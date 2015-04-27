@@ -4,6 +4,8 @@ angular.module('contentful').directive('cfFormWidget', function() {
   return {
     restrict: 'E',
     controller: ['$scope', function($scope) {
+      $scope.widgetIndex = _.indexOf($scope.widgets, $scope.widget);
+
       $scope.$watch('widget.field', function (field) {
         $scope.field = field;
       });

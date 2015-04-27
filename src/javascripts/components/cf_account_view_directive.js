@@ -1,19 +1,12 @@
 'use strict';
 
-angular.module('contentful').directive('cfAccountView', ['$window', '$rootScope', 'authentication', 'routing', 'logger', function($window, $rootScope, authentication, routing, logger){
+angular.module('contentful').directive('cfAccountView', ['$window', '$rootScope', 'authentication', 'logger', function($window, $rootScope, authentication, logger){
 
   return {
     template: JST.iframe_view(),
     restrict: 'A',
     scope: true,
     link: function (scope, elem) {
-      scope.tab = {params: {fullscreen: true}};
-      elem.hide();
-
-      scope.$on('$routeChangeSuccess', function (event, route, previous) {
-        routeChanged(route, previous);
-      });
-
       scope.$on('iframeMessage', function (event, data, iframe) {
         if (iframe !== elem.find('iframe')[0]) return;
         scope.hasLoaded = true;
@@ -21,18 +14,10 @@ angular.module('contentful').directive('cfAccountView', ['$window', '$rootScope'
       });
 
       scope.hasLoaded = false;
+      init();
 
-      function routeChanged(route) {
-        if (route.viewType === 'account') {
-          updateFrameLocation();
-          elem.show();
-        } else {
-          elem.hide();
-        }
-      }
-
-      function updateFrameLocation() {
-        var pathSuffix = routing.getRoute().params.pathSuffix || 'profile/user';
+      function init() {
+        var pathSuffix = scope.$stateParams.pathSuffix;
         var url = buildUrl(pathSuffix);
         if (!urlIsActive(url)) {
           scope.url = url;

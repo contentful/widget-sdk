@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfInlineEditor', ['keycodes', 'defer', function(keycodes, defer){
+angular.module('contentful').directive('cfInlineEditor', ['keycodes', function(keycodes){
   return {
     restrict: 'A',
     template: JST['cf_inline_editor'](),
@@ -19,9 +19,6 @@ angular.module('contentful').directive('cfInlineEditor', ['keycodes', 'defer', f
           if (active) scope.$emit('editingStarted');
           else        scope.$emit('editingStopped');
         }
-        if (active) defer(function(){
-          elem.find('.inline-editor-form input').select().focus();
-        });
       });
 
       scope.submitInlineForm = function () {

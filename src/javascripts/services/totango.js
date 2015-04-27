@@ -46,7 +46,7 @@ angular.module('contentful').factory('totango', ['$injector', function($injector
           var orgId = organization ? organization.sys.id : 'noorg';
           $window.totango_options.username = user.sys.id +'-'+ orgId;
           $window.totango_options.account.id = orgId;
-          $window.totango_options.module = $window.totango_options.module || 'Entries';
+          $window.totango_options.module = $window.totango_options.module || 'spaces.detail.entries.list';
           $window.totango.go($window.totango_options);
         }
       });

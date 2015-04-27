@@ -7,23 +7,17 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
   var logger            = $injector.get('logger');
   var notification      = $injector.get('notification');
   var stringUtils       = $injector.get('stringUtils');
-  var validation        = $injector.get('validation');
 
   //Initialization
-  $scope.$watch('tab.params.asset', function (asset) { $scope.asset = asset; });
-  $controller('EntityActionsController', {
+  $scope.entityActionsController = $controller('EntityActionsController', {
     $scope: $scope,
-    params: {
-      entityType: 'asset'
-    }
+    entityType: 'asset'
   });
 
-  // Tab related stuff
-  $scope.tab.closingMessage = 'You have unpublished changes.';
-  $scope.tab.closingMessageDisplayType = 'tooltip';
-  $scope.$watch('spaceContext.assetTitle(asset)', function(title, old, scope) {
-    scope.tab.title = title;
+  $scope.$watch('spaceContext.assetTitle(asset)', function (title) {
+    $scope.context.title = title;
   });
+
   $scope.$watch(function (scope) {
     if (scope.otDoc && scope.asset) {
       if (angular.isDefined(scope.asset.getPublishedVersion()))
@@ -34,13 +28,13 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
       return undefined;
     }
   }, function (modified, old, scope) {
-    if (modified !== undefined) scope.tab.dirty = modified;
+    if (modified !== undefined) scope.context.dirty = modified;
   });
   $scope.$on('entityDeleted', function (event, asset) {
     if (event.currentScope !== event.targetScope) {
       var scope = event.currentScope;
       if (asset === scope.asset) {
-        scope.tab.close();
+        scope.closeState();
       }
     }
   });
@@ -57,7 +51,6 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
 
   // Validations
   $scope.errorPaths = {};
-  $scope.assetSchema = validation.schemas.Asset($scope.spaceContext.space.getPrivateLocales());
   $scope.$watch('asset.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
     if (publishedVersion > oldVersion) scope.validate();
   });

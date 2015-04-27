@@ -170,9 +170,7 @@ describe('Entry List Actions Controller', function () {
       stubs.size.returns(2);
       stubs.action1.returns({contentType: {sys: {id: 'foo'}}});
       stubs.action2.returns({contentType: {sys: {id: 'bar'}}});
-      //stubs.createEntry.withArgs('foo').callsArg(2);
       stubs.createEntry.withArgs('foo').returns($q.when());
-      //stubs.createEntry.withArgs('bar').callsArgWith(2, {});
       stubs.createEntry.withArgs('bar').returns($q.reject({}));
       scope.entries = [];
       stubs.getSelected.returns([
@@ -181,7 +179,7 @@ describe('Entry List Actions Controller', function () {
       ]);
 
       scope.duplicateSelected();
-      scope.$apply();
+      scope.$digest();
     });
 
     it('calls getSys on first selected entry', function () {

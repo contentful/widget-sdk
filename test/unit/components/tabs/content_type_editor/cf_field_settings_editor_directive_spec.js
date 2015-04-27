@@ -19,7 +19,7 @@ describe('The cfFieldSettingsEditor directive', function () {
       scope.field = {};
 
       compileElement = function () {
-        container = $('<div class="cf-field-settings-editor"></div>');
+        container = $('<cf-field-settings-editor></cf-field-settings-editor>');
         $compile(container)(scope);
         scope.$digest();
       };

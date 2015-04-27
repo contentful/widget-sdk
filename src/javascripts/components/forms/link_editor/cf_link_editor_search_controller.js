@@ -110,7 +110,7 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
     .then(function createEntityHandler(entry) {
       return addEntity(entry)
       .then(function addLinkHandler() {
-        $scope.navigator.entryEditor(entry).goTo();
+        $scope.$state.go('spaces.detail.entries.detail', { entryId: entry.getId(), addToContext: true });
       })
       .catch(function addLinkErrorHandler(errSetLink) {
         notification.error('Error linking Entry');
@@ -134,7 +134,7 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
     .then(function createEntityHandler(asset) {
       return addEntity(asset)
       .then(function addLinkHandler() {
-        $scope.navigator.assetEditor(asset).goTo();
+        $scope.$state.go('spaces.detail.assets.detail', { assetId: asset.getId(), addToContext: true });
       })
       .catch(function addLinkErrorHandler(errSetLink) {
         logger.logServerWarn('Error linking Asset', {error: errSetLink });

@@ -14,17 +14,6 @@
 describe('validation dialog', function() {
   var openDialog, dialog, scope;
 
-  function validationsDoc(scope, path) {
-    return scope.otDoc.at(['fields', scope.index, 'validations'].concat(path || []));
-  }
-
-  function getOtDocField(scope, path) {
-    if (_.isString(path))
-      path = path.split('.');
-    var basePath = ['fields', scope.index];
-    return scope.otDoc.at(basePath.concat(path)).get();
-  }
-
   function getFieldProperty(scope, path) {
     return dotty.get(scope, ['field', path].join('.'));
   }
@@ -32,28 +21,6 @@ describe('validation dialog', function() {
   function setFieldProperty(scope, path, value) {
     return dotty.put(scope, ['field', path].join('.'), value);
   }
-
-  /**
-   * A small mock OtDoc implementation.
-   */
-  function OtDoc(root, path) {
-    this.root = root || {};
-    this.path = path || [];
-  }
-
-  OtDoc.prototype = {
-    at: function(path) {
-      return new OtDoc(this.root, this.path.concat(path));
-    },
-    set: function(value, cb) {
-      dotty.put(this.root, this.path, value);
-      cb();
-    },
-    get: function() {
-      return dotty.get(this.root, this.path);
-    },
-  };
-
 
   beforeEach(function () {
     var modalDialog;
@@ -79,9 +46,7 @@ describe('validation dialog', function() {
     scope.otEditable = true;
     scope.field = {type: 'Text'};
     scope.index = 1;
-    scope.otDoc = new OtDoc({
-      fields: [{}, {type: 'Text'}]
-    });
+    scope.contentTypeForm = {$setDirty: sinon.stub()};
 
     openDialog();
   });
@@ -147,8 +112,6 @@ describe('validation dialog', function() {
 
       expect(getFieldProperty(scope, validationPath))
       .toEqual([{size: {min: 10, max: 20}}]);
-      expect(getOtDocField(scope, validationPath))
-      .toEqual([{size: {min: 10, max: 20}}]);
     });
 
     it('existing validation is shown and can be disabled', function() {
@@ -165,7 +128,6 @@ describe('validation dialog', function() {
       .click();
       clickSave();
       expect(getFieldProperty(scope, validationPath)).toEqual([]);
-      expect(getOtDocField(scope, validationPath)).toEqual([]);
     });
 
     it('shows errors when opened', function() {
@@ -255,8 +217,6 @@ describe('validation dialog', function() {
 
       expect(scope.field.validations)
       .toEqual([{range: {min: -0.1, max: 0.1}}]);
-      expect(validationsDoc(scope).get())
-      .toEqual([{range: {min: -0.1, max: 0.1}}]);
     });
 
     it('it can be disabled', function() {
@@ -274,7 +234,6 @@ describe('validation dialog', function() {
       clickSave();
 
       expect(scope.field.validations).toEqual([]);
-      expect(validationsDoc(scope).get()).toEqual([]);
     });
 
   });
@@ -304,8 +263,6 @@ describe('validation dialog', function() {
       clickSave();
 
       expect(scope.field.validations)
-      .toEqual([{regexp: {pattern: 'foo|bar', flags: 'i'}}]);
-      expect(validationsDoc(scope).get())
       .toEqual([{regexp: {pattern: 'foo|bar', flags: 'i'}}]);
     });
 
@@ -381,7 +338,6 @@ describe('validation dialog', function() {
 
       clickSave();
       expect(scope.field.validations).toEqual([{in: ['a value', 'another value']}]);
-      expect(validationsDoc(scope).get()).toEqual([{in: ['a value', 'another value']}]);
     });
 
     it('shows warning for existing values', function() {
@@ -400,7 +356,6 @@ describe('validation dialog', function() {
 
       clickSave();
       expect(scope.field.validations).toEqual([{in: ['a value']}]);
-      expect(validationsDoc(scope).get()).toEqual([{in: ['a value']}]);
     });
 
     it('shows existing values', function() {
@@ -427,7 +382,6 @@ describe('validation dialog', function() {
 
       clickSave();
       expect(scope.field.validations).toEqual([{in: ['a value', 'even more value']}]);
-      expect(validationsDoc(scope).get()).toEqual([{in: ['a value', 'even more value']}]);
     });
 
     describe('for number field', function() {
@@ -503,7 +457,6 @@ describe('validation dialog', function() {
 
       clickSave();
       expect(scope.field.validations).toEqual([{linkContentType: ['2', '3']}]);
-      expect(validationsDoc(scope).get()).toEqual([{linkContentType: ['2', '3']}]);
     });
   });
 
@@ -533,7 +486,6 @@ describe('validation dialog', function() {
 
       clickSave();
       expect(scope.field.validations).toEqual([{linkMimetypeGroup: ['image', 'code']}]);
-      expect(validationsDoc(scope).get()).toEqual([{linkMimetypeGroup: ['image', 'code']}]);
     });
 
     it('shows previously selected type', function() {
@@ -583,8 +535,6 @@ describe('validation dialog', function() {
       expect(dialog.open).toBe(false);
 
       expect(scope.field.validations)
-      .toEqual([{size: {min: 10, max: 20}}]);
-      expect(validationsDoc(scope).get())
       .toEqual([{size: {min: 10, max: 20}}]);
     });
 

@@ -2,12 +2,10 @@
 
 angular.module('contentful').directive('cfFieldSettingsEditor', function() {
   return {
-    restrict: 'C',
-    template: JST['cf_field_settings_editor'](),
+    restrict: 'E',
+    template: JST.cf_field_settings_editor(),
     controller: 'FieldSettingsEditorController',
     link: function (scope, elem) {
-      //elem.on('click', clickHandler);
-
       var unwatch = scope.$watch('isAccordionItemOpen(field)', function (open) {
         if (open) { elem.find('input[name="fieldName"]').focus(); }
       });

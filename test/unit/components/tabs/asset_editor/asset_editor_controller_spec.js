@@ -62,21 +62,18 @@ describe('Asset editor controller', function () {
         process: stubs.process.returns(process.promise),
         getPublishedVersion: stubs.getPublishedVersion
       };
-      scope.tab = {
-        params: {
-          asset: asset
-        }
-      };
+      scope.asset = asset;
+      scope.context = {};
 
       assetEditorCtrl = $controller('AssetEditorController', {$scope: scope});
       scope.$apply();
     });
   });
 
-  it('gets a title set on a tab', function () {
+  it('gets a title set', function () {
     stubs.assetTitle.returns('title');
     scope.$apply();
-    expect(scope.tab.title).toBe('title');
+    expect(scope.context.title).toBe('title');
   });
 
   describe('sets the otDisabled flag', function () {
@@ -125,11 +122,9 @@ describe('Asset editor controller', function () {
           getPrivateLocales: sinon.stub().returns([locale])
         }
       };
-      scope.tab = {
-        params: {
-          asset: asset
-        }
-      };
+      scope.asset = asset;
+      scope.context = {};
+
       assetEditorCtrl = $controller('AssetEditorController', {$scope: scope});
       scope.$digest();
     }));

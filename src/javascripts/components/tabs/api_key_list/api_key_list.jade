@@ -1,7 +1,7 @@
 .tab-header
   .tab-header__title
     h1
-      | Content Delivery
+      | Content Delivery API Keys
       a(cf-knowledge-base-icon
         tooltip="Learn more about API Keys in the Knowledge Base Pages"
         tooltip-container=".entity-list"
@@ -38,7 +38,7 @@
       table.result-list.main-results
         tbody
           tr(ng-repeat="apiKey in apiKeys track by apiKey.getId()"
-              cf-click-local="navigator.apiKeyEditor(apiKey).goTo()")
+              ui-sref="spaces.detail.api.keys.detail({ apiKeyId: apiKey.getId() })")
             td.cell-name
               span {{apiKey.getName()}}
             td.cell-description

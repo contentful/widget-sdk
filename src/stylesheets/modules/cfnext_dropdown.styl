@@ -1,0 +1,62 @@
+$cfnext-caret-size = 12px
+
+$cfnext-dropdown__item()
+  line-height: $rhythm(1)
+  margin-bottom: $rhythm(0.5)
+  cursor: pointer
+  &:hover
+    font-weight: bold
+
+$cfnext-dropdown__list()
+  padding: $rhythm(1) $rhythm(1) 0
+  border-top: 1px solid $cfnext-light-blue
+  &:last-child
+    padding-bottom: $rhythm(0.3)
+
+.cfnext-dropdown
+  $layer('dropdown')
+  position: absolute
+  border: 1px solid $cfnext-gray
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5)
+  border-radius: 3px
+  background-color: $cfnext-lightest-blue
+
+  &__arrow
+    position: absolute
+    top: -10px
+    &.left-aligned
+      left: $cfnext-caret-size + 10px
+    &.right-aligned
+      right: $cfnext-caret-size + 10px
+    &.center-aligned
+      left: 50%
+
+  &__list
+    $cfnext-dropdown__list()
+
+  &__list--first
+    $cfnext-dropdown__list()
+    border-top: none
+
+  &__inner-list
+    margin-top: $rhythm(0.3)
+
+  &__item
+    $cfnext-dropdown__item()
+
+  &__item--no-highlight
+    $cfnext-dropdown__item()
+    margin-bottom: $rhythm(1)
+    cursor: default
+    &:hover
+      font-weight: normal
+
+  &__item--vcentered
+    $cfnext-dropdown__item()
+    $display-flexbox()
+    align-items: center
+    cf-icon
+      line-height: normal
+      margin-right: 4px
+
+

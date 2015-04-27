@@ -13,7 +13,7 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
 
   $controller('AssetListViewsController', {
     $scope: $scope,
-    currentViewLocation: 'tab.params.view'
+    currentViewLocation: 'context.view'
   });
 
   $scope.entityStatusController = $controller('EntityStatusController', {$scope: $scope});
@@ -27,7 +27,7 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
 
   $scope.$watch(function pageParameters(scope){
     return {
-      searchTerm:  scope.tab.params.view.searchTerm,
+      searchTerm:  scope.context.view.searchTerm,
       page:        scope.searchController.paginator.page,
       pageLength:  scope.searchController.paginator.pageLength,
       spaceId:     (scope.spaceContext.space && scope.spaceContext.space.getId())
@@ -42,7 +42,7 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
   };
 
   $scope.hasQuery = function () {
-    return !_.isEmpty($scope.tab.params.view.searchTerm);
+    return !_.isEmpty($scope.context.view.searchTerm);
   };
 
   var throttledListRefresh = throttle(function () {
@@ -124,7 +124,7 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
   });
 
   function getSearchTerm() {
-    return $scope.tab.params.view.searchTerm;
+    return $scope.context.view.searchTerm;
   }
 
 }]);

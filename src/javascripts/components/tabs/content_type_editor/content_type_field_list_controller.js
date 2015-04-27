@@ -5,8 +5,13 @@ angular.module('contentful').controller('ContentTypeFieldListController', ['$sco
 
   $controller('AccordionController', {$scope: $scope});
 
-  $scope.$watchCollection('contentType.data.fields', function (fields, old, scope) {
-    scope.fieldList = fields;
+  $scope.$watch('validationResult.errors', function activateErroredDisabledFields(errors, old, scope) {
+    _.each(errors, function (error) {
+      if (error.path[0] === 'fields' && angular.isDefined(error.path[1])) {
+        var field = scope.contentType.data.fields[error.path[1]];
+        if (field.disabled) scope.preferences.showDisabledFields = true;
+      }
+    });
   });
 
   $scope.fieldTypeParams = function (f) {
@@ -35,29 +40,12 @@ angular.module('contentful').controller('ContentTypeFieldListController', ['$sco
   };
 
   $scope.setDisplayField = function (field) {
-    $scope.otDoc.at(['displayField']).set(field.id, function (err) {
-      if (!err) $scope.$apply(function (scope) {
-        scope.contentType.data.displayField = field.id;
-      });
-    });
+    $scope.contentType.data.displayField = field.id;
   };
 
   $scope.removeDisplayField = function () {
-    $scope.otDoc.at(['displayField']).set(null, function (err) {
-      if (!err) $scope.$apply(function (scope) {
-        scope.contentType.data.displayField = null;
-      });
-    });
+    $scope.contentType.data.displayField = null;
   };
-
-  $scope.$watch('validationResult.errors', function activateErroredDisabledFields(errors, old, scope) {
-    _.each(errors, function (error) {
-      if (error.path[0] === 'fields' && angular.isDefined(error.path[1])) {
-        var field = scope.contentType.data.fields[error.path[1]];
-        if (field.disabled) scope.preferences.showDisabledFields = true;
-      }
-    });
-  });
 
   $scope.$on('fieldAdded', function (event, index) {
     var scope = event.currentScope;

@@ -39,9 +39,6 @@ describe('API key editor controller', function () {
       $q = _$q_;
       scope = _$rootScope_;
 
-      scope.tab = {
-        params: {}
-      };
       scope.spaceContext = {
         space: {
           getId: stubs.spaceGetId,
@@ -50,6 +47,7 @@ describe('API key editor controller', function () {
       };
       scope.broadcastFromSpace = stubs.broadcast;
 
+      scope.context = {};
       apiKey = {
         data: {},
         getName: stubs.getName,
@@ -57,7 +55,7 @@ describe('API key editor controller', function () {
         'delete': stubs.delete,
         save: stubs.save
       };
-      scope.tab.params.apiKey = apiKey;
+      scope.apiKey = apiKey;
 
       stubs.getName.returns('apiKeyName');
       stubs.createPreviewApiKey.returns($q.defer().promise);
@@ -68,25 +66,22 @@ describe('API key editor controller', function () {
   });
 
   it('has a closing message', function () {
-    expect(scope.tab.closingMessage).toBeDefined();
-    expect(scope.tab.closingMessageDisplayType).toEqual('dialog');
+    expect(scope.context.closingMessage).toBeDefined();
   });
 
   it('sets an apiKey on the scope', function () {
     expect(scope.apiKey).toEqual(apiKey);
   });
 
-  it('sets a headline and a tab title to untitled', function () {
+  it('sets the state title to untitled', function () {
     scope.$apply();
-    expect(scope.headline).toEqual('Untitled');
-    expect(scope.tab.title).toEqual('Untitled');
+    expect(scope.context.title).toEqual('Untitled');
   });
 
-  it('sets a headline and a tab title', function () {
+  it('sets the state title', function () {
     scope.apiKey.data.name = 'api name';
     scope.$apply();
-    expect(scope.headline).toEqual('api name');
-    expect(scope.tab.title).toEqual('api name');
+    expect(scope.context.title).toEqual('api name');
   });
 
   it('sets an example url', function () {
@@ -101,7 +96,7 @@ describe('API key editor controller', function () {
       '$dirty': true
     };
     scope.$apply();
-    expect(scope.tab.dirty).toBeTruthy();
+    expect(scope.context.dirty).toBeTruthy();
   });
 
   it('gets the api url', function() {
@@ -167,21 +162,13 @@ describe('API key editor controller', function () {
   });
 
   describe('saves an api key', function () {
-    var pristineStub, apiKeyEditorStub, goToStub;
+    var pristineStub;
     beforeEach(function () {
       pristineStub = sinon.stub();
-      goToStub = sinon.stub();
-      apiKeyEditorStub = sinon.stub();
-      apiKeyEditorStub.returns({
-        goTo: goToStub
-      });
       stubs.save.returns($q.when());
-
+      scope.$state.go = sinon.stub();
       scope.apiKeyForm = {
         '$setPristine': pristineStub
-      };
-      scope.navigator = {
-        apiKeyEditor: apiKeyEditorStub
       };
       scope.save();
       scope.$apply();
@@ -197,14 +184,10 @@ describe('API key editor controller', function () {
     });
 
     it('gets api key editor from navigator', function () {
-      sinon.assert.called(apiKeyEditorStub);
-      expect(apiKeyEditorStub.args[0][0]).toBe(apiKey);
+      sinon.assert.calledWith(scope.$state.go, 'spaces.detail.api.keys.detail', {
+        apiKeyId: apiKey.getId()
+      });
     });
-
-    it('reloads api key editor', function () {
-      sinon.assert.called(goToStub);
-    });
-
   });
 
   describe('fails to save an api key', function () {

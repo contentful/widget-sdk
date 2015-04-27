@@ -1,14 +1,21 @@
 'use strict';
 
-describe('Create Space Dialog controller', function () {
+describe('Create Space controller', function () {
   var scope, createSpaceCtrl, stubs, createController;
   var org;
 
   beforeEach(function () {
+    var self = this;
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'stop', 'then', 'getId', 'timeout'
       ]);
+
+      self.tokenStoreStubs = {
+        getUpdatedToken: sinon.stub(),
+        getSpace: sinon.stub()
+      };
+      $provide.value('tokenStore', self.tokenStoreStubs);
 
       $provide.value('$timeout', stubs.timeout);
       stubs.timeout.callsArg(0);
@@ -22,30 +29,37 @@ describe('Create Space Dialog controller', function () {
       this.enforcements = $injector.get('enforcements');
       this.cfSpinner = $injector.get('cfSpinner');
 
-      this.broadcastSpy = sinon.spy(this.$rootScope, '$broadcast');
+      this.broadcastStub = sinon.stub(this.$rootScope, '$broadcast');
+      this.broadcastStub.returns(sinon.stub());
       this.cfSpinner.start = sinon.stub();
       this.cfSpinner.start.returns(stubs.stop);
       this.client.createSpace = sinon.stub();
       this.enforcements.computeUsage = sinon.stub();
       this.enforcements.determineEnforcement = sinon.stub();
 
-      scope = this.$rootScope.$new();
+      scope = this.$rootScope;
       scope.$emit = sinon.stub();
-      scope.$on = sinon.stub();
-      scope.$on.withArgs('$routeChangeSuccess').returns(angular.noop);
+      scope.$root.$on = sinon.stub();
+      scope.$root.$on.withArgs('$stateChangeSuccess').returns(angular.noop);
 
       org = {sys: {id: 'orgid'}};
       scope.organizations = [
         org
       ];
-      scope.canCreateSpaceInOrg = sinon.stub();
+      scope.permissionController = {};
+      scope.permissionController.canCreateSpaceInOrg = sinon.stub();
       scope.newSpaceForm = {};
 
+      scope.setTokenDataOnScope = sinon.stub();
 
       createController = function () {
         createSpaceCtrl = $controller('CreateSpaceDialogController', {$scope: scope});
       };
     });
+  });
+
+  afterEach(function () {
+    this.broadcastStub.restore();
   });
 
   it('does not preselect if no organizations exist', function() {
@@ -61,8 +75,8 @@ describe('Create Space Dialog controller', function () {
         {sys: {id: 'orgid2'}},
         {badorg: true}
       ];
-      scope.canCreateSpaceInOrg.withArgs('orgid').returns(true);
-      scope.canCreateSpaceInOrg.withArgs('orgid2').returns(false);
+      scope.permissionController.canCreateSpaceInOrg.withArgs('orgid').returns(true);
+      scope.permissionController.canCreateSpaceInOrg.withArgs('orgid2').returns(false);
       createController();
     });
 
@@ -73,7 +87,7 @@ describe('Create Space Dialog controller', function () {
 
   describe('on the default state', function() {
     beforeEach(function() {
-      scope.canCreateSpaceInOrg.returns(true);
+      scope.permissionController.canCreateSpaceInOrg.returns(true);
       createController();
     });
 
@@ -113,12 +127,12 @@ describe('Create Space Dialog controller', function () {
 
       describe('if user cant create space in org', function() {
         beforeEach(function() {
-          scope.canCreateSpaceInOrg.returns(false);
+          scope.permissionController.canCreateSpaceInOrg.returns(false);
           scope.createSpace();
         });
 
         it('broadcasts space creation request', function() {
-          sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationRequested');
+          sinon.assert.calledWith(this.broadcastStub, 'spaceCreationRequested');
         });
 
         it('starts spinner', function() {
@@ -126,7 +140,7 @@ describe('Create Space Dialog controller', function () {
         });
 
         it('checks for creation permission', function() {
-          sinon.assert.calledWith(scope.canCreateSpaceInOrg, 'orgid');
+          sinon.assert.calledWith(scope.permissionController.canCreateSpaceInOrg, 'orgid');
         });
 
         it('stops spinner', function() {
@@ -139,13 +153,13 @@ describe('Create Space Dialog controller', function () {
         });
 
         it('broadcasts space creation failure', function() {
-          sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationFailed');
+          sinon.assert.calledWith(this.broadcastStub, 'spaceCreationFailed');
         });
       });
 
       describe('if user can create space in org', function() {
         beforeEach(function() {
-          scope.canCreateSpaceInOrg.returns(true);
+          scope.permissionController.canCreateSpaceInOrg.returns(true);
           scope.newSpaceData.name = 'name';
         });
 
@@ -159,11 +173,11 @@ describe('Create Space Dialog controller', function () {
               }
             }));
             scope.createSpace();
-            scope.$apply();
+            scope.$digest();
           });
 
           it('broadcasts space creation request', function() {
-            sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationRequested');
+            sinon.assert.calledWith(this.broadcastStub, 'spaceCreationRequested');
           });
 
           it('starts spinner', function() {
@@ -171,7 +185,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('checks for creation permission', function() {
-            sinon.assert.calledWith(scope.canCreateSpaceInOrg, 'orgid');
+            sinon.assert.calledWith(scope.permissionController.canCreateSpaceInOrg, 'orgid');
           });
 
           it('calls client lib with data', function() {
@@ -196,7 +210,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('broadcasts space creation failure', function() {
-            sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationFailed');
+            sinon.assert.calledWith(this.broadcastStub, 'spaceCreationFailed');
           });
         });
 
@@ -212,11 +226,11 @@ describe('Create Space Dialog controller', function () {
               }
             }));
             scope.createSpace();
-            scope.$apply();
+            scope.$digest();
           });
 
           it('broadcasts space creation request', function() {
-            sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationRequested');
+            sinon.assert.calledWith(this.broadcastStub, 'spaceCreationRequested');
           });
 
           it('starts spinner', function() {
@@ -224,7 +238,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('checks for creation permission', function() {
-            sinon.assert.calledWith(scope.canCreateSpaceInOrg, 'orgid');
+            sinon.assert.calledWith(scope.permissionController.canCreateSpaceInOrg, 'orgid');
           });
 
           it('calls client lib with data', function() {
@@ -248,7 +262,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('broadcasts space creation failure', function() {
-            sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationFailed');
+            sinon.assert.calledWith(this.broadcastStub, 'spaceCreationFailed');
           });
         });
 
@@ -259,15 +273,16 @@ describe('Create Space Dialog controller', function () {
             scope.spaces = [space];
             this.client.createSpace.returns(this.$q.when(space));
             stubs.getId.returns('spaceid');
-            scope.performTokenLookup = sinon.stub().returns(this.$q.when());
+            this.tokenStoreStubs.getUpdatedToken.returns(this.$q.when());
+            this.tokenStoreStubs.getSpace.returns(this.$q.when(space));
             scope.selectSpace = sinon.stub();
             scope.createSpace();
-            scope.$apply();
+            scope.$digest();
             scope.$on.yield();
           });
 
           it('broadcasts space creation request', function() {
-            sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationRequested');
+            sinon.assert.calledWith(this.broadcastStub, 'spaceCreationRequested');
           });
 
           it('starts spinner', function() {
@@ -275,7 +290,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('checks for creation permission', function() {
-            sinon.assert.calledWith(scope.canCreateSpaceInOrg, 'orgid');
+            sinon.assert.calledWith(scope.permissionController.canCreateSpaceInOrg, 'orgid');
           });
 
           it('calls client lib with data', function() {
@@ -287,11 +302,19 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('performs token lookup', function() {
-            sinon.assert.called(scope.performTokenLookup);
+            sinon.assert.called(this.tokenStoreStubs.getUpdatedToken);
+          });
+
+          it('gets space', function() {
+            sinon.assert.called(this.tokenStoreStubs.getSpace);
+          });
+
+          it('sets token data on scope', function() {
+            sinon.assert.called(scope.setTokenDataOnScope);
           });
 
           it('reuses existing space with same id', function() {
-            sinon.assert.calledTwice(stubs.getId);
+            sinon.assert.calledOnce(stubs.getId);
           });
 
           it('selects space', function() {

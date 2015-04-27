@@ -1,2 +1,4 @@
-p(ng-show="message" ng-bind-html="message")
-button.btn.btn--confirm(ng-show="actionMessage" ng-click="action()") {{actionMessage}}
+.persistent-notification(ng-show="persistentNotification")
+  span.persistent-notification__message(ng-show="message" ng-bind-html="message")
+  button.persistent-notification__action.cfnext-btn-action(ng-show="actionMessage" ng-click="action()") {{actionMessage}}
+  a.persistent-notification__dismiss(ng-click="dismissPersistentNotification()" ng-href="#") x

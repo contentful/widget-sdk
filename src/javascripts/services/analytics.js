@@ -55,37 +55,6 @@ angular.module('contentful').provider('analytics', ['environment', function (env
         return totango.track(event);
       },
 
-      tabAdded: function (tab) {
-        this.track('Opened Tab', {
-          viewType: tab.viewType,
-          section: tab.section,
-          id: this._idFromTab(tab)
-        });
-        this._trackView(tab);
-      },
-
-      tabClosed: function (tab) {
-        this.track('Closed Tab', {
-          viewType: tab.viewType,
-          section: tab.section,
-          id: this._idFromTab(tab)
-        });
-      },
-
-      tabActivated: function (tab, oldTab) {
-        var module = this._moduleFromTab(tab);
-        var id     = this._idFromTab(tab);
-        totango.setModule(module);
-        segment.page(module, tab.viewType, { id: id});
-        this.track('Switched Tab', {
-          viewType: tab.viewType,
-          section: tab.section,
-          id: id,
-          fromViewType: oldTab ? oldTab.viewType : null,
-          fromSection: oldTab ? oldTab.section : null
-        });
-      },
-
       knowledgeBase: function (section) {
         this.track('Clicked KBP link', {
           section: section
@@ -116,11 +85,10 @@ angular.module('contentful').provider('analytics', ['environment', function (env
         this.track(event, data);
       },
 
-      toggleAuxPanel: function (visible, tab) {
+      toggleAuxPanel: function (visible, stateName) {
         var action = visible ? 'Opened Aux-Panel' : 'Closed Aux-Panel';
         this.track(action, {
-          currentSection: tab.section,
-          currentViewType: tab.viewType
+          currentState: stateName
         });
       },
 
@@ -136,53 +104,23 @@ angular.module('contentful').provider('analytics', ['environment', function (env
         }
       },
 
-      _idFromTab: function (tab) {
-        if (tab.viewType === 'entry-editor') {
-          return tab.params.entry.getId();
-        } else if (tab.viewType === 'asset-editor'){
-          return tab.params.asset.getId();
-        } else if (tab.viewType === 'content-type-editor'){
-          return tab.params.contentType.getId();
-        }
+      stateActivated: function (state, stateParams, fromState, fromStateParams) {
+        totango.setModule(state.name);
+        segment.page(state.name, stateParams);
+        this.track('Switched State', {
+          state: state.name,
+          params: stateParams,
+          fromState: fromState ? fromState.name : null,
+          fromStateParams: fromStateParams || null
+        });
       },
 
-      _moduleFromTab: function (tab) {
-        return tab.section === 'apiKeys'       ? 'API Keys'       :
-               tab.section === 'assets'        ? 'Assets'         :
-               tab.section === 'contentTypes'  ? 'Content Types'  :
-               tab.section === 'entries'       ? 'Entries'        :
-               tab.section === 'spaceSettings' ? 'Space Settings' :
-               tab.section;
-      },
-
-      _trackView: function (tab) {
-        var t = tab.viewType;
-        if (t == 'entry-list') {
-          this.track('Viewed Page', {
-            section: tab.section,
-            viewType: tab.viewType});
-        } else if (t == 'content-type-list') {
-          this.track('Viewed Page', {
-            section: tab.section,
-            viewType: tab.viewType});
-        } else if (t == 'entry-editor') {
-          this.track('Viewed Page', {
-            section: tab.section,
-            viewType: tab.viewType,
-            entryId: tab.params.entry.getId()});
-        } else if (t == 'content-type-editor') {
-          this.track('Viewed Page', {
-            section: tab.section,
-            viewType: tab.viewType,
-            entryId: tab.params.contentType.getId()});
-        } else if (t == 'space-settings') {
-          this.track('Viewed Page', {
-            viewType: tab.viewType,
-            pathSuffix: tab.params.pathSuffix
-          });
-        }
+      trackPersistentNotificationAction: function (name) {
+        this.track('Clicked Top Banner CTA Button', {
+          action: name,
+          currentPlan: this._organizationData.subscriptionPlan.name
+        });
       }
-
     };
 
     if (shouldLoadAnalytics()) {

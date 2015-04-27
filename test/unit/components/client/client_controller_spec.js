@@ -4,44 +4,20 @@ describe('Client Controller', function () {
   var clientController, scope, notification;
   var stubs;
 
+  function setMockOnContext(context, mockKey, stubsList) {
+      context[mockKey] = {};
+      _.each(stubsList, function (val) {
+        context[mockKey][val] = sinon.stub();
+      }, context);
+  }
+
   beforeEach(function () {
+    var self = this;
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'numVisible',
         'spaceId',
-        'enableAnalytics',
-        'disableAnalytics',
-        'auxPanel',
-        'track',
-        'authorizationTokenLookup',
-        'authenticationTokenLookup',
-        'updateTokenLookup',
-        'getTokenLookup',
-        'setSpace',
-        'hasSpace',
-        'gatekeeperErrorHandler',
-        'goToSpace',
-        'goToOrganization',
-        'routingSpaceId',
-        'setUserData',
-        'setSpace',
-        'getRoute',
-        'path',
-        'logout',
-        'goodbye',
-        'supportUrl',
-        'open',
-        'newSpace',
-        'dialog',
-        'presenceActive',
-        'trigger',
-        'hasNewVersion',
-        'enforcement',
-        'reasons',
-        'organization',
-        'can',
-        'setSpaceContext',
-        'shouldAllowAnalytics'
+        'go',
       ]);
 
       $provide.removeControllers('TrialWatchController');
@@ -67,90 +43,110 @@ describe('Client Controller', function () {
         };
       });
 
-      $provide.value('analytics', {
-        enable: stubs.enableAnalytics,
-        disable: stubs.disableAnalytics,
-        toggleAuxPanel: stubs.auxPanel,
-        track: stubs.track,
-        setSpace: stubs.setSpace,
-        setUserData: stubs.setUserData,
-      });
+      $provide.value('$document', [{ title: '' }]);
 
-      $provide.value('authorization', {
-        setTokenLookup: stubs.authorizationTokenLookup,
-        setSpace: stubs.setSpace,
+      setMockOnContext(self, 'analyticsStubs', [
+        'enable',
+        'disable',
+        'toggleAuxPanel',
+        'track',
+        'setSpace',
+        'setUserData',
+        'stateActivated'
+      ]);
+      $provide.value('analytics', self.analyticsStubs);
+
+      self.authorizationStubs = {
+        setTokenLookup: sinon.stub(),
+        setSpace: sinon.stub(),
         authContext: {
-          hasSpace: stubs.hasSpace,
-          organization: stubs.organization,
-          can: stubs.can
+          hasSpace: sinon.stub(),
         }
-      });
+      };
+      $provide.value('authorization', self.authorizationStubs);
 
-      stubs.organization.returns({can: stubs.can});
+      setMockOnContext(self, 'tokenStoreStubs', [
+        'updateTokenFromTokenLookup',
+        'getToken',
+        'getUpdatedToken'
+      ]);
+      $provide.value('tokenStore', self.tokenStoreStubs);
 
-      $provide.value('features', {
-        shouldAllowAnalytics: stubs.shouldAllowAnalytics.returns(true)
-      });
+      self.featuresStubs = {
+        shouldAllowAnalytics: sinon.stub()
+      };
+      self.featuresStubs.shouldAllowAnalytics.returns(true);
+      $provide.value('features', self.featuresStubs);
 
-      $provide.value('authentication', {
-        logout: stubs.logout,
-        supportUrl: stubs.supportUrl,
-        goodbye: stubs.goodbye,
-        setTokenLookup: stubs.authenticationTokenLookup,
-        updateTokenLookup: stubs.updateTokenLookup,
-        getTokenLookup: stubs.getTokenLookup
-      });
+      setMockOnContext(self, 'authenticationStubs', [
+        'logout',
+        'supportUrl',
+        'goodbye',
+        'setTokenLookup',
+        'updateTokenLookup',
+        'getTokenLookup'
+      ]);
+      $provide.value('authentication', self.authenticationStubs);
 
+      self.windowStubs = {
+        open: sinon.stub()
+      };
       $provide.value('$window', {
-        open: stubs.open,
+        open: self.windowStubs.open,
         addEventListener: sinon.stub()
       });
 
+      setMockOnContext(self, 'routingStubs', [
+        'goToSpace',
+        'goToOrganization',
+        'getSpaceId',
+        'getRoute',
+      ]);
+      $provide.value('routing', self.routingStubs);
 
-      $provide.value('routing', {
-        goToSpace: stubs.goToSpace,
-        goToOrganization: stubs.goToOrganization,
-        getSpaceId: stubs.routingSpaceId,
-        getRoute: stubs.getRoute
-      });
+      self.locationStubs = {
+        url: sinon.stub()
+      };
+      $provide.value('$location', self.locationStubs);
 
-      $provide.value('$location', {
-        path: stubs.path
-      });
+      self.clientStubs = {
+        newSpace: sinon.stub()
+      };
+      $provide.value('client', self.clientStubs);
 
-      $provide.value('client', {
-        newSpace: stubs.newSpace
-      });
+      self.modalDialogStubs = {
+        open: sinon.stub()
+      };
+      $provide.value('modalDialog', self.modalDialogStubs);
 
-      $provide.value('modalDialog', {
-        open: stubs.dialog
-      });
+      self.presenceStubs = {
+        isActive: sinon.stub()
+      };
+      $provide.value('presence', self.presenceStubs);
 
-      $provide.value('presence', {
-        isActive: stubs.presenceActive
-      });
+      self.reloadNotificationStubs = {
+        trigger: sinon.stub(),
+        gatekeeperErrorHandler: sinon.stub()
+      };
+      $provide.value('ReloadNotification', self.reloadNotificationStubs);
 
-      $provide.value('ReloadNotification', {
-        trigger: stubs.trigger,
-        gatekeeperErrorHandler: stubs.gatekeeperErrorHandler
-      });
+      self.revisionStubs = {
+        hasNewVersion: sinon.stub()
+      };
+      $provide.value('revision', self.revisionStubs);
 
-      $provide.value('revision', {
-        hasNewVersion: stubs.hasNewVersion
-      });
-
-      $provide.value('enforcements', {
-        determineEnforcement: stubs.enforcement,
-        setSpaceContext: stubs.setSpaceContext
-      });
-
-      $provide.value('reasonsDenied', stubs.reasons);
-
+      self.enforcementsStubs = {
+        setSpaceContext: sinon.stub()
+      };
+      $provide.value('enforcements', self.enforcementsStubs);
     });
     inject(function ($controller, $rootScope, $q, $injector){
+      this.$q = $q;
+      this.$rootScope = $rootScope;
       notification = $injector.get('notification');
       scope = $rootScope.$new();
       clientController = $controller('ClientController', {$scope: scope});
+      scope.$state.go = stubs.go;
     });
   });
 
@@ -168,26 +164,26 @@ describe('Client Controller', function () {
     });
 
     it('analytics is triggered', function () {
-      sinon.assert.calledWith(stubs.auxPanel, true, {});
+      sinon.assert.calledWith(this.analyticsStubs.toggleAuxPanel, true, '');
     });
   });
 
   it('space switcher analytics tracking', function () {
     scope.clickedSpaceSwitcher();
-    sinon.assert.called(stubs.track);
+    sinon.assert.called(this.analyticsStubs.track);
   });
 
   describe('on space and token lookup updates', function () {
     beforeEach(inject(function (authentication) {
       stubs.spaceId.returns(123);
-      stubs.hasSpace.withArgs(123).returns(true);
+      this.authorizationStubs.authContext.hasSpace.withArgs(123).returns(true);
       scope.spaceContext.space = _.extend(scope.spaceContext.space, {cloned: true});
       authentication.tokenLookup = {};
       scope.$digest();
     }));
 
     it('token lookup is called', function () {
-      sinon.assert.called(stubs.authorizationTokenLookup);
+      sinon.assert.called(this.authorizationStubs.setTokenLookup);
     });
 
     it('space id is called', function () {
@@ -195,22 +191,12 @@ describe('Client Controller', function () {
     });
 
     it('hasSpace is called', function () {
-      sinon.assert.called(stubs.hasSpace);
+      sinon.assert.called(this.authorizationStubs.authContext.hasSpace);
     });
 
     it('setSpace is called', function () {
-      sinon.assert.calledWith(stubs.setSpace, scope.spaceContext.space);
+      sinon.assert.calledWith(this.authorizationStubs.setSpace, scope.spaceContext.space);
     });
-  });
-
-  it('hideTabBar is true if no tabs are visible', function () {
-    stubs.numVisible.returns(0);
-    expect(scope.hideTabBar()).toBeTruthy();
-  });
-
-  it('hideTabBar is false if no tabs are visible', function () {
-    stubs.numVisible.returns(1);
-    expect(scope.hideTabBar()).toBeFalsy();
   });
 
   it('gets current space id', function () {
@@ -244,11 +230,11 @@ describe('Client Controller', function () {
       });
 
       it('dont track analytics', function () {
-        sinon.assert.notCalled(stubs.track);
+        sinon.assert.notCalled(this.analyticsStubs.track);
       });
 
       it('dont route to another space', function () {
-        sinon.assert.notCalled(stubs.goToSpace);
+        sinon.assert.notCalled(stubs.go);
       });
     });
 
@@ -260,15 +246,15 @@ describe('Client Controller', function () {
       });
 
       it('tracks analytics', function () {
-        sinon.assert.called(stubs.track);
+        sinon.assert.called(this.analyticsStubs.track);
       });
 
       it('tracks the space properties', function () {
-        expect(stubs.track.args[0][1]).toEqual({spaceId: 123, spaceName: 'testspace'});
+        expect(this.analyticsStubs.track.args[0][1]).toEqual({spaceId: 123, spaceName: 'testspace'});
       });
 
       it('route to another space', function () {
-        sinon.assert.calledWith(stubs.goToSpace, space);
+        sinon.assert.calledWith(stubs.go, 'spaces.detail', { spaceId: 123 });
       });
     });
 
@@ -279,15 +265,15 @@ describe('Client Controller', function () {
       });
 
       it('tracks analytics', function () {
-        sinon.assert.called(stubs.track);
+        sinon.assert.called(this.analyticsStubs.track);
       });
 
       it('tracks the space properties', function () {
-        expect(stubs.track.args[0][1]).toEqual({spaceId: 456, spaceName: 'testspace'});
+        expect(this.analyticsStubs.track.args[0][1]).toEqual({spaceId: 456, spaceName: 'testspace'});
       });
 
       it('route to another space', function () {
-        sinon.assert.calledWith(stubs.goToSpace, space);
+        sinon.assert.calledWith(stubs.go, 'spaces.detail', { spaceId: 456 });
       });
 
       it('location in account set to false', function() {
@@ -312,85 +298,48 @@ describe('Client Controller', function () {
       scope.user = {
         sys: {id: '456'}
       };
-      scope.canSelectOrg = sinon.stub();
+      scope.permissionController.canSelectOrg = sinon.stub();
     });
 
     describe('cannot select org', function() {
       beforeEach(function() {
-        scope.canSelectOrg.returns(false);
+        scope.permissionController.canSelectOrg.returns(false);
         scope.selectOrg('1234');
       });
 
       it('does not tracks analytics', function () {
-          sinon.assert.notCalled(stubs.track);
+          sinon.assert.notCalled(this.analyticsStubs.track);
         });
 
-      it('does not route to another space', function () {
-        sinon.assert.notCalled(stubs.goToOrganization);
+      it('does not route to anywhere', function () {
+        sinon.assert.notCalled(stubs.go);
       });
 
     });
 
     describe('can select org', function() {
       beforeEach(function() {
-        scope.canSelectOrg.returns(true);
+        scope.permissionController.canSelectOrg.returns(true);
         scope.selectOrg('1234');
       });
 
       it('tracks analytics', function () {
-          sinon.assert.called(stubs.track);
+          sinon.assert.called(this.analyticsStubs.track);
         });
 
       it('tracks the org properties', function () {
-        expect(stubs.track.args[0][1]).toEqual({
+        expect(this.analyticsStubs.track.args[0][1]).toEqual({
           organizationId: '1234', organizationName: 'orgname'
         });
       });
 
-      it('route to another space', function () {
-        sinon.assert.calledWith(stubs.goToOrganization, '1234', true);
+      it('routes to selected org', function () {
+        sinon.assert.calledWith(stubs.go, 'account.pathSuffix', {
+          pathSuffix: 'organizations/1234/edit'
+        });
       });
     });
 
-  });
-
-  describe('check if user can select an organization', function() {
-    beforeEach(function() {
-      scope.user = {
-        organizationMemberships: [{
-          organization: {
-            sys: {
-              id: '1234',
-              createdBy: {
-                sys: {
-                  id: '456'
-                }
-              }
-            }
-          }
-        }]
-      };
-    });
-
-    it('as an owner', function() {
-      scope.user.organizationMemberships[0].role = 'owner';
-      expect(scope.canSelectOrg('1234')).toBeTruthy();
-    });
-
-    it('as an admin', function() {
-      scope.user.organizationMemberships[0].role = 'admin';
-      expect(scope.canSelectOrg('1234')).toBeTruthy();
-    });
-
-    it('as an user', function() {
-      scope.user.organizationMemberships[0].role = 'user';
-      expect(scope.canSelectOrg('1234')).toBeFalsy();
-    });
-
-    it('with no memberships', function() {
-      scope.user.organizationMemberships = [];
-      expect(scope.canSelectOrg('1234')).toBeFalsy();
-    });
   });
 
   describe('handle route change', function () {
@@ -411,7 +360,7 @@ describe('Client Controller', function () {
       });
 
       it('sets no space data on analytics', function () {
-        sinon.assert.notCalled(stubs.setSpace);
+        sinon.assert.notCalled(this.analyticsStubs.setSpace);
       });
     });
 
@@ -422,7 +371,7 @@ describe('Client Controller', function () {
       });
 
       it('sets no space data on analytics', function () {
-        sinon.assert.notCalled(stubs.setSpace);
+        sinon.assert.notCalled(this.analyticsStubs.setSpace);
       });
 
       it('location in account flag is false', function() {
@@ -434,15 +383,15 @@ describe('Client Controller', function () {
       beforeEach(function () {
         scope.spaces = [{getId: idStub}];
         idStub.returns(456);
-        childScope.$emit('$routeChangeSuccess', {params: {spaceId: 456}});
+        childScope.$emit('$stateChangeSuccess');
       });
 
       it('gets the space id', function () {
         sinon.assert.called(idStub);
       });
 
-      it('space data is set on analytics', function () {
-        sinon.assert.calledWith(stubs.setSpace, scope.spaces[0]);
+      it('switches to space', function () {
+        sinon.assert.calledWith(this.analyticsStubs.setSpace, scope.spaces[0]);
       });
 
       it('location in account flag is false', function() {
@@ -470,103 +419,11 @@ describe('Client Controller', function () {
     });
 
     it('spaces are grouped by organization', function() {
-      stubs.routingSpaceId.returns(123);
+      scope.$stateParams.spaceId = 123;
       scope.$digest();
       expect(scope.spacesByOrg).toEqual({
         132: [scope.spaces[0], scope.spaces[1]],
         456: [scope.spaces[2]]
-      });
-    });
-
-    it('space data is set on analytics', function () {
-      stubs.routingSpaceId.returns(456);
-      scope.$digest();
-      sinon.assert.calledWith(stubs.setSpace, scope.spaces[1]);
-    });
-
-    it('redirects to a non existent space and defaults to first space', function () {
-      stubs.routingSpaceId.returns(789);
-      scope.$digest();
-      sinon.assert.calledWith(stubs.goToSpace, scope.spaces[0]);
-    });
-
-    it('redirects to a space with no routing id and defaults to first space', function () {
-      stubs.routingSpaceId.returns();
-      stubs.getRoute.returns({
-        root: true
-      });
-      scope.$digest();
-      sinon.assert.calledWith(stubs.goToSpace, scope.spaces[0]);
-    });
-
-    describe('no space id for redirect provided and not redirecting to root', function () {
-      beforeEach(function () {
-        stubs.getRoute.returns({
-          root: false
-        });
-        scope.$digest();
-      });
-
-      it('doesnt redirect to another space', function () {
-        sinon.assert.notCalled(stubs.goToSpace);
-      });
-
-      it('doesnt set analytics data', function () {
-        sinon.assert.notCalled(stubs.setSpace);
-      });
-
-      it('doesnt set a location path', function () {
-        sinon.assert.notCalled(stubs.path);
-      });
-    });
-
-    describe('redirects to the current space', function () {
-      beforeEach(function () {
-        scope.spaces = [];
-        stubs.routingSpaceId.returns(321);
-        scope.$digest();
-      });
-
-      it('doesnt redirect to another space', function () {
-        sinon.assert.notCalled(stubs.goToSpace);
-      });
-
-      it('sets analytics data', function () {
-        sinon.assert.called(stubs.setSpace);
-      });
-
-      it('sets a location path', function () {
-        sinon.assert.called(stubs.path);
-      });
-    });
-
-    describe('redirects to the current space', function () {
-      beforeEach(function () {
-        stubs.routingSpaceId.returns(321);
-        scope.$digest();
-      });
-
-      it('doesnt redirect to another space', function () {
-        sinon.assert.notCalled(stubs.goToSpace);
-      });
-
-      it('doesnt set analytics data', function () {
-        sinon.assert.notCalled(stubs.setSpace);
-      });
-    });
-
-    describe('no space can be found', function () {
-      beforeEach(function () {
-        stubs.routingSpaceId.returns(321);
-        scope.$digest();
-      });
-
-      it('doesnt redirect to another space', function () {
-        sinon.assert.notCalled(stubs.goToSpace);
-      });
-
-      it('doesnt set analytics data', function () {
-        sinon.assert.notCalled(stubs.setSpace);
       });
     });
   });
@@ -577,11 +434,11 @@ describe('Client Controller', function () {
     });
 
     it('tracks analytics event', function () {
-      sinon.assert.called(stubs.track);
+      sinon.assert.called(this.analyticsStubs.track);
     });
 
     it('logs out through authentication', function () {
-      sinon.assert.called(stubs.logout);
+      sinon.assert.called(this.authenticationStubs.logout);
     });
   });
 
@@ -591,11 +448,11 @@ describe('Client Controller', function () {
     });
 
     it('opens new window', function () {
-      sinon.assert.called(stubs.open);
+      sinon.assert.called(this.windowStubs.open);
     });
 
     it('gets support url', function () {
-      sinon.assert.called(stubs.supportUrl);
+      sinon.assert.called(this.authenticationStubs.supportUrl);
     });
   });
 
@@ -634,12 +491,12 @@ describe('Client Controller', function () {
       });
 
       it('calls authentication goodbye', function () {
-        sinon.assert.called(stubs.goodbye);
+        sinon.assert.called(this.authenticationStubs.goodbye);
       });
     });
 
     describe('on token change', function() {
-      var token, mockSpace;
+      var token;
       beforeEach(inject(function (authentication) {
         spaces = [{
           sys: {id: 123}
@@ -657,51 +514,16 @@ describe('Client Controller', function () {
           token: authentication.tokenLookup
         };
 
-        mockSpace = {
-          getId: sinon.stub(),
-          update: sinon.stub()
-        };
-
+        this.tokenStoreStubs.getToken.returns({spaces: spaces, user: user});
+        childScope.$emit('iframeMessage', data);
       }));
 
-      describe('if the space already exists on the client', function() {
-        beforeEach(function() {
-          scope.spaces = [mockSpace];
-          scope.spaces[0].getId.returns(123);
-
-          childScope.$emit('iframeMessage', data);
-        });
-
-        it('sets token lookup', function() {
-          sinon.assert.calledWith(stubs.updateTokenLookup, token);
-        });
-
-        it('sets user', function() {
-          expect(scope.user).toBe(user);
-        });
-
-        it('updates spaces', function() {
-          sinon.assert.calledWith(scope.spaces[0].update, spaces[0]);
-        });
+      it('sets token lookup', function() {
+        sinon.assert.calledWith(this.authenticationStubs.updateTokenLookup, token);
       });
 
-      describe('if the space is not on the client', function() {
-        beforeEach(function() {
-          stubs.newSpace.returns(mockSpace);
-          childScope.$emit('iframeMessage', data);
-        });
-
-        it('sets token lookup', function() {
-          sinon.assert.calledWith(stubs.updateTokenLookup, token);
-        });
-
-        it('sets user', function() {
-          expect(scope.user).toBe(user);
-        });
-
-        it('wraps the space', function() {
-          sinon.assert.calledWith(stubs.newSpace, token.spaces[0]);
-        });
+      it('sets user', function() {
+        expect(scope.user).toBe(user);
       });
     });
 
@@ -743,7 +565,7 @@ describe('Client Controller', function () {
       });
 
       it('calls into location', function() {
-        sinon.assert.calledWith(stubs.path, '/foobar/baz');
+        sinon.assert.calledWith(this.locationStubs.url, '/foobar/baz');
       });
     });
 
@@ -754,12 +576,11 @@ describe('Client Controller', function () {
           action: 'update',
           path: '/foobar/baz'
         };
-        scope.performTokenLookup = sinon.stub();
         childScope.$emit('iframeMessage', data);
       });
 
       it('performs no token lookup', function() {
-        sinon.assert.notCalled(scope.performTokenLookup);
+        sinon.assert.notCalled(this.authenticationStubs.getTokenLookup);
       });
     });
 
@@ -769,12 +590,12 @@ describe('Client Controller', function () {
           type: 'space',
           action: 'delete',
         };
-        scope.performTokenLookup = sinon.stub();
+        this.tokenStoreStubs.getUpdatedToken.returns(this.$q.when());
         childScope.$emit('iframeMessage', data);
       });
 
       it('performs token lookup', function() {
-        sinon.assert.called(scope.performTokenLookup);
+        sinon.assert.called(this.tokenStoreStubs.getUpdatedToken);
       });
     });
 
@@ -782,12 +603,12 @@ describe('Client Controller', function () {
     describe('for other messages', function () {
       beforeEach(function () {
         data = {};
-        scope.performTokenLookup = sinon.stub();
+        this.tokenStoreStubs.getUpdatedToken.returns(this.$q.when());
         childScope.$emit('iframeMessage', data);
       });
 
       it('performs token lookup', function() {
-        sinon.assert.called(scope.performTokenLookup);
+        sinon.assert.called(this.tokenStoreStubs.getUpdatedToken);
       });
     });
 
@@ -795,7 +616,7 @@ describe('Client Controller', function () {
 
   it('tracks profile button click event', function () {
     scope.clickedProfileButton();
-    sinon.assert.called(stubs.track);
+    sinon.assert.called(this.analyticsStubs.track);
   });
 
   describe('redirects to profile', function () {
@@ -803,13 +624,10 @@ describe('Client Controller', function () {
       scope.goToAccount();
     });
 
-    it('sets the path', function() {
-      sinon.assert.calledWith(stubs.path, '/account/profile/user');
-    });
-
-    it('sets account section flag', function() {
-      scope.$emit('$routeChangeSuccess', {viewType: 'account'});
-      expect(scope.locationInAccount).toBeTruthy();
+    it('goes there', function() {
+      sinon.assert.calledWith(stubs.go, 'account.pathSuffix', {
+        pathSuffix: undefined
+      });
     });
   });
 
@@ -818,216 +636,12 @@ describe('Client Controller', function () {
       scope.goToAccount('section');
     });
 
-    it('sets the path', function() {
-      sinon.assert.calledWith(stubs.path, '/account/section');
-    });
-  });
-
-  describe('performs token lookup', function () {
-    var $q;
-    var tokenDeferred;
-    var tokenLookup = {
-      sys: { createdBy: 'user' },
-      spaces: [{sys: {id: 123}}]
-    };
-    beforeEach(inject(function ($injector) {
-      $q = $injector.get('$q');
-      tokenDeferred = $q.defer();
-      stubs.getTokenLookup.returns(tokenDeferred.promise);
-
-      scope.spaces = [{
-        getId: sinon.stub(),
-        update: sinon.stub()
-      }];
-      scope.spaces[0].getId.returns(123);
-
-      scope.updateSpaces = sinon.stub();
-      scope.performTokenLookup();
-    }));
-
-    it('expect getTokenLookup to be called', function () {
-      sinon.assert.called(stubs.getTokenLookup);
-    });
-
-    describe('if token lookup resolves', function() {
-      beforeEach(function() {
-      tokenDeferred.resolve(tokenLookup);
-      scope.$digest();
-      });
-
-      it('user is set to the provided one', function () {
-        expect(scope.user).toEqual('user');
-      });
-
-      it('updates spaces', function() {
-        sinon.assert.calledWith(scope.spaces[0].update, tokenLookup.spaces[0]);
-      });
-    });
-
-    it('logs the user out on error 401', function () {
-      stubs.dialog.returns({promise: $q.when()});
-      tokenDeferred.reject({statusCode: 401});
-      scope.$apply();
-      sinon.assert.called(stubs.logout);
-    });
-  });
-
-  describe('check if user can create a space in any org', function() {
-    beforeEach(function() {
-      scope.organizations = [
-        {sys: {id: 'abc'}},
-        {sys: {id: 'def'}},
-      ];
-      scope.canCreateSpaceInOrg = sinon.stub();
-    });
-
-    it('if user cant create spaces in any organizations', function() {
-      scope.canCreateSpaceInOrg.returns(false);
-      expect(scope.canCreateSpaceInAnyOrg()).toBeFalsy();
-    });
-
-    it('if user can create spaces in any organizations', function() {
-      scope.canCreateSpaceInOrg.returns(true);
-      expect(scope.canCreateSpaceInAnyOrg()).toBeTruthy();
-    });
-
-    it('if user can create spaces in some organizations', function() {
-      scope.canCreateSpaceInOrg.withArgs('abc').returns(false);
-      scope.canCreateSpaceInOrg.withArgs('def').returns(true);
-      expect(scope.canCreateSpaceInAnyOrg()).toBeTruthy();
-    });
-
-  });
-
-  describe('check if user can create a space', function() {
-    it('with no auth context', inject(function(authorization) {
-      delete authorization.authContext;
-      expect(scope.canCreateSpace()).toBeFalsy();
-    }));
-
-    it('with no organizations', function() {
-      expect(scope.canCreateSpace()).toBeFalsy();
-    });
-
-    it('with zero organizations', function() {
-      scope.organizations = [];
-      expect(scope.canCreateSpace()).toBeFalsy();
-    });
-
-    describe('with organizations', function() {
-      beforeEach(function() {
-        scope.organizations = [
-          {sys: {id: 'abc'}},
-          {sys: {id: 'def'}},
-        ];
-        scope.canCreateSpaceInAnyOrg = sinon.stub();
-      });
-
-      it('if user cant create spaces in any organizations', function() {
-        scope.canCreateSpaceInAnyOrg.returns(false);
-        expect(scope.canCreateSpace()).toBeFalsy();
-      });
-
-      it('if authorization allows', function() {
-        scope.canCreateSpaceInAnyOrg.returns(true);
-        stubs.can.returns(true);
-        expect(scope.canCreateSpace()).toBeTruthy();
-      });
-
-      describe('if authorization does not allow', function() {
-        var result;
-        beforeEach(function() {
-          scope.canCreateSpaceInAnyOrg.returns(true);
-          stubs.can.returns(false);
-          scope.checkForEnforcements = sinon.stub();
-          result = scope.canCreateSpace();
-        });
-
-        it('result is false', function() {
-          expect(result).toBeFalsy();
-        });
-
-        it('checks for enforcements', function() {
-          sinon.assert.called(scope.checkForEnforcements);
-        });
-      });
-
-    });
-
-  });
-
-
-  describe('check if user can create space in org', function() {
-
-    it('with no auth context', inject(function(authorization) {
-      delete authorization.authContext;
-      expect(scope.canCreateSpaceInOrg()).toBeFalsy();
-    }));
-
-    describe('with an auth context', function() {
-      beforeEach(function() {
-        scope.canCreateSpaceInOrg('orgid');
-      });
-
-      it('gets an organization', function() {
-        sinon.assert.calledWith(stubs.organization, 'orgid');
-      });
-
-      it('checks for permission on organization', function() {
-        sinon.assert.called(stubs.can);
+    it('goes there', function() {
+      sinon.assert.calledWith(stubs.go, 'account.pathSuffix', {
+        pathSuffix: 'section' 
       });
     });
   });
-
-
-  describe('check for enforcements', function() {
-    var args, broadcastStub;
-
-    beforeEach(inject(function($rootScope) {
-      args = [1, 2];
-      broadcastStub = sinon.stub($rootScope, '$broadcast');
-    }));
-
-    describe('if there are reasons', function () {
-      beforeEach(function () {
-        stubs.enforcement.returns({});
-        scope.checkForEnforcements(args, {});
-      });
-
-      it('enforcement is determined', function () {
-        sinon.assert.called(stubs.enforcement);
-      });
-
-      it('reasons are determined', function () {
-        sinon.assert.called(stubs.reasons);
-      });
-
-      it('event is broadcast', function () {
-        sinon.assert.called(broadcastStub);
-      });
-    });
-
-    describe('if there are no reasons', function () {
-      beforeEach(function () {
-        stubs.enforcement.returns(false);
-        scope.checkForEnforcements(args, {});
-      });
-
-      it('enforcement is determined', function () {
-        sinon.assert.called(stubs.enforcement);
-      });
-
-      it('reasons are determined', function () {
-        sinon.assert.called(stubs.reasons);
-      });
-
-      it('event is not broadcast', function () {
-        sinon.assert.notCalled(broadcastStub);
-      });
-
-    });
-  });
-
 
   describe('shows create space dialog', function () {
     beforeEach(inject(function ($q) {
@@ -1035,136 +649,94 @@ describe('Client Controller', function () {
         {sys: {id: 'abc'}},
         {sys: {id: 'def'}},
       ];
-      stubs.dialog.returns({promise: $q.when()});
+      this.modalDialogStubs.open.returns({promise: $q.when()});
     }));
     it('opens dialog', function () {
       scope.showCreateSpaceDialog();
-      sinon.assert.called(stubs.dialog);
+      sinon.assert.called(this.modalDialogStubs.open);
     });
 
     it('tracks analytics event', function () {
       scope.showCreateSpaceDialog();
-      sinon.assert.called(stubs.track);
+      sinon.assert.called(this.analyticsStubs.track);
     });
 
     describe('with an organizationId', function () {
       it('displays that organization first in the dropdown', function () {
         scope.showCreateSpaceDialog('def');
-        expect(stubs.dialog.args[0][0].scope.organizations[1].sys.id).toBe('def');
+        expect(this.modalDialogStubs.open.args[0][0].scope.organizations[1].sys.id).toBe('def');
       });
     });
 
     describe('without an organizationId', function () {
       it('displays that organization first in the dropdown', function () {
         scope.showCreateSpaceDialog();
-        expect(stubs.dialog.args[0][0].scope.organizations[0].sys.id).toBe('abc');
+        expect(this.modalDialogStubs.open.args[0][0].scope.organizations[0].sys.id).toBe('abc');
       });
     });
   });
 
   describe('initializes client', function () {
-    var thenStub, catchStub, revisionCatchStub;
     beforeEach(function () {
-      revisionCatchStub = sinon.stub();
-      stubs.hasNewVersion.returns({catch: revisionCatchStub});
-      scope.performTokenLookup = sinon.stub();
-      thenStub = sinon.stub();
-      catchStub = sinon.stub();
-      scope.performTokenLookup.returns({
-        then: thenStub,
-        catch: catchStub
-      });
-    });
-
-    it('token lookup is called', function () {
+      this.spaces = [];
+      this.user = {sys: {}};
+      this.revisionStubs.hasNewVersion.returns(this.$q.reject('APP_REVISION_CHANGED'));
+      this.tokenStoreStubs.getUpdatedToken.returns(this.$q.when({
+        spaces: this.spaces,
+        user: this.user
+      }));
+      this.broadcastStub = sinon.stub(this.$rootScope, '$broadcast');
+      jasmine.clock().install();
       scope.initClient();
-      sinon.assert.called(scope.performTokenLookup);
+      scope.$digest();
     });
 
-    describe('if lookup succeeds', function () {
-      beforeEach(function () {
-        jasmine.clock().install();
-        thenStub.callsArg(0);
-        scope.user = {
-          sys: {}
-        };
-        scope.spaces = [{}];
-      });
-
-      afterEach(function () {
-        jasmine.clock().uninstall();
-      });
-
-      it('tracks login', function () {
-        scope.initClient();
-        sinon.assert.called(stubs.setUserData);
-      });
-
-      describe('fires an initial version check', function () {
-        var broadcastStub;
-        beforeEach(inject(function ($rootScope) {
-          broadcastStub = sinon.stub($rootScope, '$broadcast');
-          revisionCatchStub.callsArgWith(0, 'APP_REVISION_CHANGED');
-          scope.initClient();
-          jasmine.clock().tick(5000);
-        }));
-
-        afterEach(function () {
-          broadcastStub.restore();
-        });
-
-        it('checks for new version', function () {
-          sinon.assert.called(stubs.hasNewVersion);
-        });
-
-        it('broadcasts event if new version is available', function () {
-          sinon.assert.called(broadcastStub);
-        });
-      });
-
-
-      describe('presence timeout is fired', function () {
-        var broadcastStub;
-        beforeEach(inject(function ($rootScope) {
-          stubs.presenceActive.returns(true);
-          catchStub.callsArg(0);
-          broadcastStub = sinon.stub($rootScope, '$broadcast');
-          revisionCatchStub.callsArgWith(0, 'APP_REVISION_CHANGED');
-          scope.initClient();
-          jasmine.clock().tick(50*60*1000);
-        }));
-
-        afterEach(function () {
-          broadcastStub.restore();
-        });
-
-        it('checks for presence', function () {
-          sinon.assert.called(stubs.presenceActive);
-        });
-
-        it('checks for new version', function () {
-          sinon.assert.called(stubs.hasNewVersion);
-        });
-
-        it('reload is triggered if lookup fails', function () {
-          sinon.assert.called(stubs.trigger);
-        });
-
-        it('broadcasts event if new version is available', function () {
-          sinon.assert.called(broadcastStub);
-        });
-      });
-
+    afterEach(function () {
+      jasmine.clock().uninstall();
+      this.broadcastStub.restore();
     });
 
-    describe('if lookup fails', function () {
-      beforeEach(function () {
-        thenStub.callsArg(1);
-        scope.initClient();
+    it('tracks login', function () {
+      sinon.assert.called(this.analyticsStubs.setUserData);
+    });
+
+    it('sets user', function() {
+      expect(scope.user).toEqual(this.user);
+    });
+
+    it('sets spaces', function() {
+      expect(scope.spaces).toEqual(this.spaces);
+    });
+
+    describe('fires an initial version check', function () {
+      beforeEach(function() {
+        jasmine.clock().tick(5000);
+        scope.$digest();
+      });
+      it('checks for new version', function () {
+        sinon.assert.called(this.revisionStubs.hasNewVersion);
       });
 
-      it('error notification shown', function () {
-        sinon.assert.called(stubs.gatekeeperErrorHandler);
+      it('broadcasts event if new version is available', function () {
+        sinon.assert.called(this.broadcastStub);
+      });
+    });
+
+
+    describe('presence timeout is fired', function () {
+      beforeEach(function () {
+        this.presenceStubs.isActive.returns(true);
+        this.tokenStoreStubs.getUpdatedToken.returns(this.$q.reject());
+        jasmine.clock().tick(50*60*1000);
+        scope.$digest();
+      });
+
+      it('checks for presence', function () {
+        sinon.assert.called(this.presenceStubs.isActive);
+      });
+
+      it('reload is triggered if lookup fails', function () {
+        sinon.assert.called(this.reloadNotificationStubs.trigger);
       });
     });
 
@@ -1172,7 +744,7 @@ describe('Client Controller', function () {
 
   describe('organizations on the scope', function() {
     it('are not set', function() {
-      expect(scope.organizations).toBeNull();
+      expect(scope.organizations).toBeFalsy();
     });
 
     describe('if user exists', function() {
@@ -1200,20 +772,20 @@ describe('Client Controller', function () {
 
       it('sets analytics user data and enables tracking', function() {
         scope.$digest();
-        sinon.assert.called(stubs.setUserData);
-        sinon.assert.called(stubs.enableAnalytics);
+        sinon.assert.called(this.analyticsStubs.setUserData);
+        sinon.assert.called(this.analyticsStubs.enable);
         sinon.assert.called(this.logger.enable);
       });
 
       describe('when analytics are disallowed', function() {
         beforeEach(function() {
-          stubs.shouldAllowAnalytics.returns(false);
+          this.featuresStubs.shouldAllowAnalytics.returns(false);
         });
 
         it('should not set or enable anything', function() {
           scope.$digest();
-          sinon.assert.notCalled(stubs.setUserData);
-          sinon.assert.called(stubs.disableAnalytics);
+          sinon.assert.notCalled(this.analyticsStubs.setUserData);
+          sinon.assert.called(this.analyticsStubs.disable);
           sinon.assert.called(this.logger.disable);
         });
       });

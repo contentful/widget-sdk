@@ -49,9 +49,7 @@ describe('Asset List Controller', function () {
       getAssets = $q.defer();
       scope = $rootScope.$new();
 
-      scope.tab = {
-        params: {}
-      };
+      scope.context = {};
 
       var space = cfStub.space('test');
       var contentTypeData = cfStub.contentTypeData('testType');
@@ -69,18 +67,18 @@ describe('Asset List Controller', function () {
 
     describe('if term is null', function () {
       beforeEach(function () {
-        scope.tab.params.view.searchTerm = null;
+        scope.context.view.searchTerm = null;
         scope.$digest();
       });
 
       it('list is not defined', function () {
-        expect(scope.tab.params.list).toBeUndefined();
+        expect(scope.context.list).toBeUndefined();
       });
     });
 
     describe('if term is set', function () {
       beforeEach(function () {
-        scope.tab.params.view.searchTerm = 'thing';
+        scope.context.view.searchTerm = 'thing';
         scope.$digest();
       });
 
@@ -102,12 +100,12 @@ describe('Asset List Controller', function () {
     });
 
     it('search term', function () {
-      scope.tab.params.list = 'all';
+      scope.context.list = 'all';
       scope.searchController.paginator.page = 0;
       scope.$digest();
       stubs.reset.restore();
       stubs.reset = sinon.stub(scope.searchController, 'resetAssets');
-      scope.tab.params.view.searchTerm = 'thing';
+      scope.context.view.searchTerm = 'thing';
       scope.$digest();
       sinon.assert.calledOnce(stubs.reset);
     });
@@ -125,7 +123,7 @@ describe('Asset List Controller', function () {
     });
 
     it('list', function () {
-      scope.tab.params.list = 'all';
+      scope.context.list = 'all';
       scope.$digest();
       sinon.assert.called(stubs.reset);
     });
@@ -184,7 +182,7 @@ describe('Asset List Controller', function () {
     describe('creates a query object', function() {
 
       it('with a defined order', function() {
-        scope.tab.params.list = 'all';
+        scope.context.list = 'all';
         scope.searchController.resetAssets();
         scope.$apply();
         expect(stubs.getAssets.args[0][0].order).toEqual('-sys.updatedAt');
@@ -210,14 +208,14 @@ describe('Asset List Controller', function () {
       });
 
       it('for published list', function() {
-        scope.tab.params.view.searchTerm = 'status:published';
+        scope.context.view.searchTerm = 'status:published';
         scope.searchController.resetAssets();
         scope.$apply();
         expect(stubs.getAssets.args[0][0]['sys.publishedAt[exists]']).toBe('true');
       });
 
       it('for changed list', function() {
-        scope.tab.params.view.searchTerm = 'status:changed';
+        scope.context.view.searchTerm = 'status:changed';
         scope.searchController.resetAssets();
         scope.$apply();
         expect(stubs.getAssets.args[0][0]['sys.archivedAt[exists]']).toBe('false');
@@ -225,14 +223,14 @@ describe('Asset List Controller', function () {
       });
 
       it('for archived list', function() {
-        scope.tab.params.view.searchTerm = 'status:archived';
+        scope.context.view.searchTerm = 'status:archived';
         scope.searchController.resetAssets();
         scope.$apply();
         expect(stubs.getAssets.args[0][0]['sys.archivedAt[exists]']).toBe('true');
       });
 
       it('for search term', function() {
-        scope.tab.params.view.searchTerm = 'term';
+        scope.context.view.searchTerm = 'term';
         scope.searchController.resetAssets();
         scope.$apply();
         expect(stubs.getAssets.args[0][0].query).toBe('term');
@@ -241,14 +239,14 @@ describe('Asset List Controller', function () {
   });
 
   it('has a query', function() {
-    scope.tab.params.list = 'all';
-    scope.tab.params.view.searchTerm = 'term';
+    scope.context.list = 'all';
+    scope.context.view.searchTerm = 'term';
     expect(scope.hasQuery()).toBeTruthy();
   });
 
   it('has no query', function() {
-    scope.tab.params.list = 'all';
-    scope.tab.params.view.searchTerm = null;
+    scope.context.list = 'all';
+    scope.context.view.searchTerm = null;
     expect(scope.hasQuery()).toBeFalsy();
   });
 
@@ -391,24 +389,6 @@ describe('Asset List Controller', function () {
         expect(scope.searchController.paginator.page).toBe(1);
       });
     });
-  });
-
-  describe('when tab becomes active', function () {
-    beforeEach(function() {
-      scope.searchController.resetAssets = sinon.stub();
-    });
-
-    it('does nothing if its not the current scope tab', inject(function ($rootScope) {
-      scope.tab = null;
-      $rootScope.$broadcast('tabBecameActive', {});
-      sinon.assert.notCalled(scope.searchController.resetAssets);
-    }));
-
-    it('resets assets', inject(function($rootScope) {
-      scope.tab = {};
-      $rootScope.$broadcast('tabBecameActive', scope.tab);
-      sinon.assert.called(scope.searchController.resetAssets);
-    }));
   });
 
   describe('creating multiple assets', function() {

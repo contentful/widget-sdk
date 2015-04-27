@@ -49,7 +49,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   };
 
   $scope.getSearchContentType = function () {
-    var id = $scope.tab && $scope.tab.params && $scope.tab.params.view && $scope.tab.params.view.contentTypeId;
+    var id = $scope.context && $scope.context.view && $scope.context.view.contentTypeId;
     return $scope.spaceContext && $scope.spaceContext.getPublishedContentType && $scope.spaceContext.getPublishedContentType(id);
   };
 
@@ -70,10 +70,10 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
 
   $scope.$watch(function pageParameters(scope){
     return {
-      searchTerm: scope.tab.params.view.searchTerm,
+      searchTerm: scope.context.view.searchTerm,
       page: scope.paginator.page,
       pageLength: scope.paginator.pageLength,
-      contentTypeId: scope.tab.params.view.contentTypeId,
+      contentTypeId: scope.context.view.contentTypeId,
       spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())
     };
   }, function(pageParameters, old, scope){
@@ -82,18 +82,18 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
 
   $scope.$watch(function cacheParameters(scope){
     return {
-      contentTypeId: scope.tab.params.view.contentTypeId,
-      displayedFieldIds: scope.tab.params.view.displayedFieldIds,
+      contentTypeId: scope.context.view.contentTypeId,
+      displayedFieldIds: scope.context.view.displayedFieldIds,
       entriesLength: scope.entries && scope.entries.length,
       page: scope.paginator.page,
-      orderDirection: scope.tab.params.view.order.direction,
-      orderFieldId: scope.tab.params.view.order.fieldId
+      orderDirection: scope.context.view.order.direction,
+      orderFieldId: scope.context.view.order.fieldId
     };
   }, refreshEntityCaches, true);
 
   $scope.typeNameOr = function (or) {
     try {
-      var id = dotty.get($scope, 'tab.params.view.contentTypeId');
+      var id = dotty.get($scope, 'context.view.contentTypeId');
       if (!id) return or;
       var ct = $scope.spaceContext.getPublishedContentType(id);
       if (!ct) return or;
@@ -105,12 +105,12 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   };
 
   $scope.selectedContentType = function () {
-    $scope.tab.params.view.searchTerm = null;
+    $scope.context.view.searchTerm = null;
     $scope.resetDisplayFields();
   };
 
   $scope.displayFieldForFilteredContentType = function () {
-    return $scope.spaceContext.displayFieldForType($scope.tab.params.view.contentTypeId);
+    return $scope.spaceContext.displayFieldForType($scope.context.view.contentTypeId);
   };
 
   $scope.visibleInCurrentList = function(entry){
@@ -137,16 +137,16 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   };
 
   function refreshEntityCaches() {
-    if($scope.tab.params.view.contentTypeId){
-      $scope.entryCache.setDisplayedFieldIds($scope.tab.params.view.displayedFieldIds);
+    if($scope.context.view.contentTypeId){
+      $scope.entryCache.setDisplayedFieldIds($scope.context.view.displayedFieldIds);
       $scope.entryCache.resolveLinkedEntities($scope.entries);
-      $scope.assetCache.setDisplayedFieldIds($scope.tab.params.view.displayedFieldIds);
+      $scope.assetCache.setDisplayedFieldIds($scope.context.view.displayedFieldIds);
       $scope.assetCache.resolveLinkedEntities($scope.entries);
     }
   }
 
   function getOrderQuery() {
-    var p = $scope.tab.params.view;
+    var p = $scope.context.view;
     return ORDER_PREFIXES[p.order.direction] + getFieldPath(p.order.fieldId);
 
     function getFieldPath(fieldId) {
@@ -155,7 +155,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
       if (field = _.find($scope.systemFields, {id: fieldId})) {
         return 'sys.'+fieldId;
       } else {
-        var contentType = $scope.spaceContext.getPublishedContentType($scope.tab.params.view.contentTypeId);
+        var contentType = $scope.spaceContext.getPublishedContentType($scope.context.view.contentTypeId);
         field = _.find(contentType.data.fields, {id: fieldId});
         var defaultLocale = $scope.spaceContext.space.getDefaultLocale().code;
         return 'fields.'+apiNameOrId(field)+'.'+defaultLocale;
@@ -171,11 +171,11 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
       skip: $scope.paginator.skipItems()
     };
 
-    if ($scope.tab.params.view.contentTypeId) {
-      contentType = $scope.spaceContext.getPublishedContentType($scope.tab.params.view.contentTypeId);
+    if ($scope.context.view.contentTypeId) {
+      contentType = $scope.spaceContext.getPublishedContentType($scope.context.view.contentTypeId);
     }
 
-    return searchQueryHelper.buildQuery($scope.spaceContext.space, contentType, $scope.tab.params.view.searchTerm)
+    return searchQueryHelper.buildQuery($scope.spaceContext.space, contentType, $scope.context.view.searchTerm)
     .then(function (searchQuery) {
       _.extend(queryObject, searchQuery);
       return queryObject;
@@ -183,7 +183,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   }
 
   $scope.hasQuery = function () {
-    return !_.isEmpty($scope.tab.params.view.searchTerm);
+    return !_.isEmpty($scope.context.view.searchTerm);
   };
 
   $scope.loadMore = function() {
@@ -242,8 +242,9 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     return 'cell-'+ type +sizeClass;
   };
 
-  $scope.$on('tabBecameActive', function(event, tab) {
-    if (tab !== $scope.tab) return;
+  $scope.resetEntries();
+
+  $scope.$on('templateWasCreated', function () {
     $scope.resetEntries();
   });
 

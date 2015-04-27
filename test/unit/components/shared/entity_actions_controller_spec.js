@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Entity Actions Controller', function () {
-  var scope, controller, createController;
+  var scope, controller;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -13,27 +13,19 @@ describe('Entity Actions Controller', function () {
       scope.entity = {};
       scope.entity.getVersion = sinon.stub().returns(123);
 
-      createController = function(methodOverrides) {
-        controller = $controller('EntityActionsController', {
-          $scope: scope,
-          params: {
-            entityType: 'entity',
-            methodOverrides: methodOverrides
-          }
-        });
-        scope.$digest();
-      };
+      controller = $controller('EntityActionsController', {
+        $scope: scope,
+        entityType: 'entity'
+      });
+      scope.$digest();
     });
   });
 
   describe('for an entity', function() {
-    beforeEach(function() {
-      createController();
-    });
 
     it('can create an entity', function () {
       scope.permissionController.can.withArgs('create', 'Entity').returns({can: true});
-      expect(scope.canDuplicate()).toBe(true);
+      expect(controller.canDuplicate()).toBe(true);
     });
 
     describe('on undeleted entities', function () {
@@ -47,31 +39,31 @@ describe('Entity Actions Controller', function () {
       it('can delete an entity', function () {
         scope.permissionController.can.withArgs('delete', scope.entity.data).returns({can: true});
         scope.entity.canDelete = sinon.stub().returns(true);
-        expect(scope.canDelete()).toBe(true);
+        expect(controller.canDelete()).toBe(true);
       });
 
       it('can archive an entity', function () {
         scope.permissionController.can.withArgs('archive', scope.entity.data).returns({can: true});
         scope.entity.canArchive = sinon.stub().returns(true);
-        expect(scope.canArchive()).toBe(true);
+        expect(controller.canArchive()).toBe(true);
       });
 
       it('can unarchive an entity', function () {
         scope.permissionController.can.withArgs('unarchive', scope.entity.data).returns({can: true});
         scope.entity.canUnarchive= sinon.stub().returns(true);
-        expect(scope.canUnarchive()).toBe(true);
+        expect(controller.canUnarchive()).toBe(true);
       });
 
       it('can unpublish an entity', function () {
         scope.permissionController.can.withArgs('unpublish', scope.entity.data).returns({can: true});
         scope.entity.canUnpublish = sinon.stub().returns(true);
-        expect(scope.canUnpublish()).toBe(true);
+        expect(controller.canUnpublish()).toBe(true);
       });
 
       it('can publish an entity', function () {
         scope.permissionController.can.withArgs('publish', scope.entity.data).returns({can: true});
         scope.entity.canPublish = sinon.stub().returns(true);
-        expect(scope.canPublish()).toBe(true);
+        expect(controller.canPublish()).toBe(true);
       });
     });
 
@@ -83,43 +75,35 @@ describe('Entity Actions Controller', function () {
       it('cannot delete an entity', function () {
         scope.permissionController.can.withArgs('delete', undefined).returns({can: false});
         scope.entity.canDelete = sinon.stub().returns(false);
-        expect(scope.canDelete()).toBe(false);
+        expect(controller.canDelete()).toBe(false);
       });
 
       it('cannot archive an entity', function () {
         scope.permissionController.can.withArgs('archive', undefined).returns({can: false});
         scope.entity.canArchive = sinon.stub().returns(false);
-        expect(scope.canArchive()).toBe(false);
+        expect(controller.canArchive()).toBe(false);
       });
 
       it('cannot unarchive an entity', function () {
         scope.permissionController.can.withArgs('unarchive', undefined).returns({can: false});
         scope.entity.canUnarchive= sinon.stub().returns(false);
-        expect(scope.canUnarchive()).toBe(false);
+        expect(controller.canUnarchive()).toBe(false);
       });
 
       it('cannot unpublish an entity', function () {
         scope.permissionController.can.withArgs('unpublish', undefined).returns({can: false});
         scope.entity.canUnpublish = sinon.stub().returns(false);
-        expect(scope.canUnpublish()).toBe(false);
+        expect(controller.canUnpublish()).toBe(false);
       });
 
       it('cannot publish an entity', function () {
         scope.permissionController.can.withArgs('publish', undefined).returns({can: false});
         scope.entity.canPublish = sinon.stub().returns(false);
-        expect(scope.canPublish()).toBe(false);
+        expect(controller.canPublish()).toBe(false);
       });
 
     });
 
-  });
-
-  it('overrides an existing can method', function () {
-    var deleteStub = sinon.stub();
-    createController({canDelete: deleteStub});
-    scope.$digest();
-    scope.canDelete();
-    sinon.assert.called(deleteStub);
   });
 
 });

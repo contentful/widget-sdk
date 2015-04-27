@@ -17,11 +17,12 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
         noBackgroundClose: false,
         attachTo: '.client',
         ignoreEnter: false,
-        ignoreEsc: false
+        ignoreEsc: false,
+        className: ''
       },
       _.pick(params,
              'title', 'message', 'html', 'template',
-             'cancelLabel', 'confirmLabel',
+             'cancelLabel', 'confirmLabel', 'className',
              'noBackgroundClose', 'attachTo', 'ignoreEnter', 'ignoreEsc')
     );
     this._deferred = $q.defer();

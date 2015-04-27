@@ -27,12 +27,11 @@ describe('Entry List Controller', function () {
       });
     });
     inject(function ($rootScope, $controller, cfStub, PromisedLoader, _$q_) {
+      this.$rootScope = $rootScope;
       $q = _$q_;
       scope = $rootScope.$new();
 
-      scope.tab = {
-        params: {}
-      };
+      scope.context = {};
 
       var space = cfStub.space('test');
       space.getUIConfig = stubs.getUIConfig;
@@ -73,34 +72,14 @@ describe('Entry List Controller', function () {
     it('sets the view, omitting the id', function () {
       var loaded = _.cloneDeep(view);
       loaded.title = 'New View';
-      expect(scope.tab.params.view).toEqual(loaded);
-      expect(scope.tab.params.view).not.toBe(loaded);
+      expect(scope.context.view).toEqual(loaded);
+      expect(scope.context.view).not.toBe(loaded);
     });
 
     it('resets entries', function() {
       sinon.assert.called(scope.resetEntries);
     });
 
-  });
-
-  xdescribe('gets a path for the field content', function() {
-    // TODO turn into test for orderquery
-    beforeEach(function() {
-      createController();
-    });
-
-    it('for sys fields', function() {
-      expect(scope.getFieldPath({
-        id: 'fieldid',
-        sys: true
-      })).toEqual('sys.fieldid');
-    });
-
-    it('for regular fields', function() {
-      expect(scope.getFieldPath({
-        id: 'fieldid'
-      })).toEqual('fields.fieldid.en-US');
-    });
   });
 
   describe('on search term change', function () {
@@ -115,11 +94,11 @@ describe('Entry List Controller', function () {
       });
 
       it('list is not defined', function () {
-        expect(scope.tab.params.list).toBeUndefined();
+        expect(scope.context.list).toBeUndefined();
       });
 
       it('contentTypeId is not defined', function () {
-        expect(scope.tab.params.contentTypeId).toBeUndefined();
+        expect(scope.context.contentTypeId).toBeUndefined();
       });
     });
 
@@ -133,7 +112,36 @@ describe('Entry List Controller', function () {
         expect(scope.paginator.page).toBe(0);
       });
     });
+  });
 
+  describe('handles entityDeleted event', function() {
+    beforeEach(inject(function(cfStub) {
+      createController();
+      var space = cfStub.space('test');
+      var removedEntity = cfStub.entry(space, 'entry2', 'type', {}, {sys: {version:1}});
+      scope.entries = [
+        cfStub.entry(space, 'entry1'),
+        removedEntity,
+        cfStub.entry(space, 'entry3')
+      ];
+
+      scope.entry = removedEntity;
+
+      this.$rootScope.$broadcast('entityDeleted', removedEntity);
+      scope.$digest();
+    }));
+
+    it('has 2 entries after deletion', function () {
+      expect(scope.entries.length).toEqual(2);
+    });
+
+    it('has entry1', function () {
+      expect(scope.entries[0].getId()).toEqual('entry1');
+    });
+
+    it('has entry3', function () {
+      expect(scope.entries[1].getId()).toEqual('entry3');
+    });
   });
 
   describe('page parameters change trigger entries reset', function () {
@@ -145,7 +153,7 @@ describe('Entry List Controller', function () {
     });
 
     it('search term', function () {
-      scope.tab.params.searchTerm = 'thing';
+      scope.context.searchTerm = 'thing';
       scope.$digest();
       sinon.assert.calledOnce(stubs.reset);
     });
@@ -163,7 +171,7 @@ describe('Entry List Controller', function () {
     });
 
     it('contentTypeId', function () {
-      scope.tab.params.view.contentTypeId = 'something';
+      scope.context.view.contentTypeId = 'something';
       scope.$digest();
       sinon.assert.calledOnce(stubs.reset);
     });
@@ -245,14 +253,14 @@ describe('Entry List Controller', function () {
       });
 
       it('for published list', function() {
-        scope.tab.params.view.searchTerm = 'status:published';
+        scope.context.view.searchTerm = 'status:published';
         scope.resetEntries();
         scope.$apply();
         expect(scope.spaceContext.space.getEntries.args[0][0]['sys.publishedAt[exists]']).toBe('true');
       });
 
       it('for changed list', function() {
-        scope.tab.params.view.searchTerm = 'status:changed';
+        scope.context.view.searchTerm = 'status:changed';
         scope.resetEntries();
         scope.$apply();
         expect(scope.spaceContext.space.getEntries.args[0][0]['sys.archivedAt[exists]']).toBe('false');
@@ -260,7 +268,7 @@ describe('Entry List Controller', function () {
       });
 
       it('for draft list', function() {
-        scope.tab.params.view.searchTerm = 'status:draft';
+        scope.context.view.searchTerm = 'status:draft';
         scope.resetEntries();
         scope.$apply();
         expect(scope.spaceContext.space.getEntries.args[0][0]['sys.archivedAt[exists]']).toBe('false');
@@ -269,7 +277,7 @@ describe('Entry List Controller', function () {
       });
 
       it('for archived list', function() {
-        scope.tab.params.view.searchTerm = 'status:archived';
+        scope.context.view.searchTerm = 'status:archived';
         scope.resetEntries();
         scope.$apply();
         expect(scope.spaceContext.space.getEntries.args[0][0]['sys.archivedAt[exists]']).toBe('true');
@@ -277,14 +285,14 @@ describe('Entry List Controller', function () {
 
       it('for contentType list', function() {
         pending('Need to change the test so that the content type is actually found');
-        scope.tab.params.view.contentTypeId = 'ct1';
+        scope.context.view.contentTypeId = 'ct1';
         scope.resetEntries();
         scope.$apply();
         expect(scope.spaceContext.space.getEntries.args[0][0]['content_type']).toBe('ct1');
       });
 
       it('for search term', function() {
-        scope.tab.params.view.searchTerm = 'term';
+        scope.context.view.searchTerm = 'term';
         scope.resetEntries();
         scope.$apply();
         expect(scope.spaceContext.space.getEntries.args[0][0].query).toBe('term');
@@ -294,13 +302,13 @@ describe('Entry List Controller', function () {
 
   it('has a query', function() {
     createController();
-    scope.tab.params.view.searchTerm = 'foo';
+    scope.context.view.searchTerm = 'foo';
     expect(scope.hasQuery()).toBeTruthy();
   });
 
   it('has no query', function() {
     createController();
-    scope.tab.params.view.searchTerm = null;
+    scope.context.view.searchTerm = null;
     expect(scope.hasQuery()).toBeFalsy();
   });
 
@@ -449,25 +457,4 @@ describe('Entry List Controller', function () {
       sinon.assert.called(apiErrorHandler);
     });
   });
-
-
-  describe('when tab becomes active', function () {
-    beforeEach(function() {
-      createController();
-      scope.resetEntries = sinon.stub();
-    });
-
-    it('does nothing if its not the current scope tab', inject(function ($rootScope) {
-      scope.tab = null;
-      $rootScope.$broadcast('tabBecameActive', {});
-      sinon.assert.notCalled(scope.resetEntries);
-    }));
-
-    it('resets entries', inject(function($rootScope) {
-      scope.tab = {};
-      $rootScope.$broadcast('tabBecameActive', scope.tab);
-      sinon.assert.called(scope.resetEntries);
-    }));
-  });
-
 });

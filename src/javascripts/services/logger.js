@@ -35,17 +35,22 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
     return 'https://admin.'+environment.settings.main_domain+'/admin/users/'+id;
   }
 
-  function getRoute() {
+  function getState() {
     //avoiding circular dependency
-    var routing = $injector.get('routing');
-    return routing.getRoute();
+    var rootScope      = $injector.get('$rootScope');
+    return {
+      name: rootScope.$state.current.name,
+      params: rootScope.$stateParams
+    };
   }
 
   function getParams() {
-    var route = getRoute();
+    var state = getState();
     return _.extend({}, 
-      route.params,
-      route.pathParams,
+      {
+        state: state.name
+      },
+      state.params,
       {
         viewport: ''+$window.innerWidth+'x'+$window.innerHeight,
         screensize: ''+$window.screen.width+'x'+$window.screen.height

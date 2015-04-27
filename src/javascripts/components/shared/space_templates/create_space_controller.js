@@ -5,6 +5,7 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
     var $timeout     = $injector.get('$timeout');
     var cfSpinner    = $injector.get('cfSpinner');
     var client       = $injector.get('client');
+    var tokenStore   = $injector.get('tokenStore');
     var enforcements = $injector.get('enforcements');
     var logger       = $injector.get('logger');
     var notification = $injector.get('notification');
@@ -23,7 +24,7 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
         data.defaultLocale = $scope.newSpaceData.defaultLocale;
 
       var orgId = $scope.selectedOrganization.sys.id;
-      if(!$scope.canCreateSpaceInOrg(orgId)){
+      if(!$scope.permissionController.canCreateSpaceInOrg(orgId)){
         stopSpinner();
         $rootScope.$broadcast('spaceCreationFailed');
         logger.logError('You can\'t create a Space in this Organization');
@@ -33,8 +34,8 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
 
       client.createSpace(data, orgId)
       .then(function(newSpace){
-        $scope.performTokenLookup()
-        .then(_.partial(handleSpaceCreation, newSpace));
+        tokenStore.getUpdatedToken()
+        .then(_.partialRight(handleSpaceCreation, newSpace));
       })
       .catch(handleSpaceCreationFailure)
       .finally(function(){
@@ -42,17 +43,18 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
       });
     }
 
-    function handleSpaceCreation(newSpace) {
-      var space = _.find($scope.spaces, function (space) {
-        return space.getId() == newSpace.getId();
+    function handleSpaceCreation(token, newSpace) {
+      $scope.setTokenDataOnScope(token);
+      tokenStore.getSpace(newSpace.getId())
+      .then(function (space) {
+        var broadcastSpaceCreated = $rootScope.$on('$stateChangeSuccess', function () {
+          broadcastSpaceCreated();
+          $timeout(function () {
+            $scope.$emit('spaceCreated', space);
+          }, 500);
+        });
+        $scope.selectSpace(space);
       });
-      var broadcastSpaceCreated = $scope.$on('$routeChangeSuccess', function () {
-        broadcastSpaceCreated();
-        $timeout(function () {
-          $scope.$emit('spaceCreated', space);
-        }, 500);
-      });
-      $scope.selectSpace(space);
     }
 
     function handleSpaceCreationFailure(err){
@@ -72,7 +74,6 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
       var enforcement = enforcements.determineEnforcement('usageExceeded');
       $rootScope.$broadcast('persistentNotification', {
         message: enforcement.message,
-        tooltipMessage: enforcement.description,
         actionMessage: enforcement.actionMessage,
         action: enforcement.action
       });
@@ -94,7 +95,7 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
 
     function setupOrganizations() {
       $scope.writableOrganizations = _.filter($scope.organizations, function (org) {
-        return org && org.sys ? $scope.canCreateSpaceInOrg(org.sys.id) : false;
+        return org && org.sys ? $scope.permissionController.canCreateSpaceInOrg(org.sys.id) : false;
       });
       if($scope.writableOrganizations.length > 0){
         $scope.selectOrganization($scope.writableOrganizations[0]);

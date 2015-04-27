@@ -17,9 +17,7 @@ describe('The Entry list directive', function () {
         getSelected: sinon.stub(),
         isSelected: sinon.stub()
       };
-      scope.tab = {
-        params: {}
-      };
+      scope.context = { view: {} };
       scope.spaceContext = {
         space: {
           data: {sys: {createdBy: {sys: {id: ''}}}},
@@ -99,7 +97,7 @@ describe('The Entry list directive', function () {
         idStub2.returns(2);
         nameStub = sinon.stub();
         nameStub.returns('name');
-        scope.tab.params.contentTypeId = 1;
+        scope.context.view.contentTypeId = 1;
         scope.spaceContext.publishedContentTypes = [
           {getId: idStub1, getName: nameStub},
           {getId: idStub2, getName: nameStub}

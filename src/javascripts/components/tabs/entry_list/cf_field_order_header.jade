@@ -1,7 +1,7 @@
 span(ng-class="{active: isOrderField(field)}")
   button.transparent-button(ng-show="fieldIsSortable(field) && !isFieldCollapsed(field)" ng-click="orderColumnBy(field)")
-    i.button-icon.fa.fa-caret-up(ng-show="tab.params.view.order.direction == 'ascending' && isOrderField(field)")
-    i.button-icon.fa.fa-caret-down(ng-show="tab.params.view.order.direction == 'descending' || !isOrderField(field)")
+    i.button-icon.fa.fa-caret-up(ng-show="context.view.order.direction == 'ascending' && isOrderField(field)")
+    i.button-icon.fa.fa-caret-down(ng-show="context.view.order.direction == 'descending' || !isOrderField(field)")
   span(ng-if="isDisplayField"
     ng-disabled="!fieldIsSortable(field)"
     ng-click="orderColumnBy(field)")

@@ -3,23 +3,17 @@
 angular.module('contentful').controller('EntryEditorController', ['$scope', '$injector', function EntryEditorController($scope, $injector) {
   var $controller       = $injector.get('$controller');
   var logger            = $injector.get('logger');
-  var validation        = $injector.get('validation');
 
   // Initialization
-  $scope.$watch('tab.params.entry', function (entry) { $scope.entry = entry; });
-  $controller('EntityActionsController', {
+  $scope.entityActionsController = $controller('EntityActionsController', {
     $scope: $scope,
-    params: {
-      entityType: 'entry'
-    }
+    entityType: 'entry'
   });
 
-  // Tab related stuff
-  $scope.tab.closingMessage = 'You have unpublished changes.';
-  $scope.tab.closingMessageDisplayType = 'tooltip';
-  $scope.$watch('spaceContext.entryTitle(entry)', function(title, old, scope) {
-    scope.tab.title = title;
+  $scope.$watch('spaceContext.entryTitle(entry)', function (title) {
+    $scope.context.title = title;
   });
+
   $scope.$watch(function (scope) {
     if (scope.otDoc && scope.entry) {
       if (angular.isDefined(scope.entry.getPublishedVersion()))
@@ -30,13 +24,13 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
       return undefined;
     }
   }, function (modified, old, scope) {
-    if (modified !== undefined) scope.tab.dirty = modified;
+    if (modified !== undefined) scope.context.dirty = modified;
   });
   $scope.$on('entityDeleted', function (event, entry) {
     if (event.currentScope !== event.targetScope) {
       var scope = event.currentScope;
       if (entry === scope.entry) {
-        scope.tab.close();
+        scope.closeState();
       }
     }
   });
@@ -53,11 +47,6 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
 
   // Validations
   $scope.errorPaths = {};
-  $scope.$watch('spaceContext.publishedTypeForEntry(entry).data', function(data) {
-    if (!data) return;
-    var locales = $scope.spaceContext.space.data.locales; // TODO: watch this, too
-    $scope.entrySchema = validation.fromContentType(data, locales);
-  });
   $scope.$watch('entry.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
     if (publishedVersion > oldVersion) scope.validate();
   });

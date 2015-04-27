@@ -4,7 +4,7 @@ angular.module('contentful').
   directive('cfEntityInfoPanel', function() {
     return {
       restrict: 'A',
-      controller: ['$scope', function EntityInfoPanelController($scope) {
+      controller: ['$scope', '$attrs', function EntityInfoPanelController($scope, $attrs) {
         $scope.$watch('entry && spaceContext.publishedTypeForEntry(entry).getName()', function(name, old, scope) {
           scope.contentTypeName = name;
         });
@@ -13,11 +13,7 @@ angular.module('contentful').
           scope.contentTypeDescription = description;
         });
 
-        $scope.$watch('otDoc.snapshot.sys', function(sys) {
-          $scope.sys = sys;
-        });
-
-        $scope.$watch('apiKey.getSys()', function(sys) {
+        $scope.$watch($attrs.cfEntityInfoPanel, function(sys) {
           $scope.sys = sys;
         });
 

@@ -1,5 +1,5 @@
 .modal-background
-  .modal-dialog(cf-center-on=".modal-background")
+  .modal-dialog(cf-center-on=".modal-background" ng-class="[dialog.className]")
     .title {{dialog.title}}
     .modal-dialog-close-button(ng-click="dialog.cancel()")
     p.dialog-content.dialog-plaintext(ng-if="!dialog.html" ng-bind="dialog.message")
