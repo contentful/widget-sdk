@@ -5,6 +5,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
   var $q       = $injector.get('$q');
   var $window  = $injector.get('$window');
   var keycodes = $injector.get('keycodes');
+  var track    = $injector.get('analytics').track;
 
   function Dialog(params) {
     this._handleKeys = _.bind(this._handleKeys, this);
@@ -79,6 +80,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
     cancel: function () {
       this._deferred.reject.apply(this, arguments);
       this.destroy();
+      trackCanceled(this);
       return this;
     },
 
@@ -99,7 +101,22 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
     open: function (params) {
       var dialog = new Dialog(params);
       dialog.attach();
+      trackOpen(dialog);
       return dialog;
     }
   };
+
+  function trackOpen(dialog) {
+    track('Dialog Opened', {
+      title: dialog.params.title,
+      message: dialog.params.message
+    });
+  }
+
+  function trackCanceled(dialog) {
+    track('Dialog Canceled', {
+      title: dialog.params.title,
+      message: dialog.params.message
+    });
+  }
 }]);
