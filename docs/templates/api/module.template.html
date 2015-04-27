@@ -1,0 +1,19 @@
+<h1>
+  {$ doc.name $}
+</h1>
+
+{$ doc.description | marked $}
+
+{% for componentGroup in doc.componentGroups %}
+<h2 class="component-heading" id="{$ componentGroup.groupType | dashCase $}">
+  {$ componentGroup.groupType | title $}
+</h2>
+<table class="module-components">
+  {% for component in componentGroup.components %}
+  <tr>
+    <td>{$ component.id | link(component.name, component) $}</td>
+    <td>{$ component.description | firstParagraph | marked $}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endfor %}

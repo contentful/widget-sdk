@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * @ngdoc directive
+ * @name cfValidate
+ * @controller ValidationController
+ */
 angular.module('contentful').directive('cfValidate', [function () {
   return {
     restrict: 'A',
@@ -14,14 +19,22 @@ function ValidationController ($scope, $attrs) {
 
   $scope.validationResult = {};
 
+  /**
+   * @ngdoc method
+   * @name cfValidate#validate
+   */
   $scope.validate = function () {
     var data = getData();
     var schema = $scope.schema;
+    var errors;
+    try {
+      errors = schema.errors(data);
+    } catch(e) {
+      errors = null;
+    }
 
-    if(!data || !schema)
-      return;
-
-    $scope.setValidationErrors(schema.errors(data));
+    if (errors)
+      $scope.setValidationErrors(errors);
     return $scope.validationResult.valid;
   };
 

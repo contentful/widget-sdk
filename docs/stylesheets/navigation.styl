@@ -1,0 +1,64 @@
+.side-nav
+  font-size: 1.1em
+  color: hsl(0, 0%, 86%)
+  background: hsl(0, 0%, 10%);
+  overflow-y: auto;
+  a, a:hover, a:focus, a:visited
+    color: inherit
+    text-decoration: none
+
+.side-nav-areas
+  display: flex
+  background: $color-main
+  line-height: $rhythm(2);
+  margin-bottom: $rhythm(1);
+
+  a:hover, a.active
+    background: lighten($color-main, 18%)
+
+  > *
+    display: block
+    text-align: center
+    flex-grow: 1
+    padding: 0 3em
+
+.nav-list
+  a, h2
+    padding-left:  2rem;
+    padding-right: 3rem;
+    display: block
+    box-sizing: border-box
+    border-left: 3px solid transparent
+
+  .active > a, a:hover, a.active
+    border-left-color: lighten($color-main, 18%)
+
+  h1, h2
+    font-weight: 700;
+
+  h1
+    font-size: 1.3em;
+    line-height: $rhythm(2);
+    margin: $rhythm(0.5) 0
+
+  h2
+    text-transform: uppercase
+    line-height: $rhythm(2)
+
+  li.nav-section
+    margin-bottom: $rhythm(1)
+
+.nav-guide.active > .nav-guide-toc
+  display: block;
+
+.nav-guide > a
+  line-height: $rhythm(2)
+
+.nav-guide-toc
+  display: none
+  padding: $rhythm(0.5) 0
+  font-size: $font-scale(-1)
+  background: hsl(0, 0%, 90%);
+  color: black;
+  line-height: $rhythm(1);
+

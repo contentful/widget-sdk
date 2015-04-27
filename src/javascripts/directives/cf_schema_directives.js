@@ -101,10 +101,23 @@ angular.module('contentful')
     this.setSchema(schema);
   }
 
+  /**
+   * @ngdoc method
+   * @name SchemaController#setSchema
+   * @param {Schema} schema
+   * @returns {null}
+   */
   SchemaController.prototype.setSchema = function (schema) {
     this.schema = schema;
   };
 
+  /**
+   * @ngdoc method
+   * @name SchemaController#errors
+   * @param data
+   * @returns {Array<Error>}
+   * @throws {TypeError} Throws if the schema is not set yet.
+   */
   SchemaController.prototype.errors = function (data) {
     return this.schema.errors(data);
   };

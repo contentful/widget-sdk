@@ -1,0 +1,20 @@
+<ul class="nav-list nav-modules">
+  <li class="nav-module" ng-repeat="module in modules track by module.id">
+    <h1>
+      <a href="{{module.href}}">{{module.name}}</a>
+    </h1>
+    <ul class="nav-sections">
+      <li class="nav-section" ng-repeat="section in module.docTypes">
+        <h2>
+          <!-- <a href="{{section.href}}">{{section.name}}</a> -->
+          {{section.name}}
+        </h2>
+        <ul class="nav-docs">
+          <li class="nav-doc" ng-repeat="doc in section.docs">
+            <a href="{{doc.href}}">{{doc.name}}</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
