@@ -6,29 +6,33 @@
   {$ doc.description | marked $}
 </div>
 
-<div>
-  {% block dependencies %}
-  {%- if doc.requires %}
-  <h2 id="dependencies">Dependencies</h2>
-  <ul>
-    {% for require in doc.requires %}<li>{$ require | link $}</li>{% endfor %}
-  </ul>
-  {% endif -%}
-  {% endblock %}
 
-  {% block additional %}
-  {% endblock %}
+{%- if doc.requires %}
+<h2 id="api-dependencies">Dependencies</h2>
+<ul>
+  {% for require in doc.requires %}
+  <li>{$ require | link $}</li>
+  {% endfor %}
+</ul>
+{% endif -%}
 
-  {% block examples %}
-  {%- if doc.examples %}
-  <h2 id="example">Example</h2>
-  {%- for example in doc.examples -%}
-    {$ example | marked $}
-  {%- endfor -%}
-  {% endif -%}
-  {% endblock %}
-</div>
 
-<h2>Source</h2>
-{% codeblock "javascript" %}{$ doc.source $}{% endcode %}
+{% block content %}
+{% endblock %}
+
+{%- if doc.examples %}
+<h2 id="api-example">Example</h2>
+{%- for example in doc.examples -%}
+  {$ example | marked $}
+{%- endfor -%}
+{% endif -%}
+
+
+<h2 id="api-source">
+  Source
+  <a class="icon-link fa fa-github" href="{$ doc.gitUrl $}"></a>
+</h2>
+{% codeblock "javascript" %}
+{$ doc.source $}
+{% endcode %}
 
