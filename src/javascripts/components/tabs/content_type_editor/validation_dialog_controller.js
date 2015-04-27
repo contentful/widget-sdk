@@ -54,6 +54,7 @@
 angular.module('contentful')
 .controller('ValidationDialogController',
 ['$scope', '$injector', function($scope, $injector) {
+  var track                   = $injector.get('analytics').track;
   var getErrorMessage         = $injector.get('validationDialogErrorMessages');
   var createSchema            = $injector.get('validation');
   var validationViews         = $injector.get('validationViews');
@@ -110,6 +111,7 @@ angular.module('contentful')
 
   updateValidationsFromField();
   validateValidations();
+  var initiallyEnabled = getValidationEnabledMap();
 
   $scope.cancel = function() {
     $scope.dialog.cancel();
@@ -117,8 +119,11 @@ angular.module('contentful')
 
   $scope.save = function() {
     if (validateValidations()) {
+      trackSave();
       saveToField();
       $scope.dialog.confirm();
+    } else {
+      trackSaveError();
     }
   };
 
@@ -163,7 +168,7 @@ angular.module('contentful')
    * Validates each enabled validation.
    *
    * If the validation fails, the errors are added to decorated
-   * validations `errors` property. This property is delted otherwise.
+   * validations `errors` property. This property is deleted otherwise.
    *
    * Returns `true` if and only if all validations are valid.
    */
@@ -246,5 +251,62 @@ angular.module('contentful')
       return label;
     else
       return label[field.type];
+  }
+
+  /**
+   * @ngdoc analytics-event
+   * @name Enabled Validation
+   * @param validation
+   */
+  /**
+   * @ngdoc analytics-event
+   * @name Disabled validation
+   * @param validation
+   */
+  function trackSave () {
+    var currentlyEnabled = getValidationEnabledMap();
+
+    _.forEach(currentlyEnabled, function (enabled, name) {
+      if (initiallyEnabled[name] !== enabled) {
+        if (enabled)
+          track('Enabled Validation', {validation: name});
+        else
+          track('Disabled Validation', {validation: name});
+      }
+    });
+  }
+
+
+  /**
+   * @ngdoc analytics-event
+   * @name Save Errored Validation Dialog
+   * @description
+   * Send this event for each validation that contains an error.
+   *
+   * @param validation
+   */
+  function trackSaveError () {
+    var validations = $scope.fieldValidations.concat($scope.fieldItemValidations);
+    var erroredValidations = _.filter(validations, function(v) {
+      return !_.isEmpty(v.errors);
+    });
+    _.forEach(erroredValidations, function (validation) {
+      track('Save Errored Validation Dialog', {
+        validation: validation.name
+      });
+    });
+  }
+
+  /**
+   * Returns a map from validation names to booleans, indicating
+   * whether they are currently enabled in the scope.
+   */
+  function getValidationEnabledMap () {
+    var enabled = {};
+    var validations = $scope.fieldValidations.concat($scope.fieldItemValidations);
+    _.forEach(validations, function(validation) {
+      enabled[validation.name] = validation.enabled;
+    });
+    return enabled;
   }
 }]);
