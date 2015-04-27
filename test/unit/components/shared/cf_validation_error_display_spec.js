@@ -3,6 +3,26 @@
 describe('cfValidate', function () {
   beforeEach(module('contentful/test'));
 
+  describe('with cfEntrySchema', function () {
+
+    beforeEach(function () {
+      var $compile = this.$inject('$compile');
+      var $rootScope = this.$inject('$rootScope');
+
+      var template = '<div cf-validate="entry" cf-entry-schema></div>';
+      var element = $compile(template)($rootScope);
+      this.scope = element.scope();
+      this.$apply();
+
+    });
+
+    it('validation is undefined if schema not set yet', function () {
+      this.scope.entry = {};
+      this.scope.validate();
+      expect(this.scope.validationResult.valid).toBeUndefined();
+    });
+  });
+
   describe('with cfContentTypeSchema', function () {
 
     var fieldFixture = {

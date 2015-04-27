@@ -116,6 +116,7 @@ angular.module('contentful')
    * @name SchemaController#errors
    * @param data
    * @returns {Array<Error>}
+   * @throws {TypeError} Throws if the schema is not set yet.
    */
   SchemaController.prototype.errors = function (data) {
     return this.schema.errors(data);
