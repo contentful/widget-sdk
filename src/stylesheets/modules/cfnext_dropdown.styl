@@ -1,17 +1,23 @@
 $cfnext-caret-size = 12px
 
+$cfnext-gutter = 18px
+
 $cfnext-dropdown__item()
-  line-height: $rhythm(1)
-  margin-bottom: $rhythm(0.5)
+  padding: $rhythm(0.4) $cfnext-gutter $rhythm(0.3)
+  margin-bottom: 0
   cursor: pointer
-  &:hover
-    font-weight: bold
 
 $cfnext-dropdown__list()
-  padding: $rhythm(1) $rhythm(1) 0
+  padding: 0
   border-top: 1px solid $cfnext-gray
-  &:last-child
-    padding-bottom: $rhythm(0.3)
+
+$cfnext-dropdown--highlight()
+  &.selected
+    color: $cfnext-white
+    background-color: $cfnext-dark-blue
+  &:hover
+    color: $cfnext-white
+    background-color: $cfnext-blue
 
 .cfnext-dropdown
   $layer('dropdown')
@@ -20,6 +26,7 @@ $cfnext-dropdown__list()
   box-shadow: 0 1px 2px rgba(0,0,0,0.5)
   border-radius: 3px
   background-color: $cfnext-lightest-blue
+  padding-top: $rhythm(0.8)
 
   &__arrow
     position: absolute
@@ -43,20 +50,28 @@ $cfnext-dropdown__list()
 
   &__item
     $cfnext-dropdown__item()
+    $cfnext-dropdown--highlight()
 
   &__item--no-highlight
     $cfnext-dropdown__item()
-    margin-bottom: $rhythm(1)
+    padding: $rhythm(0.2) 0 0
     cursor: default
-    &:hover
-      font-weight: normal
+
+  &__group-label
+    padding: 0 $cfnext-gutter
 
   &__item--vcentered
     $cfnext-dropdown__item()
+    $cfnext-dropdown--highlight()
     $display-flexbox()
     align-items: center
     cf-icon
       line-height: normal
       margin-right: 4px
 
+
+.cfnext-dropdown__list:last-child
+  .cfnext-dropdown__item:last-child
+  .cfnext-dropdown__item--vcentered:last-child
+    margin-bottom: 0
 
