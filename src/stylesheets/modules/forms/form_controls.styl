@@ -28,11 +28,18 @@ p
   .form-control.form-control--with-unit
     input(type="text")
     span.form-control__unit px
+p
+  .form-control.form-control--with-unit
+    input(type="text" disabled)
+    span.form-control__unit px
+p
+  .form-control--with-icon
+    input.form-control(type="text")
+    button.form-control__icon-suffix.fa.fa-lock
 
 Styleguide 5.1
 */
-.form-control-look,
-.form-control
+$form-control()
   $form-control-theme()
   padding: $form-textarea-padding
   padding-top: 7px
@@ -46,6 +53,12 @@ Styleguide 5.1
     outline: none
   &.error-input:focus
     border-color: darken($red, 10%)
+  &[aria-invalid="true"]
+    border-color: darken($red, 10%)
+
+.form-control-look,
+.form-control
+  $form-control()
 
 .form-control[disabled],
 .form-control[readonly]
@@ -58,14 +71,23 @@ Styleguide 5.1
 .form-control[readonly]
   color: $metallic-gray-dark
 
+/**
+ * @component form-control--with-unit
+ */
 .form-control--with-unit
   line-height: 2.4em;
   padding: 0;
   display: inline-flex;
   > input
+    line-height: inherit
     margin: 0;
     padding: 0 0 0 0.5em;
     border: 0
+    &[disabled]
+      color: $gray-medium
+      background-color: $gray-lighter
+      box-shadow: none
+      transition: none
 
 .form-control__unit
   display: inline-block
@@ -73,6 +95,29 @@ Styleguide 5.1
   background-color: $gray-lighter
   padding: 0 0.5em;
   border-left: 1px solid $metallic-gray
+
+/**
+ * @component form-control--with-icon
+ */
+.form-control--with-icon
+  display: inline-block
+  position: relative
+
+button.form-control__icon-suffix
+  border: 0
+  background: none
+  outline: 0
+  cursor: pointer
+
+  padding-left:  1.0em
+  padding-right: 1.0em
+
+  position: absolute
+  top: 0; bottom: 0; right: 0;
+
+  &[disabled]
+    cursor: not-allowed
+
 
 textarea.form-control
   resize: vertical

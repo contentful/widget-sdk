@@ -7,7 +7,7 @@ $modal-dialog-padding = 20px
   text-align: center
   background-color: rgba(0, 0, 0, 0.2)
 
-.modal-dialog
+$modal-dialog-layout()
   $layer('modalDialog')
   display: inline-block
   position: relative
@@ -15,17 +15,21 @@ $modal-dialog-padding = 20px
   padding: $modal-dialog-padding
   text-align: left
 
-.modal-dialog
-  .dropdown-menu
-    $layer('modalDialogDropdown')
-
-.modal-dialog,
-$modal-dialog-chrome
+$modal-dialog-chrome()
   background-color: white
   border: 1px solid $gray
   border-radius: 3px
   box-shadow: 0 2px 6px rgba(0,0,0,0.1)
   line-height: 15px
+
+.modal-dialog
+  $modal-dialog-chrome()
+  $modal-dialog-layout()
+
+.modal-dialog
+  .dropdown-menu
+    $layer('modalDialogDropdown')
+
 
 .modal-dialog .title,
 $modal-dialog-title

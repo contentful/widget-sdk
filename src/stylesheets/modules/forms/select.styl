@@ -8,21 +8,50 @@
 /*
 Select boxes
 
-Styled native select boxes (TODO: standardize this according to styleguide after buttons)
-
 Markup:
-div(class="btn btn-flat select-box")
-  select
+p
+  select.cfnext-select-box
     option value
-  i(class="button-icon-right fa fa-caret-dropdown")
+    option more
+  i.cfnext-select-box-icon.fa.fa-caret-down
 
 Styleguide 5.2
 */
+
+$select-box-line-height = 2em
+.cfnext-select-box
+  $button()
+  $button-tertiary()
+  padding: 1px 1.6em 0 0.6em
+  line-height: $select-box-line-height
+  color: inherit
+  font-size: inherit
+  font-family: inherit
+  cursor: inherit
+  -webkit-appearance: none
+  -moz-appearance: none
+  appearance: none
+  outline: 0
+  &:hover, &:focus, &:active
+    border-color: $gray
+
+.cfnext-select-box-icon
+  position: relative
+  width: 0
+  line-height: $select-box-line-height
+  left: -1.2em
+  top: 1px
+  pointer-events: none
+
+/**
+ * @deprecated
+ */
 .select-box
-  padding: 0px
+  padding: 1px 0 0 0;
   select
-    width: 200%
-    padding: 5px 12px
+    padding-left: 0.6em
+    padding-right: 1.6em
+    line-height: $select-box-line-height
     margin: 0
     color: inherit
     font-size: inherit

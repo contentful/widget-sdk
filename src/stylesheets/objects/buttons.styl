@@ -28,7 +28,8 @@ p
 
 Styleguide 4.1.1
 */
-.btn
+
+$button()
   display: inline-block
   position: relative
   overflow: hidden
@@ -50,6 +51,9 @@ Styleguide 4.1.1
     cursor: default
     &:active
       top: 0px
+
+.btn
+  $button()
 
 /*
 the webkit-transform fixes a glitch caused by google maps
@@ -83,7 +87,7 @@ p
 
 Styleguide 4.1.2
 */
-.btn--secondary
+$button-secondary()
   $colored-button(
     $metallic-gray-dark,
     $secondary-bg,
@@ -94,6 +98,9 @@ Styleguide 4.1.2
     $gray,
     $gray-medium-light
   )
+
+.btn--secondary
+  $button-secondary()
 
 /*
 Tertiary button
@@ -110,7 +117,7 @@ p
 
 Styleguide 4.1.3
 */
-.btn--tertiary
+$button-tertiary()
   $colored-button(
     $metallic-gray-dark,
     $gray-lightest,
@@ -122,6 +129,8 @@ Styleguide 4.1.3
     $gray-medium-light
   )
 
+.btn--tertiary
+  $button-tertiary()
 
 /*
 Primary button
