@@ -1,4 +1,4 @@
-.space-selector.app-top-bar__child-action.app-top-bar--separator(cf-dropdown ng-show="organizations && organizations.length > 0" ng-hide="spaces.length == 0 && !canCreateSpaceInAnyOrg()")
+.space-selector.app-top-bar__child-action.app-top-bar--right-separator(cf-dropdown ng-show="organizations && organizations.length > 0" ng-hide="spaces.length == 0 && !canCreateSpaceInAnyOrg()")
   a(cf-dropdown-toggle ng-click="clickedSpaceSwitcher()" tabindex="0")
     cf-icon.icon-dd-arrow-down.pull-right(name="dd-arrow-down" size="10")
     span.space-selector__name.u-truncate(ng-bind="spaceContext.space.data.name || 'Spaces'")
