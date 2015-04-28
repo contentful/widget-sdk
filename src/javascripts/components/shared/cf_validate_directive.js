@@ -6,18 +6,23 @@
  *
  * @property {Error[]}  $scope.validationResult.errors
  * @property {boolean} $scope.validationResult.valid
+ *
+ * @scope.requires {(any) => Array<Error>} schema.errors
+ * @scope.requires {(Error) => string} schema.buildMessage
  */
 angular.module('contentful').directive('cfValidate', [function () {
   return {
     restrict: 'A',
     scope: true,
-    controller: 'ValidationController'
+    controller: 'ValidationController',
+    controllerAs: 'validator'
   };
 }]);
 
 angular.module('contentful')
 .controller('ValidationController', ['$scope', '$attrs', 'logger',
 function ValidationController ($scope, $attrs, logger) {
+  var controller = this;
 
   $scope.validationResult = {};
 
@@ -46,6 +51,20 @@ function ValidationController ($scope, $attrs, logger) {
     scope.validationResult = {};
   });
 
+  /**
+   * @ngdoc method
+   * @name cfValidate#validator.getPathErrors
+   *
+   * @param {string} path
+   * @returns {Array<Error>}
+   */
+  controller.getPathErrors = function (path) {
+    var errors = $scope.validationResult.errors;
+    return _.filter(errors, function(error) {
+      return matchesPath(path, error.path);
+    });
+  };
+
 
   function getData() {
     return $scope.$eval($attrs.cfValidate);
@@ -60,9 +79,11 @@ function ValidationController ($scope, $attrs, logger) {
       }
     });
 
-    errors = _.forEach(errors, function (error) {
-      error.message = schema.buildMessage(error);
-    });
+    if (schema.buildMessage) {
+      errors = _.forEach(errors, function (error) {
+        error.message = schema.buildMessage(error);
+      });
+    }
 
     var valid = _.isEmpty(errors);
     return {
@@ -93,5 +114,14 @@ function ValidationController ($scope, $attrs, logger) {
       }
     });
     return retval;
+  }
+
+  function matchesPath(pattern, target) {
+    var prefixLen = pattern.length - 1;
+    if (pattern[prefixLen] === '*') {
+      return _.isEqual(target.slice(0, prefixLen), pattern.slice(0, prefixLen));
+    } else {
+      return _.isEqual(target, pattern);
+    }
   }
 }]);
