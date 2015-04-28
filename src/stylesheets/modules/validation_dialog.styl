@@ -20,16 +20,12 @@ $validation-indent = 30px
  * @component .validation-settings
  */
 .validation-settings
-  margin-top: 0.5em
   min-height: 250px
 
-cf-validation-setting
-  display: block;
-
 .validation-settings__header
+  font-size: inherit
   margin: 0;
-  font-size: 1.2em
-  line-height: 3
+  margin-bottom: $rhythm(1)
 
 .validation-settings__toggle
   cursor: pointer
@@ -39,7 +35,8 @@ cf-validation-setting
   display: inline-block;
   width: $validation-indent
   > input
-    margin: 0
+    // TODO this is a hack to align the checkbox
+    margin: -2px 0 0 0
 
 
 /**
@@ -47,7 +44,7 @@ cf-validation-setting
  */
 .validation-controls
   margin-left: $validation-indent
-  margin-bottom: 1.2em;
+  margin-bottom: $rhythm(2);
   margin-top: 0.2em;
 
   .form-inline-error

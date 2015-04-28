@@ -6,8 +6,8 @@ angular.module('contentful').controller('FieldSettingsEditorController', ['$scop
     var dialog = modalDialog.open({
       scope: $scope,
       title: 'Field Settings',
-      message: 'Not implemented yet',
-      ignoreEnter: true,
+      template: 'field_dialog',
+      ignoreEnter: true
     });
     dialog.promise.then(function () {
       $scope.contentTypeForm.$setDirty();

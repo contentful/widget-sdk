@@ -1,0 +1,51 @@
+$field-dialog__content-padding()
+  padding-left: 2em;
+  padding-right: 2em;
+
+
+.field-dialog.modal-dialog
+  padding: 0
+  width: 60em
+  min-height: 40em
+  margin-bottom: 3em
+
+
+.field-dialog__header
+  $field-dialog__content-padding()
+
+  display: flex;
+  align-items: center
+
+  > h1
+    font-size: 1.2em
+    line-height: ($rhythm(3) / 1.2em)
+    flex-grow: 1
+    margin: 0
+
+  button
+    margin-left: 1em
+
+.field-dialog__field-type
+  margin-left: 0.6em
+  font-weight: normal
+  color: $gray
+
+.field-dialog__tab-list
+  $field-dialog__content-padding()
+  $tab-list()
+
+  [role=tab]
+    padding-left: 1.5em
+    padding-right: 1em
+    .field-dialog__tab-invalid
+      visibility: hidden
+      padding-left: 0.3em
+
+    &[aria-invalid=true] .field-dialog__tab-invalid
+      visibility: visible
+
+
+.field-dialog__tab-content
+  $field-dialog__content-padding()
+  padding-top: $rhythm(1)
+  padding-bottom: $rhythm(1)
