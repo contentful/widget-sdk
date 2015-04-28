@@ -23,7 +23,6 @@ module.exports = new Package('angularjs', [
 
 .processor(require('./processors/keywords'))
 .processor(require('./processors/pages-data'))
-.processor(require('./processors/versions-data'))
 .processor(function gitUrlProcessor () {
   return {
     $runAfter: ['files-read'],
@@ -43,6 +42,10 @@ module.exports = new Package('angularjs', [
 
 .config(function (generateProtractorTestsProcessor) {
   generateProtractorTestsProcessor.$enabled = false;
+})
+
+.config(function (generateComponentGroupsProcessor) {
+  generateComponentGroupsProcessor.$enabled = false;
 })
 
 .config(function(dgeni, log, readFilesProcessor, writeFilesProcessor) {
@@ -104,7 +107,7 @@ module.exports = new Package('angularjs', [
 })
 
 
-.config(function(computePathsProcessor, computeIdsProcessor) {
+.config(function(computePathsProcessor, computeIdsProcessor, getAliases) {
   computePathsProcessor.pathTemplates.push({
     docTypes: ['overview', 'tutorial'],
     getPath: function(doc) {
@@ -133,6 +136,19 @@ module.exports = new Package('angularjs', [
     pathTemplate: '${area}/${moduleName}/${groupType}',
     outputPathTemplate: 'partials/${area}/${moduleName}/${groupType}.html'
   });
+
+
+  computePathsProcessor.pathTemplates.push({
+    docTypes: ['analytics-event'],
+    pathTemplate: 'analytics-event',
+    outputPathTemplate: 'partials/api/analytics/events/${name}.html'
+  });
+  computeIdsProcessor.idTemplates.push({
+    docTypes: ['analytics-event' ],
+    idTemplate: 'analytics/events/${name}',
+    getAliases: getAliases
+  });
+
 
   computeIdsProcessor.idTemplates.push({
     docTypes: ['overview', 'tutorial', 'e2e-test'],

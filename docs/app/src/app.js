@@ -1,13 +1,11 @@
+/*global angular:true*/
 'use strict';
 
-angular.module('docsApp', [
-  'navData',
-  'ui.router'
-])
+angular.module('docsApp', ['ui.router'])
 
 .controller('NavController',
-['$scope', '$location', '$state', 'NG_NAVIGATION', 'PAGES',
-function ($scope, $location, $state, NAVIGATION, PAGES) {
+['$scope', '$location', '$state', 'MODULES_INDEX', 'PAGES',
+function ($scope, $location, $state, MODULES_INDEX, PAGES) {
   loadNavigation();
   $scope.$root.$on('$stateChangeSuccess', loadNavigation);
 
@@ -17,7 +15,7 @@ function ($scope, $location, $state, NAVIGATION, PAGES) {
       $scope.guides  = PAGES;
     } else {
       $scope.navPath = 'partials/api-nav.html';
-      $scope.modules  = NAVIGATION.api.modules;
+      $scope.modules  = MODULES_INDEX;
     }
   }
 }])
@@ -70,10 +68,6 @@ function ($scope, $location, $state, NAVIGATION, PAGES) {
     template: '<div class="guide-profile" ui-view>' +
                 '<div ng-include="contentPath"></div>' +
               '</div>',
-    controller: ['$scope', function ($scope) {
-      $scope.guideActive
-      // $scope.contentPath = 'guides/api.html';
-    }],
   })
   .state('guides.doc', {
     url: '*path',

@@ -39,4 +39,16 @@ module.exports = [{
       rendered += ': '+ fn.returns.typeExpression;
     return rendered;
   }
+}, {
+  name: 'memberSyntax',
+  process: function (member, prefix) {
+    var rendered = '';
+    if (prefix)
+      rendered += prefix + '.';
+
+    rendered += member.name;
+    if (member.typeExpression)
+      rendered += ': ' + member.typeExpression;
+    return rendered;
+  }
 }];

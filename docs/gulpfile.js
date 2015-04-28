@@ -97,6 +97,7 @@ gulp.task('components', ['bower-install'], function() {
     bower('lunr.js', '*.js'),
     bower('google-code-prettify'),
     bower('jquery', 'dist/*.js'),
+    bower('font-awesome', '**/*.+(css|woff|svg)'),
     node_modules('highlight.js', 'styles/**/*.css')
   )
   .pipe(gulp.dest(dest));
@@ -118,16 +119,20 @@ gulp.task('bower-install', function() {
 gulp.task('watch', ['default'], function() {
   gulp.watch(_.flatten([app, assets, partials]), ['assets', 'app']);
   gulp.watch(['stylesheets/**/*.styl'], ['stylesheets']);
-  gulp.watch(['../src/**/*.js', 'templates/**/*.html'], ['api']);
+  gulp.watch(['../src/**/*.js', 'templates/**/*.html', 'templates/**/*.js'], ['api']);
   gulp.watch(guides, ['guides']);
 });
 
 
 function copyPackage(srcFolder) {
-  return function (name, pattern) {
-    pattern = pattern || '**/*';
-    var src = path.join(srcFolder, name, pattern);
-    return gulp.src(src)
+  return function (name) {
+    var patterns = _.toArray(arguments).slice(1);
+    patterns[0] = patterns[0] || '**/*';
+    var srcs = _.map(patterns, function(pattern) {
+      return path.join(srcFolder,name,pattern);
+    });
+
+    return gulp.src(srcs)
     .pipe(streamForEach(function (f) {
       _.extend(f, {
         base: '.',
