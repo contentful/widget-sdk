@@ -1,6 +1,12 @@
 'use strict';
 
-angular.module('contentful').constant('stringUtils', (function(){
+/**
+ * Utility functions that deal with strings.
+ *
+ * Some of them are also available as filters
+ */
+angular.module('contentful')
+.constant('stringUtils', (function(){
   function toIdentifier(string) {
     if (_.isEmpty(string)) return '';
     var words = splitIntoWords(string).map(stripInvalidChars);
@@ -102,4 +108,15 @@ angular.module('contentful').constant('stringUtils', (function(){
     titleToFileName: titleToFileName,
     getEntityLabel: getEntityLabel
   };
-})());
+})())
+
+/**
+ * @ngcdoc filter
+ * @name joinAnd
+ * @description
+ * Takes an array of strings and joins it with commas and a final
+ * “and”.
+ */
+.filter('joinAnd', ['stringUtils', function (stringUtils) {
+  return stringUtils.joinAnd;
+}]);
