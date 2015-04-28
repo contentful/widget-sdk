@@ -202,10 +202,14 @@ angular.module('contentful').config([
     resolve: {
       contentType: function ($stateParams, space) {
         return space.getContentType($stateParams.contentTypeId);
+      },
+      editingInterface: function (contentType, editingInterfaces) {
+        return editingInterfaces.forContentTypeWithId(contentType, 'default');
       }
     },
-    controller: function ($scope, contentType) {
+    controller: function ($scope, contentType, editingInterface) {
       $scope.contentType = contentType;
+      $scope.editingInterface = editingInterface;
     },
     template: '<ui-view/>'
   })
@@ -235,14 +239,8 @@ angular.module('contentful').config([
       parent: 'spaces.detail.content_types.detail.editor',
       label: 'Configure Fields'
     },
-    resolve: {
-      editingInterface: function (contentType, editingInterfaces) {
-        return editingInterfaces.forContentTypeWithId(contentType, 'default');
-      }
-    },
-    controller: function ($state, $scope, editingInterface) {
+    controller: function ($state, $scope) {
       $state.current.data = $scope.context = {};
-      $scope.editingInterface = editingInterface;
     },
     template: '<div cf-editing-interface-editor class="editing-interface-editor with-tab-actions"></div>'
   })
