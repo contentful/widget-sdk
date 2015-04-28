@@ -4,7 +4,7 @@
  * @ngdoc module
  * @name contentful/app
  */
-angular.module('contentful/app', ['contentful'])
+angular.module('contentful/app', ['contentful', 'cf.ui'])
 .config(['analyticsProvider', 'environment', function(analyticsProvider, environment){
   $.cookies.setOptions({
     secure: environment.env != 'development'

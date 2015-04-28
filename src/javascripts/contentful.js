@@ -1,8 +1,17 @@
 'use strict';
 
+/**
+ * @ngdoc module
+ * @name cf.ui
+ * @description
+ * Provides reusable UI components.
+ */
+angular.module('cf.ui', []);
+
 angular.module('contentful', [
   'contentful/environment',
   'contentful/user_interface',
+  'cf.ui',
   'angularLoad',
   'ngAnimate',
   'ngSanitize',

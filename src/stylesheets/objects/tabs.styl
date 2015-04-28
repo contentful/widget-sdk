@@ -1,0 +1,30 @@
+$tab()
+  margin: 0 0.5em 0 0
+  padding: 0 1.3em
+  border-radius: 5px
+  color: white;
+  cursor: pointer
+  transition-duration: 0.2s
+  transition-property: color background-color
+
+
+$tab-list()
+  display: flex;
+  line-height: $rhythm(2)
+  padding-top: $rhythm(0.5)
+  padding-bottom: $rhythm(0.5)
+  background: $blue-light;
+
+  [role=tab]
+    $tab()
+    &[aria-selected=true], &:hover
+      $tab-active()
+
+
+$tab-active()
+  color: $blue-light;
+  background: white
+
+// TODO move this somewhere more fitting
+[aria-hidden=true]
+  display: none;
