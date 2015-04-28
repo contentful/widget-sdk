@@ -60,8 +60,10 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
     widget.field = field;
 
     var widgetDescription = widgets.get(widget.widgetId);
-    if (widgetDescription)
+    if (widgetDescription){
       widget.rendersHelpText = widgetDescription.rendersHelpText;
+      widget.isFocusable = !widgetDescription.notFocusable;
+    }
   }
 
   function buildStaticWidget(widget) {

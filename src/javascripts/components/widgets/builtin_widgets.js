@@ -44,11 +44,13 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('radio',{
     fieldTypes: ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'],
     name: 'Radio',
+    notFocusable: true,
     template: '<cf-radio-editor ng-model="fieldData.value" ot-bind-internal="valuesController.selected"></cf-radio-editor>'
   });
   widgets.registerWidget('dropdown',{
     fieldTypes: ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'],
     name: 'Dropdown',
+    notFocusable: true,
     template: '<div cf-dropdown-editor ng-model="fieldData.value" ot-bind-internal="valuesController.selected"></div>'
   });
   widgets.registerWidget('rating',{
@@ -63,12 +65,14 @@ angular.module('contentful').run(['widgets', function(widgets){
         default: 10
       }
     ],
+    notFocusable: true,
     template: '<cf-rating-editor ng-model="fieldData.value" ot-bind-internal="rating"></cf-rating-editor>'
   });
   widgets.registerWidget('datePicker',{
     fieldTypes: ['Date'],
     name: 'Date Picker',
     template: '<div cf-datetime-editor class="widget-datetime-editor" ng-model="fieldData.value"></div>',
+    notFocusable: true,
     options: [
       {
         param: 'format',
