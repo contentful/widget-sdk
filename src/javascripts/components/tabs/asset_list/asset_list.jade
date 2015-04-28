@@ -54,23 +54,28 @@
     .main-results-wrapper.endless-container(cf-endless-container at-bottom="searchController.loadMore()" num-elements="searchController.paginator.page")
       table.result-list.main-results
         tbody
-          tr(ng-repeat="asset in visibleAssets = (assets | filter:visibleInCurrentList) track by asset.getId()" ui-sref="spaces.detail.assets.detail({ assetId: asset.getId() })")
+          tr(ng-repeat="asset in visibleAssets = (assets | filter:visibleInCurrentList) track by asset.getId()"
+              ng-init="entityNavState='spaces.detail.assets.detail({ assetId: asset.getId() })'"
+              ui-sref="{{entityNavState}}")
             td.cell-select(ng-click="selection.toggle(asset);$event.stopPropagation()")
               input(type="checkbox" cf-selection="asset" tabindex="-1")
             td.cell-preview(ng-class="{'no-padding': (!!file)}")
               div.file-preview(cf-file-preview file="spaceContext.localizedField(asset, 'data.fields.file')" preview-size="400")
                 span.cf-thumbnail(cf-thumbnail file="file" size="30" ng-if="file")
             td.cell-name
-              span {{spaceContext.assetTitle(asset)}}
+              a.entity-list-link(ui-sref="{{entityNavState}}") {{spaceContext.assetTitle(asset)}}
             td.cell-type(ng-init="file=spaceContext.localizedField(asset, 'data.fields.file')")
-              span {{file|fileType}}
-              span.extension {{file|fileExtension}}
+              a.entity-list-link(ui-sref="{{entityNavState}}")
+                span {{file|fileType}}
+                span.extension {{file|fileExtension}}
             td.cell-updated
-              date.relative(ng-if="asset.getUpdatedAt()" datetime="{{asset.getUpdatedAt()}}")
+              a.entity-list-link(ui-sref="{{entityNavState}}")
+                date.relative(ng-if="asset.getUpdatedAt()" datetime="{{asset.getUpdatedAt()}}")
             td.cell-author
-              span(cf-user link="asset.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}
+              a.entity-list-link(cf-user link="asset.getUpdatedBy()" as="updater" ui-sref="{{entityNavState}}")
+                | {{updater | userNameDisplay:user}}
             td.cell-status(ng-class="entityStatusController.getClassname(asset)")
-              .draft-wrapper
+              a.draft-wrapper.entity-list-link(ui-sref="{{entityNavState}}")
                 .status-label {{entityStatusController.getLabel(asset)}}
                 .status-bar
       .loading(ng-hide="searchController.paginator.atLast()")

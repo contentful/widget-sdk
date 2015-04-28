@@ -48,21 +48,24 @@
       table.result-list.main-results.animated
         tbody
           tr(ng-repeat="contentType in visibleContentTypes = (contentTypes | filter:visibleInCurrentList) track by contentType.getId()"
-              ui-sref="spaces.detail.content_types.detail.editor({ contentTypeId: contentType.getId() })")
+              ng-init="entityNavState='spaces.detail.content_types.detail.editor({ contentTypeId: contentType.getId() })'"
+              ui-sref="{{entityNavState}}")
             td.cell-display-name
-              span {{contentType.getName()}}
+              a.entity-list-link(ui-sref="{{entityNavState}}") {{contentType.getName()}}
             td.cell-description
-              span {{contentType.data.description}}
+              a.entity-list-link(ui-sref="{{entityNavState}}") {{contentType.data.description}}
             td.cell-integer
-              span {{numFields(contentType)}}
+              a.entity-list-link(ui-sref="{{entityNavState}}") {{numFields(contentType)}}
             td.cell-date
-              date.relative(ng-if="contentType.getUpdatedAt()" datetime="{{contentType.getUpdatedAt()}}")
+              a.entity-list-link(ng-if="contentType.getUpdatedAt()" ui-sref="{{entityNavState}}")
+                date.relative(datetime="{{contentType.getUpdatedAt()}}")
             td.cell-symbol
-              span(cf-user link="contentType.getUpdatedBy()" as="updater")
+              a.entity-list-link(cf-user link="contentType.getUpdatedBy()" as="updater" ui-sref="{{entityNavState}}")
                 | {{updater | userNameDisplay:user}}
             td.cell-status(ng-class="statusClass(contentType)")
-              .status-label {{statusLabel(contentType)}}
-              .status-bar
+              a.entity-list-link(ui-sref="{{entityNavState}}")
+                .status-label {{statusLabel(contentType)}}
+                .status-bar
 
     .advice(ng-show="visibleContentTypes | isEmpty")
       .advice__frame(ng-show="hasQuery()")
