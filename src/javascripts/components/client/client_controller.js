@@ -88,7 +88,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
     analytics.stateActivated(toState, toStateParams, fromState, fromStateParams);
 
-    if ($scope.spaces !== null && $scope.$stateParams.spaceId !== $scope.getCurrentSpaceId()) {
+    if ($scope.spaces !== null && $scope.$stateParams.spaceId !== $scope.getCurrentSpaceId() && !$scope.locationInAccount) {
       var space = getSpaceFromList($scope.$stateParams.spaceId, $scope.spaces);
       if (space) {
         setSpaceContext(space);
