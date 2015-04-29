@@ -4,7 +4,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
       a.nav-bar__link(
           ng-class="{'is-active': $state.includes('spaces.detail.content_types') ,\
                     'is-section-index': $state.$current.name === 'spaces.detail.content_types.list'}"
-          ui-sref="spaces.detail.content_types.list"
+          ui-sref="spaces.detail.content_types.list({ spaceId: $stateParams.spaceId })"
           ng-hide="permissionController.get('updateContentType', 'shouldHide')"
           data-view-type="content-type-list"
           tabindex="0")
@@ -15,7 +15,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
           ng-class="{'is-active': $state.includes('spaces.detail.entries') ,\
                     'is-section-index': $state.$current.name === 'spaces.detail.entries.list'}"
           ng-hide="permissionController.get('readEntry', 'shouldHide')"
-          ui-sref="spaces.detail.entries.list"
+          ui-sref="spaces.detail.entries.list({ spaceId: $stateParams.spaceId })"
           data-view-type="entry-list"
           tabindex="0")
         cf-icon(name="nav-entries" size="25")
@@ -24,7 +24,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
       a.nav-bar__link(
           ng-class="{'is-active': $state.includes('spaces.detail.assets') ,\
                     'is-section-index': $state.$current.name === 'spaces.detail.assets.list'}"
-          ui-sref="spaces.detail.assets.list"
+          ui-sref="spaces.detail.assets.list({ spaceId: $stateParams.spaceId })"
           ng-hide="permissionController.get('readAsset', 'shouldHide')"
           data-view-type="asset-list"
           tabindex="0")
@@ -34,7 +34,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
       a.nav-bar__link(
           ng-class="{'is-active': $state.includes('spaces.detail.api') ,\
                     'is-section-index': $state.$current.name === 'spaces.detail.api.home'}"
-          ui-sref="spaces.detail.api.home"
+          ui-sref="spaces.detail.api.home({ spaceId: $stateParams.spaceId })"
           ng-hide="permissionController.get('readApiKey', 'shouldHide')"
           data-view-type="api-home"
           tabindex="0")
@@ -44,7 +44,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
       a.nav-bar__link(
           ng-class="{'is-active': $state.includes('spaces.detail.settings') ,\
             'is-section-index': $state.$current.name === 'spaces.detail.settings.pathSuffix'}"
-          ui-sref="spaces.detail.settings.pathSuffix"
+          ui-sref="spaces.detail.settings.pathSuffix({ spaceId: $stateParams.spaceId })"
           ng-hide="permissionController.get('updateSettings', 'shouldHide')"
           data-view-type="space-settings"
           tabindex="0")
