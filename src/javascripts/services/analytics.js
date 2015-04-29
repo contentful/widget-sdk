@@ -21,14 +21,17 @@ angular.module('contentful')
   this.forceLoad = function () { load = true; };
 
   this.$get = [ '$injector', function ($injector) {
-    var segment   = $injector.get('segment');
-    var totango   = $injector.get('totango');
     var $location = $injector.get('$location');
+
+    var segment     = $injector.get('segment');
+    var totango     = $injector.get('totango');
+    var fontsdotcom = $injector.get('fontsdotcom');
 
     var analytics = {
       enable: function(){
         segment.enable();
         totango.enable();
+        fontsdotcom.enable();
       },
 
       disable: function(){
