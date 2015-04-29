@@ -1,4 +1,4 @@
-nav.nav-bar.app-top-bar--separator(ng-class="{'with-persistent-notification': persistentNotification}")
+nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
   ul.nav-bar__list(ng-show="!locationInAccount && spaces.length > 0 && spaceContext.space && !spaceContext.space.isHibernated()")
     li.app-top-bar__action.nav-bar__list-item
       a.nav-bar__link(
