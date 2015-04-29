@@ -11,6 +11,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var SpaceContext       = $injector.get('SpaceContext');
   var authentication     = $injector.get('authentication');
   var tokenStore         = $injector.get('tokenStore');
+  var spacesStore        = $injector.get('spacesStore');
   var notification       = $injector.get('notification');
   var analytics          = $injector.get('analytics');
   var authorization      = $injector.get('authorization');
@@ -89,7 +90,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     analytics.stateActivated(toState, toStateParams, fromState, fromStateParams);
 
     if ($scope.spaces !== null && $scope.$stateParams.spaceId !== $scope.getCurrentSpaceId() && !$scope.locationInAccount) {
-      var space = getSpaceFromList($scope.$stateParams.spaceId, $scope.spaces);
+      var space = spacesStore.getSpaceFromList($scope.$stateParams.spaceId, $scope.spaces);
       if (space) {
         setSpaceContext(space);
       } else if (!$scope.$stateParams.spaceId) {
@@ -202,12 +203,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     analytics.setSpace(space);
   }
 
-  function getSpaceFromList(id, existingSpaces) {
-    return _.find(existingSpaces, function (existingSpace) {
-      return existingSpace.getId() === id;
-    });
-  }
-
   function selectSpace(space) {
     if(!space){
       return notification.warn('Selected space does not exist');
@@ -217,6 +212,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       spaceId: space.getId(),
       spaceName: space.data.name
     });
+    spacesStore.saveSelectedSpace(space.getId());
     $scope.$state.go('spaces.detail', { spaceId: space.getId() });
     return true;
   }
