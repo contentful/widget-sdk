@@ -3,17 +3,11 @@
 var _ = require('lodash-node');
 var path = require('canonical-path');
 
-var AREA_NAMES = {
-  api: 'API',
-  guide: 'Developer Guide',
-  misc: 'Miscellaneous',
-  tutorial: 'Tutorial',
-  error: 'Error Reference'
-};
 
 var DOC_TYPE_NAMES = {
   directive: 'Directives',
-  type: 'Types'
+  type: 'Types',
+  service: 'Services'
 };
 
 /**
@@ -23,7 +17,6 @@ var DOC_TYPE_NAMES = {
  * containing meta information about the pages and navigation
  */
 module.exports = function generatePagesDataProcessor() {
-
   return {
     $runAfter: ['paths-computed', 'generateKeywordsProcessor'],
     $runBefore: ['rendering-docs'],
@@ -34,44 +27,51 @@ module.exports = function generatePagesDataProcessor() {
         return doc.area;
       });
 
-      docs.push(makeNavDoc(pages));
-      docs.push(makeSearchDoc(pages));
-      docs.push(makePagesDoc(docs));
+      docs.push(makeApiIndex(pages));
+      // docs.push(makeSearchDoc(pages));
     }
   };
 };
 
-function makeArea (pages, areaId) {
-  var navGroupMapper = navGroupMappers[areaId] || navGroupMappers['pages'];
+
+function makeSearchDoc(docs) {
+  var searchable = _.filter(docs, 'searchTerms');
+  var searchData = _.map(searchable, function (doc) {
+    return _.extend({ path: doc.path }, doc.searchTerms);
+  });
+
   return {
-    id: areaId,
-    name: AREA_NAMES[areaId],
-    modules: navGroupMapper(pages)
+    docType: 'json-doc',
+    id: 'search-data-json',
+    template: 'json-doc.template.json',
+    outputPath: 'js/search-data.json',
+    data: searchData
   };
 }
 
-function makeNav (doc) {
+
+function makeApiIndex (docs) {
+  docs = _.filter(docs, function(doc) {
+    return doc.area == 'api';
+  });
+  var modules = makeModulesIndex(docs);
+
   return {
-    name: doc.name,
-    href: doc.path,
-    type: doc.docType
+    docType: 'api-index',
+    id: 'api-index',
+    template: 'api-index.template.js',
+    outputPath: 'js/api-index.js',
+    modules: modules
   };
 }
 
-function makeDocType (docs, docType) {
-  if (docs.length === 0) {
-    return;
-  }
 
-  var name = DOC_TYPE_NAMES[docType];
-
-  return {
-    name: name,
-    type: 'section',
-    href: path.dirname(docs[0].path),
-    docs: _.map(docs, makeNav)
-  };
+function makeModulesIndex(areaPages) {
+    var modules = _.filter(areaPages, 'module');
+    modules = _.groupBy(modules, 'module');
+    return _.map(modules, makeModule);
 }
+
 
 function makeModule (modulePages, moduleName) {
   var docTypes = _.groupBy(modulePages, 'docType');
@@ -90,99 +90,27 @@ function makeModule (modulePages, moduleName) {
   };
 }
 
-var navGroupMappers = {
-  api: function(areaPages) {
-    var modules = _.filter(areaPages, 'module');
-    modules = _.groupBy(modules, 'module');
-    return _.map(modules, makeModule);
-  },
-  pages: function(pages, area) {
-    return [getNavGroup(
-      pages,
-      area,
-      function(page) {
-        return page.sortOrder || page.path;
-      },
-      function(page) {
-        return {
-          name: page.name,
-          href: page.path,
-          type: 'page'
-        };
-      }
-    )];
+
+function makeDocType (docs, docType) {
+  if (docs.length === 0) {
+    return;
   }
-};
 
-function makeSearchDoc(docs) {
-  var searchable = _.filter(docs, 'searchTerms');
-  var searchData = _.map(searchable, function (doc) {
-    return _.extend({ path: doc.path }, doc.searchTerms);
-  });
+  var name = DOC_TYPE_NAMES[docType] || docType;
 
   return {
-    docType: 'json-doc',
-    id: 'search-data-json',
-    template: 'json-doc.template.json',
-    outputPath: 'js/search-data.json',
-    data: searchData
+    name: name,
+    type: 'section',
+    href: path.dirname(docs[0].path),
+    docs: _.map(docs, makeNav)
   };
 }
 
-function makeNavDoc (docs) {
-  docs = _.reject(docs, {docType: 'componentGroup'});
 
-  var areas = _.groupBy(docs, 'area');
-  areas = _.reduce(areas, function (areas, docs, area) {
-    areas[area] = makeArea(docs, area);
-    return areas;
-  }, {});
-
-
+function makeNav (doc) {
   return {
-    docType: 'nav-data',
-    id: 'nav-data',
-    template: 'nav-data.template.js',
-    outputPath: 'js/nav-data.js',
-    areas: areas
+    name: doc.name,
+    href: doc.path,
+    type: doc.docType
   };
 }
-
-function makePagesDoc(docs) {
-  var pageData = _(docs)
-  .map(function(doc) {
-    return _.pick(doc, ['name', 'area', 'path']);
-  })
-  .indexBy('path')
-  .value();
-
-  return {
-    docType: 'pages-data',
-    id: 'pages-data',
-    template: 'pages-data.template.js',
-    outputPath: 'js/pages-data.js',
-    pages: pageData
-  };
-}
-
-function getNavGroup(pages, area, pageSorter, pageMapper) {
-  var navItems = _(pages)
-    // We don't want the child to include the index page as this is already catered for
-    .omit(function(page) { return page.id === 'index'; })
-
-    // Apply the supplied sorting function
-    .sortBy(pageSorter)
-
-    // Apply the supplied mapping function
-    .map(pageMapper)
-
-    .value();
-
-  return {
-    name: area.name,
-    type: 'group',
-    href: area.id,
-    navItems: navItems
-  };
-}
-

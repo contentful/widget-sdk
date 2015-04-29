@@ -7,7 +7,6 @@
     justify-content: center
     align-items: center
     padding: 0 10px
-    height: 100%
 
   &__logo-element
     position: relative
@@ -36,8 +35,11 @@
     &:hover
       cursor: pointer
 
-  &--separator
+  &--left-separator
     border-left: 1px solid transparentify($cfnext-white, 20%)
+  &--right-separator
+    border-right: 1px solid transparentify($cfnext-white, 20%)
+
 
   &__loader
     width: 50px

@@ -1,19 +1,37 @@
 'use strict';
 
-angular.module('contentful').provider('analytics', ['environment', function (environment) {
-  var dontLoad = environment.env.match(/acceptance|development|test/) ? true : false;
-  this.dontLoad  = function () { dontLoad = true;  };
-  this.forceLoad = function () { dontLoad = false; };
+/**
+ * @ngdoc service
+ * @name analytics
+ * @description
+ *
+ * This service provides an object with different methods to trigger
+ * analytics events.
+ *
+ * The service is disabled in all but the production environment. It
+ * can be enabled by appending the '?forceAnalytics' query string to
+ * the URL. In the development environment this will still keep the
+ * SegmentIO and Totango services disabled but send all tracking
+ * events to the console.
+ */
+angular.module('contentful')
+.provider('analytics', ['environment', function (environment) {
+  var load = !environment.env.match(/acceptance|development|preview|test/);
+  this.dontLoad  = function () { load = false;  };
+  this.forceLoad = function () { load = true; };
 
   this.$get = [ '$injector', function ($injector) {
-    var segment   = $injector.get('segment');
-    var totango   = $injector.get('totango');
     var $location = $injector.get('$location');
+
+    var segment     = $injector.get('segment');
+    var totango     = $injector.get('totango');
+    var fontsdotcom = $injector.get('fontsdotcom');
 
     var analytics = {
       enable: function(){
         segment.enable();
         totango.enable();
+        fontsdotcom.enable();
       },
 
       disable: function(){
@@ -47,6 +65,13 @@ angular.module('contentful').provider('analytics', ['environment', function (env
         this._initialize();
       },
 
+      /**
+       * @ngdoc method
+       * @name analytics#track
+       *
+       * @param {string} event
+       * @param {{}} data
+       */
       track: function (event, data) {
         segment.track(event, _.merge({}, data, this._spaceData));
       },
@@ -124,13 +149,41 @@ angular.module('contentful').provider('analytics', ['environment', function (env
     };
 
     if (shouldLoadAnalytics()) {
-      return analytics;
+      if (environment.env == 'development')
+        return devService();
+      else
+        return analytics;
     } else {
-      return _.mapValues(analytics, _.constant(_.noop));
+      return noopService();
     }
 
     function shouldLoadAnalytics() {
-      return !(dontLoad && !$location.search().forceAnalytics);
+      return load || $location.search().forceAnalytics;
+    }
+
+    /**
+     * Returns an object with the same interface as the proper
+     * analytics service, except that all functions are replaced by
+     * noops.
+     */
+    function noopService () {
+      return _.mapValues(analytics, _.constant(_.noop));
+    }
+
+    /**
+     * Simliar to `noopService()`, but the track methods are replaced
+     * with functions that log the events to the console. This is
+     * helpful for debugging.
+     */
+    function devService () {
+      return _.extend(noopService(), {
+        track: trackStub,
+        trackTotango: trackStub,
+      });
+
+      function trackStub (event, data) {
+        console.log('track: ' + event, data);
+      }
     }
   }];
 

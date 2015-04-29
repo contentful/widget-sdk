@@ -38,15 +38,18 @@
       table.result-list.main-results
         tbody
           tr(ng-repeat="apiKey in apiKeys track by apiKey.getId()"
-              ui-sref="spaces.detail.api.keys.detail({ apiKeyId: apiKey.getId() })")
+              ng-init="entityNavState='spaces.detail.api.keys.detail({ apiKeyId: apiKey.getId() })'"
+              ui-sref="{{entityNavState}}")
             td.cell-name
-              span {{apiKey.getName()}}
+              a.entity-list-link(ui-sref="{{entityNavState}}") {{apiKey.getName()}}
             td.cell-description
-              span {{apiKey.data.description}}
+              a.entity-list-link(ui-sref="{{entityNavState}}") {{apiKey.data.description}}
             td.cell-date
-              date.relative(ng-if="apiKey.getUpdatedAt()" datetime="{{apiKey.getUpdatedAt()}}")
+              a.entity-list-link(ui-sref="{{entityNavState}}")
+                date.relative(ng-if="apiKey.getUpdatedAt()" datetime="{{apiKey.getUpdatedAt()}}")
             td.cell-symbol
-              span(cf-user link="apiKey.getCreatedBy()" as="creator") {{creator | userNameDisplay:user}}
+              a.entity-list-link(ui-sref="{{entityNavState}}" cf-user link="apiKey.getCreatedBy()" as="creator")
+                | {{creator | userNameDisplay:user}}
 
     .advice(ng-show="empty")
       .advice__frame

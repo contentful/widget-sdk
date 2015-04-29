@@ -68,20 +68,23 @@
     .main-results-wrapper.endless-container(cf-endless-container at-bottom="loadMore()" num-elements="paginator.page")
       table.result-list.main-results.animated
         tbody
-          tr(ng-repeat="entry in visibleEntries = (entries | filter:visibleInCurrentList) track by entry.getId()" ui-sref="spaces.detail.entries.detail({ entryId: entry.getId() })")
+          tr(ng-repeat="entry in visibleEntries = (entries | filter:visibleInCurrentList) track by entry.getId()"
+              ng-init="entityNavState='spaces.detail.entries.detail({ entryId: entry.getId() })'"
+              ui-sref="{{entityNavState}}")
             td.cell-select(ng-click="selection.toggle(entry);$event.stopPropagation()")
               input(type="checkbox" cf-selection="entry" tabindex="-1")
             td.cell-content-type(ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden")
-              span {{spaceContext.publishedTypeForEntry(entry).getName()}}
+              a.entity-list-link(ui-sref="{{entityNavState}}") {{spaceContext.publishedTypeForEntry(entry).getName()}}
             td.cell-display-name
-              span {{spaceContext.entryTitle(entry)}}
+              a.entity-list-link(ui-sref="{{entityNavState}}") {{spaceContext.entryTitle(entry)}}
             td(ng-repeat="field in displayedFields track by field.id" ng-class="[getFieldClass(field), getFieldCollapsedClass(field)]")
               cf-field-display(ng-hide="isFieldCollapsed(field)")
               button.transparent-button(cf-click-local="expandColumn(field)" ng-show="isFieldCollapsed(field)")
                 | &hellip;
             td.cell-status(ng-class="entityStatusController.getClassname(entry)")
-              .status-label {{entityStatusController.getLabel(entry)}}
-              .status-bar
+              a.entity-list-link(ui-sref="{{entityNavState}}")
+                .status-label {{entityStatusController.getLabel(entry)}}
+                .status-bar
       .loading(ng-hide="paginator.atLast()")
 
     .advice(ng-show="visibleEntries | isEmpty")

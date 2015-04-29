@@ -21,6 +21,10 @@ angular.module('contentful').directive('cfFormWidget', function() {
       $scope.$watch('widget.rendersHelpText', function (rendersHelpText) {
         $scope.showHelpText = !rendersHelpText;
       });
+
+      $scope.shouldFocusField = function () {
+        return $scope.widgetIndex === 0 && $scope.widget.isFocusable;
+      };
     }]
   };
 });

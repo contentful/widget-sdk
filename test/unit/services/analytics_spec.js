@@ -13,7 +13,8 @@ describe('Analytics provider', function () {
 
 describe('Analytics service', function () {
   beforeEach(function(){
-    module('contentful/test', function(analyticsProvider){
+    module('contentful/test', function(analyticsProvider, environment){
+      environment.env = 'test';
       analyticsProvider.forceLoad();
     });
 
@@ -142,7 +143,7 @@ describe('Analytics service', function () {
       name: 'fieldName',
       type: 'fieldType',
       localized: true,
-      required: true 
+      required: true
     };
     this.analytics.modifiedContentType(event, contentType, field, action);
     sinon.assert.calledWith(this.segment.track, 'Herp', {
