@@ -41,7 +41,6 @@ before_deploy:
 - "./Packagefile.local"
 - mkdir -p archive/user_interface/git archive/user_interface/pool
 - echo "archive/user_interface/pool/$(ls cf-user-interface*.deb | head -n1)" > archive/user_interface/git/$TRAVIS_COMMIT
-- echo "archive/user_interface/pool/$(ls cf-user-interface*.deb | head -n1)" > archive/user_interface/git/$TRAVIS_BRANCH
 - mv cf-user-interface*.deb archive/user_interface/pool
 deploy:
   provider: s3

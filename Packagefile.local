@@ -30,4 +30,3 @@ fpm -t deb -s dir \
   --exclude '**/.nfs*' \
   -C $BUILD_ROOT \
   opt
-
