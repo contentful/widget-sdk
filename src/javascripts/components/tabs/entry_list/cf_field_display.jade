@@ -1,24 +1,34 @@
 ng-switch(on="displayType(field)")
-  date.relative(ng-switch-when="updatedAt" ng-if="entry.getUpdatedAt()" datetime="{{entry.getUpdatedAt()}}")
-  date.relative(ng-switch-when="createdAt" ng-if="entry.getCreatedAt()" datetime="{{entry.getCreatedAt()}}")
-  date.relative(ng-switch-when="publishedAt" ng-if="entry.getPublishedAt()" datetime="{{entry.getPublishedAt()}}")
-  date.relative(ng-switch-when="Date" ng-if="dataForField(entry, field)" datetime="{{dataForField(entry, field)}}")
-  span(cf-user ng-switch-when="author" link="entry.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}
-  span(ng-switch-when="Boolean") {{displayBool(dataForField(entry, field))}}
-  span(ng-switch-when="Location") {{displayLocation(dataForField(entry, field))}}
-  div(ng-switch-when="Entry" class="linked-entries") {{dataForLinkedEntry(entry, field)}}
+  a.entity-list-link(ng-switch-when="updatedAt" ng-if="entry.getUpdatedAt()" ui-sref="{{entityNavState}}")
+    date.relative(datetime="{{entry.getUpdatedAt()}}")
+  a.entity-list-link(ng-switch-when="createdAt" ng-if="entry.getCreatedAt()" ui-sref="{{entityNavState}}")
+    date.relative(datetime="{{entry.getCreatedAt()}}")
+  a.entity-list-link(ng-switch-when="publishedAt" ng-if="entry.getPublishedAt()" ui-sref="{{entityNavState}}")
+    date.relative(datetime="{{entry.getPublishedAt()}}")
+  a.entity-list-link(ng-switch-when="Date" ng-if="dataForField(entry, field)" ui-sref="{{entityNavState}}")
+    date.relative(datetime="{{dataForField(entry, field)}}")
+  a.entity-list-link(ng-switch-when="author" cf-user link="entry.getUpdatedBy()" as="updater" ui-sref="{{entityNavState}}")
+    | {{updater | userNameDisplay:user}}
+  a.entity-list-link(ng-switch-when="Boolean" ui-sref="{{entityNavState}}")
+    | {{displayBool(dataForField(entry, field))}}
+  a.entity-list-link(ng-switch-when="Location" ui-sref="{{entityNavState}}")
+    | {{displayLocation(dataForField(entry, field))}}
+  a.entity-list-link(ng-switch-when="Entry" ui-sref="{{entityNavState}}" class="linked-entries")
+    | {{dataForLinkedEntry(entry, field)}}
 
   div.file-preview(ng-switch-when="Asset" class="linked-assets" cf-file-preview file="dataForLinkedAsset(entry, field)" preview-size="400")
-    .cf-thumbnail(cf-thumbnail file="file" size="30" fit="thumb" focus="faces")
+    a.entity-list-link(ui-sref="{{entityNavState}}")
+      .cf-thumbnail(cf-thumbnail file="file" size="30" fit="thumb" focus="faces")
 
   div(ng-switch-when="Array")
     ul.u-list(ng-class="{'linked-entries': isEntryArray(entry, field), 'linked-assets': isAssetArray(entry, field)}")
 
       li(ng-repeat="(index, entity) in dataForArray(entry, field) track by index")
-        span(ng-if="isEntryArray(entry, field)")
+        a.entity-list-link(ng-if="isEntryArray(entry, field)" ui-sref="{{entityNavState}}")
           | {{entity}}
         div.file-preview(ng-if="isAssetArray(entry, field)" cf-file-preview file="entity" preview-size="400")
-          .cf-thumbnail(cf-thumbnail file="file" size="30" fit="thumb" focus="faces")
+          a.entity-list-link(ui-sref="{{entityNavState}}")
+            .cf-thumbnail(cf-thumbnail file="file" size="30" fit="thumb" focus="faces")
 
       li(ng-if="isEntryArray(entry, field) && countArrayHiddenItems(entry, field)")
         | + {{countArrayHiddenItems(entry, field)}} more items
@@ -26,5 +36,5 @@ ng-switch(on="displayType(field)")
       li.asset-count(ng-if="isAssetArray(entry, field) && countArrayHiddenItems(entry, field)")
         | +{{countArrayHiddenItems(entry, field)}}
 
-  span(ng-switch-default) {{dataForField(entry, field)}}
+  a.entity-list-link(ng-switch-default ui-sref="{{entityNavState}}") {{dataForField(entry, field)}}
 
