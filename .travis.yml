@@ -54,7 +54,7 @@ deploy:
   on:
     all_branches: true
 after_deploy:
-  - curl -X POST -u "$CF_DEPLOY_CREDENTIALS" https://deploy.quirely.com/deploy_ui -d "{ \"sha\": \"$TRAVIS_COMMIT\" }"
+  - ./bin/trigger-deploy-quirely
 notifications:
   slack:
     secure: lc+kwmitAcp5htZI5ETV5x5ZwP0TGzJKwenaMMyqGCCUlDgK76hBirkg9LgBhG5500Kks+udT6flZLJ0p/gNvbgqEaCR1GZBmCdneqxpkow8kAy2HUGR1MmkA3+zs1YMJ4Rp3nC78ygVKPzreqgEpmfCovYls0PmpO37khqzBnY=
