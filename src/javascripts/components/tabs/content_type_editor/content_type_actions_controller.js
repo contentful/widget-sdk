@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * @ngdoc controller
+ * @name ContentTypeActionsController
+ *
+ * @scope.requires {client.ContentType} contentType
+ * @scope.requires                      spaceContext
+ */
 angular.module('contentful').
   controller('ContentTypeActionsController', ['$scope', '$injector', function ContentTypeActionsController($scope, $injector) {
   var $rootScope   = $injector.get('$rootScope');
@@ -11,6 +18,10 @@ angular.module('contentful').
     return '"' + $scope.contentType.getName()+ '"';
   }
 
+  /**
+   * @ngdoc method
+   * @name ContentTypeActionsController#scope#delete
+   */
   $scope.delete = function () {
     $scope.contentType.delete()
     .then(function(contentType){
@@ -23,6 +34,10 @@ angular.module('contentful').
     });
   };
 
+  /**
+   * @ngdoc method
+   * @name ContentTypeActionsController#scope#publish
+   */
   $scope.publish = function () {
     $scope.regulateDisplayField();
     if (!$scope.validate()) {
@@ -33,6 +48,26 @@ angular.module('contentful').
     .then(saveSuccessHandler)
     .catch(saveErrorHandler);
   };
+
+  /**
+   * @ngdoc method
+   * @name ContentTypeActionsController#scope#canPublish
+   */
+  $scope.canPublish = function () {
+    var entityActions = $scope.entityActionsController;
+    return $scope.contentTypeForm.$dirty && entityActions.canPublish();
+  };
+
+  /**
+   * @ngdoc method
+   * @name ContentTypeActionsController#scope#unpublish
+   */
+  $scope.unpublish = function () {
+    $scope.contentType.unpublish()
+    .then(unpublishSuccessHandler)
+    .catch(unpublishErrorHandler);
+  };
+
 
   function saveSuccessHandler(contentType) {
     var version = contentType.getVersion();
@@ -86,12 +121,6 @@ angular.module('contentful').
       logger.logServerWarn('Error activating Content Type', {error: err});
     }
   }
-
-  $scope.unpublish = function () {
-    $scope.contentType.unpublish()
-    .then(unpublishSuccessHandler)
-    .catch(unpublishErrorHandler);
-  };
 
   function unpublishSuccessHandler(publishedContentType){
     $scope.updatePublishedContentType(null);
