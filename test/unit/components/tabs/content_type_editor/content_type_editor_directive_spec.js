@@ -67,7 +67,7 @@ describe('The ContentType editor directive', function () {
     });
 
     it('field list is not shown', function () {
-      expect(container.find('.content-type-field-list')).toBeNgHidden();
+      expect(container.find('.content-type__fields')).toBeNgHidden();
     });
 
     it('advice is shown', function () {

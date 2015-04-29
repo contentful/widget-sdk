@@ -62,7 +62,7 @@
     .l-form-row
       label(ng-show="hasFields") Fields
       .l-form-controls
-        cf-content-type-field-list.u-bce.content-type-field-list(ng-show="hasFields")
+        div.content-type__fields(ng-show="hasFields" cf-template="content_type_field_list")
         cf-error-list.form-box-error(cf-error-path="['fields']")
         .advice(ng-hide="hasFields")
           .advice__frame

@@ -1,6 +1,16 @@
-div(ui-sortable="fieldListSortOptions" ng-model="contentType.data.fields")
-  cf-field-settings-editor.u-bce.cf-field-settings-editor(ng-repeat="(index, field) in contentType.data.fields track by field.id"
-    ng-class="{open: isAccordionItemOpen(field), active: !field.disabled }"
+ul(cf-ui-sortable ng-model="contentType.data.fields")
+  li.content-type__field(
+    ng-controller="FieldSettingsEditorController"
+    ng-repeat="(index, field) in contentType.data.fields track by field.id"
     ng-hide="field.disabled && !preferences.showDisabledFields"
-    data-field-id="{{field.id}}"
-    ng-click="accordionItemClicked(field)")
+    data-drag-item
+  )
+
+    .ct__field__name
+      |{{field | displayedFieldName}}
+    .ct__field__type
+      | {{field.type}}
+    a.ct__field__edit(ng-click="openSettingsDialog()")
+      | Settings
+    .ct__field__drag-handle(data-drag-handle)
+      i.fa.fa-bars
