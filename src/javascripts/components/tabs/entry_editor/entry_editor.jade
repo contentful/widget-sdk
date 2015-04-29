@@ -55,7 +55,7 @@
             ot-field-presence="['fields', field.id, locale.code]"
             data-locale="{{locale.code}}")
           cf-widget-renderer.l-field-editor(
-            cf-focus-ot-input="widgetIndex===0"
+            cf-focus-ot-input="shouldFocusField()"
             ot-path="['fields', field.id, locale.code]"
             cf-field-editor="entry.data.fields[field.id][locale.code]")
           .locale-label(ng-show="locales.length > 1") {{locale.name}}
