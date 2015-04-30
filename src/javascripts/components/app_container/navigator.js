@@ -354,6 +354,7 @@ angular.module('contentful').config([
       $location    = $injector.get('$location'),
       notification = $injector.get('notification'),
       tokenStore   = $injector.get('tokenStore'),
+      spacesStore  = $injector.get('spacesStore'),
       // Result of confirmation dialog
       navigationConfirmed = false;
 
@@ -443,29 +444,32 @@ angular.module('contentful').config([
 
   function navigateToInitialSpace(spaceId) {
     tokenStore.getSpaces().then(function (spaces) {
-      var space = determineInitialSpace(spaces, spaceId);
-      if(space)
+      var space = determineInitialSpace(spaces, spaceId, spacesStore.getLastUsedSpace());
+      if(space) {
+        spacesStore.saveSelectedSpace(space.getId());
         $rootScope.$state.go('spaces.detail', { spaceId: space.getId() });
-      else
+      } else {
         $location.url('/');
+      }
     });
   }
 
-  function determineInitialSpace(spaces, toSpaceId) {
+  function determineInitialSpace(spaces, toSpaceId, lastUsedSpace) {
     var space;
     if (toSpaceId) {
-      space = _.find(spaces, function (space) {
-        return space.getId() === toSpaceId;
-      });
-      if (!space) {
+      space = spacesStore.getSpaceFromList(toSpaceId, spaces);
+      if(space) {
+        return space;
+      } else {
         notification.warn('Space does not exist or is unaccessable');
-        space = spaces[0];
       }
-    } else {
-      space = spaces[0];
+    } else if(lastUsedSpace){
+      space = spacesStore.getSpaceFromList(lastUsedSpace, spaces);
+      if(space) {
+        return space;
+      }
     }
-
-    return space;
+    return spaces[0];
   }
 
   function getAddToContext(params) {
