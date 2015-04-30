@@ -26,8 +26,8 @@ angular.module('contentful').config([
   });
 
   $stateProvider.state('spaces', {
-    abstract: true,
     url: '/spaces',
+    abstract: true,
     resolve: {
       spaces: function (tokenStore) {
         return tokenStore.getSpaces();
@@ -38,36 +38,40 @@ angular.module('contentful').config([
       'main-nav-bar': { template: '<cf-main-nav-bar/>' }
     }
   })
+
   .state('spaces.detail', {
-    template: '<cf-breadcrumbs></cf-breadcrumbs><div class="view-content" ui-view></div>',
     url: '/:spaceId',
-    ncyBreadcrumb: {
-      label: '{{label}}'
-    },
     resolve: {
       space: function (tokenStore, $stateParams) {
         return tokenStore.getSpace($stateParams.spaceId);
       }
     },
+    ncyBreadcrumb: {
+      label: '{{label}}'
+    },
     controller: function ($scope, space) {
       $scope.label = space.data.name;
-    }
+    },
+    template: '<cf-breadcrumbs></cf-breadcrumbs><div class="view-content" ui-view></div>'
   })
+
   .state('spaces.detail.entries', {
+    url: '/entries',
     abstract: true,
-    template: '<ui-view/>',
-    url: '/entries'
+    template: '<ui-view/>'
   })
+
   .state('spaces.detail.entries.list', {
     url: '',
-    template: '<div cf-entry-list class="entry-list entity-list"></div>',
     ncyBreadcrumb: {
       label: 'Entries'
     },
     controller: function ($scope) {
       $scope.context = {};
-    }
+    },
+    template: '<div cf-entry-list class="entry-list entity-list"></div>'
   })
+
   .state('spaces.detail.entries.detail', {
     url: '/:entryId',
     params: {
@@ -76,15 +80,6 @@ angular.module('contentful').config([
         squash: '~'
       }
     },
-    template:
-    '<div ' + [
-      'cf-entry-editor',
-      'class="entry-editor entity-editor with-tab-actions"',
-      'ot-doc-for="entry"',
-      'cf-validate="entry.data"', 'cf-entry-schema',
-      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"',
-      'ot-doc-presence'
-    ].join(' ') + '></div>',
     ncyBreadcrumb: {
       parent: 'spaces.detail.entries.list',
       label: '{{context.title + (context.dirty ? "*" : "")}}'
@@ -108,20 +103,32 @@ angular.module('contentful').config([
         }
         $scope.$root.contextHistory.push(entry);
       }
-    }
+    },
+    template:
+    '<div ' + [
+      'cf-entry-editor',
+      'class="entry-editor entity-editor with-tab-actions"',
+      'ot-doc-for="entry"',
+      'cf-validate="entry.data"', 'cf-entry-schema',
+      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"',
+      'ot-doc-presence'
+    ].join(' ') + '></div>'
   })
+
   .state('spaces.detail.assets', {
+    url: '/assets',
     abstract: true,
-    template: '<ui-view/>',
-    url: '/assets'
+    template: '<ui-view/>'
   })
+
   .state('spaces.detail.assets.list', {
     url: '',
-    template: '<div cf-asset-list class="asset-list entity-list"></div>',
     ncyBreadcrumb: {
       label: 'Media Library'
-    }
+    },
+    template: '<div cf-asset-list class="asset-list entity-list"></div>'
   })
+
   .state('spaces.detail.assets.detail', {
     url: '/:assetId',
     params: {
@@ -130,15 +137,6 @@ angular.module('contentful').config([
         squash: '~'
       }
     },
-    template:
-    '<div cf-asset-editor ' + [
-      'cf-asset-editor',
-      'class="asset-editor entity-editor with-tab-actions"',
-      'ot-doc-for="asset"',
-      'cf-validate="asset.data"', 'cf-asset-schema',
-      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"',
-      'ot-doc-presence',
-    ].join(' ') + '></div>',
     ncyBreadcrumb: {
       parent: 'spaces.detail.assets.list',
       label: '{{context.title + (context.dirty ? "*" : "")}}'
@@ -162,27 +160,38 @@ angular.module('contentful').config([
         }
         $scope.$root.contextHistory.push(asset);
       }
-    }
+    },
+    template:
+    '<div cf-asset-editor ' + [
+      'cf-asset-editor',
+      'class="asset-editor entity-editor with-tab-actions"',
+      'ot-doc-for="asset"',
+      'cf-validate="asset.data"', 'cf-asset-schema',
+      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"',
+      'ot-doc-presence',
+    ].join(' ') + '></div>'
   })
+
   .state('spaces.detail.content_types', {
+    url: '/content_types',
     abstract: true,
-    template: '<ui-view/>',
-    url: '/content_types'
+    template: '<ui-view/>'
   })
+
   .state('spaces.detail.content_types.list', {
     url: '',
-    template: '<div cf-content-type-list class="content-type-list entity-list"></div>',
     ncyBreadcrumb: {
       label: 'Content Types'
     },
     controller: function ($scope) {
       $scope.context = {};
-    }
+    },
+    template: '<div cf-content-type-list class="content-type-list entity-list"></div>'
   })
+
   .state('spaces.detail.content_types.detail', {
-    abstract: true,
     url: '/:contentTypeId',
-    template: '<ui-view/>',
+    abstract: true,
     resolve: {
       contentType: function ($stateParams, space) {
         return space.getContentType($stateParams.contentTypeId);
@@ -190,10 +199,19 @@ angular.module('contentful').config([
     },
     controller: function ($scope, contentType) {
       $scope.contentType = contentType;
-    }
+    },
+    template: '<ui-view/>'
   })
+
   .state('spaces.detail.content_types.detail.editor', {
     url: '',
+    ncyBreadcrumb: {
+      parent: 'spaces.detail.content_types.list',
+      label: '{{contentType.getName() + (context.dirty ? "*" : "")}}'
+    },
+    controller: function ($state, $scope) {
+      $state.current.data = $scope.context = {};
+    },
     template:
     '<div ' + [
       'cf-content-type-editor',
@@ -201,21 +219,11 @@ angular.module('contentful').config([
       'ot-doc-for="contentType"',
       'cf-validate="contentType.data"', 'cf-content-type-schema',
       'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"',
-    ].join(' ') + '></div>',
-    ncyBreadcrumb: {
-      parent: 'spaces.detail.content_types.list',
-      label: '{{contentType.getName() + (context.dirty ? "*" : "")}}'
-    },
-    controller: function ($state, $scope) {
-      $state.current.data = $scope.context = {};
-    }
+    ].join(' ') + '></div>'
   })
+
   .state('spaces.detail.content_types.detail.editing_interface', {
     url: '/editing_interface',
-    template:
-      '<div cf-editing-interface-editor ' +
-        'class="editing-interface-editor with-tab-actions">' +
-      '</div>',
     ncyBreadcrumb: {
       parent: 'spaces.detail.content_types.detail.editor',
       label: 'Configure Fields'
@@ -228,60 +236,53 @@ angular.module('contentful').config([
     controller: function ($state, $scope, editingInterface) {
       $state.current.data = $scope.context = {};
       $scope.editingInterface = editingInterface;
-    }
+    },
+    template: '<div cf-editing-interface-editor class="editing-interface-editor with-tab-actions"></div>'
   })
+
   .state('spaces.detail.api', {
-    abstract: true,
     url: '/api',
+    abstract: true,
     template: '<ui-view/>'
   })
+
   .state('spaces.detail.api.home', {
     url: '',
     ncyBreadcrumb: {
       label: 'APIs'
     },
-    template:
-      '<div cf-api-home ' +
-        'class="api-home">' +
-      '</div>'
+    template: '<div cf-api-home class="api-home"></div>'
   })
+
   .state('spaces.detail.api.content_model', {
     url: '/content_model',
     ncyBreadcrumb: {
       label: 'Content Model',
       parent: 'spaces.detail.api.home'
     },
-    template:
-      '<div cf-content-model ' +
-        'class="content-model entity-list">' +
-      '</div>',
     controller: function ($scope) {
       $scope.context = {};
-    }
+    },
+    template: '<div cf-content-model class="content-model entity-list"></div>'
   })
+
   .state('spaces.detail.api.keys', {
     abstract: true,
     url: '/keys',
     template: '<ui-view/>'
   })
+
   .state('spaces.detail.api.keys.list', {
     url: '',
     ncyBreadcrumb: {
       label: 'Delivery Keys',
       parent: 'spaces.detail.api.home'
     },
-    template:
-      '<div cf-api-key-list ' +
-        'class="api-key-list entity-list">' +
-      '</div>'
+    template: '<div cf-api-key-list class="api-key-list entity-list"></div>'
   })
+
   .state('spaces.detail.api.keys.detail', {
     url: '/:apiKeyId',
-    template:
-    '<div cf-api-key-editor ' +
-      'class="api-key--editor entity-editor with-tab-actions"' +
-      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}">' +
-    '</div>',
     ncyBreadcrumb: {
       parent: 'spaces.detail.api.keys.list',
       label: '{{context.title + (context.dirty ? "*" : "")}}'
@@ -297,16 +298,20 @@ angular.module('contentful').config([
     controller: function ($state, $scope, $stateParams, apiKey) {
       $state.current.data = $scope.context = {};
       $scope.apiKey = apiKey;
-    }
+    },
+    template:
+    '<div cf-api-key-editor ' +
+      'class="api-key--editor entity-editor with-tab-actions"' +
+      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}">' +
+    '</div>'
   })
+
   .state('spaces.detail.settings', {
     url: '/settings',
     abstract: true,
-    template:
-    '<div cf-space-settings ' +
-      'class="space-settings">' +
-    '</div>'
+    template: '<div cf-space-settings class="space-settings"></div>'
   })
+
   .state('spaces.detail.settings.pathSuffix', {
     url: '/{pathSuffix:PathSuffix}',
     params: {
@@ -316,18 +321,17 @@ angular.module('contentful').config([
       label: 'Settings'
     }
   })
+
   .state('account', {
     url: '/account',
     abstract: true,
     views: {
       'app-container': {
-        template:
-        '<div cf-account-view ' +
-          'class="account-view view-content">' +
-        '</div>'
+        template: '<div cf-account-view class="account-view view-content"></div>'
       }
     }
   })
+
   .state('account.pathSuffix', {
     url: '/{pathSuffix:PathSuffix}',
     params: {
@@ -337,17 +341,13 @@ angular.module('contentful').config([
       label: 'Account'
     }
   })
+
   .state('otherwise', {
     url: '*path',
     template: ''
   });
 }])
 .run(['$rootScope', '$state', '$stateParams', '$injector', function ($rootScope, $state, $stateParams, $injector) {
-  $rootScope.$state = $state;
-  $rootScope.$stateParams = $stateParams;
-  $rootScope.spacesLoaded = false;
-  $rootScope.contextHistory = [];
-
   var modalDialog  = $injector.get('modalDialog'),
       $q           = $injector.get('$q'),
       $document    = $injector.get('$document'),
@@ -358,17 +358,36 @@ angular.module('contentful').config([
       // Result of confirmation dialog
       navigationConfirmed = false;
 
-  $rootScope.goToEntityState = function (entity, addToContext) {
-    if (entity.getType() === 'Entry') {
-      this.$state.go('spaces.detail.entries.detail', { entryId: entity.getId(), addToContext: addToContext });
-    } else if (entity.getType === 'Asset') {
-      this.$state.go('spaces.detail.assets.detail', { assetId: entity.getId(), addToContext: addToContext });
-    }
-  };
+  $rootScope.$state = $state;
+  $rootScope.$stateParams = $stateParams;
+  $rootScope.contextHistory = [];
 
-  $rootScope.closeState = function () {
-    var currentState = this.$state.$current,
-        contextHistory = this.contextHistory;
+  $rootScope.$watch('$state.current.ncyBreadcrumbLabel', function (label) {
+    $document[0].title = label || 'Contentful';
+  });
+
+  $rootScope.$on('$stateChangeStart', stateChangeStartHandler);
+  $rootScope.$on('$stateChangeError', stateChangeErrorHandler);
+  $rootScope.$on('$stateNotFound', stateChangeErrorHandler);
+
+  $rootScope.goToEntityState = goToEntityState;
+  $rootScope.closeState = closeState;
+
+  function goToEntityState(entity, addToContext) {
+    if (entity.getType() === 'Entry') {
+      $rootScope.$state.go('spaces.detail.entries.detail', {
+        entryId: entity.getId(), addToContext: addToContext
+      });
+    } else if (entity.getType === 'Asset') {
+      $rootScope.$state.go('spaces.detail.assets.detail', {
+        assetId: entity.getId(), addToContext: addToContext
+      });
+    }
+  }
+
+  function closeState() {
+    var currentState = $rootScope.$state.$current,
+        contextHistory = $rootScope.contextHistory;
 
     confirmNavigation(currentState).then(function () {
       contextHistory.pop();
@@ -378,56 +397,50 @@ angular.module('contentful').config([
         $rootScope.$state.go((currentState.ncyBreadcrumb && currentState.ncyBreadcrumb.parent) || '');
       }
     });
-  };
+  }
 
-  $rootScope.$on('$stateChangeStart', function (event, toState, toStateParams, fromState, fromStateParams) {
-    if (fromState.name === toState.name && getAddToContext(fromStateParams) === getAddToContext(toStateParams)) {
+  function stateChangeStartHandler(event, toState, toStateParams, fromState, fromStateParams) {
+    if (fromState.name === toState.name &&
+        getAddToContext(fromStateParams) === getAddToContext(toStateParams)) {
       event.preventDefault();
       return;
     }
 
-    function preprocessChange() {
-      if (!toStateParams.addToContext) {
-        $rootScope.contextHistory.length = 0;
-      }
-      // Some redirects away from nonexistent pages
-      switch(toState.name) {
-        case 'spaces.detail':
-          event.preventDefault();
-          if(_.isEmpty(toStateParams.spaceId))
-            navigateToInitialSpace();
-          else
-            $rootScope.$state.go('spaces.detail.entries.list', toStateParams); break;
-        case 'otherwise':
-        case 'spaces':
-          event.preventDefault();
-          navigateToInitialSpace(toStateParams.spaceId);
-          break;
-        default:
-          if (navigationConfirmed) { $rootScope.$state.go(toState.name, toStateParams); }
-      }
-    }
-
     // Decide if it is OK to do the transition (unsaved changes etc)
-    if (!navigationConfirmed && fromState.data && fromState.data.dirty && fromState.data.closingMessage) {
+    if (!navigationConfirmed && dotty.get(fromState, 'data.dirty') && dotty.exists(fromState, 'data.closingMessage')) {
       event.preventDefault();
       navigationConfirmed = false;
       confirmNavigation(fromState).then(function () {
         navigationConfirmed = true;
-        preprocessChange();
+        preprocessStateChange(event, toState, toStateParams);
       });
     } else {
       navigationConfirmed = false;
-      preprocessChange();
+      preprocessStateChange(event, toState, toStateParams);
     }
-  });
+  }
 
-  $rootScope.$watch('$state.current.ncyBreadcrumbLabel', function (label) {
-    $document[0].title = label || 'Contentful';
-  });
-
-  $rootScope.$on('$stateChangeError', stateChangeErrorHandler);
-  $rootScope.$on('$stateNotFound', stateChangeErrorHandler);
+  function preprocessStateChange(toState, toStateParams) {
+    if (!toStateParams.addToContext) {
+      $rootScope.contextHistory.length = 0;
+    }
+    // Some redirects away from nonexistent pages
+    switch(toState.name) {
+      case 'spaces.detail':
+        event.preventDefault();
+        if(_.isEmpty(toStateParams.spaceId))
+          navigateToInitialSpace();
+        else
+          $rootScope.$state.go('spaces.detail.entries.list', toStateParams); break;
+      case 'otherwise':
+      case 'spaces':
+        event.preventDefault();
+        navigateToInitialSpace(toStateParams.spaceId);
+        break;
+      default:
+        if (navigationConfirmed) { $rootScope.$state.go(toState.name, toStateParams); }
+    }
+  }
 
   /**
    * Switches to the first space's entry list if there is a navigation error
