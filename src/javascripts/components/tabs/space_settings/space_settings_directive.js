@@ -13,11 +13,15 @@ angular.module('contentful').directive('cfSpaceSettings', ['$window', '$rootScop
         if (data.path && data.action === 'update') internalNavigationTo(data.path, data);
       });
 
+      scope.$watch('$stateParams.pathSuffix', function (pathSuffix) {
+        if (pathSuffix && (pathSuffix !== extractPathSuffix(scope.url))) loadGatekeeperView();
+      });
+
       scope.hasLoaded = false;
 
-      init();
+      loadGatekeeperView();
 
-      function init() {
+      function loadGatekeeperView() {
         var pathSuffix = scope.$stateParams.pathSuffix;
         var url = buildUrl(pathSuffix);
         if (!urlIsActive(url)) {

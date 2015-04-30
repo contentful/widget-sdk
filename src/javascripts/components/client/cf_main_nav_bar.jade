@@ -44,8 +44,31 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
       ng-if="canNavigateTo.settings")
       a.nav-bar__link.app-top-bar__dropdown-toggle(
           data-view-type="space-settings"
-          ng-hide="permissionController.get('updateSettings', 'shouldHide')"
           cf-dropdown-toggle="navbar.settings"
           ng-class="{'is-active': $state.includes('spaces.detail.settings')}")
         cf-icon(name="nav-settings")
         span.nav-bar__list-label Settings
+        cf-icon.icon-dd-arrow-down.pull-right(name="dd-arrow-down" size="10")
+      .app-top-bar__dropdown-menu.cfnext-dropdown(cf-dropdown-menu="navbar.settings" cf-dropdown-position="fixed")
+        cf-icon.cfnext-dropdown__arrow.center-aligned(cf-dropdown-arrow name="arrow-up" size="15")
+        ul.cfnext-dropdown__list--first
+          li.cfnext-dropdown__item(
+            cf-dropdown-close
+            ng-class="{'selected': $stateParams.pathSuffix === 'edit'}"
+            ui-sref="spaces.detail.settings.iframe.pathSuffix({ pathSuffix: 'edit' })") Space
+          li.cfnext-dropdown__item(
+            cf-dropdown-close
+            ng-class="{'selected': $state.includes('spaces.detail.settings.locales')}"
+            ui-sref="spaces.detail.settings.locales.list") Languages
+          li.cfnext-dropdown__item(
+            dropdown-close
+            ng-class="{'selected': $stateParams.pathSuffix === 'users'}"
+            ui-sref="spaces.detail.settings.iframe.pathSuffix({ pathSuffix: 'users' })") Users
+          li.cfnext-dropdown__item(
+            dropdown-close
+            ng-class="{'selected': $stateParams.pathSuffix === 'roles'}"
+            ui-sref="spaces.detail.settings.iframe.pathSuffix({ pathSuffix: 'roles' })") Roles
+          li.cfnext-dropdown__item(
+            dropdown-close
+            ng-class="{'selected': $stateParams.pathSuffix === 'webhook_definitions'}"
+            ui-sref="spaces.detail.settings.iframe.pathSuffix({ pathSuffix: 'webhook_definitions' })") Webhooks

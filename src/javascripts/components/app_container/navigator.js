@@ -360,7 +360,7 @@ angular.module('contentful').config([
   .state('spaces.detail.settings.locales.list', {
     url: '',
     ncyBreadcrumb: {
-      label: 'Language Settings'
+      label: 'Languages'
     },
     template:
       '<div cf-locale-list ' +
@@ -427,7 +427,16 @@ angular.module('contentful').config([
       pathSuffix: 'edit'
     },
     ncyBreadcrumb: {
-      label: 'Settings'
+      label: '{{title}}'
+    },
+    template: '',
+    controller: function ($scope, $stateParams) {
+      $scope.title = {
+        edit: 'Space',
+        users: 'Users',
+        roles: 'Roles',
+        webhook_definitions: 'Webhooks'
+      }[$stateParams.pathSuffix];
     }
   });
 
