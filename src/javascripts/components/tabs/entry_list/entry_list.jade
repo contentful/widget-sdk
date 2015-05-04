@@ -28,7 +28,7 @@
             ng-hide="!singleContentType || permissionController.get('createEntry', 'shouldHide')"
             ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
             cf-when-disabled="permissionController.entityActions.createEntry"
-            ng-click="entityCreationController.newEntry(singleContentType, 'frameButton')")
+            ng-click="entityCreationController.newEntry(singleContentType)")
       i.fa.fa-plus.button-icon
       | Add New {{singleContentType.getName()}}
     .dropdown-btn(ng-hide="singleContentType")
@@ -41,7 +41,7 @@
       .dropdown-menu(cf-dropdown-menu="entryList.add" cf-dropdown-position="bottomcenter")
         ul.add-entity__list
           li.dropdown-menu-item.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
-                   ng-click="entityCreationController.newEntry(contentType, 'frameButton')"
+                   ng-click="entityCreationController.newEntry(contentType)"
                    cf-dropdown-close)
             i.fa.fa-plus
             | {{contentType.getName()}}
@@ -93,7 +93,7 @@
         header.advice__title You have no Entries yet.
         p.advice__description(ng-show="spaceContext.publishedContentTypes.length == 0")
           | Entries are your content itself. These depend on the field types you created in the Content Type editor.
-        button.btn.btn--primary(type="button" ng-click="entityCreationController.newContentType('frameButton')"
+        button.btn.btn--primary(type="button" ng-click="entityCreationController.newContentType()"
             ng-hide="spaceContext.publishedContentTypes.length > 0 || permissionController.get('createContentType', 'shouldHide')"
             ng-disabled="permissionController.get('createContentType', 'shouldDisable')"
             cf-when-disabled="permissionController.entityActions.createContentType")
@@ -103,7 +103,7 @@
                   ng-hide="!singleContentType || permissionController.get('createEntry', 'shouldHide')"
                   ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
                   cf-when-disabled="permissionController.entityActions.createEntry"
-                  ng-click="entityCreationController.newEntry(singleContentType, 'frameButton')")
+                  ng-click="entityCreationController.newEntry(singleContentType)")
             i.fa.fa-plus.button-icon
             | Add New {{singleContentType.getName()}}
           button.btn.btn--primary(

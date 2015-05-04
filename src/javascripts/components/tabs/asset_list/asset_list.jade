@@ -25,7 +25,7 @@
         | Add New Asset
       .dropdown-menu(cf-dropdown-menu="assetList.add" cf-dropdown-position="bottomcenter" container=".view-content")
         ul.add-entity__list
-          li.dropdown-menu-item.type(ng-click="entityCreationController.newAsset('frameButton')" cf-dropdown-close)
+          li.dropdown-menu-item.type(ng-click="entityCreationController.newAsset()" cf-dropdown-close)
             i.fa.fa-plus.add-entity__icon
             | Single Asset
           li.dropdown-menu-item.type(ng-click="createMultipleAssets()" cf-dropdown-close)
@@ -94,7 +94,7 @@
             | Create an Asset
           .dropdown-menu(cf-dropdown-menu="assetList.addFromFrame" cf-dropdown-position="bottomcenter")
             ul.add-entity__list
-              li.dropdown-menu-item.type(ng-click="entityCreationController.newAsset('frameButton')" cf-dropdown-close)
+              li.dropdown-menu-item.type(ng-click="entityCreationController.newAsset()" cf-dropdown-close)
                 i.fa.fa-plus
                 | Single Asset
               li.dropdown-menu-item.type(ng-click="createMultipleAssets()" cf-dropdown-close)
