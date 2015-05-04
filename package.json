@@ -22,7 +22,7 @@
     "dgeni-packages": "^0.10.13",
     "dotty": "0.0.2",
     "express": "^4.8.0",
-    "file-size": "git+ssh://git@github.com:trodrigues/file-size.git",
+    "file-size": "^1.0.0",
     "front-matter": "^1.0.0",
     "gulp": "~3.8.10",
     "gulp-awspublish": "0.0.23",
