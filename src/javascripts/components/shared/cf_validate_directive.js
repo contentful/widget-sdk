@@ -3,7 +3,9 @@
 /**
  * @ngdoc directive
  * @name cfValidate
- * @controller ValidationController
+ *
+ * @property {Error[]}  $scope.validationResult.errors
+ * @property {boolean} $scope.validationResult.valid
  */
 angular.module('contentful').directive('cfValidate', [function () {
   return {
@@ -21,7 +23,9 @@ function ValidationController ($scope, $attrs) {
 
   /**
    * @ngdoc method
-   * @name cfValidate#validate
+   * @name cfValidate#$scope.validate
+   * @description
+   * Validates the data and updates `$scope.validationResult`.
    */
   $scope.validate = function () {
     var data = getData();

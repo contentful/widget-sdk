@@ -105,7 +105,7 @@ gulp.task('components', ['bower-install'], function() {
 
 
 gulp.task('bower-install', function() {
-  var bowerTask = bower.commands.install([], {}, {cwd: __dirname});
+  var bowerTask = bower.commands.install();
   bowerTask.on('log', function (result) {
     log('bower:', result.id, result.data.endpoint.name);
   });

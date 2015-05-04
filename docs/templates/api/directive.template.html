@@ -8,7 +8,7 @@
     {% for prop in doc.scopeProvides %}
       <li>
         <h3>
-          <code> {$ prop | memberSyntax('$scope') $}</code>
+          <code>{$ prop | memberSyntax('$scope') $}</code>
         </h3>
         <div class="api-members-description">{$ prop.description $}</div>
       </li>
@@ -16,13 +16,15 @@
   </ul>
 {% endif %}
 
+{% include "lib/members.template.html" %}
+
 {% if doc.scopeRequires %}
 <h2>Requires</h2>
 <ul class="api-members">
   {% for prop in doc.scopeRequires %}
     <li>
       <h3>
-        <code> {$ prop | memberSyntax('$scope') $}</code>
+        <code>{$ prop | memberSyntax('$scope') $}</code>
       </h3>
       <div class="api-members-description">{$ prop.description $}</div>
     </li>

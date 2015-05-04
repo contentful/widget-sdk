@@ -2,6 +2,12 @@
   <h1>{$ doc.name $}</h1>
 </header>
 
+{% if doc.usage %}
+  <div class="api-profile-usage">
+    {$ doc.usage | codeBlock(doc.usageLang) $}
+  </div>
+{% endif %}
+
 <div class="api-profile-description">
   {$ doc.description | marked $}
 </div>
@@ -28,11 +34,10 @@
 {% endif -%}
 
 
-<h2 id="api-source">
-  Source
-  <a class="icon-link fa fa-github" href="{$ doc.gitUrl $}"></a>
-</h2>
-{% codeblock "javascript" %}
-{$ doc.source $}
-{% endcode %}
-
+{% if doc.source %}
+  <h2 id="api-source">
+    Source
+    <a class="icon-link fa fa-github" href="{$ doc.gitUrl $}"></a>
+  </h2>
+  {$ doc.source | codeBlock("javascript") $}
+{% endif %}

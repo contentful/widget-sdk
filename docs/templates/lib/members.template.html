@@ -5,17 +5,8 @@
 <ul class="api-members">
   {%- for method in doc.methods %}
   <li id="{$ method.name $}">
-    <h3><code>{$ method | functionSyntax $}</code></h3>
+    <h3><code>{$ method | memberSyntax | escape $}</code></h3>
     <div>{$ method.description | marked $}</div>
-
-    {% if method.params %}
-    {$ paramTable(method.params) $}
-    {% endif %}
-
-    {% if method.this %}
-    <h4>Method's {% code %}this{% endcode %}</h4>
-    {$ method.this | marked $}
-    {% endif %}
   </li>
   {% endfor -%}
 </ul>
@@ -25,7 +16,8 @@
 <ul class="api-members">
   {%- for property in doc.properties %}
   <li id="{$ property.name $}">
-    <h3><code>{$ property | memberSyntax $}<code></h3>
+    <h3><code>{$ property | memberSyntax $}</code></h3>
+    <div>{$ method.description | marked $}</div>
   </li>
   {% endfor -%}
   </ul>
