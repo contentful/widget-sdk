@@ -29,7 +29,7 @@
     "gulp-clean": "^0.3.1",
     "gulp-concat": "~2.4.2",
     "gulp-debug": "~1.0.1",
-    "gulp-fingerprint": "git://github.com/janv/gulp-fingerprint#sourcemaps",
+    "gulp-fingerprint": "git://github.com/contentful/gulp-fingerprint#sourcemaps",
     "gulp-if": "^1.2.1",
     "gulp-inject": "~1.0.2",
     "gulp-jade": "~0.10.0",
