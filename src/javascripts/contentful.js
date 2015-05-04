@@ -12,6 +12,7 @@ angular.module('contentful', [
   'contentful/environment',
   'contentful/user_interface',
   'cf.ui',
+  'cf.forms',
   'angularLoad',
   'ngAnimate',
   'ngSanitize',
