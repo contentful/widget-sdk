@@ -7,8 +7,8 @@
  * @property {Error[]}  $scope.validationResult.errors
  * @property {boolean} $scope.validationResult.valid
  *
- * @scope.requires {(any) => Array<Error>} schema.errors
- * @scope.requires {(Error) => string} schema.buildMessage
+ * @scope.requires  schema.errors
+ * @scope.requires  schema.buildMessage
  */
 angular.module('contentful').directive('cfValidate', [function () {
   return {

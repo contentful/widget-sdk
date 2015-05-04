@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @ngdoc controller
+ * @ngdoc type
  * @name ContentTypeActionsController
  *
  * @scope.requires {client.ContentType} contentType
@@ -20,7 +20,7 @@ angular.module('contentful').
 
   /**
    * @ngdoc method
-   * @name ContentTypeActionsController#scope#delete
+   * @name ContentTypeActionsController#delete
    */
   $scope.delete = function () {
     $scope.contentType.delete()
@@ -36,7 +36,7 @@ angular.module('contentful').
 
   /**
    * @ngdoc method
-   * @name ContentTypeActionsController#scope#publish
+   * @name ContentTypeActionsController#publish
    */
   $scope.publish = function () {
     $scope.regulateDisplayField();
@@ -51,7 +51,7 @@ angular.module('contentful').
 
   /**
    * @ngdoc method
-   * @name ContentTypeActionsController#scope#canPublish
+   * @name ContentTypeActionsController#canPublish
    */
   $scope.canPublish = function () {
     var entityActions = $scope.entityActionsController;
