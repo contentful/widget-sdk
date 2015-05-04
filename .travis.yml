@@ -23,7 +23,7 @@ before_install:
 - npm config set always-auth true
 - npm config set _auth Y2ZkOjBlOWNhYWYyYjExMTliYjdkZjY=
 - npm config set registry https://contentful.registry.nodejitsu.com/
-- npm install npm@2.7.6
+- npm install -g npm@2.7.6
 install:
 - npm prune
 - bin/install_slimerjs
