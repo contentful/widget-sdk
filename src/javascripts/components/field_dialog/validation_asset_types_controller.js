@@ -21,6 +21,7 @@ angular.module('contentful')
 
   controller.update = function() {
     $scope.validation.settings = getSelectedGroups();
+    $scope.validate();
   };
 
   function getSelectedGroups() {

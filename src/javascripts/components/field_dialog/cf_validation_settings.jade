@@ -1,67 +1,90 @@
+mixin validation-errors
+    cf-error-list.form-inline-error(
+      cf-error-messages="$form.errorMessages"
+      aria-label="Errors"
+    )
+
+mixin error-message-input
+  label.validation-controls__error-message-input
+    | Custom error message
+    input.form-control(
+      type="text" aria-label="Custom error message"
+      ng-model="validation.message")
+
+mixin select
+  select.cfnext-select-box&attributes(attributes)
+    block
+  i.cfnext-select-box-icon.fa.fa-angle-down
+
+mixin view-select
+  .validation-controls__view-select
+    +select(
+      aria-label="Select condition"
+      ng-model="validation.currentView" cf-no-form
+      ng-options="v.name as v.label for v in validation.views"
+    )&attributes(attributes)
+
+
 h2.validation-settings__header
   label.validation-settings__toggle
     span.validation-settings__toggle-input-wrapper
-      input(type="checkbox" aria-label="{{validation.enabled ? 'Disable' : 'Enable'}} validation"
-            ng-model="validation.enabled")
+      input(type="checkbox" name="isthisenabled"
+            aria-label="{{validation.enabled ? 'Disable' : 'Enable'}} validation"
+            ng-model="validation.enabled" cf-no-form)
     span
       | {{validation.name}}
 
-.validation-controls(ng-switch="validation.type" ng-show="validation.enabled")
+.validation-controls(
+  ng-switch="validation.type" ng-if="validation.enabled"
+  ng-form="validationForm"
+  cf-validate="validation" cf-validate-form cf-validate-on="commit"
+)
 
   div(ng-switch-when="size")
-    .validation-controls__view-select.btn.btn--tertiary.select-box
-      select(aria-label="Select condition"
-             ng-model="validation.currentView"
-             ng-options="v.name as v.label for v in validation.views")
-      i.button-icon-right.fa.fa-caret-down
+    +view-select
 
     span(ng-switch="validation.currentView")
       span(ng-switch-when="min")
-        input.form-control(type="number" placeholder="Min" aria-label="Minimum size"
-                           ng-model="validation.settings.min")
+        input.cfnext-form__input(
+          type="number" placeholder="Min" aria-label="Minimum size"
+          ng-model="validation.settings.min")
       span(ng-switch-when="max")
-        input.form-control(type="number" placeholder="Max" aria-label="Maximum size"
-                           ng-model="validation.settings.max")
+        input.cfnext-form__input(
+           type="number" placeholder="Max" aria-label="Maximum size"
+           ng-model="validation.settings.max")
       span(ng-switch-when="min-max")
-        input.form-control(type="number" placeholder="Min" aria-label="Minimum size"
-                           ng-model="validation.settings.min")
+        input.cfnext-form__input(
+          type="number" placeholder="Min" aria-label="Minimum size"
+          ng-model="validation.settings.min")
         span.validation-controls__input-separator and
-        input.form-control(type="number" placeholder="Max" aria-label="Maximum size"
-                           ng-model="validation.settings.max")
-    cf-error-list.form-inline-error(
-      cf-error-messages="validation.errors"
-      aria-label="Errors"
-    )
-
-    div(cf-template="validation_error_message_input")
+        input.cfnext-form__input(
+          type="number" placeholder="Max" aria-label="Maximum size"
+          ng-model="validation.settings.max")
+    +validation-errors
+    +error-message-input
 
 
   div(ng-switch-when="range")
-    .validation-controls__view-select.btn.btn--tertiary.select-box
-      select(aria-label="Select condition"
-             ng-model="validation.currentView"
-             ng-options="v.name as v.label for v in validation.views")
-      i.button-icon-right.fa.fa-caret-down
+    +view-select
 
     span(ng-switch="validation.currentView")
       span(ng-switch-when="min")
-        input.form-control(type="number" placeholder="Min" aria-label="Minimum value"
-                           ng-model="validation.settings.min")
+        input.form-control(
+          type="number" placeholder="Min" aria-label="Minimum value"
+          ng-model="validation.settings.min")
       span(ng-switch-when="max")
-        input.form-control(type="number" placeholder="Max" aria-label="Maximum value"
-                           ng-model="validation.settings.max")
+        input.form-control(
+          type="number" placeholder="Max" aria-label="Maximum value"
+          ng-model="validation.settings.max")
       span(ng-switch-when="min-max")
-        input.form-control(type="number" placeholder="Min" aria-label="Minimum value"
-                           ng-model="validation.settings.min")
+        input.form-control(
+          type="number" placeholder="Min" aria-label="Minimum value"
+          ng-model="validation.settings.min")
         span.validation-controls__input-separator and
         input.form-control(type="number" placeholder="Max" aria-label="Maximum value"
                            ng-model="validation.settings.max")
-    cf-error-list.form-inline-error(
-      cf-error-messages="validation.errors"
-      aria-label="Errors"
-    )
-
-    div(cf-template="validation_error_message_input")
+    +validation-errors
+    +error-message-input
 
 
   div(ng-switch-when="dateRange")
@@ -69,38 +92,26 @@ h2.validation-settings__header
 
     cf-validation-date-select(aria-label="Earlier than" data="validation.settings.max")
 
-    cf-error-list.form-inline-error(
-      cf-error-messages="validation.errors"
-      aria-label="Errors"
-    )
-
-    div(cf-template="validation_error_message_input")
+    +validation-errors
+    +error-message-input
 
   div(ng-switch-when="regexp")
-    .validation-controls__view-select.btn.btn--tertiary.select-box
-      select(aria-label="Select pattern"
-             ng-model="validation.currentView"
-             ng-options="v.name as v.label for v in validation.views")
-      i.button-icon-right.fa.fa-caret-down
+    +view-select(ng-change="validator.runLater()")
 
     input.form-control.validation-controls__re-pattern(
       type="text" placeholder="foo|bar[baz]" aria-label="Regular Expression pattern"
       ng-model="validation.settings.pattern" ng-change="setMatchingView()"
-      ng-required="true")
+      cf-null-empty-input
+    )
 
     label
       span.validation-controls__re-flags-label Flags
       input.form-control.validation-controls__re-flags(
         type="text" aria-label="Regular Expression flags"
-        ng-model="validation.settings.flags" ng-change="setMatchingView()"
-       )
+        ng-model="validation.settings.flags" ng-change="setMatchingView()")
 
-    cf-error-list.form-inline-error(
-      cf-error-messages="validation.errors"
-      aria-label="Errors"
-    )
-
-    div(cf-template="validation_error_message_input")
+    +validation-errors
+    +error-message-input
 
 
   cf-validation-values(ng-switch-when="in")
@@ -116,70 +127,58 @@ h2.validation-settings__header
           input(type="checkbox" ng-model="at.selected" ng-change="assetTypes.update()")
           | {{at.label}}
 
-    cf-error-list.form-inline-error(
-      cf-error-messages="validation.errors"
-      aria-label="Errors"
-    )
-
-    div(cf-template="validation_error_message_input")
+    +validation-errors
+    +error-message-input
 
 
-  div(ng-switch-when="assetFileSize" ng-controlle="assetFileSizeValidationController")
-    .validation-controls__view-select.btn.btn--tertiary.select-box
-      select(aria-label="Select condition"
-             ng-model="validation.currentView"
-             ng-options="v.name as v.label for v in validation.views")
-      i.button-icon-right.fa.fa-caret-down
+  div(ng-switch-when="assetFileSize")
+    +view-select
 
     span(ng-switch="validation.currentView")
 
       span(ng-switch-when="min")
-        span(ng-controller="DataSizeScaleController as scale" data-model="validation.settings.min")
-          input.form-control(type="number" placeholder="Min" aria-label="Minimum size"
-                             ng-model="value")
-          span.validation-controls__unit-select.btn.btn--tertiary.select-box
-            select(aria-label="Select size unit"
-                   ng-model="unitFactor"
-                   ng-options="u.factor as u.label for u in scale.units")
-            i.button-icon-right.fa.fa-caret-down
+        span(ng-controller="DataSizeScaleController as scale"
+             data-model="validation.settings.min")
+          input.form-control(type="number" placeholder="Min"
+                             aria-label="Minimum size" ng-model="value")
+          span.validation-controls__unit-select
+            +select(aria-label="Select size unit"
+                    ng-model="unitFactor"
+                    ng-options="u.factor as u.label for u in scale.units")
 
       span(ng-switch-when="max")
-        span(ng-controller="DataSizeScaleController as scale" data-model="validation.settings.max")
+        span(ng-controller="DataSizeScaleController as scale"
+             data-model="validation.settings.max")
           input.form-control(type="number" placeholder="Max" aria-label="Maximum size"
                              ng-model="value")
-          span.validation-controls__unit-select.btn.btn--tertiary.select-box
-            select(aria-label="Select size unit"
-                   ng-model="unitFactor"
-                   ng-options="u.factor as u.label for u in scale.units")
-            i.button-icon-right.fa.fa-caret-down
+          span.validation-controls__unit-select
+            +select(aria-label="Select size unit"
+                    ng-model="unitFactor"
+                    ng-options="u.factor as u.label for u in scale.units")
 
       span(ng-switch-when="min-max")
-        span(ng-controller="DataSizeScaleController as scale" data-model="validation.settings.min")
+        span(ng-controller="DataSizeScaleController as scale"
+             data-model="validation.settings.min")
           input.form-control(type="number" placeholder="Min" aria-label="Minimum size"
                              ng-model="value")
-          span.validation-controls__unit-select.btn.btn--tertiary.select-box
-            select(aria-label="Select size unit"
-                   ng-model="unitFactor"
-                   ng-options="u.factor as u.label for u in scale.units")
-            i.button-icon-right.fa.fa-caret-down
+          span.validation-controls__unit-select
+            +select(aria-label="Select size unit"
+                    ng-model="unitFactor"
+                    ng-options="u.factor as u.label for u in scale.units")
 
         span.validation-controls__input-separator and
 
-        span(ng-controller="DataSizeScaleController as scale" data-model="validation.settings.max")
+        span(ng-controller="DataSizeScaleController as scale"
+             data-model="validation.settings.max")
           input.form-control(type="number" placeholder="Max" aria-label="Maximum size"
                              ng-model="value")
-          span.validation-controls__unit-select.btn.btn--tertiary.select-box
-            select(aria-label="Select size unit"
-                   ng-model="unitFactor"
-                   ng-options="u.factor as u.label for u in scale.units")
-            i.button-icon-right.fa.fa-caret-down
+          span.validation-controls__unit-select
+            +select(aria-label="Select size unit"
+                    ng-model="unitFactor"
+                    ng-options="u.factor as u.label for u in scale.units")
 
-    cf-error-list.form-inline-error(
-      cf-error-messages="validation.errors"
-      aria-label="Errors"
-    )
-
-    div(cf-template="validation_error_message_input")
+    +validation-errors
+    +error-message-input
 
 
   div(ng-switch-when="assetImageDimensions")
@@ -187,17 +186,16 @@ h2.validation-settings__header
       div(ng-controller="ImageDimensionsValidationController as dimensions")
         label.validation-controls__setting-toggle
           input(aria-label="Enable image {{dimension}} validation" type="checkbox"
-                ng-model="enabled" ng-change="dimensions.update()")
+                ng-model="enabled" ng-change="dimensions.update()" cf-no-form)
           | {{label}}
 
-        .validation-controls__view-select.btn.btn--tertiary.select-box(ng-disabled="!enabled")
-          select(aria-label="Select image {{dimension}} condition"
-                 ng-model="condition" ng-disabled="!enabled")
+        .validation-controls__view-select(ng-disabled="!enabled")
+          +select(aria-label="Select image {{dimension}} condition"
+                  ng-model="condition" ng-disabled="!enabled")
             option(value="min") At least
             option(value="max") At most
             option(value="min-max") Between
             option(value="exact") Exactly
-          i.button-icon-right.fa.fa-caret-down
 
         span(ng-switch="condition")
           span(ng-switch-when="min")
@@ -226,9 +224,5 @@ h2.validation-settings__header
                     ng-model="bounds.exact" ng-disabled="!enabled" ng-change="dimensions.update()")
               span.form-control__unit px
 
-    cf-error-list.form-inline-error(
-      cf-error-messages="validation.errors"
-      aria-label="Errors"
-    )
-
-    div(cf-template="validation_error_message_input")
+    +validation-errors
+    +error-message-input
