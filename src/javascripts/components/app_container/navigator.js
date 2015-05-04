@@ -420,7 +420,7 @@ angular.module('contentful').config([
     }
   }
 
-  function preprocessStateChange(toState, toStateParams) {
+  function preprocessStateChange(event, toState, toStateParams) {
     if (!toStateParams.addToContext) {
       $rootScope.contextHistory.length = 0;
     }
