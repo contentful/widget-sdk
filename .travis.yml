@@ -23,6 +23,7 @@ before_install:
 - npm config set always-auth true
 - npm config set _auth Y2ZkOjBlOWNhYWYyYjExMTliYjdkZjY=
 - npm config set registry https://contentful.registry.nodejitsu.com/
+- npm install -g npm@2.7.6
 install:
 - npm prune
 - bin/install_slimerjs
@@ -31,17 +32,13 @@ install:
 before_script:
 - gulp prepare-tests
 script:
-- npm test
-- npm run hint
+- bin/travis-test
 - gulp build
-after_success:
-- bin/trigger-packagebot
 before_deploy:
 - gem install fpm
 - "./Packagefile.local"
 - mkdir -p archive/user_interface/git archive/user_interface/pool
 - echo "archive/user_interface/pool/$(ls cf-user-interface*.deb | head -n1)" > archive/user_interface/git/$TRAVIS_COMMIT
-- echo "archive/user_interface/pool/$(ls cf-user-interface*.deb | head -n1)" > archive/user_interface/git/$TRAVIS_BRANCH
 - mv cf-user-interface*.deb archive/user_interface/pool
 deploy:
   provider: s3
@@ -54,6 +51,9 @@ deploy:
   upload-dir: archive
   on:
     all_branches: true
+after_deploy:
+  - ./bin/trigger-deploy-quirely
+  - bin/trigger-packagebot
 notifications:
   slack:
     secure: lc+kwmitAcp5htZI5ETV5x5ZwP0TGzJKwenaMMyqGCCUlDgK76hBirkg9LgBhG5500Kks+udT6flZLJ0p/gNvbgqEaCR1GZBmCdneqxpkow8kAy2HUGR1MmkA3+zs1YMJ4Rp3nC78ygVKPzreqgEpmfCovYls0PmpO37khqzBnY=

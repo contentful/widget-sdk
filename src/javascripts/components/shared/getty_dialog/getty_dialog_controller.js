@@ -246,7 +246,7 @@ angular.module('contentful').controller('GettyDialogController', ['$scope', '$in
   };
 
   $scope.fileSize = function (value) {
-    return fileSize(value, {fixed: 0}).human({jedec: true});
+    return fileSize(value, {fixed: 0}).human('jedec');
   };
 
   $scope.selectSize = function (key) {

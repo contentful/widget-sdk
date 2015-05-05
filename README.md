@@ -83,6 +83,10 @@ The built package still includes the dev host (i.e. `joistio.com`) in
 its files. The are replaced on the servers by the `bin/process_hosts`
 script.
 
+If you wish to skip the tests on the `preview` environment for purposes
+of showcasing unfinished work, you can add `[skip tests]` to your commit
+message.
+
 [package bot]: https://github.com/contentful/package-bot
 
 

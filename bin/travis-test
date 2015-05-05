@@ -1,0 +1,12 @@
+#!/bin/bash
+set -v
+
+commit_message=`git log $TRAVIS_COMMIT --pretty=oneline -n 1`
+
+if [[ "$commit_message" =~ \[skip\ tests\] && "$TRAVIS_BRANCH" =~ "preview" ]]; then
+  echo "Skipping tests"
+else
+  npm test
+  npm run hint
+fi
+
