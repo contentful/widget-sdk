@@ -58,7 +58,7 @@
               a.entity-list-link(ui-sref="{{entityNavState}}") {{numFields(contentType)}}
             td.cell-date
               a.entity-list-link(ng-if="contentType.getUpdatedAt()" ui-sref="{{entityNavState}}")
-                date.relative(datetime="{{contentType.getUpdatedAt()}}")
+                date(datetime="{{contentType.getUpdatedAt()}}" cf-relative-datetime)
             td.cell-symbol
               a.entity-list-link(cf-user link="contentType.getUpdatedBy()" as="updater" ui-sref="{{entityNavState}}")
                 | {{updater | userNameDisplay:user}}

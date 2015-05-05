@@ -6,22 +6,16 @@ angular.module('contentful', [
   'angularLoad',
   'ngAnimate',
   'ngSanitize',
-  'timeRelative',
   'ui.sortable',
   'ui.router',
   'ncy-angular-breadcrumb'
 ])
-.config(['$locationProvider', 'clientAdapterProvider', 'authenticationProvider', 'environment', '$sceDelegateProvider', '$compileProvider', 'timeRelativeConfig',
-  function($locationProvider, clientAdapterProvider, authenticationProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){
+.config(['$locationProvider', 'clientAdapterProvider', 'authenticationProvider', 'environment', '$sceDelegateProvider', '$compileProvider',
+  function($locationProvider, clientAdapterProvider, authenticationProvider, environment, $sceDelegateProvider, $compileProvider){
   var env = environment.settings;
 
   $locationProvider.html5Mode(true).hashPrefix('!');
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
   $sceDelegateProvider.resourceUrlWhitelist(env.resourceUrlWhiteListRegexp);
   clientAdapterProvider.server('//'+env.api_host);
-
-  timeRelativeConfig.calendar.en.sameElse = 'll';
-  timeRelativeConfig.calendar.en.lastWeek = 'ddd, LT';
-  timeRelativeConfig.calendar.en.nextWeek = 'Next ddd, LT';
-
 }]);
