@@ -26,20 +26,34 @@ if(window){
 
 if (angular) {
   require('ng-time-relative');
+
   angular.module('contentful/user_interface', []).
-    constant('moment', window.moment).
-    constant('privateContentfulClient', UserInterface.contentfulClient).
-    constant('hostnameTransformer', UserInterface.hostnameTransformer).
-    constant('validation', UserInterface.validation).
-    constant('mimetype', UserInterface.mimetype).
-    constant('worf', UserInterface.worf).
-    constant('stringifySafe', UserInterface.stringifySafe).
-    constant('isDiacriticalMark', UserInterface.isDiacriticalMark).
-    constant('searchParser', UserInterface.searchParser).
-    constant('fileSize', UserInterface.fileSize).
-    constant('redefine', UserInterface.redefine).
-    constant('resolveResponse', UserInterface.resolveResponse).
-    constant('querystring', UserInterface.querystring);
+  constant('moment', window.moment).
+  constant('privateContentfulClient', UserInterface.contentfulClient).
+  constant('hostnameTransformer', UserInterface.hostnameTransformer).
+  constant('validation', UserInterface.validation).
+  constant('mimetype', UserInterface.mimetype).
+  constant('worf', UserInterface.worf).
+  constant('stringifySafe', UserInterface.stringifySafe).
+  constant('isDiacriticalMark', UserInterface.isDiacriticalMark).
+  constant('searchParser', UserInterface.searchParser).
+  constant('fileSize', UserInterface.fileSize).
+  constant('redefine', UserInterface.redefine).
+  constant('resolveResponse', UserInterface.resolveResponse).
+  constant('querystring', UserInterface.querystring).
+  run(['moment', function (moment) {
+      moment.lang('en', {
+        calendar: {
+          lastDay : '[Yesterday], LT',
+          sameDay : '[Today], LT',
+          nextDay : '[Tomorrow], LT',
+          lastWeek : 'dddd, LT',
+          nextWeek : '[Next] dddd, LT',
+          sameElse : 'LL'
+        }
+      });
+  }]);
+
 
   angular.module('contentful/user_interface').factory('marked', function () {
     var marked = require('marked');
