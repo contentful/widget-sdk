@@ -25,8 +25,6 @@ if(window){
 }
 
 if (angular) {
-  require('ng-time-relative');
-
   angular.module('contentful/user_interface', []).
   constant('moment', window.moment).
   constant('privateContentfulClient', UserInterface.contentfulClient).
@@ -41,15 +39,17 @@ if (angular) {
   constant('redefine', UserInterface.redefine).
   constant('resolveResponse', UserInterface.resolveResponse).
   constant('querystring', UserInterface.querystring).
+
+  // TODO moment should be a proper, configurable service
   run(['moment', function (moment) {
       moment.lang('en', {
         calendar: {
           lastDay : '[Yesterday], LT',
           sameDay : '[Today], LT',
           nextDay : '[Tomorrow], LT',
-          lastWeek : 'dddd, LT',
-          nextWeek : '[Next] dddd, LT',
-          sameElse : 'LL'
+          lastWeek : 'ddd, LT',
+          nextWeek : '[Next] ddd, LT',
+          sameElse : 'll'
         }
       });
   }]);

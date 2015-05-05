@@ -1,7 +1,7 @@
 i.fa.fa-info-circle.last-saved-at
 span.last-saved-at(ng-if="lastSavedAt")
   | Last change made 
-  time.relative(datetime="{{lastSavedAt}}")
+  time(datetime="{{lastSavedAt}}" cf-relative-datetime)
 i.fa.fa-check.saved
 span.saved All changes saved successfully
 i.fa.fa-refresh.saving

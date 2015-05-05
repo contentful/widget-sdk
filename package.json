@@ -55,7 +55,6 @@
     "marked": "~0.3.1",
     "merge-stream": "^0.1.7",
     "moment": "~2.9.0",
-    "ng-time-relative": "~0.5.0",
     "nib": "^1.0.3",
     "node-html-encoder": "0.0.2",
     "nunjucks": "^1.3.3",

@@ -17,7 +17,7 @@ table
     tr
       th Created
       td
-        date.relative(ng-if="sys.createdAt" datetime="{{sys.createdAt}}")
+        date(ng-if="sys.createdAt" datetime="{{sys.createdAt}}" cf-relative-datetime)
     tr
       th Created by
       td
@@ -28,7 +28,7 @@ table
     tr
       th Updated
       td
-        date.relative(ng-if="sys.updatedAt" datetime="{{sys.updatedAt}}")
+        date(ng-if="sys.updatedAt" datetime="{{sys.updatedAt}}" cf-relative-datetime)
     tr
       th Updated by
       td
@@ -39,7 +39,7 @@ table
     tr
       th Archived
       td
-        date.relative(ng-if="sys.archivedAt" datetime="{{sys.archivedAt}}")
+        date(ng-if="sys.archivedAt" datetime="{{sys.archivedAt}}" cf-relative-datetime)
     tr
       th Archived by
       td {{sys.archivedBy.sys.id}}
@@ -51,7 +51,7 @@ table
     tr
       th Published
       td
-        date.relative(ng-if="sys.publishedAt" datetime="{{sys.publishedAt}}")
+        date(ng-if="sys.publishedAt" datetime="{{sys.publishedAt}}" cf-relative-datetime)
     tr
       th Published by
       td

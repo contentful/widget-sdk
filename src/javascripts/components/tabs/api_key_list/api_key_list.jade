@@ -46,7 +46,7 @@
               a.entity-list-link(ui-sref="{{entityNavState}}") {{apiKey.data.description}}
             td.cell-date
               a.entity-list-link(ui-sref="{{entityNavState}}")
-                date.relative(ng-if="apiKey.getUpdatedAt()" datetime="{{apiKey.getUpdatedAt()}}")
+                date(ng-if="apiKey.getUpdatedAt()" datetime="{{apiKey.getUpdatedAt()}}" cf-relative-datetime)
             td.cell-symbol
               a.entity-list-link(ui-sref="{{entityNavState}}" cf-user link="apiKey.getCreatedBy()" as="creator")
                 | {{creator | userNameDisplay:user}}
