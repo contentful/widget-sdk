@@ -77,7 +77,7 @@
             td.cell-content-type
               span {{spaceContext.publishedTypeForEntry(entity).getName()}}
             td.cell-updated
-              date.relative(ng-if="entity.getUpdatedAt()" datetime="{{entity.getUpdatedAt()}}")
+              date(ng-if="entity.getUpdatedAt()" datetime="{{entity.getUpdatedAt()}}" cf-relative-datetime)
       .loading(ng-hide="paginator.atLast()")
     p.search-results__length Showing {{entities.length}} of {{paginator.numEntries}} entries
 
@@ -98,7 +98,7 @@
               p(ng-show="file && file.url") {{file|fileType}}
                 span.lighter {{file|fileExtension}}
               p.cell--lighter
-                date.relative(ng-if="entity.getUpdatedAt()" datetime="{{entity.getUpdatedAt()}}")
+                date(ng-if="entity.getUpdatedAt()" datetime="{{entity.getUpdatedAt()}}" cf-relative-datetime)
       .loading(ng-hide="paginator.atLast()")
     p.search-results__length Showing {{entities.length}} of {{paginator.numEntries}} assets
 
