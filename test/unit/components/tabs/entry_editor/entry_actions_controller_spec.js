@@ -14,6 +14,7 @@ describe('Entry Actions Controller', function () {
     inject(function ($controller, $rootScope, cfStub, $q, $injector) {
       notification = $injector.get('notification');
       logger = $injector.get('logger');
+      $rootScope = $injector.get('$rootScope');
 
       space = cfStub.space('spaceid');
       var contentTypeData = cfStub.contentTypeData('type1');
@@ -23,9 +24,13 @@ describe('Entry Actions Controller', function () {
       scope = $rootScope.$new();
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
       scope.entry = entry;
-      scope.broadcastFromSpace = sinon.stub();
+      this.broadcastStub = sinon.stub($rootScope, '$broadcast');
       controller = $controller('EntryActionsController', {$scope: scope});
     });
+  });
+
+  afterEach(function () {
+    this.broadcastStub.restore();
   });
 
   describe('when deleting', function() {
@@ -66,7 +71,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('broadcasts event', function() {
-        sinon.assert.calledWith(scope.broadcastFromSpace, 'entityDeleted');
+        sinon.assert.calledWith(this.broadcastStub, 'entityDeleted');
       });
     });
   });

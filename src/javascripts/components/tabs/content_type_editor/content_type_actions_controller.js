@@ -2,6 +2,7 @@
 
 angular.module('contentful').
   controller('ContentTypeActionsController', ['$scope', '$injector', function ContentTypeActionsController($scope, $injector) {
+  var $rootScope   = $injector.get('$rootScope');
   var analytics    = $injector.get('analytics');
   var logger       = $injector.get('logger');
   var notification = $injector.get('notification');
@@ -14,7 +15,7 @@ angular.module('contentful').
     $scope.contentType.delete()
     .then(function(contentType){
       notification.info('Content type deleted successfully');
-      $scope.broadcastFromSpace('entityDeleted', contentType);
+      $rootScope.$broadcast('entityDeleted', contentType);
     })
     .catch(function(err){
       logger.logServerWarn('Error deleting Content Type', {error: err });

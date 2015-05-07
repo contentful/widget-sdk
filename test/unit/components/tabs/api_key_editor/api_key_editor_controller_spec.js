@@ -2,7 +2,7 @@
 
 describe('API key editor controller', function () {
 
-  var scope, stubs, $q;
+  var scope, stubs, $q, $rootScope;
   var apiKeyEditorCtrl;
   var apiKey;
 
@@ -17,7 +17,6 @@ describe('API key editor controller', function () {
         'info',
         'serverError',
         'warn',
-        'broadcast',
         'logServerWarn',
         'createPreviewApiKey'
       ]);
@@ -35,9 +34,12 @@ describe('API key editor controller', function () {
         logServerWarn: stubs.logServerWarn
       });
     });
-    inject(function (_$rootScope_, $controller, _$q_) {
-      $q = _$q_;
-      scope = _$rootScope_;
+    inject(function ($controller, $injector) {
+      $q = $injector.get('$q');
+      $rootScope = $injector.get('$rootScope');
+      stubs.broadcast = sinon.stub($rootScope, '$broadcast');
+      stubs.broadcast.returns({});
+      scope = $rootScope.$new();
 
       scope.spaceContext = {
         space: {
@@ -45,7 +47,6 @@ describe('API key editor controller', function () {
           createPreviewApiKey: stubs.createPreviewApiKey
         }
       };
-      scope.broadcastFromSpace = stubs.broadcast;
 
       scope.context = {};
       apiKey = {
@@ -63,6 +64,10 @@ describe('API key editor controller', function () {
       apiKeyEditorCtrl = $controller('ApiKeyEditorController', {$scope: scope});
       scope.$apply();
     });
+  });
+
+  afterEach(function () {
+    stubs.broadcast.restore();
   });
 
   it('has a closing message', function () {
@@ -141,9 +146,7 @@ describe('API key editor controller', function () {
     });
 
     it('event is broadcasted from space', function () {
-      sinon.assert.called(stubs.broadcast);
-      expect(stubs.broadcast.args[0][0]).toEqual('entityDeleted');
-      expect(stubs.broadcast.args[0][1]).toBe(apiKey);
+      sinon.assert.calledWith(stubs.broadcast, 'entityDeleted', apiKey);
     });
   });
 

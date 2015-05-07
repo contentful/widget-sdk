@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('EntryActionsController', ['$scope', '$q', 'notification', 'logger', function EntryActionsController($scope, $q, notification, logger) {
+angular.module('contentful').controller('EntryActionsController', ['$scope', '$rootScope', '$q', 'notification', 'logger', function EntryActionsController($scope, $rootScope, $q, notification, logger) {
 
   var originalEntryData, trackedPublishedVersion, trackedPreviousVersion;
 
@@ -27,7 +27,7 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$q
     $scope.entry.delete()
     .then(function(entry){
       notification.info('Entry deleted successfully');
-      $scope.broadcastFromSpace('entityDeleted', entry);
+      $rootScope.$broadcast('entityDeleted', entry);
     })
     .catch(function(err){
       logger.logServerWarn('Error deleting Entry', {error: err });
