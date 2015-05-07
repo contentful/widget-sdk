@@ -26,14 +26,9 @@ function ValidationController ($scope, $attrs) {
   $scope.validate = function () {
     var data = getData();
     var schema = $scope.schema;
-    var errors;
-    try {
-      errors = schema.errors(data);
-    } catch(e) {
-      errors = null;
-    }
+    var errors = schema.errors(data);
 
-    if (errors)
+    if (!_.isUndefined(errors))
       $scope.setValidationErrors(errors);
     return $scope.validationResult.valid;
   };
