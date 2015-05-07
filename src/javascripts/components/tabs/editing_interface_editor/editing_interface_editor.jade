@@ -3,11 +3,11 @@
     h1 {{contentType.getName()}}
 
   .tab-header__actions
-    .dropdown-btn(cf-dropdown)
-      a.btn.btn--tertiary(cf-dropdown-toggle)
+    .dropdown-btn
+      a.btn.btn--tertiary(cf-dropdown-toggle="editingInterface.view")
         i.fa.fa-caret-down.button-icon-right
         span View
-      .dropdown-menu(cf-dropdown-menu)
+      .dropdown-menu(cf-dropdown-menu="editingInterface.view")
         ul
           li.dropdown-menu-item
             label

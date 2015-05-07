@@ -1,15 +1,15 @@
-.space-selector.app-top-bar__child-action.app-top-bar--right-separator(cf-dropdown ng-show="organizations && organizations.length > 0" ng-hide="spaces.length == 0 && !canCreateSpaceInAnyOrg()")
-  a(cf-dropdown-toggle ng-click="clickedSpaceSwitcher()" tabindex="0")
+.space-selector.app-top-bar__child-action.app-top-bar--right-separator(ng-show="organizations && organizations.length > 0" ng-hide="spaces.length == 0 && !canCreateSpaceInAnyOrg()")
+  a(cf-dropdown-toggle="navbar.spaceSelector" ng-click="clickedSpaceSwitcher()" tabindex="0")
     cf-icon.icon-dd-arrow-down.pull-right(name="dd-arrow-down" size="10")
     span.space-selector__name.u-truncate(ng-bind="spaceContext.space.data.name || 'Spaces'")
-  .space-selector__dropdown.cfnext-dropdown(cf-dropdown-menu position="top15center")
+  .space-selector__dropdown.cfnext-dropdown(cf-dropdown-menu="navbar.spaceSelector" cf-dropdown-position="top15center")
     cf-icon.cfnext-dropdown__arrow(cf-dropdown-arrow name="arrow-up" size="15")
     ul.space-selector__list.cfnext-dropdown__list--first
       li.cfnext-dropdown__item--no-highlight(ng-repeat="(orgId, org) in spacesByOrg" ng-class="{'has-no-action': canSelectOrg(orgId)}")
         span.cfnext-dropdown__group-label.space-selector__group-label {{getOrgName(orgId)}}
         ul.cfnext-dropdown__inner-list
           li.space-selector__item.cfnext-dropdown__item(ng-repeat="space in org track by space.getId()"
-              cf-click-local="selectSpace(space) && toggleDropdown()"
+              cf-click-local="selectSpace(space) && broadcastFromRoot('dropdownToggle', 'navbar.spaceSelector')"
               ng-class="{hibernated: space.isHibernated(), selected: space.getId() === getCurrentSpaceId()}"
               ng-disabled="!space.isHibernated()"
               tooltip-container=".project" tooltip-placement="left"
@@ -17,6 +17,6 @@
             span {{space.data.name}}
             i.fa.fa-circle(ng-show="space.isHibernated()")
     ul.space-selector__add.cfnext-dropdown__list(ng-show="permissionController.canCreateSpace()")
-      li.cfnext-dropdown__item--vcentered(ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close)
+      li.cfnext-dropdown__item--vcentered(ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" cf-dropdown-close)
         cf-icon(name="plus" size="20")
         | Add new Space

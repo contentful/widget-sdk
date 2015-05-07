@@ -1,12 +1,12 @@
-.account-dropdown.app-top-bar__child-action.app-top-bar--left-separator(cf-dropdown label="")
-  a.account-dropdown__toggle(cf-dropdown-toggle ng-click="clickedProfileButton()" tabindex="0")
+.account-dropdown.app-top-bar__child-action.app-top-bar--left-separator
+  a.account-dropdown__toggle(cf-dropdown-toggle="navbar.account" ng-click="clickedProfileButton()" tabindex="0")
     img.account-dropdown__avatar(ng-src="{{user.avatarUrl}}")
     span.account-dropdown__name.u-truncate {{user.firstName}}
     cf-icon.icon-dd-arrow-down.pull-right(name="dd-arrow-down" size="10")
-  .cfnext-dropdown(cf-dropdown-menu position="top15center")
+  .cfnext-dropdown(cf-dropdown-menu="navbar.account" cf-dropdown-position="top15center")
     cf-icon.cfnext-dropdown__arrow(cf-dropdown-arrow name="arrow-up" size="15")
     ul.cfnext-dropdown__list--first
-      li.cfnext-dropdown__item(ng-click="goToAccount()" dropdown-close) Account Settings
-      li.cfnext-dropdown__item(ng-click="openSupport()" dropdown-close) Support
-      li.cfnext-dropdown__item(ng-click="logout()" dropdown-close) Log out
+      li.cfnext-dropdown__item(ng-click="goToAccount()" cf-dropdown-close) Account Settings
+      li.cfnext-dropdown__item(ng-click="openSupport()" cf-dropdown-close) Support
+      li.cfnext-dropdown__item(ng-click="logout()" cf-dropdown-close) Log out
 

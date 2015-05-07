@@ -14,11 +14,11 @@
             tooltip="Toggle additional details"
             tooltip-placement="bottom")
       | Info
-    .dropdown-btn(cf-dropdown)
-      button.btn.btn--tertiary(cf-dropdown-toggle)
+    .dropdown-btn
+      button.btn.btn--tertiary(cf-dropdown-toggle="contentTypeEditor.view")
         i.fa.fa-caret-down.button-icon-right
         span View
-      .dropdown-menu(cf-dropdown-menu position="bottomcenter")
+      .dropdown-menu(cf-dropdown-menu="contentTypeEditor.view" cf-dropdown-position="bottomcenter")
         ul
           li.dropdown-menu-item
             label 
@@ -70,31 +70,31 @@
             header.advice__title You have no Fields yet
             p.advice__description
               | Add Fields to configure which form inputs are available for your editors to work with.
-            .dropdown-btn(cf-dropdown)
-              button.btn.btn--primary(cf-dropdown-toggle ng-disabled="cfCanDisabled")
+            .dropdown-btn
+              button.btn.btn--primary(cf-dropdown-toggle="contentTypeEditor.createField" ng-disabled="cfCanDisabled")
                 | Create Field
-              cf-select-type.u-bce.dropdown-menu.type-menu(cf-dropdown-menu on-type-selected="addField(type)")
+              cf-select-type.u-bce.dropdown-menu.type-menu(cf-dropdown-menu="contentTypeEditor.createField" on-type-selected="addField(type)")
               a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
                 | Visit the Knowledge Base Pages
                 i.fa.fa-question-circle
-        .dropdown-btn(cf-dropdown ng-show="hasFields")
-          button.btn.btn--primary.add-field-button(cf-dropdown-toggle)
+        .dropdown-btn(ng-show="hasFields")
+          button.btn.btn--primary.add-field-button(cf-dropdown-toggle="contentTypeEditor.addField")
             i.fa.fa-plus.button-icon
             | Add Field
-          cf-select-type.u-bce.dropdown-menu.type-menu(cf-dropdown-menu on-type-selected="addField(type)")
+          cf-select-type.u-bce.dropdown-menu.type-menu(cf-dropdown-menu="contentTypeEditor.addField" on-type-selected="addField(type)")
 
 .tab-actions(ng-controller="ContentTypeActionsController")
-  .button-set(cf-dropdown)
+  .button-set
     button.btn.btn--secondary.deactivate(type="button"
                   ng-show="entityActionsController.canUnpublish()"
                   ng-click="unpublish()"
                   tooltip="Deactivate this Content Type")
       | Deactivate
-    button.btn.btn--secondary.delete(type="button" ng-show="entityActionsController.canDelete()" cf-dropdown-toggle) Delete
-    .delete-confirm(cf-dropdown-menu position="topcenter")
+    button.btn.btn--secondary.delete(type="button" ng-show="entityActionsController.canDelete()" cf-dropdown-toggle="contentTypeEditor.delete") Delete
+    .delete-confirm(cf-dropdown-menu="contentTypeEditor.delete" cf-dropdown-position="topcenter")
       p You are about to delete {{contentType.getName()}}
-      button.btn.btn--danger(type="button" ng-click="delete()" dropdown-close) Delete 
-      button.btn.btn--secondary(type="button" dropdown-close) Don't Delete 
+      button.btn.btn--danger(type="button" ng-click="delete()" cf-dropdown-close) Delete 
+      button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete 
     button.btn.btn--primary.publish(
                   ng-disabled="!entityActionsController.canPublish() || (entityActionsController.canPublish() && !contentTypeForm.$dirty && contentType.isPublished())"
                   ng-click="publish()"

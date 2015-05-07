@@ -14,11 +14,11 @@
             tooltip="Toggle additional details"
             tooltip-placement="bottom")
       | Info
-    .dropdown-btn(cf-dropdown ng-show="showLangSwitcher")
-      button.btn.btn--tertiary(cf-dropdown-toggle)
+    .dropdown-btn(ng-show="showLangSwitcher")
+      button.btn.btn--tertiary(cf-dropdown-toggle="assetEditor.view.locale")
         i.fa.fa-caret-down.button-icon-right
         span View
-      .dropdown-menu(cf-dropdown-menu position="bottomcenter")
+      .dropdown-menu(cf-dropdown-menu="assetEditor.view.locale" cf-dropdown-position="bottomcenter")
         ul.lang-switcher
           li.dropdown-menu-item--label(ng-repeat="locale in spaceContext.privateLocales track by locale.code")
             label
@@ -60,12 +60,12 @@
         cf-error-list.form-box-error(cf-error-path="['fields', field.id]")
 
 .tab-actions(ng-controller="AssetActionsController")
-  .button-set(cf-dropdown)
-    button.btn.btn--secondary.delete(type="button" ng-show="entityActionsController.canDelete()" cf-dropdown-toggle) Delete
-    .delete-confirm(cf-dropdown-menu position="topcenter")
+  .button-set
+    button.btn.btn--secondary.delete(type="button" ng-show="entityActionsController.canDelete()" cf-dropdown-toggle="assetEditor.delete") Delete
+    .delete-confirm(cf-dropdown-menu="assetEditor.delete" cf-dropdown-position="topcenter")
       p You are about to delete {{headline()}}
-      button.btn.btn--danger(type="button" ng-click="delete()" dropdown-close) Delete 
-      button.btn.btn--secondary(type="button" dropdown-close) Don't Delete 
+      button.btn.btn--danger(type="button" ng-click="delete()" cf-dropdown-close) Delete 
+      button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete 
     button.btn.btn--secondary.archive(  type="button" ng-show="entityActionsController.canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
     button.btn.btn--secondary.archive(  type="button" ng-show="entityActionsController.canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
     button.btn.btn--secondary.unpublish(type="button" ng-show="entityActionsController.canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish
