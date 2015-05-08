@@ -118,6 +118,7 @@ angular.module('cf.ui')
     scope.$watch('tab.active', function (isActive) {
       attr.$set('ariaSelected', isActive);
     });
+
   }
 
   function linkTabPanel(scope, element, attr) {

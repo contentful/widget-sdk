@@ -1,0 +1,36 @@
+@import './fields.styl'
+
+$ct-editor-code-block()
+  display: block
+  > pre
+    white-space: pre-wrap
+
+.ct-editor-json
+  padding-bottom: $rhythm(2)
+
+  &__note
+    margin: 0 0 $rhythm(1.5) 0
+
+  &__loading
+    background-image: url('/app/images/ajax-loader.gif')
+    background-position: center
+    background-repeat: no-repeat
+    background-size: 25px 25px
+    height: 30px
+
+  &__code
+    $ct-editor-code-block()
+
+  &__code--unsaved
+    $ct-editor-code-block()
+    position: relative
+    user-select: none
+    &:before
+      content: ""
+      background: linear-gradient(to bottom, hsla(0, 0%, 100%, 0.6), hsla(0, 0%, 100%, 1) 80%)
+      $stretch()
+
+
+.edit-content-type-metadata
+  &__dialog
+    min-width: 28em

@@ -17,9 +17,15 @@ describe('The ContentType editor directive', function () {
       var controllerMock = angular.noop;
       controllerMock.prototype.canPublish = sinon.stub();
       $controllerProvider.register('ContentTypeEditorController', controllerMock);
+
+      var contentTypePreview = sinon.stub();
+      contentTypePreview.fromData = sinon.stub();
+      $provide.value('contentTypePreview', contentTypePreview);
     });
 
-    inject(function ($rootScope, $compile) {
+    inject(function ($rootScope, $compile, $controller, contentTypePreview) {
+      contentTypePreview.returns(this.reject());
+      contentTypePreview.fromData.returns(this.reject());
       scope = $rootScope.$new();
 
       scope.permissionController = {
@@ -28,6 +34,8 @@ describe('The ContentType editor directive', function () {
           shouldDisable: false
         }
       };
+
+      scope.tabController = $controller('UiTabController');
 
       compileElement = function () {
         container = $('<div cf-content-type-editor></div>');

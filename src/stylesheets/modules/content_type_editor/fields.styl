@@ -1,5 +1,3 @@
-$content-type-field-bottom-margin = $rhythm(1)
-
 $content-type-field-empty-style()
     border: 1px dashed $cfnext-light-gray
     background-color: lighten($cfnext-light-gray, 80%)
@@ -10,7 +8,6 @@ $content-type-field-empty-style()
   margin-top: $rhythm(1)
   .sortable-placeholder
     $content-type-field-empty-style()
-    margin-bottom: $content-type-field-bottom-margin
 
 .content-type-no-fields
   position: relative
@@ -56,7 +53,7 @@ $ct__field-padding = 0.8em
   height: $rhythm(2.5)
   display: flex
   align-items: center
-  margin-bottom: $content-type-field-bottom-margin
+  margin-bottom: $rhythm(1)
   border: 1px solid $cfnext-light-gray
   border-radius: 1px
   box-shadow: 1px 1px 2px 0 $cfnext-light-gray
@@ -126,4 +123,3 @@ $ct__field-padding = 0.8em
     &__drag-handle
       background-color: transparentify($cfnext-gray, 0.1)
       border: 1px dashed transparentify($cfnext-gray, 0.1)
-

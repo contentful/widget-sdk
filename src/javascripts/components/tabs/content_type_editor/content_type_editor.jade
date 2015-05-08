@@ -6,14 +6,24 @@
   button.cfnext-btn-plain(ng-click="showMetadataDialog()") Edit
 
 .section-nav
-  button.cfnext-btn-action--with-icon(ng-disabled="cfCanDisabled" ng-click="showNewFieldDialog()")
-    cf-icon.inverted(name="plus")
-    | Add new Field
+  .section-nav__left-content
+    button.cfnext-btn-action--with-icon(
+      ng-disabled="cfCanDisabled"
+      ng-click="showNewFieldDialog()")
+      cf-icon.inverted(name="plus")
+      | Add Field
+  ul.section-nav__tabs
+    li(role="tab" data-tab="fields") Fields
+    li(role="tab" data-tab="json") JSON Preview
 
 
 .section-main.with-header-nav.with-tab-actions
-  .section-main__middle-content
-    form(name="contentTypeForm" submit="publish()")
+  form.section-main__middle-content(name="contentTypeForm" submit="publish()")
+
+    div(role="tabpanel" data-tab="json")
+      cf-content-type-preview.u-bce
+
+    div(role="tabpanel" data-tab="fields")
       .content-type-fields(ng-show="hasFields")
         include ./content_type_field_list
       .content-type-no-fields(ng-hide="hasFields")

@@ -219,6 +219,7 @@ angular.module('contentful').config([
       'cf-content-type-editor',
       'class="with-tab-actions"',
       'cf-validate="contentType.data" cf-content-type-schema',
+      'cf-ui-tab',
     ].join(' ') + '></div>'
   };
 

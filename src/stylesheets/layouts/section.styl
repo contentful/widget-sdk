@@ -76,6 +76,9 @@ $section-nav-height = 70px
  * Styleguide 9.3
  */
 
+$section-sidebar-width = 20%
+$section-content-width = 100% - $section-sidebar-width
+$section-middle-width = 100% - (2 * $section-sidebar-width)
 .section-main
   $stretch(0, 0, 0, 0)
   overflow-y: auto
@@ -96,41 +99,27 @@ $section-nav-height = 70px
     bottom: $tab-actions-height
 
   &__left-sidebar
-    width: 20%
+    width: $section-sidebar-width
     margin-right: auto
 
   &__right-content
-    width: 80%
+    width: $section-content-width
     margin-left: auto
 
   &__right-sidebar
-    width: 20%
+    width: $section-sidebar-width
     margin-left: auto
 
   &__left-content
-    width: 80%
+    width: $section-content-width
     margin-right: auto
 
   &__middle-content
-    width: 60%
+    width: $section-middle-width
     margin-left: auto
     margin-right: auto
 
 
-/**
- * Section Header
- *
- * Markup:
- * .section-header
- *   h1.section-header__title Title
- *   .section-header__description This is a description
- *   a.section-header__metadata-action(href="#") Edit
- *   .section-header__actions
- *     button.cfnext-btn-secondary-action Actions
- *     button.cfnext-btn-action Save
- *
- * Styleguide 9.4
- */
 .section-header
   display: flex
   align-items: baseline
@@ -169,10 +158,65 @@ $section-nav-height = 70px
       margin-left: 1em
 
 
+/*
+Section Header
+
+Markup:
+.section-header
+  h1.section-header__title Title
+  .section-header__description This is a description
+  button.cfnext-btn-plain Edit
+  .section-header__actions
+    button.cfnext-btn-secondary-action Actions
+    button.cfnext-btn-action Save
+
+Styleguide 9.4
+*/
+
+
+/*
+Section Header with Tabs
+
+Markup:
+.styleguide-stretch-container--short
+  .section-header
+    h1.section-header__title Title
+    .section-header__description This is a description
+    button.cfnext-btn-plain Edit
+    .section-header__actions
+      button.cfnext-btn-secondary-action Actions
+      button.cfnext-btn-action Save
+  .section-nav
+    .section-nav__left-content
+      button.cfnext-btn-action Add some
+    ul.section-nav__tabs
+      li(role="tab") First Tab
+      li(role="tab" aria-selected="true") Active Tab
+      li(role="tab") Last Tab
+  .section-main.with-header-nav
+    .section-main__left-sidebar.styleguide-filled-box1
+      | sidebar
+    .section-main__right-content.styleguide-filled-box2
+      | content
+
+Styleguide 9.4.1
+*/
 .section-nav
   display: flex
   align-items: center
+  justify-content: space-between
   height: $section-nav-height
-  padding-left: $section-header-horizontal-padding
-  padding-right: $section-header-horizontal-padding
   border-bottom: 1px solid $cfnext-light-gray
+
+
+.section-nav__left-content
+  padding-left: $section-header-horizontal-padding
+  flex-shrink: 0
+  padding-right: 2em
+
+
+.section-nav__tabs
+  align-self: flex-end
+  flex-grow: 0
+  flex-basis: $section-content-width
+  $tab-list()
