@@ -22,10 +22,10 @@
       ng-class="{'allow-drag': editable(folder)}")
 
 .view-menu-buttons.menu-with-buttons-bottom(ng-if="viewMenuEditable")
-  .dropdown-btn(cf-dropdown)
-    i.fa.fa-plus.dropdown-toggle(cf-dropdown-toggle)
-    .dropdown-menu(cf-dropdown-menu position="topright" collision="none")
+  .dropdown-btn
+    i.fa.fa-plus.dropdown-toggle(cf-dropdown-toggle="sidebar.viewMenu")
+    .dropdown-menu(cf-dropdown-menu="sidebar.viewMenu" cf-dropdown-position="topright" cf-dropdown-collision="none")
       ul.u-list
-        li.dropdown-menu-item(ng-click="addFolder()" dropdown-close) Add Folder
-        li.dropdown-menu-item(ng-click="addViewToDefault()" dropdown-close) Save current view as…
+        li.dropdown-menu-item(ng-click="addFolder()" cf-dropdown-close) Add Folder
+        li.dropdown-menu-item(ng-click="addViewToDefault()" cf-dropdown-close) Save current view as…
 

@@ -46,14 +46,16 @@
                 input.form-control(type="text" name="name" ng-model="newSpaceData.name" required)
             .l-form-row
               label Organization
-              .l-form-controls.space-template__org-selector(cf-dropdown)
-                button.btn.btn--tertiary(cf-dropdown-toggle type="button")
+              .l-form-controls.space-template__org-selector
+                button.btn.btn--tertiary(cf-dropdown-toggle="spaceTemplates.organization"
+                                         ng-disabled="writableOrganizations.length < 2"
+                                         type="button")
                   | {{selectedOrganization.name}}
                   i.button-icon-right.fa.fa-caret-down
-                .cfnext-dropdown.space-template__org-dropdown(cf-dropdown-menu position="bottomcenter")
+                .cfnext-dropdown.space-template__org-dropdown(cf-dropdown-menu="spaceTemplates.organization" cf-dropdown-position="bottomcenter")
                   cf-icon.cfnext-dropdown__arrow(cf-dropdown-arrow name="arrow-up" size="15")
                   ul.cfnext-dropdown__list--first
-                    li.cfnext-dropdown__item(ng-repeat="org in writableOrganizations" ng-click="selectOrganization(org)" dropdown-close) {{org.name}}
+                    li.cfnext-dropdown__item(ng-repeat="org in writableOrganizations" ng-click="selectOrganization(org)" cf-dropdown-close) {{org.name}}
             .l-form-row
               label Locale
               .l-form-controls

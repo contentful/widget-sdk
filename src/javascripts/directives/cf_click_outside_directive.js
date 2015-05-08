@@ -3,8 +3,10 @@
 // Works like ng-click but instead evaluates the argument
 // when the click is _outside_ of the element
 //
-// I don't know what the cfClickOutsideIgnore argument does, 
-// that was Tiago's invention.
+// `cf-click-outside-ignore` - If there is another element, external to the target
+// of this directive that should not trigger an event, pass it with this attribute
+// `cf-click-outside-when` - If present, the click outside handler only fires when
+// the condition in this attribute is true
 angular.module('contentful').directive('cfClickOutside', ['$parse', '$document', function($parse, $document){
   return {
     restrict: 'A',
@@ -17,7 +19,7 @@ angular.module('contentful').directive('cfClickOutside', ['$parse', '$document',
         $document.unbind('click', clickOutsideHandler);
       });
 
-      function isIgnored(target) {
+      function elementShouldBeIgnored(target) {
         return _.any(ignored, function (el) {
           return el === target;
         });
@@ -26,23 +28,16 @@ angular.module('contentful').directive('cfClickOutside', ['$parse', '$document',
       function clickOutsideHandler(event) {
         if(!scope.$eval(attr.cfClickOutsideWhen)) return;
         event.stopPropagation();
-        var targetParents = $(event.target).parents();
-        var inside = targetParents.index(element) !== -1;
-        var on     = event.target === element[0];
-        var clickOutside = !inside && !on && !isIgnored(event.target);
+        var targetParents         = $(event.target).parents();
+        var clickIsOutsideElement = targetParents.index(element) !== -1;
+        var clickIsOnElement      = event.target === element[0];
+        var clickOutsideHappened  = !clickIsOutsideElement && !clickIsOnElement && !elementShouldBeIgnored(event.target);
 
-        if (clickOutside) scope.$apply(function() {
+        if (clickOutsideHappened) scope.$apply(function() {
           fn(scope, {$event:event});
         });
       }
 
-      element.bind('click', function(event) {
-        event.stopPropagation();
-        event.preventDefault();
-        scope.$apply(function() {
-          fn(scope, {$event:event});
-        });
-      });
     }
   };
 }]);

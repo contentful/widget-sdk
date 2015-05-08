@@ -14,11 +14,11 @@
             tooltip="Toggle additional details"
             tooltip-placement="bottom")
       | Info
-    .dropdown-btn(cf-dropdown)
-      button.btn.btn--tertiary(cf-dropdown-toggle)
+    .dropdown-btn
+      button.btn.btn--tertiary(cf-dropdown-toggle="entryEditor.view")
         i.fa.fa-caret-down.button-icon-right
         span View
-      .dropdown-menu(cf-dropdown-menu position="bottomcenter")
+      .dropdown-menu(cf-dropdown-menu="entryEditor.view" cf-dropdown-position="bottomcenter")
         ul.lang-switcher(ng-show="showLangSwitcher")
           li.dropdown-menu-item--label(ng-repeat="locale in spaceContext.privateLocales track by locale.code")
             label
@@ -73,18 +73,18 @@
 
 .tab-actions(ng-controller="EntryActionsController")
   .button-set
-    .dropdown-btn(cf-dropdown="actions" ng-show="entityActionsController.canDelete() || entityActionsController.canDuplicate()")
-      button.btn.btn--tertiary(cf-dropdown-toggle="actions")
+    .dropdown-btn(ng-show="entityActionsController.canDelete() || entityActionsController.canDuplicate()")
+      button.btn.btn--tertiary(cf-dropdown-toggle="entryEditor.moreActions")
         i.fa.fa-caret-up.button-icon-right
         | More
-      .dropdown-menu(cf-dropdown-menu="actions" position="top")
-        ul(cf-dropdown="confirm")
-          li.dropdown-menu-item.duplicate(type="button" ng-show="entityActionsController.canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this Entry" dropdown-close) Duplicate
-          li.dropdown-menu-item.delete(type="button" ng-show="entityActionsController.canDelete()" cf-dropdown-toggle="confirm") Delete
-          .delete-confirm.no-caret(cf-dropdown-menu="confirm" position="topcenter")
+      .dropdown-menu(cf-dropdown-menu="entryEditor.moreActions" cf-dropdown-position="top")
+        ul
+          li.dropdown-menu-item.duplicate(type="button" ng-show="entityActionsController.canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this Entry" cf-dropdown-close) Duplicate
+          li.dropdown-menu-item.delete(type="button" ng-show="entityActionsController.canDelete()" cf-dropdown-toggle="entryEditor.delete") Delete
+          .delete-confirm.no-caret(cf-dropdown-menu="entryEditor.delete" cf-dropdown-position="topcenter")
             p You are about to delete {{headline()}}
-            button.btn.btn--danger(type="button" ng-click="delete()" dropdown-close) Delete 
-            button.btn.btn--secondary(type="button" dropdown-close) Don't Delete 
+            button.btn.btn--danger(type="button" ng-click="delete()" cf-dropdown-close) Delete 
+            button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete 
 
     | 
     button.btn.btn--secondary.archive(type="button" ng-show="entityActionsController.canArchive()"   ng-click="archive()"   tooltip="Archive this Entry") Archive
@@ -92,14 +92,14 @@
     button.btn.btn--secondary.archive(type="button" ng-show="entityActionsController.canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry") Unarchive
     | 
 
-    .dropdown-btn(cf-dropdown="revertActions" ng-show="entityActionsController.canUpdate() && (canRevertToPublishedState() || canRevertToPreviousState())")
-      button.btn.btn--tertiary(cf-dropdown-toggle="revertActions")
+    .dropdown-btn(ng-show="entityActionsController.canUpdate() && (canRevertToPublishedState() || canRevertToPreviousState())")
+      button.btn.btn--tertiary(cf-dropdown-toggle="entryEditor.revertActions")
         i.fa.fa-caret-up.button-icon-right
         | Revert...
-      .dropdown-menu.revert-actions__dropdown-menu(cf-dropdown-menu="revertActions" position="topcenter")
+      .dropdown-menu.revert-actions__dropdown-menu(cf-dropdown-menu="entryEditor.revertActions" position="topcenter")
         ul
-          li.dropdown-menu-item(type="button" ng-show="canRevertToPublishedState()" ng-click="revertToPublishedState()" dropdown-close) Revert to published version ({{publishedAt}})
-          li.dropdown-menu-item(type="button" ng-show="canRevertToPreviousState()" ng-click="revertToPreviousState()" dropdown-close) Discard my changes ({{updatedAt}})
+          li.dropdown-menu-item(type="button" ng-show="canRevertToPublishedState()" ng-click="revertToPublishedState()" cf-dropdown-close) Revert to published version ({{publishedAt}})
+          li.dropdown-menu-item(type="button" ng-show="canRevertToPreviousState()" ng-click="revertToPreviousState()" cf-dropdown-close) Discard my changes ({{updatedAt}})
 
     button.btn.btn--secondary.unpublish(type="button" ng-show="entityActionsController.canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry") Unpublish
     | 

@@ -62,6 +62,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.clickedProfileButton = clickedProfileButton;
   $scope.goToAccount = goToAccount;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
+  $scope.broadcastFromRoot = broadcastFromRoot;
 
   function initClient() {
     tokenStore.getUpdatedToken()
@@ -365,6 +366,10 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
         });
       }, 1000);
     }
+  }
+
+  function broadcastFromRoot() {
+    $rootScope.$broadcast.apply($rootScope, arguments);
   }
 
 }]);

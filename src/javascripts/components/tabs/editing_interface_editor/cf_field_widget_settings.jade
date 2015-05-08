@@ -50,12 +50,12 @@ layout-options-header.u-bce(ng-if="widget.widgetType == 'static'")
                     ng-model="widget.widgetParams[option.param]")
             span(ng-bind="option.description")
 
-    .l-form-row(ng-if="widget.widgetType == 'static'" cf-dropdown)
-      a.u-locked-action(href="#" cf-dropdown-toggle)
+    .l-form-row(ng-if="widget.widgetType == 'static'")
+      a.u-locked-action(href="#" cf-dropdown-toggle="contentTypeEditor.deleteWidget")
         i.fa.fa-trash
         | Delete Widget
-        .delete-confirm(cf-dropdown-menu position="topcenter")
+        .delete-confirm(cf-dropdown-menu="contentTypeEditor.deleteWidget" cf-dropdown-position="topcenter")
           p Are you sure you want to remove this widget?
-          button.btn.btn--danger(type="button" ng-click="removeWidget(widget)" dropdown-close) Delete
-          button.btn.btn--secondary(type="button" dropdown-close) Cancel
+          button.btn.btn--danger(type="button" ng-click="removeWidget(widget)" cf-dropdown-close) Delete
+          button.btn.btn--secondary(type="button" cf-dropdown-close) Cancel
 

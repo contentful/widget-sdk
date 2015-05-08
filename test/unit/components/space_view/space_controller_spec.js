@@ -130,20 +130,4 @@ describe('Space Controller', function () {
     sinon.assert.called(stubs.track);
   });
 
-  describe('broadcasts an event from space', function () {
-    var broadcastStub;
-    beforeEach(inject(function ($rootScope) {
-      broadcastStub = sinon.stub($rootScope, '$broadcast');
-    }));
-
-    afterEach(function () {
-      broadcastStub.restore();
-    });
-
-    it('broadcast is called', function () {
-      scope.broadcastFromSpace();
-      sinon.assert.called(broadcastStub);
-    });
-  });
-
 });

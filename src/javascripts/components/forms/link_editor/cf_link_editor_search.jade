@@ -10,20 +10,19 @@
   //- link to entry or entries
   .dropdown-btn.add-new(
       ng-if="entityType=='Entry' && addableContentTypes.length > 1"
-      cf-dropdown
       ng-hide="permissionController.get('createEntry', 'shouldHide')"
       ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
       cf-when-disabled="permissionController.entityActions.createEntry"
       tooltip="Add new {{entityType}}"
       tooltip-placement="left")
-    button.btn.btn--form.btn--tertiary(cf-dropdown-toggle type="button")
+    button.btn.btn--form.btn--tertiary(cf-dropdown-toggle="linkEditor.addNew" type="button")
       i.fa.fa-plus-circle.button-icon
       | Add New
-    a.dropdown-menu(cf-dropdown-menu)
+    a.dropdown-menu(cf-dropdown-menu="linkEditor.addNew")
       ul
         li.dropdown-menu-item(ng-repeat="contentType in addableContentTypes track by contentType.getId()"
             ng-click="addNewEntry(contentType)"
-            dropdown-close)
+            cf-dropdown-close)
           | {{contentType.getName()}}
 
   //- link to entry or entries with restriction on the type

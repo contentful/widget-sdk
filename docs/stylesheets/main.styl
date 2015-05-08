@@ -76,10 +76,28 @@ $base-profile()
     margin-top: $rhythm(2)
     margin-bottom: $rhythm(0.5)
 
+  h3
+    font-size: $font-scale(1.5);
+    margin-top: $rhythm(1.5)
+    margin-bottom: $rhythm(0.5)
+
   em
     font-style: italic;
+  strong
+    font-weight: bold
+
   p
     margin-bottom: $rhythm(0.5);
+
+  ul, ol
+    margin-top: $rhythm(0.5);
+    margin-bottom: $rhythm(0.5);
+    padding-left: $rhythm(1.2)
+  ul
+    list-style: disc
+  ol
+    list-style: decimal inside
+
 
 /**
  * Styles for guides
@@ -96,14 +114,6 @@ $base-profile()
     font-size: $font-scale(1);
     font-style: italic;
 
-  ul, ol
-    margin-top: $rhythm(0.5);
-    margin-bottom: $rhythm(0.5);
-  ul
-    list-style: disc
-  ol
-    list-style: decimal inside
-
 
 /**
  * Styles for API docs
@@ -112,6 +122,17 @@ $base-profile()
  */
 .api-profile
   $base-profile()
+  code
+    background-color: hsl(0, 0%, 95%)
+
+  pre
+    margin-bottom: $rhythm(0.5);
+    padding: $rhythm(0.2) $rhythm(0.4)
+    background-color: hsl(0, 0%, 90%)
+    border-radius: 4px
+    code
+      background-color: transparent
+
   h2
     font-size: $font-scale(1);
     text-transform: uppercase

@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('AssetActionsController', ['$scope', 'notification', 'logger', function AssetActionsController($scope, notification, logger) {
+angular.module('contentful').controller('AssetActionsController', ['$scope', 'notification', 'logger', '$rootScope', function AssetActionsController($scope, notification, logger, $rootScope) {
   // TODO If we are sure that the data in the asset has been updated from the ShareJS doc,
   // We can query the asset instead of reimplementing the checks heere
 
@@ -11,7 +11,7 @@ angular.module('contentful').controller('AssetActionsController', ['$scope', 'no
     $scope.asset.delete()
     .then(function(asset){
       notification.info('Asset deleted successfully');
-      $scope.broadcastFromSpace('entityDeleted', asset);
+      $rootScope.$broadcast('entityDeleted', asset);
     })
     .catch(function(err){
       notification.error('Error deleting Asset');
