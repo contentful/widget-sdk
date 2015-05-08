@@ -5,7 +5,7 @@
   .space-selector__dropdown.cfnext-dropdown(cf-dropdown-menu="navbar.spaceSelector" cf-dropdown-position="top15center")
     cf-icon.cfnext-dropdown__arrow(cf-dropdown-arrow name="arrow-up" size="15")
     ul.space-selector__list.cfnext-dropdown__list--first
-      li.cfnext-dropdown__item--no-highlight(ng-repeat="(orgId, org) in spacesByOrg" ng-class="{'has-no-action': canSelectOrg(orgId)}")
+      li.cfnext-dropdown__item--group(ng-repeat="(orgId, org) in spacesByOrg" ng-class="{'has-no-action': canSelectOrg(orgId)}")
         span.cfnext-dropdown__group-label.space-selector__group-label {{getOrgName(orgId)}}
         ul.cfnext-dropdown__inner-list
           li.space-selector__item.cfnext-dropdown__item(ng-repeat="space in org track by space.getId()"
@@ -16,7 +16,7 @@
               tooltip="This space entered hibernation due to lack of use. It will be back online soon.")
             span {{space.data.name}}
             i.fa.fa-circle(ng-show="space.isHibernated()")
-    ul.space-selector__add.cfnext-dropdown__list(ng-show="permissionController.canCreateSpace()")
-      li.cfnext-dropdown__item--vcentered(ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" cf-dropdown-close)
+    ul.space-selector__list.cfnext-dropdown__list(ng-show="permissionController.canCreateSpace()")
+      li.cfnext-dropdown__item(ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" cf-dropdown-close)
         cf-icon(name="plus" size="20")
         | Add new Space
