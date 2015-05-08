@@ -50,12 +50,13 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
     .then(_.partial(handler, null), handler);
   };
 
+  //TODO fix tests
   this.newApiKey = function() {
     var usage = enforcements.computeUsage('apiKey');
     if(usage){
       return notification.error(usage);
     }
-    $scope.$state.go('spaces.detail.api.keys.detail', { apiKeyId: 'new' });
+    $scope.$state.go('spaces.detail.api.keys.new');
     analytics.track(EVENT_NAME, {
       currentState: $scope.$state.current.name,
       entityType: 'apiKey'

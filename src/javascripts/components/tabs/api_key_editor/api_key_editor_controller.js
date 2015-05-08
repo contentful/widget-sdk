@@ -79,7 +79,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   });
 
   $scope.$watch('apiKey.data.name', function (title) {
-    $scope.context.title = title || 'Untitled';
+    $scope.context.title = title || 'New Api Key';
   });
 
   function title() {

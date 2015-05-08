@@ -42,9 +42,9 @@ angular.module('contentful').config([
   $stateProvider.state('spaces.new', {
     url: '/new',
     template: JST.cf_create_space_advice()
-  })
+  });
 
-  .state('spaces.detail', {
+  $stateProvider.state('spaces.detail', {
     url: '/:spaceId',
     resolve: {
       space: function (tokenStore, $stateParams) {
@@ -60,15 +60,17 @@ angular.module('contentful').config([
     template: '<cf-breadcrumbs ng-hide="spaceContext.space.isHibernated()"></cf-breadcrumbs>' +
               '<div ng-hide="spaceContext.space.isHibernated()" class="view-content" ui-view></div>' +
               '<div ng-if="spaceContext.space.isHibernated()" cf-template="cf_space_hibernation_advice"></div>'
-  })
+  });
 
-  .state('spaces.detail.entries', {
+
+  $stateProvider.state('spaces.detail.entries', {
     url: '/entries',
     abstract: true,
     template: '<ui-view/>'
-  })
+  });
 
-  .state('spaces.detail.entries.list', {
+
+  $stateProvider.state('spaces.detail.entries.list', {
     url: '',
     ncyBreadcrumb: {
       label: 'Entries'
@@ -77,9 +79,10 @@ angular.module('contentful').config([
       $scope.context = {};
     },
     template: '<div cf-entry-list class="entry-list entity-list"></div>'
-  })
+  });
 
-  .state('spaces.detail.entries.detail', {
+
+  $stateProvider.state('spaces.detail.entries.detail', {
     url: '/:entryId',
     params: {
       addToContext: {
@@ -120,23 +123,26 @@ angular.module('contentful').config([
       'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"',
       'ot-doc-presence'
     ].join(' ') + '></div>'
-  })
+  });
 
-  .state('spaces.detail.assets', {
+
+  $stateProvider.state('spaces.detail.assets', {
     url: '/assets',
     abstract: true,
     template: '<ui-view/>'
-  })
+  });
 
-  .state('spaces.detail.assets.list', {
+
+  $stateProvider.state('spaces.detail.assets.list', {
     url: '',
     ncyBreadcrumb: {
       label: 'Media Library'
     },
     template: '<div cf-asset-list class="asset-list entity-list"></div>'
-  })
+  });
 
-  .state('spaces.detail.assets.detail', {
+
+  $stateProvider.state('spaces.detail.assets.detail', {
     url: '/:assetId',
     params: {
       addToContext: {
@@ -177,15 +183,17 @@ angular.module('contentful').config([
       'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"',
       'ot-doc-presence',
     ].join(' ') + '></div>'
-  })
+  });
 
-  .state('spaces.detail.content_types', {
+
+  $stateProvider.state('spaces.detail.content_types', {
     url: '/content_types',
     abstract: true,
     template: '<ui-view/>'
-  })
+  });
 
-  .state('spaces.detail.content_types.list', {
+
+  $stateProvider.state('spaces.detail.content_types.list', {
     url: '',
     ncyBreadcrumb: {
       label: 'Content Types'
@@ -231,35 +239,25 @@ angular.module('contentful').config([
       'cf-validate="contentType.data"', 'cf-content-type-schema',
       'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"',
     ].join(' ') + '></div>'
-  })
+  });
 
-  .state('spaces.detail.content_types.detail.editing_interface', {
-    url: '/editing_interface',
-    ncyBreadcrumb: {
-      parent: 'spaces.detail.content_types.detail.editor',
-      label: 'Configure Fields'
-    },
-    controller: function ($state, $scope) {
-      $state.current.data = $scope.context = {};
-    },
-    template: '<div cf-editing-interface-editor class="editing-interface-editor with-tab-actions"></div>'
-  })
-
-  .state('spaces.detail.api', {
+  $stateProvider.state('spaces.detail.api', {
     url: '/api',
     abstract: true,
     template: '<ui-view/>'
-  })
+  });
 
-  .state('spaces.detail.api.home', {
+
+  $stateProvider.state('spaces.detail.api.home', {
     url: '',
     ncyBreadcrumb: {
       label: 'APIs'
     },
     template: '<div cf-api-home class="api-home"></div>'
-  })
+  });
 
-  .state('spaces.detail.api.content_model', {
+
+  $stateProvider.state('spaces.detail.api.content_model', {
     url: '/content_model',
     ncyBreadcrumb: {
       label: 'Content Model',
@@ -269,36 +267,29 @@ angular.module('contentful').config([
       $scope.context = {};
     },
     template: '<div cf-content-model class="content-model entity-list"></div>'
-  })
+  });
 
-  .state('spaces.detail.api.keys', {
+
+  $stateProvider.state('spaces.detail.api.keys', {
     abstract: true,
     url: '/keys',
     template: '<ui-view/>'
-  })
+  });
 
-  .state('spaces.detail.api.keys.list', {
-    url: '',
+
+  $stateProvider.state('spaces.detail.api.keys.list', {
+    url: '/',
     ncyBreadcrumb: {
       label: 'Delivery Keys',
       parent: 'spaces.detail.api.home'
     },
     template: '<div cf-api-key-list class="api-key-list entity-list"></div>'
-  })
+  });
 
-  .state('spaces.detail.api.keys.detail', {
-    url: '/:apiKeyId',
+  var apiKeyEditorState = {
     ncyBreadcrumb: {
       parent: 'spaces.detail.api.keys.list',
       label: '{{context.title + (context.dirty ? "*" : "")}}'
-    },
-    resolve: {
-      apiKey: function ($stateParams, space) {
-        if ($stateParams.apiKeyId === 'new') {
-          return space.newDeliveryApiKey();
-        }
-        return space.getDeliveryApiKey($stateParams.apiKeyId);
-      }
     },
     controller: function ($state, $scope, $stateParams, apiKey) {
       $state.current.data = $scope.context = {};
@@ -309,15 +300,35 @@ angular.module('contentful').config([
       'class="api-key--editor entity-editor with-tab-actions"' +
       'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}">' +
     '</div>'
-  })
+  };
 
-  .state('spaces.detail.settings', {
+  $stateProvider.state('spaces.detail.api.keys.new', _.extend({
+    url: '_new',
+    resolve: {
+      apiKey: function (space) {
+        return space.newDeliveryApiKey();
+      }
+    }
+  }, apiKeyEditorState));
+
+  $stateProvider.state('spaces.detail.api.keys.detail', _.extend({
+    url: '/:apiKeyId',
+    resolve: {
+      apiKey: function ($stateParams, space) {
+        return space.getDeliveryApiKey($stateParams.apiKeyId);
+      }
+    }
+  }, apiKeyEditorState));
+
+
+  $stateProvider.state('spaces.detail.settings', {
     url: '/settings',
     abstract: true,
     template: '<div cf-space-settings class="space-settings"></div>'
-  })
+  });
 
-  .state('spaces.detail.settings.pathSuffix', {
+
+  $stateProvider.state('spaces.detail.settings.pathSuffix', {
     url: '/{pathSuffix:PathSuffix}',
     params: {
       pathSuffix: 'edit'
@@ -325,9 +336,10 @@ angular.module('contentful').config([
     ncyBreadcrumb: {
       label: 'Settings'
     }
-  })
+  });
 
-  .state('account', {
+
+  $stateProvider.state('account', {
     url: '/account',
     abstract: true,
     views: {
@@ -335,9 +347,10 @@ angular.module('contentful').config([
         template: '<div cf-account-view class="account-view view-content"></div>'
       }
     }
-  })
+  });
 
-  .state('account.pathSuffix', {
+
+  $stateProvider.state('account.pathSuffix', {
     url: '/{pathSuffix:PathSuffix}',
     params: {
       pathSuffix: 'profile/user'
@@ -345,9 +358,10 @@ angular.module('contentful').config([
     ncyBreadcrumb: {
       label: 'Account'
     }
-  })
+  });
 
-  .state('otherwise', {
+
+  $stateProvider.state('otherwise', {
     url: '*path',
     template: ''
   });
