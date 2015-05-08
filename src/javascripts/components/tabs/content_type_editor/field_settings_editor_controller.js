@@ -3,11 +3,14 @@ angular.module('contentful').controller('FieldSettingsEditorController', ['$scop
   var modalDialog      = $injector.get('modalDialog');
 
   $scope.openSettingsDialog = function openSettingsDialog() {
-    modalDialog.open({
+    var dialog = modalDialog.open({
       scope: $scope,
       title: 'Field Settings',
       message: 'Not implemented yet',
       ignoreEnter: true,
+    });
+    dialog.promise.then(function () {
+      $scope.contentTypeForm.$setDirty();
     });
   };
 }]);

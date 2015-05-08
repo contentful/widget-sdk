@@ -93,10 +93,10 @@
     button.btn.btn--secondary.delete(type="button" ng-show="entityActionsController.canDelete()" cf-dropdown-toggle="contentTypeEditor.delete") Delete
     .delete-confirm(cf-dropdown-menu="contentTypeEditor.delete" cf-dropdown-position="topcenter")
       p You are about to delete {{contentType.getName()}}
-      button.btn.btn--danger(type="button" ng-click="delete()" cf-dropdown-close) Delete 
-      button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete 
+      button.btn.btn--danger(type="button" ng-click="delete()" cf-dropdown-close) Delete
+      button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete
     button.btn.btn--primary.publish(
-                  ng-disabled="!canPublish()"
-                  ng-click="publish()"
+                  ng-disabled="!canSave()"
+                  ng-click="save()"
                   tooltip="Save changed and make this Content Type available to editors")
       | Save

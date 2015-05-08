@@ -13,10 +13,16 @@ angular.module('contentful').
   var analytics    = $injector.get('analytics');
   var logger       = $injector.get('logger');
   var notification = $injector.get('notification');
+  var $q = $injector.get('$q');
 
-  function title() {
-    return '"' + $scope.contentType.getName()+ '"';
-  }
+  var saveError = 'Unable to save Content Type: ';
+  var messages = {
+    save: {
+      success: 'Content Type saved successfully',
+      invalid: saveError + 'Data is invalid',
+      outdated:  saveError + 'Your version is outdated. Please reload and try again'
+    }
+  };
 
   /**
    * @ngdoc method
@@ -36,26 +42,36 @@ angular.module('contentful').
 
   /**
    * @ngdoc method
-   * @name ContentTypeActionsController#publish
+   * @name ContentTypeActionsController#save
+   * @description
+   * Saves the content type and editing interface to the server.
    */
-  $scope.publish = function () {
+  $scope.save = function () {
     $scope.regulateDisplayField();
     if (!$scope.validate()) {
-      notification.warn('Error activating ' + title() + ': ' + 'Validation failed');
-      return;
+      notification.error(messages.save.invalid);
+      return $q.reject();
     }
-    $scope.contentType.save()
-    .then(saveSuccessHandler)
+    var contentTypeSave = $scope.contentType.save()
+    .then(publishContentType)
     .catch(saveErrorHandler);
+
+    var editingInterfaceSave = $scope.editingInterface.save()
+    .catch(saveErrorHandler);
+
+    return $q.all([contentTypeSave, editingInterfaceSave])
+    .then(function () {
+      notification.info(messages.save.success);
+      $scope.contentTypeForm.$setPristine();
+    });
   };
 
   /**
    * @ngdoc method
-   * @name ContentTypeActionsController#canPublish
+   * @name ContentTypeActionsController#canSave
    */
-  $scope.canPublish = function () {
-    var entityActions = $scope.entityActionsController;
-    return $scope.contentTypeForm.$dirty && entityActions.canPublish();
+  $scope.canSave = function () {
+    return $scope.contentTypeForm.$dirty;
   };
 
   /**
@@ -68,77 +84,55 @@ angular.module('contentful').
     .catch(unpublishErrorHandler);
   };
 
-
-  function saveSuccessHandler(contentType) {
+  function publishContentType(contentType) {
     var version = contentType.getVersion();
-    var verb = $scope.contentType.isPublished() ? 'updated' : 'activated';
-    contentType.publish(version)
-    .then(makePublishSuccessHandler(contentType, version, verb))
-    .catch(publishErrorHandler);
+    return contentType.publish(version)
+    .then(function (published) {
+      contentType.setPublishedVersion(version);
+      $scope.updatePublishedContentType(published);
+      $scope.spaceContext.registerPublishedContentType(published);
+      $scope.spaceContext.refreshContentTypes();
+
+      trackContentTypeAction('Published', $scope.contentType);
+    });
+  }
+
+  function trackContentTypeAction(action, contentType) {
+    analytics.track(action + ' ContentType', {
+      contentTypeId: contentType.getId(),
+      contentTypeName: contentType.getName(),
+      version: contentType.getVersion()
+    });
   }
 
   function saveErrorHandler(err) {
     var errorId = dotty.get(err, 'body.sys.id');
-    var messagePrefix = 'Error saving ' + title() + ': ';
-    if (errorId === 'VersionMismatch') {
-      notification.warn(messagePrefix + 'Can only save most recent version');
-    } else {
-      var reason = dotty.get(err, 'body.message');
-      notification.error(messagePrefix + reason);
-      logger.logServerWarn('Error saving Content Type', {error: err});
-    }
-
-  }
-
-  function makePublishSuccessHandler(contentType, version, verb) {
-    return function (publishedContentType){
-      contentType.setPublishedVersion(version);
-      $scope.updatePublishedContentType(publishedContentType);
-      $scope.spaceContext.registerPublishedContentType(publishedContentType);
-      $scope.spaceContext.refreshContentTypes();
-      $scope.contentTypeForm.$setPristine();
-
-      notification.info(title() + ' ' + verb + ' successfully');
-      analytics.track('Published ContentType', {
-        contentTypeId: $scope.contentType.getId(),
-        contentTypeName: $scope.contentType.getName(),
-        version: version
-      });
-    };
-  }
-
-  function publishErrorHandler(err){
-    var errorId = dotty.get(err, 'body.sys.id');
-    var messagePrefix = 'Error activating ' + title() + ': ';
     if (errorId === 'ValidationFailed') {
-      $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
-      notification.warn(messagePrefix + 'Validation failed');
+      notification.error(message.save.invalid);
     } else if (errorId === 'VersionMismatch') {
-      notification.warn(messagePrefix + 'Can only activate most recent version');
+      notification.warn(messages.save.outdated);
     } else {
-      var reason = dotty.get(err, 'body.message');
-      notification.error(messagePrefix + reason);
-      logger.logServerWarn('Error activating Content Type', {error: err});
+      var message = 'Unable to save Content Type: ';
+      message += dotty.get(err, 'body.message');
+      notification.error(message);
+      logger.logServerWarn('Error activating Content Type', err);
     }
   }
+
 
   function unpublishSuccessHandler(publishedContentType){
     $scope.updatePublishedContentType(null);
     $scope.spaceContext.unregisterPublishedContentType(publishedContentType);
     $scope.spaceContext.refreshContentTypes();
 
-    notification.info(title() + ' deactivated successfully');
-    analytics.track('Unpublished ContentType', {
-      contentTypeId: $scope.contentType.getId(),
-      contentTypeName: $scope.contentType.getName(),
-      version: $scope.contentType.getVersion()
-    });
+    notification.info('Content Type deactivated successfully');
+    trackContentTypeAction('Unpublished', $scope.contentType);
   }
 
   function unpublishErrorHandler(err){
     var reason = dotty.get(err, 'body.message');
-    if(!reason) logger.logServerWarn('Error deactivating Content Type', {error: err });
-    notification.warn('Error deactivating ' + title() + ': ' + reason, err);
+    if(!reason) logger.logServerWarn('Error deactivating Content Type', err);
+    notification.error('Unable to deactivate Content Type: ' + reason, err);
   }
 }]);
 
