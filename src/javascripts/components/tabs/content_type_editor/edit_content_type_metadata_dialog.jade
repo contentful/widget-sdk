@@ -1,0 +1,25 @@
+.modal-background
+  .modal-dialog.edit-content-type-metadata__dialog(cf-center-on=".modal-background")
+    header.modal-dialog__header
+      h1 {{dialog.title}}
+      .close-button(ng-click="dialog.cancel()")
+    form.modal-dialog__content(name="newContentTypeForm")
+      .cfnext-form__field
+        label
+          | Content Type Name
+          sup (required)
+        input.cfnext-form__input--full-size(type="text"
+               name="contentTypeName"
+               placeholder="e.g. Product, Blog Post, Author"
+               ng-model="contentTypeMetadata.name"
+               cf-focus-on-render)
+      .cfnext-form__field
+        label Short Description
+        textarea.cfnext-form__input--full-size(name="contentTypeDescription" ng-model="contentTypeMetadata.description")
+
+    .modal-dialog__controls
+      button.cfnext-btn-primary-action.modal-dialog__controls-confirm(ng-click="dialog.confirm()")
+        | {{dialog.confirmLabel}}
+      a.modal-dialog__controls-cancel(ng-href="#" ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
+        | Cancel
+

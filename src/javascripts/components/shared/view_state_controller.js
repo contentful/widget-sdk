@@ -2,7 +2,7 @@
 
 angular.module('contentful').controller('ViewStateController', ['$injector', '$scope', 'defaultState', function ViewStateController($injector, $scope, defaultState) {
   /**
-   * @ngdoc controller
+   * @ngdoc type
    * @name ViewStateController
    *
    * @usage

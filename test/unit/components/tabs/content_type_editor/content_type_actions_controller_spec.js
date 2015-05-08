@@ -47,10 +47,14 @@ describe('ContentType Actions Controller', function () {
     var contentTypeData = cfStub.contentTypeData('type1');
 
     scope = $rootScope.$new();
+    scope.context = {};
     scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
     scope.contentType = contentType;
     scope.broadcastFromSpace = sinon.stub();
     scope.regulateDisplayField = sinon.stub();
+    scope.$state = {
+      go: sinon.stub()
+    };
 
     var $controller = this.$inject('$controller');
     controller = $controller('ContentTypeActionsController', {$scope: scope});
@@ -102,6 +106,11 @@ describe('ContentType Actions Controller', function () {
         sinon.assert.calledWith(this.broadcastStub, 'entityDeleted');
       });
     });
+  });
+
+  it('when cancelling navigates back to list', function() {
+    scope.cancel();
+    sinon.assert.called(scope.$state.go, '^.list');
   });
 
   describe('when unpublishing', function() {
@@ -169,6 +178,7 @@ describe('ContentType Actions Controller', function () {
 
   describe('$scope.save()', function() {
     beforeEach(function() {
+
       scope.contentTypeForm = new FormStub();
       scope.contentTypeForm.$setDirty();
 
@@ -261,6 +271,14 @@ describe('ContentType Actions Controller', function () {
         .catch(function () {
           expect(scope.contentTypeForm.$pristine).toBe(false);
         });
+      });
+    });
+
+    pit('redirects if the content type is new', function() {
+      scope.context.isNew = true;
+      return scope.save()
+      .then(function () {
+        sinon.assert.called(scope.$state.go, 'spaces.detail.content_types.detail', {contentTypeId: 'typeid'});
       });
     });
   });

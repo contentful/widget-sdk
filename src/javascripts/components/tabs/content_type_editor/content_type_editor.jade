@@ -1,19 +1,9 @@
 .tab-header.editor-configuration
-  .tab-header__title
-    h1
-      | {{contentType.getName()}}
-      a(cf-knowledge-base-icon
-        tooltip="Learn more about Content Types in the Knowledge Base Pages"
-        analytics-event="content_types"
-        href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
+  h1.tab-header__title {{contentType.getName()}}
+  .tab-header__description {{contentType.data.description}}
+  a.tab-header__metadata-action(ng-click="showMetadataDialog()" ng-href="#") Edit
 
   .tab-header__actions
-    button.btn.btn--tertiary(type="button"
-            ng-click="preferences.toggleAuxPanel()"
-            ng-class="{active: preferences.showAuxPanel}"
-            tooltip="Toggle additional details"
-            tooltip-placement="bottom")
-      | Info
     .dropdown-btn
       button.btn.btn--tertiary(cf-dropdown-toggle="contentTypeEditor.view")
         i.fa.fa-caret-down.button-icon-right
@@ -24,43 +14,13 @@
             label 
               input(type="checkbox" ng-model="preferences.showDisabledFields")
               | Show disabled fields
-    button.btn.btn--tertiary(type="button"
-            ng-if="ctEditorController.interfaceEditorEnabled"
-            ng-disabled="!publishedContentType"
-            ng-click="$state.go('spaces.detail.content_types.detail.editing_interface')"
-            tooltip="Customize editing view"
-            tooltip-placement="bottom")
-      | Customize View
-
-.aux-panel(ng-show="preferences.showAuxPanel")
-  header
-    h1 Content Type Information
-  .entity-info-panel(cf-entity-info-panel="contentType.getSys()")
 
 .tab-main.tab-workbench
   .ng-form.l-form(name="contentTypeForm" submit="publish()")
     .l-form-row
-      label
-        | Name
-        sup (required)
-      .l-form-controls
-        .l-field-editor
-          input.form-control(type="text"
-                 name="contentTypeName"
-                 placeholder="Content Type Name (e.g. Product)"
-                 ng-model="contentType.data.name"
-                 cf-focus-on-render)
-        cf-error-list.form-box-error(cf-error-path="['name']")
-    .l-form-row
-      label Description
-      .l-form-controls
-        .l-field-editor
-          textarea.form-control(placeholder="Describe the purpose of Entries using this Content Type"
-                    name="contentTypeDescription"
-                    ng-model="contentType.data.description")
-        cf-error-list.form-box-error(cf-error-path="['description']")
-    .l-form-row
       label(ng-show="hasFields") Fields
+      .dropdown-btn
+        button.btn.btn--primary(ng-disabled="cfCanDisabled" ng-click="showNewFieldDialog()") Add new Field
       .l-form-controls
         div.content-type__fields(ng-show="hasFields" cf-template="content_type_field_list")
         cf-error-list.form-box-error(cf-error-path="['fields']")
@@ -70,18 +30,6 @@
             header.advice__title You have no Fields yet
             p.advice__description
               | Add Fields to configure which form inputs are available for your editors to work with.
-            .dropdown-btn
-              button.btn.btn--primary(cf-dropdown-toggle="contentTypeEditor.createField" ng-disabled="cfCanDisabled")
-                | Create Field
-              cf-select-type.u-bce.dropdown-menu.type-menu(cf-dropdown-menu="contentTypeEditor.createField" on-type-selected="addField(type)")
-              a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
-                | Visit the Knowledge Base Pages
-                i.fa.fa-question-circle
-        .dropdown-btn(ng-show="hasFields")
-          button.btn.btn--primary.add-field-button(cf-dropdown-toggle="contentTypeEditor.addField")
-            i.fa.fa-plus.button-icon
-            | Add Field
-          cf-select-type.u-bce.dropdown-menu.type-menu(cf-dropdown-menu="contentTypeEditor.addField" on-type-selected="addField(type)")
 
 .tab-actions(ng-controller="ContentTypeActionsController")
   .button-set
@@ -90,8 +38,9 @@
                   ng-click="unpublish()"
                   tooltip="Deactivate this Content Type")
       | Deactivate
-    button.btn.btn--secondary.delete(type="button" ng-show="entityActionsController.canDelete()" cf-dropdown-toggle="contentTypeEditor.delete") Delete
-    .delete-confirm(cf-dropdown-menu="contentTypeEditor.delete" cf-dropdown-position="topcenter")
+    button.btn.btn--secondary.cancel(type="button" ng-show="context.isNew" ng-click="cancel()") Cancel
+    button.btn.btn--secondary.delete(type="button" ng-show="!context.isNew && entityActionsController.canDelete()" cf-dropdown-toggle="contentType.delete") Delete
+    .delete-confirm(cf-dropdown-menu="contentType.delete" cf-dropdown-position="topcenter")
       p You are about to delete {{contentType.getName()}}
       button.btn.btn--danger(type="button" ng-click="delete()" cf-dropdown-close) Delete
       button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete

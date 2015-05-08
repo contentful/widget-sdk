@@ -202,11 +202,46 @@ angular.module('contentful').config([
       $scope.context = {};
     },
     template: '<div cf-content-type-list class="content-type-list entity-list"></div>'
-  })
+  });
 
-  .state('spaces.detail.content_types.detail', {
+  var contentTypeEditorState = {
+    ncyBreadcrumb: {
+      parent: 'spaces.detail.content_types.list',
+      label: '{{contentType.getName() + (context.dirty ? "*" : "")}}'
+    },
+    controller: function ($state, $scope, contentType, editingInterface) {
+      $scope.context = $state.current.data;
+      $scope.contentType = contentType;
+      $scope.editingInterface = editingInterface;
+    },
+    template:
+    '<div ' + [
+      'cf-content-type-editor',
+      'class="content-type-editor entity-editor with-tab-actions"',
+      'cf-validate="contentType.data" cf-content-type-schema',
+    ].join(' ') + '></div>'
+  };
+
+  $stateProvider.state('spaces.detail.content_types.new', _.extend({
+    url: '_new',
+    data: {
+      isNew: true
+    },
+    resolve: {
+      contentType: function (space) {
+        return space.newContentType({sys: {type: 'ContentType'}, fields: []});
+      },
+      editingInterface: ['contentType', 'editingInterfaces', function (contentType, editingInterfaces) {
+        return editingInterfaces.defaultInterface(contentType);
+      }]
+    },
+  }, contentTypeEditorState));
+
+  $stateProvider.state('spaces.detail.content_types.detail', _.extend({
     url: '/:contentTypeId',
-    abstract: true,
+    data: {
+      isNew: false
+    },
     resolve: {
       contentType: function ($stateParams, space) {
         return space.getContentType($stateParams.contentTypeId);
@@ -215,31 +250,8 @@ angular.module('contentful').config([
         return editingInterfaces.forContentTypeWithId(contentType, 'default');
       }
     },
-    controller: function ($scope, contentType, editingInterface) {
-      $scope.contentType = contentType;
-      $scope.editingInterface = editingInterface;
-    },
-    template: '<ui-view/>'
-  })
+  }, contentTypeEditorState));
 
-  .state('spaces.detail.content_types.detail.editor', {
-    url: '',
-    ncyBreadcrumb: {
-      parent: 'spaces.detail.content_types.list',
-      label: '{{contentType.getName() + (context.dirty ? "*" : "")}}'
-    },
-    controller: function ($state, $scope) {
-      $state.current.data = $scope.context = {};
-    },
-    template:
-    '<div ' + [
-      'cf-content-type-editor',
-      'class="content-type-editor entity-editor with-tab-actions"',
-      'ot-doc-for="contentType"',
-      'cf-validate="contentType.data"', 'cf-content-type-schema',
-      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"',
-    ].join(' ') + '></div>'
-  });
 
   $stateProvider.state('spaces.detail.api', {
     url: '/api',

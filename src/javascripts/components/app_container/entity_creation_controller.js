@@ -39,18 +39,13 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
   };
 
   this.newContentType = function() {
-    var handler = makeEntityResponseHandler({
-      entityType: 'contentType',
-      stateName: 'spaces.detail.content_types.detail.editor',
-      stateParam: 'contentTypeId',
-      errorMessage: 'Could not create Content Type'
+    $scope.$state.go('spaces.detail.content_types.new');
+    analytics.track(EVENT_NAME, {
+      currentState: $scope.$state.current.name,
+      entityType: 'contentType'
     });
-    var data = { sys: {}, fields: [], name: '' };
-    $scope.spaceContext.space.createContentType(data)
-    .then(_.partial(handler, null), handler);
   };
 
-  //TODO fix tests
   this.newApiKey = function() {
     var usage = enforcements.computeUsage('apiKey');
     if(usage){

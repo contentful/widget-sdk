@@ -1,13 +1,28 @@
 'use strict';
 
+/**
+ * @ngdoc type
+ * @name ContentTypeEditorController
+ *
+ * @scope.requires  context
+ * @scope.requires  $state
+ * @scope.requires  spaceContext
+ * @scope.requires  contentTypeForm
+ *
+ * @scope.provides  contentType
+ * @scope.provides  entityActionsController
+ * @scope.provides  hasFields
+ * @scope.provides  publishedIds
+ * @scope.provides  publishedApiNames
+ * @scope.provides  publishedContentType
+*/
 angular.module('contentful').controller('ContentTypeEditorController',
             ['$scope', '$injector', function ContentTypeEditorController($scope, $injector) {
   var $controller       = $injector.get('$controller');
   var analytics         = $injector.get('analytics');
-  var environment       = $injector.get('environment');
-  var random            = $injector.get('random');
   var validation        = $injector.get('validation');
   var editingInterfaces = $injector.get('editingInterfaces');
+  var modalDialog       = $injector.get('modalDialog');
 
   $scope.entityActionsController = $controller('EntityActionsController', {
     $scope: $scope,
@@ -22,7 +37,8 @@ angular.module('contentful').controller('ContentTypeEditorController',
   $scope.fieldSchema                        = validation(validation.schemas.ContentType.at(['fields']).items);
   $scope.regulateDisplayField               = regulateDisplayField;
   $scope.updatePublishedContentType         = updatePublishedContentType;
-  $scope.addField                           = addField;
+  $scope.showMetadataDialog                 = showMetadataDialog;
+  $scope.showNewFieldDialog                 = showNewFieldDialog;
 
   $scope.$watch('contentType', loadContentType);
   $scope.$watch('contentType.data.fields',       checkForDirtyForm, true);
@@ -50,7 +66,15 @@ angular.module('contentful').controller('ContentTypeEditorController',
 
   $scope.$on('entityDeleted', handleEntityDeleted);
 
-  this.interfaceEditorEnabled = $scope.user.features.showPreview || environment.env !== 'production';
+  if($scope.context.isNew){
+    showMetadataDialog({
+      optionalTitle: 'Create a new Content Type',
+      optionalActionLabel: 'Create'
+    })
+    .catch(function () {
+      $scope.$state.go('^.list');
+    });
+  }
 
   function loadContentType(contentType) {
     $scope.contentType = contentType;
@@ -103,18 +127,59 @@ angular.module('contentful').controller('ContentTypeEditorController',
       $scope.contentType.data.displayField = null;
   }
 
+  /**
+   * @ngdoc method
+   * @name ContentTypeEditorController#scope#updatePublishedContentType
+   *
+   * @param {Object} publishedContentType
+  */
   function updatePublishedContentType (publishedContentType) {
     $scope.publishedContentType = publishedContentType;
   }
 
-  function addField(typeFieldTemplate) {
-    var newField = _.extend({
-      name: '',
-      id: random.id(),
-      type: 'String',
-      apiName: ''
-    }, typeFieldTemplate);
+  /**
+   * @ngdoc method
+   * @name ContentTypeEditorController#scope#showMetadataDialog
+   *
+   * @param {object} params
+   * @property {string} optionalTitle
+   * @property {string} optionalActionLabel
+   *
+   * @returns {Promise}
+  */
+  function showMetadataDialog(params) {
+    params = params || {};
+    $scope.contentTypeMetadata = {
+      name: $scope.contentType.data.name || '',
+      description: $scope.contentType.data.description || ''
+    };
+    return modalDialog.open({
+      title: params.optionalTitle || 'Edit Content Type',
+      confirmLabel: params.optionalActionLabel || 'Confirm',
+      template: 'edit_content_type_metadata_dialog',
+      noBackgroundClose: true,
+      scope: $scope
+    }).promise
+    .then(function () {
+      _.extend($scope.contentType.data, $scope.contentTypeMetadata);
+    });
+  }
 
+  /**
+   * @ngdoc method
+   * @name ContentTypeEditorController#scope#showNewFieldDialog
+  */
+  function showNewFieldDialog() {
+    modalDialog.open({
+      title: 'Add new Field',
+      template: 'add_field_dialog',
+      noBackgroundClose: true,
+      scope: $scope
+    }).promise
+    .then(addField);
+  }
+
+  function addField(newField) {
     if(!_.has($scope.contentType.data, 'fields'))
       $scope.contentType.data.fields = [];
     $scope.contentType.data.fields.push(newField);

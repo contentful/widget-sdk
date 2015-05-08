@@ -1,0 +1,53 @@
+.modal-background
+  .modal-dialog.add-field-dialog(ng-controller="AddFieldDialogController" cf-center-on=".modal-background")
+    header.modal-dialog__header
+      h1 {{dialog.title}}
+      .close-button(ng-click="dialog.cancel()")
+
+    .modal-dialog__content(ng-show="viewState.is('fieldSelection')")
+      ul.add-field-dialog__list
+        li.add-field-dialog__list-item(ng-repeat="type in availableFieldTypes" ng-click="selectType(type)")
+          h2 {{type.name}}
+          p.add-field-dialog__description {{type.description}}
+
+    form.modal-dialog__content.add-field-dialog__config(
+      ng-show="viewState.is('fieldConfiguration')"
+      name="newFieldForm"
+      id="newFieldForm"
+      ng-submit="configureField()")
+      .cfnext-form__field
+        label
+          | Field name
+          sup (required)
+        input.cfnext-form__input--full-size(type="text"
+               name="fieldName"
+               ng-model="newField.name"
+               cf-focus-on-render)
+      .cfnext-form__field(ng-show="canHaveFieldVariant")
+        .cfnext-form__fieldset--horizontal
+          legend Would you like to store a single value or an array?
+          .cfnext-form-option
+            input.cfnext-form__input(type="radio"
+                   name="fieldVariant"
+                   ng-value="selectedType.type.single"
+                   ng-model="selectedFieldVariant")
+            .cfnext-form-option__desc
+              label Single value
+          .cfnext-form-option
+            input.cfnext-form__input(type="radio"
+                   name="fieldVariant"
+                   ng-value="selectedType.type.multiple"
+                   ng-model="selectedFieldVariant")
+            .cfnext-form-option__desc
+              label Array
+        .cfnext-form-option__desc
+          p If you store your values as an array, they will be separated on your API responses.
+        .note-box-small.note-box--blue
+          | Note: this setting cannot be changed later
+
+
+    .modal-dialog__controls(ng-show="viewState.is('fieldConfiguration')")
+      button.cfnext-btn-primary-action(type="submit" form="newFieldForm") Create Field
+
+
+

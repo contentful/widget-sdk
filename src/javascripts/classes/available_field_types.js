@@ -2,97 +2,55 @@
 angular.module('contentful').
   constant('availableFieldTypes', [
     {
-      name: 'Text',
-      description: 'Text description',
-      group: 'Single',
-      value: {type: 'Text'}
+      name: 'Short Text',
+      description: 'Single field or list. Good for titles, URLs, tags, etc.',
+      type: {single: 'Symbol', multiple: 'Array'}
     },
     {
-      name: 'Symbol',
-      description: 'Symbol description',
-      group: 'Single',
-      value: {type: 'Symbol'}
+      name: 'Long Text',
+      description: 'Good for long paragraphs',
+      type: 'Text'
     },
     {
-      name: 'Number',
-      description: 'Integer description',
-      group: 'Single',
-      value: {type: 'Integer'}
+      name: 'Integer',
+      description: 'Good for whole numbers',
+      type: 'Integer'
     },
     {
       name: 'Decimal Number',
-      description: 'Floating-point description',
-      group: 'Single',
-      value: {type: 'Number'}
+      description: 'Good for prices, weights, …',
+      type: 'Number'
     },
     {
-      name: 'Yes/No',
-      description: 'Yes/No description',
-      group: 'Single',
-      value: {type: 'Boolean'}
-    },
-    {
-      name: 'Date/Time',
-      description: 'Date/Time description',
-      group: 'Single',
-      value: {type: 'Date'}
+      name: 'Date & Time',
+      description: 'Good for dates or dates and time',
+      type: 'Date'
     },
     {
       name: 'Location',
-      group: 'Single',
-      description: 'Location description',
-      value: {type: 'Location'}
+      description: 'Good for addresses and coordinates',
+      type: 'Location'
     },
     {
-      name: 'Entry',
-      description: 'Link to Entry description',
-      group: 'Single',
-      value: {type: 'Link', linkType: 'Entry'}
+      name: 'Media',
+      description: 'Good for images, videos, PDFs, Word files, etc',
+      type: {single: 'Link', multiple: 'Array'},
+      linkType: 'Asset'
     },
     {
-      name: 'Asset',
-      description: 'Link to Asset description',
-      group: 'Single',
-      value: {type: 'Link', linkType: 'Asset'}
+      name: 'Boolean',
+      description: 'Good for simple Yes/No flags',
+      type: 'Boolean'
     },
     {
-      name: 'Object',
-      description: 'Object description',
-      group: 'Single',
-      value: {type: 'Object'}
+      name: 'JSON Object',
+      description: 'Good for JSON snippets',
+      type: 'Object'
     },
     {
-      name: 'Entries',
-      description: 'List of Entries description',
-      group: 'Multiple',
-      value: {type: 'Array', items: {type: 'Link', linkType: 'Entry'}}
+      name: 'Reference',
+      description: 'Link your Content Types',
+      type: {single: 'Link', multiple: 'Array'},
+      linkType: 'Entry'
     },
-    {
-      name: 'Assets',
-      description: 'List of Assets description',
-      group: 'Multiple',
-      value: {type: 'Array', items: {type: 'Link', linkType: 'Asset'}}
-    },
-    {
-      name: 'Symbols',
-      description: 'List of Symbols description',
-      group: 'Multiple',
-      value: {type: 'Array' , items: {type: 'Symbol'}}
-    }
-  ]).
-  factory('getFieldTypeName', ['availableFieldTypes', function(availableFieldTypes) {
-    return function(field) {
-      return _.result(_.find(availableFieldTypes, function(availableFieldType) {
-        var fieldItemsType = dotty.get(field, 'items.type');
-        var fieldType = dotty.get(field, 'type');
-        if (!field ||
-            fieldType !== dotty.get(availableFieldType, 'value.type') ||
-            fieldType === 'Link' && dotty.get(field, 'linkType') !== dotty.get(availableFieldType, 'value.linkType') ||
-            fieldItemsType !== dotty.get(availableFieldType, 'value.items.type') ||
-            fieldType === 'Array' && fieldItemsType === 'Link' && dotty.get(field, 'items.linkType') !== dotty.get(availableFieldType, 'value.items.linkType')
-           )
-          return false;
-        return true;
-      }), 'name');
-    };
-  }]);
+]);

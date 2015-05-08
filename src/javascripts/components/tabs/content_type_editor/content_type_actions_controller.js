@@ -12,6 +12,7 @@ angular.module('contentful').
   var $rootScope   = $injector.get('$rootScope');
   var analytics    = $injector.get('analytics');
   var logger       = $injector.get('logger');
+  var defer        = $injector.get('defer');
   var notification = $injector.get('notification');
   var $q = $injector.get('$q');
 
@@ -42,9 +43,15 @@ angular.module('contentful').
 
   /**
    * @ngdoc method
-   * @name ContentTypeActionsController#save
-   * @description
-   * Saves the content type and editing interface to the server.
+   * @name ContentTypeActionsController#scope#cancel
+   */
+  $scope.cancel = function () {
+    $scope.$state.go('^.list');
+  };
+
+  /**
+   * @ngdoc method
+   * @name ContentTypeActionsController#scope#save
    */
   $scope.save = function () {
     $scope.regulateDisplayField();
@@ -52,14 +59,22 @@ angular.module('contentful').
       notification.error(messages.save.invalid);
       return $q.reject();
     }
-    var contentTypeSave = $scope.contentType.save()
-    .then(publishContentType)
-    .catch(saveErrorHandler);
 
-    var editingInterfaceSave = $scope.editingInterface.save()
-    .catch(saveErrorHandler);
+    var savePromises = [];
+    savePromises.push(
+      $scope.contentType.save()
+      .then(publishContentType)
+      .catch(saveErrorHandler)
+    );
 
-    return $q.all([contentTypeSave, editingInterfaceSave])
+    if($scope.editingInterface) {
+      savePromises.push(
+        $scope.editingInterface.save()
+        .catch(saveErrorHandler)
+      );
+    }
+
+    return $q.all(savePromises)
     .then(function () {
       notification.info(messages.save.success);
       $scope.contentTypeForm.$setPristine();
@@ -94,6 +109,18 @@ angular.module('contentful').
       $scope.spaceContext.refreshContentTypes();
 
       trackContentTypeAction('Published', $scope.contentType);
+
+      if($scope.context.isNew){
+        // Let the digest cycle have time to properly set the pristine state
+        // before trying to redirect the user, otherwise they'll be prompted
+        // to save changes
+        defer(function () {
+          $scope.$state.go('spaces.detail.content_types.detail', {
+            contentTypeId: $scope.contentType.getId()
+          });
+        });
+      }
+
     });
   }
 

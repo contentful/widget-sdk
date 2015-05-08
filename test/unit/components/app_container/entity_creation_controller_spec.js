@@ -160,62 +160,17 @@ describe('EntityCreationController', function () {
   });
 
   describe('creates a content type', function () {
-    var createStub;
     beforeEach(function () {
-      createStub = sinon.stub(this.scope.spaceContext.space, 'createContentType').returns(this.$q.defer().promise);
-    });
-
-    afterEach(function () {
-      createStub.restore();
-    });
-
-    it('calls the space create method', function () {
       this.entityCreationController.newContentType();
-      sinon.assert.called(createStub);
+      this.scope.$apply();
     });
 
-    describe('creation fails', function () {
-      beforeEach(function () {
-        createStub.returns(this.$q.reject({
-          body: {
-            details: {
-              reasons: []
-            }
-          }
-        }));
-        this.entityCreationController.newContentType();
-        this.scope.$apply();
-      });
-
-      it('determines enforcements', function () {
-        sinon.assert.calledWith(stubs.enforcement, [], 'contentType');
-      });
-
-      it('notifies of the error', function () {
-        sinon.assert.called(this.notification.error);
-      });
-
-      it('tracks analytics', function () {
-        sinon.assert.called(stubs.track);
-      });
+    it('navigates to editor', function () {
+      sinon.assert.calledWith(this.scope.$state.go, 'spaces.detail.content_types.new');
     });
 
-    describe('creation suceeds', function () {
-      beforeEach(function () {
-        createStub.returns(this.$q.when({ getId: sinon.stub().returns('someContentTypeId') }));
-        this.entityCreationController.newContentType();
-        this.scope.$apply();
-      });
-
-      it('navigates to editor', function () {
-        sinon.assert.calledWith(this.scope.$state.go, 'spaces.detail.content_types.detail.editor', {
-          contentTypeId: 'someContentTypeId'
-        });
-      });
-
-      it('tracks analytics', function () {
-        sinon.assert.called(stubs.track);
-      });
+    it('tracks analytics', function () {
+      sinon.assert.called(stubs.track);
     });
   });
 
@@ -230,9 +185,7 @@ describe('EntityCreationController', function () {
     });
 
     it('navigates to editor', function () {
-      sinon.assert.calledWith(this.scope.$state.go, 'spaces.detail.api.keys.detail', {
-        apiKeyId: 'new'
-      });
+      sinon.assert.calledWith(this.scope.$state.go, 'spaces.detail.api.keys.new');
     });
 
     it('tracks analytics', function () {

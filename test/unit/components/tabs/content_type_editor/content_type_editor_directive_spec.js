@@ -48,15 +48,11 @@ describe('The ContentType editor directive', function () {
     });
 
     it('field list is shown', function () {
-      expect(container.find('.content-type-field-list')).not.toBeNgHidden();
+      expect(container.find('.content-type-fields')).not.toBeNgHidden();
     });
 
     it('advice is not shown', function () {
       expect(container.find('.advice')).toBeNgHidden();
-    });
-
-    it('fields dropdown is shown', function () {
-      expect(container.find('.form-controls > .dropdown-btn')).not.toBeNgHidden();
     });
   });
 
@@ -67,15 +63,11 @@ describe('The ContentType editor directive', function () {
     });
 
     it('field list is not shown', function () {
-      expect(container.find('.content-type__fields')).toBeNgHidden();
+      expect(container.find('.content-type-fields')).toBeNgHidden();
     });
 
     it('advice is shown', function () {
       expect(container.find('.advice')).not.toBeNgHidden();
-    });
-
-    it('fields dropdown is not shown', function () {
-      expect(container.find('.l-form-controls > .dropdown-btn')).toBeNgHidden();
     });
   });
 

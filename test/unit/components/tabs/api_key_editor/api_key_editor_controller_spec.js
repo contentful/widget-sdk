@@ -78,9 +78,9 @@ describe('API key editor controller', function () {
     expect(scope.apiKey).toEqual(apiKey);
   });
 
-  it('sets the state title to untitled', function () {
+  it('sets the state title to new api key', function () {
     scope.$apply();
-    expect(scope.context.title).toEqual('Untitled');
+    expect(scope.context.title).toEqual('New Api Key');
   });
 
   it('sets the state title', function () {

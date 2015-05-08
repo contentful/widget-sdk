@@ -4,12 +4,17 @@ describe('ContentTypeEditor Controller', function () {
   var scope, controller, $q, logger, notification;
   var space, contentType;
   var createContentType;
-  var modifiedContentTypeStub;
   beforeEach(function () {
-    modifiedContentTypeStub = sinon.stub();
+    var self = this;
     module('contentful/test', function ($provide) {
+      self.modifiedContentTypeStub = sinon.stub();
       $provide.value('analytics', {
-        modifiedContentType: modifiedContentTypeStub
+        modifiedContentType: self.modifiedContentTypeStub
+      });
+
+      self.modalDialogOpenStub = sinon.stub();
+      $provide.value('modalDialog', {
+        open: self.modalDialogOpenStub
       });
 
       $provide.removeControllers('PermissionController', 'EntityActionsController');
@@ -17,6 +22,7 @@ describe('ContentTypeEditor Controller', function () {
 
     inject(function ($rootScope, $controller, cfStub, $injector){
       this.$rootScope = $rootScope;
+      this.$q = $injector.get('$q');
       scope = $rootScope.$new();
       space = cfStub.space('space');
       $q = $injector.get('$q');
@@ -50,7 +56,7 @@ describe('ContentTypeEditor Controller', function () {
     };
   });
 
-  describe('with no fields', function() {
+  describe('on load, with no fields', function() {
     beforeEach(function() {
       createContentType();
     });
@@ -106,7 +112,7 @@ describe('ContentTypeEditor Controller', function () {
       sinon.assert.called(scope.contentTypeForm.$setDirty);
     });
 
-    describe('load published content type', function () {
+    describe('loads published content type', function () {
       var publishedCT;
       beforeEach(inject(function (cfStub){
         var newContentType = cfStub.contentType(space, 'contentType2', 'Content Type 2');
@@ -125,7 +131,7 @@ describe('ContentTypeEditor Controller', function () {
       });
     });
 
-    describe('dirty tab marker', function () {
+    describe('sets a dirty tab marker', function () {
       beforeEach(function () {
         scope.contentType.getPublishedVersion = sinon.stub();
         scope.contentType.getVersion = sinon.stub();
@@ -179,52 +185,55 @@ describe('ContentTypeEditor Controller', function () {
       });
     });
 
-    describe('#addField()', function () {
-      var childScope, eventArg;
-      beforeEach(function () {
-        childScope = scope.$new();
-        childScope.$on('fieldAdded', function (event, arg) {
-          eventArg = arg;
-        });
+    it('#showMetadataDialog', function() {
+      this.modalDialogOpenStub.returns({promise: this.$q.when()});
+      scope.showMetadataDialog();
+      sinon.assert.called(this.modalDialogOpenStub);
+    });
+
+    describe('#showNewFieldDialog', function() {
+      beforeEach(function() {
+        this.newField = {};
+        this.modalDialogOpenStub.returns({promise: this.when(this.newField)});
+        this.broadcastStub = sinon.stub(scope, '$broadcast');
+        scope.showNewFieldDialog();
       });
 
-      describe('succeeds', function () {
-        beforeEach(function () {
-          scope.addField({type: 'Text'});
-          scope.$digest();
-        });
+      afterEach(function() {
+        this.broadcastStub.restore();
+      });
 
-        it('field is added', function () {
-          expect(scope.contentType.data.fields[0]).toBeDefined();
-        });
+      it('opens dialog', function() {
+        sinon.assert.called(this.modalDialogOpenStub);
+      });
 
-        it('field has id', function () {
-          expect(typeof scope.contentType.data.fields[0].id).toBe('string');
-        });
+      it('adds field to content type', function() {
+        expect(scope.contentType.data.fields[0]).toBeUndefined();
+        scope.$digest();
+        expect(scope.contentType.data.fields[0]).toBeDefined();
+      });
 
-        it('field has supplied type', function () {
-          expect(scope.contentType.data.fields[0].type).toBe('Text');
-        });
+      it('broadcasts event', function () {
+        scope.$digest();
+        sinon.assert.called(this.broadcastStub, 'fieldAdded');
+      });
 
-        it('broadcasts event', function () {
-          expect(eventArg).toEqual(0);
-        });
-
-        it('fires analytics event', function () {
-          sinon.assert.called(modifiedContentTypeStub);
-        });
+      it('fires analytics event', function () {
+        scope.$digest();
+        sinon.assert.called(this.modifiedContentTypeStub);
       });
 
       it('adds field to editing interface', function () {
         expect(scope.editingInterface.data.widgets.length).toEqual(0);
-        scope.addField({type: 'Text'});
+        scope.$digest();
         expect(scope.editingInterface.data.widgets.length).toEqual(1);
       });
 
     });
+
   });
 
-  describe('with fields', function() {
+  describe('on load, with fields', function() {
     beforeEach(function() {
       createContentType([{}]);
     });
