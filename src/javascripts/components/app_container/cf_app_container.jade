@@ -7,5 +7,6 @@ cf-persistent-notification
   cf-navbar-loader.u-flex-pull-right
   cf-account-dropdown.u-flex-pull-right
 
-.app-container__content(ui-view="app-container" ng-class="{'with-persistent-notification': persistentNotification}")
-cf-view-content-fallback
+.app-container__content(
+  ui-view="app-container"
+  ng-class="{'with-persistent-notification': persistentNotification}")
