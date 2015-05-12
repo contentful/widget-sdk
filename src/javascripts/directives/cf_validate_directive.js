@@ -57,8 +57,7 @@ function ValidationController ($scope, $attrs, $timeout) {
    */
   controller.run = function (path, parent) {
     var data = getData();
-    var schema = $scope.schema;
-    var errors = schema.errors(data);
+    var errors = $scope.schema.errors(data);
 
     if (_.isUndefined(errors))
       return this.valid;

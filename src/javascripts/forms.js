@@ -65,6 +65,59 @@ angular.module('cf.forms', [])
   };
 }])
 
+/**
+ * @ngdoc directive
+ * @name cfValidateForm
+ * @module cf.forms
+ *
+ * @usage[jade]
+ * div(cf-validate="mydata")
+ *   div(ng-form cf-validate-form="x")
+ *     input(ng-model="mydata.x.y)
+ *
+ * @description
+ * Trigger `scope.validator.run()` when form controls emit the
+ * `ngModel:commit` event and adds schema errors to the form.
+ *
+ * The value of the `cf-validate-form` attribute sets the object path
+ * to use in the validator. This means that only errors that are
+ * contained in the path are considered by this directive. The
+ * directive will also only revalidate this path by passing it as an
+ * argument to `validator.run()`.
+ *
+ * @property {Error[]} formCtrl.errors
+ * @property {string[]} formCtrl.errorMessages
+ */
+.directive('cfValidateForm', ['$interpolate', function ($interpolate) {
+  return {
+    restrict: 'A',
+    require: ['^cfValidate', 'form'],
+    link: function (scope, elem, attrs, ctrls) {
+      var validator = ctrls[0];
+      var form = ctrls[1];
+
+      var errorPath = $interpolate(attrs.cfValidateForm || attrs.name || '')(scope);
+
+      scope.$on('ngModel:commit', validate);
+
+      scope.$watchCollection('validator.errors', function () {
+        var schemaErrors = validator.getPathErrors(errorPath, true);
+        var valid = _.isEmpty(schemaErrors);
+
+        form.errors = schemaErrors;
+
+        // TODO do we realy need this
+        form.errorMessages = _.map(schemaErrors, 'message');
+
+        form.$setValidity('schema', valid, 'schema');
+      });
+
+      function validate () {
+        return validator.run(errorPath, true);
+      }
+    }
+  };
+}])
 
 /**
  * @ngdoc directive
