@@ -4,12 +4,13 @@ import path from 'path';
 import nj from 'nunjucks';
 import marked from 'marked';
 import frontmatter from 'front-matter';
-import * as utils from './utils';
 import cheerio from 'cheerio';
 import _ from 'lodash-node';
 import combine from 'stream-combiner';
 import gutil from 'gulp-util';
-import hljs from 'highlight.js';
+
+import * as utils from './utils';
+import highlight from '../lib/highlight';
 
 /**
  * Pipeline that renders markdown files and generates an index file for
@@ -190,11 +191,3 @@ function tocTree (toc, parent) {
 function omitExtension (path) {
   return path.replace(/\.[a-zA-Z]+$/, '');
 }
-
-function highlight(code, lang) {
-  if (!lang)
-    return hljs.highlightAuto(code).value;
-  else
-    return hljs.highlight(lang, code).value;
-}
-

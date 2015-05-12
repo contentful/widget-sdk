@@ -6,6 +6,7 @@ angular.module('contentful').service('tokenStore', ['$injector', function($injec
   var client         = $injector.get('client');
   var authentication = $injector.get('authentication');
   var modalDialog    = $injector.get('modalDialog');
+  var notifyReload   = $injector.get('ReloadNotification').trigger;
 
   var tokenStore = this;
 
@@ -115,6 +116,8 @@ angular.module('contentful').service('tokenStore', ['$injector', function($injec
       }).promise.then(function () {
         authentication.logout();
       });
+    } else {
+      notifyReload('The browser was unable to obtain the login token.');
     }
     return $q.reject(err);
   }

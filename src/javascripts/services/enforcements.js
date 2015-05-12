@@ -36,7 +36,7 @@ angular.module('contentful').factory('enforcements', ['$injector', function Enfo
   var errorsByPriority = [
     {
       label: 'systemMaintenance',
-      message: '<strong>System under maintenance</strong> The service is down for maintenance and accessible in read-only mode.',
+      message: '<strong>System under maintenance.</strong> The service is down for maintenance and accessible in read-only mode.',
       actionMessage: 'Status',
       action: function () {
         analytics.trackPersistentNotificationAction('Visit Status Page');
@@ -46,7 +46,7 @@ angular.module('contentful').factory('enforcements', ['$injector', function Enfo
     {
       label: 'subscriptionUnsettled',
       message: function () {
-        return '<strong>Outstanding invoices</strong> ' +
+        return '<strong>Outstanding invoices.</strong> ' +
           (isOwner() ?
           'To be able to edit content within your Organization, please update your billing details.':
           'To be able to edit content within your Organization, the Organization Owner must update billing details.');
@@ -61,13 +61,13 @@ angular.module('contentful').factory('enforcements', ['$injector', function Enfo
     },
     {
       label: 'periodUsageExceeded',
-      message: '<strong>Over usage limits</strong> You have exceeded the monthly usage quota for your pricing plan. Please upgrade to ensure an uninterrupted delivery of your content.',
+      message: '<strong>Over usage limits.</strong> You have exceeded the monthly usage quota for your pricing plan. Please upgrade to ensure an uninterrupted delivery of your content.',
       actionMessage: upgradeActionMessage,
       action: upgradeAction
     },
     {
       label: 'usageExceeded',
-      message: '<strong>Over usage limits</strong> You have exceeded the usage limits for your plan. Please upgrade to proceed with content creation & delivery.',
+      message: '<strong>Over usage limits.</strong> You have exceeded the usage limits for your plan. Please upgrade to proceed with content creation & delivery.',
       tooltip: getMetricMessage,
       actionMessage: upgradeActionMessage,
       action: upgradeAction

@@ -92,7 +92,10 @@ module.exports = new Package('angularjs', [
 
 .factory(require('./tag-defs'))
 .config(function(parseTagsProcessor, tagDefs) {
-  parseTagsProcessor.tagDefinitions = parseTagsProcessor.tagDefinitions.concat(tagDefs);
+  var tds = parseTagsProcessor.tagDefinitions;
+  tds = _.reject(tds, {name: 'method'});
+  tds = tds.concat(tagDefs);
+  parseTagsProcessor.tagDefinitions = tds;
 })
 
 

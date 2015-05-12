@@ -3,13 +3,14 @@
 /**
  * @ngdoc directive
  * @name cfEntrySchema
- * @restrict A
+ * @usage[jade]
+ * div(cf-validate="entry" cf-entry-schema)
  *
  * @description
  * Exposes the `SchemaController` on the scope and uses the entry’s
  * content type to generate the controllers schema.
  *
- * @scope.provides {SchemaController} schema
+ * @property {SchemaController} $scope.schema
  *
  * @scope.requires {SpaceContext} spaceContext
  * @scope.requires {Entry}         entry
@@ -39,9 +40,10 @@ angular.module('contentful')
 /**
  * @ngdoc directive
  * @name cfAssetSchema
- * @restrict A
+ * @usage[jade]
+ * div(cf-validate="asset" cf-asset-schema)
  *
- * @scope.provides {SchemaController} schema
+ * @property {SchemaController} $scope.schema
  *
  * @scope.requires {SpaceContext} spaceContext
  */
@@ -65,9 +67,10 @@ angular.module('contentful')
 /**
  * @ngdoc directive
  * @name cfContentTypeSchema
- * @restrict A
+ * @usage[jade]
+ * div(cf-validate="contentType" cf-content-type-schema)
  *
- * @scope.provides {SchemaController} schema
+ * @property {SchemaController} $scope.schema
  */
 angular.module('contentful')
 .directive('cfContentTypeSchema', [function () {
@@ -105,7 +108,6 @@ angular.module('contentful')
    * @ngdoc method
    * @name SchemaController#setSchema
    * @param {Schema} schema
-   * @returns {null}
    */
   SchemaController.prototype.setSchema = function (schema) {
     this.schema = schema;
@@ -116,10 +118,10 @@ angular.module('contentful')
    * @name SchemaController#errors
    * @param data
    * @returns {Array<Error>}
-   * @throws {TypeError} Throws if the schema is not set yet.
    */
   SchemaController.prototype.errors = function (data) {
-    return this.schema.errors(data);
+    if (this.schema)
+      return this.schema.errors(data);
   };
 
   SchemaController.prototype.buildMessage = function (error, data) {

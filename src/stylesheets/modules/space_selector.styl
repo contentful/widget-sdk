@@ -9,6 +9,9 @@
     left: 0
   &__list
     $scroll-vertically(500px)
+    &.cfnext-dropdown__list,
+    &.cfnext-dropdown__list--first
+      margin-bottom: 0
   &__group-label
     text-transform: uppercase
     letter-spacing: 0.1em
@@ -22,6 +25,8 @@
       img
         position: relative
         top: 3px
+  .fa-circle
+    margin-left: 5px
 
 @media (max-width: $nav-bar-break-width)
   .space-selector

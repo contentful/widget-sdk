@@ -37,6 +37,11 @@ angular.module('contentful').config([
       'app-container': { template: '<ui-view/>' },
       'main-nav-bar': { template: '<cf-main-nav-bar/>' }
     }
+  });
+
+  $stateProvider.state('spaces.new', {
+    url: '/new',
+    template: JST.cf_create_space_advice()
   })
 
   .state('spaces.detail', {
@@ -52,7 +57,9 @@ angular.module('contentful').config([
     controller: function ($scope, space) {
       $scope.label = space.data.name;
     },
-    template: '<cf-breadcrumbs></cf-breadcrumbs><div class="view-content" ui-view></div>'
+    template: '<cf-breadcrumbs ng-hide="spaceContext.space.isHibernated()"></cf-breadcrumbs>' +
+              '<div ng-hide="spaceContext.space.isHibernated()" class="view-content" ui-view></div>' +
+              '<div ng-if="spaceContext.space.isHibernated()" cf-template="cf_space_hibernation_advice"></div>'
   })
 
   .state('spaces.detail.entries', {
@@ -351,7 +358,6 @@ angular.module('contentful').config([
   var modalDialog  = $injector.get('modalDialog'),
       $q           = $injector.get('$q'),
       $document    = $injector.get('$document'),
-      $location    = $injector.get('$location'),
       notification = $injector.get('notification'),
       tokenStore   = $injector.get('tokenStore'),
       spacesStore  = $injector.get('spacesStore'),
@@ -462,7 +468,7 @@ angular.module('contentful').config([
         spacesStore.saveSelectedSpace(space.getId());
         $rootScope.$state.go('spaces.detail', { spaceId: space.getId() });
       } else {
-        $location.url('/');
+        $rootScope.$state.go('spaces.new');
       }
     });
   }

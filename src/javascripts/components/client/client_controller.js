@@ -62,6 +62,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.clickedProfileButton = clickedProfileButton;
   $scope.goToAccount = goToAccount;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
+  $scope.broadcastFromRoot = broadcastFromRoot;
 
   function initClient() {
     tokenStore.getUpdatedToken()
@@ -242,7 +243,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     revision.hasNewVersion().catch(function (err) {
       if(err === 'APP_REVISION_CHANGED'){
         $rootScope.$broadcast('persistentNotification', {
-          message: 'A new application version is available.Please reload to get a new version of the application',
+          message: 'A new application version is available. Please reload to get a new version of the application',
           action: ReloadNotification.triggerImmediateReload,
           actionMessage: 'Reload'
         });
@@ -365,6 +366,10 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
         });
       }, 1000);
     }
+  }
+
+  function broadcastFromRoot() {
+    $rootScope.$broadcast.apply($rootScope, arguments);
   }
 
 }]);

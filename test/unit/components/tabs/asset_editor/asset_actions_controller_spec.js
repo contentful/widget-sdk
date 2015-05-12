@@ -11,6 +11,9 @@ describe('Asset Actions Controller', function () {
     });
     inject(function ($controller, $rootScope, cfStub, $injector) {
       $q = $injector.get('$q');
+      $rootScope = $injector.get('$rootScope');
+      this.broadcastStub = sinon.stub($rootScope, '$broadcast');
+      this.broadcastStub.returns({});
       logger = $injector.get('logger');
       notification = $injector.get('notification');
       space = cfStub.space('spaceid');
@@ -21,9 +24,12 @@ describe('Asset Actions Controller', function () {
       scope = $rootScope.$new();
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
       scope.asset = asset;
-      scope.broadcastFromSpace = sinon.stub();
       controller = $controller('AssetActionsController', {$scope: scope});
     });
+  });
+
+  afterEach(function () {
+    this.broadcastStub.restore();
   });
 
   describe('when deleting', function() {
@@ -65,7 +71,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('broadcasts event', function() {
-        sinon.assert.calledWith(scope.broadcastFromSpace, 'entityDeleted');
+        sinon.assert.calledWith(this.broadcastStub, 'entityDeleted');
       });
     });
   });

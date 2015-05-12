@@ -53,8 +53,4 @@ angular.module('contentful').controller('SpaceController', ['$scope', '$injector
     analytics.track('Clicked Logo');
   };
 
-  $scope.broadcastFromSpace = function(){
-    $scope.$broadcast.apply($scope, arguments);
-  };
-
 }]);

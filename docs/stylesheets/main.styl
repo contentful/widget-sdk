@@ -78,8 +78,29 @@ $base-profile()
 
   em
     font-style: italic;
+
+  strong
+    font-weight: bold
+
   p
     margin-bottom: $rhythm(0.5);
+
+$markdown-profile()
+  $base-profile()
+
+  h3
+    font-weight: 700
+    font-size: $font-scale(1);
+    margin-top: $rhythm(1)
+
+  ul, ol
+    margin-top: $rhythm(0.5);
+    margin-bottom: $rhythm(0.5);
+    padding-left: $rhythm(1.2)
+  ul
+    list-style: disc
+  ol
+    list-style: decimal inside
 
 /**
  * Styles for guides
@@ -87,22 +108,10 @@ $base-profile()
  * Markdown guides will be displayed inside this profile.
  */
 .guide-profile
-  $base-profile()
-  h3
-    font-weight: 700
-    font-size: $font-scale(1);
-    margin-top: $rhythm(1)
+  $markdown-profile()
   h1 + p
     font-size: $font-scale(1);
     font-style: italic;
-
-  ul, ol
-    margin-top: $rhythm(0.5);
-    margin-bottom: $rhythm(0.5);
-  ul
-    list-style: disc
-  ol
-    list-style: decimal inside
 
 
 /**
@@ -117,7 +126,9 @@ $base-profile()
     text-transform: uppercase
     color: $color-main
 
-.directive-scope-provides-header
+.api-profile-description
+  $markdown-profile()
+
 .api-members h3
   font-weight: 600;
   padding-bottom: $rhythm(0.5);
@@ -133,7 +144,6 @@ $base-profile()
     padding-bottom: $rhythm(0.5)
   td + td
     padding-left: 2em
-
 
 
 @import "navigation";

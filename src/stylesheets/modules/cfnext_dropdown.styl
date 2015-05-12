@@ -1,5 +1,29 @@
-$cfnext-caret-size = 12px
+/*
+Dropdowns
 
+New styles for dropdowns.
+These styles concern only the dropdown element itself and not the element
+which triggers visibility of the dropdown
+
+Markup:
+.styleguide-stretch-container--short
+  .cfnext-dropdown
+    // list-first will remove the top border separator
+    ul.cfnext-dropdown__list-first
+      li.cfnext-dropdown__item Item 1
+      li.cfnext-dropdown__item Item 2
+    ul.cfnext-dropdown__list
+      // nested sublist
+      li.cfnext-dropdown__item--group
+        span.cfnext-dropdown__group-label Inner List
+        ul.cfnext-dropdown__inner-list
+          li.cfnext-dropdown__item Inner Item 1
+          li.cfnext-dropdown__item Inner Item 2
+
+Styleguide 11.0
+*/
+
+$cfnext-caret-size = 12px
 $cfnext-gutter = 18px
 
 $cfnext-dropdown__item()
@@ -10,6 +34,7 @@ $cfnext-dropdown__item()
 
 $cfnext-dropdown__list()
   padding: 0
+  margin-bottom: $rhythm(0.5)
   border-top: 1px solid $cfnext-gray
 
 $cfnext-dropdown--highlight()
@@ -46,14 +71,23 @@ $cfnext-dropdown--highlight()
     $cfnext-dropdown__list()
     border-top: none
 
+  &__list--last
+    $cfnext-dropdown__list()
+    margin-bottom: $rhythm(0.2)
+
   &__inner-list
     margin-top: $rhythm(0.3)
 
   &__item
     $cfnext-dropdown__item()
     $cfnext-dropdown--highlight()
+    $display-flexbox()
+    align-items: center
+    cf-icon
+      line-height: normal
+      margin-right: 4px
 
-  &__item--no-highlight
+  &__item--group
     $cfnext-dropdown__item()
     padding: $rhythm(0.2) 0 0
     cursor: default
@@ -64,11 +98,6 @@ $cfnext-dropdown--highlight()
   &__item--vcentered
     $cfnext-dropdown__item()
     $cfnext-dropdown--highlight()
-    $display-flexbox()
-    align-items: center
-    cf-icon
-      line-height: normal
-      margin-right: 4px
 
 
 .cfnext-dropdown__list:last-child

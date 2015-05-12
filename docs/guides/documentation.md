@@ -79,6 +79,22 @@ this.methodName = function(arg) {
 }
 ~~~
 
+You can also inline method and property tags in the parent.
+~~~js
+/**
+ * @ngdoc type
+ * @name MyClass
+ *
+ * @property {string}     name
+ * @method   {function()} go
+ */
+function MyClass() {
+  this.name = 'myname'
+  this.go = function() {}
+}
+~~~
+
+
 ### Type Expressions
 
 Type expressions are used by the `@param`, `@returns`, and `@scope.*`

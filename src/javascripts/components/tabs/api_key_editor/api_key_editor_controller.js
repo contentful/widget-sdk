@@ -5,6 +5,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   var notification = $injector.get('notification');
   var logger = $injector.get('logger');
   var $window = $injector.get('$window');
+  var $rootScope = $injector.get('$rootScope');
   $scope.notes = $injector.get('notes');
 
   var deviceRegexps = {
@@ -94,7 +95,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     $scope.apiKey.delete()
     .then(function(){
       notification.info(t + ' deleted successfully');
-      $scope.broadcastFromSpace('entityDeleted', $scope.apiKey);
+      $rootScope.$broadcast('entityDeleted', $scope.apiKey);
     })
     .catch(function(err){
       notification.warn(t + ' could not be deleted');
