@@ -57,7 +57,7 @@ angular.module('contentful').config([
     controller: function ($scope, space) {
       $scope.label = space.data.name;
     },
-    template: '<cf-breadcrumbs></cf-breadcrumbs>' +
+    template: '<cf-breadcrumbs ng-hide="spaceContext.space.isHibernated()"></cf-breadcrumbs>' +
               '<div ng-hide="spaceContext.space.isHibernated()" class="view-content" ui-view></div>' +
               '<div ng-if="spaceContext.space.isHibernated()" cf-template="cf_space_hibernation_advice"></div>'
   })
