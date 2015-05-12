@@ -10,11 +10,13 @@
 angular.module('contentful').directive('cfCenterOn', ['$injector', function($injector){
   var $window  = $injector.get('$window');
   var debounce = $injector.get('debounce');
+  var defer    = $injector.get('defer');
 
   return {
     restrict: 'A',
     link: function(scope, elem, attr){
-      reposition();
+      defer(reposition);
+
       var debouncedReposition = debounce(reposition, 50);
       $($window).on('resize', debouncedReposition);
 
