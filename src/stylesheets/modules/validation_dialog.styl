@@ -1,7 +1,6 @@
 /**
  * Concerns:
  *
- * - validation-dialog.jade
  * - validation-values.jade
  * - validation-settings.jade
  * - validation-link.jade
@@ -9,7 +8,6 @@
  *
  * Components:
  *
- * - .validation-dialog
  * - .validation-settings
  * - .validation-controls
  * - .validation-values
@@ -17,38 +15,6 @@
 
 // Width of the left margin where the toggle checkbox sits.
 $validation-indent = 30px
-
-/**
- * @component .validation-dialog
- */
-.validation-dialog .modal-dialog
-  width: 800px
-  min-height: 500px
-  max-height: 80%
-  overflow-y: auto
-  overflow-x: hidden
-  user-select: none
-
-.validation-dialog__title
-  position: relative;
-  em
-    font-style: normal
-    &:before
-      content: "“"
-    &:after
-      content: "” "
-  .cf-knowledge-base-icon
-    margin-left: 0.3em
-
-
-.validation-dialog__actions
-  position: absolute
-  top: 0
-  bottom: 0
-  right: 0.9em
-
-  $display-flexbox()
-  align-items: center
 
 /**
  * @component .validation-settings
