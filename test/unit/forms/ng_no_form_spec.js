@@ -3,22 +3,38 @@
 describe('cfNoForm directive', function () {
   beforeEach(module('cf.forms'));
 
-  it('empty string sets model value to null', function () {
+  beforeEach(function () {
     var $compile = this.$inject('$compile');
-    var scope = this.$inject('$rootScope').$new();
+
+    this.$rootScope = this.$inject('$rootScope');
+    this.scope = this.$rootScope.$new();
 
     var template = '<form name="myform">' +
                      '<input name="no-dirty" ng-model="x" cf-no-form>' +
                      '<input name="dirty" ng-model="y">' +
                    '</form>';
+    this.element = $compile(template)(this.scope);
+  });
 
-    var element = $compile(template)(scope);
-    var form = scope.myform;
+  it('does not set the form to dirty', function () {
+    var form = this.scope.myform;
 
-    element.find('[name=no-dirty]').trigger('change');
+    this.element.find('[name=no-dirty]').trigger('change');
     expect(form.$dirty).toBe(false);
 
-    element.find('[name=dirty]').trigger('change');
+    this.element.find('[name=dirty]').trigger('change');
     expect(form.$dirty).toBe(true);
+  });
+
+  it('does not propagate the update event', function () {
+    var listener = sinon.spy();
+    this.$rootScope.$on('ngModel:update', listener);
+    this.$rootScope.$on('ngModel:commit', listener);
+
+    this.element.find('[name=no-dirty]').trigger('change').trigger('blur');
+    sinon.assert.notCalled(listener);
+
+    this.element.find('[name=dirty]').trigger('change').trigger('blur');
+    sinon.assert.calledTwice(listener);
   });
 });

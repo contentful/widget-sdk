@@ -20,20 +20,35 @@ describe('ngModel directive', function () {
     });
   });
 
-  describe('ngModelChange event', function () {
-    it('is emitted when view value chanbes', function () {
+  describe('ngModel:update event', function () {
+    it('is emitted when view value changes', function () {
       var $compile = this.$inject('$compile');
       var scope = this.$inject('$rootScope').$new();
 
       var eventListener = sinon.stub();
-      scope.$on('ngModelChange', eventListener);
+      scope.$on('ngModel:update', eventListener);
 
       var template = '<input type=text ng-model=myvalue>';
       var element = $compile(template)(scope);
       element.val('x').trigger('change');
       sinon.assert.calledOnce(eventListener);
-      var data = eventListener.firstCall.args[1];
-      expect(data.value).toEqual('x');
+      var modelCtrl = eventListener.firstCall.args[1];
+      expect(modelCtrl.$viewValue).toEqual('x');
+    });
+  });
+
+  describe('ngModel:commit event', function () {
+    it('is emitted when input is blured', function () {
+      var $compile = this.$inject('$compile');
+      var scope = this.$inject('$rootScope').$new();
+
+      var eventListener = sinon.stub();
+      scope.$on('ngModel:commit', eventListener);
+
+      var template = '<input type=text ng-model=myvalue>';
+      var element = $compile(template)(scope);
+      element.trigger('blur');
+      sinon.assert.calledOnce(eventListener);
     });
   });
 });

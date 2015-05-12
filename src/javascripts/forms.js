@@ -44,7 +44,8 @@ angular.module('cf.forms', [])
  *
  * @description
  * Prevent setting the `$dirty` property on `myform` to true when the
- * model value changes
+ * model value changes and stops propagation of the `ngModel:update`
+ * and `ngModel:commit` events fired by the `ngModel` controller.
  */
 .directive('cfNoForm', [function () {
   return {
@@ -52,6 +53,14 @@ angular.module('cf.forms', [])
     require: 'ngModel',
     link: function (scope, elem, attrs, modelCtrl) {
       modelCtrl.$setDirty = _.noop;
+      scope.$on('ngModel:update', stopThisPropagation);
+      scope.$on('ngModel:commit', stopThisPropagation);
+
+      function stopThisPropagation (ev, ngModel) {
+        if (ngModel === modelCtrl) {
+          ev.stopPropagation();
+        }
+      }
     }
   };
 }])
@@ -62,19 +71,40 @@ angular.module('cf.forms', [])
  * @module cf.forms
  * @name ngModel/change
  * @description
- * Emits the `ngModelChange` event on the scope when the model value
- * is changed.
+ * Emits `ngModel:update` when the view value changes. If the element
+ * is an `<input>` tag the `ngModel:commit` is emitted on `blur`.
+ * Otherwise the event is emitted imediately after `ngModel:update`.
+ *
+ * The event data is the model controller.
  */
 .directive('ngModel', [function () {
   return {
     require: 'ngModel',
     link: function (scope, elem, attrs, modelCtrl) {
-      modelCtrl.$viewChangeListeners.push(function () {
-        scope.$emit('ngModelChange', {
-          value: modelCtrl.$modelValue,
-          ngModel: modelCtrl
-        });
-      });
+      listenOnViewChange(emitUpdateEvent);
+
+      var composer;
+      if (elem.prop('tagName') === 'INPUT') {
+        composer = true;
+        elem.on('blur', emitCommitEvent);
+      } else {
+        composer = false;
+        listenOnViewChange(emitCommitEvent);
+      }
+
+      function emitCommitEvent () {
+        modelCtrl.composing = false;
+        scope.$emit('ngModel:commit', modelCtrl);
+      }
+
+      function emitUpdateEvent () {
+        modelCtrl.composing = true;
+        scope.$emit('ngModel:update', modelCtrl);
+      }
+
+      function listenOnViewChange (listener) {
+        modelCtrl.$viewChangeListeners.push(listener);
+      }
     }
   };
 }])
