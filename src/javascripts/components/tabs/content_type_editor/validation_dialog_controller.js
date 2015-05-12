@@ -260,7 +260,12 @@ angular.module('contentful')
    */
   /**
    * @ngdoc analytics-event
-   * @name Disabled validation
+   * @name Disabled Validation
+   * @param validation
+   */
+  /**
+   * @ngdoc analytics-event
+   * @name Saved Validation Dialog
    * @param validation
    */
   function trackSave () {
@@ -274,6 +279,7 @@ angular.module('contentful')
           track('Disabled Validation', {validation: name});
       }
     });
+    track('Saved ValidationDialog');
   }
 
 
@@ -291,7 +297,7 @@ angular.module('contentful')
       return !_.isEmpty(v.errors);
     });
     _.forEach(erroredValidations, function (validation) {
-      track('Save Errored Validation Dialog', {
+      track('Saved Errored Validation Dialog', {
         validation: validation.name
       });
     });
