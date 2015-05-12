@@ -1,8 +1,9 @@
 .modal-background
   .modal-dialog.insert-asset-dialog(ng-controller="InsertAssetDialogController" ng-keyup="handleKeys($event)" cf-center-on=".modal-background")
-    .title Insert Asset
-    .modal-dialog-close-button(ng-click="dialog.cancel()")
-    .dialog-content
+    header.modal-dialog__header
+      h1 Insert Asset
+      .close-button(ng-click="dialog.cancel()")
+    .modal-dialog__content
       div.menu-with-buttons(
         cf-view-menu="uiConfig.assetListViews"
         current-view="currentView"
@@ -19,9 +20,8 @@
             i.fa.fa-check(ng-show="selection.isSelected(asset)")
             .cf-thumbnail(cf-thumbnail file="spaceContext.localizedField(asset, 'data.fields.file')" size="100")
             .asset-title(title="{{spaceContext.assetTitle(asset)}}") {{spaceContext.assetTitle(asset)}}
-    .buttons
-      button.btn.btn--secondary.cancel(type="button" ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
-        | {{dialog.cancelLabel}}
-      | 
-      button.btn.btn--primary.confirm(ng-click="dialog.confirm(selection.getSelected(assets))")
+    .modal-dialog__controls
+      button.cfnext-btn-primary-action.modal-dialog__controls-confirm(ng-click="dialog.confirm(selection.getSelected(assets))")
         | Insert selected
+      a.modal-dialog__controls-cancel(ng-href="#" ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
+        | {{dialog.cancelLabel}}

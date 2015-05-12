@@ -1,8 +1,9 @@
 .modal-background
   .modal-dialog.space-template__dialog(ng-controller="SpaceTemplatesController" cf-center-on=".modal-background")
-    .title {{dialog.title}}
-    .modal-dialog-close-button(ng-show="dialogViewIs('spaceTemplateList') || dialogViewIs('spaceCreation')" ng-click="dialog.cancel()")
-    .dialog-content.space-template__dialog-content
+    header.modal-dialog__header
+      h1 {{dialog.title}}
+      .close-button(ng-show="dialogViewIs('spaceTemplateList') || dialogViewIs('spaceCreation')" ng-click="dialog.cancel()")
+    .modal-dialog__content.space-template__dialog-content
 
       .loading(ng-show="dialogViewIs('loading')")
 
@@ -29,7 +30,7 @@
         .space-template__detail-content(ng-show="selectedTemplate")
           h1 {{selectedTemplate.name}}
           div(ng-bind-html="selectedTemplate.description | markdown")
-        button.btn.btn--primary(ng-show="selectedTemplate" ng-click="showSpaceCreation()") Use this template
+        button.cfnext-btn-action(ng-show="selectedTemplate" ng-click="showSpaceCreation()") Use this template
 
       .space-template__space-creation(ng-show="dialogViewIs('spaceCreation')" ng-controller="CreateSpaceDialogController")
         h1
@@ -61,7 +62,7 @@
               .l-form-controls
                 input.form-control(type="text" name="locale" ng-model="newSpaceData.defaultLocale")
           .buttons
-            button.btn.btn--primary.confirm(type="submit" ng-disabled="newSpaceForm.$invalid || lockSubmit")
+            button.cfnext-btn-action(type="submit" ng-disabled="newSpaceForm.$invalid || lockSubmit")
               | Create Space
 
       .space-template__queue(ng-show="dialogViewIs('spaceTemplateQueue')")
@@ -78,5 +79,5 @@
           p
             | Some items could not be created properly right now, but don't worry, your space will work
             | normally, just with less pre created items, or you might need to publish some manually.
-          button.btn.btn--primary(ng-click="dismissDialog()") Continue
+          button.cfnext-btn-action(ng-click="dismissDialog()") Continue
 

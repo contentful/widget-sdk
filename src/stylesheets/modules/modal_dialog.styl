@@ -1,0 +1,90 @@
+/*
+Modal Dialog
+
+Styles for modal dialogs with optional controls.
+See the modal_dialog.jade template for a more complete base template for other dialogs
+
+Markup:
+// Commented out for demo purposes only
+// In normal usage, the .modal-dialog element should be a child of .modal-background
+//.modal-background
+.modal-dialog
+  header.modal-dialog__header
+    h1 Title
+    .close-button
+  .modal-dialog__content
+    p.modal-dialog__plaintext this is some plain text
+    .modal-dialog__richtext
+      p here is a paragraph
+      p here is another one
+  .modal-dialog__controls
+    button.cfnext-btn-primary-action.modal-dialog__controls-confirm
+      | Confirm
+    a.modal-dialog__controls-cancel
+      | Cancel
+
+Styleguide 12.0
+*/
+$modal-dialog-content-padding()
+  padding-left: 2em
+  padding-right: 2em
+
+.modal-background
+  $stretch()
+  $layer('modalBackground')
+  text-align: center
+  background-color: rgba(0, 0, 0, 0.2)
+
+$modal-dialog-layout()
+  $layer('modalDialog')
+  display: inline-block
+  position: relative
+  min-width: 500px
+  padding: 0
+  text-align: left
+
+$modal-dialog-chrome()
+  background-color: white
+  border: 1px solid $gray
+  border-radius: 3px
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1)
+  line-height: 15px
+
+.modal-dialog
+  $modal-dialog-chrome()
+  $modal-dialog-layout()
+
+  .dropdown-menu,
+  .cfnext-dropdown
+    $layer('modalDialogDropdown')
+
+  &__header
+    display: flex;
+    align-items: center
+    $modal-dialog-content-padding()
+
+    > h1
+      font-size: 1.2em
+      line-height: ($rhythm(3) / 1.2em)
+      flex-grow: 1
+      margin: 0
+
+  &__content
+    $modal-dialog-content-padding()
+    padding-top: $rhythm(1)
+    padding-bottom: $rhythm(1)
+
+  &__controls
+    $display-flexbox()
+    align-items: center
+    $modal-dialog-content-padding()
+    padding-bottom: $rhythm(1)
+
+  &__controls-cancel
+    margin-left: auto
+
+  &__plaintext
+    white-space: pre
+
+  &__richtext
+    max-width: 40em

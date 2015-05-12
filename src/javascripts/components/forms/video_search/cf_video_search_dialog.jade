@@ -1,12 +1,13 @@
 .modal-background
   .modal-dialog(cf-center-on=".modal-background")
-    .title Search for assets
-    .modal-dialog-close-button(ng-click="dialog.cancel()")
-    .dialog-content.video-dialog__content
+    header.modal-dialog__header
+      h1 Search for assets
+      .close-button(ng-click="dialog.cancel()")
+    .modal-dialog__content.video-dialog__content
       cf-video-search.video-dialog
-    .buttons
-      button.btn.btn--secondary.cancel(type="button" ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
-        | {{dialog.cancelLabel}}
-      | 
-      button.btn.btn--primary.confirm(ng-click="dialog.confirm(videoSearchController.getSelected())")
+    .modal-dialog__controls
+      button.cfnext-btn-primary-action.modal-dialog__controls-confirm(ng-click="dialog.confirm(videoSearchController.getSelected())")
         | Insert selected
+      a.modal-dialog__controls-cancel(ng-href="#" ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
+        | {{dialog.cancelLabel}}
+

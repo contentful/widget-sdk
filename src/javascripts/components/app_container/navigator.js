@@ -393,12 +393,14 @@ angular.module('contentful').config([
     var currentState = $rootScope.$state.$current,
         contextHistory = $rootScope.contextHistory;
 
-    confirmNavigation(currentState).then(function () {
-      contextHistory.pop();
-      if (contextHistory.length) {
-        $rootScope.goToEntityState(contextHistory[contextHistory.length - 1], true);
-      } else {
-        $rootScope.$state.go((currentState.ncyBreadcrumb && currentState.ncyBreadcrumb.parent) || '');
+    confirmNavigation(currentState).then(function (reply) {
+      if(reply.navConfirmed) {
+        contextHistory.pop();
+        if (contextHistory.length) {
+          $rootScope.goToEntityState(contextHistory[contextHistory.length - 1], true);
+        } else {
+          $rootScope.$state.go((currentState.ncyBreadcrumb && currentState.ncyBreadcrumb.parent) || '');
+        }
       }
     });
   }
@@ -414,9 +416,11 @@ angular.module('contentful').config([
     if (!navigationConfirmed && dotty.get(fromState, 'data.dirty') && dotty.exists(fromState, 'data.closingMessage')) {
       event.preventDefault();
       navigationConfirmed = false;
-      confirmNavigation(fromState).then(function () {
-        navigationConfirmed = true;
-        preprocessStateChange(event, toState, toStateParams);
+      confirmNavigation(fromState).then(function (reply) {
+        if(reply.navConfirmed) {
+          navigationConfirmed = true;
+          preprocessStateChange(event, toState, toStateParams);
+        }
       });
     } else {
       navigationConfirmed = false;
@@ -497,15 +501,27 @@ angular.module('contentful').config([
     if (state.data && state.data.dirty && state.data.closingMessage) {
       return modalDialog.open({
         title: 'Unsaved Changes',
-        confirmLabel: 'Discard Changes',
-        cancelLabel: 'Return to Editor',
-        className: 'discard-changes-dialog',
+        confirmLabel: 'Return to Editor',
+        cancelLabel: 'Discard Changes',
+        disableTopCloseButton: true,
+        noBackgroundClose: true,
         html: true,
         message: prepareClosingMessage(state.data.closingMessage),
         scope: $rootScope
-      }).promise;
+      }).promise
+      .then(function () {
+        // Primary confirm action in dialog means return to editor
+        // which means navigation is not confirmed
+        return {navConfirmed: false};
+      }, function () {
+        // Secondary cancel action in dialog means discard changes
+        // which means we can navigate away from the current page
+        return {navConfirmed: true};
+      });
     } else {
-      return $q.when('done');
+      return $q.when({
+        navConfirmed: true
+      });
     }
   }
 
