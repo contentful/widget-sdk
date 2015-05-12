@@ -111,13 +111,21 @@ angular.module('cf.forms', [])
  * @description
  * Adds the form controller as the `$form` property to the scope.
  */
-.directive('ngForm', [function () {
+.directive('ngForm', ['$timeout', function ($timeout) {
   return {
     restrict: 'A',
     require: 'form',
     controller: function () {},
     link: function (scope, elem, attrs, formCtrl) {
       scope.$form = formCtrl;
+
+      var removeControl = formCtrl.$removeControl;
+      formCtrl.$removeControl = function (ctrl) {
+        removeControl.call(this, ctrl);
+        $timeout(function () {
+          scope.$apply();
+        });
+      };
     }
   };
 }]);
