@@ -74,6 +74,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
     confirm: function () {
       this._deferred.resolve.apply(this, arguments);
       this.destroy();
+      trackConfirmed(this);
       return this;
     },
 
@@ -101,22 +102,46 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
     open: function (params) {
       var dialog = new Dialog(params);
       dialog.attach();
-      trackOpen(dialog);
+      trackOpened(dialog);
       return dialog;
     }
   };
 
-  function trackOpen(dialog) {
-    track('Dialog Opened', {
+
+  function trackDialog (eventName, dialog) {
+    track(eventName, {
       title: dialog.params.title,
       message: dialog.params.message
     });
   }
 
+  /**
+   * @ngdoc analytics-event
+   * @name Dialog Opened
+   * @param title
+   * @param message
+   */
+  function trackOpened(dialog) {
+    trackDialog('Dialog Opened', dialog);
+  }
+
+  /**
+   * @ngdoc analytics-event
+   * @name Dialog Canceled
+   * @param title
+   * @param message
+   */
   function trackCanceled(dialog) {
-    track('Dialog Canceled', {
-      title: dialog.params.title,
-      message: dialog.params.message
-    });
+    trackDialog('Dialog Canceled', dialog);
+  }
+
+  /**
+   * @ngdoc analytics-event
+   * @name Dialog Confirmed
+   * @param title
+   * @param message
+   */
+  function trackConfirmed(dialog) {
+    trackDialog('Dialog Confirmed', dialog);
   }
 }]);
