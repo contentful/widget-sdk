@@ -157,7 +157,9 @@ gulp.task('templates', function () {
 
 });
 
-gulp.task('vendor-js', function () {
+gulp.task('js', ['js/external-bundle', 'js/app', 'js/vendor']);
+
+gulp.task('js/vendor', function () {
   return gulp.src(src.vendorScripts)
     .pipe(sourceMaps.init())
     .pipe(concat('vendor.js'))
@@ -165,7 +167,7 @@ gulp.task('vendor-js', function () {
     .pipe(gulp.dest('./public/app'));
 });
 
-gulp.task('vendored-js-non-essential', function () {
+gulp.task('js/vendor-optional', function () {
   // Hardcoded to kaltura. Fix this when needed
   return gulp.src(src.vendorScriptsNonEssential.kaltura)
     .pipe(sourceMaps.init())
@@ -175,14 +177,14 @@ gulp.task('vendored-js-non-essential', function () {
     .pipe(gulp.dest('./public/app'));
 });
 
-gulp.task('user_interface', function () {
+gulp.task('js/external-bundle', function () {
   return bundleBrowserify(createBrowserify());
 });
 
 /**
  * Build all files necessary to run the tests
  */
-gulp.task('prepare-tests', ['vendor-js', 'templates', 'user_interface']);
+gulp.task('prepare-tests', ['js/vendor', 'templates', 'js/bundle']);
 
 
 gulp.task('watchify', function(){
@@ -219,7 +221,7 @@ gulp.task('git-revision', function(cb){
   });
 });
 
-gulp.task('components', ['git-revision'], function () {
+gulp.task('js/app', ['git-revision'], function () {
   return gulp.src(src.components)
     .pipe(gulpif('**/environment.js',
       replace({ regex: 'GULP_GIT_REVISION', replace: gitRevision})))
@@ -270,10 +272,8 @@ gulp.task('generate-styleguide', ['styleguide-stylesheets'], function (cb) {
 gulp.task('all', [
   'index',
   'templates',
-  'vendor-js',
-  'vendored-js-non-essential',
-  'user_interface',
-  'components',
+  'js',
+  'js/vendor-optional',
   'copy-images',
   'copy-static',
   'stylesheets',
