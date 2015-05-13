@@ -27,6 +27,7 @@ var run         = require('gulp-run');
 var path        = require('path');
 var through     = require('through2').obj;
 var ngAnnotate  = require('gulp-ng-annotate');
+var flo         = require('fb-flo');
 
 var loadSubtasks = require('./tasks/subtasks');
 loadSubtasks(gulp, 'docs');
@@ -338,26 +339,7 @@ gulp.task('serve', ['generate-styleguide'], function () {
   app.use(respond404);
   app.listen(3001);
 
-
-  var flo = require('fb-flo');
-  var floServer = flo(
-    './public/app/',
-    {
-      port: 9000,
-      verbose: false,
-      glob: [
-        '**/*.css',
-      ]
-    },
-    function resolver(filepath, cb) {
-      gutil.log('Live reloading', filepath);
-      cb({
-        resourceURL: '/app/main.css',
-        contents: fs.readFileSync('./public/app/main.css', 'utf-8')
-      });
-    }
-  );
-  floServer.once('ready', function () {
+  startLiveReload().once('ready', function () {
     gutil.log('FB Flo is ready!');
   });
 
@@ -550,4 +532,24 @@ function removeSourceRoot () {
     }
     push(null, file);
   });
+}
+
+function startLiveReload () {
+  return flo(
+    './public/app/',
+    {
+      port: 9000,
+      verbose: false,
+      glob: [
+        '**/*.css',
+      ]
+    },
+    function resolver(filepath, cb) {
+      gutil.log('Live reloading', filepath);
+      cb({
+        resourceURL: '/app/main.css',
+        contents: fs.readFileSync('./public/app/main.css', 'utf-8')
+      });
+    }
+  );
 }
