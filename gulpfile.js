@@ -113,6 +113,35 @@ var src = {
   ]
 };
 
+
+gulp.task('all', [
+  'index',
+  'templates',
+  'js',
+  'js/vendor-optional',
+  'copy-images',
+  'copy-static',
+  'stylesheets',
+]);
+
+
+/**
+ * Build all files necessary to run the tests
+ */
+gulp.task('prepare-tests', ['js/vendor', 'templates', 'js/external-bundle']);
+
+
+gulp.task('clean', function () {
+  return gulp.src([
+    './public/app',
+    './public/styleguide*',
+    './build/*',
+    './public/index.html'
+  ], {read: false})
+    .pipe(clean());
+});
+
+
 gulp.task('copy-static', function () {
   return gulp.src(src.static)
     .pipe(gulp.dest('./public/app'));
@@ -121,21 +150,6 @@ gulp.task('copy-static', function () {
 gulp.task('copy-images', function () {
   return gulp.src(src.images)
     .pipe(gulp.dest('./public/app/images'));
-});
-
-gulp.task('icons/prepare', ['icons/stylesheets'], function (cb) {
-  run('./bin/prepare_svg.js '+
-      src.svg.sourceIcons+' '+
-      src.svg.outputIcons+' '+
-      src.svg.outputCssIcons
-     ).exec(cb);
-});
-
-gulp.task('icons/cleanup', ['icons/prepare'], function (cb) {
-  run('svgo '+
-      '--disable cleanupIDs '+
-      '-i public/app/images/contentful_icons.svg'
-     ).exec(cb);
 });
 
 gulp.task('index', function(){
@@ -182,46 +196,6 @@ gulp.task('js/external-bundle', function () {
   return bundleBrowserify(createBrowserify());
 });
 
-/**
- * Build all files necessary to run the tests
- */
-gulp.task('prepare-tests', ['js/vendor', 'templates', 'js/bundle']);
-
-
-gulp.task('watchify', function(){
-  var watchify = require('watchify');
-  var ui = watchify(createBrowserify(watchify.args));
-  bundleBrowserify(ui);
-
-  ui.on('update', function() {
-    gutil.log('Rebuilding \'user_interface\' bundle...');
-    bundleBrowserify(ui)
-    .on('end', function(){
-      gutil.log('Rebuilding \'user_interface\' bundle done');
-    });
-  });
-});
-
-function createBrowserify(args) {
-  return browserify(_.extend({debug: true}, args))
-    .add('./src/user_interface')
-    .transform({optimize: 'size'}, 'browserify-pegjs');
-}
-
-function bundleBrowserify(browserify) {
-  return browserify.bundle()
-    .on('error', errorHandler('Browserify'))
-    .pipe(source('user_interface.js'))
-    .pipe(gulp.dest('./public/app/'));
-}
-
-gulp.task('git-revision', function(cb){
-  exec('git log -1 --pretty=format:%H', function(err, sha){
-    gitRevision = sha;
-    cb(err);
-  });
-});
-
 gulp.task('js/app', ['git-revision'], function () {
   return gulp.src(src.components)
     .pipe(gulpif('**/environment.js',
@@ -230,6 +204,13 @@ gulp.task('js/app', ['git-revision'], function () {
     .pipe(concat('components.js'))
     .pipe(sourceMaps.write({sourceRoot: '/components'}))
     .pipe(gulp.dest('./public/app/'));
+});
+
+gulp.task('git-revision', function(cb){
+  exec('git log -1 --pretty=format:%H', function(err, sha){
+    gitRevision = sha;
+    cb(err);
+  });
 });
 
 gulp.task('stylesheets', [
@@ -252,18 +233,25 @@ gulp.task('stylesheets/app', function () {
 
 gulp.task('icons', ['icons/cleanup']);
 
+gulp.task('icons/cleanup', ['icons/prepare'], function (cb) {
+  run('svgo '+
+      '--disable cleanupIDs '+
+      '-i public/app/images/contentful_icons.svg'
+     ).exec(cb);
+});
+
+gulp.task('icons/prepare', ['icons/stylesheets'], function (cb) {
+  run('./bin/prepare_svg.js '+
+      src.svg.sourceIcons+' '+
+      src.svg.outputIcons+' '+
+      src.svg.outputCssIcons
+     ).exec(cb);
+});
+
 gulp.task('icons/stylesheets', function () {
   return buildStylus(src.svg.inputCssIcons, './public/app');
 });
 
-function buildStylus(sources, dest) {
-  return gulp.src(sources)
-    .pipe(sourceMaps.init())
-    .pipe(stylus({use: nib()}))
-    .on('error', errorHandler('Stylus'))
-    .pipe(sourceMaps.write({sourceRoot: '/stylesheets'}))
-    .pipe(gulp.dest(dest));
-}
 
 gulp.task('styleguide', ['styleguide/stylesheets'], function (cb) {
   run('kss-node '+
@@ -278,26 +266,6 @@ gulp.task('styleguide/stylesheets', function () {
   return buildStylus(src.styleguideStylesheets, './public/styleguide_custom');
 });
 
-
-gulp.task('all', [
-  'index',
-  'templates',
-  'js',
-  'js/vendor-optional',
-  'copy-images',
-  'copy-static',
-  'stylesheets',
-]);
-
-gulp.task('clean', function () {
-  return gulp.src([
-    './public/app',
-    './public/styleguide*',
-    './build/*',
-    './public/index.html'
-  ], {read: false})
-    .pipe(clean());
-});
 
 gulp.task('serve', ['styleguide'], function () {
   var builds = [];
@@ -345,6 +313,45 @@ gulp.task('serve', ['styleguide'], function () {
   });
 
 });
+
+gulp.task('watchify', function(){
+  var watchify = require('watchify');
+  var ui = watchify(createBrowserify(watchify.args));
+  bundleBrowserify(ui);
+
+  ui.on('update', function() {
+    gutil.log('Rebuilding \'user_interface\' bundle...');
+    bundleBrowserify(ui)
+    .on('end', function(){
+      gutil.log('Rebuilding \'user_interface\' bundle done');
+    });
+  });
+});
+
+
+
+function createBrowserify(args) {
+  return browserify(_.extend({debug: true}, args))
+    .add('./src/user_interface')
+    .transform({optimize: 'size'}, 'browserify-pegjs');
+}
+
+function bundleBrowserify(browserify) {
+  return browserify.bundle()
+    .on('error', errorHandler('Browserify'))
+    .pipe(source('user_interface.js'))
+    .pipe(gulp.dest('./public/app/'));
+}
+
+
+function buildStylus(sources, dest) {
+  return gulp.src(sources)
+    .pipe(sourceMaps.init())
+    .pipe(stylus({use: nib()}))
+    .on('error', errorHandler('Stylus'))
+    .pipe(sourceMaps.write({sourceRoot: '/stylesheets'}))
+    .pipe(gulp.dest(dest));
+}
 
 function respond404 (req, res) {
   res.sendStatus(404);
