@@ -31,8 +31,7 @@ describe('ContentType Actions Controller', function () {
     });
 
     var $rootScope = this.$inject('$rootScope');
-    this.broadcastStub = sinon.stub($rootScope, '$broadcast');
-    scope.regulateDisplayField = sinon.stub();
+    this.broadcastStub = sinon.spy($rootScope, '$broadcast');
 
     logger = this.$inject('logger');
     notification = this.$inject('notification');

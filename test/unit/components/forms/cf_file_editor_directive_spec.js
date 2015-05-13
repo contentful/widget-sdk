@@ -66,8 +66,9 @@ describe('cfFileEditor Directive', function () {
 
     describe('and updating the otDoc value succeeds', function() {
       beforeEach(function() {
+        this.fileUploadListener = sinon.stub();
+        scope.$on('fileUploaded', this.fileUploadListener);
         scope.uploadFile();
-        sinon.stub(scope, '$emit');
         scope.$apply();
       });
 
@@ -96,13 +97,13 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('emits fileUploaded event', function() {
-        sinon.assert.calledWith(scope.$emit, 'fileUploaded');
-        expect(scope.$emit.args[0][1]).toEqual({
+        sinon.assert.calledOnce(this.fileUploadListener);
+        expect(this.fileUploadListener.args[0][1]).toEqual({
           upload: 'newurl',
           fileName: 'newfilename',
           contentType: 'newmimetype'
         });
-        expect(scope.$emit.args[0][2]).toEqual(scope.locale);
+        expect(this.fileUploadListener.args[0][2]).toEqual(scope.locale);
       });
     });
   });
