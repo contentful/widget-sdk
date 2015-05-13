@@ -33,6 +33,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
   var $q       = $injector.get('$q');
   var $window  = $injector.get('$window');
   var keycodes = $injector.get('keycodes');
+  var defer    = $injector.get('defer');
   var track    = $injector.get('analytics').track;
 
   function Dialog(params) {
@@ -63,7 +64,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
 
     attach: function () {
       var scope = this.scope;
-      this.domElement = $(JST[this.params.template]()).appendTo(this.params.attachTo);
+      this.domElement = $(JST[this.params.template]());
 
       if(this.domElement.find('input').length > 0)
         this.domElement.find('input').eq(0).focus();
@@ -73,10 +74,15 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       $($window).on('keyup', this._handleKeys);
 
       scope.dialog = _.extend(this, this.params);
-      $compile(this.domElement)(scope);
 
-      this.domElement.on('click', _.bind(this._closeOnBackground, this));
-      this.open = true;
+      // Defer rendering to prevent positioning issues when firing dialogs
+      // on page load
+      defer(_.bind(function () {
+        this.domElement.appendTo(this.params.attachTo);
+        $compile(this.domElement)(scope);
+        this.domElement.on('click', _.bind(this._closeOnBackground, this));
+        this.open = true;
+      }, this));
     },
 
     _closeOnBackground: function (ev) {
