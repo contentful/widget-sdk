@@ -250,10 +250,6 @@ gulp.task('stylesheets/app', function () {
   return buildStylus(src.mainStylesheets, './public/app');
 });
 
-gulp.task('styleguide-stylesheets', function () {
-  return buildStylus(src.styleguideStylesheets, './public/styleguide_custom');
-});
-
 gulp.task('icons', ['icons/cleanup']);
 
 gulp.task('icons/stylesheets', function () {
@@ -269,7 +265,7 @@ function buildStylus(sources, dest) {
     .pipe(gulp.dest(dest));
 }
 
-gulp.task('generate-styleguide', ['styleguide-stylesheets'], function (cb) {
+gulp.task('styleguide', ['styleguide/stylesheets'], function (cb) {
   run('kss-node '+
       '--template styleguide_template '+
       '--helpers styleguide_template/helpers '+
@@ -277,6 +273,11 @@ gulp.task('generate-styleguide', ['styleguide-stylesheets'], function (cb) {
       '--destination public/styleguide'
      ).exec(cb);
 });
+
+gulp.task('styleguide/stylesheets', function () {
+  return buildStylus(src.styleguideStylesheets, './public/styleguide_custom');
+});
+
 
 gulp.task('all', [
   'index',
@@ -298,18 +299,18 @@ gulp.task('clean', function () {
     .pipe(clean());
 });
 
-gulp.task('serve', ['generate-styleguide'], function () {
+gulp.task('serve', ['styleguide'], function () {
   var builds = [];
   watchTask(src['components'], 'components');
   watchTask(src['templates'], 'templates');
   gulp.watch(src['styleguideTemplate'], function () {
     builds.push(new Promise(function (resolve) {
-      runSequence('generate-styleguide', resolve);
+      runSequence('styleguide', resolve);
     }));
   });
   gulp.watch(src['stylesheets'], function () {
     builds.push(new Promise(function (resolve) {
-      runSequence('stylesheets', 'generate-styleguide', resolve);
+      runSequence('stylesheets', 'styleguide', resolve);
     }));
   });
 
