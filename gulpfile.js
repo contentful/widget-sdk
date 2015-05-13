@@ -122,7 +122,7 @@ gulp.task('copy-images', function () {
     .pipe(gulp.dest('./public/app/images'));
 });
 
-gulp.task('prepare-svg', ['svg-stylesheets'], function (cb) {
+gulp.task('icons/prepare', ['icons/stylesheets'], function (cb) {
   run('./bin/prepare_svg.js '+
       src.svg.sourceIcons+' '+
       src.svg.outputIcons+' '+
@@ -130,7 +130,7 @@ gulp.task('prepare-svg', ['svg-stylesheets'], function (cb) {
      ).exec(cb);
 });
 
-gulp.task('cleanup-svg', ['prepare-svg'], function (cb) {
+gulp.task('icons/cleanup', ['icons/prepare'], function (cb) {
   run('svgo '+
       '--disable cleanupIDs '+
       '-i public/app/images/contentful_icons.svg'
@@ -239,7 +239,7 @@ gulp.task('vendor_stylesheets', function () {
     .pipe(gulp.dest('./public/app'));
 });
 
-gulp.task('stylesheets', ['cleanup-svg'], function () {
+gulp.task('stylesheets', ['icons'], function () {
   return buildStylus(src.mainStylesheets, './public/app');
 });
 
@@ -247,7 +247,9 @@ gulp.task('styleguide-stylesheets', function () {
   return buildStylus(src.styleguideStylesheets, './public/styleguide_custom');
 });
 
-gulp.task('svg-stylesheets', function () {
+gulp.task('icons', ['icons/cleanup']);
+
+gulp.task('icons/stylesheets', function () {
   return buildStylus(src.svg.inputCssIcons, './public/app');
 });
 
