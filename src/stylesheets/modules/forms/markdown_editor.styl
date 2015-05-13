@@ -51,15 +51,15 @@ $markdown-guide-height = 25px
   overflow-wrap: break-word
   p
     margin: 0
-    margin-top: 0
-  p,
+  p + p
+    margin-top: $rhythm(0.5)
   pre,
   .markdown-image-placeholder
     margin-bottom: 22px
   hr
     background-color: $gray-medium
   ul, ol
-    margin: 5px 0;
+    margin: $rhythm(0.5) 0;
     padding-left: 1.6em
   ul > li
     list-style-type: disc
