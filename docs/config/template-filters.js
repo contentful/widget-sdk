@@ -16,6 +16,11 @@ var highlight = require('../lib/highlight');
  *   returns: {typeExpression: 'boolean'}
  * }) // => fn(arg: string): boolean
  * ~~~
+ *
+ * ## `memberSyntax`
+ * Builds a function or property expression from doc object
+ *
+ * ## `codeBlock`
  */
 module.exports = [{
   name: 'functionSyntax',
