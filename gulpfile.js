@@ -231,7 +231,13 @@ gulp.task('js/app', ['git-revision'], function () {
     .pipe(gulp.dest('./public/app/'));
 });
 
-gulp.task('vendor_stylesheets', function () {
+gulp.task('stylesheets', [
+  'stylesheets/vendor',
+  'stylesheets/app',
+  'icons'
+]);
+
+gulp.task('stylesheets/vendor', function () {
    return gulp.src(src.vendorStylesheets)
     .pipe(sourceMaps.init())
     .pipe(concat('vendor.css'))
@@ -239,7 +245,7 @@ gulp.task('vendor_stylesheets', function () {
     .pipe(gulp.dest('./public/app'));
 });
 
-gulp.task('stylesheets', ['icons'], function () {
+gulp.task('stylesheets/app', function () {
   return buildStylus(src.mainStylesheets, './public/app');
 });
 
@@ -279,7 +285,6 @@ gulp.task('all', [
   'copy-images',
   'copy-static',
   'stylesheets',
-  'vendor_stylesheets'
 ]);
 
 gulp.task('clean', function () {
