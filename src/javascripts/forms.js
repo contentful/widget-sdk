@@ -122,6 +122,70 @@ angular.module('cf.forms', [])
 /**
  * @ngdoc directive
  * @module cf.forms
+ *
+ * @name cfValidateModel
+ * @usage[jade]
+ * div(cf-validate="data")
+ *   input(ng-model="data.x" cf-validate-model="x")
+ *
+ * @description
+ * Validates changes in the model with the `cfValidate` directive and
+ * adds errors to the model controller.
+ *
+ * The directive focuses on errors with paths starting with the value
+ * of the `cf-validate-model` attribute.
+ *
+ * When the view value of the model controller changes it will call
+ * `validator.run('x', true)`. The directive will also watch changes in
+ * `validtor.errors` and add any errors that match the provided path to
+ * `ngModelCtrl.$error`.
+ *
+ * @property {[name: string]: Error} ngModelCtrl.errorDetails
+ */
+.directive('cfValidateModel', ['$interpolate', function ($interpolate) {
+  return {
+    require: ['ngModel', '^cfValidate'],
+    link: function (scope, elem, attrs, ctrls) {
+      var modelCtrl = ctrls[0];
+      var validator = ctrls[1];
+      var schemaErrors = [];
+
+      var errorPath = $interpolate(attrs.cfValidateModel || attrs.name || '')(scope);
+
+      scope.$on('ngModel:commit', validate);
+
+      scope.$watch('validator.errors', function () {
+        _.forEach(schemaErrors, function (error) {
+          modelCtrl.$setValidity(error.name, null);
+        });
+
+        schemaErrors = validator.getPathErrors(errorPath);
+
+        modelCtrl.errorDetails = mapBy(schemaErrors, 'name');
+
+        _.forEach(schemaErrors, function (error) {
+          modelCtrl.$setValidity(error.name, false);
+        });
+      });
+
+      function validate () {
+        return validator.run(errorPath, true);
+      }
+
+      function mapBy(collection, iteratee) {
+        var grouped = _.groupBy(collection, iteratee);
+        return _.mapValues(grouped, function (items) {
+          return items[0];
+        });
+      }
+
+    }
+  };
+}])
+
+/**
+ * @ngdoc directive
+ * @module cf.forms
  * @name ngModel/change
  * @description
  * Emits `ngModel:update` when the view value changes. If the element
