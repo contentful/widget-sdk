@@ -279,7 +279,7 @@ angular.module('contentful')
           track('Disabled Validation', {validation: name});
       }
     });
-    track('Saved ValidationDialog');
+    track('Saved Validation Dialog');
   }
 
 

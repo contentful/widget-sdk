@@ -18,7 +18,7 @@
               tooltip="This space entered hibernation due to lack of use. It will be back online soon.")
             span {{space.data.name}}
             i.fa.fa-circle(ng-show="space.isHibernated()")
-    ul.space-selector__list(ng-show="permissionController.canCreateSpace()" ng-class="_.keys(spacesByOrg).length > 0 ? 'cfnext-dropdown__list' : 'cfnext-dropdown__list-first'")
+    ul.space-selector__list(ng-show="permissionController.canCreateSpace()" ng-class="_.keys(spacesByOrg).length > 0 ? 'cfnext-dropdown__list' : 'cfnext-dropdown__list--first'")
       li.cfnext-dropdown__item(ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" cf-dropdown-close)
         cf-icon(name="plus" size="20")
         | Add new Space
