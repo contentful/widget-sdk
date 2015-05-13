@@ -23,11 +23,20 @@ var source      = require('vinyl-source-stream');
 var sourceMaps  = require('gulp-sourcemaps');
 var stylus      = require('gulp-stylus');
 var uglify      = require('gulp-uglify');
-var run         = require('gulp-run');
 var path        = require('path');
 var through     = require('through2').obj;
 var ngAnnotate  = require('gulp-ng-annotate');
 var flo         = require('fb-flo');
+var yargs       = require('yargs');
+var child_process = require('child_process');
+
+var argv = yargs
+.boolean('verbose')
+.alias('verbose', 'v')
+.argv;
+
+
+process.env['PATH'] += ':./node_modules/.bin';
 
 var loadSubtasks = require('./tasks/subtasks');
 loadSubtasks(gulp, 'docs');
@@ -169,7 +178,6 @@ gulp.task('templates', function () {
       renameKeys: ['^.*/(.*?).html$', '$1']
     }))
     .pipe(gulp.dest('./public/app'));
-
 });
 
 gulp.task('js', ['js/external-bundle', 'js/app', 'js/vendor']);
@@ -233,19 +241,19 @@ gulp.task('stylesheets/app', function () {
 
 gulp.task('icons', ['icons/cleanup']);
 
-gulp.task('icons/cleanup', ['icons/prepare'], function (cb) {
-  run('svgo '+
-      '--disable cleanupIDs '+
-      '-i public/app/images/contentful_icons.svg'
-     ).exec(cb);
+gulp.task('icons/cleanup', ['icons/prepare'], function () {
+  return spawnOnlyStderr('svgo', [
+      '--disable', 'cleanupIDs',
+      '-i', 'public/app/images/contentful_icons.svg'
+  ]);
 });
 
-gulp.task('icons/prepare', ['icons/stylesheets'], function (cb) {
-  run('./bin/prepare_svg.js '+
-      src.svg.sourceIcons+' '+
-      src.svg.outputIcons+' '+
+gulp.task('icons/prepare', ['icons/stylesheets'], function () {
+  return spawnOnlyStderr('./bin/prepare_svg.js', [
+      src.svg.sourceIcons,
+      src.svg.outputIcons,
       src.svg.outputCssIcons
-     ).exec(cb);
+  ]);
 });
 
 gulp.task('icons/stylesheets', function () {
@@ -253,13 +261,13 @@ gulp.task('icons/stylesheets', function () {
 });
 
 
-gulp.task('styleguide', ['styleguide/stylesheets'], function (cb) {
-  run('kss-node '+
-      '--template styleguide_template '+
-      '--helpers styleguide_template/helpers '+
-      '--source src/stylesheets '+
-      '--destination public/styleguide'
-     ).exec(cb);
+gulp.task('styleguide', ['styleguide/stylesheets'], function () {
+  return spawnOnlyStderr('kss-node', [
+    '--template', 'styleguide_template',
+    '--helpers', 'styleguide_template/helpers',
+    '--source', 'src/stylesheets',
+    '--destination', 'public/styleguide'
+  ]);
 });
 
 gulp.task('styleguide/stylesheets', function () {
@@ -269,7 +277,7 @@ gulp.task('styleguide/stylesheets', function () {
 
 gulp.task('serve', ['styleguide'], function () {
   var builds = [];
-  watchTask(src['components'], 'components');
+  watchTask(src['components'], 'js/app');
   watchTask(src['templates'], 'templates');
   gulp.watch(src['styleguideTemplate'], function () {
     builds.push(new Promise(function (resolve) {
@@ -540,6 +548,31 @@ function removeSourceRoot () {
     }
     push(null, file);
   });
+}
+
+function spawn(cmd, args, opts) {
+  return new Promise(function (resolve, reject) {
+    child_process.spawn(cmd, args, opts)
+    .on('exit', function (code, signal) {
+      if (code === 0)
+        resolve();
+      else if (signal)
+        reject(new Error('Process killed by signal ' + signal));
+      else
+        reject(new Error('Process exited with status code ' + code));
+    })
+    .on('error', function (err) {
+      reject(err);
+    });
+  });
+}
+
+function spawnOnlyStderr (cmd, args, opts) {
+  var stdout = argv.verbose ? 'inherit' : 'ignore';
+  opts = _.defaults(opts || {}, {
+    stdio: ['ignore', stdout, process.stderr]
+  });
+  return spawn(cmd, args, opts);
 }
 
 function startLiveReload () {
