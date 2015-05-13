@@ -1,6 +1,9 @@
 'use strict';
 
 /**
+ * @ngdoc service
+ * @name stringUtils
+ * @description
  * Utility functions that deal with strings.
  *
  * Some of them are also available as filters
@@ -78,7 +81,12 @@ angular.module('contentful')
   }
 
   /**
+   * @ngdoc method
+   * @name stringUtils#joinAnd
+   * @description
    * Join the strings with commas and a final 'and'.
+   *
+   * @param {string[]} list
    */
   function joinAnd (stringList) {
     if (stringList.length === 0)
@@ -94,8 +102,36 @@ angular.module('contentful')
     return head.join(', ') + ' and ' + last;
   }
 
+  /**
+   * @ngdoc method
+   * @name stringUtils#joinAndTruncate
+   * @usage[js]
+   * joinAndTruncate(['a', 'b', 'c', 'd'], 2, 'items')
+   * // => 'a, b and 2 other items'
+   * @description
+   * Join the strings with commas and a final 'and X other items'.
+   *
+   * @param {string[]} list
+   * @param {number} maxLength
+   * @param {string} itemsName
+   */
+  function joinAndTruncate (list, maxLength, itemsName) {
+    if (list.length <= maxLength)
+      return joinAnd(list);
+
+    if (list.length === maxLength + 1)
+      maxLength = maxLength - 1;
+
+    var restLength = list.length - maxLength;
+    var initialList = list.slice(0, maxLength);
+    initialList.push(restLength + ' other ' + itemsName);
+    return joinAnd(initialList);
+
+  }
+
   return {
     joinAnd: joinAnd,
+    joinAndTruncate: joinAndTruncate,
     toIdentifier: toIdentifier,
     capitalize: capitalize,
     capitalizeFirst: capitalizeFirst,
@@ -119,4 +155,8 @@ angular.module('contentful')
  */
 .filter('joinAnd', ['stringUtils', function (stringUtils) {
   return stringUtils.joinAnd;
+}])
+
+.filter('joinAndTruncate', ['stringUtils', function (stringUtils) {
+  return stringUtils.joinAndTruncate;
 }]);
