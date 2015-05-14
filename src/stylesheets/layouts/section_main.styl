@@ -1,0 +1,105 @@
+/*
+New main section layouts
+
+These layouts should be used in the main content sections.
+Flexbox based 2 and 3 column layouts, available in 3 configurations.
+Elements in all configurations are optional.
+You can also use the with-header or with-header-nav
+variants to account for either a header or a header and a section nav
+in the top position of section-main. The existence of those should be temporary
+until https://code.google.com/p/chromium/issues/detail?id=476840 gets
+fixed and sizing vertically with flex-basis becomes more feasible,
+ending the need for manually positioning this element.
+
+Styleguide 9.0
+*/
+
+/*
+Left sidebar, Right content
+
+Markup:
+.styleguide-stretch-container--short
+  .section-main
+    .section-main__left-sidebar.styleguide-filled-box1
+      | sidebar
+    .section-main__right-content.styleguide-filled-box2
+      | main content
+.styleguide-stretch-container--short
+  .section-main
+    .section-main__right-content.styleguide-filled-box2
+      | just main content
+
+Styleguide 9.1
+*/
+
+/*
+Left content, Right sidebar
+
+Markup:
+.styleguide-stretch-container--short
+  .section-main
+    .section-main__left-content.styleguide-filled-box1
+      | main content
+    .section-main__right-sidebar.styleguide-filled-box2
+      | sidebar
+.styleguide-stretch-container--short
+  .section-main
+    .section-main__left-content.styleguide-filled-box1
+      | main content
+
+Styleguide 9.2
+*/
+
+/*
+Left and right sidebars, Middle content
+
+Markup:
+.styleguide-stretch-container--short
+  .section-main
+    .section-main__left-sidebar.styleguide-filled-box1
+      | sidebar
+    .section-main__middle-content.styleguide-filled-box2
+      | content
+    .section-main__right-sidebar.styleguide-filled-box3
+      | sidebar
+.styleguide-stretch-container--short
+  .section-main
+    .section-main__middle-content.styleguide-filled-box2
+      | content
+
+Styleguide 9.3
+*/
+
+.section-main
+  $stretch(0, 0, 0, 0)
+  overflow-y: auto
+  $display-flexbox()
+  padding-top: 25px
+
+  &.with-header
+    top: $section-header-height
+
+  &.with-header-nav
+    top: $section-header-height + $section-nav-height
+
+  &__left-sidebar
+    width: 20%
+    margin-right: auto
+
+  &__right-content
+    width: 80%
+    margin-left: auto
+
+  &__right-sidebar
+    width: 20%
+    margin-left: auto
+
+  &__left-content
+    width: 80%
+    margin-right: auto
+
+  &__middle-content
+    width: 60%
+    margin-left: auto
+    margin-right: auto
+

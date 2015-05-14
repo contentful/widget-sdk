@@ -117,7 +117,7 @@ angular.module('contentful').config([
     template:
     '<div ' + [
       'cf-entry-editor',
-      'class="entry-editor entity-editor with-tab-actions"',
+      'class="entry-editor with-tab-actions"',
       'ot-doc-for="entry"',
       'cf-validate="entry.data"', 'cf-entry-schema',
       'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"',
@@ -177,7 +177,7 @@ angular.module('contentful').config([
     template:
     '<div cf-asset-editor ' + [
       'cf-asset-editor',
-      'class="asset-editor entity-editor with-tab-actions"',
+      'class="asset-editor with-tab-actions"',
       'ot-doc-for="asset"',
       'cf-validate="asset.data"', 'cf-asset-schema',
       'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"',
@@ -217,7 +217,7 @@ angular.module('contentful').config([
     template:
     '<div ' + [
       'cf-content-type-editor',
-      'class="content-type-editor entity-editor with-tab-actions"',
+      'class="with-tab-actions"',
       'cf-validate="contentType.data" cf-content-type-schema',
     ].join(' ') + '></div>'
   };
@@ -309,7 +309,7 @@ angular.module('contentful').config([
     },
     template:
     '<div cf-api-key-editor ' +
-      'class="api-key--editor entity-editor with-tab-actions"' +
+      'class="api-key--editor with-tab-actions"' +
       'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}">' +
     '</div>'
   };

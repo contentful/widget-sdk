@@ -1,0 +1,35 @@
+.content-type-fields
+  max-width: 50em
+
+  &__item
+    font-size: 1.15em
+    padding-left: 0.8em
+    line-height: $rhythm(2)
+    display: flex
+    align-items: baseline
+    border-top: 1px solid $gray-lightest
+    &:last-child()
+      border-bottom: 1px solid $gray-lightest
+
+$ct__field-padding = 0.8em
+.ct-field
+  &__name
+    flex-grow: 1
+    font-weight: bolder
+
+  &__type
+    margin-right: 1em
+    color: $gray
+
+  a&__edit
+    cursor: pointer
+
+  &__drag-handle
+    height: $rhythm(2)
+    margin-left:   0.3em
+    padding-left:  $ct__field-padding
+    padding-right: $ct__field-padding
+    cursor: move
+    cursor: -webkit-grabbing
+    cursor: -moz-grab
+    cursor: -moz-grabbing

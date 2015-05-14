@@ -1,0 +1,25 @@
+$section-header-height = 80px
+$section-header-horizontal-padding = 15px
+
+.section-header
+  $stretch(0, 0, false, 0)
+  $display-flexbox()
+  height: $section-header-height
+  border-radius: 3px 3px 0 0
+  border-bottom: 1px solid $cfnext-light-gray
+
+  &__title
+    align-self: center
+    min-width: $left-nav-width
+    padding-left: $section-header-horizontal-padding
+    padding-right: $section-header-horizontal-padding
+    margin: 0;
+    white-space: nowrap
+
+  &__actions
+    $display-flexbox()
+    justify-content: flex-end
+    align-items: center
+    margin-left: auto
+    > *
+      margin-right: $section-header-horizontal-padding

@@ -1,9 +1,9 @@
-.tab-header.editor-configuration
-  h1.tab-header__title {{contentType.getName()}}
-  .tab-header__description {{contentType.data.description}}
-  a.tab-header__metadata-action(ng-click="showMetadataDialog()" ng-href="#") Edit
+.section-header.editor-configuration
+  h1.section-header__title {{contentType.getName()}}
+  .section-header__description {{contentType.data.description}}
+  a.section-header__metadata-action(ng-click="showMetadataDialog()" ng-href="#") Edit
 
-  .tab-header__actions
+  .section-header__actions
     .dropdown-btn
       button.btn.btn--tertiary(cf-dropdown-toggle="contentTypeEditor.view")
         i.fa.fa-caret-down.button-icon-right
@@ -15,21 +15,19 @@
               input(type="checkbox" ng-model="preferences.showDisabledFields")
               | Show disabled fields
 
-.tab-main.tab-workbench
-  .ng-form.l-form(name="contentTypeForm" submit="publish()")
-    .l-form-row
-      label(ng-show="hasFields") Fields
-      .dropdown-btn
-        button.btn.btn--primary(ng-disabled="cfCanDisabled" ng-click="showNewFieldDialog()") Add new Field
-      .l-form-controls
-        div.content-type__fields(ng-show="hasFields" cf-template="content_type_field_list")
-        cf-error-list.form-box-error(cf-error-path="['fields']")
-        .advice(ng-hide="hasFields")
-          .advice__frame
-            i.fa.fa-list-alt.advice__medium-icon
-            header.advice__title You have no Fields yet
-            p.advice__description
-              | Add Fields to configure which form inputs are available for your editors to work with.
+.section-nav
+  button.cfnext-btn-action(ng-disabled="cfCanDisabled" ng-click="showNewFieldDialog()") Add new Field
+
+.section-main.with-header-nav
+  .section-main__right-content
+    form(name="contentTypeForm" submit="publish()")
+      .content-type-fields(ng-show="hasFields" cf-template="content_type_field_list")
+      .advice(ng-hide="hasFields")
+        .advice__frame
+          i.fa.fa-list-alt.advice__medium-icon
+          header.advice__title You have no Fields yet
+          p.advice__description
+            | Add Fields to configure which form inputs are available for your editors to work with.
 
 .tab-actions(ng-controller="ContentTypeActionsController")
   .button-set
