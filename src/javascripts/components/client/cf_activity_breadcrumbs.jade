@@ -3,5 +3,5 @@
     span.divider(ng-if="$first") ( opened from
     a(tooltip="{{title(entity).length > 50 ? title(entity) : ''}}" tooltip-placement="bottom" ui-sref="{{sref(entity)}}")
       | {{title(entity) | truncate: 50 }} {{entity.hasUnpublishedChanges() ? '*' : ''}}
-    span.divider(ng-if="!$last") →
+    span.breadcrumb-divider.fa.fa-angle-right(ng-if="!$last")
     span.divider(ng-if="$last") )

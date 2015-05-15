@@ -1,4 +1,4 @@
 .breadcrumbs.structure
   li.breadcrumb(ng-repeat="step in steps")
     a(href="{{step.ncyBreadcrumbLink}}") {{step.ncyBreadcrumbLabel}}
-    span.divider(ng-hide="$last") →
+    i.breadcrumb-divider.fa.fa-angle-right(ng-hide="$last")
