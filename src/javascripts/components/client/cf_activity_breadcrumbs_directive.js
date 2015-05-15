@@ -5,7 +5,15 @@ angular.module('contentful').directive('cfActivityBreadcrumbs', function () {
     template: JST.cf_activity_breadcrumbs(),
     restrict: 'AE',
     replace: true,
-    link: function ($scope) {
+    controllerAs: 'activity',
+    controller: ['$scope', function ($scope) {
+      var controller = this;
+
+      $scope.$watchCollection('contextHistory', function (context) {
+        controller.context = context.slice(0, context.length - 1);
+        controller.empty = (controller.context.length < 1);
+      });
+
       $scope.title = function (entity) {
         switch(entity.getType()) {
           case 'Entry': return $scope.spaceContext.entryTitle(entity);
@@ -20,6 +28,6 @@ angular.module('contentful').directive('cfActivityBreadcrumbs', function () {
           default     : return '';
         }
       };
-    }
+    }]
   };
 });
