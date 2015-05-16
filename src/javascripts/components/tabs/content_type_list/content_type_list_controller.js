@@ -87,9 +87,4 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
     return getStatus(contentType, 'label');
   };
 
-  $scope.$on('tabBecameActive', function(event, tab) {
-    if (tab !== $scope.tab) return;
-    $scope.resetContentTypes();
-  });
-
 }]);
