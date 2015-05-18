@@ -7,6 +7,7 @@ angular.module('contentful').controller('ContentTypeEditorController',
   var environment       = $injector.get('environment');
   var random            = $injector.get('random');
   var validation        = $injector.get('validation');
+  var editingInterfaces = $injector.get('editingInterfaces');
 
   $scope.entityActionsController = $controller('EntityActionsController', {
     $scope: $scope,
@@ -118,6 +119,14 @@ angular.module('contentful').controller('ContentTypeEditorController',
       $scope.contentType.data.fields = [];
     $scope.contentType.data.fields.push(newField);
     $scope.$broadcast('fieldAdded', $scope.contentType.data.fields.length - 1);
+    syncEditingInterface();
     analytics.modifiedContentType('Modified ContentType', $scope.contentType, newField, 'add');
+  }
+
+  /**
+   * Make sure that each field has a widget and vice versa.
+   */
+  function syncEditingInterface () {
+    editingInterfaces.syncWidgets($scope.contentType, $scope.editingInterface);
   }
 }]);

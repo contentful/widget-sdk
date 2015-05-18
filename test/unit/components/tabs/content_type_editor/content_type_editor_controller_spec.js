@@ -44,6 +44,10 @@ describe('ContentTypeEditor Controller', function () {
         scope.$digest();
       };
     });
+
+    scope.editingInterface = {
+      data: {widgets: []}
+    };
   });
 
   describe('with no fields', function() {
@@ -175,7 +179,7 @@ describe('ContentTypeEditor Controller', function () {
       });
     });
 
-    describe('adds a field to a content type', function () {
+    describe('#addField()', function () {
       var childScope, eventArg;
       beforeEach(function () {
         childScope = scope.$new();
@@ -209,6 +213,12 @@ describe('ContentTypeEditor Controller', function () {
         it('fires analytics event', function () {
           sinon.assert.called(modifiedContentTypeStub);
         });
+      });
+
+      it('adds field to editing interface', function () {
+        expect(scope.editingInterface.data.widgets.length).toEqual(0);
+        scope.addField({type: 'Text'});
+        expect(scope.editingInterface.data.widgets.length).toEqual(1);
       });
 
     });
