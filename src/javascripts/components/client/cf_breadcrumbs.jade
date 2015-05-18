@@ -1,8 +1,8 @@
 .breadcrumbs-widget
   .breadcrumbs-arrow.left(ng-click="scrollLeft()")
     i.fa.fa-arrow-circle-left
-  .breadcrumbs-container
+  .breadcrumbs-container(ng-show="!topState")
     ncy-breadcrumb
     cf-activity-breadcrumbs
-  .breadcrumbs-arrow.right(ng-click="scrollRight()") 
+  .breadcrumbs-arrow.right(ng-click="scrollRight()")
     i.fa.fa-arrow-circle-right

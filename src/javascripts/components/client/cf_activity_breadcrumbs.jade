@@ -1,7 +1,8 @@
-.breadcrumbs.activity
-  li.breadcrumb(ng-repeat="entity in contextHistory.slice(0, contextHistory.length - 1)" ng-switch="$last" ng-class="{active: $last}")
-    span.divider(ng-if="$first") ( opened from
-    a(tooltip="{{title(entity).length > 50 ? title(entity) : ''}}" tooltip-placement="bottom" ui-sref="{{sref(entity)}}")
-      | {{title(entity) | truncate: 50 }} {{entity.hasUnpublishedChanges() ? '*' : ''}}
-    span.divider(ng-switch-when="false") →
-    span.divider(ng-if="$last") )
+.breadcrumbs.activity(ng-hide="activity.empty")
+  | (opened from&nbsp;
+  ul
+    li.breadcrumb(ng-repeat="entity in activity.context")
+      a(tooltip="{{title(entity).length > 50 ? title(entity) : ''}}" tooltip-placement="bottom" ui-sref="{{sref(entity)}}")
+        | {{title(entity) | truncate: 50 }}{{entity.hasUnpublishedChanges() ? '*' : ''}}
+      span.breadcrumb-divider.fa.fa-angle-right(ng-if="!$last")
+  | )

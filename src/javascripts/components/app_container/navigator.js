@@ -52,7 +52,7 @@ angular.module('contentful').config([
       }
     },
     ncyBreadcrumb: {
-      label: '{{label}}'
+      skip: true
     },
     controller: function ($scope, space) {
       $scope.label = space.data.name;
