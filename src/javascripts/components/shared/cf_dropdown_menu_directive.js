@@ -103,7 +103,6 @@ angular.module('contentful').directive('cfDropdownMenu', ['$document', function(
       }
 
       function clickOutsideHandler(event) {
-        event.stopPropagation();
         if (isClickOutside(event.target) && isOpen) scope.$apply(function() {
           closeDropdown();
         });
