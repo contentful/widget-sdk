@@ -64,8 +64,8 @@ angular.module('contentful').directive('cfDropdownMenu', ['$document', function(
         throw new Error('cfDropdownMenu: please specify an id for a dropdown');
       }
 
-      $document.bind('click', clickOutsideHandler);
       scope.$on('dropdownToggle', dropdownToggleHandler);
+
       scope.$on('$destroy', function () {
         $document.unbind('click', clickOutsideHandler);
         toggleElement = null;
@@ -93,11 +93,13 @@ angular.module('contentful').directive('cfDropdownMenu', ['$document', function(
         dropdownElement.show();
         repositionMenu();
         isOpen = true;
+        $document.bind('click', clickOutsideHandler);
       }
 
       function closeDropdown() {
         dropdownElement.hide();
         isOpen = false;
+        $document.unbind('click', clickOutsideHandler);
       }
 
       function clickOutsideHandler(event) {
