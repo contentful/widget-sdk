@@ -81,12 +81,12 @@ function ValidationController ($scope, $attrs, $timeout) {
    * @name cfValidate#validator.runLater
    * @description
    * Behaves like `validator.run()` but runs the validation only after
-   * the current digest cycle is completed.
+   * the current digest cycle is completed and in a new digest cycle.
    */
-  controller.runLater = function (path) {
+  controller.runLater = function (path, parent) {
     $timeout(function () {
       $scope.$apply(function () {
-        controller.run(path);
+        controller.run(path, parent);
       });
     });
   };

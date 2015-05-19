@@ -51,7 +51,7 @@ angular.module('cf.forms')
       });
 
       function validate () {
-        return validator.run(errorPath, true);
+        return validator.runLater(errorPath, true);
       }
     }
   };
@@ -109,7 +109,7 @@ angular.module('cf.forms')
       });
 
       function validate () {
-        return validator.run(errorPath, true);
+        return validator.runLater(errorPath, true);
       }
 
       function mapBy(collection, iteratee) {

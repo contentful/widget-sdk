@@ -1,7 +1,11 @@
 'use strict';
 
 describe('cfValidateForm directive', function () {
-  beforeEach(module('contentful'));
+  beforeEach(module('contentful', function ($provide) {
+    $provide.constant('$timeout', function (fn) {
+      fn();
+    });
+  }));
 
   beforeEach(function () {
     var $compile = this.$inject('$compile');
