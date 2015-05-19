@@ -34,7 +34,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
 
     attach: function () {
       var scope = this.scope;
-      this.domElement = $(JST[this.params.template]()).prependTo(this.params.attachTo);
+      this.domElement = $(JST[this.params.template]()).appendTo(this.params.attachTo);
 
       if(this.domElement.find('input').length > 0)
         this.domElement.find('input').eq(0).focus();
