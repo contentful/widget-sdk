@@ -118,11 +118,6 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
     $scope.selection.setBaseSize(assets.length);
   });
 
-  $scope.$on('tabBecameActive', function(event, tab) {
-    if (tab !== $scope.tab) return;
-    $scope.searchController.resetAssets();
-  });
-
   function getSearchTerm() {
     return $scope.context.view.searchTerm;
   }
