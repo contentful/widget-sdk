@@ -98,7 +98,8 @@ angular.module('cf.forms', [])
 
       var errorPath = $interpolate(attrs.cfValidateForm || attrs.name || '')(scope);
 
-      scope.$on('ngModel:commit', validate);
+      var validateOn = 'ngModel:' + (scope.$validateOn || 'update');
+      scope.$on(validateOn, validate);
 
       scope.$watchCollection('validator.errors', function () {
         var schemaErrors = validator.getPathErrors(errorPath, true);
@@ -152,7 +153,8 @@ angular.module('cf.forms', [])
 
       var errorPath = $interpolate(attrs.cfValidateModel || attrs.name || '')(scope);
 
-      scope.$on('ngModel:commit', validate);
+      var validateOn = 'ngModel:' + (scope.$validateOn || 'update');
+      scope.$on(validateOn, validate);
 
       scope.$watch('validator.errors', function () {
         _.forEach(schemaErrors, function (error) {
@@ -182,6 +184,32 @@ angular.module('cf.forms', [])
     }
   };
 }])
+
+
+/**
+ * @ngdoc directive
+ * @module cf.forms
+ * @name cfValidateOn
+ * @usage[jade]
+ * div(cf-validate="data" cf-validate-on="commit")
+ *   input(ng-model="data.field" cf-validate-model)
+ * @description
+ * Specify the event on `ngModel` directives that triggers validations.
+ *
+ * Allowed events are `update` and `commit`.
+ */
+.directive('cfValidateOn', [function () {
+  var allowedEvents = ['update', 'commit'];
+  return {
+    link: function (scope, element, attrs) {
+      var eventName = attrs.cfValidateOn;
+      if (allowedEvents.indexOf(eventName) === -1)
+        throw new Error('Unknown validation event "' + eventName + '"');
+      scope.$validateOn = eventName;
+    }
+  };
+}])
+
 
 /**
  * @ngdoc directive

@@ -21,8 +21,8 @@ describe('cfValidateForm directive', function () {
     sinon.spy(this.validator, 'run');
   });
 
-  it('validates on input ngModel:commit', function () {
-    this.scope.$emit('ngModel:commit');
+  it('validates on input ngModel:update', function () {
+    this.scope.$emit('ngModel:update');
     this.$apply();
     sinon.assert.calledOnce(this.validator.run);
     sinon.assert.calledWith(this.validator.run, 'a.b', true);
