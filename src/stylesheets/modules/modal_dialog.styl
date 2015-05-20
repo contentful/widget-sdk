@@ -32,8 +32,19 @@ $modal-dialog-content-padding()
 .modal-background
   $stretch()
   $layer('modalBackground')
+  overflow-y: auto
+  height: 100vh
   text-align: center
   background-color: rgba(0, 0, 0, 0.2)
+
+  // Add space above dialog if we do not position in absolutely
+  &:before
+    content: ""
+    height: 10%
+    min-height: 1em
+    max-height: 10em
+    display: block
+
 
 $modal-dialog-layout()
   $layer('modalDialog')
