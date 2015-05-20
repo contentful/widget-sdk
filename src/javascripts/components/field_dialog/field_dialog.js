@@ -66,6 +66,7 @@ angular.module('contentful')
 }])
 
 .factory('validationsDecorator', ['$injector', function ($injector) {
+  var pluralize               = $injector.get('pluralize');
   var validationViews         = $injector.get('validationViews');
   var createSchema            = $injector.get('validation');
   var getErrorMessage         = $injector.get('validationDialogErrorMessages');
@@ -113,10 +114,6 @@ angular.module('contentful')
     'in'
   ];
 
-
-  var typePlurals = {
-    'Entry': 'Entries'
-  };
 
   function decorateFieldValidations(field) {
     var types = _.filter(validationTypesForField(field), function (t) {
@@ -228,8 +225,7 @@ angular.module('contentful')
   function getValidationLabel(field, type) {
     if (field.type == 'Array' && type == 'size') {
       var itemType = field.items.type == 'Link' ? field.items.linkType : field.items.type;
-      var typePlural = typePlurals[itemType] || itemType + 's';
-      return 'Specify number of ' + typePlural;
+      return 'Specify number of ' + pluralize(itemType);
     }
 
     var label = validationLabels[type];
