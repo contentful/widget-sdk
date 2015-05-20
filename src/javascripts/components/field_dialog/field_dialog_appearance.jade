@@ -1,0 +1,35 @@
+div(
+  ng-form="widgetForm" cf-validate-form
+  ng-controller="FieldDialogAppearanceController" cf-validate="widget")
+  .cfnext-form__field
+    label Widget Type
+    div
+      select.cfnext-select-box(ng-model="widget.widgetId"
+             ng-options="w.id as w.name for w in availableWidgets")
+      i.fa.fa-caret-down.cfnext-select-box-icon
+
+  .cfnext-form__field(ng-repeat="option in widgetOptions")
+    label {{option.name}}
+    div(ng-switch="option.type")
+      input.cfnext-form__input--full-size(ng-switch-when="Text"
+             type="text" name="{{option.param}}"
+             placeholder="{{option.description}}"
+             ng-model="widget.widgetParams[option.param]"
+             cf-validate-model="widgetParams.{{option.param}}")
+      input.cfnext-form__input(ng-switch-when="Number"
+             type="text"
+             placeholder="{{option.description}}"
+             ng-model="widget.widgetParams[option.param]"
+             cf-validate-model="widgetParams.{{option.param}}")
+      input.cfnext-form__input(ng-switch-when="Boolean"
+             type="checkbox"
+             ng-model="widget.widgetParams[option.param]")
+      div(ng-switch-when="Predefined")
+        select.cfnext-select-box(ng-if="option.values | isArray"
+               ng-options="value for value in option.values"
+               ng-model="widget.widgetParams[option.param]")
+        select.cfnext-select-box(ng-if="!(option.values | isArray)"
+               ng-options="desc as value for (desc, value) in option.values"
+               ng-model="widget.widgetParams[option.param]")
+        i.fa.fa-caret-down.cfnext-select-box-icon
+    ul.cfnext-form__field-errors(cf-field-errors-for="{{option.param}}")
