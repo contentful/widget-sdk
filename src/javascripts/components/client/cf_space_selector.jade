@@ -1,11 +1,11 @@
-.space-selector.app-top-bar__child-action.app-top-bar--right-separator(
+.space-selector.app-top-bar__child.app-top-bar--right-separator(
   ng-show="organizations && organizations.length > 0"
   ng-hide="spaces.length == 0 && !permissionController.canCreateSpaceInAnyOrg()")
-  a(cf-dropdown-toggle="navbar.spaceSelector" ng-click="clickedSpaceSwitcher()" tabindex="0")
-    cf-icon.icon-dd-arrow-down.pull-right(name="dd-arrow-down" size="10")
+  a.app-top-bar__dropdown-toggle(cf-dropdown-toggle="navbar.spaceSelector" ng-click="clickedSpaceSwitcher()" tabindex="0")
     span.space-selector__name.u-truncate(ng-bind="spaceContext.space.data.name || 'Spaces'")
-  .space-selector__dropdown.cfnext-dropdown(cf-dropdown-menu="navbar.spaceSelector" cf-dropdown-position="top15center")
-    cf-icon.cfnext-dropdown__arrow(cf-dropdown-arrow name="arrow-up" size="15")
+    cf-icon.icon-dd-arrow-down(name="dd-arrow-down" size="10")
+  .app-top-bar__dropdown-menu.cfnext-dropdown(cf-dropdown-menu="navbar.spaceSelector" cf-dropdown-position="fixed")
+    cf-icon.cfnext-dropdown__arrow.center-aligned(cf-dropdown-arrow name="arrow-up" size="15")
     ul.space-selector__list.cfnext-dropdown__list--first
       li.cfnext-dropdown__item--group(ng-repeat="(orgId, org) in spacesByOrg" ng-class="{'has-no-action': canSelectOrg(orgId)}")
         span.cfnext-dropdown__group-label.space-selector__group-label {{getOrgName(orgId)}}
