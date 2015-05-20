@@ -7,6 +7,7 @@
     cf-icon.cfnext-dropdown__arrow(cf-dropdown-arrow name="arrow-up" size="15")
     ul.cfnext-dropdown__list--first
       li.cfnext-dropdown__item(ng-click="goToAccount()" cf-dropdown-close) Account Settings
-      li.cfnext-dropdown__item(ng-click="openSupport()" cf-dropdown-close) Support
+      li.cfnext-dropdown__item(ng-click="openIntercom()" ng-if="isIntercomLoaded()" cf-dropdown-close) Talk to Us
+      li.cfnext-dropdown__item(ng-click="openSupport()" cf-dropdown-close) Get Support
       li.cfnext-dropdown__item(ng-click="logout()" cf-dropdown-close) Log out
 
