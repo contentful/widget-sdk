@@ -39,11 +39,15 @@ angular.module('cf.ui')
     controllerAs: 'tabController',
     controller: [function () {
       var tabs = {};
-      var activeTab;
+      var activeTab = null;
 
       this.registerControl = function (name, element) {
         var tab = this.get(name);
         tab.control = element;
+
+        if (activeTab === null) {
+          this.activate(name);
+        }
         return tab;
       };
 
@@ -101,7 +105,7 @@ angular.module('cf.ui')
     if (!tabName)
       return;
 
-    var tab = scope.tabController.get(tabName);
+    var tab = scope.tabController.registerControl(tabName);
     scope.tab = tab;
 
     element.on('click', function () {
