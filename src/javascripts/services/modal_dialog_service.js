@@ -1,5 +1,34 @@
 'use strict';
 
+/**
+ * @ngdoc service
+ * @name modalDialog
+ *
+ * Open a modal dialog on the page and return a `Dialog` instance.
+ *
+ * @example[js]
+ *   var openDialog = $injector.get('modalDialog').open;
+ *   var dialog = openDialog({
+ *     scope: myScope,
+ *     template: 'jade_template_name'
+ *   })
+ *
+ *   dialog.promise.then(function() {
+ *     console.log('dialog closed ok');
+ *   }, function() {
+ *     console.log('dialog canceled');
+ *   });
+ *
+ *   dialog.confirm();
+ */
+
+/**
+ * @ngdoc method
+ * @name modalDialog#open
+ * @param {{}} options
+ * @param {string} options.template
+ * @param {Scope} options.scope
+ */
 angular.module('contentful').factory('modalDialog', ['$injector', function ($injector) {
   var $compile = $injector.get('$compile');
   var $q       = $injector.get('$q');
