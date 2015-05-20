@@ -8,11 +8,11 @@
  * This service provides an object with different methods to trigger
  * analytics events.
  *
- * The service is disabled in all but the production environment. It
- * can be enabled by appending the '?forceAnalytics' query string to
- * the URL. In the development environment this will still keep the
- * SegmentIO and Totango services disabled but send all tracking
- * events to the console.
+ * The service is disabled in all but the production environment.
+ * It can be enabled by appending the '?forceAnalytics' query string to
+ * the URL.
+ * In the development environment you can send all tracking events to
+ * the console for testing by using '?forceAnalyticsDevMode'.
  */
 angular.module('contentful')
 .provider('analytics', ['environment', function (environment) {
@@ -149,16 +149,19 @@ angular.module('contentful')
     };
 
     if (shouldLoadAnalytics()) {
-      if (environment.env == 'development')
-        return devService();
-      else
-        return analytics;
+      return analytics;
+    } else if(forceDevMode()) {
+      return devService();
     } else {
       return noopService();
     }
 
     function shouldLoadAnalytics() {
       return load || $location.search().forceAnalytics;
+    }
+
+    function forceDevMode() {
+      return $location.search().forceAnalyticsDevMode;
     }
 
     /**
