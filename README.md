@@ -22,6 +22,9 @@ Not watched are the `user_interface` module and all the vendor stuff
 (stylesheets and scripts). If you update one of those, run `gulp all`
 again.
 
+To show `stdout` of the commands `gulp` will run, use the `--verbose`
+flag. For example `gulp icons -v`.
+
 ### Documentation
 
 The repo comes with a self hosting API documentation and guides. To

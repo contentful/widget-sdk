@@ -23,10 +23,20 @@ var source      = require('vinyl-source-stream');
 var sourceMaps  = require('gulp-sourcemaps');
 var stylus      = require('gulp-stylus');
 var uglify      = require('gulp-uglify');
-var run         = require('gulp-run');
 var path        = require('path');
 var through     = require('through2').obj;
 var ngAnnotate  = require('gulp-ng-annotate');
+var flo         = require('fb-flo');
+var yargs       = require('yargs');
+var child_process = require('child_process');
+
+var argv = yargs
+.boolean('verbose')
+.alias('verbose', 'v')
+.argv;
+
+
+process.env['PATH'] += ':./node_modules/.bin';
 
 var loadSubtasks = require('./tasks/subtasks');
 loadSubtasks(gulp, 'docs');
@@ -112,6 +122,35 @@ var src = {
   ]
 };
 
+
+gulp.task('all', [
+  'index',
+  'templates',
+  'js',
+  'js/vendor-optional',
+  'copy-images',
+  'copy-static',
+  'stylesheets',
+]);
+
+
+/**
+ * Build all files necessary to run the tests
+ */
+gulp.task('prepare-tests', ['js/vendor', 'templates', 'js/external-bundle']);
+
+
+gulp.task('clean', function () {
+  return gulp.src([
+    './public/app',
+    './public/styleguide*',
+    './build/*',
+    './public/index.html'
+  ], {read: false})
+    .pipe(clean());
+});
+
+
 gulp.task('copy-static', function () {
   return gulp.src(src.static)
     .pipe(gulp.dest('./public/app'));
@@ -120,21 +159,6 @@ gulp.task('copy-static', function () {
 gulp.task('copy-images', function () {
   return gulp.src(src.images)
     .pipe(gulp.dest('./public/app/images'));
-});
-
-gulp.task('prepare-svg', ['svg-stylesheets'], function (cb) {
-  run('./bin/prepare_svg.js '+
-      src.svg.sourceIcons+' '+
-      src.svg.outputIcons+' '+
-      src.svg.outputCssIcons
-     ).exec(cb);
-});
-
-gulp.task('cleanup-svg', ['prepare-svg'], function (cb) {
-  run('svgo '+
-      '--disable cleanupIDs '+
-      '-i public/app/images/contentful_icons.svg'
-     ).exec(cb);
 });
 
 gulp.task('index', function(){
@@ -154,10 +178,11 @@ gulp.task('templates', function () {
       renameKeys: ['^.*/(.*?).html$', '$1']
     }))
     .pipe(gulp.dest('./public/app'));
-
 });
 
-gulp.task('vendor-js', function () {
+gulp.task('js', ['js/external-bundle', 'js/app', 'js/vendor']);
+
+gulp.task('js/vendor', function () {
   return gulp.src(src.vendorScripts)
     .pipe(sourceMaps.init())
     .pipe(concat('vendor.js'))
@@ -165,7 +190,7 @@ gulp.task('vendor-js', function () {
     .pipe(gulp.dest('./public/app'));
 });
 
-gulp.task('vendored-js-non-essential', function () {
+gulp.task('js/vendor-optional', function () {
   // Hardcoded to kaltura. Fix this when needed
   return gulp.src(src.vendorScriptsNonEssential.kaltura)
     .pipe(sourceMaps.init())
@@ -175,51 +200,11 @@ gulp.task('vendored-js-non-essential', function () {
     .pipe(gulp.dest('./public/app'));
 });
 
-gulp.task('user_interface', function () {
+gulp.task('js/external-bundle', function () {
   return bundleBrowserify(createBrowserify());
 });
 
-/**
- * Build all files necessary to run the tests
- */
-gulp.task('prepare-tests', ['vendor-js', 'templates', 'user_interface']);
-
-
-gulp.task('watchify', function(){
-  var watchify = require('watchify');
-  var ui = watchify(createBrowserify(watchify.args));
-  bundleBrowserify(ui);
-
-  ui.on('update', function() {
-    gutil.log('Rebuilding \'user_interface\' bundle...');
-    bundleBrowserify(ui)
-    .on('end', function(){
-      gutil.log('Rebuilding \'user_interface\' bundle done');
-    });
-  });
-});
-
-function createBrowserify(args) {
-  return browserify(_.extend({debug: true}, args))
-    .add('./src/user_interface')
-    .transform({optimize: 'size'}, 'browserify-pegjs');
-}
-
-function bundleBrowserify(browserify) {
-  return browserify.bundle()
-    .on('error', errorHandler('Browserify'))
-    .pipe(source('user_interface.js'))
-    .pipe(gulp.dest('./public/app/'));
-}
-
-gulp.task('git-revision', function(cb){
-  exec('git log -1 --pretty=format:%H', function(err, sha){
-    gitRevision = sha;
-    cb(err);
-  });
-});
-
-gulp.task('components', ['git-revision'], function () {
+gulp.task('js/app', ['git-revision'], function () {
   return gulp.src(src.components)
     .pipe(gulpif('**/environment.js',
       replace({ regex: 'GULP_GIT_REVISION', replace: gitRevision})))
@@ -229,7 +214,20 @@ gulp.task('components', ['git-revision'], function () {
     .pipe(gulp.dest('./public/app/'));
 });
 
-gulp.task('vendor_stylesheets', function () {
+gulp.task('git-revision', function(cb){
+  exec('git log -1 --pretty=format:%H', function(err, sha){
+    gitRevision = sha;
+    cb(err);
+  });
+});
+
+gulp.task('stylesheets', [
+  'stylesheets/vendor',
+  'stylesheets/app',
+  'icons'
+]);
+
+gulp.task('stylesheets/vendor', function () {
    return gulp.src(src.vendorStylesheets)
     .pipe(sourceMaps.init())
     .pipe(concat('vendor.css'))
@@ -237,71 +235,58 @@ gulp.task('vendor_stylesheets', function () {
     .pipe(gulp.dest('./public/app'));
 });
 
-gulp.task('stylesheets', ['cleanup-svg'], function () {
+gulp.task('stylesheets/app', function () {
   return buildStylus(src.mainStylesheets, './public/app');
 });
 
-gulp.task('styleguide-stylesheets', function () {
-  return buildStylus(src.styleguideStylesheets, './public/styleguide_custom');
+gulp.task('icons', ['icons/cleanup']);
+
+gulp.task('icons/cleanup', ['icons/prepare'], function () {
+  return spawnOnlyStderr('svgo', [
+      '--disable', 'cleanupIDs',
+      '-i', 'public/app/images/contentful_icons.svg'
+  ]);
 });
 
-gulp.task('svg-stylesheets', function () {
+gulp.task('icons/prepare', ['icons/stylesheets'], function () {
+  return spawnOnlyStderr('./bin/prepare_svg.js', [
+      src.svg.sourceIcons,
+      src.svg.outputIcons,
+      src.svg.outputCssIcons
+  ]);
+});
+
+gulp.task('icons/stylesheets', function () {
   return buildStylus(src.svg.inputCssIcons, './public/app');
 });
 
-function buildStylus(sources, dest) {
-  return gulp.src(sources)
-    .pipe(sourceMaps.init())
-    .pipe(stylus({use: nib()}))
-    .on('error', errorHandler('Stylus'))
-    .pipe(sourceMaps.write({sourceRoot: '/stylesheets'}))
-    .pipe(gulp.dest(dest));
-}
 
-gulp.task('generate-styleguide', ['styleguide-stylesheets'], function (cb) {
-  run('kss-node '+
-      '--template styleguide_template '+
-      '--helpers styleguide_template/helpers '+
-      '--source src/stylesheets '+
-      '--destination public/styleguide'
-     ).exec(cb);
+gulp.task('styleguide', ['styleguide/stylesheets'], function () {
+  return spawnOnlyStderr('kss-node', [
+    '--template', 'styleguide_template',
+    '--helpers', 'styleguide_template/helpers',
+    '--source', 'src/stylesheets',
+    '--destination', 'public/styleguide'
+  ]);
 });
 
-gulp.task('all', [
-  'index',
-  'templates',
-  'vendor-js',
-  'vendored-js-non-essential',
-  'user_interface',
-  'components',
-  'copy-images',
-  'copy-static',
-  'stylesheets',
-  'vendor_stylesheets'
-]);
-
-gulp.task('clean', function () {
-  return gulp.src([
-    './public/app',
-    './public/styleguide*',
-    './build/*',
-    './public/index.html'
-  ], {read: false})
-    .pipe(clean());
+gulp.task('styleguide/stylesheets', function () {
+  return buildStylus(src.styleguideStylesheets, './public/styleguide_custom');
 });
 
-gulp.task('serve', ['generate-styleguide'], function () {
+
+gulp.task('serve', ['styleguide'], function () {
   var builds = [];
-  watchTask(src['components'], 'components');
+  watchTask(src['components'], 'js/app');
   watchTask(src['templates'], 'templates');
   gulp.watch(src['styleguideTemplate'], function () {
     builds.push(new Promise(function (resolve) {
-      runSequence('generate-styleguide', resolve);
+      runSequence('styleguide', resolve);
     }));
   });
   gulp.watch(src['stylesheets'], function () {
     builds.push(new Promise(function (resolve) {
-      runSequence('stylesheets', 'generate-styleguide', resolve);
+      runSequence('stylesheets', 'styleguide', resolve);
     }));
   });
 
@@ -331,30 +316,50 @@ gulp.task('serve', ['generate-styleguide'], function () {
   app.use(respond404);
   app.listen(3001);
 
-
-  var flo = require('fb-flo');
-  var floServer = flo(
-    './public/app/',
-    {
-      port: 9000,
-      verbose: false,
-      glob: [
-        '**/*.css',
-      ]
-    },
-    function resolver(filepath, cb) {
-      gutil.log('Live reloading', filepath);
-      cb({
-        resourceURL: '/app/main.css',
-        contents: fs.readFileSync('./public/app/main.css', 'utf-8')
-      });
-    }
-  );
-  floServer.once('ready', function () {
+  startLiveReload().once('ready', function () {
     gutil.log('FB Flo is ready!');
   });
 
 });
+
+gulp.task('watchify', function(){
+  var watchify = require('watchify');
+  var ui = watchify(createBrowserify(watchify.args));
+  bundleBrowserify(ui);
+
+  ui.on('update', function() {
+    gutil.log('Rebuilding \'user_interface\' bundle...');
+    bundleBrowserify(ui)
+    .on('end', function(){
+      gutil.log('Rebuilding \'user_interface\' bundle done');
+    });
+  });
+});
+
+
+
+function createBrowserify(args) {
+  return browserify(_.extend({debug: true}, args))
+    .add('./src/user_interface')
+    .transform({optimize: 'size'}, 'browserify-pegjs');
+}
+
+function bundleBrowserify(browserify) {
+  return browserify.bundle()
+    .on('error', errorHandler('Browserify'))
+    .pipe(source('user_interface.js'))
+    .pipe(gulp.dest('./public/app/'));
+}
+
+
+function buildStylus(sources, dest) {
+  return gulp.src(sources)
+    .pipe(sourceMaps.init())
+    .pipe(stylus({use: nib()}))
+    .on('error', errorHandler('Stylus'))
+    .pipe(sourceMaps.write({sourceRoot: '/stylesheets'}))
+    .pipe(gulp.dest(dest));
+}
 
 function respond404 (req, res) {
   res.sendStatus(404);
@@ -543,4 +548,49 @@ function removeSourceRoot () {
     }
     push(null, file);
   });
+}
+
+function spawn(cmd, args, opts) {
+  return new Promise(function (resolve, reject) {
+    child_process.spawn(cmd, args, opts)
+    .on('exit', function (code, signal) {
+      if (code === 0)
+        resolve();
+      else if (signal)
+        reject(new Error('Process killed by signal ' + signal));
+      else
+        reject(new Error('Process exited with status code ' + code));
+    })
+    .on('error', function (err) {
+      reject(err);
+    });
+  });
+}
+
+function spawnOnlyStderr (cmd, args, opts) {
+  var stdout = argv.verbose ? 'inherit' : 'ignore';
+  opts = _.defaults(opts || {}, {
+    stdio: ['ignore', stdout, process.stderr]
+  });
+  return spawn(cmd, args, opts);
+}
+
+function startLiveReload () {
+  return flo(
+    './public/app/',
+    {
+      port: 9000,
+      verbose: false,
+      glob: [
+        '**/*.css',
+      ]
+    },
+    function resolver(filepath, cb) {
+      gutil.log('Live reloading', filepath);
+      cb({
+        resourceURL: '/app/main.css',
+        contents: fs.readFileSync('./public/app/main.css', 'utf-8')
+      });
+    }
+  );
 }
