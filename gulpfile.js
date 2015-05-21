@@ -474,9 +474,10 @@ gulp.task('rev-dynamic', function(){
         verbose: false,
         prefix: '/'
       }))
-    .pipe(sourceMaps.write('.'))
     .pipe(writeBuild())
     .pipe(rev())
+    .pipe(writeBuild())
+    .pipe(sourceMaps.write('.'))
     .pipe(writeBuild())
     .pipe(rev.manifest('dynamic-manifest.json'))
     .pipe(writeBuild());
@@ -497,9 +498,10 @@ gulp.task('rev-app', function () {
     .pipe(concat('app/application.min.js'))
     .pipe(ngAnnotate())
     .pipe(uglify())
-    .pipe(sourceMaps.write('.', { sourceRoot: '/javascript' }))
     .pipe(writeBuild())
     .pipe(rev())
+    .pipe(writeBuild())
+    .pipe(sourceMaps.write('.', { sourceRoot: '/javascript' }))
     .pipe(writeBuild())
     .pipe(rev.manifest('app-manifest.json'))
     .pipe(writeBuild());
