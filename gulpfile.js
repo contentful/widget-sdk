@@ -416,11 +416,9 @@ gulp.task('build', function(done){
 });
 
 gulp.task('serve-production', function () {
-  var publicDir = path.resolve(__dirname, 'public');
-  var buildDir = path.resolve(__dirname, 'public');
+  var buildDir = path.resolve(__dirname, 'build');
 
   var app = express();
-  app.use(express.static(publicDir));
   app.use(express.static(buildDir));
   app.use(sendIndex(buildDir));
   app.use(respond404);
