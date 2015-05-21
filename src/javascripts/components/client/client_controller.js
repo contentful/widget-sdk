@@ -59,6 +59,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.getOrgName = getOrgName;
   $scope.logout = logout;
   $scope.openSupport = openSupport;
+  $scope.openIntercom = openIntercom;
+  $scope.isIntercomLoaded = isIntercomLoaded;
   $scope.clickedProfileButton = clickedProfileButton;
   $scope.goToAccount = goToAccount;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
@@ -300,6 +302,15 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
   function openSupport() {
     $window.open(authentication.supportUrl());
+  }
+
+  function isIntercomLoaded() {
+    return !!$window.Intercom;
+  }
+
+  function openIntercom() {
+    if($window.Intercom)
+      $window.Intercom('showNewMessage');
   }
 
   function clickedProfileButton() {
