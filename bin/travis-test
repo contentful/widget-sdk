@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ev
 
-commit_message=`git log $TRAVIS_COMMIT --pretty=oneline -n 1`
+commit_message=`git log $TRAVIS_COMMIT -n 1`
 
 if [[ "$commit_message" =~ \[skip\ tests\] && "$TRAVIS_BRANCH" =~ "preview" ]]; then
   echo "Skipping tests"
