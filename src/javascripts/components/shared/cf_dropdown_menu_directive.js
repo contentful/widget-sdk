@@ -71,12 +71,22 @@ angular.module('contentful').directive('cfDropdownMenu', ['$document', function(
         toggleElement = null;
       });
 
-      dropdownElement.find('[cf-dropdown-close]').click(function () {
-        closeDropdown();
+      dropdownElement.click(function (ev) {
+        if(isClickOnCloseElement(ev.target))
+          closeDropdown();
       });
 
       // Initial state
       closeDropdown();
+
+      function isClickOnCloseElement(target) {
+        return isCloseAttrOnElement(target) ||
+               _.any($(target).parentsUntil('[cf-dropdown-menu]'), isCloseAttrOnElement);
+      }
+
+      function isCloseAttrOnElement(el){
+        return !_.isUndefined(el.getAttribute('cf-dropdown-close'));
+      }
 
       function dropdownToggleHandler(event, toggledId, _toggleElement) {
         if(toggledId === id){
