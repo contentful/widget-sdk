@@ -29,9 +29,9 @@ angular.module('contentful').config([
     url: '/spaces',
     abstract: true,
     resolve: {
-      spaces: function (tokenStore) {
+      spaces: ['tokenStore', function (tokenStore) {
         return tokenStore.getSpaces();
-      }
+      }]
     },
     views: {
       'app-container': { template: '<ui-view/>' },
@@ -47,16 +47,16 @@ angular.module('contentful').config([
   $stateProvider.state('spaces.detail', {
     url: '/:spaceId',
     resolve: {
-      space: function (tokenStore, $stateParams) {
+      space: ['tokenStore', '$stateParams', function (tokenStore, $stateParams) {
         return tokenStore.getSpace($stateParams.spaceId);
-      }
+      }]
     },
     ncyBreadcrumb: {
       skip: true
     },
-    controller: function ($scope, space) {
+    controller: ['$scope', 'space', function ($scope, space) {
       $scope.label = space.data.name;
-    },
+    }],
     template: '<cf-breadcrumbs ng-hide="spaceContext.space.isHibernated()"></cf-breadcrumbs>' +
               '<div ng-hide="spaceContext.space.isHibernated()" class="view-content" ui-view></div>' +
               '<div ng-if="spaceContext.space.isHibernated()" cf-template="cf_space_hibernation_advice"></div>'
@@ -75,9 +75,9 @@ angular.module('contentful').config([
     ncyBreadcrumb: {
       label: 'Entries'
     },
-    controller: function ($scope) {
+    controller: ['$scope', function ($scope) {
       $scope.context = {};
-    },
+    }],
     template: '<div cf-entry-list class="entry-list entity-list"></div>'
   });
 
@@ -95,11 +95,11 @@ angular.module('contentful').config([
       label: '{{context.title + (context.dirty ? "*" : "")}}'
     },
     resolve: {
-      entry: function ($stateParams, space) {
+      entry: ['$stateParams', 'space', function ($stateParams, space) {
         return space.getEntry($stateParams.entryId);
-      }
+      }]
     },
-    controller: function ($state, $scope, $stateParams, entry) {
+    controller: ['$state', '$scope', '$stateParams', 'entry', function ($state, $scope, $stateParams, entry) {
       $state.current.data = $scope.context = {};
       $scope.entry = entry;
 
@@ -113,7 +113,7 @@ angular.module('contentful').config([
         }
         $scope.$root.contextHistory.push(entry);
       }
-    },
+    }],
     template:
     '<div ' + [
       'cf-entry-editor',
@@ -155,11 +155,11 @@ angular.module('contentful').config([
       label: '{{context.title + (context.dirty ? "*" : "")}}'
     },
     resolve: {
-      asset: function ($stateParams, space) {
+      asset: ['$stateParams', 'space', function ($stateParams, space) {
         return space.getAsset($stateParams.assetId);
-      }
+      }]
     },
-    controller: function ($state, $scope, $stateParams, asset) {
+    controller: ['$state', '$scope', '$stateParams', 'asset', function ($state, $scope, $stateParams, asset) {
       $state.current.data = $scope.context = {};
       $scope.asset = asset;
 
@@ -173,7 +173,7 @@ angular.module('contentful').config([
         }
         $scope.$root.contextHistory.push(asset);
       }
-    },
+    }],
     template:
     '<div cf-asset-editor ' + [
       'cf-asset-editor',
@@ -198,9 +198,9 @@ angular.module('contentful').config([
     ncyBreadcrumb: {
       label: 'Content Types'
     },
-    controller: function ($scope) {
+    controller: ['$scope', function ($scope) {
       $scope.context = {};
-    },
+    }],
     template: '<div cf-content-type-list class="content-type-list entity-list"></div>'
   });
 
@@ -209,11 +209,11 @@ angular.module('contentful').config([
       parent: 'spaces.detail.content_types.list',
       label: '{{contentType.getName() + (context.dirty ? "*" : "")}}'
     },
-    controller: function ($state, $scope, contentType, editingInterface) {
+    controller: ['$state', '$scope', 'contentType', 'editingInterface', function ($state, $scope, contentType, editingInterface) {
       $scope.context = $state.current.data;
       $scope.contentType = contentType;
       $scope.editingInterface = editingInterface;
-    },
+    }],
     template:
     '<div ' + [
       'cf-content-type-editor',
@@ -228,9 +228,9 @@ angular.module('contentful').config([
       isNew: true
     },
     resolve: {
-      contentType: function (space) {
+      contentType: ['space', function (space) {
         return space.newContentType({sys: {type: 'ContentType'}, fields: []});
-      },
+      }],
       editingInterface: ['contentType', 'editingInterfaces', function (contentType, editingInterfaces) {
         return editingInterfaces.defaultInterface(contentType);
       }]
@@ -243,12 +243,12 @@ angular.module('contentful').config([
       isNew: false
     },
     resolve: {
-      contentType: function ($stateParams, space) {
+      contentType: ['$stateParams', 'space', function ($stateParams, space) {
         return space.getContentType($stateParams.contentTypeId);
-      },
-      editingInterface: function (contentType, editingInterfaces) {
+      }],
+      editingInterface: ['contentType', 'editingInterfaces', function (contentType, editingInterfaces) {
         return editingInterfaces.forContentTypeWithId(contentType, 'default');
-      }
+      }]
     },
   }, contentTypeEditorState));
 
@@ -275,9 +275,9 @@ angular.module('contentful').config([
       label: 'Content Model',
       parent: 'spaces.detail.api.home'
     },
-    controller: function ($scope) {
+    controller: ['$scope', function ($scope) {
       $scope.context = {};
-    },
+    }],
     template: '<div cf-content-model class="content-model entity-list"></div>'
   });
 
@@ -303,10 +303,10 @@ angular.module('contentful').config([
       parent: 'spaces.detail.api.keys.list',
       label: '{{context.title + (context.dirty ? "*" : "")}}'
     },
-    controller: function ($state, $scope, $stateParams, apiKey) {
+    controller: ['$state', '$scope', '$stateParams', 'apiKey', function ($state, $scope, $stateParams, apiKey) {
       $state.current.data = $scope.context = {};
       $scope.apiKey = apiKey;
-    },
+    }],
     template:
     '<div cf-api-key-editor ' +
       'class="api-key--editor with-tab-actions"' +
@@ -317,18 +317,18 @@ angular.module('contentful').config([
   $stateProvider.state('spaces.detail.api.keys.new', _.extend({
     url: '_new',
     resolve: {
-      apiKey: function (space) {
+      apiKey: ['space', function (space) {
         return space.newDeliveryApiKey();
-      }
+      }]
     }
   }, apiKeyEditorState));
 
   $stateProvider.state('spaces.detail.api.keys.detail', _.extend({
     url: '/:apiKeyId',
     resolve: {
-      apiKey: function ($stateParams, space) {
+      apiKey: ['$stateParams', 'space', function ($stateParams, space) {
         return space.getDeliveryApiKey($stateParams.apiKeyId);
-      }
+      }]
     }
   }, apiKeyEditorState));
 

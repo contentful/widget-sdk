@@ -26,7 +26,6 @@ var stylus      = require('gulp-stylus');
 var uglify      = require('gulp-uglify');
 var path        = require('path');
 var through     = require('through2').obj;
-var ngAnnotate  = require('gulp-ng-annotate');
 var flo         = require('fb-flo');
 var yargs       = require('yargs');
 var child_process = require('child_process');
@@ -497,7 +496,6 @@ gulp.task('rev-app', function () {
   ], {base: 'build'})
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(concat('app/application.min.js'))
-    .pipe(ngAnnotate())
     .pipe(uglify())
     .pipe(writeBuild())
     .pipe(rev())
