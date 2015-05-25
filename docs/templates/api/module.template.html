@@ -1,19 +1,17 @@
-<h1>
-  {$ doc.name $}
-</h1>
+<h1>{$ doc.name $}</h1>
 
 {$ doc.description | marked $}
 
-{% for componentGroup in doc.componentGroups %}
-<h2 class="component-heading" id="{$ componentGroup.groupType | dashCase $}">
-  {$ componentGroup.groupType | title $}
-</h2>
-<table class="module-components">
-  {% for component in componentGroup.components %}
-  <tr>
-    <td>{$ component.id | link(component.name, component) $}</td>
-    <td>{$ component.description | firstParagraph | marked $}</td>
-  </tr>
+<ul class="api-module-list">
+  {% for component in doc.components %}
+  <li>
+    <h4 class="doc-type-label--{$ component.docType $}">
+      <code>{$ component | docLink $}</code>
+      <span class="api-doc-type">{$ component.docType $}</span>
+    </h4>
+    <div class="module-component-overview">
+      {$ component.description | firstParagraph | marked $}
+    </div>
+  </li>
   {% endfor %}
-</table>
-{% endfor %}
+</ul>

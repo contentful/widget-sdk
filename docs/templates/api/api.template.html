@@ -1,5 +1,8 @@
 <header class="api-profile-header">
-  <h1>{$ doc.name $}</h1>
+  <h1>
+    {$ doc.label $}
+    <span class="api-doc-type">{$ doc.docType $}</span>
+  </h1>
 </header>
 
 {% if doc.usage %}

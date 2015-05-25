@@ -7,6 +7,13 @@
   <li id="{$ method.name $}">
     <h3><code>{$ method | memberSyntax | escape $}</code></h3>
     <div>{$ method.description | marked $}</div>
+    {% if method.params %}
+      <ul>
+        {%- for param in method.params %}
+        <li>{$ param.name $}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
   </li>
   {% endfor -%}
 </ul>
@@ -17,7 +24,7 @@
   {%- for property in doc.properties %}
   <li id="{$ property.name $}">
     <h3><code>{$ property | memberSyntax $}</code></h3>
-    <div>{$ method.description | marked $}</div>
+    <div>{$ property.description | marked $}</div>
   </li>
   {% endfor -%}
   </ul>
