@@ -1,34 +1,48 @@
 .content-type-fields
   max-width: 50em
+  margin-top: $rhythm(1)
 
   &__item
-    font-size: 1.15em
-    padding-left: 0.8em
-    line-height: $rhythm(2)
+    padding-right: 1em
+    line-height: $rhythm(2.5)
     display: flex
     align-items: baseline
-    border-top: 1px solid $gray-lightest
-    &:last-child()
-      border-bottom: 1px solid $gray-lightest
+    margin-bottom: $rhythm(1)
+    border: 1px solid $cfnext-light-gray
+    border-radius: 3px
+    box-shadow: 0 0 2px 0 $cf-next-light-gray
+    background-color: white
+    &.disabled
+      color: $gray
 
 $ct__field-padding = 0.8em
 .ct-field
   &__name
-    flex-grow: 1
     font-weight: bolder
+    margin-right: 1em
 
   &__type
+    flex-grow: 1
     margin-right: 1em
     color: $gray
 
+  &__is-title
+    margin-right: 2em
+
   a&__edit
-    cursor: pointer
+    $cfnext-btn-plain()
+
+  &__disable
+    $cfnext-btn-plain()
+    min-width: 10ex
+    margin-left: 0.5em
+    text-align: right
+    font-weight: normal
 
   &__drag-handle
-    height: $rhythm(2)
-    margin-left:   0.3em
     padding-left:  $ct__field-padding
     padding-right: $ct__field-padding
+    color: $cfnext-light-gray
     cursor: move
     cursor: -webkit-grabbing
     cursor: -moz-grab

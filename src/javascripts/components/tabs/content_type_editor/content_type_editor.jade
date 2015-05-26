@@ -18,7 +18,7 @@
 .section-nav
   button.cfnext-btn-action(ng-disabled="cfCanDisabled" ng-click="showNewFieldDialog()") Add new Field
 
-.section-main.with-header-nav
+.section-main.with-header-nav.with-tab-actions
   .section-main__right-content
     form(name="contentTypeForm" submit="publish()")
       .content-type-fields(ng-show="hasFields")
