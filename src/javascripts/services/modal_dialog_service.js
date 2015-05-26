@@ -82,6 +82,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
         $compile(this.domElement)(scope);
         this.domElement.on('click', _.bind(this._closeOnBackground, this));
         this.open = true;
+        scope.$apply();
       }, this));
     },
 
