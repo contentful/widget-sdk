@@ -40,10 +40,11 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
 
   this.newContentType = function() {
     $scope.$state.go('spaces.detail.content_types.new');
-    analytics.track(EVENT_NAME, {
-      currentState: $scope.$state.current.name,
-      entityType: 'contentType'
-    });
+    /**
+     * @ngdoc analytics-event
+     * @name Clicked Add Content Type Button
+     */
+    analytics.track('Clicked Add Content Type Button');
   };
 
   this.newApiKey = function() {

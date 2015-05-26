@@ -5,8 +5,9 @@ angular.module('contentful')
 ['$scope', '$injector', function ($scope, $injector) {
   var dialog = $scope.dialog;
 
-  var validations = $injector.get('validationDecorator');
-  var field       = $injector.get('fieldDecorator');
+  var validations   = $injector.get('validationDecorator');
+  var field         = $injector.get('fieldDecorator');
+  var trackField    = $injector.get('analyticsEvents').trackField;
 
   $scope.decoratedField = field.decorate($scope.field, $scope.contentType);
   $scope.validations = validations.decorateFieldValidations($scope.field);
@@ -21,7 +22,10 @@ angular.module('contentful')
     if (isValid()) {
       field.update($scope.decoratedField, $scope.field, $scope.contentType);
       validations.updateField($scope.field, $scope.validations);
+      trackFieldSettingsSuccess($scope.field);
       dialog.confirm();
+    } else {
+      trackFieldSettingsError($scope.field);
     }
   };
 
@@ -43,6 +47,28 @@ angular.module('contentful')
     var titleField = _.find(ct.data.fields, {id: fieldId});
     return field.getDisplayName(titleField);
   }
+
+
+  /**
+   * @ngdoc analytics-event
+   * @name Saved Errored Field Settings Modal
+   * @param fieldId
+   * @param originatingFieldType
+   */
+  function trackFieldSettingsError (field) {
+    trackField('Saved Errored Field Settings Modal', field);
+  }
+
+  /**
+   * @ngdoc analytics-event
+   * @name Saved Successful Field Settings Modal
+   * @param fieldId
+   * @param originatingFieldType
+   */
+  function trackFieldSettingsSuccess (field) {
+    trackField('Saved Successful Field Settings Modal', field);
+  }
+
 }])
 
 

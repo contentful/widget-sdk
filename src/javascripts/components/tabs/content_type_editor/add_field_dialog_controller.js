@@ -16,12 +16,13 @@ angular.module('contentful')
 .controller('AddFieldDialogController',
             ['$scope', '$injector', function AddFieldDialogController($scope, $injector) {
 
-  var $controller         = $injector.get('$controller');
-  var fieldFactory        = $injector.get('fieldFactory');
-  var fieldDecorator      = $injector.get('fieldDecorator');
-  var random              = $injector.get('random');
-  var stringUtils         = $injector.get('stringUtils');
-  var buildMessage = $injector.get('fieldErrorMessageBuilder');
+  var $controller    = $injector.get('$controller');
+  var fieldFactory   = $injector.get('fieldFactory');
+  var fieldDecorator = $injector.get('fieldDecorator');
+  var random         = $injector.get('random');
+  var stringUtils    = $injector.get('stringUtils');
+  var buildMessage   = $injector.get('fieldErrorMessageBuilder');
+  var trackField     = $injector.get('analyticsEvents').trackField;
 
   $scope.viewState = $controller('ViewStateController', {
     $scope: $scope,
@@ -86,10 +87,21 @@ angular.module('contentful')
       field.apiName = stringUtils.toIdentifier(field.name);
     }
     if ($scope.validator.run()) {
+      trackCreateField(field);
       $scope.dialog.confirm($scope.newField);
     } else {
       $scope.showApiNameField = true;
     }
+  }
+
+  /**
+   * @ngdoc analytics-event
+   * @name Clicked Create Field Button
+   * @param fieldId
+   * @param originatingFieldType
+   */
+  function trackCreateField (field) {
+    trackField('Clicked Create Field Button', field);
   }
 
 }]);

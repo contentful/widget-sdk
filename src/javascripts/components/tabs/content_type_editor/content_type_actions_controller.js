@@ -54,6 +54,8 @@ angular.module('contentful').
    * @name ContentTypeActionsController#scope#save
    */
   $scope.save = function () {
+    trackSavedContentType($scope.contentType);
+
     $scope.regulateDisplayField();
     if (!$scope.validate()) {
       notification.error(messages.save.invalid);
@@ -108,8 +110,6 @@ angular.module('contentful').
       $scope.spaceContext.registerPublishedContentType(published);
       $scope.spaceContext.refreshContentTypes();
 
-      trackContentTypeAction('Published', $scope.contentType);
-
       if($scope.context.isNew){
         // Let the digest cycle have time to properly set the pristine state
         // before trying to redirect the user, otherwise they'll be prompted
@@ -121,14 +121,6 @@ angular.module('contentful').
         });
       }
 
-    });
-  }
-
-  function trackContentTypeAction(action, contentType) {
-    analytics.track(action + ' ContentType', {
-      contentTypeId: contentType.getId(),
-      contentTypeName: contentType.getName(),
-      version: contentType.getVersion()
     });
   }
 
@@ -146,14 +138,13 @@ angular.module('contentful').
     }
   }
 
-
   function unpublishSuccessHandler(publishedContentType){
     $scope.updatePublishedContentType(null);
     $scope.spaceContext.unregisterPublishedContentType(publishedContentType);
     $scope.spaceContext.refreshContentTypes();
 
     notification.info('Content Type deactivated successfully');
-    trackContentTypeAction('Unpublished', $scope.contentType);
+    trackUnpublishedContentType($scope.contentType);
   }
 
   function unpublishErrorHandler(err){
@@ -161,5 +152,31 @@ angular.module('contentful').
     if(!reason) logger.logServerWarn('Error deactivating Content Type', err);
     notification.error('Unable to deactivate Content Type: ' + reason, err);
   }
+
+
+  /**
+   * @ngdoc analytics-event
+   * @name Unpublished Content Type
+   */
+  function trackUnpublishedContentType(contentType) {
+    analytics.track('Unpublished ContentType', {
+      contentTypeId: contentType.getId(),
+      contentTypeName: contentType.getName(),
+      version: contentType.getVersion()
+    });
+  }
+
+  /**
+   * @ngdoc analytics-event
+   * @name Clicked Save Content Type Button
+   * @param initialSave
+   */
+  function trackSavedContentType (contentType) {
+    var isNew = !_.isNumber(contentType.getId());
+    analytics.track('Clicked Save Content Type Button', {
+      initialSave: isNew
+    });
+  }
+
 }]);
 
