@@ -1,6 +1,6 @@
 ul(cf-ui-sortable ng-model="contentType.data.fields")
   li.content-type-fields__item(
-    ng-controller="FieldSettingsEditorController"
+    ng-controller="ContentTypeFieldController"
     ng-repeat="(index, field) in contentType.data.fields track by field.id"
     ng-hide="field.disabled && !preferences.showDisabledFields"
   )
