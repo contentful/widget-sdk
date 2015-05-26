@@ -394,3 +394,30 @@ Styleguide 4.2.3
   $cfnext-button-large()
   color: $cfnext-blue
 
+/**
+ * Plain Action Button
+ *
+ * Use inline
+ *
+ * Markup:
+ * p
+ *   | Click here
+ *   button.cfnext-btn-plain Action 
+ *   | More text
+ *
+ * Styleguide 4.2.4
+ */
+ $cfnext-btn-plain()
+  font-size: inherit
+  display: inline-block;
+  vertical-align: baseline
+  padding: 0.1em 0.3em
+  margin: 0
+  border: 0
+  background: none
+  cursor: pointer
+  color: $cfnext-blue
+  font-weight: bold
+
+.cfnext-btn-plain
+  $cfnext-btn-plain()
