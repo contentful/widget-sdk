@@ -11,7 +11,7 @@
       .dropdown-menu(cf-dropdown-menu="contentTypeEditor.view" cf-dropdown-position="bottomcenter")
         ul
           li.dropdown-menu-item
-            label 
+            label
               input(type="checkbox" ng-model="preferences.showDisabledFields")
               | Show disabled fields
 
@@ -21,7 +21,8 @@
 .section-main.with-header-nav
   .section-main__right-content
     form(name="contentTypeForm" submit="publish()")
-      .content-type-fields(ng-show="hasFields" cf-template="content_type_field_list")
+      .content-type-fields(ng-show="hasFields")
+        include ./content_type_field_list
       .advice(ng-hide="hasFields")
         .advice__frame
           i.fa.fa-list-alt.advice__medium-icon
@@ -31,19 +32,25 @@
 
 .tab-actions(ng-controller="ContentTypeActionsController")
   .button-set
-    button.btn.btn--secondary.deactivate(type="button"
-                  ng-show="entityActionsController.canUnpublish()"
-                  ng-click="unpublish()"
-                  tooltip="Deactivate this Content Type")
+    button.btn.btn--secondary.deactivate(
+      ng-show="entityActionsController.canUnpublish()"
+      ng-click="unpublish()"
+      tooltip="Deactivate this Content Type")
       | Deactivate
-    button.btn.btn--secondary.cancel(type="button" ng-show="context.isNew" ng-click="cancel()") Cancel
-    button.btn.btn--secondary.delete(type="button" ng-show="!context.isNew && entityActionsController.canDelete()" cf-dropdown-toggle="contentType.delete") Delete
+    button.btn.btn--secondary.cancel(
+      ng-show="context.isNew"
+      ng-click="cancel()")
+      | Cancel
+    button.btn.btn--secondary.delete(
+      ng-show="!context.isNew && entityActionsController.canDelete()"
+      cf-dropdown-toggle="contentType.delete")
+      | Delete
     .delete-confirm(cf-dropdown-menu="contentType.delete" cf-dropdown-position="topcenter")
       p You are about to delete {{contentType.getName()}}
       button.btn.btn--danger(type="button" ng-click="delete()" cf-dropdown-close) Delete
       button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete
     button.btn.btn--primary.publish(
-                  ng-disabled="!canSave()"
-                  ng-click="save()"
-                  tooltip="Save changed and make this Content Type available to editors")
+      ng-disabled="!canSave()"
+      ng-click="save()"
+      tooltip="Save changed and make this Content Type available to editors")
       | Save
