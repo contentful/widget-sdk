@@ -117,20 +117,21 @@ describe('AddFieldDialogController', function() {
       });
     });
 
-    describe('for a type with variants', function() {
+    describe('for a list of symbols', function() {
       beforeEach(function() {
+        var availableTypes = this.$inject('availableFieldTypes');
         this.scope.canHaveFieldVariant = true;
-        this.scope.selectedType.linkType = 'linkType';
+        this.scope.selectedType = _.find(availableTypes, {name: 'Short Text'});
         this.scope.selectedFieldVariant = 'Array';
         this.scope.configureField();
       });
 
-      it('sets the field type', function() {
-        expect(this.scope.newField.type).toBeDefined();
+      it('sets the field type to "Array"', function() {
+        expect(this.scope.newField.type).toEqual('Array');
       });
 
-      it('sets the field linktype', function() {
-        expect(this.scope.newField.linkType).toBeDefined();
+      it('sets the field items type', function() {
+        expect(this.scope.newField.items.type).toEqual('Symbol');
       });
 
       it('sets the field apiName', function() {
@@ -139,6 +140,25 @@ describe('AddFieldDialogController', function() {
 
       it('closes the dialog', function() {
         sinon.assert.called(this.scope.dialog.confirm);
+      });
+    });
+
+    describe('for a list of links', function() {
+      beforeEach(function() {
+        var availableTypes = this.$inject('availableFieldTypes');
+        this.scope.canHaveFieldVariant = true;
+        this.scope.selectedType = _.find(availableTypes, {name: 'Reference'});
+        this.scope.selectedFieldVariant = 'Array';
+        this.scope.configureField();
+      });
+
+      it('sets the field type to "Array"', function() {
+        expect(this.scope.newField.type).toEqual('Array');
+      });
+
+      it('sets the field items type', function() {
+        expect(this.scope.newField.items.type).toEqual('Link');
+        expect(this.scope.newField.items.linkType).toEqual('Entry');
       });
     });
   });

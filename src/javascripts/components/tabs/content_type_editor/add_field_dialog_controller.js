@@ -68,16 +68,28 @@ angular.module('contentful').controller('AddFieldDialogController',
    * and closes the dialog
   */
   function configureField() {
-    if($scope.canHaveFieldVariant){
-      $scope.newField.type = $scope.selectedFieldVariant;
-      if($scope.selectedFieldVariant == 'Array'){
-        $scope.newField.linkType = $scope.selectedType.linkType;
-      }
+    var field = $scope.newField;
+    var typeInfo = fieldTypeInfo($scope.selectedType);
+    if ($scope.selectedFieldVariant == 'Array') {
+      field.type = 'Array';
+      field.items = typeInfo;
     } else {
-      $scope.newField.type = $scope.selectedType.type;
+      _.extend(field, typeInfo);
     }
     $scope.newField.apiName = stringUtils.toIdentifier($scope.newField.name);
     $scope.dialog.confirm($scope.newField);
+  }
+
+  function fieldTypeInfo (typeDescription) {
+    var typeInfo = {};
+    if (_.isObject(typeDescription.type))
+      typeInfo.type = typeDescription.type.single;
+    else
+      typeInfo.type = typeDescription.type;
+    if (typeDescription.linkType)
+      typeInfo.linkType = typeDescription.linkType;
+
+    return typeInfo;
   }
 
 }]);
