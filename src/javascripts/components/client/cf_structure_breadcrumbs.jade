@@ -1,6 +1,7 @@
 .breadcrumbs.structure
-  li.breadcrumb(
-    ng-repeat="step in steps"
-    ng-switch="$last || !!step.abstract" ng-class="{active: $last}")
+  li.breadcrumb(ng-repeat="step in steps")
+    span(ng-if="!$last")
       a(href="{{step.ncyBreadcrumbLink}}") {{step.ncyBreadcrumbLabel}}
-      span.divider(ng-hide="$last") →
+      i.breadcrumb-divider.fa.fa-angle-right
+    span(ng-if="$last")
+      | {{step.ncyBreadcrumbLabel}}
