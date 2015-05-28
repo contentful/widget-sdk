@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="40px" height="37px" viewBox="0 0 40 37" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3.2 (12043) - http://www.bohemiancoding.com/sketch -->
+    <title>page-entries</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="page-entries" sketch:type="MSLayerGroup">
+            <rect id="Rectangle-3" stroke="#21304A" stroke-width="2" fill="#F3EFBC" sketch:type="MSShapeGroup" x="0" y="0" width="27" height="37" rx="2"></rect>
+            <g id="Pencil" transform="translate(26.914214, 20.165438) rotate(-315.000000) translate(-26.914214, -20.165438) translate(17.414214, 2.165438)" sketch:type="MSShapeGroup">
+                <polygon id="Polygon-1" stroke="#21304A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="#F8F8F8" transform="translate(10.000000, 26.597500) rotate(-180.000000) translate(-10.000000, -26.597500) " points="10.0000002 18 17.6084521 30.2507272 14.702282 35.1949992 5.29771798 35.1949992 2.39154787 30.2507272 "></polygon>
+                <path d="M16.3154788,12.589565 C16.3154788,12.589565 17.1206031,4.69056539 8.12060356,3.69056539 C5.12060356,7.69056539 3.3154788,9.55078422 3.3154788,9.55078422 L10.3154788,16.5895654 L16.3154788,12.589565 Z" id="Path-127" fill="#16C98D" transform="translate(9.824751, 10.140065) rotate(-45.000000) translate(-9.824751, -10.140065) "></path>
+                <rect id="Rectangle-31" stroke="#21304A" stroke-width="2" fill="#16C98D" x="3" y="14" width="14" height="5" rx="2"></rect>
+                <path d="M5,14.5 L4,8" id="Line" stroke="#21304A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M16,14.5 L15,8" id="Line-14" stroke="#21304A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(15.500000, 11.250000) scale(-1, 1) translate(-15.500000, -11.250000) "></path>
+                <path d="M10,34.4878922 L10,27.4151425" id="Line" stroke="#21304A" stroke-linecap="square"></path>
+                <circle id="Oval-9" stroke="#21304A" fill="#F3EFBB" cx="10" cy="24.9142136" r="1.5"></circle>
+            </g>
+            <path d="M6.21813282,6.791 L20.7181328,6.791" id="Line" stroke="#21304A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" sketch:type="MSShapeGroup"></path>
+            <path d="M6.21813282,11.791 L20.7181328,11.791" id="Line-15" stroke="#21304A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" sketch:type="MSShapeGroup"></path>
+            <path d="M6.21813282,16.791 L18.2181328,16.791" id="Line-16" stroke="#21304A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" sketch:type="MSShapeGroup"></path>
+            <path d="M6.21813282,21.791 L16.2181328,21.791" id="Line-17" stroke="#21304A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" sketch:type="MSShapeGroup"></path>
+            <path d="M6.21813282,26.791 L15.2181328,26.791" id="Line-18" stroke="#21304A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" sketch:type="MSShapeGroup"></path>
+        </g>
+    </g>
+</svg>

@@ -53,6 +53,7 @@
     "lodash-node": "~2.4.1",
     "marked": "~0.3.1",
     "merge-stream": "^0.1.7",
+    "mkdirp": "^0.5.1",
     "moment": "~2.9.0",
     "nib": "^1.0.3",
     "node-html-encoder": "0.0.2",

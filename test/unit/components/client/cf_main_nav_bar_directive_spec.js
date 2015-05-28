@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Space view directive', function () {
+describe('Main nav bar directive', function () {
 
   var container, scope, stubs;
   var compileElement;
@@ -21,7 +21,7 @@ describe('Space view directive', function () {
           }
         }
       });
-      $provide.removeDirectives('otDocFor', 'otDocPresence', 'entryEditor', 'apiKeyEditor', 'entryList');
+      $provide.removeDirectives('otDocFor', 'otDocPresence', 'entryEditor', 'apiKeyEditor', 'entryList', 'cfIcon');
       $provide.removeControllers('UiConfigController', 'PermissionController');
     });
     inject(function ($rootScope, $compile) {
@@ -83,29 +83,4 @@ describe('Space view directive', function () {
   makeNavbarItemTest('ApiKey', 'read', 'api-home');
   makeNavbarItemTest('ContentType', 'update', 'content-type-list');
   makeNavbarItemTest('Settings', 'update', 'space-settings');
-
-  function makeNavbarItemClassesTest(dataViewType, viewType, section) {
-    xdescribe('defines classes on '+dataViewType+' for highlighted navigation', function () {
-      var selector = 'a[data-view-type="'+dataViewType+'"]';
-      beforeEach(function () {
-        stubs.section.returns(section);
-        stubs.viewType.returns(viewType);
-        compileElement();
-      });
-
-      it('defines is-active class', function () {
-        expect(container.find(selector)).toHaveClass('is-active');
-      });
-
-      it('defines is-section-index class', function () {
-        expect(container.find(selector)).toHaveClass('is-section-index');
-      });
-    });
-  }
-
-  makeNavbarItemClassesTest('content-type-list', 'content-type-list', 'contentTypes');
-  makeNavbarItemClassesTest('entry-list', 'entry-list', 'entries');
-  makeNavbarItemClassesTest('asset-list', 'asset-list', 'assets');
-  makeNavbarItemClassesTest('api-home', 'api-home', 'apiHome');
-  makeNavbarItemClassesTest('space-settings', 'spaceSettings', 'spaceSettings');
 });

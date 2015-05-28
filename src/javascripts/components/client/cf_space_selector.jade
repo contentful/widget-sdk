@@ -5,7 +5,7 @@
     span.space-selector__name.u-truncate(ng-bind="spaceContext.space.data.name || 'Spaces'")
     cf-icon.icon-dd-arrow-down(name="dd-arrow-down" size="10")
   .app-top-bar__dropdown-menu.cfnext-dropdown(cf-dropdown-menu="navbar.spaceSelector" cf-dropdown-position="fixed")
-    cf-icon.cfnext-dropdown__arrow.center-aligned(cf-dropdown-arrow name="arrow-up" size="15")
+    cf-icon.cfnext-dropdown__arrow.center-aligned(cf-dropdown-arrow name="arrow-up")
     ul.space-selector__list.cfnext-dropdown__list--first
       li.cfnext-dropdown__item--group(ng-repeat="(orgId, org) in spacesByOrg" ng-class="{'has-no-action': canSelectOrg(orgId)}")
         span.cfnext-dropdown__group-label.space-selector__group-label {{getOrgName(orgId)}}
@@ -20,5 +20,5 @@
             i.fa.fa-circle(ng-show="space.isHibernated()")
     ul.space-selector__list(ng-show="permissionController.canCreateSpace()" ng-class="_.keys(spacesByOrg).length > 0 ? 'cfnext-dropdown__list' : 'cfnext-dropdown__list--first'")
       li.cfnext-dropdown__item(ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" cf-dropdown-close)
-        cf-icon(name="plus" size="20")
+        cf-icon(name="plus")
         | Add new Space

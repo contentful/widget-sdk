@@ -1,141 +1,27 @@
-/*
-Icons
+.icons-metadata-dialog
+  &.modal-dialog
+    min-width: 1000px
+    height: 600px
+  .dialog-content
+    overflow: auto
+    max-width: 980px
+    height: 500px
 
-Styleguide 10.0
-*/
+.icons-metadata
+  width: 100%
 
-/*
-SVG Icons
+.icon-metadata
+  float: left
+  margin-right: 4px
+  margin-bottom: 4px
+  padding: 4px
+  width: 100px
+  height: 100px
+  background-color: $cfnext-light-gray
+  text-align: center
 
-The SVG icons are specified in a separate file and can be included via a an
-Angular directive built for this purpose.
-
-The markup below which makes use of the object tag is used only for listing
-the icons and not for actually displaying them.
-
-The first 2 examples are examples of actual usage. You can either specify a scale,
-which is a multiplier on the base icon dimensions or you can specify dimensions,
-which should respect the ratio.
-
-See cf_icon_directive.js or /app/svg/contentful_icons for more info.
-
-Markup:
-p
-  cf-icon(name="contentTypes" scale="2")
-  img(width="50" height="50" src="/app/images/contentful_icons.svg#nav-entries")
-p
-  cf-icon(name="contentTypes" width="50" height="50")
-  img(width="30" height="30" src="/app/images/contentful_icons.svg#nav-entries")
-
-Styleguide 10.1
-*/
-
-/*
-Nav icons
-
-Markup:
-p.styleguide-dark-icon-bg
-  img(src="/app/images/contentful_icons.svg#nav-ct")
-p.styleguide-dark-icon-bg
-  img(src="/app/images/contentful_icons.svg#nav-entries")
-p.styleguide-dark-icon-bg
-  img(src="/app/images/contentful_icons.svg#nav-media")
-p.styleguide-dark-icon-bg.icon-nav-api
-  img(src="/app/images/contentful_icons.svg#nav-api")
-p.styleguide-dark-icon-bg
-  img(src="/app/images/contentful_icons.svg#nav-settings")
-
-Styleguide 10.2
-*/
 .icon-nav-api
   padding-top: 4px
-
-
-/*
-Page icons
-
-Markup:
-p
-  img(src="/app/images/contentful_icons.svg#page-ct")
-p
-  img(src="/app/images/contentful_icons.svg#page-entries")
-p
-  img(src="/app/images/contentful_icons.svg#page-media")
-p
-  img(src="/app/images/contentful_icons.svg#page-api")
-p
-  img(src="/app/images/contentful_icons.svg#page-settings")
-
-Styleguide 10.3
-*/
-
-/*
-Field icons
-
-Markup:
-p
-  img(src="/app/images/contentful_icons.svg#field-media")
-  img(src="/app/images/contentful_icons.svg#field-media-small")
-p
-  img(src="/app/images/contentful_icons.svg#field-location")
-  img(src="/app/images/contentful_icons.svg#field-location-small")
-p
-  img(src="/app/images/contentful_icons.svg#field-reference")
-  img(src="/app/images/contentful_icons.svg#field-reference-small")
-p
-  img(src="/app/images/contentful_icons.svg#field-calendar")
-  img(src="/app/images/contentful_icons.svg#field-calendar-small")
-p
-  img(src="/app/images/contentful_icons.svg#field-longtext")
-  img(src="/app/images/contentful_icons.svg#field-longtext-small")
-p
-  img(src="/app/images/contentful_icons.svg#field-shorttext")
-  img(src="/app/images/contentful_icons.svg#field-shorttext-small")
-p
-  img(src="/app/images/contentful_icons.svg#field-number")
-  img(src="/app/images/contentful_icons.svg#field-number-small")
-p
-  img(src="/app/images/contentful_icons.svg#field-decimal")
-  img(src="/app/images/contentful_icons.svg#field-decimal-small")
-p
-  img(src="/app/images/contentful_icons.svg#field-yn")
-  img(src="/app/images/contentful_icons.svg#field-yn-small")
-p
-  img(src="/app/images/contentful_icons.svg#field-json")
-  img(src="/app/images/contentful_icons.svg#field-json-small")
-
-Styleguide 10.4
-*/
-
-/*
-Utility icons
-
-Markup:
-p
-  img(src="/app/images/contentful_icons.svg#close")
-p
-  img(src="/app/images/contentful_icons.svg#info")
-p
-  img(src="/app/images/contentful_icons.svg#plus")
-p
-  img(src="/app/images/contentful_icons.svg#lock")
-p
-  img(src="/app/images/contentful_icons.svg#drag-handle")
-p.styleguide-dark-icon-bg.icon-dd-arrow-down
-  img(src="/app/images/contentful_icons.svg#dd-arrow-down")
-p
-  img(src="/app/images/contentful_icons.svg#arrow-up")
-p.icon-checkmark
-  img(src="/app/images/contentful_icons.svg#checkmark")
-p
-  img(src="/app/images/contentful_icons.svg#fd-headings")
-p
-  img(src="/app/images/contentful_icons.svg#fd-info-text")
-p
-  img(src="/app/images/contentful_icons.svg#fd-separator")
-
-Styleguide 10.5
-*/
 
 .icon-dd-arrow-down
   padding-left: 4px
@@ -143,4 +29,12 @@ Styleguide 10.5
 
 .icon-checkmark
   padding-top: 3px
+
+ svg
+   #icon-dd-arrow-down
+     fill: white
+
+   #icon-plus
+     circle
+       fill: $cfnext-blue
 
