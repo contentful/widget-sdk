@@ -13,7 +13,8 @@ describe('Locale editor controller', function () {
         'getCode',
         'save',
         'delete',
-        'getUpdatedToken'
+        'getUpdatedToken',
+        'track'
       ]);
       $provide.value('logger', {
         logServerWarn: stubs.logServerWarn
@@ -22,6 +23,9 @@ describe('Locale editor controller', function () {
         info: stubs.info,
         warn: stubs.warn,
         serverError: stubs.serverError
+      });
+      $provide.value('analytics', {
+        track: stubs.track
       });
     });
 
@@ -34,6 +38,7 @@ describe('Locale editor controller', function () {
         code: 'en-US'
       }
     };
+    dotty.put(this.scope.spaceContext, 'space.data.organization.subscriptionPlan.name', 'Unlimited');
     this.scope.context = {};
     this.scope.locale = {
       data: {},
@@ -42,7 +47,8 @@ describe('Locale editor controller', function () {
       'delete': stubs.delete.returns(this.$q.when()),
       save: stubs.save.returns(this.$q.when({getId: stubs.getId})),
       getCode: stubs.getCode,
-      isDefault: sinon.stub()
+      isDefault: sinon.stub(),
+      getVersion: sinon.stub()
     };
     this.$inject('tokenStore').getUpdatedToken = stubs.getUpdatedToken.returns(this.$q.when());
 
@@ -83,6 +89,10 @@ describe('Locale editor controller', function () {
       sinon.assert.called(stubs.info);
       expect(stubs.info.args[0][0]).toEqual('"localeName" deleted successfully');
     });
+
+    it('is logged to analytics', function () {
+      sinon.assert.calledWith(stubs.track, 'Clicked Delete Locale Button');
+    });
   });
 
   describe('fails to delete a locale', function () {
@@ -97,6 +107,10 @@ describe('Locale editor controller', function () {
       sinon.assert.called(stubs.logServerWarn);
       expect(stubs.warn.args[0][0]).toEqual('"localeName" could not be deleted: ' + error.body.message);
       expect(stubs.logServerWarn.args[0][1]).toEqual({error: error});
+    });
+
+    it('is logged to analytics', function () {
+      sinon.assert.calledWith(stubs.track, 'Clicked Delete Locale Button');
     });
   });
 
@@ -126,6 +140,10 @@ describe('Locale editor controller', function () {
         localeId: 'someId'
       });
     });
+
+    it('is logged to analytics', function () {
+      sinon.assert.calledWith(stubs.track, 'Saved Successful Locale');
+    });
   });
 
   describe('fails to save a locale', function () {
@@ -139,6 +157,10 @@ describe('Locale editor controller', function () {
       sinon.assert.called(stubs.logServerWarn);
       expect(stubs.logServerWarn.args[0][1]).toEqual({error: {}});
       expect(stubs.warn.args[0][0]).toEqual('"localeName" could not be saved');
+    });
+
+    it('is logged to analytics', function () {
+      sinon.assert.calledWith(stubs.track, 'Saved Errored Locale');
     });
   });
 });

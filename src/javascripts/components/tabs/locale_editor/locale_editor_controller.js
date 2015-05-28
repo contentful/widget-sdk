@@ -4,7 +4,8 @@ angular.module('contentful').controller('LocaleEditorController', ['$scope', '$i
   var availableLocales = $injector.get('locales'),
       notification = $injector.get('notification'),
       logger = $injector.get('logger'),
-      tokenStore = $injector.get('tokenStore');
+      tokenStore = $injector.get('tokenStore'),
+      analytics = $injector.get('analytics');
 
   $scope.context.closingMessage = 'You have unsaved changes.';
 
@@ -69,6 +70,7 @@ angular.module('contentful').controller('LocaleEditorController', ['$scope', '$i
 */
   $scope.delete = function () {
     var t = title();
+    trackDelete('Clicked Delete Locale Button');
     $scope.locale.delete()
     .then(function () {
       notification.info(t + ' deleted successfully');
@@ -90,6 +92,7 @@ angular.module('contentful').controller('LocaleEditorController', ['$scope', '$i
       tokenStore.getUpdatedToken().then(function () {
         $scope.$state.go('spaces.detail.settings.locales.detail', { localeId: response.getId() });
         notification.info(t + ' saved successfully');
+        trackSave('Saved Successful Locale');
       });
     })
     .catch(function (err) {
@@ -103,6 +106,25 @@ angular.module('contentful').controller('LocaleEditorController', ['$scope', '$i
         }
       }
       notification.warn(t + ' could not be saved' + message);
+      trackSave('Saved Errored Locale');
     });
   };
+
+  function trackSave(message) {
+    analytics.track(message, {
+      subscriptionPlan: $scope.spaceContext.space.data.organization.subscriptionPlan.name,
+      language: $scope.locale.getName(),
+      saveFrequency: $scope.locale.getVersion() ? 'return save' : 'first time save',
+      editing: $scope.locale.data.contentManagementApi ? 'enabled' : 'disabled',
+      publishing: $scope.locale.data.contentDeliveryApi ? 'enabled' : 'disabled',
+      defaultLanguage: $scope.locale.isDefault() ? 'enabled': 'disabled'
+    });
+  }
+
+  function trackDelete(message) {
+    analytics.track(message, {
+      subscriptionPlan: $scope.spaceContext.space.data.organization.subscriptionPlan.name,
+      language: $scope.locale.getName()
+    });
+  }
 }]);
