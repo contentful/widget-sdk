@@ -40,16 +40,21 @@
 
 .tab-actions
   .button-set
-    button.btn.btn--secondary.delete(type="button" ng-show="locale.getId()" cf-dropdown-toggle="localeEditor.delete") Delete
+    button.btn.btn--secondary.delete(
+      type="button"
+      ng-show="locale.getId()"
+      ng-disabled="requestInProgress"
+      cf-dropdown-toggle="localeEditor.delete")
+      | Delete
     .delete-confirm(cf-dropdown-menu="localeEditor.delete" cf-dropdown-position="topcenter")
       p You are about to delete {{context.title}}
       button.btn.btn--danger(type="button" ng-click="delete()" cf-dropdown-close) Delete 
       button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete 
-    button.btn.btn--primary.save(type="submit"
-                 tooltip="Save this Language"
-                 ng-click="save()"
-                 cf-when-disabled="permissionController.entityActions.createLocale"
-                 ng-disabled="localeForm.$invalid || permissionController.get('createLocale', 'shouldDisable')")
+    button.btn.btn--primary.save(
+       type="submit"
+       tooltip="Save this Language"
+       ng-click="save()"
+       ng-disabled="localeForm.$invalid || !localeForm.$dirty || requestInProgress")
       | Save
   .rest-save-status
     | Hit Save to save changes to this Language.

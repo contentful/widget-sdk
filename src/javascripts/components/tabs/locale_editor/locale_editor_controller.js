@@ -70,6 +70,7 @@ angular.module('contentful').controller('LocaleEditorController', ['$scope', '$i
 */
   $scope.delete = function () {
     var t = title();
+    $scope.requestInProgress = true;
     trackDelete('Clicked Delete Locale Button');
     $scope.locale.delete()
     .then(function () {
@@ -80,11 +81,13 @@ angular.module('contentful').controller('LocaleEditorController', ['$scope', '$i
     .catch(function (err) {
       notification.warn(t + ' could not be deleted: ' + err.body.message);
       logger.logServerWarn('Locale could not be deleted', {error: err});
-    });
+    })
+    .finally(function () { $scope.requestInProgress = false; });
   };
 
   $scope.save = function () {
     var t = title();
+    $scope.requestInProgress = true;
     $scope.locale.save()
     .then(function (response) {
       $scope.localeForm.$setPristine();
@@ -107,7 +110,8 @@ angular.module('contentful').controller('LocaleEditorController', ['$scope', '$i
       }
       notification.warn(t + ' could not be saved' + message);
       trackSave('Saved Errored Locale');
-    });
+    })
+    .finally(function () { $scope.requestInProgress = false; });
   };
 
   function trackSave(message) {
