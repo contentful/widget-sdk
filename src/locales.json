@@ -40,10 +40,6 @@
         "name": "Arabic"
     },
     {
-        "code": "ar-001",
-        "name": "Arabic (World)"
-    },
-    {
         "code": "ar-AE",
         "name": "Arabic (United Arab Emirates)"
     },
@@ -496,10 +492,6 @@
         "name": "English (United States)"
     },
     {
-        "code": "en-US-POSIX",
-        "name": "English (United States, Computer)"
-    },
-    {
         "code": "en-VI",
         "name": "English (U.S. Virgin Islands)"
     },
@@ -518,10 +510,6 @@
     {
         "code": "es",
         "name": "Spanish"
-    },
-    {
-        "code": "es-419",
-        "name": "Spanish (Latin America)"
     },
     {
         "code": "es-AR",
@@ -1592,16 +1580,8 @@
         "name": "Tachelhit (Latin)"
     },
     {
-        "code": "shi-Latn-MA",
-        "name": "Tachelhit (Latin, Morocco)"
-    },
-    {
         "code": "shi-Tfng",
         "name": "Tachelhit (Tifinagh)"
-    },
-    {
-        "code": "shi-Tfng-MA",
-        "name": "Tachelhit (Tifinagh, Morocco)"
     },
     {
         "code": "si",
@@ -1816,10 +1796,6 @@
         "name": "Central Morocco Tamazight (Latin)"
     },
     {
-        "code": "tzm-Latn-MA",
-        "name": "Central Morocco Tamazight (Latin, Morocco)"
-    },
-    {
         "code": "uk",
         "name": "Ukrainian"
     },
@@ -1876,16 +1852,8 @@
         "name": "Vai (Latin)"
     },
     {
-        "code": "vai-Latn-LR",
-        "name": "Vai (Latin, Liberia)"
-    },
-    {
         "code": "vai-Vaii",
         "name": "Vai (Vai)"
-    },
-    {
-        "code": "vai-Vaii-LR",
-        "name": "Vai (Vai, Liberia)"
     },
     {
         "code": "vi",

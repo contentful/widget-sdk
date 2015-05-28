@@ -74,9 +74,11 @@ angular.module('contentful').controller('LocaleEditorController', ['$scope', '$i
     trackDelete('Clicked Delete Locale Button');
     $scope.locale.delete()
     .then(function () {
-      notification.info(t + ' deleted successfully');
-      $scope.context.dirty = false;
-      $scope.closeState();
+      tokenStore.getUpdatedToken().then(function () {
+        notification.info(t + ' deleted successfully');
+        $scope.context.dirty = false;
+        $scope.closeState();
+      });
     })
     .catch(function (err) {
       notification.warn(t + ' could not be deleted: ' + err.body.message);
