@@ -16,9 +16,11 @@
   .form-control::-webkit-search-cancel-button
     -webkit-appearance: none
   .form-control::-webkit-search-cancel-button::after
+    display: block
+    cursor: pointer
     font-family: 'FontAwesome'
-    content: "\f057";
-    color: red
+    content: "\f057"
+    color: $gray
 
 .search-field__button
   position: absolute
