@@ -20,7 +20,7 @@ angular.module('contentful')
     $scope.$broadcast('validate');
     if (isValid()) {
       field.update($scope.decoratedField, $scope.field, $scope.contentType);
-      $scope.field.validations = validations.extractAll($scope.validations);
+      validations.updateField($scope.field, $scope.validations);
       dialog.confirm();
     }
   };

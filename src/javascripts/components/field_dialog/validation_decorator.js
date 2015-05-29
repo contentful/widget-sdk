@@ -61,7 +61,8 @@ angular.module('contentful')
     decorateFieldValidations: decorateFieldValidations,
     extractAll:  extractAll,
     validate:    validate,
-    validateAll: validateAll
+    validateAll: validateAll,
+    updateField: updateField
   };
 
   /**
@@ -158,6 +159,27 @@ angular.module('contentful')
       error.path = [];
       error.message = getErrorMessage(validation.type, error);
     });
+  }
+
+  /**
+   * @ngdoc method
+   * @name validationDecorator#updateField
+   * @description
+   * Set the fields validations by extracting all enabled decorated
+   * validations.
+   *
+   * This is the inverse of `decorateFieldValidations`.
+   *
+   * @param {ContentType.Field} field
+   * @param {DecoratedValdiation[]} validations
+   */
+  function updateField (field, validations) {
+    var baseValidations = _.filter(validations, {onItems: false});
+    var itemValidations = _.filter(validations, {onItems: true});
+
+    field.validations = extractAll(baseValidations);
+    if (!_.isEmpty(itemValidations))
+      field.items.validations = extractAll(itemValidations);
   }
 
   function validateAll (decoratedValidations) {
