@@ -14,7 +14,7 @@
  */
 
 // Width of the left margin where the toggle checkbox sits.
-$validation-indent = 30px
+$validation-indent = 1.6em
 
 /**
  * @component .validation-settings
@@ -102,7 +102,7 @@ $validation-indent = 30px
 
 .validation-controls__option-list
   $pie-clearfix()
-  margin: 0
+  margin: $rhythm(-0.5) 0 0 0
   line-height: 2.8
   list-style: none
 
@@ -110,8 +110,12 @@ $validation-indent = 30px
     float: left
     margin: 0 1.8em 0 0
 
+  label
+    cursor: pointer
+    $text-truncate()
+
   input
-    margin: 0 0.6em 0 0
+    margin: -3px 0.6em 0 0
 
 .validation-controls__datetime-editor
   margin-bottom: $rhythm()
