@@ -2,15 +2,24 @@
   .modal-dialog.getty-dialog(ng-controller="GettyDialogController" cf-center-on=".modal-background")
     .title Getty Images
     .modal-dialog-close-button(ng-click="dialog.cancel()")
-    .getty-results-bar(getty-results-bar active-when="fixedResults" ng-show="fixedResults && !imageDetail")
-      | for "{{getty.search}}"
-    .endless-container(cf-endless-container at-bottom="loadMore()" num-elements="paginator.page" threshold="50")
-      .dialog-content
-        .getty-error(ng-show="searchError")
-          | {{searchError}}
-        .search-area(getty-search-area ng-show="!imageDetail")
-        .getty-no-results(ng-show="noResults")
-          | No results were found for this search
-        .getty-image-results(getty-image-results ng-show="imageResults.length > 0 && !imageDetail && !gettyLoading")
-        .loading(ng-show="gettyLoading")
-        .getty-image-view(getty-image-view ng-show="imageDetail && !gettyLoading")
+
+    .getty__dialog-container(ng-show="imageDetail" ng-controller="GettyImageDetailsController")
+      include ./getty_image_details
+
+    .getty__dialog-container(ng-show="!imageDetail"
+      cf-endless-container at-bottom="loadMore()"
+      num-elements="paginator.page" threshold="50")
+
+      .getty__search-area
+        include ./getty_search_area
+      .getty-error(ng-show="searchError")
+        | {{searchError}}
+      .getty-no-results(ng-show="noResults")
+        | No results were found for this search
+      .getty__search-results(ng-show="imageResults.length > 0 && !gettyLoading")
+        .getty__search-results-info
+          include ./getty_search_results_info
+        .getty__search-result(ng-repeat="image in imageResults track by image.id" ng-controller="GettyImageController")
+          include ./getty_search_result
+        .loading(ng-hide="paginator.atLast()")
+      .getty__loading.loading(ng-show="gettyLoading")

@@ -21,6 +21,21 @@ angular.module('contentful').controller('GettyDialogController', ['$scope', '$in
 
   var gettyImages = gettyImagesFactory($scope.spaceContext.space);
 
+  $scope.licensingModel = function (key) {
+    return {
+      RoyaltyFree: 'Royalty Free',
+      RightsManaged: 'Rights Managed'
+    }[key];
+  };
+
+  $scope.parseDate = function (dateSrc) {
+    var extractedDate = /Date\((\d+)-\d+\)/g.exec(dateSrc);
+    if(extractedDate && extractedDate.length > 0){
+      return moment(parseInt(extractedDate[1], 10)).format('DD MMMM YYYY');
+    }
+    return '';
+  };
+
   $scope.getty = {
     families: {
       creative: false,
@@ -77,8 +92,8 @@ angular.module('contentful').controller('GettyDialogController', ['$scope', '$in
         FileTypes: ['jpg'],
         ProductOfferings: objectToArray(params.offerings),
         ImageFamilies: objectToArray(params.families),
-        LicensingModels: objectToArrayIf(params.families.creative, params.licensing),
-        GraphicStyles: objectToArrayIf(params.families.creative, params.graphicsStyle)
+        LicensingModels: [],
+        GraphicStyles: [],
       },
       ResultOptions: {
         ItemCount: IMAGES_PER_PAGE,
@@ -89,17 +104,21 @@ angular.module('contentful').controller('GettyDialogController', ['$scope', '$in
       }
     };
 
-    if(params.editorial)
+    if (params.editorial)
       searchParams.Filter.EditorialSegments = [ stringUtils.capitalize(params.editorial) ];
-    if(params.excludeNudity)
+    if (params.excludeNudity)
       searchParams.Filter.ExcludeNudity = true;
-    if(params.vectorIllustrations)
+    if (params.vectorIllustrations)
       searchParams.Filter.FileTypes.push('eps');
-    if(params.sorting) {
+    if (params.sorting) {
       if(params.families.editorial && !params.families.creative)
         searchParams.ResultOptions.EditorialSortOrder = params.sorting;
       if(!params.families.editorial && params.families.creative)
         searchParams.ResultOptions.CreativeSortOrder = params.sorting;
+    }
+    if (params.families.creative) {
+      searchParams.Filter.LicensingModels = objectToArray(params.licensing);
+      searchParams.Filter.GraphicStyles = objectToArray(params.graphicsStyle);
     }
 
     return gettyImages.searchForImages(searchParams);
@@ -116,7 +135,6 @@ angular.module('contentful').controller('GettyDialogController', ['$scope', '$in
     $scope.paginator.numEntries = itemCount;
     $scope.hasBlendedSortOrder = !!getPath(res, 'data.result.BlendedSortOrder');
     $scope.currentSortOrder = getPath(res, 'data.result.CreativeSortOrder') || getPath(res, 'data.result.EditorialSortOrder');
-
     $scope.imageResults = prepareImageObjects(parseImagesResult(res));
   }
 
@@ -140,10 +158,6 @@ angular.module('contentful').controller('GettyDialogController', ['$scope', '$in
       unknownError('Failure getting images', res.data);
       return [];
     }
-  }
-
-  function objectToArrayIf(condition, obj) {
-    return condition ? objectToArray(obj) : [];
   }
 
   function objectToArray(obj) {
@@ -198,8 +212,7 @@ angular.module('contentful').controller('GettyDialogController', ['$scope', '$in
   $scope.loadMore = function() {
     if ($scope.paginator.atLast() ||
         !$scope.imageResults ||
-        $scope.imageResults.length === 0 ||
-        $scope.imageDetail
+        $scope.imageResults.length === 0
        ) return;
     resetErrors();
     $scope.paginator.page++;
@@ -324,56 +337,86 @@ angular.module('contentful').controller('GettyDialogController', ['$scope', '$in
    * Use with care, don't leave uncommented when commiting code.
   */
 
-  /*
-  function mockImageResult() {
-    var metadata = {
-      Title: 'Kitten',
-      ImageId: '12345678',
-      ApplicableProductOfferings: ['EasyAccess'],
-      ImageFamily: 'Photography',
-      LicensingModel: 'RoyaltyFree',
-      CollectionName: 'Kittens',
-      DateCreated: '\/Date(1294868991374-0800)\/',
-      Artist: 'Some fella',
-      ReleaseMessage: 'Away you go',
-      SizesDownloadableImages: [
-        {SizeKey: '123', PixelWidth: 340, PixelHeight: 200, ResolutionDpi: 1200, FileSizeInBytes: 12345671}
-      ]
-    };
+  // var random = $injector.get('random');
+  // function mockImageResult() {
+  //   var metadata = {
+  //     Title: 'Kitten',
+  //     ImageId: '12345678',
+  //     ApplicableProductOfferings: ['EasyAccess'],
+  //     ImageFamily: 'Photography',
+  //     LicensingModel: 'RoyaltyFree',
+  //     CollectionName: 'Kittens',
+  //     DateCreated: '\/Date(1294868991374-0800)\/',
+  //     Artist: 'Some fella',
+  //     ReleaseMessage: 'Away you go',
+  //     SizesDownloadableImages: [
+  //       {SizeKey: '123', PixelWidth: 340, PixelHeight: 200, ResolutionDpi: 1200, FileSizeInBytes: 12345671}
+  //     ]
+  //   };
+  //   return {
+  //     id: random.id(),
+  //     preview: _.assign({
+  //       fileName: 'kitten1.jpg',
+  //       url: 'http://placekitten.com/340/200',
+  //       external: true,
+  //       baseDimSize: 340,
+  //       details: {
+  //         image: {width: 340, height: 200}
+  //       },
+  //       UrlPreview: 'http://placekitten.com/340/200',
+  //     }, metadata),
+  //     thumb: _.assign({
+  //       fileName: 'kitten1.jpg',
+  //       url: 'http://placekitten.com/170/170',
+  //       external: true,
+  //       baseDimSize: 170,
+  //       details: {
+  //         image: {width: 170, height: 170}
+  //       }
+  //     }, metadata)
+  //   };
+  // }
+
+  // $scope.imageDetail = mockImageResult().preview;
+
+  // $scope.imageResults = _.map(new Array(6), mockImageResult);
+
+  // $scope.loadMore = function () {
+  //   _.times(6, function () { $scope.imageResults.push(mockImageResult()); });
+  //   $scope.$apply();
+  // };
+
+}])
+
+.controller('GettyImageDetailsController', ['$scope', function ($scope) {
+  $scope.$watch('imageDetail', function (image) {
+    $scope.image = image;
+  });
+
+  $scope.$watchCollection('image.ApplicableProductOfferings', function (offerings) {
+    $scope.offerings = _.map(offerings, getOfferingLabel);
+  });
+
+  function getOfferingLabel(offering) {
     return {
-      id: random.id(),
-      preview: _.assign({
-        fileName: 'kitten1.jpg',
-        url: 'http://placekitten.com/340/200',
-        external: true,
-        baseDimSize: 340,
-        details: {
-          image: {width: 340, height: 200}
-        },
-        UrlPreview: 'http://placekitten.com/340/200',
-      }, metadata),
-      thumb: _.assign({
-        fileName: 'kitten1.jpg',
-        url: 'http://placekitten.com/170/170',
-        external: true,
-        baseDimSize: 170,
-        details: {
-          image: {width: 170, height: 170}
-        }
-      }, metadata)
-    };
+      EasyAccess: 'Easy Access'
+    }[offering] || offering;
   }
-  */
+}])
 
-  //$scope.imageDetail = mockImageResult().preview;
+.controller('GettyImageController', ['$scope', function ($scope) {
 
-  /*
-  $scope.imageResults = (new Array(6)).map(mockImageResult);
-
-  $scope.loadMore = function () {
-    _.times(6, function () { $scope.imageResults.push(mockImageResult()); });
-    $scope.paginator.numEntries = 36;
+  $scope.showDetails = function () {
+    $scope.showImageDetail($scope.image.thumb);
   };
-  */
 
+  $scope.$watchCollection('image.thumb.ApplicableProductOfferings', function (offerings) {
+    $scope.offerings = _.map(offerings, getOfferingLabel);
+  });
+
+  function getOfferingLabel(offering) {
+    return {
+      EasyAccess: 'Easy Access'
+    }[offering] || offering;
+  }
 }]);

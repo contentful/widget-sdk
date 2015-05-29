@@ -1,13 +1,10 @@
-.results-count(ng-show="isActive() && paginator.numEntries")
-  | {{paginator.numEntries|decimalMarks}} results, {{paginator.page+1}} of {{paginator.numPages()|decimalMarks}} pages
-  span(ng-transclude)
+span.getty__results-count
+  | {{paginator.numEntries|decimalMarks}} Images found
 
-.sorting-options(ng-show="isActive() && isSortingActive()")
+span.getty__results-sorting(ng-show="isSortingActive()")
   button.btn.btn--tertiary(ng-click="sortBy('default')" ng-show="getty.families.editorial" ng-class="{active: currentSortOrder == 'Default'}")
     | Best Match
   button.btn.btn--tertiary(ng-click="sortBy('MostRecent')" ng-class="{active: !hasBlendedSortOrder && currentSortOrder == 'MostRecent'}")
     | Most Recent
   button.btn.btn--tertiary(ng-click="sortBy('MostPopular')" ng-class="{active: !hasBlendedSortOrder && currentSortOrder == 'MostPopular'}")
     | Most Popular
-
-
