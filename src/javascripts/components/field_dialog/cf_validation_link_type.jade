@@ -1,9 +1,10 @@
+include ./validation_settings_mixins
+
 ul.validation-controls__option-list(aria-label="Available Content Types")
   li(ng-repeat="ct in contentTypes")
     label
       input(type="checkbox" ng-model="ct.selected" ng-change="update()")
       | {{ct.name}}
 
-cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
-
-div(cf-template="validation_error_message_input")
++validation-errors
++error-message-input

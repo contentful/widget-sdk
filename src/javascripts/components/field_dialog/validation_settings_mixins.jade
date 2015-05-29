@@ -1,0 +1,25 @@
+mixin validation-errors
+    cf-error-list.form-inline-error(
+      cf-error-messages="$form.errorMessages"
+      aria-label="Errors"
+    )
+
+mixin error-message-input
+  label.validation-controls__error-message-input
+    | Custom error message
+    input.form-control(
+      type="text" aria-label="Custom error message"
+      ng-model="validation.message")
+
+mixin select
+  select.cfnext-select-box&attributes(attributes)
+    block
+  i.cfnext-select-box-icon.fa.fa-angle-down
+
+mixin view-select
+  .validation-controls__view-select
+    +select(
+      aria-label="Select condition"
+      ng-model="validation.currentView" cf-no-form
+      ng-options="v.name as v.label for v in validation.views"
+    )&attributes(attributes)
