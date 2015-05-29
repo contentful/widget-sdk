@@ -25,6 +25,16 @@ angular.module('contentful').config([
     template: JST.cf_structure_breadcrumbs()
   });
 
+  function filterDeletedLocales(data, availableLocales) {
+    _.keys(data.fields).forEach(function (fieldId) {
+      _.keys(data.fields[fieldId]).forEach(function (internal_code) {
+        if (!_.find(availableLocales, { internal_code: internal_code })) {
+          delete data.fields[fieldId][internal_code];
+        }
+      });
+    });
+  }
+
   $stateProvider.state('spaces', {
     url: '/spaces',
     abstract: true,
@@ -96,7 +106,11 @@ angular.module('contentful').config([
     },
     resolve: {
       entry: ['$stateParams', 'space', function ($stateParams, space) {
-        return space.getEntry($stateParams.entryId);
+        return space.getEntry($stateParams.entryId).then(function (entry) {
+          filterDeletedLocales(entry.data, space.getPrivateLocales());
+          return entry;
+        });
+
       }]
     },
     controller: ['$state', '$scope', '$stateParams', 'entry', function ($state, $scope, $stateParams, entry) {
@@ -156,7 +170,10 @@ angular.module('contentful').config([
     },
     resolve: {
       asset: ['$stateParams', 'space', function ($stateParams, space) {
-        return space.getAsset($stateParams.assetId);
+        return space.getAsset($stateParams.assetId).then(function (asset) {
+          filterDeletedLocales(asset.data, space.getPrivateLocales());
+          return asset;
+        });
       }]
     },
     controller: ['$state', '$scope', '$stateParams', 'asset', function ($state, $scope, $stateParams, asset) {
