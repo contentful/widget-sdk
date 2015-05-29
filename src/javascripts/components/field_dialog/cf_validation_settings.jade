@@ -1,29 +1,4 @@
-mixin validation-errors
-    cf-error-list.form-inline-error(
-      cf-error-messages="$form.errorMessages"
-      aria-label="Errors"
-    )
-
-mixin error-message-input
-  label.validation-controls__error-message-input
-    | Custom error message
-    input.form-control(
-      type="text" aria-label="Custom error message"
-      ng-model="validation.message")
-
-mixin select
-  select.cfnext-select-box&attributes(attributes)
-    block
-  i.cfnext-select-box-icon.fa.fa-angle-down
-
-mixin view-select
-  .validation-controls__view-select
-    +select(
-      aria-label="Select condition"
-      ng-model="validation.currentView" cf-no-form
-      ng-options="v.name as v.label for v in validation.views"
-    )&attributes(attributes)
-
+include ./validation_settings_mixins
 
 h2.validation-settings__header
   label.validation-settings__toggle
@@ -116,7 +91,18 @@ h2.validation-settings__header
 
   cf-validation-values(ng-switch-when="in")
 
-  cf-validation-link-type(ng-switch-when="linkContentType")
+  div(ng-switch-when="linkContentType")
+    ul.validation-controls__option-list(
+      aria-label="Available Content Types"
+      ng-controller="ValidationLinkTypeController"
+    )
+      li(ng-repeat="ct in contentTypes")
+        label
+          input(type="checkbox" ng-model="ct.selected" ng-change="update()")
+          | {{ct.name}}
+
+    +validation-errors
+    +error-message-input
 
   div(ng-switch-when="linkMimetypeGroup")
     ul.validation-controls__option-list(
