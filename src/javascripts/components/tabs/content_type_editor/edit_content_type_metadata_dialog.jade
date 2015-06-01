@@ -7,19 +7,26 @@
       .cfnext-form__field
         label
           | Content Type Name
-          sup (required)
-        input.cfnext-form__input--full-size(type="text"
-               name="contentTypeName"
-               placeholder="e.g. Product, Blog Post, Author"
-               ng-model="contentTypeMetadata.name"
-               cf-focus-on-render)
+        input.cfnext-form__input--full-size(
+          type="text"
+          name="contentTypeName"
+          placeholder="e.g. Product, Blog Post, Author"
+          ng-model="contentTypeMetadata.name"
+          required maxlength="50"
+          cf-focus-on-render)
+        .cfnext-form__field-error(cf-field-error-for="contentTypeName")
       .cfnext-form__field
         label Short Description
-        textarea.cfnext-form__input--full-size(name="contentTypeDescription" ng-model="contentTypeMetadata.description")
+        textarea.cfnext-form__input--full-size(
+          maxlength="500"
+          name="contentTypeDescription"
+          ng-model="contentTypeMetadata.description")
+        .cfnext-form__field-error(cf-field-error-for="contentTypeDescription")
 
     .modal-dialog__controls
-      button.cfnext-btn-primary-action.modal-dialog__controls-confirm(ng-click="dialog.confirm()")
+      button.cfnext-btn-primary-action.modal-dialog__controls-confirm(
+        ng-click="dialog.confirm()"
+        ng-disabled="newContentTypeForm.$invalid || newContentTypeForm.$pristine")
         | {{dialog.confirmLabel}}
       a.modal-dialog__controls-cancel(ng-href="#" ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
         | Cancel
-
