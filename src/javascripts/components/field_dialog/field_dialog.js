@@ -26,9 +26,8 @@ angular.module('contentful')
   };
 
   function isValid () {
-    var fieldErrors = field.validate($scope.decoratedField);
     // TODO this should only check the $valid property
-    if (!$scope.fieldForm.$valid || !_.isEmpty(fieldErrors))
+    if (!$scope.fieldForm.$valid)
       return false;
 
     if (!_.isEmpty(validations.validateAll($scope.validations)))
@@ -55,7 +54,7 @@ angular.module('contentful')
 
   $scope.schema = {
     errors: function (decoratedField) {
-      return fieldDecorator.validate(decoratedField);
+      return fieldDecorator.validateInContentType(decoratedField, $scope.contentType);
     },
     buildMessage: function (error) {
       if (error.path && error.path[0] === 'apiName') {
@@ -63,6 +62,8 @@ angular.module('contentful')
           return 'Please use only letters and number';
         if (error.name === 'size')
           return 'Please shorten the text so it’s no longer than 64 characters';
+        if (error.name === 'uniqueFieldId')
+          return 'A field with this ID already exists';
       }
       return buildMessage(error);
     }

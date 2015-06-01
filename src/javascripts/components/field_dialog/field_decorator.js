@@ -11,6 +11,15 @@ angular.module('contentful')
     'localized', 'required', 'disabled'
   ];
 
+  return {
+    decorate: decorate,
+    update:   update,
+    validate: validate,
+    validateInContentType: validateInContentType,
+    getDisplayName: getDisplayFieldName
+  };
+
+
   function decorate (field, contentType) {
     var isTitle = (contentType.data.displayField === field.id);
     return _.extend(_.pick(field, fieldProperties), {
@@ -41,12 +50,22 @@ angular.module('contentful')
     return fieldSchema.errors(extract(field));
   }
 
-  return {
-    decorate: decorate,
-    update:   update,
-    validate: validate,
-    getDisplayName: getDisplayFieldName
-  };
+  function validateInContentType (field, contentType) {
+    var errors = validate(field);
+    if (!isApiNameUnique(field, contentType)) {
+      errors.push({
+        name: 'uniqueFieldId',
+        path: ['apiName']
+      });
+    }
+    return errors;
+  }
+
+  function isApiNameUnique (field, contentType) {
+    var otherFields = _.reject(contentType.data.fields, {id: field.id});
+    var apiNames = _.map(otherFields, 'apiName');
+    return (apiNames.indexOf(field.apiName) === -1);
+  }
 
   function isTitleField (fieldType) {
     return fieldType === 'Symbol' || fieldType === 'Text';
