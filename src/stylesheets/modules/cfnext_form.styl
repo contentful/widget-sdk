@@ -75,6 +75,12 @@ $cfnext-form-input()
  *   div.cfnext-form__field
  *     label Name
  *     input.cfnext-form__input(type="text" aria-invalid="true")
+ *     .cfnext-form__field-error
+ *       | Something went wrong!
+ * p
+ *   div.cfnext-form__field
+ *     label Name
+ *     input.cfnext-form__input(type="text" aria-invalid="true")
  *     span.cfnext-form__field-suffix-error
  *       | Something went wrong!
  * p
@@ -87,11 +93,13 @@ $cfnext-form-input()
  *
  * Styleguide 30.2
  */
+.cfnext-form__field-error,
 .cfnext-form__field-errors
   margin-top: $rhythm(0.5)
   color: $red
-  > li
-    margin-bottom: $rhythm(0.5)
+
+.cfnext-form__field-errors > li
+  margin-bottom: $rhythm(0.5)
 
 .cfnext-form__field-suffix-error
   margin-left: 1.5em
