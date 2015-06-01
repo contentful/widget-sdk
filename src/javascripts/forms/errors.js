@@ -31,7 +31,7 @@ angular.module('cf.forms')
     controller: 'FieldErrorController',
     link: function (scope, elem, attrs, form) {
       scope.errors.link(form, scope.fieldName);
-      scope.$watch('errors.exist', function (hasErrors) {
+      scope.$watch('errors.exist && !errors.hide', function (hasErrors) {
         elem.toggleClass('ng-hide', !hasErrors);
       });
     }
@@ -67,7 +67,7 @@ angular.module('cf.forms')
     controller: 'FieldErrorController',
     link: function (scope, elem, attrs, form) {
       scope.errors.link(form, scope.fieldName);
-      scope.$watch('errors.exist', function (hasErrors) {
+      scope.$watch('errors.exist && !errors.hide', function (hasErrors) {
         elem.toggleClass('ng-hide', !hasErrors);
       });
     }
@@ -90,12 +90,14 @@ angular.module('cf.forms')
  * @property {boolean} exist
  *   True if and only if there are errors for the form field the
  *   controller is attached to.
+ * @property {boolean} hide
+ *   Corresponds to the form controllers `hideErrors` property.
  */
 .controller('FieldErrorController', ['$scope', '$injector',
 function ($scope, $injector) {
   var fieldErrorMessage = $injector.get('fieldErrorMessage');
   var controller = this;
-  var unwatch;
+  var unwatchErrors, unwatchHide;
 
   /**
    * @ngdoc method
@@ -111,10 +113,10 @@ function ($scope, $injector) {
     if (!ctrlName)
       throw new TypeError('FieldErrorController#link(): argument required');
 
-    if (unwatch)
-      unwatch();
+    if (unwatchErrors) unwatchErrors();
+    if (unwatchHide) unwatchHide();
 
-    unwatch = $scope.$watchCollection(ngModelError, function (errors) {
+    unwatchErrors = $scope.$watchCollection(ngModelError, function (errors) {
       var errorDetails = (form[ctrlName] || {}).errorDetails || {};
 
       controller.messages = _.map(_.keys(errors), function (error) {
@@ -123,6 +125,12 @@ function ($scope, $injector) {
       });
 
       controller.exist = controller.messages.length > 0;
+    });
+
+    unwatchHide = $scope.$watch(function () {
+      return form[ctrlName] && form[ctrlName].hideErrors;
+    }, function (hideErrors) {
+      controller.hide = hideErrors;
     });
 
     function ngModelError() {

@@ -122,13 +122,35 @@ angular.module('cf.forms', [])
   return {
     require: 'ngModel',
     link: function (scope, elem, attrs, modelCtrl) {
-      if (elem.is('input')) {
+      if (elem.is('input, textarea')) {
         scope.$watch(function () {
-          return modelCtrl.$invalid;
+          return modelCtrl.$invalid && !modelCtrl.hideErrors;
         }, function (isInvalid) {
           attrs.$set('aria-invalid', isInvalid);
         });
       }
+    }
+  };
+}])
+
+
+/**
+ * @ngdoc directive
+ * @module cf.forms
+ * @name ngModel/hideErrors
+ * @description
+ * Sets the `hideErrors` property to `true` on the model controller if
+ * the input has been touched or is dirty.
+ */
+.directive('ngModel', [function () {
+  return {
+    require: 'ngModel',
+    link: function (scope, elem, attrs, modelCtrl) {
+      scope.$watch(function () {
+        return modelCtrl.$touched || modelCtrl.$dirty;
+      }, function (touched) {
+        modelCtrl.hideErrors = !touched;
+      });
     }
   };
 }])

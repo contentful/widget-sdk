@@ -22,12 +22,24 @@ describe('cfFieldErrorsFor', function () {
     expect(this.errorList.hasClass('ng-hide')).toBe(true);
 
     this.modelController.$setValidity('a', false);
+    this.modelController.$touched = true;
     this.$apply();
     expect(this.errorList.hasClass('ng-hide')).toBe(false);
 
     this.modelController.$setValidity('a', true);
     this.$apply();
     expect(this.errorList.hasClass('ng-hide')).toBe(true);
+  });
+
+  it('hides the element when input has not been touched', function () {
+    this.modelController.$setValidity('a', false);
+
+    this.$apply();
+    expect(this.errorList.hasClass('ng-hide')).toBe(true);
+
+    this.modelController.$touched = true;
+    this.$apply();
+    expect(this.errorList.hasClass('ng-hide')).toBe(false);
   });
 
   it('renders error messages', function () {

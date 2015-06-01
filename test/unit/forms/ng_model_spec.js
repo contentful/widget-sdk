@@ -12,6 +12,9 @@ describe('ngModel directive', function () {
       var element = $compile(template)(scope);
       expect(element.attr('aria-invalid')).toBeUndefined();
 
+      this.$apply();
+      expect(element.attr('aria-invalid')).toBe('false');
+
       element.val('').trigger('change');
       expect(element.attr('aria-invalid')).toBe('true');
 
