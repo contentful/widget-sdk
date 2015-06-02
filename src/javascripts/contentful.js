@@ -14,7 +14,10 @@ angular.module('contentful', [
   function($locationProvider, clientAdapterProvider, authenticationProvider, environment, $sceDelegateProvider, $compileProvider){
   var env = environment.settings;
 
-  $locationProvider.html5Mode(true).hashPrefix('!');
+  $locationProvider.html5Mode({
+    enabled: true,
+    requireBase: false
+  }).hashPrefix('!');
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
   $sceDelegateProvider.resourceUrlWhitelist(env.resourceUrlWhiteListRegexp);
   clientAdapterProvider.server('//'+env.api_host);
