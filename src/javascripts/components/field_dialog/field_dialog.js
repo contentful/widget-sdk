@@ -49,23 +49,13 @@ angular.module('contentful')
 .controller('FieldDialogSettingsController',
 ['$scope', '$injector', function ($scope, $injector) {
   var fieldDecorator = $injector.get('fieldDecorator');
-  var buildMessage = $injector.get('baseErrorMessageBuilder');
+  var buildMessage = $injector.get('fieldErrorMessageBuilder');
 
   $scope.schema = {
     errors: function (decoratedField) {
       return fieldDecorator.validateInContentType(decoratedField, $scope.contentType);
     },
-    buildMessage: function (error) {
-      if (error.path && error.path[0] === 'apiName') {
-        if (error.name === 'regexp')
-          return 'Please use only letters and number';
-        if (error.name === 'size')
-          return 'Please shorten the text so it’s no longer than 64 characters';
-        if (error.name === 'uniqueFieldId')
-          return 'A field with this ID already exists';
-      }
-      return buildMessage(error);
-    }
+    buildMessage: buildMessage,
   };
   $scope.field = $scope.decoratedField;
   $scope.$watch('fieldSettingsForm.$invalid', function (isInvalid) {

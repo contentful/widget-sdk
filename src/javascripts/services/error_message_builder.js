@@ -83,6 +83,20 @@ angular.module('contentful')
   return buildErrorMessage;
 }])
 
+.factory('fieldErrorMessageBuilder', ['baseErrorMessageBuilder', function (buildBaseMessage) {
+  return function buildMessage (error) {
+    if (error.path && error.path[0] === 'apiName') {
+      if (error.name === 'regexp')
+        return 'Please use only letters and number';
+      if (error.name === 'size')
+        return 'Please shorten the text so it’s no longer than 64 characters';
+      if (error.name === 'uniqueFieldId')
+        return 'A field with this ID already exists';
+    }
+    return buildBaseMessage(error);
+  };
+}])
+
 /**
  * @ngdoc service
  * @name errorMessageBuilder
