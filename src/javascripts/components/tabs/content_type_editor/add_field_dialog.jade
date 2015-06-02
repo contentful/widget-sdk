@@ -28,21 +28,21 @@
         .cfnext-form__fieldset--horizontal
           legend Would you like the field to contain a single value or an array?
           .cfnext-form-option
-            input.cfnext-form__input(type="radio"
-                   name="fieldVariant"
-                   ng-value="false"
-                   ng-model="fieldIsList")
-            .cfnext-form-option__desc
-              label Single value
+            input.cfnext-form__input(
+              type="radio"
+              name="fieldIsSingle" id="add-field-form-field-is-single"
+              ng-model="fieldIsList" ng-value="false")
+            label(for="add-field-form-field-is-single")
+              | Single value
           .cfnext-form-option
-            input.cfnext-form__input(type="radio"
-                   name="fieldVariant"
-                   ng-value="true"
-                   ng-model="fieldIsList")
-            .cfnext-form-option__desc
-              label Array
-        .cfnext-form-option__desc
-          p If you store your values as an array, they will be separated on your API responses.
+            input.cfnext-form__input(
+              type="radio"
+              name="fieldIsList" id="add-field-form-field-is-list"
+              ng-model="fieldIsList" ng-value="true")
+            label(for="add-field-form-field-is-list")
+              | List of values
+        .add-field-dialog__info
+          | If you store your values as a list, they will be separated on your API responses.
         .note-box-small.note-box--blue
           | Note: The field type cannot be changed later
 
