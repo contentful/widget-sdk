@@ -13,6 +13,9 @@
  * same id. Ids are global to the app but can and should be namespaced according to
  * the page or section of the app.
  *
+ * The element with the `cfDropdownToggle` directive should also be a previous sibling
+ * of the `cfDropdownMenu`
+ *
  * Other attributes can be specified either in the same element where
  * `cf-dropdown-menu` is being applied, or in children elements.
  *
@@ -55,10 +58,10 @@
 angular.module('contentful').directive('cfDropdownMenu', ['$document', function($document) {
   return {
     restrict: 'A',
-    link: function(scope, dropdownElement, attrs) {
+    link: function(scope, $dropdownMenu, attrs) {
       var id = attrs.cfDropdownMenu;
       var isOpen;
-      var toggleElement;
+      var $toggleElement;
 
       if(_.isEmpty(id)){
         throw new Error('cfDropdownMenu: please specify an id for a dropdown');
@@ -68,10 +71,10 @@ angular.module('contentful').directive('cfDropdownMenu', ['$document', function(
 
       scope.$on('$destroy', function () {
         $document.unbind('click', clickOutsideHandler);
-        toggleElement = null;
+        $toggleElement = null;
       });
 
-      dropdownElement.click(function (ev) {
+      $dropdownMenu.click(function (ev) {
         if(isClickOnCloseElement(ev.target))
           closeDropdown();
       });
@@ -88,10 +91,14 @@ angular.module('contentful').directive('cfDropdownMenu', ['$document', function(
         return !_.isUndefined(el.getAttribute('cf-dropdown-close'));
       }
 
-      function dropdownToggleHandler(event, toggledId, _toggleElement) {
-        if(toggledId === id){
+      // The $newToggleElement is only sent from the cf-dropdown-toggle directive
+      // When triggered by the event handler here, the $toggleElement has already
+      // been saved on the first time this event was handled after being called from
+      // cf-dropdown-toggle
+      function dropdownToggleHandler(event, toggledId, $newToggleElement) {
+        if(toggledId === id && isPreviousSibling($newToggleElement || $toggleElement)){
+          saveToggleElement($newToggleElement);
           if(!isOpen){
-            toggleElement = toggleElement || _toggleElement;
             openDropdown();
           } else if(isOpen) {
             closeDropdown();
@@ -99,15 +106,27 @@ angular.module('contentful').directive('cfDropdownMenu', ['$document', function(
         }
       }
 
+      // The toggle element is saved for proper detection of clicks outside the current dropdown
+      function saveToggleElement($newToggleElement) {
+        if(!$toggleElement){
+          $toggleElement = $newToggleElement;
+        }
+      }
+
+      function isPreviousSibling($expectedPreviousSibling) {
+        var previousSibling = $dropdownMenu.prevAll('[cf-dropdown-toggle="'+id+'"]').get(0);
+        return previousSibling && previousSibling === $expectedPreviousSibling.get(0);
+      }
+
       function openDropdown() {
-        dropdownElement.show();
+        $dropdownMenu.show();
         repositionMenu();
         isOpen = true;
         $document.bind('click', clickOutsideHandler);
       }
 
       function closeDropdown() {
-        dropdownElement.hide();
+        $dropdownMenu.hide();
         isOpen = false;
         $document.unbind('click', clickOutsideHandler);
       }
@@ -120,11 +139,11 @@ angular.module('contentful').directive('cfDropdownMenu', ['$document', function(
 
       function isClickOutside(target) {
         var targetParents         = $(target).parents();
-        var clickIsOutsideElement = targetParents.index(dropdownElement) !== -1;
-        var clickIsOnToggle       = toggleElement && target === toggleElement.get(0);
-        var clickIsInsideToggle   = toggleElement && toggleElement.children().index($(target)) !== -1;
-        var clickIsOnElement      = target === dropdownElement[0];
-        var clickIsInsideElement  = dropdownElement.children().index($(target)) !== -1;
+        var clickIsOutsideElement = targetParents.index($dropdownMenu) !== -1;
+        var clickIsOnToggle       = $toggleElement && target === $toggleElement.get(0);
+        var clickIsInsideToggle   = $toggleElement && $toggleElement.children().index($(target)) !== -1;
+        var clickIsOnElement      = target === $dropdownMenu[0];
+        var clickIsInsideElement  = $dropdownMenu.children().index($(target)) !== -1;
         return !clickIsOutsideElement &&
                !clickIsOnToggle &&
                !clickIsInsideToggle &&
@@ -138,22 +157,22 @@ angular.module('contentful').directive('cfDropdownMenu', ['$document', function(
       function repositionMenu() {
         if (skipPositioning()) return;
         resetPosition();
-        dropdownElement
+        $dropdownMenu
         .position(
           _.extend(getPositioning(), {
-            of: toggleElement,
-            collision: dropdownElement.attr('cf-dropdown-collision') || 'flipfit',
+            of: $toggleElement,
+            collision: $dropdownMenu.attr('cf-dropdown-collision') || 'flipfit',
             using: applyPosition
           })
         );
       }
 
       function skipPositioning() {
-        return dropdownElement.attr('cf-dropdown-position') == 'fixed';
+        return $dropdownMenu.attr('cf-dropdown-position') == 'fixed';
       }
 
       function resetPosition() {
-        dropdownElement.css({
+        $dropdownMenu.css({
           top:    '',
           bottom: '',
           left:   '',
@@ -166,7 +185,7 @@ angular.module('contentful').directive('cfDropdownMenu', ['$document', function(
       }
 
       function getPositioning() {
-        var position = dropdownElement.attr('cf-dropdown-position');
+        var position = $dropdownMenu.attr('cf-dropdown-position');
         switch (position) {
           case 'top15center':
             return {
