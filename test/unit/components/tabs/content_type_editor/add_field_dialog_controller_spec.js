@@ -71,12 +71,8 @@ describe('AddFieldDialogController', function() {
         expect(this.scope.selectedType.type).toBeDefined();
       });
 
-      it('sets a flag if variants exist', function() {
-        expect(this.scope.canHaveFieldVariant).toBeTruthy();
-      });
-
-      it('sets the default selected variant', function() {
-        expect(this.scope.selectedFieldVariant).toBeDefined();
+      it('sets the the single value flag', function() {
+        expect(this.scope.fieldIsList).toBe(false);
       });
 
       it('sets the dialog title with the selected type', function() {
@@ -99,17 +95,21 @@ describe('AddFieldDialogController', function() {
       };
     });
 
-    describe('for a type with no variants', function() {
+    describe('for a single value types', function() {
       beforeEach(function() {
+        var availableTypes = this.$inject('fieldFactory').all;
+        this.scope.selectedType = _.find(availableTypes, {name: 'Short Text'});
+        this.scope.fieldIsList = false;
+        this.scope.newField.name = 'a name';
         this.scope.configureField();
       });
 
       it('sets the field type', function() {
-        expect(this.scope.newField.type).toBeDefined();
+        expect(this.scope.newField.type).toEqual('Symbol');
       });
 
       it('sets the field apiName', function() {
-        expect(this.scope.newField.apiName).toBeDefined();
+        expect(this.scope.newField.apiName).toEqual('aName');
       });
 
       it('closes the dialog', function() {
@@ -119,10 +119,9 @@ describe('AddFieldDialogController', function() {
 
     describe('for a list of symbols', function() {
       beforeEach(function() {
-        var availableTypes = this.$inject('availableFieldTypes');
-        this.scope.canHaveFieldVariant = true;
+        var availableTypes = this.$inject('fieldFactory').all;
         this.scope.selectedType = _.find(availableTypes, {name: 'Short Text'});
-        this.scope.selectedFieldVariant = 'Array';
+        this.scope.fieldIsList = true;
         this.scope.configureField();
       });
 
@@ -145,10 +144,9 @@ describe('AddFieldDialogController', function() {
 
     describe('for a list of links', function() {
       beforeEach(function() {
-        var availableTypes = this.$inject('availableFieldTypes');
-        this.scope.canHaveFieldVariant = true;
+        var availableTypes = this.$inject('fieldFactory').all;
         this.scope.selectedType = _.find(availableTypes, {name: 'Reference'});
-        this.scope.selectedFieldVariant = 'Array';
+        this.scope.fieldIsList = true;
         this.scope.configureField();
       });
 

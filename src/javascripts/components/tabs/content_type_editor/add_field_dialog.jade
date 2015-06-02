@@ -6,7 +6,7 @@
 
     .modal-dialog__content(ng-show="viewState.is('fieldSelection')")
       ul.add-field-dialog__list
-        li.add-field-dialog__list-item(ng-repeat="type in availableFieldTypes" ng-click="selectType(type)")
+        li.add-field-dialog__list-item(ng-repeat="type in availableFields" ng-click="selectType(type)")
           h2 {{type.name}}
           p.add-field-dialog__description {{type.description}}
 
@@ -23,21 +23,21 @@
                name="fieldName"
                ng-model="newField.name"
                cf-focus-on-render)
-      .cfnext-form__field(ng-show="canHaveFieldVariant")
+      .cfnext-form__field(ng-show="selectedType.hasListVariant")
         .cfnext-form__fieldset--horizontal
           legend Would you like to store a single value or an array?
           .cfnext-form-option
             input.cfnext-form__input(type="radio"
                    name="fieldVariant"
-                   ng-value="selectedType.type.single"
-                   ng-model="selectedFieldVariant")
+                   ng-value="false"
+                   ng-model="fieldIsList")
             .cfnext-form-option__desc
               label Single value
           .cfnext-form-option
             input.cfnext-form__input(type="radio"
                    name="fieldVariant"
-                   ng-value="selectedType.type.multiple"
-                   ng-model="selectedFieldVariant")
+                   ng-value="true"
+                   ng-model="fieldIsList")
             .cfnext-form-option__desc
               label Array
         .cfnext-form-option__desc

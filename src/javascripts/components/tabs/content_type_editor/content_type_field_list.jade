@@ -11,7 +11,7 @@ ul(cf-ui-sortable ng-model="contentType.data.fields")
     .ct-field__name
       |{{field | displayedFieldName}}
     .ct-field__type
-      | {{fieldType}}
+      | {{fieldTypeLabel}}
     .ct-field__is-title(ng-if="fieldIsTitle")
       | Title
     a.ct-field__edit(ng-click="openSettingsDialog()")

@@ -6,19 +6,18 @@
  *
  * @scope.requires {object} dialog
  *
- * @scope.provides {object} viewState
- * @scope.provides {object} availableFieldTypes
- * @scope.provides {object} newField
- * @scope.provides {object} selectedType
- * @scope.provides {bool}   canHaveFieldVariant
- * @scope.provides {string} selectedFieldVariant
- * The currently selected field variant value provided by the single/multiple property
+ * @scope.provides {object}          viewState
+ * @scope.provides {FieldDescriptor[]} availableFields
+ * @scope.provides {Field}           newField
+ * @scope.provides {FieldDescriptor} selectedType
+ * @scope.provides {bool}            fieldIsList
 */
-angular.module('contentful').controller('AddFieldDialogController',
+angular.module('contentful')
+.controller('AddFieldDialogController',
             ['$scope', '$injector', function AddFieldDialogController($scope, $injector) {
 
   var $controller         = $injector.get('$controller');
-  var availableFieldTypes = $injector.get('availableFieldTypes');
+  var fieldFactory        = $injector.get('fieldFactory');
   var random              = $injector.get('random');
   var stringUtils         = $injector.get('stringUtils');
 
@@ -27,14 +26,13 @@ angular.module('contentful').controller('AddFieldDialogController',
     defaultState: 'fieldSelection'
   });
 
-  $scope.availableFieldTypes = availableFieldTypes;
-  $scope.selectType          = selectType;
-  $scope.configureField      = configureField;
+  $scope.availableFields = fieldFactory.all;
+  $scope.selectType      = selectType;
+  $scope.configureField  = configureField;
 
   $scope.newField = {
     name: '',
     id: random.id(),
-    type: '',
     apiName: ''
   };
 
@@ -46,16 +44,13 @@ angular.module('contentful').controller('AddFieldDialogController',
    * Sets the relevant scope properties based on the selected field
    * and transitions to the field configuration state
    *
-   * @param {object} typeInfo
-   * Object with information about the selected field type
+   * @param {object} typeDescriptor
+   * Object with information about the selected field type.
   */
-  function selectType(typeInfo) {
-    $scope.selectedType = typeInfo;
-    $scope.canHaveFieldVariant = _.isObject(typeInfo.type);
-    if($scope.canHaveFieldVariant){
-      $scope.selectedFieldVariant = typeInfo.type.single;
-    }
-    $scope.dialog.title = 'New '+typeInfo.name+' field';
+  function selectType (typeDescriptor) {
+    $scope.selectedType = typeDescriptor;
+    $scope.dialog.title = 'New '+typeDescriptor.name+' field';
+    $scope.fieldIsList = false;
     $scope.viewState.set('fieldConfiguration');
   }
 
@@ -64,32 +59,16 @@ angular.module('contentful').controller('AddFieldDialogController',
    * @name AddFieldDialogController#scope#configureField
    *
    * @description
-   * Configures optional parameters of the previously selected field
-   * and closes the dialog
+   * Sets the type information and API Name for the new field and
+   * closes the dialog.
   */
-  function configureField() {
+  function configureField () {
     var field = $scope.newField;
-    var typeInfo = fieldTypeInfo($scope.selectedType);
-    if ($scope.selectedFieldVariant == 'Array') {
-      field.type = 'Array';
-      field.items = typeInfo;
-    } else {
-      _.extend(field, typeInfo);
-    }
-    $scope.newField.apiName = stringUtils.toIdentifier($scope.newField.name);
+    var typeInfo = fieldFactory.createTypeInfo($scope.selectedType.type, $scope.fieldIsList);
+    _.extend(field, typeInfo, {
+      apiName: stringUtils.toIdentifier(field.name)
+    });
     $scope.dialog.confirm($scope.newField);
-  }
-
-  function fieldTypeInfo (typeDescription) {
-    var typeInfo = {};
-    if (_.isObject(typeDescription.type))
-      typeInfo.type = typeDescription.type.single;
-    else
-      typeInfo.type = typeDescription.type;
-    if (typeDescription.linkType)
-      typeInfo.linkType = typeDescription.linkType;
-
-    return typeInfo;
   }
 
 }]);
