@@ -2,7 +2,6 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <base href="/">
   <title>Contentful</title>
   <link href="/app/vendor.css" media="all" rel="stylesheet" type="text/css">
   <link href="/app/main.css" media="all" rel="stylesheet" type="text/css">
@@ -21,6 +20,7 @@
   </script>
 </head>
 <body cf-clear-outlines ng-app="contentful/app">
+  <cf-icon-definitions ng-hide="true"></cf-icon-definitions>
   <div class="client" ng-controller="ClientController" ng-init="initClient()">
     <div class="ng-hide" ng-show="user">
       <cf-notifications></cf-notifications>

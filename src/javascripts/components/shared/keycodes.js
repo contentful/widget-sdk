@@ -4,5 +4,6 @@ angular.module('contentful').constant('keycodes', {
   ENTER   : 13,
   ESC     : 27,
   TAB     : 9,
-  P       : 80
+  P       : 80,
+  I       : 73
 });
