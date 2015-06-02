@@ -18,8 +18,10 @@ angular.module('contentful')
 
   var $controller         = $injector.get('$controller');
   var fieldFactory        = $injector.get('fieldFactory');
+  var fieldDecorator      = $injector.get('fieldDecorator');
   var random              = $injector.get('random');
   var stringUtils         = $injector.get('stringUtils');
+  var buildMessage = $injector.get('fieldErrorMessageBuilder');
 
   $scope.viewState = $controller('ViewStateController', {
     $scope: $scope,
@@ -36,6 +38,13 @@ angular.module('contentful')
     apiName: ''
   };
 
+  $scope.schema = {
+    errors: function (field) {
+      return fieldDecorator.validateInContentType(field, $scope.contentType);
+    },
+    buildMessage: buildMessage,
+  };
+
   /**
    * @ngdoc method
    * @name AddFieldDialogController#scope#selectType
@@ -50,7 +59,9 @@ angular.module('contentful')
   function selectType (typeDescriptor) {
     $scope.selectedType = typeDescriptor;
     $scope.dialog.title = 'New '+typeDescriptor.name+' field';
-    $scope.fieldIsList = false;
+    $scope.fieldOptions = {
+      isList: false
+    };
     $scope.viewState.set('fieldConfiguration');
   }
 
@@ -64,11 +75,21 @@ angular.module('contentful')
   */
   function configureField () {
     var field = $scope.newField;
-    var typeInfo = fieldFactory.createTypeInfo($scope.selectedType.type, $scope.fieldIsList);
-    _.extend(field, typeInfo, {
-      apiName: stringUtils.toIdentifier(field.name)
-    });
-    $scope.dialog.confirm($scope.newField);
+    var isList = $scope.fieldOptions.isList;
+    var typeInfo = fieldFactory.createTypeInfo($scope.selectedType.type, isList);
+    _.extend(field, typeInfo);
+    if (!$scope.validator.run('name')) {
+      return;
+    }
+
+    if (!field.apiName) {
+      field.apiName = stringUtils.toIdentifier(field.name);
+    }
+    if ($scope.validator.run()) {
+      $scope.dialog.confirm($scope.newField);
+    } else {
+      $scope.showApiNameField = true;
+    }
   }
 
 }]);

@@ -9,6 +9,10 @@ describe('AddFieldDialogController', function() {
       confirm: sinon.stub()
     };
 
+    this.scope.validator = {
+      run: sinon.stub().returns(true)
+    };
+
     var $controller = this.$inject('$controller');
     this.controller = $controller('AddFieldDialogController', {$scope: this.scope});
     this.viewStateSetStub = sinon.stub(this.scope.viewState, 'set');
@@ -72,7 +76,7 @@ describe('AddFieldDialogController', function() {
       });
 
       it('sets the the single value flag', function() {
-        expect(this.scope.fieldIsList).toBe(false);
+        expect(this.scope.fieldOptions.isList).toBe(false);
       });
 
       it('sets the dialog title with the selected type', function() {
@@ -90,16 +94,15 @@ describe('AddFieldDialogController', function() {
       this.scope.newField = {
         name: 'new field name'
       };
-      this.scope.selectedType = {
-        type: 'selectedType'
-      };
+
+      var availableTypes = this.$inject('fieldFactory').all;
+      this.scope.selectType(_.find(availableTypes, {name: 'Short Text'}));
     });
 
     describe('for a single value types', function() {
       beforeEach(function() {
         var availableTypes = this.$inject('fieldFactory').all;
-        this.scope.selectedType = _.find(availableTypes, {name: 'Short Text'});
-        this.scope.fieldIsList = false;
+        this.scope.selectType(_.find(availableTypes, {name: 'Short Text'}));
         this.scope.newField.name = 'a name';
         this.scope.configureField();
       });
@@ -120,8 +123,8 @@ describe('AddFieldDialogController', function() {
     describe('for a list of symbols', function() {
       beforeEach(function() {
         var availableTypes = this.$inject('fieldFactory').all;
-        this.scope.selectedType = _.find(availableTypes, {name: 'Short Text'});
-        this.scope.fieldIsList = true;
+        this.scope.selectType(_.find(availableTypes, {name: 'Short Text'}));
+        this.scope.fieldOptions.isList = true;
         this.scope.configureField();
       });
 
@@ -145,8 +148,8 @@ describe('AddFieldDialogController', function() {
     describe('for a list of links', function() {
       beforeEach(function() {
         var availableTypes = this.$inject('fieldFactory').all;
-        this.scope.selectedType = _.find(availableTypes, {name: 'Reference'});
-        this.scope.fieldIsList = true;
+        this.scope.selectType(_.find(availableTypes, {name: 'Reference'}));
+        this.scope.fieldOptions.isList = true;
         this.scope.configureField();
       });
 
@@ -157,6 +160,26 @@ describe('AddFieldDialogController', function() {
       it('sets the field items type', function() {
         expect(this.scope.newField.items.type).toEqual('Link');
         expect(this.scope.newField.items.linkType).toEqual('Entry');
+      });
+    });
+
+    describe('with api name errors', function () {
+      beforeEach(function () {
+        this.scope.validator.run = sinon.spy(function (path) {
+          if (path === 'name')
+            return true;
+          else
+            return false;
+        });
+        this.scope.configureField();
+      });
+
+      it('does not confim the dialog', function () {
+        sinon.assert.notCalled(this.scope.dialog.confirm);
+      });
+
+      it('does show the api name input', function () {
+        expect(this.scope.showApiNameField).toBe(true);
       });
     });
   });

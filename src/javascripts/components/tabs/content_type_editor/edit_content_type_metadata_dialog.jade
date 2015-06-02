@@ -1,11 +1,13 @@
 .modal-background
-  .modal-dialog.edit-content-type-metadata__dialog(cf-center-on=".modal-background")
+  form.modal-dialog.edit-content-type-metadata__dialog(
+    name="newContentTypeForm"
+    cf-on-submit="dialog.confirm()")
     header.modal-dialog__header
       .modal-dialog__action-icon
         cf-icon(name="new-ct")
       h1 {{dialog.title}}
       .close-button(ng-click="dialog.cancel()")
-    form.modal-dialog__content(name="newContentTypeForm")
+    .modal-dialog__content
       .cfnext-form__field
         label
           | Content Type Name
@@ -16,7 +18,8 @@
           ng-model="contentTypeMetadata.name"
           required maxlength="50"
           cf-focus-on-render)
-        .cfnext-form__field-error(cf-field-error-for="contentTypeName")
+        div.cfnext-form__hint
+          | This field is required
       .cfnext-form__field
         label Short Description
         textarea.cfnext-form__input--full-size(
@@ -26,9 +29,7 @@
         .cfnext-form__field-error(cf-field-error-for="contentTypeDescription")
 
     .modal-dialog__controls
-      button.cfnext-btn-primary-action.modal-dialog__controls-confirm(
-        ng-click="dialog.confirm()"
-        ng-disabled="newContentTypeForm.$invalid || newContentTypeForm.$pristine")
+      button.cfnext-btn-primary-action(cf-form-submit)
         | {{dialog.confirmLabel}}
       a.modal-dialog__controls-cancel(ng-href="#" ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
         | Cancel

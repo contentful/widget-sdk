@@ -158,7 +158,8 @@ angular.module('contentful').controller('ContentTypeEditorController',
       confirmLabel: params.optionalActionLabel || 'Confirm',
       template: 'edit_content_type_metadata_dialog',
       noBackgroundClose: true,
-      scope: $scope
+      scope: $scope,
+      ignoreEnter: true
     }).promise
     .then(function () {
       _.extend($scope.contentType.data, $scope.contentTypeMetadata);
@@ -174,7 +175,8 @@ angular.module('contentful').controller('ContentTypeEditorController',
       title: 'Add new Field',
       template: 'add_field_dialog',
       noBackgroundClose: true,
-      scope: $scope
+      scope: $scope,
+      ignoreEnter: true,
     }).promise
     .then(addField);
   }
