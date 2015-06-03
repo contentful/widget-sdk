@@ -22,7 +22,7 @@ describe('cfFieldErrorsFor', function () {
     expect(this.errorList.hasClass('ng-hide')).toBe(true);
 
     this.modelController.$setValidity('a', false);
-    this.modelController.$touched = true;
+    this.modelController.hideErrors = false;
     this.$apply();
     expect(this.errorList.hasClass('ng-hide')).toBe(false);
 
@@ -37,7 +37,7 @@ describe('cfFieldErrorsFor', function () {
     this.$apply();
     expect(this.errorList.hasClass('ng-hide')).toBe(true);
 
-    this.modelController.$touched = true;
+    this.modelController.$dirty = true;
     this.$apply();
     expect(this.errorList.hasClass('ng-hide')).toBe(false);
   });

@@ -139,17 +139,30 @@ angular.module('cf.forms', [])
  * @module cf.forms
  * @name ngModel/hideErrors
  * @description
- * Sets the `hideErrors` property to `true` on the model controller if
- * the input has been touched or is dirty.
+ * Controls the `hideErrors` property of the model controller.
+ *
+ * Initially, `hideErrors` is set to true. It will be set to false when
+ * one of the following cases occurs.
+ *
+ * - The view value has been changed. That is `modelCtrl.$dirty` is
+ *   set.
+ * - The DOM element of the model has a `data-show-errors` attribute.
+ * - The form controller has a truthy `showErrors` property.
  */
 .directive('ngModel', [function () {
   return {
-    require: 'ngModel',
-    link: function (scope, elem, attrs, modelCtrl) {
+    require: ['ngModel', '?^form'],
+    link: function (scope, elem, attrs, ctrls) {
+      var modelCtrl = ctrls[0];
+      var formCtrl = ctrls[1];
+      modelCtrl.hideErrors = true;
       scope.$watch(function () {
-        return modelCtrl.$touched || modelCtrl.$dirty;
-      }, function (touched) {
-        modelCtrl.hideErrors = !touched;
+        return modelCtrl.$dirty ||
+               ('showErrors' in attrs) ||
+               (formCtrl && formCtrl.showErrors);
+      }, function (show) {
+        if (show)
+          modelCtrl.hideErrors = false;
       });
     }
   };
