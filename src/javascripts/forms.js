@@ -180,4 +180,62 @@ angular.module('cf.forms', [])
       };
     }
   };
-}]);
+}])
+
+
+/**
+ * @ngdoc directive
+ * @module cf.forms
+ * @name cfFormSubmit
+ * @usage[jade]
+ * form(cf-on-submit="evaluateMe()")
+ *   button(cf-submit-form)
+ *
+ * @description
+ * Calls the `submit()` method on the form controller when clicked.
+ */
+.directive('cfFormSubmit', [function () {
+  return {
+    restrict: 'A',
+    require: '^form',
+    link: function (scope, element, attrs, formCtrl) {
+      if (!attrs.type)
+        attrs.$set('type', 'submit');
+
+      element.on('click', function (ev) {
+        ev.preventDefault();
+        scope.$apply(function () {
+          formCtrl.submit();
+        });
+      });
+    }
+  };
+}])
+
+
+/**
+ * @ngdoc directive
+ * @module cf.forms
+ * @name cfOnSubmit
+ * @usage[jade]
+ * form(cf-on-submit="evaluateMe()")
+ *
+ * @description
+ * Adds a `submit()` method to the form controller that will evaluate
+ * the given expression and set the `showErrors` property to true.
+ *
+ * For more on the `showErrors` property see the `ngModel/hideErrors`
+ * directive.
+ */
+.directive('cfOnSubmit', function () {
+  return {
+    restrict: 'A',
+    require: 'form',
+    link: function (scope, element, attrs, formCtrl) {
+      formCtrl.submit = function () {
+        formCtrl.showErrors = true;
+        scope.$eval(attrs.cfOnSubmit);
+      };
+    }
+  };
+});
