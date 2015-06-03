@@ -8,7 +8,7 @@
     justify-content: center
   &__list-item
     width: 7em
-    margin: 0 0.5em
+    margin: 0 0.5em 2em
     text-align: center
     cursor: pointer
     > h2
@@ -16,5 +16,14 @@
   &__description
     font-size: 0.9em
     color: $cfnext-gray
+  &__icon
+    width: 80px
+    height: 80px
+    margin: 0 auto
+    border: 1px solid $cfnext-light-gray
+    box-shadow: 0 2px 2px rgba(0,0,0,0.1)
+    $display-flexbox()
+    flex-direction: column
+    justify-content: center
   &__config
     width: 27em

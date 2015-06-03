@@ -328,6 +328,7 @@ mocks.config(function ($provide) {
   $provide.constant('noDelayStub', noDelayStub);
   $provide.constant('delayedInvocationStub', delayedInvocationStub);
   $provide.constant('immediateInvocationStub', immediateInvocationStub);
+  $provide.constant('icons', {});
 
   function noDeferStub(f) {
     /*jshint validthis:true */

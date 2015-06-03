@@ -4,6 +4,7 @@
     cf-ui-tab
     ng-controller="FieldDialogController as fieldController")
     header.field-dialog__header
+      cf-icon(name="{{iconId}}")
       h1
         span.field-dialog__field-name
           | {{decoratedField.displayName}}

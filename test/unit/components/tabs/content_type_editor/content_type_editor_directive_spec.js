@@ -51,8 +51,8 @@ describe('The ContentType editor directive', function () {
       expect(container.find('.content-type-fields')).not.toBeNgHidden();
     });
 
-    it('advice is not shown', function () {
-      expect(container.find('.advice')).toBeNgHidden();
+    it('empty field list is not shown', function () {
+      expect(container.find('.content-type-no-fields')).toBeNgHidden();
     });
   });
 
@@ -66,8 +66,8 @@ describe('The ContentType editor directive', function () {
       expect(container.find('.content-type-fields')).toBeNgHidden();
     });
 
-    it('advice is shown', function () {
-      expect(container.find('.advice')).not.toBeNgHidden();
+    it('empty field list is shown', function () {
+      expect(container.find('.content-type-no-fields')).not.toBeNgHidden();
     });
   });
 

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg width="46px" height="22px" viewBox="0 0 46 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
     <!-- Generator: Sketch 3.3.2 (12043) - http://www.bohemiancoding.com/sketch -->
-    <title>field-yn</title>
+    <title>field-boolean</title>
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="field-yn" sketch:type="MSLayerGroup" fill="#21304A">
+        <g id="field-boolean" sketch:type="MSLayerGroup" fill="#21304A">
             <path d="M9.436,21.1507497 L7.42,21.1507497 L7.42,12.6107497 L0,1.32674974 L2.52,1.32674974 L8.484,10.9307497 L14.504,1.32674974 L16.856,1.32674974 L9.436,12.6107497 L9.436,21.1507497 Z M18.62,21.6547497 L16.996,21.1227497 L25.48,0.822749745 L27.076,1.38274974 L18.62,21.6547497 Z M43.904,18.2107497 L43.96,18.2107497 L43.96,1.32674974 L45.976,1.32674974 L45.976,21.1507497 L43.456,21.1507497 L31.92,4.09874974 L31.864,4.09874974 L31.864,21.1507497 L29.848,21.1507497 L29.848,1.32674974 L32.368,1.32674974 L43.904,18.2107497 Z" id="Y/N" sketch:type="MSShapeGroup"></path>
         </g>
     </g>

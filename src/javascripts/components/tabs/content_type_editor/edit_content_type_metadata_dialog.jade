@@ -1,6 +1,8 @@
 .modal-background
   .modal-dialog.edit-content-type-metadata__dialog(cf-center-on=".modal-background")
     header.modal-dialog__header
+      .modal-dialog__action-icon
+        cf-icon(name="new-ct")
       h1 {{dialog.title}}
       .close-button(ng-click="dialog.cancel()")
     form.modal-dialog__content(name="newContentTypeForm")

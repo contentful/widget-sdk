@@ -7,7 +7,9 @@ ul(cf-ui-sortable ng-model="contentType.data.fields")
   )
 
     .ct-field__drag-handle(data-drag-handle)
-      i.fa.fa-bars
+      | &nbsp;
+    .ct-field__icon
+      cf-icon(ng-if="iconId" name="{{iconId}}")
     .ct-field__name
       |{{field | displayedFieldName}}
     .ct-field__type

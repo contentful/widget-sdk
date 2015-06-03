@@ -6,7 +6,9 @@
 
     .modal-dialog__content(ng-show="viewState.is('fieldSelection')")
       ul.add-field-dialog__list
-        li.add-field-dialog__list-item(ng-repeat="type in availableFields" ng-click="selectType(type)")
+        li.add-field-dialog__list-item(ng-repeat="type in availableFieldTypes track by type.id" ng-click="selectType(type)")
+          .add-field-dialog__icon
+            cf-icon(name="{{'field-'+type.id}}")
           h2 {{type.name}}
           p.add-field-dialog__description {{type.description}}
 

@@ -16,37 +16,44 @@ angular.module('contentful')
    */
   var fieldTypes = [
     {
+      iconId: 'shorttext',
       name: 'Short Text',
       description: 'Single field or list. Good for titles, URLs, tags, etc.',
       type: 'Symbol',
       hasListVariant: true,
     },
     {
+      iconId: 'longtext',
       name: 'Long Text',
       description: 'Good for long paragraphs',
       type: 'Text'
     },
     {
+      iconId: 'number',
       name: 'Integer',
       description: 'Good for whole numbers',
       type: 'Integer'
     },
     {
+      iconId: 'decimal',
       name: 'Decimal Number',
       description: 'Good for prices, weights, …',
       type: 'Number'
     },
     {
+      iconId: 'calendar',
       name: 'Date & Time',
       description: 'Good for dates or dates and time',
       type: 'Date'
     },
     {
+      iconId: 'location',
       name: 'Location',
       description: 'Good for addresses and coordinates',
       type: 'Location'
     },
     {
+      iconId: 'media',
       name: 'Media',
       description: 'Good for images, videos, PDFs, Word files, etc',
       type: 'Asset',
@@ -54,16 +61,19 @@ angular.module('contentful')
       hasListVariant: true,
     },
     {
+      iconId: 'boolean',
       name: 'Boolean',
       description: 'Good for simple Yes/No flags',
       type: 'Boolean'
     },
     {
+      iconId: 'json',
       name: 'JSON Object',
       description: 'Good for JSON snippets',
       type: 'Object'
     },
     {
+      iconId: 'reference',
       name: 'Reference',
       description: 'Link your Content Types',
       type: 'Entry',
@@ -75,6 +85,7 @@ angular.module('contentful')
   return {
     all: fieldTypes,
     getLabel: getFieldLabel,
+    getIconId: getIconId,
     createTypeInfo: createTypeInfo,
   };
 
@@ -92,6 +103,17 @@ angular.module('contentful')
       label += ' List';
 
     return label;
+  }
+
+  /**
+   * @ngdoc method
+   * @name fieldFactory#getIconId
+   * @description
+   * Return an id for the associated field icon
+   * @return {string}
+  */
+  function getIconId(field) {
+    return 'field-'+getFieldDescriptor(field).iconId;
   }
 
   /**
@@ -115,7 +137,7 @@ angular.module('contentful')
     }
 
     if (isList && !descriptor.hasListVariant)
-      throw new Error('The field type "'+type+'" does not have a list variatn');
+      throw new Error('The field type "'+type+'" does not have a list variant');
 
     if (isList) {
       info = { type: 'Array', items: info};

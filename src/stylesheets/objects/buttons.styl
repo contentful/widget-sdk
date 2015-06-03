@@ -300,10 +300,12 @@ $cfnext-button($color = false, $border-color = false)
   font-size: 0.9rem
   font-weight: bold
   color: white
-  padding: 0.6rem 2rem
+  padding: 0.6rem 1.5rem
   background-color: $color
   border-radius: 2px
   cursor: pointer;
+  display: flex
+  align-items: center
   if $border-color
     border-color: $border-color
     border-width: 1px
@@ -316,6 +318,10 @@ $cfnext-button($color = false, $border-color = false)
   &:active
     padding-top: 0.7rem
     padding-bottom: 0.5rem
+  cf-icon
+    margin-right: 0.5em
+    position: relative
+    top: 0.1em
 
 $cfnext-button-large()
   font-size: 1.15rem

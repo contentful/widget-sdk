@@ -1,4 +1,6 @@
 .section-header.editor-configuration
+  .section-header__icon
+    cf-icon(name="page-ct")
   h1.section-header__title {{contentType.getName()}}
   .section-header__description {{contentType.data.description}}
   a.section-header__metadata-action(ng-click="showMetadataDialog()" ng-href="#") Edit
@@ -16,7 +18,9 @@
               | Show disabled fields
 
 .section-nav
-  button.cfnext-btn-action(ng-disabled="cfCanDisabled" ng-click="showNewFieldDialog()") Add new Field
+  button.cfnext-btn-action(ng-disabled="cfCanDisabled" ng-click="showNewFieldDialog()")
+    cf-icon.inverted(name="plus")
+    | Add new Field
 
 .section-main.with-header-nav.with-tab-actions
   .section-main__right-content

@@ -2,8 +2,8 @@
 angular.module('contentful')
 .controller('ContentTypeFieldController', ['$scope', '$injector',
 function ($scope, $injector) {
-  var modalDialog = $injector.get('modalDialog');
-  var getFieldLabel = $injector.get('fieldFactory').getLabel;
+  var modalDialog  = $injector.get('modalDialog');
+  var fieldFactory = $injector.get('fieldFactory');
 
   $scope.openSettingsDialog = function openSettingsDialog() {
     var dialog = modalDialog.open({
@@ -22,7 +22,8 @@ function ($scope, $injector) {
   };
 
   $scope.$watchGroup(['field.type', 'field.linkType', 'field.items.type', 'field.items.linkType'], function () {
-    $scope.fieldTypeLabel = getFieldLabel($scope.field);
+    $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
+    $scope.iconId = fieldFactory.getIconId($scope.field)+'-small';
   });
 
   $scope.$watch(function (scope) {

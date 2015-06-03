@@ -49,17 +49,6 @@ describe('The ContentType list directive', function () {
     });
   });
 
-  it('save button is disabled', function () {
-    scope.permissionController.get.withArgs('createContentType', 'shouldDisable').returns(true);
-    compileElement();
-    expect(container.find('.advice .btn--primary').attr('disabled')).toBe('disabled');
-  });
-
-  it('save button is enabled', function () {
-    compileElement();
-    expect(container.find('.advice .btn--primary').attr('disabled')).toBeUndefined();
-  });
-
   describe('list of content types is filtered', function() {
     var list;
     var idStub1, idStub2, idStub3, nameStub, listFilterStub;
