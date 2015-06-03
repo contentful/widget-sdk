@@ -18,12 +18,13 @@ p
 Styleguide 5.2
 */
 
-$select-box-line-height = 2em
+$select-box-line-height = 2.3em
 .cfnext-select-box
+  box-sizing: border-box
   $button()
   $button-tertiary()
-  padding: 1px 1.6em 0 0.6em
-  line-height: $select-box-line-height
+  padding: 0 1.6em 1px 0.6em
+  height: $select-box-line-height
   color: inherit
   font-size: inherit
   font-family: inherit
