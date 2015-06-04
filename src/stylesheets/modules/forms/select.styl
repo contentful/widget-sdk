@@ -18,13 +18,13 @@ p
 Styleguide 5.2
 */
 
-$select-box-line-height = 2.3em
+$select-box-height = 2.3em
 .cfnext-select-box
   box-sizing: border-box
   $button()
   $button-tertiary()
   padding: 0 1.6em 1px 0.6em
-  height: $select-box-line-height
+  height: $select-box-height
   color: inherit
   font-size: inherit
   font-family: inherit
@@ -39,7 +39,7 @@ $select-box-line-height = 2.3em
 .cfnext-select-box-icon
   position: relative
   width: 0
-  line-height: $select-box-line-height
+  line-height: $select-box-height
   left: -1.2em
   top: 1px
   pointer-events: none
@@ -48,11 +48,11 @@ $select-box-line-height = 2.3em
  * @deprecated
  */
 .select-box
-  padding: 1px 0 0 0;
+  padding: 0
   select
-    padding-left: 0.6em
-    padding-right: 1.6em
-    line-height: $select-box-line-height
+    // This is a hack to keep IE from showing the dropdown arrow
+    width: 200%
+    padding: 5px 12px
     margin: 0
     color: inherit
     font-size: inherit
@@ -73,3 +73,7 @@ $select-box-line-height = 2.3em
     top: 7px
     cursor: default
     pointer-events: none
+
+.select-box__wrapper
+  width: 90%
+  overflow: hidden

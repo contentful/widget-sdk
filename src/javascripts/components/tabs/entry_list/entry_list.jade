@@ -9,10 +9,11 @@
 
   .tab-header__search.search-area--with-filter
     .btn.btn--tertiary.select-box
-      select.u-truncate(ng-model="context.view.contentTypeId"
-              ng-change="selectedContentType()"
-              ng-options="ct.getId() as ct.getName() group by getGroupName() for ct in spaceContext.publishedContentTypes")
-        option(value="") All
+      .select-box__wrapper
+        select.u-truncate(ng-model="context.view.contentTypeId"
+                ng-change="selectedContentType()"
+                ng-options="ct.getId() as ct.getName() group by getGroupName() for ct in spaceContext.publishedContentTypes")
+          option(value="") All
       i.button-icon-right.fa.fa-caret-down
 
     .l-search-w-autocomplete(
