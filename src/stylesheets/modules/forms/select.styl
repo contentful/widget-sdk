@@ -35,6 +35,8 @@ $select-box-height = 2.3em
   outline: 0
   &:hover, &:focus, &:active
     border-color: $gray
+  &::-ms-expand
+    display: none
 
 .cfnext-select-box-icon
   position: relative
@@ -63,6 +65,8 @@ $select-box-height = 2.3em
     -webkit-appearance: none
     -moz-appearance: none
     appearance: none
+    &::-ms-expand
+      display: none
   &:hover
     border-color: $gray
   .button-icon-right
