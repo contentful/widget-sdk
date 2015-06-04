@@ -16,6 +16,7 @@ angular.module('contentful').directive('cfDropdownToggle', ['$rootScope', functi
     restrict: 'A',
     link: function(scope, toggleElement, attrs) {
       var id = attrs.cfDropdownToggle;
+
       toggleElement.click(function (event) {
         if(!toggleElement.attr('disabled')){
           event.stopPropagation();
