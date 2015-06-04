@@ -88,7 +88,7 @@ angular.module('contentful')
       $scope.bounds.min = min;
     } else if (exists(max)) {
       $scope.condition = 'max';
-      $scope.bounds.min = max;
+      $scope.bounds.max = max;
     }
   }
 
