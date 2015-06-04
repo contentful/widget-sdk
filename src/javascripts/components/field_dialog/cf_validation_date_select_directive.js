@@ -51,7 +51,7 @@ angular.module('contentful')
       var form = ctrls[1];
       scope.$watch('enabled', function(enabled) {
         if (form.$dirty) {
-          validator.validate();
+          validator.run();
         }
         elem.find('[cf-datetime-editor] input').attr('disabled', !enabled);
       });
