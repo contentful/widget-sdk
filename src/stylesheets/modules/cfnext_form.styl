@@ -13,15 +13,15 @@
  * p
  *   div.cfnext-form__field
  *     label Name
- *     input.cfnext-form__input(type="text")
+ *     input.cfnext-form__input(type="text" value="Name")
  * p
  *   div.cfnext-form__field
  *     label Longer Name
- *     input.cfnext-form__input(type="text" size="50")
+ *     input.cfnext-form__input(type="text" size="50" value="Longer Name")
  * p
  *   div.cfnext-form__field
  *     label Full Name
- *     input.cfnext-form__input--full-size(type="text")
+ *     input.cfnext-form__input--full-size(type="text" value="Full Name")
  *
  * Styleguide 30.1
  */
@@ -37,9 +37,10 @@ $cfnext-form-input()
   font-size: inherit
   border: 1px solid $metallic-gray
   border-radius: 3px 3px 3px 3px
-  line-height: 2.2em
+  box-sizing: border-box
+  height: 2.3em
   padding: 0 0.5em
-  transition: border 0.4s
+  transition: border 0.3s
   &:focus
     background-color: white
     border-color: $blue-link
