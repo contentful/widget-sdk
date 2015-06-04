@@ -151,8 +151,13 @@ $cfnext-form__fieldset()
 
   > input[type="checkbox"],
   > input[type="radio"]
+    align-self: flex-start
     flex-shrink: 0
-    margin: 0.1em 0.7em 0 0.3em
+    margin: 1px 0.5em 0 0
+
+  > label
+    display: block
+    cursor: pointer
 
 $text-dimmed = hsl(0, 0%, 50%)
 .cfnext-form-option__desc p
