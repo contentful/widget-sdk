@@ -15,9 +15,11 @@ angular.module('contentful')
   return {
     restrict: 'E',
     template: JST['cf_validation_values'](),
-    link: setupScrollIndicators,
+    link: link,
 
+    controllerAs: 'valuesController',
     controller: ['$scope', function($scope) {
+      var controller = this;
 
       /**
        * Sync 'validation.settings' and the local 'valueList'
@@ -41,6 +43,7 @@ angular.module('contentful')
        * to the list.
        */
       $scope.onInputKey = function(ev) {
+        controller.clearErrors();
         ev.stopPropagation();
         var input = $(ev.target);
         if (ev.keyCode === keycodes.ENTER && input.val()) {
@@ -91,24 +94,36 @@ angular.module('contentful')
           value = parseValue(value, $scope.field.type);
         } catch (e) {
           setError(e.message);
-          return;
+          return false;
         }
 
         if ($scope.valueList.length == 50){
           setError('You can only add up to 50 predefined values');
+          return false;
         } else if (_.contains($scope.valueList, value)){
           setError('This value already exists on the list');
+          return false;
         } else {
           $scope.valueList.push(value);
+          $scope.validator.run();
           return true;
         }
       }
 
-      function setError(error) {
-        $scope.validation.errors = [error];
+      function setError(message) {
+        controller.errorMessages = [message];
       }
+
+      controller.clearErrors = function () {
+        this.errorMessages = [];
+      };
     }]
   };
+
+  function link (scope, elem) {
+    setupScrollIndicators(scope, elem);
+    clearErrorsOnBlur(scope, elem);
+  }
 
 
   /**
@@ -139,5 +154,13 @@ angular.module('contentful')
 
     valueListFrame.on('scroll', updateIndicators);
     scope.$watchCollection('valueList', updateIndicators);
+  }
+
+  function clearErrorsOnBlur (scope, elem) {
+    elem.children('input[type=text]').first().on('blur', function () {
+      scope.$apply(function () {
+        scope.valuesController.clearErrors();
+      });
+    });
   }
 }]);
