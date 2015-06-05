@@ -20,8 +20,9 @@ angular.module('contentful/app', ['contentful'])
 
   //analyticsProvider.forceLoad();
 }])
-.run(['authentication', 'clientAdapter', 'ShareJS', 'analytics', 'logger', function(authentication, clientAdapter, ShareJS) {
+.run(['authentication', 'clientAdapter', 'ShareJS', 'iconsPreview', function(authentication, clientAdapter, ShareJS, iconsPreview) {
   authentication.login();
   clientAdapter.token = authentication.token;
   ShareJS.connect();
+  iconsPreview();
 }]);
