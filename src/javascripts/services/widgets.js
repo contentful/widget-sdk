@@ -1,7 +1,23 @@
 'use strict';
-angular.module('contentful').factory('widgets', ['$injector', function($injector){
+
+/**
+ * @ngdoc service
+ * @name widgets
+ */
+angular.module('contentful')
+.factory('widgets', ['$injector', function($injector){
   var $q = $injector.get('$q');
 
+  /**
+   * @ngdoc type
+   * @name Widget.Option
+   * @property {string} param
+   * @property {string} name
+   * @property {string} type
+   * @property {string} description
+   * @property {any[]}  values
+   * @property {any}    default
+   */
   var COMMON_OPTIONS = [
     {
       param: 'helpText',
@@ -30,7 +46,25 @@ angular.module('contentful').factory('widgets', ['$injector', function($injector
     //},
   ];
 
+  /**
+   * @ngdoc type
+   * @name Widget
+   * @property {string} widgetId
+   * @property {[string]: any} widgetParams
+   */
   var WIDGETS = {};
+
+  return {
+    get:               getWidget,
+    forField:          typesForField,
+    defaultWidgetId:   defaultWidgetId,
+    optionsForWidget:  optionsForWidget,
+    widgetTemplate:    widgetTemplate,
+    paramDefaults:     paramDefaults,
+    registerWidget:    registerWidget,
+    applyDefaults:     applyDefaults
+  };
+
 
   function getWidget(id) {
     return WIDGETS[id];
@@ -125,14 +159,18 @@ angular.module('contentful').factory('widgets', ['$injector', function($injector
     WIDGETS[id] = WIDGETS[id] || descriptor;
   }
 
-  return {
-    get:               getWidget,
-    forField:          typesForField,
-    defaultWidgetId:   defaultWidgetId,
-    optionsForWidget:  optionsForWidget,
-    widgetTemplate:    widgetTemplate,
-    paramDefaults:     paramDefaults,
-    registerWidget:    registerWidget
-  };
+  /**
+   * @ngdoc method
+   * @name widgets#applyDefaults
+   * @description
+   * Sets each widget paramter to its default value if it is not set
+   * yet.
+   * @param {Widget} widget
+   */
+  function applyDefaults (widget) {
+    var defaults = paramDefaults(widget.widgetId, 'field');
+    widget.widgetParams = _.defaults(widget.widgetParams || {}, defaults);
+    return widget;
+  }
 
 }]);

@@ -123,6 +123,10 @@ angular.module('contentful')
     additionalProperties: true
   };
 
+  $scope.$watch('widget.widgetId', function () {
+    if ($scope.widget)
+      widgets.applyDefaults($scope.widget);
+  });
 
   $scope.$watch('widget.widgetId', function (widgetId) {
     if (widgetId)

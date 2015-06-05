@@ -227,8 +227,34 @@ describe('Widget types service', function () {
       expect(widgets.widgetTemplate('derp')).toBe('<div class="missing-widget-template">Unknown editor widget "derp"</div>');
     });
   });
-  
-  
-  
+
+  describe('#applyDefaults(widget)', function () {
+    beforeEach(function () {
+      this.widgets = this.$inject('widgets');
+      this.widgets.registerWidget('test', {
+        options: [{
+          param: 'x',
+          default: 'DEFAULT'
+        }]
+      });
+    });
+
+    it('sets missing parameters to default value', function () {
+      var widget = {
+        widgetId: 'test',
+      };
+      this.widgets.applyDefaults(widget);
+      expect(widget.widgetParams['x']).toEqual('DEFAULT');
+    });
+
+    it('does not overwrite existing params', function () {
+      var widget = {
+        widgetId: 'test',
+        widgetParams: {x: 'VALUE'}
+      };
+      this.widgets.applyDefaults(widget);
+      expect(widget.widgetParams['x']).toEqual('VALUE');
+    });
+  });
 
 });
