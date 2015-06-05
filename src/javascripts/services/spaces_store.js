@@ -6,7 +6,7 @@ angular.module('contentful').service('spacesStore', [function() {
 
   spacesStore.saveSelectedSpace = function (id) {
     $.cookies.set('lastUsedSpace', id, {
-      expiresAt: moment().add('y', 1).toDate()
+      expiresAt: moment().add(1, 'y').toDate()
     });
   };
 

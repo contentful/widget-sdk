@@ -136,7 +136,7 @@ angular.module('contentful')
       scope.setFromISO = function(iso){
         var tokens = parseIso(iso);
         if (tokens) {
-          var dateTime = tokens.tzString ? moment(iso).zone(iso) : moment(iso);
+          var dateTime = tokens.tzString ? moment(iso).utcOffset(iso) : moment(iso);
           scope.localDate = dateTime.format(DATE_FORMAT_INTERNAL);
           scope.localTime = tokens.time ? makeLocalTime(tokens.time) : null;
           scope.ampm      = dateTime.format('a');

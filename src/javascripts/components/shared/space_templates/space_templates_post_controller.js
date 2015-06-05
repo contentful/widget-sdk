@@ -5,7 +5,7 @@ angular.module('contentful').controller('SpaceTemplatesPostController', ['$injec
   $scope.dismissInfoDialogForever = function () {
     $scope.dialog.confirm();
     $.cookies.set('seenSpaceTemplateInfoDialog', true, {
-      expiresAt: moment().add('y', 1).toDate()
+      expiresAt: moment().add(1, 'y').toDate()
     });
   };
 
