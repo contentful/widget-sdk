@@ -6,9 +6,8 @@
 
     .modal-dialog__content(ng-show="viewState.is('fieldSelection')")
       ul.add-field-dialog__list
-        li.add-field-dialog__list-item(ng-repeat="type in availableFieldTypes track by type.id" ng-click="selectType(type)")
-          .add-field-dialog__icon
-            cf-icon(name="{{'field-'+type.id}}")
+        li.add-field-dialog__list-item(ng-repeat="type in availableFields track by type.iconId" ng-click="selectType(type)")
+          cf-icon.add-field-dialog__icon(name="{{'field-'+type.iconId}}")
           h2 {{type.name}}
           p.add-field-dialog__description {{type.description}}
 
@@ -27,7 +26,7 @@
                cf-focus-on-render)
       .cfnext-form__field(ng-show="selectedType.hasListVariant")
         .cfnext-form__fieldset--horizontal
-          legend Would you like to store a single value or an array?
+          legend Would you like the field to contain a single value or an array?
           .cfnext-form-option
             input.cfnext-form__input(type="radio"
                    name="fieldVariant"
@@ -45,7 +44,7 @@
         .cfnext-form-option__desc
           p If you store your values as an array, they will be separated on your API responses.
         .note-box-small.note-box--blue
-          | Note: this setting cannot be changed later
+          | Note: The field type cannot be changed later
 
 
     .modal-dialog__controls(ng-show="viewState.is('fieldConfiguration')")

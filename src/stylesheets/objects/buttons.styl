@@ -297,15 +297,16 @@ New Buttons
 Styleguide 4.2
 */
 $cfnext-button($color = false, $border-color = false)
+  display: flex
+  align-items: center
+  position: relative
   font-size: 0.9rem
   font-weight: bold
   color: white
   padding: 0.6rem 1.5rem
   background-color: $color
   border-radius: 2px
-  cursor: pointer;
-  display: flex
-  align-items: center
+  cursor: pointer
   if $border-color
     border-color: $border-color
     border-width: 1px
@@ -343,6 +344,7 @@ p
   button(class="cfnext-btn-action{{modifier_class}}" disabled) Action
 
 --large - Large variation
+--large-with-icon - Large with an icon on the left
 
 Styleguide 4.2.1
 */
@@ -352,6 +354,15 @@ Styleguide 4.2.1
 .cfnext-btn-action--large
   $cfnext-button($cfnext-blue)
   $cfnext-button-large()
+
+.cfnext-btn-action--large-with-icon
+  $cfnext-button($cfnext-blue)
+  $cfnext-button-large()
+  padding-left: 4.5rem
+  cf-icon
+    position: absolute
+    left: 0.5rem
+    top: -0.5rem
 
 /*
 Primary Action Button

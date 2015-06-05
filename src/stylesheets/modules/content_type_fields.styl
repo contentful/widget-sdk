@@ -1,6 +1,13 @@
-.content-type-fields
+$content-type-field-empty-style()
+    border: 1px dashed $cfnext-light-gray
+    background-color: lighten($cfnext-light-gray, 80%)
+
+.content-type-fields,
+.content-type-no-fields
   max-width: 50em
   margin-top: $rhythm(1)
+  .sortable-placeholder
+    $content-type-field-empty-style()
 
   &__item
     padding-right: 1em
@@ -10,10 +17,45 @@
     margin-bottom: $rhythm(1)
     border: 1px solid $cfnext-light-gray
     border-radius: 1px
-    box-shadow: 0 0 2px 0 $cf-next-light-gray
+    box-shadow: 1px 1px 2px 0 $cfnext-light-gray
     background-color: white
-    &.disabled
+    &.is-disabled
       color: $gray
+
+.content-type-no-fields
+  position: relative
+  .content-type-fields__item
+    $content-type-field-empty-style()
+  .content-type-fields__item:nth-child(0n+2)
+    opacity: 0.9
+  .content-type-fields__item:nth-child(0n+3)
+    opacity: 0.8
+  .content-type-fields__item:nth-child(0n+4)
+    opacity: 0.7
+  .content-type-fields__item:nth-child(0n+5)
+    opacity: 0.6
+  .advice
+    $stretch(0, 0, 0, 0)
+    display: flex
+    align-items: center
+    justify-content: center
+  .advice__frame
+    width: 32em
+    height: 9em
+    padding-top: $rhythm(1)
+    $content-type-field-empty-style()
+    border-style: solid
+    border-radius: 1px
+    display: flex
+    justify-content: center
+    flex-direction: column
+  .advice__title
+    font-size: 1.2em
+  .advice__description
+    font-size: 1em
+    margin-bottom: $rhythm(0.3)
+    color: $cfnext-gray
+
 
 $ct__field-padding = 0.8em
 .ct-field
@@ -40,18 +82,32 @@ $ct__field-padding = 0.8em
 
   &__disable
     $cfnext-btn-plain()
-    min-width: 10px
+    min-width: 10ex
     margin-left: 0.5em
     text-align: right
     font-weight: normal
 
   &__drag-handle
     width: 16px
-    height: 100%
+    align-self: stretch
+    margin: -1px
     margin-right: 1em
-    border: 1px solid transparentify(lighten($cfnext-green, 40%), 0.2)
     background-color: transparentify(lighten($cfnext-green, 40%), 0.2)
+    border: 1px solid transparentify(lighten($cfnext-green, 40%), 0.2)
     cursor: move
     cursor: -webkit-grabbing
     cursor: -moz-grab
     cursor: -moz-grabbing
+    .is-disabled &
+      background-color: transparentify($cfnext-gray, 0.2)
+      border: 1px solid transparentify($cfnext-green, 0.2)
+
+.content-type-no-fields
+  .ct-field
+    &__name
+      font-weight: normal
+      color: $cfnext-gray
+    &__drag-handle
+      background-color: transparentify($cfnext-gray, 0.1)
+      border: 1px dashed transparentify($cfnext-gray, 0.1)
+

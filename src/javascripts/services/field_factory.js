@@ -18,44 +18,44 @@ angular.module('contentful')
     {
       iconId: 'shorttext',
       name: 'Short Text',
-      description: 'Single field or list. Good for titles, URLs, tags, etc.',
+      description: 'Email, phone #, URL, slug, color code, opening hours, tags',
       type: 'Symbol',
       hasListVariant: true,
     },
     {
       iconId: 'longtext',
       name: 'Long Text',
-      description: 'Good for long paragraphs',
+      description: 'Post title, product description, formatted article, author name',
       type: 'Text'
     },
     {
       iconId: 'number',
       name: 'Integer',
-      description: 'Good for whole numbers',
+      description: 'ID, order number, rating, quantity',
       type: 'Integer'
     },
     {
       iconId: 'decimal',
       name: 'Decimal Number',
-      description: 'Good for prices, weights, …',
+      description: 'Price, measurement, exchange rate, weight',
       type: 'Number'
     },
     {
       iconId: 'calendar',
       name: 'Date & Time',
-      description: 'Good for dates or dates and time',
+      description: 'Creation date, opening hours, promotion period',
       type: 'Date'
     },
     {
       iconId: 'location',
       name: 'Location',
-      description: 'Good for addresses and coordinates',
+      description: 'Map coordinates, company address, venue location',
       type: 'Location'
     },
     {
       iconId: 'media',
       name: 'Media',
-      description: 'Good for images, videos, PDFs, Word files, etc',
+      description: 'Photo, PDF brochure, document, attachments, podcast archive, playlist',
       type: 'Asset',
       isLink: true,
       hasListVariant: true,
@@ -63,13 +63,13 @@ angular.module('contentful')
     {
       iconId: 'boolean',
       name: 'Boolean',
-      description: 'Good for simple Yes/No flags',
+      description: 'RSVP, membership in a group, availability in stock',
       type: 'Boolean'
     },
     {
       iconId: 'json',
       name: 'JSON Object',
-      description: 'Good for JSON snippets',
+      description: 'External record, template values',
       type: 'Object'
     },
     {

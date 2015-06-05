@@ -27,12 +27,8 @@
     form(name="contentTypeForm" submit="publish()")
       .content-type-fields(ng-show="hasFields")
         include ./content_type_field_list
-      .advice(ng-hide="hasFields")
-        .advice__frame
-          i.fa.fa-list-alt.advice__medium-icon
-          header.advice__title You have no Fields yet
-          p.advice__description
-            | Add Fields to configure which form inputs are available for your editors to work with.
+      .content-type-no-fields(ng-hide="hasFields")
+        include ./content_type_field_list_empty
 
 .tab-actions(ng-controller="ContentTypeActionsController")
   .button-set

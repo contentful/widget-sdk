@@ -37,6 +37,8 @@ angular.module('cf.ui')
         handle: '[data-drag-handle]',
         item: '*:not([data-no-drag])',
         axis: 'y',
+        forcePlaceholderSize: true,
+        placeholder: 'sortable-placeholder'
       };
       uiSortable.link(scope, element, attrs, ngModel);
     }

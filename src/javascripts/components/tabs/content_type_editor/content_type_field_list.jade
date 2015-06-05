@@ -3,11 +3,10 @@ ul(cf-ui-sortable ng-model="contentType.data.fields")
     ng-controller="ContentTypeFieldController"
     ng-repeat="(index, field) in contentType.data.fields track by field.id"
     ng-hide="field.disabled && !preferences.showDisabledFields"
-    ng-class="{disabled: field.disabled}"
+    ng-class="{'is-disabled': field.disabled}"
   )
 
     .ct-field__drag-handle(data-drag-handle)
-      | &nbsp;
     .ct-field__icon
       cf-icon(ng-if="iconId" name="{{iconId}}")
     .ct-field__name
