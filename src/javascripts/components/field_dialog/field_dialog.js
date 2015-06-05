@@ -26,7 +26,6 @@ angular.module('contentful')
   };
 
   function isValid () {
-    // TODO this should only check the $valid property
     if (!$scope.fieldForm.$valid)
       return false;
 
@@ -98,30 +97,7 @@ angular.module('contentful')
   var widgets          = $injector.get('widgets');
   var getWidgetOptions = widgets.optionsForWidget;
   var buildMessage = $injector.get('baseErrorMessageBuilder');
-  var schemaErrors = $injector.get('validation').errors;
 
-  // TODO move this to validation library
-  var widgetSchema = {
-    type: 'Object',
-    properties: {
-      id: {
-        type: 'Symbol',
-        required: true
-      },
-      widgetParams: {
-        type: 'Object',
-        properties: {
-          helpText: {
-            type: 'Text',
-            validations: [{size: {max: 300}}]
-          }
-        },
-        additionalProperties: true
-      }
-
-    },
-    additionalProperties: true
-  };
 
   $scope.$watch('widget.widgetId', function () {
     if ($scope.widget)
@@ -138,9 +114,7 @@ angular.module('contentful')
   });
 
   $scope.schema = {
-    errors: function (widget) {
-      return schemaErrors(widget, widgetSchema);
-    },
+    errors: widgets.validate,
     buildMessage: buildMessage,
   };
 

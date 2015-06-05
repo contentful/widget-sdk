@@ -7,6 +7,7 @@
 angular.module('contentful')
 .factory('widgets', ['$injector', function($injector){
   var $q = $injector.get('$q');
+  var schemaErrors = $injector.get('validation').errors;
 
   /**
    * @ngdoc type
@@ -54,6 +55,33 @@ angular.module('contentful')
    */
   var WIDGETS = {};
 
+  // TODO move this to validation library
+  var widgetSchema = {
+    type: 'Object',
+    properties: {
+      id: {
+        type: 'Symbol',
+        required: true
+      },
+      widgetId: {
+        type: 'Symbol',
+        required: true
+      },
+      widgetParams: {
+        type: 'Object',
+        properties: {
+          helpText: {
+            type: 'Text',
+            validations: [{size: {max: 300}}]
+          }
+        },
+        additionalProperties: true
+      }
+
+    },
+    additionalProperties: true
+  };
+
   return {
     get:               getWidget,
     forField:          typesForField,
@@ -62,7 +90,8 @@ angular.module('contentful')
     widgetTemplate:    widgetTemplate,
     paramDefaults:     paramDefaults,
     registerWidget:    registerWidget,
-    applyDefaults:     applyDefaults
+    applyDefaults:     applyDefaults,
+    validate:          validate
   };
 
 
@@ -171,6 +200,18 @@ angular.module('contentful')
     var defaults = paramDefaults(widget.widgetId, 'field');
     widget.widgetParams = _.defaults(widget.widgetParams || {}, defaults);
     return widget;
+  }
+
+  /**
+   * @ngdoc method
+   * @name widgets#validate
+   * @description
+   * Validate the widget against the schema and return a list of
+   * errors.
+   * @return {Error[]}
+   */
+  function validate (widget) {
+    return schemaErrors(widget, widgetSchema);
   }
 
 }]);
