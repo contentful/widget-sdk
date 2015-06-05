@@ -21,7 +21,9 @@ module.exports = function(config) {
       'src/javascripts/*.js',
       'src/javascripts/*/**/*.js',
       'bower_components/angular-mocks/angular-mocks.js',
-      'test/**/*.js'
+      'test/helpers/**/*.js',
+      'test/unit/**/*.js',
+      'test/integration/**/*.js'
     ],
 
 
@@ -39,13 +41,6 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    // installed reporters:
-    // - tape (tape output style)
-    // - specjson (outputs to a json file)
-    // - mocha (shows a nested list of all tests)
-    // - nested (shows a nested list of only the failing tests)
-    // - nyan (nyan cat! shows a nested list of only the failing tests)
-    // run with --reporters <name>
     reporters: ['nested'],
 
     specjsonReporter: {
