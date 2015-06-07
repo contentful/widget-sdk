@@ -6,6 +6,8 @@ var _ = require('lodash-node');
 
 var Package = require('dgeni').Package;
 
+var templateFilters = require('./template-filters');
+
 // Create and export a new Dgeni package called angularjs. This package depends upon
 // the ngdoc,nunjucks and examples packages defined in the dgeni-packages npm module.
 module.exports = new Package('angularjs', [
@@ -112,9 +114,8 @@ module.exports = new Package('angularjs', [
 
 .factory(require('./template-tags'))
 .config(function (templateEngine, templateTags) {
-  var filters = require('./template-filters');
   templateEngine.tags = templateEngine.tags.concat(templateTags);
-  templateEngine.filters = templateEngine.filters.concat(filters);
+  templateEngine.filters = templateEngine.filters.concat(templateFilters);
 })
 
 .config(function(checkAnchorLinksProcessor) {
