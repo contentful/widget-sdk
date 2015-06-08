@@ -10,18 +10,15 @@
  * Inputs and labels
  *
  * Markup:
- * p
- *   div.cfnext-form__field
- *     label Name
- *     input.cfnext-form__input(type="text" value="Name")
- * p
- *   div.cfnext-form__field
- *     label Longer Name
- *     input.cfnext-form__input(type="text" size="50" value="Longer Name")
- * p
- *   div.cfnext-form__field
- *     label Full Name
- *     input.cfnext-form__input--full-size(type="text" value="Full Name")
+ * div.cfnext-form__field
+ *   label Name
+ *   input.cfnext-form__input(type="text" value="Name")
+ * div.cfnext-form__field
+ *   label Longer Name
+ *   input.cfnext-form__input(type="text" size="50" value="Longer Name")
+ * div.cfnext-form__field
+ *   label Full Name
+ *   input.cfnext-form__input--full-size(type="text" value="Full Name")
  *
  * Styleguide 30.1
  */
@@ -68,31 +65,50 @@ $cfnext-form-input()
   $cfnext-form-input()
   width: 100%;
 
+
+/**
+ * Hints
+ *
+ * Markup:
+ * div.cfnext-form__field
+ *   label First Name
+ *   input.cfnext-form__input(type="text")
+ *   div.cfnext-form__hint
+ *     | You have to provide your name here
+ * div.cfnext-form__field
+ *   label Last Name
+ *   input.cfnext-form__input(type="text")
+ *   div.cfnext-form__hint
+ *     | You have to provide your last name here
+ *
+ * Styleguide 30.2
+ */
+.cfnext-form__hint
+  margin-top: $rhythm(0.5)
+  color: $text-dimmed
+
 /**
  * Errors
  *
  * Markup:
- * p
- *   div.cfnext-form__field
- *     label Name
- *     input.cfnext-form__input(type="text" aria-invalid="true")
- *     .cfnext-form__field-error
- *       | Something went wrong!
- * p
- *   div.cfnext-form__field
- *     label Name
- *     input.cfnext-form__input(type="text" aria-invalid="true")
- *     span.cfnext-form__field-suffix-error
- *       | Something went wrong!
- * p
- *   div.cfnext-form__field
- *     label Name
- *     input.cfnext-form__input(type="text" aria-invalid="true")
- *     ul.cfnext-form__field-errors
- *       li This went wrong
- *       li And that
+ * div.cfnext-form__field
+ *   label Name
+ *   input.cfnext-form__input(type="text" aria-invalid="true")
+ *   .cfnext-form__field-error
+ *     | Something went wrong!
+ * div.cfnext-form__field
+ *   label Name
+ *   input.cfnext-form__input(type="text" aria-invalid="true")
+ *   span.cfnext-form__field-suffix-error
+ *     | Something went wrong!
+ * div.cfnext-form__field
+ *   label Name
+ *   input.cfnext-form__input(type="text" aria-invalid="true")
+ *   ul.cfnext-form__field-errors
+ *     li This went wrong
+ *     li And that
  *
- * Styleguide 30.2
+ * Styleguide 30.3
  */
 .cfnext-form__field-error,
 .cfnext-form__field-errors
@@ -129,7 +145,7 @@ $cfnext-form-input()
  *       label(for="radio-b") Or me
  *       p This is radio
  *
- * Styleguide 30.3
+ * Styleguide 30.4
  */
 $cfnext-form__fieldset()
   legend
@@ -194,7 +210,7 @@ $cfnext-form__fieldset()
  *     input(type="radio" id="radio-b" name="selectme")
  *     label(for="radio-b") Or me
  *
- * Styleguide 30.4
+ * Styleguide 30.5
  */
 .cfnext-form__fieldset--horizontal
   $cfnext-form__fieldset()
