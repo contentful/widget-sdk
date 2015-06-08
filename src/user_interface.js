@@ -42,7 +42,7 @@ if (angular) {
 
   // TODO moment should be a proper, configurable service
   run(['moment', function (moment) {
-      moment.lang('en', {
+      moment.locale('en', {
         calendar: {
           lastDay : '[Yesterday], LT',
           sameDay : '[Today], LT',

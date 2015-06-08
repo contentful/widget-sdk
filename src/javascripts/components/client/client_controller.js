@@ -260,7 +260,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     var seenOnboarding = $.cookies.get('seenOnboarding');
     if (age < 7 && !seenOnboarding && _.isEmpty($scope.spaces)) {
       $.cookies.set('seenOnboarding', true, {
-        expiresAt: moment().add('y', 1).toDate()
+        expiresAt: moment().add(1, 'y').toDate()
       });
       $timeout(function () {
         analytics.track('Viewed Onboarding');

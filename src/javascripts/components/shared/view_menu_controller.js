@@ -36,7 +36,7 @@ angular.module('contentful').controller('ViewMenuController', ['$scope', '$attrs
       return state === 'closed' && _.find($scope.folders, {id: folderId});
     });
     $.cookies.set('folderStates', folderStates, {
-      expiresAt: moment().add('y', 1).toDate()
+      expiresAt: moment().add(1, 'y').toDate()
     });
   }
 

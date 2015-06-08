@@ -40,7 +40,7 @@ angular.module('contentful').directive('cfAutocompleteDate', function(){
       function adjustDate(offset) {
         var date = $datepicker.datepicker('getDate');
         var m = date ? moment(date) : moment();
-        m = m.add('days', offset);
+        m = m.add(offset, 'days');
         $datepicker.datepicker('setDate', m.format(DATE_FORMAT_INTERNAL));
         scope.fillAutocompletion(m.format(DATE_FORMAT_INTERNAL));
       }
