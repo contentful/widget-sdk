@@ -43,7 +43,7 @@ var loadSubtasks = require('./tasks/subtasks');
 loadSubtasks(gulp, 'docs');
 
 var pexec = Promise.denodeify(exec);
-var gitRevision, svgIconsDefinition, svgIconsMetadata;
+var gitRevision;
 var settings = _.omit(require('./config/environment.json'), 'fog');
 
 var src = {
@@ -95,8 +95,8 @@ var src = {
   ],
   svg: {
     sourceDirectory: 'src/svg',
-    outputFile:      'public/app/images/contentful_icons.svg',
-    metadataFile:    'public/app/icon_metadata.js'
+    outputDirectory: 'public/app/svg',
+    outputFile:      'public/app/contentful_icons.js'
   },
   static: [
     'vendor/font-awesome/*.+(eot|svg|ttf|woff)',
@@ -204,18 +204,10 @@ gulp.task('js/external-bundle', function () {
   return bundleBrowserify(createBrowserify());
 });
 
-gulp.task('js/app', ['git-revision', 'icons/load'], function () {
-  return gulp.src(src.components)
+gulp.task('js/app', ['git-revision', 'icons/prepare'], function () {
+  return gulp.src([src.components, src.svg.outputFile])
     .pipe(gulpif('**/environment.js',
       replace({ regex: 'GULP_GIT_REVISION', replace: gitRevision})))
-    .pipe(replace({
-      regex: 'var CF_SVG_ICONS_DEFINITION =.*',
-      replace: 'var CF_SVG_ICONS_DEFINITION =' + svgIconsDefinition
-    }))
-    .pipe(replace({
-      regex: 'var CF_SVG_ICONS_METADATA =.*',
-      replace: 'var CF_SVG_ICONS_METADATA =' + svgIconsMetadata
-    }))
     .pipe(sourceMaps.init())
     .pipe(concat('components.js'))
     .pipe(sourceMaps.write({sourceRoot: '/components'}))
@@ -229,32 +221,21 @@ gulp.task('git-revision', function(cb){
   });
 });
 
-gulp.task('icons/prepare', function () {
+gulp.task('icons/cleanup', function () {
+  mkdirp(path.dirname(src.svg.outputDirectory));
+  return spawnOnlyStderr('svgo', [
+    '--enable', 'removeTitle',
+    '-f', src.svg.sourceDirectory,
+    '-o', src.svg.outputDirectory
+  ]);
+});
+
+gulp.task('icons/prepare', ['icons/cleanup'], function () {
   mkdirp(path.dirname(src.svg.outputFile));
   return spawnOnlyStderr('./bin/prepare_svg.js', [
-    src.svg.sourceDirectory,
-    src.svg.outputFile,
-    src.svg.metadataFile
+    src.svg.outputDirectory,
+    src.svg.outputFile
   ]);
-});
-
-gulp.task('icons/cleanup', ['icons/prepare'], function () {
-  return spawnOnlyStderr('svgo', [
-    '--disable', 'cleanupIDs',
-    '-i', src.svg.outputFile
-  ]);
-});
-
-gulp.task('icons/load', ['icons/cleanup'], function (cb) {
-  try {
-    var iconsStr = fs.readFileSync(src.svg.outputFile, 'utf-8');
-    svgIconsDefinition = '\''+iconsStr.split('\n').join('')+'\'';
-    var iconsMetadata = fs.readFileSync(src.svg.metadataFile, 'utf-8');
-    svgIconsMetadata = iconsMetadata;
-    cb();
-  } catch(err) {
-    cb(err);
-  }
 });
 
 gulp.task('stylesheets', [
