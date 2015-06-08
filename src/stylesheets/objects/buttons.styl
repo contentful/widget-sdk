@@ -413,6 +413,21 @@ Styleguide 4.2.3
   color: $cfnext-blue
 
 /**
+ * Caution button
+ *
+ * Markup:
+ * button.cfnext-btn-caution
+ *   | Be Careful!
+ * button.cfnext-btn-caution(disabled)
+ *   | Be Careful!
+ *
+ * Styleguide 4.2.4
+ */
+.cfnext-btn-caution
+  $cfnext-button($color: $cfnext-red)
+
+
+/**
  * Plain Action Button
  *
  * Use inline
@@ -422,8 +437,15 @@ Styleguide 4.2.3
  *   | Click here
  *   button.cfnext-btn-plain Action 
  *   | More text
+ * p
+ *   button.cfnext-btn-primary-action
+ *     | One
+ *   button.cfnext-btn-plain-block
+ *     | Two
+ *   button.cfnext-btn-action
+ *     | Three
  *
- * Styleguide 4.2.4
+ * Styleguide 4.2.5
  */
  $cfnext-btn-plain()
   font-size: inherit
@@ -439,3 +461,7 @@ Styleguide 4.2.3
 
 .cfnext-btn-plain
   $cfnext-btn-plain()
+
+.cfnext-btn-plain-block
+  $cfnext-button(transparent)
+  color: $cfnext-blue;
