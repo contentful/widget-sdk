@@ -16,7 +16,7 @@ angular.module('cf.ui')
  * least the `active` property that is `true` only if the tab is
  * currently displayed.
  *
- * @example[jade]
+ * @usage[jade]
  *   div(cf-ui-tab)
  *     ul(role="tablist")
  *       li(role="tab" data-tab="one")
