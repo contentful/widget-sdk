@@ -6,9 +6,14 @@
  * @module cf.ui
  *
  * @description
- * Adds user interactions for rearranging a list
+ * Adds user interactions for rearranging a list vertically.
  *
- * ~~~jade
+ * The actual heavy lifiting is done by the
+ * [`ui.sortable`][ui-sortable] module.
+ *
+ * [ui-sortable]: https://github.com/angular-ui/ui-sortable
+ *
+ * @usage[jade]
  * ul(ui-sortable)
  *   li
  *     | Item 1
@@ -19,18 +24,14 @@
  *   li(data-no-drag)
  *     | This cannot be dragged
  *     a(data-drag-handle)
- * ~~~
  */
-// The actual heavy lifiting is done by the ui.sortable module.
 angular.module('cf.ui')
 .directive('cfUiSortable', ['uiSortableDirective', function(uiSortableDirectives) {
   var uiSortable = uiSortableDirectives[0];
   return {
     restrict: 'A',
     require: '?ngModel',
-    scope: {
-      ngModel: '=',
-    },
+    scope: true,
     link: function link (scope, element, attrs, ngModel) {
       scope.uiSortable = {
         handle: '[data-drag-handle]',
