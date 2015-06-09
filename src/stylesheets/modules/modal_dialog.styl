@@ -8,20 +8,29 @@ Markup:
 // Commented out for demo purposes only
 // In normal usage, the .modal-dialog element should be a child of .modal-background
 //.modal-background
-.modal-dialog
-  header.modal-dialog__header
-    h1 Title
-    .close-button
-  .modal-dialog__content
-    p.modal-dialog__plaintext this is some plain text
-    .modal-dialog__richtext
-      p here is a paragraph
-      p here is another one
-  .modal-dialog__controls
-    button.cfnext-btn-primary-action.modal-dialog__controls-confirm
-      | Confirm
-    a.modal-dialog__controls-cancel
-      | Cancel
+p
+  .modal-dialog
+    header.modal-dialog__header
+      h1 Title
+      .close-button
+    .modal-dialog__content
+      p.modal-dialog__plaintext this is some plain text
+      .modal-dialog__richtext
+        p here is a paragraph
+        p here is another one
+    .modal-dialog__controls
+      button.cfnext-btn-primary-action
+        | Confirm
+      button.cfnext-btn-plain-block
+        | Cancel
+p
+  .modal-dialog
+    header.modal-dialog__header
+      h1 One button
+      .close-button
+    .modal-dialog__controls
+      button.cfnext-btn-primary-action
+        | Confirm
 
 Styleguide 12.0
 */
@@ -94,9 +103,9 @@ $modal-dialog-chrome()
     align-items: center
     $modal-dialog-content-padding()
     padding-bottom: $rhythm(1)
-
-  &__controls-cancel
-    margin-left: auto
+    // The last of two or more elements should be right aligned
+    > * + *:last-child
+      margin-left: auto
 
   &__plaintext
     white-space: pre

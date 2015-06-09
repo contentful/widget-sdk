@@ -31,5 +31,5 @@
     .modal-dialog__controls
       button.cfnext-btn-primary-action(cf-form-submit)
         | {{dialog.confirmLabel}}
-      a.modal-dialog__controls-cancel(ng-href="#" ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
+      button.cfnext-btn-plain-block(ng-click="dialog.cancel()")
         | Cancel
