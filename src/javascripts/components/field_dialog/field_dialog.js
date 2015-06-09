@@ -49,10 +49,7 @@ angular.module('contentful')
 .controller('FieldDialogSettingsController',
 ['$scope', '$injector', function ($scope, $injector) {
   var fieldDecorator = $injector.get('fieldDecorator');
-  var fieldFactory = $injector.get('fieldFactory');
   var buildMessage = $injector.get('baseErrorMessageBuilder');
-
-  $scope.iconId = 'field-'+fieldFactory.getIconId($scope.decoratedField)+'-small';
 
   $scope.schema = {
     errors: function (decoratedField) {
