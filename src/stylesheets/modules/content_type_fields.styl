@@ -9,19 +9,6 @@ $content-type-field-empty-style()
   .sortable-placeholder
     $content-type-field-empty-style()
 
-  &__item
-    padding-right: 1em
-    height: $rhythm(2.5)
-    display: flex
-    align-items: center
-    margin-bottom: $rhythm(1)
-    border: 1px solid $cfnext-light-gray
-    border-radius: 1px
-    box-shadow: 1px 1px 2px 0 $cfnext-light-gray
-    background-color: white
-    &.is-disabled
-      color: $gray
-
 .content-type-no-fields
   position: relative
   .content-type-fields__item
@@ -59,6 +46,19 @@ $content-type-field-empty-style()
 
 $ct__field-padding = 0.8em
 .ct-field
+  padding-right: 1em
+  height: $rhythm(2.5)
+  display: flex
+  align-items: center
+  margin-bottom: $rhythm(1)
+  border: 1px solid $cfnext-light-gray
+  border-radius: 1px
+  box-shadow: 1px 1px 2px 0 $cfnext-light-gray
+  background-color: white
+  &.is-disabled
+    color: $gray
+
+
   &__name
     font-weight: bolder
     margin-right: 1em
