@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="30px" height="30px" viewBox="0 0 30 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3.2 (12043) - http://www.bohemiancoding.com/sketch -->
+    <title>field-media-small</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="field-media-small" sketch:type="MSLayerGroup" stroke="#21304A" fill-opacity="0">
+            <rect id="frame" fill="#FFFFFF" sketch:type="MSShapeGroup" x="0" y="0" width="30" height="30" rx="5"></rect>
+            <g id="media" transform="translate(6.000000, 6.000000)" sketch:type="MSShapeGroup">
+                <rect id="Rectangle-3" fill="#FFFFFF" x="0" y="0.250272436" width="19.52125" height="19.0207051" rx="2"></rect>
+                <path d="M0.625,11.965625 L6.875,6.965625 L15,18.215625" id="Line" stroke-linecap="round" stroke-linejoin="round" fill="#D8D8D8"></path>
+                <path d="M11.875,12.590625 L14.375,10.090625 L18.75,13.996875" id="Line-13" stroke-linecap="round" stroke-linejoin="round" fill="#D8D8D8"></path>
+                <circle id="Oval-2" fill="#D8D8D8" cx="12.8125" cy="5.403125" r="1.5625"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

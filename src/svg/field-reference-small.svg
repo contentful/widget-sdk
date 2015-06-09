@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="30px" height="30px" viewBox="0 0 30 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3.2 (12043) - http://www.bohemiancoding.com/sketch -->
+    <title>field-reference-small</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="field-reference-small" sketch:type="MSLayerGroup" stroke="#21304A">
+            <rect id="frame" fill-opacity="0" fill="#FFFFFF" sketch:type="MSShapeGroup" x="0" y="0" width="30" height="30" rx="5"></rect>
+            <g id="Reference" transform="translate(5.000000, 5.000000)" sketch:type="MSShapeGroup">
+                <rect id="Rectangle-6" fill-opacity="0" fill="#D8D8D8" x="8" y="6.20021795" width="12" height="13" rx="2"></rect>
+                <rect id="Rectangle-3" fill-opacity="0" fill="#FFFFFF" x="0" y="0.200217949" width="12" height="13" rx="2"></rect>
+                <path d="M6,6.1455 L13.5,11.1455" id="Line" stroke-linecap="round" stroke-linejoin="round"></path>
+                <circle id="Oval-7" fill-opacity="0" fill="#D8D8D8" cx="4.75" cy="4.8955" r="1.75"></circle>
+                <circle id="Oval-8" fill-opacity="0" fill="#D8D8D8" cx="15.25" cy="12.3955" r="1.75"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

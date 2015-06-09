@@ -52,9 +52,6 @@ explained below.
  * @description
  * Description of this directive
  *
- * @scope.provides {string} name
- * This is a `name` property that is added to the scope by the directive.
- *
  * @scope.requires {string[]} data
  * The `$scope.data` property is required by the directive and it is
  * expected to be an array of strings.
@@ -64,8 +61,8 @@ explained below.
 ### Members
 
 Documentation with the `@ngdoc` type `method` or `property` will be
-attached to their parent document. The parent document is determined
-by the `@name` tag.
+attached to their parent document. The parent document’s is determined
+by the string preceding the `#` in the `@name` tag.
 
 ~~~js
 /**

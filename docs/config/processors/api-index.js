@@ -11,43 +11,18 @@ var DOC_TYPE_NAMES = {
 };
 
 /**
- * @dgProcessor generatePagesDataProcessor
- * @description
- * This processor will create a new doc that will be rendered as a JavaScript file
- * containing meta information about the pages and navigation
+ * Create an index for all API documents and rendere it as a Angular
+ * service.
  */
-module.exports = function generatePagesDataProcessor() {
+module.exports = function apiIndexProcessor() {
   return {
     $runAfter: ['paths-computed', 'generateKeywordsProcessor'],
     $runBefore: ['rendering-docs'],
     $process: function(docs) {
-
-      // We are only interested in docs that are in an area
-      var pages = _.filter(docs, function(doc) {
-        return doc.area;
-      });
-
-      docs.push(makeApiIndex(pages));
-      // docs.push(makeSearchDoc(pages));
+      docs.push(makeApiIndex(docs));
     }
   };
 };
-
-
-function makeSearchDoc(docs) {
-  var searchable = _.filter(docs, 'searchTerms');
-  var searchData = _.map(searchable, function (doc) {
-    return _.extend({ path: doc.path }, doc.searchTerms);
-  });
-
-  return {
-    docType: 'json-doc',
-    id: 'search-data-json',
-    template: 'json-doc.template.json',
-    outputPath: 'js/search-data.json',
-    data: searchData
-  };
-}
 
 
 function makeApiIndex (docs) {

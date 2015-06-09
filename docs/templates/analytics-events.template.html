@@ -1,0 +1,13 @@
+<div class="analytics-profile">
+<h1>Analytics Events</h1>
+
+{%- for event in doc.analytics %}
+<h2>{$ event.name $}</h2>
+<ul>
+  {%- for param in event.params %}
+  <li>{$ param.name $}</li>
+  {% endfor -%}
+</ul>
+
+{%- endfor %}
+</div>

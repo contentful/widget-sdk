@@ -156,7 +156,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
       convert: function (op, exp) {
         try {
           var match = RELATIVE.exec(exp);
-          var date = match ? moment().subtract('days', match[1]) : moment(exp);
+          var date = match ? moment().subtract(match[1], 'days') : moment(exp);
           if (date.isValid()) {
             var query = {};
             if (dayEquality(op, exp)) {

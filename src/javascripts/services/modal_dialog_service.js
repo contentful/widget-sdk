@@ -3,12 +3,11 @@
 /**
  * @ngdoc service
  * @name modalDialog
- *
+ * @description
  * Open a modal dialog on the page and return a `Dialog` instance.
  *
- * @example[js]
- *   var openDialog = $injector.get('modalDialog').open;
- *   var dialog = openDialog({
+ * @usage[js]
+ *   var dialog = modalDialog.open({
  *     scope: myScope,
  *     template: 'jade_template_name'
  *   })

@@ -9,6 +9,7 @@ var exec        = require('child_process').exec;
 var express     = require('express');
 var fingerprint = require('gulp-fingerprint');
 var fs          = require('fs');
+var mkdirp      = require('mkdirp');
 var gulp        = require('gulp');
 var gulpif      = require('gulp-if');
 var gutil       = require('gulp-util');
@@ -93,10 +94,9 @@ var src = {
     './bower_components/jquery-ui/themes/base/images/*'
   ],
   svg: {
-    sourceIcons:    __dirname+ '/src/svg/contentful_icons.svg',
-    outputIcons:    __dirname+ '/public/app/images/contentful_icons.svg',
-    outputCssIcons: __dirname+ '/public/app/contentful_icons.css',
-    inputCssIcons:  __dirname+ '/src/stylesheets/contentful_icons.styl'
+    sourceDirectory: 'src/svg',
+    outputDirectory: 'public/app/svg',
+    outputFile:      'public/app/contentful_icons.js'
   },
   static: [
     'vendor/font-awesome/*.+(eot|svg|ttf|woff)',
@@ -204,8 +204,8 @@ gulp.task('js/external-bundle', function () {
   return bundleBrowserify(createBrowserify());
 });
 
-gulp.task('js/app', ['git-revision'], function () {
-  return gulp.src(src.components)
+gulp.task('js/app', ['git-revision', 'icons/prepare'], function () {
+  return gulp.src([src.components, src.svg.outputFile])
     .pipe(gulpif('**/environment.js',
       replace({ regex: 'GULP_GIT_REVISION', replace: gitRevision})))
     .pipe(sourceMaps.init())
@@ -221,10 +221,26 @@ gulp.task('git-revision', function(cb){
   });
 });
 
+gulp.task('icons/cleanup', function () {
+  mkdirp(path.dirname(src.svg.outputDirectory));
+  return spawnOnlyStderr('svgo', [
+    '--enable', 'removeTitle',
+    '-f', src.svg.sourceDirectory,
+    '-o', src.svg.outputDirectory
+  ]);
+});
+
+gulp.task('icons/prepare', ['icons/cleanup'], function () {
+  mkdirp(path.dirname(src.svg.outputFile));
+  return spawnOnlyStderr('./bin/prepare_svg.js', [
+    src.svg.outputDirectory,
+    src.svg.outputFile
+  ]);
+});
+
 gulp.task('stylesheets', [
   'stylesheets/vendor',
-  'stylesheets/app',
-  'icons'
+  'stylesheets/app'
 ]);
 
 gulp.task('stylesheets/vendor', function () {
@@ -239,27 +255,14 @@ gulp.task('stylesheets/app', function () {
   return buildStylus(src.mainStylesheets, './public/app');
 });
 
-gulp.task('icons', ['icons/cleanup']);
-
-gulp.task('icons/cleanup', ['icons/prepare'], function () {
-  return spawnOnlyStderr('svgo', [
-      '--disable', 'cleanupIDs',
-      '-i', 'public/app/images/contentful_icons.svg'
-  ]);
-});
-
-gulp.task('icons/prepare', ['icons/stylesheets'], function () {
-  return spawnOnlyStderr('./bin/prepare_svg.js', [
-      src.svg.sourceIcons,
-      src.svg.outputIcons,
-      src.svg.outputCssIcons
-  ]);
-});
-
-gulp.task('icons/stylesheets', function () {
-  return buildStylus(src.svg.inputCssIcons, './public/app');
-});
-
+function buildStylus(sources, dest) {
+  return gulp.src(sources)
+    .pipe(sourceMaps.init())
+    .pipe(stylus({use: nib()}))
+    .on('error', errorHandler('Stylus'))
+    .pipe(sourceMaps.write({sourceRoot: '/stylesheets'}))
+    .pipe(gulp.dest(dest));
+}
 
 gulp.task('styleguide', ['styleguide/stylesheets'], function () {
   return spawnOnlyStderr('kss-node', [
@@ -568,7 +571,7 @@ function spawn(cmd, args, opts) {
 }
 
 function spawnOnlyStderr (cmd, args, opts) {
-  var stdout = argv.verbose ? 'inherit' : 'ignore';
+  var stdout = argv.verbose ? process.stdout : 'ignore';
   opts = _.defaults(opts || {}, {
     stdio: ['ignore', stdout, process.stderr]
   });

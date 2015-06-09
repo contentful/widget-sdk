@@ -9,6 +9,7 @@ $font-scale(scale)
 $color-main = hsl(263, 47%, 39%)
 // $color-link = hsl(246, 52%, 51%)
 $color-link = $color-main
+$color-dimmed = hsl(0, 0%, 70%)
 
 @import "font-faces";
 
@@ -69,7 +70,7 @@ $base-profile()
 
   h1
     font-size: $font-scale(3);
-    margin-bottom: $rhythm(1)
+    margin-bottom: $rhythm(0.5)
 
   h2
     font-size: $font-scale(2);
@@ -126,6 +127,13 @@ $markdown-profile()
     text-transform: uppercase
     color: $color-main
 
+.api-doc-type
+  font-size: $font-scale(-1)
+  text-transform: uppercase
+  color: $color-dimmed
+  font-weight: normal
+  margin-left: 0.5em
+
 .api-profile-description
   $markdown-profile()
 
@@ -145,5 +153,33 @@ $markdown-profile()
   td + td
     padding-left: 2em
 
+.api-module-list
+  > li
+    margin-bottom: $rhythm(1)
+  h4
+    margin-bottom: $rhythm(0.5)
+    font-weight: bold
+    a
+      color: inherit
+
+$doc-type-label($content)
+  &:before
+    content: $content
+    font-weight: 800
+    display: inline-block
+    text-align: right
+    width: 1em
+    margin-right: 0.3em
+    margin-left: -1.3em
+    color: $color-main
+
+.doc-type-label--directive
+  $doc-type-label: 'D'
+.doc-type-label--service
+  $doc-type-label: 'S'
+.doc-type-label--type
+  $doc-type-label: 'T'
+.doc-type-label--module
+  $doc-type-label: 'M'
 
 @import "navigation";

@@ -13,22 +13,11 @@ angular.module('contentful').directive('cfEndlessContainer', function(){
         return !isNaN(threshold) && threshold >= 0 ? threshold : 200;
       }
 
-      var reloadInProgress;
-
       var interval = setInterval(function() {
         if (!elem.is(':visible')) return;
         var scrollBottom = elem.scrollTop() + elem.prop('clientHeight');
-        //console.log('scrolling', scrollBottom);
         if (elem.prop('scrollHeight') - getThreshold() <= scrollBottom) {
-          reloadInProgress = true;
-          try {
-            //console.log('loading more');
-            //console.log(elem.scrollTop(), elem.prop('clientHeight'), scrollBottom,
-            //elem.prop('scrollHeight') - getThreshold(), elem.prop('scrollHeight'), getThreshold());
-            scope.$eval(attr.atBottom);
-          } finally {
-            reloadInProgress = false;
-          }
+          scope.$eval(attr.atBottom);
         }
       }, 400);
 

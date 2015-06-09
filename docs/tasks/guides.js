@@ -69,8 +69,7 @@ function markdownRender () {
     if (!tokens)
       return;
 
-    var src = file.contents.toString();
-    var rendered = marked.parse(src, {renderer});
+    var rendered = marked.parser(tokens, {renderer});
     file.path = gutil.replaceExtension(file.path, '.html');
     file.contents = new Buffer(rendered);
   });

@@ -1,146 +1,94 @@
-/*
-Icons
+.icons-metadata-dialog
+  &.modal-dialog
+    min-width: 1000px
+    height: 600px
+  .modal-dialog__richtext
+    overflow: auto
+    max-width: 980px
+    height: 500px
 
-Styleguide 10.0
-*/
+.icons-metadata
+  width: 100%
 
-/*
-SVG Icons
+.icon-metadata
+  float: left
+  margin-right: 4px
+  margin-bottom: 4px
+  padding: 4px
+  width: 100px
+  height: 100px
+  background-color: $cfnext-light-gray
+  text-align: center
 
-The SVG icons are specified in a separate file and can be included via a an
-Angular directive built for this purpose.
+cf-icon[name="nav-ct"],
+cf-icon[name="nav-entries"],
+cf-icon[name="nav-media"],
+cf-icon[name="nav-settings"]
+  a:hover &,
+  .is-active &
+    g, path
+      stroke: $cfnext-blue
+      transition: stroke $app-top-bar-transition-time
 
-The markup below which makes use of the object tag is used only for listing
-the icons and not for actually displaying them.
+cf-icon[name="nav-api"]
+  a:hover &,
+  .is-active &
+    path
+      fill: $cfnext-blue
+      transition: stroke $app-top-bar-transition-time
 
-The first 2 examples are examples of actual usage. You can either specify a scale,
-which is a multiplier on the base icon dimensions or you can specify dimensions,
-which should respect the ratio.
+cf-icon[name="dd-arrow-down"]
+  path
+    fill: white
 
-See cf_icon_directive.js or /app/svg/contentful_icons for more info.
+cf-icon[name="plus"]
+  circle
+    fill: $cfnext-blue
 
-Markup:
-p
-  cf-icon(name="contentTypes" scale="2")
-  img(width="50" height="50" src="/app/images/contentful_icons.svg#nav-entries")
-p
-  cf-icon(name="contentTypes" width="50" height="50")
-  img(width="30" height="30" src="/app/images/contentful_icons.svg#nav-entries")
+cf-icon[name="field-shorttext"],
+cf-icon[name="field-shorttext-small"],
+cf-icon[name="field-longtext"],
+cf-icon[name="field-longtext-small"],
+cf-icon[name="field-number"],
+cf-icon[name="field-number-small"],
+cf-icon[name="field-decimal"],
+cf-icon[name="field-decimal-small"],
+cf-icon[name="field-boolean"],
+cf-icon[name="field-boolean-small"],
+cf-icon[name="field-json"],
+cf-icon[name="field-json-small"]
+  path, circle
+    fill: $cfnext-green
+  rect
+    stroke: $cfnext-green
+  .is-disabled &
+    path, circle
+      fill: $cfnext-gray
+    rect
+      stroke: $cfnext-gray
 
-Styleguide 10.1
-*/
+cf-icon[name="field-calendar"],
+cf-icon[name="field-calendar-small"],
+cf-icon[name="field-media"],
+cf-icon[name="field-media-small"],
+cf-icon[name="field-location"],
+cf-icon[name="field-location-small"],
+cf-icon[name="field-reference"],
+cf-icon[name="field-reference-small"]
+  path, circle, rect
+    stroke: $cfnext-green
+  .is-disabled &
+    path, circle, rect
+      stroke: $cfnext-gray
 
-/*
-Nav icons
+cf-icon[name="field-calendar"]
+  rect
+    fill: $cfnext-green
+  rect:first-of-type
+    fill: none
 
-Markup:
-p.styleguide-dark-icon-bg
-  img(src="/app/images/contentful_icons.svg#nav-ct")
-p.styleguide-dark-icon-bg
-  img(src="/app/images/contentful_icons.svg#nav-entries")
-p.styleguide-dark-icon-bg
-  img(src="/app/images/contentful_icons.svg#nav-media")
-p.styleguide-dark-icon-bg.icon-nav-api
-  img(src="/app/images/contentful_icons.svg#nav-api")
-p.styleguide-dark-icon-bg
-  img(src="/app/images/contentful_icons.svg#nav-settings")
-
-Styleguide 10.2
-*/
-.icon-nav-api
-  padding-top: 4px
-
-
-/*
-Page icons
-
-Markup:
-p
-  img(src="/app/images/contentful_icons.svg#page-ct")
-p
-  img(src="/app/images/contentful_icons.svg#page-entries")
-p
-  img(src="/app/images/contentful_icons.svg#page-media")
-p
-  img(src="/app/images/contentful_icons.svg#page-api")
-p
-  img(src="/app/images/contentful_icons.svg#page-settings")
-
-Styleguide 10.3
-*/
-
-/*
-Field icons
-
-Markup:
-p
-  img(src="/app/images/contentful_icons.svg#field-media")
-  img(src="/app/images/contentful_icons.svg#field-media-small")
-p
-  img(src="/app/images/contentful_icons.svg#field-location")
-  img(src="/app/images/contentful_icons.svg#field-location-small")
-p
-  img(src="/app/images/contentful_icons.svg#field-reference")
-  img(src="/app/images/contentful_icons.svg#field-reference-small")
-p
-  img(src="/app/images/contentful_icons.svg#field-calendar")
-  img(src="/app/images/contentful_icons.svg#field-calendar-small")
-p
-  img(src="/app/images/contentful_icons.svg#field-longtext")
-  img(src="/app/images/contentful_icons.svg#field-longtext-small")
-p
-  img(src="/app/images/contentful_icons.svg#field-shorttext")
-  img(src="/app/images/contentful_icons.svg#field-shorttext-small")
-p
-  img(src="/app/images/contentful_icons.svg#field-number")
-  img(src="/app/images/contentful_icons.svg#field-number-small")
-p
-  img(src="/app/images/contentful_icons.svg#field-decimal")
-  img(src="/app/images/contentful_icons.svg#field-decimal-small")
-p
-  img(src="/app/images/contentful_icons.svg#field-yn")
-  img(src="/app/images/contentful_icons.svg#field-yn-small")
-p
-  img(src="/app/images/contentful_icons.svg#field-json")
-  img(src="/app/images/contentful_icons.svg#field-json-small")
-
-Styleguide 10.4
-*/
-
-/*
-Utility icons
-
-Markup:
-p
-  img(src="/app/images/contentful_icons.svg#close")
-p
-  img(src="/app/images/contentful_icons.svg#info")
-p
-  img(src="/app/images/contentful_icons.svg#plus")
-p
-  img(src="/app/images/contentful_icons.svg#lock")
-p
-  img(src="/app/images/contentful_icons.svg#drag-handle")
-p.styleguide-dark-icon-bg.icon-dd-arrow-down
-  img(src="/app/images/contentful_icons.svg#dd-arrow-down")
-p
-  img(src="/app/images/contentful_icons.svg#arrow-up")
-p.icon-checkmark
-  img(src="/app/images/contentful_icons.svg#checkmark")
-p
-  img(src="/app/images/contentful_icons.svg#fd-headings")
-p
-  img(src="/app/images/contentful_icons.svg#fd-info-text")
-p
-  img(src="/app/images/contentful_icons.svg#fd-separator")
-
-Styleguide 10.5
-*/
-
-.icon-dd-arrow-down
-  padding-left: 4px
-  padding-top: 2px
-
-.icon-checkmark
-  padding-top: 3px
-
+cf-icon[name="field-media"]
+  rect
+    fill: $cfnext-green
+  rect:last-of-type
+    fill: none

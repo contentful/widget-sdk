@@ -53,7 +53,7 @@
                   | {{selectedOrganization.name}}
                   i.button-icon-right.fa.fa-caret-down
                 .cfnext-dropdown.space-template__org-dropdown(cf-dropdown-menu="spaceTemplates.organization" cf-dropdown-position="bottomcenter")
-                  cf-icon.cfnext-dropdown__arrow(cf-dropdown-arrow name="arrow-up" size="15")
+                  cf-icon.cfnext-dropdown__arrow(cf-dropdown-arrow name="arrow-up")
                   ul.cfnext-dropdown__list--first
                     li.cfnext-dropdown__item(ng-repeat="org in writableOrganizations" ng-click="selectOrganization(org)" cf-dropdown-close) {{org.name}}
             .l-form-row

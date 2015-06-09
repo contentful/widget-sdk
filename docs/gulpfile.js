@@ -16,6 +16,7 @@ var stylus = require('gulp-stylus');
 var nib = require('nib');
 var streamForEach = require('./tasks/utils').forEach;
 var rename = require('gulp-rename');
+var docPackage = require('./config');
 
 
 var outputFolder = '../public/docs';
@@ -23,7 +24,7 @@ var outputFolder = '../public/docs';
 gulp.task('default', ['api','guides', 'app', 'assets' ]);
 
 gulp.task('api', function() {
-  var dgeni = new Dgeni([require('./config')]);
+  var dgeni = new Dgeni([docPackage]);
   return dgeni.generate();
 });
 
@@ -141,4 +142,3 @@ function copyPackage(srcFolder) {
     }));
   };
 }
-

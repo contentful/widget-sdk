@@ -21,8 +21,15 @@ var highlight = require('../lib/highlight');
  * Builds a function or property expression from doc object
  *
  * ## `codeBlock`
+ *
+ * ## `docLink`
  */
 module.exports = [{
+  name: 'docLink',
+  process: function (doc) {
+    return `<a href="${doc.path}">${doc.label}</a>`;
+  }
+}, {
   name: 'functionSyntax',
   process: function (fn, prefix) {
     // TODO types
@@ -118,10 +125,17 @@ function functionTagTypes (fn) {
  */
 function methodMemberSyntax (doc) {
   var rendered = doc.name;
+  var params = doc.params;
 
-  var params = _.map(doc.params, function (param) {
+  // Filter nested parameters the describe object properties
+  params = _.filter(params, function ({name}) {
+    return name.indexOf('.') === -1;
+  });
+
+
+  params = _.map(params, function (param) {
     var rendered = param.name;
-    if (param.type)
+    if (param.typeExpression)
       rendered += ': ' + param.typeExpression;
     return rendered;
   }).join(', ');

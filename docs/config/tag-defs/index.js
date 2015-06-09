@@ -19,20 +19,28 @@ module.exports = function tagDefs (extractTypeTransform, wholeTagTransform, extr
     multi: true,
     docProperty: 'scopeRequires',
     transforms: [extractTypeTransform, extractNameTransform, wholeTagTransform]
-  }, {
-    name: 'usage[jade]',
-    docProperty: 'usage',
-  }, {
-    name: 'usage[html]',
-    docProperty: 'usage',
-    transforms: function (doc, tag, value) {
-      doc.usageLang = 'html';
-      return value;
-    }
-  }, {
+  },
+  usageTagDef('jade'),
+  usageTagDef('html'),
+  usageTagDef('js'),
+  {
     name: 'method',
     multi: true,
     docProperty: 'methods',
     transforms: [extractTypeTransform, extractNameTransform, wholeTagTransform]
+  }, {
+    name: 'todo',
+    multi: true
   }];
 };
+
+function usageTagDef (lang) {
+  return {
+    name: `usage[${lang}]`,
+    docProperty: 'usage',
+    transforms: function (doc, tag, value) {
+      doc.usageLang = lang;
+      return value;
+    }
+  };
+}
