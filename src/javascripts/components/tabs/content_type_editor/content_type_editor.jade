@@ -5,18 +5,6 @@
   .section-header__description {{contentType.data.description}}
   a.section-header__metadata-action(ng-click="showMetadataDialog()" ng-href="#") Edit
 
-  .section-header__actions
-    .dropdown-btn
-      button.btn.btn--tertiary(cf-dropdown-toggle="contentTypeEditor.view")
-        i.fa.fa-caret-down.button-icon-right
-        span View
-      .dropdown-menu(cf-dropdown-menu="contentTypeEditor.view" cf-dropdown-position="bottomcenter")
-        ul
-          li.dropdown-menu-item
-            label
-              input(type="checkbox" ng-model="preferences.showDisabledFields")
-              | Show disabled fields
-
 .section-nav
   button.cfnext-btn-action(ng-disabled="cfCanDisabled" ng-click="showNewFieldDialog()")
     cf-icon.inverted(name="plus")
