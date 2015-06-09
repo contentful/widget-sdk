@@ -9,11 +9,13 @@ describe('otBindText', function () {
       peek: sinon.stub().returns('xx'),
       isConnected: function () { return true; },
       open: sinon.stub().yieldsAsync(null, doc = {
+        // otDoc
         on: sinon.stub(),
         at: sinon.stub().returns(subdoc ={
           attach_textarea: sinon.stub().returns(unbindTextArea = sinon.stub()),
           path: ['value']
-        })
+        }),
+        snapshot: {}
       })
     });
     $provide.value('ReloadNotification', {
@@ -59,20 +61,6 @@ describe('otBindText', function () {
     scope.otSubdoc = subdoc;
     scope.$apply();
     sinon.assert.calledOnce(subdoc.attach_textarea);
-  });
-
-  describe('when mkPath fails', function () {
-    it('should throw an error', inject(function (ShareJS, $rootScope){
-      ShareJS.mkpath = sinon.stub().yieldsAsync('error');
-      ShareJS.peek.withArgs(undefined, ['value']).returns(undefined);
-      $rootScope.entity.value = null;
-
-      scope.$apply();
-      elem.val('a').trigger('input');
-      expect(function(){
-        jasmine.clock().tick(10);
-      }).toThrow(new Error('makeAndAttach mkpath failed'));
-    }));
   });
 
 });
