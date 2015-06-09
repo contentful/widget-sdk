@@ -1,7 +1,7 @@
 .modal-background
   form.modal-dialog.edit-content-type-metadata__dialog(
     name="newContentTypeForm"
-    cf-on-submit="dialog.confirm()")
+    cf-on-submit="newContentTypeForm.$valid && dialog.confirm()")
     header.modal-dialog__header
       .modal-dialog__action-icon
         cf-icon(name="new-ct")
