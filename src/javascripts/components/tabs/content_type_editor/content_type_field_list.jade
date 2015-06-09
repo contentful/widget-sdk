@@ -14,7 +14,7 @@ ul(cf-ui-sortable ng-model="contentType.data.fields")
       | {{fieldTypeLabel}}
     .ct-field__is-title(ng-if="fieldIsTitle")
       | Title
-    a.ct-field__edit(ng-click="openSettingsDialog()")
+    a.cfnext-btn-plain(ng-click="openSettingsDialog()")
       | Settings
     button.ct-field__disable(ng-click="toggleDisableField()")
       | {{ field.disabled ? 'Enable' : 'Disable' }}
