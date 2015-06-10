@@ -52,7 +52,6 @@ deploy:
   on:
     all_branches: true
 after_deploy:
-  - ./bin/trigger-deploy-quirely
   - bin/trigger-packagebot
 notifications:
   slack:
