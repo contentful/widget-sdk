@@ -9,6 +9,8 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   var widgetIdsByContentType = {};
 
   return {
+    // TODO we should rewrite this and get rid of the ID for the interface
+    // as we won't use those anyway
     forContentTypeWithId: function (contentType, interfaceId) {
       return getEditingInterface(contentType, interfaceId)
       .catch(function (err) {

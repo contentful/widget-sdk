@@ -62,25 +62,10 @@ angular.module('contentful').
       return $q.reject();
     }
 
-    var savePromises = [];
-    savePromises.push(
-      $scope.contentType.save()
-      .then(publishContentType)
-      .catch(saveErrorHandler)
-    );
-
-    if($scope.editingInterface) {
-      savePromises.push(
-        $scope.editingInterface.save()
-        .catch(saveErrorHandler)
-      );
-    }
-
-    return $q.all(savePromises)
-    .then(function () {
-      notification.info(messages.save.success);
-      $scope.contentTypeForm.$setPristine();
-    });
+    return $scope.contentType.save()
+    .then(publishContentType)
+    .then(saveEditingInterface)
+    .then(postSaveActions, triggerApiErrorNotification);
   };
 
   /**
@@ -110,32 +95,53 @@ angular.module('contentful').
       $scope.spaceContext.registerPublishedContentType(published);
       $scope.spaceContext.refreshContentTypes();
 
-      if($scope.context.isNew){
-        // Let the digest cycle have time to properly set the pristine state
-        // before trying to redirect the user, otherwise they'll be prompted
-        // to save changes
-        defer(function () {
-          $scope.$state.go('spaces.detail.content_types.detail', {
-            contentTypeId: $scope.contentType.getId()
-          });
-        });
-      }
-
+      return contentType;
     });
   }
 
-  function saveErrorHandler(err) {
+  function saveEditingInterface(contentType) {
+    if(!$scope.editingInterface.getVersion()){
+      var data = _.clone($scope.editingInterface.data);
+      data.contentTypeId = contentType.getId();
+      $scope.editingInterface = contentType.newEditingInterface(data);
+    }
+    return $scope.editingInterface.save();
+  }
+
+  function postSaveActions() {
+    notification.info(messages.save.success);
+    $scope.contentTypeForm.$setPristine();
+    redirectWhenNew();
+    return $scope.contentType;
+  }
+
+  /**
+    * Lets the digest cycle have time to properly set the pristine state
+    * before trying to redirect the user, otherwise they'll be prompted
+    * to save changes
+  */
+  function redirectWhenNew() {
+    if($scope.context.isNew){
+      defer(function () {
+        $scope.$state.go('spaces.detail.content_types.detail', {
+          contentTypeId: $scope.contentType.getId()
+        });
+      });
+    }
+  }
+
+  function triggerApiErrorNotification(err) {
     var errorId = dotty.get(err, 'body.sys.id');
     if (errorId === 'ValidationFailed') {
-      notification.error(message.save.invalid);
+      notification.error(messages.save.invalid);
     } else if (errorId === 'VersionMismatch') {
       notification.warn(messages.save.outdated);
     } else {
-      var message = 'Unable to save Content Type: ';
-      message += dotty.get(err, 'body.message');
+      var message = saveError + (dotty.get(err, 'body.message') || err);
       notification.error(message);
       logger.logServerWarn('Error activating Content Type', err);
     }
+    return $q.reject(err);
   }
 
   function unpublishSuccessHandler(publishedContentType){

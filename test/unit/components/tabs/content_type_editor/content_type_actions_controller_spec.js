@@ -184,12 +184,16 @@ describe('ContentType Actions Controller', function () {
 
       scope.validate = sinon.stub().returns(true);
 
+      scope.editingInterface = {
+        data: {},
+        save: sinon.stub().returns(this.when()),
+        getVersion: sinon.stub()
+      };
+      scope.editingInterface.getVersion.returns(0);
+
       scope.contentType.save = sinon.stub().returns(this.when(scope.contentType));
       scope.contentType.publish = sinon.stub().returns(this.when(scope.contentType));
-
-      scope.editingInterface = {
-        save: sinon.stub().returns(this.when())
-      };
+      scope.contentType.newEditingInterface = sinon.stub().returns(scope.editingInterface);
 
       scope.updatePublishedContentType = sinon.stub();
     });
@@ -209,6 +213,13 @@ describe('ContentType Actions Controller', function () {
         sinon.assert.calledOnce(ct.publish);
         sinon.assert.calledOnce(scope.updatePublishedContentType);
         expect(ct.getPublishedVersion()).toEqual(ct.getVersion());
+      });
+    });
+
+    pit('creates new editing interface', function () {
+      return scope.save()
+      .then(function () {
+        sinon.assert.calledOnce(scope.contentType.newEditingInterface);
       });
     });
 
