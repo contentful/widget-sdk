@@ -20,21 +20,14 @@
  *
  *   dialog.confirm();
  */
-
-/**
- * @ngdoc method
- * @name modalDialog#open
- * @param {{}} options
- * @param {string} options.template
- * @param {Scope} options.scope
- */
 angular.module('contentful').factory('modalDialog', ['$injector', function ($injector) {
-  var $compile = $injector.get('$compile');
-  var $q       = $injector.get('$q');
-  var $window  = $injector.get('$window');
-  var keycodes = $injector.get('keycodes');
-  var defer    = $injector.get('defer');
-  var track    = $injector.get('analytics').track;
+  var $compile   = $injector.get('$compile');
+  var $q         = $injector.get('$q');
+  var $window    = $injector.get('$window');
+  var keycodes   = $injector.get('keycodes');
+  var defer      = $injector.get('defer');
+  var track      = $injector.get('analytics').track;
+  var $rootScope = $injector.get('$rootScope');
 
   function Dialog(params) {
     this._handleKeys = _.bind(this._handleKeys, this);
@@ -134,15 +127,59 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
   };
 
   return {
-    // Available params: template, cancelLabel, confirmLabel, title, message, scope, noBackgroundClose
-    open: function (params) {
-      var dialog = new Dialog(params);
-      dialog.attach();
-      trackOpened(dialog);
-      return dialog;
-    }
+    open: openDialog,
+    confirmDeletion: confirmDeletion
   };
 
+  /**
+   * @ngdoc method
+   * @name modalDialog#open
+   * @param {{}} options
+   * @param {string}   options.title
+   * @param {string}   options.message
+   * @param {string}   options.cancelLabel
+   * @param {string}   options.confirmLabel
+   * @param {string}   options.template
+   * @param {Scope}    options.scope
+   * @param {boolean}  options.noBackgrounClose
+   * @param {boolean}  options.ignoreEnter
+   * @param {boolean}  options.ignoreEscape
+   * @param {boolean}  options.disableTopCloseButton
+   */
+  function openDialog (params) {
+    var dialog = new Dialog(params);
+    dialog.attach();
+    trackOpened(dialog);
+    return dialog;
+  }
+
+  /**
+   * @ngdoc method
+   * @name modalDialog#confirmDeletion
+   * @description
+   * Shows a dialog that asks the user to click a button to confirm
+   * deletion of an item. Return a promise that is resolved if the user
+   * clicks the “Delete” button and rejected if she cancels the dialog.
+   *
+   * @param {string} message
+   * @param {string?} hint
+   * @return {Promise<void>}
+   */
+  function confirmDeletion (message, hint) {
+    var scope = $rootScope.$new();
+    _.extend(scope, {
+      message: message,
+      hint: hint,
+    });
+    return openDialog({
+      template: 'dialog_confirm_deletion',
+      attachTo: '.client',
+      ignoreEnter: true,
+      ignoreEsc: true,
+      noBackgroundClose: true,
+      scope: scope,
+    }).promise;
+  }
 
   function trackDialog (eventName, dialog) {
     track(eventName, {

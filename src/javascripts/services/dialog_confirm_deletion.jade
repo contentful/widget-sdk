@@ -1,0 +1,10 @@
+.modal-background
+  .modal-dialog.modal-dialog--small
+    .modal-dialog__content
+      .modal-dialog__message(ng-bind="message")
+      .modal-dialog__hint(ng-if="hint", ng-bind="hint")
+    .modal-dialog__controls
+      button.cfnext-btn-caution(ng-click="dialog.confirm()")
+        | Delete
+      button.cfnext-btn-plain-block(ng-click="dialog.cancel()")
+        | Back to Editor
