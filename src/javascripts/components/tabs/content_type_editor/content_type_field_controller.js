@@ -25,6 +25,10 @@ function ($scope, $injector) {
     trackFieldAction(actionName, this.field);
   };
 
+  $scope.deleteField = function () {
+    $scope.ctEditorController.deleteField($scope.field.id);
+  };
+
   $scope.$watchGroup(['field.type', 'field.linkType', 'field.items.type', 'field.items.linkType'], function () {
     $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
     $scope.iconId = fieldFactory.getIconId($scope.field)+'-small';
@@ -35,6 +39,11 @@ function ($scope, $injector) {
   }, function (isTitle) {
     $scope.fieldIsTitle = isTitle;
   });
+
+  $scope.$watchCollection('publishedContentType.data.fields', function (fields) {
+    $scope.isPublished = !!_.find(fields, {id: $scope.field.id});
+  });
+
 
   /**
    * @ngdoc analytics-event

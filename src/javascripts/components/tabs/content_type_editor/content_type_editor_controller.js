@@ -16,8 +16,10 @@
  * @scope.provides  publishedApiNames
  * @scope.provides  publishedContentType
 */
-angular.module('contentful').controller('ContentTypeEditorController',
-            ['$scope', '$injector', function ContentTypeEditorController($scope, $injector) {
+angular.module('contentful')
+.controller('ContentTypeEditorController', ['$scope', '$injector',
+function ContentTypeEditorController($scope, $injector) {
+  var controller        = this;
   var $controller       = $injector.get('$controller');
   var analytics         = $injector.get('analytics');
   var validation        = $injector.get('validation');
@@ -75,6 +77,22 @@ angular.module('contentful').controller('ContentTypeEditorController',
       $scope.$state.go('^.list');
     });
   }
+
+  /**
+   * @ngdoc method
+   * @name ContentTypeEditorController#deleteField
+   * @param {string} id
+   */
+  controller.deleteField = function (id) {
+    modalDialog.confirmDeletion(
+      'You’re about to delete this field.',
+      'Please remember that you won’t be able to delete ' +
+      'fields once the content type is published.'
+    ).then(function () {
+      var fields = $scope.contentType.data.fields;
+      _.remove(fields, {id: id});
+    });
+  };
 
   function loadContentType(contentType) {
     $scope.contentType = contentType;

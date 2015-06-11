@@ -16,5 +16,7 @@ ul(cf-ui-sortable ng-model="contentType.data.fields")
       | Title
     a.cfnext-btn-plain(ng-click="openSettingsDialog()")
       | Settings
-    button.ct-field__disable(ng-click="toggleDisableField()")
+    button.ct-field__disable(ng-if="isPublished" ng-click="toggleDisableField()")
       | {{ field.disabled ? 'Enable' : 'Disable' }}
+    button.ct-field__disable(ng-if="!isPublished" ng-click="deleteField()")
+      | Delete
