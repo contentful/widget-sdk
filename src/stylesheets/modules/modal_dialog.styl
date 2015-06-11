@@ -68,6 +68,7 @@ $modal-dialog-chrome()
   border: 1px solid $gray
   border-radius: 3px
   box-shadow: 0 2px 6px rgba(0,0,0,0.1)
+  // TODO WHY? This looks scheiße
   line-height: 15px
 
 .modal-dialog
@@ -103,6 +104,9 @@ $modal-dialog-chrome()
     align-items: center
     $modal-dialog-content-padding()
     padding-bottom: $rhythm(1)
+    // Optical vertical alignment with dialog text
+    margin-left: -0.2ex
+    margin-right: -0.2ex
     // The last of two or more elements should be right aligned
     > * + *:last-child
       margin-left: auto
@@ -112,3 +116,50 @@ $modal-dialog-chrome()
 
   &__richtext
     max-width: 40em
+
+
+/*
+Confirm Deletion
+
+Used in `dialog_confirm_deletion.jade`
+
+Markup:
+.styleguide-align-horizontally
+  .modal-dialog.modal-dialog--small
+    .modal-dialog__content
+      .modal-dialog__message
+         | Do you really want to do this?
+      .modal-dialog__hint
+         | You cannot undo this later!
+    .modal-dialog__controls
+      button.cfnext-btn-caution
+        | Delete
+      button.cfnext-btn-plain-block
+        | Cancel
+  .modal-dialog.modal-dialog--small
+    .modal-dialog__content
+      .modal-dialog__message
+         | Do you really want to do this?
+    .modal-dialog__controls
+      button.cfnext-btn-caution
+        | Delete
+      button.cfnext-btn-plain-block
+        | Cancel
+
+Styleguide 12.1
+*/
+
+.modal-dialog
+  &--small
+    min-width: 46ex
+    max-width: 70ex
+    line-height: $base-line-height
+
+  &__hint
+    color: $text-dimmed
+    margin: $rhythm(1) 0 0
+
+  &__message
+    font-size: 1.14em
+    margin-bottom: $rhythm(0.5)
+    margin-top: 0.1em
