@@ -163,6 +163,7 @@ angular.module('contentful').controller('ContentTypeEditorController',
     }).promise
     .then(function () {
       _.extend($scope.contentType.data, $scope.contentTypeMetadata);
+      $scope.contentTypeForm.$setDirty();
     });
   }
 
