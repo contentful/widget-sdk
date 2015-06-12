@@ -34,9 +34,12 @@ p
 
 Styleguide 12.0
 */
-$modal-dialog-content-padding()
-  padding-left: 2em
-  padding-right: 2em
+
+$modal-dialog-frame-padding = 2em
+
+$modal-dialog-horizontal-padding()
+  padding-left: $modal-dialog-frame-padding
+  padding-right: $modal-dialog-frame-padding
 
 .modal-background
   $stretch()
@@ -85,25 +88,24 @@ $modal-dialog-chrome()
   &__header
     display: flex;
     align-items: center
-    padding-top: 1em
-    $modal-dialog-content-padding()
+    padding-top: $modal-dialog-frame-padding
+    $modal-dialog-horizontal-padding()
 
     > h1
       font-size: 1.2em
-      line-height: ($rhythm(3) / 1.2em)
       flex-grow: 1
       margin: 0
 
   &__content
-    $modal-dialog-content-padding()
+    $modal-dialog-horizontal-padding()
     padding-top: $rhythm(1)
     padding-bottom: $rhythm(1)
 
   &__controls
     display: flex
     align-items: center
-    $modal-dialog-content-padding()
-    padding-bottom: $rhythm(1)
+    $modal-dialog-horizontal-padding()
+    padding-bottom: $modal-dialog-frame-padding
     // Optical vertical alignment with dialog text
     margin-left: -0.2ex
     margin-right: -0.2ex
