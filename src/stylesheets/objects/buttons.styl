@@ -16,14 +16,25 @@ New Buttons
 
 Styleguide 4.1
 */
+
+// This function generates the padding for the pressed state of a button
+$pressed-vert-padding($value, $modifiers = {})
+  $top = 0.1
+  $bottom = 0.1
+  padding-top: $value + ($modifiers.top || $top)
+  padding-bottom: $value - ($modifiers.bottom || $bottom)
+
+
+// vertical padding for regular button
+$cfnext-button-vert-padding = 0.6rem
+
 $cfnext-button($color = false, $border-color = false)
-  display: flex
-  align-items: center
   position: relative
+  padding: $cfnext-button-vert-padding 1.5rem
+  text-align: center
   font-size: 0.9rem
   font-weight: bold
   color: white
-  padding: 0.6rem 1.5rem
   background-color: $color
   border-radius: 2px
   cursor: pointer
@@ -38,19 +49,33 @@ $cfnext-button($color = false, $border-color = false)
   &[disabled]
     opacity: 0.4
   &:active
-    padding-top: 0.7rem
-    padding-bottom: 0.5rem
+    $pressed-vert-padding($cfnext-button-vert-padding)
   cf-icon
-    margin-right: 0.5em
+    display: block
+    float: left
     position: relative
-    top: 0.1em
+    margin-right: 0.5em
+    margin-top: -1px
+
+$cfnext-button--with-icon()
+  padding-bottom: 0.4rem
+  &:active
+    $pressed-vert-padding($cfnext-button-vert-padding, {bottom: 0.3})
 
 $cfnext-button-large()
+  $cfnext-button-large-vert-padding = 1rem
   font-size: 1.15rem
-  padding: 1rem 2.5rem
+  padding: $cfnext-button-large-vert-padding 2.5rem
   &:active
-    padding-top: 1.1rem
-    padding-bottom: 0.95rem
+    $pressed-vert-padding($cfnext-button-large-vert-padding, {bottom: 0.05})
+
+$cfnext-button--large-popout-icon()
+  $cfnext-button-large()
+  padding-left: 4.5rem
+  cf-icon
+    position: absolute
+    left: 0.5rem
+    top: -0.5rem
 
 /*
 Action Button
@@ -64,26 +89,26 @@ p
 p
   button(class="cfnext-btn-action{{modifier_class}}" disabled) Action
 
+--with-icon - With an icon on the left of the text
 --large - Large variation
---large-with-icon - Large with an icon on the left
+--large-popout-icon - Large variation with an popping out of the button on the left side
 
 Styleguide 4.1.1
 */
 .cfnext-btn-action
   $cfnext-button($cfnext-blue)
 
+.cfnext-btn-action--with-icon
+  $cfnext-button($cfnext-blue)
+  $cfnext-button--with-icon()
+
 .cfnext-btn-action--large
   $cfnext-button($cfnext-blue)
   $cfnext-button-large()
 
-.cfnext-btn-action--large-with-icon
+.cfnext-btn-action--large-popout-icon
   $cfnext-button($cfnext-blue)
-  $cfnext-button-large()
-  padding-left: 4.5rem
-  cf-icon
-    position: absolute
-    left: 0.5rem
-    top: -0.5rem
+  $cfnext-button--large-popout-icon()
 
 /*
 Primary Action Button
