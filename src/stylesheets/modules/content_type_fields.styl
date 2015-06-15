@@ -11,16 +11,16 @@ $content-type-field-empty-style()
 
 .content-type-no-fields
   position: relative
-  .content-type-fields__item
+  .ct-field
     $content-type-field-empty-style()
-  .content-type-fields__item:nth-child(0n+2)
-    opacity: 0.9
-  .content-type-fields__item:nth-child(0n+3)
+  .ct-field:nth-child(0n+2)
     opacity: 0.8
-  .content-type-fields__item:nth-child(0n+4)
+  .ct-field:nth-child(0n+3)
     opacity: 0.7
-  .content-type-fields__item:nth-child(0n+5)
+  .ct-field:nth-child(0n+4)
     opacity: 0.6
+  .ct-field:nth-child(0n+5)
+    opacity: 0.5
   .advice
     $stretch(0, 0, 0, 0)
     display: flex
