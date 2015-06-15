@@ -40,7 +40,7 @@ angular.module('contentful').config([
   });
 
   $stateProvider.state('spaces.new', {
-    url: '/new',
+    url: '_new',
     template: JST.cf_create_space_advice()
   });
 
