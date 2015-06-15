@@ -16,6 +16,7 @@ describe('AddFieldDialogController', function() {
     var $controller = this.$inject('$controller');
     this.controller = $controller('AddFieldDialogController', {$scope: this.scope});
     this.viewStateSetStub = sinon.stub(this.scope.viewState, 'set');
+    this.initialNewFieldState = _.clone(this.scope.newField);
   });
 
   describe('sets newField', function() {
@@ -55,7 +56,7 @@ describe('AddFieldDialogController', function() {
       });
 
       it('sets the viewstate', function() {
-        sinon.assert.called(this.viewStateSetStub);
+        sinon.assert.calledWith(this.viewStateSetStub, 'fieldConfiguration');
       });
     });
 
@@ -84,8 +85,26 @@ describe('AddFieldDialogController', function() {
       });
 
       it('sets the viewstate', function() {
-        sinon.assert.called(this.viewStateSetStub);
+        sinon.assert.calledWith(this.viewStateSetStub, 'fieldConfiguration');
       });
+    });
+  });
+
+  describe('#showFieldSelection', function() {
+    beforeEach(function() {
+      this.scope.showFieldSelection();
+    });
+
+    it('new field name is reset', function() {
+      expect(this.scope.newField.name).toEqual(this.initialNewFieldState.name);
+    });
+
+    it('new field api name is reset', function() {
+      expect(this.scope.newField.apiName).toEqual(this.initialNewFieldState.apiName);
+    });
+
+    it('sets the viewstate', function() {
+      sinon.assert.calledWith(this.viewStateSetStub, 'fieldSelection');
     });
   });
 

@@ -29,15 +29,10 @@ angular.module('contentful')
     defaultState: 'fieldSelection'
   });
 
-  $scope.availableFields = fieldFactory.all;
-  $scope.selectType      = selectType;
-  $scope.configureField  = configureField;
-
-  $scope.newField = {
-    name: '',
-    id: random.id(),
-    apiName: ''
-  };
+  $scope.availableFields    = fieldFactory.all;
+  $scope.selectType         = selectType;
+  $scope.showFieldSelection = showFieldSelection;
+  $scope.configureField     = configureField;
 
   $scope.schema = {
     errors: function (field) {
@@ -45,6 +40,27 @@ angular.module('contentful')
     },
     buildMessage: buildMessage,
   };
+
+  // Initial dialog state
+  showFieldSelection();
+
+  /**
+   * @ngdoc method
+   * @name AddFieldDialogController#scope#showFieldSelection
+   *
+   * @description
+   * Resets the information regarding the selected type of field
+   * in case the user wants to change their selection
+  */
+  function showFieldSelection() {
+    $scope.dialog.title = 'Add new Field';
+    $scope.newField = {
+      name: '',
+      id: random.id(),
+      apiName: ''
+    };
+    $scope.viewState.set('fieldSelection');
+  }
 
   /**
    * @ngdoc method

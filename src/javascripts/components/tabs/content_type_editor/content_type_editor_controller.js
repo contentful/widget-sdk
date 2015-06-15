@@ -191,7 +191,6 @@ function ContentTypeEditorController($scope, $injector) {
   */
   function showNewFieldDialog() {
     modalDialog.open({
-      title: 'Add new Field',
       template: 'add_field_dialog',
       noBackgroundClose: true,
       scope: $scope,
