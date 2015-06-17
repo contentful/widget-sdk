@@ -65,6 +65,10 @@ describe('ContentTypeEditor Controller', function () {
       expect(scope.contentType).toEqual(contentType);
     });
 
+    it('has no title field', function() {
+      expect(scope.contentType.data.displayField).toBeUndefined();
+    });
+
     it('fires no initial validation', function() {
       sinon.assert.notCalled(scope.validate);
     });
@@ -83,6 +87,47 @@ describe('ContentTypeEditor Controller', function () {
       scope.contentType.data = {fields: [1]};
       scope.$digest();
       expect(scope.hasFields).toBeTruthy();
+    });
+
+    describe('uses first added text field as title', function() {
+      it('ignores non-text fields', function() {
+        scope.contentType.data.fields.push({id: 1, type: 'Number'});
+        scope.$digest();
+        expect(scope.contentType.data.displayField).toBeUndefined();
+      });
+
+      ['Symbol', 'Text'].forEach(function(type) {
+        it('catches up "' + type + '" fields', function() {
+          var id = type + '_field';
+          scope.contentType.data.fields.push({id: id, type: type});
+          scope.$digest();
+          expect(scope.contentType.data.displayField).toEqual(id);
+        });
+      });
+    });
+
+    describe('tries to select title field when current is deleted', function() {
+      it('clears "displayField" property when no field was found', function() {
+        var data = scope.contentType.data;
+        data.fields.push({id: 1, type: 'Text'});
+        scope.$digest();
+        expect(data.displayField).toEqual(1);
+        data.fields.pop();
+        scope.$digest();
+        expect(data.displayField).toBeUndefined();
+      });
+
+      it('gets the next one when available', function() {
+        var data = scope.contentType.data;
+        data.fields.push({id: 1, type: 'Text'});
+        scope.$digest();
+        expect(data.displayField).toEqual(1);
+        data.fields.push({id: 1.5, type: 'Text', disabled: true});
+        data.fields.push({id: 2, type: 'Symbol'});
+        data.fields.shift();
+        scope.$digest();
+        expect(data.displayField).toEqual(2);
+      });
     });
 
     it('doesn\'t try to set the form to dirty', function() {
@@ -171,7 +216,7 @@ describe('ContentTypeEditor Controller', function () {
               {apiName: 'a2', id: 'i2'},
               {apiName: 'a3', id: 'i3'}
             ]
-          },
+          }
         };
         scope.$digest();
       });

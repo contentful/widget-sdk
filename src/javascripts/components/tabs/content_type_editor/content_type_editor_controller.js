@@ -45,17 +45,18 @@ function ContentTypeEditorController($scope, $injector) {
   $scope.showMetadataDialog                 = showMetadataDialog;
   $scope.showNewFieldDialog                 = showNewFieldDialog;
 
-  $scope.$watch('contentType', loadContentType);
+  $scope.$watch('contentType',                   loadContentType);
   $scope.$watch('contentType.data.fields',       checkForDirtyForm, true);
   $scope.$watch('contentType.data.displayField', checkForDirtyForm);
 
   $scope.$watch('contentTypeForm.$dirty', function (modified) {
-    reloadPublisedContentType(modified);
+    reloadPublishedContentType(modified);
     $scope.context.dirty = modified;
   });
 
-  $scope.$watch('contentType.data.fields.length', function(length) {
+  $scope.$watch('contentType.data.fields.length', function(length, old) {
     $scope.hasFields = length > 0;
+    assureTitleField(length-old > 0 ? 'add' : 'delete');
   });
 
   $scope.$watch('publishedContentType.data.fields', function (fields, old, scope) {
@@ -103,7 +104,7 @@ function ContentTypeEditorController($scope, $injector) {
     loadPublishedContentType();
   }
 
-  function reloadPublisedContentType(dirty){
+  function reloadPublishedContentType(dirty){
     if (dirty){
       loadPublishedContentType();
     }
@@ -135,17 +136,6 @@ function ContentTypeEditorController($scope, $injector) {
         scope.closeState();
       }
     }
-  }
-
-  /**
-   * Accounts for displayField value inconsistencies for content types which existed
-   * before the internal apiName content type property.
-   */
-  function regulateDisplayField() {
-    var displayField = $scope.contentType.data.displayField;
-    var valid = _.isUndefined(displayField) || displayField === null || _.any($scope.contentType.data.fields, {id: displayField});
-    if (!valid)
-      $scope.contentType.data.displayField = null;
   }
 
   /**
@@ -197,16 +187,16 @@ function ContentTypeEditorController($scope, $injector) {
       template: 'add_field_dialog',
       noBackgroundClose: true,
       scope: $scope,
-      ignoreEnter: true,
+      ignoreEnter: true
     }).promise
     .then(addField);
   }
 
   function addField(newField) {
-    if(!_.has($scope.contentType.data, 'fields'))
-      $scope.contentType.data.fields = [];
-    $scope.contentType.data.fields.push(newField);
-    $scope.$broadcast('fieldAdded', $scope.contentType.data.fields.length - 1);
+    var data = $scope.contentType.data;
+    data.fields = data.fields || [];
+    data.fields.push(newField);
+    $scope.$broadcast('fieldAdded', data.fields.length - 1);
     syncEditingInterface();
     analytics.modifiedContentType('Modified ContentType', $scope.contentType, newField, 'add');
   }
@@ -216,5 +206,55 @@ function ContentTypeEditorController($scope, $injector) {
    */
   function syncEditingInterface () {
     editingInterfaces.syncWidgets($scope.contentType, $scope.editingInterface);
+  }
+
+  /**
+   * Accounts for displayField value inconsistencies for content types which existed
+   * before the internal apiName content type property.
+   */
+  function regulateDisplayField() {
+    var data = $scope.contentType.data;
+    var valid = _.isUndefined(data.displayField) || data.displayField === null || hasFieldUsedAsTitle();
+    if (!valid) {
+      data.displayField = null;
+    }
+  }
+
+  /**
+   * Checks if on the list of fields there is a object with id that is currently set
+   * on Content Type as a "displayField" property
+   */
+  function hasFieldUsedAsTitle() {
+    var data = $scope.contentType.data;
+    return _.any(data.fields, {id: data.displayField});
+  }
+
+  /**
+   * If there's no field selected as a title, use first found
+   */
+  function assureTitleField(action) {
+    var data = $scope.contentType.data;
+    var usableFields = findFieldsUsableAsTitle();
+
+    // this the first usable field added
+    if (action === 'add' && usableFields.length === 1) {
+      data.displayField = usableFields.shift();
+    }
+
+    // deleted field was used as title
+    if (action === 'delete' && data.displayField && !hasFieldUsedAsTitle()) {
+      data.displayField = usableFields.shift();
+    }
+  }
+
+  function findFieldsUsableAsTitle() {
+    return  _($scope.contentType.data.fields).
+      filter(isUsable).
+      pluck('id').
+      value();
+
+    function isUsable(field) {
+      return _.contains(['Symbol', 'Text'], field.type) && !field.disabled;
+    }
   }
 }]);
