@@ -3,6 +3,7 @@ ul(cf-ui-sortable ng-model="contentType.data.fields")
     ng-controller="ContentTypeFieldController"
     ng-repeat="(index, field) in contentType.data.fields track by field.id"
     ng-class="{'is-disabled': field.disabled}"
+    role="toolbar"
   )
 
     .ct-field__drag-handle(data-drag-handle)
@@ -14,8 +15,10 @@ ul(cf-ui-sortable ng-model="contentType.data.fields")
       | {{fieldTypeLabel}}
     .ct-field__is-title(ng-if="fieldIsTitle")
       | Title
-    a.cfnext-btn-plain(ng-click="openSettingsDialog()")
+    a.ct-field__settings.cfnext-btn-plain(ng-click="openSettingsDialog()" aria-label="Settings")
       | Settings
+      cf-ui-hint(ng-if="index===0" name="ct-field-settings")
+        | Change field settings, add validations, default values or define the appearance of this field
     button.ct-field__disable(ng-if="isPublished" ng-click="toggleDisableField()")
       | {{ field.disabled ? 'Enable' : 'Disable' }}
     button.ct-field__disable(ng-if="!isPublished" ng-click="deleteField()")

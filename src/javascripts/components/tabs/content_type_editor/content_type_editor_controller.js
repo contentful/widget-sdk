@@ -23,6 +23,7 @@ function ContentTypeEditorController($scope, $injector) {
   var $controller       = $injector.get('$controller');
   var analytics         = $injector.get('analytics');
   var validation        = $injector.get('validation');
+  var hints             = $injector.get('hints');
   var editingInterfaces = $injector.get('editingInterfaces');
   var modalDialog       = $injector.get('modalDialog');
 
@@ -30,6 +31,8 @@ function ContentTypeEditorController($scope, $injector) {
     $scope: $scope,
     entityType: 'contentType'
   });
+
+  $scope.hints = hints;
 
   $scope.context.closingMessage = [
     'You edited the Content Type but didn\'t save your changes.',

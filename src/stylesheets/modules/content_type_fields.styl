@@ -105,6 +105,19 @@ $ct__field-padding = 0.8em
       background-color: transparentify($cfnext-gray, 0.2)
       border: 1px solid transparentify($cfnext-green, 0.2)
 
+  &__settings
+    position: relative
+
+  .ui-hint
+    top: 20px
+    left: 67px
+    cf-icon
+      transform: scale(1.5) rotate(2deg)
+    p
+      top: -15px
+      left: 95px
+      width: 175px
+
 .content-type-no-fields
   .ct-field
     &__name
@@ -113,3 +126,4 @@ $ct__field-padding = 0.8em
     &__drag-handle
       background-color: transparentify($cfnext-gray, 0.1)
       border: 1px dashed transparentify($cfnext-gray, 0.1)
+
