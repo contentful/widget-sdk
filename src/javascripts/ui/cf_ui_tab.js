@@ -27,6 +27,13 @@ angular.module('cf.ui')
  *       | content of tab two
  */
 .directive('cfUiTab', [function () {
+  return {
+    controllerAs: 'tabController',
+    controller: 'UiTabController'
+  };
+}])
+
+.controller('UiTabController', [function () {
 
   function Tab (controller, name) {
     this.name = name;
@@ -35,53 +42,49 @@ angular.module('cf.ui')
     };
   }
 
-  return {
-    controllerAs: 'tabController',
-    controller: [function () {
-      var tabs = {};
-      var activeTab = null;
+  var tabs = {};
+  var activeTab = null;
 
-      this.registerControl = function (name, element) {
-        var tab = this.get(name);
-        tab.control = element;
+  this.registerControl = function (name, element) {
+    var tab = this.get(name);
+    tab.control = element;
 
-        if (activeTab === null) {
-          this.activate(name);
-        }
-        return tab;
-      };
-
-      this.registerPanel = function (name, element) {
-        var tab = this.get(name);
-        tab.panel = element;
-        return tab;
-      };
-
-      this.get = function (name) {
-        if (!_.isString(name))
-          throw new TypeError('Tab name must be a string');
-
-        var tab = tabs[name];
-        if (!tab)
-          tab = tabs[name] = new Tab(this, name);
-
-        return tab;
-      };
-
-      this.activate = function (name) {
-        if (activeTab)
-          activeTab.active = false;
-
-        if (name) {
-          activeTab = this.get(name);
-          activeTab.active = true;
-        } else {
-          activeTab = null;
-        }
-      };
-
-    }]
+    if (activeTab === null) {
+      this.activate(name);
+    }
+    return tab;
   };
+
+  this.registerPanel = function (name, element) {
+    var tab = this.get(name);
+    tab.panel = element;
+    return tab;
+  };
+
+  this.get = function (name) {
+    if (!_.isString(name))
+      throw new TypeError('Tab name must be a string');
+
+    var tab = tabs[name];
+    if (!tab)
+      tab = tabs[name] = new Tab(this, name);
+
+    return tab;
+  };
+
+  this.activate = function (name) {
+    if (activeTab)
+      activeTab.active = false;
+
+    if (name) {
+      activeTab = this.get(name);
+      activeTab.active = true;
+    } else {
+      activeTab = null;
+    }
+  };
+
+
 }])
 
 .directive('role', [function () {
