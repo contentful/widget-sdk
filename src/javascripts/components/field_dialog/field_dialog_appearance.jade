@@ -1,7 +1,7 @@
 div(
   ng-form="widgetForm" cf-validate-form
   ng-controller="FieldDialogAppearanceController" cf-validate="widget")
-  .cfnext-form__field
+  .cfnext-form__field(ng-if="availableWidgets.length > 1")
     label Widget Type
     div
       select.cfnext-select-box(ng-model="widget.widgetId"
