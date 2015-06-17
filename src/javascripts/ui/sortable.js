@@ -36,7 +36,6 @@ angular.module('cf.ui')
       scope.uiSortable = {
         handle: '[data-drag-handle]',
         item: '*:not([data-no-drag])',
-        axis: 'y',
         forcePlaceholderSize: true,
         placeholder: 'sortable-placeholder'
       };
