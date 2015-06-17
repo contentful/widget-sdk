@@ -12,7 +12,7 @@
             <rect id="Rectangle-19" fill="#FFFFFF" sketch:type="MSShapeGroup" x="33" y="10.210565" width="3" height="3" rx="1"></rect>
             <rect id="Rectangle-20" fill="#FFFFFF" sketch:type="MSShapeGroup" x="33" y="16.210565" width="3" height="3" rx="1"></rect>
             <rect id="Rectangle-21" fill="#FFFFFF" sketch:type="MSShapeGroup" x="33" y="22.210565" width="3" height="3" rx="1"></rect>
-            <rect id="Rectangle-61" fill="#A8E2FF" sketch:type="MSShapeGroup" x="2" y="11" width="28" height="21"></rect>
+            <rect id="Rectangle-61" fill="#A8E2FF" sketch:type="MSShapeGroup" x="1" y="10" width="29" height="22"></rect>
             <path d="M1,28 L11,20 L18,30 L23,25 L30,31 L30,38 L29,39 L2,39 L1,38 L1,28 Z" id="Line-19" fill="#16C98D" sketch:type="MSShapeGroup"></path>
             <rect id="Rectangle-3" stroke="#21304A" stroke-width="2" sketch:type="MSShapeGroup" x="0" y="9.4004359" width="31.234" height="30.4331282" rx="2"></rect>
             <path d="M1,28.145 L11,20.145 L24,38.145" id="Line" stroke="#21304A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" sketch:type="MSShapeGroup"></path>
