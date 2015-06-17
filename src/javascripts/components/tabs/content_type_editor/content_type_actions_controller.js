@@ -73,7 +73,8 @@ angular.module('contentful').
    * @name ContentTypeActionsController#canSave
    */
   $scope.canSave = function () {
-    return $scope.contentTypeForm.$dirty;
+    return $scope.contentTypeForm.$dirty &&
+           !allFieldsDisabled($scope.contentType);
   };
 
   /**
@@ -182,6 +183,10 @@ angular.module('contentful').
     analytics.track('Clicked Save Content Type Button', {
       initialSave: isNew
     });
+  }
+
+  function allFieldsDisabled (contentType) {
+    return _.all(contentType.data.fields, 'disabled');
   }
 
 }]);

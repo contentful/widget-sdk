@@ -293,4 +293,37 @@ describe('ContentType Actions Controller', function () {
       });
     });
   });
+
+  describe('$scope.canSave()', function () {
+    beforeEach(function () {
+      scope.contentTypeForm = {
+        $dirty: true,
+      };
+      scope.contentType.data.fields = [
+        { disabled: false },
+        { disabled: true }
+      ];
+    });
+
+    it('is false when form is pristine', function () {
+      expect(scope.canSave()).toBe(true);
+      scope.contentTypeForm.$dirty = false;
+      expect(scope.canSave()).toBe(false);
+    });
+
+    it('is false when content type has no fields', function () {
+      expect(scope.canSave()).toBe(true);
+      scope.contentType.data.fields = [];
+      expect(scope.canSave()).toBe(false);
+      scope.contentType.data.fields = null;
+      expect(scope.canSave()).toBe(false);
+    });
+
+    it('is false when all fields are disabled', function () {
+      expect(scope.canSave()).toBe(true);
+      scope.contentType.data.fields[0].disabled = true;
+      expect(scope.canSave()).toBe(false);
+    });
+  });
+
 });
