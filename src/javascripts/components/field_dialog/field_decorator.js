@@ -26,6 +26,7 @@ angular.module('contentful')
       displayName: getDisplayFieldName(field),
       isTitle: isTitle,
       canBeTitle: isTitleField(field.type),
+      canBeLocalized: isLocalizable(field.type),
       apiName: field.apiName || field.id
     });
   }
@@ -69,6 +70,12 @@ angular.module('contentful')
 
   function isTitleField (fieldType) {
     return fieldType === 'Symbol' || fieldType === 'Text';
+  }
+
+  function isLocalizable(fieldType) {
+    // @todo specify localizable content types
+    var localizableTypes = [];
+    return _.contains(localizableTypes, fieldType);
   }
 
   function getDisplayFieldName (field) {

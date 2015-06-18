@@ -21,7 +21,7 @@ div(
         ng-click="apiNameController.unlockEditing()")
     span.cfnext-form__field-suffix-error(cf-field-error-for="apiName")
 
-  fieldset.cfnext-form__fieldset
+  fieldset.cfnext-form__fieldset(ng-show="field.canBeTitle || field.canBeLocalized")
     legend Field Options
 
     div.cfnext-form-option(ng-show="field.canBeTitle")
@@ -32,7 +32,7 @@ div(
         p(ng-if="currentTitleField")
           | Currently “{{currentTitleField}}” is set as the title field
 
-    div.cfnext-form-option
+    div.cfnext-form-option(ng-show="field.canBeLocalized")
       input(id="field-dialog--localized" ng-model="field.localized" type="checkbox")
       div.cfnext-form-option__desc
         label(for="field-dialog--localized")
