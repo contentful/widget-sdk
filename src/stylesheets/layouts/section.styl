@@ -83,10 +83,14 @@ $section-nav-height = 70px
   padding-top: $rhythm(1)
 
   &.with-header
-    top: $section-header-height
+    // TODO replace this with flexbox
+    // 1px is for section header border width
+    top: $section-header-height + 1px
 
   &.with-header-nav
-    top: $section-header-height + $section-nav-height
+    // TODO replace this with flexbox
+    // 1px is for section header border width
+    top: $section-header-height + $section-nav-height + 1px
 
   &.with-tab-actions
     bottom: $tab-actions-height
