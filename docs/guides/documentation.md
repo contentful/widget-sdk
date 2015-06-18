@@ -10,7 +10,7 @@ We currently generate documentation from the JavasScript code in the
 
 To generate the documentation run `gulp docs` and then start the server
 with `gulp serve`. You will be able to see the documentation under the
-[`/docs`](https://app.joistio.com:8888/docs) folder in your development app.
+[`/docs`](http://app.joistio.com:8888/docs) folder in your development app.
 To automatically re-generate your documentation when something changes,
 run the `gulp docs/watch` task.
 
@@ -42,7 +42,7 @@ explained below.
 * *method*
 * *property*
 
-### Directives
+## Directives
 
 ~~~javascript
 /**
@@ -52,13 +52,16 @@ explained below.
  * @description
  * Description of this directive
  *
+ * @usage[html]
+ * <div directive="hello">
+ *
  * @scope.requires {string[]} data
  * The `$scope.data` property is required by the directive and it is
  * expected to be an array of strings.
  */
 ~~~
 
-### Members
+## Members
 
 Documentation with the `@ngdoc` type `method` or `property` will be
 attached to their parent document. The parent document’s is determined
@@ -70,10 +73,18 @@ by the string preceding the `#` in the `@name` tag.
  * @name SomeType#methodName
  *
  * @param {string} arg
+ * @return {boolean}
  */
 this.methodName = function(arg) {
   // body
 }
+
+/**
+ * @ngdoc property
+ * @name SomeType#state
+ * @type {string}
+ */
+this.state = 'ready 2 rumble'
 ~~~
 
 You can also inline method and property tags in the parent.
@@ -91,8 +102,25 @@ function MyClass() {
 }
 ~~~
 
+## `@usage`
 
-### Type Expressions
+The usage tag renders code examples at the top of the documented
+entity.
+
+~~~js
+/**
+ * @ngdoc function
+ * @name pirateify
+ * @usage
+ * pirateify('Hello')
+ * // => 'Hello, arrrgh!'
+ */
+~~~
+
+To enable syntax highlighting you can specifiy the language in brackets
+like `@usage[js]` or `@usage[html]`
+
+## Type Expressions
 
 Type expressions are used by the `@param`, `@returns`, and `@scope.*`
 tags, among others, to indicate a type. All type expressions must be

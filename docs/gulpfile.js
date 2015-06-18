@@ -121,7 +121,7 @@ gulp.task('watch', ['default'], function() {
   gulp.watch(_.flatten([app, assets, partials]), ['assets', 'app']);
   gulp.watch(['stylesheets/**/*.styl'], ['stylesheets']);
   gulp.watch(['../src/**/*.js', 'templates/**/*.html', 'templates/**/*.js'], ['api']);
-  gulp.watch(guides, ['guides']);
+  gulp.watch(guides.concat(['../README.md']), ['guides']);
 });
 
 
