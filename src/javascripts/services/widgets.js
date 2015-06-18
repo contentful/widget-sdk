@@ -87,6 +87,7 @@ angular.module('contentful')
     forField:          typesForField,
     defaultWidgetId:   defaultWidgetId,
     optionsForWidget:  optionsForWidget,
+    filterOptions:     filterOptions,
     widgetTemplate:    widgetTemplate,
     paramDefaults:     paramDefaults,
     registerWidget:    registerWidget,
@@ -167,6 +168,21 @@ angular.module('contentful')
       return widget.options;
     }
     return [];
+  }
+
+  function filterOptions(widgetOptions, widgetParams) {
+    widgetParams = _.isObject(widgetParams) ? widgetParams : {};
+    return _.filter(widgetOptions || [], shouldOptionBeVisible);
+
+    function shouldOptionBeVisible(option) {
+      // @todo in the future there may be a need for "dependsOnEvery"
+      var dependencies = option.dependsOnAny;
+      return _.keys(dependencies).length ? _.some(dependencies, areMet) : true;
+    }
+
+    function areMet(acceptedValues, paramName) {
+      return _.contains(acceptedValues, widgetParams[paramName]);
+    }
   }
 
   function paramDefaults(widgetId, widgetType) {

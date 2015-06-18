@@ -94,7 +94,10 @@ angular.module('contentful').run(['widgets', function(widgets){
           '12': 'AM/PM',
           '24': '24 Hour'
         },
-        default: '24'
+        default: '24',
+        dependsOnAny: {
+          format: ['time', 'timeZ']
+        }
       }
     ]
   });

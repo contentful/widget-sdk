@@ -12,7 +12,7 @@ div(
         |  "{{ misconfiguredMap[widget.widgetId].name }}" widget is not properly configured.
         | Editor features may not work as expected.
 
-  .cfnext-form__field(ng-repeat="option in widgetOptions")
+  .cfnext-form__field(ng-repeat="option in filteredWidgetOptions track by option.name")
     label {{option.name}}
     div(ng-switch="option.type")
       input.cfnext-form__input--full-size(ng-switch-when="Text"

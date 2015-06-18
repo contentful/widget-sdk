@@ -125,6 +125,10 @@ angular.module('contentful')
       $scope.widgetOptions = getWidgetOptions(widgetId, 'field');
   });
 
+  $scope.$watch('widget.widgetParams', function(params) {
+    $scope.filteredWidgetOptions = widgets.filterOptions($scope.widgetOptions, params);
+  }, true);
+
   $scope.$watch('$form.$invalid', function (isInvalid) {
     $scope.tab.invalid = isInvalid;
   });
@@ -140,5 +144,4 @@ angular.module('contentful')
     $scope.availableWidgets = widgets;
     $scope.misconfiguredMap = widgetChecks.getMisconfigured(widgets);
   });
-
 }]);
