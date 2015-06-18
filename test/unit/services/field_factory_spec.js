@@ -9,7 +9,7 @@ describe('field factory', function () {
   describe('descriptors', function () {
 
     it('has only one descriptor per type', function () {
-      var types = _.map(this.fieldFactory.all, 'type');
+      var types = _.map(this.fieldFactory.all, 'name');
       var uniqueTypes = _.uniq(types);
       expect(types).toEqual(uniqueTypes);
     });
@@ -20,8 +20,8 @@ describe('field factory', function () {
 
     it('returns single value labels from name', function () {
       var fieldFactory = this.fieldFactory;
-      _.forEach(fieldFactory.all, function (descriptor) {
-        var field = fieldFactory.createTypeInfo(descriptor.type);
+      _.forEach(fieldFactory.types, function (descriptor) {
+        var field = fieldFactory.createTypeInfo(descriptor);
         var label = fieldFactory.getLabel(field);
         expect(label, descriptor.name);
       });
@@ -31,7 +31,7 @@ describe('field factory', function () {
       var fieldFactory = this.fieldFactory;
       var listFieldDescriptors = _.filter(fieldFactory.all, {hasListVariant: true});
       _.forEach(listFieldDescriptors, function (descriptor) {
-        var field = fieldFactory.createTypeInfo(descriptor.type);
+        var field = fieldFactory.createTypeInfo(descriptor, true);
         var label = fieldFactory.getLabel(field);
         expect(label, descriptor.name + ' List');
       });
@@ -42,7 +42,8 @@ describe('field factory', function () {
   describe('#createTypeInfo', function () {
 
     it('creates entry link info', function () {
-      var typeInfo = this.fieldFactory.createTypeInfo('Entry');
+      var descriptor = _.find(this.fieldFactory.types, {name: 'Entry'});
+      var typeInfo = this.fieldFactory.createTypeInfo(descriptor);
       expect(typeInfo).toEqual({
         type: 'Link',
         linkType: 'Entry'
@@ -50,7 +51,8 @@ describe('field factory', function () {
     });
 
     it('creates entry list link info', function () {
-      var typeInfo = this.fieldFactory.createTypeInfo('Entry', true);
+      var descriptor = _.find(this.fieldFactory.types, {name: 'Entry'});
+      var typeInfo = this.fieldFactory.createTypeInfo(descriptor, true);
       expect(typeInfo).toEqual({
         type: 'Array',
         items: {
@@ -61,7 +63,8 @@ describe('field factory', function () {
     });
 
     it('creates symbol list info', function () {
-      var typeInfo = this.fieldFactory.createTypeInfo('Symbol', true);
+      var descriptor = _.find(this.fieldFactory.types, {name: 'Symbol'});
+      var typeInfo = this.fieldFactory.createTypeInfo(descriptor, true);
       expect(typeInfo).toEqual({
         type: 'Array',
         items: {

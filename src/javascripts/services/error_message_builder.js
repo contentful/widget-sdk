@@ -86,6 +86,8 @@ angular.module('contentful')
 .factory('fieldErrorMessageBuilder', ['baseErrorMessageBuilder', function (buildBaseMessage) {
   return function buildMessage (error) {
     if (error.path && error.path[0] === 'apiName') {
+      if (error.name === 'regexp' && error.value.match(/^\d/))
+        return 'Please use a letter as the first character';
       if (error.name === 'regexp')
         return 'Please use only letters and number';
       if (error.name === 'size')

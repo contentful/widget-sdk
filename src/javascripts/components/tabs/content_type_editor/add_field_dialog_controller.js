@@ -23,16 +23,18 @@ angular.module('contentful')
   var stringUtils    = $injector.get('stringUtils');
   var buildMessage   = $injector.get('fieldErrorMessageBuilder');
   var trackField     = $injector.get('analyticsEvents').trackField;
+  var $q             = $injector.get('$q');
 
   $scope.viewState = $controller('ViewStateController', {
     $scope: $scope,
     defaultState: 'fieldSelection'
   });
 
-  $scope.availableFields    = fieldFactory.all;
-  $scope.selectType         = selectType;
+  $scope.fieldGroupRows     = chunk(fieldFactory.groups, 4);
+  $scope.selectFieldGroup   = selectFieldGroup;
   $scope.showFieldSelection = showFieldSelection;
-  $scope.configureField     = configureField;
+  $scope.create     = create;
+  $scope.createAndConfigure = createAndConfigure;
 
   $scope.schema = {
     errors: function (field) {
@@ -53,61 +55,80 @@ angular.module('contentful')
    * in case the user wants to change their selection
   */
   function showFieldSelection() {
-    $scope.dialog.title = 'Add new Field';
-    $scope.newField = {
-      name: '',
-      id: random.id(),
-      apiName: ''
-    };
-    $scope.viewState.set('fieldSelection');
-  }
-
-  /**
-   * @ngdoc method
-   * @name AddFieldDialogController#scope#selectType
-   *
-   * @description
-   * Sets the relevant scope properties based on the selected field
-   * and transitions to the field configuration state
-   *
-   * @param {object} typeDescriptor
-   * Object with information about the selected field type.
-  */
-  function selectType (typeDescriptor) {
-    $scope.selectedType = typeDescriptor;
-    $scope.dialog.title = 'New '+typeDescriptor.name+' field';
-    $scope.fieldOptions = {
+    $scope.field = {
+      data: {
+        name: '',
+        id: random.id(),
+        apiName: ''
+      },
       isList: false
     };
+    $scope.viewState.set('fieldSelection');
+
+    if ($scope.newFieldForm) {
+      $scope.newFieldForm.showErrors = false;
+    }
+  }
+
+  function selectFieldGroup (group) {
+    $scope.fieldGroup = group;
+    $scope.fieldTypes = _.mapValues(_.groupBy(group.types, 'name'), first);
+    $scope.field.type = group.types[0];
+
     $scope.viewState.set('fieldConfiguration');
   }
 
+  $scope.$watch('field.data.name', function (name) {
+    var apiNameField = $scope.newFieldForm.apiName;
+    var apiName = $scope.field.data.apiName;
+    if (!apiNameField || !apiNameField.$touched || !apiName) {
+      $scope.field.data.apiName = stringUtils.toIdentifier(name);
+      if (apiNameField) {
+        apiNameField.$setUntouched();
+      }
+    }
+  });
+
   /**
    * @ngdoc method
-   * @name AddFieldDialogController#scope#configureField
+   * @name AddFieldDialogController#$scope.create
    *
    * @description
-   * Sets the type information and API Name for the new field and
-   * closes the dialog.
-  */
-  function configureField () {
-    var field = $scope.newField;
-    var isList = $scope.fieldOptions.isList;
-    var typeInfo = fieldFactory.createTypeInfo($scope.selectedType.type, isList);
+   * Create a field from the user input and validate it. Then confirm
+   * the dialog with that field.
+   */
+  function create () {
+    var field = $scope.field.data;
+    var typeInfo = fieldFactory.createTypeInfo($scope.field.type, $scope.field.isList);
     _.extend(field, typeInfo);
-    if (!$scope.validator.run('name')) {
-      return;
+
+    if (!$scope.validator.run()) {
+      $scope.newFieldForm.showErrors = true;
+      return $q.reject(new Error('Invalid user data'));
     }
 
-    if (!field.apiName) {
-      field.apiName = stringUtils.toIdentifier(field.name);
-    }
-    if ($scope.validator.run()) {
-      trackCreateField(field);
-      $scope.dialog.confirm($scope.newField);
-    } else {
-      $scope.showApiNameField = true;
-    }
+    trackCreateField(field);
+    return $scope.dialog.confirm(field)
+    .promise.then(function () {
+      return field;
+    });
+  }
+
+  /**
+   * @ngdoc method
+   * @name AddFieldDialogController#$scope.createAndConfigure
+   *
+   * @description
+   * Call `$scope.create()` and open the field configuration dialog
+   * afterwards.
+   */
+  function createAndConfigure () {
+    create()
+    // We don’t care about validation errors raised by
+    // `configureField`, so catch is noop.
+    .then(function (field) {
+      $scope.ctEditorController.openFieldDialog(field);
+    }, _.noop);
   }
 
   /**
@@ -118,6 +139,23 @@ angular.module('contentful')
    */
   function trackCreateField (field) {
     trackField('Clicked Create Field Button', field);
+  }
+
+
+  function chunk (array, size) {
+    var index = 0;
+    var length = array.length;
+    var resIndex = -1;
+    var result = new Array(Math.ceil(length / size));
+
+    while (index < length) {
+      result[++resIndex] = array.slice(index, (index += size));
+    }
+    return result;
+  }
+
+  function first (array) {
+    return array[0];
   }
 
 }]);

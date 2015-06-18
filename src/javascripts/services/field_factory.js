@@ -7,96 +7,143 @@
  * Utilities for creating and handling Content Type Fields
  */
 angular.module('contentful')
-.factory('fieldFactory', [function () {
+.factory('fieldFactory', ['stringUtils', function (stringUtils) {
+  var capitalize = stringUtils.capitalize;
   /**
    * @ngdoc property
-   * @name fieldFactory#all
+   * @name fieldFactory#types
+   * @type {Array<TypeDescriptor>}
    * @description
-   * List of descriptors for all available fields.
+   * List of descriptors for all available fields types.
+   *
+   * If the `label` and `icon` properties of a descriptor are not set,
+   * they will be auto-generated.
+   *
    * Default widgets for fields are specified here for display purposes,
    * but actually determined in the widgets service (see docs there
    * for an explanation)
    */
-  var fieldTypes = [
+  var fieldTypes = _.forEach([
     {
-      iconId: 'shorttext',
-      name: 'Short Text',
-      description: 'Email, phone #, URL, slug, color code, opening hours, tags',
-      type: 'Symbol',
+      name: 'Symbol',
       hasListVariant: true,
+      label: 'Short Text',
       defaultWidget: {single: 'singleLine', list: 'singleLine'}
     },
     {
-      iconId: 'longtext',
-      name: 'Long Text',
-      description: 'Post title, product description, formatted article, author name',
-      type: 'Text',
-      defaultWidget: {single: 'markdown'}
+      name: 'Text',
+      label: 'Long Text',
+      defaultWidget: {single: 'markdown'},
     },
     {
-      iconId: 'number',
       name: 'Integer',
-      description: 'ID, order number, rating, quantity',
-      type: 'Integer',
-      defaultWidget: {single: 'numberEditor'}
+      defaultWidget: {single: 'numberEditor'},
+      icon: 'number',
     },
     {
-      iconId: 'decimal',
-      name: 'Decimal Number',
-      description: 'Price, measurement, exchange rate, weight',
-      type: 'Number',
-      defaultWidget: {single: 'numberEditor'}
+      name: 'Number',
+      label: 'Decimal Number',
+      defaultWidget: {single: 'numberEditor'},
+      icon: 'decimal',
     },
     {
-      iconId: 'calendar',
-      name: 'Date & Time',
-      description: 'Creation date, opening hours, promotion period',
-      type: 'Date',
-      defaultWidget: {single: 'datePicker'}
+      name: 'Date',
+      label: 'Date & Time',
+      defaultWidget: {single: 'datePicker'},
+      icon: 'calendar',
     },
     {
-      iconId: 'location',
       name: 'Location',
-      description: 'Map coordinates, company address, venue location',
-      type: 'Location',
-      defaultWidget: {single: 'locationEditor'}
+      defaultWidget: {single: 'locationEditor'},
     },
     {
-      iconId: 'media',
-      name: 'Media',
-      description: 'Photo, PDF brochure, document, attachments, podcast archive, playlist',
-      type: 'Asset',
+      name: 'Asset',
       isLink: true,
       hasListVariant: true,
-      defaultWidget: {single: 'assetLinkEditor', list: 'assetLinksEditor'}
+      label: 'Media',
+      defaultWidget: {single: 'assetLinkEditor', list: 'assetLinksEditor'},
     },
     {
-      iconId: 'boolean',
       name: 'Boolean',
-      description: 'RSVP, membership in a group, availability in stock',
-      type: 'Boolean',
-      defaultWidget: {single: 'radio'}
+      defaultWidget: {single: 'radio'},
     },
     {
-      iconId: 'json',
-      name: 'JSON Object',
+      name: 'Object',
+      label: 'JSON Object',
       description: 'External record, template values',
-      type: 'Object',
-      defaultWidget: {single: 'objectEditor'}
+      defaultWidget: {single: 'objectEditor'},
+      icon: 'json',
     },
     {
-      iconId: 'reference',
-      name: 'Reference',
-      description: 'Link your Content Types',
-      type: 'Entry',
+      name: 'Entry',
       isLink: true,
       hasListVariant: true,
+      label: 'Reference',
       defaultWidget: {single: 'entryLinkEditor', list: 'entryLinksEditor'}
     }
-  ];
+  ], function (descriptor) {
+    _.defaults(descriptor, {
+      label: descriptor.name
+    });
+    _.defaults(descriptor, {
+      icon: descriptor.label.replace(/ +/g, '').toLowerCase(),
+    });
+  });
+
+  var fieldGroups = _.forEach([{
+    name: 'text',
+    icon: 'longtext',
+    description: 'Titles, names, paragraphs, list of names',
+    types: [ 'Symbol', 'Text' ]
+  }, {
+    name: 'number',
+    description: 'ID, order number, rating, quantity',
+    types: [ 'Integer', 'Number' ]
+  }, {
+    name: 'date-time',
+    icon: 'calendar',
+    label: 'Date and time',
+    description: 'Event date, opening hours',
+    types: ['Date']
+  }, {
+    name: 'location',
+    description: 'Coordinates: latitude and longitude',
+    types: ['Location']
+  }, {
+    name: 'media',
+    description: 'Images, videos, PDFs and other files',
+    types: ['Asset']
+  }, {
+    name: 'boolean',
+    description: 'Yes or no, 1 or 0, true or false',
+    types: ['Boolean']
+  }, {
+    name: 'json',
+    label: 'JSON Object',
+    description: 'Data in JSON format',
+    types: ['Object']
+  }, {
+    name: 'reference',
+    description: 'For example, a blog post can reference its author(s)',
+    types: ['Entry']
+  }], function (group) {
+    group.types = _.map(group.types, getTypeByName);
+    _.defaults(group, {
+      label: capitalize(group.name),
+      icon: group.types[0].icon
+    });
+  });
+
+  function getTypeByName(name) {
+    var type = _.find(fieldTypes, {name: name});
+    if (!type)
+      throw new Error('Could not find field type "'+name+'"');
+    return type;
+  }
 
   return {
-    all: fieldTypes,
+    types: fieldTypes,
+    groups: fieldGroups,
     getLabel: getFieldLabel,
     getIconId: getIconId,
     getDefaultWidget: getDefaultWidget,
@@ -108,6 +155,8 @@ angular.module('contentful')
    * @name fieldFactory#getLabel
    * @description
    * Return a human readable label of a Content Type Field.
+   *
+   * @param {API.ContentType.Field} field
    * @return {string}
    */
   function getFieldLabel (field) {
@@ -124,10 +173,11 @@ angular.module('contentful')
    * @name fieldFactory#getIconId
    * @description
    * Return an id for the associated field icon
+   * @param {API.ContentType.Field} field
    * @return {string}
   */
   function getIconId(field) {
-    return 'field-'+getFieldDescriptor(field).iconId;
+    return 'field-'+getFieldDescriptor(field).icon;
   }
 
   /**
@@ -147,15 +197,13 @@ angular.module('contentful')
    * @name fieldFactory#createTypeInfo
    * @description
    * Create an object that can extend a `Field` with type information
-   * @param {string} type
-   * @param {boolean} isList
+   *
+   * @param {FieldDescriptor} descriptor
+   * @param {boolean}         isList
    * @return {FieldTypeInfo}
    */
-  function createTypeInfo (type, isList) {
-    var descriptor = _.find(fieldTypes, {type: type});
-    if (!descriptor)
-      throw new Error('Unknown field type');
-
+  function createTypeInfo (descriptor, isList) {
+    var type = descriptor.name;
     var info = { type: type };
     if (descriptor.isLink) {
       info.type = 'Link';
@@ -187,9 +235,9 @@ angular.module('contentful')
       type = linkType;
     }
 
-    var descriptor = _.find(fieldTypes, {type: type});
+    var descriptor = _.find(fieldTypes, {name: type});
     if (!descriptor)
-      throw new Error('Unknown field type');
+      throw new Error('Unknown field type "'+type+'"');
 
     return _.extend({isList: isArray}, descriptor);
   }

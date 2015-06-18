@@ -2,68 +2,22 @@
   form.modal-dialog.add-field-dialog(
     name="newFieldForm"
     ng-controller="AddFieldDialogController"
-    cf-on-submit="configureField()"
-    cf-validate="newField")
+    cf-validate="field.data")
 
-    header.modal-dialog__header
-      h1 {{dialog.title}}
-      .close-button(ng-click="dialog.cancel()")
+    div(ng-if="viewState.is('fieldSelection')")
+      header.modal-dialog__header
+        h1 New field
+        .close-button(ng-click="dialog.cancel()")
 
-    .modal-dialog__content(ng-if="viewState.is('fieldSelection')")
-      ul.add-field-dialog__list
-        li.add-field-dialog__list-item(ng-repeat="type in availableFields track by type.iconId" ng-click="selectType(type)")
-          cf-icon.add-field-dialog__icon(name="{{'field-'+type.iconId}}")
-          h2 {{type.name}}
-          p.add-field-dialog__description {{type.description}}
+      .add-field-dialog__selection.modal-dialog__content(role="group" aria-label="Field Types")
+        .add-field-dialog__list(ng-repeat="fieldGroups in fieldGroupRows")
+          .add-field-dialog__list-item(ng-repeat="group in fieldGroups")
+            button.add-field-dialog__icon(
+              aria-label="{{group.label}}"
+              ng-click="selectFieldGroup(group)")
+              cf-icon(name="field-{{group.icon}}")
+            h2 {{group.label}}
+            p.add-field-dialog__description {{group.description}}
 
-    .modal-dialog__content.add-field-dialog__config(
-      ng-if="viewState.is('fieldConfiguration')")
-
-      .cfnext-form__field
-        label
-          | Field name
-        input.cfnext-form__input--full-size(
-          type="text" name="fieldName"
-          ng-model="newField.name"
-          required maxlength="50"
-          cf-focus-on-render)
-        div.cfnext-form__hint
-          | This field is required
-
-      .cfnext-form__field(ng-if="showApiNameField")
-        label
-          | Field ID
-        input.cfnext-form__input--full-size(
-          type="text" name="apiName"
-          ng-model="newField.apiName"
-          cf-validate-model data-show-errors
-          required maxlength="50")
-        .cfnext-form__field-error(cf-field-error-for="apiName")
-
-      .cfnext-form__fieldset--horizontal(ng-show="selectedType.hasListVariant")
-        legend Would you like to store a single value or an array?
-        .cfnext-form-option
-          input(
-            type="radio"
-            name="fieldIsSingle" id="add-field-form-field-is-single"
-            ng-model="fieldOptions.isList" ng-value="false")
-          label(for="add-field-form-field-is-single")
-            | Single value
-        .cfnext-form-option
-          input(
-            type="radio"
-            name="fieldIsList" id="add-field-form-field-is-list"
-            ng-model="fieldOptions.isList" ng-value="true")
-          label(for="add-field-form-field-is-list")
-            | List of values
-      .add-field-dialog__info(ng-show="selectedType.hasListVariant")
-        | If you store your values as a list, they will be separated on your API responses.
-      .note-box-small.note-box--blue(ng-show="selectedType.hasListVariant")
-        | Note: This setting cannot be changed later
-
-
-    .modal-dialog__controls(ng-show="viewState.is('fieldConfiguration')")
-      button.cfnext-btn-primary-action(cf-form-submit)
-        | Create Field
-      button.cfnext-btn-plain-block(ng-click="showFieldSelection()")
-        | Go back
+    div(ng-if="viewState.is('fieldConfiguration')")
+      include ./add_field_dialog_settings

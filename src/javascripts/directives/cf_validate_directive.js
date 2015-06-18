@@ -92,6 +92,11 @@ function ValidationController ($scope, $attrs, $timeout) {
   };
 
 
+  /**
+   * @ngdoc method
+   * @name cfValidate#validator.setErrors
+   * @param {Array<Error>}
+   */
   controller.setErrors = function (errors) {
     $scope.validationResult = makeValidationResult(errors, getData(), $scope.schema);
     this.errors = $scope.validationResult.errors;

@@ -29,7 +29,6 @@
   margin-bottom: $rhythm(1.5)
   > label
     display: block
-    font-weight: bold
     margin-bottom: $rhythm(0.5)
 
 $cfnext-form-input()
@@ -43,7 +42,8 @@ $cfnext-form-input()
   transition: border 0.3s
   &:focus
     background-color: white
-    border-color: $blue-link
+    border-width: 1px
+    border-color: $cfnext-blue
     outline: none
   &[aria-invalid="true"]
     border-color: darken($red, 10%)
@@ -90,6 +90,7 @@ $cfnext-form-input()
 .cfnext-form__hint
   margin-top: $rhythm(0.5)
   color: $text-dimmed
+  font-size: $small-font-size
 
 /**
  * Errors
@@ -140,6 +141,7 @@ $cfnext-form-input()
  *     .cfnext-form-option__desc
  *       label(for="option-b") Or check that
  *       p You also can check both
+ *       p.text-dimmed This is a hint
  *   .cfnext-form-option
  *     input(type="radio" id="radio-a" name="selectme")
  *     label(for="radio-a") Select me
@@ -156,7 +158,6 @@ $cfnext-form__fieldset()
     width: 100%
     flex-shrink: 0
     margin-bottom: $rhythm(1)
-    font-weight: bold
 
 .cfnext-form__fieldset
   $cfnext-form__fieldset()
@@ -179,8 +180,8 @@ $cfnext-form__fieldset()
     cursor: pointer
 
 .cfnext-form-option__desc p
-  color: $text-dimmed
-  margin: $rhythm(0.5) 0 0 0
+  font-size: (13/14) * 1em
+  margin: 0
 
 .cfnext-form-option__desc label
   // Larger line height increases clickable area
@@ -188,7 +189,6 @@ $cfnext-form__fieldset()
   // Negative margin makes sure the larger line height does not
   // influence the layout
   margin-top:    - $rhythm(0.5)
-  margin-bottom: - $rhythm(0.5)
   display: inline-block;
   cursor: pointer
 
