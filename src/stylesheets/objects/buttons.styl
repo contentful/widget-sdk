@@ -31,19 +31,19 @@ $cfnext-button-vert-padding = 0.6rem
 $cfnext-button($color = false, $border-color = false)
   position: relative
   padding: $cfnext-button-vert-padding 1.5rem
+  cursor: pointer
   text-align: center
   font-size: 0.9rem
   font-weight: bold
   color: white
   background-color: $color
   border-radius: 2px
-  cursor: pointer
+  border-width: 1px
+  border-style: solid
   if $border-color
     border-color: $border-color
-    border-width: 1px
-    border-style: solid
   else
-    border: none
+    border-color: $color
   &:disabled,
   &[aria-disabled=true],
   &[disabled]
