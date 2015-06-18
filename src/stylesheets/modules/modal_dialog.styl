@@ -21,6 +21,8 @@ p
     .modal-dialog__controls
       button.cfnext-btn-primary-action
         | Confirm
+      button.cfnext-btn-secondary-action
+        | More
       button.cfnext-btn-plain-block
         | Cancel
 p
@@ -109,6 +111,8 @@ $modal-dialog-chrome()
     // Optical vertical alignment with dialog text
     margin-left: -0.2ex
     margin-right: -0.2ex
+    > * + *
+      margin-left: 1rem
     // The last of two or more elements should be right aligned
     > * + *:last-child
       margin-left: auto
