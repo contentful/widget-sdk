@@ -56,9 +56,9 @@
             ng-model="fieldOptions.isList" ng-value="true")
           label(for="add-field-form-field-is-list")
             | List of values
-      .add-field-dialog__info
+      .add-field-dialog__info(ng-show="selectedType.hasListVariant")
         | If you store your values as a list, they will be separated on your API responses.
-      .note-box-small.note-box--blue
+      .note-box-small.note-box--blue(ng-show="selectedType.hasListVariant")
         | Note: This setting cannot be changed later
 
 
