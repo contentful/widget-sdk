@@ -108,25 +108,22 @@ angular.module('contentful')
 }])
 
 
-.controller('FieldDialogAppearanceController',
-['$scope', '$injector', function ($scope, $injector) {
-  var widgets          = $injector.get('widgets');
-  var getWidgetOptions = widgets.optionsForWidget;
-  var widgetChecks     = $injector.get('widgetChecks');
-  var buildMessage     = $injector.get('baseErrorMessageBuilder');
+.controller('FieldDialogAppearanceController', ['$scope', '$injector', function ($scope, $injector) {
+  var widgets        = $injector.get('widgets');
+  var widgetChecks   = $injector.get('widgetChecks');
+  var buildMessage   = $injector.get('baseErrorMessageBuilder');
+  var widgetOptions;
 
-  $scope.$watch('widget.widgetId', function () {
-    if ($scope.widget)
-      widgets.applyDefaults($scope.widget);
+  $scope.$watch('widget', function(widget) {
+    if (widget && widget.widgetId) {
+      widgetOptions = widgets.optionsForWidget(widget.widgetId, 'field');
+      widgets.applyDefaults(widget);
+    }
   });
 
-  $scope.$watch('widget.widgetId', function (widgetId) {
-    if (widgetId)
-      $scope.widgetOptions = getWidgetOptions(widgetId, 'field');
-  });
-
+  // when widget parameter is changed, filter option list with dependency check
   $scope.$watch('widget.widgetParams', function(params) {
-    $scope.filteredWidgetOptions = widgets.filterOptions($scope.widgetOptions, params);
+    $scope.widgetOptions = widgets.filterOptions(widgetOptions || [], params);
   }, true);
 
   $scope.$watch('$form.$invalid', function (isInvalid) {

@@ -175,12 +175,18 @@ angular.module('contentful')
     return _.filter(widgetOptions || [], shouldOptionBeVisible);
 
     function shouldOptionBeVisible(option) {
-      // @todo in the future there may be a need for "dependsOnEvery"
-      var dependencies = option.dependsOnAny;
-      return _.keys(dependencies).length ? _.some(dependencies, areMet) : true;
+      var dependencies = option.dependsOnEvery || option.dependsOnAny;
+      var everyOrAny = option.dependsOnEvery ? 'every' : 'any';
+
+      if (!_.isObject(dependencies) || !_.keys(dependencies).length) {
+        return true;
+      }
+
+      return _[everyOrAny](dependencies, areMet);
     }
 
     function areMet(acceptedValues, paramName) {
+      acceptedValues = _.isArray(acceptedValues) ? acceptedValues : [acceptedValues];
       return _.contains(acceptedValues, widgetParams[paramName]);
     }
   }

@@ -278,17 +278,17 @@ describe('Widget types service', function () {
       feedTest([[1,2]]);
     });
 
-    it('removes option if dependency is not met (one acceptable value)', function() {
+    it('removes option if no dependencies are met (one acceptable value)', function() {
       descriptor.options[1].dependsOnAny = {x: 'test'};
       feedTest([[2,1], [null, 1], ['test', 2]]);
     });
 
-    it('removes option if dependency is not met (multiple acceptable values)', function() {
+    it('removes option if no dependencies are met (multiple acceptable values)', function() {
       descriptor.options[1].dependsOnAny = {x: [1, 3, 8]};
       feedTest([[2,1], ['test',1], [null, 1], [1,2], [3,2], [8,2]]);
     });
 
-    it('removes option if dependency is not met (depending on multiple params)', function() {
+    it('removes option if no dependencies are met (depending on multiple params)', function() {
       var deps = {};
       descriptor.options.push({param: 'z', default: 0, dependsOnAny: deps});
       deps.x = [1000, 'test'];
@@ -304,6 +304,20 @@ describe('Widget types service', function () {
         [{x: null,   y: -1     }, 2],
         [{x: -1,     y: null   }, 2],
         [{x: null,   y: null   }, 2]
+      ]);
+    });
+
+    it('removes option if some of dependencies are not met', function() {
+      var deps = {};
+      descriptor.options.push({param: 'z', default: 0, dependsOnEvery: deps});
+      deps.x = 42;
+      deps.y = 'hello';
+
+      feedTest([
+        [{x: 42,   y: 'hello'}, 3],
+        [{x: 42,   y: 'hi!'  }, 2],
+        [{x: -1,   y: 'hello'}, 2],
+        [{x: null, y: -1     }, 2]
       ]);
     });
   });
