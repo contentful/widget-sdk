@@ -6,6 +6,8 @@ module.exports = function tagDefs (extractTypeTransform, wholeTagTransform, extr
     defaultFn: function (doc) {
       if (doc.docType === 'module')
         return doc.name;
+      if (~doc.fileInfo.projectRelativePath.indexOf('test'))
+        return 'contentful/test';
       if (doc.area === 'api' && doc.docType !== 'overview')
         return 'contentful/app';
     }

@@ -50,23 +50,6 @@ Don't forget to provide an appropriate commit message outlining the
 changes.
 
 
-## Testing
-
-To execute the unit tests, you need to install karma-cli globally:
-
-    npm install -g karma-cli
-
-Then just run `karma start`. Your tests are automatically watched and
-re-run when you change them.
-
-To select only a subsect of specs to run, replace their respective
-`describe` or `it` call with `ddescribe` or `iit`.
-
-For the available test reporters see [karma.conf.js#L43](https://github.com/contentful/user_interface/blob/master/karma.conf.js#L43) or `package.json`
-
-If you use the `verbose` reporter you might want to set `set-option -g history-limit 5000` in your `tmux.conf`
-
-
 ## Live Reloading
 
 We have setup live reloading for CSS only, both in the app and the

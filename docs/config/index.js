@@ -59,6 +59,7 @@ module.exports = new Package('angularjs', [
   readFilesProcessor.basePath = path.resolve(__dirname,'../..');
   readFilesProcessor.sourceFiles = [
     { include: 'src/javascripts/**/*.js', basePath: 'src/javascripts' },
+    { include: 'test/helpers/*.js', basePath: 'test/helpers' },
   ];
 
   writeFilesProcessor.outputFolder = 'public/docs';
