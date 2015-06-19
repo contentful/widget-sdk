@@ -71,5 +71,5 @@
         i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
         header.advice__title There are no matches to your search
 
-.advice(ng-show="contentTypes.length === 0")
+.advice(ng-show="contentTypes.length === 0 && !hasQuery()")
   include ../../shared/create_content_type_advice

@@ -4,7 +4,7 @@
     header.advice__title Nothing to see yet.
     p.advice__description(ng-show="!permissionController.canCreateSpace()") You need to be part of an Organization to create a space.
     p.advice__description(ng-show="permissionController.canCreateSpace()") Why don't you create a space?
-    button.cfnext-btn-action(type="button" ng-show="permissionController.canCreateSpace()" ng-click="showCreateSpaceDialog()")
+    button.advice__action(type="button" ng-show="permissionController.canCreateSpace()" ng-click="showCreateSpaceDialog()")
       | Create Space
     a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513118-What-is-a-space-")
       | Visit the Knowledge Base Pages
