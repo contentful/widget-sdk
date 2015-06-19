@@ -19,27 +19,27 @@
       .content-type-no-fields(ng-hide="hasFields")
         include ./content_type_field_list_empty
 
-.tab-actions(ng-controller="ContentTypeActionsController")
+.tab-actions
   .button-set
     button.btn.btn--secondary.deactivate(
-      ng-show="canUnpublish()"
-      ng-click="unpublish()"
+      ng-show="actions.canUnpublish()"
+      ng-click="actions.unpublish()"
       tooltip="Deactivate this Content Type")
       | Deactivate
     button.btn.btn--secondary.cancel(
       ng-show="context.isNew"
-      ng-click="cancel()")
+      ng-click="actions.cancel()")
       | Cancel
     button.btn.btn--secondary.delete(
-      ng-show="canDelete()"
+      ng-show="actions.canDelete()"
       cf-dropdown-toggle="contentType.delete")
       | Delete
     .delete-confirm(cf-dropdown-menu="contentType.delete" cf-dropdown-position="topcenter")
       p You are about to delete {{contentType.getName()}}
-      button.btn.btn--danger(type="button" ng-click="delete()" cf-dropdown-close) Delete
+      button.btn.btn--danger(type="button" ng-click="actions.delete()" cf-dropdown-close) Delete
       button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete
     button.btn.btn--primary.publish(
-      ng-disabled="!canSave()"
-      ng-click="save()"
+      ng-disabled="!actions.canSave()"
+      ng-click="actions.save()"
       tooltip="Save changed and make this Content Type available to editors")
       | Save

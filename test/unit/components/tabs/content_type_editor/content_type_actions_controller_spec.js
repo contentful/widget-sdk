@@ -72,7 +72,7 @@ describe('ContentType Actions Controller', function () {
     describe('fails with an error', function() {
       beforeEach(function() {
         this.actionDeferred.reject({error: true});
-        scope.delete();
+        controller.delete();
         scope.$apply();
       });
 
@@ -90,7 +90,7 @@ describe('ContentType Actions Controller', function () {
     describe('succeeds', function() {
       beforeEach(function() {
         this.actionDeferred.resolve({contentType: true});
-        scope.delete();
+        controller.delete();
         scope.$apply();
       });
 
@@ -109,7 +109,7 @@ describe('ContentType Actions Controller', function () {
   });
 
   it('when cancelling navigates back to list', function() {
-    scope.cancel();
+    controller.cancel();
     sinon.assert.called(scope.$state.go, '^.list');
   });
 
@@ -121,7 +121,7 @@ describe('ContentType Actions Controller', function () {
     describe('fails with an error', function() {
       beforeEach(function() {
         this.actionDeferred.reject({body: {message: ''}});
-        scope.unpublish();
+        controller.unpublish();
         scope.$apply();
       });
 
@@ -145,7 +145,7 @@ describe('ContentType Actions Controller', function () {
         this.unregisterPublishedContentTypeStub = sinon.stub(scope.spaceContext, 'unregisterPublishedContentType');
         scope.updatePublishedContentType = this.updatePublishedContentTypeStub;
         this.refreshContentTypesStub = sinon.stub(scope.spaceContext, 'refreshContentTypes');
-        scope.unpublish();
+        controller.unpublish();
         scope.$apply();
       });
 
@@ -176,7 +176,7 @@ describe('ContentType Actions Controller', function () {
   });
 
 
-  describe('$scope.save()', function() {
+  describe('controller.save()', function() {
     beforeEach(function() {
 
       scope.contentTypeForm = new FormStub();
@@ -199,14 +199,14 @@ describe('ContentType Actions Controller', function () {
     });
 
     pit('resets form to pristine state', function () {
-      return scope.save()
+      return controller.save()
       .then(function () {
         expect(scope.contentTypeForm.$pristine).toBe(true);
       });
     });
 
     pit('saves and publishes content type', function () {
-      return scope.save()
+      return controller.save()
       .then(function () {
         var ct = scope.contentType;
         sinon.assert.calledOnce(ct.save);
@@ -217,14 +217,14 @@ describe('ContentType Actions Controller', function () {
     });
 
     pit('creates new editing interface', function () {
-      return scope.save()
+      return controller.save()
       .then(function () {
         sinon.assert.calledOnce(scope.contentType.newEditingInterface);
       });
     });
 
     pit('saves editing interface', function () {
-      return scope.save()
+      return controller.save()
       .then(function () {
         sinon.assert.calledOnce(scope.editingInterface.save);
       });
@@ -236,7 +236,7 @@ describe('ContentType Actions Controller', function () {
       });
 
       pit('does not save entities', function () {
-        return scope.save()
+        return controller.save()
         .catch(function () {
           sinon.assert.notCalled(scope.editingInterface.save);
           sinon.assert.notCalled(scope.contentType.save);
@@ -244,7 +244,7 @@ describe('ContentType Actions Controller', function () {
       });
 
       pit('shows error message', function () {
-        return scope.save()
+        return controller.save()
         .catch(function () {
           sinon.assert.called(notification.error);
         });
@@ -257,28 +257,28 @@ describe('ContentType Actions Controller', function () {
       });
 
       pit('rejects promise', function () {
-        return scope.save()
+        return controller.save()
         .catch(function (err) {
           expect(err).toBe('err');
         });
       });
 
       pit('does not publish content type', function () {
-        return scope.save()
+        return controller.save()
         .catch(function () {
           sinon.assert.notCalled(scope.contentType.publish);
         });
       });
 
       pit('shows error message', function () {
-        return scope.save()
+        return controller.save()
         .catch(function () {
           sinon.assert.called(notification.error);
         });
       });
 
       pit('does not reset form', function () {
-        return scope.save()
+        return controller.save()
         .catch(function () {
           expect(scope.contentTypeForm.$pristine).toBe(false);
         });
@@ -287,14 +287,14 @@ describe('ContentType Actions Controller', function () {
 
     pit('redirects if the content type is new', function() {
       scope.context.isNew = true;
-      return scope.save()
+      return controller.save()
       .then(function () {
         sinon.assert.called(scope.$state.go, 'spaces.detail.content_types.detail', {contentTypeId: 'typeid'});
       });
     });
   });
 
-  describe('$scope.canSave()', function () {
+  describe('controller.canSave()', function () {
     beforeEach(function () {
       scope.contentTypeForm = {
         $dirty: true,
@@ -306,23 +306,23 @@ describe('ContentType Actions Controller', function () {
     });
 
     it('is false when form is pristine', function () {
-      expect(scope.canSave()).toBe(true);
+      expect(controller.canSave()).toBe(true);
       scope.contentTypeForm.$dirty = false;
-      expect(scope.canSave()).toBe(false);
+      expect(controller.canSave()).toBe(false);
     });
 
     it('is false when content type has no fields', function () {
-      expect(scope.canSave()).toBe(true);
+      expect(controller.canSave()).toBe(true);
       scope.contentType.data.fields = [];
-      expect(scope.canSave()).toBe(false);
+      expect(controller.canSave()).toBe(false);
       scope.contentType.data.fields = null;
-      expect(scope.canSave()).toBe(false);
+      expect(controller.canSave()).toBe(false);
     });
 
     it('is false when all fields are disabled', function () {
-      expect(scope.canSave()).toBe(true);
+      expect(controller.canSave()).toBe(true);
       scope.contentType.data.fields[0].disabled = true;
-      expect(scope.canSave()).toBe(false);
+      expect(controller.canSave()).toBe(false);
     });
   });
 

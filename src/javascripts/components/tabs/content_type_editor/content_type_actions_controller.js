@@ -7,8 +7,10 @@
  * @scope.requires {client.ContentType} contentType
  * @scope.requires                      spaceContext
  */
-angular.module('contentful').
-  controller('ContentTypeActionsController', ['$scope', '$injector', function ContentTypeActionsController($scope, $injector) {
+angular.module('contentful')
+.controller('ContentTypeActionsController', ['$scope', '$injector',
+function ContentTypeActionsController($scope, $injector) {
+  var controller   = this;
   var $controller  = $injector.get('$controller');
   var $rootScope   = $injector.get('$rootScope');
   var analytics    = $injector.get('analytics');
@@ -21,7 +23,6 @@ angular.module('contentful').
     $scope: $scope,
     entityType: 'contentType'
   });
-
 
   var saveError = 'Unable to save Content Type: ';
   var messages = {
@@ -36,7 +37,7 @@ angular.module('contentful').
    * @ngdoc method
    * @name ContentTypeActionsController#delete
    */
-  $scope.delete = function () {
+  controller.delete = function () {
     $scope.contentType.delete()
     .then(function(contentType){
       notification.info('Content type deleted successfully');
@@ -48,7 +49,7 @@ angular.module('contentful').
     });
   };
 
-  $scope.canDelete = function () {
+  controller.canDelete = function () {
     return $scope.context.isNew && entityActionsController.canDelete();
   };
 
@@ -56,7 +57,7 @@ angular.module('contentful').
    * @ngdoc method
    * @name ContentTypeActionsController#scope#cancel
    */
-  $scope.cancel = function () {
+  controller.cancel = function () {
     $scope.$state.go('^.list');
   };
 
@@ -64,7 +65,7 @@ angular.module('contentful').
    * @ngdoc method
    * @name ContentTypeActionsController#scope#save
    */
-  $scope.save = function () {
+  controller.save = function () {
     trackSavedContentType($scope.contentType);
 
     $scope.regulateDisplayField();
@@ -83,7 +84,7 @@ angular.module('contentful').
    * @ngdoc method
    * @name ContentTypeActionsController#canSave
    */
-  $scope.canSave = function () {
+  controller.canSave = function () {
     return $scope.contentTypeForm.$dirty &&
            !allFieldsDisabled($scope.contentType);
   };
@@ -92,13 +93,13 @@ angular.module('contentful').
    * @ngdoc method
    * @name ContentTypeActionsController#scope#unpublish
    */
-  $scope.unpublish = function () {
+  controller.unpublish = function () {
     $scope.contentType.unpublish()
     .then(unpublishSuccessHandler)
     .catch(unpublishErrorHandler);
   };
 
-  $scope.canUnpublish = function () {
+  controller.canUnpublish = function () {
     return entityActionsController.canUnpublish();
   };
 
