@@ -9,12 +9,19 @@
  */
 angular.module('contentful').
   controller('ContentTypeActionsController', ['$scope', '$injector', function ContentTypeActionsController($scope, $injector) {
+  var $controller  = $injector.get('$controller');
   var $rootScope   = $injector.get('$rootScope');
   var analytics    = $injector.get('analytics');
   var logger       = $injector.get('logger');
   var defer        = $injector.get('defer');
   var notification = $injector.get('notification');
-  var $q = $injector.get('$q');
+  var $q           = $injector.get('$q');
+
+  var entityActionsController = $controller('EntityActionsController', {
+    $scope: $scope,
+    entityType: 'contentType'
+  });
+
 
   var saveError = 'Unable to save Content Type: ';
   var messages = {
@@ -39,6 +46,10 @@ angular.module('contentful').
       logger.logServerWarn('Error deleting Content Type', {error: err });
       notification.error('Error deleting Content Type');
     });
+  };
+
+  $scope.canDelete = function () {
+    return $scope.context.isNew && entityActionsController.canDelete();
   };
 
   /**
@@ -85,6 +96,10 @@ angular.module('contentful').
     $scope.contentType.unpublish()
     .then(unpublishSuccessHandler)
     .catch(unpublishErrorHandler);
+  };
+
+  $scope.canUnpublish = function () {
+    return entityActionsController.canUnpublish();
   };
 
   function publishContentType(contentType) {

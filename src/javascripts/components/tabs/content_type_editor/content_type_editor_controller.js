@@ -10,7 +10,6 @@
  * @scope.requires  contentTypeForm
  *
  * @scope.provides  contentType
- * @scope.provides  entityActionsController
  * @scope.provides  hasFields
  * @scope.provides  publishedIds
  * @scope.provides  publishedApiNames
@@ -27,10 +26,7 @@ function ContentTypeEditorController($scope, $injector) {
   var editingInterfaces = $injector.get('editingInterfaces');
   var modalDialog       = $injector.get('modalDialog');
 
-  $scope.entityActionsController = $controller('EntityActionsController', {
-    $scope: $scope,
-    entityType: 'contentType'
-  });
+  $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
   $scope.hints = hints;
 

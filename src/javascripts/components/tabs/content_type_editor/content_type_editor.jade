@@ -22,7 +22,7 @@
 .tab-actions(ng-controller="ContentTypeActionsController")
   .button-set
     button.btn.btn--secondary.deactivate(
-      ng-show="entityActionsController.canUnpublish()"
+      ng-show="canUnpublish()"
       ng-click="unpublish()"
       tooltip="Deactivate this Content Type")
       | Deactivate
@@ -31,7 +31,7 @@
       ng-click="cancel()")
       | Cancel
     button.btn.btn--secondary.delete(
-      ng-show="!context.isNew && entityActionsController.canDelete()"
+      ng-show="canDelete()"
       cf-dropdown-toggle="contentType.delete")
       | Delete
     .delete-confirm(cf-dropdown-menu="contentType.delete" cf-dropdown-position="topcenter")
