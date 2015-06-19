@@ -3,7 +3,7 @@
     cf-icon(name="page-ct")
   h1.section-header__title {{contentType.getName()}}
   .section-header__description {{contentType.data.description}}
-  a.section-header__metadata-action(ng-click="showMetadataDialog()" ng-href="#") Edit
+  button.cfnext-btn-plain(ng-click="showMetadataDialog()") Edit
 
 .section-nav
   button.cfnext-btn-action--with-icon(ng-disabled="cfCanDisabled" ng-click="showNewFieldDialog()")
