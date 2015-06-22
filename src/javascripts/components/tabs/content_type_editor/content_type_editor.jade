@@ -13,7 +13,9 @@
       cf-icon.inverted(name="plus")
       | Add Field
   ul.section-nav__tabs
-    li(role="tab" data-tab="fields") Fields
+    li(role="tab" data-tab="fields")
+      | Fields
+      span(ng-show="contentType.data.fields.length") &nbsp;({{contentType.data.fields.length}})
     li(role="tab" data-tab="json") JSON Preview
 
 
