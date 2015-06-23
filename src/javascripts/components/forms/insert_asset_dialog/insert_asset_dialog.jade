@@ -21,7 +21,10 @@
             .cf-thumbnail(cf-thumbnail file="spaceContext.localizedField(asset, 'data.fields.file')" size="100")
             .asset-title(title="{{spaceContext.assetTitle(asset)}}") {{spaceContext.assetTitle(asset)}}
     .modal-dialog__controls
-      button.cfnext-btn-primary-action.modal-dialog__controls-confirm(ng-click="dialog.confirm(selection.getSelected(assets))")
+      button.cfnext-btn-primary-action.modal-dialog__controls-confirm(
+        ng-click="dialog.confirm(selection.getSelected(assets))" type="button")
         | Insert selected
-      a.modal-dialog__controls-cancel(ng-href="#" ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
+      button.cfnext-btn-plain-block(
+        ng-click="dialog.cancel()" type="button"
+        ng-show="dialog.cancelLabel")
         | {{dialog.cancelLabel}}

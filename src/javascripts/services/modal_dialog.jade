@@ -7,8 +7,9 @@
       p.modal-dialog__plaintext(ng-if="!dialog.html" ng-bind="dialog.message")
       p.modal-dialog__richtext(ng-if="dialog.html" ng-bind-html="dialog.message")
     .modal-dialog__controls
-      button.cfnext-btn-primary-action.modal-dialog__controls-confirm(ng-click="dialog.confirm()")
+      button.cfnext-btn-primary-action(ng-click="dialog.confirm()")
         | {{dialog.confirmLabel}}
-      a.modal-dialog__controls-cancel(ng-href="#" ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
+      button.cfnext-btn-plain-block.push-right(
+        ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
         | {{dialog.cancelLabel}}
 

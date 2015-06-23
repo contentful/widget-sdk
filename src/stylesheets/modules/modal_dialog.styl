@@ -23,7 +23,7 @@ p
         | Confirm
       button.cfnext-btn-secondary-action
         | More
-      button.cfnext-btn-plain-block
+      button.cfnext-btn-plain-block.push-right
         | Cancel
 p
   .modal-dialog
@@ -113,8 +113,7 @@ $modal-dialog-chrome()
     margin-right: -0.2ex
     > * + *
       margin-left: 1rem
-    // The last of two or more elements should be right aligned
-    > * + *:last-child
+    > .push-right
       margin-left: auto
 
   &__plaintext
@@ -140,7 +139,7 @@ Markup:
     .modal-dialog__controls
       button.cfnext-btn-caution
         | Delete
-      button.cfnext-btn-plain-block
+      button.cfnext-btn-plain-block.push-right
         | Cancel
   .modal-dialog.modal-dialog--small
     .modal-dialog__content
@@ -149,7 +148,7 @@ Markup:
     .modal-dialog__controls
       button.cfnext-btn-caution
         | Delete
-      button.cfnext-btn-plain-block
+      button.cfnext-btn-plain-block.push-right
         | Cancel
 
 Styleguide 12.1
