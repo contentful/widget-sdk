@@ -3,7 +3,7 @@
     ng-form="fieldForm"
     cf-ui-tab
     ng-controller="FieldDialogController as fieldController")
-    header.field-dialog__header
+    header.modal-dialog__header.field-dialog__header
       cf-icon(name="{{iconId}}")
       h1
         span.field-dialog__field-name
@@ -11,27 +11,22 @@
         span.field-dialog__field-type
           | {{fieldTypeLabel}}
 
-      .field-dialog__header-controls
-        button.btn.btn--secondary(ng-click="dialog.cancel()") Cancel
-        button.btn.btn--primary(ng-click="dialog.save()"
-                                ng-disabled="!fieldForm.$valid") Save
+      ul.field-dialog__tab-list(role="tablist")
+        li(role="tab" data-tab="settings"
+           ng-attr-aria-invalid="{{tab.invalid}}")
+          | Settings
+          i.fa.fa-exclamation-circle.field-dialog__tab-invalid
+        li(role="tab" data-tab="validations"
+           ng-attr-aria-invalid="{{tab.invalid}}")
+          | Validations
+          i.fa.fa-exclamation-circle.field-dialog__tab-invalid
+        li(role="tab" data-tab="appearance"
+           ng-attr-aria-invalid="{{tab.invalid}}"
+           ng-if="widget")
+          | Appearance
+          i.fa.fa-exclamation-circle.field-dialog__tab-invalid
 
-    ul.field-dialog__tab-list(role="tablist")
-      li(role="tab" data-tab="settings"
-         ng-attr-aria-invalid="{{tab.invalid}}")
-        | Field settings
-        i.fa.fa-exclamation-circle.field-dialog__tab-invalid
-      li(role="tab" data-tab="validations"
-         ng-attr-aria-invalid="{{tab.invalid}}")
-        | Validation rules
-        i.fa.fa-exclamation-circle.field-dialog__tab-invalid
-      li(role="tab" data-tab="appearance"
-         ng-attr-aria-invalid="{{tab.invalid}}"
-         ng-if="widget")
-        | Field appearance
-        i.fa.fa-exclamation-circle.field-dialog__tab-invalid
-
-    div.field-dialog__tab-content
+    div.modal-dialog__content.field-dialog__content
 
       div(role="tabpanel" data-tab="settings")
         include ./field_dialog_settings.jade
@@ -54,3 +49,12 @@
 
       div(role="tabpanel" data-tab="appearance" ng-if="widget")
         include ./field_dialog_appearance.jade
+
+    .modal-dialog__controls
+      button.cfnext-btn-primary-action(
+        type="button" ng-click="dialog.save()"
+        ng-disabled="!fieldForm.$valid")
+        | Save
+      button.cfnext-btn-plain-block(
+        type="button" ng-click="dialog.cancel()")
+        | Cancel

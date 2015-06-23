@@ -6,27 +6,19 @@ $field-dialog__content-padding()
 .field-dialog.modal-dialog
   padding: 0
   width: 60em
-  min-height: 40em
-  margin-bottom: 3em
+  border-radius: 0
+  border: 0
 
 
-.field-dialog__header
-  $field-dialog__content-padding()
-
-  display: flex;
-  align-items: center
+.field-dialog__header.modal-dialog__header
+  padding-top: 0
+  border-bottom: 1px solid $cfnext-light-gray
 
   > h1
-    font-size: 1.3em
     line-height: ($rhythm(3) / 1.2em)
-    flex-grow: 1
-    margin: 0
 
   > cf-icon
     margin-right: 1em
-
-  button
-    margin-left: 1em
 
 .field-dialog__field-type
   margin-left: 0.6em
@@ -34,21 +26,21 @@ $field-dialog__content-padding()
   color: $gray
 
 .field-dialog__tab-list
-  $field-dialog__content-padding()
+  align-self: flex-end
+  margin-left: auto
   $tab-list()
 
   [role=tab]
-    padding-left: 1.5em
-    padding-right: 1em
     .field-dialog__tab-invalid
-      visibility: hidden
+      display: none
+      width: 0
       padding-left: 0.3em
 
     &[aria-invalid=true] .field-dialog__tab-invalid
-      visibility: visible
+      display: inline-block
 
 
-.field-dialog__tab-content
-  $field-dialog__content-padding()
-  padding-top: $rhythm(1)
-  padding-bottom: $rhythm(1)
+.field-dialog__content.modal-dialog__content
+  padding-top: $rhythm(2)
+  padding-bottom: $rhythm(2)
+  min-height: 30em

@@ -1,29 +1,51 @@
+/*
+Tabs
+
+Markup:
+ul.tab-list
+  li(role="tab") First
+  li(role="tab" aria-selected="true") Second
+  li(role="tab") Third
+
+
+Styleguide tabs
+*/
+$tab-marker($color)
+  &:before
+    content: ""
+    position: absolute
+    background: $color
+    bottom: 0
+    left: 0
+    right: 0
+    height: 4px
+
+$tab-space = (10 / 14) * 1rem
 $tab()
-  margin: 0 0.5em 0 0
-  padding: 0 1.3em
-  border-radius: 5px
-  color: white;
+  white-space: nowrap
+  position: relative
+  line-height: 4em
   cursor: pointer
-  transition-duration: 0.2s
-  transition-property: color background-color
+  margin: 0 (4*$tab-space) 0 0;
+  &:last-child
+    margin-right: 0
+  padding: 0 $tab-space
+
+  &:hover
+    $tab-marker($cfnext-light-blue)
+  &[aria-selected=true]
+    font-weight: bold
+    $tab-marker($cfnext-blue)
 
 
 $tab-list()
   display: flex;
-  line-height: $rhythm(2)
-  padding-top: $rhythm(0.5)
-  padding-bottom: $rhythm(0.5)
-  background: $blue-light;
-
   [role=tab]
     $tab()
-    &[aria-selected=true], &:hover
-      $tab-active()
 
+.tab-list
+  $tab-list()
 
-$tab-active()
-  color: $blue-light;
-  background: white
 
 // TODO move this somewhere more fitting
 [aria-hidden=true]
