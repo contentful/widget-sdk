@@ -85,8 +85,10 @@ function ContentTypeActionsController($scope, $injector) {
    * @name ContentTypeActionsController#canSave
    */
   controller.canSave = function () {
-    return $scope.contentTypeForm.$dirty &&
-           !allFieldsDisabled($scope.contentType);
+    var dirty = $scope.contentTypeForm.$dirty ||
+                !$scope.contentType.getPublishedVersion();
+    var valid = !allFieldsDisabled($scope.contentType);
+    return dirty && valid;
   };
 
   /**

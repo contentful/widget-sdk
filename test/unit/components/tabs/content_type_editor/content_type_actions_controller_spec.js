@@ -303,12 +303,20 @@ describe('ContentType Actions Controller', function () {
         { disabled: false },
         { disabled: true }
       ];
+      scope.contentType.data.sys.publishedVersion = 1;
     });
 
     it('is false when form is pristine', function () {
       expect(controller.canSave()).toBe(true);
       scope.contentTypeForm.$dirty = false;
       expect(controller.canSave()).toBe(false);
+    });
+
+    it('is true when form is pristine and Content Type unpublished', function () {
+      expect(controller.canSave()).toBe(true);
+      scope.contentTypeForm.$dirty = false;
+      delete scope.contentType.data.sys.publishedVersion;
+      expect(controller.canSave()).toBe(true);
     });
 
     it('is false when content type has no fields', function () {
