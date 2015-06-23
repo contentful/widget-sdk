@@ -25,6 +25,7 @@ function ContentTypeEditorController($scope, $injector) {
   var hints             = $injector.get('hints');
   var editingInterfaces = $injector.get('editingInterfaces');
   var modalDialog       = $injector.get('modalDialog');
+  var openFieldDialog   = $injector.get('openFieldDialog');
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
@@ -85,6 +86,18 @@ function ContentTypeEditorController($scope, $injector) {
         if (result.cancelled) { return; }
         var fields = $scope.contentType.data.fields;
         _.remove(fields, {id: id});
+    });
+  };
+
+  /**
+   * @ngdoc method
+   * @name ContentTypeEditorController#openFieldDialog
+   * @param {Client.ContentType.Field} field
+   */
+  controller.openFieldDialog = function (field) {
+    return openFieldDialog($scope, field)
+    .then(function () {
+      $scope.contentTypeForm.$setDirty();
     });
   };
 

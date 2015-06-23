@@ -2,20 +2,11 @@
 angular.module('contentful')
 .controller('ContentTypeFieldController', ['$scope', '$injector',
 function ($scope, $injector) {
-  var modalDialog  = $injector.get('modalDialog');
-  var fieldFactory = $injector.get('fieldFactory');
-  var trackField    = $injector.get('analyticsEvents').trackField;
+  var fieldFactory    = $injector.get('fieldFactory');
+  var trackField      = $injector.get('analyticsEvents').trackField;
 
   $scope.openSettingsDialog = function openSettingsDialog() {
-    trackOpenSettingsDialog($scope.field);
-    modalDialog.open({
-      scope: $scope,
-      title: 'Field Settings',
-      template: 'field_dialog',
-      ignoreEnter: true
-    }).promise.then(function () {
-      $scope.contentTypeForm.$setDirty();
-    });
+    return $scope.ctEditorController.openFieldDialog($scope.field);
   };
 
   $scope.toggleDisableField = function () {
@@ -43,17 +34,6 @@ function ($scope, $injector) {
   $scope.$watchCollection('publishedContentType.data.fields', function (fields) {
     $scope.isPublished = !!_.find(fields, {id: $scope.field.id});
   });
-
-
-  /**
-   * @ngdoc analytics-event
-   * @name Clicked Field Settings Button
-   * @param fieldId
-   * @param originatingFieldType
-   */
-  function trackOpenSettingsDialog (field) {
-    trackField('Clicked Field Settings Button', field);
-  }
 
   /**
    * @ngdoc analytics-event

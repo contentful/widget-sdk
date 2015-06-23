@@ -1,6 +1,56 @@
 'use strict';
 
 angular.module('contentful')
+
+/**
+ * @ngdoc service
+ * @name openFieldDialog
+ *
+ * @description
+ * Opens a the editing dialog for the given field and returns a promise
+ * that resolves when the field is updated.
+ *
+ * @param {Scope}                    $scope
+ * @param {Client.ContentType}       $scope.contentType
+ * @param {Client.EditingInterface}  $scope.editingInterface
+ * @param {Client.ContentType.Field} field
+ * @return {Promise<void>}
+ */
+.factory('openFieldDialog', ['$injector', function ($injector) {
+  var analytics = $injector.get('analyticsEvents');
+  var modalDialog  = $injector.get('modalDialog');
+
+  return function openFieldDialog($scope, field) {
+    var scope = $scope.$new();
+    _.extend(scope, {field: field});
+    trackOpenSettingsDialog(field);
+    return modalDialog.open({
+      scope: scope,
+      template: 'field_dialog',
+      ignoreEnter: true
+    }).promise;
+  };
+
+
+  /**
+   * @ngdoc analytics-event
+   * @name Clicked Field Settings Button
+   * @param fieldId
+   * @param originatingFieldType
+   */
+  function trackOpenSettingsDialog (field) {
+    analytics.trackField('Clicked Field Settings Button', field);
+  }
+}])
+
+/**
+ * @ngdoc type
+ * @name FieldDialogController
+ *
+ * @scope.requires {Client.ContentType.Field}  field
+ * @scope.requires {Client.ContentType}        contentType
+ * @scope.requires {Client.EditingInterface}   editingInterface
+ */
 .controller('FieldDialogController',
 ['$scope', '$injector', function ($scope, $injector) {
   var dialog = $scope.dialog;
@@ -8,6 +58,7 @@ angular.module('contentful')
   var validations   = $injector.get('validationDecorator');
   var field         = $injector.get('fieldDecorator');
   var trackField    = $injector.get('analyticsEvents').trackField;
+  var fieldFactory  = $injector.get('fieldFactory');
 
   $scope.decoratedField = field.decorate($scope.field, $scope.contentType);
   $scope.validations = validations.decorateFieldValidations($scope.field);
@@ -16,6 +67,9 @@ angular.module('contentful')
 
   var widgets = $scope.editingInterface.data.widgets;
   $scope.widget = _.clone(_.find(widgets, {fieldId: $scope.field.id}));
+
+  $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
+  $scope.iconId = fieldFactory.getIconId($scope.field)+'-small';
 
   dialog.save = function () {
     $scope.$broadcast('validate');
