@@ -38,17 +38,30 @@ before_deploy:
 - mkdir -p archive/user_interface/git archive/user_interface/pool
 - echo "archive/user_interface/pool/$(ls cf-user-interface*.deb | head -n1)" > archive/user_interface/git/$TRAVIS_COMMIT
 - mv cf-user-interface*.deb archive/user_interface/pool
+- mkdir -p upload/archive/$TRAVIS_COMMIT
+- cp -R build/app upload
+- cp build/*.json build/index.html upload/archive/$TRAVIS_COMMIT
 deploy:
-  provider: s3
-  access_key_id: AKIAJBRHNHEFAA552JLQ
-  secret_access_key:
-    secure: "IUQlzPFoJ1IdgbjTiHMzQBxS47ymlWTWUH40zgBUSaT2jIKEGWavxmYqdBWwfzDBb5nPOYALUX/+ZZ2mMb3mokaQPhn5BS1Pc7pb1xIwlLskRH6eeoN0JP9He3I8eX0PrnOJJU9lw9b2legopSLm7j7KXBz/pgC5wAwBDBH0bwo="
-  bucket: pkg.contentful.org
-  local-dir: archive
-  skip_cleanup: true
-  upload-dir: archive
-  on:
-    all_branches: true
+  - provider: s3
+    access_key_id: AKIAJBRHNHEFAA552JLQ
+    secret_access_key:
+      secure: "IUQlzPFoJ1IdgbjTiHMzQBxS47ymlWTWUH40zgBUSaT2jIKEGWavxmYqdBWwfzDBb5nPOYALUX/+ZZ2mMb3mokaQPhn5BS1Pc7pb1xIwlLskRH6eeoN0JP9He3I8eX0PrnOJJU9lw9b2legopSLm7j7KXBz/pgC5wAwBDBH0bwo="
+    bucket: pkg.contentful.org
+    local-dir: archive
+    skip_cleanup: true
+    upload-dir: archive
+    on:
+      all_branches: true
+  - provider: s3
+    access_key_id: AKIAI35UEY5UVV5IT6BQ
+    secret_access_key:
+      secure: "Azx2DWNKfcFZhQoB1eR6dJ1F0QClJYLohozyzutOhpp86mUuoGXtBPOaiD0kfM8sNFdlhyjagVZo30wMCXBw5t9qSDqEpCOOhZk4kRNnInCh+ha/H14FFbxki7TaWn9RQXmTIoGh5JSmIZ5RDYRJZRyoL4Da11CojildoBD7wJ8="
+    bucket: cf-preview-static-cdnorigin
+    local-dir: upload
+    acl: public_read
+    skip_cleanup: true
+    on:
+      all_branches: true
 after_deploy:
   - bin/trigger-packagebot
 notifications:
