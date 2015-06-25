@@ -1,6 +1,11 @@
-.video-widget-loading(ng-if="!multiVideoEditorController.isVideoWidgetReady()")
+.video-widget-loading(ng-if="multiVideoEditorController.isWidgetStatus('loading')")
   p Initializing video widget
     i.fa.fa-spinner.fa-spin
+
+.video-widget-loading(ng-if="multiVideoEditorController.isWidgetStatus('failed')")
+  p
+    i.fa.fa-exclamation-triangle
+    |  Widget may be not properly configured or failed while initializing.
 
 div(ng-if="multiVideoEditorController.isVideoWidgetReady()")
   cf-video-input(

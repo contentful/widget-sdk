@@ -33,6 +33,7 @@ angular.module('contentful').controller('cfMultiVideoEditorController', ['$attrs
 
   this.customAttrsForPlayer = customAttrsForPlayer;
   this.isVideoWidgetReady   = isVideoWidgetReady;
+  this.isWidgetStatus       = isWidgetStatus;
   this.storeAsset           = storeAsset;
   this.lookupAsset          = lookupAsset;
   this.showErrors           = showErrors;
@@ -45,6 +46,10 @@ angular.module('contentful').controller('cfMultiVideoEditorController', ['$attrs
 
   function isVideoWidgetReady() {
     return providerVideoEditorController.isWidgetReady();
+  }
+
+  function isWidgetStatus(value) {
+    return providerVideoEditorController.isWidgetStatus(value);
   }
 
   function storeAsset(asset) {

@@ -9,7 +9,8 @@ angular.module('contentful')
   var $q = $injector.get('$q');
 
   var CHECKS = {
-    kalturaEditor: kalturaCredentialsCheck
+    kalturaEditor:           kalturaCredentialsCheck,
+    kalturaMultiVideoEditor: kalturaCredentialsCheck
   };
 
   return {
