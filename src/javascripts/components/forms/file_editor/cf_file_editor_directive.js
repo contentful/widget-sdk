@@ -99,7 +99,7 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
             scope.loadingEditor = false;
           }).catch(function (err) {
             notification.error(err.message);
-            logger.logWarn(err.message, {error: err.error});
+            logger.logError(err.message, {error: err.error});
             scope.loadingEditor = false;
             aviary.close();
           });

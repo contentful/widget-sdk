@@ -69,7 +69,7 @@ angular.module('contentful').controller('EntryListActionsController', ['$scope',
   function duplicateCallback(entry, params) {
     var sys = entry.getSys();
     if(!dotty.exists(sys, 'contentType.sys.id')){
-      logger.logWarn('content type does not exist', {
+      logger.logWarn('Content type does not exist', {
         data: {
           entry: entry
         }
