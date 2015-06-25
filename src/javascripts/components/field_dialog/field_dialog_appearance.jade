@@ -7,6 +7,10 @@ div(
       select.cfnext-select-box(ng-model="widget.widgetId"
              ng-options="w.id as w.name for w in availableWidgets")
       i.fa.fa-caret-down.cfnext-select-box-icon
+      p.cfnext-form__hint(ng-show="misconfiguredMap[widget.widgetId]")
+        i.fa.fa-exclamation-triangle
+        |  "{{ misconfiguredMap[widget.widgetId].name }}" widget is not properly configured.
+        | Editor features may not work as expected.
 
   .cfnext-form__field(ng-repeat="option in widgetOptions")
     label {{option.name}}

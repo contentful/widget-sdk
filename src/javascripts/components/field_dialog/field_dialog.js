@@ -112,8 +112,8 @@ angular.module('contentful')
 ['$scope', '$injector', function ($scope, $injector) {
   var widgets          = $injector.get('widgets');
   var getWidgetOptions = widgets.optionsForWidget;
-  var buildMessage = $injector.get('baseErrorMessageBuilder');
-
+  var widgetChecks     = $injector.get('widgetChecks');
+  var buildMessage     = $injector.get('baseErrorMessageBuilder');
 
   $scope.$watch('widget.widgetId', function () {
     if ($scope.widget)
@@ -131,12 +131,14 @@ angular.module('contentful')
 
   $scope.schema = {
     errors: widgets.validate,
-    buildMessage: buildMessage,
+    buildMessage: buildMessage
   };
 
   widgets.forField($scope.field)
+  .then(widgetChecks.markMisconfigured)
   .then(function (widgets) {
     $scope.availableWidgets = widgets;
+    $scope.misconfiguredMap = widgetChecks.getMisconfigured(widgets);
   });
 
 }]);
