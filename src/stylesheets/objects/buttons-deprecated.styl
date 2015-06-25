@@ -1,23 +1,3 @@
-/*
-Old Buttons
-
-Styleguide 4.2
-*/
-
-/*
-A button base class
-
-Markup:
-p
-  button(class="btn") button
-p
-  button(class="btn" disabled) button
-
-:disabled - Disabled state
-
-Styleguide 4.2.1
-*/
-
 $button()
   display: inline-block
   position: relative
@@ -63,19 +43,6 @@ usage of the same property in their iframe container
 input.btn--input
   padding: 0.6em 1em
 
-/*
-Secondary button
-
-Secondary button theme, with hover, active and disabled states
-
-Markup:
-p
-  button(class="btn btn--secondary {{modifier_class}}") secondary
-p
-  button(class="btn btn--secondary {{modifier_class}}" disabled) secondary
-
-Styleguide 4.2.2
-*/
 $button-secondary()
   $colored-button(
     $metallic-gray-dark,
@@ -91,21 +58,6 @@ $button-secondary()
 .btn--secondary
   $button-secondary()
 
-/*
-Tertiary button
-
-Tertiary button theme, with hover, active and disabled states
-
-Markup:
-p
-  button(class="btn btn--tertiary {{modifier_class}}") Tertiary
-p
-  button(class="btn btn--tertiary {{modifier_class}}" disabled) Tertiary
-
-.active - active state
-
-Styleguide 4.2.3
-*/
 $button-tertiary()
   $colored-button(
     $metallic-gray-dark,
@@ -121,17 +73,6 @@ $button-tertiary()
 .btn--tertiary
   $button-tertiary()
 
-/*
-Primary button
-
-Button for primary actions, with hover and active states
-
-Markup:
-p
-  button(class="btn btn--primary {{modifier_class}}") Primary
-
-Styleguide 4.2.4
-*/
 $btn--primary()
   font-weight: bold
   $colored-button(
@@ -148,17 +89,6 @@ $btn--primary()
 .btn--primary
   $btn--primary()
 
-/*
-Danger button
-
-A button for dangerous situations
-
-Markup:
-p
-  button(class="btn btn--danger {{modifier_class}}") Danger
-
-Styleguide 4.2.5
-*/
 .btn--danger,
 li.btn--danger
   font-weight: bold
@@ -173,17 +103,6 @@ li.btn--danger
     $red-mexican
   )
 
-/*
-Confirm button
-
-A button for confirming actions
-
-Markup:
-p
-  button(class="btn btn--confirm {{modifier_class}}") Confirm
-
-Styleguide 4.2.6
-*/
 .btn--confirm
   font-weight: bold
   $colored-button(
@@ -279,4 +198,3 @@ $button-icon()
 .button-icon-right
   &.fa-caret-down
     top: 3px
-
