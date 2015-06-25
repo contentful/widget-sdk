@@ -25,15 +25,7 @@ install:
 before_script:
 - gulp prepare-tests
 script: bin/travis-test && gulp build
-before_deploy:
-- gem install fpm
-- "./Packagefile.local"
-- mkdir -p archive/user_interface/git archive/user_interface/pool
-- echo "archive/user_interface/pool/$(ls cf-user-interface*.deb | head -n1)" > archive/user_interface/git/$TRAVIS_COMMIT
-- mv cf-user-interface*.deb archive/user_interface/pool
-- mkdir -p upload/archive/$TRAVIS_COMMIT
-- cp -R build/app upload
-- cp build/*.json build/index.html upload/archive/$TRAVIS_COMMIT
+before_deploy: bin/travis-prepare-deploy
 deploy:
   - provider: s3
     access_key_id: AKIAJBRHNHEFAA552JLQ
