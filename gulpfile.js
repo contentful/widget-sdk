@@ -529,7 +529,7 @@ gulp.task('rev-index', function () {
 
 gulp.task('revision', ['git-revision'], function(){
   var stream = source('revision.json');
-  stream.write(JSON.stringify({revision: gitRevision}));
+  stream.end(JSON.stringify({revision: gitRevision}));
   return stream.pipe(writeBuild());
 });
 
