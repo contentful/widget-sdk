@@ -268,7 +268,8 @@ gulp.task('styleguide', ['styleguide/stylesheets'], function () {
     '--template', 'styleguide_template',
     '--helpers', 'styleguide_template/helpers',
     '--source', 'src/stylesheets',
-    '--destination', 'public/styleguide'
+    '--destination', 'public/styleguide',
+    '--placeholder', ''
   ]);
 });
 
