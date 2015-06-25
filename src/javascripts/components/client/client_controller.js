@@ -317,8 +317,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     analytics.track('Clicked Profile Button');
   }
 
-  function goToAccount(pathSuffix) {
-    $scope.$state.go('account.pathSuffix', { pathSuffix: pathSuffix });
+  function goToAccount(pathSuffix, options) {
+    $scope.$state.go('account.pathSuffix', { pathSuffix: pathSuffix }, options);
   }
 
   function showCreateSpaceDialog(organizationId) {
