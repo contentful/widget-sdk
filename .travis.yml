@@ -24,7 +24,7 @@ install:
 - bower install
 before_script:
 - gulp prepare-tests
-script: bin/travis-test && gulp build
+script: bin/travis-test && bin/travis-build
 before_deploy: bin/travis-prepare-deploy
 deploy:
   - provider: s3
