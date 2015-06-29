@@ -1,0 +1,26 @@
+.modal-background
+  .modal-dialog(cf-center-on=".modal-background")
+    header.modal-dialog__header
+      h1 You're about to delete <em>{{ data.contentTypeName }}</em> content type.
+      .close-button(ng-click="dialog.cancel()")
+
+    .modal-dialog__content
+      .modal-dialog__richtext
+        p
+          | The applications, websites or other API clients might expect this content
+          | type to exist, so they might break after the content type is gone.
+          | We suggest that you double-check that before deleting the content type.
+        p
+          strong Please keep in mind that you can't restore the content type once it's deleted.
+        p
+          | If you definitely want to delete this content type, please type its name in the field below:
+        input(ng-model="data.typedContentTypeName", class="cfnext-form__input")
+
+    .modal-dialog__controls
+      button.cfnext-btn-caution(
+        ng-click="dialog.confirm()",
+        ng-disabled="data.typedContentTypeName !== data.contentTypeName")
+        | Delete
+      button.cfnext-btn-plain-block(
+        ng-click="dialog.cancel()")
+        | Don't delete

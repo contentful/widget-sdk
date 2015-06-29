@@ -127,8 +127,9 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
   };
 
   return {
-    open: openDialog,
-    confirmDeletion: confirmDeletion
+    open:              openDialog,
+    confirmDeletion:   confirmDeletion,
+    openConfirmDialog: openConfirmDialog
   };
 
   /**
@@ -158,27 +159,50 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
    * @name modalDialog#confirmDeletion
    * @description
    * Shows a dialog that asks the user to click a button to confirm
-   * deletion of an item. Return a promise that is resolved if the user
-   * clicks the “Delete” button and rejected if she cancels the dialog.
+   * deletion of an item. Uses "openConfirmDialog" internally.
    *
    * @param {string} message
    * @param {string?} hint
-   * @return {Promise<void>}
+   * @return {Promise<object>}
    */
   function confirmDeletion (message, hint) {
-    var scope = $rootScope.$new();
-    _.extend(scope, {
+    var scope = _.extend($rootScope.$new(), {
       message: message,
-      hint: hint,
+      hint: hint
     });
-    return openDialog({
+
+    return openConfirmDialog({
       template: 'dialog_confirm_deletion',
       attachTo: '.client',
+      scope: scope
+    });
+  }
+
+  /**
+   * @ngdoc method
+   * @name modalDialog#openConfirmDialog
+   * @description
+   * Generic method for opening confirmation dialogs. It has sensible
+   * defaults (no accidental closing actions) and always returns promise.
+   * This promise will be resolved with object containing two properties:
+   * "confirmed" and "cancelled" when user interacts with dialog.
+   *
+   * @param {object} params
+   * @returns {Promise<object>}
+   */
+  function openConfirmDialog(params) {
+    params = _.defaults(params || {}, {
       ignoreEnter: true,
       ignoreEsc: true,
-      noBackgroundClose: true,
-      scope: scope,
-    }).promise;
+      noBackgroundClose: true
+    });
+
+    return openDialog(params)
+      .promise.then(function() {
+        return { confirmed: true,  cancelled: false };
+      }, function() {
+        return { confirmed: false, cancelled: true  };
+      });
   }
 
   function trackDialog (eventName, dialog) {

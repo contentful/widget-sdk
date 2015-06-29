@@ -18,6 +18,7 @@ function ContentTypeActionsController($scope, $injector) {
   var defer        = $injector.get('defer');
   var notification = $injector.get('notification');
   var $q           = $injector.get('$q');
+  var modalDialog  = $injector.get('modalDialog');
 
   var entityActionsController = $controller('EntityActionsController', {
     $scope: $scope,
@@ -37,20 +38,119 @@ function ContentTypeActionsController($scope, $injector) {
    * @ngdoc method
    * @name ContentTypeActionsController#delete
    */
-  controller.delete = function () {
-    $scope.contentType.delete()
-    .then(function(contentType){
-      notification.info('Content type deleted successfully');
-      $rootScope.$broadcast('entityDeleted', contentType);
-    })
-    .catch(function(err){
-      logger.logServerWarn('Error deleting Content Type', {error: err });
-      notification.error('Error deleting Content Type');
-    });
+  controller.delete = remove;
+
+  /**
+   * @ngdoc method
+   * @name ContentTypeActionsController#unpublish
+   */
+  controller.unpublish = unpublish;
+
+  /**
+   * @ngdoc method
+   * @name ContentTypeActionsController#startDeleteFlow
+   */
+  controller.startDeleteFlow = function startDeleteFlow() {
+    countEntries().then(function(count) {
+      if (count > 0) {
+        forbidRemoval(count);
+        return;
+      }
+
+      confirmRemoval().then(function(result) {
+        if (result.cancelled) { return; }
+        unpublish().then(remove);
+      });
+
+    }, removalErrorHandler);
   };
 
+  function countEntries() {
+    return $scope.spaceContext.space.getEntries({
+      content_type: $scope.contentType.data.sys.id
+    }).then(function(response) {
+      return response.length;
+    });
+  }
+
+  function forbidRemoval(count) {
+    var dialogScope = prepareRemovalDialogScope();
+    dialogScope.data.count = count;
+
+    return modalDialog.openConfirmDialog({
+      template: 'content_type_removal_forbidden_dialog',
+      scope: dialogScope
+    });
+  }
+
+  function confirmRemoval() {
+    return modalDialog.openConfirmDialog({
+      template: 'content_type_removal_confirm_dialog',
+      scope: prepareRemovalDialogScope()
+    });
+  }
+
+  function prepareRemovalDialogScope() {
+    var dialogScope = $rootScope.$new();
+    dialogScope.data = { contentTypeName: $scope.contentType.data.name };
+    return dialogScope;
+  }
+
+  function unpublish() {
+    return $scope.contentType.unpublish()
+      .then(unpublishSuccessHandler, unpublishErrorHandler);
+  }
+
+  function unpublishSuccessHandler(publishedContentType){
+    $scope.updatePublishedContentType(null);
+    $scope.spaceContext.unregisterPublishedContentType(publishedContentType);
+    $scope.spaceContext.refreshContentTypes();
+    trackUnpublishedContentType($scope.contentType);
+    return publishedContentType;
+  }
+
+  function unpublishErrorHandler(err){
+    logger.logServerWarn('Error deactivating Content Type', err);
+    return $q.reject(err);
+  }
+
+  function remove() {
+    return $scope.contentType.delete()
+      .then(removalSuccessHandler, removalErrorHandler);
+  }
+
+  function removalSuccessHandler(contentType){
+    notification.info('Content type deleted successfully');
+    $rootScope.$broadcast('entityDeleted', contentType);
+  }
+
+  function removalErrorHandler(err) {
+    logger.logServerWarn('Error deleting Content Type', err);
+    notification.error('Error deleting Content Type');
+  }
+
+  /**
+   * @ngdoc analytics-event
+   * @name Unpublished Content Type
+   */
+  function trackUnpublishedContentType(contentType) {
+    analytics.track('Unpublished ContentType', {
+      contentTypeId: contentType.getId(),
+      contentTypeName: contentType.getName(),
+      version: contentType.getVersion()
+    });
+  }
+
+  /**
+   * @ngdoc method
+   * @name ContentTypeActionsController#canDelete
+   *
+   * Because we've removed "unpublish" step for content types,
+   * checking if we can *delete* content type w/o server round-trip
+   * has to be reduced to checking only if user can *unpublish* it
+   */
   controller.canDelete = function () {
-    return $scope.context.isNew && entityActionsController.canDelete();
+    return !$scope.context.isNew && entityActionsController.canUnpublish();
   };
 
   /**
@@ -89,20 +189,6 @@ function ContentTypeActionsController($scope, $injector) {
                 !$scope.contentType.getPublishedVersion();
     var valid = !allFieldsDisabled($scope.contentType);
     return dirty && valid;
-  };
-
-  /**
-   * @ngdoc method
-   * @name ContentTypeActionsController#scope#unpublish
-   */
-  controller.unpublish = function () {
-    $scope.contentType.unpublish()
-    .then(unpublishSuccessHandler)
-    .catch(unpublishErrorHandler);
-  };
-
-  controller.canUnpublish = function () {
-    return entityActionsController.canUnpublish();
   };
 
   function publishContentType(contentType) {
@@ -161,34 +247,6 @@ function ContentTypeActionsController($scope, $injector) {
       logger.logServerWarn('Error activating Content Type', err);
     }
     return $q.reject(err);
-  }
-
-  function unpublishSuccessHandler(publishedContentType){
-    $scope.updatePublishedContentType(null);
-    $scope.spaceContext.unregisterPublishedContentType(publishedContentType);
-    $scope.spaceContext.refreshContentTypes();
-
-    notification.info('Content Type deactivated successfully');
-    trackUnpublishedContentType($scope.contentType);
-  }
-
-  function unpublishErrorHandler(err){
-    var reason = dotty.get(err, 'body.message');
-    if(!reason) logger.logServerWarn('Error deactivating Content Type', err);
-    notification.error('Unable to deactivate Content Type: ' + reason, err);
-  }
-
-
-  /**
-   * @ngdoc analytics-event
-   * @name Unpublished Content Type
-   */
-  function trackUnpublishedContentType(contentType) {
-    analytics.track('Unpublished ContentType', {
-      contentTypeId: contentType.getId(),
-      contentTypeName: contentType.getName(),
-      version: contentType.getVersion()
-    });
   }
 
   /**

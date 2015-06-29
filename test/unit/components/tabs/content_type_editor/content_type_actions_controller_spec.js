@@ -129,12 +129,7 @@ describe('ContentType Actions Controller', function () {
         sinon.assert.called(this.actionStub);
       });
 
-      it('shows error notification', function() {
-        sinon.assert.called(notification.error);
-      });
-
       it('captures server error', function() {
-        sinon.assert.called(notification.error);
         sinon.assert.called(logger.logServerWarn);
       });
     });
@@ -151,10 +146,6 @@ describe('ContentType Actions Controller', function () {
 
       it('calls action', function() {
         sinon.assert.called(this.actionStub);
-      });
-
-      it('shows notification', function() {
-        sinon.assert.called(notification.info);
       });
 
       it('tracks analytics event', function() {

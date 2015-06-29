@@ -88,9 +88,10 @@ function ContentTypeEditorController($scope, $injector) {
       'You’re about to delete this field.',
       'Please remember that you won’t be able to delete ' +
       'fields once the content type is published.'
-    ).then(function () {
-      var fields = $scope.contentType.data.fields;
-      _.remove(fields, {id: id});
+    ).then(function(result) {
+        if (result.cancelled) { return; }
+        var fields = $scope.contentType.data.fields;
+        _.remove(fields, {id: id});
     });
   };
 
