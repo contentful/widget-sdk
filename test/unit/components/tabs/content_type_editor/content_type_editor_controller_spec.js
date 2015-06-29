@@ -176,37 +176,6 @@ describe('ContentTypeEditor Controller', function () {
       });
     });
 
-    describe('sets a dirty tab marker', function () {
-      beforeEach(function () {
-        scope.contentType.getPublishedVersion = sinon.stub();
-        scope.contentType.getVersion = sinon.stub();
-        scope.contentTypeForm.$dirty = false;
-      });
-
-      it('unset if version one ahead of published', function () {
-        scope.contentType.getPublishedVersion.returns(1);
-        scope.contentType.getVersion.returns(2);
-        scope.$digest();
-        expect(scope.context.dirty).toBe(false);
-      });
-
-
-      it('set if version is higher than published version', function () {
-        scope.contentType.getPublishedVersion.returns(1);
-        scope.contentType.getVersion.returns(4);
-        scope.$digest();
-        expect(scope.context.dirty).toBe(true);
-      });
-
-      it('set if form is dirty', function () {
-        scope.contentType.getPublishedVersion.returns(1);
-        scope.contentType.getVersion.returns(2);
-        scope.contentTypeForm.$dirty = true;
-        scope.$digest();
-        expect(scope.context.dirty).toBe(true);
-      });
-    });
-
     describe('sets arrays with published content type info', function () {
       beforeEach(function () {
         scope.publishedContentType = {

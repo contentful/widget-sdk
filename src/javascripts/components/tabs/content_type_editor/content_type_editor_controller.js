@@ -44,26 +44,19 @@ function ContentTypeEditorController($scope, $injector) {
   $scope.$watch('contentType',                   loadContentType);
   $scope.$watch('contentType.data.fields',       checkForDirtyForm, true);
   $scope.$watch('contentType.data.displayField', checkForDirtyForm);
-
-  $scope.$watch('contentTypeForm.$dirty', function (modified) {
-    reloadPublishedContentType(modified);
-    $scope.context.dirty = modified;
-  });
+  $scope.$watch('contentTypeForm.$dirty',        reloadPublishedContentType);
+  $scope.$watch('contentTypeForm.$dirty',        setDirtyState);
+  $scope.$watch('context.isNew',                 setDirtyState);
 
   $scope.$watch('contentType.data.fields.length', function(length, old) {
     $scope.hasFields = length > 0;
     assureTitleField(length-old > 0 ? 'add' : 'delete');
+    setDirtyState();
   });
 
   $scope.$watch('publishedContentType.data.fields', function (fields, old, scope) {
     scope.publishedIds = _.pluck(fields, 'id');
     scope.publishedApiNames = _.pluck(fields, 'apiName');
-  });
-
-  $scope.$watch(function contentTypeModifiedWatcher() {
-    return contentTypeIsDirty() || $scope.contentTypeForm.$dirty;
-  }, function (modified, old, scope) {
-    if (modified !== undefined) scope.context.dirty = modified;
   });
 
   $scope.$on('entityDeleted', handleEntityDeleted);
@@ -101,14 +94,14 @@ function ContentTypeEditorController($scope, $injector) {
     loadPublishedContentType();
   }
 
-  function reloadPublishedContentType(dirty){
-    if (dirty){
+  function reloadPublishedContentType(){
+    if ($scope.contentTypeForm.$dirty){
       loadPublishedContentType();
     }
   }
 
   function checkForDirtyForm(newVal, oldVal) {
-    if(newVal !== oldVal) {
+    if (newVal !== oldVal) {
       $scope.contentTypeForm.$setDirty();
     }
   }
@@ -121,8 +114,12 @@ function ContentTypeEditorController($scope, $injector) {
     });
   }
 
-  function contentTypeIsDirty() {
-    return $scope.contentType && $scope.contentType.getVersion() > $scope.contentType.getPublishedVersion() + 1;
+  function setDirtyState() {
+    var modified = $scope.contentTypeForm.$dirty;
+    if (modified === true && $scope.context.isNew && $scope.contentType.data.fields.length < 1) {
+      modified = false;
+    }
+    $scope.context.dirty = !!modified;
   }
 
   function handleEntityDeleted(event, contentType) {
