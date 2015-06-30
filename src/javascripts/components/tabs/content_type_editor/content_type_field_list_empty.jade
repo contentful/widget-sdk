@@ -1,4 +1,4 @@
-ul
+ul.ct-fields--dummy
   li.ct-field
     .ct-field__drag-handle
     .ct-field__name
@@ -19,8 +19,15 @@ ul
     .ct-field__drag-handle
     .ct-field__name
       | Field 5
-.advice
+.ct-no-fields-advice.advice
   .advice__frame
-    header.advice__title This Content Type has no fields yet!
+    header
+      h1.advice__title
+        | It’s time to add some fields
+      div.advice__sub-title
+        | Click that blue button on top left
+
     p.advice__description
-      | The fields you add will appear here. You can rearrange the order of fields by dragging them up or down.
+      | The field defines what the type of content which can be put there <br>
+      | For instance, text field would accept titles and descriptions, whereas
+      | media field is best used for images and videos

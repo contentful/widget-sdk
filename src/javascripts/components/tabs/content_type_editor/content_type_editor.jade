@@ -26,9 +26,9 @@
       cf-content-type-preview.u-bce
 
     div(role="tabpanel" data-tab="fields")
-      .content-type-fields(ng-show="hasFields")
+      .content-type-fields(ng-if="hasFields")
         include ./content_type_field_list
-      .content-type-no-fields(ng-hide="hasFields")
+      .content-type-fields(ng-if="!hasFields")
         include ./content_type_field_list_empty
 
 .tab-actions

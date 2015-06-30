@@ -2,49 +2,13 @@ $content-type-field-empty-style()
     border: 1px dashed $cfnext-light-gray
     background-color: lighten($cfnext-light-gray, 80%)
 
-.content-type-fields,
-.content-type-no-fields
+.content-type-fields
+  position: relative
   max-width: 50em
   margin-top: $rhythm(1)
+
   .sortable-placeholder
     $content-type-field-empty-style()
-
-.content-type-no-fields
-  position: relative
-  .ct-field
-    $content-type-field-empty-style()
-    box-shadow: none
-  .ct-field:nth-child(0n+1)
-    opacity: 0.5
-  .ct-field:nth-child(0n+2)
-    opacity: 0.4
-  .ct-field:nth-child(0n+3)
-    opacity: 0.3
-  .ct-field:nth-child(0n+4)
-    opacity: 0.2
-  .ct-field:nth-child(0n+5)
-    opacity: 0.1
-  .advice
-    $stretch(0, 0, 0, 0)
-    display: flex
-    align-items: center
-    justify-content: center
-  .advice__frame
-    width: 32em
-    height: 9em
-    padding-top: $rhythm(1)
-    $content-type-field-empty-style()
-    border-style: solid
-    border-radius: 1px
-    display: flex
-    justify-content: center
-    flex-direction: column
-  .advice__title
-    font-size: 1.2em
-  .advice__description
-    font-size: 1em
-    margin-bottom: $rhythm(0.3)
-    color: $cfnext-gray
 
 
 $ct__field-padding = 0.8em
@@ -115,11 +79,43 @@ $ct__field-padding = 0.8em
       left: 95px
       width: 175px
 
-.content-type-no-fields
+
+.ct-fields--dummy
   .ct-field
-    &__name
-      font-weight: normal
-      color: $cfnext-gray
+    $content-type-field-empty-style()
+    box-shadow: none
+    color: $cfnext-gray
     &__drag-handle
       background-color: transparentify($cfnext-gray, 0.1)
       border: 1px dashed transparentify($cfnext-gray, 0.1)
+
+  .ct-field:nth-child(0n+1)
+    opacity: 0.5
+  .ct-field:nth-child(0n+2)
+    opacity: 0.4
+  .ct-field:nth-child(0n+3)
+    opacity: 0.3
+  .ct-field:nth-child(0n+4)
+    opacity: 0.2
+  .ct-field:nth-child(0n+5)
+    opacity: 0.1
+
+
+.ct-no-fields-advice.advice
+  .advice__frame
+    width: 80ex
+    padding: $rhythm(1) 1.5em
+    $content-type-field-empty-style()
+    border-style: solid
+    border-radius: 3px
+    text-align: center
+  .advice__title
+    font-size: 1.33em
+    margin: $rhythm(0.33) 0 $rhythm(0.33)
+  .advice__sub-title
+    font-size: 1.1em
+    margin-bottom: $rhythm(1)
+  .advice__description
+    font-size: 1.1em
+    line-height: 1.5
+    margin: 0
