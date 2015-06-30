@@ -94,7 +94,7 @@ angular.module('contentful').service('tokenStore', ['$injector', function($injec
     if(space)
       return space;
     else
-      return $q.reject(new Error('Space not found'));
+      return $q.reject(new Error('Space not found in token'));
   }
 
   function getSpaceFromList(id, existingSpaces) {
