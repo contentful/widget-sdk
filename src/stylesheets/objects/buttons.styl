@@ -170,26 +170,36 @@ Styleguide 4.4
 
 
 /**
- * Plain Action Button
- *
- * Use inline
- *
- * Markup:
- * p
- *   | Click here
- *   button.cfnext-btn-plain Action Button
- *   | More text
- * p
- *   button.cfnext-btn-primary-action
- *     | One
- *   button.cfnext-btn-plain-block
- *     | Two
- *   button.cfnext-btn-action
- *     | Three
- *
- * Styleguide 4.5
- */
- $cfnext-btn-plain()
+Plain Action Button
+
+Markup:
+button.cfnext-btn-primary-action
+  | One
+button.cfnext-btn-plain-block
+  | Two
+button.cfnext-btn-action
+  | Three
+
+Styleguide 4.5
+*/
+.cfnext-btn-plain-block
+  background: none
+  $cfnext-button-layout()
+  color: $cfnext-blue;
+  outline: 0
+
+/**
+Inline button
+
+Markup:
+p
+  | Click here
+  button.cfnext-btn-inline Action Button
+  | More text
+
+Styleguide 4.6
+*/
+$cfnext-btn-inline()
   font-size: inherit
   display: inline-block;
   vertical-align: baseline
@@ -200,13 +210,8 @@ Styleguide 4.4
   cursor: pointer
   color: $cfnext-blue
 
-.cfnext-btn-plain
-  $cfnext-btn-plain()
-
-.cfnext-btn-plain-block
-  background: none
-  $cfnext-button-layout()
-  color: $cfnext-blue;
+.cfnext-btn-inline
+  $cfnext-btn-inline()
 
 /*
 Buttons with icons
@@ -223,7 +228,7 @@ p
       img(src="/app/svg/new-ct.svg")
     | Action
 
-Styleguide 4.6
+Styleguide 4.7
 */
 .cfnext-btn-action--with-icon
 .cfnext-btn-action--large-popout-icon

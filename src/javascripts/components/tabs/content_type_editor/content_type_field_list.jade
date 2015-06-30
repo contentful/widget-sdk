@@ -17,11 +17,11 @@ ul(cf-ui-sortable ng-model="contentType.data.fields")
       | {{fieldTypeLabel}}, disabled
     .ct-field__is-title(ng-if="fieldIsTitle")
       | Entry title
-    a.ct-field__settings.cfnext-btn-plain(ng-click="openSettingsDialog()" aria-label="Settings")
+    button.ct-field__settings.cfnext-btn-inline(ng-click="openSettingsDialog()" aria-label="Settings")
       | Settings
       cf-ui-hint(ng-if="index===0" name="ct-field-settings")
         | Change field settings, add validations, default values or define the appearance of this field
-    button.ct-field__disable(ng-if="isPublished" ng-click="toggleDisableField()")
+    button.ct-field__disable.cfnext-btn-inline(ng-if="isPublished" ng-click="toggleDisableField()")
       | {{ field.disabled ? 'Enable' : 'Disable' }}
-    button.ct-field__disable(ng-if="!isPublished" ng-click="deleteField()")
+    button.ct-field__disable.cfnext-btn-inline(ng-if="!isPublished" ng-click="deleteField()")
       | Delete
