@@ -10,11 +10,13 @@ ul(cf-ui-sortable ng-model="contentType.data.fields")
     .ct-field__icon
       cf-icon(ng-if="iconId" name="{{iconId}}")
     .ct-field__name
-      |{{field | displayedFieldName}}
-    .ct-field__type
+      | {{field | displayedFieldName}}
+    .ct-field__type(ng-if="!field.disabled")
       | {{fieldTypeLabel}}
+    .ct-field__type(ng-if="field.disabled")
+      | {{fieldTypeLabel}}, disabled
     .ct-field__is-title(ng-if="fieldIsTitle")
-      | Title
+      | Entry title
     a.ct-field__settings.cfnext-btn-plain(ng-click="openSettingsDialog()" aria-label="Settings")
       | Settings
       cf-ui-hint(ng-if="index===0" name="ct-field-settings")

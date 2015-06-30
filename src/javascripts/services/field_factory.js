@@ -28,6 +28,7 @@ angular.module('contentful')
       name: 'Symbol',
       hasListVariant: true,
       label: 'Short Text',
+      listLabel: 'Short Text, list',
       defaultWidget: {single: 'singleLine', list: 'singleLine'}
     },
     {
@@ -61,6 +62,7 @@ angular.module('contentful')
       isLink: true,
       hasListVariant: true,
       label: 'Media',
+      listLabel: 'Media, many files',
       defaultWidget: {single: 'assetLinkEditor', list: 'assetLinksEditor'},
     },
     {
@@ -70,7 +72,6 @@ angular.module('contentful')
     {
       name: 'Object',
       label: 'JSON Object',
-      description: 'External record, template values',
       defaultWidget: {single: 'objectEditor'},
       icon: 'json',
     },
@@ -79,7 +80,8 @@ angular.module('contentful')
       isLink: true,
       hasListVariant: true,
       label: 'Reference',
-      defaultWidget: {single: 'entryLinkEditor', list: 'entryLinksEditor'}
+      listLabel: 'References, many',
+      defaultWidget: {single: 'entryLinkEditor', list: 'entryLinksEditor'},
     }
   ], function (descriptor) {
     _.defaults(descriptor, {
@@ -161,11 +163,10 @@ angular.module('contentful')
    */
   function getFieldLabel (field) {
     var descriptor = getFieldDescriptor(field);
-    var label = descriptor.name;
     if (descriptor.isList)
-      label += ' List';
-
-    return label;
+      return descriptor.listLabel;
+    else
+      return descriptor.label;
   }
 
   /**
@@ -220,6 +221,10 @@ angular.module('contentful')
     return info;
   }
 
+  /**
+   * @param {API.ContentType.Field} field
+   * @return {FieldDescriptor}
+   */
   function getFieldDescriptor (field) {
     var type = field.type;
     var linkType = field.linkType;

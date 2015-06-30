@@ -6,12 +6,26 @@ describe('field factory', function () {
     this.fieldFactory = this.$inject('fieldFactory');
   });
 
-  describe('descriptors', function () {
+  describe('type descriptor', function () {
+    var types;
 
-    it('has only one descriptor per type', function () {
-      var types = _.map(this.fieldFactory.all, 'name');
+    beforeEach(function () {
+      types = this.fieldFactory.types;
+    });
+
+    it('is unique per type', function () {
+      var types = _.map(types, 'name');
       var uniqueTypes = _.uniq(types);
       expect(types).toEqual(uniqueTypes);
+    });
+
+    it('has a label', function () {
+      expect(_.all(types, 'label')).toBe(true);
+    });
+
+    it('has list label if there is a list variatn', function () {
+      var listTypes = _.filter(types, 'hasListVariant');
+      expect(_.all(listTypes, 'listLabel')).toBe(true);
     });
 
   });
