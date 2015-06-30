@@ -73,18 +73,24 @@
 
 .advice(ng-show="contentTypes.length === 0")
   .advice__frame
-    header.advice__title {{spaceContext.space.data.name}} doesn't have any Content Type defined.
-    p.advice__description Content Types make up a repository for your content.
-    p.advice__description Think of Content Types as tables in a Database.
-    button.cfnext-btn-action--large-popout-icon.advice__action(type="button"
+    header.advice__title
+      | <em>{{spaceContext.space.data.name}}</em> has no content types yet
+    button.cfnext-btn-action--large-popout-icon.ct-empty-list__action(type="button"
         ng-click="entityCreationController.newContentType()"
         ng-hide="permissionController.get('createContentType', 'shouldHide')"
         ng-disabled="permissionController.get('createContentType', 'shouldDisable')"
         cf-when-disabled="permissionController.entityActions.createContentType")
       cf-icon(name="new-ct")
-      | Add new Content Type
-    p.advice__description--smaller
-      | Psst, you can you use some of the predefined templates when you create a new space.
-    a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
-      | Visit the Knowledge Base Pages
-      i.fa.fa-question-circle
+      | Create content type
+
+    p.ct-empty-list__description
+      | This is the first step in organizing your content <br>
+      | The content type will define the structure of <em>entries</em>
+      | where your content is actually stored
+
+    p.ct-empty-list__additional
+      | If you are not sure what content types and entries are, <br>
+      | consider reading the 
+      a(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
+        | introduction to Contentful content model
+      |.
