@@ -21,100 +21,86 @@ $button-reset()
   background: none
   cursor: pointer
 
+$cfnext-button($color, $shade, $border = false)
+  $cfnext-button-layout()
+  $cfnext-button-colors($color, $shade, $border)
 
-// This function generates the padding for the pressed state of a button
-$pressed-vert-padding($value, $modifiers = {})
-  $top = 0.1
-  $bottom = 0.1
-  padding-top: $value + ($modifiers.top || $top)
-  padding-bottom: $value - ($modifiers.bottom || $bottom)
-
-
-// vertical padding for regular button
-$cfnext-button-vert-padding = 0.6rem
-
-$cfnext-button($color = false, $border-color = false)
-  position: relative
-  padding: $cfnext-button-vert-padding 1.5rem
+$cfnext-button-layout()
+  padding: 0.6rem 1.5rem
   cursor: pointer
   text-align: center
   font-size: 0.9rem
   font-weight: bold
   white-space: nowrap
-  color: white
-  background-color: $color
+  border: none
   border-radius: 2px
-  border-width: 1px
-  border-style: solid
-  if $border-color
-    border-color: $border-color
-  else
-    border-color: $color
-  &:disabled,
-  &[aria-disabled=true],
-  &[disabled]
+
+$cfnext-button-colors($color, $shade)
+  color: white
+  background: $color
+
+  &, &:hover, &:active
+    outline: 0
+
+  &:hover, &:active, &.active
+    background: linear-gradient(to bottom, $color, $shade)
+
+  &:hover
+    box-shadow: 0 0 2px hsla(0, 0%, 0%, 0.1)
+  &:active, &.active
+    box-shadow: inset 0 1px 2px 1px hsla(0, 0%, 0%, 0.18)
+
+  &:disabled, &[aria-disabled=true]
     opacity: 0.4
-  &:active
-    $pressed-vert-padding($cfnext-button-vert-padding)
+    background: $color
+    box-shadow: none
+
+$cfnext-button--with-icon()
   cf-icon
     display: block
+    height: 2px
     float: left
-    position: relative
     margin-right: 0.5em
     margin-top: -1px
 
-$cfnext-button--with-icon()
-  padding-bottom: 0.4rem
-  &:active
-    $pressed-vert-padding($cfnext-button-vert-padding, {bottom: 0.3})
-
 $cfnext-button-large()
-  $cfnext-button-large-vert-padding = 1rem
   font-size: 1.15rem
-  padding: $cfnext-button-large-vert-padding 2.5rem
-  &:active
-    $pressed-vert-padding($cfnext-button-large-vert-padding, {bottom: 0.05})
+  padding: 1rem 2.5rem
 
 $cfnext-button--large-popout-icon()
   $cfnext-button-large()
-  padding-left: 4.5rem
+  padding-left: 5.0rem
   cf-icon
     position: absolute
-    left: 0.5rem
+    left: 1.0rem
     top: -0.5rem
 
 /*
-Action Button
+Action/Secondary Button
 
 This button should be used for actions which are important, but not necessarily
 the most important action in the current view
 
 Markup:
-p
-  button(class="cfnext-btn-action{{modifier_class}}") Action
-p
-  button(class="cfnext-btn-action{{modifier_class}}" disabled) Action
+button.cfnext-btn-action{{modifier_class}} Action
+button.cfnext-btn-action{{modifier_class}}.pseudo-class-hover Action
+button.cfnext-btn-action{{modifier_class}}.active Action
+button.cfnext-btn-action{{modifier_class}}(disabled) Action
 
---with-icon - With an icon on the left of the text
 --large - Large variation
---large-popout-icon - Large variation with an popping out of the button on the left side
 
 Styleguide 4.1
 */
-.cfnext-btn-action
-  $cfnext-button($cfnext-blue)
 
-.cfnext-btn-action--with-icon
-  $cfnext-button($cfnext-blue)
-  $cfnext-button--with-icon()
+$btn-action()
+  $cfnext-button($cfnext-blue, hsl(200, 76%, 46%))
+
+.cfnext-btn-action,
+.cfnext-btn-action--large
+  $btn-action()
 
 .cfnext-btn-action--large
-  $cfnext-button($cfnext-blue)
   $cfnext-button-large()
-
-.cfnext-btn-action--large-popout-icon
-  $cfnext-button($cfnext-blue)
-  $cfnext-button--large-popout-icon()
 
 /*
 Primary Action Button
@@ -122,20 +108,20 @@ Primary Action Button
 Used for the most important action in a given context
 
 Markup:
-p
-  button(class="cfnext-btn-primary-action{{modifier_class}}") Action
-p
-  button(class="cfnext-btn-primary-action{{modifier_class}}" disabled) Action
+button.cfnext-btn-primary-action{{modifier_class}} Action
+button.cfnext-btn-primary-action{{modifier_class}}.pseudo-class-hover Action
+button.cfnext-btn-primary-action{{modifier_class}}.active Action
+button.cfnext-btn-primary-action{{modifier_class}}(disabled) Action
 
 --large - Large variation
 
 Styleguide 4.2
 */
-.cfnext-btn-primary-action
-  $cfnext-button($cfnext-green)
+.cfnext-btn-primary-action,
+.cfnext-btn-primary-action--large
+  $cfnext-button($cfnext-green, hsl(160, 86%, 38%))
 
 .cfnext-btn-primary-action--large
-  $cfnext-button($cfnext-green)
   $cfnext-button-large()
 
 /*
@@ -145,37 +131,42 @@ Used for actions that should complement primary actions or visually less
 important actions
 
 Markup:
-p
-  button(class="cfnext-btn-secondary-action{{modifier_class}}") Action
-p
-  button(class="cfnext-btn-secondary-action{{modifier_class}}" disabled) Action
+button.cfnext-btn-secondary-action{{modifier_class}} Action
+button.cfnext-btn-secondary-action{{modifier_class}}.pseudo-class-hover Action
+button.cfnext-btn-secondary-action{{modifier_class}}.active Action
+button.cfnext-btn-secondary-action{{modifier_class}}(disabled) Action
 
 --large - Large variation
 
 Styleguide 4.3
 */
-.cfnext-btn-secondary-action
-  $cfnext-button(white, $border-color: $cfnext-blue)
+.cfnext-btn-secondary-action,
+.cfnext-btn-secondary-action--large
+  $cfnext-button(white, hsla(0, 0%, 94%, 1))
   color: $cfnext-blue
+
+  a&:hover, a&:link, a&:visited
+    color: $cfnext-blue
+
+  &, &:hover, &:active
+    border: 1px solid $cfnext-blue
 
 .cfnext-btn-secondary-action--large
-  $cfnext-button(white, $border-color: $cfnext-blue)
   $cfnext-button-large()
-  color: $cfnext-blue
 
 /**
- * Caution button
- *
- * Markup:
- * button.cfnext-btn-caution
- *   | Be Careful!
- * button.cfnext-btn-caution(disabled)
- *   | Be Careful!
- *
- * Styleguide 4.4
- */
+Caution button
+
+Markup:
+button.cfnext-btn-caution Be Careful!
+button.cfnext-btn-caution.pseudo-class-hover Be Careful!
+button.cfnext-btn-caution.active Be Careful!
+button.cfnext-btn-caution(disabled) Be Careful!
+
+Styleguide 4.4
+*/
 .cfnext-btn-caution
-  $cfnext-button($color: $cfnext-red)
+  $cfnext-button($cfnext-red, hsl(353, 61%, 45%))
 
 
 /**
@@ -186,9 +177,8 @@ Styleguide 4.3
  * Markup:
  * p
  *   | Click here
- *   button.cfnext-btn-plain Action Button 
+ *   button.cfnext-btn-plain Action Button
  *   | More text
- *   a.cfnext-btn-plain Action link 
  * p
  *   button.cfnext-btn-primary-action
  *     | One
@@ -212,11 +202,36 @@ Styleguide 4.3
 
 .cfnext-btn-plain
   $cfnext-btn-plain()
-  a&
-    padding: 0
-  a&:hover
-    color: $cfnext-blue
 
 .cfnext-btn-plain-block
-  $cfnext-button(transparent)
+  background: none
+  $cfnext-button-layout()
   color: $cfnext-blue;
+
+/*
+Buttons with icons
+
+Markup:
+p
+  button.cfnext-btn-action--with-icon
+    cf-icon
+      img(src="/app/svg/plus.svg")
+    | Action
+p
+  button.cfnext-btn-action--large-popout-icon
+    cf-icon
+      img(src="/app/svg/new-ct.svg")
+    | Action
+
+Styleguide 4.6
+*/
+.cfnext-btn-action--with-icon
+.cfnext-btn-action--large-popout-icon
+  $btn-action()
+
+.cfnext-btn-action--with-icon
+  $cfnext-button--with-icon()
+
+.cfnext-btn-action--large-popout-icon
+  position: relative
+  $cfnext-button--large-popout-icon()

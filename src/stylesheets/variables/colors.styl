@@ -13,6 +13,8 @@ Colors used on the redesign.
 Use http://chir.ag/projects/name-that-color/ or http://www.color-blindness.com/color-name-hue/
 to find color names.
 
+Define new colors with the `hsl()` syntax.
+
 Markup:
 div(class="colors {{modifier_class}}") hello, text
 
@@ -37,7 +39,7 @@ $cfnext-dark-blue     = #21304A
 .colors__cfnext-dark-blue
   background-color: $cfnext-dark-blue
 
-$cfnext-blue          = #28A8E9
+$cfnext-blue = hsl(200, 81%, 54%) // #28A8E9
 .colors__cfnext-blue
   background-color: $cfnext-blue
 
@@ -49,7 +51,7 @@ $cfnext-lightest-blue = #E8F7FF
 .colors__cfnext-lightest-blue
   background-color: $cfnext-lightest-blue
 
-$cfnext-green         = #16C98D
+$cfnext-green = hsl(160, 80%, 44%)  // #16C98D
 .colors__cfnext-green
   background-color: $cfnext-green
 
@@ -84,5 +86,3 @@ $cfnext-yellow        = #F6E8B0
 $cfnext-white         = #F6F8FA
 .colors__cfnext-white
   background-color: $cfnext-white
-
-
