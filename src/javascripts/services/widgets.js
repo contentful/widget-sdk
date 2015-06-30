@@ -26,25 +26,6 @@ angular.module('contentful')
       type: 'Text',
       description: 'This help text will show up below the field'
     },
-    //{
-      //param: 'numberTest',
-      //name: 'Number Test',
-      //type: 'Number',
-      //description: 'This is a number test'
-    //},
-    //{
-      //param: 'booleanTest',
-      //name: 'Boolean Test',
-      //type: 'Boolean',
-      //description: 'This is a boolean test'
-    //},
-    //{
-      //param: 'predefinedTest',
-      //name: 'Predefined Test',
-      //type: 'Predefined',
-      //description: 'This is a predefined Test',
-      //values: [1,2,3, true, false]
-    //},
   ];
 
   /**
@@ -117,6 +98,22 @@ angular.module('contentful')
     }
   }
 
+  /**
+   * This method determines the default widget for a given field.
+   * Default widgets are also specified in the fieldFactory.
+   * (Documentation there should be changed if this method ever stops
+   * being used)
+   *
+   * It accounts for legacy behavior for when there were no user selectable
+   * widgets for a given field and some fields would have different widgets
+   * in different occasions, specifically:
+   * - Text field: defaults to markdown, unless it is a title field.
+   *   where it gets switched to singleLine
+   * - Any field that allows for predefined values: gets changed to a dropdown
+   *   in the presence of the 'in' validation
+   * It also returns a default widget for the File type which actually
+   * doesn't exist in the backend and is only used in the asset editor
+  */
   function defaultWidgetId(field, contentType) {
     var fieldType = detectFieldType(field);
     var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
@@ -133,6 +130,7 @@ angular.module('contentful')
     if (fieldType === 'Asset') return 'assetLinkEditor';
     if (fieldType === 'Entries') return 'entryLinksEditor';
     if (fieldType === 'Assets' ) return 'assetLinksEditor';
+    // File is a special field type, only used in the Asset Editor and not on the backend.
     if (fieldType === 'File' ) return 'fileEditor';
 
     return _.findKey(WIDGETS, function (widget) {

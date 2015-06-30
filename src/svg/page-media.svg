@@ -5,19 +5,21 @@
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="page-media" sketch:type="MSLayerGroup">
-            <rect id="Rectangle-6" stroke="#21304A" stroke-width="2" fill="#21304A" sketch:type="MSShapeGroup" x="8" y="0.400435897" width="31.234" height="30.4331282" rx="2"></rect>
-            <rect id="Rectangle-8" fill="#FFFFFF" sketch:type="MSShapeGroup" x="12" y="4.21056504" width="3" height="3" rx="1"></rect>
-            <rect id="Rectangle-11" fill="#FFFFFF" sketch:type="MSShapeGroup" x="33" y="4.21056504" width="3" height="3" rx="1"></rect>
-            <rect id="Rectangle-19" fill="#FFFFFF" sketch:type="MSShapeGroup" x="33" y="10.210565" width="3" height="3" rx="1"></rect>
-            <rect id="Rectangle-20" fill="#FFFFFF" sketch:type="MSShapeGroup" x="33" y="16.210565" width="3" height="3" rx="1"></rect>
-            <rect id="Rectangle-21" fill="#FFFFFF" sketch:type="MSShapeGroup" x="33" y="22.210565" width="3" height="3" rx="1"></rect>
-            <rect id="Rectangle-61" fill="#A8E2FF" sketch:type="MSShapeGroup" x="1" y="10" width="29" height="22"></rect>
-            <path d="M1,28 L11,20 L18,30 L23,25 L30,31 L30,38 L29,39 L2,39 L1,38 L1,28 Z" id="Line-19" fill="#16C98D" sketch:type="MSShapeGroup"></path>
-            <rect id="Rectangle-3" stroke="#21304A" stroke-width="2" sketch:type="MSShapeGroup" x="0" y="9.4004359" width="31.234" height="30.4331282" rx="2"></rect>
-            <path d="M1,28.145 L11,20.145 L24,38.145" id="Line" stroke="#21304A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" sketch:type="MSShapeGroup"></path>
-            <path d="M19,29.145 L23,25.145 L30,31.395" id="Line-13" stroke="#21304A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" sketch:type="MSShapeGroup"></path>
-            <circle id="Oval-2" stroke="#21304A" stroke-width="2" fill="#F8E81C" sketch:type="MSShapeGroup" cx="20.5" cy="17.645" r="2.5"></circle>
+        <g id="contentful_icons" sketch:type="MSArtboardGroup" transform="translate(-101.000000, -51.000000)">
+            <g id="page-media" sketch:type="MSLayerGroup" transform="translate(101.000000, 51.000000)">
+                <rect id="Rectangle-6" stroke="#21304A" stroke-width="2" fill="#21304A" sketch:type="MSShapeGroup" x="8" y="0.400435897" width="31.234" height="30.4331282" rx="2"></rect>
+                <rect id="Rectangle-8" fill="#FFFFFF" sketch:type="MSShapeGroup" x="12" y="4.21056504" width="3" height="3" rx="1"></rect>
+                <rect id="Rectangle-11" fill="#FFFFFF" sketch:type="MSShapeGroup" x="33" y="4.21056504" width="3" height="3" rx="1"></rect>
+                <rect id="Rectangle-19" fill="#FFFFFF" sketch:type="MSShapeGroup" x="33" y="10.210565" width="3" height="3" rx="1"></rect>
+                <rect id="Rectangle-20" fill="#FFFFFF" sketch:type="MSShapeGroup" x="33" y="16.210565" width="3" height="3" rx="1"></rect>
+                <rect id="Rectangle-21" fill="#FFFFFF" sketch:type="MSShapeGroup" x="33" y="22.210565" width="3" height="3" rx="1"></rect>
+                <rect id="Rectangle-61" fill="#A8E2FF" sketch:type="MSShapeGroup" x="1" y="10" width="29" height="22"></rect>
+                <path d="M1,28 L11,20 L18,30 L23,25 L30,31 L30,38 L29,39 L2,39 L1,38 L1,28 Z" id="Line-19" fill="#16C98D" sketch:type="MSShapeGroup"></path>
+                <rect id="Rectangle-3" stroke="#21304A" stroke-width="2" sketch:type="MSShapeGroup" x="0" y="9.4004359" width="31.234" height="30.4331282" rx="2"></rect>
+                <path d="M1,28.145 L11,20.145 L24,38.145" id="Line" stroke="#21304A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" sketch:type="MSShapeGroup"></path>
+                <path d="M19,29.145 L23,25.145 L30,31.395" id="Line-13" stroke="#21304A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" sketch:type="MSShapeGroup"></path>
+                <circle id="Oval-2" stroke="#21304A" stroke-width="2" fill="#F8E81C" sketch:type="MSShapeGroup" cx="20.5" cy="17.645" r="2.5"></circle>
+            </g>
         </g>
     </g>
 </svg>

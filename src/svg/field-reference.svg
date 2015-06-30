@@ -5,12 +5,14 @@
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="field-reference" sketch:type="MSLayerGroup" stroke="#21304A" stroke-width="2">
-            <rect id="Rectangle-6" fill-opacity="0" fill="#D8D8D8" sketch:type="MSShapeGroup" x="16" y="12.4004359" width="24" height="26" rx="2"></rect>
-            <rect id="Rectangle-3" fill-opacity="0" fill="#FFFFFF" sketch:type="MSShapeGroup" x="0" y="0.400435897" width="24" height="26" rx="2"></rect>
-            <path d="M12,12.291 L27,22.291" id="Line" stroke-linecap="round" stroke-linejoin="round" sketch:type="MSShapeGroup"></path>
-            <circle id="Oval-7" fill-opacity="0" fill="#D8D8D8" sketch:type="MSShapeGroup" cx="9.5" cy="9.791" r="3.5"></circle>
-            <circle id="Oval-8" fill-opacity="0" fill="#D8D8D8" sketch:type="MSShapeGroup" cx="30.5" cy="24.791" r="3.5"></circle>
+        <g id="contentful_icons" sketch:type="MSArtboardGroup" transform="translate(-51.000000, -200.000000)" stroke="#21304A" stroke-width="2">
+            <g id="field-reference" sketch:type="MSLayerGroup" transform="translate(51.000000, 200.000000)">
+                <path d="M0,2.40919072 C0,1.29978606 0.897026226,0.400435897 2.00494659,0.400435897 L21.9950534,0.400435897 C23.1023548,0.400435897 24,1.29274131 24,2.40709848 L24,14.0000004 L19.9979131,14.0000004 C18.8944962,14.0000004 18,14.9019507 18,16.0085305 L18,25.9999995 L1.99508929,25.9999995 C0.893231902,25.9999995 0,25.1039078 0,23.9912447 L0,2.40919072 Z" id="Rectangle-3" fill-opacity="0" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
+                <path d="M16,14.0059924 C16,12.8981134 16.8970262,12 18.0049466,12 L37.9950534,12 C39.1023548,12 40,12.8935174 40,14.0059924 L40,36.3944435 C40,37.5023225 39.1029738,38.4004359 37.9950534,38.4004359 L18.0049466,38.4004359 C16.8976452,38.4004359 16,37.5069185 16,36.3944435 L16,14.0059924 Z" id="Rectangle-6-Copy" fill-opacity="0" fill="#D8D8D8" sketch:type="MSShapeGroup"></path>
+                <path d="M13,12 L27,22.291" id="Line" stroke-linecap="round" stroke-linejoin="round" sketch:type="MSShapeGroup"></path>
+                <circle id="Oval-7" fill-opacity="0" fill="#D8D8D8" sketch:type="MSShapeGroup" cx="9.5" cy="9.791" r="3.5"></circle>
+                <circle id="Oval-8" fill-opacity="0" fill="#D8D8D8" sketch:type="MSShapeGroup" cx="30.5" cy="24.791" r="3.5"></circle>
+            </g>
         </g>
     </g>
 </svg>

@@ -13,6 +13,9 @@ angular.module('contentful')
    * @name fieldFactory#all
    * @description
    * List of descriptors for all available fields.
+   * Default widgets for fields are specified here for display purposes,
+   * but actually determined in the widgets service (see docs there
+   * for an explanation)
    */
   var fieldTypes = [
     {
@@ -21,36 +24,42 @@ angular.module('contentful')
       description: 'Email, phone #, URL, slug, color code, opening hours, tags',
       type: 'Symbol',
       hasListVariant: true,
+      defaultWidget: {single: 'singleLine', list: 'singleLine'}
     },
     {
       iconId: 'longtext',
       name: 'Long Text',
       description: 'Post title, product description, formatted article, author name',
-      type: 'Text'
+      type: 'Text',
+      defaultWidget: {single: 'markdown'}
     },
     {
       iconId: 'number',
       name: 'Integer',
       description: 'ID, order number, rating, quantity',
-      type: 'Integer'
+      type: 'Integer',
+      defaultWidget: {single: 'numberEditor'}
     },
     {
       iconId: 'decimal',
       name: 'Decimal Number',
       description: 'Price, measurement, exchange rate, weight',
-      type: 'Number'
+      type: 'Number',
+      defaultWidget: {single: 'numberEditor'}
     },
     {
       iconId: 'calendar',
       name: 'Date & Time',
       description: 'Creation date, opening hours, promotion period',
-      type: 'Date'
+      type: 'Date',
+      defaultWidget: {single: 'datePicker'}
     },
     {
       iconId: 'location',
       name: 'Location',
       description: 'Map coordinates, company address, venue location',
-      type: 'Location'
+      type: 'Location',
+      defaultWidget: {single: 'locationEditor'}
     },
     {
       iconId: 'media',
@@ -59,18 +68,21 @@ angular.module('contentful')
       type: 'Asset',
       isLink: true,
       hasListVariant: true,
+      defaultWidget: {single: 'assetLinkEditor', list: 'assetLinksEditor'}
     },
     {
       iconId: 'boolean',
       name: 'Boolean',
       description: 'RSVP, membership in a group, availability in stock',
-      type: 'Boolean'
+      type: 'Boolean',
+      defaultWidget: {single: 'radio'}
     },
     {
       iconId: 'json',
       name: 'JSON Object',
       description: 'External record, template values',
-      type: 'Object'
+      type: 'Object',
+      defaultWidget: {single: 'objectEditor'}
     },
     {
       iconId: 'reference',
@@ -79,6 +91,7 @@ angular.module('contentful')
       type: 'Entry',
       isLink: true,
       hasListVariant: true,
+      defaultWidget: {single: 'entryLinkEditor', list: 'entryLinksEditor'}
     }
   ];
 
@@ -86,6 +99,7 @@ angular.module('contentful')
     all: fieldTypes,
     getLabel: getFieldLabel,
     getIconId: getIconId,
+    getDefaultWidget: getDefaultWidget,
     createTypeInfo: createTypeInfo,
   };
 
@@ -114,6 +128,18 @@ angular.module('contentful')
   */
   function getIconId(field) {
     return 'field-'+getFieldDescriptor(field).iconId;
+  }
+
+  /**
+   * @ngdoc method
+   * @name fieldFactory#getDefaultWidget
+   * @description
+   * Returns the default widget for a given field
+   * @return {string}
+   */
+  function getDefaultWidget(field) {
+    var descriptor = getFieldDescriptor(field);
+    return descriptor.isList ? descriptor.defaultWidget.list : descriptor.defaultWidget.single;
   }
 
   /**

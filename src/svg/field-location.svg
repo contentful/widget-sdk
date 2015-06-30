@@ -5,8 +5,10 @@
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="field-location" sketch:type="MSLayerGroup" transform="translate(1.000000, 1.000000)" stroke="#21304A" stroke-width="2" fill="#D8D8D8" fill-opacity="0">
-            <path d="M15,38 C15.8823529,38 30,23.3203709 30,15.0232558 C30,6.72614074 23.2842712,0 15,0 C6.71572875,0 0,6.72614074 0,15.0232558 C0,23.3203709 14.1176471,38 15,38 Z M15,23.8604651 C19.8731007,23.8604651 23.8235294,19.9039117 23.8235294,15.0232558 C23.8235294,10.1425999 19.8731007,6.18604651 15,6.18604651 C10.1268993,6.18604651 6.17647059,10.1425999 6.17647059,15.0232558 C6.17647059,19.9039117 10.1268993,23.8604651 15,23.8604651 Z" id="Location" sketch:type="MSShapeGroup"></path>
+        <g id="contentful_icons" sketch:type="MSArtboardGroup" transform="translate(-201.000000, -151.000000)" stroke="#21304A" stroke-width="2" fill="#D8D8D8" fill-opacity="0">
+            <g id="field-location" sketch:type="MSLayerGroup" transform="translate(202.000000, 152.000000)">
+                <path d="M15,38 C15.8823529,38 30,23.3203709 30,15.0232558 C30,6.72614074 23.2842712,0 15,0 C6.71572875,0 0,6.72614074 0,15.0232558 C0,23.3203709 14.1176471,38 15,38 Z M15,23.8604651 C19.8731007,23.8604651 23.8235294,19.9039117 23.8235294,15.0232558 C23.8235294,10.1425999 19.8731007,6.18604651 15,6.18604651 C10.1268993,6.18604651 6.17647059,10.1425999 6.17647059,15.0232558 C6.17647059,19.9039117 10.1268993,23.8604651 15,23.8604651 Z" id="Location" sketch:type="MSShapeGroup"></path>
+            </g>
         </g>
     </g>
 </svg>

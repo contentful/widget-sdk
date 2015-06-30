@@ -2,38 +2,52 @@ div(
   ng-form="widgetForm" cf-validate-form
   ng-controller="FieldDialogAppearanceController" cf-validate="widget")
   .cfnext-form__field(ng-if="availableWidgets.length > 1")
-    label Widget Type
-    div
-      select.cfnext-select-box(ng-model="widget.widgetId"
-             ng-options="w.id as w.name for w in availableWidgets")
-      i.fa.fa-caret-down.cfnext-select-box-icon
-      p.cfnext-form__hint(ng-show="misconfiguredMap[widget.widgetId]")
-        i.fa.fa-exclamation-triangle
-        |  "{{ misconfiguredMap[widget.widgetId].name }}" widget is not properly configured.
-        | Editor features may not work as expected.
+    label How the content will be added:
+    ul.field-dialog__widget-list
+      li.field-dialog__widget-item(
+          ng-repeat="w in availableWidgets track by w.id"
+          ng-class="{'is-selected': widget.widgetId === w.id}"
+          data-current-widget-index="{{$index}}"
+          ng-click="selectWidget(w.id)")
+        cf-icon.field-dialog__widget-icon(name="{{w.icon}}-widget")
+        p {{w.name}}
+        p.field-dialog__widget-default(ng-if="w.id === defaultWidget") (default)
+        cf-icon(name="checkmark")
 
-  .cfnext-form__field(ng-repeat="option in widgetOptions track by option.name")
-    label {{option.name}}
-    div(ng-switch="option.type")
-      input.cfnext-form__input--full-size(ng-switch-when="Text"
-             type="text" name="{{option.param}}"
-             placeholder="{{option.description}}"
-             ng-model="widget.widgetParams[option.param]"
-             cf-validate-model="widgetParams.{{option.param}}")
-      input.cfnext-form__input(ng-switch-when="Number"
-             type="text"
-             placeholder="{{option.description}}"
-             ng-model="widget.widgetParams[option.param]"
-             cf-validate-model="widgetParams.{{option.param}}")
-      input.cfnext-form__input(ng-switch-when="Boolean"
-             type="checkbox"
-             ng-model="widget.widgetParams[option.param]")
-      div(ng-switch-when="Predefined")
-        select.cfnext-select-box(ng-if="option.values | isArray"
-               ng-options="value for value in option.values"
+  div(ng-class="{'field-dialog__widget-options': availableWidgets.length > 1}")
+    cf-icon(name="arrow-up"
+      ng-if="tab.active && availableWidgets.length > 1 && selectedWidgetIndex >= 0"
+      cf-position-relative-to-widget-list
+      position-relative-to=".field-dialog__widget-item[data-current-widget-index=\"{{selectedWidgetIndex}}\"]"
+      reposition-when-scrolls=".field-dialog__widget-list")
+
+    p.cfnext-form__hint(ng-show="misconfiguredMap[widget.widgetId]")
+      i.fa.fa-exclamation-triangle
+      | The "{{ misconfiguredMap[widget.widgetId].name }}" widget is not properly configured.
+      | Editor features may not work as expected.
+
+    .cfnext-form__field(ng-repeat="option in widgetOptions track by option.name")
+      label {{option.name}}
+      div(ng-switch="option.type")
+        input.cfnext-form__input--full-size(ng-switch-when="Text"
+               type="text" name="{{option.param}}"
+               placeholder="{{option.description}}"
+               ng-model="widget.widgetParams[option.param]"
+               cf-validate-model="widgetParams.{{option.param}}")
+        input.cfnext-form__input(ng-switch-when="Number"
+               type="text"
+               placeholder="{{option.description}}"
+               ng-model="widget.widgetParams[option.param]"
+               cf-validate-model="widgetParams.{{option.param}}")
+        input.cfnext-form__input(ng-switch-when="Boolean"
+               type="checkbox"
                ng-model="widget.widgetParams[option.param]")
-        select.cfnext-select-box(ng-if="!(option.values | isArray)"
-               ng-options="desc as value for (desc, value) in option.values"
-               ng-model="widget.widgetParams[option.param]")
-        i.fa.fa-caret-down.cfnext-select-box-icon
-    ul.cfnext-form__field-errors(cf-field-errors-for="{{option.param}}")
+        div(ng-switch-when="Predefined")
+          select.cfnext-select-box(ng-if="option.values | isArray"
+                 ng-options="value for value in option.values"
+                 ng-model="widget.widgetParams[option.param]")
+          select.cfnext-select-box(ng-if="!(option.values | isArray)"
+                 ng-options="desc as value for (desc, value) in option.values"
+                 ng-model="widget.widgetParams[option.param]")
+          i.fa.fa-caret-down.cfnext-select-box-icon
+      ul.cfnext-form__field-errors(cf-field-errors-for="{{option.param}}")

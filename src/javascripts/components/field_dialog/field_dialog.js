@@ -15,13 +15,15 @@ angular.module('contentful')
   $scope.currentTitleField = getTitleField($scope.contentType);
 
   var widgets = $scope.editingInterface.data.widgets;
-  $scope.widget = _.find(widgets, {fieldId: $scope.field.id});
+  $scope.widget = _.clone(_.find(widgets, {fieldId: $scope.field.id}));
 
   dialog.save = function () {
     $scope.$broadcast('validate');
     if (isValid()) {
       field.update($scope.decoratedField, $scope.field, $scope.contentType);
       validations.updateField($scope.field, $scope.validations);
+      var widgetIndex = _.findIndex(widgets, {fieldId: $scope.field.id});
+      widgets[widgetIndex] = $scope.widget;
       trackFieldSettingsSuccess($scope.field);
       dialog.confirm();
     } else {
@@ -108,16 +110,25 @@ angular.module('contentful')
 }])
 
 
-.controller('FieldDialogAppearanceController', ['$scope', '$injector', function ($scope, $injector) {
-  var widgets        = $injector.get('widgets');
-  var widgetChecks   = $injector.get('widgetChecks');
-  var buildMessage   = $injector.get('baseErrorMessageBuilder');
+.controller('FieldDialogAppearanceController',
+['$scope', '$injector', function ($scope, $injector) {
+  var widgets          = $injector.get('widgets');
+  var widgetChecks     = $injector.get('widgetChecks');
+  var fieldFactory     = $injector.get('fieldFactory');
+  var buildMessage     = $injector.get('baseErrorMessageBuilder');
   var widgetOptions;
 
   $scope.$watch('widget', function(widget) {
     if (widget && widget.widgetId) {
-      widgetOptions = widgets.optionsForWidget(widget.widgetId, 'field');
       widgets.applyDefaults(widget);
+      $scope.defaultWidget = fieldFactory.getDefaultWidget($scope.field);
+    }
+  });
+
+  $scope.$watch('widget.widgetId', function (widgetId) {
+    if (widgetId) {
+      widgetOptions = widgets.optionsForWidget(widgetId, 'field');
+      setSelectedWidgetIndex(widgetId);
     }
   });
 
@@ -135,10 +146,19 @@ angular.module('contentful')
     buildMessage: buildMessage
   };
 
+  $scope.selectWidget = function (id) {
+    $scope.widget.widgetId = id;
+  };
+
   widgets.forField($scope.field)
   .then(widgetChecks.markMisconfigured)
   .then(function (widgets) {
     $scope.availableWidgets = widgets;
     $scope.misconfiguredMap = widgetChecks.getMisconfigured(widgets);
+    setSelectedWidgetIndex($scope.widget.widgetId);
   });
+
+  function setSelectedWidgetIndex(widgetId) {
+    $scope.selectedWidgetIndex = _.findIndex($scope.availableWidgets, {id: widgetId});
+  }
 }]);
