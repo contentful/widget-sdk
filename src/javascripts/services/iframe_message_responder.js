@@ -1,13 +1,8 @@
 'use strict';
 
 angular.module('contentful').run(['$window', '$rootScope', '$sce', function($window, $rootScope, $sce){
-  // Create IE + others compatible event handler
-  var eventMethod = $window.addEventListener ? 'addEventListener' : 'attachEvent';
-  var eventer = $window[eventMethod];
-  var messageEvent = eventMethod == 'attachEvent' ? 'onmessage' : 'message';
-
   // Listen to message from child window
-  eventer(messageEvent, function(event) {
+  $window.addEventListener('message', function(event) {
     try{
       $sce.getTrustedResourceUrl(event.origin); // important security check
     } catch (e) {
@@ -21,7 +16,9 @@ angular.module('contentful').run(['$window', '$rootScope', '$sce', function($win
       };
     }
 
-    var iframe = $('iframe').filter(function () { return this.contentWindow === event.source; })[0];
+    var iframe = $('iframe[data-iframe-message-channel]')
+                 .filter(function () { return this.contentWindow === event.source; })
+                 .get(0);
 
     $rootScope.$apply(function (scope) {
       scope.$broadcast('iframeMessage', event.data, iframe);
