@@ -5,6 +5,8 @@ angular.module('contentful').directive('cfSpaceSettings', ['$window', '$rootScop
     restrict: 'A',
     scope: true,
     link: function (scope, elem) {
+      scope.iframeId = 'spaceSettingsFrame';
+
       scope.$on('iframeMessage', function (event, data, iframe) {
         if (iframe !== elem.find('iframe')[0]) return;
         scope.hasLoaded = true;
