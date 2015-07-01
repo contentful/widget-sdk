@@ -7,6 +7,7 @@ branches:
   - staging
   - preview
   - /^feature\//
+  - /^fix\//
 node_js:
 - '0.10'
 
