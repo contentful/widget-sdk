@@ -26,6 +26,11 @@ div(
       | The "{{ misconfiguredMap[widget.widgetId].name }}" widget is not properly configured.
       | Editor features may not work as expected.
 
+    p.cfnext-form__hint(ng-show="deprecatedMap[widget.widgetId]")
+      i.fa.fa-exclamation-triangle
+      | The "{{ deprecatedMap[widget.widgetId].name }}" widget is deprecated.
+      | Please use the "{{ deprecatedMap[widget.widgetId].alternative }}" widget instead.
+
     .cfnext-form__field(ng-repeat="option in widgetOptions track by option.name")
       label {{option.name}}
       div(ng-switch="option.type")

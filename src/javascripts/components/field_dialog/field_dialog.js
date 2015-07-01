@@ -155,6 +155,7 @@ angular.module('contentful')
   .then(function (widgets) {
     $scope.availableWidgets = widgets;
     $scope.misconfiguredMap = widgetChecks.getMisconfigured(widgets);
+    $scope.deprecatedMap = widgetChecks.getDeprecated();
     setSelectedWidgetIndex($scope.widget.widgetId);
   });
 

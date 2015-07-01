@@ -13,9 +13,17 @@ angular.module('contentful')
     kalturaMultiVideoEditor: kalturaCredentialsCheck
   };
 
+  var DEPRECATED = {
+    youtubeEditor: {
+      name: 'Youtube',
+      alternative: 'Embedded Content'
+    }
+  };
+
   return {
     markMisconfigured: markMisconfigured,
-    getMisconfigured:  getMisconfigured
+    getMisconfigured:  getMisconfigured,
+    getDeprecated:     function() { return DEPRECATED; }
   };
 
   /**
