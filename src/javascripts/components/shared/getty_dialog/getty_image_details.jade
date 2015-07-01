@@ -44,9 +44,9 @@ form.getty__details-size-select(name="imageSizes")
         td {{size.ResolutionDpi}}
         td {{fileSize(size.FileSizeInBytes)}}
 
-  button.btn.btn--tertiary(ng-click="resetImageView()")
+  button.cfnext-btn-secondary-action(ng-click="resetImageView()")
     | &larr; Back
-  button.getty__add-image.btn.btn--primary(ng-disabled="!selectedSizeKey" ng-click="addImage()")
+  button.getty__add-image.cfnext-btn-action(ng-disabled="!selectedSizeKey" ng-click="addImage()")
     | Add image
   i.getty__download-spinner.loading(ng-show="gettyDownloading")
   p.getty-downloads-error(ng-show="downloadsError") {{downloadsError}}

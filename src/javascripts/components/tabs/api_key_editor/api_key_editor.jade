@@ -9,7 +9,7 @@
         href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
 
   .tab-header__actions
-    button.btn.btn--tertiary(type="button"
+    button.cfnext-btn-secondary-action(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
@@ -77,14 +77,13 @@
             a.u-locked-action(ng-show="!regenerateProductionToken" href="#" cf-dropdown-toggle="apiKeyEditor.productionToken")
               i.fa.fa-lock
               |  Unlock Access Token Regeneration
-            .delete-confirm(cf-dropdown-menu="apiKeyEditor.productionToken" cf-dropdown-position="bottomcenter")
-              h2
-                i.fa.fa-exclamation-circle
-                |  Warning
-              p Regenerating the production API access token will break the connection to your apps
-              button.btn.btn--danger(type="button" ng-click="regenerateProductionToken=true" cf-dropdown-close) Unlock
-              | &nbsp;
-              button.btn.btn--secondary(type="button" cf-dropdown-close) Cancel
+              .delete-confirm(cf-dropdown-menu="apiKeyEditor.productionToken" cf-dropdown-position="bottomcenter")
+                h2
+                  i.fa.fa-exclamation-circle
+                  |  Warning
+                p Regenerating the production API access token will break the connection to your apps
+                button.cfnext-btn-caution(type="button" ng-click="regenerateProductionToken=true" cf-dropdown-close) Unlock
+                button.cfnext-btn-secondary-action(type="button" cf-dropdown-close) Cancel
             a(ng-click="regenerateAccessToken()" ng-show="regenerateProductionToken" href="#")
               i.fa.fa-refresh
               |  Regenerate Access Token
@@ -174,12 +173,12 @@
 
 .tab-actions
   .button-set
-    button.btn.btn--secondary.delete(type="button" ng-show="apiKey.getId()" cf-dropdown-toggle="apiKeyEditor.delete") Delete
+    button.cfnext-btn-secondary-action.delete(type="button" ng-show="apiKey.getId()" cf-dropdown-toggle="apiKeyEditor.delete") Delete
     .delete-confirm(cf-dropdown-menu="apiKeyEditor.delete" cf-dropdown-position="topcenter")
       p You are about to delete {{context.title}}
-      button.btn.btn--danger(type="button" ng-click="delete()" cf-dropdown-close) Delete
-      button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete
-    button.btn.btn--primary.save(type="submit"
+      button.cfnext-btn-caution(type="button" ng-click="delete()" cf-dropdown-close) Delete 
+      button.cfnext-btn-secondary-action(type="button" cf-dropdown-close) Don't Delete 
+    button.cfnext-btn-action.save(type="submit"
                  tooltip="Save this API key"
                  ng-click="save()"
                  cf-when-disabled="permissionController.entityActions.createApiKey"

@@ -11,7 +11,7 @@
     .search-field(cf-search="searchTerm" placeholder="Search for Content Types")
 
   .tab-header__actions.add-entity(ng-hide="empty")
-    button.btn.btn--primary.u-truncate(
+    button.cfnext-btn-action.u-truncate(
         ng-click="entityCreationController.newContentType()"
         ng-hide="permissionController.get('createContentType', 'shouldHide')"
         ng-disabled="permissionController.get('createContentType', 'shouldDisable')"

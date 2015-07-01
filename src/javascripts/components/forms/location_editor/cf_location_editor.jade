@@ -7,5 +7,5 @@ div.location-fields
     p Longitude
     input.form-control.lon(type="text" name="lon" ng-model="location.lon" ng-disabled="!otEditable")
     i(cf-field-alert="{{lonAlert}}" tooltip-placement="left")
-  button.btn.btn--form.btn--secondary.remove-location(type="button" ng-show="location && otEditable" ng-click="removeLocation()") Remove
+  button.cfnext-btn-secondary-action.btn--form.remove-location(type="button" ng-show="location && otEditable" ng-click="removeLocation()") Remove
 

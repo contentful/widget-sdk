@@ -33,15 +33,15 @@
 
 .tab-actions
   .button-set
-    button.btn.btn--secondary.cancel(
+    button.cfnext-btn-secondary-action.cancel(
       ng-show="context.isNew"
       ng-click="actions.cancel()")
       | Cancel
-    button.btn.btn--secondary.delete(
+    button.cfnext-btn-secondary-action.delete(
       ng-show="actions.canDelete()"
       ng-click="actions.startDeleteFlow()")
       | Delete
-    button.btn.btn--primary.publish(
+    button.cfnext-btn-action.publish(
       ng-disabled="!actions.canSave()"
       ng-click="actions.save()"
       tooltip="Save changed and make this Content Type available to editors")

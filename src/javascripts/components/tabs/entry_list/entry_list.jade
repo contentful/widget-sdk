@@ -26,7 +26,7 @@
     .search-results-position(cf-search-results-position paginator="paginator" ng-hide="!paginator.numEntries")
 
   .tab-header__actions.add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0 || entries.length == 0")
-    button.btn.btn--primary.u-truncate(
+    button.cfnext-btn-action.u-truncate(
             ng-hide="!singleContentType || permissionController.get('createEntry', 'shouldHide')"
             ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
             cf-when-disabled="permissionController.entityActions.createEntry"
@@ -34,7 +34,7 @@
       i.fa.fa-plus.button-icon
       | Add New {{singleContentType.getName()}}
     .dropdown-btn(ng-hide="singleContentType")
-      button.btn.btn--primary.u-truncate(cf-dropdown-toggle="entryList.add"
+      button.cfnext-btn-action.u-truncate(cf-dropdown-toggle="entryList.add"
           ng-hide="permissionController.get('createEntry', 'shouldHide')"
           ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
           cf-when-disabled="permissionController.entityActions.createEntry")
@@ -95,20 +95,20 @@
         header.advice__title You have no Entries yet.
         p.advice__description(ng-show="spaceContext.publishedContentTypes.length == 0")
           | Entries are your content itself. These depend on the field types you created in the Content Type editor.
-        button.btn.btn--primary(type="button" ng-click="entityCreationController.newContentType()"
+        button.cfnext-btn-action(type="button" ng-click="entityCreationController.newContentType()"
             ng-hide="spaceContext.publishedContentTypes.length > 0 || permissionController.get('createContentType', 'shouldHide')"
             ng-disabled="permissionController.get('createContentType', 'shouldDisable')"
             cf-when-disabled="permissionController.entityActions.createContentType")
           | Create a Content Type
         p(ng-hide="spaceContext.publishedContentTypes.length == 0")
-          button.btn.btn--primary(
+          button.cfnext-btn-action(
                   ng-hide="!singleContentType || permissionController.get('createEntry', 'shouldHide')"
                   ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
                   cf-when-disabled="permissionController.entityActions.createEntry"
                   ng-click="entityCreationController.newEntry(singleContentType)")
             i.fa.fa-plus.button-icon
             | Add New {{singleContentType.getName()}}
-          button.btn.btn--primary(
+          button.cfnext-btn-action(
               ng-hide="singleContentType || permissionController.get('createEntry', 'shouldHide')"
               ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
               cf-when-disabled="permissionController.entityActions.createEntry"
@@ -122,18 +122,18 @@
 .tab-actions
   .label {{selection.size()}} Entries selected
   .button-set(ng-controller="EntryListActionsController" ng-hide="selection.isEmpty()")
-    button.btn.btn--secondary.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
+    button.cfnext-btn-secondary-action.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
     | 
-    button.btn.btn--secondary.delete(type="button" ng-show="showDelete()" cf-dropdown-toggle="entryList.delete") Delete
+    button.cfnext-btn-secondary-action.delete(type="button" ng-show="showDelete()" cf-dropdown-toggle="entryList.delete") Delete
     .delete-confirm(cf-dropdown-menu="entryList.delete" cf-dropdown-position="topcenter")
       p You are about to delete {{selection.size()}} Entries
-      button.btn.btn--danger(type="button" ng-click="deleteSelected()" cf-dropdown-close) Delete 
-      button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete 
+      button.cfnext-btn-caution(type="button" ng-click="deleteSelected()" cf-dropdown-close) Delete 
+      button.cfnext-btn-secondary-action(type="button" cf-dropdown-close) Don't Delete 
     | 
-    button.btn.btn--secondary.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
+    button.cfnext-btn-secondary-action.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
     | 
-    button.btn.btn--secondary.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
+    button.cfnext-btn-secondary-action.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
     | 
-    button.btn.btn--secondary.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
+    button.cfnext-btn-secondary-action.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
     | 
-    button.btn.btn--primary.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}
+    button.cfnext-btn-action.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}

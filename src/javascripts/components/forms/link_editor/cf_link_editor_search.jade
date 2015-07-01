@@ -15,7 +15,7 @@
       cf-when-disabled="permissionController.entityActions.createEntry"
       tooltip="Add new {{entityType}}"
       tooltip-placement="left")
-    button.btn.btn--form.btn--tertiary(cf-dropdown-toggle="linkEditor.addNew" type="button")
+    button.cfnext-btn-secondary-action.btn--form(cf-dropdown-toggle="linkEditor.addNew" type="button")
       i.fa.fa-plus-circle.button-icon
       | Add New
     a.dropdown-menu(cf-dropdown-menu="linkEditor.addNew")
@@ -26,7 +26,7 @@
           | {{contentType.getName()}}
 
   //- link to entry or entries with restriction on the type
-  button.btn.btn--form.btn--tertiary.add-new.with-link-content-type(type="button"
+  button.cfnext-btn-secondary-action.btn--form.add-new.with-link-content-type(type="button"
       ng-if="entityType=='Entry' && addableContentTypes.length === 1"
       ng-hide="permissionController.get('createEntry', 'shouldHide')"
       ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
@@ -36,7 +36,7 @@
     | Add New
 
   //- link to asset (with or without restriction)
-  button.btn.btn--form.btn--tertiary.add-new.with-link-content-type(type="button"
+  button.cfnext-btn-secondary-action.btn--form.add-new.with-link-content-type(type="button"
       ng-if="entityType=='Asset'"
       ng-hide="permissionController.get('createAsset', 'shouldHide')"
       ng-disabled="permissionController.get('createAsset', 'shouldDisable')"

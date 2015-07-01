@@ -56,7 +56,7 @@
           i.fa.fa-database.advice__giant-icon
           header.advice__title You have no Content Types yet.
           p.advice__description Content Types work like stencils that define which Entries you can create within a specific Space.
-          button.btn.btn--primary(type="button" ng-click="entityCreationController.newContentType()"
+          button.cfnext-btn-action(type="button" ng-click="entityCreationController.newContentType()"
               ng-hide="permissionController.get('createContentType', 'shouldHide')"
               ng-disabled="permissionController.get('createContentType', 'shouldDisable')"
               cf-when-disabled="permissionController.entityActions.createContentType")
