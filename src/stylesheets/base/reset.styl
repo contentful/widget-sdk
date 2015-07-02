@@ -1,0 +1,7 @@
+// Do not show a red shadow around invalid inputs in Firefox.
+//
+// We use the `required` attribute on inputs to add validations. This
+// also triggers in-browser validations that show a red box around the
+// input.
+:-moz-ui-invalid
+  box-shadow: none
