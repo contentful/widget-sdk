@@ -34,6 +34,10 @@ server.
 
 To continuously rebuild the documentation use `gulp docs/watch`.
 
+## Testing
+
+For more information on testing consult the generated guides on the documentation or refer to [testing.md](docs/guides/testing.md)
+
 ## Styleguide
 
 The styleguide is generated automatically when running `gulp serve` and
