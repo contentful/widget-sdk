@@ -72,25 +72,4 @@
         header.advice__title There are no matches to your search
 
 .advice(ng-show="contentTypes.length === 0")
-  .advice__frame
-    header.advice__title
-      | <em>{{spaceContext.space.data.name}}</em> has no content types yet
-    button.cfnext-btn-action--large-popout-icon.ct-empty-list__action(type="button"
-        ng-click="entityCreationController.newContentType()"
-        ng-hide="permissionController.get('createContentType', 'shouldHide')"
-        ng-disabled="permissionController.get('createContentType', 'shouldDisable')"
-        cf-when-disabled="permissionController.entityActions.createContentType")
-      cf-icon(name="new-ct")
-      | Create content type
-
-    p.ct-empty-list__description
-      | This is the first step in organizing your content <br>
-      | The content type will define the structure of <em>entries</em>
-      | where your content is actually stored
-
-    p.ct-empty-list__additional
-      | If you are not sure what content types and entries are, <br>
-      | consider reading the 
-      a(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
-        | introduction to Contentful content model
-      |.
+  include ../../shared/create_content_type_advice
