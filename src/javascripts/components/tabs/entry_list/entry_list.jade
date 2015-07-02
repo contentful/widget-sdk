@@ -94,20 +94,20 @@
         header.advice__title You have no Entries yet.
         p.advice__description(ng-show="spaceContext.publishedContentTypes.length == 0")
           | Entries are your content itself. These depend on the field types you created in the Content Type editor.
-        button.cfnext-btn-action(type="button" ng-click="entityCreationController.newContentType()"
+        button.advice__action(type="button" ng-click="entityCreationController.newContentType()"
             ng-hide="spaceContext.publishedContentTypes.length > 0 || permissionController.get('createContentType', 'shouldHide')"
             ng-disabled="permissionController.get('createContentType', 'shouldDisable')"
             cf-when-disabled="permissionController.entityActions.createContentType")
           | Create a Content Type
-        p(ng-hide="spaceContext.publishedContentTypes.length == 0")
-          button.cfnext-btn-action(
+        div(ng-hide="spaceContext.publishedContentTypes.length == 0")
+          button.advice__action(
                   ng-hide="!singleContentType || permissionController.get('createEntry', 'shouldHide')"
                   ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
                   cf-when-disabled="permissionController.entityActions.createEntry"
                   ng-click="entityCreationController.newEntry(singleContentType)")
             cf-icon.btn-icon.inverted(name="plus")
             | Add New {{singleContentType.getName()}}
-          button.cfnext-btn-action(
+          button.advice__action(
               ng-hide="singleContentType || permissionController.get('createEntry', 'shouldHide')"
               ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
               cf-when-disabled="permissionController.entityActions.createEntry"
