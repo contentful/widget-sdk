@@ -18,19 +18,17 @@
 
   .tab-header__actions.add-entity
     .dropdown-btn(ng-show="assets.length > 0")
-      button.cfnext-btn-action.u-truncate(cf-dropdown-toggle="assetList.add"
+      button.cfnext-btn-action(cf-dropdown-toggle="assetList.add"
           ng-hide="permissionController.get('createAsset', 'shouldHide')"
           ng-disabled="permissionController.get('createAsset', 'shouldDisable')"
           cf-when-disabled="permissionController.entityActions.createAsset")
-        i.fa.fa-plus.button-icon
+        cf-icon.btn-icon.inverted(name="plus")
         | Add New Asset
       .dropdown-menu(cf-dropdown-menu="assetList.add" cf-dropdown-position="bottomcenter" container=".view-content")
         ul.add-entity__list
           li.dropdown-menu-item.type(ng-click="entityCreationController.newAsset()" cf-dropdown-close)
-            i.fa.fa-plus.add-entity__icon
             | Single Asset
           li.dropdown-menu-item.type(ng-click="createMultipleAssets()" cf-dropdown-close)
-            i.fa.fa-plus.add-entity__icon
             | Multiple Assets
 
 .tab-main
@@ -96,10 +94,8 @@
           .dropdown-menu(cf-dropdown-menu="assetList.addFromFrame" cf-dropdown-position="bottomcenter")
             ul.add-entity__list
               li.dropdown-menu-item.type(ng-click="entityCreationController.newAsset()" cf-dropdown-close)
-                i.fa.fa-plus
                 | Single Asset
               li.dropdown-menu-item.type(ng-click="createMultipleAssets()" cf-dropdown-close)
-                i.fa.fa-plus
                 | Multiple Assets
 
 

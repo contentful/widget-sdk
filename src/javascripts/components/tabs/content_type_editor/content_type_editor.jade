@@ -7,10 +7,10 @@
 
 .section-nav
   .section-nav__left-content
-    button.cfnext-btn-action--with-icon(
+    button.cfnext-btn-action(
       ng-disabled="cfCanDisabled"
       ng-click="showNewFieldDialog()")
-      cf-icon.inverted(name="plus")
+      cf-icon.btn-icon.inverted(name="plus")
       | Add Field
   ul.section-nav__tabs
     li(role="tab" data-tab="fields")

@@ -11,12 +11,12 @@
     .search-field(cf-search="searchTerm" placeholder="Search for Content Types")
 
   .tab-header__actions.add-entity(ng-hide="empty")
-    button.cfnext-btn-action.u-truncate(
+    button.cfnext-btn-action(
         ng-click="entityCreationController.newContentType()"
         ng-hide="permissionController.get('createContentType', 'shouldHide')"
         ng-disabled="permissionController.get('createContentType', 'shouldDisable')"
         cf-when-disabled="permissionController.entityActions.createContentType")
-      i.fa.fa-plus.button-icon
+      cf-icon.btn-icon.inverted(name="plus")
       | New Content Type
 
 .tab-main

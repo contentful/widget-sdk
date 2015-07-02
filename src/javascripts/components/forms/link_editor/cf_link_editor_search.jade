@@ -16,7 +16,7 @@
       tooltip="Add new {{entityType}}"
       tooltip-placement="left")
     button.cfnext-btn-secondary-action.btn--form(cf-dropdown-toggle="linkEditor.addNew" type="button")
-      i.fa.fa-plus-circle.button-icon
+      cf-icon.btn-icon(name="plus")
       | Add New
     a.dropdown-menu(cf-dropdown-menu="linkEditor.addNew")
       ul
@@ -32,7 +32,7 @@
       ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
       cf-when-disabled="permissionController.entityActions.createEntry"
       ng-click="addNewEntry(addableContentTypes[0])")
-    i.fa.fa-plus-circle.button-icon
+    cf-icon.btn-icon(name="plus")
     | Add New
 
   //- link to asset (with or without restriction)
@@ -42,7 +42,7 @@
       ng-disabled="permissionController.get('createAsset', 'shouldDisable')"
       cf-when-disabled="permissionController.entityActions.createAsset"
       ng-click="addNewAsset()")
-    i.fa.fa-plus-circle.button-icon
+    cf-icon.btn-icon(name="plus")
     | Add New
 
 

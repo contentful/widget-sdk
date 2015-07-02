@@ -14,7 +14,7 @@
         ng-hide="permissionController.get('createApiKey', 'shouldHide')"
         ng-disabled="permissionController.get('createApiKey', 'shouldDisable')"
         cf-when-disabled="permissionController.entityActions.createApiKey")
-      i.fa.fa-plus.button-icon
+      cf-icon.btn-icon.inverted(name="plus")
       | Add API Key
 
 .tab-main

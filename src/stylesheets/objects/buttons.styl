@@ -55,25 +55,9 @@ $cfnext-button-colors($color, $shade)
     background: $color
     box-shadow: none
 
-$cfnext-button--with-icon()
-  cf-icon
-    display: block
-    height: 2px
-    float: left
-    margin-right: 0.5em
-    margin-top: -1px
-
 $cfnext-button-large()
   font-size: 1.15rem
   padding: 1rem 2.5rem
-
-$cfnext-button--large-popout-icon()
-  $cfnext-button-large()
-  padding-left: 5.0rem
-  cf-icon
-    position: absolute
-    left: 1.0rem
-    top: -0.5rem
 
 /*
 Action/Secondary Button
@@ -218,8 +202,12 @@ Buttons with icons
 
 Markup:
 p
-  button.cfnext-btn-action--with-icon
-    cf-icon
+  button.cfnext-btn-primary-action
+    cf-icon.btn-icon
+      img(src="/app/svg/plus.svg")
+    | Action
+  button.cfnext-btn-action
+    cf-icon.btn-icon
       img(src="/app/svg/plus.svg")
     | Action
 p
@@ -230,13 +218,28 @@ p
 
 Styleguide 4.7
 */
-.cfnext-btn-action--with-icon
-.cfnext-btn-action--large-popout-icon
-  $btn-action()
 
-.cfnext-btn-action--with-icon
-  $cfnext-button--with-icon()
+$btn-icon()
+  display: block
+  height: 2px
+  float: left
+  margin-right: 0.5em
+  margin-top: -1px
+  margin-left: -0.6em
+
+.btn-icon
+  $btn-icon()
+
+
+$cfnext-button--large-popout-icon()
+  $cfnext-button-large()
+  padding-left: 5.0rem
+  cf-icon
+    position: absolute
+    left: 1.0rem
+    top: -0.5rem
 
 .cfnext-btn-action--large-popout-icon
   position: relative
+  $btn-action()
   $cfnext-button--large-popout-icon()
