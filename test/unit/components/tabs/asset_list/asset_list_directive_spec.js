@@ -48,19 +48,6 @@ describe('The Asset list directive', function () {
     container.remove();
   });
 
-  describe('the tab header add button', function() {
-    it('is not shown', function() {
-      scope.permissionController.get.withArgs('createAsset', 'shouldHide').returns(true);
-      compileElement();
-      expect(container.find('.tab-header .add-entity .btn--primary')).toBeNgHidden();
-    });
-
-    it('is shown', function() {
-      compileElement();
-      expect(container.find('.tab-header .add-entity .btn--primary')).not.toBeNgHidden();
-    });
-  });
-
   function makeActionTest(button, action) {
     it(button+' button not shown', function () {
       scope.permissionController.get.withArgs(action+'Asset', 'shouldHide').returns(true);
@@ -79,17 +66,6 @@ describe('The Asset list directive', function () {
   makeActionTest('archive', 'archive');
   makeActionTest('unpublish', 'unpublish');
   makeActionTest('publish', 'publish');
-
-  it('create button is disabled', function () {
-    scope.permissionController.get.withArgs('createAsset', 'shouldDisable').returns(true);
-    compileElement();
-    expect(container.find('.advice .btn--primary').attr('disabled')).toBe('disabled');
-  });
-
-  it('create button is enabled', function () {
-    compileElement();
-    expect(container.find('.advice .btn--primary').attr('disabled')).toBeUndefined();
-  });
 
   describe('list of assets is filtered', function() {
     var list;
