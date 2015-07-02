@@ -51,6 +51,10 @@ module.exports = function(config) {
     // web server port
     port: 9876,
 
+    reportSlowerThan: 200,
+
+    browserNoActivityTimeout: 15000,
+
 
     // enable / disable colors in the output (reporters and logs)
     colors: true,
