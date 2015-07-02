@@ -51,7 +51,7 @@ module.exports = function(config) {
     // web server port
     port: 9876,
 
-    reportSlowerThan: 200,
+    reportSlowerThan: 500,
 
     browserNoActivityTimeout: 15000,
 
