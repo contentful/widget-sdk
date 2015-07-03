@@ -1,26 +1,28 @@
-.section-header.editor-configuration
-  .section-header__icon
-    cf-icon(name="page-ct")
-  h1.section-header__title {{contentType.getName()}}
-  .section-header__description {{contentType.data.description}}
-  button.cfnext-btn-inline(ng-click="showMetadataDialog()") Edit
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-ct")
+  h1.workbench-header__title
+    | {{contentType.getName()}}
+  .workbench-header__description
+    | {{contentType.data.description}}
+  button.cfnext-btn-inline(type="button" ng-click="showMetadataDialog()")
+    | Edit
 
-.section-nav
-  .section-nav__left-content
+.workbench-nav
+  .workbench-nav__left-content
     button.cfnext-btn-action(
       ng-disabled="cfCanDisabled"
       ng-click="showNewFieldDialog()")
       cf-icon.btn-icon.inverted(name="plus")
       | Add Field
-  ul.section-nav__tabs
+  ul.workbench-nav__tabs
     li(role="tab" data-tab="fields")
       | Fields
       span(ng-show="contentType.data.fields.length") &nbsp;({{contentType.data.fields.length}})
     li(role="tab" data-tab="json") JSON Preview
 
 
-.section-main.with-header-nav.with-tab-actions
-  form.section-main__middle-content(name="contentTypeForm" submit="publish()")
+.workbench-main
+  form.workbench-main__middle-content(name="contentTypeForm" submit="publish()")
 
     div(role="tabpanel" data-tab="json")
       cf-content-type-preview.u-bce
@@ -31,18 +33,17 @@
       .content-type-fields(ng-if="!hasFields")
         include ./content_type_field_list_empty
 
-.tab-actions
-  .button-set
-    button.cfnext-btn-secondary-action.cancel(
-      ng-show="context.isNew"
-      ng-click="actions.cancel()")
-      | Cancel
-    button.cfnext-btn-secondary-action.delete(
-      ng-show="actions.canDelete()"
-      ng-click="actions.startDeleteFlow()")
-      | Delete
-    button.cfnext-btn-primary-action.publish(
-      ng-disabled="!actions.canSave()"
-      ng-click="actions.save()"
-      tooltip="Save changed and make this Content Type available to editors")
-      | Save
+.workbench-actions
+  button.cfnext-btn-secondary-action.cancel(
+    ng-show="context.isNew"
+    ng-click="actions.cancel()")
+    | Cancel
+  button.cfnext-btn-secondary-action.delete(
+    ng-show="actions.canDelete()"
+    ng-click="actions.startDeleteFlow()")
+    | Delete
+  button.cfnext-btn-primary-action.publish(
+    ng-disabled="!actions.canSave()"
+    ng-click="actions.save()"
+    tooltip="Save changed and make this Content Type available to editors")
+    | Save

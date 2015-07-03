@@ -1,0 +1,196 @@
+$workbench-header-height = $tab-header-height
+$workbench-header-horizontal-padding = 2em
+$workbench-nav-height = 70px
+
+/**
+Workbench
+
+The `.workbench` is positioned absolutely and stretched to completely
+cover its offset parent.  The `.workbench-main` section will scroll if
+its content is too large to fit into the workbench.
+
+Markup:
+.styleguide-stretch-container--short
+  .workbench
+    .workbench-header
+      a(href="#kssref-9-4") Header
+    .workbench-nav
+      a(href="#kssref-9-5") Navigation
+    .workbench-main
+      | Main
+    .workbench-actions
+      | Actions
+
+Styleguide 9.0
+*/
+
+.workbench
+  display: flex
+  flex-direction: column
+  $stretch(0, 0, 0, 0)
+  > *
+    flex: 0 0 auto;
+
+
+.workbench-actions
+  margin-top: auto;
+  display: flex
+  justify-content: flex-end;
+  > *
+    margin-left: 0.7rem
+  padding: 0.6rem 1rem
+  border-top: 1px solid $gray-light
+  background-color: $gray-lightest
+
+/**
+Main content and sidebars
+
+Markup:
+.workbench-header
+  | Header
+.workbench-main
+  .workbench-main__left-sidebar.styleguide-filled-box1
+    code __left-sidebar
+  .workbench-main__right-content.styleguide-filled-box2
+    code __right-content
+.workbench-main
+  .workbench-main__right-content.styleguide-filled-box2
+    code __right-content
+.workbench-main
+  .workbench-main__left-sidebar.styleguide-filled-box1
+    code __left-sidebar
+  .workbench-main__middle-content.styleguide-filled-box2
+    code __middle-content
+  .workbench-main__right-sidebar.styleguide-filled-box3
+    code __right-sidebar
+.workbench-main
+  .workbench-main__middle-content.styleguide-filled-box2
+    code __middle-content
+.workbench-actions
+  | Actions
+
+Styleguide 9.1
+*/
+
+$workbench-sidebar-width = 20%
+$workbench-content-width = 100% - $workbench-sidebar-width
+$workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
+.workbench-main
+  overflow-y: auto
+  flex: 1 1 auto
+  display: flex
+  padding-top: $rhythm(1)
+
+  &__left-sidebar
+    width: $workbench-sidebar-width
+    margin-right: auto
+
+  &__right-content
+    width: $workbench-content-width
+    margin-left: auto
+
+  &__right-sidebar
+    width: $workbench-sidebar-width
+    margin-left: auto
+
+  &__middle-content
+    width: $workbench-middle-width
+    margin-left: auto
+    margin-right: auto
+
+
+.workbench-header
+  display: flex
+  align-items: baseline
+  background-color: $gray-lightest
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07)
+  padding-left: $workbench-header-horizontal-padding
+  padding-right: $workbench-header-horizontal-padding
+  border-radius: 3px 3px 0 0
+  border-bottom: 1px solid $cfnext-light-gray
+  > *
+    flex-shrink: 0
+
+  &__icon
+    margin-top: 0.5em
+    margin-right: 1em
+    align-self: center
+    display: block
+
+  &__title
+    font-size: $tab-header-font-size
+    line-height: $workbench-header-height
+    margin: 0 0.6em 0 0.1ex
+    white-space: nowrap
+
+  &__description
+    $text-truncate()
+    color: $gray
+    flex-shrink: 1
+    margin-right: 1ex
+
+  &__actions
+    align-self: center
+    margin-left: auto
+    > *
+      margin-left: 1em
+
+
+/*
+Header
+
+Markup:
+.workbench-header
+  img.workbench-header__icon(src="/app/svg/page-ct.svg")
+  h1.workbench-header__title Title
+  .workbench-header__description This is a description
+  button.cfnext-btn-inline Edit
+  .workbench-header__actions
+    button.cfnext-btn-secondary-action Actions
+    button.cfnext-btn-action Save
+
+Styleguide 9.4
+*/
+
+
+/*
+Workbench Nav with tabs
+
+The `.workbench-nav__left-content` section fills exactly the same space
+as the main sidebar.
+
+Markup:
+.workbench-nav
+  .workbench-nav__left-content
+    button.cfnext-btn-action Add some
+  ul.workbench-nav__tabs
+    li(role="tab") First Tab
+    li(role="tab" aria-selected="true") Active Tab
+    li(role="tab") Last Tab
+.workbench-main.with-header-nav
+  .workbench-main__left-sidebar.styleguide-filled-box1
+    | sidebar
+  .workbench-main__right-content.styleguide-filled-box2
+    | content
+
+Styleguide 9.5
+*/
+.workbench-nav
+  display: flex
+  align-items: center
+  justify-content: space-between
+  height: 4rem
+  border-bottom: 1px solid $cfnext-light-gray
+
+
+.workbench-nav__left-content
+  padding-left: $workbench-header-horizontal-padding
+  flex-shrink: 0
+  padding-right: 2em
+
+
+.workbench-nav__tabs
+  align-self: flex-end
+  flex-grow: 0
+  flex-basis: $workbench-content-width
+  $tab-list()
