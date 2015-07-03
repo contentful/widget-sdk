@@ -128,14 +128,13 @@ angular.module('contentful')
   $scope.$watch('widget.widgetId', function (widgetId) {
     if (widgetId) {
       widgetOptions = widgets.optionsForWidget(widgetId, 'field');
+      updateWidgetOptions($scope.widgetParams);
       setSelectedWidgetIndex(widgetId);
     }
   });
 
   // when widget parameter is changed, filter option list with dependency check
-  $scope.$watch('widget.widgetParams', function(params) {
-    $scope.widgetOptions = widgets.filterOptions(widgetOptions || [], params);
-  }, true);
+  $scope.$watch('widget.widgetParams', updateWidgetOptions, true);
 
   $scope.$watch('$form.$invalid', function (isInvalid) {
     $scope.tab.invalid = isInvalid;
@@ -161,5 +160,9 @@ angular.module('contentful')
 
   function setSelectedWidgetIndex(widgetId) {
     $scope.selectedWidgetIndex = _.findIndex($scope.availableWidgets, {id: widgetId});
+  }
+
+  function updateWidgetOptions(params) {
+    $scope.widgetOptions = widgets.filterOptions(widgetOptions || [], params);
   }
 }]);
