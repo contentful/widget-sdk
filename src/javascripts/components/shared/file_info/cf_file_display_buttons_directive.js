@@ -2,7 +2,7 @@
 
 angular.module('contentful').directive('cfFileDisplayButtons', function () {
   return {
-    restrict: 'A',
+    restrict: 'E',
     template: JST.cf_file_display_buttons,
     controller: ['$scope', '$state', function ($scope, $state) {
 

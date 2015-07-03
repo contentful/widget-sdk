@@ -1,35 +1,31 @@
-button.cfnext-btn-secondary-action(type="button"
-  aria-label="Open Asset" tooltip="Open Asset"
-  ng-click="tryOpenAsset()"
-  ng-show="canOpenAsset()")
-  i.fa.fa-share-square-o
-| &nbsp;
-a.cfnext-btn-secondary-action(type="button"
-  aria-label="Download file" tooltip="Download file"
-  href="{{file.url|assetUrl}}" target="_blank"
-  ng-show="file|isFileReady")
-  i.fa.fa-download
-| &nbsp;
-button.cfnext-btn-secondary-action(type="button"
-  aria-label="Show file information" tooltip="Show file information"
-  ng-click="toggleMeta()"
-  ng-show="file")
-  i.fa.fa-info-circle
-| &nbsp;
-button.cfnext-btn-secondary-action(type="button"
-  aria-label="Edit file" tooltip="Edit file"
-  ng-click="editFile()"
-  ng-show="canEditFile()")
-  i.fa.fa-picture-o
-| &nbsp;
-button.cfnext-btn-secondary-action(type="button"
-  aria-label="Delete file" tooltip="Delete file"
-  ng-click="deleteFile()"
-  ng-show="canDeleteFile()")
-  i.fa.fa-trash
-| &nbsp;
-button.cfnext-btn-secondary-action(type="button"
-  aria-label="Remove Asset" tooltip="Remove Asset"
-  ng-show="!otDisabled && removeLink"
-  ng-click="removeLink(index, entity)")
-  i.fa.fa-close
+.file-buttons
+  button.cfnext-btn-secondary-action(type="button"
+    aria-label="Open Asset" tooltip="Open Asset"
+    ng-click="tryOpenAsset()"
+    ng-show="canOpenAsset()")
+    i.fa.fa-share-square-o
+  a.cfnext-btn-secondary-action(type="button"
+    aria-label="Download file" tooltip="Download file"
+    href="{{file.url|assetUrl}}" target="_blank"
+    ng-show="file|isFileReady")
+    i.fa.fa-download
+  button.cfnext-btn-secondary-action(type="button"
+    aria-label="Show file information" tooltip="Show file information"
+    ng-click="toggleMeta()"
+    ng-show="file")
+    i.fa.fa-info-circle
+  button.cfnext-btn-secondary-action(type="button"
+    aria-label="Edit file" tooltip="Edit file"
+    ng-click="editFile()"
+    ng-show="canEditFile()")
+    i.fa.fa-picture-o
+  button.cfnext-btn-secondary-action(type="button"
+    aria-label="Delete file" tooltip="Delete file"
+    ng-click="deleteFile()"
+    ng-show="canDeleteFile()")
+    i.fa.fa-trash
+  button.cfnext-btn-secondary-action(type="button"
+    aria-label="Remove Asset" tooltip="Remove Asset"
+    ng-show="!otDisabled && removeLink"
+    ng-click="removeLink(index, entity)")
+    i.fa.fa-close
