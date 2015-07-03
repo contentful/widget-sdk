@@ -1,18 +1,35 @@
-button.cfnext-btn-secondary-action.go-to-asset(type="button" ng-click="entity && !entity.isMissing && $state.go('spaces.detail.assets.detail', { assetId: entity.getId(), addToContext: true })" ng-show="!!(!enableUpload && entity && !entity.isMissing)" tooltip="Open Asset")
+button.cfnext-btn-secondary-action.go-to-asset(type="button"
+  ng-click="tryOpenAsset()"
+  ng-show="canOpenAsset()"
+  tooltip="Open Asset")
   i.fa.fa-share-square-o
 | &nbsp;
-a.cfnext-btn-secondary-action.download-file(type="button" href="{{file.url|assetUrl}}" target="_blank" ng-show="file|isFileReady" tooltip="Download file")
+a.cfnext-btn-secondary-action.download-file(type="button"
+  href="{{file.url|assetUrl}}" target="_blank"
+  ng-show="file|isFileReady"
+  tooltip="Download file")
   i.fa.fa-download
 | &nbsp;
-button.cfnext-btn-secondary-action.show-metadata(type="button" ng-click="toggleMeta()" ng-show="file" tooltip="Show file information")
+button.cfnext-btn-secondary-action.show-metadata(type="button"
+  ng-click="toggleMeta()"
+  ng-show="file"
+  tooltip="Show file information")
   i.fa.fa-info-circle
 | &nbsp;
-button.cfnext-btn-secondary-action.edit-button(type="button" ng-show="!otDisabled && enableUpload && imageHasLoaded && file|isFileReady" ng-click="editFile()" tooltip="Edit file")
+button.cfnext-btn-secondary-action.edit-button(type="button"
+  ng-click="editFile()"
+  ng-show="canEditFile()"
+  tooltip="Edit file")
   i.fa.fa-picture-o
 | &nbsp;
-button.cfnext-btn-secondary-action.delete-file(type="button" ng-show="!otDisabled && deleteFile && ((file|isFileReady) || (file|isFileProcessing))" ng-click="deleteFile()" tooltip="Delete file")
+button.cfnext-btn-secondary-action.delete-file(type="button"
+  ng-click="deleteFile()"
+  ng-show="canDeleteFile()"
+  tooltip="Delete file")
   i.fa.fa-trash
 | &nbsp;
-button.cfnext-btn-secondary-action.remove-link(type="button" ng-show="!otDisabled && removeLink" ng-click="removeLink(index, entity)" tooltip="Remove Asset")
+button.cfnext-btn-secondary-action.remove-link(type="button"
+  ng-show="!otDisabled && removeLink"
+  ng-click="removeLink(index, entity)"
+  tooltip="Remove Asset")
   i.fa.fa-close
-
