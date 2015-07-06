@@ -52,6 +52,8 @@ function makeModule (modulePages, moduleName) {
   var docTypes = _.groupBy(modulePages, 'docType');
 
   // Extract the module page from the collection
+  if (!docTypes.module)
+    throw new Error(`Could not find documentation for module "${moduleName}"`);
   var modulePage = docTypes.module[0];
   delete docTypes.module;
 

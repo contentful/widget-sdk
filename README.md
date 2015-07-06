@@ -25,12 +25,18 @@ again.
 To show `stdout` of the commands `gulp` will run, use the `--verbose`
 flag. For example `gulp icons -v`.
 
-### Documentation
+## Documentation
 
 The repo comes with a self hosting API documentation and guides. To
-view them run `gulp docs` and go to the
+view them run `gulp docs` and `gulp serve` and go to the
 [`/docs`](http://app.joistio.com:8888/docs) folder of you development
 server.
+
+To continuously rebuild the documentation use `gulp docs/watch`.
+
+## Testing
+
+For more information on testing consult the generated guides on the documentation or refer to [testing.md](docs/guides/testing.md)
 
 ## Styleguide
 
@@ -46,6 +52,7 @@ branch which will make it available at [http://contentful.github.io/user_interfa
 
 Don't forget to provide an appropriate commit message outlining the
 changes.
+
 
 ## Live Reloading
 
@@ -124,39 +131,3 @@ Count Lines of Code. (Run `brew install cloc` to install cloc).
 ### npm run clean
 
 Removes installed bower and node modules.
-
-## Karma tests
-
-To execute the unit tests, you need to install karma-cli globally:
-
-    npm install -g karma-cli
-
-Then just run `karma start`. Your tests are automatically watched and
-re-run when you change them.
-
-To select only a subsect of specs to run, replace their respective
-`describe` or `it` call with `ddescribe` or `iit`.
-
-For the available test reporters see [karma.conf.js#L43](https://github.com/contentful/user_interface/blob/master/karma.conf.js#L43) or `package.json`
-
-If you use the `verbose` reporter you might want to set `set-option -g history-limit 5000` in your `tmux.conf`
-
-## Acceptance tests
-
-Those were deleted and can be found in pre-gulp revisions on the Repo.
-
-They're supposed to be moved into the `ui_integration_test` repo.
-
-Located under `spec/features`
-
-On the main project directory:
-
-1. `bundle exec rspec spec/features`
-
-Possible ENV VARS:
-
-- `USE_QUIRELY=true` to run against the integration server
-  instead of localhost
-- `USE_SAUCE=true` to use sauce labs instead of local firefox.
-  Implies `USE_QUIRELY`
-

@@ -11,7 +11,10 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
   var $parse            = $injector.get('$parse');
   var ShareJS           = $injector.get('ShareJS');
   var defer             = $injector.get('defer');
+  var logger            = $injector.get('logger');
   var isDiacriticalMark = $injector.get('isDiacriticalMark');
+
+  var ReloadNotification = $injector.get('ReloadNotification');
 
   return {
     restrict: 'A',
@@ -119,9 +122,9 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
       function makeAndAttach(subdoc, text){
         text = text === undefined ? '' : text;
         var loggingData = {
-          subdoc: subdoc,
-          text: text,
-          otDoc: scope.otDoc
+          snapshotSys: scope.otDoc.snapshot.sys,
+          snapshotFields: scope.otDoc.snapshot.fields,
+          path: subdoc.path
         };
         ShareJS.mkpath({
           doc: scope.otDoc,
@@ -131,12 +134,11 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
         }, function(err) {
           if (err){
             scope.$apply(function(){
-              var error = new Error('makeAndAttach mkpath failed');
-              error.metaData = {
+              loggingData.error = err;
+              logger.logError('makeAndAttach mkpath failed', {
                 data: loggingData,
-                error: err
-              };
-              throw error;
+              });
+              ReloadNotification.trigger();
             });
           }
         });

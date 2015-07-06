@@ -20,11 +20,11 @@ angular.module('contentful').directive('cfFileDrop', ['$injector', function ($in
     },
     UploadError: function(message){
       notification.warn('Upload error: ' + message);
-      logger.logWarn('Filedrop UploadError', {data: {message: message} });
+      logger.logError('Filedrop UploadError', {data: {message: message} });
     },
     _unknown: function(message, type) {
       notification.warn('Upload error: ' + message);
-      logger.logWarn('Filedrop UnkownError', {data: {type: type, message: message} });
+      logger.logError('Filedrop UnkownError', {data: {type: type, message: message} });
     }
   };
 

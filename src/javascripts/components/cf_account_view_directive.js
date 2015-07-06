@@ -7,6 +7,8 @@ angular.module('contentful').directive('cfAccountView', ['$window', '$rootScope'
     restrict: 'A',
     scope: true,
     link: function (scope, elem) {
+      scope.iframeId = 'accountViewFrame';
+
       scope.$on('iframeMessage', function (event, data, iframe) {
         if (iframe !== elem.find('iframe')[0]) return;
         scope.hasLoaded = true;

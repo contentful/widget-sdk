@@ -40,7 +40,7 @@
         data-field-id="{{field.id}}"
         ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
       label {{field.name}}
-        sup(ng-show="field.required") (required)
+        sup(ng-show="field.required")  (required)
       .l-form-controls
         .l-form-locale(ng-repeat="locale in locales track by locale.code"
             ot-field-presence="['fields', widget.field.id, locale.code]"
@@ -64,8 +64,8 @@
     button.btn.btn--secondary.delete(type="button" ng-show="entityActionsController.canDelete()" cf-dropdown-toggle="assetEditor.delete") Delete
     .delete-confirm(cf-dropdown-menu="assetEditor.delete" cf-dropdown-position="topcenter")
       p You are about to delete {{headline()}}
-      button.btn.btn--danger(type="button" ng-click="delete()" cf-dropdown-close) Delete 
-      button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete 
+      button.btn.btn--danger(type="button" ng-click="delete()" cf-dropdown-close) Delete
+      button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete
     button.btn.btn--secondary.archive(  type="button" ng-show="entityActionsController.canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
     button.btn.btn--secondary.archive(  type="button" ng-show="entityActionsController.canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
     button.btn.btn--secondary.unpublish(type="button" ng-show="entityActionsController.canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish

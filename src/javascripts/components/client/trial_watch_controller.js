@@ -48,12 +48,16 @@ angular.module('contentful').controller('TrialWatchController', ['$scope', '$roo
   }
 
   function upgradeAction(){
-    if($scope.spaceContext.space)
-      analytics.trackPersistentNotificationAction('Plan Upgrade');
-      $scope.goToAccount(
-        'organizations/'+
-        $scope.spaceContext.space.getOrganizationId()+
-        '/subscription');
+    if (!$scope.spaceContext.space) {
+      return;
+    }
+
+    var pathSuffix = 'organizations/' +
+      $scope.spaceContext.space.getOrganizationId() +
+      '/subscription';
+
+    analytics.trackPersistentNotificationAction('Plan Upgrade');
+    $scope.goToAccount(pathSuffix, { reload: true });
   }
 
   function timeTpl(str, timePeriod) {

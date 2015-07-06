@@ -88,7 +88,7 @@
     "karma-osx-reporter": "~0.1.0",
     "karma-slimerjs-launcher": "^0.1.2",
     "karma-story-reporter": "~0.2.2",
-    "kss": "^2.0.1",
+    "kss": "^2.1.0",
     "watchify": "2.1.x"
   },
   "scripts": {

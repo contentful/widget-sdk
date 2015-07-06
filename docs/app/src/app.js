@@ -44,6 +44,7 @@ function ($scope, $location, $state, MODULES_INDEX, PAGES) {
 
 .config(['$urlRouterProvider', function($urlRouterProvider){
   $urlRouterProvider.when('/guides', '/guides/README');
+  $urlRouterProvider.when('/', '/guides/README');
 }])
 
 .config(['$stateProvider', function ($stateProvider) {

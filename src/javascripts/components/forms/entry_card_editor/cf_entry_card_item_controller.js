@@ -7,7 +7,7 @@ angular.module('contentful').controller('EntryCardItemController', ['$scope', '$
   var entityExists = $scope.entryLinkController.entityExists;
   var linkedAssetsCache = $scope.entryLinkController.linkedAssetsCache;
 
-  $scope.descriptionLength = $scope.linkMultiple ? 180 : 300;
+  $scope.descriptionLength = $scope.linkMultiple ? 150 : 300;
 
   $scope.$watch('entity', linkImage);
 

@@ -1,7 +1,0 @@
-#!/bin/sh
-
-cat > deploy.json <<EOF
-{"sha": "$TRAVIS_COMMIT"}
-EOF
-
-curl -X POST -u "$CF_DEPLOY_CREDENTIALS" https://deploy.quirely.com/deploy_ui -d @deploy.json
