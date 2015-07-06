@@ -243,3 +243,36 @@ $cfnext-button--large-popout-icon()
   position: relative
   $btn-action()
   $cfnext-button--large-popout-icon()
+
+/*
+Buttons with dropdowns
+
+This is does not use inline SVGs yet so the color of the icons is off.
+
+Markup:
+button.cfnext-btn-secondary-action.cfnext-btn--dropdown
+  | More
+  cf-icon.btn-dropdown-icon
+    img(src="/app/svg/dd-arrow-down.svg")
+button.cfnext-btn-action.cfnext-btn--dropdown
+  | More
+  cf-icon.btn-dropdown-icon
+    img(src="/app/svg/dd-arrow-down.svg")
+button.cfnext-btn-primary-action.cfnext-btn--dropdown
+  | More
+  cf-icon.btn-dropdown-icon--up
+    img(src="/app/svg/dd-arrow-down.svg")
+
+Styleguide 4.8
+*/
+.btn-dropdown-icon,
+.btn-dropdown-icon--up
+  float: right
+  margin-left: 0.9em
+  margin-right: -0.6em
+
+.btn-dropdown-icon--up
+  transform: rotate(180deg)
+
+.cfnext-btn-secondary-action cf-icon path
+  fill: $cfnext-blue

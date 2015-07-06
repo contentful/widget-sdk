@@ -24,6 +24,7 @@
           cf-when-disabled="permissionController.entityActions.createAsset")
         cf-icon.btn-icon.inverted(name="plus")
         | Add New Asset
+        cf-icon.btn-dropdown-icon(name="dd-arrow-down")
       .dropdown-menu(cf-dropdown-menu="assetList.add" cf-dropdown-position="bottomcenter" container=".view-content")
         ul.add-entity__list
           li.dropdown-menu-item.type(ng-click="entityCreationController.newAsset()" cf-dropdown-close)

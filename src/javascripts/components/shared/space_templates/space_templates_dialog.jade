@@ -51,7 +51,7 @@
                                          ng-disabled="writableOrganizations.length < 2"
                                          type="button")
                   | {{selectedOrganization.name}}
-                  i.button-icon-right.fa.fa-caret-down
+                  cf-icon.btn-dropdown-icon(name="dd-arrow-down")
                 .cfnext-dropdown.space-template__org-dropdown(cf-dropdown-menu="spaceTemplates.organization" cf-dropdown-position="bottomcenter")
                   cf-icon.cfnext-dropdown__arrow(cf-dropdown-arrow name="arrow-up")
                   ul.cfnext-dropdown__list--first
