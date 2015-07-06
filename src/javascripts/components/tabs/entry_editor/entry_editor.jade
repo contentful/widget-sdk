@@ -104,7 +104,7 @@
 
     button.cfnext-btn-secondary-action.unpublish(type="button" ng-show="entityActionsController.canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry") Unpublish
     | 
-    button.cfnext-btn-action.publish(type="submit" ng-show="entityActionsController.canPublish()" ng-click="publish()" tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}
+    button.cfnext-btn-primary-action.publish(type="submit" ng-show="entityActionsController.canPublish()" ng-click="publish()" tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}
   .save-status(cf-save-status tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
   .other-users
