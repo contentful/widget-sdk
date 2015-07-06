@@ -166,3 +166,33 @@ Styleguide 12.1
     font-size: 1.14em
     margin-bottom: $rhythm(0.5)
     margin-top: 0.1em
+
+
+/**
+Modal Dialog Slices
+
+Allows you to bleed background into the `modal-dialog__content`
+element. You can also use it with the `$modal-dialog-slice()` mixin.
+
+Markup:
+.modal-dialog
+  header.modal-dialog__header
+    h1 Title
+    .close-button
+  .modal-dialog__content
+    p Hello
+    .modal-dialog__slice.styleguide-filled-box1
+      p This has a background
+  .modal-dialog__controls
+    button.cfnext-btn-primary-action
+      | Confirm
+
+Styleguide 12.2
+*/
+$modal-dialog-slice()
+  $modal-dialog-horizontal-padding()
+  margin-left: - $modal-dialog-frame-padding
+  margin-right: - $modal-dialog-frame-padding
+
+.modal-dialog__slice
+  $modal-dialog-slice()

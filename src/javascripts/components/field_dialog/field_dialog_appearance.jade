@@ -14,7 +14,7 @@ div(
         p.field-dialog__widget-default(ng-if="w.id === defaultWidget") (default)
         cf-icon(name="checkmark")
 
-  div(ng-class="{'field-dialog__widget-options': availableWidgets.length > 1}")
+  div.modal-dialog__slice(ng-class="{'field-dialog__widget-options': availableWidgets.length > 1}")
     cf-icon(name="arrow-up"
       ng-if="tab.active && availableWidgets.length > 1 && selectedWidgetIndex >= 0"
       cf-position-relative-to-widget-list
