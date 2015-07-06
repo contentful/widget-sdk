@@ -1,6 +1,14 @@
 'use strict';
 
 angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope', '$attrs', '$injector', function($scope, $attrs, $injector) {
+
+  /**
+   * Throughout this controller there are various checks to see if scope exists.
+   *
+   * These checks are placed on methods that can execute asynchrounously,
+   * due to the fact that we set the scope to null on '$destroy' to avoid memleak issues.
+  */
+
   var $q                = $injector.get('$q');
   var logger            = $injector.get('logger');
   var mimetype          = $injector.get('mimetype');
@@ -110,7 +118,9 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
     .then(function createEntityHandler(entry) {
       return addEntity(entry)
       .then(function addLinkHandler() {
-        $scope.$state.go('spaces.detail.entries.detail', { entryId: entry.getId(), addToContext: true });
+        // See scope checks comment at the top
+        if($scope)
+          $scope.$state.go('spaces.detail.entries.detail', { entryId: entry.getId(), addToContext: true });
       })
       .catch(function addLinkErrorHandler(errSetLink) {
         notification.error('Error linking Entry');
@@ -134,7 +144,9 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
     .then(function createEntityHandler(asset) {
       return addEntity(asset)
       .then(function addLinkHandler() {
-        $scope.$state.go('spaces.detail.assets.detail', { assetId: asset.getId(), addToContext: true });
+        // See scope checks comment at the top
+        if($scope)
+          $scope.$state.go('spaces.detail.assets.detail', { assetId: asset.getId(), addToContext: true });
       })
       .catch(function addLinkErrorHandler(errSetLink) {
         logger.logServerWarn('Error linking Asset', errSetLink);
@@ -185,10 +197,14 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
     $scope.paginator.page++;
     controller._loadEntities()
     .then(function (entities) {
-      $scope.paginator.numEntries = entities.total;
-      $scope.entities.push.apply($scope.entities, entities);
+      // See scope checks comment at the top
+      if($scope) {
+        $scope.paginator.numEntries = entities.total;
+        $scope.entities.push.apply($scope.entities, entities);
+      }
     }, function () {
-      $scope.paginator.page--;
+      // See scope checks comment at the top
+      if($scope) $scope.paginator.page--;
     });
   };
 
@@ -204,10 +220,14 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
   });
 
   function addEntity(entity) {
-    return $q.when($scope.$eval($attrs.addEntity, {entity: entity}));
+    // See scope checks comment at the top
+    if($scope) {
+      return $q.when($scope.$eval($attrs.addEntity, {entity: entity}));
+    }
   }
 
   function buildQuery() {
+    if(!$scope) return $q.reject();
     var contentType;
     var queryObject = {
       order: '-sys.updatedAt',
