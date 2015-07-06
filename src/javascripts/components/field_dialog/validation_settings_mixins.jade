@@ -5,9 +5,10 @@ mixin validation-errors
     )
 
 mixin error-message-input
-  label.validation-controls__error-message-input
-    | Custom error message
-    input.form-control(
+  .cfnext-form__field.validation-controls__error-message-field
+    label
+      | Custom error message
+    input.cfnext-form__input--full-size(
       type="text" aria-label="Custom error message"
       ng-model="validation.message")
 
