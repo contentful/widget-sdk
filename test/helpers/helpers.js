@@ -45,16 +45,19 @@ beforeEach(function () {
 
   /**
    * @ngdoc method
-   * @name helpers#when
+   * @name helpers#resolve
    * @description
    * Return a `$q` promise that resolves with the given value.
    *
    * @param {any} value
    * @return {Promise<any>}
    */
-  this.when = function (val) {
+  this.resolve = function (val) {
     return this.$inject('$q').when(val);
   };
+
+  // DEPRECATED
+  this.when = this.resolve;
 
   /**
    * @ngdoc method
