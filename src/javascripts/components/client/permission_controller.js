@@ -44,6 +44,13 @@ function PermissionController($scope, $injector) {
     });
   }
 
+  /**
+   * @ngdoc method
+   * @name PermissionController#get
+   * @param {string} label
+   * @param {string} permission
+   * @returns {boolean}
+   */
   function getEntityActionPermission(label, permission) {
     var entityAction = controller.entityActions[label];
     return (entityAction && permission in entityAction) ? entityAction[permission] : false;
