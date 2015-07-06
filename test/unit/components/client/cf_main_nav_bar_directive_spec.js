@@ -69,13 +69,13 @@ describe('Main nav bar directive', function () {
       it('is hidden', function () {
         scope.permissionController.get.withArgs(action+type, 'shouldHide').returns(true);
         compileElement();
-        expect(container.find(selector)).toBeNgHidden();
+        expect(container.find(selector).length).toEqual(0);
       });
 
       it('is shown', function () {
         scope.permissionController.get.withArgs(action+type, 'shouldHide').returns(false);
         compileElement();
-        expect(container.find(selector)).not.toBeNgHidden();
+        expect(container.find(selector).length).toEqual(1);
       });
     });
   }
