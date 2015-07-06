@@ -9,7 +9,7 @@
     .modal-dialog__controls
       button.cfnext-btn-primary-action(ng-click="dialog.confirm()")
         | {{dialog.confirmLabel}}
-      button.cfnext-btn-plain-block.push-right(
+      button.cfnext-btn-plain-block(
         ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
         | {{dialog.cancelLabel}}
 
