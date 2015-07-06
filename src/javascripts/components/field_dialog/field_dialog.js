@@ -161,6 +161,12 @@ angular.module('contentful')
       return validations.validate(decoratedValidation);
     }
   };
+
+  $scope.$watch('widget.widgetId', function (name) {
+    var properWidget = name === 'radio' || name === 'dropdown';
+    $scope.showPredefinedValueWidgetHint = !properWidget;
+  });
+
 }])
 
 

@@ -1,7 +1,12 @@
 include ./validation_settings_mixins
 
+.validation-value-list__hint(ng-if="showPredefinedValueWidgetHint")
+ | Predefined values work best with dropdown list or radio button list<br>
+ | To select either, go to the “Appearance” tab
+
+
 input.form-control.validation-value-list__add(
-  type="text" placeholder="Add a value"
+  type="text" placeholder="Add a value and hit enter"
   aria-label="Add a value" ng-keydown="onInputKey($event)")
 
 a(cf-knowledge-base-icon
