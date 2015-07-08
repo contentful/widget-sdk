@@ -1,6 +1,13 @@
 'use strict';
 
-angular.module('contentful').controller('PermissionController', ['$scope', '$injector', function PermissionController($scope, $injector) {
+angular.module('contentful')
+
+/**
+ * @ngdoc type
+ * @name PermissionController
+ */
+.controller('PermissionController', ['$scope', '$injector',
+function PermissionController($scope, $injector) {
 
   var $rootScope    = $injector.get('$rootScope');
   var stringUtils   = $injector.get('stringUtils');
@@ -37,11 +44,24 @@ angular.module('contentful').controller('PermissionController', ['$scope', '$inj
     });
   }
 
+  /**
+   * @ngdoc method
+   * @name PermissionController#get
+   * @param {string} label
+   * @param {string} permission
+   * @returns {boolean}
+   */
   function getEntityActionPermission(label, permission) {
     var entityAction = controller.entityActions[label];
     return (entityAction && permission in entityAction) ? entityAction[permission] : false;
   }
 
+  /**
+   * @ngdoc method
+   * @name PermissionController#can
+   * @param {string} action
+   * @param {any} entity
+   */
   function can(action, entity) {
     var response = {
       action: action,
