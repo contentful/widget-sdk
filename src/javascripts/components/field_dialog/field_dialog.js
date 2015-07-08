@@ -50,39 +50,56 @@ angular.module('contentful')
  * @scope.requires {Client.ContentType.Field}  field
  * @scope.requires {Client.ContentType}        contentType
  * @scope.requires {Client.EditingInterface}   editingInterface
+ *
+ * @property {string} $scope.widgetSettings.id
+ * @property {object} $scope.widgetSettings.params
  */
 .controller('FieldDialogController',
-['$scope', '$injector', function ($scope, $injector) {
+['$scope', '$injector', function FieldDialogController ($scope, $injector) {
   var dialog = $scope.dialog;
 
   var validations   = $injector.get('validationDecorator');
   var field         = $injector.get('fieldDecorator');
   var trackField    = $injector.get('analyticsEvents').trackField;
   var fieldFactory  = $injector.get('fieldFactory');
+  var Widgets       = $injector.get('widgets');
 
   $scope.decoratedField = field.decorate($scope.field, $scope.contentType);
   $scope.validations = validations.decorateFieldValidations($scope.field);
 
   $scope.currentTitleField = getTitleField($scope.contentType);
 
-  var widgets = $scope.editingInterface.data.widgets;
-  $scope.widget = _.clone(_.find(widgets, {fieldId: $scope.field.id}));
+  var eiWidgets = $scope.editingInterface.data.widgets;
+  var widget = _.find(eiWidgets, {fieldId: $scope.field.id});
+
+  $scope.widgetSettings = {
+    id: widget.widgetId,
+    params: _.cloneDeep(widget.widgetParams)
+  };
+
 
   $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
   $scope.iconId = fieldFactory.getIconId($scope.field)+'-small';
 
   dialog.save = function () {
     $scope.$broadcast('validate');
-    if (isValid()) {
-      field.update($scope.decoratedField, $scope.field, $scope.contentType);
-      validations.updateField($scope.field, $scope.validations);
-      var widgetIndex = _.findIndex(widgets, {fieldId: $scope.field.id});
-      widgets[widgetIndex] = $scope.widget;
-      trackFieldSettingsSuccess($scope.field);
-      dialog.confirm();
-    } else {
+    if (!isValid()) {
       trackFieldSettingsError($scope.field);
+      return;
     }
+
+    field.update($scope.decoratedField, $scope.field, $scope.contentType);
+    validations.updateField($scope.field, $scope.validations);
+
+    var params = $scope.widgetSettings.params;
+    var id = $scope.widgetSettings.id;
+    _.extend(widget, {
+      widgetId: id,
+      widgetParams: Widgets.filteredParams(id, params)
+    });
+
+    trackFieldSettingsSuccess($scope.field);
+    dialog.confirm();
   };
 
   function isValid () {
@@ -162,7 +179,7 @@ angular.module('contentful')
     }
   };
 
-  $scope.$watch('widget.widgetId', function (name) {
+  $scope.$watch('widgetSettings.id', function (name) {
     var properWidget = name === 'radio' || name === 'dropdown';
     $scope.showPredefinedValueWidgetHint = !properWidget;
   });
@@ -170,59 +187,50 @@ angular.module('contentful')
 }])
 
 
+/**
+ * @ngdoc type
+ * @name FieldDialogAppearanceController
+ *
+ * @scope.requires {string} widgetSettings.widgetId
+ * @scope.requires {object} widgetSettings.widgetParams
+ * @scope.requires {UI.Tab} tab
+ *
+ * @property {Widgets.Descriptor[]}  availableWidgets
+ * @property {Widgets.Descriptor}    widget
+ * @property {Widgets.Options[]}     widgetOptions
+ */
 .controller('FieldDialogAppearanceController',
 ['$scope', '$injector', function ($scope, $injector) {
   var widgets          = $injector.get('widgets');
-  var widgetChecks     = $injector.get('widgetChecks');
-  var fieldFactory     = $injector.get('fieldFactory');
-  var buildMessage     = $injector.get('baseErrorMessageBuilder');
-  var widgetOptions;
 
-  $scope.$watch('widget', function(widget) {
-    if (widget && widget.widgetId) {
-      widgets.applyDefaults(widget);
-      $scope.defaultWidget = fieldFactory.getDefaultWidget($scope.field);
-    }
-  });
-
-  $scope.$watch('widget.widgetId', function (widgetId) {
-    if (widgetId) {
-      widgetOptions = widgets.optionsForWidget(widgetId, 'field');
-      updateWidgetOptions($scope.widgetParams);
-      setSelectedWidgetIndex(widgetId);
-    }
-  });
+  $scope.defaultWidgetId = widgets.defaultWidgetId($scope.field, $scope.contentType);
+  $scope.widgetParams = $scope.widgetSettings.params;
+  $scope.$watch('widgetParams', updateWidgetOptions, true);
+  $scope.$watch('widget.options', updateWidgetOptions);
 
   // when widget parameter is changed, filter option list with dependency check
-  $scope.$watch('widget.widgetParams', updateWidgetOptions, true);
-
-  $scope.$watch('$form.$invalid', function (isInvalid) {
-    $scope.tab.invalid = isInvalid;
+  widgets.descriptorsForField($scope.field)
+  .then(function (available) {
+    $scope.availableWidgets = available;
+    var selected = _.findIndex(available, {id: $scope.widgetSettings.id});
+    $scope.selectedWidgetIndex = selected;
+    $scope.widget = available[selected];
   });
 
-  $scope.schema = {
-    errors: widgets.validate,
-    buildMessage: buildMessage
+  $scope.selectWidget = function (i) {
+    var widget = $scope.availableWidgets[i];
+    $scope.selectedWidgetIndex = i;
+    $scope.widget = widget;
+    $scope.widgetSettings.id = widget.id;
   };
 
-  $scope.selectWidget = function (id) {
-    $scope.widget.widgetId = id;
-  };
+  function updateWidgetOptions () {
+    // Loading widgets is asynchronous
+    if (!$scope.widget) return;
 
-  widgets.forField($scope.field)
-  .then(widgetChecks.markMisconfigured)
-  .then(function (widgets) {
-    $scope.availableWidgets = widgets;
-    $scope.misconfiguredMap = widgetChecks.getMisconfigured(widgets);
-    $scope.deprecatedMap = widgetChecks.getDeprecated();
-    setSelectedWidgetIndex($scope.widget.widgetId);
-  });
-
-  function setSelectedWidgetIndex(widgetId) {
-    $scope.selectedWidgetIndex = _.findIndex($scope.availableWidgets, {id: widgetId});
-  }
-
-  function updateWidgetOptions(params) {
-    $scope.widgetOptions = widgets.filterOptions(widgetOptions || [], params);
+    var options = $scope.widget.options;
+    var params = $scope.widgetParams;
+    widgets.applyDefaults(params, options);
+    $scope.widgetOptions = widgets.filterOptions(options, params);
   }
 }]);

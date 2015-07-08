@@ -7,6 +7,7 @@
 angular.module('contentful')
 .factory('widgets', ['$injector', function($injector){
   var $q = $injector.get('$q');
+  var widgetChecks = $injector.get('widgetChecks');
   var schemaErrors = $injector.get('validation').errors;
 
   /**
@@ -30,7 +31,7 @@ angular.module('contentful')
 
   /**
    * @ngdoc type
-   * @name Widget
+   * @name API.Widget
    * @property {string} widgetId
    * @property {[string]: any} widgetParams
    */
@@ -43,6 +44,14 @@ angular.module('contentful')
       id: {
         type: 'Symbol',
         required: true
+      },
+      fieldId: {
+        type: 'Symbol',
+        required: true,
+      },
+      widgetType: {
+        type: 'Symobl',
+        required: true,
       },
       widgetId: {
         type: 'Symbol',
@@ -58,22 +67,23 @@ angular.module('contentful')
         },
         additionalProperties: true
       }
-
     },
     additionalProperties: true
   };
 
   return {
-    get:               getWidget,
-    forField:          typesForField,
-    defaultWidgetId:   defaultWidgetId,
-    optionsForWidget:  optionsForWidget,
-    filterOptions:     filterOptions,
-    widgetTemplate:    widgetTemplate,
-    paramDefaults:     paramDefaults,
-    registerWidget:    registerWidget,
-    applyDefaults:     applyDefaults,
-    validate:          validate
+    get:                 getWidget,
+    forField:            typesForField,
+    descriptorsForField: descriptorsForField,
+    defaultWidgetId:     defaultWidgetId,
+    optionsForWidget:    optionsForWidget,
+    filterOptions:       filterOptions,
+    widgetTemplate:      widgetTemplate,
+    paramDefaults:       paramDefaults,
+    registerWidget:      registerWidget,
+    applyDefaults:       applyDefaults,
+    validate:            validate,
+    filteredParams:      filteredParams
   };
 
 
@@ -81,6 +91,32 @@ angular.module('contentful')
     return WIDGETS[id];
   }
 
+
+  /**
+   * @ngdoc method
+   * @name widgets#descriptorsForField
+   * @param {API.ContentType.Field} field
+   * @return {Promise<Array<Widget>>}
+   */
+  function descriptorsForField (field) {
+    return typesForField(field)
+    .then(function (widgets) {
+      widgets = _.map(widgets, _.clone);
+      _.forEach(widgets, function (widget) {
+        widget.options = optionsForWidget(widget.id, 'field');
+      });
+      return widgets;
+    })
+    .then(widgetChecks.markDeprecated)
+    .then(widgetChecks.markMisconfigured);
+  }
+
+  /**
+   * @ngdoc method
+   * @name widgets#forField
+   * @param {API.ContentType.Field} field
+   * @return {Promise<Array<Widget>>}
+   */
   function typesForField(field) {
     var fieldType = detectFieldType(field);
     var widgets =  _(WIDGETS)
@@ -100,9 +136,6 @@ angular.module('contentful')
 
   /**
    * This method determines the default widget for a given field.
-   * Default widgets are also specified in the fieldFactory.
-   * (Documentation there should be changed if this method ever stops
-   * being used)
    *
    * It accounts for legacy behavior for when there were no user selectable
    * widgets for a given field and some fields would have different widgets
@@ -168,6 +201,35 @@ angular.module('contentful')
     return [];
   }
 
+
+  /**
+   * @ngdoc method
+   * @name widgets#filteredParams
+   * @description
+   * Returns a copy of the `params` object that includes only keys that
+   * are applicable to the widget.
+   *
+   * @param {string} widgetId
+   * @param {object} params
+   * @returns {object}
+   */
+  function filteredParams (widgetId, params) {
+    var options = optionsForWidget(widgetId, 'field');
+    return _.transform(options, function (filtered, option) {
+      var param = params[option.param];
+      if (!_.isUndefined(param))
+        filtered[option.param] = param;
+    }, {});
+  }
+
+
+
+  /**
+   * @ngdoc method
+   * @name widgets#filterOptions
+   * @param {} options
+   * @param {} params
+   */
   function filterOptions(widgetOptions, widgetParams) {
     widgetParams = _.isObject(widgetParams) ? widgetParams : {};
     return _.filter(widgetOptions || [], shouldOptionBeVisible);
@@ -212,14 +274,17 @@ angular.module('contentful')
    * @ngdoc method
    * @name widgets#applyDefaults
    * @description
-   * Sets each widget paramter to its default value if it is not set
-   * yet.
-   * @param {Widget} widget
+   * Sets each widget paramter to its default value if it is not set yet.
+   *
+   * @param {object} params
+   * @param {options} Widget.Option[]
    */
-  function applyDefaults (widget) {
-    var defaults = paramDefaults(widget.widgetId, 'field');
-    widget.widgetParams = _.defaults(widget.widgetParams || {}, defaults);
-    return widget;
+  function applyDefaults (params, options) {
+    return _.forEach(options, function (option) {
+      if ('default' in option && !(option.param in params)) {
+        params[option.param] = option.default;
+      }
+    });
   }
 
   /**

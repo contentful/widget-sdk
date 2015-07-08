@@ -21,8 +21,7 @@
           | Validations
           i.fa.fa-exclamation-circle.field-dialog__tab-invalid
         li(role="tab" data-tab="appearance"
-           ng-attr-aria-invalid="{{tab.invalid}}"
-           ng-if="widget")
+           ng-attr-aria-invalid="{{tab.invalid}}")
           | Appearance
           i.fa.fa-exclamation-circle.field-dialog__tab-invalid
 
@@ -47,7 +46,7 @@
             cf-validation-setting.u-bce
 
 
-      div(role="tabpanel" data-tab="appearance" ng-if="widget")
+      div(role="tabpanel" data-tab="appearance")
         include ./field_dialog_appearance.jade
 
     .modal-dialog__controls

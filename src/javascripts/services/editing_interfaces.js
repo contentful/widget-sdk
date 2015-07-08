@@ -131,6 +131,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     return { data: data };
   }
 
+  // TODO this is not inline with the field factory
   function defaultWidget(contentType, field) {
     return {
       id: generateId(field.id, contentType.getId()),

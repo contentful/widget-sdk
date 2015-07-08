@@ -78,7 +78,14 @@ $field-dialog-width = 60em
       display: block
 
 .field-dialog__widget-icon
-  margin-bottom: auto
+  margin: auto 0
+
+.field-dialog__widget-warning
+  font-size: $small-font-size
+  color: $text-dimmed
+  margin: 0 0 $rhythm(1)
+  > i.fa
+    margin-right: 0.6em
 
 .field-dialog__widget-options
   position: relative
@@ -100,4 +107,3 @@ $field-dialog-width = 60em
     path
       fill: $cfnext-white
       stroke: $cfnext-light-gray
-

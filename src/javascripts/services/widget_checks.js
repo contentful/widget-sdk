@@ -15,22 +15,35 @@ angular.module('contentful')
 
   var DEPRECATED = {
     youtubeEditor: {
-      name: 'Youtube',
       alternative: 'Embedded Content'
     }
   };
 
   return {
     markMisconfigured: markMisconfigured,
-    getMisconfigured:  getMisconfigured,
-    getDeprecated:     function() { return DEPRECATED; }
+    markDeprecated:    markDeprecated,
   };
+
+
+  /**
+   * @ngdoc method
+   * @name widgetChecks#markDeprecated
+   * @param {Widget[]} widgets
+   * @returns {Widget[]}
+   */
+  function markDeprecated (widgets) {
+    return _.forEach(widgets, function (widget) {
+      var deprecation = DEPRECATED[widget.id];
+      if (deprecation)
+        widget.deprecation = deprecation;
+    });
+  }
 
   /**
    * @ngdoc method
    * @name widgetChecks#markMisconfigured
    * @param {Widget[]} widgets
-   * @returns {Promise}
+   * @returns {Promise<Widget[]>}
    */
   function markMisconfigured(widgets) {
     var promises = _(widgets)
@@ -50,21 +63,6 @@ angular.module('contentful')
   function getCheck(widget) {
     var check = CHECKS[widget.id];
     return _.isFunction(check) ? check : _resolveWith(false);
-  }
-
-  /**
-   * @ngdoc method
-   * @name widgetChecks#getMisconfigured
-   * @param {Widget[]} widgets
-   * @returns {Widget[]}
-   */
-  function getMisconfigured(widgets) {
-    return _.reduce(widgets, toMisconfiguredOnly, {});
-  }
-
-  function toMisconfiguredOnly(acc, widget) {
-    if (widget.misconfigured) { acc[widget.id] = widget; }
-    return acc;
   }
 
   function kalturaCredentialsCheck() {

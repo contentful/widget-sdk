@@ -7,8 +7,9 @@
  * Utilities for creating and handling Content Type Fields
  */
 angular.module('contentful')
-.factory('fieldFactory', ['stringUtils', function (stringUtils) {
+.factory('fieldFactory', ['widgets', 'stringUtils', function (widgets, stringUtils) {
   var capitalize = stringUtils.capitalize;
+
   /**
    * @ngdoc property
    * @name fieldFactory#types
@@ -29,33 +30,27 @@ angular.module('contentful')
       hasListVariant: true,
       label: 'Short Text',
       listLabel: 'Short Text, list',
-      defaultWidget: {single: 'singleLine', list: 'singleLine'}
     },
     {
       name: 'Text',
       label: 'Long Text',
-      defaultWidget: {single: 'markdown'},
     },
     {
       name: 'Integer',
-      defaultWidget: {single: 'numberEditor'},
       icon: 'number',
     },
     {
       name: 'Number',
       label: 'Decimal Number',
-      defaultWidget: {single: 'numberEditor'},
       icon: 'decimal',
     },
     {
       name: 'Date',
       label: 'Date & Time',
-      defaultWidget: {single: 'datePicker'},
       icon: 'calendar',
     },
     {
       name: 'Location',
-      defaultWidget: {single: 'locationEditor'},
     },
     {
       name: 'Asset',
@@ -63,16 +58,13 @@ angular.module('contentful')
       hasListVariant: true,
       label: 'Media',
       listLabel: 'Media, many files',
-      defaultWidget: {single: 'assetLinkEditor', list: 'assetLinksEditor'},
     },
     {
       name: 'Boolean',
-      defaultWidget: {single: 'radio'},
     },
     {
       name: 'Object',
       label: 'JSON Object',
-      defaultWidget: {single: 'objectEditor'},
       icon: 'json',
     },
     {
@@ -81,7 +73,6 @@ angular.module('contentful')
       hasListVariant: true,
       label: 'Reference',
       listLabel: 'References, many',
-      defaultWidget: {single: 'entryLinkEditor', list: 'entryLinksEditor'},
     }
   ], function (descriptor) {
     _.defaults(descriptor, {
@@ -148,7 +139,6 @@ angular.module('contentful')
     groups: fieldGroups,
     getLabel: getFieldLabel,
     getIconId: getIconId,
-    getDefaultWidget: getDefaultWidget,
     createTypeInfo: createTypeInfo,
   };
 
@@ -179,18 +169,6 @@ angular.module('contentful')
   */
   function getIconId(field) {
     return 'field-'+getFieldDescriptor(field).icon;
-  }
-
-  /**
-   * @ngdoc method
-   * @name fieldFactory#getDefaultWidget
-   * @description
-   * Returns the default widget for a given field
-   * @return {string}
-   */
-  function getDefaultWidget(field) {
-    var descriptor = getFieldDescriptor(field);
-    return descriptor.isList ? descriptor.defaultWidget.list : descriptor.defaultWidget.single;
   }
 
   /**

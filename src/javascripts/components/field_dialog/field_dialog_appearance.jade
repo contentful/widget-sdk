@@ -1,17 +1,18 @@
 div(
-  ng-form="widgetForm" cf-validate-form
-  ng-controller="FieldDialogAppearanceController" cf-validate="widget")
+  ng-form="widgetForm"
+  ng-controller="FieldDialogAppearanceController")
   .cfnext-form__field(ng-if="availableWidgets.length > 1")
-    label How the content will be added:
+    label
+      | Choose how this field should be displayed
     ul.field-dialog__widget-list
       li.field-dialog__widget-item(
           ng-repeat="w in availableWidgets track by w.id"
-          ng-class="{'is-selected': widget.widgetId === w.id}"
+          ng-class="{'is-selected': selectedWidgetIndex === $index}"
           data-current-widget-index="{{$index}}"
-          ng-click="selectWidget(w.id)")
+          ng-click="selectWidget($index)")
         cf-icon.field-dialog__widget-icon(name="{{w.icon}}-widget")
         p {{w.name}}
-        p.field-dialog__widget-default(ng-if="w.id === defaultWidget") (default)
+        p.field-dialog__widget-default(ng-if="w.id === defaultWidgetId") (default)
         cf-icon(name="checkmark")
 
   div.modal-dialog__slice(ng-class="{'field-dialog__widget-options': availableWidgets.length > 1}")
@@ -21,15 +22,15 @@ div(
       position-relative-to=".field-dialog__widget-item[data-current-widget-index=\"{{selectedWidgetIndex}}\"]"
       reposition-when-scrolls=".field-dialog__widget-list")
 
-    p.cfnext-form__hint(ng-show="misconfiguredMap[widget.widgetId]")
+    p.field-dialog__widget-warning(ng-show="widget.misconfigured")
       i.fa.fa-exclamation-triangle
-      | The "{{ misconfiguredMap[widget.widgetId].name }}" widget is not properly configured.
+      | The "{{ widget.name }}" widget is not properly configured.
       | Editor features may not work as expected.
 
-    p.cfnext-form__hint(ng-show="deprecatedMap[widget.widgetId]")
+    p.field-dialog__widget-warning(ng-show="widget.deprecation")
       i.fa.fa-exclamation-triangle
-      | The "{{ deprecatedMap[widget.widgetId].name }}" widget is deprecated.
-      | Please use the "{{ deprecatedMap[widget.widgetId].alternative }}" widget instead.
+      | The "{{ widget.name }}" widget is deprecated.
+      | Please use the "{{ widget.deprecation.alternative }}" widget instead.
 
     .cfnext-form__field(ng-repeat="option in widgetOptions track by option.name")
       label {{option.name}}
@@ -37,22 +38,20 @@ div(
         input.cfnext-form__input--full-size(ng-switch-when="Text"
                type="text" name="{{option.param}}"
                placeholder="{{option.description}}"
-               ng-model="widget.widgetParams[option.param]"
-               cf-validate-model="widgetParams.{{option.param}}")
+               ng-model="widgetParams[option.param]")
         input.cfnext-form__input(ng-switch-when="Number"
                type="text"
                placeholder="{{option.description}}"
-               ng-model="widget.widgetParams[option.param]"
-               cf-validate-model="widgetParams.{{option.param}}")
+               ng-model="widgetParams[option.param]")
         input.cfnext-form__input(ng-switch-when="Boolean"
                type="checkbox"
-               ng-model="widget.widgetParams[option.param]")
+               ng-model="widgetParams[option.param]")
         div(ng-switch-when="Predefined")
           select.cfnext-select-box(ng-if="option.values | isArray"
                  ng-options="value for value in option.values"
-                 ng-model="widget.widgetParams[option.param]")
+                 ng-model="widgetParams[option.param]")
           select.cfnext-select-box(ng-if="!(option.values | isArray)"
                  ng-options="desc as value for (desc, value) in option.values"
-                 ng-model="widget.widgetParams[option.param]")
+                 ng-model="widgetParams[option.param]")
           i.fa.fa-caret-down.cfnext-select-box-icon
       ul.cfnext-form__field-errors(cf-field-errors-for="{{option.param}}")

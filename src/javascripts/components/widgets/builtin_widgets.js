@@ -1,5 +1,15 @@
 'use strict';
 angular.module('contentful').run(['widgets', function(widgets){
+  /**
+   * @ngdoc type
+   * @name Widget
+   *
+   * @property {string} id
+   * @property {string} name
+   * @property {Widget.Option[]} options
+   * @property {string} icon
+   */
+
   // Static widgets
   widgets.registerWidget('sectionHeader',{
     name: 'Section Header',
@@ -75,9 +85,9 @@ angular.module('contentful').run(['widgets', function(widgets){
       {
         param: 'stars',
         type: 'Predefined',
-        values: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
+        values: _.range(1, 20),
         name: 'Number of stars',
-        default: 10
+        default: 5
       }
     ],
     notFocusable: true,

@@ -13,17 +13,6 @@ describe('Widget checks service', function() {
     kalturaCredentials  = this.$inject('kalturaCredentials');
   });
 
-  describe('getMisconfigured', function() {
-    it('should return misconfigured widgets only', function() {
-      var misconfigured = {id: 'third', misconfigured: true};
-      var widgets = [{id: 'first'}, {id: 'second'}, misconfigured, {id: 'last', misconfigured: false}];
-      var result = widgetChecks.getMisconfigured(widgets);
-
-      expect(result['third']).toEqual(misconfigured);
-      expect(Object.keys(result).length).toEqual(1);
-    });
-  });
-
   describe('markMisconfigured', function() {
     describe('kalturaEditor', function() {
 
