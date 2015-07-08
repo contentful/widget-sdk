@@ -1,13 +1,5 @@
 sudo: false
 language: node_js
-branches:
-  only:
-  - master
-  - production
-  - staging
-  - preview
-  - /^feature\//
-  - /^fix\//
 node_js:
 - '0.10'
 
