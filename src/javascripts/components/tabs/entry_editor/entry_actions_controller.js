@@ -181,7 +181,10 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
       notification.warn('Error publishing ' + title() + ': Validation failed');
     } else if (errorId === 'VersionMismatch'){
       notification.warn('Error publishing ' + title() + ': Can only publish most recent version');
-    } else if (errorId === 'InvalidEntry' || errorId === 'UnresolvedLinks') {
+    } else if (errorId === 'UnresolvedLinks') {
+      $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
+      notification.warn('Error publishing ' + title() + ': Some linked entries are missing.');
+    } else if (errorId === 'InvalidEntry') {
       if (err.body.message === 'Validation error') {
         $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
         notification.warn('Error publishing ' + title() + ': Validation failed');
