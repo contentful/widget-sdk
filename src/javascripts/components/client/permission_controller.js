@@ -14,6 +14,7 @@ function PermissionController($scope, $injector) {
   var enforcements  = $injector.get('enforcements');
   var authorization = $injector.get('authorization');
   var reasonsDenied = $injector.get('reasonsDenied');
+  var logger        = $injector.get('logger');
 
   var actionsForEntities = {
     contentType: ['create', 'read', 'update', 'delete', 'publish', 'unpublish'],
@@ -93,7 +94,16 @@ function PermissionController($scope, $injector) {
     if(authorization.authContext && $scope.organizations && $scope.organizations.length > 0){
       if(!canCreateSpaceInAnyOrg()) return false;
 
-      response = authorization.authContext.can('create', 'Space');
+      try {
+        response = authorization.authContext.can('create', 'Space');
+      } catch(exp){
+        logger.logError('Worf can exception', {
+          data: {
+            exception: exp,
+            tokenLookup: tokenLookup
+          }
+        });
+      }
       if(!response){
         checkForEnforcements('create', 'Space');
       }
