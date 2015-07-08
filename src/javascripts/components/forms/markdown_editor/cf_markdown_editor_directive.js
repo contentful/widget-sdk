@@ -288,6 +288,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         textarea.trigger('input').trigger('autosize');
         var textareaElem = textarea.get(0);
         /*global Event*/
+        // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events
         var evt;
         try {
           evt = new Event('paste');
