@@ -18,7 +18,7 @@ angular.module('contentful').
       $rootScope.$broadcast('entityDeleted', contentType);
     })
     .catch(function(err){
-      logger.logServerWarn('Error deleting Content Type', {error: err });
+      logger.logServerWarn('Error deleting Content Type', err);
       notification.error('Error deleting Content Type');
     });
   };
@@ -50,7 +50,7 @@ angular.module('contentful').
     } else {
       var reason = dotty.get(err, 'body.message');
       notification.error(messagePrefix + reason);
-      logger.logServerWarn('Error saving Content Type', {error: err});
+      logger.logServerWarn('Error saving Content Type', err);
     }
 
   }
@@ -83,7 +83,7 @@ angular.module('contentful').
     } else {
       var reason = dotty.get(err, 'body.message');
       notification.error(messagePrefix + reason);
-      logger.logServerWarn('Error activating Content Type', {error: err});
+      logger.logServerWarn('Error activating Content Type', err);
     }
   }
 
@@ -108,7 +108,7 @@ angular.module('contentful').
 
   function unpublishErrorHandler(err){
     var reason = dotty.get(err, 'body.message');
-    if(!reason) logger.logServerWarn('Error deactivating Content Type', {error: err });
+    if(!reason) logger.logServerWarn('Error deactivating Content Type', err);
     notification.warn('Error deactivating ' + title() + ': ' + reason, err);
   }
 }]);
