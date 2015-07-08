@@ -20,7 +20,7 @@
         span View
       .dropdown-menu(cf-dropdown-menu="assetEditor.view.locale" cf-dropdown-position="bottomcenter")
         ul.lang-switcher
-          li.dropdown-menu-item--label(ng-repeat="locale in spaceContext.privateLocales track by locale.code")
+          li.dropdown-menu-item--label(ng-repeat="locale in spaceContext.privateLocales track by locale.sys.id")
             label
               input.form-control(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
               | {{locale.name}}
