@@ -10,16 +10,16 @@
  * @scope.requires  schema.errors
  * @scope.requires  schema.buildMessage
  */
-angular.module('contentful').directive('cfValidate', [function () {
+angular.module('contentful')
+.directive('cfValidate', [function () {
   return {
     restrict: 'A',
     scope: true,
     controller: 'ValidationController',
     controllerAs: 'validator'
   };
-}]);
+}])
 
-angular.module('contentful')
 .controller('ValidationController', ['$scope', '$attrs', '$timeout',
 function ValidationController ($scope, $attrs, $timeout) {
   var controller = this;
@@ -95,7 +95,7 @@ function ValidationController ($scope, $attrs, $timeout) {
   /**
    * @ngdoc method
    * @name cfValidate#validator.setErrors
-   * @param {Array<Error>}
+   * @param {Array<Error>} errors
    */
   controller.setErrors = function (errors) {
     $scope.validationResult = makeValidationResult(errors, getData(), $scope.schema);
