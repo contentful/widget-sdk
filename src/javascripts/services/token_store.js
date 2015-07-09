@@ -7,6 +7,7 @@ angular.module('contentful').service('tokenStore', ['$injector', function($injec
   var authentication = $injector.get('authentication');
   var modalDialog    = $injector.get('modalDialog');
   var notifyReload   = $injector.get('ReloadNotification').trigger;
+  var logger         = $injector.get('logger');
 
   var tokenStore = this;
 
@@ -84,7 +85,15 @@ angular.module('contentful').service('tokenStore', ['$injector', function($injec
       }
     });
     newSpaceList.sort(function (a,b) {
-      return a.data.name.localeCompare(b.data.name);
+      try {
+        return a.data.name.localeCompare(b.data.name);
+      } catch(exp) {
+        logger.logError('Space is not defined', {
+          data: {
+            spaces: newSpaceList
+          }
+        });
+      }
     });
     return newSpaceList;
   }

@@ -158,7 +158,18 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
         var contentType = $scope.spaceContext.getPublishedContentType($scope.context.view.contentTypeId);
         field = _.find(contentType.data.fields, {id: fieldId});
         var defaultLocale = $scope.spaceContext.space.getDefaultLocale().code;
-        return 'fields.'+apiNameOrId(field)+'.'+defaultLocale;
+        try {
+          return 'fields.'+apiNameOrId(field)+'.'+defaultLocale;
+        } catch(exp) {
+          logger.logError('Field is undefined exception', {
+            data: {
+              exp: exp,
+              field: field,
+              fieldId: fieldId,
+              fields: contentType.data.fields
+            }
+          });
+        }
       }
     }
   }

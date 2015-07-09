@@ -5,7 +5,7 @@ angular.module('contentful').factory('lookupLinksForEntityCache', ['$injector', 
 
   return function lookupLinksForEntityCache(links, cache) {
     var ids = _.map(links, function (link) {
-      if(!link){
+      if(!link || link && !link.sys){
         logger.logError('link object doesnt exist', {
           data: {
             links: links

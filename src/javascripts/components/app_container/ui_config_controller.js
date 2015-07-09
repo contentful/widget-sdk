@@ -33,7 +33,7 @@ angular.module('contentful').controller('UiConfigController', ['$scope', '$q', '
         $scope.uiConfig = {};
         return $scope.uiConfig;
       } else if(statusCode !== 502) {
-        logger.logServerWarn('Could not load UIConfig', {error: err});
+        logger.logServerWarn('Could not load UIConfig', err);
       }
     });
   }

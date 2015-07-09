@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  factory('authorization', ['worf', function (worf) {
+  factory('authorization', ['worf', 'logger', function (worf, logger) {
     function Authorization() {}
 
     Authorization.prototype = {
@@ -9,13 +9,26 @@ angular.module('contentful').
       spaceContext: null,
       setTokenLookup: function (tokenLookup, space) {
         this._tokenLookup = tokenLookup;
-        this.authContext = worf(tokenLookup);
+        try {
+          this.authContext = worf(tokenLookup);
+        } catch (exp) {
+          logger.logError('Worf initialization exception', {
+            data: {
+              exception: exp,
+              tokenLookup: tokenLookup
+            }
+          });
+        }
         this.setSpace(space);
       },
       setSpace: function (space) {
         this._space = space;
         if (space && this.authContext) {
-          this.spaceContext = this.authContext.space(space.getId());
+          try {
+            this.spaceContext = this.authContext.space(space.getId());
+          } catch(exp) {
+            logger.logError('Worf authContext space exception', exp);
+          }
         } else {
           this.spaceContext = null;
         }

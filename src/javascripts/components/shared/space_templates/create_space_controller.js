@@ -67,7 +67,7 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
         notification.warn('Space name is too long');
       } else {
         notification.error('Could not create Space. If the problem persists please get in contact with us.');
-        logger.logServerWarn('Could not create Space', {error: err});
+        logger.logServerWarn('Could not create Space', err);
       }
     }
 

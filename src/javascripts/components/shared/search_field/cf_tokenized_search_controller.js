@@ -189,8 +189,10 @@ angular.module('contentful').controller('cfTokenizedSearchController', ['$scope'
     if(token.type === 'Value') $scope.submitSearch($scope.inner.term);
     $scope.selectRange(token.end + appendString.length, 0)
     .then(function () {
-      $scope.position = token.end + appendString.length;
-      $scope.updateAutocompletions();
+      if($scope){
+        $scope.position = token.end + appendString.length;
+        $scope.updateAutocompletions();
+      }
     });
 
     function operator(key) {

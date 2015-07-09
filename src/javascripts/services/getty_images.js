@@ -1,6 +1,11 @@
 'use strict';
 
-angular.module('contentful').factory('gettyImagesFactory', ['$http', '$q', 'client', function gettyImagesFactory($http, $q, client) {
+angular.module('contentful').factory('gettyImagesFactory', ['$injector', function gettyImagesFactory($injector) {
+  var $http  = $injector.get('$http');
+  var $q     = $injector.get('$q');
+  var client = $injector.get('client');
+  var logger = $injector.get('logger');
+
   var accessTokens = {};
   var service = {};
   var space;
@@ -89,7 +94,18 @@ angular.module('contentful').factory('gettyImagesFactory', ['$http', '$q', 'clie
   };
 
   function getNewToken (spaceId, result) {
-    var path = 'getty_images/' + space.getOrganizationId();
+    var path;
+    try {
+      path = 'getty_images/' + space.getOrganizationId();
+    } catch(exp){
+      logger.logError('Getty Images space organizations exception', {
+        data: {
+          space: space,
+          exp: exp
+        }
+      });
+    }
+
     client.getIntegrationToken(path)
     .then(function(data){
       result.resolve(data.access_token);

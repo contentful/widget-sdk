@@ -16,8 +16,8 @@ angular.module('contentful').directive('cfValidate', [function () {
 }]);
 
 angular.module('contentful')
-.controller('ValidationController', ['$scope', '$attrs',
-function ValidationController ($scope, $attrs) {
+.controller('ValidationController', ['$scope', '$attrs', 'logger',
+function ValidationController ($scope, $attrs, logger) {
 
   $scope.validationResult = {};
 
@@ -78,9 +78,18 @@ function ValidationController ($scope, $attrs) {
     var retval = {};
     _.each(errors, function (error) {
       var pointer = retval;
-      for (var i = 0, l = error.path.length; i < l; i ++) {
-        var pathSeg = error.path[i];
-        pointer = pointer[pathSeg] = pointer[pathSeg] || {};
+      try {
+        for (var i = 0, l = error.path.length; i < l; i ++) {
+          var pathSeg = error.path[i];
+          pointer = pointer[pathSeg] = pointer[pathSeg] || {};
+        }
+      } catch (exp) {
+        logger.logError('Error path exception', {
+          data: {
+            error: error,
+            path: error.path
+          }
+        });
       }
     });
     return retval;

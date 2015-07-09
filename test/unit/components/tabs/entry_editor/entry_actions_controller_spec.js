@@ -480,7 +480,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('gets contextual error message', function() {
-        expect(logger.logServerWarn.args[0][1].error).toEqual(err);
+        expect(logger.logServerWarn.args[0][1]).toEqual(err);
       });
     });
 

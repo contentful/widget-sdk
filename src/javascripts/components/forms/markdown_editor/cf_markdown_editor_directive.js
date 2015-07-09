@@ -287,11 +287,16 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       function triggerUpdateEvents() {
         textarea.trigger('input').trigger('autosize');
         var textareaElem = textarea.get(0);
-        // TODO this is causing errors, also Event is not defined
-        // https://bugsnag.com/contentful/user-interface/errors/54acf5a6c3bb24b1646d8b10
         /*global Event*/
-        if(textareaElem && textareaElem.dispatchEvent)
-          textareaElem.dispatchEvent(new Event('paste'));
+        // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events
+        var evt;
+        try {
+          evt = new Event('paste');
+        } catch(e) {
+          evt = document.createEvent('Event');
+          evt.initEvent('paste', true, true);
+        }
+        textareaElem.dispatchEvent(evt);
       }
 
       function makeAssetLink(asset) {

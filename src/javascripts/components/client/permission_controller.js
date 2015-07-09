@@ -1,12 +1,20 @@
 'use strict';
 
-angular.module('contentful').controller('PermissionController', ['$scope', '$injector', function PermissionController($scope, $injector) {
+angular.module('contentful')
+
+/**
+ * @ngdoc type
+ * @name PermissionController
+ */
+.controller('PermissionController', ['$scope', '$injector',
+function PermissionController($scope, $injector) {
 
   var $rootScope    = $injector.get('$rootScope');
   var stringUtils   = $injector.get('stringUtils');
   var enforcements  = $injector.get('enforcements');
   var authorization = $injector.get('authorization');
   var reasonsDenied = $injector.get('reasonsDenied');
+  var logger        = $injector.get('logger');
 
   var actionsForEntities = {
     contentType: ['create', 'read', 'update', 'delete', 'publish', 'unpublish'],
@@ -37,11 +45,24 @@ angular.module('contentful').controller('PermissionController', ['$scope', '$inj
     });
   }
 
+  /**
+   * @ngdoc method
+   * @name PermissionController#get
+   * @param {string} label
+   * @param {string} permission
+   * @returns {boolean}
+   */
   function getEntityActionPermission(label, permission) {
     var entityAction = controller.entityActions[label];
     return (entityAction && permission in entityAction) ? entityAction[permission] : false;
   }
 
+  /**
+   * @ngdoc method
+   * @name PermissionController#can
+   * @param {string} action
+   * @param {any} entity
+   */
   function can(action, entity) {
     var response = {
       action: action,
@@ -73,7 +94,11 @@ angular.module('contentful').controller('PermissionController', ['$scope', '$inj
     if(authorization.authContext && $scope.organizations && $scope.organizations.length > 0){
       if(!canCreateSpaceInAnyOrg()) return false;
 
-      response = authorization.authContext.can('create', 'Space');
+      try {
+        response = authorization.authContext.can('create', 'Space');
+      } catch(exp){
+        logger.logError('Worf can exception', exp);
+      }
       if(!response){
         checkForEnforcements('create', 'Space');
       }
