@@ -6,7 +6,6 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   var logger = $injector.get('logger');
   var $window = $injector.get('$window');
   var $rootScope = $injector.get('$rootScope');
-  $scope.notes = $injector.get('notes');
 
   var IOS_RE = /(iphone os|ipad|iphone)/gi;
   $scope.isIos = IOS_RE.test($window.navigator.userAgent);

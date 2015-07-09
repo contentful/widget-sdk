@@ -5,11 +5,8 @@
  * @name contentful/app
  */
 angular.module('contentful/app', ['contentful', 'cf.ui'])
-.config(['analyticsProvider', 'environment', function(analyticsProvider, environment){
-  $.cookies.setOptions({
-    secure: environment.env != 'development'
-  });
 
+.config(function(){
   if (!history.pushState) {
     // Strip invalid hash so $location does not trip up
     // when we call the page with #access_token=foo
@@ -17,9 +14,8 @@ angular.module('contentful/app', ['contentful', 'cf.ui'])
       window.location.hash = '!/' + window.location.hash;
     }
   }
+})
 
-  //analyticsProvider.forceLoad();
-}])
 .run([
   'authentication', 'clientAdapter', 'ShareJS', 'iconsPreview', 'uiVersionSwitcher',
   function(authentication, clientAdapter, ShareJS, iconsPreview, uiVersionSwitcher) {

@@ -1,8 +1,16 @@
 'use strict';
-angular.module('contentful').controller('ViewMenuController', ['$scope', '$attrs', 'modalDialog', 'random', '$timeout', 'analytics', '$parse', function($scope, $attrs, modalDialog, random, $timeout, analytics, $parse){
-  $scope.tempFreeViews = [];
-  $scope.folderStates = loadFolderStates();
+angular.module('contentful')
+
+.controller('ViewMenuController', ['$scope', '$attrs', '$injector', '$parse', function($scope, $attrs, $injector, $parse) {
+  var modalDialog    = $injector.get('modalDialog');
+  var random         = $injector.get('random');
+  var $timeout       = $injector.get('$timeout');
+  var analytics      = $injector.get('analytics');
+  var TheStore       = $injector.get('TheStore');
   var getCurrentView = $parse($attrs.currentView);
+
+  $scope.tempFreeViews = [];
+  $scope.folderStates = TheStore.get('folderStates') || {};
 
   $scope.$watch($attrs.cfViewMenu, function (folders) {
     $scope.folders = folders;
@@ -21,23 +29,12 @@ angular.module('contentful').controller('ViewMenuController', ['$scope', '$attrs
     return $scope.folderStates[folder.id] !== 'closed';
   };
 
-  function loadFolderStates() {
-    var states = {};
-    try {
-      states = $.cookies.get('folderStates') || {};
-    } finally {
-      return states;
-    }
-  }
-
   function saveFolderStates(folderStates) {
     // Only store closed folders that actually exist
     folderStates = _.pick(folderStates, function (state, folderId) {
       return state === 'closed' && _.find($scope.folders, {id: folderId});
     });
-    $.cookies.set('folderStates', folderStates, {
-      expiresAt: moment().add(1, 'y').toDate()
-    });
+    TheStore.set('folderStates', folderStates);
   }
 
   $scope.editName = function (item) {
