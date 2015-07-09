@@ -50,8 +50,8 @@
                 button.cfnext-btn-secondary-action(cf-dropdown-toggle="spaceTemplates.organization"
                                          ng-disabled="writableOrganizations.length < 2"
                                          type="button")
-                  | {{selectedOrganization.name}}
                   cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+                  | {{selectedOrganization.name}}
                 .cfnext-dropdown.space-template__org-dropdown(cf-dropdown-menu="spaceTemplates.organization" cf-dropdown-position="bottomcenter")
                   cf-icon.cfnext-dropdown__arrow(cf-dropdown-arrow name="arrow-up")
                   ul.cfnext-dropdown__list--first

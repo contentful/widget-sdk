@@ -39,8 +39,8 @@
           ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
           cf-when-disabled="permissionController.entityActions.createEntry")
         cf-icon.btn-icon.inverted(name="plus")
-        | Add New Entry
         cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+        | Add New Entry
       .dropdown-menu(cf-dropdown-menu="entryList.add" cf-dropdown-position="bottomcenter")
         ul.add-entity__list
           li.dropdown-menu-item.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
