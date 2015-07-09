@@ -122,7 +122,18 @@ angular.module('contentful').controller('LinkEditorController',
 
     function removeLink(index) {
       cb = $q.callbackWithApply();
-      $scope.otDoc.at($scope.otPath.concat(index)).remove(cb);
+      var path = $scope.otPath.concat(index);
+      try {
+        $scope.otDoc.at(path).remove(cb);
+      } catch(exp){
+        logger.logError('No element at that path', {
+          data: {
+            exp: exp,
+            path: path,
+            snapshot: $scope.otDoc.snapshot
+          }
+        });
+      }
       return cb.promise.then(function () {
         $scope.links.splice(index,1);
         $scope.updateModel();
