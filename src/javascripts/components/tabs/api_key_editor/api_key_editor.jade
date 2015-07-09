@@ -57,8 +57,8 @@
           .l-field-editor.u-separator--small(ng-if="isDevice('any')")
             a(href="https://itunes.apple.com/au/app/contentful-discovery-cms-for/id892840015" target="_blank")
               i.fa.fa-apple.fa-2x
-              |  Browse entries in the Discovery App 
-            span (For iOS devices only)
+              |  Browse entries in the Discovery App
+            |  (For iOS devices only)
 
     .l-form-right
       h2.section-title API Access Tokens
@@ -76,13 +76,14 @@
             a.u-locked-action(ng-show="!regenerateProductionToken" href="#" cf-dropdown-toggle="apiKeyEditor.productionToken")
               i.fa.fa-lock
               |  Unlock Access Token Regeneration
-              .delete-confirm(cf-dropdown-menu="apiKeyEditor.productionToken" cf-dropdown-position="bottomcenter")
-                h2
-                  i.fa.fa-exclamation-circle
-                  |  Warning
-                p Regenerating the production API access token will break the connection to your apps
-                button.btn.btn--danger(type="button" ng-click="regenerateProductionToken=true" cf-dropdown-close) Unlock
-                button.btn.btn--secondary(type="button" cf-dropdown-close) Cancel
+            .delete-confirm(cf-dropdown-menu="apiKeyEditor.productionToken" cf-dropdown-position="bottomcenter")
+              h2
+                i.fa.fa-exclamation-circle
+                |  Warning
+              p Regenerating the production API access token will break the connection to your apps
+              button.btn.btn--danger(type="button" ng-click="regenerateProductionToken=true" cf-dropdown-close) Unlock
+              | &nbsp;
+              button.btn.btn--secondary(type="button" cf-dropdown-close) Cancel
             a(ng-click="regenerateAccessToken()" ng-show="regenerateProductionToken" href="#")
               i.fa.fa-refresh
               |  Regenerate Access Token
@@ -175,8 +176,8 @@
     button.btn.btn--secondary.delete(type="button" ng-show="apiKey.getId()" cf-dropdown-toggle="apiKeyEditor.delete") Delete
     .delete-confirm(cf-dropdown-menu="apiKeyEditor.delete" cf-dropdown-position="topcenter")
       p You are about to delete {{context.title}}
-      button.btn.btn--danger(type="button" ng-click="delete()" cf-dropdown-close) Delete 
-      button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete 
+      button.btn.btn--danger(type="button" ng-click="delete()" cf-dropdown-close) Delete
+      button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete
     button.btn.btn--primary.save(type="submit"
                  tooltip="Save this API key"
                  ng-click="save()"
