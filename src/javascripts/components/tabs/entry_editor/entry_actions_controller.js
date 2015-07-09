@@ -108,6 +108,7 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
 
   $scope.revertToPreviousState = function () {
     var cb = $q.callbackWithApply();
+    if(!$scope.otDoc) return $q.when();
     $scope.otDoc.at('fields').set(originalEntryData.fields, cb);
     cb.promise
     .then(function () {
