@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Client Controller', function () {
-  var clientController, scope, notification;
+  var clientController, scope, notification, TheAccountView;
   var stubs;
 
   function setMockOnContext(context, mockKey, stubsList) {
@@ -144,6 +144,7 @@ describe('Client Controller', function () {
       this.$q = $q;
       this.$rootScope = $rootScope;
       notification = $injector.get('notification');
+      TheAccountView = $injector.get('TheAccountView');
       scope = $rootScope.$new();
       clientController = $controller('ClientController', {$scope: scope});
       scope.$state.go = stubs.go;
@@ -166,11 +167,6 @@ describe('Client Controller', function () {
     it('analytics is triggered', function () {
       sinon.assert.calledWith(this.analyticsStubs.toggleAuxPanel, true, '');
     });
-  });
-
-  it('space switcher analytics tracking', function () {
-    scope.clickedSpaceSwitcher();
-    sinon.assert.called(this.analyticsStubs.track);
   });
 
   describe('on space and token lookup updates', function () {
@@ -241,7 +237,8 @@ describe('Client Controller', function () {
     describe('if we are selecting the current space but in account section', function () {
       beforeEach(function () {
         idStub.returns(123);
-        scope.locationInAccount = true;
+        TheAccountView.isActive = sinon.stub();
+        TheAccountView.isActive.returns(true);
         scope.selectSpace(space);
       });
 
@@ -277,117 +274,23 @@ describe('Client Controller', function () {
       });
 
       it('location in account set to false', function() {
-        expect(scope.locationInAccount).toBeFalsy();
+        expect(TheAccountView.isActive()).toBeFalsy();
       });
     });
-  });
-
-  describe('select organization', function() {
-    beforeEach(function() {
-      scope.organizations = [{
-        sys: {
-          id: '1234',
-          createdBy: {
-            sys: {
-              id: '456'
-            }
-          }
-        },
-        name: 'orgname'
-      }];
-      scope.user = {
-        sys: {id: '456'}
-      };
-      scope.permissionController.canSelectOrg = sinon.stub();
-    });
-
-    describe('cannot select org', function() {
-      beforeEach(function() {
-        scope.permissionController.canSelectOrg.returns(false);
-        scope.selectOrg('1234');
-      });
-
-      it('does not tracks analytics', function () {
-          sinon.assert.notCalled(this.analyticsStubs.track);
-        });
-
-      it('does not route to anywhere', function () {
-        sinon.assert.notCalled(stubs.go);
-      });
-
-    });
-
-    describe('can select org', function() {
-      beforeEach(function() {
-        scope.permissionController.canSelectOrg.returns(true);
-        scope.selectOrg('1234');
-      });
-
-      it('tracks analytics', function () {
-          sinon.assert.called(this.analyticsStubs.track);
-        });
-
-      it('tracks the org properties', function () {
-        expect(this.analyticsStubs.track.args[0][1]).toEqual({
-          organizationId: '1234', organizationName: 'orgname'
-        });
-      });
-
-      it('routes to selected org', function () {
-        sinon.assert.calledWith(stubs.go, 'account.pathSuffix', {
-          pathSuffix: 'organizations/1234/edit'
-        });
-      });
-    });
-
   });
 
   describe('handle route change', function () {
     var childScope;
-    var idStub;
     beforeEach(function () {
       childScope = scope.$new();
       scope.getCurrentSpaceId = sinon.stub();
-      scope.getCurrentSpaceId.returns(123);
-
-      idStub = sinon.stub();
-    });
-
-    describe('no spaces exist', function () {
-      beforeEach(function () {
-        scope.spaces = null;
-        childScope.$emit('$routeChangeSuccess', {viewType: null});
-      });
-
-      it('sets no space data on analytics', function () {
-        sinon.assert.notCalled(this.analyticsStubs.setSpace);
-      });
-    });
-
-    describe('does not change route to the same space', function () {
-      beforeEach(function () {
-        scope.spaces = [];
-        childScope.$emit('$routeChangeSuccess', {params: {spaceId: 123}, viewType: null});
-      });
-
-      it('sets no space data on analytics', function () {
-        sinon.assert.notCalled(this.analyticsStubs.setSpace);
-      });
-
-      it('location in account flag is false', function() {
-        expect(scope.locationInAccount).toBeFalsy();
-      });
+      scope.getCurrentSpaceId.returns(321);
     });
 
     describe('changing route to a different space', function () {
       beforeEach(function () {
-        scope.spaces = [{getId: idStub}];
-        idStub.returns(456);
+        scope.spaces = [{getId: function() { return 123; }}];
         childScope.$emit('$stateChangeSuccess');
-      });
-
-      it('gets the space id', function () {
-        sinon.assert.called(idStub);
       });
 
       it('switches to space', function () {
@@ -395,65 +298,10 @@ describe('Client Controller', function () {
       });
 
       it('location in account flag is false', function() {
-        expect(scope.locationInAccount).toBeFalsy();
+        expect(TheAccountView.isActive()).toBeFalsy();
       });
     });
 
-  });
-
-  describe('watches for spaces array', function () {
-    var idStub1, idStub2;
-    beforeEach(function () {
-      scope.spaces = null;
-      scope.$digest();
-      stubs.spaceId.returns(321);
-      idStub1 = sinon.stub();
-      idStub2 = sinon.stub();
-      idStub1.returns(123);
-      idStub2.returns(456);
-      scope.spaces = [
-        {getId: idStub1, data: {organization: {sys: {id: 132}}}},
-        {getId: idStub2, data: {organization: {sys: {id: 132}}}},
-        scope.spaceContext.space
-      ];
-    });
-
-    it('spaces are grouped by organization', function() {
-      scope.$stateParams.spaceId = 123;
-      scope.$digest();
-      expect(scope.spacesByOrg).toEqual({
-        132: [scope.spaces[0], scope.spaces[1]],
-        456: [scope.spaces[2]]
-      });
-    });
-  });
-
-  describe('calls logout', function () {
-    beforeEach(function () {
-      scope.logout();
-    });
-
-    it('tracks analytics event', function () {
-      sinon.assert.called(this.analyticsStubs.track);
-    });
-
-    it('logs out through authentication', function () {
-      sinon.assert.called(this.authenticationStubs.logout);
-    });
-  });
-
-  describe('open support', function () {
-    beforeEach(function () {
-      scope.openSupport();
-    });
-
-    it('opens new window', function () {
-      sinon.assert.called(this.windowStubs.open);
-    });
-
-    it('gets support url', function () {
-      sinon.assert.called(this.authenticationStubs.supportUrl);
-    });
   });
 
   describe('handle iframe messages', function () {
@@ -614,14 +462,9 @@ describe('Client Controller', function () {
 
   });
 
-  it('tracks profile button click event', function () {
-    scope.clickedProfileButton();
-    sinon.assert.called(this.analyticsStubs.track);
-  });
-
   describe('redirects to profile', function () {
     beforeEach(function() {
-      scope.goToAccount();
+      TheAccountView.goTo();
     });
 
     it('goes there', function() {
@@ -633,12 +476,12 @@ describe('Client Controller', function () {
 
   describe('redirects to profile with a suffix', function () {
     beforeEach(function() {
-      scope.goToAccount('section');
+      TheAccountView.goTo('section');
     });
 
     it('goes there', function() {
       sinon.assert.calledWith(stubs.go, 'account.pathSuffix', {
-        pathSuffix: 'section' 
+        pathSuffix: 'section'
       });
     });
   });
@@ -790,20 +633,6 @@ describe('Client Controller', function () {
         });
       });
     });
-  });
-
-  it('gets organization name', function() {
-    scope.organizations = [
-      {name: 'orgname', sys: {id: '123'}}
-    ];
-    scope.$digest();
-    expect(scope.getOrgName('123')).toEqual('orgname');
-  });
-
-  it('gets no organization name', function() {
-    scope.organizations = [];
-    scope.$digest();
-    expect(scope.getOrgName('123')).toEqual('');
   });
 
 });

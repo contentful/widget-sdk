@@ -1,6 +1,11 @@
 'use strict';
 
-angular.module('contentful').directive('cfAccountView', ['$window', '$rootScope', 'authentication', 'logger', function($window, $rootScope, authentication, logger){
+angular.module('contentful')
+
+.directive('cfAccountView', ['$window', '$rootScope', '$injector', function($window, $rootScope, $injector) {
+  var authentication = $injector.get('authentication');
+  var logger         = $injector.get('logger');
+  var TheAccountView = $injector.get('TheAccountView');
 
   return {
     template: JST.iframe_view(),
@@ -38,7 +43,9 @@ angular.module('contentful').directive('cfAccountView', ['$window', '$rootScope'
         var oldPathSuffix = extractPathSuffix(scope.url);
         var pathSuffix    = extractPathSuffix(path);
         scope.url = buildUrl(pathSuffix);
-        if (oldPathSuffix !== pathSuffix) scope.goToAccount(pathSuffix);
+        if (oldPathSuffix !== pathSuffix) {
+          TheAccountView.goTo(pathSuffix);
+        }
       }
 
       function urlIsActive(url) {

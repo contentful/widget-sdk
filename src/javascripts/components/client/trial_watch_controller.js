@@ -1,9 +1,12 @@
 'use strict';
 
-angular.module('contentful').controller('TrialWatchController', ['$scope', '$injector', function TrialWatchController($scope, $injector) {
-  var $rootScope = $injector.get('$rootScope');
-  var analytics  = $injector.get('analytics');
-  var logger  = $injector.get('logger');
+angular.module('contentful')
+
+.controller('TrialWatchController', ['$scope', '$injector', function TrialWatchController($scope, $injector) {
+  var $rootScope     = $injector.get('$rootScope');
+  var analytics      = $injector.get('analytics');
+  var logger         = $injector.get('logger');
+  var TheAccountView = $injector.get('TheAccountView');
 
   $scope.$watch('user', trialWatcher);
   $scope.$watch('spaceContext.space', trialWatcher);
@@ -83,7 +86,7 @@ angular.module('contentful').controller('TrialWatchController', ['$scope', '$inj
       '/subscription';
 
     analytics.trackPersistentNotificationAction('Plan Upgrade');
-    $scope.goToAccount(pathSuffix, { reload: true });
+    TheAccountView.goTo(pathSuffix, { reload: true });
   }
 
   function timeTpl(str, timePeriod) {
