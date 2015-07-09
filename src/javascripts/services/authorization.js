@@ -27,12 +27,7 @@ angular.module('contentful').
           try {
             this.spaceContext = this.authContext.space(space.getId());
           } catch(exp) {
-            logger.logError('Worf authContext space exception', {
-              data: {
-                exception: exp,
-                tokenLookup: tokenLookup
-              }
-            });
+            logger.logError('Worf authContext space exception', exp);
           }
         } else {
           this.spaceContext = null;

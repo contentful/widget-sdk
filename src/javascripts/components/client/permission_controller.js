@@ -97,12 +97,7 @@ function PermissionController($scope, $injector) {
       try {
         response = authorization.authContext.can('create', 'Space');
       } catch(exp){
-        logger.logError('Worf can exception', {
-          data: {
-            exception: exp,
-            tokenLookup: tokenLookup
-          }
-        });
+        logger.logError('Worf can exception', exp);
       }
       if(!response){
         checkForEnforcements('create', 'Space');
