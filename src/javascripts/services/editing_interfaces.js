@@ -29,7 +29,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
         if(dotty.get(err, 'body.sys.type') == 'Error' && dotty.get(err, 'body.sys.id') == 'VersionMismatch')
           notification.warn('This configuration has been changed by another user. Please reload and try again.');
         else {
-          logger.logServerWarn('There was a problem saving the configuration', {error: err });
+          logger.logServerWarn('There was a problem saving the configuration', err);
           notification.error('There was a problem saving the configuration');
         }
         return $q.reject(err);

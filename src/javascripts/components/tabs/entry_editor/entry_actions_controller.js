@@ -30,7 +30,7 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
       $rootScope.$broadcast('entityDeleted', entry);
     })
     .catch(function(err){
-      logger.logServerWarn('Error deleting Entry', {error: err });
+      logger.logServerWarn('Error deleting Entry', err);
       notification.error('Error deleting Entry');
     });
   };
@@ -44,7 +44,7 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
       $scope.$state.go('spaces.detail.entries.detail', { entryId: entry.getId(), addToContext: true });
     })
     .catch(function(err){
-      logger.logServerWarn('Could not duplicate Entry', {error: err });
+      logger.logServerWarn('Could not duplicate Entry', err);
       notification.error('Could not duplicate Entry');
     });
   };
@@ -56,7 +56,7 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
     })
     .catch(function(err){
       notification.warn('Error archiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logServerWarn('Error archiving entry', {error: err });
+      logger.logServerWarn('Error archiving entry', err);
     });
   };
 
@@ -67,7 +67,7 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
     })
     .catch(function(err){
       notification.warn('Error unarchiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logServerWarn('Error unarchiving entry', {error: err });
+      logger.logServerWarn('Error unarchiving entry', err);
     });
   };
 
@@ -81,7 +81,7 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
   $scope.revertToPublishedState = function () {
     function flashError(err) {
       notification.warn('Error reverting to the last published state of ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logSharejsWarn('Error reverting entry to published state', {error: err});
+      logger.logSharejsWarn('Error reverting entry to published state', err);
     }
 
     $scope.entry.getPublishedState().then(function (data) {
@@ -119,7 +119,7 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
       notification.info('Entry reverted to the previous state successfully');
     }, function(err){
       notification.warn('Error reverting to the previous state of ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logSharejsWarn('Error reverting entry to previous state', {error: err});
+      logger.logSharejsWarn('Error reverting entry to previous state', err);
     });
   };
 
@@ -131,7 +131,7 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
     })
     .catch(function(err){
       notification.warn('Error unpublishing ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logServerWarn('Error unpublishing entry', {error: err });
+      logger.logServerWarn('Error unpublishing entry', err);
     });
   };
 
@@ -196,7 +196,7 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
         notification.warn('Error publishing ' + title() + ':' + details);
       }
     } else {
-      logger.logServerWarn('Publishing the entry has failed due to a server issue. We have been notified.', {error: err });
+      logger.logServerWarn('Publishing the entry has failed due to a server issue. We have been notified.', err);
       notification.error('Publishing the entry has failed due to a server issue. We have been notified.');
     }
   }

@@ -114,16 +114,16 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
       })
       .catch(function addLinkErrorHandler(errSetLink) {
         notification.error('Error linking Entry');
-        logger.logServerWarn('Error linking Entry', {error: errSetLink});
+        logger.logServerWarn('Error linking Entry', errSetLink);
         return entry.delete();
       })
       .catch(function deleteEntityErrorHandler(errDelete) {
-        logger.logServerWarn('Error deleting Entry again', {error: errDelete });
+        logger.logServerWarn('Error deleting Entry again', errDelete);
         notification.error('Error deleting Entry again');
         return $q.reject(errDelete);
       });
     }, function createEntityErrorHandler(errCreate) {
-      logger.logServerWarn('Error creating Entry', {error: errCreate });
+      logger.logServerWarn('Error creating Entry', errCreate);
       notification.error('Error creating Entry');
       return $q.reject(errCreate);
     });
@@ -137,17 +137,17 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
         $scope.$state.go('spaces.detail.assets.detail', { assetId: asset.getId(), addToContext: true });
       })
       .catch(function addLinkErrorHandler(errSetLink) {
-        logger.logServerWarn('Error linking Asset', {error: errSetLink });
+        logger.logServerWarn('Error linking Asset', errSetLink);
         notification.error('Error linking Asset');
         return asset.delete();
       })
       .catch(function deleteEntityErrorHandler(errDelete) {
-        logger.logServerWarn('Error deleting Asset again', {error: errDelete });
+        logger.logServerWarn('Error deleting Asset again', errDelete);
         notification.error('Error deleting Asset again');
         return $q.reject(errDelete);
       });
     }, function createEntityErrorHandler(errCreate) {
-      logger.logServerWarn('Error creating Asset', {error: errCreate });
+      logger.logServerWarn('Error creating Asset', errCreate);
       notification.error('Error creating Asset');
       return $q.reject(errCreate);
     });

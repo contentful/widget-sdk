@@ -326,7 +326,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('gets contextual error message', function() {
-        expect(logger.logServerWarn.args[0][1]).toEqual({error: err});
+        expect(logger.logServerWarn.args[0][1]).toEqual(err);
       });
     });
 
