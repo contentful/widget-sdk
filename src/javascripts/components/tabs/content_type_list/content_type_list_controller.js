@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeListController', ['$scope', function ContentTypeListController($scope) {
+angular.module('contentful').controller('ContentTypeListController', ['$scope', 'notification', function ContentTypeListController($scope, notification) {
   $scope.contentTypeSection = 'all';
 
   $scope.numFields = function(contentType) {
@@ -37,7 +37,12 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
 
   $scope.visibleInCurrentList = function(contentType){
     if($scope.searchTerm){
-      var searchTermRe = new RegExp($scope.searchTerm.toLowerCase(), 'gi');
+      var searchTermRe;
+      try {
+        searchTermRe = new RegExp($scope.searchTerm.toLowerCase(), 'gi');
+      } catch(exp) {
+        notification.warn('Invalid search term');
+      }
       return searchTermRe.test(contentType.getName());
     }
     switch ($scope.context.list) {
