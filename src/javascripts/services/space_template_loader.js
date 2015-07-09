@@ -7,6 +7,7 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
   var $q               = $injector.get('$q');
   var environment      = $injector.get('environment');
   var mergeSort        = $injector.get('mergeSort');
+  var logger           = $injector.get('logger');
 
   var contentfulConfig = environment.settings.contentful;
 
@@ -234,12 +235,23 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
   function parseAssetFields(fields) {
     return _.mapValues(fields, function (field, fieldName) {
       return _.mapValues(field, function (localizedField) {
-        if(fieldName == 'file'){
-          return {
-            fileName: localizedField.fileName,
-            contentType: localizedField.contentType,
-            upload: 'http:'+localizedField.url
-          };
+        try {
+          if(fieldName == 'file'){
+            return {
+              fileName: localizedField.fileName,
+              contentType: localizedField.contentType,
+              upload: 'http:'+localizedField.url
+            };
+          }
+        } catch(exp) {
+          logger.logError('No localizedField available', {
+            data: {
+              exp: exp,
+              localizedField: localizedField,
+              field: field,
+              fieldName: fieldName
+            }
+          });
         }
         return localizedField;
       });

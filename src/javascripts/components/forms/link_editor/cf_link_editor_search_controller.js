@@ -176,10 +176,12 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
     this.clearSearch();
     this._loadEntities()
     .then(function (entities) {
-      controller.showSearchResults();
-      $scope.paginator.numEntries = entities.total;
-      $scope.entities = entities;
-      $scope.selectedEntity = entities[0];
+      if($scope) {
+        controller.showSearchResults();
+        $scope.paginator.numEntries = entities.total;
+        $scope.entities = entities;
+        $scope.selectedEntity = entities[0];
+      }
     });
   };
 
