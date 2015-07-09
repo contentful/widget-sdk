@@ -26,6 +26,7 @@ angular.module('contentful')
     var segment     = $injector.get('segment');
     var totango     = $injector.get('totango');
     var fontsdotcom = $injector.get('fontsdotcom');
+    var logger      = $injector.get('logger');
 
     var analytics = {
       enable: function(){
@@ -45,14 +46,23 @@ angular.module('contentful')
       setSpace: function (space) {
         if (space) {
           this._organizationData = space.data.organization;
-          this._spaceData = {
-            spaceIsTutorial:                       space.data.tutorial,
-            spaceSubscriptionKey:                  space.data.organization.sys.id,
-            spaceSubscriptionState:                space.data.organization.subscriptionState,
-            spaceSubscriptionInvoiceState:         space.data.organization.invoiceState,
-            spaceSubscriptionSubscriptionPlanKey:  space.data.organization.subscriptionPlan.sys.id,
-            spaceSubscriptionSubscriptionPlanName: space.data.organization.subscriptionPlan.name
-          };
+          try {
+            this._spaceData = {
+              spaceIsTutorial:                       space.data.tutorial,
+              spaceSubscriptionKey:                  space.data.organization.sys.id,
+              spaceSubscriptionState:                space.data.organization.subscriptionState,
+              spaceSubscriptionInvoiceState:         space.data.organization.invoiceState,
+              spaceSubscriptionSubscriptionPlanKey:  space.data.organization.subscriptionPlan.sys.id,
+              spaceSubscriptionSubscriptionPlanName: space.data.organization.subscriptionPlan.name
+            };
+          } catch(exp){
+            logger.logError('Analytics space organizations exception', {
+              data: {
+                space: space,
+                exp: exp
+              }
+            });
+          }
           this._initialize();
         } else {
           this._spaceData = null;

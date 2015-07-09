@@ -233,7 +233,16 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
   function groupSpacesByOrg(spaces) {
     return _.groupBy(spaces, function(space){
-      return space.data.organization.sys.id;
+      try {
+        return space.data.organization.sys.id;
+      } catch(exp) {
+        logger.logError('Client controller space organizations exception', {
+          data: {
+            space: space,
+            exp: exp
+          }
+        });
+      }
     });
   }
 
