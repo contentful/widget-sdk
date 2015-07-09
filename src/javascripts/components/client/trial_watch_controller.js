@@ -1,6 +1,10 @@
 'use strict';
 
-angular.module('contentful').controller('TrialWatchController', ['$scope', '$rootScope', 'analytics', function TrialWatchController($scope, $rootScope, analytics) {
+angular.module('contentful').controller('TrialWatchController', ['$scope', '$injector', function TrialWatchController($scope, $injector) {
+  var $rootScope = $injector.get('$rootScope');
+  var analytics  = $injector.get('analytics');
+  var logger  = $injector.get('logger');
+
   $scope.$watch('user', trialWatcher);
   $scope.$watch('spaceContext.space', trialWatcher);
 
@@ -10,7 +14,17 @@ angular.module('contentful').controller('TrialWatchController', ['$scope', '$roo
     if(!user || !space) return;
     var hours = null;
     var timePeriod, message, action, actionMessage;
-    var isSpaceOwner = space.isOwner(user);
+    var isSpaceOwner;
+    try {
+      isSpaceOwner = space.isOwner(user);
+    } catch(exp){
+      logger.logError('Trial watch controller organization exception', {
+        data: {
+          space: space,
+          exp: exp
+        }
+      });
+    }
     var organization = space.data.organization;
 
     if(organization.subscriptionState == 'trial'){
@@ -52,8 +66,20 @@ angular.module('contentful').controller('TrialWatchController', ['$scope', '$roo
       return;
     }
 
+    var orgId;
+    try {
+      orgId = $scope.spaceContext.space.getOrganizationId();
+    } catch(exp) {
+      logger.logError('Trial watch controller organization upgrade exception', {
+        data: {
+          space: $scope.spaceContext.space,
+          exp: exp
+        }
+      });
+    }
+
     var pathSuffix = 'organizations/' +
-      $scope.spaceContext.space.getOrganizationId() +
+      orgId +
       '/subscription';
 
     analytics.trackPersistentNotificationAction('Plan Upgrade');

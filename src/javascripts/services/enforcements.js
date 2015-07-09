@@ -7,6 +7,7 @@ angular.module('contentful').factory('enforcements', ['$injector', function Enfo
   var $window     = $injector.get('$window');
   var stringUtils = $injector.get('stringUtils');
   var analytics   = $injector.get('analytics');
+  var logger      = $injector.get('logger');
 
   function setTokenObjects(newSpaceContext) {
     if(newSpaceContext) spaceContext = newSpaceContext;
@@ -20,7 +21,16 @@ angular.module('contentful').factory('enforcements', ['$injector', function Enfo
   }
 
   function getOrgId() {
-    return spaceContext.space.getOrganizationId();
+    try {
+      return spaceContext.space.getOrganizationId();
+    } catch(exp){
+      logger.logError('enforcements organization exception', {
+        data: {
+          space: spaceContext.space,
+          exp: exp
+        }
+      });
+    }
   }
 
   function upgradeActionMessage() {
