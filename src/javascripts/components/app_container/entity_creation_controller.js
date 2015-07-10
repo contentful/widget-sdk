@@ -84,7 +84,7 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
             params.errorMessage = enforcement.tooltip || enforcement.message;
           }
         }
-        logger.logServerWarn(params.errorMessage, err);
+        logger.logServerWarn(params.errorMessage, {error: err });
         notification.error(params.errorMessage);
       }
       analytics.track(getEventSource(params.source), {

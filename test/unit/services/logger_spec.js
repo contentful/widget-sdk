@@ -17,7 +17,7 @@ describe('logger service', function () {
 
     this.logger = this.$inject('realLogger');
   });
-
+  
   it('should enable', function(){
     this.logger.enable();
     sinon.assert.called(this.bugsnag.enable);
@@ -26,7 +26,7 @@ describe('logger service', function () {
   it('should disable', function(){
     this.logger.disable();
     sinon.assert.called(this.bugsnag.disable);
-    this.logger.logError('foo');
+    this.logger.log('foo');
     sinon.assert.notCalled(this.bugsnag.notify);
   });
 
@@ -72,14 +72,19 @@ describe('logger service', function () {
     sinon.assert.calledWith(this.bugsnag.notify, 'Logged ShareJS Warning', 'omfg', sinon.match({meta: 'Data'}), 'warning');
   });
 
+  it('should log info', function(){
+    this.logger.log('omfg', {meta: 'Data'});
+    sinon.assert.calledWith(this.bugsnag.notify, 'Logged Info', 'omfg', sinon.match({meta: 'Data'}), 'info');
+  });
+
   describe('when receiving error with status code 0', function(){
     it('should log errors as cors warnings', function(){
-      this.logger.logServerError('omfg', {meta: 'Data', statusCode: 0});
-      sinon.assert.calledWith(this.bugsnag.notify, 'CORS Warning', 'omfg', sinon.match({meta: 'Data', statusCode: 0}), 'warning');
+      this.logger.logServerError('omfg', {meta: 'Data', error: {statusCode: 0}});
+      sinon.assert.calledWith(this.bugsnag.notify, 'CORS Warning', 'omfg', sinon.match({meta: 'Data'}), 'warning');
     });
     it('should log warnings as cors warnings', function(){
-      this.logger.logServerWarn('omfg', {meta: 'Data', statusCode: 0});
-      sinon.assert.calledWith(this.bugsnag.notify, 'CORS Warning', 'omfg', sinon.match({meta: 'Data', statusCode: 0}), 'warning');
+      this.logger.logServerWarn('omfg', {meta: 'Data', error: {statusCode: 0}});
+      sinon.assert.calledWith(this.bugsnag.notify, 'CORS Warning', 'omfg', sinon.match({meta: 'Data'}), 'warning');
     });
   });
 
@@ -100,7 +105,7 @@ describe('logger service', function () {
     });
 
     it('should set user info before logging', function(){
-      this.logger.logError('error');
+      this.logger.log('derp');
       sinon.assert.calledWith(this.bugsnag.setUser, {
         firstName:      'Hans',
         lastName:       'Wurst',
@@ -108,17 +113,21 @@ describe('logger service', function () {
         organizations:  'Conglom-O, ACME',
         adminLink:      'https://admin.contentful.com/admin/users/h4nswur5t',
       });
+      //sinon.assert.calledWith(this.bugsnag.notify,
+        //'Logged Info', 'omfg', sinon.match({
+          //meta: 'Data'
+        //}), 'info');
     });
 
     it('should derive the grouping hash from the message if none provided', function(){
-      this.logger.logError('error');
+      this.logger.log('derp');
       sinon.assert.calledWith(this.bugsnag.notify,
-        'Logged Error', 'error', sinon.match({ groupingHash: 'error' }), 'error');
+        'Logged Info', 'derp', sinon.match({ groupingHash: 'derp' }), 'info');
     });
 
     describe('augmenting metadata', function(){
       it('should add params', function(){
-        this.logger.logError('error', {groupingHash: 'grp'});
+        this.logger.log('derp', {groupingHash: 'grp'});
         var actual = this.bugsnag.notify.args[0][2];
         expect(actual.params.spaceId).toBe('123456');
         expect(actual.params.state).toBe('some.state.name');
@@ -130,7 +139,7 @@ describe('logger service', function () {
       it('should preparse the data property', function(){
         var data = { foo: { bar: {} } };
         data.foo.bar.baz = data;
-        this.logger.logError('error', {data: data});
+        this.logger.log('derp', {data: data});
         var actual = this.bugsnag.notify.args[0][2];
         expect(actual.data).toEqual({ foo : { bar : { baz : { foo : '[Circular ~]' } } } });
       });

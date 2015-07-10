@@ -118,7 +118,7 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
     },
 
     logServerError: function (message, metaData) {
-      if (dotty.get(metaData, 'statusCode') === 0) {
+      if (dotty.get(metaData, 'error.statusCode') === 0) {
         this._logCorsWarn(message, metaData);
       } else {
         this._log('Logged Server Error', 'error', message, flattenServerErrors(metaData));
@@ -126,7 +126,7 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
     },
 
     logServerWarn: function (message, metaData) {
-      if (dotty.get(metaData, 'statusCode') === 0) {
+      if (dotty.get(metaData, 'error.statusCode') === 0) {
         this._logCorsWarn(message, metaData);
       } else {
         this._log('Logged Server Warning', 'warning', message, flattenServerErrors(metaData));
@@ -139,6 +139,10 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
 
     logSharejsWarn: function (message, metaData) {
       this._log('Logged ShareJS Warning', 'warning', message, metaData);
+    },
+
+    log: function (message, metaData) {
+      this._log('Logged Info', 'info', message, metaData);
     },
 
     _logCorsWarn: function(message, metaData) {

@@ -56,7 +56,7 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
         notification.warn('This configuration has been changed by another user. Please reload and try again.');
         return loadFromServer();
       } else
-        logger.logServerWarn('There was a problem saving the configuration', err);
+        logger.logServerWarn('There was a problem saving the configuration', {error: err});
         notification.error('There was a problem saving the configuration');
     });
   }

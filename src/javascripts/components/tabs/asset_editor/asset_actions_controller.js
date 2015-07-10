@@ -15,7 +15,7 @@ angular.module('contentful').controller('AssetActionsController', ['$scope', 'no
     })
     .catch(function(err){
       notification.error('Error deleting Asset');
-      logger.logServerWarn('Error deleting Asset', err);
+      logger.logServerWarn('Error deleting Asset', {error: err });
     });
   };
 
@@ -26,7 +26,7 @@ angular.module('contentful').controller('AssetActionsController', ['$scope', 'no
     })
     .catch(function(err){
       notification.warn('Error archiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logServerWarn('Error archiving asset', err);
+      logger.logServerWarn('Error archiving asset', {error: err });
     });
   };
 
@@ -37,7 +37,7 @@ angular.module('contentful').controller('AssetActionsController', ['$scope', 'no
     })
     .catch(function(err){
       notification.warn('Error unarchiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logServerWarn('Error unarchiving asset', err);
+      logger.logServerWarn('Error unarchiving asset', {error: err });
     });
   };
 
@@ -49,7 +49,7 @@ angular.module('contentful').controller('AssetActionsController', ['$scope', 'no
     })
     .catch(function(err){
       notification.warn('Error unpublishing ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logServerWarn('Error unpublishing asset', err);
+      logger.logServerWarn('Error unpublishing asset', {error: err });
     });
   };
 
@@ -73,7 +73,7 @@ angular.module('contentful').controller('AssetActionsController', ['$scope', 'no
         notification.warn('Error publishing ' + title() + ': Can only publish most recent version');
       } else {
         notification.error('Publishing the asset has failed due to a server issue. We have been notified.');
-        logger.logServerWarn('Publishing the asset has failed due to a server issue. We have been notified.', err);
+        logger.logServerWarn('Publishing the asset has failed due to a server issue. We have been notified.', {error: err });
       }
     });
   };

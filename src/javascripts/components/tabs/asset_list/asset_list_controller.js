@@ -75,7 +75,7 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
           return $q.reject(err);
         });
       }).catch(function (err) {
-        logger.logServerWarn('Some assets failed to upload', err);
+        logger.logServerWarn('Some assets failed to upload', {error: err });
         notification.error('Some assets failed to upload');
         throttledListRefresh();
         return $q.reject(err);
