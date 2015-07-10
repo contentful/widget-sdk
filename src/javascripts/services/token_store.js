@@ -90,7 +90,9 @@ angular.module('contentful').service('tokenStore', ['$injector', function($injec
       } catch(exp) {
         logger.logError('Space is not defined', {
           data: {
-            spaces: newSpaceList
+            spaces: _.map(newSpaceList, function (space) {
+              return _.pluck(space, 'data');
+            })
           }
         });
       }
