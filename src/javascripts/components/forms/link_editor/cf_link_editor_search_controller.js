@@ -212,7 +212,7 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
 
   $scope.getSearchContentType = function () {
     if ($scope.entityType === 'Asset')
-     return searchQueryHelper.assetContentType;
+      return searchQueryHelper.assetContentType;
     if (singleContentType($scope.entityContentTypes))
       return singleContentType($scope.entityContentTypes);
   };
@@ -226,6 +226,7 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
     if($scope) {
       return $q.when($scope.$eval($attrs.addEntity, {entity: entity}));
     }
+    return $q.reject();
   }
 
   function buildQuery() {
