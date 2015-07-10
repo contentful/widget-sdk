@@ -1,4 +1,11 @@
 'use strict';
+/**
+ * @ngdoc service
+ * @name bugsnag
+ * @description
+ * Bugsnag wrapper.
+ * See https://bugsnag.com/docs/notifiers/js for more details
+*/
 angular.module('contentful').factory('bugsnag', ['$injector', function($injector){
   var $window    = $injector.get('$window');
   var CallBuffer = $injector.get('CallBuffer');

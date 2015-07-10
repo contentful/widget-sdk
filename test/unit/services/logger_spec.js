@@ -37,11 +37,6 @@ describe('logger service', function () {
       exception, null, sinon.match({meta: 'Data'}), 'error');
   });
 
-  it('should refresh when a tab has changed', function(){
-    this.logger.tabChanged();
-    sinon.assert.called(this.bugsnag.refresh);
-  });
-
   it('should log errors', function(){
     this.logger.logError('omfg', {meta: 'Data'});
     sinon.assert.calledWith(this.bugsnag.notify, 'Logged Error', 'omfg', sinon.match({meta: 'Data'}), 'error');

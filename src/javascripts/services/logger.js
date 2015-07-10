@@ -1,5 +1,13 @@
 'use strict';
 
+/**
+ * @ngdoc service
+ * @name logger
+ * @description
+ * Service used to log errors and exceptions.
+ * At the moment this is mostly based on Bugsnag.
+ * See the Bugsnag service and https://bugsnag.com/docs/notifiers/js for more details
+*/
 angular.module('contentful').factory('logger', ['$injector', function ($injector) {
   var $window        = $injector.get('$window');
   var bugsnag        = $injector.get('bugsnag');
@@ -89,10 +97,24 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
   }
 
   return {
+    /**
+     * @ngdoc method
+     * @name logger#enable
+     * @description
+     * Enables the logger service
+     * any 3rd party services running
+    */
     enable: function(){
       bugsnag.enable();
     },
 
+    /**
+     * @ngdoc method
+     * @name logger#disable
+     * @description
+     * Disables the logger service because of customers who wish to not have
+     * any 3rd party services running
+    */
     disable: function(){
       bugsnag.disable();
       _.forEach(this, function(value, key){
@@ -100,23 +122,58 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
       }, this);
     },
 
+    /**
+     * @ngdoc method
+     * @name logger#logException
+     * @description
+     * Mostly used by the $uncaughtException service
+     * @param {Error} Exception Error object
+     * @param {Object} Metadata object. Can take any of the expected bugsnag metadata parameters.
+     * @param.data  {Object} Additional data (other objects). Shows up on the bugsnag data tab.
+    */
     logException: function (exception, metaData) {
       setUserInfo();
       bugsnag.notifyException(exception, null, augmentMetadata(metaData), 'error');
     },
 
-    tabChanged: function(){
-      bugsnag.refresh();
-    },
-
+    /**
+     * @ngdoc method
+     * @name logger#logError
+     * @description
+     * Log with error level
+     * @param {String} Error message.
+     * @param {Object} Metadata object. Can take any of the expected bugsnag metadata parameters.
+     * @param.data  {Object} Additional data (other objects). Shows up on the bugsnag data tab.
+     * @param.error {Object} Error object. Shows up on the bugsnag error tab.
+    */
     logError: function (message, metaData) {
       this._log('Logged Error', 'error', message, metaData);
     },
 
+    /**
+     * @ngdoc method
+     * @name logger#logWarn
+     * @description
+     * Log with warn level
+     * @param {String} Error message.
+     * @param {Object} Metadata object. Can take any of the expected bugsnag metadata parameters.
+     * @param.data  {Object} Additional data (other objects). Shows up on the bugsnag data tab.
+     * @param.error {Object} Error object. Shows up on the bugsnag error tab.
+    */
     logWarn: function (message, metaData) {
       this._log('Logged Warning', 'warning', message, metaData);
     },
 
+    /**
+     * @ngdoc method
+     * @name logger#logServerError
+     * @description
+     * Log an error from the Contentful API with error level
+     * @param {String} Error message.
+     * @param {Object} Metadata object. Can take any of the expected bugsnag metadata parameters.
+     * @param.data  {Object} Additional data (other objects). Shows up on the bugsnag data tab.
+     * @param.error {Object} Error object. Shows up on the bugsnag error tab.
+    */
     logServerError: function (message, metaData) {
       if (dotty.get(metaData, 'error.statusCode') === 0) {
         this._logCorsWarn(message, metaData);
@@ -125,6 +182,16 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
       }
     },
 
+    /**
+     * @ngdoc method
+     * @name logger#logServerWarn
+     * @description
+     * Log an error from the Contentful API with warn level
+     * @param {String} Error message.
+     * @param {Object} Metadata Can take any of the expected bugsnag metadata parameters.
+     * @param.data  {Object} Additional data (other objects). Shows up on the bugsnag data tab.
+     * @param.error {Object} Error object. Shows up on the bugsnag error tab.
+    */
     logServerWarn: function (message, metaData) {
       if (dotty.get(metaData, 'error.statusCode') === 0) {
         this._logCorsWarn(message, metaData);
@@ -133,22 +200,58 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
       }
     },
 
+    /**
+     * @ngdoc method
+     * @name logger#logSharejsError
+     * @description
+     * Log an error specific to ShareJS with error level
+     * @param {String} Error message.
+     * @param {Object} Metadata Can take any of the expected bugsnag metadata parameters.
+     * @param.data  {Object} Additional data (other objects). Shows up on the bugsnag data tab.
+     * @param.error {Object} Error object. Shows up on the bugsnag error tab.
+    */
     logSharejsError: function (message, metaData) {
       this._log('Logged ShareJS Error', 'error', message, metaData);
     },
 
+    /**
+     * @ngdoc method
+     * @name logger#logSharejsWarn
+     * @description
+     * Log an error specific to ShareJS with warn level
+     * @param {String} Error message.
+     * @param {Object} Metadata Can take any of the expected bugsnag metadata parameters.
+     * @param.data  {Object} Additional data (other objects). Shows up on the bugsnag data tab.
+     * @param.error {Object} Error object. Shows up on the bugsnag error tab.
+    */
     logSharejsWarn: function (message, metaData) {
       this._log('Logged ShareJS Warning', 'warning', message, metaData);
     },
 
-    log: function (message, metaData) {
-      this._log('Logged Info', 'info', message, metaData);
-    },
-
+    /**
+     * @name logger#_logCorsWarn
+     * @description
+     * Log detected CORS warnings
+     * @param {String} Error message.
+     * @param {Object} Metadata Can take any of the expected bugsnag metadata parameters.
+     * @param.data  {Object} Additional data (other objects). Shows up on the bugsnag data tab.
+     * @param.error {Object} Error object. Shows up on the bugsnag error tab.
+    */
     _logCorsWarn: function(message, metaData) {
       this._log('CORS Warning', 'warning', message, metaData);
     },
 
+    /**
+     * @name logger#_log
+     * @description
+     * Log a message to the bugsnag wrapper.
+     * @param {String} Error type, mostly used for grouping on bugsnag.
+     * @param {String} Severity level.
+     * @param {String} Error message.
+     * @param {Object} Metadata Can take any of the expected bugsnag metadata parameters.
+     * @param.data  {Object} Additional data (other objects). Shows up on the bugsnag data tab.
+     * @param.error {Object} Error object. Shows up on the bugsnag error tab.
+    */
     _log: function(type, severity, message, metaData) {
       metaData = metaData || {};
       metaData.groupingHash = metaData.groupingHash || message;
