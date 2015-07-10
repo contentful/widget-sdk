@@ -50,7 +50,7 @@
       margin: 0 auto;
 
   &__config
-    width: 50em
+    width: 54em
 
   &__name-inputs
     display: flex
@@ -78,9 +78,11 @@
       flex-basis: 1.5rem
       margin-left: 1.5rem
 
+    // We need to overwrite the ng-hide styles to make sure the
+    // sections do not recalculate the widths
     > .ng-hide
-      display: block !important
-      visibility: none
+      display: block !important;
+      visibility: hidden
 
   &__note
     margin: $rhythm(1.5) 0

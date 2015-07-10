@@ -1,12 +1,12 @@
-display($val)
+display($val, $important = )
   if $val is flex
-    display: -webkit-box;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
+    display: -webkit-box $important;
+    display: -moz-box $important;
+    display: -ms-flexbox $important;
+    display: -webkit-flex $important;
+    display: flex $important;
   else
-    display: $val
+    display: $val $important
 
 flex($values...)
   -webkit-box-flex: $values;
