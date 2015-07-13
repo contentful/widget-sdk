@@ -25,7 +25,11 @@ angular.module('contentful').factory('slug', ['$injector', function ($injector) 
     return window.getSlug(text, {
       separator: '-',
       lang: supportedLanguage(locale) || 'en',
-      truncate: 75
+      truncate: 75,
+      custom: {
+        '\'': '',
+        '`':  ''
+      }
     });
   }
 

@@ -78,9 +78,9 @@ describe('API key editor controller', function () {
     expect(scope.apiKey).toEqual(apiKey);
   });
 
-  it('sets the state title to untitled', function () {
+  it('sets the state title to new api key', function () {
     scope.$apply();
-    expect(scope.context.title).toEqual('Untitled');
+    expect(scope.context.title).toEqual('New Api Key');
   });
 
   it('sets the state title', function () {
@@ -159,7 +159,7 @@ describe('API key editor controller', function () {
 
     it('error notification is shown', function () {
       sinon.assert.called(stubs.logServerWarn);
-      expect(stubs.logServerWarn.args[0][1]).toEqual({});
+      expect(stubs.logServerWarn.args[0][1]).toEqual({error: {}});
       expect(stubs.warn.args[0][0]).toEqual('"apiKeyName" could not be deleted');
     });
   });
@@ -202,7 +202,7 @@ describe('API key editor controller', function () {
 
     it('error notification is shown', function () {
       sinon.assert.called(stubs.logServerWarn);
-      expect(stubs.logServerWarn.args[0][1]).toEqual({});
+      expect(stubs.logServerWarn.args[0][1]).toEqual({error: {}});
       expect(stubs.warn.args[0][0]).toEqual('"apiKeyName" could not be saved');
     });
   });

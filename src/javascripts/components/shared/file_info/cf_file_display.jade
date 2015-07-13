@@ -24,10 +24,10 @@
   .no-file.center.vcenter(ng-show="entity && entity.isMissing")
     | Asset does not exist anymore
 
-  .file-buttons(cf-file-display-buttons)
+  cf-file-display-buttons
 
   .cf-file-drop(cf-file-drop ng-show="!otDisabled && !file && enableUpload")
-    button.btn.btn--secondary.upload-button(type="button" ng-click="uploadFile()") Or Open File Picker
+    button.cfnext-btn-secondary-action.upload-button(type="button" ng-click="uploadFile()") Or Open File Picker
     | 
-    button.btn.btn--secondary.upload-button(type="button" ng-show="spaceContext.space.hasFeature('gettyImages')" ng-click="uploadFromGetty()") Or Pick From Getty Images
+    button.cfnext-btn-secondary-action.upload-button(type="button" ng-show="spaceContext.space.hasFeature('gettyImages')" ng-click="uploadFromGetty()") Or Pick From Getty Images
 

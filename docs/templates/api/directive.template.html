@@ -2,20 +2,6 @@
 
 {% block content %}
 
-{% if doc.scopeProvides %}
-  <h2>API</h2>
-  <ul class="api-members">
-    {% for prop in doc.scopeProvides %}
-      <li>
-        <h3>
-          <code>{$ prop | memberSyntax('$scope') $}</code>
-        </h3>
-        <div class="api-members-description">{$ prop.description $}</div>
-      </li>
-    {% endfor %}
-  </ul>
-{% endif %}
-
 {% include "lib/members.template.html" %}
 
 {% if doc.scopeRequires %}

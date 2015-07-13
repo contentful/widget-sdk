@@ -47,6 +47,20 @@ module.exports = new Package('angularjs', [
   };
 })
 
+.processor(function memberUnionProcessor () {
+  return {
+    $runAfter: ['memberDocsProcessor'],
+    $runBefore: ['moduleDocsProcessor'],
+    $process: function (docs) {
+      _.forEach(docs, function (doc) {
+        doc.members = (doc.properties || [])
+                      .concat(doc.methods || [])
+                      .concat(doc.scopeProvides || []);
+      });
+    }
+  };
+})
+
 
 
 .config(function(dgeni, log, readFilesProcessor, writeFilesProcessor) {

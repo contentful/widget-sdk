@@ -25,16 +25,9 @@ Styleguide 20.1
 */
 .advice
   $stretch()
-  $display-flexbox()
+  display: flex
   flex-direction: column
   justify-content: center
-  text-align: center
-
-  .top-advice
-    margin-bottom: 10em
-
-  .btn--primary
-    margin-bottom: 15px
 
 /*
 Used for the advice items at the top level which act as content fallback in
@@ -57,22 +50,29 @@ $advice-icon()
   font-size: 14rem
 
 .advice__frame
-  width: 600px
+  width: 60em
   margin: 0 auto
+  display: flex
+  flex-direction: column
+  align-items: center
+  text-align: center
 
 .advice__title
   font-weight: bold
   font-size: 2em
+  line-height: 1.2em
   margin-top: 0
-  margin-bottom: $rhythm(1)
+  margin-bottom: $rhythm(0.5)
 
 .advice__description
   font-size: 1.2em
-  margin-top: 0
-  margin-bottom: $rhythm(1)
+  line-height: 1.2em
+  margin: 0 6em $rhythm(0.5)
+
+.advice__action
+  margin: $rhythm(1) 0
+  $btn-action()
 
 .advice__description--smaller
   font-size: 1.0em
-  margin-top: 0
-  margin-bottom: $rhythm(1)
-
+  margin: 0 16em $rhythm(0.5)

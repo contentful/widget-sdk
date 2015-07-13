@@ -1,10 +1,9 @@
 .tab-header
   .tab-header__title
+    cf-icon(name="page-ct")
     h1
       | Content Types
       a(cf-knowledge-base-icon
-        tooltip="Learn more about Content Types in the Knowledge Base Pages"
-        tooltip-container=".entity-list"
         analytics-event="content_types"
         href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
 
@@ -12,16 +11,16 @@
     .search-field(cf-search="searchTerm" placeholder="Search for Content Types")
 
   .tab-header__actions.add-entity(ng-hide="empty")
-    button.btn.btn--primary.u-truncate(
-        ng-click="entityCreationController.newContentType('frameButton')"
+    button.cfnext-btn-action(
+        ng-click="entityCreationController.newContentType()"
         ng-hide="permissionController.get('createContentType', 'shouldHide')"
         ng-disabled="permissionController.get('createContentType', 'shouldDisable')"
         cf-when-disabled="permissionController.entityActions.createContentType")
-      i.fa.fa-plus.button-icon
-      | Add Content Type
+      cf-icon.btn-icon.inverted(name="plus")
+      | New Content Type
 
 .tab-main
-  .left-nav
+  .left-nav(ng-hide="empty")
     header.filter-list-header Filter By Status
     ul.status-filters
       li.filter-list-item(ng-class="{active: context.list == 'all'}" ng-click="switchList('all')")
@@ -33,8 +32,8 @@
       li.filter-list-item(ng-class="{active: context.list == 'active'}" ng-click="switchList('active')")
         span.filter-list-title Active
 
-  .with-left-nav
-    table.result-list.main-results.main-header(ng-hide="empty")
+  .with-left-nav(ng-hide="empty")
+    table.result-list.main-results.main-header
       thead
         tr
           th.cell-display-name Name
@@ -48,7 +47,7 @@
       table.result-list.main-results.animated
         tbody
           tr(ng-repeat="contentType in visibleContentTypes = (contentTypes | filter:visibleInCurrentList) track by contentType.getId()"
-              ng-init="entityNavState='spaces.detail.content_types.detail.editor({ contentTypeId: contentType.getId() })'"
+              ng-init="entityNavState='spaces.detail.content_types.detail({ contentTypeId: contentType.getId() })'"
               ui-sref="{{entityNavState}}")
             td.cell-display-name
               a.entity-list-link(ui-sref="{{entityNavState}}") {{contentType.getName()}}
@@ -71,16 +70,6 @@
       .advice__frame(ng-show="hasQuery()")
         i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
         header.advice__title There are no matches to your search
-      .advice__frame(ng-show="!hasQuery()")
-        i.fa.fa-database.advice__giant-icon
-        header.advice__title You have no Content Types yet.
-        p.advice__description Content Types work like stencils that define which Entries you can create within a specific Space.
-        button.btn.btn--primary(type="button"
-            ng-click="entityCreationController.newContentType('frameButton')"
-            ng-hide="permissionController.get('createContentType', 'shouldHide')"
-            ng-disabled="permissionController.get('createContentType', 'shouldDisable')"
-            cf-when-disabled="permissionController.entityActions.createContentType")
-          | Create Content Type
-        a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
-          | Visit the Knowledge Base Pages
-          i.fa.fa-question-circle
+
+.advice(ng-show="contentTypes.length === 0 && !hasQuery()")
+  include ../../shared/create_content_type_advice

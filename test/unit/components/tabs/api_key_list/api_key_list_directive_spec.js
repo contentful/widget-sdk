@@ -38,19 +38,6 @@ describe('The ApiKey list directive', function () {
     container.remove();
   });
 
-  describe('the tab header add button', function() {
-    it('is not shown', function() {
-      scope.permissionController.get.withArgs('createApiKey', 'shouldHide').returns(true);
-      compileElement();
-      expect(container.find('.tab-header .add-entity .btn--primary')).toBeNgHidden();
-    });
-
-    it('is shown', function() {
-      compileElement();
-      expect(container.find('.tab-header .add-entity .btn--primary')).not.toBeNgHidden();
-    });
-  });
-
 
   describe('list of api keys', function() {
     var list;

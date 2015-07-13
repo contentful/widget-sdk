@@ -2,28 +2,25 @@
 
 angular.module('contentful').controller('SpaceTemplatesController', ['$injector', '$scope', function SpaceController($injector, $scope) {
 
+  var $controller          = $injector.get('$controller');
   var stringUtils          = $injector.get('stringUtils');
   var analytics            = $injector.get('analytics');
   var spaceTemplateCreator = $injector.get('spaceTemplateCreator');
   var spaceTemplateLoader  = $injector.get('spaceTemplateLoader');
 
-  var dialogView = 'loading';
   var contentTypeToDisplayFieldMap;
   var retryAttempts = 0;
-
-  spaceTemplateLoader.getTemplatesList().then(function (templates) {
-    dialogView = 'spaceTemplateList';
-    $scope.spaceTemplates = _.map(templates, 'fields');
-  }).catch(function () {
-    $scope.dialog.cancel();
-  });
 
   $scope.$on('spaceCreationRequested', showLoadingState);
   $scope.$on('spaceCreationFailed', showSpaceCreation);
   $scope.$on('spaceCreated', waitForSpace);
 
+  $scope.viewState = $controller('ViewStateController', {
+    $scope: $scope,
+    defaultState: 'loading'
+  });
+
   $scope.completedItems = {};
-  $scope.dialogViewIs = dialogViewIs;
   $scope.showSpaceCreation = showSpaceCreation;
   $scope.selectTemplate = selectTemplate;
   $scope.dismissDialog = dismissDialog;
@@ -31,20 +28,23 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   $scope.queueItemClass = queueItemClass;
   $scope.entityStatusString = entityStatusString;
 
-  function dialogViewIs(expectedView) {
-    return expectedView === dialogView;
-  }
+  spaceTemplateLoader.getTemplatesList().then(function (templates) {
+    $scope.viewState.set('spaceTemplateList');
+    $scope.spaceTemplates = _.map(templates, 'fields');
+  }).catch(function () {
+    $scope.dialog.cancel();
+  });
 
   function selectTemplate(template) {
     $scope.selectedTemplate = template;
   }
 
   function showSpaceCreation() {
-    dialogView = 'spaceCreation';
+    $scope.viewState.set('spaceCreation');
   }
 
   function showLoadingState() {
-    dialogView = 'loading';
+    $scope.viewState.set('loading');
   }
 
   function waitForSpace(ev, space) {
@@ -81,7 +81,7 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   }
 
   function createTemplate(template) {
-    dialogView = 'spaceTemplateQueue';
+    $scope.viewState.set('spaceTemplateQueue');
     contentTypeToDisplayFieldMap = contentTypeToDisplayFieldMap || mapDisplayFields(template.contentTypes);
     $scope.templateCreator.create(template)
     .then(function () {

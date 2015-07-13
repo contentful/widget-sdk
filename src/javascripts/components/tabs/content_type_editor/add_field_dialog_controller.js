@@ -1,0 +1,161 @@
+'use strict';
+
+/**
+ * @ngdoc type
+ * @name AddFieldDialogController
+ *
+ * @scope.requires {object} dialog
+ *
+ * @scope.provides {object}          viewState
+ * @scope.provides {FieldDescriptor[]} availableFields
+ * @scope.provides {Field}           newField
+ * @scope.provides {FieldDescriptor} selectedType
+ * @scope.provides {bool}            fieldIsList
+*/
+angular.module('contentful')
+.controller('AddFieldDialogController',
+            ['$scope', '$injector', function AddFieldDialogController($scope, $injector) {
+
+  var $controller    = $injector.get('$controller');
+  var fieldFactory   = $injector.get('fieldFactory');
+  var fieldDecorator = $injector.get('fieldDecorator');
+  var random         = $injector.get('random');
+  var stringUtils    = $injector.get('stringUtils');
+  var buildMessage   = $injector.get('fieldErrorMessageBuilder');
+  var trackField     = $injector.get('analyticsEvents').trackField;
+  var $q             = $injector.get('$q');
+
+  $scope.viewState = $controller('ViewStateController', {
+    $scope: $scope,
+    defaultState: 'fieldSelection'
+  });
+
+  $scope.fieldGroupRows     = chunk(fieldFactory.groups, 4);
+  $scope.selectFieldGroup   = selectFieldGroup;
+  $scope.showFieldSelection = showFieldSelection;
+  $scope.create     = create;
+  $scope.createAndConfigure = createAndConfigure;
+
+  $scope.schema = {
+    errors: function (field) {
+      return fieldDecorator.validateInContentType(field, $scope.contentType);
+    },
+    buildMessage: buildMessage,
+  };
+
+  // Initial dialog state
+  showFieldSelection();
+
+  /**
+   * @ngdoc method
+   * @name AddFieldDialogController#scope#showFieldSelection
+   *
+   * @description
+   * Resets the information regarding the selected type of field
+   * in case the user wants to change their selection
+  */
+  function showFieldSelection() {
+    $scope.field = {
+      data: {
+        name: '',
+        id: random.id(),
+        apiName: ''
+      },
+      isList: false
+    };
+    $scope.viewState.set('fieldSelection');
+
+    if ($scope.newFieldForm) {
+      $scope.newFieldForm.showErrors = false;
+    }
+  }
+
+  function selectFieldGroup (group) {
+    $scope.fieldGroup = group;
+    $scope.fieldTypes = _.mapValues(_.groupBy(group.types, 'name'), first);
+    $scope.field.type = group.types[0];
+
+    $scope.viewState.set('fieldConfiguration');
+  }
+
+  $scope.$watch('field.data.name', function (name) {
+    var apiNameField = $scope.newFieldForm.apiName;
+    var apiName = $scope.field.data.apiName;
+    if (!apiNameField || !apiNameField.$touched || !apiName) {
+      $scope.field.data.apiName = stringUtils.toIdentifier(name);
+      if (apiNameField) {
+        apiNameField.$setUntouched();
+      }
+    }
+  });
+
+  /**
+   * @ngdoc method
+   * @name AddFieldDialogController#$scope.create
+   *
+   * @description
+   * Create a field from the user input and validate it. Then confirm
+   * the dialog with that field.
+   */
+  function create () {
+    var field = $scope.field.data;
+    var typeInfo = fieldFactory.createTypeInfo($scope.field.type, $scope.field.isList);
+    _.extend(field, typeInfo);
+
+    if (!$scope.validator.run()) {
+      $scope.newFieldForm.showErrors = true;
+      return $q.reject(new Error('Invalid user data'));
+    }
+
+    trackCreateField(field);
+    return $scope.dialog.confirm(field)
+    .promise.then(function () {
+      return field;
+    });
+  }
+
+  /**
+   * @ngdoc method
+   * @name AddFieldDialogController#$scope.createAndConfigure
+   *
+   * @description
+   * Call `$scope.create()` and open the field configuration dialog
+   * afterwards.
+   */
+  function createAndConfigure () {
+    create()
+    // We don’t care about validation errors raised by
+    // `configureField`, so catch is noop.
+    .then(function (field) {
+      $scope.ctEditorController.openFieldDialog(field);
+    }, _.noop);
+  }
+
+  /**
+   * @ngdoc analytics-event
+   * @name Clicked Create Field Button
+   * @param fieldId
+   * @param originatingFieldType
+   */
+  function trackCreateField (field) {
+    trackField('Clicked Create Field Button', field);
+  }
+
+
+  function chunk (array, size) {
+    var index = 0;
+    var length = array.length;
+    var resIndex = -1;
+    var result = new Array(Math.ceil(length / size));
+
+    while (index < length) {
+      result[++resIndex] = array.slice(index, (index += size));
+    }
+    return result;
+  }
+
+  function first (array) {
+    return array[0];
+  }
+
+}]);

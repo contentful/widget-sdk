@@ -9,7 +9,7 @@
       ng-keyup="keyReleased($event)"
       ng-focus="inputFocused($event)"
       ng-blur="inputBlurred($event)")
-  .search-field__button.btn.btn--tertiary(ng-click="updateFromButton()" tabindex="0")
+  .search-field__button.cfnext-btn-secondary-action(ng-click="updateFromButton()" tabindex="0")
     i.fa.fa-search.fa-flip-horizontal
 .search-results(cf-autocomplete-list ng-if="showAutocompletions && autocompletion.type === 'List'")
 .search-results.shrink-result-width(cf-autocomplete-date ng-if="showAutocompletions && autocompletion.type === 'Date'")

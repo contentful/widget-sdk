@@ -37,11 +37,6 @@ describe('logger service', function () {
       exception, null, sinon.match({meta: 'Data'}), 'error');
   });
 
-  it('should refresh when a tab has changed', function(){
-    this.logger.tabChanged();
-    sinon.assert.called(this.bugsnag.refresh);
-  });
-
   it('should log errors', function(){
     this.logger.logError('omfg', {meta: 'Data'});
     sinon.assert.calledWith(this.bugsnag.notify, 'Logged Error', 'omfg', sinon.match({meta: 'Data'}), 'error');
@@ -74,12 +69,12 @@ describe('logger service', function () {
 
   describe('when receiving error with status code 0', function(){
     it('should log errors as cors warnings', function(){
-      this.logger.logServerError('omfg', {meta: 'Data', statusCode: 0});
-      sinon.assert.calledWith(this.bugsnag.notify, 'CORS Warning', 'omfg', sinon.match({meta: 'Data', statusCode: 0}), 'warning');
+      this.logger.logServerError('omfg', {meta: 'Data', error: {statusCode: 0}});
+      sinon.assert.calledWith(this.bugsnag.notify, 'CORS Warning', 'omfg', sinon.match({meta: 'Data', error: {statusCode: 0}}), 'warning');
     });
     it('should log warnings as cors warnings', function(){
-      this.logger.logServerWarn('omfg', {meta: 'Data', statusCode: 0});
-      sinon.assert.calledWith(this.bugsnag.notify, 'CORS Warning', 'omfg', sinon.match({meta: 'Data', statusCode: 0}), 'warning');
+      this.logger.logServerWarn('omfg', {meta: 'Data', error: {statusCode: 0}});
+      sinon.assert.calledWith(this.bugsnag.notify, 'CORS Warning', 'omfg', sinon.match({meta: 'Data', error: {statusCode: 0}}), 'warning');
     });
   });
 

@@ -1,5 +1,6 @@
 .tab-header.editor-configuration
   .tab-header__title
+    cf-icon(name="page-media")
     h1(title="{{headline()}}")
       | {{headline()}}
       a(cf-knowledge-base-icon
@@ -8,16 +9,16 @@
         href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
 
   .tab-header__actions
-    button.btn.btn--tertiary(type="button"
+    button.cfnext-btn-secondary-action(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
             tooltip-placement="bottom")
       | Info
     .dropdown-btn(ng-show="showLangSwitcher")
-      button.btn.btn--tertiary(cf-dropdown-toggle="assetEditor.view.locale")
-        i.fa.fa-caret-down.button-icon-right
-        span View
+      button.cfnext-btn-secondary-action(cf-dropdown-toggle="assetEditor.view.locale")
+        cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+        | View
       .dropdown-menu(cf-dropdown-menu="assetEditor.view.locale" cf-dropdown-position="bottomcenter")
         ul.lang-switcher
           li.dropdown-menu-item--label(ng-repeat="locale in spaceContext.privateLocales track by locale.sys.id")
@@ -61,15 +62,15 @@
 
 .tab-actions(ng-controller="AssetActionsController")
   .button-set
-    button.btn.btn--secondary.delete(type="button" ng-show="entityActionsController.canDelete()" cf-dropdown-toggle="assetEditor.delete") Delete
+    button.cfnext-btn-secondary-action.delete(type="button" ng-show="entityActionsController.canDelete()" cf-dropdown-toggle="assetEditor.delete") Delete
     .delete-confirm(cf-dropdown-menu="assetEditor.delete" cf-dropdown-position="topcenter")
       p You are about to delete {{headline()}}
-      button.btn.btn--danger(type="button" ng-click="delete()" cf-dropdown-close) Delete
-      button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete
-    button.btn.btn--secondary.archive(  type="button" ng-show="entityActionsController.canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
-    button.btn.btn--secondary.archive(  type="button" ng-show="entityActionsController.canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
-    button.btn.btn--secondary.unpublish(type="button" ng-show="entityActionsController.canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish
-    button.btn.btn--primary.publish(    type="submit" ng-show="entityActionsController.canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Asset") {{publishButtonLabel()}}
+      button.cfnext-btn-caution(type="button" ng-click="delete()" cf-dropdown-close) Delete
+      button.cfnext-btn-secondary-action(type="button" cf-dropdown-close) Don't Delete
+    button.cfnext-btn-secondary-action.archive(  type="button" ng-show="entityActionsController.canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
+    button.cfnext-btn-secondary-action.archive(  type="button" ng-show="entityActionsController.canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
+    button.cfnext-btn-secondary-action.unpublish(type="button" ng-show="entityActionsController.canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish
+    button.cfnext-btn-primary-action.publish(    type="submit" ng-show="entityActionsController.canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Asset") {{publishButtonLabel()}}
   .save-status(cf-save-status tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
   .other-users
@@ -81,6 +82,6 @@
                          link="link" as="presenceUser"
                          tooltip="{{presenceUser | userNameDisplay:user}}")
         img(ng-src="{{user.data.avatarUrl}}")
-    a.btn.btn--secondary.invite-users(ui-sref="spaces.detail.settings.pathSuffix({ pathSuffix: 'users/new/' })")
+    a.cfnext-btn-secondary-action.invite-users(ui-sref="spaces.detail.settings.pathSuffix({ pathSuffix: 'users/new/' })")
       i.fa.fa-user
       i.fa.fa-plus

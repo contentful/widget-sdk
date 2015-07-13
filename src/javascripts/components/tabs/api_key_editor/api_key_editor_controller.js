@@ -79,7 +79,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   });
 
   $scope.$watch('apiKey.data.name', function (title) {
-    $scope.context.title = title || 'Untitled';
+    $scope.context.title = title || 'New Api Key';
   });
 
   function title() {
@@ -99,7 +99,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     })
     .catch(function(err){
       notification.warn(t + ' could not be deleted');
-      logger.logServerWarn('ApiKey could not be deleted', err);
+      logger.logServerWarn('ApiKey could not be deleted', {error: err});
     });
   };
 
@@ -131,7 +131,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     .catch(function(err){
       notification.warn(t + ' could not be saved');
       if(dotty.get(err, 'statusCode') !== 422)
-        logger.logServerWarn('ApiKey could not be saved', err);
+        logger.logServerWarn('ApiKey could not be saved', {error: err });
     });
   };
 

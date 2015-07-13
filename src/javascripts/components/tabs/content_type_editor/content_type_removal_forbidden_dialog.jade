@@ -1,0 +1,20 @@
+.modal-background
+  .modal-dialog(cf-center-on=".modal-background")
+    header.modal-dialog__header
+      h1 This content type can't be deleted right now.
+      .close-button(ng-click="dialog.cancel()")
+
+    .modal-dialog__content
+      .modal-dialog__richtext
+        p
+          | We've found {{ data.count }} entries which use the <em>{{ data.contentTypeName }}</em> content type.<br>
+          | The content types which are used by other entries can't be deleted.<br>
+          a(href="" ng-click="explanationShown = !explanationShown") Why?
+        p(ng-show="explanationShown")
+          | This is done for the reasons of security and consistency of the content model.<br>
+          | We wouldn't know what to do with these entries otherwise.
+        p
+          strong Please delete all the entries which use this content type before deleting it.
+    .modal-dialog__controls
+      button.cfnext-btn-primary-action(ng-click="dialog.cancel()")
+        | Okay, got it

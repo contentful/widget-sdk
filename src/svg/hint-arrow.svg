@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="81px" height="21px" viewBox="0 0 81 21" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3.2 (12043) - http://www.bohemiancoding.com/sketch -->
+    <title>hint-arrow</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="contentful_icons" sketch:type="MSArtboardGroup" transform="translate(-109.000000, -461.000000)" fill="#D6DDE5">
+            <g id="hint-arrow" sketch:type="MSLayerGroup" transform="translate(146.778022, 471.856691) scale(-1, -1) rotate(-135.000000) translate(-146.778022, -471.856691) translate(114.778022, 442.356691)">
+                <path d="M35.5594766,35.566013 C14.1105709,50.8866583 1.33876913,48.6765005 1.33876913,48.6765005 C1.33876913,48.6765005 15.9490505,52.7251396 36.7851297,36.7916661 C57.6212088,20.8581927 63.7494676,0.0221135096 63.7494676,0.0221135096 C63.7494676,0.0221135096 57.0083823,20.2453678 35.5594766,35.566013 Z" id="Line" sketch:type="MSShapeGroup"></path>
+                <path d="M0.151230856,48.7094142 C4.76407041,56.352404 9.8813399,58.9110387 9.8813399,58.9110387 C9.8813399,58.9110387 3.48475304,51.3009636 3.48475304,48.7094143 C3.48475304,46.117865 8.60202253,38.4419608 8.60202253,38.4419608 C8.60202253,38.4419608 2.20543582,44.8385476 0.151230856,48.7094142 Z" id="Line-8" sketch:type="MSShapeGroup"></path>
+            </g>
+        </g>
+    </g>
+</svg>

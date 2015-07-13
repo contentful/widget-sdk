@@ -66,9 +66,13 @@ describe('cfFileEditor Directive', function () {
 
     describe('and updating the otDoc value succeeds', function() {
       beforeEach(function() {
+        this.emitStub = sinon.stub(scope, '$emit');
         scope.uploadFile();
-        sinon.stub(scope, '$emit');
         scope.$apply();
+      });
+
+      afterEach(function () {
+        this.emitStub.restore();
       });
 
       it('calls filepickers pick', function() {
@@ -96,14 +100,13 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('emits fileUploaded event', function() {
-        sinon.assert.calledWith(scope.$emit, 'fileUploaded');
-        expect(scope.$emit.args[0][1]).toEqual({
+        sinon.assert.calledWith(this.emitStub, 'fileUploaded', {
           upload: 'newurl',
           fileName: 'newfilename',
           contentType: 'newmimetype'
-        });
-        expect(scope.$emit.args[0][2]).toEqual(scope.locale);
+        }, scope.locale);
       });
+
     });
   });
 

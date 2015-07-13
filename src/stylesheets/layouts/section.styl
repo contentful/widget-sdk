@@ -1,0 +1,222 @@
+$section-header-height = $tab-header-height
+$section-header-horizontal-padding = 2em
+$section-nav-height = 70px
+
+/**
+ * New main section layouts
+ *
+ * These layouts should be used in the main content sections.
+ * Flexbox based 2 and 3 column layouts, available in 3 configurations.
+ * Elements in all configurations are optional.
+ * You can also use the with-header or with-header-nav
+ * variants to account for either a header or a header and a section nav
+ * in the top position of section-main. The existence of those should be temporary
+ * until [this
+ * bug](https://code.google.com/p/chromium/issues/detail?id=476840) gets
+ * fixed and sizing vertically with flex-basis becomes more feasible,
+ * ending the need for manually positioning this element.
+ *
+ *
+ * Styleguide 9.0
+ */
+
+/**
+ * Left sidebar, Right content
+ *
+ * Markup:
+ * .styleguide-stretch-container--short
+ *   .section-main
+ *     .section-main__left-sidebar.styleguide-filled-box1
+ *       | sidebar
+ *     .section-main__right-content.styleguide-filled-box2
+ *       | main content
+ * .styleguide-stretch-container--short
+ *   .section-main
+ *     .section-main__right-content.styleguide-filled-box2
+ *       | just main content
+ *
+ * Styleguide 9.1
+ */
+
+/**
+ * Left content, Right sidebar
+ *
+ * Markup:
+ * .styleguide-stretch-container--short
+ *   .section-main
+ *     .section-main__left-content.styleguide-filled-box1
+ *       | main content
+ *     .section-main__right-sidebar.styleguide-filled-box2
+ *       | sidebar
+ * .styleguide-stretch-container--short
+ *   .section-main
+ *     .section-main__left-content.styleguide-filled-box1
+ *       | main content
+ *
+ * Styleguide 9.2
+ */
+
+/**
+ * Left and right sidebars, Middle content
+ *
+ * Markup:
+ * .styleguide-stretch-container--short
+ *   .section-main
+ *     .section-main__left-sidebar.styleguide-filled-box1
+ *       | sidebar
+ *     .section-main__middle-content.styleguide-filled-box2
+ *       | content
+ *     .section-main__right-sidebar.styleguide-filled-box3
+ *       | sidebar
+ * .styleguide-stretch-container--short
+ *   .section-main
+ *     .section-main__middle-content.styleguide-filled-box2
+ *       | content
+ *
+ * Styleguide 9.3
+ */
+
+$section-sidebar-width = 20%
+$section-content-width = 100% - $section-sidebar-width
+$section-middle-width = 100% - (2 * $section-sidebar-width)
+.section-main
+  $stretch(0, 0, 0, 0)
+  overflow-y: auto
+  display: flex
+  padding-top: $rhythm(1)
+
+  &.with-header
+    // TODO replace this with flexbox
+    // 1px is for section header border width
+    top: $section-header-height + 1px
+
+  &.with-header-nav
+    // TODO replace this with flexbox
+    // 1px is for section header border width
+    top: $section-header-height + $section-nav-height + 1px
+
+  &.with-tab-actions
+    bottom: $tab-actions-height
+
+  &__left-sidebar
+    width: $section-sidebar-width
+    margin-right: auto
+
+  &__right-content
+    width: $section-content-width
+    margin-left: auto
+
+  &__right-sidebar
+    width: $section-sidebar-width
+    margin-left: auto
+
+  &__left-content
+    width: $section-content-width
+    margin-right: auto
+
+  &__middle-content
+    width: $section-middle-width
+    margin-left: auto
+    margin-right: auto
+
+
+.section-header
+  display: flex
+  align-items: baseline
+  background-color: $gray-lightest
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07)
+  padding-left: $section-header-horizontal-padding
+  padding-right: $section-header-horizontal-padding
+  border-radius: 3px 3px 0 0
+  border-bottom: 1px solid $cfnext-light-gray
+  > *
+    flex-shrink: 0
+
+  &__icon
+    margin-top: 0.5em
+    margin-right: 1em
+    align-self: center
+    cf-icon
+      display: block
+
+  &__title
+    font-size: $tab-header-font-size
+    line-height: $section-header-height
+    margin: 0 0.6em 0 0.1ex
+    white-space: nowrap
+
+  &__description
+    $text-truncate()
+    color: $gray
+    flex-shrink: 1
+    margin-right: 1ex
+
+  &__actions
+    align-self: center
+    margin-left: auto
+    > *
+      margin-left: 1em
+
+
+/*
+Section Header
+
+Markup:
+.section-header
+  h1.section-header__title Title
+  .section-header__description This is a description
+  button.cfnext-btn-inline Edit
+  .section-header__actions
+    button.cfnext-btn-secondary-action Actions
+    button.cfnext-btn-action Save
+
+Styleguide 9.4
+*/
+
+
+/*
+Section Header with Tabs
+
+Markup:
+.styleguide-stretch-container--short
+  .section-header
+    h1.section-header__title Title
+    .section-header__description This is a description
+    button.cfnext-btn-inline Edit
+    .section-header__actions
+      button.cfnext-btn-secondary-action Actions
+      button.cfnext-btn-action Save
+  .section-nav
+    .section-nav__left-content
+      button.cfnext-btn-action Add some
+    ul.section-nav__tabs
+      li(role="tab") First Tab
+      li(role="tab" aria-selected="true") Active Tab
+      li(role="tab") Last Tab
+  .section-main.with-header-nav
+    .section-main__left-sidebar.styleguide-filled-box1
+      | sidebar
+    .section-main__right-content.styleguide-filled-box2
+      | content
+
+Styleguide 9.4.1
+*/
+.section-nav
+  display: flex
+  align-items: center
+  justify-content: space-between
+  height: $section-nav-height
+  border-bottom: 1px solid $cfnext-light-gray
+
+
+.section-nav__left-content
+  padding-left: $section-header-horizontal-padding
+  flex-shrink: 0
+  padding-right: 2em
+
+
+.section-nav__tabs
+  align-self: flex-end
+  flex-grow: 0
+  flex-basis: $section-content-width
+  $tab-list()

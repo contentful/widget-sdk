@@ -11,11 +11,8 @@ vagrant_bootstrap.sh
 run_vagrant_build.sh
 karma-specs.json
 bower_components
+
+# Build artifacts
+gh-pages/
 build/
-
 public/*
-
-webdrivercss
-webdrivercss.tar.gz
-app/assets/stylesheets/styleguide
-app/assets/stylesheets/compiled.css

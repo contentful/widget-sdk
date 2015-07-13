@@ -1,0 +1,35 @@
+.modal-background
+  form.modal-dialog.edit-content-type-metadata__dialog(
+    name="newContentTypeForm"
+    cf-on-submit="newContentTypeForm.$valid && dialog.confirm()")
+    header.modal-dialog__header
+      .modal-dialog__action-icon
+        cf-icon(name="new-ct")
+      h1 {{dialog.title}}
+      .close-button(ng-click="dialog.cancel()")
+    .modal-dialog__content
+      .cfnext-form__field
+        label
+          | Content Type Name
+        input.cfnext-form__input--full-size(
+          type="text"
+          name="contentTypeName"
+          placeholder="For example Product, Blog Post, Author"
+          ng-model="contentTypeMetadata.name"
+          required maxlength="50"
+          cf-focus-on-render)
+        div.cfnext-form__hint
+          | This field is required
+      .cfnext-form__field
+        label Short Description
+        textarea.cfnext-form__input--full-size(
+          maxlength="500"
+          name="contentTypeDescription"
+          ng-model="contentTypeMetadata.description")
+        .cfnext-form__field-error(cf-field-error-for="contentTypeDescription")
+
+    .modal-dialog__controls
+      button.cfnext-btn-primary-action(cf-form-submit)
+        | {{dialog.confirmLabel}}
+      button.cfnext-btn-plain(type="button" ng-click="dialog.cancel()")
+        | Cancel

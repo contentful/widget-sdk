@@ -1,5 +1,5 @@
 .link-editor__controls
-  .l-search-w-autocomplete(cf-tokenized-search="searchTerm"
+  .link-editor__search-input.l-search-w-autocomplete(cf-tokenized-search="searchTerm"
     tooltip-placement="top"
     tooltip="Search for existing {{entityName}}"
     search-content-type="getSearchContentType()"
@@ -8,41 +8,45 @@
     cf-on-blur-component-when="showAutocompletions")
 
   //- link to entry or entries
-  .dropdown-btn.add-new(
-      ng-if="entityType=='Entry' && addableContentTypes.length > 1"
-      ng-hide="permissionController.get('createEntry', 'shouldHide')"
-      ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
-      cf-when-disabled="permissionController.entityActions.createEntry"
-      tooltip="Add new {{entityType}}"
-      tooltip-placement="left")
-    button.btn.btn--form.btn--tertiary(cf-dropdown-toggle="linkEditor.addNew" type="button")
-      i.fa.fa-plus-circle.button-icon
-      | Add New
-    a.dropdown-menu(cf-dropdown-menu="linkEditor.addNew")
-      ul
-        li.dropdown-menu-item(ng-repeat="contentType in addableContentTypes track by contentType.getId()"
-            ng-click="addNewEntry(contentType)"
-            cf-dropdown-close)
-          | {{contentType.getName()}}
+  button.cfnext-btn-secondary-action.link-editor__add-button(type="button"
+    ng-if="entityType=='Entry' && addableContentTypes.length > 1"
+    ng-hide="permissionController.get('createEntry', 'shouldHide')"
+    ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
+    cf-when-disabled="permissionController.entityActions.createEntry"
+    tooltip="Add new {{entityType}}"
+    tooltip-placement="left"
+    cf-dropdown-toggle="linkEditor.addNew")
+    cf-icon.btn-icon(name="plus")
+    | Add New
+  //- TODO the ng-if condition for the dropdown has to be synced
+  //- manually with the confidtion above
+  a.dropdown-menu(
+    ng-if="entityType=='Entry' && addableContentTypes.length > 1"
+    cf-dropdown-menu="linkEditor.addNew")
+    ul
+      li.dropdown-menu-item(ng-repeat="contentType in addableContentTypes track by contentType.getId()"
+          ng-click="addNewEntry(contentType)"
+          cf-dropdown-close)
+        | {{contentType.getName()}}
 
   //- link to entry or entries with restriction on the type
-  button.btn.btn--form.btn--tertiary.add-new.with-link-content-type(type="button"
+  button.cfnext-btn-secondary-action.link-editor__add-button(type="button"
       ng-if="entityType=='Entry' && addableContentTypes.length === 1"
       ng-hide="permissionController.get('createEntry', 'shouldHide')"
       ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
       cf-when-disabled="permissionController.entityActions.createEntry"
       ng-click="addNewEntry(addableContentTypes[0])")
-    i.fa.fa-plus-circle.button-icon
+    cf-icon.btn-icon(name="plus")
     | Add New
 
   //- link to asset (with or without restriction)
-  button.btn.btn--form.btn--tertiary.add-new.with-link-content-type(type="button"
+  button.cfnext-btn-secondary-action.link-editor__add-button(type="button"
       ng-if="entityType=='Asset'"
       ng-hide="permissionController.get('createAsset', 'shouldHide')"
       ng-disabled="permissionController.get('createAsset', 'shouldDisable')"
       cf-when-disabled="permissionController.entityActions.createAsset"
       ng-click="addNewAsset()")
-    i.fa.fa-plus-circle.button-icon
+    cf-icon.btn-icon(name="plus")
     | Add New
 
 
@@ -100,4 +104,3 @@
                 date(ng-if="entity.getUpdatedAt()" datetime="{{entity.getUpdatedAt()}}" cf-relative-datetime)
       .loading(ng-hide="paginator.atLast()")
     p.search-results__length Showing {{entities.length}} of {{paginator.numEntries}} assets
-

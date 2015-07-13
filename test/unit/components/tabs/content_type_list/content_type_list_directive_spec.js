@@ -36,30 +36,6 @@ describe('The ContentType list directive', function () {
     container.remove();
   });
 
-  describe('the tab header add button', function() {
-    it('is not shown', function() {
-      scope.permissionController.get.withArgs('createContentType', 'shouldHide').returns(true);
-      compileElement();
-      expect(container.find('.tab-header .add-entity .btn--primary')).toBeNgHidden();
-    });
-
-    it('is shown', function() {
-      compileElement();
-      expect(container.find('.tab-header .add-entity .btn--primary')).not.toBeNgHidden();
-    });
-  });
-
-  it('save button is disabled', function () {
-    scope.permissionController.get.withArgs('createContentType', 'shouldDisable').returns(true);
-    compileElement();
-    expect(container.find('.advice .btn--primary').attr('disabled')).toBe('disabled');
-  });
-
-  it('save button is enabled', function () {
-    compileElement();
-    expect(container.find('.advice .btn--primary').attr('disabled')).toBeUndefined();
-  });
-
   describe('list of content types is filtered', function() {
     var list;
     var idStub1, idStub2, idStub3, nameStub, listFilterStub;

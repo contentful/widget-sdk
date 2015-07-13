@@ -1,5 +1,6 @@
 .tab-header
   .tab-header__title
+    cf-icon(name="page-api")
     h1 APIs
 
 .tab-main
@@ -13,11 +14,6 @@
 
   .with-left-nav
     .main-results-wrapper
-      //- %header.hero
-        h1 Contentful Developers
-        p(ng-if="notes.isActive('developers-hero')")
-          | Contentful offers RESTful APIs and a growing list of libraries for managing and delivering your content. Use the Delivery API to deliver content to mobile apps, interactive websites, and connected devices. The Management API allows you to upload JSON and binary content, which is fully indexed and open to querying minutes later.
-          a.close-button(href="" ng-click="notes.dismiss('developers-hero')")
 
       .boxes
         .box
@@ -66,6 +62,6 @@
                 | See more in our Github
 
 
-      .note-box
+      .note-box.note-box--gold.note-box--centered
         | This page is only visible to Space Admins and Developers.
 

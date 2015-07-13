@@ -30,16 +30,19 @@ angular.module('contentful')
 
   $scope.unitFactor = getUnitFactor(getModelValue());
 
-  $scope.$watch($attrs.model, setScaledValue);
-  $scope.$watch('unitFactor', computeRawValue);
-  $scope.$watch('value', computeRawValue);
+  $scope.$watch($attrs.model, updateScaledValue);
+  $scope.$watch('unitFactor', updateModelValue);
+  $scope.$watch('value', updateModelValue);
 
-  function computeRawValue() {
+  $scope.$on('ngModel:commit', updateModelValue);
+
+
+  function updateModelValue() {
     var raw = _.isFinite($scope.value) ? $scope.value * $scope.unitFactor : null;
     setModelValue(raw);
   }
 
-  function setScaledValue(raw) {
+  function updateScaledValue(raw) {
     $scope.value = _.isFinite(raw) ? raw / $scope.unitFactor : null;
   }
 

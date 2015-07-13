@@ -25,8 +25,8 @@ To select only a subsect of specs to run, replace their respective
 `describe` or `it` calls with `ddescribe` or `iit`.
 
 
-Using Angular Services
-----------------------
+Using Angular
+-------------
 
 Each test case must load an Angular module using the `module` function.
 Then we can use the `$inject` helper to obtain services from that
@@ -44,9 +44,46 @@ The [`ngMock`][ng-mock] module is automatically required. The
 `contentful/mocks` module. The latter provides various services that
 mock certain parts of the application.
 
+Directives can be compiled and tested with the
+[`$compile` helper][service:helpers].
+
+~~~js
+it('renders', function () {
+  var $el = this.$compile('<span>{{{text}}}</span>', {text: 'Hello'})
+  exepect($el.text()).toEqual('Hello')
+})
+~~~
+
+
+Mocks
+-----
+
+Use `sinon.stub()` to create mock functions and `sinon.assert` to make
+assertions.
+
+We provide two extensions to Sinon stubs that allow you to create
+functions that return promises.
+
+~~~js
+// Equivalent: Function that returns a resolved promise
+sinon.stub().returns($q.when('yeah'))
+
+// Equivalent: Function that returns a rejected promise
+var callAndReject = sinon.stub().rejects(new Error())
+sinon.stub().returns($q.reject(new Error()))
+~~~
+
+There is a `mocks` module and a `cfStub` service that provide elaborate
+mocks for certain parts of the app. Use of this module is *deprecated*
+and needs some major cleanup.
+
 
 Asynchronous Tests
 ------------------
+
+In test cases we can use the `this.resolve()` and `this.reject()`
+helper methods to create promises. This is documented in the [Test
+module][module:test].
 
 There are two ways to test code that uses promises. The first is to
 flush promises in a test case with `this.$apply()`
@@ -103,3 +140,4 @@ the test run. You can choose a reporter by passing the
 [karma]: http://karma-runner.github.io/0.12/index.html
 [module:test]: api/contentful/test
 [tape]: https://github.com/substack/tape
+[service:helpers]: api/contentful/test/service/helpers

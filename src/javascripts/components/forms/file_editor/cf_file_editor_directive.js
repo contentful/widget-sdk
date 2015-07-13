@@ -68,7 +68,6 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
       }
 
       function notify() {
-        // dependency on scope.locale feels weird
         if (scope.file) scope.$emit('fileUploaded', scope.file, scope.locale);
       }
 
@@ -99,7 +98,7 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
             scope.loadingEditor = false;
           }).catch(function (err) {
             notification.error(err.message);
-            logger.logError(err.message, err.error);
+            logger.logError(err.message, {error: err.error});
             scope.loadingEditor = false;
             aviary.close();
           });

@@ -9,18 +9,20 @@
         <rect id="path-3" x="6" y="19" width="18" height="9" rx="2"></rect>
     </defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="fd-separator" sketch:type="MSLayerGroup">
-            <g id="Middle">
-                <use fill="#2D2F31" fill-rule="evenodd" sketch:type="MSShapeGroup" xlink:href="#path-1"></use>
-                <use fill="none" xlink:href="#path-1"></use>
-            </g>
-            <g id="Top">
-                <use fill="#D6DDE5" fill-rule="evenodd" sketch:type="MSShapeGroup" xlink:href="#path-2"></use>
-                <use fill="none" xlink:href="#path-2"></use>
-            </g>
-            <g id="Bottom">
-                <use fill="#D6DDE5" fill-rule="evenodd" sketch:type="MSShapeGroup" xlink:href="#path-3"></use>
-                <use fill="none" xlink:href="#path-3"></use>
+        <g id="contentful_icons" sketch:type="MSArtboardGroup" transform="translate(-101.000000, -402.000000)">
+            <g id="fd-separator" sketch:type="MSLayerGroup" transform="translate(101.000000, 402.000000)">
+                <g id="Middle">
+                    <use fill="#2D2F31" fill-rule="evenodd" sketch:type="MSShapeGroup" xlink:href="#path-1"></use>
+                    <use fill="none" xlink:href="#path-1"></use>
+                </g>
+                <g id="Top">
+                    <use fill="#D6DDE5" fill-rule="evenodd" sketch:type="MSShapeGroup" xlink:href="#path-2"></use>
+                    <use fill="none" xlink:href="#path-2"></use>
+                </g>
+                <g id="Bottom">
+                    <use fill="#D6DDE5" fill-rule="evenodd" sketch:type="MSShapeGroup" xlink:href="#path-3"></use>
+                    <use fill="none" xlink:href="#path-3"></use>
+                </g>
             </g>
         </g>
     </g>

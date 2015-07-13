@@ -38,7 +38,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
           ui-sref="spaces.detail.api.home({ spaceId: $stateParams.spaceId })"
           data-view-type="api-home"
           tabindex="0")
-        cf-icon.icon-nav-api(name="nav-api")
+        cf-icon(name="nav-api")
         span.nav-bar__list-label APIs
     li.app-top-bar__action.nav-bar__list-item(
       ng-if="canNavigateTo.settings")

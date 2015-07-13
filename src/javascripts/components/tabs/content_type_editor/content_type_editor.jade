@@ -1,102 +1,48 @@
-.tab-header.editor-configuration
-  .tab-header__title
-    h1
-      | {{contentType.getName()}}
-      a(cf-knowledge-base-icon
-        tooltip="Learn more about Content Types in the Knowledge Base Pages"
-        analytics-event="content_types"
-        href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
+.section-header.editor-configuration
+  .section-header__icon
+    cf-icon(name="page-ct")
+  h1.section-header__title {{contentType.getName()}}
+  .section-header__description {{contentType.data.description}}
+  button.cfnext-btn-inline(ng-click="showMetadataDialog()") Edit
 
-  .tab-header__actions
-    button.btn.btn--tertiary(type="button"
-            ng-click="preferences.toggleAuxPanel()"
-            ng-class="{active: preferences.showAuxPanel}"
-            tooltip="Toggle additional details"
-            tooltip-placement="bottom")
-      | Info
-    .dropdown-btn
-      button.btn.btn--tertiary(cf-dropdown-toggle="contentTypeEditor.view")
-        i.fa.fa-caret-down.button-icon-right
-        span View
-      .dropdown-menu(cf-dropdown-menu="contentTypeEditor.view" cf-dropdown-position="bottomcenter")
-        ul
-          li.dropdown-menu-item
-            label 
-              input(type="checkbox" ng-model="preferences.showDisabledFields")
-              | Show disabled fields
-    button.btn.btn--tertiary(type="button"
-            ng-if="ctEditorController.interfaceEditorEnabled"
-            ng-disabled="!publishedContentType"
-            ng-click="$state.go('spaces.detail.content_types.detail.editing_interface')"
-            tooltip="Customize editing view"
-            tooltip-placement="bottom")
-      | Customize View
+.section-nav
+  .section-nav__left-content
+    button.cfnext-btn-action(
+      ng-disabled="cfCanDisabled"
+      ng-click="showNewFieldDialog()")
+      cf-icon.btn-icon.inverted(name="plus")
+      | Add Field
+  ul.section-nav__tabs
+    li(role="tab" data-tab="fields")
+      | Fields
+      span(ng-show="contentType.data.fields.length") &nbsp;({{contentType.data.fields.length}})
+    li(role="tab" data-tab="json") JSON Preview
 
-.aux-panel(ng-show="preferences.showAuxPanel")
-  header
-    h1 Content Type Information
-  .entity-info-panel(cf-entity-info-panel="contentType.getSys()")
 
-.tab-main.tab-workbench
-  .ng-form.l-form(name="contentTypeForm" submit="publish()")
-    .l-form-row
-      label
-        | Name
-        sup (required)
-      .l-form-controls
-        .l-field-editor
-          input.form-control(type="text"
-                 name="contentTypeName"
-                 placeholder="Content Type Name (e.g. Product)"
-                 ng-model="contentType.data.name"
-                 cf-focus-on-render)
-        cf-error-list.form-box-error(cf-error-path="['name']")
-    .l-form-row
-      label Description
-      .l-form-controls
-        .l-field-editor
-          textarea.form-control(placeholder="Describe the purpose of Entries using this Content Type"
-                    name="contentTypeDescription"
-                    ng-model="contentType.data.description")
-        cf-error-list.form-box-error(cf-error-path="['description']")
-    .l-form-row
-      label(ng-show="hasFields") Fields
-      .l-form-controls
-        cf-content-type-field-list.u-bce.content-type-field-list(ng-show="hasFields")
-        cf-error-list.form-box-error(cf-error-path="['fields']")
-        .advice(ng-hide="hasFields")
-          .advice__frame
-            i.fa.fa-list-alt.advice__medium-icon
-            header.advice__title You have no Fields yet
-            p.advice__description
-              | Add Fields to configure which form inputs are available for your editors to work with.
-            .dropdown-btn
-              button.btn.btn--primary(cf-dropdown-toggle="contentTypeEditor.createField" ng-disabled="cfCanDisabled")
-                | Create Field
-              cf-select-type.u-bce.dropdown-menu.type-menu(cf-dropdown-menu="contentTypeEditor.createField" on-type-selected="addField(type)")
-              a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
-                | Visit the Knowledge Base Pages
-                i.fa.fa-question-circle
-        .dropdown-btn(ng-show="hasFields")
-          button.btn.btn--primary.add-field-button(cf-dropdown-toggle="contentTypeEditor.addField")
-            i.fa.fa-plus.button-icon
-            | Add Field
-          cf-select-type.u-bce.dropdown-menu.type-menu(cf-dropdown-menu="contentTypeEditor.addField" on-type-selected="addField(type)")
+.section-main.with-header-nav.with-tab-actions
+  form.section-main__middle-content(name="contentTypeForm" submit="publish()")
 
-.tab-actions(ng-controller="ContentTypeActionsController")
+    div(role="tabpanel" data-tab="json")
+      cf-content-type-preview.u-bce
+
+    div(role="tabpanel" data-tab="fields")
+      .content-type-fields(ng-if="hasFields")
+        include ./content_type_field_list
+      .content-type-fields(ng-if="!hasFields")
+        include ./content_type_field_list_empty
+
+.tab-actions
   .button-set
-    button.btn.btn--secondary.deactivate(type="button"
-                  ng-show="entityActionsController.canUnpublish()"
-                  ng-click="unpublish()"
-                  tooltip="Deactivate this Content Type")
-      | Deactivate
-    button.btn.btn--secondary.delete(type="button" ng-show="entityActionsController.canDelete()" cf-dropdown-toggle="contentTypeEditor.delete") Delete
-    .delete-confirm(cf-dropdown-menu="contentTypeEditor.delete" cf-dropdown-position="topcenter")
-      p You are about to delete {{contentType.getName()}}
-      button.btn.btn--danger(type="button" ng-click="delete()" cf-dropdown-close) Delete 
-      button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete 
-    button.btn.btn--primary.publish(
-                  ng-disabled="!entityActionsController.canPublish() || (entityActionsController.canPublish() && !contentTypeForm.$dirty && contentType.isPublished())"
-                  ng-click="publish()"
-                  tooltip="Save changed and make this Content Type available to editors")
+    button.cfnext-btn-secondary-action.cancel(
+      ng-show="context.isNew"
+      ng-click="actions.cancel()")
+      | Cancel
+    button.cfnext-btn-secondary-action.delete(
+      ng-show="actions.canDelete()"
+      ng-click="actions.startDeleteFlow()")
+      | Delete
+    button.cfnext-btn-primary-action.publish(
+      ng-disabled="!actions.canSave()"
+      ng-click="actions.save()"
+      tooltip="Save changed and make this Content Type available to editors")
       | Save

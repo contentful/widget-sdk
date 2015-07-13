@@ -10,18 +10,18 @@
  * Inputs and labels
  *
  * Markup:
- * p
- *   div.cfnext-form__field
- *     label Name
- *     input.cfnext-form__input(type="text")
- * p
- *   div.cfnext-form__field
- *     label Longer Name
- *     input.cfnext-form__input(type="text" size="50")
- * p
- *   div.cfnext-form__field
- *     label Full Name
- *     input.cfnext-form__input--full-size(type="text")
+ * div.cfnext-form__field
+ *   label Name
+ *   input.cfnext-form__input(type="text" value="Name")
+ * div.cfnext-form__field
+ *   label Longer Name
+ *   input.cfnext-form__input(type="text" size="50" value="Longer Name")
+ * div.cfnext-form__field
+ *   label Full Name
+ *   input.cfnext-form__input--full-size(type="text" value="Full Name")
+ * div.cfnext-form__field
+ *   label Bio
+ *   textarea.cfnext-form__input
  *
  * Styleguide 30.1
  */
@@ -29,7 +29,6 @@
   margin-bottom: $rhythm(1.5)
   > label
     display: block
-    font-weight: bold
     margin-bottom: $rhythm(0.5)
 
 $cfnext-form-input()
@@ -37,12 +36,14 @@ $cfnext-form-input()
   font-size: inherit
   border: 1px solid $metallic-gray
   border-radius: 3px 3px 3px 3px
-  line-height: 2.2em
+  box-sizing: border-box
+  height: 2.3em
   padding: 0 0.5em
-  transition: border 0.4s
+  transition: border 0.3s
   &:focus
     background-color: white
-    border-color: $blue-link
+    border-width: 1px
+    border-color: $cfnext-blue
     outline: none
   &[aria-invalid="true"]
     border-color: darken($red, 10%)
@@ -54,6 +55,11 @@ $cfnext-form-input()
     transition: none
   &[type="number"]
     padding-right: 0
+  textarea&
+    padding-top: 0.5em
+    padding-bottom: 0.5em
+    line-height: 1.3
+    height: auto
 
 .cfnext-form__input
   $cfnext-form-input()
@@ -63,31 +69,59 @@ $cfnext-form-input()
   $cfnext-form-input()
   width: 100%;
 
+
+/**
+ * Hints
+ *
+ * Markup:
+ * div.cfnext-form__field
+ *   label First Name
+ *   input.cfnext-form__input(type="text")
+ *   div.cfnext-form__hint
+ *     | You have to provide your name here
+ * div.cfnext-form__field
+ *   label Last Name
+ *   input.cfnext-form__input(type="text")
+ *   div.cfnext-form__hint
+ *     | You have to provide your last name here
+ *
+ * Styleguide 30.2
+ */
+.cfnext-form__hint
+  margin-top: $rhythm(0.5)
+  color: $text-dimmed
+  font-size: $small-font-size
+
 /**
  * Errors
  *
  * Markup:
- * p
- *   div.cfnext-form__field
- *     label Name
- *     input.cfnext-form__input(type="text" aria-invalid="true")
- *     span.cfnext-form__field-suffix-error
- *       | Something went wrong!
- * p
- *   div.cfnext-form__field
- *     label Name
- *     input.cfnext-form__input(type="text" aria-invalid="true")
- *     ul.cfnext-form__field-errors
- *       li This went wrong
- *       li And that
+ * div.cfnext-form__field
+ *   label Name
+ *   input.cfnext-form__input(type="text" aria-invalid="true")
+ *   .cfnext-form__field-error
+ *     | Something went wrong!
+ * div.cfnext-form__field
+ *   label Name
+ *   input.cfnext-form__input(type="text" aria-invalid="true")
+ *   span.cfnext-form__field-suffix-error
+ *     | Something went wrong!
+ * div.cfnext-form__field
+ *   label Name
+ *   input.cfnext-form__input(type="text" aria-invalid="true")
+ *   ul.cfnext-form__field-errors
+ *     li This went wrong
+ *     li And that
  *
- * Styleguide 30.2
+ * Styleguide 30.3
  */
+.cfnext-form__field-error,
 .cfnext-form__field-errors
   margin-top: $rhythm(0.5)
   color: $red
-  > li
-    margin-bottom: $rhythm(0.5)
+
+.cfnext-form__field-errors > li
+  margin-bottom: $rhythm(0.5)
 
 .cfnext-form__field-suffix-error
   margin-left: 1.5em
@@ -101,50 +135,53 @@ $cfnext-form-input()
  *   legend A few options
  *   .cfnext-form-option
  *     input(type="checkbox" id="option-a")
- *     .cfnext-form-option__desc
- *       label(for="option-a") Check this
+ *     label(for="option-a") Check this
  *   .cfnext-form-option
  *     input(type="checkbox" id="option-b")
  *     .cfnext-form-option__desc
  *       label(for="option-b") Or check that
  *       p You also can check both
+ *       p.text-dimmed This is a hint
  *   .cfnext-form-option
  *     input(type="radio" id="radio-a" name="selectme")
- *     .cfnext-form-option__desc
- *       label(for="radio-a") Select me
+ *     label(for="radio-a") Select me
  *   .cfnext-form-option
  *     input(type="radio" id="radio-b" name="selectme")
  *     .cfnext-form-option__desc
  *       label(for="radio-b") Or me
+ *       p This is radio
  *
- * Styleguide 30.3
+ * Styleguide 30.4
  */
 $cfnext-form__fieldset()
   legend
     width: 100%
     flex-shrink: 0
-    line-height: $rhythm(2)
-    margin-bottom: $rhythm(0.5)
-    font-weight: bold
+    margin-bottom: $rhythm(1)
 
 .cfnext-form__fieldset
   $cfnext-form__fieldset()
 
 .cfnext-form-option
   margin-bottom: $rhythm(1)
-  $display-flexbox()
+  display: flex
 
   .cfnext-form-option:last-child
     margin-bottom: 0
+
   > input[type="checkbox"],
   > input[type="radio"]
+    align-self: flex-start
     flex-shrink: 0
-    margin: 0.1em 0.7em 0 0.3em
+    margin: 1px 0.5em 0 0
 
-$text-dimmed = hsl(0, 0%, 50%)
+  > label
+    display: block
+    cursor: pointer
+
 .cfnext-form-option__desc p
-  color: $text-dimmed
-  margin: $rhythm(0.5) 0 0 0
+  font-size: $small-font-size
+  margin: 0
 
 .cfnext-form-option__desc label
   // Larger line height increases clickable area
@@ -152,7 +189,6 @@ $text-dimmed = hsl(0, 0%, 50%)
   // Negative margin makes sure the larger line height does not
   // influence the layout
   margin-top:    - $rhythm(0.5)
-  margin-bottom: - $rhythm(0.5)
   display: inline-block;
   cursor: pointer
 
@@ -167,26 +203,22 @@ $text-dimmed = hsl(0, 0%, 50%)
  *   legend A few options
  *   .cfnext-form-option
  *     input(type="checkbox" id="option-a")
- *     .cfnext-form-option__desc
- *       label(for="option-a") Check this
+ *     label(for="option-a") Check this
  *   .cfnext-form-option
  *     input(type="checkbox" id="option-b")
- *     .cfnext-form-option__desc
- *       label(for="option-b") Or check that
+ *     label(for="option-b") Or check that
  *   .cfnext-form-option
  *     input(type="radio" id="radio-a" name="selectme")
- *     .cfnext-form-option__desc
- *       label(for="radio-a") Select me
+ *     label(for="radio-a") Select me
  *   .cfnext-form-option
  *     input(type="radio" id="radio-b" name="selectme")
- *     .cfnext-form-option__desc
- *       label(for="radio-b") Or me
+ *     label(for="radio-b") Or me
  *
- * Styleguide 30.4
+ * Styleguide 30.5
  */
 .cfnext-form__fieldset--horizontal
   $cfnext-form__fieldset()
-  $display-flexbox()
+  display: flex
   flex-wrap: wrap
 
   .cfnext-form-option

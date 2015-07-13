@@ -1,7 +1,8 @@
 .modal-background
   .modal-dialog.getty-dialog(ng-controller="GettyDialogController" cf-center-on=".modal-background")
-    .title Getty Images
-    .modal-dialog-close-button(ng-click="dialog.cancel()")
+    header.modal-dialog__header
+      h1 Getty Images
+      .close-button(ng-click="dialog.cancel()")
 
     .getty__dialog-container(ng-show="imageDetail" ng-controller="GettyImageDetailsController")
       include ./getty_image_details
@@ -23,3 +24,4 @@
           include ./getty_search_result
         .loading(ng-hide="paginator.atLast()")
       .getty__loading.loading(ng-show="gettyLoading")
+

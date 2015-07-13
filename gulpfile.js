@@ -26,7 +26,6 @@ var stylus      = require('gulp-stylus');
 var uglify      = require('gulp-uglify');
 var path        = require('path');
 var through     = require('through2').obj;
-var ngAnnotate  = require('gulp-ng-annotate');
 var flo         = require('fb-flo');
 var yargs       = require('yargs');
 var child_process = require('child_process');
@@ -113,12 +112,8 @@ var src = {
     'src/stylesheets/main.styl',
     'src/stylesheets/ie9.css'
   ],
-  styleguideTemplate: [
-    'styleguide_template/*',
-    'styleguide_template/public/*'
-  ],
   styleguideStylesheets: [
-    'styleguide_template/public/custom.styl'
+    'styleguide/public/custom.styl'
   ]
 };
 
@@ -266,15 +261,16 @@ function buildStylus(sources, dest) {
 
 gulp.task('styleguide', ['styleguide/stylesheets'], function () {
   return spawnOnlyStderr('kss-node', [
-    '--template', 'styleguide_template',
-    '--helpers', 'styleguide_template/helpers',
+    '--template', 'styleguide',
+    '--helpers', 'styleguide/helpers',
     '--source', 'src/stylesheets',
-    '--destination', 'public/styleguide'
+    '--destination', 'public/styleguide',
+    '--placeholder', ''
   ]);
 });
 
 gulp.task('styleguide/stylesheets', function () {
-  return buildStylus(src.styleguideStylesheets, './public/styleguide_custom');
+  return buildStylus('styleguide/custom.styl', './public/styleguide');
 });
 
 
@@ -282,7 +278,7 @@ gulp.task('serve', ['styleguide'], function () {
   var builds = [];
   watchTask(src['components'], 'js/app');
   watchTask(src['templates'], 'templates');
-  gulp.watch(src['styleguideTemplate'], function () {
+  gulp.watch('styleguide/**/*', function () {
     builds.push(new Promise(function (resolve) {
       runSequence('styleguide', resolve);
     }));
@@ -418,6 +414,20 @@ gulp.task('build', function(done){
   );
 });
 
+gulp.task('build/with-styleguide', function (done) {
+  runSequence(
+    'build',
+    'styleguide',
+    'build/copy-styleguide',
+    done
+  );
+});
+
+gulp.task('build/copy-styleguide', function () {
+  return gulp.src('public/styleguide/**/*')
+  .pipe(writeBuild('styleguide'));
+});
+
 gulp.task('serve-production', function () {
   var buildDir = path.resolve(__dirname, 'build');
 
@@ -497,7 +507,6 @@ gulp.task('rev-app', function () {
   ], {base: 'build'})
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(concat('app/application.min.js'))
-    .pipe(ngAnnotate())
     .pipe(uglify())
     .pipe(writeBuild())
     .pipe(rev())
@@ -530,7 +539,7 @@ gulp.task('rev-index', function () {
 
 gulp.task('revision', ['git-revision'], function(){
   var stream = source('revision.json');
-  stream.write(JSON.stringify({revision: gitRevision}));
+  stream.end(JSON.stringify({revision: gitRevision}));
   return stream.pipe(writeBuild());
 });
 

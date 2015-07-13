@@ -137,14 +137,19 @@ $markdown-profile()
 .api-profile-description
   $markdown-profile()
 
-.api-members h3
-  font-weight: 600;
-  padding-bottom: $rhythm(0.5);
-  border-bottom: 1px solid hsl(0, 0%, 80%)
-  margin-bottom: $rhythm(0.5)
-
-.api-members > li
+.api-member
   margin-bottom: $rhythm(1);
+
+  > h3
+    background: hsl(0, 0%, 90%)
+    font-weight: 600;
+    padding: $rhythm(0.33) 2ex;
+    border-bottom: 1px solid hsl(0, 0%, 80%)
+    margin-bottom: $rhythm(0.5)
+
+  &__params
+    display: none
+
 
 .api-module-components
   td

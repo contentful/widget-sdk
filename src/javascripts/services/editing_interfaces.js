@@ -9,6 +9,8 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   var widgetIdsByContentType = {};
 
   return {
+    // TODO we should rewrite this and get rid of the ID for the interface
+    // as we won't use those anyway
     forContentTypeWithId: function (contentType, interfaceId) {
       return getEditingInterface(contentType, interfaceId)
       .catch(function (err) {
@@ -29,7 +31,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
         if(dotty.get(err, 'body.sys.type') == 'Error' && dotty.get(err, 'body.sys.id') == 'VersionMismatch')
           notification.warn('This configuration has been changed by another user. Please reload and try again.');
         else {
-          logger.logServerWarn('There was a problem saving the configuration', err);
+          logger.logServerWarn('There was a problem saving the configuration', {error: err });
           notification.error('There was a problem saving the configuration');
         }
         return $q.reject(err);
@@ -129,6 +131,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     return { data: data };
   }
 
+  // TODO this is not inline with the field factory
   function defaultWidget(contentType, field) {
     return {
       id: generateId(field.id, contentType.getId()),

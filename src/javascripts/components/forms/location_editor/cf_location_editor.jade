@@ -1,11 +1,13 @@
 div.location-fields
   label.widget-location-editor__location-picker
     p Latitude
-    input.form-control.lat(type="text" name="lat" ng-model="location.lat" ng-disabled="!otEditable")
+    input.form-control.lat(type="text" name="lat" ng-model="location.lat" ng-disabled="!otEditable" size="18")
     i(cf-field-alert="{{latAlert}}" tooltip-placement="left")
   label.widget-location-editor__location-picker
     p Longitude
-    input.form-control.lon(type="text" name="lon" ng-model="location.lon" ng-disabled="!otEditable")
+    input.form-control.lon(type="text" name="lon" ng-model="location.lon" ng-disabled="!otEditable" size="18")
     i(cf-field-alert="{{lonAlert}}" tooltip-placement="left")
-  button.btn.btn--form.btn--secondary.remove-location(type="button" ng-show="location && otEditable" ng-click="removeLocation()") Remove
-
+  button.cfnext-btn-secondary-action.location-fields__remove-button(type="button"
+    ng-show="location && otEditable"
+    ng-click="removeLocation()")
+    | Remove

@@ -5,8 +5,10 @@
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="drag-handle" sketch:type="MSLayerGroup" fill="#000000">
-            <path d="M0.25,3 L2.75,3 L3,3 L3,0 L2.75,0 L0.25,0 L0,0 L0,3 L0.25,3 Z M0.25,8.8 L2.75,8.8 L3,8.8 L3,5.8 L2.75,5.8 L0.25,5.8 L0,5.8 L0,8.8 L0.25,8.8 Z M0.25,14.6 L2.75,14.6 L3,14.6 L3,11.6 L2.75,11.6 L0.25,11.6 L0,11.6 L0,14.6 L0.25,14.6 Z" id="Handle" sketch:type="MSShapeGroup" transform="translate(1.500000, 7.300000) scale(-1, 1) translate(-1.500000, -7.300000) "></path>
+        <g id="contentful_icons" sketch:type="MSArtboardGroup" transform="translate(-151.000000, -401.000000)" fill="#000000">
+            <g id="drag-handle" sketch:type="MSLayerGroup" transform="translate(151.000000, 401.000000)">
+                <path d="M0.25,3 L2.75,3 L3,3 L3,0 L2.75,0 L0.25,0 L0,0 L0,3 L0.25,3 Z M0.25,8.8 L2.75,8.8 L3,8.8 L3,5.8 L2.75,5.8 L0.25,5.8 L0,5.8 L0,8.8 L0.25,8.8 Z M0.25,14.6 L2.75,14.6 L3,14.6 L3,11.6 L2.75,11.6 L0.25,11.6 L0,11.6 L0,14.6 L0.25,14.6 Z" id="Handle" sketch:type="MSShapeGroup" transform="translate(1.500000, 7.300000) scale(-1, 1) translate(-1.500000, -7.300000) "></path>
+            </g>
         </g>
     </g>
 </svg>

@@ -1,12 +1,12 @@
 .modal-background
   .modal-dialog.space-template__dialog(ng-controller="SpaceTemplatesController" cf-center-on=".modal-background")
-    .title {{dialog.title}}
-    .modal-dialog-close-button(ng-show="dialogViewIs('spaceTemplateList') || dialogViewIs('spaceCreation')" ng-click="dialog.cancel()")
-    .dialog-content.space-template__dialog-content
+    header.modal-dialog__header
+      h1 {{dialog.title}}
+      .close-button(ng-show="viewState.is('spaceTemplateList') || viewState.is('spaceCreation')" ng-click="dialog.cancel()")
+    .modal-dialog__content.space-template__dialog-content
+      .loading(ng-show="viewState.is('loading')")
 
-      .loading(ng-show="dialogViewIs('loading')")
-
-      .space-template__list(ng-show="dialogViewIs('spaceTemplateList')")
+      .space-template__list(ng-show="viewState.is('spaceTemplateList')")
         .space-template__item(
             ng-repeat="template in spaceTemplates"
             ng-click="selectTemplate(template)"
@@ -20,7 +20,7 @@
           | Missing a template?
           a(href="mailto:support@contentful.com" target="_blank") Let us know.
 
-      .space-template__detail(ng-show="dialogViewIs('spaceTemplateList')")
+      .space-template__detail(ng-show="viewState.is('spaceTemplateList')")
         .space-template__detail-content(ng-show="!selectedTemplate")
           p Publish content in seconds with predefined templates for common scenarios.
           p Or build your model from scratch by going with a blank template.
@@ -29,9 +29,9 @@
         .space-template__detail-content(ng-show="selectedTemplate")
           h1 {{selectedTemplate.name}}
           div(ng-bind-html="selectedTemplate.description | markdown")
-        button.btn.btn--primary(ng-show="selectedTemplate" ng-click="showSpaceCreation()") Use this template
+        button.cfnext-btn-action(ng-show="selectedTemplate" ng-click="showSpaceCreation()") Use this template
 
-      .space-template__space-creation(ng-show="dialogViewIs('spaceCreation')" ng-controller="CreateSpaceDialogController")
+      .space-template__space-creation(ng-show="viewState.is('spaceCreation')" ng-controller="CreateSpaceDialogController")
         h1
           | Create Space
           a(cf-knowledge-base-icon
@@ -47,11 +47,11 @@
             .l-form-row
               label Organization
               .l-form-controls.space-template__org-selector
-                button.btn.btn--tertiary(cf-dropdown-toggle="spaceTemplates.organization"
+                button.cfnext-btn-secondary-action(cf-dropdown-toggle="spaceTemplates.organization"
                                          ng-disabled="writableOrganizations.length < 2"
                                          type="button")
+                  cf-icon.btn-dropdown-icon(name="dd-arrow-down")
                   | {{selectedOrganization.name}}
-                  i.button-icon-right.fa.fa-caret-down
                 .cfnext-dropdown.space-template__org-dropdown(cf-dropdown-menu="spaceTemplates.organization" cf-dropdown-position="bottomcenter")
                   cf-icon.cfnext-dropdown__arrow(cf-dropdown-arrow name="arrow-up")
                   ul.cfnext-dropdown__list--first
@@ -61,10 +61,10 @@
               .l-form-controls
                 input.form-control(type="text" name="locale" ng-model="newSpaceData.defaultLocale")
           .buttons
-            button.btn.btn--primary.confirm(type="submit" ng-disabled="newSpaceForm.$invalid || lockSubmit")
+            button.cfnext-btn-action(type="submit" ng-disabled="newSpaceForm.$invalid || lockSubmit")
               | Create Space
 
-      .space-template__queue(ng-show="dialogViewIs('spaceTemplateQueue')")
+      .space-template__queue(ng-show="viewState.is('spaceTemplateQueue')")
         h1 Creating template entities
         .space-template__queue-container
           .space-template__queue-item(ng-repeat="(id, item) in completedItems" ng-class="queueItemClass(item.status)" cf-scroll-into-view)
@@ -78,5 +78,5 @@
           p
             | Some items could not be created properly right now, but don't worry, your space will work
             | normally, just with less pre created items, or you might need to publish some manually.
-          button.btn.btn--primary(ng-click="dismissDialog()") Continue
+          button.cfnext-btn-action(ng-click="dismissDialog()") Continue
 

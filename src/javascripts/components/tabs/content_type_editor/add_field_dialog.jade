@@ -1,0 +1,23 @@
+.modal-background
+  form.modal-dialog.add-field-dialog(
+    name="newFieldForm"
+    ng-controller="AddFieldDialogController"
+    cf-validate="field.data")
+
+    div(ng-if="viewState.is('fieldSelection')")
+      header.modal-dialog__header
+        h1 New field
+        .close-button(ng-click="dialog.cancel()")
+
+      .add-field-dialog__selection.modal-dialog__content(role="group" aria-label="Field Types")
+        .add-field-dialog__list(ng-repeat="fieldGroups in fieldGroupRows")
+          .add-field-dialog__list-item(ng-repeat="group in fieldGroups")
+            button.add-field-dialog__icon(
+              aria-label="{{group.label}}"
+              ng-click="selectFieldGroup(group)")
+              cf-icon(name="field-{{group.icon}}")
+            h2 {{group.label}}
+            p.add-field-dialog__description {{group.description}}
+
+    div(ng-if="viewState.is('fieldConfiguration')")
+      include ./add_field_dialog_settings

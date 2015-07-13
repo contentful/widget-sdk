@@ -124,16 +124,16 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
       })
       .catch(function addLinkErrorHandler(errSetLink) {
         notification.error('Error linking Entry');
-        logger.logServerWarn('Error linking Entry', errSetLink);
+        logger.logServerWarn('Error linking Entry', {error: errSetLink});
         return entry.delete();
       })
       .catch(function deleteEntityErrorHandler(errDelete) {
-        logger.logServerWarn('Error deleting Entry again', errDelete);
+        logger.logServerWarn('Error deleting Entry again', {error: errDelete });
         notification.error('Error deleting Entry again');
         return $q.reject(errDelete);
       });
     }, function createEntityErrorHandler(errCreate) {
-      logger.logServerWarn('Error creating Entry', errCreate);
+      logger.logServerWarn('Error creating Entry', {error: errCreate });
       notification.error('Error creating Entry');
       return $q.reject(errCreate);
     });
@@ -149,17 +149,17 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
           $scope.$state.go('spaces.detail.assets.detail', { assetId: asset.getId(), addToContext: true });
       })
       .catch(function addLinkErrorHandler(errSetLink) {
-        logger.logServerWarn('Error linking Asset', errSetLink);
+        logger.logServerWarn('Error linking Asset', {error: errSetLink });
         notification.error('Error linking Asset');
         return asset.delete();
       })
       .catch(function deleteEntityErrorHandler(errDelete) {
-        logger.logServerWarn('Error deleting Asset again', errDelete);
+        logger.logServerWarn('Error deleting Asset again', {error: errDelete });
         notification.error('Error deleting Asset again');
         return $q.reject(errDelete);
       });
     }, function createEntityErrorHandler(errCreate) {
-      logger.logServerWarn('Error creating Asset', errCreate);
+      logger.logServerWarn('Error creating Asset', {error: errCreate });
       notification.error('Error creating Asset');
       return $q.reject(errCreate);
     });
@@ -212,7 +212,7 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
 
   $scope.getSearchContentType = function () {
     if ($scope.entityType === 'Asset')
-     return searchQueryHelper.assetContentType;
+      return searchQueryHelper.assetContentType;
     if (singleContentType($scope.entityContentTypes))
       return singleContentType($scope.entityContentTypes);
   };
@@ -226,6 +226,7 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
     if($scope) {
       return $q.when($scope.$eval($attrs.addEntity, {entity: entity}));
     }
+    return $q.reject();
   }
 
   function buildQuery() {
