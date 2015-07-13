@@ -4,6 +4,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
   var $document   = $injector.get('$document');
   var $timeout    = $injector.get('$timeout');
   var $window     = $injector.get('$window');
+  var $rootScope  = $injector.get('$rootScope');
   var assetUrl    = $injector.get('$filter')('assetUrl');
   var delay       = $injector.get('delay');
   var keycodes    = $injector.get('keycodes');
@@ -60,7 +61,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         if (scope.displayMode === 'preview') {
           var targetText = $(ev.target).text().trim();
           scope.displayMode = 'edit';
-          textarea.trigger('autosize');
+          $rootScope.$broadcast('elastic:adjust');
           delay(function () {
             textarea.trigger('focus');
             var cursorPos = textarea.val().indexOf(targetText);
@@ -285,7 +286,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       }
 
       function triggerUpdateEvents() {
-        textarea.trigger('input').trigger('autosize');
+        $rootScope.$broadcast('elastic:adjust');
         var textareaElem = textarea.get(0);
         /*global Event*/
         // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events
