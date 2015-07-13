@@ -178,31 +178,49 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
   function handlePublishErrors(err) {
     var errorId = dotty.get(err, 'body.sys.id');
     if (errorId === 'ValidationFailed') {
-      $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
-      notification.warn('Error publishing ' + title() + ': Validation failed');
+      setValidationErrors(err);
+      validationWarn('Validation failed');
     } else if (errorId === 'VersionMismatch'){
-      notification.warn('Error publishing ' + title() + ': Can only publish most recent version');
+      validationWarn('Can only publish most recent version');
     } else if (errorId === 'UnresolvedLinks') {
-      $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
-      notification.warn('Error publishing ' + title() + ': Some linked entries are missing.');
+      setValidationErrors(err);
+      validationWarn('Some linked entries are missing.');
     } else if (errorId === 'InvalidEntry') {
-      if (err.body.message === 'Validation error') {
-        $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
-        notification.warn('Error publishing ' + title() + ': Validation failed');
+      if (isLinkValidationError(err)) {
+        validationWarn(getLinkValidationErrorMessage(err));
+        setValidationErrors(err);
+      } else if (err.body.message === 'Validation error') {
+        setValidationErrors(err);
+        validationWarn('Validation failed. Please check the individual fields for errors.');
       } else {
-        var errors = dotty.get(err, 'body.details.errors');
-        var details;
-        if(errors.length > 0 && errors[0].name == 'linkContentType'){
-          details = errors[0].details;
-        } else {
-          details = err.body.message;
-        }
-        notification.warn('Error publishing ' + title() + ':' + details);
+        validationWarn(err.body.message);
       }
     } else {
       logger.logServerWarn('Publishing the entry has failed due to a server issue. We have been notified.', {error: err });
       notification.error('Publishing the entry has failed due to a server issue. We have been notified.');
     }
+  }
+
+  function validationWarn(message) {
+    notification.warn('Error publishing '+ title() +': '+ message);
+  }
+
+  function setValidationErrors(err) {
+    $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
+  }
+
+  function isLinkValidationError(err) {
+      var errors = dotty.get(err, 'body.details.errors');
+      return err.body.message === 'Validation error' &&
+             errors.length > 0 &&
+             errors[0].name == 'linkContentType';
+  }
+
+  function getLinkValidationErrorMessage(err) {
+    var error = _.first(dotty.get(err, 'body.details.errors'));
+    var contentTypeId = _.first(error.contentTypeId);
+    var contentType = _.findWhere($scope.spaceContext.publishedContentTypes, {data: {sys: {id: contentTypeId}}});
+    return error.details.replace(contentTypeId, contentType.data.name);
   }
 
 }]);
