@@ -9,6 +9,8 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   var widgetIdsByContentType = {};
 
   return {
+    // TODO we should rewrite this and get rid of the ID for the interface
+    // as we won't use those anyway
     forContentTypeWithId: function (contentType, interfaceId) {
       return getEditingInterface(contentType, interfaceId)
       .catch(function (err) {
@@ -129,6 +131,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     return { data: data };
   }
 
+  // TODO this is not inline with the field factory
   function defaultWidget(contentType, field) {
     return {
       id: generateId(field.id, contentType.getId()),

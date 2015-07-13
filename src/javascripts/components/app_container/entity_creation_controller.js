@@ -7,9 +7,10 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
   var logger       = $injector.get('logger');
   var enforcements = $injector.get('enforcements');
 
-  this.newEntry = function(contentType, source) {
+  var EVENT_NAME = 'Selected Add-Button in the Frame';
+
+  this.newEntry = function(contentType) {
     var handler = makeEntityResponseHandler({
-      source: source,
       entityType: 'entry',
       entitySubType: contentType.getId(),
       stateName: 'spaces.detail.entries.detail',
@@ -21,9 +22,8 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
     .then(_.partial(handler, null), handler);
   };
 
-  this.newAsset = function(source) {
+  this.newAsset = function() {
     var handler = makeEntityResponseHandler({
-      source: source,
       entityType: 'asset',
       entitySubType: function (entity) {
         return entity && entity.getId();
@@ -38,37 +38,27 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
     .then(_.partial(handler, null), handler);
   };
 
-  this.newContentType = function(source) {
-    var handler = makeEntityResponseHandler({
-      source: source,
-      entityType: 'contentType',
-      stateName: 'spaces.detail.content_types.detail.editor',
-      stateParam: 'contentTypeId',
-      errorMessage: 'Could not create Content Type'
-    });
-    var data = { sys: {}, fields: [], name: '' };
-    $scope.spaceContext.space.createContentType(data)
-    .then(_.partial(handler, null), handler);
+  this.newContentType = function() {
+    $scope.$state.go('spaces.detail.content_types.new');
+    /**
+     * @ngdoc analytics-event
+     * @name Clicked Add Content Type Button
+     */
+    analytics.track('Clicked Add Content Type Button');
   };
 
-  this.newApiKey = function(source) {
+  this.newApiKey = function() {
     var usage = enforcements.computeUsage('apiKey');
     if(usage){
       return notification.error(usage);
     }
-    $scope.$state.go('spaces.detail.api.keys.detail', { apiKeyId: 'new' });
-    analytics.track(getEventSource(source), {
+    $scope.$state.go('spaces.detail.api.keys.new');
+    analytics.track(EVENT_NAME, {
       currentState: $scope.$state.current.name,
       entityType: 'apiKey'
     });
   };
 
-  function getEventSource(source) {
-    return {
-      addDropdown: 'Selected Add-Button',
-      frameButton: 'Selected Add-Button in the Frame'
-    }[source];
-  }
 
   function makeEntityResponseHandler(params) {
     return function entityResponseHandler(err, entity) {
@@ -87,7 +77,7 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
         logger.logServerWarn(params.errorMessage, {error: err });
         notification.error(params.errorMessage);
       }
-      analytics.track(getEventSource(params.source), {
+      analytics.track(EVENT_NAME, {
         currentState: $scope.$state.current.name,
         entityType: params.entityType,
         entitySubType: (typeof params.entitySubType == 'function') ?

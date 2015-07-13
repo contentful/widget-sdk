@@ -1,0 +1,21 @@
+div.ct-editor-json
+
+  div(ng-if="isNew")
+    div.ct-editor-json__note.note-box.note-box--blue
+      p
+        | We will show you a preview once the content type has been saved.
+        button.cfnext-btn-inline(ng-if="actions.canSave()" ng-click="actions.save()")
+          | Save now and get preview
+    code.ct-editor-json__code--unsaved
+      pre {{preview | json}}
+
+  dif(ng-if="!isNew")
+    div.ct-editor-json__loading(ng-show="isLoading")
+    div(ng-show="!isLoading")
+      div.ct-editor-json__note.note-box.note-box--blue(ng-show="contentTypeForm.$dirty")
+        p
+          | You have unsaved changes.
+          button.cfnext-btn-inline(ng-if="actions.canSave()" ng-click="actions.save()")
+            | Save now and get preview
+      code.ct-editor-json__code
+        pre {{preview | json}}

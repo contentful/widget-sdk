@@ -48,27 +48,7 @@ describe('Modal dialog service', function () {
     });
 
     it('sets content', function () {
-      expect(dialog.domElement.find('.dialog-content').html()).toMatch(dialog.params.message);
-    });
-
-    it('sets confirm label', function () {
-      expect(dialog.domElement.find('.confirm').html()).toMatch(dialog.params.confirmLabel);
-    });
-
-    it('sets cancel label', function () {
-      expect(dialog.domElement.find('.cancel').html()).toMatch(dialog.params.cancelLabel);
-    });
-
-    describe('if no cancel is defined', function () {
-      beforeEach(function () {
-        delete dialog.params.cancelLabel;
-        delete dialog.cancelLabel;
-        scope.$digest();
-      });
-
-      it('do not show cancel', function () {
-        expect(dialog.domElement.find('.cancel')).toBeNgHidden();
-      });
+      expect(dialog.domElement.find('.modal-dialog__content').html()).toMatch(dialog.params.message);
     });
 
     describe('closes by clicking on background', function () {

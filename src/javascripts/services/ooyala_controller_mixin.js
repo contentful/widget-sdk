@@ -8,6 +8,7 @@ angular.module('contentful').factory('OoyalaEditorControllerMixin', ['$injector'
     customAttrsForPlayer               : customAttrsForPlayer,
     customAttrsForPlayerInSearchDialog : customAttrsForPlayerInSearchDialog,
     isWidgetReady                      : isWidgetReady,
+    isWidgetStatus                     : isWidgetStatus,
     processLookupInProviderResult      : processLookupInProviderResult,
     loadingFeedbackMessage             : loadingFeedbackMessage,
     lookupVideoInProvider              : lookupVideoInProvider,
@@ -28,6 +29,10 @@ angular.module('contentful').factory('OoyalaEditorControllerMixin', ['$injector'
 
   function isWidgetReady() {
     return true;
+  }
+
+  function isWidgetStatus(value) {
+    return value === 'ready';
   }
 
   function loadingFeedbackMessage(asset) {

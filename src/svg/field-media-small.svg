@@ -5,13 +5,15 @@
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="field-media-small" sketch:type="MSLayerGroup" stroke="#21304A" fill-opacity="0">
-            <rect id="frame" fill="#FFFFFF" sketch:type="MSShapeGroup" x="0" y="0" width="30" height="30" rx="5"></rect>
-            <g id="media" transform="translate(6.000000, 6.000000)" sketch:type="MSShapeGroup">
-                <rect id="Rectangle-3" fill="#FFFFFF" x="0" y="0.250272436" width="19.52125" height="19.0207051" rx="2"></rect>
-                <path d="M0.625,11.965625 L6.875,6.965625 L15,18.215625" id="Line" stroke-linecap="round" stroke-linejoin="round" fill="#D8D8D8"></path>
-                <path d="M11.875,12.590625 L14.375,10.090625 L18.75,13.996875" id="Line-13" stroke-linecap="round" stroke-linejoin="round" fill="#D8D8D8"></path>
-                <circle id="Oval-2" fill="#D8D8D8" cx="12.8125" cy="5.403125" r="1.5625"></circle>
+        <g id="contentful_icons" sketch:type="MSArtboardGroup" transform="translate(-51.000000, -301.000000)" stroke="#21304A" fill-opacity="0">
+            <g id="field-media-small" sketch:type="MSLayerGroup" transform="translate(51.000000, 301.000000)">
+                <rect id="frame" fill="#FFFFFF" sketch:type="MSShapeGroup" x="0" y="0" width="30" height="30" rx="5"></rect>
+                <g id="media" transform="translate(5.000000, 5.000000)" sketch:type="MSShapeGroup">
+                    <rect id="Rectangle-3" fill="#FFFFFF" x="0" y="0.262786058" width="20.4973125" height="19.9717404" rx="2"></rect>
+                    <path d="M0.65625,12.5639062 L7.21875,7.31390625 L15.75,19.1264062" id="Line" stroke-linecap="round" stroke-linejoin="round" fill="#D8D8D8"></path>
+                    <path d="M12.46875,13.2201562 L15.09375,10.5951562 L19.6875,14.6967187" id="Line-13" stroke-linecap="round" stroke-linejoin="round" fill="#D8D8D8"></path>
+                    <circle id="Oval-2" fill="#D8D8D8" cx="13.453125" cy="5.67328125" r="1.640625"></circle>
+                </g>
             </g>
         </g>
     </g>

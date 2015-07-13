@@ -74,15 +74,13 @@ cf-google-maps
     margin-bottom: 10px
   .sub-fields
     position: relative
-    $display-flexbox()
+    display: flex
     flex-wrap: wrap
     align-items: flex-end
     width: $form-controlwidth-inner
     margin-top: 5px
     .search
       width: 100%
-    .btn--form
-      margin-left: auto
 
 .widget-location-editor
   position: relative
@@ -93,23 +91,24 @@ cf-google-maps
 
 .location-fields
   position: relative
-  $display-flexbox()
-  flex-wrap: wrap
+  display: flex
   align-items: flex-end
-  width: $form-controlwidth-inner
-  .search
-    width: 100%
-  .btn--form
-    margin-left: auto
+
+  &__remove-button
+    flex-shrink: 0
+    padding-top: 0.5rem
+    padding-bottom: 0.5rem
+
 
 .widget-location-editor__location-picker
   display: block
-  width: 37% !important
-  padding-bottom: 0 !important
-  margin-right: 5%
-  > input,
-  > input[type="text"]
-    width: 100%
+  flex-grow: 1
+  margin-right: 1.5rem
+  flex-grow: 0
+  // TODO cascading sucks !important
+  width: auto !important
+  padding: 0 !important
+  > input
     margin-top: 5px
 
 

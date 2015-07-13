@@ -1,6 +1,6 @@
 .tab-header
   $stretch(0, 0, false, 0)
-  $display-flexbox()
+  display: flex
   height: $tab-header-height
   border-radius: 3px 3px 0 0
   border-bottom: 1px solid $gray-light
@@ -10,11 +10,16 @@
     padding-left: 10px
     font-size: $tab-header-font-size
 
+
 .tab-header__title
   align-self: center
   min-width: $left-nav-width
   padding-left: 25px
   padding-right: 15px
+  display: flex
+  align-items: center
+  > cf-icon
+    margin-right: 1em
   > h1
     margin: 0;
     font-size: $tab-header-font-size
@@ -28,7 +33,7 @@
   padding-right: 20px
 
 .tab-header__actions
-  $display-flexbox()
+  display: flex
   justify-content: flex-end
   align-items: center
   margin-left: auto

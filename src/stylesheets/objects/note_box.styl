@@ -1,17 +1,112 @@
-.note-box
+/*
+Note box
+
+Show highlighted notes
+
+Markup:
+.note-box.note-box--gold
+  h2 Important note
+  p This note will show you important and useful information!
+  .note-box-dismissal close
+.note-box.note-box--blue
+  h2 Important note
+  p This note will show you important and useful information!
+  .note-box-dismissal close
+.note-box.note-box--gold.note-box--centered
+  h2 Important note
+  p This note will show you important and useful information!
+  .note-box-dismissal close
+
+Styleguide 21.0
+*/
+
+/*
+Large note box
+
+Markup:
+.note-box-large.note-box--gold
+  h2 Important note
+  p This note will show you important and useful information!
+  .note-box-dismissal close
+.note-box-large.note-box--blue
+  h2 Important note
+  p This note will show you important and useful information!
+  .note-box-dismissal close
+.note-box-large.note-box--gold.note-box--centered
+  h2 Important note
+  p This note will show you important and useful information!
+  .note-box-dismissal close
+
+Styleguide 21.1
+*/
+
+/*
+Small note box
+
+Markup:
+.note-box-small.note-box--gold
+  h2 Important note
+  p This note will show you important and useful information!
+  .note-box-dismissal close
+.note-box-small.note-box--blue
+  h2 Important note
+  p This note will show you important and useful information!
+  .note-box-dismissal close
+.note-box-small.note-box--gold.note-box--centered
+  h2 Important note
+  p This note will show you important and useful information!
+  .note-box-dismissal close
+
+Styleguide 21.2
+*/
+
+$note-box()
   clear: both
   overflow: hidden
-  margin: 3rem 5%
-  padding: 2rem
-  padding-bottom: 1rem
-  border-radius: 4px
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1)
-  background-color: lighten($gold, 70%)
+  position: relative
+  margin: $rhythm(1)
+  padding: $rhythm(1)
+  > *:first-child
+    padding-top: 0
+    margin-top: 0
+  > p:last-of-type
+    margin-bottom: 0
+    padding-bottom: 0
   h2
     text-transform: none
-    margin-bottom: 1.4rem
+    margin-bottom: $rhythm(0.4)
   .note-box-dismissal
-    float: right
-    margin-top: 0.5rem
+    position: absolute
+    top: 10px
+    right: 15px
 
+.note-box
+  $note-box()
 
+.note-box-large
+  $note-box()
+  margin: $rhythm(2)
+  padding: $rhythm(2)
+
+.note-box-small
+  $note-box()
+  margin: $rhythm(1) $rhythm(0)
+  padding: $rhythm(0.66) 2ex
+
+$note-box--gold()
+  border-radius: 4px
+  background-color: lighten($gold, 70%)
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1)
+
+$note-box--blue()
+  background-color: $cfnext-lightest-blue
+  border: 1px solid $cfnext-light-blue
+
+.note-box--gold
+  $note-box--gold()
+
+.note-box--blue
+  $note-box--blue()
+
+.note-box--centered
+  text-align: center

@@ -1,12 +1,13 @@
 .tab-header
   .tab-header__title
+    cf-icon(name="page-entries")
     h1
       | Entries
       a(cf-knowledge-base-icon
         analytics-event="entries"
         href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
 
-  .tab-header__search.search-area--with-filter
+  .tab-header__search.search-area--with-filter(ng-show="entries.length > 0 || hasQuery()")
     .btn.btn--tertiary.select-box
       .select-box__wrapper
         select.u-truncate(ng-model="context.view.contentTypeId"
@@ -25,29 +26,29 @@
     .search-results-position(cf-search-results-position paginator="paginator" ng-hide="!paginator.numEntries")
 
   .tab-header__actions.add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0 || entries.length == 0")
-    button.btn.btn--primary.u-truncate(
+    button.cfnext-btn-action(
             ng-hide="!singleContentType || permissionController.get('createEntry', 'shouldHide')"
             ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
             cf-when-disabled="permissionController.entityActions.createEntry"
-            ng-click="entityCreationController.newEntry(singleContentType, 'frameButton')")
-      i.fa.fa-plus.button-icon
+            ng-click="entityCreationController.newEntry(singleContentType)")
+      cf-icon.btn-icon.inverted(name="plus")
       | Add New {{singleContentType.getName()}}
     .dropdown-btn(ng-hide="singleContentType")
-      button.btn.btn--primary.u-truncate(cf-dropdown-toggle="entryList.add"
+      button.cfnext-btn-action.u-truncate(cf-dropdown-toggle="entryList.add"
           ng-hide="permissionController.get('createEntry', 'shouldHide')"
           ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
           cf-when-disabled="permissionController.entityActions.createEntry")
-        i.fa.fa-plus.button-icon
+        cf-icon.btn-icon.inverted(name="plus")
+        cf-icon.btn-dropdown-icon(name="dd-arrow-down")
         | Add New Entry
       .dropdown-menu(cf-dropdown-menu="entryList.add" cf-dropdown-position="bottomcenter")
         ul.add-entity__list
           li.dropdown-menu-item.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
-                   ng-click="entityCreationController.newEntry(contentType, 'frameButton')"
+                   ng-click="entityCreationController.newEntry(contentType)"
                    cf-dropdown-close)
-            i.fa.fa-plus
             | {{contentType.getName()}}
 
-.tab-main
+.tab-main(ng-show="entries.length > 0 || hasQuery()")
   .left-nav
     div.menu-with-buttons(cf-view-menu="uiConfig.entryListViews" current-view="context.view" ng-show="uiConfig")
   .with-left-nav
@@ -89,50 +90,53 @@
       .advice__frame(ng-show="hasQuery()")
         i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
         header.advice__title There are no matches to your search
-      .advice__frame(ng-show="!hasQuery()")
-        i.fa.fa-file.advice__giant-icon
-        header.advice__title You have no Entries yet.
-        p.advice__description(ng-show="spaceContext.publishedContentTypes.length == 0")
-          | Entries are your content itself. These depend on the field types you created in the Content Type editor.
-        button.btn.btn--primary(type="button" ng-click="entityCreationController.newContentType('frameButton')"
-            ng-hide="spaceContext.publishedContentTypes.length > 0 || permissionController.get('createContentType', 'shouldHide')"
-            ng-disabled="permissionController.get('createContentType', 'shouldDisable')"
-            cf-when-disabled="permissionController.entityActions.createContentType")
-          | Create a Content Type
-        p(ng-hide="spaceContext.publishedContentTypes.length == 0")
-          button.btn.btn--primary(
-                  ng-hide="!singleContentType || permissionController.get('createEntry', 'shouldHide')"
-                  ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
-                  cf-when-disabled="permissionController.entityActions.createEntry"
-                  ng-click="entityCreationController.newEntry(singleContentType, 'frameButton')")
-            i.fa.fa-plus.button-icon
-            | Add New {{singleContentType.getName()}}
-          button.btn.btn--primary(
-              ng-hide="singleContentType || permissionController.get('createEntry', 'shouldHide')"
+
+.advice(ng-show="entries.length === 0 && !hasQuery()")
+  .advice__frame
+    i.fa.fa-file.advice__giant-icon
+    header.advice__title You have no Entries yet.
+    p.advice__description(ng-show="spaceContext.publishedContentTypes.length == 0")
+      | Entries are your content itself. These depend on the field types you created in the Content Type editor.
+    button.advice__action(type="button" ng-click="entityCreationController.newContentType()"
+        ng-hide="spaceContext.publishedContentTypes.length > 0 || permissionController.get('createContentType', 'shouldHide')"
+        ng-disabled="permissionController.get('createContentType', 'shouldDisable')"
+        cf-when-disabled="permissionController.entityActions.createContentType")
+      | Create a Content Type
+    p(ng-hide="spaceContext.publishedContentTypes.length == 0")
+      button.advice__action(
+              ng-hide="!singleContentType || permissionController.get('createEntry', 'shouldHide')"
               ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
               cf-when-disabled="permissionController.entityActions.createEntry"
-              ng-click="showNewContentTypeDialog()")
-            i.fa.fa-plus.button-icon
-            | Add New Entry
-        a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
-          | Visit the Knowledge Base Pages
-          i.fa.fa-question-circle
+              ng-click="entityCreationController.newEntry(singleContentType)")
+        cf-icon.inverted(name="plus")
+        | Add New {{singleContentType.getName()}}
+      button.advice__action(
+          ng-hide="singleContentType || permissionController.get('createEntry', 'shouldHide')"
+          ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
+          cf-when-disabled="permissionController.entityActions.createEntry"
+          ng-click="showNewContentTypeDialog()")
+        cf-icon.inverted(name="plus")
+        | Add New Entry
+    a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
+      | Visit the Knowledge Base Pages
+      i.fa.fa-question-circle
+
 
 .tab-actions
   .label {{selection.size()}} Entries selected
   .button-set(ng-controller="EntryListActionsController" ng-hide="selection.isEmpty()")
-    button.btn.btn--secondary.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
+    button.cfnext-btn-secondary-action.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
     | 
-    button.btn.btn--secondary.delete(type="button" ng-show="showDelete()" cf-dropdown-toggle="entryList.delete") Delete
+    button.cfnext-btn-secondary-action.delete(type="button" ng-show="showDelete()" cf-dropdown-toggle="entryList.delete") Delete
     .delete-confirm(cf-dropdown-menu="entryList.delete" cf-dropdown-position="topcenter")
       p You are about to delete {{selection.size()}} Entries
-      button.btn.btn--danger(type="button" ng-click="deleteSelected()" cf-dropdown-close) Delete 
-      button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete 
+      button.cfnext-btn-caution(type="button" ng-click="deleteSelected()" cf-dropdown-close) Delete 
+      button.cfnext-btn-secondary-action(type="button" cf-dropdown-close) Don't Delete 
     | 
-    button.btn.btn--secondary.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
+    button.cfnext-btn-secondary-action.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
     | 
-    button.btn.btn--secondary.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
+    button.cfnext-btn-secondary-action.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
     | 
-    button.btn.btn--secondary.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
+    button.cfnext-btn-secondary-action.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
     | 
-    button.btn.btn--primary.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}
+    button.cfnext-btn-primary-action.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}

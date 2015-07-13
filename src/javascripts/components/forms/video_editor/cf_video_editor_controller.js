@@ -24,6 +24,7 @@ angular.module('contentful').controller('cfVideoEditorController', ['$scope', '$
   this.addAsset                        = addAsset;
   this.customAttrsForPlayer            = customAttrsForPlayer;
   this.isVideoWidgetReady              = isVideoWidgetReady;
+  this.isWidgetStatus                  = isWidgetStatus;
   this.loadingPlayerFeedbackMessage    = loadingPlayerFeedbackMessage;
   this.lookupAsset                     = lookupAsset;
   this.persistInput                    = persistInput;
@@ -48,6 +49,10 @@ angular.module('contentful').controller('cfVideoEditorController', ['$scope', '$
 
   function isVideoWidgetReady() {
     return providerVideoEditorController.isWidgetReady();
+  }
+
+  function isWidgetStatus(value) {
+    return providerVideoEditorController.isWidgetStatus(value);
   }
 
   function loadingPlayerFeedbackMessage() {

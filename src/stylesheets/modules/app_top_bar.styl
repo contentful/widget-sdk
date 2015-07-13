@@ -6,11 +6,11 @@ $app-top-bar__action-color()
     transition: color $app-top-bar-transition-time
 
 .app-top-bar
-  $display-flexbox()
+  display: flex
   background-color: $cfnext-dark-blue
 
   &__logo
-    $display-flexbox()
+    display: flex
     justify-content: center
     align-items: center
     padding: 0 10px
@@ -32,7 +32,7 @@ $app-top-bar__action-color()
     padding-left: 15px
     padding-right: 15px
     height: 100%
-    $display-flexbox()
+    display: flex
     align-items: center;
     justify-content: space-between
     cursor: pointer;
@@ -44,7 +44,7 @@ $app-top-bar__action-color()
 
   &__action,
   &__child-action
-    $display-flexbox()
+    display: flex
     flex-direction: column
     justify-content: center
     padding: 0 15px

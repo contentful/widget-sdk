@@ -5,10 +5,12 @@
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="plus" sketch:type="MSLayerGroup">
-            <circle id="Oval-20" fill="#21304A" sketch:type="MSShapeGroup" cx="9" cy="9" r="9"></circle>
-            <path d="M4,9 L14,9" id="Path" stroke="#FFFFFF" stroke-width="2" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
-            <path d="M9,4 L9,14" id="Path" stroke="#FFFFFF" stroke-width="2" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
+        <g id="contentful_icons" sketch:type="MSArtboardGroup" transform="translate(-100.000000, -350.000000)">
+            <g id="plus" sketch:type="MSLayerGroup" transform="translate(100.000000, 350.000000)">
+                <circle id="Oval-20" fill="#21304A" sketch:type="MSShapeGroup" cx="9" cy="9" r="9"></circle>
+                <path d="M4,9 L14,9" id="Path" stroke="#FFFFFF" stroke-width="2" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
+                <path d="M9,4 L9,14" id="Path" stroke="#FFFFFF" stroke-width="2" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
+            </g>
         </g>
     </g>
 </svg>

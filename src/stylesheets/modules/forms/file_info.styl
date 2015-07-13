@@ -71,22 +71,9 @@
     $stretch(false, 10px, 10px, 10px)
     opacity: 0
     transition: opacity 0.1s ease-in-out
-    &.center
-      text-align: center
-      opacity: 1
-    .btn--secondary
-      text-align: center
-      width: 40px
-      margin: 0
-      outline: none
-    .upload-button
-      width: auto
-    i.fa-close
-      float: none
-      margin: 0
-      font-size: $base-font-size
-      color: $gray-medium
-      text-shadow: 0 1px 0 rgba(255,255,255,0.6)
+    display: flex
+    > *
+      margin-right: 0.5rem
 
 
 .file-info:hover

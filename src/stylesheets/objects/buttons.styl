@@ -9,332 +9,81 @@ Styleguide 4.0
   $layer('buttonOverlay')
   margin: 0 !important
 
-/*
-Old Buttons
+@import './buttons-deprecated.styl'
 
-Styleguide 4.1
-*/
 
-/*
-A button base class
-
-Markup:
-p
-  button(class="btn") button
-p
-  button(class="btn" disabled) button
-
-:disabled - Disabled state
-
-Styleguide 4.1.1
-*/
-.btn
-  display: inline-block
-  position: relative
-  overflow: hidden
-  padding: 7px 10px
-  font-size: 1em
-  text-decoration: none
-  vertical-align: middle
-  cursor: pointer
-  -webkit-appearance: none
-  border-radius: 3px
-  border-width: 1px
-  border-style: solid
-  -webkit-transform: translate3d(0px, 0px, 0px)
-  &:link
-    color: $gray-medium
-  &:disabled,
-  &[disabled]
-    opacity: 0.5
-    cursor: default
-    &:active
-      top: 0px
-
-/*
-the webkit-transform fixes a glitch caused by google maps
-usage of the same property in their iframe container
-*/
-.btn--form
-  padding-top: 6px
-  padding-bottom: 5px
-  -webkit-transform: translate3d(-1px, 1px, 0px)
-
-.btn--field-settings
-  padding-top: 2px
-  padding-bottom: 2px
+$button-reset()
   font-size: inherit
-
-
-// Temporary override for gatekeeper usage
-input.btn--input
-  padding: 0.6em 1em
-
-/*
-Secondary button
-
-Secondary button theme, with hover, active and disabled states
-
-Markup:
-p
-  button(class="btn btn--secondary {{modifier_class}}") secondary
-p
-  button(class="btn btn--secondary {{modifier_class}}" disabled) secondary
-
-Styleguide 4.1.2
-*/
-.btn--secondary
-  $colored-button(
-    $metallic-gray-dark,
-    $secondary-bg,
-    $secondary-gradient-from,
-    $secondary-gradient-to,
-    $metallic-gray,
-    $secondary-shadow,
-    $gray,
-    $gray-medium-light
-  )
-
-/*
-Tertiary button
-
-Tertiary button theme, with hover, active and disabled states
-
-Markup:
-p
-  button(class="btn btn--tertiary {{modifier_class}}") Tertiary
-p
-  button(class="btn btn--tertiary {{modifier_class}}" disabled) Tertiary
-
-.active - active state
-
-Styleguide 4.1.3
-*/
-.btn--tertiary
-  $colored-button(
-    $metallic-gray-dark,
-    $gray-lightest,
-    $gray-gradient-from,
-    $gray-gradient-to,
-    $metallic-gray,
-    white,
-    $gray,
-    $gray-medium-light
-  )
-
-
-/*
-Primary button
-
-Button for primary actions, with hover and active states
-
-Markup:
-p
-  button(class="btn btn--primary {{modifier_class}}") Primary
-
-Styleguide 4.1.4
-*/
-$btn--primary()
-  font-weight: bold
-  $colored-button(
-    white,
-    $blue-light,
-    $blue-gradient-from,
-    $blue-gradient-to,
-    $blue-dark-link,
-    $blue-lightest,
-    $gray,
-    $blue-dark
-  )
-
-.btn--primary
-  $btn--primary()
-
-/*
-Danger button
-
-A button for dangerous situations
-
-Markup:
-p
-  button(class="btn btn--danger {{modifier_class}}") Danger
-
-Styleguide 4.1.5
-*/
-.btn--danger,
-li.btn--danger
-  font-weight: bold
-  $colored-button(
-    white,
-    $red,
-    $red-gradient-from,
-    $red-gradient-to,
-    $red-dark,
-    $red-light,
-    $gray,
-    $red-mexican
-  )
-
-/*
-Confirm button
-
-A button for confirming actions
-
-Markup:
-p
-  button(class="btn btn--confirm {{modifier_class}}") Confirm
-
-Styleguide 4.1.6
-*/
-.btn--confirm
-  font-weight: bold
-  $colored-button(
-    white,
-    $green,
-    lighten($green, 10%),
-    darken($green, 20%),
-    darken($green, 60%),
-    lighten($green, 80%),
-    $gray,
-    darken($green, 50%)
-  )
-
-.transparent-button
+  vertical-align: baseline
+  padding: 0
+  margin: 0
+  border: 0
   background: none
-  border: none
   cursor: pointer
-  padding: 0
-  margin: 0
-.transparent-button[disabled]
-  cursor: auto
 
-.toggle-collapse
-  display: inline-block
-  color: inherit
+$cfnext-button($color, $shade, $border = false)
+  $cfnext-button-layout()
+  $cfnext-button-colors($color, $shade, $border)
+
+$cfnext-button-layout()
+  padding: 0.6rem 1.5rem
   cursor: pointer
-  transition: transform 0.1s ease-in-out
-  &.on-right
-    transform: rotate(180deg)
-  &.open
-    transform: rotate(90deg)
-  &:hover
-    color: inherit
-
-.copy-paste-button
-  position: absolute
-  display: block
-  right: 0px
-  top: 0px
-  bottom: 0px
-  width: 33px
-  line-height: 30px
-  padding: 0
-  padding-left: 4px
   text-align: center
-  vertical-align: middle
-  box-shadow: none
-  .fa-copy
-    font-size: 15px
-
-.toggle-button-set
-  $display-flex
-
-.toggle-button
-  flex-grow: 1
-  border-radius: 0
-  &:first-child
-    border-radius: 3px 0 0 3px
-  &:last-child
-    border-radius: 0 3px 3px 0
-  cursor: pointer
-  margin: 0
-  &:active,
-  &.active
-    top: 0
-    box-shadow: 0 2px 2px darken($gray-lightest, 10%) inset
-    cursor: default
-  &:focus
-    outline: none !important
-
-// An Icon inside a button
-$button-icon()
-  position: relative
-  right: 2px
-
-.button-icon
-  $button-icon()
-  &.fa-caret-down
-    font-size: 13px
-  &.fa-plus
-    font-size: 0.9em
-  &.fa-angle-right
-    font-size: 0.9em
-
-.button-icon-right
-  $button-icon()
-  float: right
-  top: 2px
-  right: 0
-  left: 3px
-
-// Tweaks for specific icons
-.button-icon-right
-  &.fa-caret-down
-    top: 3px
-
-/*
-New Buttons
-
-Styleguide 4.2
-*/
-$cfnext-button($color = false, $border-color = false)
   font-size: 0.9rem
   font-weight: bold
-  color: white
-  padding: 0.6rem 2rem
-  background-color: $color
+  white-space: nowrap
+  border: none
   border-radius: 2px
-  if $border-color
-    border-color: $border-color
-    border-width: 1px
-    border-style: solid
-  else
-    border: none
-  &:disabled,
-  &[disabled]
+
+$cfnext-button-colors($color, $shade)
+  color: white
+  background: $color
+
+  &, &:hover, &:active
+    outline: 0
+
+  &:hover, &:active, &.active
+    background: linear-gradient(to bottom, $color, $shade)
+
+  &:hover
+    box-shadow: 0 0 2px hsla(0, 0%, 0%, 0.1)
+  &:active, &.active
+    box-shadow: inset 0 1px 2px 1px hsla(0, 0%, 0%, 0.18)
+
+  &:disabled, &[aria-disabled=true]
     opacity: 0.4
-  &:active
-    padding-top: 0.7rem
-    padding-bottom: 0.5rem
+    background: $color
+    box-shadow: none
 
 $cfnext-button-large()
   font-size: 1.15rem
   padding: 1rem 2.5rem
-  &:active
-    padding-top: 1.1rem
-    padding-bottom: 0.95rem
 
 /*
-Action Button
+Action/Secondary Button
 
 This button should be used for actions which are important, but not necessarily
 the most important action in the current view
 
 Markup:
-p
-  button(class="cfnext-btn-action{{modifier_class}}") Action
-p
-  button(class="cfnext-btn-action{{modifier_class}}" disabled) Action
+button.cfnext-btn-action{{modifier_class}} Action
+button.cfnext-btn-action{{modifier_class}}.pseudo-class-hover Action
+button.cfnext-btn-action{{modifier_class}}.active Action
+button.cfnext-btn-action{{modifier_class}}(disabled) Action
 
 --large - Large variation
 
-Styleguide 4.2.1
+Styleguide 4.1
 */
-.cfnext-btn-action
-  $cfnext-button($cfnext-blue)
+
+$btn-action()
+  $cfnext-button($cfnext-blue, hsl(200, 76%, 46%))
+
+.cfnext-btn-action,
+.cfnext-btn-action--large
+  $btn-action()
 
 .cfnext-btn-action--large
-  $cfnext-button($cfnext-blue)
   $cfnext-button-large()
 
 /*
@@ -343,20 +92,20 @@ Primary Action Button
 Used for the most important action in a given context
 
 Markup:
-p
-  button(class="cfnext-btn-primary-action{{modifier_class}}") Action
-p
-  button(class="cfnext-btn-primary-action{{modifier_class}}" disabled) Action
+button.cfnext-btn-primary-action{{modifier_class}} Action
+button.cfnext-btn-primary-action{{modifier_class}}.pseudo-class-hover Action
+button.cfnext-btn-primary-action{{modifier_class}}.active Action
+button.cfnext-btn-primary-action{{modifier_class}}(disabled) Action
 
 --large - Large variation
 
-Styleguide 4.2.2
+Styleguide 4.2
 */
-.cfnext-btn-primary-action
-  $cfnext-button($cfnext-green)
+.cfnext-btn-primary-action,
+.cfnext-btn-primary-action--large
+  $cfnext-button($cfnext-green, hsl(160, 86%, 38%))
 
 .cfnext-btn-primary-action--large
-  $cfnext-button($cfnext-green)
   $cfnext-button-large()
 
 /*
@@ -366,21 +115,164 @@ Used for actions that should complement primary actions or visually less
 important actions
 
 Markup:
-p
-  button(class="cfnext-btn-secondary-action{{modifier_class}}") Action
-p
-  button(class="cfnext-btn-secondary-action{{modifier_class}}" disabled) Action
+button.cfnext-btn-secondary-action{{modifier_class}} Action
+button.cfnext-btn-secondary-action{{modifier_class}}.pseudo-class-hover Action
+button.cfnext-btn-secondary-action{{modifier_class}}.active Action
+button.cfnext-btn-secondary-action{{modifier_class}}(disabled) Action
 
 --large - Large variation
 
-Styleguide 4.2.3
+Styleguide 4.3
 */
-.cfnext-btn-secondary-action
-  $cfnext-button(white, $border-color: $cfnext-blue)
+.cfnext-btn-secondary-action,
+.cfnext-btn-secondary-action--large
+  $cfnext-button(white, hsla(0, 0%, 94%, 1))
   color: $cfnext-blue
+
+  a&:hover, a&:link, a&:visited
+    color: $cfnext-blue
+
+  &, &:hover, &:active
+    border: 1px solid $cfnext-blue
 
 .cfnext-btn-secondary-action--large
-  $cfnext-button(white, $border-color: $cfnext-blue)
   $cfnext-button-large()
+
+/**
+Caution button
+
+Markup:
+button.cfnext-btn-caution Be Careful!
+button.cfnext-btn-caution.pseudo-class-hover Be Careful!
+button.cfnext-btn-caution.active Be Careful!
+button.cfnext-btn-caution(disabled) Be Careful!
+
+Styleguide 4.4
+*/
+.cfnext-btn-caution
+  $cfnext-button($cfnext-red, hsl(353, 61%, 45%))
+
+
+/**
+Plain Action Button
+
+Markup:
+button.cfnext-btn-primary-action
+  | One
+button.cfnext-btn-plain
+  | Two
+button.cfnext-btn-action
+  | Three
+
+Styleguide 4.5
+*/
+.cfnext-btn-plain
+  background: none
+  $cfnext-button-layout()
+  color: $cfnext-blue;
+  outline: 0
+
+/**
+Inline button
+
+Markup:
+p
+  | Click here
+  button.cfnext-btn-inline Action Button
+  | More text
+
+Styleguide 4.6
+*/
+$cfnext-btn-inline()
+  font-size: inherit
+  display: inline-block;
+  vertical-align: baseline
+  padding: 0.1em 0.3em
+  margin: 0
+  border: 0
+  background: none
+  cursor: pointer
   color: $cfnext-blue
 
+.cfnext-btn-inline
+  $cfnext-btn-inline()
+
+/*
+Buttons with icons
+
+Markup:
+p
+  button.cfnext-btn-primary-action
+    cf-icon.btn-icon
+      img(src="/app/svg/plus.svg")
+    | Action
+  button.cfnext-btn-action
+    cf-icon.btn-icon
+      img(src="/app/svg/plus.svg")
+    | Action
+p
+  button.cfnext-btn-action--large-popout-icon
+    cf-icon
+      img(src="/app/svg/new-ct.svg")
+    | Action
+
+Styleguide 4.7
+*/
+
+$btn-icon()
+  display: block
+  height: 2px
+  float: left
+  margin-right: 0.5em
+  margin-top: -1px
+  margin-left: -0.6em
+
+.btn-icon
+  $btn-icon()
+
+
+$cfnext-button--large-popout-icon()
+  $cfnext-button-large()
+  padding-left: 5.0rem
+  cf-icon
+    position: absolute
+    left: 1.0rem
+    top: -0.5rem
+
+.cfnext-btn-action--large-popout-icon
+  position: relative
+  $btn-action()
+  $cfnext-button--large-popout-icon()
+
+/*
+Buttons with dropdowns
+
+This is does not use inline SVGs yet so the color of the icons is off.
+
+Markup:
+button.cfnext-btn-secondary-action.cfnext-btn--dropdown
+  cf-icon.btn-dropdown-icon
+    img(src="/app/svg/dd-arrow-down.svg")
+  | More
+button.cfnext-btn-action.cfnext-btn--dropdown
+  cf-icon.btn-dropdown-icon
+    img(src="/app/svg/dd-arrow-down.svg")
+  | More
+button.cfnext-btn-primary-action.cfnext-btn--dropdown
+  cf-icon.btn-dropdown-icon--up
+    img(src="/app/svg/dd-arrow-down.svg")
+  | More
+
+Styleguide 4.8
+*/
+.btn-dropdown-icon,
+.btn-dropdown-icon--up
+  float: right
+  margin-left: 0.9em
+  margin-right: -0.6em
+
+.btn-dropdown-icon--up
+  transform: rotate(180deg)
+
+.cfnext-btn-secondary-action cf-icon path
+  fill: $cfnext-blue

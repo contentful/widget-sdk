@@ -1,31 +1,26 @@
-{% include "lib/macros.html" -%}
-
+{% if doc.members %}
 <h2>API</h2>
-{% if doc.methods %}
 <ul class="api-members">
-  {%- for method in doc.methods %}
-  <li id="{$ method.name $}">
-    <h3><code>{$ method | memberSyntax | escape $}</code></h3>
-    <div>{$ method.description | marked $}</div>
-    {% if method.params %}
-      <ul>
+  {%- for member in doc.members %}
+  <li class="api-member">
+    <h3>{$ member | memberSyntax | code $}</h3>
+    <div>{$ member.description | marked $}</div>
+    {% if member.params %}
+      <ul class="api-member__params">
         {%- for param in method.params %}
-        <li>{$ param.name $}</li>
+        <li>{$ param | paramSyntax | code $}</li>
         {% endfor %}
       </ul>
+    {% endif %}
+    {% if member.source %}
+      <div ng-scope style="display: none">
+        <button ng-click="showSource = !showSource">Show Source</button>
+        <div class="api-member__source" ng-show="showSource">
+          {$ member.source | codeBlock("javascript") $}
+        <div class="api-member__source">
+      </div>
     {% endif %}
   </li>
   {% endfor -%}
 </ul>
-{% endif %}
-
-{% if doc.properties %}
-<ul class="api-members">
-  {%- for property in doc.properties %}
-  <li id="{$ property.name $}">
-    <h3><code>{$ property | memberSyntax $}</code></h3>
-    <div>{$ property.description | marked $}</div>
-  </li>
-  {% endfor -%}
-  </ul>
 {% endif %}

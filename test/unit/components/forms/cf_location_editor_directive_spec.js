@@ -174,7 +174,7 @@ describe('cfLocationEditor Directive', function () {
     });
 
     it('remove button is not shown', function () {
-      expect(this.element.find('.remove-location')).toBeNgHidden();
+      expect(this.element.find('button:contains("Remove")')).toBeNgHidden();
     });
   });
 

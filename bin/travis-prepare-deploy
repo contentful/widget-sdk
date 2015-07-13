@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# Build a debian package from the `build` directory
+#
+
+set -ev
+
+gem install fpm
+
+./Packagefile.local
+
+PKG=$(ls cf-user-interface*.deb | head -n1)
+POOL="archive/user_interface/pool"
+GIT_SHA_DIR="archive/user_interface/git"
+
+
+mkdir -p "$GIT_SHA_DIR" "$POOL"
+echo "$POOL/$PKG" > "$GIT_SHA_DIR/$TRAVIS_COMMIT"
+
+mv "$PKG" "$POOL"
+
+UPLOAD_DIR="upload/archive/$TRAVIS_COMMIT"
+mkdir -p "$UPLOAD_DIR"
+cp -R build/app upload
+cp build/*.json build/index.html "$UPLOAD_DIR"

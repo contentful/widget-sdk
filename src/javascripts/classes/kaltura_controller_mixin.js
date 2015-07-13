@@ -1,23 +1,27 @@
 'use strict';
 
 angular.module('contentful').factory('KalturaEditorControllerMixin', ['$injector', function($injector){
-  var isReady = false, kalturaClientWrapper, KalturaSearch;
+  var kalturaClientWrapper;
+  var KalturaSearch;
+  var status = 'loading';
 
   $injector.get('kalturaLoader').load().then(function(){
     kalturaClientWrapper = $injector.get('kalturaClientWrapper');
     KalturaSearch        = $injector.get('KalturaSearch');
 
     kalturaClientWrapper.init()
-    .then(function () {
-      isReady = true;
-    });
-  });
+      .then(setStatus('ready'), setStatus('failed'));
 
+    function setStatus(val) {
+      return function() { status = val; };
+    }
+  });
 
   var mixin = {
     customAttrsForPlayer               : customAttrsForPlayer,
     customAttrsForPlayerInSearchDialog : customAttrsForPlayerInSearchDialog,
     isWidgetReady                      : isWidgetReady,
+    isWidgetStatus                     : isWidgetStatus,
     loadingFeedbackMessage             : loadingFeedbackMessage,
     lookupVideoInProvider              : lookupVideoInProvider,
     processLookupInProviderResult      : processLookupInProviderResult,
@@ -32,13 +36,16 @@ angular.module('contentful').factory('KalturaEditorControllerMixin', ['$injector
     return video;
   }
 
-
   function customAttrsForPlayerInSearchDialog(searchResult) {
     return {entryId: searchResult.id};
   }
 
   function isWidgetReady() {
-    return isReady;
+    return status === 'ready';
+  }
+
+  function isWidgetStatus(value) {
+    return status === value;
   }
 
   function loadingFeedbackMessage(asset) {

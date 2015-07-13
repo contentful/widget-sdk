@@ -72,19 +72,19 @@ describe('cfFileMetadata Directive', function () {
     });
 
     it('go to asset button is shown hidden', function() {
-      expect(element.find('.go-to-asset')).not.toBeNgHidden();
+      expect(element.find('[aria-label="Open Asset"]')).not.toBeNgHidden();
     });
 
     it('metadata button is hidden', function() {
-      expect(element.find('.show-metadata')).toBeNgHidden();
+      expect(element.find('[aria-label="Show file information"]')).toBeNgHidden();
     });
 
     it('delete button is hidden', function() {
-      expect(element.find('.delete-file')).toBeNgHidden();
+      expect(element.find('[aria-label="Delete file"]')).toBeNgHidden();
     });
 
     it('remove link button is hidden', function() {
-      expect(element.find('.remove-link')).toBeNgHidden();
+      expect(element.find('[aria-label="Remove Asset"]')).toBeNgHidden();
     });
 
     it('upload button is hidden', function() {
@@ -102,7 +102,7 @@ describe('cfFileMetadata Directive', function () {
       });
 
       it('go to asset button is hidden', function() {
-        expect(element.find('.go-to-asset')).toBeNgHidden();
+        expect(element.find('[aria-label="Open Asset"]')).toBeNgHidden();
       });
     });
   });
@@ -154,7 +154,7 @@ describe('cfFileMetadata Directive', function () {
     it('delete button is shown', function() {
       scope.deleteFile = function () {};
       scope.$digest();
-      expect(element.find('.delete-file')).not.toBeNgHidden();
+      expect(element.find('[aria-label="Delete file"]')).not.toBeNgHidden();
     });
   });
 
@@ -250,29 +250,29 @@ describe('cfFileMetadata Directive', function () {
     });
 
     it('download button is shown', function() {
-      expect(element.find('.download-file')).not.toBeNgHidden();
+      expect(element.find('[aria-label="Download file"]')).not.toBeNgHidden();
     });
 
     it('download button is hidden', function() {
       delete scope.file.url;
       scope.$digest();
-      expect(element.find('.download-file')).toBeNgHidden();
+      expect(element.find('[aria-label="Download file"]')).toBeNgHidden();
     });
 
     it('metadata button is shown', function() {
-      expect(element.find('.show-metadata')).not.toBeNgHidden();
+      expect(element.find('[aria-label="Show file information"]')).not.toBeNgHidden();
     });
 
     it('delete button is shown', function() {
       scope.deleteFile = function () {};
       scope.$digest();
-      expect(element.find('.delete-file')).not.toBeNgHidden();
+      expect(element.find('[aria-label="Delete file"]')).not.toBeNgHidden();
     });
 
     it('remove link button is shown', function() {
       scope.removeLink = function () {};
       scope.$digest();
-      expect(element.find('.remove-link')).not.toBeNgHidden();
+      expect(element.find('[aria-label="Remove Asset"]')).not.toBeNgHidden();
     });
 
 

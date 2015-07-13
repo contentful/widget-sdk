@@ -1,6 +1,27 @@
-div(ui-sortable="fieldListSortOptions" ng-model="contentType.data.fields")
-  cf-field-settings-editor.u-bce.cf-field-settings-editor(ng-repeat="(index, field) in contentType.data.fields track by field.id"
-    ng-class="{open: isAccordionItemOpen(field), active: !field.disabled }"
-    ng-hide="field.disabled && !preferences.showDisabledFields"
-    data-field-id="{{field.id}}"
-    ng-click="accordionItemClicked(field)")
+ul(cf-ui-sortable ng-model="contentType.data.fields")
+  li.ct-field(
+    ng-controller="ContentTypeFieldController"
+    ng-repeat="(index, field) in contentType.data.fields track by field.id"
+    ng-class="{'is-disabled': field.disabled}"
+    role="toolbar"
+  )
+
+    .ct-field__drag-handle(data-drag-handle)
+    .ct-field__icon
+      cf-icon(ng-if="iconId" name="{{iconId}}")
+    .ct-field__name
+      | {{field | displayedFieldName}}
+    .ct-field__type(ng-if="!field.disabled")
+      | {{fieldTypeLabel}}
+    .ct-field__type(ng-if="field.disabled")
+      | {{fieldTypeLabel}}, disabled
+    .ct-field__is-title(ng-if="fieldIsTitle")
+      | Entry title
+    button.ct-field__settings.cfnext-btn-inline(ng-click="openSettingsDialog()" aria-label="Settings")
+      | Settings
+      cf-ui-hint(ng-if="index===0" name="ct-field-settings")
+        | Change field settings, add validations, default values or define the appearance of this field
+    button.ct-field__disable.cfnext-btn-inline(ng-if="isPublished" ng-click="toggleDisableField()")
+      | {{ field.disabled ? 'Enable' : 'Disable' }}
+    button.ct-field__disable.cfnext-btn-inline(ng-if="!isPublished" ng-click="deleteField()")
+      | Delete

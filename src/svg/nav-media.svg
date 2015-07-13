@@ -5,12 +5,14 @@
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="nav-media" sketch:type="MSLayerGroup" stroke="#FFFFFF" stroke-width="1.5">
-            <rect id="Rectangle-6" fill="#21304A" sketch:type="MSShapeGroup" x="4" y="0" width="22.2564103" height="22.475" rx="2"></rect>
-            <rect id="Rectangle-3" fill="#21304A" sketch:type="MSShapeGroup" x="0" y="4" width="22.2564103" height="22.475" rx="2"></rect>
-            <path d="M0.717948718,18.3 L7.8974359,12.5 L17.2307692,25.55" id="Line" stroke-linecap="round" stroke-linejoin="round" fill="#21304A" sketch:type="MSShapeGroup"></path>
-            <path d="M13.6410256,18.909 L16.5128205,16.125 L21.0000001,18.9089999" id="Line-13" stroke-linecap="round" stroke-linejoin="round" sketch:type="MSShapeGroup"></path>
-            <ellipse id="Oval-2" sketch:type="MSShapeGroup" cx="14.7179487" cy="10.6875" rx="1.79487179" ry="1.8125"></ellipse>
+        <g id="contentful_icons" sketch:type="MSArtboardGroup" transform="translate(-100.000000, -103.000000)" stroke="#FFFFFF" stroke-width="1.5">
+            <g id="nav-media" sketch:type="MSLayerGroup" transform="translate(100.000000, 103.000000)">
+                <rect id="Rectangle-6" fill="#21304A" sketch:type="MSShapeGroup" x="4" y="0" width="22.2564103" height="22.475" rx="2"></rect>
+                <rect id="Rectangle-3" fill="#21304A" sketch:type="MSShapeGroup" x="0" y="4" width="22.2564103" height="22.475" rx="2"></rect>
+                <path d="M0.717948718,18.3 L7.8974359,12.5 L17.2307692,25.55" id="Line" stroke-linecap="round" stroke-linejoin="round" fill="#21304A" sketch:type="MSShapeGroup"></path>
+                <path d="M13.6410256,18.909 L16.5128205,16.125 L21.0000001,18.9089999" id="Line-13" stroke-linecap="round" stroke-linejoin="round" sketch:type="MSShapeGroup"></path>
+                <ellipse id="Oval-2" sketch:type="MSShapeGroup" cx="14.7179487" cy="10.6875" rx="1.79487179" ry="1.8125"></ellipse>
+            </g>
         </g>
     </g>
 </svg>

@@ -1,105 +1,65 @@
 'use strict';
 
 describe('ApiNameController', function () {
-  var controller, scope, stubs, logger, notification;
+  beforeEach(module('contentful'));
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs(['toIdentifier', 'isDisplayableAsTitleFilter']);
-      $provide.value('isDisplayableAsTitleFilter', stubs.isDisplayableAsTitleFilter);
-      $provide.constant('stringUtils', {toIdentifier: stubs.toIdentifier});
-    });
-    inject(function ($controller, $rootScope, $injector) {
-      logger = $injector.get('logger');
-      notification = $injector.get('notification');
-      scope = $rootScope.$new();
+    var $controller = this.$inject('$controller');
 
-      scope.field = {};
+    this.modalDialog = this.$inject('modalDialog');
 
-      scope.publishedContentType = { data: { sys: {revision: 1} } };
-      scope.contentType = {
-        data: {
-          fields: {}
-        }
-      };
+    this.scope = this.$inject('$rootScope').$new();
+    this.scope.field = {id: 'field-id'};
 
-      controller = $controller('ApiNameController', {$scope: scope});
-      scope.$digest();
-    });
+    this.scope.publishedContentType = {
+      data: {
+        fields: [{id: 'field-id'}]
+      }
+    };
+
+    this.apiNameController = $controller('ApiNameController', {$scope: this.scope});
+    this.$apply();
   });
 
-  describe('default state', function() {
-    it('is not editable', function() {
-      expect(controller.isEditable()).toBe(false);
+
+  describe('isEditable()', function() {
+    it('is true if field not published', function() {
+      this.scope.publishedContentType = null;
+      this.$apply();
+      expect(this.apiNameController.isEditable()).toBe(true);
     });
 
-    it('is not revertable', function() {
-      expect(controller.isRevertable()).toBe(false);
-    });
-  });
-
-  describe('published content type revision is changed', function() {
-    beforeEach(function() {
-      scope.field.id = 'fieldid';
-      scope.publishedContentType = {
-        data: {
-          sys: {revision: 2},
-          fields: {fieldid: {id: 'fieldid', apiName: 'fieldApiName'}}
-        }
-      };
-      scope.$digest();
+    it('is false if field is published', function () {
+      expect(this.apiNameController.isEditable()).toBe(false);
     });
 
-    it('changes published name', function() {
-      expect(controller._publishedApiName).toEqual('fieldApiName');
-    });
+    it('is true after confirmation', function (done) {
+      var apiNameController = this.apiNameController;
 
-    it('locks controller with new revision', function() {
-      expect(controller._locked).toBeTruthy();
-    });
-  });
+      this.modalDialog.open = sinon.stub().returns({promise: this.when()});
 
-  describe('automatically update apiName from field name change', function() {
-    beforeEach(function() {
-      scope.isDisplayField = sinon.stub();
-      scope.setDisplayField = sinon.stub();
-    });
-
-    describe('on the default state updates nothing', function() {
-      beforeEach(function() {
-        controller.updateFromName();
+      apiNameController.unlockEditing()
+      .finally(function () {
+        expect(apiNameController.isEditable()).toBe(true);
+        done();
       });
 
-      it('sets field api name', function() {
-        expect(scope.field.apiName).toBeUndefined();
-      });
-
-      it('sets no display field', function() {
-        sinon.assert.notCalled(scope.setDisplayField);
-      });
+      this.$apply();
     });
 
-    describe('updates to current value of field name', function() {
-      beforeEach(function() {
-        scope.field.id = 'oldfieldid';
-        scope.field.apiName = 'fieldid';
-        controller._originalFieldName = 'fieldid';
-        stubs.toIdentifier.withArgs('fieldid').returns('fieldid');
-        stubs.toIdentifier.withArgs('fieldname').returns('fieldname');
-        stubs.isDisplayableAsTitleFilter.returns(true);
-        scope.field.name = 'fieldname';
-        controller.updateFromName();
+    it('is false after unlock cancel', function (done) {
+      var apiNameController = this.apiNameController;
+
+      this.modalDialog.open = sinon.stub().returns({promise: this.reject()});
+
+      apiNameController.unlockEditing()
+      .finally(function () {
+        expect(apiNameController.isEditable()).toBe(false);
+        done();
       });
 
-      it('sets field api name', function() {
-        expect(scope.field.apiName).toBe('fieldname');
-      });
-
-      it('sets no display field', function() {
-        sinon.assert.calledWith(scope.setDisplayField, {id: 'oldfieldid', apiName: 'fieldname', name: 'fieldname'});
-      });
+      this.$apply();
     });
-
   });
 
 });

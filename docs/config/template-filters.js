@@ -1,12 +1,22 @@
 'use strict';
 
-var _ = require('lodash-node');
-var highlight = require('../lib/highlight');
+import _ from 'lodash-node';
+import highlight from '../lib/highlight';
 
 /**
  * Filters for nunjucks templates.
- *
- * ## `functionSyntax`
+ */
+
+var tags = [];
+export default tags;
+
+
+addTag('docLink', function (doc) {
+  return `<a href="${doc.path}">${doc.label}</a>`;
+});
+
+
+/**
  * Builds a function expression from an object
  *
  * ~~~js
@@ -16,70 +26,68 @@ var highlight = require('../lib/highlight');
  *   returns: {typeExpression: 'boolean'}
  * }) // => fn(arg: string): boolean
  * ~~~
- *
- * ## `memberSyntax`
- * Builds a function or property expression from doc object
- *
- * ## `codeBlock`
- *
- * ## `docLink`
  */
-module.exports = [{
-  name: 'docLink',
-  process: function (doc) {
-    return `<a href="${doc.path}">${doc.label}</a>`;
-  }
-}, {
-  name: 'functionSyntax',
-  process: function (fn, prefix) {
-    // TODO types
-    var rendered;
-    if (prefix)
-      rendered = prefix + '.';
-    else
-      rendered = '';
+addTag('functionSyntax', function (fn, prefix) {
+  // TODO types
+  var rendered;
+  if (prefix)
+    rendered = prefix + '.';
+  else
+    rendered = '';
 
-    rendered += fn.name;
+  rendered += fn.name;
 
-    var types;
-    if (fn.type && fn.type.type == 'FunctionType')
-      types = functionTypeTypes(fn.type);
-    else
-      types = functionTagTypes(fn);
+  var types;
+  if (fn.type && fn.type.type == 'FunctionType')
+    types = functionTypeTypes(fn.type);
+  else
+    types = functionTagTypes(fn);
 
-    var params = _.map(types.params, function (param) {
-      var rendered = param.name;
-      if (param.type)
-        rendered += ': ' + param.type;
-      return rendered;
-    }).join(', ');
-    rendered += '(' + params + ')';
-    if (types.returns)
-      rendered += ': '+ types.returns.type;
+  var params = _.map(types.params, function (param) {
+    var rendered = param.name;
+    if (param.type)
+      rendered += ': ' + param.type;
     return rendered;
-  }
-}, {
-  name: 'memberSyntax',
-  process: function (member, prefix) {
-    if (member.docType == 'method')
-      return methodMemberSyntax(member);
+  }).join(', ');
+  rendered += '(' + params + ')';
+  if (types.returns)
+    rendered += ': '+ types.returns.type;
+  return rendered;
+});
 
-    var rendered = '';
-    if (prefix)
-      rendered += prefix + '.';
 
-    rendered += member.name;
-    if (member.typeExpression)
-      rendered += ': ' + member.typeExpression;
-    return rendered;
-  }
-}, {
-  name: 'codeBlock',
-  process: function (src, lang) {
-    var codeString = highlight(src, lang);
-    return '<code class="code-block hljs"><pre>' + codeString + '</pre></code>';
-  }
-}];
+addTag('memberSyntax', function (member, prefix) {
+  if (member.docType == 'method')
+    return methodMemberSyntax(member);
+
+  var rendered = '';
+  if (prefix)
+    rendered += prefix + '.';
+
+  rendered += member.name;
+  if (member.typeExpression)
+    rendered += ': ' + member.typeExpression;
+  return rendered;
+});
+
+
+addTag('paramSyntax', function (param) {
+  var rendered = param.name;
+  if (param.typeExpression)
+    rendered += ': ' + param.typeExpression;
+  return rendered;
+});
+
+
+addTag('codeBlock', function (src, lang) {
+  var codeString = highlight(src, lang);
+  return '<code class="code-block hljs"><pre>' + codeString + '</pre></code>';
+});
+
+
+function addTag (name, process) {
+  tags.push({name, process});
+}
 
 function functionTypeTypes (closureType) {
   var params = _.map(closureType.params, function (param) {

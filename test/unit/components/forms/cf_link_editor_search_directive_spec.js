@@ -63,7 +63,7 @@ describe('cfLinkEditorSearch Directive', function () {
       ];
 
       compileElement();
-      newButton = element.find('.add-new');
+      newButton = element.find('button:contains("Add New")');
     });
 
     it('to have button', function () {
@@ -71,20 +71,20 @@ describe('cfLinkEditorSearch Directive', function () {
     });
 
     it('has dropdown menu', function () {
-      expect(newButton.find('.dropdown-menu').get(0)).toBeDefined();
+      expect(element.find('.dropdown-menu').get(0)).toBeDefined();
     });
 
     it('has menu elements', function () {
-      expect(newButton.find('.dropdown-menu li').get(0)).toBeDefined();
+      expect(element.find('.dropdown-menu li').get(0)).toBeDefined();
     });
 
     it('has action on menu elements', function () {
-      expect(newButton.find('.dropdown-menu li').attr('ng-click')).toMatch('addNewEntry');
+      expect(element.find('.dropdown-menu li').attr('ng-click')).toMatch('addNewEntry');
     });
 
     it('gets the name of the content type', function () {
-      expect(newButton.text()).toMatch('Herp');
-      expect(newButton.text()).toMatch('Derp');
+      expect(element.text()).toMatch('Herp');
+      expect(element.text()).toMatch('Derp');
     });
 
   });
@@ -101,7 +101,7 @@ describe('cfLinkEditorSearch Directive', function () {
       ];
 
       compileElement();
-      newButton = element.find('.add-new');
+      newButton = element.find('button:contains("Add New")');
     });
 
     it('to have button', function () {
@@ -119,7 +119,7 @@ describe('cfLinkEditorSearch Directive', function () {
       scope.entityType = 'Asset';
 
       compileElement();
-      newButton = element.find('.add-new');
+      newButton = element.find('button:contains("Add New")');
     });
 
     it('to have button', function () {

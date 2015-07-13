@@ -1,0 +1,199 @@
+/*
+Modal Dialog
+
+Styles for modal dialogs with optional controls.
+See the modal_dialog.jade template for a more complete base template for other dialogs
+
+Markup:
+// Commented out for demo purposes only
+// In normal usage, the .modal-dialog element should be a child of .modal-background
+//.modal-background
+p
+  .modal-dialog
+    header.modal-dialog__header
+      h1 Title
+      .close-button
+    .modal-dialog__content
+      p.modal-dialog__plaintext this is some plain text
+      .modal-dialog__richtext
+        p here is a paragraph
+        p here is another one
+    .modal-dialog__controls
+      button.cfnext-btn-primary-action
+        | Confirm
+      button.cfnext-btn-secondary-action
+        | More
+      button.cfnext-btn-plain
+        | Cancel
+p
+  .modal-dialog
+    header.modal-dialog__header
+      h1 One button
+      .close-button
+    .modal-dialog__controls
+      button.cfnext-btn-primary-action
+        | Confirm
+
+Styleguide 12.0
+*/
+
+$modal-dialog-frame-padding = 2em
+
+$modal-dialog-horizontal-padding()
+  padding-left: $modal-dialog-frame-padding
+  padding-right: $modal-dialog-frame-padding
+
+.modal-background
+  $stretch()
+  $layer('modalBackground')
+  overflow-y: auto
+  height: 100vh
+  text-align: center
+  background-color: rgba(0, 0, 0, 0.2)
+
+  // Add space above dialog if we do not position in absolutely
+  &:before
+    content: ""
+    height: 10%
+    min-height: 1em
+    max-height: 10em
+    display: block
+
+
+$modal-dialog-layout()
+  $layer('modalDialog')
+  display: inline-block
+  position: relative
+  min-width: 500px
+  padding: 0
+  text-align: left
+
+$modal-dialog-chrome()
+  background-color: white
+  border: 1px solid $gray
+  border-radius: 3px
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1)
+  // TODO WHY? This looks scheiße
+  line-height: 15px
+
+
+.modal-dialog
+  $modal-dialog-chrome()
+  $modal-dialog-layout()
+
+  .dropdown-menu,
+  .cfnext-dropdown
+    $layer('modalDialogDropdown')
+
+  &__action-icon
+    margin-right: 1em
+
+  &__header
+    display: flex;
+    align-items: center
+    padding-top: $modal-dialog-frame-padding
+    $modal-dialog-horizontal-padding()
+
+    > h1
+      font-size: 1.2em
+      flex-grow: 1
+      margin: 0
+
+  &__content
+    $modal-dialog-horizontal-padding()
+    padding-top: $rhythm(1)
+    margin-bottom: $rhythm(1)
+
+  &__controls
+    display: flex
+    align-items: center
+    $modal-dialog-horizontal-padding()
+    padding-bottom: $modal-dialog-frame-padding
+    // Optical vertical alignment with dialog text
+    margin-left: -0.2ex
+    margin-right: -0.2ex
+    > * + *
+      margin-left: 1rem
+
+  &__plaintext
+    white-space: pre
+
+  &__richtext
+    max-width: 40em
+
+
+/*
+Confirm Deletion
+
+Used in `dialog_confirm_deletion.jade`
+
+Markup:
+.styleguide-align-horizontally
+  .modal-dialog.modal-dialog--small
+    .modal-dialog__content
+      .modal-dialog__message
+         | Do you really want to do this?
+      .modal-dialog__hint
+         | You cannot undo this later!
+    .modal-dialog__controls
+      button.cfnext-btn-caution
+        | Delete
+      button.cfnext-btn-plain
+        | Cancel
+  .modal-dialog.modal-dialog--small
+    .modal-dialog__content
+      .modal-dialog__message
+         | Do you really want to do this?
+    .modal-dialog__controls
+      button.cfnext-btn-caution
+        | Delete
+      button.cfnext-btn-plain
+        | Cancel
+
+Styleguide 12.1
+*/
+
+.modal-dialog
+  &--small
+    min-width: 46ex
+    max-width: 70ex
+    line-height: $base-line-height
+
+  &__hint
+    color: $text-dimmed
+    margin: $rhythm(1) 0 0
+
+  &__message
+    font-size: 1.14em
+    margin-bottom: $rhythm(0.5)
+    margin-top: 0.1em
+
+
+/**
+Modal Dialog Slices
+
+Allows you to bleed background into the `modal-dialog__content`
+element. You can also use it with the `$modal-dialog-slice()` mixin.
+
+Markup:
+.modal-dialog
+  header.modal-dialog__header
+    h1 Title
+    .close-button
+  .modal-dialog__content
+    p Hello
+    .modal-dialog__slice.styleguide-filled-box1
+      p This has a background
+  .modal-dialog__controls
+    button.cfnext-btn-primary-action
+      | Confirm
+
+Styleguide 12.2
+*/
+$modal-dialog-slice()
+  $modal-dialog-horizontal-padding()
+  margin-left: - $modal-dialog-frame-padding
+  margin-right: - $modal-dialog-frame-padding
+
+.modal-dialog__slice
+  $modal-dialog-slice()

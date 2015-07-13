@@ -1,0 +1,57 @@
+div(
+  ng-form="widgetForm"
+  ng-controller="FieldDialogAppearanceController")
+  .cfnext-form__field(ng-if="availableWidgets.length > 1")
+    label
+      | Choose how this field should be displayed
+    ul.field-dialog__widget-list
+      li.field-dialog__widget-item(
+          ng-repeat="w in availableWidgets track by w.id"
+          ng-class="{'is-selected': selectedWidgetIndex === $index}"
+          data-current-widget-index="{{$index}}"
+          ng-click="selectWidget($index)")
+        cf-icon.field-dialog__widget-icon(name="{{w.icon}}-widget")
+        p {{w.name}}
+        p.field-dialog__widget-default(ng-if="w.id === defaultWidgetId") (default)
+        cf-icon(name="checkmark")
+
+  div.modal-dialog__slice(ng-class="{'field-dialog__widget-options': availableWidgets.length > 1}")
+    cf-icon(name="arrow-up"
+      ng-if="tab.active && availableWidgets.length > 1 && selectedWidgetIndex >= 0"
+      cf-position-relative-to-widget-list
+      position-relative-to=".field-dialog__widget-item[data-current-widget-index=\"{{selectedWidgetIndex}}\"]"
+      reposition-when-scrolls=".field-dialog__widget-list")
+
+    p.field-dialog__widget-warning(ng-show="widget.misconfigured")
+      i.fa.fa-exclamation-triangle
+      | The "{{ widget.name }}" widget is not properly configured.
+      | Editor features may not work as expected.
+
+    p.field-dialog__widget-warning(ng-show="widget.deprecation")
+      i.fa.fa-exclamation-triangle
+      | The "{{ widget.name }}" widget is deprecated.
+      | Please use the "{{ widget.deprecation.alternative }}" widget instead.
+
+    .cfnext-form__field(ng-repeat="option in widgetOptions track by option.name")
+      label {{option.name}}
+      div(ng-switch="option.type")
+        input.cfnext-form__input--full-size(ng-switch-when="Text"
+               type="text" name="{{option.param}}"
+               placeholder="{{option.description}}"
+               ng-model="widgetParams[option.param]")
+        input.cfnext-form__input(ng-switch-when="Number"
+               type="text"
+               placeholder="{{option.description}}"
+               ng-model="widgetParams[option.param]")
+        input.cfnext-form__input(ng-switch-when="Boolean"
+               type="checkbox"
+               ng-model="widgetParams[option.param]")
+        div(ng-switch-when="Predefined")
+          select.cfnext-select-box(ng-if="option.values | isArray"
+                 ng-options="value for value in option.values"
+                 ng-model="widgetParams[option.param]")
+          select.cfnext-select-box(ng-if="!(option.values | isArray)"
+                 ng-options="desc as value for (desc, value) in option.values"
+                 ng-model="widgetParams[option.param]")
+          i.fa.fa-caret-down.cfnext-select-box-icon
+      ul.cfnext-form__field-errors(cf-field-errors-for="{{option.param}}")

@@ -4,199 +4,16 @@ Colors
 Styleguide 1.0
 */
 
+@import './colors-deprecated.styl'
+
 /*
 Text and background colors
 
-Colors used throughout the site
+Colors used on the redesign.
+Use http://chir.ag/projects/name-that-color/ or http://www.color-blindness.com/color-name-hue/
+to find color names.
 
-Markup:
-div(class="colors {{modifier_class}}") hello, text
-
-colors__gray-lightest         - $gray-lightest \#F5F5F5 rgb(245, 245, 245), used for light rules
-colors__gray-lighter          - $gray-lighter \#EBEBEB rgb(235, 235, 235)
-colors__gray-light            - $gray-light \#DEDEDE rgb(222, 222, 222), used for dark rules
-colors__gray                  - $gray \#9B9B9B rgb(155, 155, 155)
-colors__gray-medium-light     - $gray-medium-light \#8B8B8B rgb(139, 139, 139)
-colors__gray-medium           - $gray-medium \#7F7F7F rgb(127, 127, 127)
-colors__gray-dark             - $gray-dark \#545454 rgb(84, 84, 84)
-colors__gray-darkest          - $gray-darkest \#2D2F31 rgb(45, 47, 49)
-colors__metallic-gray         - $metallic-gray \#969FA6 rgb(150, 159, 166)
-colors__metallic-gray-blueish - $metallic-gray-blueish \#768FAC rgb(118, 143, 172)
-colors__metallic-gray-dark    - $metallic-gray-dark \#333A42 rgb(51, 58, 66)
-colors__gray-gradient-from    - $gray-gradient-from \#F6F8F9 rgb(246, 248, 249)
-colors__gray-gradient-to      - $gray-gradient-to \#EDEFF4 rgb(237, 239, 244)
-colors__blue-lightest         - $blue-lightest \#98C4EF
-colors__blue-light            - $blue-light \#4A90E2 rgb(74, 144, 226)
-colors__blue                  - $blue \#3e97d6
-colors__blue-dark             - $blue-dark \#2F5B85
-colors__blue-link             - $blue-link \#1683d0 rgb(22, 131, 208)
-colors__blue-dark-link        - $blue-dark-link \#0C2C52
-colors__blue-gradient-from    - $blue-gradient-from \#68A9E8
-colors__blue-gradient-to      - $blue-gradient-to \#4183DE
-colors__green                 - $green \#33ca6c
-colors__gold                  - $gold \#e6ae17
-colors__orange                - $orange \#f2602e
-colors__red                   - $red \#DF3537
-colors__red-dark              - $red-dark \#6F020B
-colors__red-gradient-from     - $red-gradient-from \#FB6974
-colors__red-gradient-to       - $red-gradient-to \#BF171B
-colors__red-light             - $red-light \#FDA9AF
-colors__red-mexican           - $red-mexican \#964047
-colors__secondary-bg              - $secondary-bg \#D4D4D4
-colors__secondary-gradient-from   - $secondary-gradient-from \#F6F9FE
-colors__secondary-gradient-to     - $secondary-gradient-to \#DEE8FF
-colors__secondary-gradient-shadow - $secondary-gradient-shadow \#F7FAFD
-
-Styleguide 1.1
-*/
-.colors
-  width: 100px
-  height: 50px
-
-$gray-lightest = #F5F5F5
-.colors__gray-lightest
-  background-color: $gray-lightest
-
-$gray-lighter = #EBEBEB
-.colors__gray-lighter
-  background-color: $gray-lighter
-
-$gray-light = #DEDEDE
-.colors__gray-light
-  background-color: $gray-light
-
-$gray = #9B9B9B
-.colors__gray
-  background-color: $gray
-
-$gray-medium-light = #8B8B8B
-.colors__gray-medium-light
-  background-color: $gray-medium-light
-
-$gray-medium = #7F7F7F
-.colors__gray-medium
-  background-color: $gray-medium
-
-$gray-dark = #545454
-.colors__gray-dark
-  background-color: $gray-dark
-
-$gray-darkest = #2D2F31
-.colors__gray-darkest
-  background-color: $gray-darkest
-
-$metallic-gray = #969FA6
-.colors__metallic-gray
-  background-color: $metallic-gray
-
-$metallic-gray-blueish = #768FAC
-.colors__metallic-gray-blueish
-  background-color: $metallic-gray-blueish
-
-$metallic-gray-dark = #333A42
-.colors__metallic-gray-dark
-  background-color: $metallic-gray-dark
-
-$gray-gradient-from = #F6F8F9
-.colors__gray-gradient-from
-  background-color: $gray-gradient-from
-
-$gray-gradient-to   = #EDEFF4
-.colors__gray-gradient-to
-  background-color: $gray-gradient-to
-
-$blue-lightest = #98C4EF
-.colors__blue-lightest
-  background-color: $blue-lightest
-
-$blue-light = #4A90E2
-.colors__blue-light
-  background-color: $blue-light
-
-$blue = #3e97d6
-.colors__blue
-  background-color: $blue
-
-$blue-dark = #2F5B85
-.colors__blue-dark
-  background-color: $blue-dark
-
-$blue-link = #1683d0
-.colors__blue-link
-  color: $blue-link
-
-$blue-dark-link = #0C2C52
-.colors__blue-dark-link
-  color: $blue-dark-link
-
-$blue-gradient-from = #68A9E8
-.colors__blue-gradient-from
-  color: $blue-gradient-from
-
-$blue-gradient-to = #4183DE
-.colors__blue-gradient-to
-  color: $blue-gradient-to
-
-$orange = #f2602e
-.colors__orange
-  background-color: $orange
-
-$red = #DF3537
-.colors__red
-  background-color: $red
-
-$red-dark = #6F020B
-.colors__red-dark
-  background-color: $red-dark
-
-$red-gradient-from = #FB6974
-.colors__red-gradient-from
-  background-color: $red-gradient-from
-
-$red-gradient-to = #BF171B
-.colors__red-gradient-to
-  background-color: $red-gradient-to
-
-$red-light = #FDA9AF
-.colors__red-light
-  background-color: $red-light
-
-$red-mexican = #964047
-.colors__red-mexican
-  background-color: $red-mexican
-
-$green = #33ca6c
-.colors__green
-  background-color: $green
-
-$gold = #e6ae17
-.colors__gold
-  background-color: $gold
-
-$secondary-bg = #D4D4D4
-.colors__secondary-bg
-  background-color: $secondary-bg
-
-$secondary-border = #EAF1FE
-.colors__secondary-border
-  background-color: $secondary-border
-
-$secondary-gradient-from = #F6F9FE
-.colors__secondary-gradient-from
-  background-color: $secondary-gradient-from
-
-$secondary-gradient-to = #DEE8FF
-.colors__secondary-gradient-to
-  background-color: $secondary-gradient-to
-
-$secondary-shadow = #F7FAFD
-.colors__secondary-shadow
-  background-color: $secondary-shadow
-
-/*
-New Colors
-
-Colors used on the redesign
+Define new colors with the `hsl()` syntax.
 
 Markup:
 div(class="colors {{modifier_class}}") hello, text
@@ -207,6 +24,9 @@ cfnext-colors__ - modifier description
 .colors__cfnext-light-blue    - $cfnext-light-blue \#A7E2FF
 .colors__cfnext-lightest-blue - $cfnext-lightest-blue \#E8F7FF
 .colors__cfnext-green         - $cfnext-green \#16C98D
+.colors__cfnext-green         - $cfnext-green \#16C98D
+.colors__cfnext-shadow-green  - $cfnext-shadow-green \#90C2AC
+.colors__cfnext-red           - $cfnext-red \#F05650
 .colors__cfnext-dark-gray     - $cfnext-dark-gray \#2D2F31
 .colors__cfnext-gray          - $cfnext-gray \#A2A9B1
 .colors__cfnext-light-gray    - $cfnext-light-gray \#D6DCE4
@@ -219,7 +39,7 @@ $cfnext-dark-blue     = #21304A
 .colors__cfnext-dark-blue
   background-color: $cfnext-dark-blue
 
-$cfnext-blue          = #28A8E9
+$cfnext-blue = hsl(200, 81%, 54%) // #28A8E9
 .colors__cfnext-blue
   background-color: $cfnext-blue
 
@@ -231,9 +51,21 @@ $cfnext-lightest-blue = #E8F7FF
 .colors__cfnext-lightest-blue
   background-color: $cfnext-lightest-blue
 
-$cfnext-green         = #16C98D
+$cfnext-green = hsl(160, 80%, 44%)  // #16C98D
 .colors__cfnext-green
   background-color: $cfnext-green
+
+$cfnext-shadow-green  = #90C2AC
+.colors__cfnext-shadow-green
+  background-color: $cfnext-shadow-green
+
+$cfnext-aero-blue = #B9E9D4
+.colors__cfnext-aero-blue
+  background-color: $cfnext-aero-blue
+
+$cfnext-red           = #F05650
+.colors__cfnext-red
+  background-color: $cfnext-red
 
 $cfnext-dark-gray     = #2D2F31
 .colors__cfnext-dark-gray
@@ -254,4 +86,3 @@ $cfnext-yellow        = #F6E8B0
 $cfnext-white         = #F6F8FA
 .colors__cfnext-white
   background-color: $cfnext-white
-

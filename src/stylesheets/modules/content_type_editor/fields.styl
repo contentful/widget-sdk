@@ -1,0 +1,120 @@
+$content-type-field-empty-style()
+    border: 1px dashed $cfnext-light-gray
+    background-color: lighten($cfnext-light-gray, 80%)
+
+.content-type-fields
+  position: relative
+  max-width: 50em
+  margin-top: $rhythm(1)
+
+  .sortable-placeholder
+    $content-type-field-empty-style()
+
+
+$ct__field-padding = 0.8em
+.ct-field
+  padding-right: 1em
+  height: $rhythm(2.5)
+  display: flex
+  align-items: center
+  margin-bottom: $rhythm(1)
+  border: 1px solid $cfnext-light-gray
+  border-radius: 1px
+  box-shadow: 1px 1px 2px 0 $cfnext-light-gray
+  background-color: white
+  &.is-disabled
+    color: $gray
+
+
+  &__name
+    font-weight: bolder
+    margin-right: 1em
+
+  &__icon
+    margin-right: 0.66em
+    cf-icon
+      margin-top: 5px
+      display: block
+
+  &__type
+    flex-grow: 1
+    margin-right: 1em
+    color: $text-dimmed
+
+  &__is-title
+    margin-right: 2em
+
+  &__disable
+    min-width: 10ex
+    margin-left: 0.5em
+    text-align: right
+    font-weight: normal
+
+  &__drag-handle
+    width: 16px
+    align-self: stretch
+    margin: -1px
+    margin-right: 1em
+    background-color: $cfnext-aero-blue
+    border: 1px solid $cfnext-shadow-green
+    cursor: move
+    cursor: -webkit-grabbing
+    cursor: -moz-grab
+    cursor: -moz-grabbing
+    .is-disabled &
+      background-color: transparentify($cfnext-gray, 0.2)
+      border: 1px solid transparentify($cfnext-green, 0.2)
+
+  &__settings
+    position: relative
+
+  .ui-hint
+    top: 20px
+    left: 67px
+    cf-icon
+      transform: scale(1.5) rotate(2deg)
+    p
+      top: -15px
+      left: 95px
+      width: 175px
+
+
+.ct-fields--dummy
+  .ct-field
+    $content-type-field-empty-style()
+    box-shadow: none
+    color: $cfnext-gray
+    &__drag-handle
+      background-color: transparentify($cfnext-gray, 0.1)
+      border: 1px dashed transparentify($cfnext-gray, 0.1)
+
+  .ct-field:nth-child(0n+1)
+    opacity: 0.5
+  .ct-field:nth-child(0n+2)
+    opacity: 0.4
+  .ct-field:nth-child(0n+3)
+    opacity: 0.3
+  .ct-field:nth-child(0n+4)
+    opacity: 0.2
+  .ct-field:nth-child(0n+5)
+    opacity: 0.1
+
+
+.ct-no-fields-advice.advice
+  .advice__frame
+    width: 80ex
+    padding: $rhythm(1) 1.5em
+    $content-type-field-empty-style()
+    border-style: solid
+    border-radius: 3px
+    text-align: center
+  .advice__title
+    font-size: 1.33em
+    margin: $rhythm(0.33) 0 $rhythm(0.33)
+  .advice__sub-title
+    font-size: 1.1em
+    margin-bottom: $rhythm(1)
+  .advice__description
+    font-size: 1.1em
+    line-height: 1.5
+    margin: 0

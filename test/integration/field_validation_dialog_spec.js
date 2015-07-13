@@ -11,7 +11,7 @@
  *
  * Stubs the scope's `field`, `index`, and `otDoc`.
  */
-describe('validation dialog', function() {
+xdescribe('validation dialog', function() {
   var openDialog, dialog, scope;
 
   function getFieldProperty(scope, path) {

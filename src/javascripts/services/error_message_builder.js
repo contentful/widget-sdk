@@ -1,26 +1,15 @@
 'use strict';
 
 angular.module('contentful')
-.factory('errorMessageBuilder', ['$injector', function ($injector) {
-  var joinAnd = $injector.get('stringUtils').joinAnd;
-  var mimetypeGroupNames = $injector.get('mimetype').getGroupNames();
 
+/**
+ * @ngdoc service
+ * @name baseErrorMessageBuilder
+ *
+ * @method {function(error:Error): string} baseErrorMessageBuilder
+ */
+.factory('baseErrorMessageBuilder', [function () {
   var messages = {
-    linkMimetypeGroup: function (error) {
-      var labels = _.map(error.mimetypeGroupName, function (name) {
-        return '“' + mimetypeGroupNames[name] + '”';
-      });
-      return '' + joinAnd(labels) + ' are the only acceptable file types';
-    },
-
-    linkContentType: function(error, spaceContext) {
-      var ct = spaceContext.getPublishedContentType(error.contentTypeId);
-      if (!ct)
-        return 'Invalid Content Type';
-      else
-        return 'Linked Entry\'s Content Type must be ' + ct.getName() + '.';
-    },
-
     size: function (error) {
       if (_.isString(error.value))
         return stringLengthMessage(error.min, error.max);
@@ -38,20 +27,6 @@ angular.module('contentful')
       }
     },
 
-    dateRange: function (error) {
-      var dateFormat = 'lll';
-      var min = error.min && moment(error.min).format(dateFormat);
-      var max = error.max && moment(error.max).format(dateFormat);
-
-      if (min && max ) {
-        return 'Please set a date between ' + min + ' and ' +  max;
-      } else if (min) {
-        return 'Please set a time no earlier than ' + min;
-      } else {
-        return 'Please set a time no later than ' + max;
-      }
-    },
-
     regexp: function () {
       return 'Input does not match the expected format. Please edit and try again.';
     },
@@ -65,6 +40,105 @@ angular.module('contentful')
         return 'All fields are empty. Please fill out some fields.';
       } else {
         return 'Required';
+      }
+    },
+  };
+
+  function stringLengthMessage (min, max) {
+    if (_.isNumber(min) && _.isNumber(max)) {
+      return 'Please edit the text so it\'s between ' + min + ' and ' + max + ' characters long';
+    } else if(_.isNumber(min)) {
+      return 'Please expand the text so it\'s no shorter than ' + min + ' characters';
+    } else {
+      return 'Please shorten the text so it\'s no longer than ' + max + ' characters';
+    }
+  }
+
+  function sizeMessage (min, max, itemsName) {
+    if (_.isNumber(min) && _.isNumber(max)) {
+      return 'Please provide between ' + min + ' and ' + max + ' ' +  itemsName;
+    } else if(_.isNumber(min)) {
+      return 'Please provide at least ' + min +  ' ' + itemsName;
+    } else {
+      return 'Please provide at most ' + max + ' ' + itemsName;
+    }
+  }
+
+  function defaultMessage(error) {
+    if (error.message)
+      return error.message;
+    if (error.details)
+      return error.details;
+    else
+      return 'Error: ' + error.name;
+  }
+
+  function buildErrorMessage (error) {
+    var getMessage = messages[error.name] || defaultMessage;
+    return getMessage(error);
+  }
+
+  buildErrorMessage.size = sizeMessage;
+
+  return buildErrorMessage;
+}])
+
+.factory('fieldErrorMessageBuilder', ['baseErrorMessageBuilder', function (buildBaseMessage) {
+  return function buildMessage (error) {
+    if (error.path && error.path[0] === 'apiName') {
+      if (error.name === 'regexp' && error.value.match(/^\d/))
+        return 'Please use a letter as the first character';
+      if (error.name === 'regexp')
+        return 'Please use only letters and number';
+      if (error.name === 'size')
+        return 'Please shorten the text so it’s no longer than 64 characters';
+      if (error.name === 'uniqueFieldId')
+        return 'A field with this ID already exists';
+    }
+    return buildBaseMessage(error);
+  };
+}])
+
+/**
+ * @ngdoc service
+ * @name errorMessageBuilder
+ *
+ * @method {function(error:Error): string} errorMessageBuilder.forContentType
+ * @method {function(error:Error): string} errorMessageBuilder.forAsset
+ */
+.factory('errorMessageBuilder', ['$injector', function ($injector) {
+  var joinAnd = $injector.get('stringUtils').joinAnd;
+  var mimetypeGroupNames = $injector.get('mimetype').getGroupNames();
+  var buildBaseErrorMessage = $injector.get('baseErrorMessageBuilder');
+  var sizeMessage = buildBaseErrorMessage.size;
+
+  var messages = {
+    linkMimetypeGroup: function (error) {
+      var labels = _.map(error.mimetypeGroupName, function (name) {
+        return '“' + mimetypeGroupNames[name] + '”';
+      });
+      return '' + joinAnd(labels) + ' are the only acceptable file types';
+    },
+
+    linkContentType: function(error, spaceContext) {
+      var ct = spaceContext.getPublishedContentType(error.contentTypeId);
+      if (!ct)
+        return 'Invalid Content Type';
+      else
+        return 'Linked Entry\'s Content Type must be ' + ct.getName() + '.';
+    },
+
+    dateRange: function (error) {
+      var dateFormat = 'lll';
+      var min = error.min && moment(error.min).format(dateFormat);
+      var max = error.max && moment(error.max).format(dateFormat);
+
+      if (min && max ) {
+        return 'Please set a date between ' + min + ' and ' +  max;
+      } else if (min) {
+        return 'Please set a time no earlier than ' + min;
+      } else {
+        return 'Please set a time no later than ' + max;
       }
     },
 
@@ -94,33 +168,6 @@ angular.module('contentful')
     }
   };
 
-  function stringLengthMessage (min, max) {
-    if (_.isNumber(min) && _.isNumber(max)) {
-      return 'Please edit the text so it\'s between ' + min + ' and ' + max + ' characters long';
-    } else if(_.isNumber(min)) {
-      return 'Please expand the text so it\'s no shorter than ' + min + ' characters';
-    } else {
-      return 'Please shorten the text so it\'s no longer than ' + max + ' characters';
-    }
-  }
-
-  function sizeMessage (min, max, itemsName) {
-    if (_.isNumber(min) && _.isNumber(max)) {
-      return 'Please provide between ' + min + ' and ' + max + ' ' +  itemsName;
-    } else if(_.isNumber(min)) {
-      return 'Please provide at least ' + min +  ' ' + itemsName;
-    } else {
-      return 'Please provide at most ' + max + ' ' + itemsName;
-    }
-  }
-
-  function defaultMessage(error) {
-    if (error.details)
-      return error.details;
-    else
-      return 'Error: ' + error.name;
-  }
-
   function customMessage(error) {
     return error.customMessage;
   }
@@ -130,7 +177,7 @@ angular.module('contentful')
     if (error.customMessage)
       getMessage = customMessage;
     else
-      getMessage = messages[error.name] || defaultMessage;
+      getMessage = messages[error.name] || buildBaseErrorMessage;
     return getMessage(error, spaceContext);
   }
 

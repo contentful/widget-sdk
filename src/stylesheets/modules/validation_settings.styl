@@ -1,0 +1,198 @@
+/**
+ * Concerns:
+ *
+ * - validation-values.jade
+ * - validation-settings.jade
+ * - validation-link.jade
+ * - validation-date-select.jade
+ *
+ * Components:
+ *
+ * - .validation-settings
+ * - .validation-controls
+ * - .validation-values
+ */
+
+// Width of the left margin where the toggle checkbox sits.
+$validation-indent = 1.4em
+
+/**
+ * @component .validation-settings
+ */
+.validation-settings
+  min-height: 250px
+
+.validation-settings__header
+  font-size: inherit
+  margin: 0;
+  margin-bottom: $rhythm(1)
+
+.validation-settings__toggle
+  cursor: pointer
+  display: inline-block;
+
+.validation-settings__toggle-input-wrapper
+  display: inline-block;
+  width: $validation-indent
+  > input
+    // TODO this is a hack to align the checkbox
+    margin: -2px 0 0 0
+
+
+/**
+ * @component .validation-controls
+ */
+.validation-controls
+  margin-left: $validation-indent
+  margin-bottom: $rhythm(2);
+  margin-top: 0.2em;
+
+  .form-inline-error
+    display: block
+    font-size: 1em;
+    padding-top: $rhythm(0.5)
+
+  input[type=number]
+    width: 6em
+
+.validation-controls__setting
+  margin-bottom: $rhythm(0.5)
+
+.validation-controls__setting-toggle
+  display: inline-block
+  min-width: 7em
+  > input
+    margin-right: 1em
+
+.validation-controls__view-select
+  display: inline-block
+  margin-right: 1.5em
+  &.select-box > select
+    width: auto;
+    padding-right: 2em
+
+.validation-controls__input-separator
+  margin: 0 1em
+
+.validation-controls__error-message-field
+  margin-top: $rhythm(1);
+
+.validation-controls__select-box
+  padding-right: 12px
+
+  .button-icon-right
+    top: 10px
+
+.validation-controls__re-pattern
+  $monospace-font()
+  width: 28em
+
+.validation-controls__re-flags-label
+  margin-left: 1.6em;
+  margin-right: 0.8em;
+
+.validation-controls__re-flags
+  $monospace-font()
+  width: 4em
+
+.validation-controls__option-list
+  $pie-clearfix()
+  margin: $rhythm(-0.5) 0 0 0
+  line-height: 2.8
+  list-style: none
+
+  > li
+    float: left
+    margin: 0 1.8em 0 0
+
+  label
+    cursor: pointer
+    $text-truncate()
+
+  input
+    margin: -3px 0.6em 0 0
+
+.validation-controls__datetime-editor
+  margin-bottom: $rhythm()
+  > label
+    > input[type="checkbox"]
+      margin-right: 0.8em
+    display: inline-block
+    min-width: 8em
+    padding-right: 1em
+
+.validation-controls__unit-select
+  display: inline-block
+  margin-left: 1em;
+  &.select-box > select
+    width: auto;
+    padding-right: 2em
+
+/**
+ * @component .validation-values
+ */
+
+// Width of the value input and a value list item.
+$validation-values-width = 350px
+
+.validation-value-list
+  margin-top: 10px
+  width: $validation-values-width
+  position: relative
+
+  .fa-caret-down, .fa-caret-up
+    position: absolute
+    right: -20px
+    color: $gray-light
+  .fa-caret-down
+    bottom: 3px
+  .fa-caret-up
+    top: 0px
+
+.validation-value-list__hint
+  margin-top: - $rhythm(0.5)
+  margin-bottom: $rhythm(1)
+  color: $text-dimmed
+  font-size: $small-font-size
+
+.validation-value-list__add
+  width: $validation-values-width
+  margin-right: 1em
+
+.validation-value-list__scroll-frame
+  max-height: 240px
+  overflow-y: auto
+  > ul
+    margin: 0
+    padding: 0
+
+.validation-value-list__item
+  display: flex
+  padding: 0 0 0 0.8em
+  border-radius: 5px
+  color: inherit
+  background: $gray-lighter
+  cursor: move
+  cursor: -webkit-grabbing
+  cursor: -moz-grab
+  cursor: -moz-grabbing
+
+.validation-value-list__value
+  padding: 0.8em 0;
+  flex-grow: 1;
+  white-space: normal
+
+.validation-value-list__remove
+  width: 2.5em
+  flex-shrink: 0
+  cursor: pointer
+
+  display: flex
+  align-items: center
+  justify-content: space-around
+  &:after
+    content: '\00d7' // Unicode MULTIPLICATION SIGN
+    font-size: 20px
+    font-weight: lighter
+  &:hover
+    color: $blue

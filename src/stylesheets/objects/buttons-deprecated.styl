@@ -1,0 +1,225 @@
+$colored-button-hover-state($text-color, $shadow-color)
+  color: $text-color
+  box-shadow: 0 1px 2px $shadow-color
+
+$colored-button(
+    $text-color,
+    $background-color,
+    $gradient-from,
+    $gradient-to,
+    $border-color,
+    $top-shadow,
+    $drop-shadow,
+    $active-drop-shadow
+  )
+  color: $text-color
+  border-color: $border-color
+  box-shadow: 0 1px 1px $top-shadow inset
+  background: $background-color
+  background-image: linear-gradient($gradient-from, $gradient-to)
+  &:not(:disabled),
+  &:not([disabled])
+    &:hover
+      $colored-button-hover-state($text-color, $drop-shadow)
+    &.active, &:active
+      box-shadow: 0 2px 2px $active-drop-shadow inset
+    &:link
+      color: $text-color
+    i
+      color: lighten($text-color, 20%)
+      &:active
+        box-shadow: 0 2px 2px 2px $active-drop-shadow inset
+
+
+$button()
+  display: inline-block
+  position: relative
+  overflow: hidden
+  padding: 7px 10px
+  font-size: 1em
+  text-decoration: none
+  vertical-align: middle
+  cursor: pointer
+  -webkit-appearance: none
+  border-radius: 3px
+  border-width: 1px
+  border-style: solid
+  -webkit-transform: translate3d(0px, 0px, 0px)
+  &:link
+    color: $gray-medium
+  &:disabled,
+  &[disabled]
+    opacity: 0.5
+    cursor: default
+    &:active
+      top: 0px
+
+.btn
+  $button()
+
+
+.btn--field-settings
+  padding-top: 2px
+  padding-bottom: 2px
+  font-size: inherit
+
+
+// Temporary override for gatekeeper usage
+input.btn--input
+  padding: 0.6em 1em
+
+$button-secondary()
+  $colored-button(
+    $metallic-gray-dark,
+    $secondary-bg,
+    $secondary-gradient-from,
+    $secondary-gradient-to,
+    $metallic-gray,
+    $secondary-shadow,
+    $gray,
+    $gray-medium-light
+  )
+
+.btn--secondary
+  $button-secondary()
+
+$button-tertiary()
+  $colored-button(
+    $metallic-gray-dark,
+    $gray-lightest,
+    $gray-gradient-from,
+    $gray-gradient-to,
+    $metallic-gray,
+    white,
+    $gray,
+    $gray-medium-light
+  )
+
+.btn--tertiary
+  $button-tertiary()
+
+$btn--primary()
+  font-weight: bold
+  $colored-button(
+    white,
+    $blue-light,
+    $blue-gradient-from,
+    $blue-gradient-to,
+    $blue-dark-link,
+    $blue-lightest,
+    $gray,
+    $blue-dark
+  )
+
+.btn--primary
+  $btn--primary()
+
+.btn--danger,
+li.btn--danger
+  font-weight: bold
+  $colored-button(
+    white,
+    $red,
+    $red-gradient-from,
+    $red-gradient-to,
+    $red-dark,
+    $red-light,
+    $gray,
+    $red-mexican
+  )
+
+.btn--confirm
+  font-weight: bold
+  $colored-button(
+    white,
+    $green,
+    lighten($green, 10%),
+    darken($green, 20%),
+    darken($green, 60%),
+    lighten($green, 80%),
+    $gray,
+    darken($green, 50%)
+  )
+
+.transparent-button
+  background: none
+  border: none
+  cursor: pointer
+  padding: 0
+  margin: 0
+.transparent-button[disabled]
+  cursor: auto
+
+.toggle-collapse
+  display: inline-block
+  color: inherit
+  cursor: pointer
+  transition: transform 0.1s ease-in-out
+  &.on-right
+    transform: rotate(180deg)
+  &.open
+    transform: rotate(90deg)
+  &:hover
+    color: inherit
+
+.copy-paste-button
+  position: absolute
+  display: block
+  right: 0px
+  top: 0px
+  bottom: 0px
+  width: 33px
+  line-height: 30px
+  padding: 0
+  padding-left: 4px
+  text-align: center
+  vertical-align: middle
+  box-shadow: none
+  .fa-copy
+    font-size: 15px
+
+.toggle-button-set
+  $display-flex
+
+.toggle-button
+  flex-grow: 1
+  border-radius: 0
+  &:first-child
+    border-radius: 3px 0 0 3px
+  &:last-child
+    border-radius: 0 3px 3px 0
+  cursor: pointer
+  margin: 0
+  &:active,
+  &.active
+    top: 0
+    box-shadow: 0 2px 2px darken($gray-lightest, 10%) inset
+    cursor: default
+  &:focus
+    outline: none !important
+
+// An Icon inside a button
+$button-icon()
+  position: relative
+  right: 2px
+
+.button-icon
+  $button-icon()
+  &.fa-caret-down
+    font-size: 13px
+  &.fa-plus
+    font-size: 0.9em
+  &.fa-angle-right
+    font-size: 0.9em
+
+.button-icon-right
+  $button-icon()
+  float: right
+  top: 2px
+  right: 0
+  left: 3px
+
+// Tweaks for specific icons
+.button-icon-right
+  &.fa-caret-down
+    top: 3px

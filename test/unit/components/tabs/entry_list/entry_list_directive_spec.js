@@ -45,48 +45,32 @@ describe('The Entry list directive', function () {
   });
 
   describe('the tab header first add button', function() {
-    it('is not shown if not allowed', function() {
-      scope.permissionController.get.withArgs('createEntry', 'shouldHide').returns(true);
-      compileElement();
-      expect(container.find('.tab-header .add-entity .btn--primary').eq(0)).toBeNgHidden();
-    });
-
+    var addEntryButtonSelector = '.tab-header button:contains("Add New")';
 
     it('is not shown if there are no entries', function() {
       scope.singleContentType = null;
       scope.entries = [];
       compileElement();
-      expect(container.find('.tab-header .add-entity .btn--primary').eq(0)).toBeNgHidden();
+      expect(container.find(addEntryButtonSelector)).toBeNgHidden();
     });
 
     it('is not shown if there is no single content type', function() {
       scope.singleContentType = null;
       scope.entries = [{}];
       compileElement();
-      expect(container.find('.tab-header .add-entity .btn--primary').eq(0)).toBeNgHidden();
+      expect(container.find(addEntryButtonSelector)).toBeNgHidden();
     });
 
     it('is shown if all conditions are met', function() {
       scope.singleContentType = {};
       scope.entries = [{}];
       compileElement();
-      expect(container.find('.tab-header .add-entity .btn--primary').eq(0)).not.toBeNgHidden();
+      expect(container.find(addEntryButtonSelector)).not.toBeNgHidden();
     });
   });
 
 
   describe('the tab header add dropdown button', function() {
-
-    it('is not shown', function() {
-      scope.permissionController.get.withArgs('createEntry', 'shouldHide').returns(true);
-      compileElement();
-      expect(container.find('.tab-header .add-entity .btn--primary').eq(1)).toBeNgHidden();
-    });
-
-    it('is shown', function() {
-      compileElement();
-      expect(container.find('.tab-header .add-entity .btn--primary').eq(1)).not.toBeNgHidden();
-    });
 
     describe('has dropdown items', function() {
       var idStub1, idStub2, nameStub;
@@ -131,17 +115,6 @@ describe('The Entry list directive', function () {
   makeActionTest('archive', 'archive');
   makeActionTest('unpublish', 'unpublish');
   makeActionTest('publish', 'publish');
-
-  it('content type button is disabled', function () {
-    scope.permissionController.get.withArgs('createContentType', 'shouldDisable').returns(true);
-    compileElement();
-    expect(container.find('.advice .btn--primary').attr('disabled')).toBe('disabled');
-  });
-
-  it('content type button is enabled', function () {
-    compileElement();
-    expect(container.find('.advice .btn--primary').attr('disabled')).toBeUndefined();
-  });
 
   describe('list of entries is filtered', function() {
     var list;

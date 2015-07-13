@@ -3,10 +3,6 @@ Space templates
 
 Styleguide 7.0
 */
-.space-template__dialog
-  padding: 0
-  .title
-    margin: 0
 
 /*
 Space template list
@@ -31,11 +27,11 @@ div(class="space-template__dialog" style="width: 700px; height: 600px;")
 Styleguide 7.1
 */
 .space-template__dialog-content
-  $display-flexbox()
+  display: flex
   position: relative
   height: 600px
   width: 900px
-  &.dialog-content
+  &.modal-dialog__content
     margin: 0
   > .loading
     margin: auto
@@ -43,16 +39,14 @@ Styleguide 7.1
 .space-template__list,
 .space-template__detail
   font-size: 1.1em
-  padding-top: 20px
-  padding-bottom: 20px
 
 .space-template__list
   width: 70%
+  padding-top: 5px
 .space-template__detail
   width: 30%
   padding-left: 30px
   padding-right: 30px
-  background-color: $gray-lighter
 
 .space-template__list,
 .space-template__detail-content
@@ -78,7 +72,7 @@ Styleguide 7.1
     box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.4), 1px 1px 1px transparentify($metallic-gray-blueish, 0.4) inset, -1px -1px 1px transparentify($metallic-gray-blueish, 0.4) inset
 
 .space-template__icon
-  $display-flexbox()
+  display: flex
   align-items: center
   width: 100px
   height: 135px
@@ -208,7 +202,7 @@ Styleguide 7.2
   .numbered-tooltip__label
     margin-right: 10px
   .numbered-tooltip__description
-    $display-flexbox()
+    display: flex
     flex-direction: column
     justify-content: center
     height: 100%
