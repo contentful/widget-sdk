@@ -72,10 +72,11 @@ angular.module('contentful')
     return fieldType === 'Symbol' || fieldType === 'Text';
   }
 
-  function isLocalizable(fieldType) {
+  function isLocalizable() {
     // @todo specify localizable content types
-    var localizableTypes = [];
-    return _.contains(localizableTypes, fieldType);
+    /* var localizableTypes = [];
+    return _.contains(localizableTypes, fieldType); */
+    return true;
   }
 
   function getDisplayFieldName (field) {
