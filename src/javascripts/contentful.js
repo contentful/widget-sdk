@@ -19,7 +19,8 @@ angular.module('contentful', [
   'ngSanitize',
   'ui.sortable',
   'ui.router',
-  'ncy-angular-breadcrumb'
+  'ncy-angular-breadcrumb',
+  'monospaced.elastic'
 ])
 .config(['$locationProvider', 'clientAdapterProvider', 'authenticationProvider', 'environment', '$sceDelegateProvider', '$compileProvider',
   function($locationProvider, clientAdapterProvider, authenticationProvider, environment, $sceDelegateProvider, $compileProvider){
