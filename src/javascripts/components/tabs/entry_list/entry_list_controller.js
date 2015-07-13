@@ -146,32 +146,34 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   }
 
   function getOrderQuery() {
-    var p = $scope.context.view;
-    return ORDER_PREFIXES[p.order.direction] + getFieldPath(p.order.fieldId);
+    var path = $scope.context.view;
+    return ORDER_PREFIXES[path.order.direction] + getFieldPath(path.order.fieldId);
+  }
 
-    function getFieldPath(fieldId) {
-      /* jshint boss:true */
-      var field;
-      if (field = _.find($scope.systemFields, {id: fieldId})) {
-        return 'sys.'+fieldId;
-      } else {
-        var contentType = $scope.spaceContext.getPublishedContentType($scope.context.view.contentTypeId);
-        field = _.find(contentType.data.fields, {id: fieldId});
+  function getFieldPath(fieldId) {
+    /* jshint boss:true */
+    var field;
+    // Usually we use a system field for ordering
+    if (field = findSysField(fieldId)) {
+      return 'sys.'+fieldId;
+    } else {
+      // If the user has defined a custom field for ordering
+      var contentType = $scope.spaceContext.getPublishedContentType($scope.context.view.contentTypeId);
+      field = _.find(contentType.data.fields, {id: fieldId});
+      if(field){
         var defaultLocale = $scope.spaceContext.space.getDefaultLocale().code;
-        try {
-          return 'fields.'+apiNameOrId(field)+'.'+defaultLocale;
-        } catch(exp) {
-          logger.logError('Field is undefined exception', {
-            data: {
-              exp: exp,
-              field: field,
-              fieldId: fieldId,
-              fields: contentType.data.fields
-            }
-          });
-        }
+        return 'fields.'+apiNameOrId(field)+'.'+defaultLocale;
+      } else {
+        // In case the custom field saved in the view does not exist anymore
+        var defaultFieldId = $scope.getDefaultOrderFieldId();
+        field = findSysField(defaultFieldId);
+        return 'sys.'+defaultFieldId;
       }
     }
+  }
+
+  function findSysField(fieldId) {
+    return _.find($scope.systemFields, {id: fieldId});
   }
 
   function buildQuery() {
