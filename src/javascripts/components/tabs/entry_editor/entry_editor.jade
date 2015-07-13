@@ -95,7 +95,7 @@
 
     .dropdown-btn(ng-show="entityActionsController.canUpdate() && (canRevertToPublishedState() || canRevertToPreviousState())")
       button.cfnext-btn-secondary-action(cf-dropdown-toggle="entryEditor.revertActions")
-        i.fa.fa-caret-up.button-icon-right
+        cf-icon.btn-dropdown-icon--up(name="dd-arrow-down")
         | Revert...
       .dropdown-menu.revert-actions__dropdown-menu(cf-dropdown-menu="entryEditor.revertActions" position="topcenter")
         ul

@@ -17,8 +17,8 @@
       | Info
     .dropdown-btn(ng-show="showLangSwitcher")
       button.cfnext-btn-secondary-action(cf-dropdown-toggle="assetEditor.view.locale")
-        i.fa.fa-caret-down.button-icon-right
-        span View
+        cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+        | View
       .dropdown-menu(cf-dropdown-menu="assetEditor.view.locale" cf-dropdown-position="bottomcenter")
         ul.lang-switcher
           li.dropdown-menu-item--label(ng-repeat="locale in spaceContext.privateLocales track by locale.sys.id")
