@@ -210,12 +210,21 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<div cf-asset-gallery-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
 
-  widgets.registerWidget('youtubeEditor',{
+  widgets.registerWidget('urlEditor', {
     fieldTypes: ['Symbol'],
-    name: 'Youtube',
-    icon: 'video-preview',
+    name: 'URL',
+    icon: 'preview',
     rendersHelpText: true,
-    template: '<cf-youtube-editor></cf-youtube-editor>'
+    template: '<cf-url-editor class="widget-url-editor"></cf-url-editor>' +
+              '<div class="form-widget__help-text">{{helpText}}</div>' +
+              '<cf-embedly-preview></cf-embedly-preview>'
+  });
+
+  widgets.registerWidget('slugEditor', {
+    fieldTypes: ['Symbol'],
+    name: 'Slug',
+    icon: 'slug',
+    template: '<cf-slug-editor class="widget-slug-editor"></cf-slug-editor>'
   });
 
   widgets.registerWidget('ooyalaEditor',{
@@ -250,20 +259,13 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<cf-kaltura-multi-video-editor ng-model="fieldData.value" ot-bind-internal="selectedAssets"></cf-kaltura-multi-video-editor>'
   });
 
-  widgets.registerWidget('slugEditor', {
+  widgets.registerWidget('youtubeEditor',{
     fieldTypes: ['Symbol'],
-    name: 'Slug',
-    icon: 'slug',
-    template: '<cf-slug-editor class="widget-slug-editor"></cf-slug-editor>'
+    name: 'Youtube',
+    icon: 'video-preview',
+    rendersHelpText: true,
+    template: '<cf-youtube-editor></cf-youtube-editor>'
   });
 
-  widgets.registerWidget('urlEditor', {
-    fieldTypes: ['Symbol'],
-    name: 'URL',
-    icon: 'preview',
-    rendersHelpText: true,
-    template: '<cf-url-editor class="widget-url-editor"></cf-url-editor>' +
-              '<div class="form-widget__help-text">{{helpText}}</div>' +
-              '<cf-embedly-preview></cf-embedly-preview>'
-  });
+
 }]);
