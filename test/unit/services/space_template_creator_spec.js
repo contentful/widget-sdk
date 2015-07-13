@@ -55,7 +55,7 @@ describe('Space Template creation service', function () {
         space: {
           data: {
             locales: [
-              { code: 'de-DE' }
+              { internal_code: 'de-DE' }
             ]
           },
           createContentType: sinon.stub(),

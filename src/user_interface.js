@@ -9,7 +9,7 @@ var UserInterface = {
   stringifySafe: require('json-stringify-safe'),
   isDiacriticalMark: require('is-diacritical-mark'),
   searchParser: require('./search.pegjs'),
-  locales: require('./locales.json'),
+  localesList: require('./locales_list.json'),
   fileSize: require('file-size'),
   redefine: require('redefine'),
   resolveResponse: require('contentful-resolve-response'),
@@ -36,7 +36,7 @@ if (angular) {
   constant('stringifySafe', UserInterface.stringifySafe).
   constant('isDiacriticalMark', UserInterface.isDiacriticalMark).
   constant('searchParser', UserInterface.searchParser).
-  constant('locales', UserInterface.locales).
+  constant('localesList', UserInterface.localesList).
   constant('fileSize', UserInterface.fileSize).
   constant('redefine', UserInterface.redefine).
   constant('resolveResponse', UserInterface.resolveResponse).

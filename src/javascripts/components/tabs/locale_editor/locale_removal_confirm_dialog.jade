@@ -1,0 +1,21 @@
+.modal-background
+  .modal-dialog(cf-center-on=".modal-background")
+    header.modal-dialog__header
+      h1 You're about to delete the <em>{{locale.data.name}} ({{locale.data.code}})</em> content type.
+      .close-button(ng-click="dialog.cancel()")
+
+    .modal-dialog__content
+      .modal-dialog__richtext
+        p This will break any API clients that rely on <code>{{locale.data.code}}</code> existing.
+        p
+          strong Please note that this action is permanent and you cannot undo it.
+        p Please type the locale code below to confirm this change:
+        input.cfnext-form__input(ng-model="typedLocaleCode")
+
+    .modal-dialog__controls
+      button.cfnext-btn-caution(
+        ng-click="dialog.confirm()"
+        ng-disabled="typedLocaleCode !== locale.data.code")
+        | Delete
+      button.cfnext-btn-plain(ng-click="dialog.cancel()")
+        | Don't delete

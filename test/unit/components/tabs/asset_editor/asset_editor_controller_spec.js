@@ -42,7 +42,7 @@ describe('Asset editor controller', function () {
 
       var locale = {
         code: 'en-US',
-        internal_Code: 'en-US',
+        internal_code: 'en-US',
         contentDeliveryApi: true,
         contentManagementApi: true,
         'default': true,

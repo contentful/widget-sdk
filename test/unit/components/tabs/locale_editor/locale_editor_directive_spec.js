@@ -3,7 +3,7 @@
 describe('Locale Editor Directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      $provide.constant('locales', [
+      $provide.constant('localesList', [
         {
           code: 'fr',
           name: 'French'
@@ -23,6 +23,7 @@ describe('Locale Editor Directive', function () {
         code: 'de'
       }
     };
+
     dotty.put(this.scope.spaceContext, 'space.data.organization.subscriptionPlan.name');
     this.scope.context = {};
 
@@ -36,7 +37,7 @@ describe('Locale Editor Directive', function () {
         getId: sinon.stub().returns('id'),
         isDefault: sinon.stub(),
         save: sinon.stub(),
-        'delete': sinon.stub(),
+        delete: sinon.stub(),
         getVersion: sinon.stub()
       };
 
@@ -47,9 +48,9 @@ describe('Locale Editor Directive', function () {
 
   it('has a headline', function () {
     this.compileElement();
-    this.scope.locale.getName.returns('Some language');
+    this.scope.locale.getName.returns('Some locale');
     this.scope.$digest();
-    expect(this.element.find('.tab-header h1').html()).toMatch('Some language');
+    expect(this.element.find('.workbench-header h1').text()).toMatch('Some locale');
   });
 
   it('shows a delete button', function () {
@@ -61,32 +62,17 @@ describe('Locale Editor Directive', function () {
     this.compileElement();
     this.scope.locale.getId.returns();
     this.scope.$digest();
-    expect(this.element.find('.tab-actions .delete')).toBeNgHidden();
+    expect(this.element.find('.workbench-actions .delete')).toBeNgHidden();
   });
 
-  it('adds and selects the opened locale in the dropdown', function () {
+  it('renders the dropdown with locales', function () {
     this.compileElement();
-    expect(this.element.find('select')[0].children.length).toBe(3);
-    expect(this.element.find('select > [selected]').html()).toBe('name (co-DE)');
+    expect(this.element.find('select').get(0).children.length).toBe(4);
   });
 
-  it('disables the save and delete buttons during a request', function () {
-    var deferred = this.$q.defer();
-    this.compileElement();
 
-    // Attempt to save
-    this.scope.localeForm.$dirty = true;
-    this.scope.locale.save.returns(deferred.promise);
-    this.scope.save();
-    this.$apply();
-    // Notice that both buttons are disabled
-    expect(this.element.find('.tab-actions .save').attr('disabled')).toBe('disabled');
-    expect(this.element.find('.tab-actions .delete').attr('disabled')).toBe('disabled');
-    // Finish save response
-    deferred.reject();
-    this.$apply();
-    // Notice that tbe buttons are active again
-    expect(this.element.find('.tab-actions .save').attr('disabled')).toBeUndefined();
-    expect(this.element.find('.tab-actions .delete').attr('disabled')).toBeUndefined();
+  it('selects the opened locale in the dropdown', function () {
+    this.compileElement();
+    expect(this.element.find('select > [selected]').text()).toBe('name (co-DE)');
   });
 });

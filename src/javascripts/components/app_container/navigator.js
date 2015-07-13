@@ -94,12 +94,7 @@ angular.module('contentful').config([
 
   $stateProvider.state('spaces.detail.entries.detail', {
     url: '/:entryId',
-    params: {
-      addToContext: {
-        value: false,
-        squash: '~'
-      }
-    },
+    params: { addToContext: false },
     ncyBreadcrumb: {
       parent: 'spaces.detail.entries.list',
       label: '{{context.title + (context.dirty ? "*" : "")}}'
@@ -158,12 +153,7 @@ angular.module('contentful').config([
 
   $stateProvider.state('spaces.detail.assets.detail', {
     url: '/:assetId',
-    params: {
-      addToContext: {
-        value: false,
-        squash: '~'
-      }
-    },
+    params: { addToContext: false },
     ncyBreadcrumb: {
       parent: 'spaces.detail.assets.list',
       label: '{{context.title + (context.dirty ? "*" : "")}}'
@@ -368,59 +358,33 @@ angular.module('contentful').config([
     url: '/settings',
     abstract: true,
     template: '<ui-view/>'
-  })
-  .state('spaces.detail.settings.locales', {
+  });
+
+  $stateProvider.state('spaces.detail.settings.locales', {
     url: '/locales',
     abstract: true,
     template: '<ui-view/>'
-  })
-  .state('spaces.detail.settings.locales.list', {
+  });
+
+  $stateProvider.state('spaces.detail.settings.locales.list', {
     url: '',
     ncyBreadcrumb: {
-      label: 'Languages'
+      label: 'Locales'
     },
-    template:
-      '<div cf-locale-list ' +
-        'class="locale-list entity-list">' +
-      '</div>',
-    controller: function () {
-    }
-  })
-  .state('spaces.detail.settings.locales.detail', {
-    url: '/:localeId',
-    params: {
-      addToContext: {
-        value: false,
-        squash: '~'
-      }
-    },
-    template:
-    '<div ' + [
-      'cf-locale-editor',
-      'class="locale-editor entity-editor with-tab-actions"'
-    ].join(' ') + '></div>',
+    template: '<div cf-locale-list class="locale-list entity-list"></div>'
+  });
+
+  var localeEditorState = {
+    template: '<div cf-locale-editor class="workbench"></div>',
     ncyBreadcrumb: {
       parent: 'spaces.detail.settings.locales.list',
       label: '{{context.title + (context.dirty ? "*" : "")}}'
     },
-    resolve: {
-      locale: function ($stateParams, space) {
-        if ($stateParams.localeId === 'new') {
-          return space.newLocale({
-            code: space.getDefaultLocale().code,
-            contentDeliveryApi: false,
-            contentManagementApi: false
-          });
-        }
-        return space.getLocale($stateParams.localeId);
-      }
-    },
-    controller: function ($state, $scope, $stateParams, locale) {
-      $state.current.data = $scope.context = {};
+    controller: ['$state', '$scope', '$stateParams', 'locale', function ($state, $scope, $stateParams, locale) {
+      $scope.context = $state.current.data;
       $scope.locale = locale;
 
-      if (!$scope.$root.contextHistory.length ||
-          $stateParams.addToContext) {
+      if (!$scope.$root.contextHistory.length || $stateParams.addToContext) {
         var index = _.findIndex($scope.$root.contextHistory, function (e) {
           return e.sys.id === $scope.locale.getId();
         });
@@ -429,14 +393,43 @@ angular.module('contentful').config([
         }
         $scope.$root.contextHistory.push($scope.locale);
       }
+    }]
+  };
+
+  $stateProvider.state('spaces.detail.settings.locales.new', _.extend({
+    url: '_new',
+    data: {
+      isNew: true
+    },
+    resolve: {
+      locale: ['$stateParams', 'space', function ($stateParams, space) {
+        return space.newLocale({
+          code: null,
+          contentDeliveryApi: true,
+          contentManagementApi: true
+        });
+      }]
     }
-  })
-  .state('spaces.detail.settings.iframe', {
+  }, localeEditorState));
+
+  $stateProvider.state('spaces.detail.settings.locales.detail', _.extend({
+    url: '/:localeId',
+    params: { addToContext: false },
+    data: {
+      isNew: false
+    },
+    resolve: {
+      locale: ['$stateParams', 'space', function ($stateParams, space) {
+        return space.getLocale($stateParams.localeId);
+      }]
+    }
+  }, localeEditorState));
+
+  $stateProvider.state('spaces.detail.settings.iframe', {
     url: '',
     abstract: true,
     template: '<div cf-space-settings class="space-settings"></div>'
   });
-
 
   $stateProvider.state('spaces.detail.settings.iframe.pathSuffix', {
     url: '/{pathSuffix:PathSuffix}',
@@ -447,14 +440,14 @@ angular.module('contentful').config([
       label: '{{title}}'
     },
     template: '',
-    controller: function ($scope, $stateParams) {
+    controller: ['$scope', '$stateParams', function ($scope, $stateParams) {
       $scope.title = {
         edit: 'Space',
         users: 'Users',
         roles: 'Roles',
         webhook_definitions: 'Webhooks'
       }[$stateParams.pathSuffix];
-    }
+    }]
   });
 
 

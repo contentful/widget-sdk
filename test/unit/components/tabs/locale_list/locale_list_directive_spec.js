@@ -10,6 +10,7 @@ describe('The Locale list directive', function () {
     this.container = null;
     this.compileElement = null;
     this.$q = this.$inject('$q');
+
     this.scope = this.$inject('$rootScope').$new();
     this.scope.spaceContext = {
       space: {
@@ -29,15 +30,12 @@ describe('The Locale list directive', function () {
     this.container.remove();
   });
 
-  describe('the tab header add button', function () {
-    it('is shown', function () {
-      this.compileElement();
-      expect(this.container.find('.tab-header .add-entity .btn--primary')).not.toBeNgHidden();
-    });
+  it('the tab header add button is shown', function () {
+    this.compileElement();
+    expect(this.container.find('.add-entity button')).not.toBeNgHidden();
   });
 
   describe('list of locales', function () {
-    var list;
     beforeEach(function () {
       this.scope.locales = [
         {
@@ -83,18 +81,33 @@ describe('The Locale list directive', function () {
       ];
 
       this.compileElement();
-      list = this.container.find('.main-results tbody');
+      this.list = this.container.find('.main-results-wrapper tbody');
     });
 
     it('list has 4 elements', function () {
-      expect(list.find('tr').length).toBe(4);
+      expect(this.list.find('tr').length).toBe(4);
     });
 
-    it('enabled info is correctly shown', function () {
-      expect(list.find('td.cell-enabled-for a')[0].textContent).toBe('Publishing and editing');
-      expect(list.find('td.cell-enabled-for a')[1].textContent).toBe('Publishing only');
-      expect(list.find('td.cell-enabled-for a')[2].textContent).toBe('Editing only');
-      expect(list.find('td.cell-enabled-for a')[3].textContent).toBe('-');
+    describe('enabled column', function () {
+      beforeEach(function() {
+        this.tableCell = this.list.find('td.cell-enabled-for');
+      });
+
+      it('publishing and editing', function() {
+        expect(this.tableCell.get(0).textContent).toMatch('Publishing and editing');
+      });
+
+      it('publishing only', function() {
+        expect(this.tableCell.get(1).textContent).toMatch('Publishing only');
+      });
+
+      it('editing only', function() {
+        expect(this.tableCell.get(2).textContent).toMatch('Editing only');
+      });
+
+      it('empty', function() {
+        expect(this.tableCell.get(3).textContent).toMatch('-');
+      });
     });
   });
 });

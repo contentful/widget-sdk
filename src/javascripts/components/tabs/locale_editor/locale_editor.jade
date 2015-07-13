@@ -1,60 +1,43 @@
-.tab-header.editor-configuration
-  .tab-header__title
-    h1(title="{{context.title}}")
-      | {{context.title}}
-      a(cf-knowledge-base-icon
-        tooltip="Learn more about Languages in the Knowledge Base Pages"
-        analytics-event="locales"
-        href="https://support.contentful.com/hc/en-us/articles/200513368-What-is-a-Locale-")
+header.workbench-header
+  h1.workbench-header__title(title="{{context.title}}") {{context.title}}
+  .workbench-header__description(ng-show="locale.data.default")
+    p Default locale
 
-.tab-main.tab-workbench
-  .ng-form.l-form(name="localeForm" submit="save()")
-    .l-form-row
-      label
-        | Language and Code
-      .l-form-controls
-        .l-field-editor
-          .joint-field
-            .btn.btn--tertiary.select-box
-              select(ng-model="locale.data.code"
-                      ng-options="item.code as (item.name + ' (' + item.code + ')') for item in locales")
-                | Language
-              i.button-icon-right.fa.fa-caret-down
-            //
-              .field-right
-                button.btn.cfnext-btn-action(ng-if="canSetAsDefault()" ng-click="makeDefault") Make this language default
-                span.info-default Currently, {{getHumanDefault()}} is the default language.
-    .l-form-row
-      label
-        | Options
-      .l-form-controls
-        ul.l-field-editor
-          li
-            label
-              input(type="checkbox" ng-model="locale.data.contentDeliveryApi")
-              | Publish content for this language
-          li
-            label
-              input(type="checkbox" ng-model="locale.data.contentManagementApi")
-              | Enable editing for this language
+.workbench-main
+  form.workbench-main__middle-content(name="localeForm" submit="save()")
+    .cfnext-form__field
+      label Locale and Code
+      select.cfnext-select-box(
+          ng-model="locale.data.code"
+          ng-options="item.code as (item.name + ' (' + item.code + ')') for item in locales")
+        | Locale
+        option(value="") Select a locale
+      i.fa.fa-caret-down.cfnext-select-box-icon
+        // Check the corresponding comment in the controller
+          button.btn.cfnext-btn-action(ng-if="canSetAsDefault()" ng-click="makeDefault") Make this language default
+          span.info-default Currently, {{getHumanDefault()}} is the default language.
+    .cfnext-form__fieldset
+      legend Options
+      .cfnext-form-option
+        input(id="cda" type="checkbox" ng-model="locale.data.contentDeliveryApi" ng-disabled="locale.data.default")
+        label(for="cda") Publish content for this locale
+      .cfnext-form-option
+        input(id="cma" type="checkbox" ng-model="locale.data.contentManagementApi" ng-disabled="locale.data.default")
+        label(for="cma") Enable editing for this locale
 
-.tab-actions
-  .button-set
-    button.btn.btn--secondary.delete(
-      type="button"
-      ng-show="locale.getId()"
-      ng-disabled="requestInProgress"
-      cf-dropdown-toggle="localeEditor.delete")
-      | Delete
-    .delete-confirm(cf-dropdown-menu="localeEditor.delete" cf-dropdown-position="topcenter")
-      p You are about to delete {{context.title}}
-      button.btn.btn--danger(type="button" ng-click="delete()" cf-dropdown-close) Delete 
-      button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete 
-    button.btn.btn--primary.save(
-       type="submit"
-       tooltip="Save this Language"
-       ng-click="save()"
-       ng-disabled="localeForm.$invalid || !localeForm.$dirty || requestInProgress")
-      | Save
-  .rest-save-status
-    | Hit Save to save changes to this Language.
+.workbench-actions
+  button.cfnext-btn-secondary-action.cancel(
+    ng-show="context.isNew"
+    ng-click="cancel()")
+    | Cancel
+  button.cfnext-btn-secondary-action.delete(
+    ng-show="locale.getId() && !locale.data.default"
+    ng-disabled="localeForm.$submitted"
+    ng-click="startDeleteFlow()")
+    | Delete
+  button.cfnext-btn-primary-action(
+     type="submit"
+     tooltip="Save this Locale"
+     ng-click="save()"
+     ng-disabled="localeForm.$invalid || !localeForm.$dirty || localeForm.$submitted")
+    | Save

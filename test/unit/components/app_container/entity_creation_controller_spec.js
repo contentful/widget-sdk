@@ -204,9 +204,7 @@ describe('EntityCreationController', function () {
     });
 
     it('navigates to editor', function () {
-      sinon.assert.calledWith(this.scope.$state.go, 'spaces.detail.settings.locales.detail', {
-        localeId: 'new'
-      });
+      sinon.assert.calledWith(this.scope.$state.go, 'spaces.detail.settings.locales.new');
     });
 
     it('tracks analytics', function () {

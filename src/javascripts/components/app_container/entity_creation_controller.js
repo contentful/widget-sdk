@@ -64,7 +64,7 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
     if (usage) {
       return notification.error(usage);
     }
-    $scope.$state.go('spaces.detail.settings.locales.detail', { localeId: 'new' });
+    $scope.$state.go('spaces.detail.settings.locales.new');
     analytics.track(EVENT_NAME, {
       currentState: $scope.$state.current.name,
       entityType: 'locale'
