@@ -90,6 +90,8 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
     return _.map($scope.displayedFields, 'name').join(', ');
   };
 
+  $scope.getDefaultOrderFieldId = getDefaultOrderFieldId;
+
   return $controller('ListViewsController', {
     $scope: $scope,
     getBlankView: getBlankView,
@@ -120,11 +122,15 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
       contentTypeHidden: false,
       id: null,
       order: {
-        fieldId: updatedAtField.id,
+        fieldId: getDefaultOrderFieldId(),
         direction: DEFAULT_ORDER_DIRECTION
       },
       displayedFieldIds: getDefaultFieldIds()
     };
+  }
+
+  function getDefaultOrderFieldId() {
+    return updatedAtField.id;
   }
 
   function determineFallbackSortField(displayedFieldIds) {

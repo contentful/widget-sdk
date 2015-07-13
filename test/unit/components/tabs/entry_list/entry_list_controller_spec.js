@@ -226,16 +226,43 @@ describe('Entry List Controller', function () {
     });
 
     describe('creates a query object', function() {
-      it('with a defined order', function() {
+      it('with a default order', function() {
         scope.resetEntries();
         scope.$apply();
         expect(scope.spaceContext.space.getEntries.args[0][0].order).toEqual('-sys.updatedAt');
       });
 
+      describe('with a user defined order', function() {
+        beforeEach(function() {
+          scope.spaceContext.getPublishedContentType = sinon.stub();
+          scope.spaceContext.getPublishedContentType.returns({
+            data: {
+              fields: [
+                {id: 'fieldId'}
+              ]
+            }
+          });
+        });
+
+        it('when the field exists', function() {
+          scope.context.view.order.fieldId = 'fieldId';
+          scope.resetEntries();
+          scope.$apply();
+          expect(scope.spaceContext.space.getEntries.args[0][0].order).toEqual('-fields.fieldId.en-US');
+        });
+
+        it('when the field does not exist', function() {
+          scope.context.view.order.fieldId = 'deletedFieldId';
+          scope.resetEntries();
+          scope.$apply();
+          expect(scope.spaceContext.space.getEntries.args[0][0].order).toEqual('-sys.updatedAt');
+        });
+      });
+
       it('with a defined limit', function() {
         scope.resetEntries();
         scope.$apply();
-      getEntries.resolve(entries);
+        getEntries.resolve(entries);
         expect(scope.spaceContext.space.getEntries.args[0][0].limit).toEqual(3);
       });
 
