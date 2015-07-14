@@ -59,6 +59,11 @@
     tabindex="-1"
     tooltip="Insert link to an asset"
     ng-disabled="inPreviewMode()")
+  button.toolbar-button.toolbar-button-flex.md-link-icon(
+    ng-click="insertExternalLink()"
+    tabindex="-1"
+    tooltip="Insert external link"
+    ng-disabled="inPreviewMode()")
   .markdown-modeswitch
     button.toolbar-button.md-right-button.md-preview-icon(
       ng-click="toggleDisplayMode()"

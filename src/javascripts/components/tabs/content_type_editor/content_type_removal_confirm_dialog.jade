@@ -14,13 +14,12 @@
           strong Please keep in mind that you can't restore the content type once it's deleted.
         p
           | If you definitely want to delete this content type, please type its name in the field below:
-        input(ng-model="data.typedContentTypeName", class="cfnext-form__input")
+        input.cfnext-form__input(ng-model="data.typedContentTypeName")
 
     .modal-dialog__controls
       button.cfnext-btn-caution(
-        ng-click="dialog.confirm()",
+        ng-click="dialog.confirm()"
         ng-disabled="data.typedContentTypeName !== data.contentTypeName")
         | Delete
-      button.cfnext-btn-plain(
-        ng-click="dialog.cancel()")
+      button.cfnext-btn-plain(ng-click="dialog.cancel()")
         | Don't delete

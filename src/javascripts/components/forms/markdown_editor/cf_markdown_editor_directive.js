@@ -2,9 +2,9 @@
 
 angular.module('contentful').directive('cfMarkdownEditor', ['$injector', function($injector){
   var $document   = $injector.get('$document');
+  var $rootScope  = $injector.get('$rootScope');
   var $timeout    = $injector.get('$timeout');
   var $window     = $injector.get('$window');
-  var $rootScope  = $injector.get('$rootScope');
   var assetUrl    = $injector.get('$filter')('assetUrl');
   var delay       = $injector.get('delay');
   var keycodes    = $injector.get('keycodes');
@@ -212,10 +212,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       };
 
       scope.insertRule = function () {
-        var range = lineRange();
-        textarea.textrange('replace', range.text + '\n\n___');
-        textarea.textrange('set', range.end, 0);
-        triggerUpdateEvents();
+        insertText('\n\n___');
       };
 
       scope.toggleBlockQuote = function () {
@@ -243,10 +240,18 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         }).promise.then(function (assets) {
           if (_.isEmpty(assets)) return;
           var links = _.map(assets, makeAssetLink).join('\n');
-          var range = lineRange();
-          textarea.textrange('replace', range.text + '\n\n'+links+'\n');
-          textarea.textrange('set', range.end, 0);
-          triggerUpdateEvents();
+          insertText('\n\n'+links+'\n');
+        });
+      };
+
+      scope.insertExternalLink = function() {
+        modalDialog.open({
+          scope: $rootScope.$new(),
+          template: 'insert_external_link_dialog',
+          ignoreEnter: true
+        }).promise.then(function(link) {
+          var markup = makeExternalLink(link);
+          insertText(markup);
         });
       };
 
@@ -257,6 +262,13 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         var lines = entireLines(range);
         textarea.textrange('set', lines.start, lines.length);
         return textarea.textrange('get');
+      }
+
+      function insertText(text) {
+        var range = lineRange();
+        textarea.textrange('replace', range.text + text);
+        textarea.textrange('set', range.end, 0);
+        triggerUpdateEvents();
       }
 
       function mapLines(lines, mapFn) {
@@ -307,6 +319,14 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         } catch (e) {
           return null;
         }
+      }
+
+      function makeExternalLink(link) {
+        var url = encodeURI(link.url);
+        if (link.title) {
+          return '[' + link.title + '](' + url + ')';
+        }
+        return '<' + url + '>';
       }
 
       function localizedAsset(asset, locale) {

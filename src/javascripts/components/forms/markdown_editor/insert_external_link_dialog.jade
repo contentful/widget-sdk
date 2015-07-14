@@ -1,0 +1,22 @@
+.modal-background
+  .modal-dialog.insert-link-dialog(cf-center-on=".modal-background")
+    header.modal-dialog__header
+      h1 Insert external link
+      .close-button(ng-click="dialog.cancel()")
+    form.modal-dialog__content(name="externalLinkForm")
+      .cfnext-form__field
+        label Target URL
+        input.cfnext-form__input--full-size(ng-model="model.url" name="url" type="url" required)
+        .cfnext-form__hint Required. Please include protocol (e.g. <code>http://</code>).
+      .cfnext-form__field
+        label Link label
+        input.cfnext-form__input--full-size(ng-model="model.title" name="title" type="text")
+        .cfnext-form__hint Optional.
+    .modal-dialog__controls
+      button.cfnext-btn-primary-action.modal-dialog__controls-confirm(
+        ng-click="dialog.confirm(model)"
+        ng-disabled="!externalLinkForm.$valid"
+        type="button") Insert
+      button.cfnext-btn-plain(
+        ng-click="dialog.cancel()"
+        type="button") Cancel
