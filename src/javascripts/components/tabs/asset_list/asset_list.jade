@@ -44,6 +44,7 @@
             input(type="checkbox" cf-selection ng-show="assets.length > 0" tabindex="-1")
           th.cell-preview Preview
           th.cell-name Name
+          th.cell-dimensions Dimensions
           th.cell-type Type
           th.cell-updated Updated
           th.cell-author By
@@ -62,6 +63,8 @@
                 span.cf-thumbnail(cf-thumbnail file="file" size="30" ng-if="file")
             td.cell-name
               a.entity-list-link(ui-sref="{{entityNavState}}") {{spaceContext.assetTitle(asset)}}
+            td.cell-dimensions
+              span(ng-bind-html="getAssetDimensions(asset)")
             td.cell-type(ng-init="file=spaceContext.localizedField(asset, 'data.fields.file')")
               a.entity-list-link(ui-sref="{{entityNavState}}")
                 span {{file|fileType}}
@@ -113,8 +116,8 @@
     button.cfnext-btn-secondary-action.delete(type="button" ng-show="showDelete()" cf-dropdown-toggle="assetList.delete") Delete
     .delete-confirm(cf-dropdown-menu="assetList.delete" cf-dropdown-position="topcenter")
       p You are about to delete {{selection.size()}} Assets
-      button.cfnext-btn-caution(type="button" ng-click="deleteSelected()" cf-dropdown-close) Delete 
-      button.cfnext-btn-secondary-action(type="button" cf-dropdown-close) Don't Delete 
+      button.cfnext-btn-caution(type="button" ng-click="deleteSelected()" cf-dropdown-close) Delete
+      button.cfnext-btn-secondary-action(type="button" cf-dropdown-close) Don't Delete
     button.cfnext-btn-secondary-action.archive(type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
     button.cfnext-btn-secondary-action.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
     button.cfnext-btn-secondary-action.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish

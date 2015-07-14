@@ -24,6 +24,7 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
   });
 
   $scope.selection = new Selection();
+  $scope.getAssetDimensions = getAssetDimensions;
 
   $scope.$watch(function pageParameters(scope){
     return {
@@ -122,5 +123,21 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
     return $scope.context.view.searchTerm;
   }
 
-}]);
+  function getAssetDimensions(asset) {
+    var file, width, height;
 
+    // @todo due to buggy implementation, "localizedField" may throw TypeError
+    try {
+      file = $scope.spaceContext.localizedField(asset, 'data.fields.file');
+    } catch (e) {}
+
+    width = dotty.get(file, 'details.image.width', false);
+    height = dotty.get(file, 'details.image.height', false);
+
+    if (width && height) {
+      return width + ' &times; ' + height + '&thinsp;px';
+    }
+    return '&ndash;'; // default to dash
+  }
+
+}]);
