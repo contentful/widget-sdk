@@ -108,14 +108,14 @@
               ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
               cf-when-disabled="permissionController.entityActions.createEntry"
               ng-click="entityCreationController.newEntry(singleContentType)")
-        cf-icon.inverted(name="plus")
+        cf-icon.btn-icon.inverted(name="plus")
         | Add New {{singleContentType.getName()}}
       button.advice__action(
           ng-hide="singleContentType || permissionController.get('createEntry', 'shouldHide')"
           ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
           cf-when-disabled="permissionController.entityActions.createEntry"
           ng-click="showNewContentTypeDialog()")
-        cf-icon.inverted(name="plus")
+        cf-icon.btn-icon.inverted(name="plus")
         | Add New Entry
     a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
       | Visit the Knowledge Base Pages
