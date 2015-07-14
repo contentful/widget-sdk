@@ -77,13 +77,14 @@
             a.u-locked-action(ng-show="!regenerateProductionToken" href="#" cf-dropdown-toggle="apiKeyEditor.productionToken")
               i.fa.fa-lock
               |  Unlock Access Token Regeneration
-              .delete-confirm(cf-dropdown-menu="apiKeyEditor.productionToken" cf-dropdown-position="bottomcenter")
-                h2
-                  i.fa.fa-exclamation-circle
-                  |  Warning
-                p Regenerating the production API access token will break the connection to your apps
-                button.cfnext-btn-caution(type="button" ng-click="regenerateProductionToken=true" cf-dropdown-close) Unlock
-                button.cfnext-btn-secondary-action(type="button" cf-dropdown-close) Cancel
+            .delete-confirm(cf-dropdown-menu="apiKeyEditor.productionToken" cf-dropdown-position="bottomcenter")
+              h2
+                i.fa.fa-exclamation-circle
+                |  Warning
+              p Regenerating the production API access token will break the connection to your apps
+              button.cfnext-btn-caution(type="button" ng-click="regenerateProductionToken=true" cf-dropdown-close) Unlock
+              | &nbsp;
+              button.cfnext-btn-secondary-action(type="button" cf-dropdown-close) Cancel
             a(ng-click="regenerateAccessToken()" ng-show="regenerateProductionToken" href="#")
               i.fa.fa-refresh
               |  Regenerate Access Token
@@ -176,8 +177,8 @@
     button.cfnext-btn-secondary-action.delete(type="button" ng-show="apiKey.getId()" cf-dropdown-toggle="apiKeyEditor.delete") Delete
     .delete-confirm(cf-dropdown-menu="apiKeyEditor.delete" cf-dropdown-position="topcenter")
       p You are about to delete {{context.title}}
-      button.cfnext-btn-caution(type="button" ng-click="delete()" cf-dropdown-close) Delete 
-      button.cfnext-btn-secondary-action(type="button" cf-dropdown-close) Don't Delete 
+      button.cfnext-btn-caution(type="button" ng-click="delete()" cf-dropdown-close) Delete
+      button.cfnext-btn-secondary-action(type="button" cf-dropdown-close) Don't Delete
     button.cfnext-btn-primary-action.save(type="submit"
                  tooltip="Save this API key"
                  ng-click="save()"
