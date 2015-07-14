@@ -44,23 +44,6 @@ angular.module('contentful')
 
   $scope.$watch('locale.getCode()', updateLocaleName);
 
-  /*  TODO: Finish when Gatekeeper support for setting as default is done
-  $scope.getHumanDefault = function () {
-    var defaultLocale = $scope.spaceContext.defaultLocale;
-
-    if (defaultLocale.code === $scope.locale.getCode()) return 'this';
-
-    return defaultLocale.name + ' (' + defaultLocale.code + ')';
-  };
-
-  $scope.canSetAsDefault = function () {
-    return !!$scope.locale.getId() && !$scope.locale.isDefault();
-  };
-
-  $scope.makeDefault = function () {
-  };
-  */
-
   /**
    * @ngdoc method
    * @name LocaleEditorController#startDeleteFlow

@@ -13,9 +13,6 @@ header.workbench-header
         | Locale
         option(value="") Select a locale
       i.fa.fa-caret-down.cfnext-select-box-icon
-        // Check the corresponding comment in the controller
-          button.btn.cfnext-btn-action(ng-if="canSetAsDefault()" ng-click="makeDefault") Make this language default
-          span.info-default Currently, {{getHumanDefault()}} is the default language.
     .cfnext-form__fieldset
       legend Options
       .cfnext-form-option
