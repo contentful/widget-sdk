@@ -202,6 +202,7 @@ angular.module('contentful')
 .controller('FieldDialogAppearanceController',
 ['$scope', '$injector', function ($scope, $injector) {
   var widgets          = $injector.get('widgets');
+  var isPreviewEnabled = dotty.get($scope, 'user.features.showPreview', false);
 
   $scope.defaultWidgetId = widgets.defaultWidgetId($scope.field, $scope.contentType);
   $scope.widgetParams = $scope.widgetSettings.params;
@@ -209,7 +210,7 @@ angular.module('contentful')
   $scope.$watch('widget.options', updateWidgetOptions);
 
   // when widget parameter is changed, filter option list with dependency check
-  widgets.descriptorsForField($scope.field)
+  widgets.descriptorsForField($scope.field, isPreviewEnabled)
   .then(function (available) {
     $scope.availableWidgets = available;
     var selected = _.findIndex(available, {id: $scope.widgetSettings.id});

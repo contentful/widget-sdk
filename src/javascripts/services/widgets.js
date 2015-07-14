@@ -96,9 +96,10 @@ angular.module('contentful')
    * @ngdoc method
    * @name widgets#descriptorsForField
    * @param {API.ContentType.Field} field
+   * @param {boolean} isPreviewEnabled
    * @return {Promise<Array<Widget>>}
    */
-  function descriptorsForField (field) {
+  function descriptorsForField (field, isPreviewEnabled) {
     return typesForField(field)
     .then(function (widgets) {
       widgets = _.map(widgets, _.clone);
@@ -108,7 +109,18 @@ angular.module('contentful')
       return widgets;
     })
     .then(widgetChecks.markDeprecated)
+    .then(removeDeprecatedIf(isPreviewEnabled))
     .then(widgetChecks.markMisconfigured);
+  }
+
+  function removeDeprecatedIf(isPreviewEnabled) {
+    return function (widgets) {
+      if (isPreviewEnabled) { return widgets; }
+
+      return _.filter(widgets, function (widget) {
+        return !_.isObject(widget.deprecation);
+      });
+    };
   }
 
   /**
