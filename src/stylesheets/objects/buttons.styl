@@ -139,6 +139,11 @@ $secondary-button-bg = hsl(0, 0%, 93%)
   a&:hover, a&:link, a&:visited
     color: $secondary-button-color
 
+  > cf-icon[name="plus"]
+    circle
+      fill: $secondary-button-color
+    path
+      stroke: $secondary-button-bg
 
 .cfnext-btn-secondary-action--large
   $cfnext-button-large()
@@ -225,12 +230,12 @@ Styleguide 4.7
 */
 
 $btn-icon()
-  display: block
-  height: 2px
+  display: inline-block
   float: left
-  margin-right: 0.5em
-  margin-top: -1px
-  margin-left: -0.6em
+  margin-right: 0.55em
+  margin-left: -0.7em
+  > svg
+    display: block
 
 .btn-icon
   $btn-icon()
