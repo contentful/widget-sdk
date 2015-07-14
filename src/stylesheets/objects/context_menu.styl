@@ -1,0 +1,107 @@
+/**
+Context Menus
+
+Markup:
+.context-menu.styleguide-noabsolute
+  cf-icon.context-menu__arrow(name="arrow-up")
+    img(src="/app/svg/arrow-up.svg")
+  ul.context-menu__items
+    li Item 1
+    li Item 2
+    li.pseudo-class-hover Hovered
+.context-menu.styleguide-noabsolute
+  cf-icon.context-menu__arrow.x--bottom-left(name="arrow-up")
+    img(src="/app/svg/arrow-up.svg")
+  .context-menu__item Item
+
+Styleguide 11
+*/
+
+$cfnext-caret-size = 12px
+
+$context-menu-item--layout()
+  line-height: 1.2
+  padding: 0.6em 2em 0.6em 1.3em
+  margin-bottom: 0
+  white-space: no-wrap
+  display: flex
+  align-items: center
+  overflow-clip-box: content-box
+  overflow: hidden
+  text-overflow: ellipsis
+
+$context-menu-item()
+  $context-menu-item--layout()
+  cursor: pointer
+
+  &.selected
+    background: $cfnext-light-blue
+
+  &:hover
+    font-weight: bold
+    background: $cfnext-blue
+    color: white
+
+
+$context-menu-base()
+  $layer('dropdown')
+  min-width: 19ex
+  position: absolute
+  padding: 0.3rem 0
+  border: 1px solid #D6DCE4
+  border-radius: 2px
+  background: white
+  box-shadow: 0px 1px 2px 0px hsla(black, 0.1);
+
+
+.context-menu
+  $context-menu-base()
+
+  &__items > *, &__item
+    $context-menu-item()
+
+  &__arrow
+    position: absolute
+    display: flex
+    justify-content: center
+    // TODO should actually be -13px to hide the context menu border
+    top: -12px
+    width: 100%
+
+    &.x--bottom-left
+      top: auto
+      bottom: -12px
+      justify-content: flex-start
+      padding-left: 1em
+      > svg, img
+        transform: rotate(180deg)
+
+/**
+Top Bar Context Menu
+
+Different colors for use in the top bar
+
+Markup:
+.context-menu.x--top-bar.styleguide-noabsolute
+  cf-icon.context-menu__arrow(name="arrow-up")
+    img(src="/app/svg/arrow-up.svg")
+  ul.context-menu__items
+    li Item 1
+    li Item 2
+    li.pseudo-class-hover Hovered
+
+Styleguide 11.1
+*/
+
+$context-menu-top-bar--border = hsl(201, 33%, 66%)
+
+$context-menu-top-bar()
+  background-color: $cfnext-lightest-blue
+  margin-top: 13px
+  border-color: hsl(201, 33%, 66%)
+  > .context-menu__arrow path
+    fill: $cfnext-lightest-blue
+    stroke: $context-menu-top-bar--border
+
+.context-menu.x--top-bar
+  $context-menu-top-bar()
