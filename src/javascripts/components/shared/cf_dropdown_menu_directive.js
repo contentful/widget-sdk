@@ -240,22 +240,14 @@ angular.module('contentful').directive('cfDropdownMenu', ['$document', function(
         var caretDirection = getCaretDirection(pos, info);
         var arrow = $menu.find('[cf-dropdown-arrow]');
         if (caretDirection == 'horizontal') {
-          if(arrow.get(0)){
-            arrow.addClass(info.horizontal + '-aligned');
-          } else {
-            $menu.addClass(info.vertical + '-caret ' + info.horizontal + '-aligned');
-          }
+          arrow.addClass(info.horizontal + '-aligned');
           if (info.vertical == 'top') {
             pos.top += 10;
           } else {
             pos.top -= 10;
           }
         } else if (caretDirection == 'vertical') {
-          if(arrow.get(0)){
-            arrow.addClass(info.vertical+ '-aligned');
-          } else {
-            $menu.addClass(info.horizontal + '-caret ' + info.vertical + '-aligned');
-          }
+          arrow.addClass(info.vertical+ '-aligned');
           if (info.horizontal == 'left') {
             pos.left += 20;
           } else {
