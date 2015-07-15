@@ -215,7 +215,9 @@ function ContentTypeActionsController($scope, $injector) {
 
   function postSaveActions() {
     notification.info(messages.save.success);
-    $scope.contentTypeForm.$setPristine();
+    if ($scope.contentTypeForm) {
+      $scope.contentTypeForm.$setPristine();
+    }
     redirectWhenNew();
     return $scope.contentType;
   }
