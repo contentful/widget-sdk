@@ -20,7 +20,19 @@ angular.module('contentful').controller('LinkEditorController',
 
 
   var validationsPath = $scope.field.type == 'Array' ? 'field.items.validations' : 'field.validations';
-  $scope.$watchCollection(validationsPath, setLinkValidation);
+  $scope.$watchCollection(validationsPath, function(validations) {
+    try {
+      setLinkValidation(validations);
+    } catch (exp) {
+      logger.logError('Error setting link validation.', {
+        data: {
+          exp: exp,
+          msg: exp.message,
+          validations: validations
+        }
+      });
+    }
+  });
 
   $scope.entityStatusController = $controller('EntityStatusController', {$scope: $scope});
 

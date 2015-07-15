@@ -386,6 +386,7 @@ angular.module('contentful').config([
       notification = $injector.get('notification'),
       tokenStore   = $injector.get('tokenStore'),
       spacesStore  = $injector.get('spacesStore'),
+      logger       = $injector.get('logger'),
       // Result of confirmation dialog
       navigationConfirmed = false;
 
