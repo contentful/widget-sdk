@@ -392,167 +392,261 @@ describe('Entry Actions Controller', function () {
       });
     });
 
-
-    describe('fails with a remote validation error', function() {
-      var errors;
+    describe('local validation passes', function() {
       beforeEach(function() {
-        errors = {errors: true};
-        this.actionStub.returns(this.$q.reject({
-          body: {
-            sys: {
-              id: 'ValidationFailed'
-            },
-            details: {
-              errors: errors
-            }
-          }
-        }));
         this.scope.validate.returns(true);
         this.scope.setValidationErrors = sinon.stub();
-        this.scope.publish();
-        this.scope.$apply();
       });
 
-      it('calls validation', function() {
-        sinon.assert.called(this.scope.validate);
-      });
-
-      it('sets validation errors', function() {
-        sinon.assert.calledWith(this.scope.setValidationErrors, errors);
-      });
-
-      it('calls action', function() {
-        sinon.assert.called(this.actionStub);
-      });
-
-      it('shows error notification', function() {
-        sinon.assert.called(this.notification.warn);
-      });
-    });
-
-    describe('fails with an invalid entry error (Validation error)', function() {
-      var errors;
-      beforeEach(function() {
-        errors = {errors: true};
-        this.actionStub.returns(this.$q.reject({
-          body: {
-            message: 'Validation error',
-            sys: {
-              id: 'InvalidEntry'
-            },
-            details: {
-              errors: errors
+      describe('fails with a remote validation error', function() {
+        beforeEach(function() {
+          this.actionStub.returns(this.$q.reject({
+            body: {
+              sys: {
+                id: 'ValidationFailed'
+              },
+              details: {
+                errors: []
+              }
             }
-          }
-        }));
-        this.scope.validate.returns(true);
-        this.scope.setValidationErrors = sinon.stub();
-        this.scope.publish();
-        this.scope.$apply();
+          }));
+          this.scope.publish();
+          this.scope.$apply();
+        });
+
+        it('calls validation', function() {
+          sinon.assert.called(this.scope.validate);
+        });
+
+        it('sets validation errors', function() {
+          sinon.assert.calledWith(this.scope.setValidationErrors, []);
+        });
+
+        it('calls action', function() {
+          sinon.assert.called(this.actionStub);
+        });
+
+        it('shows error notification', function() {
+          sinon.assert.called(this.notification.warn);
+        });
       });
 
-      it('sets validation errors', function() {
-        sinon.assert.calledWith(this.scope.setValidationErrors, errors);
-      });
-    });
-
-    describe('fails with a version mismatch', function() {
-      var errors;
-      beforeEach(function() {
-        errors = {errors: true};
-        this.actionStub.returns(this.$q.reject({
-          body: {
-            sys: {
-              id: 'VersionMismatch'
-            },
-            details: {
-              errors: errors
+      describe('fails with unresolved links', function() {
+        beforeEach(function() {
+          this.actionStub.returns(this.$q.reject({
+            body: {
+              sys: {
+                id: 'UnresolvedLinks'
+              },
+              details: {
+                errors: []
+              }
             }
-          }
-        }));
-        this.scope.validate.returns(true);
-        this.scope.publish();
-        this.scope.$apply();
+          }));
+          this.scope.publish();
+          this.scope.$apply();
+        });
+
+        it('calls validation', function() {
+          sinon.assert.called(this.scope.validate);
+        });
+
+        it('calls action', function() {
+          sinon.assert.called(this.actionStub);
+        });
+
+        it('shows error notification', function() {
+          sinon.assert.called(this.notification.warn);
+        });
+
+        it('gets contextual error message', function() {
+          expect(this.notification.warn.args[0][0]).toMatch(/linked entries/i);
+        });
       });
 
-      it('calls validation', function() {
-        sinon.assert.called(this.scope.validate);
+      describe('fails with a version mismatch', function() {
+        var errors;
+        beforeEach(function() {
+          errors = {errors: true};
+          this.actionStub.returns(this.$q.reject({
+            body: {
+              sys: {
+                id: 'VersionMismatch'
+              },
+              details: {
+                errors: errors
+              }
+            }
+          }));
+          this.scope.publish();
+          this.scope.$apply();
+        });
+
+        it('calls validation', function() {
+          sinon.assert.called(this.scope.validate);
+        });
+
+        it('calls action', function() {
+          sinon.assert.called(this.actionStub);
+        });
+
+        it('shows error notification', function() {
+          sinon.assert.called(this.notification.warn);
+        });
+
+        it('gets contextual error message', function() {
+          expect(this.notification.warn.args[0][0]).toMatch(/version/i);
+        });
       });
 
-      it('calls action', function() {
-        sinon.assert.called(this.actionStub);
+      describe('fails with an invalid entry error (Link validation error)', function() {
+        var errors;
+        beforeEach(function() {
+          errors = [{name: 'linkContentType'}];
+          this.actionStub.returns(this.$q.reject({
+            body: {
+              message: 'Validation error',
+              sys: {
+                id: 'InvalidEntry'
+              },
+              details: {
+                errors: errors
+              }
+            }
+          }));
+          this.scope.publish();
+          this.scope.$apply();
+        });
+
+        it('sets validation errors', function() {
+          sinon.assert.calledWith(this.scope.setValidationErrors, errors);
+        });
+
+        it('gets contextual error message', function() {
+          expect(this.notification.warn.args[0][0]).toMatch(/unexistent content type/i);
+        });
       });
 
-      it('shows error notification', function() {
-        sinon.assert.called(this.notification.warn);
+      describe('fails with an invalid entry error (Link validation error with a given content type)', function() {
+        var errors;
+        beforeEach(function() {
+          this.scope.spaceContext.publishedContentTypes = [
+            {data: {sys: {id: 'contentTypeId'}, name: 'content type name'}}
+          ];
+          errors = [{name: 'linkContentType', details: 'error details contentTypeId', contentTypeId: ['contentTypeId']}];
+          this.actionStub.returns(this.$q.reject({
+            body: {
+              message: 'Validation error',
+              sys: {
+                id: 'InvalidEntry'
+              },
+              details: {
+                errors: errors
+              }
+            }
+          }));
+          this.scope.publish();
+          this.scope.$apply();
+        });
+
+        it('sets validation errors', function() {
+          sinon.assert.calledWith(this.scope.setValidationErrors, errors);
+        });
+
+        it('gets contextual error message', function() {
+          expect(this.notification.warn.args[0][0]).toMatch(/content type name/i);
+        });
       });
 
-      it('gets contextual error message', function() {
-        expect(this.notification.warn.args[0][0]).toMatch(/version/i);
-      });
-    });
+      describe('fails with an invalid entry error (Validation error)', function() {
+        var errors;
+        beforeEach(function() {
+          errors = {errors: true};
+          this.actionStub.returns(this.$q.reject({
+            body: {
+              message: 'Validation error',
+              sys: {
+                id: 'InvalidEntry'
+              },
+              details: {
+                errors: errors
+              }
+            }
+          }));
+          this.scope.publish();
+          this.scope.$apply();
+        });
 
-    describe('fails with a remote error', function() {
-      var errors, err;
-      beforeEach(function() {
-        errors = {errors: true};
-        err = {
-          body: {
-            sys: {
-              id: 'remote error'
-            },
-          }
-        };
-        this.actionStub.returns(this.$q.reject(err));
-        this.scope.validate.returns(true);
-        this.scope.publish();
-        this.scope.$apply();
-      });
+        it('sets validation errors', function() {
+          sinon.assert.calledWith(this.scope.setValidationErrors, errors);
+        });
 
-      it('calls validation', function() {
-        sinon.assert.called(this.scope.validate);
-      });
-
-      it('calls action', function() {
-        sinon.assert.called(this.actionStub);
+        it('gets contextual error message', function() {
+          expect(this.notification.warn.args[0][0]).toMatch(/individual fields/i);
+        });
       });
 
-      it('shows error notification', function() {
-        sinon.assert.called(this.notification.error);
-        sinon.assert.called(this.logger.logServerWarn);
+      describe('fails with a remote error', function() {
+        var errors, err;
+        beforeEach(function() {
+          errors = {errors: true};
+          err = {
+            body: {
+              sys: {
+                id: 'remote error'
+              },
+            }
+          };
+          this.actionStub.returns(this.$q.reject(err));
+          this.scope.publish();
+          this.scope.$apply();
+        });
+
+        it('calls validation', function() {
+          sinon.assert.called(this.scope.validate);
+        });
+
+        it('calls action', function() {
+          sinon.assert.called(this.actionStub);
+        });
+
+        it('shows error notification', function() {
+          sinon.assert.called(this.notification.error);
+          sinon.assert.called(this.logger.logServerWarn);
+        });
+
+        it('gets contextual error message', function() {
+          expect(this.logger.logServerWarn.args[0][1].error).toEqual(err);
+        });
       });
 
-      it('gets contextual error message', function() {
-        expect(this.logger.logServerWarn.args[0][1].error).toEqual(err);
-      });
-    });
+      describe('succeeds', function() {
+        var versionStub;
+        beforeEach(function() {
+          this.actionStub.returns(this.$q.when({entry: true}));
+          this.scope.otUpdateEntity = sinon.stub();
+          versionStub = sinon.stub(this.scope.entry, 'setPublishedVersion');
+          this.scope.publish();
+          this.scope.$apply();
+        });
 
-    describe('succeeds', function() {
-      var versionStub;
-      beforeEach(function() {
-        this.actionStub.returns(this.$q.when({entry: true}));
-        this.scope.validate.returns(true);
-        this.scope.otUpdateEntity = sinon.stub();
-        versionStub = sinon.stub(this.scope.entry, 'setPublishedVersion');
-        this.scope.publish();
-        this.scope.$apply();
+        it('calls validation', function() {
+          sinon.assert.called(this.scope.validate);
+        });
+
+        it('calls action', function() {
+          sinon.assert.called(this.actionStub);
+        });
+
+        it('shows notification', function() {
+          sinon.assert.called(this.notification.info);
+        });
+
+        it('updates ot entity', function() {
+          sinon.assert.calledWith(versionStub, 1);
+        });
       });
 
-      it('calls validation', function() {
-        sinon.assert.called(this.scope.validate);
-      });
-
-      it('calls action', function() {
-        sinon.assert.called(this.actionStub);
-      });
-
-      it('shows notification', function() {
-        sinon.assert.called(this.notification.info);
-      });
-
-      it('updates ot entity', function() {
-        sinon.assert.calledWith(versionStub, 1);
-      });
     });
   });
 
