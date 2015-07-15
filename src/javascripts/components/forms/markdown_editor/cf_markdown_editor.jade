@@ -77,12 +77,18 @@ textarea.form-control.markdown-textarea(
   ot-subdoc
   ot-bind-text
   ng-disabled="!otEditable"
-  ng-hide="inPreviewMode()")
+  ng-if="inEditMode()")
 
 .cf-markdown-guide(cf-markdown-guide ng-if="inEditMode()")
 
 .markdown-preview(
   tabindex="0"
   ng-bind-html="markdownPreview"
-  ng-hide="inEditMode()"
+  ng-if="inPreviewMode()"
   ng-click="enterEditor($event)")
+
+p.form-widget__help-text
+  | {{ counts.textWords }} words, {{ counts.rawChars }} characters
+  span(ng-if="counts.constraints")
+   |  (min required characters: {{ counts.constraints.min || 'none' }},
+   | max allowed characters: {{ counts.constraints.max || 'none' }})
