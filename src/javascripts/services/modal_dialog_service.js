@@ -128,6 +128,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
 
   return {
     open:              openDialog,
+    notify:            notify,
     confirmDeletion:   confirmDeletion,
     openConfirmDialog: openConfirmDialog
   };
@@ -175,6 +176,39 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       template: 'dialog_confirm_deletion',
       attachTo: '.client',
       scope: scope
+    });
+  }
+
+  /**
+   * @ngdoc method
+   * @name modalDialog#notify
+   * @description
+   * Show a message in a dialog with a single 'OK' button.
+   *
+   * The returned promise is resolved when the user clicks 'OK', clicks
+   * on the background or hits 'Enter' or 'Escape'.
+   *
+   * @param {string} message
+   * @returns {Promise<void>}
+   */
+  function notify (message, confirmLabel) {
+    var scope = _.extend($rootScope.$new(), {
+      message: message,
+      confirmLabel: confirmLabel || 'OK'
+    });
+
+    return openConfirmDialog({
+      template: 'dialog_notification',
+      attachTo: '.client',
+      scope: scope,
+      ignoreEnter: false,
+      ignoreEsc: false,
+      noBackgroundClose: false
+    }).then(function () {
+      return;
+    }, function () {
+      // Hitting Escape rejects the promsise
+      return;
     });
   }
 

@@ -1,0 +1,7 @@
+.modal-background.x--position-top
+  .notification-dialog
+    .notification-dialog__message
+      | {{ message }}
+    .notification-dialog__controls
+      button.cfnext-btn-primary-action(ng-click="dialog.confirm()")
+        | {{ confirmLabel }}
