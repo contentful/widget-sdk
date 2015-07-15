@@ -19,9 +19,10 @@
       button.cfnext-btn-secondary-action(cf-dropdown-toggle="assetEditor.view.locale")
         cf-icon.btn-dropdown-icon(name="dd-arrow-down")
         | View
-      .dropdown-menu(cf-dropdown-menu="assetEditor.view.locale" cf-dropdown-position="bottomcenter")
-        ul.lang-switcher
-          li.dropdown-menu-item--label(ng-repeat="locale in spaceContext.privateLocales track by locale.sys.id")
+      .context-menu(cf-dropdown-menu="assetEditor.view.locale" cf-dropdown-position="bottomcenter")
+        cf-icon.context-menu__arrow(name="arrow-up")
+        ul.context-menu__items.lang-switcher
+          li(ng-repeat="locale in spaceContext.privateLocales track by locale.sys.id")
             label
               input.form-control(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
               | {{locale.name}}

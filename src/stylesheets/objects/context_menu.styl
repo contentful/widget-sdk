@@ -68,13 +68,20 @@ $context-menu-base()
     top: -12px
     width: 100%
 
+    &.x--top-right
+      justify-content: flex-end
+      padding-right: 30px
+
+    &.x--bottom,
     &.x--bottom-left
       top: auto
       bottom: -12px
-      justify-content: flex-start
-      padding-left: 1em
       > svg, img
         transform: rotate(180deg)
+
+    &.x--bottom-left
+      justify-content: flex-start
+      padding-left: 1em
 
 /**
 Top Bar Context Menu
