@@ -76,9 +76,11 @@ $workbench-sidebar-width = 20%
 $workbench-content-width = 100% - $workbench-sidebar-width
 $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
 .workbench-main
+  display: flex
   overflow-y: auto
   flex: 1 1 auto
-  display: flex
+  // This hack is required for Safari to grow this element
+  height: 100%;
   padding-top: $rhythm(1)
 
   &__left-sidebar
