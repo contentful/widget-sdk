@@ -27,7 +27,6 @@
         | Add New Asset
       .context-menu(
         cf-dropdown-menu="assetList.add"
-        cf-dropdown-position="bottomcenter"
         container=".view-content")
         cf-icon.context-menu__arrow(name="arrow-up")
         ul.context-menu__items
@@ -101,7 +100,7 @@
         ng-disabled="permissionController.get('createAsset', 'shouldDisable')"
         cf-when-disabled="permissionController.entityActions.createAsset")
         | Create an Asset
-      .context-menu(cf-dropdown-menu="assetList.addFromFrame" cf-dropdown-position="bottomcenter")
+      .context-menu(cf-dropdown-menu="assetList.addFromFrame")
         ul.context-menu__items
           li(ng-click="entityCreationController.newAsset()" cf-dropdown-close)
             | Single Asset

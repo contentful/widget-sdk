@@ -217,6 +217,11 @@ angular.module('contentful').directive('cfDropdownMenu', ['$document', function(
               my: 'center top',
               at: 'center bottom'
             };
+          case 'bottomright':
+            return {
+              my: 'left-39 top',
+              at: 'center bottom'
+            };
           case 'topright':
             return {
               my: 'left-20 bottom',
@@ -224,8 +229,8 @@ angular.module('contentful').directive('cfDropdownMenu', ['$document', function(
             };
           default:
             return {
-              my: 'left top',
-              at: 'left bottom'
+              my: 'center top',
+              at: 'center bottom+3'
             };
         }
       }

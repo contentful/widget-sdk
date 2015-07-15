@@ -19,14 +19,14 @@
       button.cfnext-btn-secondary-action(cf-dropdown-toggle="entryEditor.view")
         cf-icon.btn-dropdown-icon(name="dd-arrow-down")
         | View
-      .context-menu(cf-dropdown-menu="entryEditor.view" cf-dropdown-position="bottomcenter")
-        cf-icon.context-menu__arrow(name="arrow-up")
-        ul.context-menu__items.lang-switcher(ng-show="showLangSwitcher")
-          li(ng-repeat="locale in spaceContext.privateLocales track by locale.sys.id")
-            label
-              input(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
-              | {{locale.name}}
-              span(ng-show="locale == spaceContext.space.getDefaultLocale()") (default)
+      .context-menu(cf-dropdown-menu="entryEditor.view" cf-dropdown-position="bottomright")
+        cf-icon.context-menu__arrow.x--top-right(name="arrow-up")
+        ul.lang-switcher(ng-show="showLangSwitcher")
+          label.context-menu__item(ng-repeat="locale in spaceContext.privateLocales track by locale.sys.id")
+            input(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
+            | {{locale.name}}
+            span(ng-show="locale == spaceContext.space.getDefaultLocale()")
+              | &nbsp;(default)
         .context-menu__item
           label
             input(type="checkbox" ng-model="preferences.showDisabledFields")
