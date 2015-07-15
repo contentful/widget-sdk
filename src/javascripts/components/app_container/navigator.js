@@ -493,11 +493,25 @@ angular.module('contentful').config([
   function navigateToInitialSpace(spaceId) {
     tokenStore.getSpaces().then(function (spaces) {
       var space = determineInitialSpace(spaces, spaceId, spacesStore.getLastUsedSpace());
-      if(space) {
+      if (space) {
         spacesStore.saveSelectedSpace(space.getId());
-        $rootScope.$state.go('spaces.detail', { spaceId: space.getId() });
-      } else {
-        $rootScope.$state.go('spaces.new');
+      }
+
+      try {
+        if (space) {
+          $rootScope.$state.go('spaces.detail', { spaceId: space.getId() });
+        } else {
+          $rootScope.$state.go('spaces.new');
+        }
+      } catch(exp){
+        logger.logError('Error navigating to initial space', {
+          data: {
+            exp: exp,
+            msg: exp.message,
+            spaceId: space ? space.getId() : null,
+            state: $rootScope.$state
+          }
+        });
       }
     });
   }
