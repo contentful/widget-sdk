@@ -16,7 +16,8 @@ angular.module('contentful')
     update:   update,
     validate: validate,
     validateInContentType: validateInContentType,
-    getDisplayName: getDisplayFieldName
+    getDisplayName: getDisplayFieldName,
+    isTitleType: isTitleType
   };
 
 
@@ -25,7 +26,7 @@ angular.module('contentful')
     return _.extend(_.pick(field, fieldProperties), {
       displayName: getDisplayFieldName(field),
       isTitle: isTitle,
-      canBeTitle: isTitleField(field.type),
+      canBeTitle: isTitleType(field.type),
       canBeLocalized: isLocalizable(field.type),
       apiName: field.apiName || field.id
     });
@@ -68,7 +69,7 @@ angular.module('contentful')
     return (apiNames.indexOf(field.apiName) === -1);
   }
 
-  function isTitleField (fieldType) {
+  function isTitleType (fieldType) {
     return fieldType === 'Symbol' || fieldType === 'Text';
   }
 
