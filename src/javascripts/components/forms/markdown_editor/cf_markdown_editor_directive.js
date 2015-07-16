@@ -28,6 +28,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       var toolbar = elem.find('.markdown-toolbar');
       var modeSwitch = elem.find('.markdown-modeswitch');
       var preview = elem.find('.markdown-preview');
+      var validations = dotty.get(scope, 'widget.field.validations', []);
 
       scope.metaKey = /(Mac|Macintosh)/gi.test($window.navigator.userAgent) ? 'Cmd' : 'Ctrl';
 
@@ -339,24 +340,54 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         };
       }
 
-      // Update Preview /////////////////////////////////////
+      // Update preview and counts /////////////////////////////////////
 
-      scope.$watch('displayMode', function () {
-        var source = scope.fieldData.value;
-        if (scope.inPreviewMode() && source) {
-          scope.markdownPreview = marked(source, {renderer: renderer});
-        } else {
-          scope.markdownPreview = null;
-        }
+      scope.$watch('displayMode', function() {
+        updatePreview();
+        updateCounts();
       });
 
-      scope.$watch('fieldData.value', function (source, old, scope) {
-        if (scope.inPreviewMode() && source) {
-          scope.markdownPreview = marked(source, {renderer: renderer});
-        } else {
-          scope.markdownPreview = null;
-        }
+      var timeoutPromise = tick();
+      function tick() {
+        updatePreview();
+        updateCounts();
+        timeoutPromise = $timeout(tick, 500);
+        return timeoutPromise;
+      }
+
+      scope.$on('$destroy', function() {
+        $timeout.cancel(timeoutPromise);
       });
+
+      function updatePreview() {
+        scope.markdownPreview = marked(getFieldRawValue(), {renderer: renderer});
+      }
+
+      function updateCounts() {
+        scope.counts = {
+          rawChars: getFieldRawValue().length,
+          textWords: countWords(getFieldTextValue()),
+          constraints: _(validations).pluck('size').first()
+        };
+      }
+
+      function getFieldRawValue() {
+        return dotty.get(scope, 'fieldData.value', '') || '';
+      }
+
+      function getFieldTextValue() {
+        return htmlToText(scope.markdownPreview || '');
+      }
+
+      function countWords(v) {
+        var words = v.replace(/\s+/gm, ' ').split(' ');
+        words = words.filter(function(word) { return word.length > 0; });
+        return words.length;
+      }
+
+      function htmlToText(v) {
+        return v.replace(/<[^>]+>/gm, '');
+      }
     }
   };
 }]);
