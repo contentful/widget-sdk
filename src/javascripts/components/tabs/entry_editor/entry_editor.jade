@@ -80,7 +80,8 @@
         | More
       .context-menu(
         cf-dropdown-menu="entryEditor.moreActions"
-        cf-dropdown-position="top")
+        cf-dropdown-position="topcenter")
+        cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
         ul
           li.context-menu__item.duplicate(
             ng-show="entityActionsController.canDuplicate()"
