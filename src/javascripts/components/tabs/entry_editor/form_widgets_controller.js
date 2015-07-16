@@ -54,10 +54,13 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
 
   function buildFieldWidget(widget) {
     var field = getFieldForWidget(widget);
-    var locales = _.union(getFieldLocales(field), getErrorLocales(field));
-    locales = _.uniq(locales, 'code');
-    widget.locales = locales;
+
     widget.field = field;
+    widget.locales = _(getFieldLocales(field))
+      .union(getErrorLocales(field))
+      .filter(_.isObject)
+      .uniq('code')
+      .value();
 
     var widgetDescription = widgets.get(widget.widgetId);
     if (widgetDescription){
