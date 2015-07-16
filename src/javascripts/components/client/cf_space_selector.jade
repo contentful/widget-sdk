@@ -1,24 +1,29 @@
 .space-selector.app-top-bar__child.app-top-bar--right-separator(
   ng-show="organizations && organizations.length > 0"
   ng-hide="spaces.length == 0 && !permissionController.canCreateSpaceInAnyOrg()")
-  a.app-top-bar__dropdown-toggle(cf-dropdown-toggle="navbar.spaceSelector" ng-click="clickedSpaceSwitcher()" tabindex="0")
+  a.app-top-bar__dropdown-toggle(
+    cf-dropdown-toggle="navbar.spaceSelector"
+    ng-click="clickedSpaceSwitcher()" tabindex="0")
     span.space-selector__name.u-truncate(ng-bind="spaceContext.space.data.name || 'Spaces'")
     cf-icon.icon-dd-arrow-down(name="dd-arrow-down" size="10")
-  .app-top-bar__dropdown-menu.cfnext-dropdown(cf-dropdown-menu="navbar.spaceSelector" cf-dropdown-position="fixed")
-    cf-icon.cfnext-dropdown__arrow.center-aligned(cf-dropdown-arrow name="arrow-up")
-    ul.space-selector__list.cfnext-dropdown__list--first
-      li.cfnext-dropdown__item--group(ng-repeat="(orgId, org) in spacesByOrg" ng-class="{'has-no-action': canSelectOrg(orgId)}")
-        span.cfnext-dropdown__group-label.space-selector__group-label {{getOrgName(orgId)}}
-        ul.cfnext-dropdown__inner-list
-          li.space-selector__item.cfnext-dropdown__item(ng-repeat="space in org track by space.getId()"
-              cf-click-local="selectSpace(space) && broadcastFromRoot('dropdownToggle', 'navbar.spaceSelector')"
-              ng-class="{hibernated: space.isHibernated(), selected: space.getId() === getCurrentSpaceId()}"
-              ng-disabled="!space.isHibernated()"
-              tooltip-container=".project" tooltip-placement="left"
-              tooltip="This space entered hibernation due to lack of use. It will be back online soon.")
-            span {{space.data.name}}
-            i.fa.fa-circle(ng-show="space.isHibernated()")
-    ul.space-selector__list(ng-show="permissionController.canCreateSpace()" ng-class="_.keys(spacesByOrg).length > 0 ? 'cfnext-dropdown__list' : 'cfnext-dropdown__list--first'")
-      li.cfnext-dropdown__item(ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" cf-dropdown-close)
-        cf-icon(name="plus")
-        | Add new Space
+
+  .space-selector__menu(
+    cf-dropdown-menu="navbar.spaceSelector"
+    cf-dropdown-position="fixed")
+    cf-icon.context-menu__arrow(cf-dropdown-arrow name="arrow-up")
+    .space-selector__orgs(ng-if="hasSpaces")
+      .space-selector__group(ng-repeat="(orgId, org) in spacesByOrg")
+        .space-selector__group-label
+          | {{getOrgName(orgId)}}
+        .context-menu__item(
+          ng-repeat="space in org track by space.getId()"
+          cf-click-local="selectSpace(space) && broadcastFromRoot('dropdownToggle', 'navbar.spaceSelector')"
+          ng-class="{selected: isCurrentSpace(space)}")
+          | {{space.data.name}}
+    .space-selector__group
+      .context-menu__item(
+        ng-show="permissionController.canCreateSpace()"
+        ng-click="showCreateSpaceDialog()"
+        cf-dropdown-close)
+          cf-icon.space-selector__add-icon(name="plus")
+          | Add new Space

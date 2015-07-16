@@ -77,7 +77,7 @@
             a.u-locked-action(ng-show="!regenerateProductionToken" href="#" cf-dropdown-toggle="apiKeyEditor.productionToken")
               i.fa.fa-lock
               |  Unlock Access Token Regeneration
-            .delete-confirm(cf-dropdown-menu="apiKeyEditor.productionToken" cf-dropdown-position="bottomcenter")
+            .delete-confirm(cf-dropdown-menu="apiKeyEditor.productionToken")
               h2
                 i.fa.fa-exclamation-circle
                 |  Warning
@@ -180,10 +180,9 @@
       button.cfnext-btn-caution(type="button" ng-click="delete()" cf-dropdown-close) Delete
       button.cfnext-btn-secondary-action(type="button" cf-dropdown-close) Don't Delete
     button.cfnext-btn-primary-action.save(type="submit"
-                 tooltip="Save this API key"
-                 ng-click="save()"
-                 cf-when-disabled="permissionController.entityActions.createApiKey"
-                 ng-disabled="apiKeyForm.$invalid || permissionController.get('createApiKey', 'shouldDisable')")
+      ng-click="save()"
+      cf-when-disabled="permissionController.entityActions.createApiKey"
+      ng-disabled="apiKeyForm.$invalid || permissionController.get('createApiKey', 'shouldDisable')")
       | Save
   .rest-save-status
     | Hit Save to save changes to this API Key.

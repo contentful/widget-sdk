@@ -176,11 +176,15 @@ button.cfnext-btn-action
 
 Styleguide 4.5
 */
-.cfnext-btn-plain
+$cfnext-button-plain()
   background: none
   $cfnext-button-layout()
   color: $cfnext-blue;
   outline: 0
+
+.cfnext-btn-plain
+  $cfnext-button-plain()
+
 
 /**
 Inline button

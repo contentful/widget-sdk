@@ -1,35 +1,67 @@
+$space-selector--min-width = 11rem
+
 .space-selector
   position: relative
-  min-width: 170px
+  min-width: $space-selector--min-width
   max-width: 200px
   &__name
     display: block
     width: inherit
-  &__dropdown
-    left: 0
-  &__list
-    $scroll-vertically(500px)
-    &.cfnext-dropdown__list,
-    &.cfnext-dropdown__list--first
-      margin-bottom: 0
-  &__group-label
-    text-transform: uppercase
-    letter-spacing: 0.1em
-    font-size: 0.8em
-    font-weight: bold
-  .selected
-    .icon-checkmark
-      display: inline-block
-      position: relative
-      margin-left: 4px
-      img
-        position: relative
-        top: 3px
-  .fa-circle
-    margin-left: 5px
 
 @media (max-width: $nav-bar-break-width)
   .space-selector
     width: 120px
     min-width: 120px
     max-width: 120px
+
+/**
+Space Selector Context Menu
+
+Markup:
+.space-selector__menu.styleguide-noabsolute
+  cf-icon.context-menu__arrow(name="arrow-up")
+    img(src="/app/svg/arrow-up.svg")
+  .space-selector__group
+    .space-selector__group-label Group Label
+    ul.context-menu__items
+      li Item 1
+      li.selected Selected
+  .space-selector__group
+    .space-selector__group-label Another Group
+    .context-menu__item Item 2
+  .space-selector__group
+    .context-menu__item Item 1
+
+Styleguide 11.2
+*/
+
+.space-selector
+  &__menu
+    $context-menu-base()
+    $context-menu-top-bar()
+    width: $space-selector--min-width
+    padding: 0
+
+  &__orgs
+    $scroll-vertically(50vh)
+    box-shadow: inset 0 0 0 0 hsla(black, 0.3)
+
+  &__group
+    border-top: 1px solid $context-menu-top-bar--border
+    padding: 0.3rem 0
+    &:first-of-type
+      border-top: 0
+
+  &__group-label
+    $context-menu-item--layout()
+    margin: 0.3rem 0 0.2rem
+    font-size: 0.8em
+    text-transform: uppercase
+    letter-spacing: 0.1em
+    font-weight: bold
+
+  &__add-icon
+    margin-right: 0.6em
+    transform: scale(1.3)
+    > svg
+      display: block

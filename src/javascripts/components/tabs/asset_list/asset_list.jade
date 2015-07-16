@@ -25,11 +25,14 @@
         cf-icon.btn-icon.inverted(name="plus")
         cf-icon.btn-dropdown-icon(name="dd-arrow-down")
         | Add New Asset
-      .dropdown-menu(cf-dropdown-menu="assetList.add" cf-dropdown-position="bottomcenter" container=".view-content")
-        ul.add-entity__list
-          li.dropdown-menu-item.type(ng-click="entityCreationController.newAsset()" cf-dropdown-close)
+      .context-menu(
+        cf-dropdown-menu="assetList.add"
+        container=".view-content")
+        cf-icon.context-menu__arrow(name="arrow-up")
+        ul.context-menu__items
+          li(ng-click="entityCreationController.newAsset()" cf-dropdown-close)
             | Single Asset
-          li.dropdown-menu-item.type(ng-click="createMultipleAssets()" cf-dropdown-close)
+          li(ng-click="createMultipleAssets()" cf-dropdown-close)
             | Multiple Assets
 
 .tab-main(ng-show="assets.length > 0 || hasQuery()")
@@ -97,13 +100,11 @@
         ng-disabled="permissionController.get('createAsset', 'shouldDisable')"
         cf-when-disabled="permissionController.entityActions.createAsset")
         | Create an Asset
-      .dropdown-menu(cf-dropdown-menu="assetList.addFromFrame" cf-dropdown-position="bottomcenter")
-        ul.add-entity__list
-          li.dropdown-menu-item.type(ng-click="entityCreationController.newAsset()" cf-dropdown-close)
-            i.fa.fa-plus
+      .context-menu(cf-dropdown-menu="assetList.addFromFrame")
+        ul.context-menu__items
+          li(ng-click="entityCreationController.newAsset()" cf-dropdown-close)
             | Single Asset
-          li.dropdown-menu-item.type(ng-click="createMultipleAssets()" cf-dropdown-close)
-            i.fa.fa-plus
+          li(ng-click="createMultipleAssets()" cf-dropdown-close)
             | Multiple Assets
     a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
       | Visit the Knowledge Base Pages

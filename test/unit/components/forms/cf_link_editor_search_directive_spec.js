@@ -70,18 +70,6 @@ describe('cfLinkEditorSearch Directive', function () {
       expect(newButton.get(0)).toBeDefined();
     });
 
-    it('has dropdown menu', function () {
-      expect(element.find('.dropdown-menu').get(0)).toBeDefined();
-    });
-
-    it('has menu elements', function () {
-      expect(element.find('.dropdown-menu li').get(0)).toBeDefined();
-    });
-
-    it('has action on menu elements', function () {
-      expect(element.find('.dropdown-menu li').attr('ng-click')).toMatch('addNewEntry');
-    });
-
     it('gets the name of the content type', function () {
       expect(element.text()).toMatch('Herp');
       expect(element.text()).toMatch('Derp');

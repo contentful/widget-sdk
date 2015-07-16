@@ -41,11 +41,12 @@
         cf-icon.btn-icon.inverted(name="plus")
         cf-icon.btn-dropdown-icon(name="dd-arrow-down")
         | Add New Entry
-      .dropdown-menu(cf-dropdown-menu="entryList.add" cf-dropdown-position="bottomcenter")
-        ul.add-entity__list
-          li.dropdown-menu-item.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
-                   ng-click="entityCreationController.newEntry(contentType)"
-                   cf-dropdown-close)
+      .context-menu(cf-dropdown-menu="entryList.add")
+        cf-icon.context-menu__arrow(name="arrow-up")
+        ul.context-menu__items
+          li(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
+            ng-click="entityCreationController.newEntry(contentType)"
+            cf-dropdown-close)
             | {{contentType.getName()}}
 
 .tab-main(ng-show="entries.length > 0 || hasQuery()")
