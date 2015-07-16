@@ -5,7 +5,7 @@ angular.module('contentful').factory('TheStore', ['$injector', function($injecto
   var localStorageStore = $injector.get('TheStore/localStorageStore');
   var cookieStore       = $injector.get('TheStore/cookieStore');
 
-  var storage = _hasLocalStorage() ? localStorageStore : cookieStore;
+  var storage = localStorageStore.isSupported() ? localStorageStore : cookieStore;
 
   return {
     set: set,
@@ -14,9 +14,9 @@ angular.module('contentful').factory('TheStore', ['$injector', function($injecto
     has: has
   };
 
-  function set(key, value, expires) {
+  function set(key, value) {
     value = _.isString(value) ? value : JSON.stringify(value);
-    storage.set(key, value, expires);
+    storage.set(key, value);
   }
 
   function get(key) {
@@ -35,27 +35,17 @@ angular.module('contentful').factory('TheStore', ['$injector', function($injecto
   function has(key) {
     return get(key) !== null;
   }
-
-  function _hasLocalStorage() {
-    var now = 'tmp/' + (new Date()).getTime();
-    try {
-      window.localStorage.setItem(now, now);
-      window.localStorage.removeItem(now);
-      return true;
-    } catch (ex) {
-      return false;
-    }
-  }
 }]);
 
-angular.module('contentful').factory('TheStore/localStorageStore', function() {
+angular.module('contentful').factory('TheStore/localStorageStore', ['$injector', function($injector) {
 
-  var storage = window.localStorage;
+  var storage = $injector.get('TheStore/localStorageWrapper');
 
   return {
     set: set,
     get: get,
-    remove: remove
+    remove: remove,
+    isSupported: isSupported
   };
 
   function set(key, value) {
@@ -69,13 +59,37 @@ angular.module('contentful').factory('TheStore/localStorageStore', function() {
   function remove(key) {
     storage.removeItem(key);
   }
+
+  function isSupported() {
+    try {
+      set('test', { test: true });
+      remove('test');
+      return true;
+    } catch (ex) {
+      return false;
+    }
+  }
+}]);
+
+angular.module('contentful').factory('TheStore/localStorageWrapper', function() {
+
+  var wrapper = {};
+  var methods = ['setItem', 'getItem', 'removeItem'];
+
+  _.forEach(methods, function(method) {
+    wrapper[method] = function() {
+      var args = Array.prototype.slice.call(arguments);
+      window.localStorage[method].apply(window.localStorage, args);
+    };
+  });
+
+  return wrapper;
 });
 
 angular.module('contentful').factory('TheStore/cookieStore', ['$injector', function($injector) {
 
-  var Cookies     = $injector.get('Cookies');
-  var environment = $injector.get('environment').env;
-  var baseAttrs   = { secure: environment !== 'development' };
+  var Cookies = $injector.get('Cookies');
+  var config  = $injector.get('environment');
 
   return {
     set: set,
@@ -84,7 +98,7 @@ angular.module('contentful').factory('TheStore/cookieStore', ['$injector', funct
   };
 
   function set(key, value) {
-    var attrs = _.extend({ expires: moment().add(1, 'y') }, baseAttrs);
+    var attrs = _.extend({ expires: 365 }, _getBaseAttrs());
     Cookies.set(key, value, attrs);
   }
 
@@ -93,6 +107,10 @@ angular.module('contentful').factory('TheStore/cookieStore', ['$injector', funct
   }
 
   function remove(key) {
-    Cookies.remove(key, baseAttrs);
+    Cookies.remove(key, _getBaseAttrs());
+  }
+
+  function _getBaseAttrs() {
+    return { secure: config.env !== 'development' };
   }
 }]);
