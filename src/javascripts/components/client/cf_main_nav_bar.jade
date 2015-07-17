@@ -1,5 +1,5 @@
 nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
-  ul.nav-bar__list(ng-show="!locationInAccount && spaces.length > 0 && spaceContext.space && !spaceContext.space.isHibernated()")
+  ul.nav-bar__list(ng-show="spaces.length > 0 && spaceContext.space && !spaceContext.space.isHibernated()")
     li.app-top-bar__action.nav-bar__list-item(
       ng-if="canNavigateTo.contentType")
       a.nav-bar__link(

@@ -6,19 +6,18 @@
     ng-click="clickedSpaceSwitcher()" tabindex="0")
     span.space-selector__name.u-truncate(ng-bind="spaceContext.space.data.name || 'Spaces'")
     cf-icon.icon-dd-arrow-down(name="dd-arrow-down" size="10")
-
   .space-selector__menu(
     cf-dropdown-menu="navbar.spaceSelector"
     cf-dropdown-position="fixed")
     cf-icon.context-menu__arrow(cf-dropdown-arrow name="arrow-up")
-    .space-selector__orgs(ng-if="hasSpaces")
-      .space-selector__group(ng-repeat="(orgId, org) in spacesByOrg")
+    .space-selector__orgs(ng-if="spaces.length > 0")
+      .space-selector__group(ng-repeat="(orgId, org) in spacesByOrganization")
         .space-selector__group-label
-          | {{getOrgName(orgId)}}
+          | {{getOrganizationName(orgId)}}
         .context-menu__item(
           ng-repeat="space in org track by space.getId()"
-          cf-click-local="selectSpace(space) && broadcastFromRoot('dropdownToggle', 'navbar.spaceSelector')"
-          ng-class="{selected: isCurrentSpace(space)}")
+          cf-click-local="selectSpace(space)"
+          ng-class="{selected: space.getId() === getCurrentSpaceId()}")
           | {{space.data.name}}
     .space-selector__group
       .context-menu__item(

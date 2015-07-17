@@ -3,7 +3,6 @@
 angular.module('contentful').controller('ClientController', ['$scope', '$injector', function ClientController($scope, $injector) {
   var $rootScope         = $injector.get('$rootScope');
   var $controller        = $injector.get('$controller');
-  var $window            = $injector.get('$window');
   var $timeout           = $injector.get('$timeout');
   var $location          = $injector.get('$location');
   var features           = $injector.get('features');
@@ -20,6 +19,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var enforcements       = $injector.get('enforcements');
   var revision           = $injector.get('revision');
   var ReloadNotification = $injector.get('ReloadNotification');
+  var TheAccountView     = $injector.get('TheAccountView');
 
   $controller('TrialWatchController', {$scope: $scope});
 
@@ -44,27 +44,20 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     };
   }, spaceAndTokenWatchHandler);
 
-  $scope.$watch('spaces', spacesWatchHandler);
   $scope.$watch('user', userWatchHandler);
 
   $scope.$on('iframeMessage', iframeMessageWatchHandler);
   $scope.$on('$stateChangeSuccess', stateChangeSuccessHandler);
 
+  // @todo remove it - temporary proxy event handlers
+  $scope.$on('showCreateSpaceDialog', function(e, id) { showCreateSpaceDialog(id); });
+  $scope.$on('selectSpace', function(e, space) { selectSpace(space); });
+
   $scope.initClient = initClient;
   $scope.setTokenDataOnScope = setTokenDataOnScope;
-  $scope.clickedSpaceSwitcher = clickedSpaceSwitcher;
   $scope.getCurrentSpaceId = getCurrentSpaceId;
   $scope.selectSpace = selectSpace;
-  $scope.selectOrg = selectOrg;
-  $scope.getOrgName = getOrgName;
-  $scope.logout = logout;
-  $scope.openSupport = openSupport;
-  $scope.openIntercom = openIntercom;
-  $scope.isIntercomLoaded = isIntercomLoaded;
-  $scope.clickedProfileButton = clickedProfileButton;
-  $scope.goToAccount = goToAccount;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
-  $scope.broadcastFromRoot = broadcastFromRoot;
 
   function initClient() {
     tokenStore.getUpdatedToken()
@@ -88,11 +81,10 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function stateChangeSuccessHandler(event, toState, toStateParams, fromState, fromStateParams) {
-    $scope.locationInAccount = $scope.$state.includes('account');
-
+    TheAccountView.check();
     analytics.stateActivated(toState, toStateParams, fromState, fromStateParams);
 
-    if ($scope.spaces !== null && $scope.$stateParams.spaceId !== $scope.getCurrentSpaceId() && !$scope.locationInAccount) {
+    if ($scope.spaces !== null && $scope.$stateParams.spaceId !== $scope.getCurrentSpaceId() && !TheAccountView.isActive()) {
       var space = spacesStore.getSpaceFromList($scope.$stateParams.spaceId, $scope.spaces);
       if (space) {
         setSpaceContext(space);
@@ -122,12 +114,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
         logger.disable();
         analytics.disable();
       }
-    }
-  }
-
-  function spacesWatchHandler(spaces, old, scope) {
-    if(spaces) {
-      scope.spacesByOrg = groupSpacesByOrg(spaces);
     }
   }
 
@@ -210,7 +196,9 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     if(!space){
       return notification.warn('Selected space does not exist');
     }
-    if (!$scope.locationInAccount && $scope.getCurrentSpaceId() === space.getId()) return true;
+    if (!TheAccountView.isActive() && $scope.getCurrentSpaceId() === space.getId()) {
+      return true;
+    }
     analytics.track('Switched Space', {
       spaceId: space.getId(),
       spaceName: space.data.name
@@ -218,36 +206,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     spacesStore.saveSelectedSpace(space.getId());
     $scope.$state.go('spaces.detail', { spaceId: space.getId() });
     return true;
-  }
-
-  function selectOrg(orgId) {
-    if(!$scope.permissionController.canSelectOrg(orgId)) return false;
-    var org = getOrgById(orgId);
-    analytics.track('Switched Organization', {
-      organizationId: orgId,
-      organizationName: getOrgName(orgId)
-    });
-    $scope.$state.go('account.pathSuffix', { pathSuffix: 'organizations/' + orgId + '/' + (isOrgOwner(org) ? 'edit' : 'usage') });
-    return true;
-  }
-
-  function groupSpacesByOrg(spaces) {
-    return _.groupBy(spaces, function(space){
-      try {
-        return space.data.organization.sys.id;
-      } catch(exp) {
-        logger.logError('Client controller space organizations exception', {
-          data: {
-            space: space,
-            exp: exp
-          }
-        });
-      }
-    });
-  }
-
-  function clickedSpaceSwitcher() {
-    analytics.track('Clicked Space-Switcher');
   }
 
   function newVersionCheck() {
@@ -282,52 +240,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     return $scope.spaceContext &&
            $scope.spaceContext.space &&
            $scope.spaceContext.space.getId();
-  }
-
-  function getOrgName(orgId) {
-    var org = getOrgById(orgId);
-    if(org){
-      return org.name;
-    }
-    return '';
-  }
-
-  function getOrgById(id) {
-    var query = _.where($scope.organizations, {sys: {id: id}});
-    if(query.length > 0){
-      return query[0];
-    }
-    return null;
-  }
-
-  function isOrgOwner(org) {
-    return dotty.get(org, 'sys.createdBy.sys.id') === dotty.get($scope.user, 'sys.id');
-  }
-
-  function logout() {
-    analytics.track('Clicked Logout');
-    authentication.logout();
-  }
-
-  function openSupport() {
-    $window.open(authentication.supportUrl());
-  }
-
-  function isIntercomLoaded() {
-    return !!$window.Intercom;
-  }
-
-  function openIntercom() {
-    if($window.Intercom)
-      $window.Intercom('showNewMessage');
-  }
-
-  function clickedProfileButton() {
-    analytics.track('Clicked Profile Button');
-  }
-
-  function goToAccount(pathSuffix, options) {
-    $scope.$state.go('account.pathSuffix', { pathSuffix: pathSuffix }, options);
   }
 
   function showCreateSpaceDialog(organizationId) {
@@ -387,9 +299,4 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       }, 1000);
     }
   }
-
-  function broadcastFromRoot() {
-    $rootScope.$broadcast.apply($rootScope, arguments);
-  }
-
 }]);
