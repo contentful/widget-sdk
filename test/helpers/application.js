@@ -21,9 +21,9 @@ angular.module('contentful/test', ['contentful', 'contentful/mocks'])
 
   sinon.stub.rejects = function (err) {
     return this.returns($q.reject(err));
-  }
+  };
 
   sinon.stub.resolves = function (value) {
-    return this.returns($q.reject(value));
-  }
-}])
+    return this.returns($q.when(value));
+  };
+}]);
