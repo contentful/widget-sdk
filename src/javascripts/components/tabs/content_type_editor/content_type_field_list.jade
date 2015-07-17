@@ -4,11 +4,11 @@ mixin actions-dropdown
     cf-dropdown-position="bottomcenter")
     cf-icon.context-menu__arrow(cf-dropdown-arrow name="arrow-up" size="15")
     ul.context-menu__items
-      li(role="button" ng-click="fieldController.toggleDisable()" cf-dropdown-close)
-        | {{ field.disabled ? 'Enable' : 'Disable' }}
       li(role="button" ng-click="fieldController.setAsTitle()" ng-if="fieldCanBeTitle" cf-dropdown-close)
         | Set field as Entry title
-      li(role="button" ng-if="!isPublished" ng-click="fieldController.deleteField()")
+      li(role="button" ng-click="fieldController.toggleDisable()" cf-dropdown-close)
+        | {{ field.disabled ? 'Enable' : 'Disable' }}
+      li(role="button" ng-click="fieldController.deleteField()")
         | Delete
 
 

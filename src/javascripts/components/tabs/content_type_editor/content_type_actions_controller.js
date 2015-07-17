@@ -46,7 +46,7 @@ function ContentTypeActionsController($scope, $injector) {
    * @name ContentTypeActionsController#startDeleteFlow
    */
   controller.startDeleteFlow = function startDeleteFlow() {
-    countEntries().then(function(count) {
+    $scope.ctEditorController.countEntries().then(function(count) {
       if (count > 0) {
         forbidRemoval(count);
         return;
@@ -59,14 +59,6 @@ function ContentTypeActionsController($scope, $injector) {
 
     }, removalErrorHandler);
   };
-
-  function countEntries() {
-    return $scope.spaceContext.space.getEntries({
-      content_type: $scope.contentType.data.sys.id
-    }).then(function(response) {
-      return response.length;
-    });
-  }
 
   function forbidRemoval(count) {
     var dialogScope = prepareRemovalDialogScope();
@@ -169,7 +161,21 @@ function ContentTypeActionsController($scope, $injector) {
       return $q.reject();
     }
 
-    return $scope.contentType.save()
+    var unpublish;
+    if (hasFieldRemoved($scope.contentType)) {
+      var oldData = $scope.contentType.data;
+      unpublish = $scope.contentType.unpublish().then(function (published) {
+        oldData.sys = published.data.sys;
+        $scope.contentType.data = oldData;
+      });
+    } else {
+      unpublish = $q.when();
+    }
+
+    return unpublish
+    .then(function () {
+      return $scope.contentType.save();
+    })
     .then(publishContentType)
     .then(saveEditingInterface)
     .then(postSaveActions, triggerApiErrorNotification);
@@ -191,12 +197,25 @@ function ContentTypeActionsController($scope, $injector) {
     return contentType.publish(version)
     .then(function (published) {
       contentType.setPublishedVersion(version);
+      $scope.publishedContentType = published;
       $scope.updatePublishedContentType(published);
       $scope.spaceContext.registerPublishedContentType(published);
       $scope.spaceContext.refreshContentTypes();
 
       return contentType;
     });
+  }
+
+  function hasFieldRemoved (contentType) {
+    var newFields = _.map(contentType.data.fields, 'id');
+    var publishedCT = $scope.publishedContentType;
+    if (!publishedCT) {
+      return false;
+    }
+
+    var publishedFields = _.map(dotty.get(publishedCT, 'data.fields'), 'id');
+    var diff = _.difference(publishedFields, newFields);
+    return diff.length > 0;
   }
 
   function saveEditingInterface(contentType) {
@@ -263,4 +282,3 @@ function ContentTypeActionsController($scope, $injector) {
   }
 
 }]);
-

@@ -229,6 +229,62 @@ describe('ContentType Actions Controller', function () {
         sinon.assert.called(scope.$state.go, 'spaces.detail.content_types.detail', {contentTypeId: 'typeid'});
       });
     });
+
+    describe('field removal', function () {
+
+      beforeEach(function () {
+        var published = { data: {fields: [{id: 'A'}]} };
+        scope.publishedContentType = published;
+        scope.contentType.unpublish = sinon.stub().resolves(published);
+      });
+
+      pit('unpublishes content type', function () {
+        return controller.save()
+        .then(function () {
+          sinon.assert.callOrder(
+            scope.contentType.unpublish,
+            scope.contentType.save,
+            scope.contentType.publish
+          );
+        });
+      });
+
+      pit('does not unpublish if no field removed', function () {
+        scope.contentType.data.fields = [{id: 'A'}, {id: 'B'}];
+        return controller.save()
+        .then(function () {
+          sinon.assert.notCalled(scope.contentType.unpublish);
+        });
+      });
+
+      describe('after unpublishing', function () {
+        pit('retains local content type data', function () {
+          var $q = this.$inject('$q');
+          scope.contentType.data = 'LOCAL';
+          scope.contentType.unpublish = function () {
+            this.data = 'UNPULBISHED';
+            return $q.when(this);
+          };
+          return controller.save()
+          .then(function () {
+            expect(scope.contentType.data).toEqual('LOCAL');
+          });
+        });
+
+        pit('updates version', function () {
+          var $q = this.$inject('$q');
+          scope.contentType.data = {};
+          scope.contentType.unpublish = function () {
+            this.data = {sys: 'NEW SYS'};
+            return $q.when(this);
+          };
+          return controller.save()
+          .then(function () {
+            expect(scope.contentType.data.sys).toEqual('NEW SYS');
+          });
+        });
+      });
+    });
   });
 
   describe('controller.canSave()', function () {
