@@ -113,60 +113,6 @@ describe('ContentType Actions Controller', function () {
     sinon.assert.called(scope.$state.go, '^.list');
   });
 
-  describe('when unpublishing', function() {
-    beforeEach(function() {
-      this.actionStub = sinon.stub(contentType, 'unpublish').returns(this.actionDeferred.promise);
-    });
-
-    describe('fails with an error', function() {
-      beforeEach(function() {
-        this.actionDeferred.reject({body: {message: ''}});
-        controller.unpublish();
-        scope.$apply();
-      });
-
-      it('calls action', function() {
-        sinon.assert.called(this.actionStub);
-      });
-
-      it('captures server error', function() {
-        sinon.assert.called(logger.logServerWarn);
-      });
-    });
-
-    describe('succeeds', function() {
-      beforeEach(function() {
-        this.actionDeferred.resolve({contentType: true});
-        this.unregisterPublishedContentTypeStub = sinon.stub(scope.spaceContext, 'unregisterPublishedContentType');
-        scope.updatePublishedContentType = this.updatePublishedContentTypeStub;
-        this.refreshContentTypesStub = sinon.stub(scope.spaceContext, 'refreshContentTypes');
-        controller.unpublish();
-        scope.$apply();
-      });
-
-      it('calls action', function() {
-        sinon.assert.called(this.actionStub);
-      });
-
-      it('tracks analytics event', function() {
-        sinon.assert.called(stubs.track);
-      });
-
-      it('updated published content type', function() {
-        sinon.assert.called(this.updatePublishedContentTypeStub);
-      });
-
-      it('unregisters published content type', function() {
-        sinon.assert.called(this.unregisterPublishedContentTypeStub);
-      });
-
-      it('refreshes content types', function() {
-        sinon.assert.called(this.refreshContentTypesStub);
-      });
-    });
-  });
-
-
   describe('controller.save()', function() {
     beforeEach(function() {
 

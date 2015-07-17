@@ -40,11 +40,6 @@ function ContentTypeActionsController($scope, $injector) {
    */
   controller.delete = remove;
 
-  /**
-   * @ngdoc method
-   * @name ContentTypeActionsController#unpublish
-   */
-  controller.unpublish = unpublish;
 
   /**
    * @ngdoc method
