@@ -193,6 +193,28 @@ $cfnext-form__fieldset()
   cursor: pointer
 
 /**
+Disabled options
+
+Markup:
+.cfnext-form-option
+  input(type="checkbox" id="option-d" disabled)
+  .cfnext-form-option__desc
+    label(for="option-d") This is disabled
+    p ...with more description
+.cfnext-form-option
+  input(type="checkbox" id="option-d" disabled)
+  label(for="option-d") This is disabled, too
+
+Styleguide 30.5
+*/
+
+.cfnext-form-option > input[type="checkbox"]:disabled
+  & + .cfnext-form-option__desc,
+  & + label
+    color: $text-dimmed
+
+
+/**
  * Horizontal option set
  *
  * Note: don't use an actual fieldset tag with this class:
@@ -214,7 +236,7 @@ $cfnext-form__fieldset()
  *     input(type="radio" id="radio-b" name="selectme")
  *     label(for="radio-b") Or me
  *
- * Styleguide 30.5
+ * Styleguide 30.6
  */
 .cfnext-form__fieldset--horizontal
   $cfnext-form__fieldset()
