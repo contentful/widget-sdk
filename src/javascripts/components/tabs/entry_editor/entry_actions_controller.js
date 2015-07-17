@@ -220,7 +220,11 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
     var error = _.first(dotty.get(err, 'body.details.errors'));
     var contentTypeId = _.first(error.contentTypeId);
     var contentType = _.findWhere($scope.spaceContext.publishedContentTypes, {data: {sys: {id: contentTypeId}}});
-    return error.details.replace(contentTypeId, contentType.data.name);
+    if(contentType) {
+      return error.details.replace(contentTypeId, contentType.data.name);
+    } else {
+      return 'This reference requires an entry of an unexistent content type';
+    }
   }
 
 }]);
