@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('TheAccountView', function($state) {
+angular.module('contentful').factory('TheAccountView', ['$state', function($state) {
   var isActive = false;
 
   return {
@@ -16,4 +16,4 @@ angular.module('contentful').factory('TheAccountView', function($state) {
   function check() {
     isActive = $state.includes('account');
   }
-});
+}]);
