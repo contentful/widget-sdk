@@ -4,22 +4,34 @@ describe('Features service', function(){
   beforeEach(function(){
     module('contentful/test');
     this.authentication = this.$inject('authentication');
-    this.features       = this.$inject('features');
+    this.authentication.getUser = function(){
+      return this.user;
+    }.bind(this);
+    this.user = {
+      features: {
+        logAnalytics: true
+      },
+      organizationMemberships: [
+        {organization: {disableAnalytics: false}}
+      ]
+    };
+
+    this.features = this.$inject('features');
+  });
+
+  describe('isPreviewEnabled', function() {
+    it('is enabled', function() {
+      this.user.features.showPreview = true;
+      expect(this.features.isPreviewEnabled()).toBe(true);
+    });
+
+    it('is disabled', function() {
+      expect(this.features.isPreviewEnabled()).toBe(false);
+    });
+
   });
 
   describe('shouldAllowAnalytics', function(){
-    beforeEach(function(){
-      this.authentication.getUser = function(){
-        return this.user;
-      }.bind(this);
-      this.user = {
-        features: { logAnalytics: true },
-        organizationMemberships: [
-          {organization: {disableAnalytics: false}}
-        ]
-      };
-    });
-
     it('should allow by default', function() {
       expect(this.features.shouldAllowAnalytics()).toBe(true);
     });
