@@ -51,15 +51,23 @@
             a(href="http://docs.contentfulcda.apiary.io/#reference/entries/entries-collection/get-all-entries-of-a-space?console=1" target="_blank")
               i.fa.fa-terminal.fa-2x
               |  Try it out on our API Console
-          .l-field-editor.u-separator--small(ng-if="isDevice('iOS')")
-            a(href="{{mobileAppUrl}}" target="_blank")
+
+          .l-field-editor.u-separator--small(ng-if="isIos")
+            a(href="{{ iosMobileAppUrl }}" target="_blank")
               i.fa.fa-apple.fa-2x
-              |  Browse entries in the Discovery App
-          .l-field-editor.u-separator--small(ng-if="isDevice('any')")
-            a(href="https://itunes.apple.com/au/app/contentful-discovery-cms-for/id892840015" target="_blank")
+              |  Browse entries in the Discovery app
+
+          .l-field-editor.u-separator--small(ng-if="!isIos")
+            a(href="https://www.contentful.com/ecosystem/discovery-app-ios/" target="_blank")
               i.fa.fa-apple.fa-2x
-              |  Browse entries in the Discovery App
-            |  (For iOS devices only)
+              |  Browse in the Discovery app
+            |  (iOS)
+
+          .l-field-editor.u-separator--small(ng-if="!isIos")
+            a(href="https://www.contentful.com/ecosystem/discovery-app-android/" target="_blank")
+              i.fa.fa-android.fa-2x
+              |  Browse in the Discovery app
+            |  (Android)
 
     .l-form-right
       h2.section-title API Access Tokens
