@@ -1,6 +1,20 @@
+mixin actions-dropdown
+  .ct-field__actions-menu.context-menu(
+    cf-dropdown-menu="field.actions"
+    cf-dropdown-position="bottomcenter")
+    cf-icon.context-menu__arrow(cf-dropdown-arrow name="arrow-up" size="15")
+    ul.context-menu__items
+      li(role="button" ng-click="fieldController.toggleDisable()" cf-dropdown-close)
+        | {{ field.disabled ? 'Enable' : 'Disable' }}
+      li(role="button" ng-click="fieldController.setAsTitle()" ng-if="fieldCanBeTitle" cf-dropdown-close)
+        | Set field as Entry title
+      li(role="button" ng-if="!isPublished" ng-click="fieldController.deleteField()")
+        | Delete
+
+
 ul(cf-ui-sortable ng-model="contentType.data.fields")
   li.ct-field(
-    ng-controller="ContentTypeFieldController"
+    ng-controller="ContentTypeFieldController as fieldController"
     ng-repeat="(index, field) in contentType.data.fields track by field.id"
     ng-class="{'is-disabled': field.disabled}"
     role="toolbar"
@@ -17,11 +31,14 @@ ul(cf-ui-sortable ng-model="contentType.data.fields")
       | {{fieldTypeLabel}}, disabled
     .ct-field__is-title(ng-if="fieldIsTitle")
       | Entry title
-    button.ct-field__settings.cfnext-btn-inline(ng-click="openSettingsDialog()" aria-label="Settings")
+    button.ct-field__settings.cfnext-btn-inline(
+      aria-label="Settings"
+      ng-click="fieldController.openSettingsDialog()")
       | Settings
       cf-ui-hint(ng-if="index===0" name="ct-field-settings")
         | Change field settings, add validations, default values or define the appearance of this field
-    button.ct-field__disable.cfnext-btn-inline(ng-if="isPublished" ng-click="toggleDisableField()")
-      | {{ field.disabled ? 'Enable' : 'Disable' }}
-    button.ct-field__disable.cfnext-btn-inline(ng-if="!isPublished" ng-click="deleteField()")
-      | Delete
+    button.ct-field__actions.cfnext-btn-inline(type="button"
+      aria-label="Actions"
+      cf-dropdown-toggle="field.actions")
+      | &bullet;&bullet;&bullet;
+    +actions-dropdown
