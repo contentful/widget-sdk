@@ -65,11 +65,18 @@ angular.module('contentful').factory('KalturaEditorControllerMixin', ['$injector
   }
 
   function prepareSearch(query) {
-    var search = new KalturaSearch().where('nameLike', query);
+    var search = new KalturaSearch();
     var categoryId = kalturaClientWrapper.getCategoryId();
-    if(categoryId)
-      search.where('categoriesIdsMatchAnd', categoryId);
-    return search.limit(10);
+
+    search.where('nameLike', query);
+    search.limit(10);
+    if (categoryId) {
+      // categoryAncestorIdIn: All entries within this categoy or in child categories
+      // http://www.kaltura.com/api_v3/testmeDoc/?object=KalturaMediaEntryFilter
+      search.where('categoryAncestorIdIn', categoryId);
+    }
+
+    return search;
   }
 
   function processSearchResults(results) {
