@@ -77,14 +77,14 @@ textarea.form-control.markdown-textarea(
   ot-subdoc
   ot-bind-text
   ng-disabled="!otEditable"
-  ng-if="inEditMode()")
+  ng-show="inEditMode()")
 
 .cf-markdown-guide(cf-markdown-guide ng-if="inEditMode()")
 
 .markdown-preview(
   tabindex="0"
   ng-bind-html="markdownPreview"
-  ng-if="inPreviewMode()"
+  ng-show="inPreviewMode()"
   ng-click="enterEditor($event)")
 
 p.form-widget__help-text
