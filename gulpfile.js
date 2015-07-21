@@ -59,6 +59,7 @@ var src = {
     'bower_components/jquery-ui/ui/jquery.ui.draggable.js',
     'bower_components/jquery-ui/ui/jquery.ui.autocomplete.js',
     'bower_components/jquery-ui/ui/jquery.ui.datepicker.js',
+    'bower_components/jquery-textrange/jquery-textrange.js',
     'bower_components/angular/angular.js',
     'bower_components/angular-animate/angular-animate.js',
     'bower_components/angular-load/angular-load.js',
@@ -70,13 +71,14 @@ var src = {
     'bower_components/angular-breadcrumb/dist/angular-breadcrumb.js',
     'bower_components/bootstrap/js/tooltip.js',
     'bower_components/speakingurl/lib/index.js',
-
-    'vendor/**/*.js',
-
     'node_modules/share/node_modules/browserchannel/dist/bcsocket-uncompressed.js',
     'node_modules/share/webclient/share.uncompressed.js',
     'node_modules/share/webclient/json.uncompressed.js',
     'node_modules/share/webclient/textarea.js',
+
+    // @todo no need for wildcard anymore
+    // jquery.cookies will be removed with https://github.com/contentful/user_interface/pull/511
+    'vendor/jquery.cookies.2.2.0.js'
   ],
   vendorScriptsNonEssential: {
     kaltura: [
