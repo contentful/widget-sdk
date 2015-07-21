@@ -20,7 +20,6 @@ angular.module('contentful').factory('uiVersionSwitcher', ['$injector', function
         return;
 
       attemptToSwitchVersion();
-
       checkIfVersionWasSwitched();
     }
   };
@@ -32,7 +31,6 @@ angular.module('contentful').factory('uiVersionSwitcher', ['$injector', function
         expiresAt: moment().add(1, 'h').toDate()
       });
       $location.search('ui_version', null);
-      $window.location.reload();
     }
   }
 
@@ -52,7 +50,6 @@ angular.module('contentful').factory('uiVersionSwitcher', ['$injector', function
         $.cookies.set('ui_version', null, {
           expiresAt: 0
         });
-        $location.search('ui_version', null);
         $window.location.reload();
       });
     }
