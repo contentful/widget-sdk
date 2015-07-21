@@ -23,9 +23,9 @@
 
 .view-menu-buttons.menu-with-buttons-bottom(ng-if="viewMenuEditable")
   .dropdown-btn
-    i.fa.fa-plus.dropdown-toggle(cf-dropdown-toggle="sidebar.viewMenu")
-    .context-menu(cf-dropdown-menu="sidebar.viewMenu" cf-dropdown-position="topright" cf-dropdown-collision="none")
+    i.fa.fa-plus.dropdown-toggle(cf-context-menu-trigger)
+    .context-menu(cf-context-menu="top-right")
       cf-icon.context-menu__arrow.x--bottom-left(name="arrow-up")
       ul.context-menu__items
-        li(ng-click="addFolder()" cf-dropdown-close) Add Folder
-        li(ng-click="addViewToDefault()" cf-dropdown-close) Save current view as…
+        li(ng-click="addFolder()") Add Folder
+        li(ng-click="addViewToDefault()") Save current view as…

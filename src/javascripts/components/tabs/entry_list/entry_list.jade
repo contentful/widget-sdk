@@ -34,21 +34,19 @@
       cf-icon.btn-icon.inverted(name="plus")
       | Add New {{singleContentType.getName()}}
     .dropdown-btn(ng-hide="singleContentType")
-      button.cfnext-btn-action.u-truncate(cf-dropdown-toggle="entryList.add"
-          ng-hide="permissionController.get('createEntry', 'shouldHide')"
-          ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
-          cf-when-disabled="permissionController.entityActions.createEntry")
+      button.cfnext-btn-action.u-truncate(
+        cf-context-menu-trigger
+        ng-hide="permissionController.get('createEntry', 'shouldHide')"
+        ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
+        cf-when-disabled="permissionController.entityActions.createEntry")
         cf-icon.btn-icon.inverted(name="plus")
         cf-icon.btn-dropdown-icon(name="dd-arrow-down")
         | Add New Entry
-      .context-menu(
-        cf-dropdown-menu="entryList.add"
-        cf-dropdown-collision="none")
+      .context-menu(cf-context-menu)
         cf-icon.context-menu__arrow(name="arrow-up")
         ul.context-menu__items
           li(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
-            ng-click="entityCreationController.newEntry(contentType)"
-            cf-dropdown-close)
+            ng-click="entityCreationController.newEntry(contentType)")
             | {{contentType.getName()}}
 
 .tab-main(ng-show="entries.length > 0 || hasQuery()")
@@ -130,11 +128,11 @@
   .button-set(ng-controller="EntryListActionsController" ng-hide="selection.isEmpty()")
     button.cfnext-btn-secondary-action.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
     | 
-    button.cfnext-btn-secondary-action.delete(type="button" ng-show="showDelete()" cf-dropdown-toggle="entryList.delete") Delete
-    .delete-confirm(cf-dropdown-menu="entryList.delete" cf-dropdown-position="topcenter")
+    button.cfnext-btn-secondary-action.delete(type="button" ng-show="showDelete()" cf-context-menu-trigger) Delete
+    .delete-confirm(cf-context-menu="top")
       p You are about to delete {{selection.size()}} Entries
-      button.cfnext-btn-caution(type="button" ng-click="deleteSelected()" cf-dropdown-close) Delete 
-      button.cfnext-btn-secondary-action(type="button" cf-dropdown-close) Don't Delete 
+      button.cfnext-btn-caution(type="button" ng-click="deleteSelected()") Delete 
+      button.cfnext-btn-secondary-action(type="button") Don't Delete 
     | 
     button.cfnext-btn-secondary-action.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
     | 

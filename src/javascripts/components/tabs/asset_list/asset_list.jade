@@ -18,21 +18,20 @@
 
   .tab-header__actions.add-entity
     .dropdown-btn(ng-show="assets.length > 0")
-      button.cfnext-btn-action(cf-dropdown-toggle="assetList.add"
-          ng-hide="permissionController.get('createAsset', 'shouldHide')"
-          ng-disabled="permissionController.get('createAsset', 'shouldDisable')"
-          cf-when-disabled="permissionController.entityActions.createAsset")
+      button.cfnext-btn-action(
+        cf-context-menu-trigger
+        ng-hide="permissionController.get('createAsset', 'shouldHide')"
+        ng-disabled="permissionController.get('createAsset', 'shouldDisable')"
+        cf-when-disabled="permissionController.entityActions.createAsset")
         cf-icon.btn-icon.inverted(name="plus")
         cf-icon.btn-dropdown-icon(name="dd-arrow-down")
         | Add New Asset
-      .context-menu(
-        cf-dropdown-menu="assetList.add"
-        container=".view-content")
+      .context-menu(cf-context-menu)
         cf-icon.context-menu__arrow(name="arrow-up")
         ul.context-menu__items
-          li(ng-click="entityCreationController.newAsset()" cf-dropdown-close)
+          li(ng-click="entityCreationController.newAsset()")
             | Single Asset
-          li(ng-click="createMultipleAssets()" cf-dropdown-close)
+          li(ng-click="createMultipleAssets()")
             | Multiple Assets
 
 .tab-main(ng-show="assets.length > 0 || hasQuery()")
@@ -95,16 +94,18 @@
     header.advice__title You have no Assets yet.
     p.advice__description Assets are external documents that you can link to your Entries. They can be any file you wish, form sounds to images or videos to text documents.
     .dropdown-btn
-      button.advice__action(cf-dropdown-toggle="assetList.addFromFrame"
+      button.advice__action(
+        cf-context-menu-trigger
         ng-hide="permissionController.get('createAsset', 'shouldHide')"
         ng-disabled="permissionController.get('createAsset', 'shouldDisable')"
         cf-when-disabled="permissionController.entityActions.createAsset")
         | Create an Asset
-      .context-menu(cf-dropdown-menu="assetList.addFromFrame")
+      .context-menu(cf-context-menu)
+        cf-icon.context-menu__arrow(name="arrow-up")
         ul.context-menu__items
-          li(ng-click="entityCreationController.newAsset()" cf-dropdown-close)
+          li(ng-click="entityCreationController.newAsset()")
             | Single Asset
-          li(ng-click="createMultipleAssets()" cf-dropdown-close)
+          li(ng-click="createMultipleAssets()")
             | Multiple Assets
     a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
       | Visit the Knowledge Base Pages
@@ -114,11 +115,11 @@
 .tab-actions
   .label {{selection.size()}} Assets selected
   .button-set(ng-controller="AssetListActionsController" ng-hide="selection.isEmpty()")
-    button.cfnext-btn-secondary-action.delete(type="button" ng-show="showDelete()" cf-dropdown-toggle="assetList.delete") Delete
-    .delete-confirm(cf-dropdown-menu="assetList.delete" cf-dropdown-position="topcenter")
+    button.cfnext-btn-secondary-action.delete(type="button" ng-show="showDelete()" cf-context-menu-trigger) Delete
+    .delete-confirm(cf-context-menu="top")
       p You are about to delete {{selection.size()}} Assets
-      button.cfnext-btn-caution(type="button" ng-click="deleteSelected()" cf-dropdown-close) Delete
-      button.cfnext-btn-secondary-action(type="button" cf-dropdown-close) Don't Delete
+      button.cfnext-btn-caution(type="button" ng-click="deleteSelected()") Delete
+      button.cfnext-btn-secondary-action(type="button") Don't Delete
     button.cfnext-btn-secondary-action.archive(type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
     button.cfnext-btn-secondary-action.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
     button.cfnext-btn-secondary-action.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
