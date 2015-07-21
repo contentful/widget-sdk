@@ -41,7 +41,9 @@
         cf-icon.btn-icon.inverted(name="plus")
         cf-icon.btn-dropdown-icon(name="dd-arrow-down")
         | Add New Entry
-      .context-menu(cf-dropdown-menu="entryList.add")
+      .context-menu(
+        cf-dropdown-menu="entryList.add"
+        cf-dropdown-collision="none")
         cf-icon.context-menu__arrow(name="arrow-up")
         ul.context-menu__items
           li(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
