@@ -189,12 +189,16 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
    * on the background or hits 'Enter' or 'Escape'.
    *
    * @param {string} message
+   * @param {object} opts
+   * @param {boolean} opts.html
    * @returns {Promise<void>}
    */
-  function notify (message, confirmLabel) {
+  function notify (message, opts) {
+    opts = opts || {};
     var scope = _.extend($rootScope.$new(), {
       message: message,
-      confirmLabel: confirmLabel || 'OK'
+      confirmLabel: 'OK',
+      isHtml: opts.html
     });
 
     return openConfirmDialog({

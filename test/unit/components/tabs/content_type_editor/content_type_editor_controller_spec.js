@@ -157,25 +157,6 @@ describe('ContentTypeEditor Controller', function () {
       sinon.assert.called(scope.contentTypeForm.$setDirty);
     });
 
-    describe('loads published content type', function () {
-      var publishedCT;
-      beforeEach(inject(function (cfStub){
-        var newContentType = cfStub.contentType(space, 'contentType2', 'Content Type 2');
-        publishedCT = {published:true};
-        newContentType.getPublishedStatus = sinon.stub().returns($q.when(publishedCT));
-        scope.contentType = newContentType;
-        scope.$digest();
-      }));
-
-      it('gets published status', function () {
-        sinon.assert.called(scope.contentType.getPublishedStatus);
-      });
-
-      it('sets the published content type', function () {
-        expect(scope.publishedContentType).toEqual(publishedCT);
-      });
-    });
-
     describe('sets arrays with published content type info', function () {
       beforeEach(function () {
         scope.publishedContentType = {
@@ -256,10 +237,6 @@ describe('ContentTypeEditor Controller', function () {
       expect(scope.contentType).toEqual(contentType);
     });
 
-    it('fires initial validation', function() {
-      sinon.assert.called(scope.validate);
-    });
-
     it('has fields', function () {
       expect(scope.hasFields).toBeTruthy();
     });
@@ -273,6 +250,55 @@ describe('ContentTypeEditor Controller', function () {
 
     it('closes tab', function() {
       sinon.assert.called(scope.closeState);
+    });
+  });
+
+  describe('#deleteField(id)', function () {
+    beforeEach(function () {
+      createContentType([{id: 'FID'}]);
+      scope.publishedContentType = {
+        data: scope.contentType.data
+      };
+      this.modalDialog = this.$inject('modalDialog');
+      this.modalDialog.notify = sinon.stub();
+    });
+
+    describe('without entries', function () {
+      beforeEach(function () {
+        controller.countEntries = sinon.stub().resolves(0);
+      });
+
+      it('removes the field', function () {
+        expect(contentType.data.fields.length).toEqual(1);
+
+        controller.deleteField('FID');
+        this.$apply();
+        expect(contentType.data.fields.length).toEqual(0);
+      });
+    });
+
+    describe('with entries', function () {
+      beforeEach(function () {
+        controller.countEntries = sinon.stub().resolves(1);
+      });
+
+      it('notifies the user if there are entries', function () {
+        expect(contentType.data.fields.length).toEqual(1);
+
+        controller.deleteField('FID');
+        this.$apply();
+        sinon.assert.called(this.modalDialog.notify);
+        expect(contentType.data.fields.length).toEqual(1);
+      });
+
+      it('deletes the field if it is not published', function () {
+        scope.publishedContentType.data = {fields: []};
+        expect(contentType.data.fields.length).toEqual(1);
+
+        controller.deleteField('FID');
+        this.$apply();
+        expect(contentType.data.fields.length).toEqual(0);
+      });
     });
   });
 

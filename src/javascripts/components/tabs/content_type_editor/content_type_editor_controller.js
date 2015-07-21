@@ -20,6 +20,7 @@ angular.module('contentful')
 function ContentTypeEditorController($scope, $injector) {
   var controller        = this;
   var $controller       = $injector.get('$controller');
+  var $q                = $injector.get('$q');
   var analytics         = $injector.get('analytics');
   var validation        = $injector.get('validation');
   var hints             = $injector.get('hints');
@@ -42,10 +43,8 @@ function ContentTypeEditorController($scope, $injector) {
   $scope.showMetadataDialog                 = showMetadataDialog;
   $scope.showNewFieldDialog                 = showNewFieldDialog;
 
-  $scope.$watch('contentType',                   loadContentType);
   $scope.$watch('contentType.data.fields',       checkForDirtyForm, true);
   $scope.$watch('contentType.data.displayField', checkForDirtyForm);
-  $scope.$watch('contentTypeForm.$dirty',        reloadPublishedContentType);
   $scope.$watch('contentTypeForm.$dirty',        setDirtyState);
   $scope.$watch('context.isNew',                 setDirtyState);
 
@@ -54,6 +53,13 @@ function ContentTypeEditorController($scope, $injector) {
     assureTitleField(length-old > 0 ? 'add' : 'delete');
     setDirtyState();
   });
+
+  var fieldDeletionNotification =
+    '<p>Please remove all entries linked to this content type before trying to delete ' +
+    'a field. Fields can only be deleted on content types that have no entries ' +
+    'associated with them.</p>' +
+    '<p>To simply stop a field from appearing on the entry editor interface, disable it. ' +
+    'Disabling fields can be done at any time regardless of number of associated entries.</p>';
 
   $scope.$watch('publishedContentType.data.fields', function (fields, old, scope) {
     scope.publishedIds = _.pluck(fields, 'id');
@@ -78,14 +84,38 @@ function ContentTypeEditorController($scope, $injector) {
    * @param {string} id
    */
   controller.deleteField = function (id) {
-    modalDialog.confirmDeletion(
-      'You’re about to delete this field.',
-      'Please remember that you won’t be able to delete ' +
-      'fields once the content type is published.'
-    ).then(function(result) {
-        if (result.cancelled) { return; }
+    var publishedFields = dotty.get($scope.publishedContentType, 'data.fields');
+    var isPublished = _.any(publishedFields, {id: id});
+    var isDeletable;
+
+    if (isPublished) {
+      isDeletable = this.countEntries().then(function (count) {
+        return !count;
+      });
+    } else {
+      isDeletable = $q.when(true);
+    }
+
+    isDeletable.then(function (deletable) {
+      if (!deletable) {
+        modalDialog.notify(fieldDeletionNotification, {html: true});
+      } else {
         var fields = $scope.contentType.data.fields;
         _.remove(fields, {id: id});
+      }
+    });
+  };
+
+  // TODO This should b a service. It is here because the
+  // ContentTypeActionsController needs it, too.
+  controller.countEntries = function () {
+    if (!$scope.contentType.getPublishedVersion()) {
+      return $q.when(0);
+    }
+    return $scope.spaceContext.space.getEntries({
+      content_type: $scope.contentType.data.sys.id
+    }).then(function(response) {
+      return response.length;
     });
   };
 
@@ -101,30 +131,10 @@ function ContentTypeEditorController($scope, $injector) {
     });
   };
 
-  function loadContentType(contentType) {
-    $scope.contentType = contentType;
-    if (!_.isEmpty($scope.contentType.data.fields)) $scope.validate();
-    loadPublishedContentType();
-  }
-
-  function reloadPublishedContentType(){
-    if ($scope.contentTypeForm.$dirty){
-      loadPublishedContentType();
-    }
-  }
-
   function checkForDirtyForm(newVal, oldVal) {
     if (newVal !== oldVal) {
       $scope.contentTypeForm.$setDirty();
     }
-  }
-
-  function loadPublishedContentType() {
-    // TODO replace with lookup in registry inside spaceContext
-    $scope.contentType.getPublishedStatus()
-    .then(function(publishedContentType){
-      $scope.publishedContentType = publishedContentType;
-    });
   }
 
   function setDirtyState() {

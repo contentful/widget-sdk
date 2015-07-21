@@ -111,13 +111,6 @@ describe('Content Type Field Controller', function () {
   });
 
   describe('delete action', function () {
-    it('is not visible when field is published', function () {
-      this.publishedContentType.data.fields.push(this.field);
-      this.$apply();
-      var deleteButton = this.fieldElement.find('[role=button]:contains(Delete)');
-      expect(deleteButton.length).toEqual(0);
-    });
-
     it('deletes a field', function () {
       var deleteField = sinon.stub();
       this.ctEditorController.deleteField = deleteField;

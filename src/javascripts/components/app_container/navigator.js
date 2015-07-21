@@ -209,10 +209,11 @@ angular.module('contentful').config([
       parent: 'spaces.detail.content_types.list',
       label: '{{contentType.getName() + (context.dirty ? "*" : "")}}'
     },
-    controller: ['$state', '$scope', 'contentType', 'editingInterface', function ($state, $scope, contentType, editingInterface) {
+    controller: ['$state', '$scope', 'contentType', 'editingInterface', 'publishedContentType', function ($state, $scope, contentType, editingInterface, publishedContentType) {
       $scope.context = $state.current.data;
       $scope.contentType = contentType;
       $scope.editingInterface = editingInterface;
+      $scope.publishedContentType = publishedContentType;
     }],
     template:
     '<div ' + [
@@ -234,6 +235,9 @@ angular.module('contentful').config([
       }],
       editingInterface: ['contentType', 'editingInterfaces', function (contentType, editingInterfaces) {
         return editingInterfaces.defaultInterface(contentType);
+      }],
+      publishedContentType: [function () {
+        return null;
       }]
     },
   }, contentTypeEditorState));
@@ -246,6 +250,15 @@ angular.module('contentful').config([
     resolve: {
       contentType: ['$stateParams', 'space', function ($stateParams, space) {
         return space.getContentType($stateParams.contentTypeId);
+      }],
+      publishedContentType: ['contentType', function (contentType) {
+        return contentType.getPublishedStatus().catch(function (err) {
+          if (err.statusCode === 404) {
+            return null;
+          } else {
+            throw err;
+          }
+        });
       }],
       editingInterface: ['contentType', 'editingInterfaces', function (contentType, editingInterfaces) {
         return editingInterfaces.forContentTypeWithId(contentType, 'default');
