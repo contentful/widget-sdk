@@ -246,8 +246,11 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       };
 
       scope.insertExternalLink = function() {
+        var modalScope = $rootScope.$new();
+        modalScope.model = {};
+
         modalDialog.open({
-          scope: $rootScope.$new(),
+          scope: modalScope,
           template: 'insert_external_link_dialog',
           ignoreEnter: true
         }).promise.then(function(link) {
@@ -299,8 +302,12 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       }
 
       function triggerUpdateEvents() {
+        textarea.trigger('input');
         $rootScope.$broadcast('elastic:adjust');
-        var textareaElem = textarea.get(0);
+        dispatchPasteEvent();
+      }
+
+      function dispatchPasteEvent() {
         /*global Event*/
         // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events
         var evt;
@@ -310,7 +317,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
           evt = document.createEvent('Event');
           evt.initEvent('paste', true, true);
         }
-        textareaElem.dispatchEvent(evt);
+        textarea.get(0).dispatchEvent(evt);
       }
 
       function makeAssetLink(asset) {

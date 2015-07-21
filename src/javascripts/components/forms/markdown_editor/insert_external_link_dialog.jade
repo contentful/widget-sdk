@@ -6,7 +6,10 @@
     form.modal-dialog__content(name="externalLinkForm")
       .cfnext-form__field
         label Target URL
-        input.cfnext-form__input--full-size(ng-model="model.url" name="url" type="url" required)
+        input.cfnext-form__input--full-size(
+          ng-model="model.url" name="url" type="url"
+          required autocomplete="off"
+          cf-focus-on-render="model")
         .cfnext-form__hint Required. Please include protocol (e.g. <code>http://</code>).
       .cfnext-form__field
         label Link label
