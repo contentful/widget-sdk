@@ -39,7 +39,8 @@ Styleguide 11.2
   &__menu
     $context-menu-base()
     $context-menu-top-bar()
-    width: $space-selector--min-width
+    min-width: $space-selector--min-width
+    max-width: 40ex
     padding: 0
 
   &__orgs
@@ -59,6 +60,10 @@ Styleguide 11.2
     text-transform: uppercase
     letter-spacing: 0.1em
     font-weight: bold
+
+  &__add-button
+    display: flex
+    align-items: center
 
   &__add-icon
     margin-right: 0.6em
