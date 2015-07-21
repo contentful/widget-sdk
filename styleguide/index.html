@@ -6,7 +6,11 @@
 <!--[if (gte IE 9)|(gt IEMobile 7)]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>KSS: Living Style Guide</title>
+  {{#if homepage}}
+    <title>Contentful Styleguide</title>
+  {{else}}
+    <title>Contentful Styleguide | {{pageTitle}}</title>
+  {{/if}}
 
   <meta name="description" content="">
   <meta name="generator" content="kss-node">

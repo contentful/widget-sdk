@@ -20,14 +20,15 @@
     | Add New
   //- TODO the ng-if condition for the dropdown has to be synced
   //- manually with the confidtion above
-  a.dropdown-menu(
+  .context-menu(
     ng-if="entityType=='Entry' && addableContentTypes.length > 1"
     cf-dropdown-menu="linkEditor.addNew")
-    ul
-      li.dropdown-menu-item(ng-repeat="contentType in addableContentTypes track by contentType.getId()"
-          ng-click="addNewEntry(contentType)"
-          cf-dropdown-close)
-        | {{contentType.getName()}}
+    cf-icon.context-menu__arrow(name="arrow-up")
+    .context-menu__item(
+      ng-repeat="contentType in addableContentTypes track by contentType.getId()"
+      ng-click="addNewEntry(contentType)"
+      cf-dropdown-close)
+      | {{contentType.getName()}}
 
   //- link to entry or entries with restriction on the type
   button.cfnext-btn-secondary-action.link-editor__add-button(type="button"

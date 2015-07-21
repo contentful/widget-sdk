@@ -209,15 +209,16 @@ angular.module('contentful').config([
       parent: 'spaces.detail.content_types.list',
       label: '{{contentType.getName() + (context.dirty ? "*" : "")}}'
     },
-    controller: ['$state', '$scope', 'contentType', 'editingInterface', function ($state, $scope, contentType, editingInterface) {
+    controller: ['$state', '$scope', 'contentType', 'editingInterface', 'publishedContentType', function ($state, $scope, contentType, editingInterface, publishedContentType) {
       $scope.context = $state.current.data;
       $scope.contentType = contentType;
       $scope.editingInterface = editingInterface;
+      $scope.publishedContentType = publishedContentType;
     }],
     template:
     '<div ' + [
       'cf-content-type-editor',
-      'class="with-tab-actions"',
+      'class="workbench"',
       'cf-validate="contentType.data" cf-content-type-schema',
       'cf-ui-tab',
     ].join(' ') + '></div>'
@@ -234,6 +235,9 @@ angular.module('contentful').config([
       }],
       editingInterface: ['contentType', 'editingInterfaces', function (contentType, editingInterfaces) {
         return editingInterfaces.defaultInterface(contentType);
+      }],
+      publishedContentType: [function () {
+        return null;
       }]
     },
   }, contentTypeEditorState));
@@ -246,6 +250,15 @@ angular.module('contentful').config([
     resolve: {
       contentType: ['$stateParams', 'space', function ($stateParams, space) {
         return space.getContentType($stateParams.contentTypeId);
+      }],
+      publishedContentType: ['contentType', function (contentType) {
+        return contentType.getPublishedStatus().catch(function (err) {
+          if (err.statusCode === 404) {
+            return null;
+          } else {
+            throw err;
+          }
+        });
       }],
       editingInterface: ['contentType', 'editingInterfaces', function (contentType, editingInterfaces) {
         return editingInterfaces.forContentTypeWithId(contentType, 'default');
@@ -386,6 +399,7 @@ angular.module('contentful').config([
       notification = $injector.get('notification'),
       tokenStore   = $injector.get('tokenStore'),
       spacesStore  = $injector.get('spacesStore'),
+      logger       = $injector.get('logger'),
       // Result of confirmation dialog
       navigationConfirmed = false;
 
@@ -493,11 +507,25 @@ angular.module('contentful').config([
   function navigateToInitialSpace(spaceId) {
     tokenStore.getSpaces().then(function (spaces) {
       var space = determineInitialSpace(spaces, spaceId, spacesStore.getLastUsedSpace());
-      if(space) {
+      if (space) {
         spacesStore.saveSelectedSpace(space.getId());
-        $rootScope.$state.go('spaces.detail', { spaceId: space.getId() });
-      } else {
-        $rootScope.$state.go('spaces.new');
+      }
+
+      try {
+        if (space) {
+          $rootScope.$state.go('spaces.detail', { spaceId: space.getId() });
+        } else {
+          $rootScope.$state.go('spaces.new');
+        }
+      } catch(exp){
+        logger.logError('Error navigating to initial space', {
+          data: {
+            exp: exp,
+            msg: exp.message,
+            spaceId: space ? space.getId() : null,
+            state: $rootScope.$state
+          }
+        });
       }
     });
   }

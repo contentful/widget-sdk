@@ -8,18 +8,8 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   var $rootScope = $injector.get('$rootScope');
   $scope.notes = $injector.get('notes');
 
-  var deviceRegexps = {
-    iOS: /(iphone os|ipad|iphone)/gi
-  };
-
-  var detectedDevice = 'any';
-
-  _.forEach(deviceRegexps, function (re, id) {
-    if(re.test($window.navigator.userAgent)){
-      detectedDevice = id;
-      return false;
-    }
-  });
+  var IOS_RE = /(iphone os|ipad|iphone)/gi;
+  $scope.isIos = IOS_RE.test($window.navigator.userAgent);
 
   $scope.context.closingMessage = [
     'You edited the Api Key but didn\'t save your changes.',
@@ -51,13 +41,15 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
       '/entries?access_token=' +
       accessToken;
 
-    $scope.mobileAppUrl =
+    $scope.iosMobileAppUrl =
       'contentful://open/space/' +
       $scope.spaceContext.space.getId() +
       '?access_token=' +
       accessToken;
 
-    if($scope.apiKey.getId() && !dotty.exists($scope, 'apiKey.data.preview_api_key')) generatePreviewApiKey();
+    if ($scope.apiKey.getId() && !dotty.exists($scope, 'apiKey.data.preview_api_key')) {
+      generatePreviewApiKey();
+    }
   });
 
   $scope.$watch('apiKey.data.preview_api_key', function (previewApiKey) {
@@ -69,10 +61,6 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
       });
     }
   });
-
-  $scope.isDevice = function (id) {
-    return id === detectedDevice;
-  };
 
   $scope.$watch('apiKeyForm.$dirty', function (modified) {
     $scope.context.dirty = modified;

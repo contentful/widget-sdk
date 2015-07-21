@@ -2,10 +2,14 @@ cf-persistent-notification
 .app-container__top-bar.app-top-bar
   .app-top-bar__logo.app-top-bar__child.app-top-bar--right-separator(ng-click="logoClicked()")
     .app-top-bar__logo-element(cf-custom-logo)
-  cf-space-selector
+  cf-space-selector(
+    organizations="organizations"
+    spaces="spaces"
+    permission-controller="permissionController"
+    space-context="spaceContext")
   div.app-top-bar__child(ui-view="main-nav-bar")
   cf-navbar-loader.u-flex-pull-right
-  cf-account-dropdown.u-flex-pull-right
+  cf-account-dropdown.u-flex-pull-right(user="user")
 
 .app-container__content(
   ui-view="app-container"

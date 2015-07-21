@@ -113,60 +113,6 @@ describe('ContentType Actions Controller', function () {
     sinon.assert.called(scope.$state.go, '^.list');
   });
 
-  describe('when unpublishing', function() {
-    beforeEach(function() {
-      this.actionStub = sinon.stub(contentType, 'unpublish').returns(this.actionDeferred.promise);
-    });
-
-    describe('fails with an error', function() {
-      beforeEach(function() {
-        this.actionDeferred.reject({body: {message: ''}});
-        controller.unpublish();
-        scope.$apply();
-      });
-
-      it('calls action', function() {
-        sinon.assert.called(this.actionStub);
-      });
-
-      it('captures server error', function() {
-        sinon.assert.called(logger.logServerWarn);
-      });
-    });
-
-    describe('succeeds', function() {
-      beforeEach(function() {
-        this.actionDeferred.resolve({contentType: true});
-        this.unregisterPublishedContentTypeStub = sinon.stub(scope.spaceContext, 'unregisterPublishedContentType');
-        scope.updatePublishedContentType = this.updatePublishedContentTypeStub;
-        this.refreshContentTypesStub = sinon.stub(scope.spaceContext, 'refreshContentTypes');
-        controller.unpublish();
-        scope.$apply();
-      });
-
-      it('calls action', function() {
-        sinon.assert.called(this.actionStub);
-      });
-
-      it('tracks analytics event', function() {
-        sinon.assert.called(stubs.track);
-      });
-
-      it('updated published content type', function() {
-        sinon.assert.called(this.updatePublishedContentTypeStub);
-      });
-
-      it('unregisters published content type', function() {
-        sinon.assert.called(this.unregisterPublishedContentTypeStub);
-      });
-
-      it('refreshes content types', function() {
-        sinon.assert.called(this.refreshContentTypesStub);
-      });
-    });
-  });
-
-
   describe('controller.save()', function() {
     beforeEach(function() {
 
@@ -281,6 +227,62 @@ describe('ContentType Actions Controller', function () {
       return controller.save()
       .then(function () {
         sinon.assert.called(scope.$state.go, 'spaces.detail.content_types.detail', {contentTypeId: 'typeid'});
+      });
+    });
+
+    describe('field removal', function () {
+
+      beforeEach(function () {
+        var published = { data: {fields: [{id: 'A'}]} };
+        scope.publishedContentType = published;
+        scope.contentType.unpublish = sinon.stub().resolves(published);
+      });
+
+      pit('unpublishes content type', function () {
+        return controller.save()
+        .then(function () {
+          sinon.assert.callOrder(
+            scope.contentType.unpublish,
+            scope.contentType.save,
+            scope.contentType.publish
+          );
+        });
+      });
+
+      pit('does not unpublish if no field removed', function () {
+        scope.contentType.data.fields = [{id: 'A'}, {id: 'B'}];
+        return controller.save()
+        .then(function () {
+          sinon.assert.notCalled(scope.contentType.unpublish);
+        });
+      });
+
+      describe('after unpublishing', function () {
+        pit('retains local content type data', function () {
+          var $q = this.$inject('$q');
+          scope.contentType.data = 'LOCAL';
+          scope.contentType.unpublish = function () {
+            this.data = 'UNPULBISHED';
+            return $q.when(this);
+          };
+          return controller.save()
+          .then(function () {
+            expect(scope.contentType.data).toEqual('LOCAL');
+          });
+        });
+
+        pit('updates version', function () {
+          var $q = this.$inject('$q');
+          scope.contentType.data = {};
+          scope.contentType.unpublish = function () {
+            this.data = {sys: 'NEW SYS'};
+            return $q.when(this);
+          };
+          return controller.save()
+          .then(function () {
+            expect(scope.contentType.data.sys).toEqual('NEW SYS');
+          });
+        });
       });
     });
   });

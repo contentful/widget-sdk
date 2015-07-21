@@ -2,9 +2,9 @@
 
 angular.module('contentful').directive('cfMarkdownEditor', ['$injector', function($injector){
   var $document   = $injector.get('$document');
+  var $rootScope  = $injector.get('$rootScope');
   var $timeout    = $injector.get('$timeout');
   var $window     = $injector.get('$window');
-  var $rootScope  = $injector.get('$rootScope');
   var assetUrl    = $injector.get('$filter')('assetUrl');
   var delay       = $injector.get('delay');
   var keycodes    = $injector.get('keycodes');
@@ -28,6 +28,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       var toolbar = elem.find('.markdown-toolbar');
       var modeSwitch = elem.find('.markdown-modeswitch');
       var preview = elem.find('.markdown-preview');
+      var validations = dotty.get(scope, 'widget.field.validations', []);
 
       scope.metaKey = /(Mac|Macintosh)/gi.test($window.navigator.userAgent) ? 'Cmd' : 'Ctrl';
 
@@ -212,10 +213,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       };
 
       scope.insertRule = function () {
-        var range = lineRange();
-        textarea.textrange('replace', range.text + '\n\n___');
-        textarea.textrange('set', range.end, 0);
-        triggerUpdateEvents();
+        insertText('\n\n___');
       };
 
       scope.toggleBlockQuote = function () {
@@ -243,10 +241,21 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         }).promise.then(function (assets) {
           if (_.isEmpty(assets)) return;
           var links = _.map(assets, makeAssetLink).join('\n');
-          var range = lineRange();
-          textarea.textrange('replace', range.text + '\n\n'+links+'\n');
-          textarea.textrange('set', range.end, 0);
-          triggerUpdateEvents();
+          insertText('\n\n'+links+'\n');
+        });
+      };
+
+      scope.insertExternalLink = function() {
+        var modalScope = $rootScope.$new();
+        modalScope.model = {};
+
+        modalDialog.open({
+          scope: modalScope,
+          template: 'insert_external_link_dialog',
+          ignoreEnter: true
+        }).promise.then(function(link) {
+          var markup = makeExternalLink(link);
+          insertText(markup);
         });
       };
 
@@ -257,6 +266,13 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         var lines = entireLines(range);
         textarea.textrange('set', lines.start, lines.length);
         return textarea.textrange('get');
+      }
+
+      function insertText(text) {
+        var range = lineRange();
+        textarea.textrange('replace', range.text + text);
+        textarea.textrange('set', range.end, 0);
+        triggerUpdateEvents();
       }
 
       function mapLines(lines, mapFn) {
@@ -286,8 +302,12 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       }
 
       function triggerUpdateEvents() {
+        textarea.trigger('input');
         $rootScope.$broadcast('elastic:adjust');
-        var textareaElem = textarea.get(0);
+        dispatchPasteEvent();
+      }
+
+      function dispatchPasteEvent() {
         /*global Event*/
         // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events
         var evt;
@@ -297,7 +317,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
           evt = document.createEvent('Event');
           evt.initEvent('paste', true, true);
         }
-        textareaElem.dispatchEvent(evt);
+        textarea.get(0).dispatchEvent(evt);
       }
 
       function makeAssetLink(asset) {
@@ -307,6 +327,14 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         } catch (e) {
           return null;
         }
+      }
+
+      function makeExternalLink(link) {
+        var url = encodeURI(link.url);
+        if (link.title) {
+          return '[' + link.title + '](' + url + ')';
+        }
+        return '<' + url + '>';
       }
 
       function localizedAsset(asset, locale) {
@@ -319,24 +347,54 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         };
       }
 
-      // Update Preview /////////////////////////////////////
+      // Update preview and counts /////////////////////////////////////
 
-      scope.$watch('displayMode', function () {
-        var source = scope.fieldData.value;
-        if (scope.inPreviewMode() && source) {
-          scope.markdownPreview = marked(source, {renderer: renderer});
-        } else {
-          scope.markdownPreview = null;
-        }
+      scope.$watch('displayMode', function() {
+        updatePreview();
+        updateCounts();
       });
 
-      scope.$watch('fieldData.value', function (source, old, scope) {
-        if (scope.inPreviewMode() && source) {
-          scope.markdownPreview = marked(source, {renderer: renderer});
-        } else {
-          scope.markdownPreview = null;
-        }
+      var timeoutPromise = tick();
+      function tick() {
+        updatePreview();
+        updateCounts();
+        timeoutPromise = $timeout(tick, 500);
+        return timeoutPromise;
+      }
+
+      scope.$on('$destroy', function() {
+        $timeout.cancel(timeoutPromise);
       });
+
+      function updatePreview() {
+        scope.markdownPreview = marked(getFieldRawValue(), {renderer: renderer});
+      }
+
+      function updateCounts() {
+        scope.counts = {
+          rawChars: getFieldRawValue().length,
+          textWords: countWords(getFieldTextValue()),
+          constraints: _(validations).pluck('size').first()
+        };
+      }
+
+      function getFieldRawValue() {
+        return dotty.get(scope, 'fieldData.value', '') || '';
+      }
+
+      function getFieldTextValue() {
+        return htmlToText(scope.markdownPreview || '');
+      }
+
+      function countWords(v) {
+        var words = v.replace(/\s+/gm, ' ').split(' ');
+        words = words.filter(function(word) { return word.length > 0; });
+        return words.length;
+      }
+
+      function htmlToText(v) {
+        return v.replace(/<[^>]+>/gm, '');
+      }
     }
   };
 }]);

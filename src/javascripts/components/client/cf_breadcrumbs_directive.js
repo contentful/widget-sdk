@@ -48,17 +48,15 @@ angular.module('contentful').directive('cfBreadcrumbs', ['$injector', function (
         if (canScroll().right) { arrowRight.show(); } else { arrowRight.hide(); }
       }
 
-      function getStatesChainLength () {
-        return $breadcrumb.getStatesChain().length;
+      function updateTopState() {
+        $scope.topState = $breadcrumb.getStatesChain().length === 1;
       }
 
       breadcrumbsContainer.scroll(updateArrows);
+      updateTopState();
       $scope.$on('$stateChangeSuccess', debouncedScrollToLastBreadCrumb);
+      $scope.$on('$stateChangeSuccess', updateTopState);
       $scope.$watch('$state.current.ncyBreadcrumbLabel', debouncedScrollToLastBreadCrumb);
-
-      $scope.$watch(getStatesChainLength, function (length) {
-        $scope.topState = length === 1;
-      });
 
       $scope.scrollLeft = function () {
         breadcrumbsContainer.animate({ scrollLeft: breadcrumbsContainer.scrollLeft() - breadcrumbsContainer.width() });

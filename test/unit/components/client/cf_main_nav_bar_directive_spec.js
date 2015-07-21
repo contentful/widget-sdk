@@ -42,7 +42,6 @@ describe('Main nav bar directive', function () {
       scope.permissionController.get.returns(false);
 
       scope.spaces = [{}];
-      scope.locationInAccount = false;
 
       compileElement = function () {
         container = $('<cf-main-nav-bar></cf-main-nav-bar>');
