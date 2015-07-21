@@ -37,7 +37,7 @@ angular.module('contentful').factory('uiVersionSwitcher', ['$injector', function
   }
 
   function checkIfVersionWasSwitched() {
-    var uiVersion = $window.CF_UI_VERSION;
+    var uiVersion = $.cookies.get('ui_version');
     if(uiVersion) {
       notification.info('UI Version was switched to uiVersion '+uiVersion);
 
