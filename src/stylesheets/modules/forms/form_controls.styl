@@ -42,8 +42,7 @@ Styleguide 5.1
 $form-control()
   $form-control-theme()
   padding: $form-textarea-padding
-  padding-top: 7px
-  font-size: $base-font-size
+  $input-dimensions()
   border: 1px solid $metallic-gray
   border-radius: 3px 3px 3px 3px
   &:focus
@@ -75,13 +74,14 @@ $form-control()
  * @component form-control--with-unit
  */
 .form-control--with-unit
-  line-height: 2.4em;
-  padding: 0;
-  display: inline-flex;
+  line-height: 31px
+  height: auto
+  padding: 0
+  display: inline-flex
   > input
-    line-height: inherit
+    height: 31px
     margin: 0;
-    padding: 0 0 0 0.5em;
+    padding: 0 0 0 0.5em
     border: 0
     &[disabled]
       color: $gray-medium
