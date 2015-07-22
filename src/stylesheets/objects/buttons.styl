@@ -145,8 +145,14 @@ $secondary-button-bg = hsl(0, 0%, 93%)
     path
       stroke: $secondary-button-bg
 
+.cfnext-btn-secondary-action
+  // This button has a border and is therefore one pixel larger if the
+  // padding is not adjusted
+  padding: calc(0.6rem - 1px) calc(1.5rem - 1px)
+
 .cfnext-btn-secondary-action--large
   $cfnext-button-large()
+  padding: calc(1rem - 1px) calc(2.5rem - 1px)
 
 /**
 Caution button
