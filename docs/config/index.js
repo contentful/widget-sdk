@@ -3,6 +3,7 @@
 var path = require('path');
 var packagePath = __dirname;
 var _ = require('lodash-node');
+var markdown = require('../lib/markdown-render');
 
 var Package = require('dgeni').Package;
 
@@ -23,6 +24,10 @@ module.exports = new Package('angularjs', [
 .factory(require('./services/gitData'))
 .factory(require('./services/extract-type-transform'))
 .factory(require('./inline-tag-defs/type'))
+
+.factory(function renderMarkdown () {
+  return markdown.render;
+})
 
 .processor(require('./processors/git-url'))
 .processor(require('./processors/source-code'))
