@@ -89,6 +89,7 @@
             cf-context-menu-trigger)
             | Delete
           .delete-confirm.no-caret(cf-context-menu="top")
+            cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
             p You are about to delete {{headline()}}
             button.cfnext-btn-caution(type="button" ng-click="delete()") Delete 
             button.cfnext-btn-secondary-action(type="button") Don't Delete 
