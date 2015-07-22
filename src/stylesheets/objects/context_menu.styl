@@ -24,8 +24,6 @@ $context-menu-item--layout()
   padding: 0.6em 2em 0.6em 1.3em
   margin-bottom: 0
   white-space: no-wrap
-  display: flex
-  align-items: center
   overflow-clip-box: content-box
   overflow: hidden
   text-overflow: ellipsis
@@ -74,6 +72,10 @@ $context-menu-base()
     &.x--top-right
       justify-content: flex-end
       padding-right: 30px
+
+    &.x--top-left
+      justify-content: flex-start
+      padding-left: 30px
 
     &.x--bottom,
     &.x--bottom-left
