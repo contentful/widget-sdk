@@ -30,7 +30,7 @@ angular.module('contentful').factory('uiVersionSwitcher', ['$injector', function
       $.cookies.set('ui_version', uiVersion, {
         expiresAt: moment().add(1, 'h').toDate()
       });
-      $location.search('ui_version', null);
+      $location.url($location.protocol() +'://'+ $location.host() + $location.path());
     }
   }
 
