@@ -1,6 +1,10 @@
 .dropdown-btn
-  i.fa.fa-bars.fa-rotate-90.dropdown-toggle(cf-dropdown-toggle="viewCustomizer" tooltip="Select visible columns" tooltip-placement="top" tooltip-container=".client")
-  .dropdown-menu(cf-dropdown-menu="viewCustomizer" cf-dropdown-position="left")
+  i.fa.fa-bars.fa-rotate-90.dropdown-toggle(
+    cf-context-menu-trigger
+    tooltip="Select visible columns"
+    tooltip-placement="top"
+    tooltip-container=".client")
+  .dropdown-menu(cf-context-menu="left")
     h3 Displayed columns
     .column-lists
       ul.u-list.displayed-fields

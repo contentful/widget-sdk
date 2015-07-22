@@ -6,7 +6,12 @@
  * @description
  * Provides reusable UI components.
  */
-angular.module('cf.ui', []);
+angular.module('cf.ui', [])
+
+.run(['contextMenu', function (contextMenu) {
+  contextMenu.init();
+}]);
+
 
 angular.module('contentful', [
   'contentful/environment',

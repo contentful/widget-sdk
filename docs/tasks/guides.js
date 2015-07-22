@@ -10,7 +10,7 @@ import combine from 'stream-combiner';
 import gutil from 'gulp-util';
 
 import * as utils from './utils';
-import highlight from '../lib/highlight';
+import {createRenderer} from '../lib/markdown-render';
 
 /**
  * Pipeline that renders markdown files and generates an index file for
@@ -47,22 +47,7 @@ function markdownLex () {
  * the the file extension with '.html'.
  */
 function markdownRender () {
-  var Renderer = marked.Renderer;
-  var renderBase = Renderer.prototype;
-  var renderer = new Renderer();
-
-  renderer.link = function (href, title, text) {
-    return renderBase.link.call(this, href, title, text);
-  };
-
-  renderer.code = function (code, lang) {
-    var html = highlight(code, lang);
-    return `<code class="md-code-block hljs"><pre>${html}</pre></code>`;
-  };
-
-  renderer.codespan = function (code) {
-    return `<code class="md-code-inline">${code}</code>`;
-  };
+  let renderer = createRenderer();
 
   return utils.forEach(function (file) {
     var tokens = file.markdown;

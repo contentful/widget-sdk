@@ -27,6 +27,7 @@ $context-menu-item--layout()
   overflow-clip-box: content-box
   overflow: hidden
   text-overflow: ellipsis
+  display: block
 
 $context-menu-item()
   $context-menu-item--layout()
@@ -67,7 +68,8 @@ $context-menu-base()
     justify-content: center
     // TODO should actually be -13px to hide the context menu border
     top: -12px
-    width: 100%
+    left: 0
+    right: 0
 
     &.x--top-right
       justify-content: flex-end
