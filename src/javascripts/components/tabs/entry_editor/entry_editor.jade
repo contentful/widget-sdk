@@ -19,15 +19,19 @@
       button.cfnext-btn-secondary-action(cf-context-menu-trigger)
         cf-icon.btn-dropdown-icon(name="dd-arrow-down")
         | View
-      .context-menu(cf-context-menu="bottom-right")
+      .context-menu(
+        role="menu" cf-context-menu="bottom-right"
+        aria-label="Configure Entry View" data-test-id="entry-view-menu")
         cf-icon.context-menu__arrow.x--top-right(name="arrow-up")
         ul.lang-switcher(ng-show="showLangSwitcher")
-          label.context-menu__item(ng-repeat="locale in spaceContext.privateLocales track by locale.sys.id")
+          label.context-menu__item(
+            ng-repeat="locale in spaceContext.privateLocales track by locale.sys.id"
+            role="menuitemcheckbox")
             input(type="checkbox" ng-model="spaceContext.localeStates[locale.internal_code]")
             | {{locale.name}}
             span(ng-show="locale == spaceContext.space.getDefaultLocale()")
               | &nbsp;(default)
-        label.context-menu__item
+        label.context-menu__item(role="menuitemcheckbox")
           input(type="checkbox" ng-model="preferences.showDisabledFields")
           | Show disabled fields
 
@@ -77,14 +81,18 @@
       button.cfnext-btn-secondary-action(cf-context-menu-trigger)
         cf-icon.btn-dropdown-icon--up(name="dd-arrow-down")
         | More
-      .context-menu(cf-context-menu="top")
+      .context-menu(
+        role="menu" cf-context-menu="top"
+        aria-label="Entry Actions" data-test-id="entry-actions-menu")
         cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
         ul
           li.context-menu__item.duplicate(
+            role="menuitem"
             ng-show="entityActionsController.canDuplicate()"
             ng-click="duplicate()")
             | Duplicate
           li.context-menu__item.delete(
+            role="menuitem"
             ng-show="entityActionsController.canDelete()"
             cf-context-menu-trigger)
             | Delete
@@ -104,11 +112,19 @@
       button.cfnext-btn-secondary-action(cf-context-menu-trigger)
         cf-icon.btn-dropdown-icon--up(name="dd-arrow-down")
         | Revert
-      .context-menu.revert-actions__menu(cf-context-menu="top")
+      .context-menu.revert-actions__menu(
+        role="menu" cf-context-menu="top"
+        aria-label="Revert Entry" data-test-id="revert-entry-menu")
         cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
         ul.context-menu__items
-          li(type="button" ng-show="canRevertToPublishedState()" ng-click="revertToPublishedState()") Revert to published version ({{publishedAt}})
-          li(type="button" ng-show="canRevertToPreviousState()" ng-click="revertToPreviousState()") Discard my changes ({{updatedAt}})
+          li(role="menuitem"
+            ng-show="canRevertToPublishedState()"
+            ng-click="revertToPublishedState()")
+            | Revert to published version ({{publishedAt}})
+          li(role="menuitem"
+            ng-show="canRevertToPreviousState()"
+            ng-click="revertToPreviousState()")
+            | Discard my changes ({{updatedAt}})
 
     button.cfnext-btn-secondary-action.unpublish(type="button" ng-show="entityActionsController.canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry") Unpublish
     | 

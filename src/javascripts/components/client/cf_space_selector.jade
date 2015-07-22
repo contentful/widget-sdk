@@ -6,19 +6,23 @@
     ng-click="clickedSpaceSwitcher()" tabindex="0")
     span.space-selector__name.u-truncate(ng-bind="spaceContext.space.data.name || 'Spaces'")
     cf-icon.icon-dd-arrow-down(name="dd-arrow-down" size="10")
-  .space-selector__menu(cf-context-menu="bottom-left")
+  .space-selector__menu(
+    role="menu" cf-context-menu="bottom-left"
+    aria-label="Select Space" data-test-id="space-selector-menu")
     cf-icon.context-menu__arrow.x--top-left(name="arrow-up")
     .space-selector__orgs(ng-if="spaces.length > 0")
       .space-selector__group(ng-repeat="(orgId, org) in spacesByOrganization")
         .space-selector__group-label
           | {{getOrganizationName(orgId)}}
         .context-menu__item(
+          role="menuitem"
           ng-repeat="space in org track by space.getId()"
           ng-click="selectSpace(space)"
           ng-class="{selected: space.getId() === getCurrentSpaceId()}")
           | {{space.data.name}}
     .space-selector__group
       .space-selector__add-button.context-menu__item(
+        role="menuitem"
         ng-show="permissionController.canCreateSpace()"
         ng-click="showCreateSpaceDialog()")
           cf-icon.space-selector__add-icon(name="plus")

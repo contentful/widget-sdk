@@ -23,9 +23,11 @@
 
 .view-menu-buttons.menu-with-buttons-bottom(ng-if="viewMenuEditable")
   .dropdown-btn
-    i.fa.fa-plus.dropdown-toggle(cf-context-menu-trigger)
-    .context-menu(cf-context-menu="top-right")
+    i.fa.fa-plus.dropdown-toggle(role="button" cf-context-menu-trigger)
+    .context-menu(
+      role="menu" cf-context-menu="top-right"
+      aria-label="Add View menu" data-test-id="add-view-menu")
       cf-icon.context-menu__arrow.x--bottom-left(name="arrow-up")
       ul.context-menu__items
-        li(ng-click="addFolder()") Add Folder
-        li(ng-click="addViewToDefault()") Save current view as…
+        li(role="menuitem" ng-click="addFolder()") Add Folder
+        li(role="menuitem" ng-click="addViewToDefault()") Save current view as…

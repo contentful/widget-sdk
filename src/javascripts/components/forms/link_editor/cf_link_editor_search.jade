@@ -22,9 +22,11 @@
   //- manually with the confidtion above
   .context-menu(
     ng-if="entityType=='Entry' && addableContentTypes.length > 1"
-    cf-context-menu)
+    cf-context-menu role="menu"
+    aria-label="Add new Entry" data-test-id="add-new-entry-menu")
     cf-icon.context-menu__arrow(name="arrow-up")
     .context-menu__item(
+      role="menuitem"
       ng-repeat="contentType in addableContentTypes track by contentType.getId()"
       ng-click="addNewEntry(contentType)")
       | {{contentType.getName()}}
