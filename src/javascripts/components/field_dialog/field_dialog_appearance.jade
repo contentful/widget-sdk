@@ -47,11 +47,12 @@ div(
                type="checkbox"
                ng-model="widgetParams[option.param]")
         div(ng-switch-when="Predefined")
-          select.cfnext-select-box(ng-if="option.values | isArray"
-                 ng-options="value for value in option.values"
-                 ng-model="widgetParams[option.param]")
-          select.cfnext-select-box(ng-if="!(option.values | isArray)"
-                 ng-options="desc as value for (desc, value) in option.values"
-                 ng-model="widgetParams[option.param]")
-          i.fa.fa-caret-down.cfnext-select-box-icon
+          select.cfnext-select-box(
+            ng-if="option.values | isArray"
+            ng-options="value for value in option.values"
+            ng-model="widgetParams[option.param]")
+          select.cfnext-select-box(
+            ng-if="!(option.values | isArray)"
+            ng-options="desc as value for (desc, value) in option.values"
+            ng-model="widgetParams[option.param]")
       ul.cfnext-form__field-errors(cf-field-errors-for="{{option.param}}")

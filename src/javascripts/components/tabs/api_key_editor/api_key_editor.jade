@@ -116,14 +116,12 @@
         .l-form-controls
           .l-field-editor
             .tools
-              .btn.btn--tertiary.select-box
-                select(ng-model="authCodeExample.lang")
-                  option(value="http" selected) HTTP (Curl)
-                  option(value="javascript") JavaScript
-                  option(value="objc") Objective-C
-                  option(value="ruby") Ruby
-                  option(value="swift") Swift
-                i.button-icon-right.fa.fa-caret-down
+              select.cfnext-select-box(ng-model="authCodeExample.lang")
+                option(value="http" selected) HTTP (Curl)
+                option(value="javascript") JavaScript
+                option(value="objc") Objective-C
+                option(value="ruby") Ruby
+                option(value="swift") Swift
               label
                 input.form-control-look(type="radio" name="codeexampleapi" ng-model="authCodeExample.api" value="cda")
                 | Production
