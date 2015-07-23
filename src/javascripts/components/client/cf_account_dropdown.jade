@@ -1,8 +1,9 @@
 .account-dropdown.app-top-bar__child.app-top-bar--left-separator
-  a.app-top-bar__dropdown-toggle.account-dropdown__toggle(
+  a.app-top-bar__menu-trigger(
+    role="button"
     cf-context-menu-trigger
     ng-click="clickedProfileButton()"
-    tabindex="0")
+    tabindex="0" data-test-id="account-menu-trigger")
     img.account-dropdown__avatar(ng-src="{{user.avatarUrl}}")
     span.account-dropdown__name.u-truncate {{user.firstName}}
     cf-icon.icon-dd-arrow-down.pull-right(name="dd-arrow-down")
