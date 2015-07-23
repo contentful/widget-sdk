@@ -1,0 +1,40 @@
+header.workbench-header
+  h1.workbench-header__title(title="{{context.title}}") {{context.title}}
+  .workbench-header__description(ng-show="locale.data.default")
+    p Default locale
+
+.workbench-main
+  form.workbench-main__middle-content(name="localeForm" submit="save()")
+    .cfnext-form__field
+      label Locale and Code
+      select.cfnext-select-box(
+          ng-model="locale.data.code"
+          ng-options="item.code as (item.name + ' (' + item.code + ')') for item in locales")
+        | Locale
+        option(value="") Select a locale
+      i.fa.fa-caret-down.cfnext-select-box-icon
+    .cfnext-form__fieldset
+      legend Options
+      .cfnext-form-option
+        input(id="cda" type="checkbox" ng-model="locale.data.contentDeliveryApi" ng-disabled="locale.data.default")
+        label(for="cda") Publish content for this locale
+      .cfnext-form-option
+        input(id="cma" type="checkbox" ng-model="locale.data.contentManagementApi" ng-disabled="locale.data.default")
+        label(for="cma") Enable editing for this locale
+
+.workbench-actions
+  button.cfnext-btn-secondary-action.cancel(
+    ng-show="context.isNew"
+    ng-click="cancel()")
+    | Cancel
+  button.cfnext-btn-secondary-action.delete(
+    ng-show="locale.getId() && !locale.data.default"
+    ng-disabled="localeForm.$submitted"
+    ng-click="startDeleteFlow()")
+    | Delete
+  button.cfnext-btn-primary-action(
+     type="submit"
+     tooltip="Save this Locale"
+     ng-click="save()"
+     ng-disabled="localeForm.$invalid || !localeForm.$dirty || localeForm.$submitted")
+    | Save

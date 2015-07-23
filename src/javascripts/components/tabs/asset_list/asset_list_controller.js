@@ -90,7 +90,7 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
 
   function createAssetForFile(FPFile) {
     var file = filepicker.parseFPFile(FPFile);
-    var locale = $scope.spaceContext.space.getDefaultLocale().code;
+    var locale = $scope.spaceContext.space.getDefaultLocale().internal_code;
     var data = {
       sys: { type: 'Asset' },
       fields: { file: {}, title: {} }
@@ -102,7 +102,7 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
   }
 
   function processAssetForFile(entity) {
-    var locale = $scope.spaceContext.space.getDefaultLocale().code;
+    var locale = $scope.spaceContext.space.getDefaultLocale().internal_code;
     return entity.process(entity.version, locale);
   }
 

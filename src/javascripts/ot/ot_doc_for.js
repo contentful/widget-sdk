@@ -44,6 +44,17 @@ angular.module('contentful').directive('otDocFor', function () {
     });
   }
 
+  function filterDeletedLocales(data) {
+    _.keys(data.fields).forEach(function (fieldId) {
+      _.keys(data.fields[fieldId]).forEach(function (internal_code) {
+        if (!_.find($scope.spaceContext.privateLocales, { internal_code: internal_code })) {
+          delete data.fields[fieldId][internal_code];
+        }
+      });
+    });
+    return data;
+  }
+
   $scope.otDisabled = true; // set to true to prevent editing
   $scope.otEditable = false; // indicates editability
 
@@ -92,6 +103,8 @@ angular.module('contentful').directive('otDocFor', function () {
               if (shouldDocBeOpen(scope)) {
                 //console.log('otDocFor installing doc %o for entity %o', doc, entity);
                 //console.log('setting doc to %o (id: %o) in scope %o', doc.name, doc.snapshot.sys.id, scope.$id);
+                // Filter deleted locales here too
+                filterDeletedLocales(doc.snapshot);
                 scope.otDoc = doc;
                 setVersionUpdater();
                 updateIfValid();

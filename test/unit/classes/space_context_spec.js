@@ -118,7 +118,10 @@ describe('SpaceContext class with a space', function () {
     var privateLocales, defaultLocale;
     beforeEach(function () {
       privateLocales = ['privateLocales'];
-      defaultLocale = {code: 'en-US'};
+      defaultLocale = {
+        code: 'en-US',
+        internal_code: 'en-US'
+      };
       spaceContext.space.getPrivateLocales = sinon.stub().returns(privateLocales);
       spaceContext.space.getDefaultLocale  = sinon.stub().returns(defaultLocale);
       spaceContext.refreshActiveLocales = sinon.stub();
@@ -157,9 +160,18 @@ describe('SpaceContext class with a space', function () {
   describe('refresh active locales', function () {
     beforeEach(function () {
       spaceContext.privateLocales = [
-        {code: 'en-US'},
-        {code: 'pt-PT'},
-        {code: 'pt-BR'}
+        {
+          code: 'en-US',
+          internal_code: 'en-US'
+        },
+        {
+          code: 'pt-PT',
+          internal_code: 'pt-PT'
+        },
+        {
+          code: 'pt-BR',
+          internal_code: 'pt-BR'
+        }
       ];
       spaceContext.localeStates = {
         'en-US': true,
@@ -178,8 +190,14 @@ describe('SpaceContext class with a space', function () {
 
     it('sets new active locales', function () {
       expect(spaceContext.activeLocales).toEqual([
-        {code: 'en-US'},
-        {code: 'pt-PT'}
+        {
+          code: 'en-US',
+          internal_code: 'en-US'
+        },
+        {
+          code: 'pt-PT',
+          internal_code: 'pt-PT'
+        }
       ]);
     });
   });

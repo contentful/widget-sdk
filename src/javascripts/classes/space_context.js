@@ -32,7 +32,7 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
         if (this.space) {
           this.privateLocales = this.space.getPrivateLocales();
           this.defaultLocale  = this.space.getDefaultLocale();
-          this.localeStates[this.defaultLocale.code] = true;
+          this.localeStates[this.defaultLocale.internal_code] = true;
         } else {
           this.privateLocales = [];
           this.defaultLocale  = null;
@@ -43,17 +43,17 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
       refreshActiveLocales: function () {
         var newLocaleStates = {}, newActiveLocales = [];
         _.each(this.privateLocales, function (locale) {
-          if (this.localeStates[locale.code]) {
-            newLocaleStates[locale.code] = true;
+          if (this.localeStates[locale.internal_code]) {
+            newLocaleStates[locale.internal_code] = true;
             newActiveLocales.push(locale);
           }
         }, this);
         this.localeStates = newLocaleStates;
-        this.activeLocales = _.uniq(newActiveLocales, function(locale){return locale.code;});
+        this.activeLocales = _.uniq(newActiveLocales, function(locale){return locale.internal_code;});
       },
 
-      getPrivateLocale: function(code) {
-        return _.find(this.privateLocales, {'code': code});
+      getPrivateLocale: function(internal_code) {
+        return _.find(this.privateLocales, {'internal_code': internal_code});
       },
 
       filterAndSortContentTypes: function (contentTypes) {
@@ -168,7 +168,7 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
       localizedField: function(entity, path, locale) {
         var getField = $parse(path);
         var field = getField(entity);
-        var defaultLocale = this.space.getDefaultLocale().code;
+        var defaultLocale = this.space.getDefaultLocale().internal_code;
         locale = locale || defaultLocale;
         return (field && field[locale]) || field && field[defaultLocale];
       },

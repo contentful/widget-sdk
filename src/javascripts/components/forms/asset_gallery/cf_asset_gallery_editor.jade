@@ -13,8 +13,8 @@ ul.asset-gallery(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide
     .asset-gallery__info(cf-file-metadata
                   ng-mouseover="hoveringImage=true"
                   ng-mouseleave="hoveringImage=false"
-                  entity-title="spaceContext.localizedField(entity, 'data.fields.title', locale.code)"
-                  file="spaceContext.localizedField(entity, 'data.fields.file', locale.code)")
+                  entity-title="spaceContext.localizedField(entity, 'data.fields.title', locale.internal_code)"
+                  file="spaceContext.localizedField(entity, 'data.fields.file', locale.internal_code)")
       .asset-gallery__file.gallery-file
         div(cf-thumbnail file="file" size="120" fit="thumb" ng-if="file && file.url")
 

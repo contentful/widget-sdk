@@ -63,6 +63,7 @@ mocks.factory('cfStub', function ($injector) {
   cfStub.locale = function (code, extraData) {
     return _.extend({
       code: code,
+      internal_code: code,
       contentDeliveryApi: true,
       contentManagementApi: true,
       'default': true,

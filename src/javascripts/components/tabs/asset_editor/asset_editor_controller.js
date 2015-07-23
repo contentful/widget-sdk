@@ -71,7 +71,7 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
       if (error.path.length == 1 && error.path[0] == 'fields') {
         $scope.hasErrorOnFields = error.path.length == 1 && error.path[0] == 'fields';
       } else if (error.path.length == 2) {
-        $scope.errorPaths[field].push($scope.spaceContext.space.getDefaultLocale().code);
+        $scope.errorPaths[field].push($scope.spaceContext.space.getDefaultLocale().internal_code);
       } else {
         var localeCode = error.path[2];
         $scope.errorPaths[field].push(localeCode);
@@ -89,8 +89,8 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
 
   // File uploads
   $scope.$on('fileUploaded', function (event, file, locale) {
-    setTitleOnDoc(file, locale.code);
-    $scope.asset.process($scope.otDoc.version, locale.code)
+    setTitleOnDoc(file, locale.internal_code);
+    $scope.asset.process($scope.otDoc.version, locale.internal_code)
     .catch(function (err) {
       $scope.$emit('fileProcessingFailed');
       notification.error('There has been a problem processing the Asset.');

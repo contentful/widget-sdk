@@ -14,7 +14,7 @@ angular.module('contentful').controller('SpaceController', ['$scope', '$injector
   $scope.$watch(function (scope) {
     if (scope.spaceContext && scope.spaceContext.space) {
       return _.map(scope.spaceContext.space.getPrivateLocales(), function (locale) {
-        return locale.code;
+        return locale.internal_code;
       });
     }
   }, function (codes, old, scope) {

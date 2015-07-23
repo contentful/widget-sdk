@@ -84,7 +84,8 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
         $scope.hasErrorOnFields = error.path.length == 1 && error.path[0] == 'fields';
       } else if (error.path.length == 2) {
         var locales = field.localized ? $scope.spaceContext.privateLocales : [$scope.spaceContext.space.getDefaultLocale()];
-        var allCodes = _.pluck(locales, 'code');
+        var allCodes = _.pluck(locales, 'internal_code');
+        console.log(allCodes);
         $scope.errorPaths[fieldId].push.apply($scope.errorPaths[fieldId], allCodes);
       } else {
         var localeCode = error.path[2];
@@ -155,10 +156,10 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
       var fieldType = _.find(contentTypeFields, {id: fieldId});
       if(fieldType.localized){
         _.each($scope.spaceContext.space.data.locales, function (locale) {
-          newField[locale.code] = null;
+          newField[locale.internal_code] = null;
         });
       } else {
-        newField[$scope.spaceContext.space.getDefaultLocale().code] = null;
+        newField[$scope.spaceContext.space.getDefaultLocale().internal_code] = null;
       }
       $scope.otDoc.at(['fields', fieldId]).set(newField);
     }

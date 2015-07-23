@@ -25,6 +25,16 @@ angular.module('contentful').config([
     template: JST.cf_structure_breadcrumbs()
   });
 
+  function filterDeletedLocales(data, availableLocales) {
+    _.keys(data.fields).forEach(function (fieldId) {
+      _.keys(data.fields[fieldId]).forEach(function (internal_code) {
+        if (!_.find(availableLocales, { internal_code: internal_code })) {
+          delete data.fields[fieldId][internal_code];
+        }
+      });
+    });
+  }
+
   $stateProvider.state('spaces', {
     url: '/spaces',
     abstract: true,
@@ -84,19 +94,18 @@ angular.module('contentful').config([
 
   $stateProvider.state('spaces.detail.entries.detail', {
     url: '/:entryId',
-    params: {
-      addToContext: {
-        value: false,
-        squash: '~'
-      }
-    },
+    params: { addToContext: false },
     ncyBreadcrumb: {
       parent: 'spaces.detail.entries.list',
       label: '{{context.title + (context.dirty ? "*" : "")}}'
     },
     resolve: {
       entry: ['$stateParams', 'space', function ($stateParams, space) {
-        return space.getEntry($stateParams.entryId);
+        return space.getEntry($stateParams.entryId).then(function (entry) {
+          filterDeletedLocales(entry.data, space.getPrivateLocales());
+          return entry;
+        });
+
       }]
     },
     controller: ['$state', '$scope', '$stateParams', 'entry', function ($state, $scope, $stateParams, entry) {
@@ -144,19 +153,17 @@ angular.module('contentful').config([
 
   $stateProvider.state('spaces.detail.assets.detail', {
     url: '/:assetId',
-    params: {
-      addToContext: {
-        value: false,
-        squash: '~'
-      }
-    },
+    params: { addToContext: false },
     ncyBreadcrumb: {
       parent: 'spaces.detail.assets.list',
       label: '{{context.title + (context.dirty ? "*" : "")}}'
     },
     resolve: {
       asset: ['$stateParams', 'space', function ($stateParams, space) {
-        return space.getAsset($stateParams.assetId);
+        return space.getAsset($stateParams.assetId).then(function (asset) {
+          filterDeletedLocales(asset.data, space.getPrivateLocales());
+          return asset;
+        });
       }]
     },
     controller: ['$state', '$scope', '$stateParams', 'asset', function ($state, $scope, $stateParams, asset) {
@@ -350,18 +357,97 @@ angular.module('contentful').config([
   $stateProvider.state('spaces.detail.settings', {
     url: '/settings',
     abstract: true,
+    template: '<ui-view/>'
+  });
+
+  $stateProvider.state('spaces.detail.settings.locales', {
+    url: '/locales',
+    abstract: true,
+    template: '<ui-view/>'
+  });
+
+  $stateProvider.state('spaces.detail.settings.locales.list', {
+    url: '',
+    ncyBreadcrumb: {
+      label: 'Locales'
+    },
+    template: '<div cf-locale-list class="locale-list entity-list"></div>'
+  });
+
+  var localeEditorState = {
+    template: '<div cf-locale-editor class="workbench"></div>',
+    ncyBreadcrumb: {
+      parent: 'spaces.detail.settings.locales.list',
+      label: '{{context.title + (context.dirty ? "*" : "")}}'
+    },
+    controller: ['$state', '$scope', '$stateParams', 'locale', function ($state, $scope, $stateParams, locale) {
+      $scope.context = $state.current.data;
+      $scope.locale = locale;
+
+      if (!$scope.$root.contextHistory.length || $stateParams.addToContext) {
+        var index = _.findIndex($scope.$root.contextHistory, function (e) {
+          return e.sys.id === $scope.locale.getId();
+        });
+        if (index > -1) {
+          $scope.$root.contextHistory.length = index;
+        }
+        $scope.$root.contextHistory.push($scope.locale);
+      }
+    }]
+  };
+
+  $stateProvider.state('spaces.detail.settings.locales.new', _.extend({
+    url: '_new',
+    data: {
+      isNew: true
+    },
+    resolve: {
+      locale: ['$stateParams', 'space', function ($stateParams, space) {
+        return space.newLocale({
+          code: null,
+          contentDeliveryApi: true,
+          contentManagementApi: true
+        });
+      }]
+    }
+  }, localeEditorState));
+
+  $stateProvider.state('spaces.detail.settings.locales.detail', _.extend({
+    url: '/:localeId',
+    params: { addToContext: false },
+    data: {
+      isNew: false
+    },
+    resolve: {
+      locale: ['$stateParams', 'space', function ($stateParams, space) {
+        return space.getLocale($stateParams.localeId);
+      }]
+    }
+  }, localeEditorState));
+
+  $stateProvider.state('spaces.detail.settings.iframe', {
+    url: '',
+    abstract: true,
     template: '<div cf-space-settings class="space-settings"></div>'
   });
 
-
-  $stateProvider.state('spaces.detail.settings.pathSuffix', {
+  $stateProvider.state('spaces.detail.settings.iframe.pathSuffix', {
     url: '/{pathSuffix:PathSuffix}',
     params: {
       pathSuffix: 'edit'
     },
     ncyBreadcrumb: {
-      label: 'Settings'
-    }
+      label: '{{title}}'
+    },
+    template: '',
+    controller: ['$scope', '$stateParams', function ($scope, $stateParams) {
+      $scope.title = {
+        edit: 'Space',
+        users: 'Users',
+        roles: 'Roles',
+        webhook_definitions: 'Webhooks'
+      }[$stateParams.pathSuffix];
+    }]
   });
 
 

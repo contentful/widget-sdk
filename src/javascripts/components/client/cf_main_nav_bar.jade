@@ -42,11 +42,23 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
         span.nav-bar__list-label APIs
     li.app-top-bar__action.nav-bar__list-item(
       ng-if="canNavigateTo.settings")
-      a.nav-bar__link(
-          ng-class="{'is-active': $state.includes('spaces.detail.settings') ,\
-            'is-section-index': $state.$current.name === 'spaces.detail.settings.pathSuffix'}"
-          ui-sref="spaces.detail.settings.pathSuffix({ spaceId: $stateParams.spaceId })"
+      a.nav-bar__link.app-top-bar__dropdown-toggle(
           data-view-type="space-settings"
-          tabindex="0")
+          cf-context-menu-trigger
+          ng-class="{'is-active': $state.includes('spaces.detail.settings')}")
         cf-icon(name="nav-settings")
         span.nav-bar__list-label Settings
+        cf-icon.icon-dd-arrow-down.pull-right(name="dd-arrow-down")
+      .context-menu.x--top-bar(cf-context-menu)
+        cf-icon.context-menu__arrow.center-aligned(name="arrow-up")
+        ul.context-menu__items
+          li(ng-class="{'selected': $stateParams.pathSuffix === 'edit'}"
+            ui-sref="spaces.detail.settings.iframe.pathSuffix({ pathSuffix: 'edit' })") Space
+          li(ng-class="{'selected': $state.includes('spaces.detail.settings.locales')}"
+            ui-sref="spaces.detail.settings.locales.list") Locales
+          li(ng-class="{'selected': $stateParams.pathSuffix === 'users'}"
+            ui-sref="spaces.detail.settings.iframe.pathSuffix({ pathSuffix: 'users' })") Users
+          li(ng-class="{'selected': $stateParams.pathSuffix === 'roles'}"
+            ui-sref="spaces.detail.settings.iframe.pathSuffix({ pathSuffix: 'roles' })") Roles
+          li(ng-class="{'selected': $stateParams.pathSuffix === 'webhook_definitions'}"
+            ui-sref="spaces.detail.settings.iframe.pathSuffix({ pathSuffix: 'webhook_definitions' })") Webhooks

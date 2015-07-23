@@ -283,7 +283,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
 
     _getDefaultLocale: function () {
       var locales = this.spaceContext.space.data.locales;
-      return !_.isEmpty(locales) ? locales[0].code : 'en-US';
+      return !_.isEmpty(locales) ? locales[0].internal_code : 'en-US';
     }
   };
 

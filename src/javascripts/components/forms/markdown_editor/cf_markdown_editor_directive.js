@@ -342,8 +342,8 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         var file  = asset.data.fields.file;
         var title = asset.data.fields.title;
         return {
-          file:   file[locale.code] ||  file[defaultLocale.code] || _.first(file ),
-          title: title[locale.code] || title[defaultLocale.code] || _.first(title),
+          file:   file[locale.internal_code] ||  file[defaultLocale.internal_code] || _.first(file ),
+          title: title[locale.internal_code] || title[defaultLocale.internal_code] || _.first(title),
         };
       }
 

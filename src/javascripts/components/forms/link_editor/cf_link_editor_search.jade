@@ -92,12 +92,12 @@
               cf-click-local="pick(entity)"
               ng-class="{selected: entity==selectedEntity}")
             td.cell-preview
-              p.file-preview(cf-file-preview file="spaceContext.localizedField(entity, 'data.fields.file', locale.code)")
+              p.file-preview(cf-file-preview file="spaceContext.localizedField(entity, 'data.fields.file', locale.internal_code)")
                 span.cf-thumbnail(cf-thumbnail file="file" size="70" ng-if="file")
-            td.cell-name(ng-init="assetCellName=spaceContext.localizedField(entity, 'data.fields.title', locale.code) || 'Untitled'")
+            td.cell-name(ng-init="assetCellName=spaceContext.localizedField(entity, 'data.fields.title', locale.internal_code) || 'Untitled'")
               p(title="{{assetCellName}}") {{assetCellName}}
-              p.lighter {{spaceContext.localizedField(entity, 'data.fields.description', locale.code)}}
-            td.cell-type(ng-init="file=spaceContext.localizedField(entity, 'data.fields.file', locale.code)")
+              p.lighter {{spaceContext.localizedField(entity, 'data.fields.description', locale.internal_code)}}
+            td.cell-type(ng-init="file=spaceContext.localizedField(entity, 'data.fields.file', locale.internal_code)")
               p(ng-show="file && file.url") {{file|fileType}}
                 span.lighter {{file|fileExtension}}
               p.cell--lighter
