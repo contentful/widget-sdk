@@ -60,7 +60,6 @@ angular.module('contentful')
 
       var buildMessage = errorMessageBuilder.forAsset;
       var schema = createAssetSchema($scope.spaceContext.space.getPrivateLocales());
-      $scope.schema.setContext({ skipDeletedLocaleFieldValidation: true });
       $scope.schema = new SchemaController(buildMessage, schema);
       $scope.schema.setContext({ skipDeletedLocaleFieldValidation: true });
     }]
