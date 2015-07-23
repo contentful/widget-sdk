@@ -38,7 +38,8 @@
         cf-context-menu-trigger
         ng-hide="permissionController.get('createEntry', 'shouldHide')"
         ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
-        cf-when-disabled="permissionController.entityActions.createEntry")
+        cf-when-disabled="permissionController.entityActions.createEntry"
+        data-test-id="add-entry-menu-trigger")
         cf-icon.btn-icon.inverted(name="plus")
         cf-icon.btn-dropdown-icon(name="dd-arrow-down")
         | Add New Entry
@@ -131,7 +132,11 @@
   .button-set(ng-controller="EntryListActionsController" ng-hide="selection.isEmpty()")
     button.cfnext-btn-secondary-action.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
     | 
-    button.cfnext-btn-secondary-action.delete(type="button" ng-show="showDelete()" cf-context-menu-trigger) Delete
+    button.cfnext-btn-secondary-action.delete(type="button"
+      ng-show="showDelete()"
+      cf-context-menu-trigger
+      data-test-id="delete-entry")
+      | Delete
     .delete-confirm(cf-context-menu="top")
       cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
       p You are about to delete {{selection.size()}} Entries

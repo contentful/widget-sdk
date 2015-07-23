@@ -84,7 +84,8 @@
           .l-field-action(ng-show="apiKey.data.accessToken")
             a.u-locked-action( href="#"
               ng-show="!regenerateProductionToken"
-              cf-context-menu-trigger)
+              cf-context-menu-trigger
+              data-test-id="unlock-access-token-regeneration")
               i.fa.fa-lock
               |  Unlock Access Token Regeneration
             .delete-confirm(cf-context-menu)
@@ -187,7 +188,8 @@
   .button-set
     button.cfnext-btn-secondary-action.delete(type="button"
       ng-show="apiKey.getId()"
-      cf-context-menu-trigger)
+      cf-context-menu-trigger
+      data-test-id="delete-api-key")
       | Delete
     .delete-confirm(cf-context-menu="top")
       cf-icon.context-menu__arrow.x--bottom(name="arrow-up")

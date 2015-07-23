@@ -16,7 +16,9 @@
             tooltip-placement="bottom")
       | Info
     .dropdown-btn
-      button.cfnext-btn-secondary-action(cf-context-menu-trigger)
+      button.cfnext-btn-secondary-action(
+        cf-context-menu-trigger
+        data-test-id="entry-view-menu-trigger")
         cf-icon.btn-dropdown-icon(name="dd-arrow-down")
         | View
       .context-menu(
@@ -78,7 +80,9 @@
 .tab-actions(ng-controller="EntryActionsController")
   .button-set
     .dropdown-btn(ng-show="entityActionsController.canDelete() || entityActionsController.canDuplicate()")
-      button.cfnext-btn-secondary-action(cf-context-menu-trigger)
+      button.cfnext-btn-secondary-action(
+        cf-context-menu-trigger
+        data-test-id="entry-actions-menu-trigger")
         cf-icon.btn-dropdown-icon--up(name="dd-arrow-down")
         | More
       .context-menu(
@@ -94,7 +98,8 @@
           li.context-menu__item.delete(
             role="menuitem"
             ng-show="entityActionsController.canDelete()"
-            cf-context-menu-trigger)
+            cf-context-menu-trigger
+            data-test-id="delete-entry")
             | Delete
           .delete-confirm.no-caret(cf-context-menu="top")
             cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
@@ -109,7 +114,9 @@
     | 
 
     .dropdown-btn(ng-show="entityActionsController.canUpdate() && (canRevertToPublishedState() || canRevertToPreviousState())")
-      button.cfnext-btn-secondary-action(cf-context-menu-trigger)
+      button.cfnext-btn-secondary-action(
+        cf-context-menu-trigger
+        data-test-id="revert-entry-menu-trigger")
         cf-icon.btn-dropdown-icon--up(name="dd-arrow-down")
         | Revert
       .context-menu.revert-actions__menu(

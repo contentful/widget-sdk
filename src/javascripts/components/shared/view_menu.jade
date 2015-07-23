@@ -23,7 +23,9 @@
 
 .view-menu-buttons.menu-with-buttons-bottom(ng-if="viewMenuEditable")
   .dropdown-btn
-    i.fa.fa-plus.dropdown-toggle(role="button" cf-context-menu-trigger)
+    i.fa.fa-plus.dropdown-toggle(role="button"
+      cf-context-menu-trigger
+      data-test-id="add-view-menu-trigger")
     .context-menu(
       role="menu" cf-context-menu="top-right"
       aria-label="Add View menu" data-test-id="add-view-menu")
