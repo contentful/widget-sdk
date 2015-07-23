@@ -97,10 +97,7 @@ angular.module('contentful')
           return false;
         }
 
-        if ($scope.valueList.length == 50){
-          setError('You can only add up to 50 predefined values');
-          return false;
-        } else if (_.contains($scope.valueList, value)){
+        if (_.contains($scope.valueList, value)){
           setError('This value already exists on the list');
           return false;
         } else {

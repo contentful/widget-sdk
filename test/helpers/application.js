@@ -17,6 +17,11 @@
  *
  */
 angular.module('contentful/test', ['contentful', 'contentful/mocks'])
+
+.config(['contextMenuProvider', function (contextMenuProvider) {
+  contextMenuProvider.disable();
+}])
+
 .run(['$q', function ($q) {
 
   sinon.stub.rejects = function (err) {

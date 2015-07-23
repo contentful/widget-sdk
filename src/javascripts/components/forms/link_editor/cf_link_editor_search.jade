@@ -15,19 +15,18 @@
     cf-when-disabled="permissionController.entityActions.createEntry"
     tooltip="Add new {{entityType}}"
     tooltip-placement="left"
-    cf-dropdown-toggle="linkEditor.addNew")
+    cf-context-menu-trigger)
     cf-icon.btn-icon(name="plus")
     | Add New
   //- TODO the ng-if condition for the dropdown has to be synced
   //- manually with the confidtion above
   .context-menu(
     ng-if="entityType=='Entry' && addableContentTypes.length > 1"
-    cf-dropdown-menu="linkEditor.addNew")
+    cf-context-menu)
     cf-icon.context-menu__arrow(name="arrow-up")
     .context-menu__item(
       ng-repeat="contentType in addableContentTypes track by contentType.getId()"
-      ng-click="addNewEntry(contentType)"
-      cf-dropdown-close)
+      ng-click="addNewEntry(contentType)")
       | {{contentType.getName()}}
 
   //- link to entry or entries with restriction on the type

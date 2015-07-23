@@ -16,16 +16,17 @@
             tooltip-placement="bottom")
       | Info
     .dropdown-btn(ng-show="showLangSwitcher")
-      button.cfnext-btn-secondary-action(cf-dropdown-toggle="assetEditor.view.locale")
+      button.cfnext-btn-secondary-action(cf-context-menu-trigger)
         cf-icon.btn-dropdown-icon(name="dd-arrow-down")
         | View
-      .context-menu(cf-dropdown-menu="assetEditor.view.locale" cf-dropdown-position="bottomright")
+      .context-menu(cf-context-menu="bottom-right")
         cf-icon.context-menu__arrow.x--top-right(name="arrow-up")
-        label.context-menu__item(ng-repeat="locale in spaceContext.privateLocales track by locale.sys.id")
-          input(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
-          | {{locale.name}}
-          span(ng-show="locale == spaceContext.space.getDefaultLocale()")
-            | &nbsp;(default)
+        ul.lang-switcher(ng-show="showLangSwitcher")
+          label.context-menu__item(ng-repeat="locale in spaceContext.privateLocales track by locale.sys.id")
+            input(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
+            | {{locale.name}}
+            span(ng-show="locale == spaceContext.space.getDefaultLocale()")
+              | &nbsp;(default)
 
 .aux-panel(ng-show="preferences.showAuxPanel")
   header
@@ -62,11 +63,15 @@
 
 .tab-actions(ng-controller="AssetActionsController")
   .button-set
-    button.cfnext-btn-secondary-action.delete(type="button" ng-show="entityActionsController.canDelete()" cf-dropdown-toggle="assetEditor.delete") Delete
-    .delete-confirm(cf-dropdown-menu="assetEditor.delete" cf-dropdown-position="topcenter")
+    button.cfnext-btn-secondary-action.delete(type="button"
+      ng-show="entityActionsController.canDelete()"
+      cf-context-menu-trigger)
+      | Delete
+    .delete-confirm(cf-context-menu="top")
+      cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
       p You are about to delete {{headline()}}
-      button.cfnext-btn-caution(type="button" ng-click="delete()" cf-dropdown-close) Delete
-      button.cfnext-btn-secondary-action(type="button" cf-dropdown-close) Don't Delete
+      button.cfnext-btn-caution(type="button" ng-click="delete()") Delete
+      button.cfnext-btn-secondary-action(type="button") Don't Delete
     button.cfnext-btn-secondary-action.archive(  type="button" ng-show="entityActionsController.canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
     button.cfnext-btn-secondary-action.archive(  type="button" ng-show="entityActionsController.canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
     button.cfnext-btn-secondary-action.unpublish(type="button" ng-show="entityActionsController.canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish

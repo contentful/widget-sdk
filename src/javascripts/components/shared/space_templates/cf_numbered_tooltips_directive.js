@@ -23,7 +23,7 @@ angular.module('contentful').directive('cfNumberedTooltips', ['$timeout', functi
         position: 'bottom'
       });
       createNumberedTooltip({
-        selector: '.view-customizer [cf-dropdown-toggle]',
+        selector: '.view-customizer',
         title: '4',
         position: 'top'
       });
