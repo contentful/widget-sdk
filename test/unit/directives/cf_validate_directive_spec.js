@@ -226,7 +226,7 @@ describe('cfValidate', function () {
     });
   });
 
-  describe('with cfAssetSchema', function () {
+  xdescribe('with cfAssetSchema', function () {
     beforeEach(function () {
       var $compile = this.$inject('$compile');
       var $rootScope = this.$inject('$rootScope');

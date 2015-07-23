@@ -27,6 +27,7 @@ angular.module('contentful')
 
       var buildMessage = errorMessageBuilder($scope.spaceContext);
       $scope.schema = new SchemaController(buildMessage);
+      $scope.schema.setContext({ skipDeletedLocaleFieldValidation: true });
 
       $scope.$watch('spaceContext.publishedTypeForEntry(entry).data', function(data) {
         if (!data) return;
@@ -59,6 +60,7 @@ angular.module('contentful')
 
       var buildMessage = errorMessageBuilder.forAsset;
       var schema = createAssetSchema($scope.spaceContext.space.getPrivateLocales());
+      $scope.schema.setContext({ skipDeletedLocaleFieldValidation: true });
       $scope.schema = new SchemaController(buildMessage, schema);
     }]
   };
@@ -101,6 +103,7 @@ angular.module('contentful')
 
   function SchemaController(messageBuilder, schema) {
     this.messageBuilder = messageBuilder;
+    this.context = {};
     this.setSchema(schema);
   }
 
@@ -115,13 +118,22 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
+   * @name SchemaController#setContext
+   * @param {Schema} schema
+   */
+  SchemaController.prototype.setContext = function (context) {
+    this.context = context;
+  };
+
+  /**
+   * @ngdoc method
    * @name SchemaController#errors
    * @param data
    * @returns {Array<Error>}
    */
   SchemaController.prototype.errors = function (data) {
     if (this.schema)
-      return this.schema.errors(data);
+      return this.schema.errors(data, this.context);
   };
 
   SchemaController.prototype.buildMessage = function (error, data) {
