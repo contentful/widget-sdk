@@ -276,7 +276,6 @@ gulp.task('styleguide/stylesheets', function () {
   return buildStylus('styleguide/custom.styl', './public/styleguide');
 });
 
-
 gulp.task('serve', ['styleguide'], function () {
   var builds = [];
   watchTask(src['components'], 'js/app');

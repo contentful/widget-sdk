@@ -193,5 +193,22 @@ describe('EntityCreationController', function () {
     });
   });
 
+  describe('opens editor for new locale', function () {
+    beforeEach(function () {
+      stubs.computeUsage.returns(null);
+      this.entityCreationController.newLocale();
+    });
 
+    it('computes the locale usage', function () {
+      sinon.assert.calledWith(stubs.computeUsage, 'locale');
+    });
+
+    it('navigates to editor', function () {
+      sinon.assert.calledWith(this.scope.$state.go, 'spaces.detail.settings.locales.new');
+    });
+
+    it('tracks analytics', function () {
+      sinon.assert.called(stubs.track);
+    });
+  });
 });

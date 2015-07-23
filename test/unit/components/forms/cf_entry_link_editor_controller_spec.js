@@ -56,7 +56,8 @@ describe('EntryLinkEditorController', function () {
       scope.spaceContext.publishedTypeForEntry = stubs.publishedTypeForEntry;
 
       scope.locale = {
-        code: 'en-US'
+        code: 'en-US',
+        internal_code: 'en-US'
       };
 
       scope.field = {

@@ -97,8 +97,8 @@ angular.module('contentful').controller('SlugEditorController', [
    * title exists, null is returned.
    */
   function currentTitle() {
-    return spaceContext.entryTitle($scope.entry, currentLocale.code, true) ||
-           spaceContext.entryTitle($scope.entry, defaultLocale.code, true);
+    return spaceContext.entryTitle($scope.entry, currentLocale.internal_code, true) ||
+           spaceContext.entryTitle($scope.entry, defaultLocale.internal_code, true);
   }
 
   /**

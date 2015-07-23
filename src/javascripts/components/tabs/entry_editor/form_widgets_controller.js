@@ -59,7 +59,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
     widget.locales = _(getFieldLocales(field))
       .union(getErrorLocales(field))
       .filter(_.isObject)
-      .uniq('code')
+      .uniq('internal_code')
       .value();
 
     var widgetDescription = widgets.get(widget.widgetId);
@@ -82,7 +82,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
   }
 
   function getActiveLocaleCodes() {
-    return _.pluck($scope.spaceContext.activeLocales, 'code');
+    return _.pluck($scope.spaceContext.activeLocales, 'internal_code');
   }
 
   function widgetIsVisible(widget) {
@@ -108,7 +108,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
 
   function getErrorLocales(field) {
     return $scope.errorPaths && _.map($scope.errorPaths[field.id], function (code) {
-      return _.find($scope.spaceContext.space.data.locales, {code: code});
+      return _.find($scope.spaceContext.space.data.locales, {internal_code: code});
     });
   }
 

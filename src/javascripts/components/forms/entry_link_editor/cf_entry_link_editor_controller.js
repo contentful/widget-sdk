@@ -51,7 +51,7 @@ angular.module('contentful').controller('EntryLinkEditorController', [
 
   function linkTitle(entity) {
     if (entityExists(entity)) {
-      return $scope.spaceContext.entryTitle(entity, $scope.locale.code);
+      return $scope.spaceContext.entryTitle(entity, $scope.locale.internal_code);
     } else {
       return '(Missing entity)';
     }

@@ -232,7 +232,7 @@ describe('cfValidate', function () {
       var $rootScope = this.$inject('$rootScope');
 
       var defaultLocale = {
-        code: 'default-locale',
+        internal_code: 'default-locale',
         default: true
       };
 

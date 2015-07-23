@@ -7,7 +7,7 @@ angular.module('contentful').factory('EntityListCache', ['$rootScope', '$q', 'lo
   function EntityListCache(params){
     this.params = params;
     this.fetchMethod = getFetchMethod(params.entityType);
-    this.locale = params.space.getDefaultLocale().code;
+    this.locale = params.space.getDefaultLocale().internal_code;
     this.missingIds = [];
     this.cache = {};
     this.queue = [];
