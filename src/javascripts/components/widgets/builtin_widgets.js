@@ -72,7 +72,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     fieldTypes: ['Text'],
     name: 'Markdown',
     icon: 'markdown',
-    template: '<div cf-markdown-editor class="cf-markdown-editor"></div>'
+    template: '<cf-markdown-editor-bridge />'
   });
 
   widgets.registerWidget('dropdown',{

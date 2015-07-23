@@ -1,30 +1,19 @@
-$markdown-editor-height = 125px
-$markdown-guide-height = 25px
+$markdown-preview-height = 400
+$markdown-guide-height = 350
 
 .cf-markdown-editor
   position: relative
 
 .markdown-toolbar,
 .markdown-modeswitch
-  padding: 7px 4px 1px
+  padding: 7px 4px 5px
 
 .markdown-toolbar
-  display: flex
-  $form-control-theme()
   position: relative
-  height: 35px
-  border-radius: 3px 3px 0 0
   border: 1px solid $gray-light
-  &:focus, &.opaque
-    border-top-left-radius: 3px
-    border-top-right-radius: 3px
-    background-color: $gray-lightest
-    border-color: $blue-link
-    outline: none
-  &.preview-mode
-    background-color: white
-    border: none
-    box-shadow: none
+
+.markdown-actions
+  width: 90%
 
 .markdown-modeswitch
   position: absolute
@@ -32,23 +21,26 @@ $markdown-guide-height = 25px
   $stretch-y()
   border-left: 1px solid $gray-light
 
-.markdown-textarea
-  border-radius: 0 0 0 0
-  box-shadow: none
-  min-height: $markdown-editor-height
-  border-bottom: none
-  border-top: none
+.markdown-editing-area,
+.markdown-preview,
+.markdown-html,
+.markdown-info
+  border: 1px solid $gray-light
+  border-width: 0 1px
 
-.markdown-preview
-  position: relative
+.markdown-preview,
+.markdown-html
   overflow-y: auto
-  padding: 9px 7px 4px
-  min-height: $markdown-editor-height
-  max-width: 700px
-  max-height: $textarea-max-height + 20px
-  border: 1px solid $gray-lightest
+  padding: 20px;
+  min-height: ($markdown-preview-height / 2) px
+  max-height: $markdown-preview-height px
   word-wrap: break-word
   overflow-wrap: break-word
+
+.markdown-html
+  font-family: monospace
+
+.markdown-preview
   p
     margin: 0
   p + p
@@ -72,6 +64,15 @@ $markdown-guide-height = 25px
   padding: 5px
   background: $gray-light
 
+.markdown-info
+  padding: 6px 7px 5px;
+  color: $gray;
+  font-size: 0.9em;
+  border-width: 1px;
+
+.markdown-transfer-textarea
+  display: none
+
 .toolbar-button
   width: 36px
   height: 23px
@@ -84,112 +85,68 @@ $markdown-guide-height = 25px
   border-radius: 3px
   cursor: pointer
   &:hover
-    background-color: lighten($gray, 20%)
-.toolbar-button--flex
-  width: auto
-  flex-basis: 36px
-  flex-shrink: 1
+    background-color: $gray-light
 
-.preview-mode
+.markdown-actions.preview-mode
+  .toolbar-button
+    color: 0.5
   .toolbar-button:hover
-    background-color: transparent
-  .markdown-modeswitch
-    border-left: none
+    background-color: transparent;
 
-.md-right-button
-  display: block
-  float: right
+.cf-markdown-editor
+  .cm-header-1
+    font-size: 1.9em
+  .cm-header-2
+    font-size: 1.75em
+  .cm-header-3
+    font-size: 1.6em
+  .cm-header-4
+    font-size: 1.45em
+  .cm-header-5
+    font-size: 1.3em
+  .cm-header-6
+    font-size: 1.15em
 
-.md-bold-icon
-  background-image: url('/app/images/markdown/bold.png')
-.md-italic-icon
-  background-image: url('/app/images/markdown/italic.png')
-.md-h1-icon
-  background-image: url('/app/images/markdown/h1.png')
-.md-h2-icon
-  background-image: url('/app/images/markdown/h2.png')
-.md-h3-icon
-  background-image: url('/app/images/markdown/h3.png')
-.md-hr-icon
-  background-image: url('/app/images/markdown/hr.png')
-.md-quote-icon
-  background-image: url('/app/images/markdown/quote.png')
-.md-link-icon
-  background-image: url('/app/images/markdown/link.png')
-.md-ul-icon
-  background-image: url('/app/images/markdown/ul.png')
-.md-ol-icon
-  background-image: url('/app/images/markdown/ol.png')
-.md-code-icon
-  background-image: url('/app/images/markdown/code.png')
-.md-preview-icon
-  background-image: url('/app/images/markdown/preview.png')
-.md-edit-icon
-  background-image: url('/app/images/markdown/edit.png')
-.md-indent-icon
-  background-image: url('/app/images/markdown/indent.png')
-.md-asset-icon
-  background-image: url('/app/images/markdown/asset.png')
-.md-image-icon
-  background-image: url('/app/images/markdown/image.png')
+.markdown-guide
+  position: relative;
+
+.markdown-guide-hint,
+.markdown-guide
+  border: 1px solid $gray-light
+  border-top: 0;
 
 .markdown-guide-hint
-  position: absolute
-  top: 0
-  left: 0
-  right: 0
-  height: $markdown-guide-height
-  background-color: $gray-light
-  border-bottom: 1px solid $gray
-  padding: 3px 7px
+  background-color: $gray-lightest
+  padding: 6px 7px 5px
   cursor: pointer
   color: $gray-darkest
-  border-top: 1px solid $gray
   &:hover
-    background-color: darken($gray-light, 10%)
-  .toggle-collapse
-    float: right
+    background-color: darken($gray-lightest, 10%)
 
-
-.cf-markdown-guide
-  position: relative
-  height: $markdown-guide-height
-  border: 1px solid $gray
-  border-radius: 0 0 3px 3px
-  border-top: none
-  overflow: hidden
-  margin-bottom: 10px
-  &.open
-    height: 300px
+.markdown-guide-main
+  margin-left: 20%
+  overflow-y: auto
+  padding: 20px
+  height: ($markdown-guide-height - 40) px
 
 .markdown-guide-nav
-  position: absolute
-  top: $markdown-guide-height
-  left: 0
-  bottom: 0
+  margin-top: 20px;
   width: 20%
+  float: left;
   font-weight: bold
-  background-color: $gray-light
+  background-color: $gray-lightest
   overflow: hidden
+  border-top-right-radius: 5px
+  border-bottom-right-radius: 5px
+  border: 1px solid $gray-lighter
+  border-left-width: 0
+  border-bottom-width: 0
   li
+    margin: 0
     cursor: pointer
     color: $gray-darkest
-    padding: 5px
-    border-bottom: 1px solid $gray
-  li:hover:not(.active)
-    background-color: darken($gray-light, 10%)
+    padding: 6px 7px 5px
+    border-bottom: 1px solid $gray-lighter
   li.active
     color: white
     background-color: $blue
-
-.markdown-guide-main
-  position: absolute
-  top: $markdown-guide-height
-  right: 0
-  bottom: 0
-  width: 80%
-  overflow-y: auto
-  padding: 10px
-  box-shadow: -1px 0px 4px rgba(0,0,0,0.3)
-
-

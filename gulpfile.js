@@ -73,7 +73,12 @@ var src = {
     'node_modules/share/node_modules/browserchannel/dist/bcsocket-uncompressed.js',
     'node_modules/share/webclient/share.uncompressed.js',
     'node_modules/share/webclient/json.uncompressed.js',
-    'node_modules/share/webclient/textarea.js'
+    'node_modules/share/webclient/textarea.js',
+    'node_modules/codemirror/lib/codemirror.js',
+    'node_modules/codemirror/addon/mode/overlay.js',
+    'node_modules/codemirror/mode/markdown/markdown.js',
+    'node_modules/codemirror/mode/gfm/gfm.js',
+    'node_modules/codemirror/addon/edit/continuelist.js'
   ],
   vendorScriptsNonEssential: {
     kaltura: [
@@ -105,6 +110,8 @@ var src = {
     './bower_components/jquery-ui/themes/base/jquery-ui.css',
     './bower_components/jquery-ui/themes/base/jquery.ui.autocomplete.css',
     './bower_components/jquery-ui/themes/base/jquery.ui.datepicker.css',
+    './node_modules/codemirror/lib/codemirror.css',
+    './node_modules/codemirror/theme/elegant.css'
   ],
   mainStylesheets: [
     'src/stylesheets/main.styl',
