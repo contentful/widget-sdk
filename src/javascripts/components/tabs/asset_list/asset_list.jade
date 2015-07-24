@@ -22,16 +22,19 @@
         cf-context-menu-trigger
         ng-hide="permissionController.get('createAsset', 'shouldHide')"
         ng-disabled="permissionController.get('createAsset', 'shouldDisable')"
-        cf-when-disabled="permissionController.entityActions.createAsset")
+        cf-when-disabled="permissionController.entityActions.createAsset"
+        data-test-id="add-asset-menu-trigger")
         cf-icon.btn-icon.inverted(name="plus")
         cf-icon.btn-dropdown-icon(name="dd-arrow-down")
         | Add New Asset
-      .context-menu(cf-context-menu)
+      .context-menu(
+        role="menu" cf-context-menu
+        aria-label="Add Assets" data-test-id="add-asset-menu")
         cf-icon.context-menu__arrow(name="arrow-up")
         ul.context-menu__items
-          li(ng-click="entityCreationController.newAsset()")
+          li(role="menuitem" ng-click="entityCreationController.newAsset()")
             | Single Asset
-          li(ng-click="createMultipleAssets()")
+          li(role="menuitem" ng-click="createMultipleAssets()")
             | Multiple Assets
 
 .tab-main(ng-show="assets.length > 0 || hasQuery()")
@@ -98,14 +101,17 @@
         cf-context-menu-trigger
         ng-hide="permissionController.get('createAsset', 'shouldHide')"
         ng-disabled="permissionController.get('createAsset', 'shouldDisable')"
-        cf-when-disabled="permissionController.entityActions.createAsset")
+        cf-when-disabled="permissionController.entityActions.createAsset"
+        data-test-id="create-asset-menu-trigger")
         | Create an Asset
-      .context-menu(cf-context-menu)
+      .context-menu(
+        role="menu" cf-context-menu
+        aria-label="Create Asset" data-test-id="create-asset-menu")
         cf-icon.context-menu__arrow(name="arrow-up")
         ul.context-menu__items
-          li(ng-click="entityCreationController.newAsset()")
+          li(role="menuitem" ng-click="entityCreationController.newAsset()")
             | Single Asset
-          li(ng-click="createMultipleAssets()")
+          li(role="menuitem" ng-click="createMultipleAssets()")
             | Multiple Assets
     a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
       | Visit the Knowledge Base Pages
@@ -115,7 +121,11 @@
 .tab-actions
   .label {{selection.size()}} Assets selected
   .button-set(ng-controller="AssetListActionsController" ng-hide="selection.isEmpty()")
-    button.cfnext-btn-secondary-action.delete(type="button" ng-show="showDelete()" cf-context-menu-trigger) Delete
+    button.cfnext-btn-secondary-action.delete(type="button"
+      ng-show="showDelete()"
+      cf-context-menu-trigger
+      data-test-id="delete-asset")
+      | Delete
     .delete-confirm(cf-context-menu="top")
       cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
       p You are about to delete {{selection.size()}} Assets

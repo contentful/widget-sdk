@@ -25,8 +25,8 @@ angular.module('cf.ui')
  *
  * ~~~html
  * <button cf-context-menu-trigger>Open</button>
- * <div cf-context-menu>
- *   ...
+ * <div cf-context-menu role="menu">
+ *   <button role="menuitem">Action</button>
  * </div>
  * ~~~
  *
@@ -41,7 +41,7 @@ angular.module('cf.ui')
  *
  * Positioning can be customized as follows
  * ~~~html
- * <div cf-context-menu="top">
+ * <div cf-context-menu="top" role="menu">
  *   ...
  * </div>
  * ~~~

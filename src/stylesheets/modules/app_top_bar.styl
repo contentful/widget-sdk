@@ -1,9 +1,8 @@
-
 $app-top-bar__action-color()
   color: $cfnext-white
   &:hover
     color: $cfnext-blue
-    transition: color $app-top-bar-transition-time
+
 
 .app-top-bar
   display: flex
@@ -28,15 +27,17 @@ $app-top-bar__action-color()
     height: 70%
     margin: auto 0
 
-  &__dropdown-toggle
-    padding-left: 15px
-    padding-right: 15px
+  &__menu-trigger
+    padding-left: 1em
+    padding-right: 1em
     height: 100%
     display: flex
     align-items: center;
     justify-content: space-between
     cursor: pointer;
     $app-top-bar__action-color()
+    &:hover > cf-icon[name="dd-arrow-down"] path
+      fill: $cfnext-blue
 
   &__action,
   &__child-action

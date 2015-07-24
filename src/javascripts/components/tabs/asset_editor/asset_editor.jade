@@ -16,13 +16,19 @@
             tooltip-placement="bottom")
       | Info
     .dropdown-btn(ng-show="showLangSwitcher")
-      button.cfnext-btn-secondary-action(cf-context-menu-trigger)
+      button.cfnext-btn-secondary-action(
+        cf-context-menu-trigger
+        data-test-id="asset-view-menu-trigger")
         cf-icon.btn-dropdown-icon(name="dd-arrow-down")
         | View
-      .context-menu(cf-context-menu="bottom-right")
+      .context-menu(
+        role="menu" cf-context-menu="bottom-right"
+        aria-label="Configure Asset View" data-test-id="asset-view-menu")
         cf-icon.context-menu__arrow.x--top-right(name="arrow-up")
         ul.lang-switcher(ng-show="showLangSwitcher")
-          label.context-menu__item(ng-repeat="locale in spaceContext.privateLocales track by locale.sys.id")
+          label.context-menu__item(
+            role="menuitemcheckbox"
+            ng-repeat="locale in spaceContext.privateLocales track by locale.sys.id")
             input(type="checkbox" ng-model="spaceContext.localeStates[locale.internal_code]")
             | {{locale.name}}
             span(ng-show="locale == spaceContext.space.getDefaultLocale()")
@@ -65,7 +71,8 @@
   .button-set
     button.cfnext-btn-secondary-action.delete(type="button"
       ng-show="entityActionsController.canDelete()"
-      cf-context-menu-trigger)
+      cf-context-menu-trigger
+      data-test-id="delete-asset")
       | Delete
     .delete-confirm(cf-context-menu="top")
       cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
