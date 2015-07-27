@@ -285,6 +285,15 @@ describe('ContentType Actions Controller', function () {
         });
       });
     });
+
+    pit('sets default name', function () {
+      var ct = scope.contentType;
+      delete ct.data.name;
+      return controller.save()
+      .then(function () {
+        expect(ct.data.name).toEqual('Untitled');
+      });
+    });
   });
 
   describe('controller.canSave()', function () {
