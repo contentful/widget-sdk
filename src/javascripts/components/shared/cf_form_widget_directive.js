@@ -11,7 +11,7 @@ angular.module('contentful').directive('cfFormWidget', function() {
       });
 
       $scope.$watch('widget.widgetParams.helpText', function (helpText) {
-        $scope.helpText = helpText;
+        $scope.helpText = helpText || $scope.widget.defaultHelpText;
       });
 
       $scope.$watch('widget.locales', function(locales) {

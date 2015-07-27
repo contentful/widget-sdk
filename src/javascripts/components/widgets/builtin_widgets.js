@@ -157,6 +157,7 @@ angular.module('contentful').run(['widgets', function(widgets){
 
   widgets.registerWidget('listInput',{
     fieldTypes: ['Symbols'],
+    defaultHelpText: 'Insert comma separated values',
     name: 'List',
     icon: 'singleline',
     template: '<input cf-list-identity-fix class="form-control" ng-disabled="!otEditable" ng-list cf-empty-list ng-model="fieldData.value" ot-bind-model type="text">'
