@@ -9,9 +9,8 @@
         current-view="currentView"
         ng-show="uiConfig")
       .main.search-area
-        .l-search-w-autocomplete(cf-tokenized-search="currentView.searchTerm"
-          tooltip-placement="top"
-          tooltip="Search for existing asset"
+        .l-search-w-autocomplete(
+          cf-tokenized-search="currentView.searchTerm"
           search-content-type="assetContentType"
           placeholder="Search for asset"
           cf-on-blur-component="leftSearch($event)")

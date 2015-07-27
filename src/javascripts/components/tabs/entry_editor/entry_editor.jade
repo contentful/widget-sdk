@@ -4,16 +4,13 @@
     h1(title="{{headline()}}")
       | {{headline()}}
       a(cf-knowledge-base-icon
-        tooltip="Learn more about Entries in the Knowledge Base Pages"
         analytics-event="entries"
         href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
 
   .tab-header__actions
     button.cfnext-btn-secondary-action(type="button"
-            ng-click="preferences.toggleAuxPanel()"
-            ng-class="{active: preferences.showAuxPanel}"
-            tooltip="Toggle additional details"
-            tooltip-placement="bottom")
+      ng-click="preferences.toggleAuxPanel()"
+      ng-class="{active: preferences.showAuxPanel}")
       | Info
     .dropdown-btn
       button.cfnext-btn-secondary-action(
@@ -104,15 +101,18 @@
           .delete-confirm.no-caret(cf-context-menu="top")
             cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
             p You are about to delete {{headline()}}
-            button.cfnext-btn-caution(type="button" ng-click="delete()") Delete 
-            button.cfnext-btn-secondary-action(type="button") Don't Delete 
-
-    | 
-    button.cfnext-btn-secondary-action.archive(type="button" ng-show="entityActionsController.canArchive()"   ng-click="archive()"   tooltip="Archive this Entry") Archive
-    | 
-    button.cfnext-btn-secondary-action.archive(type="button" ng-show="entityActionsController.canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry") Unarchive
-    | 
-
+            button.cfnext-btn-caution(type="button" ng-click="delete()") Delete
+            button.cfnext-btn-secondary-action(type="button") Don't Delete
+    button.cfnext-btn-secondary-action.archive(
+      type="button"
+      ng-show="entityActionsController.canArchive()"
+      ng-click="archive()")
+      | Archive
+    button.cfnext-btn-secondary-action.archive(
+      type="button"
+      ng-show="entityActionsController.canUnarchive()"
+      ng-click="unarchive()")
+      | Unarchive
     .dropdown-btn(ng-show="entityActionsController.canUpdate() && (canRevertToPublishedState() || canRevertToPreviousState())")
       button.cfnext-btn-secondary-action(
         cf-context-menu-trigger
@@ -133,11 +133,17 @@
             ng-click="revertToPreviousState()")
             | Discard my changes ({{updatedAt}})
 
-    button.cfnext-btn-secondary-action.unpublish(type="button" ng-show="entityActionsController.canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry") Unpublish
-    | 
-    button.cfnext-btn-primary-action.publish(type="submit" ng-show="entityActionsController.canPublish()" ng-click="publish()" tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}
-  .save-status(cf-save-status tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
-               tooltip-placement="top")
+    button.cfnext-btn-secondary-action.unpublish(
+      type="button"
+      ng-show="entityActionsController.canUnpublish()"
+      ng-click="unpublish()")
+      | Unpublish
+    button.cfnext-btn-primary-action.publish(
+      type="submit"
+      ng-show="entityActionsController.canPublish()"
+      ng-click="publish()")
+      | {{publishButtonLabel()}}
+  .save-status(cf-save-status)
   .other-users
     span(ng-show="presence.users.length == 0"
           tooltip="Edit collaboratively by inviting more users into your space. Go to Settings → Users → Invite New User to invite people.")
