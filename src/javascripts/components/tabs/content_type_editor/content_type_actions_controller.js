@@ -38,26 +38,26 @@ function ContentTypeActionsController($scope, $injector) {
    * @ngdoc method
    * @name ContentTypeActionsController#delete
    */
-  controller.delete = remove;
+  controller.delete = function() {
+    if ($scope.contentType.isPublished()) {
+      $scope.ctEditorController.countEntries().then(function(count) {
+        if (count > 0) {
+          forbidRemoval(count);
+          return;
+        }
 
+        confirmRemoval().then(function(result) {
+          if (result.cancelled) { return; }
+          unpublish().then(sendDeleteRequest);
+        });
 
-  /**
-   * @ngdoc method
-   * @name ContentTypeActionsController#startDeleteFlow
-   */
-  controller.startDeleteFlow = function startDeleteFlow() {
-    $scope.ctEditorController.countEntries().then(function(count) {
-      if (count > 0) {
-        forbidRemoval(count);
-        return;
-      }
-
+      }, removalErrorHandler);
+    } else {
       confirmRemoval().then(function(result) {
         if (result.cancelled) { return; }
-        unpublish().then(remove);
+        sendDeleteRequest();
       });
-
-    }, removalErrorHandler);
+    }
   };
 
   function forbidRemoval(count) {
@@ -101,7 +101,7 @@ function ContentTypeActionsController($scope, $injector) {
     return $q.reject(err);
   }
 
-  function remove() {
+  function sendDeleteRequest () {
     return $scope.contentType.delete()
       .then(removalSuccessHandler, removalErrorHandler);
   }
@@ -131,13 +131,12 @@ function ContentTypeActionsController($scope, $injector) {
   /**
    * @ngdoc method
    * @name ContentTypeActionsController#canDelete
-   *
-   * Because we've removed "unpublish" step for content types,
-   * checking if we can *delete* content type w/o server round-trip
-   * has to be reduced to checking only if user can *unpublish* it
    */
   controller.canDelete = function () {
-    return !$scope.context.isNew && entityActionsController.canUnpublish();
+    return !$scope.context.isNew && (
+      entityActionsController.canUnpublish() ||
+      !$scope.contentType.isPublished()
+    );
   };
 
   /**
