@@ -38,14 +38,7 @@ function ContentTypeActionsController($scope, $injector) {
    * @ngdoc method
    * @name ContentTypeActionsController#delete
    */
-  controller.delete = remove;
-
-
-  /**
-   * @ngdoc method
-   * @name ContentTypeActionsController#startDeleteFlow
-   */
-  controller.startDeleteFlow = function startDeleteFlow() {
+  controller.delete = function() {
     $scope.ctEditorController.countEntries().then(function(count) {
       if (count > 0) {
         forbidRemoval(count);
@@ -54,7 +47,7 @@ function ContentTypeActionsController($scope, $injector) {
 
       confirmRemoval().then(function(result) {
         if (result.cancelled) { return; }
-        unpublish().then(remove);
+        unpublish().then(sendDeleteRequest);
       });
 
     }, removalErrorHandler);
@@ -101,7 +94,7 @@ function ContentTypeActionsController($scope, $injector) {
     return $q.reject(err);
   }
 
-  function remove() {
+  function sendDeleteRequest () {
     return $scope.contentType.delete()
       .then(removalSuccessHandler, removalErrorHandler);
   }
