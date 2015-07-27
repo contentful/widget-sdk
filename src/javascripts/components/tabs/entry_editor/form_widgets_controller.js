@@ -39,39 +39,19 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
       .value();
   }
 
-  function buildWidget(widget) {
-    widget = Object.create(widget);
-
-    var template = widgets.widgetTemplate(widget.widgetId);
-    widget.template = template;
-
-    if (widget.widgetType === 'field')
-      buildFieldWidget(widget);
-    else
-      buildStaticWidget(widget);
-    return widget;
-  }
-
-  function buildFieldWidget(widget) {
+  function buildWidget (widget) {
     var field = getFieldForWidget(widget);
-
-    widget.field = field;
-    widget.locales = _(getFieldLocales(field))
+    var locales = _(getFieldLocales(field))
       .union(getErrorLocales(field))
       .filter(_.isObject)
       .uniq('internal_code')
       .value();
-
-    var widgetDescription = widgets.get(widget.widgetId);
-    if (widgetDescription){
-      widget.rendersHelpText = widgetDescription.rendersHelpText;
-      widget.isFocusable = !widgetDescription.notFocusable;
-    }
+    var defaultLocale = $scope.spaceContext.space.getDefaultLocale();
+    var renderable = widgets.buildRenderable(widget, locales, defaultLocale);
+    renderable.field = field;
+    return renderable;
   }
 
-  function buildStaticWidget(widget) {
-    widget.locales = [$scope.spaceContext.space.getDefaultLocale()];
-  }
 
   function getAvailableWidgets() {
     return dotty.get(controller, 'editingInterface.data.widgets');
