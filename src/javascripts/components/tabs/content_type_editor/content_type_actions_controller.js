@@ -153,6 +153,10 @@ function ContentTypeActionsController($scope, $injector) {
    * @name ContentTypeActionsController#scope#save
    */
   controller.save = function () {
+    if (!$scope.contentType.data.name) {
+      $scope.contentType.data.name = 'Untitled';
+    }
+
     trackSavedContentType($scope.contentType);
 
     $scope.regulateDisplayField();
