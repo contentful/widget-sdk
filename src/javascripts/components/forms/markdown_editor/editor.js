@@ -2,8 +2,8 @@
 
 angular.module('contentful').factory('MarkdownEditor', ['$injector', function($injector) {
 
-  var marked        = $injector.get('marked');
-  var createWrapper = $injector.get('MarkdownEditor/createCodeMirrorWrapper');
+  var renderMarkdown = $injector.get('MarkdownEditor/customRenderer');
+  var createWrapper  = $injector.get('MarkdownEditor/createCodeMirrorWrapper');
 
   return { create: create };
 
@@ -57,7 +57,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       }
 
       previousValue = value;
-      var html = marked(value);
+      var html = renderMarkdown(value);
       var clean = html.replace(/<\/?[^>]+(>|$)/g, '');
       var words = (clean || '').replace(/\s+/g, ' ').split(' ').length - 1;
 

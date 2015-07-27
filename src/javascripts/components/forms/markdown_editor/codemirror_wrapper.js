@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', function() {
+angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', function () {
   return function(textarea) {
     /*global CodeMirror*/
     var cm = CodeMirror.fromTextArea(textarea, {

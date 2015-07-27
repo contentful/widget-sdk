@@ -49,7 +49,9 @@ $markdown-guide-height = 350
   .markdown-image-placeholder
     margin-bottom: 22px
   hr
-    background-color: $gray-medium
+    border: 0
+    background: transparent
+    border-bottom: 1px solid $gray-light
   ul, ol
     margin: $rhythm(0.5) 0;
     padding-left: 1.6em
@@ -60,9 +62,13 @@ $markdown-guide-height = 350
 
 .markdown-image-placeholder
   border: 1px solid $gray-light
-  text-align: center
-  padding: 5px
-  background: $gray-light
+  border-radius: 5px
+  padding: 10px
+  background: $gray-lightest
+
+.markdown-image-placeholder img
+  display: block
+  margin: 0 auto
 
 .markdown-info
   padding: 6px 7px 5px;
