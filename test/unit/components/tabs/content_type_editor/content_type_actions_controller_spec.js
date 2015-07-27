@@ -68,13 +68,14 @@ describe('ContentType Actions Controller', function () {
     beforeEach(function() {
       contentType.delete = sinon.stub().resolves();
       contentType.unpublish = sinon.stub().resolves();
+      contentType.isPublished = sinon.stub().returns(true);
 
       scope.updatePublishedContentType = sinon.stub();
       scope.ctEditorController = {
-        countEntries: sinon.stub()
+        countEntries: sinon.stub().resolves()
       };
 
-      this.modalDialog = this.$inject('modalDialog')
+      this.modalDialog = this.$inject('modalDialog');
       sinon.stub(this.modalDialog, 'openConfirmDialog').resolves({cancelled: false});
     });
 
@@ -134,6 +135,30 @@ describe('ContentType Actions Controller', function () {
         sinon.match({template: 'content_type_removal_forbidden_dialog'})
       );
       sinon.assert.notCalled(contentType.delete);
+    });
+
+    describe('when CT is not published', function () {
+      beforeEach(function () {
+        contentType.isPublished = sinon.stub().returns(false);
+      });
+
+      it('does not count entries', function () {
+        controller.delete();
+        this.$apply();
+        sinon.assert.notCalled(scope.ctEditorController.countEntries);
+      });
+
+      it('does not call unpublish', function () {
+        controller.delete();
+        this.$apply();
+        sinon.assert.notCalled(contentType.unpublish);
+      });
+
+      it('calls delete', function () {
+        controller.delete();
+        this.$apply();
+        sinon.assert.called(contentType.delete);
+      });
     });
 
   });

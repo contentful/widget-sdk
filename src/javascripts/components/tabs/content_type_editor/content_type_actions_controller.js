@@ -39,18 +39,25 @@ function ContentTypeActionsController($scope, $injector) {
    * @name ContentTypeActionsController#delete
    */
   controller.delete = function() {
-    $scope.ctEditorController.countEntries().then(function(count) {
-      if (count > 0) {
-        forbidRemoval(count);
-        return;
-      }
+    if ($scope.contentType.isPublished()) {
+      $scope.ctEditorController.countEntries().then(function(count) {
+        if (count > 0) {
+          forbidRemoval(count);
+          return;
+        }
 
+        confirmRemoval().then(function(result) {
+          if (result.cancelled) { return; }
+          unpublish().then(sendDeleteRequest);
+        });
+
+      }, removalErrorHandler);
+    } else {
       confirmRemoval().then(function(result) {
         if (result.cancelled) { return; }
-        unpublish().then(sendDeleteRequest);
+        sendDeleteRequest();
       });
-
-    }, removalErrorHandler);
+    }
   };
 
   function forbidRemoval(count) {
@@ -124,13 +131,12 @@ function ContentTypeActionsController($scope, $injector) {
   /**
    * @ngdoc method
    * @name ContentTypeActionsController#canDelete
-   *
-   * Because we've removed "unpublish" step for content types,
-   * checking if we can *delete* content type w/o server round-trip
-   * has to be reduced to checking only if user can *unpublish* it
    */
   controller.canDelete = function () {
-    return !$scope.context.isNew && entityActionsController.canUnpublish();
+    return !$scope.context.isNew && (
+      entityActionsController.canUnpublish() ||
+      !$scope.contentType.isPublished()
+    );
   };
 
   /**
