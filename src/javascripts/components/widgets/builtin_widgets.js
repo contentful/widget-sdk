@@ -2,12 +2,16 @@
 angular.module('contentful').run(['widgets', function(widgets){
   /**
    * @ngdoc type
-   * @name Widget
+   * @name Widget.Descriptor
    *
    * @property {string} id
    * @property {string} name
    * @property {Widget.Option[]} options
    * @property {string} icon
+   * @property {string} template
+   * @property {string} defaulHelpText
+   * @property {boolean} notFocusable
+   * @property {boolean} rendersHelpText
    */
 
   // Static widgets

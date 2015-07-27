@@ -5,7 +5,7 @@
  * @name widgets
  */
 angular.module('contentful')
-.factory('widgets', ['$injector', function($injector){
+.factory('widgets', ['$injector', function($injector) {
   var $q = $injector.get('$q');
   var widgetChecks = $injector.get('widgetChecks');
   var schemaErrors = $injector.get('validation').errors;
@@ -28,6 +28,19 @@ angular.module('contentful')
       description: 'This help text will show up below the field'
     },
   ];
+
+
+  /**
+   * @ngdoc type
+   * @name Widget.Renderable
+   * @property {string} template
+   * @property {Locale[]} locales
+   * @property {object} widgetParams
+   * @property {string} defaultHelpText
+   * @property {boolean} rendersHelpText
+   * @property {boolean} isFocusable
+   */
+
 
   /**
    * @ngdoc type
@@ -75,6 +88,7 @@ angular.module('contentful')
     get:                 getWidget,
     forField:            typesForField,
     descriptorsForField: descriptorsForField,
+    buildRenderable:     buildRenderable,
     defaultWidgetId:     defaultWidgetId,
     optionsForWidget:    optionsForWidget,
     filterOptions:       filterOptions,
@@ -97,7 +111,7 @@ angular.module('contentful')
    * @name widgets#descriptorsForField
    * @param {API.ContentType.Field} field
    * @param {boolean} isPreviewEnabled
-   * @return {Promise<Array<Widget>>}
+   * @return {Promise<Array<Widget.Descriptor>>}
    */
   function descriptorsForField (field, isPreviewEnabled) {
     return typesForField(field)
@@ -127,7 +141,7 @@ angular.module('contentful')
    * @ngdoc method
    * @name widgets#forField
    * @param {API.ContentType.Field} field
-   * @return {Promise<Array<Widget>>}
+   * @return {Promise<Array<Widget.Descriptor>>}
    */
   function typesForField(field) {
     var fieldType = detectFieldType(field);
@@ -147,6 +161,13 @@ angular.module('contentful')
   }
 
   /**
+   * @ngdoc method
+   * @name widgets#defaultWidgetId
+   * @param {API.ContentType.Field} field
+   * @param {Client.ContentType} contentType
+   * @return {string}
+   *
+   * @description
    * This method determines the default widget for a given field.
    *
    * It accounts for legacy behavior for when there were no user selectable
@@ -239,8 +260,8 @@ angular.module('contentful')
   /**
    * @ngdoc method
    * @name widgets#filterOptions
-   * @param {} options
-   * @param {} params
+   * @param {Widget.Option[]} options
+   * @param {object} params
    */
   function filterOptions(widgetOptions, widgetParams) {
     widgetParams = _.isObject(widgetParams) ? widgetParams : {};
@@ -289,7 +310,7 @@ angular.module('contentful')
    * Sets each widget paramter to its default value if it is not set yet.
    *
    * @param {object} params
-   * @param {options} Widget.Option[]
+   * @param {Widget.Option[]} options
    */
   function applyDefaults (params, options) {
     return _.forEach(options, function (option) {
@@ -305,10 +326,51 @@ angular.module('contentful')
    * @description
    * Validate the widget against the schema and return a list of
    * errors.
+   * @param {Widget} widget
    * @return {Error[]}
    */
   function validate (widget) {
     return schemaErrors(widget, widgetSchema);
+  }
+
+  /**
+   * @ngdoc method
+   * @name widgets#buildRenderable
+   * @description
+   * Create an object that contains all the necessary data to render a
+   * widget
+   *
+   * @param {API.Widget} widget
+   * @return {Widget.Renderable}
+   */
+  function buildRenderable (widget, locales, defaultLocale) {
+    widget = Object.create(widget);
+
+    var template = widgetTemplate(widget.widgetId);
+    widget.template = template;
+
+    if (widget.widgetType === 'field')
+      applyFieldWidgetProperties(widget, locales);
+    else
+      applyStaticWidgetProperties(widget, defaultLocale);
+
+    return widget;
+  }
+
+  function applyFieldWidgetProperties (widget, locales) {
+    widget.locales = locales;
+    var descriptor = getWidget(widget.widgetId);
+    if (descriptor) {
+      _.extend(widget, {
+        rendersHelpText: descriptor.rendersHelpText,
+        defaultHelpText: descriptor.defaultHelpText,
+        isFocusable: !descriptor.notFocusable
+      });
+    }
+  }
+
+  function applyStaticWidgetProperties (widget, defaultLocale) {
+    widget.locales = [defaultLocale];
   }
 
 }]);
