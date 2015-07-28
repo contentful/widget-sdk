@@ -12,7 +12,6 @@ angular.module('contentful').factory('uiVersionSwitcher', ['$injector', function
   var $window      = $injector.get('$window');
   var $document    = $injector.get('$document');
   var environment  = $injector.get('environment');
-  var notification = $injector.get('notification');
 
   return {
     checkIfVersionShouldBeSwitched: function () {
@@ -43,7 +42,6 @@ angular.module('contentful').factory('uiVersionSwitcher', ['$injector', function
       return;
 
     var uiVersion = window.CF_UI_VERSION;
-    notification.info('UI Version was switched to uiVersion '+uiVersion);
 
     $document.find('body')
     .append(
