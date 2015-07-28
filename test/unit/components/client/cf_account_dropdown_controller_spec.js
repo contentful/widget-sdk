@@ -8,7 +8,11 @@ describe('Account Dropdown Controller', function () {
 
     module('contentful/test');
     module(function($provide) {
-      self.windowStubs = { open: sinon.stub(), addEventListener: sinon.stub() };
+      self.windowStubs = {
+        open: sinon.stub(),
+        addEventListener: sinon.stub(),
+        document: window.document
+      };
       self.analyticsStubs = { track: sinon.stub() };
       self.authenticationStubs = { logout: sinon.stub(), supportUrl: sinon.stub() };
       $provide.value('$window', self.windowStubs);

@@ -73,6 +73,6 @@ describe('Locale Editor Directive', function () {
 
   it('selects the opened locale in the dropdown', function () {
     this.compileElement();
-    expect(this.element.find('select > [selected]').text()).toBe('name (co-DE)');
+    expect(this.element.find('select > :selected').text()).toBe('name (co-DE)');
   });
 });

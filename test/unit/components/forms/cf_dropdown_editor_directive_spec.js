@@ -27,6 +27,14 @@ describe('cfDropdownEditor Directive', function () {
     });
   });
 
+  function selectValue ($select, label) {
+    var option = $select.find('option').filter(function () {
+      return $(this).text() === label;
+    });
+    var value = option.attr('value');
+    $select.val(value).trigger('change');
+  }
+
   describe('dropdown width class', function() {
     describe('with strings', function() {
       it('is small', function() {
@@ -77,7 +85,7 @@ describe('cfDropdownEditor Directive', function () {
         expect(scope.dropdownWidthClass()).toEqual('small-dropdown');
       });
     });
-    
+
   });
 
 
@@ -94,11 +102,11 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('values list is set', function() {
-      expect(scope.valuesController.valuesList).toEqual([
-        {label: 'banana'    , value: 'banana'},
-        {label: 'orange'    , value: 'orange'},
-        {label: 'strawberry', value: 'strawberry'},
-      ]);
+      var valuesList = scope.valuesController.valuesList;
+      var labels = _.map(valuesList, 'label');
+      var values = _.map(valuesList, 'value');
+      expect(values).toEqual(['banana', 'orange', 'strawberry']);
+      expect(labels).toEqual(['banana', 'orange', 'strawberry']);
     });
   });
 
@@ -107,7 +115,7 @@ describe('cfDropdownEditor Directive', function () {
       var valuesList = ['banana', 'orange', 'strawberry'];
       scope.getFieldValidationsOfType.returns(valuesList);
       compileElement();
-      element.find('select').val(1).trigger('change');
+      selectValue(element.find('select'), 'orange');
     });
 
     it('changes ot value', function() {
@@ -125,7 +133,7 @@ describe('cfDropdownEditor Directive', function () {
       scope.getFieldValidationsOfType.returns(valuesList);
       scope.field.type = 'Integer';
       compileElement();
-      element.find('select').val(1).trigger('change');
+      selectValue(element.find('select'), '1');
     });
 
     it('changes ot value', function() {
@@ -143,7 +151,7 @@ describe('cfDropdownEditor Directive', function () {
       scope.getFieldValidationsOfType.returns(valuesList);
       scope.field.type = 'Number';
       compileElement();
-      element.find('select').val(1).trigger('change');
+      selectValue(element.find('select'), '1.2');
     });
 
     it('changes ot value', function() {
