@@ -9,12 +9,12 @@ input.form-control(
 i.fa.fa-exclamation-triangle.is-slug-duplicate(
   ng-show="state === 'duplicate'"
   tooltip="This slug has already been published in another entry"
-  tooltip-placement="bottom")
+  tooltip-placement="left")
 i.fa.fa-check-circle.is-slug-unique(
   ng-show="state === 'unique'"
   tooltip="This is a unique slug"
-  tooltip-placement="bottom")
+  tooltip-placement="left")
 i.fa.fa-spinner(
   ng-show="state === 'checking'"
   tooltip="Checking if this slug is unique"
-  tooltip-placement="bottom")
+  tooltip-placement="left")
