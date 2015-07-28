@@ -7,7 +7,7 @@
         analytics-event="entries"
         href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
 
-  .tab-header__search.search-area--with-filter(ng-show="entries.length > 0 || hasQuery()")
+  .tab-header__search.search-area--with-filter(ng-show="!showNoEntriesAdvice()")
     .btn.btn--tertiary.select-box
       .select-box__wrapper
         select.u-truncate(ng-model="context.view.contentTypeId"
@@ -53,7 +53,7 @@
             ng-click="entityCreationController.newEntry(contentType)")
             | {{contentType.getName()}}
 
-.tab-main(ng-show="entries.length > 0 || hasQuery()")
+.tab-main(ng-show="!showNoEntriesAdvice()")
   .left-nav
     div.menu-with-buttons(cf-view-menu="uiConfig.entryListViews" current-view="context.view" ng-show="uiConfig")
   .with-left-nav
@@ -92,11 +92,11 @@
       .loading(ng-hide="paginator.atLast()")
 
     .advice(ng-show="visibleEntries | isEmpty")
-      .advice__frame(ng-show="hasQuery()")
+      .advice__frame
         i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
         header.advice__title There are no matches to your search
 
-.advice(ng-show="entries.length === 0 && !hasQuery()")
+.advice(ng-show="showNoEntriesAdvice()")
   .advice__frame
     i.fa.fa-file.advice__giant-icon
     header.advice__title You have no Entries yet.
