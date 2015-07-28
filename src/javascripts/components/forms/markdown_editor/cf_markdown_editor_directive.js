@@ -2,10 +2,11 @@
 
 angular.module('contentful').directive('cfMarkdownEditor', ['$injector', function ($injector) {
 
-  var $rootScope     = $injector.get('$rootScope');
-  var modalDialog    = $injector.get('modalDialog');
-  var MarkdownEditor = $injector.get('MarkdownEditor');
-  var assetUrl       = $injector.get('$filter')('assetUrl');
+  var $rootScope        = $injector.get('$rootScope');
+  var modalDialog       = $injector.get('modalDialog');
+  var MarkdownEditor    = $injector.get('MarkdownEditor');
+  var assetUrl          = $injector.get('$filter')('assetUrl');
+  var specialCharacters = $injector.get('specialCharacters');
 
   return {
     restrict: 'A',
@@ -31,7 +32,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.insertAsset = insertAsset;
       scope.insertLink = insertLink;
       scope.insertTable = _notImplemented;
-      scope.insertSpecial = _notImplemented;
+      scope.insertSpecial = insertSpecialCharacter;
 
       scope.$watch('fieldData.value', handleValueChange);
 
@@ -103,7 +104,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       function insertLink() {
         modalDialog.open({
           scope: _.extend($rootScope.$new(), { model: {} }),
-          template: 'insert_external_link_dialog',
+          template: 'insert_link_dialog',
           ignoreEnter: true
         }).promise.then(function (data) {
           editor.insert(makeLink(data));
@@ -113,6 +114,19 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       function makeLink(data) {
         if (!data.title) { return '<' + data.url + '>'; }
         return '[' + data.title + '](' + data.url + ')';
+      }
+
+      function insertSpecialCharacter() {
+        var modalScope = $rootScope.$new();
+        modalScope.specialCharacters = specialCharacters;
+        modalScope.model = { choice: _.first(specialCharacters) };
+        modalScope.entity = function (x) { return '&' + x.id + ';'; };
+
+        modalDialog.open({
+          scope: modalScope,
+          template: 'insert_special_character_dialog',
+          ignoreEnter: true
+        }).promise.then(editor.insert);
       }
 
       function _notImplemented() {

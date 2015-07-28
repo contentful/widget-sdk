@@ -31,7 +31,7 @@ $markdown-guide-height = 350
 .markdown-preview,
 .markdown-html
   overflow-y: auto
-  padding: 20px;
+  padding: 20px
   min-height: ($markdown-preview-height / 2) px
   max-height: $markdown-preview-height px
   word-wrap: break-word
@@ -53,7 +53,7 @@ $markdown-guide-height = 350
     background: transparent
     border-bottom: 1px solid $gray-light
   ul, ol
-    margin: $rhythm(0.5) 0;
+    margin: $rhythm(0.5) 0
     padding-left: 1.6em
   ul > li
     list-style-type: disc
@@ -71,10 +71,10 @@ $markdown-guide-height = 350
   margin: 0 auto
 
 .markdown-info
-  padding: 6px 7px 5px;
-  color: $gray;
-  font-size: 0.9em;
-  border-width: 1px;
+  padding: 6px 7px 5px
+  color: $gray
+  font-size: 0.9em
+  border-width: 1px
 
 .markdown-transfer-textarea
   display: none
@@ -97,7 +97,7 @@ $markdown-guide-height = 350
   .toolbar-button
     color: 0.5
   .toolbar-button:hover
-    background-color: transparent;
+    background-color: transparent
 
 .cf-markdown-editor
   .cm-header-1
@@ -114,12 +114,12 @@ $markdown-guide-height = 350
     font-size: 1.15em
 
 .markdown-guide
-  position: relative;
+  position: relative
 
 .markdown-guide-hint,
 .markdown-guide
   border: 1px solid $gray-light
-  border-top: 0;
+  border-top: 0
 
 .markdown-guide-hint
   background-color: $gray-lightest
@@ -136,9 +136,9 @@ $markdown-guide-height = 350
   height: ($markdown-guide-height - 40) px
 
 .markdown-guide-nav
-  margin-top: 20px;
+  margin-top: 20px
   width: 20%
-  float: left;
+  float: left
   font-weight: bold
   background-color: $gray-lightest
   overflow: hidden
@@ -156,3 +156,34 @@ $markdown-guide-height = 350
   li.active
     color: white
     background-color: $blue
+
+.markdown-special-char-choices
+  max-width: 500px
+  min-height: 300px
+
+.markdown-special-char
+  display: inline-block
+  border: 1px solid $gray-light
+  border-radius: 3px
+  padding: 15px
+  margin: 3px
+  margin-top: 0
+  margin-left: 0
+  width: 50px
+  font-size: 1.5em
+  text-align: center
+  cursor: pointer
+
+.markdown-special-char.current
+  background: $gray-lightest
+
+.markdown-special-char-choice
+  text-align: center
+  margin: 20px
+  p
+    font-size: 2.5em
+    font-weight: bold
+    margin-bottom: 10px
+  small
+    font-size: 0.8em
+    color: $gray-dark
