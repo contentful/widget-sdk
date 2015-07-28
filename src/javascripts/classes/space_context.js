@@ -1,6 +1,16 @@
 'use strict';
 
-angular.module('contentful').factory('SpaceContext', ['$injector', function($injector){
+angular.module('contentful')
+
+/**
+ * @ngdoc service
+ * @name spaceContext
+ *
+ * @description
+ * This service holds all context related to a space, including contentTypes,
+ * locales, and helper methods.
+*/
+.factory('spaceContext', ['$injector', function($injector){
   var $parse             = $injector.get('$parse');
   var $q                 = $injector.get('$q');
   var $rootScope         = $injector.get('$rootScope');
@@ -9,25 +19,81 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
   var notification       = $injector.get('notification');
   var logger             = $injector.get('logger');
 
-  function SpaceContext(space){
-    this.space = space;
-    this._contentTypeLoader = new PromisedLoader();
-    this._publishedContentTypeLoader = new PromisedLoader();
-    this.refreshLocales();
-  }
+  function SpaceContext(){}
 
   SpaceContext.prototype = {
+      /**
+       * @ngdoc property
+       * @type Object
+       * @name spaceContext#space
+      */
       space: null,
 
+      /**
+       * @ngdoc property
+       * @type Array
+       * @name spaceContext#contentTypes
+      */
       contentTypes: [],
+      /**
+       * @ngdoc property
+       * @type Array
+       * @name spaceContext#publishedContentTypes
+      */
       publishedContentTypes: [],
       _publishedContentTypesHash: {},
+      _publishedContentTypeIsMissing: {},
 
+      /**
+       * @ngdoc property
+       * @name spaceContext#privateLocales
+       * @description
+       * Locales which are available to the CMA
+      */
       privateLocales: [],
+      /**
+       * @ngdoc property
+       * @name spaceContext#defaultLocale
+      */
       defaultLocale: null,
+      /**
+       * @ngdoc property
+       * @name spaceContext#localeStates
+       * @description
+       * Map of current locales and their active state.
+       * If a locale is "active" it means the user can see it for editing
+       * on the entry/asset editors.
+      */
       localeStates: {},
+      /**
+       * @ngdoc property
+       * @name spaceContext#activeLocales
+       * @description
+       * List of currently active locales visible in the entry/asset editors.
+      */
       activeLocales: [],
 
+      /**
+       * @ngdoc method
+       * @name spaceContext#resetContextWithSpace
+       * @param {Object} space
+       * @description
+       * This method resets a space context with a given space, as well as
+       * associated locales information
+      */
+      resetContextWithSpace: function(space){
+        this.space = space;
+        this._contentTypeLoader = new PromisedLoader();
+        this._publishedContentTypeLoader = new PromisedLoader();
+        this.refreshLocales();
+      },
+
+      /**
+       * @ngdoc method
+       * @name spaceContext#refreshLocales
+       * @description
+       * Refreshes all locale related information contained in the context
+      */
       refreshLocales: function () {
         if (this.space) {
           this.privateLocales = this.space.getPrivateLocales();
@@ -40,6 +106,12 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
         this.refreshActiveLocales();
       },
 
+      /**
+       * @ngdoc method
+       * @name spaceContext#refreshActiveLocales
+       * @description
+       * Refreshes currently active locales list and locale states
+      */
       refreshActiveLocales: function () {
         var newLocaleStates = {}, newActiveLocales = [];
         _.each(this.privateLocales, function (locale) {
@@ -52,18 +124,22 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
         this.activeLocales = _.uniq(newActiveLocales, function(locale){return locale.internal_code;});
       },
 
-      getPrivateLocale: function(internal_code) {
-        return _.find(this.privateLocales, {'internal_code': internal_code});
+      /**
+       * @ngdoc method
+       * @name spaceContext#getPrivateLocale
+       * @param {String} internalCode
+       * @return {Object}
+      */
+      getPrivateLocale: function(internalCode) {
+        return _.find(this.privateLocales, {'internal_code': internalCode});
       },
 
-      filterAndSortContentTypes: function (contentTypes) {
-        contentTypes = _.reject(contentTypes, function (ct) { return ct.isDeleted(); });
-        contentTypes.sort(function (a,b) {
-          return a.getName().localeCompare(b.getName());
-        });
-        return contentTypes;
-      },
-
+      /**
+       * @ngdoc method
+       * @name spaceContext#refreshContentTypes
+       * @description
+       * Refreshes all Content Type related information in the context
+      */
       refreshContentTypes: function() {
         if (this.space) {
           var spaceContext = this;
@@ -71,7 +147,7 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
             return spaceContext.space.getContentTypes({order: 'name', limit: 1000});
           })
           .then(function (contentTypes) {
-            spaceContext.contentTypes = spaceContext.filterAndSortContentTypes(contentTypes);
+            spaceContext.contentTypes = filterAndSortContentTypes(contentTypes);
             return spaceContext.refreshPublishedContentTypes().then(function () {
               return contentTypes;
             });
@@ -85,6 +161,24 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
         }
       },
 
+      /**
+       * @ngdoc method
+       * @name spaceContext#getFilteredAndSortedContentTypes
+       * @description
+       * Returns a list of content types with deleted ones filtered out
+       * and with the content types sorted by name
+       * @return {Array<Client.ContentType>}
+      */
+      getFilteredAndSortedContentTypes: function () {
+        return filterAndSortContentTypes(this.contentTypes);
+      },
+
+      /**
+       * @ngdoc method
+       * @name spaceContext#refreshPublishedContentTypes
+       * @description
+       * Refreshes list of published content types
+      */
       refreshPublishedContentTypes: function() {
         var spaceContext = this;
         return this._publishedContentTypeLoader.loadPromise(function(){
@@ -117,14 +211,24 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
         .catch(ReloadNotification.apiErrorHandler);
       },
 
-      registerPublishedContentType: function (publishedContentType) {
-        if (!_.contains(this.publishedContentTypes, publishedContentType)) {
-          this.publishedContentTypes.push(publishedContentType);
-          this._publishedContentTypesHash[publishedContentType.getId()] = publishedContentType;
-          $rootScope.$broadcast('contentTypePublished', publishedContentType);
+      /**
+       * @ngdoc method
+       * @name spaceContext#registerPublishedContentType
+       * @param {Object} contentType
+      */
+      registerPublishedContentType: function (contentType) {
+        if (!_.contains(this.publishedContentTypes, contentType)) {
+          this.publishedContentTypes.push(contentType);
+          this._publishedContentTypesHash[contentType.getId()] = contentType;
+          $rootScope.$broadcast('contentTypePublished', contentType);
         }
       },
 
+      /**
+       * @ngdoc method
+       * @name spaceContext#unregisterPublishedContentType
+       * @param {Object} publishedContentType
+      */
       unregisterPublishedContentType: function (publishedContentType) {
         var index = _.indexOf(this.publishedContentTypes, publishedContentType);
         if (index === -1) return;
@@ -136,6 +240,11 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
         $rootScope.$broadcast('contentTypeUnpublished', publishedContentType);
       },
 
+      /**
+       * @ngdoc method
+       * @name spaceContext#removeContentType
+       * @param {Object} contentType
+      */
       removeContentType: function(contentType) {
         var index = _.indexOf(this.contentTypes, contentType);
         if (index === -1) return;
@@ -143,13 +252,27 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
         this.refreshContentTypes();
       },
 
-      _publishedContentTypeIsMissing: {},
-
+      /**
+       * @ngdoc method
+       * @name spaceContext#publishedTypeForEntry
+       * @param {Object} entry
+       * @return {Object}
+       * @description
+       * Returns the published content type for a given entry
+      */
       publishedTypeForEntry: function(entry) {
         var contentTypeId = entry.getContentTypeId();
         return this.getPublishedContentType(contentTypeId);
       },
 
+      /**
+       * @ngdoc method
+       * @name spaceContext#getPublishedContentType
+       * @param {string} contentTypeId
+       * @return {Object}
+       * @description
+       * Returns the published content type for a given ID
+      */
       getPublishedContentType: function (contentTypeId) {
         var contentType = this._publishedContentTypesHash[contentTypeId];
 
@@ -160,11 +283,30 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
         return contentType;
       },
 
+      /**
+       * @ngdoc method
+       * @name spaceContext#displayFieldForType
+       * @param {string} contentTypeId
+       * @return {Object}
+       * @description
+       * Returns the display field for a given content type id
+      */
       displayFieldForType: function (contentTypeId) {
         var ct = this.getPublishedContentType(contentTypeId);
         return ct && _.find(ct.data.fields, {id: ct.data.displayField});
       },
 
+      /**
+       * @ngdoc method
+       * @name spaceContext#localizedField
+       * @param {Object} entity
+       * @param {Array} path
+       * @param {Object} locale
+       * @return {Object}
+       * @description
+       * Given an entity (entry/asset), and a field path, returns the field
+       * content for a given locale
+      */
       localizedField: function(entity, path, locale) {
         var getField = $parse(path);
         var field = getField(entity);
@@ -174,6 +316,14 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
       },
 
       /**
+       * @ngdoc method
+       * @name spaceContext#entryTitle
+       * @param {Object} entry
+       * @param {string} localeCode
+       * @param {Object} modelValue
+       * @return {Object}
+       * @description
+       * Returns the title for a given entry and locale.
        * The `modelValue` flag, if true, causes `null` to be returned
        * when no title is present. If false or left unspecified, the
        * UI string indicating that is returned, which is 'Untitled'.
@@ -198,6 +348,15 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
         }
       },
 
+      /**
+       * @ngdoc method
+       * @name spaceContext#assetTitle
+       * @param {Object} asset
+       * @param {string} localeCode
+       * @return {Object}
+       * @description
+       * Returns the title for a given asset and locale.
+       */
       assetTitle: function (asset, localeCode) {
         var defaultTitle = 'Untitled';
 
@@ -215,5 +374,13 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
 
     };
 
-    return SpaceContext;
+    function filterAndSortContentTypes(contentTypes) {
+      contentTypes = _.reject(contentTypes, function (ct) { return ct.isDeleted(); });
+      contentTypes.sort(function (a,b) {
+        return a.getName().localeCompare(b.getName());
+      });
+      return contentTypes;
+    }
+
+    return new SpaceContext();
 }]);
