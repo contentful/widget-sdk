@@ -11,7 +11,16 @@ angular.module('contentful').factory('MarkdownEditor/customRenderer', ['$injecto
   renderer.link   = renderLink;
 
   return function (source) {
-    return marked(source, { renderer: renderer });
+    return marked(source, {
+      // use renderer with altered methods for links and images
+      renderer: renderer,
+      // turn on Github-flavored MD goodies
+      gfm: true,
+      tables: true,
+      breaks: true,
+      // we use ng-bind-html that automatically $sanitizes source scope property
+      sanitize: false
+    });
   };
 
   function renderImage(href, title, text) {

@@ -13,7 +13,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
     var DESTROYED = false;
     var NOTIFY, SUBSCRIBER_CB;
 
-    var previousValue = '';
+    var previousValue = null;
     var e = createWrapper(textarea);
     var quoteToggleFn = createPrefixToggleFn('> ');
     var codeToggleFn = createPrefixToggleFn('    ');
@@ -30,13 +30,14 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
         h1:     function () { insertHeader('#');                   },
         h2:     function () { insertHeader('##');                  },
         h3:     function () { insertHeader('###');                 },
-        hr:     function () { insertHr();                          },
-        indent: function () { indent();                            },
-        dedent: function () { dedent();                            },
         ul:     function () { modifySelection(ulToggleFn);         },
         ol:     function () { modifySelection(olToggleFn);         },
         undo:   function () { e.cmd('undo');                       },
-        redo:   function () { e.cmd('redo');                       }
+        redo:   function () { e.cmd('redo');                       },
+        hr:     insertHr,
+        indent: indent,
+        dedent: dedent,
+        table:  insertTable
       },
       subscribe:       function (cb) { SUBSCRIBER_CB = cb; },
       insert:          function (text) { e.insertAtCursor(text); },
@@ -96,11 +97,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
      */
 
     function insertHr() {
-      // if the current line is not empty, then move to next one
-      if (e.getCurrentLineLength() > 0) {
-        e.moveToLineBeginning(e.getCurrentLineNumber() + 1);
-      }
-
+      e.moveIfNotEmpty();
       var nl = e.getNl();
       var markup = nl + '- - -' + nl + nl;
       e.insertAtCursor(markup);
@@ -215,6 +212,42 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
     function getListNumber() {
       var result = e.getCurrentLine().match(/^(\d+\. )/);
       return result ? result[1] : null;
+    }
+
+    /**
+     * Table-related functions
+     */
+
+    function insertTable(config) {
+      var nl = e.getNl();
+      e.moveIfNotEmpty();
+      e.insertAtCursor(nl);
+      var line = e.getCurrentLineNumber();
+      e.insertAtCursor(generateTableRows(config).join(nl));
+      e.insertAtCursor(nl + nl);
+      e.restoreCursor(2, line);
+    }
+
+    function generateTableRows(c) {
+      var rows = [];
+      var cellWidth = new Array(c.width + 1);
+      var cell = cellWidth.join(' ') + '|';
+      var separatorCell = cellWidth.join('-') + '|';
+      var row = '|';
+      var separator = '|';
+      var i = 0;
+
+      for (; i < c.cols; i += 1) {
+        row += cell;
+        separator += separatorCell;
+      }
+
+      row = row.replace(/\|  /g, '| ?');
+
+      for (i = 0; i < c.rows; i += 1) { rows.push(row); }
+      rows.splice(1, 0, separator);
+
+      return rows;
     }
 
     /**

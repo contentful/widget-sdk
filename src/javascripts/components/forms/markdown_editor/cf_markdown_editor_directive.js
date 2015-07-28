@@ -31,7 +31,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.inMode = inMode;
       scope.insertAsset = insertAsset;
       scope.insertLink = insertLink;
-      scope.insertTable = _notImplemented;
+      scope.insertTable = insertTable;
       scope.insertSpecial = insertSpecialCharacter;
 
       scope.$watch('fieldData.value', handleValueChange);
@@ -129,8 +129,15 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         }).promise.then(editor.insert);
       }
 
-      function _notImplemented() {
-        window.alert('Not implemented yet.');
+      function insertTable() {
+        var modalScope = $rootScope.$new();
+        modalScope.model = { rows: 2, cols: 2, width: 10 };
+
+        modalDialog.open({
+          scope: modalScope,
+          template: 'insert_table_dialog',
+          ignoreEnter: true
+        }).promise.then(editor.actions.table);
       }
     }
   };

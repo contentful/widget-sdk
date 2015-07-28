@@ -5,7 +5,7 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', f
     /*global CodeMirror*/
     var cm = CodeMirror.fromTextArea(textarea, {
       mode: 'gfm',
-      lineNumbers: false,
+      lineNumbers: true,
       undoDepth: 0,
       matchBrackets: true,
       lineWrapping: true,
@@ -29,6 +29,7 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', f
       cmd:                     cmd,
       opt:                     opt,
       moveToLineBeginning:     moveToLineBeginning,
+      moveIfNotEmpty:          moveIfNotEmpty,
       restoreCursor:           restoreCursor,
       moveToLineEnd:           moveToLineEnd,
       usePrimarySelection:     usePrimarySelection,
@@ -71,6 +72,18 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', f
     function moveToLineBeginning(lineNumber) {
       cm.setCursor({line: lineNumber || getCurrentLineNumber(), ch: 0});
       cm.focus();
+    }
+
+    function moveIfNotEmpty() {
+      if (getCurrentLineLength() < 1) { return; }
+
+      var next = getCurrentLineNumber() + 1;
+      if (cm.lastLine() < next) {
+        moveToLineEnd();
+        insertAtCursor(getNl());
+      }
+
+      moveToLineBeginning(next);
     }
 
     function restoreCursor(character, lineNumber) {
