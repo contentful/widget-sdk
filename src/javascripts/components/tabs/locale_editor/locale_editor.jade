@@ -24,17 +24,18 @@ header.workbench-header
 
 .workbench-actions
   button.cfnext-btn-secondary-action.cancel(
+    type="button"
     ng-show="context.isNew"
     ng-click="cancel()")
     | Cancel
   button.cfnext-btn-secondary-action.delete(
+    type="button"
     ng-show="locale.getId() && !locale.data.default"
     ng-disabled="localeForm.$submitted"
     ng-click="startDeleteFlow()")
     | Delete
   button.cfnext-btn-primary-action(
-     type="submit"
-     tooltip="Save this Locale"
-     ng-click="save()"
-     ng-disabled="localeForm.$invalid || !localeForm.$dirty || localeForm.$submitted")
+    type="submit"
+    ng-click="save()"
+    ng-disabled="localeForm.$invalid || !localeForm.$dirty || localeForm.$submitted")
     | Save
