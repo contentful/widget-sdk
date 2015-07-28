@@ -4,39 +4,3 @@
   font-size: inherit
   margin: 0
   margin-top: -1px
-
-/**
- * @deprecated
- */
-.select-box
-  padding: 0
-  select
-    // This is a hack to keep IE from showing the dropdown arrow
-    width: 200%
-    padding: 5px 12px
-    margin: 0
-    color: inherit
-    font-size: inherit
-    font-family: inherit
-    border: none
-    background: transparent
-    border-radius: 0
-    -webkit-appearance: none
-    -moz-appearance: none
-    appearance: none
-    &::-ms-expand
-      display: none
-  &:hover
-    border-color: $gray
-  .button-icon-right
-    position: absolute
-    left: auto
-    float: none
-    right: 7px
-    top: 7px
-    cursor: default
-    pointer-events: none
-
-.select-box__wrapper
-  width: 90%
-  overflow: hidden

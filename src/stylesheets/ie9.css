@@ -18,14 +18,9 @@
   float: right
 }
 
-.tab-header__search .select-box,
 .tab-header__search .l-search-w-autocomplete,
 .tab-header__search .search-results-position {
   float: left;
-}
-
-.tab-header__search .select-box {
-  width: 20%;
 }
 
 .tab-header__search .l-search-w-autocomplete {
