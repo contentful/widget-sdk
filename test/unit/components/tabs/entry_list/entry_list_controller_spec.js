@@ -327,16 +327,30 @@ describe('Entry List Controller', function () {
     });
   });
 
-  it('has a query', function() {
-    createController();
-    scope.context.view.searchTerm = 'foo';
-    expect(scope.hasQuery()).toBeTruthy();
-  });
+  describe('#showNoEntriesAdvice()', function () {
 
-  it('has no query', function() {
-    createController();
-    scope.context.view.searchTerm = null;
-    expect(scope.hasQuery()).toBeFalsy();
+    beforeEach(function () {
+      createController();
+    });
+
+    it('is true when there are no entries', function () {
+      scope.entries = null;
+      expect(scope.showNoEntriesAdvice()).toBe(true);
+      scope.entries = [];
+      expect(scope.showNoEntriesAdvice()).toBe(true);
+    });
+
+    it('is false when there is a search term', function () {
+      scope.entries = null;
+      scope.context.view.searchTerm = 'foo';
+      expect(scope.showNoEntriesAdvice()).toBe(false);
+    });
+
+    it('is false when there is a content type filter', function () {
+      scope.entries = null;
+      scope.context.view.contentTypeId = 'foo';
+      expect(scope.showNoEntriesAdvice()).toBe(false);
+    });
   });
 
   describe('loadMore', function () {

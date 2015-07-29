@@ -195,8 +195,12 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     });
   }
 
-  $scope.hasQuery = function () {
-    return !_.isEmpty($scope.context.view.searchTerm);
+  $scope.showNoEntriesAdvice = function () {
+    var view =$scope.context.view;
+    var hasQuery = !_.isEmpty(view.searchTerm) ||
+                   !_.isEmpty(view.contentTypeId);
+    var hasEntries = $scope.entries && $scope.entries.length > 0;
+    return !hasEntries && !hasQuery;
   };
 
   $scope.loadMore = function() {
