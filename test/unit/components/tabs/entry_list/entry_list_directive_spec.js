@@ -44,58 +44,6 @@ describe('The Entry list directive', function () {
     container.remove();
   });
 
-  describe('the tab header first add button', function() {
-    var addEntryButtonSelector = '.tab-header button:contains("Add New")';
-
-    it('is not shown if there are no entries', function() {
-      scope.singleContentType = null;
-      scope.entries = [];
-      compileElement();
-      expect(container.find(addEntryButtonSelector)).toBeNgHidden();
-    });
-
-    it('is not shown if there is no single content type', function() {
-      scope.singleContentType = null;
-      scope.entries = [{}];
-      compileElement();
-      expect(container.find(addEntryButtonSelector)).toBeNgHidden();
-    });
-
-    it('is shown if all conditions are met', function() {
-      scope.singleContentType = {};
-      scope.entries = [{}];
-      compileElement();
-      expect(container.find(addEntryButtonSelector)).not.toBeNgHidden();
-    });
-  });
-
-
-  describe('the tab header add dropdown button', function() {
-
-    describe('has dropdown items', function() {
-      var idStub1, idStub2, nameStub;
-      beforeEach(function() {
-        idStub1 = sinon.stub();
-        idStub1.returns(1);
-        idStub2 = sinon.stub();
-        idStub2.returns(2);
-        nameStub = sinon.stub();
-        nameStub.returns('name');
-        scope.context.view.contentTypeId = 1;
-        scope.spaceContext.publishedContentTypes = [
-          {getId: idStub1, getName: nameStub},
-          {getId: idStub2, getName: nameStub}
-        ];
-        compileElement();
-      });
-
-      it('has 2 items', function() {
-        expect(container.find('.tab-header .add-entity li').length).toBe(2);
-      });
-    });
-
-  });
-
   function makeActionTest(button, action) {
     it(button+' button not shown', function () {
       scope.permissionController.get.withArgs(action+'Entry', 'shouldHide').returns(true);
