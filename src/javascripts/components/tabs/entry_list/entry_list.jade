@@ -1,7 +1,6 @@
 mixin create-entry-button
   div(ng-if="singleContentType")
     button.cfnext-btn-action(
-      ng-if
       ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
       cf-when-disabled="permissionController.entityActions.createEntry"
       ng-click="entityCreationController.newEntry(singleContentType)")
