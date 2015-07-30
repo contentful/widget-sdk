@@ -113,6 +113,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     return $scope.spaceContext.displayFieldForType($scope.context.view.contentTypeId);
   };
 
+  // TODO this code is duplicated in the asset list controller
   $scope.visibleInCurrentList = function(entry){
     // TODO: This needs to basically emulate the API :(
     return !entry.isDeleted();
@@ -195,11 +196,23 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     });
   }
 
-  $scope.hasQuery = function () {
-    return !_.isEmpty($scope.context.view.searchTerm);
+  // TODO this code is duplicated in the asset list controller
+  $scope.showNoEntriesAdvice = function () {
+    var view = $scope.context.view;
+    var hasQuery = !_.isEmpty(view.searchTerm) ||
+                   !_.isEmpty(view.contentTypeId);
+    var hasEntries = $scope.entries && $scope.entries.length > 0;
+    return !hasEntries && !hasQuery;
   };
 
-  $scope.loadMore = function() {
+  // TODO this code is duplicated in the asset list controller
+  $scope.showCreateEntryButton = function () {
+    var hasContentTypes = !_.isEmpty($scope.spaceContext.publishedContentTypes);
+    var hideCreateEntry = $scope.permissionController.get('createEntry', 'shouldHide');
+    return hasContentTypes && !hideCreateEntry;
+  };
+
+  $scope.loadMore = function () {
     if ($scope.paginator.atLast()) return;
     $scope.paginator.page++;
     var queryForDebug;

@@ -1,7 +1,6 @@
 .link-editor__controls
-  .link-editor__search-input.l-search-w-autocomplete(cf-tokenized-search="searchTerm"
-    tooltip-placement="top"
-    tooltip="Search for existing {{entityName}}"
+  .link-editor__search-input.l-search-w-autocomplete(
+    cf-tokenized-search="searchTerm"
     search-content-type="getSearchContentType()"
     placeholder="Search for {{entityName}}"
     cf-on-blur-component="leftSearch($event)"
@@ -13,18 +12,19 @@
     ng-hide="permissionController.get('createEntry', 'shouldHide')"
     ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
     cf-when-disabled="permissionController.entityActions.createEntry"
-    tooltip="Add new {{entityType}}"
-    tooltip-placement="left"
-    cf-context-menu-trigger)
+    cf-context-menu-trigger
+    data-test-id="add-new-entry-menu-trigger")
     cf-icon.btn-icon(name="plus")
     | Add New
   //- TODO the ng-if condition for the dropdown has to be synced
   //- manually with the confidtion above
   .context-menu(
     ng-if="entityType=='Entry' && addableContentTypes.length > 1"
-    cf-context-menu)
+    cf-context-menu role="menu"
+    aria-label="Add new Entry" data-test-id="add-new-entry-menu")
     cf-icon.context-menu__arrow(name="arrow-up")
     .context-menu__item(
+      role="menuitem"
       ng-repeat="contentType in addableContentTypes track by contentType.getId()"
       ng-click="addNewEntry(contentType)")
       | {{contentType.getName()}}

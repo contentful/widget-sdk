@@ -64,48 +64,103 @@ describe('ContentType Actions Controller', function () {
     this.broadcastStub.restore();
   });
 
-  describe('when deleting', function() {
+  describe('#delete()', function() {
     beforeEach(function() {
-      this.actionStub = sinon.stub(contentType, 'delete').returns(this.actionDeferred.promise);
+      contentType.delete = sinon.stub().resolves();
+      contentType.unpublish = sinon.stub().resolves();
+      contentType.isPublished = sinon.stub().returns(true);
+
+      scope.updatePublishedContentType = sinon.stub();
+      scope.ctEditorController = {
+        countEntries: sinon.stub().resolves()
+      };
+
+      this.modalDialog = this.$inject('modalDialog');
+      sinon.stub(this.modalDialog, 'openConfirmDialog').resolves({cancelled: false});
     });
 
-    describe('fails with an error', function() {
-      beforeEach(function() {
-        this.actionDeferred.reject({error: true});
+    describe('without entries', function () {
+      beforeEach(function () {
+        scope.ctEditorController.countEntries.resolves(0);
+      });
+
+      it('calls unpublish and then delete', function () {
         controller.delete();
-        scope.$apply();
+        this.$apply();
+        sinon.assert.callOrder(contentType.unpublish, contentType.delete);
       });
 
-      it('calls action', function() {
-        sinon.assert.called(this.actionStub);
+      it('asks the user for confirmation', function () {
+        controller.delete();
+        this.$apply();
+        sinon.assert.called(this.modalDialog.openConfirmDialog);
       });
 
+      it('does not send DELETE if the user denies confirmation', function () {
+        this.modalDialog.openConfirmDialog.resolves({cancelled: true});
 
-      it('shows error notification', function() {
+        controller.delete();
+        this.$apply();
+        sinon.assert.notCalled(contentType.delete);
+      });
+
+      it('notifies of server errors', function() {
+        contentType.delete.rejects({error: true});
+        controller.delete();
+        this.$apply();
         sinon.assert.called(notification.error);
         sinon.assert.called(logger.logServerWarn);
       });
-    });
-
-    describe('succeeds', function() {
-      beforeEach(function() {
-        this.actionDeferred.resolve({contentType: true});
-        controller.delete();
-        scope.$apply();
-      });
-
-      it('calls action', function() {
-        sinon.assert.called(this.actionStub);
-      });
 
       it('shows notification', function() {
+        controller.delete();
+        this.$apply();
         sinon.assert.called(notification.info);
       });
 
       it('broadcasts event', function() {
+        controller.delete();
+        this.$apply();
         sinon.assert.calledWith(this.broadcastStub, 'entityDeleted');
       });
     });
+
+    it('notifies the user when there are entries', function () {
+      scope.ctEditorController.countEntries.resolves(1);
+      controller.delete();
+      this.$apply();
+
+      sinon.assert.calledWith(
+        this.modalDialog.openConfirmDialog,
+        sinon.match({template: 'content_type_removal_forbidden_dialog'})
+      );
+      sinon.assert.notCalled(contentType.delete);
+    });
+
+    describe('when CT is not published', function () {
+      beforeEach(function () {
+        contentType.isPublished = sinon.stub().returns(false);
+      });
+
+      it('does not count entries', function () {
+        controller.delete();
+        this.$apply();
+        sinon.assert.notCalled(scope.ctEditorController.countEntries);
+      });
+
+      it('does not call unpublish', function () {
+        controller.delete();
+        this.$apply();
+        sinon.assert.notCalled(contentType.unpublish);
+      });
+
+      it('calls delete', function () {
+        controller.delete();
+        this.$apply();
+        sinon.assert.called(contentType.delete);
+      });
+    });
+
   });
 
   it('when cancelling navigates back to list', function() {
@@ -283,6 +338,15 @@ describe('ContentType Actions Controller', function () {
             expect(scope.contentType.data.sys).toEqual('NEW SYS');
           });
         });
+      });
+    });
+
+    pit('sets default name', function () {
+      var ct = scope.contentType;
+      delete ct.data.name;
+      return controller.save()
+      .then(function () {
+        expect(ct.data.name).toEqual('Untitled');
       });
     });
   });

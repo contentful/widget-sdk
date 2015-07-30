@@ -37,14 +37,25 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
     scope.searchController.resetAssets(pageParameters.page === old.page);
   }, true);
 
+  // TODO this code is duplicated in the asset list controller
   $scope.visibleInCurrentList = function(asset){
     // TODO: This needs to basically emulate the API :(
     return !asset.isDeleted();
   };
 
-  $scope.hasQuery = function () {
-    return !_.isEmpty($scope.context.view.searchTerm);
+  // TODO this code is duplicated in the asset list controller
+  $scope.showNoAssetsAdvice = function () {
+    var view = $scope.context.view;
+    var hasQuery = !_.isEmpty(view.searchTerm);
+    var hasEntries = $scope.assets && $scope.assets.length > 0;
+    return !hasEntries && !hasQuery;
   };
+
+  // TODO this code is duplicated in the asset list controller
+  $scope.showCreateAssetButton = function () {
+    return !$scope.permissionController.get('createAsset', 'shouldHide');
+  };
+
 
   var throttledListRefresh = throttle(function () {
     delay(function () {

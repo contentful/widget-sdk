@@ -4,25 +4,28 @@
     h1(title="{{headline()}}")
       | {{headline()}}
       a(cf-knowledge-base-icon
-        tooltip="Learn more about Assets in the Knowledge Base Pages"
         analytics-event="assets"
         href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
 
   .tab-header__actions
     button.cfnext-btn-secondary-action(type="button"
-            ng-click="preferences.toggleAuxPanel()"
-            ng-class="{active: preferences.showAuxPanel}"
-            tooltip="Toggle additional details"
-            tooltip-placement="bottom")
+      ng-click="preferences.toggleAuxPanel()"
+      ng-class="{active: preferences.showAuxPanel}")
       | Info
     .dropdown-btn(ng-show="showLangSwitcher")
-      button.cfnext-btn-secondary-action(cf-context-menu-trigger)
+      button.cfnext-btn-secondary-action(
+        cf-context-menu-trigger
+        data-test-id="asset-view-menu-trigger")
         cf-icon.btn-dropdown-icon(name="dd-arrow-down")
         | View
-      .context-menu(cf-context-menu="bottom-right")
+      .context-menu(
+        role="menu" cf-context-menu="bottom-right"
+        aria-label="Configure Asset View" data-test-id="asset-view-menu")
         cf-icon.context-menu__arrow.x--top-right(name="arrow-up")
         ul.lang-switcher(ng-show="showLangSwitcher")
-          label.context-menu__item(ng-repeat="locale in spaceContext.privateLocales track by locale.sys.id")
+          label.context-menu__item(
+            role="menuitemcheckbox"
+            ng-repeat="locale in spaceContext.privateLocales track by locale.sys.id")
             input(type="checkbox" ng-model="spaceContext.localeStates[locale.internal_code]")
             | {{locale.name}}
             span(ng-show="locale == spaceContext.space.getDefaultLocale()")
@@ -65,19 +68,35 @@
   .button-set
     button.cfnext-btn-secondary-action.delete(type="button"
       ng-show="entityActionsController.canDelete()"
-      cf-context-menu-trigger)
+      cf-context-menu-trigger
+      data-test-id="delete-asset")
       | Delete
     .delete-confirm(cf-context-menu="top")
       cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
       p You are about to delete {{headline()}}
       button.cfnext-btn-caution(type="button" ng-click="delete()") Delete
       button.cfnext-btn-secondary-action(type="button") Don't Delete
-    button.cfnext-btn-secondary-action.archive(  type="button" ng-show="entityActionsController.canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
-    button.cfnext-btn-secondary-action.archive(  type="button" ng-show="entityActionsController.canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
-    button.cfnext-btn-secondary-action.unpublish(type="button" ng-show="entityActionsController.canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish
-    button.cfnext-btn-primary-action.publish(    type="submit" ng-show="entityActionsController.canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Asset") {{publishButtonLabel()}}
-  .save-status(cf-save-status tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
-               tooltip-placement="top")
+    button.cfnext-btn-secondary-action.archive(
+      type="button"
+      ng-show="entityActionsController.canArchive()"
+      ng-click="archive()")
+      | Archive
+    button.cfnext-btn-secondary-action.archive(
+      type="button"
+      ng-show="entityActionsController.canUnarchive()"
+      ng-click="unarchive()")
+      | Unarchive
+    button.cfnext-btn-secondary-action.unpublish(
+      type="button"
+      ng-show="entityActionsController.canUnpublish()"
+      ng-click="unpublish()")
+      | Unpublish
+    button.cfnext-btn-primary-action.publish(
+      type="submit"
+      ng-show="entityActionsController.canPublish()"
+      ng-click="publish()")
+      | {{publishButtonLabel()}}
+  .save-status(cf-save-status)
   .other-users
     span(ng-show="presence.users.length == 0"
           tooltip="Edit collaboratively by inviting more users into your space. Go to Settings → Users → Invite New User to invite people.")

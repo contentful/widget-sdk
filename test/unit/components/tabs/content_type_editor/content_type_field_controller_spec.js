@@ -44,7 +44,7 @@ describe('Content Type Field Controller', function () {
       this.field.disabled = false;
       this.fieldElement.find('[aria-label=Actions]').click();
       this.$apply();
-      this.fieldElement.find('[role=button]:contains(Disable)').click();
+      this.fieldElement.find('[role=menuitem]:contains(Disable)').click();
       this.$apply();
       expect(this.field.disabled).toBe(true);
     });
@@ -54,7 +54,7 @@ describe('Content Type Field Controller', function () {
       this.$apply();
       this.fieldElement.find('[aria-label=Actions]').click();
       this.$apply();
-      this.fieldElement.find('[role=button]:contains(Enable)').click();
+      this.fieldElement.find('[role=menuitem]:contains(Enable)').click();
       this.$apply();
       expect(this.field.disabled).toBe(false);
     });
@@ -68,7 +68,7 @@ describe('Content Type Field Controller', function () {
       this.$apply();
       this.fieldElement.find('[aria-label=Actions]').click();
       this.$apply();
-      this.fieldElement.find('[role=button]:contains(Disable)').click();
+      this.fieldElement.find('[role=menuitem]:contains(Disable)').click();
       this.$apply();
 
       expect(this.field.disabled).toBe(false);
@@ -82,7 +82,7 @@ describe('Content Type Field Controller', function () {
 
       this.fieldElement.find('[aria-label=Actions]').click();
       this.$apply();
-      this.fieldElement.find('[role=button]:contains(Set field as Entry title)').click();
+      this.fieldElement.find('[role=menuitem]:contains(Set field as Entry title)').click();
       this.$apply();
 
       expect(this.contentType.data.displayField).toEqual(this.field.id);
@@ -91,21 +91,21 @@ describe('Content Type Field Controller', function () {
     it('is not shown if field cannot be title', function () {
       this.field.type = 'Number';
       this.createFieldElements();
-      var setEntryButton = this.fieldElement.find('[role=button]:contains(Set field as Entry title)');
+      var setEntryButton = this.fieldElement.find('[role=menuitem]:contains(Set field as Entry title)');
       expect(setEntryButton.length).toBe(0);
     });
 
     it('is not shown if field is title', function () {
       this.contentType.data.displayField = this.field.id;
       this.$apply();
-      var setEntryButton = this.fieldElement.find('[role=button]:contains(Set field as Entry title)');
+      var setEntryButton = this.fieldElement.find('[role=menuitem]:contains(Set field as Entry title)');
       expect(setEntryButton.length).toBe(0);
     });
 
     it('is not shown if field is disabled', function () {
       this.field.disabled = true;
       this.$apply();
-      var setEntryButton = this.fieldElement.find('[role=button]:contains(Set field as Entry title)');
+      var setEntryButton = this.fieldElement.find('[role=menuitem]:contains(Set field as Entry title)');
       expect(setEntryButton.length).toBe(0);
     });
   });
@@ -115,7 +115,7 @@ describe('Content Type Field Controller', function () {
       var deleteField = sinon.stub();
       this.ctEditorController.deleteField = deleteField;
 
-      var deleteButton = this.fieldElement.find('[role=button]:contains(Delete)');
+      var deleteButton = this.fieldElement.find('[role=menuitem]:contains(Delete)');
       deleteButton.click();
       this.$apply();
 

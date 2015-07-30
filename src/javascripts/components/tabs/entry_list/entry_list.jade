@@ -1,3 +1,32 @@
+mixin create-entry-button
+  div(ng-if="singleContentType")
+    button.cfnext-btn-action(
+      ng-if
+      ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
+      cf-when-disabled="permissionController.entityActions.createEntry"
+      ng-click="entityCreationController.newEntry(singleContentType)")
+      cf-icon.btn-icon.inverted(name="plus")
+      | Add New {{singleContentType.getName()}}
+  div(ng-if="!singleContentType")
+    button.cfnext-btn-action.u-truncate(
+      cf-context-menu-trigger
+      ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
+      cf-when-disabled="permissionController.entityActions.createEntry"
+      data-test-id="add-entry-menu-trigger")
+      cf-icon.btn-icon.inverted(name="plus")
+      cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+      | Add New Entry
+    .context-menu(
+      role="menu" cf-context-menu
+      aria-label="Add Entry" data-test-id="add-entry-menu")
+      cf-icon.context-menu__arrow(name="arrow-up")
+      ul.context-menu__items
+        li(role="menuitem"
+          ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
+          ng-click="entityCreationController.newEntry(contentType)")
+          | {{contentType.getName()}}
+
+
 .tab-header
   .tab-header__title
     cf-icon(name="page-entries")
@@ -7,7 +36,7 @@
         analytics-event="entries"
         href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
 
-  .tab-header__search.search-area--with-filter(ng-show="entries.length > 0 || hasQuery()")
+  .tab-header__search.search-area--with-filter(ng-show="!showNoEntriesAdvice()")
     .btn.btn--tertiary.select-box
       .select-box__wrapper
         select.u-truncate(ng-model="context.view.contentTypeId"
@@ -25,31 +54,11 @@
 
     .search-results-position(cf-search-results-position paginator="paginator" ng-hide="!paginator.numEntries")
 
-  .tab-header__actions.add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0 || entries.length == 0")
-    button.cfnext-btn-action(
-            ng-hide="!singleContentType || permissionController.get('createEntry', 'shouldHide')"
-            ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
-            cf-when-disabled="permissionController.entityActions.createEntry"
-            ng-click="entityCreationController.newEntry(singleContentType)")
-      cf-icon.btn-icon.inverted(name="plus")
-      | Add New {{singleContentType.getName()}}
-    .dropdown-btn(ng-hide="singleContentType")
-      button.cfnext-btn-action.u-truncate(
-        cf-context-menu-trigger
-        ng-hide="permissionController.get('createEntry', 'shouldHide')"
-        ng-disabled="permissionController.get('createEntry', 'shouldDisable')"
-        cf-when-disabled="permissionController.entityActions.createEntry")
-        cf-icon.btn-icon.inverted(name="plus")
-        cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-        | Add New Entry
-      .context-menu(cf-context-menu)
-        cf-icon.context-menu__arrow(name="arrow-up")
-        ul.context-menu__items
-          li(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
-            ng-click="entityCreationController.newEntry(contentType)")
-            | {{contentType.getName()}}
+  .tab-header__actions(ng-show="!showNoEntriesAdvice()")
+    div(ng-if="showCreateEntryButton()")
+      +create-entry-button
 
-.tab-main(ng-show="entries.length > 0 || hasQuery()")
+.tab-main(ng-show="!showNoEntriesAdvice()")
   .left-nav
     div.menu-with-buttons(cf-view-menu="uiConfig.entryListViews" current-view="context.view" ng-show="uiConfig")
   .with-left-nav
@@ -88,11 +97,11 @@
       .loading(ng-hide="paginator.atLast()")
 
     .advice(ng-show="visibleEntries | isEmpty")
-      .advice__frame(ng-show="hasQuery()")
+      .advice__frame
         i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
         header.advice__title There are no matches to your search
 
-.advice(ng-show="entries.length === 0 && !hasQuery()")
+.advice(ng-show="showNoEntriesAdvice()")
   .advice__frame
     i.fa.fa-file.advice__giant-icon
     header.advice__title You have no Entries yet.
@@ -128,7 +137,11 @@
   .button-set(ng-controller="EntryListActionsController" ng-hide="selection.isEmpty()")
     button.cfnext-btn-secondary-action.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
     | 
-    button.cfnext-btn-secondary-action.delete(type="button" ng-show="showDelete()" cf-context-menu-trigger) Delete
+    button.cfnext-btn-secondary-action.delete(type="button"
+      ng-show="showDelete()"
+      cf-context-menu-trigger
+      data-test-id="delete-entry")
+      | Delete
     .delete-confirm(cf-context-menu="top")
       cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
       p You are about to delete {{selection.size()}} Entries

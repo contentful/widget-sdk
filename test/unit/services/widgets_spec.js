@@ -317,4 +317,26 @@ describe('Widget types service', function () {
     });
   });
 
+  describe('#buildRenderable()', function () {
+
+    it('has widget’s template property', function () {
+      var renderable = widgets.buildRenderable({widgetId: 'singleLine'});
+      var template = widgets.get('singleLine').template;
+      expect(renderable.template).toEqual(template);
+    });
+
+    it('assigns locales', function () {
+      var locales = ['my locales'];
+      var renderable = widgets.buildRenderable({widgetId: 'singleLine', widgetType: 'field'}, locales);
+      expect(renderable.locales).toBe(locales);
+    });
+
+    it('keeps widgetParams property', function () {
+      var params = 'MY PARAMS';
+      var widget = {widgetId: 'singleLine', widgetType: 'field', widgetParams: params};
+      var renderable = widgets.buildRenderable(widget);
+      expect(renderable.widgetParams).toBe(params);
+    });
+
+  });
 });

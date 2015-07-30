@@ -2,12 +2,16 @@
 angular.module('contentful').run(['widgets', function(widgets){
   /**
    * @ngdoc type
-   * @name Widget
+   * @name Widget.Descriptor
    *
    * @property {string} id
    * @property {string} name
    * @property {Widget.Option[]} options
    * @property {string} icon
+   * @property {string} template
+   * @property {string} defaulHelpText
+   * @property {boolean} notFocusable
+   * @property {boolean} rendersHelpText
    */
 
   // Static widgets
@@ -153,6 +157,7 @@ angular.module('contentful').run(['widgets', function(widgets){
 
   widgets.registerWidget('listInput',{
     fieldTypes: ['Symbols'],
+    defaultHelpText: 'Insert comma separated values',
     name: 'List',
     icon: 'singleline',
     template: '<input cf-list-identity-fix class="form-control" ng-disabled="!otEditable" ng-list cf-empty-list ng-model="fieldData.value" ot-bind-model type="text">'
