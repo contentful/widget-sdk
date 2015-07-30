@@ -289,7 +289,11 @@ function ContentTypeActionsController($scope, $injector) {
     if (errorId === 'ValidationFailed') {
       notify.invalid();
     } else if (errorId === 'VersionMismatch') {
-      notify.saveOutdated();
+      if ($scope.contentType.getVersion()) {
+        notify.saveOutdated();
+      } else {
+        notify.saveIdExists();
+      }
     } else {
       notify.saveApiError(err);
     }
@@ -325,6 +329,9 @@ function ContentTypeActionsController($scope, $injector) {
       success: 'Content Type saved successfully',
       invalid: saveError + 'Data is invalid',
       outdated:  saveError + 'Your version is outdated. Please reload and try again'
+    },
+    create: {
+      exists: 'A Content Type with this ID already exists'
     }
   };
 
@@ -360,6 +367,10 @@ function ContentTypeActionsController($scope, $injector) {
 
     saveOutdated: function () {
       notification.error(messages.save.outdated);
+    },
+
+    saveIdExists: function () {
+      notification.warn(messages.create.exists);
     },
 
     saveApiError: function (err) {

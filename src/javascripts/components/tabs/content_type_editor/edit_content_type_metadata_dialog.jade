@@ -1,6 +1,7 @@
 .modal-background
   form.modal-dialog.edit-content-type-metadata__dialog(
     novalidate
+    ng-controller="ContentTypeMetadataController"
     name="newContentTypeForm"
     cf-on-submit="newContentTypeForm.$valid && dialog.confirm()")
     header.modal-dialog__header
@@ -9,7 +10,9 @@
     .modal-dialog__content
       .cfnext-form__field
         label
-          | Content Type Name
+          | Name
+          span.cfnext-form__label-hint(cf-field-invalid-class="contentTypeName")
+           | required
         input.cfnext-form__input--full-size(
           type="text"
           name="contentTypeName"
@@ -17,10 +20,22 @@
           ng-model="contentTypeMetadata.name"
           required maxlength="50"
           cf-focus-on-render)
-        div.cfnext-form__hint
-          | This field is required
+      .cfnext-form__field(ng-if="contentTypeIsNew")
+        label
+          | API identifier
+          span.cfnext-form__label-hint
+           | generated from name
+        input.cfnext-form__input--full-size(
+          type="text"
+          name="contentTypeId"
+          ng-model="contentTypeMetadata.id"
+          required)
+        div.cfnext-form__field-error(cf-field-error-for="contentTypeId")
       .cfnext-form__field
-        label Short Description
+        label
+          | Description
+          span.cfnext-form__label-hint
+           | in less than 500 characters
         textarea.cfnext-form__input--full-size(
           maxlength="500"
           name="contentTypeDescription"
