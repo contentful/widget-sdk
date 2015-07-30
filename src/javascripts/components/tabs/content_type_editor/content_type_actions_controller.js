@@ -39,6 +39,7 @@ function ContentTypeActionsController($scope, $injector) {
    * @name ContentTypeActionsController#delete
    */
   controller.delete = function() {
+    populateDefaultName($scope.contentType);
     if ($scope.contentType.isPublished()) {
       $scope.ctEditorController.countEntries().then(function(count) {
         if (count > 0) {
@@ -152,9 +153,7 @@ function ContentTypeActionsController($scope, $injector) {
    * @name ContentTypeActionsController#scope#save
    */
   controller.save = function () {
-    if (!$scope.contentType.data.name) {
-      $scope.contentType.data.name = 'Untitled';
-    }
+    populateDefaultName($scope.contentType);
 
     trackSavedContentType($scope.contentType);
 
@@ -183,6 +182,16 @@ function ContentTypeActionsController($scope, $injector) {
     .then(saveEditingInterface)
     .then(postSaveActions, triggerApiErrorNotification);
   };
+
+  // This is handling legacy content types.
+  // FIXME This is not the proper place for this function, it should be
+  // handled when loading the CT. Unfortunately this is not currently
+  // possible.
+  function populateDefaultName (contentType) {
+    if (contentType && contentType.data && !contentType.data.name) {
+      contentType.data.name = 'Untitled';
+    }
+  }
 
   /**
    * @ngdoc method
