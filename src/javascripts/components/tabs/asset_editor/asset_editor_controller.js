@@ -4,6 +4,7 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
   var $controller       = $injector.get('$controller');
   var AssetContentType  = $injector.get('AssetContentType');
   var ShareJS           = $injector.get('ShareJS');
+  var TheLocaleStore    = $injector.get('TheLocaleStore');
   var logger            = $injector.get('logger');
   var notification      = $injector.get('notification');
   var stringUtils       = $injector.get('stringUtils');
@@ -17,6 +18,8 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
   $scope.$watch('spaceContext.assetTitle(asset)', function (title) {
     $scope.context.title = title;
   });
+
+  $scope.TheLocaleStore = TheLocaleStore;
 
   $scope.$watch(function (scope) {
     if (scope.otDoc && scope.asset) {
@@ -71,7 +74,7 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
       if (error.path.length == 1 && error.path[0] == 'fields') {
         $scope.hasErrorOnFields = error.path.length == 1 && error.path[0] == 'fields';
       } else if (error.path.length == 2) {
-        $scope.errorPaths[field].push($scope.spaceContext.space.getDefaultLocale().internal_code);
+        $scope.errorPaths[field].push(TheLocaleStore.getDefaultLocale().internal_code);
       } else {
         var localeCode = error.path[2];
         $scope.errorPaths[field].push(localeCode);
@@ -111,7 +114,7 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
     if (file !== old) scope.validate();
   }, true);
 
-  $scope.showLangSwitcher = $scope.spaceContext.space.getPrivateLocales().length > 1;
+  $scope.showLangSwitcher = TheLocaleStore.getPrivateLocales().length > 1;
 
   $scope.headline = function(){
     return this.spaceContext.assetTitle(this.asset);

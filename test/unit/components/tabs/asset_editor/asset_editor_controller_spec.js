@@ -118,6 +118,7 @@ describe('Asset editor controller', function () {
       });
 
       asset.isArchived = sinon.stub().returns(false);
+      // TODO fix me
       scope.spaceContext = {
         activeLocales: sinon.stub().returns([locale]),
         space: {

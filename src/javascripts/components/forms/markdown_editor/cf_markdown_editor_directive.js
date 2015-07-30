@@ -1,15 +1,16 @@
 'use strict';
 
 angular.module('contentful').directive('cfMarkdownEditor', ['$injector', function($injector){
-  var $document   = $injector.get('$document');
-  var $rootScope  = $injector.get('$rootScope');
-  var $timeout    = $injector.get('$timeout');
-  var $window     = $injector.get('$window');
-  var assetUrl    = $injector.get('$filter')('assetUrl');
-  var delay       = $injector.get('delay');
-  var keycodes    = $injector.get('keycodes');
-  var modalDialog = $injector.get('modalDialog');
-  var marked      = $injector.get('marked');
+  var $document      = $injector.get('$document');
+  var $rootScope     = $injector.get('$rootScope');
+  var $timeout       = $injector.get('$timeout');
+  var $window        = $injector.get('$window');
+  var assetUrl       = $injector.get('$filter')('assetUrl');
+  var delay          = $injector.get('delay');
+  var keycodes       = $injector.get('keycodes');
+  var modalDialog    = $injector.get('modalDialog');
+  var marked         = $injector.get('marked');
+  var TheLocaleStore = $injector.get('TheLocaleStore');
 
   var renderer = new marked.Renderer();
 
@@ -337,8 +338,9 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         return '<' + url + '>';
       }
 
+      // TODO is this method even necessary?
       function localizedAsset(asset, locale) {
-        var defaultLocale = scope.spaceContext.defaultLocale;
+        var defaultLocale = TheLocaleStore.getDefaultLocale();
         var file  = asset.data.fields.file;
         var title = asset.data.fields.title;
         return {

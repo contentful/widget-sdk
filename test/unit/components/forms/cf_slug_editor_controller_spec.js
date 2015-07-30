@@ -2,7 +2,13 @@
 
 describe('SlugEditorController', function () {
   beforeEach(function () {
-    module('contentful/test');
+    var self = this;
+    module('contentful/test', function ($provide) {
+      self.TheLocaleStoreMock = {
+        getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'})
+      };
+      $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
+    });
 
     this.scope = this.$inject('$rootScope').$new();
 
@@ -14,7 +20,7 @@ describe('SlugEditorController', function () {
 
     this.$q = $q;
     dotty.put(this.scope, 'fieldData.value', null);
-    dotty.put(this.scope, 'locale.code', 'en_US');
+    dotty.put(this.scope, 'locale.code', 'en-US');
     dotty.put(this.scope, 'field.apiName', 'slug');
     this.scope.otGetValue = sinon.stub().returns(null);
 

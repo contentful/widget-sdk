@@ -14,45 +14,6 @@ describe('spaceContext', function () {
       expect(this.spaceContext.space).toBeNull();
     });
 
-    it('privateLocales exists', function () {
-      expect(_.isArray(this.spaceContext.privateLocales)).toBeTruthy();
-    });
-
-    it('private locales is empty', function () {
-      expect(this.spaceContext.privateLocales.length).toBe(0);
-    });
-
-    it('no default locale is defined', function () {
-      expect(this.spaceContext.defaultLocale).toBeNull();
-    });
-
-    it('has no active locales', function () {
-      expect(this.spaceContext.activeLocales.length).toBe(0);
-    });
-
-    describe('refreshes locales', function () {
-      beforeEach(function () {
-        this.spaceContext.refreshActiveLocales = sinon.stub();
-        this.spaceContext.refreshLocales();
-      });
-
-      it('privateLocales exists', function () {
-        expect(_.isArray(this.spaceContext.privateLocales)).toBeTruthy();
-      });
-
-      it('private locales is empty', function () {
-        expect(this.spaceContext.privateLocales.length).toBe(0);
-      });
-
-      it('no default locale is defined', function () {
-        expect(this.spaceContext.defaultLocale).toBeNull();
-      });
-
-      it('refreshes active locales', function () {
-        sinon.assert.called(this.spaceContext.refreshActiveLocales);
-      });
-    });
-
     describe('refreshes content types', function () {
       beforeEach(function () {
         this.spaceContext.refreshContentTypes();
@@ -86,141 +47,6 @@ describe('spaceContext', function () {
 
     it('has a space', function () {
       expect(this.spaceContext.space).toBeDefined();
-    });
-
-    it('gets an array of published locales', function () {
-      expect(_.isArray(this.spaceContext.privateLocales)).toBeTruthy();
-    });
-
-    it('has a published locale with a code', function () {
-      expect(this.spaceContext.privateLocales[0].code).toBeDefined();
-    });
-
-    it('has a default locale', function () {
-      expect(this.spaceContext.defaultLocale).toBeDefined();
-    });
-
-    it('has a default locale with a code', function () {
-      expect(this.spaceContext.defaultLocale.code).toBeDefined();
-    });
-
-    it('sets a locale state for an active locale', function () {
-      expect(this.spaceContext.localeStates['en-US']).toBeTruthy();
-    });
-
-    it('has active locales', function () {
-      expect(_.isArray(this.spaceContext.activeLocales)).toBeTruthy();
-    });
-
-    it('has an active locale with a code', function () {
-      expect(this.spaceContext.activeLocales[0].code).toBeDefined();
-    });
-
-    describe('refreshes locales', function () {
-      var privateLocales, defaultLocale;
-      beforeEach(function () {
-        privateLocales = ['privateLocales'];
-        defaultLocale = {
-          code: 'en-US',
-          internal_code: 'en-US'
-        };
-        this.spaceContext.space.getPrivateLocales = sinon.stub().returns(privateLocales);
-        this.spaceContext.space.getDefaultLocale  = sinon.stub().returns(defaultLocale);
-        this.spaceContext.refreshActiveLocales = sinon.stub();
-        this.spaceContext.refreshLocales();
-      });
-
-      it('calls private locales space getter', function () {
-        sinon.assert.called(this.spaceContext.space.getPrivateLocales);
-      });
-
-      it('privateLocales exists', function () {
-        expect(_.isArray(this.spaceContext.privateLocales)).toBeTruthy();
-      });
-
-      it('private locales is the supplied array', function () {
-        expect(this.spaceContext.privateLocales).toBe(privateLocales);
-      });
-
-      it('calls default locale space getter', function () {
-        sinon.assert.called(this.spaceContext.space.getDefaultLocale);
-      });
-
-      it('default locale is defined', function () {
-        expect(this.spaceContext.defaultLocale).toBe(defaultLocale);
-      });
-
-      it('refreshes active locales', function () {
-        sinon.assert.called(this.spaceContext.refreshActiveLocales);
-      });
-
-      it('sets locale state for default locale', function () {
-        expect(this.spaceContext.localeStates['en-US']).toBeTruthy();
-      });
-    });
-
-    describe('refresh active locales', function () {
-      beforeEach(function () {
-        this.spaceContext.privateLocales = [
-          {
-            code: 'en-US',
-            internal_code: 'en-US'
-          },
-          {
-            code: 'pt-PT',
-            internal_code: 'pt-PT'
-          },
-          {
-            code: 'pt-BR',
-            internal_code: 'pt-BR'
-          }
-        ];
-        this.spaceContext.localeStates = {
-          'en-US': true,
-          'pt-PT': true,
-          'pt-BR': false
-        };
-        this.spaceContext.refreshActiveLocales();
-      });
-
-      it('sets new locale states', function () {
-        expect(this.spaceContext.localeStates).toEqual({
-          'en-US': true,
-          'pt-PT': true
-        });
-      });
-
-      it('sets new active locales', function () {
-        expect(this.spaceContext.activeLocales).toEqual([
-          {
-            code: 'en-US',
-            internal_code: 'en-US'
-          },
-          {
-            code: 'pt-PT',
-            internal_code: 'pt-PT'
-          }
-        ]);
-      });
-    });
-
-    describe('gets a private locale and', function () {
-      var privateLocale;
-      beforeEach(function () {
-        privateLocale = this.spaceContext.getPrivateLocale('en-US');
-      });
-
-      it('it exists', function () {
-        expect(privateLocale).toBeDefined();
-      });
-
-      it('has a name', function () {
-        expect(privateLocale.name).toEqual('en-US');
-      });
-
-      it('has a code', function () {
-        expect(privateLocale.code).toEqual('en-US');
-      });
     });
 
     describe('getting content types from server', function () {
@@ -525,14 +351,17 @@ describe('spaceContext', function () {
   describe('resolving missing ContentTypes', function () {
     var scope, entry, $q;
 
-    beforeEach(module('contentful/test'));
-    beforeEach(inject(function ($rootScope, spaceContext, _$q_) {
-      $q = _$q_;
-      scope = $rootScope;
-      this.spaceContext = spaceContext; // Not passing argument to avoid initializing the locales
+    beforeEach(function () {
+      module('contentful/test');
+      var cfStub = this.$inject('cfStub');
+      var space = cfStub.space('test');
+      scope = this.$inject('$rootScope');
+      $q = this.$inject('$q');
+      this.spaceContext = this.$inject('spaceContext');
+      this.spaceContext.resetContextWithSpace(space);
       entry = { getContentTypeId: function () { return 'foo'; } };
       spyOn(this.spaceContext, 'refreshContentTypes');
-    }));
+    });
 
     it('should not trigger a refresh when resolving a known published content type', function () {
       this.spaceContext._publishedContentTypesHash = { foo: 'Bar' };
@@ -546,8 +375,7 @@ describe('spaceContext', function () {
       expect(this.spaceContext.refreshContentTypes).toHaveBeenCalled();
     });
 
-    //TODO fix me and rewrite me properly
-    xit('should mark a published type as not missing after retrieval', function () {
+    it('should mark a published type as not missing after retrieval', function () {
       this.spaceContext._publishedContentTypeIsMissing['foo'] = true;
       this.spaceContext.space.getPublishedContentTypes = sinon.stub().returns($q.when([
         {

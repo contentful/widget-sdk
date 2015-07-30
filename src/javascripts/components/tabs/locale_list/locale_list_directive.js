@@ -20,6 +20,9 @@ angular.module('contentful')
   $scope.refreshLocales();
 
   function refreshLocales() {
+    // TODO huh?
+    // maybe put a method for this on the localestore
+    // and figure out how this differs from privatelocales and such
     return $scope.spaceContext.space.getLocales()
     .then(function (locales) {
       $scope.locales = locales;

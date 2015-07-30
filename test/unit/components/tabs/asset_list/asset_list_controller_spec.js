@@ -4,6 +4,7 @@ describe('Asset List Controller', function () {
   var controller, scope, stubs, $q, $rootScope, getAssets;
 
   beforeEach(function () {
+    var self = this;
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'archived',
@@ -39,6 +40,10 @@ describe('Asset List Controller', function () {
         parseFPFile: stubs.parseFPFile
       });
 
+      self.TheLocaleStoreMock = {
+        getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'})
+      };
+      $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
     });
     inject(function ($injector) {
       $rootScope         = $injector.get('$rootScope');

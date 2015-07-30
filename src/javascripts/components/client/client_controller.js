@@ -21,6 +21,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var ReloadNotification = $injector.get('ReloadNotification');
   var TheAccountView     = $injector.get('TheAccountView');
   var TheStore           = $injector.get('TheStore');
+  var TheLocaleStore     = $injector.get('TheLocaleStore');
 
   $controller('TrialWatchController', {$scope: $scope});
 
@@ -189,6 +190,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
   function setSpaceContext(space) {
     $scope.spaceContext.resetContextWithSpace(space);
+    TheLocaleStore.initializeWithSpace(space);
     enforcements.setSpaceContext($scope.spaceContext);
     analytics.setSpace(space);
   }

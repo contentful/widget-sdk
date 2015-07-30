@@ -3,18 +3,20 @@
 describe('otDocFor', function () {
   var elem, scope;
 
-  beforeEach(module('contentful/test'));
-  beforeEach(inject(function ($compile, $rootScope) {
-    scope = $rootScope;
-    $rootScope.otDoc = {
-      snapshot: {foo: 'bar', baz: {}, sys: {version: 100, updatedAt: 'foo'}},
-      version: 123
-    };
-    $rootScope.entity = {
-      update: sinon.stub()
-    };
-    elem = $compile('<div ot-doc-for="entity"></div>')($rootScope);
-  }));
+  beforeEach(function() {
+    module('contentful/test');
+    inject(function ($compile, $rootScope) {
+      scope = $rootScope;
+      $rootScope.otDoc = {
+        snapshot: {foo: 'bar', baz: {}, sys: {version: 100, updatedAt: 'foo'}},
+        version: 123
+      };
+      $rootScope.entity = {
+        update: sinon.stub()
+      };
+      elem = $compile('<div ot-doc-for="entity"></div>')($rootScope);
+    });
+  });
 
   describe('updating entity', function () {
     it('should update the entity with a copy of the snapshot', function () {

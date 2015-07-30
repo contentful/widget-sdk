@@ -45,35 +45,6 @@ angular.module('contentful')
       _publishedContentTypeIsMissing: {},
 
       /**
-       * @ngdoc property
-       * @name spaceContext#privateLocales
-       * @description
-       * Locales which are available to the CMA
-      */
-      privateLocales: [],
-      /**
-       * @ngdoc property
-       * @name spaceContext#defaultLocale
-      */
-      defaultLocale: null,
-      /**
-       * @ngdoc property
-       * @name spaceContext#localeStates
-       * @description
-       * Map of current locales and their active state.
-       * If a locale is "active" it means the user can see it for editing
-       * on the entry/asset editors.
-      */
-      localeStates: {},
-      /**
-       * @ngdoc property
-       * @name spaceContext#activeLocales
-       * @description
-       * List of currently active locales visible in the entry/asset editors.
-      */
-      activeLocales: [],
-
-      /**
        * @ngdoc method
        * @name spaceContext#resetContextWithSpace
        * @param {Object} space
@@ -85,53 +56,6 @@ angular.module('contentful')
         this.space = space;
         this._contentTypeLoader = new PromisedLoader();
         this._publishedContentTypeLoader = new PromisedLoader();
-        this.refreshLocales();
-      },
-
-      /**
-       * @ngdoc method
-       * @name spaceContext#refreshLocales
-       * @description
-       * Refreshes all locale related information contained in the context
-      */
-      refreshLocales: function () {
-        if (this.space) {
-          this.privateLocales = this.space.getPrivateLocales();
-          this.defaultLocale  = this.space.getDefaultLocale();
-          this.localeStates[this.defaultLocale.internal_code] = true;
-        } else {
-          this.privateLocales = [];
-          this.defaultLocale  = null;
-        }
-        this.refreshActiveLocales();
-      },
-
-      /**
-       * @ngdoc method
-       * @name spaceContext#refreshActiveLocales
-       * @description
-       * Refreshes currently active locales list and locale states
-      */
-      refreshActiveLocales: function () {
-        var newLocaleStates = {}, newActiveLocales = [];
-        _.each(this.privateLocales, function (locale) {
-          if (this.localeStates[locale.internal_code]) {
-            newLocaleStates[locale.internal_code] = true;
-            newActiveLocales.push(locale);
-          }
-        }, this);
-        this.localeStates = newLocaleStates;
-        this.activeLocales = _.uniq(newActiveLocales, function(locale){return locale.internal_code;});
-      },
-
-      /**
-       * @ngdoc method
-       * @name spaceContext#getPrivateLocale
-       * @param {String} internalCode
-       * @return {Object}
-      */
-      getPrivateLocale: function(internalCode) {
-        return _.find(this.privateLocales, {'internal_code': internalCode});
       },
 
       /**
@@ -190,12 +114,15 @@ angular.module('contentful')
             .union(spaceContext.publishedContentTypes)
             .sortBy(function(ct) { return ct.getName().trim().toLowerCase(); })
             .value();
+
           spaceContext._publishedContentTypesHash = _(spaceContext.publishedContentTypes).map(function(ct) {
             return [ct.getId(), ct];
           }).object().valueOf();
+
           _.each(spaceContext._publishedContentTypesHash, function (val, id) {
             spaceContext._publishedContentTypeIsMissing[id] = false;
           });
+
           return spaceContext.publishedContentTypes;
         }, function (err) {
           if (err === PromisedLoader.IN_PROGRESS) return;

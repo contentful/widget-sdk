@@ -67,8 +67,7 @@ mocks.factory('cfStub', function ($injector) {
       contentDeliveryApi: true,
       contentManagementApi: true,
       'default': true,
-      name: code,
-      publish: true
+      name: code
     }, extraData || {});
   };
 

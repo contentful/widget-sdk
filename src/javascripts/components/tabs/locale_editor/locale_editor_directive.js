@@ -15,13 +15,14 @@ angular.module('contentful')
  * @scope.provides  locales
 */
 .controller('LocaleEditorController', ['$scope', '$injector', function ($scope, $injector) {
-  var localesList  = $injector.get('localesList');
-  var notification = $injector.get('notification');
-  var logger       = $injector.get('logger');
-  var $q           = $injector.get('$q');
-  var modalDialog  = $injector.get('modalDialog');
-  var tokenStore   = $injector.get('tokenStore');
-  var analytics    = $injector.get('analytics');
+  var localesList    = $injector.get('localesList');
+  var TheLocaleStore = $injector.get('TheLocaleStore');
+  var notification   = $injector.get('notification');
+  var logger         = $injector.get('logger');
+  var $q             = $injector.get('$q');
+  var modalDialog    = $injector.get('modalDialog');
+  var tokenStore     = $injector.get('tokenStore');
+  var analytics      = $injector.get('analytics');
 
   var formWasDirty = false;
 
@@ -114,7 +115,7 @@ angular.module('contentful')
     tokenStore.getUpdatedToken().then(function () {
       updateInitialLocaleCode();
       $scope.$state.go('spaces.detail.settings.locales.detail', { localeId: response.getId() });
-      $scope.spaceContext.refreshLocales();
+      TheLocaleStore.refreshLocales();
       notification.info('Locale saved successfully');
       trackSave('Saved Successful Locale');
     });

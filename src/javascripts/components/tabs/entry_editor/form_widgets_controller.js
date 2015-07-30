@@ -2,14 +2,15 @@
 angular.module('contentful').controller('FormWidgetsController', ['$scope', '$injector', function FormWidgetsController($scope, $injector){
   var controller        = this;
   var editingInterfaces = $injector.get('editingInterfaces');
+  var TheLocaleStore    = $injector.get('TheLocaleStore');
   var widgets           = $injector.get('widgets');
 
-  $scope.$watch(getContentTypeFields,                    updateEditingInterface, true);
-  $scope.$watch(getAvailableWidgets,                     updateWidgets, true);
-  $scope.$watch(getActiveLocaleCodes,                    updateWidgets, true);
-  $scope.$watch('spaceContext.space.getDefaultLocale()', updateWidgets);
-  $scope.$watch('preferences.showDisabledFields',        updateWidgets);
-  $scope.$watch('errorPaths',                            updateWidgets);
+  $scope.$watch(getContentTypeFields,                updateEditingInterface, true);
+  $scope.$watch(getAvailableWidgets,                 updateWidgets, true);
+  $scope.$watch(getActiveLocaleCodes,                updateWidgets, true);
+  $scope.$watch(function() { return TheLocaleStore.getDefaultLocale();}, updateWidgets);
+  $scope.$watch('preferences.showDisabledFields',    updateWidgets);
+  $scope.$watch('errorPaths',                        updateWidgets);
 
   this.editingInterface = null;
   this.updateWidgets = updateWidgets;
@@ -46,7 +47,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
       .filter(_.isObject)
       .uniq('internal_code')
       .value();
-    var defaultLocale = $scope.spaceContext.space.getDefaultLocale();
+    var defaultLocale = TheLocaleStore.getDefaultLocale();
     var renderable = widgets.buildRenderable(widget, locales, defaultLocale);
     renderable.field = field;
     return renderable;
@@ -62,7 +63,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
   }
 
   function getActiveLocaleCodes() {
-    return _.pluck($scope.spaceContext.activeLocales, 'internal_code');
+    return _.pluck(TheLocaleStore.getActiveLocales(), 'internal_code');
   }
 
   function widgetIsVisible(widget) {
@@ -81,9 +82,9 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
 
   function getFieldLocales(field) {
     if (field.localized)
-      return $scope.spaceContext.activeLocales;
+      return TheLocaleStore.getActiveLocales();
     else
-      return [$scope.spaceContext.space.getDefaultLocale()];
+      return [TheLocaleStore.getDefaultLocale()];
   }
 
   function getErrorLocales(field) {

@@ -25,10 +25,10 @@
         ul.lang-switcher(ng-show="showLangSwitcher")
           label.context-menu__item(
             role="menuitemcheckbox"
-            ng-repeat="locale in spaceContext.privateLocales track by locale.sys.id")
-            input(type="checkbox" ng-model="spaceContext.localeStates[locale.internal_code]")
+            ng-repeat="locale in TheLocaleStore.getPrivateLocales() track by locale.sys.id")
+            input(type="checkbox" ng-model="TheLocaleStore.getLocaleStates()[locale.internal_code]")
             | {{locale.name}}
-            span(ng-show="locale == spaceContext.space.getDefaultLocale()")
+            span(ng-show="locale == TheLocaleStore.getDefaultLocale()")
               | &nbsp;(default)
 
 .aux-panel(ng-show="preferences.showAuxPanel")

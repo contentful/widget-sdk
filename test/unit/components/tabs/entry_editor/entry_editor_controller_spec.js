@@ -4,6 +4,7 @@ describe('Entry Editor Controller', function () {
   var controller, scope;
 
   beforeEach(function () {
+    var self = this;
     module('contentful/test', function ($provide) {
       $provide.removeControllers('PermissionController');
       $provide.removeController('FormWidgetsController', function () {
@@ -11,6 +12,11 @@ describe('Entry Editor Controller', function () {
           updateWidgets: sinon.stub()
         };
       });
+      self.TheLocaleStoreMock = {
+        getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'}),
+        getPrivateLocales: sinon.stub().returns([{internal_code: 'en-US'}, {internal_code: 'de-DE'}])
+      };
+      $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
     });
     inject(function ($compile, $rootScope, $controller, cfStub){
       scope = $rootScope;

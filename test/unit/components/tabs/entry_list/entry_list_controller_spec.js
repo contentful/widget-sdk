@@ -7,6 +7,7 @@ describe('Entry List Controller', function () {
   var $q;
 
   beforeEach(function () {
+    var self = this;
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'archived',
@@ -25,6 +26,11 @@ describe('Entry List Controller', function () {
       $provide.value('analytics', {
         track: stubs.track
       });
+
+      self.TheLocaleStoreMock = {
+        getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'})
+      };
+      $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
     });
     inject(function ($rootScope, $controller, cfStub, PromisedLoader, _$q_) {
       this.$rootScope = $rootScope;
