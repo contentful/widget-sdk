@@ -8,7 +8,7 @@
         href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
 
 
-  .tab-header__search.search-area(ng-show="assets.length > 0 || hasQuery()")
+  .tab-header__search.search-area(ng-show="!showNoAssetsAdvice()")
     .l-search-w-autocomplete(
       cf-tokenized-search="context.view.searchTerm"
       search-content-type="assetContentType"
@@ -16,11 +16,10 @@
 
     .search-results-position(cf-search-results-position paginator="searchController.paginator" ng-hide="!searchController.paginator.numEntries")
 
-  .tab-header__actions.add-entity
-    .dropdown-btn(ng-show="assets.length > 0")
+  .tab-header__actions(ng-show="!showNoAssetsAdvice()")
+    div(ng-if="showCreateAssetButton()")
       button.cfnext-btn-action(
         cf-context-menu-trigger
-        ng-hide="permissionController.get('createAsset', 'shouldHide')"
         ng-disabled="permissionController.get('createAsset', 'shouldDisable')"
         cf-when-disabled="permissionController.entityActions.createAsset"
         data-test-id="add-asset-menu-trigger")
@@ -37,7 +36,7 @@
           li(role="menuitem" ng-click="createMultipleAssets()")
             | Multiple Assets
 
-.tab-main(ng-show="assets.length > 0 || hasQuery()")
+.tab-main(ng-show="!showNoAssetsAdvice()")
   .left-nav
     div.menu-with-buttons(cf-view-menu="uiConfig.assetListViews" current-view="context.view" ng-show="uiConfig")
 
@@ -87,11 +86,11 @@
       .loading(ng-hide="searchController.paginator.atLast()")
 
     .advice(ng-show="visibleAssets | isEmpty")
-      .advice__frame(ng-show="hasQuery()")
+      .advice__frame
         i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
         header.advice__title There are no matches to your search
 
-.advice(ng-show="assets.length === 0 && !hasQuery()")
+.advice(ng-show="showNoAssetsAdvice()")
   .advice__frame
     i.fa.fa-paperclip.advice__giant-icon
     header.advice__title You have no Assets yet.

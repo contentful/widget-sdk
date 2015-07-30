@@ -238,18 +238,6 @@ describe('Asset List Controller', function () {
     });
   });
 
-  it('has a query', function() {
-    scope.context.list = 'all';
-    scope.context.view.searchTerm = 'term';
-    expect(scope.hasQuery()).toBeTruthy();
-  });
-
-  it('has no query', function() {
-    scope.context.list = 'all';
-    scope.context.view.searchTerm = null;
-    expect(scope.hasQuery()).toBeFalsy();
-  });
-
   describe('Api Errors', function () {
     var apiErrorHandler;
     beforeEach(inject(function (ReloadNotification){
