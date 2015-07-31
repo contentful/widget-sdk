@@ -70,10 +70,16 @@ $field-dialog-width = 60em
     right: -7px
     bottom: -7px
     display: none
+    padding: 4px 3px
+    border-radius: 10px
+    background: $cfnext-green
+    > svg path
+      fill: white
   &.is-selected
-    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1) inset, -2px -2px 6px rgba(0, 0, 0, 0.1) inset
+    box-shadow: 2px 2px 6px hsla(black, 0.1) inset, -2px -2px 6px hsla(black, 0.1) inset
     cf-icon[name="checkmark"]
       display: block
+
 
 .field-dialog__widget-icon
   margin: auto 0
