@@ -3,12 +3,13 @@
 angular.module('contentful')
 .factory('searchQueryHelper', ['$injector', function($injector) {
 
-  var searchParser               = $injector.get('searchParser');
   var $q                         = $injector.get('$q');
   var AssetContentType           = $injector.get('AssetContentType');
   var searchQueryAutocompletions = $injector.get('searchQueryAutocompletions');
+  var createParser               = $injector.get('search/cachedParser');
 
-  var lastQueryString, lastParseResult = [];
+  var parse = createParser();
+
   var complete = searchQueryAutocompletions.complete;
   var api = {
     // Dummy Content-Type object that can be used when searching for Assets
@@ -108,18 +109,6 @@ angular.module('contentful')
   };
 
   return api;
-
-  function parse(queryString) {
-    if (queryString !== lastQueryString) {
-      lastQueryString = queryString;
-      try {
-        lastParseResult = searchParser.parse(queryString);
-      } catch (e) {
-        lastParseResult = [];
-      }
-    }
-    return lastParseResult;
-  }
 
   // Returns an objects that has a bunch of boolean flags
   //
