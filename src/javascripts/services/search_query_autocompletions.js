@@ -253,17 +253,26 @@ angular.module('contentful')
     if (completions[key]) {
       return makeListCompletion(completions[key].operators || makeOperatorList([':']));
     } else {
-      return makeListCompletion(operatorsForField(key, contentType));
+      return fieldOperatorCompletion(key, contentType);
     }
 
-    // Offer available operators for a certain field of a content type
-    // Based on field type and validations
-    function operatorsForField(fieldId, contentType) {
+    /**
+     * @description
+     * Offer available operators for a certain field of a content type
+     * Based on field type and validations
+     *
+     * @param {string} fieldId
+     * @param {Client.ContentType} contentType
+     * @returns {CompletionData}
+     */
+    function fieldOperatorCompletion (fieldId, contentType) {
       var field = findField(fieldId, contentType) || {};
-      if (field.type === 'Integer' || field.type === 'Number' || field.type === 'Date') {
-        return makeOperatorList(['<', '<=', '==', '>=', '>']);
+      var type = field ? field.type : null;
+      if (type === 'Integer' || type === 'Number' || type === 'Date') {
+        return makeOperatorListCompletion(['<', '<=', '==', '>=', '>']);
+      } else {
+        return makeOperatorListCompletion([':']);
       }
-      return makeOperatorList([':']);
     }
   }
 
@@ -319,7 +328,9 @@ angular.module('contentful')
     var value    = pair.content.value.content;
     var keyData  = staticAutocompletions(contentType)[key];
     if (keyData) {
-      if (_.isFunction(keyData.convert) ) return keyData.convert(operator, value, space);
+      if (_.isFunction(keyData.convert)) {
+        return keyData.convert(operator, value, space);
+      }
       if (_.isObject(keyData.convert)) {
         return createConverter(keyData.convert, operator, value, space);
       }
@@ -433,6 +444,14 @@ angular.module('contentful')
         return _.isPlainObject(val) ? val : {value: val};
       })
     };
+  }
+
+  /**
+   * @param {string[]} operators
+   * @returns {CompletionData}
+   */
+  function makeOperatorListCompletion (operators) {
+    return makeListCompletion(makeOperatorList(operators));
   }
 
   // Helper for creating a list completion with operators
