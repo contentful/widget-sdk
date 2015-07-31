@@ -19,7 +19,15 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
     $scope.context.title = title;
   });
 
-  $scope.TheLocaleStore = TheLocaleStore;
+  $scope.localesState = TheLocaleStore.getLocalesState();
+
+  $scope.$watch(function () {
+    return TheLocaleStore.getLocalesState().localeActiveStates;
+  }, function () {
+    $scope.localesState = TheLocaleStore.getLocalesState();
+  }, true);
+
+  $scope.$watch('localesState.localeActiveStates', TheLocaleStore.setActiveStates, true);
 
   $scope.$watch(function (scope) {
     if (scope.otDoc && scope.asset) {
@@ -113,8 +121,6 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
   $scope.$watch('asset.data.fields.file', function (file, old, scope) {
     if (file !== old) scope.validate();
   }, true);
-
-  $scope.showLangSwitcher = TheLocaleStore.getPrivateLocales().length > 1;
 
   $scope.headline = function(){
     return this.spaceContext.assetTitle(this.asset);

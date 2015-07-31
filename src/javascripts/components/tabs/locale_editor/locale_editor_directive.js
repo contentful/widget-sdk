@@ -69,6 +69,7 @@ angular.module('contentful')
     .then(function () {
       notification.info('Locale deleted successfully');
       tokenStore.getUpdatedToken().then(function () {
+        TheLocaleStore.refreshLocales();
         $scope.context.dirty = false;
         $scope.closeState();
       });

@@ -11,27 +11,30 @@ angular.module('contentful')
  * locales, and helper methods.
 */
 .factory('TheLocaleStore', [function(){
-  var _space          = null;
-  var _defaultLocale  = null;
-  // Locales which are available to the CMA
-  var _privateLocales = [];
-  /**
-   * Map of current locales and their active state.
-   * If a locale is "active" it means the user can see it for editing
-   * on the entry/asset editors.
-  */
-  var _localeStates   = {};
-  //List of currently active locales visible in the entry/asset editors.
-  var _activeLocales  = [];
+
+  var _space = null;
+  var _state = {
+    defaultLocale: null,
+    // Locales which are available to the CMA
+    privateLocales: [],
+    /**
+     * Map of current locales and their active state.
+     * If a locale is "active" it means the user can see it for editing
+     * on the entry/asset editors.
+    */
+    localeActiveStates: {},
+    //List of currently active locales visible in the entry/asset editors.
+    activeLocales: []
+  };
 
   return {
-    initializeWithSpace:     initializeWithSpace,
-    refreshLocales:          refreshLocales,
-    refreshActiveLocales:    refreshActiveLocales,
-    getDefaultLocale:        getDefaultLocale,
-    getActiveLocales:        getActiveLocales,
-    getLocaleStates:         getLocaleStates,
-    getPrivateLocales:       getPrivateLocales
+    initializeWithSpace:  initializeWithSpace,
+    refreshLocales:       refreshLocales,
+    getLocalesState:      getLocalesState,
+    getDefaultLocale:     getDefaultLocale,
+    getActiveLocales:     getActiveLocales,
+    getPrivateLocales:    getPrivateLocales,
+    setActiveStates:      setActiveStates
   };
 
   /**
@@ -51,29 +54,35 @@ angular.module('contentful')
    * Refreshes all locale related information
   */
   function refreshLocales() {
-    _privateLocales = _space.getPrivateLocales();
-    _defaultLocale  = _space.getDefaultLocale();
-    _localeStates[_defaultLocale.internal_code] = true;
+    _state.privateLocales = _space.getPrivateLocales();
+    _state.defaultLocale  = _space.getDefaultLocale();
+    _state.localeActiveStates[_state.defaultLocale.internal_code] = true;
     refreshActiveLocales();
   }
 
   /**
-   * @ngdoc method
-   * @name TheLocaleStore#refreshActiveLocales
-   * @description
    * Refreshes currently active locales list and locale states
   */
   function refreshActiveLocales() {
-    var newLocaleStates = {};
-    var newActiveLocales = [];
-    _.each(_privateLocales, function (locale) {
-      if (_localeStates[locale.internal_code]) {
-        newLocaleStates[locale.internal_code] = true;
-        newActiveLocales.push(locale);
-      }
-    });
-    _localeStates = newLocaleStates;
-    _activeLocales = _.uniq(newActiveLocales, function(locale){return locale.internal_code;});
+    _state.activeLocales = _.uniq(
+      _.filter(_state.privateLocales, localeIsActive),
+      function(locale){return locale.internal_code;}
+    );
+    _state.localeActiveStates = _.reduce(_state.activeLocales, function (states, locale) {
+      states[locale.internal_code] = true;
+      return states;
+    }, {});
+  }
+
+  /**
+   * @ngdoc method
+   * @name TheLocaleStore#getLocalesState
+   * @return {Object}
+   * @description
+   * Returns the current state of all the locales store information
+  */
+  function getLocalesState() {
+    return _state;
   }
 
   /**
@@ -91,16 +100,7 @@ angular.module('contentful')
    * @return {Array}
   */
   function getActiveLocales() {
-    return _activeLocales;
-  }
-
-  /**
-   * @ngdoc method
-   * @name TheLocaleStore#getLocaleStates
-   * @return {Array}
-  */
-  function getLocaleStates() {
-    return _localeStates;
+    return _state.activeLocales;
   }
 
   /**
@@ -109,7 +109,19 @@ angular.module('contentful')
    * @return {Array}
   */
   function getPrivateLocales() {
-    return _privateLocales;
+    return _state.privateLocales;
+  }
+
+  /**
+   * @ngdoc method
+  */
+  function setActiveStates(localeActiveStates) {
+    _state.localeActiveStates = localeActiveStates;
+    refreshActiveLocales();
+  }
+
+  function localeIsActive(locale) {
+    return _state.localeActiveStates[locale.internal_code];
   }
 
 }]);

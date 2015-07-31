@@ -11,7 +11,16 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
     entityType: 'entry'
   });
 
-  $scope.TheLocaleStore = TheLocaleStore;
+  $scope.localesState = TheLocaleStore.getLocalesState();
+
+  $scope.$watch(function () {
+    return TheLocaleStore.getLocalesState().localeActiveStates;
+  }, function () {
+    $scope.localesState = TheLocaleStore.getLocalesState();
+  }, true);
+
+  $scope.$watch('localesState.localeActiveStates', TheLocaleStore.setActiveStates, true);
+
 
   $scope.$watch('spaceContext.entryTitle(entry)', function (title) {
     $scope.context.title = title;

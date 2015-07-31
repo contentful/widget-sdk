@@ -12,7 +12,7 @@
       ng-click="preferences.toggleAuxPanel()"
       ng-class="{active: preferences.showAuxPanel}")
       | Info
-    .dropdown-btn(ng-show="showLangSwitcher")
+    .dropdown-btn(ng-show="localesState.privateLocales.length > 0")
       button.cfnext-btn-secondary-action(
         cf-context-menu-trigger
         data-test-id="asset-view-menu-trigger")
@@ -22,13 +22,15 @@
         role="menu" cf-context-menu="bottom-right"
         aria-label="Configure Asset View" data-test-id="asset-view-menu")
         cf-icon.context-menu__arrow.x--top-right(name="arrow-up")
-        ul.lang-switcher(ng-show="showLangSwitcher")
+        ul.lang-switcher
           label.context-menu__item(
             role="menuitemcheckbox"
-            ng-repeat="locale in TheLocaleStore.getPrivateLocales() track by locale.sys.id")
-            input(type="checkbox" ng-model="TheLocaleStore.getLocaleStates()[locale.internal_code]")
+            ng-repeat="locale in localesState.privateLocales track by locale.sys.id")
+            input(type="checkbox"
+              ng-disabled="locale == localesState.defaultLocale"
+              ng-model="localesState.localeActiveStates[locale.internal_code]")
             | {{locale.name}}
-            span(ng-show="locale == TheLocaleStore.getDefaultLocale()")
+            span(ng-show="locale == localesState.defaultLocale")
               | &nbsp;(default)
 
 .aux-panel(ng-show="preferences.showAuxPanel")

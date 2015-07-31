@@ -22,9 +22,7 @@ describe('Space Controller', function () {
 
       self.TheLocaleStoreMock = {
         getPrivateLocales: sinon.stub(),
-        getLocaleStates: sinon.stub(),
-        refreshLocales: sinon.stub(),
-        refreshActiveLocales: sinon.stub()
+        refreshLocales: sinon.stub()
       };
       $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
     });
@@ -47,18 +45,6 @@ describe('Space Controller', function () {
       ]);
       this.scope.$digest();
       sinon.assert.called(this.TheLocaleStoreMock.refreshLocales);
-    });
-  });
-
-  describe('refreshes active locales if locale states change', function () {
-    beforeEach(function () {
-      this.scope.$digest();
-      this.TheLocaleStoreMock.getLocaleStates.returns({'pt-PT': true});
-      this.scope.$digest();
-    });
-
-    it('calls refresh method', function () {
-      sinon.assert.called(this.TheLocaleStoreMock.refreshActiveLocales);
     });
   });
 

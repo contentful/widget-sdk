@@ -20,13 +20,6 @@ angular.module('contentful').controller('SpaceController', ['$scope', '$injector
     if (!_.isEmpty(codes)) TheLocaleStore.refreshLocales();
   }, true);
 
-  // TODO useless
-  $scope.$watch(function () {
-    return TheLocaleStore.getLocaleStates();
-  }, function () {
-    TheLocaleStore.refreshActiveLocales();
-  }, true);
-
   $scope.$watch('spaceContext', function(space, o, scope) {
     enforcements.setSpaceContext(scope.spaceContext);
     scope.spaceContext.refreshContentTypes();

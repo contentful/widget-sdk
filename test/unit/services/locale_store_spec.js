@@ -15,19 +15,16 @@ describe('TheLocaleStore', function () {
   describe('refreshes locales', function () {
     var privateLocales;
     beforeEach(function () {
-      privateLocales = [{
-          code: 'en-US',
-          internal_code: 'en-US'
-      }];
-      this.space.getPrivateLocales = sinon.stub()
-      .returns(privateLocales);
-      this.space.getDefaultLocale  = sinon.stub()
-      .returns({
+      privateLocales = [
+        { code: 'en-US', internal_code: 'en-US' },
+        { code: 'de-DE', internal_code: 'de-DE' }
+      ];
+      this.space.getPrivateLocales = sinon.stub().returns(privateLocales);
+      this.space.getDefaultLocale  = sinon.stub().returns({
         code: 'en-US',
         internal_code: 'en-US'
       });
 
-      this.theLocaleStore.refreshActiveLocales = sinon.stub();
       this.theLocaleStore.refreshLocales();
     });
 
@@ -36,58 +33,40 @@ describe('TheLocaleStore', function () {
     });
 
     it('private locales is the supplied array', function () {
-      expect(this.theLocaleStore.getPrivateLocales()).toBe(privateLocales);
+      expect(this.theLocaleStore.getPrivateLocales()).toEqual(privateLocales);
     });
 
     it('refreshes active locales', function () {
       expect(_.isArray(this.theLocaleStore.getActiveLocales())).toBeTruthy();
     });
 
-    it('sets locale state for default locale', function () {
-      expect(this.theLocaleStore.getLocaleStates()['en-US']).toBeTruthy();
-    });
-  });
-
-  describe('refresh active locales', function () {
-    beforeEach(function () {
-      this.space.getPrivateLocales = sinon.stub().returns([
-        {
-          code: 'en-US',
-          internal_code: 'en-US'
-        },
-        {
-          code: 'pt-PT',
-          internal_code: 'pt-PT'
-        },
-        {
-          code: 'pt-BR',
-          internal_code: 'pt-BR'
-        }
-      ]);
-      this.theLocaleStore.refreshActiveLocales();
+    it('gets default locale', function() {
+      expect(this.theLocaleStore.getDefaultLocale()).toEqual(this.space.getDefaultLocale());
     });
 
-    // refactor because of reasons
-    xit('sets new locale states', function () {
-      expect(this.theLocaleStore.getLocaleStates()).toEqual({
-        'en-US': true,
-        'pt-PT': true
+    it('gets active locale states', function () {
+      expect(this.theLocaleStore.getLocalesState().localeActiveStates).toEqual({
+          'en-US': true
       });
     });
 
-    // this whole logic is convoluted, refactor
-    xit('sets new active locales', function () {
-      expect(this.theLocaleStore.getActiveLocales()).toEqual([
-        {
-          code: 'en-US',
-          internal_code: 'en-US'
-        },
-        {
-          code: 'pt-PT',
-          internal_code: 'pt-PT'
-        }
-      ]);
+    describe('changes active locales', function() {
+      beforeEach(function() {
+        this.theLocaleStore.setActiveStates({
+          'en-US': true,
+          'de-DE': true
+        });
+      });
+
+      it('gets updated active locale states', function () {
+        expect(this.theLocaleStore.getLocalesState().localeActiveStates).toEqual({
+          'en-US': true,
+          'de-DE': true
+        });
+      });
+
     });
   });
+
 
 });

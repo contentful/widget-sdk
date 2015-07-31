@@ -7,9 +7,12 @@ describe('Asset editor controller', function () {
   var process;
 
   beforeEach(function () {
+    var self = this;
+    self.TheLocaleStoreMock = {
+      getLocalesState: sinon.stub().returns({})
+    };
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'getPrivateLocales',
         'assetTitle',
         'isArchived',
         'process',
@@ -30,6 +33,8 @@ describe('Asset editor controller', function () {
       $provide.value('stringUtils', {
         fileNameToTitle: stubs.fileNameToTitle
       });
+
+      $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
     });
     inject(function ($rootScope, $controller, $q, $injector) {
       logger = $injector.get('logger');
@@ -40,21 +45,8 @@ describe('Asset editor controller', function () {
 
       process = $q.defer();
 
-      var locale = {
-        code: 'en-US',
-        internal_code: 'en-US',
-        contentDeliveryApi: true,
-        contentManagementApi: true,
-        'default': true,
-        name: 'en-US',
-        publish: true
-      };
-      stubs.getPrivateLocales.returns([locale]);
       scope.spaceContext = {
-        assetTitle: stubs.assetTitle,
-        space: {
-          getPrivateLocales: stubs.getPrivateLocales
-        }
+        assetTitle: stubs.assetTitle
       };
       scope.validate = sinon.stub();
 
@@ -69,6 +61,10 @@ describe('Asset editor controller', function () {
       assetEditorCtrl = $controller('AssetEditorController', {$scope: scope});
       scope.$apply();
     });
+  });
+
+  it('gets locales state', function() {
+    sinon.assert.called(this.TheLocaleStoreMock.getLocalesState);
   });
 
   it('gets a title set', function () {
@@ -101,15 +97,6 @@ describe('Asset editor controller', function () {
       scope.permissionController = { can: sinon.stub() };
       scope.permissionController.can.returns({can: true});
 
-      var locale = {
-        code: 'en-US',
-        internal_code: 'en-US',
-        contentDeliveryApi: true,
-        contentManagementApi: true,
-        'default': true,
-        name: 'en-US',
-        publish: true
-      };
       var space = cfStub.space('test');
       var asset = cfStub.asset(space, 'asset1', {}, {
         sys: {
@@ -118,13 +105,6 @@ describe('Asset editor controller', function () {
       });
 
       asset.isArchived = sinon.stub().returns(false);
-      // TODO fix me
-      scope.spaceContext = {
-        activeLocales: sinon.stub().returns([locale]),
-        space: {
-          getPrivateLocales: sinon.stub().returns([locale])
-        }
-      };
       scope.asset = asset;
       scope.context = {};
 

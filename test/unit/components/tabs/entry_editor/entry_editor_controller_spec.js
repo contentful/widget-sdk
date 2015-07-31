@@ -13,6 +13,7 @@ describe('Entry Editor Controller', function () {
         };
       });
       self.TheLocaleStoreMock = {
+        getLocalesState: sinon.stub().returns({}),
         getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'}),
         getPrivateLocales: sinon.stub().returns([{internal_code: 'en-US'}, {internal_code: 'de-DE'}])
       };
@@ -36,6 +37,10 @@ describe('Entry Editor Controller', function () {
       controller = $controller('EntryEditorController', {$scope: scope});
       scope.$digest();
     });
+  });
+
+  it('gets locales state', function() {
+    sinon.assert.called(this.TheLocaleStoreMock.getLocalesState);
   });
 
   it('should validate if the published version has changed', function () {

@@ -11,25 +11,17 @@ angular.module('contentful')
   $scope.locales = [];
   $scope.localesUsageState = getLocalesUsageState();
 
-  $scope.refreshLocales = refreshLocales;
   $scope.getEnabledInfo = getEnabledInfo;
   $scope.getPlanLocalesUsage = getPlanLocalesUsage;
   $scope.getPlanLocalesLimit = getPlanLocalesLimit;
   $scope.getSubscriptionPlan = getSubscriptionPlan;
 
-  $scope.refreshLocales();
-
-  function refreshLocales() {
-    // TODO huh?
-    // maybe put a method for this on the localestore
-    // and figure out how this differs from privatelocales and such
-    return $scope.spaceContext.space.getLocales()
-    .then(function (locales) {
-      $scope.locales = locales;
-      $scope.localesUsageState = getLocalesUsageState();
-    })
-    .catch(ReloadNotification.apiErrorHandler);
-  }
+  return $scope.spaceContext.space.getLocales()
+  .then(function (locales) {
+    $scope.locales = locales;
+    $scope.localesUsageState = getLocalesUsageState();
+  })
+  .catch(ReloadNotification.apiErrorHandler);
 
   function getEnabledInfo (locale) {
     var info1 = locale.data.contentDeliveryApi   ? 'Publishing' : '';
