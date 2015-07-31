@@ -24,7 +24,13 @@
 // - Then PairToRequest function
 // - A couple of helper methods
 // - The public facing API, exposing some functions to the outside
-angular.module('contentful').factory('searchQueryAutocompletions', ['userCache', 'mimetype', 'AssetContentType', function(userCache, mimetype, AssetContentType){
+angular.module('contentful')
+.factory('searchQueryAutocompletions', ['$injector',function($injector) {
+
+  var userCache        = $injector.get('userCache');
+  var mimetype         = $injector.get('mimetype');
+  var AssetContentType = $injector.get('AssetContentType');
+
   // Autocomplete object {{{1
   //
   // This part contains autocompletion factories for key/value pairs
