@@ -3,14 +3,18 @@
   display: flex
   align-items: center
 
-  .select-box
-    min-width: 140px
-    height: 32px
+  &__select-box
+    flex-grow: 0
     border-radius: 20px 0px 0px 20px
-    box-shadow: 0 1px 3px rgba(255,255,255,0.8) inset
-    border-color: $gray-light
-    select
-      padding-top: 7px
+    border: 1px solid $gray-light
+    padding-bottom: 6px
+    padding-left: 1em
+    background-color: hsl(0, 0%, 96%)
+    max-width: 120px
+    min-width: 100px
+    padding-right: 5ex
+    &:hover:not(:disabled)
+      background-image: $select-box-caret, linear-gradient(to bottom, hsla(white, 0.10) 0%, hsla(black, 0.10))
 
   .form-control
     background-color: white
@@ -23,5 +27,3 @@
     border-color: $gray-light
     box-shadow: none
     outline: none
-
-
