@@ -98,10 +98,19 @@
         ng-disabled="!inMode('md')")
 
       button.toolbar-button.fa.fa-link(
-        ng-click="insertLink()"
+        cf-context-menu-trigger
         tabindex="-1"
-        tooltip="Insert link"
+        tooltip="Links"
         ng-disabled="!inMode('md')")
+      .context-menu(cf-context-menu="bottom")
+        cf-icon.context-menu__arrow(name="arrow-up")
+        ul.context-menu__items
+          li(type="button" ng-click="insertLink()")
+            i.fa.fa-link
+            |  Insert link
+          li(type="button" ng-click="organizeLinks()")
+            i.fa.fa-sitemap
+            |  Organize links
 
       button.toolbar-button.fa.fa-table(
         ng-click="insertTable()"

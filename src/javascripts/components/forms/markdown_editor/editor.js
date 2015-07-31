@@ -231,8 +231,8 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
     function generateTableRows(c) {
       var rows = [];
       var cellWidth = new Array(c.width + 1);
-      var cell = cellWidth.join(' ') + '|';
-      var separatorCell = cellWidth.join('-') + '|';
+      var cell = ' ' + cellWidth.join(' ') + ' |';
+      var separatorCell = ' ' + cellWidth.join('-') + ' |';
       var row = '|';
       var separator = '|';
       var i = 0;
@@ -241,7 +241,6 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
         row += cell;
         separator += separatorCell;
       }
-
       row = row.replace(/\|  /g, '| ?');
 
       for (i = 0; i < c.rows; i += 1) { rows.push(row); }

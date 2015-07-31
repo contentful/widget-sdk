@@ -7,6 +7,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
   var MarkdownEditor    = $injector.get('MarkdownEditor');
   var assetUrl          = $injector.get('$filter')('assetUrl');
   var specialCharacters = $injector.get('specialCharacters');
+  var LinkOrganizer     = $injector.get('LinkOrganizer');
 
   return {
     restrict: 'A',
@@ -31,6 +32,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.inMode = inMode;
       scope.insertAsset = insertAsset;
       scope.insertLink = insertLink;
+      scope.organizeLinks = organizeLinks;
       scope.insertTable = insertTable;
       scope.insertSpecial = insertSpecialCharacter;
 
@@ -114,6 +116,13 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       function makeLink(data) {
         if (!data.title) { return '<' + data.url + '>'; }
         return '[' + data.title + '](' + data.url + ')';
+      }
+
+      function organizeLinks() {
+        var text = scope.fieldData.value;
+        text = LinkOrganizer.referizeInline(text);
+        text = LinkOrganizer.rewriteRefs(text);
+        scope.fieldData.value = text;
       }
 
       function insertSpecialCharacter() {
