@@ -7,6 +7,7 @@ angular.module('contentful')
   var AssetContentType           = $injector.get('AssetContentType');
   var searchQueryAutocompletions = $injector.get('searchQueryAutocompletions');
   var createParser               = $injector.get('search/cachedParser');
+  var buildQuery                 = $injector.get('search/queryBuilder');
 
   var parse = createParser();
 
@@ -79,33 +80,7 @@ angular.module('contentful')
       return complete.operator(key, contentType).items[0].value;
     },
 
-    // Build a Query for the CMA
-    // Returns a request object that can be passed into space.getEntries()
-    buildQuery: function (space, contentType, queryString) {
-      var requestObject = {};
-      if (contentType) requestObject.content_type = contentType.getId();
-
-      var tokens = parse(queryString);
-      var pairs = extractPairs(tokens);
-      return $q.all(_.map(pairs, function (pair) {
-        return searchQueryAutocompletions.pairToRequestObject(pair, contentType, space);
-      }))
-      .then(function (reqObjects) {
-        return _.each(reqObjects, function (o) {
-          _.extend(requestObject, o);
-        });
-      })
-      .then(function () {
-        _.tap(extractQuery(tokens), function (query) {
-          if (query.length > 0) requestObject.query = query;
-        });
-        // Filter out archived entries
-        if (!('sys.archivedAt[exists]' in requestObject)) {
-          requestObject['sys.archivedAt[exists]'] = 'false';
-        }
-        return requestObject;
-      });
-    }
+    buildQuery: buildQuery
   };
 
   return api;
@@ -137,20 +112,6 @@ angular.module('contentful')
     pos.touch   = pos.pre    || pos.post;
 
     return pos;
-  }
-
-  // Returns only pairs with a value from a list of tokens
-  function extractPairs(tokens) {
-    return _.filter(tokens, function (token) {
-      return token.type == 'Pair' && token.content.value.length > 0;
-    });
-  }
-
-  // Takes all tokens that are queries and joins them with spaces
-  function extractQuery(tokens) {
-    return _(tokens).filter(function (token) {
-      return token.type == 'Query' && token.content.length > 0;
-    }).map(function(token){return token.content;}).value().join(' ');
   }
 
 }]);
