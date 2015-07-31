@@ -217,27 +217,33 @@ angular.module('contentful')
     });
   }
 
-  // Completions {{{1
-  //
-  // The three completion methods exposed in the API for
-  // generating completions for keys, operators and values
-
-  function keyCompletion(contentType) {
+  /**
+   * @description
+   * Return completions for static fields (i.e. `sys`) properties and
+   * dynamic fields on the Content Type.
+   *
+   * @param {Client.ContentType?} contentType
+   * @return {CompletionData}
+   */
+  function keyCompletion (contentType) {
     return makeListCompletion(_.union(
-      searchableFieldIds(contentType),
+      searchableFieldCompletions(contentType),
       staticKeys(contentType)));
 
-    function searchableFieldIds(contentType) {
+    function searchableFieldCompletions (contentType) {
       if (!contentType) return [];
-      return _.transform(contentType.data.fields, function (fieldIds, field) {
-        if (fieldSearchable(field)) fieldIds.push({
+
+      var fields = contentType.data.fields;
+      var searchableFields = _.filter(fields, fieldIsSearchable);
+      return _.map(searchableFields, function (field) {
+        return {
           value: apiNameOrId(field),
-          description: field.name});
+          description: field.name
+        };
       });
     }
 
-    // Tells if a field is searchable or not
-    function fieldSearchable(field) {
+    function fieldIsSearchable(field) {
       return !field.disabled && !field.type.match(/Location|Object|File/);
     }
   }
