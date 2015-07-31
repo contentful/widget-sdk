@@ -391,16 +391,29 @@ angular.module('contentful')
     }
   }
 
-  // Identifies a field by its ID, falling back to searching by name
-  // COMPLETIONS + PAIRTOREQUESTOBJECT
-  function findField(key, contentType) {
-    var fields = contentType ? contentType.data.fields : [];
-    return _.find(fields, match) || _.find(fields, function (field) {
-      return field.name.toLowerCase() == key.toLowerCase();
-    });
+  /**
+   * Identifies a field by its ID, falling back to searching by name
+   * COMPLETIONS + PAIRTOREQUESTOBJECT
+   *
+   * @param {string}  key
+   * @param {Client.ContentType?}  contentType
+   *
+   * @returns {API.ContentType.Field?}
+   */
+  function findField (key, contentType) {
+    if (!contentType) {
+      return;
+    }
 
-    function match(field) {
+    var fields = contentType.data.fields;
+    return _.find(fields, matchApiName) || _.find(fields, matchFieldLabel);
+
+    function matchApiName (field) {
       return apiNameOrId(field) === key;
+    }
+
+    function matchFieldLabel (field) {
+      return field.name.toLowerCase() == key.toLowerCase();
     }
   }
 
