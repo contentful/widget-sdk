@@ -11,6 +11,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
   var modalDialog    = $injector.get('modalDialog');
   var marked         = $injector.get('marked');
   var TheLocaleStore = $injector.get('TheLocaleStore');
+  var spaceContext   = $injector.get('spaceContext');
 
   var renderer = new marked.Renderer();
 
@@ -323,8 +324,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
       function makeAssetLink(asset) {
         try {
-          asset = localizedAsset(asset, scope.locale);
-          return '!['+asset.title+']('+assetUrl(asset.file.url)+')';
+          var localeCode = scope.locale.internal_code;
+          var title = spaceContext.localizedField(asset, 'data.fields.title', localeCode);
+          var file = spaceContext.localizedField(asset, 'data.fields.file', localeCode);
+          return '!['+title+']('+assetUrl(file.url)+')';
         } catch (e) {
           return null;
         }
@@ -336,17 +339,6 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
           return '[' + link.title + '](' + url + ')';
         }
         return '<' + url + '>';
-      }
-
-      // TODO is this method even necessary?
-      function localizedAsset(asset, locale) {
-        var defaultLocale = TheLocaleStore.getDefaultLocale();
-        var file  = asset.data.fields.file;
-        var title = asset.data.fields.title;
-        return {
-          file:   file[locale.internal_code] ||  file[defaultLocale.internal_code] || _.first(file ),
-          title: title[locale.internal_code] || title[defaultLocale.internal_code] || _.first(title),
-        };
       }
 
       // Update preview and counts /////////////////////////////////////
