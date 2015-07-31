@@ -157,7 +157,7 @@ angular.module('contentful')
     var EQUALITY = /^==|=|:$/;
     return {
       description: description,
-      operators: makeOperatorList(['==', '<', '<=', '>=', '>'], 'Date'),
+      operators: makeDateOperatorList(),
       complete: makeDateCompletion(),
       convert: function (op, exp) {
         try {
@@ -437,31 +437,40 @@ angular.module('contentful')
 
   // Helper for creating a list completion with operators
   // with descriptions based on the type of the key
-  function makeOperatorList(operators, type) {
+  function makeOperatorList (operators) {
     return _.map(operators, function (op) {
-      return {value: op, description: descriptions(op)};
+      return {value: op, description: operatorDescription(op)};
     });
+  }
 
-    function descriptions(op) {
-      if (type === 'Date') {
-        return op == '<=' ? 'Before or on that date/time' :
-               op == '<'  ? 'Before that date/time'       :
-               op == '>=' ? 'After or on that date/time'  :
-               op == '>'  ? 'After that date/time'        :
-               op == '==' ? 'Exactly on that date/time'   :
-               op == '!=' ? 'Not on that date/time'       :
-               '';
-      } else {
-        return op == '<=' ? 'Less than or equal'    :
-               op == '<'  ? 'Less than'             :
-               op == '>=' ? 'Greater than or equal' :
-               op == '>'  ? 'Greater than'          :
-               op == '='  ? 'Equal'                 :
-               op == '==' ? 'Equal'                 :
-               op == '!=' ? 'Not equal'             :
-               '';
-        }
-      }
+  function operatorDescription (op) {
+    return {
+      '<=': 'Less than or equal',
+      '<' : 'Less than',
+      '>=': 'Greater than or equal',
+      '>' : 'Greater than',
+      '=' : 'Equal',
+      '==': 'Equal',
+      '!=': 'Not equal'
+    }[op] || '';
+  }
+
+  function makeDateOperatorList () {
+    var operators = ['==', '<', '<=', '>=', '>'];
+    return _.map(operators, function (op) {
+      return {value: op, description: dateOperatorDescription(op)};
+    });
+  }
+
+  function dateOperatorDescription (op) {
+    return {
+      '<=': 'Before or on that date/time',
+      '<' : 'Before that date/time',
+      '>=': 'After or on that date/time',
+      '>' : 'After that date/time',
+      '==': 'Exactly on that date/time',
+      '!=': 'Not on that date/time'
+    }[op] || '';
   }
 
   function makeDateCompletion() {
@@ -484,4 +493,3 @@ angular.module('contentful')
 
   // }}}
 }]);
-
