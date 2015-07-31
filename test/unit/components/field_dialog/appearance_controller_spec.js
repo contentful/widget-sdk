@@ -17,13 +17,11 @@ describe('FieldDialogAppearanceController', function () {
     });
 
     this.controller = $controller('FieldDialogAppearanceController', {$scope: this.scope});
-
-    // Available widgets setup is asynchronous
+    this.scope.availableWidgets = [
+      {id: 'numberEditor', options: []},
+      {}
+    ];
     this.$apply();
-  });
-
-  it('provides a list of available widgets', function () {
-    expect(Array.isArray(this.scope.availableWidgets));
   });
 
   describe('#selectWidget()', function () {
@@ -41,14 +39,13 @@ describe('FieldDialogAppearanceController', function () {
     });
 
     it('it updates the widget options', function () {
-      var widgetOption = {param: 'myparam'};
+      var widgetOptions = [{param: 'myparam'}];
+      this.scope.availableWidgets[1].options = widgetOptions;
 
-      this.scope.availableWidgets[1].options = [widgetOption];
-      expect(this.scope.widgetOptions[0]).not.toBe(widgetOption);
-
+      expect(this.scope.widgetOptions).not.toEqual(widgetOptions);
       this.scope.selectWidget(1);
       this.$apply();
-      expect(this.scope.widgetOptions[0]).toBe(widgetOption);
+      expect(this.scope.widgetOptions).toEqual(widgetOptions);
     });
 
     it('applies the default parameters', function () {
