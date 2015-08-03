@@ -32,7 +32,7 @@ angular.module('contentful')
     var tokens = parse(queryString);
     var pairs = filterPairs(tokens);
 
-    return $q.all(_.map(pairs, queryPairParser(space, contentType)))
+    return $q.all(_.map(pairs, createQueryPairParser(space, contentType)))
     .then(function (queryItems) {
       _.each(queryItems, function (o) {
         _.extend(requestObject, o);
@@ -52,7 +52,7 @@ angular.module('contentful')
   };
 
 
-  function queryPairParser (space, contentType) {
+  function createQueryPairParser (space, contentType) {
     return function parse (pair) {
       return searchQueryAutocompletions.pairToRequestObject(pair, contentType, space);
     };

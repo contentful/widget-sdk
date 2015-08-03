@@ -30,6 +30,36 @@ angular.module('contentful')
   var userCache        = $injector.get('userCache');
   var mimetype         = $injector.get('mimetype');
   var AssetContentType = $injector.get('AssetContentType');
+  var $q               = $injector.get('$q');
+
+
+  function operatorDescription (op) {
+    return operatorDescriptions[op] || '';
+  }
+
+  var operatorDescriptions = {
+    '<=': 'Less than or equal',
+    '<' : 'Less than',
+    '>=': 'Greater than or equal',
+    '>' : 'Greater than',
+    '=' : 'Equal',
+    '==': 'Equal',
+    '!=': 'Not equal'
+  };
+
+  function dateOperatorDescription (op) {
+    return dateOperatorDescriptions[op] || '';
+  }
+
+  var dateOperatorDescriptions = {
+    '<=': 'Before or on that date/time',
+    '<' : 'Before that date/time',
+    '>=': 'After or on that date/time',
+    '>' : 'After that date/time',
+    '==': 'Exactly on that date/time',
+    '!=': 'Not on that date/time'
+  };
+
 
   // Autocomplete object {{{1
   //
@@ -55,6 +85,14 @@ angular.module('contentful')
     createdAt: dateCompletions('sys.createdAt', 'Date the item was created'),
     publishedAt: dateCompletions('sys.publishedAt', 'Date the item was last published'),
     firstPublishedAt: dateCompletions('sys.firstPublishedAt', 'Date the item was published for the first time'),
+    id: {
+      description: 'Unique identifier',
+      convert: function (operator, value) {
+        return $q.when({
+          'sys.id': value
+        });
+      }
+    },
     author: {
       description: 'User who created the item',
       complete: function (contentType, space) {
@@ -430,7 +468,7 @@ angular.module('contentful')
     }
 
     function matchFieldLabel (field) {
-      return field.name.toLowerCase() == key.toLowerCase();
+      return field.name.toLowerCase() === key.toLowerCase();
     }
   }
 
@@ -462,34 +500,11 @@ angular.module('contentful')
     });
   }
 
-  function operatorDescription (op) {
-    return {
-      '<=': 'Less than or equal',
-      '<' : 'Less than',
-      '>=': 'Greater than or equal',
-      '>' : 'Greater than',
-      '=' : 'Equal',
-      '==': 'Equal',
-      '!=': 'Not equal'
-    }[op] || '';
-  }
-
   function makeDateOperatorList () {
     var operators = ['==', '<', '<=', '>=', '>'];
     return _.map(operators, function (op) {
       return {value: op, description: dateOperatorDescription(op)};
     });
-  }
-
-  function dateOperatorDescription (op) {
-    return {
-      '<=': 'Before or on that date/time',
-      '<' : 'Before that date/time',
-      '>=': 'After or on that date/time',
-      '>' : 'After that date/time',
-      '==': 'Exactly on that date/time',
-      '!=': 'Not on that date/time'
-    }[op] || '';
   }
 
   function makeDateCompletion() {
