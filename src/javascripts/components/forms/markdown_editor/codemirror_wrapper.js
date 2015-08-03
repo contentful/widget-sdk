@@ -5,13 +5,13 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', f
     /*global CodeMirror*/
     var cm = CodeMirror.fromTextArea(textarea, {
       mode: 'gfm',
-      lineNumbers: true,
+      lineNumbers: false,
       undoDepth: 0,
       matchBrackets: true,
       lineWrapping: true,
       theme: 'elegant',
       lineSeparator: '\n',
-      tabSize: 16,
+      tabSize: 2,
       indentWithTabs: false,
       indentUnit: 2
     });
@@ -25,6 +25,8 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', f
 
     // API
     return {
+      getEditor:               function () { return cm; },
+      destroy:                 function () { cm.toTextArea(); },
       setValue:                setValue,
       cmd:                     cmd,
       opt:                     opt,

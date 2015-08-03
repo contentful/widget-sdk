@@ -90,6 +90,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
     function destroy() {
       DESTROYED = true;
       window.clearTimeout(NOTIFY);
+      e.destroy();
     }
 
     /**
