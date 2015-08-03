@@ -72,7 +72,7 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', f
     }
 
     function moveToLineBeginning(lineNumber) {
-      cm.setCursor({line: lineNumber || getCurrentLineNumber(), ch: 0});
+      cm.setCursor({line: defaultToCurrentLineNumber(lineNumber), ch: 0});
       cm.focus();
     }
 
@@ -89,13 +89,20 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', f
     }
 
     function restoreCursor(character, lineNumber) {
-      cm.setCursor({line: lineNumber || getCurrentLineNumber(), ch: character});
+      cm.setCursor({line: defaultToCurrentLineNumber(lineNumber), ch: character});
       cm.focus();
     }
 
     function moveToLineEnd(lineNumber) {
-      cm.setCursor({line: lineNumber || getCurrentLineNumber(), ch: getCurrentLineLength() });
+      cm.setCursor({line: defaultToCurrentLineNumber(lineNumber), ch: getCurrentLineLength() });
       cm.focus();
+    }
+
+    function defaultToCurrentLineNumber(lineNumber) {
+      if (lineNumber === 0 || lineNumber > 0) {
+        return lineNumber;
+      }
+      return getCurrentLineNumber();
     }
 
     function usePrimarySelection() {

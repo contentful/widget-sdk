@@ -2,6 +2,7 @@
 
 angular.module('contentful').factory('MarkdownEditor', ['$injector', function($injector) {
 
+  var $timeout       = $injector.get('$timeout');
   var renderMarkdown = $injector.get('MarkdownEditor/customRenderer');
   var createWrapper  = $injector.get('MarkdownEditor/createCodeMirrorWrapper');
 
@@ -41,12 +42,13 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       },
       subscribe:       function (cb) { SUBSCRIBER_CB = cb; },
       insert:          function (text) { e.insertAtCursor(text); },
+      getWrapper:      function () { return e; },
       alterValue:      alterValue,
       destroy:         destroy
     };
 
     function scheduleSubscriberNotification() {
-      NOTIFY = window.setTimeout(notifySubscriber, NOTIFY_INTERVAL);
+      NOTIFY = $timeout(notifySubscriber, NOTIFY_INTERVAL);
     }
 
     function notifySubscriber() {
@@ -89,7 +91,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
 
     function destroy() {
       DESTROYED = true;
-      window.clearTimeout(NOTIFY);
+      $timeout.cancel(NOTIFY);
       e.destroy();
     }
 
