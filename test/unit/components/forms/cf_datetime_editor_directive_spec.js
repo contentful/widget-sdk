@@ -35,10 +35,16 @@ describe('DateTime Editor', function () {
     if (ampm != null) element.find('.ampm').val(ampm).
       trigger('change');
     if (zone != null) {
-      var zoneIndex = _.indexOf(scope.timezones, zone);
-      element.find('.zone').val(zoneIndex).
-        trigger('change');
+      selectValue(element.find('.zone'), 'UTC'+zone);
     }
+  }
+
+  function selectValue ($select, label) {
+    var option = $select.find('option').filter(function () {
+      return $(this).text() === label;
+    });
+    var value = option.attr('value');
+    $select.val(value).trigger('change');
   }
 
   function expectScope(date, time, zone, ampm) {
@@ -51,7 +57,10 @@ describe('DateTime Editor', function () {
   function expectFields(date, time, zone, ampm) {
     if (date) expect(element.find('.date').val()).toBe(date);
     if (time) expect(element.find('.time').val()).toBe(time);
-    if (zone) expect(scope.timezones[element.find('.zone').val()]).toBe(zone);
+    if (zone) {
+      var selected = element.find('.zone').val().substr('string:'.length);
+      expect(selected).toBe(zone);
+    }
     if (ampm) expect(element.find('.ampm').val()).toBe(ampm);
   }
 
