@@ -25,44 +25,53 @@ angular.module('contentful')
    */
   return function buildQuery (space, contentType, queryString) {
     var requestObject = {};
-    if (contentType) requestObject.content_type = contentType.getId();
+    if (contentType) {
+      requestObject.content_type = contentType.getId();
+    }
 
     var tokens = parse(queryString);
-    var pairs = extractPairs(tokens);
-    return $q.all(_.map(pairs, function (pair) {
-      return searchQueryAutocompletions.pairToRequestObject(pair, contentType, space);
-    }))
-    .then(function (reqObjects) {
-      return _.each(reqObjects, function (o) {
+    var pairs = filterPairs(tokens);
+
+    return $q.all(_.map(pairs, queryPairParser(space, contentType)))
+    .then(function (queryItems) {
+      _.each(queryItems, function (o) {
         _.extend(requestObject, o);
       });
-    })
-    .then(function () {
-      _.tap(extractQuery(tokens), function (query) {
-        if (query.length > 0) requestObject.query = query;
-      });
-      // Filter out archived entries
-      if (!('sys.archivedAt[exists]' in requestObject)) {
-        requestObject['sys.archivedAt[exists]'] = 'false';
+
+      var query = extractQuery(tokens);
+      if (query.length > 0) {
+        requestObject.query = query;
       }
+
+      _.defaults(requestObject, {
+        'sys.archivedAt[exists]': 'false'
+      });
+
       return requestObject;
     });
   };
 
 
-  // Returns only pairs with a value from a list of tokens
-  function extractPairs(tokens) {
+  function queryPairParser (space, contentType) {
+    return function parse (pair) {
+      return searchQueryAutocompletions.pairToRequestObject(pair, contentType, space);
+    };
+  }
+
+
+  function filterPairs (tokens) {
     return _.filter(tokens, function (token) {
       return token.type == 'Pair' && token.content.value.length > 0;
     });
   }
 
   // Takes all tokens that are queries and joins them with spaces
-  function extractQuery(tokens) {
-    return _(tokens).filter(function (token) {
+  function extractQuery (tokens) {
+    var queries = _.filter(tokens, function (token) {
       return token.type == 'Query' && token.content.length > 0;
-    }).map(function(token){return token.content;}).value().join(' ');
+    });
+    var queryContents = _.map(queries, 'content');
+    return queryContents.join(' ');
   }
-
 
 }]);
