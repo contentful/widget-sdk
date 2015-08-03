@@ -1,49 +1,50 @@
 'use strict';
 
-angular.module('contentful').controller('EntityActionsController',
-  ['$scope', '$injector', 'entityType', function EntityActionsController($scope, $injector, entityType) {
+angular.module('contentful')
+.controller('EntityActionsController',
+['$scope', '$injector', 'entityType', function EntityActionsController($scope, $injector, entityType) {
 
   var controller = this;
 
-  var stringUtils = $injector.get('stringUtils');
+  var capitalizeFirst = $injector.get('stringUtils').capitalizeFirst;
+  var entity;
 
-  $scope.$watch(entityType, addPermissionMethods);
+  $scope.$watch(entityType, function (newEntity) {
+    entity = newEntity;
+  });
 
-  function addPermissionMethods(){
-    var entity = $scope[entityType];
-    if(!entity) return;
+  controller.canDelete = bindCan('delete');
+  controller.canPublish = bindCan('publish');
+  controller.canUnpublish = bindCan('unpublish');
+  controller.canArchive = bindCan('archive');
+  controller.canUnarchive = bindCan('unarchive');
 
-    controller.canDuplicate = function () {
-      return !!(entityType &&
-                $scope.permissionController.can('create', stringUtils.capitalizeFirst(entityType)).can
-               );
-    };
+  controller.canUpdate = function () {
+    return hasPermission('update');
+  };
 
-    controller.canDelete = function () {
-      return !!(entity.canDelete() && $scope.permissionController.can('delete', entity.data).can);
-    };
+  controller.canDuplicate = function () {
+    return hasPermission('create', capitalizeFirst(entityType));
+  };
 
-    controller.canArchive = function () {
-      return !!(entity.canArchive() && $scope.permissionController.can('archive', entity.data).can);
-    };
 
-    controller.canUnarchive = function () {
-      return !!(entity.canUnarchive() && $scope.permissionController.can('unarchive', entity.data).can);
-    };
-
-    controller.canUpdate = function () {
-      return !!($scope.permissionController.can('update', entity.data).can);
-    };
-
-    controller.canUnpublish = function () {
-      return !!(entity.canUnpublish() && $scope.permissionController.can('unpublish', entity.data).can);
-    };
-
-    controller.canPublish = function() {
-      return !!(entity.canPublish() && $scope.permissionController.can('publish', entity.data).can);
-    };
-
+  function hasPermission (action, data) {
+    data = data || entity.data;
+    return $scope.permissionController.can(action, data).can;
   }
 
+  function entityAllowsAction (action) {
+    var methodName = 'can' + capitalizeFirst(action);
+    return entity && entity[methodName]();
+  }
 
+  function can (action) {
+    return entityAllowsAction(action) && hasPermission(action);
+  }
+
+  function bindCan (action) {
+    return function () {
+      return can(action);
+    };
+  }
 }]);
