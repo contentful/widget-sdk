@@ -208,8 +208,8 @@ angular.module('contentful')
     var available = values[1];
     var properWidgets = ['radio', 'dropdown'];
 
-    var isProper = name === 'radio' || name === 'dropdown';
-    var availableIds = _.map(available, 'id');
+    var isProper = _.contains(properWidgets, name);
+    var availableIds = _.pluck(available, 'id');
     var properAvailable = _.intersection(availableIds, properWidgets).length;
     $scope.showPredefinedValueWidgetHint = !isProper && properAvailable;
   });
