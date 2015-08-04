@@ -17,23 +17,23 @@ describe('Entry Actions Controller', function () {
     this.scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
     this.scope.entry = entry;
     this.broadcastStub = sinon.stub($rootScope, '$broadcast');
-    this.$inject('$controller')('EntryActionsController', {$scope: this.scope});
+    this. controller = this.$inject('$controller')('EntryActionsController', {$scope: this.scope});
   });
 
   afterEach(function () {
     this.broadcastStub.restore();
   });
 
-  describe('when deleting', function() {
+  describe('#delete command', function() {
     beforeEach(function() {
       this.actionStub = sinon.stub(this.scope.entry, 'delete');
     });
 
-    describe('fails with an error', function() {
+    describe('with API error', function() {
       beforeEach(function() {
-        this.actionStub.returns(this.$q.reject({error: true}));
-        this.scope.delete();
-        this.scope.$apply();
+        this.actionStub.rejects({error: true});
+        this.controller.delete.execute();
+        this.$apply();
       });
 
       it('calls action', function() {
@@ -49,11 +49,11 @@ describe('Entry Actions Controller', function () {
       });
     });
 
-    describe('succeeds', function() {
+    describe('with API success', function() {
       beforeEach(function() {
-        this.actionStub.returns(this.$q.when({entry: true}));
-        this.scope.delete();
-        this.scope.$apply();
+        this.actionStub.resolves({entry: true});
+        this.controller.delete.execute();
+        this.$apply();
       });
 
       it('calls action', function() {
@@ -70,16 +70,16 @@ describe('Entry Actions Controller', function () {
     });
   });
 
-  describe('when duplicating', function() {
+  describe('scope.duplicate()', function() {
     beforeEach(function() {
       this.actionStub = sinon.stub(this.scope.spaceContext.space, 'createEntry');
     });
 
     describe('fails with an error', function() {
       beforeEach(function() {
-        this.actionStub.returns(this.$q.reject({error: true}));
-        this.scope.duplicate();
-        this.scope.$apply();
+        this.actionStub.rejects({error: true});
+        this.controller.duplicate.execute();
+        this.$apply();
       });
 
       it('calls action', function() {
@@ -97,10 +97,10 @@ describe('Entry Actions Controller', function () {
 
     describe('succeeds', function() {
       beforeEach(function() {
-        this.actionStub.returns(this.$q.when(this.scope.entry));
+        this.actionStub.resolves(this.scope.entry);
         this.scope.$state.go = sinon.stub();
-        this.scope.duplicate();
-        this.scope.$apply();
+        this.controller.duplicate.execute();
+        this.$apply();
       });
 
       it('calls action', function() {
@@ -116,16 +116,16 @@ describe('Entry Actions Controller', function () {
     });
   });
 
-  describe('when archiving', function() {
+  describe('#archive command', function() {
     beforeEach(function() {
       this.actionStub = sinon.stub(this.scope.entry, 'archive');
     });
 
     describe('fails with an error', function() {
       beforeEach(function() {
-        this.actionStub.returns(this.$q.reject({body: {sys: {}}}));
-        this.scope.archive();
-        this.scope.$apply();
+        this.actionStub.rejects({body: {sys: {}}});
+        this.controller.archive.execute();
+        this.$apply();
       });
 
       it('calls action', function() {
@@ -143,9 +143,9 @@ describe('Entry Actions Controller', function () {
 
     describe('succeeds', function() {
       beforeEach(function() {
-        this.actionStub.returns(this.$q.when({entry: true}));
-        this.scope.archive();
-        this.scope.$apply();
+        this.actionStub.resolves({entry: true});
+        this.controller.archive.execute();
+        this.$apply();
       });
 
       it('calls action', function() {
@@ -158,16 +158,16 @@ describe('Entry Actions Controller', function () {
     });
   });
 
-  describe('when unarchiving', function() {
+  describe('#unarchive command', function() {
     beforeEach(function() {
       this.actionStub = sinon.stub(this.scope.entry, 'unarchive');
     });
 
     describe('fails with an error', function() {
       beforeEach(function() {
-        this.actionStub.returns(this.$q.reject({body: {sys: {}}}));
-        this.scope.unarchive();
-        this.scope.$apply();
+        this.actionStub.rejects({body: {sys: {}}});
+        this.controller.unarchive.execute();
+        this.$apply();
       });
 
       it('calls action', function() {
@@ -185,9 +185,9 @@ describe('Entry Actions Controller', function () {
 
     describe('succeeds', function() {
       beforeEach(function() {
-        this.actionStub.returns(this.$q.when({entry: true}));
-        this.scope.unarchive();
-        this.scope.$apply();
+        this.actionStub.resolves({entry: true});
+        this.controller.unarchive.execute();
+        this.$apply();
       });
 
       it('calls action', function() {
@@ -200,16 +200,16 @@ describe('Entry Actions Controller', function () {
     });
   });
 
-  describe('when unpublishing', function() {
+  describe('#unpublish command', function() {
     beforeEach(function() {
       this.actionStub = sinon.stub(this.scope.entry, 'unpublish');
     });
 
     describe('fails with an error', function() {
       beforeEach(function() {
-        this.actionStub.returns(this.$q.reject({body: {sys: {}}}));
-        this.scope.unpublish();
-        this.scope.$apply();
+        this.actionStub.rejects({body: {sys: {}}});
+        this.controller.unpublish.execute();
+        this.$apply();
       });
 
       it('calls action', function() {
@@ -227,10 +227,10 @@ describe('Entry Actions Controller', function () {
 
     describe('succeeds', function() {
       beforeEach(function() {
-        this.actionStub.returns(this.$q.when({entry: true}));
+        this.actionStub.resolves({entry: true});
         this.scope.otUpdateEntity = sinon.stub();
-        this.scope.unpublish();
-        this.scope.$apply();
+        this.controller.unpublish.execute();
+        this.$apply();
       });
 
       it('calls action', function() {
@@ -331,8 +331,8 @@ describe('Entry Actions Controller', function () {
             entry.data.fields.field1 = 'three';
             entry.save();
             this.publishedData = _.cloneDeep(entry.data);
-            this.scope.publish();
-            this.scope.$apply();
+            this.controller.publish.execute();
+            this.$apply();
           });
 
           canBeReverted({toPublished: false, toPrevious: true});
@@ -369,7 +369,7 @@ describe('Entry Actions Controller', function () {
 
   });
 
-  describe('when publishing', function() {
+  describe('#publish command', function() {
     beforeEach(function() {
       this.actionStub = sinon.stub(this.scope.entry, 'publish');
       this.scope.validate = sinon.stub();
@@ -377,10 +377,10 @@ describe('Entry Actions Controller', function () {
 
     describe('fails due to validation', function() {
       beforeEach(function() {
-        this.actionStub.returns(this.$q.reject({body: {sys: {}}}));
+        this.actionStub.rejects({body: {sys: {}}});
         this.scope.validate.returns(false);
-        this.scope.publish();
-        this.scope.$apply();
+        this.controller.publish.execute();
+        this.$apply();
       });
 
       it('calls validation', function() {
@@ -392,26 +392,27 @@ describe('Entry Actions Controller', function () {
       });
     });
 
-    describe('local validation passes', function() {
+    describe('with server error: ', function() {
       beforeEach(function() {
         this.scope.validate.returns(true);
         this.scope.setValidationErrors = sinon.stub();
       });
 
-      describe('fails with a remote validation error', function() {
+      function buildErrorResponse (id, message, errors) {
+        return {
+          body: {
+            sys: {id: id},
+            message: message || '',
+            details: {errors: errors || []}
+          }
+        };
+      }
+
+      describe('ValidationFailed', function() {
         beforeEach(function() {
-          this.actionStub.returns(this.$q.reject({
-            body: {
-              sys: {
-                id: 'ValidationFailed'
-              },
-              details: {
-                errors: []
-              }
-            }
-          }));
-          this.scope.publish();
-          this.scope.$apply();
+          this.actionStub.rejects(buildErrorResponse('ValidationFailed'));
+          this.controller.publish.execute();
+          this.$apply();
         });
 
         it('calls validation', function() {
@@ -431,20 +432,11 @@ describe('Entry Actions Controller', function () {
         });
       });
 
-      describe('fails with unresolved links', function() {
+      describe('UnresolvedLinks', function() {
         beforeEach(function() {
-          this.actionStub.returns(this.$q.reject({
-            body: {
-              sys: {
-                id: 'UnresolvedLinks'
-              },
-              details: {
-                errors: []
-              }
-            }
-          }));
-          this.scope.publish();
-          this.scope.$apply();
+          this.actionStub.rejects(buildErrorResponse('UnresolvedLinks'));
+          this.controller.publish.execute();
+          this.$apply();
         });
 
         it('calls validation', function() {
@@ -465,21 +457,10 @@ describe('Entry Actions Controller', function () {
       });
 
       describe('fails with a version mismatch', function() {
-        var errors;
         beforeEach(function() {
-          errors = {errors: true};
-          this.actionStub.returns(this.$q.reject({
-            body: {
-              sys: {
-                id: 'VersionMismatch'
-              },
-              details: {
-                errors: errors
-              }
-            }
-          }));
-          this.scope.publish();
-          this.scope.$apply();
+          this.actionStub.rejects(buildErrorResponse('VersionMismatch'));
+          this.controller.publish.execute();
+          this.$apply();
         });
 
         it('calls validation', function() {
@@ -503,19 +484,11 @@ describe('Entry Actions Controller', function () {
         var errors;
         beforeEach(function() {
           errors = [{name: 'linkContentType'}];
-          this.actionStub.returns(this.$q.reject({
-            body: {
-              message: 'Validation error',
-              sys: {
-                id: 'InvalidEntry'
-              },
-              details: {
-                errors: errors
-              }
-            }
-          }));
-          this.scope.publish();
-          this.scope.$apply();
+          this.actionStub.rejects(buildErrorResponse(
+            'InvalidEntry', 'Validation error', errors
+          ));
+          this.controller.publish.execute();
+          this.$apply();
         });
 
         it('sets validation errors', function() {
@@ -533,20 +506,16 @@ describe('Entry Actions Controller', function () {
           this.scope.spaceContext.publishedContentTypes = [
             {data: {sys: {id: 'contentTypeId'}, name: 'content type name'}}
           ];
-          errors = [{name: 'linkContentType', details: 'error details contentTypeId', contentTypeId: ['contentTypeId']}];
-          this.actionStub.returns(this.$q.reject({
-            body: {
-              message: 'Validation error',
-              sys: {
-                id: 'InvalidEntry'
-              },
-              details: {
-                errors: errors
-              }
-            }
-          }));
-          this.scope.publish();
-          this.scope.$apply();
+          errors = [{
+            name: 'linkContentType',
+            details: 'error details contentTypeId',
+            contentTypeId: ['contentTypeId']
+          }];
+          this.actionStub.rejects(buildErrorResponse(
+            'InvalidEntry', 'Validation error', errors
+          ));
+          this.controller.publish.execute();
+          this.$apply();
         });
 
         it('sets validation errors', function() {
@@ -559,26 +528,16 @@ describe('Entry Actions Controller', function () {
       });
 
       describe('fails with an invalid entry error (Validation error)', function() {
-        var errors;
         beforeEach(function() {
-          errors = {errors: true};
-          this.actionStub.returns(this.$q.reject({
-            body: {
-              message: 'Validation error',
-              sys: {
-                id: 'InvalidEntry'
-              },
-              details: {
-                errors: errors
-              }
-            }
-          }));
-          this.scope.publish();
-          this.scope.$apply();
+          this.actionStub.rejects(buildErrorResponse(
+            'InvalidEntry', 'Validation error', 'AN ERROR'
+          ));
+          this.controller.publish.execute();
+          this.$apply();
         });
 
         it('sets validation errors', function() {
-          sinon.assert.calledWith(this.scope.setValidationErrors, errors);
+          sinon.assert.calledWith(this.scope.setValidationErrors, 'AN ERROR');
         });
 
         it('gets contextual error message', function() {
@@ -587,19 +546,11 @@ describe('Entry Actions Controller', function () {
       });
 
       describe('fails with a remote error', function() {
-        var errors, err;
         beforeEach(function() {
-          errors = {errors: true};
-          err = {
-            body: {
-              sys: {
-                id: 'remote error'
-              },
-            }
-          };
-          this.actionStub.returns(this.$q.reject(err));
-          this.scope.publish();
-          this.scope.$apply();
+          this.errorResponse = buildErrorResponse('remote error');
+          this.actionStub.rejects(this.errorResponse);
+          this.controller.publish.execute();
+          this.$apply();
         });
 
         it('calls validation', function() {
@@ -616,18 +567,18 @@ describe('Entry Actions Controller', function () {
         });
 
         it('gets contextual error message', function() {
-          expect(this.logger.logServerWarn.args[0][1].error).toEqual(err);
+          expect(this.logger.logServerWarn.args[0][1].error).toEqual(this.errorResponse);
         });
       });
 
       describe('succeeds', function() {
         var versionStub;
         beforeEach(function() {
-          this.actionStub.returns(this.$q.when({entry: true}));
+          this.actionStub.resolves({entry: true});
           this.scope.otUpdateEntity = sinon.stub();
           versionStub = sinon.stub(this.scope.entry, 'setPublishedVersion');
-          this.scope.publish();
-          this.scope.$apply();
+          this.controller.publish.execute();
+          this.$apply();
         });
 
         it('calls validation', function() {
@@ -649,23 +600,4 @@ describe('Entry Actions Controller', function () {
 
     });
   });
-
-  describe('getting the publish button label', function() {
-    beforeEach(function() {
-      this.scope.otDoc = {
-        getAt: sinon.stub()
-      };
-    });
-
-    it('not published yet', function() {
-      this.scope.otDoc.getAt.returns(false);
-      expect(this.scope.publishButtonLabel()).toBe('Publish');
-    });
-
-    it('already published', function() {
-      this.scope.otDoc.getAt.returns(true);
-      expect(this.scope.publishButtonLabel()).toBe('Republish');
-    });
-  });
-
 });

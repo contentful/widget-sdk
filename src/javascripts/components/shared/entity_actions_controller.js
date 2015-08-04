@@ -13,6 +13,11 @@ angular.module('contentful')
     entity = newEntity;
   });
 
+  controller.can = function (action) {
+    var methodName = 'can' + capitalizeFirst(action);
+    return controller[methodName]();
+  };
+
   controller.canDelete = bindCan('delete');
   controller.canPublish = bindCan('publish');
   controller.canUnpublish = bindCan('unpublish');
