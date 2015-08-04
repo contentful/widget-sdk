@@ -209,8 +209,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function newVersionCheck() {
-    revision.hasNewVersion().catch(function (err) {
-      if(err === 'APP_REVISION_CHANGED'){
+    revision.hasNewVersion().then(function (hasNewVersion) {
+      if (hasNewVersion) {
         $rootScope.$broadcast('persistentNotification', {
           message: 'A new application version is available. Please reload to get a new version of the application',
           action: ReloadNotification.triggerImmediateReload,
