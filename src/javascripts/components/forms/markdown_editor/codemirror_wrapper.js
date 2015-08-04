@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', function () {
+angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', [function () {
   return function(textarea) {
     /*global CodeMirror*/
     var cm = CodeMirror.fromTextArea(textarea, {
@@ -16,12 +16,18 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', f
       indentUnit: 2
     });
 
+    cm.on('change', function() {
+      var MIN = 300, MAX = 600, OFFSET = 50;
+      var current = cm.heightAtLine(Infinity, 'local') + OFFSET;
+      if (current < MIN) { cm.setSize(null, MIN); }
+      else if (current > MAX) { cm.setSize(null, MAX); }
+      else { cm.setSize(null, current); }
+    });
+
     cm.setOption('extraKeys', {
       Tab: function () { replaceSelectedText(getIndentation()); },
       Enter: 'newlineAndIndentContinueMarkdownList'
     });
-
-    cm.setSize(null, '400px');
 
     // API
     return {
@@ -235,4 +241,4 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', f
       cm.setOption(name, value);
     }
   };
-});
+}]);
