@@ -72,20 +72,22 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
         $scope.errorPaths[fieldId] = $scope.errorPaths[fieldId] || [];
       }
 
-      if(!field) logger.logError('Field object does not exist', {
-        data: {
-          fieldId: fieldId,
-          field: field,
-          dataFields: et.data.fields
-        }
-      });
+      if (!field) {
+        logger.logError('Field object does not exist', {
+          data: {
+            allErrors: errors,
+            currentError: error,
+            entryFields: et.data.fields
+          }
+        });
+        return;
+      }
 
       if (error.path.length == 1 && error.path[0] == 'fields') {
         $scope.hasErrorOnFields = error.path.length == 1 && error.path[0] == 'fields';
       } else if (error.path.length == 2) {
         var locales = field.localized ? $scope.spaceContext.privateLocales : [$scope.spaceContext.space.getDefaultLocale()];
         var allCodes = _.pluck(locales, 'internal_code');
-        console.log(allCodes);
         $scope.errorPaths[fieldId].push.apply($scope.errorPaths[fieldId], allCodes);
       } else {
         var localeCode = error.path[2];
