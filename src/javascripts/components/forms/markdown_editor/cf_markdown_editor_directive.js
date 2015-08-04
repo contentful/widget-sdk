@@ -120,7 +120,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
       function organizeLinks() {
         var text = scope.fieldData.value;
-        text = LinkOrganizer.referizeInline(text);
+        text = LinkOrganizer.convertInlineToRef(text);
         text = LinkOrganizer.rewriteRefs(text);
         scope.fieldData.value = text;
       }

@@ -1,47 +1,40 @@
 'use strict';
 
-angular.module('contentful').factory('LinkOrganizer', ['$injector', function () {
+angular.module('contentful').factory('LinkOrganizer', ['$injector', function ($injector) {
 
-  var LINK_INLINE_RE =   /\[([^\r\n\[\]]+)]\(([^\r\n\)]+)\)/;
-  var LINK_REF_RE    =   /\[([^\r\n\[\]]+)] ?\[([^\r\n\[\]]+)]/;
-  var LINK_LABEL_RE  =   /^ {0,3}\[([^\r\n\[\]]+)]:\s+(.+)$/;
+  var PROCESSORS = $injector.get('LinkOrganizer/matchProcessors');
+  var REGEXS     = {
+    inline: /\[([^\r\n\[\]]+)]\(([^\r\n\)]+)\)/,
+    ref:    /\[([^\r\n\[\]]+)] ?\[([^\r\n\[\]]+)]/,
+    label:  /^ {0,3}\[([^\r\n\[\]]+)]:\s+(.+)$/
+  };
+  var findInline = makeFinder('inline');
+  var findRefs   = makeFinder('ref');
+  var findLabels = makeFinder('label');
 
   return {
-    scan:            scan,
-    referizeInline:  referizeInline,
-    getMergedLabels: getMergedLabels,
-    rewriteRefs:     rewriteRefs,
-    findInlineLinks: findInlineLinks,
-    findRefLinks:    findRefLinks,
-    findLabels:      findLabels,
-    getMaxLabelId:   getMaxLabelId
+    convertInlineToRef: convertInlineToRef,
+    mergeLabels:        mergeLabels,
+    rewriteRefs:        rewriteRefs,
+    findInline:         findInline,
+    findRefs:           findRefs,
+    findLabels:         findLabels,
+    findMaxLabelId:     findMaxLabelId
   };
 
-  function scan(text) {
-    var data = {
-      inline: findInlineLinks(text),
-      ref:    findRefLinks(text),
-      labels: findLabels(text)
-    };
+  function convertInlineToRef(text) {
+    var id = findMaxLabelId(text) ;
 
-    data.maxLabelId = getMaxLabelId(data.labels);
-
-    return data;
-  }
-
-  function referizeInline(text) {
-    var id = getMaxLabelId(text) ;
-
-    _.forEach(findInlineLinks(text), function (link) {
+    _.forEach(findInline(text), function (inline) {
       id += 1;
-      text = text.replace(link.match, buildRef(link, id));
-      text += '\n' + buildLabel(link, id);
+      text = text.replace(inline.match, buildRef(inline, id));
+      text += '\n' + buildLabel(inline, id);
     });
 
     return text;
   }
 
-  function getMergedLabels(text) {
+  function mergeLabels(text) {
     var byHref = {};
     var byOldId = {};
 
@@ -65,14 +58,14 @@ angular.module('contentful').factory('LinkOrganizer', ['$injector', function () 
   }
 
   function rewriteRefs(text) {
-    var merged = getMergedLabels(text);
+    var merged = mergeLabels(text);
     var hrefToRefId = {};
     var labels = [];
     var rewrites = [];
     var i = 1;
 
     // 1. compose list of labels with new ids, in order
-    _.forEach(findRefLinks(text), function (ref) {
+    _.forEach(findRefs(text), function (ref) {
       var oldLabel = merged.byOldId[ref.id];
       if (!oldLabel) { return; }
       var href = oldLabel.href;
@@ -110,22 +103,17 @@ angular.module('contentful').factory('LinkOrganizer', ['$injector', function () 
     return text;
   }
 
-  function findInlineLinks(text) {
-    var links = findAll(text, LINK_INLINE_RE);
-    return _.map(links, processInlineLink);
+  /**
+   * Finding stuff
+   */
+
+  function makeFinder(type) {
+    return function (text) {
+      return _.map(findAll(text, type), PROCESSORS[type]);
+    };
   }
 
-  function findRefLinks(text) {
-    var links = findAll(text, LINK_REF_RE);
-    return _.map(links, processRefLink);
-  }
-
-  function findLabels(text) {
-    var labels = findAll(text, LINK_LABEL_RE, 'm');
-    return _.map(labels, processLabel);
-  }
-
-  function getMaxLabelId(textOrLabels) {
+  function findMaxLabelId(textOrLabels) {
     if (_.isString(textOrLabels)) {
       textOrLabels = findLabels(textOrLabels);
     }
@@ -138,30 +126,74 @@ angular.module('contentful').factory('LinkOrganizer', ['$injector', function () 
     return ids.length > 0 ? _.max(ids) : 0;
   }
 
-  function processInlineLink(match) {
-    return {
-      match: match[0],
-      text:  match[1],
-      href:  head(match[2]),
-      title: extractTitle(tail(match[2]))
-    };
+  function findAll(text, type) {
+    var flags = 'g' + (type === 'label' ? 'm' : '');
+    var matches = [];
+    var re = new RegExp(REGEXS[type].source, flags);
+    var found = re.exec(text);
+
+    while (found) {
+      matches.push(found);
+      re.lastIndex = found.index + found[0].length;
+      found = re.exec(text);
+    }
+
+    return matches;
   }
 
-  function processRefLink(match) {
-    return {
-      match: match[0],
-      text:  match[1],
-      id:    match[2]
-    };
+  /**
+   * Other utilities
+   */
+
+  function hasTitle(link) {
+    return _.isObject(link) && _.isString(link.title) && link.title.length > 0;
   }
 
-  function processLabel(match) {
-    return {
-      match: match[0],
-      id:    match[1],
-      href:  head(match[2]),
-      title: extractTitle(tail(match[2]))
-    };
+  function buildLabel(link, id) {
+    var markup = '[' + id + ']: ' + link.href;
+    if (hasTitle(link)) { markup += ' "' + link.title + '"'; }
+    return markup;
+  }
+
+  function buildRef(link, id) {
+    return '[' + link.text + '][' + id + ']';
+  }
+
+}]);
+
+angular.module('contentful').factory('LinkOrganizer/matchProcessors', function () {
+
+  return {
+    inline: function (match) {
+      return {
+        match: match[0],
+        text: match[1],
+        href: head(match[2]),
+        title: extractTitle(tail(match[2]))
+      };
+    },
+    ref: function (match) {
+      return {
+        match: match[0],
+        text: match[1],
+        id: match[2]
+      };
+    },
+    label: function (match) {
+      return {
+        match: match[0],
+        id:    match[1],
+        href:  head(match[2]),
+        title: extractTitle(tail(match[2]))
+      };
+    }
+  };
+
+  function extractTitle(title) {
+    title = title || '';
+    title = title.replace(/^ *('|"|\()*/, '');
+    title = title.replace(/('|"|\))* *$/, '');
+    return title;
   }
 
   function head(text) {
@@ -174,41 +206,4 @@ angular.module('contentful').factory('LinkOrganizer', ['$injector', function () 
     return segments.join(' ');
   }
 
-  function hasTitle(link) {
-    return _.isObject(link) && _.isString(link.title) && link.title.length > 0;
-  }
-
-  function buildLabel(labelOrLink, id) {
-    var markup = '[' + id + ']: ' + labelOrLink.href;
-    if (hasTitle(labelOrLink)) { markup += ' "' + labelOrLink.title + '"'; }
-    return markup;
-  }
-
-  function buildRef(link, id) {
-    return '[' + link.text + '][' + id + ']';
-  }
-
-  function extractTitle(title) {
-    title = title || '';
-    title = title.replace( /^ *('|"|\()*/, '');
-    title = title.replace( /('|"|\))* *$/, '');
-    return title;
-  }
-
-  function findAll(text, re, additionalFlags) {
-    additionalFlags = additionalFlags || '';
-    var flags = 'g' + additionalFlags;
-    var matches = [];
-    re = new RegExp(re.source, flags);
-    var found = re.exec(text);
-
-    while (found) {
-      matches.push(found);
-      re.lastIndex = found.index + 1;
-      found = re.exec(text);
-    }
-
-    return matches;
-  }
-
-}]);
+});
