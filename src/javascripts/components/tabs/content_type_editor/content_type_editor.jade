@@ -34,18 +34,9 @@ header.workbench-header
         include ./content_type_field_list_empty
 
 .workbench-actions
-  button.cfnext-btn-secondary-action.cancel(
-    type="button"
-    ng-show="context.isNew"
-    ng-click="actions.cancel()")
+  button.cfnext-btn-secondary-action(ui-command="actions.cancel")
     | Cancel
-  button.cfnext-btn-secondary-action.delete(
-    type="button"
-    ng-show="actions.canDelete()"
-    ng-click="actions.delete()")
+  button.cfnext-btn-secondary-action(ui-command="actions.delete")
     | Delete
-  button.cfnext-btn-primary-action.publish(
-    type="button"
-    ng-disabled="!actions.canSave()"
-    ng-click="actions.save()")
+  button.cfnext-btn-primary-action(ui-command="actions.save")
     | Save

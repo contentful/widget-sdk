@@ -19,8 +19,9 @@ function ContentTypeActionsController($scope, $injector) {
   var notification = $injector.get('notification');
   var $q           = $injector.get('$q');
   var modalDialog  = $injector.get('modalDialog');
+  var Command      = $injector.get('command');
 
-  var entityActionsController = $controller('EntityActionsController', {
+  var availableActions = $controller('EntityActionsController', {
     $scope: $scope,
     entityType: 'contentType'
   });
@@ -35,13 +36,25 @@ function ContentTypeActionsController($scope, $injector) {
   };
 
   /**
-   * @ngdoc method
+   * @ngdoc property
    * @name ContentTypeActionsController#delete
+   * @type {Command}
    */
-  controller.delete = function() {
+  controller.delete = Command.create(remove, {
+    available: canDelete
+  });
+
+  function canDelete () {
+    return !$scope.context.isNew && (
+      availableActions.canUnpublish() ||
+      !$scope.contentType.isPublished()
+    );
+  }
+
+  function remove () {
     populateDefaultName($scope.contentType);
     if ($scope.contentType.isPublished()) {
-      $scope.ctEditorController.countEntries().then(function(count) {
+      return $scope.ctEditorController.countEntries().then(function(count) {
         if (count > 0) {
           forbidRemoval(count);
           return;
@@ -49,17 +62,17 @@ function ContentTypeActionsController($scope, $injector) {
 
         confirmRemoval().then(function(result) {
           if (result.cancelled) { return; }
-          unpublish().then(sendDeleteRequest);
+          return unpublish().then(sendDeleteRequest);
         });
 
       }, removalErrorHandler);
     } else {
-      confirmRemoval().then(function(result) {
+      return confirmRemoval().then(function(result) {
         if (result.cancelled) { return; }
-        sendDeleteRequest();
+        return sendDeleteRequest();
       });
     }
-  };
+  }
 
   function forbidRemoval(count) {
     var dialogScope = prepareRemovalDialogScope();
@@ -129,30 +142,36 @@ function ContentTypeActionsController($scope, $injector) {
     });
   }
 
-  /**
-   * @ngdoc method
-   * @name ContentTypeActionsController#canDelete
-   */
-  controller.canDelete = function () {
-    return !$scope.context.isNew && (
-      entityActionsController.canUnpublish() ||
-      !$scope.contentType.isPublished()
-    );
-  };
 
   /**
-   * @ngdoc method
+   * @ngdoc property
    * @name ContentTypeActionsController#scope#cancel
+   * @type {Command}
    */
-  controller.cancel = function () {
-    $scope.$state.go('^.list');
-  };
+  controller.cancel = Command.create(function () {
+    return $scope.$state.go('^.list');
+  }, {
+    available: function () {
+      return $scope.context.isNew;
+    }
+  });
+
 
   /**
-   * @ngdoc method
-   * @name ContentTypeActionsController#scope#save
+   * @ngdoc property
+   * @name ContentTypeActionsController#save
+   * @type {Command}
    */
-  controller.save = function () {
+  controller.save = Command.create(save, {
+    disabled: function () {
+      var dirty = $scope.contentTypeForm.$dirty ||
+                  !$scope.contentType.getPublishedVersion();
+      var valid = !allFieldsDisabled($scope.contentType);
+      return !dirty || !valid;
+    }
+  });
+
+  function save () {
     populateDefaultName($scope.contentType);
 
     trackSavedContentType($scope.contentType);
@@ -181,7 +200,7 @@ function ContentTypeActionsController($scope, $injector) {
     .then(publishContentType)
     .then(saveEditingInterface)
     .then(postSaveActions, triggerApiErrorNotification);
-  };
+  }
 
   // This is handling legacy content types.
   // FIXME This is not the proper place for this function, it should be
@@ -192,17 +211,6 @@ function ContentTypeActionsController($scope, $injector) {
       contentType.data.name = 'Untitled';
     }
   }
-
-  /**
-   * @ngdoc method
-   * @name ContentTypeActionsController#canSave
-   */
-  controller.canSave = function () {
-    var dirty = $scope.contentTypeForm.$dirty ||
-                !$scope.contentType.getPublishedVersion();
-    var valid = !allFieldsDisabled($scope.contentType);
-    return dirty && valid;
-  };
 
   function publishContentType(contentType) {
     var version = contentType.getVersion();
