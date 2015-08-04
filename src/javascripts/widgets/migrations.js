@@ -21,6 +21,11 @@ angular.module('contentful')
     from: 'youtubeEditor',
     to: 'urlEditor',
     fieldTypes: ['Symbol']
+  },
+  {
+    from: 'radio',
+    to: 'boolean',
+    fieldTypes: ['Boolean']
   }
 ])
 
