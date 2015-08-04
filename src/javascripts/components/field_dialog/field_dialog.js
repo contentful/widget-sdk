@@ -84,7 +84,9 @@ angular.module('contentful')
    * @name FieldDialogController#availableWidgets
    * @type {Widgets.Descriptor[]}
    */
-  Widgets.descriptorsForField($scope.field, features.isPreviewEnabled())
+  var preview = features.isPreviewEnabled();
+  var currentWidgetId = widget.widgetId;
+  Widgets.getAvailable($scope.field, currentWidgetId, preview)
   .then(function (available) {
     $scope.availableWidgets = available;
   });
