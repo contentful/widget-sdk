@@ -24,7 +24,43 @@
 // - Then PairToRequest function
 // - A couple of helper methods
 // - The public facing API, exposing some functions to the outside
-angular.module('contentful').factory('searchQueryAutocompletions', ['userCache', 'mimetype', 'AssetContentType', function(userCache, mimetype, AssetContentType){
+angular.module('contentful')
+.factory('searchQueryAutocompletions', ['$injector',function($injector) {
+
+  var userCache        = $injector.get('userCache');
+  var mimetype         = $injector.get('mimetype');
+  var AssetContentType = $injector.get('AssetContentType');
+  var $q               = $injector.get('$q');
+
+
+  function operatorDescription (op) {
+    return operatorDescriptions[op] || '';
+  }
+
+  var operatorDescriptions = {
+    '<=': 'Less than or equal',
+    '<' : 'Less than',
+    '>=': 'Greater than or equal',
+    '>' : 'Greater than',
+    '=' : 'Equal',
+    '==': 'Equal',
+    '!=': 'Not equal'
+  };
+
+  function dateOperatorDescription (op) {
+    return dateOperatorDescriptions[op] || '';
+  }
+
+  var dateOperatorDescriptions = {
+    '<=': 'Before or on that date/time',
+    '<' : 'Before that date/time',
+    '>=': 'After or on that date/time',
+    '>' : 'After that date/time',
+    '==': 'Exactly on that date/time',
+    '!=': 'Not on that date/time'
+  };
+
+
   // Autocomplete object {{{1
   //
   // This part contains autocompletion factories for key/value pairs
@@ -49,6 +85,14 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
     createdAt: dateCompletions('sys.createdAt', 'Date the item was created'),
     publishedAt: dateCompletions('sys.publishedAt', 'Date the item was last published'),
     firstPublishedAt: dateCompletions('sys.firstPublishedAt', 'Date the item was published for the first time'),
+    id: {
+      description: 'Unique identifier',
+      convert: function (operator, value) {
+        return $q.when({
+          'sys.id': value
+        });
+      }
+    },
     author: {
       description: 'User who created the item',
       complete: function (contentType, space) {
@@ -151,7 +195,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
     var EQUALITY = /^==|=|:$/;
     return {
       description: description,
-      operators: makeOperatorList(['==', '<', '<=', '>=', '>'], 'Date'),
+      operators: makeDateOperatorList(),
       complete: makeDateCompletion(),
       convert: function (op, exp) {
         try {
@@ -211,27 +255,33 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
     });
   }
 
-  // Completions {{{1
-  //
-  // The three completion methods exposed in the API for
-  // generating completions for keys, operators and values
-
-  function keyCompletion(contentType) {
+  /**
+   * @description
+   * Return completions for static fields (i.e. `sys`) properties and
+   * dynamic fields on the Content Type.
+   *
+   * @param {Client.ContentType?} contentType
+   * @return {CompletionData}
+   */
+  function keyCompletion (contentType) {
     return makeListCompletion(_.union(
-      searchableFieldIds(contentType),
+      searchableFieldCompletions(contentType),
       staticKeys(contentType)));
 
-    function searchableFieldIds(contentType) {
+    function searchableFieldCompletions (contentType) {
       if (!contentType) return [];
-      return _.transform(contentType.data.fields, function (fieldIds, field) {
-        if (fieldSearchable(field)) fieldIds.push({
+
+      var fields = contentType.data.fields;
+      var searchableFields = _.filter(fields, fieldIsSearchable);
+      return _.map(searchableFields, function (field) {
+        return {
           value: apiNameOrId(field),
-          description: field.name});
+          description: field.name
+        };
       });
     }
 
-    // Tells if a field is searchable or not
-    function fieldSearchable(field) {
+    function fieldIsSearchable(field) {
       return !field.disabled && !field.type.match(/Location|Object|File/);
     }
   }
@@ -241,17 +291,26 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
     if (completions[key]) {
       return makeListCompletion(completions[key].operators || makeOperatorList([':']));
     } else {
-      return makeListCompletion(operatorsForField(key, contentType));
+      return fieldOperatorCompletion(key, contentType);
     }
 
-    // Offer available operators for a certain field of a content type
-    // Based on field type and validations
-    function operatorsForField(fieldId, contentType) {
+    /**
+     * @description
+     * Offer available operators for a certain field of a content type
+     * Based on field type and validations
+     *
+     * @param {string} fieldId
+     * @param {Client.ContentType} contentType
+     * @returns {CompletionData}
+     */
+    function fieldOperatorCompletion (fieldId, contentType) {
       var field = findField(fieldId, contentType) || {};
-      if (field.type === 'Integer' || field.type === 'Number' || field.type === 'Date') {
-        return makeOperatorList(['<', '<=', '==', '>=', '>']);
+      var type = field ? field.type : null;
+      if (type === 'Integer' || type === 'Number' || type === 'Date') {
+        return makeOperatorListCompletion(['<', '<=', '==', '>=', '>']);
+      } else {
+        return makeOperatorListCompletion([':']);
       }
-      return makeOperatorList([':']);
     }
   }
 
@@ -307,7 +366,9 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
     var value    = pair.content.value.content;
     var keyData  = staticAutocompletions(contentType)[key];
     if (keyData) {
-      if (_.isFunction(keyData.convert) ) return keyData.convert(operator, value, space);
+      if (_.isFunction(keyData.convert)) {
+        return keyData.convert(operator, value, space);
+      }
       if (_.isObject(keyData.convert)) {
         return createConverter(keyData.convert, operator, value, space);
       }
@@ -385,16 +446,29 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
     }
   }
 
-  // Identifies a field by its ID, falling back to searching by name
-  // COMPLETIONS + PAIRTOREQUESTOBJECT
-  function findField(key, contentType) {
-    var fields = contentType ? contentType.data.fields : [];
-    return _.find(fields, match) || _.find(fields, function (field) {
-      return field.name.toLowerCase() == key.toLowerCase();
-    });
+  /**
+   * Identifies a field by its ID, falling back to searching by name
+   * COMPLETIONS + PAIRTOREQUESTOBJECT
+   *
+   * @param {string}  key
+   * @param {Client.ContentType?}  contentType
+   *
+   * @returns {API.ContentType.Field?}
+   */
+  function findField (key, contentType) {
+    if (!contentType) {
+      return;
+    }
 
-    function match(field) {
+    var fields = contentType.data.fields;
+    return _.find(fields, matchApiName) || _.find(fields, matchFieldLabel);
+
+    function matchApiName (field) {
       return apiNameOrId(field) === key;
+    }
+
+    function matchFieldLabel (field) {
+      return field.name.toLowerCase() === key.toLowerCase();
     }
   }
 
@@ -410,33 +484,27 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
     };
   }
 
+  /**
+   * @param {string[]} operators
+   * @returns {CompletionData}
+   */
+  function makeOperatorListCompletion (operators) {
+    return makeListCompletion(makeOperatorList(operators));
+  }
+
   // Helper for creating a list completion with operators
   // with descriptions based on the type of the key
-  function makeOperatorList(operators, type) {
+  function makeOperatorList (operators) {
     return _.map(operators, function (op) {
-      return {value: op, description: descriptions(op)};
+      return {value: op, description: operatorDescription(op)};
     });
+  }
 
-    function descriptions(op) {
-      if (type === 'Date') {
-        return op == '<=' ? 'Before or on that date/time' :
-               op == '<'  ? 'Before that date/time'       :
-               op == '>=' ? 'After or on that date/time'  :
-               op == '>'  ? 'After that date/time'        :
-               op == '==' ? 'Exactly on that date/time'   :
-               op == '!=' ? 'Not on that date/time'       :
-               '';
-      } else {
-        return op == '<=' ? 'Less than or equal'    :
-               op == '<'  ? 'Less than'             :
-               op == '>=' ? 'Greater than or equal' :
-               op == '>'  ? 'Greater than'          :
-               op == '='  ? 'Equal'                 :
-               op == '==' ? 'Equal'                 :
-               op == '!=' ? 'Not equal'             :
-               '';
-        }
-      }
+  function makeDateOperatorList () {
+    var operators = ['==', '<', '<=', '>=', '>'];
+    return _.map(operators, function (op) {
+      return {value: op, description: dateOperatorDescription(op)};
+    });
   }
 
   function makeDateCompletion() {
@@ -459,4 +527,3 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
 
   // }}}
 }]);
-
