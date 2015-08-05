@@ -192,9 +192,6 @@
       button.cfnext-btn-caution(type="button" ng-click="delete()") Delete
       button.cfnext-btn-secondary-action(type="button") Don't Delete
     button.cfnext-btn-primary-action.save(type="submit"
-      ng-click="save()"
-      cf-when-disabled="permissionController.entityActions.createApiKey"
-      ng-disabled="apiKeyForm.$invalid || permissionController.get('createApiKey', 'shouldDisable')")
+      ui-command="apiKeyController.save"
+      cf-when-disabled="permissionController.entityActions.createApiKey")
       | Save
-  .rest-save-status
-    | Hit Save to save changes to this API Key.
