@@ -64,38 +64,26 @@
           cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.internal_code,'*']")
         cf-error-list.form-box-error(cf-error-path="['fields', field.id]")
 
-.tab-actions(ng-controller="AssetActionsController")
+.tab-actions(ng-controller="AssetActionsController as actions")
   .button-set
-    button.cfnext-btn-secondary-action.delete(type="button"
-      ng-show="entityActionsController.canDelete()"
+    button.cfnext-btn-secondary-action(type="button"
+      ng-show="actions.delete.isAvailable()"
       cf-context-menu-trigger
       data-test-id="delete-asset")
       | Delete
     .delete-confirm(cf-context-menu="top")
       cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
       p You are about to delete {{headline()}}
-      button.cfnext-btn-caution(type="button" ng-click="delete()") Delete
+      button.cfnext-btn-caution(ui-command="actions.delete") Delete
       button.cfnext-btn-secondary-action(type="button") Don't Delete
-    button.cfnext-btn-secondary-action.archive(
-      type="button"
-      ng-show="entityActionsController.canArchive()"
-      ng-click="archive()")
+    button.cfnext-btn-secondary-action(ui-command="actions.archive")
       | Archive
-    button.cfnext-btn-secondary-action.archive(
-      type="button"
-      ng-show="entityActionsController.canUnarchive()"
-      ng-click="unarchive()")
+    button.cfnext-btn-secondary-action(ui-command="actions.unarchive")
       | Unarchive
-    button.cfnext-btn-secondary-action.unpublish(
-      type="button"
-      ng-show="entityActionsController.canUnpublish()"
-      ng-click="unpublish()")
+    button.cfnext-btn-secondary-action(ui-command="actions.unpublish")
       | Unpublish
-    button.cfnext-btn-primary-action.publish(
-      type="submit"
-      ng-show="entityActionsController.canPublish()"
-      ng-click="publish()")
-      | {{publishButtonLabel()}}
+    button.cfnext-btn-primary-action.publish(ui-command="actions.publish")
+      | {{ command.label() }}
   .save-status(cf-save-status)
   .other-users
     span(ng-show="presence.users.length == 0"

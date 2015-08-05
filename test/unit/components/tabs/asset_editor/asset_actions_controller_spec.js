@@ -32,7 +32,7 @@ describe('Asset Actions Controller', function () {
     this.broadcastStub.restore();
   });
 
-  describe('when deleting', function() {
+  describe('#delete command', function() {
     beforeEach(function() {
       stubs.action = sinon.stub(asset, 'delete').returns(action.promise);
     });
@@ -40,8 +40,8 @@ describe('Asset Actions Controller', function () {
     describe('fails with an error', function() {
       beforeEach(function() {
         action.reject({error: true});
-        scope.delete();
-        scope.$apply();
+        controller.delete.execute();
+        this.$apply();
       });
 
       it('calls action', function() {
@@ -58,8 +58,8 @@ describe('Asset Actions Controller', function () {
     describe('succeeds', function() {
       beforeEach(function() {
         action.resolve({asset: true});
-        scope.delete();
-        scope.$apply();
+        controller.delete.execute();
+        this.$apply();
       });
 
       it('calls action', function() {
@@ -76,7 +76,7 @@ describe('Asset Actions Controller', function () {
     });
   });
 
-  describe('when archiving', function() {
+  describe('#archive command', function() {
     beforeEach(function() {
       stubs.action = sinon.stub(asset, 'archive').returns(action.promise);
     });
@@ -84,8 +84,8 @@ describe('Asset Actions Controller', function () {
     describe('fails with an error', function() {
       beforeEach(function() {
         action.reject({body: {sys: {}}});
-        scope.archive();
-        scope.$apply();
+        controller.archive.execute();
+        this.$apply();
       });
 
       it('calls action', function() {
@@ -101,8 +101,8 @@ describe('Asset Actions Controller', function () {
     describe('succeeds', function() {
       beforeEach(function() {
         action.resolve({asset: true});
-        scope.archive();
-        scope.$apply();
+        controller.archive.execute();
+        this.$apply();
       });
 
       it('calls action', function() {
@@ -115,7 +115,7 @@ describe('Asset Actions Controller', function () {
     });
   });
 
-  describe('when unarchiving', function() {
+  describe('#unarchive command', function() {
     beforeEach(function() {
       stubs.action = sinon.stub(asset, 'unarchive').returns(action.promise);
     });
@@ -123,8 +123,8 @@ describe('Asset Actions Controller', function () {
     describe('fails with an error', function() {
       beforeEach(function() {
         action.reject({body: {sys: {}}});
-        scope.unarchive();
-        scope.$apply();
+        controller.unarchive.execute();
+        this.$apply();
       });
 
       it('calls action', function() {
@@ -140,8 +140,8 @@ describe('Asset Actions Controller', function () {
     describe('succeeds', function() {
       beforeEach(function() {
         action.resolve({asset: true});
-        scope.unarchive();
-        scope.$apply();
+        controller.unarchive.execute();
+        this.$apply();
       });
 
       it('calls action', function() {
@@ -154,7 +154,7 @@ describe('Asset Actions Controller', function () {
     });
   });
 
-  describe('when unpublishing', function() {
+  describe('#unpublish commmand', function() {
     beforeEach(function() {
       stubs.action = sinon.stub(asset, 'unpublish').returns(action.promise);
     });
@@ -162,8 +162,8 @@ describe('Asset Actions Controller', function () {
     describe('fails with an error', function() {
       beforeEach(function() {
         action.reject({body: {sys: {}}});
-        scope.unpublish();
-        scope.$apply();
+        controller.unpublish.execute();
+        this.$apply();
       });
 
       it('calls action', function() {
@@ -180,8 +180,8 @@ describe('Asset Actions Controller', function () {
       beforeEach(function() {
         action.resolve({asset: true});
         scope.otUpdateEntity = stubs.otUpdateEntity;
-        scope.unpublish();
-        scope.$apply();
+        controller.unpublish.execute();
+        this.$apply();
       });
 
       it('calls action', function() {
@@ -208,8 +208,8 @@ describe('Asset Actions Controller', function () {
       beforeEach(function() {
         action.reject({body: {sys: {}}});
         scope.validate.returns(false);
-        scope.publish();
-        scope.$apply();
+        controller.publish.execute();
+        this.$apply();
       });
 
       it('calls validation', function() {
@@ -238,8 +238,8 @@ describe('Asset Actions Controller', function () {
         });
         scope.validate.returns(true);
         scope.setValidationErrors = sinon.stub();
-        scope.publish();
-        scope.$apply();
+        controller.publish.execute();
+        this.$apply();
       });
 
       it('calls validation', function() {
@@ -274,8 +274,8 @@ describe('Asset Actions Controller', function () {
           }
         });
         scope.validate.returns(true);
-        scope.publish();
-        scope.$apply();
+        controller.publish.execute();
+        this.$apply();
       });
 
       it('calls validation', function() {
@@ -308,8 +308,8 @@ describe('Asset Actions Controller', function () {
         };
         action.reject(err);
         scope.validate.returns(true);
-        scope.publish();
-        scope.$apply();
+        controller.publish.execute();
+        this.$apply();
       });
 
       it('calls validation', function() {
@@ -337,8 +337,8 @@ describe('Asset Actions Controller', function () {
         scope.validate.returns(true);
         scope.otUpdateEntity = stubs.otUpdateEntity;
         versionStub = sinon.stub(asset, 'setPublishedVersion');
-        scope.publish();
-        scope.$apply();
+        controller.publish.execute();
+        this.$apply();
       });
 
       it('calls validation', function() {
@@ -356,24 +356,6 @@ describe('Asset Actions Controller', function () {
       it('updates ot entity', function() {
         sinon.assert.calledWith(versionStub, 1);
       });
-    });
-  });
-
-  describe('getting the publish button label', function() {
-    beforeEach(function() {
-      scope.otDoc = {
-        getAt: stubs.getAt
-      };
-    });
-
-    it('not published yet', function() {
-      stubs.getAt.returns(false);
-      expect(scope.publishButtonLabel()).toBe('Publish');
-    });
-
-    it('already published', function() {
-      stubs.getAt.returns(true);
-      expect(scope.publishButtonLabel()).toBe('Republish');
     });
   });
 

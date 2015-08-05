@@ -1,14 +1,33 @@
 'use strict';
-angular.module('contentful').controller('AssetActionsController', ['$scope', 'notification', 'logger', '$rootScope', function AssetActionsController($scope, notification, logger, $rootScope) {
+angular.module('contentful')
+.controller('AssetActionsController',
+['$scope', '$injector', function AssetActionsController($scope, $injector) {
+  var controller = this;
+
+  var Command      = $injector.get('command');
+  var logger       = $injector.get('logger');
+  var notification = $injector.get('notification');
+  var $rootScope   = $injector.get('$rootScope');
+  var $q           = $injector.get('$q');
+
+
   // TODO If we are sure that the data in the asset has been updated from the ShareJS doc,
   // We can query the asset instead of reimplementing the checks heere
-
   function title() {
     return '"' + $scope.spaceContext.assetTitle($scope.asset) + '"';
   }
 
-  $scope.delete = function () {
-    $scope.asset.delete()
+
+  function createAssetCommand (action, run, extension) {
+    var can = function () {
+      return $scope.entityActionsController.can(action);
+    };
+
+    controller[action] = Command.create(run, {available: can}, extension);
+  }
+
+  createAssetCommand('delete', function () {
+    return $scope.asset.delete()
     .then(function(asset){
       notification.info('Asset deleted successfully');
       $rootScope.$broadcast('entityDeleted', asset);
@@ -17,10 +36,10 @@ angular.module('contentful').controller('AssetActionsController', ['$scope', 'no
       notification.error('Error deleting Asset');
       logger.logServerWarn('Error deleting Asset', {error: err });
     });
-  };
+  });
 
-  $scope.archive = function() {
-    $scope.asset.archive()
+  createAssetCommand('archive', function () {
+    return $scope.asset.archive()
     .then(function(){
       notification.info(title() + ' archived successfully');
     })
@@ -28,10 +47,10 @@ angular.module('contentful').controller('AssetActionsController', ['$scope', 'no
       notification.warn('Error archiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
       logger.logServerWarn('Error archiving asset', {error: err });
     });
-  };
+  });
 
-  $scope.unarchive = function() {
-    $scope.asset.unarchive()
+  createAssetCommand('unarchive', function () {
+    return $scope.asset.unarchive()
     .then(function(){
       notification.info(title() + ' unarchived successfully');
     })
@@ -39,10 +58,10 @@ angular.module('contentful').controller('AssetActionsController', ['$scope', 'no
       notification.warn('Error unarchiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
       logger.logServerWarn('Error unarchiving asset', {error: err });
     });
-  };
+  });
 
-  $scope.unpublish = function () {
-    $scope.asset.unpublish()
+  createAssetCommand('unpublish', function () {
+    return $scope.asset.unpublish()
     .then(function(){
       notification.info(title() + ' unpublished successfully');
       $scope.otUpdateEntity();
@@ -51,15 +70,19 @@ angular.module('contentful').controller('AssetActionsController', ['$scope', 'no
       notification.warn('Error unpublishing ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
       logger.logServerWarn('Error unpublishing asset', {error: err });
     });
-  };
+  });
 
-  $scope.publish = function () {
+  createAssetCommand('publish', publish, {
+    label: getPublishCommandLabel
+  });
+
+  function publish () {
     var version = $scope.asset.getVersion();
     if (!$scope.validate()) {
       notification.warn('Error publishing ' + title() + ': ' + 'Validation failed');
-      return;
+      return $q.reject();
     }
-    $scope.asset.publish(version)
+    return $scope.asset.publish(version)
     .then(function(){
       $scope.asset.setPublishedVersion(version);
       notification.info(title() + ' published successfully');
@@ -76,20 +99,15 @@ angular.module('contentful').controller('AssetActionsController', ['$scope', 'no
         logger.logServerWarn('Publishing the asset has failed due to a server issue. We have been notified.', {error: err });
       }
     });
-  };
+  }
 
-  $scope.publishButtonLabel = function () {
-    var publishedAt = null;
-    try {
-      publishedAt = $scope.otDoc.getAt(['sys', 'publishedAt']);
-    } catch (e) { }
-
-    if (publishedAt) {
+  function getPublishCommandLabel () {
+    var isPublished = !!$scope.asset.getPublishedAt();
+    if (isPublished) {
       return 'Republish';
     } else {
       return 'Publish';
     }
-  };
-
+  }
 }]);
 
