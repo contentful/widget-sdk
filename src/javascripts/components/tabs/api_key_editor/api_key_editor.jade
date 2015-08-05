@@ -123,10 +123,10 @@
                 option(value="ruby") Ruby
                 option(value="swift") Swift
               label
-                input.form-control-look(type="radio" name="codeexampleapi" ng-model="authCodeExample.api" value="cda")
+                input(type="radio" name="codeexampleapi" ng-model="authCodeExample.api" value="cda")
                 | Production
               label
-                input.form-control-look(type="radio" name="codeexampleapi" ng-model="authCodeExample.api" value="preview")
+                input(type="radio" name="codeexampleapi" ng-model="authCodeExample.api" value="preview")
                 | Preview
               a.cf-copy-paste(href="#" cf-copy-paste clipboard-target-selector=".authentication-code .code-example textarea")
                 i.fa.fa-copy
