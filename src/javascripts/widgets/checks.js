@@ -2,10 +2,10 @@
 
 /**
  * @ngdoc service
- * @name widgetChecks
+ * @name widgets/checks
  */
 angular.module('contentful')
-.factory('widgetChecks', ['$injector', function widgetChecks($injector) {
+.factory('widgets/checks', ['$injector', function widgetChecks($injector) {
   var $q = $injector.get('$q');
 
   var CHECKS = {
@@ -13,35 +13,15 @@ angular.module('contentful')
     kalturaMultiVideoEditor: kalturaCredentialsCheck
   };
 
-  var DEPRECATED = {
-    youtubeEditor: {
-      alternative: 'Embedded Content'
-    }
-  };
 
   return {
-    markMisconfigured: markMisconfigured,
-    markDeprecated:    markDeprecated,
+    markMisconfigured: markMisconfigured
   };
 
 
   /**
    * @ngdoc method
-   * @name widgetChecks#markDeprecated
-   * @param {Widget[]} widgets
-   * @returns {Widget[]}
-   */
-  function markDeprecated (widgets) {
-    return _.forEach(widgets, function (widget) {
-      var deprecation = DEPRECATED[widget.id];
-      if (deprecation)
-        widget.deprecation = deprecation;
-    });
-  }
-
-  /**
-   * @ngdoc method
-   * @name widgetChecks#markMisconfigured
+   * @name widgets/checks#markMisconfigured
    * @param {Widget[]} widgets
    * @returns {Promise<Widget[]>}
    */
