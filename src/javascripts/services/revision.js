@@ -1,5 +1,27 @@
 'use strict';
-angular.module('contentful').factory('revision', ['$rootScope', '$http', '$q', 'environment', 'logger', function RevisionFactory($rootScope, $http, $q, environment, logger) {
+angular.module('contentful')
+.factory('revision', ['$injector', function($injector) {
+  var logger = $injector.get('logger');
+  var $http = $injector.get('$http');
+  var environment = $injector.get('environment');
+
+  return {
+    hasNewVersion: function() {
+      var transformResponse = $http.defaults.transformResponse.slice();
+      transformResponse.unshift(hideManifestErrors);
+
+      var random = Math.ceil(Math.random()*10000000);
+
+      return $http.get('/revision.json?cfv='+random, {
+        transformResponse: transformResponse,
+      }).then(function (response) {
+        return response && response.data &&
+               response.data.git_revision &&
+               response.data.git_revision !== environment.gitRevision;
+      });
+    }
+  };
+
   function hideManifestErrors(response, getHeader) {
     if(getHeader('Content-Type') === 'application/json' && _.isString(response)){
       try {
@@ -11,22 +33,4 @@ angular.module('contentful').factory('revision', ['$rootScope', '$http', '$q', '
     }
     return response;
   }
-
-  return {
-    hasNewVersion: function() {
-      $http.defaults.transformResponse.unshift(hideManifestErrors);
-
-      return $http.get('/revision.json?cfv='+Math.ceil(Math.random()*10000000)).
-      then(function (response) {
-        if(response && response.data &&
-           response.data.git_revision &&
-           response.data.git_revision !== environment.gitRevision){
-          return $q.reject('APP_REVISION_CHANGED');
-        }
-      }).
-      finally(function () {
-        $http.defaults.transformResponse.shift();
-      });
-    }
-  };
 }]);
