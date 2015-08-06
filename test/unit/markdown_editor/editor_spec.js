@@ -3,27 +3,25 @@
 describe('Markdown editor', function () {
   var $timeout;
   var textarea, editor, actions, wrapper, cm;
+  var libs = window.cfLibs.markdown;
 
   beforeEach(function () {
     module('contentful/test');
-
-    inject(function ($injector) {
-      $timeout = $injector.get('$timeout');
-      var MarkdownEditor = $injector.get('MarkdownEditor');
-      textarea = document.createElement('textarea');
-      document.body.appendChild(textarea);
-      editor = MarkdownEditor.createManually(textarea, window.CodeMirror, window.marked);
-      actions = editor.actions;
-      wrapper = editor.getWrapper();
-      cm = wrapper.getEditor();
-    });
+    $timeout = this.$inject('$timeout');
+    var MarkdownEditor = this.$inject('MarkdownEditor');
+    textarea = document.createElement('textarea');
+    document.body.appendChild(textarea);
+    editor = MarkdownEditor.createManually(textarea, libs.CodeMirror, libs.marked);
+    actions = editor.actions;
+    wrapper = editor.getWrapper();
+    cm = wrapper.getEditor();
   });
 
   describe('Synchronization', function () {
     it('allows to register notification callback', function () {
       var notificationSpy = sinon.stub();
       editor.subscribe(notificationSpy);
-      editor.alterValue('test');
+      editor.setContent('test');
       $timeout.flush();
       sinon.assert.called(notificationSpy);
     });
@@ -50,14 +48,14 @@ describe('Markdown editor', function () {
         done();
       });
 
-      editor.alterValue('__test__');
+      editor.setContent('__test__');
       $timeout.flush();
     });
 
     it('stops notifying after editor is destroyed', function () {
       var notificationSpy = sinon.spy();
       editor.subscribe(notificationSpy);
-      editor.alterValue('test');
+      editor.setContent('test');
       editor.destroy();
       $timeout.flush();
       sinon.assert.notCalled(notificationSpy);
@@ -117,9 +115,9 @@ describe('Markdown editor', function () {
     });
 
     it('history actions: undo/redo things', function () {
-      editor.alterValue('test');
+      editor.setContent('test');
       actions.undo();
-      // after initial "alterValue" call, history tracking starts
+      // after initial "setContent" call, history tracking starts
       expect(wrapper.getValue()).toBe('test');
       wrapper.moveToLineEnd();
       wrapper.insertAtCursor(' content');
@@ -133,9 +131,8 @@ describe('Markdown editor', function () {
     describe('headers', function () {
       var headers = { h1: '#', h2: '##', h3: '###' };
 
-      Object.keys(headers).forEach(function (header) {
+      _.forEach(headers, function (prefix, header) {
         it('for header ' + header + ': toggles marker, keeps cursor position', function () {
-          var prefix = headers[header];
           cm.setValue('test');
           cm.setCursor({ line: 0, ch: 2 });
           actions[header]();
@@ -177,9 +174,7 @@ describe('Markdown editor', function () {
     describe('code/quote', function () {
       var markers = { code: '    ', quote: '> ' };
 
-      Object.keys(markers).forEach(function (marker) {
-        var prefix = markers[marker];
-
+      _.forEach(markers, function (prefix, marker) {
         it('for ' + marker + ': toggles marker in current line, saves cursor position', function () {
           cm.setValue('test');
           cm.setCursor({ line: 0, ch: 2 });
@@ -219,9 +214,7 @@ describe('Markdown editor', function () {
 
       function selectAll() { cm.setSelection({ line: 0, ch: 0 }, { line: 2, ch: Infinity }); }
 
-      Object.keys(lists).forEach(function (list) {
-        var prefix = lists[list];
-
+      _.forEach(lists, function (prefix, list) {
         it('for ' + list + ': inserts marker in empty line', function () {
           actions[list]();
           expect(cm.getValue()).toBe(prefix);

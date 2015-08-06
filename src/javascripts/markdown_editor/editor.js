@@ -21,10 +21,12 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
   function create(textarea, CodeMirror, marked) {
     var NOTIFY_INTERVAL = 250;
     var WORDS_PER_MINUTE = 200;
-    var DESTROYED = false;
-    var NOTIFY, SUBSCRIBER_CB;
 
+    var destroyed = false;
+    var notificationTimeout;
+    var subscriberCb = null;
     var previousValue = null;
+
     var e = createWrapper(textarea, CodeMirror);
     var renderMarkdown = createRenderer(marked);
     var quoteToggleFn = createPrefixToggleFn('> ');
@@ -51,19 +53,19 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
         dedent: dedent,
         table:  insertTable
       },
-      subscribe:       function (cb) { SUBSCRIBER_CB = cb; },
+      subscribe:       function (cb) { subscriberCb = cb; },
       insert:          function (text) { e.insertAtCursor(text); },
       getWrapper:      function () { return e; },
-      alterValue:      alterValue,
+      setContent:      setContent,
       destroy:         destroy
     };
 
     function scheduleSubscriberNotification() {
-      NOTIFY = $timeout(notifySubscriber, NOTIFY_INTERVAL);
+      notificationTimeout = $timeout(notifySubscriber, NOTIFY_INTERVAL);
     }
 
     function notifySubscriber() {
-      if (DESTROYED) { return; }
+      if (destroyed) { return; }
       var value = e.getValue();
       // check if something changed
       if (value === previousValue) {
@@ -82,26 +84,27 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
         time: Math.round(words / WORDS_PER_MINUTE)
       };
 
-      if (SUBSCRIBER_CB) {
-        SUBSCRIBER_CB(value, html, info);
+      if (subscriberCb) {
+        subscriberCb(value, html, info);
       }
 
       scheduleSubscriberNotification();
     }
 
-    function alterValue(value) {
+    function setContent(value) {
       if (e.getValue() === value) { return; }
       var line = e.getCurrentLineNumber();
       var ch = e.getCurrentCharacter();
       e.setValue(value);
       e.restoreCursor(ch, line);
-      // enable undo/redo
+      // enable undo/redo, by default "undoDepth" is set to 0
+      // we set it here so we cannot undo setting initial value (first "setValue" call)
       e.opt('undoDepth', 200);
     }
 
     function destroy() {
-      DESTROYED = true;
-      $timeout.cancel(NOTIFY);
+      destroyed = true;
+      $timeout.cancel(notificationTimeout);
       e.destroy();
     }
 
@@ -287,17 +290,11 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
     function forLineIn(selection, cb) {
       // anchor/head depend on selection direction, so min & max have to be used
       var lines = [selection.anchor.line, selection.head.line];
-      var i = get('min');
-      var max = get('max');
-      var n = 1;
+      var lineRange = _.range(_.min(lines), _.max(lines) + 1);
 
-      while (i <= max) {
-        cb(i, n);
-        i += 1;
-        n += 1;
-      }
-
-      function get(method) { return Math[method].apply(Math, lines); }
+      _.forEach(lineRange, function (lineNumber, i) {
+        cb(lineNumber, i + 1);
+      });
     }
   }
 }]);

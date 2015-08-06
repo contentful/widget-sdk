@@ -10,7 +10,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
   var LinkOrganizer     = $injector.get('LinkOrganizer');
 
   return {
-    restrict: 'A',
+    restrict: 'E',
     template: JST['cf_markdown_editor'](),
     scope: {
       field: '=',
@@ -51,10 +51,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
       function handleValueChange(value) {
         if (scope.isInitialized) {
-          editor.alterValue(value);
+          editor.setContent(value);
         } else {
           scope.isInitialized = true;
-          editor.alterValue(value);
+          editor.setContent(value);
           editor.subscribe(receiveData);
         }
       }
@@ -123,8 +123,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       }
 
       function makeLink(data) {
-        if (!data.title) { return '<' + data.url + '>'; }
-        return '[' + data.title + '](' + data.url + ')';
+        if (data.title) {
+          return '[' + data.title + '](' + data.url + ')';
+        }
+        return '<' + data.url + '>';
       }
 
       function organizeLinks() {

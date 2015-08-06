@@ -1,0 +1,10 @@
+cf-markdown-editor(
+  field-data="fieldData"
+  field="field"
+  locale="locale"
+  space-context="spaceContext")
+textarea.markdown-transfer-textarea(
+  ng-model="fieldData.value"
+  ng-trim="false"
+  ot-subdoc
+  ot-bind-text)

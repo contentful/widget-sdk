@@ -3,22 +3,28 @@
 describe('cfMarkdownEditor', function () {
   var $timeout;
   var scope, textarea, editor;
+  var libs = window.cfLibs.markdown;
 
   beforeEach(function () {
     module('contentful/test');
 
-    inject(function ($rootScope, $compile, $injector) {
-      $timeout = $injector.get('$timeout');
-      var compiled = $compile('<div cf-markdown-editor field-data="fieldData"></div>');
-      var elem = compiled(_.extend($rootScope.$new(), { fieldData: { value: 'test' } }));
-      textarea = elem.find('textarea').get(0);
-      scope = elem.isolateScope();
+    $timeout = this.$inject('$timeout');
+    var $q = this.$inject('$q');
+    var MarkdownEditor = this.$inject('MarkdownEditor');
+    var scopeProps = { fieldData: { value: 'test' } };
 
-      // resolves editor's lazy-load promise, subscribes for changes:
-      scope.$apply();
-      // can get CodeMirror instance from DOM node now:
-      editor = elem.find('.CodeMirror').get(0).CodeMirror;
+    sinon.stub(MarkdownEditor, 'create', function (textarea) {
+      return $q.when(MarkdownEditor.createManually(textarea, libs.CodeMirror, libs.marked));
     });
+
+    var elem = this.$compile('<cf-markdown-editor field-data="fieldData" />', scopeProps);
+    textarea = elem.find('textarea').get(0);
+    scope = elem.isolateScope();
+
+    // resolves editor's lazy-load promise, subscribes for changes:
+    scope.$apply();
+    // can get CodeMirror instance from DOM node now:
+    editor = elem.find('.CodeMirror').get(0).CodeMirror;
   });
 
   it('Initializes editor with data from scope', function () {

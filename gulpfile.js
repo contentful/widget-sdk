@@ -3,6 +3,7 @@
 var _           = require('lodash-node/modern');
 var Promise     = require('promise');
 var browserify  = require('browserify');
+var glob        = require('glob');
 var clean       = require('gulp-clean');
 var concat      = require('gulp-concat');
 var exec        = require('child_process').exec;
@@ -196,7 +197,7 @@ gulp.task('js/vendor/main', function () {
 });
 
 gulp.task('js/vendor/markdown', function () {
-  return browserify({debug: false})
+  return browserify()
     .add('./src/markdown_vendors.js')
     .bundle()
     .on('error', errorHandler('Browserify'))
@@ -464,13 +465,11 @@ function writeBuild (dir) {
  * create a manifest for them.
  */
 gulp.task('rev-static', function () {
-  var stream = gulp.src([
-    'public/app/**',
-    '!**/!(kaltura|markdown_vendors).js',
-    '!**/*.css',
-  ], {base: 'public'});
+  var files = glob.sync('public/app/**/*.!(js|css)');
+  files.push('public/app/kaltura.js');
+  files.push('public/app/markdown_vendors.js');
 
-  return stream
+  return gulp.src(files, {base: 'public'})
     .pipe(writeBuild())
     .pipe(rev())
     .pipe(writeBuild())

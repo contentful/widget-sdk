@@ -7,16 +7,16 @@ angular.module('contentful').factory('LazyLoader', ['$injector', function ($inje
   var $rootScope = $injector.get('$rootScope');
   var load       = $injector.get('angularLoad').loadScript;
   var env        = $injector.get('environment');
-  var packages   = $injector.get('LazyLoader/packages');
+  var scripts    = $injector.get('LazyLoader/scripts');
+
   var store      = {};
+  var cache      = {};
 
   $window.cfFeedLazyLoader = provide;
 
   return {
     provide: provide,
-    get: get,
-    _store: store,
-    _packages: packages
+    get: get
   };
 
   function provide(name, value) {
@@ -26,29 +26,24 @@ angular.module('contentful').factory('LazyLoader', ['$injector', function ($inje
   }
 
   function get(name) {
-    // no package definition at all
-    var definition = packages[name];
-    if (!definition) {
-      return $q.reject(new Error('No definition for requested value.'));
+    // no script definition at all
+    var script = scripts[name];
+    if (!script) {
+      return $q.reject(new Error('No script with requested name.'));
     }
 
-    // check if package can be derived from global values
-    var globalValue = _.isFunction(definition.fromGlobal) ? definition.fromGlobal() : null;
-    if (globalValue) {
-      return $q.when(globalValue);
-    }
+    // use cached promise
+    var cached = cache[name];
+    if (cached) { return cached; }
 
-    // use cached package
-    var value = store[name];
-    if (value) {
-      return $q.when(value);
-    }
-
-    // issue request to get value
-    return load(getAssetUrl(definition.script)).then(function () {
+    // issue HTTP request to get value
+    var loadPromise = load(getAssetUrl(script)).then(function () {
       var value = store[name];
       return value ? value : $q.reject(new Error('Script loaded, but no value provided.'));
     });
+
+    cache[name] = loadPromise;
+    return loadPromise;
   }
 
   function getAssetUrl(file) {
@@ -56,13 +51,6 @@ angular.module('contentful').factory('LazyLoader', ['$injector', function ($inje
   }
 }]);
 
-angular.module('contentful').value('LazyLoader/packages', {
-  markdown: {
-    script: '/app/markdown_vendors.js',
-    fromGlobal: function () {
-      if (window.CodeMirror && window.marked) {
-        return { CodeMirror: window.CodeMirror, marked: window.marked };
-      }
-    }
-  }
+angular.module('contentful').value('LazyLoader/scripts', {
+  markdown: '/app/markdown_vendors.js'
 });

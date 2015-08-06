@@ -2,6 +2,7 @@
 
 describe('Markdown renderer', function () {
   var render;
+  var marked = window.cfLibs.markdown.marked;
 
   function assertRenderedContains(md, html) {
     expect(render(md).indexOf(html) > -1).toBe(true);
@@ -9,10 +10,8 @@ describe('Markdown renderer', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    inject(function ($injector) {
-      var create = $injector.get('MarkdownEditor/createMarkdownRenderer');
-      render = create(window.marked);
-    });
+    var create = this.$inject('MarkdownEditor/createMarkdownRenderer');
+    render = create(marked);
   });
 
   it('renders links with target=_blank', function () {

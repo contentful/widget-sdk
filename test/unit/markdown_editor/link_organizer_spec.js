@@ -5,10 +5,7 @@ describe('Link organizer', function () {
 
   beforeEach(function () {
     module('contentful/test');
-
-    inject(function ($injector) {
-      LinkOrganizer = $injector.get('LinkOrganizer');
-    });
+    LinkOrganizer = this.$inject('LinkOrganizer');
   });
 
   describe('Inline link finder', function () {

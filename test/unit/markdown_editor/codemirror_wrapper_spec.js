@@ -2,27 +2,25 @@
 
 describe('CodeMirror wrapper', function () {
   var textarea, wrapper, cm, focusSpy;
+  var CodeMirror = window.cfLibs.markdown.CodeMirror;
 
   function assertHasFocused() { sinon.assert.called(focusSpy); }
   function assertHasNotFocused() { sinon.assert.notCalled(focusSpy); }
 
   beforeEach(function () {
     module('contentful/test');
-
-    inject(function ($injector) {
-      var createWrapper = $injector.get('MarkdownEditor/createCodeMirrorWrapper');
-      textarea = document.createElement('textarea');
-      document.body.appendChild(textarea);
-      wrapper = createWrapper(textarea, window.CodeMirror);
-      cm = wrapper.getEditor();
-      focusSpy = sinon.spy();
-      cm.on('focus', focusSpy);
-    });
+    var createWrapper = this.$inject('MarkdownEditor/createCodeMirrorWrapper');
+    textarea = document.createElement('textarea');
+    document.body.appendChild(textarea);
+    wrapper = createWrapper(textarea, CodeMirror);
+    cm = wrapper.getEditor();
+    focusSpy = sinon.spy();
+    cm.on('focus', focusSpy);
   });
 
   describe('Wrapper creation', function () {
     it('wraps CodeMirror instance', function () {
-      expect(cm instanceof window.CodeMirror).toBe(true);
+      expect(cm instanceof CodeMirror).toBe(true);
       expect(cm.getTextArea()).toBe(textarea);
     });
 
@@ -44,20 +42,20 @@ describe('CodeMirror wrapper', function () {
   });
 
   describe('Getter methods', function () {
-    it('1) simple getter methods', function () {
+    it('simple getter methods', function () {
       expect(wrapper.getNl()).toBe('\n');
       expect(wrapper.getIndentation()).toBe('  ');
       expect(wrapper.opt('mode')).toBe('gfm');
       assertHasNotFocused();
     });
 
-    it('2) value getter', function () {
+    it('value getter', function () {
       cm.setValue('test');
       expect(wrapper.getValue()).toBe('test');
       assertHasNotFocused();
     });
 
-    it('3) line value getter', function () {
+    it('line value getter', function () {
       cm.setValue('line 1\nline 2\nline 3, last');
       expect(wrapper.getLine(0)).toBe('line 1');
       expect(wrapper.getLine(1)).toBe('line 2');
@@ -67,7 +65,7 @@ describe('CodeMirror wrapper', function () {
       assertHasNotFocused();
     });
 
-    it('4) position getters', function () {
+    it('position getters', function () {
       cm.setValue('test\ntest');
       cm.setCursor({ line: 1, ch: 1 });
       expect(wrapper.getCurrentLineNumber()).toBe(1);
@@ -75,7 +73,7 @@ describe('CodeMirror wrapper', function () {
       assertHasNotFocused();
     });
 
-    it('5) starting substring test', function () {
+    it('starting substring test', function () {
       cm.setValue('testing');
       expect(wrapper.lineStartsWith('test')).toBe(true);
       expect(wrapper.lineStartsWith('xtest')).toBe(false);
@@ -136,7 +134,7 @@ describe('CodeMirror wrapper', function () {
 
     beforeEach(function () { cm.setValue(val); });
 
-    it('1) line jumping, end/beginning', function () {
+    it('line jumping, end/beginning', function () {
       cm.setCursor({ line: 0, ch: 3 });
       wrapper.moveToLineBeginning();
       expect(wrapper.getCurrentCharacter()).toBe(0);
@@ -145,7 +143,7 @@ describe('CodeMirror wrapper', function () {
       assertHasFocused();
     });
 
-    describe('2) cursor movement', function () {
+    describe('cursor movement', function () {
       it('moves cursor around, within current line', function () {
         wrapper.restoreCursor(2);
         expect(wrapper.getCurrentLineNumber()).toBe(0);
@@ -161,7 +159,7 @@ describe('CodeMirror wrapper', function () {
       });
     });
 
-    describe('3) jumping to next line', function () {
+    describe('jumping to next line', function () {
       it('moves to next line if current line is not empty', function () {
         cm.setCursor({ line: 0, ch: 2 });
         wrapper.moveIfNotEmpty();

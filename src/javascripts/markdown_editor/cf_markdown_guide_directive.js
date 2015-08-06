@@ -2,7 +2,7 @@
 
 angular.module('contentful').directive('cfMarkdownGuide', function (){
   return {
-    restrict: 'A',
+    restrict: 'E',
     template: JST['cf_markdown_guide'](),
     scope: {},
     link: function (scope, elem) {

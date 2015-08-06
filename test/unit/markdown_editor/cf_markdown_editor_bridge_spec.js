@@ -6,16 +6,19 @@ describe('cfMarkdownEditorBridge', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('otBindModel');
+      $provide.removeDirectives('cfMarkdownEditor');
     });
 
-    inject(function ($rootScope, $compile, $q) {
-      scope = $rootScope;
-      scope.otEditable = true;
-      scope.fieldData = {value: null};
-      scope.otChangeValue = sinon.stub().returns($q.when());
-      var elem = $compile('<div cf-markdown-editor-bridge></div>')(scope);
-      textarea = elem.find('.markdown-transfer-textarea').get(0);
-    });
+    var resolved = this.$inject('$q').when();
+    var scopeProps = {
+      otEditable: true,
+      fieldData: { value: null },
+      otChangeValue: sinon.stub().returns(resolved)
+    };
+
+    var elem = this.$compile('<cf-markdown-editor-bridge />', scopeProps);
+    scope = elem.scope();
+    textarea = elem.find('.markdown-transfer-textarea').get(0);
   });
 
   it('Dispatches paste event on model change', function () {
