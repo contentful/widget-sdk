@@ -12,6 +12,13 @@ $markdown-guide-height = 350
   position: relative
   border: 1px solid $gray-light
 
+.markdown-loaded
+  visibility: hidden
+  height: 1px
+  &.visible
+    visibility: visible
+    height: auto
+
 .markdown-actions
   width: 90%
 
@@ -27,6 +34,9 @@ $markdown-guide-height = 350
 .markdown-info
   border: 1px solid $gray-light
   border-width: 0 1px
+
+.markdown-editing-area textarea
+  height: 1px
 
 .markdown-preview,
 .markdown-html

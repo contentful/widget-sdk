@@ -12,7 +12,7 @@ describe('Markdown editor', function () {
       var MarkdownEditor = $injector.get('MarkdownEditor');
       textarea = document.createElement('textarea');
       document.body.appendChild(textarea);
-      editor = MarkdownEditor.create(textarea);
+      editor = MarkdownEditor.createManually(textarea, window.CodeMirror, window.marked);
       actions = editor.actions;
       wrapper = editor.getWrapper();
       cm = wrapper.getEditor();

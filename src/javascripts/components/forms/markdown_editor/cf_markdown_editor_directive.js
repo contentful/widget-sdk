@@ -20,12 +20,13 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
     },
     link: function (scope, el) {
       var textarea = el.find('textarea').get(0);
-      var editor = MarkdownEditor.create(textarea);
       var currentMode = 'md';
+      var editor = null;
 
       scope.isInitialized = false;
       scope.firstSyncDone = false;
-      scope.actions = editor.actions;
+      scope.hasCrashed = false;
+      scope.isReady = isReady;
       scope.preview = '';
       scope.info = {};
       scope.setMode = setMode;
@@ -36,22 +37,26 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.insertTable = insertTable;
       scope.insertSpecial = insertSpecialCharacter;
 
-      scope.$watch('fieldData.value', handleValueChange);
-
-      scope.$on('$destroy', function() {
-        editor.destroy();
-        scope = null;
+      MarkdownEditor.create(textarea).then(function (editorInstance) {
+        editor = editorInstance;
+        scope.actions = editor.actions;
+        scope.$watch('fieldData.value', handleValueChange);
+        scope.$on('$destroy', function () {
+          editor.destroy();
+          scope = null;
+        });
+      }).catch(function () {
+        scope.hasCrashed = true;
       });
 
       function handleValueChange(value) {
         if (scope.isInitialized) {
           editor.alterValue(value);
-          return;
+        } else {
+          scope.isInitialized = true;
+          editor.alterValue(value);
+          editor.subscribe(receiveData);
         }
-
-        scope.isInitialized = true;
-        editor.alterValue(value);
-        editor.subscribe(receiveData);
       }
 
       function receiveData(value, preview, info) {
@@ -61,6 +66,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
           scope.info = info;
           scope.firstSyncDone = true;
         });
+      }
+
+      function isReady() {
+        return scope.isInitialized && scope.firstSyncDone;
       }
 
       function setMode(mode) {

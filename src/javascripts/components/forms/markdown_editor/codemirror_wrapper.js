@@ -1,8 +1,17 @@
 'use strict';
 
-angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', [function () {
-  return function(textarea) {
-    /*global CodeMirror*/
+angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', ['$injector', function ($injector) {
+
+  var $timeout = $injector.get('$timeout');
+
+  return function(textarea, CodeMirror) {
+
+    var EDITOR_SIZE = {
+      min: 300,
+      max: 500,
+      shift: 50
+    };
+
     var cm = CodeMirror.fromTextArea(textarea, {
       mode: 'gfm',
       lineNumbers: false,
@@ -16,13 +25,8 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', [
       indentUnit: 2
     });
 
-    cm.on('change', function() {
-      var MIN = 300, MAX = 600, OFFSET = 50;
-      var current = cm.heightAtLine(Infinity, 'local') + OFFSET;
-      if (current < MIN) { cm.setSize(null, MIN); }
-      else if (current > MAX) { cm.setSize(null, MAX); }
-      else { cm.setSize(null, current); }
-    });
+    cm.setSize('100%', EDITOR_SIZE.min);
+    cm.on('change', assureHeight);
 
     cm.setOption('extraKeys', {
       Tab: function () { replaceSelectedText(getIndentation()); },
@@ -63,6 +67,20 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', [
       getNl:                   getNl,
       getValue:                getValue
     };
+
+    function assureHeight() {
+      refresh();
+      var current = cm.heightAtLine(cm.lastLine(), 'local') + EDITOR_SIZE.shift;
+      var next = current;
+      if (current < EDITOR_SIZE.min) { next = EDITOR_SIZE.min; }
+      if (current > EDITOR_SIZE.max) { next = EDITOR_SIZE.max; }
+      cm.setSize('100%', next);
+      refresh();
+    }
+
+    function refresh() {
+      $timeout(_.bind(cm.refresh, cm));
+    }
 
     /**
      * low-level editor manipulation functions

@@ -3,19 +3,30 @@
 angular.module('contentful').factory('MarkdownEditor', ['$injector', function($injector) {
 
   var $timeout       = $injector.get('$timeout');
-  var renderMarkdown = $injector.get('MarkdownEditor/customRenderer');
+  var createRenderer = $injector.get('MarkdownEditor/createMarkdownRenderer');
   var createWrapper  = $injector.get('MarkdownEditor/createCodeMirrorWrapper');
+  var LazyLoader     = $injector.get('LazyLoader');
 
-  return { create: create };
+  return {
+    create:         loadAndCreate,
+    createManually: create
+  };
 
-  function create(textarea) {
+  function loadAndCreate(textarea) {
+    return LazyLoader.get('markdown').then(function (libs) {
+      return create(textarea, libs.CodeMirror, libs.marked);
+    });
+  }
+
+  function create(textarea, CodeMirror, marked) {
     var NOTIFY_INTERVAL = 250;
     var WORDS_PER_MINUTE = 200;
     var DESTROYED = false;
     var NOTIFY, SUBSCRIBER_CB;
 
     var previousValue = null;
-    var e = createWrapper(textarea);
+    var e = createWrapper(textarea, CodeMirror);
+    var renderMarkdown = createRenderer(marked);
     var quoteToggleFn = createPrefixToggleFn('> ');
     var codeToggleFn = createPrefixToggleFn('    ');
 
@@ -52,6 +63,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
     }
 
     function notifySubscriber() {
+      if (DESTROYED) { return; }
       var value = e.getValue();
       // check if something changed
       if (value === previousValue) {
@@ -69,8 +81,6 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
         words: words < 0 ? 0 : words,
         time: Math.round(words / WORDS_PER_MINUTE)
       };
-
-      if (DESTROYED) { return; }
 
       if (SUBSCRIBER_CB) {
         SUBSCRIBER_CB(value, html, info);

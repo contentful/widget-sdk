@@ -1,9 +1,12 @@
-.markdown-loading(ng-show="!isInitialized || !firstSyncDone")
-  p
-    | Initializing Markdown editor&nbsp;
-    i.fa.fa-spinner.fa-spin
+.markdown-loading(ng-if="!isReady() && !hasCrashed")
+  | Initializing Markdown editor&nbsp;
+  i.fa.fa-spinner.fa-spin
 
-.markdown-loaded(ng-show="isInitialized && firstSyncDone")
+.markdown-crashed(ng-if="hasCrashed")
+  | Markdown editor has crashed, please refresh the page&nbsp;
+  i.fa.fa-warning
+
+.markdown-loaded(ng-class="{'visible': isReady() && !hasCrashed}")
   .markdown-toolbar
     .markdown-actions(ng-class="{'preview-mode': !inMode('md')}")
 

@@ -13,7 +13,7 @@ describe('CodeMirror wrapper', function () {
       var createWrapper = $injector.get('MarkdownEditor/createCodeMirrorWrapper');
       textarea = document.createElement('textarea');
       document.body.appendChild(textarea);
-      wrapper = createWrapper(textarea);
+      wrapper = createWrapper(textarea, window.CodeMirror);
       cm = wrapper.getEditor();
       focusSpy = sinon.spy();
       cm.on('focus', focusSpy);
@@ -22,8 +22,7 @@ describe('CodeMirror wrapper', function () {
 
   describe('Wrapper creation', function () {
     it('wraps CodeMirror instance', function () {
-      /*global CodeMirror*/
-      expect(cm instanceof CodeMirror).toBe(true);
+      expect(cm instanceof window.CodeMirror).toBe(true);
       expect(cm.getTextArea()).toBe(textarea);
     });
 

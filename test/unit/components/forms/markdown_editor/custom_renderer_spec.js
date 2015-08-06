@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Custom Markdown renderer', function () {
+describe('Markdown renderer', function () {
   var render;
 
   function assertRenderedContains(md, html) {
@@ -10,7 +10,8 @@ describe('Custom Markdown renderer', function () {
   beforeEach(function () {
     module('contentful/test');
     inject(function ($injector) {
-      render = $injector.get('MarkdownEditor/customRenderer');
+      var create = $injector.get('MarkdownEditor/createMarkdownRenderer');
+      render = create(window.marked);
     });
   });
 
