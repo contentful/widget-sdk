@@ -2,13 +2,19 @@
 
 describe('widgets/deprecations', function() {
   var createFilter;
-  var deprecate;
+  var deprecations;
+
+  function deprecate (widgetId, deprecation) {
+    deprecations[widgetId] = deprecation;
+  }
+
 
   beforeEach(function() {
     module('contentful/test');
-    var deprecations = this.$inject('widgets/deprecations');
-    createFilter = deprecations.createFilter;
-    deprecate = deprecations.deprecate;
+    deprecations = this.$inject('widgets/deprecations/data');
+
+    var deprecator = this.$inject('widgets/deprecations');
+    createFilter = deprecator.createFilter;
   });
 
   it('removes deprecated widget if field matches', function () {

@@ -1,32 +1,29 @@
 'use strict';
 
+angular.module('contentful')
+
+.value('widgets/deprecations/data', {
+  youtubeEditor: {
+    alternative: 'Embedded Content',
+    preview: true
+  },
+  dropdown: {
+    alternative: 'Radio',
+    field: ['Boolean']
+  }
+})
+
+
 /**
  * @ngdoc service
  * @name widgets/deprecations
  */
-angular.module('contentful')
-.factory('widgets/deprecations', [function () {
-
-  var DEPRECATIONS = {
-    youtubeEditor: {
-      alternative: 'Embedded Content',
-      preview: true
-    },
-    dropdown: {
-      alternative: 'Radio',
-      field: ['Boolean']
-    }
-  };
+.factory('widgets/deprecations', ['$injector', function ($injector) {
+  var DEPRECATIONS = $injector.get('widgets/deprecations/data');
 
   return {
     createFilter: createFilter,
-    deprecate: deprecate
   };
-
-
-  function deprecate (widgetId, deprecation) {
-    DEPRECATIONS[widgetId] = deprecation;
-  }
 
 
   /**
