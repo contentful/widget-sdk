@@ -49,9 +49,10 @@ angular.module('contentful')
           searchTermRe = new RegExp($scope.searchTerm.toLowerCase(), 'gi');
         } catch(exp) {
           notification.warn('Invalid search term');
-          return true;
         }
-        return searchTermRe.test(contentType.getName());
+        if (searchTermRe) {
+          return searchTermRe.test(contentType.getName());
+        }
       }
       switch ($scope.context.list) {
         case 'changed':
