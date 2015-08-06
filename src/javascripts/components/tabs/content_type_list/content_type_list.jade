@@ -46,7 +46,7 @@
     .main-results-wrapper
       table.result-list.main-results.animated
         tbody
-          tr(ng-repeat="contentType in visibleContentTypes = (contentTypes | filter:visibleInCurrentList) track by contentType.getId()"
+          tr(ng-repeat="contentType in visibleContentTypes track by contentType.getId()"
               ng-init="entityNavState='spaces.detail.content_types.detail({ contentTypeId: contentType.getId() })'"
               ui-sref="{{entityNavState}}")
             td.cell-display-name

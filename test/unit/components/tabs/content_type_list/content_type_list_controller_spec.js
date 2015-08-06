@@ -3,7 +3,7 @@
 describe('Content Type List Controller', function () {
   var controller, scope, stubs;
 
-  var makeCT = function () {
+  function makeCT (extensions) {
     var ct;
     inject(function (cfStub) {
       var space = cfStub.space('spaceid');
@@ -14,8 +14,8 @@ describe('Content Type List Controller', function () {
     stubs.hasUnpublishedChanges = sinon.stub(ct, 'hasUnpublishedChanges');
     stubs.publishedAt = sinon.stub(ct, 'getPublishedAt');
     ct.getName = stubs.getName;
-    return ct;
-  };
+    return _.extend(ct, extensions);
+  }
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -134,46 +134,23 @@ describe('Content Type List Controller', function () {
     });
   });
 
-  describe('changed list', function () {
-    it('content type is filtered by search', function () {
-      var contentType = makeCT();
-      stubs.getName.returns('Type Name');
-      scope.searchTerm = 'type';
-      expect(scope.visibleInCurrentList(contentType)).toBeTruthy();
+  describe('scope.visibleContentTypes', function () {
+    it('only contains content types matched by the search', function () {
+      var matched = makeCT({getName: sinon.stub().returns('MATCH')});
+      var unmatched = makeCT();
+      scope.contentTypes = [matched, unmatched];
+      this.$apply();
+      expect(scope.visibleContentTypes).toEqual([matched, unmatched]);
+
+      scope.searchTerm = 'MAT';
+      this.$apply();
+      expect(scope.visibleContentTypes).toEqual([matched]);
     });
 
-    it('content type is included in all', function () {
-      var contentType = makeCT();
-      stubs.deleted.returns(false);
-      scope.context.list = 'all';
-      expect(scope.visibleInCurrentList(contentType)).toBeTruthy();
-    });
-
-    it('content type is included in changed', function () {
-      var contentType = makeCT();
-      stubs.hasUnpublishedChanges.returns(true);
-      scope.context.list = 'changes';
-      expect(scope.visibleInCurrentList(contentType)).toBeTruthy();
-    });
-
-    it('content type is included in active', function () {
-      var contentType = makeCT();
-      stubs.published.returns(true);
-      scope.context.list = 'active';
-      expect(scope.visibleInCurrentList(contentType)).toBeTruthy();
-    });
-
-    it('content type is included in draft', function () {
-      var contentType = makeCT();
-      stubs.published.returns(false);
-      scope.context.list = 'draft';
-      expect(scope.visibleInCurrentList(contentType)).toBeTruthy();
-    });
-
-    it('content type is not contained in any list', function () {
-      var contentType = makeCT();
-      scope.context.list = '';
-      expect(scope.visibleInCurrentList(contentType)).toBeTruthy();
+    it('it does not include deleted content types', function () {
+      scope.contentTypes = [makeCT({isDeleted: sinon.stub().returns(true)})];
+      this.$apply();
+      expect(scope.visibleContentTypes.length).toBe(0);
     });
   });
 
