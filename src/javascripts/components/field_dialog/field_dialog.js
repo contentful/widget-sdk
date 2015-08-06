@@ -243,6 +243,9 @@ angular.module('contentful')
   $scope.$watch('availableWidgets', function (available) {
     if (!available) { return; }
     var selected = _.findIndex(available, {id: $scope.widgetSettings.id});
+    if (selected < 0) {
+      selected = 0;
+    }
     $scope.selectWidget(selected);
   });
 
