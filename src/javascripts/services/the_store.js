@@ -121,7 +121,7 @@ angular.module('contentful').factory('TheStore/localStorageWrapper', function() 
   _.forEach(methods, function(method) {
     wrapper[method] = function() {
       var args = Array.prototype.slice.call(arguments);
-      window.localStorage[method].apply(window.localStorage, args);
+      return window.localStorage[method].apply(window.localStorage, args);
     };
   });
 
