@@ -34,9 +34,7 @@
     width: 80px
     height: 80px
     margin: 0 auto
-    display: flex
-    justify-content: center
-    align-items: center
+    text-align: center
 
     border: 1px solid $cfnext-light-gray
     box-shadow: 0 2px 2px rgba(0,0,0,0.1)
@@ -48,6 +46,8 @@
       box-shadow: inset 0 0px 3px 2px hsla(0, 0%, 0%, 0.05)
     > cf-icon
       margin: 0 auto;
+      > svg
+        display: inline-block
 
   &__config
     width: 54em
