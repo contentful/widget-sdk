@@ -18,21 +18,22 @@ describe('Authentication service', function () {
     this.authentication = this.$inject('authentication');
     this.notification = this.$inject('notification');
     this.$location = this.$inject('$location');
+    this.TheStore = this.$inject('TheStore');
     sinon.stub(this.$location, 'hash');
     sinon.stub(this.$location, 'search');
     sinon.stub(this.$location, 'path');
 
-    sinon.stub($.cookies, 'set');
-    sinon.stub($.cookies, 'get');
-    sinon.stub($.cookies, 'del');
+    sinon.stub(this.TheStore, 'set');
+    sinon.stub(this.TheStore, 'get');
+    sinon.stub(this.TheStore, 'remove');
 
     this.QueryLinkResolver = this.$inject('privateContentfulClient').QueryLinkResolver;
   });
 
   afterEach(function () {
-    $.cookies.get.restore();
-    $.cookies.set.restore();
-    $.cookies.del.restore();
+    this.TheStore.get.restore();
+    this.TheStore.set.restore();
+    this.TheStore.remove.restore();
   });
 
   it('has a client', function () {
@@ -43,16 +44,16 @@ describe('Authentication service', function () {
     beforeEach(function () {
       this.$location.hash.returns('#access_token=logintoken');
       this.$location.search.returns({});
-      $.cookies.get.withArgs('redirect_after_login').returns(false);
+      this.TheStore.get.withArgs('redirect_after_login').returns(false);
     });
 
     describe('no notifications or redirections', function () {
       beforeEach(function () {
         this.authentication.login();
       });
-      it('saves the access token on the cookie', function () {
-        expect($.cookies.set.args[0][0]).toBe('token');
-        expect($.cookies.set.args[0][1]).toBe('logintoken');
+      it('saves the access token in the store', function () {
+        expect(this.TheStore.set.args[0][0]).toBe('token');
+        expect(this.TheStore.set.args[0][1]).toBe('logintoken');
       });
 
       it('saves the access token on a param', function () {
@@ -67,8 +68,8 @@ describe('Authentication service', function () {
         sinon.assert.notCalled(this.notification.info);
       });
 
-      it('does not delete a redirect cookie', function () {
-        sinon.assert.notCalled($.cookies.del);
+      it('does not delete a redirect store entry', function () {
+        sinon.assert.notCalled(this.TheStore.remove);
       });
 
       it('does not attempt to redirect', function () {
@@ -90,13 +91,13 @@ describe('Authentication service', function () {
 
     describe('redirection after login', function () {
       beforeEach(function () {
-        $.cookies.get.withArgs('redirect_after_login').returns('/redirection/path');
+        this.TheStore.get.withArgs('redirect_after_login').returns('/redirection/path');
         this.$location.search.returns({});
         this.authentication.login();
       });
 
-      it('deletes the redirection cookie', function () {
-        sinon.assert.calledWith($.cookies.del, 'redirect_after_login');
+      it('deletes the redirection store entry', function () {
+        sinon.assert.calledWith(this.TheStore.remove, 'redirect_after_login');
       });
 
       it('redirects the path', function () {
@@ -105,12 +106,12 @@ describe('Authentication service', function () {
     });
   });
 
-  describe('login with existing token from cookie', function () {
+  describe('login with existing token from the store', function () {
     beforeEach(function () {
       this.$location.search.returns({});
       this.$location.hash.returns('');
-      $.cookies.get.withArgs('token').returns('logintoken');
-      $.cookies.get.withArgs('redirect_after_login').returns(false);
+      this.TheStore.get.withArgs('token').returns('logintoken');
+      this.TheStore.get.withArgs('redirect_after_login').returns(false);
     });
 
     describe('no notifications or redirections', function () {
@@ -126,8 +127,8 @@ describe('Authentication service', function () {
         sinon.assert.notCalled(this.notification.info);
       });
 
-      it('does not delete a redirect cookie', function () {
-        sinon.assert.notCalled($.cookies.del);
+      it('does not delete a redirect store entry', function () {
+        sinon.assert.notCalled(this.TheStore.remove);
       });
 
       it('does not attempt to redirect', function () {
@@ -146,12 +147,12 @@ describe('Authentication service', function () {
 
     describe('redirection after login', function () {
       beforeEach(function () {
-        $.cookies.get.withArgs('redirect_after_login').returns('/redirection/path');
+        this.TheStore.get.withArgs('redirect_after_login').returns('/redirection/path');
         this.authentication.login();
       });
 
-      it('deletes the redirection cookie', function () {
-        sinon.assert.calledWith($.cookies.del, 'redirect_after_login');
+      it('deletes the redirection store entry', function () {
+        sinon.assert.calledWith(this.TheStore.remove, 'redirect_after_login');
       });
 
       it('redirects the path', function () {
@@ -165,7 +166,7 @@ describe('Authentication service', function () {
     var redirectStub;
     beforeEach(function () {
       this.$location.hash.returns('');
-      $.cookies.get.withArgs('token').returns(false);
+      this.TheStore.get.withArgs('token').returns(false);
       redirectStub = sinon.stub(this.authentication, 'redirectToLogin');
     });
 
@@ -179,11 +180,11 @@ describe('Authentication service', function () {
       sinon.assert.called(redirectStub);
     });
 
-    it('redirect is called and cookie is set', function () {
+    it('redirect is called and entry is stored', function () {
       this.$location.path.returns('/path');
       this.authentication.login();
       sinon.assert.called(redirectStub);
-      sinon.assert.calledWith($.cookies.set, 'redirect_after_login', '/path');
+      sinon.assert.calledWith(this.TheStore.set, 'redirect_after_login', '/path');
     });
   });
 
@@ -193,8 +194,8 @@ describe('Authentication service', function () {
       this.authentication.logout();
     });
 
-    it('deletes the token cookie', function () {
-      sinon.assert.calledWith($.cookies.del, 'token');
+    it('deletes the token entry', function () {
+      sinon.assert.calledWith(this.TheStore.remove, 'token');
     });
 
     it('sets the window location', inject(function ($window) {
@@ -207,8 +208,8 @@ describe('Authentication service', function () {
       this.authentication.goodbye();
     });
 
-    it('deletes the token cookie', function () {
-      sinon.assert.calledWith($.cookies.del, 'token');
+    it('deletes the token entry', function () {
+      sinon.assert.calledWith(this.TheStore.remove, 'token');
     });
 
     it('sets the window location', inject(function ($window) {
@@ -410,7 +411,7 @@ describe('Authentication service', function () {
       this.authentication._unresolvedTokenLookup = this.oldTokenLookup;
       this.authentication.tokenLookup = this.oldTokenLookup;
     });
-    
+
     it('should merge includes', function(){
       this.authentication.updateTokenLookup(this.newTokenLookup);
       var t = this.authentication.tokenLookup;

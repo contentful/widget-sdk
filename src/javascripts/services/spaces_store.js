@@ -1,17 +1,16 @@
 'use strict';
 
-angular.module('contentful').service('spacesStore', [function() {
+angular.module('contentful').service('spacesStore', ['$injector', function($injector) {
 
+  var TheStore    = $injector.get('TheStore');
   var spacesStore = this;
 
   spacesStore.saveSelectedSpace = function (id) {
-    $.cookies.set('lastUsedSpace', id, {
-      expiresAt: moment().add(1, 'y').toDate()
-    });
+    TheStore.set('lastUsedSpace', id);
   };
 
   spacesStore.getLastUsedSpace = function () {
-    return $.cookies.get('lastUsedSpace');
+    return TheStore.get('lastUsedSpace');
   };
 
   spacesStore.getSpaceFromList = function(id, existingSpaces) {

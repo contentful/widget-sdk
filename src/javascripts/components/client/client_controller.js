@@ -20,6 +20,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var revision           = $injector.get('revision');
   var ReloadNotification = $injector.get('ReloadNotification');
   var TheAccountView     = $injector.get('TheAccountView');
+  var TheStore           = $injector.get('TheStore');
 
   $controller('TrialWatchController', {$scope: $scope});
 
@@ -224,11 +225,9 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     var now = moment();
     var created = moment($scope.user.sys.createdAt);
     var age = now.diff(created, 'days');
-    var seenOnboarding = $.cookies.get('seenOnboarding');
+    var seenOnboarding = TheStore.get('seenOnboarding');
     if (age < 7 && !seenOnboarding && _.isEmpty($scope.spaces)) {
-      $.cookies.set('seenOnboarding', true, {
-        expiresAt: moment().add(1, 'y').toDate()
-      });
+      TheStore.set('seenOnboarding', true);
       $timeout(function () {
         analytics.track('Viewed Onboarding');
         $timeout(showSpaceTemplatesModal, 1500);
