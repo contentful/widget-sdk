@@ -1,15 +1,15 @@
 'use strict';
-angular.module('contentful')
-.controller('EntryActionsController',
-['$scope', '$injector', function EntryActionsController ($scope, $injector) {
-  var controller = this;
 
-  var Command      = $injector.get('command');
-  var logger       = $injector.get('logger');
-  var notification = $injector.get('notification');
+angular.module('contentful')
+.controller('EntryActionsController', ['$scope', '$injector', function EntryActionsController($scope, $injector) {
+
+  var controller   = this;
   var $rootScope   = $injector.get('$rootScope');
   var $q           = $injector.get('$q');
-
+  var notification = $injector.get('notification');
+  var logger       = $injector.get('logger');
+  var moment       = $injector.get('moment');
+  var Command      = $injector.get('command');
 
   var originalEntryData, trackedPublishedVersion, trackedPreviousVersion;
 

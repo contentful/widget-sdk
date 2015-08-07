@@ -5,6 +5,7 @@ describe('Trial Watch controller', function () {
   var trialWatchCtrl;
   var ownerStub;
   var broadcastStub;
+  var momentStub;
   var $window, $q;
 
   function makeSpace(organization) {
@@ -17,7 +18,11 @@ describe('Trial Watch controller', function () {
   }
 
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', function ($provide) {
+      momentStub = sinon.stub();
+      $provide.value('moment', momentStub);
+    });
+
     inject(function ($rootScope, $controller, _$window_, _$q_) {
       scope = $rootScope.$new();
       broadcastStub = sinon.stub($rootScope, '$broadcast');
@@ -65,11 +70,10 @@ describe('Trial Watch controller', function () {
   });
 
   describe('shows a persistent notification', function () {
-    var momentStub, diffStub;
+    var diffStub;
 
     beforeEach(function () {
       jasmine.clock().install();
-      momentStub = sinon.stub($window, 'moment');
       diffStub = sinon.stub();
       momentStub.returns({
         diff: diffStub
@@ -77,7 +81,6 @@ describe('Trial Watch controller', function () {
     });
 
     afterEach(function () {
-      momentStub.restore();
       jasmine.clock().uninstall();
     });
 
