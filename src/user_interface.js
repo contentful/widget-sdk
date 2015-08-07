@@ -19,7 +19,6 @@ if (angular) {
   constant('localesList', require('./locales_list.json')).
   constant('fileSize', require('file-size')).
   constant('redefine', require('redefine')).
-  constant('resolveResponse', require('contentful-resolve-response')).
   constant('querystring', require('querystring')).
   constant('Cookies', require('js-cookie'));
 

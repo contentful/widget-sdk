@@ -11,7 +11,7 @@ angular.module('contentful').provider('contentfulClient', ['$injector', function
   */
 
   var redefine = $injector.get('redefine');
-  var $http, $q, resolveResponse, querystring;
+  var $http, $q, querystring;
 
   var Client = redefine.Class({
     constructor: function Client(options) {
@@ -228,7 +228,6 @@ angular.module('contentful').provider('contentfulClient', ['$injector', function
   this.$get = ['$injector', function ($injector) {
     $http = $injector.get('$http');
     $q = $injector.get('$q');
-    resolveResponse = $injector.get('resolveResponse');
     querystring = $injector.get('querystring');
 
     return {
@@ -288,6 +287,27 @@ angular.module('contentful').provider('contentfulClient', ['$injector', function
     }
 
     return input;
+  }
+
+  function resolveResponse(response) {
+    walkMutate(response, isLink, function(link) {
+      return getLink(response, link) || link;
+    });
+    return response.items || [];
+  }
+
+  function isLink(object) {
+    return dotty.get(object, 'sys.type') === 'Link';
+  }
+
+  function getLink(response, link) {
+    var type = link.sys.linkType;
+    var id = link.sys.id;
+    var pred = function(resource) {
+      return resource.sys.type === type && resource.sys.id === id;
+    };
+    return _.find(response.items, pred) ||
+      response.includes && _.find(response.includes[type], pred);
   }
 
 }]);
