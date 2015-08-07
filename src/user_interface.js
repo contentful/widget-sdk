@@ -16,7 +16,6 @@ if (angular) {
   constant('mimetype', require('contentful-mimetype')).
   constant('worf', require('worf')).
   constant('stringifySafe', require('json-stringify-safe')).
-  constant('isDiacriticalMark', require('is-diacritical-mark')).
   constant('searchParser', require('./search.pegjs')).
   constant('localesList', require('./locales_list.json')).
   constant('fileSize', require('file-size')).

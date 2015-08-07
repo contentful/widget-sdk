@@ -43,7 +43,6 @@
     "gulp-uglify": "~1.0.2",
     "gulp-util": "~3.0.1",
     "highlight.js": "^8.5.0",
-    "is-diacritical-mark": "~1.0.1",
     "js-cookie": "^2.0.2",
     "json-stringify-safe": "~5.0.0",
     "karma-mocha-reporter": "^1.0.2",
