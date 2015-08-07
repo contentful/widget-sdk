@@ -12,6 +12,7 @@ angular.module('contentful').factory('uiVersionSwitcher', ['$injector', function
   var $window      = $injector.get('$window');
   var $document    = $injector.get('$document');
   var environment  = $injector.get('environment');
+  var Cookies      = $injector.get('Cookies');
 
   return {
     checkIfVersionShouldBeSwitched: function () {
@@ -26,8 +27,8 @@ angular.module('contentful').factory('uiVersionSwitcher', ['$injector', function
   function setVersionFromQuery () {
     var uiVersion = $location.search().ui_version;
     if (uiVersion) {
-      $.cookies.set('ui_version', uiVersion, {
-        expiresAt: moment().add(1, 'h').toDate()
+      Cookies.set('ui_version', uiVersion, {
+        expires: moment().add(1, 'h').toDate()
       });
       if (window.CF_UI_VERSION !== uiVersion) {
         // This reloads the page without the query string
@@ -37,7 +38,7 @@ angular.module('contentful').factory('uiVersionSwitcher', ['$injector', function
   }
 
   function addVersionNotification () {
-    var previewVersion = $.cookies.get('ui_version');
+    var previewVersion = Cookies.get('ui_version');
     if (!previewVersion)
       return;
 
@@ -51,9 +52,7 @@ angular.module('contentful').factory('uiVersionSwitcher', ['$injector', function
     );
 
     $document.find('[data-cf-ui-version-reload]').on('click', function () {
-      $.cookies.set('ui_version', null, {
-        expiresAt: 0
-      });
+      Cookies.remove('ui_version');
       $window.location.reload();
     });
   }

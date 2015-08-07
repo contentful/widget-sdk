@@ -74,11 +74,7 @@ var src = {
     'node_modules/share/node_modules/browserchannel/dist/bcsocket-uncompressed.js',
     'node_modules/share/webclient/share.uncompressed.js',
     'node_modules/share/webclient/json.uncompressed.js',
-    'node_modules/share/webclient/textarea.js',
-
-    // @todo no need for wildcard anymore
-    // jquery.cookies will be removed with https://github.com/contentful/user_interface/pull/511
-    'vendor/jquery.cookies.2.2.0.js'
+    'node_modules/share/webclient/textarea.js'
   ],
   vendorScriptsNonEssential: {
     kaltura: [
