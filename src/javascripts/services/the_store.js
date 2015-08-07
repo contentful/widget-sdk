@@ -1,5 +1,16 @@
 'use strict';
 
+/**
+ * @ngdoc service
+ * @name TheStore
+ *
+ * @description
+ * This service is the central point for storing session-related user data.
+ * By default it uses localStorage, but falls back gracefully into cookies.
+ *
+ * Subservices, "localStorageStore" and "cookieStore" implement storage-specific
+ * logic. These are NOT intended to be used on their own.
+ */
 angular.module('contentful').factory('TheStore', ['$injector', function($injector) {
 
   var localStorageStore = $injector.get('TheStore/localStorageStore');
@@ -14,11 +25,27 @@ angular.module('contentful').factory('TheStore', ['$injector', function($injecto
     has: has
   };
 
+  /**
+   * @ngdoc method
+   * @name TheStore#set
+   * @param {string} key
+   * @param {*} value
+   * @description
+   * Stores the value under the key. Replaces current value, if already set.
+   */
   function set(key, value) {
     value = _.isString(value) ? value : JSON.stringify(value);
     storage.set(key, value);
   }
 
+  /**
+   * @ngdoc method
+   * @name TheStore#get
+   * @param {string} key
+   * @returns {*|null}
+   * @description
+   * Gets the value under the key. Returns null when value is not set.
+   */
   function get(key) {
     var value = storage.get(key) || 'null';
     try {
@@ -28,10 +55,25 @@ angular.module('contentful').factory('TheStore', ['$injector', function($injecto
     }
   }
 
+  /**
+   * @ngdoc method
+   * @name TheStore#remove
+   * @param {string} key
+   * @description
+   * Removes the values stored under the given key. Silent for non-existent keys.
+   */
   function remove(key) {
     storage.remove(key);
   }
 
+  /**
+   * @ngdoc method
+   * @name TheStore#has
+   * @param {string} key
+   * @returns {boolean}
+   * @description
+   * Returns boolean indicating value presence under the given key.
+   */
   function has(key) {
     return get(key) !== null;
   }
