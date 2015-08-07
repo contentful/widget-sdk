@@ -15,11 +15,11 @@ angular.module('contentful').provider('clientAdapter', ['$injector', function Cl
       .then(function (res) {
         return res.data;
       }, function (res) {
-        return {
+        return $q.reject({
           statusCode: res.status,
           body: res.data,
           request: request
-        };
+        });
       });
     }
 
