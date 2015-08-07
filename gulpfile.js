@@ -64,7 +64,6 @@ var src = {
     'bower_components/angular-animate/angular-animate.js',
     'bower_components/angular-load/angular-load.js',
     'bower_components/angular-sanitize/angular-sanitize.js',
-    'bower_components/angular-route/angular-route.js',
     'bower_components/angular-elastic/elastic.js',
     'bower_components/angular-ui-sortable/sortable.js',
     'bower_components/angular-ui-router/release/angular-ui-router.js',
