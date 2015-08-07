@@ -21,7 +21,6 @@
     "angular": "1.4.3",
     "angular-animate": "1.4.3",
     "angular-sanitize": "1.4.3",
-    "angular-route": "1.4.3",
     "angular-mocks": "1.4.3",
     "angular-load": "0.2.0",
     "angular-ui-sortable": "0.13.4",
