@@ -2,13 +2,10 @@
 
 angular.module('contentful').directive('cfMarkdownEditor', ['$injector', function ($injector) {
 
-  var $rootScope        = $injector.get('$rootScope');
-  var $sce              = $injector.get('$sce');
-  var modalDialog       = $injector.get('modalDialog');
-  var MarkdownEditor    = $injector.get('MarkdownEditor');
-  var assetUrl          = $injector.get('$filter')('assetUrl');
-  var specialCharacters = $injector.get('specialCharacters');
-  var LinkOrganizer     = $injector.get('LinkOrganizer');
+  var $sce            = $injector.get('$sce');
+  var MarkdownEditor  = $injector.get('MarkdownEditor');
+  var advancedActions = $injector.get('MarkdownEditor/advancedActions');
+  var LinkOrganizer   = $injector.get('LinkOrganizer');
 
   return {
     restrict: 'E',
@@ -32,11 +29,12 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.info = {};
       scope.setMode = setMode;
       scope.inMode = inMode;
-      scope.insertAsset = insertAsset;
-      scope.insertLink = insertLink;
+
+      scope.insertAsset   = function () { advancedActions.asset(scope, editor.insert); };
+      scope.insertLink    = function () { advancedActions.link(editor.insert);         };
+      scope.insertSpecial = function () { advancedActions.special(editor.insert);      };
+      scope.insertTable   = function () { advancedActions.table(editor.actions.table); };
       scope.organizeLinks = organizeLinks;
-      scope.insertTable = insertTable;
-      scope.insertSpecial = insertSpecialCharacter;
 
       MarkdownEditor.create(textarea).then(function (editorInstance) {
         editor = editorInstance;
@@ -81,90 +79,11 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         return currentMode === mode;
       }
 
-      function insertAsset() {
-        modalDialog.open({
-          scope: scope,
-          template: 'insert_asset_dialog',
-          ignoreEnter: true
-        }).promise.then(function (assets) {
-          if (_.isEmpty(assets)) { return; }
-          var links = _.map(assets, makeAssetLink).join(' ');
-          editor.insert(links);
-        });
-      }
-
-      function makeAssetLink(asset) {
-        try {
-          asset = localizedAsset(asset);
-          return '![' + asset.title + '](' + assetUrl(asset.file.url) + ')';
-        } catch (e) {
-          return '';
-        }
-      }
-
-      /**
-       * @todo there have to be a better way?
-       * ACHTUNG! This method IS EXPECTED to throw TypeError sometimes.
-       * This is the one and only leftover from the previous MD editor.
-       */
-      function localizedAsset(asset) {
-        var locale = scope.locale;
-        var defaultLocale = scope.spaceContext.defaultLocale;
-        var file  = asset.data.fields.file;
-        var title = asset.data.fields.title;
-        return {
-          file:   file[locale.internal_code] ||  file[defaultLocale.internal_code] || _.first(file ),
-          title: title[locale.internal_code] || title[defaultLocale.internal_code] || _.first(title)
-        };
-      }
-
-      function insertLink() {
-        modalDialog.open({
-          scope: _.extend($rootScope.$new(), { model: {} }),
-          template: 'insert_link_dialog',
-          ignoreEnter: true
-        }).promise.then(function (data) {
-          editor.insert(makeLink(data));
-        });
-      }
-
-      function makeLink(data) {
-        if (data.title) {
-          return '[' + data.title + '](' + data.url + ')';
-        } else {
-          return '<' + data.url + '>';
-        }
-      }
-
       function organizeLinks() {
         var text = scope.fieldData.value;
         text = LinkOrganizer.convertInlineToRef(text);
         text = LinkOrganizer.rewriteRefs(text);
         scope.fieldData.value = text;
-      }
-
-      function insertSpecialCharacter() {
-        var modalScope = $rootScope.$new();
-        modalScope.specialCharacters = specialCharacters;
-        modalScope.model = { choice: _.first(specialCharacters) };
-        modalScope.entity = function (x) { return '&' + x.id + ';'; };
-
-        modalDialog.open({
-          scope: modalScope,
-          template: 'insert_special_character_dialog',
-          ignoreEnter: true
-        }).promise.then(editor.insert);
-      }
-
-      function insertTable() {
-        var modalScope = $rootScope.$new();
-        modalScope.model = { rows: 2, cols: 2, width: 10 };
-
-        modalDialog.open({
-          scope: modalScope,
-          template: 'insert_table_dialog',
-          ignoreEnter: true
-        }).promise.then(editor.actions.table);
       }
     }
   };
