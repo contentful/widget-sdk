@@ -51,7 +51,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     rendersHelpText: true,
     template: '<cf-url-editor class="widget-url-editor"></cf-url-editor>' +
     '<div class="form-widget__help-text">{{helpText}}</div>' +
-    '<cf-embedly-preview></cf-embedly-preview>'
+    '<cf-embedly-preview field-data="fieldData"></cf-embedly-preview>'
   });
 
   widgets.registerWidget('numberEditor',{

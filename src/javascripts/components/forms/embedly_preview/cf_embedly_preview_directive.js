@@ -1,26 +1,26 @@
 'use strict';
 
 angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', function ($injector) {
-  var embedlyLoader = $injector.get('embedlyLoader'),
-      debounce      = $injector.get('debounce'),
-      urlUtils      = $injector.get('urlUtils');
+  var LazyLoader = $injector.get('LazyLoader');
+  var debounce   = $injector.get('debounce');
+  var urlUtils   = $injector.get('urlUtils');
 
   return {
     restrict: 'E',
-    link    : function link(scope, element) {
-      embedlyLoader.load().then(function (embedly) {
+    scope: { fieldData: '=' },
+    link: function (scope, element) {
+
+      LazyLoader.get('embedly').then(setup);
+
+      function setup(embedly) {
         var debouncedRequestPreview = debounce(requestPreview, 500);
 
-        /*
-         * @param {!string} url
-         */
         function requestPreview(url) {
           var previewElement = $('<a/>', {
             'href'              : url,
             'data-card-controls': 0
           });
           element.append(previewElement);
-
           embedly('card', previewElement[0]);
         }
 
@@ -46,7 +46,7 @@ angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', functio
             debouncedRequestPreview(value);
           }
         });
-      });
+      }
     }
   };
 }]);
