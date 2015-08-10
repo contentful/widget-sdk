@@ -40,7 +40,7 @@ function ContentTypeActionsController($scope, $injector) {
    * @name ContentTypeActionsController#delete
    * @type {Command}
    */
-  controller.delete = Command.create(remove, {
+  controller.delete = Command.create(startDeleteFlow, {
     available: canDelete
   });
 
@@ -51,50 +51,71 @@ function ContentTypeActionsController($scope, $injector) {
     );
   }
 
-  function remove () {
+  function startDeleteFlow () {
     populateDefaultName($scope.contentType);
-    if ($scope.contentType.isPublished()) {
+    var isPublished = $scope.contentType.isPublished();
+    return checkRemovable().then(function (isRemovable) {
+      if (isRemovable) {
+        return confirmRemoval(isPublished);
+      }
+    });
+  }
+
+  function checkRemovable () {
+    var isPublished = $scope.contentType.isPublished();
+    if (isPublished) {
       return $scope.ctEditorController.countEntries().then(function(count) {
         if (count > 0) {
           forbidRemoval(count);
-          return;
+          return false;
+        } else {
+          return true;
         }
-
-        confirmRemoval().then(function(result) {
-          if (result.cancelled) { return; }
-          return unpublish().then(sendDeleteRequest);
-        });
-
-      }, removalErrorHandler);
-    } else {
-      return confirmRemoval().then(function(result) {
-        if (result.cancelled) { return; }
-        return sendDeleteRequest();
       });
+    } else {
+      return $q.when(true);
     }
   }
 
-  function forbidRemoval(count) {
-    var dialogScope = prepareRemovalDialogScope();
-    dialogScope.data.count = count;
+  function remove (isPublished) {
+    var unpub = isPublished ? unpublish() : $q.when();
+    return unpub.then(sendDeleteRequest);
+  }
 
+  function forbidRemoval(count) {
     return modalDialog.openConfirmDialog({
       template: 'content_type_removal_forbidden_dialog',
-      scope: dialogScope
+      scopeData: {
+        count: count,
+        contentTypeName: $scope.contentType.data.name
+      }
     });
   }
 
-  function confirmRemoval() {
+  function confirmRemoval(isPublished) {
     return modalDialog.openConfirmDialog({
       template: 'content_type_removal_confirm_dialog',
-      scope: prepareRemovalDialogScope()
+      scope: prepareRemovalDialogScope(isPublished),
+      noNewScope: true
     });
   }
 
-  function prepareRemovalDialogScope() {
-    var dialogScope = $rootScope.$new();
-    dialogScope.data = { contentTypeName: $scope.contentType.data.name };
-    return dialogScope;
+  function prepareRemovalDialogScope(isPublished) {
+    var scope = $rootScope.$new();
+    return _.extend(scope, {
+      input: {},
+      contentTypeName: $scope.contentType.data.name,
+      delete: Command.create(function () {
+        return remove(isPublished)
+        .finally(function() {
+          scope.dialog.confirm();
+        });
+      }, {
+        disabled: function () {
+          return scope.input.contentTypeName !== scope.contentTypeName;
+        }
+      })
+    });
   }
 
   function unpublish() {

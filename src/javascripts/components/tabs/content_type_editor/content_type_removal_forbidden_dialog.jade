@@ -7,7 +7,7 @@
     .modal-dialog__content
       .modal-dialog__richtext
         p
-          | We've found {{ data.count }} entries which use the <em>{{ data.contentTypeName }}</em> content type.<br>
+          | We've found {{ count }} entries which use the <em>{{ contentTypeName }}</em> content type.<br>
           | The content types which are used by other entries can't be deleted.<br>
           a(href="" ng-click="explanationShown = !explanationShown") Why?
         p(ng-show="explanationShown")

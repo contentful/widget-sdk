@@ -76,7 +76,11 @@ describe('ContentType Actions Controller', function () {
       };
 
       this.modalDialog = this.$inject('modalDialog');
-      sinon.stub(this.modalDialog, 'openConfirmDialog').resolves({cancelled: false});
+      sinon.stub(this.modalDialog, 'openConfirmDialog', function (params) {
+        if (params.scope && params.scope.delete) {
+          params.scope.delete.execute();
+        }
+      });
     });
 
     describe('without entries', function () {
@@ -97,7 +101,8 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('does not send DELETE if the user denies confirmation', function () {
-        this.modalDialog.openConfirmDialog.resolves({cancelled: true});
+        this.modalDialog.openConfirmDialog.restore();
+        sinon.stub(this.modalDialog, 'openConfirmDialog').resolves();
 
         controller.delete.execute();
         this.$apply();
