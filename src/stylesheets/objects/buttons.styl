@@ -87,7 +87,7 @@ Styleguide 4.1
 */
 
 $btn-action()
-  $cfnext-button($cfnext-blue, hsl(200, 76%, 46%))
+  $cfnext-button($colors.blue, hsl(200, 76%, 46%))
 
 .cfnext-btn-action,
 .cfnext-btn-action--large
@@ -113,7 +113,7 @@ Styleguide 4.2
 */
 .cfnext-btn-primary-action,
 .cfnext-btn-primary-action--large
-  $cfnext-button($cfnext-green, hsl(160, 86%, 38%))
+  $cfnext-button($colors.green, hsl(160, 86%, 38%))
 
 .cfnext-btn-primary-action--large
   $cfnext-button-large()
@@ -140,7 +140,7 @@ $secondary-button-bg = hsl(0, 0%, 93%)
 .cfnext-btn-secondary-action--large
   $cfnext-button(hsl(0, 0%, 93%), hsl(0, 0%, 88%))
   color: $secondary-button-color
-  border: 1px solid $cfnext-gray
+  border: 1px solid $colors.gray
 
   &:hover
     background-image: linear-gradient(to bottom, hsla(white, 0.10) 0%, hsla(black, 0.10))
@@ -175,7 +175,7 @@ button.cfnext-btn-caution(disabled) Be Careful!
 Styleguide 4.4
 */
 .cfnext-btn-caution
-  $cfnext-button($cfnext-red, hsl(353, 61%, 45%))
+  $cfnext-button($colors.red, hsl(353, 61%, 45%))
 
 
 /**
@@ -194,7 +194,7 @@ Styleguide 4.5
 $cfnext-button-plain()
   background: none
   $cfnext-button-layout()
-  color: $cfnext-blue;
+  color: $colors.blue;
   outline: 0
 
 .cfnext-btn-plain
@@ -221,7 +221,7 @@ $cfnext-btn-inline()
   border: 0
   background: none
   cursor: pointer
-  color: $cfnext-blue
+  color: $colors.blue
 
 .cfnext-btn-inline
   $cfnext-btn-inline()
