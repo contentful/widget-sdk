@@ -41,7 +41,7 @@ describe('spaceContext', function () {
         rootScope = $rootScope;
         $q = _$q_;
         this.spaceContext = spaceContext;
-        this.spaceContext.resetContextWithSpace(space);
+        this.spaceContext.resetWithSpace(space);
       });
     });
 
@@ -358,7 +358,7 @@ describe('spaceContext', function () {
       scope = this.$inject('$rootScope');
       $q = this.$inject('$q');
       this.spaceContext = this.$inject('spaceContext');
-      this.spaceContext.resetContextWithSpace(space);
+      this.spaceContext.resetWithSpace(space);
       entry = { getContentTypeId: function () { return 'foo'; } };
       spyOn(this.spaceContext, 'refreshContentTypes');
     });

@@ -129,7 +129,7 @@ describe('Client Controller', function () {
       var spaceContext = this.$inject('spaceContext');
       var space = this.$inject('cfStub').space('');
       space.getId = stubs.spaceId;
-      spaceContext.resetContextWithSpace(space);
+      spaceContext.resetWithSpace(space);
 
       scope = this.$rootScope.$new();
       clientController = this.$inject('$controller')('ClientController', {$scope: scope});

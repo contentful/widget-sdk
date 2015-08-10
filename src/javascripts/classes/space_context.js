@@ -46,13 +46,13 @@ angular.module('contentful')
 
       /**
        * @ngdoc method
-       * @name spaceContext#resetContextWithSpace
+       * @name spaceContext#resetWithSpace
        * @param {Object} space
        * @description
        * This method resets a space context with a given space, as well as
        * associated locales information
       */
-      resetContextWithSpace: function(space){
+      resetWithSpace: function(space){
         this.space = space;
         this._contentTypeLoader = new PromisedLoader();
         this._publishedContentTypeLoader = new PromisedLoader();

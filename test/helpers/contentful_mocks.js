@@ -105,7 +105,7 @@ mocks.factory('cfStub', function ($injector) {
 
   cfStub.spaceContext = function (space, contentTypes) {
     var context = spaceContext;
-    context.resetContextWithSpace(space);
+    context.resetWithSpace(space);
     context.refreshContentTypes();
     adapter.resolveLast({
       sys: {

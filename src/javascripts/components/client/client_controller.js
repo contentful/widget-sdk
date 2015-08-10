@@ -189,8 +189,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function setSpaceContext(space) {
-    $scope.spaceContext.resetContextWithSpace(space);
-    TheLocaleStore.initializeWithSpace(space);
+    $scope.spaceContext.resetWithSpace(space);
+    TheLocaleStore.resetWithSpace(space);
     enforcements.setSpaceContext($scope.spaceContext);
     analytics.setSpace(space);
   }

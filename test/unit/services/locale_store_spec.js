@@ -8,7 +8,7 @@ describe('TheLocaleStore', function () {
       this.theLocaleStore = this.$inject('TheLocaleStore');
       var cfStub = this.$inject('cfStub');
       this.space = cfStub.space('test');
-      this.theLocaleStore.initializeWithSpace(this.space);
+      this.theLocaleStore.resetWithSpace(this.space);
     });
   });
 

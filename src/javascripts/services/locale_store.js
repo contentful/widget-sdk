@@ -28,7 +28,7 @@ angular.module('contentful')
   };
 
   return {
-    initializeWithSpace:  initializeWithSpace,
+    resetWithSpace:       resetWithSpace,
     refreshLocales:       refreshLocales,
     getLocalesState:      getLocalesState,
     getDefaultLocale:     getDefaultLocale,
@@ -39,10 +39,10 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name TheLocaleStore#initializeWithSpace
+   * @name TheLocaleStore#resetWithSpace
    * @param {Object} space
   */
-  function initializeWithSpace(space) {
+  function resetWithSpace(space) {
     _space = space;
     refreshLocales();
   }
