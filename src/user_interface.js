@@ -2,7 +2,7 @@
 
 if (window){
   window._ = require('lodash-node/modern');
-  window.dotty = require('dotty');
+  window.dotty = require('./dottie_wrapper.js');
   window.ZeroClipboard = require('zeroclipboard');
 }
 
