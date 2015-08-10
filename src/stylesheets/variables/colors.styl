@@ -7,6 +7,14 @@ Define new colors with the `hsl()` syntax.
 
 Markup:
 .styleguide-swatches
+  .colors__dark-gray
+    | dark-gray
+  .colors__gray
+    | gray
+  .colors__light-gray
+    | light-gray
+  .colors__white
+    | white
   .colors__dark-blue
     | dark-blue
   .colors__blue
@@ -23,49 +31,27 @@ Markup:
     | aero-blue
   .colors__red
     | red
-  .colors__dark-gray
-    | dark-gray
-  .colors__gray
-    | gray
-  .colors__light-gray
-    | light-gray
   .colors__yellow
     | yellow
-  .colors__white
-    | white
 
 Styleguide 1.0
 */
 
 $colors = {
-  dark-blue:     #21304A,
-  blue:          hsl(200,  81%, 54%)  // #28A8E9
-  dark-blue:     #21304A
-  blue:          hsl(200,  81%, 54%)  // #28A8E9
-  light-blue:    #A7E2FF,
-  lightest-blue: hsl(201, 100%, 95%)  // #E8F7FF
-  green:         hsl(160,  80%, 44%)  // #16C98D
-  shadow-green:  #90C2AC,
-  aero-blue:     #B9E9D4,
-  red:           #F05650,
   dark-gray:     #2D2F31,
   gray:          #A2A9B1,
   light-gray:    #D6DCE4,
-  yellow:        #F6E8B0,
   white:         #F6F8FA,
-}
 
-// TODO these should be removed
-$cfnext-dark-blue     = #21304A
-$cfnext-blue = hsl(200, 81%, 54%) // #28A8E9
-$cfnext-light-blue    = #A7E2FF
-$cfnext-lightest-blue = hsl(201, 100%, 95%)  // #E8F7FF
-$cfnext-green = hsl(160, 80%, 44%)  // #16C98D
-$cfnext-shadow-green  = #90C2AC
-$cfnext-aero-blue = #B9E9D4
-$cfnext-red           = #F05650
-$cfnext-dark-gray     = #2D2F31
-$cfnext-gray          = #A2A9B1
-$cfnext-light-gray    = #D6DCE4
-$cfnext-yellow        = #F6E8B0
-$cfnext-white         = #F6F8FA
+  blue:          hsl(200,  81%, 54%)  // #28A8E9
+  dark-blue:     #21304A
+  light-blue:    #A7E2FF,
+  lightest-blue: hsl(201, 100%, 95%)  // #E8F7FF
+
+  green:         hsl(160,  80%, 44%)  // #16C98D
+  shadow-green:  #90C2AC,
+  aero-blue:     #B9E9D4,
+
+  red:           #F05650,
+  yellow:        #F6E8B0,
+}

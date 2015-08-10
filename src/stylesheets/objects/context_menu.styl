@@ -34,10 +34,10 @@ $context-menu-item()
   cursor: pointer
 
   &.selected
-    background: $cfnext-light-blue
+    background: $colors.light-blue
 
   &:hover
-    background: $cfnext-blue
+    background: $colors.blue
     color: white
 
 
@@ -46,7 +46,7 @@ $context-menu-base()
   min-width: 19ex
   position: absolute
   padding: 0.3rem 0
-  border: 1px solid $cfnext-light-gray
+  border: 1px solid $colors.light-gray
   border-radius: 2px
   background: white
   box-shadow: 0px 1px 2px 0px hsla(black, 0.1);
@@ -109,11 +109,11 @@ Styleguide 11.1
 $context-menu-top-bar--border = hsl(201, 33%, 66%)
 
 $context-menu-top-bar()
-  background-color: $cfnext-lightest-blue
+  background-color: $colors.lightest-blue
   margin-top: 13px
   border-color: hsl(201, 33%, 66%)
   > .context-menu__arrow path
-    fill: $cfnext-lightest-blue
+    fill: $colors.lightest-blue
     stroke: $context-menu-top-bar--border
 
 .context-menu.x--top-bar
