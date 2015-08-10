@@ -18,7 +18,6 @@ if (angular) {
   constant('searchParser', require('./search.pegjs')).
   constant('localesList', require('./locales_list.json')).
   constant('fileSize', require('file-size')).
-  constant('redefine', require('redefine')).
   constant('querystring', require('querystring')).
   constant('Cookies', require('js-cookie'));
 

@@ -63,7 +63,6 @@
     "promise": "^6.0.1",
     "proxyquire": "^1.4.0",
     "querystring": "^0.2.0",
-    "redefine": "~0.2.0",
     "run-sequence": "~1.0.2",
     "share": "git+ssh://git@github.com:contentful/sharejs.git#v1.1.0",
     "stream-combiner": "^0.2.1",
