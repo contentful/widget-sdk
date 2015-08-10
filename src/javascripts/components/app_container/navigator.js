@@ -375,7 +375,7 @@ angular.module('contentful').config([
   });
 
   var localeEditorState = {
-    template: '<div cf-locale-editor class="workbench"></div>',
+    template: '<cf-locale-editor class="workbench">',
     ncyBreadcrumb: {
       parent: 'spaces.detail.settings.locales.list',
       label: '{{context.title + (context.dirty ? "*" : "")}}'
@@ -520,7 +520,7 @@ angular.module('contentful').config([
     var currentState = $rootScope.$state.$current,
         contextHistory = $rootScope.contextHistory;
 
-    confirmNavigation(currentState).then(function (reply) {
+    return confirmNavigation(currentState).then(function (reply) {
       if(reply.navConfirmed) {
         contextHistory.pop();
         if (contextHistory.length) {
