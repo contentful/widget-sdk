@@ -68,10 +68,10 @@ angular.module('contentful')
       _.filter(_state.privateLocales, localeIsActive),
       function(locale){return locale.internal_code;}
     );
-    _state.localeActiveStates = _.reduce(_state.activeLocales, function (states, locale) {
-      states[locale.internal_code] = true;
-      return states;
-    }, {});
+  }
+
+  function localeIsActive(locale) {
+    return _state.localeActiveStates[locale.internal_code];
   }
 
   /**
@@ -118,10 +118,6 @@ angular.module('contentful')
   function setActiveStates(localeActiveStates) {
     _state.localeActiveStates = localeActiveStates;
     refreshActiveLocales();
-  }
-
-  function localeIsActive(locale) {
-    return _state.localeActiveStates[locale.internal_code];
   }
 
 }]);
