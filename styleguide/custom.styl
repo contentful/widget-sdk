@@ -1,3 +1,4 @@
+$monospace-font = 'Consolas', 'Monaco', 'Andale Mono', monospace
 body
   overflow: visible
 
@@ -63,3 +64,26 @@ body
 .styleguide-noabsolute
   display: inline-block
   position: relative !important
+
+@import '../src/stylesheets/variables/colors.styl'
+
+.styleguide-swatches
+  display: flex
+  flex-wrap: wrap
+  > *
+    margin: 0 2em 2em 0
+    text-align: center
+    padding: 1em 1em
+    width: 10em
+    height: 10em
+    font-family: $monospace-font
+    font-size: 1.2em
+
+for name, $color in $colors
+  if (luminosity($color) < 0.1)
+    $text-color = white
+  else
+    $text-color = black
+  .colors__{name}
+    background-color: $color
+    color: $text-color
