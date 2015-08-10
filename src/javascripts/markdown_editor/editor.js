@@ -3,6 +3,7 @@
 angular.module('contentful').factory('MarkdownEditor', ['$injector', function($injector) {
 
   var $timeout       = $injector.get('$timeout');
+  var $sanitize      = $injector.get('$sanitize');
   var createRenderer = $injector.get('MarkdownEditor/createMarkdownRenderer');
   var createWrapper  = $injector.get('MarkdownEditor/createCodeMirrorWrapper');
   var LazyLoader     = $injector.get('LazyLoader');
@@ -22,7 +23,6 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
     var NOTIFY_INTERVAL = 250;
     var WORDS_PER_MINUTE = 200;
 
-    var destroyed = false;
     var notificationTimeout;
     var subscriberCb = null;
     var previousValue = null;
@@ -65,7 +65,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
     }
 
     function notifySubscriber() {
-      if (destroyed) { return; }
+      if (!subscriberCb) { return; }
       var value = e.getValue();
       // check if something changed
       if (value === previousValue) {
@@ -74,20 +74,23 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       }
 
       previousValue = value;
+
       var html = renderMarkdown(value);
+      html = html.replace(/\r?\n|\r/g, '');
+      html = $sanitize(html);
+
       var clean = html.replace(/<\/?[^>]+(>|$)/g, '');
-      var words = (clean || '').replace(/\s+/g, ' ').split(' ').length - 1;
+      var words = (clean || '').replace(/\s+/g, ' ').split(' ');
+      words = _.filter(words, function (word) { return word.length > 0; });
+      var wordCount = words.length < 0 ? 0 : words.length;
 
       var info = {
         chars: value.length || 0,
-        words: words < 0 ? 0 : words,
-        time: Math.round(words / WORDS_PER_MINUTE)
+        words: wordCount,
+        time: Math.round(wordCount / WORDS_PER_MINUTE)
       };
 
-      if (subscriberCb) {
-        subscriberCb(value, html, info);
-      }
-
+      subscriberCb(value, html, info);
       scheduleSubscriberNotification();
     }
 
@@ -103,7 +106,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
     }
 
     function destroy() {
-      destroyed = true;
+      subscriberCb = null;
       $timeout.cancel(notificationTimeout);
       e.destroy();
     }

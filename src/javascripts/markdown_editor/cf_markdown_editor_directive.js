@@ -3,6 +3,7 @@
 angular.module('contentful').directive('cfMarkdownEditor', ['$injector', function ($injector) {
 
   var $rootScope        = $injector.get('$rootScope');
+  var $sce              = $injector.get('$sce');
   var modalDialog       = $injector.get('modalDialog');
   var MarkdownEditor    = $injector.get('MarkdownEditor');
   var assetUrl          = $injector.get('$filter')('assetUrl');
@@ -62,7 +63,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       function receiveData(value, preview, info) {
         scope.$apply(function() {
           scope.fieldData.value = value;
-          scope.preview = preview;
+          scope.preview = $sce.trustAsHtml(preview);
           scope.info = info;
           scope.firstSyncDone = true;
         });
@@ -101,6 +102,11 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         }
       }
 
+      /**
+       * @todo there have to be a better way?
+       * ACHTUNG! This method IS EXPECTED to throw TypeError sometimes.
+       * This is the one and only leftover from the previous MD editor.
+       */
       function localizedAsset(asset) {
         var locale = scope.locale;
         var defaultLocale = scope.spaceContext.defaultLocale;
@@ -125,8 +131,9 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       function makeLink(data) {
         if (data.title) {
           return '[' + data.title + '](' + data.url + ')';
+        } else {
+          return '<' + data.url + '>';
         }
-        return '<' + data.url + '>';
       }
 
       function organizeLinks() {
