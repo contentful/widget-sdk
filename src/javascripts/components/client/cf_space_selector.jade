@@ -21,10 +21,10 @@
           ng-click="selectSpace(space)"
           ng-class="{selected: space.getId() === getCurrentSpaceId()}")
           | {{space.data.name}}
-    .space-selector__group
+    .space-selector__group(
+      ng-if="permissionController.canCreateSpace()")
       .space-selector__add-button.context-menu__item(
         role="menuitem"
-        ng-show="permissionController.canCreateSpace()"
         ng-click="showCreateSpaceDialog()")
           cf-icon.space-selector__add-icon(name="plus")
           | Add new Space
