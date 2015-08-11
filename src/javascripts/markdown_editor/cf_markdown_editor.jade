@@ -74,6 +74,12 @@
         tooltip="Insert link"
         ng-disabled="!inMode('md')")
 
+      button.toolbar-button.fa.fa-cubes(
+        ng-click="embed()"
+        tabindex="-1"
+        tooltip="Embed external content"
+        ng-disabled="!inMode('md')")
+
       button.toolbar-button.fa.fa-ellipsis-h(
         ng-click="minorActionsShown = !minorActionsShown"
         tabindex="-1"
@@ -153,14 +159,12 @@
     textarea
 
   .markdown-preview(
-    tabindex="0"
-    ng-show="inMode('rich')"
+    ng-if="inMode('rich')"
     ng-bind-html="preview"
     ng-click="setMode('md')")
 
   pre.markdown-html(
-    ng-if="notInProduction()"
-    ng-show="inMode('html')"
+    ng-if="notInProduction() && inMode('html')"
     ng-bind="preview"
     ng-click="setMode('md')")
 

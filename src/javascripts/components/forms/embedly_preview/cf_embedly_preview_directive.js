@@ -1,52 +1,62 @@
 'use strict';
 
 angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', function ($injector) {
+  var $timeout   = $injector.get('$timeout');
   var LazyLoader = $injector.get('LazyLoader');
   var debounce   = $injector.get('debounce');
   var urlUtils   = $injector.get('urlUtils');
 
   return {
     restrict: 'E',
-    scope: { fieldData: '=' },
+    scope: {
+      fieldData: '=',
+      urlStatus: '='
+    },
     link: function (scope, element) {
+
+      var TIMEOUT = 5000;
 
       LazyLoader.get('embedly').then(setup);
 
       function setup(embedly) {
         var debouncedRequestPreview = debounce(requestPreview, 500);
+        var loadCheck = null;
+
+        scope.$watch('fieldData.value', handleValueChange);
+        embedly('on', 'card.rendered', markAsLoaded);
 
         function requestPreview(url) {
-          var previewElement = $('<a/>', {
-            'href'              : url,
-            'data-card-controls': 0
-          });
+          var previewElement = $('<a/>', { href: url, 'data-card-controls': 0 });
           element.append(previewElement);
-          embedly('card', previewElement[0]);
+          embedly('card', previewElement.get(0));
+
+          $timeout.cancel(loadCheck);
+          loadCheck = $timeout(function () { changeStatus('broken'); }, TIMEOUT);
         }
 
-        embedly('on', 'card.rendered', function (iframe) {
-          /**
-           * This means that the iframe got a 404 or for
-           * some other reason did not load. In which case,
-           * inform that it is a broken URL.
-           */
-          if (iframe.contentWindow === null) {
-            scope.state = 'broken';
-          } else {
-            delete scope.state;
-          }
-          scope.$digest();
-        });
+        function markAsLoaded() {
+          $timeout.cancel(loadCheck);
+          scope.$apply(function() {
+            changeStatus('ok');
+          });
+        }
 
-        scope.$watch('fieldData.value', function (value) {
-          delete scope.state;
+        function handleValueChange(value) {
           element.empty();
-          if (urlUtils.isValid(value)) {
-            scope.state = 'loading';
+          if (value && urlUtils.isValid(value)) {
+            changeStatus('loading');
             debouncedRequestPreview(value);
+          } else {
+            changeStatus('invalid');
           }
-        });
+        }
+
+        function changeStatus(status) {
+          scope.urlStatus = status;
+          scope.$emit('centerOn:reposition');
+        }
       }
+
     }
   };
 }]);

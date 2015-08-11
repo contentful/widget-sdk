@@ -5,6 +5,8 @@ angular.module('contentful').directive('cfUrlEditor', [function () {
     restrict: 'E',
     scope: true,
     template: JST.cf_url_editor(),
-    controller: 'UrlEditorController'
+    controller: ['$scope', function ($scope) {
+      $scope.urlStatus = 'ok';
+    }]
   };
 }]);

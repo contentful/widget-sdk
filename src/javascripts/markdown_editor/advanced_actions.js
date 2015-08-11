@@ -6,12 +6,14 @@ angular.module('contentful').factory('MarkdownEditor/advancedActions', ['$inject
   var modalDialog       = $injector.get('modalDialog');
   var specialCharacters = $injector.get('specialCharacters');
   var assetUrl          = $injector.get('$filter')('assetUrl');
+  var LazyLoader        = $injector.get('LazyLoader');
 
   return {
     link: link,
     asset: asset,
     special: special,
-    table: table
+    table: table,
+    embed: embed
   };
 
   function link(cb) {
@@ -86,5 +88,26 @@ angular.module('contentful').factory('MarkdownEditor/advancedActions', ['$inject
       template: 'insert_table_dialog',
       ignoreEnter: true
     }).promise.then(cb);
+  }
+
+  function embed(cb) {
+    var modalScope = _.extend($rootScope.$new(), {
+      fieldData: { value: '' },
+      urlStatus: 'invalid'
+    });
+
+    LazyLoader.get('embedly');
+
+    modalDialog.open({
+      scope: modalScope,
+      template: 'embed_external_content_dialog',
+      ignoreEnter: true
+    }).promise.then(function (data) {
+        cb(makeEmbedlyLink(data.value));
+    });
+  }
+
+  function makeEmbedlyLink(url) {
+    return '<a href="' + url + '" class="embedly-card">Embedded content: ' + url + '</a>';
   }
 }]);

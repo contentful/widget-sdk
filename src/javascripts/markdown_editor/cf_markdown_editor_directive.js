@@ -37,6 +37,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.insertLink    = function () { advancedActions.link(editor.insert);         };
       scope.insertSpecial = function () { advancedActions.special(editor.insert);      };
       scope.insertTable   = function () { advancedActions.table(editor.actions.table); };
+      scope.embed         = function () { advancedActions.embed(editor.insert);        };
       scope.organizeLinks = organizeLinks;
 
       MarkdownEditor.create(textarea).then(function (editorInstance) {

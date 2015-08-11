@@ -22,6 +22,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
   function create(textarea, CodeMirror, marked) {
     var NOTIFY_INTERVAL = 250;
     var WORDS_PER_MINUTE = 200;
+    var EMBEDLY_CLASS_RE = new RegExp('class="embedly-card"', 'g');
 
     var notificationTimeout;
     var subscriberCb = null;
@@ -78,11 +79,12 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       var html = renderMarkdown(value);
       html = html.replace(/\r?\n|\r/g, '');
       html = $sanitize(html);
+      html = disableEmbedlyControls(html);
 
       var clean = html.replace(/<\/?[^>]+(>|$)/g, '');
       var words = (clean || '').replace(/\s+/g, ' ').split(' ');
       words = _.filter(words, function (word) { return word.length > 0; });
-      var wordCount = words.length < 0 ? 0 : words.length;
+      var wordCount = words.length || 0;
 
       var info = {
         chars: value.length || 0,
@@ -92,6 +94,10 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
 
       subscriberCb(value, html, info);
       scheduleSubscriberNotification();
+    }
+
+    function disableEmbedlyControls(html) {
+      return html.replace(EMBEDLY_CLASS_RE, 'class="embedly-card" data-card-controls="0"');
     }
 
     function setContent(value) {

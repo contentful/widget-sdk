@@ -1,13 +1,14 @@
 'use strict';
 
 describe('cfEmbedlyPreview Directive', function () {
-  var $q;
+  var $q, $timeout;
   var deferredEmbedlyResponse;
 
   beforeEach(function () {
     module('contentful/test');
 
     $q = this.$inject('$q');
+    $timeout = this.$inject('$timeout');
     deferredEmbedlyResponse = $q.defer();
 
     this.$inject('LazyLoader').get = function () {
@@ -65,17 +66,17 @@ describe('cfEmbedlyPreview Directive', function () {
 
   describe('changes state depending on value', function () {
     it('updates state when the field changes', function () {
-      // Initial state is undefined
+      // Initial state is invalid
       this.compileElement();
-      expect(this.scope.state).toBe(undefined);
+      expect(this.scope.urlStatus).toBe('invalid');
     });
     it('changes state to loading and then broken when URL is broken', function () {
       // Add a URL
       this.compileElement('http://404site.com');
-      expect(this.scope.state).toBe('loading');
-      // Simulate a 404 by making the iframe's contentWindow null
-      deferredEmbedlyResponse.resolve({contentWindow: null});
-      expect(this.scope.state).toBe('broken');
+      expect(this.scope.urlStatus).toBe('loading');
+      // Simulate a 404 by flushing timers without resolving
+      $timeout.flush();
+      expect(this.scope.urlStatus).toBe('broken');
     });
   });
 });
