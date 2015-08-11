@@ -21,14 +21,3 @@ angular.module('contentful/test', ['contentful', 'contentful/mocks'])
 .config(['contextMenuProvider', function (contextMenuProvider) {
   contextMenuProvider.disable();
 }])
-
-.run(['$q', function ($q) {
-
-  sinon.stub.rejects = function (err) {
-    return this.returns($q.reject(err));
-  };
-
-  sinon.stub.resolves = function (value) {
-    return this.returns($q.when(value));
-  };
-}]);
