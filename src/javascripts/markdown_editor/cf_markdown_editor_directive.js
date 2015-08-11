@@ -6,6 +6,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
   var MarkdownEditor  = $injector.get('MarkdownEditor');
   var advancedActions = $injector.get('MarkdownEditor/advancedActions');
   var LinkOrganizer   = $injector.get('LinkOrganizer');
+  var environment     = $injector.get('environment');
 
   return {
     restrict: 'E',
@@ -29,6 +30,8 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.info = {};
       scope.setMode = setMode;
       scope.inMode = inMode;
+      scope.notInProduction = notInProduction;
+      scope.openHelp = function () { window.alert('Not implemented.'); };
 
       scope.insertAsset   = function () { advancedActions.asset(scope, editor.insert); };
       scope.insertLink    = function () { advancedActions.link(editor.insert);         };
@@ -77,6 +80,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
       function inMode(mode) {
         return currentMode === mode;
+      }
+
+      function notInProduction() {
+        return environment.env !== 'production';
       }
 
       function organizeLinks() {

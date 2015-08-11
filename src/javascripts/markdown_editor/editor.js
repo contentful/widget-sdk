@@ -118,7 +118,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
     function insertHr() {
       e.moveIfNotEmpty();
       var nl = e.getNl();
-      var markup = nl + '- - -' + nl + nl;
+      var markup = nl + '---' + nl + nl;
       e.insertAtCursor(markup);
     }
 

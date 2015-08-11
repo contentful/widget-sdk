@@ -7,7 +7,7 @@
     form.modal-dialog__content(name="tableForm")
       .cfnext-form__field
         label Number of rows
-        input.cfnext-form__input(
+        input.cfnext-form__input--short(
           ng-model="model.rows" name="rows" type="number"
           min="2" pattern="[1-9][0-9]*"
           required autocomplete="off"
@@ -16,13 +16,13 @@
 
       .cfnext-form__field
         label Number of columns
-        input.cfnext-form__input(
+        input.cfnext-form__input--short(
           ng-model="model.cols" name="cols" type="number"
           min="1" pattern="[1-9][0-9]*"
           required autocomplete="off")
         .cfnext-form__hint Required. Minimal value is 1.
 
-      .cfnext-form__field
+      .cfnext-form__field(ng-show="false")
         label Cell width
         input.cfnext-form__input(
           ng-model="model.width" name="width" type="number"

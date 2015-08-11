@@ -7,32 +7,24 @@
   i.fa.fa-warning
 
 .markdown-loaded(ng-class="{'visible': isReady() && !hasCrashed}")
+  .markdown-tabs
+    a(href ng-if="notInProduction()" ng-click="setMode('html')" ng-class="{'inactive': !inMode('html')}")
+      | HTML
+    a(href ng-click="setMode('rich')" ng-class="{'inactive': !inMode('rich')}")
+      | Preview
+    a(href ng-click="setMode('md')" ng-class="{'inactive': !inMode('md')}")
+      | Editor
+
   .markdown-toolbar
-    .markdown-actions(ng-class="{'preview-mode': !inMode('md')}")
-
-      button.toolbar-button.fa.fa-bold(
-        ng-click="actions.bold()"
-        tabindex="-1"
-        tooltip="Bold"
-        ng-disabled="!inMode('md')")
-
-      button.toolbar-button.fa.fa-italic(
-        ng-click="actions.italic()"
-        tabindex="-1"
-        tooltip="Italic"
-        ng-disabled="!inMode('md')")
-
-      button.toolbar-button.fa.fa-strikethrough(
-        ng-click="actions.strike()"
-        tabindex="-1"
-        tooltip="Strike out"
-        ng-disabled="!inMode('md')")
-
+    .markdown-actions
       button.toolbar-button.fa.fa-header(
         cf-context-menu-trigger
         tabindex="-1"
-        tooltip="Heading"
-        ng-disabled="!inMode('md')")
+        tooltip="Headings"
+        ng-disabled="!inMode('md')"
+        class="markdown-headings")
+        | &nbsp;
+        i.fa.fa-chevron-down
       .context-menu(cf-context-menu="bottom")
         cf-icon.context-menu__arrow(name="arrow-up")
         ul.context-menu__items
@@ -46,10 +38,61 @@
             i.fa.fa-star-o
             |  Heading 3
 
+      button.toolbar-button.fa.fa-bold(
+        ng-click="actions.bold()"
+        tabindex="-1"
+        tooltip="Bold"
+        ng-disabled="!inMode('md')")
+
+      button.toolbar-button.fa.fa-italic(
+        ng-click="actions.italic()"
+        tabindex="-1"
+        tooltip="Italic"
+        ng-disabled="!inMode('md')")
+
       button.toolbar-button.fa.fa-quote-left(
         ng-click="actions.quote()"
         tabindex="-1"
         tooltip="Quote"
+        ng-disabled="!inMode('md')")
+
+      button.toolbar-button.fa.fa-list(
+        ng-click="actions.ul()"
+        tabindex="-1"
+        tooltip="Unordered list"
+        ng-disabled="!inMode('md')")
+
+      button.toolbar-button.fa.fa-list-ol(
+        ng-click="actions.ol()"
+        tabindex="-1"
+        tooltip="Ordered list"
+        ng-disabled="!inMode('md')")
+
+      button.toolbar-button.fa.fa-link(
+        ng-click="insertLink()"
+        tabindex="-1"
+        tooltip="Insert link"
+        ng-disabled="!inMode('md')")
+
+      button.toolbar-button.fa.fa-ellipsis-h(
+        ng-click="minorActionsShown = !minorActionsShown"
+        tabindex="-1"
+        tooltip="More actions..."
+        class="markdown-more-actions"
+        ng-class="{'active': minorActionsShown}")
+
+      button.toolbar-button.fa.fa-picture-o(
+        ng-click="insertAsset()"
+        tabindex="-1"
+        ng-disabled="!inMode('md')"
+        class="markdown-media")
+        |  Insert media
+
+    .markdown-minor-actions(ng-show="minorActionsShown")
+      button.toolbar-button.fa.fa-strikethrough(
+        ng-click="actions.strike()"
+        tabindex="-1"
+        tooltip="Strike out"
         ng-disabled="!inMode('md')")
 
       button.toolbar-button.fa.fa-code(
@@ -58,62 +101,23 @@
         tooltip="Code"
         ng-disabled="!inMode('md')")
 
-      button.toolbar-button.fa.fa-ellipsis-h(
+      button.toolbar-button.fa.fa-arrows-h(
         ng-click="actions.hr()"
         tabindex="-1"
         tooltip="Horizontal rule"
         ng-disabled="!inMode('md')")
 
-      button.toolbar-button.fa.fa-list(
-        cf-context-menu-trigger
-        tabindex="-1"
-        tooltip="List"
-        ng-disabled="!inMode('md')")
-      .context-menu(cf-context-menu="bottom")
-        cf-icon.context-menu__arrow(name="arrow-up")
-        ul.context-menu__items
-          li(type="button" ng-click="actions.ul()")
-            i.fa.fa-list-ul
-            |  Unordered list
-          li(type="button" ng-click="actions.ol()")
-            i.fa.fa-list-ol
-            |  Ordered list
-
       button.toolbar-button.fa.fa-indent(
-        cf-context-menu-trigger
+        ng-click="actions.indent()"
         tabindex="-1"
-        tooltip="Indentation"
-        ng-disabled="!inMode('md')")
-      .context-menu(cf-context-menu="bottom")
-        cf-icon.context-menu__arrow(name="arrow-up")
-        ul.context-menu__items
-          li(type="button" ng-click="actions.indent()")
-            i.fa.fa-indent
-            |  Indent
-          li(type="button" ng-click="actions.dedent()")
-            i.fa.fa-dedent
-            |  Dedent
-
-      button.toolbar-button.fa.fa-paperclip(
-        ng-click="insertAsset()"
-        tabindex="-1"
-        tooltip="Insert asset"
+        tooltip="Indent"
         ng-disabled="!inMode('md')")
 
-      button.toolbar-button.fa.fa-link(
-        cf-context-menu-trigger
+      button.toolbar-button.fa.fa-dedent(
+        ng-click="actions.dedent()"
         tabindex="-1"
-        tooltip="Links"
+        tooltip="Dedent"
         ng-disabled="!inMode('md')")
-      .context-menu(cf-context-menu="bottom")
-        cf-icon.context-menu__arrow(name="arrow-up")
-        ul.context-menu__items
-          li(type="button" ng-click="insertLink()")
-            i.fa.fa-link
-            |  Insert link
-          li(type="button" ng-click="organizeLinks()")
-            i.fa.fa-sitemap
-            |  Organize links
 
       button.toolbar-button.fa.fa-table(
         ng-click="insertTable()"
@@ -127,38 +131,21 @@
         tooltip="Insert special character"
         ng-disabled="!inMode('md')")
 
-      button.toolbar-button.fa.fa-undo(
-        cf-context-menu-trigger
+      button.toolbar-button.fa.fa-sitemap(
+        ng-click="organizeLinks()"
         tabindex="-1"
-        tooltip="History"
+        tooltip="Organize links"
         ng-disabled="!inMode('md')")
-      .context-menu(cf-context-menu="bottom")
-        cf-icon.context-menu__arrow(name="arrow-up")
-        ul.context-menu__items
-          li(type="button" ng-click="actions.undo()")
-            i.fa.fa-undo
-            |  Undo
-          li(type="button" ng-click="actions.redo()")
-            i.fa.fa-repeat
-            |  Redo
 
-    .markdown-modeswitch
-      button.toolbar-button.fa.fa-eye(
-        cf-context-menu-trigger
+      button.toolbar-button.fa.fa-undo(
+        ng-click="actions.undo()"
         tabindex="-1"
-        tooltip="View mode")
-      .context-menu(cf-context-menu="bottom")
-        cf-icon.context-menu__arrow(name="arrow-up")
-        ul.context-menu__items
-          li(type="button" ng-click="setMode('md')")
-            i.fa.fa-edit
-            |  Markdown editor
-          li(type="button" ng-click="setMode('rich')")
-            i.fa.fa-eye
-            |  Rich-text preview
-          li(type="button" ng-click="setMode('html')")
-            i.fa.fa-file-code-o
-            |  Generated HTML
+        tooltip="Undo")
+
+      button.toolbar-button.fa.fa-repeat(
+        ng-click="actions.redo()"
+        tabindex="-1"
+        tooltip="Redo")
 
   .markdown-editing-area(
     tabindex="0"
@@ -172,13 +159,16 @@
     ng-click="setMode('md')")
 
   pre.markdown-html(
+    ng-if="notInProduction()"
     ng-show="inMode('html')"
     ng-bind="preview"
     ng-click="setMode('md')")
 
   .markdown-info
-    | Characters: {{ info.chars }},
-    | words: {{ info.words }},
-    | time to read: {{ info.time }} minute(s)
-
-  cf-markdown-guide
+    .markdown-stats
+      | {{ info.words }} words,
+      | {{ info.chars }} characters,
+      | {{ info.time }}m reading time
+    .markdown-help
+      | This field supports GitHub flavoured Markdown.&nbsp;
+      a(href ng-click="openHelp()") See Markdown help

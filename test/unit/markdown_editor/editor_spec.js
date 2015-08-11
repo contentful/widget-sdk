@@ -156,7 +156,7 @@ describe('Markdown editor', function () {
     });
 
     describe('horizontal rule', function () {
-      var hrMarkup = '\n- - -\n\n';
+      var hrMarkup = '\n---\n\n';
 
       it('inserts horizontal rule after current line, if not empty', function () {
         cm.setValue('test');

@@ -1,16 +1,12 @@
+$markdown-radius = 3
 $markdown-preview-height = 400
 $markdown-guide-height = 350
 
 .cf-markdown-editor
   position: relative
 
-.markdown-toolbar,
-.markdown-modeswitch
-  padding: 7px 4px 5px
-
-.markdown-toolbar
-  position: relative
-  border: 1px solid $gray-light
+.markdown-transfer-textarea
+  display: none
 
 .markdown-loaded
   visibility: hidden
@@ -19,24 +15,111 @@ $markdown-guide-height = 350
     visibility: visible
     height: auto
 
-.markdown-actions
-  width: 90%
+/**
+ * Toolbar
+ */
 
-.markdown-modeswitch
-  position: absolute
-  right: 0
-  $stretch-y()
-  border-left: 1px solid $gray-light
+.markdown-tabs
+  position: relative
+  z-index: 10
+  overflow: hidden
+  margin-bottom: -1px
+
+.markdown-tabs a
+  color: $base-font-color
+  display: block
+  float: right
+  padding: 8px 5px 4px
+  width: 80px
+  border: 1px solid $gray-light
+  border-top-left-radius: $markdown-radius px
+  border-top-right-radius: $markdown-radius px
+  margin-left: 3px
+  text-align: center
+  background-color: $gray-lightest
+  border-bottom-color: $gray-lightest
+  &.inactive
+    background: $gray-light
+    border-bottom-color $gray-light
+
+.markdown-toolbar
+  position: relative
+  z-index: 5
+  border: 1px solid $gray-light
+  background-color: $gray-lightest
+  padding: 9px 7px 7px
+  border-top-left-radius: $markdown-radius px
+
+.markdown-minor-actions
+  margin-top: 5px
+
+.toolbar-button
+  width: 30px
+  height: 30px
+  border: none
+  background-color: transparent
+  display: inline-block
+  border-radius: $markdown-radius px
+  cursor: pointer
+  margin-right: 7px
+  &:hover
+    background-color: $gray-light
+  &:disabled:hover
+    background-color: transparent
+
+.markdown-headings
+  width: 45px
+  i
+    color: $gray
+    font-size: 0.7em
+
+.markdown-more-actions
+  border: 1px solid $gray-light
+  margin-left: 10px
+  &.active
+    background: $gray-lighter
+
+.markdown-media
+  float: right
+  width: auto
+  padding: 0 20px
+  border: 1px solid $gray-light
+  background: lighten($gray-lightest, 20%)
+
+/**
+ * Editor, preview, info
+ */
 
 .markdown-editing-area,
 .markdown-preview,
 .markdown-html,
 .markdown-info
   border: 1px solid $gray-light
-  border-width: 0 1px
+  border-width: 0 1px 1px
+  border-bottom-left-radius: $markdown-radius px
+  border-bottom-right-radius: $markdown-radius px
 
-.markdown-editing-area textarea
-  height: 1px
+.markdown-editing-area
+  .CodeMirror
+    padding: 0 20px
+    font-family: "Avenir Next W01", Helvetica, sans-serif
+    line-height: 1.5em
+  .CodeMirror-lines
+    padding: 20px 0
+  .cm-header-1
+    font-size: 1.9em
+  .cm-header-2
+    font-size: 1.75em
+  .cm-header-3
+    font-size: 1.6em
+  .cm-header-4
+    font-size: 1.45em
+  .cm-header-5
+    font-size: 1.3em
+  .cm-header-6
+    font-size: 1.15em
+  textarea
+    height: 1px
 
 .markdown-preview,
 .markdown-html
@@ -50,14 +133,32 @@ $markdown-guide-height = 350
 .markdown-html
   font-family: monospace
 
+.markdown-info
+  overflow: hidden
+  font-size: 0.8em
+  padding: 6px 2px 5px
+  border: 0
+  .markdown-stats
+    float: left
+  .markdown-help
+    float: right
+    a
+      color: $base-font-color
+      text-decoration: underline
+
+/**
+ * Markdown preview styles
+ */
+
 .markdown-preview
   p
     margin: 0
+    line-height: 1.5em
   p + p
     margin-top: $rhythm(0.5)
   pre,
   .markdown-image-placeholder
-    margin-bottom: 22px
+    margin-bottom: 20px
   hr
     border: 0
     background: transparent
@@ -83,59 +184,18 @@ $markdown-guide-height = 350
     padding: 5px
     border-left-width: 0
     border-top-width: 0
+  .markdown-image-placeholder
+    border: 1px solid $gray-light
+    border-radius: 5px
+    padding: 10px
+    background: $gray-lightest
+  .markdown-image-placeholder img
+    display: block
+    margin: 0 auto
 
-.markdown-image-placeholder
-  border: 1px solid $gray-light
-  border-radius: 5px
-  padding: 10px
-  background: $gray-lightest
-
-.markdown-image-placeholder img
-  display: block
-  margin: 0 auto
-
-.markdown-info
-  padding: 6px 7px 5px
-  color: $gray
-  font-size: 0.9em
-  border-width: 1px
-
-.markdown-transfer-textarea
-  display: none
-
-.toolbar-button
-  width: 36px
-  height: 23px
-  border: none
-  background-color: transparent
-  background-repeat: no-repeat
-  background-position: center
-  background-size: 50%
-  display: inline-block
-  border-radius: 3px
-  cursor: pointer
-  &:hover
-    background-color: $gray-light
-
-.markdown-actions.preview-mode
-  .toolbar-button
-    color: 0.5
-  .toolbar-button:hover
-    background-color: transparent
-
-.cf-markdown-editor
-  .cm-header-1
-    font-size: 1.9em
-  .cm-header-2
-    font-size: 1.75em
-  .cm-header-3
-    font-size: 1.6em
-  .cm-header-4
-    font-size: 1.45em
-  .cm-header-5
-    font-size: 1.3em
-  .cm-header-6
-    font-size: 1.15em
+/**
+ * Guide
+ */
 
 .markdown-guide
   position: relative
@@ -180,6 +240,10 @@ $markdown-guide-height = 350
   li.active
     color: white
     background-color: $blue
+
+/**
+ * Special characters modal
+ */
 
 .markdown-special-char-choices
   max-width: 500px

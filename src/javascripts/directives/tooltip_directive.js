@@ -9,7 +9,9 @@ angular.module('contentful').
 
         element.on('mouseenter focus', initialize);
 
-        scope.$watch(attrs.ngDisabled, function(val){
+        scope.$watch(function () {
+          return attrs.ngDisabled;
+        }, function(val){
           scope.disableTooltip = !!val;
         });
 
