@@ -7,8 +7,8 @@
  * Utilities for creating and handling Content Type Fields
  */
 angular.module('contentful')
-.factory('fieldFactory', ['widgets', 'stringUtils', function (widgets, stringUtils) {
-  var capitalize = stringUtils.capitalize;
+.factory('fieldFactory', ['$injector', function ($injector) {
+  var capitalize = $injector.get('stringUtils').capitalize;
 
   /**
    * @ngdoc property
@@ -19,10 +19,6 @@ angular.module('contentful')
    *
    * If the `label` and `icon` properties of a descriptor are not set,
    * they will be auto-generated.
-   *
-   * Default widgets for fields are specified here for display purposes,
-   * but actually determined in the widgets service (see docs there
-   * for an explanation)
    */
   var fieldTypes = _.forEach([
     {

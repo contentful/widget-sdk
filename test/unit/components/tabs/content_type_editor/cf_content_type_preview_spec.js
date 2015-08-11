@@ -13,7 +13,8 @@ describe('cfContentTypePreview directive', function () {
     this.getPreview.fromData.returns(this.when('DUMMY PREVIEW'));
 
     this.element = this.$compile('<cf-content-type-preview>', {
-      contentType: {data: {sys: {publishedVersion: false}}}
+      contentType: {data: {sys: {publishedVersion: false}}},
+      actions: { save: 'stub' }
     });
     this.scope = this.element.scope();
   });

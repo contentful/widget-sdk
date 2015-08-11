@@ -63,6 +63,7 @@ angular.module('contentful')
   var trackField    = $injector.get('analyticsEvents').trackField;
   var fieldFactory  = $injector.get('fieldFactory');
   var Widgets       = $injector.get('widgets');
+  var features      = $injector.get('features');
 
   $scope.decoratedField = field.decorate($scope.field, $scope.contentType);
   $scope.validations = validations.decorateFieldValidations($scope.field);
@@ -76,6 +77,19 @@ angular.module('contentful')
     id: widget.widgetId,
     params: _.cloneDeep(widget.widgetParams)
   };
+
+
+  /**
+   * @ngdoc property
+   * @name FieldDialogController#availableWidgets
+   * @type {Widgets.Descriptor[]}
+   */
+  var preview = features.isPreviewEnabled();
+  var currentWidgetId = widget.widgetId;
+  Widgets.getAvailable($scope.field, currentWidgetId, preview)
+  .then(function (available) {
+    $scope.availableWidgets = available;
+  });
 
 
   $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
@@ -165,6 +179,13 @@ angular.module('contentful')
 }])
 
 
+/**
+ * @ngdoc type
+ * @name FieldDialogValidationsController
+ *
+ * @scope.requires {string}  widgetSettings.id
+ * @scope.requires {Widgets.Descriptor[]}  availableWidgets
+ */
 .controller('FieldDialogValidationsController',
 ['$scope', '$injector', function ($scope, $injector) {
   var validations = $injector.get('validationDecorator');
@@ -179,9 +200,20 @@ angular.module('contentful')
     }
   };
 
-  $scope.$watch('widgetSettings.id', function (name) {
-    var properWidget = name === 'radio' || name === 'dropdown';
-    $scope.showPredefinedValueWidgetHint = !properWidget;
+  /**
+   * @ngdoc property
+   * @name FieldDialogValidationsController#showPredefinedValueWidgetHint
+   * @type {boolean}
+   */
+  $scope.$watchGroup(['widgetSettings.id', 'availableWidgets'], function (values) {
+    var name = values[0];
+    var available = values[1];
+    var properWidgets = ['radio', 'dropdown'];
+
+    var isProper = _.contains(properWidgets, name);
+    var availableIds = _.pluck(available, 'id');
+    var properAvailable = _.intersection(availableIds, properWidgets).length;
+    $scope.showPredefinedValueWidgetHint = !isProper && properAvailable;
   });
 
 }])
@@ -191,31 +223,30 @@ angular.module('contentful')
  * @ngdoc type
  * @name FieldDialogAppearanceController
  *
- * @scope.requires {string} widgetSettings.widgetId
- * @scope.requires {object} widgetSettings.widgetParams
+ * @scope.requires {string} widgetSettings.id
+ * @scope.requires {object} widgetSettings.params
  * @scope.requires {UI.Tab} tab
+ * @scope.requires {Widgets.Descriptor[]}  availableWidgets
  *
- * @property {Widgets.Descriptor[]}  availableWidgets
  * @property {Widgets.Descriptor}    widget
  * @property {Widgets.Options[]}     widgetOptions
  */
 .controller('FieldDialogAppearanceController',
 ['$scope', '$injector', function ($scope, $injector) {
-  var widgets  = $injector.get('widgets');
-  var features = $injector.get('features');
+  var widgets = $injector.get('widgets');
 
   $scope.defaultWidgetId = widgets.defaultWidgetId($scope.field, $scope.contentType);
   $scope.widgetParams = $scope.widgetSettings.params;
   $scope.$watch('widgetParams', updateWidgetOptions, true);
   $scope.$watch('widget.options', updateWidgetOptions);
 
-  // when widget parameter is changed, filter option list with dependency check
-  widgets.descriptorsForField($scope.field, features.isPreviewEnabled())
-  .then(function (available) {
-    $scope.availableWidgets = available;
+  $scope.$watch('availableWidgets', function (available) {
+    if (!available) { return; }
     var selected = _.findIndex(available, {id: $scope.widgetSettings.id});
-    $scope.selectedWidgetIndex = selected;
-    $scope.widget = available[selected];
+    if (selected < 0) {
+      selected = 0;
+    }
+    $scope.selectWidget(selected);
   });
 
   $scope.selectWidget = function (i) {
@@ -226,7 +257,6 @@ angular.module('contentful')
   };
 
   function updateWidgetOptions () {
-    // Loading widgets is asynchronous
     if (!$scope.widget) return;
 
     var options = $scope.widget.options;

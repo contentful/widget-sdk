@@ -1,7 +1,16 @@
 'use strict';
 // Provide services to entrylistController and cfTokenizedSearch
-angular.module('contentful').factory('searchQueryHelper', ['searchParser', 'userCache', '$q', 'searchQueryAutocompletions', 'AssetContentType', function(searchParser, userCache, $q, searchQueryAutocompletions, AssetContentType){
-  var lastQueryString, lastParseResult = [];
+angular.module('contentful')
+.factory('searchQueryHelper', ['$injector', function($injector) {
+
+  var $q                         = $injector.get('$q');
+  var AssetContentType           = $injector.get('AssetContentType');
+  var searchQueryAutocompletions = $injector.get('searchQueryAutocompletions');
+  var createParser               = $injector.get('search/cachedParser');
+  var buildQuery                 = $injector.get('search/queryBuilder');
+
+  var parse = createParser();
+
   var complete = searchQueryAutocompletions.complete;
   var api = {
     // Dummy Content-Type object that can be used when searching for Assets
@@ -47,7 +56,7 @@ angular.module('contentful').factory('searchQueryHelper', ['searchParser', 'user
     // List of available autocompletions for current position
     offerCompletion: _.compose($q.when, function (space, contentType, queryString, cursorPos) {
       var token = api.currentToken(queryString, cursorPos);
-      
+
       if (token && token.type === 'Pair') {
         var pos = tokenPosition(cursorPos, token.content.operator);
         var key = token.content.key.content;
@@ -71,48 +80,10 @@ angular.module('contentful').factory('searchQueryHelper', ['searchParser', 'user
       return complete.operator(key, contentType).items[0].value;
     },
 
-    // Build a Query for the CMA
-    // Returns a request object that can be passed into space.getEntries()
-    buildQuery: function (space, contentType, queryString) {
-      var requestObject = {};
-      if (contentType) requestObject.content_type = contentType.getId();
-
-      var tokens = parse(queryString);
-      var pairs = extractPairs(tokens);
-      return $q.all(_.map(pairs, function (pair) {
-        return searchQueryAutocompletions.pairToRequestObject(pair, contentType, space);
-      }))
-      .then(function (reqObjects) {
-        return _.each(reqObjects, function (o) {
-          _.extend(requestObject, o);
-        });
-      })
-      .then(function () {
-        _.tap(extractQuery(tokens), function (query) {
-          if (query.length > 0) requestObject.query = query;
-        });
-        // Filter out archived entries
-        if (!('sys.archivedAt[exists]' in requestObject)) {
-          requestObject['sys.archivedAt[exists]'] = 'false';
-        }
-        return requestObject;
-      });
-    }
+    buildQuery: buildQuery
   };
 
   return api;
-
-  function parse(queryString) {
-    if (queryString !== lastQueryString) {
-      lastQueryString = queryString;
-      try {
-        lastParseResult = searchParser.parse(queryString);
-      } catch (e) {
-        lastParseResult = [];
-      }
-    }
-    return lastParseResult;
-  }
 
   // Returns an objects that has a bunch of boolean flags
   //
@@ -141,20 +112,6 @@ angular.module('contentful').factory('searchQueryHelper', ['searchParser', 'user
     pos.touch   = pos.pre    || pos.post;
 
     return pos;
-  }
-
-  // Returns only pairs with a value from a list of tokens
-  function extractPairs(tokens) {
-    return _.filter(tokens, function (token) {
-      return token.type == 'Pair' && token.content.value.length > 0;
-    });
-  }
-
-  // Takes all tokens that are queries and joins them with spaces
-  function extractQuery(tokens) {
-    return _(tokens).filter(function (token) {
-      return token.type == 'Query' && token.content.length > 0;
-    }).map(function(token){return token.content;}).value().join(' ');
   }
 
 }]);

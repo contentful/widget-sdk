@@ -523,7 +523,7 @@ describe('Client Controller', function () {
     beforeEach(function () {
       this.spaces = [];
       this.user = {sys: {}};
-      this.revisionStubs.hasNewVersion.returns(this.$q.reject('APP_REVISION_CHANGED'));
+      this.revisionStubs.hasNewVersion = sinon.stub().resolves(true);
       this.tokenStoreStubs.getUpdatedToken.returns(this.$q.when({
         spaces: this.spaces,
         user: this.user

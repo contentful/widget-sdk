@@ -93,22 +93,6 @@ describe('Widget types service', function () {
       });
     });
 
-    describe('if validations exist', function() {
-      beforeEach(function() {
-        field.validations = [{'in': ['123']}];
-      });
-
-      it('for a type with a dropdown widget', function() {
-        field.type = 'Symbol';
-        expect(widgets.defaultWidgetId(field, contentType)).toBe('dropdown');
-      });
-
-      it('for a type with no dropdown widget', function() {
-        field.type = 'Date';
-        expect(widgets.defaultWidgetId(field, contentType)).toBe('datePicker');
-      });
-    });
-
     describe('if field is Text', function() {
       beforeEach(function() {
         field.type = 'Text';

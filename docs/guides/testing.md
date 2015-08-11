@@ -55,8 +55,8 @@ it('renders', function () {
 ~~~
 
 
-Mocks
------
+Mocks and Stubs
+---------------
 
 Use `sinon.stub()` to create mock functions and `sinon.assert` to make
 assertions.
@@ -66,10 +66,11 @@ functions that return promises.
 
 ~~~js
 // Equivalent: Function that returns a resolved promise
+sinon.stub().resolves('yeah')
 sinon.stub().returns($q.when('yeah'))
 
 // Equivalent: Function that returns a rejected promise
-var callAndReject = sinon.stub().rejects(new Error())
+sinon.stub().rejects(new Error())
 sinon.stub().returns($q.reject(new Error()))
 ~~~
 

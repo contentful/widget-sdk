@@ -1,5 +1,15 @@
 'use strict';
-angular.module('contentful').controller('EntryActionsController', ['$scope', '$rootScope', '$q', 'notification', 'logger', function EntryActionsController($scope, $rootScope, $q, notification, logger) {
+angular.module('contentful')
+.controller('EntryActionsController',
+['$scope', '$injector', function EntryActionsController ($scope, $injector) {
+  var controller = this;
+
+  var Command      = $injector.get('command');
+  var logger       = $injector.get('logger');
+  var notification = $injector.get('notification');
+  var $rootScope   = $injector.get('$rootScope');
+  var $q           = $injector.get('$q');
+
 
   var originalEntryData, trackedPublishedVersion, trackedPreviousVersion;
 
@@ -16,6 +26,14 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
     }
   });
 
+  function createEntryCommand (action, run, extension) {
+    var can = function () {
+      return $scope.entityActionsController.can(action);
+    };
+
+    controller[action] = Command.create(run, {available: can}, extension);
+  }
+
   // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
   // We can query the entry instead of reimplementing the checks heere
 
@@ -23,8 +41,8 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
     return '"' + $scope.spaceContext.entryTitle($scope.entry) + '"';
   }
 
-  $scope.delete = function () {
-    $scope.entry.delete()
+  createEntryCommand('delete', function () {
+    return $scope.entry.delete()
     .then(function(entry){
       notification.info('Entry deleted successfully');
       $rootScope.$broadcast('entityDeleted', entry);
@@ -33,13 +51,14 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
       logger.logServerWarn('Error deleting Entry', {error: err });
       notification.error('Error deleting Entry');
     });
-  };
+  });
 
-  $scope.duplicate = function() {
+
+  createEntryCommand('duplicate', function () {
     var contentType = $scope.entry.getSys().contentType.sys.id;
     var data = _.omit($scope.entry.data, 'sys');
 
-    $scope.spaceContext.space.createEntry(contentType, data)
+    return $scope.spaceContext.space.createEntry(contentType, data)
     .then(function(entry){
       $scope.$state.go('spaces.detail.entries.detail', { entryId: entry.getId(), addToContext: true });
     })
@@ -47,10 +66,10 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
       logger.logServerWarn('Could not duplicate Entry', {error: err });
       notification.error('Could not duplicate Entry');
     });
-  };
+  });
 
-  $scope.archive = function() {
-    $scope.entry.archive()
+  createEntryCommand('archive', function () {
+    return $scope.entry.archive()
     .then(function(){
       notification.info(title() + ' archived successfully');
     })
@@ -58,10 +77,10 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
       notification.warn('Error archiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
       logger.logServerWarn('Error archiving entry', {error: err });
     });
-  };
+  });
 
-  $scope.unarchive = function() {
-    $scope.entry.unarchive()
+  createEntryCommand('unarchive', function () {
+    return $scope.entry.unarchive()
     .then(function(){
       notification.info(title() + ' unarchived successfully');
     })
@@ -69,7 +88,7 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
       notification.warn('Error unarchiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
       logger.logServerWarn('Error unarchiving entry', {error: err });
     });
-  };
+  });
 
   $scope.canRevertToPublishedState = function () {
     var entry = $scope.entry;
@@ -124,8 +143,8 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
     });
   };
 
-  $scope.unpublish = function () {
-    $scope.entry.unpublish()
+  createEntryCommand('unpublish', function () {
+    return $scope.entry.unpublish()
     .then(function(){
       notification.info(title() + ' unpublished successfully');
       $scope.otUpdateEntity();
@@ -134,15 +153,20 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
       notification.warn('Error unpublishing ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
       logger.logServerWarn('Error unpublishing entry', {error: err });
     });
-  };
+  });
 
-  $scope.publish = function () {
+
+  createEntryCommand('publish', publish, {
+    label: getPublishCommandLabel
+  });
+
+  function publish () {
     var version = $scope.entry.getVersion();
     if (!$scope.validate()) {
       notification.warn('Error publishing ' + title() + ': ' + 'Validation failed');
-      return;
+      return $q.reject();
     }
-    $scope.entry.publish(version)
+    return $scope.entry.publish(version)
     .then(function(){
       $scope.entry.setPublishedVersion(version);
       if (trackedPreviousVersion === version) {
@@ -152,20 +176,18 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
       notification.info(title() + ' published successfully');
     })
     .catch(handlePublishErrors);
-  };
+  }
 
-  $scope.publishButtonLabel = function () {
-    var publishedAt = null;
-    try {
-      publishedAt = $scope.otDoc.getAt(['sys', 'publishedAt']);
-    } catch (e) { }
 
-    if (publishedAt) {
+  function getPublishCommandLabel () {
+    var isPublished = !!$scope.entry.getPublishedAt();
+    if (isPublished) {
       return 'Republish';
     } else {
       return 'Publish';
     }
-  };
+  }
+
 
   /**
    * TODO This is way to complicated: We should only care about the
@@ -228,4 +250,3 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$r
   }
 
 }]);
-

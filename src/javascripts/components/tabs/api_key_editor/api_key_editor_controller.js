@@ -1,12 +1,13 @@
 'use strict';
 
 angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$injector', function($scope, $injector) {
+  var controller = this;
   var environment = $injector.get('environment');
   var notification = $injector.get('notification');
   var logger = $injector.get('logger');
   var $window = $injector.get('$window');
   var $rootScope = $injector.get('$rootScope');
-  $scope.notes = $injector.get('notes');
+  var Command = $injector.get('command');
 
   var IOS_RE = /(iphone os|ipad|iphone)/gi;
   $scope.isIos = IOS_RE.test($window.navigator.userAgent);
@@ -107,9 +108,16 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     apiKey.regenerateAccessToken();
   };
 
-  $scope.save = function() {
+  controller.save = Command.create(save, {
+    disabled: function () {
+      return $scope.apiKeyForm.$invalid ||
+             $scope.permissionController.get('createApiKey', 'shouldDisable');
+    }
+  });
+
+  function save () {
     var t = title();
-    $scope.apiKey.save()
+    return $scope.apiKey.save()
     .then(function(){
       $scope.apiKeyForm.$setPristine();
       $scope.context.dirty = false;
@@ -121,7 +129,8 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
       if(dotty.get(err, 'statusCode') !== 422)
         logger.logServerWarn('ApiKey could not be saved', {error: err });
     });
-  };
+  }
+
 
   function generatePreviewApiKey() {
     var data = _.omit($scope.apiKey.data, 'sys', 'preview_api_key', 'accessToken', 'policies');

@@ -20,7 +20,7 @@
   .entity-info-panel(cf-entity-info-panel="apiKey.getSys()")
 
 
-.tab-main.tab-workbench
+.tab-main.tab-workbench.api-key-editor
   .ng-form.l-form--split(name="apiKeyForm" submit="save()")
     .l-form-left
       h2.section-title API General Info
@@ -116,19 +116,17 @@
         .l-form-controls
           .l-field-editor
             .tools
-              .btn.btn--tertiary.select-box
-                select(ng-model="authCodeExample.lang")
-                  option(value="http" selected) HTTP (Curl)
-                  option(value="javascript") JavaScript
-                  option(value="objc") Objective-C
-                  option(value="ruby") Ruby
-                  option(value="swift") Swift
-                i.button-icon-right.fa.fa-caret-down
+              select.cfnext-select-box(ng-model="authCodeExample.lang")
+                option(value="http" selected) HTTP (Curl)
+                option(value="javascript") JavaScript
+                option(value="objc") Objective-C
+                option(value="ruby") Ruby
+                option(value="swift") Swift
               label
-                input.form-control-look(type="radio" name="codeexampleapi" ng-model="authCodeExample.api" value="cda")
+                input(type="radio" name="codeexampleapi" ng-model="authCodeExample.api" value="cda")
                 | Production
               label
-                input.form-control-look(type="radio" name="codeexampleapi" ng-model="authCodeExample.api" value="preview")
+                input(type="radio" name="codeexampleapi" ng-model="authCodeExample.api" value="preview")
                 | Preview
               a.cf-copy-paste(href="#" cf-copy-paste clipboard-target-selector=".authentication-code .code-example textarea")
                 i.fa.fa-copy
@@ -194,9 +192,6 @@
       button.cfnext-btn-caution(type="button" ng-click="delete()") Delete
       button.cfnext-btn-secondary-action(type="button") Don't Delete
     button.cfnext-btn-primary-action.save(type="submit"
-      ng-click="save()"
-      cf-when-disabled="permissionController.entityActions.createApiKey"
-      ng-disabled="apiKeyForm.$invalid || permissionController.get('createApiKey', 'shouldDisable')")
+      ui-command="apiKeyController.save"
+      cf-when-disabled="permissionController.entityActions.createApiKey")
       | Save
-  .rest-save-status
-    | Hit Save to save changes to this API Key.

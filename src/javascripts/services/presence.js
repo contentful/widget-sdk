@@ -1,8 +1,9 @@
 'use strict';
 
-angular.module('contentful').factory('presence', ['$rootScope', 'debounce', function ($rootScope, debounce) {
+angular.module('contentful')
+.factory('presence', ['$rootScope', 'debounce', function ($rootScope, debounce) {
   // Code related to the hidden Property is from http://www.html5rocks.com/en/tutorials/pagevisibility/intro/
-  
+
   function watchVisibility() {
     var visProp = getHiddenProp();
     if (visProp) {
@@ -12,11 +13,11 @@ angular.module('contentful').factory('presence', ['$rootScope', 'debounce', func
   }
 
   function visibilityChangeHandler() {
-    var oldHidden = hidden,
-        newHidden = isHidden();
+    var oldHidden = hidden;
+    var newHidden = isHidden();
     if (newHidden !== oldHidden) {
       hidden = newHidden;
-      $rootScope.$apply(function () {
+      $rootScope.$evalAsync(function () {
         $rootScope.$broadcast('presenceChanged', newHidden, oldHidden);
       });
     }

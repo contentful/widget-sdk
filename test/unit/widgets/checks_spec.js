@@ -9,7 +9,7 @@ describe('Widget checks service', function() {
     module('contentful/test');
     $q                  = this.$inject('$q');
     $rootScope          = this.$inject('$rootScope');
-    widgetChecks        = this.$inject('widgetChecks');
+    widgetChecks        = this.$inject('widgets/checks');
     kalturaCredentials  = this.$inject('kalturaCredentials');
   });
 
@@ -27,7 +27,7 @@ describe('Widget checks service', function() {
       pit('should not mark as misconfigured for 200 response', function() {
         var widgets = [{id: 'kalturaEditor'}];
 
-        sinon.stub(kalturaCredentials, 'get').returns($q.when(200));
+        sinon.stub(kalturaCredentials, 'get').resolves(200);
 
         return widgetChecks.markMisconfigured(widgets).then(function(result) {
           expect(result.length).toEqual(1);
@@ -38,7 +38,7 @@ describe('Widget checks service', function() {
       pit('should mark as misconfigured for non-200 response', function() {
         var widgets = [{id: 'kalturaEditor'}, {id: 'anotherOne'}];
 
-        sinon.stub(kalturaCredentials, 'get').returns($q.reject(404));
+        sinon.stub(kalturaCredentials, 'get').rejects(404);
 
         return widgetChecks.markMisconfigured(widgets).then(function(result) {
           expect(result.length).toEqual(2);

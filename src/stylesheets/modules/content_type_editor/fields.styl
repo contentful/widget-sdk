@@ -1,6 +1,6 @@
 $content-type-field-empty-style()
-    border: 1px dashed $cfnext-light-gray
-    background-color: lighten($cfnext-light-gray, 80%)
+    border: 1px dashed $colors.light-gray
+    background-color: lighten($colors.light-gray, 80%)
 
 .content-type-fields
   position: relative
@@ -18,9 +18,9 @@ $ct__field-padding = 0.8em
   display: flex
   align-items: center
   margin-bottom: $rhythm(1)
-  border: 1px solid $cfnext-light-gray
+  border: 1px solid $colors.light-gray
   border-radius: 1px
-  box-shadow: 1px 1px 2px 0 $cfnext-light-gray
+  box-shadow: 1px 1px 2px 0 $colors.light-gray
   background-color: white
 
   &.is-disabled
@@ -35,9 +35,6 @@ $ct__field-padding = 0.8em
 
   &__icon
     margin-right: 0.66em
-    cf-icon
-      margin-top: 5px
-      display: block
 
   &__type
     flex-grow: 1
@@ -61,15 +58,15 @@ $ct__field-padding = 0.8em
     align-self: stretch
     margin: -1px
     margin-right: 1em
-    background-color: $cfnext-aero-blue
-    border: 1px solid $cfnext-shadow-green
+    background-color: $colors.aero-blue
+    border: 1px solid $colors.shadow-green
     cursor: move
     cursor: -webkit-grabbing
     cursor: -moz-grab
     cursor: -moz-grabbing
     .is-disabled &
-      background-color: transparentify($cfnext-gray, 0.2)
-      border: 1px solid transparentify($cfnext-green, 0.2)
+      background-color: transparentify($colors.gray, 0.2)
+      border: 1px solid transparentify($colors.green, 0.2)
 
   &__settings
     position: relative
@@ -89,10 +86,10 @@ $ct__field-padding = 0.8em
   .ct-field
     $content-type-field-empty-style()
     box-shadow: none
-    color: $cfnext-gray
+    color: $colors.gray
     &__drag-handle
-      background-color: transparentify($cfnext-gray, 0.1)
-      border: 1px dashed transparentify($cfnext-gray, 0.1)
+      background-color: transparentify($colors.gray, 0.1)
+      border: 1px dashed transparentify($colors.gray, 0.1)
 
   .ct-field:nth-child(0n+1)
     opacity: 0.5

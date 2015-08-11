@@ -1,11 +1,8 @@
 'use strict';
 
-angular.module('contentful').directive('cfApiHome', ['notes', function(notes) {
+angular.module('contentful').directive('cfApiHome', function() {
   return {
     template: JST['api_home'](),
-    restrict: 'A',
-    link: function (scope) {
-      scope.notes = notes;
-    }
+    restrict: 'A'
   };
-}]);
+});

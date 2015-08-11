@@ -11,20 +11,16 @@ angular.module('contentful').provider('clientAdapter', ['$injector', function Cl
     var $q    = $injector.get('$q');
 
     function performRequest(request) {
-      var deferred = $q.defer();
-
-      $http(request)
-      .success(function(data) {
-        deferred.resolve(data);
-      })
-      .error(function(data, status) {
-        deferred.reject({
-          statusCode: status,
-          body: data
+      return $http(request)
+      .then(function (res) {
+        return res.data;
+      }, function (res) {
+        return $q.reject({
+          statusCode: res.status,
+          body: res.data,
+          request: request
         });
       });
-
-      return deferred.promise;
     }
 
     function Adapter(server) {

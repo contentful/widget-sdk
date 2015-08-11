@@ -13,7 +13,8 @@ var UserInterface = {
   fileSize: require('file-size'),
   redefine: require('redefine'),
   resolveResponse: require('contentful-resolve-response'),
-  querystring: require('querystring')
+  querystring: require('querystring'),
+  Cookies: require('js-cookie')
 };
 
 module.exports = UserInterface;
@@ -41,6 +42,7 @@ if (angular) {
   constant('redefine', UserInterface.redefine).
   constant('resolveResponse', UserInterface.resolveResponse).
   constant('querystring', UserInterface.querystring).
+  constant('Cookies', UserInterface.Cookies).
 
   // TODO moment should be a proper, configurable service
   run(['moment', function (moment) {

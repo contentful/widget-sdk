@@ -3,7 +3,7 @@
 angular.module('contentful').provider('authentication', function AuthenticationProvider() {
   var authApp, marketingApp, QueryLinkResolver;
 
-  var logger, environment, contentfulClient, $window, $location, $q, $rootScope, notification, assert;
+  var logger, environment, contentfulClient, $window, $location, $q, $rootScope, notification, assert, TheStore;
 
   function setEnvVars($injector) {
     environment       = $injector.get('environment');
@@ -29,13 +29,11 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
       if (token = this.extractToken($location.hash())) {
         $location.hash('');
-        $.cookies.set('token', token, {
-          expiresAt: moment().add(1, 'y').toDate()
-        });
+        TheStore.set('token', token);
         return token;
       }
 
-      if (token = $.cookies.get('token')) {
+      if (token = TheStore.get('token')) {
         return token;
       }
 
@@ -52,26 +50,26 @@ angular.module('contentful').provider('authentication', function AuthenticationP
         if ($location.search().already_authenticated) {
           notification.info('You are already signed in.');
         }
-        var afterLoginPath = $.cookies.get('redirect_after_login');
-        if(afterLoginPath){
-          $.cookies.del('redirect_after_login');
+        var afterLoginPath = TheStore.get('redirect_after_login');
+        if (afterLoginPath) {
+          TheStore.remove('redirect_after_login');
           $location.path(afterLoginPath);
         }
       } else {
-        if(/^\/(\w+)/.test($location.path())){
-          $.cookies.set('redirect_after_login', $location.path());
+        if (/^\/(\w+)/.test($location.path())) {
+          TheStore.set('redirect_after_login', $location.path());
         }
         this.redirectToLogin();
       }
     },
 
     logout: function() {
-      $.cookies.del('token');
+      TheStore.remove('token');
       $window.location = authApp + 'logout';
     },
 
     goodbye: function () {
-      $.cookies.del('token');
+      TheStore.remove('token');
       $window.location = marketingApp + 'goodbye';
     },
 
@@ -175,6 +173,7 @@ angular.module('contentful').provider('authentication', function AuthenticationP
     assert       = $injector.get('assert');
     notification = $injector.get('notification');
     logger       = $injector.get('logger');
+    TheStore     = $injector.get('TheStore');
     var client   = $injector.get('client');
 
     var authentication = new Authentication(client);

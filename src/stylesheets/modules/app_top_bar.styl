@@ -1,12 +1,12 @@
 $app-top-bar__action-color()
-  color: $cfnext-white
+  color: $colors.white
   &:hover
-    color: $cfnext-blue
+    color: $colors.blue
 
 
 .app-top-bar
   display: flex
-  background-color: $cfnext-dark-blue
+  background-color: $colors.dark-blue
 
   &__logo
     display: flex
@@ -37,7 +37,7 @@ $app-top-bar__action-color()
     cursor: pointer;
     $app-top-bar__action-color()
     &:hover > cf-icon[name="dd-arrow-down"] path
-      fill: $cfnext-blue
+      fill: $colors.blue
 
   &__action,
   &__child-action
@@ -51,9 +51,9 @@ $app-top-bar__action-color()
       $focus-styles
 
   &--left-separator
-    border-left: 1px solid transparentify($cfnext-white, 20%)
+    border-left: 1px solid transparentify($colors.white, 20%)
   &--right-separator
-    border-right: 1px solid transparentify($cfnext-white, 20%)
+    border-right: 1px solid transparentify($colors.white, 20%)
 
 
   &__loader

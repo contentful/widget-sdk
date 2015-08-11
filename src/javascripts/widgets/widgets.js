@@ -7,7 +7,8 @@
 angular.module('contentful')
 .factory('widgets', ['$injector', function($injector) {
   var $q = $injector.get('$q');
-  var widgetChecks = $injector.get('widgetChecks');
+  var checks       = $injector.get('widgets/checks');
+  var deprecations = $injector.get('widgets/deprecations');
   var schemaErrors = $injector.get('validation').errors;
 
   /**
@@ -87,7 +88,7 @@ angular.module('contentful')
   return {
     get:                 getWidget,
     forField:            typesForField,
-    descriptorsForField: descriptorsForField,
+    getAvailable:        getAvailable,
     buildRenderable:     buildRenderable,
     defaultWidgetId:     defaultWidgetId,
     optionsForWidget:    optionsForWidget,
@@ -109,11 +110,21 @@ angular.module('contentful')
   /**
    * @ngdoc method
    * @name widgets#descriptorsForField
+   * @description
+   * Return a list of widgets that can be selected for the given field
+   *
    * @param {API.ContentType.Field} field
-   * @param {boolean} isPreviewEnabled
+   *
+   * @param {string} currentWidgetId
+   * If the current widget is deprecated, do not remove it from the
+   * list of available widgets.
+   *
+   * @param {boolean} preview
+   * Include previe widgets.
+   *
    * @return {Promise<Array<Widget.Descriptor>>}
    */
-  function descriptorsForField (field, isPreviewEnabled) {
+  function getAvailable (field, currentWidgetId, preview) {
     return typesForField(field)
     .then(function (widgets) {
       widgets = _.map(widgets, _.clone);
@@ -122,20 +133,10 @@ angular.module('contentful')
       });
       return widgets;
     })
-    .then(widgetChecks.markDeprecated)
-    .then(removeDeprecatedIf(isPreviewEnabled))
-    .then(widgetChecks.markMisconfigured);
+    .then(deprecations.createFilter(currentWidgetId, field, preview))
+    .then(checks.markMisconfigured);
   }
 
-  function removeDeprecatedIf(isPreviewEnabled) {
-    return function (widgets) {
-      if (isPreviewEnabled) { return widgets; }
-
-      return _.filter(widgets, function (widget) {
-        return !_.isObject(widget.deprecation);
-      });
-    };
-  }
 
   /**
    * @ngdoc method
@@ -182,8 +183,7 @@ angular.module('contentful')
   */
   function defaultWidgetId(field, contentType) {
     var fieldType = detectFieldType(field);
-    var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
-    if(hasValidations && _.contains(WIDGETS['dropdown'].fieldTypes, fieldType)) return 'dropdown';
+
     if (fieldType === 'Text') {
       if (contentType.data.displayField === field.id ||
           contentType.getId() === 'asset') {
@@ -192,12 +192,14 @@ angular.module('contentful')
         return 'markdown';
       }
     }
+
     if (fieldType === 'Entry') return 'entryLinkEditor';
     if (fieldType === 'Asset') return 'assetLinkEditor';
     if (fieldType === 'Entries') return 'entryLinksEditor';
     if (fieldType === 'Assets' ) return 'assetLinksEditor';
     // File is a special field type, only used in the Asset Editor and not on the backend.
-    if (fieldType === 'File' ) return 'fileEditor';
+    if (fieldType === 'File') return 'fileEditor';
+    if (fieldType === 'Boolean') return 'boolean';
 
     return _.findKey(WIDGETS, function (widget) {
       return _.contains(widget.fieldTypes, fieldType);
@@ -218,10 +220,6 @@ angular.module('contentful')
       if (itemsType === 'Symbol') return 'Symbols';
     }
     return type;
-  }
-
-  function getFieldValidationsOfType(field, type) {
-    return _.filter(_.pluck(field.validations, type));
   }
 
   function optionsForWidget(widgetId, widgetType) {
@@ -284,6 +282,13 @@ angular.module('contentful')
     }
   }
 
+  /**
+   * @ngdoc method
+   * @name widgts#paramDefaults
+   * @param {string} widgetId
+   * @param {string} widgetType
+   * @returns {object}
+   */
   function paramDefaults(widgetId, widgetType) {
     return _.transform(optionsForWidget(widgetId, widgetType), function (defaults, option) {
       defaults[option.param] = option.default;

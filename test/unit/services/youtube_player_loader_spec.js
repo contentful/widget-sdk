@@ -1,43 +1,32 @@
 'use strict';
 
 describe('Youtube Player Loader', function() {
-  var defer, loader, googleScriptLoader, $q, $window, $rootScope;
+  var ytLoader, googleScriptLoader, $window;
 
   beforeEach(function() {
     module('contentful/test');
     inject(function($injector){
-      loader             = $injector.get('youtubePlayerLoader');
+      ytLoader           = $injector.get('youtubePlayerLoader');
       googleScriptLoader = $injector.get('googleScriptLoader');
       $window            = $injector.get('$window');
-      $rootScope         = $injector.get('$rootScope');
-      $q                 = $injector.get('$q');
     });
   });
 
   it('sets the expected callback function', function(){
-    spyOn(googleScriptLoader, 'load').and.callThrough();
+    var googleLoad = sinon.stub(googleScriptLoader, 'load').resolves();
 
-    loader.load();
+    ytLoader.load();
 
-    expect(googleScriptLoader.load.calls.mostRecent().args[1].name).toBe('onYouTubeIframeAPIReady');
+    expect(googleLoad.args[0][1].name).toBe('onYouTubeIframeAPIReady');
   });
 
-  describe('on successful load', function() {
-    beforeEach(function() {
-      $window.YT = {Player: 'player'};
-      defer      = $q.defer();
+  pit('returns the Youtube Player object', function() {
+    $window.YT = {Player: 'player'};
 
-      spyOn(googleScriptLoader, 'load').and.returnValue(defer.promise);
-    });
+    sinon.stub(googleScriptLoader, 'load').resolves();
 
-    it('returns the Youtube Player object', function() {
-      var player;
-
-      loader.load().then(function(_player_){ player = _player_; });
-
-      defer.resolve();
-      $rootScope.$apply();
-
+    return ytLoader.load()
+    .then(function(player) {
       expect(player).toEqual($window.YT.Player);
     });
   });

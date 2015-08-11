@@ -116,8 +116,11 @@ cf-radio-editor
   display: block
 .cf-radio-editor__option
   line-height: 40px
+  margin-right: 1em
 .cf-radio-editor__radio
-  vertical-align: initial
+  margin-top: 1px
+  vertical-align: middle
+  margin-right: 1ex
 
 cf-rating-editor
   display: block
@@ -143,18 +146,15 @@ cf-rating-editor
   input[type="text"] // TODO we can simplify this selector once we simplify form controls
     display: inline
   .fa-calendar,
-  .fa-clock-o,
-  .fa-globe
+  .fa-clock-o
     font-size: 14px
     color: $gray
     vertical-align: middle
     pointer-events: none
     position: relative
     left: -25px
-  .select-box
-    padding-right: 30px
-    .button-icon-right
-      right: 27px
+  .cfnext-select-box
+    margin-right: 1ex
 
 
 .is-date-invalid,

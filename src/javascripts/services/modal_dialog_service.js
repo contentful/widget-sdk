@@ -31,7 +31,19 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
 
   function Dialog(params) {
     this._handleKeys = _.bind(this._handleKeys, this);
-    this.scope = params.scope.$new();
+
+    var scope = params.scope;
+
+    if (!scope) {
+      scope = _.extend($rootScope.$new(), params.scopeData);
+    }
+
+    if (params.noNewScope) {
+      this.scope = scope;
+    } else {
+      this.scope = scope.$new();
+    }
+
     this.params = _.extend(
       {
         template: 'modal_dialog',

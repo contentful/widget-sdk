@@ -1,6 +1,9 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeListController', ['$scope', 'notification', function ContentTypeListController($scope, notification) {
+angular.module('contentful')
+.controller('ContentTypeListController',
+['$scope', '$injector', function ContentTypeListController($scope, $injector) {
+  var notification = $injector.get('notification');
   $scope.contentTypeSection = 'all';
 
   $scope.numFields = function(contentType) {
@@ -35,29 +38,34 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
     }
   };
 
-  $scope.visibleInCurrentList = function(contentType){
-    if($scope.searchTerm){
-      var searchTermRe;
-      try {
-        searchTermRe = new RegExp($scope.searchTerm.toLowerCase(), 'gi');
-      } catch(exp) {
-        notification.warn('Invalid search term');
+  $scope.$watchCollection('contentTypes', filterContentTypes);
+  $scope.$watchGroup(['searchTerm', 'context.list'], filterContentTypes);
+
+  function filterContentTypes () {
+    $scope.visibleContentTypes = _.filter($scope.contentTypes, function (contentType) {
+      if($scope.searchTerm){
+        var searchTermRe;
+        try {
+          searchTermRe = new RegExp($scope.searchTerm.toLowerCase(), 'gi');
+        } catch(exp) {
+          notification.warn('Invalid search term');
+        }
+        if (searchTermRe) {
+          return searchTermRe.test(contentType.getName());
+        }
       }
-      return searchTermRe.test(contentType.getName());
-    }
-    switch ($scope.context.list) {
-      case 'all':
-        return !contentType.isDeleted();
-      case 'changed':
-        return contentType.hasUnpublishedChanges();
-      case 'active':
-        return contentType.isPublished();
-      case 'draft':
-        return !contentType.isPublished();
-      default:
-        return true;
-    }
-  };
+      switch ($scope.context.list) {
+        case 'changed':
+          return contentType.hasUnpublishedChanges();
+        case 'active':
+          return contentType.isPublished();
+        case 'draft':
+          return !contentType.isPublished();
+        default:
+          return !contentType.isDeleted();
+      }
+    });
+  }
 
   $scope.resetContentTypes = function(){
     if (this.spaceContext) this.spaceContext.refreshContentTypes();

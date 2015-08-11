@@ -10,10 +10,6 @@ describe('API key editor controller', function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'spaceGetId',
-        'delete',
-        'save',
-        'apiGetId',
-        'getName',
         'info',
         'serverError',
         'warn',
@@ -51,14 +47,13 @@ describe('API key editor controller', function () {
       scope.context = {};
       apiKey = {
         data: {},
-        getName: stubs.getName,
-        getId: stubs.apiGetId,
-        'delete': stubs.delete,
-        save: stubs.save
+        getName: sinon.stub().returns('apiKeyName'),
+        getId: sinon.stub(),
+        delete: sinon.stub(),
+        save: sinon.stub()
       };
       scope.apiKey = apiKey;
 
-      stubs.getName.returns('apiKeyName');
       stubs.createPreviewApiKey.returns($q.defer().promise);
 
       apiKeyEditorCtrl = $controller('ApiKeyEditorController', {$scope: scope});
@@ -120,7 +115,7 @@ describe('API key editor controller', function () {
   describe('creates a preview api if none exists', function() {
     beforeEach(function() {
       scope.apiKey.data.accessToken = 'accessToken';
-      stubs.apiGetId.returns('123');
+      apiKey.getId.returns('123');
       scope.$apply();
     });
 
@@ -135,14 +130,13 @@ describe('API key editor controller', function () {
 
   describe('deletes an api key', function () {
     beforeEach(function () {
-      stubs.delete.returns($q.when());
+      apiKey.delete.resolves();
       scope.delete();
       scope.$apply();
     });
 
     it('info notification is shown', function () {
-      sinon.assert.called(stubs.info);
-      expect(stubs.info.args[0][0]).toEqual('"apiKeyName" deleted successfully');
+      sinon.assert.calledWith(stubs.info, '"apiKeyName" deleted successfully');
     });
 
     it('event is broadcasted from space', function () {
@@ -152,7 +146,7 @@ describe('API key editor controller', function () {
 
   describe('fails to delete an api key', function () {
     beforeEach(function () {
-      stubs.delete.returns($q.reject({}));
+      apiKey.delete.rejects({});
       scope.delete();
       scope.$apply();
     });
@@ -160,7 +154,7 @@ describe('API key editor controller', function () {
     it('error notification is shown', function () {
       sinon.assert.called(stubs.logServerWarn);
       expect(stubs.logServerWarn.args[0][1]).toEqual({error: {}});
-      expect(stubs.warn.args[0][0]).toEqual('"apiKeyName" could not be deleted');
+      sinon.assert.calledWith(stubs.warn, '"apiKeyName" could not be deleted');
     });
   });
 
@@ -168,13 +162,13 @@ describe('API key editor controller', function () {
     var pristineStub;
     beforeEach(function () {
       pristineStub = sinon.stub();
-      stubs.save.returns($q.when());
+      apiKey.save.resolves();
       scope.$state.go = sinon.stub();
       scope.apiKeyForm = {
         '$setPristine': pristineStub
       };
-      scope.save();
-      scope.$apply();
+      apiKeyEditorCtrl.save.execute();
+      this.$apply();
     });
 
     it('info notification is shown', function () {
@@ -195,15 +189,15 @@ describe('API key editor controller', function () {
 
   describe('fails to save an api key', function () {
     beforeEach(function () {
-      stubs.save.returns($q.reject({}));
-      scope.save();
-      scope.$apply();
+      apiKey.save.rejects('AN ERROR');
+      apiKeyEditorCtrl.save.execute();
+      this.$apply();
     });
 
     it('error notification is shown', function () {
-      sinon.assert.called(stubs.logServerWarn);
-      expect(stubs.logServerWarn.args[0][1]).toEqual({error: {}});
-      expect(stubs.warn.args[0][0]).toEqual('"apiKeyName" could not be saved');
+      sinon.assert.calledWith(stubs.logServerWarn);
+      expect(stubs.logServerWarn.args[0][1]).toEqual({error: 'AN ERROR'});
+      sinon.assert.calledWith(stubs.warn, '"apiKeyName" could not be saved');
     });
   });
 
