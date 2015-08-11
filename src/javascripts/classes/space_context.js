@@ -109,12 +109,14 @@ angular.module('contentful')
           return spaceContext.space.getPublishedContentTypes();
         })
         .then(function (contentTypes) {
+          // TODO use filterAndSortContentTypes here
           spaceContext.publishedContentTypes = _(contentTypes)
             .reject(function (ct) { return ct.isDeleted(); })
             .union(spaceContext.publishedContentTypes)
             .sortBy(function(ct) { return ct.getName().trim().toLowerCase(); })
             .value();
 
+          // TODO we could probably reduce here
           spaceContext._publishedContentTypesHash = _(spaceContext.publishedContentTypes).map(function(ct) {
             return [ct.getId(), ct];
           }).object().valueOf();
@@ -144,6 +146,7 @@ angular.module('contentful')
        * @param {Object} contentType
       */
       registerPublishedContentType: function (contentType) {
+        // TODO this check should look at the hash instead
         if (!_.contains(this.publishedContentTypes, contentType)) {
           this.publishedContentTypes.push(contentType);
           this._publishedContentTypesHash[contentType.getId()] = contentType;
