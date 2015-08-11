@@ -17,29 +17,42 @@ describe('widgets/deprecations', function() {
     createFilter = deprecator.createFilter;
   });
 
-  it('removes deprecated widget if field matches', function () {
-    var widgets = [
-      {id: 'DEPRECATED'},
-      {id: 'not deprecated'}
-    ];
+  describe('per field deprecation', function () {
+    beforeEach(function () {
+      deprecate('DEPRECATED', {field: ['FIELD'], name: 'DEPRECATION'});
+    });
 
-    deprecate('DEPRECATED', {field: {type: 'FIELD'}});
+    it('removes deprecated widget if field matches', function () {
+      var widgets = [
+        {id: 'DEPRECATED'},
+        {id: 'not deprecated'}
+      ];
 
-    var filter = createFilter(null, {type: 'FIELD'});
-    var filtered = filter(widgets);
+      var filter = createFilter(null, {type: 'FIELD'});
+      var filtered = filter(widgets);
 
-    expect(filtered).toEqual([{id: 'not deprecated'}]);
-  });
+      expect(filtered).toEqual([{id: 'not deprecated'}]);
+    });
 
-  it('retains current widget', function () {
-    var widgets = [{id: 'DEPRECATED'}];
+    it('retains deprecated widget if field does not match', function () {
+      var widgets = [
+        {id: 'DEPRECATED'},
+      ];
 
-    deprecate('DEPRECATED', {field: {type: 'FIELD'}});
+      var filter = createFilter(null, {type: 'OTHER'});
+      var filtered = filter(widgets);
 
-    var filter = createFilter('DEPRECATED', {type: 'FIELD'});
-    var filtered = filter(widgets);
+      expect(filtered).toEqual([{id: 'DEPRECATED'}]);
+    });
 
-    expect(filtered[0].id).toEqual('DEPRECATED');
+    it('retains current widget', function () {
+      var widgets = [{id: 'DEPRECATED'}];
+      var filter = createFilter('DEPRECATED', {type: 'FIELD'});
+      var filtered = filter(widgets);
+
+      expect(filtered[0].id).toEqual('DEPRECATED');
+      expect(filtered[0].deprecation.name).toEqual('DEPRECATION');
+    });
   });
 
   it('adds deprecation information', function () {

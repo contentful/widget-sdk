@@ -46,21 +46,21 @@ angular.module('contentful')
           return true;
         }
 
+        if (deprecation.field && !_.contains(deprecation.field, field.type)) {
+          return true;
+        }
+
         widget.deprecation = deprecation;
 
         if (widget.id === skipId) {
           return true;
         }
 
-        if (deprecation.preview && !preview) {
-          return false;
+        if (deprecation.preview && preview) {
+          return true;
         }
 
-        if (deprecation.field && _.contains(deprecation.field, field.type)) {
-          return false;
-        }
-
-        return true;
+        return false;
       });
     };
   }
