@@ -33,4 +33,5 @@ angular.module('contentful', [
   }
 
   $injector.get('contextMenu').init();
+  $injector.get('notification').setupClearMessageHooks();
 }]);
