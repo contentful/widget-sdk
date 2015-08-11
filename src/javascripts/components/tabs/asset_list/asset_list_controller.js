@@ -1,15 +1,16 @@
 'use strict';
 
 angular.module('contentful').controller('AssetListController',['$scope', '$injector', function AssetListController($scope, $injector) {
-  var $controller = $injector.get('$controller');
-  var $q          = $injector.get('$q');
-  var Selection   = $injector.get('Selection');
-  var delay       = $injector.get('delay');
-  var filepicker  = $injector.get('filepicker');
-  var logger      = $injector.get('logger');
-  var notification= $injector.get('notification');
-  var stringUtils = $injector.get('stringUtils');
-  var throttle    = $injector.get('throttle');
+  var $controller    = $injector.get('$controller');
+  var $q             = $injector.get('$q');
+  var Selection      = $injector.get('Selection');
+  var delay          = $injector.get('delay');
+  var filepicker     = $injector.get('filepicker');
+  var logger         = $injector.get('logger');
+  var notification   = $injector.get('notification');
+  var stringUtils    = $injector.get('stringUtils');
+  var throttle       = $injector.get('throttle');
+  var TheLocaleStore = $injector.get('TheLocaleStore');
 
   $controller('AssetListViewsController', {
     $scope: $scope,
@@ -101,7 +102,7 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
 
   function createAssetForFile(FPFile) {
     var file = filepicker.parseFPFile(FPFile);
-    var locale = $scope.spaceContext.space.getDefaultLocale().internal_code;
+    var locale = TheLocaleStore.getDefaultLocale().internal_code;
     var data = {
       sys: { type: 'Asset' },
       fields: { file: {}, title: {} }
@@ -113,7 +114,7 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
   }
 
   function processAssetForFile(entity) {
-    var locale = $scope.spaceContext.space.getDefaultLocale().internal_code;
+    var locale = TheLocaleStore.getDefaultLocale().internal_code;
     return entity.process(entity.version, locale);
   }
 

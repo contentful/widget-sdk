@@ -16,12 +16,16 @@ describe('Locale editor controller', function () {
     this.modalDialog = {
       openConfirmDialog: sinon.stub()
     };
+    this.TheLocaleStoreMock = {
+      refreshLocales: sinon.stub()
+    };
 
     module('contentful/test', function ($provide) {
       $provide.value('logger', self.logger);
       $provide.value('notification', self.notification);
       $provide.value('analytics', self.analytics);
       $provide.value('modalDialog', self.modalDialog);
+      $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
     });
 
     this.$q = this.$inject('$q');
@@ -186,7 +190,7 @@ describe('Locale editor controller', function () {
       });
 
       it('refreshes locales', function() {
-        sinon.assert.called(this.scope.spaceContext.refreshLocales);
+        sinon.assert.called(this.TheLocaleStoreMock.refreshLocales);
       });
 
       it('is logged to analytics', function () {

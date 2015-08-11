@@ -3,12 +3,24 @@
 angular.module('contentful').controller('EntryEditorController', ['$scope', '$injector', function EntryEditorController($scope, $injector) {
   var $controller       = $injector.get('$controller');
   var logger            = $injector.get('logger');
+  var TheLocaleStore    = $injector.get('TheLocaleStore');
 
   // Initialization
   $scope.entityActionsController = $controller('EntityActionsController', {
     $scope: $scope,
     entityType: 'entry'
   });
+
+  $scope.localesState = TheLocaleStore.getLocalesState();
+
+  $scope.$watch(function () {
+    return TheLocaleStore.getLocalesState().localeActiveStates;
+  }, function () {
+    $scope.localesState = TheLocaleStore.getLocalesState();
+  }, true);
+
+  $scope.$watch('localesState.localeActiveStates', TheLocaleStore.setActiveStates, true);
+
 
   $scope.$watch('spaceContext.entryTitle(entry)', function (title) {
     $scope.context.title = title;
@@ -86,7 +98,7 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
       if (error.path.length == 1 && error.path[0] == 'fields') {
         $scope.hasErrorOnFields = error.path.length == 1 && error.path[0] == 'fields';
       } else if (error.path.length == 2) {
-        var locales = field.localized ? $scope.spaceContext.privateLocales : [$scope.spaceContext.space.getDefaultLocale()];
+        var locales = field.localized ? TheLocaleStore.getPrivateLocales() : [TheLocaleStore.getDefaultLocale()];
         var allCodes = _.pluck(locales, 'internal_code');
         $scope.errorPaths[fieldId].push.apply($scope.errorPaths[fieldId], allCodes);
       } else {
@@ -157,11 +169,11 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
       var newField = {};
       var fieldType = _.find(contentTypeFields, {id: fieldId});
       if(fieldType.localized){
-        _.each($scope.spaceContext.space.data.locales, function (locale) {
+        _.each(TheLocaleStore.getPrivateLocales(), function (locale) {
           newField[locale.internal_code] = null;
         });
       } else {
-        newField[$scope.spaceContext.space.getDefaultLocale().internal_code] = null;
+        newField[TheLocaleStore.getDefaultLocale().internal_code] = null;
       }
       $scope.otDoc.at(['fields', fieldId]).set(newField);
     }

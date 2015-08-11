@@ -35,7 +35,12 @@ angular.module('contentful').directive('otDocFor', function () {
     priority: -100,
     controller: 'otDocForController'
   };
-}).controller('otDocForController', ['$scope', '$attrs', 'ShareJS', 'logger', 'defer', function OtDocForController($scope, $attrs, ShareJS, logger, defer) {
+}).controller('otDocForController', ['$injector', '$attrs', '$scope', function OtDocForController($injector, $attrs, $scope) {
+  var ShareJS        = $injector.get('ShareJS');
+  var logger         = $injector.get('logger');
+  var defer          = $injector.get('defer');
+  var TheLocaleStore = $injector.get('TheLocaleStore');
+
   function remoteOpListener(ops) {
     $scope.$apply(function(scope) {
       _.each(ops, function (op) {
@@ -47,7 +52,7 @@ angular.module('contentful').directive('otDocFor', function () {
   function filterDeletedLocales(data) {
     _.keys(data.fields).forEach(function (fieldId) {
       _.keys(data.fields[fieldId]).forEach(function (internal_code) {
-        if (!_.find($scope.spaceContext.privateLocales, { internal_code: internal_code })) {
+        if (!_.find(TheLocaleStore.getPrivateLocales(), { internal_code: internal_code })) {
           delete data.fields[fieldId][internal_code];
         }
       });

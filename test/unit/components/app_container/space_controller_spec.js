@@ -1,133 +1,93 @@
 'use strict';
 
 describe('Space Controller', function () {
-  var spaceController, scope, stubs, $q, logger;
-
   beforeEach(function () {
+    var self = this;
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs([
-        'authUpdated',
-        'periodUsage',
-        'setSpaceContext',
-        'track',
-        'localesStub'
-      ]);
+      self.authorizationMock = {
+        isUpdated: sinon.stub()
+      };
+      $provide.value('authorization', self.authorizationMock);
 
-      $provide.value('authorization', {
-        isUpdated: stubs.authUpdated
-      });
+      self.enforcementsMock = {
+        getPeriodUsage: sinon.stub(),
+        setSpaceContext: sinon.stub()
+      };
+      $provide.value('enforcements', self.enforcementsMock);
 
-      $provide.value('authentication', {
-      });
+      self.analyticsMock = {
+        track: sinon.stub()
+      };
+      $provide.value('analytics', self.analyticsMock);
 
-      $provide.value('enforcements', {
-        getPeriodUsage: stubs.periodUsage,
-        setSpaceContext: stubs.setSpaceContext
-      });
-
-      $provide.value('analytics', {
-        track: stubs.track
-      });
+      self.TheLocaleStoreMock = {
+        getPrivateLocales: sinon.stub(),
+        refreshLocales: sinon.stub()
+      };
+      $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
     });
-    inject(function ($controller, $rootScope, cfStub, $injector){
-      $q = $injector.get('$q');
-      logger = $injector.get('logger');
-      scope = $rootScope.$new();
+    this.$rootScope = this.$inject('$rootScope');
+    this.scope = this.$rootScope.$new();
+    var cfStub = this.$inject('cfStub');
 
-      var space = cfStub.space('test');
-      var contentTypeData = cfStub.contentTypeData('testType');
-      scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
+    var space = cfStub.space('test');
+    var contentTypeData = cfStub.contentTypeData('testType');
+    this.scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
 
-      spaceController = $controller('SpaceController', {$scope: scope});
-    });
+    this.$inject('$controller')('SpaceController', {$scope: this.scope});
   });
 
   describe('watches for new locales', function () {
-    var privateStub, refreshStub;
-    beforeEach(function () {
-      privateStub = sinon.stub();
-      refreshStub = sinon.stub();
-      scope.spaceContext.space.getPrivateLocales = privateStub;
-      scope.spaceContext.refreshLocales = refreshStub;
-    });
-
     it('refreshes locales if new locales are available', function () {
-      privateStub.returns([
+      this.TheLocaleStoreMock.getPrivateLocales.returns([
         {code: 'en-US'},
         {code: 'pt-PT'}
       ]);
-      scope.$digest();
-      sinon.assert.called(refreshStub);
-    });
-
-    it('does not refresh locales if no new locales are available', function () {
-      scope.spaceContext.space = null;
-      scope.$digest();
-      sinon.assert.notCalled(refreshStub);
-    });
-  });
-
-  describe('refreshes active locales if locale states change', function () {
-    var refreshStub;
-    beforeEach(function () {
-      scope.$digest();
-      refreshStub = sinon.stub(scope.spaceContext, 'refreshActiveLocales');
-      scope.spaceContext.localeStates['pt-PT'] = true;
-      scope.$digest();
-    });
-
-    afterEach(function () {
-      refreshStub.restore();
-    });
-
-    it('calls refresh method', function () {
-      sinon.assert.called(refreshStub);
+      this.scope.$digest();
+      sinon.assert.called(this.TheLocaleStoreMock.refreshLocales);
     });
   });
 
   describe('refreshes content types if spaceContext changes', function () {
-    var refreshStub;
     beforeEach(function () {
-      scope.$digest();
-      refreshStub = sinon.stub();
-      scope.spaceContext = {
-        refreshContentTypes: refreshStub,
-        refreshActiveLocales: stubs.localesStub
+      this.scope.$digest();
+      this.scope.spaceContext = {
+        refreshContentTypes: sinon.stub()
       };
-      scope.$digest();
+      this.scope.$digest();
     });
 
     it('calls refresh method', function () {
-      sinon.assert.called(refreshStub);
+      sinon.assert.called(this.scope.spaceContext.refreshContentTypes);
     });
   });
 
   describe('watches for updated tokenLookup', function () {
-    var broadcastStub;
-    beforeEach(inject(function (authentication, $rootScope) {
+    beforeEach(function () {
+      var authentication = this.$inject('authentication');
       authentication.tokenLookup = {};
-      stubs.authUpdated.returns(true);
-      stubs.periodUsage.returns(true);
-      broadcastStub = sinon.stub($rootScope, '$broadcast');
-      scope.$digest();
-    }));
+      this.authorizationMock.isUpdated.returns(true);
+      this.enforcementsMock.getPeriodUsage.returns(true);
+      this.broadcastStub = sinon.stub(this.$rootScope, '$broadcast');
+      this.scope.$digest();
+    });
 
     afterEach(function () {
-      broadcastStub.restore();
+      this.broadcastStub.restore();
     });
 
     it('gets period usage', function () {
-      sinon.assert.called(stubs.periodUsage);
+      sinon.assert.called(this.enforcementsMock.getPeriodUsage);
     });
 
     it('broadcasts event if usage exceeded', function () {
-      sinon.assert.called(broadcastStub);
+      sinon.assert.called(this.broadcastStub);
     });
   });
 
   it('analytics event fired on logo clicked', function () {
-    scope.logoClicked();
-    sinon.assert.called(stubs.track);
+    this.scope.logoClicked();
+    sinon.assert.called(this.analyticsMock.track);
   });
 
 });

@@ -50,7 +50,7 @@ mocks.factory('TestingAdapter', function ($q) {
 
 mocks.factory('cfStub', function ($injector) {
   var $rootScope       = $injector.get('$rootScope');
-  var SpaceContext     = $injector.get('SpaceContext');
+  var spaceContext     = $injector.get('spaceContext');
   var contentfulClient = $injector.get('privateContentfulClient');
   var Adapter          = $injector.get('TestingAdapter');
 
@@ -67,8 +67,7 @@ mocks.factory('cfStub', function ($injector) {
       contentDeliveryApi: true,
       contentManagementApi: true,
       'default': true,
-      name: code,
-      publish: true
+      name: code
     }, extraData || {});
   };
 
@@ -105,8 +104,9 @@ mocks.factory('cfStub', function ($injector) {
   };
 
   cfStub.spaceContext = function (space, contentTypes) {
-    var spaceContext = new SpaceContext(space);
-    spaceContext.refreshContentTypes();
+    var context = spaceContext;
+    context.resetWithSpace(space);
+    context.refreshContentTypes();
     adapter.resolveLast({
       sys: {
         type: 'Array'
@@ -123,7 +123,7 @@ mocks.factory('cfStub', function ($injector) {
       total: contentTypes.length
     });
     $rootScope.$apply();
-    return spaceContext;
+    return context;
   };
 
   cfStub.mockSpaceContext = function () {

@@ -1,15 +1,16 @@
 'use strict';
 
 angular.module('contentful').directive('cfMarkdownEditor', ['$injector', function($injector){
-  var $document   = $injector.get('$document');
-  var $rootScope  = $injector.get('$rootScope');
-  var $timeout    = $injector.get('$timeout');
-  var $window     = $injector.get('$window');
-  var assetUrl    = $injector.get('$filter')('assetUrl');
-  var delay       = $injector.get('delay');
-  var keycodes    = $injector.get('keycodes');
-  var modalDialog = $injector.get('modalDialog');
-  var marked      = $injector.get('marked');
+  var $document      = $injector.get('$document');
+  var $rootScope     = $injector.get('$rootScope');
+  var $timeout       = $injector.get('$timeout');
+  var $window        = $injector.get('$window');
+  var assetUrl       = $injector.get('$filter')('assetUrl');
+  var delay          = $injector.get('delay');
+  var keycodes       = $injector.get('keycodes');
+  var modalDialog    = $injector.get('modalDialog');
+  var marked         = $injector.get('marked');
+  var spaceContext   = $injector.get('spaceContext');
 
   var renderer = new marked.Renderer();
 
@@ -322,8 +323,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
       function makeAssetLink(asset) {
         try {
-          asset = localizedAsset(asset, scope.locale);
-          return '!['+asset.title+']('+assetUrl(asset.file.url)+')';
+          var localeCode = scope.locale.internal_code;
+          var title = spaceContext.localizedField(asset, 'data.fields.title', localeCode);
+          var file = spaceContext.localizedField(asset, 'data.fields.file', localeCode);
+          return '!['+title+']('+assetUrl(file.url)+')';
         } catch (e) {
           return null;
         }
@@ -335,16 +338,6 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
           return '[' + link.title + '](' + url + ')';
         }
         return '<' + url + '>';
-      }
-
-      function localizedAsset(asset, locale) {
-        var defaultLocale = scope.spaceContext.defaultLocale;
-        var file  = asset.data.fields.file;
-        var title = asset.data.fields.title;
-        return {
-          file:   file[locale.internal_code] ||  file[defaultLocale.internal_code] || _.first(file ),
-          title: title[locale.internal_code] || title[defaultLocale.internal_code] || _.first(title),
-        };
       }
 
       // Update preview and counts /////////////////////////////////////

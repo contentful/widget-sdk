@@ -13,12 +13,10 @@ angular.module('contentful')
   $scope.$watch(function (scope) {
     if (scope.spaceContext.contentTypes) {
       return scope.spaceContext.contentTypes;
-    } else {
-      return [];
     }
-  }, function (contentTypes) {
-    $scope.contentTypes = $scope.spaceContext.filterAndSortContentTypes(contentTypes);
-    $scope.empty = contentTypes.length === 0;
+  }, function () {
+    $scope.contentTypes = $scope.spaceContext.getFilteredAndSortedContentTypes();
+    $scope.empty = $scope.contentTypes.length === 0;
   });
 
   $scope.$watch('searchTerm',  function (term) {

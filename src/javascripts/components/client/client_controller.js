@@ -7,7 +7,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var $location          = $injector.get('$location');
   var features           = $injector.get('features');
   var logger             = $injector.get('logger');
-  var SpaceContext       = $injector.get('SpaceContext');
+  var spaceContext       = $injector.get('spaceContext');
   var authentication     = $injector.get('authentication');
   var tokenStore         = $injector.get('tokenStore');
   var spacesStore        = $injector.get('spacesStore');
@@ -21,12 +21,13 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var ReloadNotification = $injector.get('ReloadNotification');
   var TheAccountView     = $injector.get('TheAccountView');
   var TheStore           = $injector.get('TheStore');
+  var TheLocaleStore     = $injector.get('TheLocaleStore');
 
   $controller('TrialWatchController', {$scope: $scope});
 
   $scope.permissionController = $controller('PermissionController', {$scope: $scope});
   $scope.featureController    = $controller('FeatureController'   , {$scope: $scope});
-  $scope.spaceContext = new SpaceContext();
+  $scope.spaceContext = spaceContext;
   $scope.notification = notification;
 
   $scope.preferences = {
@@ -188,7 +189,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function setSpaceContext(space) {
-    $scope.spaceContext = new SpaceContext(space);
+    $scope.spaceContext.resetWithSpace(space);
+    TheLocaleStore.resetWithSpace(space);
     enforcements.setSpaceContext($scope.spaceContext);
     analytics.setSpace(space);
   }

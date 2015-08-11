@@ -3,14 +3,15 @@
 angular.module('contentful').controller('SlugEditorController', [
   '$scope', '$injector', function ($scope, $injector) {
 
-  var slugUtils = $injector.get('slug'),
-      debounce = $injector.get('debounce');
+  var slugUtils       = $injector.get('slug');
+  var debounce        = $injector.get('debounce');
+  var TheLocaleStore  = $injector.get('TheLocaleStore');
 
-  var spaceContext = $scope.spaceContext,
-      currentLocale = $scope.locale, //locale for slug widget
-      defaultLocale = spaceContext.defaultLocale,
-      debouncedPerformDuplicityCheck = debounce(performDuplicityCheck, 500),
-      unwatchers = [];
+  var spaceContext = $scope.spaceContext;
+  var currentLocale = $scope.locale;
+  var defaultLocale = TheLocaleStore.getDefaultLocale();
+  var debouncedPerformDuplicityCheck = debounce(performDuplicityCheck, 500);
+  var unwatchers = [];
 
   $scope.$watch('otEditable', function (otEditable) {
     if (otEditable) {

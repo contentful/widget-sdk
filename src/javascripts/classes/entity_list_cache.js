@@ -1,5 +1,10 @@
 'use strict';
-angular.module('contentful').factory('EntityListCache', ['$rootScope', '$q', 'logger', function($rootScope, $q, logger){
+angular.module('contentful')
+
+.factory('EntityListCache', ['$injector', function($injector){
+  var $q             = $injector.get('$q');
+  var logger         = $injector.get('logger');
+  var TheLocaleStore = $injector.get('TheLocaleStore');
 
   // params:
   // - space
@@ -7,7 +12,7 @@ angular.module('contentful').factory('EntityListCache', ['$rootScope', '$q', 'lo
   function EntityListCache(params){
     this.params = params;
     this.fetchMethod = getFetchMethod(params.entityType);
-    this.locale = params.space.getDefaultLocale().internal_code;
+    this.locale = TheLocaleStore.getDefaultLocale().internal_code;
     this.missingIds = [];
     this.cache = {};
     this.queue = [];
