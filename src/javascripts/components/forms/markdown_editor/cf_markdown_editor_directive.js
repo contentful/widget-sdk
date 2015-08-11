@@ -10,7 +10,6 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
   var keycodes       = $injector.get('keycodes');
   var modalDialog    = $injector.get('modalDialog');
   var marked         = $injector.get('marked');
-  var TheLocaleStore = $injector.get('TheLocaleStore');
   var spaceContext   = $injector.get('spaceContext');
 
   var renderer = new marked.Renderer();
