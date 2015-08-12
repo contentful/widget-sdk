@@ -6,12 +6,7 @@
  * @description
  * Provides reusable UI components.
  */
-angular.module('cf.ui', [])
-
-.run(['contextMenu', function (contextMenu) {
-  contextMenu.init();
-}]);
-
+angular.module('cf.ui', []);
 
 angular.module('contentful', [
   'contentful/environment',
@@ -38,4 +33,12 @@ angular.module('contentful', [
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
   $sceDelegateProvider.resourceUrlWhitelist(env.resourceUrlWhiteListRegexp);
   clientAdapterProvider.server('//'+env.api_host);
+}])
+
+.run(['$injector', function ($injector) {
+  if (window.CF_ENV === 'unitttest') {
+    return;
+  }
+
+  $injector.get('contextMenu').init();
 }]);
