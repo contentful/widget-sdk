@@ -44,7 +44,6 @@ describe('Markdown editor', function () {
         expect(html.trim()).toBe('<p><strong>test</strong></p>');
         expect(info.words).toBe(1);
         expect(info.chars).toBe(8);
-        expect(info.time).toBe(0);
         done();
       });
 

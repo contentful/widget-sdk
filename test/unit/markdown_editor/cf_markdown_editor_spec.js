@@ -36,8 +36,8 @@ describe('cfMarkdownEditor', function () {
     expect(scope.firstSyncDone).toBe(false);
     $timeout.flush();
     expect(scope.firstSyncDone).toBe(true);
-    var infoKeys = _.intersection(Object.keys(scope.info), ['chars', 'words', 'time']);
-    expect(infoKeys.length).toBe(3);
+    var infoKeys = _.intersection(Object.keys(scope.info), ['chars', 'words']);
+    expect(infoKeys.length).toBe(2);
   });
 
   it('Updates scope with changes made in editor UI', function () {

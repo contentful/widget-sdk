@@ -5,8 +5,10 @@ angular.module('contentful').controller('InsertAssetDialogController', ['$scope'
   var keycodes          = $injector.get('keycodes');
   var searchQueryHelper = $injector.get('searchQueryHelper');
   var Selection         = $injector.get('Selection');
+  var spaceContext      = $injector.get('spaceContext');
 
   $scope.assetContentType = searchQueryHelper.assetContentType;
+  $scope.spaceContext     = spaceContext;
   $scope.canEditUiConfig  = false;
   $scope.currentView      = {searchTerm: null};
   $scope.assets           = [];

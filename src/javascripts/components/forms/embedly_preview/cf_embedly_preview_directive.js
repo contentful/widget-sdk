@@ -14,7 +14,7 @@ angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', functio
     },
     link: function (scope, element) {
 
-      var TIMEOUT = 5000;
+      var TIMEOUT = 7500;
 
       LazyLoader.get('embedly').then(setup);
 

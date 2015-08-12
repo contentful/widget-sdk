@@ -6,7 +6,7 @@ angular.module('contentful').factory('MarkdownEditor/advancedActions', ['$inject
   var modalDialog       = $injector.get('modalDialog');
   var specialCharacters = $injector.get('specialCharacters');
   var assetUrl          = $injector.get('$filter')('assetUrl');
-  var LazyLoader        = $injector.get('LazyLoader');
+  var spaceContext      = $injector.get('spaceContext');
 
   return {
     link: link,
@@ -34,12 +34,9 @@ angular.module('contentful').factory('MarkdownEditor/advancedActions', ['$inject
     }
   }
 
-  function asset(scope, cb) {
-    var localeCode = dotty.get(scope, 'locale.internal_code', null);
-    var defaultLocaleCode = dotty.get(scope, 'spaceContext.defaultLocale.internal_code', null);
-
+  function asset(localeCode, cb) {
     modalDialog.open({
-      scope: scope,
+      scope: $rootScope.$new(),
       template: 'insert_asset_dialog',
       ignoreEnter: true
     }).promise.then(function (assets) {
@@ -49,21 +46,21 @@ angular.module('contentful').factory('MarkdownEditor/advancedActions', ['$inject
     });
 
     function makeLocalizedAssetLink(asset) {
-      return _makeAssetLink(asset, localeCode, defaultLocaleCode);
+      return _makeAssetLink(asset, localeCode);
     }
   }
 
-  function _makeAssetLink(asset, localeCode, defaultLocaleCode) {
-    var file  = dotty.get(asset, 'data.fields.file', {});
-    var title = dotty.get(asset, 'data.fields.title', {});
-    file = file[localeCode] || file[defaultLocaleCode] || _.first(file);
-    title = title[localeCode] || file[defaultLocaleCode] || _.first(title);
+  function _makeAssetLink(asset, localeCode) {
+    try {
+      // "localizedField" may throw TypeError
+      var title = spaceContext.localizedField(asset, 'data.fields.title', localeCode);
+      var file = spaceContext.localizedField(asset, 'data.fields.file', localeCode);
+      if (title && file && file.url) {
+        return '![' + title + '](' + assetUrl(file.url) + ')';
+      }
+    } catch (e) {}
 
-    if (title && file && file.url) {
-      return '![' + title + '](' + assetUrl(file.url) + ')';
-    } else {
-      return '';
-    }
+    return '';
   }
 
   function special(cb) {
@@ -95,8 +92,6 @@ angular.module('contentful').factory('MarkdownEditor/advancedActions', ['$inject
       fieldData: { value: '' },
       urlStatus: 'invalid'
     });
-
-    LazyLoader.get('embedly');
 
     modalDialog.open({
       scope: modalScope,

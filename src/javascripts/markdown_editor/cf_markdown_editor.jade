@@ -85,13 +85,15 @@
         tabindex="-1"
         tooltip="More actions..."
         class="markdown-more-actions"
-        ng-class="{'active': minorActionsShown}")
+        ng-class="{'active': minorActionsShown}"
+        ng-disabled="!inMode('md')")
 
-      button.toolbar-button.fa.fa-picture-o(
+      button.toolbar-button(
         ng-click="insertAsset()"
         tabindex="-1"
         ng-disabled="!inMode('md')"
         class="markdown-media")
+        i.fa.fa-picture-o
         |  Insert media
 
     .markdown-minor-actions(ng-show="minorActionsShown")
@@ -146,33 +148,40 @@
       button.toolbar-button.fa.fa-undo(
         ng-click="actions.undo()"
         tabindex="-1"
-        tooltip="Undo")
+        tooltip="Undo"
+        ng-disabled="!inMode('md')")
 
       button.toolbar-button.fa.fa-repeat(
         ng-click="actions.redo()"
         tabindex="-1"
-        tooltip="Redo")
+        tooltip="Redo"
+        ng-disabled="!inMode('md')")
 
-  .markdown-editing-area(
-    tabindex="0"
-    ng-show="inMode('md')")
-    textarea
+  .markdown-areas
+    .markdown-editing-area(
+      tabindex="0"
+      ng-show="inMode('md')")
+      textarea
 
-  .markdown-preview(
-    ng-if="inMode('rich')"
-    ng-bind-html="preview"
-    ng-click="setMode('md')")
+    .markdown-preview(
+      ng-show="inMode('rich')"
+      ng-bind-html="preview"
+      ng-click="setMode('md')")
 
-  pre.markdown-html(
-    ng-if="notInProduction() && inMode('html')"
-    ng-bind="preview"
-    ng-click="setMode('md')")
+    pre.markdown-html(
+      ng-if="notInProduction() && inMode('html')"
+      ng-bind="preview"
+      ng-click="setMode('md')")
+
+  .markdown-help
+    cf-icon(name="markdown")
+    | Use Markdown syntax to format your text.&nbsp;
+    a(href ng-click="openHelp()") Help
 
   .markdown-info
     .markdown-stats
       | {{ info.words }} words,
-      | {{ info.chars }} characters,
-      | {{ info.time }}m reading time
-    .markdown-help
-      | This field supports GitHub flavoured Markdown.&nbsp;
-      a(href ng-click="openHelp()") See Markdown help
+      | {{ info.chars }} characters
+    .markdown-requirements
+      // @todo implement
+      | Required characters: min 25 / max 50
