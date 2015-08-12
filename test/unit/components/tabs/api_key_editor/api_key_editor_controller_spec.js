@@ -12,7 +12,7 @@ describe('API key editor controller', function () {
         'spaceGetId',
         'info',
         'serverError',
-        'warn',
+        'error',
         'logServerWarn',
         'createPreviewApiKey'
       ]);
@@ -23,8 +23,7 @@ describe('API key editor controller', function () {
       });
       $provide.value('notification', {
         info: stubs.info,
-        warn: stubs.warn,
-        serverError: stubs.serverError
+        error: stubs.error,
       });
       $provide.value('logger', {
         logServerWarn: stubs.logServerWarn
@@ -136,7 +135,7 @@ describe('API key editor controller', function () {
     });
 
     it('info notification is shown', function () {
-      sinon.assert.calledWith(stubs.info, '"apiKeyName" deleted successfully');
+      sinon.assert.calledOnce(stubs.info);
     });
 
     it('event is broadcasted from space', function () {
@@ -154,7 +153,7 @@ describe('API key editor controller', function () {
     it('error notification is shown', function () {
       sinon.assert.called(stubs.logServerWarn);
       expect(stubs.logServerWarn.args[0][1]).toEqual({error: {}});
-      sinon.assert.calledWith(stubs.warn, '"apiKeyName" could not be deleted');
+      sinon.assert.calledOnce(stubs.error);
     });
   });
 
@@ -163,7 +162,7 @@ describe('API key editor controller', function () {
     beforeEach(function () {
       pristineStub = sinon.stub();
       apiKey.save.resolves();
-      scope.$state.go = sinon.stub();
+      scope.$state.go = sinon.stub().resolves();
       scope.apiKeyForm = {
         '$setPristine': pristineStub
       };
@@ -172,8 +171,7 @@ describe('API key editor controller', function () {
     });
 
     it('info notification is shown', function () {
-      sinon.assert.called(stubs.info);
-      expect(stubs.info.args[0][0]).toEqual('"apiKeyName" saved successfully');
+      sinon.assert.calledOnce(stubs.info);
     });
 
     it('form is reset as pristine', function () {
@@ -195,9 +193,9 @@ describe('API key editor controller', function () {
     });
 
     it('error notification is shown', function () {
-      sinon.assert.calledWith(stubs.logServerWarn);
+      sinon.assert.calledOnce(stubs.error);
+      sinon.assert.calledOnce(stubs.logServerWarn);
       expect(stubs.logServerWarn.args[0][1]).toEqual({error: 'AN ERROR'});
-      sinon.assert.calledWith(stubs.warn, '"apiKeyName" could not be saved');
     });
   });
 
