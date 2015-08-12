@@ -183,7 +183,8 @@ angular.module('contentful')
   */
   function defaultWidgetId(field, contentType) {
     var fieldType = detectFieldType(field);
-
+    var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
+    if(hasValidations && _.contains(WIDGETS['dropdown'].fieldTypes, fieldType)) return 'dropdown';
     if (fieldType === 'Text') {
       if (contentType.data.displayField === field.id ||
           contentType.getId() === 'asset') {
@@ -192,7 +193,6 @@ angular.module('contentful')
         return 'markdown';
       }
     }
-
     if (fieldType === 'Entry') return 'entryLinkEditor';
     if (fieldType === 'Asset') return 'assetLinkEditor';
     if (fieldType === 'Entries') return 'entryLinksEditor';
@@ -220,6 +220,10 @@ angular.module('contentful')
       if (itemsType === 'Symbol') return 'Symbols';
     }
     return type;
+  }
+
+  function getFieldValidationsOfType(field, type) {
+    return _.filter(_.pluck(field.validations, type));
   }
 
   function optionsForWidget(widgetId, widgetType) {
