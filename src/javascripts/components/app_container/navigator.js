@@ -208,7 +208,7 @@ angular.module('contentful').config([
     controller: ['$scope', function ($scope) {
       $scope.context = {};
     }],
-    template: '<div cf-content-type-list class="content-type-list entity-list"></div>'
+    template: '<div cf-content-type-list class="workbench"></div>'
   });
 
   var contentTypeEditorState = {

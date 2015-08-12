@@ -73,6 +73,7 @@ Styleguide 9.1
 */
 
 $workbench-sidebar-width = 20%
+$workbench-max-sidebar-width = 20rem
 $workbench-content-width = 100% - $workbench-sidebar-width
 $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
 .workbench-main
@@ -85,6 +86,9 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
 
   &__left-sidebar
     width: $workbench-sidebar-width
+    max-width: $workbench-max-sidebar-width
+    padding-left: 1.5rem
+    padding-right: 1.5rem
     margin-right: auto
 
   &__right-content
@@ -93,6 +97,7 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
 
   &__right-sidebar
     width: $workbench-sidebar-width
+    max-width: $workbench-max-sidebar-width
     margin-left: auto
 
   &__middle-content
@@ -124,6 +129,10 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     margin: 0 0.6em 0 0.1ex
     white-space: nowrap
 
+  &__kb-link
+    line-height: normal
+    margin-left: 0.8ex
+
   &__description
     $text-truncate()
     color: $gray
@@ -135,6 +144,14 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     margin-left: auto
     > *
       margin-left: 1em
+
+  &__search
+    align-self: center
+    position: relative
+    flex-basis: 60%
+    flex-grow: 3
+    max-width: 1100px
+    padding-right: 20px
 
 
 /*

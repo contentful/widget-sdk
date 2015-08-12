@@ -74,6 +74,14 @@ angular.module('contentful')
     return !noQuery;
   };
 
+  $scope.hasContentTypes = function () {
+    return !$scope.empty || $scope.hasQuery();
+  };
+
+  $scope.hasQueryResults = function () {
+    return $scope.visibleContentTypes.length > 0;
+  };
+
   function getStatus(contentType, statusType) {
     var status = {
       'class': 'published',
