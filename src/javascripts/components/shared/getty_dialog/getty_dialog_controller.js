@@ -7,6 +7,7 @@ angular.module('contentful').controller('GettyDialogController', ['$scope', '$in
   var gettyImagesFactory = $injector.get('gettyImagesFactory');
   var logger             = $injector.get('logger');
   var stringUtils        = $injector.get('stringUtils');
+  var moment             = $injector.get('moment');
 
   var IMAGES_PER_PAGE = 6;
 

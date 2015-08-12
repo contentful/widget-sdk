@@ -1,63 +1,27 @@
 'use strict';
 
-var UserInterface = {
-  worf: require('worf'),
-  validation: require('contentful-validation'),
-  mimetype: require('contentful-mimetype'),
-  contentfulClient: require('contentful-client'),
-  hostnameTransformer: require('contentful-hostname-transformer'),
-  stringifySafe: require('json-stringify-safe'),
-  isDiacriticalMark: require('is-diacritical-mark'),
-  searchParser: require('./search.pegjs'),
-  localesList: require('./locales_list.json'),
-  fileSize: require('file-size'),
-  redefine: require('redefine'),
-  resolveResponse: require('contentful-resolve-response'),
-  querystring: require('querystring'),
-  Cookies: require('js-cookie')
-};
-
-module.exports = UserInterface;
-
-if(window){
+if (window){
   window._ = require('lodash-node/modern');
-  window.dotty = require('dotty');
-  window.moment = require('moment');
+  window.dotty = require('./dottie_wrapper.js');
   window.ZeroClipboard = require('zeroclipboard');
 }
 
 if (angular) {
   angular.module('contentful/user_interface', []).
-  constant('moment', window.moment).
-  constant('privateContentfulClient', UserInterface.contentfulClient).
-  constant('hostnameTransformer', UserInterface.hostnameTransformer).
-  constant('validation', UserInterface.validation).
-  constant('mimetype', UserInterface.mimetype).
-  constant('worf', UserInterface.worf).
-  constant('stringifySafe', UserInterface.stringifySafe).
-  constant('isDiacriticalMark', UserInterface.isDiacriticalMark).
-  constant('searchParser', UserInterface.searchParser).
-  constant('localesList', UserInterface.localesList).
-  constant('fileSize', UserInterface.fileSize).
-  constant('redefine', UserInterface.redefine).
-  constant('resolveResponse', UserInterface.resolveResponse).
-  constant('querystring', UserInterface.querystring).
-  constant('Cookies', UserInterface.Cookies).
+  constant('raw/moment', require('moment')).
+  constant('privateContentfulClient', require('contentful-client')).
+  constant('hostnameTransformer', require('contentful-hostname-transformer')).
+  constant('validation', require('contentful-validation')).
+  constant('mimetype', require('contentful-mimetype')).
+  constant('worf', require('worf')).
+  constant('stringifySafe', require('json-stringify-safe')).
+  constant('searchParser', require('./search.pegjs')).
+  constant('localesList', require('./locales_list.json')).
+  constant('fileSize', require('file-size')).
+  constant('querystring', require('querystring')).
+  constant('Cookies', require('js-cookie'));
 
-  // TODO moment should be a proper, configurable service
-  run(['moment', function (moment) {
-      moment.locale('en', {
-        calendar: {
-          lastDay : '[Yesterday], LT',
-          sameDay : '[Today], LT',
-          nextDay : '[Tomorrow], LT',
-          lastWeek : 'ddd, LT',
-          nextWeek : '[Next] ddd, LT',
-          sameElse : 'll'
-        }
-      });
-  }]);
-
+  // @todo it will be removed in #588
   angular.module('contentful/user_interface').factory('marked', function () {
     var marked = require('marked');
     marked.setOptions({
@@ -67,4 +31,3 @@ if (angular) {
     return marked;
   });
 }
-

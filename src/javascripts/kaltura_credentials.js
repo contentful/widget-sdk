@@ -3,6 +3,7 @@
 angular.module('contentful').service('kalturaCredentials', ['$injector', function($injector){
   var $q     = $injector.get('$q');
   var client = $injector.get('client');
+  var moment = $injector.get('moment');
 
   var credentialsCache = {
     credentials : undefined,

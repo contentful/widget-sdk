@@ -1,11 +1,9 @@
 'use strict';
 
-angular.module('contentful')
-.directive('cfDatetimeEditor', ['$injector', function($injector){
-  var $parse = $injector.get('$parse');
+angular.module('contentful').directive('cfDatetimeEditor', ['$injector', function ($injector) {
+  var $parse      = $injector.get('$parse');
   var zoneOffsets = $injector.get('zoneOffsets');
-  var moment = $injector.get('moment');
-
+  var moment      = $injector.get('moment');
 
   // The format strings for datepicker and moment.js are different!
   var DATE_FORMAT = $.datepicker.ISO_8601; // datepicker format

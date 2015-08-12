@@ -29,16 +29,22 @@
  *
  * It also ensures that the version in the entity is always up-to-date
  */
-angular.module('contentful').directive('otDocFor', function () {
+angular.module('contentful')
+
+.directive('otDocFor', function () {
   return {
     restrict: 'A',
     priority: -100,
     controller: 'otDocForController'
   };
-}).controller('otDocForController', ['$injector', '$attrs', '$scope', function OtDocForController($injector, $attrs, $scope) {
-  var ShareJS        = $injector.get('ShareJS');
-  var logger         = $injector.get('logger');
-  var defer          = $injector.get('defer');
+})
+
+.controller('otDocForController', ['$scope', '$attrs', '$injector', function OtDocForController($scope, $attrs, $injector) {
+
+  var ShareJS = $injector.get('ShareJS');
+  var logger  = $injector.get('logger');
+  var defer   = $injector.get('defer');
+  var moment  = $injector.get('moment');
   var TheLocaleStore = $injector.get('TheLocaleStore');
 
   function remoteOpListener(ops) {

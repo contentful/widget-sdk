@@ -22,6 +22,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var TheAccountView     = $injector.get('TheAccountView');
   var TheStore           = $injector.get('TheStore');
   var TheLocaleStore     = $injector.get('TheLocaleStore');
+  var moment             = $injector.get('moment');
 
   $controller('TrialWatchController', {$scope: $scope});
 

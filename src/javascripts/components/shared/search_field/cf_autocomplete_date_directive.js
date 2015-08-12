@@ -1,5 +1,7 @@
 'use strict';
-angular.module('contentful').directive('cfAutocompleteDate', function(){
+angular.module('contentful').directive('cfAutocompleteDate', ['$injector', function ($injector) {
+  var moment = $injector.get('moment');
+
   var DATE_FORMAT          =   'yy-mm-dd'; // datepicker format
   var DATE_FORMAT_INTERNAL = 'YYYY-MM-DD'; // moment.js format
 
@@ -53,4 +55,4 @@ angular.module('contentful').directive('cfAutocompleteDate', function(){
       }
     }
   };
-});
+}]);

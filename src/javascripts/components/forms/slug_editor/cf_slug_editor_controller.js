@@ -1,10 +1,9 @@
 'use strict';
 
-angular.module('contentful').controller('SlugEditorController', [
-  '$scope', '$injector', function ($scope, $injector) {
-
-  var slugUtils       = $injector.get('slug');
-  var debounce        = $injector.get('debounce');
+angular.module('contentful').controller('SlugEditorController', ['$scope', '$injector', function ($scope, $injector) {
+  var slugUtils = $injector.get('slug');
+  var debounce  = $injector.get('debounce');
+  var moment    = $injector.get('moment');
   var TheLocaleStore  = $injector.get('TheLocaleStore');
 
   var spaceContext = $scope.spaceContext;

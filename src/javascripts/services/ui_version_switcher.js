@@ -13,6 +13,7 @@ angular.module('contentful').factory('uiVersionSwitcher', ['$injector', function
   var $document    = $injector.get('$document');
   var environment  = $injector.get('environment');
   var Cookies      = $injector.get('Cookies');
+  var moment       = $injector.get('moment');
 
   return {
     checkIfVersionShouldBeSwitched: function () {
