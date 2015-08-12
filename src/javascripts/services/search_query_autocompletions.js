@@ -31,7 +31,7 @@ angular.module('contentful')
   var mimetype         = $injector.get('mimetype');
   var AssetContentType = $injector.get('AssetContentType');
   var $q               = $injector.get('$q');
-
+  var moment           = $injector.get('moment');
 
   function operatorDescription (op) {
     return operatorDescriptions[op] || '';

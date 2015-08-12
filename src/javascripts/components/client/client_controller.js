@@ -22,6 +22,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var TheAccountView     = $injector.get('TheAccountView');
   var TheStore           = $injector.get('TheStore');
   var TheLocaleStore     = $injector.get('TheLocaleStore');
+  var moment             = $injector.get('moment');
 
   $controller('TrialWatchController', {$scope: $scope});
 
@@ -90,7 +91,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       var space = spacesStore.getSpaceFromList($scope.$stateParams.spaceId, $scope.spaces);
       if (space) {
         setSpaceContext(space);
-      } else if (!$scope.$stateParams.spaceId) {
+      } else if (!$scope.$stateParams.spaceId && $scope.spaces && $scope.spaces.length > 0) {
         setSpaceContext($scope.spaces[0]);
       }
     }

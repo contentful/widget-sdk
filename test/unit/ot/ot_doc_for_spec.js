@@ -1,11 +1,13 @@
 'use strict';
 
 describe('otDocFor', function () {
+  var moment;
   var elem, scope;
 
   beforeEach(function() {
     module('contentful/test');
-    inject(function ($compile, $rootScope) {
+    inject(function ($compile, $rootScope, _moment_) {
+      moment = _moment_;
       scope = $rootScope;
       $rootScope.otDoc = {
         snapshot: {foo: 'bar', baz: {}, sys: {version: 100, updatedAt: 'foo'}},
@@ -28,7 +30,6 @@ describe('otDocFor', function () {
     });
 
     it('should preserve version and updatedAt', function () {
-      /*global moment*/
       var clock = sinon.useFakeTimers('Date');
       try {
         scope.otUpdateEntity();

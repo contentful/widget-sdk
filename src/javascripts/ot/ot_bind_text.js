@@ -12,9 +12,10 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
   var ShareJS           = $injector.get('ShareJS');
   var defer             = $injector.get('defer');
   var logger            = $injector.get('logger');
-  var isDiacriticalMark = $injector.get('isDiacriticalMark');
 
   var ReloadNotification = $injector.get('ReloadNotification');
+
+  var DIACRITICAL_CHAR_CODES = [94, 96, 126, 168, 180];
 
   return {
     restrict: 'A',
@@ -59,7 +60,7 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
         //console.log('parsing', viewValue);
         return (
           viewValue === '' ||
-          viewValue && typeof viewValue == 'string' && viewValue.length === 1 && isDiacriticalMark.fromChar(viewValue)
+          viewValue && typeof viewValue == 'string' && viewValue.length === 1 && isDiacriticalMark(viewValue)
         ) ? null : viewValue;
       });
 
@@ -143,6 +144,10 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
           }
         });
         unbindTextField = subdoc.attach_textarea(elm[0]);
+      }
+
+      function isDiacriticalMark(val) {
+        return val && DIACRITICAL_CHAR_CODES.indexOf(val.charCodeAt(0)) > -1;
       }
 
       //console.log('linking done', scope.$id, scope.otPath);

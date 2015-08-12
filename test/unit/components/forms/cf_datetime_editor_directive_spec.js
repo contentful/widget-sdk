@@ -1,11 +1,13 @@
 'use strict';
 
 describe('DateTime Editor', function () {
+  var moment;
   var element, scope;
-  var localZone = moment().format('Z');
+
   beforeEach(module('contentful/test'));
 
-  beforeEach(inject(function ($compile, $rootScope, $q){
+  beforeEach(inject(function ($compile, $rootScope, $q, _moment_){
+    moment = _moment_;
     scope = $rootScope;
     scope.otChangeValue = sinon.stub().returns($q.when());
     scope.widget = {widgetParams: {
@@ -119,12 +121,13 @@ describe('DateTime Editor', function () {
   });
 
   it('should accepts different inputs', function () {
+    var localZone = moment().format('Z');
     // No time
     enter('2013-12-24');
     expect(scope.fieldData.value).toBe('2013-12-24');
     // Time formats
     enter('2013-12-24', '1:23');
-    expect(scope.fieldData.value).toBe('2013-12-24T01:23'+localZone);
+    expect(scope.fieldData.value).toBe('2013-12-24T01:23' + localZone);
     enter('2013-12-24', '01:23', '');
     expect(scope.fieldData.value).toBe('2013-12-24T01:23');
     enter('2013-12-24', '1:23:45');

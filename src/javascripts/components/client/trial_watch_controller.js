@@ -7,6 +7,7 @@ angular.module('contentful')
   var analytics      = $injector.get('analytics');
   var logger         = $injector.get('logger');
   var TheAccountView = $injector.get('TheAccountView');
+  var moment         = $injector.get('moment');
 
   $scope.$watch('user', trialWatcher);
   $scope.$watch('spaceContext.space', trialWatcher);

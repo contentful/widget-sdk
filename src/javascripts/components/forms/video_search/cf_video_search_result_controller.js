@@ -1,7 +1,8 @@
 'use strict';
 
-angular.module('contentful').controller('cfVideoSearchResultController', ['$scope', function($scope){
+angular.module('contentful').controller('cfVideoSearchResultController', ['$scope', '$injector', function ($scope, $injector){
   var controller = this;
+  var moment     = $injector.get('moment');
 
   $scope.videoSearchResult = {
     isPlaying        : false,
