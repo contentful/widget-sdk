@@ -91,7 +91,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       var space = spacesStore.getSpaceFromList($scope.$stateParams.spaceId, $scope.spaces);
       if (space) {
         setSpaceContext(space);
-      } else if (!$scope.$stateParams.spaceId) {
+      } else if (!$scope.$stateParams.spaceId && $scope.spaces && $scope.spaces.length > 0) {
         setSpaceContext($scope.spaces[0]);
       }
     }
