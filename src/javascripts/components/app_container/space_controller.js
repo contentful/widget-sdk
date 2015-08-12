@@ -7,22 +7,17 @@ angular.module('contentful').controller('SpaceController', ['$scope', '$injector
   var authentication = $injector.get('authentication');
   var authorization  = $injector.get('authorization');
   var enforcements   = $injector.get('enforcements');
+  var TheLocaleStore = $injector.get('TheLocaleStore');
 
   $controller('UiConfigController', {$scope: $scope});
   $scope.entityCreationController = $controller('EntityCreationController', {$scope: $scope});
 
-  $scope.$watch(function (scope) {
-    if (scope.spaceContext && scope.spaceContext.space) {
-      return _.map(scope.spaceContext.space.getPrivateLocales(), function (locale) {
-        return locale.internal_code;
-      });
-    }
-  }, function (codes, old, scope) {
-    if (codes) scope.spaceContext.refreshLocales();
-  }, true);
-
-  $scope.$watch('spaceContext.localeStates', function () {
-    $scope.spaceContext.refreshActiveLocales();
+  $scope.$watch(function () {
+    return _.map(TheLocaleStore.getPrivateLocales(), function (locale) {
+      return locale.internal_code;
+    });
+  }, function (codes) {
+    if (!_.isEmpty(codes)) TheLocaleStore.refreshLocales();
   }, true);
 
   $scope.$watch('spaceContext', function(space, o, scope) {

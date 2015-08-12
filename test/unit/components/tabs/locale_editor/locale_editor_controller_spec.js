@@ -16,12 +16,16 @@ describe('Locale editor controller', function () {
     this.modalDialog = {
       openConfirmDialog: sinon.stub()
     };
+    this.TheLocaleStoreMock = {
+      refreshLocales: sinon.stub()
+    };
 
     module('contentful/test', function ($provide) {
       $provide.value('logger', self.logger);
       $provide.value('notification', self.notification);
       $provide.value('analytics', self.analytics);
       $provide.value('modalDialog', self.modalDialog);
+      $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
     });
 
     this.$q = this.$inject('$q');
@@ -57,8 +61,9 @@ describe('Locale editor controller', function () {
       getVersion: sinon.stub()
     };
 
-    this.$inject('$controller')('LocaleEditorController', {$scope: this.scope});
-    this.scope.$apply();
+    var $controller = this.$inject('$controller');
+    this.controller = $controller('LocaleEditorController', {$scope: this.scope});
+    this.$apply();
   });
 
   it('has a closing message', function () {
@@ -81,16 +86,16 @@ describe('Locale editor controller', function () {
     expect(this.scope.context.dirty).toBeTruthy();
   });
 
-  describe('deletes a locale', function () {
+  describe('#delete command succeeds', function () {
     beforeEach(function() {
-      this.scope.locale.delete.returns(this.$q.when());
+      this.scope.locale.delete.resolves();
     });
 
     describe('with confirmation', function () {
       beforeEach(function () {
         this.modalDialog.openConfirmDialog.returns(this.$q.when({confirmed: true}));
-        this.scope.startDeleteFlow();
-        this.scope.$apply();
+        this.controller.delete.execute();
+        this.$apply();
       });
 
       it('info notification is shown', function () {
@@ -110,8 +115,8 @@ describe('Locale editor controller', function () {
     describe('with no confirmation', function() {
       beforeEach(function () {
         this.modalDialog.openConfirmDialog.returns(this.$q.when({}));
-        this.scope.startDeleteFlow();
-        this.scope.$apply();
+        this.controller.delete.execute();
+        this.$apply();
       });
 
       it('does not delete locale', function() {
@@ -124,14 +129,14 @@ describe('Locale editor controller', function () {
     });
   });
 
-  describe('fails to delete a locale', function () {
+  describe('#delete command failures', function () {
     var error = { body: { message: 'errorMessage' }};
     beforeEach(function () {
       this.scope.localeForm.$dirty = true;
       this.scope.locale.delete.returns(this.$q.reject(error));
       this.modalDialog.openConfirmDialog.returns(this.$q.when({confirmed: true}));
-      this.scope.startDeleteFlow();
-      this.scope.$apply();
+      this.controller.delete.execute();
+      this.$apply();
     });
 
     it('error notification is shown', function () {
@@ -159,15 +164,15 @@ describe('Locale editor controller', function () {
     });
   });
 
-  describe('saves a locale', function () {
+  describe('#save command succeeds', function () {
     beforeEach(function() {
       this.scope.$state.go = sinon.stub();
     });
 
     describe('with unchanged code', function() {
       beforeEach(function () {
-        this.scope.save();
-        this.scope.$apply();
+        this.controller.save.execute();
+        this.$apply();
       });
 
       it('info notification is shown', function () {
@@ -186,7 +191,7 @@ describe('Locale editor controller', function () {
       });
 
       it('refreshes locales', function() {
-        sinon.assert.called(this.scope.spaceContext.refreshLocales);
+        sinon.assert.called(this.TheLocaleStoreMock.refreshLocales);
       });
 
       it('is logged to analytics', function () {
@@ -211,8 +216,8 @@ describe('Locale editor controller', function () {
       describe('with confirmation', function() {
         beforeEach(function() {
           this.modalDialog.openConfirmDialog.returns(this.$q.when({confirmed: true}));
-          this.scope.save();
-          this.scope.$apply();
+          this.controller.save.execute();
+          this.$apply();
         });
 
         it('saves locale', function() {
@@ -231,8 +236,8 @@ describe('Locale editor controller', function () {
       describe('with no confirmation', function() {
         beforeEach(function() {
           this.modalDialog.openConfirmDialog.returns(this.$q.when({}));
-          this.scope.save();
-          this.scope.$apply();
+          this.controller.save.execute();
+          this.$apply();
         });
 
         it('saves locale', function() {
@@ -251,12 +256,12 @@ describe('Locale editor controller', function () {
     });
   });
 
-  describe('fails to save a locale', function () {
+  describe('#save command fails', function () {
     beforeEach(function () {
       this.scope.locale.save.returns(this.$q.reject({}));
       this.scope.localeForm.$dirty = true;
-      this.scope.save();
-      this.scope.$apply();
+      this.controller.save.execute();
+      this.$apply();
     });
 
     it('error notification is shown', function () {

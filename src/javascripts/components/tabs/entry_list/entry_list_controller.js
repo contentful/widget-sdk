@@ -12,6 +12,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   var modalDialog        = $injector.get('modalDialog');
   var searchQueryHelper  = $injector.get('searchQueryHelper');
   var logger             = $injector.get('logger');
+  var TheLocaleStore     = $injector.get('TheLocaleStore');
 
   $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('EntryListViewsController', {$scope: $scope});
@@ -162,7 +163,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
       var contentType = $scope.spaceContext.getPublishedContentType($scope.context.view.contentTypeId);
       field = _.find(contentType.data.fields, {id: fieldId});
       if(field){
-        var defaultLocale = $scope.spaceContext.space.getDefaultLocale().internal_code;
+        var defaultLocale = TheLocaleStore.getDefaultLocale().internal_code;
         return 'fields.'+apiNameOrId(field)+'.'+defaultLocale;
       } else {
         // In case the custom field saved in the view does not exist anymore

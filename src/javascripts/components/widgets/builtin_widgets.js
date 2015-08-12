@@ -84,7 +84,15 @@ angular.module('contentful').run(['widgets', function(widgets){
   });
 
   widgets.registerWidget('radio',{
-    fieldTypes: ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'],
+    fieldTypes: ['Text', 'Symbol', 'Integer', 'Number'],
+    name: 'Radio',
+    icon: 'radio',
+    notFocusable: true,
+    template: '<cf-radio-editor ng-model="fieldData.value" ot-bind-internal="valuesController.selected"></cf-radio-editor>'
+  });
+
+  widgets.registerWidget('boolean',{
+    fieldTypes: ['Boolean'],
     name: 'Radio',
     icon: 'radio',
     notFocusable: true,

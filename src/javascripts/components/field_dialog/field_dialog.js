@@ -162,7 +162,8 @@ angular.module('contentful')
 .controller('FieldDialogSettingsController',
 ['$scope', '$injector', function ($scope, $injector) {
   var fieldDecorator = $injector.get('fieldDecorator');
-  var buildMessage = $injector.get('fieldErrorMessageBuilder');
+  var buildMessage   = $injector.get('fieldErrorMessageBuilder');
+  var TheLocaleStore = $injector.get('TheLocaleStore');
 
   $scope.schema = {
     errors: function (decoratedField) {
@@ -175,7 +176,7 @@ angular.module('contentful')
     $scope.tab.invalid = isInvalid;
   });
 
-  $scope.locales = _.map($scope.spaceContext.privateLocales, 'name');
+  $scope.locales = _.map(TheLocaleStore.getPrivateLocales(), 'name');
 }])
 
 

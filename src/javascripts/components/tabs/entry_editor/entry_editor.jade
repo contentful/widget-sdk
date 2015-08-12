@@ -24,11 +24,13 @@
         cf-icon.context-menu__arrow.x--top-right(name="arrow-up")
         ul.lang-switcher(ng-show="showLangSwitcher")
           label.context-menu__item(
-            ng-repeat="locale in spaceContext.privateLocales track by locale.sys.id"
+            ng-repeat="locale in localesState.privateLocales track by locale.sys.id"
             role="menuitemcheckbox")
-            input(type="checkbox" ng-model="spaceContext.localeStates[locale.internal_code]")
+            input(type="checkbox"
+              ng-disabled="locale == localesState.defaultLocale"
+              ng-model="localesState.localeActiveStates[locale.internal_code]")
             | {{locale.name}}
-            span(ng-show="locale == spaceContext.space.getDefaultLocale()")
+            span(ng-show="locale == localesState.defaultLocale")
               | &nbsp;(default)
         label.context-menu__item(role="menuitemcheckbox")
           input(type="checkbox" ng-model="preferences.showDisabledFields")

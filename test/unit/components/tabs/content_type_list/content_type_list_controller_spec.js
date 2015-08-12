@@ -21,7 +21,7 @@ describe('Content Type List Controller', function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs(['resetContentTypes', 'getName']);
     });
-    inject(function ($rootScope, $controller, SpaceContext, cfStub) {
+    inject(function ($rootScope, $controller, cfStub) {
       scope = $rootScope.$new();
       var space = cfStub.space('space');
       scope.spaceContext = cfStub.spaceContext(space, [

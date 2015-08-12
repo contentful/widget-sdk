@@ -2,6 +2,15 @@
 
 angular.module('contentful')
 
+.directive('cfLocaleEditor', function () {
+  return {
+    template: JST.locale_editor(),
+    restrict: 'E',
+    controller: 'LocaleEditorController',
+    controllerAs: 'localeEditor'
+  };
+})
+
 /**
  * @ngdoc type
  * @name LocaleEditorController
@@ -15,19 +24,18 @@ angular.module('contentful')
  * @scope.provides  locales
 */
 .controller('LocaleEditorController', ['$scope', '$injector', function ($scope, $injector) {
-  var localesList  = $injector.get('localesList');
-  var notification = $injector.get('notification');
-  var logger       = $injector.get('logger');
-  var $q           = $injector.get('$q');
-  var modalDialog  = $injector.get('modalDialog');
-  var tokenStore   = $injector.get('tokenStore');
-  var analytics    = $injector.get('analytics');
+  var controller   = this;
+  var localesList    = $injector.get('localesList');
+  var TheLocaleStore = $injector.get('TheLocaleStore');
+  var notification   = $injector.get('notification');
+  var logger         = $injector.get('logger');
+  var $q             = $injector.get('$q');
+  var modalDialog    = $injector.get('modalDialog');
+  var tokenStore     = $injector.get('tokenStore');
+  var analytics      = $injector.get('analytics');
+  var Command      = $injector.get('command');
 
   var formWasDirty = false;
-
-  $scope.startDeleteFlow = startDeleteFlow;
-  $scope.cancel = cancel;
-  $scope.save = save;
 
   $scope.context.closingMessage = 'You have unsaved changes.';
   $scope.locales = _.clone(localesList, true);
@@ -44,67 +52,88 @@ angular.module('contentful')
 
   $scope.$watch('locale.getCode()', updateLocaleName);
 
+
   /**
    * @ngdoc method
-   * @name LocaleEditorController#startDeleteFlow
-  */
+   * @name LocaleEditorController#delete
+   * @type {Command}
+   */
+  controller.delete = Command.create(startDeleteFlow, {
+    available: function () {
+      return !$scope.context.isNew &&
+             $scope.locale.getId() &&
+             !$scope.locale.data.default;
+    }
+  });
+
   function startDeleteFlow() {
     lockFormWhileSubmitting();
-    modalDialog.openConfirmDialog({
+    return modalDialog.openConfirmDialog({
       template: 'locale_removal_confirm_dialog',
       scope: $scope
     })
     .then(function (result) {
       if(result.confirmed)
-        deleteLocale();
+        return deleteLocale();
       else
-        resetFormStatusOnFailure();
+        return resetFormStatusOnFailure();
     });
   }
 
   function deleteLocale() {
     trackDelete();
-    $scope.locale.delete()
-    .then(function () {
+    return $scope.locale.delete()
+    .then(function deletedSuccesfully () {
       notification.info('Locale deleted successfully');
-      tokenStore.getUpdatedToken().then(function () {
-        $scope.context.dirty = false;
-        $scope.closeState();
+      return tokenStore.getUpdatedToken().then(function () {
+        TheLocaleStore.refreshLocales();
+        return $scope.closeState();
       });
-    })
-    .catch(function (err) {
+    }, function errorDeletingLocale (err) {
       resetFormStatusOnFailure();
       notification.warn('Locale could not be deleted: ' + err.body.message);
       logger.logServerWarn('Locale could not be deleted', {error: err});
     });
   }
 
+
   /**
-   * @ngdoc method
+   * @ngdoc property
    * @name LocaleEditorController#cancel
-  */
-  function cancel() {
-    $scope.$state.go('^.list');
-  }
+   * @type {Command}
+   */
+  controller.cancel = Command.create(function cancel () {
+    return $scope.$state.go('^.list');
+  }, {
+    available: function () {
+      return $scope.context.isNew;
+    }
+  });
 
-  function updateInitialLocaleCode() {
-    $scope.initialLocaleCode = $scope.locale.data.code;
-  }
 
   /**
-   * @ngdoc method
+   * @ngdoc property
    * @name LocaleEditorController#save
-  */
+   * @type {Command}
+   */
+  controller.save = Command.create(save, {
+    disabled: function () {
+      var form = $scope.localeForm;
+      return form.$invalid || !form.$dirty;
+    }
+  });
+
   function save() {
     lockFormWhileSubmitting();
-    confirmCodeChange()
+    return confirmCodeChange()
     .then(function (result) {
       if(result.confirmed) {
         return $scope.locale.save()
         .then(saveSuccessHandler)
         .catch(saveErrorHandler);
+      } else {
+        return resetFormStatusOnFailure();
       }
-      resetFormStatusOnFailure();
     });
   }
 
@@ -114,7 +143,7 @@ angular.module('contentful')
     tokenStore.getUpdatedToken().then(function () {
       updateInitialLocaleCode();
       $scope.$state.go('spaces.detail.settings.locales.detail', { localeId: response.getId() });
-      $scope.spaceContext.refreshLocales();
+      TheLocaleStore.refreshLocales();
       notification.info('Locale saved successfully');
       trackSave('Saved Successful Locale');
     });
@@ -169,6 +198,10 @@ angular.module('contentful')
     }
   }
 
+  function updateInitialLocaleCode() {
+    $scope.initialLocaleCode = $scope.locale.data.code;
+  }
+
   /**
    * Adds the current locale to the list
    *
@@ -210,12 +243,4 @@ angular.module('contentful')
     return $scope.spaceContext.space.data.organization.subscriptionPlan.name;
   }
 
-}])
-
-.directive('cfLocaleEditor', function () {
-  return {
-    template: JST.locale_editor(),
-    restrict: 'A',
-    controller: 'LocaleEditorController'
-  };
-});
+}]);

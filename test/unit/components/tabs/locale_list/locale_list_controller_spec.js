@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Locale List Controller', function () {
-  var controller;
   beforeEach(function () {
     module('contentful/test');
     this.scope = this.$inject('$rootScope').$new();
@@ -15,13 +14,15 @@ describe('Locale List Controller', function () {
       }
     };
 
-    controller = this.$inject('$controller')('LocaleListController', {$scope: this.scope});
+    this.createController = function () {
+      this.$inject('$controller')('LocaleListController', {$scope: this.scope});
+      this.scope.$digest();
+    };
   });
 
   describe('refreshing locales', function () {
-    beforeEach(function () {
-      this.scope.refreshLocales();
-      this.scope.$apply();
+    beforeEach(function() {
+      this.createController();
     });
 
     it('calls locales getter', function () {
@@ -36,8 +37,7 @@ describe('Locale List Controller', function () {
   describe('refreshing locales fails', function () {
     beforeEach(function () {
       this.scope.spaceContext.space.getLocales.returns(this.$q.reject({statusCode: 500}));
-      this.scope.refreshLocales();
-      this.scope.$apply();
+      this.createController();
     });
 
     it('results in an error message', function () {

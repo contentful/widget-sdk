@@ -17,15 +17,16 @@ describe('The ContentType list directive', function () {
   }
 
   it('filters content types by name', function() {
+    var contentTypes = [
+      makeCT(1, 'A'),
+      makeCT(2, 'B'),
+      makeCT(3, 'Bx')
+    ];
     var element = this.$compile('<div cf-content-type-list>', {
       context: {},
       spaceContext: {
-        contentTypes: [
-          makeCT(1, 'A'),
-          makeCT(2, 'B'),
-          makeCT(3, 'Bx')
-        ],
-        filterAndSortContentTypes: _.identity,
+        contentTypes: contentTypes,
+        getFilteredAndSortedContentTypes: sinon.stub().returns(contentTypes),
         refreshContentTypes: sinon.stub()
       },
       searchTerm: 'B'

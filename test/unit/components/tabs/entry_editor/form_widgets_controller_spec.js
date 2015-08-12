@@ -4,7 +4,14 @@ describe('Form Widgets Controller', function () {
   var controller, scope;
 
   beforeEach(function () {
-    module('contentful/test');
+    var self = this;
+    module('contentful/test', function ($provide) {
+      self.TheLocaleStoreMock = {
+        getActiveLocales: sinon.stub(),
+        getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'})
+      };
+      $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
+    });
     inject(function ($compile, $rootScope, $controller, cfStub, editingInterfaces, $q){
       scope = $rootScope;
       var space = cfStub.space('testSpace');
@@ -83,9 +90,11 @@ describe('Form Widgets Controller', function () {
 
     describe('locales for a field', function () {
       beforeEach(function () {
+        this.TheLocaleStoreMock.getActiveLocales.returns([
+          {internal_code: 'en-US'},
+          {internal_code: 'de-DE'}
+        ]);
         field.disabled = false;
-        scope.spaceContext.localeStates['de-DE'] = true;
-        scope.spaceContext.refreshActiveLocales();
       });
 
       it('should contain active locales if localized', function () {
@@ -98,7 +107,7 @@ describe('Form Widgets Controller', function () {
         field.localized = false;
         scope.$apply();
         expect(scope.widgets[0].locales.length).toBe(1);
-        expect(scope.widgets[0].locales[0].code).toBe('en-US');
+        expect(scope.widgets[0].locales[0].internal_code).toBe('en-US');
       });
 
       it('should contain all error locales even if not localized', function () {
@@ -135,22 +144,6 @@ describe('Form Widgets Controller', function () {
         it('should only display the default locale for non-localized fields', function () {
           scope.$apply();
           expect(scope.widgets[1].locales.length).toBe(1);
-        });
-      });
-
-      describe('field with data in a disabled locale', function () {
-        beforeEach(function () {
-          scope.spaceContext.space.data.locales[1].publish = false;
-          scope.spaceContext.refreshLocales();
-
-          scope.errorPaths = {
-            'localized': ['de-DE']
-          };
-        });
-
-        it('should show the field with the error', function () {
-          scope.$apply();
-          expect(scope.widgets[0].locales.length).toBe(2);
         });
       });
 

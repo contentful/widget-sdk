@@ -1,7 +1,7 @@
 header.workbench-header
   h1.workbench-header__title(title="{{context.title}}") {{context.title}}
-  .workbench-header__description(ng-show="locale.data.default")
-    p Default locale
+  .workbench-header__description(ng-if="locale.data.default")
+    | Default locale
 
 .workbench-main
   form.workbench-main__middle-content(name="localeForm" submit="save()")
@@ -22,19 +22,11 @@ header.workbench-header
         label(for="cma") Enable editing for this locale
 
 .workbench-actions
-  button.cfnext-btn-secondary-action.cancel(
-    type="button"
-    ng-show="context.isNew"
-    ng-click="cancel()")
+  button.cfnext-btn-secondary-action(ui-command="localeEditor.cancel")
     | Cancel
-  button.cfnext-btn-secondary-action.delete(
-    type="button"
-    ng-show="locale.getId() && !locale.data.default"
-    ng-disabled="localeForm.$submitted"
-    ng-click="startDeleteFlow()")
+  button.cfnext-btn-secondary-action(ui-command="localeEditor.delete")
     | Delete
   button.cfnext-btn-primary-action(
     type="submit"
-    ng-click="save()"
-    ng-disabled="localeForm.$invalid || !localeForm.$dirty || localeForm.$submitted")
+    ui-command="localeEditor.save")
     | Save

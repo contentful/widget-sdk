@@ -22,27 +22,6 @@ describe('Client Controller', function () {
 
       $provide.removeControllers('TrialWatchController');
 
-      $provide.factory('SpaceContext', function () {
-        return function(){
-          return {
-            space: {
-              getId: stubs.spaceId,
-              data: {
-                organization: {
-                  sys: {
-                    id: 456
-                  }
-                }
-              }
-            },
-            tabList: {
-              numVisible: stubs.numVisible,
-              current: {}
-            }
-          };
-        };
-      });
-
       $provide.value('$document', [{ title: '' }]);
 
       setMockOnContext(self, 'analyticsStubs', [
@@ -140,13 +119,20 @@ describe('Client Controller', function () {
       };
       $provide.value('enforcements', self.enforcementsStubs);
     });
-    inject(function ($controller, $rootScope, $q, $injector){
-      this.$q = $q;
-      this.$rootScope = $rootScope;
-      notification = $injector.get('notification');
-      TheAccountView = $injector.get('TheAccountView');
-      scope = $rootScope.$new();
-      clientController = $controller('ClientController', {$scope: scope});
+    inject(function (){
+      this.$q = this.$inject('$q');
+      this.$rootScope = this.$inject('$rootScope');
+
+      notification = this.$inject('notification');
+      TheAccountView = this.$inject('TheAccountView');
+
+      var spaceContext = this.$inject('spaceContext');
+      var space = this.$inject('cfStub').space('');
+      space.getId = stubs.spaceId;
+      spaceContext.resetWithSpace(space);
+
+      scope = this.$rootScope.$new();
+      clientController = this.$inject('$controller')('ClientController', {$scope: scope});
       scope.$state.go = stubs.go;
     });
   });
@@ -289,7 +275,9 @@ describe('Client Controller', function () {
 
     describe('changing route to a different space', function () {
       beforeEach(function () {
-        scope.spaces = [{getId: function() { return 123; }}];
+        var space = this.$inject('cfStub').space('123');
+        scope.spaces = [space];
+        scope.$stateParams.spaceId = '123';
         childScope.$emit('$stateChangeSuccess');
       });
 
