@@ -75,6 +75,7 @@
         ng-disabled="!inMode('md')")
 
       button.toolbar-button.fa.fa-cubes(
+        ng-show="notInProduction()"
         ng-click="embed()"
         tabindex="-1"
         tooltip="Embed external content"
@@ -180,8 +181,7 @@
 
   .markdown-info
     .markdown-stats
-      | {{ info.words }} words,
-      | {{ info.chars }} characters
-    .markdown-requirements
-      // @todo implement
-      | Required characters: min 25 / max 50
+    | {{ info.words }} words,&nbsp;
+    span(ng-class="marker") {{ info.chars }}
+    |  characters
+    .markdown-requirements {{ requirements }}

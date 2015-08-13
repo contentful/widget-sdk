@@ -95,7 +95,6 @@ $markdown-radius = 3
 
 .markdown-editing-area
   .CodeMirror
-    font-family: "Avenir Next W01", Helvetica, sans-serif
     line-height: 1.5em
   .CodeMirror-lines
     padding: 20px
@@ -149,6 +148,11 @@ $markdown-radius = 3
     a
       color: $base-font-color
       text-decoration: underline
+  .markdown-marker-near
+    color: lighten($orange, 20%)
+  .markdown-marker-invalid
+    color: $red
+    font-weight: bold
 
 /**
  * Markdown preview styles

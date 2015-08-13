@@ -7,6 +7,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
   var LazyLoader      = $injector.get('LazyLoader');
   var MarkdownEditor  = $injector.get('MarkdownEditor');
   var advancedActions = $injector.get('MarkdownEditor/advancedActions');
+  var requirements    = $injector.get('MarkdownEditor/requirements');
   var LinkOrganizer   = $injector.get('LinkOrganizer');
   var environment     = $injector.get('environment');
 
@@ -28,6 +29,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.firstSyncDone = false;
       scope.hasCrashed = false;
       scope.isReady = isReady;
+      scope.requirements = requirements.getInfoLine(scope.field);
       scope.preview = '';
       scope.info = {};
       scope.setMode = setMode;
@@ -51,6 +53,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         editor = editorInstance;
         scope.actions = editor.actions;
         scope.$watch('fieldData.value', handleValueChange);
+        scope.$watch('fieldData.value', addSizeMarker);
         scope.$on('$destroy', function () {
           editor.destroy();
           scope = null;
@@ -76,6 +79,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
           scope.info = info;
           scope.firstSyncDone = true;
         });
+      }
+
+      function addSizeMarker() {
+        scope.marker = requirements.getSizeMarker(scope.field, scope.fieldData);
       }
 
       function isReady() {

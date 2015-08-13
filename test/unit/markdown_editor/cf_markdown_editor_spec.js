@@ -11,13 +11,13 @@ describe('cfMarkdownEditor', function () {
     $timeout = this.$inject('$timeout');
     var $q = this.$inject('$q');
     var MarkdownEditor = this.$inject('MarkdownEditor');
-    var scopeProps = { fieldData: { value: 'test' } };
+    var scopeProps = { fieldData: { value: 'test' }, field: {} };
 
     sinon.stub(MarkdownEditor, 'create', function (textarea) {
       return $q.when(MarkdownEditor.createManually(textarea, libs.CodeMirror, libs.marked));
     });
 
-    var elem = this.$compile('<cf-markdown-editor field-data="fieldData" />', scopeProps);
+    var elem = this.$compile('<cf-markdown-editor field-data="fieldData" field="field" />', scopeProps);
     textarea = elem.find('textarea').get(0);
     scope = elem.isolateScope();
 
