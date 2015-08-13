@@ -3,6 +3,7 @@
 describe('context menu', function () {
   beforeEach(module('cf.ui'));
   beforeEach(function () {
+    this.$inject('contextMenu').init();
     var $document = this.$inject('$document');
     this.$body = $document.find('body');
   });
