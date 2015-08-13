@@ -9,7 +9,11 @@ angular.module('contentful')
  * @description
  * This service holds all context related to a space, including contentTypes,
  * locales, and helper methods.
-*/
+ *
+ * @property {Client.ContentType[]} contentTypes
+ * @property {Client.ContentType[]} publishedContentTypes
+ * @property {Client.Space} space
+ */
 .factory('spaceContext', ['$injector', function($injector){
   var $parse             = $injector.get('$parse');
   var $q                 = $injector.get('$q');
@@ -19,31 +23,11 @@ angular.module('contentful')
   var notification       = $injector.get('notification');
   var logger             = $injector.get('logger');
 
-  function SpaceContext(){}
+  function SpaceContext () {
+    this.resetWithSpace(null);
+  }
 
   SpaceContext.prototype = {
-      /**
-       * @ngdoc property
-       * @type Object
-       * @name spaceContext#space
-      */
-      space: null,
-
-      /**
-       * @ngdoc property
-       * @type Array
-       * @name spaceContext#contentTypes
-      */
-      contentTypes: [],
-      /**
-       * @ngdoc property
-       * @type Array
-       * @name spaceContext#publishedContentTypes
-      */
-      publishedContentTypes: [],
-      _publishedContentTypesHash: {},
-      _publishedContentTypeIsMissing: {},
-
       /**
        * @ngdoc method
        * @name spaceContext#resetWithSpace
@@ -54,7 +38,12 @@ angular.module('contentful')
       */
       resetWithSpace: function(space){
         this.space = space;
+        this.contentTypes = [];
         this._contentTypeLoader = new PromisedLoader();
+
+        this.publishedContentTypes = [];
+        this._publishedContentTypesHash = {};
+        this._publishedContentTypeIsMissing = {};
         this._publishedContentTypeLoader = new PromisedLoader();
       },
 
@@ -63,7 +52,13 @@ angular.module('contentful')
        * @name spaceContext#refreshContentTypes
        * @description
        * Refreshes all Content Type related information in the context
-      */
+       */
+      // FIXME This is a potential source of a race condition
+      // Consider the case where we call `refreshContentTypes()`, then
+      // `resetSpace()` and then `refreshContenTypes()` again. If the
+      // first query for content types is resolved after the latter
+      // one, the space context will have the content types of the
+      // wrong space
       refreshContentTypes: function() {
         if (this.space) {
           var spaceContext = this;
@@ -102,7 +97,9 @@ angular.module('contentful')
        * @name spaceContext#refreshPublishedContentTypes
        * @description
        * Refreshes list of published content types
-      */
+       */
+      // FIXME Much like `refreshContentTypes()` this is a potential
+      // source of a race condition.
       refreshPublishedContentTypes: function() {
         var spaceContext = this;
         return this._publishedContentTypeLoader.loadPromise(function(){
