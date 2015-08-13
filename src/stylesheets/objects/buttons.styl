@@ -44,9 +44,11 @@ $cfnext-button($color, $shade, $text = rgba(255,255,255,1))
   $cfnext-button-colors($color, $text, $shade)
   $cfnext-button-loading($text)
 
+$button-vertical-padding = (10 / 16) * 1rem
+
 $cfnext-button-layout()
   display: inline-block
-  padding: 0.6rem 1.5rem
+  padding: $button-vertical-padding 1.5rem
   cursor: pointer
   text-align: center
   font-size: 0.9rem
@@ -202,7 +204,7 @@ $secondary-button-bg = hsl(0, 0%, 93%)
 .cfnext-btn-secondary-action
   // This button has a border and is therefore one pixel larger if the
   // padding is not adjusted
-  padding: calc(0.6rem - 1px) calc(1.5rem - 1px)
+  padding: s('calc( %s - 1px)', $button-vertical-padding) calc(1.5rem - 1px)
 
 .cfnext-btn-secondary-action--large
   $cfnext-button-large()
