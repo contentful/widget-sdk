@@ -181,12 +181,11 @@ angular.module('contentful').config([
       }
     }],
     template:
-    '<div cf-asset-editor ' + [
+    '<div ' + [
       'cf-asset-editor',
-      'class="asset-editor with-tab-actions"',
+      'class="asset-editor workbench"',
       'ot-doc-for="asset"',
       'cf-validate="asset.data"', 'cf-asset-schema',
-      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"',
       'ot-doc-presence',
     ].join(' ') + '></div>'
   });

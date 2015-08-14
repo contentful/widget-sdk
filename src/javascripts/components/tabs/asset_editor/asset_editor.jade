@@ -1,13 +1,13 @@
-.tab-header
-  .tab-header__title
-    cf-icon(name="page-media")
-    h1(title="{{headline()}}")
-      | {{headline()}}
-      a(cf-knowledge-base-icon
-        analytics-event="assets"
-        href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-media")
+  h1.workbench-header__title
+    | {{headline()}}
+    a.workbench-header__kb-link(
+      cf-knowledge-base-icon
+      analytics-event="assets"
+      href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
 
-  .tab-header__actions
+  .workbench-header__actions
     button.cfnext-btn-secondary-action(type="button"
       ng-click="preferences.toggleAuxPanel()"
       ng-class="{active: preferences.showAuxPanel}")
@@ -33,12 +33,13 @@
             span(ng-show="locale == localesState.defaultLocale")
               | &nbsp;(default)
 
-.aux-panel(ng-show="preferences.showAuxPanel")
+.workbench-panel(ng-show="preferences.showAuxPanel")
   header
     h1 Asset Information
   .entity-info-panel(cf-entity-info-panel="otDoc.doc.snapshot.sys")
 
-.tab-main.tab-workbench
+.workbench-main.x--content(
+  ng-class="{'x--panel': preferences.showAuxPanel}")
   form.l-form(name="assetForm")
     .l-form-row--no-label(ng-show="hasErrorOnFields")
       .l-form-controls
@@ -66,28 +67,9 @@
           cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.internal_code,'*']")
         cf-error-list.form-box-error(cf-error-path="['fields', field.id]")
 
-.tab-actions(ng-controller="AssetActionsController as actions")
-  .button-set
-    button.cfnext-btn-secondary-action(type="button"
-      ng-show="actions.delete.isAvailable()"
-      cf-context-menu-trigger
-      data-test-id="delete-asset")
-      | Delete
-    .delete-confirm(cf-context-menu="top")
-      cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
-      p You are about to delete {{headline()}}
-      button.cfnext-btn-caution(ui-command="actions.delete") Delete
-      button.cfnext-btn-secondary-action(type="button") Don't Delete
-    button.cfnext-btn-secondary-action(ui-command="actions.archive")
-      | Archive
-    button.cfnext-btn-secondary-action(ui-command="actions.unarchive")
-      | Unarchive
-    button.cfnext-btn-secondary-action(ui-command="actions.unpublish")
-      | Unpublish
-    button.cfnext-btn-primary-action.publish(ui-command="actions.publish")
-      | {{ command.label() }}
-  .save-status(cf-save-status)
-  .other-users
+.workbench-actions(ng-controller="AssetActionsController as actions")
+  .workbench__save-status(cf-save-status)
+  .workbench__active-users
     span(ng-show="otPresence.users.length == 0"
           tooltip="Edit collaboratively by inviting more users into your space. Go to Settings → Users → Invite New User to invite people.")
       | No other users online
@@ -99,3 +81,22 @@
     a.cfnext-btn-secondary-action.invite-users(ui-sref="spaces.detail.settings.iframe.pathSuffix({ pathSuffix: 'users/new/' })")
       i.fa.fa-user
       i.fa.fa-plus
+
+  button.cfnext-btn-secondary-action(type="button"
+    ng-show="actions.delete.isAvailable()"
+    cf-context-menu-trigger
+    data-test-id="delete-asset")
+    | Delete
+  .delete-confirm(cf-context-menu="top")
+    cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
+    p You are about to delete {{headline()}}
+    button.cfnext-btn-caution(ui-command="actions.delete") Delete
+    button.cfnext-btn-secondary-action(type="button") Don't Delete
+  button.cfnext-btn-secondary-action(ui-command="actions.archive")
+    | Archive
+  button.cfnext-btn-secondary-action(ui-command="actions.unarchive")
+    | Unarchive
+  button.cfnext-btn-secondary-action(ui-command="actions.unpublish")
+    | Unpublish
+  button.cfnext-btn-primary-action.publish(ui-command="actions.publish")
+    | {{ command.label() }}
