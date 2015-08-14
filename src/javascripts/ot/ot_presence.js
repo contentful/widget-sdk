@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('contentful').
+
   directive('otDocPresence', function() {
     return {
       require: '^otDocFor',
@@ -14,10 +15,13 @@ angular.module('contentful').
   }).
 
   controller('otDocPresenceController', ['$scope', '$timeout', 'otPresenceConfig', function($scope, $timeout, otPresenceConfig) {
+    var controller = this;
     var presence = {};
     var ownPresence = {};
     var user  = $scope.user.sys.id;
     var timeout;
+    var lastId;
+    var lastFocus;
 
     $scope.$watch(function() {
       return presence;
@@ -27,6 +31,42 @@ angular.module('contentful').
         users: presenceUsers(presence)
       };
     }, true);
+
+    $scope.$watch('otDoc', otDocChangeHandler);
+    $scope.$on('tabClosed', tabClosedHandler);
+    $scope.$on('$destroy', destroyHandler);
+
+    doLater();
+
+    controller.focus = function(id) {
+      var now = new Date();
+      if (id === lastId && now - lastFocus < otPresenceConfig.focusThrottle) return;
+      lastId = id;
+      lastFocus = now;
+      ownPresence.focus = id;
+      var doc = $scope.otDoc;
+      if (!doc) return;
+      doc.shout(['focus', user, id]);
+    };
+
+    function otDocChangeHandler(doc, old) {
+      if (old) {
+        old.removeListener('closed', closedHandler);
+        old.removeListener('shout', shoutHandler);
+      }
+
+      if (!doc) return;
+
+      doc.shout(['open', user]);
+      doc.on('shout', shoutHandler);
+    }
+
+    function tabClosedHandler(event, tab) {
+      var isOwnTab = (tab === $scope.tab);
+      var docExists = 'otDoc' in $scope;
+      if (!isOwnTab || !docExists) { return; }
+      closedHandler($scope.otDoc);
+    }
 
     function closedHandler(doc) {
       /*jshint validthis:true */
@@ -63,37 +103,10 @@ angular.module('contentful').
       });
     }
 
-    $scope.$watch('otDoc', function(doc, old) {
-      if (old) {
-        old.removeListener('closed', closedHandler);
-        old.removeListener('shout', shoutHandler);
-      }
-
-      if (!doc) return;
-
-      doc.shout(['open', user]);
-      doc.on('shout', shoutHandler);
-    });
-
-    $scope.$on('tabClosed', function(event, tab) {
-      var isOwnTab = (tab === $scope.tab);
-      var docExists = 'otDoc' in $scope;
-      if (!isOwnTab || !docExists) { return; }
-      closedHandler($scope.otDoc);
-    });
-
-    var lastId;
-    var lastFocus;
-    this.focus = function(id) {
-      var now = new Date();
-      if (id === lastId && now - lastFocus < otPresenceConfig.focusThrottle) return;
-      lastId = id;
-      lastFocus = now;
-      ownPresence.focus = id;
-      var doc = $scope.otDoc;
-      if (!doc) return;
-      doc.shout(['focus', user, id]);
-    };
+    function doLater() {
+      removeTimedOutUsers();
+      timeout = $timeout(doLater, otPresenceConfig.pingTimeout);
+    }
 
     function removeTimedOutUsers() {
       var timedOutUsers = _(presence).map(function(p, u) {
@@ -105,18 +118,9 @@ angular.module('contentful').
       _.forEach(timedOutUsers, function(u) {
         delete presence[u];
       });
-
     }
 
-    function doLater() {
-      removeTimedOutUsers();
-      timeout = $timeout(doLater, otPresenceConfig.pingTimeout);
-    }
-
-    doLater();
-
-    var controller = this;
-    $scope.$on('$destroy', function(event) {
+    function destroyHandler(event) {
       var scope = event.currentScope;
       controller.focus = null;
       $timeout.cancel(timeout);
@@ -124,8 +128,7 @@ angular.module('contentful').
         scope.otDoc.removeListener('closed', closedHandler);
         scope.otDoc.removeListener('shout', shoutHandler);
       }
-
-    });
+    }
 
     function groupPresenceByField(presence) {
       return _.reduce(presence, function(fields, userPresence, user) {
@@ -147,6 +150,18 @@ angular.module('contentful').
 
   }]).
 
+  controller('otFieldPresenceController', ['$scope', '$attrs', function($scope, $attrs) {
+    var unregister;
+    $scope.$watch($attrs.otFieldPresence, function(v) {
+      var id = $scope.otFieldPresenceId = v.join('.');
+      var fp = 'presence.fields["' + id + '"]';
+      if (unregister) unregister();
+      unregister = $scope.$watch(fp, function (fp) {
+        $scope.fieldPresence = fp;
+      });
+    }, true);
+  }]).
+
   directive('otFieldPresence', function() {
     return {
       require: '^otDocPresence',
@@ -160,16 +175,4 @@ angular.module('contentful').
         element.on('focus keydown', 'input, textarea', focus);
       }
     };
-  }).
-
-  controller('otFieldPresenceController', ['$scope', '$attrs', function($scope, $attrs) {
-    var unregister;
-    $scope.$watch($attrs.otFieldPresence, function(v) {
-      var id = $scope.otFieldPresenceId = v.join('.');
-      var fp = 'presence.fields["' + id + '"]';
-      if (unregister) unregister();
-      unregister = $scope.$watch(fp, function (fp) {
-        $scope.fieldPresence = fp;
-      });
-    }, true);
-  }]);
+  });
