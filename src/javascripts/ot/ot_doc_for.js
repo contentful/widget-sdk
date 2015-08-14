@@ -47,31 +47,9 @@ angular.module('contentful')
   var moment  = $injector.get('moment');
   var TheLocaleStore = $injector.get('TheLocaleStore');
 
-  function remoteOpListener(ops) {
-    $scope.$apply(function(scope) {
-      _.each(ops, function (op) {
-        scope.$broadcast('otRemoteOp', op);
-      });
-    });
-  }
-
-  function filterDeletedLocales(data) {
-    _.keys(data.fields).forEach(function (fieldId) {
-      _.keys(data.fields[fieldId]).forEach(function (internal_code) {
-        if (!_.find(TheLocaleStore.getPrivateLocales(), { internal_code: internal_code })) {
-          delete data.fields[fieldId][internal_code];
-        }
-      });
-    });
-    return data;
-  }
-
   $scope.otDisabled = true; // set to true to prevent editing
   $scope.otEditable = false; // indicates editability
 
-  function otGetEntity() {
-    return $scope.$eval($attrs.otDocFor);
-  }
   $scope.otGetEntity = otGetEntity;
 
   $scope.$watch(function () {
@@ -79,11 +57,6 @@ angular.module('contentful')
   }, function (connected, old, scope) {
     scope.otConnected = connected;
   });
-
-  function shouldDocBeOpen(scope) {
-    //console.log('otDocFor shouldDocBeOpen disabled %o, connected %o, entity %o', scope.otDisabled, scope.otConnected, otGetEntity() );
-    return scope.otConnected && !scope.otDisabled && !!otGetEntity();
-  }
 
   $scope.$watch(function (scope) {
     return shouldDocBeOpen(scope) ? otGetEntity() : false;
@@ -199,6 +172,34 @@ angular.module('contentful')
       }
     }
   });
+
+  function otGetEntity() {
+    return $scope.$eval($attrs.otDocFor);
+  }
+
+  function filterDeletedLocales(data) {
+    _.keys(data.fields).forEach(function (fieldId) {
+      _.keys(data.fields[fieldId]).forEach(function (internal_code) {
+        if (!_.find(TheLocaleStore.getPrivateLocales(), { internal_code: internal_code })) {
+          delete data.fields[fieldId][internal_code];
+        }
+      });
+    });
+    return data;
+  }
+
+  function shouldDocBeOpen(scope) {
+    //console.log('otDocFor shouldDocBeOpen disabled %o, connected %o, entity %o', scope.otDisabled, scope.otConnected, otGetEntity() );
+    return scope.otConnected && !scope.otDisabled && !!otGetEntity();
+  }
+
+  function remoteOpListener(ops) {
+    $scope.$apply(function(scope) {
+      _.each(ops, function (op) {
+        scope.$broadcast('otRemoteOp', op);
+      });
+    });
+  }
 
   function updateIfValid() {
     // Sanity check to make sure there's actually something in the snapshot
