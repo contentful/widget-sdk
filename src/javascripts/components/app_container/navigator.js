@@ -297,7 +297,7 @@ angular.module('contentful').config([
     controller: ['$scope', function ($scope) {
       $scope.context = {};
     }],
-    template: '<div cf-content-model class="content-model entity-list"></div>'
+    template: '<div cf-content-model class="workbench content-model entity-list"></div>'
   });
 
 
