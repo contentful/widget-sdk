@@ -52,12 +52,12 @@ describe('The Asset list directive', function () {
     it(button+' button not shown', function () {
       scope.permissionController.get.withArgs(action+'Asset', 'shouldHide').returns(true);
       compileElement();
-      expect(container.find('.tab-actions .'+button)).toBeNgHidden();
+      expect(container.find('.workbench-actions .'+button)).toBeNgHidden();
     });
 
     it(button+' button shown', function () {
       compileElement();
-      expect(container.find('.tab-actions .'+button)).not.toBeNgHidden();
+      expect(container.find('.workbench-actions .'+button)).not.toBeNgHidden();
     });
   }
 

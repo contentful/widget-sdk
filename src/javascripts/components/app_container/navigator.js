@@ -146,7 +146,7 @@ angular.module('contentful').config([
     ncyBreadcrumb: {
       label: 'Media Library'
     },
-    template: '<div cf-asset-list class="asset-list entity-list"></div>'
+    template: '<div cf-asset-list class="workbench asset-list entity-list"></div>'
   });
 
 
