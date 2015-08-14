@@ -328,8 +328,7 @@ angular.module('contentful').config([
     }],
     template:
     '<div cf-api-key-editor ' +
-      'class="api-key--editor with-tab-actions"' +
-      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}">' +
+      'class="workbench"' +
     '</div>'
   };
 

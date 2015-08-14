@@ -1,26 +1,26 @@
-.tab-header
-  .tab-header__title
-    cf-icon(name="page-api")
-    h1(title="{{context.title}}")
-      | {{context.title}}
-      a(cf-knowledge-base-icon
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-api")
+  h1.workbench-header__title
+    | {{context.title}}
+    a.workbench-header__kb-link(
+      cf-knowledge-base-icon
         analytics-event="api_keys"
         href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
-
-  .tab-header__actions
+  .workbench-header__actions
     button.cfnext-btn-secondary-action(type="button"
       ng-click="preferences.toggleAuxPanel()"
       ng-class="{active: preferences.showAuxPanel}")
       | Info
 
 
-.aux-panel(ng-show="preferences.showAuxPanel")
+.workbench-panel(ng-show="preferences.showAuxPanel")
   header
     span API Key Information
   .entity-info-panel(cf-entity-info-panel="apiKey.getSys()")
 
 
-.tab-main.tab-workbench.api-key-editor
+.workbench-main.api-key-editor(
+  ng-class="{'x--panel': preferences.showAuxPanel}")
   .ng-form.l-form--split(name="apiKeyForm" submit="save()")
     .l-form-left
       h2.section-title API General Info
@@ -179,19 +179,18 @@
                 textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'cda' && environment.env == 'production'").
                   var client = CDAClient(spaceKey:"{{spaceContext.space.getId()}}", accessToken:"{{getSelectedAccessToken()}}")
 
-.tab-actions
-  .button-set
-    button.cfnext-btn-secondary-action.delete(type="button"
-      ng-show="apiKey.getId()"
-      cf-context-menu-trigger
-      data-test-id="delete-api-key")
-      | Delete
-    .delete-confirm(cf-context-menu="top")
-      cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
-      p You are about to delete {{context.title}}
-      button.cfnext-btn-caution(type="button" ng-click="delete()") Delete
-      button.cfnext-btn-secondary-action(type="button") Don't Delete
-    button.cfnext-btn-primary-action.save(type="submit"
-      ui-command="apiKeyController.save"
-      cf-when-disabled="permissionController.entityActions.createApiKey")
-      | Save
+.workbench-actions
+  button.cfnext-btn-secondary-action.delete(type="button"
+    ng-show="apiKey.getId()"
+    cf-context-menu-trigger
+    data-test-id="delete-api-key")
+    | Delete
+  .delete-confirm(cf-context-menu="top")
+    cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
+    p You are about to delete {{context.title}}
+    button.cfnext-btn-caution(type="button" ng-click="delete()") Delete
+    button.cfnext-btn-secondary-action(type="button") Don't Delete
+  button.cfnext-btn-primary-action.save(type="submit"
+    ui-command="apiKeyController.save"
+    cf-when-disabled="permissionController.entityActions.createApiKey")
+    | Save

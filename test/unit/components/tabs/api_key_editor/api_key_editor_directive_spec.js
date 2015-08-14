@@ -70,18 +70,18 @@ describe('apiKeyEditor Directive', function () {
     compileElement();
     scope.apiKey.data.name = 'headline text';
     scope.$digest();
-    expect(element.find('.tab-header h1').html()).toMatch('headline text');
+    expect(element.find('.workbench-header h1').html()).toMatch('headline text');
   });
 
   it('delete button cant ever be disabled', function () {
     scope.permissionController.get.withArgs('createApiKey', 'shouldDisable').returns(true);
     compileElement();
-    expect(element.find('.tab-actions .delete').attr('disabled')).toBeUndefined();
+    expect(element.find('.workbench-actions .delete').attr('disabled')).toBeUndefined();
   });
 
   it('delete button is enabled', function () {
     compileElement();
-    expect(element.find('.tab-actions .delete').attr('disabled')).toBeUndefined();
+    expect(element.find('.workbench-actions .delete').attr('disabled')).toBeUndefined();
   });
 
   it('save button is disabled', function () {
@@ -91,7 +91,7 @@ describe('apiKeyEditor Directive', function () {
       $invalid: false
     };
     scope.$digest();
-    expect(element.find('.tab-actions .save').attr('disabled')).toBe('disabled');
+    expect(element.find('.workbench-actions .save').attr('disabled')).toBe('disabled');
   });
 
   it('save button is enabled', function () {
@@ -100,7 +100,7 @@ describe('apiKeyEditor Directive', function () {
       $invalid: false
     };
     scope.$digest();
-    expect(element.find('.tab-actions .save').attr('disabled')).toBeUndefined();
+    expect(element.find('.workbench-actions .save').attr('disabled')).toBeUndefined();
   });
 
   describe('code examples for', function() {
