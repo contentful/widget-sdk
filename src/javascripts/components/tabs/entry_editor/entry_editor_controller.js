@@ -143,6 +143,12 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
     });
   });
 
+  $scope.$watch('entry.data.fields', function (fields) {
+    if (!fields) {
+      $scope.entry.data.fields = {};
+    }
+  });
+
   $scope.headline = function(){
     return this.spaceContext.entryTitle(this.entry);
   };
