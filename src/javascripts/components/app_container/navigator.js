@@ -314,7 +314,7 @@ angular.module('contentful').config([
       label: 'Delivery Keys',
       parent: 'spaces.detail.api.home'
     },
-    template: '<div cf-api-key-list class="api-key-list entity-list"></div>'
+    template: '<div cf-api-key-list class="workbench entity-list"></div>'
   });
 
   var apiKeyEditorState = {

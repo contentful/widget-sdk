@@ -1,22 +1,22 @@
-.tab-header
-  .tab-header__title
-    cf-icon(name="page-api")
-    h1
-      | Content Delivery API Keys
-      a(cf-knowledge-base-icon
-        analytics-event="api_keys"
-        href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-api")
+  h1.workbench-header__title
+    | Content Delivery API Keys
+    a.workbench-header__kb-link(
+      cf-knowledge-base-icon
+      analytics-event="api_keys"
+      href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
 
-  .tab-header__actions.add-entity.u-truncate(ng-class="{'with-pagination': paginator.numPages() > 1}" ng-hide="empty")
+  .workbench-header__actions(ng-hide="empty")
     button.cfnext-btn-action(ng-click="entityCreationController.newApiKey()"
-        ng-hide="permissionController.get('createApiKey', 'shouldHide')"
-        ng-disabled="permissionController.get('createApiKey', 'shouldDisable')"
-        cf-when-disabled="permissionController.entityActions.createApiKey")
+      ng-hide="permissionController.get('createApiKey', 'shouldHide')"
+      ng-disabled="permissionController.get('createApiKey', 'shouldDisable')"
+      cf-when-disabled="permissionController.entityActions.createApiKey")
       cf-icon.btn-icon.inverted(name="plus")
       | Add API Key
 
-.tab-main
-  .left-nav
+.workbench-main(ng-hide="empty")
+  .workbench-main__left-sidebar
     header.filter-list-header
       | Content Delivery API
     ul.u-list(cf-cda-links)
@@ -24,8 +24,8 @@
       | Content Management API
     ul.u-list(cf-cma-links)
 
-  .with-left-nav
-    table.result-list.main-results.main-header(ng-hide="empty")
+  .workbench-main__right-content
+    table.result-list.main-results.main-header
       thead
         tr
           th.cell-name Name
@@ -33,7 +33,7 @@
           th.cell-date Updated
           th.cell-symbol By
 
-    .main-results-wrapper(ng-hide="empty")
+    .main-results-wrapper
       table.result-list.main-results
         tbody
           tr(ng-repeat="apiKey in apiKeys track by apiKey.getId()"
@@ -50,16 +50,16 @@
               a.entity-list-link(ui-sref="{{entityNavState}}" cf-user link="apiKey.getCreatedBy()" as="creator")
                 | {{creator | userNameDisplay:user}}
 
-    .advice(ng-show="empty")
-      .advice__frame
-        i.fa.fa-random.advice__giant-icon
-        header.advice__title There are no API Keys yet.
-        p.advice__description API Keys open the door to your content. One should be created for each application that accesses your content.
-        button.advice__action(type="button" ng-click="entityCreationController.newApiKey()"
-            ng-hide="permissionController.get('createApiKey', 'shouldHide')"
-            ng-disabled="permissionController.get('createApiKey', 'shouldDisable')"
-            cf-when-disabled="permissionController.entityActions.createApiKey")
-          | Create API Key
-        a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
-          | Visit the Knowledge Base Pages
-          i.fa.fa-question-circle
+.workbench-main(ng-show="empty")
+  .cfnext-advice
+    i.fa.fa-random.advice__giant-icon
+    header.advice__title There are no API Keys yet.
+    p.advice__description API Keys open the door to your content. One should be created for each application that accesses your content.
+    button.advice__action(type="button" ng-click="entityCreationController.newApiKey()"
+        ng-hide="permissionController.get('createApiKey', 'shouldHide')"
+        ng-disabled="permissionController.get('createApiKey', 'shouldDisable')"
+        cf-when-disabled="permissionController.entityActions.createApiKey")
+      | Create API Key
+    a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
+      | Visit the Knowledge Base Pages
+      i.fa.fa-question-circle
