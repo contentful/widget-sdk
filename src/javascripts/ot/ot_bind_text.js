@@ -87,16 +87,16 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
         return !!unbindTextField;
       }
 
-      function isString() {
-        return _.isString(ngModelCtrl.$modelValue);
-      }
-
       function needsAttach() {
         return !isAttached() && isString() && scope.otSubdoc;
       }
 
       function needsDetach() {
         return isAttached() && (!isString() || !scope.otSubdoc);
+      }
+
+      function isString() {
+        return _.isString(ngModelCtrl.$modelValue);
       }
 
       function attach(text) {
