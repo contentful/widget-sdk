@@ -1,5 +1,4 @@
-.tab-actions,
-$tab-actions-container
+.tab-actions
   border-top: 1px solid $gray-light
   background-color: $gray-lightest
   box-shadow: 0 -1px 4px rgba(0,0,0,0.07), 0 1px 1px rgba(255,255,255,0.8) inset
@@ -85,21 +84,11 @@ $tab-actions-other-users()
   float: none
 
 // text label
-.tab-actions,
-$tab-action-inner-components
+.tab-actions
   .label
     line-height: $tab-actions-content-height
     font-size: $base-font-size
     float: left
-
-  // (rest) save status
-  .save-status,
-  .rest-save-status
-    $tab-actions-save-status()
-
-  // other users
-  .other-users
-    $tab-actions-other-users()
 
   // buttons
   .button-set
@@ -110,5 +99,3 @@ $tab-action-inner-components
   display: none // initial state
   $stretch(false, 0, 0, 0)
   height: $tab-actions-height
-
-
