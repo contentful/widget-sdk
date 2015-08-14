@@ -48,7 +48,7 @@ describe('The Entry list directive', function () {
     it(button+' button not shown', function () {
       scope.permissionController.get.withArgs(action+'Entry', 'shouldHide').returns(true);
       compileElement();
-      expect(container.find('.tab-actions .'+button)).toBeNgHidden();
+      expect(container.find('.workbench-actions .'+button)).toBeNgHidden();
     });
 
     it(button+' button shown', function () {
