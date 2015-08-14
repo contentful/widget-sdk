@@ -51,6 +51,7 @@ angular.module('contentful')
   $scope.otEditable = false; // indicates editability
 
   $scope.otGetEntity = otGetEntity;
+  $scope.otUpdateEntity = otUpdateEntity;
 
   $scope.$watch(function () {
     return ShareJS.isConnected();
@@ -63,24 +64,19 @@ angular.module('contentful')
   }, attemptToOpenOtDoc);
 
   $scope.$watch('otDoc', function (otDoc, old, scope) {
-    if (old) {
-      old.removeListener('remoteop', remoteOpListener);
-    }
-    if (otDoc) {
-      otDoc.on('remoteop', remoteOpListener);
-    }
+    setupRemoteOpListeners(otDoc, old);
     scope.otEditable = !!otDoc;
   });
 
-  $scope.$watch('otEditable', function (editable, old, scope) {
-    if (editable) {
-      scope.$emit('otBecameEditable', otGetEntity());
-    } else {
-      scope.$emit('otBecameReadonly', otGetEntity());
-    }
-  });
+  $scope.$watch('otEditable', handleEditableState);
 
-  $scope.otUpdateEntity = function (entity) {
+  $scope.$on('$destroy', handleScopeDestruction);
+
+  function otGetEntity() {
+    return $scope.$eval($attrs.otDocFor);
+  }
+
+  function otUpdateEntity(entity) {
     entity = entity || otGetEntity();
     if (entity && $scope.otDoc) {
       var data = _.cloneDeep($scope.otDoc.snapshot);
@@ -102,22 +98,7 @@ angular.module('contentful')
         }
       });
     }
-  };
-
-  $scope.$on('$destroy', function (event) {
-    var scope = event.currentScope;
-    if (scope.otDoc) {
-      scope.otDoc.removeListener(remoteOpListener);
-      remoteOpListener = null;
-      try {
-        scope.otDoc.close();
-      } catch(e) {
-        if (e.message !== 'Cannot send to a closed connection') throw e;
-      } finally {
-        scope.otDoc = null;
-      }
-    }
-  });
+  }
 
   function attemptToOpenOtDoc(entity) {
     if (entity) {
@@ -198,8 +179,21 @@ angular.module('contentful')
     }
   }
 
-  function otGetEntity() {
-    return $scope.$eval($attrs.otDocFor);
+  function setupRemoteOpListeners(otDoc, old) {
+    if (old) {
+      old.removeListener('remoteop', remoteOpListener);
+    }
+    if (otDoc) {
+      otDoc.on('remoteop', remoteOpListener);
+    }
+  }
+
+  function handleEditableState(editable, old, scope) {
+    if (editable) {
+      scope.$emit('otBecameEditable', otGetEntity());
+    } else {
+      scope.$emit('otBecameReadonly', otGetEntity());
+    }
   }
 
   function filterDeletedLocales(data) {
@@ -233,14 +227,29 @@ angular.module('contentful')
     }
   }
 
+  function setVersionUpdater() {
+    $scope.otDoc.on('acknowledge', updateHandler);
+    $scope.otDoc.on('remoteop', updateHandler);
+  }
+
   function updateHandler(){
     if($scope.otDoc)
       $scope.otGetEntity().setVersion($scope.otDoc.version);
   }
 
-  function setVersionUpdater() {
-    $scope.otDoc.on('acknowledge', updateHandler);
-    $scope.otDoc.on('remoteop', updateHandler);
+  function handleScopeDestruction(event) {
+    var scope = event.currentScope;
+    if (scope.otDoc) {
+      scope.otDoc.removeListener(remoteOpListener);
+      remoteOpListener = null;
+      try {
+        scope.otDoc.close();
+      } catch(e) {
+        if (e.message !== 'Cannot send to a closed connection') throw e;
+      } finally {
+        scope.otDoc = null;
+      }
+    }
   }
 
 }]);
