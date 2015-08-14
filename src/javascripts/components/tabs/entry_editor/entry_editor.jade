@@ -1,13 +1,13 @@
-.tab-header
-  .tab-header__title
-    cf-icon(name="page-entries")
-    h1(title="{{headline()}}")
-      | {{headline()}}
-      a(cf-knowledge-base-icon
-        analytics-event="entries"
-        href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-entries")
+  h1.workbench-header__title
+    | {{headline()}}
+    a.workbench-header__kb-link(
+      cf-knowledge-base-icon
+      analytics-event="entries"
+      href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
 
-  .tab-header__actions
+  .workbench-header__actions
     button.cfnext-btn-secondary-action(type="button"
       ng-click="preferences.toggleAuxPanel()"
       ng-class="{active: preferences.showAuxPanel}")
@@ -36,12 +36,13 @@
           input(type="checkbox" ng-model="preferences.showDisabledFields")
           | Show disabled fields
 
-.aux-panel(ng-show="preferences.showAuxPanel")
+.workbench-panel(ng-show="preferences.showAuxPanel")
   header
     h1 Entry Information
   .entity-info-panel(cf-entity-info-panel="otDoc.doc.snapshot.sys")
 
-.tab-main.tab-workbench
+.workbench-main.x--content(
+  ng-class="{'x--panel': preferences.showAuxPanel}")
   form.l-form(name="entryForm")
     .l-form-row--no-label(ng-show="hasErrorOnFields")
       .l-form-controls
@@ -76,67 +77,9 @@
       .l-form-controls(ng-if="!field")
         cf-widget-renderer
 
-.tab-actions(ng-controller="EntryActionsController as actions")
-  .button-set
-    .dropdown-btn(ng-show="actions.delete.isAvailable() || entityActionsController.canDuplicate()")
-      button.cfnext-btn-secondary-action(
-        cf-context-menu-trigger
-        data-test-id="entry-actions-menu-trigger")
-        cf-icon.btn-dropdown-icon--up(name="dd-arrow-down")
-        | More
-      .context-menu(
-        role="menu" cf-context-menu="top"
-        aria-label="Entry Actions" data-test-id="entry-actions-menu")
-        cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
-        ul
-          li.context-menu__item.duplicate(
-            role="menuitem"
-            ng-show="actions.duplicate.isAvailable()"
-            ng-click="actions.duplicate.execute()")
-            | Duplicate
-          li.context-menu__item.delete(
-            role="menuitem"
-            ng-show="actions.delete.isAvailable()"
-            cf-context-menu-trigger
-            data-test-id="delete-entry")
-            | Delete
-          .delete-confirm.no-caret(cf-context-menu="top")
-            cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
-            p You are about to delete {{headline()}}
-            button.cfnext-btn-caution(ui-command="actions.delete")
-              | Delete
-            button.cfnext-btn-secondary-action(type="button")
-              | Don't Delete
-    button.cfnext-btn-secondary-action(ui-command="actions.archive")
-      | Archive
-    button.cfnext-btn-secondary-action(ui-command="actions.unarchive")
-      | Unarchive
-    .dropdown-btn(ng-show="entityActionsController.canUpdate() && (canRevertToPublishedState() || canRevertToPreviousState())")
-      button.cfnext-btn-secondary-action(
-        cf-context-menu-trigger
-        data-test-id="revert-entry-menu-trigger")
-        cf-icon.btn-dropdown-icon--up(name="dd-arrow-down")
-        | Revert
-      .context-menu.revert-actions__menu(
-        role="menu" cf-context-menu="top"
-        aria-label="Revert Entry" data-test-id="revert-entry-menu")
-        cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
-        ul.context-menu__items
-          li(role="menuitem"
-            ng-show="canRevertToPublishedState()"
-            ng-click="revertToPublishedState()")
-            | Revert to published version ({{publishedAt}})
-          li(role="menuitem"
-            ng-show="canRevertToPreviousState()"
-            ng-click="revertToPreviousState()")
-            | Discard my changes ({{updatedAt}})
-
-    button.cfnext-btn-secondary-action(ui-command="actions.unpublish")
-      | Unpublish
-    button.cfnext-btn-primary-action(ui-command="actions.publish" type="submit")
-      | {{command.label()}}
-  .save-status(cf-save-status)
-  .other-users
+.workbench-actions(ng-controller="EntryActionsController as actions")
+  .workbench__save-status(cf-save-status)
+  .workbench__active-users
     span(ng-show="otPresence.users.length == 0"
           tooltip="Edit collaboratively by inviting more users into your space. Go to Settings → Users → Invite New User to invite people.")
       | No other users online
@@ -150,3 +93,60 @@
       tooltip="Add a user to this space")
       i.fa.fa-user
       i.fa.fa-plus
+  .dropdown-btn(ng-show="actions.delete.isAvailable() || entityActionsController.canDuplicate()")
+    button.cfnext-btn-secondary-action(
+      cf-context-menu-trigger
+      data-test-id="entry-actions-menu-trigger")
+      cf-icon.btn-dropdown-icon--up(name="dd-arrow-down")
+      | More
+    .context-menu(
+      role="menu" cf-context-menu="top"
+      aria-label="Entry Actions" data-test-id="entry-actions-menu")
+      cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
+      ul
+        li.context-menu__item.duplicate(
+          role="menuitem"
+          ng-show="actions.duplicate.isAvailable()"
+          ng-click="actions.duplicate.execute()")
+          | Duplicate
+        li.context-menu__item.delete(
+          role="menuitem"
+          ng-show="actions.delete.isAvailable()"
+          cf-context-menu-trigger
+          data-test-id="delete-entry")
+          | Delete
+        .delete-confirm.no-caret(cf-context-menu="top")
+          cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
+          p You are about to delete {{headline()}}
+          button.cfnext-btn-caution(ui-command="actions.delete")
+            | Delete
+          button.cfnext-btn-secondary-action(type="button")
+            | Don't Delete
+  button.cfnext-btn-secondary-action(ui-command="actions.archive")
+    | Archive
+  button.cfnext-btn-secondary-action(ui-command="actions.unarchive")
+    | Unarchive
+  .dropdown-btn(ng-show="entityActionsController.canUpdate() && (canRevertToPublishedState() || canRevertToPreviousState())")
+    button.cfnext-btn-secondary-action(
+      cf-context-menu-trigger
+      data-test-id="revert-entry-menu-trigger")
+      cf-icon.btn-dropdown-icon--up(name="dd-arrow-down")
+      | Revert
+    .context-menu.revert-actions__menu(
+      role="menu" cf-context-menu="top"
+      aria-label="Revert Entry" data-test-id="revert-entry-menu")
+      cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
+      ul.context-menu__items
+        li(role="menuitem"
+          ng-show="canRevertToPublishedState()"
+          ng-click="revertToPublishedState()")
+          | Revert to published version ({{publishedAt}})
+        li(role="menuitem"
+          ng-show="canRevertToPreviousState()"
+          ng-click="revertToPreviousState()")
+          | Discard my changes ({{updatedAt}})
+
+  button.cfnext-btn-secondary-action(ui-command="actions.unpublish")
+    | Unpublish
+  button.cfnext-btn-primary-action(ui-command="actions.publish" type="submit")
+    | {{command.label()}}

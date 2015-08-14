@@ -126,10 +126,9 @@ angular.module('contentful').config([
     template:
     '<div ' + [
       'cf-entry-editor',
-      'class="entry-editor with-tab-actions"',
+      'class="workbench entry-editor"',
       'ot-doc-for="entry"',
       'cf-validate="entry.data"', 'cf-entry-schema',
-      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"',
       'ot-doc-presence'
     ].join(' ') + '></div>'
   });

@@ -1,6 +1,7 @@
 $aux-padding = 1.8em
 $aux-panel-border-color = lighten($gray-light, 47%)
 
+.workbench-panel
 .aux-panel
   width: 20%
   position: absolute
@@ -31,7 +32,7 @@ $aux-panel-border-color = lighten($gray-light, 47%)
       font-size: 10px
       position: absolute
       right: 1.5em
-  table 
+  table
     width: 100%
     border-collapse: collapse
     border-spacing: 0
@@ -52,8 +53,10 @@ $aux-panel-border-color = lighten($gray-light, 47%)
       font-weight: bold
       color: $gray-darkest
 
+.workbench-panel
+  top: $tab-header-height + 1px
+  bottom: 58px
+
 .with-tab-actions
   .aux-panel
     bottom: $tab-actions-height
-
-
