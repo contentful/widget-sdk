@@ -73,6 +73,10 @@ Markup:
 Styleguide 9.1
 */
 
+$workbench-content()
+  overflow-y: auto
+  position: relative
+
 $workbench-sidebar-width = 20%
 $workbench-max-sidebar-width = 20rem
 $workbench-content-width = 100% - $workbench-sidebar-width
@@ -85,8 +89,15 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
   height: 100%;
   padding-top: $rhythm(1)
 
+  &.x--content
+    display: block
+    $workbench-content()
+
+  &__content
+    $workbench-content()
+
   &__left-sidebar
-    overflow-y: auto
+    $workbench-content()
     width: $workbench-sidebar-width
     max-width: $workbench-max-sidebar-width
     padding-left: 1.5rem
@@ -94,18 +105,18 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     margin-right: auto
 
   &__right-content
-    overflow-y: auto
+    $workbench-content()
     width: $workbench-content-width
     margin-left: auto
 
   &__right-sidebar
-    overflow-y: auto
+    $workbench-content()
     width: $workbench-sidebar-width
     max-width: $workbench-max-sidebar-width
     margin-left: auto
 
   &__middle-content
-    overflow-y: auto
+    $workbench-content()
     width: $workbench-middle-width
     margin-left: auto
     margin-right: auto

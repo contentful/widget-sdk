@@ -1,12 +1,16 @@
-.tab-header
-  .tab-header__title
-    h1 Locales
-      a(cf-knowledge-base-icon
-        analytics-event="locales"
-        href="https://support.contentful.com/hc/en-us/articles/200513368-What-is-a-Locale-")
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-ct")
+  h1.workbench-header__title
+    | Locales
+    a.workbench-header__kb-link(
+      cf-knowledge-base-icon
+      analytics-event="locales"
+      href="https://support.contentful.com/hc/en-us/articles/200513368-What-is-a-Locale-")
 
-  .tab-header__actions.add-entity
-    button.cfnext-btn-action(ng-click="entityCreationController.newLocale()" ng-show="localesUsageState == 'oneLocaleUsed' || localesUsageState == 'moreThanOneLocaleUsed'")
+  .workbench-header__actions
+    button.cfnext-btn-action.add-entity(
+      ng-click="entityCreationController.newLocale()"
+      ng-show="localesUsageState == 'oneLocaleUsed' || localesUsageState == 'moreThanOneLocaleUsed'")
       cf-icon.btn-icon.inverted(name="plus")
       | Add Locale
     p.add-entity__advice(ng-show="localesUsageState == 'localesLimitReached'")
@@ -14,8 +18,8 @@
     p.add-entity__advice(ng-show="localesUsageState == 'noMultipleLocales'")
       | Your plan does not include multiple locales. <a ui-sref="{{accountUpgradeState}}">Upgrade for more</a>.
 
-.tab-main
-  .without-left-nav
+.workbench-main
+  .workbench-main__content
     table.result-list.main-results.main-header
       thead
         tr
@@ -57,5 +61,3 @@
             h1.advice__title Your plan does not include multiple locales
             p.advice__description Your current subscription plan <strong>({{getSubscriptionPlan().name}})</strong> does not support localizing content
             p.advice__description Please <a ui-sref="{{accountUpgradeState}}">upgrade</a> to one of our paid plans to enable this feature
-
-

@@ -368,7 +368,7 @@ angular.module('contentful').config([
     ncyBreadcrumb: {
       label: 'Locales'
     },
-    template: '<div cf-locale-list class="locale-list entity-list"></div>'
+    template: '<div cf-locale-list class="workbench locale-list entity-list"></div>'
   });
 
   var localeEditorState = {
