@@ -60,61 +60,7 @@ angular.module('contentful')
 
   $scope.$watch(function (scope) {
     return shouldDocBeOpen(scope) ? otGetEntity() : false;
-  } , function (entity, old, scope) {
-    if (entity) {
-      ShareJS.open(entity, function(err, doc) {
-        scope.$apply(function(scope){
-          if(err || !doc){
-            scope.otDoc = null;
-            logger.logSharejsError('Failed to open sharejs doc', {
-              data: {
-                error: err,
-                entity: entity
-              }
-            });
-          } else {
-              doc.on('closed', function () {
-                // TODO this is dangerous! We could be removing listeners that are still needed
-                var d = this;
-                defer(function () {
-                  d._listeners.length = 0;
-                  _.each(d._events, function (listeners) {
-                    listeners.length = 0;
-                  });
-                  d = null;
-                });
-              });
-              if (shouldDocBeOpen(scope)) {
-                //console.log('otDocFor installing doc %o for entity %o', doc, entity);
-                //console.log('setting doc to %o (id: %o) in scope %o', doc.name, doc.snapshot.sys.id, scope.$id);
-                // Filter deleted locales here too
-                filterDeletedLocales(doc.snapshot);
-                scope.otDoc = doc;
-                setVersionUpdater();
-                updateIfValid();
-              } else {
-                try {
-                  doc.close();
-                } catch(e) {
-                  if (e.message !== 'Cannot send to a closed connection') throw e;
-                }
-              }
-          }
-        });
-      });
-    } else {
-      if (scope.otDoc) {
-        //console.log('setting doc to null %o (id: %o) in scope %o', scope.otDoc.name, scope.otDoc.snapshot.sys.id, scope.$id);
-        try {
-          scope.otDoc.close();
-        } catch(e) {
-          if (e.message !== 'Cannot send to a closed connection') throw e;
-        } finally {
-          scope.otDoc = null;
-        }
-      }
-    }
-  });
+  }, attemptToOpenOtDoc);
 
   $scope.$watch('otDoc', function (otDoc, old, scope) {
     if (old) {
@@ -172,6 +118,85 @@ angular.module('contentful')
       }
     }
   });
+
+  function attemptToOpenOtDoc(entity) {
+    if (entity) {
+      ShareJS.open(entity, _.partialRight(openOtDocFor, entity));
+    } else {
+      handleLackOfEntity();
+    }
+  }
+
+  function openOtDocFor(err, doc, entity) {
+    $scope.$apply(function(scope){
+      if(err || !doc){
+        handleOtDocOpeningFailure(err, entity);
+        } else {
+          setupClosedEventHandling(doc);
+          if (shouldDocBeOpen(scope)) {
+            setupOtDoc(doc);
+          } else {
+            handleSecondaryDocFailures(doc);
+          }
+      }
+    });
+  }
+
+  function handleOtDocOpeningFailure(err, entity) {
+    $scope.otDoc = null;
+      logger.logSharejsError('Failed to open sharejs doc', {
+        data: {
+          error: err,
+          entity: entity
+        }
+      });
+  }
+
+  function setupClosedEventHandling(doc) {
+    doc.on('closed', function () { handleDocClosedEvent(this); });
+  }
+
+  function handleDocClosedEvent(context) {
+    // TODO this is dangerous! We could be removing listeners that are still needed
+    defer(function () {
+      context._listeners.length = 0;
+      _.each(context._events, function (listeners) {
+        listeners.length = 0;
+      });
+      context = null;
+    });
+  }
+
+  function setupOtDoc(doc) {
+    //console.log('otDocFor installing doc %o for entity %o', doc, entity);
+    //console.log('setting doc to %o (id: %o) in scope %o', doc.name, doc.snapshot.sys.id, scope.$id);
+    // Filter deleted locales here too
+    filterDeletedLocales(doc.snapshot);
+    $scope.otDoc = doc;
+    setVersionUpdater();
+    updateIfValid();
+  }
+
+  function handleSecondaryDocFailures(doc) {
+    try {
+      doc.close();
+    } catch(e) {
+      if (e.message !== 'Cannot send to a closed connection') throw e;
+    }
+  }
+
+  function handleLackOfEntity() {
+    if ($scope.otDoc) {
+      //console.log('setting doc to null %o (id: %o) in scope %o', scope.otDoc.name, scope.otDoc.snapshot.sys.id, scope.$id);
+      try {
+        $scope.otDoc.close();
+      } catch(e) {
+        if (e.message !== 'Cannot send to a closed connection') throw e;
+      } finally {
+        $scope.otDoc = null;
+      }
+    }
+  }
 
   function otGetEntity() {
     return $scope.$eval($attrs.otDocFor);
