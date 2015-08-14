@@ -27,16 +27,10 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
       var ngModelGet = $parse(attrs.ngModel),
           ngModelSet = ngModelGet.assign;
 
-      //scope.$on('otRemoteOp', function (event, op) {
-        //console.log('remoteop', op);
-      //});
-
       scope.$on('otValueChanged', function (event, path, val) {
         //console.log('value changed, updating model', path, val);
         if (path === event.currentScope.otPath) ngModelSet(event.currentScope, val);
       });
-
-      // TODO remove last remaining use of otTextIdle
 
       scope.$watch('otSubdoc', function(){
         //console.log('otBindText subdoc changed, reattaching');
@@ -122,28 +116,24 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
 
       function makeAndAttach(subdoc, text){
         text = text === undefined ? '' : text;
-        var loggingData = {
-          snapshotSys: scope.otDoc.snapshot.sys,
-          snapshotFields: scope.otDoc.snapshot.fields,
-          path: subdoc.path
-        };
         ShareJS.mkpath({
           doc: scope.otDoc,
           path: subdoc.path,
           types: subdoc.types,
           value: text
-        }, function(err) {
-          if (err){
-            scope.$apply(function(){
-              loggingData.error = err;
-              logger.logError('makeAndAttach mkpath failed', {
-                data: loggingData,
-              });
-              ReloadNotification.trigger();
-            });
-          }
-        });
+        }, handleMkPathErrors);
         unbindTextField = subdoc.attach_textarea(elm[0]);
+      }
+
+      function handleMkPathErrors(err) {
+        if (err){
+          scope.$apply(function(){
+            logger.logError('makeAndAttach mkpath failed', {
+              data: err,
+            });
+            ReloadNotification.trigger();
+          });
+        }
       }
 
       function isDiacriticalMark(val) {
