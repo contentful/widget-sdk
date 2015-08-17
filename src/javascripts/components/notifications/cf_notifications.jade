@@ -1,0 +1,7 @@
+.app-notification--anchor(ng-show="message")
+  .app-notification--slider
+    .app-notification(ng-show="message" class="x--{{message.severity}}")
+      p(role="alert" aria-hidden="{{!message}}" data-alert-severity="{{message.severity}}")
+        | {{message.body}}
+      button.app-notification__close-button(ng-click="clear()")
+        cf-icon(name="close" scale="0.7")

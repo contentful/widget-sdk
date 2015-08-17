@@ -21,10 +21,7 @@
 </head>
 <body cf-clear-outlines ng-app="contentful/app">
   <div class="client" ng-controller="ClientController" ng-init="initClient()">
-    <div class="ng-hide" ng-show="user">
-      <cf-notifications></cf-notifications>
-      <cf-app-container class="app-container"></cf-app-container>
-    </div>
+    <cf-app-container class="app-container ng-hide" ng-show="user"></cf-app-container>
     <div class="client-loading" ng-if="!user">
       <div class="client-loading__icon fa fa-cog fa-spin"></div>
       <div class="client-loading__text">Loading Contentful...</div>

@@ -23,6 +23,8 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
       .then(addDefaultParams);
     },
 
+    // TODO this function is not used anywhere.
+    // We should remove it
     save: function (editingInterface) {
       return editingInterface.save()
       .then(function (interf) {

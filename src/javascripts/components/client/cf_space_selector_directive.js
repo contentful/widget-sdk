@@ -53,10 +53,5 @@ angular.module('contentful')
   function selectSpace(space) {
     // @todo move it to service - broadcast is a workaround to isolate scope
     $rootScope.$broadcast('selectSpace', space);
-    toggleSpaceSelector();
-  }
-
-  function toggleSpaceSelector() {
-    $rootScope.$broadcast('dropdownToggle', 'navbar.spaceSelector');
   }
 }]);

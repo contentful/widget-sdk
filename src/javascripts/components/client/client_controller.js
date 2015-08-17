@@ -29,7 +29,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.permissionController = $controller('PermissionController', {$scope: $scope});
   $scope.featureController    = $controller('FeatureController'   , {$scope: $scope});
   $scope.spaceContext = spaceContext;
-  $scope.notification = notification;
 
   $scope.preferences = {
     showAuxPanel: false,
@@ -198,6 +197,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
   function selectSpace(space) {
     if(!space){
+      // TODO this should never happen and is definitely not a user
+      // error
       return notification.warn('Selected space does not exist');
     }
     if (!TheAccountView.isActive() && $scope.getCurrentSpaceId() === space.getId()) {

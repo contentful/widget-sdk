@@ -1,36 +1,53 @@
-.notifications
-  // Layout
+.app-notification--anchor
   position: absolute
-  $layer('notification')
+  left: 0
+  right: 0
+  z-index: 1
+  display: flex
+  justify-content: center
+  align-items: flex-start
+  height: 0
 
-  // Hacked
-  top: 60px
-  right: 40px
 
-  .notification
-    // Layout
-    margin-top: 10px
-    padding: 1.3em 1.8em
-    width: 400px
-    $layer('notification')
+.app-notification--slider
+  overflow: hidden
+  max-width: 70vw
 
-    // Style
-    background: white
-    border: 1px solid $gray-light
-    color: black
-    font-weight: bold
-    line-height: 18px
-    opacity: 0.9
-    border-radius: 4px
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 1px 1px rgba(255,255,255,0.2) inset
 
-    &.info
-      background: rgba($green, 0.95)
-      border: 1px solid darken($green, 8%)
-      color: white
+.app-notification
+  min-width: 28em
+  max-width: 65em
+  line-height: 1.5
+  padding: $rhythm(0.5) 1rem $rhythm(0.5) 1.7rem
+  font-weight: bold
+  display: flex
 
-    &.error,
-    &.warn
-      background: rgba($orange, 0.95)
-      border: 1px solid darken($orange, 8%)
-      color: white
+  transition: 0.3s ease-out transform
+  transform: translateY(0%)
+
+  color: $colors.white
+  &
+    background: $colors.green
+    .app-notification__close-button svg path
+      fill:  #0E8C62
+  &.x--error
+    background: $colors.red
+    .app-notification__close-button svg path
+      fill:  #7A1824
+
+  &.ng-hide-add
+    transition: none
+  &.ng-hide
+    display: block !important
+    transform: translateY(-100%)
+
+
+  > p
+    flex: 1 1 auto
+    margin: 0
+
+  &__close-button
+    flex: 0 0 auto
+    $button-reset()
+    margin-left: 1.5em
+    height: 21px
