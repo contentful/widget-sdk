@@ -69,7 +69,7 @@
               li.avatar(cf-user ng-repeat="link in fieldPresence.users track by link.sys.id"
                                  link="link" as="presenceUser"
                                  tooltip="{{presenceUser | userNameDisplay:user}}")
-                img(ng-src="{{presenceUser.avatarUrl}}")
+                img(ng-src="{{presenceUser.data.avatarUrl}}")
           cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.internal_code,'*']")
         .form-widget__help-text(ng-if="showHelpText") {{helpText}}
         cf-error-list.form-box-error(cf-error-path="['fields', field.id]")
