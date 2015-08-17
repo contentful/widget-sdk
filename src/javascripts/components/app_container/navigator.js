@@ -284,7 +284,7 @@ angular.module('contentful').config([
     ncyBreadcrumb: {
       label: 'APIs'
     },
-    template: '<div cf-api-home class="api-home"></div>'
+    template: '<div cf-api-home class="workbench"></div>'
   });
 
 
