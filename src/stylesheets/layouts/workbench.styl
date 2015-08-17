@@ -141,13 +141,20 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
   &__icon
     margin-right: 1em
     align-self: center
-    display: block
 
   &__title
     font-size: $tab-header-font-size
     line-height: $workbench-header-height
     margin: 0 0.6em 0 0.1ex
     white-space: nowrap
+
+  &__left
+    display: flex
+    align-self: stretch
+    min-width: $workbench-sidebar-width
+    max-width: $workbench-max-sidebar-width
+    flex: 0 0 auto
+
 
   &__kb-link
     line-height: normal
@@ -170,7 +177,7 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     align-self: center
     position: relative
     flex-basis: 60%
-    flex-grow: 3
+    flex-shrink: 1
     max-width: 1100px
     padding-right: 20px
 

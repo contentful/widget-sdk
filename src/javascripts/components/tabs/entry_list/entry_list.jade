@@ -27,13 +27,14 @@ mixin create-entry-button
 
 
 header.workbench-header
-  cf-icon.workbench-header__icon(name="page-entries")
-  h1.workbench-header__title
-    | Entries
-    a.workbench-header__kb-link(
-      cf-knowledge-base-icon
-      analytics-event="entries"
-      href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
+  .workbench-header__left
+    cf-icon.workbench-header__icon(name="page-entries")
+    h1.workbench-header__title
+      | Entries
+      a.workbench-header__kb-link(
+        cf-knowledge-base-icon
+        analytics-event="entries"
+        href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
 
   .workbench-header__search.search-area--with-filter(
     ng-show="!showNoEntriesAdvice()")
@@ -43,7 +44,7 @@ header.workbench-header
       ng-options="ct.getId() as ct.getName() group by getGroupName() for ct in spaceContext.publishedContentTypes")
       option(value="") All
 
-    .l-search-w-autocomplete(
+    .search-area__input(
       cf-tokenized-search="context.view.searchTerm"
       search-content-type="getSearchContentType()"
       placeholder="Search for {{typeNameOr('Entries')}}"
