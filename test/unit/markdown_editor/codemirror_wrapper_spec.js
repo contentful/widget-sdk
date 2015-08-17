@@ -12,7 +12,7 @@ describe('CodeMirror wrapper', function () {
     var createWrapper = this.$inject('MarkdownEditor/createCodeMirrorWrapper');
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
-    wrapper = createWrapper(textarea, CodeMirror);
+    wrapper = createWrapper(textarea, {}, CodeMirror);
     cm = wrapper.getEditor();
     focusSpy = sinon.spy();
     cm.on('focus', focusSpy);

@@ -17,26 +17,22 @@
 
   .markdown-toolbar
     .markdown-actions
-      button.toolbar-button.fa.fa-header(
+      button.toolbar-button.markdown-headings.fa.fa-header(
         cf-context-menu-trigger
         tabindex="-1"
         tooltip="Headings"
-        ng-disabled="!inMode('md')"
-        class="markdown-headings")
+        ng-disabled="!inMode('md')")
         | &nbsp;
         i.fa.fa-chevron-down
       .context-menu(cf-context-menu="bottom")
         cf-icon.context-menu__arrow(name="arrow-up")
         ul.context-menu__items
           li(type="button" ng-click="actions.h1()")
-            i.fa.fa-star
             |  Heading 1
           li(type="button" ng-click="actions.h2()")
-            i.fa.fa-star-half-o
-            |  Heading 2
+            | Heading 2
           li(type="button" ng-click="actions.h3()")
-            i.fa.fa-star-o
-            |  Heading 3
+            | Heading 3
 
       button.toolbar-button.fa.fa-bold(
         ng-click="actions.bold()"
@@ -69,33 +65,37 @@
         ng-disabled="!inMode('md')")
 
       button.toolbar-button.fa.fa-link(
-        ng-click="insertLink()"
+        ng-click="actions.link()"
         tabindex="-1"
         tooltip="Insert link"
         ng-disabled="!inMode('md')")
 
       button.toolbar-button.fa.fa-cubes(
         ng-show="notInProduction()"
-        ng-click="embed()"
+        ng-click="actions.embed()"
         tabindex="-1"
         tooltip="Embed external content"
         ng-disabled="!inMode('md')")
 
-      button.toolbar-button.fa.fa-ellipsis-h(
+      button.toolbar-button.markdown-more-actions.fa.fa-ellipsis-h(
         ng-click="minorActionsShown = !minorActionsShown"
         tabindex="-1"
         tooltip="More actions..."
-        class="markdown-more-actions"
         ng-class="{'active': minorActionsShown}"
         ng-disabled="!inMode('md')")
 
-      button.toolbar-button(
-        ng-click="insertAsset()"
+      button.toolbar-button.markdown-side-action(
+        ng-click="actions.asset()"
         tabindex="-1"
-        ng-disabled="!inMode('md')"
-        class="markdown-media")
+        ng-disabled="!inMode('md')")
         i.fa.fa-picture-o
         |  Insert media
+
+      button.toolbar-button.markdown-side-action(
+        ng-click="zenApi.toggle()"
+        tabindex="-1")
+        i.fa.fa-arrows-alt
+        |  Zen mode
 
     .markdown-minor-actions(ng-show="minorActionsShown")
       button.toolbar-button.fa.fa-strikethrough(
@@ -129,19 +129,19 @@
         ng-disabled="!inMode('md')")
 
       button.toolbar-button.fa.fa-table(
-        ng-click="insertTable()"
+        ng-click="actions.table()"
         tabindex="-1"
         tooltip="Insert table"
         ng-disabled="!inMode('md')")
 
       button.toolbar-button.fa.fa-eur(
-        ng-click="insertSpecial()"
+        ng-click="actions.special()"
         tabindex="-1"
         tooltip="Insert special character"
         ng-disabled="!inMode('md')")
 
       button.toolbar-button.fa.fa-sitemap(
-        ng-click="organizeLinks()"
+        ng-click="actions.organizeLinks()"
         tabindex="-1"
         tooltip="Organize links"
         ng-disabled="!inMode('md')")
@@ -185,3 +185,5 @@
     span(ng-class="marker") {{ info.chars }}
     |  characters
     .markdown-requirements {{ requirements }}
+
+  cf-zenmode(ng-if="zen" zen-api="zenApi")

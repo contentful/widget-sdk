@@ -11,7 +11,7 @@ describe('Markdown editor', function () {
     var MarkdownEditor = this.$inject('MarkdownEditor');
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
-    editor = MarkdownEditor.createManually(textarea, libs.CodeMirror, libs.marked);
+    editor = MarkdownEditor.createManually(textarea, {}, libs.CodeMirror, libs.marked);
     actions = editor.actions;
     wrapper = editor.getWrapper();
     cm = wrapper.getEditor();
@@ -39,6 +39,7 @@ describe('Markdown editor', function () {
     });
 
     it('notifies with editor detailed information', function (done) {
+      editor.setContent('__test__');
       editor.subscribe(function (value, html, info) {
         expect(value).toBe('__test__');
         expect(html.trim()).toBe('<p><strong>test</strong></p>');
@@ -47,7 +48,6 @@ describe('Markdown editor', function () {
         done();
       });
 
-      editor.setContent('__test__');
       $timeout.flush();
     });
 
@@ -57,7 +57,7 @@ describe('Markdown editor', function () {
       editor.setContent('test');
       editor.destroy();
       $timeout.flush();
-      sinon.assert.notCalled(notificationSpy);
+      sinon.assert.calledOnce(notificationSpy);
     });
   });
 

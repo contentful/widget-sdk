@@ -14,7 +14,7 @@ describe('cfMarkdownEditor', function () {
     var scopeProps = { fieldData: { value: 'test' }, field: {} };
 
     sinon.stub(MarkdownEditor, 'create', function (textarea) {
-      return $q.when(MarkdownEditor.createManually(textarea, libs.CodeMirror, libs.marked));
+      return $q.when(MarkdownEditor.createManually(textarea, {}, libs.CodeMirror, libs.marked));
     });
 
     var elem = this.$compile('<cf-markdown-editor field-data="fieldData" field="field" />', scopeProps);
@@ -33,8 +33,6 @@ describe('cfMarkdownEditor', function () {
   });
 
   it('Subscribes to editor changes', function () {
-    expect(scope.firstSyncDone).toBe(false);
-    $timeout.flush();
     expect(scope.firstSyncDone).toBe(true);
     var infoKeys = _.intersection(Object.keys(scope.info), ['chars', 'words']);
     expect(infoKeys.length).toBe(2);

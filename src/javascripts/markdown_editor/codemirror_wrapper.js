@@ -4,10 +4,12 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', [
 
   var $timeout = $injector.get('$timeout');
 
-  return function(textarea, CodeMirror) {
+  return function(textarea, options, CodeMirror) {
+
+    options = options || {};
 
     var EDITOR_SIZE = {
-      min: 300,
+      min: options.height || 300,
       max: 500,
       shift: 50
     };
@@ -26,7 +28,10 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', [
     });
 
     cm.setSize('100%', EDITOR_SIZE.min);
-    cm.on('change', assureHeight);
+
+    if (!options.fixedHeight) {
+      cm.on('change', assureHeight);
+    }
 
     cm.setOption('extraKeys', {
       Tab: function () { replaceSelectedText(getIndentation()); },
@@ -112,9 +117,9 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', [
       moveToLineBeginning(next);
     }
 
-    function restoreCursor(character, lineNumber) {
+    function restoreCursor(character, lineNumber, noFocus) {
       cm.setCursor({line: defaultToCurrentLineNumber(lineNumber), ch: character});
-      cm.focus();
+      if (!noFocus) { cm.focus(); }
     }
 
     function moveToLineEnd(lineNumber) {

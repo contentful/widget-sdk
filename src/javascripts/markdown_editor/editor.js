@@ -13,21 +13,22 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
     createManually: create
   };
 
-  function loadAndCreate(textarea) {
+  function loadAndCreate(textarea, options) {
     return LazyLoader.get('markdown').then(function (libs) {
-      return create(textarea, libs.CodeMirror, libs.marked);
+      return create(textarea, options, libs.CodeMirror, libs.marked);
     });
   }
 
-  function create(textarea, CodeMirror, marked) {
+  function create(textarea, options, CodeMirror, marked) {
     var NOTIFY_INTERVAL = 250;
     var EMBEDLY_CLASS_RE = new RegExp('class="embedly-card"', 'g');
 
     var notificationTimeout;
     var subscriberCb = null;
+    var notificationStopped = false;
     var previousValue = null;
 
-    var editor = wrapEditor(textarea, CodeMirror);
+    var editor = wrapEditor(textarea, options, CodeMirror);
     var renderMarkdown = createRenderer(marked);
     var quoteToggleFn = createPrefixToggleFn('> ');
     var codeToggleFn = createPrefixToggleFn('    ');
@@ -53,10 +54,13 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
         dedent: dedent,
         table:  insertTable
       },
-      subscribe:       function (cb) { subscriberCb = cb; },
+      subscribe:       function (cb) { subscriberCb = cb; notifySubscriber(); },
+      stopSync:        function () { notificationStopped = true; },
+      startSync:       function () { notificationStopped = false; },
       insert:          function (text) { editor.insertAtCursor(text); },
       getWrapper:      function () { return editor; },
       setContent:      setContent,
+      getContent:      getContent,
       destroy:         destroy
     };
 
@@ -65,36 +69,44 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
     }
 
     function notifySubscriber() {
-      if (!subscriberCb) { return; }
-      var value = editor.getValue();
+      // check if notification is needed
+      if (!subscriberCb || notificationStopped) { return; }
+
       // check if something changed
+      var value = editor.getValue();
       if (value === previousValue) {
         scheduleSubscriberNotification();
         return;
+      } else {
+        previousValue = value;
       }
 
-      previousValue = value;
-
-      var html = renderMarkdown(value);
-      html = html.replace(/\r?\n|\r/g, '');
-      html = $sanitize(html);
-      html = disableEmbedlyControls(html);
-
-      var clean = html.replace(/<\/?[^>]+(>|$)/g, '');
-      var words = (clean || '').replace(/\s+/g, ' ').split(' ');
-      words = _.filter(words, function (word) { return word.length > 0; });
-
-      var info = {
-        chars: value.length || 0,
-        words: words.length || 0
-      };
+      var html = renderAndSanitizeMarkdown(value);
+      var info = { chars: value.length || 0, words: countWords(html) };
 
       subscriberCb(value, html, info);
       scheduleSubscriberNotification();
     }
 
+    function renderAndSanitizeMarkdown(markup) {
+      var html = renderMarkdown(markup);
+      html = html.replace(/\r?\n|\r/g, '');
+      html = $sanitize(html);
+      html = disableEmbedlyControls(html);
+
+      return html;
+    }
+
     function disableEmbedlyControls(html) {
       return html.replace(EMBEDLY_CLASS_RE, 'class="embedly-card" data-card-controls="0"');
+    }
+
+    function countWords(html) {
+      var clean = html.replace(/<\/?[^>]+(>|$)/g, '');
+      var words = (clean || '').replace(/\s+/g, ' ').split(' ');
+      words = _.filter(words, function (word) { return word.length > 0; });
+
+      return words.length || 0;
     }
 
     function setContent(value) {
@@ -102,10 +114,14 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       var line = editor.getCurrentLineNumber();
       var ch = editor.getCurrentCharacter();
       editor.setValue(value);
-      editor.restoreCursor(ch, line);
+      editor.restoreCursor(ch, line, true);
       // enable undo/redo, by default "undoDepth" is set to 0
       // we set it here so we cannot undo setting initial value (first "setValue" call)
       editor.opt('undoDepth', 200);
+    }
+
+    function getContent() {
+      return editor.getValue();
     }
 
     function destroy() {

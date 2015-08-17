@@ -6,9 +6,8 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
   var $timeout        = $injector.get('$timeout');
   var LazyLoader      = $injector.get('LazyLoader');
   var MarkdownEditor  = $injector.get('MarkdownEditor');
-  var advancedActions = $injector.get('MarkdownEditor/advancedActions');
+  var actions         = $injector.get('MarkdownEditor/actions');
   var requirements    = $injector.get('MarkdownEditor/requirements');
-  var LinkOrganizer   = $injector.get('LinkOrganizer');
   var environment     = $injector.get('environment');
 
   return {
@@ -37,30 +36,34 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.notInProduction = notInProduction;
       scope.openHelp = function () { window.alert('Not implemented.'); };
 
-      scope.insertAsset   = function () { advancedActions.asset(localeCode, editor.insert); };
-      scope.insertLink    = function () { advancedActions.link(editor.insert);              };
-      scope.insertSpecial = function () { advancedActions.special(editor.insert);           };
-      scope.insertTable   = function () { advancedActions.table(editor.actions.table);      };
-      scope.embed         = function () { advancedActions.embed(editor.insert);             };
-      scope.organizeLinks = organizeLinks;
+      scope.zenApi = {
+        get: function () { return scope.fieldData.value; },
+        sync: function (content) { editor.setContent(content); },
+        toggle: function () {
+          scope.zen = !scope.zen;
+          editor[scope.zen ? 'startSync' : 'stopSync']();
+        }
+      };
 
       // No need to handle response:
       // 1. embedly integration is optional
       // 2. loading it even after elements are added to DOM works just fine
       LazyLoader.get('embedly');
 
-      MarkdownEditor.create(textarea).then(function (editorInstance) {
+      MarkdownEditor.create(textarea)
+        .then(initEditor)
+        .catch(function () { scope.hasCrashed = true; });
+
+      function initEditor(editorInstance) {
         editor = editorInstance;
-        scope.actions = editor.actions;
+        scope.actions = actions.for(editor, localeCode);
         scope.$watch('fieldData.value', handleValueChange);
         scope.$watch('fieldData.value', addSizeMarker);
         scope.$on('$destroy', function () {
           editor.destroy();
           scope = null;
         });
-      }).catch(function () {
-        scope.hasCrashed = true;
-      });
+      }
 
       function handleValueChange(value) {
         if (scope.isInitialized) {
@@ -73,16 +76,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       }
 
       function receiveData(value, preview, info) {
-        scope.$apply(function() {
-          scope.fieldData.value = value;
-          scope.preview = $sce.trustAsHtml(preview);
-          scope.info = info;
-          scope.firstSyncDone = true;
-        });
-      }
-
-      function addSizeMarker() {
-        scope.marker = requirements.getSizeMarker(scope.field, scope.fieldData);
+        scope.fieldData.value = value;
+        scope.preview = $sce.trustAsHtml(preview);
+        scope.info = info;
+        scope.firstSyncDone = true;
       }
 
       function isReady() {
@@ -116,11 +113,8 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         return environment.env !== 'production';
       }
 
-      function organizeLinks() {
-        var text = scope.fieldData.value;
-        text = LinkOrganizer.convertInlineToRef(text);
-        text = LinkOrganizer.rewriteRefs(text);
-        scope.fieldData.value = text;
+      function addSizeMarker() {
+        scope.marker = requirements.getSizeMarker(scope.field, scope.fieldData);
       }
     }
   };

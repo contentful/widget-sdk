@@ -5,6 +5,7 @@ angular.module('contentful').factory('MarkdownEditor/advancedActions', ['$inject
   var $rootScope        = $injector.get('$rootScope');
   var modalDialog       = $injector.get('modalDialog');
   var specialCharacters = $injector.get('specialCharacters');
+  var LinkOrganizer     = $injector.get('LinkOrganizer');
   var assetUrl          = $injector.get('$filter')('assetUrl');
   var spaceContext      = $injector.get('spaceContext');
 
@@ -13,7 +14,8 @@ angular.module('contentful').factory('MarkdownEditor/advancedActions', ['$inject
     asset: asset,
     special: special,
     table: table,
-    embed: embed
+    embed: embed,
+    organizeLinks: organizeLinks
   };
 
   function link(cb) {
@@ -98,11 +100,18 @@ angular.module('contentful').factory('MarkdownEditor/advancedActions', ['$inject
       template: 'embed_external_content_dialog',
       ignoreEnter: true
     }).promise.then(function (data) {
-        cb(makeEmbedlyLink(data.value));
+        cb(_makeEmbedlyLink(data.value));
     });
   }
 
-  function makeEmbedlyLink(url) {
+  function _makeEmbedlyLink(url) {
     return '<a href="' + url + '" class="embedly-card">Embedded content: ' + url + '</a>';
+  }
+
+  function organizeLinks(editor) {
+    var text = editor.getContent();
+    text = LinkOrganizer.convertInlineToRef(text);
+    text = LinkOrganizer.rewriteRefs(text);
+    editor.setContent(text);
   }
 }]);

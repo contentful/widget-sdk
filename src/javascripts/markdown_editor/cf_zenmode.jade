@@ -1,0 +1,43 @@
+.cf-zenmode
+  .zenmode-toolbar
+    button.toolbar-button.fa.fa-bold(
+      ng-click="actions.bold()"
+      tabindex="-1"
+      tooltip="Bold"
+      tooltip-placement="bottom")
+
+    button.toolbar-button.fa.fa-italic(
+      ng-click="actions.italic()"
+      tabindex="-1"
+      tooltip="Italic"
+      tooltip-placement="bottom")
+
+    button.toolbar-button.fa.fa-quote-left(
+      ng-click="actions.quote()"
+      tabindex="-1"
+      tooltip="Quote"
+      tooltip-placement="bottom")
+
+    button.toolbar-button.fa.fa-list(
+      ng-click="actions.ul()"
+      tabindex="-1"
+      tooltip="Unordered list"
+      tooltip-placement="bottom")
+
+    button.toolbar-button.fa.fa-link(
+      ng-click="actions.link()"
+      tabindex="-1"
+      tooltip="Insert link"
+      tooltip-placement="bottom")
+
+    button.toolbar-button.fa.fa-sitemap(
+      ng-click="actions.organizeLinks()"
+      tabindex="-1"
+      tooltip="Organize links"
+      tooltip-placement="bottom")
+
+    button(ng-click="zenApi.toggle()") Close zenmode
+
+  .zenmode-editor.markdown-editing-area
+    textarea
+  .zenmode-preview.markdown-preview(ng-bind-html="preview")
