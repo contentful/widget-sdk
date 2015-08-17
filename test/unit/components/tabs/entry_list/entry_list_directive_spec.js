@@ -53,7 +53,7 @@ describe('The Entry list directive', function () {
 
     it(button+' button shown', function () {
       compileElement();
-      expect(container.find('.tab-actions .'+button)).not.toBeNgHidden();
+      expect(container.find('.workbench-actions .'+button)).not.toBeNgHidden();
     });
   }
 

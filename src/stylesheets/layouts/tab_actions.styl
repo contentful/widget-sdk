@@ -1,16 +1,4 @@
-.tab-actions
-  border-top: 1px solid $gray-light
-  background-color: $gray-lightest
-  box-shadow: 0 -1px 4px rgba(0,0,0,0.07), 0 1px 1px rgba(255,255,255,0.8) inset
-
-$tab-actions-vertical-padding = 10px
-$tab-actions-content-height = $tab-actions-height - (2 * $tab-actions-vertical-padding)
-
-$tab-actions-padding()
-  padding: ($tab-actions-vertical-padding - 1) 20px $tab-actions-vertical-padding // -1 on top to make up for the border
-
-.tab-actions
-  $tab-actions-padding()
+$tab-actions-content-height = 34px
 
 $tab-actions-save-status()
   float: left
@@ -87,20 +75,3 @@ $tab-actions-other-users()
   line-height: $tab-actions-content-height
   font-size: $base-font-size
   flex-grow: 1
-
-// text label
-.tab-actions
-  .label
-    line-height: $tab-actions-content-height
-    font-size: $base-font-size
-    float: left
-
-  // buttons
-  .button-set
-    position: relative
-    float: right
-
-.tab-actions
-  display: none // initial state
-  $stretch(false, 0, 0, 0)
-  height: $tab-actions-height

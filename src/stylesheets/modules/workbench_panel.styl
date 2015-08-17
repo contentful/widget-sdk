@@ -2,17 +2,15 @@ $aux-padding = 1.8em
 $aux-panel-border-color = lighten($gray-light, 47%)
 
 .workbench-panel
-.aux-panel
+  top: $tab-header-height + 1px
+  bottom: 58px
+  right: 0
   width: 20%
   position: absolute
   overflow-y: auto
-  top: $tab-header-height
-  bottom: 0
-  right: 0
-  padding: 0
   background-color: lighten($gray-light, 82%)
   border-left: 1px solid $aux-panel-border-color
-  box-shadow: -1px 0 5px rgba(0,0,0,0.06), 0 0 4px rgba(255,255,255,1) inset
+  box-shadow: -1px 0 5px hsla(black,0.06), 0 0 4px white inset
   .entity-info-panel
     font-size: 10px
     padding: 0
@@ -52,11 +50,3 @@ $aux-panel-border-color = lighten($gray-light, 47%)
       font-size: 1.2em
       font-weight: bold
       color: $gray-darkest
-
-.workbench-panel
-  top: $tab-header-height + 1px
-  bottom: 58px
-
-.with-tab-actions
-  .aux-panel
-    bottom: $tab-actions-height
