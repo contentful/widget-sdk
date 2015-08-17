@@ -70,7 +70,8 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', [
       lineStartsWith:          lineStartsWith,
       getIndentation:          getIndentation,
       getNl:                   getNl,
-      getValue:                getValue
+      getValue:                getValue,
+      getHistorySize:          getHistorySize
     };
 
     function assureHeight() {
@@ -253,6 +254,10 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', [
 
     function getValue() {
       return cm.getValue() || '';
+    }
+
+    function getHistorySize() {
+      return cm.historySize();
     }
 
     function repeat(what, n) {

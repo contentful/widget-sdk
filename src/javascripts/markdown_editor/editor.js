@@ -54,6 +54,10 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
         dedent: dedent,
         table:  insertTable
       },
+      history: {
+        hasUndo: function () { return editor.getHistorySize().undo > 0; },
+        hasRedo: function () { return editor.getHistorySize().redo > 0; }
+      },
       subscribe:       function (cb) { subscriberCb = cb; notifySubscriber(); },
       stopSync:        function () { notificationStopped = true; },
       startSync:       function () { notificationStopped = false; },

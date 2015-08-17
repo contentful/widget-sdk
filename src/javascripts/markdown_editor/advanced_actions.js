@@ -15,7 +15,8 @@ angular.module('contentful').factory('MarkdownEditor/advancedActions', ['$inject
     special: special,
     table: table,
     embed: embed,
-    organizeLinks: organizeLinks
+    organizeLinks: organizeLinks,
+    openHelp: openHelp
   };
 
   function link(cb) {
@@ -113,5 +114,13 @@ angular.module('contentful').factory('MarkdownEditor/advancedActions', ['$inject
     text = LinkOrganizer.convertInlineToRef(text);
     text = LinkOrganizer.rewriteRefs(text);
     editor.setContent(text);
+  }
+
+  function openHelp() {
+    modalDialog.open({
+      scope: $rootScope.$new(),
+      template: 'markdown_help_dialog',
+      ignoreEnter: true
+    });
   }
 }]);

@@ -20,6 +20,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
     },
     link: function (scope, el) {
       var textarea = el.find('textarea').get(0);
+      var minorActions = el.find('.markdown-minor-actions').first().hide();
       var currentMode = 'md';
       var editor = null;
       var localeCode = dotty.get(scope, 'locale.internal_code', null);
@@ -28,13 +29,14 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.firstSyncDone = false;
       scope.hasCrashed = false;
       scope.isReady = isReady;
+      scope.minorActionsShown = false;
+      scope.toggleMinorActions = toggleMinorActions;
       scope.requirements = requirements.getInfoLine(scope.field);
       scope.preview = '';
       scope.info = {};
       scope.setMode = setMode;
       scope.inMode = inMode;
-      scope.notInProduction = notInProduction;
-      scope.openHelp = function () { window.alert('Not implemented.'); };
+      scope.inDevelopment = inDevelopment;
 
       scope.zenApi = {
         get: function () { return scope.fieldData.value; },
@@ -57,6 +59,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       function initEditor(editorInstance) {
         editor = editorInstance;
         scope.actions = actions.for(editor, localeCode);
+        scope.history = editor.history;
         scope.$watch('fieldData.value', handleValueChange);
         scope.$watch('fieldData.value', addSizeMarker);
         scope.$on('$destroy', function () {
@@ -96,7 +99,12 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         if (nextMode === currentMode) { return; }
         currentMode = nextMode;
 
-        // 3. when rerendered and in Markdown mode,
+        // 3. hide minor actions if going to preview mode
+        if (currentMode !== 'md') {
+          toggleMinorActions(true);
+        }
+
+        // 4. when rerendered and in Markdown mode,
         // set height to "auto" to allow auto-expanding
         if (currentMode === 'md') {
           $timeout(function () {
@@ -109,8 +117,14 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         return currentMode === mode;
       }
 
-      function notInProduction() {
-        return environment.env !== 'production';
+      function toggleMinorActions(forceHide) {
+        scope.minorActionsShown = forceHide ? false : !scope.minorActionsShown;
+        var method = 'slide' + (scope.minorActionsShown ? 'Down' : 'Up');
+        minorActions.stop()[method]();
+      }
+
+      function inDevelopment() {
+        return environment.env === 'development';
       }
 
       function addSizeMarker() {

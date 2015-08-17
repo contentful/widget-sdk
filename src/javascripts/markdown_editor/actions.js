@@ -18,6 +18,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
     add(function () { advancedActions.table(editor.actions.table);      }, 'table');
     add(function () { advancedActions.embed(editor.insert);             }, 'embed');
     add(function () { advancedActions.organizeLinks(editor);            }, 'organizeLinks');
+    add(function () { advancedActions.openHelp();                       }, 'openHelp');
 
     return actions;
 

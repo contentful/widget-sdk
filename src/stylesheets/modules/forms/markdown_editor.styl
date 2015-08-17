@@ -152,7 +152,6 @@ $markdown-radius = 3
     color: lighten($orange, 20%)
   .markdown-marker-invalid
     color: $red
-    font-weight: bold
 
 /**
  * Markdown preview styles
@@ -266,7 +265,7 @@ $markdown-radius = 3
   position: fixed
   top: 30px
   bottom: 0
-  width: 50%;
+  width: 50%
 
 .zenmode-editor
   z-index: 102
@@ -276,3 +275,43 @@ $markdown-radius = 3
 .zenmode-preview
   z-index: 101
   right: 0
+
+/**
+ * Help
+ */
+
+.markdown-help-dialog
+  .modal-dialog__content
+    overflow: hidden
+    width: 780px
+    a
+      text-decoration: underline
+
+.markdown-help-column
+  width: 340px
+  float: left
+
+.markdown-help-column.first
+  border-right: 1px solid $gray-light
+  padding-right: 20px
+  margin-right: 20px
+
+.markdown-help-item
+  width: 340px
+  font-size: 1.5em
+  margin-bottom: 15px
+  line-height: 1.5em
+  .item
+    width: 170px
+    display: inline-block
+  .markup
+    width: 170px
+    display: inline-block
+    color: $gray
+
+.markdown-help-link
+  clear: both
+  padding: 20px
+  text-align: center
+  a
+    font-size: 1.1em

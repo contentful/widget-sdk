@@ -11,6 +11,7 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
     scope: { zenApi: '=' },
     link: function(scope, el) {
       var textarea = el.find('textarea').get(0);
+      var preview = el.find('.markdown-preview').first();
       var editor;
       var opts = { height: '100%', fixedHeight: true };
 
@@ -24,10 +25,21 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
           scope.zenApi.sync(content);
           scope.preview = preview;
         });
+        mountScroll();
         scope.$on('$destroy', function () {
           editor.destroy();
           scope = null;
         });
+      }
+
+      function mountScroll() {
+        var cm = editor.getWrapper().getEditor();
+        cm.on('scroll', _.throttle(function () {
+          var info = cm.getScrollInfo();
+          var position = info.top / info.height;
+          var top = preview.get(0).scrollHeight * position;
+          preview.scrollTop(top);
+        }, 150));
       }
     }
   };

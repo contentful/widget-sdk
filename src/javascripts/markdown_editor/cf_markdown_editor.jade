@@ -8,7 +8,7 @@
 
 .markdown-loaded(ng-class="{'visible': isReady() && !hasCrashed}")
   .markdown-tabs
-    a(href ng-if="notInProduction()" ng-click="setMode('html')" ng-class="{'inactive': !inMode('html')}")
+    a(href ng-if="inDevelopment()" ng-click="setMode('html')" ng-class="{'inactive': !inMode('html')}")
       | HTML
     a(href ng-click="setMode('rich')" ng-class="{'inactive': !inMode('rich')}")
       | Preview
@@ -70,15 +70,8 @@
         tooltip="Insert link"
         ng-disabled="!inMode('md')")
 
-      button.toolbar-button.fa.fa-cubes(
-        ng-show="notInProduction()"
-        ng-click="actions.embed()"
-        tabindex="-1"
-        tooltip="Embed external content"
-        ng-disabled="!inMode('md')")
-
       button.toolbar-button.markdown-more-actions.fa.fa-ellipsis-h(
-        ng-click="minorActionsShown = !minorActionsShown"
+        ng-click="toggleMinorActions()"
         tabindex="-1"
         tooltip="More actions..."
         ng-class="{'active': minorActionsShown}"
@@ -92,12 +85,13 @@
         |  Insert media
 
       button.toolbar-button.markdown-side-action(
+        ng-show="inDevelopment()"
         ng-click="zenApi.toggle()"
         tabindex="-1")
         i.fa.fa-arrows-alt
         |  Zen mode
 
-    .markdown-minor-actions(ng-show="minorActionsShown")
+    .markdown-minor-actions
       button.toolbar-button.fa.fa-strikethrough(
         ng-click="actions.strike()"
         tabindex="-1"
@@ -128,6 +122,12 @@
         tooltip="Dedent"
         ng-disabled="!inMode('md')")
 
+      button.toolbar-button.fa.fa-cubes(
+        ng-click="actions.embed()"
+        tabindex="-1"
+        tooltip="Embed external content"
+        ng-disabled="!inMode('md')")
+
       button.toolbar-button.fa.fa-table(
         ng-click="actions.table()"
         tabindex="-1"
@@ -150,13 +150,13 @@
         ng-click="actions.undo()"
         tabindex="-1"
         tooltip="Undo"
-        ng-disabled="!inMode('md')")
+        ng-disabled="!inMode('md') || !history.hasUndo()")
 
       button.toolbar-button.fa.fa-repeat(
         ng-click="actions.redo()"
         tabindex="-1"
         tooltip="Redo"
-        ng-disabled="!inMode('md')")
+        ng-disabled="!inMode('md') || !history.hasRedo()")
 
   .markdown-areas
     .markdown-editing-area(
@@ -170,20 +170,19 @@
       ng-click="setMode('md')")
 
     pre.markdown-html(
-      ng-if="notInProduction() && inMode('html')"
+      ng-if="inDevelopment() && inMode('html')"
       ng-bind="preview"
       ng-click="setMode('md')")
 
   .markdown-help
     cf-icon(name="markdown")
     | Use Markdown syntax to format your text.&nbsp;
-    a(href ng-click="openHelp()") Help
+    a(href ng-click="actions.openHelp()") Help
 
   .markdown-info
     .markdown-stats
-    | {{ info.words }} words,&nbsp;
-    span(ng-class="marker") {{ info.chars }}
-    |  characters
+    | {{ info.words }} words,
+    span(ng-class="marker")  {{ info.chars }} characters
     .markdown-requirements {{ requirements }}
 
   cf-zenmode(ng-if="zen" zen-api="zenApi")
