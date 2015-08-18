@@ -7,94 +7,60 @@ angular.module('contentful').
     pingTimeout: 60e3
   }).
 
+  /**
+   * @ngdoc type
+   * @name otDocPresenceController
+   * @scope.provides {Object} otPresence
+   * @description
+   * This controller listens to events on the otDoc and populates an otPresence
+   * object with information about which users are editing which fields on the
+   * current document.
+   *
+   * Internally, this controller is watching for the existence of otDoc. When
+   * otDoc is present, an event listener is set on otDoc (see otDocChangeHandler).
+   * When the shout event is handled, the internal presence variable is updated.
+   * This presence variable is also being watched, and when it's changed,
+   * the watcher updates the otPresence property on the scope.
+  */
   controller('otDocPresenceController', ['$scope', '$timeout', 'otPresenceConfig', function($scope, $timeout, otPresenceConfig) {
     var controller = this;
     var presence = {};
     var ownPresence = {};
-    var user  = $scope.user.sys.id;
+    var ownUserId = $scope.user.sys.id;
     var timeout;
-    var lastId;
+    var lastFieldId;
     var lastFocus;
+
+    $scope.$watch('otDoc', otDocChangeHandler);
+    $scope.$on('$stateChangeStart', stateChangeStartHandler);
+    $scope.$on('$destroy', destroyHandler);
 
     $scope.$watch(function() {
       return presence;
     }, function(presence) {
-      $scope.presence = {
+      $scope.otPresence = {
         fields: groupPresenceByField(presence),
         users: presenceUsers(presence)
       };
     }, true);
 
-    $scope.$watch('otDoc', otDocChangeHandler);
-    $scope.$on('tabClosed', tabClosedHandler);
-    $scope.$on('$destroy', destroyHandler);
-
     doLater();
 
-    controller.focus = function(id) {
+    /**
+     * @ngdoc method
+     * @name focus
+     * @param {string} fieldId
+    */
+    controller.focus = function(fieldId) {
       var now = new Date();
-      if (id === lastId && now - lastFocus < otPresenceConfig.focusThrottle) return;
-      lastId = id;
+      if (fieldId === lastFieldId && now - lastFocus < otPresenceConfig.focusThrottle) return;
+      lastFieldId = fieldId;
       lastFocus = now;
-      ownPresence.focus = id;
+      ownPresence.focus = fieldId;
       var doc = $scope.otDoc;
       if (!doc) return;
-      doc.shout(['focus', user, id]);
+      doc.shout(['focus', ownUserId, fieldId]);
     };
-
-    function otDocChangeHandler(doc, old) {
-      if (old) {
-        old.removeListener('closed', closedHandler);
-        old.removeListener('shout', shoutHandler);
-      }
-
-      if (!doc) return;
-
-      doc.shout(['open', user]);
-      doc.on('shout', shoutHandler);
-    }
-
-    function tabClosedHandler(event, tab) {
-      var isOwnTab = (tab === $scope.tab);
-      var docExists = 'otDoc' in $scope;
-      if (!isOwnTab || !docExists) { return; }
-      closedHandler($scope.otDoc);
-    }
-
-    function closedHandler(doc) {
-      /*jshint validthis:true */
-      if(doc) doc.shout(['close', user]);
-      $timeout.cancel(timeout);
-    }
-
-    function shoutHandler(shout) {
-      $scope.$apply(function(scope) {
-        var type = shout[0];
-        var from = shout[1];
-
-        if (!presence[from]) presence[from] = {};
-
-        presence[from].shoutedAt = new Date();
-
-        if (type === 'open') {
-          if (ownPresence.focus)
-            scope.otDoc.shout(['focus', user, ownPresence.focus]);
-          else
-            scope.otDoc.shout(['ping', user]);
-          presence[from] = {};
-        }
-
-        if (type === 'ping') {}
-
-        if (type === 'focus') {
-          var id = shout[2];
-          presence[from].focus = id;
-        }
-
-        if (type === 'close')
-          delete presence[from];
-      });
-    }
 
     function doLater() {
       removeTimedOutUsers();
@@ -113,22 +79,65 @@ angular.module('contentful').
       });
     }
 
-    function destroyHandler(event) {
-      var scope = event.currentScope;
-      controller.focus = null;
-      $timeout.cancel(timeout);
-      if (scope.otDoc) {
-        scope.otDoc.removeListener('closed', closedHandler);
-        scope.otDoc.removeListener('shout', shoutHandler);
+    function stateChangeStartHandler() {
+      var docExists = !!($scope.otDoc);
+      if (!docExists) { return; }
+      closedHandler($scope.otDoc);
+    }
+
+    function otDocChangeHandler(doc, old) {
+      if (old) {
+        old.removeListener('closed', closedHandler);
+        old.removeListener('shout', shoutHandler);
       }
+
+      if (!doc) return;
+
+      doc.shout(['open', ownUserId]);
+      doc.on('shout', shoutHandler);
+    }
+
+    function closedHandler(doc) {
+      /*jshint validthis:true */
+      if(doc) doc.shout(['close', ownUserId]);
+      $timeout.cancel(timeout);
+    }
+
+    function shoutHandler(shout) {
+      $scope.$apply(function(scope) {
+        var type   = shout[0];
+        var from   = shout[1];
+        var focusedFieldId = shout[2];
+
+        if (!presence[from]) presence[from] = {};
+
+        presence[from].shoutedAt = new Date();
+
+        if (type === 'open') {
+          if (ownPresence.focus)
+            scope.otDoc.shout(['focus', ownUserId, ownPresence.focus]);
+          else
+            scope.otDoc.shout(['ping', ownUserId]);
+          presence[from] = {};
+        }
+
+        if (type === 'ping') {}
+
+        if (type === 'focus') {
+          presence[from].focus = focusedFieldId;
+        }
+
+        if (type === 'close')
+          delete presence[from];
+      });
     }
 
     function groupPresenceByField(presence) {
-      return _.reduce(presence, function(fields, userPresence, user) {
+      return _.reduce(presence, function(fields, userPresence, presenceUserId) {
         var field = userPresence.focus;
         if (!field) return fields;
         if (!fields[field]) fields[field] = {users: []};
-        fields[field].users.push(toUserLink(user));
+        fields[field].users.push(toUserLink(presenceUserId));
         return fields;
       }, {});
     }
@@ -141,8 +150,22 @@ angular.module('contentful').
       return {sys: {type: 'Link', linkType: 'User', id: id}};
     }
 
+    function destroyHandler(event) {
+      var scope = event.currentScope;
+      controller.focus = null;
+      $timeout.cancel(timeout);
+      if (scope.otDoc) {
+        scope.otDoc.removeListener('closed', closedHandler);
+        scope.otDoc.removeListener('shout', shoutHandler);
+      }
+    }
+
   }]).
 
+  /**
+   * @ngdoc directive
+   * @name otDocPresence
+  */
   directive('otDocPresence', function() {
     return {
       require: '^otDocFor',
@@ -150,19 +173,32 @@ angular.module('contentful').
     };
   }).
 
-  // Listens to changes on scope.presence.fields to indicate if a user is editing the current field
+  /**
+   * @ngdoc type
+   * @name otFieldPresenceController
+   * @scope.requires otPresence
+   * @scope.provides {string} otFieldPresenceId
+   * @scope.provides {object} otFieldPresence
+   * @description
+   * This controller looks for information about the current field in the document
+   * presence and populates some properties to indicate the current field presence
+  */
   controller('otFieldPresenceController', ['$scope', '$attrs', function($scope, $attrs) {
     var unregister;
     $scope.$watch($attrs.otFieldPresence, function(v) {
       var id = $scope.otFieldPresenceId = v.join('.');
-      var fp = 'presence.fields["' + id + '"]';
+      var fp = 'otPresence.fields["' + id + '"]';
       if (unregister) unregister();
       unregister = $scope.$watch(fp, function (fp) {
-        $scope.fieldPresence = fp;
+        $scope.otFieldPresence = fp;
       });
     }, true);
   }]).
 
+  /**
+   * @ngdoc directive
+   * @name otFieldPresence
+  */
   directive('otFieldPresence', function() {
     return {
       require: '^otDocPresence',
