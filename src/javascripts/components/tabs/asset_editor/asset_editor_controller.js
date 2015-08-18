@@ -57,7 +57,7 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
     scope.otDisabled = !enabled;
   });
   $scope.$on('otRemoteOp', function (event) {
-    event.currentScope.otUpdateEntity();
+    event.currentScope.otUpdateEntityData();
   });
 
   // Validations

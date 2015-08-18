@@ -82,7 +82,7 @@ angular.module('contentful')
       $scope.otDoc.at('fields').set(data.fields, cb);
       cb.promise
       .then(function () {
-        $scope.otUpdateEntity();
+        $scope.otUpdateEntityData();
         if (trackedPreviousVersion === (trackedPublishedVersion + 1)) {
           trackedPreviousVersion = $scope.entry.getVersion() + 1;
         }
@@ -105,7 +105,7 @@ angular.module('contentful')
     $scope.otDoc.at('fields').set(originalEntryData.fields, cb);
     cb.promise
     .then(function () {
-      $scope.otUpdateEntity();
+      $scope.otUpdateEntityData();
       if (trackedPreviousVersion === (trackedPublishedVersion + 1)) {
         trackedPublishedVersion = $scope.entry.getVersion() - 1;
       }
@@ -117,7 +117,7 @@ angular.module('contentful')
   createEntryCommand('unpublish', function () {
     return $scope.entry.unpublish()
     .then(function(){
-      $scope.otUpdateEntity();
+      $scope.otUpdateEntityData();
       notify.unpublishSuccess();
     })
     .catch(notify.unpublishFail);

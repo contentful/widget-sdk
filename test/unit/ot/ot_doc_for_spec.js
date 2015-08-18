@@ -22,7 +22,7 @@ describe('otDocFor', function () {
 
   describe('updating entity', function () {
     it('should update the entity with a copy of the snapshot', function () {
-      scope.otUpdateEntity();
+      scope.otUpdateEntityData();
       sinon.assert.calledOnce(scope.entity.update);
       var data = scope.entity.update.args[0][0];
       expect(data).not.toBe(scope.otDoc.snapshot);
@@ -32,7 +32,7 @@ describe('otDocFor', function () {
     it('should preserve version and updatedAt', function () {
       var clock = sinon.useFakeTimers('Date');
       try {
-        scope.otUpdateEntity();
+        scope.otUpdateEntityData();
         var iso = moment().toISOString();
         var data = scope.entity.update.args[0][0];
         expect(data.sys.version).toBe(123);
@@ -52,10 +52,10 @@ describe('otDocFor', function () {
     }));
 
     it('should immediately update the entity', function (done) {
-      spyOn(scope, 'otUpdateEntity');
+      spyOn(scope, 'otUpdateEntityData');
       scope.$watch('!!otDoc', function (hasDoc) {
         if (hasDoc) {
-          expect(scope.otUpdateEntity).toHaveBeenCalled();
+          expect(scope.otUpdateEntityData).toHaveBeenCalled();
           done();
         }
       });
@@ -64,10 +64,10 @@ describe('otDocFor', function () {
 
     it('should not immediately update the entity if the id is missing', function (done) {
       delete scope.entity.data.sys.id;
-      spyOn(scope, 'otUpdateEntity');
+      spyOn(scope, 'otUpdateEntityData');
       scope.$watch('!!otDoc', function (hasDoc) {
         if (hasDoc) {
-          expect(scope.otUpdateEntity).not.toHaveBeenCalled();
+          expect(scope.otUpdateEntityData).not.toHaveBeenCalled();
           done();
         }
       });

@@ -65,7 +65,7 @@ angular.module('contentful')
     return $scope.asset.unpublish()
     .then(function(){
       notification.info(title() + ' unpublished successfully');
-      $scope.otUpdateEntity();
+      $scope.otUpdateEntityData();
     })
     .catch(function(err){
       notification.warn('Error unpublishing ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');

@@ -1,18 +1,29 @@
 'use strict';
 
+angular.module('contentful')
+
 /**
- * Directive that installs a otDoc property on the scope that corresponds to an entity
+ * @ngdoc directive
+ * @name otDocFor
+ * @description
+ * See the otDocForController for more details on what this directive provides
  *
- * Usage: <... ot-doc-for="entity">
- *
- * The controller installs several properties on the scope:
- *
- * - otDisable: Boolean that can be set to true/false to turn ot on or off for this component
- * - otEditable: Readonly boolean indicating if the ot Document is available and editable
- * - otGetEntity: Function that returns the entity for which the otDoc was opened
- * - otDoc: The otDoc itself
- * - otUpdateEntity: updates the entity with the data from the ot snapShot
- *
+ * @usage[html]
+ * <... ot-doc-for="entity">
+ */
+.directive('otDocFor', function () {
+  return {
+    restrict: 'A',
+    priority: -100,
+    controller: 'otDocForController'
+  };
+})
+
+/**
+ * @ngdoc type
+ * @name otDocForController
+ * @description
+ * Installs a otDoc property on the scope that corresponds to an entity
  * It emits the following events:
  *
  * - otRemoteOp(op), broadcast:
@@ -28,17 +39,16 @@
  * - otDisabled flag
  *
  * It also ensures that the version in the entity is always up-to-date
+ *
+ * @scope.provides {OtDoc} otDoc
+ * @scope.provides {boolean} otDisabled
+ * Turn ShareJS on/off for this component
+ * @scope.provides {boolean} otEditable
+ * Readonly boolean indicating if the OT document is available and editable
+ * @scope.provides {function()} otGetEntity
+ * Function that returns the entity for which the otDoc was opened
+ * @scope.provides {function()} otUpdateEntityData
  */
-angular.module('contentful')
-
-.directive('otDocFor', function () {
-  return {
-    restrict: 'A',
-    priority: -100,
-    controller: 'otDocForController'
-  };
-})
-
 .controller('otDocForController', ['$scope', '$attrs', '$injector', function OtDocForController($scope, $attrs, $injector) {
 
   var ShareJS = $injector.get('ShareJS');
@@ -47,11 +57,12 @@ angular.module('contentful')
   var moment  = $injector.get('moment');
   var TheLocaleStore = $injector.get('TheLocaleStore');
 
-  $scope.otDisabled = true; // set to true to prevent editing
-  $scope.otEditable = false; // indicates editability
+  // initialized to true to prevent editing until otDoc is ready
+  $scope.otDisabled = true;
+  $scope.otEditable = false;
 
   $scope.otGetEntity = otGetEntity;
-  $scope.otUpdateEntity = otUpdateEntity;
+  $scope.otUpdateEntityData = otUpdateEntityData;
 
   $scope.$watch(function () {
     return ShareJS.isConnected();
@@ -76,7 +87,7 @@ angular.module('contentful')
     return $scope.$eval($attrs.otDocFor);
   }
 
-  function otUpdateEntity(entity) {
+  function otUpdateEntityData(entity) {
     entity = entity || otGetEntity();
     if (entity && $scope.otDoc) {
       var data = _.cloneDeep($scope.otDoc.snapshot);
@@ -91,7 +102,7 @@ angular.module('contentful')
       data.sys.updatedAt = moment().toISOString();
       entity.update(data);
     } else {
-      logger.logSharejsError('otUpdateEntity did not update', {
+      logger.logSharejsError('otUpdateEntityData did not update', {
         data: {
           entity: entity,
           otDoc: $scope.otDoc
@@ -138,7 +149,6 @@ angular.module('contentful')
   }
 
   function handleDocClosedEvent(context) {
-    // TODO this is dangerous! We could be removing listeners that are still needed
     defer(function () {
       context._listeners.length = 0;
       _.each(context._events, function (listeners) {
@@ -149,9 +159,6 @@ angular.module('contentful')
   }
 
   function setupOtDoc(doc) {
-    //console.log('otDocFor installing doc %o for entity %o', doc, entity);
-    //console.log('setting doc to %o (id: %o) in scope %o', doc.name, doc.snapshot.sys.id, scope.$id);
-    // Filter deleted locales here too
     filterDeletedLocales(doc.snapshot);
     $scope.otDoc = doc;
     setVersionUpdater();
@@ -162,17 +169,20 @@ angular.module('contentful')
     try {
       doc.close();
     } catch(e) {
-      if (e.message !== 'Cannot send to a closed connection') throw e;
+      if (e.message !== 'Cannot send to a closed connection') {
+        throw e;
+      }
     }
   }
 
   function handleLackOfEntity() {
     if ($scope.otDoc) {
-      //console.log('setting doc to null %o (id: %o) in scope %o', scope.otDoc.name, scope.otDoc.snapshot.sys.id, scope.$id);
       try {
         $scope.otDoc.close();
       } catch(e) {
-        if (e.message !== 'Cannot send to a closed connection') throw e;
+        if (e.message !== 'Cannot send to a closed connection') {
+          throw e;
+        }
       } finally {
         $scope.otDoc = null;
       }
@@ -208,7 +218,6 @@ angular.module('contentful')
   }
 
   function shouldDocBeOpen(scope) {
-    //console.log('otDocFor shouldDocBeOpen disabled %o, connected %o, entity %o', scope.otDisabled, scope.otConnected, otGetEntity() );
     return scope.otConnected && !scope.otDisabled && !!otGetEntity();
   }
 
@@ -223,7 +232,7 @@ angular.module('contentful')
   function updateIfValid() {
     // Sanity check to make sure there's actually something in the snapshot
     if ($scope.$eval('otDoc.snapshot.sys.id')) {
-      $scope.otUpdateEntity();
+      $scope.otUpdateEntityData();
     }
   }
 

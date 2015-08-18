@@ -228,7 +228,7 @@ describe('Entry Actions Controller', function () {
     describe('succeeds', function() {
       beforeEach(function() {
         this.actionStub.resolves({entry: true});
-        this.scope.otUpdateEntity = sinon.stub();
+        this.scope.otUpdateEntityData = sinon.stub();
         this.controller.unpublish.execute();
         this.$apply();
       });
@@ -242,7 +242,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('updates ot entity', function() {
-        sinon.assert.called(this.scope.otUpdateEntity);
+        sinon.assert.called(this.scope.otUpdateEntityData);
       });
     });
   });
@@ -294,7 +294,7 @@ describe('Entry Actions Controller', function () {
         })
       };
       this.scope.$apply();
-      this.scope.otUpdateEntity = entry.save;
+      this.scope.otUpdateEntityData = entry.save;
       this.scope.validate = sinon.stub().returns(true);
     });
 
@@ -575,7 +575,7 @@ describe('Entry Actions Controller', function () {
         var versionStub;
         beforeEach(function() {
           this.actionStub.resolves({entry: true});
-          this.scope.otUpdateEntity = sinon.stub();
+          this.scope.otUpdateEntityData = sinon.stub();
           versionStub = sinon.stub(this.scope.entry, 'setPublishedVersion');
           this.controller.publish.execute();
           this.$apply();
