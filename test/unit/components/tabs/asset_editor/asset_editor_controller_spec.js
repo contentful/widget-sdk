@@ -17,7 +17,7 @@ describe('Asset editor controller', function () {
         'isArchived',
         'process',
         'peek',
-        'mkpath',
+        'mkpathAndSetValue',
         'fileNameToTitle',
         'serverError',
         'getPublishedVersion',
@@ -27,7 +27,7 @@ describe('Asset editor controller', function () {
 
       $provide.value('ShareJS', {
         peek: stubs.peek,
-        mkpath: stubs.mkpath
+        mkpathAndSetValue: stubs.mkpathAndSetValue
       });
 
       $provide.value('stringUtils', {
@@ -148,19 +148,19 @@ describe('Asset editor controller', function () {
       });
 
       it('creates otDoc', function() {
-        sinon.assert.called(stubs.mkpath);
+        sinon.assert.called(stubs.mkpathAndSetValue);
       });
 
       it('creates otDoc with doc', function() {
-        expect(stubs.mkpath.args[0][0].doc).toEqual(scope.otDoc);
+        expect(stubs.mkpathAndSetValue.args[0][0].doc).toEqual(scope.otDoc);
       });
 
       it('creates otDoc with path', function() {
-        expect(stubs.mkpath.args[0][0].path).toEqual(otPath);
+        expect(stubs.mkpathAndSetValue.args[0][0].path).toEqual(otPath);
       });
 
       it('creates otDoc with filename', function() {
-        expect(stubs.mkpath.args[0][0].value).toEqual('file');
+        expect(stubs.mkpathAndSetValue.args[0][0].value).toEqual('file');
       });
     });
 

@@ -61,7 +61,7 @@ angular.module('contentful').controller('cfMultiVideoEditorController', ['$attrs
     if (_.isArray(ShareJS.peek($scope.otDoc, $scope.otPath))) {
       $scope.otDoc.at($scope.otPath).insert(0, asset.assetId, cb);
     } else {
-      ShareJS.mkpath({
+      ShareJS.mkpathAndSetValue({
         doc: $scope.otDoc,
         path: $scope.otPath,
         types: $scope.otPathTypes,

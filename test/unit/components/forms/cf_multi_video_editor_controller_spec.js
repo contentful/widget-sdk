@@ -7,7 +7,7 @@ describe('Multi Video Editor Controller', function() {
   beforeEach(function() {
     module('contentful/test');
     module(function($provide){
-      ShareJSMock = jasmine.createSpyObj('ShareJSMock', ['peek', 'mkpath']);
+      ShareJSMock = jasmine.createSpyObj('ShareJSMock', ['peek', 'mkpathAndSetValue']);
       $provide.value('ShareJS', ShareJSMock);
     });
 
@@ -148,7 +148,7 @@ describe('Multi Video Editor Controller', function() {
       });
 
       it('creates a path in the document', function() {
-        expect(ShareJSMock.mkpath).toHaveBeenCalledWith({
+        expect(ShareJSMock.mkpathAndSetValue).toHaveBeenCalledWith({
           doc: scope.otDoc,
           path: scope.otPath,
           types: scope.otPathTypes,

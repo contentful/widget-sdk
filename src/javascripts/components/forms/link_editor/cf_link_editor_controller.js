@@ -83,7 +83,7 @@ angular.module('contentful').controller('LinkEditorController',
         $scope.otDoc.at($scope.otPath).push(link, cb);
         promise = cb.promise.then(function () { $scope.links.push(link); });
       } else {
-        ShareJS.mkpath({
+        ShareJS.mkpathAndSetValue({
           doc: $scope.otDoc,
           path: $scope.otPath,
           types: $scope.otPathTypes,

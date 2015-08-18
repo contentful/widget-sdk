@@ -112,7 +112,7 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
     var otPath = ['fields', 'title', localeCode];
     var fileName = stringUtils.fileNameToTitle(file.fileName);
     if(!ShareJS.peek($scope.otDoc, otPath))
-      ShareJS.mkpath({
+      ShareJS.mkpathAndSetValue({
         doc: $scope.otDoc,
         path: otPath,
         value: fileName

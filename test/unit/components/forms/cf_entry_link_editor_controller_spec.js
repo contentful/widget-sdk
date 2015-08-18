@@ -24,7 +24,7 @@ describe('EntryLinkEditorController', function () {
 
       shareJSMock = {
         peek: sinon.stub(),
-        mkpath: sinon.stub()
+        mkpathAndSetValue: sinon.stub()
       };
 
       entityCacheMock = sinon.stub();
@@ -241,7 +241,7 @@ describe('EntryLinkEditorController', function () {
           shareJSMock.peek.returns({});
 
           scope.addLink(entry);
-          shareJSMock.mkpath.yield();
+          shareJSMock.mkpathAndSetValue.yield();
         });
 
         addEntryExpectations();

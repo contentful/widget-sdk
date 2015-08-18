@@ -72,7 +72,7 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
               cbOp2 = $q.callbackWithApply();
 
           if (!oldValue || !newValue) {
-            ShareJS.mkpath({
+            ShareJS.mkpathAndSetValue({
               doc: $scope.otDoc,
               path: $scope.otPath,
               types: $scope.otPathTypes,
@@ -115,7 +115,7 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
           try {
             $scope.otDoc.setAt($scope.otPath, value, cb);
           } catch(e) {
-            ShareJS.mkpath({
+            ShareJS.mkpathAndSetValue({
               doc: $scope.otDoc,
               path: $scope.otPath,
               types: $scope.otPathTypes,

@@ -112,6 +112,30 @@ beforeEach(function () {
 
         }
       };
+    },
+
+
+    /**
+     * This matcher gets an args array from a sinon stub and composes the first
+     * argument of each call into an array, which is then compared with the
+     * expected result.
+     * This is used when a method is called repeatedly in a loop and we're
+     * trying to understand if it was called with the right sequence of
+     * arguments
+    */
+    toMatchMultipleCallsArgs: function () {
+      return {
+        compare: function (actual, expected) {
+          var flattenedArgs = _.flatten(actual);
+          var pass = _.isEqual(flattenedArgs, expected);
+          return {
+            pass: pass,
+            message: pass ? 'Expected arguments '+JSON.stringify(actual)+' not to equal ' + JSON.stringify(expected)
+                          : 'Expected arguments '+JSON.stringify(actual)+' to equal ' + JSON.stringify(expected)
+          };
+        }
+      };
     }
+
   });
 });

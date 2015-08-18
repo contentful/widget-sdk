@@ -63,14 +63,14 @@ describe('otPath', function() {
       });
     });
     describe('when the path is not present in the otDoc', function () {
-      it('should mkpath the value', function () {
-        var mkpath;
+      it('should mkpathAndSetValue the value', function () {
+        var mkpathAndSetValue;
         inject(function (ShareJS) {
-          mkpath = ShareJS.mkpath = jasmine.createSpy('mkpath');
+          mkpathAndSetValue = ShareJS.mkpathAndSetValue = jasmine.createSpy('mkpathAndSetValue');
         });
         scope.otChangeValue('bla');
-        expect(mkpath).toHaveBeenCalled();
-        expect(mkpath.calls.mostRecent().args[0]).toEqual({
+        expect(mkpathAndSetValue).toHaveBeenCalled();
+        expect(mkpathAndSetValue.calls.mostRecent().args[0]).toEqual({
           doc: scope.otDoc,
           path: scope.otPath,
           types: undefined,

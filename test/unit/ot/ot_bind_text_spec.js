@@ -5,7 +5,7 @@ describe('otBindText', function () {
 
   beforeEach(module('contentful/test', function ($provide) {
     $provide.value('ShareJS', {
-      mkpath: sinon.stub().yieldsAsync(null),
+      mkpathAndSetValue: sinon.stub().yieldsAsync(null),
       peek: sinon.stub().returns('xx'),
       isConnected: function () { return true; },
       open: sinon.stub().yieldsAsync(null, doc = {

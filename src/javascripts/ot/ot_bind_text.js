@@ -135,7 +135,7 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
 
       function makeAndAttach(subdoc, text){
         text = text === undefined ? '' : text;
-        ShareJS.mkpath({
+        ShareJS.mkpathAndSetValue({
           doc: scope.otDoc,
           path: subdoc.path,
           types: subdoc.types,
@@ -147,7 +147,7 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
       function handleMkPathErrors(err) {
         if (err){
           scope.$apply(function(){
-            logger.logError('makeAndAttach mkpath failed', {
+            logger.logError('makeAndAttach mkpathAndSetValue failed', {
               data: err,
             });
             ReloadNotification.trigger();
