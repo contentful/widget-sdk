@@ -23,6 +23,7 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
       function initEditor(editorInstance) {
         editor = editorInstance;
         scope.actions = actions.for(editor);
+        scope.history = editor.history;
         syncFromParent();
         scope.zenApi.setChildContent = syncFromParent;
         editor.events.onChange(syncToParent);

@@ -129,7 +129,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       function toggleMinorActions(forceHide) {
         scope.minorActionsShown = forceHide ? false : !scope.minorActionsShown;
         var method = 'slide' + (scope.minorActionsShown ? 'Down' : 'Up');
-        minorActions.stop()[method]();
+        minorActions.stop()[method](300);
       }
 
       function inDevelopment() {

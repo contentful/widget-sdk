@@ -33,41 +33,12 @@
           li(type="button" ng-click="actions.h3()")
             | Heading 3
 
-      button.toolbar-button.fa.fa-bold(
-        ng-click="actions.bold()"
-        tabindex="-1"
-        tooltip="Bold"
-        ng-disabled="!inMode('md')")
-
-      button.toolbar-button.fa.fa-italic(
-        ng-click="actions.italic()"
-        tabindex="-1"
-        tooltip="Italic"
-        ng-disabled="!inMode('md')")
-
-      button.toolbar-button.fa.fa-quote-left(
-        ng-click="actions.quote()"
-        tabindex="-1"
-        tooltip="Quote"
-        ng-disabled="!inMode('md')")
-
-      button.toolbar-button.fa.fa-list(
-        ng-click="actions.ul()"
-        tabindex="-1"
-        tooltip="Unordered list"
-        ng-disabled="!inMode('md')")
-
-      button.toolbar-button.fa.fa-list-ol(
-        ng-click="actions.ol()"
-        tabindex="-1"
-        tooltip="Ordered list"
-        ng-disabled="!inMode('md')")
-
-      button.toolbar-button.fa.fa-link(
-        ng-click="actions.link()"
-        tabindex="-1"
-        tooltip="Insert link"
-        ng-disabled="!inMode('md')")
+      cf-markdown-action(actions="actions" name="bold"   disabled="!inMode('md')")
+      cf-markdown-action(actions="actions" name="italic" disabled="!inMode('md')")
+      cf-markdown-action(actions="actions" name="quote"  disabled="!inMode('md')")
+      cf-markdown-action(actions="actions" name="ul"     disabled="!inMode('md')")
+      cf-markdown-action(actions="actions" name="ol"     disabled="!inMode('md')")
+      cf-markdown-action(actions="actions" name="link"   disabled="!inMode('md')")
 
       button.toolbar-button.markdown-more-actions.fa.fa-ellipsis-h(
         ng-click="toggleMinorActions()"
@@ -90,71 +61,17 @@
         |  Zen mode
 
     .markdown-minor-actions
-      button.toolbar-button.fa.fa-strikethrough(
-        ng-click="actions.strike()"
-        tabindex="-1"
-        tooltip="Strike out"
-        ng-disabled="!inMode('md')")
-
-      button.toolbar-button.fa.fa-code(
-        ng-click="actions.code()"
-        tabindex="-1"
-        tooltip="Code"
-        ng-disabled="!inMode('md')")
-
-      button.toolbar-button.fa.fa-arrows-h(
-        ng-click="actions.hr()"
-        tabindex="-1"
-        tooltip="Horizontal rule"
-        ng-disabled="!inMode('md')")
-
-      button.toolbar-button.fa.fa-indent(
-        ng-click="actions.indent()"
-        tabindex="-1"
-        tooltip="Indent"
-        ng-disabled="!inMode('md')")
-
-      button.toolbar-button.fa.fa-dedent(
-        ng-click="actions.dedent()"
-        tabindex="-1"
-        tooltip="Dedent"
-        ng-disabled="!inMode('md')")
-
-      button.toolbar-button.fa.fa-cubes(
-        ng-click="actions.embed()"
-        tabindex="-1"
-        tooltip="Embed external content"
-        ng-disabled="!inMode('md')")
-
-      button.toolbar-button.fa.fa-table(
-        ng-click="actions.table()"
-        tabindex="-1"
-        tooltip="Insert table"
-        ng-disabled="!inMode('md')")
-
-      button.toolbar-button.fa.fa-eur(
-        ng-click="actions.special()"
-        tabindex="-1"
-        tooltip="Insert special character"
-        ng-disabled="!inMode('md')")
-
-      button.toolbar-button.fa.fa-sitemap(
-        ng-click="actions.organizeLinks()"
-        tabindex="-1"
-        tooltip="Organize links"
-        ng-disabled="!inMode('md')")
-
-      button.toolbar-button.fa.fa-undo(
-        ng-click="actions.undo()"
-        tabindex="-1"
-        tooltip="Undo"
-        ng-disabled="!inMode('md') || !history.hasUndo()")
-
-      button.toolbar-button.fa.fa-repeat(
-        ng-click="actions.redo()"
-        tabindex="-1"
-        tooltip="Redo"
-        ng-disabled="!inMode('md') || !history.hasRedo()")
+      cf-markdown-action(actions="actions" name="strike"        disabled="!inMode('md')")
+      cf-markdown-action(actions="actions" name="code"          disabled="!inMode('md')")
+      cf-markdown-action(actions="actions" name="hr"            disabled="!inMode('md')")
+      cf-markdown-action(actions="actions" name="indent"        disabled="!inMode('md')")
+      cf-markdown-action(actions="actions" name="dedent"        disabled="!inMode('md')")
+      cf-markdown-action(actions="actions" name="embed"         disabled="!inMode('md')")
+      cf-markdown-action(actions="actions" name="table"         disabled="!inMode('md')")
+      cf-markdown-action(actions="actions" name="special"       disabled="!inMode('md')")
+      cf-markdown-action(actions="actions" name="organizeLinks" disabled="!inMode('md')")
+      cf-markdown-action(actions="actions" name="undo"          disabled="!inMode('md') || !history.hasUndo()")
+      cf-markdown-action(actions="actions" name="redo"          disabled="!inMode('md') || !history.hasRedo()")
 
   .markdown-areas
     .markdown-editing-area(
