@@ -4,7 +4,7 @@ describe('Number widgets', function () {
   var elem, scope;
   beforeEach(function() {
     module('contentful/test', function ($provide) {
-      $provide.removeDirectives('otBindModel');
+      $provide.removeDirectives('otBindNgModel');
     });
     inject(function ($rootScope) {
       scope = $rootScope;

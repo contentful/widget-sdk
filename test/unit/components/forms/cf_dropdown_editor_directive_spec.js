@@ -22,7 +22,7 @@ describe('cfDropdownEditor Directive', function () {
       scope.getFieldValidationsOfType = sinon.stub().returns([]);
 
       compileElement = function () {
-        element = $compile('<div cf-dropdown-editor ot-bind-internal="valuesController.selected" ot-path="" ng-model="fieldData.value"></div>')(scope);
+        element = $compile('<div cf-dropdown-editor ot-bind-object-value="valuesController.selected" ot-path="" ng-model="fieldData.value"></div>')(scope);
         scope.$apply();
         controller = element.controller('cfDropdownEditorController');
       };

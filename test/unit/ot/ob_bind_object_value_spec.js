@@ -1,6 +1,6 @@
 'use strict';
 
-describe('otBindInternal', function () {
+describe('otBindObjectValue', function () {
   var element, scope;
 
   beforeEach(function(){
@@ -17,7 +17,7 @@ describe('otBindInternal', function () {
     scope.otPath        = 'path' ;
     scope.external      = {value: 'foo'};
     scope.internal      = {value: 'foo'};
-    element = $compile('<div ot-bind-internal="internal.value" ng-model="external.value" ot-path="">')(scope);
+    element = $compile('<div ot-bind-object-value="internal.value" ng-model="external.value" ot-path="">')(scope);
     scope.$apply();
   }));
 
@@ -28,7 +28,7 @@ describe('otBindInternal', function () {
 
     describe('and OT change successful', function(){
       beforeEach(function(){
-        scope.otBindInternalChangeHandler();
+        scope.otBindObjectValueCommit();
         scope.$apply();
       });
       it('should update OT', function(){
@@ -41,7 +41,7 @@ describe('otBindInternal', function () {
     describe('and OT change fails', function(){
       beforeEach(inject(function($q){
         scope.otSubDoc.changeValue.returns($q.reject());
-        scope.otBindInternalChangeHandler();
+        scope.otBindObjectValueCommit();
         scope.$apply();
       }));
       it('should try to update OT', function(){

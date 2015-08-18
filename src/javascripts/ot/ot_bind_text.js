@@ -1,11 +1,19 @@
 'use strict';
 
 /**
- * Bind a text input to an ot string
+ * @ngdoc directive
+ * @name otBindText
+ * @scope.requires otPath
+ * @scope.requires otSubDoc
  *
+ * @description
+ * Binds a text input to an ot text value, attaching the textarea to sharejs
+ * with attach_textarea
+ * Use this when the value is text and you want to support concurrent editing
+ * with diffing.
+ *
+ * @usage
  * <input type="text" ng-model="fieldData.value" ot-bind-text>
- *
- * Needs an ngModel. Everything else is handled automatically.
  */
 angular.module('contentful').directive('otBindText', ['$injector', function($injector) {
   var $parse            = $injector.get('$parse');

@@ -1,7 +1,7 @@
 label.cf-radio-editor__option(ng-repeat="value in valuesController.valuesList track by value.value")
   input.cf-radio-editor__radio(type="radio"
          ng-model="valuesController.selected"
-         ng-change="otBindInternalChangeHandler()"
+         ng-change="otBindObjectValueCommit()"
          ng-value="value.value"
          ng-disabled="!otDoc.state.editable")
   span.cf-radio-editor__label {{value.label}}

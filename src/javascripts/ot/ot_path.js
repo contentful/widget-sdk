@@ -4,8 +4,8 @@
  * @ngdoc directive
  * @name otPath
  * @scope.requires otDoc
- * @scope.provides otPath
- * @scope.provides otPathTypes
+ * @property otPath
+ * @property otPathTypes
  *
  * @description
  * Scopes a part of an ot component to a path within the ot document
@@ -55,7 +55,7 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
   /**
    * @ngdoc type
    * @name otPathController
-   * @scope.provides otSubDoc
+   * @property otSubDoc
    *
    * @description
    * Broadcasts the following events:

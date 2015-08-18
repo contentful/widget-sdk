@@ -1,6 +1,6 @@
 'use strict';
 
-describe('otBindModel', function () {
+describe('otBindNgModel', function () {
   var elem, scope;
 
   beforeEach(function () {
@@ -15,7 +15,7 @@ describe('otBindModel', function () {
       scope.otPath = 'path';
       scope.fieldData = {value: 'a'};
       scope.otSubDoc = {};
-      elem = $compile('<input type="text" ot-path ot-bind-model ng-model="fieldData.value">')(scope);
+      elem = $compile('<input type="text" ot-path ot-bind-ng-model ng-model="fieldData.value">')(scope);
       scope.$apply();
     });
   });

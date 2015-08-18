@@ -60,7 +60,7 @@ angular.module('contentful').directive('cfGoogleMaps', ['$injector', function ($
           }
         };
 
-        locationController.$viewChangeListeners.push(scope.otBindInternalChangeHandler);
+        locationController.$viewChangeListeners.push(scope.otBindObjectValueCommit);
         locationController.$parsers.unshift(latLngParser);
         locationController.$formatters.push(locationFormatter);
         locationController.$render = function() {
@@ -83,7 +83,7 @@ angular.module('contentful').directive('cfGoogleMaps', ['$injector', function ($
 
         scope.updateLocation = function(location) {
           scope.location = location;
-          scope.otBindInternalChangeHandler();
+          scope.otBindObjectValueCommit();
         };
 
         function mapClick(event){

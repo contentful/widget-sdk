@@ -10,7 +10,7 @@ angular.module('contentful').
   /**
    * @ngdoc type
    * @name otDocPresenceController
-   * @scope.provides {Object} otPresence
+   * @property {Object} otPresence
    * @description
    * This controller listens to events on the otDoc and populates an otPresence
    * object with information about which users are editing which fields on the
@@ -177,8 +177,8 @@ angular.module('contentful').
    * @ngdoc type
    * @name otFieldPresenceController
    * @scope.requires otPresence
-   * @scope.provides {string} otFieldPresenceId
-   * @scope.provides {object} otFieldPresence
+   * @property {string} otFieldPresenceId
+   * @property {object} otFieldPresence
    * @description
    * This controller looks for information about the current field in the document
    * presence and populates some properties to indicate the current field presence

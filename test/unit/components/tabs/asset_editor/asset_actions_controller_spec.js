@@ -338,7 +338,7 @@ describe('Asset Actions Controller', function () {
       beforeEach(function() {
         action.resolve({asset: true});
         scope.validate.returns(true);
-        scope.otDoc.updateEntityData = sinon.stub()
+        scope.otDoc.updateEntityData = sinon.stub();
         versionStub = sinon.stub(asset, 'setPublishedVersion');
         controller.publish.execute();
         this.$apply();

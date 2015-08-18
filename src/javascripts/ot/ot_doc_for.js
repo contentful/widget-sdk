@@ -56,7 +56,7 @@ angular.module('contentful')
  *
  * It also ensures that the version in the entity is always up-to-date
  *
- * @scope.provides {otDoc} otDoc
+ * @property {otDoc} otDoc
  */
 .controller('otDocForController', ['$scope', '$attrs', '$injector', function OtDocForController($scope, $attrs, $injector) {
 

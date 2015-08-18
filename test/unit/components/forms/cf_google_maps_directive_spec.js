@@ -41,7 +41,7 @@ describe('cfGoogleMaps Directive', function () {
     this.scope = this.$inject('$rootScope').$new();
     this.scope.otDoc = {doc: {}, state: {}};
     this.scope.locationIsValid = sinon.stub();
-    this.scope.otBindInternalChangeHandler = sinon.stub();
+    this.scope.otBindObjectValueCommit = sinon.stub();
     this.compileElement = function () {
       this.element = this.$inject('$compile')('<cf-google-maps></cf-google-maps>')(this.scope);
       this.$apply();

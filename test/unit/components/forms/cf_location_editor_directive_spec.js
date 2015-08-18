@@ -28,7 +28,7 @@ describe('cfLocationEditor Directive', function () {
     this.scope.locationIsValid = sinon.stub();
     dotty.put(this.scope, 'fieldData.value', {});
     this.compileElement = function () {
-      this.element = this.$inject('$compile')('<div cf-location-editor ot-path="" ot-bind-internal="location" ng-model="fieldData.value"></div>')(this.scope);
+      this.element = this.$inject('$compile')('<div cf-location-editor ot-path="" ot-bind-object-value="location" ng-model="fieldData.value"></div>')(this.scope);
       this.$apply();
     };
     this.compileElement.bind(this);

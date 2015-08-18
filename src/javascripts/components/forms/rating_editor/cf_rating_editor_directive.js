@@ -40,7 +40,7 @@ angular.module('contentful').directive('cfRatingEditor', [function(){
         } else {
           $scope.rating = index;
         }
-        $scope.otBindInternalChangeHandler();
+        $scope.otBindObjectValueCommit();
       }
 
       function setStars(numStars) {
