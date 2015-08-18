@@ -42,6 +42,7 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', [
     return {
       getEditor:               function () { return cm; },
       destroy:                 function () { cm.toTextArea(); },
+      attachEvent:             attachEvent,
       setValue:                setValue,
       cmd:                     cmd,
       opt:                     opt,
@@ -71,7 +72,8 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', [
       getIndentation:          getIndentation,
       getNl:                   getNl,
       getValue:                getValue,
-      getHistorySize:          getHistorySize
+      getHistorySize:          getHistorySize,
+      getScrollInfo:           getScrollInfo
     };
 
     function assureHeight() {
@@ -86,6 +88,13 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', [
 
     function refresh() {
       $timeout(_.bind(cm.refresh, cm));
+    }
+
+    function attachEvent(name, fn, throttle) {
+      if (throttle) {
+        fn = _.throttle(fn);
+      }
+      cm.on(name, fn);
     }
 
     /**
@@ -256,8 +265,13 @@ angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', [
       return cm.getValue() || '';
     }
 
-    function getHistorySize() {
-      return cm.historySize();
+    function getHistorySize(which) {
+      var history = cm.historySize();
+      return which ? history[which] : history;
+    }
+
+    function getScrollInfo() {
+      return cm.getScrollInfo();
     }
 
     function repeat(what, n) {

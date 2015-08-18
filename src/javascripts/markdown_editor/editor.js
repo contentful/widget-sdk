@@ -2,9 +2,6 @@
 
 angular.module('contentful').factory('MarkdownEditor', ['$injector', function($injector) {
 
-  var $timeout       = $injector.get('$timeout');
-  var $sanitize      = $injector.get('$sanitize');
-  var createRenderer = $injector.get('MarkdownEditor/createMarkdownRenderer');
   var wrapEditor     = $injector.get('MarkdownEditor/createCodeMirrorWrapper');
   var LazyLoader     = $injector.get('LazyLoader');
 
@@ -15,25 +12,14 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
 
   function loadAndCreate(textarea, options) {
     return LazyLoader.get('markdown').then(function (libs) {
-      return create(textarea, options, libs.CodeMirror, libs.marked);
+      return create(textarea, options, libs.CodeMirror);
     });
   }
 
-  function create(textarea, options, CodeMirror, marked) {
-    var NOTIFY_INTERVAL = 250;
-    var EMBEDLY_CLASS_RE = new RegExp('class="embedly-card"', 'g');
-
-    var notificationTimeout;
-    var subscriberCb = null;
-    var notificationStopped = false;
-    var previousValue = null;
-
+  function create(textarea, options, CodeMirror) {
     var editor = wrapEditor(textarea, options, CodeMirror);
-    var renderMarkdown = createRenderer(marked);
     var quoteToggleFn = createPrefixToggleFn('> ');
     var codeToggleFn = createPrefixToggleFn('    ');
-
-    scheduleSubscriberNotification();
 
     return {
       actions: {
@@ -55,83 +41,37 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
         table:  insertTable
       },
       history: {
-        hasUndo: function () { return editor.getHistorySize().undo > 0; },
-        hasRedo: function () { return editor.getHistorySize().redo > 0; }
+        hasUndo: function () { return editor.getHistorySize('undo') > 0; },
+        hasRedo: function () { return editor.getHistorySize('redo') > 0; }
       },
-      subscribe:       function (cb) { subscriberCb = cb; notifySubscriber(); },
-      stopSync:        function () { notificationStopped = true; },
-      startSync:       function () { notificationStopped = false; },
+      events: {
+        onScroll: function (fn) {
+          editor.attachEvent('scroll', onScroll, 150);
+          function onScroll () { fn(editor.getScrollInfo()); }
+        },
+        onChange: function (fn) { editor.attachEvent('change', fn); }
+      },
       insert:          function (text) { editor.insertAtCursor(text); },
       getWrapper:      function () { return editor; },
-      setContent:      setContent,
-      getContent:      getContent,
-      destroy:         destroy
+      getContent:      function () { return editor.getValue(); },
+      destroy:         function () { editor.destroy(); },
+      setContent:      setContent
     };
 
-    function scheduleSubscriberNotification() {
-      notificationTimeout = $timeout(notifySubscriber, NOTIFY_INTERVAL);
-    }
-
-    function notifySubscriber() {
-      // check if notification is needed
-      if (!subscriberCb || notificationStopped) { return; }
-
-      // check if something changed
-      var value = editor.getValue();
-      if (value === previousValue) {
-        scheduleSubscriberNotification();
-        return;
-      } else {
-        previousValue = value;
-      }
-
-      var html = renderAndSanitizeMarkdown(value);
-      var info = { chars: value.length || 0, words: countWords(html) };
-
-      subscriberCb(value, html, info);
-      scheduleSubscriberNotification();
-    }
-
-    function renderAndSanitizeMarkdown(markup) {
-      var html = renderMarkdown(markup);
-      html = html.replace(/\r?\n|\r/g, '');
-      html = $sanitize(html);
-      html = disableEmbedlyControls(html);
-
-      return html;
-    }
-
-    function disableEmbedlyControls(html) {
-      return html.replace(EMBEDLY_CLASS_RE, 'class="embedly-card" data-card-controls="0"');
-    }
-
-    function countWords(html) {
-      var clean = html.replace(/<\/?[^>]+(>|$)/g, '');
-      var words = (clean || '').replace(/\s+/g, ' ').split(' ');
-      words = _.filter(words, function (word) { return word.length > 0; });
-
-      return words.length || 0;
-    }
-
     function setContent(value) {
+      // if value is unchanged, break the loop
       if (editor.getValue() === value) { return; }
+
+      // set value, but save cursor position first
+      // position will be restored, but w/o focus (third arg)
       var line = editor.getCurrentLineNumber();
       var ch = editor.getCurrentCharacter();
       editor.setValue(value);
       editor.restoreCursor(ch, line, true);
+
       // enable undo/redo, by default "undoDepth" is set to 0
       // we set it here so we cannot undo setting initial value (first "setValue" call)
       editor.opt('undoDepth', 200);
-    }
-
-    function getContent() {
-      return editor.getValue();
-    }
-
-    function destroy() {
-      subscriberCb = null;
-      $timeout.cancel(notificationTimeout);
-      editor.destroy();
     }
 
     /**

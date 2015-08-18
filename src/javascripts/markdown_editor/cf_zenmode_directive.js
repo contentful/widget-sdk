@@ -8,7 +8,10 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
   return {
     restrict: 'E',
     template: JST['cf_zenmode'](),
-    scope: { zenApi: '=' },
+    scope: {
+      zenApi: '=',
+      preview: '='
+    },
     link: function(scope, el) {
       var textarea = el.find('textarea').get(0);
       var preview = el.find('.markdown-preview').first();
@@ -20,26 +23,25 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
       function initEditor(editorInstance) {
         editor = editorInstance;
         scope.actions = actions.for(editor);
-        editor.setContent(scope.zenApi.get());
-        editor.subscribe(function(content, preview) {
-          scope.zenApi.sync(content);
-          scope.preview = preview;
-        });
-        mountScroll();
-        scope.$on('$destroy', function () {
-          editor.destroy();
-          scope = null;
-        });
+        syncFromParent();
+        scope.zenApi.setChildContent = syncFromParent;
+        editor.events.onChange(syncToParent);
+        editor.events.onScroll(handleScroll);
+        scope.$on('$destroy', editor.destroy);
       }
 
-      function mountScroll() {
-        var cm = editor.getWrapper().getEditor();
-        cm.on('scroll', _.throttle(function () {
-          var info = cm.getScrollInfo();
-          var position = info.top / info.height;
-          var top = preview.get(0).scrollHeight * position;
-          preview.scrollTop(top);
-        }, 150));
+      function syncFromParent(value) {
+        editor.setContent(value || scope.zenApi.getParentContent());
+      }
+
+      function syncToParent() {
+        scope.zenApi.setParentContent(editor.getContent());
+      }
+
+      function handleScroll(info) {
+        var position = info.top / info.height;
+        var top = preview.get(0).scrollHeight * position;
+        preview.scrollTop(top);
       }
     }
   };

@@ -2,13 +2,14 @@
 
 angular.module('contentful').directive('cfMarkdownEditor', ['$injector', function ($injector) {
 
-  var $sce            = $injector.get('$sce');
-  var $timeout        = $injector.get('$timeout');
-  var LazyLoader      = $injector.get('LazyLoader');
-  var MarkdownEditor  = $injector.get('MarkdownEditor');
-  var actions         = $injector.get('MarkdownEditor/actions');
-  var requirements    = $injector.get('MarkdownEditor/requirements');
-  var environment     = $injector.get('environment');
+  var $sce             = $injector.get('$sce');
+  var $timeout         = $injector.get('$timeout');
+  var LazyLoader       = $injector.get('LazyLoader');
+  var MarkdownEditor   = $injector.get('MarkdownEditor');
+  var actions          = $injector.get('MarkdownEditor/actions');
+  var requirements     = $injector.get('MarkdownEditor/requirements');
+  var startLivePreview = $injector.get('MarkdownEditor/preview');
+  var environment      = $injector.get('environment');
 
   return {
     restrict: 'E',
@@ -32,18 +33,19 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.minorActionsShown = false;
       scope.toggleMinorActions = toggleMinorActions;
       scope.requirements = requirements.getInfoLine(scope.field);
-      scope.preview = '';
-      scope.info = {};
+      scope.preview = {};
       scope.setMode = setMode;
       scope.inMode = inMode;
       scope.inDevelopment = inDevelopment;
 
+      // simple bus that is used to synchronize between Zen Mode and main editor
       scope.zenApi = {
-        get: function () { return scope.fieldData.value; },
-        sync: function (content) { editor.setContent(content); },
+        getParentContent: function () { return editor.getContent(); },
+        setParentContent: function (content) { editor.setContent(content); },
+        setChildContent: _.noop,
         toggle: function () {
           scope.zen = !scope.zen;
-          editor[scope.zen ? 'startSync' : 'stopSync']();
+          if (!scope.zen) { this.setChildContent = _.noop; }
         }
       };
 
@@ -60,29 +62,36 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         editor = editorInstance;
         scope.actions = actions.for(editor, localeCode);
         scope.history = editor.history;
-        scope.$watch('fieldData.value', handleValueChange);
+        var off = startLivePreview(editor, updatePreview);
+        editor.events.onChange(handleEditorChange);
+        scope.$watch('fieldData.value', handleModelChange);
         scope.$watch('fieldData.value', addSizeMarker);
-        scope.$on('$destroy', function () {
-          editor.destroy();
-          scope = null;
-        });
+        scope.$on('$destroy', off);
+        scope.$on('$destroy', editor.destroy);
       }
 
-      function handleValueChange(value) {
-        if (scope.isInitialized) {
-          editor.setContent(value);
-        } else {
-          scope.isInitialized = true;
-          editor.setContent(value);
-          editor.subscribe(receiveData);
-        }
+      function handleEditorChange() {
+        scope.fieldData.value = editor.getContent();
       }
 
-      function receiveData(value, preview, info) {
-        scope.fieldData.value = value;
-        scope.preview = $sce.trustAsHtml(preview);
-        scope.info = info;
+      function handleModelChange(value) {
+        // sets main editor's content; if change originates from editor,
+        // it won't emit "change" again
+        editor.setContent(value);
+        // sets content of Zen Mode editor
+        // if there's no Zen Mode opened, "setChildContent" is noop
+        scope.zenApi.setChildContent(value);
+
+        scope.isInitialized = true;
+      }
+
+      function updatePreview(err, preview, info) {
         scope.firstSyncDone = true;
+        scope.preview = {
+          hasCrashed: err ? true : false,
+          html: $sce.trustAsHtml(preview),
+          info: info
+        };
       }
 
       function isReady() {

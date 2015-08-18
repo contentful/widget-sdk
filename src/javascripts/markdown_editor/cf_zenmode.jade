@@ -36,9 +36,13 @@
       tooltip="Organize links"
       tooltip-placement="bottom")
 
-    button(ng-click="zenApi.toggle()") Close zenmode
+    button.toolbar-button.markdown-side-action(
+      ng-click="zenApi.toggle()")
+      i.fa.fa-close
+      |  Close Zen Mode
 
   .zenmode-editor.markdown-editing-area
     textarea
   .zenmode-preview
-    .markdown-preview(ng-bind-html="preview")
+    .markdown-preview
+      cf-markdown-preview(preview="preview")

@@ -17,50 +17,6 @@ describe('Markdown editor', function () {
     cm = wrapper.getEditor();
   });
 
-  describe('Synchronization', function () {
-    it('allows to register notification callback', function () {
-      var notificationSpy = sinon.stub();
-      editor.subscribe(notificationSpy);
-      editor.setContent('test');
-      $timeout.flush();
-      sinon.assert.called(notificationSpy);
-    });
-
-    it('notifies only when value is changed', function () {
-      var notificationSpy = sinon.spy();
-      editor.subscribe(notificationSpy);
-      $timeout.flush();
-      sinon.assert.calledOnce(notificationSpy);
-      $timeout.flush();
-      sinon.assert.calledOnce(notificationSpy);
-      editor.insert('test');
-      $timeout.flush();
-      sinon.assert.calledTwice(notificationSpy);
-    });
-
-    it('notifies with editor detailed information', function (done) {
-      editor.setContent('__test__');
-      editor.subscribe(function (value, html, info) {
-        expect(value).toBe('__test__');
-        expect(html.trim()).toBe('<p><strong>test</strong></p>');
-        expect(info.words).toBe(1);
-        expect(info.chars).toBe(8);
-        done();
-      });
-
-      $timeout.flush();
-    });
-
-    it('stops notifying after editor is destroyed', function () {
-      var notificationSpy = sinon.spy();
-      editor.subscribe(notificationSpy);
-      editor.setContent('test');
-      editor.destroy();
-      $timeout.flush();
-      sinon.assert.calledOnce(notificationSpy);
-    });
-  });
-
   describe('Actions', function () {
     describe('inline actions', function () {
       var inlineActions = [
