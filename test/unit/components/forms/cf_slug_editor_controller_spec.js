@@ -23,11 +23,13 @@ describe('SlugEditorController', function () {
     dotty.put(this.scope, 'fieldData.value', null);
     dotty.put(this.scope, 'locale.code', 'en-US');
     dotty.put(this.scope, 'field.apiName', 'slug');
-    this.scope.otGetValue = sinon.stub().returns(null);
 
-    this.scope.otChangeString = function (value) {
-      scope.otGetValue.returns(value || null);
-      return $q.when();
+    this.scope.otSubDoc = {
+      changeString: function (value) {
+        scope.otSubDoc.getValue.returns(value || null);
+        return $q.when();
+      },
+      getValue: sinon.stub().returns(null)
     };
     this.scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
     this.scope.entry = cfStub.entry(space, '__ID__', 'testType', {}, {

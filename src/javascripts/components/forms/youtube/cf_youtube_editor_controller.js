@@ -45,7 +45,7 @@ angular.module('contentful').controller('cfYoutubeEditorController', ['$injector
   }
 
   function handleClickOnRemoveSign() {
-    $scope.otChangeValue(undefined).then(function(){
+    $scope.otSubDoc.changeValue(undefined).then(function(){
       $scope.fieldData.value = undefined;
       $scope.youtubeUrl      = undefined;
     });

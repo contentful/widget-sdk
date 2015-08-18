@@ -3,9 +3,9 @@
 /**
  * Bind a text input to an ot string
  *
- * <input type="text" ng-model="fieldData.value" ot-subdoc ot-bind-text>
+ * <input type="text" ng-model="fieldData.value" ot-bind-text>
  *
- * Needs an otSubdoc and an ngModel. Everything else is handled automatically.
+ * Needs an ngModel. Everything else is handled automatically.
  */
 angular.module('contentful').directive('otBindText', ['$injector', function($injector) {
   var $parse            = $injector.get('$parse');
@@ -25,7 +25,7 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
 
   return {
     restrict: 'A',
-    require: ['^otSubdoc', 'ngModel'],
+    require: ['^otPath', 'ngModel'],
     priority: 10, //textarea / input[type=text] are 0
     link: function(scope, elm, attrs, controllers) {
       var ngModelCtrl = controllers[1];
@@ -37,7 +37,7 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
         if (path === event.currentScope.otPath) ngModelSet(event.currentScope, val);
       });
 
-      scope.$watch('otSubdoc', function(){
+      scope.$watch('otSubDoc.doc', function(){
         if (needsDetach()) detach();
         if (needsAttach()) attach();
       });
@@ -99,7 +99,7 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
           // is also deferred. If we would change the value to null now, some code in attach_textarea
           // would try to access null as a string in the next tick:
           defer(function () {
-            scope.otChangeValue(null);
+            scope.otSubDoc.changeValue(null);
           });
         }
       }
@@ -109,11 +109,11 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
       }
 
       function needsAttach() {
-        return !isAttached() && isString() && scope.otSubdoc;
+        return !isAttached() && isString() && scope.otSubDoc.doc;
       }
 
       function needsDetach() {
-        return isAttached() && (!isString() || !scope.otSubdoc);
+        return isAttached() && (!isString() || !scope.otSubDoc.doc);
       }
 
       function isString() {
@@ -121,8 +121,8 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
       }
 
       function attach(text) {
-        if (scope.otSubdoc) {
-          makeAndAttach(scope.otSubdoc, text);
+        if (scope.otSubDoc.doc) {
+          makeAndAttach(scope.otSubDoc.doc, text);
         }
       }
 

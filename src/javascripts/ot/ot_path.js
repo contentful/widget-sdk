@@ -1,27 +1,20 @@
 'use strict';
 
 /**
+ * @ngdoc directive
+ * @name otPath
+ * @scope.requires otDoc
+ * @scope.provides otPath
+ * @scope.provides otPathTypes
+ *
+ * @description
  * Scopes a part of an ot component to a path within the ot document
+ * defined by the value of the ot-path attribute
  *
- * Usage:
+ * @usage[html]
  * <entity-editor ot-doc-for="entity">
- *   <part-editor ot-path="['foo', 'bar', 'baz']" ot-path-types="['Array', 'Object', 'String']">
- *
- * The otPath attribute is evaluated against the scope and can contain variables or other expressions.
- * The otPathTypes attribute is used to inform about the type of each step in the path. This information is used by ShareJS.mkPath
- *
- * This directive puts the following properties on the scope:
- * - otPath: The evalualted otPath attribute
- * - otPathTypes: The evaluated otPathTypes attribute
- * - otGetValue(): Returns the value at the path in the document or undefined if the path is not found
- * - otChangeValue(value): Updates the value at the path to the new value. Returns a promise
- * - otChangeString(value): Update the string at the path to a new string.
- *   Calculates the string difference using the algorithm from the ShareJS text binding to generate a insert and/or delete operation.
- *   Returns a promise.
- *
- * Broadcasts the following events:
- * - otValueChanged(path, newValue), broadcast: Whenever the value at this path changes
- */
+ *   <part-editor ot-path="['fields', 'fieldId', 'locale']" ot-path-types="['String', 'String', 'String']">
+*/
 angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', function(ShareJS, cfSpinner, $q) {
 
   return {
@@ -29,10 +22,12 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
     priority: 600,
     require: '^otDocFor',
     scope: true,
+
     link: function(scope, elem, attr) {
       scope.$watch(attr['otPath'], function(otPath, old, scope) {
         scope.otPath = otPath;
       }, true);
+
       scope.$watch(attr['otPathTypes'], function(otPathTypes, old, scope) {
         scope.otPathTypes = otPathTypes;
       }, true);
@@ -40,13 +35,73 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
       scope.otPath = scope.$eval(attr['otPath']);
       scope.otPathTypes = scope.$eval(attr['otPathTypes']);
     },
-    controller: ['$scope', function OtPathController($scope) {
-      $scope.$on('otRemoteOp', function (event, op) {
+
+
+  /**
+   * @ngdoc type
+   * @name otSubDoc
+   * @property {otSubDoc} doc
+   * @property {function()} getValue
+   * Returns the value at the path in the document or undefined if the path is not found
+   * @property {function()} changeValue
+   * Updates the value at the path to the new value. Returns a promise
+   * @property {function()} changeStringValue
+   * Update the string at the path to a new string.
+   * Calculates the string difference using the algorithm from the ShareJS text binding to generate a insert and/or delete operation.
+   * Returns a promise.
+   *
+   */
+
+  /**
+   * @ngdoc type
+   * @name otPathController
+   * @scope.provides otSubDoc
+   *
+   * @description
+   * Broadcasts the following events:
+   * - otValueChanged(path, newValue), broadcast: Whenever the value at this path changes
+   */
+    controller: ['$scope', function otPathController($scope) {
+      $scope.otSubDoc = makeSubDoc();
+
+      $scope.$watch('otDoc.doc', init);
+      $scope.$watch('otPath', init, true);
+
+      $scope.$on('otRemoteOp', remoteOpHandler);
+
+      function makeSubDoc() {
+        return {
+          doc: null,
+          changeString: otChangeString,
+          changeValue: otChangeValue,
+          getValue: otGetValue
+        };
+      }
+
+      function init(val) {
+        if ($scope.otPath && $scope.otDoc.doc) {
+          updateSubDoc(val);
+          $scope.$broadcast('otValueChanged', $scope.otPath, otGetValue());
+        }
+      }
+
+      function updateSubDoc(path) {
+        var pathUpdated = path === $scope.otPath;
+        if (pathUpdated && $scope.otSubDoc.doc) {
+          // if the path has been changed, manipulate path in subdoc
+          $scope.otSubDoc.doc.path =  angular.copy($scope.otPath);
+        } else {
+          // if the path has been replaced, replace subdoc
+          $scope.otSubDoc.doc = $scope.otDoc.doc.at($scope.otPath);
+        }
+      }
+
+      function remoteOpHandler(event, op) {
         var scope = event.currentScope;
         if (angular.equals(op.p, scope.otPath)) {
           scope.$broadcast('otValueChanged', scope.otPath, scope.otDoc.doc.getAt(op.p));
         }
-      });
+      }
 
       /**
        * Replaces a string type field in the document  with a new string value by
@@ -60,10 +115,12 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
        *
        * TL;DR - Simulates manual editing of the old string into the new string
        * for more natural collaboration.
+       *
+       * Additional note: this essentially replicates attach_textarea from ShareJS
        */
-      $scope.otChangeString = function (newValue) {
+      function otChangeString(newValue) {
         if ($scope.otDoc.doc) {
-          var oldValue = $scope.otGetValue();
+          var oldValue = otGetValue();
           var cb = $q.callbackWithApply(),
               cbOp1 = $q.callbackWithApply(),
               cbOp2 = $q.callbackWithApply();
@@ -103,9 +160,9 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
         } else {
           return $q.reject('No otDoc to push to');
         }
-      };
+      }
 
-      $scope.otChangeValue = function (value) {
+      function otChangeValue(value) {
         if ($scope.otDoc.doc) {
           var stopSpin = cfSpinner.start();
           var cb = $q.callbackWithApply();
@@ -125,31 +182,16 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
         } else {
           return $q.reject('No otDoc to push to');
         }
-      };
-
-      $scope.$watch('otDoc.doc', init);
-      $scope.$watch('otPath', init);
-
-      function init(val, old, scope) {
-        // dispatch initial otValueChanged
-        if (scope.otPath && scope.otDoc.doc) {
-          //console.log('init path', scope.otPath, scope.otGetValue());
-          scope.$broadcast('otValueChanged', scope.otPath, scope.otGetValue());
-        }
       }
 
-      $scope.otGetValue = function () {
+      function otGetValue() {
         if ($scope.otDoc.doc) {
           return ShareJS.peek($scope.otDoc.doc, $scope.otPath);
         } else {
           return void(0);
         }
-      };
-
-      // TODO attr "sync entity", that provides a value that can be bound to ng-models,
-      // that writes back all changes that appear within here to the entity
+      }
 
     }]
   };
 }]);
-

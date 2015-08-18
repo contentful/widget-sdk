@@ -123,8 +123,10 @@ describe('LinkEditorController', function () {
         validations: []
       };
 
-      this.otChangeValueDeferred = $q.defer();
-      scope.otChangeValue = sinon.stub().returns(this.otChangeValueDeferred.promise);
+      this.changeValueDeferred = $q.defer();
+      scope.otSubDoc = {
+        changeValue: sinon.stub().returns(this.changeValueDeferred.promise)
+      };
       scope.updateModel = sinon.stub();
 
       scope.otDoc = {
@@ -149,7 +151,7 @@ describe('LinkEditorController', function () {
       describe('add an entry', function () {
         beforeEach(function() {
           scope.addLink(entry);
-          this.otChangeValueDeferred.resolve();
+          this.changeValueDeferred.resolve();
           scope.$apply();
         });
 
@@ -168,7 +170,7 @@ describe('LinkEditorController', function () {
             {sys: {id: 'entry3'}}
           ];
           scope.removeLink(0, entry);
-          this.otChangeValueDeferred.resolve();
+          this.changeValueDeferred.resolve();
           scope.$apply();
         });
 
@@ -238,7 +240,7 @@ describe('LinkEditorController', function () {
             {sys: {id: 'entry1'}}
           ];
           scope.removeLink(0, entry);
-          this.otChangeValueDeferred.resolve();
+          this.changeValueDeferred.resolve();
           scope.$apply();
         });
 

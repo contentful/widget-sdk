@@ -11,7 +11,9 @@ describe('otBindInternal', function () {
 
   beforeEach(inject(function ($rootScope, $compile, $q) {
     scope = $rootScope.$new();
-    scope.otChangeValue = sinon.stub().returns($q.when());
+    scope.otSubDoc = {
+      changeValue: sinon.stub().returns($q.when())
+    };
     scope.otPath        = 'path' ;
     scope.external      = {value: 'foo'};
     scope.internal      = {value: 'foo'};
@@ -30,7 +32,7 @@ describe('otBindInternal', function () {
         scope.$apply();
       });
       it('should update OT', function(){
-        sinon.assert.calledWith(scope.otChangeValue, 'bar');
+        sinon.assert.calledWith(scope.otSubDoc.changeValue, 'bar');
       });
       it('should update the external value', function(){
         expect(scope.external.value).toBe('bar');
@@ -38,12 +40,12 @@ describe('otBindInternal', function () {
     });
     describe('and OT change fails', function(){
       beforeEach(inject(function($q){
-        scope.otChangeValue.returns($q.reject());
+        scope.otSubDoc.changeValue.returns($q.reject());
         scope.otBindInternalChangeHandler();
         scope.$apply();
       }));
       it('should try to update OT', function(){
-        sinon.assert.calledWith(scope.otChangeValue, 'bar');
+        sinon.assert.calledWith(scope.otSubDoc.changeValue, 'bar');
       });
       it('should reset the internal value', function(){
         expect(scope.internal.value).toBe('foo');
@@ -71,5 +73,5 @@ describe('otBindInternal', function () {
       expect(scope.internal.value).toBe('bar');
     });
   });
-  
+
 });

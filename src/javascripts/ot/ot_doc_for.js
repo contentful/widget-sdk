@@ -68,7 +68,7 @@ angular.module('contentful')
 
   var otConnected = false;
 
-  $scope.otDoc = initializeOtDoc();
+  $scope.otDoc = makeOtDoc();
 
   $scope.$watch(function () {
     return ShareJS.isConnected();
@@ -88,7 +88,7 @@ angular.module('contentful')
   $scope.$watch('otDoc.state.editable', handleEditableState);
   $scope.$on('$destroy', handleScopeDestruction);
 
-  function initializeOtDoc() {
+  function makeOtDoc() {
     return {
       doc: null,
       state: {
@@ -153,7 +153,7 @@ angular.module('contentful')
   }
 
   function handleOtDocOpeningFailure(err, entity) {
-    $scope.otDoc = initializeOtDoc();
+    $scope.otDoc = makeOtDoc();
     logger.logSharejsError('Failed to open sharejs doc', {
       data: {
         error: err,
@@ -202,7 +202,7 @@ angular.module('contentful')
           throw e;
         }
       } finally {
-        $scope.otDoc = initializeOtDoc();
+        $scope.otDoc = makeOtDoc();
       }
     }
   }
@@ -275,7 +275,7 @@ angular.module('contentful')
       } catch(e) {
         if (e.message !== 'Cannot send to a closed connection') throw e;
       } finally {
-        scope.otDoc = initializeOtDoc();
+        scope.otDoc = makeOtDoc();
       }
     }
   }

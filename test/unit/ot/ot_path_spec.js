@@ -12,6 +12,7 @@ describe('otPath', function() {
         $rootScope.entity = 'ENTITY';
         $rootScope.otDoc = {
           doc: {
+            at: sinon.stub(),
             getAt: function () {
               return aValue;
             }
@@ -58,19 +59,20 @@ describe('otPath', function() {
           _.defer(callback, null);
         };
         spyOn(scope.otDoc.doc, 'setAt');
-        scope.otChangeValue('bla');
+        scope.otSubDoc.changeValue('bla');
         expect(scope.otDoc.doc.setAt).toHaveBeenCalled();
         expect(scope.otDoc.doc.setAt.calls.mostRecent().args[0]).toEqual(scope.otPath);
         expect(scope.otDoc.doc.setAt.calls.mostRecent().args[1]).toEqual('bla');
       });
     });
+
     describe('when the path is not present in the otDoc', function () {
       it('should mkpathAndSetValue the value', function () {
         var mkpathAndSetValue;
         inject(function (ShareJS) {
           mkpathAndSetValue = ShareJS.mkpathAndSetValue = jasmine.createSpy('mkpathAndSetValue');
         });
-        scope.otChangeValue('bla');
+        scope.otSubDoc.changeValue('bla');
         expect(mkpathAndSetValue).toHaveBeenCalled();
         expect(mkpathAndSetValue.calls.mostRecent().args[0]).toEqual({
           doc: scope.otDoc.doc,
@@ -82,4 +84,57 @@ describe('otPath', function() {
     });
   });
 
+});
+
+describe('otSubdoc', function () {
+  var elem, scope, subdoc;
+
+  beforeEach(function () {
+    module('contentful/test', function ($provide) {
+      $provide.stubDirective('otDocFor', {
+        controller: function() { }
+      });
+    });
+    inject(function ($compile, $rootScope) {
+      $rootScope.otDoc = makeDoc();
+      $rootScope.otPath = ['path'];
+      elem = $compile('<div ot-doc-for><div ot-path="[\'fields\', \'field\']"></div></div>')($rootScope).find('*[ot-path]');
+      scope = elem.scope();
+      scope.$apply();
+    });
+  });
+
+  it('should install subdoc on the scope', function () {
+    expect(scope.otSubDoc.doc).toBe(subdoc);
+  });
+
+  it('should update the subdoc path if the path has been changed', function () {
+    var oldSubdoc = scope.otSubDoc.doc;
+    scope.$apply();
+    expect(scope.otSubDoc.doc.path[0]).toBe('fields');
+    expect(scope.otSubDoc.doc).toBe(oldSubdoc);
+  });
+
+  it('should replace the subdoc if the otDoc has been changed', function () {
+    var oldSubdoc = scope.otSubDoc.doc;
+    scope.$root.otDoc = makeDoc();
+    scope.$apply();
+    expect(scope.otSubDoc.doc).toBeTruthy();
+    expect(scope.otSubDoc.doc).not.toBe(oldSubdoc);
+  });
+
+  function makeDoc() {
+    return {
+      doc: {
+        at: function (path) {
+          var doc = this;
+          subdoc = {
+            doc: doc,
+            path: path
+          };
+          return subdoc;
+        }
+      }
+    };
+  }
 });

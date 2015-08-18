@@ -32,8 +32,8 @@ angular.module('contentful').controller('SlugEditorController', ['$scope', '$inj
    * Sets the slug to a new value through OT-friendly string updating.
    */
   function setSlug(value) {
-    $scope.otChangeString(value).then(function() {
-      $scope.fieldData.value = $scope.otGetValue();
+    $scope.otSubDoc.changeString(value).then(function() {
+      $scope.fieldData.value = $scope.otSubDoc.getValue();
     });
   }
 
