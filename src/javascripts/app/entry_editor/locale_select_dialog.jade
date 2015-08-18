@@ -1,0 +1,17 @@
+.modal-background
+  .modal-dialog
+    header.modal-dialog__header
+      h1 Choose your Translations
+    .modal-dialog__content
+      ul
+        li(ng-repeat="locale in locales track by locale.sys.id")
+          label
+            input(type="checkbox"
+              ng-model="locale.active"
+              ng-disabled="locale.default")
+            | {{locale.name}} ({{locale.code}})
+    .modal-dialog__controls
+      button.cfnext-btn-primary-action(ng-click="dialog.confirm()")
+        | Save
+      button.cfnext-btn-plain(ng-click="dialog.cancel()")
+        | Cancel

@@ -116,6 +116,7 @@ angular.module('contentful').config([
     controller: ['$state', '$scope', '$stateParams', 'entry', function ($state, $scope, $stateParams, entry) {
       $state.current.data = $scope.context = {};
       $scope.entry = entry;
+      $scope.entity = entry;
 
       if (!$scope.$root.contextHistory.length ||
           $stateParams.addToContext) {
@@ -514,6 +515,8 @@ angular.module('contentful').config([
   $rootScope.$on('$stateNotFound', stateChangeErrorHandler);
 
   $rootScope.goToEntityState = goToEntityState;
+
+  // TODO Should not be a scope method
   $rootScope.closeState = closeState;
 
   function goToEntityState(entity, addToContext) {

@@ -1,6 +1,7 @@
 $aux-padding = 1.8em
 $aux-panel-border-color = lighten($gray-light, 47%)
 
+.entity-sidebar__panel,
 .workbench-panel
   top: $tab-header-height + 1px
   bottom: 58px
@@ -50,3 +51,16 @@ $aux-panel-border-color = lighten($gray-light, 47%)
       font-size: 1.2em
       font-weight: bold
       color: $gray-darkest
+
+.entity-sidebar__panel
+  $stretch(0, 0, 0, 0)
+  z-index: 1
+  width: auto
+  overflow-y: auto
+  background-color: lighten($gray-light, 82%)
+  transition: transform 0.2s ease-in
+  overflow: hidden
+  transform: translateX(100%)
+
+  &.x--show
+    transform: translateX(0)

@@ -156,17 +156,35 @@ angular.module('contentful')
    * Activates exactly the locales in the list.
    *
    * ~~~js
-   * localeStore.activateLocales([{internal_code: 'en'}])
+   * localeStore.setActiveLocales([{internal_code: 'en'}])
    * assert(localeStore.isActive({internal_code: 'en'})
    * ~~~
    */
   function setActiveLocales(locales) {
-    locales = locales.concat([_state.defaultLocale]);
+    if (_state.defaultLocale) {
+      locales = locales.concat([_state.defaultLocale]);
+    }
+
     setActiveStates(_.transform(locales, function (active, locale) {
       active[locale.internal_code] = true;
     }, {}));
   }
 
+  /**
+   * @ngdoc method
+   * @name TheLocaleStore#deactivateLocale
+   *
+   * @param {API.Locale} locale
+   *
+   * @description
+   * Activates exactly the locales in the list.
+   *
+   * ~~~js
+   * localeStore.setActiveLocales([{internal_code: 'en'}])
+   * localeStore.deactivateLocale({internal_code: 'en'})
+   * assert(!localeStore.isActive({internal_code: 'en'})
+   * ~~~
+   */
   function deactivateLocale (locale) {
     delete _state.localeActiveStates[locale.internal_code];
     refreshActiveLocales();

@@ -1,0 +1,122 @@
+@import '../mixins/spinner'
+
+.entity-sidebar
+  position: relative
+  padding: $rhythm(1) 1.6rem
+  border-left: 1px solid $colors.light-gray
+  background: $gray-lightest
+  overflow-y: auto
+  overflow-x: hidden
+  min-width: 26rem
+  max-width: 30rem
+  width: 30vw
+
+
+  &__heading
+    margin-top: $rhythm(2)
+    &:first-of-type
+      margin-top: 0
+    font-size: 1em
+    text-transform: uppercase
+    color: $colors.gray
+    line-height: 2
+    border-bottom: 1px solid $colors.light-gray
+    letter-spacing: 1px
+    margin-bottom: $rhythm(1)
+
+  &__state-select
+    margin-bottom: $rhythm(0.5)
+
+
+  &__state
+    margin-bottom: $rhythm(0.5)
+    color: $text-dimmed
+
+  &__state-indicator
+    // TODO The alignment is similar to the spinner
+    display: inline-block
+    border-radius: 50%
+    width: 14px
+    height: 14px
+    vertical-align: middle
+    margin-bottom: 3px
+    margin-right: 0.4rem
+    &[data-state="archived"]
+      background: $colors.light-gray
+    &[data-state="draft"]
+      background: $gold
+    &[data-state="published"]
+      background: $colors.green-mid
+    &[data-state="changes"]
+      background: $colors.blue-mid
+
+  &__update
+    width: 100%
+
+  &__status-more
+    color: $text-dimmed
+    margin-top: $rhythm(1)
+    display: flex
+    justify-content: space-between
+    > button
+      margin: 0
+      flex-shrink: 0
+
+  &__saving-spinner
+    display: inline-block
+    vertical-align: middle
+    margin-bottom: 2px
+
+    +$spinner-base()
+      display: block
+
+    &.x--active
+      +$spinner-active()
+        margin-right: 5px
+
+
+  &__last-saved
+    text-overflow: ellipsis
+    overflow: hidden
+
+  &__translation-list
+    display: flex
+    flex-wrap: wrap
+
+  &__translation-pill,
+  &__translation-change
+    margin-bottom: $rhythm(0.5)
+
+  &__translation-pill
+    $text-truncate()
+
+    padding: 1px 0 0 2ex
+    line-height: 2rem
+    height: 2rem
+
+    &
+      background: $colors.element-darker
+    &.x--default
+      background: $colors.element-dark
+      padding-right: 2ex
+
+    border-radius: 2px
+    margin-right: 1rem
+
+  &__translation-remove
+    $button-reset()
+    vertical-align: middle
+    position: relative
+    height: 100%
+    padding: 0 0.7rem 0 0.5rem
+    top: -1px
+    outline: 0
+
+  &__no-users
+    color: $text-dimmed
+
+  &__users
+    display: flex
+    flex-wrap: wrap
+    > img
+      display: block

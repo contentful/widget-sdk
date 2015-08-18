@@ -1,0 +1,182 @@
+'use strict';
+
+describe('StateManager class', function () {
+
+  var entityURL = '/spaces/SID/entries/EID';
+
+  beforeEach(function () {
+    module('contentful/test');
+
+    var cfStub = this.$inject('cfStub');
+
+    var EntityStateManager = this.$inject('EntityStateManager');
+    this.entity = cfStub.entry(cfStub.space('SID'), 'EID');
+    this.manager = new EntityStateManager(this.entity);
+    this.adapter = cfStub.adapter;
+  });
+
+  describe('#getState()', function () {
+    it('returns "archived" when archived version is set', function () {
+      this.entity.data.sys.archivedVersion = 1;
+      expect(this.manager.getState()).toEqual('archived');
+    });
+
+    it('returns "published" when published version is set', function () {
+      this.entity.data.sys.publishedVersion = 1;
+      expect(this.manager.getState()).toEqual('published');
+    });
+
+    it('returns "draft" otherwise', function () {
+      expect(this.manager.getState()).toEqual('draft');
+    });
+  });
+
+  describe('#getEditingState()', function () {
+    it('returns "archived" when archived version is set', function () {
+      this.entity.data.sys.archivedVersion = 1;
+      expect(this.manager.getEditingState()).toEqual('archived');
+    });
+
+    it('returns "published" when current version is published', function () {
+      this.entity.data.sys.publishedVersion = 1;
+      this.entity.data.sys.version = 2;
+      expect(this.manager.getEditingState()).toEqual('published');
+    });
+
+    it('returns "changes" when current version is larger then published version', function () {
+      this.entity.data.sys.publishedVersion = 1;
+      this.entity.data.sys.version = 3;
+      expect(this.manager.getEditingState()).toEqual('changes');
+    });
+
+
+    it('returns "draft" otherwise', function () {
+      expect(this.manager.getEditingState()).toEqual('draft');
+    });
+  });
+
+  describe('#archive()', function () {
+    pit('send archive PUT request', function () {
+      var archive = this.manager.archive();
+      this.$apply();
+      var req = this.adapter.requests.pop();
+      expect(req.options.path).toEqual(entityURL + '/archived');
+      expect(req.options.method).toEqual('PUT');
+
+      req.resolve();
+      return archive;
+    });
+
+    pit('unpublishes published entity first', function () {
+      this.entity.data.sys.publishedVersion = 1;
+      var archive = this.manager.archive();
+      this.$apply();
+      var req = this.adapter.requests.pop();
+      expect(req.options.path).toEqual(entityURL + '/published');
+      expect(req.options.method).toEqual('DELETE');
+
+      req.resolve(_.merge({
+        sys: {publishedVersion: null}
+      }, this.entity.data));
+      this.$apply();
+      this.adapter.requests.pop().resolve();
+      return archive;
+    });
+  });
+
+  describe('#publish()', function () {
+    pit('send publish PUT request', function () {
+      var publish = this.manager.publish();
+      this.$apply();
+      var req = this.adapter.requests.pop();
+      expect(req.options.path).toEqual(entityURL + '/published');
+      expect(req.options.method).toEqual('PUT');
+
+      req.resolve();
+      return publish;
+    });
+
+    pit('unarchives archived entity first', function () {
+      this.entity.data.sys.archivedVersion = 1;
+      var publish = this.manager.publish();
+      this.$apply();
+      var req = this.adapter.requests.pop();
+      expect(req.options.path).toEqual(entityURL + '/archived');
+      expect(req.options.method).toEqual('DELETE');
+
+      req.resolve(_.merge({
+        sys: {archivedVersion: null}
+      }, this.entity.data));
+      this.$apply();
+      this.adapter.requests.pop().resolve();
+      return publish;
+    });
+  });
+
+  describe('#toDraft()', function () {
+    pit('unpublishes published entity', function () {
+      this.entity.data.sys.publishedVersion = 1;
+      var toDraft = this.manager.toDraft();
+      this.$apply();
+
+      var req = this.adapter.requests.pop();
+      expect(req.options.path).toEqual(entityURL + '/published');
+      expect(req.options.method).toEqual('DELETE');
+      req.resolve();
+
+      return toDraft;
+    });
+
+    pit('unarchives archived entity', function () {
+      this.entity.data.sys.archivedVersion = 1;
+      var toDraft = this.manager.toDraft();
+      this.$apply();
+
+      var req = this.adapter.requests.pop();
+      expect(req.options.path).toEqual(entityURL + '/archived');
+      expect(req.options.method).toEqual('DELETE');
+      req.resolve();
+
+      return toDraft;
+    });
+
+  pit('does nothing by default', function () {
+      this.adapter.requests = [];
+      var toDraft = this.manager.toDraft();
+      this.$apply();
+
+      expect(this.adapter.requests.length).toEqual(0);
+      return toDraft;
+    });
+  });
+
+  describe('#delete()', function () {
+    pit('sends DELETE request', function () {
+      var del = this.manager.delete();
+      this.$apply();
+
+      var req = this.adapter.requests.pop();
+      expect(req.options.path).toEqual(entityURL);
+      expect(req.options.method).toEqual('DELETE');
+      req.resolve();
+
+      return del;
+    });
+
+    pit('unpublishes published entries', function () {
+      this.entity.data.sys.publishedVersion = 1;
+
+      var del = this.manager.delete();
+      this.$apply();
+
+      var req = this.adapter.requests.pop();
+      expect(req.options.path).toEqual(entityURL + '/published');
+      expect(req.options.method).toEqual('DELETE');
+      req.resolve(this.entity.data);
+
+      this.$apply();
+      this.adapter.requests.pop().resolve();
+      return del;
+    });
+  });
+});

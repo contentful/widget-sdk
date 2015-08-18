@@ -1,0 +1,40 @@
+include ./entity_sidebar.mixin.jade
+
+mixin editor-info-toggle
+  button.cfnext-btn-secondary-action(type="button"
+    ng-click="preferences.toggleAuxPanel()"
+    ng-class="{active: preferences.showAuxPanel}")
+    | Info
+
+mixin editor-actions-dropdown
+  button.cfnext-btn-secondary-action(
+    cf-context-menu-trigger
+    data-test-id="entity-actions-menu-trigger")
+    cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+    | Actions
+  .context-menu(
+    cf-context-menu
+    data-test-id="entity-actions-menu")
+    cf-icon.context-menu__arrow.x--top(name="arrow-up")
+    block
+
+mixin entity-delete-confirm-menu
+  .delete-confirm(cf-context-menu="bottom-right")
+    cf-icon.context-menu__arrow.x--top-right(name="arrow-up")
+    p Do you really want to delete the entry <em>{{ title }}</em>
+    button.cfnext-btn-caution(ui-command="state.delete") Delete
+    button.cfnext-btn-secondary-action(type="button") Don't Delete
+
+mixin editor-field-collaborators
+  .field-collaborators
+    ul.field-list
+      li.avatar(
+        cf-user
+        ng-repeat="link in otFieldPresence.users track by link.sys.id"
+        link="link" as="presentUser"
+        tooltip="{{presentUser| userNameDisplay:user}}")
+        img(ng-src="{{presentUser.data.avatarUrl}}")
+
+mixin editor-notification
+  .entity-editor__notification(ng-if="notifications.message" role="alert")
+    p {{notifications.message}}
