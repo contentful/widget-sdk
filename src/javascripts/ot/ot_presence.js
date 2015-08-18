@@ -2,13 +2,6 @@
 
 angular.module('contentful').
 
-  directive('otDocPresence', function() {
-    return {
-      require: '^otDocFor',
-      controller: 'otDocPresenceController'
-    };
-  }).
-
   value('otPresenceConfig', {
     focusThrottle: 10e3,
     pingTimeout: 60e3
@@ -150,6 +143,14 @@ angular.module('contentful').
 
   }]).
 
+  directive('otDocPresence', function() {
+    return {
+      require: '^otDocFor',
+      controller: 'otDocPresenceController'
+    };
+  }).
+
+  // Listens to changes on scope.presence.fields to indicate if a user is editing the current field
   controller('otFieldPresenceController', ['$scope', '$attrs', function($scope, $attrs) {
     var unregister;
     $scope.$watch($attrs.otFieldPresence, function(v) {

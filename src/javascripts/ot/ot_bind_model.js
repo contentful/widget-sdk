@@ -15,14 +15,18 @@ angular.module('contentful').directive('otBindModel', ['$parse', function($parse
       var ngModelCtrl = controllers[0];
       var ngModelGet = $parse(attr['ngModel']),
           ngModelSet = ngModelGet.assign;
+
       ngModelCtrl.$viewChangeListeners.push(function(){
         scope.otChangeValue(ngModelCtrl.$modelValue);
         // TODO this is wrong because it does not handle the error case
         // This directive was writte for Angular 1.1
         // With Angular 1.3+ we could make use of async validations to revert when otChangeValue fails
       });
+
       scope.$on('otValueChanged', function(event, path, val) {
-        if (path === event.currentScope.otPath) ngModelSet(event.currentScope, val);
+        if (path === event.currentScope.otPath) {
+          ngModelSet(event.currentScope, val);
+        }
       });
     }
   };
