@@ -25,7 +25,7 @@ angular.module('cf.ui')
 
   /**
    * @ngdoc property
-   * @name command.executions
+   * @name command#executions
    * @description
    * This signal is dispatched when ever a command is executed.
    *
