@@ -1,5 +1,5 @@
 .google-map(ng-model="location")
-.invalid-location-warning(ng-show="location && !locationValid")
+.invalid-location-warning(ng-if="location && !locationValid")
   .text Invalid location data!
 .sub-fields(cf-autocomplete-results="results")
   .search(ng-show="otEditable")
@@ -10,4 +10,3 @@
           span.address {{result.address}}
           span.lat Lat: {{result.strippedLocation.lat}}
           span.lon Lon: {{result.strippedLocation.lon}}
-
