@@ -1,7 +1,7 @@
 header.workbench-header
   cf-icon.workbench-header__icon(name="page-api")
   h1.workbench-header__title
-    | {{context.title}}
+    | {{ context.title | truncate:50 }}
     a.workbench-header__kb-link(
       cf-knowledge-base-icon
         analytics-event="api_keys"
