@@ -517,19 +517,16 @@ angular.module('contentful').config([
   }
 
   function closeState() {
-    var currentState = $rootScope.$state.$current,
-        contextHistory = $rootScope.contextHistory;
+    var currentState = $rootScope.$state.$current;
+    var contextHistory = $rootScope.contextHistory;
 
-    return confirmNavigation(currentState).then(function (reply) {
-      if(reply.navConfirmed) {
-        contextHistory.pop();
-        if (contextHistory.length) {
-          $rootScope.goToEntityState(contextHistory[contextHistory.length - 1], true);
-        } else {
-          $rootScope.$state.go((currentState.ncyBreadcrumb && currentState.ncyBreadcrumb.parent) || '');
-        }
-      }
-    });
+    navigationConfirmed = true;
+    contextHistory.pop();
+    if (contextHistory.length) {
+      $rootScope.goToEntityState(contextHistory[contextHistory.length - 1], true);
+    } else {
+      $rootScope.$state.go((currentState.ncyBreadcrumb && currentState.ncyBreadcrumb.parent) || '');
+    }
   }
 
   function stateChangeStartHandler(event, toState, toStateParams, fromState, fromStateParams) {
@@ -639,31 +636,25 @@ angular.module('contentful').config([
   }
 
   function confirmNavigation(state) {
-    if (state.data && state.data.dirty && state.data.closingMessage) {
-      return modalDialog.open({
-        title: 'Unsaved Changes',
-        confirmLabel: 'Return to Editor',
-        cancelLabel: 'Discard Changes',
-        disableTopCloseButton: true,
-        noBackgroundClose: true,
-        html: true,
-        message: prepareClosingMessage(state.data.closingMessage),
-        scope: $rootScope
-      }).promise
-      .then(function () {
-        // Primary confirm action in dialog means return to editor
-        // which means navigation is not confirmed
-        return {navConfirmed: false};
-      }, function () {
-        // Secondary cancel action in dialog means discard changes
-        // which means we can navigate away from the current page
-        return {navConfirmed: true};
-      });
-    } else {
-      return $q.when({
-        navConfirmed: true
-      });
-    }
+    return modalDialog.open({
+      title: 'Unsaved Changes',
+      confirmLabel: 'Return to Editor',
+      cancelLabel: 'Discard Changes',
+      disableTopCloseButton: true,
+      noBackgroundClose: true,
+      html: true,
+      message: prepareClosingMessage(state.data.closingMessage),
+      scope: $rootScope
+    }).promise
+    .then(function () {
+      // Primary confirm action in dialog means return to editor
+      // which means navigation is not confirmed
+      return {navConfirmed: false};
+    }, function () {
+      // Secondary cancel action in dialog means discard changes
+      // which means we can navigate away from the current page
+      return {navConfirmed: true};
+    });
   }
 
   function prepareClosingMessage(message) {

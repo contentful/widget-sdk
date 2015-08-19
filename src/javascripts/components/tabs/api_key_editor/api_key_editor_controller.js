@@ -91,7 +91,6 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     if (event.currentScope !== event.targetScope) {
       var scope = event.currentScope;
       if (apiKey === scope.apiKey) {
-        $scope.context.dirty = false;
         scope.closeState();
       }
     }

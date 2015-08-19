@@ -149,7 +149,6 @@ function ContentTypeEditorController($scope, $injector) {
     if (event.currentScope !== event.targetScope) {
       var scope = event.currentScope;
       if (contentType === scope.contentType) {
-        $scope.context.dirty = false;
         scope.closeState();
       }
     }
