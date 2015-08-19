@@ -6,15 +6,18 @@ describe('Bugsnag service', function(){
     this.bugsnag = this.$inject('bugsnag');
     this.$window = this.$inject('$window');
     this.angularLoad = this.$inject('angularLoad');
+    var $q = this.$inject('$q');
+
     this.BugsnagStub = {
       notify: sinon.stub(),
       notifyException: sinon.stub(),
       refresh: sinon.stub()
     };
 
-    this.angularLoad.loadScript = sinon.stub().returns(this.when().then(function(){
+    this.angularLoad.loadScript = function () {
       this.$window.Bugsnag = this.BugsnagStub;
-    }.bind(this)));
+      return $q.when();
+    }.bind(this);
   });
 
   afterEach(function(){
@@ -29,19 +32,19 @@ describe('Bugsnag service', function(){
     this.$apply();
   });
 
-  it('should disable', function(done){
+  pit('should disable', function(){
     this.bugsnag.disable();
-    this.bugsnag.enable().then(null, function(){
+    return this.bugsnag.enable()
+    .catch(function () {})
+    .finally(function(){
       expect(this.$window.Bugsnag).toBe(undefined);
-      done();
     }.bind(this));
-    this.$apply();
   });
 
   describe('when script loading fails', function(){
     beforeEach(function(){
       sinon.stub(this.bugsnag._buffer, 'disable');
-      this.angularLoad.loadScript.returns(this.reject());
+      this.angularLoad.loadScript = sinon.stub().rejects();
     });
 
     it('should disable the buffer', function(){
