@@ -14,6 +14,9 @@ angular.module('contentful').controller('InsertAssetDialogController', ['$scope'
   $scope.assets           = [];
   $scope.selection        = new Selection();
 
+  $controller('UiConfigController', {
+    $scope: $scope
+  });
   $controller('AssetListViewsController', {
     $scope: $scope,
     currentViewLocation: 'currentView'
