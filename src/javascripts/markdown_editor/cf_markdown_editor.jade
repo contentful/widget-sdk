@@ -95,10 +95,8 @@
     a(href ng-click="actions.openHelp()") Help
 
   .markdown-info
-    .markdown-info__stats
-    | {{ info.words }} words,
-    span(ng-class="marker")  {{ info.chars }} characters
-    .markdown-info__requirements {{ requirements }}
+    cf-markdown-stats(preview="preview")
+    cf-markdown-requirements(preview="preview")
 
   cf-zenmode(
     ng-if="zen"

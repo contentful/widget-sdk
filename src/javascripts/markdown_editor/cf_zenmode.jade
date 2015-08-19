@@ -53,3 +53,12 @@
   .zenmode-preview
     .markdown-preview
       cf-markdown-preview(preview="preview")
+
+  .zenmode-footer
+    .zenmode-help
+      cf-icon(name="markdown")
+      | Use Markdown syntax to format your text.&nbsp;
+      a(href ng-click="actions.openHelp()") Help
+    .zenmode-info
+      cf-markdown-stats(preview="preview")
+      cf-markdown-requirements(preview="preview")

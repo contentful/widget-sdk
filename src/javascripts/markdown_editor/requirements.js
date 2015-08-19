@@ -5,12 +5,13 @@ angular.module('contentful').factory('MarkdownEditor/requirements', function () 
   var MARKER_OFFSET = 10;
 
   return {
-    getInfoLine:   getInfoLine,
-    getSizeMarker: getSizeMarker
+    getInfoLine:          getInfoLine,
+    getSizeMarker:        getSizeMarker,
+    findSizeRequirements: findSizeRequirements
   };
 
-  function getInfoLine(field) {
-    var reqs = findSizeRequirements(field);
+  function getInfoLine(validations) {
+    var reqs = findSizeRequirements(validations);
     var result = '';
 
     if (reqs.min || reqs.max) { add('Required characters: '); }
@@ -23,9 +24,7 @@ angular.module('contentful').factory('MarkdownEditor/requirements', function () 
     function add(s) { result += s; }
   }
 
-  function getSizeMarker(field, fieldData) {
-    var reqs = findSizeRequirements(field);
-    var len = _.isString(fieldData.value) ? fieldData.value.length : 0;
+  function getSizeMarker(reqs, len) {
     var o = MARKER_OFFSET;
 
     if      (reqs.min && len < reqs.min    ) { return m('invalid'); }
@@ -38,10 +37,58 @@ angular.module('contentful').factory('MarkdownEditor/requirements', function () 
     function m(marker) { return 'markdown-marker__' + marker; }
   }
 
-  function findSizeRequirements(field) {
-    return _(field.validations || [])
+  function findSizeRequirements(validations) {
+    return _(validations || [])
       .pluck('size')
       .filter(_.isObject)
       .first() || {};
   }
 });
+
+angular.module('contentful').directive('cfMarkdownRequirements', ['$injector', function ($injector) {
+
+  var requirements = $injector.get('MarkdownEditor/requirements');
+
+  return {
+    restrict: 'E',
+    scope: { preview: '=' },
+    template: '<div class="markdown-info__requirements">{{ infoLine }}</div>',
+    link: function (scope) {
+      scope.$watch('preview.field.validations', addInfoLine, true);
+
+      function addInfoLine(validations) {
+        scope.infoLine = requirements.getInfoLine(validations);
+      }
+    }
+  };
+}]);
+
+angular.module('contentful').directive('cfMarkdownStats', ['$injector', function ($injector) {
+
+  var requirements = $injector.get('MarkdownEditor/requirements');
+
+  return {
+    restrict: 'E',
+    scope: { preview: '=' },
+    template: [
+      '<div class="markdown-info__stats">',
+        '{{ preview.info.words }} words, ',
+        '<span ng-class="marker">{{ preview.info.chars }} characters</span>',
+      '</div>'
+    ].join(''),
+    link: function(scope) {
+      var sizeRequirements = {};
+
+      scope.$watch('preview.field.validations', findRequirements, true);
+      scope.$watch('preview.info.chars', addMarker);
+
+      function findRequirements(validations) {
+        sizeRequirements = requirements.findSizeRequirements(validations);
+      }
+
+      function addMarker(length) {
+        scope.marker = requirements.getSizeMarker(sizeRequirements, length);
+      }
+    }
+  };
+}]);

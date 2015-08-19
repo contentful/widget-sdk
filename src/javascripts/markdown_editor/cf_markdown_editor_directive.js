@@ -7,7 +7,6 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
   var LazyLoader       = $injector.get('LazyLoader');
   var MarkdownEditor   = $injector.get('MarkdownEditor');
   var actions          = $injector.get('MarkdownEditor/actions');
-  var requirements     = $injector.get('MarkdownEditor/requirements');
   var startLivePreview = $injector.get('MarkdownEditor/preview');
   var environment      = $injector.get('environment');
 
@@ -32,7 +31,6 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.isReady = isReady;
       scope.minorActionsShown = false;
       scope.toggleMinorActions = toggleMinorActions;
-      scope.requirements = requirements.getInfoLine(scope.field);
       scope.preview = {};
       scope.setMode = setMode;
       scope.inMode = inMode;
@@ -65,7 +63,6 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         var off = startLivePreview(editor, updatePreview);
         editor.events.onChange(handleEditorChange);
         scope.$watch('fieldData.value', handleModelChange);
-        scope.$watch('fieldData.value', addSizeMarker);
         scope.$on('$destroy', off);
         scope.$on('$destroy', editor.destroy);
       }
@@ -88,6 +85,8 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       function updatePreview(err, preview, info) {
         scope.firstSyncDone = true;
         scope.preview = {
+          field: scope.field,
+          value: editor.getContent(),
           hasCrashed: err ? true : false,
           html: $sce.trustAsHtml(preview),
           info: info
@@ -134,10 +133,6 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
       function inDevelopment() {
         return environment.env === 'development';
-      }
-
-      function addSizeMarker() {
-        scope.marker = requirements.getSizeMarker(scope.field, scope.fieldData);
       }
     }
   };

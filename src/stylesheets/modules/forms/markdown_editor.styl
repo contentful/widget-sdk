@@ -141,9 +141,6 @@ $markdown-radius = 3px
 
 .markdown-info__requirements
   float: right
-  a
-    color: $base-font-color
-    text-decoration: underline
 
 .markdown-marker__near
   color: lighten($orange, 20%)
@@ -249,17 +246,20 @@ $markdown-radius = 3px
   background: #FFF
   overflow: hidden
 
-.zenmode-toolbar
+.zenmode-toolbar,
+.zenmode-footer
   z-index: 103
   position: fixed
-  top: 0
   left: 0
   right: 0
+  background: $gray-lightest
+
+.zenmode-toolbar
+  top: 0
   padding-top: 15px
   padding-left: 80px
   padding-right: 15px
   height: 60px
-  background: $gray-lightest
   border-top: 3px solid $gray-light
   border-bottom: 1px solid $gray-light
 
@@ -275,7 +275,7 @@ $markdown-radius = 3px
 .zenmode-preview
   position: fixed
   top: 60px
-  bottom: 0
+  bottom: 60px
   width: 50%
 
 .zenmode-editor
@@ -286,6 +286,32 @@ $markdown-radius = 3px
 .zenmode-preview
   z-index: 101
   right: 0
+
+.zenmode-footer
+  z-index: 103
+  position: fixed
+  left: 0
+  right: 0
+  bottom: 0
+  height: 60px
+  padding: 20px 30px
+  border-bottom: 3px solid $gray-light
+  border-top: 1px solid $gray-light
+
+.zenmode-help
+  float: left
+  display: flex
+  cf-icon
+    width: 25px
+    margin-right: 5px
+
+.zenmode-info
+  display: flex
+  float: right
+  font-size: 0.9em
+  text-align: right
+  .markdown-info__requirements
+    margin-left: 30px
 
 /**
  * Help
