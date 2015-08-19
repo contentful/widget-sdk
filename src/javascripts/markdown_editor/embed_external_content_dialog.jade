@@ -3,21 +3,44 @@
     header.modal-dialog__header
       h1 Embed external content
       .close-button(ng-click="dialog.cancel()")
-    form.modal-dialog__content
+
+    form.modal-dialog__content(name="contentForm")
       .cfnext-form__field
         label Content URL
         input.cfnext-form__input--full-size(
-        ng-model="fieldData.value"
+        ng-model="model.value"
         name="url"
         autocomplete="off"
         cf-focus-on-render="model")
         cf-embedly-status(url-status="urlStatus")
-        .cfnext-form__hint Required. Please include protocol (e.g. <code>http://</code>).
-      cf-embedly-preview(field-data="fieldData" url-status="urlStatus")
+        .cfnext-form__hint Please include protocol (e.g. <code>http://</code>).
+
+      .cfnext-form__field
+        label Width
+        input.cfnext-form__input--short(
+        ng-model="model.width"
+        name="width"
+        type="number"
+        min="1" pattern="[1-9][0-9]*"
+        required
+        autocomplete="off")
+        label.cfnext-form-option.embed-content-dialog__suffix
+          input(type="radio" ng-model="model.widthSuffix" value="%")
+          | percent
+        label.cfnext-form-option.embed-content-dialog__suffix
+          input(type="radio" ng-model="model.widthSuffix" value="px")
+          | pixel
+
+      label.cfnext-form-option
+        input(type="checkbox" ng-model="model.social")
+        | Enable social tools (sharing content on Facebook, Twitter...)
+
+      cf-embedly-preview(field-data="model" url-status="urlStatus")
+
     .modal-dialog__controls
       button.cfnext-btn-primary-action.modal-dialog__controls-confirm(
-      ng-click="dialog.confirm(fieldData)"
-      ng-disabled="urlStatus !== 'ok'"
+      ng-click="dialog.confirm(model)"
+      ng-disabled="urlStatus !== 'ok' || !contentForm.$valid"
       type="button") Insert
       button.cfnext-btn-plain(
       ng-click="dialog.cancel()"

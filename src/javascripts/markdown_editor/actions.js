@@ -26,7 +26,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
 
     function link() {
       modalDialog.open({
-        scopeData: { model: {} },
+        scopeData: { model: { url: 'https://' } },
         template: 'insert_link_dialog',
         ignoreEnter: true
       }).promise.then(function (data) {
@@ -90,16 +90,24 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
 
     function embed() {
       modalDialog.open({
-        scopeData: { fieldData: { value: '' }, urlStatus: 'invalid' },
+        scopeData: {
+          model: { value: 'https://', width: 100, widthSuffix: '%' },
+          urlStatus: 'invalid'
+        },
         template: 'embed_external_content_dialog',
         ignoreEnter: true
       }).promise.then(function (data) {
-        editor.insert(_makeEmbedlyLink(data.value));
+        editor.insert(_makeEmbedlyLink(data));
       });
     }
 
-    function _makeEmbedlyLink(url) {
-      return '<a href="' + url + '" class="embedly-card">Embedded content: ' + url + '</a>';
+    function _makeEmbedlyLink(data) {
+      return [
+        '<a href="' + data.value + '" class="embedly-card" ',
+        'data-card-width="' + data.width + data.widthSuffix + '" ',
+        'data-card-controls="' + (data.social ? '1' : '0') + '"',
+        '>Embedded content: ' + data.value + '</a>'
+      ].join('');
     }
 
     function organizeLinks() {

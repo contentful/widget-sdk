@@ -8,9 +8,10 @@
         label Target URL
         input.cfnext-form__input--full-size(
           ng-model="model.url" name="url" type="url"
+          ng-maxlength="2100"
           required autocomplete="off"
           cf-focus-on-render="model")
-        .cfnext-form__hint Required. Please include protocol (e.g. <code>http://</code>).
+        .cfnext-form__hint Please include protocol (e.g. <code>https://</code>).
       .cfnext-form__field
         label Link label
         input.cfnext-form__input--full-size(ng-model="model.title" name="title" type="text")
