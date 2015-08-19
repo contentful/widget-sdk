@@ -5,19 +5,6 @@
 some stuff here should go into components, other into layout
 */
 .entity-list
-  .main-header
-    $stretch(0, 0, false, 0)
-    width: 100%
-
-  .add-entity__list
-    overflow-y: auto
-    max-height: 500px
-    max-height: $new-entities-dropdown-height - 30px
-
-  .add-entity__icon
-    font-size: 0.7em
-    margin-right: 0.5em
-
   .add-entity__advice
     margin-bottom: 0
 
@@ -26,40 +13,6 @@ some stuff here should go into components, other into layout
     overflow-y: auto
     .main-results
       border-left: none
-
-  .tab-main
-    .left-nav
-      overflow-y: auto
-      overflow-x: hidden
-      $tab-workbench()
-      padding-left: 20px
-      padding-right: 20px
-      padding-bottom: 0
-      .dropdown-menu
-        min-width: 150px
-    .with-left-nav
-      margin-top: $tab-main-margin-top // padding is ignored by absolute children
-      $stretch-y()
-      $tab-workbench()
-
-  .left-nav-bottom
-    position: absolute
-    background: white
-    bottom: 0
-    right: 0
-    width: 100%
-    padding: 1.5em 0 2em
-    span
-      color: $gray
-      line-height: 1.3em
-      padding: .1em 0
-      &:first-child
-        margin-left: 29px
-        margin-right: .6em
-        padding-right: .6em
-    span:hover
-      color: $blue-dark-link
-      cursor: pointer
 
   .result-list
     tbody tr
