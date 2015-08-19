@@ -541,9 +541,9 @@ angular.module('contentful').config([
       event.preventDefault();
       navigationConfirmed = false;
       confirmNavigation(fromState).then(function (reply) {
-        if(reply.navConfirmed) {
+        if (reply.navConfirmed) {
           navigationConfirmed = true;
-          preprocessStateChange(event, toState, toStateParams);
+          $rootScope.$state.go(toState.name, toStateParams);
         }
       });
     } else {
@@ -569,8 +569,6 @@ angular.module('contentful').config([
         event.preventDefault();
         navigateToInitialSpace(toStateParams.spaceId);
         break;
-      default:
-        if (navigationConfirmed) { $rootScope.$state.go(toState.name, toStateParams); }
     }
   }
 
