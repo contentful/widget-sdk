@@ -35,7 +35,7 @@ angular.module('contentful').factory('MarkdownEditor/requirements', function () 
 
     return m('ok');
 
-    function m(marker) { return 'markdown-marker-' + marker; }
+    function m(marker) { return 'markdown-marker__' + marker; }
   }
 
   function findSizeRequirements(field) {

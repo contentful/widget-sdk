@@ -1,7 +1,4 @@
-$markdown-radius = 3
-
-.cf-markdown-editor
-  position: relative
+$markdown-radius = 3px
 
 .markdown-transfer-textarea
   display: none
@@ -31,8 +28,8 @@ $markdown-radius = 3
   padding: 8px 5px 4px
   width: 80px
   border: 1px solid $gray-light
-  border-top-left-radius: $markdown-radius px
-  border-top-right-radius: $markdown-radius px
+  border-top-left-radius: $markdown-radius
+  border-top-right-radius: $markdown-radius
   margin-left: 3px
   text-align: center
   background-color: $gray-lightest
@@ -47,18 +44,18 @@ $markdown-radius = 3
   border: 1px solid $gray-light
   background-color: $gray-lightest
   padding: 9px 7px 7px
-  border-top-left-radius: $markdown-radius px
+  border-top-left-radius: $markdown-radius
 
 .markdown-minor-actions
   margin-top: 5px
 
 .toolbar-button
-  width: 30px
+  min-width: 30px
   height: 30px
   border: none
   background-color: transparent
   display: inline-block
-  border-radius: $markdown-radius px
+  border-radius: $markdown-radius
   cursor: pointer
   margin-right: 7px
   &:hover
@@ -67,10 +64,8 @@ $markdown-radius = 3
     background-color: transparent
 
 .markdown-headings
-  width: 40px
-  i
-    color: $gray-dark
-    font-size: 0.7em
+  i, cf-icon, svg
+    display: inline-block
 
 .markdown-more-actions
   border: 1px solid $gray-light
@@ -79,7 +74,6 @@ $markdown-radius = 3
 
 .markdown-side-action
   float: right
-  width: auto
   padding: 0 20px
   border: 1px solid $gray-light
   background: lighten($gray-lightest, 20%)
@@ -127,8 +121,8 @@ $markdown-radius = 3
 .markdown-help
   background: $gray-lightest
   border: 1px solid $gray-light
-  border-bottom-left-radius: $markdown-radius px
-  border-bottom-right-radius: $markdown-radius px
+  border-bottom-left-radius: $markdown-radius
+  border-bottom-right-radius: $markdown-radius
   font-size: 0.85em
   padding: 5px 7px 4px
   cf-icon
@@ -141,17 +135,21 @@ $markdown-radius = 3
   font-size: 0.85em
   padding: 6px 2px 5px
   border: 0
-  .markdown-stats
-    float: left
-  .markdown-requirements
-    float: right
-    a
-      color: $base-font-color
-      text-decoration: underline
-  .markdown-marker-near
-    color: lighten($orange, 20%)
-  .markdown-marker-invalid
-    color: $red
+
+.markdown-info__stats
+  float: left
+
+.markdown-info__requirements
+  float: right
+  a
+    color: $base-font-color
+    text-decoration: underline
+
+.markdown-marker__near
+  color: lighten($orange, 20%)
+
+.markdown-marker__invalid
+  color: $red
 
 /**
  * Markdown preview styles
@@ -193,7 +191,7 @@ $markdown-radius = 3
     border-top-width: 0
   .markdown-image-placeholder
     border: 1px solid $gray-light
-    border-radius: $markdown-radius px
+    border-radius: $markdown-radius
     padding: 10px
     background: $gray-lightest
   .markdown-image-placeholder img
@@ -213,7 +211,7 @@ $markdown-radius = 3
 .markdown-special-char
   display: inline-block
   border: 1px solid $gray-light
-  border-radius: $markdown-radius px
+  border-radius: $markdown-radius
   padding: 15px
   margin: 3px
   margin-top: 0
@@ -280,20 +278,18 @@ $markdown-radius = 3
  * Help
  */
 
-.markdown-help-dialog
-  .modal-dialog__content
-    overflow: hidden
-    width: 780px
-    a
-      text-decoration: underline
+.markdown-help-dialog a
+  text-decoration: underline
+
+.markdown-help-columns
+  display: flex
+  width: 720px
 
 .markdown-help-column
   width: 340px
-  float: left
 
-.markdown-help-column.first
+.markdown-help-column:first-child
   border-right: 1px solid $gray-light
-  padding-right: 20px
   margin-right: 20px
 
 .markdown-help-item
@@ -301,16 +297,17 @@ $markdown-radius = 3
   font-size: 1.5em
   margin-bottom: 15px
   line-height: 1.5em
-  .item
-    width: 170px
-    display: inline-block
-  .markup
-    width: 170px
-    display: inline-block
-    color: $gray
+
+.markdown-help__preview
+  width: 170px
+  display: inline-block
+
+.markdown-help__markup
+  width: 170px
+  display: inline-block
+  color: $gray
 
 .markdown-help-link
-  clear: both
   padding: 20px
   text-align: center
   a

@@ -5,45 +5,46 @@
       .close-button(ng-click="dialog.cancel()")
 
     .modal-dialog__content
-      .markdown-help-column.first
-        .markdown-help-item
-          .item H1
-          .markup # heading
-        .markdown-help-item
-          .item H2
-          .markup ## heading
-        .markdown-help-item
-          .item H3
-          .markup ### heading
-        .markdown-help-item
-          strong.item bold
-          .markup **text**
-        .markdown-help-item
-          em.item italic
-          .markup *text*
-        .markdown-help-item
-          strike.item strikethrough
-          .markup ~~text~~
-        .markdown-help-item
-          a.item Link
-          .markup [text](url)
+      .markdown-help-columns
+        .markdown-help-column
+          .markdown-help-item
+            .markdown-help__preview H1
+            .markdown-help__markup # heading
+          .markdown-help-item
+            .markdown-help__preview H2
+            .markdown-help__markup ## heading
+          .markdown-help-item
+            .markdown-help__preview H3
+            .markdown-help__markup ### heading
+          .markdown-help-item
+            strong.markdown-help__preview bold
+            .markdown-help__markup **text**
+          .markdown-help-item
+            em.markdown-help__preview italic
+            .markdown-help__markup *text*
+          .markdown-help-item
+            strike.markdown-help__preview strikethrough
+            .markdown-help__markup ~~text~~
+          .markdown-help-item
+            a.markdown-help__preview Link
+            .markdown-help__markup [text](url)
 
-      .markdown-help-column
-        .markdown-help-item
-          .item Image
-          .markup ![alt-text](url)
-        .markdown-help-item
-          .item Unordered list<br>&nbsp;
-          .markup * list item<br>* list item
-        .markdown-help-item
-          .item Ordered list<br>&nbsp;
-          .markup 1. list item<br>2. list item
-        .markdown-help-item
-          .item Blockquote
-          .markup > quote
-        .markdown-help-item
-          code.item code block
-          .markup `code here`
+        .markdown-help-column
+          .markdown-help-item
+            .markdown-help__preview Image
+            .markdown-help__markup ![alt-text](url)
+          .markdown-help-item
+            .markdown-help__preview Unordered list<br>&nbsp;
+            .markdown-help__markup * list item<br>* list item
+          .markdown-help-item
+            .markdown-help__preview Ordered list<br>&nbsp;
+            .markdown-help__markup 1. list item<br>2. list item
+          .markdown-help-item
+            .markdown-help__preview Blockquote
+            .markdown-help__markup &gt; quote
+          .markdown-help-item
+            code.markdown-help__preview code block
+            .markdown-help__markup `code here`
 
       .markdown-help-link
         a(href="https://support.contentful.com/hc/en-us/articles/201638326-Using-Markdown-in-Contentful" target="_blank")

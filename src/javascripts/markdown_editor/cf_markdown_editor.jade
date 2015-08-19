@@ -22,8 +22,7 @@
         tabindex="-1"
         tooltip="Headings"
         ng-disabled="!inMode('md')")
-        | &nbsp;
-        i.fa.fa-chevron-down
+        cf-icon(name="dd-arrow-down-disabled")
       .context-menu(cf-context-menu="bottom")
         cf-icon.context-menu__arrow(name="arrow-up")
         ul.context-menu__items
@@ -180,9 +179,9 @@
     a(href ng-click="actions.openHelp()") Help
 
   .markdown-info
-    .markdown-stats
+    .markdown-info__stats
     | {{ info.words }} words,
     span(ng-class="marker")  {{ info.chars }} characters
-    .markdown-requirements {{ requirements }}
+    .markdown-info__requirements {{ requirements }}
 
   cf-zenmode(ng-if="zen" zen-api="zenApi")

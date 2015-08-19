@@ -2,7 +2,6 @@
 
 angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', function ($injector) {
 
-  var $rootScope        = $injector.get('$rootScope');
   var modalDialog       = $injector.get('modalDialog');
   var specialCharacters = $injector.get('specialCharacters');
   var LinkOrganizer     = $injector.get('LinkOrganizer');
