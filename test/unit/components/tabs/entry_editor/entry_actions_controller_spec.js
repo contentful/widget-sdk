@@ -133,7 +133,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        sinon.assert.called(this.notification.warn);
+        sinon.assert.called(this.notification.error);
       });
 
       it('logs error notification', function() {
@@ -175,7 +175,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        sinon.assert.called(this.notification.warn);
+        sinon.assert.called(this.notification.error);
       });
 
       it('logs error notification', function() {
@@ -217,7 +217,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        sinon.assert.called(this.notification.warn);
+        sinon.assert.called(this.notification.error);
       });
 
       it('logs error notification', function() {
@@ -388,7 +388,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows warn notification', function() {
-        sinon.assert.called(this.notification.warn);
+        sinon.assert.called(this.notification.error);
       });
     });
 
@@ -428,7 +428,7 @@ describe('Entry Actions Controller', function () {
         });
 
         it('shows error notification', function() {
-          sinon.assert.called(this.notification.warn);
+          sinon.assert.called(this.notification.error);
         });
       });
 
@@ -448,11 +448,11 @@ describe('Entry Actions Controller', function () {
         });
 
         it('shows error notification', function() {
-          sinon.assert.called(this.notification.warn);
+          sinon.assert.called(this.notification.error);
         });
 
         it('gets contextual error message', function() {
-          expect(this.notification.warn.args[0][0]).toMatch(/linked entries/i);
+          expect(this.notification.error.args[0][0]).toMatch(/linked entries/i);
         });
       });
 
@@ -472,11 +472,11 @@ describe('Entry Actions Controller', function () {
         });
 
         it('shows error notification', function() {
-          sinon.assert.called(this.notification.warn);
+          sinon.assert.called(this.notification.error);
         });
 
         it('gets contextual error message', function() {
-          expect(this.notification.warn.args[0][0]).toMatch(/version/i);
+          expect(this.notification.error.args[0][0]).toMatch(/version/i);
         });
       });
 
@@ -496,7 +496,7 @@ describe('Entry Actions Controller', function () {
         });
 
         it('gets contextual error message', function() {
-          expect(this.notification.warn.args[0][0]).toMatch(/unexistent content type/i);
+          expect(this.notification.error.args[0][0]).toMatch(/unexistent content type/i);
         });
       });
 
@@ -523,7 +523,7 @@ describe('Entry Actions Controller', function () {
         });
 
         it('gets contextual error message', function() {
-          expect(this.notification.warn.args[0][0]).toMatch(/content type name/i);
+          expect(this.notification.error.args[0][0]).toMatch(/content type name/i);
         });
       });
 
@@ -541,7 +541,7 @@ describe('Entry Actions Controller', function () {
         });
 
         it('gets contextual error message', function() {
-          expect(this.notification.warn.args[0][0]).toMatch(/individual fields/i);
+          expect(this.notification.error.args[0][0]).toMatch(/individual fields/i);
         });
       });
 

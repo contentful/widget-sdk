@@ -29,4 +29,28 @@ describe('stringUtils service', function () {
       return string.split(' ');
     }
   });
+
+  describe('#truncate()', function () {
+    var truncate;
+    beforeEach(function () {
+      truncate = this.$inject('stringUtils').truncate;
+    });
+
+    it('retains short strings', function () {
+      expect(truncate('abc', 3)).toEqual('abc');
+    });
+
+    it('truncates long strings with ellipses', function () {
+      expect(truncate('abcd', 3)).toEqual('abc…');
+    });
+
+    it('ommits trailing spaces', function () {
+      expect(truncate('abc \t\n\r xyz', 8)).toEqual('abc…');
+    });
+
+    it('ommits orphaned letters', function () {
+      expect(truncate('abc xyz', 5)).toEqual('abc…');
+    });
+
+  });
 });

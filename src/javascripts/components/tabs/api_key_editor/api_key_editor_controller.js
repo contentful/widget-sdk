@@ -7,12 +7,13 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   var $window     = $injector.get('$window');
   var $rootScope  = $injector.get('$rootScope');
   var Command     = $injector.get('command');
+  var truncate    = $injector.get('stringUtils').truncate;
 
   var IOS_RE = /(iphone os|ipad|iphone)/gi;
   $scope.isIos = IOS_RE.test($window.navigator.userAgent);
 
   var notify = notifier(function getTitle () {
-    return $scope.apiKey.getName();
+    return truncate($scope.apiKey.getName(), 50);
   });
 
   $scope.context.closingMessage = [
