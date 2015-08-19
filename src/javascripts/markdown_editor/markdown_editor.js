@@ -2,8 +2,8 @@
 
 angular.module('contentful').factory('MarkdownEditor', ['$injector', function($injector) {
 
-  var wrapEditor     = $injector.get('MarkdownEditor/createCodeMirrorWrapper');
-  var LazyLoader     = $injector.get('LazyLoader');
+  var wrapEditor = $injector.get('MarkdownEditor/wrapper');
+  var LazyLoader = $injector.get('LazyLoader');
 
   return {
     create:         loadAndCreate,

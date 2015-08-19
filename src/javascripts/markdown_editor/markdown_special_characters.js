@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').constant('specialCharacters', [
+angular.module('contentful').constant('MarkdownEditor/specialCharacters', [
   { id: 'acute', desc: 'acute accent' },
   { id: 'amp', desc: 'ampersand' },
   { id: 'brvbar', desc: 'broken vertical bar' },

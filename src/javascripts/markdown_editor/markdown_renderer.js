@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('MarkdownEditor/createMarkdownRenderer', [function () {
+angular.module('contentful').factory('MarkdownEditor/renderer', [function () {
 
   return function createRenderer(marked) {
     var Renderer = marked.Renderer;
@@ -18,7 +18,8 @@ angular.module('contentful').factory('MarkdownEditor/createMarkdownRenderer', [f
         gfm: true,
         tables: true,
         breaks: true,
-        // we use ng-bind-html that automatically $sanitizes source scope property
+        smartypants: true,
+        // we use $sanitize later on
         sanitize: false
       });
     };

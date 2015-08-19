@@ -9,7 +9,7 @@ describe('CodeMirror wrapper', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    var createWrapper = this.$inject('MarkdownEditor/createCodeMirrorWrapper');
+    var createWrapper = this.$inject('MarkdownEditor/wrapper');
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
     wrapper = createWrapper(textarea, {}, CodeMirror);

@@ -6,6 +6,7 @@ var libs = {
 };
 
 require('codemirror/addon/mode/overlay');
+require('codemirror/mode/xml/xml');
 require('codemirror/mode/markdown/markdown');
 require('codemirror/mode/gfm/gfm');
 require('codemirror/addon/edit/continuelist');

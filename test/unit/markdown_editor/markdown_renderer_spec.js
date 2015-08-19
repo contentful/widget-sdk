@@ -10,7 +10,7 @@ describe('Markdown renderer', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    var create = this.$inject('MarkdownEditor/createMarkdownRenderer');
+    var create = this.$inject('MarkdownEditor/renderer');
     render = create(marked);
   });
 

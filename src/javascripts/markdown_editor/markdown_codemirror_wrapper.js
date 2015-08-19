@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('MarkdownEditor/createCodeMirrorWrapper', ['$injector', function ($injector) {
+angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', function ($injector) {
 
   var $timeout = $injector.get('$timeout');
 

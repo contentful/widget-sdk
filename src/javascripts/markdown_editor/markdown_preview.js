@@ -5,9 +5,10 @@ angular.module('contentful').factory('MarkdownEditor/preview', ['$injector', fun
   var $timeout       = $injector.get('$timeout');
   var $sanitize      = $injector.get('$sanitize');
   var LazyLoader     = $injector.get('LazyLoader');
-  var createRenderer = $injector.get('MarkdownEditor/createMarkdownRenderer');
+  var createRenderer = $injector.get('MarkdownEditor/renderer');
 
   var NOTIFY_INTERVAL = 250;
+  var NEWLINE_ENTITY_RE = new RegExp('&#10;', 'g');
   var EMBEDLY_CLASS_RE = new RegExp('class="embedly-card"', 'g');
 
   return function startLivePreview(editor, subscriberCb) {
@@ -63,9 +64,10 @@ angular.module('contentful').factory('MarkdownEditor/preview', ['$injector', fun
 
     function renderAndSanitizeMarkdown(markup) {
       var html = renderMarkdown(markup);
-      html = html.replace(/\r?\n|\r/g, '');
       html = $sanitize(html);
       html = disableEmbedlyControls(html);
+      // restore new lines
+      html = html.replace(NEWLINE_ENTITY_RE, '\n');
 
       return html;
     }

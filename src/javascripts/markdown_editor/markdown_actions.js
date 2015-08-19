@@ -3,10 +3,10 @@
 angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', function ($injector) {
 
   var modalDialog       = $injector.get('modalDialog');
-  var specialCharacters = $injector.get('specialCharacters');
-  var LinkOrganizer     = $injector.get('LinkOrganizer');
   var assetUrl          = $injector.get('$filter')('assetUrl');
   var spaceContext      = $injector.get('spaceContext');
+  var specialCharacters = $injector.get('MarkdownEditor/specialCharacters');
+  var LinkOrganizer     = $injector.get('LinkOrganizer');
 
   return { for: prepareActions };
 
@@ -27,7 +27,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
     function link() {
       modalDialog.open({
         scopeData: { model: { url: 'https://' } },
-        template: 'insert_link_dialog',
+        template: 'markdown_link_dialog',
         ignoreEnter: true
       }).promise.then(function (data) {
         editor.insert(_makeLink(data));
@@ -75,7 +75,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
 
       modalDialog.open({
         scopeData: scopeData,
-        template: 'insert_special_character_dialog',
+        template: 'markdown_special_character_dialog',
         ignoreEnter: true
       }).promise.then(editor.insert);
     }
@@ -83,7 +83,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
     function table() {
       modalDialog.open({
         scopeData: { model: { rows: 2, cols: 2, width: 10 } },
-        template: 'insert_table_dialog',
+        template: 'markdown_table_dialog',
         ignoreEnter: true
       }).promise.then(editor.actions.table);
     }
@@ -94,7 +94,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
           model: { value: 'https://', width: 100, widthSuffix: '%' },
           urlStatus: 'invalid'
         },
-        template: 'embed_external_content_dialog',
+        template: 'markdown_embed_dialog',
         ignoreEnter: true
       }).promise.then(function (data) {
         editor.insert(_makeEmbedlyLink(data));
