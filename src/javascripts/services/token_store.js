@@ -127,7 +127,7 @@ angular.module('contentful').service('tokenStore', ['$injector', function($injec
         noBackgroundClose: true,
         attachTo: 'body'
       }).promise.then(function () {
-        authentication.logout();
+        authentication.clearAndLogin();
       });
     } else {
       notifyReload('The browser was unable to obtain the login token.');

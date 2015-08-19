@@ -5,6 +5,8 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
   var logger, environment, contentfulClient, $window, $location, $q, $rootScope, notification, assert, TheStore;
 
+  var $http;
+
   function setEnvVars($injector) {
     environment       = $injector.get('environment');
     contentfulClient  = $injector.get('privateContentfulClient');
@@ -63,9 +65,22 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       }
     },
 
+    clearAndLogin: function () {
+      TheStore.remove('token');
+      this.redirectToLogin();
+    },
+
     logout: function() {
       TheStore.remove('token');
-      $window.location = authApp + 'logout';
+      var payload = $.param({token: this.token});
+      return $http.post(authApp + 'oauth/revoke', payload, {
+        headers: {
+          'Authorization': 'Bearer ' + this.token,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+      }).finally(function () {
+        $window.location = authApp + 'logout';
+      });
     },
 
     goodbye: function () {
@@ -83,7 +98,6 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
     supportUrl: function() {
       return authApp + 'integrations/zendesk/login';
-      // return 'http://support.contentful.com/';
     },
 
     spaceSettingsUrl: function (spaceId) {
@@ -170,6 +184,7 @@ angular.module('contentful').provider('authentication', function AuthenticationP
     $q           = $injector.get('$q');
     $rootScope   = $injector.get('$rootScope');
     $window      = $injector.get('$window');
+    $http        = $injector.get('$http');
     assert       = $injector.get('assert');
     notification = $injector.get('notification');
     logger       = $injector.get('logger');

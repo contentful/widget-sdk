@@ -188,17 +188,48 @@ describe('Authentication service', function () {
     });
   });
 
+  describe('#clearAndLogin()', function () {
 
-  describe('logout', function () {
-    beforeEach(function () {
-      this.authentication.logout();
-    });
+    beforeEach(inject(function ($window) {
+      $window.location = {};
+    }));
 
     it('deletes the token entry', function () {
+      this.authentication.clearAndLogin();
       sinon.assert.calledWith(this.TheStore.remove, 'token');
     });
 
-    it('sets the window location', inject(function ($window) {
+    it('redirects to the login page', inject(function ($window) {
+      this.authentication.clearAndLogin();
+      expect($window.location).toMatch(/^\/\/basehost\/oauth\/authorize/);
+    }));
+
+  });
+
+  describe('#logout', function () {
+
+    it('deletes the token entry', function () {
+      this.authentication.logout();
+      sinon.assert.calledWith(this.TheStore.remove, 'token');
+    });
+
+    it('revokes the token', inject(function ($httpBackend) {
+      $httpBackend.expectPOST('//basehost/oauth/revoke').respond();
+      this.authentication.logout();
+      $httpBackend.verifyNoOutstandingExpectation();
+    }));
+
+    it('redirects to the logout page', inject(function ($window, $httpBackend) {
+      $httpBackend.expectPOST('//basehost/oauth/revoke').respond();
+      this.authentication.logout();
+      $httpBackend.flush();
+      expect($window.location).toEqual('//basehost/logout');
+    }));
+
+    it('redirects to the logout page if revokation fails', inject(function ($window, $httpBackend) {
+      $httpBackend.expectPOST('//basehost/oauth/revoke').respond(500);
+      this.authentication.logout();
+      $httpBackend.flush();
       expect($window.location).toEqual('//basehost/logout');
     }));
   });
