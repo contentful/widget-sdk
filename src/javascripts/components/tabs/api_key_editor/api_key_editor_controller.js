@@ -1,16 +1,19 @@
 'use strict';
 
 angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$injector', function($scope, $injector) {
-  var controller = this;
+  var controller  = this;
   var environment = $injector.get('environment');
-  var notification = $injector.get('notification');
-  var logger = $injector.get('logger');
-  var $window = $injector.get('$window');
-  var $rootScope = $injector.get('$rootScope');
-  var Command = $injector.get('command');
+  var notifier    = $injector.get('apiKeyEditor/notifications');
+  var $window     = $injector.get('$window');
+  var $rootScope  = $injector.get('$rootScope');
+  var Command     = $injector.get('command');
 
   var IOS_RE = /(iphone os|ipad|iphone)/gi;
   $scope.isIos = IOS_RE.test($window.navigator.userAgent);
+
+  var notify = notifier(function getTitle () {
+    return $scope.apiKey.getName();
+  });
 
   $scope.context.closingMessage = [
     'You edited the Api Key but didn\'t save your changes.',
@@ -71,25 +74,16 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     $scope.context.title = title || 'New Api Key';
   });
 
-  function title() {
-    return '"' + $scope.apiKey.getName() + '"';
-  }
-
   $scope.editable = function() {
     return true;
   };
 
   $scope.delete = function() {
-    var t = title();
     $scope.apiKey.delete()
     .then(function(){
-      notification.info(t + ' deleted successfully');
+      notify.deleteSuccess();
       $rootScope.$broadcast('entityDeleted', $scope.apiKey);
-    })
-    .catch(function(err){
-      notification.warn(t + ' could not be deleted');
-      logger.logServerWarn('ApiKey could not be deleted', {error: err});
-    });
+    }, notify.deleteFail);
   };
 
   $scope.$on('entityDeleted', function (event, apiKey) {
@@ -116,19 +110,14 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   });
 
   function save () {
-    var t = title();
     return $scope.apiKey.save()
     .then(function(){
       $scope.apiKeyForm.$setPristine();
       $scope.context.dirty = false;
-      $scope.$state.go('spaces.detail.api.keys.detail', { apiKeyId: $scope.apiKey.getId() });
-      notification.info(t + ' saved successfully');
+      $scope.$state.go('spaces.detail.api.keys.detail', { apiKeyId: $scope.apiKey.getId() })
+      .finally(notify.saveSuccess);
     })
-    .catch(function(err){
-      notification.warn(t + ' could not be saved');
-      if(dotty.get(err, 'statusCode') !== 422)
-        logger.logServerWarn('ApiKey could not be saved', {error: err });
-    });
+    .catch(notify.saveFail);
   }
 
 
@@ -145,6 +134,34 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     return $scope.authCodeExample.api == 'preview';
   }
 
+}])
 
+.factory('apiKeyEditor/notifications', ['$injector', function ($injector) {
+  var logger       = $injector.get('logger');
+  var notification = $injector.get('notification');
 
+  return function (getTitle) {
+    return {
+      saveSuccess: function () {
+        notification.info('“' + getTitle() + '” saved successfully');
+      },
+
+      saveFail: function (error) {
+        notification.error('“' + getTitle() + '” could not be saved');
+        // HTTP 422: Unprocessable entity
+        if (dotty.get(error, 'statusCode') !== 422) {
+          logger.logServerWarn('ApiKey could not be saved', {error: error });
+        }
+      },
+
+      deleteSuccess: function () {
+        notification.info('“' + getTitle() + '” deleted successfully');
+      },
+
+      deleteFail: function (error) {
+        notification.error('“' + getTitle() + '” could not be deleted');
+        logger.logServerWarn('ApiKey could not be deleted', {error: error});
+      }
+    };
+  };
 }]);

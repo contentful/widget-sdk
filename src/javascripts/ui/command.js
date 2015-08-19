@@ -20,7 +20,20 @@ angular.module('cf.ui')
  *   }
  * })
  */
-.factory('command', [function () {
+.factory('command', ['$injector', function ($injector) {
+  var createSignal = $injector.get('signal');
+
+  /**
+   * @ngdoc property
+   * @name command#executions
+   * @description
+   * This signal is dispatched when ever a command is executed.
+   *
+   * It receives the command and the action promise as parameters.
+   *
+   * @type Signal<Command, Promise<any>>
+   */
+  var executions = createSignal();
 
   /**
    * @ngdoc method
@@ -35,7 +48,7 @@ angular.module('cf.ui')
    * @returns {Command}
    */
   function createCommand(run, options, extension) {
-    var command = new Command(run, options);
+    var command = new Command(run, options, executions);
     return _.extend(command, extension);
   }
 
@@ -44,11 +57,12 @@ angular.module('cf.ui')
    * @module cf.ui
    * @name Command
    */
-  function Command (run, opts) {
+  function Command (run, opts, executions) {
     if (!_.isFunction(run)) {
       throw new Error('Expected a function');
     }
     this._run = run;
+    this._executions = executions;
 
     opts = _.defaults(opts || {}, {
       available: _.constant(true),
@@ -76,6 +90,11 @@ angular.module('cf.ui')
       self._inProgress = null;
       return res;
     });
+
+    if (this._executions) {
+      this._executions.dispatch(this, this._inProgress);
+    }
+
     return this._inProgress;
   };
 
@@ -93,9 +112,9 @@ angular.module('cf.ui')
     return this._isDisabled() || this._inProgress || !this.isAvailable();
   };
 
-
   return {
-    create: createCommand
+    create: createCommand,
+    executions: executions
   };
 }])
 

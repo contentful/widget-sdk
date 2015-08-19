@@ -147,7 +147,7 @@ describe('cfGoogleMaps Directive', function () {
     this.compileElement();
     this.scope.locationValid = true;
     this.scope.$digest();
-    expect(this.element.find('.invalid-location-warning')).toBeNgHidden();
+    expect(this.element.find('.invalid-location-warning').length).toBe(0);
   });
 
   it('search is not shown if otEditable is not initiated ', function () {

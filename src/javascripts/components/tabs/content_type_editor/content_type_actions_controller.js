@@ -16,7 +16,7 @@ function ContentTypeActionsController($scope, $injector) {
   var analytics    = $injector.get('analytics');
   var logger       = $injector.get('logger');
   var defer        = $injector.get('defer');
-  var notification = $injector.get('notification');
+  var notify       = $injector.get('contentType/notifications');
   var $q           = $injector.get('$q');
   var modalDialog  = $injector.get('modalDialog');
   var Command      = $injector.get('command');
@@ -26,14 +26,6 @@ function ContentTypeActionsController($scope, $injector) {
     entityType: 'contentType'
   });
 
-  var saveError = 'Unable to save Content Type: ';
-  var messages = {
-    save: {
-      success: 'Content Type saved successfully',
-      invalid: saveError + 'Data is invalid',
-      outdated:  saveError + 'Your version is outdated. Please reload and try again'
-    }
-  };
 
   /**
    * @ngdoc property
@@ -138,17 +130,10 @@ function ContentTypeActionsController($scope, $injector) {
 
   function sendDeleteRequest () {
     return $scope.contentType.delete()
-      .then(removalSuccessHandler, removalErrorHandler);
-  }
-
-  function removalSuccessHandler(contentType){
-    notification.info('Content type deleted successfully');
-    $rootScope.$broadcast('entityDeleted', contentType);
-  }
-
-  function removalErrorHandler(err) {
-    logger.logServerWarn('Error deleting Content Type', err);
-    notification.error('Error deleting Content Type');
+    .then(function () {
+      notify.deleteSuccess();
+      $rootScope.$broadcast('entityDeleted', $scope.contentType);
+    }, notify.deleteFail);
   }
 
   /**
@@ -199,7 +184,7 @@ function ContentTypeActionsController($scope, $injector) {
 
     $scope.regulateDisplayField();
     if (!$scope.validate()) {
-      notification.error(messages.save.invalid);
+      notify.invalid();
       return $q.reject();
     }
 
@@ -269,12 +254,10 @@ function ContentTypeActionsController($scope, $injector) {
   }
 
   function postSaveActions() {
-    notification.info(messages.save.success);
     if ($scope.contentTypeForm) {
       $scope.contentTypeForm.$setPristine();
     }
-    redirectWhenNew();
-    return $scope.contentType;
+    return redirectWhenNew().then(notify.saveSuccess);
   }
 
   /**
@@ -284,24 +267,26 @@ function ContentTypeActionsController($scope, $injector) {
   */
   function redirectWhenNew() {
     if($scope.context.isNew){
-      defer(function () {
-        $scope.$state.go('spaces.detail.content_types.detail', {
-          contentTypeId: $scope.contentType.getId()
+      return $q((function (res, reject) {
+        defer(function () {
+          $scope.$state.go('spaces.detail.content_types.detail', {
+            contentTypeId: $scope.contentType.getId()
+          }).then(res, reject);
         });
-      });
+      }));
+    } else {
+      return $q.when();
     }
   }
 
   function triggerApiErrorNotification(err) {
     var errorId = dotty.get(err, 'body.sys.id');
     if (errorId === 'ValidationFailed') {
-      notification.error(messages.save.invalid);
+      notify.invalid();
     } else if (errorId === 'VersionMismatch') {
-      notification.warn(messages.save.outdated);
+      notify.saveOutdated();
     } else {
-      var message = saveError + (dotty.get(err, 'body.message') || err);
-      notification.error(message);
-      logger.logServerWarn('Error activating Content Type', err);
+      notify.saveApiError(err);
     }
     return $q.reject(err);
   }
@@ -320,6 +305,57 @@ function ContentTypeActionsController($scope, $injector) {
 
   function allFieldsDisabled (contentType) {
     return _.all(contentType.data.fields, 'disabled');
+  }
+
+}])
+
+.factory('contentType/notifications', ['$injector', function ($injector) {
+  var logger       = $injector.get('logger');
+  var notification = $injector.get('notification');
+
+  var saveError = 'Unable to save Content Type: ';
+  var messages = {
+    save: {
+      success: 'Content Type saved successfully',
+      invalid: saveError + 'Data is invalid',
+      outdated:  saveError + 'Your version is outdated. Please reload and try again'
+    }
+  };
+
+  return {
+    deleteSuccess: function () {
+      notification.info('Content Type deleted successfully');
+    },
+
+    deleteFail: function (err) {
+      notification.error('Deleting Content Type failed: ' + getServerMessage(err));
+      logger.logServerWarn('Error deleting Content Type', {error: err});
+    },
+
+    invalid: function () {
+      notification.error(messages.save.invalid);
+    },
+
+    saveSuccess: function () {
+      notification.info(messages.save.success);
+    },
+
+    saveOutdated: function () {
+      notification.error(messages.save.outdated);
+    },
+
+    saveApiError: function (err) {
+      var message = saveError + getServerMessage(err);
+      notification.error(message);
+      logger.logServerWarn('Error activating Content Type', {error: err});
+    }
+  };
+
+
+  function getServerMessage (err) {
+    return dotty.get(err, 'body.message') ||
+           dotty.get(err, 'body.sys.id') ||
+           'Unknown server error';
   }
 
 }]);

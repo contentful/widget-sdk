@@ -114,6 +114,7 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
+   * @name TheLocaleStore#setActiveStates
   */
   function setActiveStates(localeActiveStates) {
     _state.localeActiveStates = localeActiveStates;
