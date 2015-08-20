@@ -84,10 +84,11 @@ angular.module('contentful')
     trackDelete();
     return $scope.locale.delete()
     .then(function deletedSuccesfully () {
-      notification.info('Locale deleted successfully');
       return tokenStore.getUpdatedToken().then(function () {
         TheLocaleStore.refreshLocales();
         return $scope.closeState();
+      }).finally(function () {
+        notification.info('Locale deleted successfully');
       });
     }, function errorDeletingLocale (err) {
       resetFormStatusOnFailure();
