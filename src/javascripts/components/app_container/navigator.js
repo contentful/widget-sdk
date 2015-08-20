@@ -473,21 +473,20 @@ angular.module('contentful').config([
   });
 
 
+  // TODO remove this state and replace it with a route redirect
   $stateProvider.state('otherwise', {
     url: '*path',
     template: ''
   });
 }])
 .run(['$rootScope', '$state', '$stateParams', '$injector', function ($rootScope, $state, $stateParams, $injector) {
-  var modalDialog  = $injector.get('modalDialog'),
-      $q           = $injector.get('$q'),
-      $document    = $injector.get('$document'),
-      notification = $injector.get('notification'),
-      tokenStore   = $injector.get('tokenStore'),
-      spacesStore  = $injector.get('spacesStore'),
-      logger       = $injector.get('logger'),
-      // Result of confirmation dialog
-      navigationConfirmed = false;
+  var $document    = $injector.get('$document');
+  var notification = $injector.get('notification');
+  var tokenStore   = $injector.get('tokenStore');
+  var spacesStore  = $injector.get('spacesStore');
+  var logger       = $injector.get('logger');
+  // Result of confirmation dialog
+  var navigationConfirmed = false;
 
   $rootScope.$state = $state;
   $rootScope.$stateParams = $stateParams;
@@ -537,19 +536,24 @@ angular.module('contentful').config([
     }
 
     // Decide if it is OK to do the transition (unsaved changes etc)
-    if (!navigationConfirmed && dotty.get(fromState, 'data.dirty') && dotty.exists(fromState, 'data.closingMessage')) {
+    var stateData = fromState.data || {};
+    var requestLeaveConfirmation = stateData.requestLeaveConfirmation;
+    var needConfirmation = !navigationConfirmed &&
+                           stateData.dirty &&
+                           requestLeaveConfirmation;
+    navigationConfirmed = false;
+    if (needConfirmation) {
       event.preventDefault();
-      navigationConfirmed = false;
-      confirmNavigation(fromState).then(function (reply) {
-        if (reply.navConfirmed) {
+      requestLeaveConfirmation().then(function (confirmed) {
+        if (confirmed) {
           navigationConfirmed = true;
           $rootScope.$state.go(toState.name, toStateParams);
         }
       });
-    } else {
-      navigationConfirmed = false;
-      preprocessStateChange(event, toState, toStateParams);
+      return;
     }
+
+    preprocessStateChange(event, toState, toStateParams);
   }
 
   function preprocessStateChange(event, toState, toStateParams) {
@@ -632,35 +636,5 @@ angular.module('contentful').config([
   function getAddToContext(params) {
     return JSON.stringify(_.omit(params, 'addToContext'));
   }
-
-  function confirmNavigation(state) {
-    return modalDialog.open({
-      title: 'Unsaved Changes',
-      confirmLabel: 'Return to Editor',
-      cancelLabel: 'Discard Changes',
-      disableTopCloseButton: true,
-      noBackgroundClose: true,
-      html: true,
-      message: prepareClosingMessage(state.data.closingMessage),
-      scope: $rootScope
-    }).promise
-    .then(function () {
-      // Primary confirm action in dialog means return to editor
-      // which means navigation is not confirmed
-      return {navConfirmed: false};
-    }, function () {
-      // Secondary cancel action in dialog means discard changes
-      // which means we can navigate away from the current page
-      return {navConfirmed: true};
-    });
-  }
-
-  function prepareClosingMessage(message) {
-    if(_.isArray(message)){
-      message = message.join('</p><p>');
-    }
-    return '<p>'+message+'</p>';
-  }
-
 
 }]);

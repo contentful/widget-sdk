@@ -27,15 +27,13 @@ function ContentTypeEditorController($scope, $injector) {
   var editingInterfaces = $injector.get('editingInterfaces');
   var modalDialog       = $injector.get('modalDialog');
   var openFieldDialog   = $injector.get('openFieldDialog');
+  var leaveConfirmator  = $injector.get('navigation/confirmLeaveEditor');
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
   $scope.hints = hints;
 
-  $scope.context.closingMessage = [
-    'You edited the Content Type but didn\'t save your changes.',
-    'Please either save or discard them'
-  ];
+  $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.runSave);
 
   $scope.fieldSchema                        = validation(validation.schemas.ContentType.at(['fields']).items);
   $scope.regulateDisplayField               = regulateDisplayField;

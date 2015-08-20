@@ -1,13 +1,14 @@
 'use strict';
 
 angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$injector', function($scope, $injector) {
-  var controller  = this;
-  var environment = $injector.get('environment');
-  var notifier    = $injector.get('apiKeyEditor/notifications');
-  var $window     = $injector.get('$window');
-  var $rootScope  = $injector.get('$rootScope');
-  var Command     = $injector.get('command');
-  var truncate    = $injector.get('stringUtils').truncate;
+  var controller       = this;
+  var environment      = $injector.get('environment');
+  var notifier         = $injector.get('apiKeyEditor/notifications');
+  var $window          = $injector.get('$window');
+  var $rootScope       = $injector.get('$rootScope');
+  var Command          = $injector.get('command');
+  var truncate         = $injector.get('stringUtils').truncate;
+  var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
 
   var IOS_RE = /(iphone os|ipad|iphone)/gi;
   $scope.isIos = IOS_RE.test($window.navigator.userAgent);
@@ -16,10 +17,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     return truncate($scope.apiKey.getName(), 50);
   });
 
-  $scope.context.closingMessage = [
-    'You edited the Api Key but didn\'t save your changes.',
-    'Please either save or discard them'
-  ];
+  $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
 
   $scope.environment = environment;
 

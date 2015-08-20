@@ -59,7 +59,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       _.pick(params,
              'title', 'message', 'html', 'template',
              'cancelLabel', 'confirmLabel', 'className', 'disableTopCloseButton',
-             'noBackgroundClose', 'attachTo', 'ignoreEnter', 'ignoreEsc')
+             'noBackgroundClose', 'attachTo', 'ignoreEnter', 'ignoreEsc', 'enterAction')
     );
     this._deferred = $q.defer();
     this.promise = this._deferred.promise;
@@ -105,10 +105,16 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       var dialog = this;
       dialog.scope.$apply(function(){
         if (ev.target.tagName.toLowerCase() == 'select') return;
-        if (!dialog.params.ignoreEsc && ev.keyCode === keycodes.ESC)
+        if (!dialog.params.ignoreEsc && ev.keyCode === keycodes.ESC) {
           dialog.cancel();
-        if (!dialog.params.ignoreEnter && ev.keyCode === keycodes.ENTER)
-          dialog.confirm();
+        }
+        if (!dialog.params.ignoreEnter && ev.keyCode === keycodes.ENTER) {
+          if (dialog.params.enterAction) {
+            dialog.params.enterAction();
+          } else {
+            dialog.confirm();
+          }
+        }
       });
     },
 
