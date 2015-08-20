@@ -11,8 +11,10 @@ describe('otPath', function() {
         $rootScope.foo = 'FOO';
         $rootScope.entity = 'ENTITY';
         $rootScope.otDoc = {
-          getAt: function () {
-            return aValue;
+          doc: {
+            getAt: function () {
+              return aValue;
+            }
           }
         };
         elem = $compile('<div ot-doc-for="entity"><div ot-path="[foo, \'bar\']"></div></div>')($rootScope).find('div').get(0);
@@ -45,21 +47,21 @@ describe('otPath', function() {
         scope.$emit('otRemoteOp', op);
         expect(scope.$broadcast).not.toHaveBeenCalled();
       });
-      
+
     });
   });
 
   describe('changing the value', function () {
     describe('when the path is present in the otDoc', function () {
       it('should set the value', function () {
-        scope.otDoc.setAt = function (path, value, callback) {
+        scope.otDoc.doc.setAt = function (path, value, callback) {
           _.defer(callback, null);
         };
-        spyOn(scope.otDoc, 'setAt');
+        spyOn(scope.otDoc.doc, 'setAt');
         scope.otChangeValue('bla');
-        expect(scope.otDoc.setAt).toHaveBeenCalled();
-        expect(scope.otDoc.setAt.calls.mostRecent().args[0]).toEqual(scope.otPath);
-        expect(scope.otDoc.setAt.calls.mostRecent().args[1]).toEqual('bla');
+        expect(scope.otDoc.doc.setAt).toHaveBeenCalled();
+        expect(scope.otDoc.doc.setAt.calls.mostRecent().args[0]).toEqual(scope.otPath);
+        expect(scope.otDoc.doc.setAt.calls.mostRecent().args[1]).toEqual('bla');
       });
     });
     describe('when the path is not present in the otDoc', function () {
@@ -71,7 +73,7 @@ describe('otPath', function() {
         scope.otChangeValue('bla');
         expect(mkpathAndSetValue).toHaveBeenCalled();
         expect(mkpathAndSetValue.calls.mostRecent().args[0]).toEqual({
-          doc: scope.otDoc,
+          doc: scope.otDoc.doc,
           path: scope.otPath,
           types: undefined,
           value: 'bla'

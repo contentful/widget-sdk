@@ -166,9 +166,11 @@ describe('EntryLinkEditorController', function () {
       scope.updateModel = sinon.stub();
 
       scope.otDoc = {
-        at: sinon.stub()
+        doc: {
+          at: sinon.stub()
+        }
       };
-      scope.otDoc.at.returns({
+      scope.otDoc.doc.at.returns({
         push: stubs.otDocPush,
         remove: stubs.remove
       });

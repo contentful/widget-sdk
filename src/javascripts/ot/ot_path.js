@@ -43,11 +43,8 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
     controller: ['$scope', function OtPathController($scope) {
       $scope.$on('otRemoteOp', function (event, op) {
         var scope = event.currentScope;
-        //if (isSubPath(op.p)) {
         if (angular.equals(op.p, scope.otPath)) {
-          // TODO introduce ot-on-change attr that can be used to bind instead of the events
-          //console.log('broadcasting otValueChanged', scope.otPath, scope.otDoc, scope.otDoc.getAt(op.p));
-          scope.$broadcast('otValueChanged', scope.otPath, scope.otDoc.getAt(op.p));
+          scope.$broadcast('otValueChanged', scope.otPath, scope.otDoc.doc.getAt(op.p));
         }
       });
 
@@ -65,7 +62,7 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
        * for more natural collaboration.
        */
       $scope.otChangeString = function (newValue) {
-        if ($scope.otDoc) {
+        if ($scope.otDoc.doc) {
           var oldValue = $scope.otGetValue();
           var cb = $q.callbackWithApply(),
               cbOp1 = $q.callbackWithApply(),
@@ -73,7 +70,7 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
 
           if (!oldValue || !newValue) {
             ShareJS.mkpathAndSetValue({
-              doc: $scope.otDoc,
+              doc: $scope.otDoc.doc,
               path: $scope.otPath,
               types: $scope.otPathTypes,
               value: newValue || null
@@ -96,10 +93,10 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
             }
 
             if (oldValue.length !== commonStart + commonEnd) {
-              $scope.otDoc.deleteTextAt($scope.otPath, oldValue.length - commonStart - commonEnd, commonStart, cbOp1);
+              $scope.otDoc.doc.deleteTextAt($scope.otPath, oldValue.length - commonStart - commonEnd, commonStart, cbOp1);
             }
             if (newValue.length !== commonStart + commonEnd) {
-              $scope.otDoc.insertAt($scope.otPath, commonStart, newValue.slice(commonStart, newValue.length - commonEnd), cbOp2);
+              $scope.otDoc.doc.insertAt($scope.otPath, commonStart, newValue.slice(commonStart, newValue.length - commonEnd), cbOp2);
             }
             return $q.all(cbOp1.promise, cbOp2.promise);
           }
@@ -109,14 +106,14 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
       };
 
       $scope.otChangeValue = function (value) {
-        if ($scope.otDoc) {
+        if ($scope.otDoc.doc) {
           var stopSpin = cfSpinner.start();
           var cb = $q.callbackWithApply();
           try {
-            $scope.otDoc.setAt($scope.otPath, value, cb);
+            $scope.otDoc.doc.setAt($scope.otPath, value, cb);
           } catch(e) {
             ShareJS.mkpathAndSetValue({
-              doc: $scope.otDoc,
+              doc: $scope.otDoc.doc,
               path: $scope.otPath,
               types: $scope.otPathTypes,
               value: value
@@ -130,20 +127,20 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
         }
       };
 
-      $scope.$watch('otDoc', init);
+      $scope.$watch('otDoc.doc', init);
       $scope.$watch('otPath', init);
 
       function init(val, old, scope) {
         // dispatch initial otValueChanged
-        if (scope.otPath && scope.otDoc) {
+        if (scope.otPath && scope.otDoc.doc) {
           //console.log('init path', scope.otPath, scope.otGetValue());
           scope.$broadcast('otValueChanged', scope.otPath, scope.otGetValue());
         }
       }
 
       $scope.otGetValue = function () {
-        if ($scope.otDoc) {
-          return ShareJS.peek($scope.otDoc, $scope.otPath);
+        if ($scope.otDoc.doc) {
+          return ShareJS.peek($scope.otDoc.doc, $scope.otPath);
         } else {
           return void(0);
         }

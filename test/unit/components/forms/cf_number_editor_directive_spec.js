@@ -10,7 +10,8 @@ describe('Number widgets', function () {
       scope = $rootScope;
       scope.fieldData = {value: null};
       scope.field = {type: null};
-      scope.otEditable = true;
+      scope.otDoc = {doc: {}, state: {}};
+      scope.otDoc.state.editable = true;
     });
   });
 
@@ -72,4 +73,3 @@ describe('Number widgets', function () {
     });
   });
 });
-

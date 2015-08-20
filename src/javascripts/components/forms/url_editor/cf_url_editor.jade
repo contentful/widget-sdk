@@ -3,7 +3,7 @@ input.form-control(
   ng-model="fieldData.value"
   ot-bind-text
   ot-subdoc
-  ng-disabled="!otEditable"
+  ng-disabled="!otDoc.state.editable"
 )
 
 i.fa.fa-exclamation-triangle.is-url-invalid(

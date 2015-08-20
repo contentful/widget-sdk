@@ -3,7 +3,7 @@
 angular.module('contentful').directive('cfNumberEditor', function(){
   return {
     restrict: 'A',
-    template: '<input type="text" class="form-control" ng-model="fieldData.value" ot-bind-model ng-disabled="!otEditable"><i cf-field-alert="{{parseWarning}}" tooltip-placement="left"></i>',
+    template: '<input type="text" class="form-control" ng-model="fieldData.value" ot-bind-model ng-disabled="!otDoc.state.editable"><i cf-field-alert="{{parseWarning}}" tooltip-placement="left"></i>',
     link: function(scope, elem){
       var ngModel = elem.find('input').controller('ngModel');
       ngModel.$parsers.push(function (viewValue) {

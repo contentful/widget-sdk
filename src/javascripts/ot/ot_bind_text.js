@@ -136,7 +136,7 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
       function makeAndAttach(subdoc, text){
         text = text === undefined ? '' : text;
         ShareJS.mkpathAndSetValue({
-          doc: scope.otDoc,
+          doc: scope.otDoc.doc,
           path: subdoc.path,
           types: subdoc.types,
           value: text

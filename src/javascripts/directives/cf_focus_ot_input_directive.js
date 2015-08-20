@@ -22,8 +22,8 @@ angular.module('contentful').directive('cfFocusOtInput', ['defer', function(defe
     restrict: 'A',
     link: function(scope, elem, attrs){
       if(scope.$eval(attrs.cfFocusOtInput) || _.isEmpty(attrs.cfFocusOtInput)){
-        var unwatchEditable = scope.$watch('otEditable', function focus() {
-          if (scope.otEditable) {
+        var unwatchEditable = scope.$watch('otDoc.state.editable', function focus() {
+          if (scope.otDoc.state.editable) {
             var input = elem.find('input').eq(0);
             defer(function () { input.focus(); });
             unwatchEditable();

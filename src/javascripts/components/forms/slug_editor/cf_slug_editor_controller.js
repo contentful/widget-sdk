@@ -12,8 +12,8 @@ angular.module('contentful').controller('SlugEditorController', ['$scope', '$inj
   var debouncedPerformDuplicityCheck = debounce(performDuplicityCheck, 500);
   var unwatchers = [];
 
-  $scope.$watch('otEditable', function (otEditable) {
-    if (otEditable) {
+  $scope.$watch('otDoc.state.editable', function (editable) {
+    if (editable) {
       unwatchers.push($scope.$watch('entry.isPublished()', updateDivergedStatus));
       unwatchers.push($scope.$watch('fieldData.value', updateStateFromSlug));
       unwatchers.push($scope.$watch(currentTitle, updateSlugFromTitle));

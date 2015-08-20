@@ -39,6 +39,7 @@ describe('cfGoogleMaps Directive', function () {
     };
     this.stubs = stubs;
     this.scope = this.$inject('$rootScope').$new();
+    this.scope.otDoc = {doc: {}, state: {}};
     this.scope.locationIsValid = sinon.stub();
     this.scope.otBindInternalChangeHandler = sinon.stub();
     this.compileElement = function () {
@@ -77,15 +78,15 @@ describe('cfGoogleMaps Directive', function () {
     });
   });
 
-  describe('watches for otEditable status', function() {
-    it('makes marker draggable when otEditable is true', function () {
-      this.scope.otEditable = true;
+  describe('watches for otDoc.state.editable status', function() {
+    it('makes marker draggable when otDoc.state.editable is true', function () {
+      this.scope.otDoc.state.editable = true;
       this.compileElement();
       expect(this.stubs.setDraggable.args[0][0]).toBeTruthy();
     });
 
-    it('makes marker not draggable when otEditable is false', function () {
-      this.scope.otEditable = false;
+    it('makes marker not draggable when otDoc.state.editable is false', function () {
+      this.scope.otDoc.state.editable = false;
       this.compileElement();
       expect(this.stubs.setDraggable.args[0][0]).toBeFalsy();
     });
@@ -150,16 +151,16 @@ describe('cfGoogleMaps Directive', function () {
     expect(this.element.find('.invalid-location-warning').length).toBe(0);
   });
 
-  it('search is not shown if otEditable is not initiated ', function () {
+  it('search is not shown if otDoc.state.editable is not initiated ', function () {
     this.compileElement();
-    this.scope.otEditable = false;
+    this.scope.otDoc.state.editable = false;
     this.scope.$digest();
     expect(this.element.find('.search')).toBeNgHidden();
   });
 
-  it('search is shown if otEditable is not initiated ', function () {
+  it('search is shown if otDoc.state.editable is not initiated ', function () {
     this.compileElement();
-    this.scope.otEditable = true;
+    this.scope.otDoc.state.editable = true;
     this.scope.$digest();
     expect(this.element.find('.search')).not.toBeNgHidden();
   });
@@ -167,7 +168,7 @@ describe('cfGoogleMaps Directive', function () {
   describe('rendering results', function() {
     beforeEach(function() {
       this.compileElement();
-      this.scope.otEditable = true;
+      this.scope.otDoc.state.editable = true;
       this.scope.selectedResult = {address: 'address', strippedLocation: {lat: 123, lon: 456}};
       this.scope.results = [
         this.scope.selectedResult,

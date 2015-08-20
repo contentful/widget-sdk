@@ -31,7 +31,7 @@ angular.module('contentful').
     var lastFieldId;
     var lastFocus;
 
-    $scope.$watch('otDoc', otDocChangeHandler);
+    $scope.$watch('otDoc.doc', otDocChangeHandler);
     $scope.$on('$stateChangeStart', stateChangeStartHandler);
     $scope.$on('$destroy', destroyHandler);
 
@@ -57,7 +57,7 @@ angular.module('contentful').
       lastFieldId = fieldId;
       lastFocus = now;
       ownPresence.focus = fieldId;
-      var doc = $scope.otDoc;
+      var doc = $scope.otDoc.doc;
       if (!doc) return;
       doc.shout(['focus', ownUserId, fieldId]);
     };
@@ -80,9 +80,9 @@ angular.module('contentful').
     }
 
     function stateChangeStartHandler() {
-      var docExists = !!($scope.otDoc);
+      var docExists = !!($scope.otDoc.doc);
       if (!docExists) { return; }
-      closedHandler($scope.otDoc);
+      closedHandler($scope.otDoc.doc);
     }
 
     function otDocChangeHandler(doc, old) {
@@ -115,9 +115,9 @@ angular.module('contentful').
 
         if (type === 'open') {
           if (ownPresence.focus)
-            scope.otDoc.shout(['focus', ownUserId, ownPresence.focus]);
+            scope.otDoc.doc.shout(['focus', ownUserId, ownPresence.focus]);
           else
-            scope.otDoc.shout(['ping', ownUserId]);
+            scope.otDoc.doc.shout(['ping', ownUserId]);
           presence[from] = {};
         }
 
@@ -154,9 +154,9 @@ angular.module('contentful').
       var scope = event.currentScope;
       controller.focus = null;
       $timeout.cancel(timeout);
-      if (scope.otDoc) {
-        scope.otDoc.removeListener('closed', closedHandler);
-        scope.otDoc.removeListener('shout', shoutHandler);
+      if (scope.otDoc.doc) {
+        scope.otDoc.doc.removeListener('closed', closedHandler);
+        scope.otDoc.doc.removeListener('shout', shoutHandler);
       }
     }
 

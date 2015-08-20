@@ -43,7 +43,7 @@ xdescribe('validation dialog', function() {
       return dialog;
     };
 
-    scope.otEditable = true;
+    scope.otDoc = {state: {editable: true}};
     scope.field = {type: 'Text'};
     scope.index = 1;
     scope.contentTypeForm = {$setDirty: sinon.stub()};
@@ -512,7 +512,7 @@ xdescribe('validation dialog', function() {
 
   describe('array length validation', function() {
     beforeEach(function() {
-      scope.otEditable = true;
+      scope.otDoc = {state: {editable: true}};
       scope.field = {type: 'Array', items: {type: 'Symbol'}};
       openDialog();
     });

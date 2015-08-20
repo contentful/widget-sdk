@@ -76,7 +76,7 @@ textarea.form-control.markdown-textarea(
   ng-model="fieldData.value"
   ot-subdoc
   ot-bind-text
-  ng-disabled="!otEditable"
+  ng-disabled="!otDoc.state.editable"
   ng-show="inEditMode()")
 
 .cf-markdown-guide(cf-markdown-guide ng-if="inEditMode()")

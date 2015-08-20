@@ -27,9 +27,9 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
   });
 
   $scope.$watch(function (scope) {
-    if (scope.otDoc && scope.entry) {
+    if (scope.otDoc.doc && scope.entry) {
       if (angular.isDefined(scope.entry.getPublishedVersion()))
-        return scope.otDoc.version > scope.entry.getPublishedVersion() + 1;
+        return scope.otDoc.doc.version > scope.entry.getPublishedVersion() + 1;
       else
         return 'draft';
     } else {
@@ -51,10 +51,10 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
   $scope.$watch(function entryEditorEnabledWatcher(scope) {
     return !scope.entry.isArchived() && scope.permissionController.can('update', scope.entry.data).can;
   }, function entryEditorEnabledHandler(enabled, old, scope) {
-    scope.otDisabled = !enabled;
+    scope.otDoc.state.disabled = !enabled;
   });
   $scope.$on('otRemoteOp', function (event) {
-    event.currentScope.otUpdateEntityData();
+    event.currentScope.otDoc.updateEntityData();
   });
 
   // Validations
@@ -155,7 +155,7 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
 
   // Prevents badly created fields via the API from breaking the editor
   function cleanupEntryFields(contentTypeFields) {
-    $scope.$watchGroup(['::entry', '::otDoc'], function (values) {
+    $scope.$watchGroup(['::entry', '::otDoc.doc'], function (values) {
       if(!_.isEmpty($scope.entry.data.fields) && areValuesDefined(values)){
         _.each($scope.entry.data.fields, _.partial(setupFieldLocales, contentTypeFields));
       }
@@ -181,7 +181,7 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
       } else {
         newField[TheLocaleStore.getDefaultLocale().internal_code] = null;
       }
-      $scope.otDoc.at(['fields', fieldId]).set(newField);
+      $scope.otDoc.doc.at(['fields', fieldId]).set(newField);
     }
   }
 

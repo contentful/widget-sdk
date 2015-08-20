@@ -79,12 +79,12 @@ angular.module('contentful').controller('LinkEditorController',
       promise = $scope.otChangeValue(link).then(function () { $scope.links = [link]; });
     } else {
       cb = $q.callbackWithApply();
-      if (_.isArray(ShareJS.peek($scope.otDoc, $scope.otPath))) {
-        $scope.otDoc.at($scope.otPath).push(link, cb);
+      if (_.isArray(ShareJS.peek($scope.otDoc.doc, $scope.otPath))) {
+        $scope.otDoc.doc.at($scope.otPath).push(link, cb);
         promise = cb.promise.then(function () { $scope.links.push(link); });
       } else {
         ShareJS.mkpathAndSetValue({
-          doc: $scope.otDoc,
+          doc: $scope.otDoc.doc,
           path: $scope.otPath,
           types: $scope.otPathTypes,
           value: [link]
@@ -136,13 +136,13 @@ angular.module('contentful').controller('LinkEditorController',
       cb = $q.callbackWithApply();
       var path = $scope.otPath.concat(index);
       try {
-        $scope.otDoc.at(path).remove(cb);
+        $scope.otDoc.doc.at(path).remove(cb);
       } catch(exp){
         logger.logError('No element at that path', {
           data: {
             exp: exp,
             path: path,
-            snapshot: $scope.otDoc.snapshot
+            snapshot: $scope.otDoc.doc.snapshot
           }
         });
       }

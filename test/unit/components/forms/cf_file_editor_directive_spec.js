@@ -29,6 +29,8 @@ describe('cfFileEditor Directive', function () {
     inject(function ($compile, $rootScope) {
       scope = $rootScope.$new();
 
+      scope.otDoc = {doc: {}, state: {}};
+
       scope.fieldData = {
         fileName: 'file.jpg',
         fileType: 'image/jpeg'

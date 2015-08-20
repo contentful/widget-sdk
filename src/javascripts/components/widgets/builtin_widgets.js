@@ -41,7 +41,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     fieldTypes: ['Text', 'Symbol'],
     name: 'Single Line',
     icon: 'singleline',
-    template: '<input class="form-control" ng-disabled="!otEditable" ng-model="fieldData.value" ot-bind-text ot-subdoc type="text">'
+    template: '<input class="form-control" ng-disabled="!otDoc.state.editable" ng-model="fieldData.value" ot-bind-text ot-subdoc type="text">'
   });
 
   widgets.registerWidget('urlEditor', {
@@ -65,7 +65,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     fieldTypes: ['Text'],
     name: 'Multiple Line',
     icon: 'multipleline',
-    template: '<textarea msd-elastic class="form-control" ng-disabled="!otEditable" ng-model="fieldData.value" ot-bind-text ot-subdoc></textarea>'
+    template: '<textarea msd-elastic class="form-control" ng-disabled="!otDoc.state.editable" ng-model="fieldData.value" ot-bind-text ot-subdoc></textarea>'
   });
 
   widgets.registerWidget('markdown',{
@@ -168,7 +168,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     defaultHelpText: 'Insert comma separated values',
     name: 'List',
     icon: 'singleline',
-    template: '<input cf-list-identity-fix class="form-control" ng-disabled="!otEditable" ng-list cf-empty-list ng-model="fieldData.value" ot-bind-model type="text">'
+    template: '<input cf-list-identity-fix class="form-control" ng-disabled="!otDoc.state.editable" ng-list cf-empty-list ng-model="fieldData.value" ot-bind-model type="text">'
   });
 
   widgets.registerWidget('fileEditor',{

@@ -23,6 +23,7 @@ describe('cfLocationEditor Directive', function () {
 
     this.stubs = stubs;
     this.scope = this.$inject('$rootScope').$new();
+    this.scope.otDoc = {doc: {}, state: {}};
     this.scope.locationIsValid = sinon.stub();
     dotty.put(this.scope, 'fieldData.value', {});
     this.compileElement = function () {
@@ -158,10 +159,10 @@ describe('cfLocationEditor Directive', function () {
 
   });
 
-  describe('if otEditable is not initiated', function() {
+  describe('if otDoc.state.editable is not initiated', function() {
     beforeEach(function() {
       this.compileElement();
-      this.scope.otEditable = false;
+      this.scope.otDoc.state.editable = false;
       this.scope.$digest();
     });
 
@@ -178,10 +179,10 @@ describe('cfLocationEditor Directive', function () {
     });
   });
 
-  describe('if otEditable is initiated', function() {
+  describe('if otDoc.state.editable is initiated', function() {
     beforeEach(function() {
       this.compileElement();
-      this.scope.otEditable = true;
+      this.scope.otDoc.state.editable = true;
       this.scope.$digest();
     });
 

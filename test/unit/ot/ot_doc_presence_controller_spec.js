@@ -4,9 +4,11 @@ describe('otDocPresenceController', function(){
 
   function makeOtDoc() {
     return {
-      shout: sinon.stub(),
-      on: sinon.stub().yieldsAsync([]),
-      removeListener: sinon.stub()
+      doc: {
+        shout: sinon.stub(),
+        on: sinon.stub().yieldsAsync([]),
+        removeListener: sinon.stub()
+      }
     };
   }
 
@@ -28,7 +30,7 @@ describe('otDocPresenceController', function(){
 
   it('presence watcher creates otPresence on scope', function(){
     this.$scope.otDoc = makeOtDoc();
-    this.$scope.otDoc.on = sinon.stub().yieldsAsync([]);
+    this.$scope.otDoc.doc.on = sinon.stub().yieldsAsync([]);
     this.$scope.$digest();
     expect(this.$scope.otPresence).toBeDefined();
   });
@@ -36,7 +38,7 @@ describe('otDocPresenceController', function(){
   describe('presence defines a source user (from)', function(){
     beforeEach(function(done){
       this.$scope.otDoc = makeOtDoc();
-      this.$scope.otDoc.on = sinon.stub().yieldsAsync([ '', 'sourceUser']);
+      this.$scope.otDoc.doc.on = sinon.stub().yieldsAsync([ '', 'sourceUser']);
       this.$scope.$digest();
       // defer due to $apply on shoutHandler
       _.defer(function () { done(); });
@@ -54,18 +56,18 @@ describe('otDocPresenceController', function(){
     });
 
     it('shouts about user opening a doc', function(){
-      sinon.assert.called(this.$scope.otDoc.shout);
+      sinon.assert.called(this.$scope.otDoc.doc.shout);
     });
 
     it('listens for further shout events on doc', function(){
-      sinon.assert.called(this.$scope.otDoc.on);
+      sinon.assert.called(this.$scope.otDoc.doc.on);
     });
   });
 
   describe('handles focus shout', function(){
     beforeEach(function(done){
       this.$scope.otDoc = makeOtDoc();
-      this.$scope.otDoc.on = sinon.stub().yieldsAsync(['focus', 'sourceUser', 'fieldId']);
+      this.$scope.otDoc.doc.on = sinon.stub().yieldsAsync(['focus', 'sourceUser', 'fieldId']);
       this.$scope.$digest();
       // defer due to $apply on shoutHandler
       _.defer(function () { done(); });
@@ -85,28 +87,28 @@ describe('otDocPresenceController', function(){
       beforeEach(function(done){
         this.controller.focus('fieldId');
         this.$scope.otDoc = makeOtDoc();
-        this.$scope.otDoc.on = sinon.stub().yieldsAsync(['open', 'ownUser']);
+        this.$scope.otDoc.doc.on = sinon.stub().yieldsAsync(['open', 'ownUser']);
         this.$scope.$digest();
         // defer due to $apply on shoutHandler
         _.defer(function () { done(); });
       });
 
       it('shouts focus', function(){
-        sinon.assert.calledWith(this.$scope.otDoc.shout, ['focus', 'ownUser', 'fieldId']);
+        sinon.assert.calledWith(this.$scope.otDoc.doc.shout, ['focus', 'ownUser', 'fieldId']);
       });
     });
 
     describe('with no focused field', function(){
       beforeEach(function(done){
         this.$scope.otDoc = makeOtDoc();
-        this.$scope.otDoc.on = sinon.stub().yieldsAsync(['open']);
+        this.$scope.otDoc.doc.on = sinon.stub().yieldsAsync(['open']);
         this.$scope.$digest();
         // defer due to $apply on shoutHandler
         _.defer(function () { done(); });
       });
 
       it('shouts focus', function(){
-        sinon.assert.calledWith(this.$scope.otDoc.shout, ['ping', 'ownUser']);
+        sinon.assert.calledWith(this.$scope.otDoc.doc.shout, ['ping', 'ownUser']);
       });
     });
   });
@@ -114,10 +116,10 @@ describe('otDocPresenceController', function(){
   describe('handles close shout', function(){
     beforeEach(function(done){
       this.$scope.otDoc = makeOtDoc();
-      this.$scope.otDoc.on = sinon.stub().yieldsAsync(['', 'sourceUser']);
+      this.$scope.otDoc.doc.on = sinon.stub().yieldsAsync(['', 'sourceUser']);
       this.$scope.$digest();
       this.$scope.otDoc = makeOtDoc();
-      this.$scope.otDoc.on = sinon.stub().yieldsAsync(['close', 'sourceUser']);
+      this.$scope.otDoc.doc.on = sinon.stub().yieldsAsync(['close', 'sourceUser']);
       this.$scope.$digest();
       // defer due to $apply on shoutHandler
       _.defer(function () { done(); });

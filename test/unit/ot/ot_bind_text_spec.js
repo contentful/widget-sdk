@@ -28,7 +28,9 @@ describe('otBindText', function () {
     $rootScope.entity = {value: 'xx'};
     elem = $compile('<input type="text" ng-model="entity.value" ot-doc-for="entity" ot-path="[\'value\']" ot-subdoc ot-bind-text>')($rootScope);
     scope = elem.scope();
-    scope.otDisabled = false;
+    scope.otDoc = {
+      state: { disabled: false }
+    };
     controller = elem.controller('ngModel');
   }));
 

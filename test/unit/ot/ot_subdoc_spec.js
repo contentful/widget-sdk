@@ -40,7 +40,7 @@ describe('otSubdoc', function () {
   });
 
   it('should set the subdoc to null if the otDoc disappears', function () {
-    scope.$root.otDoc = null;
+    scope.$root.otDoc.doc = null;
     scope.$apply();
     expect(scope.otSubdoc).toBe(null);
   });
@@ -53,16 +53,16 @@ describe('otSubdoc', function () {
 
   function makeDoc() {
     return {
-      at: function (path) {
-        var doc = this;
-        subdoc = {
-          doc: doc,
-          path: path
-        };
-        return subdoc;
+      doc: {
+        at: function (path) {
+          var doc = this;
+          subdoc = {
+            doc: doc,
+            path: path
+          };
+          return subdoc;
+        }
       }
     };
   }
 });
-
-

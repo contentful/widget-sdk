@@ -4,18 +4,18 @@ angular.module('contentful').controller('SaveStatusController', ['$scope', 'defe
   $scope.saveStatus = 'no_connection';
 
   $scope.$watch(function (scope) {
-    if (scope.otDoc) {
+    if (scope.otDoc.doc) {
       if (scope.saving) {
         scope.saveStatus = 'saving';
       } else if(typeof scope.saving == 'undefined'){
         scope.saveStatus = 'last-saved-at';
-        var updatedAt = scope.otGetEntity().getUpdatedAt();
+        var updatedAt = scope.otDoc.getEntity().getUpdatedAt();
         scope.lastSavedAt = updatedAt;
       } else {
         scope.saveStatus = 'saved';
       }
     } else {
-      if (scope.otDisabled) {
+      if (scope.otDoc.state.disabled) {
         scope.saveStatus = 'not-allowed';
       } else {
         scope.saveStatus = 'no-connection';
@@ -33,7 +33,7 @@ angular.module('contentful').controller('SaveStatusController', ['$scope', 'defe
 
   var detachHandlers;
 
-  $scope.$watch('otDoc', function (doc) {
+  $scope.$watch('otDoc.doc', function (doc) {
     if (detachHandlers) detachHandlers();
 
     if (doc) {

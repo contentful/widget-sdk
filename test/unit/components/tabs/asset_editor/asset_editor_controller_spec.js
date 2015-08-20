@@ -40,6 +40,7 @@ describe('Asset editor controller', function () {
       logger = $injector.get('logger');
       notification = $injector.get('notification');
       scope = $rootScope.$new();
+      scope.otDoc = {doc: {}, state: {}};
       scope.permissionController = { can: sinon.stub() };
       scope.permissionController.can.returns({can: true});
 
@@ -73,27 +74,32 @@ describe('Asset editor controller', function () {
     expect(scope.context.title).toBe('title');
   });
 
-  describe('sets the otDisabled flag', function () {
+  describe('sets the otDoc.state.disabled flag', function () {
     beforeEach(function () {
+      scope.otDoc = {
+        doc: {},
+        state: { disabled: false }
+      };
       stubs.isArchived.returns(false);
     });
 
     it('to disabled', function () {
       scope.permissionController.can.returns({can: true});
       scope.$apply();
-      expect(scope.otDisabled).toBe(false);
+      expect(scope.otDoc.state.disabled).toBe(false);
     });
 
     it('to enabled', function () {
       scope.permissionController.can.returns({can: false});
       scope.$apply();
-      expect(scope.otDisabled).toBe(true);
+      expect(scope.otDoc.state.disabled).toBe(true);
     });
   });
 
   describe('validation on publish', function () {
     beforeEach(inject(function ($compile, $rootScope, $controller, cfStub){
       scope = $rootScope.$new();
+      scope.otDoc = {doc: {}, state: {}};
       scope.permissionController = { can: sinon.stub() };
       scope.permissionController.can.returns({can: true});
 
@@ -124,7 +130,7 @@ describe('Asset editor controller', function () {
     var otPath, childScope;
     beforeEach(function() {
       childScope = scope.$new();
-      scope.otDoc = { version: 123 };
+      scope.otDoc = { doc: {version: 123} };
       otPath = ['fields', 'title', 'en-US'];
       var fileObj = {fileName: 'file.jpg'};
       scope.$on('fileProcessingFailed', stubs.fileProcessingFailed);
@@ -144,7 +150,7 @@ describe('Asset editor controller', function () {
       });
 
       it('looks for otDoc with locale', function() {
-        sinon.assert.calledWith(stubs.peek, scope.otDoc, otPath);
+        sinon.assert.calledWith(stubs.peek, scope.otDoc.doc, otPath);
       });
 
       it('creates otDoc', function() {
@@ -152,7 +158,7 @@ describe('Asset editor controller', function () {
       });
 
       it('creates otDoc with doc', function() {
-        expect(stubs.mkpathAndSetValue.args[0][0].doc).toEqual(scope.otDoc);
+        expect(stubs.mkpathAndSetValue.args[0][0].doc).toEqual(scope.otDoc.doc);
       });
 
       it('creates otDoc with path', function() {
