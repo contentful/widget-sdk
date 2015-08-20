@@ -16,7 +16,7 @@ p
     .modal-dialog__content
       p.modal-dialog__plaintext this is some plain text
       .modal-dialog__richtext
-        p here is a paragraph
+        p here is a paragraph<br>and a next line
         p here is another one
     .modal-dialog__controls
       button.cfnext-btn-primary-action
@@ -65,6 +65,15 @@ $modal-dialog-horizontal-padding()
     min-height: 1rem
     max-height: none
     display: block
+
+  &.x--flex
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+
+    &:before
+      display: none
 
 
 
@@ -131,7 +140,78 @@ $modal-dialog-chrome()
 
 
 /*
+Notification Dialog
+
+Markup:
+.styleguide-align-horizontally
+  .message-dialog
+    .message-dialog__title
+      button.message-dialog__close
+        img(src="/app/svg/close.svg" height="14")
+      | A message
+    .message-dialog__controls
+      button.cfnext-btn-primary-action
+        | OK
+      button.cfnext-btn-secondary-action
+        | More
+      button.cfnext-btn-plain
+        | Cancel
+  .message-dialog
+    .message-dialog__title
+      button.message-dialog__close
+        img(src="/app/svg/close.svg" height="14")
+      | A message
+    .message-dialog__message
+      | With some additional lines
+    .message-dialog__controls
+      button.cfnext-btn-primary-action
+        | OK
+      button.cfnext-btn-secondary-action
+        | More
+      button.cfnext-btn-plain
+        | Cancel
+
+Styleguide 12.1
+*/
+// TODO this is a superclass of the notification and deletion
+// confirmation dialog
+$message-dialog()
+  $modal-dialog-layout()
+  $modal-dialog-chrome()
+  line-height: 1.5
+  padding: 1.5rem
+  min-width: 58ex
+
+.message-dialog
+  $message-dialog()
+
+  &__title
+    font-size: 1.3em
+    padding-bottom: ($rhythm(0.7) / 1.3em)
+    font-weight: bold
+
+  &__controls
+    margin-top: $rhythm(1.5)
+    display: flex
+    > *:not(:last-child)
+      margin-right: 1em
+
+  &__close
+    float: right
+    text-align: center
+    $button-reset()
+    height: 1.6em
+    width: 1.6em
+    > cf-icon
+      display: inline-block
+      svg path
+        fill: $colors.blue
+
+
+/*
 Confirm Deletion
+
+TODO: refactor
 
 Used in `dialog_confirm_deletion.jade`
 
@@ -158,7 +238,7 @@ Markup:
       button.cfnext-btn-plain
         | Cancel
 
-Styleguide 12.1
+Styleguide 12.2
 */
 
 .modal-dialog
@@ -190,18 +270,15 @@ Markup:
     button.cfnext-btn-primary-action
       | OK
 
-Styleguide 12.2
+Styleguide 12.3
 */
+
 .notification-dialog
-  $modal-dialog-layout()
-  $modal-dialog-chrome()
-  line-height: 1.5
-  padding: 1.5rem
-  min-width: 0
-  width: 63ex
+  $message-dialog();
 
   &__message
     margin-bottom: $rhythm(1)
+
 
 /**
 Modal Dialog Slices
@@ -222,7 +299,7 @@ Markup:
     button.cfnext-btn-primary-action
       | Confirm
 
-Styleguide 12.3
+Styleguide 12.4
 */
 $modal-dialog-slice()
   $modal-dialog-horizontal-padding()
