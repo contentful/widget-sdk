@@ -3,13 +3,14 @@
 describe('context menu', function () {
   beforeEach(module('cf.ui'));
   beforeEach(function () {
-    this.$inject('contextMenu').init();
+    this.detach = this.$inject('contextMenu').init();
     var $document = this.$inject('$document');
     this.$body = $document.find('body');
   });
 
   afterEach(function () {
     this.$body.empty();
+    this.detach();
   });
 
   describe('one context menu', function () {
@@ -100,5 +101,41 @@ describe('context menu', function () {
     });
 
   });
+
+  describe('two context menus', function () {
+
+    var selectA = '[cf-context-menu]:contains(A)';
+    var selectB = '[cf-context-menu]:contains(B)';
+
+    beforeEach(function () {
+      this.$body.append(this.$compile(
+        '<button cf-context-menu-trigger>OpenA</button>' +
+        '<div cf-context-menu>A</div>' +
+        '<button cf-context-menu-trigger>OpenB</button>' +
+        '<div cf-context-menu>B</div>'
+      ));
+    });
+
+    it('it opens the first', function () {
+      expect(this.$body.find(selectA).is(':visible')).toBe(false);
+      this.$body.find('button[cf-context-menu-trigger]:contains(OpenA)').click();
+      expect(this.$body.find(selectA).is(':visible')).toBe(true);
+    });
+
+    it('it opens the second', function () {
+      expect(this.$body.find(selectB).is(':visible')).toBe(false);
+      this.$body.find('button[cf-context-menu-trigger]:contains(OpenB)').click();
+      expect(this.$body.find(selectB).is(':visible')).toBe(true);
+    });
+
+    it('it closes the first when opening the second', function () {
+      this.$body.find('button[cf-context-menu-trigger]:contains(OpenA)').click();
+      expect(this.$body.find(selectA).is(':visible')).toBe(true);
+      this.$body.find('button[cf-context-menu-trigger]:contains(OpenB)').click();
+      expect(this.$body.find(selectA).is(':visible')).toBe(false);
+    });
+
+  });
+
 
 });

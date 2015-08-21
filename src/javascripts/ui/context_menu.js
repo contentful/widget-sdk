@@ -46,34 +46,20 @@ angular.module('cf.ui')
  * </div>
  * ~~~
  */
-.provider('contextMenu', [function contextMenuProvider() {
+.factory('contextMenu', ['$injector', function contextMenu ($injector) {
+  var $document = $injector.get('$document');
 
-  var enabled = true;
-  var detach;
-
-  this.disable = function () {
-    enabled = false;
-  };
-
-  this.enable = function () {
-    enabled = true;
-  };
-
-  this.$get = ['$document', function ($document) {
-    return {
-      attach: attach,
-      init: function () {
-        if (!enabled) return;
-        detach = attach($document);
-        return detach;
-      }
-    };
-  }];
-
-
-  var currentOpenMenu = null;
   var TRIGGER_SELECTOR = '[cf-context-menu-trigger]';
   var MENU_SELECTOR = '[cf-context-menu]';
+
+  var currentOpenMenu = null;
+
+  return {
+    init: function () {
+      return attach($document);
+    }
+  };
+
 
   function attach ($document) {
     $document.on('click', handleClick);
@@ -82,55 +68,52 @@ angular.module('cf.ui')
     };
   }
 
-
   function handleClick (event) {
-    var target = event.target;
-    var menu = getAttachedMenu(target);
-    if (menu) {
-      event.preventDefault();
-    }
-    if (sameNode(menu, currentOpenMenu)) {
-      closeMenu(currentOpenMenu);
-    } else if (menu) {
-      if (!isParent(currentOpenMenu, menu)) {
-        closeMenu(currentOpenMenu);
-      }
-      openMenu(menu);
-    } else if (currentOpenMenu) {
-      closeMenu(currentOpenMenu);
-    }
-  }
+    var $trigger = getMenuTrigger($(event.target));
+    var toOpen;
 
-  function sameNode($a, $b) {
-    return $a && $b && $a.get(0) === $b.get(0);
+    if ($trigger) {
+      var menu = getAttachedMenu($trigger);
+      event.preventDefault();
+      if (!menu.data('menuOpen')) {
+        toOpen = menu;
+      }
+    }
+
+    closeMenu(currentOpenMenu);
+    currentOpenMenu = openMenu(toOpen);
   }
 
   function closeMenu ($menu) {
     if ($menu) {
-      $menu.parents(MENU_SELECTOR).andSelf().hide();
+      $menu.parents(MENU_SELECTOR).andSelf()
+      .data('menuOpen', false)
+      .hide();
     }
-    currentOpenMenu = null;
   }
 
   function openMenu ($menu) {
-    $menu.parents(MENU_SELECTOR).andSelf().show();
-    repositionMenu($menu);
-    currentOpenMenu = $menu;
-  }
-
-  function getAttachedMenu (trigger) {
-    var $trigger = $(trigger).closest(TRIGGER_SELECTOR);
-    var $menu = $trigger.nextAll(MENU_SELECTOR).first();
-    if ($menu.length) {
+    if ($menu) {
+      $menu.parents(MENU_SELECTOR).andSelf()
+      .data('menuOpen', true)
+      .show();
+      repositionMenu($menu);
       return $menu;
-    } else {
-      return null;
     }
   }
 
-  function isParent(maybeParent, child) {
-    return child.parents().index(child.get(0)) >= 0;
+  function getMenuTrigger ($el) {
+    return getElement($el.closest(TRIGGER_SELECTOR));
   }
+
+  function getAttachedMenu ($trigger) {
+    return $trigger && getElement($trigger.nextAll(MENU_SELECTOR));
+  }
+
+  function getElement ($el) {
+    return $el && $el.length ? $el.first() : null;
+  }
+
 
   function repositionMenu($menu) {
     var position = $menu.attr('cf-context-menu');
