@@ -9,21 +9,22 @@ angular.module('cf.ui')
  * Shows only one tabpanel at a time and let the user select the panel
  * through a click.
  *
- * This directive is ARIA compatible
+ * Two elements with the same `ui-tab` and `ui-tabpanel` attribute
+ * value both hold references to the same object in the `scope.tab`.
+ * This object contains at least the `active` property that is `true`
+ * only if the tab is currently displayed.
  *
- * Two elements with the same `data-tab` attribute both hold references
- * to the same object in the `scope.tab`.  This object contains at
- * least the `active` property that is `true` only if the tab is
- * currently displayed.
+ * The `ui-tab` and `ui-tabpanel` set the ARIA roles to `tab` and
+ * `tabpanel`, respectively.
  *
  * @usage[jade]
  *   div(cf-ui-tab)
  *     ul(role="tablist")
- *       li(role="tab" data-tab="one")
- *       li(role="tab" data-tab="two")
- *     div(role="tabpanel" data-tab="one")
+ *       li(ui-tab="one")
+ *       li(ui-tab="two")
+ *     div(ui-tabpanel="one")
  *       | content of tab one
- *     div(role="tabpanel" data-tab="two")
+ *     div(ui-tabpanel="two")
  *       | content of tab two
  */
 .directive('cfUiTab', [function () {
@@ -87,51 +88,40 @@ angular.module('cf.ui')
 
 }])
 
-.directive('role', [function () {
+.directive('uiTab', [function () {
   return {
     scope: true,
-    link: function (scope, element, attr) {
-      var link;
-      if (attr.role === 'tab') {
-        link = linkTab;
-      } else if (attr.role === 'tabpanel') {
-        link = linkTabPanel;
-      }
+    link: function (scope, element, attrs) {
+      var tabName = attrs.uiTab;
+      var tab = scope.tabController.registerControl(tabName);
 
-      if (link)
-        link(scope, element, attr);
+      attrs.$set('role', 'tab');
+      scope.tab = tab;
+
+      element.on('click', function () {
+        scope.$apply(tab.activate);
+      });
+
+      scope.$watch('tab.active', function (isActive) {
+        attrs.$set('ariaSelected', isActive);
+      });
     }
   };
+}])
 
-  function linkTab(scope, element, attr) {
-    var tabName = attr.tab;
-    if (!tabName)
-      return;
+.directive('uiTabpanel', [function () {
+  return {
+    scope: true,
+    link: function (scope, element, attrs) {
+      var tabName = attrs.uiTabpanel;
+      var tabController = scope.tabController;
+      var tab = tabController.registerPanel(tabName, element);
+      attrs.$set('role', 'tabpanel');
+      scope.tab = tab;
 
-    var tab = scope.tabController.registerControl(tabName);
-    scope.tab = tab;
-
-    element.on('click', function () {
-      scope.$apply(tab.activate);
-    });
-
-    scope.$watch('tab.active', function (isActive) {
-      attr.$set('ariaSelected', isActive);
-    });
-
-  }
-
-  function linkTabPanel(scope, element, attr) {
-    var tabName = attr.tab;
-    if (!tabName)
-      return;
-
-    var tabController = scope.tabController;
-    var tab = tabController.registerPanel(tabName, element);
-    scope.tab = tab;
-
-    scope.$watch('tab.active', function (isActive) {
-      attr.$set('ariaHidden', !isActive);
-    });
-  }
+      scope.$watch('tab.active', function (isActive) {
+        attrs.$set('ariaHidden', !isActive);
+      });
+    }
+  };
 }]);
