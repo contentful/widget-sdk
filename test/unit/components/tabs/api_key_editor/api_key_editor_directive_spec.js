@@ -33,6 +33,7 @@ describe('apiKeyEditor Directive', function () {
 
     inject(function ($compile, $rootScope, enforcements) {
       scope = $rootScope.$new();
+      scope.otDoc = {doc: {}, state: {}};
 
       scope.spaceContext = {
         space: {
@@ -261,4 +262,3 @@ describe('apiKeyEditor Directive', function () {
   });
 
 });
-

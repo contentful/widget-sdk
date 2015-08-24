@@ -11,6 +11,7 @@ describe('SlugEditorController', function () {
     });
 
     this.scope = this.$inject('$rootScope').$new();
+    this.scope.otDoc = {doc: {}, state: {}};
 
     var cfStub = this.$inject('cfStub'),
         space = cfStub.space('testSpace'),
@@ -22,11 +23,13 @@ describe('SlugEditorController', function () {
     dotty.put(this.scope, 'fieldData.value', null);
     dotty.put(this.scope, 'locale.code', 'en-US');
     dotty.put(this.scope, 'field.apiName', 'slug');
-    this.scope.otGetValue = sinon.stub().returns(null);
 
-    this.scope.otChangeString = function (value) {
-      scope.otGetValue.returns(value || null);
-      return $q.when();
+    this.scope.otSubDoc = {
+      changeString: function (value) {
+        scope.otSubDoc.getValue.returns(value || null);
+        return $q.when();
+      },
+      getValue: sinon.stub().returns(null)
     };
     this.scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
     this.scope.entry = cfStub.entry(space, '__ID__', 'testType', {}, {
@@ -41,7 +44,7 @@ describe('SlugEditorController', function () {
 
   describe('#titleToSlug', function () {
     beforeEach(function () {
-      this.scope.otEditable = true;
+      this.scope.otDoc.state.editable = true;
       this.scope.entry.isPublished = sinon.stub().returns(false);
       this.scope.spaceContext.entryTitle = sinon.stub().returns(null);
       this.$apply();
@@ -113,7 +116,7 @@ describe('SlugEditorController', function () {
 
   describe('#alreadyPublished', function () {
     beforeEach(function () {
-      this.scope.otEditable = true;
+      this.scope.otDoc.state.editable = true;
       this.scope.entry.isPublished = sinon.stub().returns(true);
       this.scope.spaceContext.entryTitle = sinon.stub().returns('old title');
       this.scope.fieldData.value = 'old-title';
@@ -129,7 +132,7 @@ describe('SlugEditorController', function () {
 
   describe('#uniqueness', function () {
     beforeEach(function () {
-      this.scope.otEditable = true;
+      this.scope.otDoc.state.editable = true;
       this.scope.entry.isPublished = sinon.stub().returns(false);
       this.scope.spaceContext.entryTitle = sinon.stub().returns(null);
       this.$apply();

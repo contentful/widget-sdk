@@ -4,13 +4,14 @@ describe('Number widgets', function () {
   var elem, scope;
   beforeEach(function() {
     module('contentful/test', function ($provide) {
-      $provide.removeDirectives('otBindModel');
+      $provide.removeDirectives('otBindNgModel');
     });
     inject(function ($rootScope) {
       scope = $rootScope;
       scope.fieldData = {value: null};
       scope.field = {type: null};
-      scope.otEditable = true;
+      scope.otDoc = {doc: {}, state: {}};
+      scope.otDoc.state.editable = true;
     });
   });
 
@@ -72,4 +73,3 @@ describe('Number widgets', function () {
     });
   });
 });
-

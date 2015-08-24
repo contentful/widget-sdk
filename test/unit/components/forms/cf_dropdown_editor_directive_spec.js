@@ -7,7 +7,9 @@ describe('cfDropdownEditor Directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.stubDirective('otPath', {controller: function ($scope, $q) {
-        $scope.otChangeValue = sinon.stub().returns($q.when());
+        $scope.otSubDoc = {
+          changeValue: sinon.stub().returns($q.when())
+        };
       }});
     });
 
@@ -20,7 +22,7 @@ describe('cfDropdownEditor Directive', function () {
       scope.getFieldValidationsOfType = sinon.stub().returns([]);
 
       compileElement = function () {
-        element = $compile('<div cf-dropdown-editor ot-bind-internal="valuesController.selected" ot-path="" ng-model="fieldData.value"></div>')(scope);
+        element = $compile('<div cf-dropdown-editor ot-bind-object-value="valuesController.selected" ot-path="" ng-model="fieldData.value"></div>')(scope);
         scope.$apply();
         controller = element.controller('cfDropdownEditorController');
       };
@@ -119,7 +121,7 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('changes ot value', function() {
-      sinon.assert.calledWith(scope.otChangeValue, 'orange');
+      sinon.assert.calledWith(scope.otSubDoc.changeValue, 'orange');
     });
 
     it('sets the selected value', function() {
@@ -137,7 +139,7 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('changes ot value', function() {
-      sinon.assert.calledWith(scope.otChangeValue, 1);
+      sinon.assert.calledWith(scope.otSubDoc.changeValue, 1);
     });
 
     it('sets the selected value', function() {
@@ -155,7 +157,7 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('changes ot value', function() {
-      sinon.assert.calledWith(scope.otChangeValue, 1.2);
+      sinon.assert.calledWith(scope.otSubDoc.changeValue, 1.2);
     });
 
     it('sets the selected value', function() {

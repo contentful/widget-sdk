@@ -32,8 +32,8 @@ angular.module('contentful').directive('cfLocationEditor', function(){
       lonController.$parsers.push(parse);
       latController.$viewChangeListeners.push(triggerLocationWatchers);
       lonController.$viewChangeListeners.push(triggerLocationWatchers);
-      latController.$viewChangeListeners.push(scope.otBindInternalChangeHandler);
-      lonController.$viewChangeListeners.push(scope.otBindInternalChangeHandler);
+      latController.$viewChangeListeners.push(scope.otBindObjectValueCommit);
+      lonController.$viewChangeListeners.push(scope.otBindObjectValueCommit);
 
       scope.$watch(function (scope) {
         return {
@@ -51,7 +51,7 @@ angular.module('contentful').directive('cfLocationEditor', function(){
 
       scope.updateLocation = function(location) {
         scope.location = location;
-        scope.otBindInternalChangeHandler();
+        scope.otBindObjectValueCommit();
       };
 
       function noNumber(n) {

@@ -63,7 +63,7 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
 
       function setFPFile(FPFile) {
         scope.file = filepicker.parseFPFile(FPFile);
-        scope.otBindInternalChangeHandler().then(notify);
+        scope.otBindObjectValueCommit().then(notify);
         aviary.close();
       }
 

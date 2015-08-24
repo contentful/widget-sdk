@@ -12,8 +12,8 @@ angular.module('contentful').controller('SlugEditorController', ['$scope', '$inj
   var debouncedPerformDuplicityCheck = debounce(performDuplicityCheck, 500);
   var unwatchers = [];
 
-  $scope.$watch('otEditable', function (otEditable) {
-    if (otEditable) {
+  $scope.$watch('otDoc.state.editable', function (editable) {
+    if (editable) {
       unwatchers.push($scope.$watch('entry.isPublished()', updateDivergedStatus));
       unwatchers.push($scope.$watch('fieldData.value', updateStateFromSlug));
       unwatchers.push($scope.$watch(currentTitle, updateSlugFromTitle));
@@ -32,8 +32,8 @@ angular.module('contentful').controller('SlugEditorController', ['$scope', '$inj
    * Sets the slug to a new value through OT-friendly string updating.
    */
   function setSlug(value) {
-    $scope.otChangeString(value).then(function() {
-      $scope.fieldData.value = $scope.otGetValue();
+    $scope.otSubDoc.changeString(value).then(function() {
+      $scope.fieldData.value = $scope.otSubDoc.getValue();
     });
   }
 

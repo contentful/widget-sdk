@@ -21,6 +21,7 @@ describe('Entry Editor Controller', function () {
     });
     inject(function ($compile, $rootScope, $controller, cfStub){
       scope = $rootScope;
+      scope.otDoc = {doc: {}, state: {}};
       scope.user = {
         features: {}
       };
@@ -50,17 +51,23 @@ describe('Entry Editor Controller', function () {
     sinon.assert.called(scope.validate);
   });
 
-  describe('sets the otDisabled flag', function () {
+  describe('sets the otDoc.state.disabled flag', function () {
+    beforeEach(function(){
+      scope.otDoc = {
+        state: { disabled: false }
+      };
+    });
+
     it('to disabled', function () {
       scope.permissionController.can.withArgs('update', scope.entry.data).returns({can: true});
       scope.$apply();
-      expect(scope.otDisabled).toBe(false);
+      expect(scope.otDoc.state.disabled).toBe(false);
     });
 
     it('to enabled', function () {
       scope.permissionController.can.withArgs('update', scope.entry.data).returns({can: false});
       scope.$apply();
-      expect(scope.otDisabled).toBe(true);
+      expect(scope.otDoc.state.disabled).toBe(true);
     });
   });
 
@@ -104,14 +111,14 @@ describe('Entry Editor Controller', function () {
 
   describe('setting the tab dirty state', function () {
     beforeEach(function () {
-      scope.otDoc = {};
+      scope.otDoc = {doc: {}, state: {}};
       scope.$digest();
     });
     it('should be false by default', function () {
       expect(scope.context.dirty).toBe(false);
     });
     it('should be true when modified', function () {
-      scope.otDoc.version = scope.entry.getPublishedVersion() + 2;
+      scope.otDoc.doc.version = scope.entry.getPublishedVersion() + 2;
       scope.$digest();
       expect(scope.context.dirty).toBe(true);
     });
@@ -148,7 +155,9 @@ describe('Entry Editor Controller', function () {
         set: this.setStub
       });
       scope.otDoc = {
-        at: this.atStub
+        doc: {
+          at: this.atStub
+        }
       };
       scope.entry.data.fields = {
         field1: {'en-US': 'field1'},
@@ -173,4 +182,3 @@ describe('Entry Editor Controller', function () {
   });
 
 });
-

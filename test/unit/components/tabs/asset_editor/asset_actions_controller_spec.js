@@ -7,7 +7,7 @@ describe('Asset Actions Controller', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs([ 'otUpdateEntity', 'getAt' ]);
+      stubs = $provide.makeStubs(['getAt' ]);
     });
     inject(function ($controller, $rootScope, cfStub, $injector) {
       $q = $injector.get('$q');
@@ -22,6 +22,9 @@ describe('Asset Actions Controller', function () {
       action = $q.defer();
 
       scope = $rootScope.$new();
+      scope.otDoc = {
+        doc: {}, state: {}
+      };
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
       scope.asset = asset;
       controller = $controller('AssetActionsController', {$scope: scope});
@@ -179,7 +182,7 @@ describe('Asset Actions Controller', function () {
     describe('succeeds', function() {
       beforeEach(function() {
         action.resolve({asset: true});
-        scope.otUpdateEntity = stubs.otUpdateEntity;
+        scope.otDoc.updateEntityData = sinon.stub();
         controller.unpublish.execute();
         this.$apply();
       });
@@ -193,7 +196,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('updates ot entity', function() {
-        sinon.assert.called(scope.otUpdateEntity);
+        sinon.assert.called(scope.otDoc.updateEntityData);
       });
     });
   });
@@ -335,7 +338,7 @@ describe('Asset Actions Controller', function () {
       beforeEach(function() {
         action.resolve({asset: true});
         scope.validate.returns(true);
-        scope.otUpdateEntity = stubs.otUpdateEntity;
+        scope.otDoc.updateEntityData = sinon.stub();
         versionStub = sinon.stub(asset, 'setPublishedVersion');
         controller.publish.execute();
         this.$apply();

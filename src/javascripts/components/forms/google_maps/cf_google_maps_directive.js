@@ -37,8 +37,8 @@ angular.module('contentful').directive('cfGoogleMaps', ['$injector', function ($
         scope.$watch('locationValid', function (showMarker) {
           marker.setVisible(!!showMarker);
         });
-        scope.$watch('otEditable', function(otEditable) {
-          if (otEditable) {
+        scope.$watch('otDoc.state.editable', function(editable) {
+          if (editable) {
             marker.setDraggable(true);
           } else {
             marker.setDraggable(false);
@@ -60,7 +60,7 @@ angular.module('contentful').directive('cfGoogleMaps', ['$injector', function ($
           }
         };
 
-        locationController.$viewChangeListeners.push(scope.otBindInternalChangeHandler);
+        locationController.$viewChangeListeners.push(scope.otBindObjectValueCommit);
         locationController.$parsers.unshift(latLngParser);
         locationController.$formatters.push(locationFormatter);
         locationController.$render = function() {
@@ -83,11 +83,11 @@ angular.module('contentful').directive('cfGoogleMaps', ['$injector', function ($
 
         scope.updateLocation = function(location) {
           scope.location = location;
-          scope.otBindInternalChangeHandler();
+          scope.otBindObjectValueCommit();
         };
 
         function mapClick(event){
-          if (!scope.location && scope.otEditable) {
+          if (!scope.location && scope.otDoc.state.editable) {
             marker.setPosition(event.latLng);
             locationController.$setViewValue(event.latLng);
           }

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('otBindModel', function () {
+describe('otBindNgModel', function () {
   var elem, scope;
 
   beforeEach(function () {
@@ -14,16 +14,17 @@ describe('otBindModel', function () {
       scope = $rootScope;
       scope.otPath = 'path';
       scope.fieldData = {value: 'a'};
-      elem = $compile('<input type="text" ot-path ot-bind-model ng-model="fieldData.value">')(scope);
+      scope.otSubDoc = {};
+      elem = $compile('<input type="text" ot-path ot-bind-ng-model ng-model="fieldData.value">')(scope);
       scope.$apply();
     });
   });
 
 
-  it('should call otChangeValue whenever the value is changed', function () {
-    scope.otChangeValue = sinon.stub();
+  it('should call changeValue whenever the value is changed', function () {
+    scope.otSubDoc.changeValue = sinon.stub();
     elem.val('b').trigger('input');
-    sinon.assert.calledWith(scope.otChangeValue, 'b');
+    sinon.assert.calledWith(scope.otSubDoc.changeValue, 'b');
   });
 
   it('should update the model value in response to otValueChanged', function () {

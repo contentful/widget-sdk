@@ -21,7 +21,7 @@ angular.module('contentful').directive('cfMultiVideoEditor', [function(){
           update: function(e, ui) {
             var oldIndex = ui.item.sortable.index;
             var newIndex = ui.item.sortable.dropindex;
-            scope.otDoc.at(scope.otPath).move(oldIndex, newIndex);
+            scope.otDoc.doc.at(scope.otPath).move(oldIndex, newIndex);
           }
         };
 

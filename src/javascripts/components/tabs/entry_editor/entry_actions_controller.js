@@ -17,9 +17,9 @@ angular.module('contentful')
     return '“' + truncate($scope.spaceContext.entryTitle($scope.entry), 50) + '”';
   });
 
-  $scope.$watch('otEditable', function (otEditable) {
-    if (otEditable && !originalEntryData) {
-      var originalEntry = $scope.otGetEntity();
+  $scope.$watch('otDoc.state.editable', function (editable) {
+    if (editable && !originalEntryData) {
+      var originalEntry = $scope.otDoc.getEntity();
       originalEntryData = _.cloneDeep(originalEntry.data);
 
       trackedPublishedVersion = originalEntry.getPublishedVersion();
@@ -79,10 +79,10 @@ angular.module('contentful')
   $scope.revertToPublishedState = function () {
     $scope.entry.getPublishedState().then(function (data) {
       var cb = $q.callbackWithApply();
-      $scope.otDoc.at('fields').set(data.fields, cb);
+      $scope.otDoc.doc.at('fields').set(data.fields, cb);
       cb.promise
       .then(function () {
-        $scope.otUpdateEntity();
+        $scope.otDoc.updateEntityData();
         if (trackedPreviousVersion === (trackedPublishedVersion + 1)) {
           trackedPreviousVersion = $scope.entry.getVersion() + 1;
         }
@@ -101,11 +101,11 @@ angular.module('contentful')
 
   $scope.revertToPreviousState = function () {
     var cb = $q.callbackWithApply();
-    if(!$scope.otDoc) return $q.when();
-    $scope.otDoc.at('fields').set(originalEntryData.fields, cb);
+    if(!$scope.otDoc.doc) return $q.when();
+    $scope.otDoc.doc.at('fields').set(originalEntryData.fields, cb);
     cb.promise
     .then(function () {
-      $scope.otUpdateEntity();
+      $scope.otDoc.updateEntityData();
       if (trackedPreviousVersion === (trackedPublishedVersion + 1)) {
         trackedPublishedVersion = $scope.entry.getVersion() - 1;
       }
@@ -117,7 +117,7 @@ angular.module('contentful')
   createEntryCommand('unpublish', function () {
     return $scope.entry.unpublish()
     .then(function(){
-      $scope.otUpdateEntity();
+      $scope.otDoc.updateEntityData();
       notify.unpublishSuccess();
     })
     .catch(notify.unpublishFail);

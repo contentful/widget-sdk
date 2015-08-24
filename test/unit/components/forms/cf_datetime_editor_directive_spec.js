@@ -9,7 +9,9 @@ describe('DateTime Editor', function () {
   beforeEach(inject(function ($compile, $rootScope, $q, _moment_){
     moment = _moment_;
     scope = $rootScope;
-    scope.otChangeValue = sinon.stub().returns($q.when());
+    scope.otSubDoc = {
+      changeValue: sinon.stub().returns($q.when())
+    };
     scope.widget = {widgetParams: {
       format: 'timeZ',
       ampm: '24'

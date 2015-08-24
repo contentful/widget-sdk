@@ -11,7 +11,9 @@ describe('cfYoutubeEditor Controller', function() {
 
       scope               = $rootScope.$new();
       scope.fieldData     = {};
-      scope.otChangeValue = jasmine.createSpy().and.returnValue(deferred.promise);
+      scope.otSubDoc         = {
+        changeValue: jasmine.createSpy().and.returnValue(deferred.promise)
+      };
 
       controller           = $controller('cfYoutubeEditorController', { $scope : scope });
       scope.$apply();
@@ -84,9 +86,9 @@ describe('cfYoutubeEditor Controller', function() {
         scope.handleClickOnRemoveSign();
       });
 
-      describe('uses otChangeValue to persist the change', function() {
+      describe('uses changeValue to persist the change', function() {
         it('and calls it with undefined', function() {
-          expect(scope.otChangeValue).toHaveBeenCalledWith(undefined);
+          expect(scope.otSubDoc.changeValue).toHaveBeenCalledWith(undefined);
         });
 
         describe('on successful save', function() {

@@ -5,13 +5,16 @@ describe('cfObjectEditor', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      $provide.removeDirectives('otBindModel');
+      $provide.removeDirectives('otBindNgModel');
     });
 
     inject(function ($rootScope, $compile, $q) {
-      $rootScope.otEditable = true;
+      $rootScope.otDoc = {doc: {}, state: {}};
+      $rootScope.otDoc.state.editable = true;
       $rootScope.fieldData = {value: null};
-      $rootScope.otChangeValue = sinon.stub().returns($q.when());
+      $rootScope.otSubDoc = {
+        changeValue: sinon.stub().returns($q.when())
+      };
       elem = $compile('<div cf-object-editor ng-model="fieldData.value"></div>')($rootScope);
       textarea = elem.find('textarea');
       scope = elem.scope();

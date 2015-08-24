@@ -1,6 +1,6 @@
 'use strict';
 
-describe('otBindInternal', function () {
+describe('otBindObjectValue', function () {
   var element, scope;
 
   beforeEach(function(){
@@ -11,11 +11,13 @@ describe('otBindInternal', function () {
 
   beforeEach(inject(function ($rootScope, $compile, $q) {
     scope = $rootScope.$new();
-    scope.otChangeValue = sinon.stub().returns($q.when());
+    scope.otSubDoc = {
+      changeValue: sinon.stub().returns($q.when())
+    };
     scope.otPath        = 'path' ;
     scope.external      = {value: 'foo'};
     scope.internal      = {value: 'foo'};
-    element = $compile('<div ot-bind-internal="internal.value" ng-model="external.value" ot-path="">')(scope);
+    element = $compile('<div ot-bind-object-value="internal.value" ng-model="external.value" ot-path="">')(scope);
     scope.$apply();
   }));
 
@@ -26,11 +28,11 @@ describe('otBindInternal', function () {
 
     describe('and OT change successful', function(){
       beforeEach(function(){
-        scope.otBindInternalChangeHandler();
+        scope.otBindObjectValueCommit();
         scope.$apply();
       });
       it('should update OT', function(){
-        sinon.assert.calledWith(scope.otChangeValue, 'bar');
+        sinon.assert.calledWith(scope.otSubDoc.changeValue, 'bar');
       });
       it('should update the external value', function(){
         expect(scope.external.value).toBe('bar');
@@ -38,12 +40,12 @@ describe('otBindInternal', function () {
     });
     describe('and OT change fails', function(){
       beforeEach(inject(function($q){
-        scope.otChangeValue.returns($q.reject());
-        scope.otBindInternalChangeHandler();
+        scope.otSubDoc.changeValue.returns($q.reject());
+        scope.otBindObjectValueCommit();
         scope.$apply();
       }));
       it('should try to update OT', function(){
-        sinon.assert.calledWith(scope.otChangeValue, 'bar');
+        sinon.assert.calledWith(scope.otSubDoc.changeValue, 'bar');
       });
       it('should reset the internal value', function(){
         expect(scope.internal.value).toBe('foo');
@@ -71,5 +73,5 @@ describe('otBindInternal', function () {
       expect(scope.internal.value).toBe('bar');
     });
   });
-  
+
 });

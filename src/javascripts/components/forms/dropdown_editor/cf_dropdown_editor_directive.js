@@ -10,7 +10,7 @@ angular.module('contentful').directive('cfDropdownEditor', function(){
     link: function(scope, elem){
       var internalController = elem.find('select').controller('ngModel');
       internalController.$parsers.push(valueParser);
-      internalController.$viewChangeListeners.push(scope.otBindInternalChangeHandler);
+      internalController.$viewChangeListeners.push(scope.otBindObjectValueCommit);
 
       function valueParser(value) {
         value = (scope.field.type == 'Integer') ? parseInt(value, 10)   : value;
