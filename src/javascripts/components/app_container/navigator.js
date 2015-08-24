@@ -505,26 +505,26 @@ angular.module('contentful').config([
 
   function goToEntityState(entity, addToContext) {
     if (entity.getType() === 'Entry') {
-      $rootScope.$state.go('spaces.detail.entries.detail', {
+      $state.go('spaces.detail.entries.detail', {
         entryId: entity.getId(), addToContext: addToContext
       });
     } else if (entity.getType === 'Asset') {
-      $rootScope.$state.go('spaces.detail.assets.detail', {
+      $state.go('spaces.detail.assets.detail', {
         assetId: entity.getId(), addToContext: addToContext
       });
     }
   }
 
   function closeState() {
-    var currentState = $rootScope.$state.$current;
+    var currentState = $state.$current;
     var contextHistory = $rootScope.contextHistory;
 
     navigationConfirmed = true;
     contextHistory.pop();
     if (contextHistory.length) {
-      $rootScope.goToEntityState(contextHistory[contextHistory.length - 1], true);
+      goToEntityState(contextHistory[contextHistory.length - 1], true);
     } else {
-      $rootScope.$state.go((currentState.ncyBreadcrumb && currentState.ncyBreadcrumb.parent) || '');
+      $state.go((currentState.ncyBreadcrumb && currentState.ncyBreadcrumb.parent) || '');
     }
   }
 
@@ -547,7 +547,7 @@ angular.module('contentful').config([
       requestLeaveConfirmation().then(function (confirmed) {
         if (confirmed) {
           navigationConfirmed = true;
-          $rootScope.$state.go(toState.name, toStateParams);
+          $state.go(toState.name, toStateParams);
         }
       });
       return;
@@ -567,7 +567,7 @@ angular.module('contentful').config([
         if(_.isEmpty(toStateParams.spaceId))
           navigateToInitialSpace();
         else
-          $rootScope.$state.go('spaces.detail.entries.list', toStateParams); break;
+          $state.go('spaces.detail.entries.list', toStateParams); break;
       case 'otherwise':
       case 'spaces':
         event.preventDefault();
@@ -583,7 +583,7 @@ angular.module('contentful').config([
     event.preventDefault();
     var matchedSection = /spaces.detail.(entries|assets|content_types|api\.keys).detail/.exec(toState.name);
     if(matchedSection && error.statusCode == 404){
-      $rootScope.$state.go('spaces.detail.'+matchedSection[1]+'.list', { spaceId: toParams.spaceId });
+      $state.go('spaces.detail.'+matchedSection[1]+'.list', { spaceId: toParams.spaceId });
     } else {
       navigateToInitialSpace();
     }
@@ -598,9 +598,9 @@ angular.module('contentful').config([
 
       try {
         if (space) {
-          $rootScope.$state.go('spaces.detail', { spaceId: space.getId() });
+          $state.go('spaces.detail', { spaceId: space.getId() });
         } else {
-          $rootScope.$state.go('spaces.new');
+          $state.go('spaces.new');
         }
       } catch(exp){
         logger.logError('Error navigating to initial space', {
@@ -608,7 +608,7 @@ angular.module('contentful').config([
             exp: exp,
             msg: exp.message,
             spaceId: space ? space.getId() : null,
-            state: $rootScope.$state
+            state: $state
           }
         });
       }
