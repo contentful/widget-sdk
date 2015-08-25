@@ -63,7 +63,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     fieldTypes: ['Text'],
     name: 'Multiple Line',
     icon: 'multipleline',
-    template: '<textarea msd-elastic class="form-control" ng-disabled="!otDoc.state.editable" ng-model="fieldData.value" ot-bind-text></textarea>'
+    template: '<textarea class="form-control" ng-disabled="!otDoc.state.editable" ng-model="fieldData.value" ot-bind-text></textarea>'
   });
 
   widgets.registerWidget('markdown',{

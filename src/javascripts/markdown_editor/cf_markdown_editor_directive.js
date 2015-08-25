@@ -16,7 +16,8 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
     scope: {
       field: '=',
       fieldData: '=',
-      locale: '='
+      locale: '=',
+      disabled: '='
     },
     link: function (scope, el) {
       var textarea = el.find('textarea').get(0);
