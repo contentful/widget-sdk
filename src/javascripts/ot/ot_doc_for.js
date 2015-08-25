@@ -116,8 +116,12 @@ angular.module('contentful')
         throw new Error('Failed to update entity: sys not available');
       }
 
+      if ($scope.otDoc.doc.version > entity.getVersion()) {
+        data.sys.updatedAt = moment().toISOString();
+      } else {
+        data.sys.updatedAt = entity.data.sys.updatedAt;
+      }
       data.sys.version = $scope.otDoc.doc.version;
-      data.sys.updatedAt = moment().toISOString();
       entity.update(data);
     } else {
       logger.logSharejsError('otUpdateEntityData did not update', {
