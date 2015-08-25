@@ -11,6 +11,13 @@ Markup:
 .context-menu.styleguide-noabsolute
   cf-icon.context-menu__arrow.x--bottom-left(name="arrow-up")
   .context-menu__item Item
+.context-menu.styleguide-noabsolute
+  cf-icon.context-menu__arrow.x--bottom-left(name="arrow-up")
+    img(src="/app/svg/arrow-up.svg")
+  div(role="menuitem") Item 1
+  div(role="menuitem") Item 2
+  hr
+  div(role="menuitem") Separate
 
 Styleguide 11
 */
@@ -53,8 +60,20 @@ $context-menu-base()
 .context-menu
   $context-menu-base()
 
-  &__items > *, &__item
+  &__items > *, &__item, [role="menuitem"]
     $context-menu-item()
+
+  // FIXME this overides a lot of styles from $context-menu-item().
+  // Maybe we should only use the [role="menuitem"] selector for the latter.
+  hr
+    margin: 0.6em 1.3em
+    padding: 0
+    background: $colors.light-gray
+    cursor: auto
+    &:hover
+      background: $colors.light-gray
+
+
 
   &__items
     $scroll-vertically(60vh)
