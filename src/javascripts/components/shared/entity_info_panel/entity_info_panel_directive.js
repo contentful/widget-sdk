@@ -18,7 +18,7 @@ angular.module('contentful').
         });
 
         $scope.entityVersion = function () {
-          if($scope.otDoc.doc)
+          if($scope.otDoc && $scope.otDoc.doc)
             return $scope.otDoc.doc.version;
           if($scope.sys)
             return $scope.sys.version;
@@ -29,4 +29,3 @@ angular.module('contentful').
       template: JST['entity_info_panel']
     };
   });
-
