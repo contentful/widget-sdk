@@ -66,10 +66,6 @@ describe('Locale editor controller', function () {
     this.$apply();
   });
 
-  it('has a closing message', function () {
-    expect(this.scope.context.closingMessage).toBeDefined();
-  });
-
   it('sets a locale on the scope', function () {
     expect(this.scope.locale).toBeDefined();
   });
@@ -165,9 +161,6 @@ describe('Locale editor controller', function () {
   });
 
   describe('#save command succeeds', function () {
-    beforeEach(function() {
-      this.scope.$state.go = sinon.stub();
-    });
 
     describe('with unchanged code', function() {
       beforeEach(function () {
@@ -182,12 +175,6 @@ describe('Locale editor controller', function () {
 
       it('form is reset as pristine', function () {
         sinon.assert.called(this.scope.localeForm.$setPristine);
-      });
-
-      it('gets locale editor from navigator', function () {
-        sinon.assert.calledWith(this.scope.$state.go, 'spaces.detail.settings.locales.detail', {
-          localeId: 'someId'
-        });
       });
 
       it('refreshes locales', function() {
