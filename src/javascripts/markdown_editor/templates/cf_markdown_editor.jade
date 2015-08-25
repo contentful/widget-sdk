@@ -8,9 +8,7 @@
 
 .markdown-loaded(ng-class="{'visible': isReady() && !hasCrashed}")
   .markdown-tabs
-    a(href ng-if="inDevelopment()" ng-click="setMode('html')" ng-class="{'inactive': !inMode('html')}")
-      | HTML
-    a(href ng-click="setMode('rich')" ng-class="{'inactive': !inMode('rich')}")
+    a(href ng-click="setMode('preview')" ng-class="{'inactive': !inMode('preview')}")
       | Preview
     a(href ng-click="setMode('md')" ng-class="{'inactive': !inMode('md')}")
       | Editor
@@ -80,14 +78,9 @@
       textarea
 
     .markdown-preview(
-      ng-show="inMode('rich')"
+      ng-show="inMode('preview')"
       ng-click="setMode('md')")
-      cf-markdown-preview(preview="preview")
-
-    pre.markdown-html(
-      ng-if="inDevelopment() && inMode('html')"
-      ng-bind="preview.html"
-      ng-click="setMode('md')")
+      cf-markdown-preview(preview="preview" disabled="zen || inMode('md')")
 
   .markdown-help
     cf-icon(name="markdown")

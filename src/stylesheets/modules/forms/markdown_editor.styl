@@ -80,7 +80,7 @@ $markdown-radius = 2px
     border-color: $colors.element-darker
   &.active
     background: $colors.element-dark
-    box-shadow: inset 0px 1px 2px 0px rgba(0, 0 , 0, .08);
+    box-shadow: inset 0px 1px 2px 0px rgba(0, 0 , 0, .08)
 
 .markdown-side-action
   float: right
@@ -117,16 +117,12 @@ $markdown-radius = 2px
   textarea
     height: 1px
 
-.markdown-preview,
-.markdown-html
+.markdown-preview
   padding: 20px
   overflow-y: auto
   word-wrap: break-word
   overflow-wrap: break-word
   height: 100%
-
-.markdown-html
-  font-family: monospace
 
 .markdown-help
   background: $colors.element-light
@@ -164,14 +160,30 @@ $markdown-radius = 2px
  */
 
 .markdown-preview
-  p
+  .markdown-block
     margin: 0
-    line-height: 1.5em
-  p + p
+  .markdown-block + .markdown-block
     margin-top: $rhythm(0.5)
-  pre,
+  .markdown-block + .markdown-heading
+    margin-top: $rhythm(1)
+  .markdown-heading + .markdown-heading
+    margin-top: $rhythm(0.7)
+  .markdown-fragment
+    display: inline
+  .markdown-paragraph
+    line-height: 1.5em
+  .markdown-table
+    width: 80%
+    margin-left: auto
+    margin-right: auto
   .markdown-image-placeholder
-    margin-bottom: 20px
+    border: 1px solid $gray-light
+    border-radius: $markdown-radius
+    padding: 10px
+    background: $gray-lightest
+  .markdown-image-placeholder img
+    display: block
+    margin: 0 auto
   hr
     border: 0
     background: transparent
@@ -186,8 +198,6 @@ $markdown-radius = 2px
   table, td, th
     border: 1px solid $gray-light
   table
-    width: 85%
-    margin: 15px auto
     table-layout: fixed
     border-right-width: 0
     border-bottom-width: 0
@@ -197,16 +207,6 @@ $markdown-radius = 2px
     padding: 5px
     border-left-width: 0
     border-top-width: 0
-  .markdown-image-placeholder
-    border: 1px solid $gray-light
-    border-radius: $markdown-radius
-    padding: 10px
-    background: $gray-lightest
-  .markdown-image-placeholder img
-    display: block
-    margin: 0 auto
-  .embedly-card
-    margin: 10px auto
 
 /**
  * Special characters modal

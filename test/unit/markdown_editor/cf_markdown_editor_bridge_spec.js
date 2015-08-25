@@ -5,7 +5,7 @@ describe('cfMarkdownEditorBridge', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      $provide.removeDirectives('otBindModel');
+      $provide.removeDirectives('otBindText');
       $provide.removeDirectives('cfMarkdownEditor');
     });
 

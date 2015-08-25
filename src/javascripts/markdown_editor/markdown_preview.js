@@ -2,30 +2,23 @@
 
 angular.module('contentful').factory('MarkdownEditor/preview', ['$injector', function ($injector) {
 
-  var $timeout       = $injector.get('$timeout');
-  var $sanitize      = $injector.get('$sanitize');
-  var LazyLoader     = $injector.get('LazyLoader');
-  var createRenderer = $injector.get('MarkdownEditor/renderer');
+  var $timeout          = $injector.get('$timeout');
+  var LazyLoader        = $injector.get('LazyLoader');
+  var createTreeBuilder = $injector.get('MarkdownEditor/tree');
 
   var NOTIFY_INTERVAL = 250;
-  var NEWLINE_ENTITY_RE = new RegExp('&#10;', 'g');
-  var EMBEDLY_CLASS_RE = new RegExp('class="embedly-card"', 'g');
 
   return function startLivePreview(editor, subscriberCb) {
     var destroyed = false;
     var previousValue = null;
-    var renderMarkdown;
+    var buildTree;
 
     LazyLoader.get('markdown').then(function (libs) {
-      renderMarkdown = createRenderer(libs.marked);
+      buildTree = createTreeBuilder(libs);
       scheduleSubscriberNotification();
     });
 
-    return function () { destroyed = true; };
-
-    /**
-     * Notification logic
-     */
+    return function stopNotification() { destroyed = true; };
 
     function scheduleSubscriberNotification() {
       $timeout(notifySubscriber, NOTIFY_INTERVAL);
@@ -44,12 +37,11 @@ angular.module('contentful').factory('MarkdownEditor/preview', ['$injector', fun
         previousValue = value;
       }
 
-      // render HTML from Markdown and calculate stats
-      var html, info;
+      // build tree
+      var tree = {};
       var err = null;
       try {
-        html = renderAndSanitizeMarkdown(value);
-        info = { chars: value.length || 0, words: countWords(html) };
+        tree = buildTree(value);
       } catch (e) {
         // it can go wrong: both Marked and ngSanitize throw errors
         // it happens when for e.g. user is in the middle of typing HTML tag
@@ -57,46 +49,61 @@ angular.module('contentful').factory('MarkdownEditor/preview', ['$injector', fun
       }
 
       // notify subscriber
-      subscriberCb(err, html, info);
+      var info = { chars: value.length, words: tree.words };
+      subscriberCb(err, { tree: tree.root, info: info });
+
       // repeat
       scheduleSubscriberNotification();
-    }
-
-    function renderAndSanitizeMarkdown(markup) {
-      var html = renderMarkdown(markup);
-      html = $sanitize(html);
-      html = disableEmbedlyControls(html);
-      // restore new lines
-      html = html.replace(NEWLINE_ENTITY_RE, '\n');
-
-      return html;
-    }
-
-    function disableEmbedlyControls(html) {
-      return html.replace(EMBEDLY_CLASS_RE, 'class="embedly-card" data-card-controls="0"');
-    }
-
-    function countWords(html) {
-      var clean = html.replace(/<\/?[^>]+(>|$)/g, '');
-      var words = (clean || '').replace(/\s+/g, ' ').split(' ');
-      words = _.filter(words, function (word) { return word.length > 0; });
-
-      return words.length || 0;
     }
   };
 }]);
 
-angular.module('contentful').directive('cfMarkdownPreview', function () {
+angular.module('contentful').directive('cfMarkdownPreview', ['$injector', function ($injector) {
+
+  var LazyLoader = $injector.get('LazyLoader');
+
   return {
     restrict: 'E',
-    scope: { preview: '=' },
+    scope: {
+      preview: '=',
+      disabled: '='
+    },
     template: [
-      '<div ng-bind-html="preview.html" ng-if="!preview.hasCrashed"></div>',
-      '<div ng-if="preview.hasCrashed">',
+      '<div ng-show="!preview.hasCrashed" class="markdown-preview-mounting-point"></div>',
+      '<div ng-show="preview.hasCrashed || mountHasCrashed">',
         '<i class="fa fa-warning"></i> ',
         'We cannot render the preview. ',
         'If you use HTML tags, check if these are valid.',
       '</div>'
-    ].join('')
+    ].join(''),
+    link: function (scope, el) {
+      var mountingPoint = el.find('.markdown-preview-mounting-point').get(0);
+      scope.mountHasCrashed = false;
+      LazyLoader.get('markdown').then(initPreview);
+
+      function initPreview(libs) {
+        var React = libs.React;
+
+        scope.$watch('preview.tree', update);
+        scope.$watch('disabled',     update);
+
+        scope.$on('$destroy', unmount);
+
+        function update() {
+          var newTree = scope.preview && scope.preview.tree;
+          if (!newTree || scope.disabled) { return; }
+
+          try {
+            mount();
+            scope.mountHasCrashed = false;
+          } catch (e) {
+            scope.mountHasCrashed = true;
+          }
+        }
+
+        function mount()   { React.render(scope.preview.tree, mountingPoint); }
+        function unmount() { React.unmountComponentAtNode(mountingPoint);     }
+      }
+    }
   };
-});
+}]);

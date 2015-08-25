@@ -2,7 +2,8 @@
 
 var libs = {
   CodeMirror: require('codemirror'),
-  marked: require('marked')
+  MarkedAst:  require('marked-ast'),
+  React:      require('react')
 };
 
 require('codemirror/addon/mode/overlay');

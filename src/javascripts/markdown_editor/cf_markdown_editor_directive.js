@@ -2,13 +2,11 @@
 
 angular.module('contentful').directive('cfMarkdownEditor', ['$injector', function ($injector) {
 
-  var $sce             = $injector.get('$sce');
   var $timeout         = $injector.get('$timeout');
   var LazyLoader       = $injector.get('LazyLoader');
   var MarkdownEditor   = $injector.get('MarkdownEditor');
   var actions          = $injector.get('MarkdownEditor/actions');
   var startLivePreview = $injector.get('MarkdownEditor/preview');
-  var environment      = $injector.get('environment');
 
   return {
     restrict: 'E',
@@ -35,7 +33,6 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.preview = {};
       scope.setMode = setMode;
       scope.inMode = inMode;
-      scope.inDevelopment = inDevelopment;
 
       // simple bus that is used to synchronize between Zen Mode and main editor
       scope.zenApi = {
@@ -83,19 +80,21 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         scope.isInitialized = true;
       }
 
-      function updatePreview(err, preview, info) {
+      function updatePreview(err, preview) {
         scope.firstSyncDone = true;
-        scope.preview = {
+        scope.preview = _.extend(preview, {
           field: scope.field,
           value: editor.getContent(),
-          hasCrashed: err ? true : false,
-          html: $sce.trustAsHtml(preview),
-          info: info
-        };
+          hasCrashed: err ? true : false
+        });
       }
 
       function isReady() {
         return scope.isInitialized && scope.firstSyncDone;
+      }
+
+      function inMode(mode) {
+        return currentMode === mode;
       }
 
       function setMode(mode) {
@@ -104,7 +103,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         areas.height(areas.height());
 
         // 2. change mode
-        var nextMode = _.contains(['md', 'html', 'rich'], mode) ? mode : 'md';
+        var nextMode = _.contains(['md', 'preview'], mode) ? mode : 'md';
         if (nextMode === currentMode) { return; }
         currentMode = nextMode;
 
@@ -122,18 +121,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         }
       }
 
-      function inMode(mode) {
-        return currentMode === mode;
-      }
-
       function toggleMinorActions(forceHide) {
         scope.minorActionsShown = forceHide ? false : !scope.minorActionsShown;
         var method = 'slide' + (scope.minorActionsShown ? 'Down' : 'Up');
         minorActions.stop()[method](300);
-      }
-
-      function inDevelopment() {
-        return environment.env === 'development';
       }
     }
   };
