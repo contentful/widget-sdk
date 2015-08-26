@@ -14,9 +14,9 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
     },
     link: function(scope, el) {
       var textarea = el.find('textarea').get(0);
-      var preview = el.find('.markdown-preview').first();
-      var editor;
-      var opts = { height: '100%', fixedHeight: true };
+      var preview  = el.find('.markdown-preview').first();
+      var editor   = null;
+      var opts     = { height: '100%', fixedHeight: true };
 
       MarkdownEditor.create(textarea, opts).then(initEditor);
 
@@ -24,19 +24,12 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
         editor = editorInstance;
         scope.actions = actions.for(editor);
         scope.history = editor.history;
-        syncFromParent();
-        scope.zenApi.setChildContent = syncFromParent;
-        editor.events.onChange(syncToParent);
+
+        scope.zenApi.registerChild(editorInstance);
+        editor.events.onChange(scope.zenApi.syncToParent);
         editor.events.onScroll(handleScroll);
+
         scope.$on('$destroy', editor.destroy);
-      }
-
-      function syncFromParent(value) {
-        editor.setContent(value || scope.zenApi.getParentContent());
-      }
-
-      function syncToParent() {
-        scope.zenApi.setParentContent(editor.getContent());
       }
 
       function handleScroll(info) {

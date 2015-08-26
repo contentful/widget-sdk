@@ -8,7 +8,7 @@ angular.module('contentful').factory('MarkdownEditor/preview', ['$injector', fun
 
   var NOTIFY_INTERVAL = 250;
 
-  return function startLivePreview(editor, subscriberCb) {
+  return function startLivePreview(getContentFn, subscriberCb) {
     var destroyed = false;
     var previousValue = null;
     var buildTree;
@@ -29,7 +29,7 @@ angular.module('contentful').factory('MarkdownEditor/preview', ['$injector', fun
       if (destroyed) { return; }
 
       // check if something changed
-      var value = editor.getContent();
+      var value = getContentFn();
       if (value === previousValue) {
         scheduleSubscriberNotification();
         return;

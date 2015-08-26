@@ -2,7 +2,7 @@
 
 angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', function ($injector) {
 
-  var $timeout = $injector.get('$timeout');
+  var throttle = $injector.get('throttle');
 
   return function(textarea, options, CodeMirror) {
 
@@ -30,7 +30,7 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
     cm.setSize('100%', EDITOR_SIZE.min);
 
     if (!options.fixedHeight) {
-      cm.on('change', assureHeight);
+      cm.on('change', throttle(assureHeight, 150));
     }
 
     cm.setOption('extraKeys', {
@@ -77,22 +77,16 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
     };
 
     function assureHeight() {
-      refresh();
       var current = cm.heightAtLine(cm.lastLine(), 'local') + EDITOR_SIZE.shift;
       var next = current;
       if (current < EDITOR_SIZE.min) { next = EDITOR_SIZE.min; }
       if (current > EDITOR_SIZE.max) { next = EDITOR_SIZE.max; }
       cm.setSize('100%', next);
-      refresh();
     }
 
-    function refresh() {
-      $timeout(_.bind(cm.refresh, cm));
-    }
-
-    function attachEvent(name, fn, throttle) {
-      if (throttle) {
-        fn = _.throttle(fn);
+    function attachEvent(name, fn, throttleInterval) {
+      if (throttleInterval) {
+        fn = throttle(fn, throttleInterval);
       }
       cm.on(name, fn);
     }
