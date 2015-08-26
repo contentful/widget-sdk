@@ -107,8 +107,7 @@ var src = {
     './bower_components/jquery-ui/themes/base/jquery-ui.css',
     './bower_components/jquery-ui/themes/base/jquery.ui.autocomplete.css',
     './bower_components/jquery-ui/themes/base/jquery.ui.datepicker.css',
-    './node_modules/codemirror/lib/codemirror.css',
-    './node_modules/codemirror/theme/elegant.css'
+    './node_modules/codemirror/lib/codemirror.css'
   ],
   mainStylesheets: [
     'src/stylesheets/main.styl',
