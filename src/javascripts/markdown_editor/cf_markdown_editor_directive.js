@@ -35,6 +35,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.isReady            = isReady;
       scope.setMode            = setMode;
       scope.inMode             = inMode;
+      scope.canEdit            = canEdit;
       scope.toggleMinorActions = toggleMinorActions;
 
       // simple bus that is used to synchronize between Zen Mode and main editor
@@ -61,6 +62,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         var stopPreview = startLivePreview(getModelValue, updatePreview);
         editor.events.onChange(handleEditorChange);
         scope.$watch('fieldData.value', handleModelChange);
+        scope.$watch('disabled',        handleStateChange);
 
         scope.$on('$destroy', stopPreview);
         scope.$on('$destroy', editor.destroy);
@@ -99,6 +101,15 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         scope.isInitialized = true;
       }
 
+      function handleStateChange(isDisabled) {
+        if (isDisabled) {
+          setMode('preview');
+          if (scope.zen) { scope.zenApi.toggle(); }
+        } else {
+          setMode('md');
+        }
+      }
+
       function updatePreview(err, preview) {
         scope.firstSyncDone = true;
         scope.preview = _.extend(preview, {
@@ -116,13 +127,21 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         return currentMode === mode;
       }
 
+      function canEdit() {
+        return inMode('md') && !scope.disabled;
+      }
+
       function setMode(mode) {
         // 1. froze element height
         var areas = el.find('.markdown-areas');
         areas.height(areas.height());
 
         // 2. change mode
-        var nextMode = _.contains(['md', 'preview'], mode) ? mode : 'md';
+        var nextMode = 'preview';
+        if (mode === 'md' && !scope.disabled) {
+          nextMode = 'md';
+        }
+
         if (nextMode === currentMode) { return; }
         currentMode = nextMode;
 
