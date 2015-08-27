@@ -1,45 +1,74 @@
 'use strict';
 
 describe('otDocFor', function () {
-  var moment;
-  var elem, scope;
+  var moment, scope;
 
   beforeEach(function() {
     module('contentful/test');
-    inject(function ($compile, $rootScope, _moment_) {
-      moment = _moment_;
-      scope = $rootScope;
-      $rootScope.entity = {
-        update: sinon.stub()
-      };
-      elem = $compile('<div ot-doc-for="entity"></div>')($rootScope);
-      $rootScope.otDoc.doc = {
-        snapshot: {foo: 'bar', baz: {}, sys: {version: 100, updatedAt: 'foo'}},
-        version: 123
-      };
-    });
+    moment = this.$inject('moment');
+
+    this.entity = {
+      update: function (data) {
+        this.data = data;
+      },
+      getVersion: function () {
+        return this.data.sys.version;
+      },
+      data: {
+        sys: {version: 8}
+      }
+    };
+
+    scope = this.$compile('<div ot-doc-for="entity">', {
+      entity: this.entity,
+    }).scope();
+    scope.otDoc.doc = {
+      snapshot: {foo: 'bar', baz: {}, sys: {version: 100, updatedAt: 'foo'}},
+      version: 123
+    };
   });
 
-  describe('updating entity', function () {
-    it('should update the entity with a copy of the snapshot', function () {
+  describe('#updateEntityData()', function () {
+
+    beforeEach(function () {
+      this.clock = sinon.useFakeTimers(1234, 'Date');
+      this.now = moment();
+    });
+
+    afterEach(function () {
+      this.clock.restore();
+    });
+
+    it('updates the entity data with a copy of the snapshot', function () {
+      sinon.spy(this.entity, 'update');
       scope.otDoc.updateEntityData();
-      sinon.assert.calledOnce(scope.entity.update);
-      var data = scope.entity.update.args[0][0];
+      sinon.assert.calledOnce(this.entity.update);
+      var data = this.entity.data;
       expect(data).not.toBe(scope.otDoc.doc.snapshot);
       expect(_.omit(data, 'sys')).toLookEqual(_.omit(scope.otDoc.doc.snapshot, 'sys'));
     });
 
-    it('should preserve version and updatedAt', function () {
-      var clock = sinon.useFakeTimers('Date');
-      try {
-        scope.otDoc.updateEntityData();
-        var iso = moment().toISOString();
-        var data = scope.entity.update.args[0][0];
-        expect(data.sys.version).toBe(123);
-        expect(data.sys.updatedAt).toBe(iso);
-      } finally {
-        clock.restore();
-      }
+    it('it updates the entity version', function () {
+      this.entity.data.sys.version = '';
+      scope.otDoc.doc.version = 'NEW VERSION';
+      scope.otDoc.updateEntityData();
+      expect(this.entity.data.sys.version).toBe('NEW VERSION');
+    });
+
+    it('it updates the entity timestamp for new versions', function () {
+      this.entity.data.sys.updatedAt = 'UPDATED AT';
+      this.entity.data.sys.version = 0;
+      scope.otDoc.doc.version = 1;
+      scope.otDoc.updateEntityData();
+      expect(this.entity.data.sys.updatedAt).toBe(this.now.toISOString());
+    });
+
+    it('it does not update the entity timestamp for new versions', function () {
+      this.entity.data.sys.updatedAt = 'UPDATED AT';
+      this.entity.data.sys.version = 1;
+      scope.otDoc.doc.version = 1;
+      scope.otDoc.updateEntityData();
+      expect(this.entity.data.sys.updatedAt).toBe('UPDATED AT');
     });
   });
 
