@@ -6,8 +6,7 @@ describe('cfGoogleMaps Directive', function () {
       $provide.removeControllers('GoogleMapsController');
     });
 
-    var $q = this.$inject('$q'),
-        stubs = {};
+    var stubs = {};
 
     stubs.setVisible = sinon.stub();
     stubs.setDraggable = sinon.stub();
@@ -15,28 +14,30 @@ describe('cfGoogleMaps Directive', function () {
     stubs.panTo = sinon.stub();
     stubs.LatLng = sinon.stub();
 
-    this.$inject('googleMapsLoader').load = function () {
-      var stubbedGMap = {
-        Map: sinon.stub().returns({
-          getCenter: sinon.stub(),
-          panTo: stubs.panTo,
-          fitBounds: stubs.fitBounds
-        }),
-        Marker: sinon.stub().returns({
-          setDraggable: stubs.setDraggable,
-          setPosition: sinon.stub(),
-          setVisible: stubs.setVisible
-        }),
-        LatLng: stubs.LatLng,
-        MapTypeId: {
-          ROADMAP: 'roadmap',
-        },
-        event: {
-          addListener: sinon.stub()
-        }
-      };
-      return $q.when(stubbedGMap);
+    this.googleMapsStub = {
+      Map: sinon.stub().returns({
+        getCenter: sinon.stub(),
+        panTo: stubs.panTo,
+        fitBounds: stubs.fitBounds
+      }),
+      Marker: sinon.stub().returns({
+        setDraggable: stubs.setDraggable,
+        setPosition: sinon.stub(),
+        setVisible: stubs.setVisible
+      }),
+      LatLng: stubs.LatLng,
+      MapTypeId: {
+        ROADMAP: 'roadmap',
+      },
+      event: {
+        addListener: sinon.stub()
+      }
     };
+
+    var googleMapsLoader = this.$inject('googleMapsLoader');
+    this.loadGoogleMaps = sinon.stub(googleMapsLoader, 'load');
+    this.loadGoogleMaps.resolves(this.googleMapsStub);
+
     this.stubs = stubs;
     this.scope = this.$inject('$rootScope').$new();
     this.scope.otDoc = {doc: {}, state: {}};
@@ -45,8 +46,7 @@ describe('cfGoogleMaps Directive', function () {
     this.compileElement = function () {
       this.element = this.$inject('$compile')('<cf-google-maps></cf-google-maps>')(this.scope);
       this.$apply();
-    };
-    this.compileElement.bind(this);
+    }.bind(this);
   });
 
   describe('watches for location change and location validity', function() {
@@ -188,5 +188,27 @@ describe('cfGoogleMaps Directive', function () {
     it('second element is not selected', function() {
       expect(this.element.find('.search-results li').eq(1)).not.toHaveClass('selected');
     });
+  });
+
+  describe('setup', function () {
+
+    it('loads GoogleMaps', function () {
+      sinon.assert.notCalled(this.loadGoogleMaps);
+      this.compileElement();
+      sinon.assert.called(this.loadGoogleMaps);
+    });
+
+    it('does not intitialize element if it destroyed', function () {
+      var $q = this.$inject('$q');
+      var deferred = $q.defer();
+      this.loadGoogleMaps.returns(deferred.promise);
+
+      this.compileElement();
+      this.element.remove();
+      deferred.resolve(this.googleMapsStub);
+      // This would raise an exception before
+      this.$apply();
+    });
+
   });
 });
