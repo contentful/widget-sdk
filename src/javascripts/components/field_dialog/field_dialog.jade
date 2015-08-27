@@ -12,25 +12,25 @@
           | {{fieldTypeLabel}}
 
       ul.field-dialog__tab-list(role="tablist")
-        li(role="tab" data-tab="settings"
+        li(ui-tab="settings"
            ng-attr-aria-invalid="{{tab.invalid}}")
           | Settings
           i.fa.fa-exclamation-circle.field-dialog__tab-invalid
-        li(role="tab" data-tab="validations"
+        li(ui-tab="validations"
            ng-attr-aria-invalid="{{tab.invalid}}")
           | Validations
           i.fa.fa-exclamation-circle.field-dialog__tab-invalid
-        li(role="tab" data-tab="appearance"
+        li(ui-tab="appearance"
            ng-attr-aria-invalid="{{tab.invalid}}")
           | Appearance
           i.fa.fa-exclamation-circle.field-dialog__tab-invalid
 
     div.modal-dialog__content.field-dialog__content
 
-      div(role="tabpanel" data-tab="settings")
+      div(ui-tabpanel="settings")
         include ./field_dialog_settings.jade
 
-      div(role="tabpanel" data-tab="validations"
+      div(ui-tabpanel="validations"
         ng-form="fieldValidationsForm"
         ng-controller="FieldDialogValidationsController")
         ul.validation-settings
@@ -46,7 +46,7 @@
             cf-validation-setting.u-bce
 
 
-      div(role="tabpanel" data-tab="appearance")
+      div(ui-tabpanel="appearance")
         include ./field_dialog_appearance.jade
 
     .modal-dialog__controls

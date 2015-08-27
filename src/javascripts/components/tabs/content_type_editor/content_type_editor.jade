@@ -15,19 +15,19 @@ header.workbench-header
       cf-icon.btn-icon.inverted(name="plus")
       | Add Field
   ul.workbench-nav__tabs
-    li(role="tab" data-tab="fields")
+    li(ui-tab="fields")
       | Fields
       span(ng-show="contentType.data.fields.length") &nbsp;({{contentType.data.fields.length}})
-    li(role="tab" data-tab="json") JSON Preview
+    li(ui-tab="json") JSON Preview
 
 
 .workbench-main
   form.workbench-main__middle-content(name="contentTypeForm")
 
-    div(role="tabpanel" data-tab="json")
+    div(ui-tabpanel="json")
       cf-content-type-preview.u-bce
 
-    div(role="tabpanel" data-tab="fields")
+    div(ui-tabpanel="fields")
       .content-type-fields(ng-if="hasFields")
         include ./content_type_field_list
       .content-type-fields(ng-if="!hasFields")
