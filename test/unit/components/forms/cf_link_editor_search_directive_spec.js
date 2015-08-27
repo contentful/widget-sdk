@@ -18,6 +18,7 @@ describe('cfLinkEditorSearch Directive', function () {
 
     inject(function ($compile, $rootScope) {
       scope = $rootScope.$new();
+      scope.otDoc = {doc: {}, state: {}};
 
       scope.locale = {
         code: 'en-US',
@@ -122,7 +123,7 @@ describe('cfLinkEditorSearch Directive', function () {
 
   describe('for asset links', function () {
     beforeEach(function () {
-      scope.otEditable = true;
+      scope.otDoc.state.editable = true;
       scope.linkedEntities = [];
       scope.entities = [];
       scope.entityType = 'Asset';
@@ -204,7 +205,7 @@ describe('cfLinkEditorSearch Directive', function () {
 
   describe('for entry links', function () {
     beforeEach(function () {
-      scope.otEditable = true;
+      scope.otDoc.state.editable = true;
       scope.linkedEntities = [];
       scope.entities = [];
       scope.entityType = 'Entry';

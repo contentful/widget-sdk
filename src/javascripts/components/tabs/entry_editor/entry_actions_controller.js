@@ -6,16 +6,20 @@ angular.module('contentful')
   var controller   = this;
   var $rootScope   = $injector.get('$rootScope');
   var $q           = $injector.get('$q');
-  var notification = $injector.get('notification');
-  var logger       = $injector.get('logger');
+  var notifier     = $injector.get('entryActions/notifications');
   var moment       = $injector.get('moment');
   var Command      = $injector.get('command');
+  var truncate     = $injector.get('stringUtils').truncate;
 
   var originalEntryData, trackedPublishedVersion, trackedPreviousVersion;
 
-  $scope.$watch('otEditable', function (otEditable) {
-    if (otEditable && !originalEntryData) {
-      var originalEntry = $scope.otGetEntity();
+  var notify = notifier(function () {
+    return '“' + truncate($scope.spaceContext.entryTitle($scope.entry), 50) + '”';
+  });
+
+  $scope.$watch('otDoc.state.editable', function (editable) {
+    if (editable && !originalEntryData) {
+      var originalEntry = $scope.otDoc.getEntity();
       originalEntryData = _.cloneDeep(originalEntry.data);
 
       trackedPublishedVersion = originalEntry.getPublishedVersion();
@@ -34,23 +38,13 @@ angular.module('contentful')
     controller[action] = Command.create(run, {available: can}, extension);
   }
 
-  // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
-  // We can query the entry instead of reimplementing the checks heere
-
-  function title() {
-    return '"' + $scope.spaceContext.entryTitle($scope.entry) + '"';
-  }
-
   createEntryCommand('delete', function () {
     return $scope.entry.delete()
     .then(function(entry){
-      notification.info('Entry deleted successfully');
+      notify.deleteSuccess();
       $rootScope.$broadcast('entityDeleted', entry);
     })
-    .catch(function(err){
-      logger.logServerWarn('Error deleting Entry', {error: err });
-      notification.error('Error deleting Entry');
-    });
+    .catch(notify.deleteFail);
   });
 
 
@@ -62,32 +56,17 @@ angular.module('contentful')
     .then(function(entry){
       $scope.$state.go('spaces.detail.entries.detail', { entryId: entry.getId(), addToContext: true });
     })
-    .catch(function(err){
-      logger.logServerWarn('Could not duplicate Entry', {error: err });
-      notification.error('Could not duplicate Entry');
-    });
+    .catch(notify.duplicateFail);
   });
 
   createEntryCommand('archive', function () {
     return $scope.entry.archive()
-    .then(function(){
-      notification.info(title() + ' archived successfully');
-    })
-    .catch(function(err){
-      notification.warn('Error archiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logServerWarn('Error archiving entry', {error: err });
-    });
+    .then(notify.archiveSuccess, notify.archiveFail);
   });
 
   createEntryCommand('unarchive', function () {
     return $scope.entry.unarchive()
-    .then(function(){
-      notification.info(title() + ' unarchived successfully');
-    })
-    .catch(function(err){
-      notification.warn('Error unarchiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logServerWarn('Error unarchiving entry', {error: err });
-    });
+    .then(notify.unarchiveSuccess, notify.unarchiveFail);
   });
 
   $scope.canRevertToPublishedState = function () {
@@ -98,25 +77,20 @@ angular.module('contentful')
   };
 
   $scope.revertToPublishedState = function () {
-    function flashError(err) {
-      notification.warn('Error reverting to the last published state of ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logSharejsWarn('Error reverting entry to published state', {error: err});
-    }
-
     $scope.entry.getPublishedState().then(function (data) {
       var cb = $q.callbackWithApply();
-      $scope.otDoc.at('fields').set(data.fields, cb);
+      $scope.otDoc.doc.at('fields').set(data.fields, cb);
       cb.promise
       .then(function () {
-        $scope.otUpdateEntity();
+        $scope.otDoc.updateEntityData();
         if (trackedPreviousVersion === (trackedPublishedVersion + 1)) {
           trackedPreviousVersion = $scope.entry.getVersion() + 1;
         }
         trackedPublishedVersion = $scope.entry.getVersion();
-        notification.info('Entry reverted to the last published state successfully');
-      }, flashError);
+        notify.revertToPublishedSuccess();
+      }, notify.revertToPublishedFail);
     })
-    .catch(flashError);
+    .catch(notify.revertToPublishedFail);
   };
 
   $scope.canRevertToPreviousState = function () {
@@ -127,32 +101,26 @@ angular.module('contentful')
 
   $scope.revertToPreviousState = function () {
     var cb = $q.callbackWithApply();
-    if(!$scope.otDoc) return $q.when();
-    $scope.otDoc.at('fields').set(originalEntryData.fields, cb);
+    if(!$scope.otDoc.doc) return $q.when();
+    $scope.otDoc.doc.at('fields').set(originalEntryData.fields, cb);
     cb.promise
     .then(function () {
-      $scope.otUpdateEntity();
+      $scope.otDoc.updateEntityData();
       if (trackedPreviousVersion === (trackedPublishedVersion + 1)) {
         trackedPublishedVersion = $scope.entry.getVersion() - 1;
       }
       trackedPreviousVersion = $scope.entry.getVersion();
-      notification.info('Entry reverted to the previous state successfully');
-    }, function(err){
-      notification.warn('Error reverting to the previous state of ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logSharejsWarn('Error reverting entry to previous state', {error: err});
-    });
+      notify.revertToPreviousSuccess();
+    }, notify.revertToPreviousFail);
   };
 
   createEntryCommand('unpublish', function () {
     return $scope.entry.unpublish()
     .then(function(){
-      notification.info(title() + ' unpublished successfully');
-      $scope.otUpdateEntity();
+      $scope.otDoc.updateEntityData();
+      notify.unpublishSuccess();
     })
-    .catch(function(err){
-      notification.warn('Error unpublishing ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logServerWarn('Error unpublishing entry', {error: err });
-    });
+    .catch(notify.unpublishFail);
   });
 
 
@@ -163,7 +131,7 @@ angular.module('contentful')
   function publish () {
     var version = $scope.entry.getVersion();
     if (!$scope.validate()) {
-      notification.warn('Error publishing ' + title() + ': ' + 'Validation failed');
+      notify.publishValidationFail();
       return $q.reject();
     }
     return $scope.entry.publish(version)
@@ -173,7 +141,7 @@ angular.module('contentful')
         trackedPreviousVersion = version + 1;
       }
       trackedPublishedVersion = version;
-      notification.info(title() + ' published successfully');
+      notify.publishSuccess();
     })
     .catch(handlePublishErrors);
   }
@@ -201,30 +169,25 @@ angular.module('contentful')
     var errorId = dotty.get(err, 'body.sys.id');
     if (errorId === 'ValidationFailed') {
       setValidationErrors(err);
-      validationWarn('Validation failed');
+      notify.publishValidationFail();
     } else if (errorId === 'VersionMismatch'){
-      validationWarn('Can only publish most recent version');
+      notify.publishFail('Can only publish most recent version');
     } else if (errorId === 'UnresolvedLinks') {
       setValidationErrors(err);
-      validationWarn('Some linked entries are missing.');
+      notify.publishFail('Some linked entries are missing.');
     } else if (errorId === 'InvalidEntry') {
       if (isLinkValidationError(err)) {
-        validationWarn(getLinkValidationErrorMessage(err));
+        notify.publishFail(getLinkValidationErrorMessage(err));
         setValidationErrors(err);
       } else if (err.body.message === 'Validation error') {
         setValidationErrors(err);
-        validationWarn('Validation failed. Please check the individual fields for errors.');
+        notify.publishValidationFail();
       } else {
-        validationWarn(err.body.message);
+        notify.publishServerFail(err);
       }
     } else {
-      logger.logServerWarn('Publishing the entry has failed due to a server issue. We have been notified.', {error: err });
-      notification.error('Publishing the entry has failed due to a server issue. We have been notified.');
+      notify.publishServerFail(err);
     }
-  }
-
-  function validationWarn(message) {
-    notification.warn('Error publishing '+ title() +': '+ message);
   }
 
   function setValidationErrors(err) {
@@ -248,5 +211,105 @@ angular.module('contentful')
       return 'This reference requires an entry of an unexistent content type';
     }
   }
+
+}])
+
+.factory('entryActions/notifications', ['$injector', function ($injector) {
+  var logger       = $injector.get('logger');
+  var notification = $injector.get('notification');
+
+  return function (getTitle) {
+    return {
+      saveSuccess: function () {
+        notification.info('“' + getTitle() + '” saved successfully');
+      },
+
+      saveFail: function (error) {
+        notification.error('“' + getTitle() + '” could not be saved');
+        // HTTP 422: Unprocessable entity
+        if (dotty.get(error, 'statusCode') !== 422) {
+          logger.logServerWarn('ApiKey could not be saved', {error: error });
+        }
+      },
+
+      archiveSuccess: function () {
+        notification.info(getTitle() + ' archived successfully');
+      },
+
+      archiveFail: function (error) {
+        notification.error('Error archiving ' + getTitle() + ' (' + dotty.get(error, 'body.sys.id') + ')');
+        logger.logServerWarn('Error archiving entry', {error: error });
+      },
+
+      unarchiveSuccess: function () {
+        notification.info(getTitle() + ' unarchived successfully');
+      },
+
+      unarchiveFail: function (error) {
+        notification.error('Error unarchiving ' + getTitle() + ' (' + dotty.get(error, 'body.sys.id') + ')');
+        logger.logServerWarn('Error unarchiving entry', {error: error });
+      },
+
+      duplicateFail: function (error) {
+        notification.error('Could not duplicate Entry');
+        logger.logServerWarn('Could not duplicate Entry', {error: error });
+      },
+
+      deleteSuccess: function () {
+        notification.info('Entry deleted successfully');
+      },
+
+      deleteFail: function (error) {
+        notification.error('Error deleting Entry');
+        logger.logServerWarn('Error deleting Entry', {error: error });
+      },
+
+      revertToPublishedSuccess: function () {
+        notification.info('Entry reverted to the last published state successfully');
+      },
+
+      revertToPublishedFail: function (error) {
+        notification.error('Error reverting to the last published state of ' + getTitle() + ' (' + dotty.get(error, 'body.sys.id') + ')');
+        logger.logSharejsWarn('Error reverting entry to published state', {error: error});
+      },
+
+      revertToPreviousSuccess: function () {
+        notification.info('Entry reverted to the previous state successfully');
+      },
+
+      revertToPreviousFail: function (error) {
+        notification.error('Error reverting to the previous state of ' + getTitle() + ' (' + dotty.get(error, 'body.sys.id') + ')');
+        logger.logSharejsWarn('Error reverting entry to previous state', {error: error});
+      },
+
+      unpublishSuccess: function () {
+        notification.info(getTitle() + ' unpublished successfully');
+      },
+
+      unpublishFail: function (error) {
+        notification.error('Error unpublishing ' + getTitle() + ' (' + dotty.get(error, 'body.sys.id') + ')');
+        logger.logServerWarn('Error unpublishing entry', {error: error });
+      },
+
+      publishSuccess: function () {
+        notification.info(getTitle() + ' published successfully');
+      },
+
+      publishServerFail: function (error) {
+        notification.error('Publishing the entry has failed due to a server issue. We have been notified.');
+        logger.logServerWarn('Publishing the entry has failed due to a server issue. We have been notified.', {error: error });
+      },
+
+      publishFail: function (message) {
+        notification.error('Error publishing ' + getTitle() + ': ' + message);
+      },
+
+      publishValidationFail: function () {
+        notification.error('Error publishing ' + getTitle() + ': ' + 'Validation failed. ' +
+                           'Please check the individual fields for errors.');
+      }
+
+    };
+  };
 
 }]);

@@ -24,7 +24,7 @@ describe('EntryLinkEditorController', function () {
 
       shareJSMock = {
         peek: sinon.stub(),
-        mkpath: sinon.stub()
+        mkpathAndSetValue: sinon.stub()
       };
 
       entityCacheMock = sinon.stub();
@@ -161,14 +161,18 @@ describe('EntryLinkEditorController', function () {
         validations: []
       };
 
-      this.otChangeValueDeferred = $q.defer();
-      scope.otChangeValue = sinon.stub().returns(this.otChangeValueDeferred.promise);
+      this.changeValueDeferred = $q.defer();
+      scope.otSubDoc = {
+        changeValue: sinon.stub().returns(this.changeValueDeferred.promise)
+      };
       scope.updateModel = sinon.stub();
 
       scope.otDoc = {
-        at: sinon.stub()
+        doc: {
+          at: sinon.stub()
+        }
       };
-      scope.otDoc.at.returns({
+      scope.otDoc.doc.at.returns({
         push: stubs.otDocPush,
         remove: stubs.remove
       });
@@ -185,7 +189,7 @@ describe('EntryLinkEditorController', function () {
       describe('add an entry', function () {
         beforeEach(function() {
           scope.addLink(entry);
-          this.otChangeValueDeferred.resolve();
+          this.changeValueDeferred.resolve();
           scope.$apply();
         });
 
@@ -204,7 +208,7 @@ describe('EntryLinkEditorController', function () {
             {sys: {id: 'entry3'}}
           ];
           scope.removeLink(0, entry);
-          this.otChangeValueDeferred.resolve();
+          this.changeValueDeferred.resolve();
           scope.$apply();
         });
 
@@ -241,7 +245,7 @@ describe('EntryLinkEditorController', function () {
           shareJSMock.peek.returns({});
 
           scope.addLink(entry);
-          shareJSMock.mkpath.yield();
+          shareJSMock.mkpathAndSetValue.yield();
         });
 
         addEntryExpectations();
@@ -261,7 +265,7 @@ describe('EntryLinkEditorController', function () {
 
         it('removes link', function() {
           scope.removeLink(0, entry);
-          this.otChangeValueDeferred.resolve();
+          this.changeValueDeferred.resolve();
           scope.$apply();
           expect(scope.links).toEqual([]);
         });

@@ -150,14 +150,9 @@ filters.filter('isDisplayableAsTitle', function () {
   };
 });
 
-filters.filter('truncate', function () {
-  return function (str, length) {
-    if(str && str.length > length) {
-      return str.substr(0, length)+'…';
-    }
-    return str;
-  };
-});
+filters.filter('truncate', ['stringUtils', function (stringUtils) {
+  return stringUtils.truncate;
+}]);
 
 
 filters.filter('truncateMiddle', function () {

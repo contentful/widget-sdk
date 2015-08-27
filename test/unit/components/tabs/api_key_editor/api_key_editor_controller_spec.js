@@ -64,10 +64,6 @@ describe('API key editor controller', function () {
     stubs.broadcast.restore();
   });
 
-  it('has a closing message', function () {
-    expect(scope.context.closingMessage).toBeDefined();
-  });
-
   it('sets an apiKey on the scope', function () {
     expect(scope.apiKey).toEqual(apiKey);
   });

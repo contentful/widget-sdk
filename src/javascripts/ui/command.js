@@ -22,6 +22,7 @@ angular.module('cf.ui')
  */
 .factory('command', ['$injector', function ($injector) {
   var createSignal = $injector.get('signal');
+  var $q = $injector.get('$q');
 
   /**
    * @ngdoc property
@@ -85,10 +86,9 @@ angular.module('cf.ui')
     }
 
     var self = this;
-    this._inProgress = this._run()
-    .finally(function (res) {
+    this._inProgress = (this._run() || $q.reject())
+    .finally(function () {
       self._inProgress = null;
-      return res;
     });
 
     if (this._executions) {
@@ -109,7 +109,7 @@ angular.module('cf.ui')
    * @returns {boolean}
    */
   Command.prototype.isDisabled = function () {
-    return this._isDisabled() || this._inProgress || !this.isAvailable();
+    return !!(this._isDisabled() || this._inProgress || !this.isAvailable());
   };
 
   return {

@@ -18,8 +18,8 @@ angular.module('contentful').
         });
 
         $scope.entityVersion = function () {
-          if($scope.otDoc)
-            return $scope.otDoc.version;
+          if($scope.otDoc && $scope.otDoc.doc)
+            return $scope.otDoc.doc.version;
           if($scope.sys)
             return $scope.sys.version;
           return '';
@@ -29,4 +29,3 @@ angular.module('contentful').
       template: JST['entity_info_panel']
     };
   });
-

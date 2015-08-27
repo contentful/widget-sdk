@@ -37,7 +37,7 @@ angular.module('contentful').directive('cfObjectEditor', function() {
       };
 
       scope.saveJSON = function () {
-        scope.otChangeValue(scope.jsonData.value)
+        scope.otSubDoc.changeValue(scope.jsonData.value)
         .then(function(){
           ngModel.$setViewValue(scope.jsonData.value);
           ngModel.$render();

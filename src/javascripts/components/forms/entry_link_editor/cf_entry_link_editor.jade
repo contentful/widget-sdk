@@ -4,7 +4,7 @@
   entity-type="Entry"
   entity-content-types="linkContentTypes"
   entity-mime-type-group="linkMimetypeGroup"
-  ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
+  ng-show="otDoc.state.editable && (linkedEntities.length == 0 || field.type == 'Array')")
 
 .form-widget__help-text(ng-if="helpText") {{helpText}}
 
@@ -12,13 +12,13 @@ ul.linked-entities(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hi
   li.linked-entities__item(
       ng-repeat="(index, entity) in linkedEntities track by index"
       ng-class="{'linked-entities--with-handle': linkedEntities.length>1}")
-    .linked-entities__handle(cf-drag-handle ng-disabled="!otEditable" ng-hide="linkedEntities.length==1")
+    .linked-entities__handle(cf-drag-handle ng-disabled="!otDoc.state.editable" ng-hide="linkedEntities.length==1")
       i.fa.fa-ellipsis-v
       i.fa.fa-ellipsis-v
     .linked-entities__info
       a(ui-sref="spaces.detail.entries.detail({ entryId: entity.getId(), addToContext: true })" ng-show="entity && entity.data" title="{{entryLinkController.linkTitle(entity)}}") {{entryLinkController.linkTitle(entity)}}
       span(ng-hide="entity && entity.data" title="{{entryLinkController.linkTitle(entity)}}") {{entryLinkController.linkTitle(entity)}}
-      i.fa.fa-times-circle(ng-click="removeLink(index, entity)" ng-show="otEditable")
+      i.fa.fa-times-circle(ng-click="removeLink(index, entity)" ng-show="otDoc.state.editable")
       .linked-entities__status(ng-class="entityStatusController.getClassname(entity)")
         .status-bar
 

@@ -12,7 +12,9 @@ describe('cfFileEditor Directive', function () {
       $provide.removeControllers('NgModelCtrl');
       $provide.stubDirective('otPath', {
         controller: function ($scope, $q) {
-          $scope.otChangeValue = sinon.stub().returns($q.when());
+          $scope.otSubDoc = {
+            changeValue: sinon.stub().returns($q.when())
+          };
         }
       });
       $provide.removeDirectives('cfFileDrop');
@@ -29,12 +31,14 @@ describe('cfFileEditor Directive', function () {
     inject(function ($compile, $rootScope) {
       scope = $rootScope.$new();
 
+      scope.otDoc = {doc: {}, state: {}};
+
       scope.fieldData = {
         fileName: 'file.jpg',
         fileType: 'image/jpeg'
       };
 
-      element = $compile('<div ot-path=""><div cf-file-editor cf-file-display ng-model="fieldData" ot-bind-internal="file"></div></div>')(scope);
+      element = $compile('<div ot-path=""><div cf-file-editor cf-file-display ng-model="fieldData" ot-bind-object-value="file"></div></div>')(scope);
       scope.$apply();
     });
   });
@@ -80,7 +84,7 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('calls otchangevalue', function() {
-        sinon.assert.called(scope.otChangeValue);
+        sinon.assert.called(scope.otSubDoc.changeValue);
       });
 
       it('file object is parsed', function() {
@@ -156,7 +160,7 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('calls otchangevalue', function() {
-        sinon.assert.called(scope.otChangeValue);
+        sinon.assert.called(scope.otSubDoc.changeValue);
       });
 
       it('file is null', function() {
@@ -181,7 +185,7 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('calls otchangevalue', function() {
-        sinon.assert.called(scope.otChangeValue);
+        sinon.assert.called(scope.otSubDoc.changeValue);
       });
 
       it('file now has url', function() {

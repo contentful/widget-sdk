@@ -5,7 +5,6 @@ describe('cfLocationEditor Directive', function () {
     var stubs = {};
 
     stubs.serverError = sinon.stub();
-    stubs.otChangeValue = sinon.stub();
 
     module('contentful/test', function ($provide) {
       $provide.removeControllers('cfLocationEditorController');
@@ -16,17 +15,20 @@ describe('cfLocationEditor Directive', function () {
 
       $provide.stubDirective('otPath', {
         controller: function ($scope, $q) {
-          $scope.otChangeValue = stubs.otChangeValue.returns($q.when());
+          $scope.otSubDoc = {
+            changeValue: sinon.stub().returns($q.when())
+          };
         }
       });
     });
 
     this.stubs = stubs;
     this.scope = this.$inject('$rootScope').$new();
+    this.scope.otDoc = {doc: {}, state: {}};
     this.scope.locationIsValid = sinon.stub();
     dotty.put(this.scope, 'fieldData.value', {});
     this.compileElement = function () {
-      this.element = this.$inject('$compile')('<div cf-location-editor ot-path="" ot-bind-internal="location" ng-model="fieldData.value"></div>')(this.scope);
+      this.element = this.$inject('$compile')('<div cf-location-editor ot-path="" ot-bind-object-value="location" ng-model="fieldData.value"></div>')(this.scope);
       this.$apply();
     };
     this.compileElement.bind(this);
@@ -55,7 +57,7 @@ describe('cfLocationEditor Directive', function () {
       });
 
       it('calls ot change value with location', function() {
-        sinon.assert.calledWith(this.scope.otChangeValue, location);
+        sinon.assert.calledWith(this.scope.otSubDoc.changeValue, location);
       });
 
       it('update external value', function() {
@@ -65,7 +67,7 @@ describe('cfLocationEditor Directive', function () {
 
     describe('fails to update', function() {
       beforeEach(inject(function($q) {
-        this.stubs.otChangeValue.returns($q.reject());
+        this.scope.otSubDoc.changeValue.returns($q.reject());
         this.scope.updateLocation(location);
         this.scope.$apply();
       }));
@@ -75,7 +77,7 @@ describe('cfLocationEditor Directive', function () {
       });
 
       it('calls ot change value with location', function() {
-        sinon.assert.calledWith(this.scope.otChangeValue, location);
+        sinon.assert.calledWith(this.scope.otSubDoc.changeValue, location);
       });
 
       it('resets external value', function() {
@@ -158,10 +160,10 @@ describe('cfLocationEditor Directive', function () {
 
   });
 
-  describe('if otEditable is not initiated', function() {
+  describe('if otDoc.state.editable is not initiated', function() {
     beforeEach(function() {
       this.compileElement();
-      this.scope.otEditable = false;
+      this.scope.otDoc.state.editable = false;
       this.scope.$digest();
     });
 
@@ -178,10 +180,10 @@ describe('cfLocationEditor Directive', function () {
     });
   });
 
-  describe('if otEditable is initiated', function() {
+  describe('if otDoc.state.editable is initiated', function() {
     beforeEach(function() {
       this.compileElement();
-      this.scope.otEditable = true;
+      this.scope.otDoc.state.editable = true;
       this.scope.$digest();
     });
 

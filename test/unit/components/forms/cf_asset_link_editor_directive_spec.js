@@ -99,7 +99,7 @@ describe('cfAssetLinkEditor Directive', function () {
 
   describe('for asset links', function () {
     beforeEach(function () {
-      scope.otEditable = true;
+      scope.otDoc = {state: {editable: true}};
       scope.linkedEntities = [];
       scope.entities = [];
       compileElement();

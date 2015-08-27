@@ -5,7 +5,6 @@
  * @name ContentTypeActionsController
  *
  * @scope.requires {client.ContentType} contentType
- * @scope.requires                      spaceContext
  */
 angular.module('contentful')
 .controller('ContentTypeActionsController', ['$scope', '$injector',
@@ -20,6 +19,8 @@ function ContentTypeActionsController($scope, $injector) {
   var $q           = $injector.get('$q');
   var modalDialog  = $injector.get('modalDialog');
   var Command      = $injector.get('command');
+  var $timeout     = $injector.get('$timeout');
+  var spaceContext = $injector.get('spaceContext');
 
   var availableActions = $controller('EntityActionsController', {
     $scope: $scope,
@@ -117,8 +118,8 @@ function ContentTypeActionsController($scope, $injector) {
 
   function unpublishSuccessHandler(publishedContentType){
     $scope.updatePublishedContentType(null);
-    $scope.spaceContext.unregisterPublishedContentType(publishedContentType);
-    $scope.spaceContext.refreshContentTypes();
+    spaceContext.unregisterPublishedContentType(publishedContentType);
+    spaceContext.refreshContentTypes();
     trackUnpublishedContentType($scope.contentType);
     return publishedContentType;
   }
@@ -177,6 +178,8 @@ function ContentTypeActionsController($scope, $injector) {
     }
   });
 
+  controller.runSave = save;
+
   function save () {
     populateDefaultName($scope.contentType);
 
@@ -224,9 +227,17 @@ function ContentTypeActionsController($scope, $injector) {
     .then(function (published) {
       contentType.setPublishedVersion(version);
       $scope.publishedContentType = published;
+
+      // TODO this methods seem to do the same thing
       $scope.updatePublishedContentType(published);
-      $scope.spaceContext.registerPublishedContentType(published);
-      $scope.spaceContext.refreshContentTypes();
+      spaceContext.registerPublishedContentType(published);
+
+      // If the content type was created for the first time the API
+      // will not include it immediately. In effect, not showing in the
+      // new content type in the content type list.
+      $timeout(function () {
+        spaceContext.refreshContentTypes();
+      }, 2000);
 
       return contentType;
     });

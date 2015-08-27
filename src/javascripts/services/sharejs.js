@@ -1,27 +1,39 @@
 'use strict';
 /**
- * Provide access to ShareJS
+ * @ngdoc service
+ * @name ShareJS
+ *
+ * @description
+ * Initializes and provides access to ShareJS
+ *
+ * TODO
+ * Future refactoring tips
+ * - It would be good if the ShareJS callbacks were wrapped to return promises
+ * - the mkpathAndSetValue does too much
  */
 angular.module('contentful').provider('ShareJS', ['environment', function ShareJSProvider(environment) {
   var token;
   var url = '//'+environment.settings.ot_host+'/channel';
 
-  this.token= function(e) {
-    token = e;
+  this.token = function(_token) {
+    token = _token;
   };
 
-  this.url = function(e) {
-    url = e;
+  this.url = function(_url) {
+    url = _url;
   };
 
-  this.$get = ['client', 'clientAdapter', '$rootScope', function(client, clientAdapter, $rootScope) {
+  this.$get = ['$injector', function($injector) {
+    var clientAdapter = $injector.get('clientAdapter');
+    var $rootScope    = $injector.get('$rootScope');
+
     /**
      * Class that wraps the native ShareJS Client
      *
      * Adds state monitoring and event broadcasting as well as support for opening Contentful entities.
      *
      * VERY IMPORTANT:
-     * 
+     *
      * What this _doesn't_ do is integration of ShareJS into Angular.
      * In particular:
      * - Callbacks are not wrapped and exposed as promises
@@ -43,7 +55,6 @@ angular.module('contentful').provider('ShareJS', ['environment', function ShareJ
       var oldState, c=this;
       function stateChangeHandler(error) {
         if (c.connection.state !== oldState) {
-          //console.log('sharejs connection state changed from %o to %o', oldState, c.connection.state);
           $rootScope.$apply(function (scope) {
             scope.$broadcast('otConnectionStateChanged', c.connection.state, c.connection, error);
           });
@@ -101,53 +112,76 @@ angular.module('contentful').provider('ShareJS', ['environment', function ShareJ
     var ShareJS = {
       client : null,
 
+      /**
+       * @ngdoc method
+       * @name ShareJS#connect
+       * @description
+       * Connects the ShareJS client
+       */
       connect: function () {
         ShareJS.client = ShareJS.client || new ShareJSClient(url, token || clientAdapter.token);
       },
 
       /**
+       * @ngdoc method
+       * @name ShareJS#open
+       * @description
        * Open a ShareJS document for an entity
+       *
+       * @param {Entity} entity
+       * @param {function()} callback
        */
       open: function (/* entity, callback */) {
         ShareJS.connect();
         return ShareJS.client.open.apply(ShareJS.client, arguments);
       },
+
+      /**
+       * @ngdoc method
+       * @name ShareJS#isConnected
+       * @return {boolean}
+       */
       isConnected: function () {
         return ShareJS.client && ShareJS.client.connection.state == 'ok';
       },
+
       /**
-       * Created a deeply nested property in a ShareJS JSON document
-       *
-       * The purpose is more on making sure that the path exists not
-       * that the value is the same value as supplied
-       * 
-       * Params are given as an object in the params argument
-       * with these properties:
-       * - value: The initial value we want to be at the end of the path
-       * - doc: The document to operate on
-       * - path: An array describing the path in the JSON doc
-       * - types: An array describing the type of each step in
+       * @ngdoc type
+       * @name ShareJS.mkpathAndSetValue.params
+       * @property {any} value The initial value we want to be at the end of the path
+       * @property {OtDoc} doc The document to operate on
+       * @property {Array<string>} path An array describing the path in the JSON doc
+       * @property {Array<string>} types An array describing the type of each step in
        *   the path as either "Object", "Array" or "String".
        *   This information is used to create the correct
        *   intermediate objects when creating the path.
+      */
+
+      /**
+       * @ngdoc method
+       * @name ShareJS#mkpathAndSetValue
+       * @description
+       * Creates a deeply nested property in a ShareJS JSON document
        *
-       * Example:
-       *
-       *   value: 'Foo'
-       *   path:  ['foo', '12']
-       *   types: ['Object', 'Array']
-       *
-       * would create a property foo on an object, assign it an Array
-       * and set foo[12] to be a String 'Foo' types are optional and
-       * assumed to be "Object" if missing.
+       * The purpose is more on making sure that the path exists not
+       * that the value is the same value as supplied
        *
        * The behavior when the entire path exists already is to
        * - keep the existing value when it is of the same type as the
        *   `value` parameter
        * - set it to the value parameter otherwise
        *
+       * @param {ShareJS.mkpathAndSetValue.params} params
+       * @param {function()} callback
+       *
+       * @usage
+       * ShareJS.mkpathAndSetValue({
+       *   value: 'Foo'
+       *   path:  ['foo', '12']
+       *   types: ['Object', 'Array']
+       * }, callback);
        */
-      mkpath: function(params, callback){
+      mkpathAndSetValue: function(params, callback){
         //jshint boss:true
         var doc = params.doc;
         var segments = _.zip(params.path, params.types || []);
@@ -177,12 +211,19 @@ angular.module('contentful').provider('ShareJS', ['environment', function ShareJ
         if (_.isNull(currentVal)    && _.isNull(value)   ) {_.defer(callback); return;}
         if (_.isObject(currentVal)  && _.isObject(value) &&
             _.isArray(currentVal)  === _.isArray(value)) {_.defer(callback); return;}
+
         doc.set(value, callback);
       },
 
-      // Read out the value at the path
-      //
-      // Returns undefined if missing
+      /**
+       * @ngdoc method
+       * @name ShareJS#peek
+       * @description
+       * Read the value at the given path in the doc
+       * @param {OtDoc} doc
+       * @param {Array<string>} path
+       * @return {any}
+       */
       peek: function(doc, path) {
         try {
           return doc.getAt(path);

@@ -17,7 +17,7 @@ describe('AssetLinkEditorController', function () {
 
       shareJSMock = {
         peek: sinon.stub(),
-        mkpath: sinon.stub()
+        mkpathAndSetValue: sinon.stub()
       };
 
       entityCacheMock = sinon.stub();

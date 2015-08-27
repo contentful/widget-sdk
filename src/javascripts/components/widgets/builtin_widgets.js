@@ -41,7 +41,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     fieldTypes: ['Text', 'Symbol'],
     name: 'Single Line',
     icon: 'singleline',
-    template: '<input class="form-control" ng-disabled="!otEditable" ng-model="fieldData.value" ot-bind-text ot-subdoc type="text">'
+    template: '<input class="form-control" ng-disabled="!otDoc.state.editable" ng-model="fieldData.value" ot-bind-text type="text">'
   });
 
   widgets.registerWidget('urlEditor', {
@@ -65,7 +65,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     fieldTypes: ['Text'],
     name: 'Multiple Line',
     icon: 'multipleline',
-    template: '<textarea msd-elastic class="form-control" ng-disabled="!otEditable" ng-model="fieldData.value" ot-bind-text ot-subdoc></textarea>'
+    template: '<textarea msd-elastic class="form-control" ng-disabled="!otDoc.state.editable" ng-model="fieldData.value" ot-bind-text></textarea>'
   });
 
   widgets.registerWidget('markdown',{
@@ -80,7 +80,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     name: 'Dropdown',
     icon: 'dropdown',
     notFocusable: true,
-    template: '<div cf-dropdown-editor ng-model="fieldData.value" ot-bind-internal="valuesController.selected"></div>'
+    template: '<div cf-dropdown-editor ng-model="fieldData.value" ot-bind-object-value="valuesController.selected"></div>'
   });
 
   widgets.registerWidget('radio',{
@@ -88,7 +88,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     name: 'Radio',
     icon: 'radio',
     notFocusable: true,
-    template: '<cf-radio-editor ng-model="fieldData.value" ot-bind-internal="valuesController.selected"></cf-radio-editor>'
+    template: '<cf-radio-editor ng-model="fieldData.value" ot-bind-object-value="valuesController.selected"></cf-radio-editor>'
   });
 
   widgets.registerWidget('boolean',{
@@ -96,7 +96,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     name: 'Radio',
     icon: 'radio',
     notFocusable: true,
-    template: '<cf-radio-editor ng-model="fieldData.value" ot-bind-internal="valuesController.selected"></cf-radio-editor>'
+    template: '<cf-radio-editor ng-model="fieldData.value" ot-bind-object-value="valuesController.selected"></cf-radio-editor>'
   });
 
   widgets.registerWidget('rating',{
@@ -113,7 +113,7 @@ angular.module('contentful').run(['widgets', function(widgets){
       }
     ],
     notFocusable: true,
-    template: '<cf-rating-editor ng-model="fieldData.value" ot-bind-internal="rating"></cf-rating-editor>'
+    template: '<cf-rating-editor ng-model="fieldData.value" ot-bind-object-value="rating"></cf-rating-editor>'
   });
 
   widgets.registerWidget('datePicker',{
@@ -154,7 +154,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     fieldTypes: ['Location'],
     name: 'Location',
     // Show the google maps widget alongwith the location editor widget. They share the same 'location' model.
-    template: '<cf-google-maps ng-model="location" ot-bind-internal="location"></cf-google-maps><div cf-location-editor class="widget-location-editor" ng-model="fieldData.value" ot-bind-internal="location"></div>'
+    template: '<cf-google-maps ng-model="location" ot-bind-object-value="location"></cf-google-maps><div cf-location-editor class="widget-location-editor" ng-model="fieldData.value" ot-bind-object-value="location"></div>'
   });
 
   widgets.registerWidget('objectEditor',{
@@ -168,13 +168,13 @@ angular.module('contentful').run(['widgets', function(widgets){
     defaultHelpText: 'Insert comma separated values',
     name: 'List',
     icon: 'singleline',
-    template: '<input cf-list-identity-fix class="form-control" ng-disabled="!otEditable" ng-list cf-empty-list ng-model="fieldData.value" ot-bind-model type="text">'
+    template: '<input cf-list-identity-fix class="form-control" ng-disabled="!otDoc.state.editable" ng-list cf-empty-list ng-model="fieldData.value" ot-bind-ng-model type="text">'
   });
 
   widgets.registerWidget('fileEditor',{
     fieldTypes: ['File'],
     name: 'File',
-    template: '<div class="widget-file-editor" cf-file-display cf-file-editor ng-model="fieldData.value" ot-bind-internal="file"></div>'
+    template: '<div class="widget-file-editor" cf-file-display cf-file-editor ng-model="fieldData.value" ot-bind-object-value="file"></div>'
   });
 
   widgets.registerWidget('entryLinkEditor',{
@@ -253,7 +253,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     name: 'Ooyala (multiple assets)',
     icon: 'video-preview',
     rendersHelpText: true,
-    template: '<cf-ooyala-multi-video-editor ng-model="fieldData.value" ot-bind-internal="selectedAssets"></cf-ooyala-multi-video-editor>'
+    template: '<cf-ooyala-multi-video-editor ng-model="fieldData.value" ot-bind-object-value="selectedAssets"></cf-ooyala-multi-video-editor>'
   });
 
   widgets.registerWidget('kalturaEditor',{
@@ -269,7 +269,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     name: 'Kaltura (multiple videos)',
     icon: 'video-preview',
     rendersHelpText: true,
-    template: '<cf-kaltura-multi-video-editor ng-model="fieldData.value" ot-bind-internal="selectedAssets"></cf-kaltura-multi-video-editor>'
+    template: '<cf-kaltura-multi-video-editor ng-model="fieldData.value" ot-bind-object-value="selectedAssets"></cf-kaltura-multi-video-editor>'
   });
 
   widgets.registerWidget('youtubeEditor',{

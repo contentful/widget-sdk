@@ -30,9 +30,9 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
   $scope.$watch('localesState.localeActiveStates', TheLocaleStore.setActiveStates, true);
 
   $scope.$watch(function (scope) {
-    if (scope.otDoc && scope.asset) {
+    if (scope.otDoc.doc && scope.asset) {
       if (angular.isDefined(scope.asset.getPublishedVersion()))
-        return scope.otDoc.version > scope.asset.getPublishedVersion() + 1;
+        return scope.otDoc.doc.version > scope.asset.getPublishedVersion() + 1;
       else
         return 'draft';
     } else {
@@ -54,10 +54,10 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
   $scope.$watch(function assetEditorEnabledWatcher(scope) {
     return !scope.asset.isArchived() && scope.permissionController.can('update', scope.asset.data).can;
   }, function assetEditorEnabledHandler(enabled, old, scope) {
-    scope.otDisabled = !enabled;
+    scope.otDoc.state.disabled = !enabled;
   });
   $scope.$on('otRemoteOp', function (event) {
-    event.currentScope.otUpdateEntity();
+    event.currentScope.otDoc.updateEntityData();
   });
 
   // Validations
@@ -101,7 +101,7 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
   // File uploads
   $scope.$on('fileUploaded', function (event, file, locale) {
     setTitleOnDoc(file, locale.internal_code);
-    $scope.asset.process($scope.otDoc.version, locale.internal_code)
+    $scope.asset.process($scope.otDoc.doc.version, locale.internal_code)
     .catch(function (err) {
       $scope.$emit('fileProcessingFailed');
       notification.error('There has been a problem processing the Asset.');
@@ -111,9 +111,9 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
   function setTitleOnDoc(file, localeCode) {
     var otPath = ['fields', 'title', localeCode];
     var fileName = stringUtils.fileNameToTitle(file.fileName);
-    if(!ShareJS.peek($scope.otDoc, otPath))
-      ShareJS.mkpath({
-        doc: $scope.otDoc,
+    if(!ShareJS.peek($scope.otDoc.doc, otPath))
+      ShareJS.mkpathAndSetValue({
+        doc: $scope.otDoc.doc,
         path: otPath,
         value: fileName
       });

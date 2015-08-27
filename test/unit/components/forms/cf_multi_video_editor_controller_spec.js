@@ -7,7 +7,7 @@ describe('Multi Video Editor Controller', function() {
   beforeEach(function() {
     module('contentful/test');
     module(function($provide){
-      ShareJSMock = jasmine.createSpyObj('ShareJSMock', ['peek', 'mkpath']);
+      ShareJSMock = jasmine.createSpyObj('ShareJSMock', ['peek', 'mkpathAndSetValue']);
       $provide.value('ShareJS', ShareJSMock);
     });
 
@@ -119,8 +119,10 @@ describe('Multi Video Editor Controller', function() {
     var insertOpMock;
     beforeEach(function() {
       insertOpMock = jasmine.createSpyObj('insertOpMock', ['insert']);
-      scope.otDoc  = jasmine.createSpyObj('otDocMock', ['at']);
-      scope.otDoc.at.and.returnValue(insertOpMock);
+      scope.otDoc  = {
+        doc: jasmine.createSpyObj('otDocMock', ['at'])
+      };
+      scope.otDoc.doc.at.and.returnValue(insertOpMock);
 
       scope.otPathTypes = 'ot-path-types';
       scope.otPath      = 'ot-path';
@@ -133,7 +135,7 @@ describe('Multi Video Editor Controller', function() {
       });
 
       it('finds the path in the document', function() {
-        expect(scope.otDoc.at).toHaveBeenCalledWith(scope.otPath);
+        expect(scope.otDoc.doc.at).toHaveBeenCalledWith(scope.otPath);
       });
 
       it('prepends the new asset', function() {
@@ -148,8 +150,8 @@ describe('Multi Video Editor Controller', function() {
       });
 
       it('creates a path in the document', function() {
-        expect(ShareJSMock.mkpath).toHaveBeenCalledWith({
-          doc: scope.otDoc,
+        expect(ShareJSMock.mkpathAndSetValue).toHaveBeenCalledWith({
+          doc: scope.otDoc.doc,
           path: scope.otPath,
           types: scope.otPathTypes,
           value: ['asset-id']

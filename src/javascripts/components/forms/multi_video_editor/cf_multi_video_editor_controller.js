@@ -58,11 +58,11 @@ angular.module('contentful').controller('cfMultiVideoEditorController', ['$attrs
     assetObject = initAssetObject(asset.assetId);
     cb          = $q.callbackWithApply();
 
-    if (_.isArray(ShareJS.peek($scope.otDoc, $scope.otPath))) {
-      $scope.otDoc.at($scope.otPath).insert(0, asset.assetId, cb);
+    if (_.isArray(ShareJS.peek($scope.otDoc.doc, $scope.otPath))) {
+      $scope.otDoc.doc.at($scope.otPath).insert(0, asset.assetId, cb);
     } else {
-      ShareJS.mkpath({
-        doc: $scope.otDoc,
+      ShareJS.mkpathAndSetValue({
+        doc: $scope.otDoc.doc,
         path: $scope.otPath,
         types: $scope.otPathTypes,
         value: [asset.assetId]
@@ -77,7 +77,7 @@ angular.module('contentful').controller('cfMultiVideoEditorController', ['$attrs
 
   function removeAsset(index) {
     var cb = $q.callbackWithApply();
-    $scope.otDoc.at($scope.otPath.concat(index)).remove(cb);
+    $scope.otDoc.doc.at($scope.otPath.concat(index)).remove(cb);
     cb.promise.then(function () { $scope.multiVideoEditor.assets.splice(index,1); });
   }
 

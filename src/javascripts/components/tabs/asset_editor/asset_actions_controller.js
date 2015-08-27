@@ -9,12 +9,13 @@ angular.module('contentful')
   var notification = $injector.get('notification');
   var $rootScope   = $injector.get('$rootScope');
   var $q           = $injector.get('$q');
+  var truncate     = $injector.get('stringUtils').truncate;
 
 
   // TODO If we are sure that the data in the asset has been updated from the ShareJS doc,
   // We can query the asset instead of reimplementing the checks heere
   function title() {
-    return '"' + $scope.spaceContext.assetTitle($scope.asset) + '"';
+    return '“' + truncate($scope.spaceContext.assetTitle($scope.asset), 50) + '”';
   }
 
 
@@ -64,7 +65,7 @@ angular.module('contentful')
     return $scope.asset.unpublish()
     .then(function(){
       notification.info(title() + ' unpublished successfully');
-      $scope.otUpdateEntity();
+      $scope.otDoc.updateEntityData();
     })
     .catch(function(err){
       notification.warn('Error unpublishing ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');

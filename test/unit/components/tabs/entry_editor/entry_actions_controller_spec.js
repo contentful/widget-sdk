@@ -14,6 +14,7 @@ describe('Entry Actions Controller', function () {
     var entry = cfStub.entry(space, 'entryid', 'typeid', {field1: 'one'}, {sys: {version: 1}});
 
     this.scope = $rootScope.$new();
+    this.scope.otDoc = {doc: {}, state: {}};
     this.scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
     this.scope.entry = entry;
     this.broadcastStub = sinon.stub($rootScope, '$broadcast');
@@ -133,7 +134,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        sinon.assert.called(this.notification.warn);
+        sinon.assert.called(this.notification.error);
       });
 
       it('logs error notification', function() {
@@ -175,7 +176,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        sinon.assert.called(this.notification.warn);
+        sinon.assert.called(this.notification.error);
       });
 
       it('logs error notification', function() {
@@ -217,7 +218,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        sinon.assert.called(this.notification.warn);
+        sinon.assert.called(this.notification.error);
       });
 
       it('logs error notification', function() {
@@ -228,7 +229,7 @@ describe('Entry Actions Controller', function () {
     describe('succeeds', function() {
       beforeEach(function() {
         this.actionStub.resolves({entry: true});
-        this.scope.otUpdateEntity = sinon.stub();
+        this.scope.otDoc.updateEntityData = sinon.stub();
         this.controller.unpublish.execute();
         this.$apply();
       });
@@ -242,7 +243,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('updates ot entity', function() {
-        sinon.assert.called(this.scope.otUpdateEntity);
+        sinon.assert.called(this.scope.otDoc.updateEntityData);
       });
     });
   });
@@ -276,8 +277,17 @@ describe('Entry Actions Controller', function () {
       self = this;
       entry = this.scope.entry;
 
-      this.scope.otEditable = true;
-      this.scope.otGetEntity = sinon.stub().returns(this.scope.entry);
+      this.setStub = sinon.stub();
+      this.scope.otDoc = {
+        state: {},
+        doc: {
+          at: sinon.stub().returns({
+            set: this.setStub
+          })
+        }
+      };
+      this.scope.otDoc.state.editable = true;
+      this.scope.otDoc.getEntity = sinon.stub().returns(this.scope.entry);
       entry.save = function () { entry.data.sys.version += 1; };
       entry.publish = function () {
         entry.data.sys.publishedVersion += 1;
@@ -287,14 +297,8 @@ describe('Entry Actions Controller', function () {
       entry.setPublishedVersion = function (version) {
         entry.data.sys.publishedVersion = version;
       };
-      this.setStub = sinon.stub();
-      this.scope.otDoc = {
-        at: sinon.stub().returns({
-          set: this.setStub
-        })
-      };
       this.scope.$apply();
-      this.scope.otUpdateEntity = entry.save;
+      this.scope.otDoc.updateEntityData = entry.save;
       this.scope.validate = sinon.stub().returns(true);
     });
 
@@ -388,7 +392,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows warn notification', function() {
-        sinon.assert.called(this.notification.warn);
+        sinon.assert.called(this.notification.error);
       });
     });
 
@@ -428,7 +432,7 @@ describe('Entry Actions Controller', function () {
         });
 
         it('shows error notification', function() {
-          sinon.assert.called(this.notification.warn);
+          sinon.assert.called(this.notification.error);
         });
       });
 
@@ -448,11 +452,11 @@ describe('Entry Actions Controller', function () {
         });
 
         it('shows error notification', function() {
-          sinon.assert.called(this.notification.warn);
+          sinon.assert.called(this.notification.error);
         });
 
         it('gets contextual error message', function() {
-          expect(this.notification.warn.args[0][0]).toMatch(/linked entries/i);
+          expect(this.notification.error.args[0][0]).toMatch(/linked entries/i);
         });
       });
 
@@ -472,11 +476,11 @@ describe('Entry Actions Controller', function () {
         });
 
         it('shows error notification', function() {
-          sinon.assert.called(this.notification.warn);
+          sinon.assert.called(this.notification.error);
         });
 
         it('gets contextual error message', function() {
-          expect(this.notification.warn.args[0][0]).toMatch(/version/i);
+          expect(this.notification.error.args[0][0]).toMatch(/version/i);
         });
       });
 
@@ -496,7 +500,7 @@ describe('Entry Actions Controller', function () {
         });
 
         it('gets contextual error message', function() {
-          expect(this.notification.warn.args[0][0]).toMatch(/unexistent content type/i);
+          expect(this.notification.error.args[0][0]).toMatch(/unexistent content type/i);
         });
       });
 
@@ -523,7 +527,7 @@ describe('Entry Actions Controller', function () {
         });
 
         it('gets contextual error message', function() {
-          expect(this.notification.warn.args[0][0]).toMatch(/content type name/i);
+          expect(this.notification.error.args[0][0]).toMatch(/content type name/i);
         });
       });
 
@@ -541,7 +545,7 @@ describe('Entry Actions Controller', function () {
         });
 
         it('gets contextual error message', function() {
-          expect(this.notification.warn.args[0][0]).toMatch(/individual fields/i);
+          expect(this.notification.error.args[0][0]).toMatch(/individual fields/i);
         });
       });
 
@@ -575,7 +579,7 @@ describe('Entry Actions Controller', function () {
         var versionStub;
         beforeEach(function() {
           this.actionStub.resolves({entry: true});
-          this.scope.otUpdateEntity = sinon.stub();
+          this.scope.otDoc.updateEntityData = sinon.stub();
           versionStub = sinon.stub(this.scope.entry, 'setPublishedVersion');
           this.controller.publish.execute();
           this.$apply();

@@ -129,6 +129,28 @@ angular.module('contentful')
 
   }
 
+
+  /**
+   * @ngdoc method
+   * @name stringUtils#truncate
+   * @usage[js]
+   * truncate('Hello world', 6)
+   * // => 'Hello…'
+   *
+   * @param {string} str
+   * @param {number} length
+   * @returns {string}
+   */
+  function truncate (str, length) {
+    if (str && str.length > length) {
+      str = str.substr(0, length);
+      str = str.replace(/\s.\s*$/, '');
+      return str + '…';
+    } else {
+      return str;
+    }
+  }
+
   return {
     joinAnd: joinAnd,
     joinAndTruncate: joinAndTruncate,
@@ -142,7 +164,8 @@ angular.module('contentful')
     removeExtension: removeExtension,
     fileNameToTitle: fileNameToTitle,
     titleToFileName: titleToFileName,
-    getEntityLabel: getEntityLabel
+    getEntityLabel: getEntityLabel,
+    truncate: truncate
   };
 })())
 
