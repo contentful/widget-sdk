@@ -13,7 +13,10 @@ angular.module('contentful').factory('MarkdownEditor/tree', ['$injector', functi
   var EMBEDLY_CLASS_RE          = new RegExp('class="embedly-card"', 'g');
   var EMBEDLY_CLASS_REPLACEMENT = 'class="embedly-card markdown-block" data-card-controls="0"';
 
-  return function createTreeBuilder(libs) {
+  createTreeBuilder._hash = getHashCode;
+  return createTreeBuilder;
+
+  function createTreeBuilder(libs) {
     var MarkedAst  = libs.MarkedAst;
     var AstBuilder = libs.MarkedAst.AstBuilder;
     var React      = libs.React;
@@ -215,7 +218,7 @@ angular.module('contentful').factory('MarkdownEditor/tree', ['$injector', functi
 
       return key;
     }
-  };
+  }
 
   /**
    * Context-free utilities
@@ -246,8 +249,8 @@ angular.module('contentful').factory('MarkdownEditor/tree', ['$injector', functi
 
   function countWords(html, isClean) {
     var clean = isClean ? html : html.replace(HTML_TAGS_RE, '');
-    var words = _.isString(clean) ? clean : '';
-    words = words.replace(WHITESPACE_RE, ' ').split(' ');
+    clean = _.isString(clean) ? clean : '';
+    var words = clean.replace(WHITESPACE_RE, ' ').split(' ');
 
     return _.filter(words, notEmpty).length;
   }

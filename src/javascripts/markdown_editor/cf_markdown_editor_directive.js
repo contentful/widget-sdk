@@ -73,9 +73,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       }
 
       function setModelValue(value) {
-        if (!_.isObject(scope.fieldData)) { return; }
-        scope.fieldData.value = value;
-        changedByWidget = true;
+        if (_.isObject(scope.fieldData) && value !== getModelValue()) {
+          scope.fieldData.value = value;
+          changedByWidget = true;
+        }
       }
 
       function handleEditorChange() {
