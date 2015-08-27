@@ -17,8 +17,4 @@
  *
  */
 window.CF_ENV = 'unitttest';
-angular.module('contentful/test', ['contentful', 'contentful/mocks'])
-
-.config(['contextMenuProvider', function (contextMenuProvider) {
-  contextMenuProvider.disable();
-}]);
+angular.module('contentful/test', ['contentful', 'contentful/mocks']);
