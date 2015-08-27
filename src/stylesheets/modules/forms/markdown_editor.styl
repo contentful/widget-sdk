@@ -68,6 +68,8 @@ $markdown-radius = 2px
     background-color: transparent
 
 .markdown-headings
+  padding-top: 3px
+  margin-right: 2px
   font-size: 1em
   i, cf-icon, svg
     display: inline-block
@@ -99,6 +101,9 @@ $markdown-radius = 2px
   border-width: 0 1px
 
 .markdown-editing-area
+  textarea
+    height: 1px
+
   .CodeMirror
     line-height: 1.5em
   .CodeMirror-lines
@@ -115,21 +120,39 @@ $markdown-radius = 2px
     font-size: 1.3em
   .cm-header-6
     font-size: 1.15em
-  .cm-s-elegant span.cm-number, .cm-s-elegant span.cm-string, .cm-s-elegant span.cm-atom {color: #762;}
-  .cm-s-elegant span.cm-comment {color: #262; font-style: italic; line-height: 1em;}
-  .cm-s-elegant span.cm-meta {color: #555; font-style: italic; line-height: 1em;}
-  .cm-s-elegant span.cm-variable {color: black;}
-  .cm-s-elegant span.cm-variable-2 {color: #b11;}
-  .cm-s-elegant span.cm-qualifier {color: #555;}
-  .cm-s-elegant span.cm-keyword {color: #730;}
-  .cm-s-elegant span.cm-builtin {color: #30a;}
-  .cm-s-elegant span.cm-link {color: #762;}
-  .cm-s-elegant span.cm-error {background-color: #fdd;}
 
-  .cm-s-elegant .CodeMirror-activeline-background {background: #e8f2ff !important;}
-  .cm-s-elegant .CodeMirror-matchingbracket {outline:1px solid grey; color:black !important;}
-  textarea
-    height: 1px
+  .cm-s-elegant
+    span.cm-number,
+    span.cm-string,
+    span.cm-atom
+      color: #762
+    span.cm-comment
+      color: #262
+      font-style: italic
+      line-height: 1em
+    span.cm-meta
+      color: #555
+      font-style: italic
+      line-height: 1em
+    span.cm-variable
+      color: black
+    span.cm-variable-2
+      color: #b11
+    span.cm-qualifier
+      color: #555
+    span.cm-keyword
+      color: #730
+    span.cm-builtin
+      color: #30a
+    span.cm-link
+      color: #762
+    span.cm-error
+      background-color: #fdd
+    .CodeMirror-activeline-background
+      background: #e8f2ff !important
+    .CodeMirror-matchingbracket
+      outline: 1px solid grey
+      color:black !important
 
 .markdown-preview
   padding: 20px
@@ -137,6 +160,9 @@ $markdown-radius = 2px
   word-wrap: break-word
   overflow-wrap: break-word
   height: 100%
+
+.markdown-preview-crashed
+  text-align: center
 
 .markdown-help
   background: $colors.element-light
@@ -279,6 +305,10 @@ $markdown-radius = 2px
   bottom: 0
   background: #FFF
   overflow: hidden
+  .CodeMirror-lines,
+  .markdown-preview-mounting-point
+    max-width: 640px
+    margin: 0 auto
 
 .zenmode-toolbar,
 .zenmode-footer
@@ -286,30 +316,20 @@ $markdown-radius = 2px
   position: fixed
   left: 0
   right: 0
-  background: $gray-lightest
+  background-color: $colors.element-light
 
 .zenmode-toolbar
   top: 0
-  padding-top: 15px
-  padding-left: 80px
-  padding-right: 15px
-  height: 60px
-  border-top: 3px solid $gray-light
-  border-bottom: 1px solid $gray-light
-
-.zenmode-logo
-  z-index: 104
-  position: fixed
-  top: 18px
-  left: 20px
-  width: 30px
-  height: 30px
+  padding: 12px 20px 0
+  padding-left: 50px
+  height: 52px
+  border-bottom: 1px solid $colors.element-dark
 
 .zenmode-editor,
 .zenmode-preview
   position: fixed
-  top: 60px
-  bottom: 60px
+  top: 52px
+  bottom: 38px
   width: 50%
 
 .zenmode-editor
@@ -324,28 +344,28 @@ $markdown-radius = 2px
 .zenmode-footer
   z-index: 103
   position: fixed
+  display: flex
+  justify-content: space-between
   left: 0
   right: 0
   bottom: 0
-  height: 60px
-  padding: 20px 30px
-  border-bottom: 3px solid $gray-light
-  border-top: 1px solid $gray-light
+  height: 38px
+  padding: 10px 20px
+  border-top: 1px solid $colors.element-dark
 
 .zenmode-help
-  float: left
   display: flex
   cf-icon
     width: 25px
     margin-right: 5px
 
-.zenmode-info
-  display: flex
-  float: right
+.zenmode-info,
+.zenmode-reqs
   font-size: 0.9em
-  text-align: right
-  .markdown-info__requirements
-    margin-left: 30px
+
+.zenmode-help,
+.zenmode-reqs
+  min-width: 450px
 
 /**
  * Help

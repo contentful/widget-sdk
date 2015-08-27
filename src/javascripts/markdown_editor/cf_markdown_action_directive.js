@@ -50,3 +50,15 @@ angular.module('contentful').directive('cfMarkdownAction', function () {
     }
   };
 });
+
+angular.module('contentful').directive('cfMarkdownHeadingAction', function () {
+  return {
+    restrict: 'E',
+    scope: {
+      actions: '=',
+      disabled: '=',
+      mode: '@'
+    },
+    template: JST['cf_markdown_heading_action']()
+  };
+});

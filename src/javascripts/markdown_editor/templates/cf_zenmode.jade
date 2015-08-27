@@ -1,23 +1,6 @@
 .cf-zenmode
   .zenmode-toolbar
-    .zenmode-logo.app-top-bar__logo-element(cf-custom-logo)
-
-    button.toolbar-button.markdown-headings.fa.fa-header(
-      cf-context-menu-trigger
-      tabindex="-1"
-      tooltip="Headings"
-      tooltip-placement="bottom")
-        | &nbsp;
-        i.fa.fa-chevron-down
-    .context-menu(cf-context-menu="bottom")
-      cf-icon.context-menu__arrow(name="arrow-up")
-      ul.context-menu__items
-        li(type="button" ng-click="actions.h1()")
-          |  Heading 1
-        li(type="button" ng-click="actions.h2()")
-          | Heading 2
-        li(type="button" ng-click="actions.h3()")
-          | Heading 3
+    cf-markdown-heading-action(actions="actions" mode="zen")
 
     cf-markdown-action(actions="actions" name="bold"          mode="zen")
     cf-markdown-action(actions="actions" name="italic"        mode="zen")
@@ -37,10 +20,9 @@
     cf-markdown-action(actions="actions" name="undo"          mode="zen" disabled="!history.hasUndo()")
     cf-markdown-action(actions="actions" name="redo"          mode="zen" disabled="!history.hasRedo()")
 
-    button.toolbar-button.markdown-side-action(
+    button.toolbar-button.markdown-side-action.active(
       ng-click="zenApi.toggle()")
-      i.fa.fa-close
-      |  Exit Zen Mode
+      i.fa.fa-arrows-alt
 
     button.toolbar-button.markdown-side-action(
       ng-click="actions.asset()"
@@ -59,6 +41,8 @@
       cf-icon(name="markdown")
       | Use Markdown syntax to format your text.&nbsp;
       a(href ng-click="actions.openHelp()") Help
-    .zenmode-info
-      cf-markdown-stats(preview="preview")
-      cf-markdown-requirements(preview="preview")
+
+    cf-markdown-stats.zenmode-info(preview="preview")
+    cf-markdown-requirements.zenmode-reqs(
+      ng-if="preview.field.validations"
+      preview="preview")

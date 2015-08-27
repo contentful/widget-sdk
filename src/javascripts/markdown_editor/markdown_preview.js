@@ -70,7 +70,7 @@ angular.module('contentful').directive('cfMarkdownPreview', ['$injector', functi
     },
     template: [
       '<div ng-show="!preview.hasCrashed" class="markdown-preview-mounting-point"></div>',
-      '<div ng-show="preview.hasCrashed || mountHasCrashed">',
+      '<div ng-show="preview.hasCrashed || mountHasCrashed" class="markdown-preview-crashed">',
         '<i class="fa fa-warning"></i> ',
         'We cannot render the preview. ',
         'If you use HTML tags, check if these are valid.',
