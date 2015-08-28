@@ -14,13 +14,10 @@ angular.module('contentful').controller('SaveStatusController', ['$scope', 'defe
       } else {
         scope.saveStatus = 'saved';
       }
+    } else if (scope.otDoc.state.disabled) {
+      scope.saveStatus = 'not-allowed';
     } else {
-      if (scope.otDoc.state.disabled) {
-        scope.saveStatus = 'not-allowed';
-      } else {
-        scope.saveStatus = 'no-connection';
-        // TODO distinction between connecting and stopped according to sharejs connection state
-      }
+      scope.saveStatus = 'no-connection';
     }
   });
 
