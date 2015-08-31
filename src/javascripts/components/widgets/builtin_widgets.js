@@ -70,6 +70,13 @@ angular.module('contentful').run(['widgets', function(widgets){
     fieldTypes: ['Text'],
     name: 'Markdown',
     icon: 'markdown',
+    template: '<div cf-legacy-markdown-editor class="cf-legacy-markdown-editor"></div>'
+  });
+
+  widgets.registerWidget('newMarkdown',{
+    fieldTypes: ['Text'],
+    name: 'New Markdown Editor',
+    icon: 'markdown',
     template: '<cf-markdown-editor-bridge />'
   });
 
