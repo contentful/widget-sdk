@@ -55,7 +55,7 @@ describe('otBindText', function () {
     sinon.assert.calledOnce(subdoc.attach_textarea);
     subdoc.attach_textarea.reset();
 
-    scope.otSubDoc.doc = null;
+    scope.otSubDoc.doc = undefined;
     scope.$apply();
     sinon.assert.calledOnce(unbindTextArea);
 

@@ -71,7 +71,7 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
 
       function makeSubDoc() {
         return {
-          doc: null,
+          doc: undefined,
           changeString: otChangeString,
           changeValue: otChangeValue,
           getValue: otGetValue
