@@ -90,7 +90,7 @@ angular.module('contentful')
 
   function makeOtDoc() {
     return {
-      doc: null,
+      doc: undefined,
       state: {
         // initialized to true to prevent editing until otDoc is ready
         disabled: true, // otDoc.state.disabled

@@ -22,10 +22,10 @@ describe('otDocFor', function () {
     scope = this.$compile('<div ot-doc-for="entity">', {
       entity: this.entity,
     }).scope();
-    scope.otDoc.doc = {
-      snapshot: {foo: 'bar', baz: {}, sys: {version: 100, updatedAt: 'foo'}},
-      version: 123
-    };
+  });
+
+  it('otDoc is initially undefined', function(){
+    expect(scope.otDoc.doc).toBeUndefined();
   });
 
   describe('#updateEntityData()', function () {
@@ -33,6 +33,10 @@ describe('otDocFor', function () {
     beforeEach(function () {
       this.clock = sinon.useFakeTimers(1234, 'Date');
       this.now = moment();
+      scope.otDoc.doc = {
+        snapshot: {foo: 'bar', baz: {}, sys: {version: 100, updatedAt: 'foo'}},
+        version: 123
+      };
     });
 
     afterEach(function () {
@@ -74,7 +78,6 @@ describe('otDocFor', function () {
 
   describe('opening a ShareJS document', function () {
     beforeEach(inject(function (){
-      scope.otDoc.doc = null;
       scope.otDoc.state = {
         disabled: false,
         connected: true
