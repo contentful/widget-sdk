@@ -28,9 +28,11 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
   var defer      = $injector.get('defer');
   var track      = $injector.get('analytics').track;
   var $rootScope = $injector.get('$rootScope');
+  var opened     = [];
 
   function Dialog(params) {
     this._handleKeys = _.bind(this._handleKeys, this);
+    opened.push(this);
 
     var scope = params.scope;
 
@@ -122,6 +124,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       this._deferred.resolve.apply(this, arguments);
       this.destroy();
       trackConfirmed(this);
+      removeFromOpened(this);
       return this;
     },
 
@@ -129,6 +132,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       this._deferred.reject.apply(this, arguments);
       this.destroy();
       trackCanceled(this);
+      removeFromOpened(this);
       return this;
     },
 
@@ -148,7 +152,8 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
     open:              openDialog,
     notify:            notify,
     confirmDeletion:   confirmDeletion,
-    openConfirmDialog: openConfirmDialog
+    openConfirmDialog: openConfirmDialog,
+    getOpened:         getOpened
   };
 
   /**
@@ -259,6 +264,22 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       }, function() {
         return { confirmed: false, cancelled: true  };
       });
+  }
+
+  /**
+   * @ngdoc method
+   * @name modalDialog#getOpened
+   * @returns Dialog[]
+   */
+  function getOpened() {
+    return opened;
+  }
+
+  function removeFromOpened(dialog) {
+    var index = opened.indexOf(dialog);
+    if (index > -1) {
+      opened.splice(index, 1);
+    }
   }
 
   function trackDialog (eventName, dialog) {

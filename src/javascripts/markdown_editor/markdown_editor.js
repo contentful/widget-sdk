@@ -22,7 +22,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
     var quoteToggleFn = createPrefixToggleFn('> ');
     var codeToggleFn = createPrefixToggleFn('    ');
 
-    return {
+    var api = {
       actions: {
         bold:   function () { insertInline('__', 'text in bold');  },
         italic: function () { insertInline('*', 'text in italic'); },
@@ -62,6 +62,16 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       getWrapper:      function () { return editor; }
     };
 
+    addKeyShortcuts({
+      'B': api.actions.bold,
+      'I': api.actions.italic,
+      '1': api.actions.h1,
+      '2': api.actions.h2,
+      '3': api.actions.h3
+    });
+
+    return api;
+
     function setContent(value) {
       // if value is unchanged, break the loop
       if (editor.getValue() === value) { return; }
@@ -100,6 +110,15 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
         var info = editor.getScrollInfo();
         editor.getEditor().scrollTo(null, position*info.height);
       });
+    }
+
+    function addKeyShortcuts(map) {
+      var extension = {};
+      _.forEach(map, function (value, key) {
+        extension['Ctrl-' + key] = value;
+        extension['Cmd-'  + key] = value;
+      });
+      editor.getEditor().addKeyMap(extension);
     }
 
     /**

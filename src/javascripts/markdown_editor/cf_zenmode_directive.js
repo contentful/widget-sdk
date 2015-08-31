@@ -2,8 +2,11 @@
 
 angular.module('contentful').directive('cfZenmode', ['$injector', function ($injector) {
 
+  var $window        = $injector.get('$window');
   var MarkdownEditor = $injector.get('MarkdownEditor');
   var actions        = $injector.get('MarkdownEditor/actions');
+  var keycodes       = $injector.get('keycodes');
+  var modalDialog    = $injector.get('modalDialog');
 
   return {
     restrict: 'E',
@@ -30,9 +33,11 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
 
         editor.events.onChange(scope.zenApi.syncToParent);
         editor.events.onScroll(handleScroll);
+        $($window).on('keyup', handleEsc);
 
         scope.$on('$destroy', function () {
           tieParentEditor();
+          $($window).off('keyup', handleEsc);
           editor.destroy();
         });
       }
@@ -48,6 +53,12 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
 
       function handleScroll() {
         editor.tie.previewToEditor(preview);
+      }
+
+      function handleEsc(e) {
+        if (modalDialog.getOpened().length < 1 && e.keyCode === keycodes.ESC) {
+          scope.zenApi.toggle();
+        }
       }
     }
   };
