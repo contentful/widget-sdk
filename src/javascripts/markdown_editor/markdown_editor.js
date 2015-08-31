@@ -2,6 +2,7 @@
 
 angular.module('contentful').factory('MarkdownEditor', ['$injector', function($injector) {
 
+  var $timeout   = $injector.get('$timeout');
   var wrapEditor = $injector.get('MarkdownEditor/wrapper');
   var LazyLoader = $injector.get('LazyLoader');
 
@@ -45,17 +46,20 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
         hasRedo: function () { return editor.getHistorySize('redo') > 0; }
       },
       events: {
-        onScroll: function (fn) {
-          editor.attachEvent('scroll', onScroll, 150);
-          function onScroll () { fn(editor.getScrollInfo()); }
-        },
-        onChange: function (fn) { editor.attachEvent('change', fn); }
+        onScroll: function (fn) { editor.attachEvent('scroll', fn, 150); },
+        onChange: function (fn) { editor.attachEvent('change', fn);      }
       },
-      insert:          function (text) { editor.insertAtCursor(text); },
-      getWrapper:      function () { return editor; },
-      getContent:      function () { return editor.getValue(); },
-      destroy:         function () { editor.destroy(); },
-      setContent:      setContent
+      tie: {
+        previewToEditor: tiePreviewToEdiotr,
+        editorToEditor:  tieEditorToEditor,
+        editorToPreview: tieEditorToPreview
+      },
+      insert:          editor.insertAtCursor,
+      focus:           editor.focus,
+      getContent:      editor.getValue,
+      destroy:         editor.destroy,
+      setContent:      setContent,
+      getWrapper:      function () { return editor; }
     };
 
     function setContent(value) {
@@ -72,6 +76,30 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       // enable undo/redo, by default "undoDepth" is set to 0
       // we set it here so we cannot undo setting initial value (first "setValue" call)
       editor.opt('undoDepth', 200);
+    }
+
+    function tiePreviewToEdiotr(el) {
+      var info = editor.getScrollInfo();
+      var position = info.top / info.height;
+
+      $timeout(function () {
+        var top = el.get(0).scrollHeight * position;
+        el.scrollTop(top);
+      });
+    }
+
+    function tieEditorToEditor(other) {
+      other = _.isFunction(other.getWrapper) ? other.getWrapper() : other;
+      other.restoreCursor(editor.getCurrentCharacter(), editor.getCurrentLineNumber());
+    }
+
+    function tieEditorToPreview(el) {
+      var position =  el.scrollTop() / el.get(0).scrollHeight;
+
+      $timeout(function () {
+        var info = editor.getScrollInfo();
+        editor.getEditor().scrollTo(null, position*info.height);
+      });
     }
 
     /**

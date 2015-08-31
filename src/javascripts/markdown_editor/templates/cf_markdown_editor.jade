@@ -32,17 +32,17 @@
         ng-disabled="!canEdit()")
 
       button.toolbar-button.markdown-side-action(
+        ng-click="zenApi.toggle()"
+        tabindex="-1"
+        ng-disabled="disabled")
+          i.fa.fa-arrows-alt
+
+      button.toolbar-button.markdown-side-action(
         ng-click="actions.asset()"
         tabindex="-1"
         ng-disabled="!canEdit()")
         i.fa.fa-picture-o
         |  Insert media
-
-      button.toolbar-button.markdown-side-action(
-        ng-click="zenApi.toggle()"
-        tabindex="-1"
-        ng-disabled="disabled")
-        i.fa.fa-arrows-alt
 
     .markdown-minor-actions
       cf-markdown-action(actions="actions" name="strike"        disabled="!canEdit()")

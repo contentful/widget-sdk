@@ -3,7 +3,15 @@
 describe('cfZenmode', function () {
   var editor;
   var libs = window.cfLibs.markdown;
-  var apiMock = { registerChild: sinon.spy(), syncToParent: sinon.spy() };
+
+  var tieSpy = sinon.spy();
+  var apiMock = {
+    registerChild: sinon.spy(),
+    syncToParent: sinon.spy(),
+    getParent: function () {
+      return { tie: { editorToEditor: tieSpy } };
+    }
+  };
 
   beforeEach(function () {
     module('contentful/test');
@@ -27,6 +35,7 @@ describe('cfZenmode', function () {
 
   it('Registers editor on startup', function () {
     sinon.assert.calledOnce(apiMock.registerChild);
+    sinon.assert.calledOnce(tieSpy);
   });
 
   it('Syncs changes from editor to parent', function () {

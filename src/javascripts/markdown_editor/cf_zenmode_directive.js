@@ -26,16 +26,28 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
         scope.history = editor.history;
 
         scope.zenApi.registerChild(editorInstance);
+        tieChildEditor();
+
         editor.events.onChange(scope.zenApi.syncToParent);
         editor.events.onScroll(handleScroll);
 
-        scope.$on('$destroy', editor.destroy);
+        scope.$on('$destroy', function () {
+          tieParentEditor();
+          editor.destroy();
+        });
       }
 
-      function handleScroll(info) {
-        var position = info.top / info.height;
-        var top = preview.get(0).scrollHeight * position;
-        preview.scrollTop(top);
+      function tieChildEditor() {
+        var parent = scope.zenApi.getParent();
+        parent.tie.editorToEditor(editor);
+      }
+
+      function tieParentEditor() {
+        editor.tie.editorToEditor(scope.zenApi.getParent());
+      }
+
+      function handleScroll() {
+        editor.tie.previewToEditor(preview);
       }
     }
   };

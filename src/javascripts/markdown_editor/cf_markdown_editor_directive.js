@@ -19,6 +19,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
     },
     link: function (scope, el) {
       var textarea        = el.find('textarea').get(0);
+      var preview         = el.find('.markdown-preview').first();
       var minorActions    = el.find('.markdown-minor-actions').first().hide();
       var currentMode     = 'md';
       var editor          = null;
@@ -40,9 +41,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
       // simple bus that is used to synchronize between Zen Mode and main editor
       scope.zenApi = {
-        syncToParent: syncFromChildToParent,
+        syncToParent:  syncFromChildToParent,
         registerChild: registerChildEditor,
-        toggle: toggleZenMode
+        getParent:     function () { return editor; },
+        toggle:        toggleZenMode
       };
 
       // No need to handle response:
@@ -146,17 +148,20 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         if (nextMode === currentMode) { return; }
         currentMode = nextMode;
 
-        // 3. hide minor actions if going to preview mode
-        if (currentMode !== 'md') {
+        // 3. when going to preview mode:
+        //    - hide minor actions
+        //    - tie preview position with editor
+        if (currentMode === 'preview') {
+          editor.tie.previewToEditor(preview);
           toggleMinorActions(true);
         }
 
-        // 4. when rerendered and in Markdown mode,
-        // set height to "auto" to allow auto-expanding
+        // 4. when in Markdown mode:
+        //    - set height to "auto" to allow auto-expanding
+        //    - tie editor position with preview
         if (currentMode === 'md') {
-          $timeout(function () {
-            areas.height('auto');
-          });
+          editor.tie.editorToPreview(preview);
+          $timeout(function () { areas.height('auto'); });
         }
       }
 
