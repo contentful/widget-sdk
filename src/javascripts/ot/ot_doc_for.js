@@ -68,7 +68,16 @@ angular.module('contentful')
 
   var otConnected = false;
 
-  $scope.otDoc = makeOtDoc();
+  $scope.otDoc = {
+    doc: undefined,
+    state: {
+      // initialized to true to prevent editing until otDoc is ready
+      disabled: true, // otDoc.state.disabled
+      editable: false // otDoc.state.editable
+    },
+    getEntity: otGetEntity,
+    updateEntityData: otUpdateEntityData
+  };
 
   $scope.$watch(function () {
     return ShareJS.isConnected();
@@ -76,9 +85,14 @@ angular.module('contentful')
     otConnected = connected;
   });
 
+  // If the document connection state changes, this watcher is triggered
+  // Connection failures during editing are handled from this point onwards.
   $scope.$watch(function (scope) {
     return shouldDocBeOpen(scope) ? otGetEntity() : false;
   }, attemptToOpenOtDoc);
+  $scope.$on('otConnectionStateChanged', function () {
+    attemptToOpenOtDoc(otGetEntity());
+  });
 
   $scope.$watch('otDoc.doc', function (otDoc, old, scope) {
     setupRemoteOpListeners(otDoc, old);
@@ -88,17 +102,13 @@ angular.module('contentful')
   $scope.$watch('otDoc.state.editable', handleEditableState);
   $scope.$on('$destroy', handleScopeDestruction);
 
-  function makeOtDoc() {
-    return {
-      doc: undefined,
-      state: {
-        // initialized to true to prevent editing until otDoc is ready
-        disabled: true, // otDoc.state.disabled
-        editable: false // otDoc.state.editable
-      },
-      getEntity: otGetEntity,
-      updateEntityData: otUpdateEntityData
-    };
+  function resetOtDoc() {
+    $scope.otDoc.doc = undefined;
+  }
+
+  function shouldDocBeOpen(scope) {
+    var state = scope.otDoc.state;
+    return otConnected && !state.disabled && !!otGetEntity();
   }
 
   function otGetEntity() {
@@ -157,7 +167,7 @@ angular.module('contentful')
   }
 
   function handleOtDocOpeningFailure(err, entity) {
-    $scope.otDoc = makeOtDoc();
+    resetOtDoc();
     logger.logSharejsError('Failed to open sharejs doc', {
       data: {
         error: err,
@@ -206,7 +216,7 @@ angular.module('contentful')
           throw e;
         }
       } finally {
-        $scope.otDoc = makeOtDoc();
+        resetOtDoc();
       }
     }
   }
@@ -237,11 +247,6 @@ angular.module('contentful')
       });
     });
     return data;
-  }
-
-  function shouldDocBeOpen(scope) {
-    var state = scope.otDoc.state;
-    return otConnected && !state.disabled && !!otGetEntity();
   }
 
   function remoteOpListener(ops) {
@@ -279,7 +284,7 @@ angular.module('contentful')
       } catch(e) {
         if (e.message !== 'Cannot send to a closed connection') throw e;
       } finally {
-        scope.otDoc = makeOtDoc();
+        resetOtDoc();
       }
     }
   }
