@@ -40,27 +40,32 @@ angular.module('contentful').provider('ShareJS', ['environment', function ShareJ
      * - Callback execution is not wrapped in $apply
      */
     function ShareJSClient(url, token) {
+      var oldState;
+      var self = this;
       this.token = token;
       this.url = url;
       this.connection = new window.sharejs.Connection(this.url, this.token);
       this.connection.socket.send = function (message) {
-        // Monkey patch for better Angular compatiblity
-        return this.sendMap({JSON: angular.toJson(message)});
+        try {
+          return this.sendMap({JSON: angular.toJson(message)});
+        } catch (error) {
+          // Silently ignore the error as this is handled on ot_doc_for
+        }
       };
       this.connection.on('ok', stateChangeHandler);
       this.connection.on('error', stateChangeHandler);
       this.connection.on('disconnected', stateChangeHandler);
       this.connection.on('connect failed', stateChangeHandler);
 
-      var oldState, c=this;
       function stateChangeHandler(error) {
-        if (c.connection.state !== oldState) {
-          $rootScope.$apply(function (scope) {
-            scope.$broadcast('otConnectionStateChanged', c.connection.state, c.connection, error);
-          });
-          oldState = c.connection.state;
-        }
+        $rootScope.$apply(function () {
+          if (self.connection.state !== oldState) {
+            $rootScope.$broadcast('otConnectionStateChanged', self.connection.state, self.connection, error);
+            oldState = self.connection.state;
+          }
+        });
       }
+
     }
 
     ShareJSClient.prototype = {
