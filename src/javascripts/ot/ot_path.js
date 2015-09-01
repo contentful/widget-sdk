@@ -62,26 +62,24 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
    * - otValueChanged(path, newValue), broadcast: Whenever the value at this path changes
    */
     controller: ['$scope', function otPathController($scope) {
-      $scope.otSubDoc = makeSubDoc();
+      $scope.otSubDoc = {
+        doc: undefined,
+        changeString: otChangeString,
+        changeValue: otChangeValue,
+        getValue: otGetValue
+      };
 
       $scope.$watch('otDoc.doc', init);
       $scope.$watch('otPath', init, true);
 
       $scope.$on('otRemoteOp', remoteOpHandler);
 
-      function makeSubDoc() {
-        return {
-          doc: undefined,
-          changeString: otChangeString,
-          changeValue: otChangeValue,
-          getValue: otGetValue
-        };
-      }
-
       function init(val) {
         if ($scope.otPath && $scope.otDoc.doc) {
           updateSubDoc(val);
           $scope.$broadcast('otValueChanged', $scope.otPath, otGetValue());
+        } else if($scope.otSubDoc.doc){
+          $scope.otSubDoc.doc = undefined;
         }
       }
 
