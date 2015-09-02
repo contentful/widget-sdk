@@ -11,7 +11,15 @@ angular.module('contentful').directive('cfGoogleMaps', ['$injector', function ($
     controllerAs: 'googleMapsController',
     template    : JST['cf_google_maps'](),
     link        : function (scope, element) {
+      var destroyed = false;
+      element.on('$destroy', function () {
+        destroyed = true;
+      });
       googleMapsLoader.load().then(function (GMaps) {
+        if (destroyed) {
+          return;
+        }
+
         var locationController = element.find(MAP_DOM_ELEMENT_CLASS).controller('ngModel');
 
         /*
