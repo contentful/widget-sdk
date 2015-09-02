@@ -41,7 +41,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     fieldTypes: ['Text', 'Symbol'],
     name: 'Single Line',
     icon: 'singleline',
-    template: '<input class="form-control" ng-disabled="!otDoc.state.editable" ng-model="fieldData.value" ot-bind-text type="text">'
+    template: '<cf-single-line-editor />'
   });
 
   widgets.registerWidget('urlEditor', {
