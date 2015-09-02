@@ -62,10 +62,13 @@ $markdown-radius = 2px
   cursor: pointer
   margin-right: 7px
   line-height: 1
-  &:hover
+  svg path
+    fill: $colors.text-mid //Quick fix!
+  &:disabled
+    cursor: not-allowed
+    opacity: .35
+  &:not(:disabled):hover
     background-color: $colors.element-dark
-  &:disabled:hover
-    background-color: transparent
 
 .markdown-headings
   padding-top: 3px
@@ -78,7 +81,7 @@ $markdown-radius = 2px
 .markdown-side-action
   border: 1px solid $colors.element-dark
   background: $colors.element-mid
-  &:hover,
+  &:not(:disabled):hover,
   &.active
     border-color: $colors.element-darker
   &.active
@@ -97,17 +100,21 @@ $markdown-radius = 2px
  */
 
 .markdown-areas
-  border: 1px solid $colors.element-darker
+  border: 1px solid $colors.element-dark
   border-width: 0 1px
 
 .markdown-editing-area
+
   textarea
     height: 1px
 
   .CodeMirror
-    line-height: 1.5em
+    line-height: 1.5
   .CodeMirror-lines
+    color: $colors.text-mid
     padding: 20px
+  .cm-header
+    color: $colors.text-dark
   .cm-header-1
     font-size: 1.9em
   .cm-header-2
@@ -121,38 +128,21 @@ $markdown-radius = 2px
   .cm-header-6
     font-size: 1.15em
 
-  .cm-s-elegant
-    span.cm-number,
-    span.cm-string,
-    span.cm-atom
-      color: #762
-    span.cm-comment
-      color: #262
-      font-style: italic
-      line-height: 1em
-    span.cm-meta
-      color: #555
-      font-style: italic
-      line-height: 1em
-    span.cm-variable
-      color: black
-    span.cm-variable-2
-      color: #b11
-    span.cm-qualifier
-      color: #555
-    span.cm-keyword
-      color: #730
-    span.cm-builtin
-      color: #30a
-    span.cm-link
-      color: #762
-    span.cm-error
-      background-color: #fdd
-    .CodeMirror-activeline-background
-      background: #e8f2ff !important
-    .CodeMirror-matchingbracket
-      outline: 1px solid grey
-      color:black !important
+  span.cm-tag,
+  span.cm-string,
+  span.cm-attribute
+    color: $colors.red-dark
+  span.cm-string
+    text-decoration: none !important
+  span.cm-quote,
+  span.cm-comment,
+  span.cm-variable-2
+    color: $colors.text-light
+  span.cm-link,
+  span.cm-url
+    color: $colors.blue-mid !important
+  span.cm-link
+    text-decoration: underline
 
 .markdown-preview
   padding: 20px
