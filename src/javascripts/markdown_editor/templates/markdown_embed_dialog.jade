@@ -6,7 +6,10 @@
 
     form.modal-dialog__content(name="contentForm")
       .cfnext-form__field
-        label Content URL
+        label
+          | Content URL (
+          a(href="http://embed.ly/providers" target="_blank") supported sources
+          | )
         input.cfnext-form__input--full-size(
         ng-model="model.value"
         name="url"
@@ -18,22 +21,36 @@
       .cfnext-form__field
         label Width
         input.cfnext-form__input--short(
-        ng-model="model.width"
-        name="width"
-        type="number"
-        min="1" pattern="[1-9][0-9]*"
-        required
-        autocomplete="off")
+          ng-show="model.widthSuffix === 'percent'"
+          ng-model="model.width.percent"
+          name="widthPercent"
+          type="number"
+          min="1" max="100" pattern="[1-9][0-9]*"
+          required
+          autocomplete="off")
+        input.cfnext-form__input--short(
+          ng-show="model.widthSuffix === 'px'"
+          ng-model="model.width.px"
+          name="widthPx"
+          type="number"
+          min="1" pattern="[1-9][0-9]*"
+          required
+          autocomplete="off")
         label.cfnext-form-option.embed-content-dialog__suffix
-          input(type="radio" ng-model="model.widthSuffix" value="%")
+          input(type="radio" ng-model="model.widthSuffix" value="percent")
           | percent
         label.cfnext-form-option.embed-content-dialog__suffix
           input(type="radio" ng-model="model.widthSuffix" value="px")
-          | pixel
+          | pixels
 
       label.cfnext-form-option
         input(type="checkbox" ng-model="model.social")
-        | Enable social tools (sharing content on Facebook, Twitter...)
+        | Attach social sharing links to this element
+
+      .cfnext-form__hint
+        | To enable this embedded content in your application make sure to add the&nbsp;
+        a(href="http://embed.ly/docs/products/cards" target="_blank") Embedly's platform.js
+        |  on your development environment
 
       cf-embedly-preview(field-data="model" url-status="urlStatus")
 

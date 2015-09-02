@@ -1,5 +1,5 @@
 .modal-background
-  .modal-dialog.insert-link-dialog(cf-center-on=".modal-background")
+  .modal-dialog.insert-table-dialog(cf-center-on=".modal-background")
     header.modal-dialog__header
       h1 Insert table
       .close-button(ng-click="dialog.cancel()")
@@ -9,26 +9,24 @@
         label Number of rows
         input.cfnext-form__input--short(
           ng-model="model.rows" name="rows" type="number"
-          min="2" pattern="[1-9][0-9]*"
+          min="2" max="100" pattern="[1-9][0-9]*"
           required autocomplete="off"
           cf-focus-on-render="model")
-        .cfnext-form__hint Required. Minimal value is 2 (one header row, one value row).
+        .cfnext-form__hint Required. Enter value between 2 (one header row, one value row) and 100.
 
       .cfnext-form__field
         label Number of columns
         input.cfnext-form__input--short(
           ng-model="model.cols" name="cols" type="number"
-          min="1" pattern="[1-9][0-9]*"
+          min="1" max="100" pattern="[1-9][0-9]*"
           required autocomplete="off")
-        .cfnext-form__hint Required. Minimal value is 1.
+        .cfnext-form__hint Required. Enter value between 1 and 100.
 
       .cfnext-form__field(ng-show="false")
-        label Cell width
         input.cfnext-form__input(
           ng-model="model.width" name="width" type="number"
           min="1" pattern="[1-9][0-9]*"
           required autocomplete="off")
-        .cfnext-form__hint Required. Initial width of all cells (in characters). Minimal value is 1.
 
     .modal-dialog__controls
       button.cfnext-btn-primary-action.modal-dialog__controls-confirm(

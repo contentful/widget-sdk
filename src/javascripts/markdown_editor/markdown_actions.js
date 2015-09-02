@@ -91,7 +91,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
     function embed() {
       modalDialog.open({
         scopeData: {
-          model: { value: 'https://', width: 100, widthSuffix: '%' },
+          model: { value: 'https://', width: { px: 600, percent: 100 }, widthSuffix: 'percent' },
           urlStatus: 'invalid'
         },
         template: 'markdown_embed_dialog',
@@ -102,9 +102,10 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
     }
 
     function _makeEmbedlyLink(data) {
+      var s = { percent: '%', px: 'px' };
       return [
         '<a href="' + data.value + '" class="embedly-card" ',
-        'data-card-width="' + data.width + data.widthSuffix + '" ',
+        'data-card-width="' + data.width[data.widthSuffix] + s[data.widthSuffix] + '" ',
         'data-card-controls="' + (data.social ? '1' : '0') + '"',
         '>Embedded content: ' + data.value + '</a>'
       ].join('');

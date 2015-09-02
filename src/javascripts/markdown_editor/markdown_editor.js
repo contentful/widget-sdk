@@ -65,9 +65,9 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
     addKeyShortcuts({
       'B': api.actions.bold,
       'I': api.actions.italic,
-      '1': api.actions.h1,
-      '2': api.actions.h2,
-      '3': api.actions.h3
+      'Alt-1': api.actions.h1,
+      'Alt-2': api.actions.h2,
+      'Alt-3': api.actions.h3
     });
 
     return api;
