@@ -10,19 +10,19 @@
   .markdown-tabs
     a(href ng-click="setMode('preview')" ng-class="{'inactive': !inMode('preview')}")
       | Preview
-    a(href ng-click="setMode('md')" ng-show="!disabled" ng-class="{'inactive': !inMode('md')}")
+    a(href ng-click="setMode('md')" ng-show="!isDisabled" ng-class="{'inactive': !inMode('md')}")
       | Editor
 
   .markdown-toolbar
     .markdown-actions
-      cf-markdown-heading-action(actions="actions" disabled="!canEdit()")
+      cf-markdown-heading-action(actions="actions" is-disabled="!canEdit()")
 
-      cf-markdown-action(actions="actions" name="bold"   disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="italic" disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="quote"  disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="ul"     disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="ol"     disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="link"   disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="bold"   is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="italic" is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="quote"  is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="ul"     is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="ol"     is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="link"   is-disabled="!canEdit()")
 
       button.toolbar-button.markdown-more-actions.fa.fa-ellipsis-h(
         ng-click="toggleMinorActions()"
@@ -34,7 +34,7 @@
       button.toolbar-button.markdown-side-action(
         ng-click="zenApi.toggle()"
         tabindex="-1"
-        ng-disabled="disabled")
+        ng-disabled="isDisabled")
           i.fa.fa-arrows-alt
 
       button.toolbar-button.markdown-side-action(
@@ -45,17 +45,17 @@
         |  Insert media
 
     .markdown-minor-actions
-      cf-markdown-action(actions="actions" name="strike"        disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="code"          disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="hr"            disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="indent"        disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="dedent"        disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="embed"         disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="table"         disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="special"       disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="organizeLinks" disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="undo"          disabled="!canEdit() || !history.hasUndo()")
-      cf-markdown-action(actions="actions" name="redo"          disabled="!canEdit() || !history.hasRedo()")
+      cf-markdown-action(actions="actions" name="strike"        is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="code"          is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="hr"            is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="indent"        is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="dedent"        is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="embed"         is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="table"         is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="special"       is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="organizeLinks" is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="undo"          is-disabled="!canEdit() || !history.hasUndo()")
+      cf-markdown-action(actions="actions" name="redo"          is-disabled="!canEdit() || !history.hasRedo()")
 
   .markdown-areas
     .markdown-editing-area(
@@ -66,7 +66,7 @@
     .markdown-preview(
       ng-show="inMode('preview')"
       ng-click="setMode('md')")
-      cf-markdown-preview(preview="preview" disabled="zen || inMode('md')")
+      cf-markdown-preview(preview="preview" is-disabled="zen || inMode('md')")
 
   .markdown-help
     cf-icon(name="markdown")

@@ -7,6 +7,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
   var MarkdownEditor   = $injector.get('MarkdownEditor');
   var actions          = $injector.get('MarkdownEditor/actions');
   var startLivePreview = $injector.get('MarkdownEditor/preview');
+  var notification     = $injector.get('notification');
 
   return {
     restrict: 'E',
@@ -15,7 +16,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       field: '=',
       fieldData: '=',
       locale: '=',
-      disabled: '='
+      isDisabled: '='
     },
     link: function (scope, el) {
       var textarea        = el.find('textarea').get(0);
@@ -64,7 +65,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         var stopPreview = startLivePreview(getModelValue, updatePreview);
         editor.events.onChange(handleEditorChange);
         scope.$watch('fieldData.value', handleModelChange);
-        scope.$watch('disabled',        handleStateChange);
+        scope.$watch('isDisabled',      handleStateChange);
 
         scope.$on('$destroy', stopPreview);
         scope.$on('$destroy', editor.destroy);
@@ -131,7 +132,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       }
 
       function canEdit() {
-        return inMode('md') && !scope.disabled;
+        return inMode('md') && !scope.isDisabled;
       }
 
       function setMode(mode) {
@@ -141,11 +142,15 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
         // 2. change mode
         var nextMode = 'preview';
-        if (mode === 'md' && !scope.disabled) {
+        if (mode === 'md' && !scope.isDisabled) {
           nextMode = 'md';
         }
 
-        if (nextMode === currentMode) { return; }
+        if (nextMode === currentMode) {
+          setAutoHeight();
+          return;
+        }
+
         currentMode = nextMode;
 
         // 3. when going to preview mode:
@@ -161,7 +166,13 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         //    - tie editor position with preview
         if (currentMode === 'md') {
           editor.tie.editorToPreview(preview);
-          $timeout(function () { areas.height('auto'); });
+          setAutoHeight();
+        }
+
+        function setAutoHeight() {
+          $timeout(function () {
+            areas.height('auto');
+          });
         }
       }
 
@@ -186,6 +197,8 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
       function toggleZenMode() {
         scope.zen = !scope.zen;
+
+        if (scope.zen) { notification.clear(); }
         // leaving Zen Mode - update main editor
         if (!scope.zen) {
           editor.setContent(getModelValue());

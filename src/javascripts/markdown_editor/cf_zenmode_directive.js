@@ -17,10 +17,17 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
       preview: '='
     },
     link: function(scope, el) {
-      var textarea = el.find('textarea').get(0);
-      var preview  = el.find('.markdown-preview').first();
-      var editor   = null;
-      var opts     = { height: '100%', fixedHeight: true };
+      var textarea   = el.find('textarea').get(0);
+      var preview    = el.find('.markdown-preview').first();
+      var editor     = null;
+      var opts       = { height: '100%', fixedHeight: true };
+      var containers = {
+        editor:  el.find('.zenmode-editor').first(),
+        preview: el.find('.zenmode-preview').first()
+      };
+
+      scope.togglePreview = togglePreview;
+      scope.isPreviewActive = true;
 
       MarkdownEditor.create(textarea, opts).then(initEditor);
 
@@ -41,6 +48,18 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
           win.off('keyup', handleEsc);
           editor.destroy();
         });
+      }
+
+      function togglePreview() {
+        scope.isPreviewActive = !scope.isPreviewActive;
+
+        if (scope.isPreviewActive) {
+          containers.editor.css('width', '50%');
+          containers.preview.css('width', '50%');
+        } else {
+          containers.editor.css('width', '100%');
+          containers.preview.css('width', '0%');
+        }
       }
 
       function tieChildEditor() {

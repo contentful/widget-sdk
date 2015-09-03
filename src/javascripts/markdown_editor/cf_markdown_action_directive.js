@@ -29,7 +29,7 @@ angular.module('contentful').directive('cfMarkdownAction', function () {
       'ng-click="actions[name]()" ',
       'class="toolbar-button fa" ',
       'ng-class="cssClass" ',
-      'ng-disabled="disabled"',
+      'ng-disabled="isDisabled"',
     '></button>'
   ].join('');
 
@@ -38,7 +38,7 @@ angular.module('contentful').directive('cfMarkdownAction', function () {
     scope: {
       name: '@',
       actions: '=',
-      disabled: '=',
+      isDisabled: '=',
       mode: '@'
     },
     template: template,
@@ -56,7 +56,7 @@ angular.module('contentful').directive('cfMarkdownHeadingAction', function () {
     restrict: 'E',
     scope: {
       actions: '=',
-      disabled: '=',
+      isDisabled: '=',
       mode: '@'
     },
     template: JST['cf_markdown_heading_action']()

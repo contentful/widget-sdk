@@ -62,6 +62,7 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
       replaceSelectedText:     replaceSelectedText,
       getSelection:            getSelection,
       getLine:                 getLine,
+      isLineEmpty:             isLineEmpty,
       getSelectedText:         getSelectedText,
       getSelectionLength:      getSelectionLength,
       getCurrentLine:          getCurrentLine,
@@ -219,6 +220,11 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
       return cm.getLine(n) || '';
     }
 
+    function isLineEmpty(n) {
+      n = defaultToCurrentLineNumber(n);
+      return n > -1 && getLine(n).length < 1 && n < cm.lineCount();
+    }
+
     function getSelectedText() {
       return getSelection() ? cm.getSelection() : '';
     }
@@ -251,8 +257,9 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
       return repeat(' ', opt('indentUnit'));
     }
 
-    function getNl() {
-      return opt('lineSeparator');
+    function getNl(n) {
+      if (n < 1) { return ''; }
+      return repeat(opt('lineSeparator'), n || 1);
     }
 
     function getValue() {

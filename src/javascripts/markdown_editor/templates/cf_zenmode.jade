@@ -1,7 +1,8 @@
 .cf-zenmode
   .zenmode-toolbar
-    cf-markdown-heading-action(actions="actions" mode="zen")
+    .zenmode-logo.app-top-bar__logo-element(cf-custom-logo)
 
+    cf-markdown-heading-action(actions="actions" mode="zen")
     cf-markdown-action(actions="actions" name="bold"          mode="zen")
     cf-markdown-action(actions="actions" name="italic"        mode="zen")
     cf-markdown-action(actions="actions" name="quote"         mode="zen")
@@ -17,8 +18,8 @@
     cf-markdown-action(actions="actions" name="table"         mode="zen")
     cf-markdown-action(actions="actions" name="special"       mode="zen")
     cf-markdown-action(actions="actions" name="organizeLinks" mode="zen")
-    cf-markdown-action(actions="actions" name="undo"          mode="zen" disabled="!history.hasUndo()")
-    cf-markdown-action(actions="actions" name="redo"          mode="zen" disabled="!history.hasRedo()")
+    cf-markdown-action(actions="actions" name="undo"          mode="zen" is-disabled="!history.hasUndo()")
+    cf-markdown-action(actions="actions" name="redo"          mode="zen" is-disabled="!history.hasRedo()")
 
     button.toolbar-button.markdown-side-action.active(
       ng-click="zenApi.toggle()")
@@ -29,6 +30,14 @@
       tabindex="-1")
         i.fa.fa-picture-o
         |  Insert media
+
+  button.zenmode-drawer__hide.fa.fa-angle-double-right(
+    ng-click="togglePreview()"
+    ng-show="isPreviewActive")
+
+  button.zenmode-drawer__show.fa.fa-angle-double-left(
+    ng-click="togglePreview()"
+    ng-show="!isPreviewActive")
 
   .zenmode-editor.markdown-editing-area
     textarea

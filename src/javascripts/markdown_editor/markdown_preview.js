@@ -66,7 +66,7 @@ angular.module('contentful').directive('cfMarkdownPreview', ['$injector', functi
     restrict: 'E',
     scope: {
       preview: '=',
-      disabled: '='
+      isDisabled: '='
     },
     template: [
       '<div ng-show="!preview.hasCrashed" class="markdown-preview-mounting-point"></div>',
@@ -85,13 +85,13 @@ angular.module('contentful').directive('cfMarkdownPreview', ['$injector', functi
         var React = libs.React;
 
         scope.$watch('preview.tree', update);
-        scope.$watch('disabled',     update);
+        scope.$watch('isDisabled',   update);
 
         scope.$on('$destroy', unmount);
 
         function update() {
           var newTree = scope.preview && scope.preview.tree;
-          if (!newTree || scope.disabled) { return; }
+          if (!newTree || scope.isDisabled) { return; }
 
           try {
             mount();

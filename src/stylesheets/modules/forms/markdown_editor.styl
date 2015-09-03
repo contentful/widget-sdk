@@ -164,6 +164,7 @@ $markdown-radius = 2px
   padding: 5px 7px 4px
   cf-icon
     width: 25px
+    height: 18px
     float: left
     margin-right: 5px
 
@@ -301,6 +302,14 @@ $markdown-radius = 2px
     max-width: 640px
     margin: 0 auto
 
+.zenmode-logo
+  z-index: 104
+  position: fixed
+  top: 13px
+  left: 16px
+  width: 30px
+  height: 30px
+
 .zenmode-toolbar,
 .zenmode-footer
   z-index: 103
@@ -312,7 +321,7 @@ $markdown-radius = 2px
 .zenmode-toolbar
   top: 0
   padding: 12px 20px 0
-  padding-left: 50px
+  padding-left: 60px
   height: 52px
   border-bottom: 1px solid $colors.element-dark
 
@@ -326,11 +335,29 @@ $markdown-radius = 2px
 .zenmode-editor
   z-index: 102
   left: 0
-  border-right: 1px solid $gray-light
+  border-right: 1px solid $colors.element-dark
 
 .zenmode-preview
   z-index: 101
   right: 0
+
+.zenmode-drawer__show,
+.zenmode-drawer__hide
+  position: fixed
+  cursor: pointer
+  z-index: 105
+  top: 49%
+  height: 30px
+  background-color: $colors.element-light
+  border: 1px solid $colors.element-dark
+
+.zenmode-drawer__show
+  right: 0
+  border-right-width: 0
+
+.zenmode-drawer__hide
+  left: 50%
+  border-left-width: 0
 
 .zenmode-footer
   z-index: 103
@@ -348,6 +375,7 @@ $markdown-radius = 2px
   display: flex
   cf-icon
     width: 25px
+    height: 18px
     margin-right: 5px
 
 .zenmode-info,

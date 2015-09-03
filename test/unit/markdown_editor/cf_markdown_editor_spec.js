@@ -70,27 +70,27 @@ describe('cfMarkdownEditor', function () {
   describe('Handling OT problems', function () {
     it('Goes to preview in case of connection problems', function () {
       expect(scope.inMode('md')).toBe(true);
-      scope.disabled = true;
+      scope.isDisabled = true;
       scope.$apply();
       expect(scope.inMode('preview')).toBe(true);
     });
 
     it('Closes zen mode', function () {
       scope.zen = true;
-      scope.disabled = true;
+      scope.isDisabled = true;
       scope.$apply();
       expect(scope.zen).toBe(false);
     });
 
     it('Marks as non-editable', function () {
       expect(scope.canEdit()).toBe(true);
-      scope.disabled = true;
+      scope.isDisabled = true;
       scope.$apply();
       expect(scope.canEdit()).toBe(false);
     });
 
     it('Disallows to go to MD mode', function () {
-      scope.disabled = true;
+      scope.isDisabled = true;
       scope.$apply();
       expect(scope.inMode('preview')).toBe(true);
       scope.setMode('md');

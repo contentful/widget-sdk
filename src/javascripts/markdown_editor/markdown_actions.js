@@ -7,6 +7,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
   var spaceContext      = $injector.get('spaceContext');
   var specialCharacters = $injector.get('MarkdownEditor/specialCharacters');
   var LinkOrganizer     = $injector.get('LinkOrganizer');
+  var notification      = $injector.get('notification');
 
   return { for: prepareActions };
 
@@ -82,7 +83,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
 
     function table() {
       modalDialog.open({
-        scopeData: { model: { rows: 2, cols: 2, width: 10 } },
+        scopeData: { model: { rows: 2, cols: 2 } },
         template: 'markdown_table_dialog',
         ignoreEnter: true
       }).promise.then(editor.actions.table);
@@ -116,6 +117,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
       text = LinkOrganizer.convertInlineToRef(text);
       text = LinkOrganizer.rewriteRefs(text);
       editor.setContent(text);
+      notification.info('All your links are now references at the bottom of your document.');
     }
 
     function openHelp() {

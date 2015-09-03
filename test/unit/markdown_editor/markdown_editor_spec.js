@@ -159,6 +159,7 @@ describe('Markdown editor', function () {
     });
 
     describe('lists', function () {
+      var nl = '\n';
       var initialValue = 'one\ntwo\nthree';
       var lists = { ul: '- ', ol: '1. ' };
       var other = { ul: 'ol', ol: 'ul' };
@@ -170,21 +171,19 @@ describe('Markdown editor', function () {
       function selectAll() { cm.setSelection({ line: 0, ch: 0 }, { line: 2, ch: Infinity }); }
 
       _.forEach(lists, function (prefix, list) {
-        it('for ' + list + ': inserts marker in empty line', function () {
+        it('for ' + list + ': inserts marker, surrounds with whitespace', function () {
           actions[list]();
-          expect(cm.getValue()).toBe(prefix);
-          expect(wrapper.getCurrentCharacter()).toBe(prefix.length);
+          expect(cm.getValue()).toBe(nl + prefix + nl);
         });
 
-        it('for ' + list + ': toggles line to list item', function () {
+        it('for ' + list + ': creates whitespace and starts list', function () {
           cm.setValue('test');
           cm.setCursor({ line: 0, ch: 2 });
           actions[list]();
-          expect(cm.getValue()).toBe(prefix + 'test');
-          expect(wrapper.getCurrentCharacter()).toBe(2 + prefix.length);
+          expect(cm.getValue()).toBe('test' + nl + nl + prefix + nl);
+          cm.setCursor({ line: 2, ch: 0 });
           actions[list]();
-          expect(cm.getValue()).toBe('test');
-          expect(wrapper.getCurrentCharacter()).toBe(2);
+          expect(wrapper.getCurrentLine()).toBe('');
         });
 
         it('for ' + list + ': toggles in multiline selection', function () {
@@ -210,11 +209,11 @@ describe('Markdown editor', function () {
     });
 
     it('generates table markup', function () {
-      actions.table({ rows: 2, cols: 3, width: 5 });
+      actions.table({ rows: 2, cols: 3 });
       var expected = [
-        '| ?     | ?     | ?     |',
-        '| ----- | ----- | ----- |',
-        '| ?     | ?     | ?     |'
+        '| Header     | Header     | Header     |',
+        '| ---------- | ---------- | ---------- |',
+        '| Cell       | Cell       | Cell       |'
       ].join('\n');
       expect(cm.getValue().indexOf(expected) > -1).toBe(true);
     });

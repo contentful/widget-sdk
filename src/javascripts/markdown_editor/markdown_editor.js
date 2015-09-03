@@ -32,8 +32,8 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
         h1:     function () { insertHeader('#');                   },
         h2:     function () { insertHeader('##');                  },
         h3:     function () { insertHeader('###');                 },
-        ul:     function () { modifySelection(ulToggleFn);         },
-        ol:     function () { modifySelection(olToggleFn);         },
+        ul:     function () { modifySelection(ulToggleFn, true);   },
+        ol:     function () { modifySelection(olToggleFn, true);   },
         undo:   function () { editor.cmd('undo');                  },
         redo:   function () { editor.cmd('redo');                  },
         hr:     insertHr,
@@ -258,22 +258,25 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
     }
 
     function generateTableRows(c) {
-      var rows = [];
-      var cellWidth = new Array(c.width + 1);
+      var cellWidth = new Array(11);
       var cell = ' ' + cellWidth.join(' ') + ' |';
       var separatorCell = ' ' + cellWidth.join('-') + ' |';
-      var row = '|';
-      var separator = '|';
+      var baseRow = '|';
+      var separatorRow = '|';
       var i = 0;
 
       for (; i < c.cols; i += 1) {
-        row += cell;
-        separator += separatorCell;
+        baseRow      += cell;
+        separatorRow += separatorCell;
       }
-      row = row.replace(/\|  /g, '| ?');
 
-      for (i = 0; i < c.rows; i += 1) { rows.push(row); }
-      rows.splice(1, 0, separator);
+      var bodyRow   = baseRow.replace(/\|     /g,   '| Cell');
+      var headerRow = baseRow.replace(/\|       /g, '| Header');
+
+      var rows = [headerRow, separatorRow];
+      for (i = 0; i < c.rows-1; i += 1) {
+        rows.push(bodyRow);
+      }
 
       return rows;
     }
@@ -282,11 +285,15 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
      * Selection processing functions
      */
 
-    function modifySelection(toggleFn) {
+    function modifySelection(toggleFn, isList) {
       editor.usePrimarySelection();
 
-      // there's no selection - just toggle list bullet
+      // there's no selection - just toggle line prefix
       if (!editor.getSelection()) {
+        // but if adding list, add whitespace before and after list
+        if (isList && !getListNumber() && !editor.lineStartsWith('- ')) {
+          prepareListWhitespace();
+        }
         toggleFn();
         return;
       }
@@ -298,6 +305,29 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
         toggleFn(listNumber);
       });
       editor.moveToLineEnd();
+    }
+
+    function prepareListWhitespace() {
+      var line = editor.getCurrentLineNumber();
+      var isEmpty = editor.isLineEmpty();
+      var emptyLines = countEmptyLines();
+      var linesToInsert = (isEmpty ? 2 : 3) - emptyLines;
+
+      editor.moveToLineEnd();
+      editor.insertAtCursor(editor.getNl(linesToInsert));
+      editor.restoreCursor(0, isEmpty ? line : line + 1);
+      editor.restoreCursor(0, editor.getCurrentLineNumber() + 1);
+    }
+
+    function countEmptyLines() {
+      var line = editor.getCurrentLineNumber() + 1;
+      var empty = 0;
+
+      while (editor.isLineEmpty(line)) {
+        empty += 1; line += 1;
+      }
+
+      return empty;
     }
 
     function forLineIn(selection, cb) {
