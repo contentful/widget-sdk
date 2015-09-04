@@ -33,6 +33,7 @@ $button-reset()
 $cfnext-button($color, $shade, $border = false)
   $cfnext-button-layout()
   $cfnext-button-colors($color, $shade, $border)
+  $cfnext-button-loading()
 
 $cfnext-button-layout()
   padding: 0.6rem 1.5rem
@@ -43,6 +44,31 @@ $cfnext-button-layout()
   white-space: nowrap
   border: none
   border-radius: 2px
+
+$cfnext-button-loading()
+  &:disabled
+    opacity: 1
+  &:after
+    display: block
+    float: right
+    font-family: FontAwesome
+    content: '\f1ce'
+    opacity: 0
+    max-width: 0
+    height: 18px
+    overflow: hidden
+    transition: max-width .2s, opacity .3s linear
+    animation: fa-spin 2s infinite linear
+  &.is-loading
+    &:before
+      content: ' '
+      width: 10px
+      display: block
+      float: right
+    &:after
+      opacity: .5
+      max-width: 18px
+      overflow: visible
 
 $cfnext-button-colors($color, $shade = false)
   color: white
@@ -308,3 +334,4 @@ Styleguide 4.8
 
 .cfnext-btn-secondary-action cf-icon path
   fill: $secondary-button-color
+

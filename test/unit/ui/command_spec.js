@@ -62,4 +62,19 @@ describe('command service', function () {
     });
   });
 
+  describe('#inProgress()', function () {
+    it ('is "true" when command in progress', function () {
+      var action = sinon.stub().resolves();
+      var command = this.create(action);
+
+      expect(command.inProgress()).toBe(false);
+      command.execute();
+      expect(command.inProgress()).toBe(true);
+      this.$apply();
+      expect(command.inProgress()).toBe(false);
+
+    });
+  });
+
+
 });
