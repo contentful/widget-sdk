@@ -16,6 +16,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'public/app/vendor.js',
+      'public/app/markdown_vendors.js',
       'public/app/templates.js',
       'public/app/user_interface.js',
       'src/javascripts/*.js',

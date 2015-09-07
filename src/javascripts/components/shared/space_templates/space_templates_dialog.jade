@@ -28,7 +28,7 @@
             Need help? Read more about it in the <a href="https://support.contentful.com/hc/en-us/articles/203905588-What-is-a-Space-template-" target="_blank">Knowledge Database</a>.
         .space-template__detail-content(ng-show="selectedTemplate")
           h1 {{selectedTemplate.name}}
-          div(ng-bind-html="selectedTemplate.description | markdown")
+          div(ng-bind-html="selectedTemplate.description")
         button.cfnext-btn-action(ng-show="selectedTemplate" ng-click="showSpaceCreation()") Use this template
 
       .space-template__space-creation(ng-show="viewState.is('spaceCreation')" ng-controller="CreateSpaceDialogController")

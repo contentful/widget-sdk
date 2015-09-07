@@ -3,6 +3,7 @@
 var _           = require('lodash-node/modern');
 var Promise     = require('promise');
 var browserify  = require('browserify');
+var glob        = require('glob');
 var clean       = require('gulp-clean');
 var concat      = require('gulp-concat');
 var exec        = require('child_process').exec;
@@ -21,6 +22,7 @@ var replace     = require('gulp-regex-replace');
 var rev         = require('gulp-rev');
 var runSequence = require('run-sequence');
 var source      = require('vinyl-source-stream');
+var buffer      = require('vinyl-buffer');
 var sourceMaps  = require('gulp-sourcemaps');
 var stylus      = require('gulp-stylus');
 var uglify      = require('gulp-uglify');
@@ -49,33 +51,33 @@ var src = {
   templates:   'src/javascripts/**/*.jade',
   components:  'src/javascripts/**/*.js',
   stylesheets: 'src/stylesheets/**/*',
-  vendorScripts: [
-    'bower_components/jquery/dist/jquery.js',
-    'bower_components/jquery-ui/ui/jquery.ui.core.js',
-    'bower_components/jquery-ui/ui/jquery.ui.position.js',
-    'bower_components/jquery-ui/ui/jquery.ui.widget.js',
-    'bower_components/jquery-ui/ui/jquery.ui.mouse.js',
-    'bower_components/jquery-ui/ui/jquery.ui.sortable.js',
-    'bower_components/jquery-ui/ui/jquery.ui.draggable.js',
-    'bower_components/jquery-ui/ui/jquery.ui.autocomplete.js',
-    'bower_components/jquery-ui/ui/jquery.ui.datepicker.js',
-    'bower_components/jquery-textrange/jquery-textrange.js',
-    'bower_components/angular/angular.js',
-    'bower_components/angular-animate/angular-animate.js',
-    'bower_components/angular-load/angular-load.js',
-    'bower_components/angular-sanitize/angular-sanitize.js',
-    'bower_components/angular-elastic/elastic.js',
-    'bower_components/angular-ui-sortable/sortable.js',
-    'bower_components/angular-ui-router/release/angular-ui-router.js',
-    'bower_components/angular-breadcrumb/dist/angular-breadcrumb.js',
-    'bower_components/bootstrap/js/tooltip.js',
-    'bower_components/speakingurl/lib/index.js',
-    'node_modules/share/node_modules/browserchannel/dist/bcsocket-uncompressed.js',
-    'node_modules/share/webclient/share.uncompressed.js',
-    'node_modules/share/webclient/json.uncompressed.js',
-    'node_modules/share/webclient/textarea.js'
-  ],
-  vendorScriptsNonEssential: {
+  vendorScripts: {
+    main: [
+      'bower_components/jquery/dist/jquery.js',
+      'bower_components/jquery-ui/ui/jquery.ui.core.js',
+      'bower_components/jquery-ui/ui/jquery.ui.position.js',
+      'bower_components/jquery-ui/ui/jquery.ui.widget.js',
+      'bower_components/jquery-ui/ui/jquery.ui.mouse.js',
+      'bower_components/jquery-ui/ui/jquery.ui.sortable.js',
+      'bower_components/jquery-ui/ui/jquery.ui.draggable.js',
+      'bower_components/jquery-ui/ui/jquery.ui.autocomplete.js',
+      'bower_components/jquery-ui/ui/jquery.ui.datepicker.js',
+      'bower_components/jquery-textrange/jquery-textrange.js',
+      'bower_components/angular/angular.js',
+      'bower_components/angular-animate/angular-animate.js',
+      'bower_components/angular-load/angular-load.js',
+      'bower_components/angular-sanitize/angular-sanitize.js',
+      'bower_components/angular-route/angular-route.js',
+      'bower_components/angular-ui-sortable/sortable.js',
+      'bower_components/angular-ui-router/release/angular-ui-router.js',
+      'bower_components/angular-breadcrumb/dist/angular-breadcrumb.js',
+      'bower_components/bootstrap/js/tooltip.js',
+      'bower_components/speakingurl/lib/index.js',
+      'node_modules/share/node_modules/browserchannel/dist/bcsocket-uncompressed.js',
+      'node_modules/share/webclient/share.uncompressed.js',
+      'node_modules/share/webclient/json.uncompressed.js',
+      'node_modules/share/webclient/textarea.js'
+    ],
     kaltura: [
       'kaltura*/webtoolkit.md5.js',
       'kaltura*/ox.ajast.js',
@@ -105,6 +107,7 @@ var src = {
     './bower_components/jquery-ui/themes/base/jquery-ui.css',
     './bower_components/jquery-ui/themes/base/jquery.ui.autocomplete.css',
     './bower_components/jquery-ui/themes/base/jquery.ui.datepicker.css',
+    './node_modules/codemirror/lib/codemirror.css'
   ],
   mainStylesheets: [
     'src/stylesheets/main.styl',
@@ -120,7 +123,6 @@ gulp.task('all', [
   'index',
   'templates',
   'js',
-  'js/vendor-optional',
   'copy-images',
   'copy-static',
   'stylesheets',
@@ -173,23 +175,41 @@ gulp.task('templates', function () {
     .pipe(gulp.dest('./public/app'));
 });
 
-gulp.task('js', ['js/external-bundle', 'js/app', 'js/vendor']);
+gulp.task('js', [
+  'js/external-bundle',
+  'js/app',
+  'js/vendor'
+]);
 
-gulp.task('js/vendor', function () {
-  return gulp.src(src.vendorScripts)
+gulp.task('js/vendor', [
+  'js/vendor/main',
+  'js/vendor/markdown',
+  'js/vendor/kaltura'
+]);
+
+gulp.task('js/vendor/main', function () {
+  return gulp.src(src.vendorScripts.main)
     .pipe(sourceMaps.init())
     .pipe(concat('vendor.js'))
     .pipe(sourceMaps.write({sourceRoot: '/vendor'}))
     .pipe(gulp.dest('./public/app'));
 });
 
-gulp.task('js/vendor-optional', function () {
-  // Hardcoded to kaltura. Fix this when needed
-  return gulp.src(src.vendorScriptsNonEssential.kaltura)
-    .pipe(sourceMaps.init())
+gulp.task('js/vendor/markdown', function () {
+  return browserify()
+    .add('./src/markdown_vendors.js')
+    .bundle()
+    .on('error', errorHandler('Browserify'))
+    .pipe(source('markdown_vendors.js'))
+    .pipe(buffer())
+    .pipe(uglify())
+    .pipe(gulp.dest('./public/app/'));
+});
+
+gulp.task('js/vendor/kaltura', function () {
+  return gulp.src(src.vendorScripts.kaltura)
     .pipe(uglify())
     .pipe(concat('kaltura.js'))
-    .pipe(sourceMaps.write({sourceRoot: '/vendor/kaltura'}))
     .pipe(gulp.dest('./public/app'));
 });
 
@@ -347,7 +367,6 @@ function bundleBrowserify(browserify) {
     .pipe(gulp.dest('./public/app/'));
 }
 
-
 function buildStylus(sources, dest) {
   return gulp.src(sources)
     .pipe(sourceMaps.init())
@@ -445,7 +464,11 @@ function writeBuild (dir) {
  * create a manifest for them.
  */
 gulp.task('rev-static', function () {
-  return gulp.src(['public/app/**', '!**/!(kaltura).js', '!**/*.css'], {base: 'public'})
+  var files = glob.sync('public/app/**/*.!(js|css)');
+  files.push('public/app/kaltura.js');
+  files.push('public/app/markdown_vendors.js');
+
+  return gulp.src(files, {base: 'public'})
     .pipe(writeBuild())
     .pipe(rev())
     .pipe(writeBuild())

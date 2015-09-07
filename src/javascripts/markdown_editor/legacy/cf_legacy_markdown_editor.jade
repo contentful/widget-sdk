@@ -1,86 +1,85 @@
-.markdown-toolbar(ng-class="{'preview-mode': inPreviewMode()}")
-  button.toolbar-button.toolbar-button--flex.md-bold-icon(
+.markdown-legacy-toolbar(ng-class="{'preview-mode': inPreviewMode()}")
+  button.legacy-toolbar-button.legacy-toolbar-button--flex.md-bold-icon(
     ng-click="toggleBold()"
     tabindex="-1"
     tooltip="Bold (on selection)"
     ng-disabled="inPreviewMode()")
-  button.toolbar-button.toolbar-button--flex.md-italic-icon(
+  button.legacy-toolbar-button.legacy-toolbar-button--flex.md-italic-icon(
     ng-click="toggleItalic()"
     tabindex="-1"
     tooltip="Italic (on selection)"
     ng-disabled="inPreviewMode()")
-  button.toolbar-button.toolbar-button--flex.md-h1-icon(
+  button.legacy-toolbar-button.legacy-toolbar-button--flex.md-h1-icon(
     ng-click="toggleHeadline(1)"
     tabindex="-1"
     tooltip="Heading 1"
     ng-disabled="inPreviewMode()")
-  button.toolbar-button.toolbar-button--flex.md-h2-icon(
+  button.legacy-toolbar-button.legacy-toolbar-button--flex.md-h2-icon(
     ng-click="toggleHeadline(2)"
     tabindex="-1"
     tooltip="Heading 2"
     ng-disabled="inPreviewMode()")
-  button.toolbar-button.toolbar-button--flex.md-h3-icon(
+  button.legacy-toolbar-button.legacy-toolbar-button--flex.md-h3-icon(
     ng-click="toggleHeadline(3)"
     tabindex="-1"
     tooltip="Heading 3"
     ng-disabled="inPreviewMode()")
-  button.toolbar-button.toolbar-button--flex.md-hr-icon(
+  button.legacy-toolbar-button.legacy-toolbar-button--flex.md-hr-icon(
     ng-click="insertRule()"
     tabindex="-1"
     tooltip="Horizontal rule"
     ng-disabled="inPreviewMode()")
-  button.toolbar-button.toolbar-button--flex.md-quote-icon(
+  button.legacy-toolbar-button.legacy-toolbar-button--flex.md-quote-icon(
     ng-click="toggleBlockQuote()"
     tabindex="-1"
     tooltip="Blockquote"
     ng-disabled="inPreviewMode()")
-  button.toolbar-button.toolbar-button--flex.md-ul-icon(
+  button.legacy-toolbar-button.legacy-toolbar-button--flex.md-ul-icon(
     ng-click="toggleUnorderedList()"
     tabindex="-1"
     tooltip="Unordered List"
     ng-disabled="inPreviewMode()")
-  button.toolbar-button.toolbar-button--flex.md-ol-icon(
+  button.legacy-toolbar-button.legacy-toolbar-button--flex.md-ol-icon(
     ng-click="toggleOrderedList()"
     tabindex="-1"
     tooltip="Ordered List"
     ng-disabled="inPreviewMode()")
-  button.toolbar-button.toolbar-button--flex.md-code-icon(
+  button.legacy-toolbar-button.legacy-toolbar-button--flex.md-code-icon(
     ng-click="addCodeblock()"
     tabindex="-1"
     tooltip="Code"
     ng-disabled="inPreviewMode()")
-  button.toolbar-button.toolbar-button--flex.md-indent-icon(
+  button.legacy-toolbar-button.legacy-toolbar-button--flex.md-indent-icon(
     ng-click="indent()"
     tabindex="-1"
     tooltip="Indent (Shift+Alt+Tab)"
     ng-disabled="inPreviewMode()")
-  button.toolbar-button.toolbar-button--flex.md-asset-icon(
+  button.legacy-toolbar-button.legacy-toolbar-button--flex.md-asset-icon(
     ng-click="insertAsset()"
     tabindex="-1"
     tooltip="Insert link to an asset"
     ng-disabled="inPreviewMode()")
-  button.toolbar-button.toolbar-button-flex.md-link-icon(
+  button.legacy-toolbar-button.legacy-toolbar-button-flex.md-link-icon(
     ng-click="insertExternalLink()"
     tabindex="-1"
     tooltip="Insert external link"
     ng-disabled="inPreviewMode()")
-  .markdown-modeswitch
-    button.toolbar-button.md-right-button.md-preview-icon(
+  .markdown-legacy-modeswitch
+    button.legacy-toolbar-button.md-right-button.md-preview-icon(
       ng-click="toggleDisplayMode()"
       tabindex="-1"
       tooltip="Preview (Shift+{{metaKey}}+P)"
       ng-class="{'md-preview-icon': inEditMode(), 'md-edit-icon': inPreviewMode()}")
 
-textarea.form-control.markdown-textarea(
-  msd-elastic
+textarea.form-control.markdown-legacy-textarea(
   ng-model="fieldData.value"
   ot-bind-text
   ng-disabled="!otDoc.state.editable"
   ng-show="inEditMode()")
 
-.cf-markdown-guide(cf-markdown-guide ng-if="inEditMode()")
+.cf-legacy-markdown-guide(cf-legacy-markdown-guide ng-if="inEditMode()")
 
-.markdown-preview(
+.markdown-legacy-preview(
   tabindex="0"
   ng-bind-html="markdownPreview"
   ng-show="inPreviewMode()"

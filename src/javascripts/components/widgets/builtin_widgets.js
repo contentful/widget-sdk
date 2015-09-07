@@ -49,9 +49,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     name: 'URL',
     icon: 'preview',
     rendersHelpText: true,
-    template: '<cf-url-editor class="widget-url-editor"></cf-url-editor>' +
-    '<div class="form-widget__help-text">{{helpText}}</div>' +
-    '<cf-embedly-preview></cf-embedly-preview>'
+    template: '<cf-url-editor class="widget-url-editor"></cf-url-editor>'
   });
 
   widgets.registerWidget('numberEditor',{
@@ -65,14 +63,21 @@ angular.module('contentful').run(['widgets', function(widgets){
     fieldTypes: ['Text'],
     name: 'Multiple Line',
     icon: 'multipleline',
-    template: '<textarea msd-elastic class="form-control" ng-disabled="!otDoc.state.editable" ng-model="fieldData.value" ot-bind-text></textarea>'
+    template: '<textarea class="form-control" ng-disabled="!otDoc.state.editable" ng-model="fieldData.value" ot-bind-text></textarea>'
   });
 
   widgets.registerWidget('markdown',{
     fieldTypes: ['Text'],
     name: 'Markdown',
     icon: 'markdown',
-    template: '<div cf-markdown-editor class="cf-markdown-editor"></div>'
+    template: '<div cf-legacy-markdown-editor class="cf-legacy-markdown-editor"></div>'
+  });
+
+  widgets.registerWidget('newMarkdown',{
+    fieldTypes: ['Text'],
+    name: 'New Markdown Editor',
+    icon: 'markdown',
+    template: '<cf-markdown-editor-bridge />'
   });
 
   widgets.registerWidget('dropdown',{

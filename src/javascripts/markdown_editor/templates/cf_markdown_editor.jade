@@ -1,0 +1,83 @@
+.markdown-loading(ng-if="!isReady() && !hasCrashed")
+  | Initializing Markdown editor&nbsp;
+  i.fa.fa-spinner.fa-spin
+
+.markdown-crashed(ng-if="hasCrashed")
+  | Markdown editor has crashed, please refresh the page&nbsp;
+  i.fa.fa-warning
+
+.markdown-loaded(ng-class="{'visible': isReady() && !hasCrashed}")
+  .markdown-tabs
+    a(href ng-click="setMode('preview')" ng-class="{'inactive': !inMode('preview')}")
+      | Preview
+    a(href ng-click="setMode('md')" ng-show="!isDisabled" ng-class="{'inactive': !inMode('md')}")
+      | Editor
+
+  .markdown-toolbar
+    .markdown-actions
+      cf-markdown-heading-action(actions="actions" is-disabled="!canEdit()")
+
+      cf-markdown-action(actions="actions" name="bold"   is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="italic" is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="quote"  is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="ul"     is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="ol"     is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="link"   is-disabled="!canEdit()")
+
+      button.toolbar-button.markdown-more-actions.fa.fa-ellipsis-h(
+        ng-click="toggleMinorActions()"
+        tabindex="-1"
+        tooltip="More actions..."
+        ng-class="{'active': minorActionsShown}"
+        ng-disabled="!canEdit()")
+
+      button.toolbar-button.markdown-side-action(
+        ng-click="zenApi.toggle()"
+        tabindex="-1"
+        ng-disabled="isDisabled")
+          i.fa.fa-arrows-alt
+
+      button.toolbar-button.markdown-side-action(
+        ng-click="actions.asset()"
+        tabindex="-1"
+        ng-disabled="!canEdit()")
+        i.fa.fa-picture-o
+        |  Insert media
+
+    .markdown-minor-actions
+      cf-markdown-action(actions="actions" name="strike"        is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="code"          is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="hr"            is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="indent"        is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="dedent"        is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="embed"         is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="table"         is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="special"       is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="organizeLinks" is-disabled="!canEdit()")
+      cf-markdown-action(actions="actions" name="undo"          is-disabled="!canEdit() || !history.hasUndo()")
+      cf-markdown-action(actions="actions" name="redo"          is-disabled="!canEdit() || !history.hasRedo()")
+
+  .markdown-areas
+    .markdown-editing-area(
+      tabindex="0"
+      ng-show="inMode('md')")
+      textarea
+
+    .markdown-preview(
+      ng-show="inMode('preview')"
+      ng-click="setMode('md')")
+      cf-markdown-preview(preview="preview" is-disabled="zen || inMode('md')")
+
+  .markdown-help
+    cf-icon(name="markdown")
+    | Use Markdown syntax to format your text.&nbsp;
+    a(href ng-click="actions.openHelp()") Help
+
+  .markdown-info
+    cf-markdown-stats(preview="preview")
+    cf-markdown-requirements(preview="preview")
+
+  cf-zenmode(
+    ng-if="zen"
+    zen-api="zenApi"
+    preview="preview")
