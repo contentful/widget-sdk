@@ -26,7 +26,7 @@ angular.module('contentful').directive('cfLegacyMarkdownEditor', ['$injector', f
     };
 
     renderFn = function(source) {
-      return marked(source, { renderer: renderer });
+      return marked(source, { sanitize: true, renderer: renderer });
     };
 
     return renderFn;
