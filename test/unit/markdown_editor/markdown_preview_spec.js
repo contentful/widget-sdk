@@ -33,6 +33,17 @@ describe('Markdown preview', function() {
     $timeout.flush(); // notify
   });
 
+  it('notifies even when content is null or undefined', function () {
+    var s1 = sinon.spy();
+    var s2 = sinon.spy();
+    startLivePreview(function () { return null; }, s1);
+    startLivePreview(function () { return undefined; }, s2);
+    scope.$apply();
+    $timeout.flush();
+    sinon.assert.called(s1);
+    sinon.assert.called(s2);
+  });
+
   it('notifies after the change to content only', function () {
     var previewSpy = sinon.spy();
     startLivePreview(getContentFn, previewSpy);

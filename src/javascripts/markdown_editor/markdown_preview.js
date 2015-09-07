@@ -6,11 +6,12 @@ angular.module('contentful').factory('MarkdownEditor/preview', ['$injector', fun
   var LazyLoader        = $injector.get('LazyLoader');
   var createTreeBuilder = $injector.get('MarkdownEditor/tree');
 
-  var NOTIFY_INTERVAL = 250;
+  var NOTIFY_INTERVAL  = 250;
+  var UNIQUE_SOMETHING = {};
 
   return function startLivePreview(getContentFn, subscriberCb) {
-    var destroyed = false;
-    var previousValue = null;
+    var destroyed     = false;
+    var previousValue = UNIQUE_SOMETHING;
     var buildTree;
 
     LazyLoader.get('markdown').then(function (libs) {
@@ -33,9 +34,10 @@ angular.module('contentful').factory('MarkdownEditor/preview', ['$injector', fun
       if (value === previousValue) {
         scheduleSubscriberNotification();
         return;
-      } else {
-        previousValue = value;
       }
+
+      value = value || '';
+      previousValue = value;
 
       // build tree
       var tree = {};
