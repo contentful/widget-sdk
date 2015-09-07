@@ -6,15 +6,17 @@ angular.module('contentful').
       restrict: 'A',
       link: function(scope, element, attrs) {
         var tooltipInitialized = false;
+        var tooltipDisabled    = false;
 
         element.on('mouseenter focus', initialize);
 
         scope.$watch(attrs.ngDisabled, function(val){
-          scope.disableTooltip = !!val;
+          tooltipDisabled = !!val;
+          disableHandler();
         });
 
         function initialize() {
-          if (tooltipInitialized || scope.disableTooltip) return;
+          if (tooltipInitialized || tooltipDisabled) return;
           createTooltip(true);
           element.off('mouseenter focus', initialize);
           tooltipInitialized = true;
@@ -53,11 +55,10 @@ angular.module('contentful').
           element.tooltip('destroy');
         }
 
-        scope.$watch('disableTooltip', disableHandler);
-        function disableHandler(disabled) {
+        function disableHandler() {
           if (!tooltipInitialized) return;
-          if(disabled) destroyTooltip();
-          if(!disabled) createTooltip();
+          if(tooltipDisabled) destroyTooltip();
+          if(!tooltipDisabled) createTooltip();
         }
 
         element.on('$destroy', function () {

@@ -172,11 +172,4 @@ filters.filter('prefixAssetHost', ['environment', function(environment){
   };
 }]);
 
-filters.filter('markdown', ['marked', '$sanitize', function (marked, $sanitize) {
-  var renderer = new marked.Renderer();
-  return function (source) {
-    if(source) return $sanitize(marked(source, {renderer: renderer}));
-  };
-}]);
-
 filters = null;

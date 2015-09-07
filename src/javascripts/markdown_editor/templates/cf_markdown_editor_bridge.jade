@@ -1,0 +1,9 @@
+cf-markdown-editor(
+  field-data="fieldData"
+  field="field"
+  locale="locale"
+  is-disabled="!otDoc.state.editable")
+textarea.markdown-transfer-textarea(
+  ng-model="fieldData.value"
+  ng-trim="false"
+  ot-bind-text)

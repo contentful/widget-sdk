@@ -1,14 +1,17 @@
 'use strict';
 
 describe('cfEmbedlyPreview Directive', function () {
+  var $q, $timeout;
+  var deferredEmbedlyResponse;
+
   beforeEach(function () {
     module('contentful/test');
 
-    var $q = this.$inject('$q'),
-        deferredEmbedlyResponse = $q.defer(),
-        stubs = {};
+    $q = this.$inject('$q');
+    $timeout = this.$inject('$timeout');
+    deferredEmbedlyResponse = $q.defer();
 
-    this.$inject('embedlyLoader').load = function () {
+    this.$inject('LazyLoader').get = function () {
       var stubbedEmbedly = function (type, element, callback) {
         if (type === 'card' &&
             element.localName === 'a' &&
@@ -22,16 +25,13 @@ describe('cfEmbedlyPreview Directive', function () {
       return $q.when(stubbedEmbedly);
     };
 
-    this.$q = $q;
-    this.deferredEmbedlyResponse = deferredEmbedlyResponse;
-    this.stubs = stubs;
-    this.scope = this.$inject('$rootScope').$new();
-    dotty.put(this.scope, 'fieldData.value', null); 
-    this.compileElement = function () {
-      this.element = this.$inject('$compile')('<cf-embedly-preview></cf-embedly-preview>')(this.scope);
+    this.compileElement = function (defaultValue) {
+      defaultValue = defaultValue || null;
+      var scopeProps = { fieldData: { value: dotty.get(this, 'scope.fieldData.value') || defaultValue } };
+      this.element = this.$compile('<cf-embedly-preview field-data="fieldData" />', scopeProps);
+      this.scope = this.element.isolateScope();
       this.$apply();
-    };
-    this.compileElement.bind(this);
+    }.bind(this);
   });
 
   describe('watches for value change', function () {
@@ -41,21 +41,18 @@ describe('cfEmbedlyPreview Directive', function () {
     });
 
     it('is empty when there is no URL', function () {
-      this.scope.fieldData.value = 'this-is-some string';
-      this.compileElement();
+      this.compileElement('this-is-some string');
       expect(this.element[0].children.length).toBe(0);
     });
 
     it('gains a card when there is a URL', function () {
-      this.scope.fieldData.value = 'http://contentful.com';
-      this.compileElement();
+      this.compileElement('http://contentful.com');
       expect(this.element[0].children.length).toBe(1);
       expect(this.element[0].firstChild.innerHTML).toBe('I am a card from http://contentful.com');
     });
 
     it('changes cards when the value changes', function () {
-      this.scope.fieldData.value = 'http://contentful.com';
-      this.compileElement();
+      this.compileElement('http://contentful.com');
       expect(this.element[0].firstChild.innerHTML).toBe('I am a card from http://contentful.com');
       this.scope.fieldData.value = 'http://joistio.com';
       this.compileElement();
@@ -69,18 +66,17 @@ describe('cfEmbedlyPreview Directive', function () {
 
   describe('changes state depending on value', function () {
     it('updates state when the field changes', function () {
-      // Initial state is undefined
+      // Initial state is invalid
       this.compileElement();
-      expect(this.scope.state).toBe(undefined);
+      expect(this.scope.urlStatus).toBe('invalid');
     });
     it('changes state to loading and then broken when URL is broken', function () {
       // Add a URL
-      this.scope.fieldData.value = 'http://404site.com';
-      this.compileElement();
-      expect(this.scope.state).toBe('loading');
-      // Simulate a 404 by making the iframe's contentWindow null
-      this.deferredEmbedlyResponse.resolve({contentWindow: null});
-      expect(this.scope.state).toBe('broken');
+      this.compileElement('http://404site.com');
+      expect(this.scope.urlStatus).toBe('loading');
+      // Simulate a 404 by flushing timers without resolving
+      $timeout.flush();
+      expect(this.scope.urlStatus).toBe('broken');
     });
   });
 });

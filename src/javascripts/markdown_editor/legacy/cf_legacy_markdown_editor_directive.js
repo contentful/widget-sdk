@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfMarkdownEditor', ['$injector', function($injector){
+angular.module('contentful').directive('cfLegacyMarkdownEditor', ['$injector', function($injector){
   var $document      = $injector.get('$document');
   var $rootScope     = $injector.get('$rootScope');
   var $timeout       = $injector.get('$timeout');
@@ -9,26 +9,37 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
   var delay          = $injector.get('delay');
   var keycodes       = $injector.get('keycodes');
   var modalDialog    = $injector.get('modalDialog');
-  var marked         = $injector.get('marked');
+  var LazyLoader     = $injector.get('LazyLoader');
   var spaceContext   = $injector.get('spaceContext');
+  var renderFn       = null;
 
-  var renderer = new marked.Renderer();
+  function prepareRenderFn(MarkedAst) {
+    if (renderFn) { return renderFn; }
 
-  renderer._image = renderer.image;
-  renderer.image = function (href, title, text) {
-    href = ''+href+'?h=200';
-    var img = this._image(href, title, text);
-    return '<div class="markdown-image-placeholder">'+img+'</div>';
-  };
+    var marked = MarkedAst._marked;
+    var renderer = new marked.Renderer();
+    renderer._image = renderer.image;
+    renderer.image = function (href, title, text) {
+      href = ''+href+'?h=200';
+      var img = this._image(href, title, text);
+      return '<div class="markdown-image-placeholder">'+img+'</div>';
+    };
+
+    renderFn = function(source) {
+      return marked(source, { renderer: renderer });
+    };
+
+    return renderFn;
+  }
 
   return {
     restrict: 'A',
-    template: JST['cf_markdown_editor'](),
+    template: JST['cf_legacy_markdown_editor'](),
     link: function(scope, elem){
       var textarea = elem.find('textarea');
-      var toolbar = elem.find('.markdown-toolbar');
-      var modeSwitch = elem.find('.markdown-modeswitch');
-      var preview = elem.find('.markdown-preview');
+      var toolbar = elem.find('.markdown-legacy-toolbar');
+      var modeSwitch = elem.find('.markdown-legacy-modeswitch');
+      var preview = elem.find('.markdown-legacy-preview');
       var validations = dotty.get(scope, 'widget.field.validations', []);
 
       scope.metaKey = /(Mac|Macintosh)/gi.test($window.navigator.userAgent) ? 'Cmd' : 'Ctrl';
@@ -63,7 +74,6 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         if (scope.displayMode === 'preview') {
           var targetText = $(ev.target).text().trim();
           scope.displayMode = 'edit';
-          $rootScope.$broadcast('elastic:adjust');
           delay(function () {
             textarea.trigger('focus');
             var cursorPos = textarea.val().indexOf(targetText);
@@ -236,7 +246,6 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
       scope.insertAsset = function () {
         modalDialog.open({
-          scope: scope,
           template: 'insert_asset_dialog',
           ignoreEnter: true
         }).promise.then(function (assets) {
@@ -251,8 +260,8 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         modalScope.model = {};
 
         modalDialog.open({
-          scope: modalScope,
-          template: 'insert_external_link_dialog',
+          scopeData: { model: { url: 'https://' } },
+          template: 'markdown_link_dialog',
           ignoreEnter: true
         }).promise.then(function(link) {
           var markup = makeExternalLink(link);
@@ -304,7 +313,6 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
       function triggerUpdateEvents() {
         textarea.trigger('input');
-        $rootScope.$broadcast('elastic:adjust');
         dispatchPasteEvent();
       }
 
@@ -360,7 +368,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       });
 
       function updatePreview() {
-        scope.markdownPreview = marked(getFieldRawValue(), {renderer: renderer});
+        LazyLoader.get('markdown').then(function (libs) {
+          var render = prepareRenderFn(libs.MarkedAst);
+          scope.markdownPreview = render(getFieldRawValue());
+        });
       }
 
       function updateCounts() {

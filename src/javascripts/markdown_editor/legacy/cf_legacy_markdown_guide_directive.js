@@ -1,8 +1,8 @@
 'use strict';
-angular.module('contentful').directive('cfMarkdownGuide', function(){
+angular.module('contentful').directive('cfLegacyMarkdownGuide', function(){
   return {
     restrict: 'A',
-    template: JST['cf_markdown_guide'](),
+    template: JST['cf_legacy_markdown_guide'](),
     link: function(scope, elem){
       var $main = elem.find('.markdown-guide-main');
       var $nav= elem.find('.markdown-guide-nav');

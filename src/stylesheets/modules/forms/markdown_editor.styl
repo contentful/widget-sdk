@@ -1,195 +1,426 @@
-$markdown-editor-height = 125px
-$markdown-guide-height = 25px
+$markdown-radius = 2px
 
-.cf-markdown-editor
+.markdown-transfer-textarea
+  display: none
+
+.markdown-loaded
+  visibility: hidden
+  height: 1px
+  &.visible
+    visibility: visible
+    height: auto
+    margin-top: -25px
+
+/**
+ * Toolbar
+ */
+
+.markdown-tabs
   position: relative
+  z-index: 10
+  overflow: hidden
+  margin-bottom: -1px
 
-.markdown-toolbar,
-.markdown-modeswitch
-  padding: 7px 4px 1px
+.markdown-tabs a
+  color: $colors.text-mid
+  display: block
+  float: right
+  padding: 8px 5px 4px
+  width: 80px
+  border: 1px solid $colors.element-dark
+  border-top-left-radius: $markdown-radius
+  border-top-right-radius: $markdown-radius
+  margin-left: 3px
+  text-align: center
+  background-color: $colors.element-light
+  border-bottom-color: $colors.element-light
+  &.inactive
+    background: $colors.element-mid
+    border-bottom-color: $colors.element-dark
+    &:hover
+      background: $colors.element-dark
 
 .markdown-toolbar
-  display: flex
-  $form-control-theme()
   position: relative
-  height: 35px
-  border-radius: 3px 3px 0 0
-  border: 1px solid $gray-light
-  &:focus, &.opaque
-    border-top-left-radius: 3px
-    border-top-right-radius: 3px
-    background-color: $gray-lightest
-    border-color: $blue-link
-    outline: none
-  &.preview-mode
-    background-color: white
-    border: none
-    box-shadow: none
+  z-index: 5
+  border: 1px solid $colors.element-dark
+  background-color: $colors.element-light
+  padding: 9px 7px 7px
+  border-top-left-radius: $markdown-radius
 
-.markdown-modeswitch
-  position: absolute
-  right: 0
-  $stretch-y()
-  border-left: 1px solid $gray-light
+.markdown-minor-actions
+  margin-top: 5px
 
-.markdown-textarea
-  border-radius: 0 0 0 0
-  box-shadow: none
-  min-height: $markdown-editor-height
-  border-bottom: none
-  border-top: none
+.toolbar-button
+  background-color: transparent
+  color: $colors.text-mid
+  min-width: 30px
+  height: 30px
+  border: none
+  display: inline-block
+  border-radius: $markdown-radius
+  cursor: pointer
+  margin-right: 7px
+  line-height: 1
+  svg path
+    fill: $colors.text-mid //Quick fix!
+  &:disabled
+    cursor: not-allowed
+    opacity: .35
+  &:not(:disabled):hover
+    background-color: $colors.element-dark
+
+.markdown-headings
+  padding-top: 3px
+  margin-right: 2px
+  font-size: 1em
+  i, cf-icon, svg
+    display: inline-block
+
+.markdown-more-actions,
+.markdown-side-action
+  border: 1px solid $colors.element-dark
+  background: $colors.element-mid
+  &:not(:disabled):hover,
+  &.active
+    border-color: $colors.element-darker
+  &.active
+    background: $colors.element-dark
+    box-shadow: inset 0px 1px 2px 0px rgba(0, 0 , 0, .08)
+
+.markdown-side-action
+  float: right
+  padding: 0 8px
+  font-size: 1em
+  &:hover
+    border-color: $colors.element-darker
+
+/**
+ * Editor, preview, info
+ */
+
+.markdown-areas
+  border: 1px solid $colors.element-dark
+  border-width: 0 1px
+
+.markdown-editing-area
+
+  textarea
+    height: 1px
+
+  .CodeMirror
+    line-height: 1.5
+  .CodeMirror-lines
+    color: $colors.text-mid
+    padding: 20px
+  .cm-header
+    color: $colors.text-dark
+  .cm-header-1
+    font-size: 1.9em
+  .cm-header-2
+    font-size: 1.75em
+  .cm-header-3
+    font-size: 1.6em
+  .cm-header-4
+    font-size: 1.45em
+  .cm-header-5
+    font-size: 1.3em
+  .cm-header-6
+    font-size: 1.15em
+
+  span.cm-tag,
+  span.cm-string,
+  span.cm-attribute
+    color: $colors.red-dark
+  span.cm-string
+    text-decoration: none !important
+  span.cm-quote,
+  span.cm-comment,
+  span.cm-variable-2
+    color: $colors.text-light
+  span.cm-link,
+  span.cm-url
+    color: $colors.blue-mid !important
+  span.cm-link
+    text-decoration: underline
 
 .markdown-preview
-  position: relative
+  padding: 20px
   overflow-y: auto
-  padding: 9px 7px 4px
-  min-height: $markdown-editor-height
-  max-width: 700px
-  max-height: $textarea-max-height + 20px
-  border: 1px solid $gray-lightest
   word-wrap: break-word
   overflow-wrap: break-word
-  p
+  height: 100%
+
+.markdown-preview-crashed
+  text-align: center
+
+.markdown-help
+  background: $colors.element-light
+  border: 1px solid $colors.element-dark
+  border-bottom-left-radius: $markdown-radius
+  border-bottom-right-radius: $markdown-radius
+  color: $colors.text-mid
+  font-size: 0.85em
+  padding: 5px 7px 4px
+  cf-icon
+    width: 25px
+    height: 18px
+    float: left
+    margin-right: 5px
+
+.markdown-info
+  overflow: hidden
+  font-size: 0.85em
+  padding: 6px 2px 5px
+  border: 0
+
+.markdown-info__stats
+  float: left
+
+.markdown-info__requirements
+  float: right
+
+.markdown-marker__near
+  color: lighten($orange, 20%)
+
+.markdown-marker__invalid
+  color: $red
+
+/**
+ * Markdown preview styles
+ */
+
+.markdown-preview
+  .markdown-block
     margin: 0
-  p + p
+  .markdown-block + .markdown-block
     margin-top: $rhythm(0.5)
-  pre,
+  .markdown-block + .markdown-heading
+    margin-top: $rhythm(1)
+  .markdown-heading + .markdown-heading
+    margin-top: $rhythm(0.7)
+  .markdown-fragment
+    display: inline
+  .markdown-paragraph
+    line-height: 1.5em
+  .markdown-table
+    width: 80%
+    margin-left: auto
+    margin-right: auto
   .markdown-image-placeholder
-    margin-bottom: 22px
+    border: 1px solid $gray-light
+    border-radius: $markdown-radius
+    padding: 10px
+    background: $gray-lightest
+  .markdown-image-placeholder img
+    display: block
+    margin: 0 auto
   hr
-    background-color: $gray-medium
+    border: 0
+    background: transparent
+    border-bottom: 1px solid $gray-light
   ul, ol
-    margin: $rhythm(0.5) 0;
+    margin: $rhythm(0.5) 0
     padding-left: 1.6em
   ul > li
     list-style-type: disc
   ol > li
     list-style-type: decimal
-
-.markdown-image-placeholder
-  border: 1px solid $gray-light
-  text-align: center
-  padding: 5px
-  background: $gray-light
-
-.toolbar-button
-  width: 36px
-  height: 23px
-  border: none
-  background-color: transparent
-  background-repeat: no-repeat
-  background-position: center
-  background-size: 50%
-  display: inline-block
-  border-radius: 3px
-  cursor: pointer
-  &:hover
-    background-color: lighten($gray, 20%)
-.toolbar-button--flex
-  width: auto
-  flex-basis: 36px
-  flex-shrink: 1
-
-.preview-mode
-  .toolbar-button:hover
-    background-color: transparent
-  .markdown-modeswitch
-    border-left: none
-
-.md-right-button
-  display: block
-  float: right
-
-.md-bold-icon
-  background-image: url('/app/images/markdown/bold.png')
-.md-italic-icon
-  background-image: url('/app/images/markdown/italic.png')
-.md-h1-icon
-  background-image: url('/app/images/markdown/h1.png')
-.md-h2-icon
-  background-image: url('/app/images/markdown/h2.png')
-.md-h3-icon
-  background-image: url('/app/images/markdown/h3.png')
-.md-hr-icon
-  background-image: url('/app/images/markdown/hr.png')
-.md-quote-icon
-  background-image: url('/app/images/markdown/quote.png')
-.md-link-icon
-  background-image: url('/app/images/markdown/link.png')
-.md-ul-icon
-  background-image: url('/app/images/markdown/ul.png')
-.md-ol-icon
-  background-image: url('/app/images/markdown/ol.png')
-.md-code-icon
-  background-image: url('/app/images/markdown/code.png')
-.md-preview-icon
-  background-image: url('/app/images/markdown/preview.png')
-.md-edit-icon
-  background-image: url('/app/images/markdown/edit.png')
-.md-indent-icon
-  background-image: url('/app/images/markdown/indent.png')
-.md-asset-icon
-  background-image: url('/app/images/markdown/asset.png')
-.md-image-icon
-  background-image: url('/app/images/markdown/image.png')
-
-.markdown-guide-hint
-  position: absolute
-  top: 0
-  left: 0
-  right: 0
-  height: $markdown-guide-height
-  background-color: $gray-light
-  border-bottom: 1px solid $gray
-  padding: 3px 7px
-  cursor: pointer
-  color: $gray-darkest
-  border-top: 1px solid $gray
-  &:hover
-    background-color: darken($gray-light, 10%)
-  .toggle-collapse
-    float: right
-
-
-.cf-markdown-guide
-  position: relative
-  height: $markdown-guide-height
-  border: 1px solid $gray
-  border-radius: 0 0 3px 3px
-  border-top: none
-  overflow: hidden
-  margin-bottom: 10px
-  &.open
-    height: 300px
-
-.markdown-guide-nav
-  position: absolute
-  top: $markdown-guide-height
-  left: 0
-  bottom: 0
-  width: 20%
-  font-weight: bold
-  background-color: $gray-light
-  overflow: hidden
-  li
-    cursor: pointer
-    color: $gray-darkest
+  table, td, th
+    border: 1px solid $gray-light
+  table
+    table-layout: fixed
+    border-right-width: 0
+    border-bottom-width: 0
+  th
+    background: $gray-lightest
+  td, th
     padding: 5px
-    border-bottom: 1px solid $gray
-  li:hover:not(.active)
-    background-color: darken($gray-light, 10%)
-  li.active
-    color: white
-    background-color: $blue
+    border-left-width: 0
+    border-top-width: 0
 
-.markdown-guide-main
-  position: absolute
-  top: $markdown-guide-height
+/**
+ * Special characters modal
+ */
+
+.markdown-special-char-choices
+  max-width: 500px
+  min-height: 300px
+
+.markdown-special-char
+  display: inline-block
+  border: 1px solid $gray-light
+  border-radius: $markdown-radius
+  padding: 15px
+  margin: 3px
+  margin-top: 0
+  margin-left: 0
+  width: 50px
+  font-size: 1.5em
+  text-align: center
+  cursor: pointer
+
+.markdown-special-char.current
+  background: $gray-lightest
+
+.markdown-special-char-choice
+  text-align: center
+  margin: 20px
+  p
+    font-size: 2.5em
+    font-weight: bold
+    margin-bottom: 10px
+  small
+    font-size: 0.8em
+    color: $gray-dark
+
+/**
+ * Misc dialogs
+ */
+
+.embed-content-dialog
+  max-width: 500px
+  .embed-content-dialog__suffix
+    display: inline-block
+    margin-left: 10px
+
+/**
+ * ZenMode
+ */
+
+.cf-zenmode
+  position: fixed
+  z-index: 100
+  left: 0
+  right: 0
+  top: 0
+  bottom: 0
+  background: #FFF
+  overflow: hidden
+  .CodeMirror-lines,
+  .markdown-preview-mounting-point
+    max-width: 640px
+    margin: 0 auto
+
+.zenmode-logo
+  z-index: 104
+  position: fixed
+  top: 13px
+  left: 16px
+  width: 30px
+  height: 30px
+
+.zenmode-toolbar,
+.zenmode-footer
+  z-index: 103
+  position: fixed
+  left: 0
+  right: 0
+  background-color: $colors.element-light
+
+.zenmode-toolbar
+  top: 0
+  padding: 12px 20px 0
+  padding-left: 60px
+  height: 52px
+  border-bottom: 1px solid $colors.element-dark
+
+.zenmode-editor,
+.zenmode-preview
+  position: fixed
+  top: 52px
+  bottom: 38px
+  width: 50%
+
+.zenmode-editor
+  z-index: 102
+  left: 0
+  border-right: 1px solid $colors.element-dark
+
+.zenmode-preview
+  z-index: 101
+  right: 0
+
+.zenmode-drawer__show,
+.zenmode-drawer__hide
+  position: fixed
+  cursor: pointer
+  z-index: 105
+  top: 49%
+  height: 30px
+  background-color: $colors.element-light
+  border: 1px solid $colors.element-dark
+
+.zenmode-drawer__show
+  right: 0
+  border-right-width: 0
+
+.zenmode-drawer__hide
+  left: 50%
+  border-left-width: 0
+
+.zenmode-footer
+  z-index: 103
+  position: fixed
+  display: flex
+  justify-content: space-between
+  left: 0
   right: 0
   bottom: 0
-  width: 80%
-  overflow-y: auto
-  padding: 10px
-  box-shadow: -1px 0px 4px rgba(0,0,0,0.3)
+  height: 38px
+  padding: 10px 20px
+  border-top: 1px solid $colors.element-dark
 
+.zenmode-help
+  display: flex
+  cf-icon
+    width: 25px
+    height: 18px
+    margin-right: 5px
 
+.zenmode-info,
+.zenmode-reqs
+  font-size: 0.9em
+
+.zenmode-help,
+.zenmode-reqs
+  min-width: 450px
+
+/**
+ * Help
+ */
+
+.markdown-help-dialog a
+  text-decoration: underline
+
+.markdown-help-columns
+  display: flex
+  width: 720px
+
+.markdown-help-column
+  width: 340px
+
+.markdown-help-column:first-child
+  border-right: 1px solid $gray-light
+  margin-right: 20px
+
+.markdown-help-item
+  width: 340px
+  font-size: 1.5em
+  margin-bottom: 15px
+  line-height: 1.5em
+
+.markdown-help__preview
+  width: 170px
+  display: inline-block
+
+.markdown-help__markup
+  width: 170px
+  display: inline-block
+  color: $gray
+
+.markdown-help-link
+  padding: 20px
+  text-align: center
+  a
+    font-size: 1.1em
