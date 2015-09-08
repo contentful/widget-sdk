@@ -277,12 +277,4 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<cf-kaltura-multi-video-editor ng-model="fieldData.value" ot-bind-object-value="selectedAssets"></cf-kaltura-multi-video-editor>'
   });
 
-  widgets.registerWidget('youtubeEditor',{
-    fieldTypes: ['Symbol'],
-    name: 'Youtube',
-    icon: 'video-preview',
-    rendersHelpText: true,
-    template: '<cf-youtube-editor></cf-youtube-editor>'
-  });
-
 }]);

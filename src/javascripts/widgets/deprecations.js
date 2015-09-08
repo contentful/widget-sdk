@@ -4,7 +4,7 @@ angular.module('contentful')
 
 .value('widgets/deprecations/data', {
   youtubeEditor: {
-    alternative: 'Embedded Content',
+    alternative: 'URL',
     preview: true
   },
   dropdown: {

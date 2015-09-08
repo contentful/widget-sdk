@@ -17,6 +17,11 @@ angular.module('contentful')
  * fields whose type is included in that list.
  */
 .value('widgets/migrations/data', [
+  {
+    from: 'youtubeEditor',
+    to: 'urlEditor',
+    fieldTypes: ['Symbol']
+  }
 ])
 
 /**
@@ -45,8 +50,8 @@ angular.module('contentful')
   function migrateWidget (widget, field) {
     var id = widget.widgetId;
     var migration = _.find(MIGRATIONS, function (migration) {
-      var fieldMatches = !migration.fieldTypes || _.contains(migration.fieldTypes, field.type)
-      return fieldMatches && migration.from === id
+      var fieldMatches = !migration.fieldTypes || _.contains(migration.fieldTypes, field.type);
+      return fieldMatches && migration.from === id;
     });
 
     if (migration) {
