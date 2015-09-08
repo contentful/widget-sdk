@@ -18,6 +18,7 @@ describe('The Entry list directive', function () {
         isSelected: sinon.stub()
       };
       scope.context = { view: {} };
+      scope.loadView = _.noop;
       scope.spaceContext = {
         space: {
           data: {sys: {createdBy: {sys: {id: ''}}}},

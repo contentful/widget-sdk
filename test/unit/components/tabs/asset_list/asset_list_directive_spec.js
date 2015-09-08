@@ -21,6 +21,7 @@ describe('The Asset list directive', function () {
       scope.tab = {
         params: {}
       };
+      scope.loadView = _.noop;
       scope.spaceContext = {
         space: {
           data: {sys: {createdBy: {sys: {id: ''}}}},

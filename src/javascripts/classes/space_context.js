@@ -221,6 +221,16 @@ angular.module('contentful')
         return contentType;
       },
 
+      fetchPublishedContentType: function (contentTypeId) {
+        var hash = this._publishedContentTypesHash;
+        var contentType = pick();
+        if (contentType) { return $q.when(contentType); }
+
+        return this.refreshContentTypes().then(pick);
+
+        function pick() { return hash[contentTypeId]; }
+      },
+
       /**
        * @ngdoc method
        * @name spaceContext#displayFieldForType

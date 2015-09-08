@@ -29,8 +29,7 @@ function($scope, $injector, generateDefaultViews, getBlankView, resetList, viewC
   };
 
   $scope.loadView = function (view) {
-    var newView;
-    newView = _.cloneDeep(view);
+    var newView = _.extend(getBlankView(), _.cloneDeep(view));
     newView.title = 'New View';
     setCurrentView($scope, newView);
     resetList();

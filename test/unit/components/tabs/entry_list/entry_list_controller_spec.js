@@ -65,7 +65,8 @@ describe('Entry List Controller', function () {
         title: 'Derp',
         searchTerm: 'search term',
         contentTypeId: 'ctid',
-        displayedFields: ['field1', 'field2'],
+        contentTypeHidden: false,
+        displayedFieldIds: ['field1', 'field2'],
         order: {
           fieldId: 'fieldid',
           direction: 'descending'
@@ -74,11 +75,10 @@ describe('Entry List Controller', function () {
       scope.loadView(view);
     });
 
-
     it('sets the view, omitting the id', function () {
       var loaded = _.cloneDeep(view);
       loaded.title = 'New View';
-      expect(scope.context.view).toEqual(loaded);
+      expect(_.isEqual(scope.context.view, loaded)).toBe(true);
       expect(scope.context.view).not.toBe(loaded);
     });
 

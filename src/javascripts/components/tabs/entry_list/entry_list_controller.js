@@ -179,21 +179,19 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   }
 
   function buildQuery() {
-    var contentType;
+    var contentTypeId = dotty.get($scope, 'context.view.contentTypeId', null);
     var queryObject = {
       order: getOrderQuery(),
       limit: $scope.paginator.pageLength,
       skip: $scope.paginator.skipItems()
     };
 
-    if ($scope.context.view.contentTypeId) {
-      contentType = $scope.spaceContext.getPublishedContentType($scope.context.view.contentTypeId);
-    }
-
-    return searchQueryHelper.buildQuery($scope.spaceContext.space, contentType, $scope.context.view.searchTerm)
-    .then(function (searchQuery) {
-      _.extend(queryObject, searchQuery);
-      return queryObject;
+    return $scope.spaceContext.fetchPublishedContentType(contentTypeId).then(function (contentType) {
+      return searchQueryHelper.buildQuery($scope.spaceContext.space, contentType, $scope.context.view.searchTerm)
+      .then(function (searchQuery) {
+        _.extend(queryObject, searchQuery);
+        return queryObject;
+      });
     });
   }
 
