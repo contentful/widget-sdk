@@ -23,13 +23,13 @@
   .left-nav(ng-hide="empty")
     header.filter-list-header Filter By Status
     ul.status-filters
-      li.filter-list-item(ng-class="{active: context.list == 'all'}" ng-click="switchList('all')")
+      li.filter-list-item(ng-class="{active: context.list == 'all'}" ng-click="context.list = 'all'")
         span.filter-list-title All
-      li.filter-list-item(ng-class="{active: context.list == 'changed'}" ng-click="switchList('changed')")
+      li.filter-list-item(ng-class="{active: context.list == 'changed'}" ng-click="context.list = 'changed'")
         span.filter-list-title Changed
-      li.filter-list-item(ng-class="{active: context.list == 'draft'}" ng-click="switchList('draft')")
+      li.filter-list-item(ng-class="{active: context.list == 'draft'}" ng-click="context.list = 'draft'")
         span.filter-list-title Draft
-      li.filter-list-item(ng-class="{active: context.list == 'active'}" ng-click="switchList('active')")
+      li.filter-list-item(ng-class="{active: context.list == 'active'}" ng-click="context.list = 'active'")
         span.filter-list-title Active
 
   .with-left-nav(ng-hide="empty")
@@ -66,10 +66,10 @@
                 .status-label {{statusLabel(contentType)}}
                 .status-bar
 
-    .advice(ng-show="visibleContentTypes | isEmpty")
-      .advice__frame(ng-show="hasQuery()")
+    .advice(ng-show="contentTypes.length && !visibleContentTypes.length")
+      .advice__frame
         i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
         header.advice__title There are no matches to your search
 
-.advice(ng-show="contentTypes.length === 0 && !hasQuery()")
+.advice(ng-show="!contentTypes.length")
   include ../../shared/create_content_type_advice

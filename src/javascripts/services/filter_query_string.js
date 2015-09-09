@@ -2,16 +2,16 @@
 
 angular.module('contentful').factory('FilterQueryString', ['$injector', function ($injector) {
 
-  var querystring = $injector.get('querystring');
-  var $location   = $injector.get('$location');
-  var TheStore    = $injector.get('TheStore');
+  var querystring  = $injector.get('querystring');
+  var $location    = $injector.get('$location');
+  var spaceContext = $injector.get('spaceContext');
+  var TheStore     = $injector.get('TheStore');
 
   return { create: create };
 
   function create(entityType) {
 
     var isInitialized = false;
-    var KEY           = 'lastFilterQueryString.' + entityType;
 
     return {
       createInitHandler: createInitHandler,
@@ -30,13 +30,13 @@ angular.module('contentful').factory('FilterQueryString', ['$injector', function
 
       var viewData = {};
       _.forEach(view, processViewItems);
-      TheStore.set(KEY, viewData);
+      TheStore.set(getKey(), viewData);
       var qs = querystring.stringify(viewData);
       $location.search(qs).replace();
 
       function processViewItems(item, key) {
         if (key === 'title') { return; }
-        if (_.isNull(item) || item === '') { return; }
+        if (_.isNull(item) || _.isUndefined(item) || item === '') { return; }
         _.extend(viewData, flatten(item, key));
       }
     }
@@ -61,7 +61,7 @@ angular.module('contentful').factory('FilterQueryString', ['$injector', function
     function read() {
       var view = {};
       var currentQS  = $location.search();
-      var previousQS = TheStore.get(KEY) || {};
+      var previousQS = TheStore.get(getKey()) || {};
       var qs = _.keys(currentQS).length ? currentQS : previousQS;
 
       _.forEach(qs, function (item, key) {
@@ -83,10 +83,20 @@ angular.module('contentful').factory('FilterQueryString', ['$injector', function
         view[parts[0]][parts[1]] = item;
       }
     }
+
+    function getKey() {
+      return 'lastFilterQueryString.' + entityType + '.' + getSpaceId();
+    }
   }
 
   function toBool(obj, key) {
-    var value = obj[key];
-    obj[key] = value !== 'false';
+    if (_.has(obj, key)) {
+      var value = obj[key];
+      obj[key] = value !== 'false';
+    }
+  }
+
+  function getSpaceId() {
+    return dotty.get(spaceContext, 'space.data.sys.id', 'undef');
   }
 }]);

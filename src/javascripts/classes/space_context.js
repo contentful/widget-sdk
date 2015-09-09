@@ -221,6 +221,15 @@ angular.module('contentful')
         return contentType;
       },
 
+      /**
+       * @ngdoc method
+       * @name spaceContext#fetchPublishedContentType
+       * @param {string} contentTypeId
+       * @return Promise<Object>
+       * @description
+       * Returns the promise of published content type for a given ID.
+       * Different from getPublishedContentType, it will fetch CT if it's not loaded yet.
+       */
       fetchPublishedContentType: function (contentTypeId) {
         var hash = this._publishedContentTypesHash;
         var contentType = pick();
