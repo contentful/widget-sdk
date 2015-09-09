@@ -1,0 +1,17 @@
+input.form-control(
+  ng-disabled="!otDoc.state.editable"
+  ng-model="fieldData.value"
+  ot-bind-text=""
+  type="text")
+.form-widget__help-text--full-width
+  span(
+    ng-class="{'colors__red': charCountStatus === 'exceeded', 'colors__orange': charCountStatus === 'approaching'}")
+      | {{ charCount }} characters
+  span.u-pull-right(ng-if="constraints")
+    | Required characters:
+    span(ng-if="constraints.min")
+      |  Min: {{ constraints.min }}
+    span(ng-if="constraints.min && constraints.max")
+      |  /
+    span(ng-if="constraints.max")
+      |  Max: {{ constraints.max }}
