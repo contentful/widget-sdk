@@ -128,12 +128,13 @@ mixin create-entry-button
       | Visit the Knowledge Base Pages
       i.fa.fa-question-circle
 
-
 .tab-actions
   .label {{selection.size()}} Entries selected
   .button-set(ng-controller="EntryListActionsController" ng-hide="selection.isEmpty()")
-    button.cfnext-btn-secondary-action.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
-    | &nbsp;
+    button.cfnext-btn-secondary-action.duplicate(type="button"
+      ng-click="duplicateSelected()"
+      ng-show="showDuplicate()")
+      | Duplicate
     button.cfnext-btn-secondary-action.delete(type="button"
       ng-show="showDelete()"
       cf-context-menu-trigger

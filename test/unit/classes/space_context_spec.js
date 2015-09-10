@@ -263,6 +263,40 @@ describe('spaceContext', function () {
 
     });
 
+    describe('forced fetch of content types', function () {
+      var spaceContext, $q;
+
+      beforeEach(function () {
+        spaceContext = this.spaceContext;
+        $q = this.$inject('$q');
+
+        spaceContext._publishedContentTypesHash = {
+          already_fetched: { data: { sys: { id: 'already_fetched' } } }
+        };
+        sinon.stub(this.spaceContext, 'refreshContentTypes', function () {
+          var ct = { data: { sys: { id: 'to_be_fetched' } } };
+          spaceContext._publishedContentTypesHash['to_be_fetched'] = ct;
+          return $q.when(ct);
+        });
+      });
+
+      pit('returns promise immediately when content type is already there', function () {
+        return spaceContext.fetchPublishedContentType('already_fetched')
+          .then(function (ct) {
+            expect(ct.data.sys.id).toBe('already_fetched');
+            sinon.assert.notCalled(spaceContext.refreshContentTypes);
+          });
+      });
+
+      pit('returns promise after refreshing content types if one was not found', function () {
+        return spaceContext.fetchPublishedContentType('to_be_fetched')
+          .then(function (ct) {
+            expect(ct.data.sys.id).toBe('to_be_fetched');
+            sinon.assert.called(spaceContext.refreshContentTypes);
+          });
+      });
+    });
+
     describe('getting existing published content types locally', function () {
       var contentType;
 

@@ -66,10 +66,10 @@
                 .status-label {{statusLabel(contentType)}}
                 .status-bar
 
-    .advice(ng-show="contentTypes.length && !visibleContentTypes.length")
+    .advice(ng-show="!visibleContentTypes.length")
       .advice__frame
         i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
         header.advice__title There are no matches to your search
 
-.advice(ng-show="!contentTypes.length")
+.advice(ng-show="empty")
   include ../../shared/create_content_type_advice

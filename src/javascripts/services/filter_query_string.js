@@ -32,61 +32,42 @@ angular.module('contentful').factory('FilterQueryString', ['$injector', function
       _.forEach(view, processViewItems);
       TheStore.set(getKey(), viewData);
       var qs = querystring.stringify(viewData);
-      $location.search(qs).replace();
+      $location.search(qs);
+      $location.replace();
 
       function processViewItems(item, key) {
         if (key === 'title') { return; }
         if (_.isNull(item) || _.isUndefined(item) || item === '') { return; }
-        _.extend(viewData, flatten(item, key));
-      }
-    }
 
-    function flatten(item, key) {
-      var result = {};
-      if (_.isObject(item) && !_.isArray(item)) {
-        addNested(item);
-      } else {
-        result[key] = item;
-      }
-
-      return result;
-
-      function addNested(item) {
-        _.forEach(item, function (nestedItem, nestedKey) {
-          result[key + '.' + nestedKey] = nestedItem;
-        });
+        if (_.isObject(item) && !_.isArray(item)) {
+          _.extend(viewData, flatten(key, item));
+        } else {
+          viewData[key] = item;
+        }
       }
     }
 
     function read() {
-      var view = {};
       var currentQS  = $location.search();
       var previousQS = TheStore.get(getKey()) || {};
       var qs = _.keys(currentQS).length ? currentQS : previousQS;
-
-      _.forEach(qs, function (item, key) {
-        if (key.indexOf('.') > -1) {
-          addNested(key, item);
-        } else {
-          view[key] = item;
-        }
-      });
+      var view = dotty.transform(qs);
 
       toBool(view, 'contentTypeHidden');
       isInitialized = true;
 
       return view;
-
-      function addNested(key, item) {
-        var parts = key.split('.');
-        if (!view[parts[0]]) { view[parts[0]] = {}; }
-        view[parts[0]][parts[1]] = item;
-      }
     }
 
     function getKey() {
       return 'lastFilterQueryString.' + entityType + '.' + getSpaceId();
     }
+  }
+
+  function flatten(key, item) {
+    var nested = {};
+    nested[key] = item;
+    return dotty.flatten(nested);
   }
 
   function toBool(obj, key) {
