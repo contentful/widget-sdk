@@ -267,15 +267,17 @@ describe('Create Space controller', function () {
         });
 
         describe('if remote call succeeds', function() {
-          var space;
+          var space, spaceTools;
           beforeEach(function() {
+
             space = {getId: stubs.getId, data: {name: 'newspace'}};
             scope.spaces = [space];
             this.client.createSpace.returns(this.$q.when(space));
             stubs.getId.returns('spaceid');
             this.tokenStoreStubs.getUpdatedToken.returns(this.$q.when());
             this.tokenStoreStubs.getSpace.returns(this.$q.when(space));
-            scope.selectSpace = sinon.stub();
+            spaceTools = this.$inject('spaceTools');
+            sinon.stub(spaceTools, 'goTo');
             scope.createSpace();
             scope.$digest();
             scope.$on.yield();
@@ -318,7 +320,7 @@ describe('Create Space controller', function () {
           });
 
           it('selects space', function() {
-            sinon.assert.calledWith(scope.selectSpace, space);
+            sinon.assert.calledWith(spaceTools.goTo, space);
           });
 
           it('stops spinner', function() {

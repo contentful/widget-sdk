@@ -483,7 +483,7 @@ angular.module('contentful').config([
   var $document    = $injector.get('$document');
   var notification = $injector.get('notification');
   var tokenStore   = $injector.get('tokenStore');
-  var spacesStore  = $injector.get('spacesStore');
+  var spaceTools   = $injector.get('spaceTools');
   var logger       = $injector.get('logger');
   // Result of confirmation dialog
   var navigationConfirmed = false;
@@ -591,14 +591,11 @@ angular.module('contentful').config([
 
   function navigateToInitialSpace(spaceId) {
     tokenStore.getSpaces().then(function (spaces) {
-      var space = determineInitialSpace(spaces, spaceId, spacesStore.getLastUsedSpace());
-      if (space) {
-        spacesStore.saveSelectedSpace(space.getId());
-      }
+      var space = determineInitialSpace(spaces, spaceId, spaceTools.getLastUsed());
 
       try {
         if (space) {
-          $state.go('spaces.detail', { spaceId: space.getId() });
+          spaceTools.goTo(space.getId(), true);
         } else {
           $state.go('spaces.new');
         }
@@ -618,15 +615,15 @@ angular.module('contentful').config([
   function determineInitialSpace(spaces, toSpaceId, lastUsedSpace) {
     var space;
     if (toSpaceId) {
-      space = spacesStore.getSpaceFromList(toSpaceId, spaces);
-      if(space) {
+      space = spaceTools.getFromList(toSpaceId, spaces);
+      if (space) {
         return space;
       } else {
         notification.warn('Space does not exist or is unaccessable');
       }
-    } else if(lastUsedSpace){
-      space = spacesStore.getSpaceFromList(lastUsedSpace, spaces);
-      if(space) {
+    } else if (lastUsedSpace){
+      space = spaceTools.getFromList(lastUsedSpace, spaces);
+      if (space) {
         return space;
       }
     }
@@ -636,5 +633,4 @@ angular.module('contentful').config([
   function getAddToContext(params) {
     return JSON.stringify(_.omit(params, 'addToContext'));
   }
-
 }]);

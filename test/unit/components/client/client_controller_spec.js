@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Client Controller', function () {
-  var clientController, scope, notification, TheAccountView;
+  var clientController, scope, notification, TheAccountView, spaceContext, spaceTools;
   var stubs;
 
   function setMockOnContext(context, mockKey, stubsList) {
@@ -125,8 +125,9 @@ describe('Client Controller', function () {
 
       notification = this.$inject('notification');
       TheAccountView = this.$inject('TheAccountView');
+      spaceTools = this.$inject('spaceTools');
 
-      var spaceContext = this.$inject('spaceContext');
+      spaceContext = this.$inject('spaceContext');
       var space = this.$inject('cfStub').space('');
       space.getId = stubs.spaceId;
       spaceContext.resetWithSpace(space);
@@ -159,7 +160,7 @@ describe('Client Controller', function () {
     beforeEach(inject(function (authentication) {
       stubs.spaceId.returns(123);
       this.authorizationStubs.authContext.hasSpace.withArgs(123).returns(true);
-      scope.spaceContext.space = _.extend(scope.spaceContext.space, {cloned: true});
+      spaceContext.space = _.extend(spaceContext.space, {cloned: true});
       authentication.tokenLookup = {};
       scope.$digest();
     }));
@@ -177,13 +178,8 @@ describe('Client Controller', function () {
     });
 
     it('setSpace is called', function () {
-      sinon.assert.calledWith(this.authorizationStubs.setSpace, scope.spaceContext.space);
+      sinon.assert.calledWith(this.authorizationStubs.setSpace, spaceContext.space);
     });
-  });
-
-  it('gets current space id', function () {
-    stubs.spaceId.returns(123);
-    expect(scope.getCurrentSpaceId()).toBe(123);
   });
 
   describe('select a space', function () {
@@ -200,15 +196,11 @@ describe('Client Controller', function () {
       };
     });
 
-    it('with no space triggers an error notification', function () {
-      scope.selectSpace();
-      sinon.assert.called(notification.warn);
-    });
-
     describe('if we are selecting the current space', function () {
       beforeEach(function () {
         idStub.returns(123);
-        scope.selectSpace(space);
+        spaceContext.getId = _.constant(123);
+        spaceTools.goTo(space);
       });
 
       it('dont track analytics', function () {
@@ -225,7 +217,7 @@ describe('Client Controller', function () {
         idStub.returns(123);
         TheAccountView.isActive = sinon.stub();
         TheAccountView.isActive.returns(true);
-        scope.selectSpace(space);
+        spaceTools.goTo(space);
       });
 
       it('tracks analytics', function () {
@@ -244,7 +236,7 @@ describe('Client Controller', function () {
     describe('if we are selecting a different space', function () {
       beforeEach(function () {
         idStub.returns(456);
-        scope.selectSpace(space);
+        spaceTools.goTo(space);
       });
 
       it('tracks analytics', function () {
@@ -269,8 +261,7 @@ describe('Client Controller', function () {
     var childScope;
     beforeEach(function () {
       childScope = scope.$new();
-      scope.getCurrentSpaceId = sinon.stub();
-      scope.getCurrentSpaceId.returns(321);
+      spaceContext.getId = sinon.stub().returns(321);
     });
 
     describe('changing route to a different space', function () {
