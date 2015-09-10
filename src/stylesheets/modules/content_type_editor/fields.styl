@@ -17,6 +17,7 @@ $ct__field-padding = 0.8em
   height: $rhythm(2.5)
   display: flex
   align-items: center
+  white-space: nowrap
   margin-bottom: $rhythm(1)
   border: 1px solid $colors.light-gray
   border-radius: 1px
@@ -30,6 +31,7 @@ $ct__field-padding = 0.8em
 
 
   &__name
+    $text-truncate()
     font-weight: bolder
     margin-right: 1em
 
