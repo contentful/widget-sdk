@@ -96,12 +96,25 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<cf-radio-editor ng-model="fieldData.value" ot-bind-object-value="valuesController.selected"></cf-radio-editor>'
   });
 
-  widgets.registerWidget('boolean',{
+  widgets.registerWidget('boolean', {
     fieldTypes: ['Boolean'],
     name: 'Radio',
     icon: 'radio',
     notFocusable: true,
-    template: '<cf-radio-editor ng-model="fieldData.value" ot-bind-object-value="valuesController.selected"></cf-radio-editor>'
+    template: '<cf-widget-boolean ng-model="fieldData.value" ot-bind-object-value="valuesController.selected">',
+    options: [{
+      name: 'True condition custom label',
+      param: 'trueLabel',
+      type:  'short-text',
+      description: 'Yes',
+      default: 'Yes'
+    }, {
+      name: 'False condition custom label',
+      param: 'falseLabel',
+      type:  'short-text',
+      description: 'No',
+      default: 'No'
+    }]
   });
 
   widgets.registerWidget('rating',{
