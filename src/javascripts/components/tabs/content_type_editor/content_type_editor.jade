@@ -6,6 +6,13 @@ header.workbench-header
     | {{contentType.data.description}}
   button.cfnext-btn-inline(type="button" ng-click="showMetadataDialog()")
     | Edit
+  .workbench-header__actions
+    button.cfnext-btn-secondary-action(ui-command="actions.cancel")
+      | Cancel
+    button.cfnext-btn-secondary-action(ui-command="actions.delete")
+      | Delete
+    button.cfnext-btn-primary-action(ui-command="actions.save")
+      | Save
 
 .workbench-nav
   .workbench-nav__left-content
@@ -32,11 +39,3 @@ header.workbench-header
         include ./content_type_field_list
       .content-type-fields(ng-if="!hasFields")
         include ./content_type_field_list_empty
-
-.workbench-actions
-  button.cfnext-btn-secondary-action(ui-command="actions.cancel")
-    | Cancel
-  button.cfnext-btn-secondary-action(ui-command="actions.delete")
-    | Delete
-  button.cfnext-btn-primary-action(ui-command="actions.save")
-    | Save
