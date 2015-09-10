@@ -92,15 +92,6 @@ describe('Thumbnail Controller', function () {
         this.scope.imageHasLoaded = true;
         expect(this.scope.isFileLoading()).toBe(false);
       });
-
-      it('file is not previewable', function() {
-        expect(this.scope.isFilePreviewable()).toBe(false);
-      });
-
-      it('file is previewable', function() {
-        this.scope.imageHasLoaded = true;
-        expect(this.scope.isFilePreviewable()).toBe(true);
-      });
     });
 
     describe('previewable, but not coming from the images server', function() {
@@ -114,10 +105,6 @@ describe('Thumbnail Controller', function () {
       it('image has no preview', function() {
         expect(this.scope.hasPreview()).toBe(false);
       });
-
-      it('file is previewable (because it has an icon instead)', function() {
-        expect(this.scope.isFilePreviewable()).toBe(true);
-      });
     });
 
 
@@ -128,10 +115,6 @@ describe('Thumbnail Controller', function () {
 
       it('image has no preview', function() {
         expect(this.scope.hasPreview()).toBe(false);
-      });
-
-      it('file is previewable (because it has an icon instead)', function() {
-        expect(this.scope.isFilePreviewable()).toBe(true);
       });
     });
 

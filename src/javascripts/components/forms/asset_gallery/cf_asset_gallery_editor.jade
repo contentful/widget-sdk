@@ -31,13 +31,6 @@ ul.asset-gallery(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide
         | Asset does not exist anymore
 
       .gallery-buttons(ng-show="hoveringImage")
-        button.btn(type="button"
-            cf-file-preview
-            ng-if="file && file.url && hasPreview()"
-            preview-size="fullscreen"
-            tooltip="Image zoom"
-            tooltip-container=".entry-editor")
-          i.fa.fa-search-plus
         a.btn(type="button"
             ng-if="!hasPreview()"
             href="{{file.url|assetUrl}}"

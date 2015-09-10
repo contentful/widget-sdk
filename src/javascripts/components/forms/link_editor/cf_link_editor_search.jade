@@ -90,14 +90,14 @@
         tbody
           tr(ng-repeat="entity in entities track by entity.getId()"
               cf-click-local="pick(entity)"
-              ng-class="{selected: entity==selectedEntity}")
+              ng-class="{selected: entity==selectedEntity}",
+              ng-init="file=spaceContext.localizedField(entity, 'data.fields.file', locale.internal_code)")
             td.cell-preview
-              p.file-preview(cf-file-preview file="spaceContext.localizedField(entity, 'data.fields.file', locale.internal_code)")
-                span.cf-thumbnail(cf-thumbnail file="file" size="70" ng-if="file")
+              .cf-thumbnail(cf-thumbnail file="file" size="70" ng-if="file")
             td.cell-name(ng-init="assetCellName=spaceContext.localizedField(entity, 'data.fields.title', locale.internal_code) || 'Untitled'")
               p(title="{{assetCellName}}") {{assetCellName}}
               p.lighter {{spaceContext.localizedField(entity, 'data.fields.description', locale.internal_code)}}
-            td.cell-type(ng-init="file=spaceContext.localizedField(entity, 'data.fields.file', locale.internal_code)")
+            td.cell-type
               p(ng-show="file && file.url") {{file|fileType}}
                 span.lighter {{file|fileExtension}}
               p.cell--lighter

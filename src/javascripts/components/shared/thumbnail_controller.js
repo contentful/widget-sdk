@@ -18,17 +18,11 @@ angular.module('contentful').controller('ThumbnailController',
   });
 
   $scope.isFileLoading = isFileLoading;
-  $scope.isFilePreviewable = isFilePreviewable;
   $scope.hasPreview = hasPreview;
   $scope.getIconName = getIconName;
 
   function isFileLoading() {
     return $scope.hasPreview() && !$scope.imageHasLoaded;
-  }
-
-  function isFilePreviewable() {
-    return !$scope.hasPreview() ||
-           $scope.hasPreview() && $scope.imageHasLoaded;
   }
 
   function hasPreview() {

@@ -20,7 +20,6 @@ describe('cfFileMetadata Directive', function () {
         canPublish: sinon.stub()
       };
 
-      parentScope.isFilePreviewable = sinon.stub();
       parentScope.isFileLoading = sinon.stub();
       parentScope.hasPreview = sinon.stub();
 
@@ -143,7 +142,6 @@ describe('cfFileMetadata Directive', function () {
         upload: 'http://url'
       };
 
-      parentScope.isFilePreviewable.returns(false);
       parentScope.isFileLoading.returns(false);
       compileElement();
     });
@@ -167,7 +165,6 @@ describe('cfFileMetadata Directive', function () {
         url: 'http://url'
       };
 
-      parentScope.isFilePreviewable.returns(false);
       parentScope.isFileLoading.returns(true);
       compileElement();
     });
@@ -186,7 +183,6 @@ describe('cfFileMetadata Directive', function () {
       };
 
       parentScope.entity.canPublish.returns(true);
-      parentScope.isFilePreviewable.returns(true);
       compileElement();
     });
 
