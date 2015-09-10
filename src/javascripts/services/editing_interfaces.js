@@ -1,10 +1,11 @@
 'use strict';
 angular.module('contentful').factory('editingInterfaces', ['$injector', function($injector){
-  var $q           = $injector.get('$q');
-  var notification = $injector.get('notification');
-  var logger       = $injector.get('logger');
-  var random       = $injector.get('random');
-  var widgets      = $injector.get('widgets');
+  var $q             = $injector.get('$q');
+  var notification   = $injector.get('notification');
+  var logger         = $injector.get('logger');
+  var random         = $injector.get('random');
+  var widgets        = $injector.get('widgets');
+  var widgetMigrator = $injector.get('widgets/migrations');
 
   var widgetIdsByContentType = {};
 
@@ -20,7 +21,8 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
           return $q.reject(err);
       })
       .then(_.partial(syncWidgets, contentType))
-      .then(addDefaultParams);
+      .then(addDefaultParams)
+      .then(widgetMigrator(contentType));
     },
 
     // TODO this function is not used anywhere.
@@ -81,6 +83,8 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   }
 
   // TODO temporary function. This forces widgets order to always reflect fields
+  // We should not manually apply this order every time. Instead the
+  // Entry Editor should order widgets according to the fields
   function syncOrder(contentType, interf) {
     var newOrder = _.map(contentType.data.fields, function (field) {
       return _.find(interf.data.widgets, {fieldId: field.id});
