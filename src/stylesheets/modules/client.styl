@@ -5,9 +5,12 @@
 
 .client-loading
   $stretch()
-  margin: auto
-  height: 8em
-  text-align: center
+  $background-pattern()
+  &__container
+    $stretch()
+    margin: auto
+    height: 8em
+    text-align: center
   &__icon
     font-size: 4em
     line-height: 1

@@ -25,9 +25,11 @@ Styleguide 9.0
 */
 
 .workbench
+  border-top: 1px solid #dbdbdb
   display: flex
   flex-direction: column
-  $stretch(0, 0, 0, 0)
+  $stretch($breadcrumbs-height, 0, 0, 0)
+  $layer('bottom')
   > *
     flex: 0 0 auto;
 
