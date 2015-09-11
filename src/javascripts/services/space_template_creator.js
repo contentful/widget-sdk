@@ -199,16 +199,14 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
         deferred.reject({error: 'timeout processing'});
       }, ASSET_PROCESSING_TIMEOUT);
 
-      ShareJS.open(asset, function (err, _doc) {
-        $rootScope.$apply(function () {
-          if(err) {
-            $timeout.cancel(processingTimeout);
-            return deferred.reject(err);
-          }
-          doc = _doc;
-          listener = doc.on('remoteop', remoteOpHandler);
-          asset.process(version, locale);
-        });
+      ShareJS.open(asset)
+      .then(function (_doc) {
+        doc = _doc;
+        listener = doc.on('remoteop', remoteOpHandler);
+        asset.process(version, locale);
+      }, function (err) {
+        $timeout.cancel(processingTimeout);
+        deferred.reject(err);
       });
 
       return deferred.promise;

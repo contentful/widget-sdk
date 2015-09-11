@@ -33,6 +33,7 @@ angular.module('contentful')
  * @name otDoc.state
  * @property {boolean} disabled
  * @property {boolean} editable
+ * @property {boolean} error
 */
 
 /**
@@ -86,24 +87,17 @@ angular.module('contentful')
   var moment  = $injector.get('moment');
   var TheLocaleStore = $injector.get('TheLocaleStore');
 
-  var otConnected = false;
-
   $scope.otDoc = {
     doc: undefined,
     state: {
       // initialized to true to prevent editing until otDoc is ready
       disabled: true, // otDoc.state.disabled
-      editable: false // otDoc.state.editable
+      editable: false, // otDoc.state.editable
+      error: false
     },
     getEntity: otGetEntity,
     updateEntityData: otUpdateEntityData
   };
-
-  $scope.$watch(function () {
-    return ShareJS.isConnected();
-  }, function (connected) {
-    otConnected = connected;
-  });
 
   // If the document connection state changes, this watcher is triggered
   // Connection failures during editing are handled from this point onwards.
@@ -111,13 +105,20 @@ angular.module('contentful')
     return isDocUsable(scope) ? otGetEntity() : false;
   }, attemptToOpenOtDoc);
 
-  $scope.$on('otConnectionStateChanged', function () {
-    attemptToOpenOtDoc(otGetEntity());
-  });
-
   $scope.$watch('otDoc.doc', function (otDoc, old, scope) {
     setupRemoteOpListeners(otDoc, old);
     scope.otDoc.state.editable = !!otDoc;
+  });
+
+  $scope.$watch(function () {
+    return ShareJS.connectionFailed();
+  }, function (failed) {
+    // We do not want to remove errors that result from failed document
+    // opening. Therefore we only set the error to `true` and to to
+    // `failed`.
+    if (failed) {
+      $scope.otDoc.state.error = true;
+    }
   });
 
   $scope.$watch('otDoc.state.editable', handleEditableState);
@@ -128,7 +129,7 @@ angular.module('contentful')
   }
 
   function isDocUsable(scope) {
-    return otConnected && !scope.otDoc.state.disabled && !!otGetEntity();
+    return ShareJS.isConnected() && !scope.otDoc.state.disabled && !!otGetEntity();
   }
 
   function otGetEntity() {
@@ -137,16 +138,23 @@ angular.module('contentful')
 
   function attemptToOpenOtDoc(entity) {
     if (entity) {
-      ShareJS.open(entity, _.partialRight(openOtDocFor, entity));
-    } else {
-      handleLackOfEntity();
-    }
-  }
-
-  function handleLackOfEntity() {
-    if ($scope.otDoc.doc) {
+      ShareJS.open(entity)
+      .then(function (doc) {
+        setupClosedEventHandling(doc);
+        if (isDocUsable($scope)) {
+          $scope.otDoc.state.error = false;
+          setupOtDoc(doc);
+        } else {
+          closeDoc(doc);
+        }
+      }, function (err) {
+        $scope.otDoc.state.error = true;
+        handleOtDocOpeningFailure(err, entity);
+      });
+    } else if ($scope.otDoc.doc) {
       closeDoc($scope.otDoc.doc);
     }
+
   }
 
   function closeDoc(doc) {
@@ -161,20 +169,6 @@ angular.module('contentful')
     }
   }
 
-  function openOtDocFor(err, doc, entity) {
-    $scope.$apply(function(scope){
-      if(err || !doc){
-        handleOtDocOpeningFailure(err, entity);
-      } else {
-        setupClosedEventHandling(doc);
-        if (isDocUsable(scope)) {
-          setupOtDoc(doc);
-        } else {
-          closeDoc(doc);
-        }
-      }
-    });
-  }
 
   function handleOtDocOpeningFailure(err, entity) {
     resetOtDoc();
