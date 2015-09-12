@@ -284,17 +284,7 @@ $cfnext-block-button-loading()
     $cfnext-block-button-loading()
 
 
-/**
-Inline button
-
-Markup:
-p
-  | Click here
-  button.cfnext-btn-inline Action Button
-  | More text
-
-Styleguide 4.7
-*/
+// DEPRECATED
 $cfnext-btn-inline()
   font-size: inherit
   display: inline-block
@@ -310,16 +300,38 @@ $cfnext-btn-inline()
   $cfnext-btn-inline()
 
 
+/**
+Link Style Button
+
+Markup:
+button.cfnext-btn-link
+  | Action
+p
+button.cfnext-btn-link(disabled)
+  | Disabled
+
+Styleguide 4.7
+*/
+
+.cfnext-btn-link
+  $button-reset();
+  display: block
+  font-weight: bold
+  color: $colors.blue
+  text-decoration: underline
+
+  &:disabled
+    color: $text-dimmed
+    cursor: default
+
+
 /*
 Buttons with icons
 
 Markup:
 p
-  button.cfnext-btn-primary-action
-    cf-icon.btn-icon(name="plus")
-    | Action
   button.cfnext-btn-action
-    cf-icon.btn-icon(name="plus")
+    cf-icon.btn-icon.inverted(name="plus")
     | Action
 p
   button.cfnext-btn-action--large-popout-icon
@@ -354,10 +366,9 @@ $cfnext-button--large-popout-icon()
   $btn-action()
   $cfnext-button--large-popout-icon()
 
+
 /*
 Buttons with dropdowns
-
-This is does not use inline SVGs yet so the color of the icons is off.
 
 Markup:
 button.cfnext-btn-secondary-action.cfnext-btn--dropdown
@@ -372,6 +383,7 @@ button.cfnext-btn-primary-action.cfnext-btn--dropdown
 
 Styleguide 4.9
 */
+
 .btn-dropdown-icon,
 .btn-dropdown-icon--up
   float: right
@@ -385,4 +397,3 @@ Styleguide 4.9
 
 .cfnext-btn-secondary-action cf-icon path
   fill: $secondary-button-color
-
