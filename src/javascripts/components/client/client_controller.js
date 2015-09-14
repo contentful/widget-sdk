@@ -230,9 +230,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     modalDialog.open({
       title: 'Space templates',
       template: 'space_templates_dialog',
-      ignoreEnter: true,
-      ignoreEsc: true,
-      noBackgroundClose: true,
       scope: $scope
     })
     .promise

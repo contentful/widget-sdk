@@ -1,8 +1,8 @@
 .modal-background
-  .modal-dialog.embed-content-dialog(cf-center-on=".modal-background")
+  .modal-dialog.embed-content-dialog
     header.modal-dialog__header
       h1 Embed external content
-      .close-button(ng-click="dialog.cancel()")
+      a.close-button(ng-click="dialog.cancel()")
 
     form.modal-dialog__content(name="contentForm")
       .cfnext-form__field
@@ -59,6 +59,6 @@
       ng-click="dialog.confirm(model)"
       ng-disabled="urlStatus !== 'ok' || !contentForm.$valid"
       type="button") Insert
-      button.cfnext-btn-plain(
+      button.cfnext-btn-secondary-action(
       ng-click="dialog.cancel()"
       type="button") Cancel

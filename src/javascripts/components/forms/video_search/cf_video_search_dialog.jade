@@ -1,15 +1,15 @@
 .modal-background
-  .modal-dialog(cf-center-on=".modal-background")
+  .modal-dialog
     header.modal-dialog__header
       h1 Search for assets
-      .close-button(ng-click="dialog.cancel()")
+      a.close-button(ng-click="dialog.cancel()")
     .modal-dialog__content.video-dialog__content
       cf-video-search.video-dialog
     .modal-dialog__controls
       button.cfnext-btn-primary-action(
         ng-click="dialog.confirm(videoSearchController.getSelected())" type="button")
         | Insert selected
-      button.cfnext-btn-plain(
+      button.cfnext-btn-secondary-action(
         ng-click="dialog.cancel()" type="button"
         ng-show="dialog.cancelLabel")
         | {{dialog.cancelLabel}}

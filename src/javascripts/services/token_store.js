@@ -125,6 +125,8 @@ angular.module('contentful').service('tokenStore', ['$injector', function($injec
         cancelLabel: null,
         confirmLabel: 'Login',
         noBackgroundClose: true,
+        disableTopCloseButton: true,
+        ignoreEsc: true,
         attachTo: 'body'
       }).promise.then(function () {
         authentication.clearAndLogin();

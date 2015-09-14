@@ -65,10 +65,9 @@ describe('Modal dialog service', function () {
         sinon.assert.called(cancelStub);
       });
 
-      it('cancel is not called with html attr', function () {
-        $(event.target).attr('no-background-close', true);
+      it('modal can be closed', function () {
         dialog._closeOnBackground(event);
-        sinon.assert.notCalled(cancelStub);
+        sinon.assert.called(cancelStub);
       });
 
       it('cancel is not called with params attr', function () {
@@ -98,6 +97,7 @@ describe('Modal dialog service', function () {
       it('confirm is called with Enter key', function () {
         event.keyCode = 13;
         event.target = {tagName: ''};
+        dialog.params.ignoreEnter = false;
         dialog._handleKeys(event);
         dialog.scope.$digest();
         sinon.assert.called(confirmStub);

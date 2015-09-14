@@ -33,7 +33,7 @@ angular.module('contentful')
    */
   this.unlockEditing  = unlockEditing;
 
-  this._unlocked          = false;
+  this._unlocked      = false;
 
 
   function isEditable() {
@@ -55,8 +55,7 @@ angular.module('contentful')
       html: true,
       scope: $scope,
       cancelLabel: 'Skip editing',
-      confirmLabel: 'Edit field ID',
-      noBackgroundClose: true,
+      confirmLabel: 'Edit field ID'
     }).promise.then(function () {
       controller._unlocked = true;
     });

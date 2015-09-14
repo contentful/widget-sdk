@@ -32,7 +32,9 @@ angular.module('contentful').factory('ReloadNotification', ['$injector', functio
       scope: $rootScope,
       cancelLabel: null,
       confirmLabel: 'Reload application',
-      noBackgroundClose: true
+      noBackgroundClose: true,
+      ignoreEsc: true,
+      disableTopCloseButton: true
     });
     modalDialog.open(options).promise.then(reloadWithCacheBuster);
   }

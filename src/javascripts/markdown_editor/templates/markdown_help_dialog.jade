@@ -1,8 +1,8 @@
 .modal-background
-  .modal-dialog.markdown-help-dialog(cf-center-on=".modal-background")
+  .modal-dialog.markdown-help-dialog
     header.modal-dialog__header
       h1 Markdown formatting help
-      .close-button(ng-click="dialog.cancel()")
+      a.close-button(ng-click="dialog.cancel()")
 
     .modal-dialog__content
       .markdown-help-columns

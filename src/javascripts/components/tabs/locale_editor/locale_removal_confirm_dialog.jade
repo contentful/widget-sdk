@@ -1,8 +1,8 @@
 .modal-background
-  .modal-dialog(cf-center-on=".modal-background")
+  .modal-dialog
     header.modal-dialog__header
       h1 You're about to delete the <em>{{locale.data.name}} ({{locale.data.code}})</em> content type.
-      .close-button(ng-click="dialog.cancel()")
+      a.close-button(ng-click="dialog.cancel()")
 
     .modal-dialog__content
       .modal-dialog__richtext
@@ -17,5 +17,5 @@
         ng-click="dialog.confirm()"
         ng-disabled="typedLocaleCode !== locale.data.code")
         | Delete
-      button.cfnext-btn-plain(ng-click="dialog.cancel()")
+      button.cfnext-btn-secondary-action(ng-click="dialog.cancel()")
         | Don't delete

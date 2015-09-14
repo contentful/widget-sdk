@@ -28,6 +28,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
   var defer      = $injector.get('defer');
   var track      = $injector.get('analytics').track;
   var $rootScope = $injector.get('$rootScope');
+  var debounce   = $injector.get('debounce');
   var opened     = [];
 
   function Dialog(params) {
@@ -52,8 +53,9 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
         cancelLabel: 'Cancel',
         confirmLabel: 'OK',
         noBackgroundClose: false,
+        noCentering: false,
         attachTo: '.client',
-        ignoreEnter: false,
+        ignoreEnter: true,
         ignoreEsc: false,
         disableTopCloseButton: false,
         className: ''
@@ -61,7 +63,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       _.pick(params,
              'title', 'message', 'html', 'template',
              'cancelLabel', 'confirmLabel', 'className', 'disableTopCloseButton',
-             'noBackgroundClose', 'attachTo', 'ignoreEnter', 'ignoreEsc', 'enterAction')
+             'noBackgroundClose', 'noCentering', 'attachTo', 'ignoreEnter', 'ignoreEsc', 'enterAction')
     );
     this._deferred = $q.defer();
     this.promise = this._deferred.promise;
@@ -71,14 +73,8 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
 
     attach: function () {
       var scope = this.scope;
+
       this.domElement = $(JST[this.params.template]());
-
-      if(this.domElement.find('input').length > 0)
-        this.domElement.find('input').eq(0).focus();
-      else
-        $(':focus').blur();
-
-      $($window).on('keyup', this._handleKeys);
 
       scope.dialog = _.extend(this, this.params);
 
@@ -87,24 +83,60 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       defer(_.bind(function () {
         this.domElement.appendTo(this.params.attachTo);
         $compile(this.domElement)(scope);
+
         this.domElement.on('click', _.bind(this._closeOnBackground, this));
         this.open = true;
         scope.$apply();
+
+        this._centerOnBackground();
+
+        if(this.domElement.find('input').length > 0) {
+          this.domElement.find('input').eq(0).focus();
+        } else {
+          $(':focus').blur();
+        }
+
+        $($window).on('keyup', this._handleKeys);
+
+        this.domElement.addClass('is-visible');
+
       }, this));
+    },
+
+    _centerOnBackground: function () {
+      if (this.noCentering) return;
+      var elem = this.domElement.children('.modal-dialog');
+      var debouncedReposition = debounce(reposition, 50);
+      var destroyed = false;
+
+      reposition();
+      $($window).on('resize', debouncedReposition);
+
+      var repositionOff = $rootScope.$on('centerOn:reposition', function () {
+        if (!destroyed) { reposition(); }
+      });
+
+      elem.on('$destroy', function () {
+        destroyed = true;
+        $($window).off('resize', debouncedReposition);
+        repositionOff();
+      });
+
+      function reposition() {
+        var topOffset = Math.max(($window.innerHeight-elem.height())/2, 0);
+        elem.css({ top: topOffset + 'px' });
+      }
     },
 
     _closeOnBackground: function (ev) {
       var target = $(ev.target);
-      if(target.hasClass('modal-background') &&
-         _.isUndefined(target.attr('no-background-close')) &&
-         !this.params.noBackgroundClose
-        ){
+      if(target.hasClass('modal-background') && !this.params.noBackgroundClose) {
         this.cancel();
       }
     },
 
     _handleKeys: function(ev) {
-      var dialog = this;
+      var dialog = _.last(opened);
       dialog.scope.$apply(function(){
         if (ev.target.tagName.toLowerCase() == 'select') return;
         if (!dialog.params.ignoreEsc && ev.keyCode === keycodes.ESC) {
@@ -150,8 +182,6 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
 
   return {
     open:              openDialog,
-    notify:            notify,
-    confirmDeletion:   confirmDeletion,
     openConfirmDialog: openConfirmDialog,
     getOpened:         getOpened
   };
@@ -180,67 +210,6 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
 
   /**
    * @ngdoc method
-   * @name modalDialog#confirmDeletion
-   * @description
-   * Shows a dialog that asks the user to click a button to confirm
-   * deletion of an item. Uses "openConfirmDialog" internally.
-   *
-   * @param {string} message
-   * @param {string?} hint
-   * @return {Promise<object>}
-   */
-  function confirmDeletion (message, hint) {
-    var scope = _.extend($rootScope.$new(), {
-      message: message,
-      hint: hint
-    });
-
-    return openConfirmDialog({
-      template: 'dialog_confirm_deletion',
-      attachTo: '.client',
-      scope: scope
-    });
-  }
-
-  /**
-   * @ngdoc method
-   * @name modalDialog#notify
-   * @description
-   * Show a message in a dialog with a single 'OK' button.
-   *
-   * The returned promise is resolved when the user clicks 'OK', clicks
-   * on the background or hits 'Enter' or 'Escape'.
-   *
-   * @param {string} message
-   * @param {object} opts
-   * @param {boolean} opts.html
-   * @returns {Promise<void>}
-   */
-  function notify (message, opts) {
-    opts = opts || {};
-    var scope = _.extend($rootScope.$new(), {
-      message: message,
-      confirmLabel: 'OK',
-      isHtml: opts.html
-    });
-
-    return openConfirmDialog({
-      template: 'dialog_notification',
-      attachTo: '.client',
-      scope: scope,
-      ignoreEnter: false,
-      ignoreEsc: false,
-      noBackgroundClose: false
-    }).then(function () {
-      return;
-    }, function () {
-      // Hitting Escape rejects the promsise
-      return;
-    });
-  }
-
-  /**
-   * @ngdoc method
    * @name modalDialog#openConfirmDialog
    * @description
    * Generic method for opening confirmation dialogs. It has sensible
@@ -253,7 +222,6 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
    */
   function openConfirmDialog(params) {
     params = _.defaults(params || {}, {
-      ignoreEnter: true,
       ignoreEsc: true,
       noBackgroundClose: true
     });

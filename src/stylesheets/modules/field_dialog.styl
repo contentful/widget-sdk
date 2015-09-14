@@ -6,6 +6,7 @@ $field-dialog-width = 60em
 
 .field-dialog__header.modal-dialog__header
   padding-top: 0
+  padding-bottom: 0
   border-bottom: 1px solid $colors.light-gray
 
   > h1
@@ -27,11 +28,12 @@ $field-dialog-width = 60em
   color: $gray
 
 .field-dialog__tab-list
+  $tab-list()
   align-self: flex-end
   margin-left: auto
-  $tab-list()
 
   [role=tab]
+    line-height: 73px
     .field-dialog__tab-invalid
       display: none
       width: 0

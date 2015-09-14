@@ -1,8 +1,8 @@
 .modal-background
-  .modal-dialog.insert-special-character-dialog(cf-center-on=".modal-background")
+  .modal-dialog.insert-special-character-dialog
     header.modal-dialog__header
       h1 Insert special character
-      .close-button(ng-click="dialog.cancel()")
+      a.close-button(ng-click="dialog.cancel()")
 
     .modal-dialog__content
       .markdown-special-char-choice
@@ -21,6 +21,6 @@
       button.cfnext-btn-primary-action.modal-dialog__controls-confirm(
         ng-click="dialog.confirm(entity(model.choice))"
         type="button") Insert
-      button.cfnext-btn-plain(
+      button.cfnext-btn-secondary-action(
         ng-click="dialog.cancel()"
         type="button") Cancel

@@ -52,13 +52,6 @@ function ContentTypeEditorController($scope, $injector) {
     setDirtyState();
   });
 
-  var fieldDeletionNotification =
-    '<p>Please remove all entries linked to this content type before trying to delete ' +
-    'a field. Fields can only be deleted on content types that have no entries ' +
-    'associated with them.</p>' +
-    '<p>To simply stop a field from appearing on the entry editor interface, disable it. ' +
-    'Disabling fields can be done at any time regardless of number of associated entries.</p>';
-
   $scope.$watch('publishedContentType.data.fields', function (fields, old, scope) {
     scope.publishedIds = _.pluck(fields, 'id');
     scope.publishedApiNames = _.pluck(fields, 'apiName');
@@ -96,7 +89,15 @@ function ContentTypeEditorController($scope, $injector) {
 
     isDeletable.then(function (deletable) {
       if (!deletable) {
-        modalDialog.notify(fieldDeletionNotification, {html: true});
+        modalDialog.open({
+          title: 'Please be careful',
+          message: '<p>Please remove all entries linked to this content type before trying to delete ' +
+                   'a field. Fields can only be deleted on content types that have no entries ' +
+                   'associated with them.</p>' +
+                   '<p>To simply stop a field from appearing on the entry editor interface, disable it. ' +
+                   'Disabling fields can be done at any time regardless of number of associated entries.</p>'
+        });
+
       } else {
         var fields = $scope.contentType.data.fields;
         _.remove(fields, {id: id});
@@ -182,9 +183,7 @@ function ContentTypeEditorController($scope, $injector) {
       title: params.optionalTitle || 'Edit Content Type',
       confirmLabel: params.optionalActionLabel || 'Confirm',
       template: 'edit_content_type_metadata_dialog',
-      noBackgroundClose: true,
-      scope: $scope,
-      ignoreEnter: true
+      scope: $scope
     }).promise
     .then(function () {
       _.extend($scope.contentType.data, $scope.contentTypeMetadata);
@@ -199,9 +198,7 @@ function ContentTypeEditorController($scope, $injector) {
   function showNewFieldDialog() {
     modalDialog.open({
       template: 'add_field_dialog',
-      noBackgroundClose: true,
-      scope: $scope,
-      ignoreEnter: true
+      scope: $scope
     }).promise
     .then(addField);
   }

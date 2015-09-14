@@ -12,7 +12,7 @@ p
   .modal-dialog
     header.modal-dialog__header
       h1 Title
-      .close-button
+      a.close-button
     .modal-dialog__content
       p.modal-dialog__plaintext this is some plain text
       .modal-dialog__richtext
@@ -23,41 +23,39 @@ p
         | Confirm
       button.cfnext-btn-secondary-action
         | More
-      button.cfnext-btn-plain
-        | Cancel
-p
-  .modal-dialog
-    header.modal-dialog__header
-      h1 One button
-      .close-button
-    .modal-dialog__controls
-      button.cfnext-btn-primary-action
-        | Confirm
 
 Styleguide 12.0
 */
 
-$modal-dialog-frame-padding = 2rem
+$modal-dialog-padding = 30px
+$modal-dialog-header-padding = 24px
 
 $modal-dialog-horizontal-padding()
-  padding-left: $modal-dialog-frame-padding
-  padding-right: $modal-dialog-frame-padding
+  padding-left: $modal-dialog-padding
+  padding-right: $modal-dialog-padding
+
+$modal-transition()
+  opacity: 0
+  transition: .1s opacity ease-in-out
+  .modal-dialog
+    opacity: .5
+    transform: scale(0.9)
+    transition: .1s opacity ease-in-out, .3s transform ease-in-out
+  &.is-visible
+    opacity: 1
+    .modal-dialog
+      opacity: 1
+      transform: scale(1)
 
 .modal-background
   $stretch()
   $layer('modalBackground')
+  $modal-transition()
+  position: fixed
   overflow-y: auto
   height: 100vh
   text-align: center
-  background-color: rgba(0, 0, 0, 0.2)
-
-  // Add space above dialog if we do not position in absolutely
-  &:before
-    content: ""
-    height: 10%
-    min-height: 1rem
-    max-height: 10rem
-    display: block
+  background-color: rgba(12, 20, 28, 0.75)
 
   &.x--position-top:before
     content: ""
@@ -66,60 +64,50 @@ $modal-dialog-horizontal-padding()
     max-height: none
     display: block
 
-  &.x--flex
-    display: flex
-    flex-direction: column
-    align-items: center
-    justify-content: center
-
-    &:before
-      display: none
-
-
-
 $modal-dialog-layout()
   $layer('modalDialog')
   display: inline-block
   position: relative
-  min-width: 500px
+  min-width: 520px
   padding: 0
   text-align: left
 
 $modal-dialog-chrome()
   background-color: white
   border-radius: 3px
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1)
-  box-shadow: 0px 5px 10px 0px hlsa(black ,0.4)
-
+  box-shadow: 0 2px 3px rgba(0,0,0,0.35)
+  border: 1px solid #979797
 
 .modal-dialog
   $modal-dialog-chrome()
   $modal-dialog-layout()
-  // TODO WHY? This looks scheiße
-  line-height: 15px
 
   .dropdown-menu,
   .context-menu
     $layer('modalDialogDropdown')
 
-  &__action-icon
-    margin-right: 1em
-
   &__header
     display: flex;
     align-items: center
-    padding-top: $modal-dialog-frame-padding
+    padding-top: $modal-dialog-header-padding
+    padding-bottom: $modal-dialog-header-padding
     $modal-dialog-horizontal-padding()
+    background-color: $colors.element-light
+    border-radius: 3px 3px 0 0
+    border-bottom: 1px solid $colors.element-dark
 
     > h1
       font-size: 1.2em
       flex-grow: 1
       margin: 0
 
+    > .close-button
+      color: $colors.text-light
+
   &__content
     $modal-dialog-horizontal-padding()
-    padding-top: $rhythm(1)
-    margin-bottom: $rhythm(1)
+    padding-top: $modal-dialog-padding
+    padding-bottom: $rhythm(1)
 
   &__controls
     display: flex
@@ -128,7 +116,7 @@ $modal-dialog-chrome()
     // dialogs and makes button appearance consistent
     line-height: $base-line-height
     $modal-dialog-horizontal-padding()
-    padding-bottom: $modal-dialog-frame-padding
+    padding-bottom: $modal-dialog-padding
     // Optical vertical alignment with dialog text
     margin-left: -0.2ex
     margin-right: -0.2ex
@@ -137,78 +125,10 @@ $modal-dialog-chrome()
 
   &__plaintext
     white-space: pre
+    max-width: 520px
 
   &__richtext
-    max-width: 40em
-
-
-/*
-Notification Dialog
-
-Markup:
-.styleguide-align-horizontally
-  .message-dialog
-    .message-dialog__title
-      button.message-dialog__close
-        img(src="/app/svg/close.svg" height="14")
-      | A message
-    .message-dialog__controls
-      button.cfnext-btn-primary-action
-        | OK
-      button.cfnext-btn-secondary-action
-        | More
-      button.cfnext-btn-plain
-        | Cancel
-  .message-dialog
-    .message-dialog__title
-      button.message-dialog__close
-        img(src="/app/svg/close.svg" height="14")
-      | A message
-    .message-dialog__message
-      | With some additional lines
-    .message-dialog__controls
-      button.cfnext-btn-primary-action
-        | OK
-      button.cfnext-btn-secondary-action
-        | More
-      button.cfnext-btn-plain
-        | Cancel
-
-Styleguide 12.1
-*/
-// TODO this is a superclass of the notification and deletion
-// confirmation dialog
-$message-dialog()
-  $modal-dialog-layout()
-  $modal-dialog-chrome()
-  line-height: 1.5
-  padding: 1.5rem
-  min-width: 58ex
-
-.message-dialog
-  $message-dialog()
-
-  &__title
-    font-size: 1.3em
-    padding-bottom: ($rhythm(0.7) / 1.3em)
-    font-weight: bold
-
-  &__controls
-    margin-top: $rhythm(1.5)
-    display: flex
-    > *:not(:last-child)
-      margin-right: 1em
-
-  &__close
-    float: right
-    text-align: center
-    $button-reset()
-    height: 1.6em
-    width: 1.6em
-    > cf-icon
-      display: inline-block
-      svg path
-        fill: $colors.blue
+    max-width: 520px
 
 
 /*
@@ -221,6 +141,8 @@ Used in `dialog_confirm_deletion.jade`
 Markup:
 .styleguide-align-horizontally
   .modal-dialog.modal-dialog--small
+    .modal-dialog__header
+      h1 Are you sure?
     .modal-dialog__content
       .modal-dialog__message
          | Do you really want to do this?
@@ -229,16 +151,7 @@ Markup:
     .modal-dialog__controls
       button.cfnext-btn-caution
         | Delete
-      button.cfnext-btn-plain
-        | Cancel
-  .modal-dialog.modal-dialog--small
-    .modal-dialog__content
-      .modal-dialog__message
-         | Do you really want to do this?
-    .modal-dialog__controls
-      button.cfnext-btn-caution
-        | Delete
-      button.cfnext-btn-plain
+      button.cfnext-btn-secondary-action
         | Cancel
 
 Styleguide 12.2
@@ -258,30 +171,6 @@ Styleguide 12.2
     font-size: 1.14em
     margin-bottom: $rhythm(0.5)
     margin-top: 0.1em
-
-/*
-Notification Dialog
-
-Used in `dialog_notification.jade`
-
-Markup:
-.notification-dialog
-  .notification-dialog__message
-    | A short message spanning<br>
-    | a couple of lines
-  .notification-dialog__controls
-    button.cfnext-btn-primary-action
-      | OK
-
-Styleguide 12.3
-*/
-
-.notification-dialog
-  $message-dialog();
-
-  &__message
-    margin-bottom: $rhythm(1)
-    max-width: 75ex
 
 
 /**
@@ -307,8 +196,8 @@ Styleguide 12.4
 */
 $modal-dialog-slice()
   $modal-dialog-horizontal-padding()
-  margin-left: - $modal-dialog-frame-padding
-  margin-right: - $modal-dialog-frame-padding
+  margin-left: - $modal-dialog-padding
+  margin-right: - $modal-dialog-padding
 
 .modal-dialog__slice
   $modal-dialog-slice()
