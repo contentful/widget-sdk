@@ -1,6 +1,15 @@
 /*
 Buttons
 
+Markup:
+script
+  | $(function () {
+  |   $('button.is-loading').on('click', function() {
+  |     $(this).toggleClass('is-loading');
+  |   });
+  | });
+
+
 Styleguide 4.0
 */
 .transparent-button-layer
@@ -46,29 +55,28 @@ $cfnext-button-layout()
   border-radius: 2px
 
 $cfnext-button-loading()
-  &:disabled
-    opacity: 1
+  display: inline-block
+  line-height: $base-line-height
+  > *
+    display: inline-block
   &:after
-    display: block
-    float: right
+    display: inline-block
     font-family: FontAwesome
     content: '\f1ce'
+    width: 0
     opacity: 0
-    max-width: 0
-    height: 18px
-    overflow: hidden
-    transition: max-width .2s, opacity .3s linear
+    line-height: $base-line-height
+    height: $base-line-height
+    transition: width .2s linear
     animation: fa-spin 2s infinite linear
   &.is-loading
-    &:before
-      content: ' '
-      width: 10px
-      display: block
-      float: right
+    &:disabled
+      opacity: 1
     &:after
+      margin-left: ($base-line-height/3)
       opacity: .5
-      max-width: 18px
-      overflow: visible
+      width: $base-line-height
+      transition: width .2s linear, opacity .5s linear
 
 $cfnext-button-colors($color, $shade = false)
   color: white
@@ -107,6 +115,7 @@ button.cfnext-btn-action{{modifier_class}} Action
 button.cfnext-btn-action{{modifier_class}}.pseudo-class-hover Action
 button.cfnext-btn-action{{modifier_class}}.active Action
 button.cfnext-btn-action{{modifier_class}}(disabled) Action
+button.cfnext-btn-action{{modifier_class}}.is-loading Action
 
 --large - Large variation
 
@@ -133,6 +142,7 @@ button.cfnext-btn-primary-action{{modifier_class}} Action
 button.cfnext-btn-primary-action{{modifier_class}}.pseudo-class-hover Action
 button.cfnext-btn-primary-action{{modifier_class}}.active Action
 button.cfnext-btn-primary-action{{modifier_class}}(disabled) Action
+button.cfnext-btn-primary-action{{modifier_class}}.is-loading Action
 
 --large - Large variation
 
@@ -156,6 +166,7 @@ button.cfnext-btn-secondary-action{{modifier_class}} Action
 button.cfnext-btn-secondary-action{{modifier_class}}.pseudo-class-hover Action
 button.cfnext-btn-secondary-action{{modifier_class}}.active Action
 button.cfnext-btn-secondary-action{{modifier_class}}(disabled) Action
+button.cfnext-btn-secondary-action{{modifier_class}}.is-loading Action
 
 --large - Large variation
 
