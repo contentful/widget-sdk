@@ -1,11 +1,13 @@
 'use strict';
 
-angular.module('contentful').controller('DisplayedFieldsController', ['$scope', function DisplayedFieldsController($scope) {
+angular.module('contentful').controller('DisplayedFieldsController', ['$scope', '$injector', function DisplayedFieldsController($scope, $injector) {
+
+  var systemFields = $injector.get('systemFields');
 
   function getAvailableFields(contentTypeId) {
     var filteredContentType = $scope.spaceContext.getPublishedContentType(contentTypeId);
     var contentTypeFields = filteredContentType ? _.reject(filteredContentType.data.fields, {disabled: true}) : [];
-    var fields = $scope.systemFields.concat(contentTypeFields);
+    var fields = systemFields.getList().concat(contentTypeFields);
     if (filteredContentType) _.remove(fields, function (field) { return field.id === filteredContentType.data.displayField; });
     return fields;
   }

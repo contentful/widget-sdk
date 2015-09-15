@@ -182,13 +182,13 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
   function setTokenDataOnScope(token) {
     $scope.user = token.user;
+    enforcements.setUser(token.user);
     $scope.spaces = token.spaces;
   }
 
   function setSpaceContext(space) {
     spaceContext.resetWithSpace(space);
     TheLocaleStore.resetWithSpace(space);
-    enforcements.setSpaceContext(spaceContext);
     analytics.setSpace(space);
   }
 

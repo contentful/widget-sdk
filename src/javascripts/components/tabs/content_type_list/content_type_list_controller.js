@@ -6,17 +6,15 @@ angular.module('contentful')
 
   var notification  = $injector.get('notification');
   var spaceContext  = $injector.get('spaceContext');
-  var qs            = $injector.get('FilterQueryString').create('contentTypes');
+  var FilterQS      = $injector.get('FilterQueryString');
 
-  var init = qs.createInitHandler(function (view) {
-    $scope.context.list = view.list || 'all';
-    $scope.searchTerm = view.searchTerm || '';
-  });
+  var qs = FilterQS.create('contentTypes');
+  var view = qs.readView();
 
+  $scope.context.list = view.list || 'all';
+  $scope.searchTerm = view.searchTerm || '';
   $scope.updateList = updateList;
   $scope.empty = true;
-
-  init(true);
 
   $scope.$watchGroup(['context.list', 'searchTerm'], function (args) {
     if (args[0] || args[1]) {
@@ -27,6 +25,7 @@ angular.module('contentful')
 
   function updateList() {
     spaceContext.refreshContentTypes().then(function() {
+      $scope.context.ready = true;
       $scope.contentTypes = spaceContext.getFilteredAndSortedContentTypes();
       $scope.empty = $scope.contentTypes.length === 0;
       $scope.visibleContentTypes = _.filter($scope.contentTypes, shouldBeVisible);

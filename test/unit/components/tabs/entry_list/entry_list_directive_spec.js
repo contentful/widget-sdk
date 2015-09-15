@@ -10,7 +10,7 @@ describe('The Entry list directive', function () {
       $provide.removeDirectives('viewCustomizer');
       $provide.removeControllers('EntryListController');
     });
-    inject(function ($rootScope, $compile, enforcements) {
+    inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
 
       scope.selection = {
@@ -30,8 +30,6 @@ describe('The Entry list directive', function () {
         get: sinon.stub()
       };
       scope.permissionController.get.returns(false);
-
-      enforcements.setSpaceContext(scope.spaceContext);
 
       compileElement = function () {
         container = $('<div cf-entry-list></div>');

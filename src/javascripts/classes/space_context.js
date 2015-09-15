@@ -18,16 +18,11 @@ angular.module('contentful')
   var $parse             = $injector.get('$parse');
   var $q                 = $injector.get('$q');
   var $rootScope         = $injector.get('$rootScope');
-  var PromisedLoader     = $injector.get('PromisedLoader');
   var ReloadNotification = $injector.get('ReloadNotification');
   var notification       = $injector.get('notification');
   var logger             = $injector.get('logger');
 
-  function SpaceContext () {
-    this.resetWithSpace(null);
-  }
-
-  SpaceContext.prototype = {
+  var spaceContext = {
       /**
        * @ngdoc method
        * @name spaceContext#resetWithSpace
@@ -39,12 +34,9 @@ angular.module('contentful')
       resetWithSpace: function(space){
         this.space = space;
         this.contentTypes = [];
-        this._contentTypeLoader = new PromisedLoader();
-
         this.publishedContentTypes = [];
         this._publishedContentTypesHash = {};
         this._publishedContentTypeIsMissing = {};
-        this._publishedContentTypeLoader = new PromisedLoader();
       },
 
       /**
@@ -71,24 +63,30 @@ angular.module('contentful')
       // one, the space context will have the content types of the
       // wrong space
       refreshContentTypes: function() {
-        if (this.space) {
-          var spaceContext = this;
-          return this._contentTypeLoader.loadPromise(function(){
-            return spaceContext.space.getContentTypes({order: 'name', limit: 1000});
-          })
-          .then(function (contentTypes) {
-            spaceContext.contentTypes = filterAndSortContentTypes(contentTypes);
-            return spaceContext.refreshPublishedContentTypes().then(function () {
-              return contentTypes;
-            });
-          })
-          .catch(ReloadNotification.apiErrorHandler);
-        } else {
+        if (!this.space) {
           this.contentTypes = [];
           this.publishedContentTypes = [];
           this._publishedContentTypesHash = {};
           return $q.when(this.contentTypes);
         }
+
+        if (this.loadingPromise) {
+          return this.loadingPromise;
+        }
+
+        var spaceContext = this;
+
+        this.loadingPromise = spaceContext.space.getContentTypes({order: 'name', limit: 1000})
+        .then(function (contentTypes) {
+          spaceContext.contentTypes = filterAndSortContentTypes(contentTypes);
+          return refreshPublishedContentTypes(spaceContext).then(function () {
+            return contentTypes;
+          });
+        })
+        .catch(ReloadNotification.apiErrorHandler)
+        .finally(function () { spaceContext.loadingPromise = null; });
+
+        return this.loadingPromise;
       },
 
       /**
@@ -101,51 +99,6 @@ angular.module('contentful')
       */
       getFilteredAndSortedContentTypes: function () {
         return filterAndSortContentTypes(this.contentTypes);
-      },
-
-      /**
-       * @ngdoc method
-       * @name spaceContext#refreshPublishedContentTypes
-       * @description
-       * Refreshes list of published content types
-       */
-      // FIXME Much like `refreshContentTypes()` this is a potential
-      // source of a race condition.
-      refreshPublishedContentTypes: function() {
-        var spaceContext = this;
-        return this._publishedContentTypeLoader.loadPromise(function(){
-          return spaceContext.space.getPublishedContentTypes();
-        })
-        .then(function (contentTypes) {
-          // TODO use filterAndSortContentTypes here
-          spaceContext.publishedContentTypes = _(contentTypes)
-            .reject(function (ct) { return ct.isDeleted(); })
-            .union(spaceContext.publishedContentTypes)
-            .sortBy(function(ct) { return ct.getName().trim().toLowerCase(); })
-            .value();
-
-          // TODO we could probably reduce here
-          spaceContext._publishedContentTypesHash = _(spaceContext.publishedContentTypes).map(function(ct) {
-            return [ct.getId(), ct];
-          }).object().valueOf();
-
-          _.each(spaceContext._publishedContentTypesHash, function (val, id) {
-            spaceContext._publishedContentTypeIsMissing[id] = false;
-          });
-
-          return spaceContext.publishedContentTypes;
-        }, function (err) {
-          if (err === PromisedLoader.IN_PROGRESS) return;
-          var message = dotty.get(err, 'body.message');
-          if(message) {
-            notification.warn(message);
-          } else {
-            notification.warn('Could not get published Content Types');
-            logger.logServerError('Could not get published Content Types', { error: err });
-          }
-          return $q.reject(err);
-        })
-        .catch(ReloadNotification.apiErrorHandler);
       },
 
       /**
@@ -231,13 +184,15 @@ angular.module('contentful')
        * Different from getPublishedContentType, it will fetch CT if it's not loaded yet.
        */
       fetchPublishedContentType: function (contentTypeId) {
-        var hash = this._publishedContentTypesHash;
+        var spaceContext = this;
         var contentType = pick();
         if (contentType) { return $q.when(contentType); }
 
-        return this.refreshContentTypes().then(pick);
+        return spaceContext.refreshContentTypes().then(pick);
 
-        function pick() { return hash[contentTypeId]; }
+        function pick() {
+          return spaceContext._publishedContentTypesHash[contentTypeId];
+        }
       },
 
       /**
@@ -331,6 +286,35 @@ angular.module('contentful')
 
     };
 
+    // @todo we need to pass spaceContext there, it would be better
+    // to have it available in the closure
+    function refreshPublishedContentTypes(spaceContext) {
+      return spaceContext.space.getPublishedContentTypes()
+      .then(function (contentTypes) {
+        contentTypes = _.union(contentTypes, spaceContext.publishedContentTypes);
+        contentTypes = filterAndSortContentTypes(contentTypes);
+        spaceContext.publishedContentTypes = contentTypes;
+
+        spaceContext._publishedContentTypesHash = _.reduce(contentTypes, function(acc, ct) {
+          var id = ct.getId();
+          acc[id] = ct;
+          spaceContext._publishedContentTypeIsMissing[id] = false;
+          return acc;
+        }, {});
+
+        return contentTypes;
+      }, function (err) {
+        var message = dotty.get(err, 'body.message');
+        if(message) {
+          notification.warn(message);
+        } else {
+          notification.warn('Could not get published Content Types');
+          logger.logServerError('Could not get published Content Types', { error: err });
+        }
+        return $q.reject(err);
+      });
+    }
+
     function filterAndSortContentTypes(contentTypes) {
       contentTypes = _.reject(contentTypes, function (ct) { return ct.isDeleted(); });
       contentTypes.sort(function (a,b) {
@@ -339,5 +323,6 @@ angular.module('contentful')
       return contentTypes;
     }
 
-    return new SpaceContext();
+    spaceContext.resetWithSpace(null);
+    return spaceContext;
 }]);

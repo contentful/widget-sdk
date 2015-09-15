@@ -10,7 +10,7 @@ describe('The Asset list directive', function () {
       $provide.removeDirectives('relative');
       $provide.removeControllers('PermissionController', 'AssetListController');
     });
-    inject(function ($rootScope, $compile, enforcements) {
+    inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
 
       scope.selection = {
@@ -29,8 +29,6 @@ describe('The Asset list directive', function () {
         }
       };
       scope.validate = sinon.stub();
-
-      enforcements.setSpaceContext(scope.spaceContext);
 
       scope.permissionController = {
         get: sinon.stub()

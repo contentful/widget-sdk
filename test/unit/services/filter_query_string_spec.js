@@ -19,71 +19,33 @@ describe('Filter Query String', function () {
   describe('initialization', function () {
     it('constructor exposes API', function () {
       expect(typeof qs.update).toBe('function');
-      expect(typeof qs.createInitHandler).toBe('function');
+      expect(typeof qs.readView).toBe('function');
     });
 
-    it('blocks "update" calls until initial view is handled', function () {
-      qs.update({ test: true });
-      sinon.assert.notCalled($location.search);
-      qs.createInitHandler(_.noop)(true);
-      qs.update({ test: true });
-      sinon.assert.called($location.search);
-    });
-  });
-
-  describe('"createInitHandler" method', function () {
-    it('returns function', function () {
-      expect(typeof qs.createInitHandler(_.noop)).toBe('function');
-    });
-
-    it('disallows to execute callback twice', function () {
-      var spy = sinon.spy();
-      var init = qs.createInitHandler(spy);
-
-      init(true);
-      init(true);
-      sinon.assert.calledOnce(spy);
-    });
-
-    describe('calls callback with view data when entities are loaded', function () {
-      beforeEach(function () {
-        sinon.stub(TheStore, 'get').returns({ test: true });
-      });
-
+    describe('"readView" method', function () {
       it('reads data from query string by default', function () {
         $location.search.returns({ fromSearch: true });
-        qs.createInitHandler(function (view) {
-          expect(view.fromSearch).toBe(true);
-        })(true);
+        expect(qs.readView().fromSearch).toBe(true);
       });
 
       it('falls back to data from localStorage', function () {
-        qs.createInitHandler(function (view) {
-          expect(view.test).toBe(true);
-        })(true);
+        sinon.stub(TheStore, 'get').returns({ test: true });
+        expect(qs.readView().test).toBe(true);
       });
 
       it('restores nested structure', function () {
         $location.search.returns({ 'x.y': true });
-        qs.createInitHandler(function (view) {
-          expect(view.x.y).toBe(true);
-        })(true);
+        expect(qs.readView().x.y).toBe(true);
       });
 
       it('handles boolean fileds', function () {
         $location.search.returns({ contentTypeHidden: 'false' });
-        qs.createInitHandler(function (view) {
-          expect(view.contentTypeHidden).toBe(false);
-        })(true);
+        expect(qs.readView().contentTypeHidden).toBe(false);
       });
     });
   });
 
   describe('"update" method', function () {
-    beforeEach(function () {
-      qs.createInitHandler(_.noop)(true);
-    });
-
     it('updates query string', function () {
       qs.update({ test: true });
       sinon.assert.calledWith($location.search, 'test=true');

@@ -115,7 +115,7 @@ describe('Client Controller', function () {
       $provide.value('revision', self.revisionStubs);
 
       self.enforcementsStubs = {
-        setSpaceContext: sinon.stub()
+        setUser: sinon.stub()
       };
       $provide.value('enforcements', self.enforcementsStubs);
     });

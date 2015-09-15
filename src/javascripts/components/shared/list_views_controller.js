@@ -28,10 +28,14 @@ function($scope, $injector, generateDefaultViews, getBlankView, resetList, viewC
     resetList();
   };
 
-  $scope.loadView = function (view) {
+  $scope.replaceView = function (view) {
     var newView = _.extend(getBlankView(), _.cloneDeep(view));
     newView.title = 'New View';
     setCurrentView($scope, newView);
+  };
+
+  $scope.loadView = function (view) {
+    $scope.replaceView(view);
     resetList();
   };
 

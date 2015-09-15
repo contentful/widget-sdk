@@ -57,7 +57,7 @@ mixin create-entry-button
 
 .tab-main(ng-show="!showNoEntriesAdvice()")
   .left-nav
-    div.menu-with-buttons(cf-view-menu="uiConfig.entryListViews" current-view="context.view" entity-type="entries" ng-show="uiConfig")
+    div.menu-with-buttons(cf-view-menu="uiConfig.entryListViews" current-view="context.view" ng-show="uiConfig")
   .with-left-nav
     table.result-list.main-results.main-header
       thead
@@ -147,11 +147,7 @@ mixin create-entry-button
         | Delete
       button.cfnext-btn-secondary-action(type="button")
         | Don't Delete
-    | &nbsp;
     button.cfnext-btn-secondary-action.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
-    | &nbsp;
     button.cfnext-btn-secondary-action.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
-    | &nbsp;
     button.cfnext-btn-secondary-action.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
-    | &nbsp;
     button.cfnext-btn-primary-action.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}

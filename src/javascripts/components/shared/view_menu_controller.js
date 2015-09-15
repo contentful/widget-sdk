@@ -8,7 +8,6 @@ angular.module('contentful')
   var analytics      = $injector.get('analytics');
   var TheStore       = $injector.get('TheStore');
   var getCurrentView = $parse($attrs.currentView);
-  var FilterQS       = $injector.get('FilterQueryString');
 
   $scope.tempFreeViews = [];
   $scope.folderStates = TheStore.get('folderStates') || {};
@@ -16,12 +15,6 @@ angular.module('contentful')
   $scope.$watch($attrs.cfViewMenu, function (folders) {
     $scope.folders = folders;
   });
-
-  if ($attrs.entityType) {
-    var qs = FilterQS.create($attrs.entityType);
-    $scope.$watch($attrs.entityType, qs.createInitHandler($scope.loadView));
-    $scope.$watch(getCurrentView, qs.update, true);
-  }
 
   $scope.toggleFolder = function (folder) {
     if ($scope.folderStates[folder.id] === 'closed') {

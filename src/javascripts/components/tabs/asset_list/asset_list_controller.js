@@ -11,6 +11,7 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
   var stringUtils    = $injector.get('stringUtils');
   var throttle       = $injector.get('throttle');
   var TheLocaleStore = $injector.get('TheLocaleStore');
+  var FilterQS       = $injector.get('FilterQueryString');
 
   $controller('AssetListViewsController', {
     $scope: $scope,
@@ -26,6 +27,10 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
 
   $scope.selection = new Selection();
   $scope.getAssetDimensions = getAssetDimensions;
+
+  var qs = FilterQS.create('assets');
+  $scope.replaceView(qs.readView());
+  $scope.$watch('context.view', qs.update, true);
 
   $scope.$watch(function pageParameters(scope){
     return {
@@ -56,7 +61,6 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
   $scope.showCreateAssetButton = function () {
     return !$scope.permissionController.get('createAsset', 'shouldHide');
   };
-
 
   var throttledListRefresh = throttle(function () {
     delay(function () {

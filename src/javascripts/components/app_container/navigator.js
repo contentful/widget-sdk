@@ -80,7 +80,7 @@ angular.module('contentful').config([
   });
 
 
-  $stateProvider.state('spaces.detail.entries.list', {
+  $stateProvider.state('spaces.detail.entries.list', loadableState({
     url: '',
     ncyBreadcrumb: {
       label: 'Entries'
@@ -89,7 +89,7 @@ angular.module('contentful').config([
       $scope.context = {};
     }],
     template: '<div cf-entry-list class="entry-list entity-list"></div>'
-  });
+  }));
 
 
   $stateProvider.state('spaces.detail.entries.detail', {
@@ -142,13 +142,13 @@ angular.module('contentful').config([
   });
 
 
-  $stateProvider.state('spaces.detail.assets.list', {
+  $stateProvider.state('spaces.detail.assets.list', loadableState({
     url: '',
     ncyBreadcrumb: {
       label: 'Media Library'
     },
     template: '<div cf-asset-list class="asset-list entity-list"></div>'
-  });
+  }));
 
 
   $stateProvider.state('spaces.detail.assets.detail', {
@@ -200,7 +200,7 @@ angular.module('contentful').config([
   });
 
 
-  $stateProvider.state('spaces.detail.content_types.list', {
+  $stateProvider.state('spaces.detail.content_types.list', loadableState({
     url: '',
     ncyBreadcrumb: {
       label: 'Content Types'
@@ -209,7 +209,7 @@ angular.module('contentful').config([
       $scope.context = {};
     }],
     template: '<div cf-content-type-list class="content-type-list entity-list"></div>'
-  });
+  }));
 
   var contentTypeEditorState = {
     ncyBreadcrumb: {
@@ -478,6 +478,20 @@ angular.module('contentful').config([
     url: '*path',
     template: ''
   });
+
+  function loadableState(definition) {
+    definition.template = [
+      '<div ng-show="context.ready">' + definition.template + '</div>',
+      '<div ng-hide="context.ready" class="client-loading">',
+        '<div class="client-loading__icon fa fa-cog fa-spin"></div>',
+        '<div class="client-loading__text">',
+          'Loading your ' + definition.ncyBreadcrumb.label + '...',
+        '</div>',
+      '</div>'
+    ].join('');
+
+    return definition;
+  }
 }])
 .run(['$rootScope', '$state', '$stateParams', '$injector', function ($rootScope, $state, $stateParams, $injector) {
   var $document    = $injector.get('$document');
