@@ -1,25 +1,22 @@
 'use strict';
 
 describe('Single Line Editor widget', function() {
-
-  var compiledElement;
-  var scope;
   beforeEach(function () {
 
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('otBindText');
     });
 
-    this.compileElement = function(textStr, validations) {
-      var element = angular.element('<cf-single-line-editor />');
-      var compile = this.$inject('$compile');
-      scope = this.$inject('$rootScope').$new();
-      scope.fieldData = {value: textStr};
-      if (validations) {
-        dotty.put(scope, 'widget.field.validations', validations);
-      }
-      compiledElement = compile(element)(scope);
-      scope.$digest();
+    this.compileElement = function(value, validations, fieldType) {
+      var widget = {};
+      dotty.put(widget, 'field.validations', validations);
+      dotty.put(widget, 'field.type', fieldType);
+      var el = this.$compile('<cf-single-line-editor>', {
+        fieldData: {value: value},
+        widget: widget
+      });
+      this.$apply();
+      return el;
     };
 
   });
@@ -34,8 +31,7 @@ describe('Single Line Editor widget', function() {
     ];
 
     testData.forEach(function(data) {
-      this.compileElement(data.input);
-      var txt = angular.element(compiledElement.find('div')).text();
+      var txt = this.compileElement(data.input).text();
       expect(txt).toBe(data.expected);
     }, this);
 
@@ -58,11 +54,9 @@ describe('Single Line Editor widget', function() {
         hasTxt: ['Max: 30']
       }
     ];
-    var html;
     testData.forEach(function(data) {
-      this.compileElement(data.input, data.validations);
-      html = angular.element(compiledElement.find('div')).html();
-      expect(data.hasTxt.every(function(e) {return html.indexOf(e) > -1;})).toBe(true);
+      var txt = this.compileElement(data.input, data.validations).text();
+      expect(data.hasTxt.every(function(e) {return txt.indexOf(e) > -1;})).toBe(true);
     }, this);
   });
 
@@ -71,21 +65,29 @@ describe('Single Line Editor widget', function() {
       {
         input: 'This text should turn orange',
         validations: [{size: {max: 30, min: 10}}],
-        expectedClass: 'colors__orange'
+        expectedClass: '.colors__orange'
       },
       {
         input: 'This text should turn red',
         validations: [{size: {max: 20, min: 10}}],
-        expectedClass: 'colors__red'
+        expectedClass: '.colors__red'
       }
     ];
-    var elem;
     testData.forEach(function(data) {
-      this.compileElement(data.input, data.validations);
-      elem = compiledElement[0].lastChild.innerHTML;
-      expect(angular.element(elem).hasClass(data.expectedClass)).toBe(true);
+      var el = this.compileElement(data.input, data.validations);
+      expect(el.find(data.expectedClass).length).toBe(1);
     }, this);
 
+  });
+
+  it('adds constraints for symbol fields', function () {
+    var elem = this.compileElement('', false, 'Symbol');
+    expect(elem.text()).toMatch('Required characters: Max: 256');
+  });
+
+  it('does not overwrite constraints for symbol fields', function () {
+    var elem = this.compileElement('', [{size: {max: 50}}], 'Symbol');
+    expect(elem.text()).toMatch('Required characters: Max: 50');
   });
 
 });

@@ -20,6 +20,11 @@ angular.module('contentful').directive('cfSingleLineEditor', function() {
 
       scope.constraints = _(validations).pluck('size').filter().first();
 
+      var fieldType = dotty.get(scope, 'widget.field.type');
+      if (fieldType === 'Symbol') {
+        scope.constraints = _.defaults(scope.constraints || {}, {max: 256});
+      }
+
       scope.$watch('fieldData.value', function (val) {
         scope.charCount = (val || '').length;
         if (scope.constraints && scope.constraints.max) {
