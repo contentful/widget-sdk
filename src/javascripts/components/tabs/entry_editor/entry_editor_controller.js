@@ -89,6 +89,7 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
           data: {
             allErrors: errors,
             currentError: error,
+            entryData: $scope.entry.data,
             entryFields: et.data.fields
           }
         });
