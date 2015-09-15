@@ -129,9 +129,9 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * @name logger#logException
      * @description
      * Mostly used by the $uncaughtException service
-     * @param {Error} Exception Error object
-     * @param {Object} Metadata object. Can take any of the expected bugsnag metadata parameters.
-     * @param.data  {Object} Additional data (other objects). Shows up on the bugsnag data tab.
+     * @param {Error} exception  Exception Error object
+     * @param {Object} metadata  Metadata object. Can take any of the expected bugsnag metadata parameters.
+     * @param {Object} metadata.data  Additional data (other objects). Shows up on the bugsnag data tab.
      */
     logException: function (exception, metaData) {
       setUserInfo();
