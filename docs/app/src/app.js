@@ -51,9 +51,7 @@ function ($scope, $location, $state, MODULES_INDEX, PAGES) {
   $stateProvider
   .state('api', {
     url: '/api',
-    template: '<div class="api-profile" ui-view>' +
-                // '<div ng-include="\'guides/api.html\'"></div>' +
-              '</div>',
+    template: '<div class="api-profile" ui-view>'
   })
   .state('api.doc', {
     url: '*path',
