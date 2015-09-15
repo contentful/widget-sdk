@@ -79,10 +79,22 @@ angular.module('contentful')
   }
 
   buildErrorMessage.size = sizeMessage;
+  buildErrorMessage.stringLength = stringLengthMessage;
 
   return buildErrorMessage;
 }])
 
+/**
+ * @ngdoc service
+ * @name fieldErrorMessageBuilder
+ * @description
+ * Creates error messages for Content Type fields.
+ *
+ * Extends the `baseErrorMessageBuilder` with special messages for the
+ * `apiName` property of a CT field.
+ *
+ * @method {function(error:Error): string} fieldErrorMessageBuilder
+ */
 .factory('fieldErrorMessageBuilder', ['baseErrorMessageBuilder', function (buildBaseMessage) {
   return function buildMessage (error) {
     if (error.path && error.path[0] === 'apiName') {
@@ -103,6 +115,13 @@ angular.module('contentful')
  * @ngdoc service
  * @name errorMessageBuilder
  *
+ * @description
+ * Build error messages for Entries, Assets, and Content Types.
+ *
+ * The error messages for Entries are parameterized by the
+ * SpaceContext.
+ *
+ * @method {(sc:SpaceContext) => ((e:Error) => string)} errorMessageBuilder
  * @method {function(error:Error): string} errorMessageBuilder.forContentType
  * @method {function(error:Error): string} errorMessageBuilder.forAsset
  */
@@ -146,6 +165,8 @@ angular.module('contentful')
     type: function(error) {
       if (error.details && (error.type == 'Validation' || error.type == 'Text')) {
         return error.details;
+      } else if (error.type === 'Symbol') {
+        return buildBaseErrorMessage.stringLength(null, 256);
       } else if (error.type.match(/^aeio/i)) {
         return 'Must be an ' + error.type + '.';
       } else {
