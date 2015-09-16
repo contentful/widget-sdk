@@ -3,15 +3,19 @@
 angular.module('contentful')
 .controller('EntryActionsController', ['$scope', '$injector', function EntryActionsController($scope, $injector) {
 
-  var controller   = this;
-  var $rootScope   = $injector.get('$rootScope');
-  var $q           = $injector.get('$q');
-  var notifier     = $injector.get('entryActions/notifications');
-  var moment       = $injector.get('moment');
-  var Command      = $injector.get('command');
-  var truncate     = $injector.get('stringUtils').truncate;
+  var controller          = this;
+  var $rootScope          = $injector.get('$rootScope');
+  var $q                  = $injector.get('$q');
+  var notifier            = $injector.get('entryActions/notifications');
+  var moment              = $injector.get('moment');
+  var Command             = $injector.get('command');
+  var truncate            = $injector.get('stringUtils').truncate;
+  var createEntryReverter = $injector.get('entryReverter');
 
-  var originalEntryData, trackedPublishedVersion, trackedPreviousVersion;
+  var entryReverter = createEntryReverter(function () {
+    return $scope.entry;
+  });
+
 
   var notify = notifier(function () {
     return '“' + truncate($scope.spaceContext.entryTitle($scope.entry), 50) + '”';
@@ -58,18 +62,15 @@ angular.module('contentful')
 
 
   var unwatchRevertSetup = $scope.$watch('otDoc.state.editable', function (editable) {
-    if (editable) {
-      var originalEntry = $scope.otDoc.getEntity();
-      originalEntryData = _.cloneDeep(originalEntry.data);
+    if (!editable) { return; }
 
-      trackedPublishedVersion = originalEntry.getPublishedVersion();
-      trackedPreviousVersion = originalEntry.getVersion();
+    var entry = $scope.otDoc.getEntity();
+    entryReverter.init();
 
-      controller.revertToPublished.publishedAt = moment(originalEntry.getPublishedAt()).format('h:mma [on] MMM DD, YYYY');
-      controller.revertToPrevious.updatedAt = moment(originalEntry.getUpdatedAt()).format('h:mma [on] MMM DD, YYYY');
+    controller.revertToPublished.publishedAt = moment(entry.getPublishedAt()).format('h:mma [on] MMM DD, YYYY');
+    controller.revertToPrevious.updatedAt = moment(entry.getUpdatedAt()).format('h:mma [on] MMM DD, YYYY');
 
-      unwatchRevertSetup();
-    }
+    unwatchRevertSetup();
   });
 
 
@@ -78,18 +79,13 @@ angular.module('contentful')
       return setDocFields($scope.otDoc.doc, data.fields);
     }).then(function () {
       $scope.otDoc.updateEntityData();
-      if (trackedPreviousVersion === (trackedPublishedVersion + 1)) {
-        trackedPreviousVersion = $scope.entry.getVersion() + 1;
-      }
-      trackedPublishedVersion = $scope.entry.getVersion();
+      entryReverter.revertedToPublished();
     })
     .then(notify.revertToPublishedSuccess, notify.revertToPublishedFail);
   }, {
     available: function () {
-      var entry = $scope.entry;
       return $scope.entityActionsController.canUpdate() &&
-             entry.isPublished() &&
-             entry.getVersion() > (trackedPublishedVersion + 1);
+             entryReverter.canRevertToPublished();
     }
   });
 
@@ -97,19 +93,16 @@ angular.module('contentful')
     if(!$scope.otDoc.doc) {
       return $q.when();
     }
-    return setDocFields($scope.otDoc.doc, originalEntryData.fields)
+    return setDocFields($scope.otDoc.doc, entryReverter.getPreviousData().fields)
     .then(function () {
       $scope.otDoc.updateEntityData();
-      if (trackedPreviousVersion === (trackedPublishedVersion + 1)) {
-        trackedPublishedVersion = $scope.entry.getVersion() - 1;
-      }
-      trackedPreviousVersion = $scope.entry.getVersion();
+      entryReverter.revertedToPrevious();
     })
     .then(notify.revertToPreviousSuccess, notify.revertToPreviousFail);
   }, {
     available: function () {
       return $scope.entityActionsController.canUpdate() &&
-             $scope.entry.getVersion() > trackedPreviousVersion;
+             entryReverter.canRevertToPrevious();
     }
   });
 
@@ -139,13 +132,7 @@ angular.module('contentful')
       return $q.reject();
     }
     return $scope.entry.publish()
-    .then(function(){
-      var version = $scope.entry.getPublishedVersion();
-      if (trackedPreviousVersion === version) {
-        trackedPreviousVersion = version + 1;
-      }
-      trackedPublishedVersion = version;
-    })
+    .then(entryReverter.publishedNewVersion)
     .then(notify.publishSuccess, handlePublishErrors);
   }
 
