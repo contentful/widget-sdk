@@ -18,12 +18,14 @@ angular.module('contentful').directive('cfSingleLineEditor', function() {
         }
       }
 
-      scope.constraints = _(validations).pluck('size').filter().first();
-
+      var constraints = _(validations).pluck('size').filter().first() || {};
       var fieldType = dotty.get(scope, 'widget.field.type');
-      if (fieldType === 'Symbol') {
-        scope.constraints = _.defaults(scope.constraints || {}, {max: 256});
+      if (fieldType === 'Symbol' && !_.isNumber(constraints.max)) {
+        constraints.max = 256;
       }
+
+      scope.constraints = constraints;
+      scope.constraintsType = constraintsType(constraints);
 
       scope.$watch('fieldData.value', function (val) {
         scope.charCount = (val || '').length;
@@ -33,4 +35,16 @@ angular.module('contentful').directive('cfSingleLineEditor', function() {
       });
     }
   };
+
+  function constraintsType (constraints) {
+    if (_.isNumber(constraints.min) && _.isNumber(constraints.max)) {
+      return 'min-max';
+    } else if (_.isNumber(constraints.min)) {
+      return 'min';
+    } else if (_.isNumber(constraints.max)) {
+      return 'max';
+    } else {
+      return '';
+    }
+  }
 });
