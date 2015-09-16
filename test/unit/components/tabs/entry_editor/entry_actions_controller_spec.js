@@ -254,21 +254,21 @@ describe('Entry Actions Controller', function () {
     function canBeReverted(states) {
       if(states.toPublished) {
         it('entry can be reverted to published', function() {
-          expect(this.scope.canRevertToPublishedState()).toBeTruthy();
+          expect(this.controller.revertToPublished.isAvailable()).toBeTruthy();
         });
       } else {
         it('entry cannot be reverted to published', function() {
-          expect(this.scope.canRevertToPublishedState()).toBeFalsy();
+          expect(this.controller.revertToPublished.isAvailable()).toBeFalsy();
         });
       }
 
       if(states.toPrevious) {
         it('entry can be reverted to previous state', function() {
-          expect(this.scope.canRevertToPreviousState()).toBeTruthy();
+          expect(this.controller.revertToPrevious.isAvailable()).toBeTruthy();
         });
       } else {
         it('entry cannot be reverted to previous state', function() {
-          expect(this.scope.canRevertToPreviousState()).toBeFalsy();
+          expect(this.controller.revertToPrevious.isAvailable()).toBeFalsy();
         });
       }
     }
@@ -322,6 +322,10 @@ describe('Entry Actions Controller', function () {
         return self.$q.when();
       };
 
+      this.scope.entityActionsController = {
+        canUpdate: sinon.stub().returns(true)
+      };
+
       this.otDoc = new OtDoc(entry);
       this.scope.otDoc = this.otDoc;
       this.scope.validate = sinon.stub().returns(true);
@@ -346,10 +350,10 @@ describe('Entry Actions Controller', function () {
 
       canBeReverted({toPublished: true, toPrevious: true});
 
-      describe('#revertToPublishedState()', function () {
+      describe('#revertToPublished command', function () {
         beforeEach(function() {
           entry.getPublishedState = sinon.stub().resolves({fields: 'published'});
-          this.scope.revertToPublishedState();
+          this.controller.revertToPublished.execute();
           this.$apply();
         });
 
@@ -359,7 +363,7 @@ describe('Entry Actions Controller', function () {
 
         describe('afterwards', function () {
           beforeEach(function () {
-            this.scope.revertToPublishedState();
+            this.controller.revertToPublished.execute();
             this.$apply();
           });
 
@@ -378,12 +382,12 @@ describe('Entry Actions Controller', function () {
 
       canBeReverted({toPublished: false, toPrevious: true});
 
-      describe('#revertToPreviousState()', function() {
+      describe('#revertToPrevious command', function() {
 
         it('reverts the field data', function() {
           expect(entry.data.fields.field1).toBe('two');
           expect(this.otDoc.doc.snapshot.fields.field1).toBe('two');
-          this.scope.revertToPreviousState();
+          this.controller.revertToPrevious.execute();
           this.$apply();
           expect(entry.data.fields.field1).toBe('one');
           expect(this.otDoc.doc.snapshot.fields.field1).toBe('one');
@@ -391,14 +395,14 @@ describe('Entry Actions Controller', function () {
 
         it('increments version', function () {
           expect(entry.data.sys.version).toEqual(2);
-          this.scope.revertToPreviousState();
+          this.controller.revertToPrevious.execute();
           this.$apply();
           expect(entry.data.sys.version).toEqual(3);
         });
 
         describe('afterwards', function () {
           beforeEach(function () {
-            this.scope.revertToPreviousState();
+            this.controller.revertToPrevious.execute();
             this.$apply();
           });
 

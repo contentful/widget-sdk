@@ -126,7 +126,7 @@ header.workbench-header
     | Archive
   button.cfnext-btn-secondary-action(ui-command="actions.unarchive")
     | Unarchive
-  .dropdown-btn(ng-show="entityActionsController.canUpdate() && (canRevertToPublishedState() || canRevertToPreviousState())")
+  .dropdown-btn(ng-show="actions.revertToPublished.isAvailable() || actions.revertToPrevious.isAvailable()")
     button.cfnext-btn-secondary-action(
       cf-context-menu-trigger
       data-test-id="revert-entry-menu-trigger")
@@ -137,14 +137,10 @@ header.workbench-header
       aria-label="Revert Entry" data-test-id="revert-entry-menu")
       cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
       ul.context-menu__items
-        li(role="menuitem"
-          ng-show="canRevertToPublishedState()"
-          ng-click="revertToPublishedState()")
-          | Revert to published version ({{publishedAt}})
-        li(role="menuitem"
-          ng-show="canRevertToPreviousState()"
-          ng-click="revertToPreviousState()")
-          | Discard my changes ({{updatedAt}})
+        li(role="menuitem" ui-command="actions.revertToPublished")
+          | Revert to published version ({{command.publishedAt}})
+        li(role="menuitem" ui-command="actions.revertToPrevious")
+          | Discard my changes ({{command.updatedAt}})
 
   button.cfnext-btn-secondary-action(ui-command="actions.unpublish")
     | Unpublish

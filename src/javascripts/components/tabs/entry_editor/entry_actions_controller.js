@@ -17,19 +17,6 @@ angular.module('contentful')
     return '“' + truncate($scope.spaceContext.entryTitle($scope.entry), 50) + '”';
   });
 
-  $scope.$watch('otDoc.state.editable', function (editable) {
-    if (editable && !originalEntryData) {
-      var originalEntry = $scope.otDoc.getEntity();
-      originalEntryData = _.cloneDeep(originalEntry.data);
-
-      trackedPublishedVersion = originalEntry.getPublishedVersion();
-      trackedPreviousVersion = originalEntry.getVersion();
-
-      $scope.publishedAt = moment(originalEntry.getPublishedAt()).format('h:mma [on] MMM DD, YYYY');
-      $scope.updatedAt = moment(originalEntry.getUpdatedAt()).format('h:mma [on] MMM DD, YYYY');
-    }
-  });
-
   function createEntryCommand (action, run, extension) {
     var can = function () {
       return $scope.entityActionsController.can(action);
@@ -69,12 +56,24 @@ angular.module('contentful')
     .then(notify.unarchiveSuccess, notify.unarchiveFail);
   });
 
-  $scope.canRevertToPublishedState = function () {
-    var entry = $scope.entry;
-    return (entry.isPublished() && entry.getVersion() > (trackedPublishedVersion + 1));
-  };
 
-  $scope.revertToPublishedState = function () {
+  var unwatchRevertSetup = $scope.$watch('otDoc.state.editable', function (editable) {
+    if (editable) {
+      var originalEntry = $scope.otDoc.getEntity();
+      originalEntryData = _.cloneDeep(originalEntry.data);
+
+      trackedPublishedVersion = originalEntry.getPublishedVersion();
+      trackedPreviousVersion = originalEntry.getVersion();
+
+      controller.revertToPublished.publishedAt = moment(originalEntry.getPublishedAt()).format('h:mma [on] MMM DD, YYYY');
+      controller.revertToPrevious.updatedAt = moment(originalEntry.getUpdatedAt()).format('h:mma [on] MMM DD, YYYY');
+
+      unwatchRevertSetup();
+    }
+  });
+
+
+  controller.revertToPublished = Command.create(function () {
     $scope.entry.getPublishedState().then(function (data) {
       return setDocFields($scope.otDoc.doc, data.fields);
     }).then(function () {
@@ -85,13 +84,16 @@ angular.module('contentful')
       trackedPublishedVersion = $scope.entry.getVersion();
     })
     .then(notify.revertToPublishedSuccess, notify.revertToPublishedFail);
-  };
+  }, {
+    available: function () {
+      var entry = $scope.entry;
+      return $scope.entityActionsController.canUpdate() &&
+             entry.isPublished() &&
+             entry.getVersion() > (trackedPublishedVersion + 1);
+    }
+  });
 
-  $scope.canRevertToPreviousState = function () {
-    return $scope.entry.getVersion() > trackedPreviousVersion;
-  };
-
-  $scope.revertToPreviousState = function () {
+  controller.revertToPrevious = Command.create(function () {
     if(!$scope.otDoc.doc) {
       return $q.when();
     }
@@ -104,7 +106,12 @@ angular.module('contentful')
       trackedPreviousVersion = $scope.entry.getVersion();
     })
     .then(notify.revertToPreviousSuccess, notify.revertToPreviousFail);
-  };
+  }, {
+    available: function () {
+      return $scope.entityActionsController.canUpdate() &&
+             $scope.entry.getVersion() > trackedPreviousVersion;
+    }
+  });
 
   function setDocFields (doc, data) {
     return $q.denodeify(function (handler) {
