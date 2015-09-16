@@ -7,11 +7,10 @@ input.form-control(
   span(
     ng-class="{'colors__red': charCountStatus === 'exceeded', 'colors__orange': charCountStatus === 'approaching'}")
       | {{ charCount }} characters
-  span.u-pull-right(ng-if="constraints")
-    | Required characters:
-    span(ng-if="constraints.min")
-      |  Min: {{ constraints.min }}
-    span(ng-if="constraints.min && constraints.max")
-      |  /
-    span(ng-if="constraints.max")
-      |  Max: {{ constraints.max }}
+  span.u-pull-right(ng-switch="constraintsType")
+    span(ng-switch-when="min")
+      |  Requires at least {{ constraints.min }} characters
+    span(ng-switch-when="max")
+      |  Requires less than {{ constraints.max }} characters
+    span(ng-switch-when="min-max")
+      |  Requires between {{ constraints.min }} and {{ constraints.max }} characters

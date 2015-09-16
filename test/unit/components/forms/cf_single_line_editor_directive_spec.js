@@ -21,7 +21,7 @@ describe('Single Line Editor widget', function() {
 
   });
 
-  it ('counts characters correctly', function() {
+  it('counts characters correctly', function() {
 
     var testData = [
       {input: 'Test', expected: '4 characters'},
@@ -37,30 +37,26 @@ describe('Single Line Editor widget', function() {
 
   });
 
-  it ('validates by min and max length', function() {
+  it('displays validation hints', function() {
     var testData = [
       {
-        input: 'Test',
         validations: [{size: {max: 20, min: 10}}],
-        hasTxt: ['Min: 10', 'Max: 20']
-      },
-      {
-        input: 'Test',
-        validations: [{size: {}}],
-        hasTxt: []
+        hint: 'Requires between 10 and 20 characters'
       }, {
-        input: '',
-        validations: [{size: {max: 30}}],
-        hasTxt: ['Max: 30']
+        validations: [{size: {max: null, min: 10}}],
+        hint: 'Requires at least 10 characters'
+      }, {
+        validations: [{size: {max: 20, min: null}}],
+        hint: 'Requires less than 20 characters'
       }
     ];
     testData.forEach(function(data) {
       var txt = this.compileElement(data.input, data.validations).text();
-      expect(data.hasTxt.every(function(e) {return txt.indexOf(e) > -1;})).toBe(true);
+      expect(txt).toMatch(data.hint);
     }, this);
   });
 
-  it ('changes color according to maxlength validation', function() {
+  it('changes color according to maxlength validation', function() {
     var testData = [
       {
         input: 'This text should turn orange',
@@ -80,14 +76,19 @@ describe('Single Line Editor widget', function() {
 
   });
 
-  it('adds constraints for symbol fields', function () {
+  it('adds max constraints for symbol fields', function () {
     var elem = this.compileElement('', false, 'Symbol');
-    expect(elem.text()).toMatch('Required characters: Max: 256');
+    expect(elem.text()).toMatch('Requires less than 256 characters');
+  });
+
+  it('adds max constraints to symbol fields with min validation', function () {
+    var elem = this.compileElement('', [{size: {min: 20, max: null}}], 'Symbol');
+    expect(elem.text()).toMatch('Requires between 20 and 256 characters');
   });
 
   it('does not overwrite constraints for symbol fields', function () {
-    var elem = this.compileElement('', [{size: {max: 50}}], 'Symbol');
-    expect(elem.text()).toMatch('Required characters: Max: 50');
+    var elem = this.compileElement('', [{size: {min: null, max: 50}}], 'Symbol');
+    expect(elem.text()).toMatch('Requires less than 50 characters');
   });
 
 });
