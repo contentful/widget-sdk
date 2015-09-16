@@ -1,6 +1,15 @@
 'use strict';
 
 
+/**
+ * @ngdoc module
+ * @name contentful/mocks
+ * @description
+ * This module provides mocks for business domain objects.
+ *
+ * Mocked objects include the API clients `Space`, `ContentType`,
+ * `Entry` and `Asset` classes.
+ */
 var mocks = angular.module('contentful/mocks', []);
 
 mocks.factory('TestingAdapter', function ($q) {

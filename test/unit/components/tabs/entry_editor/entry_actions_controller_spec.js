@@ -18,7 +18,7 @@ describe('Entry Actions Controller', function () {
     this.scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
     this.scope.entry = entry;
     this.broadcastStub = sinon.stub($rootScope, '$broadcast');
-    this. controller = this.$inject('$controller')('EntryActionsController', {$scope: this.scope});
+    this.controller = this.$inject('$controller')('EntryActionsController', {$scope: this.scope});
   });
 
   afterEach(function () {
@@ -254,11 +254,11 @@ describe('Entry Actions Controller', function () {
     function canBeReverted(states) {
       if(states.toPublished) {
         it('entry can be reverted to published', function() {
-          expect(self.scope.canRevertToPublishedState()).toBeTruthy();
+          expect(this.scope.canRevertToPublishedState()).toBeTruthy();
         });
       } else {
         it('entry cannot be reverted to published', function() {
-          expect(self.scope.canRevertToPublishedState()).toBeFalsy();
+          expect(this.scope.canRevertToPublishedState()).toBeFalsy();
         });
       }
 
@@ -273,100 +273,136 @@ describe('Entry Actions Controller', function () {
       }
     }
 
+    /**
+     * Mock object providing the interface from the `ot-doc-for`
+     * directive.
+     */
+    function OtDoc (entity) {
+      var doc = this.doc = {
+        at: createSubDoc
+      };
+
+      this.state = {
+        editable: true
+      };
+
+      this.updateEntityData = function () {
+        entity.data = this.doc.snapshot;
+        entity.data.sys.version += 1;
+      };
+
+      this.getEntity = function () {
+        return entity;
+      };
+
+      this.updateSnapshot = function () {
+        doc.snapshot = _.cloneDeep(entity.data);
+      };
+
+      this.updateSnapshot();
+
+      function createSubDoc (path) {
+        return { set: set };
+
+        function set (data, cb) {
+          dotty.put(doc.snapshot, path, data);
+          if (cb) {
+            cb();
+          }
+        }
+      }
+    }
+
     beforeEach(function () {
       self = this;
       entry = this.scope.entry;
-
-      this.setStub = sinon.stub();
-      this.scope.otDoc = {
-        state: {},
-        doc: {
-          at: sinon.stub().returns({
-            set: this.setStub
-          })
-        }
-      };
-      this.scope.otDoc.state.editable = true;
-      this.scope.otDoc.getEntity = sinon.stub().returns(this.scope.entry);
-      entry.save = function () { entry.data.sys.version += 1; };
       entry.publish = function () {
-        entry.data.sys.publishedVersion += 1;
-        entry.save();
+        entry.data.sys.publishedVersion = entry.data.sys.version;
+        entry.data.sys.version += 1;
         return self.$q.when();
       };
-      entry.setPublishedVersion = function (version) {
-        entry.data.sys.publishedVersion = version;
-      };
-      this.scope.$apply();
-      this.scope.otDoc.updateEntityData = entry.save;
+
+      this.otDoc = new OtDoc(entry);
+      this.scope.otDoc = this.otDoc;
       this.scope.validate = sinon.stub().returns(true);
+      this.$apply();
     });
 
-    it('entry is not published', function() {
-      expect(entry.isPublished()).toBeFalsy();
+    describe('in initial, unpublished state', function () {
+      canBeReverted({toPublished: false, toPrevious: false});
     });
 
-    canBeReverted({toPublished: false, toPrevious: false});
-
-    describe('if field changes', function() {
+    describe('published entry with changes', function () {
       beforeEach(function() {
-        entry.data.fields.field1 = 'two';
-        entry.save();
-        this.scope.$apply();
+        this.controller.publish.execute();
+        this.$apply();
+        // TODO we should not need this
+        this.otDoc.updateSnapshot();
+
+        this.otDoc.doc.at('fields.field1').set('two');
+        this.otDoc.updateEntityData();
+        this.$apply();
+      });
+
+      canBeReverted({toPublished: true, toPrevious: true});
+
+      describe('#revertToPublishedState()', function () {
+        beforeEach(function() {
+          entry.getPublishedState = sinon.stub().resolves({fields: 'published'});
+          this.scope.revertToPublishedState();
+          this.$apply();
+        });
+
+        it('reverts the field data', function() {
+          expect(entry.data.fields).toBe('published');
+        });
+
+        describe('afterwards', function () {
+          beforeEach(function () {
+            this.scope.revertToPublishedState();
+            this.$apply();
+          });
+
+          canBeReverted({toPublished: false, toPrevious: false});
+        });
+      });
+    });
+
+
+    describe('unpublished entry with changes', function () {
+      beforeEach(function() {
+        this.otDoc.doc.at('fields.field1').set('two');
+        this.otDoc.updateEntityData();
+        this.$apply();
       });
 
       canBeReverted({toPublished: false, toPrevious: true});
 
-      describe('if it is reverted', function() {
-        beforeEach(function() {
-          this.scope.revertToPreviousState();
-          entry.data.fields = this.setStub.args[0][0];
-          this.setStub.yield();
-        });
+      describe('#revertToPreviousState()', function() {
 
         it('reverts the field data', function() {
+          expect(entry.data.fields.field1).toBe('two');
+          expect(this.otDoc.doc.snapshot.fields.field1).toBe('two');
+          this.scope.revertToPreviousState();
+          this.$apply();
           expect(entry.data.fields.field1).toBe('one');
+          expect(this.otDoc.doc.snapshot.fields.field1).toBe('one');
         });
 
-        canBeReverted({toPublished: false, toPrevious: false});
+        it('increments version', function () {
+          expect(entry.data.sys.version).toEqual(2);
+          this.scope.revertToPreviousState();
+          this.$apply();
+          expect(entry.data.sys.version).toEqual(3);
+        });
 
-        describe('if field changes and entry is saved', function() {
-          beforeEach(function() {
-            entry.data.fields.field1 = 'three';
-            entry.save();
-            this.publishedData = _.cloneDeep(entry.data);
-            this.controller.publish.execute();
+        describe('afterwards', function () {
+          beforeEach(function () {
+            this.scope.revertToPreviousState();
             this.$apply();
           });
 
-          canBeReverted({toPublished: false, toPrevious: true});
-
-          describe('changes field again and saves again', function() {
-            beforeEach(function() {
-              entry.data.fields.field1 = 'four';
-              entry.save();
-              this.scope.$apply();
-            });
-
-            canBeReverted({toPublished: true, toPrevious: true});
-
-            describe('reverts to published state and then changes the field', function() {
-              beforeEach(function() {
-                entry.getPublishedState = sinon.stub().returns(this.$q.when(this.publishedData));
-                this.scope.revertToPublishedState();
-                this.scope.$apply();
-                entry.data.fields = this.setStub.args[1][0];
-                this.setStub.yield();
-              });
-
-              it('reverts the field data', function() {
-                expect(entry.data.fields.field1).toBe('three');
-              });
-
-              canBeReverted({toPublished: false, toPrevious: true});
-            });
-
-          });
+          canBeReverted({toPublished: false, toPrevious: false});
         });
       });
     });

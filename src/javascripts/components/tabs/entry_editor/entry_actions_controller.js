@@ -71,48 +71,46 @@ angular.module('contentful')
 
   $scope.canRevertToPublishedState = function () {
     var entry = $scope.entry;
-
-    return (entry.isPublished() &&
-           entry.getVersion() > (trackedPublishedVersion + 1));
+    return (entry.isPublished() && entry.getVersion() > (trackedPublishedVersion + 1));
   };
 
   $scope.revertToPublishedState = function () {
     $scope.entry.getPublishedState().then(function (data) {
-      var cb = $q.callbackWithApply();
-      $scope.otDoc.doc.at('fields').set(data.fields, cb);
-      cb.promise
-      .then(function () {
-        $scope.otDoc.updateEntityData();
-        if (trackedPreviousVersion === (trackedPublishedVersion + 1)) {
-          trackedPreviousVersion = $scope.entry.getVersion() + 1;
-        }
-        trackedPublishedVersion = $scope.entry.getVersion();
-        notify.revertToPublishedSuccess();
-      }, notify.revertToPublishedFail);
+      return setDocFields($scope.otDoc.doc, data.fields);
+    }).then(function () {
+      $scope.otDoc.updateEntityData();
+      if (trackedPreviousVersion === (trackedPublishedVersion + 1)) {
+        trackedPreviousVersion = $scope.entry.getVersion() + 1;
+      }
+      trackedPublishedVersion = $scope.entry.getVersion();
     })
-    .catch(notify.revertToPublishedFail);
+    .then(notify.revertToPublishedSuccess, notify.revertToPublishedFail);
   };
 
   $scope.canRevertToPreviousState = function () {
-    var entry = $scope.entry;
-
-    return entry.getVersion() > trackedPreviousVersion;
+    return $scope.entry.getVersion() > trackedPreviousVersion;
   };
 
   $scope.revertToPreviousState = function () {
-    var cb = $q.callbackWithApply();
-    if(!$scope.otDoc.doc) return $q.when();
-    $scope.otDoc.doc.at('fields').set(originalEntryData.fields, cb);
-    cb.promise
+    if(!$scope.otDoc.doc) {
+      return $q.when();
+    }
+    return setDocFields($scope.otDoc.doc, originalEntryData.fields)
     .then(function () {
       $scope.otDoc.updateEntityData();
       if (trackedPreviousVersion === (trackedPublishedVersion + 1)) {
         trackedPublishedVersion = $scope.entry.getVersion() - 1;
       }
       trackedPreviousVersion = $scope.entry.getVersion();
-      notify.revertToPreviousSuccess();
-    }, notify.revertToPreviousFail);
+    })
+    .then(notify.revertToPreviousSuccess, notify.revertToPreviousFail);
   };
+
+  function setDocFields (doc, data) {
+    return $q.denodeify(function (handler) {
+      doc.at('fields').set(data, handler);
+    });
+  }
 
   createEntryCommand('unpublish', function () {
     return $scope.entry.unpublish()
