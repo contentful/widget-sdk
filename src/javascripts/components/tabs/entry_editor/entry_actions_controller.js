@@ -129,21 +129,19 @@ angular.module('contentful')
   });
 
   function publish () {
-    var version = $scope.entry.getVersion();
     if (!$scope.validate()) {
       notify.publishValidationFail();
       return $q.reject();
     }
-    return $scope.entry.publish(version)
+    return $scope.entry.publish()
     .then(function(){
-      $scope.entry.setPublishedVersion(version);
+      var version = $scope.entry.getPublishedVersion();
       if (trackedPreviousVersion === version) {
         trackedPreviousVersion = version + 1;
       }
       trackedPublishedVersion = version;
-      notify.publishSuccess();
     })
-    .catch(handlePublishErrors);
+    .then(notify.publishSuccess, handlePublishErrors);
   }
 
 

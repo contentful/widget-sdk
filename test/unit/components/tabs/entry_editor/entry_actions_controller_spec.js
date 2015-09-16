@@ -576,11 +576,9 @@ describe('Entry Actions Controller', function () {
       });
 
       describe('succeeds', function() {
-        var versionStub;
         beforeEach(function() {
           this.actionStub.resolves({entry: true});
           this.scope.otDoc.updateEntityData = sinon.stub();
-          versionStub = sinon.stub(this.scope.entry, 'setPublishedVersion');
           this.controller.publish.execute();
           this.$apply();
         });
@@ -595,10 +593,6 @@ describe('Entry Actions Controller', function () {
 
         it('shows notification', function() {
           sinon.assert.called(this.notification.info);
-        });
-
-        it('updates ot entity', function() {
-          sinon.assert.calledWith(versionStub, 1);
         });
       });
 
