@@ -22,16 +22,16 @@ Styleguide 4.0
 
 
 $button-reset()
-  color: inherit;
-  font: inherit;
+  color: inherit
+  font: inherit
   font-size: inherit
-  line-height: normal;
+  line-height: normal
   vertical-align: baseline
   padding: 0
   margin: 0
   border: 0
   background: none
-  overflow: visible;
+  overflow: visible
   user-select: none
   cursor: pointer
   &::-moz-focus-inner
@@ -39,10 +39,10 @@ $button-reset()
     padding: 0
 
 
-$cfnext-button($color, $shade, $border = false)
+$cfnext-button($color, $shade, $text = rgba(255,255,255,1))
   $cfnext-button-layout()
-  $cfnext-button-colors($color, $shade, $border)
-  $cfnext-button-loading()
+  $cfnext-button-colors($color, $shade)
+  $cfnext-button-loading($text)
 
 $cfnext-button-layout()
   padding: 0.6rem 1.5rem
@@ -54,29 +54,33 @@ $cfnext-button-layout()
   border: none
   border-radius: 2px
 
-$cfnext-button-loading()
-  display: inline-block
-  line-height: $base-line-height
+$cfnext-button-loading($text)
   > *
     display: inline-block
   &:after
-    display: inline-block
-    font-family: FontAwesome
-    content: '\f1ce'
+    content: ''
+    box-sizing: border-box
     width: 0
+    height: 0
     opacity: 0
-    line-height: $base-line-height
-    height: $base-line-height
-    transition: width .2s linear
+    border-radius: 50%
+    transition: width .2s linear, height .2s linear, border-color .5s ease-in
     animation: fa-spin 2s infinite linear
+    border: 2px solid rgba(255,255,255,0)
   &.is-loading
     &:disabled
       opacity: 1
     &:after
-      margin-left: ($base-line-height/3)
-      opacity: .5
-      width: $base-line-height
-      transition: width .2s linear, opacity .5s linear
+      width: $base-line-height - 4px
+      height: $base-line-height - 4px
+      opacity: 1
+      border-bottom: 2px solid $text
+      border-left: 2px solid $text
+      border-top: 2px solid transparentify(lighten($text, 60%), 60%)
+      border-right: 2px solid transparentify(lighten($text, 60%), 60%)
+      display: inline-block
+      margin-left: 5px
+      margin-bottom: -2px
 
 $cfnext-button-colors($color, $shade = false)
   color: white
@@ -90,9 +94,9 @@ $cfnext-button-colors($color, $shade = false)
       background-image: linear-gradient(to bottom, $color, $shade)
 
   &:hover
-    box-shadow: 0px 1px 2px 0px hsla(black, 0.15);
+    box-shadow: 0px 1px 2px 0px hsla(black, 0.15)
   &:active, &.active
-    box-shadow: inset 0px 1px 3px 0px hsla(black, 0.29);
+    box-shadow: inset 0px 1px 3px 0px hsla(black, 0.29)
 
   &:disabled, &[aria-disabled=true]
     opacity: 0.4
@@ -176,7 +180,7 @@ $secondary-button-color = hsl(213, 5%, 45%)
 $secondary-button-bg = hsl(0, 0%, 93%)
 .cfnext-btn-secondary-action,
 .cfnext-btn-secondary-action--large
-  $cfnext-button(hsl(0, 0%, 93%), hsl(0, 0%, 88%))
+  $cfnext-button(hsl(0, 0%, 93%), hsl(0, 0%, 88%), $secondary-button-color)
   color: $secondary-button-color
   border: 1px solid $colors.gray
 
@@ -232,7 +236,7 @@ Styleguide 4.5
 $cfnext-button-plain()
   background: none
   $cfnext-button-layout()
-  color: $colors.blue;
+  color: $colors.blue
   outline: 0
 
 .cfnext-btn-plain
@@ -252,7 +256,7 @@ Styleguide 4.6
 */
 $cfnext-btn-inline()
   font-size: inherit
-  display: inline-block;
+  display: inline-block
   vertical-align: baseline
   padding: 0.1em 0.3em
   margin: 0
