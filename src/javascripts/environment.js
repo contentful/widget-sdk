@@ -33,8 +33,6 @@ angular.module('contentful/environment', []).constant('environment', {
   //                                          __proto___      __maybe_subdomain_             __port__
   s.resourceUrlWhiteListRegexp = [new RegExp('(https?:)?\\/\\/([^:\\/.?&;]*\\.)?('+domains+')(:\\d+)?.*'), 'self'];
 
-  s.dataLoggerUrl = 'https://cf-track-107d49294b11c1.appspot.com/track/';
-
   // TODO IE8 Hack:
   if (window.XDomainRequest) {
     s.api_host = s.app_host + '/api';
