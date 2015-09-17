@@ -41,7 +41,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     fieldTypes: ['Text', 'Symbol'],
     name: 'Single Line',
     icon: 'singleline',
-    template: '<input class="form-control" ng-disabled="!otDoc.state.editable" ng-model="fieldData.value" ot-bind-text type="text">'
+    template: '<cf-single-line-editor />'
   });
 
   widgets.registerWidget('urlEditor', {
@@ -96,12 +96,25 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<cf-radio-editor ng-model="fieldData.value" ot-bind-object-value="valuesController.selected"></cf-radio-editor>'
   });
 
-  widgets.registerWidget('boolean',{
+  widgets.registerWidget('boolean', {
     fieldTypes: ['Boolean'],
     name: 'Radio',
     icon: 'radio',
     notFocusable: true,
-    template: '<cf-radio-editor ng-model="fieldData.value" ot-bind-object-value="valuesController.selected"></cf-radio-editor>'
+    template: '<cf-widget-boolean ng-model="fieldData.value" ot-bind-object-value="valuesController.selected">',
+    options: [{
+      name: 'True condition custom label',
+      param: 'trueLabel',
+      type:  'short-text',
+      description: 'Yes',
+      default: 'Yes'
+    }, {
+      name: 'False condition custom label',
+      param: 'falseLabel',
+      type:  'short-text',
+      description: 'No',
+      default: 'No'
+    }]
   });
 
   widgets.registerWidget('rating',{
@@ -275,14 +288,6 @@ angular.module('contentful').run(['widgets', function(widgets){
     icon: 'video-preview',
     rendersHelpText: true,
     template: '<cf-kaltura-multi-video-editor ng-model="fieldData.value" ot-bind-object-value="selectedAssets"></cf-kaltura-multi-video-editor>'
-  });
-
-  widgets.registerWidget('youtubeEditor',{
-    fieldTypes: ['Symbol'],
-    name: 'Youtube',
-    icon: 'video-preview',
-    rendersHelpText: true,
-    template: '<cf-youtube-editor></cf-youtube-editor>'
   });
 
 }]);

@@ -67,7 +67,7 @@ angular.module('cf.ui')
 
     opts = _.defaults(opts || {}, {
       available: _.constant(true),
-      disabled: _.constant(false),
+      disabled: _.constant(false)
     });
 
     this.isAvailable = opts.available;
@@ -81,6 +81,7 @@ angular.module('cf.ui')
    * @returns {Promise<void>}
    */
   Command.prototype.execute = function () {
+
     if (this._inProgress) {
       return this._inProgress;
     }
@@ -108,6 +109,11 @@ angular.module('cf.ui')
    *
    * @returns {boolean}
    */
+
+  Command.prototype.inProgress = function () {
+    return !!this._inProgress;
+  };
+
   Command.prototype.isDisabled = function () {
     return !!(this._isDisabled() || this._inProgress || !this.isAvailable());
   };
@@ -174,6 +180,10 @@ angular.module('cf.ui')
 
       scope.$watch('command.isDisabled()', function (isDisabled) {
         element.prop('disabled', isDisabled);
+      });
+
+      scope.$watch('command.inProgress()', function (inProgress) {
+        element.toggleClass('is-loading', inProgress);
       });
 
     }

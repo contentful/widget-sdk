@@ -36,17 +36,25 @@ div(
     .cfnext-form__field(ng-repeat="option in widgetOptions track by option.name")
       label {{option.name}}
       div(ng-switch="option.type")
-        input.cfnext-form__input--full-size(ng-switch-when="Text"
-               type="text" name="{{option.param}}"
-               placeholder="{{option.description}}"
-               ng-model="widgetParams[option.param]")
-        input.cfnext-form__input(ng-switch-when="Number"
-               type="text"
-               placeholder="{{option.description}}"
-               ng-model="widgetParams[option.param]")
-        input.cfnext-form__input(ng-switch-when="Boolean"
-               type="checkbox"
-               ng-model="widgetParams[option.param]")
+        input.cfnext-form__input(
+          ng-switch-when="short-text"
+          type="text" name="{{option.param}}"
+          placeholder="{{option.description}}" size="50"
+          ng-model="widgetParams[option.param]")
+        input.cfnext-form__input--full-size(
+          ng-switch-when="Text"
+          type="text" name="{{option.param}}"
+          placeholder="{{option.description}}"
+          ng-model="widgetParams[option.param]")
+        input.cfnext-form__input(
+          ng-switch-when="Number"
+          type="text"
+          placeholder="{{option.description}}"
+          ng-model="widgetParams[option.param]")
+        input.cfnext-form__input(
+          ng-switch-when="Boolean"
+          type="checkbox"
+          ng-model="widgetParams[option.param]")
         div(ng-switch-when="Predefined")
           select.cfnext-select-box(
             ng-if="option.values | isArray"

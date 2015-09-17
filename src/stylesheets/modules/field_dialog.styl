@@ -10,12 +10,19 @@ $field-dialog-width = 60em
 
   > h1
     line-height: ($rhythm(3) / 1.2em)
+    display: flex
+    $text-truncate()
 
   > cf-icon
     margin-right: 1em
 
+
+.field-dialog__field-name
+  $text-truncate()
+
 .field-dialog__field-type
   margin-left: 0.6em
+  margin-right: 1rem
   font-weight: normal
   color: $gray
 

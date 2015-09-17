@@ -1,11 +1,7 @@
 .app-notification--anchor
   position: absolute
-  left: 0
-  right: 0
+  right: 25px
   z-index: 1
-  display: flex
-  justify-content: center
-  align-items: flex-start
   height: 0
 
 
@@ -16,29 +12,34 @@
 
 .app-notification
   min-width: 28em
-  max-width: 65em
+  max-width: 40em
   line-height: 1.5
   padding: $rhythm(0.5) 1rem $rhythm(0.5) 1.7rem
   font-weight: bold
   display: flex
+  align-items: baseline
+  cursor: pointer
 
-  transition: 0.3s ease-out transform
-  transform: translateY(0%)
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out
+  transform: translateY(0)
+
+  &:hover
+    opacity: 0.6
 
   color: $colors.white
   &
     background: $colors.green
-    .app-notification__close-button svg path
-      fill:  #0E8C62
+    .app-notification__close
+      color:  #0E8C62
   &.x--error
     background: $colors.red
-    .app-notification__close-button svg path
-      fill:  #7A1824
+    .app-notification__close
+      color:  #7A1824
 
   &.ng-hide-add
     transition: none
   &.ng-hide
-    display: block !important
+    display: flex !important
     transform: translateY(-100%)
 
 
@@ -46,8 +47,7 @@
     flex: 1 1 auto
     margin: 0
 
-  &__close-button
+  &__close
+    font-size: 0.9em
     flex: 0 0 auto
-    $button-reset()
     margin-left: 1.5em
-    height: 21px

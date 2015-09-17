@@ -124,6 +124,9 @@ $modal-dialog-chrome()
   &__controls
     display: flex
     align-items: center
+    // TODO this overides the hideous 15px line height for modal
+    // dialogs and makes button appearance consistent
+    line-height: $base-line-height
     $modal-dialog-horizontal-padding()
     padding-bottom: $modal-dialog-frame-padding
     // Optical vertical alignment with dialog text
