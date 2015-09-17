@@ -28,7 +28,7 @@ Styleguide 12.0
 */
 
 $modal-dialog-padding = 30px
-$modal-dialog-header-padding = 24px
+$modal-dialog-header-padding = 23px
 
 $modal-dialog-horizontal-padding()
   padding-left: $modal-dialog-padding
@@ -36,11 +36,11 @@ $modal-dialog-horizontal-padding()
 
 $modal-transition()
   opacity: 0
-  transition: .1s opacity ease-in-out
+  transition: .2s opacity ease-in-out
   .modal-dialog
     opacity: .5
-    transform: scale(0.9)
-    transition: .1s opacity ease-in-out, .3s transform ease-in-out
+    transform: scale(.85)
+    transition: .3s opacity ease-in-out, .3s transform cubic-bezier(0.13, 0.62, 0.11, 0.99)
   &.is-visible
     opacity: 1
     .modal-dialog
@@ -55,7 +55,7 @@ $modal-transition()
   overflow-y: auto
   height: 100vh
   text-align: center
-  background-color: rgba(12, 20, 28, 0.75)
+  background-color: rgba($colors.contrast-dark, .75)
 
   &.x--position-top:before
     content: ""
@@ -76,7 +76,6 @@ $modal-dialog-chrome()
   background-color: white
   border-radius: 3px
   box-shadow: 0 2px 3px rgba(0,0,0,0.35)
-  border: 1px solid #979797
 
 .modal-dialog
   $modal-dialog-chrome()
@@ -103,6 +102,9 @@ $modal-dialog-chrome()
 
     > .close-button
       color: $colors.text-light
+      transform: translateY(3px)
+      &:hover
+        color: $colors.text-mid
 
   &__content
     $modal-dialog-horizontal-padding()
