@@ -78,14 +78,12 @@ angular.module('contentful')
   });
 
   function publish () {
-    var version = $scope.asset.getVersion();
     if (!$scope.validate()) {
       notification.warn('Error publishing ' + title() + ': ' + 'Validation failed');
       return $q.reject();
     }
-    return $scope.asset.publish(version)
+    return $scope.asset.publish()
     .then(function(){
-      $scope.asset.setPublishedVersion(version);
       notification.info(title() + ' published successfully');
     })
     .catch(function(err){

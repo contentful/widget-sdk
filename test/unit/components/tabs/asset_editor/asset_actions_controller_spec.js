@@ -334,12 +334,10 @@ describe('Asset Actions Controller', function () {
     });
 
     describe('succeeds', function() {
-      var versionStub;
       beforeEach(function() {
         action.resolve({asset: true});
         scope.validate.returns(true);
         scope.otDoc.updateEntityData = sinon.stub();
-        versionStub = sinon.stub(asset, 'setPublishedVersion');
         controller.publish.execute();
         this.$apply();
       });
@@ -354,10 +352,6 @@ describe('Asset Actions Controller', function () {
 
       it('shows notification', function() {
         sinon.assert.called(notification.info);
-      });
-
-      it('updates ot entity', function() {
-        sinon.assert.calledWith(versionStub, 1);
       });
     });
   });
