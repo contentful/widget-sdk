@@ -40,8 +40,9 @@ header.workbench-header
         span.filter-list-title Active
 
   .workbench-main__right-content(ng-show="!hasQueryResults()")
-    i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
-    .advice__title There are no matches to your search
+    .cfnext-advice
+      i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
+      .advice__title There are no matches to your search
 
   .workbench-main__right-content(ng-show="hasQueryResults()")
     table.result-list.main-results.main-header
