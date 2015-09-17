@@ -16,9 +16,9 @@ ng-switch(on="displayType(field)")
   a.entity-list-link(ng-switch-when="Entry" ui-sref="{{entityNavState}}" class="linked-entries")
     | {{dataForLinkedEntry(entry, field)}}
 
-  div.file-preview(ng-switch-when="Asset" class="linked-assets" cf-file-preview file="dataForLinkedAsset(entry, field)" preview-size="400")
+  div.file-preview(ng-switch-when="Asset" class="linked-assets")
     a.entity-list-link(ui-sref="{{entityNavState}}")
-      .cf-thumbnail(cf-thumbnail file="file" size="30" fit="thumb" focus="faces")
+      .cf-thumbnail(cf-thumbnail file="dataForLinkedAsset(entry, field)" size="30" fit="thumb" focus="faces")
 
   div(ng-switch-when="Array")
     ul.u-list(ng-class="{'linked-entries': isEntryArray(entry, field), 'linked-assets': isAssetArray(entry, field)}")
@@ -26,9 +26,9 @@ ng-switch(on="displayType(field)")
       li(ng-repeat="(index, entity) in dataForArray(entry, field) track by index")
         a.entity-list-link(ng-if="isEntryArray(entry, field)" ui-sref="{{entityNavState}}")
           | {{entity}}
-        div.file-preview(ng-if="isAssetArray(entry, field)" cf-file-preview file="entity" preview-size="400")
+        div.file-preview(ng-if="isAssetArray(entry, field)")
           a.entity-list-link(ui-sref="{{entityNavState}}")
-            .cf-thumbnail(cf-thumbnail file="file" size="30" fit="thumb" focus="faces")
+            .cf-thumbnail(cf-thumbnail file="entity" size="30" fit="thumb" focus="faces")
 
       li(ng-if="isEntryArray(entry, field) && countArrayHiddenItems(entry, field)")
         | + {{countArrayHiddenItems(entry, field)}} more items
