@@ -147,11 +147,11 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         }
 
         if (nextMode === currentMode) {
-          setAutoHeight();
+          if (currentMode === 'md') { setAutoHeight(); }
           return;
+        } else {
+          currentMode = nextMode;
         }
-
-        currentMode = nextMode;
 
         // 3. when going to preview mode:
         //    - hide minor actions
