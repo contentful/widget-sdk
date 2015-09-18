@@ -20,16 +20,16 @@ describe('Markdown requirements', function () {
     });
 
     it('min length requirement only', function () {
-      expect(line(size({min: 5}))).toBe('Required characters: min 5');
+      expect(line(size({min: 5}))).toBe('Requires at least 5 characters');
       expect(line(size({min: 0}))).toBe('');
     });
 
     it('max length requirement only', function () {
-      expect(line(size({max: 100}))).toBe('Required characters: max 100');
+      expect(line(size({max: 100}))).toBe('Requires no more than 100 characters');
     });
 
     it('min and max requirements', function () {
-      expect(line(size({min: 5, max: 100}))).toBe('Required characters: min 5 / max 100');
+      expect(line(size({min: 5, max: 100}))).toBe('Requires between 5 and 100 characters');
     });
   });
 

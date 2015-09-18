@@ -14,14 +14,15 @@ angular.module('contentful').factory('MarkdownEditor/requirements', function () 
     var reqs = findSizeRequirements(validations);
     var result = '';
 
-    if (reqs.min || reqs.max) { add('Required characters: '); }
-    if (reqs.min)             { add('min ' + reqs.min);       }
-    if (reqs.min && reqs.max) { add(' / ');                   }
-    if (reqs.max)             { add('max ' + reqs.max);       }
+    if (reqs.min && reqs.max) {
+      result = 'Requires between ' + reqs.min + ' and ' + reqs.max + ' characters';
+    } else if (reqs.min) {
+      result = 'Requires at least ' + reqs.min + ' characters';
+    } else if (reqs.max) {
+      result = 'Requires no more than ' + reqs.max + ' characters';
+    }
 
     return result;
-
-    function add(s) { result += s; }
   }
 
   function getSizeMarker(reqs, len) {
