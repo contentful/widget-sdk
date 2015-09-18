@@ -279,6 +279,7 @@ angular.module('contentful')
       _.each(ops, function (op) {
         scope.$broadcast('otRemoteOp', op);
       });
+      otUpdateEntityData();
     });
   }
 

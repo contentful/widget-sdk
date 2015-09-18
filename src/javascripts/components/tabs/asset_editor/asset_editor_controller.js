@@ -56,9 +56,6 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
   }, function assetEditorEnabledHandler(enabled, old, scope) {
     scope.otDoc.state.disabled = !enabled;
   });
-  $scope.$on('otRemoteOp', function (event) {
-    event.currentScope.otDoc.updateEntityData();
-  });
 
   // Validations
   $scope.errorPaths = {};
