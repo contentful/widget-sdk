@@ -25,7 +25,7 @@ mixin settings-note
 
 header.modal-dialog__header
   h1 New <em>{{fieldGroup.label}}</em> Field
-  a.close-button(ng-click="dialog.cancel()")
+  a.modal-dialog__close(ng-click="dialog.cancel()")
 
 .add-field-dialog__config.modal-dialog__content
   .add-field-dialog__name-inputs

@@ -2,7 +2,7 @@
   .modal-dialog.insert-link-dialog
     header.modal-dialog__header
       h1 Insert link
-      a.close-button(ng-click="dialog.cancel()")
+      a.modal-dialog__close(ng-click="dialog.cancel()")
     form.modal-dialog__content(name="linkForm")
       .cfnext-form__field
         label Target URL

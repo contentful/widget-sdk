@@ -12,7 +12,7 @@ p
   .modal-dialog
     header.modal-dialog__header
       h1 Title
-      a.close-button
+      a.modal-dialog__close
     .modal-dialog__content
       p.modal-dialog__plaintext this is some plain text
       .modal-dialog__richtext
@@ -100,11 +100,15 @@ $modal-dialog-chrome()
       flex-grow: 1
       margin: 0
 
-    > .close-button
-      color: $colors.text-light
-      transform: translateY(3px)
-      &:hover
-        color: $colors.text-mid
+  &__close
+    color: $colors.text-light
+    transform: translateY(3px)
+    cursor: pointer;
+    &:after
+      content: '×';
+      font-size: 30px;
+    &:hover
+      color: $colors.text-mid
 
   &__content
     $modal-dialog-horizontal-padding()
@@ -127,10 +131,10 @@ $modal-dialog-chrome()
 
   &__plaintext
     white-space: pre
-    max-width: 520px
+    max-width: 458px
 
   &__richtext
-    max-width: 520px
+    max-width: 458px
 
 
 /*
@@ -142,7 +146,7 @@ Used in `dialog_confirm_deletion.jade`
 
 Markup:
 .styleguide-align-horizontally
-  .modal-dialog.modal-dialog--small
+  .modal-dialog
     .modal-dialog__header
       h1 Are you sure?
     .modal-dialog__content
@@ -160,11 +164,6 @@ Styleguide 12.2
 */
 
 .modal-dialog
-  &--small
-    min-width: 46ex
-    max-width: 70ex
-    line-height: $base-line-height
-
   &__hint
     color: $text-dimmed
     margin: $rhythm(1) 0 0
@@ -185,7 +184,7 @@ Markup:
 .modal-dialog
   header.modal-dialog__header
     h1 Title
-    .close-button
+    .modal-dialog__close
   .modal-dialog__content
     p Hello
     .modal-dialog__slice.styleguide-filled-box1

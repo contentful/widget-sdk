@@ -2,7 +2,7 @@
   .modal-dialog(ng-class="[dialog.className]")
     header.modal-dialog__header
       h1 {{dialog.title}}
-      a.close-button(ng-show="!dialog.disableTopCloseButton" ng-click="dialog.cancel()")
+      a.modal-dialog__close(ng-show="!dialog.disableTopCloseButton" ng-click="dialog.cancel()")
     .modal-dialog__content
       p.modal-dialog__richtext(ng-if="dialog.html || dialog.message" ng-bind-html="dialog.message")
     .modal-dialog__controls

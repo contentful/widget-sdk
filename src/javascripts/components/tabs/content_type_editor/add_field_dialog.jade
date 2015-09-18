@@ -7,7 +7,7 @@
     div(ng-if="viewState.is('fieldSelection')")
       header.modal-dialog__header
         h1 New field
-        a.close-button(ng-click="dialog.cancel()")
+        a.modal-dialog__close(ng-click="dialog.cancel()")
 
       .add-field-dialog__selection.modal-dialog__content(role="group" aria-label="Field Types")
         .add-field-dialog__list(ng-repeat="fieldGroups in fieldGroupRows")

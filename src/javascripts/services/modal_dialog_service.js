@@ -53,7 +53,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
         cancelLabel: 'Cancel',
         confirmLabel: 'OK',
         noBackgroundClose: false,
-        noCentering: false,
+        centering: true,
         attachTo: '.client',
         ignoreEnter: true,
         ignoreEsc: false,
@@ -63,7 +63,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       _.pick(params,
              'title', 'message', 'html', 'template',
              'cancelLabel', 'confirmLabel', 'className', 'disableTopCloseButton',
-             'noBackgroundClose', 'noCentering', 'attachTo', 'ignoreEnter', 'ignoreEsc', 'enterAction')
+             'noBackgroundClose', 'centering', 'attachTo', 'ignoreEnter', 'ignoreEsc', 'enterAction')
     );
     this._deferred = $q.defer();
     this.promise = this._deferred.promise;
@@ -104,7 +104,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
     },
 
     _centerOnBackground: function () {
-      if (this.noCentering) return;
+      if (!this.centering) return;
       var elem = this.domElement.children('.modal-dialog');
       var debouncedReposition = debounce(reposition, 50);
       var destroyed = false;

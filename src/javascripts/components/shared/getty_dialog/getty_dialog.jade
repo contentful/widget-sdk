@@ -2,7 +2,7 @@
   .modal-dialog.getty-dialog(ng-controller="GettyDialogController")
     header.modal-dialog__header
       h1 Getty Images
-      a.close-button(ng-click="dialog.cancel()")
+      a.modal-dialog__close(ng-click="dialog.cancel()")
 
     .getty__dialog-container(ng-show="imageDetail" ng-controller="GettyImageDetailsController")
       include ./getty_image_details
