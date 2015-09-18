@@ -105,11 +105,6 @@ angular.module('contentful')
     return isDocUsable(scope) ? otGetEntity() : false;
   }, attemptToOpenOtDoc);
 
-  $scope.$watch('otDoc.doc', function (otDoc, old, scope) {
-    setupRemoteOpListeners(otDoc, old);
-    scope.otDoc.state.editable = !!otDoc;
-  });
-
   $scope.$watch(function () {
     return ShareJS.connectionFailed();
   }, function (failed) {
@@ -123,10 +118,6 @@ angular.module('contentful')
 
   $scope.$watch('otDoc.state.editable', handleEditableState);
   $scope.$on('$destroy', handleScopeDestruction);
-
-  function resetOtDoc() {
-    $scope.otDoc.doc = undefined;
-  }
 
   function isDocUsable(scope) {
     return ShareJS.isConnected() && !scope.otDoc.state.disabled && !!otGetEntity();
@@ -194,9 +185,21 @@ angular.module('contentful')
     });
   }
 
+
+  function resetOtDoc() {
+    if ($scope.otDoc.doc) {
+      removeRemoteOpListener($scope.otDoc.doc);
+    }
+    $scope.otDoc.doc = null;
+    $scope.otDoc.state.editable = false;
+  }
+
+
   function setupOtDoc(doc) {
     filterDeletedLocales(doc.snapshot);
+    installRemoteOpListener(doc);
     $scope.otDoc.doc = doc;
+    $scope.otDoc.state.editable = true;
     setVersionUpdater();
     updateIfValid();
   }
@@ -268,13 +271,13 @@ angular.module('contentful')
     }
   }
 
-  function setupRemoteOpListeners(doc, old) {
-    if (old) {
-      old.removeListener('remoteop', remoteOpListener);
-    }
-    if (doc) {
-      doc.on('remoteop', remoteOpListener);
-    }
+  function installRemoteOpListener (doc) {
+    doc.on('remoteop', remoteOpListener);
+
+  }
+
+  function removeRemoteOpListener (doc) {
+    doc.removeListener('remoteop', remoteOpListener);
   }
 
   function remoteOpListener(ops) {
@@ -289,9 +292,8 @@ angular.module('contentful')
   function handleScopeDestruction(event) {
     var scope = event.currentScope;
     if (scope.otDoc.doc) {
-      scope.otDoc.doc.removeListener(remoteOpListener);
-      remoteOpListener = null;
       closeDoc(scope.otDoc.doc);
+      resetOtDoc(scope.otDoc.doc);
     }
   }
 

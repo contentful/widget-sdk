@@ -63,32 +63,6 @@ describe('otDocFor', function () {
     expect(scope.otDoc.doc).toBeUndefined();
   });
 
-  describe('if otDoc.doc changes', function(){
-    beforeEach(function(){
-      this.disconnect();
-      sinon.stub(scope, '$broadcast');
-      this.oldDoc = makeOtDocStub();
-      scope.otDoc.doc = this.oldDoc;
-      this.$apply();
-
-      this.newDoc = makeOtDocStub();
-      scope.otDoc.doc = this.newDoc;
-      this.$apply();
-    });
-
-    it('doc is set as editable', function(){
-      expect(scope.otDoc.state.editable).toBe(true);
-    });
-
-    it('removes old remote op listener', function(){
-      sinon.assert.calledWith(this.oldDoc.removeListener, 'remoteop');
-    });
-
-    it('sets up remote op listener', function(){
-      sinon.assert.calledWith(this.newDoc.on, 'remoteop');
-    });
-  });
-
   describe('successful initialization flow', function(){
     beforeEach(function(){
       var localeStore = this.$inject('TheLocaleStore');
@@ -148,10 +122,8 @@ describe('otDocFor', function () {
       this.connect();
 
       this.closeStub = sinon.stub();
-      scope.otDoc.doc = {
-        close: this.closeStub,
-        on: sinon.stub()
-      };
+      this.otDoc = makeOtDocStub();
+      scope.otDoc.doc = this.otDoc;
       this.disconnect();
     });
 
@@ -160,11 +132,11 @@ describe('otDocFor', function () {
     });
 
     it('otdoc is closed', function(){
-      sinon.assert.called(this.closeStub);
+      sinon.assert.called(this.otDoc.close);
     });
 
     it('otdoc.doc is reset', function(){
-      expect(scope.otDoc.doc).toBeUndefined();
+      expect(scope.otDoc.doc).toBe(null);
     });
   });
 
@@ -182,7 +154,7 @@ describe('otDocFor', function () {
     });
 
     it('otDoc.doc is undefined', function(){
-      expect(scope.otDoc.doc).toBeUndefined();
+      expect(scope.otDoc.doc).toBe(null);
     });
 
     it('logger sharejs error is called', function(){
@@ -264,7 +236,7 @@ describe('otDocFor', function () {
     });
 
     it('removes the remote op listener', function(){
-      sinon.assert.called(this.otDoc.removeListener);
+      sinon.assert.calledWith(this.otDoc.removeListener, 'remoteop');
     });
 
     it('closes the doc', function(){
