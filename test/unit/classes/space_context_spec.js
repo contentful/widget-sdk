@@ -2,14 +2,12 @@
 
 describe('spaceContext', function () {
 
-  describe('with no space', function () {
-    beforeEach(function () {
-      module('contentful/test');
-      inject(function (spaceContext) {
-        this.spaceContext = spaceContext;
-      });
-    });
+  beforeEach(function () {
+    module('contentful/test');
+    this.spaceContext = this.$inject('spaceContext');
+  });
 
+  describe('with no space', function () {
     it('has no space', function () {
       expect(this.spaceContext.space).toBeNull();
     });
@@ -27,22 +25,42 @@ describe('spaceContext', function () {
         expect(this.spaceContext.publishedContentTypes.length).toEqual(0);
       });
     });
+  });
 
+  describe('resetting with a space', function () {
+    var SPACE = {};
+    beforeEach(function () {
+      sinon.stub(this.spaceContext, 'refreshContentTypes');
+      this.spaceContext.contentTypes = [{}];
+      this.spaceContext.resetWithSpace(SPACE);
+    });
+
+    it('sets space on context', function () {
+      expect(this.spaceContext.space).toBe(SPACE);
+    });
+
+    it('clears content types', function () {
+      expect(this.spaceContext.contentTypes.length).toEqual(0);
+    });
+
+    it('refreshes content types', function () {
+      sinon.assert.called(this.spaceContext.refreshContentTypes);
+    });
   });
 
   describe('with a space', function () {
     var space, rootScope, $q;
     var cfStub;
     beforeEach(function () {
-      module('contentful/test');
-      inject(function (spaceContext, _cfStub_, $rootScope, _$q_) {
-        cfStub = _cfStub_;
-        space = cfStub.space('test');
-        rootScope = $rootScope;
-        $q = _$q_;
-        this.spaceContext = spaceContext;
-        this.spaceContext.resetWithSpace(space);
-      });
+      cfStub = this.$inject('cfStub');
+      space = cfStub.space('test');
+      rootScope = this.$inject('$rootScope');
+      $q = this.$inject('$q');
+
+      // do not refresh  CTs while initializing with space
+      sinon.stub(this.spaceContext, 'refreshContentTypes');
+      this.spaceContext.resetWithSpace(space);
+      this.spaceContext.refreshContentTypes.restore();
     });
 
     it('has a space', function () {
@@ -387,13 +405,13 @@ describe('spaceContext', function () {
     var scope, entry, $q;
 
     beforeEach(function () {
-      module('contentful/test');
       var cfStub = this.$inject('cfStub');
       var space = cfStub.space('test');
       scope = this.$inject('$rootScope');
       $q = this.$inject('$q');
-      this.spaceContext = this.$inject('spaceContext');
+      sinon.stub(this.spaceContext, 'refreshContentTypes');
       this.spaceContext.resetWithSpace(space);
+      this.spaceContext.refreshContentTypes.restore();
       entry = { getContentTypeId: function () { return 'foo'; } };
       sinon.spy(this.spaceContext, 'refreshContentTypes');
     });
