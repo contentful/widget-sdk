@@ -220,18 +220,6 @@ angular.module('contentful')
 
   return function (getTitle) {
     return {
-      saveSuccess: function () {
-        notification.info('“' + getTitle() + '” saved successfully');
-      },
-
-      saveFail: function (error) {
-        notification.error('“' + getTitle() + '” could not be saved');
-        // HTTP 422: Unprocessable entity
-        if (dotty.get(error, 'statusCode') !== 422) {
-          logger.logServerWarn('ApiKey could not be saved', {error: error });
-        }
-      },
-
       archiveSuccess: function () {
         notification.info(getTitle() + ' archived successfully');
       },
@@ -311,5 +299,4 @@ angular.module('contentful')
 
     };
   };
-
 }]);
