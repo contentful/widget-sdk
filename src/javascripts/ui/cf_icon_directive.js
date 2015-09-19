@@ -12,8 +12,8 @@
  * @param {string} name - name of the icon to be used
  * @param {float} scale - (optional) scale factor to be applied to the icon
  */
-angular.module('contentful').directive('cfIcon', ['icons', function(icons){
-
+angular.module('cf.ui')
+.directive('cfIcon', ['icons', function(icons){
   return {
     restrict: 'E',
     link: function (scope, el, attrs) {
