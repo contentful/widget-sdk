@@ -48,7 +48,7 @@ angular.module('contentful')
 
       dialog = modalDialog.open({
         template: 'confirm_leave_editor',
-        noBackgroundClose: true,
+        backgroundClose: false,
         ignoreEnter: false,
         enterAction: function () {
           save.execute();

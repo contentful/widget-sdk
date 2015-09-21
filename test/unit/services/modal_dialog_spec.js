@@ -71,7 +71,7 @@ describe('Modal dialog service', function () {
       });
 
       it('cancel is not called with params attr', function () {
-        dialog.params.noBackgroundClose = true;
+        dialog.params.backgroundClose = false;
         dialog._closeOnBackground(event);
         sinon.assert.notCalled(cancelStub);
       });

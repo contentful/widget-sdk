@@ -124,7 +124,7 @@ angular.module('contentful').service('tokenStore', ['$injector', function($injec
         scope: $rootScope,
         cancelLabel: null,
         confirmLabel: 'Login',
-        noBackgroundClose: true,
+        backgroundClose: false,
         disableTopCloseButton: true,
         ignoreEsc: true,
         attachTo: 'body'
