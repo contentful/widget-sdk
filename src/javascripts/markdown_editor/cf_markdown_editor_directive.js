@@ -21,7 +21,6 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
     link: function (scope, el) {
       var textarea        = el.find('textarea').get(0);
       var preview         = el.find('.markdown-preview').first();
-      var minorActions    = el.find('.markdown-minor-actions').first().hide();
       var currentMode     = 'md';
       var editor          = null;
       var childEditor     = null;
@@ -38,7 +37,6 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.setMode            = setMode;
       scope.inMode             = inMode;
       scope.canEdit            = canEdit;
-      scope.toggleMinorActions = toggleMinorActions;
 
       // simple bus that is used to synchronize between Zen Mode and main editor
       scope.zenApi = {
@@ -147,25 +145,22 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         }
 
         if (nextMode === currentMode) {
-          setAutoHeight();
+          if (currentMode === 'md') { setAutoHeight(); }
           return;
+        } else {
+          currentMode = nextMode;
         }
 
-        currentMode = nextMode;
-
-        // 3. when going to preview mode:
-        //    - hide minor actions
-        //    - tie preview position with editor
+        // 3. when going to preview mode,tie preview position with editor
         if (currentMode === 'preview') {
           editor.tie.previewToEditor(preview);
-          toggleMinorActions(true);
         }
 
         // 4. when in Markdown mode:
-        //    - set height to "auto" to allow auto-expanding
-        //    - tie editor position with preview
         if (currentMode === 'md') {
+          // tie editor position with preview
           editor.tie.editorToPreview(preview);
+          // set height to "auto" to allow auto-expanding
           setAutoHeight();
         }
 
@@ -174,12 +169,6 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
             areas.height('auto');
           });
         }
-      }
-
-      function toggleMinorActions(forceHide) {
-        scope.minorActionsShown = forceHide ? false : !scope.minorActionsShown;
-        var method = 'slide' + (scope.minorActionsShown ? 'Down' : 'Up');
-        minorActions.stop()[method](300);
       }
 
       function syncFromChildToParent() {

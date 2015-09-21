@@ -26,6 +26,10 @@ angular.module('contentful')
     from: 'radio',
     to: 'boolean',
     fieldTypes: ['Boolean']
+  },
+  {
+    from: 'newMarkdown',
+    to: 'markdown'
   }
 ])
 
