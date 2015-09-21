@@ -87,7 +87,7 @@ angular.module('contentful')
   var moment  = $injector.get('moment');
   var TheLocaleStore = $injector.get('TheLocaleStore');
 
-  $scope.otDoc = {
+  var otDoc = {
     doc: undefined,
     state: {
       // initialized to true to prevent editing until otDoc is ready
@@ -98,6 +98,8 @@ angular.module('contentful')
     getEntity: otGetEntity,
     updateEntityData: otUpdateEntityData
   };
+
+  $scope.otDoc = otDoc;
 
   // If the document connection state changes, this watcher is triggered
   // Connection failures during editing are handled from this point onwards.
@@ -112,15 +114,15 @@ angular.module('contentful')
     // opening. Therefore we only set the error to `true` and to to
     // `failed`.
     if (failed) {
-      $scope.otDoc.state.error = true;
+      otDoc.state.error = true;
     }
   });
 
   $scope.$watch('otDoc.state.editable', handleEditableState);
   $scope.$on('$destroy', handleScopeDestruction);
 
-  function isDocUsable(scope) {
-    return ShareJS.isConnected() && !scope.otDoc.state.disabled && !!otGetEntity();
+  function isDocUsable() {
+    return ShareJS.isConnected() && !otDoc.state.disabled && !!otGetEntity();
   }
 
   function otGetEntity() {
@@ -133,17 +135,17 @@ angular.module('contentful')
       .then(function (doc) {
         setupClosedEventHandling(doc);
         if (isDocUsable($scope)) {
-          $scope.otDoc.state.error = false;
+          otDoc.state.error = false;
           setupOtDoc(doc);
         } else {
           closeDoc(doc);
         }
       }, function (err) {
-        $scope.otDoc.state.error = true;
+        otDoc.state.error = true;
         handleOtDocOpeningFailure(err, entity);
       });
-    } else if ($scope.otDoc.doc) {
-      closeDoc($scope.otDoc.doc);
+    } else if (otDoc.doc) {
+      closeDoc(otDoc.doc);
     }
 
   }
@@ -187,19 +189,19 @@ angular.module('contentful')
 
 
   function resetOtDoc() {
-    if ($scope.otDoc.doc) {
-      removeRemoteOpListener($scope.otDoc.doc);
+    if (otDoc.doc) {
+      removeRemoteOpListener(otDoc.doc);
     }
-    $scope.otDoc.doc = null;
-    $scope.otDoc.state.editable = false;
+    delete otDoc.doc;
+    otDoc.state.editable = false;
   }
 
 
   function setupOtDoc(doc) {
     filterDeletedLocales(doc.snapshot);
     installRemoteOpListener(doc);
-    $scope.otDoc.doc = doc;
-    $scope.otDoc.state.editable = true;
+    otDoc.doc = doc;
+    otDoc.state.editable = true;
     setVersionUpdater();
     updateIfValid();
   }
@@ -216,14 +218,14 @@ angular.module('contentful')
   }
 
   function setVersionUpdater() {
-    $scope.otDoc.doc.on('acknowledge', updateHandler);
-    $scope.otDoc.doc.on('remoteop', updateHandler);
+    otDoc.doc.on('acknowledge', updateHandler);
+    otDoc.doc.on('remoteop', updateHandler);
   }
 
   function updateHandler () {
-    if ($scope.otDoc.doc) {
+    if (otDoc.doc) {
       var entity = otGetEntity();
-      entity.setVersion($scope.otDoc.doc.version);
+      entity.setVersion(otDoc.doc.version);
       entity.data.sys.updatedAt = moment().toISOString();
     }
   }
@@ -237,8 +239,8 @@ angular.module('contentful')
 
   function otUpdateEntityData() {
     var entity = otGetEntity();
-    if (entity && $scope.otDoc.doc) {
-      var data = _.cloneDeep($scope.otDoc.doc.snapshot);
+    if (entity && otDoc.doc) {
+      var data = _.cloneDeep(otDoc.doc.snapshot);
       if(!data) {
         throw new Error('Failed to update entity: data not available');
       }
@@ -246,12 +248,12 @@ angular.module('contentful')
         throw new Error('Failed to update entity: sys not available');
       }
 
-      if ($scope.otDoc.doc.version > entity.getVersion()) {
+      if (otDoc.doc.version > entity.getVersion()) {
         data.sys.updatedAt = moment().toISOString();
       } else {
         data.sys.updatedAt = entity.data.sys.updatedAt;
       }
-      data.sys.version = $scope.otDoc.doc.version;
+      data.sys.version = otDoc.doc.version;
       entity.update(data);
     } else {
       logger.logSharejsError('otUpdateEntityData did not update', {
@@ -263,11 +265,11 @@ angular.module('contentful')
     }
   }
 
-  function handleEditableState(editable, old, scope) {
+  function handleEditableState(editable) {
     if (editable) {
-      scope.$emit('otBecameEditable', otGetEntity());
+      $scope.$emit('otBecameEditable', otGetEntity());
     } else {
-      scope.$emit('otBecameReadonly', otGetEntity());
+      $scope.$emit('otBecameReadonly', otGetEntity());
     }
   }
 
@@ -289,11 +291,10 @@ angular.module('contentful')
     });
   }
 
-  function handleScopeDestruction(event) {
-    var scope = event.currentScope;
-    if (scope.otDoc.doc) {
-      closeDoc(scope.otDoc.doc);
-      resetOtDoc(scope.otDoc.doc);
+  function handleScopeDestruction() {
+    if (otDoc.doc) {
+      closeDoc(otDoc.doc);
+      resetOtDoc(otDoc.doc);
     }
   }
 

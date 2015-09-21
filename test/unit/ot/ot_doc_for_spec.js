@@ -135,8 +135,8 @@ describe('otDocFor', function () {
       sinon.assert.called(this.otDoc.close);
     });
 
-    it('otdoc.doc is reset', function(){
-      expect(scope.otDoc.doc).toBe(null);
+    it('otdoc.doc is removed', function(){
+      expect(scope.otDoc.doc).toBeUndefined();
     });
   });
 
@@ -154,7 +154,7 @@ describe('otDocFor', function () {
     });
 
     it('otDoc.doc is undefined', function(){
-      expect(scope.otDoc.doc).toBe(null);
+      expect(scope.otDoc.doc).toBeUndefined();
     });
 
     it('logger sharejs error is called', function(){
