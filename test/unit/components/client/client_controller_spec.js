@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Client Controller', function () {
-  var clientController, scope, notification, TheAccountView, spaceContext, spaceTools;
+  var clientController, scope, notification, TheAccountView, spaceContext;
   var stubs;
 
   function setMockOnContext(context, mockKey, stubsList) {
@@ -125,7 +125,6 @@ describe('Client Controller', function () {
 
       notification = this.$inject('notification');
       TheAccountView = this.$inject('TheAccountView');
-      spaceTools = this.$inject('spaceTools');
 
       spaceContext = this.$inject('spaceContext');
       var space = this.$inject('cfStub').space('');
@@ -179,81 +178,6 @@ describe('Client Controller', function () {
 
     it('setSpace is called', function () {
       sinon.assert.calledWith(this.authorizationStubs.setSpace, spaceContext.space);
-    });
-  });
-
-  describe('select a space', function () {
-    var space;
-    var idStub;
-    beforeEach(function () {
-      idStub = sinon.stub();
-      stubs.spaceId.returns(123);
-      space = {
-        getId: idStub,
-        data: {
-          name: 'testspace'
-        }
-      };
-    });
-
-    describe('if we are selecting the current space', function () {
-      beforeEach(function () {
-        idStub.returns(123);
-        spaceContext.getId = _.constant(123);
-        spaceTools.goTo(space);
-      });
-
-      it('dont track analytics', function () {
-        sinon.assert.notCalled(this.analyticsStubs.track);
-      });
-
-      it('dont route to another space', function () {
-        sinon.assert.notCalled(stubs.go);
-      });
-    });
-
-    describe('if we are selecting the current space but in account section', function () {
-      beforeEach(function () {
-        idStub.returns(123);
-        TheAccountView.isActive = sinon.stub();
-        TheAccountView.isActive.returns(true);
-        spaceTools.goTo(space);
-      });
-
-      it('tracks analytics', function () {
-        sinon.assert.called(this.analyticsStubs.track);
-      });
-
-      it('tracks the space properties', function () {
-        expect(this.analyticsStubs.track.args[0][1]).toEqual({spaceId: 123, spaceName: 'testspace'});
-      });
-
-      it('route to another space', function () {
-        sinon.assert.calledWith(stubs.go, 'spaces.detail', { spaceId: 123 });
-      });
-    });
-
-    describe('if we are selecting a different space', function () {
-      beforeEach(function () {
-        idStub.returns(456);
-        spaceTools.goTo(space);
-      });
-
-      it('tracks analytics', function () {
-        sinon.assert.called(this.analyticsStubs.track);
-      });
-
-      it('tracks the space properties', function () {
-        expect(this.analyticsStubs.track.args[0][1]).toEqual({spaceId: 456, spaceName: 'testspace'});
-      });
-
-      it('route to another space', function () {
-        sinon.assert.calledWith(stubs.go, 'spaces.detail', { spaceId: 456 });
-      });
-
-      it('location in account set to false', function() {
-        expect(TheAccountView.isActive()).toBeFalsy();
-      });
     });
   });
 
