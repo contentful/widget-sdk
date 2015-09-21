@@ -481,10 +481,7 @@ angular.module('contentful').config([
 }])
 .run(['$rootScope', '$state', '$stateParams', '$injector', function ($rootScope, $state, $stateParams, $injector) {
   var $document    = $injector.get('$document');
-  var notification = $injector.get('notification');
-  var tokenStore   = $injector.get('tokenStore');
   var spaceTools   = $injector.get('spaceTools');
-  var logger       = $injector.get('logger');
   // Result of confirmation dialog
   var navigationConfirmed = false;
 
@@ -565,13 +562,13 @@ angular.module('contentful').config([
       case 'spaces.detail':
         event.preventDefault();
         if(_.isEmpty(toStateParams.spaceId))
-          navigateToInitialSpace();
+          spaceTools.goToInitialSpace();
         else
           $state.go('spaces.detail.entries.list', toStateParams); break;
       case 'otherwise':
       case 'spaces':
         event.preventDefault();
-        navigateToInitialSpace(toStateParams.spaceId);
+        spaceTools.goToInitialSpace(toStateParams.spaceId);
         break;
     }
   }
@@ -585,49 +582,8 @@ angular.module('contentful').config([
     if(matchedSection && error.statusCode == 404){
       $state.go('spaces.detail.'+matchedSection[1]+'.list', { spaceId: toParams.spaceId });
     } else {
-      navigateToInitialSpace();
+      spaceTools.goToInitialSpace();
     }
-  }
-
-  function navigateToInitialSpace(spaceId) {
-    tokenStore.getSpaces().then(function (spaces) {
-      var space = determineInitialSpace(spaces, spaceId, spaceTools.getLastUsed());
-
-      try {
-        if (space) {
-          spaceTools.goTo(space.getId(), true);
-        } else {
-          $state.go('spaces.new');
-        }
-      } catch(exp){
-        logger.logError('Error navigating to initial space', {
-          data: {
-            exp: exp,
-            msg: exp.message,
-            spaceId: space ? space.getId() : null,
-            state: $state
-          }
-        });
-      }
-    });
-  }
-
-  function determineInitialSpace(spaces, toSpaceId, lastUsedSpace) {
-    var space;
-    if (toSpaceId) {
-      space = spaceTools.getFromList(toSpaceId, spaces);
-      if (space) {
-        return space;
-      } else {
-        notification.warn('Space does not exist or is unaccessable');
-      }
-    } else if (lastUsedSpace){
-      space = spaceTools.getFromList(lastUsedSpace, spaces);
-      if (space) {
-        return space;
-      }
-    }
-    return spaces[0];
   }
 
   function getAddToContext(params) {

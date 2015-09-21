@@ -7,11 +7,14 @@ angular.module('contentful').factory('spaceTools', ['$injector', function($injec
   var analytics      = $injector.get('analytics');
   var $state         = $injector.get('$state');
   var spaceContext   = $injector.get('spaceContext');
+  var tokenStore     = $injector.get('tokenStore');
+  var notification   = $injector.get('notification');
 
   return {
-    getLastUsed:  getLastUsed,
-    getFromList:  getFromList,
-    goTo:         goTo
+    getLastUsed:      getLastUsed,
+    getFromList:      getFromList,
+    goTo:             goTo,
+    goToInitialSpace: goToInitialSpace
   };
 
   function getLastUsed() {
@@ -36,5 +39,31 @@ angular.module('contentful').factory('spaceTools', ['$injector', function($injec
     }
     TheStore.set('lastUsedSpace', space.getId());
     $state.go('spaces.detail', { spaceId: space.getId() });
+  }
+
+  function goToInitialSpace(forcedId) {
+    tokenStore.getSpaces().then(function (spaceList) {
+      var space = determineInitialSpace(spaceList, forcedId);
+
+      if (space) {
+        goTo(space, true);
+      } else {
+        $state.go('spaces.new');
+      }
+    });
+  }
+
+  function determineInitialSpace(spaceList, forcedId) {
+    var space = getFromList(forcedId || getLastUsed(), spaceList);
+
+    if (_.isObject(space) && _.isFunction(space.getId)) {
+      return space;
+    }
+
+    if (forcedId) {
+      notification.warn('Space does not exist or is inaccessible');
+    }
+
+    return spaceList[0];
   }
 }]);
