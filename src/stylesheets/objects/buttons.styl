@@ -41,10 +41,11 @@ $button-reset()
 
 $cfnext-button($color, $shade, $text = rgba(255,255,255,1))
   $cfnext-button-layout()
-  $cfnext-button-colors($color, $shade)
+  $cfnext-button-colors($color, $text, $shade)
   $cfnext-button-loading($text)
 
 $cfnext-button-layout()
+  display: inline-block
   padding: 0.6rem 1.5rem
   cursor: pointer
   text-align: center
@@ -82,9 +83,10 @@ $cfnext-button-loading($text)
       margin-left: 5px
       margin-bottom: -2px
 
-$cfnext-button-colors($color, $shade = false)
-  color: white
+$cfnext-button-colors($color, $text, $shade = false)
   background: $color
+  &, &:link, &:hover, &:active
+    color: $text
 
   &, &:hover, &:active
     outline: 0

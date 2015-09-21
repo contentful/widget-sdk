@@ -97,4 +97,25 @@ $formtastic-fieldwidth = 40%
   > h1
     margin-left: 20px
 
+$fa-offset()
+  .fa
+    margin-right: 4px
 
+.btn--primary
+  $fa-offset()
+  @extend .cfnext-btn-action
+
+.btn--secondary
+  $fa-offset()
+  &, &.new-resource
+    @extend .cfnext-btn-secondary-action
+  &.new-resource
+    margin-top: 34px //result list tr-height
+
+.btn--confirm
+  $fa-offset()
+  @extend .cfnext-btn-primary-action
+
+.btn--danger
+  $fa-offset()
+  @extend .cfnext-btn-caution
