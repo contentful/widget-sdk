@@ -73,5 +73,40 @@ describe('TheLocaleStore', function () {
     });
   });
 
+  describe('#setActiveLocales', function () {
 
+    it('activates given locale', function () {
+      var locale = {internal_code: 'zz'};
+      expect(this.theLocaleStore.localeIsActive(locale)).toBe(false);
+      this.theLocaleStore.setActiveLocales([locale]);
+      expect(this.theLocaleStore.localeIsActive(locale)).toBe(true);
+    });
+
+    it('removes other locales', function () {
+      var a = {internal_code: 'aa'};
+      var b = {internal_code: 'bb'};
+      this.theLocaleStore.setActiveLocales([a]);
+      expect(this.theLocaleStore.localeIsActive(a)).toBe(true);
+      this.theLocaleStore.setActiveLocales([b]);
+      expect(this.theLocaleStore.localeIsActive(a)).toBe(false);
+    });
+
+    it('keeps default locale', function () {
+      var def = this.theLocaleStore.getDefaultLocale();
+      expect(this.theLocaleStore.localeIsActive(def)).toBe(true);
+      this.theLocaleStore.setActiveLocales([]);
+      expect(this.theLocaleStore.localeIsActive(def)).toBe(true);
+    });
+  });
+
+  describe('#deactivateLocale', function () {
+
+    it('it makes locale inactive', function () {
+      var locale = {internal_code: 'zz'};
+      this.theLocaleStore.setActiveLocales([locale]);
+      expect(this.theLocaleStore.localeIsActive(locale)).toBe(true);
+      this.theLocaleStore.deactivateLocale(locale);
+      expect(this.theLocaleStore.localeIsActive(locale)).toBe(false);
+    });
+  });
 });
