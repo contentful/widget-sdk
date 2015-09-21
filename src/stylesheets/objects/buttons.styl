@@ -157,6 +157,10 @@ button.cfnext-btn-primary-action{{modifier_class}}.is-loading Action
 
 Styleguide 4.2
 */
+
+$btn-primary()
+  $cfnext-button($colors.green, hsl(160, 86%, 38%))
+
 .cfnext-btn-primary-action,
 .cfnext-btn-primary-action--large
   $cfnext-button($colors.green, hsl(160, 86%, 38%))
@@ -397,3 +401,82 @@ Styleguide 4.9
 
 .cfnext-btn-secondary-action cf-icon path
   fill: $secondary-button-color
+
+
+/*
+Action Selector
+
+Click on the lower button to toggle the state.
+
+Markup:
+div(style="width: 24em")
+  div.btn-action-select
+    button.btn-action-select__action.is-loading
+      | Publish
+    button.btn-action-select__selector
+      span.btn-action-select__selector-label
+        | Change actions
+      cf-icon.btn-action-select__icon(name="dd-arrow-down")
+  p
+  div.btn-action-select.x--no-action
+    button.btn-action-select__action
+      | Publish
+    button.btn-action-select__selector
+      span.btn-action-select__selector-label
+        | Change actions
+      cf-icon.btn-action-select__icon(name="dd-arrow-down")
+script
+  | $('.btn-action-select.x--no-action').click(function () {
+  |   $(this).toggleClass('x--no-action')
+  | })
+
+Styleguide 4.10
+*/
+
+
+.btn-action-select
+  display: flex
+  overflow: hidden
+  border-radius: 2px
+
+  &__selector,
+  &__action
+    $btn-primary()
+    flex: 1 1 auto
+    transition: all 0.2s
+    border-radius: 0
+
+  &__action
+    border-right: 1px solid $colors.green-dark
+    overflow: hidden
+    width: 100%
+
+  &__selector
+    width: 4em
+    white-space: nowrap
+    overflow: hidden
+    padding-left: 0
+    padding-right: 0
+
+  &__icon
+    display: inline-block
+    margin: 0 0.8em 0 0.9em
+
+  &__selector-label
+    display: none
+
+
+.btn-action-select.x--no-action
+
+  .btn-action-select__action
+    width: 0
+    padding-left: 0
+    padding-right: 0
+    // This hides the border
+    margin-left: -1px
+
+  .btn-action-select__selector
+    width: 100%
+
+  .btn-action-select__selector-label
+    display: inline
