@@ -118,7 +118,6 @@ angular.module('contentful')
     }
   });
 
-  $scope.$watch('otDoc.state.editable', handleEditableState);
   $scope.$on('$destroy', handleScopeDestruction);
 
   function isDocUsable() {
@@ -194,6 +193,7 @@ angular.module('contentful')
     }
     delete otDoc.doc;
     otDoc.state.editable = false;
+    $scope.$emit('otBecameReadonly', otGetEntity());
   }
 
 
@@ -202,6 +202,7 @@ angular.module('contentful')
     installRemoteOpListener(doc);
     otDoc.doc = doc;
     otDoc.state.editable = true;
+    $scope.$emit('otBecameEditable', otGetEntity());
     setVersionUpdater();
     updateIfValid();
   }
@@ -262,14 +263,6 @@ angular.module('contentful')
           otDoc: $scope.otDoc.doc
         }
       });
-    }
-  }
-
-  function handleEditableState(editable) {
-    if (editable) {
-      $scope.$emit('otBecameEditable', otGetEntity());
-    } else {
-      $scope.$emit('otBecameReadonly', otGetEntity());
     }
   }
 
