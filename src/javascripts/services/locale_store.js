@@ -10,7 +10,8 @@ angular.module('contentful')
  * This service holds all context related to a space, including contentTypes,
  * locales, and helper methods.
 */
-.factory('TheLocaleStore', [function(){
+.factory('TheLocaleStore', ['$injector', function ($injector){
+  var store = $injector.get('TheStore').forKey('activeLocales');
 
   var _space = null;
   var _state = {
@@ -60,8 +61,11 @@ angular.module('contentful')
   function refreshLocales() {
     _state.privateLocales = _space.getPrivateLocales();
     _state.defaultLocale  = _space.getDefaultLocale();
-    _state.localeActiveStates[_state.defaultLocale.internal_code] = true;
-    refreshActiveLocales();
+    var storedLocaleCodes = store.get();
+    var storedLocales = _.filter(_state.privateLocales, function (locale) {
+      return _.contains(storedLocaleCodes, locale.code);
+    });
+    setActiveLocales(storedLocales);
   }
 
   /**
@@ -73,6 +77,7 @@ angular.module('contentful')
       _.filter(_state.privateLocales, localeIsActive),
       function(locale){return locale.internal_code;}
     );
+    store.set(_.pluck(_state.activeLocales, 'code'));
   }
 
   function localeIsActive(locale) {
@@ -164,6 +169,7 @@ angular.module('contentful')
 
   function deactivateLocale (locale) {
     delete _state.localeActiveStates[locale.internal_code];
+    refreshActiveLocales();
   }
 
 }]);
