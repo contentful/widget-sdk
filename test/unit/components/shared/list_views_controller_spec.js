@@ -4,11 +4,16 @@ describe('ListViewsController', function () {
   var controller, scope, $q;
   var getBlankView, generateDefaultViews, resetList;
 
-  beforeEach(module('contentful/test'));
-  beforeEach(inject(function ($controller, $rootScope, _$q_) {
-    $q = _$q_;
-    scope = $rootScope.$new();
+  beforeEach(function () {
+    module('contentful/test');
+    var $controller = this.$inject('$controller');
+    var FilterQS = this.$inject('FilterQueryString');
+    $q = this.$inject('$q');
+
+    scope = this.$inject('$rootScope').$new();
     scope.context = {};
+    FilterQS.create = _.constant({ readView: _.constant({ from_qs: 'test' }), update: _.noop });
+
     controller = $controller('ListViewsController', {
       $scope: scope,
       getBlankView: getBlankView = sinon.stub().returns({id: 'blankView'}),
@@ -17,8 +22,15 @@ describe('ListViewsController', function () {
       generateDefaultViews: generateDefaultViews = sinon.stub().returns(['defaultViews']),
       resetList: resetList = sinon.stub()
     });
+
     scope.$apply();
-  }));
+  });
+
+  describe('initialization', function () {
+    it('reads view from the query string service', function () {
+      expect(scope.context.view.from_qs).toBe('test');
+    });
+  });
 
   describe('when the uiConfig changes', function () {
     it('should generate the default views', function () {
@@ -52,7 +64,7 @@ describe('ListViewsController', function () {
     });
   });
 
-  describe('loadView', function () {
+  describe('loading view', function () {
     it('should assign a deep copy of the view to the tab, reset the title and reset the list', function () {
       var view = {id: 'foo'};
       scope.loadView(view);

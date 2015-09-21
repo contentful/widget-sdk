@@ -35,7 +35,8 @@ angular.module('contentful').factory('FilterQueryString', ['$injector', function
     }
 
     function getKey() {
-      return 'lastFilterQueryString.' + entityType + '.' + getSpaceId();
+      var spaceId = spaceContext.getId() || 'undef';
+      return 'lastFilterQueryString.' + entityType + '.' + spaceId;
     }
   }
 
@@ -52,9 +53,5 @@ angular.module('contentful').factory('FilterQueryString', ['$injector', function
       var value = obj[key];
       obj[key] = value !== 'false';
     }
-  }
-
-  function getSpaceId() {
-    return dotty.get(spaceContext, 'space.data.sys.id', 'undef');
   }
 }]);

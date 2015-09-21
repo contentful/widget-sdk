@@ -13,20 +13,15 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   var ListQuery          = $injector.get('ListQuery');
   var logger             = $injector.get('logger');
   var spaceContext       = $injector.get('spaceContext');
-  var FilterQS           = $injector.get('FilterQueryString');
 
   $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('EntryListViewsController', {$scope: $scope});
   $scope.entityStatusController = $controller('EntityStatusController', {$scope: $scope});
 
-  var qs = FilterQS.create('entries');
   var entryLoader = new PromisedLoader();
 
   $scope.paginator = new Paginator();
   $scope.selection = new Selection();
-
-  $scope.resetEntries = resetEntries;
-  $scope.replaceView(qs.readView());
 
   $scope.entryCache = new EntityListCache({
     space: spaceContext.space,
@@ -59,8 +54,6 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
       scope.entries.splice(index, 1);
     }
   });
-
-  $scope.$watch('context.view', qs.update, true);
 
   $scope.$watch(function () {
     return spaceContext.publishedContentTypes.length;
@@ -119,7 +112,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     return !entry.isDeleted();
   };
 
-  function resetEntries(resetPage) {
+  $scope.resetEntries = function (resetPage) {
     if (resetPage) $scope.paginator.page = 0;
 
     return prepareQuery()
@@ -137,7 +130,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
       refreshEntityCaches();
     })
     .catch(ReloadNotification.apiErrorHandler);
-  }
+  };
 
   function refreshEntityCaches() {
     if($scope.context.view.contentTypeId){
