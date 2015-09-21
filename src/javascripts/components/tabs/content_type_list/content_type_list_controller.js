@@ -10,16 +10,14 @@ angular.module('contentful')
 
   var qs = FilterQS.create('contentTypes');
   var view = qs.readView();
-
   $scope.context.list = view.list || 'all';
   $scope.searchTerm = view.searchTerm || '';
-  $scope.updateList = updateList;
   $scope.empty = true;
 
   $scope.$watchGroup(['context.list', 'searchTerm'], function (args) {
     if (args[0] || args[1]) {
       qs.update({list: args[0], searchTerm: args[1]});
-      $scope.updateList();
+      updateList();
     }
   });
 
