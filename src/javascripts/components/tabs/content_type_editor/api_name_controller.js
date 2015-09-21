@@ -45,16 +45,15 @@ angular.module('contentful')
       return $q.when(true);
 
     return modalDialog.open({
-      title: 'Warning!',
-      message: 'Changing the ID of a published field will interrupt the delivery ' +
-               'of your content to applications that currently display it.<br><br>'+
-               'Change field ID only if you plan to update your client applications ' +
-               'as well.<br><br>'+
-               'Consult our <a href="https://support.contentful.com/hc/en-us/articles/204101273">' +
-               'Knowledge base</a> for more information on updating published Content Types.',
+      title: 'Edit field ID',
+      message: '<p>Changing the ID of a published field will interrupt the delivery ' +
+               'of your content to applications that currently display it. '+
+               'Change the field ID only if you plan to update your client applications ' +
+               'as well.</p>'+
+               '<p>Consult our <a href="https://support.contentful.com/hc/en-us/articles/204101273">' +
+               'Knowledge base</a> for more information on updating published Content Types.</p>',
       html: true,
       scope: $scope,
-      cancelLabel: 'Skip editing',
       confirmLabel: 'Edit field ID'
     }).promise.then(function () {
       controller._unlocked = true;

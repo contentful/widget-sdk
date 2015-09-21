@@ -90,12 +90,13 @@ function ContentTypeEditorController($scope, $injector) {
     isDeletable.then(function (deletable) {
       if (!deletable) {
         modalDialog.open({
-          title: 'Please be careful',
-          message: '<p>Please remove all entries linked to this content type before trying to delete ' +
-                   'a field. Fields can only be deleted on content types that have no entries ' +
-                   'associated with them.</p>' +
-                   '<p>To simply stop a field from appearing on the entry editor interface, disable it. ' +
-                   'Disabling fields can be done at any time regardless of number of associated entries.</p>'
+          title: 'This field can\'t be deleted right now.',
+          message: '<p>Please delete all entries linked to this content type before trying to delete a field. ' +
+                   'Fields can only be deleted on content types that have no entries associated with them.</p> ' +
+                   '<p>To simply stop a field from appearing on the entry editor, disable it. ' +
+                   'Disabling fields can be done at any time regardless of the number of associated entries.</p>',
+          cancelLabel: null,
+          confirmLabel: 'Okay, got it'
         });
 
       } else {

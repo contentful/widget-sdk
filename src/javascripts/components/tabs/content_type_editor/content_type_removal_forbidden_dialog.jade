@@ -7,14 +7,12 @@
     .modal-dialog__content
       .modal-dialog__richtext
         p
-          | We've found {{ count }} entries which use the <code>{{ contentTypeName }}</code> content type.<br>
-          | The content types which are used by other entries can't be deleted.<br>
-          a(href="" ng-click="explanationShown = !explanationShown") Why?
+          | We've found {{ count }} entries which use the content type <span class="modal-dialog__highlight">{{ contentTypeName }}</span>.
+          | Content types that are currently used by entries can't be deleted. <a href="" ng-click="explanationShown = !explanationShown">Why?</a>
         p(ng-show="explanationShown")
-          | This is done for the reasons of security and consistency of the content model.<br>
-          | We wouldn't know what to do with these entries otherwise.
-        p
-          strong Please delete all the entries which use this content type before deleting it.
+          | This is done for the reasons of security and consistency of the content model. We wouldn't know what to do with these entries otherwise.
+        .note-box-small.note-box--blue
+          | Delete all entries which use this content type before deleting it.
     .modal-dialog__controls
       button.cfnext-btn-primary-action(ng-click="dialog.cancel()")
         | Okay, got it

@@ -61,9 +61,9 @@ angular.module('contentful')
 
   $scope.deleteFolder = function (folder) {
     modalDialog.open({
-      title: 'Delete Folder "' + folder.title + '"?',
-      message: 'Deleting this Folder will also delete all the saved Views inside.\nIf you want to keep your views, please drag them into another folder before deleting the Folder.',
-      confirmLabel: 'Delete Folder',
+      title: 'Delete folder',
+      message: 'You are about to delete the folder <span class="modal-dialog__highlight">' + folder.title + '</span>. Deleting this Folder will also remove all the saved Views inside.\nIf you want to keep your views, please drag them into another folder before deleting the Folder.',
+      confirmLabel: 'Delete',
       scope: $scope
     }).promise.then(function () {
       _.remove($scope.folders, {id: folder.id});

@@ -32,9 +32,11 @@ function ($scope, $injector) {
     var isDisabled = !$scope.field.disabled;
     if ($scope.fieldIsTitle && isDisabled) {
       modalDialog.open({
-        title: 'Please read the text below',
-        message: 'This field is a title. Before disabling it you need '+
-                 'to choose another title field'
+        title: 'This field can\'t be disabled right now.',
+        message: 'The field <span class="modal-dialog__highlight">' + $scope.field.name + '</span> acts as a title for this content type. '+
+                 'Before disabling it you need too choose another field as title.',
+        cancelLabel: null,
+        confirmLabel: 'Okay, got it'
       });
       return;
     }
