@@ -217,9 +217,12 @@ angular.module('contentful')
     $scope.otDoc.doc.on('remoteop', updateHandler);
   }
 
-  function updateHandler(){
-    if($scope.otDoc.doc)
-      otGetEntity().setVersion($scope.otDoc.doc.version);
+  function updateHandler () {
+    if ($scope.otDoc.doc) {
+      var entity = otGetEntity();
+      entity.setVersion($scope.otDoc.doc.version);
+      entity.data.sys.updatedAt = moment().toISOString();
+    }
   }
 
   function updateIfValid() {

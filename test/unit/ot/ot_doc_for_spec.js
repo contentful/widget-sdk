@@ -299,4 +299,42 @@ describe('otDocFor', function () {
       expect(scope.otDoc.state.error).toBe(true);
     });
   });
+
+  describe('doc events', function () {
+    beforeEach(function () {
+      this.clock = sinon.useFakeTimers(1000, 'Date');
+      this.now = this.$inject('moment')();
+      this.otDoc = makeOtDocStub(this.entity.data);
+      this.openDocument.resolves(this.otDoc);
+      this.connect();
+    });
+
+    afterEach(function () {
+      this.clock.restore();
+    });
+
+    it('updates entity timestamp if operation was acknowleged', function () {
+      scope.entity.data.sys.updatedAt = null;
+      this.otDoc.on.withArgs('acknowledge').yield();
+      expect(scope.entity.data.sys.updatedAt).toEqual(this.now.toISOString());
+    });
+
+    it('updates version if operation was acknowleged', function () {
+      this.otDoc.version = 'VERSION';
+      this.otDoc.on.withArgs('acknowledge').yield();
+      sinon.assert.calledWith(scope.entity.setVersion, 'VERSION');
+    });
+
+    it('updates entity timestamp if remote operation is received', function () {
+      scope.entity.data.sys.updatedAt = null;
+      this.otDoc.on.withArgs('remoteop').yield();
+      expect(scope.entity.data.sys.updatedAt).toEqual(this.now.toISOString());
+    });
+
+    it('updates version if remote operation is received', function () {
+      this.otDoc.version = 'VERSION';
+      this.otDoc.on.withArgs('remoteop').yield();
+      sinon.assert.calledWith(scope.entity.setVersion, 'VERSION');
+    });
+  });
 });
