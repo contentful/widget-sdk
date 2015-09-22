@@ -36,7 +36,7 @@ angular.module('contentful').factory('LazyLoader', ['$injector', function ($inje
 
   /**
    * @ngdoc method
-   * @name LazyLoad#provide
+   * @name LazyLoader#provide
    * @param {string} name
    * @param {*} value
    * @description
@@ -49,7 +49,7 @@ angular.module('contentful').factory('LazyLoader', ['$injector', function ($inje
 
   /**
    * @ngdoc method
-   * @name LazyLoad#get
+   * @name LazyLoader#get
    * @param {string} name
    * @return {Promise<*>}
    * @description

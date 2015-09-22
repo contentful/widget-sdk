@@ -28,7 +28,7 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name widget/deprecations#createFilter
+   * @name widgets/deprecations#createFilter
    * @description
    * Create a filter function that removes deprecated widgets or adds
    * deprecation information

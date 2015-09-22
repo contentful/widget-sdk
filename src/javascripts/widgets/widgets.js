@@ -288,7 +288,7 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name widgts#paramDefaults
+   * @name widgets#paramDefaults
    * @param {string} widgetId
    * @param {string} widgetType
    * @returns {object}

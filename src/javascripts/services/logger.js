@@ -16,9 +16,11 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
   var toJsonReplacer = $injector.get('toJsonReplacer');
 
   function setUserInfo() {
+    // Prevents circular dependency
     var authentication = $injector.get('authentication');
+
     var user = authentication.getUser();
-    if(dotty.exists(user, 'sys.id') && bugsnag.needsUser()){
+    if (dotty.exists(user, 'sys.id') && bugsnag.needsUser()){
       bugsnag.setUser({
         id: dotty.get(user, 'sys.id'),
         firstName: dotty.get(user, 'firstName'),
@@ -127,9 +129,9 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * @name logger#logException
      * @description
      * Mostly used by the $uncaughtException service
-     * @param {Error} Exception Error object
-     * @param {Object} Metadata object. Can take any of the expected bugsnag metadata parameters.
-     * @param.data  {Object} Additional data (other objects). Shows up on the bugsnag data tab.
+     * @param {Error} exception  Exception Error object
+     * @param {Object} metadata  Metadata object. Can take any of the expected bugsnag metadata parameters.
+     * @param {Object} metadata.data  Additional data (other objects). Shows up on the bugsnag data tab.
      */
     logException: function (exception, metaData) {
       setUserInfo();
@@ -256,8 +258,24 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
       metaData = metaData || {};
       metaData.groupingHash = metaData.groupingHash || message;
       setUserInfo();
+      if (environment.env !== 'production') {
+        logToConsole(type, severity, message);
+      }
       bugsnag.notify(type, message, augmentMetadata(metaData), severity);
     }
-
   };
+
+  function logToConsole (type, severity, message) {
+    message = type + ': ' + message;
+    switch (severity) {
+      case 'error':
+        console.error(message);
+        break;
+      case 'warning':
+        console.warn(message);
+        break;
+      default:
+        console.log(message);
+    }
+  }
 }]);

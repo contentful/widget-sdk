@@ -96,7 +96,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        sinon.assert.called(notification.warn);
+        sinon.assert.called(notification.error);
         sinon.assert.called(logger.logServerWarn);
       });
     });
@@ -135,7 +135,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        sinon.assert.called(notification.warn);
+        sinon.assert.called(notification.error);
         sinon.assert.called(logger.logServerWarn);
       });
     });
@@ -174,7 +174,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        sinon.assert.called(notification.warn);
+        sinon.assert.called(notification.error);
         sinon.assert.called(logger.logServerWarn);
       });
     });
@@ -220,7 +220,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows warn notification', function() {
-        sinon.assert.called(notification.warn);
+        sinon.assert.called(notification.error);
       });
     });
 
@@ -258,7 +258,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        sinon.assert.called(notification.warn);
+        sinon.assert.called(notification.error);
       });
     });
 
@@ -290,11 +290,11 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        sinon.assert.called(notification.warn);
+        sinon.assert.called(notification.error);
       });
 
       it('gets contextual error message', function() {
-        expect(notification.warn.args[0][0]).toMatch(/version/i);
+        expect(notification.error.args[0][0]).toMatch(/version/i);
       });
     });
 
@@ -334,12 +334,10 @@ describe('Asset Actions Controller', function () {
     });
 
     describe('succeeds', function() {
-      var versionStub;
       beforeEach(function() {
         action.resolve({asset: true});
         scope.validate.returns(true);
         scope.otDoc.updateEntityData = sinon.stub();
-        versionStub = sinon.stub(asset, 'setPublishedVersion');
         controller.publish.execute();
         this.$apply();
       });
@@ -354,10 +352,6 @@ describe('Asset Actions Controller', function () {
 
       it('shows notification', function() {
         sinon.assert.called(notification.info);
-      });
-
-      it('updates ot entity', function() {
-        sinon.assert.calledWith(versionStub, 1);
       });
     });
   });

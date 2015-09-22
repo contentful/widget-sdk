@@ -79,7 +79,9 @@ function makeDocType (docs, docType) {
     name: name,
     type: 'section',
     href: path.dirname(docs[0].path),
-    docs: _.map(docs, makeNav)
+    docs: _.sortBy(_.map(docs, makeNav), function (doc) {
+      return doc.name.toLowerCase();
+    })
   };
 }
 

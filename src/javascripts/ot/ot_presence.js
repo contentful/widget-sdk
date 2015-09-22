@@ -48,7 +48,7 @@ angular.module('contentful').
 
     /**
      * @ngdoc method
-     * @name focus
+     * @name otDocPresenceController#focus
      * @param {string} fieldId
     */
     controller.focus = function(fieldId) {

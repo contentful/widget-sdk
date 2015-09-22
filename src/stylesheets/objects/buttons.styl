@@ -41,10 +41,11 @@ $button-reset()
 
 $cfnext-button($color, $shade, $text = rgba(255,255,255,1))
   $cfnext-button-layout()
-  $cfnext-button-colors($color, $shade)
+  $cfnext-button-colors($color, $text, $shade)
   $cfnext-button-loading($text)
 
 $cfnext-button-layout()
+  display: inline-block
   padding: 0.6rem 1.5rem
   cursor: pointer
   text-align: center
@@ -82,9 +83,10 @@ $cfnext-button-loading($text)
       margin-left: 5px
       margin-bottom: -2px
 
-$cfnext-button-colors($color, $shade = false)
-  color: white
+$cfnext-button-colors($color, $text, $shade = false)
   background: $color
+  &, &:link, &:hover, &:active
+    color: $text
 
   &, &:hover, &:active
     outline: 0
@@ -107,6 +109,7 @@ $cfnext-button-colors($color, $shade = false)
 $cfnext-button-large()
   font-size: 1.15rem
   padding: 1rem 2.5rem
+
 
 /*
 Action/Secondary Button
@@ -242,6 +245,42 @@ $cfnext-button-plain()
 .cfnext-btn-plain
   $cfnext-button-plain()
 
+/**
+Block button
+
+Markup:
+p
+  | Click here
+  button.cfnext-btn-primary-action.x--block Action Button
+p
+  | Loading
+  button.cfnext-btn-primary-action.x--block.is-loading Loading
+
+Styleguide 4.6
+*/
+
+$x--block()
+  display: block
+  width: 100%
+  position: relative
+  &:after
+    transition: none
+    border-width: 0
+
+$cfnext-block-button-loading()
+  &:after
+    position: absolute
+    transition: opacity .2s linear
+    border-width: 2px
+    margin-bottom: 0
+    bottom: 11px
+
+.x--block
+  $x--block()
+
+  &.is-loading
+    $cfnext-block-button-loading()
+
 
 /**
 Inline button
@@ -252,7 +291,7 @@ p
   button.cfnext-btn-inline Action Button
   | More text
 
-Styleguide 4.6
+Styleguide 4.7
 */
 $cfnext-btn-inline()
   font-size: inherit
@@ -267,6 +306,7 @@ $cfnext-btn-inline()
 
 .cfnext-btn-inline
   $cfnext-btn-inline()
+
 
 /*
 Buttons with icons
@@ -287,7 +327,7 @@ p
       img(src="/app/svg/new-ct.svg")
     | Action
 
-Styleguide 4.7
+Styleguide 4.8
 */
 
 $btn-icon()
@@ -334,7 +374,7 @@ button.cfnext-btn-primary-action.cfnext-btn--dropdown
     img(src="/app/svg/dd-arrow-down.svg")
   | More
 
-Styleguide 4.8
+Styleguide 4.9
 */
 .btn-dropdown-icon,
 .btn-dropdown-icon--up

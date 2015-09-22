@@ -4,19 +4,16 @@ angular.module('contentful')
 ['$scope', '$injector', function AssetActionsController($scope, $injector) {
   var controller = this;
 
-  var Command      = $injector.get('command');
-  var logger       = $injector.get('logger');
-  var notification = $injector.get('notification');
-  var $rootScope   = $injector.get('$rootScope');
-  var $q           = $injector.get('$q');
-  var truncate     = $injector.get('stringUtils').truncate;
+  var Command    = $injector.get('command');
+  var $rootScope = $injector.get('$rootScope');
+  var $q         = $injector.get('$q');
+  var truncate   = $injector.get('stringUtils').truncate;
+  var notifier   = $injector.get('entryActions/notifications');
 
 
-  // TODO If we are sure that the data in the asset has been updated from the ShareJS doc,
-  // We can query the asset instead of reimplementing the checks heere
-  function title() {
+  var notify = notifier(function () {
     return '“' + truncate($scope.spaceContext.assetTitle($scope.asset), 50) + '”';
-  }
+  });
 
 
   function createAssetCommand (action, run, extension) {
@@ -30,77 +27,52 @@ angular.module('contentful')
   createAssetCommand('delete', function () {
     return $scope.asset.delete()
     .then(function(asset){
-      notification.info('Asset deleted successfully');
+      notify.deleteSuccess();
       $rootScope.$broadcast('entityDeleted', asset);
     })
-    .catch(function(err){
-      notification.error('Error deleting Asset');
-      logger.logServerWarn('Error deleting Asset', {error: err });
-    });
+    .catch(notify.deleteFail);
   });
 
   createAssetCommand('archive', function () {
     return $scope.asset.archive()
-    .then(function(){
-      notification.info(title() + ' archived successfully');
-    })
-    .catch(function(err){
-      notification.warn('Error archiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logServerWarn('Error archiving asset', {error: err });
-    });
+    .then(notify.archiveSuccess, notify.archiveFail);
   });
 
   createAssetCommand('unarchive', function () {
     return $scope.asset.unarchive()
-    .then(function(){
-      notification.info(title() + ' unarchived successfully');
-    })
-    .catch(function(err){
-      notification.warn('Error unarchiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logServerWarn('Error unarchiving asset', {error: err });
-    });
+    .then(notify.unarchiveSuccess, notify.unarchiveFail);
   });
 
   createAssetCommand('unpublish', function () {
     return $scope.asset.unpublish()
     .then(function(){
-      notification.info(title() + ' unpublished successfully');
+      notify.unpublishSuccess();
       $scope.otDoc.updateEntityData();
     })
-    .catch(function(err){
-      notification.warn('Error unpublishing ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logServerWarn('Error unpublishing asset', {error: err });
-    });
+    .catch(notify.unpublishFail);
   });
 
-  createAssetCommand('publish', publish, {
-    label: getPublishCommandLabel
-  });
 
-  function publish () {
-    var version = $scope.asset.getVersion();
+  createAssetCommand('publish', function () {
     if (!$scope.validate()) {
-      notification.warn('Error publishing ' + title() + ': ' + 'Validation failed');
+      notify.publishValidationFail();
       return $q.reject();
     }
-    return $scope.asset.publish(version)
-    .then(function(){
-      $scope.asset.setPublishedVersion(version);
-      notification.info(title() + ' published successfully');
-    })
-    .catch(function(err){
-      var errorId = dotty.get(err, 'body.sys.id');
+    return $scope.asset.publish()
+    .then(notify.publishSuccess, function(error){
+      var errorId = dotty.get(error, 'body.sys.id');
       if (errorId === 'ValidationFailed') {
-        $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
-        notification.warn('Error publishing ' + title() + ': Validation failed');
+        $scope.setValidationErrors(dotty.get(error, 'body.details.errors'));
+        notify.publishValidationFail();
       } else if (errorId === 'VersionMismatch'){
-        notification.warn('Error publishing ' + title() + ': Can only publish most recent version');
+        notify.publishFail('Can only publish most recent version');
       } else {
-        notification.error('Publishing the asset has failed due to a server issue. We have been notified.');
-        logger.logServerWarn('Publishing the asset has failed due to a server issue. We have been notified.', {error: err });
+        notify.publishServerFail(error);
       }
     });
-  }
+  }, {
+    label: getPublishCommandLabel
+  });
 
   function getPublishCommandLabel () {
     var isPublished = !!$scope.asset.getPublishedAt();
@@ -110,5 +82,68 @@ angular.module('contentful')
       return 'Publish';
     }
   }
-}]);
 
+}])
+
+.factory('assetEditor/notifications', ['$injector', function ($injector) {
+  var logger       = $injector.get('logger');
+  var notification = $injector.get('notification');
+
+  return function (getTitle) {
+    return {
+      deleteSuccess: function () {
+        notification.info('Asset deleted successfully');
+      },
+
+      deleteFail: function (error) {
+        notification.error('Error deleting Asset');
+        logger.logServerWarn('Error deleting Asset', {error: error });
+      },
+
+      archiveSuccess: function () {
+        notification.info(getTitle() + ' archived successfully');
+      },
+
+      archiveFail: function (error) {
+        notification.error('Error archiving ' + getTitle() + ' (' + dotty.get(error, 'body.sys.id') + ')');
+        logger.logServerWarn('Error archiving asset', {error: error });
+      },
+
+      unarchiveSuccess: function () {
+        notification.info(getTitle() + ' unarchived successfully');
+      },
+
+      unarchiveFail: function (error) {
+        notification.error('Error unarchiving ' + getTitle() + ' (' + dotty.get(error, 'body.sys.id') + ')');
+        logger.logServerWarn('Error unarchiving asset', {error: error });
+      },
+
+      unpublishSuccess: function () {
+        notification.info(getTitle() + ' unpublished successfully');
+      },
+
+      unpublishFail: function (error) {
+        notification.error('Error unpublishing ' + getTitle() + ' (' + dotty.get(error, 'body.sys.id') + ')');
+        logger.logServerWarn('Error unpublishing asset', {error: error });
+      },
+
+      publishSuccess: function () {
+        notification.info(getTitle() + ' published successfully');
+      },
+
+      publishServerFail: function (error) {
+        notification.error('Publishing the asset has failed due to a server issue. We have been notified.');
+        logger.logServerWarn('Publishing the asset has failed due to a server issue. We have been notified.', {error: error });
+      },
+
+      publishFail: function (message) {
+        notification.error('Error publishing ' + getTitle() + ': ' + message);
+      },
+
+      publishValidationFail: function () {
+        notification.error('Error publishing ' + getTitle() + ': ' + 'Validation failed. ' +
+                           'Please check the individual fields for errors.');
+      }
+    };
+  };
+}]);
