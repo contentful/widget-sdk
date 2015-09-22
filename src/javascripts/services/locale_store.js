@@ -10,7 +10,8 @@ angular.module('contentful')
  * This service holds all context related to a space, including contentTypes,
  * locales, and helper methods.
 */
-.factory('TheLocaleStore', [function(){
+.factory('TheLocaleStore', ['$injector', function ($injector){
+  var store = $injector.get('TheStore').forKey('activeLocales');
 
   var _space = null;
   var _state = {
@@ -34,14 +35,17 @@ angular.module('contentful')
     getDefaultLocale:     getDefaultLocale,
     getActiveLocales:     getActiveLocales,
     getPrivateLocales:    getPrivateLocales,
-    setActiveStates:      setActiveStates
+    setActiveStates:      setActiveStates,
+    setActiveLocales:     setActiveLocales,
+    localeIsActive:       localeIsActive,
+    deactivateLocale:     deactivateLocale
   };
 
   /**
    * @ngdoc method
    * @name TheLocaleStore#resetWithSpace
-   * @param {Object} space
-  */
+   * @param {Client.Space} space
+   */
   function resetWithSpace(space) {
     _space = space;
     refreshLocales();
@@ -51,36 +55,45 @@ angular.module('contentful')
    * @ngdoc method
    * @name TheLocaleStore#refreshLocales
    * @description
-   * Refreshes all locale related information
-  */
+   * Updates the state of this service with the data set for the
+   * current space.
+   */
   function refreshLocales() {
     _state.privateLocales = _space.getPrivateLocales();
     _state.defaultLocale  = _space.getDefaultLocale();
-    _state.localeActiveStates[_state.defaultLocale.internal_code] = true;
-    refreshActiveLocales();
+    var storedLocaleCodes = store.get();
+    var storedLocales = _.filter(_state.privateLocales, function (locale) {
+      return _.contains(storedLocaleCodes, locale.code);
+    });
+    setActiveLocales(storedLocales);
   }
 
   /**
-   * Refreshes currently active locales list and locale states
-  */
+   * Update the list of active locales from the `localeActiveStates`
+   * hash.
+   */
   function refreshActiveLocales() {
     _state.activeLocales = _.uniq(
       _.filter(_state.privateLocales, localeIsActive),
       function(locale){return locale.internal_code;}
     );
+    store.set(_.pluck(_state.activeLocales, 'code'));
   }
 
   function localeIsActive(locale) {
-    return _state.localeActiveStates[locale.internal_code];
+    return !!_state.localeActiveStates[locale.internal_code];
   }
 
   /**
    * @ngdoc method
    * @name TheLocaleStore#getLocalesState
-   * @return {Object}
    * @description
    * Returns the current state of all the locales store information
-  */
+   *
+   * TODO This interface is deprecated. We should remove all references
+   * to it.
+   * @returns {Object}
+   */
   function getLocalesState() {
     return _state;
   }
@@ -88,17 +101,23 @@ angular.module('contentful')
   /**
    * @ngdoc method
    * @name TheLocaleStore#getDefaultLocale
-   * @return {Object}
-  */
+   * @returns {API.Locale}
+   */
   function getDefaultLocale() {
-    return _space.getDefaultLocale();
+    return _state.defaultLocale;
   }
 
   /**
    * @ngdoc method
    * @name TheLocaleStore#getActiveLocales
-   * @return {Array}
-  */
+   * @description
+   * Returns a list of all locale objects that are currently active.
+   *
+   * This is used by the Asset and Entry editor to determine which
+   * fields to display.
+   *
+   * @returns {Array<API.Locale>}
+   */
   function getActiveLocales() {
     return _state.activeLocales;
   }
@@ -106,8 +125,12 @@ angular.module('contentful')
   /**
    * @ngdoc method
    * @name TheLocaleStore#getPrivateLocales
-   * @return {Array}
-  */
+   * @description
+   * Returns a list of all locales for which content management is
+   * enabled in this space.
+   *
+   * @returns {Array<API.Locale>}
+   */
   function getPrivateLocales() {
     return _state.privateLocales;
   }
@@ -115,9 +138,37 @@ angular.module('contentful')
   /**
    * @ngdoc method
    * @name TheLocaleStore#setActiveStates
-  */
+   * @description
+   * TODO This interface is deprecated
+   */
   function setActiveStates(localeActiveStates) {
     _state.localeActiveStates = localeActiveStates;
+    refreshActiveLocales();
+  }
+
+  /**
+   * @ngdoc method
+   * @name TheLocaleStore#setActiveLocales
+   *
+   * @param {Array<API.Locale>} locales
+   *
+   * @description
+   * Activates exactly the locales in the list.
+   *
+   * ~~~js
+   * localeStore.activateLocales([{internal_code: 'en'}])
+   * assert(localeStore.isActive({internal_code: 'en'})
+   * ~~~
+   */
+  function setActiveLocales(locales) {
+    locales = locales.concat([_state.defaultLocale]);
+    setActiveStates(_.transform(locales, function (active, locale) {
+      active[locale.internal_code] = true;
+    }, {}));
+  }
+
+  function deactivateLocale (locale) {
+    delete _state.localeActiveStates[locale.internal_code];
     refreshActiveLocales();
   }
 

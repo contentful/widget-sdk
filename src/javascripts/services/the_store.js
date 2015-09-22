@@ -22,7 +22,8 @@ angular.module('contentful').factory('TheStore', ['$injector', function($injecto
     set: set,
     get: get,
     remove: remove,
-    has: has
+    has: has,
+    forKey: forKey,
   };
 
   /**
@@ -76,6 +77,31 @@ angular.module('contentful').factory('TheStore', ['$injector', function($injecto
    */
   function has(key) {
     return get(key) !== null;
+  }
+
+  /**
+   * @ngdoc method
+   * @name TheStore#forKey
+   * @param {string} key
+   * @description
+   * Returns an object with `get()` and `set()` methods that are
+   * parameterized by the `key` argument.
+   *
+   * ~~~js
+   * var mystore = theStore.forKey('mykey')
+   * theStore.set('mykey', true);
+   * assert(mystore.get() === true)
+   * mystore.set('Hello')
+   * assert(theStore.get('mykey') === 'Hello')
+   * ~~~
+   */
+  function forKey (key) {
+    return {
+      get: _.partial(get, key),
+      set: _.partial(set, key),
+      remove: _.partial(remove, key),
+      has: _.partial(has, key)
+    };
   }
 }]);
 
