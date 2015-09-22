@@ -557,19 +557,20 @@ angular.module('contentful').config([
     if (!toStateParams.addToContext) {
       $rootScope.contextHistory.length = 0;
     }
+
     // Some redirects away from nonexistent pages
-    switch(toState.name) {
-      case 'spaces.detail':
-        event.preventDefault();
-        if(_.isEmpty(toStateParams.spaceId))
-          spaceTools.goToInitialSpace();
-        else
-          $state.go('spaces.detail.entries.list', toStateParams); break;
-      case 'otherwise':
-      case 'spaces':
-        event.preventDefault();
-        spaceTools.goToInitialSpace(toStateParams.spaceId);
-        break;
+    if (toState.name === 'spaces.detail') {
+      event.preventDefault();
+      if (_.isEmpty(toStateParams.spaceId)) {
+        spaceTools.goToInitialSpace();
+      } else {
+        $state.go('spaces.detail.entries.list', toStateParams);
+      }
+    }
+
+    if (toState.name === 'otherwise' || toState.name === 'spaces') {
+      event.preventDefault();
+      spaceTools.goToInitialSpace();
     }
   }
 

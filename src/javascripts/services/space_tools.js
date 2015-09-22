@@ -14,7 +14,6 @@ angular.module('contentful').factory('spaceTools', ['$injector', function($injec
   var $state         = $injector.get('$state');
   var spaceContext   = $injector.get('spaceContext');
   var tokenStore     = $injector.get('tokenStore');
-  var notification   = $injector.get('notification');
 
   return {
     getLastUsed:      getLastUsed,
@@ -76,14 +75,13 @@ angular.module('contentful').factory('spaceTools', ['$injector', function($injec
   /**
    * @ngdoc method
    * @name spaceTools#goToInitialSpace
-   * @param {string} forcedId
    * @description
    * Determines initial space and navigates there.
    * Navigates to new space view if there are no spaces at all.
    */
-  function goToInitialSpace(forcedId) {
+  function goToInitialSpace() {
     tokenStore.getSpaces().then(function (spaceList) {
-      var space = determineInitialSpace(spaceList, forcedId);
+      var space = determineInitialSpace(spaceList);
 
       if (space) {
         goTo(space, true);
@@ -93,15 +91,11 @@ angular.module('contentful').factory('spaceTools', ['$injector', function($injec
     });
   }
 
-  function determineInitialSpace(spaceList, forcedId) {
-    var space = getFromList(forcedId || getLastUsed(), spaceList);
+  function determineInitialSpace(spaceList) {
+    var space = getFromList(getLastUsed(), spaceList);
 
     if (_.isObject(space) && _.isFunction(space.getId)) {
       return space;
-    }
-
-    if (forcedId) {
-      notification.warn('Space does not exist or is inaccessible');
     }
 
     return spaceList[0];
