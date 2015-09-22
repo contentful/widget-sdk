@@ -35,7 +35,7 @@ header.workbench-header
             td.cell-name
               a.entity-list-link(ui-sref="{{entityNavState}}") {{locale.getName()}} ({{locale.getCode()}})
             td.cell-status
-              a.status-label.entity-list-link(ui-sref="{{entityNavState}}") {{locale.isDefault() ? "Default" : ""}}
+              a.entity-list-link(ui-sref="{{entityNavState}}") {{locale.isDefault() ? "Default" : ""}}
             td.cell-enabled-for
               a.entity-list-link(ui-sref="{{entityNavState}}") {{getEnabledInfo(locale)}}
 
