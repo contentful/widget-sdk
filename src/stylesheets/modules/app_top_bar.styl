@@ -37,8 +37,9 @@ $app-top-bar__action-color()
     justify-content: space-between
     cursor: pointer;
     $app-top-bar__action-color()
-    &:hover > cf-icon[name="dd-arrow-down"] path
-      fill: $colors.blue
+    &:hover, &.is-active
+      > cf-icon[name="dd-arrow-down"] path
+        fill: $colors.blue
 
   &__action,
   &__child-action
