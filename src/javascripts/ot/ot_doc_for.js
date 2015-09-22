@@ -87,6 +87,8 @@ angular.module('contentful')
   var moment  = $injector.get('moment');
   var TheLocaleStore = $injector.get('TheLocaleStore');
 
+  var entity = $scope.$eval($attrs.otDocFor);
+
   var otDoc = {
     doc: undefined,
     state: {
@@ -95,17 +97,28 @@ angular.module('contentful')
       editable: false, // otDoc.state.editable
       error: false
     },
-    getEntity: otGetEntity,
+    // TODO should be removed from the public interface
+    getEntity: function () {
+      return entity;
+    },
     updateEntityData: otUpdateEntityData
   };
+
+
 
   $scope.otDoc = otDoc;
 
   // If the document connection state changes, this watcher is triggered
   // Connection failures during editing are handled from this point onwards.
-  $scope.$watch(function (scope) {
-    return isDocUsable(scope) ? otGetEntity() : false;
-  }, attemptToOpenOtDoc);
+  $scope.$watch(function () {
+    return shouldOpenDoc();
+  }, function (shouldOpen) {
+    if (shouldOpen) {
+      openDoc();
+    } else if (otDoc.doc) {
+      closeDoc(otDoc.doc);
+    }
+  });
 
   $scope.$watch(function () {
     return ShareJS.connectionFailed();
@@ -120,33 +133,27 @@ angular.module('contentful')
 
   $scope.$on('$destroy', handleScopeDestruction);
 
-  function isDocUsable() {
-    return ShareJS.isConnected() && !otDoc.state.disabled && !!otGetEntity();
+
+  function shouldOpenDoc() {
+    return ShareJS.isConnected() && !otDoc.state.disabled;
   }
 
-  function otGetEntity() {
-    return $scope.$eval($attrs.otDocFor);
-  }
-
-  function attemptToOpenOtDoc(entity) {
-    if (entity) {
-      ShareJS.open(entity)
-      .then(function (doc) {
-        setupClosedEventHandling(doc);
-        if (isDocUsable($scope)) {
-          otDoc.state.error = false;
-          setupOtDoc(doc);
-        } else {
-          closeDoc(doc);
-        }
-      }, function (err) {
-        otDoc.state.error = true;
-        handleOtDocOpeningFailure(err, entity);
-      });
-    } else if (otDoc.doc) {
-      closeDoc(otDoc.doc);
-    }
-
+  function openDoc() {
+    ShareJS.open(entity)
+    .then(function (doc) {
+      setupClosedEventHandling(doc);
+      // Check a second time if we have disconnected or the document
+      // has been disabled.
+      if (shouldOpenDoc()) {
+        otDoc.state.error = false;
+        setupOtDoc(doc);
+      } else {
+        closeDoc(doc);
+      }
+    }, function (err) {
+      otDoc.state.error = true;
+      handleOtDocOpeningFailure(err, entity);
+    });
   }
 
   function closeDoc(doc) {
@@ -193,7 +200,7 @@ angular.module('contentful')
     }
     delete otDoc.doc;
     otDoc.state.editable = false;
-    $scope.$emit('otBecameReadonly', otGetEntity());
+    $scope.$emit('otBecameReadonly', entity);
   }
 
 
@@ -202,7 +209,7 @@ angular.module('contentful')
     installRemoteOpListener(doc);
     otDoc.doc = doc;
     otDoc.state.editable = true;
-    $scope.$emit('otBecameEditable', otGetEntity());
+    $scope.$emit('otBecameEditable', entity);
     setVersionUpdater();
     updateIfValid();
   }
@@ -225,7 +232,6 @@ angular.module('contentful')
 
   function updateHandler () {
     if (otDoc.doc) {
-      var entity = otGetEntity();
       entity.setVersion(otDoc.doc.version);
       entity.data.sys.updatedAt = moment().toISOString();
     }
@@ -233,14 +239,13 @@ angular.module('contentful')
 
   function updateIfValid() {
     // Sanity check to make sure there's actually something in the snapshot
-    if ($scope.$eval('otDoc.doc.snapshot.sys.id')) {
+    if (dotty.get(otDoc, 'doc.snapshot.sys.id')) {
       otUpdateEntityData();
     }
   }
 
   function otUpdateEntityData() {
-    var entity = otGetEntity();
-    if (entity && otDoc.doc) {
+    if (otDoc.doc) {
       var data = _.cloneDeep(otDoc.doc.snapshot);
       if(!data) {
         throw new Error('Failed to update entity: data not available');

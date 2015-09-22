@@ -84,7 +84,8 @@ describe('otDocFor', function () {
     });
 
     it('sharejs.open is called', function(){
-      sinon.assert.called(this.openDocument);
+      sinon.assert.calledOnce(this.openDocument);
+      sinon.assert.calledWith(this.openDocument, this.entity);
     });
 
     it('sets closed event listener on doc', function () {
