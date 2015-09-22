@@ -430,7 +430,7 @@ angular.module('contentful').config([
   $stateProvider.state('spaces.detail.settings.iframe', {
     url: '',
     abstract: true,
-    template: '<div cf-space-settings class="space-settings"></div>'
+    template: '<cf-space-settings>'
   });
 
   $stateProvider.state('spaces.detail.settings.iframe.pathSuffix', {
@@ -458,7 +458,7 @@ angular.module('contentful').config([
     abstract: true,
     views: {
       'content': {
-        template: '<div cf-account-view class="account-view"></div>'
+        template: '<cf-account-view>'
       }
     }
   });
