@@ -11,7 +11,7 @@
  *
 */
 
-var JS_OUTPUT_START = "'use strict'; angular.module('contentful').constant('icons',";
+var JS_OUTPUT_START = "'use strict'; angular.module('cf.ui').constant('icons',";
 var JS_OUTPUT_END = ");";
 
 var fs = require('fs');

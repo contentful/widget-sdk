@@ -17,11 +17,10 @@ angular.module('contentful/app', ['contentful', 'cf.ui'])
 })
 
 .run([
-  'authentication', 'clientAdapter', 'ShareJS', 'iconsPreview', 'uiVersionSwitcher',
-  function(authentication, clientAdapter, ShareJS, iconsPreview, uiVersionSwitcher) {
+  'authentication', 'clientAdapter', 'ShareJS', 'uiVersionSwitcher',
+  function(authentication, clientAdapter, ShareJS, uiVersionSwitcher) {
   authentication.login();
   clientAdapter.token = authentication.token;
   ShareJS.connect();
   uiVersionSwitcher.checkIfVersionShouldBeSwitched();
-  iconsPreview();
 }]);
