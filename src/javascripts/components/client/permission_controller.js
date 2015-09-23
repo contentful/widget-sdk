@@ -62,6 +62,9 @@ function PermissionController($scope, $injector) {
    * @name PermissionController#can
    * @param {string} action
    * @param {any} entity
+   *
+   * TODO This is highly confusing: `entity` should actually look like
+   * the object in `entry.data` or `space.data`.
    */
   function can(action, entity) {
     var response = {
