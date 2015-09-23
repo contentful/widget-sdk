@@ -1,29 +1,82 @@
-.icons-metadata-dialog
-  &.modal-dialog
-    min-width: 1000px
-    height: 600px
-  .modal-dialog__richtext
-    overflow: auto
-    max-width: 980px
-    height: 500px
+/**
+Icons
 
-.icons-metadata
-  width: 100%
+Markup:
+style(type="text/css").
+  .styleguide-icon-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center
+  }
+  cf-icon { padding: 5px; }
 
-.icon-metadata
-  float: left
-  margin-right: 4px
-  margin-bottom: 4px
-  padding: 4px
-  width: 100px
-  height: 100px
-  background-color: $colors.light-gray
-  text-align: center
+Styleguide 25
+*/
 
 cf-icon
   display: block
   > svg
     display: block
+
+
+/**
+Miscellaneous
+
+Markup:
+.styleguide-icon-list
+  cf-icon(name="arrow-up" scale="2")
+  cf-icon(name="checkmark" scale="2")
+  cf-icon(name="close" scale="2")
+  cf-icon(name="dd-arrow-down-disabled" scale="2")
+  cf-icon(name="dd-arrow-down" scale="2")
+  cf-icon(name="drag-handle" scale="2")
+  cf-icon(name="fd-headings" scale="2")
+  cf-icon(name="fd-info-text" scale="2")
+  cf-icon(name="fd-separator" scale="2")
+  cf-icon(name="hint-arrow" scale="2")
+  cf-icon(name="info" scale="2")
+  cf-icon(name="lock" scale="2")
+  cf-icon(name="markdown" style="width: 40px")
+  cf-icon(name="new-ct" scale="2")
+  cf-icon(name="plus" scale="2")
+
+Styleguide 25.1
+*/
+
+cf-icon[name="dd-arrow-down"]
+  path
+    fill: white
+
+cf-icon[name="plus"]
+  circle
+    fill: $colors.blue
+
+cf-icon[name="plus"].inverted
+  circle
+    fill: white
+  path
+    stroke: $colors.blue
+
+
+/**
+Navigation
+
+Markup:
+.styleguide-icon-list
+  cf-icon(name="nav-api" scale="2")
+  cf-icon(name="nav-ct" scale="2")
+  cf-icon(name="nav-entries" scale="2")
+  cf-icon(name="nav-media" scale="2")
+  cf-icon(name="nav-settings" scale="2")
+.styleguide-icon-list
+  cf-icon(name="page-api" scale="2")
+  cf-icon(name="page-ct" scale="2")
+  cf-icon(name="page-entries" scale="2")
+  cf-icon(name="page-media" scale="2")
+  cf-icon(name="page-settings" scale="2")
+
+Styleguide 25.2
+*/
 
 cf-icon[name="nav-ct"],
 cf-icon[name="nav-entries"],
@@ -40,20 +93,66 @@ cf-icon[name="nav-api"]
     path
       fill: $colors.blue
 
-cf-icon[name="dd-arrow-down"]
-  path
-    fill: white
 
-cf-icon[name="plus"]
-  circle
-    fill: $colors.blue
+/**
+Widgets
 
-cf-icon[name="plus"].inverted
-  circle
-    fill: white
-  path
-    stroke: $colors.blue
+Markup:
+.styleguide-icon-list
+  cf-icon(name="dropdown-widget" scale="2")
+  cf-icon(name="markdown-widget" scale="2")
+  cf-icon(name="media-previews-widget" scale="2")
+  cf-icon(name="media-preview-widget" scale="2")
+  cf-icon(name="media-references-widget" scale="2")
+  cf-icon(name="media-reference-widget" scale="2")
+  cf-icon(name="multipleline-widget" scale="2")
+  cf-icon(name="number-widget" scale="2")
+  cf-icon(name="preview-widget" scale="2")
+  cf-icon(name="radio-widget" scale="2")
+  cf-icon(name="rating-widget" scale="2")
+  cf-icon(name="reference-card-widget" scale="2")
+  cf-icon(name="references-card-widget" scale="2")
+  cf-icon(name="references-widget" scale="2")
+  cf-icon(name="reference-widget" scale="2")
+  cf-icon(name="singleline-widget" scale="2")
+  cf-icon(name="slug-widget" scale="2")
+  cf-icon(name="video-preview-widget" scale="2")
+  cf-icon(name="wysiwig-widget" scale="2")
 
+Styleguide 25.3
+*/
+
+/**
+Field Icons
+
+Markup:
+.styleguide-icon-list
+  cf-icon(name="field-boolean-small" scale="2")
+  cf-icon(name="field-calendar-small" scale="2")
+  cf-icon(name="field-decimal-small" scale="2")
+  cf-icon(name="field-json-small" scale="2")
+  cf-icon(name="field-location-small" scale="2")
+  cf-icon(name="field-longtext-small" scale="2")
+  cf-icon(name="field-media-array-small" scale="2")
+  cf-icon(name="field-media-small" scale="2")
+  cf-icon(name="field-number-small" scale="2")
+  cf-icon(name="field-shorttext-array-small" scale="2")
+  cf-icon(name="field-shorttext-small" scale="2")
+  cf-icon(name="field-reference-small" scale="2")
+.styleguide-icon-list
+  cf-icon(name="field-boolean" scale="2")
+  cf-icon(name="field-calendar" scale="2")
+  cf-icon(name="field-decimal" scale="2")
+  cf-icon(name="field-json" scale="2")
+  cf-icon(name="field-location" scale="2")
+  cf-icon(name="field-longtext" scale="2")
+  cf-icon(name="field-media" scale="2")
+  cf-icon(name="field-number" scale="2")
+  cf-icon(name="field-reference" scale="2")
+  cf-icon(name="field-shorttext" scale="2")
+
+Styleguide 25.4
+*/
 cf-icon[name="field-shorttext"],
 cf-icon[name="field-shorttext-small"],
 cf-icon[name="field-longtext"],

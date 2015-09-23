@@ -81,6 +81,7 @@ angular.module('cf.ui')
    * @returns {Promise<void>}
    */
   Command.prototype.execute = function () {
+    // TODO Reject if disabled
 
     if (this._inProgress) {
       return this._inProgress;
@@ -151,13 +152,13 @@ angular.module('cf.ui')
 .directive('uiCommand', [function () {
   return {
     restrict: 'A',
-    transclude: true,
     scope: {
       command: '=uiCommand'
     },
-    link: function (scope, element, attrs, ctrl, transclude) {
-      var content = transclude(scope);
-      element.append(content);
+    template: function (element) {
+      return element.html();
+    },
+    link: function (scope, element) {
 
       if (!scope.command) {
         throw new Error('uiCommand directive requires a command');
@@ -179,6 +180,8 @@ angular.module('cf.ui')
       });
 
       scope.$watch('command.isDisabled()', function (isDisabled) {
+        // TODO what about none buttons elements?
+        // Should set aria disabled and prevent command from executing
         element.prop('disabled', isDisabled);
       });
 

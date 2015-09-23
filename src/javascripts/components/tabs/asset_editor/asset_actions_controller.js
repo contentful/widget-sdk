@@ -8,7 +8,7 @@ angular.module('contentful')
   var $rootScope = $injector.get('$rootScope');
   var $q         = $injector.get('$q');
   var truncate   = $injector.get('stringUtils').truncate;
-  var notifier   = $injector.get('entryActions/notifications');
+  var notifier   = $injector.get('assetEditor/notifications');
 
 
   var notify = notifier(function () {
