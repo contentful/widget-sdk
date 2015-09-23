@@ -10,7 +10,6 @@ angular.module('contentful')
 .controller('ContentTypeActionsController', ['$scope', '$injector',
 function ContentTypeActionsController($scope, $injector) {
   var controller   = this;
-  var $controller  = $injector.get('$controller');
   var $rootScope   = $injector.get('$rootScope');
   var analytics    = $injector.get('analytics');
   var logger       = $injector.get('logger');
@@ -21,11 +20,6 @@ function ContentTypeActionsController($scope, $injector) {
   var Command      = $injector.get('command');
   var $timeout     = $injector.get('$timeout');
   var spaceContext = $injector.get('spaceContext');
-
-  var availableActions = $controller('EntityActionsController', {
-    $scope: $scope,
-    entityType: 'contentType'
-  });
 
 
   /**
@@ -39,7 +33,7 @@ function ContentTypeActionsController($scope, $injector) {
 
   function canDelete () {
     return !$scope.context.isNew && (
-      availableActions.canUnpublish() ||
+      $scope.contentType.canUnpublish() ||
       !$scope.contentType.isPublished()
     );
   }
