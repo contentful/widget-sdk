@@ -18,17 +18,21 @@ describe('cfMarkdownEditorBridge', function () {
 
     var elem = this.$compile('<cf-markdown-editor-bridge />', scopeProps);
     scope = elem.scope();
-    textarea = elem.find('.markdown-transfer-textarea').get(0);
+    textarea = elem.find('.markdown-transfer-textarea');
   });
 
-  it('Dispatches paste event on model change', function () {
+  it('Dispatches input and paste events on model change', function () {
+    var inputSpy = sinon.stub();
     var pasteSpy = sinon.stub();
-    textarea.addEventListener('paste', pasteSpy, false);
-    scope.fieldData.value = 'test';
+    textarea.on('input', inputSpy);
+    textarea.on('paste', pasteSpy);
+    scope.editorFieldData.value = 'test';
     scope.$apply();
+    sinon.assert.calledOnce(inputSpy);
     sinon.assert.calledOnce(pasteSpy);
-    scope.fieldData.value = 'test2';
+    scope.editorFieldData.value = 'test2';
     scope.$apply();
+    sinon.assert.calledTwice(inputSpy);
     sinon.assert.calledTwice(pasteSpy);
   });
 });
