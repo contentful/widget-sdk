@@ -53,9 +53,6 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
   }, function entryEditorEnabledHandler(enabled, old, scope) {
     scope.otDoc.state.disabled = !enabled;
   });
-  $scope.$on('otRemoteOp', function (event) {
-    event.currentScope.otDoc.updateEntityData();
-  });
 
   // Validations
   $scope.errorPaths = {};
@@ -156,6 +153,10 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
 
   // Prevents badly created fields via the API from breaking the editor
   function cleanupEntryFields(contentTypeFields) {
+    // FIXME Because of the `::` eval once feature of AngularJS this
+    // code highly relies on undefined vs. falsy semantics and hides
+    // the fact that we only want to execute this once.
+    // Instead We should remove the watcher once the cleanup is done.
     $scope.$watchGroup(['::entry', '::otDoc.doc'], function (values) {
       if(!_.isEmpty($scope.entry.data.fields) && areValuesDefined(values)){
         _.each($scope.entry.data.fields, _.partial(setupFieldLocales, contentTypeFields));

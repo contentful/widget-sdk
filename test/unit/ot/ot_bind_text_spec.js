@@ -8,7 +8,7 @@ describe('otBindText', function () {
       mkpathAndSetValue: sinon.stub().yieldsAsync(null),
       peek: sinon.stub().returns('xx'),
       isConnected: sinon.stub().returns(true),
-      connectionFailed: sinon.stub().returns(true),
+      connectionFailed: sinon.stub().returns(false),
       open: sinon.stub()
     });
     $provide.value('ReloadNotification', {
@@ -31,9 +31,7 @@ describe('otBindText', function () {
     $rootScope.entity = {value: 'xx'};
     elem = $compile('<input type="text" ng-model="entity.value" ot-doc-for="entity" ot-path="[\'value\']" ot-bind-text>')($rootScope);
     scope = elem.scope();
-    scope.otDoc = {
-      state: { disabled: false }
-    };
+    scope.otDoc.state.disabled = false;
     controller = elem.controller('ngModel');
   }));
 

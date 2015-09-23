@@ -63,32 +63,6 @@ describe('otDocFor', function () {
     expect(scope.otDoc.doc).toBeUndefined();
   });
 
-  describe('if otDoc.doc changes', function(){
-    beforeEach(function(){
-      this.disconnect();
-      sinon.stub(scope, '$broadcast');
-      this.oldDoc = makeOtDocStub();
-      scope.otDoc.doc = this.oldDoc;
-      this.$apply();
-
-      this.newDoc = makeOtDocStub();
-      scope.otDoc.doc = this.newDoc;
-      this.$apply();
-    });
-
-    it('doc is set as editable', function(){
-      expect(scope.otDoc.state.editable).toBe(true);
-    });
-
-    it('removes old remote op listener', function(){
-      sinon.assert.calledWith(this.oldDoc.removeListener, 'remoteop');
-    });
-
-    it('sets up remote op listener', function(){
-      sinon.assert.calledWith(this.newDoc.on, 'remoteop');
-    });
-  });
-
   describe('successful initialization flow', function(){
     beforeEach(function(){
       var localeStore = this.$inject('TheLocaleStore');
@@ -110,7 +84,8 @@ describe('otDocFor', function () {
     });
 
     it('sharejs.open is called', function(){
-      sinon.assert.called(this.openDocument);
+      sinon.assert.calledOnce(this.openDocument);
+      sinon.assert.calledWith(this.openDocument, this.entity);
     });
 
     it('sets closed event listener on doc', function () {
@@ -148,10 +123,8 @@ describe('otDocFor', function () {
       this.connect();
 
       this.closeStub = sinon.stub();
-      scope.otDoc.doc = {
-        close: this.closeStub,
-        on: sinon.stub()
-      };
+      this.otDoc = makeOtDocStub();
+      scope.otDoc.doc = this.otDoc;
       this.disconnect();
     });
 
@@ -160,10 +133,10 @@ describe('otDocFor', function () {
     });
 
     it('otdoc is closed', function(){
-      sinon.assert.called(this.closeStub);
+      sinon.assert.called(this.otDoc.close);
     });
 
-    it('otdoc.doc is reset', function(){
+    it('otdoc.doc is removed', function(){
       expect(scope.otDoc.doc).toBeUndefined();
     });
   });
@@ -264,7 +237,7 @@ describe('otDocFor', function () {
     });
 
     it('removes the remote op listener', function(){
-      sinon.assert.called(this.otDoc.removeListener);
+      sinon.assert.calledWith(this.otDoc.removeListener, 'remoteop');
     });
 
     it('closes the doc', function(){
@@ -297,6 +270,44 @@ describe('otDocFor', function () {
       scope.otDoc.state.error = false;
       this.$apply();
       expect(scope.otDoc.state.error).toBe(true);
+    });
+  });
+
+  describe('doc events', function () {
+    beforeEach(function () {
+      this.clock = sinon.useFakeTimers(1000, 'Date');
+      this.now = this.$inject('moment')();
+      this.otDoc = makeOtDocStub(this.entity.data);
+      this.openDocument.resolves(this.otDoc);
+      this.connect();
+    });
+
+    afterEach(function () {
+      this.clock.restore();
+    });
+
+    it('updates entity timestamp if operation was acknowleged', function () {
+      scope.entity.data.sys.updatedAt = null;
+      this.otDoc.on.withArgs('acknowledge').yield();
+      expect(scope.entity.data.sys.updatedAt).toEqual(this.now.toISOString());
+    });
+
+    it('updates version if operation was acknowleged', function () {
+      this.otDoc.version = 'VERSION';
+      this.otDoc.on.withArgs('acknowledge').yield();
+      sinon.assert.calledWith(scope.entity.setVersion, 'VERSION');
+    });
+
+    it('updates entity timestamp if remote operation is received', function () {
+      scope.entity.data.sys.updatedAt = null;
+      this.otDoc.on.withArgs('remoteop').yield();
+      expect(scope.entity.data.sys.updatedAt).toEqual(this.now.toISOString());
+    });
+
+    it('updates version if remote operation is received', function () {
+      this.otDoc.version = 'VERSION';
+      this.otDoc.on.withArgs('remoteop').yield();
+      sinon.assert.calledWith(scope.entity.setVersion, 'VERSION');
     });
   });
 });

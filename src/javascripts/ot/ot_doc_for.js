@@ -87,7 +87,9 @@ angular.module('contentful')
   var moment  = $injector.get('moment');
   var TheLocaleStore = $injector.get('TheLocaleStore');
 
-  $scope.otDoc = {
+  var entity = $scope.$eval($attrs.otDocFor);
+
+  var otDoc = {
     doc: undefined,
     state: {
       // initialized to true to prevent editing until otDoc is ready
@@ -95,19 +97,27 @@ angular.module('contentful')
       editable: false, // otDoc.state.editable
       error: false
     },
-    getEntity: otGetEntity,
+    // TODO should be removed from the public interface
+    getEntity: function () {
+      return entity;
+    },
     updateEntityData: otUpdateEntityData
   };
 
+
+
+  $scope.otDoc = otDoc;
+
   // If the document connection state changes, this watcher is triggered
   // Connection failures during editing are handled from this point onwards.
-  $scope.$watch(function (scope) {
-    return isDocUsable(scope) ? otGetEntity() : false;
-  }, attemptToOpenOtDoc);
-
-  $scope.$watch('otDoc.doc', function (otDoc, old, scope) {
-    setupRemoteOpListeners(otDoc, old);
-    scope.otDoc.state.editable = !!otDoc;
+  $scope.$watch(function () {
+    return shouldOpenDoc();
+  }, function (shouldOpen) {
+    if (shouldOpen) {
+      openDoc();
+    } else if (otDoc.doc) {
+      closeDoc(otDoc.doc);
+    }
   });
 
   $scope.$watch(function () {
@@ -117,44 +127,33 @@ angular.module('contentful')
     // opening. Therefore we only set the error to `true` and to to
     // `failed`.
     if (failed) {
-      $scope.otDoc.state.error = true;
+      otDoc.state.error = true;
     }
   });
 
-  $scope.$watch('otDoc.state.editable', handleEditableState);
   $scope.$on('$destroy', handleScopeDestruction);
 
-  function resetOtDoc() {
-    $scope.otDoc.doc = undefined;
+
+  function shouldOpenDoc() {
+    return ShareJS.isConnected() && !otDoc.state.disabled;
   }
 
-  function isDocUsable(scope) {
-    return ShareJS.isConnected() && !scope.otDoc.state.disabled && !!otGetEntity();
-  }
-
-  function otGetEntity() {
-    return $scope.$eval($attrs.otDocFor);
-  }
-
-  function attemptToOpenOtDoc(entity) {
-    if (entity) {
-      ShareJS.open(entity)
-      .then(function (doc) {
-        setupClosedEventHandling(doc);
-        if (isDocUsable($scope)) {
-          $scope.otDoc.state.error = false;
-          setupOtDoc(doc);
-        } else {
-          closeDoc(doc);
-        }
-      }, function (err) {
-        $scope.otDoc.state.error = true;
-        handleOtDocOpeningFailure(err, entity);
-      });
-    } else if ($scope.otDoc.doc) {
-      closeDoc($scope.otDoc.doc);
-    }
-
+  function openDoc() {
+    ShareJS.open(entity)
+    .then(function (doc) {
+      setupClosedEventHandling(doc);
+      // Check a second time if we have disconnected or the document
+      // has been disabled.
+      if (shouldOpenDoc()) {
+        otDoc.state.error = false;
+        setupOtDoc(doc);
+      } else {
+        closeDoc(doc);
+      }
+    }, function (err) {
+      otDoc.state.error = true;
+      handleOtDocOpeningFailure(err, entity);
+    });
   }
 
   function closeDoc(doc) {
@@ -194,9 +193,23 @@ angular.module('contentful')
     });
   }
 
+
+  function resetOtDoc() {
+    if (otDoc.doc) {
+      removeRemoteOpListener(otDoc.doc);
+    }
+    delete otDoc.doc;
+    otDoc.state.editable = false;
+    $scope.$emit('otBecameReadonly', entity);
+  }
+
+
   function setupOtDoc(doc) {
     filterDeletedLocales(doc.snapshot);
-    $scope.otDoc.doc = doc;
+    installRemoteOpListener(doc);
+    otDoc.doc = doc;
+    otDoc.state.editable = true;
+    $scope.$emit('otBecameEditable', entity);
     setVersionUpdater();
     updateIfValid();
   }
@@ -213,26 +226,27 @@ angular.module('contentful')
   }
 
   function setVersionUpdater() {
-    $scope.otDoc.doc.on('acknowledge', updateHandler);
-    $scope.otDoc.doc.on('remoteop', updateHandler);
+    otDoc.doc.on('acknowledge', updateHandler);
+    otDoc.doc.on('remoteop', updateHandler);
   }
 
-  function updateHandler(){
-    if($scope.otDoc.doc)
-      otGetEntity().setVersion($scope.otDoc.doc.version);
+  function updateHandler () {
+    if (otDoc.doc) {
+      entity.setVersion(otDoc.doc.version);
+      entity.data.sys.updatedAt = moment().toISOString();
+    }
   }
 
   function updateIfValid() {
     // Sanity check to make sure there's actually something in the snapshot
-    if ($scope.$eval('otDoc.doc.snapshot.sys.id')) {
+    if (dotty.get(otDoc, 'doc.snapshot.sys.id')) {
       otUpdateEntityData();
     }
   }
 
   function otUpdateEntityData() {
-    var entity = otGetEntity();
-    if (entity && $scope.otDoc.doc) {
-      var data = _.cloneDeep($scope.otDoc.doc.snapshot);
+    if (otDoc.doc) {
+      var data = _.cloneDeep(otDoc.doc.snapshot);
       if(!data) {
         throw new Error('Failed to update entity: data not available');
       }
@@ -240,12 +254,12 @@ angular.module('contentful')
         throw new Error('Failed to update entity: sys not available');
       }
 
-      if ($scope.otDoc.doc.version > entity.getVersion()) {
+      if (otDoc.doc.version > entity.getVersion()) {
         data.sys.updatedAt = moment().toISOString();
       } else {
         data.sys.updatedAt = entity.data.sys.updatedAt;
       }
-      data.sys.version = $scope.otDoc.doc.version;
+      data.sys.version = otDoc.doc.version;
       entity.update(data);
     } else {
       logger.logSharejsError('otUpdateEntityData did not update', {
@@ -257,21 +271,13 @@ angular.module('contentful')
     }
   }
 
-  function handleEditableState(editable, old, scope) {
-    if (editable) {
-      scope.$emit('otBecameEditable', otGetEntity());
-    } else {
-      scope.$emit('otBecameReadonly', otGetEntity());
-    }
+  function installRemoteOpListener (doc) {
+    doc.on('remoteop', remoteOpListener);
+
   }
 
-  function setupRemoteOpListeners(doc, old) {
-    if (old) {
-      old.removeListener('remoteop', remoteOpListener);
-    }
-    if (doc) {
-      doc.on('remoteop', remoteOpListener);
-    }
+  function removeRemoteOpListener (doc) {
+    doc.removeListener('remoteop', remoteOpListener);
   }
 
   function remoteOpListener(ops) {
@@ -279,15 +285,14 @@ angular.module('contentful')
       _.each(ops, function (op) {
         scope.$broadcast('otRemoteOp', op);
       });
+      otUpdateEntityData();
     });
   }
 
-  function handleScopeDestruction(event) {
-    var scope = event.currentScope;
-    if (scope.otDoc.doc) {
-      scope.otDoc.doc.removeListener(remoteOpListener);
-      remoteOpListener = null;
-      closeDoc(scope.otDoc.doc);
+  function handleScopeDestruction() {
+    if (otDoc.doc) {
+      closeDoc(otDoc.doc);
+      resetOtDoc(otDoc.doc);
     }
   }
 
