@@ -174,6 +174,7 @@ angular.module('contentful').config([
     controller: ['$state', '$scope', '$stateParams', 'asset', function ($state, $scope, $stateParams, asset) {
       $state.current.data = $scope.context = {};
       $scope.asset = asset;
+      $scope.entity = asset;
 
       if (!$scope.$root.contextHistory.length ||
           $stateParams.addToContext) {

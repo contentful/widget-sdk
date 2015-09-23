@@ -1,3 +1,5 @@
+include ../entity_editor/entity_editor.mixins.jade
+
 header.workbench-header
   cf-icon.workbench-header__icon(name="page-media")
   h1.workbench-header__title
@@ -8,95 +10,38 @@ header.workbench-header
       href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
 
   .workbench-header__actions
-    button.cfnext-btn-secondary-action(type="button"
-      ng-click="preferences.toggleAuxPanel()"
-      ng-class="{active: preferences.showAuxPanel}")
-      | Info
-    .dropdown-btn(ng-show="localesState.privateLocales.length > 0")
-      button.cfnext-btn-secondary-action(
-        cf-context-menu-trigger
-        data-test-id="asset-view-menu-trigger")
-        cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-        | View
-      .context-menu(
-        role="menu" cf-context-menu="bottom-right"
-        aria-label="Configure Asset View" data-test-id="asset-view-menu")
-        cf-icon.context-menu__arrow.x--top-right(name="arrow-up")
-        ul.lang-switcher
-          label.context-menu__item(
-            role="menuitemcheckbox"
-            ng-repeat="locale in localesState.privateLocales track by locale.sys.id")
-            input(type="checkbox"
-              ng-disabled="locale == localesState.defaultLocale"
-              ng-model="localesState.localeActiveStates[locale.internal_code]")
-            | {{locale.name}}
-            span(ng-show="locale == localesState.defaultLocale")
-              | &nbsp;(default)
+    button.cfnext-btn-secondary-action(
+      ui-command-state="state.delete"
+      cf-context-menu-trigger)
+      | Delete
+    +entity-delete-confirm-menu
+    +editor-info-toggle
 
-.workbench-panel(ng-show="preferences.showAuxPanel")
-  header
-    h1 Asset Information
-  .entity-info-panel(cf-entity-info-panel="otDoc.doc.snapshot.sys")
 
-.workbench-main.x--content(
-  ng-class="{'x--panel': preferences.showAuxPanel}")
-  form.l-form(name="assetForm")
-    .l-form-row--no-label(ng-show="hasErrorOnFields")
-      .l-form-controls
-        cf-error-list.form-box-error(cf-error-path="['fields']")
-    cf-form-widget.l-form-row(ng-repeat="widget in widgets track by widget.id"
-        data-field-id="{{field.id}}"
-        ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
-      label {{field.name}}
-        sup(ng-show="field.required")  (required)
-      .l-form-controls
-        .l-form-locale(ng-repeat="locale in locales track by locale.internal_code"
-            ot-field-presence="['fields', widget.field.id, locale.internal_code]"
-            data-locale="{{locale.internal_code}}")
-          cf-widget-renderer.l-field-editor(
-            cf-focus-ot-input="widgetIndex===0"
-            cf-field-editor="asset.data.fields[field.id][locale.internal_code]"
-            ot-path="['fields', field.id, locale.internal_code]")
-          .locale-label(ng-show="locales.length > 1") {{locale.name}}
-          .field-collaborators
-            ul
-              li.avatar(cf-user ng-repeat="link in otFieldPresence.users track by link.sys.id"
-                                 link="link" as="presentUser"
-                                 tooltip="{{presentUser| userNameDisplay:user}}")
-                img(ng-src="{{presentUser.avatarUrl}}")
-          cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.internal_code,'*']")
-        cf-error-list.form-box-error(cf-error-path="['fields', field.id]")
+.workbench-main
+  .workbench-main__middle-content
+    +editor-notification
 
-.workbench-actions(ng-controller="AssetActionsController as actions")
-  .workbench__save-status(cf-save-status)
-  .workbench__active-users
-    span(ng-show="otPresence.users.length == 0"
-          tooltip="Edit collaboratively by inviting more users into your space. Go to Settings → Users → Invite New User to invite people.")
-      | No other users online
-    ul(ng-show="otPresence.users.length > 0")
-      li.avatar(cf-user ng-repeat="link in otPresence.users track by link.sys.id"
-                         link="link" as="presentUser"
-                         tooltip="{{presentUser| userNameDisplay:user}}")
-        img(ng-src="{{user.data.avatarUrl}}")
-    a.cfnext-btn-secondary-action.invite-users(ui-sref="spaces.detail.settings.iframe.pathSuffix({ pathSuffix: 'users/new/' })")
-      i.fa.fa-user
-      i.fa.fa-plus
+    form.entity-editor-form(name="assetForm")
+      .l-form-row--no-label(ng-show="hasErrorOnFields")
+        .l-form-controls
+          cf-error-list.form-box-error(cf-error-path="['fields']")
+      cf-form-widget.l-form-row(ng-repeat="widget in widgets track by widget.id"
+          data-field-id="{{field.id}}"
+          ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
+        label {{field.name}}
+          sup(ng-show="field.required")  (required)
+        .l-form-controls
+          .l-form-locale(ng-repeat="locale in locales track by locale.internal_code"
+              ot-field-presence="['fields', widget.field.id, locale.internal_code]"
+              data-locale="{{locale.internal_code}}")
+            cf-widget-renderer.l-field-editor(
+              cf-focus-ot-input="widgetIndex===0"
+              cf-field-editor="asset.data.fields[field.id][locale.internal_code]"
+              ot-path="['fields', field.id, locale.internal_code]")
+            .locale-label(ng-show="locales.length > 1") {{locale.name}}
+            +editor-field-collaborators
+            cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.internal_code,'*']")
+          cf-error-list.form-box-error(cf-error-path="['fields', field.id]")
 
-  button.cfnext-btn-secondary-action(type="button"
-    ng-show="actions.delete.isAvailable()"
-    cf-context-menu-trigger
-    data-test-id="delete-asset")
-    | Delete
-  .delete-confirm(cf-context-menu="top")
-    cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
-    p You are about to delete {{ title }}
-    button.cfnext-btn-caution(ui-command="actions.delete") Delete
-    button.cfnext-btn-secondary-action(type="button") Don't Delete
-  button.cfnext-btn-secondary-action(ui-command="actions.archive")
-    | Archive
-  button.cfnext-btn-secondary-action(ui-command="actions.unarchive")
-    | Unarchive
-  button.cfnext-btn-secondary-action(ui-command="actions.unpublish")
-    | Unpublish
-  button.cfnext-btn-primary-action.publish(ui-command="actions.publish")
-    | {{ command.label() }}
+  +entity-sidebar(revert=false)
