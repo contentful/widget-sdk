@@ -1,18 +1,24 @@
 'use strict';
 
-angular.module('contentful').run(['$window', '$rootScope', '$sce', function($window, $rootScope, $sce){
+angular.module('contentful').run(['$injector', function ($injector) {
+
+  var $window    = $injector.get('$window');
+  var $rootScope = $injector.get('$rootScope');
+  var $sce       = $injector.get('$sce');
+  var userAgent  = $injector.get('userAgent');
+
   // Listen to message from child window
-  $window.addEventListener('message', function(event) {
-    try{
+  $window.addEventListener('message', function (event) {
+    try {
       $sce.getTrustedResourceUrl(event.origin); // important security check
     } catch (e) {
       return;
     }
 
-    if ($window.navigator && $window.navigator.userAgent && $window.navigator.userAgent.match(/MSIE/)) {
+    if (userAgent.is('ie')) {
       event = {
         data: JSON.parse(event.data),
-        source: event.source,
+        source: event.source
       };
     }
 
@@ -24,5 +30,5 @@ angular.module('contentful').run(['$window', '$rootScope', '$sce', function($win
       scope.$broadcast('iframeMessage', event.data, iframe);
     });
 
-  },false);
+  }, false);
 }]);

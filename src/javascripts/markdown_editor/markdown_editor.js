@@ -62,7 +62,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       getWrapper:      function () { return editor; }
     };
 
-    addKeyShortcuts({
+    editor.addKeyShortcuts({
       'B': api.actions.bold,
       'I': api.actions.italic,
       'Alt-1': api.actions.h1,
@@ -110,15 +110,6 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
         var info = editor.getScrollInfo();
         editor.getEditor().scrollTo(null, position*info.height);
       });
-    }
-
-    function addKeyShortcuts(map) {
-      var extension = {};
-      _.forEach(map, function (value, key) {
-        extension['Ctrl-' + key] = value;
-        extension['Cmd-'  + key] = value;
-      });
-      editor.getEditor().addKeyMap(extension);
     }
 
     /**
