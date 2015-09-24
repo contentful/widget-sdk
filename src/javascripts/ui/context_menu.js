@@ -72,7 +72,7 @@ angular.module('cf.ui')
     var $trigger = getMenuTrigger($(event.target));
     var toOpen;
 
-    if ($trigger) {
+    if ($trigger && $trigger.attr('aria-disabled') !== 'true') {
       var menu = getAttachedMenu($trigger);
       event.preventDefault();
       if (!menu.data('menuOpen')) {
