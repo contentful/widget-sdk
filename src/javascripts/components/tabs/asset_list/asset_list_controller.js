@@ -57,7 +57,6 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
     return !$scope.permissionController.get('createAsset', 'shouldHide');
   };
 
-
   var throttledListRefresh = throttle(function () {
     delay(function () {
       $scope.searchController.resetAssets();

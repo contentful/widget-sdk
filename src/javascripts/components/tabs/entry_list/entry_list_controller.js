@@ -10,34 +10,27 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   var Selection          = $injector.get('Selection');
   var analytics          = $injector.get('analytics');
   var modalDialog        = $injector.get('modalDialog');
-  var searchQueryHelper  = $injector.get('searchQueryHelper');
+  var ListQuery          = $injector.get('ListQuery');
   var logger             = $injector.get('logger');
-  var TheLocaleStore     = $injector.get('TheLocaleStore');
+  var spaceContext       = $injector.get('spaceContext');
 
   $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('EntryListViewsController', {$scope: $scope});
   $scope.entityStatusController = $controller('EntityStatusController', {$scope: $scope});
 
-  var ORDER_PREFIXES = {
-    'descending': '-',
-    'ascending': '',
-  };
-
   var entryLoader = new PromisedLoader();
-
-  $scope.entrySection = 'all';
 
   $scope.paginator = new Paginator();
   $scope.selection = new Selection();
 
   $scope.entryCache = new EntityListCache({
-    space: $scope.spaceContext.space,
+    space: spaceContext.space,
     entityType: 'Entry',
     limit: 5
   });
 
   $scope.assetCache = new EntityListCache({
-    space: $scope.spaceContext.space,
+    space: spaceContext.space,
     entityType: 'Asset',
     limit: 3
   });
@@ -50,8 +43,8 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   };
 
   $scope.getSearchContentType = function () {
-    var id = $scope.context && $scope.context.view && $scope.context.view.contentTypeId;
-    return $scope.spaceContext && $scope.spaceContext.getPublishedContentType && $scope.spaceContext.getPublishedContentType(id);
+    var id = dotty.get($scope, 'context.view.contentTypeId');
+    return spaceContext.getPublishedContentType(id);
   };
 
   $scope.$on('entityDeleted', function (event, entity) {
@@ -62,12 +55,11 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     }
   });
 
-  $scope.$watch('spaceContext.publishedContentTypes.length', function (count) {
-    if(count === 1)
-      $scope.singleContentType = $scope.spaceContext.publishedContentTypes[0];
-    else
-      $scope.singleContentType = null;
-  }, true);
+  $scope.$watch(function () {
+    return spaceContext.publishedContentTypes.length;
+  }, function (count) {
+    $scope.singleContentType = count !== 1 ? null : spaceContext.publishedContentTypes[0];
+  });
 
   $scope.$watch(function pageParameters(scope){
     return {
@@ -75,7 +67,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
       page: scope.paginator.page,
       pageLength: scope.paginator.pageLength,
       contentTypeId: scope.context.view.contentTypeId,
-      spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())
+      spaceId: (spaceContext.space && spaceContext.space.getId())
     };
   }, function(pageParameters, old, scope){
     scope.resetEntries(pageParameters.page === old.page);
@@ -96,7 +88,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     try {
       var id = dotty.get($scope, 'context.view.contentTypeId');
       if (!id) return or;
-      var ct = $scope.spaceContext.getPublishedContentType(id);
+      var ct = spaceContext.getPublishedContentType(id);
       if (!ct) return or;
       return ct.getName();
     } catch (e) {
@@ -111,7 +103,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   };
 
   $scope.displayFieldForFilteredContentType = function () {
-    return $scope.spaceContext.displayFieldForType($scope.context.view.contentTypeId);
+    return spaceContext.displayFieldForType($scope.context.view.contentTypeId);
   };
 
   // TODO this code is duplicated in the asset list controller
@@ -120,15 +112,17 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     return !entry.isDeleted();
   };
 
-  $scope.resetEntries = function(resetPage) {
+  $scope.resetEntries = function (resetPage) {
     if (resetPage) $scope.paginator.page = 0;
-    return buildQuery()
+
+    return prepareQuery()
     .then(function (query) {
       return entryLoader.loadPromise(function(){
-        return $scope.spaceContext.space.getEntries(query);
+        return spaceContext.space.getEntries(query);
       });
     })
     .then(function (entries) {
+      $scope.context.ready = true;
       $scope.paginator.numEntries = entries.total;
       $scope.entries = entries;
       $scope.selection.switchBaseSet($scope.entries.length);
@@ -147,56 +141,6 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     }
   }
 
-  function getOrderQuery() {
-    var path = $scope.context.view;
-    return ORDER_PREFIXES[path.order.direction] + getFieldPath(path.order.fieldId);
-  }
-
-  function getFieldPath(fieldId) {
-    /* jshint boss:true */
-    var field;
-    // Usually we use a system field for ordering
-    if (field = findSysField(fieldId)) {
-      return 'sys.'+fieldId;
-    } else {
-      // If the user has defined a custom field for ordering
-      var contentType = $scope.spaceContext.getPublishedContentType($scope.context.view.contentTypeId);
-      field = _.find(contentType.data.fields, {id: fieldId});
-      if(field){
-        var defaultLocale = TheLocaleStore.getDefaultLocale().internal_code;
-        return 'fields.'+apiNameOrId(field)+'.'+defaultLocale;
-      } else {
-        // In case the custom field saved in the view does not exist anymore
-        var defaultFieldId = $scope.getDefaultOrderFieldId();
-        field = findSysField(defaultFieldId);
-        return 'sys.'+defaultFieldId;
-      }
-    }
-  }
-
-  function findSysField(fieldId) {
-    return _.find($scope.systemFields, {id: fieldId});
-  }
-
-  function buildQuery() {
-    var contentType;
-    var queryObject = {
-      order: getOrderQuery(),
-      limit: $scope.paginator.pageLength,
-      skip: $scope.paginator.skipItems()
-    };
-
-    if ($scope.context.view.contentTypeId) {
-      contentType = $scope.spaceContext.getPublishedContentType($scope.context.view.contentTypeId);
-    }
-
-    return searchQueryHelper.buildQuery($scope.spaceContext.space, contentType, $scope.context.view.searchTerm)
-    .then(function (searchQuery) {
-      _.extend(queryObject, searchQuery);
-      return queryObject;
-    });
-  }
-
   // TODO this code is duplicated in the asset list controller
   $scope.showNoEntriesAdvice = function () {
     var view = $scope.context.view;
@@ -208,7 +152,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
 
   // TODO this code is duplicated in the asset list controller
   $scope.showCreateEntryButton = function () {
-    var hasContentTypes = !_.isEmpty($scope.spaceContext.publishedContentTypes);
+    var hasContentTypes = !_.isEmpty(spaceContext.publishedContentTypes);
     var hideCreateEntry = $scope.permissionController.get('createEntry', 'shouldHide');
     return hasContentTypes && !hideCreateEntry;
   };
@@ -217,12 +161,12 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     if ($scope.paginator.atLast()) return;
     $scope.paginator.page++;
     var queryForDebug;
-    return buildQuery()
+    return prepareQuery()
     .then(function (query) {
       analytics.track('Scrolled EntryList');
       queryForDebug = query;
       return entryLoader.loadPromise(function(){
-        return $scope.spaceContext.space.getEntries(query);
+        return spaceContext.space.getEntries(query);
       });
     })
     .then(function (entries) {
@@ -245,6 +189,17 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     })
     .catch(ReloadNotification.apiErrorHandler);
   };
+
+  function prepareQuery() {
+    var view = $scope.context.view;
+
+    return ListQuery.getForEntries({
+      contentTypeId: view.contentTypeId,
+      order:         view.order,
+      searchTerm:    view.searchTerm,
+      paginator:     $scope.paginator
+    });
+  }
 
   var narrowFieldTypes = [
     'integer',
@@ -269,17 +224,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     return 'cell-'+ type +sizeClass;
   };
 
-  $scope.resetEntries();
-
   $scope.$on('templateWasCreated', function () {
     $scope.resetEntries();
   });
-
-  function apiNameOrId(field) {
-    if (field.apiName) {
-      return field.apiName;
-    } else {
-      return field.id;
-    }
-  }
 }]);

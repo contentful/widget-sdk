@@ -31,15 +31,13 @@ describe('apiKeyEditor Directive', function () {
       $provide.constant('environment', environmentMock);
     });
 
-    inject(function ($compile, $rootScope, enforcements) {
+    inject(function ($compile, $rootScope, enforcements, spaceContext) {
       scope = $rootScope.$new();
       scope.otDoc = {doc: {}, state: {}};
 
-      scope.spaceContext = {
-        space: {
-          data: {sys: {createdBy: {sys: {id: ''}}}},
-          getId: stubs.spaceGetId
-        }
+      spaceContext.space = {
+        data: {sys: {createdBy: {sys: {id: ''}}}},
+        getId: stubs.spaceGetId
       };
       stubs.spaceGetId.returns('spaceid');
       scope.context = {};
@@ -47,8 +45,6 @@ describe('apiKeyEditor Directive', function () {
         data: {},
         getId: stubs.apiKeyGetId
       };
-
-      enforcements.setSpaceContext(scope.spaceContext);
 
       scope.permissionController = {
         get: sinon.stub(),

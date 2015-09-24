@@ -20,11 +20,6 @@ angular.module('contentful').controller('SpaceController', ['$scope', '$injector
     if (!_.isEmpty(codes)) TheLocaleStore.refreshLocales();
   }, true);
 
-  $scope.$watch('spaceContext', function(space, o, scope) {
-    enforcements.setSpaceContext(scope.spaceContext);
-    scope.spaceContext.refreshContentTypes();
-  });
-
   $scope.$watch(function () {
     return authorization.isUpdated(authentication.tokenLookup, $scope.spaceContext.space) && authentication.tokenLookup;
   }, function (updated) {

@@ -105,7 +105,7 @@ describe('Asset List Controller', function () {
     });
 
     it('search term', function () {
-      scope.context.list = 'all';
+      scope.context.view.searchTerm = null;
       scope.searchController.paginator.page = 0;
       scope.$digest();
       stubs.reset.restore();

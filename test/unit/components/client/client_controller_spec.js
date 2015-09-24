@@ -115,7 +115,7 @@ describe('Client Controller', function () {
       $provide.value('revision', self.revisionStubs);
 
       self.enforcementsStubs = {
-        setSpaceContext: sinon.stub()
+        setUser: sinon.stub()
       };
       $provide.value('enforcements', self.enforcementsStubs);
     });
@@ -129,7 +129,10 @@ describe('Client Controller', function () {
       spaceContext = this.$inject('spaceContext');
       var space = this.$inject('cfStub').space('');
       space.getId = stubs.spaceId;
+
+      sinon.stub(spaceContext, 'refreshContentTypes');
       spaceContext.resetWithSpace(space);
+      spaceContext.refreshContentTypes.restore();
 
       scope = this.$rootScope.$new();
       clientController = this.$inject('$controller')('ClientController', {$scope: scope});

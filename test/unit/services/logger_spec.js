@@ -38,43 +38,43 @@ describe('logger service', function () {
   });
 
   it('should log errors', function(){
-    this.logger.logError('omfg', {meta: 'Data'});
-    sinon.assert.calledWith(this.bugsnag.notify, 'Logged Error', 'omfg', sinon.match({meta: 'Data'}), 'error');
+    this.logger.logError('test', {meta: 'Data'});
+    sinon.assert.calledWith(this.bugsnag.notify, 'Logged Error', 'test', sinon.match({meta: 'Data'}), 'error');
   });
 
   it('should log warnings', function(){
-    this.logger.logWarn('omfg', {meta: 'Data'});
-    sinon.assert.calledWith(this.bugsnag.notify, 'Logged Warning', 'omfg', sinon.match({meta: 'Data'}), 'warning');
+    this.logger.logWarn('test', {meta: 'Data'});
+    sinon.assert.calledWith(this.bugsnag.notify, 'Logged Warning', 'test', sinon.match({meta: 'Data'}), 'warning');
   });
 
   it('should log server errors', function(){
-    this.logger.logServerError('omfg', {meta: 'Data'});
-    sinon.assert.calledWith(this.bugsnag.notify, 'Logged Server Error', 'omfg', sinon.match({meta: 'Data'}), 'error');
+    this.logger.logServerError('test', {meta: 'Data'});
+    sinon.assert.calledWith(this.bugsnag.notify, 'Logged Server Error', 'test', sinon.match({meta: 'Data'}), 'error');
   });
 
   it('should log server warnings', function(){
-    this.logger.logServerWarn('omfg', {meta: 'Data'});
-    sinon.assert.calledWith(this.bugsnag.notify, 'Logged Server Warning', 'omfg', sinon.match({meta: 'Data'}), 'warning');
+    this.logger.logServerWarn('test', {meta: 'Data'});
+    sinon.assert.calledWith(this.bugsnag.notify, 'Logged Server Warning', 'test', sinon.match({meta: 'Data'}), 'warning');
   });
 
   it('should log sharejs errors', function(){
-    this.logger.logSharejsError('omfg', {meta: 'Data'});
-    sinon.assert.calledWith(this.bugsnag.notify, 'Logged ShareJS Error', 'omfg', sinon.match({meta: 'Data'}), 'error');
+    this.logger.logSharejsError('test', {meta: 'Data'});
+    sinon.assert.calledWith(this.bugsnag.notify, 'Logged ShareJS Error', 'test', sinon.match({meta: 'Data'}), 'error');
   });
 
   it('should log sharejs warnings', function(){
-    this.logger.logSharejsWarn('omfg', {meta: 'Data'});
-    sinon.assert.calledWith(this.bugsnag.notify, 'Logged ShareJS Warning', 'omfg', sinon.match({meta: 'Data'}), 'warning');
+    this.logger.logSharejsWarn('test', {meta: 'Data'});
+    sinon.assert.calledWith(this.bugsnag.notify, 'Logged ShareJS Warning', 'test', sinon.match({meta: 'Data'}), 'warning');
   });
 
   describe('when receiving error with status code 0', function(){
     it('should log errors as cors warnings', function(){
-      this.logger.logServerError('omfg', {meta: 'Data', error: {statusCode: 0}});
-      sinon.assert.calledWith(this.bugsnag.notify, 'CORS Warning', 'omfg', sinon.match({meta: 'Data', error: {statusCode: 0}}), 'warning');
+      this.logger.logServerError('test', {meta: 'Data', error: {statusCode: 0}});
+      sinon.assert.calledWith(this.bugsnag.notify, 'CORS Warning', 'test', sinon.match({meta: 'Data', error: {statusCode: 0}}), 'warning');
     });
     it('should log warnings as cors warnings', function(){
-      this.logger.logServerWarn('omfg', {meta: 'Data', error: {statusCode: 0}});
-      sinon.assert.calledWith(this.bugsnag.notify, 'CORS Warning', 'omfg', sinon.match({meta: 'Data', error: {statusCode: 0}}), 'warning');
+      this.logger.logServerWarn('test', {meta: 'Data', error: {statusCode: 0}});
+      sinon.assert.calledWith(this.bugsnag.notify, 'CORS Warning', 'test', sinon.match({meta: 'Data', error: {statusCode: 0}}), 'warning');
     });
   });
 
