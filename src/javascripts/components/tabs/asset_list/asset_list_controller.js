@@ -11,6 +11,7 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
   var stringUtils    = $injector.get('stringUtils');
   var throttle       = $injector.get('throttle');
   var TheLocaleStore = $injector.get('TheLocaleStore');
+  var spaceContext   = $injector.get('spaceContext');
 
   $controller('AssetListViewsController', {
     $scope: $scope,
@@ -27,12 +28,12 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
   $scope.selection = new Selection();
   $scope.getAssetDimensions = getAssetDimensions;
 
-  $scope.$watch(function pageParameters(scope){
+  $scope.$watch(function pageParameters(){
     return {
-      searchTerm:  scope.context.view.searchTerm,
-      page:        scope.searchController.paginator.page,
-      pageLength:  scope.searchController.paginator.pageLength,
-      spaceId:     (scope.spaceContext.space && scope.spaceContext.space.getId())
+      searchTerm:  $scope.context.view.searchTerm,
+      page:        $scope.searchController.paginator.page,
+      pageLength:  $scope.searchController.paginator.pageLength,
+      spaceId:     spaceContext.getId()
     };
   }, function(pageParameters, old, scope){
     scope.searchController.resetAssets(pageParameters.page === old.page);
@@ -101,7 +102,7 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
     data.fields.file[locale] = file;
     data.fields.title[locale] = stringUtils.fileNameToTitle(file.fileName);
 
-    return $scope.spaceContext.space.createAsset(data);
+    return spaceContext.space.createAsset(data);
   }
 
   function processAssetForFile(entity) {
@@ -122,20 +123,15 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
   }
 
   function getAssetDimensions(asset) {
-    var file, width, height;
-
-    // @todo due to buggy implementation, "localizedField" may throw TypeError
-    try {
-      file = $scope.spaceContext.localizedField(asset, 'data.fields.file');
-    } catch (e) {}
-
-    width = dotty.get(file, 'details.image.width', false);
-    height = dotty.get(file, 'details.image.height', false);
+    var file = spaceContext.localizedField(asset, 'data.fields.file');
+    var width = dotty.get(file, 'details.image.width', false);
+    var height = dotty.get(file, 'details.image.height', false);
 
     if (width && height) {
       return width + ' &times; ' + height + '&thinsp;px';
+    } else {
+      return '&ndash;'; // default to dash
     }
-    return '&ndash;'; // default to dash
   }
 
 }]);

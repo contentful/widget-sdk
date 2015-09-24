@@ -36,18 +36,22 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     return environment.settings.cdn_host.replace('cdn', isPreviewApiSelected() ? 'preview': 'cdn');
   };
 
+  $scope.getSpaceId = function () {
+    return spaceContext.getId();
+  };
+
   $scope.$watch('apiKey.data.accessToken', function(accessToken) {
     $scope.exampleUrl =
       'http://' +
       environment.settings.cdn_host +
       '/spaces/' +
-      spaceContext.space.getId() +
+      spaceContext.getId() +
       '/entries?access_token=' +
       accessToken;
 
     $scope.iosMobileAppUrl =
       'contentful://open/space/' +
-      spaceContext.space.getId() +
+      spaceContext.getId() +
       '?access_token=' +
       accessToken;
 
