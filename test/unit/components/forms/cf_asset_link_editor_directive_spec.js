@@ -96,9 +96,21 @@ describe('cfAssetLinkEditor Directive', function () {
     });
   });
 
-
   describe('for asset links', function () {
     beforeEach(function () {
+      var LazyLoader  = this.$inject('LazyLoader');
+      var $q          = this.$inject('$q');
+      var $rootScope  = this.$inject('$rootScope');
+
+      LazyLoader.get = function () {
+        return $q.when({
+          setKey: _.noop,
+          makeDropPane: _.noop
+        });
+      };
+
+      $rootScope.$apply();
+
       scope.otDoc = {state: {editable: true}};
       scope.linkedEntities = [];
       scope.entities = [];
