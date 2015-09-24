@@ -26,21 +26,31 @@ describe('uiCommand directive element', function () {
     var el = this.$compile('<button ui-command=cmd>', {cmd: cmd});
     this.$apply();
     expect(el.prop('disabled')).toBe(true);
+    expect(el.attr('aria-disabled')).toBe('true');
   });
 
   it('is not disabled by default', function () {
     var cmd = this.createCommand(sinon.stub());
     var el = this.$compile('<button ui-command=cmd>', {cmd: cmd});
     expect(el.prop('disabled')).toBe(false);
+    expect(el.attr('aria-disabled')).toBeUndefined();
   });
-
 
   it('runs the action on click', function () {
     var run = sinon.stub().resolves();
     var cmd = this.createCommand(run);
     var el = this.$compile('<button ui-command=cmd>', {cmd: cmd});
     el.click();
-    sinon.assert.called(run);
+    sinon.assert.calledOnce(run);
+  });
+
+  it('does not run the action on click if command is disabled', function () {
+    var run = sinon.stub().resolves();
+    var cmd = this.createCommand(run);
+    cmd.isDisabled = sinon.stub().returns(true);
+    var el = this.$compile('<div role="button" ui-command="cmd">', {cmd: cmd});
+    el.click();
+    sinon.assert.notCalled(run);
   });
 
   it('is disabled when command is in progress', function () {
@@ -50,9 +60,11 @@ describe('uiCommand directive element', function () {
     var el = this.$compile('<button ui-command=cmd>', {cmd: cmd});
 
     expect(el.prop('disabled')).toBe(false);
+    expect(el.attr('aria-disabled')).toBeUndefined();
     el.click();
     this.$apply();
     expect(el.prop('disabled')).toBe(true);
+    expect(el.attr('aria-disabled')).toBe('true');
   });
 
   it('is reenabled when command finished', function () {
@@ -64,10 +76,32 @@ describe('uiCommand directive element', function () {
     el.click();
     this.$apply();
     expect(el.prop('disabled')).toBe(true);
+    expect(el.attr('aria-disabled')).toBe('true');
 
     action.resolve();
     this.$apply();
     expect(el.prop('disabled')).toBe(false);
+    expect(el.attr('aria-disabled')).toBeUndefined();
+  });
+
+  it('is set to busy when command is in progress', function () {
+    var action = this.$inject('$q').defer();
+    var run = sinon.stub().returns(action.promise);
+    var cmd = this.createCommand(run);
+    var el = this.$compile('<button ui-command=cmd>', {cmd: cmd});
+
+    expect(el.hasClass('is-loading')).toBe(false);
+    expect(el.attr('aria-busy')).toBeUndefined();
+
+    el.click();
+    this.$apply();
+    expect(el.hasClass('is-loading')).toBe(true);
+    expect(el.attr('aria-busy')).toBe('true');
+
+    action.resolve();
+    this.$apply();
+    expect(el.hasClass('is-loading')).toBe(false);
+    expect(el.attr('aria-busy')).toBeUndefined();
   });
 
 });
