@@ -8,6 +8,8 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
   var logger            = $injector.get('logger');
   var notification      = $injector.get('notification');
   var stringUtils       = $injector.get('stringUtils');
+  var spaceContext      = $injector.get('spaceContext');
+  var truncate          = $injector.get('stringUtils').truncate;
 
   //Initialization
   $scope.entityActionsController = $controller('EntityActionsController', {
@@ -15,8 +17,11 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
     entityType: 'asset'
   });
 
-  $scope.$watch('spaceContext.assetTitle(asset)', function (title) {
+  $scope.$watch(function () {
+    return spaceContext.assetTitle($scope.asset);
+  }, function (title) {
     $scope.context.title = title;
+    $scope.title = truncate(title, 50);
   });
 
   $scope.localesState = TheLocaleStore.getLocalesState();
@@ -118,9 +123,5 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
   $scope.$watch('asset.data.fields.file', function (file, old, scope) {
     if (file !== old) scope.validate();
   }, true);
-
-  $scope.headline = function(){
-    return this.spaceContext.assetTitle(this.asset);
-  };
 
 }]);

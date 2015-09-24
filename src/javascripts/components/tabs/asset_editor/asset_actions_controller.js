@@ -7,12 +7,11 @@ angular.module('contentful')
   var Command    = $injector.get('command');
   var $rootScope = $injector.get('$rootScope');
   var $q         = $injector.get('$q');
-  var truncate   = $injector.get('stringUtils').truncate;
   var notifier   = $injector.get('assetEditor/notifications');
 
 
   var notify = notifier(function () {
-    return '“' + truncate($scope.spaceContext.assetTitle($scope.asset), 50) + '”';
+    return '“' + $scope.title + '”';
   });
 
 

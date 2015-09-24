@@ -9,7 +9,6 @@ angular.module('contentful')
   var notifier            = $injector.get('entryActions/notifications');
   var moment              = $injector.get('moment');
   var Command             = $injector.get('command');
-  var truncate            = $injector.get('stringUtils').truncate;
   var createEntryReverter = $injector.get('entryReverter');
 
   var entryReverter = createEntryReverter(function () {
@@ -18,7 +17,7 @@ angular.module('contentful')
 
 
   var notify = notifier(function () {
-    return '“' + truncate($scope.spaceContext.entryTitle($scope.entry), 50) + '”';
+    return '“' + $scope.title + '”';
   });
 
   function createEntryCommand (action, run, extension) {
