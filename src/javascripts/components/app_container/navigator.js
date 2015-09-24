@@ -481,10 +481,7 @@ angular.module('contentful').config([
 }])
 .run(['$rootScope', '$state', '$stateParams', '$injector', function ($rootScope, $state, $stateParams, $injector) {
   var $document    = $injector.get('$document');
-  var notification = $injector.get('notification');
-  var tokenStore   = $injector.get('tokenStore');
-  var spacesStore  = $injector.get('spacesStore');
-  var logger       = $injector.get('logger');
+  var spaceTools   = $injector.get('spaceTools');
   // Result of confirmation dialog
   var navigationConfirmed = false;
 
@@ -560,19 +557,20 @@ angular.module('contentful').config([
     if (!toStateParams.addToContext) {
       $rootScope.contextHistory.length = 0;
     }
+
     // Some redirects away from nonexistent pages
-    switch(toState.name) {
-      case 'spaces.detail':
-        event.preventDefault();
-        if(_.isEmpty(toStateParams.spaceId))
-          navigateToInitialSpace();
-        else
-          $state.go('spaces.detail.entries.list', toStateParams); break;
-      case 'otherwise':
-      case 'spaces':
-        event.preventDefault();
-        navigateToInitialSpace(toStateParams.spaceId);
-        break;
+    if (toState.name === 'spaces.detail') {
+      event.preventDefault();
+      if (_.isEmpty(toStateParams.spaceId)) {
+        spaceTools.goToInitialSpace();
+      } else {
+        $state.go('spaces.detail.entries.list', toStateParams);
+      }
+    }
+
+    if (toState.name === 'otherwise' || toState.name === 'spaces') {
+      event.preventDefault();
+      spaceTools.goToInitialSpace();
     }
   }
 
@@ -585,56 +583,11 @@ angular.module('contentful').config([
     if(matchedSection && error.statusCode == 404){
       $state.go('spaces.detail.'+matchedSection[1]+'.list', { spaceId: toParams.spaceId });
     } else {
-      navigateToInitialSpace();
+      spaceTools.goToInitialSpace();
     }
-  }
-
-  function navigateToInitialSpace(spaceId) {
-    tokenStore.getSpaces().then(function (spaces) {
-      var space = determineInitialSpace(spaces, spaceId, spacesStore.getLastUsedSpace());
-      if (space) {
-        spacesStore.saveSelectedSpace(space.getId());
-      }
-
-      try {
-        if (space) {
-          $state.go('spaces.detail', { spaceId: space.getId() });
-        } else {
-          $state.go('spaces.new');
-        }
-      } catch(exp){
-        logger.logError('Error navigating to initial space', {
-          data: {
-            exp: exp,
-            msg: exp.message,
-            spaceId: space ? space.getId() : null,
-            state: $state
-          }
-        });
-      }
-    });
-  }
-
-  function determineInitialSpace(spaces, toSpaceId, lastUsedSpace) {
-    var space;
-    if (toSpaceId) {
-      space = spacesStore.getSpaceFromList(toSpaceId, spaces);
-      if(space) {
-        return space;
-      } else {
-        notification.warn('Space does not exist or is unaccessable');
-      }
-    } else if(lastUsedSpace){
-      space = spacesStore.getSpaceFromList(lastUsedSpace, spaces);
-      if(space) {
-        return space;
-      }
-    }
-    return spaces[0];
   }
 
   function getAddToContext(params) {
     return JSON.stringify(_.omit(params, 'addToContext'));
   }
-
 }]);

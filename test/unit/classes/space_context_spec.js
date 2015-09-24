@@ -49,6 +49,10 @@ describe('spaceContext', function () {
       expect(this.spaceContext.space).toBeDefined();
     });
 
+    it('gets current space id', function () {
+      expect(this.spaceContext.getId()).toBe('test');
+    });
+
     describe('getting content types from server', function () {
       var getContentTypes, getPublishedContentTypes;
       var contentTypes;

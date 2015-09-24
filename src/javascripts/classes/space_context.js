@@ -49,6 +49,17 @@ angular.module('contentful')
 
       /**
        * @ngdoc method
+       * @name spaceContext#getId
+       * @description
+       * Returns ID of current space, if set
+       * @returns String
+       */
+      getId: function () {
+        return dotty.get(this, 'space.data.sys.id');
+      },
+
+      /**
+       * @ngdoc method
        * @name spaceContext#refreshContentTypes
        * @description
        * Refreshes all Content Type related information in the context
