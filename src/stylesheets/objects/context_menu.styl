@@ -14,7 +14,7 @@ Markup:
 .context-menu.styleguide-noabsolute
   cf-icon.context-menu__arrow.x--bottom-left(name="arrow-up")
   div(role="menuitem") Item 1
-  div(role="menuitem") Item 2
+  div(role="menuitem" aria-disabled="true") Item 2
   hr
   div(role="menuitem") Separate
 .context-menu.styleguide-noabsolute
@@ -52,6 +52,11 @@ $context-menu-item()
   &:hover
     background: $colors.blue
     color: white
+
+  &[aria-disabled]
+    cursor: default
+    color: $text-dimmed
+    background: transparent
 
 
 $context-menu-base()
