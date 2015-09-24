@@ -1,8 +1,9 @@
 'use strict';
-angular.module('contentful').directive('cfSpaceSettings', ['$window', '$rootScope', 'authentication', 'logger', function($window, $rootScope, authentication, logger){
+angular.module('contentful')
+.directive('cfSpaceSettings', ['$window', '$rootScope', 'authentication', 'logger', function($window, $rootScope, authentication, logger){
   return {
     template: JST['iframe_view'](),
-    restrict: 'A',
+    restrict: 'E',
     scope: true,
     link: function (scope, elem) {
       scope.iframeId = 'spaceSettingsFrame';

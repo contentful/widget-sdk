@@ -44,8 +44,8 @@ angular.module('contentful').config([
       }]
     },
     views: {
-      'app-container': { template: '<ui-view/>' },
-      'main-nav-bar': { template: '<cf-main-nav-bar/>' }
+      'content': { template: '<ui-view>' },
+      'main-nav-bar': { template: '<cf-main-nav-bar>' }
     }
   });
 
@@ -67,9 +67,14 @@ angular.module('contentful').config([
     controller: ['$scope', 'space', function ($scope, space) {
       $scope.label = space.data.name;
     }],
-    template: '<cf-breadcrumbs ng-hide="spaceContext.space.isHibernated()"></cf-breadcrumbs>' +
-              '<div ng-hide="spaceContext.space.isHibernated()" class="view-content" ui-view></div>' +
-              '<div ng-if="spaceContext.space.isHibernated()" cf-template="cf_space_hibernation_advice"></div>'
+    templateProvider: ['space', function (space) {
+      if (space.isHibernated()) {
+        return JST.cf_space_hibernation_advice();
+      } else {
+        return '<cf-breadcrumbs></cf-breadcrumbs>' +
+               '<ui-view></ui-view>';
+      }
+    }],
   });
 
 
@@ -425,7 +430,7 @@ angular.module('contentful').config([
   $stateProvider.state('spaces.detail.settings.iframe', {
     url: '',
     abstract: true,
-    template: '<div cf-space-settings class="space-settings"></div>'
+    template: '<cf-space-settings>'
   });
 
   $stateProvider.state('spaces.detail.settings.iframe.pathSuffix', {
@@ -452,8 +457,8 @@ angular.module('contentful').config([
     url: '/account',
     abstract: true,
     views: {
-      'app-container': {
-        template: '<div cf-account-view class="account-view view-content"></div>'
+      'content': {
+        template: '<cf-account-view>'
       }
     }
   });

@@ -25,9 +25,11 @@ Styleguide 9.0
 */
 
 .workbench
+  border-top: 1px solid #dbdbdb
   display: flex
   flex-direction: column
-  $stretch(0, 0, 0, 0)
+  $stretch($breadcrumbs-height, 0, 0, 0)
+  $layer('bottom')
   > *
     flex: 0 0 auto;
 
@@ -76,6 +78,7 @@ Styleguide 9.1
 $workbench-content()
   overflow-y: auto
   position: relative
+  padding-top: $rhythm(1)
 
 $workbench-sidebar-width = 20%
 $workbench-max-sidebar-width = 20rem
@@ -87,8 +90,9 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
   flex: 1 1 auto
   // This hack is required for Safari to grow this element
   height: 100%;
-  padding-top: $rhythm(1)
 
+  // Apply this modifier if `.workbench-main` does not contain a
+  // sidebar or a `.workbench__xxx-content` element.
   &.x--content
     display: block
     $workbench-content()
@@ -118,6 +122,7 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
   &__middle-content
     $workbench-content()
     width: $workbench-middle-width
+    flex-grow: 1
     margin-left: auto
     margin-right: auto
 

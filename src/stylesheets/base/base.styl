@@ -3,16 +3,19 @@
 *
   box-sizing(border-box)
 
-body
-  $sans-font()
-  text-rendering: optimizeLegibility
-  $establish-baseline()
-  color: $base-font-color
+$background-pattern()
   background-image: url("/app/images/bg.jpg")
   background-repeat: repeat
   background-size: 200px 149px
   // Fallback until image is loaded
   background-color: hsl(0, 0%, 90%)
+
+body
+  $sans-font()
+  text-rendering: optimizeLegibility
+  $establish-baseline()
+  color: $base-font-color
+  // $background-pattern()
   overflow: hidden
 
 button,
