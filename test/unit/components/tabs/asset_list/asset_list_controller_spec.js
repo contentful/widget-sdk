@@ -426,9 +426,6 @@ describe('Asset List Controller', function () {
       sinon.assert.calledTwice(stubs.process);
     });
 
-    it('publish is triggered', function() {
-      sinon.assert.calledTwice(stubs.publish);
-    });
   });
 
 });
