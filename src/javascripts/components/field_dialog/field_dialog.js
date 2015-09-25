@@ -26,8 +26,7 @@ angular.module('contentful')
     trackOpenSettingsDialog(field);
     return modalDialog.open({
       scope: scope,
-      template: 'field_dialog',
-      ignoreEnter: true
+      template: 'field_dialog'
     }).promise;
   };
 

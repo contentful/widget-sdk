@@ -14,10 +14,6 @@ function ($scope, $injector) {
   var modalDialog  = $injector.get('modalDialog');
   var Field        = $injector.get('fieldDecorator');
 
-  var disableTitleFieldNotification =
-    'This field is a title. Before disabling it you need '+
-    'to choose another title field';
-
   var isTitleType = Field.isTitleType($scope.field.type);
 
   /**
@@ -35,7 +31,13 @@ function ($scope, $injector) {
   controller.toggleDisable = function () {
     var isDisabled = !$scope.field.disabled;
     if ($scope.fieldIsTitle && isDisabled) {
-      modalDialog.notify(disableTitleFieldNotification);
+      modalDialog.open({
+        title: 'This field can\'t be disabled right now.',
+        message: 'The field <span class="modal-dialog__highlight">' + $scope.field.name + '</span> acts as a title for this content type. '+
+                 'Before disabling it you need too choose another field as title.',
+        cancelLabel: null,
+        confirmLabel: 'Okay, got it'
+      });
       return;
     }
     $scope.field.disabled = isDisabled;
