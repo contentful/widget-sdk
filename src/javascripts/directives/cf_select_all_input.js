@@ -3,15 +3,14 @@
 angular.module('contentful').directive('cfSelectAllInput', function() {
   return {
     restrict: 'A',
-    link: function(scope, element) {
-      function clickHandler() {
-        element.get(0).setSelectionRange(0, element.val().length);
-      }
-      element.on('click', clickHandler);
+    link: function(scope, el) {
+      el.css('cursor', 'pointer');
+      el.on('click', selectAll);
 
-      element.on('$destroy', function () {
-        element.off('click', clickHandler);
-      });
+      function selectAll() {
+        var end = el.val().length;
+        el.textrange('set', 0, end);
+      }
     }
   };
 });
