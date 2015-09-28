@@ -392,17 +392,20 @@ Styleguide 4.9
 /*
 Action Selector
 
-Click on the lower button to toggle the state.
+Click on the lower button to toggle the state. Click on the upper arrow to toggle the dropdown.
 
 Markup:
 div(style="width: 24em")
   div.btn-action-select
     button.btn-action-select__action.is-loading
       | Publish
-    button.btn-action-select__selector
+    button.btn-action-select__selector(cf-context-menu-trigger)
       span.btn-action-select__selector-label
         | Change actions
       cf-icon.btn-action-select__icon(name="dd-arrow-down")
+    .context-menu(cf-context-menu="bottom-right")
+      cf-icon.context-menu__arrow.x--top-right(name="arrow-up")
+      div(role="menuitem") Another action
   p
   div.btn-action-select.x--no-action
     button.btn-action-select__action
