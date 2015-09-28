@@ -44,6 +44,11 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
 
     function asset() {
       modalDialog.open({
+        scopeData: {
+          // chain: template -> InsertAssetDialogController -> AssetSearchController
+          // AssetSearchController needs "context" object defined in scope
+          context: {}
+        },
         template: 'insert_asset_dialog'
       }).promise.then(function (assets) {
         if (_.isEmpty(assets)) { return; }
