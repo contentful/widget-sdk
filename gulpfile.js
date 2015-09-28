@@ -99,8 +99,7 @@ var src = {
   },
   static: [
     'vendor/font-awesome/*.+(eot|svg|ttf|woff)',
-    'vendor/fonts.com/*.+(woff|woff2)',
-    'node_modules/zeroclipboard/ZeroClipboard.swf'
+    'vendor/fonts.com/*.+(woff|woff2)'
   ],
   vendorStylesheets: [
     './vendor/**/*.css',
