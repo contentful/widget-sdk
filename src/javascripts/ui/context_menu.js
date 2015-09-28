@@ -150,8 +150,8 @@ angular.module('cf.ui')
         at: 'center bottom+8'
       },
       'bottom-right': {
-        my: 'left top',
-        at: 'left bottom+13'
+        my: 'right top',
+        at: 'right bottom+13'
       },
       'bottom-left': {
         my: 'left top',
