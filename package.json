@@ -53,6 +53,7 @@
     "karma-tape-reporter": "^1.0.3",
     "kss": "^2.1.0",
     "lodash-node": "~2.4.1",
+    "marked": "0.3.3",
     "marked-ast": "0.2.2",
     "merge-stream": "^0.1.7",
     "mkdirp": "^0.5.1",
