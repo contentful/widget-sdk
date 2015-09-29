@@ -7,7 +7,7 @@ angular.module('contentful')
   var $timeout       = $injector.get('$timeout');
   var analytics      = $injector.get('analytics');
   var TheStore       = $injector.get('TheStore');
-  var getCurrentView = $parse($attrs.currentView);
+  var getCurrentView = $parse('context.view');
 
   $scope.tempFreeViews = [];
   $scope.folderStates = TheStore.get('folderStates') || {};

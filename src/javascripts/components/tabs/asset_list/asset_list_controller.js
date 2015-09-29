@@ -14,14 +14,14 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
 
   $controller('AssetListViewsController', {
     $scope: $scope,
-    currentViewLocation: 'context.view'
+    preserveState: true
   });
 
-  $scope.entityStatusController = $controller('EntityStatusController', {$scope: $scope});
+  $scope.entityStatusController = $controller('EntityStatusController', { $scope: $scope });
 
   $scope.searchController = $controller('AssetSearchController', {
-    $scope:         $scope,
-    getSearchTerm:  getSearchTerm
+    $scope: $scope,
+    getSearchTerm: getSearchTerm
   });
 
   $scope.selection = new Selection();

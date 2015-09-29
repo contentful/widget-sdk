@@ -53,7 +53,7 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
     getBlankView: getBlankView,
     viewCollectionName: 'entryListViews',
     generateDefaultViews: generateDefaultViews,
-    currentViewLocation: 'context.view',
+    preserveStateAs: 'entries',
     resetList: function () {
       $scope.resetEntries(true);
     }
