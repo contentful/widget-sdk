@@ -113,7 +113,8 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   };
 
   $scope.resetEntries = function (resetPage) {
-    if (resetPage) $scope.paginator.page = 0;
+    $scope.context.loading = true;
+    if (resetPage) { $scope.paginator.page = 0; }
 
     return prepareQuery()
     .then(function (query) {
@@ -123,6 +124,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     })
     .then(function (entries) {
       $scope.context.ready = true;
+      $scope.context.loading = false;
       $scope.paginator.numEntries = entries.total;
       $scope.entries = entries;
       $scope.selection.switchBaseSet($scope.entries.length);
@@ -147,7 +149,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     var hasQuery = !_.isEmpty(view.searchTerm) ||
                    !_.isEmpty(view.contentTypeId);
     var hasEntries = $scope.entries && $scope.entries.length > 0;
-    return !hasEntries && !hasQuery;
+    return !hasEntries && !hasQuery && !$scope.context.loading;
   };
 
   // TODO this code is duplicated in the asset list controller

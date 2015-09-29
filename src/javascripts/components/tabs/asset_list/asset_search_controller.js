@@ -26,7 +26,8 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
   });
 
   this.resetAssets = function(resetPage) {
-    if (resetPage) this.paginator.page = 0;
+    $scope.context.loading = true;
+    if (resetPage) { this.paginator.page = 0; }
 
     return prepareQuery()
     .then(function (query) {
@@ -36,6 +37,7 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
     })
     .then(function (assets) {
       $scope.context.ready = true;
+      $scope.context.loading = false;
       controller.paginator.numEntries = assets.total;
       $scope.assets = assets;
       $scope.$broadcast('didResetAssets', $scope.assets);

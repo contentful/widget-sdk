@@ -49,7 +49,7 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
     var view = $scope.context.view;
     var hasQuery = !_.isEmpty(view.searchTerm);
     var hasEntries = $scope.assets && $scope.assets.length > 0;
-    return !hasEntries && !hasQuery;
+    return !hasEntries && !hasQuery && !$scope.context.loading;
   };
 
   // TODO this code is duplicated in the asset list controller
