@@ -6,9 +6,14 @@ function($scope, $injector, generateDefaultViews, getBlankView, resetList, viewC
   var logger       = $injector.get('logger');
   var notification = $injector.get('notification');
   var $parse       = $injector.get('$parse');
+  var FilterQS     = $injector.get('FilterQueryString');
 
   var getCurrentView = $parse(currentViewLocation);
   var setCurrentView = getCurrentView.assign;
+
+  var qs = FilterQS.create(viewCollectionName);
+  replaceView(qs.readView());
+  $scope.$watch('context.view', qs.update, true);
 
   setCurrentView($scope, getCurrentView($scope) || getBlankView());
 
@@ -29,10 +34,7 @@ function($scope, $injector, generateDefaultViews, getBlankView, resetList, viewC
   };
 
   $scope.loadView = function (view) {
-    var newView;
-    newView = _.cloneDeep(view);
-    newView.title = 'New View';
-    setCurrentView($scope, newView);
+    replaceView(view);
     resetList();
   };
 
@@ -43,4 +45,10 @@ function($scope, $injector, generateDefaultViews, getBlankView, resetList, viewC
       return $q.reject(err);
     });
   };
+
+  function replaceView(view) {
+    var newView = _.extend(getBlankView(), _.cloneDeep(view));
+    newView.title = 'New View';
+    setCurrentView($scope, newView);
+  }
 }]);

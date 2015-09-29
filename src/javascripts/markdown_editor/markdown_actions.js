@@ -28,8 +28,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
     function link() {
       modalDialog.open({
         scopeData: { model: { url: 'https://' } },
-        template: 'markdown_link_dialog',
-        ignoreEnter: true
+        template: 'markdown_link_dialog'
       }).promise.then(function (data) {
         editor.insert(_makeLink(data));
       });
@@ -45,8 +44,12 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
 
     function asset() {
       modalDialog.open({
-        template: 'insert_asset_dialog',
-        ignoreEnter: true
+        scopeData: {
+          // chain: template -> InsertAssetDialogController -> AssetSearchController
+          // AssetSearchController needs "context" object defined in scope
+          context: {}
+        },
+        template: 'insert_asset_dialog'
       }).promise.then(function (assets) {
         if (_.isEmpty(assets)) { return; }
         var links = _.map(assets, _makeAssetLink).join(' ');
@@ -76,16 +79,14 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
 
       modalDialog.open({
         scopeData: scopeData,
-        template: 'markdown_special_character_dialog',
-        ignoreEnter: true
+        template: 'markdown_special_character_dialog'
       }).promise.then(editor.insert);
     }
 
     function table() {
       modalDialog.open({
         scopeData: { model: { rows: 2, cols: 2 } },
-        template: 'markdown_table_dialog',
-        ignoreEnter: true
+        template: 'markdown_table_dialog'
       }).promise.then(editor.actions.table);
     }
 
@@ -95,8 +96,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
           model: { value: 'https://', width: { px: 600, percent: 100 }, widthSuffix: 'percent' },
           urlStatus: 'invalid'
         },
-        template: 'markdown_embed_dialog',
-        ignoreEnter: true
+        template: 'markdown_embed_dialog'
       }).promise.then(function (data) {
         editor.insert(_makeEmbedlyLink(data));
       });
@@ -122,8 +122,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
 
     function openHelp() {
       modalDialog.open({
-        template: 'markdown_help_dialog',
-        ignoreEnter: true
+        template: 'markdown_help_dialog'
       });
     }
   }

@@ -1,35 +1,22 @@
 'use strict';
 
 describe('Space Selector Controller', function () {
-  var scope;
+  var scope, analytics;
 
-  beforeEach(function() {
-    var self = this;
-
+  beforeEach(function () {
     module('contentful/test');
-    module(function($provide) {
-      self.windowStubs = {
-        open: sinon.stub(),
-        addEventListener: sinon.stub(),
-        document: window.document
-      };
-      self.analyticsStubs = { track: sinon.stub() };
-      self.authenticationStubs = { logout: sinon.stub(), supportUrl: sinon.stub() };
-      $provide.value('$window', self.windowStubs);
-      $provide.value('analytics', self.analyticsStubs);
-      $provide.value('authentication', self.authenticationStubs);
-    });
 
     var $rootScope = this.$inject('$rootScope');
+    var $controller = this.$inject('$controller');
+    var spaceContext = this.$inject('spaceContext');
+    analytics = this.$inject('analytics');
+
     scope = $rootScope.$new();
-    scope.spaceContext = {
-      space: {
-        getId: function() { return 1; },
-        data: {organization: {sys: {id: 456}}}
-      }
+    spaceContext.space = {
+      getId: function () { return 1; },
+      data: { organization: { sys: { id: 456 } } }
     };
 
-    var $controller = this.$inject('$controller');
     $controller('cfSpaceSelectorController', { $scope: scope });
   });
 
@@ -71,8 +58,8 @@ describe('Space Selector Controller', function () {
   });
 
   it('space switcher analytics tracking', function () {
+    sinon.stub(analytics, 'track');
     scope.clickedSpaceSwitcher();
-    sinon.assert.called(this.analyticsStubs.track);
+    sinon.assert.called(analytics.track);
   });
-
 });

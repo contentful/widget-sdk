@@ -260,7 +260,7 @@ describe('ContentTypeEditor Controller', function () {
         data: scope.contentType.data
       };
       this.modalDialog = this.$inject('modalDialog');
-      this.modalDialog.notify = sinon.stub();
+      this.modalDialog.open = sinon.stub();
     });
 
     describe('without entries', function () {
@@ -287,7 +287,7 @@ describe('ContentTypeEditor Controller', function () {
 
         controller.deleteField('FID');
         this.$apply();
-        sinon.assert.called(this.modalDialog.notify);
+        sinon.assert.called(this.modalDialog.open);
         expect(contentType.data.fields.length).toEqual(1);
       });
 

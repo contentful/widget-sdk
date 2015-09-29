@@ -76,7 +76,7 @@ function ContentTypeActionsController($scope, $injector) {
   }
 
   function forbidRemoval(count) {
-    return modalDialog.openConfirmDialog({
+    return modalDialog.open({
       template: 'content_type_removal_forbidden_dialog',
       scopeData: {
         count: count,
@@ -86,7 +86,7 @@ function ContentTypeActionsController($scope, $injector) {
   }
 
   function confirmRemoval(isPublished) {
-    return modalDialog.openConfirmDialog({
+    return modalDialog.open({
       template: 'content_type_removal_confirm_dialog',
       scope: prepareRemovalDialogScope(isPublished),
       noNewScope: true

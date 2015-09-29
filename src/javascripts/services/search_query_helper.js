@@ -7,7 +7,6 @@ angular.module('contentful')
   var AssetContentType           = $injector.get('AssetContentType');
   var searchQueryAutocompletions = $injector.get('searchQueryAutocompletions');
   var createParser               = $injector.get('search/cachedParser');
-  var buildQuery                 = $injector.get('search/queryBuilder');
 
   var parse = createParser();
 
@@ -78,9 +77,7 @@ angular.module('contentful')
     // Gives the first valid operator for a key as a String
     operatorForKey: function (key, contentType) {
       return complete.operator(key, contentType).items[0].value;
-    },
-
-    buildQuery: buildQuery
+    }
   };
 
   return api;

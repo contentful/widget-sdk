@@ -48,20 +48,6 @@ describe('Space Controller', function () {
     });
   });
 
-  describe('refreshes content types if spaceContext changes', function () {
-    beforeEach(function () {
-      this.scope.$digest();
-      this.scope.spaceContext = {
-        refreshContentTypes: sinon.stub()
-      };
-      this.scope.$digest();
-    });
-
-    it('calls refresh method', function () {
-      sinon.assert.called(this.scope.spaceContext.refreshContentTypes);
-    });
-  });
-
   describe('watches for updated tokenLookup', function () {
     beforeEach(function () {
       var authentication = this.$inject('authentication');

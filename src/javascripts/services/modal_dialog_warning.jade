@@ -6,7 +6,7 @@
     .modal-dialog__content
       p.modal-dialog__richtext(ng-bind-html="dialog.message")
     .modal-dialog__controls
-      button.cfnext-btn-primary-action(ng-click="dialog.confirm()")
+      button.cfnext-btn-caution(ng-click="dialog.confirm()")
         | {{dialog.confirmLabel}}
       button.cfnext-btn-secondary-action(
         ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")

@@ -16,6 +16,7 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
   var PromisedLoader    = $injector.get('PromisedLoader');
   var notification      = $injector.get('notification');
   var searchQueryHelper = $injector.get('searchQueryHelper');
+  var buildSearchQuery  = $injector.get('search/queryBuilder');
 
   var controller = this;
   var entityLoader = new PromisedLoader();
@@ -256,7 +257,7 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
       }
     }
 
-    return searchQueryHelper.buildQuery($scope.spaceContext.space, contentType, $scope.searchTerm)
+    return buildSearchQuery($scope.spaceContext.space, contentType, $scope.searchTerm)
     .then(function (searchQuery) {
       return _.extend(searchQuery, queryObject);
     });
@@ -268,5 +269,4 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
     }
     return false;
   }
-
 }]);

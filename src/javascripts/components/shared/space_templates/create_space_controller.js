@@ -9,6 +9,7 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
     var enforcements = $injector.get('enforcements');
     var logger       = $injector.get('logger');
     var notification = $injector.get('notification');
+    var spaceTools = $injector.get('spaceTools');
 
     $scope.createSpace = createSpace;
     $scope.selectOrganization = selectOrganization;
@@ -53,7 +54,7 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
             $scope.$emit('spaceCreated', space);
           }, 500);
         });
-        $scope.selectSpace(space);
+        spaceTools.goTo(space, true);
       },
       handleSpaceCreationFailure);
     }

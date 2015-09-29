@@ -1,10 +1,11 @@
-.modal-background.x--flex
-  .message-dialog
-    .message-dialog__title
-      | There are unsaved changes
-    .message-dialog__message
-      | What would you like to do with them?
-    .message-dialog__controls
+.modal-background
+  .modal-dialog
+    header.modal-dialog__header
+      h1 There are unsaved changes
+      button.modal-dialog__close(ui-command="actions.cancel")
+    .modal-dialog__content
+      p What would you like to do with them?
+    .modal-dialog__controls
       button.cfnext-btn-primary-action(ui-command="actions.save")
         | Save changes
       button.cfnext-btn-secondary-action(ui-command="actions.discard")

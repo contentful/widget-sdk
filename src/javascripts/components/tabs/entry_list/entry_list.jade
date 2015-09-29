@@ -128,12 +128,13 @@ mixin create-entry-button
       | Visit the Knowledge Base Pages
       i.fa.fa-question-circle
 
-
 .tab-actions
   .label {{selection.size()}} Entries selected
   .button-set(ng-controller="EntryListActionsController" ng-hide="selection.isEmpty()")
-    button.cfnext-btn-secondary-action.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
-    | 
+    button.cfnext-btn-secondary-action.duplicate(type="button"
+      ng-click="duplicateSelected()"
+      ng-show="showDuplicate()")
+      | Duplicate
     button.cfnext-btn-secondary-action.delete(type="button"
       ng-show="showDelete()"
       cf-context-menu-trigger
@@ -146,11 +147,7 @@ mixin create-entry-button
         | Delete
       button.cfnext-btn-secondary-action(type="button")
         | Don't Delete
-    | 
     button.cfnext-btn-secondary-action.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
-    | 
     button.cfnext-btn-secondary-action.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
-    | 
     button.cfnext-btn-secondary-action.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
-    | 
     button.cfnext-btn-primary-action.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}

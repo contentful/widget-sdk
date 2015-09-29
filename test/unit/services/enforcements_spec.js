@@ -3,12 +3,20 @@
 describe('Enforcements service', function () {
 
   var enforcements;
-  var userStub, organizationStub;
+  var organizationMock;
   var spaceContext;
 
   beforeEach(function () {
-    userStub = sinon.stub();
-    organizationStub = {
+    module('contentful/test');
+
+    var cfStub = this.$inject('cfStub');
+    enforcements = this.$inject('enforcements');
+    spaceContext = this.$inject('spaceContext');
+
+    _.extend(spaceContext, cfStub.mockSpaceContext());
+    enforcements.setUser({ sys: {id: 123} });
+
+    organizationMock = {
       usage: {
         permanent: {
           entry: 0,
@@ -32,31 +40,11 @@ describe('Enforcements service', function () {
         }
       }
     };
-
-    module('contentful/test', function ($provide) {
-      userStub.returns({ sys: {id: 123} });
-      $provide.value('authentication', {
-        getUser: userStub
-      });
-    });
-    inject(function (_enforcements_, cfStub) {
-      enforcements = _enforcements_;
-
-      spaceContext = cfStub.mockSpaceContext();
-    });
   });
 
   describe('determines enforcements', function () {
 
-    it('throws if no space context is defined', function() {
-      expect(enforcements.determineEnforcement).toThrow();
-    });
-
     describe('with a space context', function() {
-
-      beforeEach(function () {
-        enforcements.setSpaceContext(spaceContext);
-      });
 
       it('returns null for no reasons', function () {
         expect(enforcements.determineEnforcement()).toBeNull();
@@ -135,17 +123,12 @@ describe('Enforcements service', function () {
 
   describe('gets period usage', function () {
 
-    it('throws if no space context is defined', function() {
-      expect(enforcements.determineEnforcement).toThrow();
-    });
-
     describe('with space context', function() {
 
       var enforcement;
       beforeEach(function () {
-        organizationStub.usage.period.assetBandwidth = 5;
-        enforcements.setSpaceContext(spaceContext);
-        spaceContext.space.data.organization = organizationStub;
+        organizationMock.usage.period.assetBandwidth = 5;
+        spaceContext.space.data.organization = organizationMock;
         enforcement = enforcements.getPeriodUsage();
       });
 
@@ -158,16 +141,11 @@ describe('Enforcements service', function () {
 
   describe('gets no period usage', function () {
 
-    it('throws if no space context is defined', function() {
-      expect(enforcements.determineEnforcement).toThrow();
-    });
-
     describe('with space context', function() {
 
       var enforcement;
       beforeEach(function () {
-        enforcements.setSpaceContext(spaceContext);
-        spaceContext.space.data.organization = organizationStub;
+        spaceContext.space.data.organization = organizationMock;
         enforcement = enforcements.getPeriodUsage();
       });
 
@@ -180,8 +158,7 @@ describe('Enforcements service', function () {
 
   describe('computes metrics usage', function () {
     beforeEach(function () {
-      enforcements.setSpaceContext(spaceContext);
-      spaceContext.space.data.organization = organizationStub;
+      spaceContext.space.data.organization = organizationMock;
     });
 
     it('if no space exists returns no message', function() {
@@ -194,13 +171,13 @@ describe('Enforcements service', function () {
     });
 
     it('for exceeded usage metric returns message', function () {
-      organizationStub.usage.period.assetBandwidth = 5;
+      organizationMock.usage.period.assetBandwidth = 5;
       expect(enforcements.computeUsage()).toMatch('Bandwidth');
     });
 
     it('for exceeded usage metric with filter returns message', function () {
-      organizationStub.usage.permanent.entry = 5;
-      organizationStub.usage.permanent.user = 5;
+      organizationMock.usage.permanent.entry = 5;
+      organizationMock.usage.permanent.user = 5;
       expect(enforcements.computeUsage('user')).toMatch('Users');
     });
   });
