@@ -10,21 +10,26 @@ angular.module('contentful')
     scope: {
       organizations: '=',
       spaces: '=',
-      permissionController: '=',
-      spaceContext: '='
+      permissionController: '='
     },
     controller: 'cfSpaceSelectorController'
   };
 })
 
-.controller('cfSpaceSelectorController', ['$scope', '$rootScope', 'analytics', function cfSpaceSelectorController($scope, $rootScope, analytics) {
+.controller('cfSpaceSelectorController', ['$scope', '$injector', function cfSpaceSelectorController($scope, $injector) {
+
+  var $rootScope   = $injector.get('$rootScope');
+  var analytics    = $injector.get('analytics');
+  var spaceContext = $injector.get('spaceContext');
+  var spaceTools   = $injector.get('spaceTools');
+
   $scope.$watch('spaces', groupSpacesByOrganization);
 
+  $scope.spaceContext = spaceContext;
   $scope.clickedSpaceSwitcher = clickedSpaceSwitcher;
   $scope.getOrganizationName = getOrganizationName;
-  $scope.getCurrentSpaceId = getCurrentSpaceId;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
-  $scope.selectSpace = selectSpace;
+  $scope.selectSpace = spaceTools.goTo;
 
   function groupSpacesByOrganization(spaces) {
     $scope.spacesByOrganization = _.groupBy(spaces || [], function(space) {
@@ -41,17 +46,8 @@ angular.module('contentful')
     return result.length > 0 ? result[0].name : '';
   }
 
-  function getCurrentSpaceId() {
-    return dotty.get($scope, 'spaceContext.space.data.sys.id', null);
-  }
-
   function showCreateSpaceDialog() {
     // @todo move it to service - broadcast is a workaround to isolate scope
     $rootScope.$broadcast('showCreateSpaceDialog');
-  }
-
-  function selectSpace(space) {
-    // @todo move it to service - broadcast is a workaround to isolate scope
-    $rootScope.$broadcast('selectSpace', space);
   }
 }]);

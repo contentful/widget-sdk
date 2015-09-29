@@ -63,8 +63,11 @@ angular.module('contentful').directive('cfSearch', ['keycodes', 'debounce', func
         $scope.inner.term = search;
       });
 
+      $scope.$watch('inner.term', function (term) {
+        if (term === '') {
+          $scope.update({ trigger: 'cleared' });
+        }
+      });
     }]
   };
 }]);
-
-

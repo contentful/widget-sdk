@@ -5,10 +5,9 @@ angular.module('contentful').controller('CfViewFolderController', ['$scope', 'mo
   });
 
   $scope.deleteViewFromFolder = function (view, folder) {
-    modalDialog.open({
-      title: 'Delete View?',
-      message: 'Do you really want to delete the View "'+view.title+'"?',
-      confirmLabel: 'Delete View',
+    modalDialog.openConfirmDeleteDialog({
+      title: 'Delete view',
+      message: 'Do you really want to delete the view <span class="modal-dialog__highlight">'+view.title+'</span>?',
       scope: $scope
     }).promise.then(function () {
       _.remove(folder.views, {id: view.id});

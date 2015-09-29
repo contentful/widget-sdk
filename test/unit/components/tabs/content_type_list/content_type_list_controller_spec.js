@@ -1,144 +1,104 @@
 'use strict';
 
 describe('Content Type List Controller', function () {
-  var controller, scope, stubs;
+  var scope, cfStub, stubs, $q, spaceContext, controller;
 
-  function makeCT (extensions) {
-    var ct;
-    inject(function (cfStub) {
-      var space = cfStub.space('spaceid');
-      ct = cfStub.contentType(space, 'typeid', 'typename');
-    });
+  function makeCT(extensions) {
+    var space = cfStub.space('spaceid');
+    var ct = cfStub.contentType(space, 'typeid', 'typename');
+    stubs = {};
     stubs.deleted = sinon.stub(ct, 'isDeleted');
     stubs.published = sinon.stub(ct, 'isPublished');
     stubs.hasUnpublishedChanges = sinon.stub(ct, 'hasUnpublishedChanges');
     stubs.publishedAt = sinon.stub(ct, 'getPublishedAt');
-    ct.getName = stubs.getName;
+    ct.getName = sinon.stub().returns('CTNAME');
     return _.extend(ct, extensions);
   }
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs(['resetContentTypes', 'getName']);
-    });
-    inject(function ($rootScope, $controller, cfStub) {
-      scope = $rootScope.$new();
-      var space = cfStub.space('space');
-      scope.spaceContext = cfStub.spaceContext(space, [
-        cfStub.contentTypeData('typeid1', [
-          cfStub.field('name1')
-        ]),
-        cfStub.contentTypeData('typeid2', [
-          cfStub.field('name2')
-        ])
-      ]);
+    module('contentful/test');
 
-      scope.context = {};
-      scope.searchTerm = null;
+    var $controller = this.$inject('$controller');
+    var $rootScope = this.$inject('$rootScope');
+    var TheStore = this.$inject('TheStore');
 
-      controller = $controller('ContentTypeListController', {$scope: scope});
-      scope.$digest();
-    });
-  });
+    cfStub = this.$inject('cfStub');
+    $q = this.$inject('$q');
+    spaceContext = this.$inject('spaceContext');
+    sinon.stub(spaceContext, 'refreshContentTypes').returns($q.when([]));
 
-  it('content types are set', function() {
-    expect(scope.contentTypes).toBeDefined();
-  });
-
-  it('first content type is set', function() {
-    expect(scope.contentTypes[0].data.fields[0].name).toEqual('name1');
-  });
-
-  it('empty flag is false', function() {
-    expect(scope.empty).toBeFalsy();
+    scope = $rootScope.$new();
+    scope.context = {};
+    scope.searchTerm = null;
+    TheStore.set = _.noop;
+    controller = $controller('ContentTypeListController', {$scope: scope});
+    scope.$apply();
   });
 
   it('getting number of fields from a content type', function() {
-    expect(scope.numFields(scope.contentTypes[0])).toEqual(1);
+    expect(scope.numFields(makeCT())).toEqual(0);
   });
 
-  describe('empty content types', function() {
-    beforeEach(function() {
-      delete scope.spaceContext.contentTypes;
-      scope.$digest();
-    });
-
-    it('content types are empty', function() {
-      expect(scope.contentTypes).toEqual([]);
+  describe('empty content types', function () {
+    it('content types are synced with spaceContext', function() {
+      expect(scope.contentTypes).toEqual(spaceContext.getFilteredAndSortedContentTypes());
     });
 
     it('empty flag is true', function() {
-      expect(scope.empty).toBeTruthy();
+      expect(scope.empty).toBe(true);
     });
   });
 
   describe('on search term change', function () {
-    beforeEach(function() {
-      scope.resetContentTypes = sinon.stub();
-    });
-
-    describe('if term is null', function () {
-      beforeEach(function () {
-        scope.searchTerm = null;
-        scope.$digest();
-      });
-
-      it('list is not defined', function () {
-        expect(scope.context.list).toBeUndefined();
-      });
-
-      it('reset content types not called', function () {
-        sinon.assert.notCalled(scope.resetContentTypes);
-      });
+    it('if term is null list is not changed', function () {
+      scope.searchTerm = null;
+      scope.$apply();
+      expect(scope.context.list).toBe('all');
     });
 
     describe('if term is set', function () {
       beforeEach(function () {
         scope.searchTerm = 'thing';
-        scope.$digest();
+        scope.$apply();
       });
 
-      it('list is defined', function () {
+      it('list is not changed', function () {
         expect(scope.context.list).toBe('all');
       });
 
-      it('reset content types is called', function() {
-        sinon.assert.called(scope.resetContentTypes);
+      it('content types are refreshed', function() {
+        sinon.assert.called(spaceContext.refreshContentTypes);
       });
     });
-
   });
 
   describe('switching lists', function () {
-    var list;
-    beforeEach(function() {
-      list = 'all';
-      scope.resetContentTypes = sinon.stub();
+    it('preserves search term', function() {
+      scope.searchTerm = 'thing';
+      scope.context.list = 'changed';
+      this.$apply();
+      expect(scope.searchTerm).toBe('thing');
     });
 
-    it('sets search term to null', function() {
-      scope.context.list = list;
-      scope.switchList(list);
-      expect(scope.searchTerm).toBeNull();
-    });
-
-    it('resets current list', function () {
-      scope.context.list = list;
-      scope.switchList(list);
-      sinon.assert.called(scope.resetContentTypes);
-    });
-
-    it('switches current list', function () {
-      scope.switchList(list);
-      expect(scope.context.list).toBe(list);
+    it('refreshes content types', function() {
+      scope.context.list = 'changed';
+      this.$apply();
+      sinon.assert.called(spaceContext.refreshContentTypes);
     });
   });
 
   describe('scope.visibleContentTypes', function () {
+    var contentTypes;
+    beforeEach(function() {
+      spaceContext.getFilteredAndSortedContentTypes = function () { return contentTypes; };
+    });
+
     it('only contains content types matched by the search', function () {
       var matched = makeCT({getName: sinon.stub().returns('MATCH')});
-      var unmatched = makeCT();
-      scope.contentTypes = [matched, unmatched];
+      var unmatched = makeCT({getName: sinon.stub().returns('MA')});
+      contentTypes = [matched, unmatched];
+
+      scope.searchTerm = 'MA';
       this.$apply();
       expect(scope.visibleContentTypes).toEqual([matched, unmatched]);
 
@@ -148,39 +108,32 @@ describe('Content Type List Controller', function () {
     });
 
     it('it does not include deleted content types', function () {
-      scope.contentTypes = [makeCT({isDeleted: sinon.stub().returns(true)})];
+      contentTypes = [makeCT({
+        getName: sinon.stub().returns('MATCH'),
+        isDeleted: sinon.stub().returns(true)
+      })];
+
+      scope.searchTerm = 'MAT';
       this.$apply();
       expect(scope.visibleContentTypes.length).toBe(0);
     });
   });
 
-  describe('resetting content types', function() {
-    beforeEach(function() {
-      stubs.refreshContentTypes = sinon.stub(scope.spaceContext, 'refreshContentTypes');
+  describe('query check', function () {
+    it('has a query', function() {
+      scope.searchTerm = 'term';
+      expect(scope.hasQuery()).toBeTruthy();
     });
 
-    it('refreshes content types if a spaceContext exists', function() {
-      scope.resetContentTypes();
-      sinon.assert.called(stubs.refreshContentTypes);
+    it('has no query when term is null', function() {
+      scope.searchTerm = null;
+      expect(scope.hasQuery()).toBeFalsy();
     });
 
-    it('does not refresh content types if a spaceContext doesnt exist', function() {
-      delete scope.spaceContext;
-      scope.resetContentTypes();
-      sinon.assert.notCalled(stubs.refreshContentTypes);
+    it('has no query when term is empty string', function() {
+      scope.searchTerm = '';
+      expect(scope.hasQuery()).toBeFalsy();
     });
-  });
-
-  it('has a query', function() {
-    scope.context.list = 'all';
-    scope.searchTerm = 'term';
-    expect(scope.hasQuery()).toBeTruthy();
-  });
-
-  it('has no query', function() {
-    scope.context.list = 'all';
-    scope.searchTerm = null;
-    expect(scope.hasQuery()).toBeFalsy();
   });
 
   describe('status class', function () {

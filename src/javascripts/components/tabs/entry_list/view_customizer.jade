@@ -10,13 +10,13 @@
       ul.u-list.displayed-fields
         li.non-customizable(ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden")
           p Content Type
-          .close-button(ng-click="toggleContentType($event)")
+          a.close-button(ng-click="toggleContentType($event)")
         li.non-customizable
           p Name
       ul.u-list.displayed-fields(ui-sortable="displayedFieldsSortOptions" ng-model="displayedFields")
         li.customizable(ng-repeat="field in displayedFields track by field.id" data-field-id="{{field.id}}")
           p {{field.name}}
-          .close-button(ng-show="!isPersistent(field)" ng-click="hideField($event, field)")
+          a.close-button(ng-show="!isPersistent(field)" ng-click="hideField($event, field)")
       ul.u-list.displayed-fields
         li.non-customizable
           p Status

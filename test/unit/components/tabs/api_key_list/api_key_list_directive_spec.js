@@ -10,21 +10,17 @@ describe('The ApiKey list directive', function () {
       $provide.removeDirectives('relative');
       $provide.removeControllers('PermissionController');
     });
-    inject(function ($rootScope, $compile, enforcements, $q) {
+    inject(function ($rootScope, $compile, enforcements, $q, spaceContext) {
       scope = $rootScope.$new();
-      scope.spaceContext = {
-        space: {
+      spaceContext.space = {
           data: {sys: {createdBy: {sys: {id: ''}}}},
           getDeliveryApiKeys: sinon.stub().returns($q.defer().promise)
-        }
       };
 
       scope.permissionController = {
         get: sinon.stub()
       };
       scope.permissionController.get.returns(false);
-
-      enforcements.setSpaceContext(scope.spaceContext);
 
       compileElement = function () {
         container = $('<div cf-api-key-list></div>');

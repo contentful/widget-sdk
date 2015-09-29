@@ -3,75 +3,74 @@
 angular.module('contentful')
 .controller('ContentTypeListController',
 ['$scope', '$injector', function ContentTypeListController($scope, $injector) {
-  var notification = $injector.get('notification');
-  $scope.contentTypeSection = 'all';
+
+  var notification  = $injector.get('notification');
+  var spaceContext  = $injector.get('spaceContext');
+  var FilterQS      = $injector.get('FilterQueryString');
+
+  var qs = FilterQS.create('contentTypes');
+  var view = qs.readView();
+  $scope.context.list = view.list || 'all';
+  $scope.searchTerm = view.searchTerm || '';
+  $scope.empty = true;
+
+  $scope.$watchGroup(['context.list', 'searchTerm'], function (args) {
+    if (args[0] || args[1]) {
+      qs.update({list: args[0], searchTerm: args[1]});
+      updateList();
+    }
+  });
+
+  function updateList() {
+    spaceContext.refreshContentTypes().then(function() {
+      $scope.context.ready = true;
+      $scope.contentTypes = spaceContext.getFilteredAndSortedContentTypes();
+      $scope.empty = $scope.contentTypes.length === 0;
+      $scope.visibleContentTypes = _.filter($scope.contentTypes, shouldBeVisible);
+    });
+  }
+
+  function shouldBeVisible(contentType) {
+    switch ($scope.context.list) {
+      case 'changed':
+        return matchesSearchTerm(contentType) && contentType.hasUnpublishedChanges();
+      case 'active':
+        return matchesSearchTerm(contentType) && contentType.isPublished();
+      case 'draft':
+        return matchesSearchTerm(contentType) && !contentType.isPublished();
+      default:
+        return matchesSearchTerm(contentType) && !contentType.isDeleted();
+    }
+  }
+
+  function matchesSearchTerm(contentType) {
+    var searchTermRe;
+
+    try {
+      if ($scope.hasQuery()) {
+        searchTermRe = new RegExp($scope.searchTerm.toLowerCase(), 'gi');
+      }
+    } catch (exp) {
+      notification.warn('Invalid search term');
+    }
+
+    return searchTermRe ? searchTermRe.test(contentType.getName()) : true;
+  }
 
   $scope.numFields = function(contentType) {
     return _.size(contentType.data.fields);
   };
 
-  $scope.$watch(function (scope) {
-    if (scope.spaceContext.contentTypes) {
-      return scope.spaceContext.contentTypes;
-    }
-  }, function () {
-    $scope.contentTypes = $scope.spaceContext.getFilteredAndSortedContentTypes();
-    $scope.empty = $scope.contentTypes.length === 0;
-  });
-
-  $scope.$watch('searchTerm',  function (term) {
-    if (term === null) return;
-    $scope.context.list = 'all';
-    $scope.resetContentTypes();
-  });
-
-  $scope.switchList = function(list){
-    $scope.searchTerm = null;
-    var shouldReset = $scope.context.list == list;
-
-    if (shouldReset) {
-      this.resetContentTypes();
-    } else {
-      $scope.context.list = list;
-    }
-  };
-
-  $scope.$watchCollection('contentTypes', filterContentTypes);
-  $scope.$watchGroup(['searchTerm', 'context.list'], filterContentTypes);
-
-  function filterContentTypes () {
-    $scope.visibleContentTypes = _.filter($scope.contentTypes, function (contentType) {
-      if($scope.searchTerm){
-        var searchTermRe;
-        try {
-          searchTermRe = new RegExp($scope.searchTerm.toLowerCase(), 'gi');
-        } catch(exp) {
-          notification.warn('Invalid search term');
-        }
-        if (searchTermRe) {
-          return searchTermRe.test(contentType.getName());
-        }
-      }
-      switch ($scope.context.list) {
-        case 'changed':
-          return contentType.hasUnpublishedChanges();
-        case 'active':
-          return contentType.isPublished();
-        case 'draft':
-          return !contentType.isPublished();
-        default:
-          return !contentType.isDeleted();
-      }
-    });
-  }
-
-  $scope.resetContentTypes = function(){
-    if (this.spaceContext) this.spaceContext.refreshContentTypes();
-  };
-
   $scope.hasQuery = function () {
-    var noQuery = $scope.context.list == 'all' && _.isEmpty($scope.searchTerm);
-    return !noQuery;
+    return _.isString($scope.searchTerm) && $scope.searchTerm.length > 0;
+  };
+
+  $scope.statusClass = function(contentType) {
+    return getStatus(contentType, 'class');
+  };
+
+  $scope.statusLabel = function(contentType) {
+    return getStatus(contentType, 'label');
   };
 
   $scope.hasContentTypes = function () {
@@ -97,13 +96,5 @@ angular.module('contentful')
       return 'draft';
     }
   }
-
-  $scope.statusClass = function(contentType) {
-    return getStatus(contentType, 'class');
-  };
-
-  $scope.statusLabel = function(contentType) {
-    return getStatus(contentType, 'label');
-  };
 
 }]);

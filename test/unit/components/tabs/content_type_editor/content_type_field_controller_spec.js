@@ -61,7 +61,7 @@ describe('Content Type Field Controller', function () {
 
     it('shows notification when disabling title field', function () {
       var modalDialog = this.$inject('modalDialog');
-      var notify = sinon.stub(modalDialog, 'notify');
+      var open = sinon.stub(modalDialog, 'open');
 
       this.field.disabled = false;
       this.contentType.data.displayField = this.field.id;
@@ -72,7 +72,7 @@ describe('Content Type Field Controller', function () {
       this.$apply();
 
       expect(this.field.disabled).toBe(false);
-      sinon.assert.called(notify);
+      sinon.assert.called(open);
     });
   });
 

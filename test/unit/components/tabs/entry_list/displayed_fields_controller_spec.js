@@ -9,14 +9,14 @@ describe('Displayed Fields Controller', function () {
       stubs = $provide.makeStubs([
       ]);
     });
-    inject(function ($rootScope, $controller, cfStub) {
+    inject(function ($rootScope, $controller, cfStub, systemFields) {
       scope = $rootScope.$new();
 
       scope.context = {
         view: {}
       };
 
-      scope.systemFields = [];
+      systemFields.getList = _.constant([]);
 
       var space = cfStub.space('test');
       var contentTypeData = cfStub.contentTypeData('testType');

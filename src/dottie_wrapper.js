@@ -4,9 +4,11 @@ var dottie = require('dottie');
 var NOTHING = {};
 
 module.exports = {
-  get: dottie.get,
-  put: dottie.set,
-  exists: exists
+  get:       dottie.get,
+  put:       dottie.set,
+  transform: dottie.transform,
+  flatten:   dottie.flatten,
+  exists:    exists
 };
 
 function exists(obj, path) {

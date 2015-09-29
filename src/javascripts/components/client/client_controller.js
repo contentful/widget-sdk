@@ -10,7 +10,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var spaceContext       = $injector.get('spaceContext');
   var authentication     = $injector.get('authentication');
   var tokenStore         = $injector.get('tokenStore');
-  var spacesStore        = $injector.get('spacesStore');
+  var spaceTools         = $injector.get('spaceTools');
   var notification       = $injector.get('notification');
   var analytics          = $injector.get('analytics');
   var authorization      = $injector.get('authorization');
@@ -39,9 +39,9 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     showDisabledFields: false
   };
 
-  $scope.$watchCollection(function (scope) {
+  $scope.$watchCollection(function () {
     return {
-      space: scope.spaceContext.space,
+      space: spaceContext.space,
       tokenLookup: authentication.tokenLookup
     };
   }, spaceAndTokenWatchHandler);
@@ -51,14 +51,11 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.$on('iframeMessage', iframeMessageWatchHandler);
   $scope.$on('$stateChangeSuccess', stateChangeSuccessHandler);
 
-  // @todo remove it - temporary proxy event handlers
+  // @todo remove it - temporary proxy event handler
   $scope.$on('showCreateSpaceDialog', function(e, id) { showCreateSpaceDialog(id); });
-  $scope.$on('selectSpace', function(e, space) { selectSpace(space); });
 
   $scope.initClient = initClient;
   $scope.setTokenDataOnScope = setTokenDataOnScope;
-  $scope.getCurrentSpaceId = getCurrentSpaceId;
-  $scope.selectSpace = selectSpace;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
 
   function initClient() {
@@ -86,8 +83,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     TheAccountView.check();
     analytics.stateActivated(toState, toStateParams, fromState, fromStateParams);
 
-    if ($scope.spaces !== null && $scope.$stateParams.spaceId !== $scope.getCurrentSpaceId() && !TheAccountView.isActive()) {
-      var space = spacesStore.getSpaceFromList($scope.$stateParams.spaceId, $scope.spaces);
+    if ($scope.spaces !== null && $scope.$stateParams.spaceId !== spaceContext.getId() && !TheAccountView.isActive()) {
+      var space = spaceTools.getFromList($scope.$stateParams.spaceId, $scope.spaces);
       if (space) {
         setSpaceContext(space);
       } else if (!$scope.$stateParams.spaceId && $scope.spaces && $scope.spaces.length > 0) {
@@ -185,32 +182,14 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
   function setTokenDataOnScope(token) {
     $scope.user = token.user;
+    enforcements.setUser(token.user);
     $scope.spaces = token.spaces;
   }
 
   function setSpaceContext(space) {
-    $scope.spaceContext.resetWithSpace(space);
+    spaceContext.resetWithSpace(space);
     TheLocaleStore.resetWithSpace(space);
-    enforcements.setSpaceContext($scope.spaceContext);
     analytics.setSpace(space);
-  }
-
-  function selectSpace(space) {
-    if(!space){
-      // TODO this should never happen and is definitely not a user
-      // error
-      return notification.warn('Selected space does not exist');
-    }
-    if (!TheAccountView.isActive() && $scope.getCurrentSpaceId() === space.getId()) {
-      return true;
-    }
-    analytics.track('Switched Space', {
-      spaceId: space.getId(),
-      spaceName: space.data.name
-    });
-    spacesStore.saveSelectedSpace(space.getId());
-    $scope.$state.go('spaces.detail', { spaceId: space.getId() });
-    return true;
   }
 
   function newVersionCheck() {
@@ -239,12 +218,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     }
   }
 
-  function getCurrentSpaceId() {
-    return $scope.spaceContext &&
-           $scope.spaceContext.space &&
-           $scope.spaceContext.space.getId();
-  }
-
   function showCreateSpaceDialog(organizationId) {
     analytics.track('Clicked Create-Space');
     showSpaceTemplatesModal(organizationId);
@@ -257,9 +230,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     modalDialog.open({
       title: 'Space templates',
       template: 'space_templates_dialog',
-      ignoreEnter: true,
-      ignoreEsc: true,
-      noBackgroundClose: true,
       scope: $scope
     })
     .promise
@@ -286,7 +256,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
   function refreshContentTypes() {
     return $timeout(function () {
-      $scope.spaceContext.refreshContentTypes();
+      spaceContext.refreshContentTypes();
     }, 1000);
   }
 

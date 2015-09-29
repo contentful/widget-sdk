@@ -30,7 +30,7 @@ header.workbench-header
             td.cell-display-name.cell-anchor(cf-click-local="toggleDisplay(contentType.getId())")
               span {{contentType.getName()}}
             td.cell-identifier
-              a.cf-copy-paste(href="#" clipboard-sibling-selector=".cf-copy-paste") {{contentType.getId()}}
+              span {{contentType.getId()}}
             td.cell-description
               span {{contentType.data.description}}
           tr(ng-repeat-end ng-show="isExpanded(contentType.getId())")
@@ -46,7 +46,7 @@ header.workbench-header
                   tr(ng-repeat="field in contentType.data.fields track by field.id")
                     td.cell-display-name {{field.name}}
                     td.cell-identifier
-                      a.cf-copy-paste(href="#" clipboard-sibling-selector=".cf-copy-paste") {{field.apiName || field.id}}
+                      span {{field.apiName || field.id}}
                     td.cell-description
                       span(tooltip="{{getHelpText(field.type)}}" tooltip-html="true")
                         | {{field.type}}

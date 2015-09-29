@@ -1,18 +1,13 @@
 'use strict';
 angular.module('contentful').factory('enforcements', ['$injector', function Enforcements($injector) {
 
-  var spaceContext, user;
-
-  var $location   = $injector.get('$location');
-  var $window     = $injector.get('$window');
-  var stringUtils = $injector.get('stringUtils');
-  var analytics   = $injector.get('analytics');
-  var logger      = $injector.get('logger');
-
-  function setTokenObjects(newSpaceContext) {
-    if(newSpaceContext) spaceContext = newSpaceContext;
-    user = $injector.get('authentication').getUser();
-  }
+  var $location    = $injector.get('$location');
+  var $window      = $injector.get('$window');
+  var stringUtils  = $injector.get('stringUtils');
+  var analytics    = $injector.get('analytics');
+  var logger       = $injector.get('logger');
+  var spaceContext = $injector.get('spaceContext');
+  var user;
 
   function isOwner() {
     if(!user.sys) throw new Error('Bad user object');
@@ -108,16 +103,11 @@ angular.module('contentful').factory('enforcements', ['$injector', function Enfo
     'contentDeliveryApiRequest'
   ];
 
-  function assertSpaceContext() {
-    if(!spaceContext) throw new Error('No space context defined');
-  }
-
   function getMetricMessage(metricKey) {
     return 'You have exceeded your '+usageMetrics[stringUtils.uncapitalize(metricKey)]+' usage';
   }
 
   function computeUsage(filter) {
-    assertSpaceContext();
     if(!spaceContext.space) return;
     if(filter) filter = stringUtils.uncapitalize(filter);
     var organization = spaceContext.space.data.organization;
@@ -138,7 +128,6 @@ angular.module('contentful').factory('enforcements', ['$injector', function Enfo
   }
 
   function determineEnforcement(reasons, entityType) {
-    assertSpaceContext();
     if(!reasons || reasons.length && reasons.length === 0) return null;
     var errors = _.filter(errorsByPriority, function (val) {
       return reasons.indexOf(val.label) >= 0;
@@ -179,8 +168,6 @@ angular.module('contentful').factory('enforcements', ['$injector', function Enfo
     determineEnforcement: determineEnforcement,
     computeUsage: computeUsage,
     getPeriodUsage: getPeriodUsage,
-    setSpaceContext: function (spaceContext) {
-      setTokenObjects(spaceContext);
-    }
+    setUser: function (u) { user = u; }
   };
 }]);

@@ -9,6 +9,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   var Command          = $injector.get('command');
   var truncate         = $injector.get('stringUtils').truncate;
   var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
+  var spaceContext     = $injector.get('spaceContext');
 
   var IOS_RE = /(iphone os|ipad|iphone)/gi;
   $scope.isIos = IOS_RE.test($window.navigator.userAgent);
@@ -40,13 +41,13 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
       'http://' +
       environment.settings.cdn_host +
       '/spaces/' +
-      $scope.spaceContext.space.getId() +
+      spaceContext.space.getId() +
       '/entries?access_token=' +
       accessToken;
 
     $scope.iosMobileAppUrl =
       'contentful://open/space/' +
-      $scope.spaceContext.space.getId() +
+      spaceContext.space.getId() +
       '?access_token=' +
       accessToken;
 
@@ -58,7 +59,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   $scope.$watch('apiKey.data.preview_api_key', function (previewApiKey) {
     if(previewApiKey) {
       var id = previewApiKey.sys.id;
-      $scope.spaceContext.space.getPreviewApiKey(id)
+      spaceContext.space.getPreviewApiKey(id)
       .then(function (apiKey) {
         $scope.previewApiKey = apiKey;
       });
@@ -122,7 +123,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   function generatePreviewApiKey() {
     var data = _.omit($scope.apiKey.data, 'sys', 'preview_api_key', 'accessToken', 'policies');
     data.apiKeyId = $scope.apiKey.getId();
-    $scope.spaceContext.space.createPreviewApiKey(data)
+    spaceContext.space.createPreviewApiKey(data)
     .then(function (previewApiKey) {
       $scope.previewApiKey = previewApiKey;
     });

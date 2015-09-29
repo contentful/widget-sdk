@@ -83,7 +83,7 @@ $markdown-radius = 2px
   background: $colors.element-mid
   &:not(:disabled):hover,
   &.active
-    border-color: $colors.element-darker
+    border-color: $colors.element-darkest
   &.active
     background: $colors.element-dark
     box-shadow: inset 0px 1px 2px 0px rgba(0, 0 , 0, .08)
@@ -93,7 +93,7 @@ $markdown-radius = 2px
   padding: 0 8px
   font-size: 1em
   &:hover
-    border-color: $colors.element-darker
+    border-color: $colors.element-darkest
 
 /**
  * Editor, preview, info
@@ -390,8 +390,9 @@ $markdown-radius = 2px
  * Help
  */
 
-.markdown-help-dialog a
-  text-decoration: underline
+.markdown-help-dialog
+  a
+    text-decoration: underline
 
 .markdown-help-columns
   display: flex
