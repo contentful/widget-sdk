@@ -160,6 +160,13 @@ describe('Asset List Controller', function () {
       scope.searchController.paginator.skipItems.returns(true);
     });
 
+    it('sets loading flag', function () {
+      scope.searchController.resetAssets();
+      expect(scope.context.loading).toBe(true);
+      scope.$apply();
+      expect(scope.context.loading).toBe(false);
+    });
+
     it('loads assets', function() {
       scope.searchController.resetAssets();
       scope.$apply();
@@ -428,4 +435,29 @@ describe('Asset List Controller', function () {
 
   });
 
+  describe('#showNoAssetsAdvice', function () {
+    beforeEach(function () {
+      scope.context.view = {};
+    });
+
+    it('is true when there are no entries', function () {
+      scope.assets = null;
+      expect(scope.showNoAssetsAdvice()).toBe(true);
+      scope.assets = [];
+      expect(scope.showNoAssetsAdvice()).toBe(true);
+    });
+
+    it('is false when there is a search term', function () {
+      scope.assets = null;
+      scope.context.view.searchTerm = 'foo';
+      expect(scope.showNoAssetsAdvice()).toBe(false);
+    });
+
+    it('is false when the view is loading', function () {
+      scope.assets = [{}];
+      scope.context.view.searchTerm = 'foo';
+      scope.context.loading = true;
+      expect(scope.showNoAssetsAdvice()).toBe(false);
+    });
+  });
 });

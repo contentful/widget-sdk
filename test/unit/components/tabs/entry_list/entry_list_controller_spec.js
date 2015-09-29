@@ -220,6 +220,13 @@ describe('Entry List Controller', function () {
       spaceContext.space.getEntries.reset();
     });
 
+    it('sets loading flag', function () {
+      scope.resetEntries();
+      expect(scope.context.loading).toBe(true);
+      scope.$apply();
+      expect(scope.context.loading).toBe(false);
+    });
+
     it('sets entries num on the paginator', function() {
       scope.resetEntries();
       scope.$apply();
@@ -365,6 +372,13 @@ describe('Entry List Controller', function () {
     it('is false when there is a content type filter', function () {
       scope.entries = null;
       scope.context.view.contentTypeId = 'foo';
+      expect(scope.showNoEntriesAdvice()).toBe(false);
+    });
+
+    it('is false when the view is loading', function () {
+      scope.entries = [{}];
+      scope.context.view.searchTerm = 'foo';
+      scope.context.loading = true;
       expect(scope.showNoEntriesAdvice()).toBe(false);
     });
   });
