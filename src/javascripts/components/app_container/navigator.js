@@ -484,9 +484,9 @@ angular.module('contentful').config([
   function loadableState(definition) {
     definition.template = [
       '<div ng-show="context.ready">' + definition.template + '</div>',
-      '<div ng-hide="context.ready" class="client-loading">',
-        '<div class="client-loading__icon fa fa-cog fa-spin"></div>',
-        '<div class="client-loading__text">',
+      '<div ng-hide="context.ready" class="workbench x--loading">',
+        '<div class="workbench-loading__spinner"></div>',
+        '<div class="workbench-loading__message">',
           'Loading your ' + definition.ncyBreadcrumb.label + '...',
         '</div>',
       '</div>'

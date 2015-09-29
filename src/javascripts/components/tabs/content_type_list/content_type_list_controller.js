@@ -78,7 +78,7 @@ angular.module('contentful')
   };
 
   $scope.hasQueryResults = function () {
-    return $scope.visibleContentTypes.length > 0;
+    return !_.isEmpty($scope.visibleContentTypes);
   };
 
   function getStatus(contentType, statusType) {
