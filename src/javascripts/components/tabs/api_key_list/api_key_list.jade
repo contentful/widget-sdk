@@ -50,7 +50,7 @@ header.workbench-header
               a.entity-list-link(ui-sref="{{entityNavState}}" cf-user link="apiKey.getCreatedBy()" as="creator")
                 | {{creator | userNameDisplay:user}}
 
-.workbench-main(ng-show="empty")
+.workbench-main.x--content(ng-show="empty")
   .cfnext-advice
     i.fa.fa-random.advice__giant-icon
     header.advice__title There are no API Keys yet.
