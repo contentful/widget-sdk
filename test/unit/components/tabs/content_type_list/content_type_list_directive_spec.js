@@ -1,7 +1,13 @@
 'use strict';
 
 describe('The ContentType list directive', function () {
-  beforeEach(module('contentful/test'));
+  var $q, spaceContext;
+
+  beforeEach(function () {
+    module('contentful/test');
+    $q = this.$inject('$q');
+    spaceContext = this.$inject('spaceContext');
+  });
 
   afterEach(function () {
     this.$inject('$document').empty();
@@ -12,7 +18,8 @@ describe('The ContentType list directive', function () {
       data: {},
       getId: sinon.stub().returns(id),
       getName: sinon.stub().returns(name),
-      getPublishedAt: sinon.stub()
+      getPublishedAt: sinon.stub(),
+      isDeleted: _.constant(false)
     };
   }
 
@@ -22,16 +29,15 @@ describe('The ContentType list directive', function () {
       makeCT(2, 'B'),
       makeCT(3, 'Bx')
     ];
-    var element = this.$compile('<div cf-content-type-list>', {
-      context: {},
-      spaceContext: {
-        contentTypes: contentTypes,
-        getFilteredAndSortedContentTypes: sinon.stub().returns(contentTypes),
-        refreshContentTypes: sinon.stub()
-      },
-      searchTerm: 'B'
-    });
+
+    spaceContext.getFilteredAndSortedContentTypes = sinon.stub().returns(contentTypes);
+    spaceContext.refreshContentTypes = sinon.stub().resolves();
+
+    var element = this.$compile('<div cf-content-type-list>', { context: {} });
+    var scope = element.scope();
+
+    scope.searchTerm = 'B';
+    scope.$apply();
     expect(element.find('.main-results tbody tr').length).toBe(2);
   });
-
 });

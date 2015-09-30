@@ -28,12 +28,13 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
   var defer      = $injector.get('defer');
   var track      = $injector.get('analytics').track;
   var $rootScope = $injector.get('$rootScope');
+  var debounce   = $injector.get('debounce');
+  var $timeout   = $injector.get('$timeout');
   var opened     = [];
 
   function Dialog(params) {
     this._handleKeys = _.bind(this._handleKeys, this);
     opened.push(this);
-
     var scope = params.scope;
 
     if (!scope) {
@@ -49,20 +50,21 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
     this.params = _.extend(
       {
         template: 'modal_dialog',
-        cancelLabel: 'Cancel',
         confirmLabel: 'OK',
-        noBackgroundClose: false,
+        cancelLabel: 'Cancel',
         attachTo: '.client',
-        ignoreEnter: false,
+        backgroundClose: true,
+        ignoreEnter: true,
         ignoreEsc: false,
-        disableTopCloseButton: false,
-        className: ''
+        disableTopCloseButton: false
       },
       _.pick(params,
-             'title', 'message', 'html', 'template',
-             'cancelLabel', 'confirmLabel', 'className', 'disableTopCloseButton',
-             'noBackgroundClose', 'attachTo', 'ignoreEnter', 'ignoreEsc', 'enterAction')
+        'title', 'message',
+        'template', 'confirmLabel', 'cancelLabel',
+        'attachTo', 'enterAction', 'backgroundClose',
+        'ignoreEnter', 'ignoreEsc', 'disableTopCloseButton')
     );
+
     this._deferred = $q.defer();
     this.promise = this._deferred.promise;
   }
@@ -71,14 +73,8 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
 
     attach: function () {
       var scope = this.scope;
+
       this.domElement = $(JST[this.params.template]());
-
-      if(this.domElement.find('input').length > 0)
-        this.domElement.find('input').eq(0).focus();
-      else
-        $(':focus').blur();
-
-      $($window).on('keyup', this._handleKeys);
 
       scope.dialog = _.extend(this, this.params);
 
@@ -87,18 +83,53 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       defer(_.bind(function () {
         this.domElement.appendTo(this.params.attachTo);
         $compile(this.domElement)(scope);
+
         this.domElement.on('click', _.bind(this._closeOnBackground, this));
         this.open = true;
         scope.$apply();
+
+        this._centerOnBackground();
+
+        if(this.domElement.find('input').length > 0) {
+          this.domElement.find('input').eq(0).focus();
+        } else {
+          $(':focus').blur();
+        }
+
+        $($window).on('keyup', this._handleKeys);
+
+        this.domElement.addClass('is-visible');
+
       }, this));
+    },
+
+    _centerOnBackground: function () {
+      var elem = this.domElement.children('.modal-dialog');
+      var debouncedReposition = debounce(reposition, 50);
+      var destroyed = false;
+
+      reposition();
+      $($window).on('resize', debouncedReposition);
+
+      var repositionOff = $rootScope.$on('centerOn:reposition', function () {
+        if (!destroyed) { reposition(); }
+      });
+
+      elem.on('$destroy', function () {
+        destroyed = true;
+        $($window).off('resize', debouncedReposition);
+        repositionOff();
+      });
+
+      function reposition() {
+        var topOffset = Math.max(($window.innerHeight-elem.height())/2, 0);
+        elem.css({ top: topOffset + 'px' });
+      }
     },
 
     _closeOnBackground: function (ev) {
       var target = $(ev.target);
-      if(target.hasClass('modal-background') &&
-         _.isUndefined(target.attr('no-background-close')) &&
-         !this.params.noBackgroundClose
-        ){
+      if(target.hasClass('modal-background') && this.params.backgroundClose) {
         this.cancel();
       }
     },
@@ -137,23 +168,27 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
     },
 
     destroy: function () {
-      if(this.domElement){
-        this.domElement.scope().$destroy();
-        this.domElement.remove();
-        $($window).off('keyup', this._handleKeys);
+      var self = this;
+      $($window).off('keyup', this._handleKeys);
+      function destroyModal() {
+        if(self.domElement){
+          self.domElement.scope().$destroy();
+          self.domElement.remove();
+        }
+        if(self.scope) self.scope.$destroy();
+        self.domElement = self.scope = null;
+        self.open = false;
       }
-      if(this.scope) this.scope.$destroy();
-      this.domElement = this.scope = null;
-      this.open = false;
+      this.domElement.removeClass('is-visible');
+      $timeout(destroyModal, 250);
     }
   };
 
   return {
-    open:              openDialog,
-    notify:            notify,
-    confirmDeletion:   confirmDeletion,
-    openConfirmDialog: openConfirmDialog,
-    getOpened:         getOpened
+    open:                     openDialog,
+    openConfirmDialog:        openConfirmDialog,
+    openConfirmDeleteDialog:  openConfirmDeleteDialog,
+    getOpened:                getOpened
   };
 
   /**
@@ -180,67 +215,6 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
 
   /**
    * @ngdoc method
-   * @name modalDialog#confirmDeletion
-   * @description
-   * Shows a dialog that asks the user to click a button to confirm
-   * deletion of an item. Uses "openConfirmDialog" internally.
-   *
-   * @param {string} message
-   * @param {string?} hint
-   * @return {Promise<object>}
-   */
-  function confirmDeletion (message, hint) {
-    var scope = _.extend($rootScope.$new(), {
-      message: message,
-      hint: hint
-    });
-
-    return openConfirmDialog({
-      template: 'dialog_confirm_deletion',
-      attachTo: '.client',
-      scope: scope
-    });
-  }
-
-  /**
-   * @ngdoc method
-   * @name modalDialog#notify
-   * @description
-   * Show a message in a dialog with a single 'OK' button.
-   *
-   * The returned promise is resolved when the user clicks 'OK', clicks
-   * on the background or hits 'Enter' or 'Escape'.
-   *
-   * @param {string} message
-   * @param {object} opts
-   * @param {boolean} opts.html
-   * @returns {Promise<void>}
-   */
-  function notify (message, opts) {
-    opts = opts || {};
-    var scope = _.extend($rootScope.$new(), {
-      message: message,
-      confirmLabel: 'OK',
-      isHtml: opts.html
-    });
-
-    return openConfirmDialog({
-      template: 'dialog_notification',
-      attachTo: '.client',
-      scope: scope,
-      ignoreEnter: false,
-      ignoreEsc: false,
-      noBackgroundClose: false
-    }).then(function () {
-      return;
-    }, function () {
-      // Hitting Escape rejects the promsise
-      return;
-    });
-  }
-
-  /**
-   * @ngdoc method
    * @name modalDialog#openConfirmDialog
    * @description
    * Generic method for opening confirmation dialogs. It has sensible
@@ -253,9 +227,8 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
    */
   function openConfirmDialog(params) {
     params = _.defaults(params || {}, {
-      ignoreEnter: true,
       ignoreEsc: true,
-      noBackgroundClose: true
+      backgroundClose: false
     });
 
     return openDialog(params)
@@ -264,6 +237,14 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       }, function() {
         return { confirmed: false, cancelled: true  };
       });
+  }
+
+  function openConfirmDeleteDialog(params) {
+    params = _.defaults(params || {}, {
+      template: 'modal_dialog_warning',
+      confirmLabel: 'Delete'
+    });
+    return openDialog(params);
   }
 
   /**

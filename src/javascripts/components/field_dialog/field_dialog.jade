@@ -1,4 +1,4 @@
-.modal-background(no-background-close)
+.modal-background
   .modal-dialog.field-dialog(
     ng-form="fieldForm"
     cf-ui-tab
@@ -54,6 +54,6 @@
         type="button" ng-click="dialog.save()"
         ng-disabled="!fieldForm.$valid")
         | Save
-      button.cfnext-btn-plain(
+      button.cfnext-btn-secondary-action(
         type="button" ng-click="dialog.cancel()")
         | Cancel

@@ -19,7 +19,7 @@
           role="menuitem"
           ng-repeat="space in org track by space.getId()"
           ng-click="selectSpace(space)"
-          ng-class="{selected: space.getId() === getCurrentSpaceId()}")
+          ng-class="{selected: space.getId() === spaceContext.getId()}")
           | {{space.data.name}}
     .space-selector__group(
       ng-if="permissionController.canCreateSpace()")

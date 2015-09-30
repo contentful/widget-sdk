@@ -1,12 +1,11 @@
 .modal-background
   form.modal-dialog.edit-content-type-metadata__dialog(
+    novalidate
     name="newContentTypeForm"
     cf-on-submit="newContentTypeForm.$valid && dialog.confirm()")
     header.modal-dialog__header
-      .modal-dialog__action-icon
-        cf-icon(name="new-ct")
       h1 {{dialog.title}}
-      .close-button(ng-click="dialog.cancel()")
+      button.modal-dialog__close(ng-click="dialog.cancel()")
     .modal-dialog__content
       .cfnext-form__field
         label
@@ -31,5 +30,5 @@
     .modal-dialog__controls
       button.cfnext-btn-primary-action(cf-form-submit)
         | {{dialog.confirmLabel}}
-      button.cfnext-btn-plain(type="button" ng-click="dialog.cancel()")
+      button.cfnext-btn-secondary-action(type="button" ng-click="dialog.cancel()")
         | Cancel

@@ -12,16 +12,6 @@ angular.module('contentful/environment', []).constant('environment', {
 
   s.main_domain = s.main_domain || 'contentful.com'; // Safety fallback
 
-  // for ZeroClipboard
-  var whiteList = _.union([
-                s.asset_host,
-                s.main_domain,
-        'be.' + s.main_domain,
-       'app.' + s.main_domain,
-    'static.' + s.main_domain,
-  ], s.additional_domains);
-  s.resourceUrlWhiteList = whiteList;
-
   // for sceDelegateProvider
   var domains = _([s.asset_host, s.main_domain])
     .union(s.additional_domains)

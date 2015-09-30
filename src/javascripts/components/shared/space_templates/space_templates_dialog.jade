@@ -1,8 +1,8 @@
 .modal-background
-  .modal-dialog.space-template__dialog(ng-controller="SpaceTemplatesController" cf-center-on=".modal-background")
+  .modal-dialog.space-template__dialog(ng-controller="SpaceTemplatesController")
     header.modal-dialog__header
       h1 {{dialog.title}}
-      .close-button(ng-show="viewState.is('spaceTemplateList') || viewState.is('spaceCreation')" ng-click="dialog.cancel()")
+      button.modal-dialog__close(ng-show="viewState.is('spaceTemplateList') || viewState.is('spaceCreation')" ng-click="dialog.cancel()")
     .modal-dialog__content.space-template__dialog-content
       .loading(ng-show="viewState.is('loading')")
 

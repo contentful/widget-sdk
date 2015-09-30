@@ -4,9 +4,10 @@ angular.module('contentful')
 .controller('ApiKeyListController', ['$scope', '$injector',
 function ApiKeyListController ($scope, $injector) {
   var ReloadNotification = $injector.get('ReloadNotification');
+  var spaceContext       = $injector.get('spaceContext');
 
   $scope.refreshApiKeys = function() {
-    return $scope.spaceContext.space.getDeliveryApiKeys({limit: 1000})
+    return spaceContext.space.getDeliveryApiKeys({limit: 1000})
     .then(function (apiKeys) {
       $scope.apiKeys = apiKeys;
     })

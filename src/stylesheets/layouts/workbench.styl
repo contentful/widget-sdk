@@ -248,3 +248,35 @@ Styleguide 9.5
   flex-grow: 0
   flex-basis: $workbench-content-width
   $tab-list()
+
+
+/**
+Loading Message
+
+Markup:
+.styleguide-stretch-container--short
+  div Breadcrumbs
+  .workbench.x--loading
+    .workbench-loading__spinner
+    .workbench-loading__message
+      | Loading entries...
+
+Styleguide 9.6
+*/
+
+@import "../mixins/spinner"
+
+.workbench.x--loading
+  align-items: center
+  justify-content: center
+
+.workbench-loading
+  &__spinner
+    margin-bottom: $rhythm(1)
+    $spinner-base()
+    +$spinner-active()
+      display: block
+      width: 2em
+      height: 2em
+  &__message
+    font-size: 2em

@@ -76,7 +76,7 @@ describe('ContentType Actions Controller', function () {
       };
 
       this.modalDialog = this.$inject('modalDialog');
-      sinon.stub(this.modalDialog, 'openConfirmDialog', function (params) {
+      sinon.stub(this.modalDialog, 'open', function (params) {
         if (params.scope && params.scope.delete) {
           params.scope.delete.execute();
         }
@@ -97,12 +97,12 @@ describe('ContentType Actions Controller', function () {
       it('asks the user for confirmation', function () {
         controller.delete.execute();
         this.$apply();
-        sinon.assert.called(this.modalDialog.openConfirmDialog);
+        sinon.assert.called(this.modalDialog.open);
       });
 
       it('does not send DELETE if the user denies confirmation', function () {
-        this.modalDialog.openConfirmDialog.restore();
-        sinon.stub(this.modalDialog, 'openConfirmDialog').resolves();
+        this.modalDialog.open.restore();
+        sinon.stub(this.modalDialog, 'open').resolves();
 
         controller.delete.execute();
         this.$apply();
@@ -136,7 +136,7 @@ describe('ContentType Actions Controller', function () {
       this.$apply();
 
       sinon.assert.calledWith(
-        this.modalDialog.openConfirmDialog,
+        this.modalDialog.open,
         sinon.match({template: 'content_type_removal_forbidden_dialog'})
       );
       sinon.assert.notCalled(contentType.delete);

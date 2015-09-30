@@ -29,18 +29,16 @@ describe('API key editor controller', function () {
         logServerWarn: stubs.logServerWarn
       });
     });
-    inject(function ($controller, $injector) {
+    inject(function ($controller, $injector, spaceContext) {
       $q = $injector.get('$q');
       $rootScope = $injector.get('$rootScope');
       stubs.broadcast = sinon.stub($rootScope, '$broadcast');
       stubs.broadcast.returns({});
       scope = $rootScope.$new();
 
-      scope.spaceContext = {
-        space: {
-          getId: stubs.spaceGetId,
-          createPreviewApiKey: stubs.createPreviewApiKey
-        }
+      spaceContext.space = {
+        getId: stubs.spaceGetId,
+        createPreviewApiKey: stubs.createPreviewApiKey
       };
 
       scope.context = {};

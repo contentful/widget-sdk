@@ -49,14 +49,13 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
     var view = $scope.context.view;
     var hasQuery = !_.isEmpty(view.searchTerm);
     var hasEntries = $scope.assets && $scope.assets.length > 0;
-    return !hasEntries && !hasQuery;
+    return !hasEntries && !hasQuery && !$scope.context.loading;
   };
 
   // TODO this code is duplicated in the asset list controller
   $scope.showCreateAssetButton = function () {
     return !$scope.permissionController.get('createAsset', 'shouldHide');
   };
-
 
   var throttledListRefresh = throttle(function () {
     delay(function () {
@@ -74,14 +73,6 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
         return $q.all(_.map(entities, processAssetForFile)).then(function () {
           notification.info('Assets processed');
           throttledListRefresh();
-          return $q.all(_.map(entities, publishAssetForFile)).then(function () {
-            notification.info('Assets saved');
-            throttledListRefresh();
-          }).catch(function (err) {
-            notification.warn('Some assets failed to save');
-            throttledListRefresh();
-            return $q.reject(err);
-          });
         }).catch(function (err) {
           notification.warn('Some assets failed to process');
           throttledListRefresh();
@@ -117,11 +108,6 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
     var locale = TheLocaleStore.getDefaultLocale().internal_code;
     return entity.process(entity.version, locale);
   }
-
-  function publishAssetForFile(entity) {
-    return entity.publish(entity.getVersion()+1);
-  }
-
 
   $scope.$on('didResetAssets', function (event, assets) {
     $scope.selection.switchBaseSet(assets.length);

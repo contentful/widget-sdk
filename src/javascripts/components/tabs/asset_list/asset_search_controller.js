@@ -8,12 +8,15 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
   var analytics          = $injector.get('analytics');
   var searchQueryHelper  = $injector.get('searchQueryHelper');
   var logger             = $injector.get('logger');
+  var spaceContext       = $injector.get('spaceContext');
+  var ListQuery          = $injector.get('ListQuery');
+  var systemFields       = $injector.get('systemFields');
 
   var assetLoader = new PromisedLoader();
 
   this.paginator = new Paginator();
   $scope.assetContentType = searchQueryHelper.assetContentType;
-  
+
   $scope.$on('entityDeleted', function (event, entity) {
     var scope = event.currentScope;
     var index = _.indexOf(scope.assets, entity);
@@ -23,14 +26,18 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
   });
 
   this.resetAssets = function(resetPage) {
-    if (resetPage) this.paginator.page = 0;
-    return buildQuery()
+    $scope.context.loading = true;
+    if (resetPage) { this.paginator.page = 0; }
+
+    return prepareQuery()
     .then(function (query) {
       return assetLoader.loadPromise(function(){
-        return $scope.spaceContext.space.getAssets(query);
+        return spaceContext.space.getAssets(query);
       });
     })
     .then(function (assets) {
+      $scope.context.ready = true;
+      $scope.context.loading = false;
       controller.paginator.numEntries = assets.total;
       $scope.assets = assets;
       $scope.$broadcast('didResetAssets', $scope.assets);
@@ -42,12 +49,13 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
     if (this.paginator.atLast()) return;
     this.paginator.page++;
     var queryForDebug;
-    return buildQuery()
+
+    return prepareQuery()
     .then(function (query) {
       analytics.track('Scrolled AssetList');
       queryForDebug = query;
       return assetLoader.loadPromise(function(){
-        return $scope.spaceContext.space.getAssets(query);
+        return spaceContext.space.getAssets(query);
       });
     })
     .then(function (assets) {
@@ -71,20 +79,11 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
     .catch(ReloadNotification.apiErrorHandler);
   };
 
-  function buildQuery() {
-    var queryObject = {
-      order: '-sys.updatedAt',
-      limit: controller.paginator.pageLength,
-      skip:  controller.paginator.skipItems()
-    };
-
-    return searchQueryHelper.buildQuery($scope.spaceContext.space,
-                                        searchQueryHelper.assetContentType,
-                                        getSearchTerm())
-    .then(function (searchQuery) {
-      _.extend(queryObject, searchQuery);
-      return queryObject;
+  function prepareQuery() {
+    return ListQuery.getForAssets({
+      paginator:  controller.paginator,
+      order:      systemFields.getDefaultOrder(),
+      searchTerm: getSearchTerm()
     });
   }
-
 }]);

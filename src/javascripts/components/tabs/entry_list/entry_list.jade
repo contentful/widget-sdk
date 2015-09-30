@@ -133,14 +133,16 @@ header.workbench-header
       | Visit the Knowledge Base Pages
       i.fa.fa-question-circle
 
-
 .workbench-actions(
   ng-hide="selection.isEmpty()"
   ng-controller="EntryListActionsController")
   .workbench-actions__label
     | {{selection.size()}} Entries selected
 
-  button.cfnext-btn-secondary-action.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
+  button.cfnext-btn-secondary-action.duplicate(type="button"
+    ng-click="duplicateSelected()"
+    ng-show="showDuplicate()")
+    | Duplicate
   button.cfnext-btn-secondary-action.delete(type="button"
     ng-show="showDelete()"
     cf-context-menu-trigger

@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Entry List Controller', function () {
-  var controller, scope;
+  var controller, scope, spaceContext;
   var stubs, getEntries;
   var createController;
   var $q;
@@ -32,20 +32,29 @@ describe('Entry List Controller', function () {
       };
       $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
     });
-    inject(function ($rootScope, $controller, cfStub, PromisedLoader, _$q_) {
+
+    inject(function ($rootScope, $controller, cfStub, _$q_, _spaceContext_) {
       this.$rootScope = $rootScope;
       $q = _$q_;
       scope = $rootScope.$new();
+      spaceContext = _spaceContext_;
 
       scope.context = {};
 
       var space = cfStub.space('test');
       space.getUIConfig = stubs.getUIConfig;
       space.setUIConfig = stubs.setUIConfig;
-      var contentTypeData = cfStub.contentTypeData('testType');
-      scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
+
+      var ct = {
+        getId: _.constant(1),
+        data: { fields: [{ id: 'fieldId'}], sys: { id: 1 }}
+      };
+
       getEntries = $q.defer();
-      sinon.stub(scope.spaceContext.space, 'getEntries').returns(getEntries.promise);
+      spaceContext.resetWithSpace(space);
+      sinon.stub(spaceContext.space, 'getEntries').returns(getEntries.promise);
+      sinon.stub(spaceContext.space, 'getContentTypes').returns($q.when([ct]));
+      sinon.stub(spaceContext, 'fetchPublishedContentType').returns($q.when(ct));
 
       createController = function() {
         controller = $controller('EntryListController', {$scope: scope});
@@ -65,7 +74,8 @@ describe('Entry List Controller', function () {
         title: 'Derp',
         searchTerm: 'search term',
         contentTypeId: 'ctid',
-        displayedFields: ['field1', 'field2'],
+        contentTypeHidden: false,
+        displayedFieldIds: ['field1', 'field2'],
         order: {
           fieldId: 'fieldid',
           direction: 'descending'
@@ -74,11 +84,10 @@ describe('Entry List Controller', function () {
       scope.loadView(view);
     });
 
-
     it('sets the view, omitting the id', function () {
       var loaded = _.cloneDeep(view);
       loaded.title = 'New View';
-      expect(scope.context.view).toEqual(loaded);
+      expect(_.isEqual(scope.context.view, loaded)).toBe(true);
       expect(scope.context.view).not.toBe(loaded);
     });
 
@@ -183,7 +192,7 @@ describe('Entry List Controller', function () {
     });
 
     it('space id', function () {
-      stubs.id = sinon.stub(scope.spaceContext.space, 'getId').returns(123);
+      stubs.id = sinon.stub(spaceContext.space, 'getId').returns(123);
       scope.$digest();
       sinon.assert.calledOnce(stubs.reset);
       stubs.id.restore();
@@ -208,7 +217,14 @@ describe('Entry List Controller', function () {
       scope.paginator.pageLength = 3;
       scope.paginator.skipItems = sinon.stub();
       scope.paginator.skipItems.returns(true);
-      scope.spaceContext.space.getEntries.reset();
+      spaceContext.space.getEntries.reset();
+    });
+
+    it('sets loading flag', function () {
+      scope.resetEntries();
+      expect(scope.context.loading).toBe(true);
+      scope.$apply();
+      expect(scope.context.loading).toBe(false);
     });
 
     it('sets entries num on the paginator', function() {
@@ -235,13 +251,13 @@ describe('Entry List Controller', function () {
       it('with a default order', function() {
         scope.resetEntries();
         scope.$apply();
-        expect(scope.spaceContext.space.getEntries.args[0][0].order).toEqual('-sys.updatedAt');
+        expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-sys.updatedAt');
       });
 
       describe('with a user defined order', function() {
         beforeEach(function() {
-          scope.spaceContext.getPublishedContentType = sinon.stub();
-          scope.spaceContext.getPublishedContentType.returns({
+          spaceContext.getPublishedContentType = sinon.stub();
+          spaceContext.getPublishedContentType.returns({
             data: {
               fields: [
                 {id: 'fieldId'}
@@ -254,14 +270,14 @@ describe('Entry List Controller', function () {
           scope.context.view.order.fieldId = 'fieldId';
           scope.resetEntries();
           scope.$apply();
-          expect(scope.spaceContext.space.getEntries.args[0][0].order).toEqual('-fields.fieldId.en-US');
+          expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-fields.fieldId.en-US');
         });
 
         it('when the field does not exist', function() {
           scope.context.view.order.fieldId = 'deletedFieldId';
           scope.resetEntries();
           scope.$apply();
-          expect(scope.spaceContext.space.getEntries.args[0][0].order).toEqual('-sys.updatedAt');
+          expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-sys.updatedAt');
         });
       });
 
@@ -269,51 +285,51 @@ describe('Entry List Controller', function () {
         scope.resetEntries();
         scope.$apply();
         getEntries.resolve(entries);
-        expect(scope.spaceContext.space.getEntries.args[0][0].limit).toEqual(3);
+        expect(spaceContext.space.getEntries.args[0][0].limit).toEqual(3);
       });
 
       it('with a defined skip param', function() {
         scope.resetEntries();
         scope.$apply();
-        expect(scope.spaceContext.space.getEntries.args[0][0].skip).toBeTruthy();
+        expect(spaceContext.space.getEntries.args[0][0].skip).toBeTruthy();
       });
 
       // TODO these tests should go into a test for the search query helper
       it('for all list', function() {
         scope.resetEntries();
         scope.$apply();
-        expect(scope.spaceContext.space.getEntries.args[0][0]['sys.archivedAt[exists]']).toBe('false');
+        expect(spaceContext.space.getEntries.args[0][0]['sys.archivedAt[exists]']).toBe('false');
       });
 
       it('for published list', function() {
         scope.context.view.searchTerm = 'status:published';
         scope.resetEntries();
         scope.$apply();
-        expect(scope.spaceContext.space.getEntries.args[0][0]['sys.publishedAt[exists]']).toBe('true');
+        expect(spaceContext.space.getEntries.args[0][0]['sys.publishedAt[exists]']).toBe('true');
       });
 
       it('for changed list', function() {
         scope.context.view.searchTerm = 'status:changed';
         scope.resetEntries();
         scope.$apply();
-        expect(scope.spaceContext.space.getEntries.args[0][0]['sys.archivedAt[exists]']).toBe('false');
-        expect(scope.spaceContext.space.getEntries.args[0][0].changed).toBe('true');
+        expect(spaceContext.space.getEntries.args[0][0]['sys.archivedAt[exists]']).toBe('false');
+        expect(spaceContext.space.getEntries.args[0][0].changed).toBe('true');
       });
 
       it('for draft list', function() {
         scope.context.view.searchTerm = 'status:draft';
         scope.resetEntries();
         scope.$apply();
-        expect(scope.spaceContext.space.getEntries.args[0][0]['sys.archivedAt[exists]']).toBe('false');
-        expect(scope.spaceContext.space.getEntries.args[0][0]['sys.publishedVersion[exists]']).toBe('false');
-        expect(scope.spaceContext.space.getEntries.args[0][0].changed).toBe('true');
+        expect(spaceContext.space.getEntries.args[0][0]['sys.archivedAt[exists]']).toBe('false');
+        expect(spaceContext.space.getEntries.args[0][0]['sys.publishedVersion[exists]']).toBe('false');
+        expect(spaceContext.space.getEntries.args[0][0].changed).toBe('true');
       });
 
       it('for archived list', function() {
         scope.context.view.searchTerm = 'status:archived';
         scope.resetEntries();
         scope.$apply();
-        expect(scope.spaceContext.space.getEntries.args[0][0]['sys.archivedAt[exists]']).toBe('true');
+        expect(spaceContext.space.getEntries.args[0][0]['sys.archivedAt[exists]']).toBe('true');
       });
 
       it('for contentType list', function() {
@@ -321,14 +337,14 @@ describe('Entry List Controller', function () {
         scope.context.view.contentTypeId = 'ct1';
         scope.resetEntries();
         scope.$apply();
-        expect(scope.spaceContext.space.getEntries.args[0][0]['content_type']).toBe('ct1');
+        expect(spaceContext.space.getEntries.args[0][0]['content_type']).toBe('ct1');
       });
 
       it('for search term', function() {
         scope.context.view.searchTerm = 'term';
         scope.resetEntries();
         scope.$apply();
-        expect(scope.spaceContext.space.getEntries.args[0][0].query).toBe('term');
+        expect(spaceContext.space.getEntries.args[0][0].query).toBe('term');
       });
     });
   });
@@ -337,6 +353,7 @@ describe('Entry List Controller', function () {
 
     beforeEach(function () {
       createController();
+      scope.context.view = {};
     });
 
     it('is true when there are no entries', function () {
@@ -357,30 +374,32 @@ describe('Entry List Controller', function () {
       scope.context.view.contentTypeId = 'foo';
       expect(scope.showNoEntriesAdvice()).toBe(false);
     });
+
+    it('is false when the view is loading', function () {
+      scope.entries = [{}];
+      scope.context.view.searchTerm = 'foo';
+      scope.context.loading = true;
+      expect(scope.showNoEntriesAdvice()).toBe(false);
+    });
   });
 
   describe('loadMore', function () {
     var entries;
+
+    function createEntries(n) {
+      var entries = _.map(new Array(n), function () {
+        return { data: { fields: [] } };
+      });
+      Object.defineProperty(entries, 'total', {value: n});
+      return entries;
+    }
+
     beforeEach(function() {
-      entries = [];
-      Object.defineProperty(entries, 'total', {value: 0});
-
       createController();
+      getEntries.resolve(createEntries(30));
       scope.$apply();
-      getEntries.resolve(entries);
-      scope.$apply();
-
-      entries = [];
-      Object.defineProperty(entries, 'total', {value: 30});
-
-      scope.entries = new Array(60);
 
       stubs.switch = sinon.stub();
-      // loadMore as a side effect triggers resetEntries which in reality will not
-      // run because the promisedLoader prevents that. In this test
-      // the PromisedLoader is stubbed, so we need to fake
-      // resetEntries not running:
-      scope.resetEntries = sinon.stub();
       scope.selection = {
         setBaseSize: sinon.stub(),
         switchBaseSet: stubs.switch
@@ -388,15 +407,17 @@ describe('Entry List Controller', function () {
 
       scope.paginator.atLast = sinon.stub();
       scope.paginator.atLast.returns(false);
+
+      entries = createEntries(30);
       getEntries = $q.defer();
-      scope.spaceContext.space.getEntries.reset();
-      scope.spaceContext.space.getEntries.returns(getEntries.promise);
+      spaceContext.space.getEntries.reset();
+      spaceContext.space.getEntries.returns(getEntries.promise);
     });
 
     it('doesnt load if on last page', function() {
       scope.paginator.atLast.returns(true);
       scope.loadMore();
-      sinon.assert.notCalled(scope.spaceContext.space.getEntries);
+      sinon.assert.notCalled(spaceContext.space.getEntries);
     });
 
     it('paginator count is increased', function() {
@@ -408,7 +429,7 @@ describe('Entry List Controller', function () {
     it('gets query params', function () {
       scope.loadMore();
       scope.$apply();
-      expect(scope.spaceContext.space.getEntries.args[0][0]).toBeDefined();
+      expect(spaceContext.space.getEntries.args[0][0]).toBeDefined();
     });
 
     it('should work on the page before the last', function () {
@@ -417,7 +438,7 @@ describe('Entry List Controller', function () {
       scope.paginator.page = 0;
       scope.loadMore();
       scope.$apply();
-      sinon.assert.called(scope.spaceContext.space.getEntries);
+      sinon.assert.called(spaceContext.space.getEntries);
     });
 
     it('triggers analytics event', function () {
@@ -440,7 +461,7 @@ describe('Entry List Controller', function () {
       });
 
       it('appends entries to scope', function () {
-        expect(scope.entries.slice(60)).toEqual(entries);
+        expect(scope.entries.slice(30)).toEqual(entries);
       });
 
       it('sets selection base size', function () {
