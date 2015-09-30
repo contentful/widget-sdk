@@ -101,6 +101,7 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
           });
         });
       }
+      dismissDialog();
     });
   }
 
