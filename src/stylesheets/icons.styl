@@ -63,17 +63,9 @@ Navigation
 
 Markup:
 .styleguide-icon-list
-  cf-icon(name="nav-api" scale="2")
-  cf-icon(name="nav-ct" scale="2")
-  cf-icon(name="nav-entries" scale="2")
-  cf-icon(name="nav-media" scale="2")
-  cf-icon(name="nav-settings" scale="2")
-.styleguide-icon-list
-  cf-icon(name="page-api" scale="2")
-  cf-icon(name="page-ct" scale="2")
-  cf-icon(name="page-entries" scale="2")
-  cf-icon(name="page-media" scale="2")
-  cf-icon(name="page-settings" scale="2")
+  .tab-header__title
+    .page-icon-ct
+    h1 Content Types
 
 Styleguide 25.2
 */
@@ -93,6 +85,34 @@ cf-icon[name="nav-api"]
     path
       fill: $colors.blue
 
+$page-icon()
+  display: inline-block
+  width: 40px
+  height: 40px
+  content ''
+  background-size: contain
+  background-repeat: no-repeat
+  margin-right: 1em
+
+.page-icon-ct
+  $page-icon()
+  background-image: url('svg/page-ct.svg')
+
+.page-icon-entries
+  $page-icon()
+  background-image: url('svg/page-entries.svg')
+
+.page-icon-media
+  $page-icon()
+  background-image: url('svg/page-media.svg')
+
+.page-icon-api
+  $page-icon()
+  background-image: url('svg/page-api.svg')
+
+.page-icon-settings
+  $page-icon()
+  background-image: url('svg/page-settings.svg')
 
 /**
 Widgets
