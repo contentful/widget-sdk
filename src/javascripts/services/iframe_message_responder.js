@@ -15,7 +15,7 @@ angular.module('contentful').run(['$injector', function ($injector) {
       return;
     }
 
-    if (userAgent.is('ie')) {
+    if (userAgent.isIE()) {
       event = {
         data: JSON.parse(event.data),
         source: event.source

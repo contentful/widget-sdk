@@ -22,7 +22,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     api: 'cda'
   };
 
-  $scope.isIos = userAgent.is('ios');
+  $scope.isIos = userAgent.isIOS();
   $scope.isDev = environment.env === 'development';
   $scope.isProd = environment.env === 'production';
   $scope.isNotProd = environment.env !== 'production';
