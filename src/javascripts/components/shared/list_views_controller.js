@@ -1,19 +1,21 @@
 'use strict';
 angular.module('contentful').controller('ListViewsController', [
-'$scope', '$injector', 'generateDefaultViews', 'getBlankView', 'resetList', 'viewCollectionName', 'currentViewLocation',
-function($scope, $injector, generateDefaultViews, getBlankView, resetList, viewCollectionName, currentViewLocation){
+'$scope', '$injector', 'generateDefaultViews', 'getBlankView', 'resetList', 'viewCollectionName', 'preserveStateAs',
+function ($scope, $injector, generateDefaultViews, getBlankView, resetList, viewCollectionName, preserveStateAs) {
   var $q           = $injector.get('$q');
   var logger       = $injector.get('logger');
   var notification = $injector.get('notification');
   var $parse       = $injector.get('$parse');
   var FilterQS     = $injector.get('FilterQueryString');
 
-  var getCurrentView = $parse(currentViewLocation);
+  var getCurrentView = $parse('context.view');
   var setCurrentView = getCurrentView.assign;
 
-  var qs = FilterQS.create(viewCollectionName);
-  replaceView(qs.readView());
-  $scope.$watch('context.view', qs.update, true);
+  if (preserveStateAs) {
+    var qs = FilterQS.create(preserveStateAs);
+    replaceView(qs.readView());
+    $scope.$watch('context.view', qs.update, true);
+  }
 
   setCurrentView($scope, getCurrentView($scope) || getBlankView());
 

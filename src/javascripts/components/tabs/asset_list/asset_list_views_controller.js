@@ -1,20 +1,19 @@
 'use strict';
 
 angular.module('contentful').controller('AssetListViewsController',
-['$scope', '$controller', 'mimetype', 'random', 'currentViewLocation',
-function($scope, $controller, mimetype, random, currentViewLocation){
+['$scope', '$controller', 'mimetype', 'random', 'preserveState',
+function ($scope, $controller, mimetype, random, preserveState) {
 
   return $controller('ListViewsController', {
     $scope: $scope,
     getBlankView: getBlankView,
     viewCollectionName: 'assetListViews',
     generateDefaultViews: generateDefaultViews,
-    currentViewLocation: currentViewLocation,
+    preserveStateAs: preserveState ? 'assets' : null,
     resetList: function () {
       $scope.searchController.resetAssets(true);
     }
   });
-
 
   function getBlankView() {
     return {
