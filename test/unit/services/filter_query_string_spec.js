@@ -73,7 +73,7 @@ describe('Filter Query String', function () {
     });
 
     it('puts last QS into the store', function () {
-      spaceContext.space = { data: { sys: { id: 123 } } };
+      spaceContext.space = { getId: _.constant(123) };
       qs.update({ test: true });
       sinon.assert.calledWith(TheStore.set, 'lastFilterQueryString.testEntity.123', { test: true });
     });

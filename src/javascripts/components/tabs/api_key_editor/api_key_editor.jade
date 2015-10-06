@@ -39,7 +39,7 @@
         label Space ID
         .l-form-controls
           .l-field-editor
-            input.form-control(type="text" cf-select-all-input value="{{spaceContext.space.getId()}}" readonly="readonly")
+            input.form-control(type="text" cf-select-all-input value="{{getSpaceId()}}" readonly="readonly")
       .l-form-row.device-link
         .l-form-controls
           .l-field-editor(ng-if="apiKey.data.accessToken")
@@ -126,49 +126,49 @@
             ng-switch(on="authCodeExample.lang")
               .http.code-example.curl-example(ng-switch-when="http")
                 textarea.form-control(readonly="readonly" cf-select-all-input).
-                  curl -X GET {{isDev ? 'http' : 'https'}}://{{getApiUrl()}}/spaces/{{spaceContext.space.getId()}}?access_token={{getSelectedAccessToken()}}
+                  curl -X GET {{isDev ? 'http' : 'https'}}://{{getApiUrl()}}/spaces/{{getSpaceId()}}?access_token={{getSelectedAccessToken()}}
               .javascript.code-example(ng-switch-when="javascript")
                 textarea.form-control(readonly="readonly" cf-select-all-input ng-if="authCodeExample.api == 'preview' || isNotProd").
                   var contentful = require('contentful');
                   var client = contentful.createClient({
                     accessToken: '{{getSelectedAccessToken()}}',
                     host: '{{getApiUrl()}}',
-                    space: '{{spaceContext.space.getId()}}'
+                    space: '{{getSpaceId()}}'
                   });
                 textarea.form-control(readonly="readonly" cf-select-all-input ng-if="authCodeExample.api == 'cda' && isProd").
                   var contentful = require('contentful');
                   var client = contentful.createClient({
                     accessToken: '{{getSelectedAccessToken()}}',
-                    space: '{{spaceContext.space.getId()}}'
+                    space: '{{getSpaceId()}}'
                   });
               .objc.code-example(ng-switch-when="objc")
                 textarea.form-control(readonly="readonly" cf-select-all-input ng-if="authCodeExample.api == 'preview' || isNotProd").
                   CDAConfiguration* config = [CDAConfiguration defaultConfiguration];
                   config.server = @"{{getApiUrl()}}";
-                  CDAClient* client = [[CDAClient alloc] initWithSpaceKey:@"{{spaceContext.space.getId()}}" accessToken:@"{{getSelectedAccessToken()}}" config: config];
+                  CDAClient* client = [[CDAClient alloc] initWithSpaceKey:@"{{getSpaceId()}}" accessToken:@"{{getSelectedAccessToken()}}" config: config];
                 textarea.form-control(readonly="readonly" cf-select-all-input ng-if="authCodeExample.api == 'cda' && isProd").
-                  CDAClient* client = [[CDAClient alloc] initWithSpaceKey:@"{{spaceContext.space.getId()}}" accessToken:@"{{getSelectedAccessToken()}}"];
+                  CDAClient* client = [[CDAClient alloc] initWithSpaceKey:@"{{getSpaceId()}}" accessToken:@"{{getSelectedAccessToken()}}"];
               .ruby.code-example(ng-switch-when="ruby")
                 textarea.form-control(readonly="readonly" cf-select-all-input ng-if="authCodeExample.api == 'preview' || isNotProd").
                   require 'contentful'
                   client = Contentful::Client.new(
                     access_token: '{{getSelectedAccessToken()}}',
                     api_url: '{{getApiUrl()}}',
-                    space: '{{spaceContext.space.getId()}}'
+                    space: '{{getSpaceId()}}'
                   )
                 textarea.form-control(readonly="readonly" cf-select-all-input ng-if="authCodeExample.api == 'cda' && isProd").
                   require 'contentful'
                   client = Contentful::Client.new(
                     access_token: '{{getSelectedAccessToken()}}',
-                    space: '{{spaceContext.space.getId()}}'
+                    space: '{{getSpaceId()}}'
                   )
               .swift.code-example(ng-switch-when="swift")
                 textarea.form-control(readonly="readonly" cf-select-all-input ng-if="authCodeExample.api == 'preview' || isNotProd").
                   var config = CDAConfiguration.defaultConfiguration()
                   config.server = "{{getApiUrl()}}"
-                  var client = CDAClient(spaceKey:"{{spaceContext.space.getId()}}", accessToken:"{{getSelectedAccessToken()}}", configuration:config)
+                  var client = CDAClient(spaceKey:"{{getSpaceId()}}", accessToken:"{{getSelectedAccessToken()}}", configuration:config)
                 textarea.form-control(readonly="readonly" cf-select-all-input ng-if="authCodeExample.api == 'cda' && isProd").
-                  var client = CDAClient(spaceKey:"{{spaceContext.space.getId()}}", accessToken:"{{getSelectedAccessToken()}}")
+                  var client = CDAClient(spaceKey:"{{getSpaceId()}}", accessToken:"{{getSelectedAccessToken()}}")
 
 .tab-actions
   .button-set
