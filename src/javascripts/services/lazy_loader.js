@@ -101,6 +101,13 @@ angular.module('contentful').factory('LazyLoader/scripts', ['$injector', functio
     embedly: {
       url: 'https://cdn.embedly.com/widgets/platform.js',
       globalObject: 'embedly'
+    },
+    filepicker: {
+      url: 'https://api.filepicker.io/v2/filepicker.js',
+      globalObject: 'filepicker'
+    },
+    filepickerDebug: {
+      url: 'https://api.filepicker.io/v1/filepicker_debug.js'
     }
   };
 
