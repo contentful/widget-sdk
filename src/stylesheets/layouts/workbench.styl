@@ -25,7 +25,6 @@ Styleguide 9.0
 */
 
 .workbench
-  border-top: 1px solid #dbdbdb
   display: flex
   flex-direction: column
   $stretch($breadcrumbs-height, 0, 0, 0)
@@ -84,10 +83,13 @@ $workbench-sidebar-width = 20%
 $workbench-max-sidebar-width = 20rem
 $workbench-content-width = 100% - $workbench-sidebar-width
 $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
+
 .workbench-main
+  $layer(workbenchMain)
   display: flex
   overflow-y: auto
   flex: 1 1 auto
+  position relative
   // This hack is required for Safari to grow this element
   height: 100%;
 
@@ -120,11 +122,14 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     margin-left: auto
 
   &__middle-content
+    $layer(workbenchMain)
     $workbench-content()
     width: $workbench-middle-width
     flex-grow: 1
     margin-left: auto
     margin-right: auto
+    border-right: 1px solid $colors.element-darkest
+    box-shadow: 1px 0 2px 0 rgba(black ,.09)
 
   // TODO This will be removed in the future
   &.x--panel
@@ -132,14 +137,16 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
 
 
 .workbench-header
+  $layer(workbenchHeader)
+  border-bottom: 1px solid $colors.element-darkest
+  border-top: 1px solid $colors.element-darkest
   display: flex
   align-items: baseline
-  background-color: $gray-lightest
-  box-shadow: 0 1px 4px rgba(0,0,0,0.07)
+  background-color: $colors.element-lightest
+  box-shadow: 0 1px 2px 0 rgba(black ,.09)
   padding-left: $workbench-header-horizontal-padding
   padding-right: $workbench-header-horizontal-padding
-  border-radius: 3px 3px 0 0
-  border-bottom: 1px solid $colors.light-gray
+  position relative
   > *
     flex-shrink: 0
 

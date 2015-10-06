@@ -1,7 +1,7 @@
 .modal-background
   .modal-dialog
     header.modal-dialog__header
-      h1 Choose your Translations
+      h1 Choose translations
     .modal-dialog__content
       ul
         li(ng-repeat="locale in locales track by locale.sys.id")
@@ -13,5 +13,5 @@
     .modal-dialog__controls
       button.cfnext-btn-primary-action(ng-click="dialog.confirm()")
         | Save
-      button.cfnext-btn-plain(ng-click="dialog.cancel()")
+      button.cfnext-btn-secondary-action(ng-click="dialog.cancel()")
         | Cancel

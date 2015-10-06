@@ -13,6 +13,8 @@ mixin entity-sidebar
       span.entity-sidebar__state-indicator(
         data-test-id="entity-state"
         data-state="{{state.current}}")
+      strong
+        | Status: &nbsp;
       span(ng-switch-when="archived")
         | Archived
       span(ng-switch-when="draft")

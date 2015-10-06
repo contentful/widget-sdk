@@ -53,8 +53,8 @@ $cfnext-button-layout()
   padding: $button-vertical-padding 1.5rem
   cursor: pointer
   text-align: center
-  font-size: 0.9rem
-  font-weight: bold
+  font-size: .875rem
+  font-weight: 500
   white-space: nowrap
   border: none
   border-radius: 2px
@@ -74,6 +74,7 @@ $cfnext-button-loading($text)
 
 $cfnext-button-colors($color, $text, $shade = false)
   background: $color
+  transition: all ease-in-out .1s
   &, &:link, &:hover, &:active
     color: $text
 
@@ -83,11 +84,6 @@ $cfnext-button-colors($color, $text, $shade = false)
   if ($shade)
     &:hover, &:active, &.active
       background-image: linear-gradient(to bottom, $color, $shade)
-
-  &:hover
-    box-shadow: 0px 1px 2px 0px hsla(black, 0.15)
-  &:active, &.active
-    box-shadow: inset 0px 1px 3px 0px hsla(black, 0.29)
 
   &:disabled, &[aria-disabled=true]
     opacity: 0.4
@@ -119,7 +115,13 @@ Styleguide 4.1
 */
 
 $btn-action()
-  $cfnext-button($colors.blue, hsl(200, 76%, 46%))
+  $cfnext-button(linear-gradient(0deg, $colors.blue-dark 0%, $colors.blue-light 100%) no-repeat, false, white)
+  background-size: 100% 200%
+  border: 1px solid $colors.blue-dark
+
+  &:hover
+    background-position: 0 100%
+    border-color: $colors.blue-darkest
 
 .cfnext-btn-action,
 .cfnext-btn-action--large
@@ -146,11 +148,17 @@ Styleguide 4.2
 */
 
 $btn-primary()
-  $cfnext-button($colors.green, hsl(160, 86%, 38%))
+  $cfnext-button(linear-gradient(0deg, $colors.green-dark 0%, $colors.green-light 100%) no-repeat, false, white)
+  background-size: 100% 200%
+  border: 1px solid $colors.green-dark
+
+  &:hover
+    background-position: 0 100%
+    border-color: $colors.green-darkest
 
 .cfnext-btn-primary-action,
 .cfnext-btn-primary-action--large
-  $cfnext-button($colors.green, hsl(160, 86%, 38%))
+  $btn-primary()
 
 .cfnext-btn-primary-action--large
   $cfnext-button-large()
@@ -176,26 +184,25 @@ $secondary-button-color = hsl(213, 5%, 45%)
 $secondary-button-bg = hsl(0, 0%, 93%)
 .cfnext-btn-secondary-action,
 .cfnext-btn-secondary-action--large
-  $cfnext-button(hsl(0, 0%, 93%), hsl(0, 0%, 88%), $secondary-button-color)
-  color: $secondary-button-color
-  border: 1px solid $colors.gray
+  $cfnext-button($colors.element-light, false, $colors.text-mid)
+  border: 1px solid $colors.element-dark
 
-  &:hover
-    background-image: linear-gradient(to bottom, hsla(white, 0.10) 0%, hsla(black, 0.10))
+  &:hover,
+  &.active
+    background-color: $colors.element-mid
+    border-color: $colors.element-darkest
 
   a&:hover, a&:link, a&:visited
     color: $secondary-button-color
+
+  &.active
+    box-shadow: inset 0 1px 2px rgba(black, .12)
 
   > cf-icon[name="plus"]
     circle
       fill: $secondary-button-color
     path
-      stroke: $secondary-button-bg
-
-.cfnext-btn-secondary-action
-  // This button has a border and is therefore one pixel larger if the
-  // padding is not adjusted
-  padding: s('calc( %s - 1px)', $button-vertical-padding) calc(1.5rem - 1px)
+      stroke: $colors.text-mid
 
 .cfnext-btn-secondary-action--large
   $cfnext-button-large()
@@ -213,7 +220,13 @@ button.cfnext-btn-caution(disabled) Be Careful!
 Styleguide 4.4
 */
 .cfnext-btn-caution
-  $cfnext-button($colors.red, hsl(353, 61%, 45%))
+  $cfnext-button(linear-gradient(0deg, $colors.red-dark 0%, $colors.red-light 100%) no-repeat, false, white)
+  background-size: 100% 200%
+  border: 1px solid $colors.red-dark
+
+  &:hover
+    background-position: 0 100%
+    border-color: $colors.red-darkest
 
 
 /**
@@ -307,13 +320,15 @@ Styleguide 4.7
 .cfnext-btn-link
   $button-reset();
   display: block
-  font-weight: bold
-  color: $colors.blue
-  text-decoration: underline
+  color: $colors.blue-mid
+  transition: all ease-in-out .1s
+
+  &:not(:disabled):hover
+    color: $colors.blue-darkest
 
   &:disabled
-    color: $text-dimmed
-    cursor: default
+    cursor: not-allowed
+    opacity: .5
 
 
 /*
@@ -378,8 +393,8 @@ Styleguide 4.9
 .btn-dropdown-icon,
 .btn-dropdown-icon--up
   float: right
-  margin-left: 0.9em
-  margin-right: -0.6em
+  margin-left: 0.4em
+  margin-right: -0.2em
   svg
     display: inline-block
 
@@ -387,7 +402,7 @@ Styleguide 4.9
   transform: rotate(180deg)
 
 .cfnext-btn-secondary-action cf-icon path
-  fill: $secondary-button-color
+  fill: $colors.text-mid
 
 
 /*
@@ -433,11 +448,11 @@ Styleguide 4.10
   &__action
     $btn-primary()
     flex: 1 1 auto
-    transition: all 0.2s
+    transition: all ease-in-out .6s
     border-radius: 0
 
   &__action
-    border-right: 1px solid $colors.green-dark
+    border-right: none
     overflow: hidden
     width: 100%
 
@@ -450,7 +465,7 @@ Styleguide 4.10
 
   &__icon
     display: inline-block
-    margin: 0 0.8em 0 0.9em
+    margin: 0 .4em
 
   &__selector-label
     display: none

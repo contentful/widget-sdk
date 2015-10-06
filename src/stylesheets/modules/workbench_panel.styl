@@ -9,24 +9,18 @@ $aux-panel-border-color = lighten($gray-light, 47%)
   width: 20%
   position: absolute
   overflow-y: auto
-  background-color: lighten($gray-light, 82%)
-  border-left: 1px solid $aux-panel-border-color
-  box-shadow: -1px 0 5px hsla(black,0.06), 0 0 4px white inset
+  background-color: $colors.element-lightest
+  border-left: 1px solid $colors.element-darkest
+  padding: $rhythm(1) 1.6rem
   .entity-info-panel
-    font-size: 10px
     padding: 0
-    color: $gray
-    box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset
-  header,
-  tr
-    border-bottom: 1px solid $aux-panel-border-color
+    color: $colors.text-mid
   header
-    padding: 1.5em $aux-padding 1.1em
     $gray-highlight()
     h1
+      margin-bottom: $rhythm(1)
       font-weight: bold
-      color: $gray-darkest
-      font-size: 1.5em
+      font-size: 1.2em
     i
       font-size: 10px
       position: absolute
@@ -40,27 +34,29 @@ $aux-panel-border-color = lighten($gray-light, 47%)
       float: left
       display: block
       text-align: left
-      font-weight: normal
-      padding: 0 $aux-padding
     th
+      margin-bottom: $rhythm(0.5)
       margin-top: 1em
-      font-size: 1.0em
+      color: $colors.text-light
+      font-size: .75rem
+      font-weight: normal
+      letter-spacing: 1px
+      text-transform: uppercase
+      line-height: 2
+      border-bottom: 1px solid $colors.element-dark
     td
-      padding-left: $aux-padding - 0.3
-      margin-bottom: 1em
-      font-size: 1.2em
-      font-weight: bold
-      color: $gray-darkest
+      margin-bottom: $rhythm(1)
 
 .entity-sidebar__panel
   $stretch(0, 0, 0, 0)
   z-index: 1
   width: auto
   overflow-y: auto
-  background-color: lighten($gray-light, 82%)
-  transition: transform 0.2s ease-in
+  background-color: $colors.element-lightest
+
+  transition: transform .3s cubic-bezier(.38,.54,.5,.99)
   overflow: hidden
   transform: translateX(100%)
 
   &.x--show
-    transform: translateX(0)
+    transform: translateX(-1px)
