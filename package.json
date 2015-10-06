@@ -83,13 +83,12 @@
   "devDependencies": {
     "jade": "^1.9.2",
     "jshint": "^2.7.0",
-    "karma": "~0.12.21",
-    "karma-chrome-launcher": "~0.1.4",
-    "karma-cli": "0.0.4",
-    "karma-jasmine": "~0.2.0",
-    "karma-osx-reporter": "~0.1.0",
-    "karma-slimerjs-launcher": "^0.1.2",
-    "karma-story-reporter": "~0.2.2",
+    "karma": "~0.13.10",
+    "karma-chrome-launcher": "~0.2.0",
+    "karma-cli": "0.1.1",
+    "karma-jasmine": "~0.3.6",
+    "karma-slimerjs-launcher": "~0.2.0",
+    "karma-story-reporter": "~0.3.1",
     "watchify": "2.1.x"
   },
   "scripts": {
