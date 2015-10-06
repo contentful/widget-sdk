@@ -68,7 +68,7 @@
     "querystring": "^0.2.0",
     "react": "0.13.3",
     "run-sequence": "~1.0.2",
-    "share": "git+ssh://git@github.com:contentful/sharejs.git#v1.1.0",
+    "share": "git+ssh://git@github.com:contentful/sharejs.git#v1.2.0",
     "stream-combiner": "^0.2.1",
     "stringmap": "^0.2.2",
     "stylus": "^0.48.0",
