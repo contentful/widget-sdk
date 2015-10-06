@@ -68,7 +68,7 @@
     "querystring": "^0.2.0",
     "react": "0.13.3",
     "run-sequence": "~1.0.2",
-    "share": "git+ssh://git@github.com:contentful/sharejs.git#v1.1.0",
+    "share": "git+ssh://git@github.com:contentful/sharejs.git#v1.2.0",
     "stream-combiner": "^0.2.1",
     "stringmap": "^0.2.2",
     "stylus": "^0.48.0",
@@ -81,16 +81,14 @@
     "yargs": "^3.9.1"
   },
   "devDependencies": {
-    "fb-flo": "^0.4.0",
     "jade": "^1.9.2",
     "jshint": "^2.7.0",
-    "karma": "~0.12.21",
-    "karma-chrome-launcher": "~0.1.4",
-    "karma-cli": "0.0.4",
-    "karma-jasmine": "~0.2.0",
-    "karma-osx-reporter": "~0.1.0",
-    "karma-slimerjs-launcher": "^0.1.2",
-    "karma-story-reporter": "~0.2.2",
+    "karma": "~0.13.10",
+    "karma-chrome-launcher": "~0.2.0",
+    "karma-cli": "0.1.1",
+    "karma-jasmine": "~0.3.6",
+    "karma-slimerjs-launcher": "~0.2.0",
+    "karma-story-reporter": "~0.3.1",
     "watchify": "2.1.x"
   },
   "scripts": {
