@@ -43,7 +43,7 @@ mixin entity-sidebar
         .context-menu(
           data-test-id="change-state-menu"
           cf-context-menu="bottom-right")
-          cf-icon.context-menu__arrow.x--top-right(name="arrow-up")
+          cf-icon.context-menu__arrow.x--btn-action-select(name="arrow-up")
           div.context-menu__header
             | Change status to
           div(ng-repeat="command in state.secondary")

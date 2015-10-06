@@ -85,7 +85,6 @@ $workbench-content-width = 100% - $workbench-sidebar-width
 $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
 
 .workbench-main
-  $layer(workbenchMain)
   display: flex
   overflow-y: auto
   flex: 1 1 auto
@@ -122,7 +121,6 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     margin-left: auto
 
   &__middle-content
-    $layer(workbenchMain)
     $workbench-content()
     width: $workbench-middle-width
     flex-grow: 1
@@ -137,7 +135,6 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
 
 
 .workbench-header
-  $layer(workbenchHeader)
   border-bottom: 1px solid $colors.element-darkest
   border-top: 1px solid $colors.element-darkest
   display: flex

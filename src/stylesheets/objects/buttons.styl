@@ -41,13 +41,16 @@ $button-reset()
     padding: 0
 
 
-$cfnext-button($color, $shade, $text = rgba(255,255,255,1))
+$cfnext-button($color, $text)
   $cfnext-button-layout()
-  $cfnext-button-colors($color, $text, $shade)
+  $cfnext-button-colors($color, $text)
   $cfnext-button-loading($text)
 
-$button-vertical-padding = (10 / 16) * 1rem
 
+/**
+ * Applies layout and typography styles
+ */
+$button-vertical-padding = (10 / 16) * 1rem
 $cfnext-button-layout()
   display: inline-block
   padding: $button-vertical-padding 1.5rem
@@ -56,11 +59,54 @@ $cfnext-button-layout()
   font-size: .875rem
   font-weight: 500
   white-space: nowrap
-  border: none
+  border: 1px solid transparent
   border-radius: 2px
   line-height: $base-line-height
 
 
+$cfnext-button-large()
+  font-size: 1.15rem
+  padding: 1rem 2.5rem
+
+
+/**
+ * Applies background, text and border colors for the various states.
+ */
+$cfnext-button-colors($bg, $text)
+  color: $text
+  background: $bg
+  background-size: 100% 200%
+  transition-property: all
+  transition-timing-function: ease-in-out
+  transition-duration: 0.1s
+
+  &:hover
+    background-position: 0 100%
+
+  &.active,&:active
+    box-shadow: inset 0 1px 2px rgba(black, .12)
+
+
+  // Reset for links
+  &:link, a&:hover, a&:link, a&:visited
+    color: $text
+
+  // Reset Browser styles
+  &, &:hover, &:active
+    outline: 0
+
+  &:disabled, &[aria-disabled=true]
+    opacity: 0.4
+    cursor: default
+    // This overides any other state styles, like hover or active
+    background: $bg
+    box-shadow: none
+
+
+/**
+ * Add a spinner pseude element and activate it in the `is-loading`
+ * state.
+ */
 $cfnext-button-loading($text)
   > *
     display: inline-block
@@ -71,29 +117,6 @@ $cfnext-button-loading($text)
       opacity: 1
     +$spinner-active($text)
       margin-left: 5px
-
-$cfnext-button-colors($color, $text, $shade = false)
-  background: $color
-  transition: all ease-in-out .1s
-  &, &:link, &:hover, &:active
-    color: $text
-
-  &, &:hover, &:active
-    outline: 0
-
-  if ($shade)
-    &:hover, &:active, &.active
-      background-image: linear-gradient(to bottom, $color, $shade)
-
-  &:disabled, &[aria-disabled=true]
-    opacity: 0.4
-    background: $color
-    box-shadow: none
-    cursor: default
-
-$cfnext-button-large()
-  font-size: 1.15rem
-  padding: 1rem 2.5rem
 
 
 /*
@@ -114,13 +137,12 @@ button.cfnext-btn-action{{modifier_class}}.is-loading Action
 Styleguide 4.1
 */
 
+$btn-action-bg = linear-gradient(to top, $colors.blue-dark, $colors.blue-light)
 $btn-action()
-  $cfnext-button(linear-gradient(0deg, $colors.blue-dark 0%, $colors.blue-light 100%) no-repeat, false, white)
-  background-size: 100% 200%
-  border: 1px solid $colors.blue-dark
+  $cfnext-button($btn-action-bg, white)
+  border-color: $colors.blue-dark
 
-  &:hover
-    background-position: 0 100%
+  &:hover, &.active
     border-color: $colors.blue-darkest
 
 .cfnext-btn-action,
@@ -147,13 +169,12 @@ button.cfnext-btn-primary-action{{modifier_class}}.is-loading Action
 Styleguide 4.2
 */
 
+$btn-primary-bg = linear-gradient(to top, $colors.green-dark, $colors.green-light)
 $btn-primary()
-  $cfnext-button(linear-gradient(0deg, $colors.green-dark 0%, $colors.green-light 100%) no-repeat, false, white)
-  background-size: 100% 200%
-  border: 1px solid $colors.green-dark
+  $cfnext-button($btn-primary-bg, white)
+  border-color: $colors.green-dark
 
-  &:hover
-    background-position: 0 100%
+  &:hover, &.active
     border-color: $colors.green-darkest
 
 .cfnext-btn-primary-action,
@@ -180,33 +201,26 @@ button.cfnext-btn-secondary-action{{modifier_class}}.is-loading Action
 
 Styleguide 4.3
 */
-$secondary-button-color = hsl(213, 5%, 45%)
-$secondary-button-bg = hsl(0, 0%, 93%)
+$btn-secondary-text = $colors.text-mid
+$btn-secondary-bg = $colors.element-light
 .cfnext-btn-secondary-action,
 .cfnext-btn-secondary-action--large
-  $cfnext-button($colors.element-light, false, $colors.text-mid)
-  border: 1px solid $colors.element-dark
+  $cfnext-button($btn-secondary-bg, $btn-secondary-text)
+  border-color: $colors.element-dark
 
-  &:hover,
-  &.active
+  &:hover, &.active
     background-color: $colors.element-mid
     border-color: $colors.element-darkest
 
-  a&:hover, a&:link, a&:visited
-    color: $secondary-button-color
-
-  &.active
-    box-shadow: inset 0 1px 2px rgba(black, .12)
-
   > cf-icon[name="plus"]
     circle
-      fill: $secondary-button-color
+      fill: $btn-secondary-text
     path
-      stroke: $colors.text-mid
+      stroke: $btn-secondary-bg
 
 .cfnext-btn-secondary-action--large
   $cfnext-button-large()
-  padding: calc(1rem - 1px) calc(2.5rem - 1px)
+
 
 /**
 Caution button
@@ -219,13 +233,12 @@ button.cfnext-btn-caution(disabled) Be Careful!
 
 Styleguide 4.4
 */
+$btn-caution-bg = linear-gradient(to top, $colors.red-dark, $colors.red-light)
 .cfnext-btn-caution
-  $cfnext-button(linear-gradient(0deg, $colors.red-dark 0%, $colors.red-light 100%) no-repeat, false, white)
-  background-size: 100% 200%
-  border: 1px solid $colors.red-dark
+  $cfnext-button($btn-caution-bg, white)
+  border-color: $colors.red-dark
 
   &:hover
-    background-position: 0 100%
     border-color: $colors.red-darkest
 
 
@@ -270,22 +283,16 @@ $x--block()
   width: 100%
   position: relative
   &:after
-    transition: none
-    border-width: 0
-
-$cfnext-block-button-loading()
-  &:after
     position: absolute
-    transition: opacity .2s linear
-    border-width: 2px
-    margin-bottom: 0
-    top: 11px
+
+  &.is-loading
+    &:after
+      // This overides the width and height transitions
+      transition: opacity .2s linear
+      top: 11px
 
 .x--block
   $x--block()
-
-  &.is-loading
-    $cfnext-block-button-loading()
 
 
 // DEPRECATED
@@ -335,14 +342,15 @@ Styleguide 4.7
 Buttons with icons
 
 Markup:
-p
-  button.cfnext-btn-action
-    cf-icon.btn-icon.inverted(name="plus")
-    | Action
-p
-  button.cfnext-btn-action--large-popout-icon
-    cf-icon(name="new-ct")
-    | Action
+button.cfnext-btn-action
+  cf-icon.btn-icon.inverted(name="plus")
+  | Action
+button.cfnext-btn-secondary-action
+  cf-icon.btn-icon.inverted(name="plus")
+  | Action
+button.cfnext-btn-action--large-popout-icon
+  cf-icon(name="new-ct")
+  | Action
 
 Styleguide 4.8
 */
@@ -420,7 +428,7 @@ div(style="width: 24em")
         | Change actions
       cf-icon.btn-action-select__icon(name="dd-arrow-down")
     .context-menu(cf-context-menu="bottom-right")
-      cf-icon.context-menu__arrow.x--top-right(name="arrow-up")
+      cf-icon.context-menu__arrow.x--btn-action-select(name="arrow-up")
       div(role="menuitem") Another action
   p
   div.btn-action-select.x--no-action
@@ -448,16 +456,19 @@ Styleguide 4.10
   &__action
     $btn-primary()
     flex: 1 1 auto
-    transition: all ease-in-out .6s
+    transition-property: all, width, padding
+    transition-duration: 0.1s, 0.6s, 0.6s
     border-radius: 0
 
   &__action
+    $x--block()
     border-right: none
     overflow: hidden
     width: 100%
 
   &__selector
-    width: 4em
+    flex-shrink: 0
+    width: 3.2rem
     white-space: nowrap
     overflow: hidden
     padding-left: 0
@@ -465,7 +476,7 @@ Styleguide 4.10
 
   &__icon
     display: inline-block
-    margin: 0 .4em
+    margin: 0 0.4em
 
   &__selector-label
     display: none
@@ -485,3 +496,7 @@ Styleguide 4.10
 
   .btn-action-select__selector-label
     display: inline
+
+.context-menu__arrow.x--btn-action-select
+  justify-content: flex-end
+  padding-right: calc(1.6rem - 8px)
