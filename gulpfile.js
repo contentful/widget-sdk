@@ -9,7 +9,6 @@ var concat      = require('gulp-concat');
 var exec        = require('child_process').exec;
 var express     = require('express');
 var fingerprint = require('gulp-fingerprint');
-var fs          = require('fs');
 var mkdirp      = require('mkdirp');
 var gulp        = require('gulp');
 var gulpif      = require('gulp-if');
@@ -28,7 +27,6 @@ var stylus      = require('gulp-stylus');
 var uglify      = require('gulp-uglify');
 var path        = require('path');
 var through     = require('through2').obj;
-var flo         = require('fb-flo');
 var yargs       = require('yargs');
 var child_process = require('child_process');
 
@@ -330,11 +328,6 @@ gulp.task('serve', ['styleguide'], function () {
   });
   app.use(respond404);
   app.listen(3001);
-
-  startLiveReload().once('ready', function () {
-    gutil.log('FB Flo is ready!');
-  });
-
 });
 
 gulp.task('watchify', function(){
@@ -604,24 +597,4 @@ function spawnOnlyStderr (cmd, args, opts) {
     stdio: ['ignore', stdout, process.stderr]
   });
   return spawn(cmd, args, opts);
-}
-
-function startLiveReload () {
-  return flo(
-    './public/app/',
-    {
-      port: 9000,
-      verbose: false,
-      glob: [
-        '**/*.css',
-      ]
-    },
-    function resolver(filepath, cb) {
-      gutil.log('Live reloading', filepath);
-      cb({
-        resourceURL: '/app/main.css',
-        contents: fs.readFileSync('./public/app/main.css', 'utf-8')
-      });
-    }
-  );
 }
