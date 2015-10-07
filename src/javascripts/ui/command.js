@@ -205,10 +205,6 @@ angular.module('cf.ui')
     },
     link: function (scope, element) {
 
-      if (!scope.command) {
-        throw new Error('uiCommand directive requires a command');
-      }
-
       if (element.is('button') && !element.attr('type')) {
         element.attr('type', 'button');
       }
