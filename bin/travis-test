@@ -4,9 +4,9 @@ set -ev
 commit_message=`git log $TRAVIS_COMMIT -n 1`
 
 if [[ $commit_message == *\[skip\ tests\]* && $TRAVIS_BRANCH != *master* && $TRAVIS_BRANCH != *production* ]]; then
-  echo "Skipping tests"
+  npm test || true
+  npm run hint || true
 else
   npm test
   npm run hint
 fi
-
