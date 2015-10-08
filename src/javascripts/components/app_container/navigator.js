@@ -456,6 +456,33 @@ angular.module('contentful').config([
     }
   }, localeEditorState));
 
+  $stateProvider.state('spaces.detail.settings.users', {
+    url: '/users',
+    abstract: true,
+    template: '<ui-view />'
+  });
+
+  $stateProvider.state('spaces.detail.settings.users.list', loadableState({
+    url: '',
+    ncyBreadcrumb: { label: 'Users and Roles' },
+    template: '<cf-user-list />',
+    controller: ['$scope', function ($scope) {
+      $scope.context = {};
+    }]
+  }));
+
+  $stateProvider.state('spaces.detail.settings.users.detail', {
+    url: '/:userId',
+    ncyBreadcrumb: { label: 'User details' },
+    template: '<pre>User details (ID: {{ $stateParams.userId }})</pre>'
+  });
+
+  $stateProvider.state('spaces.detail.settings.users.roleDetail', {
+    url: '/roles/:roleId',
+    ncyBreadcrumb: { label: 'Role details' },
+    template: '<pre>Role details (ID: {{ $stateParams.roleId }})</pre>'
+  });
+
   $stateProvider.state('spaces.detail.settings.iframe', {
     url: '',
     abstract: true,
@@ -474,8 +501,6 @@ angular.module('contentful').config([
     controller: ['$scope', '$stateParams', function ($scope, $stateParams) {
       $scope.title = {
         edit: 'Space',
-        users: 'Users',
-        roles: 'Roles',
         webhook_definitions: 'Webhooks'
       }[$stateParams.pathSuffix];
     }]
@@ -511,12 +536,18 @@ angular.module('contentful').config([
   });
 
   function loadableState(definition) {
+    if (!definition.loadingText) {
+      definition.loadingText = 'Loading your ' + definition.ncyBreadcrumb.label + '...';
+    }
+
     definition.template = [
-      '<div ng-show="context.ready">' + definition.template + '</div>',
+      '<div ng-show="context.ready">',
+        definition.template,
+      '</div>',
       '<div ng-hide="context.ready" class="workbench x--loading">',
         '<div class="workbench-loading__spinner"></div>',
         '<div class="workbench-loading__message">',
-          'Loading your ' + definition.ncyBreadcrumb.label + '...',
+          definition.loadingText,
         '</div>',
       '</div>'
     ].join('');
