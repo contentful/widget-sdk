@@ -211,18 +211,11 @@ angular.module('cf.ui')
 
       scope.$watch('command.isAvailable()', function (isAvailable) {
         element.toggleClass('ng-hide', !isAvailable);
+        setDisabled(element, !isAvailable);
       });
 
       scope.$watch('command.isDisabled()', function (isDisabled) {
-        if (element.is('button')) {
-          element.prop('disabled', isDisabled);
-        }
-
-        if (isDisabled) {
-          element.attr('aria-disabled', 'true');
-        } else {
-          element.removeAttr('aria-disabled');
-        }
+        setDisabled(element, isDisabled);
       });
 
       scope.$watch('command.inProgress()', function (inProgress) {
@@ -233,6 +226,18 @@ angular.module('cf.ui')
           element.removeAttr('aria-busy');
         }
       });
+
+      function setDisabled (element, isDisabled) {
+        if (element.is('button')) {
+          element.prop('disabled', isDisabled);
+        }
+
+        if (isDisabled) {
+          element.attr('aria-disabled', 'true');
+        } else {
+          element.removeAttr('aria-disabled');
+        }
+      }
 
     }
   };
