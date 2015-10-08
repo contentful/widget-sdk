@@ -7,6 +7,19 @@ describe('uiCommand directive element', function () {
     this.createCommand = this.$inject('command').create;
   });
 
+  it('sets the "button" role if no role given', function () {
+    var cmd = this.createCommand(sinon.stub());
+    var el = this.$compile('<button ui-command=cmd>', {cmd: cmd});
+    expect(el.attr('role')).toEqual('button');
+  });
+
+  it('does not overide the role attribute', function () {
+    var cmd = this.createCommand(sinon.stub());
+    var el = this.$compile('<button role=menuitem ui-command=cmd>', {cmd: cmd});
+    expect(el.attr('role')).toEqual('menuitem');
+  });
+
+
   it('is hidden when command is not available', function () {
     var available = sinon.stub().returns(false);
     var cmd = this.createCommand(sinon.stub(), {available: available});

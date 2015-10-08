@@ -205,6 +205,10 @@ angular.module('cf.ui')
     },
     link: function (scope, element) {
 
+      if (!element.attr('role')) {
+        element.attr('role', 'button');
+      }
+
       if (element.is('button') && !element.attr('type')) {
         element.attr('type', 'button');
       }
