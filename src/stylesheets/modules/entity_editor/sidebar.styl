@@ -1,15 +1,25 @@
 @import '../mixins/spinner'
 
-.entity-sidebar
-  position: relative
+$entity-sidebar-content()
+  $stretch(0, 0, 0, 0)
   padding: $rhythm(1) 1.6rem
-  background: $colors.element-lightest
   overflow-y: auto
   overflow-x: hidden
-  min-width: 26rem
-  max-width: 30rem
-  width: 30vw
+  border-left: 1px solid $colors.element-darkest
 
+
+.entity-sidebar__info-panel
+  $entity-sidebar-content()
+  z-index: 1
+  transition: transform .3s cubic-bezier(.38,.54,.5,.99)
+  transform: translateX(100%)
+
+  &.x--show
+    transform: translateX(0)
+
+
+.entity-sidebar
+  $entity-sidebar-content()
 
   &__heading
     margin-top: $rhythm(2.5)

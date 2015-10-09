@@ -1,11 +1,10 @@
 mixin entity-sidebar
-  .entity-sidebar
-    .entity-sidebar__panel(ng-class="preferences.showAuxPanel && 'x--show'")
-      header
-        h1 Entry Information
-      .entity-info-panel(cf-entity-info-panel="otDoc.doc.snapshot.sys")
+  .entity-sidebar__info-panel.entity-info-panel(
+    ng-class="preferences.showAuxPanel && 'x--show'")
+    div(cf-entity-info-panel="otDoc.doc.snapshot.sys")
 
-    h1.entity-sidebar__heading
+  .entity-sidebar
+    h2.entity-sidebar__heading
       | Status
 
     .entity-sidebar__state(
@@ -73,7 +72,7 @@ mixin entity-sidebar
           div(role="menuitem" ui-command="state.revertToPrevious")
             | Revert current changes
 
-    h1.entity-sidebar__heading
+    h2.entity-sidebar__heading
       | Translation
 
     .entity-sidebar__translation-list
@@ -89,7 +88,7 @@ mixin entity-sidebar
         ui-command="locales.changeActive")
         | Change
 
-    h1.entity-sidebar__heading
+    h2.entity-sidebar__heading
       | Users
     .entity-sidebar__no-users(ng-if="!otPresence.users.length")
       | No other users online
