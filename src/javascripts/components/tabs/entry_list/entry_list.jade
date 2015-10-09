@@ -60,8 +60,7 @@ header.workbench-header
 .workbench-main(ng-hide="showNoEntriesAdvice()")
   .workbench-main__left-sidebar(
     ng-show="uiConfig"
-    cf-view-menu="uiConfig.entryListViews"
-    current-view="context.view")
+    cf-view-menu="uiConfig.entryListViews")
 
   .workbench-main__right-content
     table.result-list.main-results.main-header

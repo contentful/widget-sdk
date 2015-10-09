@@ -41,8 +41,7 @@ header.workbench-header
 .workbench-main(ng-hide="showNoAssetsAdvice()")
   .workbench-main__left-sidebar(
     ng-show="uiConfig"
-    cf-view-menu="uiConfig.assetListViews"
-    current-view="context.view")
+    cf-view-menu="uiConfig.assetListViews")
 
   .workbench-main__right-content
     table.result-list.main-results.main-header

@@ -2,7 +2,8 @@
 
 angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', function ($injector) {
 
-  var throttle = $injector.get('throttle');
+  var throttle  = $injector.get('throttle');
+  var userAgent = $injector.get('userAgent');
 
   return function(textarea, options, CodeMirror) {
 
@@ -43,6 +44,7 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
       getEditor:               function () { return cm; },
       destroy:                 function () { cm.toTextArea(); },
       attachEvent:             attachEvent,
+      addKeyShortcuts:         addKeyShortcuts,
       setValue:                setValue,
       cmd:                     cmd,
       opt:                     opt,
@@ -90,6 +92,13 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
         fn = throttle(fn, throttleInterval);
       }
       cm.on(name, fn);
+    }
+
+    function addKeyShortcuts(map) {
+      var ctrlKey = userAgent.getCtrlKey();
+      cm.addKeyMap(_.transform(map, function (acc, value, key) {
+        acc[ctrlKey + '-' + key] = value;
+      }, {}));
     }
 
     /**

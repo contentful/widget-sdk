@@ -47,7 +47,7 @@ angular.module('contentful')
      * @returns String
      */
     getId: function () {
-      return dotty.get(this, 'space.data.sys.id');
+      return this.space && this.space.getId();
     },
 
     /**
@@ -212,18 +212,22 @@ angular.module('contentful')
      * @name spaceContext#localizedField
      * @param {Object} entity
      * @param {Array} path
-     * @param {Object} locale
+     * @param {string} localeCode
      * @return {Object}
      * @description
      * Given an entity (entry/asset), and a field path, returns the field
      * content for a given locale
     */
-    localizedField: function(entity, path, locale) {
+    localizedField: function(entity, path, localeCode) {
       var getField = $parse(path);
       var field = getField(entity);
-      var defaultLocale = this.space.getDefaultLocale().internal_code;
-      locale = locale || defaultLocale;
-      return (field && field[locale]) || field && field[defaultLocale];
+      var defaultLocale = this.space && this.space.getDefaultLocale();
+      var defaultLocaleCode = defaultLocale && defaultLocale.internal_code;
+      var firstLocaleCode = _.first(_.keys(field));
+
+      localeCode = localeCode || defaultLocaleCode || firstLocaleCode;
+
+      return field && (field[localeCode] || field[defaultLocaleCode] || field[firstLocaleCode]);
     },
 
     /**

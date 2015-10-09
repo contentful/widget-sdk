@@ -1,6 +1,12 @@
 'use strict';
-angular.module('contentful')
-.directive('cfSpaceSettings', ['$window', '$rootScope', 'authentication', 'logger', function($window, $rootScope, authentication, logger){
+angular.module('contentful').directive('cfSpaceSettings', ['$injector', function ($injector) {
+
+  var authentication = $injector.get('authentication');
+  var logger         = $injector.get('logger');
+  var spaceContext   = $injector.get('spaceContext');
+  var $state         = $injector.get('$state');
+  var $stateParams   = $injector.get('$stateParams');
+
   return {
     template: JST['iframe_view'](),
     restrict: 'E',
@@ -14,8 +20,12 @@ angular.module('contentful')
         if (data.path && data.action === 'update') internalNavigationTo(data.path, data);
       });
 
-      scope.$watch('$stateParams.pathSuffix', function (pathSuffix) {
-        if (pathSuffix && (pathSuffix !== extractPathSuffix(scope.url))) loadGatekeeperView();
+      scope.$watch(function () {
+        return $stateParams.pathSuffix;
+      }, function (pathSuffix) {
+        if (pathSuffix && (pathSuffix !== extractPathSuffix(scope.url))) {
+          loadGatekeeperView();
+        }
       });
 
       scope.hasLoaded = false;
@@ -23,7 +33,7 @@ angular.module('contentful')
       loadGatekeeperView();
 
       function loadGatekeeperView() {
-        var pathSuffix = scope.$stateParams.pathSuffix;
+        var pathSuffix = $stateParams.pathSuffix;
         var url = buildUrl(pathSuffix);
         if (!urlIsActive(url)) {
           scope.url = url;
@@ -42,17 +52,17 @@ angular.module('contentful')
         var oldPathSuffix = extractPathSuffix(scope.url);
         var pathSuffix    = extractPathSuffix(path);
         scope.url = buildUrl(pathSuffix);
-        if (oldPathSuffix !== pathSuffix) scope.$state.go('spaces.detail.settings.iframe.pathSuffix', { pathSuffix: pathSuffix });
+        if (oldPathSuffix !== pathSuffix) {
+          $state.go('spaces.detail.settings.iframe.pathSuffix', { pathSuffix: pathSuffix });
+        }
       }
 
       function urlIsActive(url) {
-        //var activeURL = elem.find('iframe').prop('src');
         return url.indexOf(scope.url) >= 0;
       }
 
       function buildUrl(pathSuffix) {
-        var spaceId = scope.spaceContext.space.getId();
-        return authentication.spaceSettingsUrl(spaceId) + '/' + pathSuffix;
+        return authentication.spaceSettingsUrl(spaceContext.getId()) + '/' + pathSuffix;
       }
 
       function extractPathSuffix(path) {
