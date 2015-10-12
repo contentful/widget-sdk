@@ -9,7 +9,6 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   var spaceTemplateLoader  = $injector.get('spaceTemplateLoader');
 
   var contentTypeToDisplayFieldMap;
-  var retryAttempts = 0;
 
   $scope.$on('spaceCreationRequested', showLoadingState);
   $scope.$on('spaceCreationFailed', showSpaceCreation);
@@ -80,18 +79,12 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
     analytics.trackTotango('Selected Space Template: '+ templateName);
   }
 
-  function createTemplate(template) {
+  function createTemplate(template, retried) {
     $scope.viewState.set('spaceTemplateQueue');
     contentTypeToDisplayFieldMap = contentTypeToDisplayFieldMap || mapDisplayFields(template.contentTypes);
     $scope.templateCreator.create(template)
-    .then(function () {
-      dismissDialog();
-    })
     .catch(function (data) {
-      if(retryAttempts === 0){
-        retryAttempts++;
-        createTemplate(data.template);
-      } else {
+      if(retried){
         $scope.templateCreationFailed = true;
         _.each(data.errors, function (error) {
           analytics.track('Created Errored Space Template', {
@@ -100,8 +93,13 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
             action: error.action
           });
         });
+      } else {
+        createTemplate(data.template, true);
       }
-      dismissDialog();
+    }).finally(function () {
+      if (!retried) {
+        dismissDialog();
+      }
     });
   }
 
