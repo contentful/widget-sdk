@@ -44,11 +44,6 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
 
     function asset() {
       modalDialog.open({
-        scopeData: {
-          // chain: template -> InsertAssetDialogController -> AssetSearchController
-          // AssetSearchController needs "context" object defined in scope
-          context: {}
-        },
         template: 'insert_asset_dialog'
       }).promise.then(function (assets) {
         if (_.isEmpty(assets)) { return; }
@@ -58,16 +53,14 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
     }
 
     function _makeAssetLink(asset) {
-      try {
-        // "localizedField" may throw TypeError
-        var title = spaceContext.localizedField(asset, 'data.fields.title', localeCode);
-        var file = spaceContext.localizedField(asset, 'data.fields.file', localeCode);
-        if (title && file && file.url) {
-          return '![' + title + '](' + assetUrl(file.url) + ')';
-        }
-      } catch (e) {}
+      var title = spaceContext.localizedField(asset, 'data.fields.title', localeCode);
+      var file = spaceContext.localizedField(asset, 'data.fields.file', localeCode);
 
-      return '';
+      if (title && _.isObject(file) && file.url) {
+        return '![' + title + '](' + assetUrl(file.url) + ')';
+      } else {
+        return '';
+      }
     }
 
     function special() {

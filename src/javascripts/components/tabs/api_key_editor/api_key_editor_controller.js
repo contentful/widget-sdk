@@ -4,15 +4,12 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   var controller       = this;
   var environment      = $injector.get('environment');
   var notifier         = $injector.get('apiKeyEditor/notifications');
-  var $window          = $injector.get('$window');
   var $rootScope       = $injector.get('$rootScope');
   var Command          = $injector.get('command');
   var truncate         = $injector.get('stringUtils').truncate;
   var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
   var spaceContext     = $injector.get('spaceContext');
-
-  var IOS_RE = /(iphone os|ipad|iphone)/gi;
-  $scope.isIos = IOS_RE.test($window.navigator.userAgent);
+  var userAgent        = $injector.get('userAgent');
 
   var notify = notifier(function getTitle () {
     return truncate($scope.apiKey.getName(), 50);
@@ -20,12 +17,15 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
 
-  $scope.environment = environment;
-
   $scope.authCodeExample = {
     lang: 'http',
     api: 'cda'
   };
+
+  $scope.isIos = userAgent.isIOS();
+  $scope.isDev = environment.env === 'development';
+  $scope.isProd = environment.env === 'production';
+  $scope.isNotProd = environment.env !== 'production';
 
   $scope.getSelectedAccessToken = function () {
     var apiKey = isPreviewApiSelected() ? $scope.previewApiKey : $scope.apiKey;
@@ -36,18 +36,22 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     return environment.settings.cdn_host.replace('cdn', isPreviewApiSelected() ? 'preview': 'cdn');
   };
 
+  $scope.getSpaceId = function () {
+    return spaceContext.getId();
+  };
+
   $scope.$watch('apiKey.data.accessToken', function(accessToken) {
     $scope.exampleUrl =
       'http://' +
       environment.settings.cdn_host +
       '/spaces/' +
-      spaceContext.space.getId() +
+      spaceContext.getId() +
       '/entries?access_token=' +
       accessToken;
 
     $scope.iosMobileAppUrl =
       'contentful://open/space/' +
-      spaceContext.space.getId() +
+      spaceContext.getId() +
       '?access_token=' +
       accessToken;
 

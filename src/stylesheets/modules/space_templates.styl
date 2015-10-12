@@ -31,6 +31,7 @@ Styleguide 7.1
   position: relative
   height: 600px
   width: 900px
+  overflow-y: scroll
   &.modal-dialog__content
     margin: 0
   > .loading
@@ -123,50 +124,5 @@ Styleguide 7.1
     width: 100%
   .buttons
     border: none
-/*
-Space Template Queue
-
-A view which shows a queue of actions performed when creating space
-template items, with variations of success and error for each item
-
-Markup:
-div(class="space-template__dialog" style="width: 700px; height: 600px;")
-  div(class="space-template__queue")
-    h1 Creating template entities
-    div(class="space-template__queue-item space-template--item-success") Content Type
-    div(class="space-template__queue-item space-template--item-error") Content Type
-      span Failed
-    div(class="space-template__queue-status") Failed
-
-Styleguide 7.2
-*/
-.space-template__queue
-  width: 100%
-  padding: 0px 20px
-  margin-top: 10px
-
-.space-template__queue-container
-  height: 420px
-  overflow-y: auto
-
-.space-template__queue-item
-  padding: 4px 0px
-  .fa
-    margin-right: 4px
-
-.space-template__item-status
-  margin-left: 4px
-
-.space-template--item-success
-  .fa
-    color: $green
-.space-template--item-error
-  .fa,
-  .space-template__item-status
-    color: $red
-
-.space-template__queue-status
-  font-size: 1.1em
-  margin: 10px 0px
 
 

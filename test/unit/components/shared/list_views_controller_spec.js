@@ -18,7 +18,7 @@ describe('ListViewsController', function () {
       $scope: scope,
       getBlankView: getBlankView = sinon.stub().returns({id: 'blankView'}),
       viewCollectionName: 'views',
-      currentViewLocation: 'context.view',
+      preserveStateAs: 'test',
       generateDefaultViews: generateDefaultViews = sinon.stub().returns(['defaultViews']),
       resetList: resetList = sinon.stub()
     });

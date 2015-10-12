@@ -61,13 +61,13 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     $scope.singleContentType = count !== 1 ? null : spaceContext.publishedContentTypes[0];
   });
 
-  $scope.$watch(function pageParameters(scope){
+  $scope.$watch(function pageParameters(){
     return {
-      searchTerm: scope.context.view.searchTerm,
-      page: scope.paginator.page,
-      pageLength: scope.paginator.pageLength,
-      contentTypeId: scope.context.view.contentTypeId,
-      spaceId: (spaceContext.space && spaceContext.space.getId())
+      searchTerm: $scope.context.view.searchTerm,
+      page: $scope.paginator.page,
+      pageLength: $scope.paginator.pageLength,
+      contentTypeId: $scope.context.view.contentTypeId,
+      spaceId: spaceContext.getId()
     };
   }, function(pageParameters, old, scope){
     scope.resetEntries(pageParameters.page === old.page);
