@@ -77,9 +77,8 @@ describe('otDocFor', function () {
         }
       };
 
-      var otDoc = makeOtDocStub(this.entity.data);
-      otDoc.on.withArgs('acknowledge').yields();
-      this.openDocument.resolves(otDoc);
+      this.otDoc = makeOtDocStub(this.entity.data);
+      this.openDocument.resolves(this.otDoc);
       this.connect();
     });
 
@@ -106,6 +105,7 @@ describe('otDocFor', function () {
     });
 
     it('updated version if updateHandler called', function(){
+      this.otDoc.on.withArgs('acknowledge').yield();
       sinon.assert.called(this.entity.setVersion);
     });
 

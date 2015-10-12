@@ -87,7 +87,7 @@ describe('apiKeyEditor Directive', function () {
       $invalid: false
     };
     scope.$digest();
-    expect(element.find('.workbench-actions .save').attr('disabled')).toBe('disabled');
+    expect(element.find('.workbench-header__actions .save').attr('disabled')).toBe('disabled');
   });
 
   it('save button is enabled', function () {

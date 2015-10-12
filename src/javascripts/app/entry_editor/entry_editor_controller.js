@@ -4,6 +4,8 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
   var $controller       = $injector.get('$controller');
   var logger            = $injector.get('logger');
   var TheLocaleStore    = $injector.get('TheLocaleStore');
+  var spaceContext      = $injector.get('spaceContext');
+  var truncate          = $injector.get('stringUtils').truncate;
 
   // Initialization
   $scope.entityActionsController = $controller('EntityActionsController', {
@@ -22,8 +24,11 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
   $scope.$watch('localesState.localeActiveStates', TheLocaleStore.setActiveStates, true);
 
 
-  $scope.$watch('spaceContext.entryTitle(entry)', function (title) {
+  $scope.$watch(function () {
+    return spaceContext.entryTitle($scope.entry);
+  }, function (title) {
     $scope.context.title = title;
+    $scope.title = truncate(title, 50);
   });
 
   $scope.$watch(function (scope) {
@@ -146,10 +151,6 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
       $scope.entry.data.fields = {};
     }
   });
-
-  $scope.headline = function(){
-    return this.spaceContext.entryTitle(this.entry);
-  };
 
   // Prevents badly created fields via the API from breaking the editor
   function cleanupEntryFields(contentTypeFields) {

@@ -1,7 +1,7 @@
 header.workbench-header
   cf-icon.workbench-header__icon(name="page-media")
   h1.workbench-header__title
-    | {{ headline() |truncate:50 }}
+    | {{ title }}
     a.workbench-header__kb-link(
       cf-knowledge-base-icon
       analytics-event="assets"
@@ -89,7 +89,7 @@ header.workbench-header
     | Delete
   .delete-confirm(cf-context-menu="top")
     cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
-    p You are about to delete {{headline()}}
+    p You are about to delete {{ title }}
     button.cfnext-btn-caution(ui-command="actions.delete") Delete
     button.cfnext-btn-secondary-action(type="button") Don't Delete
   button.cfnext-btn-secondary-action(ui-command="actions.archive")

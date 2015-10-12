@@ -2,6 +2,17 @@ header.workbench-header
   h1.workbench-header__title(title="{{context.title}}") {{context.title}}
   .workbench-header__description(ng-if="locale.data.default")
     | Default locale
+  .workbench-header__actions
+    button.cfnext-btn-secondary-action(
+      ui-command="localeEditor.cancel")
+      | Cancel
+    button.cfnext-btn-secondary-action(
+      ui-command="localeEditor.delete")
+      | Delete
+    button.cfnext-btn-primary-action(
+      type="submit"
+      ui-command="localeEditor.save")
+      | Save
 
 .workbench-main.x--content
   form.workbench-main__middle-content(name="localeForm" submit="save()")
@@ -20,13 +31,3 @@ header.workbench-header
       .cfnext-form-option
         input(id="cma" type="checkbox" ng-model="locale.data.contentManagementApi" ng-disabled="locale.data.default")
         label(for="cma") Enable editing for this locale
-
-.workbench-actions
-  button.cfnext-btn-secondary-action(ui-command="localeEditor.cancel")
-    | Cancel
-  button.cfnext-btn-secondary-action(ui-command="localeEditor.delete")
-    | Delete
-  button.cfnext-btn-primary-action(
-    type="submit"
-    ui-command="localeEditor.save")
-    | Save

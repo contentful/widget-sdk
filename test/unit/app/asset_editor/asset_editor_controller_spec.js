@@ -39,6 +39,7 @@ describe('Asset editor controller', function () {
     inject(function ($rootScope, $controller, $q, $injector) {
       logger = $injector.get('logger');
       notification = $injector.get('notification');
+      var spaceContext = $injector.get('spaceContext');
       scope = $rootScope.$new();
       scope.otDoc = {doc: {}, state: {}};
       scope.permissionController = { can: sinon.stub() };
@@ -49,6 +50,8 @@ describe('Asset editor controller', function () {
       scope.spaceContext = {
         assetTitle: stubs.assetTitle
       };
+      spaceContext.assetTitle = stubs.assetTitle;
+
       scope.validate = sinon.stub();
 
       var asset = {

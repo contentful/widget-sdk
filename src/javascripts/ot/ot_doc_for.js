@@ -93,6 +93,8 @@ angular.module('contentful')
     doc: undefined,
     state: {
       // initialized to true to prevent editing until otDoc is ready
+      // TODO this is changed from the outside (e.g. the entry editor).
+      // We need to provide a proper interface for this.
       disabled: true, // otDoc.state.disabled
       editable: false, // otDoc.state.editable
       error: false
@@ -232,8 +234,10 @@ angular.module('contentful')
 
   function updateHandler () {
     if (otDoc.doc) {
-      entity.setVersion(otDoc.doc.version);
-      entity.data.sys.updatedAt = moment().toISOString();
+      $scope.$apply(function () {
+        entity.setVersion(otDoc.doc.version);
+        entity.data.sys.updatedAt = moment().toISOString();
+      });
     }
   }
 
