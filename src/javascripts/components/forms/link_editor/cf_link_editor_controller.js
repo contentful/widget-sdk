@@ -137,12 +137,13 @@ angular.module('contentful').controller('LinkEditorController',
       var path = $scope.otPath.concat(index);
       try {
         $scope.otDoc.doc.at(path).remove(cb);
-      } catch(exp){
+      } catch(ex){
         logger.logError('No element at that path', {
           data: {
-            exp: exp,
+            exceptionMessage: ex.message,
             path: path,
-            snapshot: $scope.otDoc.doc.snapshot
+            snapshot: dotty.get($scope.otDoc, 'doc.snapshot'),
+            linkList: dotty.get($scope.otDoc, ['doc', 'snapshot'].concat($scope.otPath))
           }
         });
       }
