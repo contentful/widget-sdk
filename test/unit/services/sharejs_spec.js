@@ -135,4 +135,15 @@ describe('ShareJS static methods', function () {
     expect(this.at.args).toMatchMultipleCallsArgs(['prop', 'drop']);
     expect(this.set.calledWith({foo: 'bar'}, this.callback)).toBe(true);
   });
+
+  it('create an object where path exists and is array', function () {
+    this.getValues = [null];
+    this.ShareJS.mkpathAndSetValue({
+      doc: this.doc,
+      path: ['container', 'prop'],
+      value: true
+    }, this.callback);
+    expect(this.at.args).toMatchMultipleCallsArgs(['container']);
+    sinon.assert.calledWith(this.set, {prop: true}, this.callback);
+  });
 });
