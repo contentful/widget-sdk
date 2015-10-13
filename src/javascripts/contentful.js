@@ -27,7 +27,7 @@ angular.module('contentful', [
 }])
 
 .run(['$injector', function ($injector) {
-  if (window.CF_ENV === 'unitttest') {
+  if (window.CF_ENV === 'unittest') {
     return;
   }
 
