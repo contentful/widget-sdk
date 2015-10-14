@@ -3,10 +3,7 @@
     cf-icon(name="page-media")
     h1
       | Media Library
-      a(cf-knowledge-base-icon
-        analytics-event="assets"
-        href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
-
+      cf-knowledge-base(target="asset")
 
   .tab-header__search.search-area(ng-show="!showNoAssetsAdvice()")
     .l-search-w-autocomplete(
@@ -111,10 +108,7 @@
             | Single Asset
           li(role="menuitem" ng-click="createMultipleAssets()")
             | Multiple Assets
-    a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
-      | Visit the Knowledge Base Pages
-      i.fa.fa-question-circle
-
+    cf-knowledge-base(target="asset" text="Visit the Knowledge Base Pages")
 
 .tab-actions
   .label {{selection.size()}} Assets selected

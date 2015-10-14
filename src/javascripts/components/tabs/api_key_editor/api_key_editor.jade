@@ -3,16 +3,13 @@
     cf-icon(name="page-api")
     h1(title="{{context.title}}")
       | {{context.title}}
-      a(cf-knowledge-base-icon
-        analytics-event="api_keys"
-        href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
+      cf-knowledge-base(target="api_key")
 
   .tab-header__actions
     button.cfnext-btn-secondary-action(type="button"
       ng-click="preferences.toggleAuxPanel()"
       ng-class="{active: preferences.showAuxPanel}")
       | Info
-
 
 .aux-panel(ng-show="preferences.showAuxPanel")
   header

@@ -31,9 +31,7 @@ mixin create-entry-button
     cf-icon(name="page-entries")
     h1
       | Entries
-      a(cf-knowledge-base-icon
-        analytics-event="entries"
-        href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
+      cf-knowledge-base(target="entry")
 
   .tab-header__search.search-area--with-filter(ng-show="!showNoEntriesAdvice()")
     select.search-area__select-box.cfnext-select-box(
@@ -124,9 +122,7 @@ mixin create-entry-button
           ng-click="showNewContentTypeDialog()")
         cf-icon.btn-icon.inverted(name="plus")
         | Add New Entry
-    a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
-      | Visit the Knowledge Base Pages
-      i.fa.fa-question-circle
+    cf-knowledge-base(target="entry" text="Visit the Knowledge Base Pages")
 
 .tab-actions
   .label {{selection.size()}} Entries selected

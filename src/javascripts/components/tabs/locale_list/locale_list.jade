@@ -1,9 +1,7 @@
 .tab-header
   .tab-header__title
     h1 Locales
-      a(cf-knowledge-base-icon
-        analytics-event="locales"
-        href="https://support.contentful.com/hc/en-us/articles/200513368-What-is-a-Locale-")
+      cf-knowledge-base(target="locale")
 
   .tab-header__actions.add-entity
     button.cfnext-btn-action(ng-click="entityCreationController.newLocale()" ng-show="localesUsageState == 'oneLocaleUsed' || localesUsageState == 'moreThanOneLocaleUsed'")
