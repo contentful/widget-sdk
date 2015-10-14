@@ -56,6 +56,8 @@ angular.module('contentful')
     // TODO error handler
   }, {
     disabled: disabledChecker('createEntry')
+  }, {
+    name: function () { return $scope.contentTypeName; }
   });
 
 }]);

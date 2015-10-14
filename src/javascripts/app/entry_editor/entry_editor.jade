@@ -12,7 +12,7 @@ header.workbench-header
   .workbench-header__actions
     +editor-actions-dropdown
       div(role="menuitem" ui-command="actions.add")
-        | Create new
+        | Create new <em>{{ command.name() | truncate:14 }}</em>
       div(role="menuitem" ui-command="actions.duplicate")
         | Duplicate
       div(role="menuitem"
