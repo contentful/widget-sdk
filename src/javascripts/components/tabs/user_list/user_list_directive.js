@@ -11,8 +11,7 @@ angular.module('contentful').directive('cfUserList', function () {
 angular.module('contentful').controller('UserListController', ['$scope', '$injector', function ($scope, $injector) {
 
   var ReloadNotification = $injector.get('ReloadNotification');
-  var spaceContext       = $injector.get('spaceContext');
-  var space              = spaceContext.space;
+  var space              = $injector.get('spaceContext').space;
   var $q                 = $injector.get('$q');
 
   var adminMap     = {};

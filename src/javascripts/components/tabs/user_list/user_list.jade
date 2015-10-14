@@ -52,6 +52,6 @@
                   i.fa(ng-class="user.hasPolicies ? 'fa-check' : 'fa-times'")
                   span(ng-show="user.hasPolicies")  Yes
                   span(ng-hide="user.hasPolicies")  No
-      button.cfnext-btn-action(disabled="disabled")
+      button.cfnext-btn-action(ui-sref="spaces.detail.settings.users.roleNew")
         cf-icon.btn-icon.inverted(name="plus")
         | New Role

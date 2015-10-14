@@ -402,6 +402,10 @@ angular.module('contentful').config([
     template: '<ui-view/>'
   });
 
+  /**
+   * Settings > Locale
+   */
+
   $stateProvider.state('spaces.detail.settings.locales', {
     url: '/locales',
     abstract: true,
@@ -456,6 +460,10 @@ angular.module('contentful').config([
     }
   }, localeEditorState));
 
+  /**
+   * Settings > Users
+   */
+
   $stateProvider.state('spaces.detail.settings.users', {
     url: '/users',
     abstract: true,
@@ -477,11 +485,40 @@ angular.module('contentful').config([
     template: '<pre>User details (ID: {{ $stateParams.userId }})</pre>'
   });
 
+  $stateProvider.state('spaces.detail.settings.users.roleNew', {
+    url: '/roles/new',
+    ncyBreadcrumb: {
+      parent: 'spaces.detail.settings.users.list',
+      label: '{{ context.title + (context.dirty ? "*" : "") }}'
+    },
+    template: '<cf-role-editor />',
+    controller: ['$scope', function ($scope) {
+      $scope.context = { isNew: true };
+      $scope.role = {};
+    }]
+  });
+
   $stateProvider.state('spaces.detail.settings.users.roleDetail', {
     url: '/roles/:roleId',
-    ncyBreadcrumb: { label: 'Role details' },
-    template: '<pre>Role details (ID: {{ $stateParams.roleId }})</pre>'
+    ncyBreadcrumb: {
+      parent: 'spaces.detail.settings.users.list',
+      label: '{{ context.title + (context.dirty ? "*" : "") }}'
+    },
+    resolve: {
+      role: ['RoleRepository', 'space', '$stateParams', function (RoleRepository, space, $stateParams) {
+        return RoleRepository.getInstance(space).get($stateParams.roleId);
+      }]
+    },
+    template: '<cf-role-editor />',
+    controller: ['$scope', 'role', function ($scope, role) {
+      $scope.context = {};
+      $scope.role = role;
+    }]
   });
+
+  /**
+   * Settings > iframe views
+   */
 
   $stateProvider.state('spaces.detail.settings.iframe', {
     url: '',

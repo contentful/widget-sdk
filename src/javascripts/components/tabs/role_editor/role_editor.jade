@@ -1,0 +1,41 @@
+.workbench
+  header.workbench-header
+    h1.workbench-header__title Role: {{ context.title }}
+
+  .workbench-main
+    form.workbench-main__middle-content(name="roleForm")
+      .cfnext-form__field
+        label Name
+        input.cfnext-form__input--full-size(ng-model="role.name")
+      .cfnext-form__field
+        label Description
+        textarea.cfnext-form__input--full-size(ng-model="role.description")
+      .cfnext-form__field
+        label Permissions
+      .cfnext-form-option
+        input(id="opt_read_content_model" type="checkbox" ng-model="role.permissions.contentModel.read")
+        label(for="opt_read_content_model") Read content model
+      .cfnext-form-option
+        input(id="opt_manage_content_model" type="checkbox" ng-model="role.permissions.contentModel.manage")
+        label(for="opt_manage_content_model") Manage content model
+      .cfnext-form-option
+        input(id="opt_read_content_delivery" type="checkbox" ng-model="role.permissions.contentDelivery.read")
+        label(for="opt_read_content_delivery") Read content delivery
+      .cfnext-form-option
+        input(id="opt_manage_content_delivery" type="checkbox" ng-model="role.permissions.contentDelivery.manage")
+        label(for="opt_manage_content_delivery") Manage content delivery
+      .cfnext-form-option
+        input(id="opt_manage_settings" type="checkbox" ng-model="role.permissions.settings.manage")
+        label(for="opt_manage_settings") Manage settings
+      .cfnext-form__field
+        label Policies JSON
+        textarea.cfnext-form__input--full-size(rows="10")
+          | {{ role.policies | json }}
+
+  .workbench-actions
+    button.cfnext-btn-secondary-action(ui-command="cancel")
+      | Cancel
+    button.cfnext-btn-secondary-action(ui-command="delete")
+      | Delete
+    button.cfnext-btn-primary-action(type="submit" ui-command="save")
+      | Save
