@@ -3,9 +3,7 @@
     cf-icon(name="page-media")
     h1(title="{{headline()}}")
       | {{headline()}}
-      a(cf-knowledge-base-icon
-        analytics-event="assets"
-        href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
+      cf-knowledge-base(target="asset")
 
   .tab-header__actions
     button.cfnext-btn-secondary-action(type="button"

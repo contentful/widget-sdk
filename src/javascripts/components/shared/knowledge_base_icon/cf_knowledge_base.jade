@@ -1,0 +1,7 @@
+a.knowledge-base-link(
+  ng-class="{'knowledge-base-link--no-text': !text.length}"
+  target="_blank"
+  ng-href="{{ url }}"
+  tooltip="{{ tooltipText }}")
+  | {{ text }}
+  i.fa.fa-question-circle

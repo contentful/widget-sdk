@@ -3,9 +3,7 @@
     cf-icon(name="page-entries")
     h1(title="{{headline()}}")
       | {{headline()}}
-      a(cf-knowledge-base-icon
-        analytics-event="entries"
-        href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
+      cf-knowledge-base(target="entry")
 
   .tab-header__actions
     button.cfnext-btn-secondary-action(type="button"

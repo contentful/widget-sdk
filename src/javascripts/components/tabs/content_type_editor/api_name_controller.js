@@ -10,8 +10,9 @@ angular.module('contentful')
 .controller('ApiNameController', ['$scope', '$injector', function ApiNameController($scope, $injector){
   var controller = this;
 
-  var modalDialog = $injector.get('modalDialog');
-  var $q          = $injector.get('$q');
+  var modalDialog         = $injector.get('modalDialog');
+  var $q                  = $injector.get('$q');
+  var getKnowledgeBaseUrl = $injector.get('KnowledgeBase/getUrl');
 
   /**
    * @ngdoc method
@@ -50,7 +51,7 @@ angular.module('contentful')
                'of your content to applications that currently display it. '+
                'Change the field ID only if you plan to update your client applications ' +
                'as well.</p>'+
-               '<p>Consult our <a href="https://support.contentful.com/hc/en-us/articles/204101273">' +
+               '<p>Consult our <a href="' + getKnowledgeBaseUrl('id_change') + '">' +
                'Knowledge base</a> for more information on updating published Content Types.</p>',
       html: true,
       scope: $scope,
