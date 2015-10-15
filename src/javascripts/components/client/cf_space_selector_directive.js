@@ -8,7 +8,6 @@ angular.module('contentful')
     restrict: 'E',
     replace: true,
     scope: {
-      organizations: '=',
       spaces: '=',
       permissionController: '='
     },
@@ -18,16 +17,20 @@ angular.module('contentful')
 
 .controller('cfSpaceSelectorController', ['$scope', '$injector', function cfSpaceSelectorController($scope, $injector) {
 
-  var $rootScope   = $injector.get('$rootScope');
-  var analytics    = $injector.get('analytics');
-  var spaceContext = $injector.get('spaceContext');
-  var spaceTools   = $injector.get('spaceTools');
+  var $rootScope       = $injector.get('$rootScope');
+  var analytics        = $injector.get('analytics');
+  var spaceContext     = $injector.get('spaceContext');
+  var spaceTools       = $injector.get('spaceTools');
+  var OrganizationList = $injector.get('OrganizationList');
 
   $scope.$watch('spaces', groupSpacesByOrganization);
+  $scope.$watch(OrganizationList.isEmpty, function (isEmpty) {
+    $scope.hasOrgnizations = !isEmpty;
+  });
 
   $scope.spaceContext = spaceContext;
   $scope.clickedSpaceSwitcher = clickedSpaceSwitcher;
-  $scope.getOrganizationName = getOrganizationName;
+  $scope.getOrganizationName = OrganizationList.getOrganizationName;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
   $scope.selectSpace = spaceTools.goTo;
 
@@ -39,11 +42,6 @@ angular.module('contentful')
 
   function clickedSpaceSwitcher() {
     analytics.track('Clicked Space-Switcher');
-  }
-
-  function getOrganizationName(id) {
-    var result = _.where($scope.organizations, { sys: { id: id } });
-    return result.length > 0 ? result[0].name : '';
   }
 
   function showCreateSpaceDialog() {

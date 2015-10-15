@@ -23,6 +23,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var TheStore           = $injector.get('TheStore');
   var TheLocaleStore     = $injector.get('TheLocaleStore');
   var moment             = $injector.get('moment');
+  var OrganizationList   = $injector.get('OrganizationList');
 
   $controller('TrialWatchController', {$scope: $scope});
 
@@ -104,7 +105,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
   function userWatchHandler(user) {
     if(user){
-      $scope.organizations = _.pluck(user.organizationMemberships, 'organization');
+      OrganizationList.resetWithUser(user);
       if (features.shouldAllowAnalytics()) {
         logger.enable();
         analytics.enable();
@@ -225,7 +226,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
   function showSpaceTemplatesModal(organizationId) {
     var scope = $scope.$new();
-    setOrganizationsOnScope(scope, organizationId);
+    scope.organizations = OrganizationList.getWithOnTop(organizationId);
     analytics.track('Viewed Space Template Selection Modal');
     modalDialog.open({
       title: 'Space templates',
@@ -242,17 +243,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       }
     })
     .catch(refreshContentTypes);
-  }
-
-  function setOrganizationsOnScope(scope, organizationId){
-    if (organizationId) {
-      scope.organizations = scope.organizations.concat();
-      scope.organizations.sort(function (a, b) {
-        if (a.sys.id === organizationId) return -1;
-        if (b.sys.id === organizationId) return 1;
-        else return 0;
-      });
-    }
   }
 
   function refreshContentTypes() {

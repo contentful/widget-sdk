@@ -1,15 +1,16 @@
 'use strict';
 
 angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope', '$injector', function CreateSpaceDialogController($scope, $injector) {
-    var $rootScope   = $injector.get('$rootScope');
-    var $timeout     = $injector.get('$timeout');
-    var cfSpinner    = $injector.get('cfSpinner');
-    var client       = $injector.get('client');
-    var tokenStore   = $injector.get('tokenStore');
-    var enforcements = $injector.get('enforcements');
-    var logger       = $injector.get('logger');
-    var notification = $injector.get('notification');
-    var spaceTools = $injector.get('spaceTools');
+    var $rootScope       = $injector.get('$rootScope');
+    var $timeout         = $injector.get('$timeout');
+    var cfSpinner        = $injector.get('cfSpinner');
+    var client           = $injector.get('client');
+    var tokenStore       = $injector.get('tokenStore');
+    var enforcements     = $injector.get('enforcements');
+    var logger           = $injector.get('logger');
+    var notification     = $injector.get('notification');
+    var spaceTools       = $injector.get('spaceTools');
+    var OrganizationList = $injector.get('OrganizationList');
 
     $scope.createSpace = createSpace;
     $scope.selectOrganization = selectOrganization;
@@ -96,7 +97,7 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
     }
 
     function setupOrganizations() {
-      $scope.writableOrganizations = _.filter($scope.organizations, function (org) {
+      $scope.writableOrganizations = _.filter(OrganizationList.getAll(), function (org) {
         return org && org.sys ? $scope.permissionController.canCreateSpaceInOrg(org.sys.id) : false;
       });
       if($scope.writableOrganizations.length > 0){

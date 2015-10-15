@@ -9,12 +9,13 @@ angular.module('contentful')
 .controller('PermissionController', ['$scope', '$injector',
 function PermissionController($scope, $injector) {
 
-  var $rootScope    = $injector.get('$rootScope');
-  var stringUtils   = $injector.get('stringUtils');
-  var enforcements  = $injector.get('enforcements');
-  var authorization = $injector.get('authorization');
-  var reasonsDenied = $injector.get('reasonsDenied');
-  var logger        = $injector.get('logger');
+  var $rootScope       = $injector.get('$rootScope');
+  var stringUtils      = $injector.get('stringUtils');
+  var enforcements     = $injector.get('enforcements');
+  var authorization    = $injector.get('authorization');
+  var reasonsDenied    = $injector.get('reasonsDenied');
+  var logger           = $injector.get('logger');
+  var OrganizationList = $injector.get('OrganizationList');
 
   var actionsForEntities = {
     contentType: ['create', 'read', 'update', 'delete', 'publish', 'unpublish'],
@@ -29,7 +30,6 @@ function PermissionController($scope, $injector) {
   controller.initialize             = initialize;
   controller.get                    = getEntityActionPermission;
   controller.can                    = can;
-  controller.canSelectOrg           = canSelectOrg;
   controller.canCreateSpace         = canCreateSpace;
   controller.canCreateSpaceInAnyOrg = canCreateSpaceInAnyOrg;
   controller.canCreateSpaceInOrg    = canCreateSpaceInOrg;
@@ -87,14 +87,9 @@ function PermissionController($scope, $injector) {
     return response;
   }
 
-  function canSelectOrg(orgId) {
-    var query = _.where($scope.user.organizationMemberships, {organization: {sys: {id: orgId}}});
-    return query.length > 0 && (query[0].role == 'admin' || query[0].role == 'owner');
-  }
-
   function canCreateSpace() {
     var response;
-    if(authorization.authContext && $scope.organizations && $scope.organizations.length > 0){
+    if(authorization.authContext && !OrganizationList.isEmpty()){
       if(!canCreateSpaceInAnyOrg()) return false;
 
       try {
@@ -110,7 +105,7 @@ function PermissionController($scope, $injector) {
   }
 
   function canCreateSpaceInAnyOrg() {
-    return _.some($scope.organizations, function (org) {
+    return _.some(OrganizationList.getAll(), function (org) {
       return canCreateSpaceInOrg(org.sys.id);
     });
   }
