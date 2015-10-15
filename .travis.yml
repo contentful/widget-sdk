@@ -21,6 +21,7 @@ install:
 - npm prune
 - bin/install_slimerjs
 - npm install
+- npm list --depth 0 || true
 - bower install
 before_script:
 - gulp prepare-tests
