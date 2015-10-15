@@ -22,6 +22,7 @@ function ContentTypeActionsController($scope, $injector) {
   var $timeout     = $injector.get('$timeout');
   var spaceContext = $injector.get('spaceContext');
 
+
   var availableActions = $controller('EntityActionsController', {
     $scope: $scope,
     entityType: 'contentType'
@@ -187,7 +188,8 @@ function ContentTypeActionsController($scope, $injector) {
 
     $scope.regulateDisplayField();
     if (!$scope.validate()) {
-      notify.invalid();
+      var fieldNames = _.pluck($scope.contentType.data.fields, 'name');
+      notify.invalid($scope.validationResult.errors, fieldNames);
       return $q.reject();
     }
 
@@ -323,6 +325,7 @@ function ContentTypeActionsController($scope, $injector) {
 .factory('contentType/notifications', ['$injector', function ($injector) {
   var logger       = $injector.get('logger');
   var notification = $injector.get('notification');
+  var truncate     = $injector.get('stringUtils').truncate;
 
   var saveError = 'Unable to save Content Type: ';
   var messages = {
@@ -343,8 +346,20 @@ function ContentTypeActionsController($scope, $injector) {
       logger.logServerWarn('Error deleting Content Type', {error: err});
     },
 
-    invalid: function () {
-      notification.error(messages.save.invalid);
+    invalid: function (errors, fieldNames) {
+      var fieldErrors = _.filter(errors, function (error) {
+        return error.path && error.path[0] === 'fields';
+      });
+
+      var errorFieldName = _.first(_.map(fieldErrors, function (error) {
+        return fieldNames[error.path[1]];
+      }));
+
+      if (errorFieldName) {
+        notification.error(saveError + 'Invalid field “' + truncate(errorFieldName, 12) + '”');
+      } else {
+        notification.error(messages.save.invalid);
+      }
     },
 
     saveSuccess: function () {

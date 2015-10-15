@@ -1,6 +1,6 @@
 div(
   ng-form="fieldSettingsForm"
-  cf-validate="field"
+  cf-validate="field" show-errors cf-validate-form="field" ng-init="validator.run()"
   ng-controller="FieldDialogSettingsController")
 
   div.cfnext-form__field
@@ -8,7 +8,7 @@ div(
     input.cfnext-form__input(
       name="name" type="text" size="40"
       ng-model="field.name"
-      cf-validate-model required maxlength="50")
+      cf-validate-model)
     span.cfnext-form__field-suffix-error(cf-field-error-for="name")
 
   div.cfnext-form__field(ng-controller="ApiNameController as apiNameController")
@@ -17,7 +17,7 @@ div(
       input.cfnext-form__input(
         name="apiName" type="text" size="40"
         ng-model="field.apiName"
-        cf-validate-model required maxlength="50"
+        cf-validate-model
         ng-disabled="!apiNameController.isEditable()")
       button.form-control__icon-suffix.fa.fa-lock(
         ng-if="!apiNameController.isEditable()"
