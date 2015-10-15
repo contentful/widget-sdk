@@ -27,8 +27,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
   $controller('TrialWatchController', {$scope: $scope});
 
-  $scope.permissionController = $controller('PermissionController', {$scope: $scope});
-  $scope.featureController    = $controller('FeatureController'   , {$scope: $scope});
+  $scope.permissionController = $controller('PermissionController');
+  $scope.featureController = $controller('FeatureController', {$scope: $scope});
   $scope.spaceContext = spaceContext;
 
   $scope.preferences = {

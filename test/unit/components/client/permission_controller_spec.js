@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Permission Controller', function () {
-  var scope, controller;
+  var controller;
 
   beforeEach(function () {
     var self = this;
@@ -27,10 +27,9 @@ describe('Permission Controller', function () {
 
       self.authorizationStubs.authContext.organization.returns({can: self.authorizationStubs.authContext.can});
     });
-    inject(function ($controller, $rootScope, $q, OrganizationList){
+    inject(function ($controller, $q, OrganizationList){
       this.$q = $q;
-      scope = $rootScope.$new();
-      controller = $controller('PermissionController', {$scope: scope});
+      controller = $controller('PermissionController');
       OrganizationList.resetWithUser({
         organizationMemberships: [
           {organization: {sys: {id: 'abc'}}},
@@ -142,11 +141,6 @@ describe('Permission Controller', function () {
     }));
 
     it('with no organizations', function() {
-      expect(controller.canCreateSpace()).toBeFalsy();
-    });
-
-    it('with zero organizations', function() {
-      scope.organizations = [];
       expect(controller.canCreateSpace()).toBeFalsy();
     });
 

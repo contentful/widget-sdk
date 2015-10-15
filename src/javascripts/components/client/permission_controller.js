@@ -6,8 +6,7 @@ angular.module('contentful')
  * @ngdoc type
  * @name PermissionController
  */
-.controller('PermissionController', ['$scope', '$injector',
-function PermissionController($scope, $injector) {
+.controller('PermissionController', ['$injector', function PermissionController($injector) {
 
   var $rootScope       = $injector.get('$rootScope');
   var stringUtils      = $injector.get('stringUtils');
