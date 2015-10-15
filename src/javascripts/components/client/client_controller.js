@@ -103,6 +103,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     }
   }
 
+  // @todo this shouldn't be $watch handler - it can be called by `setTokenDataOnScope`
   function userWatchHandler(user) {
     if(user){
       OrganizationList.resetWithUser(user);
@@ -225,13 +226,14 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function showSpaceTemplatesModal(organizationId) {
-    var scope = $scope.$new();
-    scope.organizations = OrganizationList.getWithOnTop(organizationId);
+    var scope = _.extend($scope.$new(), {
+      organizations: OrganizationList.getWithOnTop(organizationId)
+    });
     analytics.track('Viewed Space Template Selection Modal');
     modalDialog.open({
       title: 'Space templates',
       template: 'space_templates_dialog',
-      scope: $scope,
+      scope: scope,
       backgroundClose: false
     })
     .promise

@@ -30,7 +30,7 @@ angular.module('contentful')
 
   $scope.spaceContext = spaceContext;
   $scope.clickedSpaceSwitcher = clickedSpaceSwitcher;
-  $scope.getOrganizationName = OrganizationList.getOrganizationName;
+  $scope.getOrganizationName = OrganizationList.getName;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
   $scope.selectSpace = spaceTools.goTo;
 

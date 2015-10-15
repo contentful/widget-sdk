@@ -27,10 +27,16 @@ describe('Permission Controller', function () {
 
       self.authorizationStubs.authContext.organization.returns({can: self.authorizationStubs.authContext.can});
     });
-    inject(function ($controller, $rootScope, $q){
+    inject(function ($controller, $rootScope, $q, OrganizationList){
       this.$q = $q;
       scope = $rootScope.$new();
       controller = $controller('PermissionController', {$scope: scope});
+      OrganizationList.resetWithUser({
+        organizationMemberships: [
+          {organization: {sys: {id: 'abc'}}},
+          {organization: {sys: {id: 'def'}}}
+        ]
+      });
     });
   });
 
@@ -117,53 +123,7 @@ describe('Permission Controller', function () {
 
   });
 
-  describe('check if user can select an organization', function() {
-    beforeEach(function() {
-      scope.user = {
-        organizationMemberships: [{
-          organization: {
-            sys: {
-              id: '1234',
-              createdBy: {
-                sys: {
-                  id: '456'
-                }
-              }
-            }
-          }
-        }]
-      };
-    });
-
-    it('as an owner', function() {
-      scope.user.organizationMemberships[0].role = 'owner';
-      expect(controller.canSelectOrg('1234')).toBeTruthy();
-    });
-
-    it('as an admin', function() {
-      scope.user.organizationMemberships[0].role = 'admin';
-      expect(controller.canSelectOrg('1234')).toBeTruthy();
-    });
-
-    it('as an user', function() {
-      scope.user.organizationMemberships[0].role = 'user';
-      expect(controller.canSelectOrg('1234')).toBeFalsy();
-    });
-
-    it('with no memberships', function() {
-      scope.user.organizationMemberships = [];
-      expect(controller.canSelectOrg('1234')).toBeFalsy();
-    });
-  });
-
   describe('check if user can create a space in any org', function() {
-    beforeEach(function() {
-      scope.organizations = [
-        {sys: {id: 'abc'}},
-        {sys: {id: 'def'}},
-      ];
-    });
-
     it('if user cant create spaces in any organizations', function() {
       this.authorizationStubs.authContext.can.returns(false);
       expect(controller.canCreateSpaceInAnyOrg()).toBeFalsy();
@@ -192,10 +152,6 @@ describe('Permission Controller', function () {
 
     describe('with organizations', function() {
       beforeEach(function() {
-        scope.organizations = [
-          {sys: {id: 'abc'}},
-          {sys: {id: 'def'}},
-        ];
         controller.canCreateSpaceInAnyOrg = sinon.stub();
       });
 

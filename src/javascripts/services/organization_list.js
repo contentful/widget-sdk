@@ -7,43 +7,96 @@ angular.module('contentful').factory('OrganizationList', function () {
   return {
     resetWithUser: resetWithUser,
     isEmpty: isEmpty,
-    getOrganization: getOrganization,
-    getOrganizationName: getOrganizationName,
+    get: get,
+    getName: getName,
     getAll: getAll,
-    getCopy: getCopy,
     getWithOnTop: getWithOnTop
   };
 
+  /**
+   * @ngdoc method
+   * @name OrganizationList#resetWithUser
+   * @param {API.User} user
+   * @description
+   * Gets user object and initializes list with organizations.
+   */
   function resetWithUser(user) {
     organizations = _.pluck(user.organizationMemberships, 'organization');
   }
 
+  /**
+   * @ngdoc method
+   * @name OrganizationList#isEmpty
+   * @returns {boolean}
+   * @description
+   * Returns true if there are no organizations, false otherwise.
+   */
   function isEmpty() {
     return organizations.length === 0;
   }
 
-  function getOrganization(id) {
+  /**
+   * @ngdoc method
+   * @name OrganizationList#get
+   * @param {string} id
+   * @returns {object}
+   * @description
+   * Gets organization by the provided ID.
+   */
+  function get(id) {
     var result = _.where(organizations, { sys: { id: id } });
     return result.length > 0 ? result[0] : null;
   }
 
-  function getOrganizationName(id) {
-    var organization = getOrganization(id);
-    return organization ? organization.name : null;
+  /**
+   * @ngdoc method
+   * @name OrganizationList#getName
+   * @param {string} id
+   * @returns {string}
+   * @description
+   * Gets name of organization (by ID).
+   */
+  function getName(id) {
+    var organization = get(id);
+    return organization ? organization.name : '';
   }
 
+  /**
+   * @ngdoc method
+   * @name OrganizationList#getAll
+   * @returns {object[]}
+   * @description
+   * Gets all organizations as an array.
+   */
   function getAll() {
     return organizations;
   }
 
-  function getCopy(deep) {
-    return _.clone(organizations, deep);
+  /**
+   * @ngdoc method
+   * @name OrganizationList#getCopy
+   * @returns {object[]}
+   * @description
+   * Returns shallow copy of the organization array.
+   */
+  function getCopy() {
+    return _.clone(organizations);
   }
 
-  function getWithOnTop(organizationId) {
+  /**
+   * @ngdoc method
+   * @name OrganizationList#getWithOnTop
+   * @param {string} id
+   * @returns {object[]}
+   * @description
+   * Returns shallow copy of the organization array.
+   * If list contains organization with the provided id,
+   * then it'll be the first one in returned array.
+   */
+  function getWithOnTop(id) {
     var organizations = getCopy();
-    if (organizationId) {
-      organizations.sort(idComparator(organizationId));
+    if (id) {
+      organizations.sort(idComparator(id));
     }
 
     return organizations;
