@@ -1,5 +1,13 @@
 'use strict';
 
+/**
+ * @ngdoc service
+ * @name OrganizationList
+ *
+ * @description
+ * This service keeps global state of organizations.
+ * It exposes multiple utility getter methods.
+ */
 angular.module('contentful').factory('OrganizationList', function () {
 
   var organizations = [];
