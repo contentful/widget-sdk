@@ -87,6 +87,7 @@
     "karma-chrome-launcher": "~0.2.0",
     "karma-cli": "0.1.1",
     "karma-jasmine": "~0.3.6",
+    "jasmine-core": "2.3.x",
     "karma-slimerjs-launcher": "~0.2.0",
     "karma-story-reporter": "~0.3.1",
     "watchify": "2.1.x"
