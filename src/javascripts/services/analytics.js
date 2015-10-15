@@ -158,10 +158,10 @@ angular.module('contentful')
       }
     };
 
-    if (shouldLoadAnalytics()) {
-      return analytics;
-    } else if(forceDevMode()) {
+    if (forceDevMode()) {
       return devService();
+    } else if (shouldLoadAnalytics()) {
+      return analytics;
     } else {
       return noopService();
     }
@@ -189,9 +189,11 @@ angular.module('contentful')
      * helpful for debugging.
      */
     function devService () {
-      return _.extend(noopService(), {
+      return _.extend(analytics, {
         track: trackStub,
         trackTotango: trackStub,
+        enable: _.noop,
+        disable: _.noop
       });
 
       function trackStub (event, data) {
