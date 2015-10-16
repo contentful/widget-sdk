@@ -43,9 +43,7 @@ describe('Create Space controller', function () {
       scope.$root.$on.withArgs('$stateChangeSuccess').returns(angular.noop);
 
       org = {sys: {id: 'orgid'}};
-      scope.organizations = [
-        org
-      ];
+      scope.organizations = [org];
       scope.permissionController = {};
       scope.permissionController.canCreateSpaceInOrg = sinon.stub();
       scope.newSpaceForm = {};
