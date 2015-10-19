@@ -93,7 +93,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     var byLetter = {};
 
     _.forEach($scope.users, function (user) {
-      var first = user.name.substr(0, 1).toLowerCase();
+      var first = user.name.substr(0, 1).toUpperCase();
       byLetter[first] = byLetter[first] || [];
       byLetter[first].push(user);
     });

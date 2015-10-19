@@ -590,7 +590,7 @@ angular.module('contentful').config([
   function loadableState(definition) {
     if (!definition.loadingText) {
       var label = dotty.get(definition, 'ncyBreadcrumb.label');
-      definition.loadingText = label ? ('Loading your ' + label + '...') : 'Loading...'
+      definition.loadingText = label ? ('Loading your ' + label + '...') : 'Loading...';
     }
 
     definition.template = [

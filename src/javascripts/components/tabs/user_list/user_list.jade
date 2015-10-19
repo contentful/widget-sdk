@@ -1,13 +1,20 @@
 .user-list(ng-init="selectedListView = 'name'")
   h1 Users ({{ users.length || 0 }})
 
-  select(ng-model="selectedListView")
+  select.user-list__view-selector(ng-model="selectedListView")
     option(value="name") Show users in alphabetical order
     option(value="role") Show users grouped by role
 
-  div(ng-repeat="item in by[selectedListView] track by item.label")
+  .user-list__group(ng-repeat="item in by[selectedListView] track by item.label")
     h3 {{ item.label }}
-    div.user-list--item(ng-repeat="user in item.users track by user.id")
-      img(ng-src="{{ user.avatarUrl }}")
-      strong {{ user.name }}
-      p {{ user.roleNames }}
+    div.user-list__item(ng-repeat="user in item.users track by user.id")
+      img.user-list__avatar(ng-src="{{ user.avatarUrl }}" width="50" height="50")
+      .user-list__info
+        strong.user-list__name {{ user.name }}
+        p.user-list__roles {{ user.roleNames }}
+      button.role-list__actions.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
+        | &bullet;&bullet;&bullet;
+      .context-menu(role="menu" cf-context-menu="bottom-4" aria-label="User Actions")
+        cf-icon.context-menu__arrow(name="arrow-up")
+        ul.context-menu__items
+          li(role="menuitem") Remove from this space

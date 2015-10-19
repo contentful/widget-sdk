@@ -22,7 +22,8 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
     $scope.memberships = countMemberships(data.memberships);
     $scope.roles = prepareRoles(data.roles);
     $scope.context.ready = true;
-  });
+  })
+  .catch(ReloadNotification.apiErrorHandler);
 
   function load(what) {
     return space.endpoint(what).payload({ limit: 100 }).rejectEmpty().get();
