@@ -1,8 +1,8 @@
-div.role-list
-  h1 Roles ({{ roles.length + 1 }})
+.role-list
+  h1 Roles ({{ (roles.length || 0) + 1 }})
 
-  div.role-list__item.admin-role
-    div.role-list__link
+  .role-list__item.admin-role
+    .role-list__link
       h3
         | Administrator
         span (built-in)
@@ -15,7 +15,7 @@ div.role-list
       ul.context-menu__items
         li(role="menuitem") Duplicate
 
-  div.role-list__item(ng-repeat="role in roles track by role.id")
+  .role-list__item(ng-repeat="role in roles track by role.id")
     a.role-list__link(ui-sref="{{ role.sref }}")
       h3 {{ role.name }}
       p(ng-if="role.description") {{ role.description }}

@@ -1,26 +1,13 @@
-.user-list
-  h1 Users
+.user-list(ng-init="selectedListView = 'name'")
+  h1 Users ({{ users.length || 0 }})
 
-.tab-main
-  .without-left-nav
-    table.result-list.main-results.main-header
-      thead
-        tr
-          th.cell-user User
-          th.cell-roles User roles
-          th.cell-admin Is admin?
-    .main-results-wrapper
-      table.result-list.main-results
-        tbody
-          tr(ng-repeat="user in users track by user.id" ui-sref="{{ user.id }}")
-            td.cell-user
-              a.entity-list-link
-                img.result-list-thumbnail.form-control(ng-src="{{ user.avatar }}" width="32" height="32")
-                |  {{ user.name }}
-            td.cell-roles
-              a.entity-list-link {{ user.roles }}
-            td.cell-admin
-              a.entity-list-link
-                i.fa(ng-class="user.isAdmin ? 'fa-check' : 'fa-times'")
-                span(ng-show="user.isAdmin")  Yes
-                span(ng-hide="user.isAdmin")  No
+  select(ng-model="selectedListView")
+    option(value="name") Show users in alphabetical order
+    option(value="role") Show users grouped by role
+
+  div(ng-repeat="item in by[selectedListView] track by item.label")
+    h3 {{ item.label }}
+    div.user-list--item(ng-repeat="user in item.users track by user.id")
+      img(ng-src="{{ user.avatarUrl }}")
+      strong {{ user.name }}
+      p {{ user.roleNames }}
