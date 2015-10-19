@@ -78,9 +78,12 @@ angular.module('contentful')
       /**
        * @ngdoc method
        * @name analytics#track
+       * @description
+       * Send `data` merged with information about the space to
+       * Segment.
        *
        * @param {string} event
-       * @param {{}} data
+       * @param {object} data
        */
       track: function (event, data) {
         segment.track(event, _.merge({}, data, this._spaceData));
