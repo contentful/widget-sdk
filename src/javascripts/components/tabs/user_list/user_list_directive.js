@@ -24,7 +24,6 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     users: space.getUsers()
   }).then(function (data) {
     prepareMaps(data.memberships, data.roles);
-    $scope.roles = prepareRoles(data.roles);
     $scope.users = prepareUsers(data.users);
     $scope.context.ready = true;
   })
@@ -41,7 +40,6 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
 
       return {
         id: id,
-        sref: createSref('detail', 'userId', id),
         avatar: data.avatarUrl,
         name: data.firstName && data.lastName ? user.getName() : 'Not defined',
         roles: getRolesForUser(id),
@@ -56,18 +54,6 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     }).join(', ');
 
     return roleString.length > 0 ? roleString: 'None';
-  }
-
-  function prepareRoles(rolesData) {
-    return _.map(rolesData.items, function (role) {
-      return {
-        id: role.sys.id,
-        sref: createSref('roleDetail', 'roleId', role.sys.id),
-        name: role.name,
-        description: role.description,
-        hasPolicies: (role.policies || []).length > 0
-      };
-    });
   }
 
   function prepareMaps(memberships, roles) {
@@ -86,10 +72,5 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
         userRolesMap[userId].push(role.sys.id);
       });
     });
-  }
-
-  function createSref(stateName, paramName, paramValue) {
-    return 'spaces.detail.settings.users.' + stateName +
-      '({ ' + paramName + ': \'' + paramValue + '\' })';
   }
 }]);

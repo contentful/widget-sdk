@@ -1,0 +1,30 @@
+div.role-list
+  h1 Roles ({{ roles.length + 1 }})
+
+  div.role-list__item.admin-role
+    div.role-list__link
+      h3
+        | Administrator
+        span (built-in)
+      p Members of this role have a full access to everything in this space. This is a built-in role and can't be deleted.
+    p.role-list__member-count {{ memberships.admin }} members
+    button.role-list__actions.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
+      | &bullet;&bullet;&bullet;
+    .context-menu(role="menu" cf-context-menu="bottom-4" aria-label="Role Actions")
+      cf-icon.context-menu__arrow(name="arrow-up")
+      ul.context-menu__items
+        li(role="menuitem") Duplicate
+
+  div.role-list__item(ng-repeat="role in roles track by role.id")
+    a.role-list__link(ui-sref="{{ role.sref }}")
+      h3 {{ role.name }}
+      p(ng-if="role.description") {{ role.description }}
+    p.role-list__member-count
+      | {{ memberships[role.id] || 0 }} members
+    button.role-list__actions.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
+      | &bullet;&bullet;&bullet;
+    .context-menu(role="menu" cf-context-menu="bottom-4" aria-label="Role Actions")
+      cf-icon.context-menu__arrow(name="arrow-up")
+      ul.context-menu__items
+        li(role="menuitem") Duplicate
+        li(role="menuitem") Delete permanently

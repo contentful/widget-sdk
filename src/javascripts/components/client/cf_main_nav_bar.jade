@@ -72,6 +72,11 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
             | Users
           li(
             role="menuitem"
+            ng-class="{'selected': $state.includes('spaces.detail.settings.roles')}"
+            ui-sref="spaces.detail.settings.roles.list")
+            | Roles
+          li(
+            role="menuitem"
             ng-class="{'selected': $stateParams.pathSuffix === 'webhook_definitions'}"
             ui-sref="spaces.detail.settings.iframe.pathSuffix({ pathSuffix: 'webhook_definitions' })")
             | Webhooks

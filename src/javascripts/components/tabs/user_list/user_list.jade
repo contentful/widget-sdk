@@ -1,12 +1,5 @@
-.tab-header
-  .tab-header__title
-    .page-icon-settings
-    h1 Users and Roles
-
-  .tab-header__actions.add-entity
-    button.cfnext-btn-action(disabled="disabled")
-      cf-icon.btn-icon.inverted(name="plus")
-      | Invite new user
+.user-list
+  h1 Users
 
 .tab-main
   .without-left-nav
@@ -19,39 +12,15 @@
     .main-results-wrapper
       table.result-list.main-results
         tbody
-          tr(ng-repeat="user in users track by user.id" ui-sref="{{ user.sref }}")
+          tr(ng-repeat="user in users track by user.id" ui-sref="{{ user.id }}")
             td.cell-user
-              a.entity-list-link(ui-sref="{{ user.sref }}")
+              a.entity-list-link
                 img.result-list-thumbnail.form-control(ng-src="{{ user.avatar }}" width="32" height="32")
                 |  {{ user.name }}
             td.cell-roles
-              a.entity-list-link(ui-sref="{{ user.sref }}") {{ user.roles }}
+              a.entity-list-link {{ user.roles }}
             td.cell-admin
-              a.entity-list-link(ui-sref="{{ user.sref }}")
+              a.entity-list-link
                 i.fa(ng-class="user.isAdmin ? 'fa-check' : 'fa-times'")
                 span(ng-show="user.isAdmin")  Yes
                 span(ng-hide="user.isAdmin")  No
-
-      h2 Available roles
-      table.result-list.main-results.main-header
-        thead
-          tr
-            th.cell-name Name
-            th.cell-description Description
-            th.cell-policies Has policies?
-      .main-results-wrapper
-        table.result-list.main-results
-          tbody
-            tr(ng-repeat="role in roles track by role.id" ui-sref="{{ role.sref }}")
-              td.cell-name
-                a.entity-list-link(ui-sref="{{ role.sref }}") {{ role.name }}
-              td.cell-description
-                a.entity-list-link(ui-sref="{{ role.sref }}") {{ role.description }}
-              td.cell-policies
-                a.entity-list-link(ui-sref="{{ role.sref }}")
-                  i.fa(ng-class="user.hasPolicies ? 'fa-check' : 'fa-times'")
-                  span(ng-show="user.hasPolicies")  Yes
-                  span(ng-hide="user.hasPolicies")  No
-      button.cfnext-btn-action(ui-sref="spaces.detail.settings.users.roleNew")
-        cf-icon.btn-icon.inverted(name="plus")
-        | New Role

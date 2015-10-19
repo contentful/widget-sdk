@@ -472,23 +472,38 @@ angular.module('contentful').config([
 
   $stateProvider.state('spaces.detail.settings.users.list', loadableState({
     url: '',
-    ncyBreadcrumb: { label: 'Users and Roles' },
+    ncyBreadcrumb: { label: 'Users' },
+    loadingText: 'Loading Users...',
     template: '<cf-user-list />',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
     }]
   }));
 
-  $stateProvider.state('spaces.detail.settings.users.detail', {
-    url: '/:userId',
-    ncyBreadcrumb: { label: 'User details' },
-    template: '<pre>User details (ID: {{ $stateParams.userId }})</pre>'
+  /**
+   * Settings > Roles
+   */
+
+  $stateProvider.state('spaces.detail.settings.roles', {
+    url: '/roles',
+    abstract: true,
+    template: '<ui-view />'
   });
 
-  $stateProvider.state('spaces.detail.settings.users.roleNew', {
-    url: '/roles/new',
+  $stateProvider.state('spaces.detail.settings.roles.list', loadableState({
+    url: '',
+    ncyBreadcrumb: { label: 'Roles' },
+    loadingText: 'Loading Roles...',
+    template: '<cf-role-list />',
+    controller: ['$scope', function ($scope) {
+      $scope.context = {};
+    }]
+  }));
+
+  $stateProvider.state('spaces.detail.settings.roles.new', {
+    url: '/new',
     ncyBreadcrumb: {
-      parent: 'spaces.detail.settings.users.list',
+      parent: 'spaces.detail.settings.roles.list',
       label: '{{ context.title + (context.dirty ? "*" : "") }}'
     },
     template: '<cf-role-editor />',
@@ -498,10 +513,10 @@ angular.module('contentful').config([
     }]
   });
 
-  $stateProvider.state('spaces.detail.settings.users.roleDetail', {
-    url: '/roles/:roleId',
+  $stateProvider.state('spaces.detail.settings.roles.detail', {
+    url: '/:roleId',
     ncyBreadcrumb: {
-      parent: 'spaces.detail.settings.users.list',
+      parent: 'spaces.detail.settings.roles.list',
       label: '{{ context.title + (context.dirty ? "*" : "") }}'
     },
     resolve: {
@@ -574,7 +589,8 @@ angular.module('contentful').config([
 
   function loadableState(definition) {
     if (!definition.loadingText) {
-      definition.loadingText = 'Loading your ' + definition.ncyBreadcrumb.label + '...';
+      var label = dotty.get(definition, 'ncyBreadcrumb.label');
+      definition.loadingText = label ? ('Loading your ' + label + '...') : 'Loading...'
     }
 
     definition.template = [
