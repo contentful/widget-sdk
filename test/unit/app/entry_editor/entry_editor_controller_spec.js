@@ -6,12 +6,16 @@ describe('Entry Editor Controller', function () {
   beforeEach(function () {
     var self = this;
     module('contentful/test', function ($provide) {
-      $provide.removeControllers('PermissionController');
       $provide.removeController('FormWidgetsController', function () {
         return {
           updateWidgets: sinon.stub()
         };
       });
+      $provide.removeControllers(
+        'PermissionController',
+        'entityEditor/LocalesController',
+        'entityEditor/StatusNotificationsController'
+      );
       self.TheLocaleStoreMock = {
         getLocalesState: sinon.stub().returns({}),
         getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'}),
@@ -38,10 +42,6 @@ describe('Entry Editor Controller', function () {
       controller = $controller('EntryEditorController', {$scope: scope});
       scope.$digest();
     });
-  });
-
-  it('gets locales state', function() {
-    sinon.assert.called(this.TheLocaleStoreMock.getLocalesState);
   });
 
   it('should validate if the published version has changed', function () {
@@ -84,21 +84,6 @@ describe('Entry Editor Controller', function () {
     });
   });
 
-  describe('when it receives an entityDeleted event', function () {
-    var closeSpy, otherScope;
-    beforeEach(function () {
-      closeSpy = scope.closeState = sinon.spy();
-      otherScope = scope.$new();
-    });
-    it('should close the tab', function () {
-      otherScope.$emit('entityDeleted', null);
-      sinon.assert.notCalled(closeSpy); // wrong entry
-      scope.$broadcast('entityDeleted', scope.entry);
-      sinon.assert.notCalled(closeSpy); // own scope
-      otherScope.$emit('entityDeleted', scope.entry);
-      sinon.assert.called(closeSpy);
-    });
-  });
 
   describe('when the published version changes', function () {
     it('should validate', function () {

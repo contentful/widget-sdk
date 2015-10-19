@@ -3,20 +3,16 @@
 *
   box-sizing(border-box)
 
-$background-pattern()
-  background-image: url("/app/images/bg.jpg")
-  background-repeat: repeat
-  background-size: 200px 149px
-  // Fallback until image is loaded
-  background-color: hsl(0, 0%, 90%)
+$background()
+  background-color: $colors.element-mid
 
 body
   $sans-font()
   text-rendering: optimizeLegibility
   $establish-baseline()
   color: $base-font-color
-  // $background-pattern()
-  overflow: hidden
+  overflow-x: auto
+  overflow-y: hidden
 
 button,
 input[type="submit"]

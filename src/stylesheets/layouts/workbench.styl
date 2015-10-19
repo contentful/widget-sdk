@@ -25,7 +25,6 @@ Styleguide 9.0
 */
 
 .workbench
-  border-top: 1px solid #dbdbdb
   display: flex
   flex-direction: column
   $stretch($breadcrumbs-height, 0, 0, 0)
@@ -48,6 +47,8 @@ Styleguide 9.0
 /**
 Main content and sidebars
 
+Click the middle content with info sidebar to toggle it
+
 Markup:
 .workbench-header
   | Header
@@ -60,17 +61,22 @@ Markup:
   .workbench-main__right-content.styleguide-filled-box2
     code __right-content
 .workbench-main
-  .workbench-main__left-sidebar.styleguide-filled-box1
-    code __left-sidebar
   .workbench-main__middle-content.styleguide-filled-box2
     code __middle-content
-  .workbench-main__right-sidebar.styleguide-filled-box3
-    code __right-sidebar
+    span &nbsp;With info sidebar
+  .workbench-main__info-sidebar.x--show
+    code __info-sidebar
 .workbench-main
   .workbench-main__middle-content.styleguide-filled-box2
     code __middle-content
+  .workbench-main__entity-sidebar
+    code __entity-sidebar
 .workbench-actions
   | Actions
+script
+  | $('.workbench-main').click(function () {
+  |   $(this).find('.workbench-main__info-sidebar').toggleClass('x--show')
+  |})
 
 Styleguide 9.1
 */
@@ -84,10 +90,12 @@ $workbench-sidebar-width = 20%
 $workbench-max-sidebar-width = 20rem
 $workbench-content-width = 100% - $workbench-sidebar-width
 $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
+
 .workbench-main
   display: flex
   overflow-y: auto
   flex: 1 1 auto
+  position relative
   // This hack is required for Safari to grow this element
   height: 100%;
 
@@ -113,11 +121,29 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     width: $workbench-content-width
     margin-left: auto
 
-  &__right-sidebar
+
+  &__info-sidebar
     $workbench-content()
-    width: $workbench-sidebar-width
-    max-width: $workbench-max-sidebar-width
-    margin-left: auto
+    background: $colors.element-lightest
+    transition: all .3s cubic-bezier(.38,.54,.5,.99)
+    &
+      width: 0
+      padding-left: 0
+      padding-right: 0
+      border: 0
+    &.x--show
+      padding: $rhythm(1) 1.6rem
+      width: 30vw
+      max-width: 30rem
+      border-left: 1px solid $colors.element-darkest
+
+
+  &__entity-sidebar
+    $workbench-content()
+    width: 30vw
+    max-width: 30rem
+    background: $colors.element-lightest
+    overflow: hidden
 
   &__middle-content
     $workbench-content()
@@ -126,20 +152,17 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     margin-left: auto
     margin-right: auto
 
-  // TODO This will be removed in the future
-  &.x--panel
-    margin-right: 20%
-
 
 .workbench-header
+  border-bottom: 1px solid $colors.element-darkest
+  border-top: 1px solid $colors.element-darkest
   display: flex
   align-items: baseline
-  background-color: $gray-lightest
-  box-shadow: 0 1px 4px rgba(0,0,0,0.07)
+  background-color: $colors.element-lightest
+  box-shadow: 0 1px 2px 0 rgba(black ,.09)
   padding-left: $workbench-header-horizontal-padding
   padding-right: $workbench-header-horizontal-padding
-  border-radius: 3px 3px 0 0
-  border-bottom: 1px solid $colors.light-gray
+  position relative
   > *
     flex-shrink: 0
 

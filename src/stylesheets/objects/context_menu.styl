@@ -6,7 +6,7 @@ Markup:
   cf-icon.context-menu__arrow(name="arrow-up")
   ul.context-menu__items
     li Item 1
-    li Item 2
+    li.selected Item 2
     li.pseudo-class-hover Hovered
 .context-menu.styleguide-noabsolute
   cf-icon.context-menu__arrow.x--bottom-left(name="arrow-up")
@@ -33,7 +33,7 @@ $cfnext-caret-size = 12px
 
 $context-menu-item--layout()
   line-height: 1.2
-  padding: 0.6em 2em 0.6em 1.3em
+  padding: 0.6rem 2rem 0.6rem 1.3rem
   margin-bottom: 0
   white-space: no-wrap
   overflow-clip-box: content-box
@@ -47,10 +47,11 @@ $context-menu-item()
   color: $base-font-color
 
   &.selected
-    background: $colors.light-blue
+    background: $colors.blue-light
+    color: white
 
   &:hover
-    background: $colors.blue
+    background: $colors.blue-mid
     color: white
 
   &[aria-disabled]
@@ -92,11 +93,12 @@ $context-menu-base()
 
   &__header
     $context-menu-item--layout()
+    color: $colors.text-dark
     margin: 0.3rem 0 0.1rem
-    font-size: 0.8em
-    text-transform: uppercase
-    letter-spacing: 0.1em
+    font-size: 0.85em
     font-weight: bold
+    text-transform: uppercase
+    letter-spacing: 1px
 
 .context-menu__arrow
   position: absolute
