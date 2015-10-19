@@ -2,10 +2,7 @@ header.workbench-header
   cf-icon.workbench-header__icon(name="page-api")
   h1.workbench-header__title
     | {{ context.title | truncate:50 }}
-    a.workbench-header__kb-link(
-      cf-knowledge-base-icon
-        analytics-event="api_keys"
-        href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
+    cf-knowledge-base.workbench-header__kb-link(target="api_key")
 
   .workbench-header__actions
     button.cfnext-btn-secondary-action(type="button"
@@ -178,6 +175,7 @@ header.workbench-header
                     var client = CDAClient(spaceKey:"{{getSpaceId()}}", accessToken:"{{getSelectedAccessToken()}}", configuration:config)
                   textarea.form-control(readonly="readonly" cf-select-all-input ng-if="authCodeExample.api == 'cda' && isProd").
                     var client = CDAClient(spaceKey:"{{getSpaceId()}}", accessToken:"{{getSelectedAccessToken()}}")
+
   .workbench-main__info-sidebar.entity-info-panel(
     ng-class="preferences.showAuxPanel && 'x--show'")
     div(cf-entity-info-panel="apiKey.getSys()")

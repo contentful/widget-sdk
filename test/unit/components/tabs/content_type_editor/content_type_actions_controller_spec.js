@@ -230,6 +230,7 @@ describe('ContentType Actions Controller', function () {
     describe('with invalid data', function () {
       beforeEach(function () {
         scope.validate.returns(false);
+        scope.validationResult = {errors: []};
       });
 
       pit('does not save entities', function () {

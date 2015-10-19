@@ -2,10 +2,7 @@ header.workbench-header
   cf-icon.workbench-header__icon(name="page-api")
   h1.workbench-header__title
     | Content Delivery API Keys
-    a.workbench-header__kb-link(
-      cf-knowledge-base-icon
-      analytics-event="api_keys"
-      href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
+    cf-knowledge-base.workbench-header__kb-link(target="api_key")
 
   .workbench-header__actions(ng-hide="empty")
     button.cfnext-btn-action(ng-click="entityCreationController.newApiKey()"
@@ -60,6 +57,4 @@ header.workbench-header
         ng-disabled="permissionController.get('createApiKey', 'shouldDisable')"
         cf-when-disabled="permissionController.entityActions.createApiKey")
       | Create API Key
-    a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
-      | Visit the Knowledge Base Pages
-      i.fa.fa-question-circle
+    cf-knowledge-base(target="api_key" text="Visit the Knowledge Base Pages")

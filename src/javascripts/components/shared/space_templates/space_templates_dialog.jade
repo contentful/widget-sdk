@@ -24,8 +24,9 @@
         .space-template__detail-content(ng-show="!selectedTemplate")
           p Publish content in seconds with predefined templates for common scenarios.
           p Or build your model from scratch by going with a blank template.
-          p.
-            Need help? Read more about it in the <a href="https://support.contentful.com/hc/en-us/articles/203905588-What-is-a-Space-template-" target="_blank">Knowledge Database</a>.
+          p
+            | Need help? Read more about it in the&nbsp;
+            cf-knowledge-base(target="space_template" text="Knowledge Database")
         .space-template__detail-content(ng-show="selectedTemplate")
           h1 {{selectedTemplate.name}}
           div(ng-bind-html="selectedTemplate.description")
@@ -34,10 +35,7 @@
       .space-template__space-creation(ng-show="viewState.is('spaceCreation')" ng-controller="CreateSpaceDialogController")
         h1
           | Create Space
-          a(cf-knowledge-base-icon
-            tooltip="Learn more about Spaces in the Knowledge Base Pages"
-            analytics-event="space_creation"
-            href="https://contentful.zendesk.com/hc/en-us/articles/200513108-What-is-a-difference-between-a-Content-Type-and-a-Space-")
+          cf-knowledge-base(target="space_creation" tooltip-text="Learn more about Spaces in the Knowledge Base Pages")
         form.space-template__space-creation-form(name="newSpaceForm" ng-submit="createSpace()")
           .l-form
             .l-form-row

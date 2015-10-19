@@ -201,7 +201,9 @@ angular.module('contentful')
 
         while(segment = segments.shift()) {
           doc = doc.at(segment[0]);
-          if (_.isUndefined(currentVal = doc.get())){
+          currentVal = doc.get();
+          var hasNoContainer = segments.length && !(_.isObject(currentVal) || _.isArray(currentVal));
+          if (hasNoContainer) {
             segments.unshift(segment);
             prop = segments.pop()[0];
             while(segments.length > 0) {

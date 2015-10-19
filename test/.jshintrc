@@ -1,28 +1,35 @@
 {
   "globalstrict": true,
-  "node": true,
   "browser": true,
   "quotmark": "single",
   "strict": true,
   "trailing": true,
   "unused": true,
   "sub": true,
-  "jasmine": true,
 
   "predef": [
     "angular",
+    "inject",
+    "module",
     "_",
     "JST",
     "$",
     "moment",
     "dotty",
-    "Bugsnag",
-    "OO",
-    "sinon",
 
-    "inject",
+    "jasmine",
+    "describe",
+    "beforeEach",
+    "afterEach",
+    "it",
+    "pit",
     "xdescribe",
+    "xit",
     "pending",
-    "pit"
+
+    "sinon",
+    "expect",
+    "spyOn"
+
   ]
 }

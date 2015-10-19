@@ -1,15 +1,15 @@
 'use strict';
 
 angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope', '$injector', function CreateSpaceDialogController($scope, $injector) {
-    var $rootScope   = $injector.get('$rootScope');
-    var $timeout     = $injector.get('$timeout');
-    var cfSpinner    = $injector.get('cfSpinner');
-    var client       = $injector.get('client');
-    var tokenStore   = $injector.get('tokenStore');
-    var enforcements = $injector.get('enforcements');
-    var logger       = $injector.get('logger');
-    var notification = $injector.get('notification');
-    var spaceTools = $injector.get('spaceTools');
+    var $rootScope       = $injector.get('$rootScope');
+    var $timeout         = $injector.get('$timeout');
+    var cfSpinner        = $injector.get('cfSpinner');
+    var client           = $injector.get('client');
+    var tokenStore       = $injector.get('tokenStore');
+    var enforcements     = $injector.get('enforcements');
+    var logger           = $injector.get('logger');
+    var notification     = $injector.get('notification');
+    var spaceTools       = $injector.get('spaceTools');
 
     $scope.createSpace = createSpace;
     $scope.selectOrganization = selectOrganization;

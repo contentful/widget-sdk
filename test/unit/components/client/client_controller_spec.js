@@ -393,13 +393,16 @@ describe('Client Controller', function () {
   });
 
   describe('shows create space dialog', function () {
-    beforeEach(inject(function ($q) {
-      scope.organizations = [
-        {sys: {id: 'abc'}},
-        {sys: {id: 'def'}},
-      ];
+    beforeEach(inject(function ($q, OrganizationList) {
+      OrganizationList.resetWithUser({
+        organizationMemberships: [
+          {organization: {sys: {id: 'abc'}}},
+          {organization: {sys: {id: 'def'}}}
+        ]
+      });
       this.modalDialogStubs.open.returns({promise: $q.when()});
     }));
+
     it('opens dialog', function () {
       scope.showCreateSpaceDialog();
       sinon.assert.called(this.modalDialogStubs.open);
@@ -413,12 +416,12 @@ describe('Client Controller', function () {
     describe('with an organizationId', function () {
       it('displays that organization first in the dropdown', function () {
         scope.showCreateSpaceDialog('def');
-        expect(this.modalDialogStubs.open.args[0][0].scope.organizations[1].sys.id).toBe('def');
+        expect(this.modalDialogStubs.open.args[0][0].scope.organizations[0].sys.id).toBe('def');
       });
     });
 
     describe('without an organizationId', function () {
-      it('displays that organization first in the dropdown', function () {
+      it('displays organizations in original order in the dropdown', function () {
         scope.showCreateSpaceDialog();
         expect(this.modalDialogStubs.open.args[0][0].scope.organizations[0].sys.id).toBe('abc');
       });
@@ -492,8 +495,15 @@ describe('Client Controller', function () {
   });
 
   describe('organizations on the scope', function() {
-    it('are not set', function() {
-      expect(scope.organizations).toBeFalsy();
+    var OrganizationList, logger;
+
+    beforeEach(function () {
+      OrganizationList = this.$inject('OrganizationList');
+      logger = this.$inject('logger');
+    });
+
+    it('are initially not set', function() {
+      expect(OrganizationList.isEmpty()).toBe(true);
     });
 
     describe('if user exists', function() {
@@ -506,24 +516,21 @@ describe('Client Controller', function () {
           organizationMemberships: [
             {organization: org1},
             {organization: org2},
-            {organization: org3},
+            {organization: org3}
           ]
         };
-        this.logger = this.$inject('logger');
       });
 
       it('are set', function() {
         scope.$digest();
-        expect(scope.organizations).toEqual([
-          org1, org2, org3
-        ]);
+        expect(OrganizationList.getAll()).toEqual([org1, org2, org3]);
       });
 
       it('sets analytics user data and enables tracking', function() {
         scope.$digest();
         sinon.assert.called(this.analyticsStubs.setUserData);
         sinon.assert.called(this.analyticsStubs.enable);
-        sinon.assert.called(this.logger.enable);
+        sinon.assert.called(logger.enable);
       });
 
       describe('when analytics are disallowed', function() {
@@ -535,7 +542,7 @@ describe('Client Controller', function () {
           scope.$digest();
           sinon.assert.notCalled(this.analyticsStubs.setUserData);
           sinon.assert.called(this.analyticsStubs.disable);
-          sinon.assert.called(this.logger.disable);
+          sinon.assert.called(logger.disable);
         });
       });
     });
