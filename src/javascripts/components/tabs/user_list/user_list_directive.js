@@ -20,6 +20,8 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
 
   var ADMIN_ROLE_ID = '__cf_builtin_admin';
 
+  $scope.selectedListView = 'name';
+
   $q.all({
     memberships: load('space_memberships'),
     roles: load('roles'),

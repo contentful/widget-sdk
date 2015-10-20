@@ -1,20 +1,34 @@
-.user-list(ng-init="selectedListView = 'name'")
-  h1 Users ({{ users.length || 0 }})
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-settings")
+  h1.workbench-header__title Users ({{ users.length || 0 }})
+  .workbench-header__actions
+    select.cfnext-select-box.user-list__view-selector(ng-model="selectedListView")
+      option(value="name") Show users in alphabetical order
+      option(value="role") Show users grouped by role
 
-  select.user-list__view-selector(ng-model="selectedListView")
-    option(value="name") Show users in alphabetical order
-    option(value="role") Show users grouped by role
+.workbench-main
+  .workbench-main__middle-content
+    .user-list__group(ng-repeat="item in by[selectedListView] track by item.label")
+      h3 {{ item.label }}
+      .user-list__item(ng-repeat="user in item.users track by user.id")
+        img(ng-src="{{ user.avatarUrl }}" width="50" height="50")
+        .user-list__info
+          strong.user-list__name {{ user.name }}
+          .user-list__roles {{ user.roleNames }}
+        .user-list__actions
+          button.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
+            | &bullet;&bullet;&bullet;
+          .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="User Actions")
+            cf-icon.context-menu__arrow.x--top-right-tight(name="arrow-up")
+            ul.context-menu__items
+              li(role="menuitem") Remove from this space
 
-  .user-list__group(ng-repeat="item in by[selectedListView] track by item.label")
-    h3 {{ item.label }}
-    div.user-list__item(ng-repeat="user in item.users track by user.id")
-      img.user-list__avatar(ng-src="{{ user.avatarUrl }}" width="50" height="50")
-      .user-list__info
-        strong.user-list__name {{ user.name }}
-        p.user-list__roles {{ user.roleNames }}
-      button.role-list__actions.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
-        | &bullet;&bullet;&bullet;
-      .context-menu(role="menu" cf-context-menu="bottom-4" aria-label="User Actions")
-        cf-icon.context-menu__arrow(name="arrow-up")
-        ul.context-menu__items
-          li(role="menuitem") Remove from this space
+  .workbench-main__entity-sidebar
+    .entity-sidebar
+      h2.entity-sidebar__heading
+        | Invite users
+      p
+        | You are currently using 5 out of 10 users quota.&nbsp;
+        a(href="") Increase your plan quotas here
+        | .
+      button.cfnext-btn-primary-action--large Invite users to this space

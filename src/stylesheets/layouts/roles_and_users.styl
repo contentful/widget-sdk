@@ -22,29 +22,36 @@
 
 .user-list__group
   margin-top: 30px
-  padding-top: 30px
+  padding-top: 20px
   position: relative
   border-top: 1px solid $gray-light
   h3
     margin: 0
     display: inline-block
     position: absolute
-    left: 0
+    left: 12px
     top: -12px
-    font-size: 1.75em
+    font-size: 1.6em
     background: white
-    padding-right: 10px
+    padding: 0 10px
 
 .user-list__item
   display: flex
   align-items: center
   justify-content: space-between
   margin-top: 15px
-  margin-left: 30px
+  padding: 5px
+  padding-left: 30px
+  cursor: default
+  &:hover
+    background: $gray-lightest
 
 .user-list__info
   margin-left: 15px
   margin-right: auto
   strong
     display: block
-    margin: 5px 0
+    margin: 3px 0 2px
+
+.user-list__actions
+  margin-right: 25px
