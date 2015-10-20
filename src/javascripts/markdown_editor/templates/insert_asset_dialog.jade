@@ -9,7 +9,7 @@
         ng-show="uiConfig")
       .main.search-area
         .l-search-w-autocomplete(
-          cf-tokenized-search="currentView.searchTerm"
+          cf-tokenized-search="context.view.searchTerm"
           search-content-type="assetContentType"
           placeholder="Search for asset"
           cf-on-blur-component="leftSearch($event)")
