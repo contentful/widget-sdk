@@ -49,6 +49,10 @@ module.exports = function(config) {
       outputFile: 'karma-specs.json'
     },
 
+    mochaReporter: {
+      ignoreSkipped: true
+    },
+
     // web server port
     port: 9876,
 
