@@ -494,7 +494,7 @@ angular.module('contentful').config([
     url: '',
     ncyBreadcrumb: { label: 'Roles' },
     loadingText: 'Loading Roles...',
-    template: '<cf-role-list />',
+    template: '<cf-role-list class="workbench role-list" />',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
     }]

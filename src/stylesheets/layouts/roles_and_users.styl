@@ -6,32 +6,49 @@
   display: flex
   align-items: center
   justify-content: space-between
-  border-bottom: 1px solid $gray-light
+  border-bottom: 1px solid $colors.element-light
+  padding: 10px 25px
 
 .role-list__link
-  width: 80%
-  cursor: pointer
+  width: 70%
+  > *
+    color: $colors.text-dark
+  &.admin-role
+    cursor: default
+  &:not(.admin-role)
+    cursor: pointer
+  &:not(.admin-role):hover > *
+    color: $colors.blue-mid
+  i
+    display: none
+  &:hover i
+    display: inline-block
+    padding-left: 10px
+    font-size: .8em
 
-.role-list__actions
-  padding: 0 25px 10px
-
+.admin-role
+  h3 small
+    display: inline-block
+    padding-left: 10px
+    font-size: .7em
+    font-weight: normal
+    color: $colors.text-light
 
 /**
  * User list
  */
 
 .user-list__group
-  margin-top: 30px
-  padding-top: 20px
+  margin: 40px 0
   position: relative
-  border-top: 1px solid $gray-light
+  border-top: 1px solid $colors.element-light
   h3
     margin: 0
     display: inline-block
     position: absolute
-    left: 12px
-    top: -12px
-    font-size: 1.6em
+    left: 15px
+    top: -10px
+    font-size: 1.4em
     background: white
     padding: 0 10px
 
@@ -40,11 +57,10 @@
   align-items: center
   justify-content: space-between
   margin-top: 15px
-  padding: 5px
-  padding-left: 30px
+  padding: 5px 25px
   cursor: default
   &:hover
-    background: $gray-lightest
+    background: $colors.element-lightest
 
 .user-list__info
   margin-left: 15px
@@ -52,6 +68,3 @@
   strong
     display: block
     margin: 3px 0 2px
-
-.user-list__actions
-  margin-right: 25px

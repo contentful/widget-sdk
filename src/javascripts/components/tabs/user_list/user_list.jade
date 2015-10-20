@@ -8,6 +8,7 @@ header.workbench-header
 
 .workbench-main
   .workbench-main__middle-content
+
     .user-list__group(ng-repeat="item in by[selectedListView] track by item.label")
       h3 {{ item.label }}
       .user-list__item(ng-repeat="user in item.users track by user.id")
@@ -31,4 +32,4 @@ header.workbench-header
         | You are currently using 5 out of 10 users quota.&nbsp;
         a(href="") Increase your plan quotas here
         | .
-      button.cfnext-btn-primary-action--large Invite users to this space
+      button.cfnext-btn-primary-action Invite users to this space

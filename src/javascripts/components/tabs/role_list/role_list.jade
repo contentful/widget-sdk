@@ -1,30 +1,44 @@
-.role-list
-  h1 Roles ({{ (roles.length || 0) + 1 }})
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-settings")
+  h1.workbench-header__title Roles ({{ (roles.length || 0) + 1 }})
 
-  .role-list__item.admin-role
-    .role-list__link
-      h3
-        | Administrator
-        span (built-in)
-      p Members of this role have a full access to everything in this space. This is a built-in role and can't be deleted.
-    p.role-list__member-count {{ memberships.admin }} members
-    button.role-list__actions.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
-      | &bullet;&bullet;&bullet;
-    .context-menu(role="menu" cf-context-menu="bottom-4" aria-label="Role Actions")
-      cf-icon.context-menu__arrow(name="arrow-up")
-      ul.context-menu__items
-        li(role="menuitem") Duplicate
+.workbench-main
+  .workbench-main__middle-content
 
-  .role-list__item(ng-repeat="role in roles track by role.id")
-    a.role-list__link(ui-sref="{{ role.sref }}")
-      h3 {{ role.name }}
-      p(ng-if="role.description") {{ role.description }}
-    p.role-list__member-count
-      | {{ memberships[role.id] || 0 }} members
-    button.role-list__actions.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
-      | &bullet;&bullet;&bullet;
-    .context-menu(role="menu" cf-context-menu="bottom-4" aria-label="Role Actions")
-      cf-icon.context-menu__arrow(name="arrow-up")
-      ul.context-menu__items
-        li(role="menuitem") Duplicate
-        li(role="menuitem") Delete permanently
+    .role-list__item
+      .role-list__link.admin-role
+        h3
+          | Administrator
+          small (built-in)
+        p Members of this role have a full access to everything in this space. This is a built-in role and can't be deleted.
+      .role-list__member-count {{ memberships.admin }} members
+      button.role-list__actions.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
+        | &bullet;&bullet;&bullet;
+      .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="Role Actions")
+        cf-icon.context-menu__arrow.x--top-right-tight(name="arrow-up")
+        ul.context-menu__items
+          li(role="menuitem") Duplicate
+
+    .role-list__item(ng-repeat="role in roles track by role.id")
+      a.role-list__link(ui-sref="{{ role.sref }}")
+        h3
+          | {{ role.name }}
+          i.fa.fa-chevron-right
+        p(ng-if="role.description") {{ role.description }}
+      .role-list__member-count
+        | {{ memberships[role.id] || 0 }} members
+      button.role-list__actions.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
+        | &bullet;&bullet;&bullet;
+      .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="Role Actions")
+        cf-icon.context-menu__arrow.x--top-right-tight(name="arrow-up")
+        ul.context-menu__items
+          li(role="menuitem") Duplicate
+          li(role="menuitem") Delete permanently
+
+  .workbench-main__entity-sidebar
+    .entity-sidebar
+      h2.entity-sidebar__heading
+        | Create new role
+      p
+        | Select one of the predefined role templates or create one from the scratch.
+      button.cfnext-btn-primary-action Create new role
