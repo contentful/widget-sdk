@@ -22,7 +22,7 @@ header.workbench-header
           .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="User Actions")
             cf-icon.context-menu__arrow.x--top-right-tight(name="arrow-up")
             ul.context-menu__items
-              li(role="menuitem") Remove from this space
+              li(role="menuitem" ng-click="removeFromSpace(user.id)") Remove from this space
 
   .workbench-main__entity-sidebar
     .entity-sidebar

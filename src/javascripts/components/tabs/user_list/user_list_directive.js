@@ -13,29 +13,59 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   var ReloadNotification = $injector.get('ReloadNotification');
   var space              = $injector.get('spaceContext').space;
   var $q                 = $injector.get('$q');
+  var modalDialog        = $injector.get('modalDialog');
 
-  var adminMap     = {};
-  var roleNameMap  = {};
-  var userRolesMap = {};
+  var adminMap;
+  var membershipMap;
+  var roleNameMap;
+  var userRolesMap;
 
   var ADMIN_ROLE_ID = '__cf_builtin_admin';
 
-  $scope.selectedListView = 'name';
+  reload();
 
-  $q.all({
-    memberships: load('space_memberships'),
-    roles: load('roles'),
-    users: space.getUsers()
-  }).then(function (data) {
-    prepareMaps(data.memberships, data.roles);
-    $scope.users = prepareUsers(data.users);
-    $scope.by = groupUsers();
-    $scope.context.ready = true;
-  })
-  .catch(ReloadNotification.apiErrorHandler);
+  $scope.selectedListView = 'name';
+  $scope.removeFromSpace = function (userId) {
+    var adminCount = _.filter(adminMap, _.identity).length;
+    var isLastAdmin = adminMap[userId] && adminCount < 2;
+
+    if (!isLastAdmin) {
+      remove();
+      return;
+    }
+
+    modalDialog.openConfirmDeleteDialog({
+      title: 'Removing last admin',
+      message: 'Are you sure?',
+      confirmLabel: 'Remove'
+    }).promise.then(remove);
+
+    function remove() {
+      return del(membershipMap[userId]).then(reload);
+    }
+  };
+
+  function reload() {
+    return $q.all({
+      memberships: load('space_memberships'),
+      roles: load('roles'),
+      users: space.getUsers()
+    }).then(function (data) {
+      prepareMaps(data.memberships, data.roles);
+      $scope.users = prepareUsers(data.users);
+      $scope.by = groupUsers();
+      $scope.context.ready = true;
+    })
+    .catch(ReloadNotification.apiErrorHandler)
+    .catch(function () { ReloadNotification.trigger(); });
+  }
 
   function load(what) {
     return space.endpoint(what).payload({ limit: 100 }).rejectEmpty().get();
+  }
+
+  function del(id) {
+    return space.endpoint('space_memberships', id).delete();
   }
 
   function prepareUsers(users) {
@@ -67,8 +97,14 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   }
 
   function prepareMaps(memberships, roles) {
+    adminMap = {};
+    membershipMap = {};
+    roleNameMap = {};
+    userRolesMap = {};
+
     _.forEach(memberships.items, function (membership) {
       adminMap[membership.user.sys.id] = membership.admin;
+      membershipMap[membership.user.sys.id] = membership.sys.id;
     });
 
     _.forEach(roles.items, function (role) {
