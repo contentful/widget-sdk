@@ -57,8 +57,18 @@ angular.module('contentful').config([
   $stateProvider.state('spaces.detail', {
     url: '/:spaceId',
     resolve: {
-      space: ['tokenStore', '$stateParams', function (tokenStore, $stateParams) {
-        return tokenStore.getSpace($stateParams.spaceId);
+      space: ['$injector', '$stateParams', function ($injector, $stateParams) {
+        var tokenStore     = $injector.get('tokenStore');
+        var spaceContext   = $injector.get('spaceContext');
+        var analytics      = $injector.get('analytics');
+        var TheLocaleStore = $injector.get('TheLocaleStore');
+        return tokenStore.getSpace($stateParams.spaceId)
+        .then(function (space) {
+          spaceContext.resetWithSpace(space);
+          TheLocaleStore.resetWithSpace(space);
+          analytics.setSpace(space);
+          return space;
+        });
       }]
     },
     ncyBreadcrumb: {
