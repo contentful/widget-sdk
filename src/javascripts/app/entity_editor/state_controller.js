@@ -11,8 +11,22 @@ function ($scope, $injector, entity, notify, handlePublishError) {
   var Command             = $injector.get('command');
   var createEntryReverter = $injector.get('entryReverter');
   var StateManager        = $injector.get('EntityStateManager');
+  var analytics           = $injector.get('analytics');
 
   var stateManager = new StateManager(entity);
+
+  /**
+   * @ngdoc analytics-event
+   * @name Changed Entity State
+   * @param {string} from
+   * @param {string} to
+   */
+  stateManager.changedEditingState.attach(function (from, to) {
+    analytics.track('Changed Entity State', {
+      from: from,
+      to: to
+    });
+  });
 
   // TODO we do not need to pass a function here.
   var entryReverter = createEntryReverter(function () {

@@ -1,12 +1,26 @@
 'use strict';
 
 angular.module('contentful')
-.factory('EntityStateManager', ['$q', function ($q) {
+.factory('EntityStateManager', ['$injector', function ($injector) {
+  var $q           = $injector.get('$q');
+  var createSignal = $injector.get('signal');
+
+  /**
+   * @ngdoc type
+   * @name StateManager
+   * @description
+   * A class to manage the state of an entity atomically.
+   *
+   * @property {Signal<string, string>} changedEditingState
+   */
   function StateManager (entity) {
     this.entity = entity;
+    this.changedEditingState = createSignal();
   }
 
   /**
+   * @ngdoc method
+   * @name StateManager#getState
    * @description
    * Returns the current server state of the entity.
    *
@@ -29,6 +43,8 @@ angular.module('contentful')
   };
 
   /**
+   * @ngdoc method
+   * @name StateManager#getEditingState
    * @description
    * Returns the current editing state.
    *
@@ -49,6 +65,11 @@ angular.module('contentful')
     }
   };
 
+  /**
+   * @ngdoc method
+   * @name StateManager#archive
+   * @returns {Promise<void>}
+   */
   StateManager.prototype.archive = function () {
     var entity = this.entity;
     return this._withLockedState(function () {
@@ -63,6 +84,11 @@ angular.module('contentful')
     });
   };
 
+  /**
+   * @ngdoc method
+   * @name StateManager#publish
+   * @returns {Promise<void>}
+   */
   StateManager.prototype.publish = function () {
     var entity = this.entity;
     return this._withLockedState(function () {
@@ -77,6 +103,11 @@ angular.module('contentful')
     });
   };
 
+  /**
+   * @ngdoc method
+   * @name StateManager#toDraft
+   * @returns {Promise<void>}
+   */
   StateManager.prototype.toDraft = function () {
     var state = this.getState();
     var entity = this.entity;
@@ -91,6 +122,11 @@ angular.module('contentful')
     });
   };
 
+  /**
+   * @ngdoc method
+   * @name StateManager#delete
+   * @returns {Promise<void>}
+   */
   StateManager.prototype.delete = function () {
     var entity = this.entity;
     return this._withLockedState(function () {
@@ -109,14 +145,17 @@ angular.module('contentful')
   StateManager.prototype._withLockedState = function (action) {
     var self = this;
     this._lockedState = this.getState();
-    this._lockedEditingState = this.getEditingState();
+    var lockedEditingState = this.getEditingState();
+    this._lockedEditingState = lockedEditingState;
     return action()
     .finally(function () {
       self._lockedState = null;
       self._lockedEditingState = null;
+    })
+    .then(function () {
+      self.changedEditingState.dispatch(lockedEditingState, self.getEditingState());
     });
   };
 
   return StateManager;
 }]);
-

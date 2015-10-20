@@ -78,9 +78,12 @@ angular.module('contentful')
       /**
        * @ngdoc method
        * @name analytics#track
+       * @description
+       * Send `data` merged with information about the space to
+       * Segment.
        *
        * @param {string} event
-       * @param {{}} data
+       * @param {object} data
        */
       track: function (event, data) {
         segment.track(event, _.merge({}, data, this._spaceData));
@@ -158,10 +161,10 @@ angular.module('contentful')
       }
     };
 
-    if (shouldLoadAnalytics()) {
-      return analytics;
-    } else if(forceDevMode()) {
+    if (forceDevMode()) {
       return devService();
+    } else if (shouldLoadAnalytics()) {
+      return analytics;
     } else {
       return noopService();
     }
@@ -189,9 +192,11 @@ angular.module('contentful')
      * helpful for debugging.
      */
     function devService () {
-      return _.extend(noopService(), {
+      return _.extend(analytics, {
         track: trackStub,
         trackTotango: trackStub,
+        enable: _.noop,
+        disable: _.noop
       });
 
       function trackStub (event, data) {

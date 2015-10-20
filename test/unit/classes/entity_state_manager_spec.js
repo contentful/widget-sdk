@@ -82,6 +82,19 @@ describe('StateManager class', function () {
       this.adapter.requests.pop().resolve();
       return archive;
     });
+
+    it('triggers "changedEditingState" signal', function () {
+      var listener = sinon.stub();
+      this.manager.changedEditingState.attach(listener);
+      this.manager.archive();
+      this.$apply();
+
+      this.adapter.requests.pop().resolve();
+      this.entity.isArchived = sinon.stub.returns(true);
+      this.$apply();
+
+      sinon.assert.calledWith(listener, 'draft', 'archived');
+    });
   });
 
   describe('#publish()', function () {
@@ -110,6 +123,20 @@ describe('StateManager class', function () {
       this.$apply();
       this.adapter.requests.pop().resolve();
       return publish;
+    });
+
+    it('triggers "changedEditingState" signal', function () {
+      var listener = sinon.stub();
+      this.manager.changedEditingState.attach(listener);
+      this.manager.publish();
+      this.$apply();
+
+      this.adapter.requests.pop().resolve(_.merge({
+        sys: {archivedVersion: null, publishedVersion: 1}
+      }, this.entity.data));
+      this.$apply();
+
+      sinon.assert.calledWith(listener, 'draft', 'published');
     });
   });
 
@@ -140,7 +167,7 @@ describe('StateManager class', function () {
       return toDraft;
     });
 
-  pit('does nothing by default', function () {
+    pit('does nothing by default', function () {
       this.adapter.requests = [];
       var toDraft = this.manager.toDraft();
       this.$apply();

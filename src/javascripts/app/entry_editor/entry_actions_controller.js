@@ -4,10 +4,11 @@ angular.module('contentful')
 .controller('EntryActionsController',
 ['$scope', '$injector', 'notify', function ($scope, $injector, notify) {
 
-  var controller          = this;
-  var Command             = $injector.get('command');
-  var spaceContext        = $injector.get('spaceContext');
-  var $state              = $injector.get('$state');
+  var controller   = this;
+  var Command      = $injector.get('command');
+  var spaceContext = $injector.get('spaceContext');
+  var $state       = $injector.get('$state');
+  var analytics    = $injector.get('analytics');
 
   function disabledChecker (action) {
     return function () {
@@ -32,7 +33,9 @@ angular.module('contentful')
 
 
   controller.toggleDisabledFields = Command.create(function () {
-    $scope.preferences.showDisabledFields = !$scope.preferences.showDisabledFields;
+    var show = !$scope.preferences.showDisabledFields;
+    trackToggleDisabledFields(show);
+    $scope.preferences.showDisabledFields = show;
   }, {}, {
     label: function () {
       return $scope.preferences.showDisabledFields ?
@@ -43,6 +46,7 @@ angular.module('contentful')
 
 
   controller.add = Command.create(function () {
+    analytics.track('Clicked Create new Entry of same CT');
     var contentTypeId = $scope.entry.getSys().contentType.sys.id;
     return spaceContext.space.createEntry(contentTypeId, {})
     .then(function (entry) {
@@ -59,5 +63,21 @@ angular.module('contentful')
   }, {
     name: function () { return $scope.contentTypeName; }
   });
+
+  /**
+   * @ngdoc analytics-event
+   * @name Show Disabled Fields
+   */
+  /**
+   * @ngdoc analytics-event
+   * @name Hide Disabled Fields
+   */
+  function trackToggleDisabledFields (show) {
+    if (show) {
+      analytics.track('Show Disabled Fields');
+    } else {
+      analytics.track('Hide Disabled Fields');
+    }
+  }
 
 }]);
