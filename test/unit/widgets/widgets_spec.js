@@ -8,7 +8,11 @@ describe('Widget types service', function () {
     widgets = this.$inject('widgets');
     widgetStore = this.$inject('widgets/store');
     $rootScope = this.$inject('$rootScope');
-    widgets.setSpace({});
+    widgets.setSpace({
+      endpoint: sinon.stub().returns({
+        get: sinon.stub().resolves([])
+      })
+    });
     this.$apply();
 
     this.setWidgets = function (ws) {

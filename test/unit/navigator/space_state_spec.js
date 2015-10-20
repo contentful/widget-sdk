@@ -8,16 +8,19 @@ describe('navigator', function () {
       $urlRouterProvider.deferIntercept(true);
     }));
 
-
     beforeEach(function () {
       var $state = this.$inject('$state');
       this.$state = $state;
 
       var cfStub = this.$inject('cfStub');
+      this.adapter = cfStub.adapter;
       this.space = cfStub.space('SPACE');
 
       this.tokenStore = this.$inject('tokenStore');
       this.tokenStore.getSpace = sinon.stub().resolves(this.space);
+
+      this.widgets = this.$inject('widgets');
+      this.widgets.setSpace = sinon.stub().resolves();
     });
 
     it('requests the space from the tokenStore', function () {
@@ -41,14 +44,10 @@ describe('navigator', function () {
     });
 
     it('sets the space on the widgets service', function () {
-      var widgets = this.$inject('widgets');
-      sinon.spy(widgets, 'setSpace');
-
       this.$state.go('spaces.detail', {spaceId: 'SPACE'});
       this.$apply();
-      sinon.assert.calledWith(widgets.setSpace, this.space);
+      sinon.assert.calledWith(this.widgets.setSpace, this.space);
     });
-
 
   });
 });
