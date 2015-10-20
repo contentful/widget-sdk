@@ -1,10 +1,15 @@
-.account-view,
-.space-settings
-  .iframe-container.tab-main
-    padding: 0
-  .iframe-container.fullscreen
-    $stretch()
-  .iframe-spinner
-    $stretch()
-    background: url('/app/images/ajax-loader-big.gif') center no-repeat
+@import "../mixins/spinner"
 
+.iframe-container
+  $stretch()
+  background: white
+.iframe-spinner
+  $spinner-base()
+  $spinner-active($colors.text-dark, $base-line-height*2)
+  position: absolute
+  left: 50%;
+  top: 50%;
+  margin-left: -($base-line-height)
+  margin-top: -($base-line-height)
+  &:after
+    display: block

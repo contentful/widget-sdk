@@ -44,8 +44,8 @@ angular.module('contentful').config([
       }]
     },
     views: {
-      'app-container': { template: '<ui-view/>' },
-      'main-nav-bar': { template: '<cf-main-nav-bar/>' }
+      'content': { template: '<ui-view>' },
+      'main-nav-bar': { template: '<cf-main-nav-bar>' }
     }
   });
 
@@ -67,9 +67,14 @@ angular.module('contentful').config([
     controller: ['$scope', 'space', function ($scope, space) {
       $scope.label = space.data.name;
     }],
-    template: '<cf-breadcrumbs ng-hide="spaceContext.space.isHibernated()"></cf-breadcrumbs>' +
-              '<div ng-hide="spaceContext.space.isHibernated()" class="view-content" ui-view></div>' +
-              '<div ng-if="spaceContext.space.isHibernated()" cf-template="cf_space_hibernation_advice"></div>'
+    templateProvider: ['space', function (space) {
+      if (space.isHibernated()) {
+        return JST.cf_space_hibernation_advice();
+      } else {
+        return '<cf-breadcrumbs></cf-breadcrumbs>' +
+               '<ui-view></ui-view>';
+      }
+    }],
   });
 
 
@@ -88,7 +93,7 @@ angular.module('contentful').config([
     controller: ['$scope', function ($scope) {
       $scope.context = {};
     }],
-    template: '<div cf-entry-list class="entry-list entity-list"></div>'
+    template: '<div cf-entry-list class="workbench entry-list entity-list"></div>'
   }));
 
 
@@ -111,6 +116,7 @@ angular.module('contentful').config([
     controller: ['$state', '$scope', '$stateParams', 'entry', function ($state, $scope, $stateParams, entry) {
       $state.current.data = $scope.context = {};
       $scope.entry = entry;
+      $scope.entity = entry;
 
       if (!$scope.$root.contextHistory.length ||
           $stateParams.addToContext) {
@@ -126,10 +132,9 @@ angular.module('contentful').config([
     template:
     '<div ' + [
       'cf-entry-editor',
-      'class="entry-editor with-tab-actions"',
+      'class="workbench entry-editor"',
       'ot-doc-for="entry"',
       'cf-validate="entry.data"', 'cf-entry-schema',
-      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"',
       'ot-doc-presence'
     ].join(' ') + '></div>'
   });
@@ -147,7 +152,7 @@ angular.module('contentful').config([
     ncyBreadcrumb: {
       label: 'Media Library'
     },
-    template: '<div cf-asset-list class="asset-list entity-list"></div>'
+    template: '<div cf-asset-list class="workbench asset-list entity-list"></div>'
   }));
 
 
@@ -169,6 +174,7 @@ angular.module('contentful').config([
     controller: ['$state', '$scope', '$stateParams', 'asset', function ($state, $scope, $stateParams, asset) {
       $state.current.data = $scope.context = {};
       $scope.asset = asset;
+      $scope.entity = asset;
 
       if (!$scope.$root.contextHistory.length ||
           $stateParams.addToContext) {
@@ -182,12 +188,11 @@ angular.module('contentful').config([
       }
     }],
     template:
-    '<div cf-asset-editor ' + [
+    '<div ' + [
       'cf-asset-editor',
-      'class="asset-editor with-tab-actions"',
+      'class="asset-editor workbench"',
       'ot-doc-for="asset"',
       'cf-validate="asset.data"', 'cf-asset-schema',
-      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"',
       'ot-doc-presence',
     ].join(' ') + '></div>'
   });
@@ -208,7 +213,7 @@ angular.module('contentful').config([
     controller: ['$scope', function ($scope) {
       $scope.context = {};
     }],
-    template: '<div cf-content-type-list class="content-type-list entity-list"></div>'
+    template: '<div cf-content-type-list class="workbench"></div>'
   }));
 
   var contentTypeEditorState = {
@@ -286,7 +291,7 @@ angular.module('contentful').config([
     ncyBreadcrumb: {
       label: 'APIs'
     },
-    template: '<div cf-api-home class="api-home"></div>'
+    template: '<div cf-api-home class="workbench"></div>'
   });
 
 
@@ -299,7 +304,7 @@ angular.module('contentful').config([
     controller: ['$scope', function ($scope) {
       $scope.context = {};
     }],
-    template: '<div cf-content-model class="content-model entity-list"></div>'
+    template: '<div cf-content-model class="workbench content-model entity-list"></div>'
   });
 
 
@@ -316,7 +321,7 @@ angular.module('contentful').config([
       label: 'Delivery Keys',
       parent: 'spaces.detail.api.home'
     },
-    template: '<div cf-api-key-list class="api-key-list entity-list"></div>'
+    template: '<div cf-api-key-list class="workbench entity-list"></div>'
   });
 
   var apiKeyEditorState = {
@@ -330,8 +335,7 @@ angular.module('contentful').config([
     }],
     template:
     '<div cf-api-key-editor ' +
-      'class="api-key--editor with-tab-actions"' +
-      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}">' +
+      'class="workbench"' +
     '</div>'
   };
 
@@ -371,7 +375,7 @@ angular.module('contentful').config([
     ncyBreadcrumb: {
       label: 'Locales'
     },
-    template: '<div cf-locale-list class="locale-list entity-list"></div>'
+    template: '<div cf-locale-list class="workbench locale-list entity-list"></div>'
   });
 
   var localeEditorState = {
@@ -428,7 +432,7 @@ angular.module('contentful').config([
   $stateProvider.state('spaces.detail.settings.iframe', {
     url: '',
     abstract: true,
-    template: '<div cf-space-settings class="space-settings"></div>'
+    template: '<cf-space-settings>'
   });
 
   $stateProvider.state('spaces.detail.settings.iframe.pathSuffix', {
@@ -455,8 +459,8 @@ angular.module('contentful').config([
     url: '/account',
     abstract: true,
     views: {
-      'app-container': {
-        template: '<div cf-account-view class="account-view view-content"></div>'
+      'content': {
+        template: '<cf-account-view>'
       }
     }
   });
@@ -482,9 +486,9 @@ angular.module('contentful').config([
   function loadableState(definition) {
     definition.template = [
       '<div ng-show="context.ready">' + definition.template + '</div>',
-      '<div ng-hide="context.ready" class="client-loading">',
-        '<div class="client-loading__icon fa fa-cog fa-spin"></div>',
-        '<div class="client-loading__text">',
+      '<div ng-hide="context.ready" class="workbench x--loading">',
+        '<div class="workbench-loading__spinner"></div>',
+        '<div class="workbench-loading__message">',
           'Loading your ' + definition.ncyBreadcrumb.label + '...',
         '</div>',
       '</div>'
@@ -512,6 +516,8 @@ angular.module('contentful').config([
   $rootScope.$on('$stateNotFound', stateChangeErrorHandler);
 
   $rootScope.goToEntityState = goToEntityState;
+
+  // TODO Should not be a scope method
   $rootScope.closeState = closeState;
 
   function goToEntityState(entity, addToContext) {

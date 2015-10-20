@@ -47,24 +47,6 @@ describe('The Asset list directive', function () {
     container.remove();
   });
 
-  function makeActionTest(button, action) {
-    it(button+' button not shown', function () {
-      scope.permissionController.get.withArgs(action+'Asset', 'shouldHide').returns(true);
-      compileElement();
-      expect(container.find('.tab-actions .'+button)).toBeNgHidden();
-    });
-
-    it(button+' button shown', function () {
-      compileElement();
-      expect(container.find('.tab-actions .'+button)).not.toBeNgHidden();
-    });
-  }
-
-  makeActionTest('delete', 'delete');
-  makeActionTest('unarchive', 'unarchive');
-  makeActionTest('archive', 'archive');
-  makeActionTest('unpublish', 'unpublish');
-  makeActionTest('publish', 'publish');
 
   describe('list of assets is filtered', function() {
     var list;

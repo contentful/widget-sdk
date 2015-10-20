@@ -31,7 +31,7 @@ describe('The ContentType list directive', function () {
     ];
 
     spaceContext.getFilteredAndSortedContentTypes = sinon.stub().returns(contentTypes);
-    spaceContext.refreshContentTypes = sinon.stub().returns($q.when([]));
+    spaceContext.refreshContentTypes = sinon.stub().resolves();
 
     var element = this.$compile('<div cf-content-type-list>', { context: {} });
     var scope = element.scope();

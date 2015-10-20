@@ -13,14 +13,6 @@ angular.module('contentful').directive('cfEntryList', ['$timeout', function($tim
     controller: 'EntryListController',
     link: function (scope, elem) {
 
-      scope.$watch('selection.isEmpty()', function (empty) {
-        if (empty) {
-          elem.removeClass('with-tab-actions');
-        } else {
-          elem.addClass('with-tab-actions');
-        }
-      });
-
       var collapsedStates = {};
       var expandedField;
 

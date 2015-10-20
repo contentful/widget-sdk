@@ -1,0 +1,100 @@
+mixin entity-sidebar
+  .entity-sidebar__info-panel.entity-info-panel(
+    ng-class="preferences.showAuxPanel && 'x--show'")
+    div(cf-entity-info-panel="otDoc.doc.snapshot.sys")
+
+  .entity-sidebar
+    h2.entity-sidebar__heading
+      | Status
+
+    .entity-sidebar__state(
+      ng-switch="state.current")
+      span.entity-sidebar__state-indicator(
+        data-test-id="entity-state"
+        data-state="{{state.current}}")
+      strong
+        | Status: &nbsp;
+      span(ng-switch-when="archived")
+        | Archived
+      span(ng-switch-when="draft")
+        | Draft
+      span(ng-switch-when="published")
+        | Published
+      span(ng-switch-when="changes")
+        | Published (pending changes)
+
+    .entity-sidebar__state-select
+      .btn-action-select(
+        ng-class="state.hidePrimary && 'x--no-action'")
+
+        button.btn-action-select__action(
+          ui-command="state.primary"
+          data-target-state="{{state.primary.targetStateId}}")
+          | {{ command.label }}
+
+        button.btn-action-select__selector(
+          cf-context-menu-trigger
+          ng-disabled="state.secondaryActionsDisabled"
+          data-test-id="change-state-menu-trigger")
+          span.btn-action-select__selector-label
+            | Change status
+          cf-icon.btn-action-select__icon(name="dd-arrow-down")
+        .context-menu(
+          data-test-id="change-state-menu"
+          cf-context-menu="bottom-right")
+          cf-icon.context-menu__arrow.x--btn-action-select(name="arrow-up")
+          div.context-menu__header
+            | Change status to
+          div(ng-repeat="command in state.secondary")
+            div(role="menuitem" ui-command="command" data-target-state="{{command.targetStateId}}")
+              | {{ command.status }}
+
+    .entity-sidebar__status-more
+      .entity-sidebar__save-status(ng-controller="SaveStatusController")
+        i.entity-sidebar__saving-spinner(ng-class="saveStatus == 'saving' && 'x--active'")
+        span.entity-sidebar__last-saved(ng-hide="saveStatus == 'saving'")
+          | Last saved&nbsp;
+          time(datetime="{{entity.getUpdatedAt()}}" cf-relative-datetime)
+        span.entity-sidebar__saving(ng-show="saveStatus == 'saving'")
+          | Saving
+      if attributes.revert
+        button.cfnext-btn-link(
+          cf-context-menu-trigger
+          data-test-id="revert-menu-trigger"
+          ng-disabled="!state.revertToPublished.isAvailable() && !state.revertToPrevious.isAvailable()")
+          | Revert
+        .context-menu(
+          cf-context-menu="bottom-left"
+          data-test-id="revert-menu")
+          cf-icon.context-menu__arrow.x--top-right(name="arrow-up")
+          div(role="menuitem" ui-command="state.revertToPublished")
+            | Revert to published
+          div(role="menuitem" ui-command="state.revertToPrevious")
+            | Revert current changes
+
+    h2.entity-sidebar__heading
+      | Translation
+
+    .entity-sidebar__translation-list
+      .entity-sidebar__translation-pill(
+        ng-repeat="locale in locales.active track by locale.sys.id"
+        ng-class="locale.default && 'x--default'")
+        | {{locale.code}}
+        button.entity-sidebar__translation-remove(
+          ng-if="!locale.default"
+          ng-click="locales.deactivate(locale)")
+          cf-icon(name="close" scale="0.6")
+      button.entity-sidebar__translation-change.cfnext-btn-link(
+        ui-command="locales.changeActive")
+        | Change
+
+    h2.entity-sidebar__heading
+      | Users
+    .entity-sidebar__no-users(ng-if="!otPresence.users.length")
+      | No other users online
+    ul.entity-sidebar__users(ng-if="otPresence.users.length")
+      li.avatar(ng-repeat="link in otPresence.users track by link.sys.id"
+        cf-user link="link" as="presenceUser"
+        tooltip-placement="bottom"
+        tooltip="{{presenceUser | userNameDisplay:user}}")
+        img(ng-src="{{presenceUser.data.avatarUrl}}")

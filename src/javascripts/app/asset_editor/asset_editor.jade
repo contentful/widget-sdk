@@ -1,0 +1,45 @@
+include ../entity_editor/entity_editor.mixins.jade
+
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-media")
+  h1.workbench-header__title
+    | {{ title }}
+    cf-knowledge-base.workbench-header__kb-link(target="asset")
+
+  .workbench-header__actions
+    button.cfnext-btn-secondary-action(
+      ui-command-state="state.delete"
+      cf-context-menu-trigger)
+      | Delete
+    +entity-delete-confirm-menu
+    +editor-info-toggle
+
+
+.workbench-main
+  .workbench-main__middle-content
+    +editor-notification
+
+    form.entity-editor-form(name="assetForm")
+      .l-form-row--no-label(ng-show="hasErrorOnFields")
+        .l-form-controls
+          cf-error-list.form-box-error(cf-error-path="['fields']")
+      cf-form-widget.l-form-row(ng-repeat="widget in widgets track by widget.id"
+          data-field-id="{{field.id}}"
+          ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
+        label {{field.name}}
+          sup(ng-show="field.required")  (required)
+        .l-form-controls
+          .l-form-locale(ng-repeat="locale in locales track by locale.internal_code"
+              ot-field-presence="['fields', widget.field.id, locale.internal_code]"
+              data-locale="{{locale.internal_code}}")
+            cf-widget-renderer.l-field-editor(
+              cf-focus-ot-input="widgetIndex===0"
+              cf-field-editor="asset.data.fields[field.id][locale.internal_code]"
+              ot-path="['fields', field.id, locale.internal_code]")
+            .locale-label(ng-show="locales.length > 1") {{locale.name}}
+            +editor-field-collaborators
+            cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.internal_code,'*']")
+          cf-error-list.form-box-error(cf-error-path="['fields', field.id]")
+
+  .workbench-main__entity-sidebar
+    +entity-sidebar(revert=false)

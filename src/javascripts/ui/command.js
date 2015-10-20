@@ -143,51 +143,105 @@ angular.module('cf.ui')
  * - The element will be shown if and only if `command.isAvailable()` is
  *   true.
  * - The element will be set to disabled if and only if
- *   `command.isDisabled()` is true.
+ *   `command.isDisabled()` is true. This means that the
+ *   `aria-disabled` property will be set to true if disabled and
+ *   removed otherwise. For buttons the `disabled` property will also
+ *   be sec accordingly.
  * - The `command.execute()` method will be called when the element is
  *   clicked.
+ * - The `is-loading` class will be added when the
+ *   `command.inProgress()` returns true.
  *
  * [ui/command]: api/cf.ui/service/command
  */
-.directive('uiCommand', [function () {
+.directive('uiCommand', ['$injector', function ($injector) {
+  var uiCommandStateDirective = $injector.get('uiCommandStateDirective')[0];
   return {
     restrict: 'A',
     scope: {
       command: '=uiCommand'
+    },
+    template: uiCommandStateDirective.template,
+    link: function (scope, element) {
+      uiCommandStateDirective.link(scope, element);
+
+      element.on('click', function () {
+        if (element.attr('aria-disabled') === 'true' || element.prop('disabled')) {
+          return;
+        }
+
+        scope.$apply(function () {
+          scope.command.execute();
+        });
+      });
+    }
+  };
+}])
+
+
+/**
+ * @ngdoc directive
+ * @module cf.ui
+ * @name uiCommandState
+ *
+ * @usage[jade]
+ * button(ui-command-state="mycommand")
+ *   | Looks like my command
+ *
+ * @description
+ * This works similarly to the `uiCommand` directive except that it
+ * does not execute the command when clicked.
+ *
+ * This directive is currently only intended as a hack and only used in context menus.
+ */
+.directive('uiCommandState', [function () {
+  return {
+    restrict: 'A',
+    scope: {
+      command: '=uiCommandState'
     },
     template: function (element) {
       return element.html();
     },
     link: function (scope, element) {
 
-      if (!scope.command) {
-        throw new Error('uiCommand directive requires a command');
+      if (!element.attr('role')) {
+        element.attr('role', 'button');
       }
 
       if (element.is('button') && !element.attr('type')) {
         element.attr('type', 'button');
       }
 
-      element.on('click', function () {
-        scope.$apply(function () {
-          scope.command.execute();
-        });
-      });
-
-
       scope.$watch('command.isAvailable()', function (isAvailable) {
         element.toggleClass('ng-hide', !isAvailable);
+        setDisabled(element, !isAvailable);
       });
 
       scope.$watch('command.isDisabled()', function (isDisabled) {
-        // TODO what about none buttons elements?
-        // Should set aria disabled and prevent command from executing
-        element.prop('disabled', isDisabled);
+        setDisabled(element, isDisabled);
       });
 
       scope.$watch('command.inProgress()', function (inProgress) {
         element.toggleClass('is-loading', inProgress);
+        if (inProgress) {
+          element.attr('aria-busy', 'true');
+        } else {
+          element.removeAttr('aria-busy');
+        }
       });
+
+      function setDisabled (element, isDisabled) {
+        if (element.is('button')) {
+          element.prop('disabled', isDisabled);
+        }
+
+        if (isDisabled) {
+          element.attr('aria-disabled', 'true');
+        } else {
+          element.removeAttr('aria-disabled');
+        }
+      }
 
     }
   };

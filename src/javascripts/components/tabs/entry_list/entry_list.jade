@@ -26,21 +26,22 @@ mixin create-entry-button
           | {{contentType.getName()}}
 
 
-.tab-header
-  .tab-header__title
-    cf-icon(name="page-entries")
-    h1
+header.workbench-header
+  .workbench-header__left
+    cf-icon.workbench-header__icon(name="page-entries")
+    h1.workbench-header__title
       | Entries
-      cf-knowledge-base(target="entry")
+      cf-knowledge-base.workbench-header__kb-link(target="entry")
 
-  .tab-header__search.search-area--with-filter(ng-show="!showNoEntriesAdvice()")
+  .workbench-header__search.search-area--with-filter(
+    ng-show="!showNoEntriesAdvice()")
     select.search-area__select-box.cfnext-select-box(
       ng-model="context.view.contentTypeId"
       ng-change="selectedContentType()"
       ng-options="ct.getId() as ct.getName() group by getGroupName() for ct in spaceContext.publishedContentTypes")
       option(value="") All
 
-    .l-search-w-autocomplete(
+    .search-area__input(
       cf-tokenized-search="context.view.searchTerm"
       search-content-type="getSearchContentType()"
       placeholder="Search for {{typeNameOr('Entries')}}"
@@ -49,14 +50,16 @@ mixin create-entry-button
 
     .search-results-position(cf-search-results-position paginator="paginator" ng-hide="!paginator.numEntries")
 
-  .tab-header__actions(ng-show="!showNoEntriesAdvice()")
-    div(ng-if="showCreateEntryButton()")
-      +create-entry-button
+  .workbench-header__actions(
+    ng-if="!showNoEntriesAdvice() && showCreateEntryButton()")
+    +create-entry-button
 
-.tab-main(ng-show="!showNoEntriesAdvice()")
-  .left-nav
-    div.menu-with-buttons(cf-view-menu="uiConfig.entryListViews" ng-show="uiConfig")
-  .with-left-nav
+.workbench-main(ng-hide="showNoEntriesAdvice()")
+  .workbench-main__left-sidebar(
+    ng-show="uiConfig"
+    cf-view-menu="uiConfig.entryListViews")
+
+  .workbench-main__right-content
     table.result-list.main-results.main-header
       thead
         tr
@@ -96,8 +99,8 @@ mixin create-entry-button
         i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
         header.advice__title There are no matches to your search
 
-.advice(ng-show="showNoEntriesAdvice()")
-  .advice__frame
+.workbench-main.x--content(ng-show="showNoEntriesAdvice()")
+  .cfnext-advice
     i.fa.fa-file.advice__giant-icon
     header.advice__title You have no Entries yet.
     p.advice__description(ng-show="spaceContext.publishedContentTypes.length == 0")
@@ -124,26 +127,29 @@ mixin create-entry-button
         | Add New Entry
     cf-knowledge-base(target="entry" text="Visit the Knowledge Base Pages")
 
-.tab-actions
-  .label {{selection.size()}} Entries selected
-  .button-set(ng-controller="EntryListActionsController" ng-hide="selection.isEmpty()")
-    button.cfnext-btn-secondary-action.duplicate(type="button"
-      ng-click="duplicateSelected()"
-      ng-show="showDuplicate()")
-      | Duplicate
-    button.cfnext-btn-secondary-action.delete(type="button"
-      ng-show="showDelete()"
-      cf-context-menu-trigger
-      data-test-id="delete-entry")
+.workbench-actions(
+  ng-hide="selection.isEmpty()"
+  ng-controller="EntryListActionsController")
+  .workbench-actions__label
+    | {{selection.size()}} Entries selected
+
+  button.cfnext-btn-secondary-action.duplicate(type="button"
+    ng-click="duplicateSelected()"
+    ng-show="showDuplicate()")
+    | Duplicate
+  button.cfnext-btn-secondary-action.delete(type="button"
+    ng-show="showDelete()"
+    cf-context-menu-trigger
+    data-test-id="delete-entry")
+    | Delete
+  .delete-confirm(cf-context-menu="top")
+    cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
+    p You are about to delete {{selection.size()}} Entries
+    button.cfnext-btn-caution(type="button" ng-click="deleteSelected()")
       | Delete
-    .delete-confirm(cf-context-menu="top")
-      cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
-      p You are about to delete {{selection.size()}} Entries
-      button.cfnext-btn-caution(type="button" ng-click="deleteSelected()")
-        | Delete
-      button.cfnext-btn-secondary-action(type="button")
-        | Don't Delete
-    button.cfnext-btn-secondary-action.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
-    button.cfnext-btn-secondary-action.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
-    button.cfnext-btn-secondary-action.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
-    button.cfnext-btn-primary-action.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}
+    button.cfnext-btn-secondary-action(type="button")
+      | Don't Delete
+  button.cfnext-btn-secondary-action.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
+  button.cfnext-btn-secondary-action.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
+  button.cfnext-btn-secondary-action.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
+  button.cfnext-btn-primary-action.publish(    type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}

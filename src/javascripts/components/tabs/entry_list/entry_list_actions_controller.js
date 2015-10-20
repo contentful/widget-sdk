@@ -32,7 +32,8 @@ angular.module('contentful').controller('EntryListActionsController', ['$scope',
   });
 
   var every = function (predicate) {
-    return _.every(getSelected(), function (entry) {
+    var selected = getSelected();
+    return !_.isEmpty(selected) && _.every(selected, function (entry) {
       return entry[predicate]();
     });
   };

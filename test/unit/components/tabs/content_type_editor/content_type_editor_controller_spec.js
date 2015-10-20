@@ -16,8 +16,6 @@ describe('ContentTypeEditor Controller', function () {
       $provide.value('modalDialog', {
         open: self.modalDialogOpenStub
       });
-
-      $provide.removeControllers('PermissionController', 'EntityActionsController');
     });
 
     inject(function ($rootScope, $controller, cfStub, $injector){

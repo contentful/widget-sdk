@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('contentful').controller('AssetEditorController', ['$scope', '$injector', function AssetEditorController($scope, $injector) {
+angular.module('contentful')
+.controller('AssetEditorController', ['$scope', '$injector', function AssetEditorController($scope, $injector) {
   var $controller       = $injector.get('$controller');
   var AssetContentType  = $injector.get('AssetContentType');
   var ShareJS           = $injector.get('ShareJS');
@@ -8,26 +9,35 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
   var logger            = $injector.get('logger');
   var notification      = $injector.get('notification');
   var stringUtils       = $injector.get('stringUtils');
+  var notifier          = $injector.get('entryEditor/notifications');
+  var spaceContext      = $injector.get('spaceContext');
+  var truncate          = $injector.get('stringUtils').truncate;
 
-  //Initialization
-  $scope.entityActionsController = $controller('EntityActionsController', {
+  var notify = notifier(function () {
+    return '“' + $scope.title + '”';
+  });
+
+  $scope.locales = $controller('entityEditor/LocalesController');
+
+  $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,
-    entityType: 'asset'
+    entity: $scope.asset,
+    notify: notify,
+    handlePublishError: handlePublishError
   });
 
-  $scope.$watch('spaceContext.assetTitle(asset)', function (title) {
-    $scope.context.title = title;
+  $scope.notifications = $controller('entityEditor/StatusNotificationsController', {
+    $scope: $scope,
+    entityLabel: 'asset'
   });
 
-  $scope.localesState = TheLocaleStore.getLocalesState();
 
   $scope.$watch(function () {
-    return TheLocaleStore.getLocalesState().localeActiveStates;
-  }, function () {
-    $scope.localesState = TheLocaleStore.getLocalesState();
-  }, true);
-
-  $scope.$watch('localesState.localeActiveStates', TheLocaleStore.setActiveStates, true);
+    return spaceContext.assetTitle($scope.asset);
+  }, function (title) {
+    $scope.context.title = title;
+    $scope.title = truncate(title, 50);
+  });
 
   $scope.$watch(function (scope) {
     if (scope.otDoc.doc && scope.asset) {
@@ -41,23 +51,13 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
   }, function (modified, old, scope) {
     if (modified !== undefined) scope.context.dirty = modified;
   });
-  $scope.$on('entityDeleted', function (event, asset) {
-    if (event.currentScope !== event.targetScope) {
-      var scope = event.currentScope;
-      if (asset === scope.asset) {
-        scope.closeState();
-      }
-    }
-  });
+
 
   // OT Stuff
   $scope.$watch(function assetEditorEnabledWatcher(scope) {
     return !scope.asset.isArchived() && scope.permissionController.can('update', scope.asset.data).can;
   }, function assetEditorEnabledHandler(enabled, old, scope) {
     scope.otDoc.state.disabled = !enabled;
-  });
-  $scope.$on('otRemoteOp', function (event) {
-    event.currentScope.otDoc.updateEntityData();
   });
 
   // Validations
@@ -122,8 +122,16 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
     if (file !== old) scope.validate();
   }, true);
 
-  $scope.headline = function(){
-    return this.spaceContext.assetTitle(this.asset);
-  };
+  function handlePublishError (error){
+    var errorId = dotty.get(error, 'body.sys.id');
+    if (errorId === 'ValidationFailed') {
+      $scope.setValidationErrors(dotty.get(error, 'body.details.errors'));
+      notify.publishValidationFail();
+    } else if (errorId === 'VersionMismatch'){
+      notify.publishFail('Can only publish most recent version');
+    } else {
+      notify.publishServerFail(error);
+    }
+  }
 
 }]);

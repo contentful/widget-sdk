@@ -23,7 +23,12 @@ describe('Asset editor controller', function () {
         'getPublishedVersion',
         'fileProcessingFailed'
       ]);
-      $provide.removeControllers('FormWidgetsController', 'PermissionController');
+      $provide.removeControllers(
+        'FormWidgetsController',
+        'PermissionController',
+        'entityEditor/LocalesController',
+        'entityEditor/StatusNotificationsController'
+      );
 
       $provide.value('ShareJS', {
         peek: stubs.peek,
@@ -36,7 +41,7 @@ describe('Asset editor controller', function () {
 
       $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
     });
-    inject(function ($rootScope, $controller, $q, $injector) {
+    inject(function ($rootScope, $controller, $q, $injector, cfStub) {
       logger = $injector.get('logger');
       notification = $injector.get('notification');
       scope = $rootScope.$new();
@@ -44,18 +49,18 @@ describe('Asset editor controller', function () {
       scope.permissionController = { can: sinon.stub() };
       scope.permissionController.can.returns({can: true});
 
-      process = $q.defer();
 
-      scope.spaceContext = {
-        assetTitle: stubs.assetTitle
-      };
       scope.validate = sinon.stub();
 
-      var asset = {
+      process = $q.defer();
+      var space = cfStub.space('testSpace');
+      var asset = cfStub.asset(space, 'testAsset', 'testType');
+      asset = _.extend(asset, {
         isArchived: stubs.isArchived,
         process: stubs.process.returns(process.promise),
         getPublishedVersion: stubs.getPublishedVersion
-      };
+      });
+
       scope.asset = asset;
       scope.context = {};
 
@@ -64,12 +69,9 @@ describe('Asset editor controller', function () {
     });
   });
 
-  it('gets locales state', function() {
-    sinon.assert.called(this.TheLocaleStoreMock.getLocalesState);
-  });
-
   it('gets a title set', function () {
-    stubs.assetTitle.returns('title');
+    var spaceContext = this.$inject('spaceContext');
+    spaceContext.assetTitle = sinon.stub().returns('title');
     scope.$apply();
     expect(scope.context.title).toBe('title');
   });

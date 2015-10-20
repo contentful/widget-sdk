@@ -7,30 +7,31 @@ describe('otBindText', function () {
     $provide.value('ShareJS', {
       mkpathAndSetValue: sinon.stub().yieldsAsync(null),
       peek: sinon.stub().returns('xx'),
-      isConnected: function () { return true; },
-      open: sinon.stub().yieldsAsync(null, doc = {
-        // otDoc
-        on: sinon.stub(),
-        at: sinon.stub().returns(subdoc ={
-          attach_textarea: sinon.stub().returns(unbindTextArea = sinon.stub()),
-          path: ['value']
-        }),
-        snapshot: {}
-      })
+      isConnected: sinon.stub().returns(true),
+      connectionFailed: sinon.stub().returns(false),
+      open: sinon.stub()
     });
     $provide.value('ReloadNotification', {
       trigger: sinon.stub()
     });
   }));
 
-  beforeEach(inject(function ($rootScope, $compile) {
+  beforeEach(inject(function ($rootScope, $compile, ShareJS) {
+    ShareJS.open.resolves(doc = {
+      // otDoc
+      on: sinon.stub(),
+      at: sinon.stub().returns(subdoc ={
+        attach_textarea: sinon.stub().returns(unbindTextArea = sinon.stub()),
+        path: ['value']
+      }),
+      snapshot: {}
+    });
+
     jasmine.clock().install();
     $rootScope.entity = {value: 'xx'};
     elem = $compile('<input type="text" ng-model="entity.value" ot-doc-for="entity" ot-path="[\'value\']" ot-bind-text>')($rootScope);
     scope = elem.scope();
-    scope.otDoc = {
-      state: { disabled: false }
-    };
+    scope.otDoc.state.disabled = false;
     controller = elem.controller('ngModel');
   }));
 

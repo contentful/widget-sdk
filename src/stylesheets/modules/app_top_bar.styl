@@ -1,10 +1,11 @@
 $app-top-bar__action-color()
   color: $colors.white
   &:hover
-    color: $colors.blue
+    color: $colors.blue-mid
 
 
 .app-top-bar
+  height: $nav-bar-height
   display: flex
   background-color: $colors.dark-blue
 
@@ -37,8 +38,9 @@ $app-top-bar__action-color()
     justify-content: space-between
     cursor: pointer;
     $app-top-bar__action-color()
-    &:hover > cf-icon[name="dd-arrow-down"] path
-      fill: $colors.blue
+    &:hover, &.is-active
+      > cf-icon[name="dd-arrow-down"] path
+        fill: $colors.blue-mid
 
   &__action,
   &__child-action

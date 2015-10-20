@@ -1,30 +1,44 @@
 'use strict';
 
-angular.module('contentful').controller('EntryEditorController', ['$scope', '$injector', function EntryEditorController($scope, $injector) {
+angular.module('contentful')
+.controller('EntryEditorController', ['$scope', '$injector', function EntryEditorController($scope, $injector) {
   var $controller       = $injector.get('$controller');
   var logger            = $injector.get('logger');
   var TheLocaleStore    = $injector.get('TheLocaleStore');
+  var notifier          = $injector.get('entryEditor/notifications');
+  var spaceContext      = $injector.get('spaceContext');
+  var truncate          = $injector.get('stringUtils').truncate;
 
-  // Initialization
-  $scope.entityActionsController = $controller('EntityActionsController', {
-    $scope: $scope,
-    entityType: 'entry'
+  var notify = notifier(function () {
+    return '“' + $scope.title + '”';
   });
 
-  $scope.localesState = TheLocaleStore.getLocalesState();
+  $scope.locales = $controller('entityEditor/LocalesController');
+
+  $scope.state = $controller('entityEditor/StateController', {
+    $scope: $scope,
+    entity: $scope.entry,
+    notify: notify,
+    handlePublishError: handlePublishError
+  });
+
+  $scope.actions = $controller('EntryActionsController', {
+    $scope: $scope,
+    notify: notify
+  });
+
+  $scope.notifications = $controller('entityEditor/StatusNotificationsController', {
+    $scope: $scope,
+    entityLabel: 'entry'
+  });
 
   $scope.$watch(function () {
-    return TheLocaleStore.getLocalesState().localeActiveStates;
-  }, function () {
-    $scope.localesState = TheLocaleStore.getLocalesState();
-  }, true);
-
-  $scope.$watch('localesState.localeActiveStates', TheLocaleStore.setActiveStates, true);
-
-
-  $scope.$watch('spaceContext.entryTitle(entry)', function (title) {
+    return spaceContext.entryTitle($scope.entry);
+  }, function (title) {
     $scope.context.title = title;
+    $scope.title = truncate(title, 50);
   });
+
 
   $scope.$watch(function (scope) {
     if (scope.otDoc.doc && scope.entry) {
@@ -38,23 +52,12 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
   }, function (modified, old, scope) {
     if (modified !== undefined) scope.context.dirty = modified;
   });
-  $scope.$on('entityDeleted', function (event, entry) {
-    if (event.currentScope !== event.targetScope) {
-      var scope = event.currentScope;
-      if (entry === scope.entry) {
-        scope.closeState();
-      }
-    }
-  });
 
   // OT Stuff
   $scope.$watch(function entryEditorEnabledWatcher(scope) {
     return !scope.entry.isArchived() && scope.permissionController.can('update', scope.entry.data).can;
   }, function entryEditorEnabledHandler(enabled, old, scope) {
     scope.otDoc.state.disabled = !enabled;
-  });
-  $scope.$on('otRemoteOp', function (event) {
-    event.currentScope.otDoc.updateEntityData();
   });
 
   // Validations
@@ -71,7 +74,7 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
   });
 
   $scope.$watch('validationResult.errors', function (errors) {
-    var et = $scope.spaceContext.publishedTypeForEntry($scope.entry);
+    var et = spaceContext.publishedTypeForEntry($scope.entry);
     $scope.errorPaths = {};
     $scope.hasErrorOnFields = false;
 
@@ -128,21 +131,6 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
     return _.filter(_.pluck(field.validations, type))[0];
   };
 
-  $scope.$watch('widgets', function (widgets, old, scope) {
-    scope.showLangSwitcher = _.some(widgets, function (widget) {
-      if(!widget) {
-        logger.logError('widget object does not exist', {
-          data: {
-            widget: widget,
-            widgets: widgets
-          }
-        });
-        return false;
-      }
-
-      return widget.field && widget.field.localized;
-    });
-  });
 
   $scope.$watch('entry.data.fields', function (fields) {
     if (!fields) {
@@ -150,12 +138,12 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
     }
   });
 
-  $scope.headline = function(){
-    return this.spaceContext.entryTitle(this.entry);
-  };
-
   // Prevents badly created fields via the API from breaking the editor
   function cleanupEntryFields(contentTypeFields) {
+    // FIXME Because of the `::` eval once feature of AngularJS this
+    // code highly relies on undefined vs. falsy semantics and hides
+    // the fact that we only want to execute this once.
+    // Instead We should remove the watcher once the cleanup is done.
     $scope.$watchGroup(['::entry', '::otDoc.doc'], function (values) {
       if(!_.isEmpty($scope.entry.data.fields) && areValuesDefined(values)){
         _.each($scope.entry.data.fields, _.partial(setupFieldLocales, contentTypeFields));
@@ -186,4 +174,60 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
     }
   }
 
+
+
+  /**
+   * TODO This is way to complicated: We should only care about the
+   * errors in `body.details.errors` and expose them to the scope so
+   * that they can be displayed at the proper location and show a
+   * simple notifictation.
+   *
+   * For this to happen the CMA needs to be refactored.
+   */
+  function handlePublishError(err) {
+    var errorId = dotty.get(err, 'body.sys.id');
+    if (errorId === 'ValidationFailed') {
+      setValidationErrors(err);
+      notify.publishValidationFail();
+    } else if (errorId === 'VersionMismatch'){
+      notify.publishFail('Can only publish most recent version');
+    } else if (errorId === 'UnresolvedLinks') {
+      setValidationErrors(err);
+      notify.publishFail('Some linked entries are missing.');
+    } else if (errorId === 'InvalidEntry') {
+      if (isLinkValidationError(err)) {
+        notify.publishFail(getLinkValidationErrorMessage(err));
+        setValidationErrors(err);
+      } else if (err.body.message === 'Validation error') {
+        setValidationErrors(err);
+        notify.publishValidationFail();
+      } else {
+        notify.publishServerFail(err);
+      }
+    } else {
+      notify.publishServerFail(err);
+    }
+  }
+
+  function setValidationErrors(err) {
+    $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
+  }
+
+  function isLinkValidationError(err) {
+      var errors = dotty.get(err, 'body.details.errors');
+      return err.body.message === 'Validation error' &&
+             errors.length > 0 &&
+             errors[0].name == 'linkContentType';
+  }
+
+  function getLinkValidationErrorMessage(err) {
+    var error = _.first(dotty.get(err, 'body.details.errors'));
+    var contentTypeId = _.first(error.contentTypeId);
+    var contentType = _.findWhere(spaceContext.publishedContentTypes, {data: {sys: {id: contentTypeId}}});
+    if(contentType) {
+      return error.details.replace(contentTypeId, contentType.data.name);
+    } else {
+      return 'This reference requires an entry of an unexistent content type';
+    }
+  }
 }]);

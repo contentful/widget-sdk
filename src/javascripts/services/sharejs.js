@@ -11,7 +11,8 @@
  * - It would be good if the ShareJS callbacks were wrapped to return promises
  * - the mkpathAndSetValue does too much
  */
-angular.module('contentful').provider('ShareJS', ['environment', function ShareJSProvider(environment) {
+angular.module('contentful')
+.provider('ShareJS', ['environment', function ShareJSProvider(environment) {
   var token;
   var url = '//'+environment.settings.ot_host+'/channel';
 
@@ -26,6 +27,7 @@ angular.module('contentful').provider('ShareJS', ['environment', function ShareJ
   this.$get = ['$injector', function($injector) {
     var clientAdapter = $injector.get('clientAdapter');
     var $rootScope    = $injector.get('$rootScope');
+    var $q            = $injector.get('$q');
 
     /**
      * Class that wraps the native ShareJS Client
@@ -40,8 +42,6 @@ angular.module('contentful').provider('ShareJS', ['environment', function ShareJ
      * - Callback execution is not wrapped in $apply
      */
     function ShareJSClient(url, token) {
-      var oldState;
-      var self = this;
       this.token = token;
       this.url = url;
       this.connection = new window.sharejs.Connection(this.url, this.token);
@@ -52,20 +52,14 @@ angular.module('contentful').provider('ShareJS', ['environment', function ShareJ
           // Silently ignore the error as this is handled on ot_doc_for
         }
       };
-      this.connection.on('ok', stateChangeHandler);
-      this.connection.on('error', stateChangeHandler);
-      this.connection.on('disconnected', stateChangeHandler);
-      this.connection.on('connect failed', stateChangeHandler);
 
-      function stateChangeHandler(error) {
-        $rootScope.$apply(function () {
-          if (self.connection.state !== oldState) {
-            $rootScope.$broadcast('otConnectionStateChanged', self.connection.state, self.connection, error);
-            oldState = self.connection.state;
-          }
-        });
-      }
-
+      // Any message on the connection may change our model so we need
+      // to apply those changes.
+      var connectionEmit = this.connection.emit;
+      this.connection.emit = function () {
+        $rootScope.$applyAsync();
+        connectionEmit.apply(this, arguments);
+      };
     }
 
     ShareJSClient.prototype = {
@@ -136,9 +130,11 @@ angular.module('contentful').provider('ShareJS', ['environment', function ShareJ
        * @param {Entity} entity
        * @param {function()} callback
        */
-      open: function (/* entity, callback */) {
+      open: function (entity) {
         ShareJS.connect();
-        return ShareJS.client.open.apply(ShareJS.client, arguments);
+        return $q.denodeify(function (cb) {
+          return ShareJS.client.open(entity, cb);
+        });
       },
 
       /**
@@ -147,7 +143,17 @@ angular.module('contentful').provider('ShareJS', ['environment', function ShareJ
        * @return {boolean}
        */
       isConnected: function () {
-        return ShareJS.client && ShareJS.client.connection.state == 'ok';
+        return dotty.get(ShareJS, 'client.connection.state') === 'ok';
+      },
+
+      /**
+       * @ngdoc method
+       * @name ShareJS#connectionFailed
+       * @return {boolean}
+       */
+      connectionFailed: function () {
+        var state = dotty.get(ShareJS, 'client.connection.state');
+        return !(state === 'connecting' || state === 'handshaking' || state === 'ok');
       },
 
       /**

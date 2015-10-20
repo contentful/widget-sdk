@@ -1,0 +1,61 @@
+include ../entity_editor/entity_editor.mixins.jade
+
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-entries")
+  h1.workbench-header__title
+    | {{ title }}
+    cf-knowledge-base.workbench-header__kb-link(target="entry")
+
+  .workbench-header__actions
+    +editor-actions-dropdown
+      div(role="menuitem" ui-command="actions.add")
+        | Create new <em>{{ command.name() | truncate:14 }}</em>
+      div(role="menuitem" ui-command="actions.duplicate")
+        | Duplicate
+      div(role="menuitem"
+        ui-command-state="state.delete"
+        cf-context-menu-trigger)
+        | Delete
+      +entity-delete-confirm-menu
+      hr
+      div(role="menuitem" ui-command="actions.toggleDisabledFields")
+        | {{command.label()}}
+
+    +editor-info-toggle
+
+
+.workbench-main
+  .workbench-main__middle-content
+    +editor-notification
+
+    form.entity-editor-form(name="entryForm")
+      .l-form-row--no-label(ng-show="hasErrorOnFields")
+        .l-form-controls
+          cf-error-list.form-box-error(cf-error-path="['fields']")
+      cf-form-widget.l-form-row(ng-repeat="widget in widgets track by widget.id"
+          data-field-id="{{field.id}}"
+          data-field-api-name="{{field.apiName}}"
+          data-field-type="{{field.type}}"
+          data-field-items-type="{{field.items.type}}"
+          ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
+        label(ng-if="field")
+          | {{field.name}} 
+          sup(ng-show="field.required") (required)
+        .l-form-controls(ng-if="field")
+          .l-form-locale(ng-repeat="locale in locales track by locale.internal_code"
+              ot-field-presence="['fields', field.id, locale.internal_code]"
+              data-locale="{{locale.internal_code}}")
+            cf-widget-renderer.l-field-editor(
+              cf-focus-ot-input="shouldFocusField()"
+              ot-path="['fields', field.id, locale.internal_code]"
+              cf-field-editor="entry.data.fields[field.id][locale.internal_code]")
+            .locale-label(ng-show="locales.length > 1") {{locale.name}}
+            +editor-field-collaborators
+            cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.internal_code,'*']")
+          .form-widget__help-text(ng-if="showHelpText") {{helpText}}
+          cf-error-list.form-box-error(cf-error-path="['fields', field.id]")
+        .l-form-controls(ng-if="!field")
+          cf-widget-renderer
+
+  .workbench-main__entity-sidebar
+    +entity-sidebar(revert=true)

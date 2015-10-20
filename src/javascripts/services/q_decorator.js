@@ -38,6 +38,30 @@ angular.module('contentful').config(['$provide', function ($provide) {
       callbackFunction.promise = deferred.promise;
       return callbackFunction;
     };
+
+    /**
+     * Usage:
+     *
+     * $q.denodeify(function (cb) {
+     *   expectsNodeStyleCallback(cb)
+     * })
+     * .then(
+     *   function (result) {},
+     *   function (err) {})
+     * )
+     */
+    $q.denodeify = function (fn) {
+      return $q(function (resolve, reject) {
+        fn(function handler(err, value) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(value);
+          }
+        });
+      });
+    };
+
     return $q;
   }]);
 }]);
