@@ -1,12 +1,14 @@
 #!/bin/bash
 #
-# Build a debian package from the `build` directory
+# Prepare the debian package and directories to upload to S3
+#
+# ./archive -> pkg.contenful.org
+# ./upload  -> cf-preview-static-cdnorigin
 #
 
 set -ev
 
 gem install fpm
-
 ./Packagefile.local
 
 PKG=$(ls cf-user-interface*.deb | head -n1)
