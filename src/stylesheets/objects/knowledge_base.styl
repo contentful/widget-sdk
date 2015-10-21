@@ -1,25 +1,14 @@
 .knowledge-base-link
-  display: block
-  &:visited
-    color: $blue-link
+  display: inline-block
+  position: relative
   &:hover
     color: $blue-dark-link
   .fa-question-circle
     display: inline-block
-    vertical-align: middle
     margin-left: 4px
-
-.knowledge-base-icon
-  color: $gray
-  display: inline-block
-  position: relative
-  &:link,
-  &:visited
-    color: $gray
-  &:hover
-    color: $gray-darkest
   .tooltip-inner
     width: 200px
-
-
-
+  &.knowledge-base-link--no-text
+    color: $gray
+    &:hover
+      color: $gray-darkest

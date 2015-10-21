@@ -16,9 +16,8 @@ ul.linked-entities(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hi
       i.fa.fa-ellipsis-v
       i.fa.fa-ellipsis-v
     .linked-entities__info
+      i.fa.fa-times-circle(ng-click="removeLink(index, entity)" ng-show="otDoc.state.editable")
       a(ui-sref="spaces.detail.entries.detail({ entryId: entity.getId(), addToContext: true })" ng-show="entity && entity.data" title="{{entryLinkController.linkTitle(entity)}}") {{entryLinkController.linkTitle(entity)}}
       span(ng-hide="entity && entity.data" title="{{entryLinkController.linkTitle(entity)}}") {{entryLinkController.linkTitle(entity)}}
-      i.fa.fa-times-circle(ng-click="removeLink(index, entity)" ng-show="otDoc.state.editable")
       .linked-entities__status(ng-class="entityStatusController.getClassname(entity)")
         .status-bar
-

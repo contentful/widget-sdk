@@ -32,19 +32,19 @@ $markdown-radius = 2px
   border-top-right-radius: $markdown-radius
   margin-left: 3px
   text-align: center
-  background-color: $colors.element-light
-  border-bottom-color: $colors.element-light
+  background-color: $colors.element-lightest
+  border-bottom-color: $colors.element-lightest
   &.inactive
-    background: $colors.element-mid
+    background: $colors.element-light
     border-bottom-color: $colors.element-dark
     &:hover
-      background: $colors.element-dark
+      background: $colors.element-mid
 
 .markdown-toolbar
   position: relative
   z-index: 5
   border: 1px solid $colors.element-dark
-  background-color: $colors.element-light
+  background-color: $colors.element-lightest
   padding: 9px 7px 7px
   border-top-left-radius: $markdown-radius
 
@@ -62,13 +62,14 @@ $markdown-radius = 2px
   cursor: pointer
   margin-right: 7px
   line-height: 1
+  transition: all ease-in-out .1s
   svg path
     fill: $colors.text-mid //Quick fix!
   &:disabled
     cursor: not-allowed
     opacity: .35
   &:not(:disabled):hover
-    background-color: $colors.element-dark
+    background-color: $colors.element-mid
 
 .markdown-headings
   padding-top: 3px
@@ -80,20 +81,18 @@ $markdown-radius = 2px
 .markdown-more-actions,
 .markdown-side-action
   border: 1px solid $colors.element-dark
-  background: $colors.element-mid
+  background: $colors.element-light
   &:not(:disabled):hover,
   &.active
     border-color: $colors.element-darkest
   &.active
-    background: $colors.element-dark
-    box-shadow: inset 0px 1px 2px 0px rgba(0, 0 , 0, .08)
+    background: $colors.element-mid
+    box-shadow: inset 0 1px 2px rgba(black, .12)
 
 .markdown-side-action
   float: right
   padding: 0 8px
   font-size: 1em
-  &:hover
-    border-color: $colors.element-darkest
 
 /**
  * Editor, preview, info
@@ -155,7 +154,7 @@ $markdown-radius = 2px
   text-align: center
 
 .markdown-help
-  background: $colors.element-light
+  background: $colors.element-lightest
   border: 1px solid $colors.element-dark
   border-bottom-left-radius: $markdown-radius
   border-bottom-right-radius: $markdown-radius
@@ -316,7 +315,7 @@ $markdown-radius = 2px
   position: fixed
   left: 0
   right: 0
-  background-color: $colors.element-light
+  background-color: $colors.element-lightest
 
 .zenmode-toolbar
   top: 0
@@ -348,7 +347,7 @@ $markdown-radius = 2px
   z-index: 105
   top: 49%
   height: 30px
-  background-color: $colors.element-light
+  background-color: $colors.element-lightest
   border: 1px solid $colors.element-dark
 
 .zenmode-drawer__show

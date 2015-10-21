@@ -29,6 +29,21 @@ Styleguide 20.1
   flex-direction: column
   justify-content: center
 
+.cfnext-advice
+  min-height: 70vh
+  max-width: 60em
+  margin: 0 auto
+  padding: $rhythm(2) 0
+  text-align: center
+
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+  > *
+    flex: 0 0 auto
+
+
 /*
 Used for the advice items at the top level which act as content fallback in
 case no spaces are available
@@ -50,7 +65,7 @@ $advice-icon()
   font-size: 14rem
 
 .advice__frame
-  width: 60em
+  max-width: 60em
   margin: 0 auto
   display: flex
   flex-direction: column

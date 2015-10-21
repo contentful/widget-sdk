@@ -4,11 +4,11 @@ Testing
 This guide describes the testing setup and helpers for the UI. See also
 the API documentation of the [`test` module][module:test]
 
-Tests are written in [Jasmine][jasmine] and run with [Karma][karma].
-The tests use [Sinon][sinon] to create function stubs. The tests files
-are contained in `test/unit` and `test/integration`, helpers are
-contained in `test/helpers`. To see a list of available test helpers
-go to the [`test` module][module:test] documentation.
+Tests are written in [Jasmine][jasmine] (version `2.3.x`) and run with
+[Karma][karma].  The tests use [Sinon][sinon] to create function stubs.
+The tests files are contained in `test/unit` and `test/integration`,
+helpers are contained in `test/helpers`. To see a list of available
+test helpers go to the [`test` module][module:test] documentation.
 
 You can run the tests with
 ~~~bash
@@ -22,7 +22,7 @@ Focused Tests
 -------------
 
 To select only a subsect of specs to run, replace their respective
-`describe` or `it` calls with `ddescribe` or `iit`.
+`describe` or `it` calls with `fdescribe` or `fit`.
 
 
 Using Angular

@@ -45,14 +45,14 @@ $cfnext-form-input()
     border-width: 1px
     border-color: $colors.blue
     outline: none
-  &[aria-invalid="true"]
-    border-color: darken($red, 10%)
-  &[readonly], &[disabled]
+  &[readonly], &[disabled], &:disabled
     color: $gray-medium
     background-color: $gray-lighter
     border: 1px solid $gray
     box-shadow: none
     transition: none
+  &[aria-invalid="true"]
+    border-color: darken($red, 10%)
   &[type="number"]
     padding-right: 0
   textarea&

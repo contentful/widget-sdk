@@ -258,7 +258,7 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
       metaData = metaData || {};
       metaData.groupingHash = metaData.groupingHash || message;
       setUserInfo();
-      if (environment.env !== 'production') {
+      if (environment.env !== 'production' && environment.env !== 'unittest') {
         logToConsole(type, severity, message);
       }
       bugsnag.notify(type, message, augmentMetadata(metaData), severity);

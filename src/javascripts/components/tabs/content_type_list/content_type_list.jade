@@ -1,26 +1,30 @@
-.tab-header
-  .tab-header__title
-    cf-icon(name="page-ct")
-    h1
+header.workbench-header
+  .workbench-header__left
+    cf-icon.workbench-header__icon(name="page-ct")
+    h1.workbench-header__title
       | Content Types
-      a(cf-knowledge-base-icon
-        analytics-event="content_types"
-        href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
+      cf-knowledge-base.workbench-header__kb-link(target="content_type")
 
-  .tab-header__search.search-area
-    .search-field(cf-search="searchTerm" placeholder="Search for Content Types")
+  .workbench-header__search.search-area
+    .search-field(
+      cf-search="searchTerm"
+      placeholder="Search for Content Types")
 
-  .tab-header__actions.add-entity(ng-hide="empty")
+  .workbench-header__actions
     button.cfnext-btn-action(
-        ng-click="entityCreationController.newContentType()"
-        ng-hide="permissionController.get('createContentType', 'shouldHide')"
-        ng-disabled="permissionController.get('createContentType', 'shouldDisable')"
-        cf-when-disabled="permissionController.entityActions.createContentType")
+      ng-click="entityCreationController.newContentType()"
+      ng-hide="permissionController.get('createContentType', 'shouldHide')"
+      ng-disabled="permissionController.get('createContentType', 'shouldDisable')"
+      cf-when-disabled="permissionController.entityActions.createContentType")
       cf-icon.btn-icon.inverted(name="plus")
       | New Content Type
 
-.tab-main
-  .left-nav(ng-hide="empty")
+.workbench-main.x--content(ng-show="!hasContentTypes()")
+  .cfnext-advice
+    include ../../shared/create_content_type_advice
+
+.workbench-main(ng-show="hasContentTypes()")
+  .workbench-main__left-sidebar
     header.filter-list-header Filter By Status
     ul.status-filters
       li.filter-list-item(ng-class="{active: context.list == 'all'}" ng-click="context.list = 'all'")
@@ -32,7 +36,12 @@
       li.filter-list-item(ng-class="{active: context.list == 'active'}" ng-click="context.list = 'active'")
         span.filter-list-title Active
 
-  .with-left-nav(ng-hide="empty")
+  .workbench-main__right-content(ng-show="!hasQueryResults()")
+    .cfnext-advice
+      i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
+      .advice__title There are no matches to your search
+
+  .workbench-main__right-content(ng-show="hasQueryResults()")
     table.result-list.main-results.main-header
       thead
         tr
@@ -44,11 +53,12 @@
           th.cell-status Status
 
     .main-results-wrapper
-      table.result-list.main-results.animated
+      table.result-list.main-results.animated.entity-table
         tbody
-          tr(ng-repeat="contentType in visibleContentTypes track by contentType.getId()"
-              ng-init="entityNavState='spaces.detail.content_types.detail({ contentTypeId: contentType.getId() })'"
-              ui-sref="{{entityNavState}}")
+          tr.entity-list__item(
+            ng-repeat="contentType in visibleContentTypes track by contentType.getId()"
+            ng-init="entityNavState='spaces.detail.content_types.detail({ contentTypeId: contentType.getId() })'"
+            ui-sref="{{entityNavState}}")
             td.cell-display-name
               a.entity-list-link(ui-sref="{{entityNavState}}") {{contentType.getName()}}
             td.cell-description
@@ -65,11 +75,3 @@
               a.entity-list-link(ui-sref="{{entityNavState}}")
                 .status-label {{statusLabel(contentType)}}
                 .status-bar
-
-    .advice(ng-show="!visibleContentTypes.length")
-      .advice__frame
-        i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
-        header.advice__title There are no matches to your search
-
-.advice(ng-show="empty")
-  include ../../shared/create_content_type_advice

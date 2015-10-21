@@ -72,7 +72,7 @@ angular.module('cf.ui')
     var $trigger = getMenuTrigger($(event.target));
     var toOpen;
 
-    if ($trigger) {
+    if ($trigger && !elementDisabled($trigger)) {
       var menu = getAttachedMenu($trigger);
       event.preventDefault();
       if (!menu.data('menuOpen')) {
@@ -114,6 +114,10 @@ angular.module('cf.ui')
     return $el && $el.length ? $el.first() : null;
   }
 
+  function elementDisabled ($el) {
+    return $el.attr('aria-disabled') === 'true' || $el.prop('disabled');
+  }
+
 
   function repositionMenu($menu) {
     var position = $menu.attr('cf-context-menu');
@@ -150,8 +154,8 @@ angular.module('cf.ui')
         at: 'center bottom+8'
       },
       'bottom-right': {
-        my: 'left top',
-        at: 'left bottom+13'
+        my: 'right top',
+        at: 'right bottom+13'
       },
       'bottom-left': {
         my: 'left top',

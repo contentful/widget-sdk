@@ -23,8 +23,10 @@
   <div class="client" ng-controller="ClientController" ng-init="initClient()">
     <cf-app-container class="app-container ng-hide" ng-show="user"></cf-app-container>
     <div class="client-loading" ng-if="!user">
-      <div class="client-loading__icon fa fa-cog fa-spin"></div>
-      <div class="client-loading__text">Loading Contentful...</div>
+      <div class="client-loading__container">
+        <div class="client-loading__icon fa fa-cog fa-spin"></div>
+        <div class="client-loading__text">Loading Contentful...</div>
+      </div>
     </div>
   </div>
   <!-- inject:js -->

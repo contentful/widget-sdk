@@ -31,6 +31,24 @@ describe('context menu', function () {
       expect(this.$body.find('[cf-context-menu]').is(':visible')).toBe(true);
     });
 
+    it('is not opened by aria-disabled trigger', function () {
+      this.$body.find('[cf-context-menu-trigger]').attr('aria-disabled', 'true');
+      expect(this.$body.find('[cf-context-menu]').is(':visible')).toBe(false);
+      this.$body.find('button[cf-context-menu-trigger]').click();
+      expect(this.$body.find('[cf-context-menu]').is(':visible')).toBe(false);
+    });
+
+    it('is not opened by button disabled trigger', function () {
+      var trigger = this.$body.find('button[cf-context-menu-trigger]');
+      trigger.prop('disabled', true);
+      expect(this.$body.find('[cf-context-menu]').is(':visible')).toBe(false);
+
+      var inner = $('<div>inner not disabled</div>');
+      trigger.append(inner);
+      inner.click();
+      expect(this.$body.find('[cf-context-menu]').is(':visible')).toBe(false);
+    });
+
     it('is closed by outside click', function () {
       this.$body.find('button[cf-context-menu-trigger]').click();
       expect(this.$body.find('[cf-context-menu]').is(':visible')).toBe(true);

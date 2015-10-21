@@ -175,7 +175,7 @@ angular.module('contentful')
     },
 
     notResolvable: function (error) {
-      var type = dotty.get(error.value, 'sys.linkType');
+      var type = dotty.get(error, 'link.linkType') || 'Entity';
       return 'Linked ' + type + ' does not exist';
     },
 

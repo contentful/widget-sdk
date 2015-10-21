@@ -28,7 +28,8 @@ angular.module('contentful').controller('AssetListActionsController', ['$scope',
   });
 
   var every = function (predicate) {
-    return _.every(getSelected(), function (asset) {
+    var selected = getSelected();
+    return !_.isEmpty(selected) && _.every(selected, function (asset) {
       return asset[predicate]();
     });
   };

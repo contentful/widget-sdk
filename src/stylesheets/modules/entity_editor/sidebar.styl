@@ -1,0 +1,142 @@
+@import '../mixins/spinner'
+
+$entity-sidebar-content()
+  $stretch(0, 0, 0, 0)
+  padding: $rhythm(1) 1.6rem
+  overflow-y: auto
+  overflow-x: hidden
+  border-left: 1px solid $colors.element-darkest
+
+
+.entity-sidebar__info-panel
+  $entity-sidebar-content()
+  z-index: 1
+  transition: transform .3s cubic-bezier(.38,.54,.5,.99)
+  transform: translateX(100%)
+
+  &.x--show
+    transform: translateX(0)
+
+
+.entity-sidebar
+  $entity-sidebar-content()
+
+  &__heading
+    margin-top: $rhythm(2.5)
+    &:first-of-type
+      margin-top: 0
+    font-size: .75rem
+    font-weight: 500
+    text-transform: uppercase
+    color: $colors.text-light
+    line-height: 2
+    border-bottom: 1px solid $colors.element-dark
+    letter-spacing: 1px
+    margin-bottom: $rhythm(1.5)
+
+  &__state-select
+    margin-bottom: $rhythm(0.5)
+
+
+  &__state
+    margin-bottom: $rhythm(0.5)
+    color: $colors.text-mid
+
+  &__state-indicator
+    // TODO The alignment is similar to the spinner
+    display: inline-block
+    border-radius: 50%
+    width: 14px
+    height: 14px
+    vertical-align: middle
+    margin-bottom: 3px
+    margin-right: 0.4rem
+    &[data-state="archived"]
+      background: $colors.red-light
+      border: 1px solid $colors.red-dark
+    &[data-state="draft"]
+      background: $colors.orange-light
+      border: 1px solid $colors.orange-dark
+    &[data-state="published"]
+      background: $colors.green-light
+      border: 1px solid $colors.green-dark
+    &[data-state="changes"]
+      background: $colors.blue-light
+      border: 1px solid $colors.blue-dark
+
+  &__update
+    width: 100%
+
+  &__status-more
+    color: $colors.text-light
+    margin-top: $rhythm(1)
+    display: flex
+
+  &__saving-spinner
+    display: inline-block
+    vertical-align: middle
+    margin-bottom: 2px
+
+    +$spinner-base()
+      display: block
+
+    &.x--active
+      +$spinner-active()
+        margin-right: 5px
+
+  &__last-saved
+    text-overflow: ellipsis
+    overflow: hidden
+
+  &__revert
+    margin-left: auto
+    flex-shrink: 0
+
+
+  &__translation-list
+    display: flex
+    flex-wrap: wrap
+
+  &__translation-pill,
+  &__translation-change
+    margin-bottom: $rhythm(0.5)
+
+  &__translation-pill
+    $text-truncate()
+
+    color: $colors.text-mid
+    padding: 1px 0 0 2ex
+    line-height: 2rem
+    height: 2rem
+
+    background: $colors.element-mid
+    &.x--default
+      background: $colors.element-light
+      padding-right: 2ex
+
+    border-radius: 2px
+    margin-right: 1rem
+
+  &__translation-remove
+    $button-reset()
+    vertical-align: middle
+    position: relative
+    height: 100%
+    padding: 0 0.7rem 0 0.5rem
+    top: -1px
+    outline: 0
+
+    path
+      fill: $colors.text-mid
+
+    &:hover path
+      fill: $colors.text-dark
+
+  &__no-users
+    color: $colors.text-light
+
+  &__users
+    display: flex
+    flex-wrap: wrap
+    > img
+      display: block

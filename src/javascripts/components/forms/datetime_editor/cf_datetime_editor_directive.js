@@ -107,7 +107,7 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$injector', functio
 
       function changeHandler() {
         var value = buildValue(scope.localDate, scope.localTime, scope.ampm, scope.tzOffset);
-        if (scope.otSubDoc.changeValue) {
+        if (scope.otSubDoc && scope.otSubDoc.changeValue) {
           scope.otSubDoc.changeValue(value)
           .then(function() {
               ngModelCtrl.$setViewValue(value);

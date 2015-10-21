@@ -1,12 +1,13 @@
-.tab-header
-  .tab-header__title
-    h1 Locales
-      a(cf-knowledge-base-icon
-        analytics-event="locales"
-        href="https://support.contentful.com/hc/en-us/articles/200513368-What-is-a-Locale-")
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-ct")
+  h1.workbench-header__title
+    | Locales
+    cf-knowledge-base.workbench-header__kb-link(target="locale")
 
-  .tab-header__actions.add-entity
-    button.cfnext-btn-action(ng-click="entityCreationController.newLocale()" ng-show="localesUsageState == 'oneLocaleUsed' || localesUsageState == 'moreThanOneLocaleUsed'")
+  .workbench-header__actions
+    button.cfnext-btn-action.add-entity(
+      ng-click="entityCreationController.newLocale()"
+      ng-show="localesUsageState == 'oneLocaleUsed' || localesUsageState == 'moreThanOneLocaleUsed'")
       cf-icon.btn-icon.inverted(name="plus")
       | Add Locale
     p.add-entity__advice(ng-show="localesUsageState == 'localesLimitReached'")
@@ -14,48 +15,45 @@
     p.add-entity__advice(ng-show="localesUsageState == 'noMultipleLocales'")
       | Your plan does not include multiple locales. <a ui-sref="{{accountUpgradeState}}">Upgrade for more</a>.
 
-.tab-main
-  .without-left-nav
-    table.result-list.main-results.main-header
-      thead
-        tr
-          th.cell-name Locale
-          th.cell-status
-            th.cell-enabled-for Enabled for
-    .main-results-wrapper
-      table.result-list.main-results
-        tbody
-          tr(ng-repeat="locale in locales track by locale.getId()"
-              ng-init="entityNavState='spaces.detail.settings.locales.detail({ localeId: locale.getId() })'"
-              ui-sref="{{entityNavState}}")
-            td.cell-name
-              a.entity-list-link(ui-sref="{{entityNavState}}") {{locale.getName()}} ({{locale.getCode()}})
-            td.cell-status
-              a.status-label.entity-list-link(ui-sref="{{entityNavState}}") {{locale.isDefault() ? "Default" : ""}}
-            td.cell-enabled-for
-              a.entity-list-link(ui-sref="{{entityNavState}}") {{getEnabledInfo(locale)}}
+.workbench-main.x--content
+  table.result-list.main-results.main-header
+    thead
+      tr
+        th.cell-name Locale
+        th.cell-status
+        th.cell-enabled-for Enabled for
+  .main-results-wrapper
+    table.result-list.main-results
+      tbody
+        tr(ng-repeat="locale in locales track by locale.getId()"
+            ng-init="entityNavState='spaces.detail.settings.locales.detail({ localeId: locale.getId() })'"
+            ui-sref="{{entityNavState}}")
+          td.cell-name
+            a.entity-list-link(ui-sref="{{entityNavState}}") {{locale.getName()}} ({{locale.getCode()}})
+          td.cell-status
+            a.entity-list-link(ui-sref="{{entityNavState}}") {{locale.isDefault() ? "Default" : ""}}
+          td.cell-enabled-for
+            a.entity-list-link(ui-sref="{{entityNavState}}") {{getEnabledInfo(locale)}}
 
-      .advice.locale-list__advice
-        .advice__frame.locale-list__advice-frame
+    .advice.locale-list__advice
+      .advice__frame.locale-list__advice-frame
 
-          div(ng-if="localesUsageState == 'oneLocaleUsed'")
-            h1.advice__title Contentful enables publishing content in multiple languages
-            p.advice__description To begin translating your content, add a second locale – for example, <strong>French (<code>fr-FR</code>)</strong>
-            p.advice__description Note that locale settings apply space-wide: the locales that you create will affect only the current space
+        div(ng-if="localesUsageState == 'oneLocaleUsed'")
+          h1.advice__title Contentful enables publishing content in multiple languages
+          p.advice__description To begin translating your content, add a second locale – for example, <strong>French (<code>fr-FR</code>)</strong>
+          p.advice__description Note that locale settings apply space-wide: the locales that you create will affect only the current space
 
-          div(ng-if="localesUsageState == 'moreThanOneLocaleUsed'")
-            h1.advice__title Contentful enables publishing content in multiple languages
-            p.advice__description To enable localization, go to the relevant content type, open field settings, and enable translation for each necessary field
-            p.advice__description After that the content editor will display multiple input fields for each locale
+        div(ng-if="localesUsageState == 'moreThanOneLocaleUsed'")
+          h1.advice__title Contentful enables publishing content in multiple languages
+          p.advice__description To enable localization, go to the relevant content type, open field settings, and enable translation for each necessary field
+          p.advice__description After that the content editor will display multiple input fields for each locale
 
-          div(ng-if="localesUsageState == 'localesLimitReached'")
-            h1.advice__title You have reached the organization locales limit
-            p.advice__description Your current subscription plan <strong>({{getSubscriptionPlan().name}})</strong> enables a maximum of {{getPlanLocalesLimit()}} locales per organization
-            p.advice__description Please <a ui-sref="{{accountUpgradeState}}">upgrade</a> if you need more locales or delete some of the existing ones
+        div(ng-if="localesUsageState == 'localesLimitReached'")
+          h1.advice__title You have reached the organization locales limit
+          p.advice__description Your current subscription plan <strong>({{getSubscriptionPlan().name}})</strong> enables a maximum of {{getPlanLocalesLimit()}} locales per organization
+          p.advice__description Please <a ui-sref="{{accountUpgradeState}}">upgrade</a> if you need more locales or delete some of the existing ones
 
-          div(ng-if="localesUsageState == 'noMultipleLocales'")
-            h1.advice__title Your plan does not include multiple locales
-            p.advice__description Your current subscription plan <strong>({{getSubscriptionPlan().name}})</strong> does not support localizing content
-            p.advice__description Please <a ui-sref="{{accountUpgradeState}}">upgrade</a> to one of our paid plans to enable this feature
-
-
+        div(ng-if="localesUsageState == 'noMultipleLocales'")
+          h1.advice__title Your plan does not include multiple locales
+          p.advice__description Your current subscription plan <strong>({{getSubscriptionPlan().name}})</strong> does not support localizing content
+          p.advice__description Please <a ui-sref="{{accountUpgradeState}}">upgrade</a> to one of our paid plans to enable this feature

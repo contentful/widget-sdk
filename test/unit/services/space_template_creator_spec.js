@@ -3,17 +3,16 @@
 describe('Space Template creation service', function () {
   var spaceTemplateCreator, creator, $q, $rootScope, stubs;
   var attemptedTemplate, spaceContext;
+  var openShareJSDoc;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'ctPublish', 'assetPublish', 'assetProcess', 'entryPublish', 'progressSuccess', 'progressError',
-        'success', 'error', 'open', 'on', 'timeout', 'timeoutCancel', 'retrySuccess'
+        'success', 'error', 'on', 'timeout', 'timeoutCancel', 'retrySuccess'
       ]);
 
-      $provide.value('ShareJS', {
-        open: stubs.open
-      });
+      $provide.value('ShareJS', {});
 
       stubs.timeout.cancel = stubs.timeoutCancel;
       $provide.value('$timeout', stubs.timeout);
@@ -22,6 +21,9 @@ describe('Space Template creation service', function () {
       spaceTemplateCreator = $injector.get('spaceTemplateCreator');
       $q = $injector.get('$q');
       $rootScope = $injector.get('$rootScope');
+      var ShareJS = $injector.get('ShareJS');
+      openShareJSDoc = $q.defer();
+      ShareJS.open = sinon.stub().returns(openShareJSDoc.promise);
     });
   });
 
@@ -107,11 +109,12 @@ describe('Space Template creation service', function () {
       });
       $rootScope.$digest();
 
-      stubs.open.yield(null, {
+      openShareJSDoc.resolve({
         on: stubs.on,
         removeListener: sinon.stub(),
         close: sinon.stub()
       });
+      this.$apply();
       stubs.on.yield([
         {p: ['fields', 'file'], oi: {url: 'url'}}
       ]);
@@ -210,7 +213,6 @@ describe('Space Template creation service', function () {
         spaceContext.space.createEntry.returns($q.when({sys: {id: 'e3'}, publish: stubs.entryPublish}));
         stubs.entryPublish.returns($q.when());
 
-        stubs.open.reset();
         stubs.on.reset();
         stubs.timeout.reset();
 
@@ -218,11 +220,12 @@ describe('Space Template creation service', function () {
         .then(stubs.retrySuccess);
         $rootScope.$digest();
 
-        stubs.open.yield(null, {
+        openShareJSDoc.resolve({
           on: stubs.on,
           removeListener: sinon.stub(),
           close: sinon.stub()
         });
+        this.$apply();
         stubs.on.yield([
           {p: ['fields', 'file'], oi: {url: 'url'}}
         ]);

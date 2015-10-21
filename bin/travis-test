@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ev
+set -e
 
 commit_message=`git log $TRAVIS_COMMIT -n 1`
 

@@ -43,26 +43,6 @@ describe('The Entry list directive', function () {
     container.remove();
   });
 
-  function makeActionTest(button, action) {
-    it(button+' button not shown', function () {
-      scope.permissionController.get.withArgs(action+'Entry', 'shouldHide').returns(true);
-      compileElement();
-      expect(container.find('.tab-actions .'+button)).toBeNgHidden();
-    });
-
-    it(button+' button shown', function () {
-      compileElement();
-      expect(container.find('.tab-actions .'+button)).not.toBeNgHidden();
-    });
-  }
-
-  makeActionTest('duplicate', 'create');
-  makeActionTest('delete', 'delete');
-  makeActionTest('unarchive', 'unarchive');
-  makeActionTest('archive', 'archive');
-  makeActionTest('unpublish', 'unpublish');
-  makeActionTest('publish', 'publish');
-
   describe('list of entries is filtered', function() {
     var list;
     var idStub1, idStub2, idStub3, nameStub, listFilterStub;

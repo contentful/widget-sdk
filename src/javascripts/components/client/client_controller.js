@@ -23,11 +23,12 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var TheStore           = $injector.get('TheStore');
   var TheLocaleStore     = $injector.get('TheLocaleStore');
   var moment             = $injector.get('moment');
+  var OrganizationList   = $injector.get('OrganizationList');
 
   $controller('TrialWatchController', {$scope: $scope});
 
-  $scope.permissionController = $controller('PermissionController', {$scope: $scope});
-  $scope.featureController    = $controller('FeatureController'   , {$scope: $scope});
+  $scope.permissionController = $controller('PermissionController');
+  $scope.featureController = $controller('FeatureController', {$scope: $scope});
   $scope.spaceContext = spaceContext;
 
   $scope.preferences = {
@@ -102,9 +103,10 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     }
   }
 
+  // @todo this shouldn't be $watch handler - it can be called by `setTokenDataOnScope`
   function userWatchHandler(user) {
     if(user){
-      $scope.organizations = _.pluck(user.organizationMemberships, 'organization');
+      OrganizationList.resetWithUser(user);
       if (features.shouldAllowAnalytics()) {
         logger.enable();
         analytics.enable();
@@ -224,13 +226,14 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function showSpaceTemplatesModal(organizationId) {
-    var scope = $scope.$new();
-    setOrganizationsOnScope(scope, organizationId);
+    var scope = _.extend($scope.$new(), {
+      organizations: OrganizationList.getWithOnTop(organizationId)
+    });
     analytics.track('Viewed Space Template Selection Modal');
     modalDialog.open({
       title: 'Space templates',
       template: 'space_templates_dialog',
-      scope: $scope,
+      scope: scope,
       backgroundClose: false
     })
     .promise
@@ -242,17 +245,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       }
     })
     .catch(refreshContentTypes);
-  }
-
-  function setOrganizationsOnScope(scope, organizationId){
-    if (organizationId) {
-      scope.organizations = scope.organizations.concat();
-      scope.organizations.sort(function (a, b) {
-        if (a.sys.id === organizationId) return -1;
-        if (b.sys.id === organizationId) return 1;
-        else return 0;
-      });
-    }
   }
 
   function refreshContentTypes() {

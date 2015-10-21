@@ -9,7 +9,7 @@ angular.module('contentful')
 
   return {
     template: JST.iframe_view(),
-    restrict: 'A',
+    restrict: 'E',
     scope: true,
     link: function (scope, elem) {
       scope.iframeId = 'accountViewFrame';

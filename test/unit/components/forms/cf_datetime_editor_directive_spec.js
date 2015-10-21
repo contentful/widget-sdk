@@ -85,6 +85,12 @@ describe('DateTime Editor', function () {
     expectScope('2013-12-24', '05:23', '+03:00');
   });
 
+  it('should sets model value without otSubDoc', function () {
+    delete scope.otSubDoc;
+    enter('2013-12-24', '5:23', '+03:00');
+    expectScope('2013-12-24', '05:23', '+03:00');
+  });
+
   it('should preserve timezones during parsing', function () {
     scope.fieldData.value = '2013-12-24T05:23:00+03:00';
     scope.$apply();

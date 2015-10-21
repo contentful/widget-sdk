@@ -62,7 +62,7 @@ describe('The ApiKey list directive', function () {
   it('save button is disabled', function () {
     scope.permissionController.get.withArgs('createApiKey', 'shouldDisable').returns(true);
     compileElement();
-    expect(container.find('.advice button').attr('disabled')).toBe('disabled');
+    expect(container.find('.cfnext-advice button').attr('disabled')).toBe('disabled');
   });
 
   it('save button is enabled', function () {

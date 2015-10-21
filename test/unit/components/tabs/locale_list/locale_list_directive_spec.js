@@ -87,7 +87,7 @@ describe('The Locale list directive', function () {
 
   it('the tab header add button is not shown', function () {
     this.compileElement();
-    expect(this.container.find('.add-entity button')).toBeNgHidden();
+    expect(this.container.find('button.add-entity')).toBeNgHidden();
   });
 
   it('the tab header add button is shown', function () {
@@ -95,7 +95,7 @@ describe('The Locale list directive', function () {
     this.scope.spaceContext.space.data.organization.subscriptionPlan.limits.permanent.locale = 10;
     this.scope.spaceContext.space.data.organization.subscriptionPlan.limits.features.multipleLocales = true;
     this.compileElement();
-    expect(this.container.find('.add-entity button')).not.toBeNgHidden();
+    expect(this.container.find('button.add-entity')).not.toBeNgHidden();
   });
 
   describe('list of locales', function () {

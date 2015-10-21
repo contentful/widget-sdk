@@ -10,6 +10,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
   var spaceContext     = $injector.get('spaceContext');
   var userAgent        = $injector.get('userAgent');
+  var $state           = $injector.get('$state');
 
   var notify = notifier(function getTitle () {
     return truncate($scope.apiKey.getName(), 50);
@@ -115,9 +116,13 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   function save () {
     return $scope.apiKey.save()
     .then(function(){
-      $scope.apiKeyForm.$setPristine();
+      // The form might already have been destroyed. This happens when
+      // navigating away before the save is successfull
+      if ($scope.apiKeyForm) {
+        $scope.apiKeyForm.$setPristine();
+      }
       $scope.context.dirty = false;
-      $scope.$state.go('spaces.detail.api.keys.detail', { apiKeyId: $scope.apiKey.getId() })
+      $state.go('spaces.detail.api.keys.detail', { apiKeyId: $scope.apiKey.getId() })
       .finally(notify.saveSuccess);
     })
     .catch(notify.saveFail);

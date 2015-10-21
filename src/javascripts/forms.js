@@ -184,6 +184,10 @@ angular.module('cf.forms', [])
     link: function (scope, elem, attrs, formCtrl) {
       scope.$form = formCtrl;
 
+      if ('showErrors' in attrs) {
+        formCtrl.showErrors = true;
+      }
+
       var removeControl = formCtrl.$removeControl;
       formCtrl.$removeControl = function (ctrl) {
         removeControl.call(this, ctrl);
