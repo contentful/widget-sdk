@@ -71,10 +71,6 @@ $entity-sidebar-content()
     color: $colors.text-light
     margin-top: $rhythm(1)
     display: flex
-    justify-content: space-between
-    > button
-      margin: 0
-      flex-shrink: 0
 
   &__saving-spinner
     display: inline-block
@@ -88,10 +84,14 @@ $entity-sidebar-content()
       +$spinner-active()
         margin-right: 5px
 
-
   &__last-saved
     text-overflow: ellipsis
     overflow: hidden
+
+  &__revert
+    margin-left: auto
+    flex-shrink: 0
+
 
   &__translation-list
     display: flex
