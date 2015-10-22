@@ -506,7 +506,7 @@ angular.module('contentful').config([
       parent: 'spaces.detail.settings.roles.list',
       label: '{{ context.title + (context.dirty ? "*" : "") }}'
     },
-    template: '<cf-role-editor />',
+    template: '<cf-role-editor class="workbench role-editor" />',
     controller: ['$scope', function ($scope) {
       $scope.context = { isNew: true };
       $scope.role = {};
@@ -524,7 +524,7 @@ angular.module('contentful').config([
         return RoleRepository.getInstance(space).get($stateParams.roleId);
       }]
     },
-    template: '<cf-role-editor />',
+    template: '<cf-role-editor class="workbench role-editor" />',
     controller: ['$scope', 'role', function ($scope, role) {
       $scope.context = {};
       $scope.role = role;

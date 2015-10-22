@@ -1,8 +1,9 @@
-.workbench
-  header.workbench-header
-    h1.workbench-header__title Role: {{ context.title }}
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-settings")
+  h1.workbench-header__title {{ context.title }}
 
-  .workbench-main
+.workbench-main
+  .workbench-main__middle-content
     form.workbench-main__middle-content(name="roleForm")
       .cfnext-form__field
         label Name
@@ -28,14 +29,20 @@
         input(id="opt_manage_settings" type="checkbox" ng-model="role.permissions.settings.manage")
         label(for="opt_manage_settings") Manage settings
       .cfnext-form__field
-        label Policies JSON
+        label Policies JSON (does not synchronize to backend yet)
         textarea.cfnext-form__input--full-size(rows="10")
           | {{ role.policies | json }}
 
-  .workbench-actions
-    button.cfnext-btn-secondary-action(ui-command="cancel")
-      | Cancel
-    button.cfnext-btn-secondary-action(ui-command="delete")
-      | Delete
-    button.cfnext-btn-primary-action(type="submit" ui-command="save")
-      | Save
+  .workbench-main__entity-sidebar
+    .entity-sidebar
+      p
+        button.cfnext-btn-primary-action(type="submit" ui-command="save")
+          | Save changes
+      h2.entity-sidebar__heading
+        | Need more complex roles?
+      p
+        | If you need define a more complex role, as translator for a specific language or person who can't edit meta-data, visit our knowledge base.
+      h2.entity-sidebar__heading
+        | Hint from our staff
+      p
+        | Stephen says: "Anything that is not allowed, is denied".
