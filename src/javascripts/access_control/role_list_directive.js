@@ -17,7 +17,7 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
   var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(space);
 
   $scope.sref = createSref;
-  $scope.notImplemented = function () { alert('Not implemented yet.'); };
+  $scope.notImplemented = function () { window.alert('Not implemented yet.'); };
 
   $q.all({
     memberships: spaceMembershipRepo.getAll(),

@@ -1,6 +1,6 @@
 header.workbench-header
   cf-icon.workbench-header__icon(name="page-settings")
-  h1.workbench-header__title Users ({{ users.length || 0 }})
+  h1.workbench-header__title Users ({{ count || 0 }})
   .workbench-header__actions
     select.cfnext-select-box.user-list__view-selector(ng-model="selectedListView")
       option(value="name") Show users in alphabetical order
@@ -22,7 +22,7 @@ header.workbench-header
           .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="User Actions")
             cf-icon.context-menu__arrow.x--top-right-tight(name="arrow-up")
             ul.context-menu__items
-              li(role="menuitem" ng-click="removeFromSpace(user.id)") Remove from this space
+              li(role="menuitem" ng-click="removeFromSpace(user)") Remove from this space
 
   .workbench-main__entity-sidebar
     .entity-sidebar
