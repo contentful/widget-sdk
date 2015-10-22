@@ -10,40 +10,29 @@ angular.module('contentful').directive('cfRoleList', function () {
 
 angular.module('contentful').controller('RoleListController', ['$scope', '$injector', function ($scope, $injector) {
 
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var space              = $injector.get('spaceContext').space;
-  var $q                 = $injector.get('$q');
-  var RoleRepository     = $injector.get('RoleRepository').getInstance(space);
+  var ReloadNotification  = $injector.get('ReloadNotification');
+  var space               = $injector.get('spaceContext').space;
+  var $q                  = $injector.get('$q');
+  var roleRepo            = $injector.get('RoleRepository').getInstance(space);
+  var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(space);
+
+  $scope.sref = createSref;
+  $scope.notImplemented = function () { alert('Not implemented yet.'); };
 
   $q.all({
-    memberships: load('space_memberships'),
-    roles: RoleRepository.getAll()
+    memberships: spaceMembershipRepo.getAll(),
+    roles: roleRepo.getAll()
   }).then(function (data) {
     $scope.memberships = countMemberships(data.memberships);
-    $scope.roles = prepareRoles(data.roles);
+    $scope.roles = data.roles;
     $scope.context.ready = true;
   })
   .catch(ReloadNotification.apiErrorHandler);
 
-  function load(what) {
-    return space.endpoint(what).payload({ limit: 100 }).rejectEmpty().get();
-  }
-
-  function prepareRoles(rolesData) {
-    return _.map(rolesData.items, function (role) {
-      return {
-        id: role.sys.id,
-        sref: createSref('detail', role.sys.id),
-        name: role.name,
-        description: role.description
-      };
-    });
-  }
-
-  function countMemberships(membershipsData) {
+  function countMemberships(memberships) {
     var counts = { admin: 0 };
 
-    _.forEach(membershipsData.items, function (item) {
+    _.forEach(memberships, function (item) {
       if (item.admin) { counts.admin += 1; }
       _.forEach(item.roles || [], function (role) {
         counts[role.sys.id] = counts[role.sys.id] || 0;
@@ -54,8 +43,9 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
     return counts;
   }
 
-  function createSref(stateName, paramValue) {
+  function createSref(role, stateName) {
     return 'spaces.detail.settings.roles.' +
-      stateName + '({ roleId: \'' + paramValue + '\' })';
+      (stateName || 'detail') +
+      '({ roleId: \'' + role.sys.id + '\' })';
   }
 }]);

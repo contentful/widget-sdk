@@ -26,7 +26,9 @@ angular.module('contentful').factory('RoleRepository', [function () {
     };
 
     function getAll() {
-      return getBaseCall().get();
+      return getBaseCall()
+      .payload({ limit: 100 })
+      .get().then(function (res) { return res.items; });
     }
 
     function get(id) {
@@ -66,7 +68,7 @@ angular.module('contentful').factory('RoleRepository', [function () {
 
   function handleRole(role) {
     role.permissions = rewritePermissions(role.permissions);
-    role.policies = [];
+    role.policies = []; // @todo handle roles
     return role;
   }
 

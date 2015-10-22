@@ -10,10 +10,12 @@ angular.module('contentful').directive('cfUserList', function () {
 
 angular.module('contentful').controller('UserListController', ['$scope', '$injector', function ($scope, $injector) {
 
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var space              = $injector.get('spaceContext').space;
-  var $q                 = $injector.get('$q');
-  var modalDialog        = $injector.get('modalDialog');
+  var ReloadNotification  = $injector.get('ReloadNotification');
+  var space               = $injector.get('spaceContext').space;
+  var $q                  = $injector.get('$q');
+  var modalDialog         = $injector.get('modalDialog');
+  var roleRepo            = $injector.get('RoleRepository').getInstance(space);
+  var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(space);
 
   var adminMap;
   var membershipMap;
@@ -41,14 +43,14 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     }).promise.then(remove);
 
     function remove() {
-      return del(membershipMap[userId]).then(reload);
+      return spaceMembershipRepo.remove(membershipMap[userId]).then(reload);
     }
   };
 
   function reload() {
     return $q.all({
-      memberships: load('space_memberships'),
-      roles: load('roles'),
+      memberships: spaceMembershipRepo.getAll(),
+      roles: roleRepo.getAll(),
       users: space.getUsers()
     }).then(function (data) {
       prepareMaps(data.memberships, data.roles);
@@ -58,14 +60,6 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     })
     .catch(ReloadNotification.apiErrorHandler)
     .catch(function () { ReloadNotification.trigger(); });
-  }
-
-  function load(what) {
-    return space.endpoint(what).payload({ limit: 100 }).rejectEmpty().get();
-  }
-
-  function del(id) {
-    return space.endpoint('space_memberships', id).delete();
   }
 
   function prepareUsers(users) {
@@ -102,16 +96,16 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     roleNameMap = {};
     userRolesMap = {};
 
-    _.forEach(memberships.items, function (membership) {
+    _.forEach(memberships, function (membership) {
       adminMap[membership.user.sys.id] = membership.admin;
       membershipMap[membership.user.sys.id] = membership.sys.id;
     });
 
-    _.forEach(roles.items, function (role) {
+    _.forEach(roles, function (role) {
       roleNameMap[role.sys.id] = role.name;
     });
 
-    _.forEach(memberships.items, function (membership) {
+    _.forEach(memberships, function (membership) {
       var userId = membership.user.sys.id;
       if (!userRolesMap[userId]) { userRolesMap[userId] = []; }
       _.forEach(membership.roles, function (role) {
