@@ -18,8 +18,14 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(space);
   var listHandler         = $injector.get('UserListHandler');
 
-  $scope.selectedListView = 'name';
+  $scope.viewLabels = {
+    name: 'Show users in alphabetical order',
+    role: 'Show users grouped by role'
+  };
+
+  $scope.selectedView     = 'name';
   $scope.removeFromSpace  = removeFromSpace;
+  $scope.notImplemented   = function () { window.alert('Not implemented yet.'); };
 
   reload().catch(ReloadNotification.basicErrorHandler);
 
