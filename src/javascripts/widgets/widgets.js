@@ -87,6 +87,7 @@ angular.module('contentful')
 
   return {
     get:                 getWidget,
+    // TODO remove this method. It is only used for testing
     forField:            typesForField,
     getAvailable:        getAvailable,
     buildRenderable:     buildRenderable,
@@ -146,14 +147,9 @@ angular.module('contentful')
    */
   function typesForField(field) {
     var fieldType = detectFieldType(field);
-    var widgets =  _(WIDGETS)
-    .pick(function (widget) {
+    var widgets = _.filter(WIDGETS, function (widget) {
       return _.contains(widget.fieldTypes, fieldType);
-    })
-    .map(function (widget, widgetId) {
-      return _.extend({id: widgetId}, widget);
-    })
-    .valueOf();
+    });
     if (_.isEmpty(widgets)) {
       return $q.reject(new Error('Field type '+fieldType+' is not supported by any widget.'));
     } else {
@@ -309,7 +305,9 @@ angular.module('contentful')
   }
 
   function registerWidget(id, descriptor) {
-    WIDGETS[id] = WIDGETS[id] || descriptor;
+    if (!(id in WIDGETS)) {
+      WIDGETS[id] = _.extend(descriptor, {id: id});
+    }
   }
 
   /**
