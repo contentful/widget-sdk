@@ -26,14 +26,14 @@ header.workbench-header
             cf-icon.context-menu__arrow.x--top-right-tight(name="arrow-up")
             ul.context-menu__items
               li(role="menuitem" ng-click="removeFromSpace(user)") Remove from this space
-              li(role="menuitem" ng-click="notImplemented()") Change a role
+              li(role="menuitem" ng-click="changeRole(user)") Change a role
 
   .workbench-main__entity-sidebar
     .entity-sidebar
       h2.entity-sidebar__heading
         | Invite users
       p
-        | You are currently using <em>x</em> out of <em>y</em> users quota.&nbsp;
+        | You are currently using 5 out of 10 users quota.&nbsp;
         a(href="") Increase your plan quotas here
         | .
       button.cfnext-btn-primary-action(ng-click="notImplemented()")

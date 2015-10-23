@@ -25,6 +25,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
 
   $scope.selectedView     = 'name';
   $scope.removeFromSpace  = removeFromSpace;
+  $scope.changeRole       = changeRole;
   $scope.notImplemented   = function () { window.alert('Not implemented yet.'); };
 
   reload().catch(ReloadNotification.basicErrorHandler);
@@ -37,11 +38,36 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
 
     modalDialog.open({
       template: 'admin_removal_confirm_dialog',
-      scopeData: { user: user, input: {} }
+      scopeData: {
+        user: user,
+        input: {}
+      }
     }).promise.then(remove);
 
     function remove() {
-      spaceMembershipRepo.remove(user.membershipId)
+      spaceMembershipRepo.remove(user.membership)
+      .then(reload)
+      .catch(ReloadNotification.basicErrorHandler);
+    }
+  }
+
+  function changeRole(user) {
+    modalDialog.open({
+      template: 'role_change_dialog',
+      scopeData: {
+        user: user,
+        input: {},
+        roleOptions: listHandler.getRoleOptions()
+      }
+    }).promise.then(change);
+
+    function change(roleId) {
+      var method = 'changeRoleTo';
+      if (listHandler.isAdminRole(roleId)) {
+        method = 'changeRoleToAdmin';
+      }
+
+      return spaceMembershipRepo[method](user.membership, roleId)
       .then(reload)
       .catch(ReloadNotification.basicErrorHandler);
     }

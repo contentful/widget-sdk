@@ -4,6 +4,7 @@ angular.module('contentful').factory('UserListHandler', [function () {
 
   var ADMIN_ROLE_ID          = '__cf_builtin_admin';
   var ADMIN_ROLE_NAME        = 'Administrator';
+  var ADMIN_OPT              = { id: ADMIN_ROLE_ID, name: ADMIN_ROLE_NAME };
   var UNKNOWN_ROLE_NAME      = 'Unknown';
   var NOT_DEFINED_USER_NAME  = 'Name not defined';
 
@@ -16,7 +17,9 @@ angular.module('contentful').factory('UserListHandler', [function () {
   return {
     reset: reset,
     getGroupedUsers: getGroupedUsers,
-    isLastAdmin: isLastAdmin
+    getRoleOptions: getRoleOptions,
+    isLastAdmin: isLastAdmin,
+    isAdminRole: isAdminRole
   };
 
   function reset(data) {
@@ -28,7 +31,7 @@ angular.module('contentful').factory('UserListHandler', [function () {
     _.forEach(data.memberships, function (membership) {
       var userId = membership.user.sys.id;
       adminMap[userId] = membership.admin;
-      membershipMap[userId] = membership.sys.id;
+      membershipMap[userId] = membership;
 
       userRolesMap[userId] = userRolesMap[userId] || [];
       _.forEach(membership.roles, function (role) {
@@ -51,7 +54,7 @@ angular.module('contentful').factory('UserListHandler', [function () {
 
       return {
         id: id,
-        membershipId: membershipMap[id],
+        membership: membershipMap[id],
         isAdmin: adminMap[id],
         roles: userRolesMap[id],
         roleNames: getRoleNamesForUser(id),
@@ -69,13 +72,23 @@ angular.module('contentful').factory('UserListHandler', [function () {
   }
 
   function getRoleName(id) {
-    if (id === ADMIN_ROLE_ID) { return ADMIN_ROLE_NAME; }
+    if (isAdminRole(id)) { return ADMIN_ROLE_NAME; }
     return roleNameMap[id] || UNKNOWN_ROLE_NAME;
+  }
+
+  function isAdminRole(id) {
+    return id === ADMIN_ROLE_ID;
   }
 
   function isLastAdmin(userId) {
     var adminCount = _.filter(adminMap, _.identity).length;
     return adminMap[userId] && adminCount < 2;
+  }
+
+  function getRoleOptions() {
+    return [ADMIN_OPT].concat(_.map(roleNameMap, function (name, id) {
+      return { id: id, name: name };
+    }));
   }
 
   function getGroupedUsers() {
