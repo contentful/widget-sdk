@@ -43,8 +43,6 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
    * @property {otSubDoc} doc
    * @property {function()} getValue
    * Returns the value at the path in the document or undefined if the path is not found
-   * @property {function()} changeValue
-   * Updates the value at the path to the new value. Returns a promise
    * @property {function()} changeStringValue
    * Update the string at the path to a new string.
    * Calculates the string difference using the algorithm from the ShareJS text binding to generate a insert and/or delete operation.
@@ -160,6 +158,15 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
         }
       }
 
+      /**
+       * @ngdoc method
+       * @name otSubDoc#changeValue
+       * @description
+       * Updates the value at the path to the new value.
+       *
+       * @param {any} value
+       * @returns {Promise<void>}
+       */
       function otChangeValue(value) {
         if ($scope.otDoc.doc) {
           var stopSpin = cfSpinner.start();
