@@ -35,10 +35,9 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
       return;
     }
 
-    modalDialog.openConfirmDeleteDialog({
-      title: 'Removing last admin',
-      message: 'Are you sure?',
-      confirmLabel: 'Remove'
+    modalDialog.open({
+      template: 'admin_removal_confirm_dialog',
+      scopeData: { user: user, input: {} }
     }).promise.then(remove);
 
     function remove() {
