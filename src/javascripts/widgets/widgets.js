@@ -9,6 +9,7 @@ angular.module('contentful')
   var $q = $injector.get('$q');
   var checks       = $injector.get('widgets/checks');
   var deprecations = $injector.get('widgets/deprecations');
+  var store        = $injector.get('widgets/store');
   var schemaErrors = $injector.get('validation').errors;
 
   /**
@@ -21,15 +22,6 @@ angular.module('contentful')
    * @property {any[]}  values
    * @property {any}    default
    */
-  var COMMON_OPTIONS = [
-    {
-      param: 'helpText',
-      name: 'Help text',
-      type: 'Text',
-      description: 'This help text will show up below the field'
-    },
-  ];
-
 
   /**
    * @ngdoc type
@@ -96,17 +88,23 @@ angular.module('contentful')
     filterOptions:       filterOptions,
     widgetTemplate:      widgetTemplate,
     paramDefaults:       paramDefaults,
-    registerWidget:      registerWidget,
     applyDefaults:       applyDefaults,
     validate:            validate,
-    filteredParams:      filteredParams
+    filteredParams:      filteredParams,
+    setSpace:            setSpace
   };
 
+
+  function setSpace (space) {
+    store.setSpace(space);
+    return store.getMap().then(function (widgets) {
+      WIDGETS = widgets;
+    });
+  }
 
   function getWidget(id) {
     return WIDGETS[id];
   }
-
 
   /**
    * @ngdoc method
@@ -222,14 +220,14 @@ angular.module('contentful')
     return _.filter(_.pluck(field.validations, type));
   }
 
-  function optionsForWidget(widgetId, widgetType) {
+  // TODO Remove this method
+  function optionsForWidget(widgetId) {
     var widget = WIDGETS[widgetId];
-    if (widget && widgetType == 'field') {
-      return COMMON_OPTIONS.concat(widget.options || []);
-    } else if(widgetType == 'static'){
-      return widget.options;
+    if (widget) {
+      return widget.options || [];
+    } else {
+      return [];
     }
-    return [];
   }
 
 
@@ -301,12 +299,6 @@ angular.module('contentful')
       return widget.template;
     } else {
       return '<div class="missing-widget-template">Unknown editor widget "'+widgetId+'"</div>';
-    }
-  }
-
-  function registerWidget(id, descriptor) {
-    if (!(id in WIDGETS)) {
-      WIDGETS[id] = _.extend(descriptor, {id: id});
     }
   }
 

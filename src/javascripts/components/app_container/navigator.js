@@ -69,12 +69,19 @@ angular.module('contentful').config([
           analytics.setSpace(space);
           return space;
         });
+      }],
+      widgets: ['$injector', 'space', function ($injector, space) {
+        var Widgets = $injector.get('widgets');
+        return Widgets.setSpace(space);
       }]
     },
     ncyBreadcrumb: {
       skip: true
     },
-    controller: ['$scope', 'space', function ($scope, space) {
+    // FIXME we depend on 'widgets' to load the service. We cannot use
+    // the 'onEnter' handler because it does not wait until the promise
+    // has been resolved.
+    controller: ['$scope', 'space', 'widgets', function ($scope, space) {
       $scope.label = space.data.name;
     }],
     templateProvider: ['space', function (space) {

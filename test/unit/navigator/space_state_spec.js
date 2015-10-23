@@ -40,5 +40,15 @@ describe('navigator', function () {
       expect(this.$state.$current.locals.globals.space).toEqual(this.space);
     });
 
+    it('sets the space on the widgets service', function () {
+      var widgets = this.$inject('widgets');
+      sinon.spy(widgets, 'setSpace');
+
+      this.$state.go('spaces.detail', {spaceId: 'SPACE'});
+      this.$apply();
+      sinon.assert.calledWith(widgets.setSpace, this.space);
+    });
+
+
   });
 });

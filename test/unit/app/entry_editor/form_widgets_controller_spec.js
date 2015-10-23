@@ -41,12 +41,17 @@ describe('FormWidgetsController#widgets', function () {
 
   it('provides the widget template', function() {
     var widgets = this.$inject('widgets');
+    var widgetsStore = this.$inject('widgets/store');
+    widgetsStore.getMap = sinon.stub().resolves({
+      foo: {
+        template: '<span class=foo></span>',
+        fieldTypes: ['foo']
+      }
+    });
+    widgets.setSpace({});
+    this.$apply();
 
     field.type = 'foo';
-    widgets.registerWidget('foo', {
-      template: '<span class=foo></span>',
-      fieldTypes: ['foo']
-    });
     this.createController();
     expect(scope.widgets[0].template).toBe('<span class=foo></span>');
   });
