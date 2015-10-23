@@ -1,8 +1,12 @@
 'use strict';
-angular.module('contentful').factory('editingInterfaces', ['$injector', function($injector){
+
+angular.module('contentful')
+/**
+ * @ngdoc service
+ * @name editingInterfaces
+ */
+.factory('editingInterfaces', ['$injector', function($injector){
   var $q             = $injector.get('$q');
-  var notification   = $injector.get('notification');
-  var logger         = $injector.get('logger');
   var random         = $injector.get('random');
   var widgets        = $injector.get('widgets');
   var widgetMigrator = $injector.get('widgets/migrations');
@@ -10,48 +14,62 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   var widgetIdsByContentType = {};
 
   return {
+    /**
+     * @ngdoc method
+     * @name editingInterfaces#forContentType
+     * @description
+     * Retrieve an Editing Interface from the API and process it to
+     * make it consistent with the CT.
+     *
+     * If there is no EI for the given CT it creates the default
+     * interface by assigning the default widgets to each field.
+     *
+     * The method also migrates outdated widgets with the
+     * `widgets/migrations` service.
+     *
+     * @param {Client.ContentType} contentType
+     * @returns {Promise<Client.EditingInterface>}
+     */
     forContentType: function (contentType) {
       return getEditingInterface(contentType)
       .catch(function (err) {
-        if(err && err.statusCode === 404)
-          return $q.when(defaultInterface(contentType));
-        else
+        if(err && err.statusCode === 404) {
+          return defaultInterface(contentType);
+        } else {
+          // We should be able to throw the error but $q sucks at this.
           return $q.reject(err);
+        }
       })
       .then(_.partial(syncWidgets, contentType))
       .then(addDefaultParams)
       .then(widgetMigrator(contentType));
     },
 
-    // TODO this function is not used anywhere.
-    // We should remove it
-    save: function (editingInterface) {
-      return editingInterface.save()
-      .then(function (interf) {
-        return interf;
-      }, function (err) {
-        if(dotty.get(err, 'body.sys.type') == 'Error' && dotty.get(err, 'body.sys.id') == 'VersionMismatch')
-          notification.warn('This configuration has been changed by another user. Please reload and try again.');
-        else {
-          logger.logServerWarn('There was a problem saving the configuration', {error: err });
-          notification.error('There was a problem saving the configuration');
-        }
-        return $q.reject(err);
-      });
-    },
-
     syncWidgets: syncWidgets,
-
     defaultInterface: defaultInterface,
-    staticWidget: staticWidget
   };
 
-  function syncWidgets(contentType, interf) {
-    pruneWidgets(contentType, interf);
-    addMissingFields(contentType, interf);
+  /**
+   * @ngdoc method
+   * @name editingInterfaces#syncWidgets
+   * @description
+   * Make sure that we have a order preserving one-to-one
+   * correspondance between CT fields and EI widgets.
+   *
+   * - Remove extraneous widgets
+   * - Add widgets for fields that had no widget before
+   * - Put widgets in same order as their corresponding fields
+   *
+   * @param {Client.ContentType} contentType
+   * @param {Client.EditingInterface} editingInterface
+   * @returns {Client.EditingInterface}
+   */
+  function syncWidgets(contentType, editingInterface) {
+    pruneWidgets(contentType, editingInterface);
+    addMissingFields(contentType, editingInterface);
     // TODO temporary order sync
-    syncOrder(contentType, interf);
-    return interf;
+    syncOrder(contentType, editingInterface);
+    return editingInterface;
   }
 
   function addMissingFields(contentType, interf) {
@@ -142,15 +160,6 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
       widgetType: 'field',
       fieldId: field.id,
       widgetId: widgets.defaultWidgetId(field, contentType),
-      widgetParams: {}
-    };
-  }
-
-  function staticWidget(widgetId) {
-    return {
-      id: random.id(),
-      widgetType: 'static',
-      widgetId: widgetId,
       widgetParams: {}
     };
   }
