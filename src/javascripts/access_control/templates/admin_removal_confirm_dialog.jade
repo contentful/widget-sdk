@@ -15,7 +15,9 @@
         input.cfnext-form__input--full-size(ng-model="input.confirm")
 
     .modal-dialog__controls
-      button.cfnext-btn-caution(ng-click="dialog.confirm()" ng-disabled="input.confirm !== 'I UNDERSTAND'")
+      button.cfnext-btn-caution(
+        ng-click="dialog.confirm()"
+        ng-disabled="input.confirm !== 'I UNDERSTAND'")
         | Delete
       button.cfnext-btn-secondary-action(ng-click="dialog.cancel()")
         | Don't delete

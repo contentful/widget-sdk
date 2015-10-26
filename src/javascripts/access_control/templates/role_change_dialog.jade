@@ -8,13 +8,13 @@
       .modal-dialog__richtext
         p
           | <span class="modal-dialog__highlight">{{ user.name }}</span> is currently {{ user.roleNames }}.
-        p
-          | New role:
-        select.cfnext-form__input--full-size(ng-model="input.id")
-          option(value="")
-            | Select the role you want to assign to this user
-          option(ng-repeat="option in roleOptions" value="{{ option.id }}")
-            | {{ option.name }}
+        .cfnext-form__field
+          label(for="field-role") New role
+          select#field-role.cfnext-form__input--full-size(ng-model="input.id")
+            option(value="")
+              | Select the role you want to assign to this user
+            option(ng-repeat="option in roleOptions" value="{{ option.id }}")
+              | {{ option.name }}
 
     .modal-dialog__controls
       button.cfnext-btn-primary-action(

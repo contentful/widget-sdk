@@ -66,6 +66,6 @@ angular.module('contentful').factory('SpaceMembershipRepository', [function () {
   function prepareRoleMembership(membership, roleId) {
     var base = _.omit(membership, ['sys', 'user']);
     var link = [{ type: 'Link', linkType: 'Role', id: roleId }];
-    return _.extend(base, { admin: false, roles: [link] })
+    return _.extend(base, { admin: false, roles: [link] });
   }
 }]);

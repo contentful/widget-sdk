@@ -1,0 +1,34 @@
+.modal-background
+  .modal-dialog
+    header.modal-dialog__header
+      h1 Invite a new user
+      button.modal-dialog__close(ng-click="dialog.cancel()")
+
+    .modal-dialog__content
+      .modal-dialog__richtext
+        form.cfnext-form__field(name="invitationForm")
+          label(for="field-mail")
+            | Email address
+          input#field-mail.cfnext-form__input--full-size(
+            ng-model="input.mail" type="email"
+            ng-maxlength="2100"
+            required autocomplete="off"
+            cf-focus-on-render="input")
+          .cfnext-form__hint User will get an invitation email with the instruction on how to join.
+
+        .cfnext-form__field
+          label(for="field-role") New role
+          select#field-role.cfnext-form__input--full-size(ng-model="input.roleId")
+            option(value="")
+              | Select the role you want to assign to this user
+            option(ng-repeat="option in roleOptions" value="{{ option.id }}")
+              | {{ option.name }}
+          .cfnext-form__hint You can change a role for this user later from Space Settings > Users.
+
+    .modal-dialog__controls
+      button.cfnext-btn-primary-action(
+        ng-click="dialog.confirm(input)"
+        ng-disabled="!invitationForm.$valid || !input.roleId")
+        | Invite
+      button.cfnext-btn-secondary-action(ng-click="dialog.cancel()")
+        | Cancel

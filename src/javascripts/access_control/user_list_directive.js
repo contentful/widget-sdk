@@ -26,7 +26,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   $scope.selectedView     = 'name';
   $scope.removeFromSpace  = removeFromSpace;
   $scope.changeRole       = changeRole;
-  $scope.notImplemented   = function () { window.alert('Not implemented yet.'); };
+  $scope.invite           = invite;
 
   reload().catch(ReloadNotification.basicErrorHandler);
 
@@ -82,6 +82,18 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
       $scope.count = listHandler.reset(data);
       $scope.by = listHandler.getGroupedUsers();
       $scope.context.ready = true;
+    });
+  }
+
+  function invite() {
+    modalDialog.open({
+      template: 'invitation_dialog',
+      scopeData: {
+        input: {},
+        roleOptions: listHandler.getRoleOptions()
+      }
+    }).promise.then(function (invitation) {
+      window.alert('To implement: inviting ' + invitation.mail + ' with role ' + invitation.roleId);
     });
   }
 }]);
