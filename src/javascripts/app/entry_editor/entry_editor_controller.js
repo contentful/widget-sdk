@@ -74,14 +74,13 @@ angular.module('contentful')
   });
 
   $scope.$watch('validationResult.errors', function (errors) {
-    var et = spaceContext.publishedTypeForEntry($scope.entry);
     $scope.errorPaths = {};
     $scope.hasErrorOnFields = false;
 
     _.each(errors, function (error) {
       if (error.path[0] !== 'fields') return;
       var fieldId      = error.path[1];
-      var field        = _.find(et.data.fields, {id: fieldId});
+      var field        = _.find($scope.contentType.data.fields, {id: fieldId});
 
       if(error.path.length > 1) {
         $scope.errorPaths[fieldId] = $scope.errorPaths[fieldId] || [];
@@ -93,7 +92,7 @@ angular.module('contentful')
             allErrors: errors,
             currentError: error,
             entryData: $scope.entry.data,
-            entryFields: et.data.fields
+            entryFields: $scope.contentType.data.fields
           }
         });
         return;
@@ -114,16 +113,16 @@ angular.module('contentful')
   });
 
   // Building the form
-  $scope.formWidgetsController = $controller('FormWidgetsController', {$scope: $scope});
-  $scope.$watch('spaceContext.publishedTypeForEntry(entry)', function (contentType) {
-    $scope.formWidgetsController.contentType = contentType;
+  $scope.formWidgetsController = $controller('FormWidgetsController', {
+    $scope: $scope,
+    contentType: $scope.contentType,
+    editingInterface: $scope.editingInterface
   });
-  $scope.$watch('spaceContext.publishedTypeForEntry(entry).data.fields', function (contentTypeFields) {
-    $scope.formWidgetsController.updateWidgets();
-    if(contentTypeFields && contentTypeFields.length > 0){
-      cleanupEntryFields(contentTypeFields);
-    }
-  }, true);
+
+  var contentTypeFields = $scope.contentType.data.fields;
+  if(contentTypeFields && contentTypeFields.length > 0){
+    cleanupEntryFields(contentTypeFields);
+  }
 
 
   // Helper methods on the scope

@@ -2,7 +2,7 @@
 
 describe('Editing interfaces service', function () {
   var editingInterfaces, $rootScope, $q, logger, notification;
-  var contentType, stubs, space;
+  var contentType, stubs;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -29,9 +29,6 @@ describe('Editing interfaces service', function () {
 
     });
 
-    space = {
-    };
-
     editingInterfaces = this.$inject('editingInterfaces');
     $q                = this.$inject('$q');
     $rootScope        = this.$inject('$rootScope');
@@ -45,33 +42,34 @@ describe('Editing interfaces service', function () {
     ];
   });
 
-  describe('gets an interface for a content type with an id', function() {
-    var config, err;
+  describe('#forContentType()', function() {
+    var config;
 
-    describe('succeeds', function() {
+    describe('success', function() {
       beforeEach(function() {
         this.$inject('widgets').paramDefaults = _.constant({foo: 'bar'});
-        contentType.getEditingInterface.returns($q.when({
+        contentType.getEditingInterface.resolves({
           data: {widgets: [{
             fieldId: 'fieldA',
             widgetParams: {foo: 'baz'}
           }]}
-        }));
-        editingInterfaces.forContentTypeWithId(contentType, 'edid').then(function (_config) {
+        });
+        editingInterfaces.forContentType(contentType)
+        .then(function (_config) {
           config = _config;
         });
-        $rootScope.$apply();
+        this.$apply();
       });
 
-      it('requests the id', function() {
-        sinon.assert.calledWith(contentType.getEditingInterface, 'edid');
+      it('requests the default id', function() {
+        sinon.assert.calledWith(contentType.getEditingInterface, 'default');
       });
 
       it('gets a config', function() {
         expect(config).toBeDefined();
       });
 
-      it('should add fields from the content Type that are missing in the user interface', function(){
+      it('should add fields from the content type that are missing in the user interface', function(){
         expect(config.data.widgets[0].fieldId).toBe('fieldA');
         expect(config.data.widgets[1].fieldId).toBe('fieldB');
       });
@@ -82,40 +80,24 @@ describe('Editing interfaces service', function () {
       });
     });
 
-    describe('fails with a 404 because config doesnt exist yet', function() {
-      beforeEach(function() {
-        contentType.getEditingInterface.returns($q.reject({statusCode: 404}));
-        editingInterfaces.forContentTypeWithId(contentType, 'edid').then(function (_config) {
-          config = _config;
-        });
-        $rootScope.$apply();
-      });
-
-      it('requests the id', function() {
-        sinon.assert.calledWith(contentType.getEditingInterface, 'edid');
-      });
-
-      it('gets a default config', function() {
+    pit('gets a default config if interface does not exit', function() {
+      contentType.getEditingInterface.rejects({statusCode: 404});
+      return editingInterfaces.forContentType(contentType)
+      .then(function (config) {
         expect(config).toBeDefined();
       });
     });
 
-    describe('fails', function() {
-      beforeEach(function() {
-        contentType.getEditingInterface.returns($q.reject({}));
-        editingInterfaces.forContentTypeWithId(contentType, 'edid').catch(function (_err) {
-          err = _err;
-        });
-        $rootScope.$apply();
+    it('fails if API returns error', function() {
+      var apiError = {};
+      var error;
+      contentType.getEditingInterface.rejects(apiError);
+      editingInterfaces.forContentType(contentType)
+      .catch(function (_err) {
+        error = _err;
       });
-
-      it('requests the id', function() {
-        sinon.assert.calledWith(contentType.getEditingInterface, 'edid');
-      });
-
-      it('gets an error', function() {
-        expect(err).toBeDefined();
-      });
+      this.$apply();
+      expect(error).toBe(apiError);
     });
 
   });

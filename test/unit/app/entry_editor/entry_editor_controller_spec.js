@@ -4,43 +4,35 @@ describe('Entry Editor Controller', function () {
   var controller, scope;
 
   beforeEach(function () {
-    var self = this;
     module('contentful/test', function ($provide) {
-      $provide.removeController('FormWidgetsController', function () {
-        return {
-          updateWidgets: sinon.stub()
-        };
-      });
       $provide.removeControllers(
+        'FormWidgetsController',
         'PermissionController',
         'entityEditor/LocalesController',
         'entityEditor/StatusNotificationsController'
       );
-      self.TheLocaleStoreMock = {
+      $provide.value('TheLocaleStore', {
         getLocalesState: sinon.stub().returns({}),
         getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'}),
         getPrivateLocales: sinon.stub().returns([{internal_code: 'en-US'}, {internal_code: 'de-DE'}])
-      };
-      $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
+      });
     });
     inject(function ($compile, $rootScope, $controller, cfStub){
       scope = $rootScope;
       scope.otDoc = {doc: {}, state: {}};
-      scope.user = {
-        features: {}
-      };
+      scope.contentType = {data: cfStub.contentTypeData()};
+      scope.context = {};
+
       var space = cfStub.space('testSpace');
-      var contentTypeData = cfStub.contentTypeData('testType');
-      scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
       var entry = cfStub.entry(space, 'testEntry', 'testType', {}, {
         sys: { publishedVersion: 1 }
       });
-      scope.context = {};
       scope.entry = entry;
-      scope.permissionController = { can: sinon.stub() };
-      scope.permissionController.can.returns({can: true});
+      scope.permissionController = {
+        can: sinon.stub().returns({can: true})
+      };
       controller = $controller('EntryEditorController', {$scope: scope});
-      scope.$digest();
+      this.$apply();
     });
   });
 
@@ -72,15 +64,17 @@ describe('Entry Editor Controller', function () {
   });
 
   describe('when the entry title changes', function () {
-    beforeEach(function () {
-      scope.spaceContext.entryTitle = sinon.stub().returns('foo');
-    });
     it('should update the tab title', function () {
-      var oldTitle = scope.context.title;
-      scope.spaceContext.entryTitle.returns('bar');
-      scope.$digest();
+      var spaceContext = this.$inject('spaceContext');
+      spaceContext.entryTitle = sinon.stub();
+
+      spaceContext.entryTitle.returns('foo');
+      this.$apply();
+      expect(scope.context.title).toEqual('foo');
+
+      spaceContext.entryTitle.returns('bar');
+      this.$apply();
       expect(scope.context.title).toEqual('bar');
-      expect(scope.context.title).not.toEqual(oldTitle);
     });
   });
 
@@ -124,16 +118,16 @@ describe('Entry Editor Controller', function () {
   // Prevents badly created fields via the API from breaking the editor
   describe('creates field structure if any fields are null', function() {
     beforeEach(function() {
-      scope.spaceContext.publishedTypeForEntry = sinon.stub();
-      scope.spaceContext.publishedTypeForEntry.returns({
-        data: {
-          fields: [
-            {id: 'field1'},
-            {id: 'field2'},
-            {id: 'field3', localized: true}
-          ]
-        }
-      });
+      var $controller = this.$inject('$controller');
+      scope.contentType.data = {
+        fields: [
+          {id: 'field1'},
+          {id: 'field2'},
+          {id: 'field3', localized: true}
+        ]
+      };
+      controller = $controller('EntryEditorController', {$scope: scope});
+
       this.atStub = sinon.stub();
       this.setStub = sinon.stub();
       this.atStub.returns({
@@ -142,14 +136,15 @@ describe('Entry Editor Controller', function () {
       scope.otDoc = {
         doc: {
           at: this.atStub
-        }
+        },
+        state: {}
       };
       scope.entry.data.fields = {
         field1: {'en-US': 'field1'},
         field2: null,
         field3: null
       };
-      scope.$digest();
+      this.$apply();
     });
 
     it('calls set twice', function() {

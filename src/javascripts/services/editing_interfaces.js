@@ -10,10 +10,8 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   var widgetIdsByContentType = {};
 
   return {
-    // TODO we should rewrite this and get rid of the ID for the interface
-    // as we won't use those anyway
-    forContentTypeWithId: function (contentType, interfaceId) {
-      return getEditingInterface(contentType, interfaceId)
+    forContentType: function (contentType) {
+      return getEditingInterface(contentType)
       .catch(function (err) {
         if(err && err.statusCode === 404)
           return $q.when(defaultInterface(contentType));
@@ -102,11 +100,11 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     return interf;
   }
 
-  function getEditingInterface(contentType, interfaceId) {
+  function getEditingInterface(contentType) {
     if (contentType.getId() === 'asset') {
       return $q.when(assetInterface(contentType));
     } else {
-      return contentType.getEditingInterface(interfaceId);
+      return contentType.getEditingInterface('default');
     }
   }
 
