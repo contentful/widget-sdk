@@ -17,7 +17,9 @@ angular.module('contentful').factory('UserListHandler', [function () {
   return {
     reset: reset,
     getGroupedUsers: getGroupedUsers,
+    getUsersByRole: getUsersByRole,
     getRoleOptions: getRoleOptions,
+    getRoleOptionsBut: getRoleOptionsBut,
     isLastAdmin: isLastAdmin,
     isAdminRole: isAdminRole
   };
@@ -43,7 +45,7 @@ angular.module('contentful').factory('UserListHandler', [function () {
       roleNameMap[role.sys.id] = role.name;
     });
 
-    users = prepareUsers(data.users);
+    users = prepareUsers(data.users || []);
     return users.length;
   }
 
@@ -56,7 +58,7 @@ angular.module('contentful').factory('UserListHandler', [function () {
         id: id,
         membership: membershipMap[id],
         isAdmin: adminMap[id],
-        roles: userRolesMap[id],
+        roles: userRolesMap[id] || [],
         roleNames: getRoleNamesForUser(id),
         avatarUrl: data.avatarUrl,
         name: data.firstName && data.lastName ? user.getName() : NOT_DEFINED_USER_NAME
@@ -89,6 +91,19 @@ angular.module('contentful').factory('UserListHandler', [function () {
     return [ADMIN_OPT].concat(_.map(roleNameMap, function (name, id) {
       return { id: id, name: name };
     }));
+  }
+
+  function getRoleOptionsBut(roleIdToExclude) {
+    return _.filter(getRoleOptions(), function (option) {
+      return option.id !== roleIdToExclude;
+    });
+  }
+
+  function getUsersByRole(id) {
+    return _.filter(users, function (user) {
+      if (isAdminRole(id)) { return user.isAdmin; }
+      return user.roles.indexOf(id) > -1;
+    });
   }
 
   function getGroupedUsers() {

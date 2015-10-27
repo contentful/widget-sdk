@@ -22,7 +22,8 @@ angular.module('contentful').factory('RoleRepository', [function () {
       getAll: getAll,
       get: get,
       create: create,
-      save: save
+      save: save,
+      remove: remove
     };
 
     function getAll() {
@@ -53,6 +54,14 @@ angular.module('contentful').factory('RoleRepository', [function () {
       .then(handleRole);
     }
 
+    function remove(role) {
+      return getBaseCall({
+        id: role.sys.id,
+        rejectEmpty: false
+      })
+      .delete();
+    }
+
     function getBaseCall(config) {
       var headers = {};
       config = config || {};
@@ -60,15 +69,14 @@ angular.module('contentful').factory('RoleRepository', [function () {
         headers['X-Contentful-Version'] = config.version;
       }
 
-      return space.endpoint('roles', config.id)
-      .headers(headers)
-      .rejectEmpty();
+      var call = space.endpoint('roles', config.id).headers(headers);
+      return config.rejectEmpty ? call.rejectEmpty() : call;
     }
   }
 
   function handleRole(role) {
     role.permissions = rewritePermissions(role.permissions);
-    role.policies = []; // @todo handle roles
+    role.policies = []; // @todo handle policies
     return role;
   }
 
