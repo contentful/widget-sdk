@@ -11,9 +11,9 @@ angular.module('contentful')
   controller.editingInterface = editingInterface;
   controller.updateWidgets = updateWidgets;
 
-  $scope.$watch(getActiveLocaleCodes,                updateWidgets, true);
-  $scope.$watch('preferences.showDisabledFields',    updateWidgets);
-  $scope.$watch('errorPaths',                        updateWidgets);
+  $scope.$watch(getActiveLocaleCodes,             updateWidgets, true);
+  $scope.$watch('preferences.showDisabledFields', updateWidgets);
+  $scope.$watch('errorPaths',                     updateWidgets);
 
 
   /**

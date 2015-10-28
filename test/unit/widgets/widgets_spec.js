@@ -1,14 +1,21 @@
 'use strict';
 
 describe('Widget types service', function () {
-  var widgets, $rootScope;
+  var widgets, widgetStore, $rootScope;
 
   beforeEach(function () {
     module('contentful/test');
-    inject(function ($injector) {
-      widgets = $injector.get('widgets');
-      $rootScope = $injector.get('$rootScope');
-    });
+    widgets = this.$inject('widgets');
+    widgetStore = this.$inject('widgets/store');
+    $rootScope = this.$inject('$rootScope');
+    widgets.setSpace({});
+    this.$apply();
+
+    this.setWidgets = function (ws) {
+      widgetStore.getMap = sinon.stub().resolves(ws);
+      widgets.setSpace({});
+      this.$apply();
+    };
   });
 
   describe('forField', function(){
@@ -181,13 +188,13 @@ describe('Widget types service', function () {
 
   describe('paramDefaults', function(){
     it('should contain the defaults for every param', function() {
-      widgets.registerWidget('herp', {
+      this.setWidgets({'herp': {
         options: [
           {param: 'foo', default: 123 },
           {param: 'bar', default: 'derp'},
           {param: 'baz'}
         ]
-      });
+      }});
 
       var d = widgets.paramDefaults('herp', 'field');
       expect(d.foo).toBe(123);
@@ -200,27 +207,9 @@ describe('Widget types service', function () {
     });
   });
 
-  describe('registerWidget', function(){
-    it('adds a widget to the database so that it can be retrieved', function () {
-      widgets.registerWidget('foo', {fieldTypes: ['Text']});
-      widgets.forField({type: 'Text'}).then(function(widgets) {
-        expect(_.any(widgets, {id: 'foo'})).toBe(true);
-      });
-      $rootScope.$apply();
-    });
-    it('does not overwrite widgets', function () {
-      widgets.registerWidget('foo', {fieldTypes: ['Text']});
-      widgets.registerWidget('foo', {fieldTypes: ['Number']});
-      widgets.forField({type: 'Number'}).then(function(widgets) {
-        expect(_.any(widgets, {id: 'foo'})).toBe(false);
-      });
-      $rootScope.$apply();
-    });
-  });
-
   describe('widgetTemplate', function(){
     it('returns the template property for a widget', function () {
-      widgets.registerWidget('foo', {fieldTypes: ['Text'], template: 'bar'});
+      this.setWidgets({'foo': {fieldTypes: ['Text'], template: 'bar'}});
       expect(widgets.widgetTemplate('foo')).toBe('bar');
     });
     it('returns a warning for a missing widget', function () {
@@ -251,20 +240,23 @@ describe('Widget types service', function () {
   });
 
   describe('#filterOptions(opts, params)', function() {
-    var widgets, filtered, descriptor;
+    var filtered, descriptor;
 
     beforeEach(function() {
-      widgets = this.$inject('widgets');
-      descriptor = {options: [{param: 'x', default: 0}, {param: 'y', default: 0}]};
-      widgets.registerWidget('test', descriptor);
+      descriptor = {
+        options: [
+          {param: 'x', default: 0},
+          {param: 'y', default: 0}
+        ]
+      };
+      this.setWidgets({test: descriptor});
     });
 
     function feedTest(pairs) {
-      var options = widgets.optionsForWidget('test', 'field');
+      var options = widgets.optionsForWidget('test');
       pairs.forEach(function(pair) {
         var params = _.isObject(pair[0]) ? pair[0] : {x: pair[0]};
         filtered = widgets.filterOptions(options, params);
-        filtered.shift(); // remove help text
         expect(filtered.length).toEqual(pair[1]);
       });
     }

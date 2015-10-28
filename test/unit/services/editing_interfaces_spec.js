@@ -1,98 +1,96 @@
 'use strict';
 
 describe('Editing interfaces service', function () {
-  var editingInterfaces, $rootScope, $q, logger, notification;
-  var contentType, stubs;
+  var editingInterfaces, $q, cfStub;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs(['defaultWidgetId']);
       $provide.value('widgets', {
-        defaultWidgetId: stubs.defaultWidgetId,
-        registerWidget: angular.noop,
-        paramDefaults: _.constant({})
+        defaultWidgetId: sinon.stub(),
+        paramDefaults: sinon.stub().returns({})
       });
-
-      contentType = {
-        getEditingInterface: sinon.stub(),
-        saveEditingInterface: sinon.stub(),
-        getId: sinon.stub(),
-        data: {},
-        newEditingInterface: function(data){
-          data.contentTypId = contentType.getId();
-          return {
-            getId: _.constant('default'),
-            data: data
-          };
-        }
-      };
-
     });
 
     editingInterfaces = this.$inject('editingInterfaces');
     $q                = this.$inject('$q');
-    $rootScope        = this.$inject('$rootScope');
-    logger            = this.$inject('logger');
-    notification      = this.$inject('notification');
-    var cfStub        = this.$inject('cfStub');
-
-    contentType.data.fields = [
-      cfStub.field('fieldA'),
-      cfStub.field('fieldB')
-    ];
+    cfStub            = this.$inject('cfStub');
   });
 
   describe('#forContentType()', function() {
-    var config;
+    beforeEach(function () {
+      this.contentType = {
+        getEditingInterface: sinon.stub(),
+        getId: sinon.stub(),
+        data: {fields: [
+          cfStub.field('fieldA')
+        ]},
+      };
+    });
 
-    describe('success', function() {
+    describe('with API data', function() {
       beforeEach(function() {
-        this.$inject('widgets').paramDefaults = _.constant({foo: 'bar'});
+        var contentType = this.contentType;
+
         contentType.getEditingInterface.resolves({
           data: {widgets: [{
             fieldId: 'fieldA',
-            widgetParams: {foo: 'baz'}
+            widgetParams: {},
           }]}
         });
-        editingInterfaces.forContentType(contentType)
-        .then(function (_config) {
-          config = _config;
-        });
-        this.$apply();
+
+        this.getEditingInterface = function () {
+          var editingInterface;
+          editingInterfaces.forContentType(contentType)
+          .then(function (ei) {
+            editingInterface = ei;
+          });
+          this.$apply();
+          return editingInterface;
+        };
       });
 
       it('requests the default id', function() {
-        sinon.assert.calledWith(contentType.getEditingInterface, 'default');
+        this.getEditingInterface();
+        sinon.assert.calledWith(this.contentType.getEditingInterface, 'default');
       });
 
-      it('gets a config', function() {
-        expect(config).toBeDefined();
+      it('returns editing interface with widgets', function() {
+        var widgets = this.getEditingInterface().data.widgets;
+        expect(widgets.length).toEqual(1);
       });
 
-      it('should add fields from the content type that are missing in the user interface', function(){
-        expect(config.data.widgets[0].fieldId).toBe('fieldA');
-        expect(config.data.widgets[1].fieldId).toBe('fieldB');
+      it('adds widget if field widget is missing', function(){
+        this.contentType.data.fields.push(cfStub.field('fieldWithoutWidget'));
+        var widgets = this.getEditingInterface().data.widgets;
+        expect(widgets[0].fieldId).toBe('fieldA');
+        expect(widgets[1].fieldId).toBe('fieldWithoutWidget');
       });
 
-      it('should fill in defaults for parameters', function(){
-        expect(config.data.widgets[0].widgetParams.foo).toBe('baz');
-        expect(config.data.widgets[1].widgetParams.foo).toBe('bar');
+      it('sets default widget parameters', function(){
+        var Widgets = this.$inject('widgets');
+        Widgets.paramDefaults = sinon.stub().returns({foo: 'bar'});
+        var widgets = this.getEditingInterface().data.widgets;
+        sinon.assert.calledWith(Widgets.paramDefaults);
+        expect(widgets[0].widgetParams).toEqual({foo: 'bar'});
       });
     });
 
     pit('gets a default config if interface does not exit', function() {
-      contentType.getEditingInterface.rejects({statusCode: 404});
-      return editingInterfaces.forContentType(contentType)
-      .then(function (config) {
-        expect(config).toBeDefined();
+      this.contentType.newEditingInterface = sinon.spy(function (data) {
+        return {data: data};
+      });
+      this.contentType.getEditingInterface.rejects({statusCode: 404});
+      return editingInterfaces.forContentType(this.contentType)
+      .then(function (editingInterface) {
+        expect(editingInterface.data.widgets).toBeDefined();
       });
     });
 
     it('fails if API returns error', function() {
       var apiError = {};
       var error;
-      contentType.getEditingInterface.rejects(apiError);
-      editingInterfaces.forContentType(contentType)
+      this.contentType.getEditingInterface.rejects(apiError);
+      editingInterfaces.forContentType(this.contentType)
       .catch(function (_err) {
         error = _err;
       });
@@ -102,14 +100,26 @@ describe('Editing interfaces service', function () {
 
   });
 
-  describe('gets a default interface', function() {
+  describe('#defaultInterface()', function() {
     var interf;
     beforeEach(function() {
-      interf = editingInterfaces.defaultInterface(contentType);
+      this.contentType =  {
+        getId: sinon.stub(),
+        data: {
+          fields: [
+            cfStub.field('fieldA'),
+            cfStub.field('fieldB')
+          ]
+        },
+        newEditingInterface: sinon.spy(function(data){
+          return { data: data };
+        })
+      };
+      interf = editingInterfaces.defaultInterface(this.contentType);
     });
 
-    it('has id', function() {
-      expect(interf.getId()).toBe('default');
+    it('creates EI through CT', function() {
+      sinon.assert.called(this.contentType.newEditingInterface);
     });
 
     it('has widgets', function() {
@@ -121,60 +131,12 @@ describe('Editing interfaces service', function () {
     });
 
     it('gets widget type', function() {
-      sinon.assert.called(stubs.defaultWidgetId);
-    });
-
-    describe('gets a default interface again', function() {
-      var interf2;
-      beforeEach(function() {
-        interf2 = editingInterfaces.defaultInterface(contentType);
-      });
-
-      it('has same field ids', function() {
-        expect(interf2.data.widgets[0].fieldId).toBe('fieldA');
-      });
-
-      it('has same widget ids', function() {
-        expect(interf2.data.widgets[0].id).toBe(interf.data.widgets[0].id);
-      });
-
+      var Widgets = this.$inject('widgets');
+      sinon.assert.called(Widgets.defaultWidgetId);
     });
   });
 
-  describe('saves interface for a content type', function() {
-    var interf, promise, save;
-    beforeEach(function() {
-      save = $q.defer();
-      interf = { save: sinon.stub().returns(save.promise) };
-      promise = editingInterfaces.save(interf);
-      $rootScope.$apply();
-    });
-
-    it('returns the editing interface from the server', function(){
-      promise.then(function(interf) {
-        expect(interf.newVersion).toBe(true);
-      });
-      save.resolve({newVersion: true});
-      $rootScope.$apply();
-    });
-
-    it('fails to save because of version mismatch', function() {
-      save.reject({body: {sys: {type: 'Error', id: 'VersionMismatch'}}});
-      //interf.save.yield({body: {sys: {type: 'Error', id: 'VersionMismatch'}}});
-      $rootScope.$apply();
-      sinon.assert.called(notification.warn);
-    });
-
-    it('fails to save because of other error', function() {
-      //interf.save.yield({});
-      save.reject({});
-      $rootScope.$apply();
-      sinon.assert.called(logger.logServerWarn);
-      sinon.assert.called(notification.error);
-    });
-  });
-
-  describe('syncs an interface to a contentType', function() {
+  describe('#syncWidgets()', function() {
     beforeEach(function(){
       this.editingInterface = {data: {widgets: [
         {fieldId: 'aaa', widgetType: 'field'},
