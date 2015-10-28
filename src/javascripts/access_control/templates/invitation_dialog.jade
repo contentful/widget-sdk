@@ -14,7 +14,7 @@
             ng-maxlength="2100"
             required autocomplete="off"
             cf-focus-on-render="input")
-          .cfnext-form__hint User will get an invitation email with the instruction on how to join.
+          .cfnext-form__hint They will receive an invitation email with a link to join Contentful.
 
         .cfnext-form__field
           label(for="field-role") New role
@@ -23,7 +23,7 @@
               | Select the role you want to assign to this user
             option(ng-repeat="option in roleOptions" value="{{ option.id }}")
               | {{ option.name }}
-          .cfnext-form__hint You can change a role for this user later from Space Settings > Users.
+          .cfnext-form__hint You can always change this later.
 
     .modal-dialog__controls
       button.cfnext-btn-primary-action(

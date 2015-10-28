@@ -18,11 +18,13 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(space);
   var listHandler         = $injector.get('UserListHandler');
 
-  $scope.viewLabels = {
+  var VOWELS = ['a', 'e', 'i', 'o', 'u'];
+  var VIEW_LABELS = {
     name: 'Show users in alphabetical order',
     role: 'Show users grouped by role'
   };
 
+  $scope.viewLabels       = VIEW_LABELS;
   $scope.selectedView     = 'name';
   $scope.removeFromSpace  = removeFromSpace;
   $scope.changeRole       = changeRole;
@@ -32,11 +34,14 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
 
   function removeFromSpace(user) {
     if (!listHandler.isLastAdmin(user.id)) {
-      remove();
-      return;
+      return modalDialog.openConfirmDeleteDialog({
+        title: 'Remove user from a space',
+        message: 'Are you sure?',
+        confirmLabel: 'Remove'
+      }).promise.then(remove);
     }
 
-    modalDialog.open({
+    return modalDialog.open({
       template: 'admin_removal_confirm_dialog',
       scopeData: {
         user: user,
@@ -56,6 +61,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
       template: 'role_change_dialog',
       scopeData: {
         user: user,
+        startsWithVowel: VOWELS.indexOf(dotty.get(user, 'roleNames', ' ').substr(0, 1).toLowerCase()) > -1,
         input: {},
         roleOptions: listHandler.getRoleOptions()
       }

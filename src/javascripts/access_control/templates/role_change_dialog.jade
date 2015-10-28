@@ -1,13 +1,14 @@
 .modal-background
   .modal-dialog
     header.modal-dialog__header
-      h1 Change a role for {{ user.name }}
+      h1 Change role for {{ user.name }}
       button.modal-dialog__close(ng-click="dialog.cancel()")
 
     .modal-dialog__content
       .modal-dialog__richtext
         p
-          | <span class="modal-dialog__highlight">{{ user.name }}</span> is currently {{ user.roleNames }}.
+          | <span class="modal-dialog__highlight">{{ user.name }}</span> is currently
+          | a<span ng-show="startsWithVowel">n</span> {{ user.roleNames }}.
         .cfnext-form__field
           label(for="field-role") New role
           select#field-role.cfnext-form__input--full-size(ng-model="input.id")
