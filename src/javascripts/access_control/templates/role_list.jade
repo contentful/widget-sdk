@@ -11,7 +11,9 @@ header.workbench-header
           | Administrator
           small (built-in)
         p Members of this role have a full access to everything in this space. This is a built-in role and can't be deleted.
-      .role-list__member-count {{ memberships.admin }} members
+      .role-list__member-count
+        a(href="" ui-sref="spaces.detail.settings.users.list")
+          | {{ memberships.admin || 0 }} members
       button.role-list__actions.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
         | &bullet;&bullet;&bullet;
       .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="Role Actions")
@@ -20,13 +22,12 @@ header.workbench-header
           li(role="menuitem" ng-click="notImplemented()") Duplicate
 
     .role-list__item(ng-repeat="role in roles track by role.sys.id")
-      a.role-list__link(ui-sref="{{ sref(role) }}")
-        h3
-          | {{ role.name }}
-          i.fa.fa-chevron-right
+      a.role-list__link(href="" ui-sref="{{ sref(role) }}")
+        h3 {{ role.name }}
         p(ng-if="role.description") {{ role.description }}
       .role-list__member-count
-        | {{ memberships[role.sys.id] || 0 }} members
+        a(href="" ui-sref="spaces.detail.settings.users.list")
+          | {{ memberships[role.sys.id] || 0 }} members
       button.role-list__actions.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
         | &bullet;&bullet;&bullet;
       .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="Role Actions")

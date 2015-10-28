@@ -1,3 +1,8 @@
+.user-list__actions,
+.role-list__actions
+  font-size: 0.6em
+  letter-spacing: 0.18em
+
 /**
  * Role list
  */
@@ -7,24 +12,26 @@
   align-items: center
   justify-content: space-between
   border-bottom: 1px solid $colors.element-light
-  padding: 10px 25px
+  padding: 20px 25px 19px
+  h3
+    margin-top: 0
+  p
+    margin-bottom: 0
+  &:first-child
+    margin-top: -15px
 
 .role-list__link
   width: 70%
-  > *
+  h3
     color: $colors.text-dark
+  p
+    color: $colors.text-lightest
   &.admin-role
     cursor: default
   &:not(.admin-role)
     cursor: pointer
   &:not(.admin-role):hover > *
     color: $colors.blue-mid
-  i
-    display: none
-  &:hover i
-    display: inline-block
-    padding-left: 10px
-    font-size: .8em
 
 .admin-role
   h3 small
@@ -32,7 +39,7 @@
     padding-left: 10px
     font-size: .7em
     font-weight: normal
-    color: $colors.text-light
+    color: $colors.text-lightest
 
 /**
  * User list
@@ -51,16 +58,16 @@
     font-size: 1.4em
     background: white
     padding: 0 10px
+    width: 40px
 
 .user-list__item
   display: flex
   align-items: center
   justify-content: space-between
   margin-top: 15px
-  padding: 5px 25px
+  padding: 5px 30px
+  padding-left: 55px
   cursor: default
-  &:hover
-    background: $colors.element-lightest
 
 .user-list__info
   margin-left: 15px

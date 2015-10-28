@@ -19,14 +19,13 @@ header.workbench-header
         .user-list__info
           strong.user-list__name {{ user.name }}
           .user-list__roles {{ user.roleNames }}
-        .user-list__actions
-          button.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
-            | &bullet;&bullet;&bullet;
-          .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="User Actions")
-            cf-icon.context-menu__arrow.x--top-right-tight(name="arrow-up")
-            ul.context-menu__items
-              li(role="menuitem" ng-click="removeFromSpace(user)") Remove from this space
-              li(role="menuitem" ng-click="changeRole(user)") Change a role
+        button.user-list__actions.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
+          | &bullet;&bullet;&bullet;
+        .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="User Actions")
+          cf-icon.context-menu__arrow.x--top-right-tight(name="arrow-up")
+          ul.context-menu__items
+            li(role="menuitem" ng-click="removeFromSpace(user)") Remove from this space
+            li(role="menuitem" ng-click="changeRole(user)") Change a role
 
   .workbench-main__entity-sidebar
     .entity-sidebar
