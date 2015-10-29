@@ -115,50 +115,89 @@ describe('Entry Editor Controller', function () {
     sinon.assert.called(scope.validate);
   });
 
-  // Prevents badly created fields via the API from breaking the editor
-  describe('creates field structure if any fields are null', function() {
+
+  /**
+   * This tests that the EntryEditorController creates placeholders for
+   * primitive types and empty collections. See `setupFieldLocales()`.
+   * The test is very flaky and requires a new controller for each test
+   * due to the placeholder validation being done when the controller is being
+   * created. See BUG#6696
+   */
+  describe('ensures that placeholders are created for empty fields',
+  function() {
+    //We are creating a controller with a specific set of scope data for each
+    //test because the controller does validation upon creation.
+    var $controller, scope;
     beforeEach(function() {
-      var $controller = this.$inject('$controller');
+      /**
+       * Since the controller runs validations on the data as soon as it's
+       * created, we need to create the controller manually in each test to
+       * ensure that the `cleanupEntryFields()` function is called. It seems
+       * like having a global controller doesn't work because of the `::` eval
+       * once feature of the `$watchGroup()` in `cleanupEntryFields()`
+       */
+      $controller = this.$inject('$controller');
+      // Start off with a fresh scope just to be safe since the watcher may
+      // have been executed before.
+      var $rootScope = this.$inject('$rootScope');
+      scope = $rootScope.$new();
+      this.setStub = sinon.stub();
+      this.atStub = sinon.stub().returns({set: this.setStub});
+      scope.otDoc = {doc: {at: this.atStub}, state: {}};
+    });
+
+    it('should check that placeholders are created for empty objects',
+    function() {
       scope.contentType.data = {
         fields: [
-          {id: 'field1'},
-          {id: 'field2'},
-          {id: 'field3', localized: true}
+          {id: 'a', localized: true},
         ]
       };
-      controller = $controller('EntryEditorController', {$scope: scope});
+      scope.entry.data.fields = {
+        'a': {},
+      };
+      $controller('EntryEditorController', {$scope:scope});
+      scope.$apply();
+      sinon.assert.calledWith(this.setStub,
+        {'en-US': undefined, 'de-DE': undefined});
+    });
 
-      this.atStub = sinon.stub();
-      this.setStub = sinon.stub();
-      this.atStub.returns({
-        set: this.setStub
-      });
-      scope.otDoc = {
-        doc: {
-          at: this.atStub
-        },
-        state: {}
+    it('should check that placeholders are created for empty arrays and ' +
+      'that the default locale is set for a non-localized field',
+    function(){
+      scope.contentType.data = {
+        fields: [
+          {id: 'a', localized: false},
+        ]
       };
       scope.entry.data.fields = {
-        field1: {'en-US': 'field1'},
-        field2: null,
-        field3: null
+        'a': [],
       };
-      this.$apply();
+      $controller('EntryEditorController', {$scope:scope});
+      scope.$apply();
+      sinon.assert.calledWith(this.setStub, {'en-US': undefined});
     });
 
-    it('calls set twice', function() {
-      sinon.assert.calledTwice(this.setStub);
+    it('should check that placeholders are created for primitive types',
+    function() {
+      scope.contentType.data = {
+        fields: [
+          {id: 'a', localized: true},
+          {id: 'b', localized: true},
+          {id: 'c', localized: true},
+        ]
+      };
+      scope.entry.data.fields = {
+        'a': 3,
+        'b': 'string',
+        'c': true
+      };
+      $controller('EntryEditorController', {$scope:scope});
+      scope.$apply();
+      sinon.assert.calledWith(this.setStub,
+        {'en-US': undefined, 'de-DE': undefined});
+      sinon.assert.calledThrice(this.setStub);
     });
-
-    it('calls set for field2', function() {
-      sinon.assert.calledWith(this.setStub, {'en-US': null});
-    });
-
-    it('calls set for field3', function() {
-      sinon.assert.calledWith(this.setStub, {'en-US': null, 'de-DE': null});
-    });
-
   });
 
 });

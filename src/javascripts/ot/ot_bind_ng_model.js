@@ -9,7 +9,10 @@
  * This directive should be used together with ngModel.
  * It binds the value specified for the ngModel to its respective otDoc value.
  */
-angular.module('contentful').directive('otBindNgModel', ['$parse', function($parse) {
+angular.module('contentful').directive('otBindNgModel', ['$injector',
+function($injector) {
+  var $parse = $injector.get('$parse');
+
   return {
     restrict: 'A',
     require: ['ngModel', '^otPath'],
@@ -18,18 +21,26 @@ angular.module('contentful').directive('otBindNgModel', ['$parse', function($par
       var ngModelGet = $parse(attr.ngModel),
           ngModelSet = ngModelGet.assign;
 
-      ngModelCtrl.$viewChangeListeners.push(function(){
-        scope.otSubDoc.changeValue(ngModelCtrl.$modelValue);
-        // TODO this is wrong because it does not handle the error case
-        // This directive was writte for Angular 1.1
-        // With Angular 1.3+ we could make use of async validations to revert when otSubDoc.changeValue fails
-      });
+      // TODO this is wrong because it does not handle the error case
+      // This directive was written for Angular 1.1
+      // With Angular 1.3+ we could make use of async validations to revert
+      // when otSubDoc.changeValue fails
+      ngModelCtrl.$viewChangeListeners.push(setOtValue);
 
       scope.$on('otValueChanged', function(event, path, val) {
         if (path === event.currentScope.otPath) {
           ngModelSet(event.currentScope, val);
         }
       });
+
+      function setOtValue() {
+        // We don't want to keep null values in the shareJS object, see BUG#6696
+        var value = ngModelCtrl.$modelValue;
+        if(value === null) {
+          value = undefined;
+        }
+        scope.otSubDoc.changeValue(value);
+      }
     }
   };
 }]);

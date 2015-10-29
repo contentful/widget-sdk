@@ -6,25 +6,27 @@ describe('otPath', function() {
     module('contentful/test', function ($provide) {
       $provide.removeControllers('otDocForController');
     });
-    inject(function ($compile, $rootScope, ShareJS) {
-      $rootScope.$apply(function () {
-        $rootScope.foo = 'FOO';
-        $rootScope.entity = 'ENTITY';
-        $rootScope.otDoc = {
-          doc: {
-            at: sinon.stub(),
-            getAt: function () {
-              return aValue;
-            }
-          }
-        };
-        elem = $compile('<div ot-doc-for="entity"><div ot-path="[foo, \'bar\']"></div></div>')($rootScope).find('div').get(0);
-        scope = angular.element(elem).scope();
-        ShareJS.peek = function () {
-          return peekValue;
-        };
-      });
-    });
+    var $rootScope  = this.$inject('$rootScope');
+    var $compile    = this.$inject('$compile');
+    var ShareJS     = this.$inject('ShareJS');
+
+
+    $rootScope.foo = 'FOO';
+    $rootScope.entity = 'ENTITY';
+    $rootScope.otDoc = {
+      doc: {
+        at: sinon.spy(),
+        getAt: function () {
+          return aValue;
+        }
+      }
+    };
+    elem = $compile('<div ot-doc-for="entity"><div ot-path="[foo, \'bar\']"></div></div>')($rootScope).find('div').get(0);
+    scope = angular.element(elem).scope();
+    ShareJS.peek = function () {
+      return peekValue;
+    };
+    $rootScope.$apply();
   });
 
   it('should provide otPath on the scope', function() {
@@ -68,18 +70,36 @@ describe('otPath', function() {
 
     describe('when the path is not present in the otDoc', function () {
       it('should mkpathAndSetValue the value', function () {
-        var mkpathAndSetValue;
-        inject(function (ShareJS) {
-          mkpathAndSetValue = ShareJS.mkpathAndSetValue = jasmine.createSpy('mkpathAndSetValue');
-        });
+        var ShareJS = this.$inject('ShareJS');
+        sinon.spy(ShareJS, 'mkpathAndSetValue');
         scope.otSubDoc.changeValue('bla');
-        expect(mkpathAndSetValue).toHaveBeenCalled();
-        expect(mkpathAndSetValue.calls.mostRecent().args[0]).toEqual({
+        sinon.assert.calledWith(ShareJS.mkpathAndSetValue, {
           doc: scope.otDoc.doc,
           path: scope.otPath,
           types: undefined,
           value: 'bla'
         });
+      });
+    });
+
+    /**
+     * Tests that when `null` is passed to `scope.otSubDoc.changeValue()` it
+     * should return $q.reject() and log a warning. See BUG#6696
+     */
+    describe('when the value is changed to null', function () {
+      it('should replace the value with undefined and log a warning',
+      function () {
+        var logger = this.$inject('logger');
+        var success = sinon.spy();
+        var fail = sinon.spy();
+        scope.otDoc.doc.setAt = sinon.spy();
+        scope.otPath = 'foo';
+
+        scope.otSubDoc.changeValue(null).then(success).catch(fail);
+        scope.$apply();
+        sinon.assert.notCalled(success);
+        sinon.assert.called(fail);
+        sinon.assert.called(logger.logWarn);
       });
     });
   });
@@ -95,13 +115,14 @@ describe('otSubdoc', function () {
         controller: function() { }
       });
     });
-    inject(function ($compile, $rootScope) {
-      $rootScope.otDoc = makeDoc();
-      $rootScope.otPath = ['path'];
-      elem = $compile('<div ot-doc-for><div ot-path="[\'fields\', \'field\']"></div></div>')($rootScope).find('*[ot-path]');
-      scope = elem.scope();
-      scope.$apply();
-    });
+    var $rootScope    = this.$inject('$rootScope');
+    var $compile      = this.$inject('$compile');
+
+    $rootScope.otDoc = makeDoc();
+    $rootScope.otPath = ['path'];
+    elem = $compile('<div ot-doc-for><div ot-path="[\'fields\', \'field\']"></div></div>')($rootScope).find('*[ot-path]');
+    scope = elem.scope();
+    scope.$apply();
   });
 
   it('should install subdoc on the scope', function () {

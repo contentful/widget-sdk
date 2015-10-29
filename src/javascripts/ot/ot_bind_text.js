@@ -107,7 +107,7 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
           // is also deferred. If we would change the value to null now, some code in attach_textarea
           // would try to access null as a string in the next tick:
           defer(function () {
-            scope.otSubDoc.changeValue(null);
+            scope.otSubDoc.changeValue(undefined);
           });
         }
       }

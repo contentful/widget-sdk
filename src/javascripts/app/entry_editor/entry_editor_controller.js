@@ -157,17 +157,33 @@ angular.module('contentful')
   /*
    * If a field is null or empty, initializes it with the necessary locale
    * placeholder objects
+   *
+   * TODO: Check if this function can be removed entirely. After doing some
+   * inspections on the data before and after manipulating the shareJS object
+   * it seems like calling `$scope.otDoc.doc.at([fields, id]).set(newField)`
+   * doesn't do very much if `newField` contains keys where values are
+   * undefined.
+   * Setting keys to undefined solves BUG#6696, but doesn't persist data to
+   * shareJS. Inspect if this can be removed entirely if it doesn't break
+   * anything.
    */
   function setupFieldLocales(contentTypeFields, field, fieldId) {
+    //1) If the field is a primitive, e.g an object, function, regex.
+    //Note: new String() or new Number() are not considered primitives to lodash
+    //unlike number and string
+    //2) If the field is an object with more than one key or a collection
+    //with a length that is larger than 0
     if(!_.isObject(field) || _.isEmpty(field)){
       var newField = {};
       var fieldType = _.find(contentTypeFields, {id: fieldId});
+      //Either initialize one field with the default locale or initialize all
+      //localized fields depending on wether the field is localizable
       if(fieldType.localized){
         _.each(TheLocaleStore.getPrivateLocales(), function (locale) {
-          newField[locale.internal_code] = null;
+          newField[locale.internal_code] = undefined;
         });
       } else {
-        newField[TheLocaleStore.getDefaultLocale().internal_code] = null;
+        newField[TheLocaleStore.getDefaultLocale().internal_code] = undefined;
       }
       $scope.otDoc.doc.at(['fields', fieldId]).set(newField);
     }

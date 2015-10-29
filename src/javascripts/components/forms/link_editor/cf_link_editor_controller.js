@@ -125,7 +125,9 @@ angular.module('contentful').controller('LinkEditorController',
     }
 
     function removeValue() {
-      return $scope.otSubDoc.changeValue(null)
+      //Note: $scope.otSubDoc.changeValue may return a $q exception which is
+      //never dealt with here...
+      return $scope.otSubDoc.changeValue(undefined)
       .then(function(){
         $scope.links.length = 0;
         $scope.updateModel();
