@@ -4,34 +4,39 @@ header.workbench-header
 
 .workbench-main
   .workbench-main__middle-content
-    form.workbench-main__middle-content(name="roleForm")
-      .cfnext-form__field
-        label Name
-        input.cfnext-form__input--full-size(ng-model="role.name")
-      .cfnext-form__field
-        label Description
-        textarea.cfnext-form__input--full-size(ng-model="role.description")
-      .cfnext-form__field
-        label Permissions
-      .cfnext-form-option
-        input(id="opt_read_content_model" type="checkbox" ng-model="role.permissions.contentModel.read")
-        label(for="opt_read_content_model") Read content model
-      .cfnext-form-option
-        input(id="opt_manage_content_model" type="checkbox" ng-model="role.permissions.contentModel.manage")
-        label(for="opt_manage_content_model") Manage content model
-      .cfnext-form-option
-        input(id="opt_read_content_delivery" type="checkbox" ng-model="role.permissions.contentDelivery.read")
-        label(for="opt_read_content_delivery") Read content delivery
-      .cfnext-form-option
-        input(id="opt_manage_content_delivery" type="checkbox" ng-model="role.permissions.contentDelivery.manage")
-        label(for="opt_manage_content_delivery") Manage content delivery
-      .cfnext-form-option
-        input(id="opt_manage_settings" type="checkbox" ng-model="role.permissions.settings.manage")
-        label(for="opt_manage_settings") Manage settings
-      .cfnext-form__field
-        label Policies JSON (does not synchronize to backend yet)
-        textarea.cfnext-form__input--full-size(rows="10")
-          | {{ role.policies | json }}
+    form(name="roleForm")
+      .role-details__section
+        h3 Entries
+        cf-rule-list(rules="internal.entries" entity="entry")
+
+      .role-details__section
+        h3 Media Assets
+        cf-rule-list(rules="internal.assets" entity="asset")
+
+      .role-details__section
+        h3 Content Types
+        .cfnext-form-option
+          input(id="opt_content_types_access" type="checkbox" ng-model="internal.contentTypes.access")
+          label(for="opt_content_types_access") Allow access to Content Types
+
+      .role-details__section
+        h3 API keys
+        .cfnext-form-option
+          input(id="opt_api_keys_view" type="checkbox" ng-model="internal.apiKeys.view")
+          label(for="opt_api_keys_view") Allow viewing API keys
+        .cfnext-form-option
+          input(id="opt_space_settings_edit" type="checkbox" ng-model="internal.apiKeys.edit")
+          label(for="opt_space_settings_edit") Allow editing API keys
+
+      .role-details__section
+        h3 Space settings
+        .cfnext-form-option
+          input(id="opt_space_settings_access" type="checkbox" ng-model="internal.spaceSettings.access")
+          label(for="opt_space_settings_access") Allow access to Space settings
+
+      .role-details__section
+        h3 Internal representation
+        pre {{ internal | json }}
 
   .workbench-main__entity-sidebar
     .entity-sidebar

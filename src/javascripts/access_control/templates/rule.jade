@@ -1,0 +1,42 @@
+select.cfnext-select-box(ng-model="rule.action")
+  option(value="read") Read
+  option(value="edit") Edit
+  option(value="create") Create
+  option(value="delete") Delete
+  option(value="archive") Archive/Unarchive
+  option(value="publish") Publish/Unpublish
+
+select.cfnext-select-box(ng-model="rule.scope")
+  option(value="any") Any {{ entityName[0] }}
+  option(value="user") {{ entityName[1] }} created by user
+
+select.cfnext-select-box(
+  ng-model="rule.contentType"
+  ng-show="entity === 'entry'")
+  option(value="all") All content types
+  option(
+    ng-repeat="ct in spaceContext.publishedContentTypes track by ct.getId()"
+    value="{{ ct.getId() }}")
+    | {{ ct.data.name }}
+
+select.cfnext-select-box(
+  ng-model="rule.field"
+  ng-show="rule.action === 'edit' && entity === 'entry'"
+  ng-disabled="rule.contentType === 'all'")
+  option(value="all") All fields
+  option(
+    ng-repeat="field in contentTypeFields track by field.id"
+    value="{{ field.id }}")
+    | {{ field.name }}
+
+select.cfnext-select-box(
+  ng-model="rule.locale"
+  ng-show="rule.action === 'edit'")
+  option(value="all") All languages
+  option(
+    ng-repeat="locale in locales track by locale.internal_code"
+    value="{{ locale.internal_code }}")
+    | {{ locale.name }} ({{ locale.code }})
+
+a.rule-list__remove(href ng-click="remove(rule)")
+  i.fa.fa-trash
