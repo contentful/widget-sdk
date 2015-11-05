@@ -66,4 +66,25 @@ describe('otBindText', function () {
     sinon.assert.calledOnce(subdoc.attach_textarea);
   });
 
+  /**
+   * This test ensures that when a textfield is cleared and the directive wants
+   * to detach from shareJS, it does so by calling
+   * `scope.otSubDoc.changeValue()` with undefined instead of null.
+   * See BUG#6696
+   */
+  it('should call shareJS with undefined when clearing out a field',
+  function() {
+    scope.otSubDoc.changeValue = sinon.spy();
+    //Simulate input changes. This can also be done by changing
+    //`controller.$modelValue`, but wont trigger `$scope.viewChangeListeners`
+    elem.val('some text which will be removed').trigger('input');
+    //NOTE: Angular treats `''` and `null` as the same when passed to
+    //`elem.val()` but test both just to be sure
+    elem.val('').trigger('input');
+    elem.val('some text which will be removed').trigger('input');
+    elem.val(null).trigger('input');
+    sinon.assert.calledWith(scope.otSubDoc.changeValue, undefined);
+    sinon.assert.calledTwice(scope.otSubDoc.changeValue);
+  });
+
 });

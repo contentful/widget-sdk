@@ -46,7 +46,12 @@ angular.module('contentful').directive('otBindObjectValue', ['$injector', functi
        * @return {Promise}
       */
       scope.otBindObjectValueCommit = function() {
-        return scope.otSubDoc.changeValue(getInternal(scope))
+        var value = getInternal(scope);
+        // Do not call otSubDoc.changeValue() with null. See BUG#6696
+        if(value === null) {
+          value = undefined;
+        }
+        return scope.otSubDoc.changeValue(value)
         .then(function(){
           ngModelCtrl.$setViewValue(getInternal(scope));
           return getInternal(scope);
