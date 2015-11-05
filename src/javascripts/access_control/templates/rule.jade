@@ -11,8 +11,8 @@ select.cfnext-select-box(ng-model="rule.scope")
   option(value="user") {{ entityName[1] }} created by user
 
 select.cfnext-select-box(
-  ng-model="rule.contentType"
-  ng-show="entity === 'entry'")
+  ng-if="entity === 'entry'"
+  ng-model="rule.contentType")
   option(value="all") All content types
   option(
     ng-repeat="ct in spaceContext.publishedContentTypes track by ct.getId()"
@@ -20,8 +20,9 @@ select.cfnext-select-box(
     | {{ ct.data.name }}
 
 select.cfnext-select-box(
+  ng-if="entity === 'entry'"
   ng-model="rule.field"
-  ng-show="rule.action === 'edit' && entity === 'entry'"
+  ng-show="rule.action === 'edit'"
   ng-disabled="rule.contentType === 'all'")
   option(value="all") All fields
   option(

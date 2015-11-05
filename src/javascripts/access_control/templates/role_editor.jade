@@ -4,7 +4,16 @@ header.workbench-header
 
 .workbench-main
   .workbench-main__middle-content
-    form(name="roleForm")
+    .role-details
+      .role-details__section
+        h3 Role details
+        .cfnext-form__field
+          label(for="opt_name") Name
+          input.cfnext-form__input--full-size(id="opt_name" ng-model="role.name")
+        .cfnext-form__field
+          label(for="opt_description") Description
+          textarea.cfnext-form__input--full-size(id="opt_description" ng-model="role.description")
+
       .role-details__section
         h3 Entries
         cf-rule-list(rules="internal.entries" entity="entry")
@@ -35,8 +44,10 @@ header.workbench-header
           label(for="opt_space_settings_access") Allow access to Space settings
 
       .role-details__section
-        h3 Internal representation
-        pre {{ internal | json }}
+        h3 Internal/external representation
+        .tmp-representations
+          pre {{ internal | json }}
+          pre {{ external | json }}
 
   .workbench-main__entity-sidebar
     .entity-sidebar
