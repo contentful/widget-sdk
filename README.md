@@ -16,7 +16,8 @@ index.html.
 
 The serve task also watches all javascript files, templates and
 stylesheets and recompiles everything back into public as soon as
-anything changes.
+anything changes. If you want to disable watching, set `NO_WATCHING=1` in
+your environment.
 
 Not watched are the `user_interface` module and all the vendor stuff
 (stylesheets and scripts). If you update one of those, run `gulp all`
