@@ -6,7 +6,9 @@ select.cfnext-select-box(ng-model="rule.action")
   option(value="archive") Archive/Unarchive
   option(value="publish") Publish/Unpublish
 
-select.cfnext-select-box(ng-model="rule.scope")
+select.cfnext-select-box(
+  ng-model="rule.scope"
+  ng-disabled="rule.action === 'create'")
   option(value="any") Any {{ entityName[0] }}
   option(value="user") {{ entityName[1] }} created by user
 
