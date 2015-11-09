@@ -290,25 +290,28 @@ gulp.task('styleguide/stylesheets', function () {
 
 gulp.task('serve', ['styleguide'], function () {
   var builds = [];
-  watchTask(src['components'], 'js/app');
-  watchTask(src['templates'], 'templates');
-  gulp.watch('styleguide/**/*', function () {
-    builds.push(new Promise(function (resolve) {
-      runSequence('styleguide', resolve);
-    }));
+  watchTask(src['components'], function (resolve) {
+    runSequence('js/app', resolve);
   });
-  gulp.watch(src['stylesheets'], function () {
-    builds.push(new Promise(function (resolve) {
-      runSequence('stylesheets', 'styleguide', resolve);
-    }));
+  watchTask(src['templates'], function (resolve) {
+    runSequence('templates', resolve);
+  });
+  watchTask('styleguide/**/*', function (resolve) {
+    runSequence('styleguide', resolve);
+  });
+  watchTask(src['stylesheets'], function (resolve) {
+    runSequence('stylesheets', 'styleguide', resolve);
   });
 
-  function watchTask(source, taskName) {
-    gulp.watch(source, function () {
-      builds.push(new Promise(function (resolve) {
-        runSequence(taskName, resolve);
-      }));
-    });
+  function watchTask(source, sequence) {
+    var afterWatch = function () {
+      builds.push(new Promise(sequence));
+    };
+
+    if (process.env.NO_WATCHING) {
+      return afterWatch();
+    }
+    gulp.watch(source, afterWatch);
   }
 
   var publicDir = path.resolve(__dirname, 'public');
