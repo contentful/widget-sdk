@@ -59,7 +59,7 @@ angular.module('contentful').factory('OoyalaEditorControllerMixin', ['$injector'
     return results.map(function(i){
       return {
         id: i.embed_code,
-        duration: i.msDuration,
+        duration: i.duration,
         name: i.name,
         playerId: i.player_id,
         thumbnailUrl: i.preview_image_url
