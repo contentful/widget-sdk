@@ -139,13 +139,13 @@ describe('Ooyala Editor Controller Mixin', function() {
     describe('for every search result', function() {
       var result, descriptor;
       beforeEach(function() {
-        result     = { embed_code: 1, msDuration: 99, player_id: 'player-123', name: 'name', preview_image_url: 'url' };
+        result     = { embed_code: 1, duration: 99, player_id: 'player-123', name: 'name', preview_image_url: 'url' };
         descriptor = OoyalaEditorControllerMixin.processSearchResults([result])[0];
       });
 
       it('returns an object that describes the search result', function() {
         expect(descriptor.id).toEqual(result.embed_code);
-        expect(descriptor.duration).toEqual(result.msDuration);
+        expect(descriptor.duration).toEqual(result.duration);
         expect(descriptor.playerId).toEqual(result.player_id);
         expect(descriptor.name).toEqual(result.name);
         expect(descriptor.thumbnailUrl).toEqual(result.preview_image_url);
