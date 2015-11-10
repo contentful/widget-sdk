@@ -125,14 +125,8 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
         var oldValue = otGetValue();
 
         if (!oldValue || !newValue) {
-          return $q.denodeify(function (cb) {
-            ShareJS.mkpathAndSetValue({
-              doc: doc,
-              path: path,
-              // TODO should this really be `null` an not an empty string?
-              value: newValue || null
-            }, cb);
-          });
+          // TODO should this really be `null` an not an empty string?
+          return ShareJS.mkpathAndSetValue(doc, path, newValue || null);
         } else if (oldValue === newValue) {
           return $q.when();
         } else {
@@ -174,7 +168,9 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
        * @returns {Promise<void>}
        */
       function otChangeValue(value) {
-        if (!$scope.otDoc.doc) {
+        var doc = $scope.otDoc.doc;
+        var path = $scope.otPath;
+        if (!doc) {
           return $q.reject('No otDoc to push to');
         }
 
@@ -186,18 +182,11 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
           return $q.reject(err);
         }
 
-        var cb = $q.callbackWithApply();
-        try {
-          $scope.otDoc.doc.setAt($scope.otPath, value, cb);
-        } catch(e) {
-          ShareJS.mkpathAndSetValue({
-            doc: $scope.otDoc.doc,
-            path: $scope.otPath,
-            value: value
-          }, cb);
-        } finally {
-          return cb.promise;
-        }
+        return $q.denodeify(function (cb) {
+          doc.setAt(path, value, cb);
+        }).catch(function () {
+          return ShareJS.mkpathAndSetValue(doc, path, value);
+        });
       }
 
       function otGetValue() {

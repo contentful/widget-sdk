@@ -148,17 +148,6 @@ angular.module('contentful')
         return !(state === 'connecting' || state === 'handshaking' || state === 'ok');
       },
 
-      /**
-       * @ngdoc type
-       * @name ShareJS.mkpathAndSetValue.params
-       * @property {any} value The initial value we want to be at the end of the path
-       * @property {OtDoc} doc The document to operate on
-       * @property {Array<string>} path An array describing the path in the JSON doc
-       * @property {Array<string>} types An array describing the type of each step in
-       *   the path as either "Object", "Array" or "String".
-       *   This information is used to create the correct
-       *   intermediate objects when creating the path.
-      */
 
       /**
        * @ngdoc method
@@ -174,50 +163,57 @@ angular.module('contentful')
        *   `value` parameter
        * - set it to the value parameter otherwise
        *
-       * @param {ShareJS.mkpathAndSetValue.params} params
-       * @param {function()} callback
+       * TODO not setting the value does not make sense at all!
+       *
+       * @param {OtDoc} doc The document to operate on
+       * @param {Array<string>} path An array describing the path in the JSON doc
+       * @param {any} value The initial value we want to be at the end of the path
+       * @returns {Promise<void>}
        *
        * @usage
-       * ShareJS.mkpathAndSetValue({
-       *   doc: shareJsDoc
-       *   value: 'Foo'
-       *   path:  ['foo', '12']
-       * }, callback);
+       * ShareJS.mkpathAndSetValue(
+       *   shareJsDoc,
+       *   ['foo', '12']
+       *   'Foo'
+       * });
        */
-      mkpathAndSetValue: function(params, callback){
-        var doc = params.doc;
-        var segments = params.path.slice();
-        var value = params.value;
-        var tmp, prop, segment, currentVal;
+      mkpathAndSetValue: function(doc, path, value){
+        return $q.denodeify(function (callback) {
+          var segments = path.slice();
+          var tmp, prop, segment, currentVal;
 
-        //jshint boss:true
-        while(segment = segments.shift()) {
-          doc = doc.at(segment);
-          currentVal = doc.get();
-          var hasNoContainer = segments.length && !(_.isObject(currentVal) || _.isArray(currentVal));
-          if (hasNoContainer) {
-            segments.unshift(segment);
-            prop = segments.pop();
-            while(segments.length > 0) {
-              segment = segments.pop();
-              tmp = {};
-              tmp[prop] = value;
-              value = tmp;
-              prop = segment;
+          //jshint boss:true
+          while(segment = segments.shift()) {
+            doc = doc.at(segment);
+            currentVal = doc.get();
+            var hasNoContainer = segments.length && !(_.isObject(currentVal) || _.isArray(currentVal));
+            if (hasNoContainer) {
+              segments.unshift(segment);
+              prop = segments.pop();
+              while(segments.length > 0) {
+                segment = segments.pop();
+                tmp = {};
+                tmp[prop] = value;
+                value = tmp;
+                prop = segment;
+              }
+              // TODO I am pretty sure this is not what we want: We
+              // only create *one* container, set the value and return
+              // from the function.
+              doc.set(value, callback);
+              return;
             }
-            doc.set(value, callback);
-            return;
           }
-        }
-        // If value at path doesn't match passed in value type replace it
-        if (_.isString(currentVal)  && _.isString(value) ) {_.defer(callback); return;}
-        if (_.isNumber(currentVal)  && _.isNumber(value) ) {_.defer(callback); return;}
-        if (_.isBoolean(currentVal) && _.isBoolean(value)) {_.defer(callback); return;}
-        if (_.isNull(currentVal)    && _.isNull(value)   ) {_.defer(callback); return;}
-        if (_.isObject(currentVal)  && _.isObject(value) &&
-            _.isArray(currentVal)  === _.isArray(value)) {_.defer(callback); return;}
+          // If value at path doesn't match passed in value type replace it
+          if (_.isString(currentVal)  && _.isString(value) ) {_.defer(callback); return;}
+          if (_.isNumber(currentVal)  && _.isNumber(value) ) {_.defer(callback); return;}
+          if (_.isBoolean(currentVal) && _.isBoolean(value)) {_.defer(callback); return;}
+          if (_.isNull(currentVal)    && _.isNull(value)   ) {_.defer(callback); return;}
+          if (_.isObject(currentVal)  && _.isObject(value) &&
+              _.isArray(currentVal)  === _.isArray(value)) {_.defer(callback); return;}
 
-        doc.set(value, callback);
+          doc.set(value, callback);
+        });
       },
 
       /**

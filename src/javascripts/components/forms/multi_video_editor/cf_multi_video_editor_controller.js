@@ -53,22 +53,19 @@ angular.module('contentful').controller('cfMultiVideoEditorController', ['$attrs
   }
 
   function storeAsset(asset) {
-    var assetObject, cb;
-
-    assetObject = initAssetObject(asset.assetId);
-    cb          = $q.callbackWithApply();
-
-    if (_.isArray(ShareJS.peek($scope.otDoc.doc, $scope.otPath))) {
-      $scope.otDoc.doc.at($scope.otPath).insert(0, asset.assetId, cb);
+    var promise;
+    var assetObject = initAssetObject(asset.assetId);
+    var doc = $scope.otDoc.doc;
+    var path = $scope.otPath;
+    if (_.isArray(ShareJS.peek(doc, path))) {
+      promise = $q.denodeify(function (cb) {
+        doc.at(path).insert(0, asset.assetId, cb);
+      });
     } else {
-      ShareJS.mkpathAndSetValue({
-        doc: $scope.otDoc.doc,
-        path: $scope.otPath,
-        value: [asset.assetId]
-      }, cb);
+      promise = ShareJS.mkpathAndSetValue(doc, path, [asset.assetId]);
     }
 
-    cb.promise.then(function () {
+    promise.then(function () {
       $scope.multiVideoEditor.assets.unshift(assetObject);
       $scope.videoInputController().clearField();
     });

@@ -15,7 +15,8 @@
  * @usage
  * <input type="text" ng-model="fieldData.value" ot-bind-text>
  */
-angular.module('contentful').directive('otBindText', ['$injector', function($injector) {
+angular.module('contentful')
+.directive('otBindText', ['$injector', function($injector) {
   var $parse            = $injector.get('$parse');
   var ShareJS           = $injector.get('ShareJS');
   var defer             = $injector.get('defer');
@@ -143,25 +144,15 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
 
       function makeAndAttach(subdoc, text){
         text = text === undefined ? '' : text;
-        ShareJS.mkpathAndSetValue({
-          doc: scope.otDoc.doc,
-          path: subdoc.path,
-          value: text
-        }, handleMkPathErrors);
+        ShareJS.mkpathAndSetValue(scope.otDoc.doc, subdoc.path, text)
+        .catch(function (err) {
+          logger.logError('makeAndAttach mkpathAndSetValue failed', {
+            data: err,
+          });
+          ReloadNotification.trigger();
+        });
         unbindTextField = subdoc.attach_textarea(elm[0]);
       }
-
-      function handleMkPathErrors(err) {
-        if (err){
-          scope.$apply(function(){
-            logger.logError('makeAndAttach mkpathAndSetValue failed', {
-              data: err,
-            });
-            ReloadNotification.trigger();
-          });
-        }
-      }
-
     }
 
   };

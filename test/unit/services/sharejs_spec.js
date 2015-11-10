@@ -1,9 +1,10 @@
 'use strict';
 
-describe('ShareJS static methods', function () {
+describe('static methods', function () {
   beforeEach(function () {
     module('contentful/test');
-    this.ShareJS = this.$inject('ShareJS');
+    var ShareJS = this.$inject('ShareJS');
+    this.mkpathAndSetValue = ShareJS.mkpathAndSetValue;
     var self = this;
     this.getValues = [];
     this.at  = sinon.spy(function () { return self.doc;  });
@@ -19,91 +20,67 @@ describe('ShareJS static methods', function () {
   });
 
   it('should create a top level property', function () {
-    this.ShareJS.mkpathAndSetValue({
-      doc: this.doc,
-      path: ['field'],
-      value: 'content'
-    }, this.callback);
+    this.mkpathAndSetValue(this.doc, ['field'], 'content');
     expect(this.at.args).toMatchMultipleCallsArgs(['field']);
-    expect(this.set.calledWith('content', this.callback)).toBe(true);
+    expect(this.set.calledWith('content')).toBe(true);
   });
 
 
+  it('resolves the promise when value is set', function () {
+    var success = sinon.stub();
+    this.mkpathAndSetValue(this.doc, ['field'], 'content')
+    .then(success);
+    this.$apply();
+    sinon.assert.calledOnce(success);
+  });
+
   it('should create a nested property', function () {
-    this.ShareJS.mkpathAndSetValue({
-      doc: this.doc,
-      path: ['field', 'subfield'],
-      value: 'content'
-    }, this.callback);
+    this.mkpathAndSetValue(this.doc, ['field', 'subfield'], 'content');
     expect(this.at.args).toMatchMultipleCallsArgs(['field']);
-    expect(this.set.calledWith({subfield: 'content'}, this.callback)).toBe(true);
+    expect(this.set.calledWith({subfield: 'content'})).toBe(true);
   });
 
   it('create a property in an existing document', function () {
     this.getValues.push({});
-    this.ShareJS.mkpathAndSetValue({
-      doc: this.doc,
-      path: ['field', 'property'],
-      value: 'content'
-    }, this.callback);
+    this.mkpathAndSetValue(this.doc, ['field', 'property'], 'content');
     expect(this.at.args).toMatchMultipleCallsArgs(['field', 'property']);
-    expect(this.set.calledWith('content', this.callback)).toBe(true);
+    expect(this.set.calledWith('content')).toBe(true);
   });
 
   it('create an array with one document in an existing collection of documents', function () {
     var doc = { fields: [{}] };
     this.getValues.push(doc, doc.fields);
-    this.ShareJS.mkpathAndSetValue({
-      doc: this.doc,
-      path: ['doc', 'fields', 1, 'document'],
-      value: 'content'
-    }, this.callback);
+    var path = ['doc', 'fields', 1, 'document'];
+    this.mkpathAndSetValue(this.doc, path, 'content');
     expect(this.at.args).toMatchMultipleCallsArgs(['doc', 'fields', 1]);
-    expect(this.set.calledWith({document: 'content'}, this.callback)).toBe(true);
+    expect(this.set.calledWith({document: 'content'})).toBe(true);
   });
 
-  it('create a string where path exists and is string', function (done) {
+  it('create a string where path exists and is string', function () {
     this.getValues.push('herp derp');
-    this.callback = function () { done(); };
-    this.ShareJS.mkpathAndSetValue({
-      doc: this.doc,
-      path: ['prop'],
-      value: 'content'
-    }, this.callback);
+    this.mkpathAndSetValue(this.doc, ['prop'], 'content');
     expect(this.at.args).toMatchMultipleCallsArgs(['prop']);
     expect(this.set.called).toBe(false);
   });
 
   it('create a string where path exists and is null', function () {
     this.getValues.push(null);
-    this.ShareJS.mkpathAndSetValue({
-      doc: this.doc,
-      path: ['prop'],
-      value: 'content'
-    }, this.callback);
+    this.mkpathAndSetValue(this.doc, ['prop'], 'content');
     expect(this.at.args).toMatchMultipleCallsArgs(['prop']);
-    expect(this.set.calledWith('content', this.callback)).toBe(true);
+    expect(this.set.calledWith('content')).toBe(true);
   });
 
   it('create an object where path exists and is array', function () {
     this.getValues.push({prop: []}, []);
-    this.ShareJS.mkpathAndSetValue({
-      doc: this.doc,
-      path: ['prop', 'drop'],
-      value: {foo: 'bar'}
-    }, this.callback);
+    this.mkpathAndSetValue(this.doc, ['prop', 'drop'], {foo: 'bar'});
     expect(this.at.args).toMatchMultipleCallsArgs(['prop', 'drop']);
-    expect(this.set.calledWith({foo: 'bar'}, this.callback)).toBe(true);
+    expect(this.set.calledWith({foo: 'bar'})).toBe(true);
   });
 
   it('create an object where path exists and is array', function () {
     this.getValues = [null];
-    this.ShareJS.mkpathAndSetValue({
-      doc: this.doc,
-      path: ['container', 'prop'],
-      value: true
-    }, this.callback);
+    this.mkpathAndSetValue(this.doc, ['container', 'prop'], true);
     expect(this.at.args).toMatchMultipleCallsArgs(['container']);
-    sinon.assert.calledWith(this.set, {prop: true}, this.callback);
+    sinon.assert.calledWith(this.set, {prop: true});
   });
 });

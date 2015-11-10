@@ -74,23 +74,23 @@ angular.module('contentful').controller('LinkEditorController',
 
     entityCache.save(entity);
 
-    var cb, promise;
+    var promise;
+    var doc = $scope.otDoc.doc;
+    var path = $scope.otPath;
     if ($scope.linkSingle) {
-      promise = $scope.otSubDoc.changeValue(link).then(function () { $scope.links = [link]; });
+      promise = $scope.otSubDoc.changeValue(link)
+      .then(function () { $scope.links = [link]; });
     } else {
-      cb = $q.callbackWithApply();
-      if (_.isArray(ShareJS.peek($scope.otDoc.doc, $scope.otPath))) {
-        $scope.otDoc.doc.at($scope.otPath).push(link, cb);
-        promise = cb.promise.then(function () { $scope.links.push(link); });
+      if (_.isArray(ShareJS.peek(doc, path))) {
+        promise = $q.denodeify(function (cb) {
+          doc.at(path).push(link, cb);
+        }).then(function () { $scope.links.push(link); });
       } else {
-        ShareJS.mkpathAndSetValue({
-          doc: $scope.otDoc.doc,
-          path: $scope.otPath,
-          value: [link]
-        }, cb);
-        promise = cb.promise.then(function () { $scope.links = [link]; });
+        promise = ShareJS.mkpathAndSetValue(doc, path, [link])
+        .then(function () { $scope.links = [link]; });
       }
     }
+
     return promise.then(function () {
       $scope.updateModel();
     });

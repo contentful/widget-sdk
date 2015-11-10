@@ -189,6 +189,7 @@ describe('LinkEditorController', function () {
 
           scope.addLink(entry);
           stubs.otDocPush.yield();
+          this.$apply();
         });
 
         addEntryExpectations();
@@ -198,8 +199,9 @@ describe('LinkEditorController', function () {
         beforeEach(function() {
           shareJSMock.peek.returns({});
 
+          shareJSMock.mkpathAndSetValue.resolves();
           scope.addLink(entry);
-          shareJSMock.mkpathAndSetValue.yield();
+          this.$apply();
         });
 
         addEntryExpectations();

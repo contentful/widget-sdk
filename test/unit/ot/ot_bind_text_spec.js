@@ -5,7 +5,7 @@ describe('otBindText', function () {
 
   beforeEach(module('contentful/test', function ($provide) {
     $provide.value('ShareJS', {
-      mkpathAndSetValue: sinon.stub().yieldsAsync(null),
+      mkpathAndSetValue: sinon.stub(),
       peek: sinon.stub().returns('xx'),
       isConnected: sinon.stub().returns(true),
       connectionFailed: sinon.stub().returns(false),
@@ -17,6 +17,7 @@ describe('otBindText', function () {
   }));
 
   beforeEach(inject(function ($rootScope, $compile, ShareJS) {
+    ShareJS.mkpathAndSetValue.resolves();
     ShareJS.open.resolves(doc = {
       // otDoc
       on: sinon.stub(),
