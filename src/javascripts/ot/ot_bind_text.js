@@ -146,7 +146,6 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
         ShareJS.mkpathAndSetValue({
           doc: scope.otDoc.doc,
           path: subdoc.path,
-          types: subdoc.types,
           value: text
         }, handleMkPathErrors);
         unbindTextField = subdoc.attach_textarea(elm[0]);
