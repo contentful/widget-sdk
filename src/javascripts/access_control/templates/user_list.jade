@@ -18,6 +18,7 @@ header.workbench-header
         img(ng-src="{{ user.avatarUrl }}" width="50" height="50")
         .user-list__info
           strong.user-list__name {{ user.name }}
+          small(ng-if="!user.confirmed") This account is not confirmed
           .user-list__roles {{ user.roleNames }}
         button.user-list__actions.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
           | &bullet;&bullet;&bullet;
