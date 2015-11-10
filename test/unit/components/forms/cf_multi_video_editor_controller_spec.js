@@ -124,7 +124,6 @@ describe('Multi Video Editor Controller', function() {
       };
       scope.otDoc.doc.at.and.returnValue(insertOpMock);
 
-      scope.otPathTypes = 'ot-path-types';
       scope.otPath      = 'ot-path';
     });
 
@@ -153,7 +152,6 @@ describe('Multi Video Editor Controller', function() {
         expect(ShareJSMock.mkpathAndSetValue).toHaveBeenCalledWith({
           doc: scope.otDoc.doc,
           path: scope.otPath,
-          types: scope.otPathTypes,
           value: ['asset-id']
         }, jasmine.any(Function));
       });

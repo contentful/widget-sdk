@@ -64,7 +64,6 @@ angular.module('contentful').controller('cfMultiVideoEditorController', ['$attrs
       ShareJS.mkpathAndSetValue({
         doc: $scope.otDoc.doc,
         path: $scope.otPath,
-        types: $scope.otPathTypes,
         value: [asset.assetId]
       }, cb);
     }

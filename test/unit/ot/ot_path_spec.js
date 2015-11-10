@@ -76,7 +76,6 @@ describe('otPath', function() {
         sinon.assert.calledWith(ShareJS.mkpathAndSetValue, {
           doc: scope.otDoc.doc,
           path: scope.otPath,
-          types: undefined,
           value: 'bla'
         });
       });

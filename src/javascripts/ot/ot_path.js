@@ -5,7 +5,6 @@
  * @name otPath
  * @scope.requires otDoc
  * @property otPath
- * @property otPathTypes
  *
  * @description
  * Scopes a part of an ot component to a path within the ot document
@@ -13,7 +12,7 @@
  *
  * @usage[html]
  * <entity-editor ot-doc-for="entity">
- *   <part-editor ot-path="['fields', 'fieldId', 'locale']" ot-path-types="['String', 'String', 'String']">
+ *   <part-editor ot-path="['fields', 'fieldId', 'locale']">
 */
 
 angular.module('contentful').directive('otPath', ['$injector', function($injector){
@@ -33,12 +32,7 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
         scope.otPath = otPath;
       }, true);
 
-      scope.$watch(attr['otPathTypes'], function(otPathTypes, old, scope) {
-        scope.otPathTypes = otPathTypes;
-      }, true);
-
       scope.otPath = scope.$eval(attr['otPath']);
-      scope.otPathTypes = scope.$eval(attr['otPathTypes']);
     },
 
 
@@ -135,7 +129,6 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
             ShareJS.mkpathAndSetValue({
               doc: doc,
               path: path,
-              types: $scope.otPathTypes,
               // TODO should this really be `null` an not an empty string?
               value: newValue || null
             }, cb);
@@ -200,7 +193,6 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
           ShareJS.mkpathAndSetValue({
             doc: $scope.otDoc.doc,
             path: $scope.otPath,
-            types: $scope.otPathTypes,
             value: value
           }, cb);
         } finally {
