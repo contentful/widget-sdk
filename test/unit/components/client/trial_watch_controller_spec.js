@@ -106,13 +106,9 @@ describe('Trial Watch controller', function () {
 
           itShowsAMessageYourTrialHasEnded();
 
-          it('shows an action message', function () {
-            expect(broadcastStub.args[0][1].actionMessage).toMatch(/upgrade/i);
-          });
+          itShowsAnActionMessage();
 
-          it('has an action', function () {
-            expect(typeof broadcastStub.args[0][1].action).toBe('function');
-          });
+          itHasAnAction();
         } );
 
         describe( 'for user not owning the organization', function() {
@@ -124,13 +120,9 @@ describe('Trial Watch controller', function () {
 
           itShowsAMessageYourTrialHasEnded();
 
-          it('does not show an action message', function () {
-            expect(broadcastStub.args[0][1].actionMessage).toBeUndefined();
-          });
+          itDoesNotShowAnActionMessage();
 
-          it('does not have an action', function () {
-            expect(broadcastStub.args[0][1].action).toBeUndefined();
-          });
+          itDoesNotHaveAnAction();
         } );
 
         function itShowsAMessageYourTrialHasEnded() {
@@ -150,13 +142,9 @@ describe('Trial Watch controller', function () {
           expect(broadcastStub.args[0][1].message).toMatch(/20(.*)hours left in trial/);
         });
 
-        it('shows an action message', function () {
-          expect(broadcastStub.args[0][1].actionMessage).toMatch(/upgrade/i);
-        });
+        itShowsAnActionMessage();
 
-        it('has an action', function () {
-          expect(typeof broadcastStub.args[0][1].action).toBe('function');
-        });
+        itHasAnAction();
       });
 
       describe('for days periods', function () {
@@ -166,13 +154,9 @@ describe('Trial Watch controller', function () {
           scope.$digest();
         });
 
-        it('shows an action message', function () {
-          expect(broadcastStub.args[0][1].actionMessage).toMatch(/upgrade/i);
-        });
+        itShowsAnActionMessage();
 
-        it('has an action', function () {
-          expect(typeof broadcastStub.args[0][1].action).toBe('function');
-        });
+        itHasAnAction();
       });
 
       describe('no action', function () {
@@ -182,13 +166,9 @@ describe('Trial Watch controller', function () {
           scope.$digest();
         });
 
-        it('does not show an action message', function () {
-          expect(broadcastStub.args[0][1].actionMessage).toBeUndefined();
-        });
+        itDoesNotShowAnActionMessage();
 
-        it('does not have an action', function () {
-          expect(broadcastStub.args[0][1].action).toBeUndefined();
-        });
+        itDoesNotHaveAnAction();
       });
 
     });
@@ -217,13 +197,9 @@ describe('Trial Watch controller', function () {
           expect(broadcastStub.args[0][1].message).toMatch('free version');
         });
 
-        it('shows an action message', function () {
-          expect(broadcastStub.args[0][1].actionMessage).toMatch(/upgrade/i);
-        });
+        itShowsAnActionMessage();
 
-        it('has an action', function () {
-          expect(typeof broadcastStub.args[0][1].action).toBe('function');
-        });
+        itHasAnAction();
       });
 
       describe('no action', function () {
@@ -233,15 +209,35 @@ describe('Trial Watch controller', function () {
           scope.$digest();
         });
 
-        it('does not show an action message', function () {
-          expect(broadcastStub.args[0][1].actionMessage).toBeUndefined();
-        });
+        itDoesNotShowAnActionMessage();
 
-        it('does not have an action', function () {
-          expect(broadcastStub.args[0][1].action).toBeUndefined();
-        });
+        itDoesNotHaveAnAction();
       });
     });
   });
+
+  function itShowsAnActionMessage() {
+    it('shows an action message', function () {
+      expect(broadcastStub.args[0][1].actionMessage).toMatch(/upgrade/i);
+    });
+  }
+
+  function itDoesNotShowAnActionMessage() {
+    it('does not show an action message', function () {
+      expect(broadcastStub.args[0][1].actionMessage).toBeUndefined();
+    });
+  }
+
+  function itHasAnAction() {
+    it('has an action', function () {
+      expect(typeof broadcastStub.args[0][1].action).toBe('function');
+    });
+  }
+
+  function itDoesNotHaveAnAction() {
+    it('does not have an action', function () {
+      expect(broadcastStub.args[0][1].action).toBeUndefined();
+    });
+  }
 
 });
