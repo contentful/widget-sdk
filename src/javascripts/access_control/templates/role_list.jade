@@ -12,7 +12,7 @@ header.workbench-header
           small (built-in)
         p Members of this role have a full access to everything in this space. This is a built-in role and can't be deleted.
       .role-list__member-count
-        a(href="" ui-sref="spaces.detail.settings.users.list")
+        a(href="" ng-click="jumpToAdminRoleMembers()")
           | {{ memberships.admin || 0 }} members
       button.role-list__actions.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
         | &bullet;&bullet;&bullet;
@@ -26,7 +26,7 @@ header.workbench-header
         h3 {{ role.name }}
         p(ng-if="role.description") {{ role.description }}
       .role-list__member-count
-        a(href="" ui-sref="spaces.detail.settings.users.list")
+        a(href="" ng-click="jumpToRoleMembers(role.sys.id)")
           | {{ memberships[role.sys.id] || 0 }} members
       button.role-list__actions.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
         | &bullet;&bullet;&bullet;

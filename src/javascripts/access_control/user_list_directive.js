@@ -1,12 +1,35 @@
 'use strict';
 
-angular.module('contentful').directive('cfUserList', function () {
+angular.module('contentful').directive('cfUserList', ['$injector', function ($injector) {
+
+  var popRoleId = $injector.get('UserListController/jumpToRole').popRoleId;
+  var $timeout  = $injector.get('$timeout');
+
   return {
     restrict: 'E',
     template: JST['user_list'](),
-    controller: 'UserListController'
+    controller: 'UserListController',
+    link: link
   };
-});
+
+  function link(scope, el) {
+    var roleId = popRoleId();
+    scope.selectedView = roleId ? 'role' : 'name';
+    scope.jumpToRole   = roleId ? _.once(jumpToRole) : _.noop;
+
+    function jumpToRole() {
+      $timeout(function () {
+        var groupHeader = el.find('#role-group-' + roleId).first();
+        var scrollContainer = el.find('.workbench-main__middle-content').first();
+
+        if (groupHeader.length && scrollContainer.length) {
+          var scrollTo = scrollContainer.scrollTop() + groupHeader.position().top;
+          scrollContainer.scrollTop(scrollTo);
+        }
+      });
+    }
+  }
+}]);
 
 angular.module('contentful').controller('UserListController', ['$scope', '$injector', function ($scope, $injector) {
 
@@ -20,7 +43,6 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(space);
   var listHandler         = $injector.get('UserListHandler');
 
-  $scope.selectedView = 'name';
   $scope.viewLabels = {
     name: 'Show users in alphabetical order',
     role: 'Show users grouped by role'
@@ -150,6 +172,25 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
       $scope.count = listHandler.reset(data);
       $scope.by = listHandler.getGroupedUsers();
       $scope.context.ready = true;
+      $scope.jumpToRole();
     });
+  }
+}]);
+
+angular.module('contentful').factory('UserListController/jumpToRole', ['$injector', function ($injector) {
+
+  var targetRoleId = null;
+  jump.popRoleId = popRoleId;
+  return jump;
+
+  function jump(roleId) {
+    targetRoleId = roleId;
+    $injector.get('$state').go('spaces.detail.settings.users.list');
+  }
+
+  function popRoleId() {
+    var roleId = targetRoleId;
+    targetRoleId = null;
+    return roleId;
   }
 }]);

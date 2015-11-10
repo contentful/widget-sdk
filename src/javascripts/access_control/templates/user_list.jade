@@ -12,7 +12,9 @@ header.workbench-header
 
 .workbench-main
   .workbench-main__middle-content
-    .user-list__group(ng-repeat="item in by[selectedView] track by item.label")
+    .user-list__group(
+      ng-attr-id="{{ item.id }}"
+      ng-repeat="item in by[selectedView] track by item.label")
       h3 {{ item.label }}
       .user-list__item(ng-repeat="user in item.users track by user.id")
         img(ng-src="{{ user.avatarUrl }}" width="50" height="50")

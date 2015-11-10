@@ -21,7 +21,8 @@ angular.module('contentful').factory('UserListHandler', [function () {
     getRoleOptions: getRoleOptions,
     getRoleOptionsBut: getRoleOptionsBut,
     isLastAdmin: isLastAdmin,
-    isAdminRole: isAdminRole
+    isAdminRole: isAdminRole,
+    getAdminRoleId: _.constant(ADMIN_ROLE_ID)
   };
 
   function reset(data) {
@@ -126,7 +127,11 @@ angular.module('contentful').factory('UserListHandler', [function () {
     var sortedLetters = _.keys(byLetter).sort();
 
     return _.map(sortedLetters, function (letter) {
-      return { label: letter, users: byLetter[letter ]};
+      return {
+        id: 'letter-group-' + letter.toLowerCase(),
+        label: letter,
+        users: byLetter[letter]
+      };
     });
   }
 
@@ -147,7 +152,11 @@ angular.module('contentful').factory('UserListHandler', [function () {
     byRole[ADMIN_ROLE_ID] = admins;
 
     return _.map(sortedRoleIds, function (roleId) {
-      return { label: getRoleName(roleId), users: byRole[roleId] };
+      return {
+        id: 'role-group-' + roleId,
+        label: getRoleName(roleId),
+        users: byRole[roleId]
+      };
     });
   }
 }]);

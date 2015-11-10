@@ -17,10 +17,13 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
   var roleRepo            = $injector.get('RoleRepository').getInstance(space);
   var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(space);
   var listHandler         = $injector.get('UserListHandler');
+  var jumpToRoleMembers   = $injector.get('UserListController/jumpToRole');
 
-  $scope.sref       = createSref;
-  $scope.removeRole = removeRole;
-  $scope.notImplemented = function () { window.alert('Not implemented yet.'); };
+  $scope.sref                   = createSref;
+  $scope.removeRole             = removeRole;
+  $scope.jumpToRoleMembers      = jumpToRoleMembers;
+  $scope.jumpToAdminRoleMembers = jumpToAdminRoleMembers;
+  $scope.notImplemented         = function () { window.alert('Not implemented yet.'); };
 
   reload().catch(ReloadNotification.basicErrorHandler);
 
@@ -88,6 +91,10 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
     });
 
     return counts;
+  }
+
+  function jumpToAdminRoleMembers() {
+    jumpToRoleMembers(listHandler.getAdminRoleId());
   }
 
   function createSref(role, stateName) {
