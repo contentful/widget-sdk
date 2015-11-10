@@ -14,6 +14,8 @@
             ng-maxlength="2100"
             required autocomplete="off"
             cf-focus-on-render="input")
+          .note-box-small.note-box--gold(ng-if="taken")
+            | There is already user with <strong>{{ taken }}</strong> email address in this space.
           .cfnext-form__hint They will receive an invitation email with a link to join Contentful.
 
         .cfnext-form__field
@@ -26,9 +28,7 @@
           .cfnext-form__hint You can always change this later.
 
     .modal-dialog__controls
-      button.cfnext-btn-primary-action(
-        ng-click="dialog.confirm(input)"
-        ng-disabled="!invitationForm.$valid || !input.roleId")
+      button.cfnext-btn-primary-action(ui-command="invite")
         | Invite
       button.cfnext-btn-secondary-action(ng-click="dialog.cancel()")
         | Cancel

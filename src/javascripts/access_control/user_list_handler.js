@@ -61,7 +61,7 @@ angular.module('contentful').factory('UserListHandler', [function () {
         roles: userRolesMap[id] || [],
         roleNames: getRoleNamesForUser(id),
         avatarUrl: data.avatarUrl,
-        name: data.firstName && data.lastName ? user.getName() : NOT_DEFINED_USER_NAME
+        name: data.firstName && data.lastName ? user.getName() : (data.email || NOT_DEFINED_USER_NAME)
       };
     }).sortBy('name').value();
   }

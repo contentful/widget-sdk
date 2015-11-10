@@ -8,10 +8,28 @@ angular.module('contentful').factory('SpaceMembershipRepository', [function () {
 
     return {
       getAll: getAll,
+      invite: invite,
+      inviteAdmin: inviteAdmin,
       changeRoleTo: changeRoleTo,
       changeRoleToAdmin: changeRoleToAdmin,
       remove: remove
     };
+
+    function invite(mail, roleId) {
+      return getBaseCall()
+      .payload({
+        email: mail,
+        admin: false,
+        roles: getRoleLink(roleId)
+      })
+      .post();
+    }
+
+    function inviteAdmin(mail) {
+      return getBaseCall()
+      .payload({ email: mail, admin: true })
+      .post();
+    }
 
     function getAll() {
       return getBaseCall()
@@ -65,7 +83,10 @@ angular.module('contentful').factory('SpaceMembershipRepository', [function () {
 
   function prepareRoleMembership(membership, roleId) {
     var base = _.omit(membership, ['sys', 'user']);
-    var link = [{ type: 'Link', linkType: 'Role', id: roleId }];
-    return _.extend(base, { admin: false, roles: [link] });
+    return _.extend(base, { admin: false, roles: getRoleLink(roleId) });
+  }
+
+  function getRoleLink(roleId) {
+    return [{ type: 'Link', linkType: 'Role', id: roleId }];
   }
 }]);
