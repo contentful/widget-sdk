@@ -97,14 +97,6 @@ angular.module('contentful')
 
     };
 
-    function getDocRoot(type) {
-      switch(type){
-        case 'Array': return [];
-        case 'Object': return {};
-        default: return {};
-      }
-    }
-
     /**
      * Public API for the ShareJS service
      */
@@ -187,31 +179,31 @@ angular.module('contentful')
        *
        * @usage
        * ShareJS.mkpathAndSetValue({
+       *   doc: shareJsDoc
        *   value: 'Foo'
        *   path:  ['foo', '12']
-       *   types: ['Object', 'Array']
        * }, callback);
        */
       mkpathAndSetValue: function(params, callback){
-        //jshint boss:true
         var doc = params.doc;
-        var segments = _.zip(params.path, params.types || []);
+        var segments = params.path.slice();
         var value = params.value;
         var tmp, prop, segment, currentVal;
 
+        //jshint boss:true
         while(segment = segments.shift()) {
-          doc = doc.at(segment[0]);
+          doc = doc.at(segment);
           currentVal = doc.get();
           var hasNoContainer = segments.length && !(_.isObject(currentVal) || _.isArray(currentVal));
           if (hasNoContainer) {
             segments.unshift(segment);
-            prop = segments.pop()[0];
+            prop = segments.pop();
             while(segments.length > 0) {
               segment = segments.pop();
-              tmp = getDocRoot(segment[1]);
+              tmp = {};
               tmp[prop] = value;
               value = tmp;
-              prop = segment[0];
+              prop = segment;
             }
             doc.set(value, callback);
             return;

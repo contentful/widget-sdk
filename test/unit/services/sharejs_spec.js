@@ -39,17 +39,6 @@ describe('ShareJS static methods', function () {
     expect(this.set.calledWith({subfield: 'content'}, this.callback)).toBe(true);
   });
 
-  it('create an array with one document', function () {
-    this.ShareJS.mkpathAndSetValue({
-      doc: this.doc,
-      path: ['fields', 0, 'document'],
-      types: ['Array', 'Object', 'String'],
-      value: 'content'
-    }, this.callback);
-    expect(this.at.args).toMatchMultipleCallsArgs(['fields']);
-    expect(this.set.calledWith([{document: 'content'}], this.callback)).toBe(true);
-  });
-
   it('create a property in an existing document', function () {
     this.getValues.push({});
     this.ShareJS.mkpathAndSetValue({
@@ -61,38 +50,12 @@ describe('ShareJS static methods', function () {
     expect(this.set.calledWith('content', this.callback)).toBe(true);
   });
 
-  it('create a property in an existing collection', function () {
-    this.getValues.push([]);
-    this.ShareJS.mkpathAndSetValue({
-      doc: this.doc,
-      path: ['fields', 0],
-      types: ['Array', 'String'],
-      value: 'content'
-    }, this.callback);
-    expect(this.at.args).toMatchMultipleCallsArgs(['fields', 0]);
-    expect(this.set.calledWith('content', this.callback)).toBe(true);
-  });
-
-  it('create a document in an existing collection of documents', function () {
-    var doc = {};
-    this.getValues.push([doc], doc);
-    this.ShareJS.mkpathAndSetValue({
-      doc: this.doc,
-      path: ['fields', 0, 'property'],
-      types: ['Array', 'Object', 'String'],
-      value: 'content'
-    }, this.callback);
-    expect(this.at.args).toMatchMultipleCallsArgs(['fields', 0, 'property']);
-    expect(this.set.calledWith('content', this.callback)).toBe(true);
-  });
-
   it('create an array with one document in an existing collection of documents', function () {
     var doc = { fields: [{}] };
     this.getValues.push(doc, doc.fields);
     this.ShareJS.mkpathAndSetValue({
       doc: this.doc,
       path: ['doc', 'fields', 1, 'document'],
-      types: ['Object', 'Array', 'Object', 'String'],
       value: 'content'
     }, this.callback);
     expect(this.at.args).toMatchMultipleCallsArgs(['doc', 'fields', 1]);
@@ -105,7 +68,6 @@ describe('ShareJS static methods', function () {
     this.ShareJS.mkpathAndSetValue({
       doc: this.doc,
       path: ['prop'],
-      types: ['String'],
       value: 'content'
     }, this.callback);
     expect(this.at.args).toMatchMultipleCallsArgs(['prop']);
@@ -117,7 +79,6 @@ describe('ShareJS static methods', function () {
     this.ShareJS.mkpathAndSetValue({
       doc: this.doc,
       path: ['prop'],
-      types: ['String'],
       value: 'content'
     }, this.callback);
     expect(this.at.args).toMatchMultipleCallsArgs(['prop']);
@@ -129,7 +90,6 @@ describe('ShareJS static methods', function () {
     this.ShareJS.mkpathAndSetValue({
       doc: this.doc,
       path: ['prop', 'drop'],
-      types: ['Object', 'Object'],
       value: {foo: 'bar'}
     }, this.callback);
     expect(this.at.args).toMatchMultipleCallsArgs(['prop', 'drop']);
