@@ -33,14 +33,23 @@ angular.module('contentful')
 
     if(organization.subscriptionState == 'trial'){
       hours = moment(organization.trialPeriodEndsAt).diff(moment(), 'hours');
-      if(hours/24 <= 1){
-        timePeriod = {length: hours, unit: 'hours'};
+      if(hours === 0){
+        message = '<strong>Your trial has ended.</strong> The ' + organization.name + ' organization is in read-only mode.';
+        if(isSpaceOwner === 'owner') {
+          message += ' To continue adding content and using the API please insert your billing information.';
+        } else {
+          message += ' To continue using it please contact the account owner.';
+        }
       } else {
-        timePeriod = {length: Math.floor(hours/24), unit: 'days'};
+        if(hours/24 <= 1){
+          timePeriod = {length: hours, unit: 'hours'};
+        } else {
+          timePeriod = {length: Math.floor(hours/24), unit: 'days'};
+        }
+        message = timeTpl('<strong>%length</strong> %unit left in trial', timePeriod) + '. '+
+                  timeTpl('Your current Organization is in trial mode giving you access to all features for '+
+                    '%length more %unit. Enter your billing information to activate your subscription.', timePeriod);
       }
-      message = timeTpl('<strong>%length</strong> %unit left in trial', timePeriod) + '. '+
-                timeTpl('Your current Organization is in trial mode giving you access to all features for '+
-                  '%length more %unit. Enter your billing information to activate your subscription.', timePeriod);
 
     } else if(organization.subscriptionState == 'active' &&
               !organization.subscriptionPlan.paid &&
