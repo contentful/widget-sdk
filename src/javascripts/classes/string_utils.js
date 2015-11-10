@@ -151,6 +151,23 @@ angular.module('contentful')
     }
   }
 
+  /**
+   * @ngdoc method
+   * @name stringUtils#startsWithVowel
+   * @usage[js]
+   * startsWithVowel('Abracadabra')
+   * // => true
+   *
+   * @param {string} str
+   * @returns {boolean}
+   */
+
+  function startsWithVowel(str) {
+    if (!_.isString(str) || str.length < 1) { return false; }
+    var firstLetter = str.substr(0, 1).toLowerCase();
+    return ['a', 'e', 'i', 'o', 'u'].indexOf(firstLetter) > -1;
+  }
+
   return {
     joinAnd: joinAnd,
     joinAndTruncate: joinAndTruncate,
@@ -165,7 +182,8 @@ angular.module('contentful')
     fileNameToTitle: fileNameToTitle,
     titleToFileName: titleToFileName,
     getEntityLabel: getEntityLabel,
-    truncate: truncate
+    truncate: truncate,
+    startsWithVowel: startsWithVowel
   };
 })())
 

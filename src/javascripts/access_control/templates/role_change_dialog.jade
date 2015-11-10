@@ -8,7 +8,7 @@
       .modal-dialog__richtext
         p
           | <span class="modal-dialog__highlight">{{ user.name }}</span> is currently
-          | a<span ng-show="startsWithVowel">n</span> {{ user.roleNames }}.
+          | a<span ng-show="startsWithVowel(user.roleNames)">n</span> {{ user.roleNames }}.
         .cfnext-form__field
           label(for="field-role") New role
           select#field-role.cfnext-form__input--full-size(ng-model="input.id")
@@ -18,9 +18,7 @@
               | {{ option.name }}
 
     .modal-dialog__controls
-      button.cfnext-btn-primary-action(
-        ng-click="dialog.confirm(input.id)"
-        ng-disabled="!input.id")
+      button.cfnext-btn-primary-action(ui-command="changeRole")
         | Assign new role
       button.cfnext-btn-secondary-action(ng-click="dialog.cancel()")
         | Cancel

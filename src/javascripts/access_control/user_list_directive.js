@@ -42,6 +42,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   var roleRepo            = $injector.get('RoleRepository').getInstance(space);
   var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(space);
   var listHandler         = $injector.get('UserListHandler');
+  var stringUtils         = $injector.get('stringUtils');
 
   $scope.viewLabels = {
     name: 'Show users in alphabetical order',
@@ -49,7 +50,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   };
 
   $scope.removeFromSpace      = removeFromSpace;
-  $scope.changeRole           = changeRole;
+  $scope.openRoleChangeDialog = openRoleChangeDialog;
   $scope.openInvitationDialog = openInvitationDialog;
 
   reload().catch(ReloadNotification.basicErrorHandler);
@@ -78,31 +79,39 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     }
   }
 
-  function changeRole(user) {
+  function openRoleChangeDialog(user) {
     modalDialog.open({
       template: 'role_change_dialog',
-      scopeData: {
-        user: user,
-        startsWithVowel: startsWithVowel(),
-        input: {},
-        roleOptions: listHandler.getRoleOptions()
-      }
-    }).promise.then(call);
+      noNewScope: true,
+      scope: prepareRoleChangeDialogScope(user)
+    });
+  }
 
-    function call(roleId) {
+  function prepareRoleChangeDialogScope(user) {
+    var scope = $rootScope.$new();
+
+    return _.extend(scope, {
+      user: user,
+      startsWithVowel: stringUtils.startsWithVowel,
+      input: {},
+      roleOptions: listHandler.getRoleOptions(),
+      changeRole: Command.create(function () {
+        return changeRole(scope.input.id)
+        .then(reload)
+        .catch(ReloadNotification.basicErrorHandler)
+        .finally(function () { scope.dialog.confirm(); });
+      }, {
+        disabled: function () { return !scope.input.id; }
+      })
+    });
+
+    function changeRole(roleId) {
       var method = 'changeRoleTo';
       if (listHandler.isAdminRole(roleId)) {
         method = 'changeRoleToAdmin';
       }
 
-      return spaceMembershipRepo[method](user.membership, roleId)
-      .then(reload)
-      .catch(ReloadNotification.basicErrorHandler);
-    }
-
-    function startsWithVowel() {
-      var firstLetter = dotty.get(user, 'roleNames', ' ').substr(0, 1).toLowerCase();
-      return ['a', 'e', 'i', 'o', 'u'].indexOf(firstLetter) > -1;
+      return spaceMembershipRepo[method](user.membership, roleId);
     }
   }
 
@@ -152,15 +161,15 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
       }
     }
 
+    function isTaken(res) {
+      var errors = dotty.get(res, 'body.details.errors', []);
+      var errorNames = _.pluck(errors, 'name');
+      return errorNames.indexOf('taken') > -1;
+    }
+
     function isDisabled() {
       return !scope.invitationForm.$valid || !scope.input.roleId;
     }
-  }
-
-  function isTaken(res) {
-    var errors = dotty.get(res, 'body.details.errors', []);
-    var errorNames = _.pluck(errors, 'name');
-    return errorNames.indexOf('taken') > -1;
   }
 
   function reload() {
@@ -179,13 +188,15 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
 
 angular.module('contentful').factory('UserListController/jumpToRole', ['$injector', function ($injector) {
 
+  var $state       = $injector.get('$state');
   var targetRoleId = null;
+
   jump.popRoleId = popRoleId;
   return jump;
 
   function jump(roleId) {
     targetRoleId = roleId;
-    $injector.get('$state').go('spaces.detail.settings.users.list');
+    $state.go('spaces.detail.settings.users.list');
   }
 
   function popRoleId() {
