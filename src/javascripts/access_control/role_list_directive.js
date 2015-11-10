@@ -73,7 +73,7 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
       users: space.getUsers()
     }).then(function (data) {
       $scope.memberships = countMemberships(data.memberships);
-      $scope.roles = data.roles;
+      $scope.roles = _.sortBy(data.roles, 'name');
       listHandler.reset(data);
       $scope.context.ready = true;
     });
