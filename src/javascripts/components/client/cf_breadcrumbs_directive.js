@@ -9,6 +9,7 @@
  */
 angular.module('contentful').directive('cfBreadcrumbs', ['$injector', function ($injector) {
   var $breadcrumb = $injector.get('$breadcrumb');
+  var $state      = $injector.get('$state');
 
   return {
     template: JST.cf_breadcrumbs(),
@@ -56,7 +57,7 @@ angular.module('contentful').directive('cfBreadcrumbs', ['$injector', function (
       updateTopState();
       $scope.$on('$stateChangeSuccess', debouncedScrollToLastBreadCrumb);
       $scope.$on('$stateChangeSuccess', updateTopState);
-      $scope.$watch('$state.current.ncyBreadcrumbLabel', debouncedScrollToLastBreadCrumb);
+      $scope.$watch(function () { return $state.current.ncyBreadcrumbLabel; }, debouncedScrollToLastBreadCrumb);
 
       $scope.scrollLeft = function () {
         breadcrumbsContainer.animate({ scrollLeft: breadcrumbsContainer.scrollLeft() - breadcrumbsContainer.width() });

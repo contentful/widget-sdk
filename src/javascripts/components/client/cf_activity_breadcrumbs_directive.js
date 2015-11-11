@@ -1,26 +1,32 @@
 'use strict';
 
-angular.module('contentful').directive('cfActivityBreadcrumbs', function () {
+angular.module('contentful').directive('cfActivityBreadcrumbs', ['$injector', function ($injector) {
+
+  var contextHistory = $injector.get('contextHistory');
+  var spaceContext   = $injector.get('spaceContext');
+
   return {
     template: JST.cf_activity_breadcrumbs(),
     restrict: 'AE',
     replace: true,
-    controllerAs: 'activity',
     controller: ['$scope', function ($scope) {
-      var controller = this;
+      $scope.activity = {};
 
-      $scope.$watchCollection('contextHistory', function (context) {
-        controller.context = context.slice(0, context.length - 1);
-        controller.empty = (controller.context.length < 1);
+      $scope.$watchCollection(function () {
+        return contextHistory.getAll();
+      }, function () {
+        $scope.activity.context = contextHistory.getAllButLast();
+        $scope.activity.empty = ($scope.activity.context.length < 1);
       });
 
       $scope.title = function (entity) {
         switch(entity.getType()) {
-          case 'Entry': return $scope.spaceContext.entryTitle(entity);
-          case 'Asset': return $scope.spaceContext.assetTitle(entity);
+          case 'Entry': return spaceContext.entryTitle(entity);
+          case 'Asset': return spaceContext.assetTitle(entity);
           default     : return '';
         }
       };
+
       $scope.sref = function (entity) {
         switch(entity.getType()) {
           case 'Entry': return 'spaces.detail.entries.detail({ entryId: "' + entity.getId() + '", addToContext: true })';
@@ -30,4 +36,4 @@ angular.module('contentful').directive('cfActivityBreadcrumbs', function () {
       };
     }]
   };
-});
+}]);

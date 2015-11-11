@@ -140,24 +140,14 @@ angular.module('contentful').config([
       }],
 
     },
-    controller: ['$state', '$scope', '$stateParams', 'entry', 'editingInterface', 'contentType',
-                 function ($state, $scope, $stateParams, entry, editingInterface, contentType) {
+    controller: ['$state', '$scope', 'entry', 'editingInterface', 'contentType', 'contextHistory',
+                 function ($state, $scope, entry, editingInterface, contentType, contextHistory) {
       $state.current.data = $scope.context = {};
       $scope.entry = entry;
       $scope.entity = entry;
       $scope.editingInterface = editingInterface;
       $scope.contentType = contentType;
-
-      if (!$scope.$root.contextHistory.length ||
-          $stateParams.addToContext) {
-        var index = _.findIndex($scope.$root.contextHistory, function (e) {
-          return e.getId() === entry.getId();
-        });
-        if (index > -1) {
-          $scope.$root.contextHistory.length = index;
-        }
-        $scope.$root.contextHistory.push(entry);
-      }
+      contextHistory.addEntity(entry);
     }],
     template:
     '<div ' + [
@@ -213,24 +203,14 @@ angular.module('contentful').config([
         return editingInterfaces.forContentType(contentType);
       }],
     },
-    controller: ['$state', '$scope', '$stateParams', 'asset', 'contentType', 'editingInterface',
-                  function ($state, $scope, $stateParams, asset, contentType, editingInterface) {
+    controller: ['$state', '$scope', 'asset', 'contentType', 'editingInterface', 'contextHistory',
+                 function ($state, $scope, asset, contentType, editingInterface, contextHistory) {
       $state.current.data = $scope.context = {};
       $scope.asset = asset;
       $scope.entity = asset;
       $scope.editingInterface = editingInterface;
       $scope.contentType = contentType;
-
-      if (!$scope.$root.contextHistory.length ||
-          $stateParams.addToContext) {
-        var index = _.findIndex($scope.$root.contextHistory, function (e) {
-          return e.getId() === asset.getId();
-        });
-        if (index > -1) {
-          $scope.$root.contextHistory.length = index;
-        }
-        $scope.$root.contextHistory.push(asset);
-      }
+      contextHistory.addEntity(asset);
     }],
     template:
     '<div ' + [
@@ -429,19 +409,9 @@ angular.module('contentful').config([
       parent: 'spaces.detail.settings.locales.list',
       label: '{{context.title + (context.dirty ? "*" : "")}}'
     },
-    controller: ['$state', '$scope', '$stateParams', 'locale', function ($state, $scope, $stateParams, locale) {
+    controller: ['$state', '$scope', 'locale', function ($state, $scope, locale) {
       $scope.context = $state.current.data;
       $scope.locale = locale;
-
-      if (!$scope.$root.contextHistory.length || $stateParams.addToContext) {
-        var index = _.findIndex($scope.$root.contextHistory, function (e) {
-          return e.sys.id === $scope.locale.getId();
-        });
-        if (index > -1) {
-          $scope.$root.contextHistory.length = index;
-        }
-        $scope.$root.contextHistory.push($scope.locale);
-      }
     }]
   };
 
@@ -463,7 +433,6 @@ angular.module('contentful').config([
 
   $stateProvider.state('spaces.detail.settings.locales.detail', _.extend({
     url: '/:localeId',
-    params: { addToContext: false },
     data: {
       isNew: false
     },
@@ -542,15 +511,18 @@ angular.module('contentful').config([
     return definition;
   }
 }])
-.run(['$rootScope', '$state', '$stateParams', '$injector', function ($rootScope, $state, $stateParams, $injector) {
-  var $document    = $injector.get('$document');
-  var spaceTools   = $injector.get('spaceTools');
+.run(['$injector', function ($injector) {
+  var $rootScope     = $injector.get('$rootScope');
+  var $document      = $injector.get('$document');
+  var $state         = $injector.get('$state');
+  var spaceTools     = $injector.get('spaceTools');
+  var contextHistory = $injector.get('contextHistory');
   // Result of confirmation dialog
   var navigationConfirmed = false;
 
-  $rootScope.contextHistory = [];
-
-  $rootScope.$watch('$state.current.ncyBreadcrumbLabel', function (label) {
+  $rootScope.$watch(function () {
+    return $state.current.ncyBreadcrumbLabel;
+  }, function (label) {
     $document[0].title = label || 'Contentful';
   });
 
@@ -558,31 +530,28 @@ angular.module('contentful').config([
   $rootScope.$on('$stateChangeError', stateChangeErrorHandler);
   $rootScope.$on('$stateNotFound', stateChangeErrorHandler);
 
-  $rootScope.goToEntityState = goToEntityState;
-
   // TODO Should not be a scope method
   $rootScope.closeState = closeState;
 
-  function goToEntityState(entity, addToContext) {
+  function goToEntityState(entity) {
     if (entity.getType() === 'Entry') {
       $state.go('spaces.detail.entries.detail', {
-        entryId: entity.getId(), addToContext: addToContext
+        entryId: entity.getId(), addToContext: true
       });
-    } else if (entity.getType === 'Asset') {
+    } else if (entity.getType() === 'Asset') {
       $state.go('spaces.detail.assets.detail', {
-        assetId: entity.getId(), addToContext: addToContext
+        assetId: entity.getId(), addToContext: true
       });
     }
   }
 
   function closeState() {
     var currentState = $state.$current;
-    var contextHistory = $rootScope.contextHistory;
 
     navigationConfirmed = true;
     contextHistory.pop();
-    if (contextHistory.length) {
-      goToEntityState(contextHistory[contextHistory.length - 1], true);
+    if (!contextHistory.isEmpty()) {
+      goToEntityState(contextHistory.getLast());
     } else {
       $state.go((currentState.ncyBreadcrumb && currentState.ncyBreadcrumb.parent) || '');
     }
@@ -618,7 +587,7 @@ angular.module('contentful').config([
 
   function preprocessStateChange(event, toState, toStateParams) {
     if (!toStateParams.addToContext) {
-      $rootScope.contextHistory.length = 0;
+      contextHistory.purge();
     }
 
     // Some redirects away from nonexistent pages
