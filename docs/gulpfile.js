@@ -9,7 +9,6 @@ var bower = require('bower');
 var Dgeni = require('dgeni');
 var merge = require('merge-stream');
 var path = require('path');
-var sourcemaps = require('gulp-sourcemaps');
 var rename = require('gulp-rename');
 var sourceMaps = require('gulp-sourcemaps');
 var stylus = require('gulp-stylus');
@@ -58,9 +57,9 @@ gulp.task('app/js', function () {
   var folder = path.join(outputFolder, 'js');
 
   return gulp.src(app)
-  .pipe(sourcemaps.init())
+  .pipe(sourceMaps.init())
   .pipe(concat(target))
-  .pipe(sourcemaps.write('.'))
+  .pipe(sourceMaps.write('.'))
   .pipe(gulp.dest(folder));
 });
 
