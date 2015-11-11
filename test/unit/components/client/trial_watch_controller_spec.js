@@ -3,18 +3,30 @@
 describe('Trial Watch controller', function () {
   var scope;
   var trialWatchCtrl;
-  var ownerStub;
   var broadcastStub;
   var momentStub;
   var $window, $q;
+  var spaceMockIdCounter = 0;
 
   function makeSpace(organization) {
+    organization.sys = organization.sys || {id: spaceMockIdCounter++};
     return {
       data: {
         organization: organization
-      },
-      isOwner: ownerStub
+      }
     };
+  }
+
+  function makeScopeUserOwnScopeSpaceOrganization() {
+    var user = scope.user;
+    var organization = scope.spaceContext.space.data.organization;
+
+    user.organizationMemberships = user.organizationMemberships || [];
+    user.organizationMemberships.push({
+      organization: organization,
+      user: user,
+      role: 'owner'
+    });
   }
 
   beforeEach(function () {
@@ -29,8 +41,6 @@ describe('Trial Watch controller', function () {
 
       $window = _$window_;
       $q = _$q_;
-
-      ownerStub = sinon.stub();
 
       trialWatchCtrl = $controller('TrialWatchController', {
         $scope: scope
@@ -94,12 +104,12 @@ describe('Trial Watch controller', function () {
             name: 'TEST_ORGA_NAME'
           })
         };
-        ownerStub.returns(true);
       });
 
       describe('for ended trial', function() {
         describe( 'for user owning the organization', function() {
           beforeEach(function () {
+            makeScopeUserOwnScopeSpaceOrganization();
             diffStub.returns(0);
             scope.$digest();
           });
@@ -113,7 +123,6 @@ describe('Trial Watch controller', function () {
 
         describe( 'for user not owning the organization', function() {
           beforeEach(function () {
-            ownerStub.returns(false);
             diffStub.returns(0);
             scope.$digest();
           });
@@ -134,6 +143,7 @@ describe('Trial Watch controller', function () {
 
       describe('for hours periods', function () {
         beforeEach(function () {
+          makeScopeUserOwnScopeSpaceOrganization();
           diffStub.returns(20);
           scope.$digest();
         });
@@ -151,6 +161,7 @@ describe('Trial Watch controller', function () {
         beforeEach(function () {
           diffStub.returns(76);
           scope.user = {sys: {}};
+          makeScopeUserOwnScopeSpaceOrganization();
           scope.$digest();
         });
 
@@ -161,7 +172,6 @@ describe('Trial Watch controller', function () {
 
       describe('no action', function () {
         beforeEach(function () {
-          ownerStub.returns(false);
           scope.user = {};
           scope.$digest();
         });
@@ -189,7 +199,7 @@ describe('Trial Watch controller', function () {
 
       describe('with an action', function () {
         beforeEach(function () {
-          ownerStub.returns(true);
+          makeScopeUserOwnScopeSpaceOrganization();
           scope.$digest();
         });
 
@@ -204,7 +214,6 @@ describe('Trial Watch controller', function () {
 
       describe('no action', function () {
         beforeEach(function () {
-          ownerStub.returns(false);
           scope.user = {};
           scope.$digest();
         });

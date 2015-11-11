@@ -16,11 +16,14 @@ angular.module('contentful')
     var user = $scope.user;
     var space = $scope.spaceContext.space;
     if(!user || !space) return;
+    var organization = space.data.organization;
     var hours = null;
     var timePeriod, message, action, actionMessage;
-    var isSpaceOwner;
+    var isOrganizationOwner;
     try {
-      isSpaceOwner = space.isOwner(user);
+      isOrganizationOwner = user.organizationMemberships.find(function(membership) {
+        return membership.organization.sys.id === organization.sys.id;
+      }).role === 'owner';
     } catch(exp){
       logger.logError('Trial watch controller organization exception', {
         data: {
@@ -29,13 +32,12 @@ angular.module('contentful')
         }
       });
     }
-    var organization = space.data.organization;
 
     if(organization.subscriptionState == 'trial'){
       hours = moment(organization.trialPeriodEndsAt).diff(moment(), 'hours');
       if(hours === 0){
         message = '<strong>Your trial has ended.</strong> The ' + organization.name + ' organization is in read-only mode.';
-        if(isSpaceOwner === 'owner') {
+        if(isOrganizationOwner === 'owner') {
           message += ' To continue adding content and using the API please insert your billing information.';
         } else {
           message += ' To continue using it please contact the account owner.';
@@ -59,7 +61,7 @@ angular.module('contentful')
 
 
     if(message || action && actionMessage){
-      if(isSpaceOwner){
+      if(isOrganizationOwner){
         actionMessage = 'Upgrade';
         action = upgradeAction;
       }
