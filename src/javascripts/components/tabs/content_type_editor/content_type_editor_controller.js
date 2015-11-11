@@ -21,6 +21,7 @@ function ContentTypeEditorController($scope, $injector) {
   var controller        = this;
   var $controller       = $injector.get('$controller');
   var $q                = $injector.get('$q');
+  var $state            = $injector.get('$state');
   var analytics         = $injector.get('analytics');
   var validation        = $injector.get('validation');
   var hints             = $injector.get('hints');
@@ -28,6 +29,7 @@ function ContentTypeEditorController($scope, $injector) {
   var modalDialog       = $injector.get('modalDialog');
   var openFieldDialog   = $injector.get('openFieldDialog');
   var leaveConfirmator  = $injector.get('navigation/confirmLeaveEditor');
+  var metadataDialog    = $injector.get('contentTypeEditor/metadataDialog');
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
@@ -38,7 +40,6 @@ function ContentTypeEditorController($scope, $injector) {
   $scope.fieldSchema                        = validation(validation.schemas.ContentType.at(['fields']).items);
   $scope.regulateDisplayField               = regulateDisplayField;
   $scope.updatePublishedContentType         = updatePublishedContentType;
-  $scope.showMetadataDialog                 = showMetadataDialog;
   $scope.showNewFieldDialog                 = showNewFieldDialog;
 
   $scope.$watch('contentType.data.fields',       checkForDirtyForm, true);
@@ -59,14 +60,19 @@ function ContentTypeEditorController($scope, $injector) {
 
   $scope.$on('entityDeleted', handleEntityDeleted);
 
-  if($scope.context.isNew){
-    showMetadataDialog({
-      optionalTitle: 'Create a new Content Type',
-      optionalActionLabel: 'Create'
-    })
-    .catch(function () {
-      $scope.$state.go('^.list');
+  if($scope.context.isNew) {
+    metadataDialog.openCreateDialog()
+    .then(applyContentTypeMetadata, function () {
+      $state.go('^.list');
     });
+  }
+
+  function applyContentTypeMetadata (metadata) {
+    var contentType = $scope.contentType;
+    contentType.data.name = metadata.name;
+    contentType.data.description = metadata.description;
+    contentType.data.sys.id = metadata.id;
+    $scope.contentTypeForm.$setDirty();
   }
 
   /**
@@ -166,31 +172,12 @@ function ContentTypeEditorController($scope, $injector) {
 
   /**
    * @ngdoc method
-   * @name ContentTypeEditorController#scope#showMetadataDialog
-   *
-   * @param {object} params
-   * @property {string} optionalTitle
-   * @property {string} optionalActionLabel
-   *
-   * @returns {Promise}
+   * @name ContentTypeEditorController#$scope.showMetadataDialog
   */
-  function showMetadataDialog(params) {
-    params = params || {};
-    $scope.contentTypeMetadata = {
-      name: $scope.contentType.data.name || '',
-      description: $scope.contentType.data.description || ''
-    };
-    return modalDialog.open({
-      title: params.optionalTitle || 'Edit Content Type',
-      confirmLabel: params.optionalActionLabel || 'Confirm',
-      template: 'edit_content_type_metadata_dialog',
-      scope: $scope
-    }).promise
-    .then(function () {
-      _.extend($scope.contentType.data, $scope.contentTypeMetadata);
-      $scope.contentTypeForm.$setDirty();
-    });
-  }
+  $scope.showMetadataDialog = function showMetadataDialog () {
+    metadataDialog.openEditDialog($scope.contentType)
+    .then(applyContentTypeMetadata);
+  };
 
   /**
    * @ngdoc method

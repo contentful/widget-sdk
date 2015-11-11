@@ -52,7 +52,7 @@ $cfnext-form-input()
     box-shadow: none
     transition: none
   &[aria-invalid="true"]
-    border-color: darken($red, 10%)
+    border-color: $red
   &[type="number"]
     padding-right: 0
   textarea&
@@ -88,6 +88,12 @@ $cfnext-form-input()
  *   input.cfnext-form__input(type="text")
  *   div.cfnext-form__hint
  *     | You have to provide your last name here
+ * div.cfnext-form__field
+ *   label
+ *     | Last Name
+ *     span.cfnext-form__label-hint
+ *       | a hint after the label
+ *   input.cfnext-form__input(type="text")
  *
  * Styleguide 30.2
  */
@@ -95,6 +101,15 @@ $cfnext-form-input()
   margin-top: $rhythm(0.5)
   color: $text-dimmed
   font-size: $small-font-size
+
+.cfnext-form__label-hint
+  margin-left: 1ex
+  color: $text-dimmed
+  font-size: $small-font-size
+
+  &.x--invalid
+    color: $red
+
 
 /**
  * Errors
@@ -116,6 +131,12 @@ $cfnext-form-input()
  *   ul.cfnext-form__field-errors
  *     li This went wrong
  *     li And that
+ * div.cfnext-form__field
+ *   label
+ *     | Name
+ *     span.cfnext-form__label-hint.x--invalid
+ *       | required
+ *   input.cfnext-form__input(type="text" aria-invalid="true")
  *
  * Styleguide 30.3
  */

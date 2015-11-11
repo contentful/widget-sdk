@@ -9,7 +9,7 @@
 #
 
 
-SLIMER_VERSION="0.9.5"
+SLIMER_VERSION="0.9.6"
 SLIMER_DIST="slimerjs-${SLIMER_VERSION}"
 SLIMER_ARCHIVE="${SLIMER_DIST}.zip"
 DOWNLOAD_URL="http://download.slimerjs.org/releases/${SLIMER_VERSION}/${SLIMER_ARCHIVE}"
