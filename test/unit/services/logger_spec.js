@@ -11,9 +11,10 @@ describe('logger service', function () {
     sinon.stub(this.bugsnag, 'notifyException');
     sinon.stub(this.bugsnag, 'refresh');
 
-    this.rootScope = this.$inject('$rootScope');
-    this.rootScope.$state = { current: { name: 'some.state.name' } };
-    this.rootScope.$stateParams = { spaceId: '123456' };
+    this.$state = this.$inject('$state');
+    this.$stateParams = this.$inject('$stateParams');
+    this.$state.current = { name: 'some.state.name' };
+    this.$stateParams.spaceId = '123456';
 
     this.logger = this.$inject('realLogger');
   });

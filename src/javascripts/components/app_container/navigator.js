@@ -548,8 +548,6 @@ angular.module('contentful').config([
   // Result of confirmation dialog
   var navigationConfirmed = false;
 
-  $rootScope.$state = $state;
-  $rootScope.$stateParams = $stateParams;
   $rootScope.contextHistory = [];
 
   $rootScope.$watch('$state.current.ncyBreadcrumbLabel', function (label) {

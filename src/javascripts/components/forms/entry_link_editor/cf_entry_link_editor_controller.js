@@ -1,11 +1,13 @@
 'use strict';
 
 angular.module('contentful').controller('EntryLinkEditorController', [
-  '$scope', '$attrs', '$controller', '$injector', function ($scope, $attrs, $controller, $injector) {
+  '$scope', '$attrs', '$injector', function ($scope, $attrs, $injector) {
 
   var controller = this;
 
   var EntityCache = $injector.get('EntityCache');
+  var $controller = $injector.get('$controller');
+  $scope.$state   = $injector.get('$state');
 
   $controller('LinkEditorController', {
     $scope: $scope,

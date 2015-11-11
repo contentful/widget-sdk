@@ -20,6 +20,7 @@ function ContentTypeActionsController($scope, $injector) {
   var Command      = $injector.get('command');
   var $timeout     = $injector.get('$timeout');
   var spaceContext = $injector.get('spaceContext');
+  var $state       = $injector.get('$state');
 
   /**
    * @ngdoc property
@@ -149,7 +150,7 @@ function ContentTypeActionsController($scope, $injector) {
    * @type {Command}
    */
   controller.cancel = Command.create(function () {
-    return $scope.$state.go('^.list');
+    return $state.go('^.list');
   }, {
     available: function () {
       return $scope.context.isNew;
@@ -274,7 +275,7 @@ function ContentTypeActionsController($scope, $injector) {
     if($scope.context.isNew){
       return $q((function (res, reject) {
         defer(function () {
-          $scope.$state.go('spaces.detail.content_types.detail', {
+          $state.go('spaces.detail.content_types.detail', {
             contentTypeId: $scope.contentType.getId()
           }).then(res, reject);
         });

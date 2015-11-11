@@ -5,6 +5,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var $controller        = $injector.get('$controller');
   var $timeout           = $injector.get('$timeout');
   var $location          = $injector.get('$location');
+  var $state             = $injector.get('$state');
   var features           = $injector.get('features');
   var logger             = $injector.get('logger');
   var spaceContext       = $injector.get('spaceContext');
@@ -32,7 +33,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     showAuxPanel: false,
     toggleAuxPanel: function() {
       $scope.preferences.showAuxPanel = !$scope.preferences.showAuxPanel;
-      analytics.toggleAuxPanel($scope.preferences.showAuxPanel, $scope.$state.current.name);
+      analytics.toggleAuxPanel($scope.preferences.showAuxPanel, $state.current.name);
     },
     showDisabledFields: false
   };

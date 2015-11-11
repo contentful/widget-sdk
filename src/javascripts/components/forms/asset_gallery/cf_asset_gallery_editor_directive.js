@@ -7,4 +7,3 @@ angular.module('contentful').directive('cfAssetGalleryEditor', [function(){
     controller: 'AssetLinkEditorController'
   };
 }]);
-

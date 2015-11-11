@@ -1,6 +1,11 @@
 'use strict';
 
-angular.module('contentful').controller('AssetLinkEditorController', ['$scope', '$attrs', '$controller', function ($scope, $attrs, $controller) {
+angular.module('contentful').controller('AssetLinkEditorController', [
+  '$scope', '$attrs', '$injector', function ($scope, $attrs, $injector) {
+
+  var $controller = $injector.get('$controller');
+  $scope.$state   = $injector.get('$state');
+
   $controller('LinkEditorController', {
     $scope: $scope,
     ngModel: $attrs.ngModel,
@@ -22,5 +27,4 @@ angular.module('contentful').controller('AssetLinkEditorController', ['$scope', 
       $scope.linkMimetypeGroup = groupNames;
     }
   });
-
 }]);
