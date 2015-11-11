@@ -104,7 +104,8 @@
     "url": "https://github.com/contentful/user_interface.git"
   },
   "author": "",
-  "license": "ISC",
+  "private": true,
+  "license": "UNLICENSED",
   "bugs": {
     "url": "https://github.com/contentful/user_interface/issues"
   },
