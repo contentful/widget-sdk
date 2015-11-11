@@ -89,14 +89,6 @@ describe('LinkEditorController', function () {
       sinon.assert.calledWith(entityCacheMock, scope.spaceContext.space, 'getEntries');
     });
 
-    it('initializes link content types', function() {
-      expect(scope.linkContentTypes).toBeFalsy();
-    });
-
-    it('initializes link mimetype group', function() {
-      expect(scope.linkMimetypeGroup).toBeFalsy();
-    });
-
   });
 
   describe('methods', function() {
