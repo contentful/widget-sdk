@@ -28,8 +28,8 @@ select.cfnext-select-box(
   ng-disabled="rule.contentType === 'all'")
   option(value="all") All fields
   option(
-    ng-repeat="field in contentTypeFields track by field.id"
-    value="{{ field.id }}")
+    ng-repeat="field in contentTypeFields track by field.apiName"
+    value="{{ field.apiName }}")
     | {{ field.name }}
 
 select.cfnext-select-box(

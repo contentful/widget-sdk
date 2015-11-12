@@ -27,7 +27,7 @@ angular.module('contentful').directive('cfRule', [function () {
         // get fields of selected content type
         $scope.contentTypeFields = dotty.get(ct, 'data.fields', []);
         // reset selected field to default one
-        if (ct) { setField('all'); }
+        setField('all');
       });
 
       function setFieldAndLocale(field, locale) {
