@@ -10,10 +10,11 @@ angular.module('contentful').directive('cfRoleEditor', function () {
 
 angular.module('contentful').controller('RoleEditorController', ['$scope', '$injector', function ($scope, $injector) {
 
-  var Command       = $injector.get('command');
-  var space         = $injector.get('spaceContext').space;
-  var roleRepo      = $injector.get('RoleRepository').getInstance(space);
-  var PolicyBuilder = $injector.get('PolicyBuilder');
+  var Command          = $injector.get('command');
+  var space            = $injector.get('spaceContext').space;
+  var roleRepo         = $injector.get('RoleRepository').getInstance(space);
+  var PolicyBuilder    = $injector.get('PolicyBuilder');
+  var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
 
   // 1. prepare "touch" counter (first touch for role->internal, next for dirty state)
   $scope.context.touched = $scope.context.isNew ? 0 : -1;
@@ -25,6 +26,9 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
       _.omit($scope.baseRole, ['name', 'sys'])
     );
   }
+
+  // 3. setup leaving confirmation
+  $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
 
   $scope.$watch('context.touched', function (touched) {
     $scope.context.dirty = touched > 0;
@@ -40,13 +44,17 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
     $scope.context.title = internal.name || 'Untitled';
   }, true);
 
-  $scope.save = Command.create(function () {
+  $scope.save = Command.create(save, {
+    disabled: function () { return !$scope.context.dirty; }
+  });
+
+  function save() {
     var method = $scope.context.isNew ? 'create' : 'save';
     return roleRepo[method]($scope.external).then(handleRole, function (res) {
       console.log('=== ROLE SAVE ERROR ===');
       console.log(res.body);
     });
-  });
+  }
 
   function handleRole(role) {
     $scope.role = role;

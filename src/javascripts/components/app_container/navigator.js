@@ -505,6 +505,9 @@ angular.module('contentful').config([
     params: {
       baseRoleId: null
     },
+    data: {
+      isNew: true
+    },
     ncyBreadcrumb: {
       parent: 'spaces.detail.settings.roles.list',
       label: '{{ context.title + (context.dirty ? "*" : "") }}'
@@ -519,8 +522,8 @@ angular.module('contentful').config([
       }]
     },
     template: '<cf-role-editor class="workbench role-editor" />',
-    controller: ['$scope', 'baseRole', 'emptyRole', function ($scope, baseRole, emptyRole) {
-      $scope.context = { isNew: true };
+    controller: ['$scope', '$state', 'baseRole', 'emptyRole', function ($scope, $state, baseRole, emptyRole) {
+      $scope.context = $state.current.data;
       $scope.baseRole = baseRole;
       $scope.role = emptyRole;
     }]
@@ -528,6 +531,9 @@ angular.module('contentful').config([
 
   $stateProvider.state('spaces.detail.settings.roles.detail', {
     url: '/:roleId',
+    data: {
+      isNew: false
+    },
     ncyBreadcrumb: {
       parent: 'spaces.detail.settings.roles.list',
       label: '{{ context.title + (context.dirty ? "*" : "") }}'
@@ -538,8 +544,8 @@ angular.module('contentful').config([
       }]
     },
     template: '<cf-role-editor class="workbench role-editor" />',
-    controller: ['$scope', 'role', function ($scope, role) {
-      $scope.context = {};
+    controller: ['$scope', '$state', 'role', function ($scope, $state, role) {
+      $scope.context = $state.current.data;
       $scope.role = role;
     }]
   });
