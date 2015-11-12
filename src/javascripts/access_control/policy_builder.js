@@ -8,12 +8,24 @@ angular.module('contentful').factory('PolicyBuilder', ['$injector', function ($i
   var PATH_SEPARATOR = '.';
 
   return {
-    internal: { from: _.constant({}) },
+    internal: {
+      from: function (role) {
+        return {
+          name: role.name,
+          description: role.description,
+          entries: { allowed: [], denied: [] },
+          assets: { allowed: [], denied: [] },
+          contentTypes: {},
+          apiKeys: {},
+          spaceSettings: {}
+        };
+      }
+    },
     external: {
-      from: function (settings) {
+      from: function (internal) {
         return {
           roleExtension: {
-            policies: toExternal(settings)
+            policies: toExternal(internal)
           }
         };
       }

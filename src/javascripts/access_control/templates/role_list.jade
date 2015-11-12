@@ -14,12 +14,8 @@ header.workbench-header
       .role-list__member-count
         a(href="" ng-click="jumpToAdminRoleMembers()")
           | {{ memberships.admin || 0 }} members
-      button.role-list__actions.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
+      button.role-list__actions.role-list__actions--disabled.cfnext-btn-inline
         | &bullet;&bullet;&bullet;
-      .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="Role Actions")
-        cf-icon.context-menu__arrow.x--top-right-tight(name="arrow-up")
-        ul.context-menu__items
-          li(role="menuitem" ng-click="notImplemented()") Duplicate
 
     .role-list__item(ng-repeat="role in roles track by role.sys.id")
       a.role-list__link(href="" ui-sref="{{ sref(role) }}")
@@ -33,8 +29,10 @@ header.workbench-header
       .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="Role Actions")
         cf-icon.context-menu__arrow.x--top-right-tight(name="arrow-up")
         ul.context-menu__items
-          li(role="menuitem" ng-click="notImplemented()") Duplicate
-          li(role="menuitem" ng-click="removeRole(role)") Delete permanently
+          li(role="menuitem" ui-sref="spaces.detail.settings.roles.new({ baseRoleId: role.sys.id })")
+            | Duplicate
+          li(role="menuitem" ng-click="removeRole(role)")
+            | Delete permanently
 
   .workbench-main__entity-sidebar
     .entity-sidebar

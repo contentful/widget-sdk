@@ -23,7 +23,6 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
   $scope.removeRole             = removeRole;
   $scope.jumpToRoleMembers      = jumpToRoleMembers;
   $scope.jumpToAdminRoleMembers = jumpToAdminRoleMembers;
-  $scope.notImplemented         = function () { window.alert('Not implemented yet.'); };
 
   reload().catch(ReloadNotification.basicErrorHandler);
 

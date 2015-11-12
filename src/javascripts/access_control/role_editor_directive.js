@@ -15,21 +15,21 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
   var roleRepo      = $injector.get('RoleRepository').getInstance(space);
   var PolicyBuilder = $injector.get('PolicyBuilder');
 
-  $scope.internal = {
-    entries: { allowed: [], denied: [] },
-    assets: { allowed: [], denied: [] },
-    contentTypes: {},
-    apiKeys: {},
-    spaceSettings: {}
-  };
+  if ($scope.baseRole) {
+    $scope.role = _.extend(
+      { name: 'Duplicate of ' + $scope.baseRole.name },
+      _.omit($scope.baseRole, ['name', 'sys'])
+    );
+  }
+
+  $scope.$watch('role', function (role) {
+    $scope.internal = PolicyBuilder.internal.from(role);
+  }, true);
 
   $scope.$watch('internal', function (internal) {
     $scope.external = PolicyBuilder.external.from(internal);
+    $scope.context.title = internal.name || 'Untitled';
   }, true);
-
-  $scope.$watch('role.name', function (name) {
-    $scope.context.title = name || 'Untitled';
-  });
 
   $scope.save = Command.create(function () {
     var method = $scope.context.isNew ? 'create' : 'save';

@@ -502,13 +502,23 @@ angular.module('contentful').config([
 
   $stateProvider.state('spaces.detail.settings.roles.new', {
     url: '/new',
+    params: {
+      baseRoleId: null
+    },
     ncyBreadcrumb: {
       parent: 'spaces.detail.settings.roles.list',
       label: '{{ context.title + (context.dirty ? "*" : "") }}'
     },
+    resolve: {
+      baseRole: ['RoleRepository', 'space', '$stateParams', '$q', function (RoleRepository, space, $stateParams, $q) {
+        if (!$stateParams.baseRoleId) { return $q.when(null); }
+        return RoleRepository.getInstance(space).get($stateParams.baseRoleId);
+      }]
+    },
     template: '<cf-role-editor class="workbench role-editor" />',
-    controller: ['$scope', function ($scope) {
+    controller: ['$scope', 'baseRole', function ($scope, baseRole) {
       $scope.context = { isNew: true };
+      $scope.baseRole = baseRole;
       $scope.role = {};
     }]
   });
