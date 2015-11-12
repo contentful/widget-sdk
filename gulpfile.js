@@ -29,6 +29,7 @@ var path        = require('path');
 var through     = require('through2').obj;
 var yargs       = require('yargs');
 var child_process = require('child_process');
+var runSequenceP = Promise.denodeify(runSequence)
 
 var argv = yargs
 .boolean('verbose')
@@ -163,13 +164,14 @@ gulp.task('index', function(){
 });
 
 gulp.task('templates', function () {
+  var dest = gulp.dest('./public/app');
   return gulp.src(src.templates)
     .pipe(jade({doctype: 'html'}))
-    .on('error', errorHandler('Jade'))
+    .on('error', passError(dest))
     .pipe(jstConcat('templates.js', {
       renameKeys: ['^.*/(.*?).html$', '$1']
     }))
-    .pipe(gulp.dest('./public/app'));
+    .pipe(dest);
 });
 
 gulp.task('js', [
@@ -193,14 +195,15 @@ gulp.task('js/vendor/main', function () {
 });
 
 gulp.task('js/vendor/markdown', function () {
+  var dest = gulp.dest('./public/app/');
   return browserify()
     .add('./src/markdown_vendors.js')
     .bundle()
-    .on('error', errorHandler('Browserify'))
+    .on('error', passError(dest))
     .pipe(source('markdown_vendors.js'))
     .pipe(buffer())
     .pipe(uglify())
-    .pipe(gulp.dest('./public/app/'));
+    .pipe(dest);
 });
 
 gulp.task('js/vendor/kaltura', function () {
@@ -266,12 +269,13 @@ gulp.task('stylesheets/app', function () {
 });
 
 function buildStylus(sources, dest) {
+  dest = gulp.dest(dest);
   return gulp.src(sources)
     .pipe(sourceMaps.init())
     .pipe(stylus({use: nib()}))
-    .on('error', errorHandler('Stylus'))
+    .on('error', passError(dest))
     .pipe(sourceMaps.write({sourceRoot: '/stylesheets'}))
-    .pipe(gulp.dest(dest));
+    .pipe(dest);
 }
 
 gulp.task('styleguide', ['styleguide/stylesheets'], function () {
@@ -289,29 +293,24 @@ gulp.task('styleguide/stylesheets', function () {
 });
 
 gulp.task('serve', ['styleguide'], function () {
-  var builds = [];
-  watchTask(src['components'], function (resolve) {
-    runSequence('js/app', resolve);
-  });
-  watchTask(src['templates'], function (resolve) {
-    runSequence('templates', resolve);
-  });
-  watchTask('styleguide/**/*', function (resolve) {
-    runSequence('styleguide', resolve);
-  });
-  watchTask(src['stylesheets'], function (resolve) {
-    runSequence('stylesheets', 'styleguide', resolve);
-  });
+  var builds = {};
+  var taskId = 0;
+  watchTask(src['components'], ['js/app']);
+  watchTask(src['templates'], ['templates']);
+  watchTask('styleguide/**/*', ['styleguide']);
+  watchTask(src['stylesheets'], ['stylesheets', 'styleguide']);
 
-  function watchTask(source, sequence) {
-    var afterWatch = function () {
-      builds.push(new Promise(sequence));
-    };
-
+  function watchTask (source, tasks) {
+    var thisTaskId = taskId++;
     if (process.env.NO_WATCHING) {
-      return afterWatch();
+      build();
+    } else {
+      gulp.watch(source, build);
     }
-    gulp.watch(source, afterWatch);
+
+    function build () {
+      builds[thisTaskId] = runSequenceP.apply(null, tasks);
+    }
   }
 
   var publicDir = path.resolve(__dirname, 'public');
@@ -322,11 +321,14 @@ gulp.task('serve', ['styleguide'], function () {
   app.use(express.static(publicDir));
   app.use('/docs/', docIndex);
   app.get('*', function(req, res, next) {
-    Promise.all(builds).then(function () {
-      appIndex(req, res, function () {
-        builds = [];
-        next();
-      });
+    Promise.all(_.values(builds)).then(function () {
+      appIndex(req, res, next);
+    }, function (err) {
+      res
+      .status(500)
+      .type('text')
+      .send(err.message + '\n' + err.err.message)
+      .end();
     });
   });
   app.use(respond404);
@@ -356,19 +358,21 @@ function createBrowserify(args) {
 }
 
 function bundleBrowserify(browserify) {
+  var dest = gulp.dest('./public/app/');
   return browserify.bundle()
-    .on('error', errorHandler('Browserify'))
+    .on('error', passError(dest))
     .pipe(source('user_interface.js'))
-    .pipe(gulp.dest('./public/app/'));
+    .pipe(dest);
 }
 
 function buildStylus(sources, dest) {
+  dest = gulp.dest(dest);
   return gulp.src(sources)
     .pipe(sourceMaps.init())
     .pipe(stylus({use: nib()}))
-    .on('error', errorHandler('Stylus'))
+    .on('error', passError(dest))
     .pipe(sourceMaps.write({sourceRoot: '/stylesheets'}))
-    .pipe(gulp.dest(dest));
+    .pipe(dest);
 }
 
 function respond404 (req, res) {
@@ -558,9 +562,10 @@ gulp.task('revision', ['git-revision'], function(){
   return stream.pipe(writeBuild());
 });
 
-function errorHandler(label) {
-  return function handleError(e) {
-    gutil.log(gutil.colors.red(label + ' error:'), e.message);
+
+function passError (target) {
+  return function handleError (e) {
+    target.emit('error', e);
   };
 }
 
