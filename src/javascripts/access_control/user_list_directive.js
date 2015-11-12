@@ -20,7 +20,7 @@ angular.module('contentful').directive('cfUserList', ['$injector', function ($in
     function jumpToRole() {
       $timeout(function () {
         var groupHeader = el.find('#role-group-' + roleId).first();
-        var scrollContainer = el.find('.workbench-main__middle-content').first();
+        var scrollContainer = el.find('.workbench-main__content').first();
 
         if (groupHeader.length && scrollContainer.length) {
           var scrollTo = scrollContainer.scrollTop() + groupHeader.position().top;

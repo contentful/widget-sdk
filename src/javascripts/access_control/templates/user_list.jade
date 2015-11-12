@@ -11,7 +11,7 @@ header.workbench-header
       div(role="menuitem" ng-click="selectedView = 'role'") {{ viewLabels.role }}
 
 .workbench-main
-  .workbench-main__middle-content
+  .workbench-main__content
     .user-list__group(
       ng-attr-id="{{ item.id }}"
       ng-repeat="item in by[selectedView] track by item.label")

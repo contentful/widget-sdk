@@ -1,6 +1,6 @@
 .rule-list
   .rule-list__section
-    label Allow these actions:
+    label Users with this role can:
     .rule-list__note.note-box--blue(ng-show="!rules.allowed.length")
       i.fa.fa-info-circle
       |  Currently, everything is denied for this role.
@@ -11,7 +11,7 @@
       | {{ rules.allowed.length ? 'Add another rule' : 'Add a rule' }}
 
   .rule-list__section(ng-show="rules.allowed.length")
-    label Deny these actions:
+    label Users with this role can <strong>not</strong>:
     .rule-list__note.note-box--blue(ng-show="!rules.denied.length")
       i.fa.fa-info-circle
       |  You can add exceptions to the rules you defined above.
