@@ -17,16 +17,15 @@ describe('Trial Watch controller', function () {
     };
   }
 
-  function makeScopeUserOwnScopeSpaceOrganization() {
-    var user = scope.user;
-    var organization = scope.spaceContext.space.data.organization;
+  function makeScopeUserOwnScopeSpaceOrganization () {
+    makeUserOwnOrganization(scope.user, scope.spaceContext.space.data.organization);
+  }
 
-    user.organizationMemberships = user.organizationMemberships || [];
-    user.organizationMemberships.push({
+  function makeUserOwnOrganization (user, organization) {
+    user.organizationMemberships = [{
       organization: organization,
-      user: user,
       role: 'owner'
-    });
+    }];
   }
 
   beforeEach(function () {
@@ -37,6 +36,10 @@ describe('Trial Watch controller', function () {
 
     inject(function ($rootScope, $controller, _$window_, _$q_) {
       scope = $rootScope.$new();
+      scope.user = {
+        organizationMemberships: []
+      };
+
       broadcastStub = sinon.stub($rootScope, '$broadcast');
 
       $window = _$window_;
@@ -63,7 +66,6 @@ describe('Trial Watch controller', function () {
 
   describe('removes an existing notification', function () {
     beforeEach(function () {
-      scope.user = {};
       scope.spaceContext = {
         space: makeSpace({})
       };
@@ -96,7 +98,6 @@ describe('Trial Watch controller', function () {
 
     describe('for a trial subscription', function () {
       beforeEach(function(){
-        scope.user = {};
         scope.spaceContext = {
           space: makeSpace({
             subscriptionState: 'trial',
@@ -107,38 +108,36 @@ describe('Trial Watch controller', function () {
       });
 
       describe('for ended trial', function() {
-        describe( 'for user owning the organization', function() {
-          beforeEach(function () {
+        beforeEach(function() {
+          diffStub.returns(0);
+        });
+
+        describe('for user owning the organization', function() {
+          beforeEach(function() {
             makeScopeUserOwnScopeSpaceOrganization();
-            diffStub.returns(0);
             scope.$digest();
           });
 
-          itShowsAMessageYourTrialHasEnded();
+          itShowsAMessage(/Your trial has ended.*TEST_ORGA_NAME organization/);
+          itShowsAMessage(/insert your billing information/);
 
           itShowsAnActionMessage();
 
           itHasAnAction();
-        } );
+        });
 
-        describe( 'for user not owning the organization', function() {
-          beforeEach(function () {
-            diffStub.returns(0);
+        describe('for user not owning the organization', function() {
+          beforeEach(function(){
             scope.$digest();
           });
 
-          itShowsAMessageYourTrialHasEnded();
+          itShowsAMessage(/Your trial has ended.*TEST_ORGA_NAME organization/);
+          itShowsAMessage(/contact the account owner/);
 
           itDoesNotShowAnActionMessage();
 
           itDoesNotHaveAnAction();
-        } );
-
-        function itShowsAMessageYourTrialHasEnded() {
-          it('shows a message', function () {
-            expect(broadcastStub.args[0][1].message).toMatch(/Your trial has ended.*TEST_ORGA_NAME organization/);
-          });
-        }
+        });
       });
 
       describe('for hours periods', function () {
@@ -148,9 +147,7 @@ describe('Trial Watch controller', function () {
           scope.$digest();
         });
 
-        it('shows a message', function () {
-          expect(broadcastStub.args[0][1].message).toMatch(/20(.*)hours left in trial/);
-        });
+        itShowsAMessage(/20(.*)hours left in trial/);
 
         itShowsAnActionMessage();
 
@@ -159,9 +156,8 @@ describe('Trial Watch controller', function () {
 
       describe('for days periods', function () {
         beforeEach(function () {
-          diffStub.returns(76);
-          scope.user = {sys: {}};
           makeScopeUserOwnScopeSpaceOrganization();
+          diffStub.returns(76);
           scope.$digest();
         });
 
@@ -172,7 +168,6 @@ describe('Trial Watch controller', function () {
 
       describe('no action', function () {
         beforeEach(function () {
-          scope.user = {};
           scope.$digest();
         });
 
@@ -185,7 +180,6 @@ describe('Trial Watch controller', function () {
 
     describe('for a free subscription', function () {
       beforeEach(function(){
-        scope.user = {};
         scope.spaceContext = {
           space: makeSpace({
             subscriptionState: 'active',
@@ -203,9 +197,7 @@ describe('Trial Watch controller', function () {
           scope.$digest();
         });
 
-        it('shows a message', function () {
-          expect(broadcastStub.args[0][1].message).toMatch('free version');
-        });
+        itShowsAMessage('free version');
 
         itShowsAnActionMessage();
 
@@ -214,7 +206,6 @@ describe('Trial Watch controller', function () {
 
       describe('no action', function () {
         beforeEach(function () {
-          scope.user = {};
           scope.$digest();
         });
 
@@ -225,26 +216,32 @@ describe('Trial Watch controller', function () {
     });
   });
 
-  function itShowsAnActionMessage() {
-    it('shows an action message', function () {
+  function itShowsAMessage (match) {
+    it('shows a message', function() {
+      expect(broadcastStub.args[0][1].message).toMatch(match);
+    });
+  }
+
+  function itShowsAnActionMessage () {
+    it('shows an action message', function() {
       expect(broadcastStub.args[0][1].actionMessage).toMatch(/upgrade/i);
     });
   }
 
-  function itDoesNotShowAnActionMessage() {
-    it('does not show an action message', function () {
+  function itDoesNotShowAnActionMessage () {
+    it('does not show an action message', function() {
       expect(broadcastStub.args[0][1].actionMessage).toBeUndefined();
     });
   }
 
-  function itHasAnAction() {
-    it('has an action', function () {
+  function itHasAnAction () {
+    it('has an action', function() {
       expect(typeof broadcastStub.args[0][1].action).toBe('function');
     });
   }
 
-  function itDoesNotHaveAnAction() {
-    it('does not have an action', function () {
+  function itDoesNotHaveAnAction () {
+    it('does not have an action', function() {
       expect(broadcastStub.args[0][1].action).toBeUndefined();
     });
   }

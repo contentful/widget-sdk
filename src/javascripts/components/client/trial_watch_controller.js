@@ -17,40 +17,20 @@ angular.module('contentful')
     var space = $scope.spaceContext.space;
     if(!user || !space) return;
     var organization = space.data.organization;
-    var hours = null;
-    var timePeriod, message, action, actionMessage;
-    var isOrganizationOwner;
-    try {
-      isOrganizationOwner = user.organizationMemberships.find(function(membership) {
+    var message, action, actionMessage;
+    var organizationMembership =
+      user.organizationMemberships.find(function (membership) {
         return membership.organization.sys.id === organization.sys.id;
-      }).role === 'owner';
-    } catch(exp){
-      logger.logError('Trial watch controller organization exception', {
-        data: {
-          space: space,
-          exp: exp
-        }
       });
-    }
+    var isOrganizationOwner =
+      !!organizationMembership && organizationMembership.role === 'owner';
 
-    if(organization.subscriptionState == 'trial'){
-      hours = moment(organization.trialPeriodEndsAt).diff(moment(), 'hours');
-      if(hours === 0){
-        message = '<strong>Your trial has ended.</strong> The ' + organization.name + ' organization is in read-only mode.';
-        if(isOrganizationOwner === 'owner') {
-          message += ' To continue adding content and using the API please insert your billing information.';
-        } else {
-          message += ' To continue using it please contact the account owner.';
-        }
+    if (organization.subscriptionState == 'trial') {
+      var hoursLeft = moment(organization.trialPeriodEndsAt).diff(moment(), 'hours');
+      if (hoursLeft === 0) {
+        message = trialHasEndedMsg(organization, isOrganizationOwner);
       } else {
-        if(hours/24 <= 1){
-          timePeriod = {length: hours, unit: 'hours'};
-        } else {
-          timePeriod = {length: Math.floor(hours/24), unit: 'days'};
-        }
-        message = timeTpl('<strong>%length</strong> %unit left in trial', timePeriod) + '. '+
-                  timeTpl('Your current Organization is in trial mode giving you access to all features for '+
-                    '%length more %unit. Enter your billing information to activate your subscription.', timePeriod);
+        message = timeLeftInTrialMsg(hoursLeft);
       }
 
     } else if(organization.subscriptionState == 'active' &&
@@ -61,7 +41,7 @@ angular.module('contentful')
 
 
     if(message || action && actionMessage){
-      if(isOrganizationOwner){
+      if (isOrganizationOwner) {
         actionMessage = 'Upgrade';
         action = upgradeAction;
       }
@@ -99,6 +79,32 @@ angular.module('contentful')
 
     analytics.trackPersistentNotificationAction('Plan Upgrade');
     TheAccountView.goTo(pathSuffix, { reload: true });
+  }
+
+  function trialHasEndedMsg ( organization, userIsOrganizationOwner ) {
+    var message = '<strong>Your trial has ended.</strong> The ' +
+      organization.name + ' organization is in read-only mode.';
+
+    if (userIsOrganizationOwner ) {
+      message += ' To continue adding content and using the API please ' +
+        'insert your billing information.';
+    } else {
+      message += ' To continue using it please contact the account owner.';
+    }
+    return message;
+  }
+
+  function timeLeftInTrialMsg (hours) {
+    var timePeriod;
+    if (hours / 24 <= 1) {
+      timePeriod = {length: hours, unit: 'hours'};
+    } else {
+      timePeriod = {length: Math.floor(hours / 24), unit: 'days'};
+    }
+    return timeTpl('<strong>%length %unit left in trial.</strong>' +
+      'Your current Organization is in trial mode giving you ' +
+      'access to all features for %length more %unit. Enter your billing ' +
+      'information to activate your subscription.', timePeriod);
   }
 
   function timeTpl(str, timePeriod) {
