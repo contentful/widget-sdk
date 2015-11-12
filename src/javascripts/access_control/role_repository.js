@@ -14,7 +14,10 @@ angular.module('contentful').factory('RoleRepository', [function () {
     Settings: 'settings'
   };
 
-  return { getInstance: getInstance };
+  return {
+    getInstance: getInstance,
+    getEmpty: getEmpty
+  };
 
   function getInstance(space) {
 
@@ -41,7 +44,8 @@ angular.module('contentful').factory('RoleRepository', [function () {
     function create(role) {
       return getBaseCall()
       .payload(map(role))
-      .post();
+      .post()
+      .then(handleRole);
     }
 
     function save(role) {
@@ -74,9 +78,19 @@ angular.module('contentful').factory('RoleRepository', [function () {
     }
   }
 
+  function getEmpty() {
+    return handleRole({
+      policies: [],
+      permissions: {
+        ContentModel: ['read'],
+        ContentDelivery: [],
+        Settings: []
+      }
+    });
+  }
+
   function handleRole(role) {
     role.permissions = rewritePermissions(role.permissions);
-    role.policies = []; // @todo handle policies
     return role;
   }
 

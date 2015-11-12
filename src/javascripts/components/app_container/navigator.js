@@ -513,13 +513,16 @@ angular.module('contentful').config([
       baseRole: ['RoleRepository', 'space', '$stateParams', '$q', function (RoleRepository, space, $stateParams, $q) {
         if (!$stateParams.baseRoleId) { return $q.when(null); }
         return RoleRepository.getInstance(space).get($stateParams.baseRoleId);
+      }],
+      emptyRole: ['RoleRepository', '$q', function (RoleRepository, $q) {
+        return $q.when(RoleRepository.getEmpty());
       }]
     },
     template: '<cf-role-editor class="workbench role-editor" />',
-    controller: ['$scope', 'baseRole', function ($scope, baseRole) {
+    controller: ['$scope', 'baseRole', 'emptyRole', function ($scope, baseRole, emptyRole) {
       $scope.context = { isNew: true };
       $scope.baseRole = baseRole;
-      $scope.role = {};
+      $scope.role = emptyRole;
     }]
   });
 

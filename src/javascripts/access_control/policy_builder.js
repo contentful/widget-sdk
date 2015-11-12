@@ -10,30 +10,31 @@ angular.module('contentful').factory('PolicyBuilder', ['$injector', function ($i
   return {
     internal: {
       from: function (role) {
-        return {
+        return _.extend({
+          id: dotty.get(role, 'sys.id', null),
+          version: dotty.get(role, 'sys.version', null),
           name: role.name,
           description: role.description,
-          entries: { allowed: [], denied: [] },
-          assets: { allowed: [], denied: [] },
-          contentTypes: {},
-          apiKeys: {},
-          spaceSettings: {}
-        };
+          entries: {allowed: [], denied: []},
+          assets: {allowed: [], denied: []}
+        }, _.clone(role.permissions, true) || {});
       }
     },
     external: {
       from: function (internal) {
         return {
-          roleExtension: {
-            policies: toExternal(internal)
-          }
+          sys: _.pick(internal, ['id', 'version']),
+          name: internal.name,
+          description: internal.description,
+          policies: toExternal(internal),
+          permissions: _.pick(internal, ['contentModel', 'contentDelivery', 'settings'])
         };
       }
     }
   };
 
-  function toExternal (settings) {
-    return _(prepare(settings))
+  function toExternal(internal) {
+    return _(prepare(internal))
       .map(addBase)
       .map(addEntityTypeConstraint)
       .map(addScopeConstraint)
@@ -43,12 +44,12 @@ angular.module('contentful').factory('PolicyBuilder', ['$injector', function ($i
       .value();
   }
 
-  function prepare(settings) {
+  function prepare(internal) {
     return _.union(
-      prepareCollection(settings.entries.allowed, 'allow'),
-      prepareCollection(settings.entries.denied, 'deny'),
-      prepareCollection(settings.assets.allowed, 'allow'),
-      prepareCollection(settings.assets.denied, 'deny')
+      prepareCollection(internal.entries.allowed, 'allow'),
+      prepareCollection(internal.entries.denied, 'deny'),
+      prepareCollection(internal.assets.allowed, 'allow'),
+      prepareCollection(internal.assets.denied, 'deny')
     );
   }
 

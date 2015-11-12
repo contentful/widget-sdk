@@ -25,7 +25,7 @@ header.workbench-header
       .role-details__section
         h3 Content Types
         .cfnext-form-option
-          input(id="opt_content_types_access" type="checkbox" ng-model="internal.contentTypes.access")
+          input(id="opt_content_types_access" type="checkbox" ng-model="internal.contentModel.manage")
           label(for="opt_content_types_access")
             | Can modify Content Types
             |  (<em>the Content Type Editor is only shown to users who have this permission</em>).
@@ -33,18 +33,18 @@ header.workbench-header
       .role-details__section
         h3 API keys
         .cfnext-form-option
-          input(id="opt_api_keys_view" type="checkbox" ng-model="internal.apiKeys.view")
+          input(id="opt_api_keys_view" type="checkbox" ng-model="internal.contentDelivery.read")
           label(for="opt_api_keys_view")
             | Can access existing API keys for this space.
         .cfnext-form-option
-          input(id="opt_space_settings_edit" type="checkbox" ng-model="internal.apiKeys.edit")
+          input(id="opt_space_settings_edit" type="checkbox" ng-model="internal.contentDelivery.manage")
           label(for="opt_space_settings_edit")
             | Can create and update API keys for this space.
 
       .role-details__section
         h3 Space settings
         .cfnext-form-option
-          input(id="opt_space_settings_access" type="checkbox" ng-model="internal.spaceSettings.access")
+          input(id="opt_space_settings_access" type="checkbox" ng-model="internal.settings.manage")
           label(for="opt_space_settings_access")
             | Can modify Space Settings. This permission allows users to <strong>delete</strong> the space and it’s contents!
             |  (<em>the Settings menu is only shown to users who have this permission</em>).
