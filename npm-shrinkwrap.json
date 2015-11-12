@@ -9236,7 +9236,7 @@
                     },
                     "escape-string-regexp": {
                       "version": "1.0.3",
-                      "from": "escape-string-regexp@>=1.0.2 <2.0.0"
+                      "from": "escape-string-regexp@1.0.3"
                     },
                     "has-ansi": {
                       "version": "1.0.3",
@@ -9437,20 +9437,16 @@
       }
     },
     "stylus": {
-      "version": "0.48.1",
-      "from": "stylus@0.48.1",
+      "version": "0.52.4",
+      "from": "stylus@0.52.4",
       "dependencies": {
         "css-parse": {
           "version": "1.7.0",
-          "from": "css-parse@1.7.0"
-        },
-        "mkdirp": {
-          "version": "0.3.5",
-          "from": "mkdirp@0.3.5"
+          "from": "css-parse@>=1.7.0 <1.8.0"
         },
         "debug": {
           "version": "2.2.0",
-          "from": "debug@2.2.0",
+          "from": "debug@*",
           "dependencies": {
             "ms": {
               "version": "0.7.1",
@@ -9460,27 +9456,27 @@
         },
         "sax": {
           "version": "0.5.8",
-          "from": "sax@0.5.8"
+          "from": "sax@>=0.5.0 <0.6.0"
         },
         "glob": {
           "version": "3.2.11",
-          "from": "glob@3.2.11",
+          "from": "glob@>=3.2.0 <3.3.0",
           "dependencies": {
             "inherits": {
               "version": "2.0.1",
-              "from": "inherits@2.0.1"
+              "from": "inherits@>=2.0.0 <3.0.0"
             },
             "minimatch": {
               "version": "0.3.0",
-              "from": "minimatch@0.3.0",
+              "from": "minimatch@>=0.3.0 <0.4.0",
               "dependencies": {
                 "lru-cache": {
                   "version": "2.7.0",
-                  "from": "lru-cache@2.7.0"
+                  "from": "lru-cache@>=2.0.0 <3.0.0"
                 },
                 "sigmund": {
                   "version": "1.0.1",
-                  "from": "sigmund@1.0.1"
+                  "from": "sigmund@>=1.0.0 <1.1.0"
                 }
               }
             }
