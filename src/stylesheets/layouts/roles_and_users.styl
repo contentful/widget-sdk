@@ -52,6 +52,8 @@
   padding-left: 45px
   position: relative
   border-top: 1px solid $colors.element-light
+  em
+    color: $colors.text-light
   h3
     position: absolute
     top: -27px
@@ -142,10 +144,11 @@
 
 .staff-hint__author
   display: flex
+  align-items: center
   strong
     display: block
     color: $colors.text-light
-    padding: 5px 0 2px
+    padding: 4px 0 2px
 
 .staff-hint__author-photo
   display: block
@@ -154,3 +157,4 @@
   height: 50px
   background-image: url('/app/images/faces/stephen.jpg')
   background-size: 100% auto
+  background-repeat: no-repeat
