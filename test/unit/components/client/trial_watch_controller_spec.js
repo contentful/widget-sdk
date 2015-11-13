@@ -6,10 +6,9 @@ describe('Trial Watch controller', function () {
   var broadcastStub;
   var momentStub;
   var $window, $q;
-  var spaceMockIdCounter = 0;
 
   function makeSpace(organization) {
-    organization.sys = organization.sys || {id: spaceMockIdCounter++};
+    organization.sys = {id: '42'};
     return {
       data: {
         organization: organization
