@@ -1,7 +1,7 @@
 sudo: false
+
+# Uses node version from .nvmrc
 language: node_js
-node_js:
-- '0.10'
 
 # Caching
 # http://docs.travis-ci.com/user/caching/
