@@ -107,12 +107,12 @@ describe('Trial Watch controller', function () {
         };
       });
 
-      describe('for ended trial', function() {
+      describe('for ended trial', function () {
         beforeEach(function() {
           diffStub.returns(0);
         });
 
-        describe('for user owning the organization', function() {
+        describe('for user owning the organization', function () {
           beforeEach(function() {
             makeScopeUserOwnScopeSpaceOrganization();
             scope.$digest();
@@ -126,8 +126,8 @@ describe('Trial Watch controller', function () {
           itHasAnAction();
         });
 
-        describe('for user not owning the organization', function() {
-          beforeEach(function(){
+        describe('for user not owning the organization', function () {
+          beforeEach(function () {
             scope.$digest();
           });
 
@@ -217,31 +217,31 @@ describe('Trial Watch controller', function () {
   });
 
   function itShowsAMessage (match) {
-    it('shows a message', function() {
+    it('shows a message', function () {
       expect(broadcastStub.args[0][1].message).toMatch(match);
     });
   }
 
   function itShowsAnActionMessage () {
-    it('shows an action message', function() {
+    it('shows an action message', function () {
       expect(broadcastStub.args[0][1].actionMessage).toMatch(/upgrade/i);
     });
   }
 
   function itDoesNotShowAnActionMessage () {
-    it('does not show an action message', function() {
+    it('does not show an action message', function () {
       expect(broadcastStub.args[0][1].actionMessage).toBeUndefined();
     });
   }
 
   function itHasAnAction () {
-    it('has an action', function() {
+    it('has an action', function () {
       expect(typeof broadcastStub.args[0][1].action).toBe('function');
     });
   }
 
   function itDoesNotHaveAnAction () {
-    it('does not have an action', function() {
+    it('does not have an action', function () {
       expect(broadcastStub.args[0][1].action).toBeUndefined();
     });
   }

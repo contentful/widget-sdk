@@ -81,11 +81,11 @@ angular.module('contentful')
     TheAccountView.goTo(pathSuffix, { reload: true });
   }
 
-  function trialHasEndedMsg ( organization, userIsOrganizationOwner ) {
+  function trialHasEndedMsg (organization, userIsOrganizationOwner) {
     var message = '<strong>Your trial has ended.</strong> The ' +
       organization.name + ' organization is in read-only mode.';
 
-    if (userIsOrganizationOwner ) {
+    if (userIsOrganizationOwner) {
       message += ' To continue adding content and using the API please ' +
         'insert your billing information.';
     } else {
