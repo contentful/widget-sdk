@@ -4,7 +4,7 @@ angular.module('contentful').factory('PolicyBuilder', ['$injector', function ($i
 
   var capitalize = $injector.get('stringUtils').capitalize;
 
-  var PATH_WILDCARD  = '*';
+  var PATH_WILDCARD  = '%';
   var PATH_SEPARATOR = '.';
 
   return {
@@ -117,7 +117,7 @@ angular.module('contentful').factory('PolicyBuilder', ['$injector', function ($i
   }
 
   function paths(segments) {
-    return { paths: [segments.join(PATH_SEPARATOR)] };
+    return { paths: [{doc: segments.join(PATH_SEPARATOR)}] };
   }
 
   function isAll(value) {
