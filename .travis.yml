@@ -17,6 +17,7 @@ before_install:
 - npm config set _auth Y2ZkOjBlOWNhYWYyYjExMTliYjdkZjY=
 - npm config set registry https://contentful.registry.nodejitsu.com/
 - npm install -g npm@latest-2
+- npm --version
 install:
 - npm prune
 - bin/install_slimerjs
