@@ -1,0 +1,20 @@
+p.paywall__intro.
+  We’re sorry to say that, but your account will be inactive until you set up
+  payment.
+
+p.
+  We would highly recommend our most popular plan: Pro Annual. If you purchase
+  an entire year upfront, it would cost $166 per month – saving you 17%.
+p.
+  If you’ve tried Contentful and liked it, please set up your
+  preferred payment method and continue managing content.
+
+button.advice__action.cfnext-btn-primary-action.modal-dialog__controls-confirm(
+  ng-click="dialog.confirm(model); setUpPayment()"
+  type="button") Set up payment
+
+p.paywall__bottom-note
+  | If you need to extend your trial, if this message caught you by surprise,
+  | or you’re unsure why this has happened, please&#32;
+  a(ng-click="openIntercom") talk to us
+  |  directly.

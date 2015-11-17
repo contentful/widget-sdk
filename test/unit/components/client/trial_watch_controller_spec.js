@@ -4,6 +4,7 @@ describe('Trial Watch controller', function () {
   var scope;
   var trialWatchCtrl;
   var broadcastStub;
+  var modalDialogMock;
   var momentStub, momentDiffStub, momentIsAfterStub;
   var $window, $q;
 
@@ -41,8 +42,13 @@ describe('Trial Watch controller', function () {
       isAfter: momentIsAfterStub
     });
 
+    modalDialogMock = {
+      open: sinon.spy()
+    };
+
     module('contentful/test', function ($provide) {
       $provide.value('moment', momentStub);
+      $provide.value('modalDialog', modalDialogMock);
     });
 
     inject(function ($rootScope, $controller, _$window_, _$q_) {
@@ -117,6 +123,8 @@ describe('Trial Watch controller', function () {
 
           itHasAnAction();
 
+          itOpensPaywallForSettingUpPayment();
+
 
         });
 
@@ -131,6 +139,8 @@ describe('Trial Watch controller', function () {
           itDoesNotShowAnActionMessage();
 
           itDoesNotHaveAnAction();
+
+          itOpensPaywallToNotifyTheUser();
         });
       });
 
@@ -146,6 +156,8 @@ describe('Trial Watch controller', function () {
         itShowsAnActionMessage();
 
         itHasAnAction();
+
+        itDoesNotOpenPaywall();
       });
 
       describe('ending in less than a day', function () {
@@ -160,6 +172,8 @@ describe('Trial Watch controller', function () {
         itShowsAnActionMessage();
 
         itHasAnAction();
+
+        itDoesNotOpenPaywall();
       });
 
       describe('ending in a few days', function () {
@@ -172,6 +186,8 @@ describe('Trial Watch controller', function () {
         itShowsAnActionMessage();
 
         itHasAnAction();
+
+        itDoesNotOpenPaywall();
       });
 
       describe('no action', function () {
@@ -210,6 +226,8 @@ describe('Trial Watch controller', function () {
         itShowsAnActionMessage();
 
         itHasAnAction();
+
+        itDoesNotOpenPaywall();
       });
 
       describe('no action', function () {
@@ -220,6 +238,8 @@ describe('Trial Watch controller', function () {
         itDoesNotShowAnActionMessage();
 
         itDoesNotHaveAnAction();
+
+        itDoesNotOpenPaywall();
       });
     });
   });
@@ -251,6 +271,34 @@ describe('Trial Watch controller', function () {
   function itDoesNotHaveAnAction () {
     it('does not have an action', function () {
       expect(broadcastStub.args[0][1].action).toBeUndefined();
+    });
+  }
+
+  function itOpensPaywallForSettingUpPayment () {
+    itOpensPaywall();
+
+    it('allows setting up payment', function () {
+      expect(modalDialogMock.open.args[0][0].scopeData.offerToSetUpPayment).toBe(true);
+    });
+  }
+
+  function itOpensPaywallToNotifyTheUser () {
+    itOpensPaywall();
+
+    it('does not allow setting up payment', function () {
+      expect(modalDialogMock.open.args[0][0].scopeData.offerToSetUpPayment).toBe(false);
+    });
+  }
+
+  function itOpensPaywall () {
+    it('opens the paywall modal dialog', function () {
+      expect(modalDialogMock.open.calledOnce).toBe(true);
+    });
+  }
+
+  function itDoesNotOpenPaywall () {
+    it('does not open the paywall modal dialog', function () {
+      expect(modalDialogMock.open.called).toBe(false);
     });
   }
 

@@ -4,10 +4,12 @@ angular.module('contentful')
 
 .controller('TrialWatchController', ['$scope', '$injector', function TrialWatchController($scope, $injector) {
   var $rootScope     = $injector.get('$rootScope');
+  var $window        = $injector.get('$window');
   var analytics      = $injector.get('analytics');
   var logger         = $injector.get('logger');
   var TheAccountView = $injector.get('TheAccountView');
   var moment         = $injector.get('moment');
+  var modalDialog    = $injector.get('modalDialog');
 
   $scope.$watchGroup(['user', 'spaceContext.space'], trialWatcher);
 
@@ -26,6 +28,7 @@ angular.module('contentful')
       var trial = new Trial(organization);
       if (trial.hasEnded()) {
         notify(trialHasEndedMsg(organization, userOwnsOrganization));
+        showPaywall(user, trial);
       } else {
         notify(timeLeftInTrialMsg(trial.getHoursLeft()));
       }
@@ -45,6 +48,18 @@ angular.module('contentful')
       }
       $rootScope.$broadcast('persistentNotification', params);
     }
+  }
+
+  function showPaywall (user, trial) {
+    modalDialog.open({
+      template: 'paywall_dialog',
+      scopeData: {
+        offerToSetUpPayment: userIsOrganizationOwner(user, trial.organization),
+        setUpPayment: upgradeAction,
+        openIntercom: openIntercom
+      },
+      backgroundClose: true
+    });
   }
 
   function upgradeAction(){
@@ -70,6 +85,12 @@ angular.module('contentful')
 
     analytics.trackPersistentNotificationAction('Plan Upgrade');
     TheAccountView.goTo(pathSuffix, { reload: true });
+  }
+
+  function openIntercom () {
+    if ($window.Intercom) {
+      $window.Intercom('showNewMessage');
+    }
   }
 
   function trialHasEndedMsg (organization, userIsOrganizationOwner) {

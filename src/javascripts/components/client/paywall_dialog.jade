@@ -1,0 +1,9 @@
+.modal-background.paywall
+  .modal-dialog
+    header.modal-dialog__header
+      h1 Your trial is over
+
+    .modal-dialog__content( ng-if="offerToSetUpPayment" )
+      include paywall_set_up_payment_notification
+    .modal-dialog__content( ng-if="!offerToSetUpPayment" )
+      include paywall_passive_notification
