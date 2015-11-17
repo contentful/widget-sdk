@@ -4,7 +4,7 @@ describe('Trial Watch controller', function () {
   var scope;
   var trialWatchCtrl;
   var broadcastStub;
-  var momentStub;
+  var momentStub, momentDiffStub, momentIsAfterStub;
   var $window, $q;
 
   function makeSpace(organization) {
@@ -27,9 +27,21 @@ describe('Trial Watch controller', function () {
     }];
   }
 
+  function trialHoursLeft( hours ) {
+    momentDiffStub.returns(Math.floor(hours));
+    momentIsAfterStub.returns( hours !== 0 );
+  }
+
   beforeEach(function () {
+    momentDiffStub = sinon.stub();
+    momentIsAfterStub = sinon.stub();
+    momentStub = sinon.stub();
+    momentStub.returns({
+      diff: momentDiffStub,
+      isAfter: momentIsAfterStub
+    });
+
     module('contentful/test', function ($provide) {
-      momentStub = sinon.stub();
       $provide.value('moment', momentStub);
     });
 
@@ -54,16 +66,7 @@ describe('Trial Watch controller', function () {
     broadcastStub.restore();
   });
 
-  it('gets no persistent notification', function () {
-    scope.user = null;
-    scope.spaceContext = {
-      space: null
-    };
-    scope.$digest();
-    sinon.assert.notCalled(broadcastStub);
-  });
-
-  describe('removes an existing notification', function () {
+  describe('without trial user', function () {
     beforeEach(function () {
       scope.spaceContext = {
         space: makeSpace({})
@@ -71,24 +74,14 @@ describe('Trial Watch controller', function () {
       scope.$digest();
     });
 
-    it('calls broadcast', function () {
-      sinon.assert.called(broadcastStub);
-    });
-
-    it('calls broadcast with null', function () {
-      expect(broadcastStub.args[0][1]).toBeNull();
+    it('removes no other notification currently shown', function () {
+      sinon.assert.notCalled(broadcastStub);
     });
   });
 
-  describe('shows a persistent notification', function () {
-    var diffStub;
-
+  describe('shows a persistent notification', function() {
     beforeEach(function () {
       jasmine.clock().install();
-      diffStub = sinon.stub();
-      momentStub.returns({
-        diff: diffStub
-      });
     });
 
     afterEach(function () {
@@ -106,9 +99,9 @@ describe('Trial Watch controller', function () {
         };
       });
 
-      describe('for ended trial', function () {
+      describe('already ended', function () {
         beforeEach(function() {
-          diffStub.returns(0);
+          trialHoursLeft(0);
         });
 
         describe('for user owning the organization', function () {
@@ -123,6 +116,8 @@ describe('Trial Watch controller', function () {
           itShowsAnActionMessage();
 
           itHasAnAction();
+
+
         });
 
         describe('for user not owning the organization', function () {
@@ -139,10 +134,24 @@ describe('Trial Watch controller', function () {
         });
       });
 
-      describe('for hours periods', function () {
+      describe('ending in less than an hour', function () {
         beforeEach(function () {
           makeScopeUserOwnScopeSpaceOrganization();
-          diffStub.returns(20);
+          trialHoursLeft(0.2);
+          scope.$digest();
+        });
+
+        itShowsAMessage(/0(.*)hours left in trial/);
+
+        itShowsAnActionMessage();
+
+        itHasAnAction();
+      });
+
+      describe('ending in less than a day', function () {
+        beforeEach(function () {
+          makeScopeUserOwnScopeSpaceOrganization();
+          trialHoursLeft(20);
           scope.$digest();
         });
 
@@ -153,10 +162,10 @@ describe('Trial Watch controller', function () {
         itHasAnAction();
       });
 
-      describe('for days periods', function () {
+      describe('ending in a few days', function () {
         beforeEach(function () {
           makeScopeUserOwnScopeSpaceOrganization();
-          diffStub.returns(76);
+          trialHoursLeft(76);
           scope.$digest();
         });
 
