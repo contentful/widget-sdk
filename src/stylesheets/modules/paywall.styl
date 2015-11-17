@@ -1,0 +1,44 @@
+.paywall
+  color: $gray-medium
+  p
+    margin-bottom: 1.6em
+    font-size: 1em
+  .paywall__intro
+    font-size: 1.2em
+    font-weight: bold
+    line-height: 1.5
+  .paywall__bottom-note
+    font-size: 0.9em
+    font-style: italic
+    color: $gray
+    margin-bottom: 0
+    a
+      cursor: pointer
+
+  .modal-dialog
+    max-width: 700px
+    > *
+      padding-left: 65px
+      padding-right: 65px
+
+    &__header
+      background-color: white
+      border: none
+      padding-top: 45px
+      padding-bottom: 0
+      h1
+        font-size: 2em
+        color: $gray-dark
+        &:after
+          content: "."
+      i
+        font-size: 4em
+        margin-right: .3em
+        color: $red
+
+    &__content
+      padding-top: 25px
+      padding-bottom: 45px
+
+    &__controls-confirm
+      margin: 3px 0 50px 0

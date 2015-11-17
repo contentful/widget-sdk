@@ -213,7 +213,7 @@ describe('Trial Watch controller', function () {
             }
           })
         };
-      });
+    });
 
       describe('with an action', function () {
         beforeEach(function () {
