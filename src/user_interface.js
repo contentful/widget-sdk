@@ -12,7 +12,7 @@ if (angular) {
     constant('hostnameTransformer', require('contentful-hostname-transformer')).
     constant('validation', require('contentful-validation')).
     constant('mimetype', require('contentful-mimetype')).
-    constant('worf', require('worf')).
+    constant('worf', require('@contentful/worf')).
     constant('stringifySafe', require('json-stringify-safe')).
     constant('searchParser', require('./search.pegjs')).
     constant('localesList', require('./locales_list.json')).
