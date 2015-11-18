@@ -3,6 +3,7 @@
     header.modal-dialog__header
       i.fa.fa-minus-circle
       h1 Your trial is over
+      button.modal-dialog__close(ng-click="dialog.cancel()")
 
     .modal-dialog__content( ng-if="offerToSetUpPayment" )
       include paywall_set_up_payment_notification
