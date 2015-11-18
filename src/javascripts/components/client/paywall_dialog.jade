@@ -5,7 +5,7 @@
       h1 Your trial is over
       button.modal-dialog__close(ng-click="dialog.cancel()")
 
-    .modal-dialog__content( ng-if="offerToSetUpPayment" )
+    .modal-dialog__content(ng-if="offerToSetUpPayment")
       include paywall_set_up_payment_notification
-    .modal-dialog__content( ng-if="!offerToSetUpPayment" )
+    .modal-dialog__content(ng-if="!offerToSetUpPayment")
       include paywall_passive_notification
