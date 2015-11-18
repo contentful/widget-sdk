@@ -224,12 +224,15 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     .promise
     .then(function (template) {
       if(template){
-        analytics.track('Created Successful Space Template');
+        analytics.track('Created Space Template', {template: template.name});
         $rootScope.$broadcast('templateWasCreated');
         refreshContentTypes();
       }
     })
-    .catch(refreshContentTypes);
+    .catch(function() {
+      analytics.track('Closed Space Template Selection Modal');
+      refreshContentTypes();
+    });
   }
 
   function refreshContentTypes() {
