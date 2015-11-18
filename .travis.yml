@@ -16,6 +16,7 @@ before_install:
 - npm config set always-auth true
 - npm config set _auth Y2ZkOjBlOWNhYWYyYjExMTliYjdkZjY=
 - npm config set registry https://contentful.registry.nodejitsu.com/
+- echo $'@contentful:registry=https://registry.npmjs.org/\n//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> ~/.npmrc
 install:
 - npm prune
 - bin/install_slimerjs
