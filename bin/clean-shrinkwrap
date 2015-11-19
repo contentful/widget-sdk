@@ -1,0 +1,30 @@
+#!/usr/bin/env node
+
+/**
+ * This script removes all the `resolved` properties from
+ * 'npm-shrinkwrap.json'.
+ */
+'use strict';
+
+var _ = require('lodash-node');
+var fs = require('fs');
+
+
+var SHRINKWRAP = __dirname + '/../npm-shrinkwrap.json';
+var dependencies = require(SHRINKWRAP);
+var cleaned = cleanResolve(dependencies);
+
+fs.writeFileSync(SHRINKWRAP, stringify(cleaned), 'utf-8');
+
+function cleanResolve (dep) {
+  dep = _.omit(dep, 'resolved');
+  if (dep.dependencies) {
+    dep.dependencies = _.mapValues(dep.dependencies, cleanResolve);
+  }
+
+  return dep;
+}
+
+function stringify (obj) {
+  return JSON.stringify(obj, null, 2);
+}
