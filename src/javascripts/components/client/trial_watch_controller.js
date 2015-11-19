@@ -50,7 +50,12 @@ angular.module('contentful')
     }
   }
 
+  var paywallIsOpen = false;
   function showPaywall (user, trial) {
+    if (paywallIsOpen) {
+      return;
+    }
+    paywallIsOpen = true;
     modalDialog.open({
       template: 'paywall_dialog',
       scopeData: {
@@ -58,6 +63,8 @@ angular.module('contentful')
         setUpPayment: upgradeAction,
         openIntercom: openIntercom
       }
+    }).promise.finally(function () {
+      paywallIsOpen = false;
     });
   }
 
