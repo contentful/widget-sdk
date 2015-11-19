@@ -13,11 +13,14 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
   var ReloadNotification  = $injector.get('ReloadNotification');
   var space               = $injector.get('spaceContext').space;
   var $q                  = $injector.get('$q');
+  var $rootScope          = $injector.get('$rootScope');
   var modalDialog         = $injector.get('modalDialog');
   var roleRepo            = $injector.get('RoleRepository').getInstance(space);
   var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(space);
   var listHandler         = $injector.get('UserListHandler');
   var jumpToRoleMembers   = $injector.get('UserListController/jumpToRole');
+  var notification        = $injector.get('notification');
+  var Command             = $injector.get('command');
 
   $scope.sref                   = createSref;
   $scope.removeRole             = removeRole;
@@ -27,26 +30,45 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
   reload().catch(ReloadNotification.basicErrorHandler);
 
   function removeRole(role) {
-    var count = $scope.memberships[role.sys.id];
-    if (!count) {
+    if (getCountFor(role)) {
+      modalDialog.open({
+        template: 'role_removal_dialog',
+        noNewScope: true,
+        ignoreEsc: true,
+        backgroundClose: false,
+        scope: prepareRemovalDialogScope(role, remove)
+      });
+    } else {
       remove();
-      return;
     }
 
-    modalDialog.open({
-      template: 'role_removal_dialog',
-      scopeData: {
-        role: role,
-        input: {},
-        count: count,
-        roleOptions: listHandler.getRoleOptionsBut(role.sys.id)
-      }
-    }).promise.then(moveUsersAndRemoveRole);
+    function remove() {
+      return roleRepo.remove(role)
+      .then(reload)
+      .then(function () { notification.info('Role successfully deleted.'); })
+      .catch(ReloadNotification.basicErrorHandler);
+    }
+  }
 
-    function moveUsersAndRemoveRole(moveToRoleId) {
+  function prepareRemovalDialogScope(role, remove) {
+    var scope = $rootScope.$new();
+
+    return _.extend(scope, {
+      role: role,
+      input: {},
+      count: getCountFor(role),
+      roleOptions: listHandler.getRoleOptionsBut(role.sys.id),
+      moveUsersAndRemoveRole: Command.create(moveUsersAndRemoveRole, {
+        disabled: function () { return !scope.input.id; }
+      })
+    });
+
+    function moveUsersAndRemoveRole() {
       var users = listHandler.getUsersByRole(role.sys.id);
       var memberships = _.pluck(users, 'membership');
+      var moveToRoleId = scope.input.id;
       var method = 'changeRoleTo';
+
       if (listHandler.isAdminRole(moveToRoleId)) {
         method = 'changeRoleToAdmin';
       }
@@ -55,13 +77,10 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
         return spaceMembershipRepo[method](membership, moveToRoleId);
       });
 
-      return $q.all(promises).then(remove, ReloadNotification.basicErrorHandler);
-    }
-
-    function remove() {
-      return roleRepo.remove(role)
-      .then(reload)
-      .catch(ReloadNotification.basicErrorHandler);
+      return $q.all(promises).then(function () {
+        return remove()
+        .finally(function () { scope.dialog.confirm(); });
+      }, ReloadNotification.basicErrorHandler);
     }
   }
 
@@ -90,6 +109,10 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
     });
 
     return counts;
+  }
+
+  function getCountFor(role) {
+    return $scope.memberships[role.sys.id];
   }
 
   function jumpToAdminRoleMembers() {

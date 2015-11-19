@@ -43,48 +43,72 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(space);
   var listHandler         = $injector.get('UserListHandler');
   var stringUtils         = $injector.get('stringUtils');
+  var notification        = $injector.get('notification');
+
+  var MODAL_OPTS_BASE = {
+    noNewScope: true,
+    ignoreEsc: true,
+    backgroundClose: false
+  };
 
   $scope.viewLabels = {
     name: 'Show users in alphabetical order',
     role: 'Show users grouped by role'
   };
 
-  $scope.removeFromSpace      = removeFromSpace;
-  $scope.openRoleChangeDialog = openRoleChangeDialog;
-  $scope.openInvitationDialog = openInvitationDialog;
+  $scope.openRemovalConfirmationDialog = openRemovalConfirmationDialog;
+  $scope.openRoleChangeDialog          = openRoleChangeDialog;
+  $scope.openInvitationDialog          = openInvitationDialog;
 
   reload().catch(ReloadNotification.basicErrorHandler);
 
-  function removeFromSpace(user) {
-    if (!listHandler.isLastAdmin(user.id)) {
-      return modalDialog.openConfirmDeleteDialog({
-        title: 'Remove user from a space',
-        message: 'Are you sure?',
-        confirmLabel: 'Remove'
-      }).promise.then(call);
+  /**
+   * Remove an user from a space
+   */
+  function openRemovalConfirmationDialog(user) {
+    if (listHandler.isLastAdmin(user.id)) {
+      return modalDialog.open(_.extend({
+        template: 'admin_removal_confirm_dialog',
+        scope: prepareRemovalConfirmationDialogScope(user)
+      }, MODAL_OPTS_BASE));
     }
 
-    return modalDialog.open({
-      template: 'admin_removal_confirm_dialog',
-      scopeData: {
-        user: user,
-        input: {}
-      }
-    }).promise.then(call);
+    return modalDialog.open(_.extend({
+      template: 'user_removal_confirm_dialog',
+      scope: prepareRemovalConfirmationDialogScope(user)
+    }, MODAL_OPTS_BASE));
+  }
 
-    function call() {
-      spaceMembershipRepo.remove(user.membership)
-      .then(reload)
-      .catch(ReloadNotification.basicErrorHandler);
+  function prepareRemovalConfirmationDialogScope(user) {
+    var scope = $rootScope.$new();
+
+    return _.extend(scope, {
+      user: user,
+      input: {},
+      removeUser: Command.create(function () {
+        return spaceMembershipRepo.remove(user.membership)
+        .then(reload)
+        .then(function () { notification.info('User successfully removed from this space.'); })
+        .catch(ReloadNotification.basicErrorHandler)
+        .finally(function () { scope.dialog.confirm(); });
+      }, {
+        disabled: isDisabled
+      })
+    });
+
+    function isDisabled() {
+      return listHandler.isLastAdmin(user.id) && scope.input.confirm !== 'I UNDERSTAND';
     }
   }
 
+  /**
+   * Change a role of an user
+   */
   function openRoleChangeDialog(user) {
-    modalDialog.open({
+    modalDialog.open(_.extend({
       template: 'role_change_dialog',
-      noNewScope: true,
       scope: prepareRoleChangeDialogScope(user)
-    });
+    }, MODAL_OPTS_BASE));
   }
 
   function prepareRoleChangeDialogScope(user) {
@@ -98,6 +122,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
       changeRole: Command.create(function () {
         return changeRole(scope.input.id)
         .then(reload)
+        .then(function () { notification.info('User role successfully changed.'); })
         .catch(ReloadNotification.basicErrorHandler)
         .finally(function () { scope.dialog.confirm(); });
       }, {
@@ -115,12 +140,14 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     }
   }
 
+  /**
+   * Send an invitation
+   */
   function openInvitationDialog() {
-    modalDialog.open({
+    modalDialog.open(_.extend({
       template: 'invitation_dialog',
-      noNewScope: true,
       scope: prepareInvitationDialogScope()
-    });
+    }, MODAL_OPTS_BASE));
   }
 
   function prepareInvitationDialogScope() {
@@ -148,6 +175,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
 
     function handleSuccess() {
       return reload()
+      .then(function () { notification.info('Invitation successfully sent.'); })
       .catch(ReloadNotification.basicErrorHandler)
       .finally(function () { scope.dialog.confirm(); });
     }
@@ -172,6 +200,9 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     }
   }
 
+  /**
+   * Reset the list with a new data
+   */
   function reload() {
     return $q.all({
       memberships: spaceMembershipRepo.getAll(),

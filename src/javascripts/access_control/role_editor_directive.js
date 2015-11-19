@@ -10,11 +10,16 @@ angular.module('contentful').directive('cfRoleEditor', function () {
 
 angular.module('contentful').controller('RoleEditorController', ['$scope', '$injector', function ($scope, $injector) {
 
+  var $state           = $injector.get('$state');
+  var $q               = $injector.get('$q');
   var Command          = $injector.get('command');
   var space            = $injector.get('spaceContext').space;
   var roleRepo         = $injector.get('RoleRepository').getInstance(space);
   var PolicyBuilder    = $injector.get('PolicyBuilder');
   var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
+  var notification     = $injector.get('notification');
+  var analytics        = $injector.get('analytics');
+  var logger           = $injector.get('logger');
 
   // 1. prepare "touch" counter (first touch for role->internal, next for dirty state)
   $scope.context.touched = $scope.context.isNew ? 0 : -1;
@@ -50,15 +55,51 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
 
   function save() {
     var method = $scope.context.isNew ? 'create' : 'save';
-    return roleRepo[method]($scope.external).then(handleRole, function (res) {
-      console.log('=== ROLE SAVE ERROR ===');
-      console.log(res.body);
-    });
+    return roleRepo[method]($scope.external).then(handleRole, handleError);
   }
 
   function handleRole(role) {
-    $scope.role = role;
-    $scope.context.touched = -1;
-    $scope.context.isNew = false;
+    notification.info($scope.context.title + ' saved successfully');
+    trackRoleChange(role);
+
+    if ($scope.context.isNew) {
+      $scope.context.dirty = false;
+      return $state.go('spaces.detail.settings.roles.detail', { roleId: role.sys.id });
+    } else {
+      $scope.role = role;
+      $scope.context.touched = -1;
+      return $q.when(role);
+    }
+  }
+
+  function handleError(res) {
+    var errors = dotty.get(res, 'body.details.errors', []);
+    var nameError = _.find(errors, function (err) {
+      return _.isObject(err) && err.name === 'length' && err.path === 'name';
+    });
+    var value = nameError.value;
+
+    if (!value) {
+      notification.error('You have to provide a role name.');
+    } else if (_.isString(value) && value.length > 0) {
+      notification.error('The provided role name is too long.');
+    } else {
+      notification.error('Error saving role. Please try again.');
+      logger.logServerWarn('Error saving role', { errors: errors });
+    }
+
+    return $q.reject();
+  }
+
+  function trackRoleChange(changedRole) {
+    var eventName = 'Role created in UI';
+    var data = { changedRole: changedRole };
+
+    if (!$scope.context.isNew) {
+      eventName = 'Role changed in UI';
+      data.originalRole = $scope.role;
+    }
+
+    analytics.track(eventName, data);
   }
 }]);

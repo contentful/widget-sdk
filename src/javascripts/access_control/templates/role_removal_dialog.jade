@@ -2,7 +2,6 @@
   .modal-dialog
     header.modal-dialog__header
       h1 Delete <em>{{ role.name }}</em> role
-      button.modal-dialog__close(ng-click="dialog.cancel()")
 
     .modal-dialog__content
       .modal-dialog__richtext
@@ -18,9 +17,7 @@
               | {{ option.name }}
 
     .modal-dialog__controls
-      button.cfnext-btn-caution(
-      ng-click="dialog.confirm(input.id)"
-      ng-disabled="!input.id")
+      button.cfnext-btn-caution(ui-command="moveUsersAndRemoveRole")
         | Move users and delete the role
       button.cfnext-btn-secondary-action(ng-click="dialog.cancel()")
         | Don't delete
