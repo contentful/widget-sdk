@@ -75,7 +75,9 @@ describe('Trial Watch controller', function () {
   describe('without trial user', function () {
     beforeEach(function () {
       scope.spaceContext = {
-        space: makeSpace({})
+        space: makeSpace({
+          trialPeriodEndsAt: null
+        })
       };
       scope.$digest();
     });
@@ -98,7 +100,6 @@ describe('Trial Watch controller', function () {
       beforeEach(function(){
         scope.spaceContext = {
           space: makeSpace({
-            subscriptionState: 'trial',
             trialPeriodEndsAt: '2013-12-13T13:28:44Z',
             name: 'TEST_ORGA_NAME'
           })
@@ -207,6 +208,7 @@ describe('Trial Watch controller', function () {
         scope.spaceContext = {
           space: makeSpace({
             subscriptionState: 'active',
+            trialPeriodEndsAt: null,
             subscriptionPlan: {
               paid: false,
               kind: 'default'
