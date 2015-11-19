@@ -16,12 +16,13 @@ angular.module('contentful')
   var TheAccountView = $injector.get('TheAccountView');
   var authentication = $injector.get('authentication');
   var analytics      = $injector.get('analytics');
+  var intercom       = $injector.get('intercom');
 
   $scope.goToAccount = TheAccountView.goTo;
   $scope.clickedProfileButton = clickedProfileButton;
   $scope.openSupport = openSupport;
-  $scope.openIntercom = openIntercom;
-  $scope.isIntercomLoaded = isIntercomLoaded;
+  $scope.openIntercom = intercom.open;
+  $scope.isIntercomLoaded = intercom.isLoaded;
   $scope.logout = logout;
 
   function clickedProfileButton() {
@@ -30,16 +31,6 @@ angular.module('contentful')
 
   function openSupport() {
     $window.open(authentication.supportUrl());
-  }
-
-  function isIntercomLoaded() {
-    return !!$window.Intercom;
-  }
-
-  function openIntercom() {
-    if ($window.Intercom) {
-      $window.Intercom('showNewMessage');
-    }
   }
 
   function logout() {

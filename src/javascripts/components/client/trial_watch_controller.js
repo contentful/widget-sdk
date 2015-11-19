@@ -4,7 +4,7 @@ angular.module('contentful')
 
 .controller('TrialWatchController', ['$scope', '$injector', function TrialWatchController($scope, $injector) {
   var $rootScope     = $injector.get('$rootScope');
-  var $window        = $injector.get('$window');
+  var intercom       = $injector.get('intercom');
   var analytics      = $injector.get('analytics');
   var logger         = $injector.get('logger');
   var TheAccountView = $injector.get('TheAccountView');
@@ -61,7 +61,7 @@ angular.module('contentful')
       scopeData: {
         offerToSetUpPayment: userIsOrganizationOwner(user, trial.organization),
         setUpPayment: upgradeAction,
-        openIntercom: openIntercom
+        openIntercom: intercom.open
       }
     }).promise.finally(function () {
       paywallIsOpen = false;
@@ -91,12 +91,6 @@ angular.module('contentful')
 
     analytics.trackPersistentNotificationAction('Plan Upgrade');
     TheAccountView.goTo(pathSuffix, { reload: true });
-  }
-
-  function openIntercom () {
-    if ($window.Intercom) {
-      $window.Intercom('showNewMessage');
-    }
   }
 
   function trialHasEndedMsg (organization, userIsOrganizationOwner) {

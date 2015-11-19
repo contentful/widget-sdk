@@ -1,6 +1,6 @@
 'use strict';
 
-fdescribe('Trial Watch controller', function () {
+describe('Trial Watch controller', function () {
   var scope;
   var trialWatchCtrl;
   var broadcastStub;
