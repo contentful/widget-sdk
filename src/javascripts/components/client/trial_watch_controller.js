@@ -24,7 +24,7 @@ angular.module('contentful')
     var organization = space.data.organization;
     var userOwnsOrganization = userIsOrganizationOwner(user, organization);
 
-    if (organization.subscriptionState == 'trial') {
+    if (organization.trialPeriodEndsAt !== null) {
       var trial = new Trial(organization);
       if (trial.hasEnded()) {
         notify(trialHasEndedMsg(organization, userOwnsOrganization));
@@ -57,8 +57,7 @@ angular.module('contentful')
         offerToSetUpPayment: userIsOrganizationOwner(user, trial.organization),
         setUpPayment: upgradeAction,
         openIntercom: openIntercom
-      },
-      backgroundClose: true
+      }
     });
   }
 
@@ -140,9 +139,6 @@ angular.module('contentful')
       organizationMembership.role === 'owner';
   }
 
-  /**
-   * @constructor
-   */
   function Trial (organization) {
     this.organization = organization;
     this._endMoment = moment(this.organization.trialPeriodEndsAt);
