@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Trial Watch controller', function () {
+fdescribe('Trial Watch controller', function () {
   var scope;
   var trialWatchCtrl;
   var broadcastStub;
@@ -43,7 +43,11 @@ describe('Trial Watch controller', function () {
     });
 
     modalDialogMock = {
-      open: sinon.spy()
+      open: sinon.stub().returns({
+          promise: {
+            'finally': function() {}
+          }
+      })
     };
 
     module('contentful/test', function ($provide) {
