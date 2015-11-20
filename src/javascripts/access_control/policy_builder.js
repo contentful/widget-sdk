@@ -1,39 +1,194 @@
 'use strict';
 
 angular.module('contentful').factory('PolicyBuilder', ['$injector', function ($injector) {
+  return {
+    toInternal: $injector.get('PolicyBuilder/toInternal'),
+    toExternal: $injector.get('PolicyBuilder/toExternal')
+  };
+}]);
+
+angular.module('contentful').factory('PolicyBuilder/defaultRule', ['$injector', function ($injector) {
+
+  var random = $injector.get('random');
+
+  var DEFAULT_RULE = {
+    action: 'read',
+    scope: 'any',
+    locale: null
+  };
+
+  var DEFAULT_ENTRY_RULE = {
+    contentType: 'all',
+    field: null
+  };
+
+  return {
+    getDefaultRuleFor: getDefaultRuleFor,
+    getDefaultRuleGetterFor: getDefaultRuleGetterFor
+  };
+
+  function getDefaultRuleGetterFor(entity) {
+    return function () {
+      return getDefaultRuleFor(entity);
+    };
+  }
+
+  function getDefaultRuleFor(entity) {
+    entity = entity.toLowerCase();
+    var meta = { id: random.id(), entity: entity };
+    var base = _.extend(meta, DEFAULT_RULE);
+
+    if (entity === 'entry') {
+      return _.extend(base, DEFAULT_ENTRY_RULE);
+    } else {
+      return base;
+    }
+  }
+}]);
+
+angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', function ($injector) {
+
+  var getDefaultRuleFor = $injector.get('PolicyBuilder/defaultRule').getDefaultRuleFor;
+
+  return function toInternal(external) {
+    return _.extend({
+      id: dotty.get(external, 'sys.id', null),
+      version: dotty.get(external, 'sys.version', null),
+      name: external.name,
+      description: external.description
+    }, (_.clone(external.permissions, true) || {}), translatePolicies(external));
+  };
+
+  function translatePolicies(external) {
+    var extension = {
+      entries: {allowed: [], denied: []},
+      assets: {allowed: [], denied: []},
+      uiCompatible: true
+    };
+
+    _(prepare(external))
+      .map(extendPolicyWithRule)
+      .forEach(prepareExtension);
+
+    return extension;
+
+    function prepareExtension(p) {
+      if (!p.action || !p.entityCollection || !p.effectCollection || !p.rule) {
+        extension.uiCompatible = false;
+      } else {
+        var rule = _.extend(p.rule, { action: p.action });
+        extension[p.entityCollection][p.effectCollection].push(rule);
+      }
+    }
+  }
+
+  function prepare(external) {
+    return _.map(external.policies, function (policy) {
+      return {
+        action: extractAction(policy),
+        effectCollection: {allow: 'allowed', deny: 'denied'}[policy.effect],
+        constraints: extractConstraints(policy)
+      };
+    });
+  }
+
+  function extendPolicyWithRule(policy) {
+    var rule = createRule(policy);
+
+    return _.extend(policy, {
+      rule: rule,
+      entityCollection: {entry: 'entries', asset: 'assets'}[(rule || {}).entity]
+    });
+  }
+
+  function extractAction(policy) {
+    if (policy.actions === 'all') {
+      return 'all';
+    } else if (_.isArray(policy.actions) && policy.actions.length === 1) {
+      return policy.actions[0];
+    }
+  }
+
+  function extractConstraints(policy) {
+    if (_.isArray(policy.constraint)) {
+      return policy.constraint;
+    } else if (_.isObject(policy.constraint) && _.isArray(policy.constraint.and)) {
+      return policy.constraint.and;
+    }
+  }
+
+  function createRule(policy) {
+    var entityConstraint = findEntityConstraint(policy.constraints);
+    if (!entityConstraint.value) { return; }
+
+    var rule = getDefaultRuleFor(entityConstraint.value);
+    var rest = _.clone(policy.constraints);
+    rest.splice(entityConstraint.index, 1);
+
+    var ctConstraint = findContentTypeConstraint(rest);
+    console.log(ctConstraint, rule);
+    if (ctConstraint.value) {
+      rule.contentType = ctConstraint.value;
+    }
+    rest.splice(ctConstraint.index, 1);
+    console.log(rest);
+
+    if (rest.length < 1) {
+      return rule;
+    }
+  }
+
+  function findEntityConstraint(cs) {
+    var index = _.findIndex(cs, function (c) {
+      return (
+        _.isArray(c.equals) &&
+        _.isObject(c.equals[0]) &&
+        c.equals[0].doc === 'sys.type' &&
+        _.contains(['Entry', 'Asset'], c.equals[1])
+      );
+    });
+
+    return {
+      index: index,
+      value: index > -1 ? cs[index].equals[1] : null
+    };
+  }
+
+  function findContentTypeConstraint(cs) {
+    var index = _.findIndex(cs, function (c) {
+      return (
+        _.isArray(c.equals) &&
+        _.isObject(c.equals[0]) &&
+        c.equals[0].doc === 'sys.contentType.sys.id' &&
+        _.isString(c.equals[1])
+      );
+    });
+
+    return {
+      index: index,
+      value: index > -1 ? cs[index].equals[1] : null
+    };
+  }
+}]);
+
+angular.module('contentful').factory('PolicyBuilder/toExternal', ['$injector', function ($injector) {
 
   var capitalize = $injector.get('stringUtils').capitalize;
 
   var PATH_WILDCARD  = '%';
   var PATH_SEPARATOR = '.';
 
-  return {
-    internal: {
-      from: function (role) {
-        return _.extend({
-          id: dotty.get(role, 'sys.id', null),
-          version: dotty.get(role, 'sys.version', null),
-          name: role.name,
-          description: role.description,
-          entries: {allowed: [], denied: []},
-          assets: {allowed: [], denied: []}
-        }, _.clone(role.permissions, true) || {});
-      }
-    },
-    external: {
-      from: function (internal) {
-        return {
-          sys: _.pick(internal, ['id', 'version']),
-          name: internal.name,
-          description: internal.description,
-          policies: toExternal(internal),
-          permissions: _.pick(internal, ['contentModel', 'contentDelivery', 'settings'])
-        };
-      }
-    }
+  return function toExternal(internal) {
+    return {
+      sys: _.pick(internal, ['id', 'version']),
+      name: internal.name,
+      description: internal.description,
+      policies: translatePolicies(internal),
+      permissions: _.pick(internal, ['contentModel', 'contentDelivery', 'settings'])
+    };
   };
 
-  function toExternal(internal) {
+  function translatePolicies(internal) {
     return _(prepare(internal))
       .map(addBase)
       .map(addEntityTypeConstraint)

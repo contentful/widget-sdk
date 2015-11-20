@@ -15,12 +15,8 @@ select.cfnext-select-box(
 
 select.cfnext-select-box(
   ng-if="entity === 'entry'"
-  ng-model="rule.contentType")
-  option(value="all") All content types
-  option(
-    ng-repeat="ct in spaceContext.publishedContentTypes track by ct.getId()"
-    value="{{ ct.getId() }}")
-    | {{ ct.data.name }}
+  ng-model="rule.contentType"
+  ng-options="ct.id as ct.name for ct in contentTypes")
 
 select.cfnext-select-box(
   ng-if="entity === 'entry'"

@@ -40,11 +40,11 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
   });
 
   $scope.$watch('role', function (role) {
-    $scope.internal = PolicyBuilder.internal.from(role);
+    $scope.internal = PolicyBuilder.toInternal(role);
   }, true);
 
   $scope.$watch('internal', function (internal) {
-    $scope.external = PolicyBuilder.external.from(internal);
+    $scope.external = PolicyBuilder.toExternal(internal);
     $scope.context.touched += 1;
     $scope.context.title = internal.name || 'Untitled';
   }, true);

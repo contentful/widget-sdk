@@ -2,20 +2,9 @@
 
 angular.module('contentful').directive('cfRuleList', ['$injector', function ($injector) {
 
-  var random         = $injector.get('random');
-  var spaceContext   = $injector.get('spaceContext');
-  var TheLocaleStore = $injector.get('TheLocaleStore');
-
-  var DEFAULT_RULE = {
-    action: 'read',
-    scope: 'any',
-    locale: null
-  };
-
-  var DEFAULT_ENTRY_RULE = {
-    contentType: 'all',
-    field: null
-  };
+  var spaceContext            = $injector.get('spaceContext');
+  var TheLocaleStore          = $injector.get('TheLocaleStore');
+  var getDefaultRuleGetterFor = $injector.get('PolicyBuilder/defaultRule').getDefaultRuleGetterFor;
 
   return {
     restrict: 'E',
@@ -28,7 +17,7 @@ angular.module('contentful').directive('cfRuleList', ['$injector', function ($in
       $scope.spaceContext = spaceContext;
       $scope.locales = TheLocaleStore.getPrivateLocales();
       $scope.entityName = getEntityName($scope.entity);
-      $scope.getDefaultRule = getDefaultRuleFor($scope.entity);
+      $scope.getDefaultRule = getDefaultRuleGetterFor($scope.entity);
 
       $scope.remove = function (rule) {
         var index = -1;
@@ -45,19 +34,6 @@ angular.module('contentful').directive('cfRuleList', ['$injector', function ($in
       };
     }]
   };
-
-  function getDefaultRuleFor(entity) {
-    return function () {
-      var meta = { id: random.id(), entity: entity };
-      var base = _.extend(meta, DEFAULT_RULE);
-
-      if (entity === 'entry') {
-        return _.extend(base, DEFAULT_ENTRY_RULE);
-      } else {
-        return base;
-      }
-    };
-  }
 
   function getEntityName(entity) {
     if (entity === 'entry') {

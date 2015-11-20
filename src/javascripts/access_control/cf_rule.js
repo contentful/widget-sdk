@@ -6,6 +6,13 @@ angular.module('contentful').directive('cfRule', [function () {
     template: JST['rule'](),
     controller: ['$scope', function ($scope) {
 
+      $scope.$watch('spaceContext.publishedContentTypes', function (cts) {
+        $scope.contentTypes = _.map(cts, function (ct) {
+          return { id: ct.getId(), name: ct.data.name };
+        });
+        $scope.contentTypes.unshift({ id: 'all', name: 'All content types' });
+      });
+
       // when selected action changes...
       $scope.$watch('rule.action', function (action) {
         // ...to "edit" -> reset locale and field
