@@ -173,6 +173,7 @@ describe('Trial Watch controller', function () {
         });
 
         itShowsAMessage(/20(.*)hours left in trial/);
+        itShowsAMessage(/access to all features for 20 more hours/);
 
         itShowsAnActionMessage();
 

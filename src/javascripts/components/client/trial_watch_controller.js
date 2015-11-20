@@ -127,8 +127,8 @@ angular.module('contentful')
 
   function timeTpl(str, timePeriod) {
     return str.
-      replace(/%length/, timePeriod.length).
-      replace(/%unit/, timePeriod.unit);
+      replace(/%length/g, timePeriod.length).
+      replace(/%unit/g, timePeriod.unit);
   }
 
   function userIsOrganizationOwner (user, organization) {
