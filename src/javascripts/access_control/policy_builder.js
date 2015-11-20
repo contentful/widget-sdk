@@ -64,7 +64,7 @@ angular.module('contentful').factory('PolicyBuilder', ['$injector', function ($i
 
   function addBase(pair) {
     pair.result.effect = pair.source.effect;
-    pair.result.actions = [pair.source.action];
+    pair.result.actions = pair.source.action === 'all' ? 'all' : [pair.source.action];
     pair.result.constraint = {};
     return pair;
   }
