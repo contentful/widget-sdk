@@ -32,10 +32,9 @@ angular.module('contentful')
       } else {
         notify(timeLeftInTrialMsg(trial.getHoursLeft()));
       }
-    }
-    else if ( organization.subscriptionState == 'active' &&
-              !organization.subscriptionPlan.paid &&
-              organization.subscriptionPlan.kind == 'default'
+    } else if ( organization.subscriptionState == 'active' &&
+                !organization.subscriptionPlan.paid &&
+                organization.subscriptionPlan.kind == 'default'
     ) {
       notify(limitedFreeVersionMsg());
     }
