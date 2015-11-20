@@ -18,5 +18,6 @@ if (angular) {
     constant('localesList', require('./locales_list.json')).
     constant('fileSize', require('file-size')).
     constant('querystring', require('querystring')).
+    constant('speakingurl', require('speakingurl')).
     constant('Cookies', require('js-cookie'));
 }
