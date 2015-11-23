@@ -6,6 +6,7 @@ angular.module('contentful').directive('cfRule', [function () {
     template: JST['rule'](),
     controller: ['$scope', function ($scope) {
 
+      // prepare content type select options
       $scope.$watch('spaceContext.publishedContentTypes', function (cts) {
         $scope.contentTypes = _.map(cts, function (ct) {
           return { id: ct.getId(), name: ct.data.name };
@@ -14,9 +15,11 @@ angular.module('contentful').directive('cfRule', [function () {
       });
 
       // when selected action changes...
-      $scope.$watch('rule.action', function (action) {
+      $scope.$watch('rule.action', function (action, prev) {
+        // ...for the first time -> do nothing
+        if (action === prev) {}
         // ...to "edit" -> reset locale and field
-        if (action === 'edit') {
+        else if (action === 'edit') {
           setFieldAndLocale('all');
         }
         // ...to "create" -> reset scope, remove locale and field
@@ -29,12 +32,17 @@ angular.module('contentful').directive('cfRule', [function () {
       });
 
       // when selected content type is changed
-      $scope.$watch('rule.contentType', function (id) {
+      $scope.$watch('rule.contentType', function (id, prev) {
         var ct = $scope.spaceContext._publishedContentTypesHash[id];
+
         // get fields of selected content type
-        $scope.contentTypeFields = dotty.get(ct, 'data.fields', []);
+        $scope.contentTypeFields = _.map(dotty.get(ct, 'data.fields', []), function (f) {
+          return { id: f.apiName || f.id, name: f.name };
+        });
+        $scope.contentTypeFields.unshift({ id: 'all', name: 'All fields' });
+
         // reset selected field to default one
-        setField('all');
+        if (id !== prev) { setField('all'); }
       });
 
       function setFieldAndLocale(field, locale) {

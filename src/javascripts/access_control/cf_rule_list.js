@@ -15,7 +15,12 @@ angular.module('contentful').directive('cfRuleList', ['$injector', function ($in
     },
     controller: ['$scope', function ($scope) {
       $scope.spaceContext = spaceContext;
-      $scope.locales = TheLocaleStore.getPrivateLocales();
+
+      $scope.locales = _.map(TheLocaleStore.getPrivateLocales(), function (l) {
+        return { code: l.internal_code, name: l.name + ' (' + l.code + ')' };
+      });
+      $scope.locales.unshift({ code: 'all', name: 'All languages' });
+
       $scope.entityName = getEntityName($scope.entity);
       $scope.getDefaultRule = getDefaultRuleGetterFor($scope.entity);
 

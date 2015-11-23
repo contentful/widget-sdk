@@ -22,21 +22,13 @@ select.cfnext-select-box(
   ng-if="entity === 'entry'"
   ng-model="rule.field"
   ng-show="rule.action === 'edit'"
-  ng-disabled="rule.contentType === 'all'")
-  option(value="all") All fields
-  option(
-    ng-repeat="field in contentTypeFields track by (field.apiName || field.id)"
-    value="{{ field.apiName || field.id }}")
-    | {{ field.name }}
+  ng-disabled="rule.contentType === 'all'"
+  ng-options="field.id as field.name for field in contentTypeFields")
 
 select.cfnext-select-box(
   ng-model="rule.locale"
-  ng-show="rule.action === 'edit'")
-  option(value="all") All languages
-  option(
-    ng-repeat="locale in locales track by locale.internal_code"
-    value="{{ locale.internal_code }}")
-    | {{ locale.name }} ({{ locale.code }})
+  ng-show="rule.action === 'edit'"
+  ng-options="locale.code as locale.name for locale in locales")
 
 a.rule-list__remove(href ng-click="remove(rule)")
   i.fa.fa-trash

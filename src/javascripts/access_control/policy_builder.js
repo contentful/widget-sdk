@@ -118,56 +118,85 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
   }
 
   function createRule(policy) {
+    // 1. find entity type
     var entityConstraint = findEntityConstraint(policy.constraints);
+
+    // 1a. no value - abort
     if (!entityConstraint.value) { return; }
 
+    // 1b. create default rule for entity type
     var rule = getDefaultRuleFor(entityConstraint.value);
     var rest = _.clone(policy.constraints);
     rest.splice(entityConstraint.index, 1);
 
+    // 2. find content type
     var ctConstraint = findContentTypeConstraint(rest);
-    console.log(ctConstraint, rule);
     if (ctConstraint.value) {
       rule.contentType = ctConstraint.value;
+      rest.splice(ctConstraint.index, 1);
     }
-    rest.splice(ctConstraint.index, 1);
-    console.log(rest);
 
-    if (rest.length < 1) {
-      return rule;
+    // 3. find scope
+    var scopeConstraint = findScopeConstraint(rest);
+    if (scopeConstraint.value) {
+      rule.scope = scopeConstraint.value === 'User.current()' ? 'user' : 'any';
+      rest.splice(scopeConstraint.index, 1);
     }
+
+    // 4. find path
+    var pathConstraint = findPathConstraint(rest);
+    if (pathConstraint.value) {
+      rule.field = pathSegment(pathConstraint.value[1]);
+      rule.locale = pathSegment(pathConstraint.value[2]);
+      rest.splice(pathConstraint.index, 1);
+    }
+
+    // return rule only when all constraints were parsed
+    if (rest.length < 1) { return rule; }
   }
 
   function findEntityConstraint(cs) {
+    return searchResult(cs, _.findIndex(cs, function (c) {
+      return docEq(c, 'sys.type') && _.contains(['Entry', 'Asset'], c.equals[1]);
+    }));
+  }
+
+  function findContentTypeConstraint(cs) {
+    return searchResult(cs, _.findIndex(cs, function (c) {
+      return docEq(c, 'sys.contentType.sys.id') && _.isString(c.equals[1]);
+    }));
+  }
+
+  function findScopeConstraint(cs) {
+    return searchResult(cs, _.findIndex(cs, function (c) {
+      return docEq(c, 'sys.createdBy.sys.id') && c.equals[1] === 'User.current()';
+    }));
+  }
+
+  function findPathConstraint(cs) {
     var index = _.findIndex(cs, function (c) {
-      return (
-        _.isArray(c.equals) &&
-        _.isObject(c.equals[0]) &&
-        c.equals[0].doc === 'sys.type' &&
-        _.contains(['Entry', 'Asset'], c.equals[1])
-      );
+      return _.isArray(c.paths) && _.isObject(c.paths[0]) && _.isString(c.paths[0].doc);
     });
 
+    return {
+      index: index,
+      value: index > -1 ? cs[index].paths[0].doc.split('.') : null
+    };
+  }
+
+  function docEq(c, val) {
+    return _.isArray(c.equals) && _.isObject(c.equals[0]) && c.equals[0].doc === val;
+  }
+
+  function searchResult(cs, index) {
     return {
       index: index,
       value: index > -1 ? cs[index].equals[1] : null
     };
   }
 
-  function findContentTypeConstraint(cs) {
-    var index = _.findIndex(cs, function (c) {
-      return (
-        _.isArray(c.equals) &&
-        _.isObject(c.equals[0]) &&
-        c.equals[0].doc === 'sys.contentType.sys.id' &&
-        _.isString(c.equals[1])
-      );
-    });
-
-    return {
-      index: index,
-      value: index > -1 ? cs[index].equals[1] : null
-    };
+  function pathSegment(segment) {
+    return segment === '%' ? 'all' : segment;
   }
 }]);
 
