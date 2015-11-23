@@ -2,17 +2,21 @@
 
 angular.module('contentful').factory('intercom', ['$injector', function ($injector) {
   var $window = $injector.get('$window');
-  var intercom = {};
 
-  intercom.isLoaded = function() {
-    return !!$window.Intercom;
+  var intercom = {
+    isLoaded: isLoaded,
+    open: openIntercom
   };
 
-  intercom.open = function() {
-    if (!!this.isLoaded()) {
+  function isLoaded () {
+    return !!$window.Intercom;
+  }
+
+  function openIntercom () {
+    if (isLoaded()) {
       $window.Intercom('showNewMessage');
     }
-  }.bind(intercom);
+  }
 
   return intercom;
 }]);
