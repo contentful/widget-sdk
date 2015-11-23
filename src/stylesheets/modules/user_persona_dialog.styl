@@ -1,0 +1,124 @@
+@import '../variables/colors'
+
+.user-persona-dialog.modal-dialog
+  width: 750px
+  text-align: center
+
+.user-persona-dialog__header
+  background: none
+  border: 0
+  padding: 0
+  display: flex
+
+.user-persona-dialog__close.modal-dialog__close
+  border: 1px solid $colors.element-mid
+  transform: none
+  background-color: transparent
+  border-top-right-radius: 2px
+  background-color: $colors.element-lightest
+  margin-left: auto
+  &:hover
+    background-color: $colors.element-light
+  &:after
+    font-size: 2em
+    line-height: 1em
+
+.user-persona-dialog__content.modal-dialog__content
+  padding-top: 0
+
+.user-persona-dialog__welcome
+  position: relative
+
+.user-persona-dialog__avatar
+  border: 1px solid $colors.element-mid
+  background-color: $colors.element-mid
+  background-size: cover
+  height: 75px
+  width: 75px
+  border-radius: 50%
+  margin: 0 auto
+
+.user-persona-dialog__line
+  position: absolute
+  left: 50%
+  margin-left: 38px;
+  top: 42px;
+
+.user-persona-dialog__message
+  position: absolute
+  top: 20px
+  left: 50%
+  margin-left: 50px
+  font-size: 12px
+  color: $colors.text-light
+
+.user-persona-dialog__greeting
+  line-height: 1.3em
+
+.user-persona-dialog__question
+  font-size: 1.05em
+  line-height: 1.3em
+  color: $colors.text-mid
+
+.user-persona-dialog__options
+  display: flex
+  padding: 20px 0
+
+.user-persona-option
+  width: 25%
+  padding: 0 20px
+
+a.user-persona-option__icon
+  cursor: pointer
+  display: block
+  width: 80px
+  height: 80px
+  padding: 24px
+  margin: 0 auto 18px
+  border: 1px solid $colors.element-mid
+  box-shadow: 0 1px 3px 0 rgba(black, 0.08)
+  border-radius: 2px
+  &:hover
+    border-color: $colors.element-darkest
+  svg
+    margin: 0 auto
+    // top: calc( 50% - 40px )
+
+.user-persona-option__title
+  color: $colors.text-dark
+  line-height: 2em
+  font-weight: bold
+
+.user-persona-option__description
+  color: $colors.text-mid
+  line-height: 1.4em
+
+.user-persona-other
+  position: absolute
+  background-color: rgba(white, 0.9)
+  bottom: 0
+  left: 0
+  right: 0
+  height: 210px
+  padding: 45px 140px
+  opacity: 1
+  &.ng-hide-animate
+    transition .3s opacity ease-in
+  &.ng-hide
+    opacity: 0
+
+.user-persona-other__label
+  line-height: 3em
+  &-question
+    font-weight: bold
+  &-hint
+    color: $colors.text-light
+
+.user-persona-other__form
+  display: flex
+  input[type="text"]
+    height: 40px
+    border-color: $colors.element-mid
+    width: 300px
+  button
+    margin-left: 0.5em

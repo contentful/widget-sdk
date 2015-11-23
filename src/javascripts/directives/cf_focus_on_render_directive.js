@@ -9,7 +9,6 @@
  * on the scope and focus the field only if true.
  */
 angular.module('contentful').directive('cfFocusOnRender', function(){
-
   return {
     restrict: 'A',
     link: function(scope, elem, attrs){

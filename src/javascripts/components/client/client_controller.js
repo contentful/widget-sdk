@@ -20,7 +20,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var ReloadNotification = $injector.get('ReloadNotification');
   var TheAccountView     = $injector.get('TheAccountView');
   var TheStore           = $injector.get('TheStore');
-  var moment             = $injector.get('moment');
   var OrganizationList   = $injector.get('OrganizationList');
 
   $controller('TrialWatchController', {$scope: $scope});
@@ -192,16 +191,17 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function showOnboardingIfNecessary() {
-    var now = moment();
-    var created = moment($scope.user.sys.createdAt);
-    var age = now.diff(created, 'days');
     var seenOnboarding = TheStore.get('seenOnboarding');
-    if (age < 7 && !seenOnboarding && _.isEmpty($scope.spaces)) {
-      TheStore.set('seenOnboarding', true);
-      $timeout(function () {
+    var signInCount = $scope.user.signInCount;
+    if (signInCount === 1 && !seenOnboarding) {
+      showUserPersonaOnboardingModal()
+      .finally(function(organizationId) {
+        if (_.isEmpty($scope.spaces)) {
+          showSpaceTemplatesModal(organizationId);
+        }
+        TheStore.set('seenOnboarding', true);
         analytics.track('Viewed Onboarding');
-        $timeout(showSpaceTemplatesModal, 1500);
-      }, 750);
+      });
     }
   }
 
@@ -214,6 +214,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     var scope = _.extend($scope.$new(), {
       organizations: OrganizationList.getWithOnTop(organizationId)
     });
+
     analytics.track('Viewed Space Template Selection Modal');
     modalDialog.open({
       title: 'Space templates',
@@ -233,6 +234,19 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       analytics.track('Closed Space Template Selection Modal');
       refreshContentTypes();
     });
+  }
+
+  function showUserPersonaOnboardingModal() {
+    return modalDialog.open({
+      title: 'Select Persona', // Not displayed, just for analytics
+      template: 'user_persona_dialog',
+      scopeData: {
+        userName: $scope.user.firstName
+      },
+      backgroundClose: false,
+      ignoreEsc: true
+    })
+    .promise;
   }
 
   function refreshContentTypes() {

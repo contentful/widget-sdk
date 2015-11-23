@@ -142,6 +142,11 @@ angular.module('contentful')
         }
       },
 
+      // Send further identifying user data to segment
+      addIdentifyingData: function(data) {
+        segment.identify(this._userData.sys.id, data);
+      },
+
       stateActivated: function (state, stateParams, fromState, fromStateParams) {
         totango.setModule(state.name);
         segment.page(state.name, stateParams);
