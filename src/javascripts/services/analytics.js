@@ -27,6 +27,7 @@ angular.module('contentful')
     var totango     = $injector.get('totango');
     var fontsdotcom = $injector.get('fontsdotcom');
     var logger      = $injector.get('logger');
+    var cookieStore = $injector.get('TheStore/cookieStore');
 
     var analytics = {
       enable: function(){
@@ -131,12 +132,42 @@ angular.module('contentful')
       },
 
       _initialize: function(){
-        if (this._userData) {
-          segment.identify(this._userData.sys.id, {
-            firstName: this._userData.firstName,
-            lastName:  this._userData.lastName
-          });
+
+        var self = this;
+
+        function parseCookie(cookieName, prop) {
+          try {
+            var cookie = cookieStore.get(cookieName);
+            return JSON.parse(cookie)[prop];
+          } catch (e) {}
         }
+
+        // On first login, include referrer data from the token set by
+        // marketing website if it's present and not falsy
+
+        if (this._userData) {
+          var userData = {
+            firstName: this._userData.firstName,
+            lastName: this._userData.lastName
+          };
+
+          var firstVisitData = {
+            firstReferrer: parseCookie('cf_first_visit', 'referer'),
+            campaignName: parseCookie('cf_first_visit', 'campaign_name'),
+            lastReferrer: parseCookie('cf_last_visit', 'referer')
+          };
+
+          if (self._userData.signInCount === 1) {
+            _.merge(userData, firstVisitData);
+          }
+
+          var dataForSegment = _.pick(userData, function(val) {
+            return !!val;
+          });
+
+          segment.identify(this._userData.sys.id, dataForSegment);
+        }
+
         if (this._userData && this._organizationData){
           totango.initialize(this._userData, this._organizationData);
         }
