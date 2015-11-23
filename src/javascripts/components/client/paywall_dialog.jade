@@ -1,11 +1,13 @@
 .modal-background.paywall
   .modal-dialog
-    header.modal-dialog__header
-      i.fa.fa-minus-circle
-      h1 Your trial is over
-      button.modal-dialog__close(ng-click="dialog.cancel()")
+    .modal-dialog__content
 
-    .modal-dialog__content(ng-if="offerToSetUpPayment")
-      include paywall_set_up_payment_notification
-    .modal-dialog__content(ng-if="!offerToSetUpPayment")
-      include paywall_passive_notification
+      header.paywall__header
+        i.fa.fa-minus-circle
+        h1 Your trial is over
+        button.modal-dialog__close(ng-click="dialog.cancel()")
+
+      .paywall__content(ng-if="offerToSetUpPayment")
+        include paywall_set_up_payment_notification
+      .paywall__content(ng-if="!offerToSetUpPayment")
+        include paywall_passive_notification
