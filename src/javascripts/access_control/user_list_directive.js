@@ -183,6 +183,10 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     function handleFailure(res) {
       if (isTaken(res)) {
         scope.taken = scope.input.mail;
+        scope.backendMessage = null;
+      } else if (isForbidden(res)) {
+        scope.taken = null;
+        scope.backendMessage = res.body.message;
       } else {
         ReloadNotification.basicErrorHandler();
         scope.dialog.confirm();
@@ -193,6 +197,13 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
       var errors = dotty.get(res, 'body.details.errors', []);
       var errorNames = _.pluck(errors, 'name');
       return errorNames.indexOf('taken') > -1;
+    }
+
+    function isForbidden(res) {
+      return (
+        dotty.get(res, 'body.sys.id') === 'Forbidden' &&
+        _.isString(dotty.get(res, 'body.message'))
+      );
     }
 
     function isDisabled() {

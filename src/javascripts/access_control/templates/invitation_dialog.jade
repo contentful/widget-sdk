@@ -15,6 +15,7 @@
             cf-focus-on-render="input")
           .note-box-small.note-box--gold(ng-if="taken")
             | There is already user with <strong>{{ taken }}</strong> email address in this space.
+          .note-box-small.note-box--gold(ng-if="backendMessage" ng-bind="backendMessage")
           .cfnext-form__hint They will receive an invitation email with a link to join Contentful.
 
         .cfnext-form__field
