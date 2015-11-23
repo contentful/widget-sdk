@@ -60,9 +60,15 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
   };
 
   function translatePolicies(external) {
+    var policyString = '[]';
+    try {
+      policyString = JSON.stringify(external.policies, null, 2);
+    } catch (e) {}
+
     var extension = {
       entries: {allowed: [], denied: []},
       assets: {allowed: [], denied: []},
+      policyString: policyString,
       uiCompatible: true
     };
 
@@ -218,6 +224,14 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['$injector', f
   };
 
   function translatePolicies(internal) {
+    if (!internal.uiCompatible) {
+      try {
+        return JSON.parse(internal.policyString);
+      } catch (e) {
+        return null;
+      }
+    }
+
     return _(prepare(internal))
       .map(addBase)
       .map(addEntityTypeConstraint)

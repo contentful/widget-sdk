@@ -53,13 +53,26 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
     disabled: function () { return !$scope.context.dirty; }
   });
 
+  $scope.resetPolicies = function () {
+    _.extend($scope.internal, {
+      entries: {allowed: [], denied: []},
+      assets: {allowed: [], denied: []},
+      uiCompatible: true
+    });
+  };
+
   function save() {
+    if (!dotty.get($scope, 'external.policies', null)) {
+      notification.error('Policies: invalid JSON.');
+      return $q.reject();
+    }
+
     var method = $scope.context.isNew ? 'create' : 'save';
     return roleRepo[method]($scope.external).then(handleRole, handleError);
   }
 
   function handleRole(role) {
-    notification.info($scope.context.title + ' saved successfully');
+    notification.info($scope.context.title + ' role saved successfully');
     trackRoleChange(role);
 
     if ($scope.context.isNew) {

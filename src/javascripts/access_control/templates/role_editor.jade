@@ -14,13 +14,21 @@ header.workbench-header
           label(for="opt_description") Description
           textarea.cfnext-form__input--full-size(id="opt_description" ng-model="internal.description")
 
-      .role-details__section
+      .role-details__section(ng-if="internal.uiCompatible")
         h3 Entries
         cf-rule-list(rules="internal.entries" entity="entry")
 
-      .role-details__section
+      .role-details__section(ng-if="internal.uiCompatible")
         h3 Media Assets
         cf-rule-list(rules="internal.assets" entity="asset")
+
+      .role-details__section(ng-if="!internal.uiCompatible")
+        h3 Policies
+        p
+          | We cannot parse your policies to the UI compatible format. You can edit JSON by hand
+          | or <a href="" ng-click="resetPolicies()">reset policies</a> to the default state.
+        .cfnext-form-option
+          textarea.cfnext-form__input--full-size(ng-model="internal.policyString" rows="10")
 
       .role-details__section
         h3 Content Types
@@ -48,12 +56,6 @@ header.workbench-header
           label(for="opt_space_settings_access")
             | Can modify Space Settings. This permission allows users to <strong>delete</strong> the space and it’s contents!
             |  <em>(the Settings menu is only shown to users who have this permission)</em>.
-
-      .role-details__section
-        h3 Internal/external representation
-        .tmp-representations
-          pre {{ internal | json }}
-          pre {{ external | json }}
 
   .workbench-main__entity-sidebar
     .entity-sidebar
