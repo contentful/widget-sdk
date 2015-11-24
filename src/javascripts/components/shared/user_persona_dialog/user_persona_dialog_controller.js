@@ -5,6 +5,8 @@ angular.module('contentful')
 
   var controller   = this;
   var analytics    = $injector.get('analytics');
+  var assetLoader  = $injector.get('AssetLoader');
+
 
   // Display a random customer success manager
   controller.csm = getRandomCSM();
@@ -66,8 +68,14 @@ angular.module('contentful')
 
   function getRandomCSM() {
     var csms = [
-      { name: 'Meghan', avatar: '/app/images/csm-avatars/avatar-meghan.jpg' },
-      { name: 'Inês', avatar: '/app/images/csm-avatars/avatar-ines.jpg' }
+      {
+        name: 'Meghan',
+        avatar: assetLoader.getAssetUrl('/app/images/csm-avatars/avatar-meghan.jpg')
+      },
+      {
+        name: 'Inês',
+        avatar: assetLoader.getAssetUrl('/app/images/csm-avatars/avatar-ines.jpg')
+      }
     ];
 
     return csms[_.random(csms.length-1)];
