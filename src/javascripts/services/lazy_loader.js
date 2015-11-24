@@ -86,7 +86,8 @@ angular.module('contentful').factory('LazyLoader', ['$injector', function ($inje
 }]);
 
 angular.module('contentful').factory('LazyLoader/scripts', ['$injector', function ($injector) {
-  var env = $injector.get('environment');
+
+  var assetLoader = $injector.get('AssetLoader');
 
   /**
    * Options:
@@ -96,7 +97,7 @@ angular.module('contentful').factory('LazyLoader/scripts', ['$injector', functio
    */
   return {
     markdown: {
-      url: getAssetUrl('/app/markdown_vendors.js')
+      url: assetLoader.getAssetUrl('/app/markdown_vendors.js')
     },
     embedly: {
       url: 'https://cdn.embedly.com/widgets/platform.js',
@@ -110,10 +111,4 @@ angular.module('contentful').factory('LazyLoader/scripts', ['$injector', functio
       url: 'https://api.filepicker.io/v1/filepicker_debug.js'
     }
   };
-
-  function getAssetUrl(file) {
-    var assetHost = dotty.get(env, 'settings.asset_host');
-    var prefix =  assetHost ? '//' + assetHost.replace(/\/*$/, '') : '';
-    return prefix + '/' + file.replace(/^\/*/, '');
-  }
 }]);
