@@ -6,7 +6,6 @@ angular.module('contentful')
   var $rootScope     = $injector.get('$rootScope');
   var intercom       = $injector.get('intercom');
   var analytics      = $injector.get('analytics');
-  var logger         = $injector.get('logger');
   var TheAccountView = $injector.get('TheAccountView');
   var moment         = $injector.get('moment');
   var modalDialog    = $injector.get('modalDialog');
@@ -43,7 +42,7 @@ angular.module('contentful')
       var params = {message: message};
       if (userOwnsOrganization) {
         params.actionMessage = 'Upgrade';
-        params.action = upgradeAction;
+        params.action = newUpgradeAction(organization);
       }
       $rootScope.$broadcast('persistentNotification', params);
     }
@@ -59,7 +58,7 @@ angular.module('contentful')
       template: 'paywall_dialog',
       scopeData: {
         offerToSetUpPayment: userIsOrganizationOwner(user, trial.organization),
-        setUpPayment: upgradeAction,
+        setUpPayment: newUpgradeAction(trial.organization),
         openIntercom: intercom.open
       }
     }).promise.finally(function () {
@@ -67,29 +66,14 @@ angular.module('contentful')
     });
   }
 
-  function upgradeAction(){
-    if (!$scope.spaceContext.space) {
-      return;
-    }
+  function newUpgradeAction(organization){
+    var organizationId = organization.sys.id;
+    return function upgradeAction() {
+      var pathSuffix = 'organizations/' + organizationId + '/subscription';
 
-    var orgId;
-    try {
-      orgId = $scope.spaceContext.space.getOrganizationId();
-    } catch(exp) {
-      logger.logError('Trial watch controller organization upgrade exception', {
-        data: {
-          space: $scope.spaceContext.space,
-          exp: exp
-        }
-      });
-    }
-
-    var pathSuffix = 'organizations/' +
-      orgId +
-      '/subscription';
-
-    analytics.trackPersistentNotificationAction('Plan Upgrade');
-    TheAccountView.goTo(pathSuffix, { reload: true });
+      analytics.trackPersistentNotificationAction('Plan Upgrade');
+      TheAccountView.goTo(pathSuffix, { reload: true });
+    };
   }
 
   function trialHasEndedMsg (organization, userIsOrganizationOwner) {
@@ -112,7 +96,7 @@ angular.module('contentful')
     } else {
       timePeriod = {length: Math.floor(hours / 24), unit: 'days'};
     }
-    return timeTpl('<strong>%length %unit left in trial.</strong>' +
+    return timeTpl('<strong>%length %unit left in trial.</strong> ' +
       'Your current Organization is in trial mode giving you ' +
       'access to all features for %length more %unit. Enter your billing ' +
       'information to activate your subscription.', timePeriod);
