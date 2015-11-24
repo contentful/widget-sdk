@@ -4,56 +4,67 @@ angular.module('contentful')
 
 .controller('TrialWatchController', ['$scope', '$injector', function TrialWatchController($scope, $injector) {
   var $rootScope     = $injector.get('$rootScope');
+  var intercom       = $injector.get('intercom');
   var analytics      = $injector.get('analytics');
   var logger         = $injector.get('logger');
   var TheAccountView = $injector.get('TheAccountView');
   var moment         = $injector.get('moment');
+  var modalDialog    = $injector.get('modalDialog');
 
-  $scope.$watch('user', trialWatcher);
-  $scope.$watch('spaceContext.space', trialWatcher);
+  $scope.$watchGroup(['user', 'spaceContext.space'], trialWatcher);
 
-  function trialWatcher() {
+  function trialWatcher () {
     var user = $scope.user;
     var space = $scope.spaceContext.space;
-    if(!user || !space) return;
+
+    if (!space || !user) {
+      return;
+    }
+
     var organization = space.data.organization;
-    var message, action, actionMessage;
-    var organizationMembership =
-      user.organizationMemberships.find(function (membership) {
-        return membership.organization.sys.id === organization.sys.id;
-      });
-    var isOrganizationOwner =
-      !!organizationMembership && organizationMembership.role === 'owner';
+    var userOwnsOrganization = userIsOrganizationOwner(user, organization);
 
-    if (organization.subscriptionState == 'trial') {
-      var hoursLeft = moment(organization.trialPeriodEndsAt).diff(moment(), 'hours');
-      if (hoursLeft === 0) {
-        message = trialHasEndedMsg(organization, isOrganizationOwner);
+    if (organization.trialPeriodEndsAt !== null) {
+      var trial = new Trial(organization);
+      if (trial.hasEnded()) {
+        notify(trialHasEndedMsg(organization, userOwnsOrganization));
+        showPaywall(user, trial);
       } else {
-        message = timeLeftInTrialMsg(hoursLeft);
+        notify(timeLeftInTrialMsg(trial.getHoursLeft()));
       }
-
-    } else if(organization.subscriptionState == 'active' &&
-              !organization.subscriptionPlan.paid &&
-              organization.subscriptionPlan.kind == 'default'){
-      message = '<strong>Limited free version.</strong> You are currently enjoying our limited Starter plan. To get access to all features, please upgrade to a paid subscription plan.';
+    } else if ( organization.subscriptionState == 'active' &&
+                !organization.subscriptionPlan.paid &&
+                organization.subscriptionPlan.kind == 'default'
+    ) {
+      notify(limitedFreeVersionMsg());
     }
 
-
-    if(message || action && actionMessage){
-      if (isOrganizationOwner) {
-        actionMessage = 'Upgrade';
-        action = upgradeAction;
+    function notify (message) {
+      var params = {message: message};
+      if (userOwnsOrganization) {
+        params.actionMessage = 'Upgrade';
+        params.action = upgradeAction;
       }
-
-      $rootScope.$broadcast('persistentNotification', {
-        message: message,
-        action: action,
-        actionMessage: actionMessage
-      });
-    } else {
-      $rootScope.$broadcast('persistentNotification', null);
+      $rootScope.$broadcast('persistentNotification', params);
     }
+  }
+
+  var paywallIsOpen = false;
+  function showPaywall (user, trial) {
+    if (paywallIsOpen) {
+      return;
+    }
+    paywallIsOpen = true;
+    modalDialog.open({
+      template: 'paywall_dialog',
+      scopeData: {
+        offerToSetUpPayment: userIsOrganizationOwner(user, trial.organization),
+        setUpPayment: upgradeAction,
+        openIntercom: intercom.open
+      }
+    }).promise.finally(function () {
+      paywallIsOpen = false;
+    });
   }
 
   function upgradeAction(){
@@ -107,10 +118,36 @@ angular.module('contentful')
       'information to activate your subscription.', timePeriod);
   }
 
+  function limitedFreeVersionMsg () {
+    return '<strong>Limited free version.</strong> You are currently ' +
+      'enjoying our limited Starter plan. To get access to all features, ' +
+      'please upgrade to a paid subscription plan.';
+  }
+
   function timeTpl(str, timePeriod) {
     return str.
-      replace(/%length/, timePeriod.length).
-      replace(/%unit/, timePeriod.unit);
+      replace(/%length/g, timePeriod.length).
+      replace(/%unit/g, timePeriod.unit);
   }
+
+  function userIsOrganizationOwner (user, organization) {
+    var organizationMembership =
+      user.organizationMemberships.find(function (membership) {
+        return membership.organization.sys.id === organization.sys.id;
+      });
+    return !!organizationMembership &&
+      organizationMembership.role === 'owner';
+  }
+
+  function Trial (organization) {
+    this.organization = organization;
+    this._endMoment = moment(this.organization.trialPeriodEndsAt);
+  }
+  Trial.prototype.getHoursLeft = function () {
+    return this._endMoment.diff(moment(), 'hours');
+  };
+  Trial.prototype.hasEnded = function () {
+    return !this._endMoment.isAfter(moment());
+  };
 
 }]);

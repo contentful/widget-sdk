@@ -4,7 +4,8 @@ describe('Trial Watch controller', function () {
   var scope;
   var trialWatchCtrl;
   var broadcastStub;
-  var momentStub;
+  var modalDialogMock;
+  var momentStub, momentDiffStub, momentIsAfterStub;
   var $window, $q;
 
   function makeSpace(organization) {
@@ -27,10 +28,31 @@ describe('Trial Watch controller', function () {
     }];
   }
 
+  function trialHoursLeft( hours ) {
+    momentDiffStub.returns(Math.floor(hours));
+    momentIsAfterStub.returns( hours !== 0 );
+  }
+
   beforeEach(function () {
+    momentDiffStub = sinon.stub();
+    momentIsAfterStub = sinon.stub();
+    momentStub = sinon.stub();
+    momentStub.returns({
+      diff: momentDiffStub,
+      isAfter: momentIsAfterStub
+    });
+
+    modalDialogMock = {
+      open: sinon.stub().returns({
+          promise: {
+            'finally': function() {}
+          }
+      })
+    };
+
     module('contentful/test', function ($provide) {
-      momentStub = sinon.stub();
       $provide.value('moment', momentStub);
+      $provide.value('modalDialog', modalDialogMock);
     });
 
     inject(function ($rootScope, $controller, _$window_, _$q_) {
@@ -54,41 +76,24 @@ describe('Trial Watch controller', function () {
     broadcastStub.restore();
   });
 
-  it('gets no persistent notification', function () {
-    scope.user = null;
-    scope.spaceContext = {
-      space: null
-    };
-    scope.$digest();
-    sinon.assert.notCalled(broadcastStub);
-  });
-
-  describe('removes an existing notification', function () {
+  describe('without trial user', function () {
     beforeEach(function () {
       scope.spaceContext = {
-        space: makeSpace({})
+        space: makeSpace({
+          trialPeriodEndsAt: null
+        })
       };
       scope.$digest();
     });
 
-    it('calls broadcast', function () {
-      sinon.assert.called(broadcastStub);
-    });
-
-    it('calls broadcast with null', function () {
-      expect(broadcastStub.args[0][1]).toBeNull();
+    it('removes no other notification currently shown', function () {
+      sinon.assert.notCalled(broadcastStub);
     });
   });
 
-  describe('shows a persistent notification', function () {
-    var diffStub;
-
+  describe('shows a persistent notification', function() {
     beforeEach(function () {
       jasmine.clock().install();
-      diffStub = sinon.stub();
-      momentStub.returns({
-        diff: diffStub
-      });
     });
 
     afterEach(function () {
@@ -99,16 +104,15 @@ describe('Trial Watch controller', function () {
       beforeEach(function(){
         scope.spaceContext = {
           space: makeSpace({
-            subscriptionState: 'trial',
             trialPeriodEndsAt: '2013-12-13T13:28:44Z',
             name: 'TEST_ORGA_NAME'
           })
         };
       });
 
-      describe('for ended trial', function () {
+      describe('already ended', function () {
         beforeEach(function() {
-          diffStub.returns(0);
+          trialHoursLeft(0);
         });
 
         describe('for user owning the organization', function () {
@@ -123,6 +127,10 @@ describe('Trial Watch controller', function () {
           itShowsAnActionMessage();
 
           itHasAnAction();
+
+          itOpensPaywallForSettingUpPayment();
+
+
         });
 
         describe('for user not owning the organization', function () {
@@ -136,33 +144,56 @@ describe('Trial Watch controller', function () {
           itDoesNotShowAnActionMessage();
 
           itDoesNotHaveAnAction();
+
+          itOpensPaywallToNotifyTheUser();
         });
       });
 
-      describe('for hours periods', function () {
+      describe('ending in less than an hour', function () {
         beforeEach(function () {
           makeScopeUserOwnScopeSpaceOrganization();
-          diffStub.returns(20);
+          trialHoursLeft(0.2);
+          scope.$digest();
+        });
+
+        itShowsAMessage(/0(.*)hours left in trial/);
+
+        itShowsAnActionMessage();
+
+        itHasAnAction();
+
+        itDoesNotOpenPaywall();
+      });
+
+      describe('ending in less than a day', function () {
+        beforeEach(function () {
+          makeScopeUserOwnScopeSpaceOrganization();
+          trialHoursLeft(20);
           scope.$digest();
         });
 
         itShowsAMessage(/20(.*)hours left in trial/);
+        itShowsAMessage(/access to all features for 20 more hours/);
 
         itShowsAnActionMessage();
 
         itHasAnAction();
+
+        itDoesNotOpenPaywall();
       });
 
-      describe('for days periods', function () {
+      describe('ending in a few days', function () {
         beforeEach(function () {
           makeScopeUserOwnScopeSpaceOrganization();
-          diffStub.returns(76);
+          trialHoursLeft(76);
           scope.$digest();
         });
 
         itShowsAnActionMessage();
 
         itHasAnAction();
+
+        itDoesNotOpenPaywall();
       });
 
       describe('no action', function () {
@@ -182,13 +213,14 @@ describe('Trial Watch controller', function () {
         scope.spaceContext = {
           space: makeSpace({
             subscriptionState: 'active',
+            trialPeriodEndsAt: null,
             subscriptionPlan: {
               paid: false,
               kind: 'default'
             }
           })
         };
-      });
+    });
 
       describe('with an action', function () {
         beforeEach(function () {
@@ -201,6 +233,8 @@ describe('Trial Watch controller', function () {
         itShowsAnActionMessage();
 
         itHasAnAction();
+
+        itDoesNotOpenPaywall();
       });
 
       describe('no action', function () {
@@ -211,6 +245,8 @@ describe('Trial Watch controller', function () {
         itDoesNotShowAnActionMessage();
 
         itDoesNotHaveAnAction();
+
+        itDoesNotOpenPaywall();
       });
     });
   });
@@ -242,6 +278,34 @@ describe('Trial Watch controller', function () {
   function itDoesNotHaveAnAction () {
     it('does not have an action', function () {
       expect(broadcastStub.args[0][1].action).toBeUndefined();
+    });
+  }
+
+  function itOpensPaywallForSettingUpPayment () {
+    itOpensPaywall();
+
+    it('allows setting up payment', function () {
+      expect(modalDialogMock.open.args[0][0].scopeData.offerToSetUpPayment).toBe(true);
+    });
+  }
+
+  function itOpensPaywallToNotifyTheUser () {
+    itOpensPaywall();
+
+    it('does not allow setting up payment', function () {
+      expect(modalDialogMock.open.args[0][0].scopeData.offerToSetUpPayment).toBe(false);
+    });
+  }
+
+  function itOpensPaywall () {
+    it('opens the paywall modal dialog', function () {
+      expect(modalDialogMock.open.calledOnce).toBe(true);
+    });
+  }
+
+  function itDoesNotOpenPaywall () {
+    it('does not open the paywall modal dialog', function () {
+      expect(modalDialogMock.open.called).toBe(false);
     });
   }
 
