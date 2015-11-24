@@ -12,7 +12,7 @@ angular.module('contentful').factory('PolicyBuilder/defaultRule', ['$injector', 
   var random = $injector.get('random');
 
   var DEFAULT_RULE = {
-    action: 'read',
+    action: 'all',
     scope: 'any',
     locale: null
   };

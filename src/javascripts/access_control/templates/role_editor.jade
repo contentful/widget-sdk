@@ -25,8 +25,10 @@ header.workbench-header
       .role-details__section(ng-if="!internal.uiCompatible")
         h3 Policies
         p
-          | We cannot parse your policies to the UI compatible format. You can edit JSON by hand
-          | or <a href="" ng-click="resetPolicies()">reset policies</a> to the default state.
+          | The policy for this role cannot be represented visually.
+          | You can continue to edit the JSON by directly,
+          | or <a href="" ng-click="resetPolicies()">clear the policy</a>
+          | to define policy rules visually.
         .cfnext-form-option
           textarea.cfnext-form__input--full-size(ng-model="internal.policyString" rows="10")
 
