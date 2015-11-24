@@ -60,19 +60,23 @@ function ContentTypeEditorController($scope, $injector) {
 
   $scope.$on('entityDeleted', handleEntityDeleted);
 
-  if($scope.context.isNew) {
+  if ($scope.context.isNew) {
     metadataDialog.openCreateDialog()
-    .then(applyContentTypeMetadata, function () {
+    .then(applyContentTypeMetadata(true), function () {
       $state.go('^.list');
     });
   }
 
-  function applyContentTypeMetadata (metadata) {
-    var contentType = $scope.contentType;
-    contentType.data.name = metadata.name;
-    contentType.data.description = metadata.description;
-    contentType.data.sys.id = metadata.id;
-    $scope.contentTypeForm.$setDirty();
+  function applyContentTypeMetadata (withId) {
+    return function (metadata) {
+      var data = $scope.contentType.data;
+      data.name = metadata.name;
+      data.description = metadata.description;
+      if (withId) {
+        data.sys.id = metadata.id;
+      }
+      $scope.contentTypeForm.$setDirty();
+    };
   }
 
   /**
@@ -176,7 +180,7 @@ function ContentTypeEditorController($scope, $injector) {
   */
   $scope.showMetadataDialog = function showMetadataDialog () {
     metadataDialog.openEditDialog($scope.contentType)
-    .then(applyContentTypeMetadata);
+    .then(applyContentTypeMetadata());
   };
 
   /**

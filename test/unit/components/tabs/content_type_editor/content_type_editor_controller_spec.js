@@ -1,9 +1,10 @@
 'use strict';
 
 describe('ContentTypeEditor Controller', function () {
-  var scope, controller, $q, logger, notification;
-  var space, contentType;
+  var scope;
+  var contentType;
   var createContentType;
+
   beforeEach(function () {
     var self = this;
     module('contentful/test', function ($provide) {
@@ -18,44 +19,33 @@ describe('ContentTypeEditor Controller', function () {
       });
     });
 
-    inject(function ($rootScope, $controller, cfStub, $injector){
-      this.$rootScope = $rootScope;
-      this.$q = $injector.get('$q');
-      scope = $rootScope.$new();
-      space = cfStub.space('space');
-      $q = $injector.get('$q');
-      logger = $injector.get('logger');
-      notification = $injector.get('notification');
+    var cfStub = this.$inject('cfStub');
+    var $rootScope = this.$inject('$rootScope');
 
-      scope.user = {
-        features: {}
-      };
+    scope = $rootScope.$new();
 
-      scope.permissionController = { can: sinon.stub() };
-      scope.permissionController.can.returns({can: true});
-
-      scope.validate = sinon.stub();
-      scope.contentTypeForm = {
+    _.extend(scope, {
+      contentTypeForm: {
         $setDirty: sinon.stub()
-      };
-
-      createContentType = function (fields) {
-        contentType = cfStub.contentType(space, 'contentType', 'Content Type', fields);
-        scope.contentType = contentType;
-        scope.closeState = sinon.stub();
-        scope.context = {};
-        controller = $controller('ContentTypeEditorController', {$scope: scope});
-        scope.$digest();
-      };
+      },
+      context: {},
     });
 
-    scope.editingInterface = {
-      data: {widgets: []}
+
+    var $controller = this.$inject('$controller');
+    createContentType = function (fields) {
+      var space = cfStub.space('space');
+      contentType = cfStub.contentType(space, 'contentType', 'Content Type', fields);
+      scope.contentType = contentType;
+      var controller = $controller('ContentTypeEditorController', {$scope: scope});
+      $rootScope.$apply();
+      return controller;
     };
   });
 
   describe('on load, with no fields', function() {
     beforeEach(function() {
+      scope.validate = sinon.stub();
       createContentType();
     });
 
@@ -178,17 +168,12 @@ describe('ContentTypeEditor Controller', function () {
       });
     });
 
-    it('#showMetadataDialog', function() {
-      this.modalDialogOpenStub.returns({promise: this.$q.when()});
-      scope.showMetadataDialog();
-      sinon.assert.called(this.modalDialogOpenStub);
-    });
-
     describe('#showNewFieldDialog', function() {
       beforeEach(function() {
         this.newField = {};
         this.modalDialogOpenStub.returns({promise: this.when(this.newField)});
         this.broadcastStub = sinon.stub(scope, '$broadcast');
+        scope.editingInterface = {data: {widgets: []}};
         scope.showNewFieldDialog();
       });
 
@@ -240,20 +225,17 @@ describe('ContentTypeEditor Controller', function () {
     });
   });
 
-  describe('handles entityDeleted event', function() {
-    beforeEach(function() {
-      createContentType([{}]);
-      this.$rootScope.$broadcast('entityDeleted', scope.contentType);
-    });
-
-    it('closes tab', function() {
-      sinon.assert.called(scope.closeState);
-    });
+  it('closesState if entityDeleted event is broadcast', function() {
+    scope.closeState = sinon.stub();
+    createContentType([{}]);
+    var $rootScope = this.$inject('$rootScope');
+    $rootScope.$broadcast('entityDeleted', scope.contentType);
+    sinon.assert.calledOnce(scope.closeState);
   });
 
   describe('#deleteField(id)', function () {
     beforeEach(function () {
-      createContentType([{id: 'FID'}]);
+      this.controller = createContentType([{id: 'FID'}]);
       scope.publishedContentType = {
         data: scope.contentType.data
       };
@@ -263,13 +245,13 @@ describe('ContentTypeEditor Controller', function () {
 
     describe('without entries', function () {
       beforeEach(function () {
-        controller.countEntries = sinon.stub().resolves(0);
+        this.controller.countEntries = sinon.stub().resolves(0);
       });
 
       it('removes the field', function () {
         expect(contentType.data.fields.length).toEqual(1);
 
-        controller.deleteField('FID');
+        this.controller.deleteField('FID');
         this.$apply();
         expect(contentType.data.fields.length).toEqual(0);
       });
@@ -277,13 +259,13 @@ describe('ContentTypeEditor Controller', function () {
 
     describe('with entries', function () {
       beforeEach(function () {
-        controller.countEntries = sinon.stub().resolves(1);
+        this.controller.countEntries = sinon.stub().resolves(1);
       });
 
       it('notifies the user if there are entries', function () {
         expect(contentType.data.fields.length).toEqual(1);
 
-        controller.deleteField('FID');
+        this.controller.deleteField('FID');
         this.$apply();
         sinon.assert.called(this.modalDialog.open);
         expect(contentType.data.fields.length).toEqual(1);
@@ -293,9 +275,72 @@ describe('ContentTypeEditor Controller', function () {
         scope.publishedContentType.data = {fields: []};
         expect(contentType.data.fields.length).toEqual(1);
 
-        controller.deleteField('FID');
+        this.controller.deleteField('FID');
         this.$apply();
         expect(contentType.data.fields.length).toEqual(0);
+      });
+    });
+  });
+
+  describe('metadata dialog', function() {
+    var metadataDialog;
+    beforeEach(function() {
+      metadataDialog = this.$inject('contentTypeEditor/metadataDialog');
+      metadataDialog.openCreateDialog = sinon.stub();
+      metadataDialog.openEditDialog = sinon.stub();
+    });
+
+
+    describe('when context is "isNew"', function () {
+      beforeEach(function () {
+        scope.context.isNew = true;
+      });
+
+      it('opens the metadata dialog', function () {
+        metadataDialog.openCreateDialog.resolves({});
+        createContentType();
+        sinon.assert.calledOnce(metadataDialog.openCreateDialog);
+      });
+
+      it('updates the metdata from the dialog', function () {
+        var metadata = {
+          name: 'NAME',
+          description: 'DESCRIPTION',
+          id: 'ID'
+        };
+        metadataDialog.openCreateDialog.resolves(metadata);
+        createContentType();
+
+        expect(contentType.data.name).toEqual('NAME');
+        expect(contentType.data.description).toEqual('DESCRIPTION');
+        expect(contentType.data.sys.id).toEqual('ID');
+      });
+    });
+
+    describe('#showMetadataDialog()', function() {
+      beforeEach(function () {
+        createContentType();
+      });
+
+      it('opens the edit metadata dialog', function() {
+        metadataDialog.openEditDialog.resolves({});
+        scope.showMetadataDialog();
+        sinon.assert.calledOnce(metadataDialog.openEditDialog);
+      });
+
+      it('updates the metdata from the dialog', function () {
+        var metadata = {
+          name: 'NAME',
+          description: 'DESCRIPTION',
+          id: 'ID'
+        };
+        metadataDialog.openEditDialog.resolves(metadata);
+        scope.showMetadataDialog();
+        this.$apply();
+
+        expect(contentType.data.name).toEqual('NAME');
+        expect(contentType.data.description).toEqual('DESCRIPTION');
+        expect(contentType.data.sys.id).not.toEqual('ID');
       });
     });
   });
