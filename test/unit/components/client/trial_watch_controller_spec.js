@@ -86,8 +86,14 @@ describe('Trial Watch controller', function () {
       scope.$digest();
     });
 
-    it('removes no other notification currently shown', function () {
-      sinon.assert.notCalled(broadcastStub);
+    describe('removal of old notification (e.g. after switch orga)', function () {
+      it('calls broadcast to remove last notification', function () {
+        sinon.assert.calledOnce(broadcastStub);
+      });
+
+      it('calls broadcast with null', function () {
+        expect(broadcastStub.args[0][1]).toBeNull();
+      });
     });
   });
 
