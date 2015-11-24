@@ -23,7 +23,7 @@ angular.module('contentful')
     var organization = space.data.organization;
     var userOwnsOrganization = userIsOrganizationOwner(user, organization);
 
-    if (organization.trialPeriodEndsAt !== null) {
+    if (organizationHasTrialSubscription(organization)) {
       var trial = new Trial(organization);
       if (trial.hasEnded()) {
         notify(trialHasEndedMsg(organization, userOwnsOrganization));
@@ -31,11 +31,12 @@ angular.module('contentful')
       } else {
         notify(timeLeftInTrialMsg(trial.getHoursLeft()));
       }
-    } else if ( organization.subscriptionState == 'active' &&
-                !organization.subscriptionPlan.paid &&
-                organization.subscriptionPlan.kind == 'default'
-    ) {
+    } else if (organizationHasLimitedFreeSubscription(organization)) {
       notify(limitedFreeVersionMsg());
+    } else {
+      // Remove last notification. E.g. after switching into another
+      // organization's space without any trial issues.
+      $rootScope.$broadcast('persistentNotification', null);
     }
 
     function notify (message) {
@@ -112,6 +113,16 @@ angular.module('contentful')
     return str.
       replace(/%length/g, timePeriod.length).
       replace(/%unit/g, timePeriod.unit);
+  }
+
+  function organizationHasLimitedFreeSubscription (organization) {
+    return organization.subscriptionState == 'active' &&
+      !organization.subscriptionPlan.paid &&
+      organization.subscriptionPlan.kind == 'default';
+  }
+
+  function organizationHasTrialSubscription (organization) {
+    return organization.trialPeriodEndsAt !== null;
   }
 
   function userIsOrganizationOwner (user, organization) {
