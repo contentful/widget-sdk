@@ -80,7 +80,7 @@ describe('Trial Watch controller', function () {
     beforeEach(function () {
       scope.spaceContext = {
         space: makeSpace({
-          trialPeriodEndsAt: null
+          subscriptionState: 'testState'
         })
       };
       scope.$digest();
@@ -97,7 +97,7 @@ describe('Trial Watch controller', function () {
     });
   });
 
-  describe('shows a persistent notification', function() {
+  describeZuoraAndLegacy('shows a persistent notification', function (usesZuora) {
     beforeEach(function () {
       jasmine.clock().install();
     });
@@ -110,6 +110,8 @@ describe('Trial Watch controller', function () {
       beforeEach(function(){
         scope.spaceContext = {
           space: makeSpace({
+            isNewSubscriptionSystemEnabled: usesZuora,
+            subscriptionState: 'trial',
             trialPeriodEndsAt: '2013-12-13T13:28:44Z',
             name: 'TEST_ORGA_NAME'
           })
@@ -134,9 +136,11 @@ describe('Trial Watch controller', function () {
 
           itHasAnAction();
 
-          itOpensPaywallForSettingUpPayment();
-
-
+          if (usesZuora) {
+            itOpensPaywallForSettingUpPayment();
+          } else {
+            itDoesNotOpenPaywall();
+          }
         });
 
         describe('for user not owning the organization', function () {
@@ -151,7 +155,11 @@ describe('Trial Watch controller', function () {
 
           itDoesNotHaveAnAction();
 
-          itOpensPaywallToNotifyTheUser();
+          if (usesZuora) {
+            itOpensPaywallToNotifyTheUser();
+          } else {
+            itDoesNotOpenPaywall();
+          }
         });
       });
 
@@ -219,7 +227,6 @@ describe('Trial Watch controller', function () {
         scope.spaceContext = {
           space: makeSpace({
             subscriptionState: 'active',
-            trialPeriodEndsAt: null,
             subscriptionPlan: {
               paid: false,
               kind: 'default'
@@ -315,4 +322,8 @@ describe('Trial Watch controller', function () {
     });
   }
 
+  function describeZuoraAndLegacy ( description, describeFn ) {
+    describe(description + ' not using Zuora', _.partial(describeFn, false));
+    describe(description + ' using Zuora',     _.partial(describeFn, true));
+  }
 });
