@@ -1,0 +1,11 @@
+extends: standard
+rules:
+  padded-blocks: off
+  semi: off
+  no-multiple-empty-lines: off
+globals:
+  angular: true
+  _: true
+  dotty: true
+  JST: true
+  $: true
