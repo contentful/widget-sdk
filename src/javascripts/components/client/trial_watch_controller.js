@@ -27,7 +27,9 @@ angular.module('contentful')
       var trial = new Trial(organization);
       if (trial.hasEnded()) {
         notify(trialHasEndedMsg(organization, userOwnsOrganization));
-        showPaywall(user, trial);
+        if (organization.isNewSubscriptionSystemEnabled) {
+          showPaywall(user, trial);
+        }
       } else {
         notify(timeLeftInTrialMsg(trial.getHoursLeft()));
       }
@@ -122,12 +124,15 @@ angular.module('contentful')
   }
 
   function organizationHasTrialSubscription (organization) {
-    return organization.trialPeriodEndsAt !== null;
+    // TODO: Make this check work with new subscription system. This will require
+    //  to revisit the token we want to get from Gatekeeper. The token should
+    //  look the same for both subscription systems.
+    return organization.subscriptionState === 'trial';
   }
 
   function userIsOrganizationOwner (user, organization) {
     var organizationMembership =
-      user.organizationMemberships.find(function (membership) {
+      _.find(user.organizationMemberships, function (membership) {
         return membership.organization.sys.id === organization.sys.id;
       });
     return !!organizationMembership &&
