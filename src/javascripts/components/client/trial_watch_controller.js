@@ -132,7 +132,7 @@ angular.module('contentful')
 
   function userIsOrganizationOwner (user, organization) {
     var organizationMembership =
-      user.organizationMemberships.find(function (membership) {
+      _.find(user.organizationMemberships, function (membership) {
         return membership.organization.sys.id === organization.sys.id;
       });
     return !!organizationMembership &&
