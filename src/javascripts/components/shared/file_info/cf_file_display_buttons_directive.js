@@ -23,13 +23,13 @@ angular.module('contentful').directive('cfFileDisplayButtons', function () {
       $scope.canEditFile = function () {
         var file = $scope.file;
         var isReady = $scope.imageHasLoaded && file && file.url;
-        return !$scope.otDoc.state.disabled && $scope.enableUpload && isReady;
+        return $scope.isEditable($scope.field, $scope.locale) && $scope.enableUpload && isReady;
       };
 
       $scope.canDeleteFile = function () {
         var file = $scope.file;
         var uploaded = file && (file.url || file.upload);
-        return !$scope.otDoc.state.disabled && $scope.deleteFile && uploaded;
+        return $scope.isEditable($scope.field, $scope.locale) && $scope.deleteFile && uploaded;
       };
 
     }]

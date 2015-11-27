@@ -4,13 +4,13 @@
   entity-type="Asset"
   entity-content-types="linkContentTypes"
   entity-mime-type-group="linkMimetypeGroup"
-  ng-show="otDoc.state.editable && (linkedEntities.length == 0 || field.type == 'Array')")
+  ng-show="isEditable(field, locale) && (linkedEntities.length == 0 || field.type == 'Array')")
 
 .form-widget__help-text(ng-if="helpText") {{helpText}}
 
 ul.linked-entities.asset-link(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide="linkedEntities.length == 0")
   li.linked-entities__item(ng-repeat="(index, entity) in linkedEntities track by index")
-    .linked-entities__handle(cf-drag-handle ng-disabled="!otDoc.state.editable" ng-hide="linkedEntities.length==1")
+    .linked-entities__handle(cf-drag-handle ng-disabled="isDisabled(field, locale)" ng-hide="linkedEntities.length==1")
       i.fa.fa-ellipsis-v
       i.fa.fa-ellipsis-v
     .linked-entities__info(cf-file-display cf-file-metadata entity-title="spaceContext.localizedField(entity, 'data.fields.title', locale.internal_code)"

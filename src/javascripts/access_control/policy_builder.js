@@ -290,15 +290,11 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['$injector', f
 
   function addPathConstraint(pair) {
     var source = pair.source;
-    if (!hasProp(source, 'field') && !hasProp(source, 'locale')) { return pair; }
+    if (!_.isString(source.field) || !_.isString(source.locale)) { return pair; }
 
     var segments = ['fields', segment(source.field), segment(source.locale)];
     pushConstraint(pair, paths(segments));
     return pair;
-  }
-
-  function hasProp(source, prop) {
-    return _.isString(source[prop]) && !isAll(source[prop]);
   }
 
   function segment(prop) {

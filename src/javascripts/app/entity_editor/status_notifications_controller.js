@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 .controller('entityEditor/StatusNotificationsController',
-['$scope', 'entityLabel', function ($scope, entityLabel) {
+['$scope', 'entityLabel', 'isReadOnly', function ($scope, entityLabel, isReadOnly) {
   var controller = this;
   var messages = {
     'ot-connection-error':
@@ -25,20 +25,18 @@ angular.module('contentful')
     }
   });
 
-  // TODO this method depends on three objects defined on the scope. We
+  // TODO this method depends on two objects defined on the scope. We
   // need better abstraction.
   function getStatus (scope) {
-    var entity = scope[entityLabel];
     if (scope.otDoc.state.error) {
       return 'ot-connection-error';
     }
 
-    var canUpdate = scope.permissionController.can('update', entity.data).can;
-    if (!canUpdate) {
+    if (isReadOnly()) {
       return 'editing-not-allowed';
     }
 
-    if (entity.isArchived()) {
+    if (scope[entityLabel].isArchived()) {
       return 'archived';
     }
   }

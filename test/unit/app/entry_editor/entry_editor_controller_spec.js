@@ -20,7 +20,8 @@ describe('Entry Editor Controller', function () {
     inject(function ($compile, $rootScope, $controller, cfStub){
       scope = $rootScope;
       scope.otDoc = {doc: {}, state: {}};
-      scope.contentType = {data: cfStub.contentTypeData()};
+      var ctData = cfStub.contentTypeData();
+      scope.contentType = {data: ctData, getId: _.constant(ctData.sys.id)};
       scope.context = {};
 
       var space = cfStub.space('testSpace');

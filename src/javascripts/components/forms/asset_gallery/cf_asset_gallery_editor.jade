@@ -4,7 +4,7 @@
   entity-type="Asset"
   entity-content-types="linkContentTypes"
   entity-mime-type-group="linkMimetypeGroup"
-  ng-show="otDoc.state.editable && (linkedEntities.length == 0 || field.type == 'Array')")
+  ng-show="isEditable(field, locale) && (linkedEntities.length == 0 || field.type == 'Array')")
 
 .form-widget__help-text(ng-if="helpText") {{helpText}}
 
@@ -18,7 +18,7 @@ ul.asset-gallery(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide
       .asset-gallery__file.gallery-file
         div(cf-thumbnail file="file" size="120" fit="thumb" ng-if="file && file.url")
 
-      .asset-gallery__handle.dragging-handle(cf-drag-handle ng-disabled="!otDoc.state.editable" ng-hide="linkedEntities.length==1")
+      .asset-gallery__handle.dragging-handle(cf-drag-handle ng-disabled="isDisabled(field, locale)" ng-hide="linkedEntities.length==1")
         i.fa.fa-ellipsis-v
         i.fa.fa-ellipsis-v
 
@@ -46,7 +46,7 @@ ul.asset-gallery(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide
             tooltip-container=".entry-editor")
           i.fa.fa-edit
         button.btn(type="button"
-            ng-show="!otDoc.state.disabled && removeLink"
+            ng-show="isEditable(field, locale) && removeLink"
             ng-click="removeLink(index, entity)"
             tooltip="Remove Asset"
             tooltip-container=".entry-editor")

@@ -27,7 +27,10 @@ angular.module('contentful')
 
   $scope.notifications = $controller('entityEditor/StatusNotificationsController', {
     $scope: $scope,
-    entityLabel: 'asset'
+    entityLabel: 'asset',
+    isReadOnly: function () {
+      return $scope.permissionController.can('update', $scope.asset.data).can;
+    }
   });
 
 

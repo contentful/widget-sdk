@@ -1,7 +1,7 @@
 select.cfnext-select-box(ng-model="rule.action")
   option(value="all") All actions
   option(value="read") Read
-  option(value="edit") Edit
+  option(value="update") Edit
   option(value="create") Create
   option(value="delete") Delete
   option(value="archive") Archive/Unarchive
@@ -21,13 +21,13 @@ select.cfnext-select-box(
 select.cfnext-select-box(
   ng-if="entity === 'entry'"
   ng-model="rule.field"
-  ng-show="rule.action === 'edit'"
+  ng-show="rule.action === 'update'"
   ng-disabled="rule.contentType === 'all'"
   ng-options="field.id as field.name for field in contentTypeFields")
 
 select.cfnext-select-box(
   ng-model="rule.locale"
-  ng-show="rule.action === 'edit'"
+  ng-show="rule.action === 'update'"
   ng-options="locale.code as locale.name for locale in locales")
 
 a.rule-list__remove(href ng-click="remove(rule)")

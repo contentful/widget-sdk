@@ -19,7 +19,7 @@ angular.module('contentful').directive('cfRule', [function () {
         // ...for the first time -> do nothing
         if (action === prev) {}
         // ...to "edit" -> reset locale and field
-        else if (action === 'edit') {
+        else if (action === 'update') {
           setFieldAndLocale('all');
         }
         // ...to "create" -> reset scope, remove locale and field

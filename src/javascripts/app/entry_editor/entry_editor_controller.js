@@ -2,17 +2,26 @@
 
 angular.module('contentful')
 .controller('EntryEditorController', ['$scope', '$injector', function EntryEditorController($scope, $injector) {
-  var $controller       = $injector.get('$controller');
-  var logger            = $injector.get('logger');
-  var TheLocaleStore    = $injector.get('TheLocaleStore');
-  var notifier          = $injector.get('entryEditor/notifications');
-  var spaceContext      = $injector.get('spaceContext');
-  var truncate          = $injector.get('stringUtils').truncate;
-  var fieldFactory      = $injector.get('fieldFactory');
+  var $controller              = $injector.get('$controller');
+  var logger                   = $injector.get('logger');
+  var TheLocaleStore           = $injector.get('TheLocaleStore');
+  var spaceContext             = $injector.get('spaceContext');
+  var fieldFactory             = $injector.get('fieldFactory');
+  var notifier                 = $injector.get('entryEditor/notifications');
+  var truncate                 = $injector.get('stringUtils').truncate;
+  var createFieldAccessChecker = $injector.get('fieldAccessChecker').getInstance;
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
   });
+
+  var fieldAccessChecker = createFieldAccessChecker({
+    contentTypeId: $scope.contentType.getId(),
+    hasUpdatePermission: hasUpdatePermission()
+  });
+
+  $scope.isEditable = fieldAccessChecker.isEditableWithPredicate(isOtDocEditable);
+  $scope.isDisabled = function (f, l) { return !$scope.isEditable(f, l); };
 
   $scope.locales = $controller('entityEditor/LocalesController');
 
@@ -30,7 +39,10 @@ angular.module('contentful')
 
   $scope.notifications = $controller('entityEditor/StatusNotificationsController', {
     $scope: $scope,
-    entityLabel: 'entry'
+    entityLabel: 'entry',
+    isReadOnly: function () {
+      return !hasUpdatePermission() && !fieldAccessChecker.hasAllowPolicies();
+    }
   });
 
   $scope.$watch(function () {
@@ -55,10 +67,11 @@ angular.module('contentful')
   });
 
   // OT Stuff
-  $scope.$watch(function entryEditorEnabledWatcher(scope) {
-    return !scope.entry.isArchived() && scope.permissionController.can('update', scope.entry.data).can;
-  }, function entryEditorEnabledHandler(enabled, old, scope) {
-    scope.otDoc.state.disabled = !enabled;
+  $scope.$watch(function entryEditorEnabledWatcher() {
+    var canBeUpdated = hasUpdatePermission() || fieldAccessChecker.hasAllowPolicies();
+    return $scope.entry.isArchived() || !canBeUpdated;
+  }, function entryEditorEnabledHandler(disabled) {
+    $scope.otDoc.state.disabled = disabled;
   });
 
   // Validations
@@ -244,5 +257,13 @@ angular.module('contentful')
     } else {
       return 'This reference requires an entry of an unexistent content type';
     }
+  }
+
+  function isOtDocEditable() {
+    return dotty.get($scope, 'otDoc.state.editable', false);
+  }
+
+  function hasUpdatePermission() {
+    return $scope.permissionController.can('update', $scope.entry.data).can;
   }
 }]);
