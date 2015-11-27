@@ -198,7 +198,7 @@ angular.module('contentful')
 
   function resetOtDoc() {
     if (otDoc.doc) {
-      removeRemoteOpListener(otDoc.doc);
+      removeListeners(otDoc.doc);
     }
     delete otDoc.doc;
     otDoc.state.editable = false;
@@ -208,10 +208,11 @@ angular.module('contentful')
 
   function setupOtDoc(doc) {
     filterDeletedLocales(doc.snapshot);
-    installRemoteOpListener(doc);
+    installListeners(doc);
     otDoc.doc = doc;
     otDoc.state.editable = true;
     $scope.$emit('otBecameEditable', entity);
+    $scope.$broadcast('otDocReady', doc);
     setVersionUpdater();
     updateIfValid();
   }
@@ -275,13 +276,15 @@ angular.module('contentful')
     }
   }
 
-  function installRemoteOpListener (doc) {
+  function installListeners (doc) {
     doc.on('remoteop', remoteOpListener);
+    doc.on('change', broadcastOtChange);
 
   }
 
-  function removeRemoteOpListener (doc) {
+  function removeListeners (doc) {
     doc.removeListener('remoteop', remoteOpListener);
+    doc.removeListener('change', broadcastOtChange);
   }
 
   function remoteOpListener(ops) {
@@ -290,6 +293,12 @@ angular.module('contentful')
         scope.$broadcast('otRemoteOp', op);
       });
       otUpdateEntityData();
+    });
+  }
+
+  function broadcastOtChange (op) {
+    $scope.$applyAsync(function () {
+      $scope.$broadcast('otChange', $scope.otDoc.doc, op);
     });
   }
 
