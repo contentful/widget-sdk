@@ -88,4 +88,38 @@ describe('field factory', function () {
     });
 
   });
+
+  describe('#getTypeName()', function () {
+    beforeEach(function () {
+      this.getTypeName = this.fieldFactory.getTypeName;
+    });
+
+    itResolves(
+      {type: 'Symbol'},
+      'Symbol'
+    );
+
+    itResolves(
+      {type: 'Array', items: {type: 'Symbol'}},
+      'Symbols'
+    );
+
+    itResolves(
+      {type: 'Link', linkType: 'Asset'},
+      'Asset'
+    );
+
+    itResolves(
+      {type: 'Array', items: {type: 'Link', linkType: 'Asset'}},
+      'Assets'
+    );
+
+    function itResolves(type, name) {
+      it('resolves "' + name + '"', function () {
+        var name = this.getTypeName(type);
+        expect(name).toEqual(name);
+      });
+    }
+
+  });
 });

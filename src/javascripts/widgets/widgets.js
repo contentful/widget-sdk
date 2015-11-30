@@ -6,7 +6,8 @@
  */
 angular.module('contentful')
 .factory('widgets', ['$injector', function($injector) {
-  var $q = $injector.get('$q');
+  var $q           = $injector.get('$q');
+  var fieldFactory = $injector.get('fieldFactory');
   var checks       = $injector.get('widgets/checks');
   var deprecations = $injector.get('widgets/deprecations');
   var store        = $injector.get('widgets/store');
@@ -144,7 +145,7 @@ angular.module('contentful')
    * @return {Promise<Array<Widget.Descriptor>>}
    */
   function typesForField(field) {
-    var fieldType = detectFieldType(field);
+    var fieldType = fieldFactory.getTypeName(field);
     var widgets = _.filter(WIDGETS, function (widget) {
       return _.contains(widget.fieldTypes, fieldType);
     });
@@ -176,7 +177,7 @@ angular.module('contentful')
    * doesn't exist in the backend and is only used in the asset editor
   */
   function defaultWidgetId(field, contentType) {
-    var fieldType = detectFieldType(field);
+    var fieldType = fieldFactory.getTypeName(field);
     var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
     if(hasValidations && _.contains(WIDGETS['dropdown'].fieldTypes, fieldType)) return 'dropdown';
     if (fieldType === 'Text') {
@@ -198,22 +199,6 @@ angular.module('contentful')
     return _.findKey(WIDGETS, function (widget) {
       return _.contains(widget.fieldTypes, fieldType);
     });
-  }
-
-  function detectFieldType(field) {
-    var type = field.type;
-    var linkType = field.linkType;
-    if(type === 'Link') return field.linkType;
-    if(type === 'Array'){
-      var itemsType = dotty.get(field, 'items.type');
-      if (itemsType === 'Link') {
-        linkType  = dotty.get(field, 'items.linkType');
-        if (linkType === 'Entry') return 'Entries';
-        if (linkType === 'Asset') return 'Assets';
-      }
-      if (itemsType === 'Symbol') return 'Symbols';
-    }
-    return type;
   }
 
   function getFieldValidationsOfType(field, type) {

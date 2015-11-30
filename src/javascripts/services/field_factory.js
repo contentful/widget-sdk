@@ -13,7 +13,7 @@ angular.module('contentful')
   /**
    * @ngdoc property
    * @name fieldFactory#types
-   * @type {Array<TypeDescriptor>}
+   * @type {Array<FieldDescriptor>}
    * @description
    * List of descriptors for all available fields types.
    *
@@ -136,6 +136,7 @@ angular.module('contentful')
     getLabel: getFieldLabel,
     getIconId: getIconId,
     createTypeInfo: createTypeInfo,
+    getTypeName: getTypeName
   };
 
   /**
@@ -196,6 +197,55 @@ angular.module('contentful')
   }
 
   /**
+   * @ngdoc method
+   * @name fieldFactory#getTypeName
+   * @description
+   * Returns a string identifier for a type object.
+   *
+   * We use this string as a simpliefied reference to field types.
+   * Possible values are
+   *
+   * - Symbol
+   * - Symbols
+   * - Text
+   * - Integer
+   * - Number
+   * - Boolean
+   * - Date
+   * - Location
+   * - Object
+   * - Entry
+   * - Entries
+   * - Asset
+   * - Assets
+   *
+   * @param {API.ContentType.Field} field
+   * @return {string}
+   */
+  function getTypeName (field) {
+    var type = field.type;
+    if (type === 'Link') {
+      return field.linkType;
+    } else if (type === 'Array') {
+      var itemsType = dotty.get(field, 'items.type');
+      if (itemsType === 'Link') {
+        var linkType  = dotty.get(field, 'items.linkType');
+        if (linkType === 'Entry') {
+          return 'Entries';
+        }
+        if (linkType === 'Asset') {
+          return 'Assets';
+        }
+      } else if (itemsType === 'Symbol') {
+        return 'Symbols';
+      }
+    } else {
+      return type;
+    }
+  }
+
+
+  /**
    * @param {API.ContentType.Field} field
    * @return {FieldDescriptor}
    */
@@ -215,10 +265,12 @@ angular.module('contentful')
     }
 
     var descriptor = _.find(fieldTypes, {name: type});
-    if (!descriptor)
+    if (!descriptor) {
       throw new Error('Unknown field type "'+type+'"');
+    }
 
-    return _.extend({isList: isArray}, descriptor);
+    return _.extend({
+      isList: isArray
+    }, descriptor);
   }
-
 }]);
