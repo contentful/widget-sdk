@@ -38,7 +38,7 @@
       "dependencies": {
         "@contentful/spock": {
           "version": "0.6.0",
-          "from": "@contentful/spock@>=0.6.0 <0.7.0"
+          "from": "contentful/spock#feature/interpret-api-names"
         }
       }
     },
@@ -9152,13 +9152,13 @@
           "version": "1.0.1",
           "from": "core-util-is@1.0.1"
         },
-        "inherits": {
-          "version": "2.0.1",
-          "from": "inherits@2.0.1"
-        },
         "isarray": {
           "version": "0.0.1",
           "from": "isarray@0.0.1"
+        },
+        "inherits": {
+          "version": "2.0.1",
+          "from": "inherits@2.0.1"
         },
         "moment": {
           "version": "2.10.3",
