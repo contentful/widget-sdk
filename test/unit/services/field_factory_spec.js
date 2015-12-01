@@ -120,6 +120,21 @@ describe('field factory', function () {
         expect(name).toEqual(name);
       });
     }
+  });
 
+  describe('#getLocaleCodes()', function () {
+    it('returns default locale for non-localized field', function () {
+      var LS = this.$inject('TheLocaleStore');
+      LS.getDefaultLocale = sinon.stub().returns({internal_code: 'DEF'});
+      var codes = this.fieldFactory.getLocaleCodes({localized: false});
+      expect(codes).toEqual(['DEF']);
+    });
+
+    it('returns all private locales for localized field', function () {
+      var LS = this.$inject('TheLocaleStore');
+      LS.getPrivateLocales = sinon.stub().returns([{internal_code: 'A'}, {internal_code: 'B'}]);
+      var codes = this.fieldFactory.getLocaleCodes({localized: true});
+      expect(codes).toEqual(['A', 'B']);
+    });
   });
 });

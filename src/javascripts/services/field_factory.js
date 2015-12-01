@@ -9,6 +9,7 @@
 angular.module('contentful')
 .factory('fieldFactory', ['$injector', function ($injector) {
   var capitalize = $injector.get('stringUtils').capitalize;
+  var TheLocaleStore = $injector.get('TheLocaleStore');
 
   /**
    * @ngdoc property
@@ -136,7 +137,8 @@ angular.module('contentful')
     getLabel: getFieldLabel,
     getIconId: getIconId,
     createTypeInfo: createTypeInfo,
-    getTypeName: getTypeName
+    getTypeName: getTypeName,
+    getLocaleCodes: getLocaleCodes
   };
 
   /**
@@ -242,6 +244,30 @@ angular.module('contentful')
     } else {
       return type;
     }
+  }
+
+
+  /**
+   * @ngdoc method
+   * @name fieldFactory#getLocaleCodes
+   * @description
+   * Returns a list of internal locale codes that this field stores.
+   *
+   * If the field is localized it returns the list of all CMA locales.
+   * If the field is not localized it returns a list containing only
+   * the default locale.
+   *
+   * @param {API.ContentType.Field} field
+   * @return {Array<string>}
+   */
+  function getLocaleCodes (field) {
+    var locales;
+    if (field.localized) {
+      locales = TheLocaleStore.getPrivateLocales();
+    } else {
+      locales = [TheLocaleStore.getDefaultLocale()];
+    }
+    return _.pluck(locales, 'internal_code');
   }
 
 
