@@ -33,7 +33,7 @@ header.workbench-header
               ot-field-presence="['fields', widget.field.id, locale.internal_code]"
               data-locale="{{locale.internal_code}}")
             cf-widget-renderer.l-field-editor(
-              cf-focus-ot-input="widgetIndex===0"
+              cf-focus-ot-input="hasInitialFocus"
               cf-field-editor="asset.data.fields[field.id][locale.internal_code]"
               ot-path="['fields', field.id, locale.internal_code]")
             .locale-label(ng-show="locales.length > 1") {{locale.name}}

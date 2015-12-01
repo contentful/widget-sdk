@@ -4,7 +4,8 @@ angular.module('contentful').directive('cfFormWidget', function() {
   return {
     restrict: 'E',
     controller: ['$scope', function($scope) {
-      $scope.widgetIndex = _.indexOf($scope.widgets, $scope.widget);
+      $scope.hasInitialFocus = $scope.$index === 0 &&
+                               $scope.widget.isFocusable;
 
       $scope.$watch('widget.field', function (field) {
         $scope.field = field;
@@ -21,10 +22,6 @@ angular.module('contentful').directive('cfFormWidget', function() {
       $scope.$watch('widget.rendersHelpText', function (rendersHelpText) {
         $scope.showHelpText = !rendersHelpText;
       });
-
-      $scope.shouldFocusField = function () {
-        return $scope.widgetIndex === 0 && $scope.widget.isFocusable;
-      };
     }]
   };
 });
