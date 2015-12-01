@@ -1,14 +1,25 @@
 'use strict';
+
 angular.module('contentful')
+
+/**
+ * @ngdoc type
+ * @name FormWidgetsController
+ * @description
+ * Sets `$scope.widgets` to a list of widgets to render.
+ *
+ * Widgets are constructed by using the 'contentType' and
+ * 'editingInterface' parameters. These do not change.
+ *
+ * The active locales, the 'showDisabledFields' preference and the
+ * error paths determine dynamically for which fields and which locales
+ * widgets should be rendered.
+ */
 .controller('FormWidgetsController',
   ['$scope', '$injector', 'contentType', 'editingInterface',
   function($scope, $injector, contentType, editingInterface) {
-  var controller        = this;
-  var TheLocaleStore    = $injector.get('TheLocaleStore');
-  var widgets           = $injector.get('widgets');
-
-  controller.contentType = contentType;
-  controller.editingInterface = editingInterface;
+  var TheLocaleStore = $injector.get('TheLocaleStore');
+  var widgets        = $injector.get('widgets');
 
   $scope.$watch(getActiveLocaleCodes,             updateWidgets, true);
   $scope.$watch('preferences.showDisabledFields', updateWidgets);
@@ -20,7 +31,7 @@ angular.module('contentful')
    * form widgets, and add them to the scope.
    */
   function updateWidgets() {
-    $scope.widgets = _(controller.editingInterface.data.widgets)
+    $scope.widgets = _(editingInterface.data.widgets)
       .filter(widgetIsVisible)
       .map(buildWidget)
       .value();
@@ -55,7 +66,7 @@ angular.module('contentful')
   }
 
   function getFieldForWidget(widget) {
-    return _.find(controller.contentType.data.fields, {id: widget.fieldId});
+    return _.find(contentType.data.fields, {id: widget.fieldId});
   }
 
   function getFieldLocales(field) {
