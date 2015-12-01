@@ -32,8 +32,8 @@ angular.module('contentful')
    */
   function updateWidgets() {
     $scope.widgets = _(editingInterface.data.widgets)
-      .filter(widgetIsVisible)
       .map(buildWidget)
+      .filter(widgetIsVisible)
       .value();
   }
 
@@ -56,13 +56,17 @@ angular.module('contentful')
   }
 
   function widgetIsVisible(widget) {
-    if (widget.widgetType === 'static') return true;
-    var field = getFieldForWidget(widget);
-    return widget.widgetType === 'static' || field && fieldIsEditable(field);
+    if (widget.widgetType === 'static') {
+      return true;
+    } else {
+      return fieldIsVisible(widget.field);
+    }
   }
 
-  function fieldIsEditable(field) {
-    return !field.disabled || $scope.preferences.showDisabledFields || $scope.errorPaths && $scope.errorPaths[field.id];
+  function fieldIsVisible (field) {
+    var isNotDisabled = !field.disabled || $scope.preferences.showDisabledFields;
+    var hasErrors = $scope.errorPaths && $scope.errorPaths[field.id];
+    return isNotDisabled || hasErrors;
   }
 
   function getFieldForWidget(widget) {
@@ -70,10 +74,11 @@ angular.module('contentful')
   }
 
   function getFieldLocales(field) {
-    if (field.localized)
+    if (field.localized) {
       return TheLocaleStore.getActiveLocales();
-    else
+    } else {
       return [TheLocaleStore.getDefaultLocale()];
+    }
   }
 
   function getErrorLocales(field) {

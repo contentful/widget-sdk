@@ -16,7 +16,6 @@ describe('FormWidgetsController#widgets', function () {
     });
 
     scope = this.$inject('$rootScope').$new();
-    scope.preferences = {};
 
     var cfStub = this.$inject('cfStub');
     var space = cfStub.space('testSpace');
@@ -59,6 +58,7 @@ describe('FormWidgetsController#widgets', function () {
 
   describe('with disabled field', function () {
     beforeEach(function () {
+      scope.preferences = {};
       field.disabled = true;
       this.createController();
     });
