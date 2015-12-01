@@ -37,7 +37,7 @@ angular.module('contentful')
         notify(trialHasEndedMsg(organization, userOwnsOrganization));
         showPaywall(user, trial);
       } else {
-        notify(timeLeftInTrialMsg(trial.getHoursLeft()));
+        notify(timeLeftInTrialMsg(trial.getHoursLeft(), userOwnsOrganization));
       }
     } else if (organizationHasLimitedFreeSubscription(organization)) {
       notify(limitedFreeVersionMsg());
@@ -98,17 +98,24 @@ angular.module('contentful')
     return message;
   }
 
-  function timeLeftInTrialMsg (hours) {
+  function timeLeftInTrialMsg (hours, userIsOrganizationOwner) {
     var timePeriod;
     if (hours / 24 <= 1) {
       timePeriod = {length: hours, unit: 'hours'};
     } else {
       timePeriod = {length: Math.floor(hours / 24), unit: 'days'};
     }
-    return timeTpl('<strong>%length %unit left in trial.</strong> ' +
+
+    var message = timeTpl('<strong>%length %unit left in trial.</strong> ' +
       'Your current Organization is in trial mode giving you ' +
-      'access to all features for %length more %unit. Enter your billing ' +
-      'information to activate your subscription.', timePeriod);
+      'access to all features for %length more %unit.', timePeriod);
+
+    if (userIsOrganizationOwner) {
+      message += ' Enter your billing information to activate your subscription.';
+    } else {
+      message += ' Your subscription can be upgraded by one of the owners of your organization.';
+    }
+    return message;
   }
 
   function limitedFreeVersionMsg () {
