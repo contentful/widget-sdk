@@ -18,7 +18,11 @@
  *     console.log('dialog canceled');
  *   });
  *
- *   dialog.confirm();
+ *   setTimeout(function(){
+ *     console.log('going to close ok');
+ *     dialog.confirm();
+ *   }, 3000);
+ *
  */
 angular.module('contentful').factory('modalDialog', ['$injector', function ($injector) {
   var $compile   = $injector.get('$compile');

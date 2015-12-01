@@ -38,6 +38,23 @@ angular.module('cf.forms')
   };
 }])
 
+.directive('cfFieldInvalidClass', [function () {
+  return {
+    restrict: 'A',
+    scope: true,
+    require: '^form',
+    controllerAs: 'errors',
+    controller: 'FieldErrorController',
+    link: function (scope, elem, attrs, form) {
+      scope.errors.link(form, attrs.cfFieldInvalidClass);
+      scope.$watch('errors.exist && !errors.hide', function (hasErrors) {
+        elem.toggleClass('x--invalid', hasErrors);
+      });
+    }
+  };
+}])
+
+
 /**
  * @ngdoc directive
  * @module cf.forms
@@ -105,6 +122,10 @@ function ($scope, $injector) {
    * @description
    * Set up the controller to provide error messages for a given form
    * control.
+   *
+   * Looks at a form controls `$error` property to determine the
+   * errors. Builds the error messages with the `fieldErrorMessage`
+   * service and from the field controller’s `errorDetails` property
    *
    * @param {FormController} form
    * @param {string} formCtrlName

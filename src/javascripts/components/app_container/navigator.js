@@ -57,14 +57,31 @@ angular.module('contentful').config([
   $stateProvider.state('spaces.detail', {
     url: '/:spaceId',
     resolve: {
-      space: ['tokenStore', '$stateParams', function (tokenStore, $stateParams) {
-        return tokenStore.getSpace($stateParams.spaceId);
+      space: ['$injector', '$stateParams', function ($injector, $stateParams) {
+        var tokenStore     = $injector.get('tokenStore');
+        var spaceContext   = $injector.get('spaceContext');
+        var analytics      = $injector.get('analytics');
+        var TheLocaleStore = $injector.get('TheLocaleStore');
+        return tokenStore.getSpace($stateParams.spaceId)
+        .then(function (space) {
+          spaceContext.resetWithSpace(space);
+          TheLocaleStore.resetWithSpace(space);
+          analytics.setSpace(space);
+          return space;
+        });
+      }],
+      widgets: ['$injector', 'space', function ($injector, space) {
+        var Widgets = $injector.get('widgets');
+        return Widgets.setSpace(space);
       }]
     },
     ncyBreadcrumb: {
       skip: true
     },
-    controller: ['$scope', 'space', function ($scope, space) {
+    // FIXME we depend on 'widgets' to load the service. We cannot use
+    // the 'onEnter' handler because it does not wait until the promise
+    // has been resolved.
+    controller: ['$scope', 'space', 'widgets', function ($scope, space) {
       $scope.label = space.data.name;
     }],
     templateProvider: ['space', function (space) {
@@ -111,12 +128,25 @@ angular.module('contentful').config([
           return entry;
         });
 
-      }]
+      }],
+      editingInterface: ['$injector', 'contentType', function ($injector, contentType) {
+        var editingInterfaces = $injector.get('editingInterfaces');
+        return editingInterfaces.forContentType(contentType);
+      }],
+      contentType: ['$injector', 'entry', function ($injector, entry) {
+        var spaceContext = $injector.get('spaceContext');
+
+        return spaceContext.fetchPublishedContentType(entry.data.sys.contentType.sys.id);
+      }],
+
     },
-    controller: ['$state', '$scope', '$stateParams', 'entry', function ($state, $scope, $stateParams, entry) {
+    controller: ['$state', '$scope', '$stateParams', 'entry', 'editingInterface', 'contentType',
+                 function ($state, $scope, $stateParams, entry, editingInterface, contentType) {
       $state.current.data = $scope.context = {};
       $scope.entry = entry;
       $scope.entity = entry;
+      $scope.editingInterface = editingInterface;
+      $scope.contentType = contentType;
 
       if (!$scope.$root.contextHistory.length ||
           $stateParams.addToContext) {
@@ -169,12 +199,27 @@ angular.module('contentful').config([
           filterDeletedLocales(asset.data, space.getPrivateLocales());
           return asset;
         });
-      }]
+      }],
+      contentType: ['$injector', function ($injector) {
+        var AssetContentType = $injector.get('AssetContentType');
+        return {
+          data: AssetContentType,
+          getId: _.constant('asset'),
+        };
+      }],
+      // TODO duplicates code in 'entries.details' state
+      editingInterface: ['$injector', 'contentType', function ($injector, contentType) {
+        var editingInterfaces = $injector.get('editingInterfaces');
+        return editingInterfaces.forContentType(contentType);
+      }],
     },
-    controller: ['$state', '$scope', '$stateParams', 'asset', function ($state, $scope, $stateParams, asset) {
+    controller: ['$state', '$scope', '$stateParams', 'asset', 'contentType', 'editingInterface',
+                  function ($state, $scope, $stateParams, asset, contentType, editingInterface) {
       $state.current.data = $scope.context = {};
       $scope.asset = asset;
       $scope.entity = asset;
+      $scope.editingInterface = editingInterface;
+      $scope.contentType = contentType;
 
       if (!$scope.$root.contextHistory.length ||
           $stateParams.addToContext) {
@@ -273,7 +318,7 @@ angular.module('contentful').config([
         });
       }],
       editingInterface: ['contentType', 'editingInterfaces', function (contentType, editingInterfaces) {
-        return editingInterfaces.forContentTypeWithId(contentType, 'default');
+        return editingInterfaces.forContentType(contentType);
       }]
     },
   }, contentTypeEditorState));

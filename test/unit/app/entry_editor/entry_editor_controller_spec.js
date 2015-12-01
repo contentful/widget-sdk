@@ -4,43 +4,35 @@ describe('Entry Editor Controller', function () {
   var controller, scope;
 
   beforeEach(function () {
-    var self = this;
     module('contentful/test', function ($provide) {
-      $provide.removeController('FormWidgetsController', function () {
-        return {
-          updateWidgets: sinon.stub()
-        };
-      });
       $provide.removeControllers(
+        'FormWidgetsController',
         'PermissionController',
         'entityEditor/LocalesController',
         'entityEditor/StatusNotificationsController'
       );
-      self.TheLocaleStoreMock = {
+      $provide.value('TheLocaleStore', {
         getLocalesState: sinon.stub().returns({}),
         getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'}),
         getPrivateLocales: sinon.stub().returns([{internal_code: 'en-US'}, {internal_code: 'de-DE'}])
-      };
-      $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
+      });
     });
     inject(function ($compile, $rootScope, $controller, cfStub){
       scope = $rootScope;
       scope.otDoc = {doc: {}, state: {}};
-      scope.user = {
-        features: {}
-      };
+      scope.contentType = {data: cfStub.contentTypeData()};
+      scope.context = {};
+
       var space = cfStub.space('testSpace');
-      var contentTypeData = cfStub.contentTypeData('testType');
-      scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
       var entry = cfStub.entry(space, 'testEntry', 'testType', {}, {
         sys: { publishedVersion: 1 }
       });
-      scope.context = {};
       scope.entry = entry;
-      scope.permissionController = { can: sinon.stub() };
-      scope.permissionController.can.returns({can: true});
+      scope.permissionController = {
+        can: sinon.stub().returns({can: true})
+      };
       controller = $controller('EntryEditorController', {$scope: scope});
-      scope.$digest();
+      this.$apply();
     });
   });
 
@@ -72,15 +64,17 @@ describe('Entry Editor Controller', function () {
   });
 
   describe('when the entry title changes', function () {
-    beforeEach(function () {
-      scope.spaceContext.entryTitle = sinon.stub().returns('foo');
-    });
     it('should update the tab title', function () {
-      var oldTitle = scope.context.title;
-      scope.spaceContext.entryTitle.returns('bar');
-      scope.$digest();
+      var spaceContext = this.$inject('spaceContext');
+      spaceContext.entryTitle = sinon.stub();
+
+      spaceContext.entryTitle.returns('foo');
+      this.$apply();
+      expect(scope.context.title).toEqual('foo');
+
+      spaceContext.entryTitle.returns('bar');
+      this.$apply();
       expect(scope.context.title).toEqual('bar');
-      expect(scope.context.title).not.toEqual(oldTitle);
     });
   });
 
@@ -121,49 +115,89 @@ describe('Entry Editor Controller', function () {
     sinon.assert.called(scope.validate);
   });
 
-  // Prevents badly created fields via the API from breaking the editor
-  describe('creates field structure if any fields are null', function() {
+
+  /**
+   * This tests that the EntryEditorController creates placeholders for
+   * primitive types and empty collections. See `setupFieldLocales()`.
+   * The test is very flaky and requires a new controller for each test
+   * due to the placeholder validation being done when the controller is being
+   * created. See BUG#6696
+   */
+  describe('ensures that placeholders are created for empty fields',
+  function() {
+    //We are creating a controller with a specific set of scope data for each
+    //test because the controller does validation upon creation.
+    var $controller, scope;
     beforeEach(function() {
-      scope.spaceContext.publishedTypeForEntry = sinon.stub();
-      scope.spaceContext.publishedTypeForEntry.returns({
-        data: {
-          fields: [
-            {id: 'field1'},
-            {id: 'field2'},
-            {id: 'field3', localized: true}
-          ]
-        }
-      });
-      this.atStub = sinon.stub();
+      /**
+       * Since the controller runs validations on the data as soon as it's
+       * created, we need to create the controller manually in each test to
+       * ensure that the `cleanupEntryFields()` function is called. It seems
+       * like having a global controller doesn't work because of the `::` eval
+       * once feature of the `$watchGroup()` in `cleanupEntryFields()`
+       */
+      $controller = this.$inject('$controller');
+      // Start off with a fresh scope just to be safe since the watcher may
+      // have been executed before.
+      var $rootScope = this.$inject('$rootScope');
+      scope = $rootScope.$new();
       this.setStub = sinon.stub();
-      this.atStub.returns({
-        set: this.setStub
-      });
-      scope.otDoc = {
-        doc: {
-          at: this.atStub
-        }
+      this.atStub = sinon.stub().returns({set: this.setStub});
+      scope.otDoc = {doc: {at: this.atStub}, state: {}};
+    });
+
+    it('should check that placeholders are created for empty objects',
+    function() {
+      scope.contentType.data = {
+        fields: [
+          {id: 'a', localized: true},
+        ]
       };
       scope.entry.data.fields = {
-        field1: {'en-US': 'field1'},
-        field2: null,
-        field3: null
+        'a': {},
       };
-      scope.$digest();
+      $controller('EntryEditorController', {$scope:scope});
+      scope.$apply();
+      sinon.assert.calledWith(this.setStub,
+        {'en-US': undefined, 'de-DE': undefined});
     });
 
-    it('calls set twice', function() {
-      sinon.assert.calledTwice(this.setStub);
+    it('should check that placeholders are created for empty arrays and ' +
+      'that the default locale is set for a non-localized field',
+    function(){
+      scope.contentType.data = {
+        fields: [
+          {id: 'a', localized: false},
+        ]
+      };
+      scope.entry.data.fields = {
+        'a': [],
+      };
+      $controller('EntryEditorController', {$scope:scope});
+      scope.$apply();
+      sinon.assert.calledWith(this.setStub, {'en-US': undefined});
     });
 
-    it('calls set for field2', function() {
-      sinon.assert.calledWith(this.setStub, {'en-US': null});
+    it('should check that placeholders are created for primitive types',
+    function() {
+      scope.contentType.data = {
+        fields: [
+          {id: 'a', localized: true},
+          {id: 'b', localized: true},
+          {id: 'c', localized: true},
+        ]
+      };
+      scope.entry.data.fields = {
+        'a': 3,
+        'b': 'string',
+        'c': true
+      };
+      $controller('EntryEditorController', {$scope:scope});
+      scope.$apply();
+      sinon.assert.calledWith(this.setStub,
+        {'en-US': undefined, 'de-DE': undefined});
+      sinon.assert.calledThrice(this.setStub);
     });
-
-    it('calls set for field3', function() {
-      sinon.assert.calledWith(this.setStub, {'en-US': null, 'de-DE': null});
-    });
-
   });
 
 });

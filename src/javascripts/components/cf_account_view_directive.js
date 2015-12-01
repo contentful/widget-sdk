@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.directive('cfAccountView', ['$window', '$rootScope', '$injector', function($window, $rootScope, $injector) {
+.directive('cfAccountView', ['$injector', function($injector) {
   var authentication = $injector.get('authentication');
   var logger         = $injector.get('logger');
   var TheAccountView = $injector.get('TheAccountView');

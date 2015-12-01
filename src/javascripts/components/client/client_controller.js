@@ -10,7 +10,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var spaceContext       = $injector.get('spaceContext');
   var authentication     = $injector.get('authentication');
   var tokenStore         = $injector.get('tokenStore');
-  var spaceTools         = $injector.get('spaceTools');
   var notification       = $injector.get('notification');
   var analytics          = $injector.get('analytics');
   var authorization      = $injector.get('authorization');
@@ -21,8 +20,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var ReloadNotification = $injector.get('ReloadNotification');
   var TheAccountView     = $injector.get('TheAccountView');
   var TheStore           = $injector.get('TheStore');
-  var TheLocaleStore     = $injector.get('TheLocaleStore');
-  var moment             = $injector.get('moment');
   var OrganizationList   = $injector.get('OrganizationList');
 
   $controller('TrialWatchController', {$scope: $scope});
@@ -81,17 +78,10 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function stateChangeSuccessHandler(event, toState, toStateParams, fromState, fromStateParams) {
+    // TODO should be done be `onEnter` and `onExit` callbacks of the 'accounts' state.
     TheAccountView.check();
+    // TODO should be done by purpse handler, e.g. in the analytics service
     analytics.stateActivated(toState, toStateParams, fromState, fromStateParams);
-
-    if ($scope.spaces !== null && $scope.$stateParams.spaceId !== spaceContext.getId() && !TheAccountView.isActive()) {
-      var space = spaceTools.getFromList($scope.$stateParams.spaceId, $scope.spaces);
-      if (space) {
-        setSpaceContext(space);
-      } else if (!$scope.$stateParams.spaceId && $scope.spaces && $scope.spaces.length > 0) {
-        setSpaceContext($scope.spaces[0]);
-      }
-    }
   }
 
   function spaceAndTokenWatchHandler(collection) {
@@ -188,12 +178,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     $scope.spaces = token.spaces;
   }
 
-  function setSpaceContext(space) {
-    spaceContext.resetWithSpace(space);
-    TheLocaleStore.resetWithSpace(space);
-    analytics.setSpace(space);
-  }
-
   function newVersionCheck() {
     revision.hasNewVersion().then(function (hasNewVersion) {
       if (hasNewVersion) {
@@ -207,16 +191,17 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function showOnboardingIfNecessary() {
-    var now = moment();
-    var created = moment($scope.user.sys.createdAt);
-    var age = now.diff(created, 'days');
     var seenOnboarding = TheStore.get('seenOnboarding');
-    if (age < 7 && !seenOnboarding && _.isEmpty($scope.spaces)) {
-      TheStore.set('seenOnboarding', true);
-      $timeout(function () {
+    var signInCount = $scope.user.signInCount;
+    if (signInCount === 1 && !seenOnboarding) {
+      showUserPersonaOnboardingModal()
+      .finally(function(organizationId) {
+        if (_.isEmpty($scope.spaces)) {
+          showSpaceTemplatesModal(organizationId);
+        }
+        TheStore.set('seenOnboarding', true);
         analytics.track('Viewed Onboarding');
-        $timeout(showSpaceTemplatesModal, 1500);
-      }, 750);
+      });
     }
   }
 
@@ -229,6 +214,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     var scope = _.extend($scope.$new(), {
       organizations: OrganizationList.getWithOnTop(organizationId)
     });
+
     analytics.track('Viewed Space Template Selection Modal');
     modalDialog.open({
       title: 'Space templates',
@@ -239,12 +225,28 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     .promise
     .then(function (template) {
       if(template){
-        analytics.track('Created Successful Space Template');
+        analytics.track('Created Space Template', {template: template.name});
         $rootScope.$broadcast('templateWasCreated');
         refreshContentTypes();
       }
     })
-    .catch(refreshContentTypes);
+    .catch(function() {
+      analytics.track('Closed Space Template Selection Modal');
+      refreshContentTypes();
+    });
+  }
+
+  function showUserPersonaOnboardingModal() {
+    return modalDialog.open({
+      title: 'Select Persona', // Not displayed, just for analytics
+      template: 'user_persona_dialog',
+      scopeData: {
+        userName: $scope.user.firstName
+      },
+      backgroundClose: false,
+      ignoreEsc: true
+    })
+    .promise;
   }
 
   function refreshContentTypes() {

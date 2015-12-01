@@ -1,39 +1,26 @@
 'use strict';
-angular.module('contentful').controller('FormWidgetsController', ['$scope', '$injector', function FormWidgetsController($scope, $injector){
+angular.module('contentful')
+.controller('FormWidgetsController',
+  ['$scope', '$injector', 'contentType', 'editingInterface',
+  function($scope, $injector, contentType, editingInterface) {
   var controller        = this;
-  var editingInterfaces = $injector.get('editingInterfaces');
   var TheLocaleStore    = $injector.get('TheLocaleStore');
   var widgets           = $injector.get('widgets');
 
-  $scope.$watch(getContentTypeFields,                updateEditingInterface, true);
-  $scope.$watch(getAvailableWidgets,                 updateWidgets, true);
-  $scope.$watch(getActiveLocaleCodes,                updateWidgets, true);
-  $scope.$watch(function() { return TheLocaleStore.getDefaultLocale();}, updateWidgets);
-  $scope.$watch('preferences.showDisabledFields',    updateWidgets);
-  $scope.$watch('errorPaths',                        updateWidgets);
+  controller.contentType = contentType;
+  controller.editingInterface = editingInterface;
+  controller.updateWidgets = updateWidgets;
 
-  this.editingInterface = null;
-  this.updateWidgets = updateWidgets;
+  $scope.$watch(getActiveLocaleCodes,             updateWidgets, true);
+  $scope.$watch('preferences.showDisabledFields', updateWidgets);
+  $scope.$watch('errorPaths',                     updateWidgets);
 
-  function updateEditingInterface() {
-    if (controller.contentType) {
-      editingInterfaces.forContentTypeWithId(controller.contentType, 'default')
-      .then(function(interf) {
-        controller.editingInterface = interf;
-      });
-    }
-  }
 
   /**
    * Retrieve the widgets from the current editingInterface, build the
    * form widgets, and add them to the scope.
    */
   function updateWidgets() {
-    if (!controller.editingInterface) {
-      $scope.widgets = [];
-      return;
-    }
-
     $scope.widgets = _(controller.editingInterface.data.widgets)
       .filter(widgetIsVisible)
       .map(buildWidget)
@@ -53,14 +40,6 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
     return renderable;
   }
 
-
-  function getAvailableWidgets() {
-    return dotty.get(controller, 'editingInterface.data.widgets');
-  }
-
-  function getContentTypeFields() {
-    return dotty.get(controller, 'contentType.data.fields');
-  }
 
   function getActiveLocaleCodes() {
     return _.pluck(TheLocaleStore.getActiveLocales(), 'internal_code');
@@ -89,7 +68,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
 
   function getErrorLocales(field) {
     return $scope.errorPaths && _.map($scope.errorPaths[field.id], function (code) {
-      return _.find($scope.spaceContext.space.data.locales, {internal_code: code});
+      return _.find(TheLocaleStore.getPrivateLocales(), {internal_code: code});
     });
   }
 

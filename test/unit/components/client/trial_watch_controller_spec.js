@@ -3,34 +3,68 @@
 describe('Trial Watch controller', function () {
   var scope;
   var trialWatchCtrl;
-  var ownerStub;
   var broadcastStub;
-  var momentStub;
+  var modalDialogMock;
+  var momentStub, momentDiffStub, momentIsAfterStub;
   var $window, $q;
 
   function makeSpace(organization) {
+    organization.sys = {id: '42'};
     return {
       data: {
         organization: organization
-      },
-      isOwner: ownerStub
+      }
     };
   }
 
+  function makeScopeUserOwnScopeSpaceOrganization () {
+    makeUserOwnOrganization(scope.user, scope.spaceContext.space.data.organization);
+  }
+
+  function makeUserOwnOrganization (user, organization) {
+    user.organizationMemberships = [{
+      organization: organization,
+      role: 'owner'
+    }];
+  }
+
+  function trialHoursLeft( hours ) {
+    momentDiffStub.returns(Math.floor(hours));
+    momentIsAfterStub.returns( hours !== 0 );
+  }
+
   beforeEach(function () {
+    momentDiffStub = sinon.stub();
+    momentIsAfterStub = sinon.stub();
+    momentStub = sinon.stub();
+    momentStub.returns({
+      diff: momentDiffStub,
+      isAfter: momentIsAfterStub
+    });
+
+    modalDialogMock = {
+      open: sinon.stub().returns({
+          promise: {
+            'finally': function() {}
+          }
+      })
+    };
+
     module('contentful/test', function ($provide) {
-      momentStub = sinon.stub();
       $provide.value('moment', momentStub);
+      $provide.value('modalDialog', modalDialogMock);
     });
 
     inject(function ($rootScope, $controller, _$window_, _$q_) {
       scope = $rootScope.$new();
+      scope.user = {
+        organizationMemberships: []
+      };
+
       broadcastStub = sinon.stub($rootScope, '$broadcast');
 
       $window = _$window_;
       $q = _$q_;
-
-      ownerStub = sinon.stub();
 
       trialWatchCtrl = $controller('TrialWatchController', {
         $scope: scope
@@ -42,42 +76,30 @@ describe('Trial Watch controller', function () {
     broadcastStub.restore();
   });
 
-  it('gets no persistent notification', function () {
-    scope.user = null;
-    scope.spaceContext = {
-      space: null
-    };
-    scope.$digest();
-    sinon.assert.notCalled(broadcastStub);
-  });
-
-  describe('removes an existing notification', function () {
+  describe('without trial user', function () {
     beforeEach(function () {
-      scope.user = {};
       scope.spaceContext = {
-        space: makeSpace({})
+        space: makeSpace({
+          subscriptionState: 'testState'
+        })
       };
       scope.$digest();
     });
 
-    it('calls broadcast', function () {
-      sinon.assert.called(broadcastStub);
-    });
+    describe('removal of old notification (e.g. after switch orga)', function () {
+      it('calls broadcast to remove last notification', function () {
+        sinon.assert.calledOnce(broadcastStub);
+      });
 
-    it('calls broadcast with null', function () {
-      expect(broadcastStub.args[0][1]).toBeNull();
+      it('calls broadcast with null', function () {
+        expect(broadcastStub.args[0][1]).toBeNull();
+      });
     });
   });
 
-  describe('shows a persistent notification', function () {
-    var diffStub;
-
+  describeZuoraAndLegacy('shows a persistent notification', function (usesZuora) {
     beforeEach(function () {
       jasmine.clock().install();
-      diffStub = sinon.stub();
-      momentStub.returns({
-        diff: diffStub
-      });
     });
 
     afterEach(function () {
@@ -86,72 +108,122 @@ describe('Trial Watch controller', function () {
 
     describe('for a trial subscription', function () {
       beforeEach(function(){
-        scope.user = {};
         scope.spaceContext = {
           space: makeSpace({
+            isNewSubscriptionSystemEnabled: usesZuora,
             subscriptionState: 'trial',
-            trialPeriodEndsAt: '2013-12-13T13:28:44Z'
+            trialPeriodEndsAt: '2013-12-13T13:28:44Z',
+            name: 'TEST_ORGA_NAME'
           })
         };
-        ownerStub.returns(true);
       });
 
-      describe('for hours periods', function () {
+      describe('already ended', function () {
+        beforeEach(function() {
+          trialHoursLeft(0);
+        });
+
+        describe('for user owning the organization', function () {
+          beforeEach(function() {
+            makeScopeUserOwnScopeSpaceOrganization();
+            scope.$digest();
+          });
+
+          itShowsAMessage(/Your trial has ended.*TEST_ORGA_NAME organization/);
+          itShowsAMessage(/insert your billing information/);
+
+          itShowsAnActionMessage();
+
+          itHasAnAction();
+
+          if (usesZuora) {
+            itOpensPaywallForSettingUpPayment();
+          } else {
+            itDoesNotOpenPaywall();
+          }
+        });
+
+        describe('for user not owning the organization', function () {
+          beforeEach(function () {
+            scope.$digest();
+          });
+
+          itShowsAMessage(/Your trial has ended.*TEST_ORGA_NAME organization/);
+          itShowsAMessage(/contact the account owner/);
+
+          itDoesNotShowAnActionMessage();
+
+          itDoesNotHaveAnAction();
+
+          if (usesZuora) {
+            itOpensPaywallToNotifyTheUser();
+          } else {
+            itDoesNotOpenPaywall();
+          }
+        });
+      });
+
+      describe('ending in less than an hour', function () {
         beforeEach(function () {
-          diffStub.returns(20);
+          makeScopeUserOwnScopeSpaceOrganization();
+          trialHoursLeft(0.2);
           scope.$digest();
         });
 
-        it('shows a message', function () {
-          expect(broadcastStub.args[0][1].message).toMatch(/20(.*)hours left in trial/);
-        });
+        itShowsAMessage(/0(.*)hours left in trial/);
 
-        it('shows an action message', function () {
-          expect(broadcastStub.args[0][1].actionMessage).toMatch(/upgrade/i);
-        });
+        itShowsAnActionMessage();
 
-        it('has an action', function () {
-          expect(typeof broadcastStub.args[0][1].action).toBe('function');
-        });
+        itHasAnAction();
+
+        itDoesNotOpenPaywall();
       });
 
-      describe('for days periods', function () {
+      describe('ending in less than a day', function () {
         beforeEach(function () {
-          diffStub.returns(76);
-          scope.user = {sys: {}};
+          makeScopeUserOwnScopeSpaceOrganization();
+          trialHoursLeft(20);
           scope.$digest();
         });
 
-        it('shows an action message', function () {
-          expect(broadcastStub.args[0][1].actionMessage).toMatch(/upgrade/i);
+        itShowsAMessage(/20(.*)hours left in trial/);
+        itShowsAMessage(/access to all features for 20 more hours/);
+
+        itShowsAnActionMessage();
+
+        itHasAnAction();
+
+        itDoesNotOpenPaywall();
+      });
+
+      describe('ending in a few days', function () {
+        beforeEach(function () {
+          makeScopeUserOwnScopeSpaceOrganization();
+          trialHoursLeft(76);
+          scope.$digest();
         });
 
-        it('has an action', function () {
-          expect(typeof broadcastStub.args[0][1].action).toBe('function');
-        });
+        itShowsAnActionMessage();
+
+        itHasAnAction();
+
+        itDoesNotOpenPaywall();
       });
 
       describe('no action', function () {
         beforeEach(function () {
-          ownerStub.returns(false);
-          scope.user = {};
           scope.$digest();
         });
 
-        it('does not show an action message', function () {
-          expect(broadcastStub.args[0][1].actionMessage).toBeUndefined();
-        });
+        itDoesNotShowAnActionMessage();
 
-        it('does not have an action', function () {
-          expect(broadcastStub.args[0][1].action).toBeUndefined();
-        });
+        itDoesNotHaveAnAction();
       });
 
     });
 
     describe('for a free subscription', function () {
       beforeEach(function(){
-        scope.user = {};
         scope.spaceContext = {
           space: makeSpace({
             subscriptionState: 'active',
@@ -161,43 +233,97 @@ describe('Trial Watch controller', function () {
             }
           })
         };
-      });
+    });
 
       describe('with an action', function () {
         beforeEach(function () {
-          ownerStub.returns(true);
+          makeScopeUserOwnScopeSpaceOrganization();
           scope.$digest();
         });
 
-        it('shows a message', function () {
-          expect(broadcastStub.args[0][1].message).toMatch('free version');
-        });
+        itShowsAMessage('free version');
 
-        it('shows an action message', function () {
-          expect(broadcastStub.args[0][1].actionMessage).toMatch(/upgrade/i);
-        });
+        itShowsAnActionMessage();
 
-        it('has an action', function () {
-          expect(typeof broadcastStub.args[0][1].action).toBe('function');
-        });
+        itHasAnAction();
+
+        itDoesNotOpenPaywall();
       });
 
       describe('no action', function () {
         beforeEach(function () {
-          ownerStub.returns(false);
-          scope.user = {};
           scope.$digest();
         });
 
-        it('does not show an action message', function () {
-          expect(broadcastStub.args[0][1].actionMessage).toBeUndefined();
-        });
+        itDoesNotShowAnActionMessage();
 
-        it('does not have an action', function () {
-          expect(broadcastStub.args[0][1].action).toBeUndefined();
-        });
+        itDoesNotHaveAnAction();
+
+        itDoesNotOpenPaywall();
       });
     });
   });
 
+  function itShowsAMessage (match) {
+    it('shows a message', function () {
+      expect(broadcastStub.args[0][1].message).toMatch(match);
+    });
+  }
+
+  function itShowsAnActionMessage () {
+    it('shows an action message', function () {
+      expect(broadcastStub.args[0][1].actionMessage).toMatch(/upgrade/i);
+    });
+  }
+
+  function itDoesNotShowAnActionMessage () {
+    it('does not show an action message', function () {
+      expect(broadcastStub.args[0][1].actionMessage).toBeUndefined();
+    });
+  }
+
+  function itHasAnAction () {
+    it('has an action', function () {
+      expect(typeof broadcastStub.args[0][1].action).toBe('function');
+    });
+  }
+
+  function itDoesNotHaveAnAction () {
+    it('does not have an action', function () {
+      expect(broadcastStub.args[0][1].action).toBeUndefined();
+    });
+  }
+
+  function itOpensPaywallForSettingUpPayment () {
+    itOpensPaywall();
+
+    it('allows setting up payment', function () {
+      expect(modalDialogMock.open.args[0][0].scopeData.offerToSetUpPayment).toBe(true);
+    });
+  }
+
+  function itOpensPaywallToNotifyTheUser () {
+    itOpensPaywall();
+
+    it('does not allow setting up payment', function () {
+      expect(modalDialogMock.open.args[0][0].scopeData.offerToSetUpPayment).toBe(false);
+    });
+  }
+
+  function itOpensPaywall () {
+    it('opens the paywall modal dialog', function () {
+      expect(modalDialogMock.open.calledOnce).toBe(true);
+    });
+  }
+
+  function itDoesNotOpenPaywall () {
+    it('does not open the paywall modal dialog', function () {
+      expect(modalDialogMock.open.called).toBe(false);
+    });
+  }
+
+  function describeZuoraAndLegacy ( description, describeFn ) {
+    describe(description + ' not using Zuora', _.partial(describeFn, false));
+    describe(description + ' using Zuora',     _.partial(describeFn, true));
+  }
 });

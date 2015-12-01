@@ -556,6 +556,10 @@
     "name": "English (Canada)"
   },
   {
+    "code": "en-EU",
+    "name": "English (Europe)"
+  },
+  {
     "code": "en-GU",
     "name": "English (Guam)"
   },

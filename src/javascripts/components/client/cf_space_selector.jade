@@ -22,7 +22,7 @@
           ng-class="{selected: space.getId() === spaceContext.getId()}")
           | {{space.data.name}}
     .space-selector__group(
-      ng-if="permissionController.canCreateSpace()")
+      ng-show="permissionController.canCreateSpace()")
       .space-selector__add-button.context-menu__item(
         role="menuitem"
         ng-click="showCreateSpaceDialog()")

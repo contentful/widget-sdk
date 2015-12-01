@@ -2,10 +2,31 @@
 
 ## Preparations
 
-Run `./Installfile`. This file ensures that both npm and bower modules are
-installed.
+Make sure you are using Node version specified in the [`.nvmrc`]('./.nvmrc')
+file and the default NPM version that comes with that Node version.
+Then run `./Installfile` to install all npm and bower dependencies
 
-## Gulp
+## Dependencies
+
+We use Bower and NPM with at shrinkwrap file to manage our dependecies. If you
+add a new dependency, prefer NPM over Bower.
+
+Production dependencies in NPM are all those packages used on Travis to build
+and test. Dev dependencies on the other hand are used to run tests locally,
+build the documentation, etc.
+
+To update a dependency, run
+~~~js
+npm install --save{-dev} my-dep@~1.2.3
+npm shrinkwrap
+./bin/clean-shrinkwrap
+~~~
+Make sure that `git diff npm-shrinkwrap.json` yield the correct result.
+
+You can check for outdated dependencies with `npm outdated`.
+
+
+## Running the dev server
 
 To start developing, run `gulp clean` (optional), then `gulp all`.
 That compiles all the files into the `public` directory.
@@ -16,7 +37,8 @@ index.html.
 
 The serve task also watches all javascript files, templates and
 stylesheets and recompiles everything back into public as soon as
-anything changes.
+anything changes. If you want to disable watching, set `NO_WATCHING=1` in
+your environment.
 
 Not watched are the `user_interface` module and all the vendor stuff
 (stylesheets and scripts). If you update one of those, run `gulp all`
@@ -24,6 +46,7 @@ again.
 
 To show `stdout` of the commands `gulp` will run, use the `--verbose`
 flag. For example `gulp icons -v`.
+
 
 ## Documentation
 
@@ -36,7 +59,8 @@ To continuously rebuild the documentation use `gulp docs/watch`.
 
 ## Testing
 
-For more information on testing consult the generated guides on the documentation or refer to [testing.md](docs/guides/testing.md)
+For more information on testing consult the generated guides on the
+documentation or refer to [testing.md](docs/guides/testing.md)
 
 ## Styleguide
 
@@ -46,29 +70,12 @@ is served by gulp at `/styleguide`.
 If you wish to generate it manually, you can run `gulp
 generate-styleguide` and then check `public/styleguide`
 
-If you wish to publish the styleguide, run `npm run publish-styleguide`,
-which will generate the styleguide and publish it to the `gh-pages`
-branch which will make it available at [http://contentful.github.io/user_interface/](http://contentful.github.io/user_interface/).
+If you wish to publish the styleguide, run `npm run publish-styleguide`, which
+will generate the styleguide and publish it to the `gh-pages` branch which will
+make it available as under <http://contentful.github.io/user_interface/>
 
-Don't forget to provide an appropriate commit message outlining the
-changes.
+Don't forget to provide an appropriate commit message outlining the changes.
 
-
-## Live Reloading
-
-We have setup live reloading for CSS only, both in the app and the
-styleguide. It uses [fb-flo](https://facebook.github.io/fb-flo/) so make
-sure you install [the extension](https://chrome.google.com/webstore/detail/fb-flo/ahkfhobdidabddlalamkkiafpipdfchp).
-
-Set it up by adding a new site in the Configuration pane, with settings:
-- hostname pattern: app.joistio.com
-- flo server hostname: 10.11.12.13
-- flo server port: 9000
-
-Once `gulp serve` is running, go to the flo tab in the developer tools
-and make sure it has connected. The connection will probably drop when
-you kill `gulp serve` so remember to refresh the page or click the "try
-again" button.
 
 ## Builds and Deployment
 
@@ -79,15 +86,9 @@ We automatically deploy three branches to different hosts
 * `production` to `app.contentful.com`
 
 Deployments are triggered by pushing commits to one of these branches.
-First the push will trigger a build on Travis. On success, this will
-run the `bin/trigger-packagebot` which will in turn tell the [package
-bot][] to build a package. The package bot will run the `Packagefile`
-script, collect all Debian packages and install them on the
-corresponding server.
-
-The package is created by `gulp build` and includes all the files
-from the `build` directory. To test the build you can run `gulp
-serve-production`
+The packages will be build on travis using `gulp build` and
+`bin/travis-prepare-deploy`. To test a build locally run `gulp build
+serve-production`. All files contained in `./build` are part of the package.
 
 The built package still includes the dev host (i.e. `joistio.com`) in
 its files. The are replaced on the servers by the `bin/process_hosts`
@@ -96,8 +97,6 @@ script.
 If you wish to skip the tests on the `preview` environment for purposes
 of showcasing unfinished work, you can add `[skip tests]` to your commit
 message.
-
-[package bot]: https://github.com/contentful/package-bot
 
 
 ## Client library development

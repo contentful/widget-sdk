@@ -19,7 +19,8 @@ describe('Modal dialog service', function () {
       $('<div class="client"></div>').appendTo('body');
       dialog = modalDialog.open({
         scope: scope,
-        message: 'dialog message'
+        message: 'dialog message',
+        title: 'TITLE'
       });
       dialog.promise.then(successStub)
                     .catch(errorStub);
@@ -44,7 +45,7 @@ describe('Modal dialog service', function () {
     });
 
     it('sets title', function () {
-      expect(dialog.domElement.find('.title').html()).toMatch(dialog.params.title);
+      expect(dialog.domElement.find('header h1').html()).toMatch('TITLE');
     });
 
     it('sets content', function () {

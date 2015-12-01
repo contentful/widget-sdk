@@ -9,7 +9,7 @@
 #
 
 export SLIMERJSLAUNCHER=$(which firefox)
-SLIMERJS_BIN="slimerjs-0.9.5/slimerjs"
+SLIMERJS_BIN="slimerjs-0.9.6/slimerjs"
 
 if [[ ! -x "${SLIMERJS_BIN}" ]]; then
   exit 1

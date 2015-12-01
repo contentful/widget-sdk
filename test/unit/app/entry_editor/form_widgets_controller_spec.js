@@ -1,155 +1,139 @@
 'use strict';
 
-describe('Form Widgets Controller', function () {
-  var controller, scope;
+describe('FormWidgetsController#widgets', function () {
+  var scope;
+  var field;
 
   beforeEach(function () {
-    var self = this;
+    var TheLocaleStore = this.TheLocaleStoreMock = {
+      getActiveLocales: sinon.stub(),
+      getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'}),
+      getPrivateLocales: sinon.stub().returns([{internal_code: 'en-US'}])
+    };
+
     module('contentful/test', function ($provide) {
-      self.TheLocaleStoreMock = {
-        getActiveLocales: sinon.stub(),
-        getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'})
-      };
-      $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
+      $provide.value('TheLocaleStore', TheLocaleStore);
     });
-    inject(function ($compile, $rootScope, $controller, cfStub, editingInterfaces, $q){
-      scope = $rootScope;
-      var space = cfStub.space('testSpace');
-      scope.spaceContext = cfStub.spaceContext(space, [
-        cfStub.contentTypeData('testType',  [cfStub.field('fieldA')]),
-        cfStub.contentTypeData('testType2', [cfStub.field('fieldB')]),
-      ]);
-      sinon.stub(editingInterfaces, 'forContentTypeWithId', function(contentType) {
-        // Do not attempt to load from remote
-        return $q.when(editingInterfaces.defaultInterface(contentType));
+
+    scope = this.$inject('$rootScope').$new();
+    scope.preferences = {};
+
+    var cfStub = this.$inject('cfStub');
+    var space = cfStub.space('testSpace');
+    this.contentType = cfStub.contentType(space, 'testType', 'testType');
+
+    field = cfStub.field('foo');
+    this.contentType.data.fields = [field];
+
+    this.createController = function () {
+      var editingInterfaces = this.$inject('editingInterfaces');
+      var $controller = this.$inject('$controller');
+      $controller('FormWidgetsController', {
+        $scope: scope,
+        contentType: this.contentType,
+        editingInterface: editingInterfaces.defaultInterface(this.contentType)
       });
-      controller = $controller('FormWidgetsController', {$scope: scope});
-      controller.contentType = scope.spaceContext.publishedContentTypes[0];
-      scope.$apply();
-    });
+      this.$apply();
+    };
+    this.createController();
   });
 
-  describe('the editing interface', function(){
-    it('updates the editing interface when the content type changes', function(){
-      expect(controller.editingInterface.data.widgets[0].fieldId).toBe('fieldA');
-      controller.contentType = scope.spaceContext.publishedContentTypes[1];
-      scope.$apply();
-      expect(controller.editingInterface.data.widgets[0].fieldId).toBe('fieldB');
+
+  it('provides the widget template', function() {
+    var widgets = this.$inject('widgets');
+    var widgetsStore = this.$inject('widgets/store');
+    widgetsStore.getMap = sinon.stub().resolves({
+      foo: {
+        template: '<span class=foo></span>',
+        fieldTypes: ['foo']
+      }
     });
+    widgets.setSpace({});
+    this.$apply();
+
+    field.type = 'foo';
+    this.createController();
+    expect(scope.widgets[0].template).toBe('<span class=foo></span>');
   });
 
-  describe('the list of widgets', function () {
-    var field;
+
+  describe('with disabled field', function () {
     beforeEach(function () {
-      inject(function (cfStub) {
-        scope.preferences = {};
-        controller.contentType.data.fields = [field = cfStub.field('foo', {disabled: true})];
-        scope.$apply(); // Trigger updateEditingInterface
-      });
+      field.disabled = true;
+      this.createController();
     });
 
-    it('should contain disabled fields if the flag is set', function () {
-      scope.preferences.showDisabledFields = true;
-      scope.$apply();
-      expect(scope.widgets.length).toBe(1);
-    });
-
-    it('should show fields that have errors even if disabled', function () {
-      scope.errorPaths = {'foo': true};
-      scope.$apply();
-      expect(scope.widgets.length).toBe(1);
-    });
-
-    it('should not show a field that is disabled', function () {
-      scope.$apply();
+    it('does not show the field', function () {
+      this.$apply();
       expect(scope.widgets.length).toBe(0);
     });
 
-
-    it('should update the widget template', function() {
-      field.disabled = false;
-      inject(function(widgets) {
-        widgets.registerWidget('foo', {
-          template: '<span class=foo></span>',
-          fieldTypes: ['foo']
-        });
-        widgets.registerWidget('bar', {
-          template: '<span class=bar></span>',
-          fieldTypes: ['bar']
-        });
-      });
-
-      field.type = 'foo';
-      scope.$apply();
-      expect(scope.widgets[0].template).toBe('<span class=foo></span>');
-
-      field.type = 'bar';
-      scope.$apply();
-      expect(scope.widgets[0].template).toBe('<span class=bar></span>');
+    it('shows the fields if the preference flag is set', function () {
+      scope.preferences.showDisabledFields = true;
+      this.$apply();
+      expect(scope.widgets.length).toBe(1);
     });
 
-    describe('locales for a field', function () {
-      beforeEach(function () {
-        this.TheLocaleStoreMock.getActiveLocales.returns([
-          {internal_code: 'en-US'},
-          {internal_code: 'de-DE'}
-        ]);
-        field.disabled = false;
-      });
+    it('shows the field if it has errors', function () {
+      scope.errorPaths = {'foo': true};
+      this.$apply();
+      expect(scope.widgets.length).toBe(1);
+    });
+  });
 
-      it('should contain active locales if localized', function () {
-        field.localized = true;
-        scope.$apply();
-        expect(scope.widgets[0].locales.length).toBe(2);
-      });
 
-      it('should contain only default locale if not localized', function () {
-        field.localized = false;
-        scope.$apply();
-        expect(scope.widgets[0].locales.length).toBe(1);
-        expect(scope.widgets[0].locales[0].internal_code).toBe('en-US');
-      });
 
-      it('should contain all error locales even if not localized', function () {
-        scope.errorPaths = { foo: ['en-US', 'de-DE'] };
-        field.localized = false;
-        scope.$apply();
-        expect(scope.widgets[0].locales.length).toBe(2);
-      });
+  describe('with multiple locales', function () {
+    beforeEach(function () {
+      var locales = [
+        {internal_code: 'en-US'},
+        {internal_code: 'de-DE'}
+      ];
+      this.TheLocaleStoreMock.getActiveLocales.returns(locales);
+      this.TheLocaleStoreMock.getPrivateLocales.returns(locales);
+    });
+
+    it('should contain active locales if localized', function () {
+      field.localized = true;
+      this.$apply();
+      expect(scope.widgets[0].locales.length).toBe(2);
+    });
+
+    it('should contain only default locale if not localized', function () {
+      field.localized = false;
+      this.$apply();
+      expect(scope.widgets[0].locales.length).toBe(1);
+      expect(scope.widgets[0].locales[0].internal_code).toBe('en-US');
+    });
+
+    it('should contain all error locales even if not localized', function () {
+      scope.errorPaths = { foo: ['en-US', 'de-DE'] };
+      field.localized = false;
+      this.$apply();
+      expect(scope.widgets[0].locales.length).toBe(2);
     });
 
     describe('with validation errors', function () {
       beforeEach(inject(function (cfStub){
-        scope.preferences = {};
-        controller.contentType.data.fields = [
+        this.contentType.data.fields = [
           cfStub.field('localized'),
           cfStub.field('nonlocalized', {localized: false})
         ];
-        scope.$apply();
+        scope.errorPaths = {
+          'localized': ['en-US', 'de-DE'],
+          'nonlocalized': ['en-US'],
+        };
+        this.createController();
       }));
 
-      describe('fields with errors', function () {
-        beforeEach(function () {
-          scope.errorPaths = {
-            'localized': ['en-US', 'de-DE'],
-            'nonlocalized': ['en-US'],
-          };
-        });
 
-        it('should display all locales for localized fields', function () {
-          scope.$apply();
-          expect(scope.widgets[0].locales.length).toBe(2);
-        });
-
-        it('should only display the default locale for non-localized fields', function () {
-          scope.$apply();
-          expect(scope.widgets[1].locales.length).toBe(1);
-        });
+      it('displays all locales for localized fields', function () {
+        expect(scope.widgets[0].locales.length).toBe(2);
       });
 
+      it('displays the default locale for non-localized fields', function () {
+        expect(scope.widgets[1].locales.length).toBe(1);
+      });
     });
   });
-
-
-
 });

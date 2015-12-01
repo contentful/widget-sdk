@@ -315,4 +315,47 @@ describe('LinkEditorController', function () {
     });
   });
 
+
+  /**
+   * This tests for the private method removeValue() which should always call
+   * $scope.otSubDoc.changeValue() with undefined and never null when removing
+   * links. In order to test removeValue() we need to call $scope.removeLink()
+   * and pass through both code paths that call removeValue(). To test both
+   * paths these conditions need to be met:
+   * a) $scope.linkSingle is true
+   * or
+   * b) $scope.linkSingle is false and the link being removed is the last link
+   *
+   * See BUG#6696
+   */
+  describe('ensures that $scope.removeLink() never uses null', function () {
+    beforeEach(function () {
+      createController();
+      scope.otSubDoc = {
+        changeValue: sinon.stub().returns($q.defer().promise)
+      };
+    });
+
+    it('is called when removing a link and linkSingle=true',
+    function() {
+      scope.linkSingle = true;
+      scope.links = [
+        {sys: {id: 'entry1'}},
+        {sys: {id: 'entry2'}},
+      ];
+      scope.removeLink();
+      sinon.assert.calledWith(scope.otSubDoc.changeValue, undefined);
+    });
+
+    it('is called when linkSingle=false and we\'re removing the last link ',
+    function() {
+      scope.linkSingle = false;
+      scope.links = [
+        {sys: {id: 'entry1'}},
+      ];
+      scope.removeLink();
+      sinon.assert.calledWith(scope.otSubDoc.changeValue, undefined);
+    });
+  });
+
 });

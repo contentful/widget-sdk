@@ -26,7 +26,7 @@ header.workbench-header
 
 
 .workbench-main
-  .workbench-main__middle-content.api-key-editor
+  .workbench-main__content.api-key-editor
     .ng-form.l-form--split(name="apiKeyForm" submit="save()")
       .l-form-left
         h2.section-title API General Info
@@ -49,7 +49,7 @@ header.workbench-header
         .l-form-row.device-link
           .l-form-controls
             .l-field-editor(ng-if="apiKey.data.accessToken")
-              a(href="http://docs.contentfulcda.apiary.io/#reference/entries/entries-collection/get-all-entries-of-a-space?console=1" target="_blank")
+              a(href="https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/entries" target="_blank")
                 i.fa.fa-terminal.fa-2x
                 |  Try it out on our API Console
 

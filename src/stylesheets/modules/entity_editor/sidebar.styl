@@ -5,7 +5,6 @@ $entity-sidebar-content()
   padding: $rhythm(1) 1.6rem
   overflow-y: auto
   overflow-x: hidden
-  border-left: 1px solid $colors.element-darkest
 
 
 .entity-sidebar__info-panel
@@ -13,9 +12,11 @@ $entity-sidebar-content()
   z-index: 1
   transition: transform .3s cubic-bezier(.38,.54,.5,.99)
   transform: translateX(100%)
+  border-left: 1px solid $colors.element-darkest
 
   &.x--show
-    transform: translateX(0)
+    // We need to hide the border
+    transform: translateX(-1px)
 
 
 .entity-sidebar

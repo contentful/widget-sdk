@@ -1,7 +1,7 @@
 sudo: false
+
+# Uses node version from .nvmrc
 language: node_js
-node_js:
-- '0.10'
 
 # Caching
 # http://docs.travis-ci.com/user/caching/
@@ -16,7 +16,7 @@ before_install:
 - npm config set always-auth true
 - npm config set _auth Y2ZkOjBlOWNhYWYyYjExMTliYjdkZjY=
 - npm config set registry https://contentful.registry.nodejitsu.com/
-- npm install -g npm@2.7.6
+- echo $'@contentful:registry=https://registry.npmjs.org/\n//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> ~/.npmrc
 install:
 - npm prune
 - bin/install_slimerjs
@@ -24,9 +24,11 @@ install:
 - npm list --depth 0 || true
 - bower install
 before_script:
-- gulp prepare-tests
-script: bin/travis-test && bin/travis-build
-before_deploy: bin/travis-prepare-deploy
+- bin/travis-build
+script:
+- bin/travis-test
+before_deploy:
+- bin/travis-prepare-deploy
 deploy:
   - provider: s3
     access_key_id: AKIAJBRHNHEFAA552JLQ

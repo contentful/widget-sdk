@@ -15,7 +15,11 @@
  * <entity-editor ot-doc-for="entity">
  *   <part-editor ot-path="['fields', 'fieldId', 'locale']" ot-path-types="['String', 'String', 'String']">
 */
-angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', function(ShareJS, cfSpinner, $q) {
+
+angular.module('contentful').directive('otPath', ['$injector', function($injector){
+  var $q          = $injector.get('$q');
+  var ShareJS     = $injector.get('ShareJS');
+  var logger      = $injector.get('logger');
 
   return {
     restrict: 'AC',
@@ -43,8 +47,6 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
    * @property {otSubDoc} doc
    * @property {function()} getValue
    * Returns the value at the path in the document or undefined if the path is not found
-   * @property {function()} changeValue
-   * Updates the value at the path to the new value. Returns a promise
    * @property {function()} changeStringValue
    * Update the string at the path to a new string.
    * Calculates the string difference using the algorithm from the ShareJS text binding to generate a insert and/or delete operation.
@@ -160,25 +162,40 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
         }
       }
 
+      /**
+       * @ngdoc method
+       * @name otSubDoc#changeValue
+       * @description
+       * Updates the value at the path to the new value.
+       *
+       * @param {any} value
+       * @returns {Promise<void>}
+       */
       function otChangeValue(value) {
-        if ($scope.otDoc.doc) {
-          var stopSpin = cfSpinner.start();
-          var cb = $q.callbackWithApply();
-          try {
-            $scope.otDoc.doc.setAt($scope.otPath, value, cb);
-          } catch(e) {
-            ShareJS.mkpathAndSetValue({
-              doc: $scope.otDoc.doc,
-              path: $scope.otPath,
-              types: $scope.otPathTypes,
-              value: value
-            }, cb);
-          } finally {
-            cb.promise.finally(stopSpin);
-            return cb.promise;
-          }
-        } else {
+        if (!$scope.otDoc.doc) {
           return $q.reject('No otDoc to push to');
+        }
+
+        // Ensure that no nulls are passed to `doc.setAt()`. See BUG#6696
+        if(value === null) {
+          var err = 'Do not call otChangeValue() with null. This causes ' +
+            'ShareJS to keep null placeholders for keys which we want to avoid.';
+          logger.logWarn(err);
+          return $q.reject(err);
+        }
+
+        var cb = $q.callbackWithApply();
+        try {
+          $scope.otDoc.doc.setAt($scope.otPath, value, cb);
+        } catch(e) {
+          ShareJS.mkpathAndSetValue({
+            doc: $scope.otDoc.doc,
+            path: $scope.otPath,
+            types: $scope.otPathTypes,
+            value: value
+          }, cb);
+        } finally {
+          return cb.promise;
         }
       }
 

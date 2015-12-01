@@ -191,21 +191,12 @@ describe('Client Controller', function () {
       spaceContext.getId = sinon.stub().returns(321);
     });
 
-    describe('changing route to a different space', function () {
-      beforeEach(function () {
-        var space = this.$inject('cfStub').space('123');
-        scope.spaces = [space];
-        scope.$stateParams.spaceId = '123';
-        childScope.$emit('$stateChangeSuccess');
-      });
-
-      it('switches to space', function () {
-        sinon.assert.calledWith(this.analyticsStubs.setSpace, scope.spaces[0]);
-      });
-
-      it('location in account flag is false', function() {
-        expect(TheAccountView.isActive()).toBeFalsy();
-      });
+    it('location in account flag is false', function() {
+      var space = this.$inject('cfStub').space('123');
+      scope.spaces = [space];
+      scope.$stateParams.spaceId = '123';
+      childScope.$emit('$stateChangeSuccess');
+      expect(TheAccountView.isActive()).toBeFalsy();
     });
 
   });

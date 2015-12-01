@@ -3,7 +3,6 @@
 angular.module('contentful')
 .controller('AssetEditorController', ['$scope', '$injector', function AssetEditorController($scope, $injector) {
   var $controller       = $injector.get('$controller');
-  var AssetContentType  = $injector.get('AssetContentType');
   var ShareJS           = $injector.get('ShareJS');
   var TheLocaleStore    = $injector.get('TheLocaleStore');
   var logger            = $injector.get('logger');
@@ -92,11 +91,11 @@ angular.module('contentful')
   });
 
   // Building the form
-  $scope.formWidgetsController = $controller('FormWidgetsController', {$scope: $scope});
-  $scope.formWidgetsController.contentType = {
-    data: AssetContentType,
-    getId: _.constant('asset'),
-  };
+  $scope.formWidgetsController = $controller('FormWidgetsController', {
+    $scope: $scope,
+    contentType: $scope.contentType,
+    editingInterface: $scope.editingInterface
+  });
 
   // File uploads
   $scope.$on('fileUploaded', function (event, file, locale) {

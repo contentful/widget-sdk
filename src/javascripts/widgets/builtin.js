@@ -1,5 +1,24 @@
 'use strict';
-angular.module('contentful').run(['widgets', function(widgets){
+angular.module('contentful')
+.factory('widgets/builtin', [function() {
+  var _widgets = {};
+
+  function registerWidget (id, desc) {
+    _widgets[id] = _.extend({}, desc, {
+      id: id,
+      options: COMMON_OPTIONS.concat(desc.options || [])
+    });
+  }
+
+  var COMMON_OPTIONS = [
+    {
+      param: 'helpText',
+      name: 'Help text',
+      type: 'Text',
+      description: 'This help text will show up below the field'
+    },
+  ];
+
   /**
    * @ngdoc type
    * @name Widget.Descriptor
@@ -15,7 +34,7 @@ angular.module('contentful').run(['widgets', function(widgets){
    */
 
   // Static widgets
-  widgets.registerWidget('sectionHeader',{
+  registerWidget('sectionHeader',{
     name: 'Section Header',
     template: '<h1 class="layout-field--section-header">{{widget.widgetParams.text}}</h1>',
     options: [
@@ -23,7 +42,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     ]
   });
 
-  widgets.registerWidget('infoText',{
+  registerWidget('infoText',{
     name: 'Info Text',
     template: '<p class="layout-field--info-text">{{widget.widgetParams.text}}</p>',
     options: [
@@ -31,20 +50,20 @@ angular.module('contentful').run(['widgets', function(widgets){
     ]
   });
 
-  widgets.registerWidget('sectionBreak',{
+  registerWidget('sectionBreak',{
     name: 'Section Break',
     template: '<hr class="layout-field--section-break" />'
   });
 
   // Field widgets
-  widgets.registerWidget('singleLine',{
+  registerWidget('singleLine',{
     fieldTypes: ['Text', 'Symbol'],
     name: 'Single Line',
     icon: 'singleline',
     template: '<cf-single-line-editor />'
   });
 
-  widgets.registerWidget('urlEditor', {
+  registerWidget('urlEditor', {
     fieldTypes: ['Symbol'],
     name: 'URL',
     icon: 'preview',
@@ -52,28 +71,28 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<cf-url-editor class="widget-url-editor"></cf-url-editor>'
   });
 
-  widgets.registerWidget('numberEditor',{
+  registerWidget('numberEditor',{
     fieldTypes: ['Integer', 'Number'],
     name: 'Number Editor',
     icon: 'number',
     template: '<div cf-number-editor class="cf-number-editor"></div>'
   });
 
-  widgets.registerWidget('multipleLine',{
+  registerWidget('multipleLine',{
     fieldTypes: ['Text'],
     name: 'Multiple Line',
     icon: 'multipleline',
     template: '<textarea class="form-control" ng-disabled="!otDoc.state.editable" ng-model="fieldData.value" ot-bind-text></textarea>'
   });
 
-  widgets.registerWidget('markdown',{
+  registerWidget('markdown',{
     fieldTypes: ['Text'],
     name: 'Markdown',
     icon: 'markdown',
     template: '<cf-markdown-editor-bridge />'
   });
 
-  widgets.registerWidget('dropdown',{
+  registerWidget('dropdown',{
     fieldTypes: ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'],
     name: 'Dropdown',
     icon: 'dropdown',
@@ -81,7 +100,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<div cf-dropdown-editor ng-model="fieldData.value" ot-bind-object-value="valuesController.selected"></div>'
   });
 
-  widgets.registerWidget('radio',{
+  registerWidget('radio',{
     fieldTypes: ['Text', 'Symbol', 'Integer', 'Number'],
     name: 'Radio',
     icon: 'radio',
@@ -89,7 +108,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<cf-radio-editor ng-model="fieldData.value" ot-bind-object-value="valuesController.selected"></cf-radio-editor>'
   });
 
-  widgets.registerWidget('boolean', {
+  registerWidget('boolean', {
     fieldTypes: ['Boolean'],
     name: 'Radio',
     icon: 'radio',
@@ -110,7 +129,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     }]
   });
 
-  widgets.registerWidget('rating',{
+  registerWidget('rating',{
     fieldTypes: ['Integer', 'Number'],
     name: 'Rating',
     icon: 'rating',
@@ -127,7 +146,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<cf-rating-editor ng-model="fieldData.value" ot-bind-object-value="rating"></cf-rating-editor>'
   });
 
-  widgets.registerWidget('datePicker',{
+  registerWidget('datePicker',{
     fieldTypes: ['Date'],
     name: 'Date Picker',
     template: '<div cf-datetime-editor class="widget-datetime-editor" ng-model="fieldData.value"></div>',
@@ -161,20 +180,20 @@ angular.module('contentful').run(['widgets', function(widgets){
     ]
   });
 
-  widgets.registerWidget('locationEditor',{
+  registerWidget('locationEditor',{
     fieldTypes: ['Location'],
     name: 'Location',
     // Show the google maps widget alongwith the location editor widget. They share the same 'location' model.
     template: '<cf-google-maps ng-model="location" ot-bind-object-value="location"></cf-google-maps><div cf-location-editor class="widget-location-editor" ng-model="fieldData.value" ot-bind-object-value="location"></div>'
   });
 
-  widgets.registerWidget('objectEditor',{
+  registerWidget('objectEditor',{
     fieldTypes: ['Object'],
     name: 'Object',
     template: '<div cf-object-editor class="cf-object-editor" ng-model="fieldData.value"></div>'
   });
 
-  widgets.registerWidget('listInput',{
+  registerWidget('listInput',{
     fieldTypes: ['Symbols'],
     defaultHelpText: 'Insert comma separated values',
     name: 'List',
@@ -182,13 +201,13 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<input cf-list-identity-fix class="form-control" ng-disabled="!otDoc.state.editable" ng-list cf-empty-list ng-model="fieldData.value" ot-bind-ng-model type="text">'
   });
 
-  widgets.registerWidget('fileEditor',{
+  registerWidget('fileEditor',{
     fieldTypes: ['File'],
     name: 'File',
     template: '<div class="widget-file-editor" cf-file-display cf-file-editor ng-model="fieldData.value" ot-bind-object-value="file"></div>'
   });
 
-  widgets.registerWidget('entryLinkEditor',{
+  registerWidget('entryLinkEditor',{
     fieldTypes: ['Entry'],
     name: 'Entry Link',
     icon: 'reference',
@@ -196,7 +215,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<div cf-entry-link-editor cf-link-editor ng-model="fieldData.value"></div>'
   });
 
-  widgets.registerWidget('assetLinkEditor',{
+  registerWidget('assetLinkEditor',{
     fieldTypes: ['Asset'],
     name: 'Asset Link',
     icon: 'media-reference',
@@ -204,7 +223,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<div cf-asset-link-editor cf-link-editor ng-model="fieldData.value"></div>'
   });
 
-  widgets.registerWidget('entryLinksEditor',{
+  registerWidget('entryLinksEditor',{
     fieldTypes: ['Entries'],
     name: 'Entry Links List',
     icon: 'references',
@@ -212,7 +231,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<div cf-entry-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
 
-  widgets.registerWidget('entryCardEditor',{
+  registerWidget('entryCardEditor',{
     fieldTypes: ['Entry'],
     name: 'Entry Card',
     icon: 'reference-card',
@@ -220,7 +239,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<div cf-entry-card-editor cf-link-editor ng-model="fieldData.value"></div>'
   });
 
-  widgets.registerWidget('entryCardsEditor',{
+  registerWidget('entryCardsEditor',{
     fieldTypes: ['Entries'],
     name: 'Entry Cards',
     icon: 'references-card',
@@ -228,7 +247,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<div cf-entry-card-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
 
-  widgets.registerWidget('assetLinksEditor',{
+  registerWidget('assetLinksEditor',{
     fieldTypes: ['Assets'],
     name: 'Asset Links List',
     icon: 'media-references',
@@ -236,7 +255,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<div cf-asset-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
 
-  widgets.registerWidget('assetGalleryEditor',{
+  registerWidget('assetGalleryEditor',{
     fieldTypes: ['Assets'],
     name: 'Asset Gallery',
     icon: 'media-previews',
@@ -244,14 +263,14 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<div cf-asset-gallery-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
 
-  widgets.registerWidget('slugEditor', {
+  registerWidget('slugEditor', {
     fieldTypes: ['Symbol'],
     name: 'Slug',
     icon: 'slug',
     template: '<cf-slug-editor class="widget-slug-editor"></cf-slug-editor>'
   });
 
-  widgets.registerWidget('ooyalaEditor',{
+  registerWidget('ooyalaEditor',{
     fieldTypes: ['Symbol'],
     name: 'Ooyala',
     icon: 'video-preview',
@@ -259,7 +278,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<cf-ooyala-editor></cf-ooyala-editor>'
   });
 
-  widgets.registerWidget('ooyalaMultiAssetEditor',{
+  registerWidget('ooyalaMultiAssetEditor',{
     fieldTypes: ['Symbols'],
     name: 'Ooyala (multiple assets)',
     icon: 'video-preview',
@@ -267,7 +286,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<cf-ooyala-multi-video-editor ng-model="fieldData.value" ot-bind-object-value="selectedAssets"></cf-ooyala-multi-video-editor>'
   });
 
-  widgets.registerWidget('kalturaEditor',{
+  registerWidget('kalturaEditor',{
     fieldTypes: ['Symbol'],
     name: 'Kaltura',
     icon: 'video-preview',
@@ -275,12 +294,14 @@ angular.module('contentful').run(['widgets', function(widgets){
     template: '<cf-kaltura-editor></cf-kaltura-editor>'
   });
 
-  widgets.registerWidget('kalturaMultiVideoEditor',{
+  registerWidget('kalturaMultiVideoEditor',{
     fieldTypes: ['Symbols'],
     name: 'Kaltura (multiple videos)',
     icon: 'video-preview',
     rendersHelpText: true,
     template: '<cf-kaltura-multi-video-editor ng-model="fieldData.value" ot-bind-object-value="selectedAssets"></cf-kaltura-multi-video-editor>'
   });
+
+  return _widgets;
 
 }]);

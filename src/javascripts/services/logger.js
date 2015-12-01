@@ -4,9 +4,12 @@
  * @ngdoc service
  * @name logger
  * @description
- * Service used to log errors and exceptions.
- * At the moment this is mostly based on Bugsnag.
- * See the Bugsnag service and https://bugsnag.com/docs/notifiers/js for more details
+ * Service used to log errors and exceptions.  At the moment this is
+ * mostly based on Bugsnag.  See the [`bugsnag` service][service] and
+ * the [Bugsnag documentation][docs] for more details
+ *
+ * [service]: api/contentful/app/service/bugsnag
+ * [docs]: https://bugsnag.com/docs/notifiers/js
 */
 angular.module('contentful').factory('logger', ['$injector', function ($injector) {
   var $window        = $injector.get('$window');
@@ -156,7 +159,9 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * @ngdoc method
      * @name logger#logWarn
      * @description
-     * Log with warn level
+     * Log a warning to Bugsnag with the 'Logged Warning' title and the
+     * given message.
+     *
      * @param {string} message
      * @param {object} metadata        Can take any of the expected bugsnag metadata properties.
      * @param {object} metadata.data   Shows up on the bugsnag data tab.
@@ -170,7 +175,18 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * @ngdoc method
      * @name logger#logServerError
      * @description
-     * Log an error from the Contentful API with error level
+     * Log an error from the Contentful API to Bugsnag.
+     *
+     * The Bugsnag title of the error will be 'Logged Server Error'.
+     *
+     * ~~~js
+     * cfServerAPICall()
+     * .then(handleSuccess)
+     * .catch(function(error) {
+     *   logger.logServerError('a server error', {error: error})
+     * })
+     * ~~~
+     *
      * @param {string} message
      * @param {object} metadata        Can take any of the expected bugsnag metadata properties.
      * @param {object} metadata.data   Shows up on the bugsnag data tab.

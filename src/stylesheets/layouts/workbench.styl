@@ -53,6 +53,16 @@ Markup:
 .workbench-header
   | Header
 .workbench-main
+  .workbench-main__content
+    code __content
+  .workbench-main__info-sidebar.x--show
+    code __info-sidebar
+.workbench-main
+  .workbench-main__content
+    code __content
+  .workbench-main__entity-sidebar
+    code __entity-sidebar
+.workbench-main
   .workbench-main__left-sidebar.styleguide-filled-box1
     code __left-sidebar
   .workbench-main__right-content.styleguide-filled-box2
@@ -60,23 +70,12 @@ Markup:
 .workbench-main
   .workbench-main__right-content.styleguide-filled-box2
     code __right-content
-.workbench-main
-  .workbench-main__middle-content.styleguide-filled-box2
-    code __middle-content
-    span &nbsp;With info sidebar
-  .workbench-main__info-sidebar.x--show
-    code __info-sidebar
-.workbench-main
-  .workbench-main__middle-content.styleguide-filled-box2
-    code __middle-content
-  .workbench-main__entity-sidebar
-    code __entity-sidebar
 .workbench-actions
   | Actions
 script
   | $('.workbench-main').click(function () {
   |   $(this).find('.workbench-main__info-sidebar').toggleClass('x--show')
-  |})
+  | })
 
 Styleguide 9.1
 */
@@ -95,7 +94,8 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
   display: flex
   overflow-y: auto
   flex: 1 1 auto
-  position relative
+  position: relative
+  z-index: 0
   // This hack is required for Safari to grow this element
   height: 100%;
 
@@ -107,6 +107,10 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
 
   &__content
     $workbench-content()
+    z-index: 1
+    flex-grow: 1
+    box-shadow: 1px 0 2px 0 rgba(black, 0.09)
+    border-right: 1px solid $colors.element-darkest
 
   &__left-sidebar
     $workbench-content()
@@ -135,11 +139,11 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
       padding: $rhythm(1) 1.6rem
       width: 30vw
       max-width: 30rem
-      border-left: 1px solid $colors.element-darkest
 
 
   &__entity-sidebar
     $workbench-content()
+    z-index: 0
     width: 30vw
     max-width: 30rem
     background: $colors.element-lightest
@@ -163,6 +167,7 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
   padding-left: $workbench-header-horizontal-padding
   padding-right: $workbench-header-horizontal-padding
   position relative
+  z-index: 1
   > *
     flex-shrink: 0
 
