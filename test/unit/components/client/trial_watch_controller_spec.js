@@ -97,7 +97,7 @@ describe('Trial Watch controller', function () {
     });
   });
 
-  describeZuoraAndLegacy('shows a persistent notification', function (usesZuora) {
+  describe('shows a persistent notification', function () {
     beforeEach(function () {
       jasmine.clock().install();
     });
@@ -110,7 +110,6 @@ describe('Trial Watch controller', function () {
       beforeEach(function(){
         scope.spaceContext = {
           space: makeSpace({
-            isNewSubscriptionSystemEnabled: usesZuora,
             subscriptionState: 'trial',
             trialPeriodEndsAt: '2013-12-13T13:28:44Z',
             name: 'TEST_ORGA_NAME'
@@ -136,11 +135,7 @@ describe('Trial Watch controller', function () {
 
           itHasAnAction();
 
-          if (usesZuora) {
-            itOpensPaywallForSettingUpPayment();
-          } else {
-            itDoesNotOpenPaywall();
-          }
+          itOpensPaywallForSettingUpPayment();
         });
 
         describe('for user not owning the organization', function () {
@@ -155,11 +150,7 @@ describe('Trial Watch controller', function () {
 
           itDoesNotHaveAnAction();
 
-          if (usesZuora) {
-            itOpensPaywallToNotifyTheUser();
-          } else {
-            itDoesNotOpenPaywall();
-          }
+          itOpensPaywallToNotifyTheUser();
         });
       });
 
@@ -320,10 +311,5 @@ describe('Trial Watch controller', function () {
     it('does not open the paywall modal dialog', function () {
       expect(modalDialogMock.open.called).toBe(false);
     });
-  }
-
-  function describeZuoraAndLegacy ( description, describeFn ) {
-    describe(description + ' not using Zuora', _.partial(describeFn, false));
-    describe(description + ' using Zuora',     _.partial(describeFn, true));
   }
 });
