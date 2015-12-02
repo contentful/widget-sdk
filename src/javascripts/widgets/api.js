@@ -5,14 +5,18 @@ angular.module('contentful')
   var Channel = $injector.get('widgets/channel');
   var TheLocaleStore = $injector.get('TheLocaleStore');
   var createIDMap = $injector.get('widgets/IDMap');
+  var $q = $injector.get('$q');
+  var APIClient = $injector.get('data/ApiClient');
+  var authentication = $injector.get('authentication');
 
   function API (space, fields, entryData, current, iframe) {
     this.channel = new Channel(iframe);
-    this.channel.handlers = createHandlers(space, iframe);
     this.idMap = createIDMap(fields);
     this.current = current;
     this.fields = fields;
     this.entryData = entryData;
+    this.apiClient = new APIClient(space.data.sys.id, authentication.token);
+    this.channel.handlers = createHandlers(this.apiClient, iframe);
   }
 
   API.prototype.connect = function () {
@@ -111,8 +115,18 @@ angular.module('contentful')
     });
   }
 
-  function createHandlers (space, iframe) {
+  function createHandlers (apiClient, iframe) {
     return {
+      callSpaceMethod: function (methodName, args) {
+        return apiClient[methodName].apply(apiClient, args)
+        .catch(function (err) {
+          return $q.reject({
+            code: err.code,
+            data: err.body
+          });
+        });
+      },
+
       setHeight: function (height) {
         iframe.setAttribute('height', height);
       }
