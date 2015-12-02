@@ -27,6 +27,9 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       var changedByWidget = false;
       var localeCode      = dotty.get(scope, 'locale.internal_code', null);
 
+      // @todo find a better way of hiding header in Zen Mode
+      var editorHeader    = el.closest('.workbench-main').siblings('.workbench-header').first();
+
       scope.isInitialized      = false;
       scope.firstSyncDone      = false;
       scope.hasCrashed         = false;
@@ -187,10 +190,15 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       function toggleZenMode() {
         scope.zen = !scope.zen;
 
-        if (scope.zen) { notification.clear(); }
-        // leaving Zen Mode - update main editor
-        if (!scope.zen) {
+        if (scope.zen) {
+          // hide leftovers from the previous screen
+          notification.clear();
+          editorHeader.hide();
+        } else {
+          // leaving Zen Mode - update main editor
           editor.setContent(getModelValue());
+          // show editor header again
+          editorHeader.show();
         }
       }
     }
