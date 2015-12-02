@@ -128,6 +128,7 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
 
   &__info-sidebar
     $workbench-content()
+    flex-shrink: 0
     background: $colors.element-lightest
     transition: all .3s cubic-bezier(.38,.54,.5,.99)
     &
@@ -145,6 +146,7 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     $workbench-content()
     z-index: 0
     width: 30vw
+    flex-shrink: 0
     max-width: 30rem
     background: $colors.element-lightest
     overflow: hidden
