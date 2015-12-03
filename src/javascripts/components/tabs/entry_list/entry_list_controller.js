@@ -1,18 +1,19 @@
 'use strict';
 
 angular.module('contentful').controller('EntryListController', ['$scope', '$injector', function EntryListController($scope, $injector) {
-  var $controller        = $injector.get('$controller');
-  var $q                 = $injector.get('$q');
-  var EntityListCache    = $injector.get('EntityListCache');
-  var Paginator          = $injector.get('Paginator');
-  var PromisedLoader     = $injector.get('PromisedLoader');
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var Selection          = $injector.get('Selection');
-  var analytics          = $injector.get('analytics');
-  var modalDialog        = $injector.get('modalDialog');
-  var ListQuery          = $injector.get('ListQuery');
-  var logger             = $injector.get('logger');
-  var spaceContext       = $injector.get('spaceContext');
+  var $controller           = $injector.get('$controller');
+  var $q                    = $injector.get('$q');
+  var EntityListCache       = $injector.get('EntityListCache');
+  var Paginator             = $injector.get('Paginator');
+  var PromisedLoader        = $injector.get('PromisedLoader');
+  var ReloadNotification    = $injector.get('ReloadNotification');
+  var Selection             = $injector.get('Selection');
+  var analytics             = $injector.get('analytics');
+  var modalDialog           = $injector.get('modalDialog');
+  var ListQuery             = $injector.get('ListQuery');
+  var logger                = $injector.get('logger');
+  var spaceContext          = $injector.get('spaceContext');
+  var responseAccessChecker = $injector.get('responseAccessChecker');
 
   $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('EntryListViewsController', {$scope: $scope});
@@ -122,17 +123,19 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
         return spaceContext.space.getEntries(query);
       });
     })
-    .then(function (entries) {
-      $scope.context.ready = true;
-      $scope.context.loading = false;
-      $scope.paginator.numEntries = entries.total;
-      $scope.entries = entries;
-      $scope.selection.switchBaseSet($scope.entries.length);
-      // Check if a refresh is necessary in cases where no pageParameters change
-      refreshEntityCaches();
-    })
+    .then(handleEntriesResponse, responseAccessChecker.withContext($scope.context))
     .catch(ReloadNotification.apiErrorHandler);
   };
+
+  function handleEntriesResponse(entries) {
+    $scope.context.ready = true;
+    $scope.context.loading = false;
+    $scope.paginator.numEntries = entries.total;
+    $scope.entries = entries;
+    $scope.selection.switchBaseSet($scope.entries.length);
+    // Check if a refresh is necessary in cases where no pageParameters change
+    refreshEntityCaches();
+  }
 
   function refreshEntityCaches() {
     if($scope.context.view.contentTypeId){

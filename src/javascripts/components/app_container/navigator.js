@@ -613,14 +613,18 @@ angular.module('contentful').config([
     }
 
     definition.template = [
-      '<div ng-show="context.ready">',
+      '<div ng-show="context.ready && !context.forbidden">',
         definition.template,
       '</div>',
-      '<div ng-hide="context.ready" class="workbench x--loading">',
+      '<div ng-show="!context.ready && !context.forbidden" class="workbench workbench-loading x--center">',
         '<div class="workbench-loading__spinner"></div>',
         '<div class="workbench-loading__message">',
           definition.loadingText,
         '</div>',
+      '</div>',
+      '<div ng-show="context.forbidden" class="workbench workbench-forbidden x--center">',
+        '<i class="fa fa-ban"></i>',
+        '<div class="workbench-forbidden__message">Forbidden</div>',
       '</div>'
     ].join('');
 
