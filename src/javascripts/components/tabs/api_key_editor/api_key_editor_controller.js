@@ -109,7 +109,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   controller.save = Command.create(save, {
     disabled: function () {
       return $scope.apiKeyForm.$invalid ||
-             $scope.permissionController.get('createApiKey', 'shouldDisable');
+             $scope.permissionController.shouldDisable('createApiKey');
     }
   });
 

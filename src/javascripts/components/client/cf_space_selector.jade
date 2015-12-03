@@ -1,6 +1,6 @@
 .space-selector.app-top-bar__child.app-top-bar--right-separator(
   ng-show="hasOrganizations"
-  ng-hide="spaces.length == 0 && !permissionController.canCreateSpaceInAnyOrg()")
+  ng-hide="spaces.length == 0 && !permissionController.canCreateSpaceInAnyOrganization()")
   a.app-top-bar__menu-trigger(
     role="button"
     cf-context-menu-trigger ng-click="clickedSpaceSwitcher()"

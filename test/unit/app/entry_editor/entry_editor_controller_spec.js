@@ -7,7 +7,6 @@ describe('Entry Editor Controller', function () {
     module('contentful/test', function ($provide) {
       $provide.removeControllers(
         'FormWidgetsController',
-        'PermissionController',
         'entityEditor/LocalesController',
         'entityEditor/StatusNotificationsController'
       );
@@ -30,7 +29,7 @@ describe('Entry Editor Controller', function () {
       });
       scope.entry = entry;
       scope.permissionController = {
-        can: sinon.stub().returns({can: true})
+        canPerformActionOnEntity: sinon.stub().returns(true)
       };
       controller = $controller('EntryEditorController', {$scope: scope});
       this.$apply();
@@ -52,13 +51,13 @@ describe('Entry Editor Controller', function () {
     });
 
     it('to disabled', function () {
-      scope.permissionController.can.withArgs('update', scope.entry.data).returns({can: true});
+      scope.permissionController.canPerformActionOnEntity.withArgs('update', scope.entry).returns(true);
       scope.$apply();
       expect(scope.otDoc.state.disabled).toBe(false);
     });
 
     it('to enabled', function () {
-      scope.permissionController.can.withArgs('update', scope.entry.data).returns({can: false});
+      scope.permissionController.canPerformActionOnEntity.withArgs('update', scope.entry).returns(false);
       scope.$apply();
       expect(scope.otDoc.state.disabled).toBe(true);
     });

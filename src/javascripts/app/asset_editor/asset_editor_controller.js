@@ -29,7 +29,7 @@ angular.module('contentful')
     $scope: $scope,
     entityLabel: 'asset',
     isReadOnly: function () {
-      return $scope.permissionController.can('update', $scope.asset.data).can;
+      return $scope.permissionController.canPerformActionOnEntity('update', $scope.asset);
     }
   });
 
@@ -57,7 +57,7 @@ angular.module('contentful')
 
   // OT Stuff
   $scope.$watch(function assetEditorEnabledWatcher(scope) {
-    return !scope.asset.isArchived() && scope.permissionController.can('update', scope.asset.data).can;
+    return !scope.asset.isArchived() && scope.permissionController.canPerformActionOnEntity('update', scope.asset);
   }, function assetEditorEnabledHandler(enabled, old, scope) {
     scope.otDoc.state.disabled = !enabled;
   });

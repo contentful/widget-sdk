@@ -264,6 +264,6 @@ angular.module('contentful')
   }
 
   function hasUpdatePermission() {
-    return $scope.permissionController.can('update', $scope.entry.data).can;
+    return $scope.permissionController.canPerformActionOnEntity('update', $scope.entry);
   }
 }]);

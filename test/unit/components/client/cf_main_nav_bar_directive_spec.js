@@ -2,53 +2,26 @@
 
 describe('Main nav bar directive', function () {
 
-  var container, scope, stubs;
+  var container, scope, PermissionController, stubs;
   var compileElement;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs([
-        'section', 'viewType', 'isHibernated'
-      ]);
-      $provide.value('authorization', {
-        isUpdated: sinon.stub(),
-        spaceContext: {}
-      });
-      $provide.value('environment', {
-        settings: {
-          filepicker: {
-            api_key: 'apikey'
-          }
-        }
-      });
+      stubs = $provide.makeStubs(['section', 'viewType', 'isHibernated']);
       $provide.removeDirectives('otDocFor', 'otDocPresence', 'entryEditor', 'apiKeyEditor', 'entryList', 'cfIcon');
-      $provide.removeControllers('UiConfigController', 'PermissionController');
+      $provide.removeControllers('UiConfigController');
     });
-    inject(function ($rootScope, $compile) {
-      scope = $rootScope.$new();
-      scope.spaceContext = {
-        space: {
-          getPrivateLocales: sinon.stub(),
-          isHibernated: stubs.isHibernated
-        },
-        refreshActiveLocales: sinon.stub(),
-        refreshContentTypes: sinon.stub(),
-        refreshLocales: sinon.stub()
-      };
 
-      scope.permissionController = {
-        get: sinon.stub()
-      };
-      scope.permissionController.get.returns(false);
+    var $compile = this.$inject('$compile');
+    scope = this.$inject('$rootScope').$new();
+    PermissionController = this.$inject('PermissionController');
+    PermissionController.getSectionVisibility = sinon.stub().returns({});
 
-      scope.spaces = [{}];
-
-      compileElement = function () {
-        container = $('<cf-main-nav-bar></cf-main-nav-bar>');
-        $compile(container)(scope);
-        scope.$digest();
-      };
-    });
+    compileElement = function () {
+      container = $('<cf-main-nav-bar></cf-main-nav-bar>');
+      $compile(container)(scope);
+      scope.$apply();
+    };
   });
 
   afterEach(function () {
@@ -61,25 +34,31 @@ describe('Main nav bar directive', function () {
     expect(container.find('.nav-bar__list')).toBeNgHidden();
   });
 
-  function makeNavbarItemTest(type, action, viewType){
-    describe('navbar item for '+type, function () {
+  function makeNavbarItemTest(key, viewType){
+    describe('navbar item for '+key, function () {
       var selector = 'a[data-view-type="'+viewType+'"]';
 
       it('is hidden', function () {
-        scope.permissionController.get.withArgs(action+type, 'shouldHide').returns(true);
+        PermissionController.getSectionVisibility.returns(getVisibility(key, false));
         compileElement();
         expect(container.find(selector).length).toEqual(0);
       });
 
       it('is shown', function () {
-        scope.permissionController.get.withArgs(action+type, 'shouldHide').returns(false);
+        PermissionController.getSectionVisibility.returns(getVisibility(key, true));
         compileElement();
         expect(container.find(selector).length).toEqual(1);
       });
     });
   }
 
-  makeNavbarItemTest('ApiKey', 'read', 'api-home');
-  makeNavbarItemTest('ContentType', 'update', 'content-type-list');
-  makeNavbarItemTest('Settings', 'update', 'space-settings');
+  function getVisibility(key, value) {
+    var returnVal = {};
+    returnVal[key] = value;
+    return returnVal;
+  }
+
+  makeNavbarItemTest('apiKey', 'api-home');
+  makeNavbarItemTest('contentType', 'content-type-list');
+  makeNavbarItemTest('settings', 'space-settings');
 });

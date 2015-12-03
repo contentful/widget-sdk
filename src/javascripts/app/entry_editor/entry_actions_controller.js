@@ -12,7 +12,7 @@ angular.module('contentful')
 
   function disabledChecker (action) {
     return function () {
-      return !$scope.permissionController.can(action, $scope.entry.data).can;
+      return !$scope.permissionController.canPerformActionOnEntity(action, $scope.entry);
     };
   }
 

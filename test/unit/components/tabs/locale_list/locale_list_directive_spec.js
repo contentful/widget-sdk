@@ -4,7 +4,6 @@ describe('The Locale list directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('relative');
-      $provide.removeControllers('PermissionController');
     });
 
     this.container = null;

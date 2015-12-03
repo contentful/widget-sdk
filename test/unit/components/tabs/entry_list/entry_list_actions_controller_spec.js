@@ -6,8 +6,6 @@ describe('Entry List Actions Controller', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      $provide.removeControllers('PermissionController');
-
       stubs = $provide.makeStubs([
         'track',
         'info',
@@ -63,9 +61,9 @@ describe('Entry List Actions Controller', function () {
       };
 
       scope.permissionController = {
-        get: sinon.stub()
+        shouldHide: sinon.stub().returns(false),
+        shouldDisable: sinon.stub().returns(false)
       };
-      scope.permissionController.get.returns(false);
 
       controller = $controller('EntryListActionsController', {$scope: scope});
     });
@@ -220,7 +218,7 @@ describe('Entry List Actions Controller', function () {
   });
 
   it('cannot show duplicate action', function () {
-    scope.permissionController.get.withArgs('createEntry', 'shouldHide').returns(true);
+    scope.permissionController.shouldHide.withArgs('createEntry').returns(true);
     expect(scope.showDuplicate()).toBeFalsy();
   });
 
@@ -239,7 +237,7 @@ describe('Entry List Actions Controller', function () {
     });
 
     it('cannot show delete '+action+' because no general permission', function () {
-      scope.permissionController.get.withArgs(action+'Entry', 'shouldHide').returns(true);
+      scope.permissionController.shouldHide.withArgs(action+'Entry').returns(true);
       stubs.action1.returns(true);
       stubs.action2.returns(true);
       stubs.getSelected.returns([

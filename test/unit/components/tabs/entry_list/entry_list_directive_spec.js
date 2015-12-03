@@ -27,9 +27,9 @@ describe('The Entry list directive', function () {
       };
 
       scope.permissionController = {
-        get: sinon.stub()
+        shouldHide: sinon.stub().returns(false),
+        shouldDisable: sinon.stub().returns(false)
       };
-      scope.permissionController.get.returns(false);
 
       compileElement = function () {
         container = $('<div cf-entry-list></div>');

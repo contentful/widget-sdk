@@ -55,7 +55,7 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
 
   // TODO this code is duplicated in the asset list controller
   $scope.showCreateAssetButton = function () {
-    return !$scope.permissionController.get('createAsset', 'shouldHide');
+    return !$scope.permissionController.shouldHide('createAsset');
   };
 
   var throttledListRefresh = throttle(function () {

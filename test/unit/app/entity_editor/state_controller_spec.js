@@ -14,7 +14,7 @@ describe('entityEditor/StateController', function () {
     this.scope = $rootScope.$new();
     this.scope.entry = entry;
     this.scope.permissionController = {
-      can: sinon.stub().returns({can: true})
+      canPerformActionOnEntity: sinon.stub().returns(true)
     };
 
     this.entity = entry;

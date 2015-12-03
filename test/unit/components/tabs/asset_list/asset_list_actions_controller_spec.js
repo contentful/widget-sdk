@@ -60,7 +60,7 @@ describe('Asset List Actions Controller', function () {
       };
 
       scope.permissionController = {
-        get: sinon.stub()
+        shouldHide: sinon.stub()
       };
 
       controller = $controller('AssetListActionsController', {$scope: scope});
@@ -176,7 +176,7 @@ describe('Asset List Actions Controller', function () {
     });
 
     it('cannot show delete '+action+' because no general permission', function () {
-      scope.permissionController.get.withArgs(action+'Asset', 'shouldHide').returns(true);
+      scope.permissionController.shouldHide.withArgs(action+'Asset').returns(true);
       stubs.action1.returns(true);
       stubs.action2.returns(true);
       stubs.getSelected.returns([

@@ -8,7 +8,7 @@ describe('The Asset list directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('relative');
-      $provide.removeControllers('PermissionController', 'AssetListController');
+      $provide.removeControllers('AssetListController');
     });
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
@@ -31,9 +31,9 @@ describe('The Asset list directive', function () {
       scope.validate = sinon.stub();
 
       scope.permissionController = {
-        get: sinon.stub()
+        shouldHide: sinon.stub().returns(false),
+        shouldDisable: sinon.stub().returns(false)
       };
-      scope.permissionController.get.returns(false);
 
       compileElement = function () {
         container = $('<div cf-asset-list></div>');

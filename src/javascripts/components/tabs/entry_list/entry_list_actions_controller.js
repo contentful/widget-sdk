@@ -110,27 +110,27 @@ angular.module('contentful').controller('EntryListActionsController', ['$scope',
   };
 
   $scope.showDuplicate = function () {
-    return !$scope.permissionController.get('createEntry', 'shouldHide');
+    return !$scope.permissionController.shouldHide('createEntry');
   };
 
   $scope.showDelete = function () {
-    return !$scope.permissionController.get('deleteEntry', 'shouldHide') && every('canDelete');
+    return !$scope.permissionController.shouldHide('deleteEntry') && every('canDelete');
   };
 
   $scope.showArchive = function () {
-    return !$scope.permissionController.get('archiveEntry', 'shouldHide') && every('canArchive');
+    return !$scope.permissionController.shouldHide('archiveEntry') && every('canArchive');
   };
 
   $scope.showUnarchive = function () {
-    return !$scope.permissionController.get('unarchiveEntry', 'shouldHide') && every('canUnarchive');
+    return !$scope.permissionController.shouldHide('unarchiveEntry') && every('canUnarchive');
   };
 
   $scope.showUnpublish = function () {
-    return !$scope.permissionController.get('unpublishEntry', 'shouldHide') && every('canUnpublish');
+    return !$scope.permissionController.shouldHide('unpublishEntry') && every('canUnpublish');
   };
 
   $scope.showPublish = function () {
-    return !$scope.permissionController.get('publishEntry', 'shouldHide') && every('canPublish');
+    return !$scope.permissionController.shouldHide('publishEntry') && every('canPublish');
   };
 
   $scope.publishButtonName = function () {

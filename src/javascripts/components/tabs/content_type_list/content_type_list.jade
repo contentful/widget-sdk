@@ -13,9 +13,9 @@ header.workbench-header
   .workbench-header__actions
     button.cfnext-btn-action(
       ng-click="entityCreationController.newContentType()"
-      ng-hide="permissionController.get('createContentType', 'shouldHide')"
-      ng-disabled="permissionController.get('createContentType', 'shouldDisable')"
-      cf-when-disabled="permissionController.entityActions.createContentType")
+      ng-hide="permissionController.shouldHide('createContentType')"
+      ng-disabled="permissionController.shouldDisable('createContentType')"
+      cf-when-disabled="createContentType")
       cf-icon.btn-icon.inverted(name="plus")
       | New Content Type
 

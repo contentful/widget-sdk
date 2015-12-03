@@ -158,7 +158,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   // TODO this code is duplicated in the asset list controller
   $scope.showCreateEntryButton = function () {
     var hasContentTypes = !_.isEmpty(spaceContext.publishedContentTypes);
-    var hideCreateEntry = $scope.permissionController.get('createEntry', 'shouldHide');
+    var hideCreateEntry = $scope.permissionController.shouldHide('createEntry');
     return hasContentTypes && !hideCreateEntry;
   };
 

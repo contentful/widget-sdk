@@ -35,7 +35,7 @@ function ($scope, $injector, entity, notify, handlePublishError) {
 
   function hasPermission (action) {
     // TODO this should be moved to a service with a simpler interface
-    return $scope.permissionController.can(action, entity.data).can;
+    return $scope.permissionController.canPerformActionOnEntity(action, entity);
   }
 
   function disabledChecker (action) {

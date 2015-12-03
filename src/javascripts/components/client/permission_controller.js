@@ -1,22 +1,15 @@
 'use strict';
 
-angular.module('contentful')
-
-/**
- * @ngdoc type
- * @name PermissionController
- */
-.controller('PermissionController', ['$injector', function PermissionController($injector) {
+angular.module('contentful').factory('PermissionController', ['$injector', function ($injector) {
 
   var $rootScope       = $injector.get('$rootScope');
   var stringUtils      = $injector.get('stringUtils');
   var enforcements     = $injector.get('enforcements');
   var authorization    = $injector.get('authorization');
-  var reasonsDenied    = $injector.get('reasonsDenied');
   var logger           = $injector.get('logger');
   var OrganizationList = $injector.get('OrganizationList');
 
-  var actionsForEntities = {
+  var ACTIONS_FOR_ENTITIES = {
     contentType: ['create', 'read', 'update', 'delete', 'publish', 'unpublish'],
     entry: ['create', 'read', 'update', 'delete', 'publish', 'unpublish', 'archive', 'unarchive'],
     asset: ['create', 'read', 'update', 'delete', 'publish', 'unpublish', 'archive', 'unarchive'],
@@ -24,98 +17,115 @@ angular.module('contentful')
     settings: ['update', 'read']
   };
 
-  var controller = this;
-  controller.entityActions = {};
-  controller.initialize             = initialize;
-  controller.get                    = getEntityActionPermission;
-  controller.can                    = can;
-  controller.canCreateSpace         = canCreateSpace;
-  controller.canCreateSpaceInAnyOrg = canCreateSpaceInAnyOrg;
-  controller.canCreateSpaceInOrg    = canCreateSpaceInOrg;
+  var shouldHide        = createResponseAttributeGetter('shouldHide');
+  var shouldDisable     = createResponseAttributeGetter('shouldDisable');
+  var responses         = {};
+  var sectionVisibility = {};
 
-  function initialize(spaceContext) {
-    controller.spaceContext = spaceContext;
-    _.forEach(actionsForEntities, function (actions, entityName) {
-      entityName = stringUtils.capitalizeFirst(entityName);
-      _.forEach(actions, function (actionName) {
-        var entityAction = actionName + entityName;
-        controller.entityActions[entityAction] = can(actionName, entityName);
+  $rootScope.$watch(function () { return authorization.spaceContext; }, reset);
+
+  return {
+    getResponseByActionName:         function (action) { return responses[action]; },
+    getSectionVisibility:            function () { return sectionVisibility; },
+    shouldHide:                      shouldHide,
+    shouldDisable:                   shouldDisable,
+    canPerformActionOnEntity:        canPerformActionOnEntity,
+    canCreateSpace:                  canCreateSpace,
+    canCreateSpaceInAnyOrganization: canCreateSpaceInAnyOrganization,
+    canCreateSpaceInOrganization:    canCreateSpaceInOrganization
+  };
+
+  function reset() {
+    collectResponses();
+    collectSectionVisibility();
+  }
+
+  function collectResponses() {
+    var replacement = {};
+
+    _.forEach(ACTIONS_FOR_ENTITIES, function (actions, entity) {
+      entity = stringUtils.capitalizeFirst(entity);
+      _.forEach(actions, function (action) {
+        replacement[action + entity] = can(action, entity);
       });
+    });
+
+    responses = replacement;
+  }
+
+  function collectSectionVisibility() {
+    sectionVisibility = {
+      contentType: !shouldHide('updateContentType'),
+      entry:       !shouldHide('readEntry'),
+      asset:       !shouldHide('readAsset'),
+      apiKey:      !shouldHide('readApiKey'),
+      settings:    !shouldHide('updateSettings')
+    };
+  }
+
+  function createResponseAttributeGetter(attrName) {
+    return function (actionName) {
+      var action = responses[actionName];
+      return (action && attrName in action) ? action[attrName] : false;
+    };
+  }
+
+  function can(action, entity) {
+    var response = { shouldHide: false, shouldDisable: false };
+
+    if (!authorization.spaceContext) { return response; }
+    response.can = authorization.spaceContext.can(action, entity);
+    if (response.can) { return response; }
+
+    var reasons = getReasonsDenied(action, entity);
+    response.reasons = (reasons && reasons.length > 0) ? reasons : null;
+    response.enforcement = getEnforcement(action, entity);
+    response.shouldDisable = !!response.reasons;
+    response.shouldHide = !response.shouldDisable;
+    broadcastEnforcement(response.enforcement);
+
+    return response;
+  }
+
+  function canPerformActionOnEntity(action, entity) {
+    return can(action, entity.data).can;
+  }
+
+  function canCreateSpace() {
+    if (OrganizationList.isEmpty()) { return false; }
+    if (!authorization.authContext) { return false; }
+    if (!canCreateSpaceInAnyOrganization()) { return false; }
+
+    var response = checkIfCanCreateSpace(authorization.authContext);
+    if (!response) { broadcastEnforcement(getEnforcement('create', 'Space')); }
+
+    return response;
+  }
+
+  function canCreateSpaceInAnyOrganization() {
+    return _.some(OrganizationList.getAll(), function (org) {
+      return canCreateSpaceInOrganization(org.sys.id);
     });
   }
 
-  /**
-   * @ngdoc method
-   * @name PermissionController#get
-   * @param {string} label
-   * @param {string} permission
-   * @returns {boolean}
-   */
-  function getEntityActionPermission(label, permission) {
-    var entityAction = controller.entityActions[label];
-    return (entityAction && permission in entityAction) ? entityAction[permission] : false;
+  function canCreateSpaceInOrganization(organizationId) {
+    if (!authorization.authContext) { return false; }
+
+    return checkIfCanCreateSpace(authorization.authContext.organization(organizationId));
   }
 
-  /**
-   * @ngdoc method
-   * @name PermissionController#can
-   * @param {string} action
-   * @param {any} entity
-   *
-   * TODO This is highly confusing: `entity` should actually look like
-   * the object in `entry.data` or `space.data`.
-   */
-  function can(action, entity) {
-    var response = {
-      action: action,
-      entity: entity,
-      shouldHide: false,
-      shouldDisable: false
-    };
-
-    if (entity && controller.spaceContext){
-      response.can = controller.spaceContext.can.apply(controller.spaceContext, arguments);
-      if(!response.can){
-        var reasons = controller.spaceContext.reasonsDenied.apply(controller.spaceContext, arguments);
-        response.reasons = reasons && reasons.length > 0 ? reasons : null;
-        response.shouldDisable = !!response.reasons;
-        response.shouldHide = !response.shouldDisable;
-        checkForEnforcements.apply(null, arguments);
-      }
+  function checkIfCanCreateSpace(context) {
+    var response = false;
+    try {
+      response = context.can('create', 'Space');
+    } catch (e) {
+      logger.logError('Worf exception - can create new space?', e);
     }
     return response;
   }
 
-  function canCreateSpace() {
-    var response;
-    if(authorization.authContext && !OrganizationList.isEmpty()){
-      if(!canCreateSpaceInAnyOrg()) return false;
-
-      try {
-        response = authorization.authContext.can('create', 'Space');
-      } catch(exp){
-        logger.logError('Worf can exception', exp);
-      }
-      if(!response){
-        checkForEnforcements('create', 'Space');
-      }
-    }
-    return !!response;
-  }
-
-  function canCreateSpaceInAnyOrg() {
-    return _.some(OrganizationList.getAll(), function (org) {
-      return canCreateSpaceInOrg(org.sys.id);
-    });
-  }
-
-  function canCreateSpaceInOrg(orgId) {
-    return authorization.authContext && authorization.authContext.organization(orgId).can('create', 'Space');
-  }
-
-  function checkForEnforcements() {
-    var enforcement = enforcements.determineEnforcement(reasonsDenied.apply(null, arguments), arguments[1]);
-    if(enforcement) {
+  function broadcastEnforcement(enforcement) {
+    if (enforcement) {
       $rootScope.$broadcast('persistentNotification', {
         message: enforcement.message,
         actionMessage: enforcement.actionMessage,
@@ -124,4 +134,11 @@ angular.module('contentful')
     }
   }
 
+  function getEnforcement(action, entity) {
+    return enforcements.determineEnforcement(getReasonsDenied(action, entity), entity);
+  }
+
+  function getReasonsDenied(action, entity) {
+    return authorization.spaceContext.reasonsDenied(action, entity);
+  }
 }]);
