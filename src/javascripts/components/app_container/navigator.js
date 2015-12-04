@@ -51,7 +51,10 @@ angular.module('contentful').config([
 
   $stateProvider.state('spaces.new', {
     url: '_new',
-    template: JST.cf_create_space_advice()
+    template: JST.cf_create_space_advice(),
+    controller: ['$scope', 'accessChecker', function($scope, accessChecker) {
+      $scope.canCreateSpace = accessChecker.canCreateSpace;
+    }]
   });
 
   $stateProvider.state('spaces.detail', {

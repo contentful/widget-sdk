@@ -9,8 +9,8 @@
   //- link to entry or entries
   button.cfnext-btn-secondary-action.link-editor__add-button(type="button"
     ng-if="entityType=='Entry' && addableContentTypes.length > 1"
-    ng-hide="permissionController.shouldHide('createEntry')"
-    ng-disabled="permissionController.shouldDisable('createEntry')"
+    ng-hide="shouldHide('createEntry')"
+    ng-disabled="shouldDisable('createEntry')"
     cf-when-disabled="createEntry"
     cf-context-menu-trigger
     data-test-id="add-new-entry-menu-trigger")
@@ -31,8 +31,8 @@
   //- link to entry or entries with restriction on the type
   button.cfnext-btn-secondary-action.link-editor__add-button(type="button"
       ng-if="entityType=='Entry' && addableContentTypes.length === 1"
-      ng-hide="permissionController.shouldHide('createEntry')"
-      ng-disabled="permissionController.shouldDisable('createEntry')"
+      ng-hide="shouldHide('createEntry')"
+      ng-disabled="shouldDisable('createEntry')"
       cf-when-disabled="createEntry"
       ng-click="addNewEntry(addableContentTypes[0])")
     cf-icon.btn-icon(name="plus")
@@ -41,8 +41,8 @@
   //- link to asset (with or without restriction)
   button.cfnext-btn-secondary-action.link-editor__add-button(type="button"
       ng-if="entityType=='Asset'"
-      ng-hide="permissionController.shouldHide('createAsset')"
-      ng-disabled="permissionController.shouldDisable('createAsset')"
+      ng-hide="shouldHide('createAsset')"
+      ng-disabled="shouldDisable('createAsset')"
       cf-when-disabled="createAsset"
       ng-click="addNewAsset()")
     cf-icon.btn-icon(name="plus")

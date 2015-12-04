@@ -18,7 +18,7 @@ header.workbench-header
     ng-show="!showNoAssetsAdvice() && showCreateAssetButton()")
     button.cfnext-btn-action(
       cf-context-menu-trigger
-      ng-disabled="permissionController.shouldDisable('createAsset')"
+      ng-disabled="shouldDisable('createAsset')"
       cf-when-disabled="createAsset"
       data-test-id="add-asset-menu-trigger")
       cf-icon.btn-icon.inverted(name="plus")
@@ -95,8 +95,8 @@ header.workbench-header
     .dropdown-btn
       button.advice__action(
         cf-context-menu-trigger
-        ng-hide="permissionController.shouldHide('createAsset')"
-        ng-disabled="permissionController.shouldDisable('createAsset')"
+        ng-hide="shouldHide('createAsset')"
+        ng-disabled="shouldDisable('createAsset')"
         cf-when-disabled="createAsset"
         data-test-id="create-asset-menu-trigger")
         | Create an Asset

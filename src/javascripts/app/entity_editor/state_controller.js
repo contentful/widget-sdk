@@ -12,6 +12,7 @@ function ($scope, $injector, entity, notify, handlePublishError) {
   var createEntryReverter = $injector.get('entryReverter');
   var StateManager        = $injector.get('EntityStateManager');
   var analytics           = $injector.get('analytics');
+  var accessChecker       = $injector.get('accessChecker');
 
   var stateManager = new StateManager(entity);
 
@@ -35,7 +36,7 @@ function ($scope, $injector, entity, notify, handlePublishError) {
 
   function hasPermission (action) {
     // TODO this should be moved to a service with a simpler interface
-    return $scope.permissionController.canPerformActionOnEntity(action, entity);
+    return accessChecker.canPerformActionOnEntity(action, entity);
   }
 
   function disabledChecker (action) {

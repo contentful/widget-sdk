@@ -1,7 +1,9 @@
 'use strict';
 
-angular.module('contentful').controller('AssetListActionsController', ['$scope', 'listActions', function AssetListActionsController($scope, listActions) {
+angular.module('contentful').controller('AssetListActionsController',
+  ['$scope', 'listActions', '$injector', function AssetListActionsController($scope, listActions, $injector) {
 
+  var accessChecker = $injector.get('accessChecker');
   var _cacheSelected;
 
   // At the beginning of every digest cycle destroy the cache of selected assets
@@ -72,23 +74,23 @@ angular.module('contentful').controller('AssetListActionsController', ['$scope',
   };
 
   $scope.showDelete = function () {
-    return !$scope.permissionController.shouldHide('deleteAsset') && every('canDelete');
+    return !accessChecker.shouldHide('deleteAsset') && every('canDelete');
   };
 
   $scope.showArchive = function () {
-    return !$scope.permissionController.shouldHide('archiveAsset') && every('canArchive');
+    return !accessChecker.shouldHide('archiveAsset') && every('canArchive');
   };
 
   $scope.showUnarchive = function () {
-    return !$scope.permissionController.shouldHide('unarchiveAsset') && every('canUnarchive');
+    return !accessChecker.shouldHide('unarchiveAsset') && every('canUnarchive');
   };
 
   $scope.showUnpublish = function () {
-    return !$scope.permissionController.shouldHide('unpublishAsset') && every('canUnpublish');
+    return !accessChecker.shouldHide('unpublishAsset') && every('canUnpublish');
   };
 
   $scope.showPublish = function () {
-    return !$scope.permissionController.shouldHide('publishAsset') && every('canPublish');
+    return !accessChecker.shouldHide('publishAsset') && every('canPublish');
   };
 
   $scope.publishButtonName = function () {

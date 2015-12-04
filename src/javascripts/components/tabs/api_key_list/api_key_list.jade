@@ -6,8 +6,8 @@ header.workbench-header
 
   .workbench-header__actions(ng-hide="empty")
     button.cfnext-btn-action(ng-click="entityCreationController.newApiKey()"
-      ng-hide="permissionController.shouldHide('createApiKey')"
-      ng-disabled="permissionController.shouldDisable('createApiKey')"
+      ng-hide="shouldHide('createApiKey')"
+      ng-disabled="shouldDisable('createApiKey')"
       cf-when-disabled="createApiKey")
       cf-icon.btn-icon.inverted(name="plus")
       | Add API Key
@@ -53,8 +53,8 @@ header.workbench-header
     header.advice__title There are no API Keys yet.
     p.advice__description API Keys open the door to your content. One should be created for each application that accesses your content.
     button.advice__action(type="button" ng-click="entityCreationController.newApiKey()"
-        ng-hide="permissionController.shouldHide('createApiKey')"
-        ng-disabled="permissionController.shouldDisable('createApiKey')"
+        ng-hide="shouldHide('createApiKey')"
+        ng-disabled="shouldDisable('createApiKey')"
         cf-when-disabled="createApiKey")
       | Create API Key
     cf-knowledge-base(target="api_key" text="Visit the Knowledge Base Pages")

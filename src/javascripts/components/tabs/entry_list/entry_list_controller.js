@@ -14,6 +14,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   var logger                = $injector.get('logger');
   var spaceContext          = $injector.get('spaceContext');
   var responseAccessChecker = $injector.get('responseAccessChecker');
+  var accessChecker         = $injector.get('accessChecker');
 
   $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('EntryListViewsController', {$scope: $scope});
@@ -23,6 +24,9 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
 
   $scope.paginator = new Paginator();
   $scope.selection = new Selection();
+
+  $scope.shouldHide = accessChecker.shouldHide;
+  $scope.shouldDisable = accessChecker.shouldDisable;
 
   $scope.entryCache = new EntityListCache({
     space: spaceContext.space,
@@ -158,7 +162,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   // TODO this code is duplicated in the asset list controller
   $scope.showCreateEntryButton = function () {
     var hasContentTypes = !_.isEmpty(spaceContext.publishedContentTypes);
-    var hideCreateEntry = $scope.permissionController.shouldHide('createEntry');
+    var hideCreateEntry = accessChecker.shouldHide('createEntry');
     return hasContentTypes && !hideCreateEntry;
   };
 

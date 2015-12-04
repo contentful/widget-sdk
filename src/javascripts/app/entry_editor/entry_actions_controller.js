@@ -4,15 +4,16 @@ angular.module('contentful')
 .controller('EntryActionsController',
 ['$scope', '$injector', 'notify', function ($scope, $injector, notify) {
 
-  var controller   = this;
-  var Command      = $injector.get('command');
-  var spaceContext = $injector.get('spaceContext');
-  var $state       = $injector.get('$state');
-  var analytics    = $injector.get('analytics');
+  var controller    = this;
+  var Command       = $injector.get('command');
+  var spaceContext  = $injector.get('spaceContext');
+  var $state        = $injector.get('$state');
+  var analytics     = $injector.get('analytics');
+  var accessChecker = $injector.get('accessChecker');
 
   function disabledChecker (action) {
     return function () {
-      return !$scope.permissionController.canPerformActionOnEntity(action, $scope.entry);
+      return !accessChecker.canPerformActionOnEntity(action, $scope.entry);
     };
   }
 

@@ -10,7 +10,7 @@ describe('The Entry list directive', function () {
       $provide.removeDirectives('viewCustomizer');
       $provide.removeControllers('EntryListController');
     });
-    inject(function ($rootScope, $compile) {
+    inject(function ($rootScope, $compile, accessChecker) {
       scope = $rootScope.$new();
 
       scope.selection = {
@@ -26,10 +26,8 @@ describe('The Entry list directive', function () {
         }
       };
 
-      scope.permissionController = {
-        shouldHide: sinon.stub().returns(false),
-        shouldDisable: sinon.stub().returns(false)
-      };
+      accessChecker.shouldHide = sinon.stub().returns(false);
+      accessChecker.shouldDisable = sinon.stub().returns(false);
 
       compileElement = function () {
         container = $('<div cf-entry-list></div>');

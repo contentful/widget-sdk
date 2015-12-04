@@ -2,7 +2,7 @@
 
 describe('Main nav bar directive', function () {
 
-  var container, scope, PermissionController, stubs;
+  var container, scope, accessChecker, stubs;
   var compileElement;
 
   beforeEach(function () {
@@ -14,8 +14,8 @@ describe('Main nav bar directive', function () {
 
     var $compile = this.$inject('$compile');
     scope = this.$inject('$rootScope').$new();
-    PermissionController = this.$inject('PermissionController');
-    PermissionController.getSectionVisibility = sinon.stub().returns({});
+    accessChecker = this.$inject('accessChecker');
+    accessChecker.getSectionVisibility = sinon.stub().returns({});
 
     compileElement = function () {
       container = $('<cf-main-nav-bar></cf-main-nav-bar>');
@@ -39,13 +39,13 @@ describe('Main nav bar directive', function () {
       var selector = 'a[data-view-type="'+viewType+'"]';
 
       it('is hidden', function () {
-        PermissionController.getSectionVisibility.returns(getVisibility(key, false));
+        accessChecker.getSectionVisibility.returns(getVisibility(key, false));
         compileElement();
         expect(container.find(selector).length).toEqual(0);
       });
 
       it('is shown', function () {
-        PermissionController.getSectionVisibility.returns(getVisibility(key, true));
+        accessChecker.getSectionVisibility.returns(getVisibility(key, true));
         compileElement();
         expect(container.find(selector).length).toEqual(1);
       });

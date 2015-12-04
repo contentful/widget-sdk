@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Asset List Actions Controller', function () {
-  var controller, scope, stubs;
+  var controller, scope, stubs, accessChecker;
   var action1, action2, action3, action4;
 
   beforeEach(function () {
@@ -34,7 +34,7 @@ describe('Asset List Actions Controller', function () {
       $provide.value('$timeout', stubs.timeout);
     });
 
-    inject(function ($rootScope, $controller, $q) {
+    inject(function ($rootScope, $controller, $q, _accessChecker_) {
       $rootScope.$broadcast = stubs.broadcast;
       scope = $rootScope.$new();
 
@@ -59,9 +59,8 @@ describe('Asset List Actions Controller', function () {
         }
       };
 
-      scope.permissionController = {
-        shouldHide: sinon.stub()
-      };
+      accessChecker = _accessChecker_;
+      accessChecker.shouldHide = sinon.stub();
 
       controller = $controller('AssetListActionsController', {$scope: scope});
     });
@@ -176,7 +175,7 @@ describe('Asset List Actions Controller', function () {
     });
 
     it('cannot show delete '+action+' because no general permission', function () {
-      scope.permissionController.shouldHide.withArgs(action+'Asset').returns(true);
+      accessChecker.shouldHide.withArgs(action+'Asset').returns(true);
       stubs.action1.returns(true);
       stubs.action2.returns(true);
       stubs.getSelected.returns([

@@ -11,6 +11,7 @@ angular.module('contentful')
   var notifier          = $injector.get('entryEditor/notifications');
   var spaceContext      = $injector.get('spaceContext');
   var truncate          = $injector.get('stringUtils').truncate;
+  var accessChecker     = $injector.get('accessChecker');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
@@ -29,7 +30,7 @@ angular.module('contentful')
     $scope: $scope,
     entityLabel: 'asset',
     isReadOnly: function () {
-      return $scope.permissionController.canPerformActionOnEntity('update', $scope.asset);
+      return accessChecker.canPerformActionOnEntity('update', $scope.asset);
     }
   });
 
@@ -57,7 +58,7 @@ angular.module('contentful')
 
   // OT Stuff
   $scope.$watch(function assetEditorEnabledWatcher(scope) {
-    return !scope.asset.isArchived() && scope.permissionController.canPerformActionOnEntity('update', scope.asset);
+    return !scope.asset.isArchived() && accessChecker.canPerformActionOnEntity('update', scope.asset);
   }, function assetEditorEnabledHandler(enabled, old, scope) {
     scope.otDoc.state.disabled = !enabled;
   });

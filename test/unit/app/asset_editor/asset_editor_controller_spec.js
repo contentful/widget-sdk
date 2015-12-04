@@ -2,7 +2,7 @@
 
 describe('Asset editor controller', function () {
 
-  var scope, stubs, logger, notification;
+  var scope, stubs, logger, notification, accessChecker;
   var assetEditorCtrl;
   var process;
 
@@ -40,15 +40,14 @@ describe('Asset editor controller', function () {
 
       $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
     });
-    inject(function ($rootScope, $controller, $q, $injector, cfStub) {
+    inject(function ($rootScope, $controller, $q, $injector, cfStub, _accessChecker_) {
       logger = $injector.get('logger');
       notification = $injector.get('notification');
       scope = $rootScope.$new();
       scope.otDoc = {doc: {}, state: {}};
-      scope.permissionController = {
-        canPerformActionOnEntity: sinon.stub().returns(true)
-      };
 
+      accessChecker = _accessChecker_;
+      accessChecker.canPerformActionOnEntity = sinon.stub().returns(true);
 
       scope.validate = sinon.stub();
 
@@ -86,13 +85,13 @@ describe('Asset editor controller', function () {
     });
 
     it('to disabled', function () {
-      scope.permissionController.canPerformActionOnEntity.returns(true);
+      accessChecker.canPerformActionOnEntity.returns(true);
       scope.$apply();
       expect(scope.otDoc.state.disabled).toBe(false);
     });
 
     it('to enabled', function () {
-      scope.permissionController.canPerformActionOnEntity.returns(false);
+      accessChecker.canPerformActionOnEntity.returns(false);
       scope.$apply();
       expect(scope.otDoc.state.disabled).toBe(true);
     });
@@ -102,9 +101,7 @@ describe('Asset editor controller', function () {
     beforeEach(inject(function ($compile, $rootScope, $controller, cfStub){
       scope = $rootScope.$new();
       scope.otDoc = {doc: {}, state: {}};
-      scope.permissionController = {
-        canPerformActionOnEntity: sinon.stub().returns(true)
-      };
+      accessChecker.canPerformActionOnEntity.returns(true);
 
       var space = cfStub.space('test');
       var asset = cfStub.asset(space, 'asset1', {}, {

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('PermissionController', ['$injector', function ($injector) {
+angular.module('contentful').factory('accessChecker', ['$injector', function ($injector) {
 
   var $rootScope       = $injector.get('$rootScope');
   var stringUtils      = $injector.get('stringUtils');

@@ -7,12 +7,16 @@ angular.module('contentful')
   var notification  = $injector.get('notification');
   var spaceContext  = $injector.get('spaceContext');
   var FilterQS      = $injector.get('FilterQueryString');
+  var accessChecker = $injector.get('accessChecker');
 
   var qs = FilterQS.create('contentTypes');
   var view = qs.readView();
   $scope.context.list = view.list || 'all';
   $scope.searchTerm = view.searchTerm || '';
   $scope.empty = true;
+
+  $scope.shouldHide = accessChecker.shouldHide;
+  $scope.shouldDisable = accessChecker.shouldDisable;
 
   $scope.$watchGroup(['context.list', 'searchTerm'], function (args) {
     if (args[0] || args[1]) {

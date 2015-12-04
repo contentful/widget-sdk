@@ -1,7 +1,7 @@
 mixin create-entry-button
   div(ng-if="singleContentType")
     button.cfnext-btn-action(
-      ng-disabled="permissionController.shouldDisable('createEntry')"
+      ng-disabled="shouldDisable('createEntry')"
       cf-when-disabled="createEntry"
       ng-click="entityCreationController.newEntry(singleContentType)")
       cf-icon.btn-icon.inverted(name="plus")
@@ -9,7 +9,7 @@ mixin create-entry-button
   div(ng-if="!singleContentType")
     button.cfnext-btn-action.u-truncate(
       cf-context-menu-trigger
-      ng-disabled="permissionController.shouldDisable('createEntry')"
+      ng-disabled="shouldDisable('createEntry')"
       cf-when-disabled="createEntry"
       data-test-id="add-entry-menu-trigger")
       cf-icon.btn-icon.inverted(name="plus")
@@ -105,21 +105,21 @@ header.workbench-header
     p.advice__description(ng-show="spaceContext.publishedContentTypes.length == 0")
       | Entries are your content itself. These depend on the field types you created in the Content Type editor.
     button.advice__action(type="button" ng-click="entityCreationController.newContentType()"
-        ng-hide="spaceContext.publishedContentTypes.length > 0 || permissionController.shouldHide('createContentType')"
-        ng-disabled="permissionController.shouldDisable('createContentType')"
+        ng-hide="spaceContext.publishedContentTypes.length > 0 || shouldHide('createContentType')"
+        ng-disabled="shouldDisable('createContentType')"
         cf-when-disabled="createContentType")
       | Create a Content Type
     p(ng-hide="spaceContext.publishedContentTypes.length == 0")
       button.advice__action(
-              ng-hide="!singleContentType || permissionController.shouldHide('createEntry')"
-              ng-disabled="permissionController.shouldDisable('createEntry')"
+              ng-hide="!singleContentType || shouldHide('createEntry')"
+              ng-disabled="shouldDisable('createEntry')"
               cf-when-disabled="createEntry"
               ng-click="entityCreationController.newEntry(singleContentType)")
         cf-icon.btn-icon.inverted(name="plus")
         | Add New {{singleContentType.getName()}}
       button.advice__action(
-          ng-hide="singleContentType || permissionController.shouldHide('createEntry')"
-          ng-disabled="permissionController.shouldDisable('createEntry')"
+          ng-hide="singleContentType || shouldHide('createEntry')"
+          ng-disabled="shouldDisable('createEntry')"
           cf-when-disabled="createEntry"
           ng-click="showNewContentTypeDialog()")
         cf-icon.btn-icon.inverted(name="plus")

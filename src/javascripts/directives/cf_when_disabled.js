@@ -2,7 +2,7 @@
 
 angular.module('contentful').directive('cfWhenDisabled', ['$injector', function ($injector) {
 
-  var PermissionController = $injector.get('PermissionController');
+  var accessChecker = $injector.get('accessChecker');
 
   function makePropGetter(elem){
     return function getCssProperty(name) {
@@ -36,7 +36,7 @@ angular.module('contentful').directive('cfWhenDisabled', ['$injector', function 
     restrict: 'A',
     link: function (scope, elem, attrs) {
       scope.$watch(function () {
-        return PermissionController.getResponseByActionName(attrs.cfWhenDisabled);
+        return accessChecker.getResponseByActionName(attrs.cfWhenDisabled);
       }, addTooltip, true);
 
       function addTooltip(response) {

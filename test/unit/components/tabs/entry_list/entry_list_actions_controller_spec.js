@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Entry List Actions Controller', function () {
-  var controller, scope, stubs, $q;
+  var controller, scope, stubs, $q, accessChecker;
   var action1, action2, action3, action4;
 
   beforeEach(function () {
@@ -34,7 +34,7 @@ describe('Entry List Actions Controller', function () {
       $provide.value('$timeout', stubs.timeout);
     });
 
-    inject(function ($rootScope, $controller, _$q_) {
+    inject(function ($rootScope, $controller, _$q_, _accessChecker_) {
       $rootScope.$broadcast = stubs.broadcast;
       scope = $rootScope.$new();
       $q = _$q_;
@@ -60,10 +60,9 @@ describe('Entry List Actions Controller', function () {
         }
       };
 
-      scope.permissionController = {
-        shouldHide: sinon.stub().returns(false),
-        shouldDisable: sinon.stub().returns(false)
-      };
+      accessChecker = _accessChecker_;
+      accessChecker.shouldHide = sinon.stub().returns(false);
+      accessChecker.shouldDisable = sinon.stub().returns(false);
 
       controller = $controller('EntryListActionsController', {$scope: scope});
     });
@@ -218,7 +217,7 @@ describe('Entry List Actions Controller', function () {
   });
 
   it('cannot show duplicate action', function () {
-    scope.permissionController.shouldHide.withArgs('createEntry').returns(true);
+    accessChecker.shouldHide.withArgs('createEntry').returns(true);
     expect(scope.showDuplicate()).toBeFalsy();
   });
 
@@ -237,7 +236,7 @@ describe('Entry List Actions Controller', function () {
     });
 
     it('cannot show delete '+action+' because no general permission', function () {
-      scope.permissionController.shouldHide.withArgs(action+'Entry').returns(true);
+      accessChecker.shouldHide.withArgs(action+'Entry').returns(true);
       stubs.action1.returns(true);
       stubs.action2.returns(true);
       stubs.getSelected.returns([

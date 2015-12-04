@@ -10,6 +10,7 @@ angular.module('contentful')
   var notifier                 = $injector.get('entryEditor/notifications');
   var truncate                 = $injector.get('stringUtils').truncate;
   var createFieldAccessChecker = $injector.get('fieldAccessChecker').getInstance;
+  var accessChecker            = $injector.get('accessChecker');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
@@ -264,6 +265,6 @@ angular.module('contentful')
   }
 
   function hasUpdatePermission() {
-    return $scope.permissionController.canPerformActionOnEntity('update', $scope.entry);
+    return accessChecker.canPerformActionOnEntity('update', $scope.entry);
   }
 }]);

@@ -2,7 +2,7 @@
 
 angular.module('contentful').directive('cfMainNavBar', ['$injector', function ($injector) {
 
-  var PermissionController = $injector.get('PermissionController');
+  var accessChecker = $injector.get('accessChecker');
 
   return {
     template: JST.cf_main_nav_bar(),
@@ -14,7 +14,7 @@ angular.module('contentful').directive('cfMainNavBar', ['$injector', function ($
       $scope.$stateParams = $injector.get('$stateParams');
 
       $scope.$watch(function () {
-        return PermissionController.getSectionVisibility();
+        return accessChecker.getSectionVisibility();
       }, function (sectionVisibility) {
         $scope.canNavigateTo = sectionVisibility;
       });

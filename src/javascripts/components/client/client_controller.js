@@ -22,11 +22,9 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var TheAccountView     = $injector.get('TheAccountView');
   var TheStore           = $injector.get('TheStore');
   var OrganizationList   = $injector.get('OrganizationList');
-  var PermissionController = $injector.get('PermissionController');
 
   $controller('TrialWatchController', {$scope: $scope});
 
-  $scope.permissionController = PermissionController;
   $scope.featureController = $controller('FeatureController', {$scope: $scope});
   $scope.spaceContext = spaceContext;
 

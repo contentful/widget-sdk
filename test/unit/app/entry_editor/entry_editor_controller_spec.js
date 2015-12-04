@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Entry Editor Controller', function () {
-  var controller, scope;
+  var controller, scope, accessChecker;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -16,7 +16,7 @@ describe('Entry Editor Controller', function () {
         getPrivateLocales: sinon.stub().returns([{internal_code: 'en-US'}, {internal_code: 'de-DE'}])
       });
     });
-    inject(function ($compile, $rootScope, $controller, cfStub){
+    inject(function ($compile, $rootScope, $controller, cfStub, _accessChecker_){
       scope = $rootScope;
       scope.otDoc = {doc: {}, state: {}};
       var ctData = cfStub.contentTypeData();
@@ -28,9 +28,8 @@ describe('Entry Editor Controller', function () {
         sys: { publishedVersion: 1 }
       });
       scope.entry = entry;
-      scope.permissionController = {
-        canPerformActionOnEntity: sinon.stub().returns(true)
-      };
+      accessChecker = _accessChecker_;
+      accessChecker.canPerformActionOnEntity = sinon.stub().returns(true);
       controller = $controller('EntryEditorController', {$scope: scope});
       this.$apply();
     });
@@ -51,13 +50,13 @@ describe('Entry Editor Controller', function () {
     });
 
     it('to disabled', function () {
-      scope.permissionController.canPerformActionOnEntity.withArgs('update', scope.entry).returns(true);
+      accessChecker.canPerformActionOnEntity.withArgs('update', scope.entry).returns(true);
       scope.$apply();
       expect(scope.otDoc.state.disabled).toBe(false);
     });
 
     it('to enabled', function () {
-      scope.permissionController.canPerformActionOnEntity.withArgs('update', scope.entry).returns(false);
+      accessChecker.canPerformActionOnEntity.withArgs('update', scope.entry).returns(false);
       scope.$apply();
       expect(scope.otDoc.state.disabled).toBe(true);
     });

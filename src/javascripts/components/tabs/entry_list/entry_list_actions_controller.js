@@ -1,10 +1,11 @@
 'use strict';
 
 angular.module('contentful').controller('EntryListActionsController', ['$scope', '$injector', function EntryListActionsController($scope, $injector) {
-  var $q          = $injector.get('$q');
-  var $timeout    = $injector.get('$timeout');
-  var listActions = $injector.get('listActions');
-  var logger      = $injector.get('logger');
+  var $q            = $injector.get('$q');
+  var $timeout      = $injector.get('$timeout');
+  var listActions   = $injector.get('listActions');
+  var logger        = $injector.get('logger');
+  var accessChecker = $injector.get('accessChecker');
 
   var _cacheSelected;
 
@@ -110,27 +111,27 @@ angular.module('contentful').controller('EntryListActionsController', ['$scope',
   };
 
   $scope.showDuplicate = function () {
-    return !$scope.permissionController.shouldHide('createEntry');
+    return !accessChecker.shouldHide('createEntry');
   };
 
   $scope.showDelete = function () {
-    return !$scope.permissionController.shouldHide('deleteEntry') && every('canDelete');
+    return !accessChecker.shouldHide('deleteEntry') && every('canDelete');
   };
 
   $scope.showArchive = function () {
-    return !$scope.permissionController.shouldHide('archiveEntry') && every('canArchive');
+    return !accessChecker.shouldHide('archiveEntry') && every('canArchive');
   };
 
   $scope.showUnarchive = function () {
-    return !$scope.permissionController.shouldHide('unarchiveEntry') && every('canUnarchive');
+    return !accessChecker.shouldHide('unarchiveEntry') && every('canUnarchive');
   };
 
   $scope.showUnpublish = function () {
-    return !$scope.permissionController.shouldHide('unpublishEntry') && every('canUnpublish');
+    return !accessChecker.shouldHide('unpublishEntry') && every('canUnpublish');
   };
 
   $scope.showPublish = function () {
-    return !$scope.permissionController.shouldHide('publishEntry') && every('canPublish');
+    return !accessChecker.shouldHide('publishEntry') && every('canPublish');
   };
 
   $scope.publishButtonName = function () {

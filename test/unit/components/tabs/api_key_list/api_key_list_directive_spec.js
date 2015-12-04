@@ -2,23 +2,22 @@
 
 describe('The ApiKey list directive', function () {
 
-  var container, scope;
+  var container, scope, accessChecker;
   var compileElement;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('relative');
     });
-    inject(function ($rootScope, $compile, enforcements, $q, spaceContext) {
+    inject(function ($rootScope, $compile, enforcements, $q, spaceContext, _accessChecker_) {
       scope = $rootScope.$new();
       spaceContext.space = {
           data: {sys: {createdBy: {sys: {id: ''}}}},
           getDeliveryApiKeys: sinon.stub().returns($q.defer().promise)
       };
 
-      scope.permissionController = {
-        shouldDisable: sinon.stub().returns(false)
-      };
+      accessChecker = _accessChecker_;
+      accessChecker.shouldDisable = sinon.stub().returns(false);
 
       compileElement = function () {
         container = $('<div cf-api-key-list></div>');
@@ -58,7 +57,7 @@ describe('The ApiKey list directive', function () {
   });
 
   it('save button is disabled', function () {
-    scope.permissionController.shouldDisable.withArgs('createApiKey').returns(true);
+    accessChecker.shouldDisable.withArgs('createApiKey').returns(true);
     compileElement();
     expect(container.find('.cfnext-advice button').attr('disabled')).toBe('disabled');
   });

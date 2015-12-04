@@ -11,6 +11,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   var spaceContext     = $injector.get('spaceContext');
   var userAgent        = $injector.get('userAgent');
   var $state           = $injector.get('$state');
+  var accessChecker    = $injector.get('accessChecker');
 
   var notify = notifier(function getTitle () {
     return truncate($scope.apiKey.getName(), 50);
@@ -109,7 +110,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   controller.save = Command.create(save, {
     disabled: function () {
       return $scope.apiKeyForm.$invalid ||
-             $scope.permissionController.shouldDisable('createApiKey');
+             accessChecker.shouldDisable('createApiKey');
     }
   });
 
