@@ -28,6 +28,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   $scope.isDev = environment.env === 'development';
   $scope.isProd = environment.env === 'production';
   $scope.isNotProd = environment.env !== 'production';
+  $scope.isReadOnly = function () { return !accessChecker.canModifyApiKeys(); };
 
   $scope.getSelectedAccessToken = function () {
     var apiKey = isPreviewApiSelected() ? $scope.previewApiKey : $scope.apiKey;
@@ -80,10 +81,6 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     $scope.context.title = title || 'New Api Key';
   });
 
-  $scope.editable = function() {
-    return true;
-  };
-
   $scope.delete = function() {
     $scope.apiKey.delete()
     .then(function(){
@@ -109,8 +106,10 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
 
   controller.save = Command.create(save, {
     disabled: function () {
-      return $scope.apiKeyForm.$invalid ||
-             accessChecker.shouldDisable('createApiKey');
+      return $scope.apiKeyForm.$invalid || accessChecker.shouldDisable('createApiKey');
+    },
+    available: function () {
+      return !$scope.isReadOnly();
     }
   });
 

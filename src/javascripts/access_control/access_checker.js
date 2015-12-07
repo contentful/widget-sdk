@@ -37,6 +37,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     canPerformActionOnEntity:        canPerformActionOnEntity,
     canUpdateEntry:                  canUpdateEntry,
     canUpdateAsset:                  canUpdateAsset,
+    canModifyApiKeys:                function () { return dotty.get(responses, 'createApiKey.can', false); },
     canCreateSpace:                  canCreateSpace,
     canCreateSpaceInAnyOrganization: canCreateSpaceInAnyOrganization,
     canCreateSpaceInOrganization:    canCreateSpaceInOrganization

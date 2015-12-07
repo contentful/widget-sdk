@@ -356,14 +356,17 @@ angular.module('contentful').config([
   });
 
 
-  $stateProvider.state('spaces.detail.api.keys.list', {
+  $stateProvider.state('spaces.detail.api.keys.list', loadableState({
     url: '/',
     ncyBreadcrumb: {
       label: 'Delivery Keys',
       parent: 'spaces.detail.api.home'
     },
-    template: '<div cf-api-key-list class="workbench entity-list"></div>'
-  });
+    template: '<div cf-api-key-list class="workbench entity-list"></div>',
+    controller: ['$scope', function ($scope) {
+      $scope.context = {};
+    }]
+  }));
 
   var apiKeyEditorState = {
     ncyBreadcrumb: {

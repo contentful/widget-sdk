@@ -14,6 +14,7 @@ function ApiKeyListController ($scope, $injector) {
     return spaceContext.space.getDeliveryApiKeys({limit: 1000})
     .then(function (apiKeys) {
       $scope.apiKeys = apiKeys;
+      $scope.context.ready = true;
     })
     .catch(ReloadNotification.apiErrorHandler);
   };
