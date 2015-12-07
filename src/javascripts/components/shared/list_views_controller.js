@@ -7,9 +7,12 @@ function ($scope, $injector, generateDefaultViews, getBlankView, resetList, view
   var notification = $injector.get('notification');
   var $parse       = $injector.get('$parse');
   var FilterQS     = $injector.get('FilterQueryString');
+  var accessChecker = $injector.get('accessChecker');
 
   var getCurrentView = $parse('context.view');
   var setCurrentView = getCurrentView.assign;
+
+  var hiddenContentTypes = [];
 
   if (preserveStateAs) {
     var qs = FilterQS.create(preserveStateAs);
@@ -24,6 +27,9 @@ function ($scope, $injector, generateDefaultViews, getBlankView, resetList, view
       uiConfig[viewCollectionName] = generateDefaultViews(true);
     }
   });
+
+  $scope.$watch('uiConfig', cacheInaccessibleContentTypes, true);
+  $scope.$watch(accessChecker.getResponses, cacheInaccessibleContentTypes);
 
   $scope.resetViews = function () {
     $scope.uiConfig[viewCollectionName] = generateDefaultViews();
@@ -48,9 +54,28 @@ function ($scope, $injector, generateDefaultViews, getBlankView, resetList, view
     });
   };
 
+  $scope.viewIsHidden = function (view) {
+    return view && view.contentTypeId && hiddenContentTypes.indexOf(view.contentTypeId) > -1;
+  };
+
   function replaceView(view) {
     var newView = _.extend(getBlankView(), _.cloneDeep(view));
     newView.title = 'New View';
     setCurrentView($scope, newView);
+  }
+
+  function cacheInaccessibleContentTypes() {
+    if (!$scope.uiConfig) { return; }
+    hiddenContentTypes = [];
+
+    _.forEach($scope.uiConfig[viewCollectionName], function (group) {
+      _.forEach(group.views || [], function (view) {
+        if (!view.contentTypeId) { return; }
+        var entity = {data: {sys: {type: 'Entry', contentType: {sys: {id: view.contentTypeId}}}}};
+        if (!accessChecker.canPerformActionOnEntity('read', entity)) {
+          hiddenContentTypes.push(view.contentTypeId);
+        }
+      });
+    });
   }
 }]);

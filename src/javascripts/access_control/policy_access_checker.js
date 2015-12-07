@@ -66,8 +66,8 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     var allowed = opts.type === 'Asset' ? policies.asset.allowed : getAllowed(opts.contentTypeId);
     var denied  = opts.type === 'Asset' ? policies.asset.denied  : getDenied(opts.contentTypeId);
 
-    allowed = _.filter(allowed, pathPoliciesOnly);
-    denied  = _.filter(denied,  pathPoliciesOnly);
+    allowed = pathPoliciesOnly(allowed);
+    denied  = pathPoliciesOnly(denied);
 
     if (opts.type === 'Asset' && allowed.length > 0)         { canUpdate = false; }
     if (checkPolicyCollection(allowed, fieldId, localeCode)) { canUpdate = true;  }
@@ -77,14 +77,18 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
   }
 
   function getAllowed(contentTypeId) {
-    return policies.entry.allowed.byContentType[contentTypeId] || [];
+    return pathPoliciesOnly(policies.entry.allowed.byContentType[contentTypeId] || []);
   }
 
   function getDenied(contentTypeId) {
-    return policies.entry.denied.byContentType[contentTypeId] || [];
+    return pathPoliciesOnly(policies.entry.denied.byContentType[contentTypeId] || []);
   }
 
-  function pathPoliciesOnly(p) {
+  function pathPoliciesOnly(collection) {
+    return _.filter(collection, isPathPolicy);
+  }
+
+  function isPathPolicy(p) {
     return p.action === 'update' && !_.isNull(p.locale) && !_.isNull(p.field);
   }
 
