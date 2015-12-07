@@ -26,6 +26,10 @@ angular.module('contentful').run(['$injector', function ($injector) {
                  .filter(function () { return this.contentWindow === event.source; })
                  .get(0);
 
+    if (!iframe) {
+      return;
+    }
+
     $rootScope.$apply(function (scope) {
       scope.$broadcast('iframeMessage', event.data, iframe);
     });
