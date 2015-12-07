@@ -17,6 +17,10 @@ angular.module('contentful')
     return '“' + $scope.title + '”';
   });
 
+  var fieldAccessChecker = accessChecker.getFieldChecker($scope.asset, isOtDocEditable);
+  $scope.isEditable = fieldAccessChecker.isEditable;
+  $scope.isDisabled = fieldAccessChecker.isDisabled;
+
   $scope.locales = $controller('entityEditor/LocalesController');
 
   $scope.state = $controller('entityEditor/StateController', {
@@ -29,9 +33,7 @@ angular.module('contentful')
   $scope.notifications = $controller('entityEditor/StatusNotificationsController', {
     $scope: $scope,
     entityLabel: 'asset',
-    isReadOnly: function () {
-      return accessChecker.canPerformActionOnEntity('update', $scope.asset);
-    }
+    isReadOnly: isReadOnly
   });
 
 
@@ -57,10 +59,10 @@ angular.module('contentful')
 
 
   // OT Stuff
-  $scope.$watch(function assetEditorEnabledWatcher(scope) {
-    return !scope.asset.isArchived() && accessChecker.canPerformActionOnEntity('update', scope.asset);
-  }, function assetEditorEnabledHandler(enabled, old, scope) {
-    scope.otDoc.state.disabled = !enabled;
+  $scope.$watch(function assetEditorDisabledWatcher(scope) {
+    return scope.asset.isArchived() || isReadOnly();
+  }, function assetEditorDisabledHandler(disabled) {
+    $scope.otDoc.state.disabled = disabled;
   });
 
   // Validations
@@ -135,4 +137,11 @@ angular.module('contentful')
     }
   }
 
+  function isOtDocEditable() {
+    return dotty.get($scope, 'otDoc.state.editable', false);
+  }
+
+  function isReadOnly() {
+    return !accessChecker.canUpdateAsset($scope.asset);
+  }
 }]);

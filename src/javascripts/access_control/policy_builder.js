@@ -290,7 +290,12 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['$injector', f
 
   function addPathConstraint(pair) {
     var source = pair.source;
-    if (!_.isString(source.field) || !_.isString(source.locale)) { return pair; }
+
+    if (pair.source.entity === 'asset') {
+      if (!_.isString(source.locale)) { return pair; }
+    } else {
+      if (!_.isString(source.field) || !_.isString(source.locale)) { return pair; }
+    }
 
     var segments = ['fields', segment(source.field), segment(source.locale)];
     pushConstraint(pair, paths(segments));
@@ -298,7 +303,7 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['$injector', f
   }
 
   function segment(prop) {
-    return isAll(prop) ? PATH_WILDCARD : prop;
+    return (isAll(prop) || !prop) ? PATH_WILDCARD : prop;
   }
 
   function pushConstraint(pair, constraint) {

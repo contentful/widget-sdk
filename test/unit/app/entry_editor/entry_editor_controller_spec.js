@@ -29,7 +29,7 @@ describe('Entry Editor Controller', function () {
       });
       scope.entry = entry;
       accessChecker = _accessChecker_;
-      accessChecker.canPerformActionOnEntity = sinon.stub().returns(true);
+      accessChecker.canUpdateEntry = sinon.stub().returns(true);
       controller = $controller('EntryEditorController', {$scope: scope});
       this.$apply();
     });
@@ -50,13 +50,13 @@ describe('Entry Editor Controller', function () {
     });
 
     it('to disabled', function () {
-      accessChecker.canPerformActionOnEntity.withArgs('update', scope.entry).returns(true);
+      accessChecker.canUpdateEntry.returns(true);
       scope.$apply();
       expect(scope.otDoc.state.disabled).toBe(false);
     });
 
     it('to enabled', function () {
-      accessChecker.canPerformActionOnEntity.withArgs('update', scope.entry).returns(false);
+      accessChecker.canUpdateEntry.returns(false);
       scope.$apply();
       expect(scope.otDoc.state.disabled).toBe(true);
     });

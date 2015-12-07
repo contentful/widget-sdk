@@ -8,6 +8,8 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   var authorization    = $injector.get('authorization');
   var logger           = $injector.get('logger');
   var OrganizationList = $injector.get('OrganizationList');
+  var spaceContext     = $injector.get('spaceContext');
+  var policyChecker    = $injector.get('accessChecker/policy');
 
   var ACTIONS_FOR_ENTITIES = {
     contentType: ['create', 'read', 'update', 'delete', 'publish', 'unpublish'],
@@ -22,20 +24,26 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   var responses         = {};
   var sectionVisibility = {};
 
-  $rootScope.$watch(function () { return authorization.spaceContext; }, reset);
+  $rootScope.$watchCollection(function () {
+    return { ctx: authorization.spaceContext, role: getCurrentRole() };
+  }, reset);
 
   return {
     getResponseByActionName:         function (action) { return responses[action]; },
     getSectionVisibility:            function () { return sectionVisibility; },
+    getFieldChecker:                 getFieldChecker,
     shouldHide:                      shouldHide,
     shouldDisable:                   shouldDisable,
     canPerformActionOnEntity:        canPerformActionOnEntity,
+    canUpdateEntry:                  canUpdateEntry,
+    canUpdateAsset:                  canUpdateAsset,
     canCreateSpace:                  canCreateSpace,
     canCreateSpaceInAnyOrganization: canCreateSpaceInAnyOrganization,
     canCreateSpaceInOrganization:    canCreateSpaceInOrganization
   };
 
   function reset() {
+    policyChecker.setRole(getCurrentRole());
     collectResponses();
     collectSectionVisibility();
   }
@@ -56,11 +64,22 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   function collectSectionVisibility() {
     sectionVisibility = {
       contentType: !shouldHide('updateContentType'),
-      entry:       !shouldHide('readEntry'),
-      asset:       !shouldHide('readAsset'),
+      entry:       !shouldHide('readEntry') || policyChecker.canAccessEntries(),
+      asset:       !shouldHide('readAsset') || policyChecker.canAccessAssets(),
       apiKey:      !shouldHide('readApiKey'),
       settings:    !shouldHide('updateSettings')
     };
+  }
+
+  function getFieldChecker(entity, predicate) {
+    var type = dotty.get(entity, 'data.sys.type', 'Entry');
+
+    return policyChecker.getFieldChecker({
+      baseCanUpdateFn: canPerformActionOnEntity.bind(null, 'update', entity),
+      predicate: predicate,
+      type: type,
+      contentTypeId: type === 'Entry' ? getContentTypeIdFor(entity) : null
+    });
   }
 
   function createResponseAttributeGetter(attrName) {
@@ -89,6 +108,21 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
 
   function canPerformActionOnEntity(action, entity) {
     return can(action, entity.data).can;
+  }
+
+  function canUpdateEntry(entry) {
+    var canUpdate = canPerformActionOnEntity('update', entry);
+    var ctId = getContentTypeIdFor(entry);
+    var hasAllowPolicies = policyChecker.hasEntryAllowPolicies(ctId);
+
+    return canUpdate || hasAllowPolicies;
+  }
+
+  function canUpdateAsset(asset) {
+    var canUpdate = canPerformActionOnEntity('update', asset);
+    var hasAllowPolicies = policyChecker.hasAssetAllowPolicies();
+
+    return canUpdate || hasAllowPolicies;
   }
 
   function canCreateSpace() {
@@ -140,5 +174,13 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
 
   function getReasonsDenied(action, entity) {
     return authorization.spaceContext.reasonsDenied(action, entity);
+  }
+
+  function getCurrentRole() {
+    return _.first(dotty.get(spaceContext, 'space.data.spaceMembership.roles', []));
+  }
+
+  function getContentTypeIdFor(entry) {
+    return dotty.get(entry, 'data.sys.contentType.sys.id');
   }
 }]);

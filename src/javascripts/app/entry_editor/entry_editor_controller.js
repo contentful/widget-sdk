@@ -9,20 +9,15 @@ angular.module('contentful')
   var fieldFactory             = $injector.get('fieldFactory');
   var notifier                 = $injector.get('entryEditor/notifications');
   var truncate                 = $injector.get('stringUtils').truncate;
-  var createFieldAccessChecker = $injector.get('fieldAccessChecker').getInstance;
   var accessChecker            = $injector.get('accessChecker');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
   });
 
-  var fieldAccessChecker = createFieldAccessChecker({
-    contentTypeId: $scope.contentType.getId(),
-    hasUpdatePermission: hasUpdatePermission()
-  });
-
-  $scope.isEditable = fieldAccessChecker.isEditableWithPredicate(isOtDocEditable);
-  $scope.isDisabled = function (f, l) { return !$scope.isEditable(f, l); };
+  var fieldAccessChecker = accessChecker.getFieldChecker($scope.entry, isOtDocEditable);
+  $scope.isEditable = fieldAccessChecker.isEditable;
+  $scope.isDisabled = fieldAccessChecker.isDisabled;
 
   $scope.locales = $controller('entityEditor/LocalesController');
 
@@ -41,9 +36,7 @@ angular.module('contentful')
   $scope.notifications = $controller('entityEditor/StatusNotificationsController', {
     $scope: $scope,
     entityLabel: 'entry',
-    isReadOnly: function () {
-      return !hasUpdatePermission() && !fieldAccessChecker.hasAllowPolicies();
-    }
+    isReadOnly: isReadOnly
   });
 
   $scope.$watch(function () {
@@ -68,10 +61,9 @@ angular.module('contentful')
   });
 
   // OT Stuff
-  $scope.$watch(function entryEditorEnabledWatcher() {
-    var canBeUpdated = hasUpdatePermission() || fieldAccessChecker.hasAllowPolicies();
-    return $scope.entry.isArchived() || !canBeUpdated;
-  }, function entryEditorEnabledHandler(disabled) {
+  $scope.$watch(function entryEditorDisabledWatcher() {
+    return $scope.entry.isArchived() || isReadOnly();
+  }, function entryEditorDisabledHandler(disabled) {
     $scope.otDoc.state.disabled = disabled;
   });
 
@@ -264,7 +256,7 @@ angular.module('contentful')
     return dotty.get($scope, 'otDoc.state.editable', false);
   }
 
-  function hasUpdatePermission() {
-    return accessChecker.canPerformActionOnEntity('update', $scope.entry);
+  function isReadOnly() {
+    return !accessChecker.canUpdateEntry($scope.entry);
   }
 }]);

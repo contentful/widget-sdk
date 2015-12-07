@@ -47,7 +47,7 @@ describe('Asset editor controller', function () {
       scope.otDoc = {doc: {}, state: {}};
 
       accessChecker = _accessChecker_;
-      accessChecker.canPerformActionOnEntity = sinon.stub().returns(true);
+      accessChecker.canUpdateAsset = sinon.stub().returns(true);
 
       scope.validate = sinon.stub();
 
@@ -85,13 +85,13 @@ describe('Asset editor controller', function () {
     });
 
     it('to disabled', function () {
-      accessChecker.canPerformActionOnEntity.returns(true);
+      accessChecker.canUpdateAsset.returns(true);
       scope.$apply();
       expect(scope.otDoc.state.disabled).toBe(false);
     });
 
     it('to enabled', function () {
-      accessChecker.canPerformActionOnEntity.returns(false);
+      accessChecker.canUpdateAsset.returns(false);
       scope.$apply();
       expect(scope.otDoc.state.disabled).toBe(true);
     });
@@ -101,7 +101,7 @@ describe('Asset editor controller', function () {
     beforeEach(inject(function ($compile, $rootScope, $controller, cfStub){
       scope = $rootScope.$new();
       scope.otDoc = {doc: {}, state: {}};
-      accessChecker.canPerformActionOnEntity.returns(true);
+      accessChecker.canUpdateAsset.returns(true);
 
       var space = cfStub.space('test');
       var asset = cfStub.asset(space, 'asset1', {}, {
