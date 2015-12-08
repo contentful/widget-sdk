@@ -30,8 +30,8 @@ describe('widgets/migrations', function() {
   });
 
   it('migrates widget if field type matches', function () {
-    var contentType = makeContentType({id: 'FID', type: 'ft1'});
-    var editingInterface = makeEditingInterface({fieldId: 'FID', widgetId: 'oldWidget'});
+    var contentType = makeContentType({apiName: 'apiName', type: 'ft1'});
+    var editingInterface = makeEditingInterface({fieldId: 'apiName', widgetId: 'oldWidget'});
 
     this.migrations.push({
       from: 'oldWidget',
@@ -45,8 +45,8 @@ describe('widgets/migrations', function() {
   });
 
   it('does not migrate widget if field type does not match', function () {
-    var contentType = makeContentType({id: 'FID', type: 'ft1'});
-    var editingInterface = makeEditingInterface({fieldId: 'FID', widgetId: 'oldWidget'});
+    var contentType = makeContentType({apiName: 'apiName', type: 'ft1'});
+    var editingInterface = makeEditingInterface({fieldId: 'apiName', widgetId: 'oldWidget'});
 
     this.migrations.push({
       from: 'oldWidget',

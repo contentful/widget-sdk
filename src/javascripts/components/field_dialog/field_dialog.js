@@ -57,12 +57,13 @@ angular.module('contentful')
 ['$scope', '$injector', function FieldDialogController ($scope, $injector) {
   var dialog = $scope.dialog;
 
-  var validations   = $injector.get('validationDecorator');
-  var field         = $injector.get('fieldDecorator');
-  var trackField    = $injector.get('analyticsEvents').trackField;
-  var fieldFactory  = $injector.get('fieldFactory');
-  var Widgets       = $injector.get('widgets');
-  var features      = $injector.get('features');
+  var validations       = $injector.get('validationDecorator');
+  var field             = $injector.get('fieldDecorator');
+  var trackField        = $injector.get('analyticsEvents').trackField;
+  var fieldFactory      = $injector.get('fieldFactory');
+  var Widgets           = $injector.get('widgets');
+  var features          = $injector.get('features');
+  var editingInterfaces = $injector.get('editingInterfaces');
 
   $scope.decoratedField = field.decorate($scope.field, $scope.contentType);
   $scope.validations = validations.decorateFieldValidations($scope.field);
@@ -70,7 +71,7 @@ angular.module('contentful')
   $scope.currentTitleField = getTitleField($scope.contentType);
 
   var eiWidgets = $scope.editingInterface.data.widgets;
-  var widget = _.find(eiWidgets, {fieldId: $scope.field.id});
+  var widget = editingInterfaces.findWidget(eiWidgets, $scope.field);
 
   $scope.widgetSettings = {
     id: widget.widgetId,
