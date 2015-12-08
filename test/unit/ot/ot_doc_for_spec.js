@@ -79,6 +79,8 @@ describe('otDocFor', function () {
 
       this.otDoc = makeOtDocStub(this.entity.data);
       this.openDocument.resolves(this.otDoc);
+      scope.$broadcast = sinon.stub();
+
       this.connect();
     });
 
@@ -111,6 +113,10 @@ describe('otDocFor', function () {
 
     it('calls otUpdateEntityData', function(){
       sinon.assert.called(this.entity.update);
+    });
+
+    it('broadcasts "otDocReady"', function () {
+      sinon.assert.calledWith(scope.$broadcast, 'otDocReady', this.otDoc);
     });
   });
 
@@ -240,6 +246,10 @@ describe('otDocFor', function () {
       sinon.assert.calledWith(this.otDoc.removeListener, 'remoteop');
     });
 
+    it('removes the change listener', function(){
+      sinon.assert.calledWith(this.otDoc.removeListener, 'change');
+    });
+
     it('closes the doc', function(){
       sinon.assert.called(this.otDoc.close);
     });
@@ -308,6 +318,13 @@ describe('otDocFor', function () {
       this.otDoc.version = 'VERSION';
       this.otDoc.on.withArgs('remoteop').yield();
       sinon.assert.calledWith(scope.entity.setVersion, 'VERSION');
+    });
+
+    it('broadcasts change event to scope', function () {
+      scope.$broadcast = sinon.stub();
+      this.otDoc.on.withArgs('change').yield('OPERATION');
+      this.$apply();
+      sinon.assert.calledWith(scope.$broadcast, 'otChange', this.otDoc, 'OPERATION');
     });
   });
 });

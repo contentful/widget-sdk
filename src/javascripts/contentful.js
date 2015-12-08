@@ -6,6 +6,7 @@ angular.module('contentful', [
   'cf.ui',
   'cf.forms',
   'cf.utils',
+  'cf.data',
   'angularLoad',
   'ngAnimate',
   'ngSanitize',

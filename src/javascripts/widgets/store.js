@@ -14,9 +14,15 @@ angular.module('contentful')
 .factory('widgets/store', ['$injector', function ($injector) {
   var $q = $injector.get('$q');
   var builtinWidgets = $injector.get('widgets/builtin');
+  var logger = $injector.get('logger');
+  var fieldFactory = $injector.get('fieldFactory');
 
   var space;
   var widgetCache;
+
+  var customWidgetProperties = [
+    'name', 'src', 'srcdoc', 'sidebar', 'options'
+  ];
 
   return {
     setSpace: setSpace,
@@ -48,7 +54,7 @@ angular.module('contentful')
     }
 
     if (!widgetCache) {
-      widgetCache = customWidgets()
+      widgetCache = customWidgets(space)
       .then(function (widgets) {
         return _.extend({}, builtinWidgets, widgets);
       });
@@ -57,7 +63,27 @@ angular.module('contentful')
     return widgetCache;
   }
 
-  function customWidgets (/* space */) {
-    return $q.resolve({});
+  function customWidgets (space) {
+    return space.endpoint('widgets').get()
+    .then(function (widgets) {
+      return _.transform(widgets.items, function (byId, data) {
+        var widget = buildCustomWidget(data);
+        byId[widget.id] = widget;
+      }, {});
+    }).catch(function (err) {
+      logger.logServerError(err);
+      return [];
+    });
   }
+
+  function buildCustomWidget (data) {
+    var widget = data.widget;
+    var fieldTypes = _.map(widget.fieldTypes, fieldFactory.getTypeName);
+    return _.extend(_.pick(widget, customWidgetProperties), {
+      id: data.sys.id,
+      fieldTypes: fieldTypes,
+      template: '<cf-iframe-widget>'
+    });
+  }
+
 }]);
