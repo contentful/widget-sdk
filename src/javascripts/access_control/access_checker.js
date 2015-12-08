@@ -6,6 +6,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   var stringUtils      = $injector.get('stringUtils');
   var enforcements     = $injector.get('enforcements');
   var authorization    = $injector.get('authorization');
+  var authentication   = $injector.get('authentication');
   var logger           = $injector.get('logger');
   var OrganizationList = $injector.get('OrganizationList');
   var spaceContext     = $injector.get('spaceContext');
@@ -22,10 +23,15 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   var shouldHide        = createResponseAttributeGetter('shouldHide');
   var shouldDisable     = createResponseAttributeGetter('shouldDisable');
   var responses         = {};
+  var features          = {};
   var sectionVisibility = {};
 
   $rootScope.$watchCollection(function () {
-    return { ctx: authorization.spaceContext, role: getCurrentRole() };
+    return {
+      authContext: authorization.spaceContext,
+      tokenLookup: authentication.tokenLookup,
+      currentRole: getCurrentRole()
+    };
   }, reset);
 
   return {
@@ -38,6 +44,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     canUpdateEntry:                  canUpdateEntry,
     canUpdateAsset:                  canUpdateAsset,
     canModifyApiKeys:                function () { return dotty.get(responses, 'createApiKey.can', false); },
+    canModifyRoles:                  function () { return dotty.get(features,  'customRoles',      false); },
     canCreateSpace:                  canCreateSpace,
     canCreateSpaceInAnyOrganization: canCreateSpaceInAnyOrganization,
     canCreateSpaceInOrganization:    canCreateSpaceInOrganization
@@ -46,6 +53,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   function reset() {
     policyChecker.setRole(getCurrentRole());
     collectResponses();
+    collectFeatures();
     collectSectionVisibility();
   }
 
@@ -70,6 +78,12 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
       apiKey:      !shouldHide('readApiKey'),
       settings:    !shouldHide('updateSettings')
     };
+  }
+
+  function collectFeatures() {
+    var spaces = dotty.get(authentication, 'tokenLookup.spaces', []);
+    var tokenLookupSpace = _.findWhere(spaces, {sys: {id: spaceContext.getId()}});
+    features = dotty.get(tokenLookupSpace, 'organization.subscriptionPlan.limits.features', {});
   }
 
   function getFieldChecker(entity, predicate) {

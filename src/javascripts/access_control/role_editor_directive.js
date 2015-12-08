@@ -20,6 +20,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
   var notification     = $injector.get('notification');
   var analytics        = $injector.get('analytics');
   var logger           = $injector.get('logger');
+  var accessChecker    = $injector.get('accessChecker');
 
   // 1. prepare "touch" counter (first touch for role->internal, next for dirty state)
   $scope.context.touched = $scope.context.isNew ? 0 : -1;
@@ -49,6 +50,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
     $scope.context.title = internal.name || 'Untitled';
   }, true);
 
+  $scope.canModifyRoles = accessChecker.canModifyRoles;
   $scope.save = Command.create(save, {
     disabled: function () { return !$scope.context.dirty; }
   });
@@ -86,6 +88,11 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
   }
 
   function handleError(res) {
+    if (_.contains([403, 404], parseInt(dotty.get(res, 'statusCode'), 10))) {
+      notification.error('Your plan does not include Custom Roles.');
+      return;
+    }
+
     var errors = dotty.get(res, 'body.details.errors', []);
     var nameError = _.find(errors, function (err) {
       return _.isObject(err) && err.name === 'length' && err.path === 'name';

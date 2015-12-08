@@ -4,38 +4,42 @@ header.workbench-header
 
 .workbench-main
   .workbench-main__content
+    .entity-editor__notification(ng-if="!canModifyRoles()" role="alert")
+      p Your plan does not include Custom Roles. You can only preview the predefined {{ internal.name }} role below.
+
     .role-details
       .role-details__section
         h3 Role details
         .cfnext-form__field
           label(for="opt_name") Name
-          input.cfnext-form__input--full-size(id="opt_name" ng-model="internal.name")
+          input.cfnext-form__input--full-size(id="opt_name" ng-model="internal.name" ng-disabled="!canModifyRoles()")
         .cfnext-form__field
           label(for="opt_description") Description
-          textarea.cfnext-form__input--full-size(id="opt_description" ng-model="internal.description")
+          textarea.cfnext-form__input--full-size(id="opt_description" ng-model="internal.description" ng-disabled="!canModifyRoles()")
 
       .role-details__section(ng-if="internal.uiCompatible")
         h3 Entries
-        cf-rule-list(rules="internal.entries" entity="entry")
+        cf-rule-list(rules="internal.entries" entity="entry" is-disabled="!canModifyRoles()")
 
       .role-details__section(ng-if="internal.uiCompatible")
         h3 Media Assets
-        cf-rule-list(rules="internal.assets" entity="asset")
+        cf-rule-list(rules="internal.assets" entity="asset" is-disabled="!canModifyRoles()")
 
       .role-details__section(ng-if="!internal.uiCompatible")
         h3 Policies
         p
-          | The policy for this role cannot be represented visually.
-          | You can continue to edit the JSON by directly,
-          | or <a href="" ng-click="resetPolicies()">clear the policy</a>
-          | to define policy rules visually.
+          span The policy for this role cannot be represented visually.
+          span(ng-if="canModifyRoles()")
+            |  You can continue to edit the JSON by directly,
+            | or <a href="" ng-click="resetPolicies()">clear the policy</a>
+            | to define policy rules visually.
         .cfnext-form-option
-          textarea.cfnext-form__input--full-size(ng-model="internal.policyString" rows="10")
+          textarea.cfnext-form__input--full-size(ng-model="internal.policyString" rows="10" ng-disabled="!canModifyRoles()")
 
       .role-details__section
         h3 Content Types
         .cfnext-form-option
-          input(id="opt_content_types_access" type="checkbox" ng-model="internal.contentModel.manage")
+          input(id="opt_content_types_access" type="checkbox" ng-model="internal.contentModel.manage" ng-disabled="!canModifyRoles()")
           label(for="opt_content_types_access")
             | Can modify Content Types
             |  <em>(the Content Type Editor is only shown to users who have this permission)</em>.
@@ -43,18 +47,18 @@ header.workbench-header
       .role-details__section
         h3 API keys
         .cfnext-form-option
-          input(id="opt_api_keys_view" type="checkbox" ng-model="internal.contentDelivery.read")
+          input(id="opt_api_keys_view" type="checkbox" ng-model="internal.contentDelivery.read" ng-disabled="!canModifyRoles()")
           label(for="opt_api_keys_view")
             | Can access existing API keys for this space.
         .cfnext-form-option
-          input(id="opt_space_settings_edit" type="checkbox" ng-model="internal.contentDelivery.manage")
+          input(id="opt_space_settings_edit" type="checkbox" ng-model="internal.contentDelivery.manage" ng-disabled="!canModifyRoles()")
           label(for="opt_space_settings_edit")
             | Can create and update API keys for this space.
 
       .role-details__section
         h3 Space settings
         .cfnext-form-option
-          input(id="opt_space_settings_access" type="checkbox" ng-model="internal.settings.manage")
+          input(id="opt_space_settings_access" type="checkbox" ng-model="internal.settings.manage" ng-disabled="!canModifyRoles()")
           label(for="opt_space_settings_access")
             | Can modify Space Settings. This permission allows users to <strong>delete</strong> the space and it’s contents!
             |  <em>(the Settings menu is only shown to users who have this permission)</em>.

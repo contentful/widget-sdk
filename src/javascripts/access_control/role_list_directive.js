@@ -12,6 +12,7 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
 
   var ReloadNotification  = $injector.get('ReloadNotification');
   var space               = $injector.get('spaceContext').space;
+  var $state              = $injector.get('$state');
   var $q                  = $injector.get('$q');
   var $rootScope          = $injector.get('$rootScope');
   var modalDialog         = $injector.get('modalDialog');
@@ -21,11 +22,13 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
   var jumpToRoleMembers   = $injector.get('UserListController/jumpToRole');
   var notification        = $injector.get('notification');
   var Command             = $injector.get('command');
+  var accessChecker       = $injector.get('accessChecker');
 
-  $scope.sref                   = createSref;
   $scope.removeRole             = removeRole;
+  $scope.duplicateRole          = duplicateRole;
   $scope.jumpToRoleMembers      = jumpToRoleMembers;
   $scope.jumpToAdminRoleMembers = jumpToAdminRoleMembers;
+  $scope.canModifyRoles         = accessChecker.canModifyRoles;
 
   reload().catch(ReloadNotification.basicErrorHandler);
 
@@ -84,6 +87,10 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
     }
   }
 
+  function duplicateRole(role) {
+    $state.go('spaces.detail.settings.roles.new', {baseRoleId: role.sys.id});
+  }
+
   function reload() {
     return $q.all({
       memberships: spaceMembershipRepo.getAll(),
@@ -117,11 +124,5 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
 
   function jumpToAdminRoleMembers() {
     jumpToRoleMembers(listHandler.getAdminRoleId());
-  }
-
-  function createSref(role, stateName) {
-    return 'spaces.detail.settings.roles.' +
-      (stateName || 'detail') +
-      '({ roleId: \'' + role.sys.id + '\' })';
   }
 }]);

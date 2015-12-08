@@ -11,7 +11,8 @@ angular.module('contentful').directive('cfRuleList', ['$injector', function ($in
     template: JST['rule_list'](),
     scope: {
       rules: '=',
-      entity: '@'
+      entity: '@',
+      isDisabled: '='
     },
     controller: ['$scope', function ($scope) {
       $scope.spaceContext = spaceContext;

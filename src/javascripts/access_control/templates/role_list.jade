@@ -4,6 +4,8 @@ header.workbench-header
 
 .workbench-main
   .workbench-main__content
+    .entity-editor__notification(ng-if="!canModifyRoles()" role="alert")
+      p Your plan does not include Custom Roles. You can still access predefined roles in a read-only mode.
 
     .role-list__item
       .role-list__link.admin-role
@@ -18,7 +20,7 @@ header.workbench-header
         | &bullet;&bullet;&bullet;
 
     .role-list__item(ng-repeat="role in roles track by role.sys.id")
-      a.role-list__link(href="" ui-sref="{{ sref(role) }}")
+      a.role-list__link(href="" ui-sref="spaces.detail.settings.roles.detail({roleId: role.sys.id })")
         h3 {{ role.name }}
         p(ng-if="role.description") {{ role.description }}
       .role-list__member-count
@@ -29,16 +31,23 @@ header.workbench-header
       .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="Role Actions")
         cf-icon.context-menu__arrow.x--top-right-tight(name="arrow-up")
         ul.context-menu__items
-          li(role="menuitem" ui-sref="spaces.detail.settings.roles.new({ baseRoleId: role.sys.id })")
-            | Duplicate
-          li(role="menuitem" ng-click="removeRole(role)")
-            | Delete permanently
+          li(ng-if="canModifyRoles()" role="menuitem" ng-click="duplicateRole(role)") Duplicate
+          li(ng-if="canModifyRoles()" role="menuitem" ng-click="removeRole(role)") Delete permanently
+          li.role-list__action--disabled(ng-if="!canModifyRoles()") Duplicate
+          li.role-list__action--disabled(ng-if="!canModifyRoles()") Delete permanently
 
   .workbench-main__entity-sidebar
-    .entity-sidebar
+    .entity-sidebar(ng-if="canModifyRoles()")
       h2.entity-sidebar__heading
         | Create new role
       p
         | Select one of the predefined role templates or create one from the scratch.
       button.cfnext-btn-primary-action(ui-sref="spaces.detail.settings.roles.new")
         | Create new role
+    .entity-sidebar(ng-if="!canModifyRoles()")
+      h2.entity-sidebar__heading
+        | Custom roles disabled
+      p
+        | Your plan does not include Custom Roles.
+        | Creating, editing, duplicating and removing roles is&nbsp;disabled.
+        | Please upgrade your plan to activate this feature.
