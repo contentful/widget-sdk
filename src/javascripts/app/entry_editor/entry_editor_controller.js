@@ -2,14 +2,14 @@
 
 angular.module('contentful')
 .controller('EntryEditorController', ['$scope', '$injector', function EntryEditorController($scope, $injector) {
-  var $controller              = $injector.get('$controller');
-  var logger                   = $injector.get('logger');
-  var TheLocaleStore           = $injector.get('TheLocaleStore');
-  var spaceContext             = $injector.get('spaceContext');
-  var fieldFactory             = $injector.get('fieldFactory');
-  var notifier                 = $injector.get('entryEditor/notifications');
-  var truncate                 = $injector.get('stringUtils').truncate;
-  var accessChecker            = $injector.get('accessChecker');
+  var $controller    = $injector.get('$controller');
+  var logger         = $injector.get('logger');
+  var TheLocaleStore = $injector.get('TheLocaleStore');
+  var spaceContext   = $injector.get('spaceContext');
+  var fieldFactory   = $injector.get('fieldFactory');
+  var notifier       = $injector.get('entryEditor/notifications');
+  var truncate       = $injector.get('stringUtils').truncate;
+  var accessChecker  = $injector.get('accessChecker');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';

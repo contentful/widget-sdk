@@ -66,13 +66,14 @@ function ($scope, $injector, generateDefaultViews, getBlankView, resetList, view
 
   function cacheInaccessibleContentTypes() {
     if (!$scope.uiConfig) { return; }
+
     hiddenContentTypes = [];
 
     _.forEach($scope.uiConfig[viewCollectionName], function (group) {
-      _.forEach(group.views || [], function (view) {
-        if (!view.contentTypeId) { return; }
-        var entity = {data: {sys: {type: 'Entry', contentType: {sys: {id: view.contentTypeId}}}}};
-        if (!accessChecker.canPerformActionOnEntity('read', entity)) {
+      _(group.views || [])
+      .filter(function (view) { return _.isString(view.contentTypeId); })
+      .forEach(function (view) {
+        if (!accessChecker.canPerformActionOnEntryOfType('read', view.contentTypeId)) {
           hiddenContentTypes.push(view.contentTypeId);
         }
       });

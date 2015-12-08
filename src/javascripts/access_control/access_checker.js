@@ -35,12 +35,14 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   }, reset);
 
   return {
+    getResponses:                    function () { return responses; },
     getResponseByActionName:         function (action) { return responses[action]; },
     getSectionVisibility:            function () { return sectionVisibility; },
     getFieldChecker:                 getFieldChecker,
     shouldHide:                      shouldHide,
     shouldDisable:                   shouldDisable,
     canPerformActionOnEntity:        canPerformActionOnEntity,
+    canPerformActionOnEntryOfType:   canPerformActionOnEntryOfType,
     canUpdateEntry:                  canUpdateEntry,
     canUpdateAsset:                  canUpdateAsset,
     canModifyApiKeys:                function () { return dotty.get(responses, 'createApiKey.can', false); },
@@ -119,6 +121,12 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     broadcastEnforcement(response.enforcement);
 
     return response;
+  }
+
+  function canPerformActionOnEntryOfType(action, contentTypeId) {
+    var entity = {data: {sys: {type: 'Entry', contentType: {sys: {id: contentTypeId}}}}};
+
+    return canPerformActionOnEntity(action, entity);
   }
 
   function canPerformActionOnEntity(action, entity) {

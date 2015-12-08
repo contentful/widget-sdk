@@ -1,12 +1,12 @@
 mixin create-entry-button
-  div(ng-if="singleContentType")
+  div(ng-if="accessibleCts.length === 1")
     button.cfnext-btn-action(
       ng-disabled="shouldDisable('createEntry')"
       cf-when-disabled="createEntry"
-      ng-click="entityCreationController.newEntry(singleContentType)")
+      ng-click="entityCreationController.newEntry(accessibleCts[0])")
       cf-icon.btn-icon.inverted(name="plus")
-      | Add New {{singleContentType.getName()}}
-  div(ng-if="!singleContentType")
+      | Add New {{accessibleCts[0].getName()}}
+  div(ng-if="accessibleCts.length > 1")
     button.cfnext-btn-action.u-truncate(
       cf-context-menu-trigger
       ng-disabled="shouldDisable('createEntry')"
@@ -20,7 +20,7 @@ mixin create-entry-button
       aria-label="Add Entry" data-test-id="add-entry-menu")
       ul.context-menu__items
         li(role="menuitem"
-          ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
+          ng-repeat="contentType in accessibleCts track by contentType.getId()"
           ng-click="entityCreationController.newEntry(contentType)")
           | {{contentType.getName()}}
 
@@ -49,8 +49,7 @@ header.workbench-header
 
     .search-results-position(cf-search-results-position paginator="paginator" ng-hide="!paginator.numEntries")
 
-  .workbench-header__actions(
-    ng-if="!showNoEntriesAdvice() && showCreateEntryButton()")
+  .workbench-header__actions(ng-if="!showNoEntriesAdvice()")
     +create-entry-button
 
 .workbench-main(ng-hide="showNoEntriesAdvice()")

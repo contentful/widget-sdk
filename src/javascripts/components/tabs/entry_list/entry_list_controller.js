@@ -60,10 +60,15 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     }
   });
 
-  $scope.$watch(function () {
-    return spaceContext.publishedContentTypes.length;
-  }, function (count) {
-    $scope.singleContentType = count !== 1 ? null : spaceContext.publishedContentTypes[0];
+  $scope.$watchCollection(function () {
+    return {
+      cts: spaceContext.publishedContentTypes,
+      responses: accessChecker.getResponses()
+    };
+  }, function () {
+    $scope.accessibleCts = _.filter(spaceContext.publishedContentTypes || [], function (ct) {
+      return accessChecker.canPerformActionOnEntryOfType('create', ct.getId());
+    });
   });
 
   $scope.$watch(function pageParameters(){
@@ -157,13 +162,6 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
                    !_.isEmpty(view.contentTypeId);
     var hasEntries = $scope.entries && $scope.entries.length > 0;
     return !hasEntries && !hasQuery && !$scope.context.loading;
-  };
-
-  // TODO this code is duplicated in the asset list controller
-  $scope.showCreateEntryButton = function () {
-    var hasContentTypes = !_.isEmpty(spaceContext.publishedContentTypes);
-    var hideCreateEntry = accessChecker.shouldHide('createEntry');
-    return hasContentTypes && !hideCreateEntry;
   };
 
   $scope.loadMore = function () {
