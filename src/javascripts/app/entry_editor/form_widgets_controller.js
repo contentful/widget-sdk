@@ -29,6 +29,7 @@ angular.module('contentful')
 
   function buildWidget (widget) {
     var field = getFieldForWidget(widget);
+    // TODO we should use `fieldFactory.getLocaleCodes(field)`
     var locales = _(getFieldLocales(field))
       .union(getErrorLocales(field))
       .filter(_.isObject)

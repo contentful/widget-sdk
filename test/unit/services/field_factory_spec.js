@@ -88,4 +88,53 @@ describe('field factory', function () {
     });
 
   });
+
+  describe('#getTypeName()', function () {
+    beforeEach(function () {
+      this.getTypeName = this.fieldFactory.getTypeName;
+    });
+
+    itResolves(
+      {type: 'Symbol'},
+      'Symbol'
+    );
+
+    itResolves(
+      {type: 'Array', items: {type: 'Symbol'}},
+      'Symbols'
+    );
+
+    itResolves(
+      {type: 'Link', linkType: 'Asset'},
+      'Asset'
+    );
+
+    itResolves(
+      {type: 'Array', items: {type: 'Link', linkType: 'Asset'}},
+      'Assets'
+    );
+
+    function itResolves(type, name) {
+      it('resolves "' + name + '"', function () {
+        var name = this.getTypeName(type);
+        expect(name).toEqual(name);
+      });
+    }
+  });
+
+  describe('#getLocaleCodes()', function () {
+    it('returns default locale for non-localized field', function () {
+      var LS = this.$inject('TheLocaleStore');
+      LS.getDefaultLocale = sinon.stub().returns({internal_code: 'DEF'});
+      var codes = this.fieldFactory.getLocaleCodes({localized: false});
+      expect(codes).toEqual(['DEF']);
+    });
+
+    it('returns all private locales for localized field', function () {
+      var LS = this.$inject('TheLocaleStore');
+      LS.getPrivateLocales = sinon.stub().returns([{internal_code: 'A'}, {internal_code: 'B'}]);
+      var codes = this.fieldFactory.getLocaleCodes({localized: true});
+      expect(codes).toEqual(['A', 'B']);
+    });
+  });
 });

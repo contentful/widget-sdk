@@ -8,6 +8,7 @@ angular.module('contentful')
   var notifier          = $injector.get('entryEditor/notifications');
   var spaceContext      = $injector.get('spaceContext');
   var truncate          = $injector.get('stringUtils').truncate;
+  var fieldFactory      = $injector.get('fieldFactory');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
@@ -101,9 +102,8 @@ angular.module('contentful')
       if (error.path.length == 1 && error.path[0] == 'fields') {
         $scope.hasErrorOnFields = error.path.length == 1 && error.path[0] == 'fields';
       } else if (error.path.length == 2) {
-        var locales = field.localized ? TheLocaleStore.getPrivateLocales() : [TheLocaleStore.getDefaultLocale()];
-        var allCodes = _.pluck(locales, 'internal_code');
-        $scope.errorPaths[fieldId].push.apply($scope.errorPaths[fieldId], allCodes);
+        var localeCodes = fieldFactory.getLocaleCodes(field);
+        $scope.errorPaths[fieldId].push.apply($scope.errorPaths[fieldId], localeCodes);
       } else {
         var localeCode = error.path[2];
         $scope.errorPaths[fieldId].push(localeCode);
