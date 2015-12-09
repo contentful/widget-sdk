@@ -63,7 +63,7 @@ angular.module('contentful').controller('EntryLinkEditorController', [
     if (entityExists(entity)) {
       return $scope.spaceContext.entryTitle(entity, $scope.locale.internal_code);
     } else {
-      return '(Missing entity)';
+      return 'Entity is missing or inaccessible due to your access level';
     }
   }
 
