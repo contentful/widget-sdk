@@ -5,7 +5,6 @@
  * @name ContentTypeEditorController
  *
  * @scope.requires  context
- * @scope.requires  $state
  * @scope.requires  spaceContext
  * @scope.requires  contentTypeForm
  *

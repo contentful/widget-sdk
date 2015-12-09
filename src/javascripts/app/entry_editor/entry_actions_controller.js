@@ -23,7 +23,7 @@ angular.module('contentful')
 
     return $scope.spaceContext.space.createEntry(contentType, data)
     .then(function(entry){
-      $scope.$state.go('spaces.detail.entries.detail', { entryId: entry.getId(), addToContext: true });
+      $state.go('spaces.detail.entries.detail', { entryId: entry.getId(), addToContext: true });
     })
     .catch(notify.duplicateFail);
   }, {

@@ -11,6 +11,7 @@ describe('Entry Actions Controller', function () {
 
     var $rootScope = this.$inject('$rootScope');
     this.scope = $rootScope.$new();
+    this.$state = this.$inject('$state');
     this.scope.spaceContext = {space: {}};
     this.scope.entry = entry;
     this.notify = {};
@@ -49,7 +50,7 @@ describe('Entry Actions Controller', function () {
     describe('succeeds', function() {
       beforeEach(function() {
         this.createEntry.resolves(this.scope.entry);
-        this.scope.$state.go = sinon.stub();
+        this.$state.go = sinon.stub();
         this.controller.duplicate.execute();
         this.$apply();
       });
@@ -59,7 +60,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('opens the editor', function() {
-        sinon.assert.calledWith(this.scope.$state.go, 'spaces.detail.entries.detail', {
+        sinon.assert.calledWith(this.$state.go, 'spaces.detail.entries.detail', {
           entryId: this.scope.entry.getId(),
           addToContext: true
         });

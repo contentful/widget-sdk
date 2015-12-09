@@ -17,6 +17,7 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
   var notification      = $injector.get('notification');
   var searchQueryHelper = $injector.get('searchQueryHelper');
   var buildSearchQuery  = $injector.get('search/queryBuilder');
+  var $state            = $injector.get('$state');
 
   var controller = this;
   var entityLoader = new PromisedLoader();
@@ -120,8 +121,9 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
       return addEntity(entry)
       .then(function addLinkHandler() {
         // See scope checks comment at the top
-        if($scope)
-          $scope.$state.go('spaces.detail.entries.detail', { entryId: entry.getId(), addToContext: true });
+        if ($scope) {
+          $state.go('spaces.detail.entries.detail', {entryId: entry.getId(), addToContext: true});
+        }
       })
       .catch(function addLinkErrorHandler(errSetLink) {
         notification.error('Error linking Entry');
@@ -146,8 +148,9 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
       return addEntity(asset)
       .then(function addLinkHandler() {
         // See scope checks comment at the top
-        if($scope)
-          $scope.$state.go('spaces.detail.assets.detail', { assetId: asset.getId(), addToContext: true });
+        if($scope) {
+          $state.go('spaces.detail.assets.detail', {assetId: asset.getId(), addToContext: true});
+        }
       })
       .catch(function addLinkErrorHandler(errSetLink) {
         logger.logServerWarn('Error linking Asset', {error: errSetLink });

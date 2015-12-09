@@ -156,12 +156,13 @@ describe('cfLinkEditorSearch Controller', function () {
       var uppercasedEntityType = entityType.charAt(0).toUpperCase() + entityType.substr(1),
           entityTypeStateName = entityType === 'entry' ? 'spaces.detail.entries' : 'spaces.detail.assets';
 
-      var contentType, entity;
+      var contentType, entity, $state;
       var createEntityStub;
-      beforeEach(inject(function(cfStub) {
+      beforeEach(inject(function(cfStub, $injector) {
         createController();
         scope.addLink = sinon.stub();
-        scope.$state.go = sinon.stub();
+        $state = $injector.get('$state');
+        $state.go = sinon.stub();
         createEntityStub = sinon.stub(scope.spaceContext.space, 'create'+uppercasedEntityType);
         contentType = cfStub.contentType(space, 'ct1', 'Content Type 1');
         entity = cfStub[entityType](space, 'entity1', entityType == 'entry' ? 'ct1' : []);
@@ -202,7 +203,7 @@ describe('cfLinkEditorSearch Controller', function () {
           var stateParams = {};
           stateParams[entityType + 'Id'] = entity.getId();
           stateParams.addToContext = true;
-          sinon.assert.called(scope.$state.go, entityTypeStateName + '.detail', stateParams);
+          sinon.assert.called($state.go, entityTypeStateName + '.detail', stateParams);
         });
       });
 
@@ -234,7 +235,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it(entityType +' editor not called', function() {
-          sinon.assert.notCalled(scope.$state.go);
+          sinon.assert.notCalled($state.go);
         });
       });
 
@@ -275,7 +276,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it(entityType +' editor not called', function() {
-          sinon.assert.notCalled(scope.$state.go);
+          sinon.assert.notCalled($state.go);
         });
       });
 
@@ -318,7 +319,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it(entityType +' editor not called', function() {
-          sinon.assert.notCalled(scope.$state.go);
+          sinon.assert.notCalled($state.go);
         });
       });
     });

@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Space Selector Controller', function () {
-  var scope, analytics;
+  var scope, analytics, $stateParams;
 
   beforeEach(function () {
     module('contentful/test');
@@ -10,6 +10,7 @@ describe('Space Selector Controller', function () {
     var $controller = this.$inject('$controller');
     var spaceContext = this.$inject('spaceContext');
     analytics = this.$inject('analytics');
+    $stateParams = this.$inject('$stateParams');
 
     scope = $rootScope.$new();
     spaceContext.space = {
@@ -32,7 +33,7 @@ describe('Space Selector Controller', function () {
     });
 
     it('spaces are grouped by organization', function() {
-      scope.$stateParams.spaceId = 123;
+      $stateParams.spaceId = 123;
       scope.$digest();
       expect(scope.spacesByOrganization).toEqual({
         132: [scope.spaces[0], scope.spaces[1]],

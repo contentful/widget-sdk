@@ -33,6 +33,9 @@ describe('ContentType Actions Controller', function () {
     var $rootScope = this.$inject('$rootScope');
     this.broadcastStub = sinon.spy($rootScope, '$broadcast');
 
+    this.$state = this.$inject('$state');
+    this.$state.go = sinon.stub().resolves();
+
     logger = this.$inject('logger');
     notification = this.$inject('notification');
 
@@ -52,9 +55,6 @@ describe('ContentType Actions Controller', function () {
     scope.contentType = contentType;
     scope.broadcastFromSpace = sinon.stub();
     scope.regulateDisplayField = sinon.stub();
-    scope.$state = {
-      go: sinon.stub().resolves()
-    };
 
     var $controller = this.$inject('$controller');
     controller = $controller('ContentTypeActionsController', {$scope: scope});
@@ -170,7 +170,7 @@ describe('ContentType Actions Controller', function () {
 
   it('when cancelling navigates back to list', function() {
     controller.cancel.execute();
-    sinon.assert.called(scope.$state.go, '^.list');
+    sinon.assert.called(this.$state.go, '^.list');
   });
 
   describe('#save command', function() {
@@ -284,10 +284,11 @@ describe('ContentType Actions Controller', function () {
     });
 
     pit('redirects if the content type is new', function() {
+      var goStub = this.$state.go;
       scope.context.isNew = true;
       return controller.save.execute()
       .then(function () {
-        sinon.assert.called(scope.$state.go, 'spaces.detail.content_types.detail', {contentTypeId: 'typeid'});
+        sinon.assert.called(goStub, 'spaces.detail.content_types.detail', {contentTypeId: 'typeid'});
       });
     });
 

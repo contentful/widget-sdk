@@ -122,6 +122,8 @@ describe('Client Controller', function () {
     inject(function (){
       this.$q = this.$inject('$q');
       this.$rootScope = this.$inject('$rootScope');
+      this.$state = this.$inject('$state');
+      this.$stateParams = this.$inject('$stateParams');
 
       notification = this.$inject('notification');
       TheAccountView = this.$inject('TheAccountView');
@@ -136,7 +138,7 @@ describe('Client Controller', function () {
 
       scope = this.$rootScope.$new();
       clientController = this.$inject('$controller')('ClientController', {$scope: scope});
-      scope.$state.go = stubs.go;
+      this.$state.go = stubs.go;
     });
   });
 
@@ -194,7 +196,7 @@ describe('Client Controller', function () {
     it('location in account flag is false', function() {
       var space = this.$inject('cfStub').space('123');
       scope.spaces = [space];
-      scope.$stateParams.spaceId = '123';
+      this.$stateParams.spaceId = '123';
       childScope.$emit('$stateChangeSuccess');
       expect(TheAccountView.isActive()).toBeFalsy();
     });

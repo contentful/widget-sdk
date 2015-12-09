@@ -6,6 +6,7 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
   var notification = $injector.get('notification');
   var logger       = $injector.get('logger');
   var enforcements = $injector.get('enforcements');
+  var $state       = $injector.get('$state');
 
   var EVENT_NAME = 'Selected Add-Button in the Frame';
 
@@ -39,7 +40,7 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
   };
 
   this.newContentType = function() {
-    $scope.$state.go('spaces.detail.content_types.new');
+    $state.go('spaces.detail.content_types.new');
     /**
      * @ngdoc analytics-event
      * @name Clicked Add Content Type Button
@@ -52,9 +53,9 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
     if(usage){
       return notification.error(usage);
     }
-    $scope.$state.go('spaces.detail.api.keys.new');
+    $state.go('spaces.detail.api.keys.new');
     analytics.track(EVENT_NAME, {
-      currentState: $scope.$state.current.name,
+      currentState: $state.current.name,
       entityType: 'apiKey'
     });
   };
@@ -64,9 +65,9 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
     if (usage) {
       return notification.error(usage);
     }
-    $scope.$state.go('spaces.detail.settings.locales.new');
+    $state.go('spaces.detail.settings.locales.new');
     analytics.track(EVENT_NAME, {
-      currentState: $scope.$state.current.name,
+      currentState: $state.current.name,
       entityType: 'locale'
     });
   };
@@ -76,7 +77,7 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
       var stateParams = {};
       if (!err) {
         stateParams[params.stateParam] = entity.getId();
-        $scope.$state.go(params.stateName, stateParams);
+        $state.go(params.stateName, stateParams);
       } else {
         if(dotty.get(err, 'body.details.reasons')){
           var enforcement = enforcements.determineEnforcement(
@@ -89,7 +90,7 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
         notification.error(params.errorMessage);
       }
       analytics.track(EVENT_NAME, {
-        currentState: $scope.$state.current.name,
+        currentState: $state.current.name,
         entityType: params.entityType,
         entitySubType: (typeof params.entitySubType == 'function') ?
           params.entitySubType(entity) : params.entitySubType
