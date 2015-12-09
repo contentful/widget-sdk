@@ -71,7 +71,10 @@ angular.module('contentful')
         byId[widget.id] = widget;
       }, {});
     }).catch(function (err) {
-      logger.logServerError(err);
+      logger.logError('Failed to build custom widgets', {
+        data: {space: space},
+        error: err
+      });
       return [];
     });
   }
