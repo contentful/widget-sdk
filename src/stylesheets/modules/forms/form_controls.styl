@@ -55,7 +55,7 @@ $form-control()
   &[aria-invalid="true"]
     border-color: darken($red, 10%)
 
-.form-control
+.form-control:not([type="checkbox"]):not([type="radio"])
   $form-control()
 
 .form-control[disabled],
