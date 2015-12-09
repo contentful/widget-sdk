@@ -26,7 +26,7 @@ describe('cfEntryLinkEditor Directive', function () {
 
     inject(function ($compile, $rootScope) {
       scope = $rootScope.$new();
-      scope.can = stubs.can;
+      scope.isDisabled = sinon.stub().returns(false);
       scope.fieldData = { value: {
         sys: {id: 123}
       }};

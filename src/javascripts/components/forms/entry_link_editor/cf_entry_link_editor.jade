@@ -11,8 +11,8 @@
 ul.linked-entities(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide="linkedEntities.length == 0")
   li.linked-entities__item(
       ng-repeat="(index, entity) in linkedEntities track by index"
-      ng-class="{'linked-entities--with-handle': linkedEntities.length>1}")
-    .linked-entities__handle(cf-drag-handle ng-disabled="isDisabled(field, locale)" ng-hide="linkedEntities.length==1")
+      ng-class="{'linked-entities--with-handle': isDraggable}")
+    .linked-entities__handle(cf-drag-handle ng-show="isDraggable")
       i.fa.fa-ellipsis-v
       i.fa.fa-ellipsis-v
     .linked-entities__info

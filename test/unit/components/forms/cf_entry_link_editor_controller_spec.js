@@ -68,6 +68,8 @@ describe('EntryLinkEditorController', function () {
         linkMultiple: false
       };
 
+      scope.isDisabled = sinon.stub().returns(false);
+
       createController = function () {
         linkEditorCtrl = $controller('EntryLinkEditorController', {
           $scope: scope,
