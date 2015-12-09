@@ -91,7 +91,7 @@ angular.module('contentful')
   });
 
   // Building the form
-  $scope.formWidgetsController = $controller('FormWidgetsController', {
+  $controller('FormWidgetsController', {
     $scope: $scope,
     contentType: $scope.contentType,
     editingInterface: $scope.editingInterface
