@@ -109,6 +109,10 @@ angular.module('contentful').factory('LazyLoader/scripts', ['$injector', functio
     },
     filepickerDebug: {
       url: 'https://api.filepicker.io/v1/filepicker_debug.js'
+    },
+    kaltura: {
+      url: assetLoader.getAssetUrl('/app/kaltura.js'),
+      globalObject: 'KalturaClient'
     }
   };
 }]);

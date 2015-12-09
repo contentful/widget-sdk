@@ -77,7 +77,7 @@ angular.module('contentful').factory('kalturaClientWrapper', ['$injector', funct
     },
 
     _initKalturaServices: function(partner_id, token, categoryId) {
-        var config              = new $window.KalturaConfiguration(partner_id);
+        var config = new $window.KalturaConfiguration(partner_id);
 
         config.serviceUrl = 'https://www.kaltura.com/';
         this.client       = new $window.KalturaClient(config);

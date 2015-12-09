@@ -1,21 +1,22 @@
 'use strict';
 
-angular.module('contentful').factory('KalturaEditorControllerMixin', ['$injector', function($injector){
+angular.module('contentful')
+.factory('KalturaEditorControllerMixin', ['$injector', function($injector){
+  var LazyLoader = $injector.get('LazyLoader');
   var kalturaClientWrapper;
   var KalturaSearch;
   var status = 'loading';
 
-  $injector.get('kalturaLoader').load().then(function(){
+  LazyLoader.get('kaltura')
+  .then(function(){
     kalturaClientWrapper = $injector.get('kalturaClientWrapper');
     KalturaSearch        = $injector.get('KalturaSearch');
+    return kalturaClientWrapper.init();
+  }).then(setStatus('ready'), setStatus('failed'));
 
-    kalturaClientWrapper.init()
-      .then(setStatus('ready'), setStatus('failed'));
-
-    function setStatus(val) {
-      return function() { status = val; };
-    }
-  });
+  function setStatus(val) {
+    return function() { status = val; };
+  }
 
   var mixin = {
     customAttrsForPlayer               : customAttrsForPlayer,

@@ -1,8 +1,8 @@
 'use strict';
 
 describe('Kaltura Editor Controller Mixin', function() {
-  var KalturaEditorControllerMixin, kalturaClientWrapperMock, kalturaLoader, kalturaLoaderDeferred,
-      kalturaSearchMock, kalturaSearchInstanceMock, $rootScope;
+  var KalturaEditorControllerMixin, kalturaClientWrapperMock,
+      kalturaSearchMock, kalturaSearchInstanceMock;
 
   beforeEach(function() {
     module('contentful/test');
@@ -13,21 +13,22 @@ describe('Kaltura Editor Controller Mixin', function() {
         getCategoryId: sinon.stub()
       };
       kalturaSearchMock        = jasmine.createSpy('kalturaSearchMock');
-      kalturaLoader            = jasmine.createSpyObj('kalturaLoaderSpy', ['load']);
 
-      $provide.value('kalturaLoader', kalturaLoader);
       $provide.value('KalturaSearch', kalturaSearchMock);
       $provide.value('kalturaClientWrapper', kalturaClientWrapperMock);
     });
 
     inject(function($injector, $q){
-      kalturaLoaderDeferred = $q.defer();
-      kalturaLoader.load.and.returnValue(kalturaLoaderDeferred.promise);
       kalturaClientWrapperMock.init.returns($q.when());
 
-      $rootScope                   = $injector.get('$rootScope');
-      KalturaEditorControllerMixin = $injector.get('KalturaEditorControllerMixin');
     });
+
+    var $q = this.$inject('$q');
+    var LazyLoader = this.$inject('LazyLoader');
+    this.loadKaltura = $q.defer();
+    LazyLoader.get = sinon.stub().returns(this.loadKaltura.promise);
+
+    KalturaEditorControllerMixin = this.$inject('KalturaEditorControllerMixin');
 
     kalturaSearchInstanceMock = jasmine.createSpyObj('kalturaSearchInstanceMock', ['where', 'limit']);
     kalturaSearchInstanceMock.where.and.returnValue(kalturaSearchInstanceMock);
@@ -39,7 +40,8 @@ describe('Kaltura Editor Controller Mixin', function() {
   }));
 
   it('loads the kaltura framework', function() {
-    expect(kalturaLoader.load).toHaveBeenCalled();
+    var LazyLoader = this.$inject('LazyLoader');
+    sinon.assert.calledWith(LazyLoader.get, 'kaltura');
   });
 
   describe('before the kaltura framework has been loaded', function() {
@@ -52,8 +54,9 @@ describe('Kaltura Editor Controller Mixin', function() {
 
   describe('when the kaltura framework has been loaded', function() {
     beforeEach(function() {
-      kalturaLoaderDeferred.resolve();
-      $rootScope.$apply();
+      kalturaClientWrapperMock.init.resolves();
+      this.loadKaltura.resolve();
+      this.$apply();
     });
 
     describe('#customAttrsForPlayer', function() {
@@ -171,8 +174,6 @@ describe('Kaltura Editor Controller Mixin', function() {
         });
       });
     });
-    
+
   });
-
-
 });
