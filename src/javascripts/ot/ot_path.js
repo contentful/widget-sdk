@@ -5,7 +5,6 @@
  * @name otPath
  * @scope.requires otDoc
  * @property otPath
- * @property otPathTypes
  *
  * @description
  * Scopes a part of an ot component to a path within the ot document
@@ -13,7 +12,7 @@
  *
  * @usage[html]
  * <entity-editor ot-doc-for="entity">
- *   <part-editor ot-path="['fields', 'fieldId', 'locale']" ot-path-types="['String', 'String', 'String']">
+ *   <part-editor ot-path="['fields', 'fieldId', 'locale']">
 */
 
 angular.module('contentful').directive('otPath', ['$injector', function($injector){
@@ -28,16 +27,12 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
     scope: true,
 
     link: function(scope, elem, attr) {
+      // TODO no need for watchers. The attributes do not change
       scope.$watch(attr['otPath'], function(otPath, old, scope) {
         scope.otPath = otPath;
       }, true);
 
-      scope.$watch(attr['otPathTypes'], function(otPathTypes, old, scope) {
-        scope.otPathTypes = otPathTypes;
-      }, true);
-
       scope.otPath = scope.$eval(attr['otPath']);
-      scope.otPathTypes = scope.$eval(attr['otPathTypes']);
     },
 
 
@@ -119,46 +114,47 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
        * Additional note: this essentially replicates attach_textarea from ShareJS
        */
       function otChangeString(newValue) {
-        if ($scope.otDoc.doc) {
-          var oldValue = otGetValue();
-          var cb = $q.callbackWithApply(),
-              cbOp1 = $q.callbackWithApply(),
-              cbOp2 = $q.callbackWithApply();
+        var doc = $scope.otDoc.doc;
+        var path = $scope.otPath;
 
-          if (!oldValue || !newValue) {
-            ShareJS.mkpathAndSetValue({
-              doc: $scope.otDoc.doc,
-              path: $scope.otPath,
-              types: $scope.otPathTypes,
-              value: newValue || null
-            }, cb);
-            return cb.promise;
-          } else if (oldValue === newValue) {
-            return $q.when(cb.promise);
-          } else {
-            var commonStart = 0,
-                commonEnd = 0,
-                oldEnd = oldValue.length - 1,
-                newEnd = newValue.length - 1;
-
-            while (oldValue.charAt(commonStart) === newValue.charAt(commonStart)) {
-              commonStart += 1;
-            }
-            while (oldValue.charAt(oldEnd - commonEnd) === newValue.charAt(newEnd - commonEnd) &&
-                   commonStart + commonEnd < oldValue.length && commonStart + commonEnd < newValue.length) {
-              commonEnd += 1;
-            }
-
-            if (oldValue.length !== commonStart + commonEnd) {
-              $scope.otDoc.doc.deleteTextAt($scope.otPath, oldValue.length - commonStart - commonEnd, commonStart, cbOp1);
-            }
-            if (newValue.length !== commonStart + commonEnd) {
-              $scope.otDoc.doc.insertAt($scope.otPath, commonStart, newValue.slice(commonStart, newValue.length - commonEnd), cbOp2);
-            }
-            return $q.all(cbOp1.promise, cbOp2.promise);
-          }
-        } else {
+        if (!doc) {
+          // TODO should reject with an new Error instance
           return $q.reject('No otDoc to push to');
+        }
+
+        var oldValue = otGetValue();
+
+        if (!oldValue || !newValue) {
+          // TODO should this really be `null` an not an empty string?
+          return ShareJS.mkpathAndSetValue(doc, path, newValue || null);
+        } else if (oldValue === newValue) {
+          return $q.when();
+        } else {
+          var commonStart = 0;
+          var commonEnd = 0;
+          var oldEnd = oldValue.length - 1;
+          var newEnd = newValue.length - 1;
+
+          while (oldValue.charAt(commonStart) === newValue.charAt(commonStart)) {
+            commonStart += 1;
+          }
+          while (oldValue.charAt(oldEnd - commonEnd) === newValue.charAt(newEnd - commonEnd) &&
+                 commonStart + commonEnd < oldValue.length && commonStart + commonEnd < newValue.length) {
+            commonEnd += 1;
+          }
+
+          var ops = [];
+          if (oldValue.length !== commonStart + commonEnd) {
+            ops.push($q.denodeify(function (cb) {
+              doc.deleteTextAt(path, oldValue.length - commonStart - commonEnd, commonStart, cb);
+            }));
+          }
+          if (newValue.length !== commonStart + commonEnd) {
+            ops.push($q.denodeify(function (cb) {
+              doc.insertAt(path, commonStart, newValue.slice(commonStart, newValue.length - commonEnd), cb);
+            }));
+          }
+          return $q.all(ops);
         }
       }
 
@@ -172,7 +168,9 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
        * @returns {Promise<void>}
        */
       function otChangeValue(value) {
-        if (!$scope.otDoc.doc) {
+        var doc = $scope.otDoc.doc;
+        var path = $scope.otPath;
+        if (!doc) {
           return $q.reject('No otDoc to push to');
         }
 
@@ -184,19 +182,11 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
           return $q.reject(err);
         }
 
-        var cb = $q.callbackWithApply();
-        try {
-          $scope.otDoc.doc.setAt($scope.otPath, value, cb);
-        } catch(e) {
-          ShareJS.mkpathAndSetValue({
-            doc: $scope.otDoc.doc,
-            path: $scope.otPath,
-            types: $scope.otPathTypes,
-            value: value
-          }, cb);
-        } finally {
-          return cb.promise;
-        }
+        return $q.denodeify(function (cb) {
+          doc.setAt(path, value, cb);
+        }).catch(function () {
+          return ShareJS.mkpathAndSetValue(doc, path, value);
+        });
       }
 
       function otGetValue() {

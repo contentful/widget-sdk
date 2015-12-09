@@ -159,16 +159,12 @@ describe('Asset editor controller', function () {
         sinon.assert.called(stubs.mkpathAndSetValue);
       });
 
-      it('creates otDoc with doc', function() {
-        expect(stubs.mkpathAndSetValue.args[0][0].doc).toEqual(scope.otDoc.doc);
-      });
-
-      it('creates otDoc with path', function() {
-        expect(stubs.mkpathAndSetValue.args[0][0].path).toEqual(otPath);
-      });
-
-      it('creates otDoc with filename', function() {
-        expect(stubs.mkpathAndSetValue.args[0][0].value).toEqual('file');
+      it('creates otDoc with doc path and filename', function() {
+        sinon.assert.calledOnce(stubs.mkpathAndSetValue);
+        sinon.assert.calledWith(
+          stubs.mkpathAndSetValue,
+          scope.otDoc.doc, otPath, 'file'
+        );
       });
     });
 
