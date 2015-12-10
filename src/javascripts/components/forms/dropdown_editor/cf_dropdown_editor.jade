@@ -1,5 +1,6 @@
 .dropdown-editor(ng-class="dropdownWidthClass()")
   select.cfnext-select-box(
+    ng-disabled="!otDoc.state.editable"
     ng-model="valuesController.selected"
     ng-required="field.required"
     ng-options="v.value as v.label for v in valuesController.valuesList")
