@@ -51,8 +51,12 @@ header.workbench-header
               cf-field-editor="entry.data.fields[field.id][locale.internal_code]")
             .locale-label(ng-show="locales.length > 1")
               | {{locale.name}}
-            .form-widget__rights-info(ng-show="isDisabled(field, locale)")
-              | <i class="fa fa-exclamation-triangle" /> no editing rights
+            .form-widget__rights-info(
+              ng-show="otDoc.state.editable && isDisabled(field, locale)"
+              tooltip="You don't have permission to edit this field. Get in touch with the person administering Contentful at your company to learn more."
+              tooltip-placement="left")
+              .fa.fa-exclamation-triangle
+              span  no editing rights
             +editor-field-collaborators
             cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.internal_code,'*']")
           .form-widget__help-text(ng-if="showHelpText") {{helpText}}
