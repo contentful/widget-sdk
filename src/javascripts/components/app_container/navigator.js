@@ -129,7 +129,12 @@ angular.module('contentful').config([
         });
 
       }],
-      editingInterface: ['$injector', 'contentType', function ($injector, contentType) {
+      // TODO we need to depend on 'widgets' so they get loaded before
+      // the editing interface is created. It depends on the presence
+      // of widgets if we construct the default interface. We MUST find
+      // a proper solution for this. This also applies to
+      // 'spaces.details.assets.detail
+      editingInterface: ['$injector', 'contentType', 'widgets', function ($injector, contentType) {
         var editingInterfaces = $injector.get('editingInterfaces');
         return editingInterfaces.forContentType(contentType);
       }],
@@ -198,7 +203,7 @@ angular.module('contentful').config([
         };
       }],
       // TODO duplicates code in 'entries.details' state
-      editingInterface: ['$injector', 'contentType', function ($injector, contentType) {
+      editingInterface: ['$injector', 'contentType', 'widgets', function ($injector, contentType) {
         var editingInterfaces = $injector.get('editingInterfaces');
         return editingInterfaces.forContentType(contentType);
       }],
