@@ -50,7 +50,7 @@ angular.module('contentful').factory('FilterQueryString', ['$injector', function
 
   function toBool(obj, key) {
     if (_.has(obj, key)) {
-      var value = obj[key];
+      var value = obj[key].toString();
       obj[key] = value !== 'false';
     }
   }
