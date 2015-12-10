@@ -101,7 +101,7 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
       $scope.roles = _.sortBy(data.roles, 'name');
       listHandler.reset(data);
       $scope.context.ready = true;
-    });
+    }, accessChecker.wasForbidden($scope.context));
   }
 
   function countMemberships(memberships) {

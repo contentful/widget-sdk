@@ -105,7 +105,7 @@ angular.module('contentful').config([
   });
 
 
-  $stateProvider.state('spaces.detail.entries.list', loadableState({
+  $stateProvider.state('spaces.detail.entries.list', base({
     url: '',
     ncyBreadcrumb: {
       label: 'Entries'
@@ -183,7 +183,7 @@ angular.module('contentful').config([
   });
 
 
-  $stateProvider.state('spaces.detail.assets.list', loadableState({
+  $stateProvider.state('spaces.detail.assets.list', base({
     url: '',
     ncyBreadcrumb: {
       label: 'Media Library'
@@ -246,7 +246,7 @@ angular.module('contentful').config([
   });
 
 
-  $stateProvider.state('spaces.detail.content_types.list', loadableState({
+  $stateProvider.state('spaces.detail.content_types.list', base({
     url: '',
     ncyBreadcrumb: {
       label: 'Content Types'
@@ -356,7 +356,7 @@ angular.module('contentful').config([
   });
 
 
-  $stateProvider.state('spaces.detail.api.keys.list', loadableState({
+  $stateProvider.state('spaces.detail.api.keys.list', base({
     url: '/',
     ncyBreadcrumb: {
       label: 'Delivery Keys',
@@ -476,7 +476,7 @@ angular.module('contentful').config([
     template: '<ui-view />'
   });
 
-  $stateProvider.state('spaces.detail.settings.users.list', loadableState({
+  $stateProvider.state('spaces.detail.settings.users.list', base({
     url: '',
     ncyBreadcrumb: { label: 'Users' },
     loadingText: 'Loading Users...',
@@ -496,7 +496,7 @@ angular.module('contentful').config([
     template: '<ui-view />'
   });
 
-  $stateProvider.state('spaces.detail.settings.roles.list', loadableState({
+  $stateProvider.state('spaces.detail.settings.roles.list', base({
     url: '',
     ncyBreadcrumb: { label: 'Roles' },
     loadingText: 'Loading Roles...',
@@ -612,7 +612,7 @@ angular.module('contentful').config([
     template: ''
   });
 
-  function loadableState(definition) {
+  function base(definition) {
     if (!definition.loadingText) {
       var label = dotty.get(definition, 'ncyBreadcrumb.label');
       definition.loadingText = label ? ('Loading your ' + label + '...') : 'Loading...';
@@ -629,8 +629,8 @@ angular.module('contentful').config([
         '</div>',
       '</div>',
       '<div ng-show="context.forbidden" class="workbench workbench-forbidden x--center">',
-        '<i class="fa fa-ban"></i>',
-        '<div class="workbench-forbidden__message">Forbidden</div>',
+        '<div class="workbench-forbidden__headline">You don\'t have permission to access this view.</div>',
+        '<div class="workbench-forbidden__message">Get in touch with the person administering Contentful at your company to learn more.</div>',
       '</div>'
     ].join('');
 

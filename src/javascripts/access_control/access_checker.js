@@ -3,6 +3,7 @@
 angular.module('contentful').factory('accessChecker', ['$injector', function ($injector) {
 
   var $rootScope       = $injector.get('$rootScope');
+  var $q               = $injector.get('$q');
   var stringUtils      = $injector.get('stringUtils');
   var enforcements     = $injector.get('enforcements');
   var authorization    = $injector.get('authorization');
@@ -49,7 +50,8 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     canModifyRoles:                  function () { return dotty.get(features,  'customRoles',      false); },
     canCreateSpace:                  canCreateSpace,
     canCreateSpaceInAnyOrganization: canCreateSpaceInAnyOrganization,
-    canCreateSpaceInOrganization:    canCreateSpaceInOrganization
+    canCreateSpaceInOrganization:    canCreateSpaceInOrganization,
+    wasForbidden:                    wasForbidden
   };
 
   function reset() {
@@ -179,6 +181,17 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
       logger.logError('Worf exception - can create new space?', e);
     }
     return response;
+  }
+
+  function wasForbidden(context) {
+    return function (res) {
+      if (_.contains([403, 404], parseInt(dotty.get(res, 'statusCode'), 10))) {
+        context.forbidden = true;
+        return $q.when(context);
+      } else {
+        return $q.reject(res);
+      }
+    };
   }
 
   function broadcastEnforcement(enforcement) {

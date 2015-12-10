@@ -15,7 +15,7 @@ function ApiKeyListController ($scope, $injector) {
     .then(function (apiKeys) {
       $scope.apiKeys = apiKeys;
       $scope.context.ready = true;
-    })
+    }, accessChecker.wasForbidden($scope.context))
     .catch(ReloadNotification.apiErrorHandler);
   };
 

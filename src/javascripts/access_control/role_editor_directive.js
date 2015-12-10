@@ -97,8 +97,6 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
     var nameError = _.find(errors, function (err) {
       return _.isObject(err) && err.name === 'length' && err.path === 'name';
     });
-    // @todo handle plans w/o custom roles
-    // API returns 403 for POST and 404 for PUT then
     var value = _.isObject(nameError) ? nameError.value : null;
 
     if (!value) {

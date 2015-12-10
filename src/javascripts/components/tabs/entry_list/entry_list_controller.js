@@ -13,7 +13,6 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   var ListQuery             = $injector.get('ListQuery');
   var logger                = $injector.get('logger');
   var spaceContext          = $injector.get('spaceContext');
-  var responseAccessChecker = $injector.get('responseAccessChecker');
   var accessChecker         = $injector.get('accessChecker');
 
   $controller('DisplayedFieldsController', {$scope: $scope});
@@ -132,7 +131,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
         return spaceContext.space.getEntries(query);
       });
     })
-    .then(handleEntriesResponse, responseAccessChecker.withContext($scope.context))
+    .then(handleEntriesResponse, accessChecker.wasForbidden($scope.context))
     .catch(ReloadNotification.apiErrorHandler);
   };
 

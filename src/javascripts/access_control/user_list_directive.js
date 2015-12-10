@@ -44,6 +44,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   var listHandler         = $injector.get('UserListHandler');
   var stringUtils         = $injector.get('stringUtils');
   var notification        = $injector.get('notification');
+  var accessChecker       = $injector.get('accessChecker');
 
   var MODAL_OPTS_BASE = {
     noNewScope: true,
@@ -224,7 +225,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
       $scope.by = listHandler.getGroupedUsers();
       $scope.context.ready = true;
       $scope.jumpToRole();
-    });
+    }, accessChecker.wasForbidden($scope.context));
   }
 }]);
 
