@@ -16,8 +16,8 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     setRole:               setRole,
     canAccessEntries:      function () { return policies.entry.allowed.flat.length > 0; },
     canAccessAssets:       function () { return policies.asset.allowed.length > 0; },
-    hasEntryAllowPolicies: function (contentTypeId) { return getAllowed(contentTypeId).length > 0; },
     hasAssetAllowPolicies: function () { return policies.asset.allowed.length > 0; },
+    hasEntryAllowPolicies: hasEntryAllowPolicies,
     getFieldChecker:       getFieldChecker
   };
 
@@ -76,12 +76,26 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     return canUpdate;
   }
 
+  function hasEntryAllowPolicies(contentTypeId) {
+    var entryAllowPolicies = pathPoliciesOnly(getAllowed(contentTypeId));
+
+    return entryAllowPolicies.length > 0;
+  }
+
   function getAllowed(contentTypeId) {
-    return pathPoliciesOnly(policies.entry.allowed.byContentType[contentTypeId] || []);
+    return getCollection('allowed', contentTypeId);
   }
 
   function getDenied(contentTypeId) {
-    return pathPoliciesOnly(policies.entry.denied.byContentType[contentTypeId] || []);
+    return getCollection('denied', contentTypeId);
+  }
+
+  function getCollection(name, contentTypeId) {
+    var ctGroups = policies.entry[name].byContentType;
+    var ctSpecificItems = ctGroups[contentTypeId] || [];
+    var generalItems = ctGroups.all || [];
+
+    return _.union(ctSpecificItems, generalItems);
   }
 
   function pathPoliciesOnly(collection) {
