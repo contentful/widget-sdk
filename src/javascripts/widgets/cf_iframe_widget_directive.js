@@ -1,6 +1,20 @@
 'use strict';
 
 angular.module('contentful')
+
+/**
+ * @ngdoc directive
+ * @name cfIframeWidget
+ * @description
+ * Creates an iframe to render a custom widget in and sets up
+ * communication between the widget and the UI.
+ *
+ * @scope.requires {Widget.Renderable} widget
+ * @scope.requires {otDoc} otDoc  Provided by the `otDocFor` directive
+ * @scope.requires {Client.Entry} entry
+ * @scope.requires {API.Locale} locale
+ * @scope.requires {API.ContentType.Field} field
+ */
 .directive('cfIframeWidget', ['$injector', function($injector) {
   return {
     restrict: 'E',
