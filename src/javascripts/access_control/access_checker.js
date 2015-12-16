@@ -138,16 +138,16 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   function canUpdateEntry(entry) {
     var canUpdate = canPerformActionOnEntity('update', entry);
     var ctId = getContentTypeIdFor(entry);
-    var hasAllowPolicies = policyChecker.hasEntryAllowPolicies(ctId);
+    var canUpdateWithPolicy = policyChecker.canUpdateEntriesOfType(ctId);
 
-    return canUpdate || hasAllowPolicies;
+    return canUpdate || canUpdateWithPolicy;
   }
 
   function canUpdateAsset(asset) {
     var canUpdate = canPerformActionOnEntity('update', asset);
-    var hasAllowPolicies = policyChecker.hasAssetAllowPolicies();
+    var canUpdateWithPolicy = policyChecker.canUpdateAssets();
 
-    return canUpdate || hasAllowPolicies;
+    return canUpdate || canUpdateWithPolicy;
   }
 
   function canCreateSpace() {

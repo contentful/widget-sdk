@@ -223,7 +223,7 @@ describe('Access Checker', function () {
   });
 
   describe('#canUpdateEntry', function () {
-    var entry = {data: {}};
+    var entry = {data: {sys: {contentType: {sys: {id: 'ctid'}}}}};
 
     it('returns true if "can" returns true', function () {
       canStub.withArgs('update', entry.data).returns(true);
@@ -232,16 +232,16 @@ describe('Access Checker', function () {
 
     it('returns false if "can" returns false and there are no allow policies', function () {
       canStub.withArgs('update', entry.data).returns(false);
-      policyChecker.hasEntryAllowPolicies = sinon.stub().returns(false);
+      policyChecker.canUpdateEntriesOfType = sinon.stub().returns(false);
       expect(ac.canUpdateEntry(entry)).toBe(false);
-      sinon.assert.calledOnce(policyChecker.hasEntryAllowPolicies);
+      sinon.assert.calledOnce(policyChecker.canUpdateEntriesOfType.withArgs('ctid'));
     });
 
     it('returns true if "can" returns false but there are allow policies', function () {
       canStub.withArgs('update', entry.data).returns(false);
-      policyChecker.hasEntryAllowPolicies = sinon.stub().returns(true);
+      policyChecker.canUpdateEntriesOfType = sinon.stub().returns(true);
       expect(ac.canUpdateEntry(entry)).toBe(true);
-      sinon.assert.calledOnce(policyChecker.hasEntryAllowPolicies);
+      sinon.assert.calledOnce(policyChecker.canUpdateEntriesOfType.withArgs('ctid'));
     });
   });
 
@@ -255,16 +255,16 @@ describe('Access Checker', function () {
 
     it('returns false if "can" returns false and there are no allow policies', function () {
       canStub.withArgs('update', asset.data).returns(false);
-      policyChecker.hasAssetAllowPolicies = sinon.stub().returns(false);
+      policyChecker.canUpdateAssets = sinon.stub().returns(false);
       expect(ac.canUpdateAsset(asset)).toBe(false);
-      sinon.assert.calledOnce(policyChecker.hasAssetAllowPolicies);
+      sinon.assert.calledOnce(policyChecker.canUpdateAssets);
     });
 
     it('returns true if "can" returns false but there are allow policies', function () {
       canStub.withArgs('update', asset.data).returns(false);
-      policyChecker.hasAssetAllowPolicies = sinon.stub().returns(true);
+      policyChecker.canUpdateAssets = sinon.stub().returns(true);
       expect(ac.canUpdateAsset(asset)).toBe(true);
-      sinon.assert.calledOnce(policyChecker.hasAssetAllowPolicies);
+      sinon.assert.calledOnce(policyChecker.canUpdateAssets);
     });
   });
 

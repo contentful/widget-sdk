@@ -13,12 +13,12 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
   };
 
   return {
-    setRole:               setRole,
-    canAccessEntries:      function () { return policies.entry.allowed.flat.length > 0; },
-    canAccessAssets:       function () { return policies.asset.allowed.length > 0; },
-    hasAssetAllowPolicies: function () { return policies.asset.allowed.length > 0; },
-    hasEntryAllowPolicies: hasEntryAllowPolicies,
-    getFieldChecker:       getFieldChecker
+    setRole:                setRole,
+    canAccessEntries:       function () { return policies.entry.allowed.flat.length > 0; },
+    canAccessAssets:        function () { return policies.asset.allowed.length > 0; },
+    canUpdateEntriesOfType: canUpdateEntriesOfType,
+    canUpdateAssets:        canUpdateAssets,
+    getFieldChecker:        getFieldChecker
   };
 
   function setRole(role) {
@@ -66,8 +66,8 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     var allowed = opts.type === 'Asset' ? policies.asset.allowed : getAllowed(opts.contentTypeId);
     var denied  = opts.type === 'Asset' ? policies.asset.denied  : getDenied(opts.contentTypeId);
 
-    allowed = pathPoliciesOnly(allowed);
-    denied  = pathPoliciesOnly(denied);
+    allowed = pathUpdatePoliciesOnly(allowed);
+    denied  = pathUpdatePoliciesOnly(denied);
 
     if (opts.type === 'Asset' && allowed.length > 0)         { canUpdate = false; }
     if (checkPolicyCollection(allowed, fieldId, localeCode)) { canUpdate = true;  }
@@ -76,10 +76,12 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     return canUpdate;
   }
 
-  function hasEntryAllowPolicies(contentTypeId) {
-    var entryAllowPolicies = pathPoliciesOnly(getAllowed(contentTypeId));
+  function canUpdateEntriesOfType(contentTypeId) {
+    return updatePoliciesOnly(getAllowed(contentTypeId)).length > 0;
+  }
 
-    return entryAllowPolicies.length > 0;
+  function canUpdateAssets() {
+    return updatePoliciesOnly(policies.asset.allowed).length > 0;
   }
 
   function getAllowed(contentTypeId) {
@@ -98,12 +100,16 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     return _.union(ctSpecificItems, generalItems);
   }
 
-  function pathPoliciesOnly(collection) {
-    return _.filter(collection, isPathPolicy);
+  function pathUpdatePoliciesOnly(collection) {
+    return _.filter(updatePoliciesOnly(collection), function (p) {
+      return !_.isNull(p.locale) && !_.isNull(p.field);
+    });
   }
 
-  function isPathPolicy(p) {
-    return p.action === 'update' && !_.isNull(p.locale) && !_.isNull(p.field);
+  function updatePoliciesOnly(collection) {
+    return _.filter(collection, function (p) {
+      return _.contains(['update', 'all'], p.action);
+    });
   }
 
   function checkPolicyCollection(collection, fieldId, localeCode) {
