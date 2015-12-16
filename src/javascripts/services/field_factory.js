@@ -188,10 +188,7 @@ angular.module('contentful')
       info.linkType = type;
     }
 
-    if (isList && !descriptor.hasListVariant)
-      throw new Error('The field type "'+type+'" does not have a list variant');
-
-    if (isList) {
+    if (isList && descriptor.hasListVariant) {
       info = { type: 'Array', items: info};
     }
 

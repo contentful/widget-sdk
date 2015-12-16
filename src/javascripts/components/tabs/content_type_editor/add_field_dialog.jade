@@ -3,17 +3,19 @@
     novalidate
     name="newFieldForm"
     ng-controller="AddFieldDialogController"
+    cf-on-submit="create()"
     cf-validate="field.data")
 
     div(ng-if="viewState.is('fieldSelection')")
       header.modal-dialog__header
         h1 Add new field
-        button.modal-dialog__close(ng-click="dialog.cancel()")
+        button.modal-dialog__close(type="button" ng-click="dialog.cancel()")
 
       .add-field-dialog__selection.modal-dialog__content(role="group" aria-label="Field Types")
         .add-field-dialog__list(ng-repeat="fieldGroups in fieldGroupRows")
           .add-field-dialog__list-item(ng-repeat="group in fieldGroups")
             button.add-field-dialog__icon(
+              type="button"
               aria-label="{{group.label}}"
               ng-click="selectFieldGroup(group)")
               cf-icon(name="field-{{group.icon}}")

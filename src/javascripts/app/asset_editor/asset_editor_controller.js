@@ -91,7 +91,7 @@ angular.module('contentful')
   });
 
   // Building the form
-  $scope.formWidgetsController = $controller('FormWidgetsController', {
+  $controller('FormWidgetsController', {
     $scope: $scope,
     contentType: $scope.contentType,
     editingInterface: $scope.editingInterface
@@ -108,14 +108,12 @@ angular.module('contentful')
     });
   });
   function setTitleOnDoc(file, localeCode) {
+    var doc = $scope.otDoc.doc;
     var otPath = ['fields', 'title', localeCode];
     var fileName = stringUtils.fileNameToTitle(file.fileName);
-    if(!ShareJS.peek($scope.otDoc.doc, otPath))
-      ShareJS.mkpathAndSetValue({
-        doc: $scope.otDoc.doc,
-        path: otPath,
-        value: fileName
-      });
+    if(!ShareJS.peek(doc, otPath)) {
+      ShareJS.mkpathAndSetValue(doc, otPath, fileName);
+    }
   }
   $scope.$watch('asset.data.fields.file', function (file, old, scope) {
     if (file !== old) scope.validate();

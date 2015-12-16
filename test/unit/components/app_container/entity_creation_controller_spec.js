@@ -31,7 +31,8 @@ describe('EntityCreationController', function () {
       var space = cfStub.space('test');
       var contentTypeData = cfStub.contentTypeData('testType');
       this.scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
-      this.scope.$state.go = sinon.stub();
+      this.$state = $injector.get('$state');
+      this.$state.go = sinon.stub();
 
       this.entityCreationController = $controller('EntityCreationController', {$scope: this.scope});
     });
@@ -88,7 +89,7 @@ describe('EntityCreationController', function () {
       });
 
       it('navigates to editor', function () {
-        sinon.assert.calledWith(this.scope.$state.go, 'spaces.detail.entries.detail', {
+        sinon.assert.calledWith(this.$state.go, 'spaces.detail.entries.detail', {
           entryId: 'someEntryId'
         });
       });
@@ -148,7 +149,7 @@ describe('EntityCreationController', function () {
       }));
 
       it('navigates to editor', function () {
-        sinon.assert.calledWith(this.scope.$state.go, 'spaces.detail.assets.detail', {
+        sinon.assert.calledWith(this.$state.go, 'spaces.detail.assets.detail', {
           assetId: 'someAssetId'
         });
       });
@@ -166,7 +167,7 @@ describe('EntityCreationController', function () {
     });
 
     it('navigates to editor', function () {
-      sinon.assert.calledWith(this.scope.$state.go, 'spaces.detail.content_types.new');
+      sinon.assert.calledWith(this.$state.go, 'spaces.detail.content_types.new');
     });
 
     it('tracks analytics', function () {
@@ -185,7 +186,7 @@ describe('EntityCreationController', function () {
     });
 
     it('navigates to editor', function () {
-      sinon.assert.calledWith(this.scope.$state.go, 'spaces.detail.api.keys.new');
+      sinon.assert.calledWith(this.$state.go, 'spaces.detail.api.keys.new');
     });
 
     it('tracks analytics', function () {
@@ -204,7 +205,7 @@ describe('EntityCreationController', function () {
     });
 
     it('navigates to editor', function () {
-      sinon.assert.calledWith(this.scope.$state.go, 'spaces.detail.settings.locales.new');
+      sinon.assert.calledWith(this.$state.go, 'spaces.detail.settings.locales.new');
     });
 
     it('tracks analytics', function () {

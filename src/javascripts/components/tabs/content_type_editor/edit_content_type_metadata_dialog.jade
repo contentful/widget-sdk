@@ -6,7 +6,7 @@
     cf-on-submit="newContentTypeForm.$valid && dialog.confirm()")
     header.modal-dialog__header
       h1 {{dialog.title}}
-      button.modal-dialog__close(ng-click="dialog.cancel()")
+      button.modal-dialog__close(type="button" ng-click="dialog.cancel()")
     .modal-dialog__content
       .cfnext-form__field
         label

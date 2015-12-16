@@ -16,7 +16,6 @@ angular.module('contentful')
  * @name LocaleEditorController
  *
  * @scope.requires  context
- * @scope.requires  $state
  * @scope.requires  spaceContext
  * @scope.requires  locale
  * @scope.requires  localeForm
@@ -35,6 +34,7 @@ angular.module('contentful')
   var analytics        = $injector.get('analytics');
   var Command          = $injector.get('command');
   var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
+  var $state           = $injector.get('$state');
 
   var formWasDirty = false;
 
@@ -106,7 +106,7 @@ angular.module('contentful')
    * @type {Command}
    */
   controller.cancel = Command.create(function cancel () {
-    return $scope.$state.go('^.list');
+    return $state.go('^.list');
   }, {
     available: function () {
       return $scope.context.isNew;
@@ -149,7 +149,7 @@ angular.module('contentful')
       notification.info('Locale saved successfully');
       trackSave('Saved Successful Locale');
       if ($scope.context.isNew) {
-        return $scope.$state.go('spaces.detail.settings.locales.detail', { localeId: response.getId() });
+        return $state.go('spaces.detail.settings.locales.detail', { localeId: response.getId() });
       }
     });
   }

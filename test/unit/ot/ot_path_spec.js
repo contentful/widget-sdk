@@ -62,6 +62,7 @@ describe('otPath', function() {
         };
         spyOn(scope.otDoc.doc, 'setAt');
         scope.otSubDoc.changeValue('bla');
+        this.$apply();
         expect(scope.otDoc.doc.setAt).toHaveBeenCalled();
         expect(scope.otDoc.doc.setAt.calls.mostRecent().args[0]).toEqual(scope.otPath);
         expect(scope.otDoc.doc.setAt.calls.mostRecent().args[1]).toEqual('bla');
@@ -71,14 +72,13 @@ describe('otPath', function() {
     describe('when the path is not present in the otDoc', function () {
       it('should mkpathAndSetValue the value', function () {
         var ShareJS = this.$inject('ShareJS');
-        sinon.spy(ShareJS, 'mkpathAndSetValue');
+        sinon.stub(ShareJS, 'mkpathAndSetValue').resolves();
         scope.otSubDoc.changeValue('bla');
-        sinon.assert.calledWith(ShareJS.mkpathAndSetValue, {
-          doc: scope.otDoc.doc,
-          path: scope.otPath,
-          types: undefined,
-          value: 'bla'
-        });
+        this.$apply();
+        sinon.assert.calledWith(
+          ShareJS.mkpathAndSetValue,
+          scope.otDoc.doc, scope.otPath, 'bla'
+        );
       });
     });
 

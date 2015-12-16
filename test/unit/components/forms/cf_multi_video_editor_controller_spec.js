@@ -7,7 +7,7 @@ describe('Multi Video Editor Controller', function() {
   beforeEach(function() {
     module('contentful/test');
     module(function($provide){
-      ShareJSMock = jasmine.createSpyObj('ShareJSMock', ['peek', 'mkpathAndSetValue']);
+      ShareJSMock = {};
       $provide.value('ShareJS', ShareJSMock);
     });
 
@@ -118,19 +118,20 @@ describe('Multi Video Editor Controller', function() {
   describe('#storeAsset', function() {
     var insertOpMock;
     beforeEach(function() {
+      ShareJSMock.mkpathAndSetValue = sinon.stub().resolves();
+      ShareJSMock.peek = sinon.stub();
       insertOpMock = jasmine.createSpyObj('insertOpMock', ['insert']);
       scope.otDoc  = {
         doc: jasmine.createSpyObj('otDocMock', ['at'])
       };
       scope.otDoc.doc.at.and.returnValue(insertOpMock);
 
-      scope.otPathTypes = 'ot-path-types';
-      scope.otPath      = 'ot-path';
+      scope.otPath = 'ot-path';
     });
 
     describe('when there are already items in the document', function() {
       beforeEach(function() {
-        ShareJSMock.peek.and.returnValue([]);
+        ShareJSMock.peek.returns([]);
         multiVideoEditorController.storeAsset({assetId: 'asset-id'});
       });
 
@@ -145,31 +146,28 @@ describe('Multi Video Editor Controller', function() {
 
     describe('when there are no items in the document', function() {
       beforeEach(function() {
-        ShareJSMock.peek.and.returnValue(undefined);
+        ShareJSMock.peek.returns();
         multiVideoEditorController.storeAsset({assetId: 'asset-id'});
       });
 
       it('creates a path in the document', function() {
-        expect(ShareJSMock.mkpathAndSetValue).toHaveBeenCalledWith({
-          doc: scope.otDoc.doc,
-          path: scope.otPath,
-          types: scope.otPathTypes,
-          value: ['asset-id']
-        }, jasmine.any(Function));
+        sinon.assert.calledOnce(ShareJSMock.mkpathAndSetValue);
+        sinon.assert.calledWith(
+          ShareJSMock.mkpathAndSetValue,
+          scope.otDoc.doc, scope.otPath, ['asset-id']
+        );
       });
     });
 
     describe('when the asset is successfully saved', function() {
-      var asset;
       beforeEach(function() {
-        scope.videoInputController = sinon.stub().returns(jasmine.createSpyObj('', ['clearField']));
+        scope.videoInputController = sinon.stub().returns({
+          clearField: sinon.stub()
+        });
         scope.multiVideoEditor.assets = ['other-asset'];
 
-        asset = {assetId: 'asset-id'};
-        multiVideoEditorController.storeAsset(asset);
-        callbackWithApplyDeferred.resolve();
-
-        $rootScope.$apply();
+        multiVideoEditorController.storeAsset({assetId: 'asset-id'});
+        this.$apply();
       });
 
       it('the new assed is prepended to the list of assets', function() {
@@ -177,7 +175,7 @@ describe('Multi Video Editor Controller', function() {
       });
 
       it('clears the input field', function() {
-        expect(scope.videoInputController().clearField).toHaveBeenCalled();
+        sinon.assert.calledOnce(scope.videoInputController().clearField);
       });
     });
   });

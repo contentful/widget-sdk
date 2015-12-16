@@ -152,11 +152,12 @@ describe('API key editor controller', function () {
   });
 
   describe('saves an api key', function () {
-    var pristineStub;
+    var pristineStub, $state;
     beforeEach(function () {
       pristineStub = sinon.stub();
+      $state = this.$inject('$state');
+      $state.go = sinon.stub().resolves();
       apiKey.save.resolves();
-      scope.$state.go = sinon.stub().resolves();
       scope.apiKeyForm = {
         '$setPristine': pristineStub
       };
@@ -173,7 +174,7 @@ describe('API key editor controller', function () {
     });
 
     it('gets api key editor from navigator', function () {
-      sinon.assert.calledWith(scope.$state.go, 'spaces.detail.api.keys.detail', {
+      sinon.assert.calledWith($state.go, 'spaces.detail.api.keys.detail', {
         apiKeyId: apiKey.getId()
       });
     });

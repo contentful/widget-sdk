@@ -49,11 +49,9 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
   }
 
   function getState() {
-    //avoiding circular dependency
-    var rootScope      = $injector.get('$rootScope');
     return {
-      name: rootScope.$state.current.name,
-      params: rootScope.$stateParams
+      name: $injector.get('$state').current.name,
+      params: $injector.get('$stateParams')
     };
   }
 

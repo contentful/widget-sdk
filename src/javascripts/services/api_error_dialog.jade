@@ -2,7 +2,7 @@
   .modal-dialog
     header.modal-dialog__header
       h1 {{dialog.title}}
-      .modal-dialog__close(ng-click="dialog.cancel()")
+      button.modal-dialog__close(ng-click="dialog.cancel()")
     .modal-dialog__content
       p.modal-dialog__plaintext(ng-if="dialog.message") {{dialog.message}}
       p.

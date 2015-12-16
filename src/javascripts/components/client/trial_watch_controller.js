@@ -10,7 +10,15 @@ angular.module('contentful')
   var moment         = $injector.get('moment');
   var modalDialog    = $injector.get('modalDialog');
 
-  $scope.$watchGroup(['user', 'spaceContext.space'], trialWatcher);
+  $scope.$watchGroup([
+    // TODO: Get rid of necessity to watch the user.
+    // Watching the user is required for initial load, when spaceContenxt.space is
+    // initialized but $scope.user might not be set yet.
+    // Watching only .sys.id prevents from calls on periodic token updates where
+    // the whole user object is being replaced.
+    'user.sys.id',
+    'spaceContext.space'
+  ], trialWatcher);
 
   function trialWatcher () {
     var user = $scope.user;
@@ -27,9 +35,7 @@ angular.module('contentful')
       var trial = new Trial(organization);
       if (trial.hasEnded()) {
         notify(trialHasEndedMsg(organization, userOwnsOrganization));
-        if (organization.isNewSubscriptionSystemEnabled) {
-          showPaywall(user, trial);
-        }
+        showPaywall(user, trial);
       } else {
         notify(timeLeftInTrialMsg(trial.getHoursLeft()));
       }
@@ -124,9 +130,6 @@ angular.module('contentful')
   }
 
   function organizationHasTrialSubscription (organization) {
-    // TODO: Make this check work with new subscription system. This will require
-    //  to revisit the token we want to get from Gatekeeper. The token should
-    //  look the same for both subscription systems.
     return organization.subscriptionState === 'trial';
   }
 

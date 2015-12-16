@@ -6,6 +6,7 @@ angular.module('contentful')
   var authentication = $injector.get('authentication');
   var logger         = $injector.get('logger');
   var TheAccountView = $injector.get('TheAccountView');
+  var $stateParams   = $injector.get('$stateParams');
 
   return {
     template: JST.iframe_view(),
@@ -24,7 +25,7 @@ angular.module('contentful')
       init();
 
       function init() {
-        var pathSuffix = scope.$stateParams.pathSuffix;
+        var pathSuffix = $stateParams.pathSuffix;
         var url = buildUrl(pathSuffix);
         if (!urlIsActive(url)) {
           scope.url = url;

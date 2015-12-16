@@ -9,4 +9,3 @@ angular.module('contentful').directive('cfEntryCardEditor', [function(){
     scope: true
   };
 }]);
-
