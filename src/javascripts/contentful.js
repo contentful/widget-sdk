@@ -1,8 +1,16 @@
 'use strict';
 
+/**
+ * @ngdoc module
+ * @name cf.app
+ */
+angular.module('cf.app', []);
+
+
 angular.module('contentful', [
   'contentful/environment',
   'contentful/user_interface',
+  'cf.app',
   'cf.ui',
   'cf.forms',
   'cf.utils',
@@ -32,6 +40,7 @@ angular.module('contentful', [
     return;
   }
 
+  $injector.get('navigation/stateChangeHandlers').setup();
   $injector.get('contextMenu').init();
   $injector.get('notification').setupClearMessageHooks();
 }]);

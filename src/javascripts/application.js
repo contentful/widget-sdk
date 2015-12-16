@@ -4,7 +4,7 @@
  * @ngdoc module
  * @name contentful/app
  */
-angular.module('contentful/app', ['contentful', 'cf.ui'])
+angular.module('contentful/app', ['contentful'])
 
 .config(function(){
   if (!history.pushState) {
