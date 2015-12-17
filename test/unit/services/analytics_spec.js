@@ -66,11 +66,12 @@ describe('Analytics service', function () {
 
   describe('setSpace', function(){
     beforeEach(function(){
+      this.userData.signInCount = 1;
       this.analytics.setUserData(this.userData);
     });
 
     it('setSpace should set space data and initialize', function() {
-      sinon.assert.calledWith(this.segment.identify, 'h4nswur5t', {firstName: 'Hans', lastName: 'Wurst'});
+      sinon.assert.calledWith(this.segment.identify, 'h4nswur5t', this.userData);
       sinon.assert.notCalled(this.totango.initialize);
       this.analytics.setSpace(this.space);
       sinon.assert.calledWith(this.totango.initialize, this.userData, this.space.data.organization);
@@ -86,7 +87,7 @@ describe('Analytics service', function () {
       sinon.assert.notCalled(this.segment.identify);
       sinon.assert.notCalled(this.totango.initialize);
       this.analytics.setUserData(this.userData);
-      sinon.assert.calledWith(this.segment.identify, 'h4nswur5t', {firstName: 'Hans', lastName: 'Wurst'});
+      sinon.assert.calledWith(this.segment.identify, 'h4nswur5t', this.userData);
       sinon.assert.calledWith(this.totango.initialize, this.userData, this.space.data.organization);
     });
   });
