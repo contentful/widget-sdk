@@ -137,7 +137,7 @@ function methodMemberSyntax (doc) {
 
   // Filter nested parameters the describe object properties
   params = _.filter(params, function ({name}) {
-    return name.indexOf('.') === -1;
+    return !/\w\.\w/.test(name);
   });
 
 
