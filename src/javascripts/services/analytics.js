@@ -133,7 +133,15 @@ angular.module('contentful')
 
       _initialize: function(){
 
-        var self = this;
+        if (this._userData) {
+          var analyticsUserData = getAnalyticsUserData(this._userData);
+
+          this.addIdentifyingData(analyticsUserData);
+
+          if (this._organizationData) {
+            totango.initialize(analyticsUserData, this._organizationData);
+          }
+        }
 
         function parseCookie(cookieName, prop) {
           try {
@@ -142,34 +150,26 @@ angular.module('contentful')
           } catch (e) {}
         }
 
-        // On first login, include referrer data from the token set by
-        // marketing website if it's present and not falsy
+        // On first login, send referrer, campaign and A/B test data to
+        // segment and totango if it has been set by marketing website cookie
 
-        if (this._userData) {
-          var userData = {
-            firstName: this._userData.firstName,
-            lastName: this._userData.lastName
-          };
+        function getAnalyticsUserData(userData) {
+          if (userData.signInCount === 1) {
+            var firstVisitData = _.pick({
+              firstReferrer: parseCookie('cf_first_visit', 'referer'),
+              campaignName: parseCookie('cf_first_visit', 'campaign_name'),
+              lastReferrer: parseCookie('cf_last_visit', 'referer'),
+              experimentId: parseCookie('cf_experiment', 'experiment_id'),
+              experimentVariationId: parseCookie('cf_experiment', 'variation_id')
+            }, function (val) {
+              return val !== null && typeof val !== 'undefined';
+            });
 
-          var firstVisitData = {
-            firstReferrer: parseCookie('cf_first_visit', 'referer'),
-            campaignName: parseCookie('cf_first_visit', 'campaign_name'),
-            lastReferrer: parseCookie('cf_last_visit', 'referer')
-          };
+            return _.merge(firstVisitData, userData);
 
-          if (self._userData.signInCount === 1) {
-            _.merge(userData, firstVisitData);
+          } else {
+            return userData;
           }
-
-          var dataForSegment = _.pick(userData, function(val) {
-            return !!val;
-          });
-
-          segment.identify(this._userData.sys.id, dataForSegment);
-        }
-
-        if (this._userData && this._organizationData){
-          totango.initialize(this._userData, this._organizationData);
         }
       },
 
