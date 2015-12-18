@@ -15,7 +15,7 @@ header.workbench-header
     .search-results-position(cf-search-results-position paginator="searchController.paginator" ng-hide="!searchController.paginator.numEntries")
 
   .workbench-header__actions(
-    ng-show="!showNoAssetsAdvice() && showCreateAssetButton()")
+    ng-show="!showNoAssetsAdvice() && !shouldHide('createAsset')")
     button.cfnext-btn-action(
       cf-context-menu-trigger
       ng-disabled="shouldDisable('createAsset')"

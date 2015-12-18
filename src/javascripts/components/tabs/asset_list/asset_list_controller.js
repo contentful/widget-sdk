@@ -57,11 +57,6 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
     return !hasEntries && !hasQuery && !$scope.context.loading;
   };
 
-  // TODO this code is duplicated in the asset list controller
-  $scope.showCreateAssetButton = function () {
-    return accessChecker.shouldHide('createAsset');
-  };
-
   var throttledListRefresh = throttle(function () {
     delay(function () {
       $scope.searchController.resetAssets();
