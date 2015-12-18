@@ -182,6 +182,7 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
           return $q.reject(err);
         }
 
+        // TODO we should replace this with `ShareJS.setDeep()`
         return $q.denodeify(function (cb) {
           doc.setAt(path, value, cb);
         }).catch(function () {
