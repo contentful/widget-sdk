@@ -14,8 +14,7 @@ header.workbench-header
       cf-context-menu-trigger
       data-test-id="delete-api-key")
       | Delete
-    .delete-confirm(cf-context-menu="bottom-left")
-      cf-icon.context-menu__arrow.x--top-right(name="arrow-up")
+    .delete-confirm.context-menu--arrow-right(cf-context-menu="bottom-left")
       p You are about to delete {{context.title}}
       button.cfnext-btn-caution(type="button" ng-click="delete()") Delete
       button.cfnext-btn-secondary-action(type="button") Don't Delete
@@ -88,7 +87,6 @@ header.workbench-header
                 i.fa.fa-lock
                 |  Unlock Access Token Regeneration
               .delete-confirm(cf-context-menu)
-                cf-icon.context-menu__arrow(name="arrow-up")
                 h2
                   i.fa.fa-exclamation-circle
                   |  Warning

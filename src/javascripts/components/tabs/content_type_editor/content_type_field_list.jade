@@ -2,7 +2,6 @@ mixin actions-dropdown
   .ct-field__actions-menu.context-menu(
     role="menu" cf-context-menu="bottom-4"
     aria-label="Field Actions" data-test-id="field-actions-menu")
-    cf-icon.context-menu__arrow(name="arrow-up")
     ul.context-menu__items
       li(role="menuitem" ng-click="fieldController.setAsTitle()" ng-if="fieldCanBeTitle")
         | Set field as Entry title

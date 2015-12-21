@@ -39,10 +39,9 @@ mixin entity-sidebar
           span.btn-action-select__selector-label
             | Change status
           cf-icon.btn-action-select__icon(name="dd-arrow-down")
-        .context-menu(
+        .context-menu.context-menu--arrow-right(
           data-test-id="change-state-menu"
           cf-context-menu="bottom-right")
-          cf-icon.context-menu__arrow.x--btn-action-select(name="arrow-up")
           div.context-menu__header
             | Change status to
           div(ng-repeat="command in state.secondary")
@@ -66,7 +65,6 @@ mixin entity-sidebar
         .context-menu(
           cf-context-menu="bottom-left"
           data-test-id="revert-menu")
-          cf-icon.context-menu__arrow.x--top-right(name="arrow-up")
           div(role="menuitem" ui-command="state.revertToPublished")
             | Revert to published
           div(role="menuitem" ui-command="state.revertToPrevious")
