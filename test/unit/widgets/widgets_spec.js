@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Widget types service', function () {
-  var widgets, promise, stub;
+  var widgets;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -9,7 +9,7 @@ describe('Widget types service', function () {
         function WidgetStore(space) {
           this.space = space;
         }
-        WidgetStore.prototype.getMap = stub;
+        WidgetStore.prototype.getMap = sinon.stub();
         return WidgetStore;
       }
 
@@ -19,23 +19,36 @@ describe('Widget types service', function () {
     this.setupWidgets = function(ws) {
       var builtinWidgets = this.$inject('widgets/builtin');
 
-      stub = sinon.stub().resolves(ws || builtinWidgets);
-      widgets = this.$inject('widgets');
+      var WidgetStore = this.$inject('widgets/store');
+      WidgetStore.prototype.getMap.resolves(ws || builtinWidgets);
 
-      promise = widgets.setSpace({
-        endpoint: sinon.stub().returns({
-          get: sinon.stub().resolves([])
-        })
-      });
+      widgets = this.$inject('widgets');
+      widgets.setSpace();
       this.$apply();
     };
 
   });
 
-  describe('#setSpace()', function() {
-    it ('returns a promise', function() {
-      this.setupWidgets();
-      expect(typeof promise.then).toEqual('function');
+  describe('#setSpace()', function () {
+
+    beforeEach(function () {
+      var WidgetStore = this.$inject('widgets/store');
+      WidgetStore.prototype.getMap.resolves();
+      widgets = this.$inject('widgets');
+    });
+
+    it('calls WidgetStore.getMap()', function () {
+      var WidgetStore = this.$inject('widgets/store');
+      var space = {};
+      widgets.setSpace(space);
+      sinon.assert.calledWithExactly(WidgetStore.prototype.getMap);
+    });
+
+    pit('returns the service when the store has fetched the widgets', function () {
+      return widgets.setSpace()
+      .then(function (widgets_) {
+        expect(widgets).toBe(widgets_);
+      });
     });
   });
 
@@ -53,9 +66,11 @@ describe('Widget types service', function () {
     });
 
     it ('calls store.getMap()', function() {
-      sinon.assert.calledOnce(stub);
+      var WidgetStore = this.$inject('widgets/store');
+      var getMap = WidgetStore.prototype.getMap;
+      sinon.assert.calledOnce(getMap);
       widgets.getAvailable('number');
-      sinon.assert.calledTwice(stub);
+      sinon.assert.calledTwice(getMap);
     });
 
 
@@ -371,5 +386,56 @@ describe('Widget types service', function () {
       expect(renderable.widgetParams).toBe(params);
     });
 
+    it('sets "sidebar" property', function () {
+      this.setupWidgets({
+        'WIDGET': {sidebar: true}
+      });
+      var renderable = widgets.buildRenderable({widgetId: 'WIDGET'});
+      expect(renderable.sidebar).toBe(true);
+    });
+
+  });
+
+  describe('#buildSidebarWidgets()', function () {
+    var apiWidgets, fields;
+
+    beforeEach(function () {
+      apiWidgets = [{fieldId: 'FIELD', widgetId: 'WIDGET'}];
+      fields = [{id: 'FIELD'}];
+      this.setupWidgets({
+        'WIDGET': {sidebar: true, template: 'TEMPLATE'}
+      });
+    });
+
+    it('adds field data to the widget', function () {
+      var renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
+      expect(renderable[0].field).toBe(fields[0]);
+    });
+
+    it('adds descriptor data to the widget', function () {
+      var renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
+      expect(renderable[0].sidebar).toEqual(true);
+      expect(renderable[0].template).toEqual('TEMPLATE');
+    });
+
+    it('filters non-sidebar widgets', function () {
+      var widgetDescriptor = {sidebar: true};
+      this.setupWidgets({ 'WIDGET': widgetDescriptor });
+
+      var renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
+      expect(renderable.length).toEqual(1);
+
+      widgetDescriptor.sidebar = false;
+      renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
+      expect(renderable.length).toEqual(0);
+    });
+
+    it('filters widgets without fields', function () {
+      var renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
+      expect(renderable.length).toEqual(1);
+
+      renderable = widgets.buildSidebarWidgets(apiWidgets, [{id: 'OTHER'}]);
+      expect(renderable.length).toEqual(0);
+    });
   });
 });

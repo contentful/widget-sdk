@@ -46,7 +46,11 @@ angular.module('contentful')
 
 
   function widgetIsVisible(widget) {
-    return fieldIsVisible(widget.field);
+    if (widget.sidebar){
+      return false;
+    } else {
+      return fieldIsVisible(widget.field);
+    }
   }
 
   function fieldIsVisible (field) {

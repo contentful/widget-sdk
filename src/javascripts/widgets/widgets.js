@@ -75,7 +75,7 @@ angular.module('contentful')
     additionalProperties: true
   };
 
-  return {
+  var widgetsService = {
     get:                 getWidget,
     getAvailable:        getAvailable,
     buildRenderable:     buildRenderable,
@@ -87,12 +87,15 @@ angular.module('contentful')
     applyDefaults:       applyDefaults,
     validate:            validate,
     filteredParams:      filteredParams,
-    setSpace:            setSpace
+    setSpace:            setSpace,
+    buildSidebarWidgets: buildSidebarWidgets
   };
+  return widgetsService;
 
   function refreshWidgetCache() {
     return store.getMap().then(function(widgets) {
       WIDGETS = widgets;
+      return widgetsService;
     });
   }
 
@@ -322,6 +325,44 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
+   * @name widgets#buildSidebarWidgets
+   * @description
+   * From a list of widget definition from the editing interface build
+   * a list of renderable widgets that can be passed to the
+   * `cfWidgetRenderer` directive.
+   *
+   * The list includes only widgets that have the `sidebar` property
+   * set to a truthy value.
+   *
+   * The function is used to setup the entry editor state.
+   *
+   * TODO Remove duplication with FormWidgetsController.
+   *
+   * @param {API.Widget[]} widgets
+   * @param {API.Fields[]} fields
+   * @return {Widget.Renderable[]}
+   */
+  function buildSidebarWidgets (apiWidgets, fields) {
+    return  _(apiWidgets)
+      .map(function (widget) {
+        // TODO duplicates code from the 'editingInterfaces' service.
+        // But we cannot use it because of circular dependencies.
+        var field = _.find(fields, function (field) {
+          return field.apiName === widget.fieldId || field.id === widget.fieldId;
+        });
+        var desc = getWidget(widget.widgetId);
+        return _.extend({
+          field: field
+        }, widget, desc);
+      })
+      .filter(function (widget) {
+        return widget.sidebar && widget.field;
+      })
+      .value();
+  }
+
+  /**
+   * @ngdoc method
    * @name widgets#buildRenderable
    * @description
    * Create an object that contains all the necessary data to render a
@@ -346,7 +387,8 @@ angular.module('contentful')
       _.extend(widget, {
         rendersHelpText: descriptor.rendersHelpText,
         defaultHelpText: descriptor.defaultHelpText,
-        isFocusable: !descriptor.notFocusable
+        isFocusable: !descriptor.notFocusable,
+        sidebar: !!descriptor.sidebar
       });
     }
   }
