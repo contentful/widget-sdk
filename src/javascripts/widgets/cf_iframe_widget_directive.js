@@ -73,19 +73,10 @@ angular.module('contentful')
       }
 
       function updateDocValue (doc, path, value) {
-        return $q.denodeify(function (cb) {
-          var current = ShareJS.peek(doc, path);
-          if (value === current) {
-            return;
-          } else if (typeof current === 'undefined') {
-            ShareJS.mkpathAndSetValue({
-              doc: doc, path: path, value: value
-            }, cb);
-          } else {
-            doc.setAt(path, value, cb);
-          }
-        })
+        return ShareJS.setDeep(doc, path, value)
         .catch(function (e) {
+          // Should only throw an error when `value` does not have the
+          // correct type. Then `e` will be "forbidden".
           return $q.reject({
             code: 'ENTRY UPDATE FAILED',
             message: 'Could not update entry field',
