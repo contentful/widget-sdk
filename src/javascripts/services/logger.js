@@ -4,19 +4,42 @@
  * @ngdoc service
  * @name logger
  * @description
- * Service used to log errors and exceptions.  At the moment this is
- * mostly based on Bugsnag.  See the [`bugsnag` service][service] and
- * the [Bugsnag documentation][docs] for more details
+ * Log errors and exceptions to Bugsnag or the console.
  *
- * [service]: api/contentful/app/service/bugsnag
- * [docs]: https://bugsnag.com/docs/notifiers/js
+ * ~~~js
+ * // error type: 'Logged Error',
+ * // severity: 'error'
+ * // and additional info
+ * logger.logError('something happened', {
+ *   error: { ... },
+ *   data: { ... }
+ * })
+ * ~~~
+ *
+ * Each logging method defines the error type and severity and accepts
+ * additional parameters.
+ *
+ * The `message` argument identifies the error and is used by Bugsnag
+ * to group different logged events. It should be a short, descriptive
+ * and constant string, that is an invocation of a logging call should
+ * not interpolate the message.
+ *
+ * The `metaData` is an object where each key corresponds to a [tab in
+ * Bugsnag][bugsnag-tab] in Bugsnag that displays the corresponding
+ * value. The value may be an arbitrary JavaScript object. Note that
+ * values are truncated to a maximal depth of three before sending
+ * them.
+ *
+ * See the [Bugsnag documentation][bugsnag-doc] for more details.
+ *
+ * [bugsnag-tab]: https://bugsnag.com/docs/notifiers/js#metadata
+ * [bugsnag-doc]: https://bugsnag.com/docs/notifiers/js
 */
 angular.module('contentful').factory('logger', ['$injector', function ($injector) {
   var $window        = $injector.get('$window');
   var bugsnag        = $injector.get('bugsnag');
   var environment    = $injector.get('environment');
   var stringifySafe  = $injector.get('stringifySafe');
-  var toJsonReplacer = $injector.get('toJsonReplacer');
 
   function setUserInfo() {
     // Prevents circular dependency
@@ -45,49 +68,39 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
 
   function getAdminLink(user) {
     var id = dotty.get(user, 'sys.id');
-    return 'https://admin.'+environment.settings.main_domain+'/admin/users/'+id;
-  }
-
-  function getState() {
-    return {
-      name: $injector.get('$state').current.name,
-      params: $injector.get('$stateParams')
-    };
+    return 'https://admin.' + environment.settings.main_domain + '/admin/users/' + id;
   }
 
   function getParams() {
-    var state = getState();
-    return _.extend({},
-      {
-        state: state.name
-      },
-      state.params,
-      {
-        viewport: ''+$window.innerWidth+'x'+$window.innerHeight,
-        screensize: ''+$window.screen.width+'x'+$window.screen.height
-      });
+    var stateName = $injector.get('$state').current.name;
+    var stateParams = $injector.get('$stateParams');
+    return _.extend({
+      state: stateName,
+      viewport: '' + $window.innerWidth + 'x' + $window.innerHeight,
+      screensize: '' + $window.screen.width + 'x' + $window.screen.height
+    }, stateParams);
   }
 
   function augmentMetadata(metaData) {
-    metaData = metaData ? metaData : {};
-    // params tab
-    _.extend(metaData, {
-      params: getParams()
-    });
-    // data tab
-    if (metaData.data) {
-      metaData.data = preParseData(metaData.data);
-    }
-    return metaData;
+    metaData = metaData || {};
+    metaData.params = getParams();
+    return _.mapValues(metaData, serializeObject);
   }
 
-  function preParseData(data) {
-    var prop;
-    for(var key in data){
-      prop = data[key];
-      data[key] = JSON.parse(stringifySafe(prop)||'{}', toJsonReplacer);
+  /**
+   * Given an aribtrary JS object returns a JSON object without `$$`
+   * properties and circular references.
+   */
+  function serializeObject (obj) {
+    return JSON.parse(stringifySafe(obj) || '{}', filterInternalProperties);
+  }
+
+  function filterInternalProperties (key, value) {
+    if (key.substr(0, 2) === '$$') {
+      return;
+    } else {
+      return value;
     }
-    return data;
   }
 
   function flattenServerErrors(err) {
@@ -264,12 +277,12 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * @name logger#_log
      * @description
      * Log a message to the bugsnag wrapper.
-     * @param {String} Error type, mostly used for grouping on bugsnag.
-     * @param {String} Severity level.
-     * @param {String} Error message.
-     * @param {Object} Metadata Can take any of the expected bugsnag metadata parameters.
-     * @param.data  {Object} Additional data (other objects). Shows up on the bugsnag data tab.
-     * @param.error {Object} Error object. Shows up on the bugsnag error tab.
+     * @param {String} type
+     * @param {String} severity
+     * @param {String} message
+     * @param {Object} metadata
+     * Additional info to show in bugsnag. Each key creates a tab that
+     * displays the corresponding value.
     */
     _log: function(type, severity, message, metaData) {
       metaData = metaData || {};
