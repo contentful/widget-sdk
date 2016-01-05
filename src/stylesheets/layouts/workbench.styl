@@ -96,8 +96,8 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
   flex: 1 1 auto
   position: relative
   // TODO: Full-screen overlay service to get .cf-zenmode out of here as it requires
-  // ancestor of menu bars as stacking context to cover them. Then uncomment z-index
-  // here and in &__content so box-shadow will overlay &__entity-sidebar.
+  // ancestor of menu bars as stacking context to cover them. Then take care of todo
+  // below.
   // z-index: 0
   // This hack is required for Safari to grow this element
   height: 100%;
@@ -110,9 +110,11 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
 
   &__content
     $workbench-content()
+    // TODO: Uncomment z-index and box-shadow after TODO above got resolved and remove
+    // &__entity-sidebar::after shadow hack below.
     // z-index: 1
     flex-grow: 1
-    box-shadow: 1px 0 2px 0 rgba(black, 0.09)
+    //box-shadow: 1px 0 2px 0 rgba(black, 0.09)
     border-right: 1px solid $colors.element-darkest
 
   &__left-sidebar
@@ -153,6 +155,17 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     max-width: 30rem
     background: $colors.element-lightest
     overflow: hidden
+
+    // TODO: Shadow hack should be removed after z-index TODOs above got resolved.
+    &:after
+      box-shadow: 1px 0 2px 0 rgba(black, 0.09)
+      content: ''
+      position: absolute
+      top: -100px // Prevents round shadow corners.
+      bottom: -100px
+      left: -2px // 2px wide, otherwise shadow is cut off.
+      width: 2px
+      z-index: 1
 
   &__middle-content
     $workbench-content()
