@@ -35,4 +35,17 @@ describe('cfMarkdownEditorBridge', function () {
     sinon.assert.calledTwice(inputSpy);
     sinon.assert.calledTwice(pasteSpy);
   });
+
+  it('Clears text when fieldData is set to undefined', function () {
+    var inputSpy = sinon.stub();
+    textarea.on('input', inputSpy);
+    scope.fieldData.value = 'test';
+    scope.$apply();
+    expect(textarea.val()).toBe('test');
+    sinon.assert.calledOnce(inputSpy);
+    scope.fieldData.value = undefined;
+    scope.$apply();
+    expect(textarea.val()).toBe('');
+    sinon.assert.calledTwice(inputSpy);
+  });
 });
