@@ -27,7 +27,6 @@ header.workbench-header
     .context-menu(
       role="menu" cf-context-menu
       aria-label="Add Assets" data-test-id="add-asset-menu")
-      cf-icon.context-menu__arrow(name="arrow-up")
       ul.context-menu__items
         li(role="menuitem" ng-click="entityCreationController.newAsset()")
           | Single Asset
@@ -104,7 +103,6 @@ header.workbench-header
       .context-menu(
         role="menu" cf-context-menu
         aria-label="Create Asset" data-test-id="create-asset-menu")
-        cf-icon.context-menu__arrow(name="arrow-up")
         ul.context-menu__items
           li(role="menuitem" ng-click="entityCreationController.newAsset()")
             | Single Asset
@@ -123,7 +121,6 @@ header.workbench-header
     data-test-id="delete-asset")
     | Delete
   .delete-confirm(cf-context-menu="top")
-    cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
     p You are about to delete {{selection.size()}} Assets
     button.cfnext-btn-caution(type="button" ng-click="deleteSelected()") Delete
     button.cfnext-btn-secondary-action(type="button") Don't Delete

@@ -7,10 +7,9 @@
     data-test-id="space-selector-trigger")
     span.space-selector__name.u-truncate(ng-bind="spaceContext.space.data.name || 'Spaces'")
     cf-icon.icon-dd-arrow-down(name="dd-arrow-down" size="10")
-  .space-selector__menu(
+  .space-selector__menu.context-menu--arrow-left.x--top-bar(
     role="menu" cf-context-menu="bottom-left"
     aria-label="Select Space" data-test-id="space-selector-menu")
-    cf-icon.context-menu__arrow.x--top-left(name="arrow-up")
     .space-selector__orgs(ng-if="spaces.length > 0")
       .space-selector__group(ng-repeat="(orgId, org) in spacesByOrganization")
         .space-selector__group-label
