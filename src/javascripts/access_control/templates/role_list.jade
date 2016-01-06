@@ -31,6 +31,7 @@ header.workbench-header
       .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="Role Actions")
         cf-icon.context-menu__arrow.x--top-right-tight(name="arrow-up")
         ul.context-menu__items
+          li(role="menuitem" ui-sref="spaces.detail.settings.roles.detail({roleId: role.sys.id })") Open role
           li(ng-if="canModifyRoles()" role="menuitem" ng-click="duplicateRole(role)") Duplicate
           li(ng-if="canModifyRoles()" role="menuitem" ng-click="removeRole(role)") Delete permanently
           li.role-list__action--disabled(ng-if="!canModifyRoles()") Duplicate
