@@ -23,12 +23,14 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
   var notification        = $injector.get('notification');
   var Command             = $injector.get('command');
   var accessChecker       = $injector.get('accessChecker');
+  var TheAccountView      = $injector.get('TheAccountView');
 
   $scope.removeRole             = removeRole;
   $scope.duplicateRole          = duplicateRole;
   $scope.jumpToRoleMembers      = jumpToRoleMembers;
   $scope.jumpToAdminRoleMembers = jumpToAdminRoleMembers;
   $scope.canModifyRoles         = accessChecker.canModifyRoles;
+  $scope.goToSubscription       = TheAccountView.goToSubscription;
 
   reload().catch(ReloadNotification.basicErrorHandler);
 

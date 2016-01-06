@@ -78,10 +78,8 @@ angular.module('contentful')
   function newUpgradeAction(organization){
     var organizationId = organization.sys.id;
     return function upgradeAction() {
-      var pathSuffix = 'organizations/' + organizationId + '/subscription';
-
       analytics.trackPersistentNotificationAction('Plan Upgrade');
-      TheAccountView.goTo(pathSuffix, { reload: true });
+      TheAccountView.goToSubscription(organizationId);
     };
   }
 

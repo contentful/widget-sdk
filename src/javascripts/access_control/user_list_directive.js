@@ -45,6 +45,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   var stringUtils         = $injector.get('stringUtils');
   var notification        = $injector.get('notification');
   var accessChecker       = $injector.get('accessChecker');
+  var TheAccountView      = $injector.get('TheAccountView');
 
   var MODAL_OPTS_BASE = {
     noNewScope: true,
@@ -57,9 +58,13 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
     role: 'Show users grouped by role'
   };
 
+  $scope.userQuota = { used: 1 };
+  $scope.$watch(accessChecker.getUserQuota, function (q) { $scope.userQuota = q; });
+
   $scope.openRemovalConfirmationDialog = openRemovalConfirmationDialog;
   $scope.openRoleChangeDialog          = openRoleChangeDialog;
   $scope.openInvitationDialog          = openInvitationDialog;
+  $scope.goToSubscription              = TheAccountView.goToSubscription;
 
   reload().catch(ReloadNotification.basicErrorHandler);
 
@@ -89,7 +94,10 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
       removeUser: Command.create(function () {
         return spaceMembershipRepo.remove(user.membership)
         .then(reload)
-        .then(function () { notification.info('User successfully removed from this space.'); })
+        .then(function () {
+          notification.info('User successfully removed from this space.');
+          $scope.userQuota.used -= 1;
+        })
         .catch(ReloadNotification.basicErrorHandler)
         .finally(function () { scope.dialog.confirm(); });
       }, {
@@ -176,7 +184,10 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
 
     function handleSuccess() {
       return reload()
-      .then(function () { notification.info('Invitation successfully sent.'); })
+      .then(function () {
+        notification.info('Invitation successfully sent.');
+        $scope.userQuota.used += 1;
+      })
       .catch(ReloadNotification.basicErrorHandler)
       .finally(function () { scope.dialog.confirm(); });
     }

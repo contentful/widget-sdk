@@ -25,6 +25,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   var shouldDisable     = createResponseAttributeGetter('shouldDisable');
   var responses         = {};
   var features          = {};
+  var userQuota         = {};
   var sectionVisibility = {};
 
   $rootScope.$watchCollection(function () {
@@ -39,6 +40,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     getResponses:                    function () { return responses; },
     getResponseByActionName:         function (action) { return responses[action]; },
     getSectionVisibility:            function () { return sectionVisibility; },
+    getUserQuota:                    function () { return userQuota; },
     getFieldChecker:                 getFieldChecker,
     shouldHide:                      shouldHide,
     shouldDisable:                   shouldDisable,
@@ -87,7 +89,10 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   function collectFeatures() {
     var spaces = dotty.get(authentication, 'tokenLookup.spaces', []);
     var tokenLookupSpace = _.findWhere(spaces, {sys: {id: spaceContext.getId()}});
-    features = dotty.get(tokenLookupSpace, 'organization.subscriptionPlan.limits.features', {});
+
+    features        = dotty.get(tokenLookupSpace, 'organization.subscriptionPlan.limits.features', {});
+    userQuota.used  = dotty.get(tokenLookupSpace, 'organization.usage.permanent.organizationMembership', 1);
+    userQuota.limit = dotty.get(tokenLookupSpace, 'organization.subscriptionPlan.limits.permanent.organizationMembership', -1);
   }
 
   function getFieldChecker(entity, predicate) {
