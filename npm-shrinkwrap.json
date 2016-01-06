@@ -20,7 +20,13 @@
       "dependencies": {
         "@contentful/spock": {
           "version": "0.6.0",
-          "from": "@contentful/spock@0.6.0"
+          "from": "git+ssh://git@github.com/contentful/spock.git#feature/interpret-api-names",
+          "dependencies": {
+            "dottie": {
+              "version": "1.1.1",
+              "from": "dottie@1.1.1"
+            }
+          }
         },
         "camelize": {
           "version": "1.0.0",
@@ -34,7 +40,7 @@
       "dependencies": {
         "@contentful/spock": {
           "version": "0.6.0",
-          "from": "@contentful/spock@0.6.0",
+          "from": "git+ssh://git@github.com/contentful/spock.git#feature/interpret-api-names",
           "dependencies": {
             "dottie": {
               "version": "1.1.1",
@@ -2200,7 +2206,7 @@
               "dependencies": {
                 "async": {
                   "version": "0.2.10",
-                  "from": "async@0.2.10"
+                  "from": "async@>=0.2.0 <0.3.0"
                 },
                 "source-map": {
                   "version": "0.1.34",
@@ -8344,7 +8350,7 @@
           "dependencies": {
             "ansi-styles": {
               "version": "2.1.0",
-              "from": "ansi-styles@2.1.0"
+              "from": "ansi-styles@>=2.1.0 <3.0.0"
             },
             "escape-string-regexp": {
               "version": "1.0.3",
@@ -8362,7 +8368,7 @@
             },
             "strip-ansi": {
               "version": "3.0.0",
-              "from": "strip-ansi@3.0.0",
+              "from": "strip-ansi@>=3.0.0 <4.0.0",
               "dependencies": {
                 "ansi-regex": {
                   "version": "2.0.0",
@@ -8372,7 +8378,7 @@
             },
             "supports-color": {
               "version": "2.0.0",
-              "from": "supports-color@2.0.0"
+              "from": "supports-color@>=2.0.0 <3.0.0"
             }
           }
         }
@@ -8456,7 +8462,13 @@
             },
             "@contentful/spock": {
               "version": "0.6.0",
-              "from": "@contentful/spock@0.6.0"
+              "from": "git+ssh://git@github.com/contentful/spock.git#feature/interpret-api-names",
+              "dependencies": {
+                "dottie": {
+                  "version": "1.1.1",
+                  "from": "dottie@1.1.1"
+                }
+              }
             }
           }
         },
@@ -8748,9 +8760,9 @@
               "version": "0.0.1",
               "from": "pause@0.0.1"
             },
-            "base64-url": {
-              "version": "1.2.1",
-              "from": "base64-url@1.2.1"
+            "ms": {
+              "version": "0.7.1",
+              "from": "ms@0.7.1"
             },
             "crc": {
               "version": "3.2.1",
@@ -8764,9 +8776,9 @@
               "version": "1.6.0",
               "from": "etag@1.6.0"
             },
-            "ms": {
-              "version": "0.7.1",
-              "from": "ms@0.7.1"
+            "base64-url": {
+              "version": "1.2.1",
+              "from": "base64-url@1.2.1"
             },
             "vary": {
               "version": "1.0.0",
@@ -9146,10 +9158,6 @@
             }
           }
         },
-        "bluebird": {
-          "version": "2.9.27",
-          "from": "bluebird@2.9.27"
-        },
         "core-util-is": {
           "version": "1.0.1",
           "from": "core-util-is@1.0.1"
@@ -9162,29 +9170,33 @@
           "version": "0.0.1",
           "from": "isarray@0.0.1"
         },
+        "string_decoder": {
+          "version": "0.10.31",
+          "from": "string_decoder@0.10.31"
+        },
+        "yasyslog": {
+          "version": "0.0.2",
+          "from": "yasyslog@0.0.2"
+        },
+        "bluebird": {
+          "version": "2.9.27",
+          "from": "bluebird@2.9.27"
+        },
         "moment": {
           "version": "2.10.3",
           "from": "moment@2.10.3"
-        },
-        "node-uuid": {
-          "version": "1.4.3",
-          "from": "node-uuid@1.4.3"
         },
         "statsd-client": {
           "version": "0.0.17",
           "from": "statsd-client@0.0.17"
         },
-        "string_decoder": {
-          "version": "0.10.31",
-          "from": "string_decoder@0.10.31"
-        },
         "underscore": {
           "version": "1.4.3",
           "from": "underscore@1.4.3"
         },
-        "yasyslog": {
-          "version": "0.0.2",
-          "from": "yasyslog@0.0.2"
+        "node-uuid": {
+          "version": "1.4.3",
+          "from": "node-uuid@1.4.3"
         },
         "raven": {
           "version": "0.7.3",
