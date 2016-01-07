@@ -62,7 +62,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
   function translatePolicies(external) {
     var policyString = '[]';
     try {
-      policyString = JSON.stringify(external.policies, null, 2);
+      policyString = JSON.stringify(external.policies);
     } catch (e) {}
 
     var extension = {
@@ -244,17 +244,17 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['$injector', f
 
   function prepare(internal) {
     return _.union(
-      prepareCollection(internal.entries.allowed, 'allow'),
-      prepareCollection(internal.entries.denied, 'deny'),
-      prepareCollection(internal.assets.allowed, 'allow'),
-      prepareCollection(internal.assets.denied, 'deny')
+      prepareCollection(dotty.get(internal, 'entries.allowed', []), 'entry', 'allow'),
+      prepareCollection(dotty.get(internal, 'entries.denied',  []), 'entry', 'deny'),
+      prepareCollection(dotty.get(internal, 'assets.allowed',  []), 'asset', 'allow'),
+      prepareCollection(dotty.get(internal, 'assets.denied',   []), 'asset', 'deny')
     );
   }
 
-  function prepareCollection(collection, effect) {
+  function prepareCollection(collection, entity, effect) {
     return _.map(collection, function (source) {
       return {
-        source: _.extend({ effect: effect }, source),
+        source: _.extend({ effect: effect, entity: entity }, source),
         result: {}
       };
     });
