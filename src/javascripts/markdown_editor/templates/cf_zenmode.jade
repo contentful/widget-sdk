@@ -32,11 +32,13 @@
         |  Insert media
 
   button.zenmode-drawer__hide.fa.fa-angle-double-right(
-    ng-click="togglePreview()"
+    aria-label="Hide Preview"
+    ng-click="showPreview(false)"
     ng-show="isPreviewActive")
 
   button.zenmode-drawer__show.fa.fa-angle-double-left(
-    ng-click="togglePreview()"
+    aria-label="Show Preview"
+    ng-click="showPreview(true)"
     ng-show="!isPreviewActive")
 
   .zenmode-editor.markdown-editing-area
