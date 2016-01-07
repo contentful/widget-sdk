@@ -111,7 +111,7 @@ angular.module('contentful')
 
   function addDefaultParams(interf) {
     _.each(interf.data.widgets, function (widget) {
-      var defaults = widgets.paramDefaults(widget.widgetId, widget.widgetType);
+      var defaults = widgets.paramDefaults(widget.widgetId);
       _.defaults(widget.widgetParams, defaults);
     });
     return interf;
@@ -156,7 +156,6 @@ angular.module('contentful')
   function defaultWidget(contentType, field) {
     return {
       id: generateId(field.id, contentType.getId()),
-      widgetType: 'field',
       fieldId: field.id,
       widgetId: widgets.defaultWidgetId(field, contentType),
       widgetParams: {}

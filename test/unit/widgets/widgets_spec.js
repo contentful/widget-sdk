@@ -177,16 +177,12 @@ describe('Widget types service', function () {
       expect(widgets.optionsForWidget(null)).toEqual([]);
     });
     it('should contain common options', function () {
-      var options = widgets.optionsForWidget('singleLine', 'field');
+      var options = widgets.optionsForWidget('singleLine');
       expect(_.find(options, {param: 'helpText'})).toBeTruthy();
     });
-    it('should contain field widget options', function () {
-      var options = widgets.optionsForWidget('rating', 'field');
+    it('should contain widget options', function () {
+      var options = widgets.optionsForWidget('rating');
       expect(_.find(options, {param: 'stars'})).toBeTruthy();
-    });
-    it('should contain static widget options', function () {
-      var options = widgets.optionsForWidget('infoText', 'static');
-      expect(_.find(options, {param: 'text'})).toBeTruthy();
     });
   });
 
@@ -200,7 +196,7 @@ describe('Widget types service', function () {
         ]
       }});
 
-      var d = widgets.paramDefaults('herp', 'field');
+      var d = widgets.paramDefaults('herp');
       expect(d.foo).toBe(123);
       expect(d.bar).toBe('derp');
       expect(d.baz).toBe(undefined);
@@ -323,13 +319,13 @@ describe('Widget types service', function () {
 
     it('assigns locales', function () {
       var locales = ['my locales'];
-      var renderable = widgets.buildRenderable({widgetId: 'singleLine', widgetType: 'field'}, locales);
+      var renderable = widgets.buildRenderable({widgetId: 'singleLine'}, locales);
       expect(renderable.locales).toBe(locales);
     });
 
     it('keeps widgetParams property', function () {
       var params = 'MY PARAMS';
-      var widget = {widgetId: 'singleLine', widgetType: 'field', widgetParams: params};
+      var widget = {widgetId: 'singleLine', widgetParams: params};
       var renderable = widgets.buildRenderable(widget);
       expect(renderable.widgetParams).toBe(params);
     });

@@ -45,8 +45,7 @@ angular.module('contentful')
       .filter(_.isObject)
       .uniq('internal_code')
       .value();
-    var defaultLocale = TheLocaleStore.getDefaultLocale();
-    var renderable = widgets.buildRenderable(widget, locales, defaultLocale);
+    var renderable = widgets.buildRenderable(widget, locales);
     renderable.field = field;
     return renderable;
   }
@@ -57,11 +56,7 @@ angular.module('contentful')
   }
 
   function widgetIsVisible(widget) {
-    if (widget.widgetType === 'static') {
-      return true;
-    } else {
-      return fieldIsVisible(widget.field);
-    }
+    return fieldIsVisible(widget.field);
   }
 
   function fieldIsVisible (field) {

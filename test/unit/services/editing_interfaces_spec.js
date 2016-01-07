@@ -139,8 +139,8 @@ describe('Editing interfaces service', function () {
   describe('#syncWidgets()', function() {
     beforeEach(function(){
       this.editingInterface = {data: {widgets: [
-        {fieldId: 'aaa', widgetType: 'field'},
-        {fieldId: 'bbb', widgetType: 'field'}
+        {fieldId: 'aaa'},
+        {fieldId: 'bbb'}
       ]}};
       this.contentType = {
         data: {fields: [
@@ -158,7 +158,7 @@ describe('Editing interfaces service', function () {
     });
 
     it('removes widgets without fields', function() {
-      this.editingInterface.data.widgets.push({id: 'ccc', fieldId: 'non-existent', widgetType: 'field'});
+      this.editingInterface.data.widgets.push({id: 'ccc', fieldId: 'non-existent'});
       editingInterfaces.syncWidgets(this.contentType, this.editingInterface);
       expect(this.editingInterface.data.widgets.length).toBe(2);
     });
