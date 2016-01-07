@@ -84,17 +84,32 @@ angular.module('contentful').config([
     // FIXME we depend on 'widgets' to load the service. We cannot use
     // the 'onEnter' handler because it does not wait until the promise
     // has been resolved.
-    controller: ['$scope', 'space', 'widgets', function ($scope, space) {
+    controller: ['$scope', 'space', 'sectionAccess', 'widgets', function ($scope, space, sectionAccess) {
       $scope.label = space.data.name;
+
+      $scope.hasAccessToAnySection = sectionAccess.hasAccessToAny();
+      if ($scope.hasAccessToAnySection) {
+        sectionAccess.redirectToFirstAccessible();
+      }
     }],
     templateProvider: ['space', function (space) {
       if (space.isHibernated()) {
         return JST.cf_space_hibernation_advice();
       } else {
-        return '<cf-breadcrumbs></cf-breadcrumbs>' +
-               '<ui-view></ui-view>';
+        return [
+          '<cf-breadcrumbs></cf-breadcrumbs>',
+          '<ui-view></ui-view>',
+          '<div ng-show="!hasAccessToAnySection" class="workbench workbench-forbidden x--center">',
+            '<div class="workbench-forbidden__headline">You don\'t have permission to access any view in this space.</div>',
+            '<div class="workbench-forbidden__message">',
+              'Get in touch with the person administering Contentful at your company to learn more.<br>',
+              'You can always access your account settings. You can also try to switch to some other space.',
+            '</div>',
+          '</div>'
+        ].join('');
       }
-    }],
+    }]
+
   });
 
 

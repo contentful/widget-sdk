@@ -101,16 +101,10 @@ angular.module('cf.app')
     }
 
     // Some redirects away from nonexistent pages
-    if (toState.name === 'spaces.detail') {
-      event.preventDefault();
-      if (_.isEmpty(toStateParams.spaceId)) {
-        spaceTools.goToInitialSpace();
-      } else {
-        $state.go('spaces.detail.entries.list', toStateParams);
-      }
-    }
-
-    if (toState.name === 'otherwise' || toState.name === 'spaces') {
+    if (
+      _.contains(['otherwise', 'spaces'], toState.name) ||
+      (toState.name === 'spaces.detail' && _.isEmpty(toStateParams.spaceId))
+    ) {
       event.preventDefault();
       spaceTools.goToInitialSpace();
     }
