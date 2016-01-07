@@ -8,12 +8,13 @@ angular.module('cf.ui')
  * @description
  * Shows an hovering hint with an arrow, with a transcluded message
  *
- * Each hint will need to set their own positioning and the message positioning via CSS
- * and should also be used inside a relatively or absolutely positioned element.
+ * Each hint will need to set their own positioning and the message
+ * positioning via CSS and should also be used inside a relatively or
+ * absolutely positioned element.
  *
  * @usage
  * // jade
- * cf-ui-hint(name="hint-name"
+ * cf-ui-hint(name="hint-name")
  *   This is a hint
  *
  * // stylus
