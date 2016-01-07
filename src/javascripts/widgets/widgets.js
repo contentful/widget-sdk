@@ -10,7 +10,7 @@ angular.module('contentful')
   var fieldFactory = $injector.get('fieldFactory');
   var checks       = $injector.get('widgets/checks');
   var deprecations = $injector.get('widgets/deprecations');
-  var store        = $injector.get('widgets/store');
+  var WidgetStore  = $injector.get('widgets/store');
   var schemaErrors = $injector.get('validation').errors;
 
   /**
@@ -42,6 +42,8 @@ angular.module('contentful')
    * @property {[string]: any} widgetParams
    */
   var WIDGETS = {};
+
+  var store;
 
   // TODO move this to validation library
   var widgetSchema = {
@@ -88,12 +90,26 @@ angular.module('contentful')
     setSpace:            setSpace
   };
 
-
-  function setSpace (space) {
-    store.setSpace(space);
-    return store.getMap().then(function (widgets) {
+  function refreshWidgetCache() {
+    return store.getMap().then(function(widgets) {
       WIDGETS = widgets;
     });
+  }
+
+  /**
+   * @ngdoc method
+   * @name widgets#setSpace
+   *
+   * @description
+   * Gets all widgets for a space and saves the object into the `WIDGETS`
+   * variable. Always gets the latest custom widgets from the widgets endpoint.
+   *
+   * @param {Client.Space} space
+   * @returns {Promise<Void>}
+   */
+  function setSpace (space) {
+    store = new WidgetStore(space);
+    return refreshWidgetCache();
   }
 
   function getWidget(id) {
@@ -104,7 +120,8 @@ angular.module('contentful')
    * @ngdoc method
    * @name widgets#descriptorsForField
    * @description
-   * Return a list of widgets that can be selected for the given field
+   * Return a list of widgets that can be selected for the given field. This
+   * method always gets the latest custom widgets from the widgets endpoint.
    *
    * @param {API.ContentType.Field} field
    *
@@ -113,12 +130,13 @@ angular.module('contentful')
    * list of available widgets.
    *
    * @param {boolean} preview
-   * Include previe widgets.
+   * Include preview widgets.
    *
    * @return {Promise<Array<Widget.Descriptor>>}
    */
   function getAvailable (field, currentWidgetId, preview) {
-    return typesForField(field)
+    return refreshWidgetCache()
+    .then(typesForField.bind(null, field))
     .then(function (widgets) {
       return _.map(widgets, function (widget) {
         return _.extend({}, widget, {

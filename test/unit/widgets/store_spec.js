@@ -6,14 +6,14 @@ describe('widgets/store', function () {
   beforeEach(function () {
     module('contentful/test');
     Store = this.$inject('widgets/store');
-    Store.setSpace(makeSpaceStub());
   });
 
   describe('#getMap()', function () {
     pit('returns an object including the builtin widgets', function () {
       var builtin = this.$inject('widgets/builtin');
       var builtinIds = _.keys(builtin);
-      return Store.getMap()
+      var store = new Store(makeSpaceStub());
+      return store.getMap()
       .then(function (widgets) {
         var widgetIds = _.keys(widgets);
         expect(widgetIds).toEqual(builtinIds);
@@ -30,9 +30,9 @@ describe('widgets/store', function () {
           fieldTypes: [{type: 'Array', items: {type: 'Link', linkType: 'Asset'}}]
         }
       };
+      var store = new Store(makeSpaceStub([custom]));
 
-      Store.setSpace(makeSpaceStub([custom]));
-      return Store.getMap().then(function (widgets) {
+      return store.getMap().then(function (widgets) {
         var processed = widgets['CUSTOM'];
         expect(processed.sidebar).toEqual('SIDEBAR');
         expect(processed.src).toEqual('SRC');
@@ -42,28 +42,9 @@ describe('widgets/store', function () {
       });
     });
 
-    pit('returns the same object on multiple calls', function () {
-      return Store.getMap()
-      .then(function (widgets1) {
-        return Store.getMap().then(function (widgets2) {
-          expect(widgets1).toBe(widgets2);
-        });
-      });
-    });
-
-    pit('invalidates cache if space is reset', function () {
-      return Store.getMap()
-      .then(function (widgets1) {
-        Store.setSpace(makeSpaceStub());
-        return Store.getMap().then(function (widgets2) {
-          expect(widgets1).not.toBe(widgets2);
-        });
-      });
-    });
-
     it('rejects the promise if there is no space', function (done) {
-      Store.setSpace(null);
-      Store.getMap()
+      var store = new Store(null);
+      store.getMap()
       .catch(function () {
         done();
       });
