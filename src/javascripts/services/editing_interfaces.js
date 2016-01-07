@@ -67,7 +67,6 @@ angular.module('contentful')
   function syncWidgets(contentType, editingInterface) {
     pruneWidgets(contentType, editingInterface);
     addMissingFields(contentType, editingInterface);
-    // TODO temporary order sync
     syncOrder(contentType, editingInterface);
     return editingInterface;
   }
@@ -90,7 +89,7 @@ angular.module('contentful')
 
   function pruneWidgets(contentType, interf) {
     _.remove(interf.data.widgets, function(widget){
-      return widget.widgetType === 'field' && !hasField(widget);
+      return !hasField(widget);
     });
 
     function hasField(widget) {
