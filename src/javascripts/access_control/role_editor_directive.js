@@ -88,20 +88,24 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
   }
 
   function handleError(res) {
+    var errors = dotty.get(res, 'body.details.errors', []);
+
     if (_.contains([403, 404], parseInt(dotty.get(res, 'statusCode'), 10))) {
       notification.error('Your plan does not include Custom Roles.');
-      return;
+      return $q.reject();
     }
 
-    var errors = dotty.get(res, 'body.details.errors', []);
-    var nameError = _.find(errors, function (err) {
-      return _.isObject(err) && err.name === 'length' && err.path === 'name';
-    });
-    var value = _.isObject(nameError) ? nameError.value : null;
+    if (_.isObject(findError('taken'))) {
+      notification.error('This role name is already used.');
+      return $q.reject();
+    }
 
-    if (!value) {
+    var nameError = findError('length');
+    var nameValue = _.isObject(nameError) ? nameError.value : null;
+
+    if (!nameValue) {
       notification.error('You have to provide a role name.');
-    } else if (_.isString(value) && value.length > 0) {
+    } else if (_.isString(nameValue) && nameValue.length > 0) {
       notification.error('The provided role name is too long.');
     } else {
       notification.error('Error saving role. Please try again.');
@@ -109,6 +113,12 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
     }
 
     return $q.reject();
+
+    function findError(errName) {
+      return _.find(errors, function (err) {
+        return _.isObject(err) && err.name === errName && err.path === 'name';
+      });
+    }
   }
 
   function trackRoleChange(changedRole) {
