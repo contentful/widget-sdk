@@ -11,7 +11,8 @@
  * Subservices, "localStorageStore" and "cookieStore" implement storage-specific
  * logic. These are NOT intended to be used on their own.
  */
-angular.module('contentful').factory('TheStore', ['$injector', function($injector) {
+angular.module('contentful')
+.factory('TheStore', ['$injector', function($injector) {
 
   var localStorageStore = $injector.get('TheStore/localStorageStore');
   var cookieStore       = $injector.get('TheStore/cookieStore');
@@ -103,9 +104,9 @@ angular.module('contentful').factory('TheStore', ['$injector', function($injecto
       has: _.partial(has, key)
     };
   }
-}]);
+}])
 
-angular.module('contentful').factory('TheStore/localStorageStore', ['$injector', function($injector) {
+.factory('TheStore/localStorageStore', ['$injector', function($injector) {
 
   var storage = $injector.get('TheStore/localStorageWrapper');
 
@@ -137,9 +138,9 @@ angular.module('contentful').factory('TheStore/localStorageStore', ['$injector',
       return false;
     }
   }
-}]);
+}])
 
-angular.module('contentful').factory('TheStore/localStorageWrapper', function() {
+.factory('TheStore/localStorageWrapper', function() {
 
   var wrapper = {};
   var methods = ['setItem', 'getItem', 'removeItem'];
@@ -152,9 +153,9 @@ angular.module('contentful').factory('TheStore/localStorageWrapper', function() 
   });
 
   return wrapper;
-});
+})
 
-angular.module('contentful').factory('TheStore/cookieStore', ['$injector', function($injector) {
+.factory('TheStore/cookieStore', ['$injector', function($injector) {
 
   var Cookies = $injector.get('Cookies');
   var config  = $injector.get('environment');
