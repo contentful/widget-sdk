@@ -10,88 +10,23 @@ angular.module('contentful').directive('cfRoleList', function () {
 
 angular.module('contentful').controller('RoleListController', ['$scope', '$injector', function ($scope, $injector) {
 
+  var $q                  = $injector.get('$q');
   var ReloadNotification  = $injector.get('ReloadNotification');
   var space               = $injector.get('spaceContext').space;
-  var $state              = $injector.get('$state');
-  var $q                  = $injector.get('$q');
-  var $rootScope          = $injector.get('$rootScope');
-  var modalDialog         = $injector.get('modalDialog');
   var roleRepo            = $injector.get('RoleRepository').getInstance(space);
   var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(space);
-  var listHandler         = $injector.get('UserListHandler');
-  var jumpToRoleMembers   = $injector.get('UserListController/jumpToRole');
-  var notification        = $injector.get('notification');
-  var Command             = $injector.get('command');
+  var RoleActions         = $injector.get('RoleActions');
   var accessChecker       = $injector.get('accessChecker');
   var TheAccountView      = $injector.get('TheAccountView');
 
-  $scope.removeRole             = removeRole;
-  $scope.duplicateRole          = duplicateRole;
-  $scope.jumpToRoleMembers      = jumpToRoleMembers;
-  $scope.jumpToAdminRoleMembers = jumpToAdminRoleMembers;
+  $scope.removeRole             = RoleActions.removeRole;
+  $scope.duplicateRole          = RoleActions.duplicateRole;
+  $scope.jumpToRoleMembers      = RoleActions.jumpToRoleMembers;
+  $scope.jumpToAdminRoleMembers = RoleActions.jumpToAdminRoleMembers;
   $scope.canModifyRoles         = accessChecker.canModifyRoles;
   $scope.goToSubscription       = TheAccountView.goToSubscription;
 
   reload().catch(ReloadNotification.basicErrorHandler);
-
-  function removeRole(role) {
-    if (getCountFor(role)) {
-      modalDialog.open({
-        template: 'role_removal_dialog',
-        noNewScope: true,
-        ignoreEsc: true,
-        backgroundClose: false,
-        scope: prepareRemovalDialogScope(role, remove)
-      });
-    } else {
-      remove();
-    }
-
-    function remove() {
-      return roleRepo.remove(role)
-      .then(reload)
-      .then(function () { notification.info('Role successfully deleted.'); })
-      .catch(ReloadNotification.basicErrorHandler);
-    }
-  }
-
-  function prepareRemovalDialogScope(role, remove) {
-    var scope = $rootScope.$new();
-
-    return _.extend(scope, {
-      role: role,
-      input: {},
-      count: getCountFor(role),
-      roleOptions: listHandler.getRoleOptionsBut(role.sys.id),
-      moveUsersAndRemoveRole: Command.create(moveUsersAndRemoveRole, {
-        disabled: function () { return !scope.input.id; }
-      })
-    });
-
-    function moveUsersAndRemoveRole() {
-      var users = listHandler.getUsersByRole(role.sys.id);
-      var memberships = _.pluck(users, 'membership');
-      var moveToRoleId = scope.input.id;
-      var method = 'changeRoleTo';
-
-      if (listHandler.isAdminRole(moveToRoleId)) {
-        method = 'changeRoleToAdmin';
-      }
-
-      var promises = _.map(memberships, function (membership) {
-        return spaceMembershipRepo[method](membership, moveToRoleId);
-      });
-
-      return $q.all(promises).then(function () {
-        return remove()
-        .finally(function () { scope.dialog.confirm(); });
-      }, ReloadNotification.basicErrorHandler);
-    }
-  }
-
-  function duplicateRole(role) {
-    $state.go('spaces.detail.settings.roles.new', {baseRoleId: role.sys.id});
-  }
 
   function reload() {
     return $q.all({
@@ -101,7 +36,15 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
     }).then(function (data) {
       $scope.memberships = countMemberships(data.memberships);
       $scope.roles = _.sortBy(data.roles, 'name');
-      listHandler.reset(data);
+
+      RoleActions.reset({
+        roleRepo: roleRepo,
+        spaceMembershipRepo: spaceMembershipRepo,
+        membershipCounts: $scope.memberships,
+        data: data,
+        reload: reload
+      });
+
       $scope.context.ready = true;
     }, accessChecker.wasForbidden($scope.context));
   }
@@ -118,13 +61,5 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
     });
 
     return counts;
-  }
-
-  function getCountFor(role) {
-    return $scope.memberships[role.sys.id];
-  }
-
-  function jumpToAdminRoleMembers() {
-    jumpToRoleMembers(listHandler.getAdminRoleId());
   }
 }]);
