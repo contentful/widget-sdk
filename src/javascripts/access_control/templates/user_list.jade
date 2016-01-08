@@ -25,7 +25,6 @@ header.workbench-header
         button.user-list__actions.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
           | &bullet;&bullet;&bullet;
         .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="User Actions")
-          cf-icon.context-menu__arrow.x--top-right-tight(name="arrow-up")
           ul.context-menu__items
             li(role="menuitem" ng-click="openRoleChangeDialog(user)") Change role
             li(role="menuitem" ng-click="openRemovalConfirmationDialog(user)") Remove from this space
