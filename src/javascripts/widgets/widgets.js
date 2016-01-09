@@ -28,7 +28,6 @@ angular.module('contentful')
    * @ngdoc type
    * @name Widget.Renderable
    * @property {string} template
-   * @property {Locale[]} locales
    * @property {object} widgetParams
    * @property {string} defaultHelpText
    * @property {boolean} rendersHelpText
@@ -311,21 +310,19 @@ angular.module('contentful')
    * widget.
    *
    * @param {API.Widget} widget
-   * @param {API.Locales[]} locales
    * @return {Widget.Renderable}
    */
-  function buildRenderable (widget, locales) {
+  function buildRenderable (widget) {
     widget = Object.create(widget);
 
     var template = widgetTemplate(widget.widgetId);
     widget.template = template;
 
-    applyWidgetProperties(widget, locales);
+    applyWidgetProperties(widget);
     return widget;
   }
 
-  function applyWidgetProperties (widget, locales) {
-    widget.locales = locales;
+  function applyWidgetProperties (widget) {
     var descriptor = getWidget(widget.widgetId);
     if (descriptor) {
       _.extend(widget, {

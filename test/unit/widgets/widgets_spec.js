@@ -325,12 +325,6 @@ describe('Widget types service', function () {
       expect(renderable.template).toEqual(template);
     });
 
-    it('assigns locales', function () {
-      var locales = ['my locales'];
-      var renderable = widgets.buildRenderable({widgetId: 'singleLine'}, locales);
-      expect(renderable.locales).toBe(locales);
-    });
-
     it('keeps widgetParams property', function () {
       var params = 'MY PARAMS';
       var widget = {widgetId: 'singleLine', widgetParams: params};
