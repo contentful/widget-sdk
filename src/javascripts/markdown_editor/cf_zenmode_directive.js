@@ -9,6 +9,9 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
   var modalDialog    = $injector.get('modalDialog');
   var win            = $($window);
 
+  // This is persisted accross Zen Mode instances
+  var initialShowPreview = true;
+
   return {
     restrict: 'E',
     template: JST['cf_zenmode'](),
@@ -26,8 +29,22 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
         preview: el.find('.zenmode-preview').first()
       };
 
-      scope.togglePreview = togglePreview;
-      scope.isPreviewActive = true;
+      scope.showPreview = function (show) {
+        scope.isPreviewActive = show;
+        initialShowPreview = show;
+      };
+
+      scope.showPreview(initialShowPreview);
+
+      scope.$watch('isPreviewActive', function (active) {
+        if (active) {
+          containers.editor.css('width', '50%');
+          containers.preview.css('width', '50%');
+        } else {
+          containers.editor.css('width', '100%');
+          containers.preview.css('width', '0%');
+        }
+      });
 
       MarkdownEditor.create(textarea, opts).then(initEditor);
 
@@ -48,18 +65,6 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
           win.off('keyup', handleEsc);
           editor.destroy();
         });
-      }
-
-      function togglePreview() {
-        scope.isPreviewActive = !scope.isPreviewActive;
-
-        if (scope.isPreviewActive) {
-          containers.editor.css('width', '50%');
-          containers.preview.css('width', '50%');
-        } else {
-          containers.editor.css('width', '100%');
-          containers.preview.css('width', '0%');
-        }
       }
 
       function tieChildEditor() {

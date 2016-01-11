@@ -25,10 +25,10 @@ describe('cfZenmode', function () {
     });
 
     var elem = this.$compile('<cf-zenmode zen-api="zenApi" />', scopeProps);
-    var scope = elem.isolateScope();
+    this.scope = elem.isolateScope();
 
     // resolve lazy-load promise:
-    scope.$apply();
+    this.scope.$apply();
     // can get CodeMirror instance from DOM node now:
     editor = elem.find('.CodeMirror').get(0).CodeMirror;
   });
@@ -41,5 +41,18 @@ describe('cfZenmode', function () {
   it('Syncs changes from editor to parent', function () {
     editor.setValue('ZEN MODE VALUE');
     sinon.assert.calledOnce(apiMock.syncToParent);
+  });
+
+  it('shows preview by default', function () {
+    expect(this.scope.isPreviewActive).toEqual(true);
+  });
+
+  it('remembers preview state for other instances', function () {
+    this.scope.showPreview(false);
+    expect(this.scope.isPreviewActive).toEqual(false);
+
+    var otherZenMode = this.$compile('<cf-zenmode zen-api="zenApi">', {zenApi: apiMock});
+    var otherScope = otherZenMode.isolateScope();
+    expect(otherScope.isPreviewActive).toEqual(false);
   });
 });
