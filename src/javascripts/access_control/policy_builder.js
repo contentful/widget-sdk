@@ -145,7 +145,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
     // 3. find scope
     var scopeConstraint = findScopeConstraint(rest);
     if (scopeConstraint.value) {
-      rule.scope = scopeConstraint.value === 'User.current()' ? 'user' : 'any';
+      rule.scope = _.isString(scopeConstraint.value) ? 'user' : 'any';
       rest.splice(scopeConstraint.index, 1);
     }
 
@@ -175,7 +175,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
 
   function findScopeConstraint(cs) {
     return searchResult(cs, _.findIndex(cs, function (c) {
-      return docEq(c, 'sys.createdBy.sys.id') && c.equals[1] === 'User.current()';
+      return docEq(c, 'sys.createdBy.sys.id') && _.isString(c.equals[1]);
     }));
   }
 

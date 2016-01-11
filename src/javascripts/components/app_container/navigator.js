@@ -97,8 +97,8 @@ angular.module('contentful').config([
         return JST.cf_space_hibernation_advice();
       } else {
         return [
-          '<cf-breadcrumbs></cf-breadcrumbs>',
-          '<ui-view></ui-view>',
+          '<cf-breadcrumbs ng-show="hasAccessToAnySection"></cf-breadcrumbs>',
+          '<ui-view ng-show="hasAccessToAnySection"></ui-view>',
           '<div ng-show="!hasAccessToAnySection" class="workbench workbench-forbidden x--center">',
             '<div class="workbench-forbidden__headline">You don\'t have permission to access any view in this space.</div>',
             '<div class="workbench-forbidden__message">',
