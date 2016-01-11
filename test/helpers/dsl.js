@@ -5,15 +5,15 @@
  *
  * ~~~js
  * pit('this is async', function () {
- *   return $q.when(false).
- *   then(function(res) {
+ *   return $q.when(false)
+ *   .then(function(res) {
  *     expect(res).toBe(true);
  *   });
  * });
  *
  * pit('this fails', function () {
- *   return $q.reject(new Error('oops'))).
- *   then(function(res) {
+ *   return $q.reject(new Error('oops')))
+ *   .then(function(res) {
  *     expect(true).toBe(true);
  *   });
  * });
@@ -29,7 +29,13 @@ window.ppit = function (desc, run) {
 
 function createPromiseSpec (specFactory, desc, run) {
   var spec = specFactory(desc, function (done) {
-    this.when(run.call(this))
+    var promise = run.call(this);
+
+    if (!isThenable(promise)) {
+      throw new TypeError('Promise test cases must return promise');
+    }
+
+    promise
     .catch(function (err) {
       addException(spec, err);
     })
@@ -47,4 +53,10 @@ function addException(spec, err) {
     actual: '',
     error: err
   });
+}
+
+function isThenable (obj) {
+  return obj &&
+       typeof obj.then === 'function' &&
+       typeof obj.catch === 'function';
 }

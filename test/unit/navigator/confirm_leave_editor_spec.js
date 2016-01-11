@@ -31,7 +31,7 @@ describe('navigation/confirmLeaveEditor', function () {
     });
   });
 
-  pit('runs the save action when "Save" is clicked', function () {
+  it('runs the save action when "Save" is clicked', function () {
     this.confirm();
     this.$apply();
     this.dialog.find('button[ui-command="actions.save"]').click();
