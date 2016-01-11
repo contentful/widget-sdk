@@ -65,54 +65,20 @@ angular.module('contentful')
    * @returns {Client.EditingInterface}
    */
   function syncWidgets(contentType, editingInterface) {
-    pruneWidgets(contentType, editingInterface);
-    addMissingFields(contentType, editingInterface);
-    // TODO temporary order sync
-    syncOrder(contentType, editingInterface);
+    var syncedWidgets = _.map(contentType.data.fields, function (field) {
+      return findFieldWidget(field) || defaultWidget(contentType, field);
+    });
+    editingInterface.data.widgets = syncedWidgets;
     return editingInterface;
-  }
 
-  function addMissingFields(contentType, interf) {
-    _(contentType.data.fields)
-      .reject(fieldHasWidget)
-      .map(_.partial(defaultWidget, contentType))
-      .each(addWidget);
-    return interf;
-
-    function fieldHasWidget(field) {
-      return _.any(interf.data.widgets, {fieldId: field.id});
+    function findFieldWidget (field) {
+      return _.find(editingInterface.data.widgets, {fieldId: field.id});
     }
-
-    function addWidget(widget){
-      interf.data.widgets.push(widget);
-    }
-  }
-
-  function pruneWidgets(contentType, interf) {
-    _.remove(interf.data.widgets, function(widget){
-      return widget.widgetType === 'field' && !hasField(widget);
-    });
-
-    function hasField(widget) {
-      return _.any(contentType.data.fields, {id: widget.fieldId});
-    }
-  }
-
-  // TODO temporary function. This forces widgets order to always reflect fields
-  // We should not manually apply this order every time. Instead the
-  // Entry Editor should order widgets according to the fields
-  function syncOrder(contentType, interf) {
-    var newOrder = _.map(contentType.data.fields, function (field) {
-      return _.find(interf.data.widgets, {fieldId: field.id});
-    });
-    var widgets = interf.data.widgets;
-    widgets.splice.apply(widgets, [0, widgets.length].concat(newOrder));
-    return interf;
   }
 
   function addDefaultParams(interf) {
     _.each(interf.data.widgets, function (widget) {
-      var defaults = widgets.paramDefaults(widget.widgetId, widget.widgetType);
+      var defaults = widgets.paramDefaults(widget.widgetId);
       _.defaults(widget.widgetParams, defaults);
     });
     return interf;
@@ -157,7 +123,6 @@ angular.module('contentful')
   function defaultWidget(contentType, field) {
     return {
       id: generateId(field.id, contentType.getId()),
-      widgetType: 'field',
       fieldId: field.id,
       widgetId: widgets.defaultWidgetId(field, contentType),
       widgetParams: {}

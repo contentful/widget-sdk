@@ -56,10 +56,6 @@ angular.module('contentful')
         type: 'Symbol',
         required: true,
       },
-      widgetType: {
-        type: 'Symobl',
-        required: true,
-      },
       widgetId: {
         type: 'Symbol',
         required: true
@@ -129,7 +125,7 @@ angular.module('contentful')
     .then(function (widgets) {
       widgets = _.map(widgets, _.clone);
       _.forEach(widgets, function (widget) {
-        widget.options = optionsForWidget(widget.id, 'field');
+        widget.options = optionsForWidget(widget.id);
       });
       return widgets;
     })
@@ -228,7 +224,7 @@ angular.module('contentful')
    * @returns {object}
    */
   function filteredParams (widgetId, params) {
-    var options = optionsForWidget(widgetId, 'field');
+    var options = optionsForWidget(widgetId);
     return _.transform(options, function (filtered, option) {
       var param = params[option.param];
       if (!_.isUndefined(param))
@@ -269,11 +265,10 @@ angular.module('contentful')
    * @ngdoc method
    * @name widgets#paramDefaults
    * @param {string} widgetId
-   * @param {string} widgetType
    * @returns {object}
    */
-  function paramDefaults(widgetId, widgetType) {
-    return _.transform(optionsForWidget(widgetId, widgetType), function (defaults, option) {
+  function paramDefaults(widgetId) {
+    return _.transform(optionsForWidget(widgetId), function (defaults, option) {
       defaults[option.param] = option.default;
     }, {});
   }
@@ -322,26 +317,23 @@ angular.module('contentful')
    * @name widgets#buildRenderable
    * @description
    * Create an object that contains all the necessary data to render a
-   * widget
+   * widget.
    *
    * @param {API.Widget} widget
+   * @param {API.Locales[]} locales
    * @return {Widget.Renderable}
    */
-  function buildRenderable (widget, locales, defaultLocale) {
+  function buildRenderable (widget, locales) {
     widget = Object.create(widget);
 
     var template = widgetTemplate(widget.widgetId);
     widget.template = template;
 
-    if (widget.widgetType === 'field')
-      applyFieldWidgetProperties(widget, locales);
-    else
-      applyStaticWidgetProperties(widget, defaultLocale);
-
+    applyWidgetProperties(widget, locales);
     return widget;
   }
 
-  function applyFieldWidgetProperties (widget, locales) {
+  function applyWidgetProperties (widget, locales) {
     widget.locales = locales;
     var descriptor = getWidget(widget.widgetId);
     if (descriptor) {
@@ -352,9 +344,4 @@ angular.module('contentful')
       });
     }
   }
-
-  function applyStaticWidgetProperties (widget, defaultLocale) {
-    widget.locales = [defaultLocale];
-  }
-
 }]);

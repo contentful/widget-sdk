@@ -340,7 +340,6 @@ describe('Space Template loading service', function () {
         widgets: [
           {
             id: 'ljZpnZHxIk2voQXaz8h83ggfM3zPgayp',
-            widgetType: 'field',
             fieldId: 'ljZpnZHxIk2voQXa',
             widgetId: 'multipleLine',
             widgetParams: {}
@@ -445,7 +444,6 @@ describe('Space Template loading service', function () {
       'widgets': [
         {
           'id': 'ljZpnZHxIk2voQXaz8h83ggfM3zPgayp',
-          'widgetType': 'field',
           'fieldId': 'ljZpnZHxIk2voQXa',
           'widgetId': 'multipleLine',
           'widgetParams': {}
