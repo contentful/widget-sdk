@@ -28,6 +28,7 @@ angular.module('contentful')
     var fontsdotcom = $injector.get('fontsdotcom');
     var logger      = $injector.get('logger');
     var cookieStore = $injector.get('TheStore/cookieStore');
+    var stringifySafe  = $injector.get('stringifySafe');
 
     var analytics = {
       enable: function(){
@@ -154,6 +155,9 @@ angular.module('contentful')
         // segment and totango if it has been set by marketing website cookie
 
         function getAnalyticsUserData(userData) {
+          // Remove circular references
+          userData = JSON.parse(stringifySafe(userData));
+
           if (userData.signInCount === 1) {
             var firstVisitData = _.pick({
               firstReferrer: parseCookie('cf_first_visit', 'referer'),
