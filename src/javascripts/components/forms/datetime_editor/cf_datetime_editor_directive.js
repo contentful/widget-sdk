@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('contentful').directive('cfDatetimeEditor', ['$injector', function ($injector) {
+  var $q          = $injector.get('$q');
   var $parse      = $injector.get('$parse');
   var zoneOffsets = $injector.get('zoneOffsets');
   var moment      = $injector.get('moment');
@@ -106,21 +107,32 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$injector', functio
       });
 
       function changeHandler() {
-        var value = buildValue(scope.localDate, scope.localTime, scope.ampm, scope.tzOffset);
-        if (scope.otSubDoc && scope.otSubDoc.changeValue) {
-          scope.otSubDoc.changeValue(value)
-          .then(function() {
-              ngModelCtrl.$setViewValue(value);
-          }, function() {
-              scope.setFromISO(ngModelCtrl.$modelValue);
-          });
+        var value = buildIsoString(scope.localDate, scope.localTime, scope.ampm, scope.tzOffset);
+        var updated;
+
+        if (scope.otSubDoc) {
+          updated = scope.otSubDoc.changeValue(value);
         } else {
-          ngModelCtrl.$setViewValue(value);
+          updated = $q.when();
         }
+
+        updated
+        .then(function() {
+            ngModelCtrl.$setViewValue(value);
+        }, function() {
+            scope.setFromISO(ngModelCtrl.$modelValue);
+        });
       }
 
-      function buildValue(localDate, localTime, ampm, tzOffset) {
-        if (!localDate) return null;
+      /**
+       * Takes the view components of the date and returns the
+       * corresponding ISO 8601 string. Returns `undefined` if
+       * `localDate` is falsy.
+       */
+      function buildIsoString (localDate, localTime, ampm, tzOffset) {
+        // Returning undefined forces the removal of the date value
+        // from the OT doc.
+        if (!localDate) return void(0);
         if (!localTime) return localDate;
         if (!tzOffset)  return localDate + 'T' + make24hTime(localTime, ampm);
         else            return localDate + 'T' + make24hTime(localTime, ampm) + tzOffset;
@@ -131,6 +143,11 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$injector', functio
       ampmController.$viewChangeListeners.push(changeHandler);
       zoneController.$viewChangeListeners.push(changeHandler);
 
+      // TODO This method is only exposed for testing. It should be
+      // removed from the scope.
+      // In fact, this should be a function that returns a object
+      // containing the four components which we then can apply to the
+      // scope.
       scope.setFromISO = function(iso){
         var tokens = parseIso(iso);
         if (tokens) {

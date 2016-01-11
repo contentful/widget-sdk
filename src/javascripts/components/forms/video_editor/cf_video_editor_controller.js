@@ -71,7 +71,7 @@ angular.module('contentful').controller('cfVideoEditorController', ['$scope', '$
   }
 
   function resetEditorInput() {
-    $scope.otSubDoc.changeValue(null);
+    $scope.otSubDoc.removeValue();
   }
 
   function resetErrors() {
