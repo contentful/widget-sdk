@@ -29,13 +29,6 @@ angular.module('contentful').controller('AssetListActionsController',
     entityNamePlural: 'Assets',
   });
 
-  var every = function (predicate) {
-    var selected = getSelected();
-    return !_.isEmpty(selected) && _.every(selected, function (asset) {
-      return asset[predicate]();
-    });
-  };
-
   $scope.publishSelected = function() {
     batchPerformer.perform({
       method: 'publish',
@@ -73,25 +66,20 @@ angular.module('contentful').controller('AssetListActionsController',
     });
   };
 
-  $scope.showDelete = function () {
-    return !accessChecker.shouldHide('deleteAsset') && every('canDelete');
-  };
+  $scope.showDelete    = createShowChecker('delete', 'canDelete');
+  $scope.showArchive   = createShowChecker('archive', 'canArchive');
+  $scope.showUnarchive = createShowChecker('archive', 'canUnarchive');
+  $scope.showPublish   = createShowChecker('publish', 'canPublish');
+  $scope.showUnpublish = createShowChecker('publish', 'canUnpublish');
 
-  $scope.showArchive = function () {
-    return !accessChecker.shouldHide('archiveAsset') && every('canArchive');
-  };
-
-  $scope.showUnarchive = function () {
-    return !accessChecker.shouldHide('unarchiveAsset') && every('canUnarchive');
-  };
-
-  $scope.showUnpublish = function () {
-    return !accessChecker.shouldHide('unpublishAsset') && every('canUnpublish');
-  };
-
-  $scope.showPublish = function () {
-    return !accessChecker.shouldHide('publishAsset') && every('canPublish');
-  };
+  function createShowChecker(action, predicate) {
+    return function () {
+      var selected = getSelected();
+      return _.isArray(selected) && selected.length > 0 &&  _.every(selected, function (asset) {
+        return accessChecker.canPerformActionOnEntity(action, asset) && asset[predicate]();
+      });
+    };
+  }
 
   $scope.publishButtonName = function () {
     var published = 0;

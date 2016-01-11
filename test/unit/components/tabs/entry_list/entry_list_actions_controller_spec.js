@@ -63,6 +63,7 @@ describe('Entry List Actions Controller', function () {
       accessChecker = _accessChecker_;
       accessChecker.shouldHide = sinon.stub().returns(false);
       accessChecker.shouldDisable = sinon.stub().returns(false);
+      accessChecker.canPerformActionOnEntity = sinon.stub();
 
       controller = $controller('EntryListActionsController', {$scope: scope});
     });
@@ -224,9 +225,11 @@ describe('Entry List Actions Controller', function () {
   function makePermissionTests(action){
     var methodName = 'show'+action.charAt(0).toUpperCase()+action.substr(1);
     var canMethodName = 'can'+action.charAt(0).toUpperCase()+action.substr(1);
+
     it('can show '+action+' action', function () {
       stubs.action1.returns(true);
       stubs.action2.returns(true);
+      accessChecker.canPerformActionOnEntity.returns(true);
       stubs.getSelected.returns([
         makeEntity(canMethodName, stubs.action1),
         makeEntity(canMethodName, stubs.action2)
@@ -239,6 +242,7 @@ describe('Entry List Actions Controller', function () {
       accessChecker.shouldHide.withArgs(action+'Entry').returns(true);
       stubs.action1.returns(true);
       stubs.action2.returns(true);
+      accessChecker.canPerformActionOnEntity.returns(false);
       stubs.getSelected.returns([
         makeEntity(canMethodName, stubs.action1),
         makeEntity(canMethodName, stubs.action2)
@@ -250,6 +254,7 @@ describe('Entry List Actions Controller', function () {
     it('cannot show '+action+' action because no permission on item', function () {
       stubs.action1.returns(true);
       stubs.action2.returns(false);
+      accessChecker.canPerformActionOnEntity.returns(true);
       stubs.getSelected.returns([
         makeEntity(canMethodName, stubs.action1),
         makeEntity(canMethodName, stubs.action2)

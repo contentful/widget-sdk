@@ -32,13 +32,6 @@ angular.module('contentful').controller('EntryListActionsController', ['$scope',
     entityNamePlural: 'Entries',
   });
 
-  var every = function (predicate) {
-    var selected = getSelected();
-    return !_.isEmpty(selected) && _.every(selected, function (entry) {
-      return entry[predicate]();
-    });
-  };
-
   $scope.publishSelected = function() {
     batchPerformer.perform({
       method: 'publish',
@@ -110,29 +103,21 @@ angular.module('contentful').controller('EntryListActionsController', ['$scope',
     });
   };
 
-  $scope.showDuplicate = function () {
-    return !accessChecker.shouldHide('createEntry');
-  };
+  $scope.showDuplicate = function () { return !accessChecker.shouldHide('createEntry'); };
+  $scope.showDelete    = createShowChecker('delete', 'canDelete');
+  $scope.showArchive   = createShowChecker('archive', 'canArchive');
+  $scope.showUnarchive = createShowChecker('archive', 'canUnarchive');
+  $scope.showPublish   = createShowChecker('publish', 'canPublish');
+  $scope.showUnpublish = createShowChecker('publish', 'canUnpublish');
 
-  $scope.showDelete = function () {
-    return !accessChecker.shouldHide('deleteEntry') && every('canDelete');
-  };
-
-  $scope.showArchive = function () {
-    return !accessChecker.shouldHide('archiveEntry') && every('canArchive');
-  };
-
-  $scope.showUnarchive = function () {
-    return !accessChecker.shouldHide('unarchiveEntry') && every('canUnarchive');
-  };
-
-  $scope.showUnpublish = function () {
-    return !accessChecker.shouldHide('unpublishEntry') && every('canUnpublish');
-  };
-
-  $scope.showPublish = function () {
-    return !accessChecker.shouldHide('publishEntry') && every('canPublish');
-  };
+  function createShowChecker(action, predicate) {
+    return function () {
+      var selected = getSelected();
+      return _.isArray(selected) && selected.length > 0 &&  _.every(selected, function (entry) {
+        return accessChecker.canPerformActionOnEntity(action, entry) && entry[predicate]();
+      });
+    };
+  }
 
   $scope.publishButtonName = function () {
     var published = 0;
