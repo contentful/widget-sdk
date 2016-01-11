@@ -143,9 +143,17 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   function canUpdateEntry(entry) {
     var canUpdate = canPerformActionOnEntity('update', entry);
     var ctId = getContentTypeIdFor(entry);
-    var canUpdateWithPolicy = policyChecker.canUpdateEntriesOfType(ctId);
+    var canUpdateThisType = policyChecker.canUpdateEntriesOfType(ctId);
+    var canUpdateOwn = policyChecker.canUpdateOwnEntries();
+    var isAuthor = false;
 
-    return canUpdate || canUpdateWithPolicy;
+    if (canUpdateOwn) {
+      var entryAuthor = dotty.get(entry, 'data.sys.createdBy.sys.id');
+      var currentUser = dotty.get(authentication, 'tokenLookup.sys.createdBy.sys.id');
+      isAuthor = entryAuthor === currentUser;
+    }
+
+    return canUpdate || canUpdateThisType || (canUpdateOwn && isAuthor);
   }
 
   function canUpdateAsset(asset) {

@@ -17,6 +17,7 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     canAccessEntries:       function () { return policies.entry.allowed.flat.length > 0; },
     canAccessAssets:        function () { return policies.asset.allowed.length > 0; },
     canUpdateEntriesOfType: canUpdateEntriesOfType,
+    canUpdateOwnEntries:    canUpdateOwnEntries,
     canUpdateAssets:        canUpdateAssets,
     getFieldChecker:        getFieldChecker
   };
@@ -77,11 +78,19 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
   }
 
   function canUpdateEntriesOfType(contentTypeId) {
-    return updatePoliciesOnly(getAllowed(contentTypeId)).length > 0;
+    return performCheck(getAllowed(contentTypeId), getDenied(contentTypeId), anyUserUpdatePoliciesOnly);
+  }
+
+  function canUpdateOwnEntries() {
+    return performCheck(policies.entry.allowed.flat, policies.entry.denied.flat, currentUserUpdatePoliciesOnly);
   }
 
   function canUpdateAssets() {
-    return updatePoliciesOnly(policies.asset.allowed).length > 0;
+    return performCheck(policies.asset.allowed, policies.asset.denied, updatePoliciesOnly);
+  }
+
+  function performCheck(c1, c2, fn) {
+    return fn(c1).length > 0 && fn(c2).length === 0;
   }
 
   function getAllowed(contentTypeId) {
@@ -100,10 +109,22 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     return _.union(ctSpecificItems, generalItems);
   }
 
-  function pathUpdatePoliciesOnly(collection) {
-    return _.filter(updatePoliciesOnly(collection), function (p) {
+  function anyUserUpdatePoliciesOnly(c) {
+    return filterCollectionWith(c, function (p) { return p.scope !== 'user'; });
+  }
+
+  function currentUserUpdatePoliciesOnly(c) {
+    return filterCollectionWith(c, function (p) { return p.scope === 'user'; });
+  }
+
+  function pathUpdatePoliciesOnly(c) {
+    return filterCollectionWith(c, function (p) {
       return !_.isNull(p.locale) && !_.isNull(p.field);
     });
+  }
+
+  function filterCollectionWith(c, p) {
+    return _.filter(updatePoliciesOnly(c), p);
   }
 
   function updatePoliciesOnly(collection) {
