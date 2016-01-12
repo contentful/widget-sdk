@@ -136,6 +136,9 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      */
     logException: function (exception, metaData) {
       setUserInfo();
+      if (environment.env !== 'production' && environment.env !== 'unittest') {
+        console.error(exception);
+      }
       bugsnag.notifyException(exception, null, augmentMetadata(metaData), 'error');
     },
 
