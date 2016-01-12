@@ -9,7 +9,6 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   var ReloadNotification    = $injector.get('ReloadNotification');
   var Selection             = $injector.get('Selection');
   var analytics             = $injector.get('analytics');
-  var modalDialog           = $injector.get('modalDialog');
   var ListQuery             = $injector.get('ListQuery');
   var logger                = $injector.get('logger');
   var spaceContext          = $injector.get('spaceContext');
@@ -38,13 +37,6 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     entityType: 'Asset',
     limit: 3
   });
-
-  $scope.showNewContentTypeDialog = function(){
-    modalDialog.open({
-      scope: $scope,
-      template: 'new_content_type_list'
-    });
-  };
 
   $scope.getSearchContentType = function () {
     var id = dotty.get($scope, 'context.view.contentTypeId');

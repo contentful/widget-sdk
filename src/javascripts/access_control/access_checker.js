@@ -131,9 +131,12 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   }
 
   function canPerformActionOnEntryOfType(action, contentTypeId) {
-    var entity = {data: {sys: {type: 'Entry', contentType: {sys: {id: contentTypeId}}}}};
-
-    return canPerformActionOnEntity(action, entity);
+    if (action === 'create') {
+      return !shouldHide('createEntry') || policyChecker.canCreateEntriesOfType(contentTypeId);
+    } else {
+      var entity = {data: {sys: {type: 'Entry', contentType: {sys: {id: contentTypeId}}}}};
+      return canPerformActionOnEntity(action, entity);
+    }
   }
 
   function canPerformActionOnEntity(action, entity) {

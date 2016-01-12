@@ -16,6 +16,7 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     setRole:                setRole,
     canAccessEntries:       function () { return policies.entry.allowed.flat.length > 0; },
     canAccessAssets:        function () { return policies.asset.allowed.length > 0; },
+    canCreateEntriesOfType: canCreateEntriesOfType,
     canUpdateEntriesOfType: canUpdateEntriesOfType,
     canUpdateOwnEntries:    canUpdateOwnEntries,
     canUpdateAssets:        canUpdateAssets,
@@ -75,6 +76,18 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     if (checkPolicyCollection(denied,  fieldId, localeCode)) { canUpdate = false; }
 
     return canUpdate;
+  }
+
+  function canCreateEntriesOfType(contentTypeId) {
+    return performCheck(policies.entry.allowed.flat, policies.entry.denied.flat, function (c) {
+      return _.filter(c, function (p) {
+        return (
+          p.scope !== 'user' &&
+          _.contains(['all', 'create'], p.action) &&
+          _.contains(['all', contentTypeId], p.contentType)
+        );
+      });
+    });
   }
 
   function canUpdateEntriesOfType(contentTypeId) {

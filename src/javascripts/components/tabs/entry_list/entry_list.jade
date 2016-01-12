@@ -108,21 +108,8 @@ header.workbench-header
         ng-disabled="shouldDisable('createContentType')"
         cf-when-disabled="createContentType")
       | Create a Content Type
-    p(ng-hide="spaceContext.publishedContentTypes.length == 0")
-      button.advice__action(
-              ng-hide="!singleContentType || shouldHide('createEntry')"
-              ng-disabled="shouldDisable('createEntry')"
-              cf-when-disabled="createEntry"
-              ng-click="entityCreationController.newEntry(singleContentType)")
-        cf-icon.btn-icon.inverted(name="plus")
-        | Add New {{singleContentType.getName()}}
-      button.advice__action(
-          ng-hide="singleContentType || shouldHide('createEntry')"
-          ng-disabled="shouldDisable('createEntry')"
-          cf-when-disabled="createEntry"
-          ng-click="showNewContentTypeDialog()")
-        cf-icon.btn-icon.inverted(name="plus")
-        | Add New Entry
+    p
+      +create-entry-button
     cf-knowledge-base(target="entry" text="Visit the Knowledge Base Pages")
 
 .workbench-actions(
