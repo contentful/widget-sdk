@@ -47,11 +47,18 @@ header.workbench-header
       .role-details__section
         h3 API keys
         .cfnext-form-option
-          input(id="opt_api_keys_view" type="checkbox" ng-model="internal.contentDelivery.read" ng-disabled="!canModifyRoles()")
+          input(
+            id="opt_api_keys_view" type="checkbox"
+            ng-model="internal.contentDelivery.read"
+            ng-disabled="!canModifyRoles() || internal.contentDelivery.manage")
           label(for="opt_api_keys_view")
             | Can access existing API keys for this space.
         .cfnext-form-option
-          input(id="opt_space_settings_edit" type="checkbox" ng-model="internal.contentDelivery.manage" ng-disabled="!canModifyRoles()")
+          input(
+            id="opt_space_settings_edit" type="checkbox"
+            ng-model="internal.contentDelivery.manage"
+            ng-disabled="!canModifyRoles()"
+            ng-change="internal.contentDelivery.read = internal.contentDelivery.manage ? true : internal.contentDelivery.read")
           label(for="opt_space_settings_edit")
             | Can create and update API keys for this space.
 
