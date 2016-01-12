@@ -10,6 +10,7 @@ angular.module('contentful')
   var random         = $injector.get('random');
   var widgets        = $injector.get('widgets');
   var widgetMigrator = $injector.get('widgets/migrations');
+  var logger         = $injector.get('logger');
 
   var widgetIdsByContentType = {};
 
@@ -32,6 +33,7 @@ angular.module('contentful')
      */
     forContentType: function (contentType) {
       return getEditingInterface(contentType)
+      // This is triggered when a CT has been created via the API, but has no EI
       .catch(function (err) {
         if(err && err.statusCode === 404) {
           return defaultInterface(contentType);
@@ -47,6 +49,8 @@ angular.module('contentful')
 
     syncWidgets: syncWidgets,
     defaultInterface: defaultInterface,
+    findField: findField,
+    findWidget: findWidget
   };
 
   /**
@@ -56,6 +60,7 @@ angular.module('contentful')
    * Make sure that we have a order preserving one-to-one
    * correspondance between CT fields and EI widgets.
    *
+   * - Remap widgets to use apiNames instead of IDs
    * - Remove extraneous widgets
    * - Add widgets for fields that had no widget before
    * - Put widgets in same order as their corresponding fields
@@ -65,15 +70,59 @@ angular.module('contentful')
    * @returns {Client.EditingInterface}
    */
   function syncWidgets(contentType, editingInterface) {
+    migrateWidgetsToApiNames(contentType, editingInterface);
     var syncedWidgets = _.map(contentType.data.fields, function (field) {
-      return findFieldWidget(field) || defaultWidget(contentType, field);
+      return findWidget(editingInterface.data.widgets, field) || defaultWidget(contentType, field);
     });
     editingInterface.data.widgets = syncedWidgets;
     return editingInterface;
+  }
 
-    function findFieldWidget (field) {
-      return _.find(editingInterface.data.widgets, {fieldId: field.id});
+  /**
+   * @ngdoc method
+   * @description
+   * Find a field in a content types fields based on the passed in `widget`'s
+   * fieldId.  Since we can't be sure that all content types have the `apiName`
+   * property in the field, we need to fall back to the `id`.
+   *
+   * @param {Array<API.Field>} contentTypeFields
+   * @param {API.Widget} widget
+   * @return {API.Field?}
+   */
+  function findField(contentTypeFields, widget) {
+    // Both widget.fieldId and field.apiName could be undefined due to legacy
+    // data. For this reason a comparison between a fieldId that is undefined
+    // and a apiName that is undefined would result in true, causing mismatched
+    // mapping and a subtle bug.
+    if(!_.isString(widget.fieldId)) {
+      return;
     }
+    return _.find(contentTypeFields, function(field) {
+      return field.apiName === widget.fieldId || field.id === widget.fieldId;
+    });
+  }
+
+  /**
+   * @ngdoc method
+   * Find a widget in an array of widget mappings that is related to a fields
+   * apiName or id.  Primarily we want to map via apiNames, but if a field does
+   * not have an apiName we need to fall back to the id.
+   *
+   * @param {Array<API.Widget>} widgets
+   * @param {API.Field} contentTypeField
+   * @return {API.Widget?}
+   */
+  function findWidget(widgets, contentTypeField) {
+    return _.find(widgets, function(widget) {
+      // Both widget.fieldId and field.apiName could be undefined due to legacy
+      // data. For this reason a comparison between a fieldId that is undefined
+      // and a apiName that is undefined would result in true, causing
+      // mismatched mapping and a subtle bug.
+      if(!_.isString(widget.fieldId)) {
+        return;
+      }
+      return widget.fieldId === contentTypeField.apiName || widget.fieldId === contentTypeField.id;
+    });
   }
 
   function addDefaultParams(interf) {
@@ -101,6 +150,7 @@ angular.module('contentful')
       title: 'Default',
       widgets: []
     };
+
     var interf = contentType.newEditingInterface(data);
     interf.data.widgets = _.map(contentType.data.fields, _.partial(defaultWidget, contentType));
     return interf;
@@ -121,9 +171,10 @@ angular.module('contentful')
 
   // TODO this is not inline with the field factory
   function defaultWidget(contentType, field) {
+    var identifier = field.apiName || field.id;
     return {
-      id: generateId(field.id, contentType.getId()),
-      fieldId: field.id,
+      id: generateId(identifier, contentType.getId()),
+      fieldId: identifier,
       widgetId: widgets.defaultWidgetId(field, contentType),
       widgetParams: {}
     };
@@ -139,4 +190,45 @@ angular.module('contentful')
     return widgetIdsByContentType[ctId][fieldId];
   }
 
+  // This function only serves migration purposes. It remaps old editing
+  // interfaces so that they use external id's (apiNames)) instead of internal
+  // ones (ids).  See user story at:
+  // https://contentful.tpondemand.com/entity/7098
+  // This function attempts to migrate editing interface widgets using a 'best
+  // case' scenario.  For each widget it tries to find the corresponding content
+  // type field. If a mapping does not exist or is corrupt it removes it.
+  function migrateWidgetsToApiNames (contentType, editorInterface) {
+    // The widgets we can successfully remapped. These will replace the original
+    // widgets.
+    var newWidgets = [];
+
+    editorInterface.data.widgets.forEach(function(widget) {
+      // Find the field(s) that map to our widget.
+      var matchingField = findField(contentType.data.fields, widget);
+
+      // If the editor interface has no mapping, ignore it.
+      if (!matchingField) {
+        // Metadata used for logging in case we hit an error
+        var errMetaData = {
+          data: {
+            widget: widget,
+            contentTypeFields: contentType.data.fields
+          }
+        };
+        var errMsg = 'The widget has no mapping to a content type field.';
+        logger.logWarn(errMsg, errMetaData);
+        return;
+      }
+
+      var newWidget = _.cloneDeep(widget);
+      if (widget.fieldId === matchingField.id && _.isString(matchingField.apiName)) {
+        newWidget.fieldId = matchingField.apiName;
+      }
+      newWidgets.push(newWidget);
+    });
+
+    editorInterface.data.widgets = newWidgets;
+  }
+
 }]);
+
