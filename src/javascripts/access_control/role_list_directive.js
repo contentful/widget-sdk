@@ -17,14 +17,12 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
   var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(space);
   var RoleActions         = $injector.get('RoleActions');
   var accessChecker       = $injector.get('accessChecker');
-  var TheAccountView      = $injector.get('TheAccountView');
 
   $scope.removeRole             = RoleActions.removeRole;
   $scope.duplicateRole          = RoleActions.duplicateRole;
   $scope.jumpToRoleMembers      = RoleActions.jumpToRoleMembers;
   $scope.jumpToAdminRoleMembers = RoleActions.jumpToAdminRoleMembers;
   $scope.canModifyRoles         = accessChecker.canModifyRoles;
-  $scope.goToSubscription       = TheAccountView.goToSubscription;
 
   reload().catch(ReloadNotification.basicErrorHandler);
 

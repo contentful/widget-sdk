@@ -36,9 +36,7 @@ header.workbench-header
       p
         | Your organization has used {{ userQuota.used }} out
         | {{ userQuota.limit > 0 ? userQuota.limit : 'unlimited' }} user accounts.
-      p
-        a(href="" ng-click="goToSubscription()") Increase your plan quotas here
-        | .
+      p <a href="" ng-click="goToSubscription()">Increase your plan quotas here</a>.
       button.cfnext-btn-primary-action(
         ng-click="openInvitationDialog()"
         ng-disabled="userQuota.used >= userQuota.limit && userQuota.limit > 0")

@@ -1,12 +1,11 @@
+include ./roles_and_permissions_mixins.jade
+
 header.workbench-header
   cf-icon.workbench-header__icon(name="page-settings")
   h1.workbench-header__title Roles ({{ (roles.length || 0) + 1 }})
 
 .workbench-main
   .workbench-main__content
-    .entity-editor__notification(ng-if="!canModifyRoles()" role="alert")
-      p Your plan does not include Custom Roles. You can still access predefined roles in a read-only mode.
-
     .role-list__item
       .role-list__link.admin-role
         h3
@@ -37,6 +36,8 @@ header.workbench-header
           li.role-list__action--disabled(ng-if="!canModifyRoles()") Delete permanently
 
   .workbench-main__entity-sidebar
+    .entity-sidebar(ng-if="!canModifyRoles()")
+      +custom-roles-plan-info
     .entity-sidebar(ng-if="canModifyRoles()")
       h2.entity-sidebar__heading
         | Create new role
@@ -44,11 +45,3 @@ header.workbench-header
         | Select one of the predefined role templates or create one from the scratch.
       button.cfnext-btn-primary-action(ui-sref="spaces.detail.settings.roles.new")
         | Create new role
-    .entity-sidebar(ng-if="!canModifyRoles()")
-      h2.entity-sidebar__heading
-        | Custom roles disabled
-      p
-        | Your plan does not include Custom Roles.
-        | Creating, editing, duplicating and removing roles is&nbsp;disabled.
-      p
-        | Please <a href="" ng-click="goToSubscription()">upgrade your plan</a> to activate this feature.

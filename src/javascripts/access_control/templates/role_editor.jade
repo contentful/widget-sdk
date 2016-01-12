@@ -1,12 +1,11 @@
+include ./roles_and_permissions_mixins.jade
+
 header.workbench-header
   cf-icon.workbench-header__icon(name="page-settings")
   h1.workbench-header__title {{ context.title }}
 
 .workbench-main
   .workbench-main__content
-    .entity-editor__notification(ng-if="!canModifyRoles()" role="alert")
-      p Your plan does not include Custom Roles. You can only preview the predefined {{ internal.name }} role below.
-
     .role-details
       .role-details__section
         h3 Role details
@@ -71,7 +70,9 @@ header.workbench-header
             |  <em>(the Settings menu is only shown to users who have this permission)</em>.
 
   .workbench-main__entity-sidebar
-    .entity-sidebar
+    .entity-sidebar(ng-if="!canModifyRoles()")
+      +custom-roles-plan-info
+    .entity-sidebar(ng-if="canModifyRoles()")
       p
         button.cfnext-btn-primary-action(type="submit" ui-command="save")
           | Save changes
