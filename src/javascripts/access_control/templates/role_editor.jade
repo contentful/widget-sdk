@@ -66,8 +66,8 @@ header.workbench-header
         .cfnext-form-option
           input(id="opt_space_settings_access" type="checkbox" ng-model="internal.settings.manage" ng-disabled="!canModifyRoles()")
           label(for="opt_space_settings_access")
-            | Can modify Space Settings. This permission allows users to <strong>delete</strong> the space and it’s contents!
-            |  <em>(the Settings menu is only shown to users who have this permission)</em>.
+            | Can modify Space Settings. This permission allows users to modify locales, webhooks, the space name, and logo image.
+            |  It does <strong>not</strong> grant permission to update users roles or delete the space.
 
   .workbench-main__entity-sidebar
     .entity-sidebar(ng-if="!canModifyRoles()")
