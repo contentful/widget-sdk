@@ -18,7 +18,7 @@ angular.module('contentful')
 .directive('cfIframeWidget', ['$injector', function($injector) {
   return {
     restrict: 'E',
-    template: '<iframe style="width:100%" sandbox="allow-scripts allow-popups"></iframe>',
+    template: '<iframe style="width:100%" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe>',
     link: function (scope, element) {
       var ShareJS = $injector.get('ShareJS');
       var fieldFactory = $injector.get('fieldFactory');
