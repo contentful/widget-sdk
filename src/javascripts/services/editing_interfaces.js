@@ -70,9 +70,10 @@ angular.module('contentful')
    * @returns {Client.EditingInterface}
    */
   function syncWidgets(contentType, editingInterface) {
-    migrateWidgetsToApiNames(contentType, editingInterface);
-    var syncedWidgets = _.map(contentType.data.fields, function (field) {
-      return findWidget(editingInterface.data.widgets, field) || defaultWidget(contentType, field);
+    var fields = contentType.data.fields;
+    var migratedWidgets = migrateWidgetsToApiNames(fields, editingInterface.data.widgets);
+    var syncedWidgets = _.map(fields, function (field) {
+      return findWidget(migratedWidgets, field) || defaultWidget(contentType, field);
     });
     editingInterface.data.widgets = syncedWidgets;
     return editingInterface;
@@ -152,6 +153,7 @@ angular.module('contentful')
     };
 
     var interf = contentType.newEditingInterface(data);
+    // TODO We should be able to replace this with a call to 'syncWidgets'.
     interf.data.widgets = _.map(contentType.data.fields, _.partial(defaultWidget, contentType));
     return interf;
   }
@@ -197,14 +199,10 @@ angular.module('contentful')
   // This function attempts to migrate editing interface widgets using a 'best
   // case' scenario.  For each widget it tries to find the corresponding content
   // type field. If a mapping does not exist or is corrupt it removes it.
-  function migrateWidgetsToApiNames (contentType, editorInterface) {
-    // The widgets we can successfully remapped. These will replace the original
-    // widgets.
-    var newWidgets = [];
-
-    editorInterface.data.widgets.forEach(function(widget) {
+  function migrateWidgetsToApiNames (fields, widgets) {
+    return _.transform(widgets, function (migratedWidgets, widget) {
       // Find the field(s) that map to our widget.
-      var matchingField = findField(contentType.data.fields, widget);
+      var matchingField = findField(fields, widget);
 
       // If the editor interface has no mapping, ignore it.
       if (!matchingField) {
@@ -212,7 +210,7 @@ angular.module('contentful')
         var errMetaData = {
           data: {
             widget: widget,
-            contentTypeFields: contentType.data.fields
+            contentTypeFields: fields
           }
         };
         var errMsg = 'The widget has no mapping to a content type field.';
@@ -224,10 +222,8 @@ angular.module('contentful')
       if (widget.fieldId === matchingField.id && _.isString(matchingField.apiName)) {
         newWidget.fieldId = matchingField.apiName;
       }
-      newWidgets.push(newWidget);
-    });
-
-    editorInterface.data.widgets = newWidgets;
+      migratedWidgets.push(newWidget);
+    }, []);
   }
 
 }]);
