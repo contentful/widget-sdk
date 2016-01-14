@@ -144,6 +144,41 @@ describe('otSubdoc', function () {
     expect(scope.otSubDoc.doc).not.toBe(oldSubdoc);
   });
 
+  describe('#removeValue()', function () {
+    var docRemove;
+
+    beforeEach(function () {
+      docRemove = sinon.stub();
+      scope.otSubDoc.doc.remove = docRemove;
+    });
+
+    it('calls "remove()" on OT sub doc', function () {
+      scope.otSubDoc.removeValue();
+      this.$apply();
+      sinon.assert.calledOnce(docRemove);
+    });
+
+    it('rejects promise if "remove()" throws an error', function () {
+      // This happens when the value at the path does not exist anymore
+      var error = new Error();
+      docRemove.throws(error);
+
+      var errorHandler = sinon.stub();
+      scope.otSubDoc.removeValue().catch(errorHandler);
+      this.$apply();
+      sinon.assert.calledWithExactly(errorHandler, error);
+    });
+
+    it('rejects promise if sub document does not exist', function () {
+      delete scope.otSubDoc.doc;
+
+      var errorHandler = sinon.stub();
+      scope.otSubDoc.removeValue().catch(errorHandler);
+      this.$apply();
+      sinon.assert.called(errorHandler);
+    });
+  });
+
   function makeDoc() {
     return {
       doc: {
