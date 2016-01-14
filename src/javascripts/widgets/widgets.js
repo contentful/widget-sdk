@@ -76,8 +76,6 @@ angular.module('contentful')
 
   return {
     get:                 getWidget,
-    // TODO remove this method. It is only used for testing
-    forField:            typesForField,
     getAvailable:        getAvailable,
     buildRenderable:     buildRenderable,
     defaultWidgetId:     defaultWidgetId,
@@ -123,23 +121,16 @@ angular.module('contentful')
   function getAvailable (field, currentWidgetId, preview) {
     return typesForField(field)
     .then(function (widgets) {
-      widgets = _.map(widgets, _.clone);
-      _.forEach(widgets, function (widget) {
-        widget.options = optionsForWidget(widget.id);
+      return _.map(widgets, function (widget) {
+        return _.extend({}, widget, {
+          options: optionsForWidget(widget.id)
+        });
       });
-      return widgets;
     })
     .then(deprecations.createFilter(currentWidgetId, field, preview))
     .then(checks.markMisconfigured);
   }
 
-
-  /**
-   * @ngdoc method
-   * @name widgets#forField
-   * @param {API.ContentType.Field} field
-   * @return {Promise<Array<Widget.Descriptor>>}
-   */
   function typesForField(field) {
     var fieldType = fieldFactory.getTypeName(field);
     var widgets = _.filter(WIDGETS, function (widget) {

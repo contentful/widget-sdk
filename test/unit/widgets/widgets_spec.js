@@ -1,13 +1,12 @@
 'use strict';
 
 describe('Widget types service', function () {
-  var widgets, widgetStore, $rootScope;
+  var widgets, widgetStore;
 
   beforeEach(function () {
     module('contentful/test');
     widgets = this.$inject('widgets');
     widgetStore = this.$inject('widgets/store');
-    $rootScope = this.$inject('$rootScope');
     widgets.setSpace({
       endpoint: sinon.stub().returns({
         get: sinon.stub().resolves([])
@@ -22,50 +21,59 @@ describe('Widget types service', function () {
     };
   });
 
-  describe('forField', function(){
-    function testTypesFor(fieldType) {
-      describe('gets widget types for a field with type '+fieldType, function() {
-        var types;
+  describe('#getAvailable()', function(){
+    beforeEach(function () {
+      // Disable checking if a widget is misconfigured since this
+      // involves API requests.
+      var widgetChecks = this.$inject('widgets/checks');
+      widgetChecks.markMisconfigured = function (widgets) {
+        return widgets;
+      };
+    });
+
+    function testAvilableForFieldType (fieldType) {
+      describe('for field type "' + fieldType + '"', function() {
+        var availableWidgets;
         beforeEach(function() {
-          widgets.forField({type: fieldType}).then(function (_types) {
-            types = _types;
+          widgets.getAvailable({type: fieldType}).then(function (_widgets) {
+            availableWidgets = _widgets;
           });
-          $rootScope.$apply();
+          this.$apply();
         });
 
-        it('gets types list', function() {
-          expect(types.length).not.toBeUndefined();
+        it('returns at least one widget', function() {
+          expect(availableWidgets.length).toBeGreaterThan(0);
         });
 
-        it('types have ids', function() {
-          expect(_.every(types, function (item) {
-            return item.id && item.name;
-          })).toBeTruthy();
+        it('each widget has "id" and "name" property', function() {
+          expect(_.every(availableWidgets, function (widget) {
+            return widget.id && widget.name;
+          })).toBe(true);
         });
       });
     }
 
-    testTypesFor('Text');
-    testTypesFor('Symbol');
-    testTypesFor('Symbols');
-    testTypesFor('Integer');
-    testTypesFor('Number');
-    testTypesFor('Boolean');
-    testTypesFor('Date');
-    testTypesFor('Location');
-    testTypesFor('Asset');
-    testTypesFor('Entry');
-    testTypesFor('Assets');
-    testTypesFor('Entries');
-    testTypesFor('File');
-    testTypesFor('Object');
+    testAvilableForFieldType('Text');
+    testAvilableForFieldType('Symbol');
+    testAvilableForFieldType('Symbols');
+    testAvilableForFieldType('Integer');
+    testAvilableForFieldType('Number');
+    testAvilableForFieldType('Boolean');
+    testAvilableForFieldType('Date');
+    testAvilableForFieldType('Location');
+    testAvilableForFieldType('Asset');
+    testAvilableForFieldType('Entry');
+    testAvilableForFieldType('Assets');
+    testAvilableForFieldType('Entries');
+    testAvilableForFieldType('File');
+    testAvilableForFieldType('Object');
 
-    it('fails to get widget for an unknown type', function() {
+    it('rejects promise if field type has no widget', function() {
       var err;
-      widgets.forField({type: 'unsupportedtype'}).catch(function (_err) {
+      widgets.getAvailable({type: 'unsupportedtype'}).catch(function (_err) {
         err = _err;
       });
-      $rootScope.$apply();
+      this.$apply();
       expect(err).not.toBeUndefined();
     });
   });
