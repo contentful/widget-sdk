@@ -30,8 +30,15 @@ angular.module('contentful/mocks')
     getDefaultLocale: function () {
       return defaultLocale;
     },
+
     getPrivateLocales: function () {
       return locales;
+    },
+
+    getActiveLocales: function () {
+      return _.filter(locales, function (locale) {
+        return locale.active !== false;
+      });
     },
 
     /**
