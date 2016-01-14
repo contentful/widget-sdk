@@ -128,7 +128,7 @@ describe('logger service', function () {
         data.foo.bar.baz = data;
         this.logger.logError('error', {data: data});
         var actual = this.bugsnag.notify.args[0][2];
-        expect(actual.data).toEqual({ foo : { bar : { baz : { foo : '[Circular ~]' } } } });
+        expect(actual.data).toEqual({ foo: { bar: { baz: '[Circular ~]' } } });
       });
     });
   });
