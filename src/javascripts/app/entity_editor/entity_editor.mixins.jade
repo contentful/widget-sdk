@@ -15,12 +15,10 @@ mixin editor-actions-dropdown
   .context-menu(
     cf-context-menu
     data-test-id="entity-actions-menu")
-    cf-icon.context-menu__arrow.x--top(name="arrow-up")
     block
 
 mixin entity-delete-confirm-menu
-  .delete-confirm(cf-context-menu="bottom-right")
-    cf-icon.context-menu__arrow.x--top-right(name="arrow-up")
+  .delete-confirm.context-menu--arrow-right(cf-context-menu="bottom-right")
     p Do you really want to delete the entry <em>{{ title }}</em>
     button.cfnext-btn-caution(ui-command="state.delete") Delete
     button.cfnext-btn-secondary-action(type="button") Cancel

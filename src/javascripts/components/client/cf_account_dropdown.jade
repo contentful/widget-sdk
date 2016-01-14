@@ -10,7 +10,6 @@
   .context-menu.x--top-bar(
     role="menu" cf-context-menu
     aria-label="Account Menu" data-test-id="account-menu")
-    cf-icon.context-menu__arrow.center-aligned(name="arrow-up")
     ul.context-menu__items
       li(role="menuitem" ng-click="goToAccount()") Account Settings
       li(role="menuitem" ng-click="openIntercom()" ng-if="isIntercomLoaded()") Talk to Us

@@ -89,7 +89,8 @@ describe('Locale editor controller', function () {
 
     describe('with confirmation', function () {
       beforeEach(function () {
-        this.modalDialog.openConfirmDialog.returns(this.$q.when({confirmed: true}));
+        this.scope.closeState = sinon.stub();
+        this.modalDialog.openConfirmDialog.resolves({confirmed: true});
         this.controller.delete.execute();
         this.$apply();
       });
@@ -106,11 +107,15 @@ describe('Locale editor controller', function () {
       it('sets form to submitted state', function() {
         sinon.assert.called(this.scope.localeForm.$setSubmitted);
       });
+
+      it('closes the current state', function() {
+        sinon.assert.calledOnce(this.scope.closeState);
+      });
     });
 
     describe('with no confirmation', function() {
       beforeEach(function () {
-        this.modalDialog.openConfirmDialog.returns(this.$q.when({}));
+        this.modalDialog.openConfirmDialog.resolves({});
         this.controller.delete.execute();
         this.$apply();
       });

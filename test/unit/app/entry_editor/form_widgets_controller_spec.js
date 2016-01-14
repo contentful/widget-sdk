@@ -116,8 +116,8 @@ describe('FormWidgetsController#widgets', function () {
     describe('with validation errors', function () {
       beforeEach(inject(function (cfStub){
         this.contentType.data.fields = [
-          cfStub.field('localized'),
-          cfStub.field('nonlocalized', {localized: false})
+          cfStub.field('id1', {apiName: 'apiName1',  localized: true, type: 'Symbol'}),
+          cfStub.field('id2', {apiName: 'apiName2',  localized: false, type: 'Symbol'})
         ];
         scope.errorPaths = {
           'localized': ['en-US', 'de-DE'],
@@ -133,6 +133,7 @@ describe('FormWidgetsController#widgets', function () {
 
       it('displays the default locale for non-localized fields', function () {
         expect(scope.widgets[1].locales.length).toBe(1);
+        expect(scope.widgets[1].locales[0].internal_code).toBe('en-US');
       });
     });
   });

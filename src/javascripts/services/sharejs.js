@@ -218,6 +218,48 @@ angular.module('contentful')
 
       /**
        * @ngdoc method
+       * @name ShareJS#setDeep
+       * @description
+       * Sets the value at the given path in the document.
+       *
+       * Works like `doc.setAt(path, value)` but also creates missing
+       * intermediate containers with `mkPathAndSetValue`.
+       *
+       * The function does not cause an update if the current value in
+       * the document equals the new value.
+       *
+       * @todo We should remove the public `mkPathAndSetValue` in favor
+       * of this.
+       *
+       * @param {OtDoc} doc
+       * @param {Array<string>} path
+       * @param {any} value
+       * @return {Promise<void>}
+       */
+      setDeep: function (doc, path, value) {
+        if (!doc) {
+          throw new TypeError('No ShareJS document provided');
+        }
+        if (!path) {
+          throw new TypeError('No path provided');
+        }
+
+        var current = ShareJS.peek(doc, path);
+        if (value === current) {
+          return $q.resolve();
+        }
+
+        if (current === undefined) {
+          return ShareJS.mkpathAndSetValue(doc, path, value);
+        } else {
+          return $q.denodeify(function (cb) {
+            doc.setAt(path, value, cb);
+          });
+        }
+      },
+
+      /**
+       * @ngdoc method
        * @name ShareJS#peek
        * @description
        * Read the value at the given path in the doc

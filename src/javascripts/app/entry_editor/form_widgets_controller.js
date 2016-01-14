@@ -18,8 +18,9 @@ angular.module('contentful')
 .controller('FormWidgetsController',
   ['$scope', '$injector', 'contentType', 'editingInterface',
   function($scope, $injector, contentType, editingInterface) {
-  var TheLocaleStore = $injector.get('TheLocaleStore');
-  var widgets        = $injector.get('widgets');
+  var TheLocaleStore    = $injector.get('TheLocaleStore');
+  var widgets           = $injector.get('widgets');
+  var editingInterfaces = $injector.get('editingInterfaces');
 
   $scope.$watch(getActiveLocaleCodes,             updateWidgets, true);
   $scope.$watch('preferences.showDisabledFields', updateWidgets);
@@ -38,15 +39,14 @@ angular.module('contentful')
   }
 
   function buildWidget (widget) {
-    var field = getFieldForWidget(widget);
+    var field = editingInterfaces.findField(contentType.data.fields, widget);
     // TODO we should use `fieldFactory.getLocaleCodes(field)`
     var locales = _(getFieldLocales(field))
       .union(getErrorLocales(field))
       .filter(_.isObject)
       .uniq('internal_code')
       .value();
-    var defaultLocale = TheLocaleStore.getDefaultLocale();
-    var renderable = widgets.buildRenderable(widget, locales, defaultLocale);
+    var renderable = widgets.buildRenderable(widget, locales);
     renderable.field = field;
     return renderable;
   }
@@ -57,21 +57,13 @@ angular.module('contentful')
   }
 
   function widgetIsVisible(widget) {
-    if (widget.widgetType === 'static') {
-      return true;
-    } else {
-      return fieldIsVisible(widget.field);
-    }
+    return fieldIsVisible(widget.field);
   }
 
   function fieldIsVisible (field) {
     var isNotDisabled = !field.disabled || $scope.preferences.showDisabledFields;
     var hasErrors = $scope.errorPaths && $scope.errorPaths[field.id];
     return isNotDisabled || hasErrors;
-  }
-
-  function getFieldForWidget(widget) {
-    return _.find(contentType.data.fields, {id: widget.fieldId});
   }
 
   function getFieldLocales(field) {

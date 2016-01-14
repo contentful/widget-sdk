@@ -12,7 +12,7 @@ angular.module('contentful').directive('cfMarkdownEditorBridge', function () {
       // and we propagate every OT change into this copy
       // "value" is displayed and modified by Markdown widget
       scope.$watch('fieldData.value', function (val) {
-        if (val) { scope.editorFieldData.value = val; }
+        scope.editorFieldData.value = val || undefined;
       });
 
       // when "value" in Markdown editor is changed,

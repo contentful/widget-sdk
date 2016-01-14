@@ -33,29 +33,6 @@ angular.module('contentful')
    * @property {boolean} rendersHelpText
    */
 
-  // Static widgets
-  registerWidget('sectionHeader',{
-    name: 'Section Header',
-    template: '<h1 class="layout-field--section-header">{{widget.widgetParams.text}}</h1>',
-    options: [
-      { param: 'text', type: 'Text', name: 'Text' }
-    ]
-  });
-
-  registerWidget('infoText',{
-    name: 'Info Text',
-    template: '<p class="layout-field--info-text">{{widget.widgetParams.text}}</p>',
-    options: [
-      { param: 'text', type: 'Text', name: 'Text' }
-    ]
-  });
-
-  registerWidget('sectionBreak',{
-    name: 'Section Break',
-    template: '<hr class="layout-field--section-break" />'
-  });
-
-  // Field widgets
   registerWidget('singleLine',{
     fieldTypes: ['Text', 'Symbol'],
     name: 'Single Line',

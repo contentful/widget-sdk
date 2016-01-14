@@ -8,11 +8,11 @@
 <h2>Requires</h2>
 <ul class="api-members">
   {% for prop in doc.scopeRequires %}
-    <li>
+    <li class="api-member">
       <h3>
         <code>{$ prop | memberSyntax('$scope') $}</code>
       </h3>
-      <div class="api-members-description">{$ prop.description $}</div>
+      <div class="api-members-description">{$ prop.description | marked $}</div>
     </li>
   {% endfor %}
 </ul>

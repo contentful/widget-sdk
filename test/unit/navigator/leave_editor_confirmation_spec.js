@@ -19,6 +19,9 @@ describe('navigator', function () {
 
 
     beforeEach(function () {
+      var stateChangeHandlers = this.$inject('navigation/stateChangeHandlers');
+      stateChangeHandlers.setup();
+
       var $state = this.$inject('$state');
       this.$state = $state;
       this.dirtyState = $state.get('dirty');

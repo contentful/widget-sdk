@@ -7,12 +7,12 @@ if (window){
 
 if (angular) {
   angular.module('contentful/user_interface', []).
-    constant('raw/moment', require('moment')).
-    constant('privateContentfulClient', require('contentful-client')).
-    constant('hostnameTransformer', require('contentful-hostname-transformer')).
-    constant('validation', require('contentful-validation')).
-    constant('mimetype', require('contentful-mimetype')).
+    constant('privateContentfulClient', require('@contentful/client')).
+    constant('hostnameTransformer', require('@contentful/hostname-transformer')).
+    constant('mimetype', require('@contentful/mimetype')).
+    constant('validation', require('@contentful/validation')).
     constant('worf', require('@contentful/worf')).
+    constant('raw/moment', require('moment')).
     constant('stringifySafe', require('json-stringify-safe')).
     constant('searchParser', require('./search.pegjs')).
     constant('localesList', require('./locales_list.json')).

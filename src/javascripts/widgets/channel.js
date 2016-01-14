@@ -22,6 +22,12 @@ angular.module('contentful')
    * @ngdoc type
    * @name Channel
    */
+
+  /**
+   * @ngdoc property
+   * @name Channel#handlers
+   * @type {[id:string]: function}
+   */
   function Channel (iframe) {
     this.iframe = iframe;
     this.id = random.id();
@@ -39,6 +45,23 @@ angular.module('contentful')
     $window.addEventListener('message', this.messageListener);
   }
 
+  /**
+   * @ngdoc method
+   * @name Channel#send
+   * @description
+   * Calls `postMessage` on the iframes content window.
+   *
+   * The message looks like
+   * ~~~
+   * { method: method, params: params }
+   * ~~~
+   *
+   * If the channel has not yet been connected the message will be
+   * pushed onto a queue and will be sent after calling `#connect()`.
+   *
+   * @param {string} message
+   * @param {Array<any>} params
+   */
   Channel.prototype.send = function (message, params) {
     if (this.connected) {
       this._send(message, params);

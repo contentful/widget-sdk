@@ -21,7 +21,7 @@
       {% for page in doc.components %}
       <tr>
         <td>{$ page.id | link(page.name, page) $}</td>
-        <td>{$ page.description | firstParagraph | marked $}</td>
+        <td>{$ page.description | marked $}</td>
       </tr>
       {% endfor %}
     </table>

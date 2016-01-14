@@ -2,23 +2,19 @@
 Context Menus
 
 Markup:
-.context-menu.styleguide-noabsolute
-  cf-icon.context-menu__arrow(name="arrow-up")
+.context-menu.context-menu--arrow-up.styleguide-noabsolute
   ul.context-menu__items
     li Item 1
     li.selected Item 2
     li.pseudo-class-hover Hovered
-.context-menu.styleguide-noabsolute
-  cf-icon.context-menu__arrow.x--bottom-left(name="arrow-up")
+.context-menu.context-menu--arrow-down.styleguide-noabsolute
   .context-menu__item Item
-.context-menu.styleguide-noabsolute
-  cf-icon.context-menu__arrow.x--bottom-left(name="arrow-up")
+.context-menu.context-menu--arrow-down.context-menu--arrow-left.styleguide-noabsolute
   div(role="menuitem") Item 1
   div(role="menuitem" aria-disabled="true") Item 2
   hr
   div(role="menuitem") Separate
-.context-menu.styleguide-noabsolute
-  cf-icon.context-menu__arrow.x--top-right(name="arrow-up")
+.context-menu.context-menu--arrow-right.context-menu--arrow-up.styleguide-noabsolute
   div.context-menu__header
     | With header
   div(role="menuitem")
@@ -28,6 +24,8 @@ Markup:
 
 Styleguide 11
 */
+
+$context-menu-top-bar--border = hsl(201, 33%, 66%)
 
 $cfnext-caret-size = 12px
 
@@ -65,7 +63,7 @@ $context-menu-base()
   min-width: 19ex
   position: absolute
   padding: 0.3rem 0
-  border: 1px solid $colors.light-gray
+  border: 1px solid $colors.element-mid
   border-radius: 2px
   background: white
   box-shadow: 0px 1px 2px 0px hsla(black, 0.1);
@@ -99,6 +97,60 @@ $context-menu-base()
     font-weight: bold
     text-transform: uppercase
     letter-spacing: 1px
+
+  &--arrow-down, &--arrow-up
+    $context-menu-base()
+    &:after, &:before
+      content: ''
+      left: 50%
+      border: solid transparent
+      height: 0
+      width: 0
+      position: absolute
+      pointer-events: none
+    &:after
+      border-width: 9px 5px
+      margin-left: -5px
+    &:before
+      border-width: 11px 7px
+      margin-left: -7px
+
+  &--arrow-right
+    &:after
+      left: auto
+      right: 30px
+    &:before
+      left: auto
+      right: 28px
+  &--arrow-left
+    &:after
+      left: 28px
+      right: auto
+    &:before
+      left: 28px
+      right: auto
+
+  &--arrow-up
+    &:after, &:before
+      bottom: 100%
+    &:after
+      border-bottom-color: white
+    &:before
+      border-bottom-color: $colors.element-mid
+    &.x--top-bar
+      &:after
+        border-bottom-color: $colors.lightest-blue
+      &:before
+        border-bottom-color: $context-menu-top-bar--border
+
+  &--arrow-down
+    &:after, &:before
+      top: 100%
+    &:after
+      border-top-color: white
+    &:before
+      border-top-color: $colors.element-mid
+
 
 .context-menu__arrow
   position: absolute
@@ -134,8 +186,7 @@ Top Bar Context Menu
 Different colors for use in the top bar
 
 Markup:
-.context-menu.x--top-bar.styleguide-noabsolute
-  cf-icon.context-menu__arrow(name="arrow-up")
+.context-menu.context-menu--arrow-up.x--top-bar.styleguide-noabsolute
   ul.context-menu__items
     li Item 1
     li Item 2
@@ -144,12 +195,10 @@ Markup:
 Styleguide 11.1
 */
 
-$context-menu-top-bar--border = hsl(201, 33%, 66%)
-
 $context-menu-top-bar()
   background-color: $colors.lightest-blue
   margin-top: 13px
-  border-color: hsl(201, 33%, 66%)
+  border-color: $context-menu-top-bar--border
   > .context-menu__arrow path
     fill: $colors.lightest-blue
     stroke: $context-menu-top-bar--border

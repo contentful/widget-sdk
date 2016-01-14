@@ -132,6 +132,14 @@ angular.module('cf.ui')
         of: $trigger,
       })
     );
+
+    var arrowClass = $menu.position().top < $trigger.position().top ?
+      'context-menu--arrow-down' :
+      'context-menu--arrow-up';
+
+    $menu.removeClass('context-menu--arrow-down context-menu--arrow-up');
+    $menu.addClass(arrowClass);
+
   }
 
   function getPositioning(position) {

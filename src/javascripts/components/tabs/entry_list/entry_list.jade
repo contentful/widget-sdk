@@ -18,7 +18,6 @@ mixin create-entry-button
     .context-menu(
       role="menu" cf-context-menu
       aria-label="Add Entry" data-test-id="add-entry-menu")
-      cf-icon.context-menu__arrow(name="arrow-up")
       ul.context-menu__items
         li(role="menuitem"
           ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
@@ -143,7 +142,6 @@ header.workbench-header
     data-test-id="delete-entry")
     | Delete
   .delete-confirm(cf-context-menu="top")
-    cf-icon.context-menu__arrow.x--bottom(name="arrow-up")
     p You are about to delete {{selection.size()}} Entries
     button.cfnext-btn-caution(type="button" ng-click="deleteSelected()")
       | Delete

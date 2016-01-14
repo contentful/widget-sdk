@@ -202,18 +202,6 @@ describe('cfValidate', function () {
       expect(this.scope.validationResult.valid).toBe(true);
     });
 
-    it('generates missing fields error', function () {
-      this.scope.contentType = {
-        name: 'MyContentType',
-        fields: []
-      };
-      this.scope.validate();
-      expect(this.scope.validationResult.errors.length).toBe(1);
-      var error = this.scope.validationResult.errors[0];
-      expect(error.name).toBe('size');
-      expect(error.message).toBe('Please provide between 1 and 50 fields');
-    });
-
     it('generates missing name error', function () {
       this.scope.contentType = {
         fields: [fieldFixture]
