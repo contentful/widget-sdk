@@ -15,31 +15,43 @@ describe('widgets/channel', function () {
     this.channel = new Channel(iframe);
   });
 
-  it('#connect() sends connect message with id', function () {
-    this.channel.connect();
-    var id = this.channel.id;
-    sinon.assert.calledWith(this.postMessage, {method: 'connect', params: {id: id}});
+  describe('#connect()', function () {
+    it('sends connect message with id', function () {
+      this.channel.connect();
+      var id = this.channel.id;
+      sinon.assert.calledWith(this.postMessage, {method: 'connect', params: [{id: id}]});
+    });
+
+    it('throws an error when called twice', function () {
+      var connect = this.channel.connect.bind(this.channel);
+      connect();
+      expect(connect).toThrow();
+    });
   });
 
-  it('#connect() throws an error when called twice', function () {
-    var connect = this.channel.connect.bind(this.channel);
-    connect();
-    expect(connect).toThrow();
-  });
+  describe('#send()', function () {
+    var PARAMS = ['PARAM'];
 
-  it('#send() messages to the iframe', function () {
-    this.channel.connect();
-    this.channel.send('METHOD', 'PARAMS');
-    sinon.assert.calledWith(this.postMessage, {method: 'METHOD', params: 'PARAMS'});
-  });
+    it('messages to the iframe', function () {
+      this.channel.connect();
+      this.channel.send('METHOD', PARAMS);
+      sinon.assert.calledWith(this.postMessage, {method: 'METHOD', params: PARAMS});
+    });
 
-  it('#send() queued messages after connecting', function () {
-    this.channel.send('METHOD', 'PARAMS');
-    this.channel.send('METHOD2', 'PARAMS');
-    sinon.assert.notCalled(this.postMessage);
-    this.channel.connect();
-    sinon.assert.calledWith(this.postMessage, {method: 'METHOD', params: 'PARAMS'});
-    sinon.assert.calledWith(this.postMessage, {method: 'METHOD2', params: 'PARAMS'});
+    it('queued messages after connecting', function () {
+      this.channel.send('METHOD', PARAMS);
+      this.channel.send('METHOD2', PARAMS);
+      sinon.assert.notCalled(this.postMessage);
+      this.channel.connect();
+      sinon.assert.calledWith(this.postMessage, {method: 'METHOD', params: PARAMS});
+      sinon.assert.calledWith(this.postMessage, {method: 'METHOD2', params: PARAMS});
+    });
+
+    it('throws an error if params is not an array', function() {
+      var send = this.channel.send.bind(this.channel, 'METHOD', 'NOT-AN-ARRAY');
+      this.channel.connect();
+      expect(send).toThrow();
+    });
   });
 
   it('calls handlers on message event', function () {
