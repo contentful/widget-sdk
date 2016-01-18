@@ -269,18 +269,14 @@ angular.module('contentful')
   };
 
   function entityMetadataToKey (sys) {
-    var parts;
-    if (sys.type === 'Space')
-      parts = [sys.id, 'space'];
-    else if (sys.type === 'ContentType')
-      parts = [sys.space.sys.id, 'content_type', sys.id];
-    else if (sys.type === 'Entry')
-      parts = [sys.space.sys.id, 'entry', sys.id];
-    else if (sys.type === 'Asset')
-      parts = [sys.space.sys.id, 'asset', sys.id];
-    else
-      throw new Error('Unable to encode key for type ' + sys.type);
-    return parts.join('!');
+    switch (sys.type) {
+      case 'Entry':
+        return [sys.space.sys.id, 'entry', sys.id].join('!');
+      case 'Asset':
+        return [sys.space.sys.id, 'asset', sys.id].join('!');
+      default:
+        throw new Error('Unable to encode key for type ' + sys.type);
+    }
   }
 
   return Client;
