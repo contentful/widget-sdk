@@ -26,76 +26,8 @@ angular.module('contentful')
 
   this.$get = ['$injector', function($injector) {
     var clientAdapter = $injector.get('clientAdapter');
-    var $rootScope    = $injector.get('$rootScope');
+    var ShareJSClient = $injector.get('ShareJS/Client');
     var $q            = $injector.get('$q');
-
-    /**
-     * Class that wraps the native ShareJS Client
-     *
-     * Adds state monitoring and event broadcasting as well as support for opening Contentful entities.
-     *
-     * VERY IMPORTANT:
-     *
-     * What this _doesn't_ do is integration of ShareJS into Angular.
-     * In particular:
-     * - Callbacks are not wrapped and exposed as promises
-     * - Callback execution is not wrapped in $apply
-     */
-    function ShareJSClient(url, token) {
-      this.token = token;
-      this.url = url;
-      this.connection = new window.sharejs.Connection(this.url, this.token);
-      this.connection.socket.send = function (message) {
-        try {
-          return this.sendMap({JSON: angular.toJson(message)});
-        } catch (error) {
-          // Silently ignore the error as this is handled on ot_doc_for
-        }
-      };
-
-      // Any message on the connection may change our model so we need
-      // to apply those changes.
-      var connectionEmit = this.connection.emit;
-      this.connection.emit = function () {
-        $rootScope.$applyAsync();
-        connectionEmit.apply(this, arguments);
-      };
-    }
-
-    ShareJSClient.prototype = {
-      _toKey: function toKey(sys) {
-        var parts;
-        if (sys.type === 'Space')
-          parts = [sys.id, 'space'];
-        else if (sys.type === 'ContentType')
-          parts = [sys.space.sys.id, 'content_type', sys.id];
-        else if (sys.type === 'Entry')
-          parts = [sys.space.sys.id, 'entry', sys.id];
-        else if (sys.type === 'Asset')
-          parts = [sys.space.sys.id, 'asset', sys.id];
-        else
-          throw new Error('Unable to encode key for type ' + sys.type);
-        return parts.join('!');
-      },
-
-      open: function(entry, callback) {
-        var key = this._toKey(entry.data.sys);
-        var synchronous = true;
-        this.connection.open(key, 'json', function(err, doc){
-          if (!err) {
-            if (synchronous) {
-              _.defer(callback, null, doc);
-            } else {
-              callback(null, doc);
-            }
-          } else {
-            _.defer(callback, err);
-          }
-        });
-        synchronous = false;
-      }
-
-    };
 
     /**
      * Public API for the ShareJS service
@@ -279,4 +211,77 @@ angular.module('contentful')
     return ShareJS;
 
   }];
+}])
+
+.factory('ShareJS/Client', ['$injector', function ($injector) {
+  var $rootScope = $injector.get('$rootScope');
+  var $window = $injector.get('$window');
+
+  /**
+   * Class that wraps the native ShareJS Client
+   *
+   * Adds state monitoring and event broadcasting as well as support
+   * for opening Contentful entities.
+   *
+   * VERY IMPORTANT:
+   *
+   * What this _doesn't_ do is integration of ShareJS into Angular.
+   * In particular:
+   * - Callbacks are not wrapped and exposed as promises
+   * - Callback execution is not wrapped in $apply
+   */
+  function Client (url, token) {
+    this.token = token;
+    this.url = url;
+    this.connection = new $window.sharejs.Connection(this.url, this.token);
+    this.connection.socket.send = function (message) {
+      try {
+        return this.sendMap({JSON: angular.toJson(message)});
+      } catch (error) {
+        // Silently ignore the error as this is handled on ot_doc_for
+      }
+    };
+
+    // Any message on the connection may change our model so we need
+    // to apply those changes.
+    var connectionEmit = this.connection.emit;
+    this.connection.emit = function () {
+      $rootScope.$applyAsync();
+      connectionEmit.apply(this, arguments);
+    };
+  }
+
+  Client.prototype.open = function open (entry, callback) {
+    var key = entityMetadataToKey(entry.data.sys);
+    var synchronous = true;
+    this.connection.open(key, 'json', function(err, doc){
+      if (!err) {
+        if (synchronous) {
+          _.defer(callback, null, doc);
+        } else {
+          callback(null, doc);
+        }
+      } else {
+        _.defer(callback, err);
+      }
+    });
+    synchronous = false;
+  };
+
+  function entityMetadataToKey (sys) {
+    var parts;
+    if (sys.type === 'Space')
+      parts = [sys.id, 'space'];
+    else if (sys.type === 'ContentType')
+      parts = [sys.space.sys.id, 'content_type', sys.id];
+    else if (sys.type === 'Entry')
+      parts = [sys.space.sys.id, 'entry', sys.id];
+    else if (sys.type === 'Asset')
+      parts = [sys.space.sys.id, 'asset', sys.id];
+    else
+      throw new Error('Unable to encode key for type ' + sys.type);
+    return parts.join('!');
+  }
+
+  return Client;
 }]);
