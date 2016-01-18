@@ -12,206 +12,191 @@
  * - the mkpathAndSetValue does too much
  */
 angular.module('contentful')
-.provider('ShareJS', ['environment', function ShareJSProvider(environment) {
-  var token;
+.factory('ShareJS', ['$injector', function ($injector) {
+  var environment   = $injector.get('environment');
+  var ShareJSClient = $injector.get('ShareJS/Client');
+  var $q            = $injector.get('$q');
+
   var url = '//'+environment.settings.ot_host+'/channel';
 
-  this.token = function(_token) {
-    token = _token;
-  };
-
-  this.url = function(_url) {
-    url = _url;
-  };
-
-  this.$get = ['$injector', function($injector) {
-    var clientAdapter = $injector.get('clientAdapter');
-    var ShareJSClient = $injector.get('ShareJS/Client');
-    var $q            = $injector.get('$q');
+  var ShareJS = {
+    client : null,
 
     /**
-     * Public API for the ShareJS service
+     * @ngdoc method
+     * @name ShareJS#connect
+     * @description
+     * Connects the ShareJS client
      */
-    var ShareJS = {
-      client : null,
+    connect: function (token) {
+      ShareJS.client = ShareJS.client || new ShareJSClient(url, token);
+    },
 
-      /**
-       * @ngdoc method
-       * @name ShareJS#connect
-       * @description
-       * Connects the ShareJS client
-       */
-      connect: function () {
-        ShareJS.client = ShareJS.client || new ShareJSClient(url, token || clientAdapter.token);
-      },
+    /**
+     * @ngdoc method
+     * @name ShareJS#open
+     * @description
+     * Open a ShareJS document for an entity
+     *
+     * @param {Entity} entity
+     * @returns {Promise<void>}
+     */
+    open: function (entity) {
+      ShareJS.connect();
+      return ShareJS.client.open(entity);
+    },
 
-      /**
-       * @ngdoc method
-       * @name ShareJS#open
-       * @description
-       * Open a ShareJS document for an entity
-       *
-       * @param {Entity} entity
-       * @returns {Promise<void>}
-       */
-      open: function (entity) {
-        ShareJS.connect();
-        return ShareJS.client.open(entity);
-      },
+    /**
+     * @ngdoc method
+     * @name ShareJS#isConnected
+     * @return {boolean}
+     */
+    isConnected: function () {
+      var client = ShareJS.client;
+      return client && client.isConnected();
+    },
 
-      /**
-       * @ngdoc method
-       * @name ShareJS#isConnected
-       * @return {boolean}
-       */
-      isConnected: function () {
-        var client = ShareJS.client;
-        return client && client.isConnected();
-      },
-
-      /**
-       * @ngdoc method
-       * @name ShareJS#connectionFailed
-       * @return {boolean}
-       */
-      connectionFailed: function () {
-        var client = ShareJS.client;
-        return client ?
-                 client.connectionFailed() :
-                 true;
-      },
+    /**
+     * @ngdoc method
+     * @name ShareJS#connectionFailed
+     * @return {boolean}
+     */
+    connectionFailed: function () {
+      var client = ShareJS.client;
+      return client ?
+               client.connectionFailed() :
+               true;
+    },
 
 
-      /**
-       * @ngdoc method
-       * @name ShareJS#mkpathAndSetValue
-       * @description
-       * Creates a deeply nested property in a ShareJS JSON document
-       *
-       * The purpose is more on making sure that the path exists not
-       * that the value is the same value as supplied
-       *
-       * The behavior when the entire path exists already is to
-       * - keep the existing value when it is of the same type as the
-       *   `value` parameter
-       * - set it to the value parameter otherwise
-       *
-       * TODO not setting the value does not make sense at all!
-       *
-       * @param {OtDoc} doc The document to operate on
-       * @param {Array<string>} path An array describing the path in the JSON doc
-       * @param {any} value The initial value we want to be at the end of the path
-       * @returns {Promise<void>}
-       *
-       * @usage
-       * ShareJS.mkpathAndSetValue(
-       *   shareJsDoc,
-       *   ['foo', '12']
-       *   'Foo'
-       * });
-       */
-      mkpathAndSetValue: function(doc, path, value){
-        return $q.denodeify(function (callback) {
-          var segments = path.slice();
-          var tmp, prop, segment, currentVal;
+    /**
+     * @ngdoc method
+     * @name ShareJS#mkpathAndSetValue
+     * @description
+     * Creates a deeply nested property in a ShareJS JSON document
+     *
+     * The purpose is more on making sure that the path exists not
+     * that the value is the same value as supplied
+     *
+     * The behavior when the entire path exists already is to
+     * - keep the existing value when it is of the same type as the
+     *   `value` parameter
+     * - set it to the value parameter otherwise
+     *
+     * TODO not setting the value does not make sense at all!
+     *
+     * @param {OtDoc} doc The document to operate on
+     * @param {Array<string>} path An array describing the path in the JSON doc
+     * @param {any} value The initial value we want to be at the end of the path
+     * @returns {Promise<void>}
+     *
+     * @usage
+     * ShareJS.mkpathAndSetValue(
+     *   shareJsDoc,
+     *   ['foo', '12']
+     *   'Foo'
+     * });
+     */
+    mkpathAndSetValue: function(doc, path, value){
+      return $q.denodeify(function (callback) {
+        var segments = path.slice();
+        var tmp, prop, segment, currentVal;
 
-          //jshint boss:true
-          while(segment = segments.shift()) {
-            doc = doc.at(segment);
-            currentVal = doc.get();
-            var hasNoContainer = segments.length && !(_.isObject(currentVal) || _.isArray(currentVal));
-            if (hasNoContainer) {
-              segments.unshift(segment);
-              prop = segments.pop();
-              while(segments.length > 0) {
-                segment = segments.pop();
-                tmp = {};
-                tmp[prop] = value;
-                value = tmp;
-                prop = segment;
-              }
-              // TODO I am pretty sure this is not what we want: We
-              // only create *one* container, set the value and return
-              // from the function.
-              doc.set(value, callback);
-              return;
+        //jshint boss:true
+        while(segment = segments.shift()) {
+          doc = doc.at(segment);
+          currentVal = doc.get();
+          var hasNoContainer = segments.length && !(_.isObject(currentVal) || _.isArray(currentVal));
+          if (hasNoContainer) {
+            segments.unshift(segment);
+            prop = segments.pop();
+            while(segments.length > 0) {
+              segment = segments.pop();
+              tmp = {};
+              tmp[prop] = value;
+              value = tmp;
+              prop = segment;
             }
+            // TODO I am pretty sure this is not what we want: We
+            // only create *one* container, set the value and return
+            // from the function.
+            doc.set(value, callback);
+            return;
           }
-          // If value at path doesn't match passed in value type replace it
-          if (_.isString(currentVal)  && _.isString(value) ) {_.defer(callback); return;}
-          if (_.isNumber(currentVal)  && _.isNumber(value) ) {_.defer(callback); return;}
-          if (_.isBoolean(currentVal) && _.isBoolean(value)) {_.defer(callback); return;}
-          if (_.isNull(currentVal)    && _.isNull(value)   ) {_.defer(callback); return;}
-          if (_.isObject(currentVal)  && _.isObject(value) &&
-              _.isArray(currentVal)  === _.isArray(value)) {_.defer(callback); return;}
-
-          doc.set(value, callback);
-        });
-      },
-
-      /**
-       * @ngdoc method
-       * @name ShareJS#setDeep
-       * @description
-       * Sets the value at the given path in the document.
-       *
-       * Works like `doc.setAt(path, value)` but also creates missing
-       * intermediate containers with `mkPathAndSetValue`.
-       *
-       * The function does not cause an update if the current value in
-       * the document equals the new value.
-       *
-       * @todo We should remove the public `mkPathAndSetValue` in favor
-       * of this.
-       *
-       * @param {OtDoc} doc
-       * @param {Array<string>} path
-       * @param {any} value
-       * @return {Promise<void>}
-       */
-      setDeep: function (doc, path, value) {
-        if (!doc) {
-          throw new TypeError('No ShareJS document provided');
         }
-        if (!path) {
-          throw new TypeError('No path provided');
-        }
+        // If value at path doesn't match passed in value type replace it
+        if (_.isString(currentVal)  && _.isString(value) ) {_.defer(callback); return;}
+        if (_.isNumber(currentVal)  && _.isNumber(value) ) {_.defer(callback); return;}
+        if (_.isBoolean(currentVal) && _.isBoolean(value)) {_.defer(callback); return;}
+        if (_.isNull(currentVal)    && _.isNull(value)   ) {_.defer(callback); return;}
+        if (_.isObject(currentVal)  && _.isObject(value) &&
+            _.isArray(currentVal)  === _.isArray(value)) {_.defer(callback); return;}
 
-        var current = ShareJS.peek(doc, path);
-        if (value === current) {
-          return $q.resolve();
-        }
+        doc.set(value, callback);
+      });
+    },
 
-        if (current === undefined) {
-          return ShareJS.mkpathAndSetValue(doc, path, value);
-        } else {
-          return $q.denodeify(function (cb) {
-            doc.setAt(path, value, cb);
-          });
-        }
-      },
-
-      /**
-       * @ngdoc method
-       * @name ShareJS#peek
-       * @description
-       * Read the value at the given path in the doc
-       * @param {OtDoc} doc
-       * @param {Array<string>} path
-       * @return {any}
-       */
-      peek: function(doc, path) {
-        try {
-          return doc.getAt(path);
-        } catch(e) {
-          return void(0);
-        }
+    /**
+     * @ngdoc method
+     * @name ShareJS#setDeep
+     * @description
+     * Sets the value at the given path in the document.
+     *
+     * Works like `doc.setAt(path, value)` but also creates missing
+     * intermediate containers with `mkPathAndSetValue`.
+     *
+     * The function does not cause an update if the current value in
+     * the document equals the new value.
+     *
+     * @todo We should remove the public `mkPathAndSetValue` in favor
+     * of this.
+     *
+     * @param {OtDoc} doc
+     * @param {Array<string>} path
+     * @param {any} value
+     * @return {Promise<void>}
+     */
+    setDeep: function (doc, path, value) {
+      if (!doc) {
+        throw new TypeError('No ShareJS document provided');
       }
-    };
+      if (!path) {
+        throw new TypeError('No path provided');
+      }
 
-    return ShareJS;
+      var current = ShareJS.peek(doc, path);
+      if (value === current) {
+        return $q.resolve();
+      }
 
-  }];
+      if (current === undefined) {
+        return ShareJS.mkpathAndSetValue(doc, path, value);
+      } else {
+        return $q.denodeify(function (cb) {
+          doc.setAt(path, value, cb);
+        });
+      }
+    },
+
+    /**
+     * @ngdoc method
+     * @name ShareJS#peek
+     * @description
+     * Read the value at the given path in the doc
+     * @param {OtDoc} doc
+     * @param {Array<string>} path
+     * @return {any}
+     */
+    peek: function(doc, path) {
+      try {
+        return doc.getAt(path);
+      } catch(e) {
+        return void(0);
+      }
+    }
+  };
+
+  return ShareJS;
 }])
 
 .factory('ShareJS/Client', ['$injector', function ($injector) {
