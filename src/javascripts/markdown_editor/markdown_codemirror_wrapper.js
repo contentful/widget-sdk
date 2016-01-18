@@ -18,6 +18,8 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
     var cm = CodeMirror.fromTextArea(textarea, {
       mode: 'gfm',
       lineNumbers: false,
+      // Will be set to 200 after setting the initial value. Prevents
+      // undoing the initial population.
       undoDepth: 0,
       matchBrackets: true,
       lineWrapping: true,

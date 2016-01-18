@@ -83,6 +83,16 @@ describe('Markdown editor', function () {
       expect(wrapper.getValue()).toBe('test content');
     });
 
+    it('history actions: undo/redo with initial empty string', function () {
+      editor.setContent('');
+      wrapper.insertAtCursor('test');
+      expect(wrapper.getValue()).toBe('test');
+      actions.undo();
+      expect(wrapper.getValue()).toBe('');
+      actions.redo();
+      expect(wrapper.getValue()).toBe('test');
+    });
+
     describe('headers', function () {
       var headers = { h1: '#', h2: '##', h3: '###' };
 
