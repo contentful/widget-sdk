@@ -18,10 +18,9 @@ angular.module('contentful')
   var $q            = $injector.get('$q');
 
   var url = '//'+environment.settings.ot_host+'/channel';
+  var client;
 
   var ShareJS = {
-    client : null,
-
     /**
      * @ngdoc method
      * @name ShareJS#connect
@@ -29,7 +28,10 @@ angular.module('contentful')
      * Connects the ShareJS client
      */
     connect: function (token) {
-      ShareJS.client = ShareJS.client || new ShareJSClient(url, token);
+      if (client) {
+        throw new Error('Attempted to connect twice to ShareJS');
+      }
+      client = new ShareJSClient(url, token);
     },
 
     /**
@@ -42,8 +44,7 @@ angular.module('contentful')
      * @returns {Promise<void>}
      */
     open: function (entity) {
-      ShareJS.connect();
-      return ShareJS.client.open(entity);
+      return client.open(entity);
     },
 
     /**
@@ -52,8 +53,7 @@ angular.module('contentful')
      * @return {boolean}
      */
     isConnected: function () {
-      var client = ShareJS.client;
-      return client && client.isConnected();
+      return client.isConnected();
     },
 
     /**
@@ -62,10 +62,7 @@ angular.module('contentful')
      * @return {boolean}
      */
     connectionFailed: function () {
-      var client = ShareJS.client;
-      return client ?
-               client.connectionFailed() :
-               true;
+      return client.connectionFailed();
     },
 
 
