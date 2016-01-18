@@ -26,8 +26,14 @@ header.workbench-header
           | &bullet;&bullet;&bullet;
         .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="User Actions")
           ul.context-menu__items
-            li(role="menuitem" ng-click="openRoleChangeDialog(user)") Change role
-            li(role="menuitem" ng-click="openRemovalConfirmationDialog(user)") Remove from this space
+            li(role="menuitem"
+              ng-click="openRoleChangeDialog(user)"
+              data-ui-trigger="user-change-role")
+              | Change role
+            li(role="menuitem"
+              ng-click="openRemovalConfirmationDialog(user)"
+              data-ui-trigger="user-remove-from-space")
+              | Remove from this space
 
   .workbench-main__entity-sidebar
     .entity-sidebar

@@ -87,6 +87,7 @@ angular.module('cf.ui')
   function closeMenu ($menu) {
     if ($menu) {
       $menu.parents(MENU_SELECTOR).andSelf()
+      .attr('data-menu-state', 'closed')
       .data('menuOpen', false)
       .hide();
     }
@@ -95,6 +96,7 @@ angular.module('cf.ui')
   function openMenu ($menu) {
     if ($menu) {
       $menu.parents(MENU_SELECTOR).andSelf()
+      .attr('data-menu-state', 'opened')
       .data('menuOpen', true)
       .show();
       repositionMenu($menu);
