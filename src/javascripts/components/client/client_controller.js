@@ -23,8 +23,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var TheStore           = $injector.get('TheStore');
   var OrganizationList   = $injector.get('OrganizationList');
 
-  $controller('TrialWatchController', {$scope: $scope});
-
   $scope.featureController = $controller('FeatureController', {$scope: $scope});
   $scope.spaceContext = spaceContext;
 

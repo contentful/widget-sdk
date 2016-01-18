@@ -1,38 +1,46 @@
 'use strict';
 
-angular.module('contentful')
+angular.module('contentful').factory('TrialWatcher', ['$injector', function ($injector) {
 
-.controller('TrialWatchController', ['$scope', '$injector', function TrialWatchController($scope, $injector) {
   var $rootScope     = $injector.get('$rootScope');
   var intercom       = $injector.get('intercom');
   var analytics      = $injector.get('analytics');
   var TheAccountView = $injector.get('TheAccountView');
-  var moment         = $injector.get('moment');
   var modalDialog    = $injector.get('modalDialog');
+  var spaceContext   = $injector.get('spaceContext');
+  var authentication = $injector.get('authentication');
+  var TrialInfo      = $injector.get('TrialInfo');
 
-  $scope.$watchGroup([
-    // TODO: Get rid of necessity to watch the user.
-    // Watching the user is required for initial load, when spaceContenxt.space is
-    // initialized but $scope.user might not be set yet.
-    // Watching only .sys.id prevents from calls on periodic token updates where
-    // the whole user object is being replaced.
-    'user.sys.id',
-    'spaceContext.space'
-  ], trialWatcher);
+  var UNKNOWN_USER_ID = {};
+  var previousUserId  = UNKNOWN_USER_ID;
+  var paywallIsOpen   = false;
 
-  function trialWatcher () {
-    var user = $scope.user;
-    var space = $scope.spaceContext.space;
+  return { init: init };
 
-    if (!space || !user) {
+  function init() {
+    $rootScope.$watchCollection(function () {
+      return {
+        space: spaceContext.space,
+        user: dotty.get(authentication, 'tokenLookup.sys.createdBy')
+      };
+    }, trialWatcher);
+  }
+
+  function trialWatcher (args) {
+    var space = args.space;
+    var user = args.user;
+    var userId = dotty.get(args.user, 'sys.id');
+
+    if (!space || !user || userId === previousUserId) {
       return;
     }
 
+    previousUserId = userId;
     var organization = space.data.organization;
     var userOwnsOrganization = userIsOrganizationOwner(user, organization);
 
     if (organizationHasTrialSubscription(organization)) {
-      var trial = new Trial(organization);
+      var trial = TrialInfo.create(organization);
       if (trial.hasEnded()) {
         notify(trialHasEndedMsg(organization, userOwnsOrganization));
         showPaywall(user, trial);
@@ -57,7 +65,6 @@ angular.module('contentful')
     }
   }
 
-  var paywallIsOpen = false;
   function showPaywall (user, trial) {
     if (paywallIsOpen) {
       return;
@@ -66,8 +73,8 @@ angular.module('contentful')
     modalDialog.open({
       template: 'paywall_dialog',
       scopeData: {
-        offerToSetUpPayment: userIsOrganizationOwner(user, trial.organization),
-        setUpPayment: newUpgradeAction(trial.organization),
+        offerToSetUpPayment: userIsOrganizationOwner(user, trial.getOrganization()),
+        setUpPayment: newUpgradeAction(trial.getOrganization()),
         openIntercom: intercom.open
       }
     }).promise.finally(function () {
@@ -146,16 +153,26 @@ angular.module('contentful')
     return !!organizationMembership &&
       organizationMembership.role === 'owner';
   }
+}]);
 
-  function Trial (organization) {
-    this.organization = organization;
-    this._endMoment = moment(this.organization.trialPeriodEndsAt);
+angular.module('contentful').factory('TrialInfo', ['$injector', function ($injector) {
+  var moment = $injector.get('moment');
+
+  return { create: create };
+
+  function create (organization) {
+    var endMoment = moment(organization.trialPeriodEndsAt);
+
+    return {
+      getHoursLeft: function () {
+        return endMoment.diff(moment(), 'hours');
+      },
+      hasEnded: function () {
+        return !endMoment.isAfter(moment());
+      },
+      getOrganization: function () {
+        return organization;
+      }
+    };
   }
-  Trial.prototype.getHoursLeft = function () {
-    return this._endMoment.diff(moment(), 'hours');
-  };
-  Trial.prototype.hasEnded = function () {
-    return !this._endMoment.isAfter(moment());
-  };
-
 }]);
