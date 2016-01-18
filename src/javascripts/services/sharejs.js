@@ -65,7 +65,8 @@ angular.module('contentful')
        * @return {boolean}
        */
       isConnected: function () {
-        return dotty.get(ShareJS, 'client.connection.state') === 'ok';
+        var client = ShareJS.client;
+        return client && client.isConnected();
       },
 
       /**
@@ -74,8 +75,10 @@ angular.module('contentful')
        * @return {boolean}
        */
       connectionFailed: function () {
-        var state = dotty.get(ShareJS, 'client.connection.state');
-        return !(state === 'connecting' || state === 'handshaking' || state === 'ok');
+        var client = ShareJS.client;
+        return client ?
+                 client.connectionFailed() :
+                 true;
       },
 
 
@@ -216,6 +219,9 @@ angular.module('contentful')
   var $window = $injector.get('$window');
   var $q = $injector.get('$q');
 
+  // List of `connection.state` values that indicate no failure
+  var VALID_STATES = ['connecting', 'handshaking', 'ok'];
+
   /**
    * Class that wraps the native ShareJS Client
    *
@@ -223,10 +229,8 @@ angular.module('contentful')
    * for opening Contentful entities.
    */
   function Client (url, token) {
-    this.token = token;
-    this.url = url;
-    this.connection = new $window.sharejs.Connection(this.url, this.token);
-    this.connection.socket.send = function (message) {
+    this._connection = new $window.sharejs.Connection(url, token);
+    this._connection.socket.send = function (message) {
       try {
         return this.sendMap({JSON: angular.toJson(message)});
       } catch (error) {
@@ -236,8 +240,8 @@ angular.module('contentful')
 
     // Any message on the connection may change our model so we need
     // to apply those changes.
-    var connectionEmit = this.connection.emit;
-    this.connection.emit = function () {
+    var connectionEmit = this._connection.emit;
+    this._connection.emit = function () {
       $rootScope.$applyAsync();
       connectionEmit.apply(this, arguments);
     };
@@ -245,10 +249,19 @@ angular.module('contentful')
 
   Client.prototype.open = function open (entry) {
     var key = entityMetadataToKey(entry.data.sys);
-    var connection = this.connection;
+    var connection = this._connection;
     return $q.denodeify(function (cb) {
       connection.open(key, 'json', cb);
     });
+  };
+
+  Client.prototype.isConnected = function () {
+    return this._connection.state === 'ok';
+  };
+
+  Client.prototype.connectionFailed = function () {
+    var state = this._connection.state;
+    return !_.contains(VALID_STATES, state);
   };
 
   function entityMetadataToKey (sys) {
