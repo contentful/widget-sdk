@@ -73,18 +73,18 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
     return api;
 
     function setContent(value) {
-      // if value is unchanged, break the loop
-      if (editor.getValue() === value) { return; }
+      if (editor.getValue() !== value) {
+        // set value, but save cursor position first
+        // position will be restored, but w/o focus (third arg)
+        var line = editor.getCurrentLineNumber();
+        var ch = editor.getCurrentCharacter();
+        editor.setValue(value);
+        editor.restoreCursor(ch, line, true);
+      }
 
-      // set value, but save cursor position first
-      // position will be restored, but w/o focus (third arg)
-      var line = editor.getCurrentLineNumber();
-      var ch = editor.getCurrentCharacter();
-      editor.setValue(value);
-      editor.restoreCursor(ch, line, true);
-
-      // enable undo/redo, by default "undoDepth" is set to 0
-      // we set it here so we cannot undo setting initial value (first "setValue" call)
+      // enable undo/redo, by default "undoDepth" is set to 0 we set it
+      // here so we cannot undo setting initial value (first "setValue"
+      // call)
       editor.opt('undoDepth', 200);
     }
 
