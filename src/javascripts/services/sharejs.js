@@ -52,13 +52,11 @@ angular.module('contentful')
        * Open a ShareJS document for an entity
        *
        * @param {Entity} entity
-       * @param {function()} callback
+       * @returns {Promise<void>}
        */
       open: function (entity) {
         ShareJS.connect();
-        return $q.denodeify(function (cb) {
-          return ShareJS.client.open(entity, cb);
-        });
+        return ShareJS.client.open(entity);
       },
 
       /**
@@ -216,19 +214,13 @@ angular.module('contentful')
 .factory('ShareJS/Client', ['$injector', function ($injector) {
   var $rootScope = $injector.get('$rootScope');
   var $window = $injector.get('$window');
+  var $q = $injector.get('$q');
 
   /**
    * Class that wraps the native ShareJS Client
    *
    * Adds state monitoring and event broadcasting as well as support
    * for opening Contentful entities.
-   *
-   * VERY IMPORTANT:
-   *
-   * What this _doesn't_ do is integration of ShareJS into Angular.
-   * In particular:
-   * - Callbacks are not wrapped and exposed as promises
-   * - Callback execution is not wrapped in $apply
    */
   function Client (url, token) {
     this.token = token;
@@ -251,21 +243,12 @@ angular.module('contentful')
     };
   }
 
-  Client.prototype.open = function open (entry, callback) {
+  Client.prototype.open = function open (entry) {
     var key = entityMetadataToKey(entry.data.sys);
-    var synchronous = true;
-    this.connection.open(key, 'json', function(err, doc){
-      if (!err) {
-        if (synchronous) {
-          _.defer(callback, null, doc);
-        } else {
-          callback(null, doc);
-        }
-      } else {
-        _.defer(callback, err);
-      }
+    var connection = this.connection;
+    return $q.denodeify(function (cb) {
+      connection.open(key, 'json', cb);
     });
-    synchronous = false;
   };
 
   function entityMetadataToKey (sys) {
