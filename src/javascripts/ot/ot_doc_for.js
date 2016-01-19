@@ -240,6 +240,16 @@ angular.module('contentful')
     // Sanity check to make sure there's actually something in the snapshot
     if (dotty.get(otDoc, 'doc.snapshot.sys.id')) {
       otUpdateEntityData();
+    } else {
+      // TODO I think this will never be called. If so, we can remove
+      // this whole function in the future and replace it by a call to
+      // 'otUpdateEntityData()'.
+      logger.logError('OT document does not provide id', {
+        data: {
+          entitySys: dotty.get(entity, 'data.sys'),
+          docSnapshot: dotty.get(otDoc, 'doc.snapshot')
+        }
+      });
     }
   }
 
@@ -292,6 +302,10 @@ angular.module('contentful')
   }
 
   function broadcastOtChange (op) {
+    // The 'change' event on a document may be called synchronously
+    // from inside the Angular loop. For instance when a directive
+    // changes the document. We therefore must use `$applyAsync()`
+    // instead of `$apply()`.
     $scope.$applyAsync(function () {
       $scope.$broadcast('otChange', $scope.otDoc.doc, op);
     });
