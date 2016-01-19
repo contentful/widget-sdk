@@ -10,18 +10,20 @@ angular.module('contentful').directive('cfRoleEditor', function () {
 
 angular.module('contentful').controller('RoleEditorController', ['$scope', '$injector', function ($scope, $injector) {
 
-  var $state           = $injector.get('$state');
-  var $q               = $injector.get('$q');
-  var Command          = $injector.get('command');
-  var space            = $injector.get('spaceContext').space;
-  var roleRepo         = $injector.get('RoleRepository').getInstance(space);
-  var PolicyBuilder    = $injector.get('PolicyBuilder');
-  var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
-  var notification     = $injector.get('notification');
-  var analytics        = $injector.get('analytics');
-  var logger           = $injector.get('logger');
-  var accessChecker    = $injector.get('accessChecker');
-  var TrialWatcher     = $injector.get('TrialWatcher');
+  var $state            = $injector.get('$state');
+  var $q                = $injector.get('$q');
+  var Command           = $injector.get('command');
+  var space             = $injector.get('spaceContext').space;
+  var roleRepo          = $injector.get('RoleRepository').getInstance(space);
+  var listHandler       = $injector.get('UserListHandler').create();
+  var createRoleRemover = $injector.get('createRoleRemover');
+  var PolicyBuilder     = $injector.get('PolicyBuilder');
+  var leaveConfirmator  = $injector.get('navigation/confirmLeaveEditor');
+  var notification      = $injector.get('notification');
+  var analytics         = $injector.get('analytics');
+  var logger            = $injector.get('logger');
+  var accessChecker     = $injector.get('accessChecker');
+  var TrialWatcher      = $injector.get('TrialWatcher');
 
   // 1. prepare "touch" counter (first touch for role->internal, next for dirty state)
   $scope.context.touched = $scope.context.isNew ? 0 : -1;
@@ -56,18 +58,24 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
   });
 
   $scope.duplicateRole  = duplicateRole;
-  $scope.removeRole     = removeRole;
   $scope.canModifyRoles = canModifyRoles;
   $scope.resetPolicies  = resetPolicies;
+
+  // setup "Remove" button:
+  listHandler.reset().then(function () {
+    $scope.removeRole = function () {
+      createRoleRemover(listHandler, function () {
+        $scope.context.touched = 0;
+        $scope.context.dirty = false;
+        $state.go('spaces.detail.settings.roles.list');
+      }).call(null, $scope.role);
+    };
+  });
 
   function duplicateRole() {
     if (dotty.get($scope, 'role.sys.id')) {
       $state.go('spaces.detail.settings.roles.new', {baseRoleId: $scope.role.sys.id});
     }
-  }
-
-  function removeRole() {
-    window.alert('Not implemented.');
   }
 
   function canModifyRoles() {

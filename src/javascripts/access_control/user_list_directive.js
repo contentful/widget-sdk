@@ -35,11 +35,9 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
 
   var ReloadNotification  = $injector.get('ReloadNotification');
   var Command             = $injector.get('command');
-  var $q                  = $injector.get('$q');
   var $rootScope          = $injector.get('$rootScope');
   var modalDialog         = $injector.get('modalDialog');
   var space               = $injector.get('spaceContext').space;
-  var roleRepo            = $injector.get('RoleRepository').getInstance(space);
   var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(space);
   var listHandler         = $injector.get('UserListHandler').create();
   var stringUtils         = $injector.get('stringUtils');
@@ -240,12 +238,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
    * Reset the list with a new data
    */
   function reload() {
-    return $q.all({
-      memberships: spaceMembershipRepo.getAll(),
-      roles: roleRepo.getAll(),
-      users: space.getUsers()
-    }).then(function (data) {
-      listHandler.reset(data);
+    return listHandler.reset().then(function () {
       $scope.count = listHandler.getUserCount();
       $scope.by = listHandler.getGroupedUsers();
       $scope.context.ready = true;

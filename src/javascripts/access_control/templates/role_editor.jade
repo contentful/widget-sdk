@@ -81,7 +81,7 @@ header.workbench-header
             cf-icon.btn-action-select__icon(name="dd-arrow-down")
           .context-menu.context-menu--arrow-right(cf-context-menu="bottom-right")
             a(role="menuitem" href="" ng-click="duplicateRole()") Duplicate
-            a(role="menuitem" href="" ng-click="removeRole()") Delete permanently
+            a(role="menuitem" href="" ng-click="removeRole()" ng-if="removeRole") Delete permanently
       h2.entity-sidebar__heading
         | Need more complex roles?
       p

@@ -1,6 +1,11 @@
 'use strict';
 
-angular.module('contentful').factory('UserListHandler', [function () {
+angular.module('contentful').factory('UserListHandler', ['$injector', function ($injector) {
+
+  var $q                  = $injector.get('$q');
+  var space               = $injector.get('spaceContext').space;
+  var roleRepo            = $injector.get('RoleRepository').getInstance(space);
+  var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(space);
 
   var ADMIN_ROLE_ID          = '__cf_builtin_admin';
   var ADMIN_ROLE_NAME        = 'Administrator';
@@ -10,8 +15,7 @@ angular.module('contentful').factory('UserListHandler', [function () {
 
   return { create: create };
 
-  function create () {
-
+  function create() {
     var membershipCounts = {};
     var users = [];
     var adminMap = {};
@@ -32,7 +36,15 @@ angular.module('contentful').factory('UserListHandler', [function () {
       getAdminRoleId: _.constant(ADMIN_ROLE_ID)
     };
 
-    function reset(data) {
+    function reset() {
+      return $q.all({
+        memberships: spaceMembershipRepo.getAll(),
+        roles: roleRepo.getAll(),
+        users: space.getUsers()
+      }).then(processData);
+    }
+
+    function processData(data) {
       adminMap = {};
       membershipMap = {};
       roleNameMap = {};
@@ -55,6 +67,8 @@ angular.module('contentful').factory('UserListHandler', [function () {
 
       membershipCounts = countMemberships(data.memberships || []);
       users = prepareUsers(data.users || []);
+
+      return data;
     }
 
     function countMemberships(memberships) {
