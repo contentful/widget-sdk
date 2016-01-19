@@ -182,19 +182,18 @@ angular.module('contentful')
   }
 
   function setupClosedEventHandling(doc) {
-    doc.on('closed', function () { handleDocClosedEvent(this); });
-  }
-
-  function handleDocClosedEvent(context) {
-    defer(function () {
-      context._listeners.length = 0;
-      _.each(context._events, function (listeners) {
-        listeners.length = 0;
+    // Remove all event listeners when the document is closed.
+    // TODO I’m not sure this accomplishes what we want. In any case
+    // this should be done through the doc’s public API.
+    doc.on('closed', function () {
+      defer(function () {
+        doc._listeners.length = 0;
+        _.each(doc._events, function (listeners) {
+          listeners.length = 0;
+        });
       });
-      context = null;
     });
   }
-
 
   function resetOtDoc() {
     if (otDoc.doc) {
