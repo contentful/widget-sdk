@@ -22,7 +22,11 @@ header.workbench-header
           strong.user-list__name {{ user.name }}
           small(ng-if="!user.confirmed") This account is not confirmed
           .user-list__roles {{ user.roleNames }}
-        button.user-list__actions.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
+        button.user-list__actions.user-list__actions--disabled.cfnext-btn-inline(ng-if="!canModifyUsers()")
+          | &bullet;&bullet;&bullet;
+        button.user-list__actions.cfnext-btn-inline(type="button"
+          aria-label="Actions" cf-context-menu-trigger
+          ng-if="canModifyUsers()")
           | &bullet;&bullet;&bullet;
         .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="User Actions")
           ul.context-menu__items
@@ -45,5 +49,5 @@ header.workbench-header
       p <a href="" ng-click="goToSubscription()">Increase your plan quotas here</a>.
       button.cfnext-btn-primary-action(
         ng-click="openInvitationDialog()"
-        ng-disabled="userQuota.used >= userQuota.limit && userQuota.limit > 0")
+        ng-disabled="!canModifyUsers() || !canInviteUsers()")
         | Invite users to this space

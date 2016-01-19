@@ -13,9 +13,13 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
 
   var UNKNOWN_USER_ID = {};
   var previousUserId  = UNKNOWN_USER_ID;
+  var hasTrialEnded   = false;
   var paywallIsOpen   = false;
 
-  return { init: init };
+  return {
+    init:     init,
+    hasEnded: function () { return hasTrialEnded; }
+  };
 
   function init() {
     $rootScope.$watchCollection(function () {
@@ -36,12 +40,15 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
     }
 
     previousUserId = userId;
+    hasTrialEnded  = false;
+
     var organization = space.data.organization;
     var userOwnsOrganization = userIsOrganizationOwner(user, organization);
 
     if (organizationHasTrialSubscription(organization)) {
       var trial = TrialInfo.create(organization);
       if (trial.hasEnded()) {
+        hasTrialEnded = true;
         notify(trialHasEndedMsg(organization, userOwnsOrganization));
         showPaywall(user, trial);
       } else {

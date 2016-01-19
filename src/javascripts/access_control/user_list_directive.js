@@ -47,6 +47,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   var accessChecker       = $injector.get('accessChecker');
   var TheAccountView      = $injector.get('TheAccountView');
   var authentication      = $injector.get('authentication');
+  var TrialWatcher        = $injector.get('TrialWatcher');
 
   var MODAL_OPTS_BASE = {
     noNewScope: true,
@@ -66,8 +67,19 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   $scope.openRoleChangeDialog          = openRoleChangeDialog;
   $scope.openInvitationDialog          = openInvitationDialog;
   $scope.goToSubscription              = TheAccountView.goToSubscription;
+  $scope.canModifyUsers                = canModifyUsers;
+  $scope.canInviteUsers                = canInviteUsers;
 
   reload().catch(ReloadNotification.basicErrorHandler);
+
+  function canModifyUsers() {
+    return !TrialWatcher.hasEnded();
+  }
+
+  function canInviteUsers() {
+    var q = $scope.userQuota;
+    return !(q.used >= q.limit && q.limit > 0);
+  }
 
   /**
    * Remove an user from a space

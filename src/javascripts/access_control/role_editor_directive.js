@@ -21,6 +21,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
   var analytics        = $injector.get('analytics');
   var logger           = $injector.get('logger');
   var accessChecker    = $injector.get('accessChecker');
+  var TrialWatcher     = $injector.get('TrialWatcher');
 
   // 1. prepare "touch" counter (first touch for role->internal, next for dirty state)
   $scope.context.touched = $scope.context.isNew ? 0 : -1;
@@ -50,18 +51,24 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
     $scope.context.title = internal.name || 'Untitled';
   }, true);
 
-  $scope.canModifyRoles = accessChecker.canModifyRoles;
   $scope.save = Command.create(save, {
     disabled: function () { return !$scope.context.dirty; }
   });
 
-  $scope.resetPolicies = function () {
+  $scope.canModifyRoles = canModifyRoles;
+  $scope.resetPolicies  = resetPolicies;
+
+  function canModifyRoles() {
+    return accessChecker.canModifyRoles() && !TrialWatcher.hasEnded();
+  }
+
+  function resetPolicies() {
     _.extend($scope.internal, {
       entries: {allowed: [], denied: []},
       assets: {allowed: [], denied: []},
       uiCompatible: true
     });
-  };
+  }
 
   function save() {
     if (!dotty.get($scope, 'external.policies', null)) {
