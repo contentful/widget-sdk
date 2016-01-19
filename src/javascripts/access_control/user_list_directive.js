@@ -35,13 +35,13 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
 
   var ReloadNotification  = $injector.get('ReloadNotification');
   var Command             = $injector.get('command');
-  var space               = $injector.get('spaceContext').space;
   var $q                  = $injector.get('$q');
   var $rootScope          = $injector.get('$rootScope');
   var modalDialog         = $injector.get('modalDialog');
+  var space               = $injector.get('spaceContext').space;
   var roleRepo            = $injector.get('RoleRepository').getInstance(space);
   var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(space);
-  var listHandler         = $injector.get('UserListHandler');
+  var listHandler         = $injector.get('UserListHandler').create();
   var stringUtils         = $injector.get('stringUtils');
   var notification        = $injector.get('notification');
   var accessChecker       = $injector.get('accessChecker');
@@ -66,9 +66,9 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   $scope.openRemovalConfirmationDialog = openRemovalConfirmationDialog;
   $scope.openRoleChangeDialog          = openRoleChangeDialog;
   $scope.openInvitationDialog          = openInvitationDialog;
-  $scope.goToSubscription              = TheAccountView.goToSubscription;
   $scope.canModifyUsers                = canModifyUsers;
   $scope.canInviteUsers                = canInviteUsers;
+  $scope.goToSubscription              = TheAccountView.goToSubscription;
 
   reload().catch(ReloadNotification.basicErrorHandler);
 
@@ -245,7 +245,8 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
       roles: roleRepo.getAll(),
       users: space.getUsers()
     }).then(function (data) {
-      $scope.count = listHandler.reset(data);
+      listHandler.reset(data);
+      $scope.count = listHandler.getUserCount();
       $scope.by = listHandler.getGroupedUsers();
       $scope.context.ready = true;
       $scope.jumpToRole();
