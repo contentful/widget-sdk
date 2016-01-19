@@ -274,14 +274,12 @@ angular.module('contentful')
     doc.on('remoteop', remoteOpListener);
     doc.on('change', broadcastOtChange);
     doc.on('acknowledge', updateHandler);
-    doc.on('remoteop', updateHandler);
   }
 
   function removeListeners (doc) {
     doc.removeListener('remoteop', remoteOpListener);
     doc.removeListener('change', broadcastOtChange);
     doc.removeListener('acknowledge', updateHandler);
-    doc.removeListener('remoteop', updateHandler);
   }
 
   function remoteOpListener(ops) {
