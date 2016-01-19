@@ -73,9 +73,15 @@ header.workbench-header
     .entity-sidebar(ng-if="!canModifyRoles()")
       +custom-roles-plan-info
     .entity-sidebar(ng-if="canModifyRoles()")
-      p
-        button.cfnext-btn-primary-action(type="submit" ui-command="save")
-          | Save changes
+      .entity-sidebar__state-select
+        .btn-action-select
+          button.btn-action-select__action(type="button" ui-command="save")
+            | Save changes
+          button.btn-action-select__selector(cf-context-menu-trigger ng-if="role.sys.id && canModifyRoles()")
+            cf-icon.btn-action-select__icon(name="dd-arrow-down")
+          .context-menu.context-menu--arrow-right(cf-context-menu="bottom-right")
+            a(role="menuitem" href="" ng-click="duplicateRole()") Duplicate
+            a(role="menuitem" href="" ng-click="removeRole()") Delete permanently
       h2.entity-sidebar__heading
         | Need more complex roles?
       p

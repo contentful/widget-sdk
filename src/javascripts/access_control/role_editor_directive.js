@@ -55,8 +55,20 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
     disabled: function () { return !$scope.context.dirty; }
   });
 
+  $scope.duplicateRole  = duplicateRole;
+  $scope.removeRole     = removeRole;
   $scope.canModifyRoles = canModifyRoles;
   $scope.resetPolicies  = resetPolicies;
+
+  function duplicateRole() {
+    if (dotty.get($scope, 'role.sys.id')) {
+      $state.go('spaces.detail.settings.roles.new', {baseRoleId: $scope.role.sys.id});
+    }
+  }
+
+  function removeRole() {
+    window.alert('Not implemented.');
+  }
 
   function canModifyRoles() {
     return accessChecker.canModifyRoles() && !TrialWatcher.hasEnded();

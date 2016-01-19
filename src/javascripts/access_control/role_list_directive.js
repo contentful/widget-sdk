@@ -11,6 +11,7 @@ angular.module('contentful').directive('cfRoleList', function () {
 angular.module('contentful').controller('RoleListController', ['$scope', '$injector', function ($scope, $injector) {
 
   var $q                  = $injector.get('$q');
+  var $state              = $injector.get('$state');
   var ReloadNotification  = $injector.get('ReloadNotification');
   var space               = $injector.get('spaceContext').space;
   var roleRepo            = $injector.get('RoleRepository').getInstance(space);
@@ -20,13 +21,17 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
   var TrialWatcher        = $injector.get('TrialWatcher');
 
   $scope.removeRole             = RoleActions.removeRole;
-  $scope.duplicateRole          = RoleActions.duplicateRole;
   $scope.jumpToRoleMembers      = RoleActions.jumpToRoleMembers;
   $scope.jumpToAdminRoleMembers = RoleActions.jumpToAdminRoleMembers;
   $scope.canModifyRoles         = canModifyRoles;
+  $scope.duplicateRole          = duplicateRole;
 
   function canModifyRoles() {
     return accessChecker.canModifyRoles() && !TrialWatcher.hasEnded();
+  }
+
+  function duplicateRole(role) {
+    $state.go('spaces.detail.settings.roles.new', {baseRoleId: role.sys.id});
   }
 
   reload().catch(ReloadNotification.basicErrorHandler);

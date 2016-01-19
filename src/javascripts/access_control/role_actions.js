@@ -3,7 +3,6 @@
 angular.module('contentful').factory('RoleActions', ['$injector', function ($injector) {
 
   var ReloadNotification = $injector.get('ReloadNotification');
-  var $state             = $injector.get('$state');
   var $q                 = $injector.get('$q');
   var $rootScope         = $injector.get('$rootScope');
   var modalDialog        = $injector.get('modalDialog');
@@ -20,7 +19,6 @@ angular.module('contentful').factory('RoleActions', ['$injector', function ($inj
   return {
     reset: reset,
     removeRole: removeRole,
-    duplicateRole: duplicateRole,
     jumpToRoleMembers: jumpToRoleMembers,
     jumpToAdminRoleMembers: jumpToAdminRoleMembers
   };
@@ -90,10 +88,6 @@ angular.module('contentful').factory('RoleActions', ['$injector', function ($inj
 
   function getCountFor(role) {
     return membershipCounts[role.sys.id];
-  }
-
-  function duplicateRole(role) {
-    $state.go('spaces.detail.settings.roles.new', {baseRoleId: role.sys.id});
   }
 
   function jumpToAdminRoleMembers() {
