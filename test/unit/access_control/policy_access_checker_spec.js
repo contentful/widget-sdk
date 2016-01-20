@@ -151,23 +151,17 @@ describe('Policy Access Checker', function () {
     }
 
     function test(field, locale, expectation, fac) {
-      fac = fac || pac.getFieldChecker({
-        type: 'Entry',
-        contentTypeId: 'ctid',
-        baseCanUpdateFn: _.constant(false)
-      });
-
+      fac = fac || pac.getFieldChecker('ctid');
       expect(fac.isEditable(field, locale)).toBe(expectation);
       expect(fac.isDisabled(field, locale)).toBe(!expectation);
     }
 
-    it('isEditable returns true if baseCanUpdateFn returns true', function () {
-      var fac = pac.getFieldChecker({baseCanUpdateFn: _.constant(true)});
-      test({}, {}, true, fac);
+    it('isEditable returns false by default', function () {
+      test({}, {}, false);
     });
 
     it('isEditable returns false if predicate returns false', function () {
-      var fac = pac.getFieldChecker({baseCanUpdateFn: _.constant(true), predicate: _.constant(false)});
+      var fac = pac.getFieldChecker('ctid', _.constant(false));
       test({}, {}, false, fac);
       expect(fac.isEditable({}, {})).toBe(false);
     });
@@ -222,24 +216,24 @@ describe('Policy Access Checker', function () {
     });
 
     it('isEditable returns false if CT does not match', function () {
-      var fac = pac.getFieldChecker({baseCanUpdateFn: _.constant(false), type: 'Entry', contentTypeId: 'x'});
+      var fac = pac.getFieldChecker('x');
       pac.setRole(pathPolicy('fields.test.pl'));
       test({apiName: 'test'}, {internal_code: 'pl'}, false, fac);
     });
 
     it('isEditable returns false for asset field w/o allow policies', function () {
-      var fac = pac.getFieldChecker({baseCanUpdateFn: _.constant(false), type: 'Asset'});
+      var fac = pac.getFieldChecker(undefined);
       test({}, {}, false, fac);
     });
 
     it('isEditable returns false for asset with policy allowing editing other locale', function () {
-      var fac = pac.getFieldChecker({baseCanUpdateFn: _.constant(false), type: 'Asset'});
+      var fac = pac.getFieldChecker(undefined);
       pac.setRole(assetPathPolicy('fields.%.en'));
       test({}, {internal_code: 'pl'}, false, fac);
     });
 
     it('isEditable returns true for asset with allowing policy', function () {
-      var fac = pac.getFieldChecker({baseCanUpdateFn: _.constant(false), type: 'Asset'});
+      var fac = pac.getFieldChecker(undefined);
       pac.setRole(assetPathPolicy('fields.%.en'));
       test({}, {internal_code: 'en'}, true, fac);
     });

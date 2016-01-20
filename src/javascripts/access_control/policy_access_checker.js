@@ -46,8 +46,8 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     });
   }
 
-  function getFieldChecker(opts) {
-    opts.predicate = opts.predicate || _.constant(true);
+  function getFieldChecker(contentTypeId, predicate) {
+    predicate = predicate || _.constant(true);
 
     return {
       isEditable: function (field, locale) { return  check(field, locale); },
@@ -55,27 +55,21 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     };
 
     function check(field, locale) {
-      var extendedOpts = _.extend({}, opts, { field: field, locale: locale });
-      return opts.predicate() && isEditable(extendedOpts);
+      return predicate() && isEditable(contentTypeId, field, locale);
     }
   }
 
-  function isEditable(opts) {
-    var fieldId    = opts.field.apiName || opts.field.id;
-    var localeCode = opts.locale.internal_code;
-    var canUpdate  = opts.baseCanUpdateFn();
+  function isEditable(contentTypeId, field, locale) {
+    var fieldId    = field.apiName || field.id;
+    var localeCode = locale.internal_code;
 
-    var allowed = opts.type === 'Asset' ? policies.asset.allowed : getAllowed(opts.contentTypeId);
-    var denied  = opts.type === 'Asset' ? policies.asset.denied  : getDenied(opts.contentTypeId);
+    var allowed = contentTypeId ? getAllowed(contentTypeId) : policies.asset.allowed;
+    var denied  = contentTypeId ? getDenied(contentTypeId)  : policies.asset.denied;
 
-    allowed = pathUpdatePoliciesOnly(allowed);
-    denied  = pathUpdatePoliciesOnly(denied);
+    var hasAllowing = checkPolicyCollectionForPath(allowed, fieldId, localeCode);
+    var hasDenying  = checkPolicyCollectionForPath(denied,  fieldId, localeCode);
 
-    if (opts.type === 'Asset' && allowed.length > 0)         { canUpdate = false; }
-    if (checkPolicyCollection(allowed, fieldId, localeCode)) { canUpdate = true;  }
-    if (checkPolicyCollection(denied,  fieldId, localeCode)) { canUpdate = false; }
-
-    return canUpdate;
+    return hasAllowing && !hasDenying;
   }
 
   function canCreateEntriesOfType(contentTypeId) {
@@ -123,21 +117,11 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
   }
 
   function anyUserUpdatePoliciesOnly(c) {
-    return filterCollectionWith(c, function (p) { return p.scope !== 'user'; });
+    return _.filter(updatePoliciesOnly(c), function (p) { return p.scope !== 'user'; });
   }
 
   function currentUserUpdatePoliciesOnly(c) {
-    return filterCollectionWith(c, function (p) { return p.scope === 'user'; });
-  }
-
-  function pathUpdatePoliciesOnly(c) {
-    return filterCollectionWith(c, function (p) {
-      return !_.isNull(p.locale) && !_.isNull(p.field);
-    });
-  }
-
-  function filterCollectionWith(c, p) {
-    return _.filter(updatePoliciesOnly(c), p);
+    return _.filter(updatePoliciesOnly(c), function (p) { return p.scope === 'user'; });
   }
 
   function updatePoliciesOnly(collection) {
@@ -146,12 +130,26 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     });
   }
 
-  function checkPolicyCollection(collection, fieldId, localeCode) {
-    return _.some(collection, function (p) {
-      return (
+  function checkPolicyCollectionForPath(collection, fieldId, localeCode) {
+    return _.some(updatePoliciesOnly(collection), function (p) {
+      var noPath = (
+        _.isNull(p.field) &&
+        _.isNull(p.locale)
+      );
+      var fieldOnlyPathMatched = (
+        _.contains(['all', fieldId], p.field) &&
+        _.isNull(p.locale)
+      );
+      var localeOnlyPathMatched = (
+        _.isNull(p.field) &&
+        _.contains(['all', localeCode], p.locale)
+      );
+      var bothMatched = (
         _.contains(['all', fieldId], p.field) &&
         _.contains(['all', localeCode], p.locale)
       );
+
+      return noPath || fieldOnlyPathMatched || localeOnlyPathMatched || bothMatched;
     });
   }
 }]);

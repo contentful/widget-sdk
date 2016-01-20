@@ -152,32 +152,21 @@ describe('Access Checker', function () {
       expect(ac.getFieldChecker(entry)).toBe(fieldChecker);
     });
 
-    it('takes base update access checker function', function () {
-      canStub.withArgs('update', entry.data).returns('YES WE CAN');
-      ac.getFieldChecker(entry, _.noop);
-      var args = policyChecker.getFieldChecker.args[0][0];
-      expect(_.isFunction(args.baseCanUpdateFn)).toBe(true);
-      expect(args.baseCanUpdateFn()).toBe('YES WE CAN');
-    });
-
     it('returns instance for entry field', function () {
       ac.getFieldChecker(entry, _.noop);
       sinon.assert.calledOnce(policyChecker.getFieldChecker);
-      var args = policyChecker.getFieldChecker.args[0][0];
-      expect(args.type).toBe('Entry');
-      expect(args.predicate).toBe(_.noop);
-      expect(args.contentTypeId).toBe('ctid');
-
+      var args = policyChecker.getFieldChecker.args[0];
+      expect(args[0]).toBe('ctid');
+      expect(args[1]).toBe(_.noop);
     });
 
     it('returns instance for asset field', function () {
       var asset = {data: {sys: {type: 'Asset'}}};
       ac.getFieldChecker(asset, _.noop);
       sinon.assert.calledOnce(policyChecker.getFieldChecker);
-      var args = policyChecker.getFieldChecker.args[0][0];
-      expect(args.type).toBe('Asset');
-      expect(args.predicate).toBe(_.noop);
-      expect(args.contentTypeId).toBe(null);
+      var args = policyChecker.getFieldChecker.args[0];
+      expect(args[0]).toBeUndefined();
+      expect(args[1]).toBe(_.noop);
     });
   });
 

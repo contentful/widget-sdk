@@ -96,14 +96,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   }
 
   function getFieldChecker(entity, predicate) {
-    var type = dotty.get(entity, 'data.sys.type', 'Entry');
-
-    return policyChecker.getFieldChecker({
-      baseCanUpdateFn: canPerformActionOnEntity.bind(null, 'update', entity),
-      predicate: predicate,
-      type: type,
-      contentTypeId: type === 'Entry' ? getContentTypeIdFor(entity) : null
-    });
+    return policyChecker.getFieldChecker(getContentTypeIdFor(entity), predicate);
   }
 
   function createResponseAttributeGetter(attrName) {
