@@ -55,7 +55,6 @@ describe('ContentType Actions Controller', function () {
     scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
     scope.contentType = contentType;
     scope.broadcastFromSpace = sinon.stub();
-    scope.regulateDisplayField = sinon.stub();
 
     var $controller = this.$inject('$controller');
     controller = $controller('ContentTypeActionsController', {$scope: scope});

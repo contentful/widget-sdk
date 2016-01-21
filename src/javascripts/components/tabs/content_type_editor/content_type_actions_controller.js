@@ -23,6 +23,7 @@ function ContentTypeActionsController($scope, $injector) {
   var $state             = $injector.get('$state');
   var accessChecker      = $injector.get('accessChecker');
   var ReloadNotification = $injector.get('ReloadNotification');
+  var ctHelpers          = $injector.get('data/ContentTypes');
 
   /**
    * @ngdoc property
@@ -201,8 +202,8 @@ function ContentTypeActionsController($scope, $injector) {
     populateDefaultName($scope.contentType);
 
     trackSavedContentType($scope.contentType);
+    ctHelpers.assureDisplayField($scope.contentType.data);
 
-    $scope.regulateDisplayField($scope.contentType.data);
     if (!$scope.validate()) {
       var fieldNames = _.pluck($scope.contentType.data.fields, 'name');
       notify.invalid($scope.validationResult.errors, fieldNames);
