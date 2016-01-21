@@ -1,7 +1,5 @@
 'use strict';
 
-/* global afterAll */
-
 describe('Editing interfaces service', function () {
   var widgets, editingInterfaces, cfStub;
 
@@ -116,10 +114,6 @@ describe('Editing interfaces service', function () {
       };
       sinon.spy(widgets, 'defaultWidgetId');
       interf = editingInterfaces.defaultInterface(this.contentType);
-    });
-
-    afterAll(function () {
-      widgets.defaultWidgetId.restore();
     });
 
     it('creates EI through CT', function() {
