@@ -2,10 +2,10 @@
 
 angular.module('contentful').factory('UserListHandler', ['$injector', function ($injector) {
 
-  var $q                  = $injector.get('$q');
-  var space               = $injector.get('spaceContext').space;
-  var roleRepo            = $injector.get('RoleRepository').getInstance(space);
-  var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(space);
+  var $q                        = $injector.get('$q');
+  var spaceContext              = $injector.get('spaceContext');
+  var RoleRepository            = $injector.get('RoleRepository');
+  var SpaceMembershipRepository = $injector.get('SpaceMembershipRepository');
 
   var ADMIN_ROLE_ID          = '__cf_builtin_admin';
   var ADMIN_ROLE_NAME        = 'Administrator';
@@ -38,9 +38,9 @@ angular.module('contentful').factory('UserListHandler', ['$injector', function (
 
     function reset() {
       return $q.all({
-        memberships: spaceMembershipRepo.getAll(),
-        roles: roleRepo.getAll(),
-        users: space.getUsers()
+        memberships: SpaceMembershipRepository.getInstance(spaceContext.space).getAll(),
+        roles: RoleRepository.getInstance(spaceContext.space).getAll(),
+        users: spaceContext.space.getUsers()
       }).then(processData);
     }
 
