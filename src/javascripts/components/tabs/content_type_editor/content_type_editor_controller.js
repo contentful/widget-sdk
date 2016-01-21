@@ -38,7 +38,7 @@ function ContentTypeEditorController($scope, $injector) {
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.runSave);
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
-  $scope.regulateDisplayField = regulateDisplayField;
+  $scope.regulateDisplayField = assureDisplayField;
   $scope.updatePublishedContentType = updatePublishedContentType;
 
   $scope.$watch('contentType.data.fields',       checkForDirtyForm, true);
@@ -218,18 +218,6 @@ function ContentTypeEditorController($scope, $injector) {
    */
   function syncEditingInterface () {
     editingInterfaces.syncWidgets($scope.contentType, $scope.editingInterface);
-  }
-
-  /**
-   * Accounts for displayField value inconsistencies for content types which existed
-   * before the internal apiName content type property.
-   */
-  function regulateDisplayField() {
-    var data = $scope.contentType.data;
-    var valid = _.isUndefined(data.displayField) || data.displayField === null || hasValidDisplayField(data);
-    if (!valid) {
-      data.displayField = null;
-    }
   }
 
   /**

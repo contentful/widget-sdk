@@ -202,7 +202,7 @@ function ContentTypeActionsController($scope, $injector) {
 
     trackSavedContentType($scope.contentType);
 
-    $scope.regulateDisplayField();
+    $scope.regulateDisplayField($scope.contentType.data);
     if (!$scope.validate()) {
       var fieldNames = _.pluck($scope.contentType.data.fields, 'name');
       notify.invalid($scope.validationResult.errors, fieldNames);
