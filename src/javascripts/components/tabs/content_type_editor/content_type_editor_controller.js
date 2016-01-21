@@ -37,19 +37,18 @@ function ContentTypeEditorController($scope, $injector) {
   $scope.hints = hints;
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.runSave);
-
-  $scope.fieldSchema                        = validation(validation.schemas.ContentType.at(['fields']).items);
-  $scope.regulateDisplayField               = regulateDisplayField;
-  $scope.updatePublishedContentType         = updatePublishedContentType;
+  $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
+  $scope.regulateDisplayField = regulateDisplayField;
+  $scope.updatePublishedContentType = updatePublishedContentType;
 
   $scope.$watch('contentType.data.fields',       checkForDirtyForm, true);
   $scope.$watch('contentType.data.displayField', checkForDirtyForm);
   $scope.$watch('contentTypeForm.$dirty',        setDirtyState);
   $scope.$watch('context.isNew',                 setDirtyState);
 
-  $scope.$watch('contentType.data.fields.length', function(length, old) {
+  $scope.$watch('contentType.data.fields.length', function (length) {
     $scope.hasFields = length > 0;
-    assureTitleField(length-old > 0 ? 'add' : 'delete');
+    assureDisplayField($scope.contentType.data);
     setDirtyState();
   });
 
@@ -227,47 +226,75 @@ function ContentTypeEditorController($scope, $injector) {
    */
   function regulateDisplayField() {
     var data = $scope.contentType.data;
-    var valid = _.isUndefined(data.displayField) || data.displayField === null || hasFieldUsedAsTitle();
+    var valid = _.isUndefined(data.displayField) || data.displayField === null || hasValidDisplayField(data);
     if (!valid) {
       data.displayField = null;
     }
   }
 
   /**
-   * Checks if on the list of fields there is a object with id that is currently set
-   * on Content Type as a "displayField" property
+   * Mutate the Content Type data so that the 'displayField' property
+   * points to a valid display field.
+   *
+   * If the display field was set before and valid, it is retained.
+   * Otherwise the first suitable field is used.
+   *
+   * @param {API.ContentType} data
    */
-  function hasFieldUsedAsTitle() {
-    var data = $scope.contentType.data;
-    return _.any(data.fields, {id: data.displayField});
+  function assureDisplayField (contentTypeData) {
+    contentTypeData.displayField = getDisplayField(contentTypeData);
   }
 
   /**
-   * If there's no field selected as a title, use first found
+   * Returns true if the 'displayField' value of a Content Type points
+   * to an existing field in the Content Type and the field type is
+   * 'Symbol' or 'Text'
+   *
+   * @pure
+   * @param {API.ContentType} datac
+   * @returns {boolean}
    */
-  function assureTitleField(action) {
-    var data = $scope.contentType.data;
-    var usableFields = findFieldsUsableAsTitle();
+  function hasValidDisplayField (contentTypeData) {
+    var displayField = contentTypeData.displayField;
+    return _.any(contentTypeData.fields, function (field) {
+      return displayField === field.id && isDisplayField(field);
+    });
+  }
 
-    // this the first usable field added
-    if (action === 'add' && usableFields.length === 1) {
-      data.displayField = usableFields.shift();
-    }
-
-    // deleted field was used as title
-    if (action === 'delete' && data.displayField && !hasFieldUsedAsTitle()) {
-      data.displayField = usableFields.shift();
+  /**
+   * If `data.displayField` does not point to an existing field, return
+   * the first field usable as a display field. Otherwise returns the display
+   * field.
+   *
+   * @pure
+   * @param {API.ContentType} data
+   * @returns {string?}
+   */
+  function getDisplayField (contentTypeData) {
+    if (hasValidDisplayField(contentTypeData)) {
+      return contentTypeData.displayField;
+    } else {
+      return findFieldUsableAsTitle(contentTypeData.fields);
     }
   }
 
-  function findFieldsUsableAsTitle() {
-    return  _($scope.contentType.data.fields).
-      filter(isUsable).
-      pluck('id').
-      value();
+  /**
+   * Returns the ID of the first field that can be used as the
+   * 'displayField'. That is a Symbol or Text fields that are not
+   * disabled. Returns undefined if no display field candidate was found.
+   *
+   * @pure
+   * @param {API.Field[]?} fields
+   * @returns {string?}
+   */
+  function findFieldUsableAsTitle (fields) {
+    return  _(fields)
+      .filter(isDisplayField)
+      .pluck('id')
+      .value()[0];
+  }
 
-    function isUsable(field) {
-      return _.contains(['Symbol', 'Text'], field.type) && !field.disabled;
-    }
+  function isDisplayField (field) {
+    return _.contains(['Symbol', 'Text'], field.type) && !field.disabled;
   }
 }]);
