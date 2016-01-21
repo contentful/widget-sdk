@@ -1,24 +1,42 @@
 'use strict';
 
 describe('Widget types service', function () {
-  var widgets, widgetStore;
+  var widgets, promise, stub;
 
   beforeEach(function () {
-    module('contentful/test');
-    widgets = this.$inject('widgets');
-    widgetStore = this.$inject('widgets/store');
-    widgets.setSpace({
-      endpoint: sinon.stub().returns({
-        get: sinon.stub().resolves([])
-      })
-    });
-    this.$apply();
+    module('contentful/test', function ($provide) {
+      function mockWidgetStore() {
+        function WidgetStore(space) {
+          this.space = space;
+        }
+        WidgetStore.prototype.getMap = stub;
+        return WidgetStore;
+      }
 
-    this.setWidgets = function (ws) {
-      widgetStore.getMap = sinon.stub().resolves(ws);
-      widgets.setSpace({});
+      $provide.factory('widgets/store', mockWidgetStore);
+    });
+
+    this.setupWidgets = function(ws) {
+      var builtinWidgets = this.$inject('widgets/builtin');
+
+      stub = sinon.stub().resolves(ws || builtinWidgets);
+      widgets = this.$inject('widgets');
+
+      promise = widgets.setSpace({
+        endpoint: sinon.stub().returns({
+          get: sinon.stub().resolves([])
+        })
+      });
       this.$apply();
     };
+
+  });
+
+  describe('#setSpace()', function() {
+    it ('returns a promise', function() {
+      this.setupWidgets();
+      expect(typeof promise.then).toEqual('function');
+    });
   });
 
   describe('#getAvailable()', function(){
@@ -29,7 +47,17 @@ describe('Widget types service', function () {
       widgetChecks.markMisconfigured = function (widgets) {
         return widgets;
       };
+
+      this.setupWidgets();
+
     });
+
+    it ('calls store.getMap()', function() {
+      sinon.assert.calledOnce(stub);
+      widgets.getAvailable('number');
+      sinon.assert.calledTwice(stub);
+    });
+
 
     function testAvilableForFieldType (fieldType) {
       describe('for field type "' + fieldType + '"', function() {
@@ -89,6 +117,9 @@ describe('Widget types service', function () {
       };
 
       field = {};
+
+      this.setupWidgets();
+
     });
 
     it('with an unexistent field', function() {
@@ -180,6 +211,9 @@ describe('Widget types service', function () {
   });
 
   describe('optionsForWidget', function(){
+    beforeEach(function() {
+      this.setupWidgets();
+    });
     it('should return empty array for missing widget', function () {
       expect(widgets.optionsForWidget('foobar')).toEqual([]);
       expect(widgets.optionsForWidget(null)).toEqual([]);
@@ -196,7 +230,7 @@ describe('Widget types service', function () {
 
   describe('paramDefaults', function(){
     it('should contain the defaults for every param', function() {
-      this.setWidgets({'herp': {
+      this.setupWidgets({'herp': {
         options: [
           {param: 'foo', default: 123 },
           {param: 'bar', default: 'derp'},
@@ -217,10 +251,11 @@ describe('Widget types service', function () {
 
   describe('widgetTemplate', function(){
     it('returns the template property for a widget', function () {
-      this.setWidgets({'foo': {fieldTypes: ['Text'], template: 'bar'}});
+      this.setupWidgets({'foo': {fieldTypes: ['Text'], template: 'bar'}});
       expect(widgets.widgetTemplate('foo')).toBe('bar');
     });
     it('returns a warning for a missing widget', function () {
+      this.setupWidgets({});
       expect(widgets.widgetTemplate('derp')).toBe('<div class="missing-widget-template">Unknown editor widget "derp"</div>');
     });
   });
@@ -257,7 +292,7 @@ describe('Widget types service', function () {
           {param: 'y', default: 0}
         ]
       };
-      this.setWidgets({test: descriptor});
+      this.setupWidgets({test: descriptor});
     });
 
     function feedTest(pairs) {
@@ -318,6 +353,10 @@ describe('Widget types service', function () {
   });
 
   describe('#buildRenderable()', function () {
+
+    beforeEach(function() {
+      this.setupWidgets();
+    });
 
     it('has widget’s template property', function () {
       var renderable = widgets.buildRenderable({widgetId: 'singleLine'});
