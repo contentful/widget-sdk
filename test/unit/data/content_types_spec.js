@@ -67,4 +67,24 @@ describe('data/ContentTypes', function () {
       expect(ct.displayField).toEqual('SECOND ID');
     });
   });
+
+  describe('#assureName', function () {
+    var assureName;
+
+    beforeEach(function () {
+      assureName = this.$inject('data/ContentTypes').assureName;
+    });
+
+    it('sets missing name to "Untitled"', function () {
+      var ct = {name: ''};
+      assureName(ct);
+      expect(ct.name).toEqual('Untitled');
+    });
+
+    it('retains existing name', function () {
+      var ct = {name: 'NAME'};
+      assureName(ct);
+      expect(ct.name).toEqual('NAME');
+    });
+  });
 });

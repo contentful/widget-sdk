@@ -22,6 +22,7 @@ angular.module('contentful')
   var notification       = $injector.get('notification');
   var logger             = $injector.get('logger');
   var TheLocaleStore     = $injector.get('TheLocaleStore');
+  var ctHelpers          = $injector.get('data/ContentTypes');
 
   var spaceContext = {
     /**
@@ -99,6 +100,15 @@ angular.module('contentful')
       this.loadingPromise = this.space.getContentTypes({order: 'name', limit: 1000})
       .then(function (contentTypes) {
         self.contentTypes = filterAndSortContentTypes(contentTypes);
+
+        // Some legacy content types do not have a name. If it is
+        // missing we set it to 'Untitled' so we can display
+        // something in the UI. Note that the API requires new
+        // Content Types to have a name.
+        _.forEach(self.contentTypes, function (ct) {
+          ctHelpers.assureName(ct.data);
+        });
+
         return refreshPublishedContentTypes(spaceContext).then(function () {
           return contentTypes;
         });
