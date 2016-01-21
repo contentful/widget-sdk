@@ -106,9 +106,9 @@ angular.module('contentful').controller('EntryListActionsController', ['$scope',
   $scope.showDuplicate = function () { return !accessChecker.shouldHide('createEntry'); };
   $scope.showDelete    = createShowChecker('delete', 'canDelete');
   $scope.showArchive   = createShowChecker('archive', 'canArchive');
-  $scope.showUnarchive = createShowChecker('archive', 'canUnarchive');
+  $scope.showUnarchive = createShowChecker('unarchive', 'canUnarchive');
   $scope.showPublish   = createShowChecker('publish', 'canPublish');
-  $scope.showUnpublish = createShowChecker('publish', 'canUnpublish');
+  $scope.showUnpublish = createShowChecker('unpublish', 'canUnpublish');
 
   function createShowChecker(action, predicate) {
     return function () {

@@ -108,11 +108,23 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
   }
 
   function extractAction(policy) {
-    if (policy.actions === 'all') {
+    var as = policy.actions;
+    var glued = ['publish', 'unpublish', 'archive', 'unarchive'];
+
+    if (as === 'all') {
       return 'all';
-    } else if (_.isArray(policy.actions) && policy.actions.length === 1) {
-      return policy.actions[0];
+    } else if (isArrayOfLength(1) && !_.contains(glued, as[0])) {
+      return as[0];
+    } else if (isArrayOfLength(2) && containsBoth.apply(null, glued.slice(0, 2))) {
+      return 'publish';
+    } else if (isArrayOfLength(2) && containsBoth.apply(null, glued.slice(2, 4))) {
+      return 'archive';
     }
+
+    return null;
+
+    function isArrayOfLength(n)   { return _.isArray(as) && as.length === n;           }
+    function containsBoth(s1, s2) { return as.indexOf(s1) > -1 && as.indexOf(s2) > -1; }
   }
 
   function extractConstraints(policy) {
@@ -262,8 +274,17 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['$injector', f
 
   function addBase(pair) {
     pair.result.effect = pair.source.effect;
-    pair.result.actions = pair.source.action === 'all' ? 'all' : [pair.source.action];
     pair.result.constraint = {};
+
+    var a = pair.source.action;
+    if (a === 'all') {
+      pair.result.actions = 'all';
+    } else if (a === 'publish' || a === 'archive') {
+      pair.result.actions = [a, 'un' + a];
+    } else {
+      pair.result.actions = [a];
+    }
+
     return pair;
   }
 

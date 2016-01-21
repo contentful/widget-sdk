@@ -102,7 +102,7 @@ function ($scope, $injector, entity, notify, handlePublishError) {
     return stateManager.toDraft()
     .then(notify.unarchiveSuccess, notify.unarchiveFail);
   }, {
-    disabled: disabledChecker('archive')
+    disabled: disabledChecker('unarchive')
   }, {
     label: 'Unarchive',
     status: 'Draft',
@@ -114,7 +114,7 @@ function ($scope, $injector, entity, notify, handlePublishError) {
     return stateManager.toDraft()
     .then(notify.unpublishSuccess, notify.unpublishFail);
   }, {
-    disabled: disabledChecker('publish')
+    disabled: disabledChecker('unpublish')
   }, {
     label: 'Unpublish',
     status: 'Draft',

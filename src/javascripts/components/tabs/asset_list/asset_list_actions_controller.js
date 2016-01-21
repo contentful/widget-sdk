@@ -68,9 +68,9 @@ angular.module('contentful').controller('AssetListActionsController',
 
   $scope.showDelete    = createShowChecker('delete', 'canDelete');
   $scope.showArchive   = createShowChecker('archive', 'canArchive');
-  $scope.showUnarchive = createShowChecker('archive', 'canUnarchive');
+  $scope.showUnarchive = createShowChecker('unarchive', 'canUnarchive');
   $scope.showPublish   = createShowChecker('publish', 'canPublish');
-  $scope.showUnpublish = createShowChecker('publish', 'canUnpublish');
+  $scope.showUnpublish = createShowChecker('unpublish', 'canUnpublish');
 
   function createShowChecker(action, predicate) {
     return function () {
