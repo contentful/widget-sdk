@@ -76,7 +76,7 @@ angular.module('contentful')
       }
 
       function updateDocValue (doc, path, value) {
-        return ShareJS.setDeep(doc, path, value)
+        var set = ShareJS.setDeep(doc, path, value)
         .catch(function (e) {
           // Should only throw an error when `value` does not have the
           // correct type. Then `e` will be "forbidden".
@@ -88,6 +88,12 @@ angular.module('contentful')
             }
           });
         });
+        // TODO Other widgets mostyl use `scope.entry.data` to determine
+        // their value. Thus changes in the OT document do not update
+        // the view. This should be handled uniformly in the `otDocFor`
+        // and `cfFieldEditor` directives.
+        scope.otDoc.updateEntityData();
+        return set;
       }
 
       function removeDocValue (doc, path) {
@@ -97,6 +103,7 @@ angular.module('contentful')
           try {
             doc.removeAt(path, cb);
           } catch (e) {}
+          scope.otDoc.updateEntityData();
         });
       }
 

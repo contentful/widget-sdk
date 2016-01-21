@@ -64,4 +64,40 @@ describe('cfIframeWidget directive', function () {
       sinon.assert.notCalled(widgetAPI.sendFieldValueChange);
     });
   });
+
+  describe('"setValue" handler', function () {
+    beforeEach(function () {
+      widgetAPI.buildDocPath = sinon.stub();
+
+      widgetAPI.buildDocPath
+      .withArgs('PUBLIC FIELD', 'PUBLIC LOCALE')
+      .returns(['docpath']);
+
+      this.setValueHandler =
+        widgetAPI.registerHandler
+        .withArgs('setValue').firstCall.args[1];
+
+      this.scope.otDoc = {
+        doc: new OtDoc(),
+        updateEntityData: sinon.stub()
+      };
+    });
+
+    it('updates the ot document', function () {
+      var snapshot = {docpath: 'OLD'};
+      this.scope.otDoc.doc.snapshot = snapshot;
+
+      this.setValueHandler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VALUE');
+      expect(snapshot.docpath).toEqual('VALUE');
+    });
+
+    it('updates the entity data through the otDocFor directive', function () {
+      this.setValueHandler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VALUE');
+      sinon.assert.calledOnce(this.scope.otDoc.updateEntityData);
+    });
+
+    pit('resolves promise when value is changed', function () {
+      return this.setValueHandler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VALUE');
+    });
+  });
 });

@@ -310,6 +310,9 @@ describe('otDocFor', function () {
 
     it('updates entity timestamp if remote operation is received', function () {
       scope.entity.data.sys.updatedAt = null;
+      scope.entity.data.sys.version = 0;
+      this.otDoc.version = 1;
+
       this.otDoc.on.withArgs('remoteop').yield();
       expect(scope.entity.data.sys.updatedAt).toEqual(this.now.toISOString());
     });
@@ -317,7 +320,7 @@ describe('otDocFor', function () {
     it('updates version if remote operation is received', function () {
       this.otDoc.version = 'VERSION';
       this.otDoc.on.withArgs('remoteop').yield();
-      sinon.assert.calledWith(scope.entity.setVersion, 'VERSION');
+      expect(scope.entity.data.sys.version).toEqual('VERSION');
     });
 
     it('broadcasts change event to scope', function () {
