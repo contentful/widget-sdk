@@ -159,7 +159,16 @@ function ($scope, $injector, entity, notify, handlePublishError) {
     })
     .then(notify.deleteSuccess, notify.deleteFail);
   }, {
-    disabled: disabledChecker('delete')
+    disabled: function () {
+      var state = stateManager.getState();
+      if ((state === 'draft' || state === 'archive') && hasPermission('delete')) {
+        return false;
+      } else if (state === 'published' && hasPermission('unpublish') && hasPermission('delete')) {
+        return false;
+      } else {
+        return true;
+      }
+    }
   });
 
 
