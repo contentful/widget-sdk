@@ -1,7 +1,6 @@
 'use strict';
 angular.module('contentful').factory('EntityCache', ['$injector', function($injector){
   var $q         = $injector.get('$q');
-  var cfSpinner  = $injector.get('cfSpinner');
 
   var MAX_IDS_PER_REQUEST = 200;
 
@@ -22,15 +21,13 @@ angular.module('contentful').factory('EntityCache', ['$injector', function($inje
 
     getAll: function (ids) {
       var self = this;
-      var stopSpinner = cfSpinner.start();
 
       var missingIds = _.reject(ids, this._isKnown, this);
       this._resolveAll(missingIds);
 
       return $q.all(_.map(ids, function(id){
         return self.get(id) || self._getProgress(id);
-      }))
-      .finally(stopSpinner);
+      }));
     },
 
     get: function (id) {

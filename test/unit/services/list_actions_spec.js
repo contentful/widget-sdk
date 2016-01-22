@@ -1,16 +1,13 @@
 'use strict';
 
 describe('List Actions Service', function () {
-  var listActions, $timeout, $q, $rootScope, startSpinner, stopSpinner;
+  var listActions, $timeout, $q, $rootScope;
 
   beforeEach(function() {
     module('contentful/test', function ($provide) {
       $provide.value('notification', {
         info: sinon.stub(),
         warn: sinon.stub()
-      });
-      $provide.value('cfSpinner', {
-        start: startSpinner = sinon.stub().returns(stopSpinner = sinon.stub())
       });
     });
     inject(function ($injector) {
@@ -199,14 +196,6 @@ describe('List Actions Service', function () {
           sinon.assert.called(params.actionCallback);
         });
 
-        it('starts spinner', function() {
-          sinon.assert.called(startSpinner);
-        });
-
-        it('stops spinner', function() {
-          sinon.assert.called(stopSpinner);
-        });
-
         it('handles results', function() {
           sinon.assert.calledWith(performer.handlePerformResult, results, params, 2);
         });
@@ -228,14 +217,6 @@ describe('List Actions Service', function () {
 
         it('calls call action', function() {
           sinon.assert.called(performer.callAction);
-        });
-
-        it('starts spinner', function() {
-          sinon.assert.called(startSpinner);
-        });
-
-        it('stops spinner', function() {
-          sinon.assert.called(stopSpinner);
         });
 
         it('handles results', function() {

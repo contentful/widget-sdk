@@ -3,7 +3,6 @@
 angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope', '$injector', function CreateSpaceDialogController($scope, $injector) {
     var $rootScope       = $injector.get('$rootScope');
     var $timeout         = $injector.get('$timeout');
-    var cfSpinner        = $injector.get('cfSpinner');
     var client           = $injector.get('client');
     var tokenStore       = $injector.get('tokenStore');
     var enforcements     = $injector.get('enforcements');
@@ -19,14 +18,12 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
 
     function createSpace() {
       $rootScope.$broadcast('spaceCreationRequested');
-      var stopSpinner = cfSpinner.start();
       var data = {name: $scope.newSpaceData.name};
       if ($scope.newSpaceData.defaultLocale)
         data.defaultLocale = $scope.newSpaceData.defaultLocale;
 
       var orgId = $scope.selectedOrganization.sys.id;
       if(!$scope.permissionController.canCreateSpaceInOrg(orgId)){
-        stopSpinner();
         $rootScope.$broadcast('spaceCreationFailed');
         logger.logError('You can\'t create a Space in this Organization');
         return notification.error('You can\'t create a Space in this Organization');
@@ -38,10 +35,7 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
         tokenStore.getUpdatedToken()
         .then(_.partialRight(handleSpaceCreation, newSpace));
       })
-      .catch(handleSpaceCreationFailure)
-      .finally(function(){
-        stopSpinner();
-      });
+      .catch(handleSpaceCreationFailure);
     }
 
     function handleSpaceCreation(token, newSpace) {

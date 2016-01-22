@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('PromisedLoader', ['$q', '$rootScope', 'cfSpinner', 'debounce', function ($q, $rootScope, cfSpinner, debounce) {
+angular.module('contentful').factory('PromisedLoader', ['$q', '$rootScope', 'debounce', function ($q, $rootScope, debounce) {
 
   function PromisedLoader() {
     this.inProgress = false;
@@ -12,13 +12,11 @@ angular.module('contentful').factory('PromisedLoader', ['$q', '$rootScope', 'cfS
   PromisedLoader.prototype = {
 
     startLoading: function () {
-      this.stopSpinner = cfSpinner.start();
       this.inProgress = true;
     },
 
     endLoading: function() {
       this.inProgress = false;
-      this.stopSpinner();
     },
 
     _loadPromiseImmediately: function (promiseLoader, args, deferred) {
