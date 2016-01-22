@@ -23,6 +23,7 @@ install:
 before_script:
 - bin/travis-build
 script:
+- bin/travis-audit
 - bin/travis-test
 before_deploy:
 - bin/travis-prepare-deploy
