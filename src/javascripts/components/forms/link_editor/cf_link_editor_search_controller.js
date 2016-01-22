@@ -95,7 +95,7 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
 
   $scope.$on('autocompleteResultPicked', function (event, index, entity) {
     addEntity(entity).then(function () {
-      if (!$scope.$eval($attrs.ngShow)) controller.clearSearch();
+      controller.clearSearch();
     });
   });
 
