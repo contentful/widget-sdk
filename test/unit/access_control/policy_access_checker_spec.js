@@ -49,82 +49,89 @@ describe('Policy Access Checker', function () {
     }]}
   };
 
+  function setRole(role, isAdmin) {
+    pac.setMembership({
+      admin: isAdmin,
+      roles: [role]
+    });
+  }
+
   describe('#canAccessEntries', function () {
     it('returns false if there are no allow policies', function () {
-      pac.setRole(roles.empty);
+      setRole(roles.empty);
       expect(pac.canAccessEntries()).toBe(false);
     });
 
     it('returns true if there is at least one allow policy', function () {
-      pac.setRole(roles.allowAllEntry);
+      setRole(roles.allowAllEntry);
       expect(pac.canAccessEntries()).toBe(true);
     });
   });
 
   describe('#canAccessAssets', function () {
     it('returns false if there are no allow policies', function () {
-      pac.setRole(roles.empty);
+      setRole(roles.empty);
       expect(pac.canAccessAssets()).toBe(false);
     });
 
     it('returns true if there is at least one allow policy', function () {
-      pac.setRole(roles.allowAllAsset);
+      setRole(roles.allowAllAsset);
       expect(pac.canAccessAssets()).toBe(true);
     });
   });
 
   describe('#canUpdateEntriesOfType', function () {
     it('returns false if there are no allow policies', function () {
-      pac.setRole(roles.empty);
+      setRole(roles.empty);
       expect(pac.canUpdateEntriesOfType('ctid')).toBe(false);
     });
 
     it('returns false if there is only read policy', function () {
-      pac.setRole(roles.allowReadEntry);
+      setRole(roles.allowReadEntry);
       expect(pac.canUpdateEntriesOfType('ctid')).toBe(false);
     });
 
     it('returns false if there is edit policy for another CT', function () {
-      pac.setRole(roles.allowReadAndEditOfEntry('otherctid'));
+      setRole(roles.allowReadAndEditOfEntry('otherctid'));
       expect(pac.canUpdateEntriesOfType('ctid')).toBe(false);
     });
 
     it('returns true when there is allow all policy', function () {
-      pac.setRole(roles.allowAllEntry);
+      setRole(roles.allowAllEntry);
       expect(pac.canUpdateEntriesOfType('ctid')).toBe(true);
     });
 
     it('returns true when there is edit policy for provided CT', function () {
-      pac.setRole(roles.allowReadAndEditOfEntry('ctid'));
+      setRole(roles.allowReadAndEditOfEntry('ctid'));
       expect(pac.canUpdateEntriesOfType('ctid')).toBe(true);
     });
   });
 
   describe('#canUpdateAssets', function () {
     it('returns false if there are no allow policies', function () {
-      pac.setRole(roles.empty);
+      setRole(roles.empty);
       expect(pac.canUpdateAssets()).toBe(false);
     });
 
     it('returns false if there is only read policy', function () {
-      pac.setRole(roles.allowReadAsset);
+      setRole(roles.allowReadAsset);
       expect(pac.canUpdateAssets()).toBe(false);
     });
 
     it('returns true if there is allow all policy', function () {
-      pac.setRole(roles.allowAllAsset);
+      setRole(roles.allowAllAsset);
       expect(pac.canUpdateAssets()).toBe(true);
     });
 
     it('returns true if there is allow edit policy', function () {
-      pac.setRole(roles.allowReadAndEditAsset);
+      setRole(roles.allowReadAndEditAsset);
       expect(pac.canUpdateAssets()).toBe(true);
     });
   });
 
   describe('#getFieldChecker', function () {
     beforeEach(function () {
-      pac.setRole(roles.empty);
+      setRole(roles.empty);
     });
 
     function pathPolicy(path, effect) {
@@ -166,58 +173,68 @@ describe('Policy Access Checker', function () {
       expect(fac.isEditable({}, {})).toBe(false);
     });
 
+    it('isEditable returns true for admin', function () {
+      setRole(undefined, true);
+      test({}, {}, true);
+    });
+
+    it('isEditable returns true for admin even for paths that do not match', function () {
+      setRole(pathPolicy('fields.other.%'), true);
+      test({apiName: 'test'}, {}, true);
+    });
+
     it('isEditable returns false if policy states: field - other than given, locale - any', function () {
-      pac.setRole(pathPolicy('fields.other.%'));
+      setRole(pathPolicy('fields.other.%'));
       test({apiName: 'test'}, {}, false);
     });
 
     it('isEditable returns false if policy states: field - any, locale - other than given', function () {
-      pac.setRole(pathPolicy('fields.%.en'));
+      setRole(pathPolicy('fields.%.en'));
       test({apiName: 'test'}, {internal_code: 'pl'}, false);
     });
 
     it('isEditable returns false if policy states: field - other than given, locale - other than given', function () {
-      pac.setRole(pathPolicy('fields.other.en'));
+      setRole(pathPolicy('fields.other.en'));
       test({apiName: 'test'}, {internal_code: 'pl'}, false);
     });
 
     it('isEditable returns true if policy states: field - given, locale - any', function () {
-      pac.setRole(pathPolicy('fields.test.%'));
+      setRole(pathPolicy('fields.test.%'));
       test({apiName: 'test'}, {}, true);
     });
 
     it('isEditable returns true if policy states: field - any, locale - given', function () {
-      pac.setRole(pathPolicy('fields.%.en'));
+      setRole(pathPolicy('fields.%.en'));
       test({apiName: 'somefield'}, {internal_code: 'en'}, true);
     });
 
     it('isEditable returns true if policy states: field - give, locale - given', function () {
-      pac.setRole(pathPolicy('fields.test.pl'));
+      setRole(pathPolicy('fields.test.pl'));
       test({apiName: 'test'}, {internal_code: 'pl'}, true);
     });
 
     it('isEditable returns false if there is overriding policy', function () {
       var p1 = pathPolicy('fields.test.pl');
       var p2 = pathPolicy('fields.test.pl', 'deny');
-      pac.setRole({policies: _.union(p1.policies, p2.policies)});
+      setRole({policies: _.union(p1.policies, p2.policies)});
       test({apiName: 'test'}, {internal_code: 'pl'}, false);
     });
 
     it('isEditable returns false if there is partially overriding policy', function () {
       var p1 = pathPolicy('fields.test.pl');
       var p2 = pathPolicy('fields.%.pl', 'deny');
-      pac.setRole({policies: _.union(p1.policies, p2.policies)});
+      setRole({policies: _.union(p1.policies, p2.policies)});
       test({apiName: 'test'}, {internal_code: 'pl'}, false);
     });
 
     it('isEditable uses legacy field ID property if apiName is not available', function () {
-      pac.setRole(pathPolicy('fields.test.%'));
+      setRole(pathPolicy('fields.test.%'));
       test({id: 'test'}, {internal_code: 'pl'}, true);
     });
 
     it('isEditable returns false if CT does not match', function () {
       var fac = pac.getFieldChecker('x');
-      pac.setRole(pathPolicy('fields.test.pl'));
+      setRole(pathPolicy('fields.test.pl'));
       test({apiName: 'test'}, {internal_code: 'pl'}, false, fac);
     });
 
@@ -228,13 +245,13 @@ describe('Policy Access Checker', function () {
 
     it('isEditable returns false for asset with policy allowing editing other locale', function () {
       var fac = pac.getFieldChecker(undefined);
-      pac.setRole(assetPathPolicy('fields.%.en'));
+      setRole(assetPathPolicy('fields.%.en'));
       test({}, {internal_code: 'pl'}, false, fac);
     });
 
     it('isEditable returns true for asset with allowing policy', function () {
       var fac = pac.getFieldChecker(undefined);
-      pac.setRole(assetPathPolicy('fields.%.en'));
+      setRole(assetPathPolicy('fields.%.en'));
       test({}, {internal_code: 'en'}, true, fac);
     });
   });

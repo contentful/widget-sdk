@@ -12,8 +12,10 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     asset : {allowed: [], denied: []}
   };
 
+  var isAdmin = false;
+
   return {
-    setRole:                setRole,
+    setMembership:          setMembership,
     canAccessEntries:       function () { return policies.entry.allowed.flat.length > 0; },
     canAccessAssets:        function () { return policies.asset.allowed.length > 0; },
     canCreateEntriesOfType: canCreateEntriesOfType,
@@ -23,8 +25,11 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     getFieldChecker:        getFieldChecker
   };
 
-  function setRole(role) {
+  function setMembership(membership) {
+    var role = _.first(dotty.get(membership, 'roles', []));
     var internal = role ? PolicyBuilder.toInternal(role) : {};
+
+    isAdmin = dotty.get(membership, 'admin', false);
     policies.entry.allowed.flat = dotty.get(internal, 'entries.allowed', []);
     policies.entry.denied.flat  = dotty.get(internal, 'entries.denied',  []);
     policies.asset.allowed = dotty.get(internal, 'assets.allowed', []);
@@ -69,7 +74,7 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     var hasAllowing = checkPolicyCollectionForPath(allowed, fieldId, localeCode);
     var hasDenying  = checkPolicyCollectionForPath(denied,  fieldId, localeCode);
 
-    return hasAllowing && !hasDenying;
+    return isAdmin || (hasAllowing && !hasDenying);
   }
 
   function canCreateEntriesOfType(contentTypeId) {

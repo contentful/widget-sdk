@@ -32,7 +32,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     return {
       authContext: authorization.spaceContext,
       tokenLookup: authentication.tokenLookup,
-      currentRole: getCurrentRole()
+      membership: getMembership()
     };
   }, reset);
 
@@ -57,7 +57,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   };
 
   function reset() {
-    policyChecker.setRole(getCurrentRole());
+    policyChecker.setMembership(getMembership());
     collectResponses();
     collectFeatures();
     collectSectionVisibility();
@@ -221,8 +221,8 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     return authorization.spaceContext.reasonsDenied(action, entity);
   }
 
-  function getCurrentRole() {
-    return _.first(dotty.get(spaceContext, 'space.data.spaceMembership.roles', []));
+  function getMembership() {
+    return dotty.get(spaceContext, 'space.data.spaceMembership');
   }
 
   function getContentTypeIdFor(entry) {
