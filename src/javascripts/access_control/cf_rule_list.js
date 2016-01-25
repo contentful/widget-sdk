@@ -16,16 +16,24 @@ angular.module('contentful').directive('cfRuleList', ['$injector', function ($in
     },
     controller: ['$scope', function ($scope) {
       $scope.spaceContext = spaceContext;
+      $scope.remove = remove;
+      $scope.entityName = getEntityName($scope.entity);
+      $scope.getDefaultRule = getDefaultRuleGetterFor($scope.entity);
 
       $scope.locales = _.map(TheLocaleStore.getPrivateLocales(), function (l) {
         return { code: l.internal_code, name: l.name + ' (' + l.code + ')' };
       });
       $scope.locales.unshift({ code: 'all', name: 'All locales' });
 
-      $scope.entityName = getEntityName($scope.entity);
-      $scope.getDefaultRule = getDefaultRuleGetterFor($scope.entity);
+      $scope.$watch(function () {
+        return dotty.get($scope, 'rules.allowed', []).length;
+      }, function (current, previous) {
+        if (current === 0 && previous > 0) {
+          $scope.rules.denied = [];
+        }
+      });
 
-      $scope.remove = function (rule) {
+      function remove(rule) {
         var index = -1;
         var collection = null;
         find('allowed');
@@ -37,7 +45,7 @@ angular.module('contentful').directive('cfRuleList', ['$injector', function ($in
           index = $scope.rules[collectionName].indexOf(rule);
           collection = $scope.rules[collectionName];
         }
-      };
+      }
     }]
   };
 
