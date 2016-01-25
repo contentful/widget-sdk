@@ -30,7 +30,7 @@ header.workbench-header
       ul.context-menu__items
         li(role="menuitem" ng-click="entityCreationController.newAsset()")
           | Single Asset
-        li(role="menuitem" ng-click="createMultipleAssets()")
+        li(role="menuitem" ng-click="createMultipleAssets()" ng-hide="shouldHide('updateAsset')")
           | Multiple Assets
 
 .workbench-main(ng-hide="showNoAssetsAdvice()")
@@ -106,7 +106,7 @@ header.workbench-header
         ul.context-menu__items
           li(role="menuitem" ng-click="entityCreationController.newAsset()")
             | Single Asset
-          li(role="menuitem" ng-click="createMultipleAssets()")
+          li(role="menuitem" ng-click="createMultipleAssets()" ng-hide="shouldHide('updateAsset')")
             | Multiple Assets
     cf-knowledge-base(target="asset" text="Visit the Knowledge Base Pages")
 
