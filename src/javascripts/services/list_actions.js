@@ -4,7 +4,6 @@ angular.module('contentful').factory('listActions', ['$injector', function($inje
   var $q           = $injector.get('$q');
   var $rootScope   = $injector.get('$rootScope');
   var analytics    = $injector.get('analytics');
-  var cfSpinner    = $injector.get('cfSpinner');
   var notification = $injector.get('notification');
 
   var RETRY_TIMEOUT = 1000;
@@ -71,10 +70,7 @@ angular.module('contentful').factory('listActions', ['$injector', function($inje
       var results = [];
 
       $q.all(_.map(selected, function (entity) {
-        var stopSpinner = cfSpinner.start();
-
         var handler = function actionHandler(res) {
-          stopSpinner();
           results.push(res || {});
         };
 

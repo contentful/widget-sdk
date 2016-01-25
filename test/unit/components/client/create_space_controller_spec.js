@@ -8,7 +8,7 @@ describe('Create Space controller', function () {
     var self = this;
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'stop', 'then', 'getId', 'timeout'
+        'then', 'getId', 'timeout'
       ]);
 
       self.tokenStoreStubs = {
@@ -27,12 +27,9 @@ describe('Create Space controller', function () {
       this.$q = $injector.get('$q');
       this.client = $injector.get('client');
       this.enforcements = $injector.get('enforcements');
-      this.cfSpinner = $injector.get('cfSpinner');
 
       this.broadcastStub = sinon.stub(this.$rootScope, '$broadcast');
       this.broadcastStub.returns(sinon.stub());
-      this.cfSpinner.start = sinon.stub();
-      this.cfSpinner.start.returns(stubs.stop);
       this.client.createSpace = sinon.stub();
       this.enforcements.computeUsage = sinon.stub();
       this.enforcements.determineEnforcement = sinon.stub();
@@ -133,16 +130,8 @@ describe('Create Space controller', function () {
           sinon.assert.calledWith(this.broadcastStub, 'spaceCreationRequested');
         });
 
-        it('starts spinner', function() {
-          sinon.assert.called(this.cfSpinner.start);
-        });
-
         it('checks for creation permission', function() {
           sinon.assert.calledWith(scope.permissionController.canCreateSpaceInOrg, 'orgid');
-        });
-
-        it('stops spinner', function() {
-          sinon.assert.called(stubs.stop);
         });
 
         it('shows error', function() {
@@ -178,10 +167,6 @@ describe('Create Space controller', function () {
             sinon.assert.calledWith(this.broadcastStub, 'spaceCreationRequested');
           });
 
-          it('starts spinner', function() {
-            sinon.assert.called(this.cfSpinner.start);
-          });
-
           it('checks for creation permission', function() {
             sinon.assert.calledWith(scope.permissionController.canCreateSpaceInOrg, 'orgid');
           });
@@ -201,10 +186,6 @@ describe('Create Space controller', function () {
           it('shows error', function() {
             sinon.assert.called(this.notification.error);
             sinon.assert.called(this.logger.logServerWarn);
-          });
-
-          it('stops spinner', function() {
-            sinon.assert.called(stubs.stop);
           });
 
           it('broadcasts space creation failure', function() {
@@ -231,10 +212,6 @@ describe('Create Space controller', function () {
             sinon.assert.calledWith(this.broadcastStub, 'spaceCreationRequested');
           });
 
-          it('starts spinner', function() {
-            sinon.assert.called(this.cfSpinner.start);
-          });
-
           it('checks for creation permission', function() {
             sinon.assert.calledWith(scope.permissionController.canCreateSpaceInOrg, 'orgid');
           });
@@ -253,10 +230,6 @@ describe('Create Space controller', function () {
 
           it('shows server error', function() {
             sinon.assert.called(this.notification.warn);
-          });
-
-          it('does stop spinner', function() {
-            sinon.assert.called(stubs.stop);
           });
 
           it('broadcasts space creation failure', function() {
@@ -283,10 +256,6 @@ describe('Create Space controller', function () {
 
           it('broadcasts space creation request', function() {
             sinon.assert.calledWith(this.broadcastStub, 'spaceCreationRequested');
-          });
-
-          it('starts spinner', function() {
-            sinon.assert.called(this.cfSpinner.start);
           });
 
           it('checks for creation permission', function() {
@@ -319,10 +288,6 @@ describe('Create Space controller', function () {
 
           it('selects space', function() {
             sinon.assert.calledWith(spaceTools.goTo, space);
-          });
-
-          it('stops spinner', function() {
-            sinon.assert.called(stubs.stop);
           });
 
           it('broadcasts space creation', function() {
