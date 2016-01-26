@@ -20,10 +20,10 @@ describe('Create Space controller', function () {
       $provide.value('$timeout', stubs.timeout);
       stubs.timeout.callsArg(0);
     });
+
     inject(function ($controller, $injector) {
       this.$rootScope = $injector.get('$rootScope');
       this.logger = $injector.get('logger');
-      this.notification = $injector.get('notification');
       this.$q = $injector.get('$q');
       this.client = $injector.get('client');
       this.enforcements = $injector.get('enforcements');
@@ -135,7 +135,7 @@ describe('Create Space controller', function () {
         });
 
         it('shows error', function() {
-          sinon.assert.called(this.notification.error);
+          expect(scope.errors.form).toEqual('You can\'t create a Space in this Organization');
           sinon.assert.called(this.logger.logError);
         });
 
@@ -184,7 +184,8 @@ describe('Create Space controller', function () {
           });
 
           it('shows error', function() {
-            sinon.assert.called(this.notification.error);
+            var error = 'Could not create Space. If the problem persists please get in contact with us.';
+            expect(scope.errors.form).toEqual(error);
             sinon.assert.called(this.logger.logServerWarn);
           });
 
@@ -228,8 +229,8 @@ describe('Create Space controller', function () {
             sinon.assert.called(this.enforcements.computeUsage);
           });
 
-          it('shows server error', function() {
-            sinon.assert.called(this.notification.warn);
+          it('shows field length error', function() {
+            expect(scope.errors.fields.name).toEqual('Space name is too long');
           });
 
           it('broadcasts space creation failure', function() {

@@ -37,32 +37,34 @@
           | Create Space
           cf-knowledge-base(target="space_creation" tooltip-text="Learn more about Spaces in the Knowledge Base Pages")
         form.space-template__space-creation-form(name="newSpaceForm" ng-submit="createSpace()")
-          .l-form
-            .l-form-row
-              label Name
-              .l-form-controls
-                input.form-control(type="text" name="name" ng-model="newSpaceData.name" required)
-            .l-form-row
-              label Organization
-              .l-form-controls.space-template__org-selector
-                button.cfnext-btn-secondary-action(type="button"
-                  cf-context-menu-trigger
-                  ng-disabled="writableOrganizations.length < 2")
-                  cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-                  | {{selectedOrganization.name}}
-                .context-menu.space-template__org-dropdown(cf-context-menu)
-                  ul
-                    li.context-menu__item(
-                      ng-repeat="org in writableOrganizations"
-                      ng-click="selectOrganization(org)")
-                      | {{org.name}}
-            .l-form-row
-              label Locale
-              .l-form-controls
-                input.form-control(type="text" name="locale" ng-model="newSpaceData.defaultLocale")
-          .buttons
+          .cfnext-form__field
+            label Name
+            input.cfnext-form__input.x--block(type="text" name="name" ng-model="newSpaceData.name" required aria-invalid="{{!!errors.fields.name}}")
+            .cfnext-form__field-error(ng-show="errors.fields.name")
+              | {{errors.fields.name}}
+          .cfnext-form__field
+            label Organization
+            button.cfnext-btn-secondary-action.x--block(type="button"
+              cf-context-menu-trigger
+              ng-disabled="writableOrganizations.length < 2")
+              cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+              | {{selectedOrganization.name}}
+            .context-menu.space-template__org-dropdown(cf-context-menu)
+              ul
+                li.context-menu__item(
+                  ng-repeat="org in writableOrganizations"
+                  ng-click="selectOrganization(org)")
+                  | {{org.name}}
+          .cfnext-form__field
+            label Locale
+            input.cfnext-form__input.x--block(type="text" name="locale" ng-model="newSpaceData.defaultLocale" aria-invalid="{{!!errors.fields.default_locale}}")
+            .cfnext-form__field-error(ng-show="errors.fields.default_locale")
+              | {{errors.fields.default_locale}}
+          .cfnext-form__field
             button.cfnext-btn-action(type="submit" ng-disabled="newSpaceForm.$invalid || lockSubmit")
               | Create Space
+          .cfnext-form__field-error(ng-show="errors.form")
+            | {{errors.form}}
 
       .space-template__queue(ng-show="viewState.is('spaceTemplateQueue')")
         h1 Creating template entities

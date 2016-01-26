@@ -7,7 +7,6 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
     var tokenStore    = $injector.get('tokenStore');
     var enforcements  = $injector.get('enforcements');
     var logger        = $injector.get('logger');
-    var notification  = $injector.get('notification');
     var spaceTools    = $injector.get('spaceTools');
     var accessChecker = $injector.get('accessChecker');
 
@@ -16,6 +15,20 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
 
     resetNewSpaceData();
     setupOrganizations();
+    resetErrors();
+
+    function resetErrors() {
+      $scope.errors = { fields: {} };
+    }
+
+    function showFieldError(field, error) {
+      $scope.errors.fields[field] = error;
+    }
+
+    function showFormError(error) {
+      resetErrors();
+      $scope.errors.form = error;
+    }
 
     function createSpace() {
       $rootScope.$broadcast('spaceCreationRequested');
@@ -27,7 +40,7 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
       if (!accessChecker.canCreateSpaceInOrganization(orgId)) {
         $rootScope.$broadcast('spaceCreationFailed');
         logger.logError('You can\'t create a Space in this Organization');
-        return notification.error('You can\'t create a Space in this Organization');
+        return showFormError('You can\'t create a Space in this Organization');
       }
 
 
@@ -54,15 +67,32 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
       handleSpaceCreationFailure);
     }
 
-    function handleSpaceCreationFailure(err){
-      $rootScope.$broadcast('spaceCreationFailed');
+    function handleSpaceCreationFailure(err) {
+      var errors = dotty.get(err, 'body.details.errors');
       var usage = enforcements.computeUsage('space');
-      if(usage){
+
+      var fieldErrors = [
+        {name: 'length', path: 'name', message: 'Space name is too long'},
+        {name: 'invalid', path: 'default_locale', message: 'Invalid locale'}
+      ];
+
+      $rootScope.$broadcast('spaceCreationFailed');
+
+      if (usage) {
         handleUsageWarning(usage);
-      } else if(hasErrorOnField(err, 'length', 'name')){
-        notification.warn('Space name is too long');
-      } else {
-        notification.error('Could not create Space. If the problem persists please get in contact with us.');
+        return;
+      }
+
+      resetErrors();
+
+      _.forEach(fieldErrors, function(e) {
+        if (hasErrorOnField(errors, e.path, e.name)) {
+          showFieldError(e.path, e.message);
+        }
+      });
+
+      if (!errors || !errors.length) {
+        showFormError('Could not create Space. If the problem persists please get in contact with us.');
         logger.logServerWarn('Could not create Space', {error: err});
       }
     }
@@ -74,16 +104,13 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
         actionMessage: enforcement.actionMessage,
         action: enforcement.action
       });
-      notification.warn(usage);
+      showFormError(usage);
     }
 
-    function hasErrorOnField(err, error, field) {
-      var errors = dotty.get(err, 'body.details.errors');
-      if(errors && errors.length > 0){
-        return errors[0].path == field &&
-               errors[0].name == error;
-      }
-      return false;
+    function hasErrorOnField(errors, fieldPath, errorName) {
+      return _.some(errors, function(e) {
+         return e.path === fieldPath && e.name === errorName;
+      });
     }
 
     function selectOrganization(org) {
