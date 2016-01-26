@@ -4,15 +4,20 @@ describe('navigation/stateChangeHandlers', function () {
   var logger;
   var $rootScope;
   var spaceTools;
+  var modalCloseStub;
 
   beforeEach(function () {
     spaceTools = {goToInitialSpace: sinon.stub()};
+
+    modalCloseStub = sinon.stub();
 
     module('cf.app', function ($provide) {
       $provide.value('$state', {});
       $provide.value('spaceTools', spaceTools);
       $provide.value('contextHistory');
       $provide.value('logger', {});
+      $provide.value('modalDialog', { closeAll: modalCloseStub });
+      $provide.value('contextHistory', {purge: sinon.stub()});
     });
 
     $rootScope = this.$inject('$rootScope');
@@ -20,6 +25,13 @@ describe('navigation/stateChangeHandlers', function () {
 
     var setup = this.$inject('navigation/stateChangeHandlers').setup;
     setup();
+  });
+
+  describe('state change', function () {
+    it ('closes opened modal dialog', function () {
+      $rootScope.$emit('$stateChangeStart', {name: 'page1'}, {}, {name: 'page2'}, {});
+      sinon.assert.calledOnce(modalCloseStub);
+    });
   });
 
   describe('error handling', function () {
@@ -84,6 +96,10 @@ describe('navigation/stateChangeHandlers', function () {
       var change = $rootScope.$emit('$stateChangeStart', to, {}, from, {});
       expect(change.defaultPrevented).toBe(true);
       sinon.assert.notCalled(requestLeaveConfirmation);
+    });
+
+    it('does not close modals', function() {
+      sinon.assert.notCalled(modalCloseStub);
     });
   });
 });
