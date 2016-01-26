@@ -2,7 +2,7 @@
 
 describe('Access Checker', function () {
 
-  var $rootScope, spaceContext, authorization, authentication, enforcements, OrganizationList, policyChecker, ac;
+  var $rootScope, spaceContext, authorization, enforcements, OrganizationList, policyChecker, ac;
   var canStub, reasonsDeniedStub;
 
   function triggerChange() {
@@ -16,7 +16,6 @@ describe('Access Checker', function () {
     $rootScope = this.$inject('$rootScope');
     spaceContext = this.$inject('spaceContext');
     authorization = this.$inject('authorization');
-    authentication = this.$inject('authentication');
     enforcements = this.$inject('enforcements');
     OrganizationList = this.$inject('OrganizationList');
     policyChecker = this.$inject('accessChecker/policy');
@@ -267,21 +266,41 @@ describe('Access Checker', function () {
   });
 
   describe('#canModifyRoles', function () {
-    it('collects features on token loopup change', function () {
+    it('collects features on organization change', function () {
       expect(ac.canModifyRoles()).toBe(false);
-
-      sinon.stub(spaceContext, 'getId').returns('spaceid');
-      authentication.tokenLookup = {
-        spaces: [
-          {sys: {id: 'spaceid'}, organization: {subscriptionPlan: {limits: {features: {customRoles: true}}}}},
-          {sys: {id: 'otherspace'}}
-        ]
-      };
+      spaceContext.space = {data: {organization: {subscriptionPlan: {limits: {features: {customRoles: true}}}}}};
       $rootScope.$apply();
-
       expect(ac.canModifyRoles()).toBe(true);
-      sinon.assert.calledOnce(spaceContext.getId);
-      spaceContext.getId.restore();
+    });
+  });
+
+  describe('#canModifyRoles', function () {
+    it('returns true when is admin of a space', function () {
+      expect(ac.canModifyUsers()).toBe(false);
+      spaceContext.space = {data: {spaceMembership: {admin: true}}};
+      expect(ac.canModifyUsers()).toBe(true);
+    });
+
+    it('returns true when is admin or owner of organization, false otherwise', function () {
+      expect(ac.canModifyUsers()).toBe(false);
+      spaceContext.space = {data: {
+        organization: {sys: {id: null}},
+        spaceMembership: {user: {organizationMemberships: [
+          {organization: {sys: {id: 'org1id'}}, role: 'admin'},
+          {organization: {sys: {id: 'org2id'}}, role: 'member'},
+          {organization: {sys: {id: 'org3id'}}, role: 'owner'}
+        ]}}
+      }};
+
+      t('org1id', true);
+      t('org2id', false);
+      t('org3id', true);
+      t('unknown', false);
+
+      function t(id, expectation) {
+        spaceContext.space.data.organization.sys.id = id;
+        expect(ac.canModifyUsers()).toBe(expectation);
+      }
     });
   });
 

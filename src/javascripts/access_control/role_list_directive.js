@@ -38,11 +38,14 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
   }
 
   function reload() {
-    return listHandler.reset().then(function (data) {
-      $scope.roles = _.sortBy(data.roles, 'name');
-      $scope.memberships = listHandler.getMembershipCounts();
-      $scope.removeRole = createRoleRemover(listHandler, reload);
-      $scope.context.ready = true;
-    }, accessChecker.wasForbidden($scope.context));
+    return listHandler.reset()
+    .then(onResetResponse, accessChecker.wasForbidden($scope.context));
+  }
+
+  function onResetResponse(data) {
+    $scope.roles = _.sortBy(data.roles, 'name');
+    $scope.memberships = listHandler.getMembershipCounts();
+    $scope.removeRole = createRoleRemover(listHandler, reload);
+    $scope.context.ready = true;
   }
 }]);

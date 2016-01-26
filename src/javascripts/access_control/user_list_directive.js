@@ -44,7 +44,6 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   var notification        = $injector.get('notification');
   var accessChecker       = $injector.get('accessChecker');
   var TheAccountView      = $injector.get('TheAccountView');
-  var authentication      = $injector.get('authentication');
   var TrialWatcher        = $injector.get('TrialWatcher');
 
   var MODAL_OPTS_BASE = {
@@ -71,12 +70,14 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   reload().catch(ReloadNotification.basicErrorHandler);
 
   function canModifyUsers() {
-    return !TrialWatcher.hasEnded();
+    return accessChecker.canModifyUsers() && !TrialWatcher.hasEnded();
   }
 
   function canInviteUsers() {
     var q = $scope.userQuota;
-    return !(q.used >= q.limit && q.limit > 0);
+    var withinQuota = !(q.used >= q.limit && q.limit > 0);
+
+    return withinQuota && canModifyUsers();
   }
 
   /**
@@ -238,16 +239,16 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
    * Reset the list with a new data
    */
   function reload() {
-    return listHandler.reset().then(function () {
-      $scope.count = listHandler.getUserCount();
-      $scope.by = listHandler.getGroupedUsers();
-      $scope.context.ready = true;
-      $scope.jumpToRole();
-      authentication.getTokenLookup();
-    }, function () {
-      accessChecker.wasForbidden($scope.context).apply(null, arguments);
-      authentication.getTokenLookup();
-    });
+    return listHandler.reset()
+    .then(onResetResponse, accessChecker.wasForbidden($scope.context))
+    .finally(accessChecker.reset);
+  }
+
+  function onResetResponse() {
+    $scope.count = listHandler.getUserCount();
+    $scope.by = listHandler.getGroupedUsers();
+    $scope.context.ready = true;
+    $scope.jumpToRole();
   }
 }]);
 

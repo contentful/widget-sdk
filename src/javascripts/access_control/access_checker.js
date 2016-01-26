@@ -7,7 +7,6 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   var stringUtils      = $injector.get('stringUtils');
   var enforcements     = $injector.get('enforcements');
   var authorization    = $injector.get('authorization');
-  var authentication   = $injector.get('authentication');
   var logger           = $injector.get('logger');
   var OrganizationList = $injector.get('OrganizationList');
   var spaceContext     = $injector.get('spaceContext');
@@ -31,12 +30,13 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   $rootScope.$watchCollection(function () {
     return {
       authContext: authorization.spaceContext,
-      tokenLookup: authentication.tokenLookup,
-      membership: getMembership()
+      organization: fromSpaceData('organization'),
+      spaceMembership: fromSpaceData('spaceMembership')
     };
   }, reset);
 
   return {
+    reset:                           reset,
     getResponses:                    function () { return responses; },
     getResponseByActionName:         function (action) { return responses[action]; },
     getSectionVisibility:            function () { return sectionVisibility; },
@@ -50,6 +50,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     canUpdateAsset:                  canUpdateAsset,
     canModifyApiKeys:                function () { return dotty.get(responses, 'createApiKey.can', false); },
     canModifyRoles:                  function () { return dotty.get(features,  'customRoles',      false); },
+    canModifyUsers:                  canModifyUsers,
     canCreateSpace:                  canCreateSpace,
     canCreateSpaceInAnyOrganization: canCreateSpaceInAnyOrganization,
     canCreateSpaceInOrganization:    canCreateSpaceInOrganization,
@@ -57,7 +58,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   };
 
   function reset() {
-    policyChecker.setMembership(getMembership());
+    policyChecker.setMembership(fromSpaceData('spaceMembership'));
     collectResponses();
     collectFeatures();
     collectSectionVisibility();
@@ -87,12 +88,9 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   }
 
   function collectFeatures() {
-    var spaces = dotty.get(authentication, 'tokenLookup.spaces', []);
-    var tokenLookupSpace = _.findWhere(spaces, {sys: {id: spaceContext.getId()}});
-
-    features        = dotty.get(tokenLookupSpace, 'organization.subscriptionPlan.limits.features', {});
-    userQuota.used  = dotty.get(tokenLookupSpace, 'organization.usage.permanent.organizationMembership', 1);
-    userQuota.limit = dotty.get(tokenLookupSpace, 'organization.subscriptionPlan.limits.permanent.organizationMembership', -1);
+    features        = fromSpaceData('organization.subscriptionPlan.limits.features', {});
+    userQuota.limit = fromSpaceData('organization.subscriptionPlan.limits.permanent.organizationMembership', -1);
+    userQuota.used  = fromSpaceData('organization.usage.permanent.organizationMembership', 1);
   }
 
   function getFieldChecker(entity, predicate) {
@@ -144,8 +142,8 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     var isAuthor = false;
 
     if (canUpdateOwn) {
-      var entryAuthor = dotty.get(entry, 'data.sys.createdBy.sys.id');
-      var currentUser = dotty.get(authentication, 'tokenLookup.sys.createdBy.sys.id');
+      var entryAuthor = getAuthorIdFor(entry);
+      var currentUser = fromSpaceData('spaceMembership.user.sys.id');
       isAuthor = entryAuthor === currentUser;
     }
 
@@ -157,6 +155,11 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     var canUpdateWithPolicy = policyChecker.canUpdateAssets();
 
     return canUpdate || canUpdateWithPolicy;
+  }
+
+  function canModifyUsers() {
+    var isSpaceAdmin = fromSpaceData('spaceMembership.admin', false);
+    return isSpaceAdmin || _.contains(['owner', 'admin'], getRoleInOrganization());
   }
 
   function canCreateSpace() {
@@ -221,11 +224,28 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     return authorization.spaceContext.reasonsDenied(action, entity);
   }
 
-  function getMembership() {
-    return dotty.get(spaceContext, 'space.data.spaceMembership');
+  function getRoleInOrganization() {
+    var organizationId = fromSpaceData('organization.sys.id');
+    var memberships    = fromSpaceData('spaceMembership.user.organizationMemberships', []);
+    var found          = null;
+
+    if (organizationId && memberships.length > 0) {
+      found = _.findWhere(memberships, {organization: {sys: {id: organizationId }}});
+    }
+
+    return dotty.get(found, 'role');
+  }
+
+  function fromSpaceData(path, defaultValue) {
+    var data = dotty.get(spaceContext, 'space.data', {});
+    return dotty.get(data, path, defaultValue);
   }
 
   function getContentTypeIdFor(entry) {
     return dotty.get(entry, 'data.sys.contentType.sys.id');
+  }
+
+  function getAuthorIdFor(entry) {
+    return dotty.get(entry, 'data.sys.createdBy.sys.id');
   }
 }]);
