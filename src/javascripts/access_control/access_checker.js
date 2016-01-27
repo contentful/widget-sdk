@@ -48,8 +48,8 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     canPerformActionOnEntryOfType:   canPerformActionOnEntryOfType,
     canUpdateEntry:                  canUpdateEntry,
     canUpdateAsset:                  canUpdateAsset,
-    canModifyApiKeys:                function () { return dotty.get(responses, 'createApiKey.can', false); },
-    canModifyRoles:                  function () { return dotty.get(features,  'customRoles',      false); },
+    canModifyApiKeys:                canModifyApiKeys,
+    canModifyRoles:                  canModifyRoles,
     canModifyUsers:                  canModifyUsers,
     canCreateSpace:                  canCreateSpace,
     canCreateSpaceInAnyOrganization: canCreateSpaceInAnyOrganization,
@@ -157,7 +157,19 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     return canUpdate || canUpdateWithPolicy;
   }
 
+  function canModifyApiKeys() {
+    return dotty.get(responses, 'createApiKey.can', false);
+  }
+
+  function canModifyRoles() {
+    return isAdminOrOwner() && dotty.get(features, 'customRoles', false);
+  }
+
   function canModifyUsers() {
+    return isAdminOrOwner();
+  }
+
+  function isAdminOrOwner() {
     var isSpaceAdmin = fromSpaceData('spaceMembership.admin', false);
     return isSpaceAdmin || _.contains(['owner', 'admin'], getRoleInOrganization());
   }

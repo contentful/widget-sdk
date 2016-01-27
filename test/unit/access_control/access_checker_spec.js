@@ -266,11 +266,29 @@ describe('Access Checker', function () {
   });
 
   describe('#canModifyRoles', function () {
+    function spaceData(hasFeature, role) {
+      return {data: {
+        organization: {
+          sys: {id: 'orgid'},
+          subscriptionPlan: {limits: {features: {customRoles: hasFeature}}}
+        },
+        spaceMembership: {user: {organizationMemberships: [
+          {organization: {sys: {id: 'orgid'}}, role: role}
+        ]}}
+      }};
+    }
+
     it('collects features on organization change', function () {
       expect(ac.canModifyRoles()).toBe(false);
-      spaceContext.space = {data: {organization: {subscriptionPlan: {limits: {features: {customRoles: true}}}}}};
+      spaceContext.space = spaceData(true, 'admin');
       $rootScope.$apply();
       expect(ac.canModifyRoles()).toBe(true);
+    });
+
+    it('returns false if is not an admin or owner', function () {
+      spaceContext.space = spaceData(true, 'member');
+      $rootScope.$apply();
+      expect(ac.canModifyRoles()).toBe(false);
     });
   });
 
