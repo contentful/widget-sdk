@@ -43,7 +43,7 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
     hasTrialEnded  = false;
 
     var organization = space.data.organization;
-    var userOwnsOrganization = userIsOrganizationOwner(user, organization);
+    var userOwnsOrganization = isUserOrganizationOwner(user, organization);
 
     if (organizationHasTrialSubscription(organization)) {
       var trial = TrialInfo.create(organization);
@@ -66,9 +66,13 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
       var params = {message: message};
       if (userOwnsOrganization) {
         params.actionMessage = 'Upgrade';
-        params.action = newUpgradeAction(organization);
+        params.action = newUpgradeAction(organization, trackPlanUpgrade);
       }
       $rootScope.$broadcast('persistentNotification', params);
+
+      function trackPlanUpgrade () {
+        analytics.trackPersistentNotificationAction('Plan Upgrade');
+      }
     }
   }
 
@@ -76,23 +80,43 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
     if (paywallIsOpen) {
       return;
     }
+    var organization = trial.getOrganization();
+    var userOwnsOrganization = isUserOrganizationOwner(user, organization);
+
+    trackPaywall('Viewed Paywall');
+
     paywallIsOpen = true;
     modalDialog.open({
+      title: 'Paywall', // For generic Modal Dialog tracking.
       template: 'paywall_dialog',
       scopeData: {
-        offerToSetUpPayment: userIsOrganizationOwner(user, trial.getOrganization()),
-        setUpPayment: newUpgradeAction(trial.getOrganization()),
+        offerToSetUpPayment: userOwnsOrganization,
+        setUpPayment: newUpgradeAction(organization, trackPaywallPlanUpgrade),
         openIntercom: intercom.open
       }
-    }).promise.finally(function () {
+    }).promise
+    .catch(function (){
+      trackPaywall('Cancelled Paywall');
+    })
+    .finally(function () {
       paywallIsOpen = false;
     });
+
+    function trackPaywallPlanUpgrade () {
+      trackPaywall('Clicked Paywall Plan Upgrade Button');
+    }
+    function trackPaywall (event) {
+      analytics.track(event, {
+        userCanUpgradePlan: userOwnsOrganization,
+        organizationName: organization.name
+      });
+    }
   }
 
-  function newUpgradeAction(organization){
+  function newUpgradeAction(organization, trackingFn){
     var organizationId = organization.sys.id;
     return function upgradeAction() {
-      analytics.trackPersistentNotificationAction('Plan Upgrade');
+      trackingFn();
       TheAccountView.goToSubscription(organizationId);
     };
   }
@@ -152,7 +176,7 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
     return organization.subscriptionState === 'trial';
   }
 
-  function userIsOrganizationOwner (user, organization) {
+  function isUserOrganizationOwner (user, organization) {
     var organizationMembership =
       _.find(user.organizationMemberships, function (membership) {
         return membership.organization.sys.id === organization.sys.id;
