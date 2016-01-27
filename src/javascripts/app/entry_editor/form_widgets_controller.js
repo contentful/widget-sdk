@@ -18,8 +18,9 @@ angular.module('contentful')
 .controller('FormWidgetsController',
   ['$scope', '$injector', 'contentType', 'editingInterface',
   function($scope, $injector, contentType, editingInterface) {
-  var widgets           = $injector.get('widgets');
-  var editingInterfaces = $injector.get('editingInterfaces');
+
+  var widgets = $injector.get('widgets');
+  var eiHelpers = $injector.get('editingInterfaces/helpers');
 
   $scope.$watchGroup(
     ['preferences.showDisabledFields', 'errorPaths'],
@@ -38,7 +39,7 @@ angular.module('contentful')
   }
 
   function buildWidget (widget) {
-    var field = editingInterfaces.findField(contentType.data.fields, widget);
+    var field = eiHelpers.findField(contentType.data.fields, widget);
     var renderable = widgets.buildRenderable(widget);
     renderable.field = field;
     return renderable;

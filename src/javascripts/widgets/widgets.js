@@ -12,6 +12,7 @@ angular.module('contentful')
   var deprecations = $injector.get('widgets/deprecations');
   var WidgetStore  = $injector.get('widgets/store');
   var schemaErrors = $injector.get('validation').errors;
+  var eiHelpers    = $injector.get('editingInterfaces/helpers');
 
   /**
    * @ngdoc type
@@ -345,11 +346,7 @@ angular.module('contentful')
   function buildSidebarWidgets (apiWidgets, fields) {
     return  _(apiWidgets)
       .map(function (widget) {
-        // TODO duplicates code from the 'editingInterfaces' service.
-        // But we cannot use it because of circular dependencies.
-        var field = _.find(fields, function (field) {
-          return field.apiName === widget.fieldId || field.id === widget.fieldId;
-        });
+        var field = eiHelpers.findField(fields, widget);
         var desc = getWidget(widget.widgetId);
         return _.extend({
           field: field

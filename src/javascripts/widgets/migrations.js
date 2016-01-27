@@ -39,19 +39,12 @@ angular.module('contentful')
  */
 .factory('widgets/migrations', ['$injector', function ($injector) {
   var MIGRATIONS = $injector.get('widgets/migrations/data');
+  var eiHelpers = $injector.get('editingInterfaces/helpers');
 
   return function editingInterfaceMigrator (contentType) {
     return function (editingInterface) {
       _.each(editingInterface.data.widgets, function (widget) {
-        // We can't unfortunately use editingInterfaces#findField because of a circular
-        // dependency, but the functionality has to remain the same...
-        var field = _.find(contentType.data.fields, function(field) {
-          if(!_.isString(widget.fieldId)) {
-            return false;
-          }
-          return field.apiName === widget.fieldId || field.id === widget.fieldId;
-        });
-
+        var field = eiHelpers.findField(contentType.data.fields, widget);
         migrateWidget(widget, field);
       });
       return editingInterface;
