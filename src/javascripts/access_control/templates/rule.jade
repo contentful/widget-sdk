@@ -30,7 +30,7 @@ select.cfnext-select-box(
 
 select.cfnext-select-box(
   ng-model="rule.locale"
-  ng-disabled="isDsiabled"
+  ng-disabled="isDisabled"
   ng-show="rule.action === 'update'"
   ng-options="locale.code as locale.name for locale in locales")
 
