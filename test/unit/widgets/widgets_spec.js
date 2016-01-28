@@ -264,17 +264,6 @@ describe('Widget types service', function () {
     });
   });
 
-  describe('widgetTemplate', function(){
-    it('returns the template property for a widget', function () {
-      this.setupWidgets({'foo': {fieldTypes: ['Text'], template: 'bar'}});
-      expect(widgets.widgetTemplate('foo')).toBe('bar');
-    });
-    it('returns a warning for a missing widget', function () {
-      this.setupWidgets({});
-      expect(widgets.widgetTemplate('derp')).toBe('<div class="missing-widget-template">Unknown editor widget "derp"</div>');
-    });
-  });
-
   describe('#applyDefaults(widget)', function () {
     beforeEach(function () {
       this.widgets = this.$inject('widgets');
@@ -392,6 +381,11 @@ describe('Widget types service', function () {
       });
       var renderable = widgets.buildRenderable({widgetId: 'WIDGET'});
       expect(renderable.sidebar).toBe(true);
+    });
+
+    it('sets fallback template if widget does not exist', function () {
+      var renderable = widgets.buildRenderable({widgetId: 'does not exist'});
+      expect(renderable.template).toMatch('Unknown editor widget "does not exist"');
     });
 
   });

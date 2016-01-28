@@ -83,7 +83,6 @@ angular.module('contentful')
     defaultWidgetId:     defaultWidgetId,
     optionsForWidget:    optionsForWidget,
     filterOptions:       filterOptions,
-    widgetTemplate:      widgetTemplate,
     paramDefaults:       paramDefaults,
     applyDefaults:       applyDefaults,
     validate:            validate,
