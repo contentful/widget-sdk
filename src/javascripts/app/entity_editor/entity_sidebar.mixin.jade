@@ -96,3 +96,10 @@ mixin entity-sidebar
         tooltip-placement="bottom"
         tooltip="{{presenceUser | userNameDisplay:user}}")
         img(ng-src="{{presenceUser.data.avatarUrl}}")
+
+    .entity-sidebar__widget(
+      ng-repeat="widget in sidebarWidgets"
+      ng-controller="SidebarWidgetRenderController")
+      h2.entity-sidebar__heading
+        | {{widget.name}}
+      cf-widget-renderer

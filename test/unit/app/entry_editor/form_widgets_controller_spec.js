@@ -68,6 +68,18 @@ describe('FormWidgetsController#widgets', function () {
     expect(scope.widgets[0].template).toBe('<span class=foo></span>');
   });
 
+  it('filters sidebar widgets', function () {
+    field.type = 'foo';
+    this.setupWidgets({
+      foo: {
+        template: '<span class=foo></span>',
+        fieldTypes: ['foo'],
+        sidebar: true
+      }
+    });
+    expect(scope.widgets.length).toBe(0);
+  });
+
 
   describe('with disabled field', function () {
     beforeEach(function () {

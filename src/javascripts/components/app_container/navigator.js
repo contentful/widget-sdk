@@ -143,15 +143,23 @@ angular.module('contentful').config([
 
         return spaceContext.fetchPublishedContentType(entry.data.sys.contentType.sys.id);
       }],
-
+      sidebarWidgets: [
+        'editingInterface', 'contentType', 'widgets',
+        function (editingInterface, contentType, Widgets) {
+          return Widgets.buildSidebarWidgets(
+            editingInterface.data.widgets,
+            contentType.data.fields
+          );
+        }]
     },
-    controller: ['$state', '$scope', 'entry', 'editingInterface', 'contentType', 'contextHistory',
-                 function ($state, $scope, entry, editingInterface, contentType, contextHistory) {
+    controller: ['$state', '$scope', 'entry', 'editingInterface', 'contentType', 'contextHistory', 'sidebarWidgets',
+                 function ($state, $scope, entry, editingInterface, contentType, contextHistory, sidebarWidgets) {
       $state.current.data = $scope.context = {};
       $scope.entry = entry;
       $scope.entity = entry;
       $scope.editingInterface = editingInterface;
       $scope.contentType = contentType;
+      $scope.sidebarWidgets = sidebarWidgets;
       contextHistory.addEntity(entry);
     }],
     template:

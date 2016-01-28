@@ -63,7 +63,7 @@ angular.module('contentful')
   var fieldFactory      = $injector.get('fieldFactory');
   var Widgets           = $injector.get('widgets');
   var features          = $injector.get('features');
-  var editingInterfaces = $injector.get('editingInterfaces');
+  var eiHelpers         = $injector.get('editingInterfaces/helpers');
 
   $scope.decoratedField = field.decorate($scope.field, $scope.contentType);
   $scope.validations = validations.decorateFieldValidations($scope.field);
@@ -71,7 +71,7 @@ angular.module('contentful')
   $scope.currentTitleField = getTitleField($scope.contentType);
 
   var eiWidgets = $scope.editingInterface.data.widgets;
-  var widget = editingInterfaces.findWidget(eiWidgets, $scope.field);
+  var widget = eiHelpers.findWidget(eiWidgets, $scope.field);
 
   $scope.widgetSettings = {
     id: widget.widgetId,
