@@ -202,7 +202,7 @@ describe('EntryLinkEditorController', function () {
         });
 
         it('returns missing description', function() {
-          expect(description).toBeNull();
+          expect(description).toBeUndefined();
         });
       });
     });
@@ -218,7 +218,7 @@ describe('EntryLinkEditorController', function () {
       });
 
       it('returns missing description', function() {
-        expect(description).toBeNull();
+        expect(description).toBeUndefined();
       });
     });
   });

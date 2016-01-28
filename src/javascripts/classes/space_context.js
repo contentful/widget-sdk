@@ -280,6 +280,31 @@ angular.module('contentful')
 
     /**
      * @ngdoc method
+     * @name spaceContext#entityDescription
+     * @param {Client.Entity} entry
+     * @description
+     * Gets the localized value of the first text field that is not the
+     * display field. May return undefined.
+     *
+     * @return {string?}
+     */
+    entityDescription: function (entity) {
+      var contentType = this.publishedTypeForEntry(entity);
+      if (!contentType) {
+        return;
+      }
+
+      var field = _.find(contentType.data.fields, function (field){
+        return field.id !== contentType.data.displayField && field.type == 'Text';
+      });
+
+      if (field) {
+        return this.localizedField(entity, 'data.fields.' + field.id);
+      }
+    },
+
+    /**
+     * @ngdoc method
      * @name spaceContext#assetTitle
      * @param {Client.Asset} asset
      * @param {string} localeCode
