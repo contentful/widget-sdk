@@ -50,6 +50,34 @@ describe('widgets/store', function () {
       });
       this.$apply();
     });
+
+    describe('with server error response', function () {
+      var store;
+
+      beforeEach(function () {
+        store = new Store({
+          endpoint: sinon.stub().returns({
+            get: sinon.stub().rejects()
+          })
+        });
+      });
+
+      it('logs server error', function () {
+        var logger = this.$inject('logger');
+        logger.logServerError = sinon.stub();
+        store.getMap();
+        this.$apply();
+        sinon.assert.calledOnce(logger.logServerError);
+      });
+
+      pit('returns only builtins', function () {
+        var builtin = this.$inject('widgets/builtin');
+        return store.getMap()
+        .then(function (widgets) {
+          expect(widgets).toEqual(builtin);
+        });
+      });
+    });
   });
 
   function makeSpaceStub (widgets) {
@@ -59,4 +87,5 @@ describe('widgets/store', function () {
       })
     };
   }
+
 });
