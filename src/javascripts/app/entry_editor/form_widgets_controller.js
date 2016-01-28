@@ -19,13 +19,33 @@ angular.module('contentful')
   ['$scope', '$injector', 'contentType', 'editingInterface',
   function($scope, $injector, contentType, editingInterface) {
 
-  var widgets = $injector.get('widgets');
+  var Widgets = $injector.get('widgets');
   var eiHelpers = $injector.get('editingInterfaces/helpers');
+  var analytics = $injector.get('analytics');
+  var getFieldLabel = $injector.get('fieldFactory').getLabel;
 
   $scope.$watchGroup(
     ['preferences.showDisabledFields', 'errorPaths'],
     updateWidgets
   );
+
+  // Executed only once when 'widgets' is not undefined.
+  $scope.$watch('::widgets', function (widgets) {
+    _.forEach(widgets, function (widget) {
+      var descriptor = Widgets.get(widget.widgetId);
+      var isCustom = descriptor && descriptor.custom;
+      if (isCustom) {
+        var event = 'Custom Widget rendered';
+        analytics.track(event, {
+          widgetId: descriptor.id,
+          widgetName: descriptor.name,
+          fieldType: getFieldLabel(widget.field),
+          contentTypeId: $scope.contentType.getId()
+        });
+        analytics.trackTotango(event, 'UI');
+      }
+    });
+  });
 
   /**
    * Retrieve the widgets from the current editingInterface, build the
@@ -40,7 +60,7 @@ angular.module('contentful')
 
   function buildWidget (widget) {
     var field = eiHelpers.findField(contentType.data.fields, widget);
-    var renderable = widgets.buildRenderable(widget);
+    var renderable = Widgets.buildRenderable(widget);
     renderable.field = field;
     return renderable;
   }
