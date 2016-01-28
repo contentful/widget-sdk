@@ -91,8 +91,20 @@ angular.module('contentful')
         segment.track(event, _.merge({}, data, this._spaceData));
       },
 
-      trackTotango: function (event) {
-        return totango.track(event);
+      /**
+       * @ngdoc method
+       * @name analytics#trackTotango
+       * @description
+       * Send event to Totango.
+       *
+       * Note that for new analytics events 'module' should be "UI" to
+       * keep the number of modules in Totango low.
+       *
+       * @param {string} event
+       * @param {string} module
+       */
+      trackTotango: function (event, module) {
+        return totango.track(event, module);
       },
 
       knowledgeBase: function (section) {
