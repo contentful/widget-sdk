@@ -1,5 +1,16 @@
 'use strict';
 
+/**
+ * @ngdoc service
+ * @name accessChecker
+ *
+ * @description
+ * This service exposes a variety of methods allowing you to check if you can
+ * (or can't) do in the application.
+ *
+ * There are no setters. This __singleton__ service is watching for changes
+ * that may change a state of user's permissions.
+ */
 angular.module('contentful').factory('accessChecker', ['$injector', function ($injector) {
 
   var $rootScope       = $injector.get('$rootScope');
@@ -36,14 +47,64 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   }, reset);
 
   return {
+    /**
+     * @ngdoc method
+     * @name accessChecker#getResponses
+     * @returns {object}
+     * @description
+     * Returns all collected worf responses.
+     */
+    getResponses: function () { return responses; },
+
+    /**
+     * @ngdoc method
+     * @name accessChecker#getResponseByActionName
+     * @returns {object}
+     * @description
+     * Returns worf response for a given action name.
+     */
+    getResponseByActionName: function (action) { return responses[action]; },
+
+    /**
+     * @ngdoc method
+     * @name accessChecker#getSectionVisibility
+     * @returns {object}
+     * @description
+     * Returns section visibility information.
+     */
+    getSectionVisibility: function () { return sectionVisibility; },
+
+    /**
+     * @ngdoc method
+     * @name accessChecker#getUserQuota
+     * @returns {object}
+     * @description
+     * Returns user quota information.
+     */
+    getUserQuota: function () { return userQuota; },
+
+    /**
+     * @ngdoc method
+     * @name accessChecker#shouldHide
+     * @param {string} actionName
+     * @returns {boolean}
+     * @description
+     * Returns true if action with a given name should be hidden.
+     */
+    shouldHide: shouldHide,
+
+    /**
+     * @ngdoc method
+     * @name accessChecker#shouldDisable
+     * * @param {string} actionName
+     * @returns {boolean}
+     * @description
+     * Returns true if action with a given name should be disabled.
+     */
+    shouldDisable: shouldDisable,
+
     reset:                           reset,
-    getResponses:                    function () { return responses; },
-    getResponseByActionName:         function (action) { return responses[action]; },
-    getSectionVisibility:            function () { return sectionVisibility; },
-    getUserQuota:                    function () { return userQuota; },
     getFieldChecker:                 getFieldChecker,
-    shouldHide:                      shouldHide,
-    shouldDisable:                   shouldDisable,
     canPerformActionOnEntity:        canPerformActionOnEntity,
     canPerformActionOnEntryOfType:   canPerformActionOnEntryOfType,
     canUpdateEntry:                  canUpdateEntry,
@@ -57,6 +118,12 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     wasForbidden:                    wasForbidden
   };
 
+  /**
+   * @ngdoc method
+   * @name accessChecker#reset
+   * @description
+   * Forcibly recollect all permission data
+   */
   function reset() {
     policyChecker.setMembership(fromSpaceData('spaceMembership'));
     collectResponses();
@@ -93,6 +160,17 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     userQuota.used  = fromSpaceData('organization.usage.permanent.organizationMembership', 1);
   }
 
+  /**
+   * @ngdoc method
+   * @name accessChecker#getFieldChecker
+   * @param {API.Entry|API.Asset} entity
+   * @param {function} predicate
+   * @returns {object}
+   * @description
+   * Gets a field chcecker for a given entity.
+   *
+   * Predicate may be used to override field access check.
+   */
   function getFieldChecker(entity, predicate) {
     return policyChecker.getFieldChecker(getContentTypeIdFor(entity), predicate);
   }
@@ -121,6 +199,15 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     return response;
   }
 
+  /**
+   * @ngdoc method
+   * @name accessChecker#canPerformActionOnEntryOfType
+   * @param {string} action
+   * @param {string} actionTypeId
+   * @returns {boolean}
+   * @description
+   * Returns true if action can be performed on entry with the given content type ID.
+   */
   function canPerformActionOnEntryOfType(action, contentTypeId) {
     if (action === 'create') {
       return !shouldHide('createEntry') || policyChecker.canCreateEntriesOfType(contentTypeId);
@@ -130,10 +217,29 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     }
   }
 
+  /**
+   * @ngdoc method
+   * @name accessChecker#canPerformActionOnEntity
+   * @param {string} action
+   * @param {API.Entry|API.Asset|string} entity
+   * @returns {boolean}
+   * @description
+   * Returns true if action can be performed on entity.
+   *
+   * This method can be provided with an entity object or string `"Entry"` or `"Asset"`.
+   */
   function canPerformActionOnEntity(action, entity) {
     return can(action, entity.data).can;
   }
 
+  /**
+   * @ngdoc method
+   * @name accessChecker#canUpdateEntry
+   * @param {API.Entry} entry
+   * @returns {boolean}
+   * @description
+   * Returns true if an entry can be updated.
+   */
   function canUpdateEntry(entry) {
     var canUpdate = canPerformActionOnEntity('update', entry);
     var ctId = getContentTypeIdFor(entry);
@@ -150,6 +256,14 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     return canUpdate || canUpdateThisType || (canUpdateOwn && isAuthor);
   }
 
+  /**
+   * @ngdoc method
+   * @name accessChecker#canUpdateAsset
+   * @param {API.Asset} asset
+   * @returns {boolean}
+   * @description
+   * Returns true if an asset can be updated.
+   */
   function canUpdateAsset(asset) {
     var canUpdate = canPerformActionOnEntity('update', asset);
     var canUpdateWithPolicy = policyChecker.canUpdateAssets();
@@ -157,14 +271,35 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     return canUpdate || canUpdateWithPolicy;
   }
 
+  /**
+   * @ngdoc method
+   * @name accessChecker#canModifyApiKeys
+   * @returns {boolean}
+   * @description
+   * Returns true if API Keys can be modified.
+   */
   function canModifyApiKeys() {
     return dotty.get(responses, 'createApiKey.can', false);
   }
 
+  /**
+   * @ngdoc method
+   * @name accessChecker#canModifyRoles
+   * @returns {boolean}
+   * @description
+   * Returns true if Roles can be modified.
+   */
   function canModifyRoles() {
     return isAdminOrOwner() && dotty.get(features, 'customRoles', false);
   }
 
+  /**
+   * @ngdoc method
+   * @name accessChecker#canModifyUsers
+   * @returns {boolean}
+   * @description
+   * Returns true if Users can be modified.
+   */
   function canModifyUsers() {
     return isAdminOrOwner();
   }
@@ -174,6 +309,13 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     return isSpaceAdmin || _.contains(['owner', 'admin'], getRoleInOrganization());
   }
 
+  /**
+   * @ngdoc method
+   * @name accessChecker#canCreateSpace
+   * @returns {boolean}
+   * @description
+   * Returns true if space can be created.
+   */
   function canCreateSpace() {
     if (OrganizationList.isEmpty()) { return false; }
     if (!authorization.authContext) { return false; }
@@ -185,12 +327,27 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     return response;
   }
 
+  /**
+   * @ngdoc method
+   * @name accessChecker#canCreateSpaceInAnyOrganization
+   * @returns {boolean}
+   * @description
+   * Returns true if space can be created in any organization.
+   */
   function canCreateSpaceInAnyOrganization() {
     return _.some(OrganizationList.getAll(), function (org) {
       return canCreateSpaceInOrganization(org.sys.id);
     });
   }
 
+  /**
+   * @ngdoc method
+   * @name accessChecker#canCreateSpaceInOrganization
+   * @param {string} organizationId
+   * @returns {boolean}
+   * @description
+   * Returns true if space can be created in an organization with a provided ID.
+   */
   function canCreateSpaceInOrganization(organizationId) {
     if (!authorization.authContext) { return false; }
 
@@ -207,6 +364,15 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     return response;
   }
 
+  /**
+   * @ngdoc method
+   * @name accessChecker#wasForbidden
+   * @param {object} context
+   * @returns {function}
+   * @description
+   * Returns function that will check a status code of response.
+   * If it's 403/4, it'll set "forbidden" key on a provided context object.
+   */
   function wasForbidden(context) {
     return function (res) {
       if (_.contains([403, 404], parseInt(dotty.get(res, 'statusCode'), 10))) {
