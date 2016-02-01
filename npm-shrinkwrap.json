@@ -4,53 +4,41 @@
   "dependencies": {
     "@contentful/client": {
       "version": "14.0.0",
-      "from": "@contentful/client@14.0.0"
+      "from": "@contentful/client@>=14.0.0 <15.0.0"
     },
     "@contentful/hostname-transformer": {
       "version": "1.2.6",
-      "from": "@contentful/hostname-transformer@1.2.6"
+      "from": "@contentful/hostname-transformer@>=1.2.5 <2.0.0"
     },
     "@contentful/mimetype": {
       "version": "1.0.1",
-      "from": "@contentful/mimetype@1.0.1"
+      "from": "@contentful/mimetype@>=1.0.0 <2.0.0"
     },
     "@contentful/validation": {
       "version": "5.9.0",
-      "from": "@contentful/validation@5.9.0",
+      "from": "@contentful/validation@>=5.7.0 <6.0.0",
       "dependencies": {
+        "@contentful/mimetype": {
+          "version": "1.0.1",
+          "from": "@contentful/mimetype@>=1.0.0 <2.0.0"
+        },
         "@contentful/spock": {
           "version": "0.6.0",
-          "from": "git+ssh://git@github.com/contentful/spock.git#feature/interpret-api-names",
-          "dependencies": {
-            "dottie": {
-              "version": "1.1.1",
-              "from": "dottie@1.1.1"
-            }
-          }
+          "from": "@contentful/spock@>=0.6.0 <0.7.0"
         },
         "camelize": {
           "version": "1.0.0",
-          "from": "camelize@1.0.0"
+          "from": "camelize@>=1.0.0 <2.0.0"
         }
       }
     },
     "@contentful/worf": {
-      "version": "3.5.1",
-      "from": "git+ssh://git@github.com/contentful/worf.git#d49d48db65a08d4c427ad802861783c2f9483bc7",
+      "version": "3.4.0",
+      "from": "@contentful/worf@>=3.4.0 <4.0.0",
       "dependencies": {
         "@contentful/spock": {
           "version": "0.6.0",
-          "from": "git+ssh://git@github.com/contentful/spock.git#5a407cb97622ba54f5f2fcec021eedea37617a94",
-          "dependencies": {
-            "dottie": {
-              "version": "1.1.1",
-              "from": "dottie@>=1.1.0 <2.0.0"
-            },
-            "lodash-node": {
-              "version": "2.4.1",
-              "from": "lodash-node@>=2.4.1 <2.5.0"
-            }
-          }
+          "from": "@contentful/spock@>=0.6.0 <0.7.0"
         }
       }
     },
@@ -3358,11 +3346,11 @@
                         },
                         "string_decoder": {
                           "version": "0.10.31",
-                          "from": "string_decoder@>=0.10.0 <0.11.0"
+                          "from": "string_decoder@0.10.31"
                         },
                         "inherits": {
                           "version": "2.0.1",
-                          "from": "inherits@>=2.0.1 <2.1.0"
+                          "from": "inherits@2.0.1"
                         }
                       }
                     }
@@ -5698,11 +5686,11 @@
                         },
                         "string_decoder": {
                           "version": "0.10.31",
-                          "from": "string_decoder@>=0.10.0 <0.11.0"
+                          "from": "string_decoder@0.10.31"
                         },
                         "inherits": {
                           "version": "2.0.1",
-                          "from": "inherits@>=2.0.1 <2.1.0"
+                          "from": "inherits@2.0.1"
                         }
                       }
                     }
@@ -6120,7 +6108,7 @@
               "dependencies": {
                 "ansi-regex": {
                   "version": "2.0.0",
-                  "from": "ansi-regex@2.0.0"
+                  "from": "ansi-regex@>=2.0.0 <3.0.0"
                 }
               }
             },
@@ -6130,7 +6118,7 @@
               "dependencies": {
                 "ansi-regex": {
                   "version": "2.0.0",
-                  "from": "ansi-regex@2.0.0"
+                  "from": "ansi-regex@>=2.0.0 <3.0.0"
                 }
               }
             },
@@ -6534,7 +6522,7 @@
                 },
                 "inherits": {
                   "version": "2.0.1",
-                  "from": "inherits@2.0.1"
+                  "from": "inherits@>=2.0.1 <2.1.0"
                 },
                 "isarray": {
                   "version": "0.0.1",
@@ -6546,7 +6534,7 @@
                 },
                 "string_decoder": {
                   "version": "0.10.31",
-                  "from": "string_decoder@0.10.31"
+                  "from": "string_decoder@>=0.10.0 <0.11.0"
                 },
                 "util-deprecate": {
                   "version": "1.0.2",
@@ -8362,11 +8350,11 @@
             },
             "has-ansi": {
               "version": "2.0.0",
-              "from": "has-ansi@2.0.0",
+              "from": "has-ansi@>=2.0.0 <3.0.0",
               "dependencies": {
                 "ansi-regex": {
                   "version": "2.0.0",
-                  "from": "ansi-regex@2.0.0"
+                  "from": "ansi-regex@>=2.0.0 <3.0.0"
                 }
               }
             },
@@ -8376,7 +8364,7 @@
               "dependencies": {
                 "ansi-regex": {
                   "version": "2.0.0",
-                  "from": "ansi-regex@2.0.0"
+                  "from": "ansi-regex@>=2.0.0 <3.0.0"
                 }
               }
             },
@@ -8466,13 +8454,7 @@
             },
             "@contentful/spock": {
               "version": "0.6.0",
-              "from": "git+ssh://git@github.com/contentful/spock.git#feature/interpret-api-names",
-              "dependencies": {
-                "dottie": {
-                  "version": "1.1.1",
-                  "from": "dottie@1.1.1"
-                }
-              }
+              "from": "@contentful/spock@0.6.0"
             }
           }
         },
@@ -8764,6 +8746,10 @@
               "version": "0.0.1",
               "from": "pause@0.0.1"
             },
+            "base64-url": {
+              "version": "1.2.1",
+              "from": "base64-url@1.2.1"
+            },
             "crc": {
               "version": "3.2.1",
               "from": "crc@3.2.1"
@@ -8783,10 +8769,6 @@
             "vary": {
               "version": "1.0.0",
               "from": "vary@1.0.0"
-            },
-            "base64-url": {
-              "version": "1.2.1",
-              "from": "base64-url@1.2.1"
             },
             "on-finished": {
               "version": "2.2.1",
