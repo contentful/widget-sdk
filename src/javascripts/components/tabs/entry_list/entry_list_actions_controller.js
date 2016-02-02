@@ -1,10 +1,11 @@
 'use strict';
 
 angular.module('contentful').controller('EntryListActionsController', ['$scope', '$injector', function EntryListActionsController($scope, $injector) {
-  var $q          = $injector.get('$q');
-  var $timeout    = $injector.get('$timeout');
-  var listActions = $injector.get('listActions');
-  var logger      = $injector.get('logger');
+  var $q            = $injector.get('$q');
+  var $timeout      = $injector.get('$timeout');
+  var listActions   = $injector.get('listActions');
+  var logger        = $injector.get('logger');
+  var accessChecker = $injector.get('accessChecker');
 
   var _cacheSelected;
 
@@ -30,13 +31,6 @@ angular.module('contentful').controller('EntryListActionsController', ['$scope',
     entityName: 'Entry',
     entityNamePlural: 'Entries',
   });
-
-  var every = function (predicate) {
-    var selected = getSelected();
-    return !_.isEmpty(selected) && _.every(selected, function (entry) {
-      return entry[predicate]();
-    });
-  };
 
   $scope.publishSelected = function() {
     batchPerformer.perform({
@@ -109,29 +103,21 @@ angular.module('contentful').controller('EntryListActionsController', ['$scope',
     });
   };
 
-  $scope.showDuplicate = function () {
-    return !$scope.permissionController.get('createEntry', 'shouldHide');
-  };
+  $scope.showDuplicate = function () { return !accessChecker.shouldHide('createEntry'); };
+  $scope.showDelete    = createShowChecker('delete', 'canDelete');
+  $scope.showArchive   = createShowChecker('archive', 'canArchive');
+  $scope.showUnarchive = createShowChecker('unarchive', 'canUnarchive');
+  $scope.showPublish   = createShowChecker('publish', 'canPublish');
+  $scope.showUnpublish = createShowChecker('unpublish', 'canUnpublish');
 
-  $scope.showDelete = function () {
-    return !$scope.permissionController.get('deleteEntry', 'shouldHide') && every('canDelete');
-  };
-
-  $scope.showArchive = function () {
-    return !$scope.permissionController.get('archiveEntry', 'shouldHide') && every('canArchive');
-  };
-
-  $scope.showUnarchive = function () {
-    return !$scope.permissionController.get('unarchiveEntry', 'shouldHide') && every('canUnarchive');
-  };
-
-  $scope.showUnpublish = function () {
-    return !$scope.permissionController.get('unpublishEntry', 'shouldHide') && every('canUnpublish');
-  };
-
-  $scope.showPublish = function () {
-    return !$scope.permissionController.get('publishEntry', 'shouldHide') && every('canPublish');
-  };
+  function createShowChecker(action, predicate) {
+    return function () {
+      var selected = getSelected();
+      return _.isArray(selected) && selected.length > 0 &&  _.every(selected, function (entry) {
+        return accessChecker.canPerformActionOnEntity(action, entry) && entry[predicate]();
+      });
+    };
+  }
 
   $scope.publishButtonName = function () {
     var published = 0;

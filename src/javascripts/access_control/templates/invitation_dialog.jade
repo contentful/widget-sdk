@@ -1,0 +1,34 @@
+.modal-background
+  .modal-dialog
+    header.modal-dialog__header
+      h1 Invite a new user
+
+    .modal-dialog__content
+      .modal-dialog__richtext
+        form.cfnext-form__field(name="invitationForm")
+          label(for="field-mail")
+            | Email address
+          input#field-mail.cfnext-form__input--full-size(
+            ng-model="input.mail" type="email"
+            ng-maxlength="2100"
+            required autocomplete="off"
+            cf-focus-on-render="input")
+          .note-box-small.note-box--gold(ng-if="taken")
+            | There is already a user with <strong>{{ taken }}</strong> email address in this space.
+          .note-box-small.note-box--gold(ng-if="backendMessage" ng-bind="backendMessage")
+          .cfnext-form__hint They will receive an invitation email with a link to join Contentful.
+
+        .cfnext-form__field
+          label(for="field-role") New role
+          select#field-role.cfnext-form__input--full-size(ng-model="input.roleId")
+            option(value="")
+              | Select the role you want to assign to this user
+            option(ng-repeat="option in roleOptions" value="{{ option.id }}")
+              | {{ option.name }}
+          .cfnext-form__hint You can always change this later.
+
+    .modal-dialog__controls
+      button.cfnext-btn-primary-action(ui-command="invite")
+        | Invite
+      button.cfnext-btn-secondary-action(ng-click="dialog.cancel()")
+        | Cancel

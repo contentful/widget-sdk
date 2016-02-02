@@ -27,12 +27,14 @@ describe('Create Space controller', function () {
       this.$q = $injector.get('$q');
       this.client = $injector.get('client');
       this.enforcements = $injector.get('enforcements');
+      this.accessChecker = $injector.get('accessChecker');
 
       this.broadcastStub = sinon.stub(this.$rootScope, '$broadcast');
       this.broadcastStub.returns(sinon.stub());
       this.client.createSpace = sinon.stub();
       this.enforcements.computeUsage = sinon.stub();
       this.enforcements.determineEnforcement = sinon.stub();
+      this.accessChecker.canCreateSpaceInOrganization = sinon.stub();
 
       scope = this.$rootScope;
       scope.$emit = sinon.stub();
@@ -41,8 +43,6 @@ describe('Create Space controller', function () {
 
       org = {sys: {id: 'orgid'}};
       scope.organizations = [org];
-      scope.permissionController = {};
-      scope.permissionController.canCreateSpaceInOrg = sinon.stub();
       scope.newSpaceForm = {};
 
       scope.setTokenDataOnScope = sinon.stub();
@@ -70,8 +70,8 @@ describe('Create Space controller', function () {
         {sys: {id: 'orgid2'}},
         {badorg: true}
       ];
-      scope.permissionController.canCreateSpaceInOrg.withArgs('orgid').returns(true);
-      scope.permissionController.canCreateSpaceInOrg.withArgs('orgid2').returns(false);
+      this.accessChecker.canCreateSpaceInOrganization.withArgs('orgid').returns(true);
+      this.accessChecker.canCreateSpaceInOrganization.withArgs('orgid2').returns(false);
       createController();
     });
 
@@ -82,7 +82,7 @@ describe('Create Space controller', function () {
 
   describe('on the default state', function() {
     beforeEach(function() {
-      scope.permissionController.canCreateSpaceInOrg.returns(true);
+      this.accessChecker.canCreateSpaceInOrganization.returns(true);
       createController();
     });
 
@@ -122,7 +122,7 @@ describe('Create Space controller', function () {
 
       describe('if user cant create space in org', function() {
         beforeEach(function() {
-          scope.permissionController.canCreateSpaceInOrg.returns(false);
+          this.accessChecker.canCreateSpaceInOrganization.returns(false);
           scope.createSpace();
         });
 
@@ -131,7 +131,7 @@ describe('Create Space controller', function () {
         });
 
         it('checks for creation permission', function() {
-          sinon.assert.calledWith(scope.permissionController.canCreateSpaceInOrg, 'orgid');
+          sinon.assert.calledWith(this.accessChecker.canCreateSpaceInOrganization, 'orgid');
         });
 
         it('shows error', function() {
@@ -146,7 +146,7 @@ describe('Create Space controller', function () {
 
       describe('if user can create space in org', function() {
         beforeEach(function() {
-          scope.permissionController.canCreateSpaceInOrg.returns(true);
+          this.accessChecker.canCreateSpaceInOrganization.returns(true);
           scope.newSpaceData.name = 'name';
         });
 
@@ -168,7 +168,7 @@ describe('Create Space controller', function () {
           });
 
           it('checks for creation permission', function() {
-            sinon.assert.calledWith(scope.permissionController.canCreateSpaceInOrg, 'orgid');
+            sinon.assert.calledWith(this.accessChecker.canCreateSpaceInOrganization, 'orgid');
           });
 
           it('calls client lib with data', function() {
@@ -213,7 +213,7 @@ describe('Create Space controller', function () {
           });
 
           it('checks for creation permission', function() {
-            sinon.assert.calledWith(scope.permissionController.canCreateSpaceInOrg, 'orgid');
+            sinon.assert.calledWith(this.accessChecker.canCreateSpaceInOrganization, 'orgid');
           });
 
           it('calls client lib with data', function() {
@@ -259,7 +259,7 @@ describe('Create Space controller', function () {
           });
 
           it('checks for creation permission', function() {
-            sinon.assert.calledWith(scope.permissionController.canCreateSpaceInOrg, 'orgid');
+            sinon.assert.calledWith(this.accessChecker.canCreateSpaceInOrganization, 'orgid');
           });
 
           it('calls client lib with data', function() {

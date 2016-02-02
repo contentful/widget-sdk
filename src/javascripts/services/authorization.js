@@ -41,11 +41,4 @@ angular.module('contentful').
     };
 
     return new Authorization();
-  }]).
-  factory('reasonsDenied', ['authorization', function (authorization) {
-    return function reasonsDenied() {
-      return authorization.spaceContext.reasonsDenied
-        .apply(authorization.spaceContext, arguments);
-    };
   }]);
-

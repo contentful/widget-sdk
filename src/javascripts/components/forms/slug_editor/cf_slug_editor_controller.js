@@ -1,18 +1,20 @@
 'use strict';
 
 angular.module('contentful').controller('SlugEditorController', ['$scope', '$injector', function ($scope, $injector) {
-  var slugUtils = $injector.get('slug');
-  var debounce  = $injector.get('debounce');
-  var moment    = $injector.get('moment');
+  var slugUtils       = $injector.get('slug');
+  var debounce        = $injector.get('debounce');
+  var moment          = $injector.get('moment');
   var TheLocaleStore  = $injector.get('TheLocaleStore');
+  var spaceContext    = $injector.get('spaceContext');
 
-  var spaceContext = $scope.spaceContext;
   var currentLocale = $scope.locale;
   var defaultLocale = TheLocaleStore.getDefaultLocale();
   var debouncedPerformDuplicityCheck = debounce(performDuplicityCheck, 500);
   var unwatchers = [];
 
-  $scope.$watch('otDoc.state.editable', function (editable) {
+  $scope.$watch(function () {
+    return $scope.isEditable($scope.field, $scope.locale);
+  }, function (editable) {
     if (editable) {
       unwatchers.push($scope.$watch('entry.isPublished()', updateDivergedStatus));
       unwatchers.push($scope.$watch('fieldData.value', updateStateFromSlug));

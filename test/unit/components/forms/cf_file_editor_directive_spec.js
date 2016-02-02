@@ -32,6 +32,7 @@ describe('cfFileEditor Directive', function () {
       scope = $rootScope.$new();
 
       scope.otDoc = {doc: {}, state: {}};
+      scope.isEditable = _.constant(true);
 
       scope.fieldData = {
         fileName: 'file.jpg',

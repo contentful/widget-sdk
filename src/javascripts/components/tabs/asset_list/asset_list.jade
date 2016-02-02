@@ -15,11 +15,11 @@ header.workbench-header
     .search-results-position(cf-search-results-position paginator="searchController.paginator" ng-hide="!searchController.paginator.numEntries")
 
   .workbench-header__actions(
-    ng-show="!showNoAssetsAdvice() && showCreateAssetButton()")
+    ng-show="!showNoAssetsAdvice() && !shouldHide('createAsset')")
     button.cfnext-btn-action(
       cf-context-menu-trigger
-      ng-disabled="permissionController.get('createAsset', 'shouldDisable')"
-      cf-when-disabled="permissionController.entityActions.createAsset"
+      ng-disabled="shouldDisable('createAsset')"
+      cf-when-disabled="createAsset"
       data-test-id="add-asset-menu-trigger")
       cf-icon.btn-icon.inverted(name="plus")
       cf-icon.btn-dropdown-icon(name="dd-arrow-down")
@@ -30,7 +30,7 @@ header.workbench-header
       ul.context-menu__items
         li(role="menuitem" ng-click="entityCreationController.newAsset()")
           | Single Asset
-        li(role="menuitem" ng-click="createMultipleAssets()")
+        li(role="menuitem" ng-click="createMultipleAssets()" ng-hide="shouldHide('updateAsset')")
           | Multiple Assets
 
 .workbench-main(ng-hide="showNoAssetsAdvice()")
@@ -95,9 +95,9 @@ header.workbench-header
     .dropdown-btn
       button.advice__action(
         cf-context-menu-trigger
-        ng-hide="permissionController.get('createAsset', 'shouldHide')"
-        ng-disabled="permissionController.get('createAsset', 'shouldDisable')"
-        cf-when-disabled="permissionController.entityActions.createAsset"
+        ng-hide="shouldHide('createAsset')"
+        ng-disabled="shouldDisable('createAsset')"
+        cf-when-disabled="createAsset"
         data-test-id="create-asset-menu-trigger")
         | Create an Asset
       .context-menu(
@@ -106,7 +106,7 @@ header.workbench-header
         ul.context-menu__items
           li(role="menuitem" ng-click="entityCreationController.newAsset()")
             | Single Asset
-          li(role="menuitem" ng-click="createMultipleAssets()")
+          li(role="menuitem" ng-click="createMultipleAssets()" ng-hide="shouldHide('updateAsset')")
             | Multiple Assets
     cf-knowledge-base(target="asset" text="Visit the Knowledge Base Pages")
 

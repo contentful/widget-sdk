@@ -1,12 +1,8 @@
 'use strict';
 
-describe('Trial Watch controller', function () {
-  var scope;
-  var trialWatchCtrl;
-  var broadcastStub;
-  var modalDialogMock;
-  var momentStub, momentDiffStub, momentIsAfterStub;
-  var $window, $q;
+describe('Trial Watcher', function () {
+  var $rootScope, spaceContext, authentication, $window, $q;
+  var broadcastStub, momentDiffStub, momentIsAfterStub, openDialogStub;
 
   function makeSpace(organization) {
     organization.sys = {id: '42'};
@@ -18,7 +14,7 @@ describe('Trial Watch controller', function () {
   }
 
   function makeScopeUserOwnScopeSpaceOrganization () {
-    makeUserOwnOrganization(scope.user, scope.spaceContext.space.data.organization);
+    makeUserOwnOrganization(authentication.tokenLookup.sys.createdBy, spaceContext.space.data.organization);
   }
 
   function makeUserOwnOrganization (user, organization) {
@@ -34,42 +30,25 @@ describe('Trial Watch controller', function () {
   }
 
   beforeEach(function () {
-    momentDiffStub = sinon.stub();
-    momentIsAfterStub = sinon.stub();
-    momentStub = sinon.stub();
-    momentStub.returns({
-      diff: momentDiffStub,
-      isAfter: momentIsAfterStub
-    });
+    module('contentful/test');
 
-    modalDialogMock = {
-      open: sinon.stub().returns({
-          promise: {
-            'finally': function() {}
-          }
-      })
-    };
+    var TrialWatcher = this.$inject('TrialWatcher');
+    var moment = this.$inject('moment');
+    var modalDialog = this.$inject('modalDialog');
 
-    module('contentful/test', function ($provide) {
-      $provide.value('moment', momentStub);
-      $provide.value('modalDialog', modalDialogMock);
-    });
+    $rootScope = this.$inject('$rootScope');
+    spaceContext = this.$inject('spaceContext');
+    authentication = this.$inject('authentication');
+    $window = this.$inject('$window');
+    $q = this.$inject('$q');
 
-    inject(function ($rootScope, $controller, _$window_, _$q_) {
-      scope = $rootScope.$new();
-      scope.user = {
-        organizationMemberships: []
-      };
+    broadcastStub = sinon.stub($rootScope, '$broadcast').returns({});
+    moment.fn.diff = momentDiffStub = sinon.stub();
+    moment.fn.isAfter = momentIsAfterStub = sinon.stub();
+    modalDialog.open = openDialogStub = sinon.stub().returns({promise: {finally: _.noop}});
+    authentication.tokenLookup = {sys: {createdBy: {organizationMemberships: []}}};
 
-      broadcastStub = sinon.stub($rootScope, '$broadcast');
-
-      $window = _$window_;
-      $q = _$q_;
-
-      trialWatchCtrl = $controller('TrialWatchController', {
-        $scope: scope
-      });
-    });
+    TrialWatcher.init();
   });
 
   afterEach(function () {
@@ -78,21 +57,18 @@ describe('Trial Watch controller', function () {
 
   describe('without trial user', function () {
     beforeEach(function () {
-      scope.spaceContext = {
-        space: makeSpace({
-          subscriptionState: 'testState'
-        })
-      };
-      scope.$digest();
+      spaceContext.space =  makeSpace({subscriptionState: 'testState'});
+      $rootScope.$apply();
     });
 
     describe('removal of old notification (e.g. after switch orga)', function () {
-      it('calls broadcast to remove last notification', function () {
-        sinon.assert.calledOnce(broadcastStub);
-      });
+      it('calls broadcast with null once', function () {
+        var notificationCalls = broadcastStub.args.filter(function (x) {
+          return x[0] === 'persistentNotification';
+        });
 
-      it('calls broadcast with null', function () {
-        expect(broadcastStub.args[0][1]).toBeNull();
+        expect(notificationCalls.length).toBe(1);
+        expect(notificationCalls[0][1]).toBeNull();
       });
     });
   });
@@ -108,13 +84,11 @@ describe('Trial Watch controller', function () {
 
     describe('for a trial subscription', function () {
       beforeEach(function(){
-        scope.spaceContext = {
-          space: makeSpace({
-            subscriptionState: 'trial',
-            trialPeriodEndsAt: '2013-12-13T13:28:44Z',
-            name: 'TEST_ORGA_NAME'
-          })
-        };
+        spaceContext.space = makeSpace({
+          subscriptionState: 'trial',
+          trialPeriodEndsAt: '2013-12-13T13:28:44Z',
+          name: 'TEST_ORGA_NAME'
+        });
       });
 
       describe('already ended', function () {
@@ -125,7 +99,7 @@ describe('Trial Watch controller', function () {
         describe('for user owning the organization', function () {
           beforeEach(function() {
             makeScopeUserOwnScopeSpaceOrganization();
-            scope.$digest();
+            $rootScope.$apply();
           });
 
           itShowsAMessage(/Your trial has ended.*TEST_ORGA_NAME organization/);
@@ -140,7 +114,7 @@ describe('Trial Watch controller', function () {
 
         describe('for user not owning the organization', function () {
           beforeEach(function () {
-            scope.$digest();
+            $rootScope.$apply();
           });
 
           itShowsAMessage(/Your trial has ended.*TEST_ORGA_NAME organization/);
@@ -158,7 +132,7 @@ describe('Trial Watch controller', function () {
         beforeEach(function () {
           makeScopeUserOwnScopeSpaceOrganization();
           trialHoursLeft(0.2);
-          scope.$digest();
+          $rootScope.$apply();
         });
 
         itShowsAMessage(/0(.*)hours left in trial/);
@@ -174,7 +148,7 @@ describe('Trial Watch controller', function () {
         beforeEach(function () {
           makeScopeUserOwnScopeSpaceOrganization();
           trialHoursLeft(20);
-          scope.$digest();
+          $rootScope.$apply();
         });
 
         itShowsAMessage(/20(.*)hours left in trial/);
@@ -191,7 +165,7 @@ describe('Trial Watch controller', function () {
         beforeEach(function () {
           makeScopeUserOwnScopeSpaceOrganization();
           trialHoursLeft(76);
-          scope.$digest();
+          $rootScope.$apply();
         });
 
         itShowsAnActionMessage();
@@ -203,7 +177,7 @@ describe('Trial Watch controller', function () {
 
       describe('no action', function () {
         beforeEach(function () {
-          scope.$digest();
+          $rootScope.$apply();
         });
 
         itDoesNotShowAnActionMessage();
@@ -215,21 +189,19 @@ describe('Trial Watch controller', function () {
 
     describe('for a free subscription', function () {
       beforeEach(function(){
-        scope.spaceContext = {
-          space: makeSpace({
-            subscriptionState: 'active',
-            subscriptionPlan: {
-              paid: false,
-              kind: 'default'
-            }
-          })
-        };
+        spaceContext.space = makeSpace({
+          subscriptionState: 'active',
+          subscriptionPlan: {
+            paid: false,
+            kind: 'default'
+          }
+        });
     });
 
       describe('with an action', function () {
         beforeEach(function () {
           makeScopeUserOwnScopeSpaceOrganization();
-          scope.$digest();
+          $rootScope.$apply();
         });
 
         itShowsAMessage('free version');
@@ -243,7 +215,7 @@ describe('Trial Watch controller', function () {
 
       describe('no action', function () {
         beforeEach(function () {
-          scope.$digest();
+          $rootScope.$apply();
         });
 
         itDoesNotShowAnActionMessage();
@@ -289,7 +261,7 @@ describe('Trial Watch controller', function () {
     itOpensPaywall();
 
     it('allows setting up payment', function () {
-      expect(modalDialogMock.open.args[0][0].scopeData.offerToSetUpPayment).toBe(true);
+      expect(openDialogStub.args[0][0].scopeData.offerToSetUpPayment).toBe(true);
     });
   }
 
@@ -297,19 +269,19 @@ describe('Trial Watch controller', function () {
     itOpensPaywall();
 
     it('does not allow setting up payment', function () {
-      expect(modalDialogMock.open.args[0][0].scopeData.offerToSetUpPayment).toBe(false);
+      expect(openDialogStub.args[0][0].scopeData.offerToSetUpPayment).toBe(false);
     });
   }
 
   function itOpensPaywall () {
     it('opens the paywall modal dialog', function () {
-      expect(modalDialogMock.open.calledOnce).toBe(true);
+      expect(openDialogStub.calledOnce).toBe(true);
     });
   }
 
   function itDoesNotOpenPaywall () {
     it('does not open the paywall modal dialog', function () {
-      expect(modalDialogMock.open.called).toBe(false);
+      expect(openDialogStub.called).toBe(false);
     });
   }
 });

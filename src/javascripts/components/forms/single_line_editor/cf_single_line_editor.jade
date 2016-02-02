@@ -1,5 +1,5 @@
 input.form-control(
-  ng-disabled="!otDoc.state.editable"
+  ng-disabled="isDisabled(field, locale)"
   ng-model="fieldData.value"
   ot-bind-text=""
   type="text")

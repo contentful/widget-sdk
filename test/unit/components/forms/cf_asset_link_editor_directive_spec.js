@@ -111,7 +111,8 @@ describe('cfAssetLinkEditor Directive', function () {
 
       $rootScope.$apply();
 
-      scope.otDoc = {state: {editable: true}};
+      scope.otDoc = {state: {}};
+      scope.isEditable = _.constant(true);
       scope.linkedEntities = [];
       scope.entities = [];
       compileElement();

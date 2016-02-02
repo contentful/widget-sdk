@@ -4,7 +4,7 @@
   entity-type="Entry"
   entity-content-types="linkContentTypes"
   entity-mime-type-group="linkMimetypeGroup"
-  ng-show="otDoc.state.editable && (linkedEntities.length == 0 || field.type == 'Array')")
+  ng-show="isEditable(field, locale) && (linkedEntities.length == 0 || field.type == 'Array')")
 
 .form-widget__help-text(ng-if="helpText") {{helpText}}
 
@@ -16,7 +16,7 @@ ul.entry-cards(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide="
       ng-mouseover="hoveringItem=true"
       ng-mouseleave="hoveringItem=false"
       ng-class="{'entry-cards__item--narrow': linkMultiple, 'entry-cards__item--wide': !linkMultiple}")
-    .entry-cards__handle.dragging-handle(cf-drag-handle ng-disabled="!otDoc.state.editable" ng-hide="linkedEntities.length==1")
+    .entry-cards__handle.dragging-handle(cf-drag-handle ng-hide="isDisabled(field, locale) || linkedEntities.length==1")
       i.fa.fa-ellipsis-v
       i.fa.fa-ellipsis-v
     .entry-cards__status(
@@ -36,7 +36,7 @@ ul.entry-cards(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide="
           tooltip-container=".entry-editor")
         i.fa.fa-edit
       button.btn(type="button"
-          ng-show="!otDoc.state.disabled && removeLink"
+          ng-show="isEditable(field, locale) && removeLink"
           ng-click="removeLink(index, entity)"
           tooltip="Remove Entry"
           tooltip-container=".entry-editor")

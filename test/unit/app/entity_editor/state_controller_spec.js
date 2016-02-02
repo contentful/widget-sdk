@@ -13,9 +13,8 @@ describe('entityEditor/StateController', function () {
     var $rootScope = this.$inject('$rootScope');
     this.scope = $rootScope.$new();
     this.scope.entry = entry;
-    this.scope.permissionController = {
-      can: sinon.stub().returns({can: true})
-    };
+
+    this.$inject('accessChecker').canPerformActionOnEntity = sinon.stub().returns(true);
 
     this.entity = entry;
     this.notify = {};

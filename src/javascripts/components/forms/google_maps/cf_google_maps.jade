@@ -2,7 +2,7 @@
 .invalid-location-warning(ng-if="location && !locationValid")
   .text Invalid location data!
 .sub-fields(cf-autocomplete-results="results")
-  .search(ng-show="otDoc.state.editable")
+  .search(ng-show="isEditable(field, locale)")
     .search-field(placeholder="Search Address" cf-search="searchTerm" search-type-ahead)
     .search-results.search-options-on(ng-show="results.length > 0")
       ul

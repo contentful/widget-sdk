@@ -50,6 +50,8 @@ angular.module('contentful').controller('LinkEditorController',
     } else {
       lookupLinksForEntityCache(links, entityCache).then(function (entities) {
         scope.linkedEntities = markMissing(entities);
+      }, function () {
+        scope.linkedEntities = markMissing(new Array(links.length));
       });
     }
   }, true);

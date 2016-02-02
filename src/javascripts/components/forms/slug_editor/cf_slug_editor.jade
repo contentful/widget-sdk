@@ -2,7 +2,7 @@ input.form-control(
   type="text"
   ng-model="fieldData.value"
   ot-bind-text
-  ng-disabled="!otDoc.state.editable"
+  ng-disabled="isDisabled(field, locale)"
 )
 
 i.fa.fa-exclamation-triangle.is-slug-duplicate(

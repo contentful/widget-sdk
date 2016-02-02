@@ -22,12 +22,11 @@
   .no-file.center.vcenter(ng-hide="(file || enableUpload)")
     | Asset has no file
   .no-file.center.vcenter(ng-show="entity && entity.isMissing")
-    | Asset does not exist anymore
+    | Asset is missing or inaccessible due to your access level
 
   cf-file-display-buttons
 
-  .cf-file-drop(cf-file-drop ng-show="!otDoc.state.disabled && !file && enableUpload")
+  .cf-file-drop(cf-file-drop ng-show="isEditable(field, locale) && !file && enableUpload")
     button.cfnext-btn-secondary-action.upload-button(type="button" ng-click="uploadFile()") Or Open File Picker
-    | 
+    | &nbsp;
     button.cfnext-btn-secondary-action.upload-button(type="button" ng-show="spaceContext.space.hasFeature('gettyImages')" ng-click="uploadFromGetty()") Or Pick From Getty Images
-

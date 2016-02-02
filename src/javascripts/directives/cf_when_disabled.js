@@ -1,6 +1,8 @@
 'use strict';
 
-angular.module('contentful').directive('cfWhenDisabled', [ 'enforcements', function (enforcements) {
+angular.module('contentful').directive('cfWhenDisabled', ['$injector', function ($injector) {
+
+  var accessChecker = $injector.get('accessChecker');
 
   function makePropGetter(elem){
     return function getCssProperty(name) {
@@ -33,28 +35,25 @@ angular.module('contentful').directive('cfWhenDisabled', [ 'enforcements', funct
   return {
     restrict: 'A',
     link: function (scope, elem, attrs) {
-      scope.$watch(attrs.cfWhenDisabled, addTooltip, true);
+      scope.$watch(function () {
+        return accessChecker.getResponseByActionName(attrs.cfWhenDisabled);
+      }, addTooltip, true);
 
-      function addTooltip(params) {
-        if(params && params.shouldDisable){
-          var enforcement = enforcements.determineEnforcement(params.reasons, params.entity);
+      function addTooltip(response) {
+        if (response && response.shouldDisable && response.enforcement) {
+          var layerId = 'transparent-button-layer-'+Math.ceil(Math.random()*100000);
+          elem.attr('disable-layer', layerId);
 
-          if(enforcement){
-            var layerId = 'transparent-button-layer-'+Math.ceil(Math.random()*100000);
-            elem.attr('disable-layer', layerId);
-
-            setTimeout(function () {
-              var layer = makeLayer(layerId, elem);
-              layer.prependTo(elem.parent());
-              layer.tooltip({
-                title: enforcement.tooltip,
-                trigger: 'hover'
-              });
-            }, 1000);
-          }
+          setTimeout(function () {
+            var layer = makeLayer(layerId, elem);
+            layer.prependTo(elem.parent());
+            layer.tooltip({
+              title: response.enforcement.tooltip,
+              trigger: 'hover'
+            });
+          }, 1000);
         }
       }
-
     }
   };
 }]);

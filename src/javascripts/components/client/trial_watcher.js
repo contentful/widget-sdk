@@ -1,43 +1,58 @@
 'use strict';
 
-angular.module('contentful')
+angular.module('contentful').factory('TrialWatcher', ['$injector', function ($injector) {
 
-.controller('TrialWatchController', ['$scope', '$injector', function TrialWatchController($scope, $injector) {
   var $rootScope     = $injector.get('$rootScope');
   var intercom       = $injector.get('intercom');
   var analytics      = $injector.get('analytics');
   var TheAccountView = $injector.get('TheAccountView');
-  var moment         = $injector.get('moment');
   var modalDialog    = $injector.get('modalDialog');
+  var spaceContext   = $injector.get('spaceContext');
+  var authentication = $injector.get('authentication');
+  var TrialInfo      = $injector.get('TrialInfo');
 
-  $scope.$watchGroup([
-    // TODO: Get rid of necessity to watch the user.
-    // Watching the user is required for initial load, when spaceContenxt.space is
-    // initialized but $scope.user might not be set yet.
-    // Watching only .sys.id prevents from calls on periodic token updates where
-    // the whole user object is being replaced.
-    'user.sys.id',
-    'spaceContext.space'
-  ], trialWatcher);
+  var UNKNOWN_USER_ID = {};
+  var previousUserId  = UNKNOWN_USER_ID;
+  var hasTrialEnded   = false;
+  var paywallIsOpen   = false;
 
-  function trialWatcher () {
-    var user = $scope.user;
-    var space = $scope.spaceContext.space;
+  return {
+    init:     init,
+    hasEnded: function () { return hasTrialEnded; }
+  };
 
-    if (!space || !user) {
+  function init() {
+    $rootScope.$watchCollection(function () {
+      return {
+        space: spaceContext.space,
+        user: dotty.get(authentication, 'tokenLookup.sys.createdBy')
+      };
+    }, trialWatcher);
+  }
+
+  function trialWatcher (args) {
+    var space = args.space;
+    var user = args.user;
+    var userId = dotty.get(args.user, 'sys.id');
+
+    if (!space || !user || userId === previousUserId) {
       return;
     }
+
+    previousUserId = userId;
+    hasTrialEnded  = false;
 
     var organization = space.data.organization;
     var userOwnsOrganization = userIsOrganizationOwner(user, organization);
 
     if (organizationHasTrialSubscription(organization)) {
-      var trial = new Trial(organization);
+      var trial = TrialInfo.create(organization);
       if (trial.hasEnded()) {
+        hasTrialEnded = true;
         notify(trialHasEndedMsg(organization, userOwnsOrganization));
         showPaywall(user, trial);
       } else {
-        notify(timeLeftInTrialMsg(trial.getHoursLeft()));
+        notify(timeLeftInTrialMsg(trial.getHoursLeft(), userOwnsOrganization));
       }
     } else if (organizationHasLimitedFreeSubscription(organization)) {
       notify(limitedFreeVersionMsg());
@@ -57,7 +72,6 @@ angular.module('contentful')
     }
   }
 
-  var paywallIsOpen = false;
   function showPaywall (user, trial) {
     if (paywallIsOpen) {
       return;
@@ -66,8 +80,8 @@ angular.module('contentful')
     modalDialog.open({
       template: 'paywall_dialog',
       scopeData: {
-        offerToSetUpPayment: userIsOrganizationOwner(user, trial.organization),
-        setUpPayment: newUpgradeAction(trial.organization),
+        offerToSetUpPayment: userIsOrganizationOwner(user, trial.getOrganization()),
+        setUpPayment: newUpgradeAction(trial.getOrganization()),
         openIntercom: intercom.open
       }
     }).promise.finally(function () {
@@ -78,10 +92,8 @@ angular.module('contentful')
   function newUpgradeAction(organization){
     var organizationId = organization.sys.id;
     return function upgradeAction() {
-      var pathSuffix = 'organizations/' + organizationId + '/subscription';
-
       analytics.trackPersistentNotificationAction('Plan Upgrade');
-      TheAccountView.goTo(pathSuffix, { reload: true });
+      TheAccountView.goToSubscription(organizationId);
     };
   }
 
@@ -98,17 +110,24 @@ angular.module('contentful')
     return message;
   }
 
-  function timeLeftInTrialMsg (hours) {
+  function timeLeftInTrialMsg (hours, userIsOrganizationOwner) {
     var timePeriod;
     if (hours / 24 <= 1) {
       timePeriod = {length: hours, unit: 'hours'};
     } else {
       timePeriod = {length: Math.floor(hours / 24), unit: 'days'};
     }
-    return timeTpl('<strong>%length %unit left in trial.</strong> ' +
+
+    var message = timeTpl('<strong>%length %unit left in trial.</strong> ' +
       'Your current Organization is in trial mode giving you ' +
-      'access to all features for %length more %unit. Enter your billing ' +
-      'information to activate your subscription.', timePeriod);
+      'access to all features for %length more %unit.', timePeriod);
+
+    if (userIsOrganizationOwner) {
+      message += ' Enter your billing information to activate your subscription.';
+    } else {
+      message += ' Your subscription can be upgraded by one of the owners of your organization.';
+    }
+    return message;
   }
 
   function limitedFreeVersionMsg () {
@@ -141,16 +160,26 @@ angular.module('contentful')
     return !!organizationMembership &&
       organizationMembership.role === 'owner';
   }
+}]);
 
-  function Trial (organization) {
-    this.organization = organization;
-    this._endMoment = moment(this.organization.trialPeriodEndsAt);
+angular.module('contentful').factory('TrialInfo', ['$injector', function ($injector) {
+  var moment = $injector.get('moment');
+
+  return { create: create };
+
+  function create (organization) {
+    var endMoment = moment(organization.trialPeriodEndsAt);
+
+    return {
+      getHoursLeft: function () {
+        return endMoment.diff(moment(), 'hours');
+      },
+      hasEnded: function () {
+        return !endMoment.isAfter(moment());
+      },
+      getOrganization: function () {
+        return organization;
+      }
+    };
   }
-  Trial.prototype.getHoursLeft = function () {
-    return this._endMoment.diff(moment(), 'hours');
-  };
-  Trial.prototype.hasEnded = function () {
-    return !this._endMoment.isAfter(moment());
-  };
-
 }]);

@@ -12,6 +12,7 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
   var throttle       = $injector.get('throttle');
   var TheLocaleStore = $injector.get('TheLocaleStore');
   var spaceContext   = $injector.get('spaceContext');
+  var accessChecker  = $injector.get('accessChecker');
 
   $controller('AssetListViewsController', {
     $scope: $scope,
@@ -19,6 +20,9 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
   });
 
   $scope.entityStatusController = $controller('EntityStatusController', { $scope: $scope });
+
+  $scope.shouldHide = accessChecker.shouldHide;
+  $scope.shouldDisable = accessChecker.shouldDisable;
 
   $scope.searchController = $controller('AssetSearchController', {
     $scope: $scope,
@@ -51,11 +55,6 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
     var hasQuery = !_.isEmpty(view.searchTerm);
     var hasEntries = $scope.assets && $scope.assets.length > 0;
     return !hasEntries && !hasQuery && !$scope.context.loading;
-  };
-
-  // TODO this code is duplicated in the asset list controller
-  $scope.showCreateAssetButton = function () {
-    return !$scope.permissionController.get('createAsset', 'shouldHide');
   };
 
   var throttledListRefresh = throttle(function () {

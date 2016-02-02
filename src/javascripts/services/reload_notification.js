@@ -75,6 +75,7 @@ angular.module('contentful').factory('ReloadNotification', ['$injector', functio
       }
       return $q.reject.apply($q, arguments);
     },
+    basicErrorHandler: function () { trigger(); }
   };
 
   return ReloadNotificationService;

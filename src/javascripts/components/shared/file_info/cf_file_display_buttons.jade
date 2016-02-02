@@ -26,6 +26,6 @@
     i.fa.fa-trash
   button.cfnext-btn-secondary-action(type="button"
     aria-label="Remove Asset" tooltip="Remove Asset"
-    ng-show="!otDoc.state.disabled && removeLink"
+    ng-show="isEditable(field, locale) && removeLink"
     ng-click="removeLink(index, entity)")
     i.fa.fa-close

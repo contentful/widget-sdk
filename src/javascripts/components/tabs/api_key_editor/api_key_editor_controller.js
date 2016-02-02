@@ -11,6 +11,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   var spaceContext     = $injector.get('spaceContext');
   var userAgent        = $injector.get('userAgent');
   var $state           = $injector.get('$state');
+  var accessChecker    = $injector.get('accessChecker');
 
   var notify = notifier(function getTitle () {
     return truncate($scope.apiKey.getName(), 50);
@@ -27,6 +28,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   $scope.isDev = environment.env === 'development';
   $scope.isProd = environment.env === 'production';
   $scope.isNotProd = environment.env !== 'production';
+  $scope.isReadOnly = function () { return !accessChecker.canModifyApiKeys(); };
 
   $scope.getSelectedAccessToken = function () {
     var apiKey = isPreviewApiSelected() ? $scope.previewApiKey : $scope.apiKey;
@@ -79,10 +81,6 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     $scope.context.title = title || 'New Api Key';
   });
 
-  $scope.editable = function() {
-    return true;
-  };
-
   $scope.delete = function() {
     $scope.apiKey.delete()
     .then(function(){
@@ -108,8 +106,10 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
 
   controller.save = Command.create(save, {
     disabled: function () {
-      return $scope.apiKeyForm.$invalid ||
-             $scope.permissionController.get('createApiKey', 'shouldDisable');
+      return $scope.apiKeyForm.$invalid || accessChecker.shouldDisable('createApiKey');
+    },
+    available: function () {
+      return !$scope.isReadOnly();
     }
   });
 

@@ -1,0 +1,53 @@
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-settings")
+  h1.workbench-header__title Users ({{ count || 0 }})
+  .workbench-header__actions
+    button.cfnext-btn-secondary-action(cf-context-menu-trigger)
+      | {{ viewLabels[selectedView] }}
+      cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+    .context-menu(cf-context-menu)
+      cf-icon.context-menu__arrow.x--top(name="arrow-up")
+      div(role="menuitem" ng-click="selectedView = 'name'") {{ viewLabels.name }}
+      div(role="menuitem" ng-click="selectedView = 'role'") {{ viewLabels.role }}
+
+.workbench-main
+  .workbench-main__content
+    .user-list__group(
+      ng-attr-id="{{ item.id }}"
+      ng-repeat="item in by[selectedView] track by item.label")
+      h3 {{ item.label }}
+      .user-list__item(ng-repeat="user in item.users track by user.id")
+        img(ng-src="{{ user.avatarUrl }}" width="50" height="50")
+        .user-list__info
+          strong.user-list__name {{ user.name }}
+          small(ng-if="!user.confirmed") This account is not confirmed
+          .user-list__roles {{ user.roleNames }}
+        button.user-list__actions.user-list__actions--disabled.cfnext-btn-inline(ng-if="!canModifyUsers()")
+          | &bullet;&bullet;&bullet;
+        button.user-list__actions.cfnext-btn-inline(type="button"
+          aria-label="Actions" cf-context-menu-trigger
+          ng-if="canModifyUsers()")
+          | &bullet;&bullet;&bullet;
+        .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="User Actions")
+          ul.context-menu__items
+            li(role="menuitem"
+              ng-click="openRoleChangeDialog(user)"
+              data-ui-trigger="user-change-role")
+              | Change role
+            li(role="menuitem"
+              ng-click="openRemovalConfirmationDialog(user)"
+              data-ui-trigger="user-remove-from-space")
+              | Remove from this space
+
+  .workbench-main__entity-sidebar
+    .entity-sidebar
+      h2.entity-sidebar__heading
+        | Invite users
+      p
+        | Your organization has used {{ userQuota.used }} out of
+        |  {{ userQuota.limit > 0 ? userQuota.limit : 'unlimited' }} user accounts.
+      p(ng-show="canModifyUsers()") <a href="" ng-click="goToSubscription()">Increase your plan quotas here</a>.
+      button.cfnext-btn-primary-action(
+        ng-click="openInvitationDialog()"
+        ng-disabled="!canModifyUsers() || !canInviteUsers()")
+        | Invite users to this space

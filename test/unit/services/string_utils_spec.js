@@ -53,4 +53,30 @@ describe('stringUtils service', function () {
     });
 
   });
+
+  describe('#startsWithVowel', function () {
+    var starts;
+    beforeEach(function () {
+      starts = this.$inject('stringUtils').startsWithVowel;
+    });
+
+    it('returns false for non-string or empty string', function () {
+      expect(starts({})).toBe(false);
+      expect(starts('')).toBe(false);
+    });
+
+    it('returns true for strings starting with vowel', function () {
+      ['anna', 'eleonore', 'isabel', 'olga', 'ulrika'].forEach(function (name) {
+        expect(starts(name)).toBe(true);
+        expect(starts(name.toUpperCase())).toBe(true);
+      });
+    });
+
+    it('returns false for strings that are not starting with vowel', function () {
+      ['daisy', 'wanda', 'rachel', 'salomea', 'tania'].forEach(function (name) {
+        expect(starts(name)).toBe(false);
+        expect(starts(name.toUpperCase())).toBe(false);
+      });
+    });
+  });
 });

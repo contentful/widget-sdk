@@ -1,14 +1,15 @@
 'use strict';
 
 angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope', '$injector', function CreateSpaceDialogController($scope, $injector) {
-    var $rootScope       = $injector.get('$rootScope');
-    var $timeout         = $injector.get('$timeout');
-    var client           = $injector.get('client');
-    var tokenStore       = $injector.get('tokenStore');
-    var enforcements     = $injector.get('enforcements');
-    var logger           = $injector.get('logger');
-    var notification     = $injector.get('notification');
-    var spaceTools       = $injector.get('spaceTools');
+    var $rootScope    = $injector.get('$rootScope');
+    var $timeout      = $injector.get('$timeout');
+    var client        = $injector.get('client');
+    var tokenStore    = $injector.get('tokenStore');
+    var enforcements  = $injector.get('enforcements');
+    var logger        = $injector.get('logger');
+    var notification  = $injector.get('notification');
+    var spaceTools    = $injector.get('spaceTools');
+    var accessChecker = $injector.get('accessChecker');
 
     $scope.createSpace = createSpace;
     $scope.selectOrganization = selectOrganization;
@@ -23,7 +24,7 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
         data.defaultLocale = $scope.newSpaceData.defaultLocale;
 
       var orgId = $scope.selectedOrganization.sys.id;
-      if(!$scope.permissionController.canCreateSpaceInOrg(orgId)){
+      if (!accessChecker.canCreateSpaceInOrganization(orgId)) {
         $rootScope.$broadcast('spaceCreationFailed');
         logger.logError('You can\'t create a Space in this Organization');
         return notification.error('You can\'t create a Space in this Organization');
@@ -91,7 +92,7 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
 
     function setupOrganizations() {
       $scope.writableOrganizations = _.filter($scope.organizations, function (org) {
-        return org && org.sys ? $scope.permissionController.canCreateSpaceInOrg(org.sys.id) : false;
+        return org && org.sys ? accessChecker.canCreateSpaceInOrganization(org.sys.id) : false;
       });
       if($scope.writableOrganizations.length > 0){
         $scope.selectOrganization($scope.writableOrganizations[0]);

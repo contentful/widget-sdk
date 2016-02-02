@@ -10,7 +10,7 @@ header.workbench-header
       ng-class="{active: preferences.showAuxPanel}")
       | Info
     button.cfnext-btn-secondary-action.delete(type="button"
-      ng-show="apiKey.getId()"
+      ng-show="apiKey.getId() && !isReadOnly()"
       cf-context-menu-trigger
       data-test-id="delete-api-key")
       | Delete
@@ -20,12 +20,14 @@ header.workbench-header
       button.cfnext-btn-secondary-action(type="button") Don't Delete
     button.cfnext-btn-primary-action.save(type="submit"
       ui-command="apiKeyController.save"
-      cf-when-disabled="permissionController.entityActions.createApiKey")
+      cf-when-disabled="createApiKey")
       | Save
 
 
 .workbench-main
   .workbench-main__content.api-key-editor
+    .entity-editor__notification(ng-if="isReadOnly()" role="alert")
+      p You have read-only access to this API key. If you need to edit it please contact your administrator.
     .ng-form.l-form--split(name="apiKeyForm" submit="save()")
       .l-form-left
         h2.section-title API General Info
@@ -34,12 +36,12 @@ header.workbench-header
             sup (required)
           .l-form-controls
             .l-field-editor
-              input.form-control(type="text" ng-model="apiKey.data.name" required ng-disabled="!editable()" placeholder="iOS iPad Application")
+              input.form-control(type="text" ng-model="apiKey.data.name" required ng-disabled="isReadOnly()" placeholder="iOS iPad Application")
         .l-form-row
           label Description
           .l-form-controls
             .l-field-editor
-              textarea.form-control(ng-model="apiKey.data.description" ng-disabled="!editable()" placeholder="This API Key will grant the iOS iPad Application access to the content on Contentful.")
+              textarea.form-control(ng-model="apiKey.data.description" ng-disabled="isReadOnly()" placeholder="This API Key will grant the iOS iPad Application access to the content on Contentful.")
         .l-form-row
           label Space ID
           .l-form-controls
@@ -81,7 +83,7 @@ header.workbench-header
               input.form-control(type="text" cf-select-all-input ng-model="apiKey.data.accessToken" readonly="readonly")
             .l-field-action(ng-show="apiKey.data.accessToken")
               a.u-locked-action( href="#"
-                ng-show="!regenerateProductionToken"
+                ng-show="!regenerateProductionToken && !isReadOnly()"
                 cf-context-menu-trigger
                 data-test-id="unlock-access-token-regeneration")
                 i.fa.fa-lock
@@ -94,7 +96,7 @@ header.workbench-header
                 button.cfnext-btn-caution(type="button" ng-click="regenerateProductionToken=true") Unlock
                 | &nbsp;
                 button.cfnext-btn-secondary-action(type="button") Cancel
-              a(ng-click="regenerateAccessToken()" ng-show="regenerateProductionToken" href="#")
+              a(ng-click="regenerateAccessToken()" ng-show="regenerateProductionToken && !isReadOnly()" href="#")
                 i.fa.fa-refresh
                 |  Regenerate Access Token
 
@@ -105,7 +107,7 @@ header.workbench-header
             .l-field-editor--with-action(ng-show="previewApiKey.data.accessToken")
               input.form-control(type="text" cf-select-all-input ng-model="previewApiKey.data.accessToken" readonly="readonly")
             .l-field-action(ng-show="previewApiKey.data.accessToken")
-              a(ng-click="regenerateAccessToken('preview')" href="#")
+              a(ng-click="regenerateAccessToken('preview')" href="#" ng-show="!isReadOnly()")
                 i.fa.fa-refresh
                 |  Regenerate Access Token
 

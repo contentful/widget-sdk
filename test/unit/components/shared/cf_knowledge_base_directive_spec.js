@@ -1,13 +1,13 @@
 'use strict';
 
 describe('cfKnowledgeBase directive', function () {
-  var el, scope, analytics;
-  var BASE = 'https://www.contentful.com';
+  var el, scope, $location, analytics;
 
   function getLink() { return el.find('a').first(); }
 
   beforeEach(function () {
     module('contentful/test');
+    $location = this.$inject('$location');
     analytics = this.$inject('analytics');
     analytics.knowledgeBase = sinon.stub();
     scope = this.$inject('$rootScope');
@@ -15,13 +15,21 @@ describe('cfKnowledgeBase directive', function () {
 
   describe('points to knowledge base', function () {
     beforeEach(function () {
+      sinon.stub($location, 'host', _.constant('app.test.com'));
+      sinon.stub($location, 'protocol', _.constant('http'));
       el = this.$compile('<cf-knowledge-base target="entry" />');
       scope.$digest();
     });
 
+    afterEach(function () {
+      $location.host.restore();
+      $location.protocol.restore();
+    });
+
     it('has href', function () {
       var href = getLink().attr('href');
-      expect(href.substring(0, BASE.length)).toBe(BASE);
+      var base = 'http://test.com/';
+      expect(href.substring(0, base.length)).toBe(base);
       expect(getLink().attr('target')).toBe('_blank');
     });
 

@@ -160,10 +160,10 @@ describe('cfLocationEditor Directive', function () {
 
   });
 
-  describe('if otDoc.state.editable is not initiated', function() {
+  describe('if editability status is not initiated', function() {
     beforeEach(function() {
       this.compileElement();
-      this.scope.otDoc.state.editable = false;
+      this.scope.isDisabled = _.constant(true);
       this.scope.$digest();
     });
 
@@ -180,10 +180,10 @@ describe('cfLocationEditor Directive', function () {
     });
   });
 
-  describe('if otDoc.state.editable is initiated', function() {
+  describe('if editability status is initiated', function() {
     beforeEach(function() {
       this.compileElement();
-      this.scope.otDoc.state.editable = true;
+      this.scope.isDisabled = _.constant(false);
       this.scope.$digest();
     });
 

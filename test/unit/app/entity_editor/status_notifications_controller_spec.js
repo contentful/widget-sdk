@@ -7,19 +7,18 @@ describe('entityEditor/StatusNotificationsController', function () {
     module('contentful/test');
     var $rootScope = this.$inject('$rootScope');
     this.scope = _.extend($rootScope.$new(), {
-      otDoc: {state: {}},
-      permissionController: {
-        can: sinon.stub().returns({can: true})
-      },
+      otDoc: {state: {}}
     });
     this.scope[entityLabel] = {
       isArchived: sinon.stub()
     };
+    this.readOnlyStub = sinon.stub().returns(false);
 
     var $controller = this.$inject('$controller');
     this.controller = $controller('entityEditor/StatusNotificationsController', {
       $scope: this.scope,
-      entityLabel: entityLabel
+      entityLabel: entityLabel,
+      isReadOnly: this.readOnlyStub
     });
   });
 
@@ -37,7 +36,7 @@ describe('entityEditor/StatusNotificationsController', function () {
   });
 
   it('sets "editing-not-allowed" when no permission', function () {
-    this.scope.permissionController.can.returns({can: false});
+    this.readOnlyStub.returns(true);
     this.$apply();
     expect(this.controller.status).toEqual('editing-not-allowed');
     expect(this.controller.message).toBeTruthy();
