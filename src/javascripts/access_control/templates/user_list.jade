@@ -44,8 +44,8 @@ header.workbench-header
       h2.entity-sidebar__heading
         | Invite users
       p
-        | Your organization has used {{ userQuota.used }} out
-        | {{ userQuota.limit > 0 ? userQuota.limit : 'unlimited' }} user accounts.
+        | Your organization has used {{ userQuota.used }} out of
+        |  {{ userQuota.limit > 0 ? userQuota.limit : 'unlimited' }} user accounts.
       p(ng-show="canModifyUsers()") <a href="" ng-click="goToSubscription()">Increase your plan quotas here</a>.
       button.cfnext-btn-primary-action(
         ng-click="openInvitationDialog()"
