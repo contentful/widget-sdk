@@ -2,11 +2,12 @@
 
 describe('Policy Builder, to external representation', function () {
 
-  var toExternal;
+  var toExternal, ALL_FIELDS;
 
   beforeEach(function () {
     module('contentful/test');
     toExternal = this.$inject('PolicyBuilder/toExternal');
+    ALL_FIELDS = this.$inject('PolicyBuilder/CONFIG').ALL_FIELDS;
   });
 
   describe('takes internal and returns external representation', function () {
@@ -152,7 +153,7 @@ describe('Policy Builder, to external representation', function () {
         uiCompatible: true,
         entries: {
           allowed: [
-            {action: 'update', field: 'all', locale: 'en-US'},
+            {action: 'update', field: ALL_FIELDS, locale: 'en-US'},
             {action: 'update', field: 'test', locale: 'all'}
           ]
         }

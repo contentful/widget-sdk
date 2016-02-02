@@ -3,6 +3,7 @@
 angular.module('contentful').factory('accessChecker/policy', ['$injector', function ($injector) {
 
   var PolicyBuilder = $injector.get('PolicyBuilder');
+  var ALL_FIELDS    = $injector.get('PolicyBuilder/CONFIG').ALL_FIELDS;
 
   var policies = {
     entry : {
@@ -142,7 +143,7 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
         _.isNull(p.locale)
       );
       var fieldOnlyPathMatched = (
-        _.contains(['all', fieldId], p.field) &&
+        _.contains([ALL_FIELDS, fieldId], p.field) &&
         _.isNull(p.locale)
       );
       var localeOnlyPathMatched = (
@@ -150,7 +151,7 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
         _.contains(['all', localeCode], p.locale)
       );
       var bothMatched = (
-        _.contains(['all', fieldId], p.field) &&
+        _.contains([ALL_FIELDS, fieldId], p.field) &&
         _.contains(['all', localeCode], p.locale)
       );
 

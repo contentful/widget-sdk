@@ -2,11 +2,12 @@
 
 describe('Policy Builder, to internal representation', function () {
 
-  var toInternal;
+  var toInternal, ALL_FIELDS;
 
   beforeEach(function () {
     module('contentful/test');
     toInternal = this.$inject('PolicyBuilder/toInternal');
+    ALL_FIELDS = this.$inject('PolicyBuilder/CONFIG').ALL_FIELDS;
   });
 
   describe('takes external and returns internal representation', function () {
@@ -153,7 +154,7 @@ describe('Policy Builder, to internal representation', function () {
       ]});
 
       expect(internal.entries.allowed.length).toBe(2);
-      expect(internal.entries.allowed[0].field).toBe('all');
+      expect(internal.entries.allowed[0].field).toBe(ALL_FIELDS);
       expect(internal.entries.allowed[0].locale).toBe('en-US');
       expect(internal.entries.allowed[1].field).toBe('test');
       expect(internal.entries.allowed[1].locale).toBe('all');

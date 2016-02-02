@@ -1,5 +1,11 @@
 'use strict';
 
+angular.module('contentful').constant('PolicyBuilder/CONFIG', {
+  ALL_FIELDS: '_cf_internal_all_fields__',
+  PATH_WILDCARD: '%',
+  PATH_SEPARATOR: '.'
+});
+
 angular.module('contentful').factory('PolicyBuilder', ['$injector', function ($injector) {
   return {
     toInternal: $injector.get('PolicyBuilder/toInternal'),
@@ -48,6 +54,7 @@ angular.module('contentful').factory('PolicyBuilder/defaultRule', ['$injector', 
 
 angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', function ($injector) {
 
+  var CONFIG            = $injector.get('PolicyBuilder/CONFIG');
   var getDefaultRuleFor = $injector.get('PolicyBuilder/defaultRule').getDefaultRuleFor;
 
   return function toInternal(external) {
@@ -164,8 +171,8 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
     // 4. find path
     var pathConstraint = findPathConstraint(rest);
     if (pathConstraint.value) {
-      rule.field = pathSegment(pathConstraint.value[1]);
-      rule.locale = pathSegment(pathConstraint.value[2]);
+      rule.field = fieldPathSegment(pathConstraint.value[1]);
+      rule.locale = localePathSegment(pathConstraint.value[2]);
       rest.splice(pathConstraint.index, 1);
     }
 
@@ -198,7 +205,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
 
     return {
       index: index,
-      value: index > -1 ? cs[index].paths[0].doc.split('.') : null
+      value: index > -1 ? cs[index].paths[0].doc.split(CONFIG.PATH_SEPARATOR) : null
     };
   }
 
@@ -213,17 +220,23 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
     };
   }
 
-  function pathSegment(segment) {
-    return segment === '%' ? 'all' : segment;
+  function fieldPathSegment(segment) {
+    return pathSegment(segment, CONFIG.ALL_FIELDS);
+  }
+
+  function localePathSegment(segment) {
+    return pathSegment(segment, 'all');
+  }
+
+  function pathSegment(segment, allValue) {
+    return segment === CONFIG.PATH_WILDCARD ? allValue : segment;
   }
 }]);
 
 angular.module('contentful').factory('PolicyBuilder/toExternal', ['$injector', function ($injector) {
 
   var capitalize = $injector.get('stringUtils').capitalize;
-
-  var PATH_WILDCARD  = '%';
-  var PATH_SEPARATOR = '.';
+  var CONFIG     = $injector.get('PolicyBuilder/CONFIG');
 
   return function toExternal(internal) {
     return {
@@ -303,7 +316,7 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['$injector', f
 
   function addContentTypeConstraint(pair) {
     var ct = pair.source.contentType;
-    if (isAll(ct) || !_.isString(ct)) { return pair; }
+    if (ct === 'all' || !_.isString(ct)) { return pair; }
 
     pushConstraint(pair, eq('sys.contentType.sys.id', ct));
     return pair;
@@ -318,13 +331,21 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['$injector', f
       if (!_.isString(source.field) || !_.isString(source.locale)) { return pair; }
     }
 
-    var segments = ['fields', segment(source.field), segment(source.locale)];
+    var segments = ['fields', fieldSegment(source.field), localeSegment(source.locale)];
     pushConstraint(pair, paths(segments));
     return pair;
   }
 
-  function segment(prop) {
-    return (isAll(prop) || !prop) ? PATH_WILDCARD : prop;
+  function fieldSegment(prop) {
+    return segment(prop, CONFIG.ALL_FIELDS);
+  }
+
+  function localeSegment(prop) {
+    return segment(prop, 'all');
+  }
+
+  function segment(prop, allValue) {
+    return (prop === allValue || !prop) ? CONFIG.PATH_WILDCARD : prop;
   }
 
   function pushConstraint(pair, constraint) {
@@ -337,10 +358,6 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['$injector', f
   }
 
   function paths(segments) {
-    return { paths: [{doc: segments.join(PATH_SEPARATOR)}] };
-  }
-
-  function isAll(value) {
-    return value === 'all';
+    return { paths: [{doc: segments.join(CONFIG.PATH_SEPARATOR)}] };
   }
 }]);
