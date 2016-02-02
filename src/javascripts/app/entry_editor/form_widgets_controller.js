@@ -21,8 +21,7 @@ angular.module('contentful')
 
   var Widgets = $injector.get('widgets');
   var eiHelpers = $injector.get('editingInterfaces/helpers');
-  var analytics = $injector.get('analytics');
-  var getFieldLabel = $injector.get('fieldFactory').getLabel;
+  var analytics = $injector.get('analyticsEvents');
 
   $scope.$watchGroup(
     ['preferences.showDisabledFields', 'errorPaths'],
@@ -31,21 +30,16 @@ angular.module('contentful')
 
   // Executed only once when 'widgets' is not undefined.
   $scope.$watch('::widgets', function (widgets) {
-    _.forEach(widgets, function (widget) {
-      var descriptor = Widgets.get(widget.widgetId);
-      var isCustom = descriptor && descriptor.custom;
-      if (isCustom) {
-        var event = 'Custom Widget rendered';
-        analytics.track(event, {
-          widgetId: descriptor.id,
-          widgetName: descriptor.name,
-          fieldType: getFieldLabel(widget.field),
-          contentTypeId: $scope.contentType.getId()
-        });
-        analytics.trackTotango(event, 'UI');
-      }
-    });
+    _.forEach(widgets, trackCustomWidgetRendered);
   });
+
+  function trackCustomWidgetRendered (widget) {
+    analytics.trackWidgetEventIfCustom(
+      'Custom Widget rendered',
+      widget, widget.field,
+      { contentTypeId: $scope.contentType.getId() }
+    );
+  }
 
   /**
    * Retrieve the widgets from the current editingInterface, build the

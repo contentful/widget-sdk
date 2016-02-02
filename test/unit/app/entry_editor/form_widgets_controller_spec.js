@@ -35,6 +35,8 @@ describe('FormWidgetsController#widgets', function () {
     field = cfStub.field('foo');
     this.contentType.data.fields = [field];
 
+    scope.contentType = this.contentType;
+
     this.setupWidgets = function (ws) {
       getStoreWidgets = sinon.stub().resolves(ws);
       var widgets = this.$inject('widgets');

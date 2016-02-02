@@ -171,17 +171,11 @@ angular.module('contentful')
    * @param contentTypeId
    */
   function trackCustomWidgetSelected (field, widgetLink) {
-    var getFieldLabel = $injector.get('fieldFactory').getLabel;
-    var descriptor = Widgets.get(widgetLink.widgetId);
-    if (descriptor.custom) {
-      analytics.trackTotango('Custom Widget Selected', 'UI');
-      analytics.track('Custom Widget Selected', {
-        widgetId: descriptor.id,
-        widgetName: descriptor.name,
-        fieldType: getFieldLabel(field),
-        contentTypeId: $scope.contentType.getId()
-      });
-    }
+    analytics.trackWidgetEventIfCustom(
+      'Custom Widget selected',
+      widgetLink, field,
+      { contentTypeId: $scope.contentType.getId() }
+    );
   }
 
 }])
