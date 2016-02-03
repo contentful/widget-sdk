@@ -166,24 +166,17 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
 
   function checkPolicyCollectionForPath(collection, fieldId, localeCode) {
     return _.some(updatePoliciesOnly(collection), function (p) {
-      var noPath = (
-        !_.isString(p.field) &&
-        !_.isString(p.locale)
-      );
-      var fieldOnlyPathMatched = (
-        _.contains([ALL_FIELDS, fieldId], p.field) &&
-        !_.isString(p.locale)
-      );
-      var localeOnlyPathMatched = (
-        !_.isString(p.field) &&
-        _.contains(['all', localeCode], p.locale)
-      );
-      var bothMatched = (
-        _.contains([ALL_FIELDS, fieldId], p.field) &&
-        _.contains(['all', localeCode], p.locale)
-      );
+      var noPath                = doesNotMatch(p.field) && doesNotMatch(p.locale);
+      var fieldOnlyPathMatched  = matchField  (p.field) && doesNotMatch(p.locale);
+      var localeOnlyPathMatched = doesNotMatch(p.field) && matchLocale (p.locale);
+      var bothMatched           = matchField  (p.field) && matchLocale (p.locale);
 
       return noPath || fieldOnlyPathMatched || localeOnlyPathMatched || bothMatched;
     });
+
+    function matchField(field)   { return _.contains([ALL_FIELDS, fieldId], field); }
+    function matchLocale(locale) { return _.contains(['all', localeCode], locale);  }
   }
+
+  function doesNotMatch(value) { return !_.isString(value); }
 }]);
