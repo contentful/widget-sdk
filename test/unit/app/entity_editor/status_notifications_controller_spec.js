@@ -1,23 +1,19 @@
 'use strict';
 
 describe('entityEditor/StatusNotificationsController', function () {
-  var entityLabel = 'entityLabel';
-
   beforeEach(function () {
     module('contentful/test');
     var $rootScope = this.$inject('$rootScope');
     this.scope = _.extend($rootScope.$new(), {
-      otDoc: {state: {}}
+      otDoc: {state: {}},
+      entity: {isArchived: sinon.stub()}
     });
-    this.scope[entityLabel] = {
-      isArchived: sinon.stub()
-    };
     this.readOnlyStub = sinon.stub().returns(false);
 
     var $controller = this.$inject('$controller');
     this.controller = $controller('entityEditor/StatusNotificationsController', {
       $scope: this.scope,
-      entityLabel: entityLabel,
+      entityLabel: 'entityLabel',
       isReadOnly: this.readOnlyStub
     });
   });
@@ -43,7 +39,7 @@ describe('entityEditor/StatusNotificationsController', function () {
   });
 
   it('sets "archived" when entity is archived', function () {
-    this.scope[entityLabel].isArchived.returns(true);
+    this.scope.entity.isArchived.returns(true);
     this.$apply();
     expect(this.controller.status).toEqual('archived');
     expect(this.controller.message).toBeTruthy();

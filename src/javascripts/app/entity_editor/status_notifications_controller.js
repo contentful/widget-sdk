@@ -27,8 +27,8 @@ angular.module('contentful')
 
   // TODO this method depends on two objects defined on the scope. We
   // need better abstraction.
-  function getStatus (scope) {
-    if (scope.otDoc.state.error) {
+  function getStatus () {
+    if (hasLostConnection()) {
       return 'ot-connection-error';
     }
 
@@ -36,7 +36,7 @@ angular.module('contentful')
       return 'editing-not-allowed';
     }
 
-    if (scope[entityLabel].isArchived()) {
+    if ($scope.entity.isArchived()) {
       return 'archived';
     }
   }
@@ -47,7 +47,9 @@ angular.module('contentful')
     } else {
       throw new Error('Unknown message id ' + JSON.stringify(id));
     }
-
   }
 
+  function hasLostConnection() {
+    return $scope.otDoc.state.error;
+  }
 }]);
