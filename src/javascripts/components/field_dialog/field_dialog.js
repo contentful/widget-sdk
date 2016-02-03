@@ -60,6 +60,7 @@ angular.module('contentful')
   var validations       = $injector.get('validationDecorator');
   var field             = $injector.get('fieldDecorator');
   var trackField        = $injector.get('analyticsEvents').trackField;
+  var analytics         = $injector.get('analytics');
   var fieldFactory      = $injector.get('fieldFactory');
   var Widgets           = $injector.get('widgets');
   var features          = $injector.get('features');
@@ -72,6 +73,7 @@ angular.module('contentful')
 
   var eiWidgets = $scope.editingInterface.data.widgets;
   var widget = eiHelpers.findWidget(eiWidgets, $scope.field);
+  var initialWidgetId = widget.widgetId;
 
   $scope.widgetSettings = {
     id: widget.widgetId,
@@ -106,11 +108,15 @@ angular.module('contentful')
     validations.updateField($scope.field, $scope.validations);
 
     var params = $scope.widgetSettings.params;
-    var id = $scope.widgetSettings.id;
+    var widgetId = $scope.widgetSettings.id;
     _.extend(widget, {
-      widgetId: id,
-      widgetParams: Widgets.filteredParams(id, params)
+      widgetId: widgetId,
+      widgetParams: Widgets.filteredParams(widgetId, params)
     });
+
+    if (widgetId !== initialWidgetId) {
+      trackCustomWidgetSelected($scope.field, widget);
+    }
 
     trackFieldSettingsSuccess($scope.field);
     dialog.confirm();
@@ -154,6 +160,22 @@ angular.module('contentful')
    */
   function trackFieldSettingsSuccess (field) {
     trackField('Saved Successful Field Settings Modal', field);
+  }
+
+  /**
+   * @ngdoc analytics-event
+   * @name Custom Widget Selected
+   * @param widgetId
+   * @param widgetName
+   * @param fieldType
+   * @param contentTypeId
+   */
+  function trackCustomWidgetSelected (field, widgetLink) {
+    analytics.trackWidgetEventIfCustom(
+      'Custom Widget selected',
+      widgetLink, field,
+      { contentTypeId: $scope.contentType.getId() }
+    );
   }
 
 }])

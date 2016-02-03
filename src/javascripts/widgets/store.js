@@ -79,7 +79,8 @@ angular.module('contentful')
     return _.extend(_.pick(widget, customWidgetProperties), {
       id: data.sys.id,
       fieldTypes: fieldTypes,
-      template: '<cf-iframe-widget>'
+      template: '<cf-iframe-widget>',
+      custom: true
     });
   }
 

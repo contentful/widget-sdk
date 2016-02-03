@@ -8,11 +8,13 @@
  */
 angular.module('contentful')
 .factory('analyticsEvents', ['$injector', function ($injector) {
-  var analytics     = $injector.get('analytics');
+  var analytics = $injector.get('analytics');
   var getFieldLabel = $injector.get('fieldFactory').getLabel;
+  var Widgets = $injector.get('widgets');
 
   return {
-    trackField: trackField
+    trackField: trackField,
+    trackWidgetEventIfCustom: trackWidgetEventIfCustom
   };
 
   /**
@@ -32,6 +34,23 @@ angular.module('contentful')
       fieldId: field.id,
       originatingFieldType: getFieldLabel(field)
     }, data));
+  }
+
+  function trackWidgetEventIfCustom (event, widget, field, extra) {
+    var descriptor = Widgets.get(widget.widgetId);
+    var isCustom = descriptor && descriptor.custom;
+    if (!isCustom) {
+      return;
+    }
+
+    var props = _.extend({
+      widgetId: descriptor.id,
+      widgetName: descriptor.name,
+      fieldType: getFieldLabel(field),
+    }, extra);
+
+    analytics.track(event, props);
+    analytics.trackTotango(event, 'UI');
   }
 
 }]);

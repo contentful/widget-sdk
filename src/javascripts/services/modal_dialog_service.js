@@ -30,7 +30,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
   var $window    = $injector.get('$window');
   var keycodes   = $injector.get('keycodes');
   var defer      = $injector.get('defer');
-  var track      = $injector.get('analytics').track;
+  var analytics  = $injector.get('analytics');
   var $rootScope = $injector.get('$rootScope');
   var debounce   = $injector.get('debounce');
   var $timeout   = $injector.get('$timeout');
@@ -268,7 +268,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
   }
 
   function trackDialog (eventName, dialog) {
-    track(eventName, {
+    analytics.track(eventName, {
       title: dialog.params.title,
       message: dialog.params.message
     });
