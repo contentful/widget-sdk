@@ -7,19 +7,10 @@ function ErrorPathController($scope, $attrs) {
 
   controller.messages = [];
 
-  function matchesPath(pattern, target) {
-    var prefixLen = pattern.length - 1;
-    if (pattern[prefixLen] === '*') {
-      return _.isEqual(target.slice(0, prefixLen), pattern.slice(0, prefixLen));
-    } else {
-      return _.isEqual(target, pattern);
-    }
-  }
-
-  var unwatchValidationErrors = $scope.$watch('validationResult.errors', function(errors) {
+  $scope.$watch('validationResult.errors', function (errors) {
     var pathPattern = $scope.$eval($attrs.cfErrorPath);
 
-    var fieldErrors = _.filter(errors, function(error) {
+    var fieldErrors = _.filter(errors, function (error) {
       return matchesPath(pathPattern, error.path);
     });
 
@@ -30,9 +21,13 @@ function ErrorPathController($scope, $attrs) {
     controller.isEmpty = !hasErrors;
   });
 
-  $scope.$on('$destroy', function () {
-    unwatchValidationErrors();
-    unwatchValidationErrors = null;
-  });
+  function matchesPath(pattern, target) {
+    var prefixLen = pattern.length - 1;
+    if (pattern[prefixLen] === '*') {
+      return _.isEqual(target.slice(0, prefixLen), pattern.slice(0, prefixLen));
+    } else {
+      return _.isEqual(target, pattern);
+    }
+  }
 
 }]);
