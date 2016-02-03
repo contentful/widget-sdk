@@ -52,6 +52,21 @@ angular.module('contentful')
 
     /**
      * @ngdoc method
+     * @name spaceContext#getData
+     * @param {string} path
+     * @param {*} defaultValue
+     * @description
+     * Returns nested value stored under `path` in current `space.data`.
+     * If not found, returns `defaultValue` (`undefined` when not provided)
+     * @returns *
+     */
+    getData: function (path, defaultValue) {
+      var data = dotty.get(this, 'space.data', {});
+      return dotty.get(data, path, defaultValue);
+    },
+
+    /**
+     * @ngdoc method
      * @name spaceContext#refreshContentTypes
      * @description
      * Refreshes all Content Type related information in the context

@@ -19,10 +19,7 @@ angular.module('contentful').factory('TheAccountView', ['$injector', function($i
   }
 
   function goToSubscription(organizationId) {
-    if (_.isFunction(dotty.get(spaceContext, 'space.getOrganizationId'))) {
-      organizationId = spaceContext.space.getOrganizationId();
-    }
-
+    organizationId = spaceContext.getData('organization.sys.id');
     if (organizationId) {
       goTo('organizations/' + organizationId + '/subscription', { reload: true });
     }
