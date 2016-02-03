@@ -30,11 +30,18 @@ describe('Trial Watcher', function () {
   }
 
   beforeEach(function () {
-    module('contentful/test');
+    openDialogStub = sinon.spy(function() {
+      return {promise: $q.defer().promise};
+    });
+
+    module('contentful/test', function ($provide) {
+      $provide.value('modalDialog', {
+        open: openDialogStub
+      });
+    });
 
     var TrialWatcher = this.$inject('TrialWatcher');
     var moment = this.$inject('moment');
-    var modalDialog = this.$inject('modalDialog');
 
     $rootScope = this.$inject('$rootScope');
     spaceContext = this.$inject('spaceContext');
@@ -45,7 +52,6 @@ describe('Trial Watcher', function () {
     broadcastStub = sinon.stub($rootScope, '$broadcast').returns({});
     moment.fn.diff = momentDiffStub = sinon.stub();
     moment.fn.isAfter = momentIsAfterStub = sinon.stub();
-    modalDialog.open = openDialogStub = sinon.stub().returns({promise: {finally: _.noop}});
     authentication.tokenLookup = {sys: {createdBy: {organizationMemberships: []}}};
 
     TrialWatcher.init();
