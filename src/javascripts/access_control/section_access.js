@@ -27,25 +27,24 @@ angular.module('contentful').factory('sectionAccess', ['$injector', function ($i
 
   function getFirstAccessibleSection() {
     var visibility = accessChecker.getSectionVisibility();
+    var section = _.find(SECTION_ACCESS_ORDER, function (section) {
+      return visibility[section[0]];
+    });
 
-    return _(SECTION_ACCESS_ORDER)
-      .map(extractVisibleState)
-      .filter(_.isString)
-      .first();
-
-    function extractVisibleState(x) {
-      return visibility[x[0]] ? x[1] : null;
-    }
+    return _.isArray(section) ? section[1] : null;
   }
 
   function redirectToFirstAccessible() {
-    var firstAccessible = getFirstAccessibleSection();
     var currentStateName = dotty.get($state, '$current.name');
+    var firstAccessible = getFirstAccessibleSection();
     var targetStateName = [BASE_STATE, firstAccessible].join('.');
-    var spaceId = $stateParams.spaceId;
 
-    if (currentStateName === BASE_STATE && spaceId && firstAccessible) {
-      $state.go(targetStateName, {spaceId: spaceId});
+    if (currentStateName === BASE_STATE) {
+      if (firstAccessible) {
+        $state.go(targetStateName, {spaceId: $stateParams.spaceId});
+      } else {
+        throw new Error('No section to redirect to.');
+      }
     }
   }
 }]);

@@ -56,18 +56,17 @@ describe('Section Access', function () {
       sinon.assert.notCalled(goStub);
     });
 
-    it('does not redirect when space ID is not provided', function () {
-      $state.$current.name = 'spaces.detail';
-      sectionAccess.redirectToFirstAccessible();
-      sinon.assert.notCalled(goStub);
-    });
-
-    it('does not redirect when there is no accessible section', function () {
+    it('throws when there is no accessible section', function () {
       $state.$current.name = 'spaces.detail';
       $stateParams.spaceId = 'sid123';
       visibilityStub.returns({});
-      sectionAccess.redirectToFirstAccessible();
-      sinon.assert.notCalled(goStub);
+
+      try {
+        sectionAccess.redirectToFirstAccessible();
+      } catch (e) {
+        expect(e.message).toBe('No section to redirect to.');
+        sinon.assert.notCalled(goStub);
+      }
     });
 
     it('does redirect when all requirements are met', function () {
