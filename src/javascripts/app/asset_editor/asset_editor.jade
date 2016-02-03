@@ -36,6 +36,11 @@ header.workbench-header
               cf-focus-ot-input="hasInitialFocus"
               cf-field-editor="asset.data.fields[field.id][locale.internal_code]"
               ot-path="['fields', field.id, locale.internal_code]")
+            .form-widget__rights-info(
+              ng-show="otDoc.state.editable && isDisabled(field, locale)"
+              tooltip="You don't have a permission to edit this field. To change your permission setting contact your space administrator."
+              tooltip-placement="left")
+                .fa.fa-lock
             .locale-label(ng-show="locales.length > 1") {{locale.name}}
             +editor-field-collaborators
             cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.internal_code,'*']")
