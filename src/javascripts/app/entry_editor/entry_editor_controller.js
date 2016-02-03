@@ -15,10 +15,6 @@ angular.module('contentful')
     return '“' + $scope.title + '”';
   });
 
-  var fieldAccessChecker = accessChecker.getFieldChecker($scope.entry, isOtDocEditable);
-  $scope.isEditable = fieldAccessChecker.isEditable;
-  $scope.isDisabled = fieldAccessChecker.isDisabled;
-
   $scope.locales = $controller('entityEditor/LocalesController');
 
   $scope.state = $controller('entityEditor/StateController', {
@@ -38,6 +34,8 @@ angular.module('contentful')
     entityLabel: 'entry',
     isReadOnly: isReadOnly
   });
+
+  $controller('entityEditor/FieldAccessController', {$scope: $scope});
 
   $scope.$watch(function () {
     return spaceContext.entryTitle($scope.entry);
@@ -250,10 +248,6 @@ angular.module('contentful')
     } else {
       return 'This reference requires an entry of an unexistent content type';
     }
-  }
-
-  function isOtDocEditable() {
-    return dotty.get($scope, 'otDoc.state.editable', false);
   }
 
   function isReadOnly() {
