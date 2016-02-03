@@ -14,6 +14,7 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
   };
 
   var isAdmin = false;
+  var fieldAccessCache = {};
 
   return {
     setMembership:          setMembership,
@@ -31,6 +32,8 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     var internal = role ? PolicyBuilder.toInternal(role) : {};
 
     isAdmin = dotty.get(membership, 'admin', false);
+    fieldAccessCache = {};
+
     policies.entry.allowed.flat = dotty.get(internal, 'entries.allowed', []);
     policies.entry.denied.flat  = dotty.get(internal, 'entries.denied',  []);
     policies.asset.allowed = dotty.get(internal, 'assets.allowed', []);
@@ -69,13 +72,38 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     var fieldId    = field.apiName || field.id;
     var localeCode = locale.internal_code;
 
+    var cached = getCached(contentTypeId, fieldId, localeCode);
+    if (cached !== null) {
+      return cached;
+    }
+
     var allowed = contentTypeId ? getAllowed(contentTypeId) : policies.asset.allowed;
     var denied  = contentTypeId ? getDenied(contentTypeId)  : policies.asset.denied;
 
     var hasAllowing = checkPolicyCollectionForPath(allowed, fieldId, localeCode);
     var hasDenying  = checkPolicyCollectionForPath(denied,  fieldId, localeCode);
 
-    return isAdmin || (hasAllowing && !hasDenying);
+    var result = isAdmin || (hasAllowing && !hasDenying);
+    cacheResult(contentTypeId, fieldId, localeCode, result);
+    return result;
+  }
+
+  function getCached(ctId, fieldId, localeCode) {
+    var result = fieldAccessCache[getCacheKey(ctId, fieldId, localeCode)];
+
+    return (result === true || result === false) ? result : null;
+  }
+
+  function cacheResult(ctId, fieldId, localeCode, result) {
+    fieldAccessCache[getCacheKey(ctId, fieldId, localeCode)] = result;
+  }
+
+  function getCacheKey(ctId, fieldId, localeCode) {
+    return [getCtCacheKey(ctId), fieldId, localeCode].join(',');
+  }
+
+  function getCtCacheKey(ctId) {
+    return ctId ? ctId : '__cf_internal_ct_asset__';
   }
 
   function canCreateEntriesOfType(contentTypeId) {
