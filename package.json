@@ -50,7 +50,7 @@
     "marked-ast": "0.2.2",
     "merge-stream": "^0.1.7",
     "mkdirp": "^0.5.1",
-    "moment": "~2.9.0",
+    "moment": "~2.11.2",
     "nib": "^1.0.3",
     "node-html-encoder": "0.0.2",
     "pegjs": "^0.8.0",
