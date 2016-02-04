@@ -2,12 +2,12 @@
 
 describe('Policy Builder, to internal representation', function () {
 
-  var toInternal, ALL_FIELDS;
+  var toInternal, CONFIG;
 
   beforeEach(function () {
     module('contentful/test');
     toInternal = this.$inject('PolicyBuilder/toInternal');
-    ALL_FIELDS = this.$inject('PolicyBuilder/CONFIG').ALL_FIELDS;
+    CONFIG = this.$inject('PolicyBuilder/CONFIG');
   });
 
   describe('takes external and returns internal representation', function () {
@@ -101,6 +101,23 @@ describe('Policy Builder, to internal representation', function () {
       base('Asset' ,'assets', ['create']);
     });
 
+    it('translates content type constraints', function () {
+      var internal = toInternal({policies: [
+        {actions: 'all', effect: 'allow', constraint: {
+          and: [ { equals: [{doc: 'sys.type'}, 'Entry'] } ]
+        }},
+        {actions: 'all', effect: 'allow', constraint: {
+          and: [
+            { equals: [{doc: 'sys.type'}, 'Entry'] },
+            { equals: [{doc: 'sys.contentType.sys.id'}, 'ctid'] }
+          ]
+        }}
+      ]});
+
+      expect(internal.entries.allowed[0].contentType).toBe(CONFIG.ALL_CTS);
+      expect(internal.entries.allowed[1].contentType).toBe('ctid');
+    });
+
     it('translates multiple policies with exceptions', function () {
       var internal = toInternal({policies: [
         {actions: 'all', effect: 'allow', constraint: {
@@ -164,11 +181,11 @@ describe('Policy Builder, to internal representation', function () {
 
       expect(internal.entries.allowed.length).toBe(4);
       expect(internal.entries.allowed[0].isPath).toBe(true);
-      expect(internal.entries.allowed[0].field).toBe(ALL_FIELDS);
+      expect(internal.entries.allowed[0].field).toBe(CONFIG.ALL_FIELDS);
       expect(internal.entries.allowed[0].locale).toBe('en-US');
       expect(internal.entries.allowed[0].isPath).toBe(true);
       expect(internal.entries.allowed[1].field).toBe('test');
-      expect(internal.entries.allowed[1].locale).toBe('all');
+      expect(internal.entries.allowed[1].locale).toBe(CONFIG.ALL_LOCALES);
       expect(internal.entries.allowed[2].isPath).toBe(true);
       expect(internal.entries.allowed[3].isPath).toBeUndefined();
 

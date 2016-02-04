@@ -3,7 +3,7 @@
 angular.module('contentful').factory('accessChecker/policy', ['$injector', function ($injector) {
 
   var PolicyBuilder = $injector.get('PolicyBuilder');
-  var ALL_FIELDS    = $injector.get('PolicyBuilder/CONFIG').ALL_FIELDS;
+  var CONFIG        = $injector.get('PolicyBuilder/CONFIG');
 
   var policies = {
     entry : {
@@ -113,7 +113,7 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
         return (
           p.scope !== 'user' &&
           _.contains(['all', 'create'], p.action) &&
-          _.contains(['all', contentTypeId], p.contentType)
+          _.contains([CONFIG.ALL_CTS, contentTypeId], p.contentType)
         );
       });
     });
@@ -154,7 +154,7 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
   function getCollection(name, contentTypeId) {
     var ctGroups = policies.entry[name].byContentType;
     var ctSpecificItems = ctGroups[contentTypeId] || [];
-    var generalItems = ctGroups.all || [];
+    var generalItems = ctGroups[CONFIG.ALL_CTS] || [];
 
     return _.union(ctSpecificItems, generalItems);
   }
@@ -175,17 +175,17 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
 
   function checkPolicyCollectionForPath(collection, fieldId, localeCode) {
     return _.some(updatePoliciesOnly(collection), function (p) {
-      var noPath                = doesNotMatch(p.field) && doesNotMatch(p.locale);
-      var fieldOnlyPathMatched  = matchField  (p.field) && doesNotMatch(p.locale);
-      var localeOnlyPathMatched = doesNotMatch(p.field) && matchLocale (p.locale);
-      var bothMatched           = matchField  (p.field) && matchLocale (p.locale);
+      var noPath                = isNotString(p.field) && isNotString(p.locale);
+      var fieldOnlyPathMatched  = matchField (p.field) && isNotString(p.locale);
+      var localeOnlyPathMatched = isNotString(p.field) && matchLocale(p.locale);
+      var bothMatched           = matchField (p.field) && matchLocale(p.locale);
 
       return noPath || fieldOnlyPathMatched || localeOnlyPathMatched || bothMatched;
     });
 
-    function matchField(field)   { return _.contains([ALL_FIELDS, fieldId], field); }
-    function matchLocale(locale) { return _.contains(['all', localeCode], locale);  }
+    function matchField(field)   { return _.contains([CONFIG.ALL_FIELDS, fieldId], field);       }
+    function matchLocale(locale) { return _.contains([CONFIG.ALL_LOCALES, localeCode], locale);  }
   }
 
-  function doesNotMatch(value) { return !_.isString(value); }
+  function isNotString(value) { return !_.isString(value); }
 }]);

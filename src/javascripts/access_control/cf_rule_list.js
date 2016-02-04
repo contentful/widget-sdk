@@ -5,6 +5,7 @@ angular.module('contentful').directive('cfRuleList', ['$injector', function ($in
   var spaceContext            = $injector.get('spaceContext');
   var TheLocaleStore          = $injector.get('TheLocaleStore');
   var getDefaultRuleGetterFor = $injector.get('PolicyBuilder/defaultRule').getDefaultRuleGetterFor;
+  var ALL_LOCALES             = $injector.get('PolicyBuilder/CONFIG').ALL_LOCALES;
 
   return {
     restrict: 'E',
@@ -23,7 +24,7 @@ angular.module('contentful').directive('cfRuleList', ['$injector', function ($in
       $scope.locales = _.map(TheLocaleStore.getPrivateLocales(), function (l) {
         return { code: l.internal_code, name: l.name + ' (' + l.code + ')' };
       });
-      $scope.locales.unshift({ code: 'all', name: 'All locales' });
+      $scope.locales.unshift({ code: ALL_LOCALES, name: 'All locales' });
 
       $scope.$watch(function () {
         return dotty.get($scope, 'rules.allowed', []).length;
