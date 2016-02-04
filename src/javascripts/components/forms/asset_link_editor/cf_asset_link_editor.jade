@@ -1,10 +1,14 @@
+.file-info(ng-show="otDoc.state.editable && isDisabled(field, locale) && linksInitialized && (linkedEntities.length == 0 || field.type == 'Array')")
+  .no-file.center.vcenter
+    | You don't have a permission to edit this field.
+
 .link-editor__search.form-widget__input-row(cf-link-editor-search
   cf-autocomplete-results="entities"
   add-entity="addLink(entity)"
   entity-type="Asset"
   entity-content-types="linkContentTypes"
   entity-mime-type-group="linkMimetypeGroup"
-  ng-show="isEditable(field, locale) && (linkedEntities.length == 0 || field.type == 'Array')")
+  ng-show="isEditable(field, locale) && linksInitialized && (linkedEntities.length == 0 || field.type == 'Array')")
 
 .form-widget__help-text(ng-if="helpText") {{helpText}}
 

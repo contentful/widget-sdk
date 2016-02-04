@@ -38,23 +38,29 @@ angular.module('contentful').controller('LinkEditorController',
 
   $scope.links = [];
   $scope.linkedEntities = [];
+  $scope.linksInitialized = false;
 
   $scope.linkMultiple = linkParams.multiple;
   $scope.linkSingle   = !$scope.linkMultiple;
 
   entityCache = new EntityCache($scope.spaceContext.space, linkParams.fetchMethod);
 
-  $scope.$watch('links', function (links, old, scope) {
+  $scope.$watch('links', function (links) {
     if (!links || links.length === 0) {
-      $scope.linkedEntities = [];
+      setLinked([]);
     } else {
       lookupLinksForEntityCache(links, entityCache).then(function (entities) {
-        scope.linkedEntities = markMissing(entities);
+        setLinked(markMissing(entities));
       }, function () {
-        scope.linkedEntities = markMissing(new Array(links.length));
+        setLinked(markMissing(new Array(links.length)));
       });
     }
   }, true);
+
+  function setLinked(linked) {
+    $scope.linkedEntities = linked;
+    $scope.linksInitialized = true;
+  }
 
   $scope.$on('otValueChanged', function(event, path, value) {
     if (path === event.currentScope.otPath) ngModelSet(event.currentScope, value);
