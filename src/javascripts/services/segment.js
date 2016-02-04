@@ -1,55 +1,43 @@
 'use strict';
-angular.module('contentful').factory('segment', ['$injector', function($injector){
+angular.module('contentful').service('segment', ['$injector', function ($injector){
   var $window     = $injector.get('$window');
   var $document   = $injector.get('$document');
   var CallBuffer  = $injector.get('CallBuffer');
   var environment = $injector.get('environment');
 
   var apiKey = dotty.get(environment, 'settings.segment_io');
-
+  var buffer = new CallBuffer();
   var enabled;
 
-  return {
-    _buffer: new CallBuffer(),
-
-    enable: function(){
-      if (enabled === undefined) {
-        enabled = true;
-        install();
-        $window.analytics.load(apiKey);
-        this._buffer.resolve();
-      }
-    },
-
-    disable: function(){
-      enabled = false;
-      this._buffer.disable();
-    },
-
-    identify: function(){
-      var args = arguments;
-      this._buffer.call(function(){
-        $window.analytics.identify.apply($window.analytics, args);
-      });
-    },
-
-    track: function(){
-      var args = arguments;
-      this._buffer.call(function(){
-        $window.analytics.track.apply($window.analytics, args);
-      });
-    },
-
-    page: function(){
-      var args = arguments;
-      this._buffer.call(function(){
-        $window.analytics.page.apply($window.analytics, args);
-      });
-    },
+  this.enable = function () {
+    if (enabled === undefined) {
+      enabled = true;
+      install();
+      $window.analytics.load(apiKey);
+      buffer.resolve();
+    }
   };
 
+  this.disable = function () {
+    enabled = false;
+    buffer.disable();
+  };
+
+  this.page = bufferedSegmentCall('page');
+  this.identify = bufferedSegmentCall('identify');
+  this.track = bufferedSegmentCall('track');
+
+  function bufferedSegmentCall (fnName) {
+    return function () {
+      var args = arguments;
+      buffer.call(function () {
+        $window.analytics[fnName].apply($window.analytics, args);
+      });
+    };
+  }
+
   // Copied from https://segment.com/docs/libraries/analytics.js/quickstart/#step-1-copy-the-snippet
-  function install(){
+  function install () {
     var document = $document[0];
     // Create a queue, but don't obliterate an existing one!
     var analytics = $window.analytics = $window.analytics || [];
@@ -91,8 +79,8 @@ angular.module('contentful').factory('segment', ['$injector', function($injector
     // for methods in Analytics.js so that you never have to wait
     // for it to load to actually record data. The `method` is
     // stored as the first argument, so we can replay the data.
-    analytics.factory = function(method){
-      return function(){
+    analytics.factory = function (method) {
+      return function () {
         var args = Array.prototype.slice.call(arguments);
         args.unshift(method);
         analytics.push(args);
@@ -108,7 +96,7 @@ angular.module('contentful').factory('segment', ['$injector', function($injector
 
     // Define a method to load Analytics.js from our CDN,
     // and that will be sure to only ever load it once.
-    analytics.load = function(key){
+    analytics.load = function (key) {
       // Create an async script element based on your key.
       var script = document.createElement('script');
       script.type = 'text/javascript';
