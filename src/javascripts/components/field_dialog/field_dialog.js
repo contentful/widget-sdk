@@ -59,8 +59,7 @@ angular.module('contentful')
 
   var validations       = $injector.get('validationDecorator');
   var field             = $injector.get('fieldDecorator');
-  var trackField        = $injector.get('analyticsEvents').trackField;
-  var analytics         = $injector.get('analytics');
+  var analyticsEvents   = $injector.get('analyticsEvents');
   var fieldFactory      = $injector.get('fieldFactory');
   var Widgets           = $injector.get('widgets');
   var features          = $injector.get('features');
@@ -149,7 +148,7 @@ angular.module('contentful')
    * @param originatingFieldType
    */
   function trackFieldSettingsError (field) {
-    trackField('Saved Errored Field Settings Modal', field);
+    analyticsEvents.trackField('Saved Errored Field Settings Modal', field);
   }
 
   /**
@@ -159,7 +158,7 @@ angular.module('contentful')
    * @param originatingFieldType
    */
   function trackFieldSettingsSuccess (field) {
-    trackField('Saved Successful Field Settings Modal', field);
+    analyticsEvents.trackField('Saved Successful Field Settings Modal', field);
   }
 
   /**
@@ -171,7 +170,7 @@ angular.module('contentful')
    * @param contentTypeId
    */
   function trackCustomWidgetSelected (field, widgetLink) {
-    analytics.trackWidgetEventIfCustom(
+    analyticsEvents.trackWidgetEventIfCustom(
       'Custom Widget selected',
       widgetLink, field,
       { contentTypeId: $scope.contentType.getId() }
