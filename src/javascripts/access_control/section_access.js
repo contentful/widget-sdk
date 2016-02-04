@@ -31,7 +31,7 @@ angular.module('contentful').factory('sectionAccess', ['$injector', function ($i
 
   /**
    * @ngdoc method
-   * @name accessChecker#hasAccessToAny
+   * @name sectionAccess#hasAccessToAny
    * @description
    * Returns true if user has access to at least one section, false otherwise.
    */
@@ -50,7 +50,7 @@ angular.module('contentful').factory('sectionAccess', ['$injector', function ($i
 
   /**
    * @ngdoc method
-   * @name accessChecker#redirectToFirstAccessible
+   * @name sectionAccess#redirectToFirstAccessible
    * @description
    * This method is intended to be used in `spaces.detail` pseudo-state.
    * It'll iterate through sections in order of preference, pick the first

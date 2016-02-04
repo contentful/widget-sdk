@@ -87,20 +87,17 @@ angular.module('contentful').config([
     controller: ['$scope', 'space', 'sectionAccess', 'widgets', function ($scope, space, sectionAccess) {
       $scope.label = space.data.name;
 
-      var alreadyRedirected = false;
-      $scope.$watch(sectionAccess.hasAccessToAny, function (hasAccess) {
-        $scope.hasAccessToAnySection = hasAccess;
-        if (hasAccess && !alreadyRedirected) {
-          sectionAccess.redirectToFirstAccessible();
-          alreadyRedirected = true;
-        }
-      });
+      if (sectionAccess.hasAccessToAny()) {
+        sectionAccess.redirectToFirstAccessible();
+      }
     }],
-    templateProvider: ['space', function (space) {
+    templateProvider: ['space', 'sectionAccess', function (space, sectionAccess) {
       if (space.isHibernated()) {
         return JST.cf_space_hibernation_advice();
+      } else if (sectionAccess.hasAccessToAny()) {
+        return '<cf-breadcrumbs></cf-breadcrumbs><ui-view></ui-view>';
       } else {
-        return JST.cf_content_container();
+        return JST.cf_no_section_available();
       }
     }]
   });
