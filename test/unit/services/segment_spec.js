@@ -1,8 +1,12 @@
 'use strict';
 
 describe('Segment service', function () {
-  var segment, $window, document;
+  var segment, $window, document, logger;
+  var logSpy;
+
   beforeEach(function () {
+    logSpy = sinon.spy();
+
     module('contentful/test', function ($provide) {
       $provide.value('$document', [{
         createElement: sinon.stub().returns({}),
@@ -11,10 +15,14 @@ describe('Segment service', function () {
           parentNode: {insertBefore: sinon.stub()}
         }])
       }]);
+      $provide.value('logger', {
+        logError: logSpy
+      });
     });
-    segment = this.$inject('segment');
-    $window = this.$inject('$window');
+    segment  = this.$inject('segment');
+    $window  = this.$inject('$window');
     document = this.$inject('$document')[0];
+    logger   = this.$inject('logger');
   });
 
   afterEach(function () {
@@ -75,6 +83,21 @@ describe('Segment service', function () {
       it('ignores calls on a disabled service', function () {
         segment.disable();
         segment[fnName]('foo');
+      });
+
+      it('results in an error being logged if the respective analytics.js function throws an exception', function () {
+        segment.enable();
+        $window.analytics[fnName].throws();
+        segment[fnName]('bar', 1, 2);
+        sinon.assert.calledOnce(logSpy);
+        sinon.assert.calledWithExactly(logSpy,
+          'Failed analytics.js call', sinon.match.object);
+        expect(logSpy.args[0][1].data).toEqual(jasmine.objectContaining({
+          msg: jasmine.any(String),
+          exp: jasmine.any(Error),
+          analyticsFn: fnName,
+          analyticsFnArgs: ['bar', 1, 2]
+        }));
       });
     });
   }

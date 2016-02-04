@@ -4,6 +4,7 @@ angular.module('contentful').service('segment', ['$injector', function ($injecto
   var $document   = $injector.get('$document');
   var CallBuffer  = $injector.get('CallBuffer');
   var environment = $injector.get('environment');
+  var logger      = $injector.get('logger');
 
   var apiKey = dotty.get(environment, 'settings.segment_io');
   var buffer = new CallBuffer();
@@ -31,7 +32,18 @@ angular.module('contentful').service('segment', ['$injector', function ($injecto
     return function () {
       var args = arguments;
       buffer.call(function () {
-        $window.analytics[fnName].apply($window.analytics, args);
+        try {
+          $window.analytics[fnName].apply($window.analytics, args);
+        } catch (exp) {
+          logger.logError('Failed analytics.js call', {
+            data: {
+              exp: exp,
+              msg: exp.message,
+              analyticsFn: fnName,
+              analyticsFnArgs: _.toArray(args)
+            }
+          });
+        }
       });
     };
   }
