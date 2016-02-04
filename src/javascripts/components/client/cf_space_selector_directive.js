@@ -22,9 +22,6 @@ angular.module('contentful')
   var accessChecker    = $injector.get('accessChecker');
 
   $scope.$watch('spaces', groupSpacesByOrganization);
-  $scope.$watch(OrganizationList.isEmpty, function (isEmpty) {
-    $scope.hasOrgnizations = !isEmpty;
-  });
 
   $scope.spaceContext = spaceContext;
   $scope.canCreateSpace = accessChecker.canCreateSpace;
