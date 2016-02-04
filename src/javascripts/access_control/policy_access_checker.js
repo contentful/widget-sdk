@@ -24,6 +24,7 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     canUpdateEntriesOfType: canUpdateEntriesOfType,
     canUpdateOwnEntries:    canUpdateOwnEntries,
     canUpdateAssets:        canUpdateAssets,
+    canUpdateOwnAssets:     canUpdateOwnAssets,
     getFieldChecker:        getFieldChecker
   };
 
@@ -127,11 +128,19 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
   }
 
   function canUpdateAssets() {
-    return performCheck(policies.asset.allowed, policies.asset.denied, updatePoliciesOnly);
+    return performCheck(policies.asset.allowed, policies.asset.denied, anyUserUpdatePoliciesOnly);
+  }
+
+  function canUpdateOwnAssets() {
+    return performCheck(policies.asset.allowed, policies.asset.denied, currentUserUpdatePoliciesOnly);
   }
 
   function performCheck(c1, c2, fn) {
-    return fn(c1).length > 0 && fn(c2).length === 0;
+    return fn(c1).length > 0 && fn(withoutPathRules(c2)).length === 0;
+  }
+
+  function withoutPathRules(c) {
+    return _.filter(c, function (p) { return !p.isPath; });
   }
 
   function getAllowed(contentTypeId) {

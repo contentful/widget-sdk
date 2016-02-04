@@ -150,14 +150,28 @@ describe('Policy Builder, to internal representation', function () {
             { equals: [{doc: 'sys.type'}, 'Entry'] },
             { paths: [{doc: 'fields.test.%'}] }
           ]
+        }},
+        {actions: ['read'], effect: 'allow', constraint: {
+          and: [
+            { equals: [{doc: 'sys.type'}, 'Entry'] },
+            { paths: [{doc: 'fields.%.%'}] }
+          ]
+        }},
+        {actions: ['read'], effect: 'allow', constraint: {
+          and: [{ equals: [{doc: 'sys.type'}, 'Entry'] }]
         }}
       ]});
 
-      expect(internal.entries.allowed.length).toBe(2);
+      expect(internal.entries.allowed.length).toBe(4);
+      expect(internal.entries.allowed[0].isPath).toBe(true);
       expect(internal.entries.allowed[0].field).toBe(ALL_FIELDS);
       expect(internal.entries.allowed[0].locale).toBe('en-US');
+      expect(internal.entries.allowed[0].isPath).toBe(true);
       expect(internal.entries.allowed[1].field).toBe('test');
       expect(internal.entries.allowed[1].locale).toBe('all');
+      expect(internal.entries.allowed[2].isPath).toBe(true);
+      expect(internal.entries.allowed[3].isPath).toBeUndefined();
+
     });
 
     it('translates "glued" actions', function () {

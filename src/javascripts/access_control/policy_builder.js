@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').constant('PolicyBuilder/CONFIG', {
-  ALL_FIELDS: '_cf_internal_all_fields__',
+  ALL_FIELDS: '__cf_internal_all_fields__',
   PATH_WILDCARD: '%',
   PATH_SEPARATOR: '.'
 });
@@ -171,6 +171,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
     // 4. find path
     var pathConstraint = findPathConstraint(rest);
     if (pathConstraint.value) {
+      rule.isPath = true;
       rule.field = fieldPathSegment(pathConstraint.value[1]);
       rule.locale = localePathSegment(pathConstraint.value[2]);
       rest.splice(pathConstraint.index, 1);

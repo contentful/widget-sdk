@@ -245,15 +245,8 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     var ctId = getContentTypeIdFor(entry);
     var canUpdateThisType = policyChecker.canUpdateEntriesOfType(ctId);
     var canUpdateOwn = policyChecker.canUpdateOwnEntries();
-    var isAuthor = false;
 
-    if (canUpdateOwn) {
-      var entryAuthor = getAuthorIdFor(entry);
-      var currentUser = spaceContext.fromData('spaceMembership.user.sys.id');
-      isAuthor = entryAuthor === currentUser;
-    }
-
-    return canUpdate || canUpdateThisType || (canUpdateOwn && isAuthor);
+    return canUpdate || canUpdateThisType || (canUpdateOwn && isAuthor(entry));
   }
 
   /**
@@ -274,7 +267,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
 
   function isAuthor(entity) {
     var author = getAuthorIdFor(entity);
-    var currentUser = spaceContext.getData('spaceMembership.user.sys.id');
+    var currentUser = spaceContext.fromData('spaceMembership.user.sys.id');
 
     return author === currentUser;
   }
