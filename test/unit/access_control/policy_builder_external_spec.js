@@ -2,12 +2,12 @@
 
 describe('Policy Builder, to external representation', function () {
 
-  var toExternal, ALL_FIELDS;
+  var toExternal, CONFIG;
 
   beforeEach(function () {
     module('contentful/test');
     toExternal = this.$inject('PolicyBuilder/toExternal');
-    ALL_FIELDS = this.$inject('PolicyBuilder/CONFIG').ALL_FIELDS;
+    CONFIG = this.$inject('PolicyBuilder/CONFIG');
   });
 
   describe('takes internal and returns external representation', function () {
@@ -128,6 +128,32 @@ describe('Policy Builder, to external representation', function () {
       expect(ps[1].constraint.and[0].equals[1]).toBe('Entry');
     });
 
+    it('translates content types', function () {
+      var external = toExternal({
+        uiCompatible: true,
+        entries: {
+          allowed: [
+            {action: 'read'},
+            {action: 'read', contentType: CONFIG.ALL_CTS},
+            {action: 'read', contentType: 'ctid'}
+          ]
+        }
+      });
+
+      var ps = external.policies;
+
+      expect(ps[0].constraint.and[0].equals[1]).toBe('Entry');
+      expect(ps[0].constraint.and.length).toBe(1);
+
+      expect(ps[1].constraint.and[0].equals[1]).toBe('Entry');
+      expect(ps[1].constraint.and.length).toBe(1);
+
+      expect(ps[2].constraint.and[0].equals[1]).toBe('Entry');
+      expect(ps[2].constraint.and.length).toBe(2);
+      expect(ps[2].constraint.and[1].equals[0].doc).toBe('sys.contentType.sys.id');
+      expect(ps[2].constraint.and[1].equals[1]).toBe('ctid');
+    });
+
     it('translates scope', function () {
       var external = toExternal({
         uiCompatible: true,
@@ -153,8 +179,8 @@ describe('Policy Builder, to external representation', function () {
         uiCompatible: true,
         entries: {
           allowed: [
-            {action: 'update', field: ALL_FIELDS, locale: 'en-US'},
-            {action: 'update', field: 'test', locale: 'all'}
+            {action: 'update', field: CONFIG.ALL_FIELDS, locale: 'en-US'},
+            {action: 'update', field: 'test', locale: CONFIG.ALL_LOCALES}
           ]
         }
       });

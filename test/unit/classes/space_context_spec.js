@@ -71,6 +71,23 @@ describe('spaceContext', function () {
       expect(this.spaceContext.getId()).toBe('test');
     });
 
+    describe('getting space data', function () {
+      it('returns undefined for an invalid path', function () {
+        expect(this.spaceContext.getData('x.y.z')).toBeUndefined();
+      });
+
+      it('returns provided default value for an invalid path', function () {
+        var obj = {};
+        expect(this.spaceContext.getData('x.y.z', obj)).toBe(obj);
+      });
+
+      it ('returns value if a path is correct', function () {
+        var obj = {};
+        space.data.x = {y: {z: obj}};
+        expect(this.spaceContext.getData('x.y.z')).toBe(obj);
+      });
+    });
+
     describe('getting content types from server', function () {
       var getContentTypes, getPublishedContentTypes;
       var contentTypes;

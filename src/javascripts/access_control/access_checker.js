@@ -41,8 +41,8 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   $rootScope.$watchCollection(function () {
     return {
       authContext: authorization.spaceContext,
-      organization: fromSpaceData('organization'),
-      spaceMembership: fromSpaceData('spaceMembership')
+      organization: spaceContext.getData('organization'),
+      spaceMembership: spaceContext.getData('spaceMembership')
     };
   }, reset);
 
@@ -125,7 +125,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * Forcibly recollect all permission data
    */
   function reset() {
-    policyChecker.setMembership(fromSpaceData('spaceMembership'));
+    policyChecker.setMembership(spaceContext.getData('spaceMembership'));
     collectResponses();
     collectFeatures();
     collectSectionVisibility();
@@ -155,9 +155,9 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   }
 
   function collectFeatures() {
-    features        = fromSpaceData('organization.subscriptionPlan.limits.features', {});
-    userQuota.limit = fromSpaceData('organization.subscriptionPlan.limits.permanent.organizationMembership', -1);
-    userQuota.used  = fromSpaceData('organization.usage.permanent.organizationMembership', 1);
+    features        = spaceContext.getData('organization.subscriptionPlan.limits.features', {});
+    userQuota.limit = spaceContext.getData('organization.subscriptionPlan.limits.permanent.organizationMembership', -1);
+    userQuota.used  = spaceContext.getData('organization.usage.permanent.organizationMembership', 1);
   }
 
   /**
@@ -245,15 +245,8 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     var ctId = getContentTypeIdFor(entry);
     var canUpdateThisType = policyChecker.canUpdateEntriesOfType(ctId);
     var canUpdateOwn = policyChecker.canUpdateOwnEntries();
-    var isAuthor = false;
 
-    if (canUpdateOwn) {
-      var entryAuthor = getAuthorIdFor(entry);
-      var currentUser = fromSpaceData('spaceMembership.user.sys.id');
-      isAuthor = entryAuthor === currentUser;
-    }
-
-    return canUpdate || canUpdateThisType || (canUpdateOwn && isAuthor);
+    return canUpdate || canUpdateThisType || (canUpdateOwn && isAuthor(entry));
   }
 
   /**
@@ -267,8 +260,16 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   function canUpdateAsset(asset) {
     var canUpdate = canPerformActionOnEntity('update', asset);
     var canUpdateWithPolicy = policyChecker.canUpdateAssets();
+    var canUpdateOwn = policyChecker.canUpdateOwnAssets();
 
-    return canUpdate || canUpdateWithPolicy;
+    return canUpdate || canUpdateWithPolicy || (canUpdateOwn && isAuthor(asset));
+  }
+
+  function isAuthor(entity) {
+    var author = getAuthorIdFor(entity);
+    var currentUser = spaceContext.fromData('spaceMembership.user.sys.id');
+
+    return author === currentUser;
   }
 
   /**
@@ -305,7 +306,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   }
 
   function isAdminOrOwner() {
-    var isSpaceAdmin = fromSpaceData('spaceMembership.admin', false);
+    var isSpaceAdmin = spaceContext.getData('spaceMembership.admin', false);
     return isSpaceAdmin || _.contains(['owner', 'admin'], getRoleInOrganization());
   }
 
@@ -403,8 +404,8 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   }
 
   function getRoleInOrganization() {
-    var organizationId = fromSpaceData('organization.sys.id');
-    var memberships    = fromSpaceData('spaceMembership.user.organizationMemberships', []);
+    var organizationId = spaceContext.getData('organization.sys.id');
+    var memberships    = spaceContext.getData('spaceMembership.user.organizationMemberships', []);
     var found          = null;
 
     if (organizationId && memberships.length > 0) {
@@ -412,11 +413,6 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     }
 
     return dotty.get(found, 'role');
-  }
-
-  function fromSpaceData(path, defaultValue) {
-    var data = dotty.get(spaceContext, 'space.data', {});
-    return dotty.get(data, path, defaultValue);
   }
 
   function getContentTypeIdFor(entry) {

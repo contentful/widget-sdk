@@ -35,7 +35,6 @@ function ($scope, $injector, entity, notify, handlePublishError) {
   });
 
   function hasPermission (action) {
-    // TODO this should be moved to a service with a simpler interface
     return accessChecker.canPerformActionOnEntity(action, entity);
   }
 
@@ -160,13 +159,11 @@ function ($scope, $injector, entity, notify, handlePublishError) {
     .then(notify.deleteSuccess, notify.deleteFail);
   }, {
     disabled: function () {
-      var state = stateManager.getState();
-      if ((state === 'draft' || state === 'archive') && hasPermission('delete')) {
-        return false;
-      } else if (state === 'published' && hasPermission('unpublish') && hasPermission('delete')) {
-        return false;
-      } else {
-        return true;
+      switch (stateManager.getState()) {
+        case 'draft':     return !hasPermission('delete');
+        case 'archive':   return !hasPermission('delete');
+        case 'published': return !hasPermission('unpublish') || !hasPermission('delete');
+        default:          return true;
       }
     }
   });

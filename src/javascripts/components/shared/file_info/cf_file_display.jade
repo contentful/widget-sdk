@@ -23,6 +23,8 @@
     | Asset has no file
   .no-file.center.vcenter(ng-show="entity && entity.isMissing")
     | Asset is missing or inaccessible due to your access level
+  .no-file.center.vcenter(ng-show="!file && otDoc.state.editable && isDisabled(field, locale)")
+    | You don't have a permission to edit this field.
 
   cf-file-display-buttons
 

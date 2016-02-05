@@ -87,29 +87,19 @@ angular.module('contentful').config([
     controller: ['$scope', 'space', 'sectionAccess', 'widgets', function ($scope, space, sectionAccess) {
       $scope.label = space.data.name;
 
-      $scope.hasAccessToAnySection = sectionAccess.hasAccessToAny();
-      if ($scope.hasAccessToAnySection) {
+      if (sectionAccess.hasAccessToAny()) {
         sectionAccess.redirectToFirstAccessible();
       }
     }],
-    templateProvider: ['space', function (space) {
+    templateProvider: ['space', 'sectionAccess', function (space, sectionAccess) {
       if (space.isHibernated()) {
         return JST.cf_space_hibernation_advice();
+      } else if (sectionAccess.hasAccessToAny()) {
+        return '<cf-breadcrumbs></cf-breadcrumbs><ui-view></ui-view>';
       } else {
-        return [
-          '<cf-breadcrumbs ng-show="hasAccessToAnySection"></cf-breadcrumbs>',
-          '<ui-view ng-show="hasAccessToAnySection"></ui-view>',
-          '<div ng-show="!hasAccessToAnySection" class="workbench workbench-forbidden x--center">',
-            '<div class="workbench-forbidden__headline">You don\'t have permission to access any view in this space.</div>',
-            '<div class="workbench-forbidden__message">',
-              'Get in touch with the person administering Contentful at your company to learn more.<br>',
-              'You can always access your account settings. You can also try to switch to some other space.',
-            '</div>',
-          '</div>'
-        ].join('');
+        return JST.cf_no_section_available();
       }
     }]
-
   });
 
 

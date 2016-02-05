@@ -2,7 +2,7 @@
 
 angular.module('contentful').directive('cfRule', ['$injector', function ($injector) {
 
-  var ALL_FIELDS = $injector.get('PolicyBuilder/CONFIG').ALL_FIELDS;
+  var CONFIG = $injector.get('PolicyBuilder/CONFIG');
 
   return {
     restrict: 'E',
@@ -14,7 +14,7 @@ angular.module('contentful').directive('cfRule', ['$injector', function ($inject
         $scope.contentTypes = _.map(cts, function (ct) {
           return { id: ct.getId(), name: ct.data.name };
         });
-        $scope.contentTypes.unshift({ id: 'all', name: 'All content types' });
+        $scope.contentTypes.unshift({ id: CONFIG.ALL_CTS, name: 'All content types' });
       });
 
       // when selected action changes...
@@ -42,7 +42,7 @@ angular.module('contentful').directive('cfRule', ['$injector', function ($inject
         $scope.contentTypeFields = _.map(dotty.get(ct, 'data.fields', []), function (f) {
           return { id: f.apiName || f.id, name: f.name };
         });
-        $scope.contentTypeFields.unshift({ id: ALL_FIELDS, name: 'All fields' });
+        $scope.contentTypeFields.unshift({ id: CONFIG.ALL_FIELDS, name: 'All fields' });
 
         // reset selected field to default one
         if (id !== prev) { setDefaultField(); }
@@ -50,7 +50,7 @@ angular.module('contentful').directive('cfRule', ['$injector', function ($inject
 
       function setDefaultFieldAndLocale() {
         setDefaultField();
-        setLocale('all');
+        setLocale(CONFIG.ALL_LOCALES);
       }
 
       function removeFieldAndLocale() {
@@ -59,7 +59,7 @@ angular.module('contentful').directive('cfRule', ['$injector', function ($inject
       }
 
       function setDefaultField() {
-        setField(ALL_FIELDS);
+        setField(CONFIG.ALL_FIELDS);
       }
 
       // this sets field involved in a rule (only if rule can hold field)

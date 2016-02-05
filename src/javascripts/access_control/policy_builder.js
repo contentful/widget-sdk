@@ -1,7 +1,9 @@
 'use strict';
 
 angular.module('contentful').constant('PolicyBuilder/CONFIG', {
-  ALL_FIELDS: '_cf_internal_all_fields__',
+  ALL_FIELDS: '__cf_internal_all_fields__',
+  ALL_LOCALES: '__cf_internal_all_locales__',
+  ALL_CTS: '__cf_internal_all_cts__',
   PATH_WILDCARD: '%',
   PATH_SEPARATOR: '.'
 });
@@ -15,7 +17,8 @@ angular.module('contentful').factory('PolicyBuilder', ['$injector', function ($i
 
 angular.module('contentful').factory('PolicyBuilder/defaultRule', ['$injector', function ($injector) {
 
-  var random = $injector.get('random');
+  var random  = $injector.get('random');
+  var ALL_CTS = $injector.get('PolicyBuilder/CONFIG').ALL_CTS;
 
   var DEFAULT_RULE = {
     action: 'all',
@@ -24,7 +27,7 @@ angular.module('contentful').factory('PolicyBuilder/defaultRule', ['$injector', 
   };
 
   var DEFAULT_ENTRY_RULE = {
-    contentType: 'all',
+    contentType: ALL_CTS,
     field: null
   };
 
@@ -171,6 +174,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
     // 4. find path
     var pathConstraint = findPathConstraint(rest);
     if (pathConstraint.value) {
+      rule.isPath = true;
       rule.field = fieldPathSegment(pathConstraint.value[1]);
       rule.locale = localePathSegment(pathConstraint.value[2]);
       rest.splice(pathConstraint.index, 1);
@@ -225,7 +229,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
   }
 
   function localePathSegment(segment) {
-    return pathSegment(segment, 'all');
+    return pathSegment(segment, CONFIG.ALL_LOCALES);
   }
 
   function pathSegment(segment, allValue) {
@@ -316,7 +320,7 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['$injector', f
 
   function addContentTypeConstraint(pair) {
     var ct = pair.source.contentType;
-    if (ct === 'all' || !_.isString(ct)) { return pair; }
+    if (ct === CONFIG.ALL_CTS || !_.isString(ct)) { return pair; }
 
     pushConstraint(pair, eq('sys.contentType.sys.id', ct));
     return pair;
@@ -341,7 +345,7 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['$injector', f
   }
 
   function localeSegment(prop) {
-    return segment(prop, 'all');
+    return segment(prop, CONFIG.ALL_LOCALES);
   }
 
   function segment(prop, allValue) {

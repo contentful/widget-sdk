@@ -30,12 +30,17 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
     }, trialWatcher);
   }
 
-  function trialWatcher (args) {
+  function trialWatcher (args, prev) {
     var space = args.space;
     var user = args.user;
     var userId = dotty.get(args.user, 'sys.id');
 
-    if (!space || !user || userId === previousUserId) {
+    // Break if there's not enough data
+    if (!space || !user) {
+      return;
+    }
+    // Break if both user and space didn't change
+    if (userId === previousUserId && args.space === prev.space) {
       return;
     }
 
