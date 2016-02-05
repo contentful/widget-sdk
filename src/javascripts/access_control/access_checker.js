@@ -267,7 +267,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
 
   function isAuthor(entity) {
     var author = getAuthorIdFor(entity);
-    var currentUser = spaceContext.fromData('spaceMembership.user.sys.id');
+    var currentUser = spaceContext.getData('spaceMembership.user.sys.id');
 
     return author === currentUser;
   }
