@@ -3,10 +3,10 @@
 describe('Access Checker', function () {
 
   var $rootScope, spaceContext, authorization, enforcements, OrganizationList, policyChecker, ac;
-  var canStub, reasonsDeniedStub;
+  var getResStub, reasonsDeniedStub;
 
   function triggerChange() {
-    authorization.spaceContext = {can: canStub, reasonsDenied: reasonsDeniedStub};
+    authorization.spaceContext = {reasonsDenied: reasonsDeniedStub};
     $rootScope.$apply();
   }
 
@@ -21,9 +21,10 @@ describe('Access Checker', function () {
     policyChecker = this.$inject('accessChecker/policy');
     ac = this.$inject('accessChecker');
 
-    canStub = sinon.stub().returns(false);
-    reasonsDeniedStub = sinon.stub().returns([]);
+    var responseCache = this.$inject('accessChecker/responseCache');
+    responseCache.getResponse = getResStub = sinon.stub().returns(false);
 
+    reasonsDeniedStub = sinon.stub().returns([]);
     enforcements.determineEnforcement = sinon.stub().returns(undefined);
 
     triggerChange();
@@ -44,7 +45,7 @@ describe('Access Checker', function () {
     });
 
     it('should not hide or disable when operation can be performed', function () {
-      canStub.withArgs('read', 'Entry').returns(true);
+      getResStub.withArgs('read', 'Entry').returns(true);
       triggerChange();
       var response = ac.getResponses()['readEntry'];
       expect(response.can).toBe(true);
@@ -107,7 +108,7 @@ describe('Access Checker', function () {
     it('checks if there is a "hide" flag for chosen actions', function () {
       function test(action, key, val) {
         var entity = key.charAt(0).toUpperCase() + key.slice(1);
-        canStub.withArgs(action, entity).returns(val);
+        getResStub.withArgs(action, entity).returns(val);
         triggerChange();
         expect(ac.getSectionVisibility()[key]).toBe(val);
       }
@@ -171,7 +172,7 @@ describe('Access Checker', function () {
 
   describe('#shouldHide and #shouldDisable', function () {
     it('are shortcuts to response object properties', function () {
-      canStub.withArgs('read', 'Entry').returns(false);
+      getResStub.withArgs('read', 'Entry').returns(false);
       triggerChange();
       var response = ac.getResponseByActionName('readEntry');
       expect(response.shouldHide).toBe(true);
@@ -189,24 +190,22 @@ describe('Access Checker', function () {
   describe('#canPerformActionOnEntity', function () {
     it('calls "can" with entity data and extracts result from response', function () {
       var entity = {data: {}};
-      canStub.withArgs('update', entity.data).returns('YES WE CAN');
+      getResStub.withArgs('update', entity.data).returns('YES WE CAN');
       var result = ac.canPerformActionOnEntity('update', entity);
-      sinon.assert.calledOnce(canStub.withArgs('update', entity.data));
+      sinon.assert.calledOnce(getResStub.withArgs('update', entity.data));
       expect(result).toBe('YES WE CAN');
     });
   });
 
   describe('#canPerformActionOnEntryOfType', function () {
     it('calls "can" with fake entity of given content type and extracts result from response', function () {
-      authorization.spaceContext.can = function (action, entity) {
-        var hasCt = dotty.get(entity, 'sys.contentType.sys.id') === 'ctid';
-        var hasType = dotty.get(entity, 'sys.type') === 'Entry';
-        if (action === 'update' && hasCt && hasType) {
-          return 'YES WE CAN';
-        }
-      };
+      getResStub.returns(true);
       var result = ac.canPerformActionOnEntryOfType('update', 'ctid');
-      expect(result).toBe('YES WE CAN');
+      var args = getResStub.lastCall.args;
+      expect(args[0]).toBe('update');
+      expect(args[1].sys.contentType.sys.id).toBe('ctid');
+      expect(args[1].sys.type).toBe('Entry');
+      expect(result).toBe(true);
     });
   });
 
@@ -214,19 +213,19 @@ describe('Access Checker', function () {
     var entry = {data: {sys: {contentType: {sys: {id: 'ctid'}}}}};
 
     it('returns true if "can" returns true', function () {
-      canStub.withArgs('update', entry.data).returns(true);
+      getResStub.withArgs('update', entry.data).returns(true);
       expect(ac.canUpdateEntry(entry)).toBe(true);
     });
 
     it('returns false if "can" returns false and there are no allow policies', function () {
-      canStub.withArgs('update', entry.data).returns(false);
+      getResStub.withArgs('update', entry.data).returns(false);
       policyChecker.canUpdateEntriesOfType = sinon.stub().returns(false);
       expect(ac.canUpdateEntry(entry)).toBe(false);
       sinon.assert.calledOnce(policyChecker.canUpdateEntriesOfType.withArgs('ctid'));
     });
 
     it('returns true if "can" returns false but there are allow policies', function () {
-      canStub.withArgs('update', entry.data).returns(false);
+      getResStub.withArgs('update', entry.data).returns(false);
       policyChecker.canUpdateEntriesOfType = sinon.stub().returns(true);
       expect(ac.canUpdateEntry(entry)).toBe(true);
       sinon.assert.calledOnce(policyChecker.canUpdateEntriesOfType.withArgs('ctid'));
@@ -237,19 +236,19 @@ describe('Access Checker', function () {
     var asset = {data: {}};
 
     it('returns true if "can" returns true', function () {
-      canStub.withArgs('update', asset.data).returns(true);
+      getResStub.withArgs('update', asset.data).returns(true);
       expect(ac.canUpdateAsset(asset)).toBe(true);
     });
 
     it('returns false if "can" returns false and there are no allow policies', function () {
-      canStub.withArgs('update', asset.data).returns(false);
+      getResStub.withArgs('update', asset.data).returns(false);
       policyChecker.canUpdateAssets = sinon.stub().returns(false);
       expect(ac.canUpdateAsset(asset)).toBe(false);
       sinon.assert.calledOnce(policyChecker.canUpdateAssets);
     });
 
     it('returns true if "can" returns false but there are allow policies', function () {
-      canStub.withArgs('update', asset.data).returns(false);
+      getResStub.withArgs('update', asset.data).returns(false);
       policyChecker.canUpdateAssets = sinon.stub().returns(true);
       expect(ac.canUpdateAsset(asset)).toBe(true);
       sinon.assert.calledOnce(policyChecker.canUpdateAssets);
@@ -259,7 +258,7 @@ describe('Access Checker', function () {
   describe('#canModifyApiKeys', function () {
     it('returns related response', function () {
       expect(ac.canModifyApiKeys()).toBe(false);
-      canStub.withArgs('create', 'ApiKey').returns(true);
+      getResStub.withArgs('create', 'ApiKey').returns(true);
       triggerChange();
       expect(ac.canModifyApiKeys()).toBe(true);
     });
