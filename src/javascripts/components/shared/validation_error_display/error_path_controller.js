@@ -21,13 +21,13 @@ function ErrorPathController($scope, $attrs) {
     controller.isEmpty = !hasErrors;
   });
 
-  function matchesPath(pattern, target) {
+  function matchesPath (pattern, target) {
     var prefixLen = pattern.length - 1;
     if (pattern[prefixLen] === '*') {
-      return _.isEqual(target.slice(0, prefixLen), pattern.slice(0, prefixLen));
-    } else {
-      return _.isEqual(target, pattern);
+      target = target.slice(0, prefixLen);
+      pattern = pattern.slice(0, prefixLen);
     }
+    return _.isEqual(target, pattern);
   }
 
 }]);
