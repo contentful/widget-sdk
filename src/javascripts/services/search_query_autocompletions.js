@@ -192,7 +192,7 @@ angular.module('contentful')
   function dateCompletions(key, description) {
     var RELATIVE = /(\d+) +days +ago/i;
     var DAY      = /^\s*\d{2,4}-\d{2}-\d{2}\s*$/;
-    var EQUALITY = /^==|=|:$/;
+    var EQUALITY = /^(==|=|:)$/;
     return {
       description: description,
       operators: makeDateOperatorList(),
