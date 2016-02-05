@@ -68,6 +68,12 @@ angular.module('cf.app')
   }
 
   function stateChangeStartHandler(event, toState, toStateParams, fromState, fromStateParams) {
+    var hasRedirected = redirect(event, toState, toStateParams);
+
+    if (hasRedirected) {
+      return;
+    }
+
     if (fromState.name === toState.name &&
         getAddToContext(fromStateParams) === getAddToContext(toStateParams)) {
       event.preventDefault();
@@ -92,21 +98,21 @@ angular.module('cf.app')
       return;
     }
 
-    preprocessStateChange(event, toState, toStateParams);
-  }
-
-  function preprocessStateChange(event, toState, toStateParams) {
     if (!toStateParams.addToContext) {
       contextHistory.purge();
     }
+  }
 
-    // Some redirects away from nonexistent pages
+  function redirect (event, toState, toStateParams) {
     if (
       _.contains(['otherwise', 'spaces'], toState.name) ||
       (toState.name === 'spaces.detail' && _.isEmpty(toStateParams.spaceId))
     ) {
       event.preventDefault();
       spaceTools.goToInitialSpace();
+      return true;
+    } else {
+      return false;
     }
   }
 
