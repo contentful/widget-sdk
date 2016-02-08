@@ -71,7 +71,7 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
 
   function isEditable(contentTypeId, field, locale) {
     var fieldId    = field.apiName || field.id;
-    var localeCode = locale.internal_code;
+    var localeCode = locale.code;
 
     var cached = getCached(contentTypeId, fieldId, localeCode);
     if (cached !== null) {
