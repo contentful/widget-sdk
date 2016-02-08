@@ -20,7 +20,6 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     setMembership:          setMembership,
     canAccessEntries:       function () { return policies.entry.allowed.flat.length > 0; },
     canAccessAssets:        function () { return policies.asset.allowed.length > 0; },
-    canCreateEntriesOfType: canCreateEntriesOfType,
     canUpdateEntriesOfType: canUpdateEntriesOfType,
     canUpdateOwnEntries:    canUpdateOwnEntries,
     canUpdateAssets:        canUpdateAssets,
@@ -105,18 +104,6 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
 
   function getCtCacheKey(ctId) {
     return ctId ? ctId : '__cf_internal_ct_asset__';
-  }
-
-  function canCreateEntriesOfType(contentTypeId) {
-    return performCheck(policies.entry.allowed.flat, policies.entry.denied.flat, function (c) {
-      return _.filter(c, function (p) {
-        return (
-          p.scope !== 'user' &&
-          _.contains(['all', 'create'], p.action) &&
-          _.contains([CONFIG.ALL_CTS, contentTypeId], p.contentType)
-        );
-      });
-    });
   }
 
   function canUpdateEntriesOfType(contentTypeId) {

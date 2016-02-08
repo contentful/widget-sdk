@@ -211,12 +211,8 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * Returns true if action can be performed on entry with the given content type ID.
    */
   function canPerformActionOnEntryOfType(action, ctId) {
-    if (action === 'create') {
-      return !shouldHide('createEntry') || (_.isString(ctId) && policyChecker.canCreateEntriesOfType(ctId));
-    } else {
-      var entity = {data: {sys: {type: 'Entry', contentType: {sys: {id: ctId}}}}};
-      return canPerformActionOnEntity(action, entity);
-    }
+    var entity = {data: {sys: {type: 'Entry', contentType: {sys: {id: ctId}}}}};
+    return canPerformActionOnEntity(action, entity);
   }
 
   /**
