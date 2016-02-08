@@ -53,6 +53,13 @@ describe('Response Cache', function () {
     sinon.assert.calledOnce(canStub.withArgs('read', entry2));
   });
 
+  it('Caches separate permission checks for two different general entities', function () {
+    callTwice('read', 'Entry');
+    callTwice('read', 'Settings');
+    sinon.assert.calledOnce(canStub.withArgs('read', 'Entry'));
+    sinon.assert.calledOnce(canStub.withArgs('read', 'Settings'));
+  });
+
   it('Caches Asset permission checks', function () {
     callTwiceAssertOnce('read', asset);
     callTwiceAssertOnce('delete', asset);

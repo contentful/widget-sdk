@@ -22,7 +22,7 @@ angular.module('contentful').directive('cfRuleList', ['$injector', function ($in
       $scope.getDefaultRule = getDefaultRuleGetterFor($scope.entity);
 
       $scope.locales = _.map(TheLocaleStore.getPrivateLocales(), function (l) {
-        return { code: l.internal_code, name: l.name + ' (' + l.code + ')' };
+        return { code: l.code, name: l.name + ' (' + l.code + ')' };
       });
       $scope.locales.unshift({ code: ALL_LOCALES, name: 'All locales' });
 

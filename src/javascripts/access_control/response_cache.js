@@ -43,7 +43,7 @@ angular.module('contentful').factory('accessChecker/responseCache', [function ()
       category = _.contains(['Entry', 'Asset'], type) ? ('specific' + type) : null;
     } else if (_.isString(entity)) {
       id = 'none';
-      category = 'general';
+      category = 'general' + entity;
     }
 
     var segments = [action, category, id];
