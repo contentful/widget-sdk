@@ -11,12 +11,10 @@ angular.module('contentful')
   var analytics     = $injector.get('analytics');
   var accessChecker = $injector.get('accessChecker');
 
-  function disabledChecker (action) {
-    return function () {
-      return !accessChecker.canPerformActionOnEntity(action, $scope.entry);
-    };
+  function canCreateEntry() {
+    var ctId = dotty.get($scope, 'entry.sys.contentType.sys.id');
+    return accessChecker.canPerformActionOnEntryOfType('create', ctId);
   }
-
 
   controller.duplicate = Command.create(function () {
     var contentType = $scope.entry.getSys().contentType.sys.id;
@@ -28,7 +26,7 @@ angular.module('contentful')
     })
     .catch(notify.duplicateFail);
   }, {
-    disabled: disabledChecker('createEntry')
+    disabled: function () { return !canCreateEntry(); }
   });
 
 
@@ -60,7 +58,7 @@ angular.module('contentful')
     });
     // TODO error handler
   }, {
-    disabled: disabledChecker('createEntry')
+    disabled: function () { return !canCreateEntry(); }
   }, {
     name: function () { return $scope.contentTypeName; }
   });

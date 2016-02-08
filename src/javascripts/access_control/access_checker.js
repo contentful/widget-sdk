@@ -22,6 +22,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   var OrganizationList = $injector.get('OrganizationList');
   var spaceContext     = $injector.get('spaceContext');
   var policyChecker    = $injector.get('accessChecker/policy');
+  var cache            = $injector.get('accessChecker/responseCache');
 
   var ACTIONS_FOR_ENTITIES = {
     contentType: ['create', 'read', 'update', 'delete', 'publish', 'unpublish'],
@@ -125,6 +126,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * Forcibly recollect all permission data
    */
   function reset() {
+    cache.reset(authorization.spaceContext);
     policyChecker.setMembership(spaceContext.getData('spaceMembership'));
     collectResponses();
     collectFeatures();
@@ -186,7 +188,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     var response = { shouldHide: false, shouldDisable: false };
 
     if (!authorization.spaceContext) { return response; }
-    response.can = authorization.spaceContext.can(action, entity);
+    response.can = cache.getResponse(action, entity);
     if (response.can) { return response; }
 
     var reasons = getReasonsDenied(action, entity);
