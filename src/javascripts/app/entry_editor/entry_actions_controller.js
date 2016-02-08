@@ -12,7 +12,7 @@ angular.module('contentful')
   var accessChecker = $injector.get('accessChecker');
 
   function canCreateEntry() {
-    var ctId = dotty.get($scope, 'entry.sys.contentType.sys.id');
+    var ctId = dotty.get($scope, 'entry.data.sys.contentType.sys.id');
     return accessChecker.canPerformActionOnEntryOfType('create', ctId);
   }
 

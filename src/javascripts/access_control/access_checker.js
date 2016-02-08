@@ -205,16 +205,16 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * @ngdoc method
    * @name accessChecker#canPerformActionOnEntryOfType
    * @param {string} action
-   * @param {string} actionTypeId
+   * @param {string} ctId
    * @returns {boolean}
    * @description
    * Returns true if action can be performed on entry with the given content type ID.
    */
-  function canPerformActionOnEntryOfType(action, contentTypeId) {
+  function canPerformActionOnEntryOfType(action, ctId) {
     if (action === 'create') {
-      return !shouldHide('createEntry') || policyChecker.canCreateEntriesOfType(contentTypeId);
+      return !shouldHide('createEntry') || (_.isString(ctId) && policyChecker.canCreateEntriesOfType(ctId));
     } else {
-      var entity = {data: {sys: {type: 'Entry', contentType: {sys: {id: contentTypeId}}}}};
+      var entity = {data: {sys: {type: 'Entry', contentType: {sys: {id: ctId}}}}};
       return canPerformActionOnEntity(action, entity);
     }
   }
