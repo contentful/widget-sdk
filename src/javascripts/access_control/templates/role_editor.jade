@@ -82,6 +82,11 @@ header.workbench-header
           .context-menu.context-menu--arrow-right(cf-context-menu="bottom-right")
             a(role="menuitem" href="" ng-click="duplicateRole()") Duplicate
             a(role="menuitem" href="" ng-click="removeRole()" ng-if="removeRole") Delete permanently
+      .rule-list__note.note-box--blue(ng-show="autofixed")
+        i.fa.fa-info-circle
+        span
+          |  Some rules have been removed because of changes in your content structure.
+          |  Please review your rules and click "Save changes".
       h2.entity-sidebar__heading
         | Need more complex roles?
       p

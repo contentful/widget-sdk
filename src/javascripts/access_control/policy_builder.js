@@ -11,7 +11,8 @@ angular.module('contentful').constant('PolicyBuilder/CONFIG', {
 angular.module('contentful').factory('PolicyBuilder', ['$injector', function ($injector) {
   return {
     toInternal: $injector.get('PolicyBuilder/toInternal'),
-    toExternal: $injector.get('PolicyBuilder/toExternal')
+    toExternal: $injector.get('PolicyBuilder/toExternal'),
+    removeOutdatedRules: $injector.get('PolicyBuilder/removeOutdatedRules')
   };
 }]);
 
