@@ -23,6 +23,7 @@
       constant('searchParser', require('./search.pegjs')).
       constant('localesList', require('./locales_list.json')).
       constant('fileSize', require('file-size')).
+      constant('encoder', require('node-html-encoder').Encoder()).
       constant('querystring', require('querystring')).
       constant('speakingurl', require('speakingurl')).
       constant('Cookies', require('js-cookie'));
