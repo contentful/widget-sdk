@@ -57,7 +57,7 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
         notify(trialHasEndedMsg(organization, userOwnsOrganization));
         showPaywall(user, trial);
       } else {
-        notify(timeLeftInTrialMsg(trial.getHoursLeft(), userOwnsOrganization));
+        notify(timeLeftInTrialMsg(trial.getHoursLeft(), organization, userOwnsOrganization));
       }
     } else if (organizationHasLimitedFreeSubscription(organization)) {
       notify(limitedFreeVersionMsg());
@@ -139,7 +139,7 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
     return message;
   }
 
-  function timeLeftInTrialMsg (hours, userIsOrganizationOwner) {
+  function timeLeftInTrialMsg (hours, organization, userIsOrganizationOwner) {
     var timePeriod;
     if (hours / 24 <= 1) {
       timePeriod = {length: hours, unit: 'hours'};
@@ -148,7 +148,7 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
     }
 
     var message = timeTpl('<strong>%length %unit left in trial.</strong> ' +
-      'Your current Organization is in trial mode giving you ' +
+      'The organization ' + organization.name + ' is in trial mode giving you ' +
       'access to all features for %length more %unit.', timePeriod);
 
     if (userIsOrganizationOwner) {

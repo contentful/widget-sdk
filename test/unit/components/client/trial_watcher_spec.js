@@ -141,6 +141,7 @@ describe('Trial Watcher', function () {
           $rootScope.$apply();
         });
 
+        itShowsAMessage(/organization TEST_ORGA_NAME/);
         itShowsAMessage(/0(.*)hours left in trial/);
 
         itShowsAnActionMessage();
@@ -157,6 +158,7 @@ describe('Trial Watcher', function () {
           $rootScope.$apply();
         });
 
+        itShowsAMessage(/organization TEST_ORGA_NAME/);
         itShowsAMessage(/20(.*)hours left in trial/);
         itShowsAMessage(/access to all features for 20 more hours/);
 
