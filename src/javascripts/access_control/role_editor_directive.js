@@ -13,7 +13,9 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
   var $state            = $injector.get('$state');
   var $q                = $injector.get('$q');
   var Command           = $injector.get('command');
-  var space             = $injector.get('spaceContext').space;
+  var spaceContext      = $injector.get('spaceContext');
+  var TheLocaleStore    = $injector.get('TheLocaleStore');
+  var space             = spaceContext.space;
   var roleRepo          = $injector.get('RoleRepository').getInstance(space);
   var listHandler       = $injector.get('UserListHandler').create();
   var createRoleRemover = $injector.get('createRoleRemover');
@@ -46,6 +48,21 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
   $scope.$watch('role', function (role) {
     $scope.internal = PolicyBuilder.toInternal(role);
   }, true);
+
+  $scope.$watchCollection(function () {
+    return {
+      internal: $scope.internal,
+      cts: spaceContext.publishedContentTypes,
+      locales: TheLocaleStore.getPrivateLocales()
+    };
+  }, function (args) {
+    if (_.isObject(args.internal) && _.isArray(args.cts) && _.isArray(args.locales)) {
+      $scope.autofixed = PolicyBuilder.removeOutdatedRules($scope.internal, args.cts, args.locales);
+      if ($scope.autofixed) {
+        $scope.context.touched += 1;
+      }
+    }
+  });
 
   $scope.$watch('internal', function (internal) {
     $scope.external = PolicyBuilder.toExternal(internal);
