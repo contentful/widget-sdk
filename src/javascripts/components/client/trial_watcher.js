@@ -10,8 +10,7 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
   var spaceContext   = $injector.get('spaceContext');
   var authentication = $injector.get('authentication');
   var TrialInfo      = $injector.get('TrialInfo');
-  var encoder        = $injector.get('encoder');
-  var htmlEncode     = encoder.htmlEncode.bind(encoder);
+  var htmlEncode     = $injector.get('encoder').htmlEncode;
 
   var UNKNOWN_USER_ID = {};
   var previousUserId  = UNKNOWN_USER_ID;
