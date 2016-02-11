@@ -59,20 +59,39 @@ angular.module('contentful')
 
   function getCustomWidgets (space) {
     return space.endpoint('widgets').get()
-    .then(function (widgets) {
-      return _.transform(widgets.items, function (byId, data) {
-        var widget = buildCustomWidget(data);
-        byId[widget.id] = widget;
-      }, {});
-    }).catch(function (err) {
-      logger.logError('Failed to build custom widgets', {
-        data: {space: space},
-        error: err
-      });
-      return [];
+    .then(function (response) {
+      return createCustomWidgetMap(response.items);
+    }, function (err) {
+      logger.logServerError('Failed to get custom widgets', {error: err});
+      return {};
     });
   }
 
+  /**
+   * Takes a list of Widgets returned by the server and builds widget
+   * descriptors to be used by the entry editor.
+   *
+   * @param {API.Widget[]} widgets
+   * @returns {Map<string, Widget.Descriptor}
+   */
+  function createCustomWidgetMap (widgets) {
+    return _.transform(widgets, function (byId, data) {
+      try {
+        var widget = buildCustomWidget(data);
+        byId[widget.id] = widget;
+      } catch (err) {
+        logger.logError('Failed to build custom widgets', {
+          data: {widget: data},
+          error: err
+        });
+      }
+    }, {});
+  }
+
+  /**
+   * @param {API.Widget} data
+   * @returns {Widget.Descriptor}
+   */
   function buildCustomWidget (data) {
     var widget = data.widget;
     var fieldTypes = _.map(widget.fieldTypes, fieldFactory.getTypeName);
