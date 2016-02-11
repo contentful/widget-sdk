@@ -1,20 +1,8 @@
 'use strict';
 
-describe('Analytics provider', function () {
-  it('generates a stub of dontLoad is set', function() {
-    module('contentful/test', function(analyticsProvider){
-      analyticsProvider.dontLoad();
-    });
-    var analytics = this.$inject('analytics');
-    expect(analytics.setUserData).toBe(_.noop);
-  });
-
-});
-
-describe('Analytics service', function () {
-  beforeEach(function(){
-    module('contentful/test', function(analyticsProvider, environment){
-      environment.env = 'test';
+describe('analytics', function () {
+  beforeEach(function () {
+    module('contentful/test', function (analyticsProvider) {
       analyticsProvider.forceLoad();
     });
 

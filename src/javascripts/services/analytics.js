@@ -17,7 +17,6 @@
 angular.module('contentful')
 .provider('analytics', ['environment', function (environment) {
   var load = !environment.env.match(/acceptance|development|preview|test/);
-  this.dontLoad  = function () { load = false;  };
   this.forceLoad = function () { load = true; };
 
   this.$get = [ '$injector', function ($injector) {
