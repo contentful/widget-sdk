@@ -14,7 +14,7 @@ var SHRINKWRAP = __dirname + '/../npm-shrinkwrap.json';
 var dependencies = require(SHRINKWRAP);
 var cleaned = cleanResolve(dependencies);
 
-fs.writeFileSync(SHRINKWRAP, stringify(cleaned), 'utf-8');
+fs.writeFileSync(SHRINKWRAP, stringify(cleaned) + '\n', 'utf-8');
 
 function cleanResolve (dep) {
   dep = _.omit(dep, 'resolved');

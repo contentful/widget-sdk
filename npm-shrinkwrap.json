@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "dependencies": {
     "@contentful/client": {
-      "version": "14.0.0",
-      "from": "@contentful/client@14.0.0"
+      "version": "14.0.1",
+      "from": "@contentful/client@14.0.1"
     },
     "@contentful/hostname-transformer": {
       "version": "1.2.6",
