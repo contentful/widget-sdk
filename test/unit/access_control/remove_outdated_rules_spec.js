@@ -31,46 +31,49 @@ describe('Remove outdated rules', function () {
   }
 
   describe('path constraints with non-existent components', function () {
-    var role = {policies: [
-      createPolicy('ctid', 'fields.test.%'),
-      createPolicy('ctid', 'fields.z.%'),
-      createPolicy('ctid2', 'fields.%.%')
-    ]};
-
-    var contentTypes = [
-      createCt('ctid', [{apiName: 'x'}, {apiName: 'y'}, {apiName: 'z'}]),
-      createCt('ctid2')
-    ];
-
     it('removes rule if CT is missing', function () {
-      var internal = toInternal(role);
-      var result = remove(internal, [contentTypes[1]], []);
+      var internal = toInternal({policies: [
+        createPolicy('ctid', 'fields.%.%'),
+        createPolicy('ctid2', 'fields.%.%')
+      ]});
+
+      var result = remove(internal, [createCt('ctid')], []);
       expect(internal.entries.allowed.length).toBe(1);
       expect(result).toBe(true);
     });
 
     it('removes rule if a single field is missing', function () {
-      var internal = toInternal(role);
+      var internal = toInternal({policies: [
+        createPolicy('ctid', 'fields.test.%'),
+        createPolicy('ctid', 'fields.z.%'),
+        createPolicy('ctid2', 'fields.%.%')
+      ]});
+      var contentTypes = [
+        createCt('ctid', [{apiName: 'x'}, {apiName: 'y'}, {apiName: 'z'}]),
+        createCt('ctid2')
+      ];
+
       var result = remove(internal, contentTypes, []);
       expect(internal.entries.allowed.length).toBe(2);
       expect(result).toBe(true);
     });
 
     it('removes rules if a locale is missing', function () {
-      var role = {policies: [createPolicy('ctid', 'fields.%.en-US')]};
-      var internal = toInternal(role);
+      var internal = toInternal({policies: [
+        createPolicy('ctid', 'fields.%.en-US'),
+        createPolicy('ctid', 'fields.%.de-DE')
+      ]});
 
-      var result = remove(internal, contentTypes, [{code: 'de-DE'}]);
-      expect(internal.entries.allowed.length).toBe(0);
+      var result = remove(internal, [createCt('ctid')], [{code: 'de-DE'}]);
+      expect(internal.entries.allowed.length).toBe(1);
       expect(result).toBe(true);
     });
 
     it('fallbacks to internal field ID', function () {
-      var role = {policies: [createPolicy('ctid', 'fields.internal.%')]};
-      var internal = toInternal(role);
-      var contentTypes = createCt('ctid',  {fields: [{id: 'internal'}, {apiName: 'xyz'}]});
+      var internal = toInternal({policies: [createPolicy('ctid', 'fields.internal.%')]});
+      var ct = createCt('ctid',  {fields: [{id: 'internal'}, {apiName: 'xyz'}]});
 
-      var result = remove(internal, contentTypes, []);
+      var result = remove(internal, [ct], []);
       expect(internal.entries.allowed.length).toBe(0);
       expect(result).toBe(true);
     });
@@ -100,15 +103,10 @@ describe('Remove outdated rules', function () {
     it('changes policy collections only when were autofixed', function () {
       var internal = toInternal({policies: [createPolicy('ctid', 'fields.%.%')]});
       var original = internal.entries.allowed;
+
       var result = remove(internal, [createCt('ctid')], []);
       expect(internal.entries.allowed).toBe(original);
       expect(result).toBe(false);
-
-      internal = toInternal({policies: [createPolicy('ctid', 'fields.test.%')]});
-      original = internal.entries.allowed;
-      result = remove(internal, [createCt('ctid')], []);
-      expect(internal.entries.allowed).not.toBe(original);
-      expect(result).toBe(true);
     });
   });
 });
