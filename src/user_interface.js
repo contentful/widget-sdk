@@ -19,6 +19,7 @@
       constant('hostnameTransformer', require('@contentful/hostname-transformer')).
       constant('mimetype', require('@contentful/mimetype')).
       constant('raw/moment', require('moment')).
+      constant('raw/htmlEncoder', require('node-html-encoder')).
       constant('stringifySafe', require('json-stringify-safe')).
       constant('searchParser', require('./search.pegjs')).
       constant('localesList', require('./locales_list.json')).

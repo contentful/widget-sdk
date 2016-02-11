@@ -10,6 +10,7 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
   var spaceContext   = $injector.get('spaceContext');
   var authentication = $injector.get('authentication');
   var TrialInfo      = $injector.get('TrialInfo');
+  var htmlEncode     = $injector.get('encoder').htmlEncode;
 
   var UNKNOWN_USER_ID = {};
   var previousUserId  = UNKNOWN_USER_ID;
@@ -128,7 +129,7 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
 
   function trialHasEndedMsg (organization, userIsOrganizationOwner) {
     var message = '<strong>Your trial has ended.</strong> The ' +
-      organization.name + ' organization is in read-only mode.';
+      htmlEncode(organization.name) + ' organization is in read-only mode.';
 
     if (userIsOrganizationOwner) {
       message += ' To continue adding content and using the API please ' +
@@ -148,8 +149,8 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
     }
 
     var message = timeTpl('<strong>%length %unit left in trial.</strong> ' +
-      'The organization ' + organization.name + ' is in trial mode giving you ' +
-      'access to all features for %length more %unit.', timePeriod);
+      'The organization ' + htmlEncode(organization.name) + ' is in trial mode ' +
+      'giving you access to all features for %length more %unit.', timePeriod);
 
     if (userIsOrganizationOwner) {
       message += ' Enter your billing information to activate your subscription.';
