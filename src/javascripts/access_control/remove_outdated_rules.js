@@ -4,7 +4,7 @@ angular.module('contentful').factory('PolicyBuilder/removeOutdatedRules', ['$inj
 
   var CONFIG = $injector.get('PolicyBuilder/CONFIG');
 
-  var collections = [
+  var PATHS = [
     'entries.allowed',
     'entries.denied',
     'assets.allowed',
@@ -13,34 +13,30 @@ angular.module('contentful').factory('PolicyBuilder/removeOutdatedRules', ['$inj
 
   return function removeOutdatedRules(internal, contentTypes, locales) {
 
-    var extension = prepareExtension();
+    var filtered = filterPolicies(internal);
 
-    if (countCollections(internal) !== countCollections(extension)) {
-      _.extend(internal, extension);
+    if (countPolicies(internal) !== countPolicies(filtered)) {
+      _.extend(internal, filtered);
       return true;
     }
 
     return false;
 
-    function prepareExtension() {
-      return _.reduce(collections, function (acc, c) {
-        var segments = c.split('.');
-        var type = segments[0];
-        var effect = segments[1];
-        acc[type] = acc[type] || {};
-        acc[type][effect] = acc[type][effect] || {};
-        acc[type][effect] = filterCollection(dotty.get(internal, c, []));
-        return acc;
+    function filterPolicies(internal) {
+      return _.transform(PATHS, function (acc, path) {
+        var collection = dotty.get(internal, path, []);
+        var filtered = filterPolicyCollection(collection);
+        dotty.put(acc, path, filtered);
       }, {});
     }
 
-    function countCollections(wrapper) {
-      return _.reduce(collections, function (acc, c) {
-        return acc + dotty.get(wrapper, c, []).length;
+    function countPolicies(wrapper) {
+      return _.reduce(PATHS, function (acc, path) {
+        return acc + dotty.get(wrapper, path, []).length;
       }, 0);
     }
 
-    function filterCollection(collection) {
+    function filterPolicyCollection(collection) {
       return _.filter(collection, function (p) {
         return !isMissingContentType(p) && !isMissingField(p) && !isMissingLocale(p);
       });
