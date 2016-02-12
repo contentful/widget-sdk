@@ -4,14 +4,13 @@ angular.module('contentful').directive('cfUserList', ['$injector', function ($in
 
   var popRoleId = $injector.get('UserListController/jumpToRole').popRoleId;
   var $timeout  = $injector.get('$timeout');
-  var TheStore  = $injector.get('TheStore');
+  var store     = $injector.get('TheStore').forKey('userListView');
 
-  var VIEW_NAME = 'name';
-  var VIEW_ROLE = 'role';
-  var STORE_KEY = 'userListView';
+  var VIEW_BY_NAME = 'name';
+  var VIEW_BY_ROLE = 'role';
   var VIEW_LABELS = {};
-  VIEW_LABELS[VIEW_NAME] = 'Show users in alphabetical order';
-  VIEW_LABELS[VIEW_ROLE] = 'Show users grouped by role';
+  VIEW_LABELS[VIEW_BY_NAME] = 'Show users in alphabetical order';
+  VIEW_LABELS[VIEW_BY_ROLE] = 'Show users grouped by role';
 
   return {
     restrict: 'E',
@@ -20,10 +19,16 @@ angular.module('contentful').directive('cfUserList', ['$injector', function ($in
     link: link
   };
 
+  function saveView(view) {
+    if (_.contains([VIEW_BY_NAME, VIEW_BY_ROLE], view)) {
+      store.set(view);
+    }
+  }
+
   function link(scope, el) {
     var roleId = popRoleId();
     scope.viewLabels = VIEW_LABELS;
-    scope.selectedView = roleId ? VIEW_ROLE : getSavedView();
+    scope.selectedView = roleId ? VIEW_BY_ROLE : (store.get() || VIEW_BY_NAME);
     scope.jumpToRole   = roleId ? _.once(jumpToRole) : _.noop;
     scope.$watch('selectedView', saveView);
 
@@ -37,16 +42,6 @@ angular.module('contentful').directive('cfUserList', ['$injector', function ($in
           scrollContainer.scrollTop(scrollTo);
         }
       });
-    }
-
-    function getSavedView() {
-      return TheStore.get(STORE_KEY) || VIEW_NAME;
-    }
-
-    function saveView(view) {
-      if (_.contains([VIEW_NAME, VIEW_ROLE], view)) {
-        TheStore.set(STORE_KEY, view);
-      }
     }
   }
 }]);
