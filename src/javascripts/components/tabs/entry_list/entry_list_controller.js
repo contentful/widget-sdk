@@ -1,6 +1,11 @@
 'use strict';
 
-angular.module('contentful').controller('EntryListController', ['$scope', '$injector', function EntryListController($scope, $injector) {
+angular.module('contentful')
+/**
+ * @ngdoc type
+ * @name EntryListController
+ */
+.controller('EntryListController', ['$scope', '$injector', function EntryListController($scope, $injector) {
   var $controller           = $injector.get('$controller');
   var $q                    = $injector.get('$q');
   var EntityListCache       = $injector.get('EntityListCache');
@@ -19,6 +24,8 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   $scope.entityStatusController = $controller('EntityStatusController', {$scope: $scope});
 
   var entryLoader = new PromisedLoader();
+
+  $scope.archivedStateRef = 'spaces.detail.entries.list({searchTerm: "status:archived"})';
 
   $scope.paginator = new Paginator();
   $scope.selection = new Selection();
@@ -146,7 +153,17 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     }
   }
 
-  // TODO this code is duplicated in the asset list controller
+  /**
+   * @ngdoc method
+   * @name EntryListController#$scope.showNoEntriesAdvice
+   * @description
+   * Returns true if there are no items to be rendered, the user
+   * specified no query, and the items are not loading.
+   *
+   * TODO this code is duplicated in the asset list controller
+   *
+   * @return {boolean}
+   */
   $scope.showNoEntriesAdvice = function () {
     var view = $scope.context.view;
     var hasQuery = !_.isEmpty(view.searchTerm) ||
@@ -154,6 +171,37 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     var hasEntries = $scope.entries && $scope.entries.length > 0;
     return !hasEntries && !hasQuery && !$scope.context.loading;
   };
+
+  /**
+   * @ngdoc property
+   * @name EntryListController#$scope.hasArchivedEntries
+   * @description
+   * Value is true if we get archived entries from the API. The value
+   * is updated whenever `showNoEntriesAdvice()` changes to `true`.
+   *
+   * TODO this code is duplicated in the asset list controller
+   *
+   * @type {boolean}
+   */
+  $scope.$watch('showNoEntriesAdvice()', function (show) {
+    if (show) {
+      $scope.hasArchivedEntries = false;
+      return hasArchivedEntries(spaceContext.space)
+      .then(function (hasArchived) {
+        $scope.hasArchivedEntries = hasArchived;
+      });
+    }
+  });
+
+  // TODO this code is duplicated in the asset list controller
+  function hasArchivedEntries (space) {
+    return space.getEntries({
+      'limit': 1,
+      'sys.archivedAt[exists]': true
+    }).then(function (response) {
+      return response && response.total > 0;
+    });
+  }
 
   $scope.loadMore = function () {
     if ($scope.paginator.atLast()) return;

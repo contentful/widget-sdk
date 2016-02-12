@@ -457,4 +457,45 @@ describe('Entry List Controller', function () {
       sinon.assert.called(apiErrorHandler);
     });
   });
+
+  describe('#hasArchivedEntries', function () {
+    var entriesResponse;
+
+    beforeEach(function () {
+      scope.showNoEntriesAdvice = _.constant(true);
+      entriesResponse = this.$inject('$q').defer();
+      spaceContext.space.getEntries.returns(entriesResponse.promise);
+    });
+
+    it('is set to false when showNoEntriesAdvice() changes to true', function () {
+      expect(scope.hasArchivedEntries).toBeUndefined();
+      this.$apply();
+      expect(scope.hasArchivedEntries).toBe(false);
+    });
+
+    it('gets archived entries when showNoEntries() changes to true', function () {
+      this.$apply();
+      var query = {
+        'limit': 1,
+        'sys.archivedAt[exists]': true
+      };
+      sinon.assert.calledWith(spaceContext.space.getEntries, query);
+    });
+
+    it('is set to true when there are archived entries', function () {
+      this.$apply();
+      expect(scope.hasArchivedEntries).toBe(false);
+      entriesResponse.resolve({total: 1});
+      this.$apply();
+      expect(scope.hasArchivedEntries).toBe(true);
+    });
+
+    it('is set to false when there no are archived entries', function () {
+      this.$apply();
+      expect(scope.hasArchivedEntries).toBe(false);
+      entriesResponse.resolve({total: 0});
+      this.$apply();
+      expect(scope.hasArchivedEntries).toBe(false);
+    });
+  });
 });
