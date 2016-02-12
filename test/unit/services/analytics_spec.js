@@ -115,49 +115,4 @@ describe('analytics', function () {
     });
   });
 
-  it('should track knowledgeBase clicks', function(){
-    this.analytics.knowledgeBase('sectionName');
-    sinon.assert.calledWith(this.segment.track, 'Clicked KBP link', {section: 'sectionName'});
-  });
-
-  it('should track modifiedContentType', function(){
-    var event  = 'Herp';
-    var action = 'derp';
-    var contentType = {
-      getId:   _.constant('ctId'),
-      getName: _.constant('ctName')
-    };
-    var field = {
-      id: 'fieldId',
-      name: 'fieldName',
-      type: 'fieldType',
-      localized: true,
-      required: true
-    };
-    this.analytics.modifiedContentType(event, contentType, field, action);
-    sinon.assert.calledWith(this.segment.track, 'Herp', {
-      contentTypeId: 'ctId',
-      contentTypeName: 'ctName',
-      fieldId: 'fieldId',
-      fieldName: 'fieldName',
-      fieldType: 'fieldType',
-      fieldSubtype: null,
-      fieldLocalized: true,
-      fieldRequired: true,
-      action: 'derp'
-    });
-  });
-
-  it('should track toggleAuxPanel', function(){
-    this.analytics.toggleAuxPanel(true, 'someStateName');
-    sinon.assert.calledWith(this.segment.track, 'Opened Aux-Panel', {
-      currentState: 'someStateName'
-    });
-
-    this.analytics.toggleAuxPanel(false, 'someStateName');
-    sinon.assert.calledWith(this.segment.track, 'Closed Aux-Panel', {
-      currentState: 'someStateName'
-    });
-  });
-
 });

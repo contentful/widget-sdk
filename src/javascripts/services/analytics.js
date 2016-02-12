@@ -116,43 +116,6 @@ angular.module('contentful')
         }
       },
 
-      knowledgeBase: function (section) {
-        this.track('Clicked KBP link', {
-          section: section
-        });
-      },
-
-      modifiedContentType: function (event, contentType, field, action) {
-        var data = {};
-        if (contentType) {
-          _.extend(data, {
-            contentTypeId: contentType.getId(),
-            contentTypeName: contentType.getName()
-          });
-        }
-        if (field) {
-          _.extend(data, {
-            fieldId: field.id,
-            fieldName: field.name,
-            fieldType: field.type,
-            fieldSubtype: dotty.get(field, 'items.type') || null,
-            fieldLocalized: field.localized,
-            fieldRequired: field.required
-          });
-        }
-        if (action) {
-          data.action = action;
-        }
-        this.track(event, data);
-      },
-
-      toggleAuxPanel: function (visible, stateName) {
-        var action = visible ? 'Opened Aux-Panel' : 'Closed Aux-Panel';
-        this.track(action, {
-          currentState: stateName
-        });
-      },
-
       _initialize: function(){
         if (this._userData) {
           var analyticsUserData;
