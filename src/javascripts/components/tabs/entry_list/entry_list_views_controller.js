@@ -5,6 +5,7 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
   var systemFields = $injector.get('systemFields');
   var random       = $injector.get('random');
   var $controller  = $injector.get('$controller');
+  var defaultOrder = _.clone(systemFields.getDefaultOrder());
 
   var SORTABLE_TYPES = [
     'Boolean',
@@ -60,7 +61,7 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
   });
 
   function setOrderField(field) {
-    $scope.context.view.order = _.defaults({ fieldId: field.id }, systemFields.getDefaultOrder());
+    $scope.context.view.order = _.defaults({ fieldId: field.id }, defaultOrder);
   }
 
   function switchOrderDirection(direction) {
@@ -74,7 +75,7 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
       contentTypeId: null,
       contentTypeHidden: false,
       id: null,
-      order: systemFields.getDefaultOrder(),
+      order: defaultOrder,
       displayedFieldIds: getDefaultFieldIds()
     };
   }
@@ -115,7 +116,7 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
         views: [{
           id: random.id(),
           title: 'All',
-          order: systemFields.getDefaultOrder(),
+          order: defaultOrder,
           displayedFieldIds: getDefaultFieldIds()
         }]
       },
@@ -141,7 +142,7 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
         title: title,
         searchTerm: searchTerm,
         id: random.id(),
-        order: systemFields.getDefaultOrder(),
+        order: defaultOrder,
         displayedFieldIds: getDefaultFieldIds()
       };
     }
@@ -152,7 +153,7 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
           title: contentType.data.name,
           contentTypeId: contentType.getId(),
           id: random.id(),
-          order: systemFields.getDefaultOrder(),
+          order: defaultOrder,
           displayedFieldIds: getDefaultFieldIds()
         };
       });

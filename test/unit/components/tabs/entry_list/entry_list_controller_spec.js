@@ -216,26 +216,25 @@ describe('Entry List Controller', function () {
 
       describe('with a user defined order', function() {
         beforeEach(function() {
-          spaceContext.getPublishedContentType = sinon.stub();
-          spaceContext.getPublishedContentType.returns({
+          scope.context.view.contentTypeId = 'CT';
+          spaceContext.fetchPublishedContentType.withArgs('CT').resolves({
+            getId: _.constant('CT'),
             data: {
               fields: [
-                {id: 'fieldId'}
+                {id: 'ORDER_FIELD'}
               ]
             }
           });
         });
 
         it('when the field exists', function() {
-          scope.context.view.order.fieldId = 'fieldId';
-          scope.resetEntries();
+          scope.context.view.order.fieldId = 'ORDER_FIELD';
           scope.$apply();
-          expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-fields.fieldId.en-US');
+          expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-fields.ORDER_FIELD.en-US');
         });
 
         it('when the field does not exist', function() {
           scope.context.view.order.fieldId = 'deletedFieldId';
-          scope.resetEntries();
           scope.$apply();
           expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-sys.updatedAt');
         });
