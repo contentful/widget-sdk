@@ -139,38 +139,6 @@ angular.module('contentful')
             }
           }
         }
-
-        function parseCookie(cookieName, prop) {
-          try {
-            var cookie = cookieStore.get(cookieName);
-            return JSON.parse(cookie)[prop];
-          } catch (e) {}
-        }
-
-        // On first login, send referrer, campaign and A/B test data to
-        // segment and totango if it has been set by marketing website cookie
-
-        function getAnalyticsUserData(userData) {
-          // Remove circular references
-          userData = JSON.parse(stringifySafe(userData));
-
-          if (userData.signInCount === 1) {
-            var firstVisitData = _.pick({
-              firstReferrer: parseCookie('cf_first_visit', 'referer'),
-              campaignName: parseCookie('cf_first_visit', 'campaign_name'),
-              lastReferrer: parseCookie('cf_last_visit', 'referer'),
-              experimentId: parseCookie('cf_experiment', 'experiment_id'),
-              experimentVariationId: parseCookie('cf_experiment', 'variation_id')
-            }, function (val) {
-              return val !== null && val !== undefined;
-            });
-
-            return _.merge(firstVisitData, userData);
-
-          } else {
-            return userData;
-          }
-        }
       },
 
       // Send further identifying user data to segment
@@ -210,6 +178,35 @@ angular.module('contentful')
           });
         }
       };
+    }
+
+    function getAnalyticsUserData(userData) {
+      // Remove circular references
+      userData = JSON.parse(stringifySafe(userData));
+
+      // On first login, send referrer, campaign and A/B test data to
+      // segment and totango if it has been set by marketing website cookie
+      if (userData.signInCount === 1) {
+        var firstVisitData = _.pick({
+          firstReferrer: parseCookie('cf_first_visit', 'referer'),
+          campaignName: parseCookie('cf_first_visit', 'campaign_name'),
+          lastReferrer: parseCookie('cf_last_visit', 'referer'),
+          experimentId: parseCookie('cf_experiment', 'experiment_id'),
+          experimentVariationId: parseCookie('cf_experiment', 'variation_id')
+        }, function (val) {
+          return val !== null && val !== undefined;
+        });
+        return _.merge(firstVisitData, userData);
+      } else {
+        return userData;
+      }
+    }
+
+    function parseCookie(cookieName, prop) {
+      try {
+        var cookie = cookieStore.get(cookieName);
+        return JSON.parse(cookie)[prop];
+      } catch (e) {}
     }
 
     if (forceDevMode()) {
