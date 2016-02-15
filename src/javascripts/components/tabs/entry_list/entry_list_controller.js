@@ -157,6 +157,9 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
 
   $scope.loadMore = function () {
     if ($scope.paginator.atLast()) return;
+    // FIXME It should suffice to just increase the page and not fetch
+    // the entries: Changing `$scope.paginator.page` will trigger the
+    // `resetEntries` watcher and thus do the heavy lifting.
     $scope.paginator.page++;
     var queryForDebug;
     return prepareQuery()
@@ -182,6 +185,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
       $scope.entries.push.apply($scope.entries, entries);
       $scope.selection.setBaseSize($scope.entries.length);
     }, function (err) {
+      // TODO not needed since we crash the app anyway
       $scope.paginator.page--;
       return $q.reject(err);
     })
