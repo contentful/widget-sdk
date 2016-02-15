@@ -20,7 +20,9 @@ describe('The Store service', function() {
 
   describe('localStorageWrapper', function() {
     it('exposes simplified localStorage API', function() {
-      var wrapper = this.$inject('TheStore/localStorageWrapper');
+      // The service is mocked by default. We need to fetch the
+      // original implementation.
+      var wrapper = this.$inject('TheStore/localStorageWrapper')._noMock;
       ['setItem', 'getItem', 'removeItem'].forEach(function(method) {
         expect(typeof wrapper[method]).toEqual('function');
       });
