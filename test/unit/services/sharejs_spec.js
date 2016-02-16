@@ -1,11 +1,39 @@
 'use strict';
 
 describe('ShareJS', function () {
-  var ShareJS;
+  var ShareJS, ShareJSClient;
 
   beforeEach(function () {
-    module('contentful/test');
-    ShareJS = this.$inject('ShareJS');
+    ShareJSClient = sinon.stub();
+    module('contentful/test', function ($provide) {
+      $provide.value('ShareJS/Client', ShareJSClient);
+    });
+    ShareJS = this.$inject('ShareJS')._noMock;
+  });
+
+  describe('#connect()', function () {
+    it('creates client for given token', function () {
+      ShareJS.connect('TOKEN');
+      sinon.assert.calledOnce(ShareJSClient);
+      var clientToken = ShareJSClient.args[0][1];
+      expect(clientToken).toEqual('TOKEN');
+    });
+
+    it('throws when called twice', function () {
+      ShareJS.connect('TOKEN');
+      expect(ShareJS.connect).toThrow();
+    });
+  });
+
+  describe('#open()', function () {
+    it('calls client.open() when connected', function () {
+      var client = {open: sinon.stub()};
+      ShareJSClient.returns(client);
+      ShareJS.connect('TOKEN');
+      ShareJS.open('ENTITY');
+      sinon.assert.calledOnce(client.open);
+      sinon.assert.calledWithExactly(client.open, 'ENTITY');
+    });
   });
 
   describe('#mkpathAndSetValue', function () {

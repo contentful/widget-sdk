@@ -270,15 +270,13 @@ mocks.config(['$provide', function ($provide) {
       on: angular.noop
     };
 
-    $delegate.open = function (entity, callback) {
+    return _.defaults({
+      _noMock: $delegate,
+      open: function (entity, callback) {
       _.defer(callback, null, new FakeShareJSDoc(entity));
-    };
-
-    $delegate.isConnected = function () {
-      return true;
-    };
-
-    return $delegate;
+      },
+      isConnected: _.constant(true)
+    }, $delegate);
   }]);
 
   $provide.decorator('ReloadNotification', ['$delegate', function ($delegate) {
