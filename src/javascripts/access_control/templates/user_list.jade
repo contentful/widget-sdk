@@ -3,10 +3,9 @@ header.workbench-header
   h1.workbench-header__title Users ({{ count || 0 }})
   .workbench-header__actions
     button.cfnext-btn-secondary-action(cf-context-menu-trigger)
-      | {{ viewLabels[selectedView] }}
       cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-    .context-menu(cf-context-menu)
-      cf-icon.context-menu__arrow.x--top(name="arrow-up")
+      | {{ viewLabels[selectedView] }}
+    .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="Change view")
       div(role="menuitem" ng-click="selectedView = 'name'") {{ viewLabels.name }}
       div(role="menuitem" ng-click="selectedView = 'role'") {{ viewLabels.role }}
 
