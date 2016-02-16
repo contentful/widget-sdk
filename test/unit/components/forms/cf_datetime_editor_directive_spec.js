@@ -115,7 +115,12 @@ describe('DateTime Editor', function () {
   });
 
   it('should not parse from invalid ISOs', function () {
+    // Moment shows a deprectaion warning when parsing an invalid date.
+    // See https://github.com/moment/moment/issues/1407 for more info
+    // TODO we can remove this when we upgrade to moment@^3.0
+    moment.suppressDeprecationWarnings = true;
     scope.setFromISO('Invalid Date');
+    moment.suppressDeprecationWarnings = false;
     scope.$apply();
     expect(scope.localDate).toBe(null);
     expect(scope.localTime).toBe(null);
