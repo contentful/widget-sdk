@@ -76,6 +76,25 @@ angular.module('contentful')
     additionalProperties: true
   };
 
+  // Maps type names to builtin widget IDs. Type names are those
+  // returned by `fieldFactory.getTypeName`.
+  var DEFAULT_WIDGETS = {
+    'Text':     'markdown',
+    'Symbol':   'singleLine',
+    'Symbols':  'listInput',
+    'Integer':  'numberEditor',
+    'Number':   'numberEditor',
+    'Boolean':  'boolean',
+    'Date':     'datePicker',
+    'Location': 'locationEditor',
+    'Object':   'objectEditor',
+    'File':     'fileEditor',
+    'Entry':    'entryLinkEditor',
+    'Entries':  'entryLinksEditor',
+    'Asset':    'assetLinkEditor',
+    'Assets':   'assetLinksEditor',
+  };
+
   var widgetsService = {
     get:                 getWidget,
     getAvailable:        getAvailable,
@@ -185,31 +204,31 @@ angular.module('contentful')
   */
   function defaultWidgetId(field, contentType) {
     var fieldType = fieldFactory.getTypeName(field);
-    var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
-    if(hasValidations && _.contains(WIDGETS['dropdown'].fieldTypes, fieldType)) return 'dropdown';
+
+    // FIXME We create the editing interface, and thus the widget ids
+    // before any validation can be set. So I think this is not need.
+    var shouldUseDropdown = hasInValidation(field.validations);
+    var canUseDropdown = _.contains(dotty.get(WIDGETS, ['dropdown', 'fieldTypes']), fieldType);
+    if (shouldUseDropdown && canUseDropdown) {
+      return 'dropdown';
+    }
+
     if (fieldType === 'Text') {
-      if (contentType.data.displayField === field.id ||
-          contentType.getId() === 'asset') {
+      var isDisplayField = contentType.data.displayField === field.id;
+      if (isDisplayField || contentType.getId() === 'asset') {
         return 'singleLine';
       } else {
         return 'markdown';
       }
     }
-    if (fieldType === 'Entry') return 'entryLinkEditor';
-    if (fieldType === 'Asset') return 'assetLinkEditor';
-    if (fieldType === 'Entries') return 'entryLinksEditor';
-    if (fieldType === 'Assets' ) return 'assetLinksEditor';
-    // File is a special field type, only used in the Asset Editor and not on the backend.
-    if (fieldType === 'File') return 'fileEditor';
-    if (fieldType === 'Boolean') return 'boolean';
 
-    return _.findKey(WIDGETS, function (widget) {
-      return _.contains(widget.fieldTypes, fieldType);
-    });
+    return DEFAULT_WIDGETS[fieldType];
   }
 
-  function getFieldValidationsOfType(field, type) {
-    return _.filter(_.pluck(field.validations, type));
+  function hasInValidation(validations) {
+    return _.find(validations, function (validation) {
+      return 'in' in validation;
+    });
   }
 
   // TODO Remove this method

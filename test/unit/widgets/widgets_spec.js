@@ -121,20 +121,16 @@ describe('Widget types service', function () {
     });
   });
 
-  describe('defaultWidgetId', function() {
-    var contentType, field, idStub;
+  describe('#defaultWidgetId()', function() {
+    var contentType, field;
 
     beforeEach(function() {
-      idStub = sinon.stub();
       contentType = {
         data: {},
-        getId: idStub
+        getId: sinon.stub()
       };
-
       field = {};
-
       this.setupWidgets();
-
     });
 
     it('with an unexistent field', function() {
@@ -185,8 +181,8 @@ describe('Widget types service', function () {
         expect(widgets.defaultWidgetId(field, contentType)).toBe('singleLine');
       });
 
-      it('and is asset', function() {
-        idStub.returns('asset');
+      it('and content type is asset', function() {
+        contentType.getId.returns('asset');
         expect(widgets.defaultWidgetId(field, contentType)).toBe('singleLine');
       });
 
@@ -222,6 +218,23 @@ describe('Widget types service', function () {
       field.type = 'Array';
       field.items = {type: 'Link', linkType: 'Entry'};
       expect(widgets.defaultWidgetId(field, contentType)).toBe('entryLinksEditor');
+    });
+
+    it('returns builtin widget id for each type', function () {
+      var fieldFactory = this.$inject('fieldFactory');
+      var builtins = this.$inject('widgets/builtin');
+
+      _.forEach(fieldFactory.types, function (typeDescriptor) {
+        var field = fieldFactory.createTypeInfo(typeDescriptor);
+        var widgetId = widgets.defaultWidgetId(field, contentType);
+        expect(widgetId in builtins).toBe(true);
+
+        if (typeDescriptor.hasListVariant) {
+          field = fieldFactory.createTypeInfo(typeDescriptor, true);
+          widgetId = widgets.defaultWidgetId(field, contentType);
+          expect(widgetId in builtins).toBe(true);
+        }
+      });
     });
   });
 
