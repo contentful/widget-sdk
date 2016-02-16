@@ -11,7 +11,7 @@
       | {{ rules.allowed.length ? 'Add another rule' : 'Add a rule' }}
 
   .rule-list__section(ng-show="rules.allowed.length")
-    label(ng-show="!isDisabled") Users with this role can <strong>not</strong>:
+    label Users with this role can <strong>not</strong>:
     .rule-list__note.note-box--blue(ng-show="!rules.denied.length && !isDisabled")
       i.fa.fa-info-circle
       span
