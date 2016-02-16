@@ -11,45 +11,33 @@ angular.module('contentful')
  * locales, and helper methods.
 */
 .factory('TheLocaleStore', ['$injector', function ($injector){
-  var store = $injector.get('TheStore').forKey('activeLocales');
+  var store        = $injector.get('TheStore').forKey('activeLocales');
+  var spaceContext = $injector.get('spaceContext');
+  var $rootScope   = $injector.get('$rootScope');
 
-  var _space = null;
-  var _state = {
-    defaultLocale: null,
-    // Locales which are available to the CMA
-    privateLocales: [],
-    /**
-     * Map of current locales and their active state.
-     * If a locale is "active" it means the user can see it for editing
-     * on the entry/asset editors.
-    */
-    localeActiveStates: {},
-    //List of currently active locales visible in the entry/asset editors.
-    activeLocales: []
-  };
+  $rootScope.$watch(function () { return spaceContext.space; }, refreshLocales);
+
+  var defaultLocale = null;
+  // Locales which are available to the CMA
+  var privateLocales = [];
+  /**
+   * Map of current locales and their active state.
+   * If a locale is "active" it means the user can see it for editing
+   * on the entry/asset editors.
+  */
+  var codeToActiveLocaleMap = {};
+  // List of currently active locales visible in the entry/asset editors.
+  var activeLocales = [];
 
   return {
-    resetWithSpace:       resetWithSpace,
-    refreshLocales:       refreshLocales,
-    getLocalesState:      getLocalesState,
-    getDefaultLocale:     getDefaultLocale,
-    getActiveLocales:     getActiveLocales,
-    getPrivateLocales:    getPrivateLocales,
-    setActiveStates:      setActiveStates,
-    setActiveLocales:     setActiveLocales,
-    localeIsActive:       localeIsActive,
-    deactivateLocale:     deactivateLocale
+    refreshLocales:    refreshLocales,
+    getDefaultLocale:  getDefaultLocale,
+    getActiveLocales:  getActiveLocales,
+    getPrivateLocales: getPrivateLocales,
+    setActiveLocales:  setActiveLocales,
+    isLocaleActive:    isLocaleActive,
+    deactivateLocale:  deactivateLocale
   };
-
-  /**
-   * @ngdoc method
-   * @name TheLocaleStore#resetWithSpace
-   * @param {Client.Space} space
-   */
-  function resetWithSpace(space) {
-    _space = space;
-    refreshLocales();
-  }
 
   /**
    * @ngdoc method
@@ -59,43 +47,28 @@ angular.module('contentful')
    * current space.
    */
   function refreshLocales() {
-    _state.privateLocales = _space.getPrivateLocales();
-    _state.defaultLocale  = _space.getDefaultLocale();
+    var space = spaceContext.space;
+    privateLocales = space ? space.getPrivateLocales() : [];
+    defaultLocale  = space ? space.getDefaultLocale()  : [];
+
     var storedLocaleCodes = store.get();
-    var storedLocales = _.filter(_state.privateLocales, function (locale) {
+    var storedLocales = _.filter(privateLocales, function (locale) {
       return _.contains(storedLocaleCodes, locale.code);
     });
+
     setActiveLocales(storedLocales);
   }
 
   /**
-   * Update the list of active locales from the `localeActiveStates`
-   * hash.
-   */
-  function refreshActiveLocales() {
-    _state.activeLocales = _.uniq(
-      _.filter(_state.privateLocales, localeIsActive),
-      function(locale){return locale.internal_code;}
-    );
-    store.set(_.pluck(_state.activeLocales, 'code'));
-  }
-
-  function localeIsActive(locale) {
-    return !!_state.localeActiveStates[locale.internal_code];
-  }
-
-  /**
    * @ngdoc method
-   * @name TheLocaleStore#getLocalesState
+   * @name TheLocaleStore#isLocaleActive
    * @description
-   * Returns the current state of all the locales store information
-   *
-   * TODO This interface is deprecated. We should remove all references
-   * to it.
-   * @returns {Object}
+   * Returns true if a given locale is active, false otherwise
+   * @param {API.Locale} locale
+   * @returns {boolean}
    */
-  function getLocalesState() {
-    return _state;
+  function isLocaleActive(locale) {
+    return !!codeToActiveLocaleMap[locale.internal_code];
   }
 
   /**
@@ -104,7 +77,7 @@ angular.module('contentful')
    * @returns {API.Locale}
    */
   function getDefaultLocale() {
-    return _state.defaultLocale;
+    return defaultLocale;
   }
 
   /**
@@ -119,7 +92,7 @@ angular.module('contentful')
    * @returns {Array<API.Locale>}
    */
   function getActiveLocales() {
-    return _state.activeLocales;
+    return activeLocales;
   }
 
   /**
@@ -132,18 +105,7 @@ angular.module('contentful')
    * @returns {Array<API.Locale>}
    */
   function getPrivateLocales() {
-    return _state.privateLocales;
-  }
-
-  /**
-   * @ngdoc method
-   * @name TheLocaleStore#setActiveStates
-   * @description
-   * TODO This interface is deprecated
-   */
-  function setActiveStates(localeActiveStates) {
-    _state.localeActiveStates = localeActiveStates;
-    refreshActiveLocales();
+    return privateLocales;
   }
 
   /**
@@ -157,17 +119,19 @@ angular.module('contentful')
    *
    * ~~~js
    * localeStore.setActiveLocales([{internal_code: 'en'}])
-   * assert(localeStore.isActive({internal_code: 'en'})
+   * assert(localeStore.isLocaleActive({internal_code: 'en'})
    * ~~~
    */
   function setActiveLocales(locales) {
-    if (_state.defaultLocale) {
-      locales = locales.concat([_state.defaultLocale]);
+    if (defaultLocale) {
+      locales = locales.concat([defaultLocale]);
     }
 
-    setActiveStates(_.transform(locales, function (active, locale) {
-      active[locale.internal_code] = true;
-    }, {}));
+    codeToActiveLocaleMap = _.transform(locales, function (map, locale) {
+      map[locale.internal_code] = true;
+    }, {});
+
+    refreshActiveLocales();
   }
 
   /**
@@ -182,12 +146,25 @@ angular.module('contentful')
    * ~~~js
    * localeStore.setActiveLocales([{internal_code: 'en'}])
    * localeStore.deactivateLocale({internal_code: 'en'})
-   * assert(!localeStore.isActive({internal_code: 'en'})
+   * assert(!localeStore.isLocaleActive({internal_code: 'en'})
    * ~~~
    */
   function deactivateLocale (locale) {
-    delete _state.localeActiveStates[locale.internal_code];
+    delete codeToActiveLocaleMap[locale.internal_code];
     refreshActiveLocales();
+  }
+
+  /**
+   * Update the list of active locales from the `codeToActiveLocaleMap`
+   * hash.
+   */
+  function refreshActiveLocales() {
+    var activePrivateLocales = _.filter(privateLocales, isLocaleActive);
+    activeLocales = _.uniq(activePrivateLocales, function (locale) {
+      return locale.internal_code;
+    });
+
+    store.set(_.map(activeLocales, 'code'));
   }
 
 }]);

@@ -23,7 +23,10 @@ describe('TheLocaleStore', function () {
     this.theLocaleStore = this.$inject('TheLocaleStore');
     var cfStub = this.$inject('cfStub');
     this.space = cfStub.space('test');
-    this.theLocaleStore.resetWithSpace(this.space);
+
+    var spaceContext = this.$inject('spaceContext');
+    spaceContext.resetWithSpace(this.space);
+    this.$inject('$rootScope').$apply();
   });
 
   describe('refreshes locales', function () {
@@ -51,9 +54,8 @@ describe('TheLocaleStore', function () {
     });
 
     it('gets active locale states', function () {
-      expect(this.theLocaleStore.getLocalesState().localeActiveStates).toEqual({
-          'en-US': true
-      });
+      expect(this.theLocaleStore.isLocaleActive({internal_code: 'en-US'})).toBe(true);
+      expect(this.theLocaleStore.isLocaleActive({internal_code: 'de-DE'})).toBe(false);
     });
 
     it('gets updated active locales', function() {
@@ -64,17 +66,15 @@ describe('TheLocaleStore', function () {
 
     describe('changes active locales', function() {
       beforeEach(function() {
-        this.theLocaleStore.setActiveStates({
-          'en-US': true,
-          'de-DE': true
-        });
+        this.theLocaleStore.setActiveLocales([
+          {internal_code: 'en-US'},
+          {internal_code: 'de-DE'}
+        ]);
       });
 
       it('gets updated active locale states', function () {
-        expect(this.theLocaleStore.getLocalesState().localeActiveStates).toEqual({
-          'en-US': true,
-          'de-DE': true
-        });
+        expect(this.theLocaleStore.isLocaleActive({internal_code: 'en-US'})).toBe(true);
+        expect(this.theLocaleStore.isLocaleActive({internal_code: 'de-DE'})).toBe(true);
       });
 
       it('gets updated active locales', function() {
@@ -91,25 +91,25 @@ describe('TheLocaleStore', function () {
 
     it('activates given locale', function () {
       var locale = {internal_code: 'zz'};
-      expect(this.theLocaleStore.localeIsActive(locale)).toBe(false);
+      expect(this.theLocaleStore.isLocaleActive(locale)).toBe(false);
       this.theLocaleStore.setActiveLocales([locale]);
-      expect(this.theLocaleStore.localeIsActive(locale)).toBe(true);
+      expect(this.theLocaleStore.isLocaleActive(locale)).toBe(true);
     });
 
     it('removes other locales', function () {
       var a = {internal_code: 'aa'};
       var b = {internal_code: 'bb'};
       this.theLocaleStore.setActiveLocales([a]);
-      expect(this.theLocaleStore.localeIsActive(a)).toBe(true);
+      expect(this.theLocaleStore.isLocaleActive(a)).toBe(true);
       this.theLocaleStore.setActiveLocales([b]);
-      expect(this.theLocaleStore.localeIsActive(a)).toBe(false);
+      expect(this.theLocaleStore.isLocaleActive(a)).toBe(false);
     });
 
     it('keeps default locale', function () {
       var def = this.theLocaleStore.getDefaultLocale();
-      expect(this.theLocaleStore.localeIsActive(def)).toBe(true);
+      expect(this.theLocaleStore.isLocaleActive(def)).toBe(true);
       this.theLocaleStore.setActiveLocales([]);
-      expect(this.theLocaleStore.localeIsActive(def)).toBe(true);
+      expect(this.theLocaleStore.isLocaleActive(def)).toBe(true);
     });
   });
 
@@ -118,9 +118,9 @@ describe('TheLocaleStore', function () {
     it('it makes locale inactive', function () {
       var locale = {internal_code: 'zz'};
       this.theLocaleStore.setActiveLocales([locale]);
-      expect(this.theLocaleStore.localeIsActive(locale)).toBe(true);
+      expect(this.theLocaleStore.isLocaleActive(locale)).toBe(true);
       this.theLocaleStore.deactivateLocale(locale);
-      expect(this.theLocaleStore.localeIsActive(locale)).toBe(false);
+      expect(this.theLocaleStore.isLocaleActive(locale)).toBe(false);
     });
   });
 
@@ -131,8 +131,8 @@ describe('TheLocaleStore', function () {
       this.space.data.locales.push(saved, notSaved);
       this.localePersistor.set(['save']);
       this.theLocaleStore.refreshLocales();
-      expect(this.theLocaleStore.localeIsActive(saved)).toBe(true);
-      expect(this.theLocaleStore.localeIsActive(notSaved)).toBe(false);
+      expect(this.theLocaleStore.isLocaleActive(saved)).toBe(true);
+      expect(this.theLocaleStore.isLocaleActive(notSaved)).toBe(false);
     });
 
     it('saves locales to store', function () {
