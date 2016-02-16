@@ -7,12 +7,16 @@ angular.module('contentful')
   var notification  = $injector.get('notification');
   var spaceContext  = $injector.get('spaceContext');
   var FilterQS      = $injector.get('FilterQueryString');
+  var accessChecker = $injector.get('accessChecker');
 
   var qs = FilterQS.create('contentTypes');
   var view = qs.readView();
   $scope.context.list = view.list || 'all';
   $scope.searchTerm = view.searchTerm || '';
   $scope.empty = true;
+
+  $scope.shouldHide = accessChecker.shouldHide;
+  $scope.shouldDisable = accessChecker.shouldDisable;
 
   $scope.$watchGroup(['context.list', 'searchTerm'], function (args) {
     if (args[0] || args[1]) {
@@ -23,11 +27,13 @@ angular.module('contentful')
 
   function updateList() {
     spaceContext.refreshContentTypes().then(function() {
+      var sectionVisibility = accessChecker.getSectionVisibility();
+      $scope.context.forbidden = !sectionVisibility.contentType;
       $scope.context.ready = true;
       $scope.contentTypes = spaceContext.getFilteredAndSortedContentTypes();
       $scope.empty = $scope.contentTypes.length === 0;
       $scope.visibleContentTypes = _.filter($scope.contentTypes, shouldBeVisible);
-    });
+    }, accessChecker.wasForbidden($scope.context));
   }
 
   function shouldBeVisible(contentType) {

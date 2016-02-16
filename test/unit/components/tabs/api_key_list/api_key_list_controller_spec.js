@@ -14,6 +14,7 @@ describe('API Key List Controller', function () {
       var space = cfStub.space('test');
       var contentTypeData = cfStub.contentTypeData('testType');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
+      scope.context = {};
 
       controller = $controller('ApiKeyListController', {$scope: scope});
     });

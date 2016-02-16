@@ -8,9 +8,9 @@ describe('The Asset list directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('relative');
-      $provide.removeControllers('PermissionController', 'AssetListController');
+      $provide.removeControllers('AssetListController');
     });
-    inject(function ($rootScope, $compile) {
+    inject(function ($rootScope, $compile, accessChecker) {
       scope = $rootScope.$new();
 
       scope.selection = {
@@ -30,10 +30,8 @@ describe('The Asset list directive', function () {
       };
       scope.validate = sinon.stub();
 
-      scope.permissionController = {
-        get: sinon.stub()
-      };
-      scope.permissionController.get.returns(false);
+      accessChecker.shouldHide = sinon.stub().returns(false);
+      accessChecker.shouldDisable = sinon.stub().returns(false);
 
       compileElement = function () {
         container = $('<div cf-asset-list></div>');

@@ -265,4 +265,12 @@ describe('Video Editor Controller', function() {
     });
   });
 
+  describe('#resetEditorInput', function () {
+    it('removes the value from the otSubDoc', function () {
+      scope.otSubDoc = {removeValue: sinon.stub()};
+      videoEditorController.resetEditorInput();
+      sinon.assert.calledOnce(scope.otSubDoc.removeValue);
+    });
+  });
+
 });

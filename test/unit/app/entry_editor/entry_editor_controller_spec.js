@@ -1,13 +1,12 @@
 'use strict';
 
 describe('Entry Editor Controller', function () {
-  var controller, scope;
+  var controller, scope, accessChecker;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeControllers(
         'FormWidgetsController',
-        'PermissionController',
         'entityEditor/LocalesController',
         'entityEditor/StatusNotificationsController'
       );
@@ -17,10 +16,11 @@ describe('Entry Editor Controller', function () {
         getPrivateLocales: sinon.stub().returns([{internal_code: 'en-US'}, {internal_code: 'de-DE'}])
       });
     });
-    inject(function ($compile, $rootScope, $controller, cfStub){
+    inject(function ($compile, $rootScope, $controller, cfStub, _accessChecker_){
       scope = $rootScope;
       scope.otDoc = {doc: {}, state: {}};
-      scope.contentType = {data: cfStub.contentTypeData()};
+      var ctData = cfStub.contentTypeData();
+      scope.contentType = {data: ctData, getId: _.constant(ctData.sys.id)};
       scope.context = {};
 
       var space = cfStub.space('testSpace');
@@ -28,9 +28,8 @@ describe('Entry Editor Controller', function () {
         sys: { publishedVersion: 1 }
       });
       scope.entry = entry;
-      scope.permissionController = {
-        can: sinon.stub().returns({can: true})
-      };
+      accessChecker = _accessChecker_;
+      accessChecker.canUpdateEntry = sinon.stub().returns(true);
       controller = $controller('EntryEditorController', {$scope: scope});
       this.$apply();
     });
@@ -51,13 +50,13 @@ describe('Entry Editor Controller', function () {
     });
 
     it('to disabled', function () {
-      scope.permissionController.can.withArgs('update', scope.entry.data).returns({can: true});
+      accessChecker.canUpdateEntry.returns(true);
       scope.$apply();
       expect(scope.otDoc.state.disabled).toBe(false);
     });
 
     it('to enabled', function () {
-      scope.permissionController.can.withArgs('update', scope.entry.data).returns({can: false});
+      accessChecker.canUpdateEntry.returns(false);
       scope.$apply();
       expect(scope.otDoc.state.disabled).toBe(true);
     });

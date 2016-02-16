@@ -1,11 +1,9 @@
 'use strict';
 
 describe('apiKeyEditor Directive', function () {
-  var element, scope, compileElement, stubs, environmentMock;
+  var element, scope, compileElement, stubs, environmentMock, accessChecker;
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      $provide.removeControllers('PermissionController');
-
       stubs = $provide.makeStubs([
         'open',
         'catch',
@@ -31,7 +29,7 @@ describe('apiKeyEditor Directive', function () {
       $provide.constant('environment', environmentMock);
     });
 
-    inject(function ($compile, $rootScope, enforcements, spaceContext) {
+    inject(function ($compile, $rootScope, enforcements, spaceContext, _accessChecker_) {
       scope = $rootScope.$new();
       scope.otDoc = {doc: {}, state: {}};
 
@@ -46,10 +44,8 @@ describe('apiKeyEditor Directive', function () {
         getId: stubs.apiKeyGetId
       };
 
-      scope.permissionController = {
-        get: sinon.stub(),
-        entityActions: {}
-      };
+      accessChecker = _accessChecker_;
+      accessChecker.shouldDisable = sinon.stub();
 
       compileElement = function () {
         element = $compile('<div cf-api-key-editor></div>')(scope);
@@ -70,7 +66,7 @@ describe('apiKeyEditor Directive', function () {
   });
 
   it('delete button cant ever be disabled', function () {
-    scope.permissionController.get.withArgs('createApiKey', 'shouldDisable').returns(true);
+    accessChecker.shouldDisable.withArgs('createApiKey').returns(true);
     compileElement();
     expect(element.find('.workbench-actions .delete').attr('disabled')).toBeUndefined();
   });
@@ -81,7 +77,7 @@ describe('apiKeyEditor Directive', function () {
   });
 
   it('save button is disabled', function () {
-    scope.permissionController.get.withArgs('createApiKey', 'shouldDisable').returns(true);
+    accessChecker.shouldDisable.withArgs('createApiKey').returns(true);
     compileElement();
     scope.apiKeyForm = {
       $invalid: false

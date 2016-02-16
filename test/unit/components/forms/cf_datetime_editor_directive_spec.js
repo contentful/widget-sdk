@@ -158,13 +158,13 @@ describe('DateTime Editor', function () {
     expect(scope.fieldData.value).toBe('2013-12-24T01:23-03:00');
   });
 
-  it('should assume null for invalid dates', function () {
+  it('sets field value to undefined if date is invalid', function () {
     enter('', '13:00', '+03:00');
-    expect(scope.fieldData.value).toBe(null);
+    expect(scope.fieldData.value).toBeUndefined();
     enter('201', '13:00', '+03:00');
-    expect(scope.fieldData.value).toBe(null);
+    expect(scope.fieldData.value).toBeUndefined();
     enter('2013', '13:00', '+03:00');
-    expect(scope.fieldData.value).toBe(null);
+    expect(scope.fieldData.value).toBeUndefined();
     enter('2013-11-11', '13:00', '+03:00');
     expect(scope.fieldData.value).toBe('2013-11-11T13:00+03:00');
   });
@@ -177,7 +177,7 @@ describe('DateTime Editor', function () {
     expect(scope.fieldData.value).not.toBe('Invalid Date');
   });
 
-  it('should assume null for invalid times', function () {
+  it('sets only dates if time is invalid', function () {
     enter('2013-12-24', 'c1:23');
     expect(scope.fieldData.value).toBe('2013-12-24');
     enter('2013-12-24', '13', '-03:30');

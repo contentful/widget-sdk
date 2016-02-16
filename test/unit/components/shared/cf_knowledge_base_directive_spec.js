@@ -1,13 +1,14 @@
 'use strict';
 
 describe('cfKnowledgeBase directive', function () {
-  var el, scope, analytics;
-  var BASE = 'https://www.contentful.com';
+  var el, scope, environment, analytics;
 
   function getLink() { return el.find('a').first(); }
 
   beforeEach(function () {
     module('contentful/test');
+    environment = this.$inject('environment');
+    environment.settings.marketing_url = 'http://test.com';
     analytics = this.$inject('analytics');
     analytics.knowledgeBase = sinon.stub();
     scope = this.$inject('$rootScope');
@@ -21,7 +22,7 @@ describe('cfKnowledgeBase directive', function () {
 
     it('has href', function () {
       var href = getLink().attr('href');
-      expect(href.substring(0, BASE.length)).toBe(BASE);
+      expect(href).toBe('http://test.com/developers/docs/concepts/data-model/');
       expect(getLink().attr('target')).toBe('_blank');
     });
 

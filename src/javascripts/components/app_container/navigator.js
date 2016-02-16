@@ -51,7 +51,10 @@ angular.module('contentful').config([
 
   $stateProvider.state('spaces.new', {
     url: '_new',
-    template: JST.cf_create_space_advice()
+    template: JST.cf_create_space_advice(),
+    controller: ['$scope', 'accessChecker', function($scope, accessChecker) {
+      $scope.canCreateSpace = accessChecker.canCreateSpace;
+    }]
   });
 
   $stateProvider.state('spaces.detail', {
@@ -81,17 +84,22 @@ angular.module('contentful').config([
     // FIXME we depend on 'widgets' to load the service. We cannot use
     // the 'onEnter' handler because it does not wait until the promise
     // has been resolved.
-    controller: ['$scope', 'space', 'widgets', function ($scope, space) {
+    controller: ['$scope', 'space', 'sectionAccess', 'widgets', function ($scope, space, sectionAccess) {
       $scope.label = space.data.name;
-    }],
-    templateProvider: ['space', function (space) {
-      if (space.isHibernated()) {
-        return JST.cf_space_hibernation_advice();
-      } else {
-        return '<cf-breadcrumbs></cf-breadcrumbs>' +
-               '<ui-view></ui-view>';
+
+      if (sectionAccess.hasAccessToAny()) {
+        sectionAccess.redirectToFirstAccessible();
       }
     }],
+    templateProvider: ['space', 'sectionAccess', function (space, sectionAccess) {
+      if (space.isHibernated()) {
+        return JST.cf_space_hibernation_advice();
+      } else if (sectionAccess.hasAccessToAny()) {
+        return '<cf-breadcrumbs></cf-breadcrumbs><ui-view></ui-view>';
+      } else {
+        return JST.cf_no_section_available();
+      }
+    }]
   });
 
 
@@ -102,7 +110,7 @@ angular.module('contentful').config([
   });
 
 
-  $stateProvider.state('spaces.detail.entries.list', loadableState({
+  $stateProvider.state('spaces.detail.entries.list', base({
     url: '',
     ncyBreadcrumb: {
       label: 'Entries'
@@ -143,15 +151,23 @@ angular.module('contentful').config([
 
         return spaceContext.fetchPublishedContentType(entry.data.sys.contentType.sys.id);
       }],
-
+      sidebarWidgets: [
+        'editingInterface', 'contentType', 'widgets',
+        function (editingInterface, contentType, Widgets) {
+          return Widgets.buildSidebarWidgets(
+            editingInterface.data.widgets,
+            contentType.data.fields
+          );
+        }]
     },
-    controller: ['$state', '$scope', 'entry', 'editingInterface', 'contentType', 'contextHistory',
-                 function ($state, $scope, entry, editingInterface, contentType, contextHistory) {
+    controller: ['$state', '$scope', 'entry', 'editingInterface', 'contentType', 'contextHistory', 'sidebarWidgets',
+                 function ($state, $scope, entry, editingInterface, contentType, contextHistory, sidebarWidgets) {
       $state.current.data = $scope.context = {};
       $scope.entry = entry;
       $scope.entity = entry;
       $scope.editingInterface = editingInterface;
       $scope.contentType = contentType;
+      $scope.sidebarWidgets = sidebarWidgets;
       contextHistory.addEntity(entry);
     }],
     template:
@@ -172,7 +188,7 @@ angular.module('contentful').config([
   });
 
 
-  $stateProvider.state('spaces.detail.assets.list', loadableState({
+  $stateProvider.state('spaces.detail.assets.list', base({
     url: '',
     ncyBreadcrumb: {
       label: 'Media Library'
@@ -235,7 +251,7 @@ angular.module('contentful').config([
   });
 
 
-  $stateProvider.state('spaces.detail.content_types.list', loadableState({
+  $stateProvider.state('spaces.detail.content_types.list', base({
     url: '',
     ncyBreadcrumb: {
       label: 'Content Types'
@@ -345,14 +361,17 @@ angular.module('contentful').config([
   });
 
 
-  $stateProvider.state('spaces.detail.api.keys.list', {
+  $stateProvider.state('spaces.detail.api.keys.list', base({
     url: '/',
     ncyBreadcrumb: {
       label: 'Delivery Keys',
       parent: 'spaces.detail.api.home'
     },
-    template: '<div cf-api-key-list class="workbench entity-list"></div>'
-  });
+    template: '<div cf-api-key-list class="workbench entity-list"></div>',
+    controller: ['$scope', function ($scope) {
+      $scope.context = {};
+    }]
+  }));
 
   var apiKeyEditorState = {
     ncyBreadcrumb: {
@@ -393,6 +412,10 @@ angular.module('contentful').config([
     abstract: true,
     template: '<ui-view/>'
   });
+
+  /**
+   * Settings > Locale
+   */
 
   $stateProvider.state('spaces.detail.settings.locales', {
     url: '/locales',
@@ -448,6 +471,100 @@ angular.module('contentful').config([
     }
   }, localeEditorState));
 
+  /**
+   * Settings > Users
+   */
+
+  $stateProvider.state('spaces.detail.settings.users', {
+    url: '/users',
+    abstract: true,
+    template: '<ui-view />'
+  });
+
+  $stateProvider.state('spaces.detail.settings.users.list', base({
+    url: '',
+    ncyBreadcrumb: { label: 'Users' },
+    loadingText: 'Loading Users...',
+    template: '<cf-user-list class="workbench user-list" />',
+    controller: ['$scope', function ($scope) {
+      $scope.context = {};
+    }]
+  }));
+
+  /**
+   * Settings > Roles
+   */
+
+  $stateProvider.state('spaces.detail.settings.roles', {
+    url: '/roles',
+    abstract: true,
+    template: '<ui-view />'
+  });
+
+  $stateProvider.state('spaces.detail.settings.roles.list', base({
+    url: '',
+    ncyBreadcrumb: { label: 'Roles' },
+    loadingText: 'Loading Roles...',
+    template: '<cf-role-list class="workbench role-list" />',
+    controller: ['$scope', function ($scope) {
+      $scope.context = {};
+    }]
+  }));
+
+  $stateProvider.state('spaces.detail.settings.roles.new', {
+    url: '/new',
+    params: {
+      baseRoleId: null
+    },
+    data: {
+      isNew: true
+    },
+    ncyBreadcrumb: {
+      parent: 'spaces.detail.settings.roles.list',
+      label: '{{ context.title + (context.dirty ? "*" : "") }}'
+    },
+    resolve: {
+      baseRole: ['RoleRepository', 'space', '$stateParams', '$q', function (RoleRepository, space, $stateParams, $q) {
+        if (!$stateParams.baseRoleId) { return $q.when(null); }
+        return RoleRepository.getInstance(space).get($stateParams.baseRoleId);
+      }],
+      emptyRole: ['RoleRepository', '$q', function (RoleRepository, $q) {
+        return $q.when(RoleRepository.getEmpty());
+      }]
+    },
+    template: '<cf-role-editor class="workbench role-editor" />',
+    controller: ['$scope', '$state', 'baseRole', 'emptyRole', function ($scope, $state, baseRole, emptyRole) {
+      $scope.context = $state.current.data;
+      $scope.baseRole = baseRole;
+      $scope.role = emptyRole;
+    }]
+  });
+
+  $stateProvider.state('spaces.detail.settings.roles.detail', {
+    url: '/:roleId',
+    data: {
+      isNew: false
+    },
+    ncyBreadcrumb: {
+      parent: 'spaces.detail.settings.roles.list',
+      label: '{{ context.title + (context.dirty ? "*" : "") }}'
+    },
+    resolve: {
+      role: ['RoleRepository', 'space', '$stateParams', function (RoleRepository, space, $stateParams) {
+        return RoleRepository.getInstance(space).get($stateParams.roleId);
+      }]
+    },
+    template: '<cf-role-editor class="workbench role-editor" />',
+    controller: ['$scope', '$state', 'role', function ($scope, $state, role) {
+      $scope.context = $state.current.data;
+      $scope.role = role;
+    }]
+  });
+
+  /**
+   * Settings > iframe views
+   */
+
   $stateProvider.state('spaces.detail.settings.iframe', {
     url: '',
     abstract: true,
@@ -466,8 +583,6 @@ angular.module('contentful').config([
     controller: ['$scope', '$stateParams', function ($scope, $stateParams) {
       $scope.title = {
         edit: 'Space',
-        users: 'Users',
-        roles: 'Roles',
         webhook_definitions: 'Webhooks'
       }[$stateParams.pathSuffix];
     }]
@@ -502,14 +617,25 @@ angular.module('contentful').config([
     template: ''
   });
 
-  function loadableState(definition) {
+  function base(definition) {
+    if (!definition.loadingText) {
+      var label = dotty.get(definition, 'ncyBreadcrumb.label');
+      definition.loadingText = label ? ('Loading your ' + label + '...') : 'Loading...';
+    }
+
     definition.template = [
-      '<div ng-show="context.ready">' + definition.template + '</div>',
-      '<div ng-hide="context.ready" class="workbench x--loading">',
+      '<div ng-show="context.ready && !context.forbidden">',
+        definition.template,
+      '</div>',
+      '<div ng-show="!context.ready && !context.forbidden" class="workbench workbench-loading x--center">',
         '<div class="workbench-loading__spinner"></div>',
         '<div class="workbench-loading__message">',
-          'Loading your ' + definition.ncyBreadcrumb.label + '...',
+          definition.loadingText,
         '</div>',
+      '</div>',
+      '<div ng-show="context.forbidden" class="workbench workbench-forbidden x--center">',
+        '<div class="workbench-forbidden__headline">You don\'t have permission to access this view.</div>',
+        '<div class="workbench-forbidden__message">Get in touch with the person administering Contentful at your company to learn more.</div>',
       '</div>'
     ].join('');
 

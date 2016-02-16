@@ -182,19 +182,18 @@ angular.module('contentful')
   }
 
   function setupClosedEventHandling(doc) {
-    doc.on('closed', function () { handleDocClosedEvent(this); });
-  }
-
-  function handleDocClosedEvent(context) {
-    defer(function () {
-      context._listeners.length = 0;
-      _.each(context._events, function (listeners) {
-        listeners.length = 0;
+    // Remove all event listeners when the document is closed.
+    // TODO I’m not sure this accomplishes what we want. In any case
+    // this should be done through the doc’s public API.
+    doc.on('closed', function () {
+      defer(function () {
+        doc._listeners.length = 0;
+        _.each(doc._events, function (listeners) {
+          listeners.length = 0;
+        });
       });
-      context = null;
     });
   }
-
 
   function resetOtDoc() {
     if (otDoc.doc) {
@@ -213,7 +212,6 @@ angular.module('contentful')
     otDoc.state.editable = true;
     $scope.$emit('otBecameEditable', entity);
     $scope.$broadcast('otDocReady', doc);
-    setVersionUpdater();
     updateIfValid();
   }
 
@@ -226,11 +224,6 @@ angular.module('contentful')
       });
     });
     return data;
-  }
-
-  function setVersionUpdater() {
-    otDoc.doc.on('acknowledge', updateHandler);
-    otDoc.doc.on('remoteop', updateHandler);
   }
 
   function updateHandler () {
@@ -246,6 +239,16 @@ angular.module('contentful')
     // Sanity check to make sure there's actually something in the snapshot
     if (dotty.get(otDoc, 'doc.snapshot.sys.id')) {
       otUpdateEntityData();
+    } else {
+      // TODO I think this will never be called. If so, we can remove
+      // this whole function in the future and replace it by a call to
+      // 'otUpdateEntityData()'.
+      logger.logError('OT document does not provide id', {
+        data: {
+          entitySys: dotty.get(entity, 'data.sys'),
+          docSnapshot: dotty.get(otDoc, 'doc.snapshot')
+        }
+      });
     }
   }
 
@@ -279,12 +282,13 @@ angular.module('contentful')
   function installListeners (doc) {
     doc.on('remoteop', remoteOpListener);
     doc.on('change', broadcastOtChange);
-
+    doc.on('acknowledge', updateHandler);
   }
 
   function removeListeners (doc) {
     doc.removeListener('remoteop', remoteOpListener);
     doc.removeListener('change', broadcastOtChange);
+    doc.removeListener('acknowledge', updateHandler);
   }
 
   function remoteOpListener(ops) {
@@ -297,6 +301,10 @@ angular.module('contentful')
   }
 
   function broadcastOtChange (op) {
+    // The 'change' event on a document may be called synchronously
+    // from inside the Angular loop. For instance when a directive
+    // changes the document. We therefore must use `$applyAsync()`
+    // instead of `$apply()`.
     $scope.$applyAsync(function () {
       $scope.$broadcast('otChange', $scope.otDoc.doc, op);
     });

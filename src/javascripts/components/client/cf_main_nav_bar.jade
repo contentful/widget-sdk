@@ -67,13 +67,13 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
             | Locales
           li(
             role="menuitem"
-            ng-class="{'selected': $stateParams.pathSuffix === 'users'}"
-            ui-sref="spaces.detail.settings.iframe.pathSuffix({ pathSuffix: 'users' })")
+            ng-class="{'selected': $state.includes('spaces.detail.settings.users')}"
+            ui-sref="spaces.detail.settings.users.list")
             | Users
           li(
             role="menuitem"
-            ng-class="{'selected': $stateParams.pathSuffix === 'roles'}"
-            ui-sref="spaces.detail.settings.iframe.pathSuffix({ pathSuffix: 'roles' })")
+            ng-class="{'selected': $state.includes('spaces.detail.settings.roles')}"
+            ui-sref="spaces.detail.settings.roles.list")
             | Roles
           li(
             role="menuitem"

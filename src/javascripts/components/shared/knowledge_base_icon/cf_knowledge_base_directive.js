@@ -22,9 +22,10 @@ angular.module('contentful').directive('cfKnowledgeBase', ['$injector', function
   };
 }]);
 
-angular.module('contentful').factory('KnowledgeBase/getUrl', function () {
+angular.module('contentful').factory('KnowledgeBase/getUrl', ['$injector', function ($injector) {
 
-  var BASE = 'https://www.contentful.com/';
+  var environment = $injector.get('environment');
+  var BASE        = environment.settings.marketing_url.replace(/\/*$/, '/');
 
   var items = {
     space:            'faq/terminology/#what-is-a-space',
@@ -37,7 +38,8 @@ angular.module('contentful').factory('KnowledgeBase/getUrl', function () {
     predefined_value: 'faq/basics/#predefined-values-validation',
     locale:           'developers/docs/concepts/locales/',
     space_template:   'developers/docs/', // @todo needs proper article
-    id_change:        'developers/docs/' // @todo needs proper article
+    id_change:        'developers/docs/', // @todo needs proper article,
+    roles:            'r/knowledgebase/roles-and-permissions/'
   };
 
   return function getKnowledgeBaseUrl(name) {
@@ -47,4 +49,4 @@ angular.module('contentful').factory('KnowledgeBase/getUrl', function () {
 
     throw new Error('Incorrect Knowledge Base item "' + name + '".');
   };
-});
+}]);

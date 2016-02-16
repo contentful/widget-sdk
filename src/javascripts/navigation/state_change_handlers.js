@@ -19,6 +19,7 @@ angular.module('cf.app')
   var $state         = $injector.get('$state');
   var spaceTools     = $injector.get('spaceTools');
   var contextHistory = $injector.get('contextHistory');
+  var logger         = $injector.get('logger');
 
   // Result of confirmation dialog
   var navigationConfirmed = false;
@@ -67,6 +68,12 @@ angular.module('cf.app')
   }
 
   function stateChangeStartHandler(event, toState, toStateParams, fromState, fromStateParams) {
+    var hasRedirected = redirect(event, toState, toStateParams);
+
+    if (hasRedirected) {
+      return;
+    }
+
     if (fromState.name === toState.name &&
         getAddToContext(fromStateParams) === getAddToContext(toStateParams)) {
       event.preventDefault();
@@ -91,27 +98,21 @@ angular.module('cf.app')
       return;
     }
 
-    preprocessStateChange(event, toState, toStateParams);
-  }
-
-  function preprocessStateChange(event, toState, toStateParams) {
     if (!toStateParams.addToContext) {
       contextHistory.purge();
     }
+  }
 
-    // Some redirects away from nonexistent pages
-    if (toState.name === 'spaces.detail') {
-      event.preventDefault();
-      if (_.isEmpty(toStateParams.spaceId)) {
-        spaceTools.goToInitialSpace();
-      } else {
-        $state.go('spaces.detail.entries.list', toStateParams);
-      }
-    }
-
-    if (toState.name === 'otherwise' || toState.name === 'spaces') {
+  function redirect (event, toState, toStateParams) {
+    if (
+      _.contains(['otherwise', 'spaces'], toState.name) ||
+      (toState.name === 'spaces.detail' && _.isEmpty(toStateParams.spaceId))
+    ) {
       event.preventDefault();
       spaceTools.goToInitialSpace();
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -120,11 +121,50 @@ angular.module('cf.app')
    */
   function stateChangeErrorHandler(event, toState, toParams, fromState, fromParams, error) {
     event.preventDefault();
+
     var matchedSection = /spaces.detail.(entries|assets|content_types|api\.keys).detail/.exec(toState.name);
-    if(matchedSection && error.statusCode == 404){
+    if (matchedSection && error.statusCode == 404) {
+      // If a request for an entity returns a 404 error we just go to the
+      // list for that entity.
+      // TODO we should provide some feedback to the user
       $state.go('spaces.detail.'+matchedSection[1]+'.list', { spaceId: toParams.spaceId });
     } else {
       spaceTools.goToInitialSpace();
+      // Otherwise we redirect the user to the inital space
+      // TODO We should notify the user of what happened and maybe
+      // rethrow the exception. As a temporary measure we log the error
+      // to figure out what errors are actually thrown.
+      logRoutingError(
+        error,
+        { state: toState, params: toParams },
+        { state: fromState, params: fromParams }
+      );
+    }
+  }
+
+  function logRoutingError (error, from, to) {
+    var metaData = {
+      error: error,
+      data: {
+        toState: {
+          name: dotty.get(to, 'state.name'),
+          params: dotty.get(to, 'params')
+        },
+        fromState: {
+          name: dotty.get(from, 'state.name'),
+          params: dotty.get(from, 'params')
+        }
+      }
+    };
+
+    // $http requests may return rejections that are *not* instances of
+    // 'Error'. We record them separately
+    // property.
+    if (error.statusCode) {
+      logger.logServerError('error during routing', metaData);
+    } else {
+      metaData.groupingHash = 'routing-error';
+      logger.logException(error, metaData);
     }
   }
 

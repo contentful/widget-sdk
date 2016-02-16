@@ -68,6 +68,8 @@ describe('EntryLinkEditorController', function () {
         linkMultiple: false
       };
 
+      scope.isDisabled = sinon.stub().returns(false);
+
       createController = function () {
         linkEditorCtrl = $controller('EntryLinkEditorController', {
           $scope: scope,
@@ -138,7 +140,8 @@ describe('EntryLinkEditorController', function () {
       });
 
       it('returns missing title', function() {
-        expect(title).toMatch('Missing entity');
+        expect(title.indexOf('Entity is missing')).toBe(0);
+        expect(title.indexOf('inaccessible') > -1).toBe(true);
       });
     });
   });

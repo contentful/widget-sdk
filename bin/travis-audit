@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# The module `nsp` ships a npm-shrinkwrap.json file which is generated with npm 3 and causes issues in projects that are using npm 2.
+# When adding `nsp` to the dev dependencies it will cause problems during the regeneration of the project's npm-shrinkwrap.json file.
+# So instead of adding that, this script is installing nsp globally and can be called as a build step on travis.
+
+npm install -g nsp
+nsp check -o summary npm-shrinkwrap.json

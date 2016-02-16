@@ -1,9 +1,9 @@
 .advice
-  .advice__frame
+  .cfnext-advice
     i.fa.fa-folder.advice__giant-icon
     header.advice__title Nothing to see yet.
-    p.advice__description(ng-show="!permissionController.canCreateSpace()") You need to be part of an Organization to create a space.
-    p.advice__description(ng-show="permissionController.canCreateSpace()") Why don't you create a space?
-    button.advice__action(type="button" ng-show="permissionController.canCreateSpace()" ng-click="showCreateSpaceDialog()")
+    p.advice__description(ng-show="!canCreateSpace()") You need to be part of an Organization to create a space.
+    p.advice__description(ng-show="canCreateSpace()") Why don't you create a space?
+    button.advice__action(type="button" ng-show="canCreateSpace()" ng-click="showCreateSpaceDialog()")
       | Create Space
     cf-knowledge-base(target="space" text="Visit the Knowledge Base Pages")

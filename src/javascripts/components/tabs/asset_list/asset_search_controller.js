@@ -11,6 +11,7 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
   var spaceContext       = $injector.get('spaceContext');
   var ListQuery          = $injector.get('ListQuery');
   var systemFields       = $injector.get('systemFields');
+  var accessChecker      = $injector.get('accessChecker');
 
   var assetLoader = new PromisedLoader();
 
@@ -41,7 +42,7 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
       controller.paginator.numEntries = assets.total;
       $scope.assets = assets;
       $scope.$broadcast('didResetAssets', $scope.assets);
-    })
+    }, accessChecker.wasForbidden($scope.context))
     .catch(ReloadNotification.apiErrorHandler);
   };
 

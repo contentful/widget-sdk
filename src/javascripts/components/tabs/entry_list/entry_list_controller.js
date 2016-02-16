@@ -1,18 +1,18 @@
 'use strict';
 
 angular.module('contentful').controller('EntryListController', ['$scope', '$injector', function EntryListController($scope, $injector) {
-  var $controller        = $injector.get('$controller');
-  var $q                 = $injector.get('$q');
-  var EntityListCache    = $injector.get('EntityListCache');
-  var Paginator          = $injector.get('Paginator');
-  var PromisedLoader     = $injector.get('PromisedLoader');
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var Selection          = $injector.get('Selection');
-  var analytics          = $injector.get('analytics');
-  var modalDialog        = $injector.get('modalDialog');
-  var ListQuery          = $injector.get('ListQuery');
-  var logger             = $injector.get('logger');
-  var spaceContext       = $injector.get('spaceContext');
+  var $controller           = $injector.get('$controller');
+  var $q                    = $injector.get('$q');
+  var EntityListCache       = $injector.get('EntityListCache');
+  var Paginator             = $injector.get('Paginator');
+  var PromisedLoader        = $injector.get('PromisedLoader');
+  var ReloadNotification    = $injector.get('ReloadNotification');
+  var Selection             = $injector.get('Selection');
+  var analytics             = $injector.get('analytics');
+  var ListQuery             = $injector.get('ListQuery');
+  var logger                = $injector.get('logger');
+  var spaceContext          = $injector.get('spaceContext');
+  var accessChecker         = $injector.get('accessChecker');
 
   $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('EntryListViewsController', {$scope: $scope});
@@ -22,6 +22,9 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
 
   $scope.paginator = new Paginator();
   $scope.selection = new Selection();
+
+  $scope.shouldHide = accessChecker.shouldHide;
+  $scope.shouldDisable = accessChecker.shouldDisable;
 
   $scope.entryCache = new EntityListCache({
     space: spaceContext.space,
@@ -34,13 +37,6 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     entityType: 'Asset',
     limit: 3
   });
-
-  $scope.showNewContentTypeDialog = function(){
-    modalDialog.open({
-      scope: $scope,
-      template: 'new_content_type_list'
-    });
-  };
 
   $scope.getSearchContentType = function () {
     var id = dotty.get($scope, 'context.view.contentTypeId');
@@ -55,10 +51,15 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     }
   });
 
-  $scope.$watch(function () {
-    return spaceContext.publishedContentTypes.length;
-  }, function (count) {
-    $scope.singleContentType = count !== 1 ? null : spaceContext.publishedContentTypes[0];
+  $scope.$watchCollection(function () {
+    return {
+      cts: spaceContext.publishedContentTypes,
+      responses: accessChecker.getResponses()
+    };
+  }, function () {
+    $scope.accessibleCts = _.filter(spaceContext.publishedContentTypes || [], function (ct) {
+      return accessChecker.canPerformActionOnEntryOfType('create', ct.getId());
+    });
   });
 
   $scope.$watch(function pageParameters(){
@@ -122,17 +123,19 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
         return spaceContext.space.getEntries(query);
       });
     })
-    .then(function (entries) {
-      $scope.context.ready = true;
-      $scope.context.loading = false;
-      $scope.paginator.numEntries = entries.total;
-      $scope.entries = entries;
-      $scope.selection.switchBaseSet($scope.entries.length);
-      // Check if a refresh is necessary in cases where no pageParameters change
-      refreshEntityCaches();
-    })
+    .then(handleEntriesResponse, accessChecker.wasForbidden($scope.context))
     .catch(ReloadNotification.apiErrorHandler);
   };
+
+  function handleEntriesResponse(entries) {
+    $scope.context.ready = true;
+    $scope.context.loading = false;
+    $scope.paginator.numEntries = entries.total;
+    $scope.entries = entries;
+    $scope.selection.switchBaseSet($scope.entries.length);
+    // Check if a refresh is necessary in cases where no pageParameters change
+    refreshEntityCaches();
+  }
 
   function refreshEntityCaches() {
     if($scope.context.view.contentTypeId){
@@ -150,13 +153,6 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
                    !_.isEmpty(view.contentTypeId);
     var hasEntries = $scope.entries && $scope.entries.length > 0;
     return !hasEntries && !hasQuery && !$scope.context.loading;
-  };
-
-  // TODO this code is duplicated in the asset list controller
-  $scope.showCreateEntryButton = function () {
-    var hasContentTypes = !_.isEmpty(spaceContext.publishedContentTypes);
-    var hideCreateEntry = $scope.permissionController.get('createEntry', 'shouldHide');
-    return hasContentTypes && !hideCreateEntry;
   };
 
   $scope.loadMore = function () {

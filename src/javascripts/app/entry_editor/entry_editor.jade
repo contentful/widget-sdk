@@ -39,7 +39,7 @@ header.workbench-header
           data-field-items-type="{{field.items.type}}"
           ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
         label(ng-if="field")
-          | {{field.name}} 
+          | {{field.name}}&nbsp;
           sup(ng-show="field.required") (required)
         .l-form-controls(ng-if="field")
           .l-form-locale(ng-repeat="locale in locales track by locale.internal_code"
@@ -49,7 +49,13 @@ header.workbench-header
               cf-focus-ot-input="hasInitialFocus"
               ot-path="['fields', field.id, locale.internal_code]"
               cf-field-editor="entry.data.fields[field.id][locale.internal_code]")
-            .locale-label(ng-show="locales.length > 1") {{locale.name}}
+            .form-widget__rights-info(
+              ng-show="otDoc.state.editable && isDisabled(field, locale)"
+              tooltip="You don't have a permission to edit this field. To change your permission setting contact your space administrator."
+              tooltip-placement="left")
+              .fa.fa-lock
+            .locale-label(ng-show="locales.length > 1")
+              | {{locale.name}}
             +editor-field-collaborators
             cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.internal_code,'*']")
           .form-widget__help-text(ng-if="showHelpText") {{helpText}}

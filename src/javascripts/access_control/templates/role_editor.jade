@@ -1,0 +1,106 @@
+include ./roles_and_permissions_mixins.jade
+
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-settings")
+  h1.workbench-header__title {{ context.title }}
+
+.workbench-main
+  .workbench-main__content
+    .role-details
+      .role-details__section
+        h3 Role details
+        .cfnext-form__field
+          label(for="opt_name") Name
+          input.cfnext-form__input--full-size(id="opt_name" ng-model="internal.name" ng-disabled="!canModifyRoles()")
+        .cfnext-form__field
+          label(for="opt_description") Description
+          textarea.cfnext-form__input--full-size(id="opt_description" ng-model="internal.description" ng-disabled="!canModifyRoles()")
+
+      .role-details__section(ng-if="internal.uiCompatible")
+        h3 Entries
+        cf-rule-list(rules="internal.entries" entity="entry" is-disabled="!canModifyRoles()")
+
+      .role-details__section(ng-if="internal.uiCompatible")
+        h3 Media Library
+        cf-rule-list(rules="internal.assets" entity="asset" is-disabled="!canModifyRoles()")
+
+      .role-details__section(ng-if="!internal.uiCompatible")
+        h3 Policies
+        p
+          span The policy for this role cannot be represented visually.
+          span(ng-if="canModifyRoles()")
+            |  You can continue to edit the JSON directly,
+            | or <a href="" ng-click="resetPolicies()">clear the policy</a>
+            | to define policy rules visually.
+        .cfnext-form-option
+          textarea.cfnext-form__input--full-size(ng-model="internal.policyString" rows="10" ng-disabled="!canModifyRoles()")
+
+      .role-details__section
+        h3 Content Types
+        .cfnext-form-option
+          input(id="opt_content_types_access" type="checkbox" ng-model="internal.contentModel.manage" ng-disabled="!canModifyRoles()")
+          label(for="opt_content_types_access")
+            | Can modify Content Types
+            |  <em>(the Content Type Editor is only shown to users who have this permission)</em>.
+
+      .role-details__section
+        h3 API keys
+        .cfnext-form-option
+          input(
+            id="opt_api_keys_view" type="checkbox"
+            ng-model="internal.contentDelivery.read"
+            ng-disabled="!canModifyRoles() || internal.contentDelivery.manage")
+          label(for="opt_api_keys_view")
+            | Can access existing API keys for this space.
+        .cfnext-form-option
+          input(
+            id="opt_space_settings_edit" type="checkbox"
+            ng-model="internal.contentDelivery.manage"
+            ng-disabled="!canModifyRoles()"
+            ng-change="internal.contentDelivery.read = internal.contentDelivery.manage ? true : internal.contentDelivery.read")
+          label(for="opt_space_settings_edit")
+            | Can create and update API keys for this space.
+
+      .role-details__section
+        h3 Space settings
+        .cfnext-form-option
+          input(id="opt_space_settings_access" type="checkbox" ng-model="internal.settings.manage" ng-disabled="!canModifyRoles()")
+          label(for="opt_space_settings_access")
+            | Can modify Space Settings. This permission allows users to modify locales, webhooks, the space name, and logo image.
+            |  It does <strong>not</strong> grant permission to update users roles or delete the space.
+
+  .workbench-main__entity-sidebar
+    .entity-sidebar(ng-if="!canModifyRoles()")
+      +custom-roles-plan-info
+    .entity-sidebar(ng-if="canModifyRoles()")
+      .entity-sidebar__state-select
+        .btn-action-select
+          button.btn-action-select__action(type="button" ui-command="save")
+            | Save changes
+          button.btn-action-select__selector(cf-context-menu-trigger ng-if="role.sys.id && canModifyRoles()")
+            cf-icon.btn-action-select__icon(name="dd-arrow-down")
+          .context-menu.context-menu--arrow-right(cf-context-menu="bottom-right")
+            a(role="menuitem" href="" ng-click="duplicateRole()") Duplicate
+            a(role="menuitem" href="" ng-click="removeRole()" ng-if="removeRole") Delete permanently
+      .rule-list__note.note-box--blue(ng-show="autofixed")
+        i.fa.fa-info-circle
+        span
+          |  Some rules have been removed because of changes in your content structure.
+          |  Please review your rules and click "Save changes".
+      h2.entity-sidebar__heading
+        | Need more complex roles?
+      p
+        | If you need define a more complex role, as translator for a specific language
+        |  or person who can't edit meta-data, visit our
+        |  <cf-knowledge-base target="roles" text="knowledge base" />
+      h2.entity-sidebar__heading
+        | Hint from our staff
+      .staff-hint
+        i.fa.fa-quote-left
+        div.staff-hint__quote
+          .staff-hint__content Anything that is not explicitly allowed, is&nbsp;denied.
+          .staff-hint__author
+            .staff-hint__author-photo
+            .staff-hint__authr-name
+              strong Stephen Sugden
+              p Product manager at Contentful

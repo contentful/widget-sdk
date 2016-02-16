@@ -5,11 +5,15 @@ angular.module('contentful')
 /**
  * @ngdoc service
  * @name widgets/store
+ *
+ * @usage
+ *  ws = new WidgetStore();
+ *
  * @description
  * Store custom and builtin widget implementations for the current
  * space.
  *
- * This service caches the widgets of the given space.
+ * This service gets the latest custom widgets from the server every time.
  */
 .factory('widgets/store', ['$injector', function ($injector) {
   var $q = $injector.get('$q');
@@ -17,76 +21,88 @@ angular.module('contentful')
   var logger = $injector.get('logger');
   var fieldFactory = $injector.get('fieldFactory');
 
-  var space;
-  var widgetCache;
 
   var customWidgetProperties = [
     'name', 'src', 'srcdoc', 'sidebar', 'options'
   ];
 
-  return {
-    setSpace: setSpace,
-    getMap: getMap,
-  };
-
-  /**
-   * @ngdoc method
-   * @name widgets/store#set
-   * @param {Client.Space} space
-   */
-  function setSpace (_space) {
-    space = _space;
-    widgetCache = null;
+  function WidgetStore(space) {
+    this.space = space;
   }
-
 
   /**
    * @ngdoc method
    * @name widgets/store#getMap
-   * @description
-   * Returns an object that maps widget ids to widget descriptions.
    *
-   * @returns {Map<string, Widget.Descriptor>}
+   * @usage
+   *  ws.getMap().then(function(widgets) {
+   *    console.log(widgets);
+   *  });
+   *
+   * @description
+   * Returns a a promise resolving to an object that maps widget ids to
+   * widget descriptions.
+   *
+   * @returns {Promise<object>}
    */
-  function getMap () {
-    if (!space) {
+
+  WidgetStore.prototype.getMap = function() {
+    if (!this.space) {
       return $q.reject(new Error('Space is not set'));
     }
 
-    if (!widgetCache) {
-      widgetCache = customWidgets(space)
-      .then(function (widgets) {
-        return _.extend({}, builtinWidgets, widgets);
-      });
-    }
-
-    return widgetCache;
-  }
-
-  function customWidgets (space) {
-    return space.endpoint('widgets').get()
+    return getCustomWidgets(this.space)
     .then(function (widgets) {
-      return _.transform(widgets.items, function (byId, data) {
-        var widget = buildCustomWidget(data);
-        byId[widget.id] = widget;
-      }, {});
-    }).catch(function (err) {
-      logger.logError('Failed to build custom widgets', {
-        data: {space: space},
-        error: err
-      });
-      return [];
+      return _.extend({}, builtinWidgets, widgets);
+    });
+  };
+
+  function getCustomWidgets (space) {
+    return space.endpoint('widgets').get()
+    .then(function (response) {
+      return createCustomWidgetMap(response.items);
+    }, function (err) {
+      logger.logServerError('Failed to get custom widgets', {error: err});
+      return {};
     });
   }
 
+  /**
+   * Takes a list of Widgets returned by the server and builds widget
+   * descriptors to be used by the entry editor.
+   *
+   * @param {API.Widget[]} widgets
+   * @returns {Map<string, Widget.Descriptor}
+   */
+  function createCustomWidgetMap (widgets) {
+    return _.transform(widgets, function (byId, data) {
+      try {
+        var widget = buildCustomWidget(data);
+        byId[widget.id] = widget;
+      } catch (err) {
+        logger.logError('Failed to build custom widgets', {
+          data: {widget: data},
+          error: err
+        });
+      }
+    }, {});
+  }
+
+  /**
+   * @param {API.Widget} data
+   * @returns {Widget.Descriptor}
+   */
   function buildCustomWidget (data) {
     var widget = data.widget;
     var fieldTypes = _.map(widget.fieldTypes, fieldFactory.getTypeName);
     return _.extend(_.pick(widget, customWidgetProperties), {
       id: data.sys.id,
       fieldTypes: fieldTypes,
-      template: '<cf-iframe-widget>'
+      template: '<cf-iframe-widget>',
+      custom: true
     });
   }
+
+  return WidgetStore;
 
 }]);

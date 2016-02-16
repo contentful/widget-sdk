@@ -26,7 +26,7 @@ describe('cfEntryLinkEditor Directive', function () {
 
     inject(function ($compile, $rootScope) {
       scope = $rootScope.$new();
-      scope.can = stubs.can;
+      scope.isDisabled = sinon.stub().returns(false);
       scope.fieldData = { value: {
         sys: {id: 123}
       }};
@@ -185,7 +185,9 @@ describe('cfEntryLinkEditor Directive', function () {
       });
 
       it('span with title for 3rd entity has supplied title', function () {
-        expect(element.find('.linked-entities__info span').eq(2).html()).toMatch('Missing entity');
+        var html = element.find('.linked-entities__info span').eq(2).html();
+        expect(html.indexOf('Entity is missing')).toBe(0);
+        expect(html.indexOf('inaccessible') > -1).toBe(true);
       });
 
       it('linkTitle is called for 1st entity', function() {

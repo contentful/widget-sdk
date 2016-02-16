@@ -59,7 +59,7 @@ angular.module('contentful')
     fieldTypes: ['Text'],
     name: 'Multiple Line',
     icon: 'multipleline',
-    template: '<textarea class="form-control" ng-disabled="!otDoc.state.editable" ng-model="fieldData.value" ot-bind-text></textarea>'
+    template: '<textarea class="form-control" ng-disabled="isDisabled(field, locale)" ng-model="fieldData.value" ot-bind-text></textarea>'
   });
 
   registerWidget('markdown',{
@@ -175,7 +175,7 @@ angular.module('contentful')
     defaultHelpText: 'Insert comma separated values',
     name: 'List',
     icon: 'singleline',
-    template: '<input cf-list-identity-fix class="form-control" ng-disabled="!otDoc.state.editable" ng-list cf-empty-list ng-model="fieldData.value" ot-bind-ng-model type="text">'
+    template: '<input cf-list-identity-fix class="form-control" ng-disabled="isDisabled(field, locale)" ng-list cf-empty-list ng-model="fieldData.value" ot-bind-ng-model type="text">'
   });
 
   registerWidget('fileEditor',{

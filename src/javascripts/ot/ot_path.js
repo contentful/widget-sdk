@@ -63,7 +63,8 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
         doc: undefined,
         changeString: otChangeString,
         changeValue: otChangeValue,
-        getValue: otGetValue
+        getValue: otGetValue,
+        removeValue: removeValue
       };
 
       $scope.$watch('otDoc.doc', init);
@@ -198,6 +199,11 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
         }
       }
 
+      function removeValue () {
+        return $q.denodeify(function (cb) {
+          $scope.otSubDoc.doc.remove(cb);
+        });
+      }
     }]
   };
 }]);

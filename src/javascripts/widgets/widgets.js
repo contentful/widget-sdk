@@ -10,8 +10,9 @@ angular.module('contentful')
   var fieldFactory = $injector.get('fieldFactory');
   var checks       = $injector.get('widgets/checks');
   var deprecations = $injector.get('widgets/deprecations');
-  var store        = $injector.get('widgets/store');
+  var WidgetStore  = $injector.get('widgets/store');
   var schemaErrors = $injector.get('validation').errors;
+  var eiHelpers    = $injector.get('editingInterfaces/helpers');
 
   /**
    * @ngdoc type
@@ -28,7 +29,6 @@ angular.module('contentful')
    * @ngdoc type
    * @name Widget.Renderable
    * @property {string} template
-   * @property {Locale[]} locales
    * @property {object} widgetParams
    * @property {string} defaultHelpText
    * @property {boolean} rendersHelpText
@@ -43,6 +43,8 @@ angular.module('contentful')
    * @property {[string]: any} widgetParams
    */
   var WIDGETS = {};
+
+  var store;
 
   // TODO move this to validation library
   var widgetSchema = {
@@ -74,29 +76,43 @@ angular.module('contentful')
     additionalProperties: true
   };
 
-  return {
+  var widgetsService = {
     get:                 getWidget,
-    // TODO remove this method. It is only used for testing
-    forField:            typesForField,
     getAvailable:        getAvailable,
     buildRenderable:     buildRenderable,
     defaultWidgetId:     defaultWidgetId,
     optionsForWidget:    optionsForWidget,
     filterOptions:       filterOptions,
-    widgetTemplate:      widgetTemplate,
     paramDefaults:       paramDefaults,
     applyDefaults:       applyDefaults,
     validate:            validate,
     filteredParams:      filteredParams,
-    setSpace:            setSpace
+    setSpace:            setSpace,
+    buildSidebarWidgets: buildSidebarWidgets
   };
+  return widgetsService;
 
-
-  function setSpace (space) {
-    store.setSpace(space);
-    return store.getMap().then(function (widgets) {
+  function refreshWidgetCache() {
+    return store.getMap().then(function(widgets) {
       WIDGETS = widgets;
+      return widgetsService;
     });
+  }
+
+  /**
+   * @ngdoc method
+   * @name widgets#setSpace
+   *
+   * @description
+   * Gets all widgets for a space and saves the object into the `WIDGETS`
+   * variable. Always gets the latest custom widgets from the widgets endpoint.
+   *
+   * @param {Client.Space} space
+   * @returns {Promise<Void>}
+   */
+  function setSpace (space) {
+    store = new WidgetStore(space);
+    return refreshWidgetCache();
   }
 
   function getWidget(id) {
@@ -107,7 +123,8 @@ angular.module('contentful')
    * @ngdoc method
    * @name widgets#descriptorsForField
    * @description
-   * Return a list of widgets that can be selected for the given field
+   * Return a list of widgets that can be selected for the given field. This
+   * method always gets the latest custom widgets from the widgets endpoint.
    *
    * @param {API.ContentType.Field} field
    *
@@ -116,30 +133,24 @@ angular.module('contentful')
    * list of available widgets.
    *
    * @param {boolean} preview
-   * Include previe widgets.
+   * Include preview widgets.
    *
    * @return {Promise<Array<Widget.Descriptor>>}
    */
   function getAvailable (field, currentWidgetId, preview) {
-    return typesForField(field)
+    return refreshWidgetCache()
+    .then(typesForField.bind(null, field))
     .then(function (widgets) {
-      widgets = _.map(widgets, _.clone);
-      _.forEach(widgets, function (widget) {
-        widget.options = optionsForWidget(widget.id);
+      return _.map(widgets, function (widget) {
+        return _.extend({}, widget, {
+          options: optionsForWidget(widget.id)
+        });
       });
-      return widgets;
     })
     .then(deprecations.createFilter(currentWidgetId, field, preview))
     .then(checks.markMisconfigured);
   }
 
-
-  /**
-   * @ngdoc method
-   * @name widgets#forField
-   * @param {API.ContentType.Field} field
-   * @return {Promise<Array<Widget.Descriptor>>}
-   */
   function typesForField(field) {
     var fieldType = fieldFactory.getTypeName(field);
     var widgets = _.filter(WIDGETS, function (widget) {
@@ -314,33 +325,66 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
+   * @name widgets#buildSidebarWidgets
+   * @description
+   * From a list of widget definition from the editing interface build
+   * a list of renderable widgets that can be passed to the
+   * `cfWidgetRenderer` directive.
+   *
+   * The list includes only widgets that have the `sidebar` property
+   * set to a truthy value.
+   *
+   * The function is used to setup the entry editor state.
+   *
+   * TODO Remove duplication with FormWidgetsController.
+   *
+   * @param {API.Widget[]} widgets
+   * @param {API.Fields[]} fields
+   * @return {Widget.Renderable[]}
+   */
+  function buildSidebarWidgets (apiWidgets, fields) {
+    return  _(apiWidgets)
+      .map(function (widget) {
+        var field = eiHelpers.findField(fields, widget);
+        var desc = getWidget(widget.widgetId);
+        return _.extend({
+          field: field
+        }, widget, desc);
+      })
+      .filter(function (widget) {
+        return widget.sidebar && widget.field;
+      })
+      .value();
+  }
+
+  /**
+   * @ngdoc method
    * @name widgets#buildRenderable
    * @description
    * Create an object that contains all the necessary data to render a
    * widget.
    *
    * @param {API.Widget} widget
-   * @param {API.Locales[]} locales
    * @return {Widget.Renderable}
    */
-  function buildRenderable (widget, locales) {
+  function buildRenderable (widget) {
     widget = Object.create(widget);
 
     var template = widgetTemplate(widget.widgetId);
     widget.template = template;
 
-    applyWidgetProperties(widget, locales);
+    applyWidgetProperties(widget);
     return widget;
   }
 
-  function applyWidgetProperties (widget, locales) {
-    widget.locales = locales;
+  function applyWidgetProperties (widget) {
     var descriptor = getWidget(widget.widgetId);
     if (descriptor) {
       _.extend(widget, {
         rendersHelpText: descriptor.rendersHelpText,
         defaultHelpText: descriptor.defaultHelpText,
-        isFocusable: !descriptor.notFocusable
+        isFocusable: !descriptor.notFocusable,
+        sidebar: !!descriptor.sidebar
       });
     }
   }

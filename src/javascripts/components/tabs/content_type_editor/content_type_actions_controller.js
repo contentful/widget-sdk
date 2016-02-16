@@ -119,7 +119,7 @@ function ContentTypeActionsController($scope, $injector) {
   }
 
   function unpublishErrorHandler(err){
-    logger.logServerWarn('Error deactivating Content Type', err);
+    logger.logServerWarn('Error deactivating Content Type', {error: err});
     return $q.reject(err);
   }
 

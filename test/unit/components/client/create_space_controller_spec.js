@@ -8,7 +8,7 @@ describe('Create Space controller', function () {
     var self = this;
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'stop', 'then', 'getId', 'timeout'
+        'then', 'getId', 'timeout'
       ]);
 
       self.tokenStoreStubs = {
@@ -27,15 +27,14 @@ describe('Create Space controller', function () {
       this.$q = $injector.get('$q');
       this.client = $injector.get('client');
       this.enforcements = $injector.get('enforcements');
-      this.cfSpinner = $injector.get('cfSpinner');
+      this.accessChecker = $injector.get('accessChecker');
 
       this.broadcastStub = sinon.stub(this.$rootScope, '$broadcast');
       this.broadcastStub.returns(sinon.stub());
-      this.cfSpinner.start = sinon.stub();
-      this.cfSpinner.start.returns(stubs.stop);
       this.client.createSpace = sinon.stub();
       this.enforcements.computeUsage = sinon.stub();
       this.enforcements.determineEnforcement = sinon.stub();
+      this.accessChecker.canCreateSpaceInOrganization = sinon.stub();
 
       scope = this.$rootScope;
       scope.$emit = sinon.stub();
@@ -44,8 +43,6 @@ describe('Create Space controller', function () {
 
       org = {sys: {id: 'orgid'}};
       scope.organizations = [org];
-      scope.permissionController = {};
-      scope.permissionController.canCreateSpaceInOrg = sinon.stub();
       scope.newSpaceForm = {};
 
       scope.setTokenDataOnScope = sinon.stub();
@@ -73,8 +70,8 @@ describe('Create Space controller', function () {
         {sys: {id: 'orgid2'}},
         {badorg: true}
       ];
-      scope.permissionController.canCreateSpaceInOrg.withArgs('orgid').returns(true);
-      scope.permissionController.canCreateSpaceInOrg.withArgs('orgid2').returns(false);
+      this.accessChecker.canCreateSpaceInOrganization.withArgs('orgid').returns(true);
+      this.accessChecker.canCreateSpaceInOrganization.withArgs('orgid2').returns(false);
       createController();
     });
 
@@ -85,7 +82,7 @@ describe('Create Space controller', function () {
 
   describe('on the default state', function() {
     beforeEach(function() {
-      scope.permissionController.canCreateSpaceInOrg.returns(true);
+      this.accessChecker.canCreateSpaceInOrganization.returns(true);
       createController();
     });
 
@@ -125,7 +122,7 @@ describe('Create Space controller', function () {
 
       describe('if user cant create space in org', function() {
         beforeEach(function() {
-          scope.permissionController.canCreateSpaceInOrg.returns(false);
+          this.accessChecker.canCreateSpaceInOrganization.returns(false);
           scope.createSpace();
         });
 
@@ -133,16 +130,8 @@ describe('Create Space controller', function () {
           sinon.assert.calledWith(this.broadcastStub, 'spaceCreationRequested');
         });
 
-        it('starts spinner', function() {
-          sinon.assert.called(this.cfSpinner.start);
-        });
-
         it('checks for creation permission', function() {
-          sinon.assert.calledWith(scope.permissionController.canCreateSpaceInOrg, 'orgid');
-        });
-
-        it('stops spinner', function() {
-          sinon.assert.called(stubs.stop);
+          sinon.assert.calledWith(this.accessChecker.canCreateSpaceInOrganization, 'orgid');
         });
 
         it('shows error', function() {
@@ -157,7 +146,7 @@ describe('Create Space controller', function () {
 
       describe('if user can create space in org', function() {
         beforeEach(function() {
-          scope.permissionController.canCreateSpaceInOrg.returns(true);
+          this.accessChecker.canCreateSpaceInOrganization.returns(true);
           scope.newSpaceData.name = 'name';
         });
 
@@ -178,12 +167,8 @@ describe('Create Space controller', function () {
             sinon.assert.calledWith(this.broadcastStub, 'spaceCreationRequested');
           });
 
-          it('starts spinner', function() {
-            sinon.assert.called(this.cfSpinner.start);
-          });
-
           it('checks for creation permission', function() {
-            sinon.assert.calledWith(scope.permissionController.canCreateSpaceInOrg, 'orgid');
+            sinon.assert.calledWith(this.accessChecker.canCreateSpaceInOrganization, 'orgid');
           });
 
           it('calls client lib with data', function() {
@@ -201,10 +186,6 @@ describe('Create Space controller', function () {
           it('shows error', function() {
             sinon.assert.called(this.notification.error);
             sinon.assert.called(this.logger.logServerWarn);
-          });
-
-          it('stops spinner', function() {
-            sinon.assert.called(stubs.stop);
           });
 
           it('broadcasts space creation failure', function() {
@@ -231,12 +212,8 @@ describe('Create Space controller', function () {
             sinon.assert.calledWith(this.broadcastStub, 'spaceCreationRequested');
           });
 
-          it('starts spinner', function() {
-            sinon.assert.called(this.cfSpinner.start);
-          });
-
           it('checks for creation permission', function() {
-            sinon.assert.calledWith(scope.permissionController.canCreateSpaceInOrg, 'orgid');
+            sinon.assert.calledWith(this.accessChecker.canCreateSpaceInOrganization, 'orgid');
           });
 
           it('calls client lib with data', function() {
@@ -253,10 +230,6 @@ describe('Create Space controller', function () {
 
           it('shows server error', function() {
             sinon.assert.called(this.notification.warn);
-          });
-
-          it('does stop spinner', function() {
-            sinon.assert.called(stubs.stop);
           });
 
           it('broadcasts space creation failure', function() {
@@ -285,12 +258,8 @@ describe('Create Space controller', function () {
             sinon.assert.calledWith(this.broadcastStub, 'spaceCreationRequested');
           });
 
-          it('starts spinner', function() {
-            sinon.assert.called(this.cfSpinner.start);
-          });
-
           it('checks for creation permission', function() {
-            sinon.assert.calledWith(scope.permissionController.canCreateSpaceInOrg, 'orgid');
+            sinon.assert.calledWith(this.accessChecker.canCreateSpaceInOrganization, 'orgid');
           });
 
           it('calls client lib with data', function() {
@@ -319,10 +288,6 @@ describe('Create Space controller', function () {
 
           it('selects space', function() {
             sinon.assert.calledWith(spaceTools.goTo, space);
-          });
-
-          it('stops spinner', function() {
-            sinon.assert.called(stubs.stop);
           });
 
           it('broadcasts space creation', function() {

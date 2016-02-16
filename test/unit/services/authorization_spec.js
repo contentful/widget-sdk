@@ -92,29 +92,3 @@ describe('Authorization service', function () {
     });
   });
 });
-
-describe('reasonsDenied service', function () {
-  var reasonsDenied;
-  var authorizationStub, reasonsStub;
-  beforeEach(function () {
-    authorizationStub = sinon.stub();
-    module('contentful/test', function ($provide) {
-      $provide.service('authorization', authorizationStub);
-      reasonsStub = sinon.stub();
-      authorizationStub.returns({
-        spaceContext: {
-          reasonsDenied: reasonsStub
-        }
-      });
-    });
-    inject(function (_reasonsDenied_) {
-      reasonsDenied = _reasonsDenied_;
-    });
-  });
-
-  it('calls reasonsDenied from authorization', function () {
-    reasonsDenied();
-    sinon.assert.called(reasonsStub);
-  });
-});
-

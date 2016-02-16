@@ -20,8 +20,6 @@ describe('Client Controller', function () {
         'go',
       ]);
 
-      $provide.removeControllers('TrialWatchController');
-
       $provide.value('$document', [{ title: '' }]);
 
       setMockOnContext(self, 'analyticsStubs', [

@@ -1,10 +1,11 @@
 'use strict';
 
 describe('FormWidgetsController#widgets', function () {
-  var scope;
-  var field;
+  var scope, field;
 
   beforeEach(function () {
+    var getStoreWidgets;
+
     var TheLocaleStore = this.TheLocaleStoreMock = {
       getActiveLocales: sinon.stub(),
       getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'}),
@@ -12,8 +13,18 @@ describe('FormWidgetsController#widgets', function () {
     };
 
     module('contentful/test', function ($provide) {
+      function mockWidgetStore() {
+        function WidgetStore(space) {
+          this.space = space;
+        }
+        WidgetStore.prototype.getMap = getStoreWidgets;
+        return WidgetStore;
+      }
+
+      $provide.factory('widgets/store', mockWidgetStore);
       $provide.value('TheLocaleStore', TheLocaleStore);
     });
+
 
     scope = this.$inject('$rootScope').$new();
 
@@ -23,6 +34,16 @@ describe('FormWidgetsController#widgets', function () {
 
     field = cfStub.field('foo');
     this.contentType.data.fields = [field];
+
+    scope.contentType = this.contentType;
+
+    this.setupWidgets = function (ws) {
+      getStoreWidgets = sinon.stub().resolves(ws);
+      var widgets = this.$inject('widgets');
+      widgets.setSpace();
+      this.$apply();
+      this.createController();
+    };
 
     this.createController = function () {
       var editingInterfaces = this.$inject('editingInterfaces');
@@ -34,25 +55,31 @@ describe('FormWidgetsController#widgets', function () {
       });
       this.$apply();
     };
-    this.createController();
+
   });
 
 
   it('provides the widget template', function() {
-    var widgets = this.$inject('widgets');
-    var widgetsStore = this.$inject('widgets/store');
-    widgetsStore.getMap = sinon.stub().resolves({
+    field.type = 'foo';
+    this.setupWidgets({
       foo: {
         template: '<span class=foo></span>',
         fieldTypes: ['foo']
       }
     });
-    widgets.setSpace({});
-    this.$apply();
-
-    field.type = 'foo';
-    this.createController();
     expect(scope.widgets[0].template).toBe('<span class=foo></span>');
+  });
+
+  it('filters sidebar widgets', function () {
+    field.type = 'foo';
+    this.setupWidgets({
+      foo: {
+        template: '<span class=foo></span>',
+        fieldTypes: ['foo'],
+        sidebar: true
+      }
+    });
+    expect(scope.widgets.length).toBe(0);
   });
 
 
@@ -78,63 +105,6 @@ describe('FormWidgetsController#widgets', function () {
       scope.errorPaths = {'foo': true};
       this.$apply();
       expect(scope.widgets.length).toBe(1);
-    });
-  });
-
-
-
-  describe('with multiple locales', function () {
-    beforeEach(function () {
-      var locales = [
-        {internal_code: 'en-US'},
-        {internal_code: 'de-DE'}
-      ];
-      this.TheLocaleStoreMock.getActiveLocales.returns(locales);
-      this.TheLocaleStoreMock.getPrivateLocales.returns(locales);
-    });
-
-    it('should contain active locales if localized', function () {
-      field.localized = true;
-      this.$apply();
-      expect(scope.widgets[0].locales.length).toBe(2);
-    });
-
-    it('should contain only default locale if not localized', function () {
-      field.localized = false;
-      this.$apply();
-      expect(scope.widgets[0].locales.length).toBe(1);
-      expect(scope.widgets[0].locales[0].internal_code).toBe('en-US');
-    });
-
-    it('should contain all error locales even if not localized', function () {
-      scope.errorPaths = { foo: ['en-US', 'de-DE'] };
-      field.localized = false;
-      this.$apply();
-      expect(scope.widgets[0].locales.length).toBe(2);
-    });
-
-    describe('with validation errors', function () {
-      beforeEach(inject(function (cfStub){
-        this.contentType.data.fields = [
-          cfStub.field('id1', {apiName: 'apiName1',  localized: true, type: 'Symbol'}),
-          cfStub.field('id2', {apiName: 'apiName2',  localized: false, type: 'Symbol'})
-        ];
-        scope.errorPaths = {
-          'localized': ['en-US', 'de-DE'],
-          'nonlocalized': ['en-US'],
-        };
-        this.createController();
-      }));
-
-
-      it('displays all locales for localized fields', function () {
-        expect(scope.widgets[0].locales.length).toBe(2);
-      });
-
-      it('displays the default locale for non-localized fields', function () {
-        expect(scope.widgets[1].locales.length).toBe(1);
-        expect(scope.widgets[1].locales[0].internal_code).toBe('en-US');
-      });
     });
   });
 });

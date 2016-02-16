@@ -18,20 +18,34 @@ angular.module('contentful')
 .controller('FormWidgetsController',
   ['$scope', '$injector', 'contentType', 'editingInterface',
   function($scope, $injector, contentType, editingInterface) {
-  var TheLocaleStore    = $injector.get('TheLocaleStore');
-  var widgets           = $injector.get('widgets');
-  var editingInterfaces = $injector.get('editingInterfaces');
 
-  $scope.$watch(getActiveLocaleCodes,             updateWidgets, true);
-  $scope.$watch('preferences.showDisabledFields', updateWidgets);
-  $scope.$watch('errorPaths',                     updateWidgets);
+  var Widgets = $injector.get('widgets');
+  var eiHelpers = $injector.get('editingInterfaces/helpers');
+  var analytics = $injector.get('analyticsEvents');
 
+  $scope.$watchGroup(
+    ['preferences.showDisabledFields', 'errorPaths'],
+    updateWidgets
+  );
+
+  // Executed only once when 'widgets' is not undefined.
+  $scope.$watch('::widgets', function (widgets) {
+    _.forEach(widgets, trackCustomWidgetRendered);
+  });
+
+  function trackCustomWidgetRendered (widget) {
+    analytics.trackWidgetEventIfCustom(
+      'Custom Widget rendered',
+      widget, widget.field,
+      { contentTypeId: $scope.contentType.getId() }
+    );
+  }
 
   /**
    * Retrieve the widgets from the current editingInterface, build the
    * form widgets, and add them to the scope.
    */
-  function updateWidgets() {
+  function updateWidgets () {
     $scope.widgets = _(editingInterface.data.widgets)
       .map(buildWidget)
       .filter(widgetIsVisible)
@@ -39,45 +53,25 @@ angular.module('contentful')
   }
 
   function buildWidget (widget) {
-    var field = editingInterfaces.findField(contentType.data.fields, widget);
-    // TODO we should use `fieldFactory.getLocaleCodes(field)`
-    var locales = _(getFieldLocales(field))
-      .union(getErrorLocales(field))
-      .filter(_.isObject)
-      .uniq('internal_code')
-      .value();
-    var renderable = widgets.buildRenderable(widget, locales);
+    var field = eiHelpers.findField(contentType.data.fields, widget);
+    var renderable = Widgets.buildRenderable(widget);
     renderable.field = field;
     return renderable;
   }
 
 
-  function getActiveLocaleCodes() {
-    return _.pluck(TheLocaleStore.getActiveLocales(), 'internal_code');
-  }
-
   function widgetIsVisible(widget) {
-    return fieldIsVisible(widget.field);
+    if (widget.sidebar){
+      return false;
+    } else {
+      return fieldIsVisible(widget.field);
+    }
   }
 
   function fieldIsVisible (field) {
     var isNotDisabled = !field.disabled || $scope.preferences.showDisabledFields;
     var hasErrors = $scope.errorPaths && $scope.errorPaths[field.id];
     return isNotDisabled || hasErrors;
-  }
-
-  function getFieldLocales(field) {
-    if (field.localized) {
-      return TheLocaleStore.getActiveLocales();
-    } else {
-      return [TheLocaleStore.getDefaultLocale()];
-    }
-  }
-
-  function getErrorLocales(field) {
-    return $scope.errorPaths && _.map($scope.errorPaths[field.id], function (code) {
-      return _.find(TheLocaleStore.getPrivateLocales(), {internal_code: code});
-    });
   }
 
 }]);

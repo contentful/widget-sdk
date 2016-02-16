@@ -28,6 +28,14 @@ angular.module('contentful').controller('EntryLinkEditorController', [
   controller.linkDescription = linkDescription;
   controller.entityExists = entityExists;
 
+  $scope.$watch(function () {
+    var isDisabled= $scope.isDisabled($scope.field, $scope.locale);
+    var linkedCount = dotty.get($scope, 'linkedEntities.length', 0);
+    return !isDisabled && linkedCount > 1;
+  }, function (isDraggable) {
+    $scope.isDraggable = isDraggable;
+  });
+
   $scope.$on('$destroy', function () {
     controller.linkedAssetsCache = null;
   });
@@ -55,7 +63,7 @@ angular.module('contentful').controller('EntryLinkEditorController', [
     if (entityExists(entity)) {
       return $scope.spaceContext.entryTitle(entity, $scope.locale.internal_code);
     } else {
-      return '(Missing entity)';
+      return 'Entity is missing or inaccessible due to your access level';
     }
   }
 

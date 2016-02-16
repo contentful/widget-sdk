@@ -2,13 +2,14 @@
 
 angular.module('contentful')
 .controller('EntryEditorController', ['$scope', '$injector', function EntryEditorController($scope, $injector) {
-  var $controller       = $injector.get('$controller');
-  var logger            = $injector.get('logger');
-  var TheLocaleStore    = $injector.get('TheLocaleStore');
-  var notifier          = $injector.get('entryEditor/notifications');
-  var spaceContext      = $injector.get('spaceContext');
-  var truncate          = $injector.get('stringUtils').truncate;
-  var fieldFactory      = $injector.get('fieldFactory');
+  var $controller    = $injector.get('$controller');
+  var logger         = $injector.get('logger');
+  var TheLocaleStore = $injector.get('TheLocaleStore');
+  var spaceContext   = $injector.get('spaceContext');
+  var fieldFactory   = $injector.get('fieldFactory');
+  var notifier       = $injector.get('entryEditor/notifications');
+  var truncate       = $injector.get('stringUtils').truncate;
+  var accessChecker  = $injector.get('accessChecker');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
@@ -30,8 +31,11 @@ angular.module('contentful')
 
   $scope.notifications = $controller('entityEditor/StatusNotificationsController', {
     $scope: $scope,
-    entityLabel: 'entry'
+    entityLabel: 'entry',
+    isReadOnly: isReadOnly
   });
+
+  $controller('entityEditor/FieldAccessController', {$scope: $scope});
 
   $scope.$watch(function () {
     return spaceContext.entryTitle($scope.entry);
@@ -55,10 +59,10 @@ angular.module('contentful')
   });
 
   // OT Stuff
-  $scope.$watch(function entryEditorEnabledWatcher(scope) {
-    return !scope.entry.isArchived() && scope.permissionController.can('update', scope.entry.data).can;
-  }, function entryEditorEnabledHandler(enabled, old, scope) {
-    scope.otDoc.state.disabled = !enabled;
+  $scope.$watch(function entryEditorDisabledWatcher() {
+    return $scope.entry.isArchived() || isReadOnly();
+  }, function entryEditorDisabledHandler(disabled) {
+    $scope.otDoc.state.disabled = disabled;
   });
 
   // Validations
@@ -244,5 +248,9 @@ angular.module('contentful')
     } else {
       return 'This reference requires an entry of an unexistent content type';
     }
+  }
+
+  function isReadOnly() {
+    return !accessChecker.canUpdateEntry($scope.entry);
   }
 }]);

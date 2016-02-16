@@ -51,5 +51,5 @@ header.workbench-header
                       span(tooltip="{{getHelpText(field.type)}}" tooltip-html="true")
                         | {{field.type}}
 
-      .advice(ng-show="visibleContentTypes | isEmpty")
-        include ../../shared/create_content_type_advice
+      p(ng-show="visibleContentTypes | isEmpty")
+        | There are no Content Types yet.

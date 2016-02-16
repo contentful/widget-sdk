@@ -23,9 +23,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var TheStore           = $injector.get('TheStore');
   var OrganizationList   = $injector.get('OrganizationList');
 
-  $controller('TrialWatchController', {$scope: $scope});
-
-  $scope.permissionController = $controller('PermissionController');
   $scope.featureController = $controller('FeatureController', {$scope: $scope});
   $scope.spaceContext = spaceContext;
 
@@ -86,11 +83,11 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function spaceAndTokenWatchHandler(collection) {
-    if (collection.tokenLookup){
+    if (collection.tokenLookup) {
       authorization.setTokenLookup(collection.tokenLookup);
-      if (collection.space && authorization.authContext && authorization.authContext.hasSpace(collection.space.getId()))
+      if (collection.space && authorization.authContext && authorization.authContext.hasSpace(collection.space.getId())) {
         authorization.setSpace(collection.space);
-        $scope.permissionController.initialize(authorization.spaceContext);
+      }
     }
   }
 

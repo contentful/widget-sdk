@@ -7,10 +7,7 @@ angular.module('contentful')
     template: JST.cf_space_selector(),
     restrict: 'E',
     replace: true,
-    scope: {
-      spaces: '=',
-      permissionController: '='
-    },
+    scope: {spaces: '='},
     controller: 'cfSpaceSelectorController'
   };
 })
@@ -22,13 +19,13 @@ angular.module('contentful')
   var spaceContext     = $injector.get('spaceContext');
   var spaceTools       = $injector.get('spaceTools');
   var OrganizationList = $injector.get('OrganizationList');
+  var accessChecker    = $injector.get('accessChecker');
 
   $scope.$watch('spaces', groupSpacesByOrganization);
-  $scope.$watch(OrganizationList.isEmpty, function (isEmpty) {
-    $scope.hasOrgnizations = !isEmpty;
-  });
 
   $scope.spaceContext = spaceContext;
+  $scope.canCreateSpace = accessChecker.canCreateSpace;
+  $scope.canCreateSpaceInAnyOrganization = accessChecker.canCreateSpaceInAnyOrganization;
   $scope.clickedSpaceSwitcher = clickedSpaceSwitcher;
   $scope.getOrganizationName = OrganizationList.getName;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;

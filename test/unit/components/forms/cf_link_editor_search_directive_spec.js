@@ -25,17 +25,6 @@ describe('cfLinkEditorSearch Directive', function () {
         internal_code: 'en-US'
       };
 
-      scope.permissionController = {
-        createEntry: {
-          shouldHide: false,
-          shouldDisable: false
-        },
-        createAsset: {
-          shouldHide: false,
-          shouldDisable: false
-        }
-      };
-
       scope.spaceContext = {
         localizedField: stubs.localizedField,
         publishedTypeForEntry: stubs.publishedType

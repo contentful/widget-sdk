@@ -18,11 +18,14 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
   var searchQueryHelper = $injector.get('searchQueryHelper');
   var buildSearchQuery  = $injector.get('search/queryBuilder');
   var $state            = $injector.get('$state');
+  var accessChecker     = $injector.get('accessChecker');
 
   var controller = this;
   var entityLoader = new PromisedLoader();
   var fetchMethod;
   $scope.paginator = new Paginator();
+  $scope.shouldHide = accessChecker.shouldHide;
+  $scope.shouldDisable = accessChecker.shouldDisable;
 
   $scope.entityType = $attrs.entityType;
   if ($scope.entityType === 'Entry'){

@@ -1,71 +1,122 @@
 'use strict';
 
 describe('Widget types service', function () {
-  var widgets, widgetStore, $rootScope;
+  var widgets;
 
   beforeEach(function () {
-    module('contentful/test');
-    widgets = this.$inject('widgets');
-    widgetStore = this.$inject('widgets/store');
-    $rootScope = this.$inject('$rootScope');
-    widgets.setSpace({
-      endpoint: sinon.stub().returns({
-        get: sinon.stub().resolves([])
-      })
-    });
-    this.$apply();
+    module('contentful/test', function ($provide) {
+      function mockWidgetStore() {
+        function WidgetStore(space) {
+          this.space = space;
+        }
+        WidgetStore.prototype.getMap = sinon.stub();
+        return WidgetStore;
+      }
 
-    this.setWidgets = function (ws) {
-      widgetStore.getMap = sinon.stub().resolves(ws);
-      widgets.setSpace({});
+      $provide.factory('widgets/store', mockWidgetStore);
+    });
+
+    this.setupWidgets = function(ws) {
+      var builtinWidgets = this.$inject('widgets/builtin');
+
+      var WidgetStore = this.$inject('widgets/store');
+      WidgetStore.prototype.getMap.resolves(ws || builtinWidgets);
+
+      widgets = this.$inject('widgets');
+      widgets.setSpace();
       this.$apply();
     };
+
   });
 
-  describe('forField', function(){
-    function testTypesFor(fieldType) {
-      describe('gets widget types for a field with type '+fieldType, function() {
-        var types;
+  describe('#setSpace()', function () {
+
+    beforeEach(function () {
+      var WidgetStore = this.$inject('widgets/store');
+      WidgetStore.prototype.getMap.resolves();
+      widgets = this.$inject('widgets');
+    });
+
+    it('calls WidgetStore.getMap()', function () {
+      var WidgetStore = this.$inject('widgets/store');
+      var space = {};
+      widgets.setSpace(space);
+      sinon.assert.calledWithExactly(WidgetStore.prototype.getMap);
+    });
+
+    pit('returns the service when the store has fetched the widgets', function () {
+      return widgets.setSpace()
+      .then(function (widgets_) {
+        expect(widgets).toBe(widgets_);
+      });
+    });
+  });
+
+  describe('#getAvailable()', function(){
+    beforeEach(function () {
+      // Disable checking if a widget is misconfigured since this
+      // involves API requests.
+      var widgetChecks = this.$inject('widgets/checks');
+      widgetChecks.markMisconfigured = function (widgets) {
+        return widgets;
+      };
+
+      this.setupWidgets();
+
+    });
+
+    it ('calls store.getMap()', function() {
+      var WidgetStore = this.$inject('widgets/store');
+      var getMap = WidgetStore.prototype.getMap;
+      sinon.assert.calledOnce(getMap);
+      widgets.getAvailable('number');
+      sinon.assert.calledTwice(getMap);
+    });
+
+
+    function testAvilableForFieldType (fieldType) {
+      describe('for field type "' + fieldType + '"', function() {
+        var availableWidgets;
         beforeEach(function() {
-          widgets.forField({type: fieldType}).then(function (_types) {
-            types = _types;
+          widgets.getAvailable({type: fieldType}).then(function (_widgets) {
+            availableWidgets = _widgets;
           });
-          $rootScope.$apply();
+          this.$apply();
         });
 
-        it('gets types list', function() {
-          expect(types.length).not.toBeUndefined();
+        it('returns at least one widget', function() {
+          expect(availableWidgets.length).toBeGreaterThan(0);
         });
 
-        it('types have ids', function() {
-          expect(_.every(types, function (item) {
-            return item.id && item.name;
-          })).toBeTruthy();
+        it('each widget has "id" and "name" property', function() {
+          expect(_.every(availableWidgets, function (widget) {
+            return widget.id && widget.name;
+          })).toBe(true);
         });
       });
     }
 
-    testTypesFor('Text');
-    testTypesFor('Symbol');
-    testTypesFor('Symbols');
-    testTypesFor('Integer');
-    testTypesFor('Number');
-    testTypesFor('Boolean');
-    testTypesFor('Date');
-    testTypesFor('Location');
-    testTypesFor('Asset');
-    testTypesFor('Entry');
-    testTypesFor('Assets');
-    testTypesFor('Entries');
-    testTypesFor('File');
-    testTypesFor('Object');
+    testAvilableForFieldType('Text');
+    testAvilableForFieldType('Symbol');
+    testAvilableForFieldType('Symbols');
+    testAvilableForFieldType('Integer');
+    testAvilableForFieldType('Number');
+    testAvilableForFieldType('Boolean');
+    testAvilableForFieldType('Date');
+    testAvilableForFieldType('Location');
+    testAvilableForFieldType('Asset');
+    testAvilableForFieldType('Entry');
+    testAvilableForFieldType('Assets');
+    testAvilableForFieldType('Entries');
+    testAvilableForFieldType('File');
+    testAvilableForFieldType('Object');
 
-    it('fails to get widget for an unknown type', function() {
+    it('rejects promise if field type has no widget', function() {
       var err;
-      widgets.forField({type: 'unsupportedtype'}).catch(function (_err) {
+      widgets.getAvailable({type: 'unsupportedtype'}).catch(function (_err) {
         err = _err;
       });
-      $rootScope.$apply();
+      this.$apply();
       expect(err).not.toBeUndefined();
     });
   });
@@ -81,6 +132,9 @@ describe('Widget types service', function () {
       };
 
       field = {};
+
+      this.setupWidgets();
+
     });
 
     it('with an unexistent field', function() {
@@ -172,6 +226,9 @@ describe('Widget types service', function () {
   });
 
   describe('optionsForWidget', function(){
+    beforeEach(function() {
+      this.setupWidgets();
+    });
     it('should return empty array for missing widget', function () {
       expect(widgets.optionsForWidget('foobar')).toEqual([]);
       expect(widgets.optionsForWidget(null)).toEqual([]);
@@ -188,7 +245,7 @@ describe('Widget types service', function () {
 
   describe('paramDefaults', function(){
     it('should contain the defaults for every param', function() {
-      this.setWidgets({'herp': {
+      this.setupWidgets({'herp': {
         options: [
           {param: 'foo', default: 123 },
           {param: 'bar', default: 'derp'},
@@ -204,16 +261,6 @@ describe('Widget types service', function () {
 
     it('should be an empty object for unknown widgets', function(){
       expect(widgets.paramDefaults('lolnope')).toEqual({});
-    });
-  });
-
-  describe('widgetTemplate', function(){
-    it('returns the template property for a widget', function () {
-      this.setWidgets({'foo': {fieldTypes: ['Text'], template: 'bar'}});
-      expect(widgets.widgetTemplate('foo')).toBe('bar');
-    });
-    it('returns a warning for a missing widget', function () {
-      expect(widgets.widgetTemplate('derp')).toBe('<div class="missing-widget-template">Unknown editor widget "derp"</div>');
     });
   });
 
@@ -249,7 +296,7 @@ describe('Widget types service', function () {
           {param: 'y', default: 0}
         ]
       };
-      this.setWidgets({test: descriptor});
+      this.setupWidgets({test: descriptor});
     });
 
     function feedTest(pairs) {
@@ -311,16 +358,14 @@ describe('Widget types service', function () {
 
   describe('#buildRenderable()', function () {
 
+    beforeEach(function() {
+      this.setupWidgets();
+    });
+
     it('has widget’s template property', function () {
       var renderable = widgets.buildRenderable({widgetId: 'singleLine'});
       var template = widgets.get('singleLine').template;
       expect(renderable.template).toEqual(template);
-    });
-
-    it('assigns locales', function () {
-      var locales = ['my locales'];
-      var renderable = widgets.buildRenderable({widgetId: 'singleLine'}, locales);
-      expect(renderable.locales).toBe(locales);
     });
 
     it('keeps widgetParams property', function () {
@@ -330,5 +375,61 @@ describe('Widget types service', function () {
       expect(renderable.widgetParams).toBe(params);
     });
 
+    it('sets "sidebar" property', function () {
+      this.setupWidgets({
+        'WIDGET': {sidebar: true}
+      });
+      var renderable = widgets.buildRenderable({widgetId: 'WIDGET'});
+      expect(renderable.sidebar).toBe(true);
+    });
+
+    it('sets fallback template if widget does not exist', function () {
+      var renderable = widgets.buildRenderable({widgetId: 'does not exist'});
+      expect(renderable.template).toMatch('Unknown editor widget "does not exist"');
+    });
+
+  });
+
+  describe('#buildSidebarWidgets()', function () {
+    var apiWidgets, fields;
+
+    beforeEach(function () {
+      apiWidgets = [{fieldId: 'FIELD', widgetId: 'WIDGET'}];
+      fields = [{id: 'FIELD'}];
+      this.setupWidgets({
+        'WIDGET': {sidebar: true, template: 'TEMPLATE'}
+      });
+    });
+
+    it('adds field data to the widget', function () {
+      var renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
+      expect(renderable[0].field).toBe(fields[0]);
+    });
+
+    it('adds descriptor data to the widget', function () {
+      var renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
+      expect(renderable[0].sidebar).toEqual(true);
+      expect(renderable[0].template).toEqual('TEMPLATE');
+    });
+
+    it('filters non-sidebar widgets', function () {
+      var widgetDescriptor = {sidebar: true};
+      this.setupWidgets({ 'WIDGET': widgetDescriptor });
+
+      var renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
+      expect(renderable.length).toEqual(1);
+
+      widgetDescriptor.sidebar = false;
+      renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
+      expect(renderable.length).toEqual(0);
+    });
+
+    it('filters widgets without fields', function () {
+      var renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
+      expect(renderable.length).toEqual(1);
+
+      renderable = widgets.buildSidebarWidgets(apiWidgets, [{id: 'OTHER'}]);
+      expect(renderable.length).toEqual(0);
+    });
   });
 });

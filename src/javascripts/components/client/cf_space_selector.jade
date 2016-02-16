@@ -1,6 +1,5 @@
 .space-selector.app-top-bar__child.app-top-bar--right-separator(
-  ng-show="hasOrganizations"
-  ng-hide="spaces.length == 0 && !permissionController.canCreateSpaceInAnyOrg()")
+  ng-show="spaces.length > 0 || canCreateSpaceInAnyOrganization()")
   a.app-top-bar__menu-trigger(
     role="button"
     cf-context-menu-trigger ng-click="clickedSpaceSwitcher()"
@@ -21,7 +20,7 @@
           ng-class="{selected: space.getId() === spaceContext.getId()}")
           | {{space.data.name}}
     .space-selector__group(
-      ng-show="permissionController.canCreateSpace()")
+      ng-show="canCreateSpace()")
       .space-selector__add-button.context-menu__item(
         role="menuitem"
         ng-click="showCreateSpaceDialog()")

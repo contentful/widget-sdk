@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Asset List Actions Controller', function () {
-  var controller, scope, stubs;
+  var controller, scope, stubs, accessChecker;
   var action1, action2, action3, action4;
 
   beforeEach(function () {
@@ -34,7 +34,7 @@ describe('Asset List Actions Controller', function () {
       $provide.value('$timeout', stubs.timeout);
     });
 
-    inject(function ($rootScope, $controller, $q) {
+    inject(function ($rootScope, $controller, $q, _accessChecker_) {
       $rootScope.$broadcast = stubs.broadcast;
       scope = $rootScope.$new();
 
@@ -59,9 +59,8 @@ describe('Asset List Actions Controller', function () {
         }
       };
 
-      scope.permissionController = {
-        get: sinon.stub()
-      };
+      accessChecker = _accessChecker_;
+      accessChecker.canPerformActionOnEntity = sinon.stub();
 
       controller = $controller('AssetListActionsController', {$scope: scope});
     });
@@ -76,7 +75,7 @@ describe('Asset List Actions Controller', function () {
     return entity;
   }
 
-  function makePerformTests(action, actionIndex, extraSpecs){
+  function makePerformTests(action, extraSpecs){
     describe(action+' selected assets', function () {
       beforeEach(function () {
         stubs.getVersion.returns(3);
@@ -141,7 +140,7 @@ describe('Asset List Actions Controller', function () {
     });
   }
 
-  makePerformTests('publish', 1, function () {
+  makePerformTests('publish', function () {
     it('gets version of selected assets', function () {
       expect(stubs.getVersion.callCount).toBe(4);
     });
@@ -151,22 +150,24 @@ describe('Asset List Actions Controller', function () {
     });
   });
 
-  makePerformTests('unpublish', 0);
-  makePerformTests('delete', 0, function () {
+  makePerformTests('unpublish');
+  makePerformTests('delete', function () {
     it('broadcasts event for sucessfully deleted asset', function () {
       sinon.assert.calledWith(stubs.broadcast, 'entityDeleted');
     });
   });
 
-  makePerformTests('archive', 0);
-  makePerformTests('unarchive', 0);
+  makePerformTests('archive');
+  makePerformTests('unarchive');
 
   function makePermissionTests(action){
     var methodName = 'show'+action.charAt(0).toUpperCase()+action.substr(1);
     var canMethodName = 'can'+action.charAt(0).toUpperCase()+action.substr(1);
+
     it('can show '+action+' action', function () {
       stubs.action1.returns(true);
       stubs.action2.returns(true);
+      accessChecker.canPerformActionOnEntity.returns(true);
       stubs.getSelected.returns([
         makeEntity(canMethodName, stubs.action1),
         makeEntity(canMethodName, stubs.action2)
@@ -176,9 +177,9 @@ describe('Asset List Actions Controller', function () {
     });
 
     it('cannot show delete '+action+' because no general permission', function () {
-      scope.permissionController.get.withArgs(action+'Asset', 'shouldHide').returns(true);
       stubs.action1.returns(true);
       stubs.action2.returns(true);
+      accessChecker.canPerformActionOnEntity.returns(false);
       stubs.getSelected.returns([
         makeEntity(canMethodName, stubs.action1),
         makeEntity(canMethodName, stubs.action2)
@@ -190,6 +191,7 @@ describe('Asset List Actions Controller', function () {
     it('cannot show '+action+' action because no permission on item', function () {
       stubs.action1.returns(true);
       stubs.action2.returns(false);
+      accessChecker.canPerformActionOnEntity.returns(true);
       stubs.getSelected.returns([
         makeEntity(canMethodName, stubs.action1),
         makeEntity(canMethodName, stubs.action2)

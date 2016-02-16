@@ -59,11 +59,11 @@ angular.module('contentful')
 
   var validations       = $injector.get('validationDecorator');
   var field             = $injector.get('fieldDecorator');
-  var trackField        = $injector.get('analyticsEvents').trackField;
+  var analyticsEvents   = $injector.get('analyticsEvents');
   var fieldFactory      = $injector.get('fieldFactory');
   var Widgets           = $injector.get('widgets');
   var features          = $injector.get('features');
-  var editingInterfaces = $injector.get('editingInterfaces');
+  var eiHelpers         = $injector.get('editingInterfaces/helpers');
 
   $scope.decoratedField = field.decorate($scope.field, $scope.contentType);
   $scope.validations = validations.decorateFieldValidations($scope.field);
@@ -71,7 +71,8 @@ angular.module('contentful')
   $scope.currentTitleField = getTitleField($scope.contentType);
 
   var eiWidgets = $scope.editingInterface.data.widgets;
-  var widget = editingInterfaces.findWidget(eiWidgets, $scope.field);
+  var widget = eiHelpers.findWidget(eiWidgets, $scope.field);
+  var initialWidgetId = widget.widgetId;
 
   $scope.widgetSettings = {
     id: widget.widgetId,
@@ -106,11 +107,15 @@ angular.module('contentful')
     validations.updateField($scope.field, $scope.validations);
 
     var params = $scope.widgetSettings.params;
-    var id = $scope.widgetSettings.id;
+    var widgetId = $scope.widgetSettings.id;
     _.extend(widget, {
-      widgetId: id,
-      widgetParams: Widgets.filteredParams(id, params)
+      widgetId: widgetId,
+      widgetParams: Widgets.filteredParams(widgetId, params)
     });
+
+    if (widgetId !== initialWidgetId) {
+      trackCustomWidgetSelected($scope.field, widget);
+    }
 
     trackFieldSettingsSuccess($scope.field);
     dialog.confirm();
@@ -143,7 +148,7 @@ angular.module('contentful')
    * @param originatingFieldType
    */
   function trackFieldSettingsError (field) {
-    trackField('Saved Errored Field Settings Modal', field);
+    analyticsEvents.trackField('Saved Errored Field Settings Modal', field);
   }
 
   /**
@@ -153,7 +158,23 @@ angular.module('contentful')
    * @param originatingFieldType
    */
   function trackFieldSettingsSuccess (field) {
-    trackField('Saved Successful Field Settings Modal', field);
+    analyticsEvents.trackField('Saved Successful Field Settings Modal', field);
+  }
+
+  /**
+   * @ngdoc analytics-event
+   * @name Custom Widget Selected
+   * @param widgetId
+   * @param widgetName
+   * @param fieldType
+   * @param contentTypeId
+   */
+  function trackCustomWidgetSelected (field, widgetLink) {
+    analyticsEvents.trackWidgetEventIfCustom(
+      'Custom Widget selected',
+      widgetLink, field,
+      { contentTypeId: $scope.contentType.getId() }
+    );
   }
 
 }])
