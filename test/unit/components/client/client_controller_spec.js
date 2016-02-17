@@ -226,7 +226,7 @@ describe('Client Controller', function () {
       });
 
       it('shows create space dialog', function() {
-        sinon.assert.calledWith(scope.showCreateSpaceDialog, '123abc');
+        sinon.assert.called(scope.showCreateSpaceDialog);
       });
     });
 
@@ -398,25 +398,13 @@ describe('Client Controller', function () {
       scope.showCreateSpaceDialog();
       sinon.assert.called(this.analyticsStubs.track);
     });
-
-    describe('with an organizationId', function () {
-      it('displays that organization first in the dropdown', function () {
-        scope.showCreateSpaceDialog('def');
-        expect(this.modalDialogStubs.open.args[0][0].scope.organizations[0].sys.id).toBe('def');
-      });
-    });
-
-    describe('without an organizationId', function () {
-      it('displays organizations in original order in the dropdown', function () {
-        scope.showCreateSpaceDialog();
-        expect(this.modalDialogStubs.open.args[0][0].scope.organizations[0].sys.id).toBe('abc');
-      });
-    });
   });
 
   describe('initializes client', function () {
     beforeEach(function () {
       this.user = {sys: {}};
+
+
       this.revisionStubs.hasNewVersion = sinon.stub().resolves(true);
       this.tokenStoreStubs.refresh.resolves();
       this.broadcastStub = sinon.stub(this.$rootScope, '$broadcast');
@@ -524,5 +512,4 @@ describe('Client Controller', function () {
       });
     });
   });
-
 });

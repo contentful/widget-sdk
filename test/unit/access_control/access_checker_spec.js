@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Access Checker', function () {
-
   var $rootScope, spaceContext, authorization, enforcements, OrganizationList, policyChecker, ac;
   var getResStub, reasonsDeniedStub;
 

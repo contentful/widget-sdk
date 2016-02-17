@@ -18,7 +18,6 @@ angular.module('cf.ui')
     restrict: 'E',
     link: function (scope, el, attrs) {
       var icon = $(icons[attrs.name]);
-
       var scale = parseFloat(attrs.scale);
       if (scale === 0) {
         icon.removeAttr('width');

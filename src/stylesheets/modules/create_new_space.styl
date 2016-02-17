@@ -1,0 +1,135 @@
+@import '../variables/colors'
+
+.create-new-space-dialog
+  &.modal-dialog
+    width: 750px
+    text-align: center
+  &__header
+    background-color: white
+    border: 0
+    padding: 0
+  &__content.modal-dialog__content
+    padding: 0 30px 30px 30px
+  &__heading
+    line-height: 1.3em
+  &__subheading
+    font-size: 1.05em
+    line-height: 1.3em
+    color: $colors.text-mid
+  &__controls--right
+    justify-content: flex-end
+  &__controls--centered
+    justify-content: center
+
+.create-new-space__form
+  text-align: left
+  padding: 20px 12px 0 12px
+  .cfnext-form__fieldset__flex
+    display: flex
+    > .cfnext-form__field
+        width: 50%
+        &:first-child
+          padding-right: 10px
+        &:last-child
+          padding-left: 10px
+        > select, > input
+          width: 100%
+  .create-new-space__form__option
+    margin-bottom: 10px
+.create-new-space__templates
+  position: relative
+  text-align: left
+  transition: height 0.2s ease-in-out
+  height: 0
+  overflow: hidden
+  padding: 0
+  &.open
+    overflow: hidden
+    height: 310px
+  &__inner
+    padding: 30px 42px
+    margin-top: 11px;
+    background-color: $colors.element-lightest
+    border-top: 1px solid $colors.element-mid
+    border-bottom: 1px solid $colors.element-mid
+
+  cf-icon[name="arrow-up"]
+    position: absolute
+    left: 38px
+  path
+    fill: $colors.element-lightest
+
+  &__nav
+    display: flex
+    border-left: 1px solid $colors.element-mid
+
+  &__navitem
+    cursor: pointer
+    display: flex
+    color: $colors.text-light
+    font-weight: bold
+    border: 1px solid $colors.element-mid
+    border-left-width: 0
+    padding: 8px
+    path
+      fill: $colors.text-light
+    &.selected
+      color: $colors.text-dark
+      border-bottom-width: 0
+      background-color: white
+      path
+        fill: $colors.green-mid
+    &__icon
+      padding-right: 5px
+
+  &__description
+    overflow: auto
+    display: flex
+    background-color: white
+    padding: 20px
+    border: 1px solid $colors.element-mid
+    border-top-width: 0
+  &__image
+    width: 220px
+    min-width: 220px
+    max-width: 220px
+    height: 160px
+    border: 1px solid $colors.element-mid
+    margin-right: 20px
+  &__text
+    display: flex
+    align-items: center
+  &__entities
+    margin: 20px 0
+  &__entity
+    display: flex
+    text-align: left
+    margin-top: 30px
+    padding: 0 60px
+    &__description
+      margin-left: 20px
+      h3
+        margin: 0 0 10px 0
+  &__status
+    height: 27px
+    width: 27px
+    margin: 6px auto
+    .spinner
+      $spinner-base()
+      $spinner-active($colors.text-dark, $base-line-height*1.5)
+      &:after
+        display: block
+
+// Close button
+.create-new-space-dialog__close.modal-dialog__close
+  border: 1px solid $colors.element-mid
+  transform: none
+  background-color: transparent
+  border-top-right-radius: 2px
+  background-color: $colors.element-lightest
+  margin-left: auto
+  &:hover
+    background-color: $colors.element-light
+  &:after
+    font-size: 2em
+    line-height: 1em
