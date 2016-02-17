@@ -4,7 +4,7 @@ describe('analytics', function () {
   beforeEach(function () {
 
     module('contentful/test', function (environment) {
-      environment.env = 'analytics';
+      environment.env = 'production';
     });
 
     this.userData = {

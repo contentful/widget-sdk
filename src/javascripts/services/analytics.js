@@ -23,17 +23,17 @@ angular.module('contentful')
   var serviceName;
 
   if (forceDevMode()) {
-    serviceName = 'consoleLogAnalytics';
+    serviceName = 'analytics/consoleLog';
   } else if (shouldLoadAnalytics()) {
-    serviceName = 'analyticsAnalytics';
+    serviceName = 'analytics/track';
   } else {
-    serviceName = 'noopAnalytics';
+    serviceName = 'analytics/noop';
   }
 
   return $injector.get(serviceName);
 
   function shouldLoadAnalytics () {
-    var load = !environment.env.match(/acceptance|development|preview|test/);
+    var load = _.contains(['production', 'staging'], environment.env);
     return load || $location.search().forceAnalytics;
   }
 
@@ -52,7 +52,7 @@ angular.module('contentful')
  * noops.
  */
 angular.module('contentful')
-.factory('analyticsAnalytics', ['$injector', function ($injector) {
+.factory('analytics/track', ['$injector', function ($injector) {
   var segment       = $injector.get('segment');
   var totango       = $injector.get('totango');
   var fontsdotcom   = $injector.get('fontsdotcom');
@@ -264,9 +264,9 @@ angular.module('contentful')
  * noops.
  */
 angular.module('contentful')
-.factory('noopAnalytics', ['$injector', function ($injector) {
+.factory('analytics/noop', ['$injector', function ($injector) {
 
-  var analyticsAnalytics = $injector.get('analyticsAnalytics');
+  var analyticsAnalytics = $injector.get('analytics/track');
 
   return _.mapValues(analyticsAnalytics, _.constant(_.noop));
 }]);
@@ -281,11 +281,11 @@ angular.module('contentful')
  * helpful for debugging.
  */
 angular.module('contentful')
-.factory('consoleLogAnalytics', ['$injector', function ($injector) {
+.factory('analytics/consoleLog', ['$injector', function ($injector) {
 
-  var analyticsAnalytics = $injector.get('analyticsAnalytics');
+  var noopAnalytics = $injector.get('analytics/noop');
 
-  return _.extend(analyticsAnalytics, {
+  return _.extend({}, noopAnalytics, {
     track: trackStub,
     trackTotango: trackStub,
     enable: _.noop,
