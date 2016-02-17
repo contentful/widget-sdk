@@ -291,7 +291,9 @@ describe('Editing interfaces service', function () {
       function makeContentType(fields) {
         return {
           data: {fields: fields},
-          newEditingInterface: sinon.stub().returns({data: {widgets: []}}),
+          newEditingInterface: function (data) {
+            return {data: data};
+          },
           getId: sinon.stub()
         };
       }

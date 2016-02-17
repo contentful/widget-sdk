@@ -86,41 +86,39 @@ angular.module('contentful')
     return interf;
   }
 
-  function getEditingInterface(contentType) {
+  function getEditingInterface (contentType) {
     if (contentType.getId() === 'asset') {
-      return $q.when(assetInterface(contentType));
+      return $q.when(makeAssetInterface(contentType));
     } else {
       return contentType.getEditingInterface('default');
     }
   }
 
-  function defaultInterface(contentType) {
-    var data = {
-      sys: {
-        id: 'default',
-        type: 'EditingInterface'
-      },
-      title: 'Default',
-      widgets: []
-    };
-
-    var interf = contentType.newEditingInterface(data);
-    // TODO We should be able to replace this with a call to 'syncWidgets'.
-    interf.data.widgets = _.map(contentType.data.fields, _.partial(defaultWidget, contentType));
-    return interf;
+  function defaultInterface (contentType) {
+    var data = makeDefaultInterfaceData(contentType);
+    return contentType.newEditingInterface(data);
   }
 
-  function assetInterface(contentType) {
-    var data = {
+  function makeAssetInterface (contentType) {
+    // TODO We should hardcode the parameter since it is always called
+    // with the same content type, namely that for assets.
+    var data = makeDefaultInterfaceData(contentType);
+    return { data: data };
+  }
+
+  function makeDefaultInterfaceData (contentType) {
+    // TODO We should be able to replace this with a call to 'syncWidgets'.
+    var widgets = _.map(contentType.data.fields, _.partial(defaultWidget, contentType));
+    return {
+      widgets: widgets,
+      // TODO It is possible that none of the properties below is needed
       sys: {
         id: 'default',
         type: 'EditingInterface'
       },
-      title: 'Default',
       contentTypeId: contentType.getId(),
-      widgets: _.map(contentType.data.fields, _.partial(defaultWidget, contentType))
+      title: 'Default',
     };
-    return { data: data };
   }
 
   // TODO this is not inline with the field factory
