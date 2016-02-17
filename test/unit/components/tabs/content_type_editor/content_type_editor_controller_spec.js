@@ -8,9 +8,9 @@ describe('ContentTypeEditor Controller', function () {
   beforeEach(function () {
     var self = this;
     module('contentful/test', function ($provide) {
-      self.modifiedContentTypeStub = sinon.stub();
-      $provide.value('analytics', {
-        modifiedContentType: self.modifiedContentTypeStub
+      self.trackContentTypeChangeStub = sinon.stub();
+      $provide.value('analyticsEvents', {
+        trackContentTypeChange: self.trackContentTypeChangeStub
       });
 
       self.modalDialogOpenStub = sinon.stub();
@@ -198,7 +198,7 @@ describe('ContentTypeEditor Controller', function () {
 
       it('fires analytics event', function () {
         scope.$digest();
-        sinon.assert.called(this.modifiedContentTypeStub);
+        sinon.assert.called(this.trackContentTypeChangeStub);
       });
 
       it('adds field to editing interface', function () {

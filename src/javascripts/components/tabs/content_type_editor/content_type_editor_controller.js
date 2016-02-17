@@ -21,7 +21,6 @@ function ContentTypeEditorController($scope, $injector) {
   var $controller       = $injector.get('$controller');
   var $q                = $injector.get('$q');
   var $state            = $injector.get('$state');
-  var analytics         = $injector.get('analytics');
   var validation        = $injector.get('validation');
   var hints             = $injector.get('hints');
   var editingInterfaces = $injector.get('editingInterfaces');
@@ -29,6 +28,7 @@ function ContentTypeEditorController($scope, $injector) {
   var openFieldDialog   = $injector.get('openFieldDialog');
   var leaveConfirmator  = $injector.get('navigation/confirmLeaveEditor');
   var metadataDialog    = $injector.get('contentTypeEditor/metadataDialog');
+  var trackContentTypeChange = $injector.get('analyticsEvents').trackContentTypeChange;
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
@@ -200,7 +200,7 @@ function ContentTypeEditorController($scope, $injector) {
     data.fields.push(newField);
     $scope.$broadcast('fieldAdded', data.fields.length - 1);
     syncEditingInterface();
-    analytics.modifiedContentType('Modified ContentType', $scope.contentType, newField, 'add');
+    trackContentTypeChange('Modified ContentType', $scope.contentType, newField, 'add');
   }
 
   /**

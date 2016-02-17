@@ -14,7 +14,10 @@ angular.module('contentful')
 
   return {
     trackField: trackField,
-    trackWidgetEventIfCustom: trackWidgetEventIfCustom
+    trackWidgetEventIfCustom: trackWidgetEventIfCustom,
+    trackFollowedKbpLink: trackFollowedKbpLink,
+    trackContentTypeChange: trackContentTypeChange,
+    trackToggleAuxPanel: trackToggleAuxPanel
   };
 
   /**
@@ -51,6 +54,43 @@ angular.module('contentful')
 
     analytics.track(event, props);
     analytics.trackTotango(event, 'UI');
+  }
+
+  function trackFollowedKbpLink (section) {
+    analytics.track('Clicked KBP link', {
+      section: section
+    });
+  }
+
+  function trackContentTypeChange (event, contentType, field, action) {
+    var data = {};
+    if (contentType) {
+      _.extend(data, {
+        contentTypeId: contentType.getId(),
+        contentTypeName: contentType.getName()
+      });
+    }
+    if (field) {
+      _.extend(data, {
+        fieldId: field.id,
+        fieldName: field.name,
+        fieldType: field.type,
+        fieldSubtype: dotty.get(field, 'items.type') || null,
+        fieldLocalized: field.localized,
+        fieldRequired: field.required
+      });
+    }
+    if (action) {
+      data.action = action;
+    }
+    analytics.track(event, data);
+  }
+
+  function trackToggleAuxPanel (visible, stateName) {
+    var action = visible ? 'Opened Aux-Panel' : 'Closed Aux-Panel';
+    analytics.track(action, {
+      currentState: stateName
+    });
   }
 
 }]);

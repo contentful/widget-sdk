@@ -13,6 +13,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var tokenStore         = $injector.get('tokenStore');
   var notification       = $injector.get('notification');
   var analytics          = $injector.get('analytics');
+  var analyticsEvents    = $injector.get('analyticsEvents');
   var authorization      = $injector.get('authorization');
   var modalDialog        = $injector.get('modalDialog');
   var presence           = $injector.get('presence');
@@ -29,8 +30,9 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.preferences = {
     showAuxPanel: false,
     toggleAuxPanel: function() {
-      $scope.preferences.showAuxPanel = !$scope.preferences.showAuxPanel;
-      analytics.toggleAuxPanel($scope.preferences.showAuxPanel, $state.current.name);
+      var showAuxPanel = !$scope.preferences.showAuxPanel;
+      $scope.preferences.showAuxPanel = showAuxPanel;
+      analyticsEvents.trackToggleAuxPanel(showAuxPanel, $state.current.name);
     },
     showDisabledFields: false
   };

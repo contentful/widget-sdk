@@ -1,16 +1,20 @@
 'use strict';
 
 describe('cfKnowledgeBase directive', function () {
-  var el, scope, environment, analytics;
+  var el, scope, environment, trackFollowedKbpLinkSpy;
 
   function getLink() { return el.find('a').first(); }
 
   beforeEach(function () {
-    module('contentful/test');
+    trackFollowedKbpLinkSpy = sinon.spy();
+
+    module('contentful/test', function($provide) {
+      $provide.value('analyticsEvents', {
+        trackFollowedKbpLink: trackFollowedKbpLinkSpy
+      });
+    });
     environment = this.$inject('environment');
     environment.settings.marketing_url = 'http://test.com';
-    analytics = this.$inject('analytics');
-    analytics.knowledgeBase = sinon.stub();
     scope = this.$inject('$rootScope');
   });
 
@@ -28,7 +32,7 @@ describe('cfKnowledgeBase directive', function () {
 
     it('sends analytics event', function () {
       el.click();
-      sinon.assert.calledWith(analytics.knowledgeBase, 'entry');
+      sinon.assert.calledWith(trackFollowedKbpLinkSpy, 'entry');
     });
   });
 
