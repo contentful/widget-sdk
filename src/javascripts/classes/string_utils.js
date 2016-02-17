@@ -11,7 +11,7 @@
 angular.module('contentful')
 .constant('stringUtils', (function(){
   function toIdentifier(string) {
-    if (_.isEmpty(string)) return '';
+    if (shouldFallbackToEmptyString(string)) return '';
     var words = splitIntoWords(string).map(stripInvalidChars);
     if (_.isEmpty(words)) return '';
     var first = words[0].toLowerCase();
@@ -20,18 +20,22 @@ angular.module('contentful')
   }
 
   function capitalize(string) {
-    if (_.isEmpty(string)) return '';
+    if (shouldFallbackToEmptyString(string)) return '';
     return string[0].toUpperCase() + string.slice(1).toLowerCase();
   }
 
   function capitalizeFirst(string) {
-    if (_.isEmpty(string)) return '';
+    if (shouldFallbackToEmptyString(string)) return '';
     return string[0].toUpperCase() + string.slice(1);
   }
 
   function uncapitalize(str) {
-    if (_.isEmpty(str)) return '';
+    if (shouldFallbackToEmptyString(str)) return '';
     return str[0].toLowerCase() + str.substr(1);
+  }
+
+  function shouldFallbackToEmptyString(str) {
+    return !_.isString(str) || str.length < 1;
   }
 
   function cleanPrefix(string) {
