@@ -11,7 +11,6 @@ angular.module('contentful')
   var modalDialog           = $injector.get('modalDialog');
   var resendActivationEmail = $injector.get('activationEmailResender').resend;
   var TheStore              = $injector.get('TheStore');
-  var htmlEncode            = $injector.get('encoder').htmlEncode;
 
   var HOUR_IN_MS = 1000 * 60 * 60;
   var HOURS_BEFORE_REOPEN_DIALOG = 24;
@@ -77,13 +76,9 @@ angular.module('contentful')
   }
 
   function showResentEmailConfirmation (email) {
-    var htmlEmail = htmlEncode(email);
     return modalDialog.open({
       title: 'It’s on its way!',
-      // TODO: Introduce a "messageTemplate" instead of having raw html here.
-      message: '<p>We’ve sent the confirmation email to <strong>' + htmlEmail + '</strong>.</p>' +
-               '<p>Please click the link in the email to confirm your email address.</p>',
-      html: true,
+      messageTemplate: 'activation_email_resend_confirmation',
       cancelLabel: false,
       disableTopCloseButton: true,
       scopeData: {
