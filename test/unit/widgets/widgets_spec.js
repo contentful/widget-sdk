@@ -62,10 +62,9 @@ describe('Widget types service', function () {
       };
 
       this.setupWidgets();
-
     });
 
-    it ('calls store.getMap()', function() {
+    it('calls store.getMap()', function() {
       var WidgetStore = this.$inject('widgets/store');
       var getMap = WidgetStore.prototype.getMap;
       sinon.assert.calledOnce(getMap);
@@ -74,7 +73,7 @@ describe('Widget types service', function () {
     });
 
 
-    function testAvilableForFieldType (fieldType) {
+    function testAvailableForFieldType (fieldType) {
       describe('for field type "' + fieldType + '"', function() {
         var availableWidgets;
         beforeEach(function() {
@@ -93,23 +92,31 @@ describe('Widget types service', function () {
             return widget.id && widget.name;
           })).toBe(true);
         });
+
+        it('has options property from builtin descriptor', function() {
+          var builtins = this.$inject('widgets/builtin');
+          availableWidgets.forEach(function (widget) {
+            var builtin = builtins[widget.id];
+            expect(builtin.options).toEqual(widget.options);
+          });
+        });
       });
     }
 
-    testAvilableForFieldType('Text');
-    testAvilableForFieldType('Symbol');
-    testAvilableForFieldType('Symbols');
-    testAvilableForFieldType('Integer');
-    testAvilableForFieldType('Number');
-    testAvilableForFieldType('Boolean');
-    testAvilableForFieldType('Date');
-    testAvilableForFieldType('Location');
-    testAvilableForFieldType('Asset');
-    testAvilableForFieldType('Entry');
-    testAvilableForFieldType('Assets');
-    testAvilableForFieldType('Entries');
-    testAvilableForFieldType('File');
-    testAvilableForFieldType('Object');
+    testAvailableForFieldType('Text');
+    testAvailableForFieldType('Symbol');
+    testAvailableForFieldType('Symbols');
+    testAvailableForFieldType('Integer');
+    testAvailableForFieldType('Number');
+    testAvailableForFieldType('Boolean');
+    testAvailableForFieldType('Date');
+    testAvailableForFieldType('Location');
+    testAvailableForFieldType('Asset');
+    testAvailableForFieldType('Entry');
+    testAvailableForFieldType('Assets');
+    testAvailableForFieldType('Entries');
+    testAvailableForFieldType('File');
+    testAvailableForFieldType('Object');
 
     it('rejects promise if field type has no widget', function() {
       var err;
@@ -238,21 +245,40 @@ describe('Widget types service', function () {
     });
   });
 
-  describe('optionsForWidget', function(){
-    beforeEach(function() {
-      this.setupWidgets();
+  describe('#filteredParams()', function () {
+    beforeEach(function () {
+      this.setupWidgets({
+        'WID': {
+          options: [{param: 'foo'}]
+        }
+      });
     });
-    it('should return empty array for missing widget', function () {
-      expect(widgets.optionsForWidget('foobar')).toEqual([]);
-      expect(widgets.optionsForWidget(null)).toEqual([]);
+
+    it('removes unknown parameters', function () {
+      var params = {unknown: true};
+      var filtered = widgets.filteredParams('WID', params);
+      expect(filtered).toEqual({});
     });
-    it('should contain common options', function () {
-      var options = widgets.optionsForWidget('singleLine');
-      expect(_.find(options, {param: 'helpText'})).toBeTruthy();
+
+    it('retains known parameters', function () {
+      var params = {foo: true, unknown: true};
+      var filtered = widgets.filteredParams('WID', params);
+      expect(filtered).toEqual({foo: true});
     });
-    it('should contain widget options', function () {
-      var options = widgets.optionsForWidget('rating');
-      expect(_.find(options, {param: 'stars'})).toBeTruthy();
+
+    it('removes undefined parameters', function () {
+      var params = {foo: undefined};
+      var filtered = widgets.filteredParams('WID', params);
+      expect(filtered).toEqual({});
+    });
+
+    it('returns empty object if widget.options is undefined', function () {
+      this.setupWidgets({
+        'WID': {}
+      });
+      var params = {foo: undefined};
+      var filtered = widgets.filteredParams('WID', params);
+      expect(filtered).toEqual({});
     });
   });
 
@@ -300,20 +326,19 @@ describe('Widget types service', function () {
   });
 
   describe('#filterOptions(opts, params)', function() {
-    var filtered, descriptor;
+    var filtered, options;
 
     beforeEach(function() {
-      descriptor = {
-        options: [
-          {param: 'x', default: 0},
-          {param: 'y', default: 0}
-        ]
-      };
-      this.setupWidgets({test: descriptor});
+      options = [
+        {param: 'x', default: 0},
+        {param: 'y', default: 0}
+      ];
+      this.setupWidgets({
+        test: {options: options}
+      });
     });
 
     function feedTest(pairs) {
-      var options = widgets.optionsForWidget('test');
       pairs.forEach(function(pair) {
         var params = _.isObject(pair[0]) ? pair[0] : {x: pair[0]};
         filtered = widgets.filterOptions(options, params);
@@ -326,18 +351,18 @@ describe('Widget types service', function () {
     });
 
     it('removes option if no dependencies are met (one acceptable value)', function() {
-      descriptor.options[1].dependsOnAny = {x: 'test'};
+      options[1].dependsOnAny = {x: 'test'};
       feedTest([[2,1], [null, 1], ['test', 2]]);
     });
 
     it('removes option if no dependencies are met (multiple acceptable values)', function() {
-      descriptor.options[1].dependsOnAny = {x: [1, 3, 8]};
+      options[1].dependsOnAny = {x: [1, 3, 8]};
       feedTest([[2,1], ['test',1], [null, 1], [1,2], [3,2], [8,2]]);
     });
 
     it('removes option if no dependencies are met (depending on multiple params)', function() {
       var deps = {};
-      descriptor.options.push({param: 'z', default: 0, dependsOnAny: deps});
+      options.push({param: 'z', default: 0, dependsOnAny: deps});
       deps.x = [1000, 'test'];
       deps.y = 'hello';
 
@@ -356,7 +381,7 @@ describe('Widget types service', function () {
 
     it('removes option if some of dependencies are not met', function() {
       var deps = {};
-      descriptor.options.push({param: 'z', default: 0, dependsOnEvery: deps});
+      options.push({param: 'z', default: 0, dependsOnEvery: deps});
       deps.x = 42;
       deps.y = 'hello';
 

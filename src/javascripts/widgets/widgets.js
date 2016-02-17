@@ -100,7 +100,6 @@ angular.module('contentful')
     getAvailable:        getAvailable,
     buildRenderable:     buildRenderable,
     defaultWidgetId:     defaultWidgetId,
-    optionsForWidget:    optionsForWidget,
     filterOptions:       filterOptions,
     paramDefaults:       paramDefaults,
     applyDefaults:       applyDefaults,
@@ -231,14 +230,8 @@ angular.module('contentful')
     });
   }
 
-  // TODO Remove this method
   function optionsForWidget(widgetId) {
-    var widget = WIDGETS[widgetId];
-    if (widget) {
-      return widget.options || [];
-    } else {
-      return [];
-    }
+    return dotty.get(WIDGETS, [widgetId, 'options'], []);
   }
 
 
