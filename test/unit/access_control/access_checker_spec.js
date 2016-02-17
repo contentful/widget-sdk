@@ -195,6 +195,15 @@ describe('Access Checker', function () {
       sinon.assert.calledOnce(getResStub.withArgs('update', entity.data));
       expect(result).toBe('YES WE CAN');
     });
+
+    it('determines enforcements for entity type', function () {
+      var reasons = ['DENIED!'];
+      var entity = {data: {sys: {type: 'Entry'}}};
+      reasonsDeniedStub.withArgs('update', entity.data).returns(reasons);
+      getResStub.withArgs('update', entity.data).returns(false);
+      ac.canPerformActionOnEntity('update', entity);
+      sinon.assert.calledOnce(enforcements.determineEnforcement.withArgs(reasons, entity.data.sys.type));
+    });
   });
 
   describe('#canPerformActionOnEntryOfType', function () {
