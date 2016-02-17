@@ -13,6 +13,7 @@ describe('Entry List Controller', function () {
       });
 
       $provide.value('TheLocaleStore', {
+        resetWithSpace: sinon.stub(),
         getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'})
       });
     });

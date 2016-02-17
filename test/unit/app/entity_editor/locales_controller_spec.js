@@ -23,11 +23,11 @@ describe('entityEditor/LocalesController', function () {
 
     beforeEach(function () {
       this.localeStore = this.$inject('TheLocaleStore');
-      this.$inject('spaceContext').space = {
+      this.localeStore.resetWithSpace({
+        getId: _.constant('sid'),
         getPrivateLocales: sinon.stub().returns([locale]),
         getDefaultLocale: sinon.stub().returns(true)
-      };
-      this.$inject('$rootScope').$apply();
+      });
 
       this.localeStore.setActiveLocales([locale]);
       this.controller = this.createController();

@@ -21,6 +21,7 @@ angular.module('contentful')
   var ReloadNotification = $injector.get('ReloadNotification');
   var notification       = $injector.get('notification');
   var logger             = $injector.get('logger');
+  var TheLocaleStore     = $injector.get('TheLocaleStore');
 
   var spaceContext = {
     /**
@@ -37,6 +38,10 @@ angular.module('contentful')
       this._publishedContentTypesHash = {};
       this._publishedContentTypeIsMissing = {};
       this.refreshContentTypes();
+
+      if (space) {
+        TheLocaleStore.resetWithSpace(space);
+      }
     },
 
     /**

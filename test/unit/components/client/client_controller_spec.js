@@ -134,6 +134,8 @@ describe('Client Controller', function () {
       spaceContext = this.$inject('spaceContext');
       var space = this.$inject('cfStub').space('');
       space.getId = stubs.spaceId;
+      var TheLocaleStore = this.$inject('TheLocaleStore');
+      TheLocaleStore.resetWithSpace = sinon.stub();
 
       sinon.stub(spaceContext, 'refreshContentTypes');
       spaceContext.resetWithSpace(space);

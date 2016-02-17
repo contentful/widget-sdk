@@ -11,26 +11,26 @@ angular.module('contentful')
  * locales, and helper methods.
 */
 .factory('TheLocaleStore', ['$injector', function ($injector){
-  var store        = $injector.get('TheStore').forKey('activeLocales');
-  var spaceContext = $injector.get('spaceContext');
-  var $rootScope   = $injector.get('$rootScope');
+  var TheStore = $injector.get('TheStore');
 
-  $rootScope.$watch(function () { return spaceContext.space; }, refreshLocales);
-
+  var currentSpaceId = null;
   var defaultLocale = null;
+
   // Locales which are available to the CMA
   var privateLocales = [];
+  // List of currently active locales visible in the entry/asset editors.
+  var activeLocales = [];
+
   /**
    * Map of current locales and their active state.
    * If a locale is "active" it means the user can see it for editing
    * on the entry/asset editors.
+   * This map uses internal locale codes as keys.
   */
   var codeToActiveLocaleMap = {};
-  // List of currently active locales visible in the entry/asset editors.
-  var activeLocales = [];
 
   return {
-    refreshLocales:    refreshLocales,
+    resetWithSpace:    resetWithSpace,
     getDefaultLocale:  getDefaultLocale,
     getActiveLocales:  getActiveLocales,
     getPrivateLocales: getPrivateLocales,
@@ -41,17 +41,18 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name TheLocaleStore#refreshLocales
+   * @name TheLocaleStore#resetWithSpace
+   * @param {API.Space} space
    * @description
    * Updates the state of this service with the data set for the
    * current space.
    */
-  function refreshLocales() {
-    var space = spaceContext.space;
+  function resetWithSpace(space) {
+    currentSpaceId = space ? space.getId()             : null;
     privateLocales = space ? space.getPrivateLocales() : [];
     defaultLocale  = space ? space.getDefaultLocale()  : [];
 
-    var storedLocaleCodes = store.get();
+    var storedLocaleCodes = getStoredActiveLocales();
     var storedLocales = _.filter(privateLocales, function (locale) {
       return _.contains(storedLocaleCodes, locale.code);
     });
@@ -131,7 +132,7 @@ angular.module('contentful')
       map[locale.internal_code] = true;
     }, {});
 
-    refreshActiveLocales();
+    updateActiveLocalesList();
   }
 
   /**
@@ -151,20 +152,37 @@ angular.module('contentful')
    */
   function deactivateLocale (locale) {
     delete codeToActiveLocaleMap[locale.internal_code];
-    refreshActiveLocales();
+    updateActiveLocalesList();
   }
 
   /**
    * Update the list of active locales from the `codeToActiveLocaleMap`
    * hash.
    */
-  function refreshActiveLocales() {
-    var activePrivateLocales = _.filter(privateLocales, isLocaleActive);
-    activeLocales = _.uniq(activePrivateLocales, function (locale) {
+  function updateActiveLocalesList() {
+    activeLocales = _.filter(privateLocales, isLocaleActive);
+    activeLocales = _.uniq(activeLocales, function (locale) {
       return locale.internal_code;
     });
 
+    storeActiveLocales();
+  }
+
+  function storeActiveLocales() {
+    var store = getStore();
     store.set(_.map(activeLocales, 'code'));
   }
 
+  function getStoredActiveLocales() {
+    var store = getStore();
+    return store.get() || [];
+  }
+
+  function getStore() {
+    if (currentSpaceId) {
+      return TheStore.forKey('activeLocalesForSpace.' + currentSpaceId);
+    } else {
+      throw new Error('Cannot get active locales store, not in a space context.');
+    }
+  }
 }]);
