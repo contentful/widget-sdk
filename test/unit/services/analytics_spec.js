@@ -2,8 +2,9 @@
 
 describe('analytics', function () {
   beforeEach(function () {
-    module('contentful/test', function (analyticsProvider) {
-      analyticsProvider.forceLoad();
+
+    module('contentful/test', function(environment) {
+      environment.env = 'analytics';
     });
 
     this.userData = {

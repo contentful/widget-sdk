@@ -15,31 +15,47 @@
  * the console for testing by using '?forceAnalyticsDevMode'.
  */
 angular.module('contentful')
-.provider('analytics', ['environment', function (environment) {
-  var load = !environment.env.match(/acceptance|development|preview|test/);
-  this.forceLoad = function () { load = true; };
+.factory('analytics', ['$injector', function ($injector) {
 
-  this.$get = [ '$injector', function ($injector) {
-    var $location = $injector.get('$location');
+  var $location   = $injector.get('$location');
+  var environment = $injector.get('environment');
 
-    var segment     = $injector.get('segment');
-    var totango     = $injector.get('totango');
-    var fontsdotcom = $injector.get('fontsdotcom');
-    var logger      = $injector.get('logger');
-    var cookieStore = $injector.get('TheStore/cookieStore');
-    var stringifySafe  = $injector.get('stringifySafe');
+  var segment       = $injector.get('segment');
+  var totango       = $injector.get('totango');
+  var fontsdotcom   = $injector.get('fontsdotcom');
+  var logger        = $injector.get('logger');
+  var cookieStore   = $injector.get('TheStore/cookieStore');
+  var stringifySafe = $injector.get('stringifySafe');
 
-    var analytics = {
-      enable: function(){
+  if (forceDevMode()) {
+    return newDevAnalytics();
+  } else if (shouldLoadAnalytics()) {
+    return newAnalytics();
+  } else {
+    return newNoopAnalytics();
+  }
+
+  function shouldLoadAnalytics() {
+    var load = !environment.env.match(/acceptance|development|preview|test/);
+    return load || $location.search().forceAnalytics;
+  }
+
+  function forceDevMode() {
+    return $location.search().forceAnalyticsDevMode;
+  }
+
+  function newAnalytics () {
+    return {
+      enable: function () {
         segment.enable();
         totango.enable();
         fontsdotcom.enable();
       },
 
-      disable: function(){
+      disable: function () {
         segment.disable();
         totango.disable();
-        _.forEach(this, function(value, key){
+        _.forEach(this, function (value, key) {
           this[key] = _.noop;
         }, this);
       },
@@ -116,7 +132,7 @@ angular.module('contentful')
         }
       },
 
-      _initialize: function(){
+      _initialize: function () {
         if (this._userData) {
           var analyticsUserData;
 
@@ -142,7 +158,7 @@ angular.module('contentful')
       },
 
       // Send further identifying user data to segment
-      addIdentifyingData: shieldFromInvalidUserData(function(data) {
+      addIdentifyingData: shieldFromInvalidUserData(function (data) {
         segment.identify(this._userData.sys.id, data);
       }),
 
@@ -164,93 +180,77 @@ angular.module('contentful')
         });
       }
     };
+  }
 
-    function shieldFromInvalidUserData (cb) {
-      return function () {
-        try {
-          return cb.apply(this, arguments);
-        } catch (error) {
-          logger.logError('Analytics user data exception', {
-            data: {
-              userData: analytics._userData,
-              error: error
-            }
-          });
-        }
-      };
-    }
-
-    function getAnalyticsUserData(userData) {
-      // Remove circular references
-      userData = JSON.parse(stringifySafe(userData));
-
-      // On first login, send referrer, campaign and A/B test data to
-      // segment and totango if it has been set by marketing website cookie
-      if (userData.signInCount === 1) {
-        var firstVisitData = _.pick({
-          firstReferrer: parseCookie('cf_first_visit', 'referer'),
-          campaignName: parseCookie('cf_first_visit', 'campaign_name'),
-          lastReferrer: parseCookie('cf_last_visit', 'referer'),
-          experimentId: parseCookie('cf_experiment', 'experiment_id'),
-          experimentVariationId: parseCookie('cf_experiment', 'variation_id')
-        }, function (val) {
-          return val !== null && val !== undefined;
-        });
-        return _.merge(firstVisitData, userData);
-      } else {
-        return userData;
-      }
-    }
-
-    function parseCookie(cookieName, prop) {
+  function shieldFromInvalidUserData (cb) {
+    return function () {
       try {
-        var cookie = cookieStore.get(cookieName);
-        return JSON.parse(cookie)[prop];
-      } catch (e) {}
-    }
-
-    if (forceDevMode()) {
-      return devService();
-    } else if (shouldLoadAnalytics()) {
-      return analytics;
-    } else {
-      return noopService();
-    }
-
-    function shouldLoadAnalytics() {
-      return load || $location.search().forceAnalytics;
-    }
-
-    function forceDevMode() {
-      return $location.search().forceAnalyticsDevMode;
-    }
-
-    /**
-     * Returns an object with the same interface as the proper
-     * analytics service, except that all functions are replaced by
-     * noops.
-     */
-    function noopService () {
-      return _.mapValues(analytics, _.constant(_.noop));
-    }
-
-    /**
-     * Similar to `noopService()`, but the track methods are replaced
-     * with functions that log the events to the console. This is
-     * helpful for debugging.
-     */
-    function devService () {
-      return _.extend(analytics, {
-        track: trackStub,
-        trackTotango: trackStub,
-        enable: _.noop,
-        disable: _.noop
-      });
-
-      function trackStub (event, data) {
-        console.log('track: ' + event, data);
+        return cb.apply(this, arguments);
+      } catch (error) {
+        logger.logError('Analytics user data exception', {
+          data: {
+            userData: analytics._userData,
+            error: error
+          }
+        });
       }
+    };
+  }
+
+  function getAnalyticsUserData (userData) {
+    // Remove circular references
+    userData = JSON.parse(stringifySafe(userData));
+
+    // On first login, send referrer, campaign and A/B test data to
+    // segment and totango if it has been set by marketing website cookie
+    if (userData.signInCount === 1) {
+      var firstVisitData = _.pick({
+        firstReferrer: parseCookie('cf_first_visit', 'referer'),
+        campaignName: parseCookie('cf_first_visit', 'campaign_name'),
+        lastReferrer: parseCookie('cf_last_visit', 'referer'),
+        experimentId: parseCookie('cf_experiment', 'experiment_id'),
+        experimentVariationId: parseCookie('cf_experiment', 'variation_id')
+      }, function (val) {
+        return val !== null && val !== undefined;
+      });
+      return _.merge(firstVisitData, userData);
+    } else {
+      return userData;
     }
-  }];
+  }
+
+  function parseCookie (cookieName, prop) {
+    try {
+      var cookie = cookieStore.get(cookieName);
+      return JSON.parse(cookie)[prop];
+    } catch (e) {}
+  }
+
+  /**
+   * Returns an object with the same interface as the proper
+   * analytics service, except that all functions are replaced by
+   * noops.
+   */
+  function newNoopAnalytics () {
+    return _.mapValues(newAnalytics(), _.constant(_.noop));
+  }
+
+  /**
+   * Similar to `noopService()`, but the track methods are replaced
+   * with functions that log the events to the console. This is
+   * helpful for debugging.
+   */
+  function newDevAnalytics () {
+    return _.extend(newAnalytics(), {
+      track: trackStub,
+      trackTotango: trackStub,
+      enable: _.noop,
+      disable: _.noop
+    });
+
+    function trackStub (event, data) {
+      console.log('track: ' + event, data);
+    }
+  }
 
 }]);
