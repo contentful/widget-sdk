@@ -20,6 +20,39 @@ angular.module('contentful')
   var $location   = $injector.get('$location');
   var environment = $injector.get('environment');
 
+  var serviceName;
+
+  if (forceDevMode()) {
+    serviceName = 'consoleLogAnalytics';
+  } else if (shouldLoadAnalytics()) {
+    serviceName = 'analyticsAnalytics';
+  } else {
+    serviceName = 'noopAnalytics';
+  }
+
+  return $injector.get(serviceName);
+
+  function shouldLoadAnalytics () {
+    var load = !environment.env.match(/acceptance|development|preview|test/);
+    return load || $location.search().forceAnalytics;
+  }
+
+  function forceDevMode () {
+    return $location.search().forceAnalyticsDevMode;
+  }
+}]);
+
+/**
+ * @ngdoc service
+ * @name noopAnalytics
+ * @description
+ *
+ * Returns an object with the same interface as the proper
+ * analytics service, except that all functions are replaced by
+ * noops.
+ */
+angular.module('contentful')
+.factory('analyticsAnalytics', ['$injector', function ($injector) {
   var segment       = $injector.get('segment');
   var totango       = $injector.get('totango');
   var fontsdotcom   = $injector.get('fontsdotcom');
@@ -27,174 +60,168 @@ angular.module('contentful')
   var cookieStore   = $injector.get('TheStore/cookieStore');
   var stringifySafe = $injector.get('stringifySafe');
 
-  if (forceDevMode()) {
-    return newDevAnalytics();
-  } else if (shouldLoadAnalytics()) {
-    return newAnalytics();
-  } else {
-    return newNoopAnalytics();
+  var organizationData, spaceData, userData;
+
+  var analytics = {
+    enable: enable,
+    disable: disable,
+    setSpace: setSpace,
+    setUserData: setUserData,
+    /**
+     * @ngdoc method
+     * @name analytics#track
+     * @description
+     * Send `data` merged with information about the space to
+     * Segment.
+     *
+     * @param {string} event
+     * @param {object} data
+     */
+    track: track,
+    /**
+     * @ngdoc method
+     * @name analytics#trackTotango
+     * @description
+     * Send event to Totango.
+     *
+     * Note that for new analytics events 'module' should be "UI" to
+     * keep the number of modules in Totango low.
+     *
+     * @param {string} event
+     * @param {string} module
+     */
+    trackTotango: trackTotango,
+    trackPersistentNotificationAction: trackPersistentNotificationAction,
+    stateActivated: stateActivated
+  };
+  return analytics;
+
+  function enable () {
+    segment.enable();
+    totango.enable();
+    fontsdotcom.enable();
   }
 
-  function shouldLoadAnalytics() {
-    var load = !environment.env.match(/acceptance|development|preview|test/);
-    return load || $location.search().forceAnalytics;
+  function disable () {
+    segment.disable();
+    totango.disable();
+    _.forEach(analytics, function (value, key) {
+      analytics[key] = _.noop;
+    });
   }
 
-  function forceDevMode() {
-    return $location.search().forceAnalyticsDevMode;
-  }
-
-  function newAnalytics () {
-    return {
-      enable: function () {
-        segment.enable();
-        totango.enable();
-        fontsdotcom.enable();
-      },
-
-      disable: function () {
-        segment.disable();
-        totango.disable();
-        _.forEach(this, function (value, key) {
-          this[key] = _.noop;
-        }, this);
-      },
-
-      setSpace: function (space) {
-        if (space) {
-          try {
-            this._organizationData = space.data.organization;
-            this._spaceData = {
-              spaceIsTutorial:                       space.data.tutorial,
-              spaceSubscriptionKey:                  space.data.organization.sys.id,
-              spaceSubscriptionState:                space.data.organization.subscriptionState,
-              spaceSubscriptionInvoiceState:         space.data.organization.invoiceState,
-              spaceSubscriptionSubscriptionPlanKey:  space.data.organization.subscriptionPlan.sys.id,
-              spaceSubscriptionSubscriptionPlanName: space.data.organization.subscriptionPlan.name
-            };
-          } catch (error) {
-            logger.logError('Analytics space organizations exception', {
-              data: {
-                space: space,
-                error: error
-              }
-            });
-          }
-          this._initialize();
-        } else {
-          this._spaceData = null;
-          this._organizationData = null;
-        }
-      },
-
-      setUserData: function (user) {
-        this._userData = user;
-        this._initialize();
-      },
-
-      /**
-       * @ngdoc method
-       * @name analytics#track
-       * @description
-       * Send `data` merged with information about the space to
-       * Segment.
-       *
-       * @param {string} event
-       * @param {object} data
-       */
-      track: function (event, data) {
-        segment.track(event, _.merge({}, data, this._spaceData));
-      },
-
-      /**
-       * @ngdoc method
-       * @name analytics#trackTotango
-       * @description
-       * Send event to Totango.
-       *
-       * Note that for new analytics events 'module' should be "UI" to
-       * keep the number of modules in Totango low.
-       *
-       * @param {string} event
-       * @param {string} module
-       */
-      trackTotango: function (event, module) {
-        try {
-          totango.track(event, module);
-        } catch (error) {
-          logger.logError('Analytics totango.track() exception', {
-            data: {
-              event: event,
-              module: module,
-              error: error
-            }
-          });
-        }
-      },
-
-      _initialize: function () {
-        if (this._userData) {
-          var analyticsUserData;
-
-          shieldFromInvalidUserData(function () {
-            analyticsUserData = getAnalyticsUserData(this._userData);
-            this.addIdentifyingData(analyticsUserData);
-          }.bind(this))();
-
-          if (analyticsUserData && this._organizationData) {
-            try {
-              totango.initialize(analyticsUserData, this._organizationData);
-            } catch (error) {
-              logger.logError('Analytics totango.initialize() exception', {
-                data: {
-                  userData: analyticsUserData,
-                  organizationData: this._organizationData,
-                  error: error
-                }
-              });
-            }
-          }
-        }
-      },
-
-      // Send further identifying user data to segment
-      addIdentifyingData: shieldFromInvalidUserData(function (data) {
-        segment.identify(this._userData.sys.id, data);
-      }),
-
-      stateActivated: function (state, stateParams, fromState, fromStateParams) {
-        totango.setModule(state.name);
-        segment.page(state.name, stateParams);
-        this.track('Switched State', {
-          state: state.name,
-          params: stateParams,
-          fromState: fromState ? fromState.name : null,
-          fromStateParams: fromStateParams || null
-        });
-      },
-
-      trackPersistentNotificationAction: function (name) {
-        this.track('Clicked Top Banner CTA Button', {
-          action: name,
-          currentPlan: this._organizationData.subscriptionPlan.name
-        });
-      }
-    };
-  }
-
-  function shieldFromInvalidUserData (cb) {
-    return function () {
+  function setSpace (space) {
+    if (space) {
       try {
-        return cb.apply(this, arguments);
+        organizationData = space.data.organization;
+        spaceData = {
+          spaceIsTutorial:                       space.data.tutorial,
+          spaceSubscriptionKey:                  space.data.organization.sys.id,
+          spaceSubscriptionState:                space.data.organization.subscriptionState,
+          spaceSubscriptionInvoiceState:         space.data.organization.invoiceState,
+          spaceSubscriptionSubscriptionPlanKey:  space.data.organization.subscriptionPlan.sys.id,
+          spaceSubscriptionSubscriptionPlanName: space.data.organization.subscriptionPlan.name
+        };
       } catch (error) {
-        logger.logError('Analytics user data exception', {
+        logger.logError('Analytics space organizations exception', {
           data: {
-            userData: analytics._userData,
+            space: space,
             error: error
           }
         });
       }
-    };
+      initialize();
+    } else {
+      spaceData = null;
+      organizationData = null;
+    }
+  }
+
+  function setUserData (user) {
+    userData = user;
+    initialize();
+  }
+
+  function track (event, data) {
+    segment.track(event, _.merge({}, data, spaceData));
+  }
+
+  function trackTotango (event, module) {
+    try {
+      totango.track(event, module);
+    } catch (error) {
+      logger.logError('Analytics totango.track() exception', {
+        data: {
+          event: event,
+          module: module,
+          error: error
+        }
+      });
+    }
+  }
+
+  function initialize () {
+    if (!userData) {
+      return;
+    }
+    var analyticsUserData;
+
+    shieldFromInvalidUserData(function () {
+      analyticsUserData = getAnalyticsUserData(userData);
+      addIdentifyingData(analyticsUserData);
+    });
+
+    if (analyticsUserData && organizationData) {
+      try {
+        totango.initialize(analyticsUserData, organizationData);
+      } catch (error) {
+        logger.logError('Analytics totango.initialize() exception', {
+          data: {
+            userData: analyticsUserData,
+            organizationData: organizationData,
+            error: error
+          }
+        });
+      }
+    }
+  }
+
+  // Send further identifying user data to segment
+  function addIdentifyingData (data) {
+    shieldFromInvalidUserData(function () {
+      segment.identify(userData.sys.id, data);
+    });
+  }
+
+  function stateActivated (state, stateParams, fromState, fromStateParams) {
+    totango.setModule(state.name);
+    segment.page(state.name, stateParams);
+    track('Switched State', {
+      state: state.name,
+      params: stateParams,
+      fromState: fromState ? fromState.name : null,
+      fromStateParams: fromStateParams || null
+    });
+  }
+
+  function trackPersistentNotificationAction (name) {
+    track('Clicked Top Banner CTA Button', {
+      action: name,
+      currentPlan: organizationData.subscriptionPlan.name
+    });
+  }
+
+  function shieldFromInvalidUserData (cb) {
+    try {
+      return cb.apply(null, arguments);
+    } catch (error) {
+      logger.logError('Analytics user data exception', {
+        data: {
+          userData: userData,
+          error: error
+        }
+      });
+    }
   }
 
   function getAnalyticsUserData (userData) {
@@ -225,32 +252,47 @@ angular.module('contentful')
       return JSON.parse(cookie)[prop];
     } catch (e) {}
   }
+}]);
 
-  /**
-   * Returns an object with the same interface as the proper
-   * analytics service, except that all functions are replaced by
-   * noops.
-   */
-  function newNoopAnalytics () {
-    return _.mapValues(newAnalytics(), _.constant(_.noop));
+/**
+ * @ngdoc service
+ * @name noopAnalytics
+ * @description
+ *
+ * Returns an object with the same interface as the proper
+ * analytics service, except that all functions are replaced by
+ * noops.
+ */
+angular.module('contentful')
+.factory('noopAnalytics', ['$injector', function ($injector) {
+
+  var analyticsAnalytics = $injector.get('analyticsAnalytics');
+
+  return _.mapValues(analyticsAnalytics, _.constant(_.noop));
+}]);
+
+/**
+ * @ngdoc service
+ * @name consoleLogAnalytics
+ * @description
+ *
+ * Similar to `noopService()`, but the track methods are replaced
+ * with functions that log the events to the console. This is
+ * helpful for debugging.
+ */
+angular.module('contentful')
+.factory('consoleLogAnalytics', ['$injector', function ($injector) {
+
+  var analyticsAnalytics = $injector.get('analyticsAnalytics');
+
+  return _.extend(analyticsAnalytics, {
+    track: trackStub,
+    trackTotango: trackStub,
+    enable: _.noop,
+    disable: _.noop
+  });
+
+  function trackStub (event, data) {
+    console.log('track: ' + event, data);
   }
-
-  /**
-   * Similar to `noopService()`, but the track methods are replaced
-   * with functions that log the events to the console. This is
-   * helpful for debugging.
-   */
-  function newDevAnalytics () {
-    return _.extend(newAnalytics(), {
-      track: trackStub,
-      trackTotango: trackStub,
-      enable: _.noop,
-      disable: _.noop
-    });
-
-    function trackStub (event, data) {
-      console.log('track: ' + event, data);
-    }
-  }
-
 }]);

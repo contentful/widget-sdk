@@ -3,7 +3,7 @@
 describe('analytics', function () {
   beforeEach(function () {
 
-    module('contentful/test', function(environment) {
+    module('contentful/test', function (environment) {
       environment.env = 'analytics';
     });
 
