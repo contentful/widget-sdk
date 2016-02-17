@@ -474,4 +474,50 @@ describe('spaceContext', function () {
     });
   });
 
+  describe('#entityDescription()', function () {
+
+    it('returns value of first text field', function () {
+      var ct = {
+        data: {
+          fields: [
+            {type: 'Text', id: 'DESC'}
+          ]
+        }
+      };
+      this.spaceContext.publishedTypeForEntry = sinon.stub().returns(ct);
+
+      var entry = {
+        data: {
+          fields: {
+            'DESC': {en: 'VAL'}
+          }
+        }
+      };
+      var desc = this.spaceContext.entityDescription(entry);
+      expect(desc).toEqual('VAL');
+    });
+
+    it('skips display field', function () {
+      var ct = {
+        data: {
+          displayField: 'DESC',
+          fields: [
+            {type: 'Text', id: 'DESC'}
+          ]
+        }
+      };
+      this.spaceContext.publishedTypeForEntry = sinon.stub().returns(ct);
+
+      var desc = this.spaceContext.entityDescription({});
+      expect(desc).toEqual(undefined);
+    });
+
+    it('returns undefined if content type is not available', function () {
+      this.spaceContext.publishedTypeForEntry = sinon.stub().returns(null);
+      var desc = this.spaceContext.entityDescription({});
+      expect(desc).toEqual(undefined);
+    });
+
+  });
+
 });
