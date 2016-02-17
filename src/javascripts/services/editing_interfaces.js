@@ -7,13 +7,10 @@ angular.module('contentful')
  */
 .factory('editingInterfaces', ['$injector', function($injector){
   var $q             = $injector.get('$q');
-  var random         = $injector.get('random');
   var widgets        = $injector.get('widgets');
   var widgetMigrator = $injector.get('widgets/migrations');
   var logger         = $injector.get('logger');
   var eiHelpers      = $injector.get('editingInterfaces/helpers');
-
-  var widgetIdsByContentType = {};
 
   return {
     /**
@@ -36,7 +33,7 @@ angular.module('contentful')
       return getEditingInterface(contentType)
       // This is triggered when a CT has been created via the API, but has no EI
       .catch(function (err) {
-        if(err && err.statusCode === 404) {
+        if (err && err.statusCode === 404) {
           return defaultInterface(contentType);
         } else {
           // We should be able to throw the error but $q sucks at this.
@@ -117,21 +114,10 @@ angular.module('contentful')
   function defaultWidget(contentType, field) {
     var identifier = field.apiName || field.id;
     return {
-      id: generateId(identifier, contentType.getId()),
       fieldId: identifier,
       widgetId: widgets.defaultWidgetId(field, contentType),
       widgetParams: {}
     };
-  }
-
-  function generateId(fieldId, ctId) {
-    if(!widgetIdsByContentType[ctId])
-      widgetIdsByContentType[ctId] = {};
-
-    if(!widgetIdsByContentType[ctId][fieldId])
-      widgetIdsByContentType[ctId][fieldId] = fieldId + random.id();
-
-    return widgetIdsByContentType[ctId][fieldId];
   }
 
   // This function only serves migration purposes. It remaps old editing
