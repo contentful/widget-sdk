@@ -168,46 +168,6 @@ describe('ContentTypeEditor Controller', function () {
       });
     });
 
-    describe('#showNewFieldDialog', function() {
-      beforeEach(function() {
-        this.newField = {};
-        this.modalDialogOpenStub.returns({promise: this.when(this.newField)});
-        this.broadcastStub = sinon.stub(scope, '$broadcast');
-        scope.editingInterface = {data: {widgets: []}};
-        scope.showNewFieldDialog();
-      });
-
-      afterEach(function() {
-        this.broadcastStub.restore();
-      });
-
-      it('opens dialog', function() {
-        sinon.assert.called(this.modalDialogOpenStub);
-      });
-
-      it('adds field to content type', function() {
-        expect(scope.contentType.data.fields[0]).toBeUndefined();
-        scope.$digest();
-        expect(scope.contentType.data.fields[0]).toBeDefined();
-      });
-
-      it('broadcasts event', function () {
-        scope.$digest();
-        sinon.assert.called(this.broadcastStub, 'fieldAdded');
-      });
-
-      it('fires analytics event', function () {
-        scope.$digest();
-        sinon.assert.called(this.trackContentTypeChangeStub);
-      });
-
-      it('adds field to editing interface', function () {
-        expect(scope.editingInterface.data.widgets.length).toEqual(0);
-        scope.$digest();
-        expect(scope.editingInterface.data.widgets.length).toEqual(1);
-      });
-
-    });
 
   });
 
@@ -222,6 +182,51 @@ describe('ContentTypeEditor Controller', function () {
 
     it('has fields', function () {
       expect(scope.hasFields).toBeTruthy();
+    });
+  });
+
+  describe('#showNewFieldDialog command', function() {
+    var syncWidgets;
+
+    beforeEach(function() {
+      var ei = this.$inject('editingInterfaces');
+      syncWidgets = ei.syncWidgets = sinon.stub();
+
+      scope.$broadcast = sinon.stub();
+      scope.editingInterface = {};
+
+      createContentType();
+
+      this.modalDialogOpenStub.returns({promise: this.when({})});
+      scope.showNewFieldDialog.execute();
+    });
+
+    it('opens dialog', function() {
+      sinon.assert.called(this.modalDialogOpenStub);
+    });
+
+    it('adds field to content type', function() {
+      expect(scope.contentType.data.fields[0]).toBeUndefined();
+      this.$apply();
+      expect(scope.contentType.data.fields[0]).toBeDefined();
+    });
+
+    it('syncs editing interface widgets with fields', function () {
+      sinon.assert.notCalled(syncWidgets);
+      this.$apply();
+      sinon.assert.calledWithExactly(syncWidgets,
+                                     scope.contentType,
+                                     scope.editingInterface);
+    });
+
+    it('broadcasts event', function () {
+      this.$apply();
+      sinon.assert.calledWithExactly(scope.$broadcast, 'fieldAdded');
+    });
+
+    it('fires analytics event', function () {
+      this.$apply();
+      sinon.assert.called(this.trackContentTypeChangeStub);
     });
   });
 
@@ -282,67 +287,71 @@ describe('ContentTypeEditor Controller', function () {
     });
   });
 
-  describe('metadata dialog', function() {
-    var metadataDialog;
-    beforeEach(function() {
-      metadataDialog = this.$inject('contentTypeEditor/metadataDialog');
-      metadataDialog.openCreateDialog = sinon.stub();
-      metadataDialog.openEditDialog = sinon.stub();
+  describe('with "isNew context"', function () {
+    var openCreateDialog;
+
+    beforeEach(function () {
+      var metadataDialog = this.$inject('contentTypeEditor/metadataDialog');
+      openCreateDialog = metadataDialog.openCreateDialog = sinon.stub();
+      scope.context.isNew = true;
     });
 
-
-    describe('when context is "isNew"', function () {
-      beforeEach(function () {
-        scope.context.isNew = true;
-      });
-
-      it('opens the metadata dialog', function () {
-        metadataDialog.openCreateDialog.resolves({});
-        createContentType();
-        sinon.assert.calledOnce(metadataDialog.openCreateDialog);
-      });
-
-      it('updates the metdata from the dialog', function () {
-        var metadata = {
-          name: 'NAME',
-          description: 'DESCRIPTION',
-          id: 'ID'
-        };
-        metadataDialog.openCreateDialog.resolves(metadata);
-        createContentType();
-
-        expect(contentType.data.name).toEqual('NAME');
-        expect(contentType.data.description).toEqual('DESCRIPTION');
-        expect(contentType.data.sys.id).toEqual('ID');
-      });
+    it('opens the metadata create dialog', function () {
+      openCreateDialog.resolves({});
+      createContentType();
+      sinon.assert.calledOnce(openCreateDialog);
     });
 
-    describe('#showMetadataDialog()', function() {
-      beforeEach(function () {
-        createContentType();
-      });
+    it('updates the metdata from the dialog', function () {
+      var metadata = {
+        name: 'NAME',
+        description: 'DESCRIPTION',
+        id: 'ID'
+      };
+      openCreateDialog.resolves(metadata);
+      createContentType();
 
-      it('opens the edit metadata dialog', function() {
-        metadataDialog.openEditDialog.resolves({});
-        scope.showMetadataDialog();
-        sinon.assert.calledOnce(metadataDialog.openEditDialog);
-      });
+      expect(contentType.data.name).toEqual('NAME');
+      expect(contentType.data.description).toEqual('DESCRIPTION');
+      expect(contentType.data.sys.id).toEqual('ID');
+    });
 
-      it('updates the metdata from the dialog', function () {
-        var metadata = {
-          name: 'NAME',
-          description: 'DESCRIPTION',
-          id: 'ID'
-        };
-        metadataDialog.openEditDialog.resolves(metadata);
-        scope.showMetadataDialog();
-        this.$apply();
-
-        expect(contentType.data.name).toEqual('NAME');
-        expect(contentType.data.description).toEqual('DESCRIPTION');
-        expect(contentType.data.sys.id).not.toEqual('ID');
-      });
+    it('goes back to list when create dialog is canceled', function () {
+      var $state = this.$inject('$state');
+      $state.go = sinon.stub();
+      openCreateDialog.rejects();
+      createContentType();
+      sinon.assert.calledWithExactly($state.go, '^.list');
     });
   });
 
+  describe('#showMetadataDialog command', function() {
+    var openEditDialog;
+    beforeEach(function() {
+      var metadataDialog = this.$inject('contentTypeEditor/metadataDialog');
+      openEditDialog = metadataDialog.openEditDialog = sinon.stub();
+      createContentType();
+    });
+
+    it('opens the edit metadata dialog', function() {
+      openEditDialog.resolves({});
+      scope.showMetadataDialog.execute();
+      sinon.assert.calledOnce(openEditDialog);
+    });
+
+    it('updates the metdata from the dialog', function () {
+      var metadata = {
+        name: 'NAME',
+        description: 'DESCRIPTION',
+        id: 'ID'
+      };
+      openEditDialog.resolves(metadata);
+      scope.showMetadataDialog.execute();
+      this.$apply();
+
+      expect(contentType.data.name).toEqual('NAME');
+      expect(contentType.data.description).toEqual('DESCRIPTION');
+      expect(contentType.data.sys.id).not.toEqual('ID');
+    });
+  });
 });
