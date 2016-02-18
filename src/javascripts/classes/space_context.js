@@ -22,6 +22,7 @@ angular.module('contentful')
   var notification       = $injector.get('notification');
   var logger             = $injector.get('logger');
   var TheLocaleStore     = $injector.get('TheLocaleStore');
+  var createUserCache    = $injector.get('data/userCache');
   var ctHelpers          = $injector.get('data/ContentTypes');
 
   var spaceContext = {
@@ -39,8 +40,10 @@ angular.module('contentful')
       this._publishedContentTypesHash = {};
       this._publishedContentTypeIsMissing = {};
       this.refreshContentTypes();
+      this.users = null;
 
       if (space) {
+        this.users = createUserCache(space);
         TheLocaleStore.resetWithSpace(space);
       }
     },
