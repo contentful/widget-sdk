@@ -5,6 +5,7 @@ describe('SlugEditorController', function () {
     var self = this;
     module('contentful/test', function ($provide) {
       self.TheLocaleStoreMock = {
+        resetWithSpace: sinon.stub(),
         getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'})
       };
       $provide.value('TheLocaleStore', self.TheLocaleStoreMock);

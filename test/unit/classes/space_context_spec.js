@@ -5,11 +5,17 @@ describe('spaceContext', function () {
   beforeEach(function () {
     module('contentful/test');
     this.spaceContext = this.$inject('spaceContext');
+    this.theLocaleStore = this.$inject('TheLocaleStore');
+    this.theLocaleStore.resetWithSpace = sinon.stub();
   });
 
   describe('with no space', function () {
     it('has no space', function () {
       expect(this.spaceContext.space).toBeNull();
+    });
+
+    it('did not reset locale store', function () {
+      sinon.assert.notCalled(this.theLocaleStore.resetWithSpace);
     });
 
     describe('refreshes content types', function () {
@@ -45,6 +51,10 @@ describe('spaceContext', function () {
 
     it('refreshes content types', function () {
       sinon.assert.called(this.spaceContext.refreshContentTypes);
+    });
+
+    it('refreshes locales', function () {
+      sinon.assert.calledOnce(this.theLocaleStore.resetWithSpace);
     });
   });
 

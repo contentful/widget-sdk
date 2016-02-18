@@ -64,11 +64,9 @@ angular.module('contentful').config([
         var tokenStore     = $injector.get('tokenStore');
         var spaceContext   = $injector.get('spaceContext');
         var analytics      = $injector.get('analytics');
-        var TheLocaleStore = $injector.get('TheLocaleStore');
         return tokenStore.getSpace($stateParams.spaceId)
         .then(function (space) {
           spaceContext.resetWithSpace(space);
-          TheLocaleStore.resetWithSpace(space);
           analytics.setSpace(space);
           return space;
         });

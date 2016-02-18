@@ -24,18 +24,19 @@ describe('entityEditor/LocalesController', function () {
     beforeEach(function () {
       this.localeStore = this.$inject('TheLocaleStore');
       this.localeStore.resetWithSpace({
+        getId: _.constant('sid'),
         getPrivateLocales: sinon.stub().returns([locale]),
         getDefaultLocale: sinon.stub().returns(true)
       });
-      this.localeStore.setActiveLocales([locale]);
 
+      this.localeStore.setActiveLocales([locale]);
       this.controller = this.createController();
     });
 
     it('deactivates the locale in the locales store', function () {
-      expect(this.localeStore.localeIsActive(locale)).toBe(true);
+      expect(this.localeStore.isLocaleActive(locale)).toBe(true);
       this.controller.deactivate(locale);
-      expect(this.localeStore.localeIsActive(locale)).toBe(false);
+      expect(this.localeStore.isLocaleActive(locale)).toBe(false);
     });
 
     it('removes the locale from the #active property', function () {

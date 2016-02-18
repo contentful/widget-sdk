@@ -41,30 +41,30 @@ describe('Asset List Controller', function () {
       });
 
       self.TheLocaleStoreMock = {
+        resetWithSpace: sinon.stub(),
         getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'})
       };
       $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
     });
-    inject(function ($injector) {
-      $rootScope         = $injector.get('$rootScope');
-      $q                 = $injector.get('$q');
-      var $controller    = $injector.get('$controller');
-      var cfStub         = $injector.get('cfStub');
 
-      getAssets = $q.defer();
-      scope = $rootScope.$new();
+    $rootScope         = this.$inject('$rootScope');
+    $q                 = this.$inject('$q');
+    var $controller    = this.$inject('$controller');
+    var cfStub         = this.$inject('cfStub');
 
-      scope.context = {};
+    getAssets = $q.defer();
+    scope = $rootScope.$new();
 
-      var space = cfStub.space('test');
-      var contentTypeData = cfStub.contentTypeData('testType');
-      scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
+    scope.context = {};
 
-      stubs.getAssets.returns(getAssets.promise);
-      space.getAssets = stubs.getAssets;
+    var space = cfStub.space('test');
+    var contentTypeData = cfStub.contentTypeData('testType');
+    scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
 
-      controller = $controller('AssetListController', {$scope: scope});
-    });
+    stubs.getAssets.returns(getAssets.promise);
+    space.getAssets = stubs.getAssets;
+
+    controller = $controller('AssetListController', {$scope: scope});
   });
 
 
