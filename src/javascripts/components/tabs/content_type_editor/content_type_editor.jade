@@ -4,7 +4,7 @@ header.workbench-header
     | {{contentType.getName()}}
   .workbench-header__description
     | {{contentType.data.description}}
-  button.cfnext-btn-inline(type="button" ng-click="showMetadataDialog()")
+  button.cfnext-btn-inline(ui-command="showMetadataDialog")
     | Edit
   .workbench-header__actions
     button.cfnext-btn-secondary-action(ui-command="actions.cancel")
@@ -16,9 +16,7 @@ header.workbench-header
 
 .workbench-nav
   .workbench-nav__left-content
-    button.cfnext-btn-action(
-      ng-disabled="cfCanDisabled"
-      ng-click="showNewFieldDialog()")
+    button.cfnext-btn-action(ui-command="showNewFieldDialog")
       cf-icon.btn-icon.inverted(name="plus")
       | Add Field
   ul.workbench-nav__tabs

@@ -21,6 +21,7 @@ function ContentTypeActionsController($scope, $injector) {
   var $timeout     = $injector.get('$timeout');
   var spaceContext = $injector.get('spaceContext');
   var $state       = $injector.get('$state');
+  var accessChecker = $injector.get('accessChecker');
 
   /**
    * @ngdoc property
@@ -28,15 +29,20 @@ function ContentTypeActionsController($scope, $injector) {
    * @type {Command}
    */
   controller.delete = Command.create(startDeleteFlow, {
-    available: canDelete
+    available: function () {
+      var deletableState = !$scope.context.isNew && (
+        $scope.contentType.canUnpublish() ||
+        !$scope.contentType.isPublished()
+      );
+      var denied = accessChecker.shouldHide('deleteContentType') ||
+                   accessChecker.shouldHide('unpublishContentType');
+      return deletableState && !denied;
+    },
+    disabled: function () {
+      return accessChecker.shouldDisable('deleteContentType') ||
+             accessChecker.shouldDisable('unpublishContentType');
+    }
   });
-
-  function canDelete () {
-    return !$scope.context.isNew && (
-      $scope.contentType.canUnpublish() ||
-      !$scope.contentType.isPublished()
-    );
-  }
 
   function startDeleteFlow () {
     populateDefaultName($scope.contentType);
@@ -168,7 +174,10 @@ function ContentTypeActionsController($scope, $injector) {
       var dirty = $scope.contentTypeForm.$dirty ||
                   !$scope.contentType.getPublishedVersion();
       var valid = !allFieldsDisabled($scope.contentType);
-      return !dirty || !valid;
+      var denied = accessChecker.shouldDisable('updateContentType') ||
+                   accessChecker.shouldDisable('publishContentType');
+
+      return !dirty || !valid || denied;
     }
   });
 

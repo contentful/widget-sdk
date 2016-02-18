@@ -28,6 +28,8 @@ function ContentTypeEditorController($scope, $injector) {
   var openFieldDialog   = $injector.get('openFieldDialog');
   var leaveConfirmator  = $injector.get('navigation/confirmLeaveEditor');
   var metadataDialog    = $injector.get('contentTypeEditor/metadataDialog');
+  var Command           = $injector.get('command');
+  var accessChecker     = $injector.get('accessChecker');
   var trackContentTypeChange = $injector.get('analyticsEvents').trackContentTypeChange;
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
@@ -39,7 +41,6 @@ function ContentTypeEditorController($scope, $injector) {
   $scope.fieldSchema                        = validation(validation.schemas.ContentType.at(['fields']).items);
   $scope.regulateDisplayField               = regulateDisplayField;
   $scope.updatePublishedContentType         = updatePublishedContentType;
-  $scope.showNewFieldDialog                 = showNewFieldDialog;
 
   $scope.$watch('contentType.data.fields',       checkForDirtyForm, true);
   $scope.$watch('contentType.data.displayField', checkForDirtyForm);
@@ -177,28 +178,38 @@ function ContentTypeEditorController($scope, $injector) {
    * @ngdoc method
    * @name ContentTypeEditorController#$scope.showMetadataDialog
   */
-  $scope.showMetadataDialog = function showMetadataDialog () {
+  $scope.showMetadataDialog = Command.create(function () {
     metadataDialog.openEditDialog($scope.contentType)
     .then(applyContentTypeMetadata());
-  };
+  }, {
+    disabled: function () {
+      return accessChecker.shouldDisable('updateContentType') ||
+             accessChecker.shouldDisable('publishContentType');
+    }
+  });
 
   /**
-   * @ngdoc method
-   * @name ContentTypeEditorController#scope#showNewFieldDialog
-  */
-  function showNewFieldDialog() {
+   * @ngdoc property
+   * @name ContentTypeEditorController#$scope.showNewFieldDialog
+   */
+  $scope.showNewFieldDialog = Command.create(function () {
     modalDialog.open({
       template: 'add_field_dialog',
       scope: $scope
     }).promise
     .then(addField);
-  }
+  }, {
+    disabled: function () {
+      return accessChecker.shouldDisable('updateContentType') ||
+             accessChecker.shouldDisable('publishContentType');
+    }
+  });
 
   function addField(newField) {
     var data = $scope.contentType.data;
     data.fields = data.fields || [];
     data.fields.push(newField);
-    $scope.$broadcast('fieldAdded', data.fields.length - 1);
+    $scope.$broadcast('fieldAdded');
     syncEditingInterface();
     trackContentTypeChange('Modified ContentType', $scope.contentType, newField, 'add');
   }
