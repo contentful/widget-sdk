@@ -6,32 +6,35 @@ Show advice to the user on empty views
 Styleguide 20.0
 */
 
-/*
-Advice
+@require 'objects/note_box'
 
-Advice is usually a whole block with the following structure
+/*
+Empty list advice
 
 Markup:
-.styleguide-stretch-container--medium
-  .advice
-    .advice__frame
-      i.fa.fa-cloud-upload.advice__giant-icon
-      header.advice__title Hold on! We're bringing your space back
-      p.advice__description You haven't been here for a while, so your Space slipped into hibernation.
-      p.advice__description Don't worry, all your content is safe and shall be available for use in a few moments.
-      p.advice__description--smaller Learn more about hibernation in our Help Center
+.cfnext-advice(style="min-height: 30em")
+  header.advice__title
+    | You have no assets yet
+  button.cfnext-btn-action--large.ct-empty-list__action
+    cf-icon.btn-icon.inverted(name="plus")
+    cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+    | Create an Asset
+  p.ct-empty-list__description
+    | Assets are external documents that you can link to your
+    | Entries. They can be any file you wish, form sounds to images or
+    | videos to text documents.
+  .advice__note
+    i.fa.fa-info-circle.advice__note-icon
+    | You can lookup old assets in the <a href="#">Archive</a>
+  p.ct-empty-list__additional
+    | If you are not sure what content types and entries are, <br>
+    | consider reading the <a href="#">introduction to Contentful content model</a>
 
 Styleguide 20.1
 */
-.advice
-  $stretch()
-  display: flex
-  flex-direction: column
-  justify-content: center
-
 .cfnext-advice
   min-height: 70vh
-  max-width: 60em
+  max-width: 65em
   margin: 0 auto
   padding: $rhythm(2) 0
   text-align: center
@@ -43,6 +46,13 @@ Styleguide 20.1
   > *
     flex: 0 0 auto
 
+
+// TODO deprecated
+.advice
+  $stretch()
+  display: flex
+  flex-direction: column
+  justify-content: center
 
 /*
 Used for the advice items at the top level which act as content fallback in
@@ -91,3 +101,12 @@ $advice-icon()
 .advice__description--smaller
   font-size: 1.0em
   margin: 0 16em $rhythm(0.5)
+
+.advice__note
+  $note-box()
+  $note-box--blue()
+  margin: 0 0 $rhythm(2)
+  padding: $rhythm(0.5) 1.3em
+
+.advice__note-icon
+  margin-right: 0.6em

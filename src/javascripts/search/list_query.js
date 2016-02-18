@@ -15,10 +15,14 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
 
   return {
     getForEntries: function (opts) {
-      return spaceContext.fetchPublishedContentType(opts.contentTypeId)
+      if (opts.contentTypeId) {
+        return spaceContext.fetchPublishedContentType(opts.contentTypeId)
         .then(function (contentType) {
           return prepareEntityListQuery(contentType, opts);
         });
+      } else {
+        return prepareEntityListQuery(null, opts);
+      }
     },
     getForAssets: function (opts) {
       return prepareEntityListQuery(searchQueryHelper.assetContentType, opts);

@@ -19,7 +19,7 @@ angular.module('contentful')
    * @ngdoc method
    * @name search/queryBuilder#self
    * @param {Client.Space}        space
-   * @param {Client.ContentType}  contentType
+   * @param {Client.ContentType?}  contentType
    * @param {string}              queryString
    * @returns {Promise<object>}
    */

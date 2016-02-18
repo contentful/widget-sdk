@@ -88,27 +88,8 @@ header.workbench-header
         header.advice__title There are no matches to your search
 
 .workbench-main.x--content(ng-show="showNoAssetsAdvice()")
-  .cfnext-advice
-    i.fa.fa-paperclip.advice__giant-icon
-    header.advice__title You have no Assets yet.
-    p.advice__description Assets are external documents that you can link to your Entries. They can be any file you wish, form sounds to images or videos to text documents.
-    .dropdown-btn
-      button.advice__action(
-        cf-context-menu-trigger
-        ng-hide="shouldHide('createAsset')"
-        ng-disabled="shouldDisable('createAsset')"
-        cf-when-disabled="createAsset"
-        data-test-id="create-asset-menu-trigger")
-        | Create an Asset
-      .context-menu(
-        role="menu" cf-context-menu
-        aria-label="Create Asset" data-test-id="create-asset-menu")
-        ul.context-menu__items
-          li(role="menuitem" ng-click="entityCreationController.newAsset()")
-            | Single Asset
-          li(role="menuitem" ng-click="createMultipleAssets()" ng-hide="shouldHide('updateAsset')")
-            | Multiple Assets
-    cf-knowledge-base(target="asset" text="Visit the Knowledge Base Pages")
+  include ./no_assets_advice
+
 
 .workbench-actions(
   ng-hide="selection.isEmpty()"

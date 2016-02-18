@@ -1,0 +1,38 @@
+mixin create-entry-button-wrapper
+  if attributes.large
+    button.cfnext-btn-action--large.ct-empty-list__action(
+      ng-disabled="shouldDisable('createEntry')"
+      cf-when-disabled="createEntry")&attributes(attributes)
+      cf-icon.btn-icon.inverted(name="plus")
+      block
+  else
+    button.cfnext-btn-action.u-truncate(
+      ng-disabled="shouldDisable('createEntry')"
+      cf-when-disabled="createEntry")&attributes(attributes)
+      cf-icon.btn-icon.inverted(name="plus")
+      block
+
+mixin create-entry-button
+  div(ng-if="accessibleCts.length === 1")
+    +create-entry-button-wrapper(
+      large=attributes.large
+      ng-click="entityCreationController.newEntry(accessibleCts[0])")
+      | Add New {{accessibleCts[0].getName()}}
+  div(ng-if="accessibleCts.length > 1")
+    +create-entry-button-wrapper(
+      large=attributes.large
+      cf-context-menu-trigger
+      data-test-id="add-entry-menu-trigger")
+      cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+      | Add New Entry
+    .context-menu(
+      role="menu" cf-context-menu
+      aria-label="Add Entry" data-test-id="add-entry-menu")
+      ul.context-menu__items
+        li(role="menuitem"
+          ng-repeat="contentType in accessibleCts track by contentType.getId()"
+          ng-click="entityCreationController.newEntry(contentType)")
+          | {{contentType.getName()}}
+
+
+

@@ -10,9 +10,17 @@
  * Mocked objects include the API clients `Space`, `ContentType`,
  * `Entry` and `Asset` classes.
  */
-var mocks = angular.module('contentful/mocks', []);
+angular.module('contentful/mocks', [])
 
-mocks.factory('TestingAdapter', function ($q) {
+.decorator('TheStore/localStorageWrapper',
+['$delegate', 'mocks/TheStore/localStorageWrapper',
+function ($delegate, mock) {
+  return _.extend({
+    _noMock: $delegate
+  }, mock);
+}])
+
+.factory('TestingAdapter', function ($q) {
   function Adapter() {
     this.requests = [];
   }
@@ -55,9 +63,9 @@ mocks.factory('TestingAdapter', function ($q) {
   };
 
   return Adapter;
-});
+})
 
-mocks.factory('cfStub', function ($injector) {
+.factory('cfStub', function ($injector) {
   var $rootScope       = $injector.get('$rootScope');
   var spaceContext     = $injector.get('spaceContext');
   var contentfulClient = $injector.get('privateContentfulClient');
@@ -249,9 +257,9 @@ mocks.factory('cfStub', function ($injector) {
   };
 
   return cfStub;
-});
+})
 
-mocks.config(['$provide', function ($provide) {
+.config(['$provide', function ($provide) {
   $provide.value('$exceptionHandler', function(e){
     throw e;
   });
@@ -317,17 +325,9 @@ mocks.config(['$provide', function ($provide) {
     };
   });
 
-  //$provide.decorator('logger', function($delegate){
-    //sinon.stub($delegate, '_log');
-    //return $delegate;
-  //});
+}])
 
-  //$provide.decorator('notification', function($delegate){
-    //sinon.stub($delegate, '_notify')
-  //});
-}]);
-
-mocks.config(function ($provide) {
+.config(function ($provide) {
   $provide.value('debounce', immediateInvocationStub);
   $provide.value('throttle', immediateInvocationStub);
   $provide.value('defer',    noDeferStub);
@@ -376,9 +376,13 @@ mocks.config(function ($provide) {
     };
     return delayedFunction;
   }
-});
+})
 
-mocks.config(['$provide', '$controllerProvider', function ($provide, $controllerProvider) {
+.config(['environment', function (environment) {
+  environment.settings.marketing_url = '//example.com';
+}])
+
+.config(['$provide', '$controllerProvider', function ($provide, $controllerProvider) {
   $provide.stubDirective = function (name, definition) {
     $provide.factory(name + 'Directive', function () {
       return [_.extend({

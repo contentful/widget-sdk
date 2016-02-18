@@ -21,6 +21,8 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
 
   $scope.entityStatusController = $controller('EntityStatusController', { $scope: $scope });
 
+  $scope.archivedStateRef = 'spaces.detail.assets.list({searchTerm: "status:archived"})';
+
   $scope.shouldHide = accessChecker.shouldHide;
   $scope.shouldDisable = accessChecker.shouldDisable;
 
@@ -43,19 +45,38 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
     scope.searchController.resetAssets(pageParameters.page === old.page);
   }, true);
 
-  // TODO this code is duplicated in the asset list controller
+  // TODO this code is duplicated in the entry list controller
   $scope.visibleInCurrentList = function(asset){
     // TODO: This needs to basically emulate the API :(
     return !asset.isDeleted();
   };
 
-  // TODO this code is duplicated in the asset list controller
+  // TODO this code is duplicated in the entry list controller
   $scope.showNoAssetsAdvice = function () {
     var view = $scope.context.view;
     var hasQuery = !_.isEmpty(view.searchTerm);
     var hasEntries = $scope.assets && $scope.assets.length > 0;
     return !hasEntries && !hasQuery && !$scope.context.loading;
   };
+
+  $scope.$watch('showNoAssetsAdvice()', function (show) {
+    if (show) {
+      $scope.hasArchivedAssets = false;
+      return hasArchivedAssets(spaceContext.space)
+      .then(function (hasArchived) {
+        $scope.hasArchivedAssets = hasArchived;
+      });
+    }
+  });
+
+  function hasArchivedAssets (space) {
+    return space.getAssets({
+      'limit': 1,
+      'sys.archivedAt[exists]': true
+    }).then(function (response) {
+      return response && response.total > 0;
+    });
+  }
 
   var throttledListRefresh = throttle(function () {
     delay(function () {
