@@ -394,7 +394,18 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   }
 
   function getEnforcement(action, entity) {
-    return enforcements.determineEnforcement(getReasonsDenied(action, entity), entity);
+    var reasonsDenied = getReasonsDenied(action, entity);
+    var entityType = toType(entity);
+
+    return enforcements.determineEnforcement(reasonsDenied, entityType);
+  }
+
+  function toType(entity) {
+    if (_.isString(entity)) {
+      return entity;
+    } else {
+      return dotty.get(entity, 'sys.type', null);
+    }
   }
 
   function getReasonsDenied(action, entity) {
