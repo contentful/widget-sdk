@@ -55,7 +55,6 @@ describe('ContentType Actions Controller', function () {
     scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
     scope.contentType = contentType;
     scope.broadcastFromSpace = sinon.stub();
-    scope.regulateDisplayField = sinon.stub();
 
     var $controller = this.$inject('$controller');
     controller = $controller('ContentTypeActionsController', {$scope: scope});
@@ -381,15 +380,6 @@ describe('ContentType Actions Controller', function () {
             expect(scope.contentType.data.sys).toEqual('NEW SYS');
           });
         });
-      });
-    });
-
-    pit('sets default name', function () {
-      var ct = scope.contentType;
-      delete ct.data.name;
-      return controller.save.execute()
-      .then(function () {
-        expect(ct.data.name).toEqual('Untitled');
       });
     });
   });

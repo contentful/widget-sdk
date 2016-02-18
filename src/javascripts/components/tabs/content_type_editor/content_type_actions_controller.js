@@ -23,6 +23,7 @@ function ContentTypeActionsController($scope, $injector) {
   var $state             = $injector.get('$state');
   var accessChecker      = $injector.get('accessChecker');
   var ReloadNotification = $injector.get('ReloadNotification');
+  var ctHelpers          = $injector.get('data/ContentTypes');
 
   /**
    * @ngdoc property
@@ -46,8 +47,6 @@ function ContentTypeActionsController($scope, $injector) {
   });
 
   function startDeleteFlow () {
-    populateDefaultName($scope.contentType);
-
     return checkRemovable().then(function (status) {
       if (status.isRemovable) {
         return confirmRemoval(status.isPublished);
@@ -198,11 +197,9 @@ function ContentTypeActionsController($scope, $injector) {
   controller.runSave = save;
 
   function save () {
-    populateDefaultName($scope.contentType);
-
     trackSavedContentType($scope.contentType);
+    ctHelpers.assureDisplayField($scope.contentType.data);
 
-    $scope.regulateDisplayField();
     if (!$scope.validate()) {
       var fieldNames = _.pluck($scope.contentType.data.fields, 'name');
       notify.invalid($scope.validationResult.errors, fieldNames);
@@ -227,16 +224,6 @@ function ContentTypeActionsController($scope, $injector) {
     .then(publishContentType)
     .then(saveEditingInterface)
     .then(postSaveActions, triggerApiErrorNotification);
-  }
-
-  // This is handling legacy content types.
-  // FIXME This is not the proper place for this function, it should be
-  // handled when loading the CT. Unfortunately this is not currently
-  // possible.
-  function populateDefaultName (contentType) {
-    if (contentType && contentType.data && !contentType.data.name) {
-      contentType.data.name = 'Untitled';
-    }
   }
 
   function publishContentType(contentType) {
