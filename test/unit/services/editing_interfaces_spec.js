@@ -15,31 +15,33 @@ describe('Editing interfaces service', function () {
     beforeEach(function () {
       this.contentType = {
         getEditingInterface: sinon.stub(),
+        newEditingInterface: sinon.spy(function (data) {
+          return {data: data};
+        }),
         getId: sinon.stub(),
+        getVersion: sinon.stub(),
         data: {fields: [ {id: 'id1',  apiName: 'apiName1'}]}
+      };
+
+      this.getEditingInterface = function () {
+        var editingInterface;
+        editingInterfaces.forContentType(this.contentType)
+        .then(function (ei) {
+          editingInterface = ei;
+        });
+        this.$apply();
+        return editingInterface;
       };
     });
 
     describe('with API data', function() {
       beforeEach(function() {
-        var contentType = this.contentType;
-
-        contentType.getEditingInterface.resolves({
+        this.contentType.getEditingInterface.resolves({
           data: {widgets: [{
             fieldId: 'apiName1',
             widgetParams: {},
           }]}
         });
-
-        this.getEditingInterface = function () {
-          var editingInterface;
-          editingInterfaces.forContentType(contentType)
-          .then(function (ei) {
-            editingInterface = ei;
-          });
-          this.$apply();
-          return editingInterface;
-        };
       });
 
       it('requests the default id', function() {
@@ -72,66 +74,49 @@ describe('Editing interfaces service', function () {
       });
     });
 
-    pit('gets a default config if interface does not exit', function() {
-      this.contentType.newEditingInterface = sinon.spy(function (data) {
-        return {data: data};
+    describe('if content type is new', function () {
+      beforeEach(function () {
+        this.contentType.data.fields = [];
+        this.contentType.getVersion.returns(0);
+        this.contentType.newEditingInterface = sinon.spy(function (data) {
+          return {data: data};
+        });
       });
+
+      it('does not call "getEditingInterface"', function () {
+        this.getEditingInterface();
+        sinon.assert.notCalled(this.contentType.getEditingInterface);
+      });
+
+      it('call "newEditingInterface"', function () {
+        this.getEditingInterface();
+        sinon.assert.called(this.contentType.newEditingInterface);
+      });
+
+      it('returns interface with empty widgets', function () {
+        var editingInterface = this.getEditingInterface();
+        expect(editingInterface.data.widgets).toEqual([]);
+      });
+    });
+
+    it('gets a default config if interface does not exit', function() {
       this.contentType.getEditingInterface.rejects({statusCode: 404});
-      return editingInterfaces.forContentType(this.contentType)
-      .then(function (editingInterface) {
-        expect(editingInterface.data.widgets).toBeDefined();
-      });
+      var editingInterface = this.getEditingInterface();
+      expect(editingInterface.data.widgets.length).toBe(1);
     });
 
     it('fails if API returns error', function() {
       var apiError = {};
-      var error;
       this.contentType.getEditingInterface.rejects(apiError);
+
+      var errorHandler = sinon.stub();
       editingInterfaces.forContentType(this.contentType)
-      .catch(function (_err) {
-        error = _err;
-      });
+      .catch(errorHandler);
+
       this.$apply();
-      expect(error).toBe(apiError);
+      sinon.assert.calledWithExactly(errorHandler, apiError);
     });
 
-  });
-
-  describe('#defaultInterface()', function() {
-    var interf;
-    beforeEach(function() {
-      this.contentType =  {
-        getId: sinon.stub(),
-        data: {
-          fields: [
-            { id: 'id1', apiName: 'apiName1' },
-            { id: 'id2', apiName: 'apiName2' }
-          ]
-        },
-        newEditingInterface: sinon.spy(function(data){
-          return { data: data };
-        })
-      };
-      sinon.spy(widgets, 'defaultWidgetId');
-      interf = editingInterfaces.defaultInterface(this.contentType);
-    });
-
-    it('creates EI through CT', function() {
-      sinon.assert.called(this.contentType.newEditingInterface);
-    });
-
-    it('has widgets', function() {
-      expect(interf.data.widgets).toBeDefined();
-    });
-
-    it('maps to fieldIds to apiNames of the content type', function() {
-      expect(interf.data.widgets[0].fieldId).toBe('apiName1');
-      expect(interf.data.widgets[1].fieldId).toBe('apiName2');
-    });
-
-    it('gets widget type', function() {
-      sinon.assert.called(widgets.defaultWidgetId);
-    });
   });
 
   describe('#syncWidgets()', function() {
@@ -190,7 +175,8 @@ describe('Editing interfaces service', function () {
         return {
           data: {fields: fields},
           getEditingInterface: sinon.stub().resolves(editingInterface),
-          getId: sinon.stub()
+          getId: sinon.stub(),
+          getVersion: sinon.stub()
         };
       }
 
@@ -243,6 +229,52 @@ describe('Editing interfaces service', function () {
           expect(editingInterface.data.widgets).toEqual(expectedWidgets);
         });
       });
+
+      // Tests that the default widget uses a fields apiName and falls back to id
+      describe('default interface', function() {
+        function makeContentType(fields) {
+          return {
+            data: {fields: fields},
+            newEditingInterface: function (data) {
+              return {data: data};
+            },
+            getEditingInterface: sinon.stub().rejects({statusCode: 404}),
+            getId: sinon.stub(),
+            getVersion: sinon.stub()
+          };
+        }
+
+        pit('creates a default interface and maps `fieldId` to apiName', function(){
+          var contentType = makeContentType([{ id: 'id1', apiName: 'apiName1' }]);
+          var expectedWidgets = [
+            {fieldId: 'apiName1', widgetId: undefined, widgetParams: {}}
+          ];
+
+          return editingInterfaces.forContentType(contentType)
+          .then(function (resultingEI) {
+            // Autogenerated id we can't match
+            delete resultingEI.data.widgets[0].id;
+
+            expect(resultingEI.data.widgets).toEqual(expectedWidgets);
+          });
+        });
+
+        it('falls back to `id` when `apiName` doesnt exist in a field', function() {
+          var contentType = makeContentType([{ id: 'id1' }]);
+
+          var expectedWidgets = [
+            {fieldId: 'id1', widgetId: undefined, widgetParams: {}}
+          ];
+
+          return editingInterfaces.forContentType(contentType)
+          .then(function (resultingEI) {
+            // Autogenerated id we can't match
+            delete resultingEI.data.widgets[0].id;
+
+            expect(resultingEI.data.widgets).toEqual(expectedWidgets);
+          });
+        });
+      });
     });
 
     describe('#syncWidgets()', function() {
@@ -282,49 +314,6 @@ describe('Editing interfaces service', function () {
         var editingInterface = {data: {widgets: editingInterfaceWidgets}};
 
         var resultingEI = editingInterfaces.syncWidgets(contentType, editingInterface);
-        expect(resultingEI.data.widgets).toEqual(expectedWidgets);
-      });
-    });
-
-    // Tests that the default widget uses a fields apiName and falls back to id
-    describe('#defaultWidget()', function() {
-      function makeContentType(fields) {
-        return {
-          data: {fields: fields},
-          newEditingInterface: function (data) {
-            return {data: data};
-          },
-          getId: sinon.stub()
-        };
-      }
-
-      it('creates a default interface and maps `fieldId` to apiName', function(){
-        var contentTypeFields = [{ id: 'id1', apiName: 'apiName1'}];
-        var contentType = makeContentType(contentTypeFields);
-
-        var expectedWidgets = [
-          {fieldId: 'apiName1', widgetId: undefined, widgetParams: {}}
-        ];
-
-        var resultingEI = editingInterfaces.defaultInterface(contentType);
-        // Autogenerated id we can't match
-        delete resultingEI.data.widgets[0].id;
-
-        expect(resultingEI.data.widgets).toEqual(expectedWidgets);
-      });
-
-      it('falls back to `id` when `apiName` doesnt exist in a field', function() {
-        var contentTypeFields = [{ id: 'id1'}];
-        var contentType = makeContentType(contentTypeFields);
-
-        var expectedWidgets = [
-          {fieldId: 'id1', widgetId: undefined, widgetParams: {}}
-        ];
-
-        var resultingEI = editingInterfaces.defaultInterface(contentType);
-        // Autogenerated id we can't match
-        delete resultingEI.data.widgets[0].id;
-
         expect(resultingEI.data.widgets).toEqual(expectedWidgets);
       });
     });

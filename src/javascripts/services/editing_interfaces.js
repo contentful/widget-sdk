@@ -48,8 +48,7 @@ angular.module('contentful')
       .then(widgetMigrator(contentType));
     },
 
-    syncWidgets: syncWidgets,
-    defaultInterface: defaultInterface
+    syncWidgets: syncWidgets
   };
 
   /**
@@ -89,6 +88,8 @@ angular.module('contentful')
   function getEditingInterface (contentType) {
     if (contentType.getId() === 'asset') {
       return $q.when(makeAssetInterface(contentType));
+    } else if (contentType.getVersion() === 0) {
+      return $q.when(defaultInterface(contentType));
     } else {
       return contentType.getEditingInterface('default');
     }
@@ -177,4 +178,3 @@ angular.module('contentful')
   }
 
 }]);
-
