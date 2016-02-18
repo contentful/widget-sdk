@@ -13,7 +13,7 @@ angular.module('contentful')
   var TheStore              = $injector.get('TheStore');
   var htmlEncode            = $injector.get('encoder').htmlEncode;
 
-  var HOUR = 1000 * 60 * 60;
+  var HOUR_IN_MS = 1000 * 60 * 60;
   var HOURS_BEFORE_REOPEN_DIALOG = 24;
   var LAST_REMINDER_STORE_KEY = 'lastActivationEmailResendReminderTimestamp';
 
@@ -33,15 +33,16 @@ angular.module('contentful')
     if (!user) {
       return;
     }
+    var msUntilReopen = getMillisecondsUntilDialogCanBeReopened();
 
     if (!user.activated && user.email) {
-      if (hasEnoughTimePassedSinceDialogWasLastShown()) {
+      if (msUntilReopen <= 0) {
         showDialog(user.email);
         storeDialogLastShownTimestamp();
-        // Show dialog after 24 hours, even if user keeps the tab open:
-        setTimeout(watcher.bind(null, user),
-          HOUR * HOURS_BEFORE_REOPEN_DIALOG);
+        msUntilReopen = HOUR_IN_MS * HOURS_BEFORE_REOPEN_DIALOG;
       }
+      // Makes sure to show the dialog again if user keeps the tab open.
+      setTimeout(watcher.bind(null, user), msUntilReopen);
     } else {
       TheStore.remove(LAST_REMINDER_STORE_KEY);
     }
@@ -103,15 +104,16 @@ angular.module('contentful')
     });
   }
 
-  function hasEnoughTimePassedSinceDialogWasLastShown () {
+  function getMillisecondsUntilDialogCanBeReopened () {
     var lastMoment = getDialogLastShownTimestamp();
     if (lastMoment) {
-      // Math.abs() since the user might have messed around with the clock and we
-      // do not want to completely ignore future dates created this way.
-      var hoursSinceLastShown = moment().diff(lastMoment, 'hours');
-      return Math.abs(hoursSinceLastShown) >= HOURS_BEFORE_REOPEN_DIALOG;
+      var msSinceLastShown = moment().diff(lastMoment, 'milliseconds');
+      // Use Math.abs() since the user might have messed around with the clock and
+      // we do not want to completely ignore future dates created this way.
+      return Math.max(0,
+        HOUR_IN_MS * HOURS_BEFORE_REOPEN_DIALOG - Math.abs(msSinceLastShown));
     } else {
-      return true;
+      return 0;
     }
   }
 

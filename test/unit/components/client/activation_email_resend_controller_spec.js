@@ -5,6 +5,7 @@ describe('activationEmailResendController', function () {
   var openDialogStub, dialogConfirmSpy, resendConfirmationEmailStub;
   var userMock, storeMock;
 
+  var A_SECOND = 1000;
   var A_DAY = 24 * 1000 * 60 * 60;
   var LAST_REMINDER_STORE_KEY;
 
@@ -88,32 +89,34 @@ describe('activationEmailResendController', function () {
       sinon.assert.calledWith(storeMock.set, LAST_REMINDER_STORE_KEY);
     });
 
-    describe('dialog has been shown before', function () {
+    describe('dialog has been shown before in another session', function () {
       beforeEach(function () {
         var lastShownTime = moment().unix();
         storeMock.get.withArgs(LAST_REMINDER_STORE_KEY).returns(lastShownTime);
       });
 
-      it('reopens the dialog after 24 hours', function () {
+      it('opens the dialog after 24 hours', function () {
+        sinon.assert.callCount(openDialogStub, 0);
         jasmine.clock().tick(A_DAY);
         $rootScope.$apply();
         sinon.assert.callCount(openDialogStub, 1);
       });
 
-      it('does not reopen the dialog after 24 hours if meanwhile the user got activated', function () {
+      it('does not open the dialog after 24 hours if meanwhile the user got activated', function () {
         jasmine.clock().tick(A_DAY);
         userMock.activated = true;
+        $rootScope.$apply();
         sinon.assert.callCount(openDialogStub, 0);
       });
 
       it('does not open the dialog for the next 23:59 hours', function () {
-        jasmine.clock().tick(A_DAY - 1);
+        jasmine.clock().tick(A_DAY - A_SECOND);
         $rootScope.$apply();
         sinon.assert.callCount(openDialogStub, 0);
       });
     });
 
-    describe('dialog has been shown and the browser tab remains open', function () {
+    describe('dialog gets shown and the browser tab remains open', function () {
       beforeEach(function () {
         $rootScope.$apply();
         var lastShownTime = storeMock.set.args[0][1];
@@ -121,19 +124,47 @@ describe('activationEmailResendController', function () {
       });
 
       it('reopens the dialog after 24 hours', function () {
+        sinon.assert.callCount(openDialogStub, 1);
         jasmine.clock().tick(A_DAY);
         sinon.assert.callCount(openDialogStub, 2);
       });
 
       it('does not reopen the dialog after 24 hours if meanwhile the user got activated', function () {
+        sinon.assert.callCount(openDialogStub, 1);
         userMock.activated = true;
         jasmine.clock().tick(A_DAY);
         sinon.assert.callCount(openDialogStub, 1);
       });
 
-      it('does not open the dialog for the next 23:59 hours', function () {
-        jasmine.clock().tick(A_DAY - 1);
+      it('does not reopen the dialog for the next 23:59 hours', function () {
         sinon.assert.callCount(openDialogStub, 1);
+        jasmine.clock().tick(A_DAY - A_SECOND);
+        sinon.assert.callCount(openDialogStub, 1);
+      });
+    });
+
+    describe('dialog is not shown because only 12 hours have passed since last time', function () {
+      beforeEach(function () {
+        var lastShownMoment = moment().subtract(12, 'hours');
+        storeMock.get.withArgs(LAST_REMINDER_STORE_KEY).returns(lastShownMoment.unix());
+        $rootScope.$apply();
+      });
+
+      it('opens the dialog after 12 hours', function () {
+        sinon.assert.callCount(openDialogStub, 0);
+        jasmine.clock().tick(A_DAY / 2);
+        sinon.assert.callCount(openDialogStub, 1);
+      });
+
+      it('does not open the dialog after 12 hours if meanwhile the user got activated', function () {
+        userMock.activated = true;
+        jasmine.clock().tick(A_DAY / 2);
+        sinon.assert.callCount(openDialogStub, 0);
+      });
+
+      it('does not open the dialog for the next 13:59 hours', function () {
+        jasmine.clock().tick(A_DAY / 2 - A_SECOND);
+        sinon.assert.callCount(openDialogStub, 0);
       });
     });
 
