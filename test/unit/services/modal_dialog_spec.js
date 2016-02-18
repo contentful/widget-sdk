@@ -158,7 +158,26 @@ describe('Modal dialog service', function () {
         });
       });
     });
+  });
 
+  describe('#closeAll()', function () {
+    beforeEach(function() {
+      _.times(2, function() {
+        modalDialog.open({
+          message: 'test'
+        }).promise
+        .then(function() {})
+        .catch(errorStub);
+      });
+    });
+
+    it ('closes all opened dialogs', function () {
+      expect(modalDialog.getOpened().length).toBe(2);
+      modalDialog.closeAll();
+      scope.$apply();
+      sinon.assert.calledTwice(errorStub);
+      expect(modalDialog.getOpened().length).toBe(0);
+    });
   });
 
 });

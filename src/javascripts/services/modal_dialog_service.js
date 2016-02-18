@@ -192,8 +192,15 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
     open:                     openDialog,
     openConfirmDialog:        openConfirmDialog,
     openConfirmDeleteDialog:  openConfirmDeleteDialog,
-    getOpened:                getOpened
+    getOpened:                getOpened,
+    closeAll:                 closeAll
   };
+
+  function closeAll () {
+    _.forEachRight(opened, function(dialog) {
+      dialog.cancel();
+    });
+  }
 
   /**
    * @ngdoc method
