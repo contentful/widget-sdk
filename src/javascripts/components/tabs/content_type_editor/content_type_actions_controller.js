@@ -9,19 +9,20 @@
 angular.module('contentful')
 .controller('ContentTypeActionsController', ['$scope', '$injector',
 function ContentTypeActionsController($scope, $injector) {
-  var controller   = this;
-  var $rootScope   = $injector.get('$rootScope');
-  var analytics    = $injector.get('analytics');
-  var logger       = $injector.get('logger');
-  var defer        = $injector.get('defer');
-  var notify       = $injector.get('contentType/notifications');
-  var $q           = $injector.get('$q');
-  var modalDialog  = $injector.get('modalDialog');
-  var Command      = $injector.get('command');
-  var $timeout     = $injector.get('$timeout');
-  var spaceContext = $injector.get('spaceContext');
-  var $state       = $injector.get('$state');
-  var accessChecker = $injector.get('accessChecker');
+  var controller         = this;
+  var $rootScope         = $injector.get('$rootScope');
+  var analytics          = $injector.get('analytics');
+  var logger             = $injector.get('logger');
+  var defer              = $injector.get('defer');
+  var notify             = $injector.get('contentType/notifications');
+  var $q                 = $injector.get('$q');
+  var modalDialog        = $injector.get('modalDialog');
+  var Command            = $injector.get('command');
+  var $timeout           = $injector.get('$timeout');
+  var spaceContext       = $injector.get('spaceContext');
+  var $state             = $injector.get('$state');
+  var accessChecker      = $injector.get('accessChecker');
+  var ReloadNotification = $injector.get('ReloadNotification');
 
   /**
    * @ngdoc property
@@ -46,27 +47,40 @@ function ContentTypeActionsController($scope, $injector) {
 
   function startDeleteFlow () {
     populateDefaultName($scope.contentType);
-    var isPublished = $scope.contentType.isPublished();
-    return checkRemovable().then(function (isRemovable) {
-      if (isRemovable) {
-        return confirmRemoval(isPublished);
+
+    return checkRemovable().then(function (status) {
+      if (status.isRemovable) {
+        return confirmRemoval(status.isPublished);
+      } else {
+        forbidRemoval(status.entryCount);
       }
-    });
+    }, ReloadNotification.basicErrorHandler);
   }
 
   function checkRemovable () {
     var isPublished = $scope.contentType.isPublished();
-    if (isPublished) {
-      return $scope.ctEditorController.countEntries().then(function(count) {
-        if (count > 0) {
-          forbidRemoval(count);
-          return false;
-        } else {
-          return true;
-        }
-      });
-    } else {
-      return $q.when(true);
+    var canRead = accessChecker.canPerformActionOnEntryOfType('read', $scope.contentType.getId());
+
+    if (!isPublished) {
+      return $q.when(createStatusObject(true));
+    }
+
+    return $scope.ctEditorController.countEntries().then(function(count) {
+      return createStatusObject(canRead && count < 1, count);
+    }, function (response) {
+      if (parseInt(response.statusCode, 10) === 404 && !canRead) {
+        return createStatusObject(false);
+      } else {
+        return $q.reject(response);
+      }
+    });
+
+    function createStatusObject(isRemovable, entryCount) {
+      return {
+        isPublished: isPublished,
+        isRemovable: isRemovable,
+        entryCount: entryCount
+      };
     }
   }
 
@@ -79,7 +93,7 @@ function ContentTypeActionsController($scope, $injector) {
     return modalDialog.open({
       template: 'content_type_removal_forbidden_dialog',
       scopeData: {
-        count: count,
+        count: count > 0 ? count : '',
         contentTypeName: $scope.contentType.data.name
       }
     });
