@@ -3,7 +3,9 @@
 describe('spaceContext', function () {
 
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', function ($provide) {
+      $provide.value('data/userCache', sinon.stub());
+    });
     this.spaceContext = this.$inject('spaceContext');
     this.theLocaleStore = this.$inject('TheLocaleStore');
     this.theLocaleStore.resetWithSpace = sinon.stub();
@@ -33,7 +35,7 @@ describe('spaceContext', function () {
     });
   });
 
-  describe('resetting with a space', function () {
+  describe('#resetWithSpace()', function () {
     var SPACE = {};
     beforeEach(function () {
       sinon.stub(this.spaceContext, 'refreshContentTypes');
@@ -55,6 +57,15 @@ describe('spaceContext', function () {
 
     it('refreshes locales', function () {
       sinon.assert.calledOnce(this.theLocaleStore.resetWithSpace);
+    });
+
+    it('creates the user cache', function () {
+      var userCache = {};
+      var createUserCache = this.$inject('data/userCache');
+      createUserCache.reset().returns(userCache);
+      this.spaceContext.resetWithSpace(SPACE);
+      sinon.assert.calledWithExactly(createUserCache, SPACE);
+      expect(this.spaceContext.users).toBe(userCache);
     });
   });
 
