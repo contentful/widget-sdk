@@ -2,49 +2,7 @@
 
 /**
  * @ngdoc service
- * @name analytics
- * @description
- *
- * This service provides an object with different methods to trigger
- * analytics events.
- *
- * The service is disabled in all but the production environment.
- * It can be enabled by appending the '?forceAnalytics' query string to
- * the URL.
- * In the development environment you can send all tracking events to
- * the console for testing by using '?forceAnalyticsDevMode'.
- */
-angular.module('contentful')
-.factory('analytics', ['$injector', function ($injector) {
-
-  var $location   = $injector.get('$location');
-  var environment = $injector.get('environment');
-
-  var serviceName;
-
-  if (forceDevMode()) {
-    serviceName = 'analytics/consoleLog';
-  } else if (shouldLoadAnalytics()) {
-    serviceName = 'analytics/track';
-  } else {
-    serviceName = 'analytics/noop';
-  }
-
-  return $injector.get(serviceName);
-
-  function shouldLoadAnalytics () {
-    var load = _.contains(['production', 'staging'], environment.env);
-    return load || $location.search().forceAnalytics;
-  }
-
-  function forceDevMode () {
-    return $location.search().forceAnalyticsDevMode;
-  }
-}]);
-
-/**
- * @ngdoc service
- * @name noopAnalytics
+ * @name analytics/track
  * @description
  *
  * Returns an object with the same interface as the proper
@@ -53,6 +11,7 @@ angular.module('contentful')
  */
 angular.module('contentful')
 .factory('analytics/track', ['$injector', function ($injector) {
+
   var segment       = $injector.get('segment');
   var totango       = $injector.get('totango');
   var fontsdotcom   = $injector.get('fontsdotcom');
@@ -251,48 +210,5 @@ angular.module('contentful')
       var cookie = cookieStore.get(cookieName);
       return JSON.parse(cookie)[prop];
     } catch (e) {}
-  }
-}]);
-
-/**
- * @ngdoc service
- * @name noopAnalytics
- * @description
- *
- * Returns an object with the same interface as the proper
- * analytics service, except that all functions are replaced by
- * noops.
- */
-angular.module('contentful')
-.factory('analytics/noop', ['$injector', function ($injector) {
-
-  var analyticsAnalytics = $injector.get('analytics/track');
-
-  return _.mapValues(analyticsAnalytics, _.constant(_.noop));
-}]);
-
-/**
- * @ngdoc service
- * @name consoleLogAnalytics
- * @description
- *
- * Similar to `noopService()`, but the track methods are replaced
- * with functions that log the events to the console. This is
- * helpful for debugging.
- */
-angular.module('contentful')
-.factory('analytics/consoleLog', ['$injector', function ($injector) {
-
-  var noopAnalytics = $injector.get('analytics/noop');
-
-  return _.extend({}, noopAnalytics, {
-    track: trackStub,
-    trackTotango: trackStub,
-    enable: _.noop,
-    disable: _.noop
-  });
-
-  function trackStub (event, data) {
-    console.log('track: ' + event, data);
   }
 }]);
