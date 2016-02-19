@@ -20,7 +20,7 @@ angular.module('cf.app')
   var spaceTools     = $injector.get('spaceTools');
   var contextHistory = $injector.get('contextHistory');
   var logger         = $injector.get('logger');
-  var modalDialog    = $injector.get('modalDialog');
+  // var modalDialog    = $injector.get('modalDialog');
 
   // Result of confirmation dialog
   var navigationConfirmed = false;
@@ -99,7 +99,12 @@ angular.module('cf.app')
       return;
     }
 
-    modalDialog.closeAll();
+    // TODO Reenable this.
+    // The problem is currently that this closes also needed dialogs
+    // when redirecting in the background. E.g. to another space or
+    // the default space. Affected are the persona and space creation
+    // dialog.
+    // modalDialog.closeAll();
 
     if (!toStateParams.addToContext) {
       contextHistory.purge();
