@@ -8,24 +8,22 @@ describe('Space Template loading service', function () {
       $provide.value('contentfulClient', {
         newClient: sinon.stub()
       });
-
-      $provide.value('environment', {
-        contentful: {}
+      $provide.constant('environment', {
+        settings: { contentful: {} }
       });
     });
-    inject(function ($injector) {
-      this.$q = $injector.get('$q');
-      this.$rootScope = $injector.get('$rootScope');
-      this.client = {
-        contentTypes: sinon.stub(),
-        entries: sinon.stub(),
-        assets: sinon.stub(),
-        editingInterface: sinon.stub()
-      };
-      this.contentfulClient = $injector.get('contentfulClient');
-      this.contentfulClient.newClient.returns(this.client);
-      this.spaceTemplateLoader = $injector.get('spaceTemplateLoader');
-    });
+
+    this.$q = this.$inject('$q');
+    this.$rootScope = this.$inject('$rootScope');
+    this.client = {
+      contentTypes: sinon.stub(),
+      entries: sinon.stub(),
+      assets: sinon.stub(),
+      editingInterface: sinon.stub()
+    };
+    this.contentfulClient = this.$inject('contentfulClient');
+    this.contentfulClient.newClient.returns(this.client);
+    this.spaceTemplateLoader = this.$inject('spaceTemplateLoader');
   });
 
   afterEach(inject(function ($log) {
