@@ -1,7 +1,7 @@
 'use strict';
 
 describe('cfKnowledgeBase directive', function () {
-  var el, scope, environment, trackFollowedKbpLinkSpy;
+  var el, scope, trackFollowedKbpLinkSpy;
 
   function getLink() { return el.find('a').first(); }
 
@@ -12,9 +12,10 @@ describe('cfKnowledgeBase directive', function () {
       $provide.value('analyticsEvents', {
         trackFollowedKbpLink: trackFollowedKbpLinkSpy
       });
+      $provide.constant('environment', {
+        settings: { marketing_url: 'http://test.com' }
+      });
     });
-    environment = this.$inject('environment');
-    environment.settings.marketing_url = 'http://test.com';
     scope = this.$inject('$rootScope');
   });
 

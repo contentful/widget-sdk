@@ -7,7 +7,7 @@ describe('data/ApiClient', function () {
     $http = sinon.stub();
     module('cf.data', function ($provide) {
       $provide.value('$http', $http);
-      $provide.value('environment', {
+      $provide.constant('environment', {
         settings: {api_host: 'api.test.local'}
       });
     });
