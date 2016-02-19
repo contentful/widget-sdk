@@ -10,6 +10,9 @@ describe('activationEmailResender', function () {
       $provide.constant('environment', {
         settings: { base_host: 'be.contentful.com:443' }
       });
+      $provide.value('logger', {
+        logError: sinon.spy()
+      });
     });
 
     resend = this.$inject('activationEmailResender').resend;
@@ -32,6 +35,8 @@ describe('activationEmailResender', function () {
   describe('#resend(email)', function () {
     beforeEach(function () {
       this.promise = resend('user@example.com');
+      this.respond = $httpBackend.whenPOST(
+        '//be.contentful.com:443/confirmation').respond;
     });
 
     it('sends data as expected by Gatekeeper', function () {
@@ -60,28 +65,59 @@ describe('activationEmailResender', function () {
         rejected = sinon.spy();
         resolved = sinon.spy();
         this.promise.then(resolved, rejected);
-        this.route = $httpBackend.whenPOST('//be.contentful.com:443/confirmation');
       });
 
       it('gets resolved on Gatekeeper success (2xx) response', function () {
-        this.route.respond(200, 'OK');
+        this.respond(200);
         $httpBackend.flush();
         sinon.assert.calledWithExactly(resolved, undefined);
         sinon.assert.notCalled(rejected);
       });
 
       it('gets rejected on Gatekeeper client error (4xx) response', function () {
-        this.route.respond(418, 'I\'m a teapot');
+        this.respond(418);
         $httpBackend.flush();
         sinon.assert.notCalled(resolved);
         sinon.assert.calledWithExactly(rejected, sinon.match.instanceOf(Error));
       });
 
       it('gets rejected on Gatekeeper server error (5xx) response', function () {
-        this.route.respond(500, 'Internal Server Error');
+        this.respond(500);
         $httpBackend.flush();
         sinon.assert.notCalled(resolved);
         sinon.assert.calledWithExactly(rejected, sinon.match.instanceOf(Error));
+      });
+    });
+
+    describe('error logging on rejection via `logger.logError()`', function () {
+      var logErrorSpy;
+      beforeEach(function () {
+        this.respond(function(method, url, data, headers) {
+          this.request = {
+            method: method, url: url, data: data, headers: headers
+          };
+          return [418, 'tea', {}, 'I\'m a teapot'];
+        }.bind(this));
+
+        $httpBackend.flush();
+        logErrorSpy = this.$inject('logger').logError;
+      });
+
+      it('includes the right message and data', function () {
+        sinon.assert.calledWithExactly(logErrorSpy,
+          'Failed activation email resend attempt',
+          sinon.match({
+            data: {
+              email: 'user@example.com',
+              request: this.request,
+              response: {
+                status: 418,
+                statusText: 'I\'m a teapot',
+                data: 'tea'
+              }
+            }
+          })
+        );
       });
     });
   });

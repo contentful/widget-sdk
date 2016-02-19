@@ -13,6 +13,7 @@ angular.module('contentful')
   var $http       = $injector.get('$http');
   var $q          = $injector.get('$q');
   var uriEncode   = $injector.get('$window').encodeURIComponent;
+  var logger      = $injector.get('logger');
 
   var GK_URL = '//' + environment.settings.base_host;
   var ENDPOINT = GK_URL + '/confirmation';
@@ -39,15 +40,23 @@ angular.module('contentful')
       throw new Error( 'email is required and expected to be a string' );
     }
     var data = uriEncode('user[email]') + '=' + uriEncode(email);
-
-    return $http({
+    var request = {
       method: 'POST',
       url: ENDPOINT,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       data: data
-    }).then(_.noop, function () {
+    };
+
+    return $http(request).then(_.noop, function (response) {
+      logger.logError('Failed activation email resend attempt', {
+        data: {
+          email: email,
+          request: _.extend({}, request, {headers: response.config.headers}),
+          response: _.pick(response, 'status', 'statusText', 'data')
+        }
+      });
       return $q.reject(new Error('The email could not be sent'));
     });
   }
