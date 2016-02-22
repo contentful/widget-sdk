@@ -102,4 +102,25 @@ describe('navigation/stateChangeHandlers', function () {
       sinon.assert.notCalled(modalCloseStub);
     });
   });
+
+  describe('leave confirmation', function () {
+    it('logs error when changing state during confirmation', function () {
+      var logger = this.$inject('logger');
+      logger.logError = sinon.stub();
+
+      var $q = this.$inject('$q');
+      var requestLeaveConfirmation = sinon.stub().returns($q.defer().promise);
+      var from = {
+        name: 'any',
+        data: {
+          dirty: true,
+          requestLeaveConfirmation: requestLeaveConfirmation
+        }
+      };
+
+      $rootScope.$emit('$stateChangeStart', {}, {}, from, {});
+      $rootScope.$emit('$stateChangeStart', {}, {}, from, {});
+      sinon.assert.calledWith(logger.logError, 'Change state during state change confirmation');
+    });
+  });
 });
