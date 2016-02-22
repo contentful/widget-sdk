@@ -37,7 +37,7 @@ function ContentTypeEditorController($scope, $injector) {
 
   $scope.hints = hints;
 
-  $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.runSave);
+  $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.saveAndClose);
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
   $scope.updatePublishedContentType = updatePublishedContentType;
 

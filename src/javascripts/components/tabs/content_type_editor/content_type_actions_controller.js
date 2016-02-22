@@ -13,7 +13,6 @@ function ContentTypeActionsController($scope, $injector) {
   var $rootScope         = $injector.get('$rootScope');
   var analytics          = $injector.get('analytics');
   var logger             = $injector.get('logger');
-  var defer              = $injector.get('defer');
   var notify             = $injector.get('contentType/notifications');
   var $q                 = $injector.get('$q');
   var modalDialog        = $injector.get('modalDialog');
@@ -182,7 +181,9 @@ function ContentTypeActionsController($scope, $injector) {
    * @name ContentTypeActionsController#save
    * @type {Command}
    */
-  controller.save = Command.create(save, {
+  controller.save = Command.create(function () {
+    return save(true);
+  }, {
     disabled: function () {
       var dirty = $scope.contentTypeForm.$dirty ||
                   !$scope.contentType.getPublishedVersion();
@@ -194,9 +195,14 @@ function ContentTypeActionsController($scope, $injector) {
     }
   });
 
-  controller.runSave = save;
+  // This is called by the state manager in case the user leaves the
+  // Content Type editor without saving. We do not redirect in that
+  // case.
+  controller.saveAndClose = function () {
+    return save(false);
+  };
 
-  function save () {
+  function save (redirect) {
     trackSavedContentType($scope.contentType);
     ctHelpers.assureDisplayField($scope.contentType.data);
 
@@ -223,7 +229,13 @@ function ContentTypeActionsController($scope, $injector) {
     })
     .then(publishContentType)
     .then(saveEditingInterface)
-    .then(postSaveActions, triggerApiErrorNotification);
+    .catch(triggerApiErrorNotification)
+    .then(setFormPristine)
+    .then(function () {
+      if (redirect && $scope.context.isNew) {
+        return goToDetails();
+      }
+    }).then(notify.saveSuccess);
   }
 
   function publishContentType(contentType) {
@@ -269,30 +281,18 @@ function ContentTypeActionsController($scope, $injector) {
     return $scope.editingInterface.save();
   }
 
-  function postSaveActions() {
+  function setFormPristine () {
+    // Since this is called by asynchronously the scope data may have
+    // already been removed.
     if ($scope.contentTypeForm) {
       $scope.contentTypeForm.$setPristine();
     }
-    return redirectWhenNew().then(notify.saveSuccess);
   }
 
-  /**
-    * Lets the digest cycle have time to properly set the pristine state
-    * before trying to redirect the user, otherwise they'll be prompted
-    * to save changes
-  */
-  function redirectWhenNew() {
-    if($scope.context.isNew){
-      return $q((function (res, reject) {
-        defer(function () {
-          $state.go('spaces.detail.content_types.detail', {
-            contentTypeId: $scope.contentType.getId()
-          }).then(res, reject);
-        });
-      }));
-    } else {
-      return $q.when();
-    }
+  function goToDetails () {
+    return $state.go('spaces.detail.content_types.detail', {
+      contentTypeId: $scope.contentType.getId()
+    });
   }
 
   function triggerApiErrorNotification(err) {
