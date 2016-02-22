@@ -1,19 +1,27 @@
 'use strict';
 
-angular.module('contentful').directive('cfWebhookList', function () {
+angular.module('contentful')
+
+.directive('cfWebhookList', function () {
   return {
     restrict: 'E',
     template: JST['webhook_list'](),
     controller: 'WebhookListController'
   };
-});
+})
 
-angular.module('contentful').controller('WebhookListController', ['$scope', '$injector', function ($scope, $injector) {
+.controller('WebhookListController', ['$scope', '$injector', function ($scope, $injector) {
 
-  var $timeout = $injector.get('$timeout');
+  var spaceContext       = $injector.get('spaceContext');
+  var webhookRepo        = $injector.get('WebhookRepository').getInstance(spaceContext.space);
+  var ReloadNotification = $injector.get('ReloadNotification');
 
-  $timeout(function () {
-    $scope.context.ready = true;
-  }, 750);
+  reload().catch(ReloadNotification.basicErrorHandler);
 
+  function reload() {
+    return webhookRepo.getAll().then(function (items) {
+      $scope.context.ready = true;
+      $scope.webhooks = items;
+    });
+  }
 }]);

@@ -1,0 +1,23 @@
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-settings")
+  h1.workbench-header__title Webhook: {{ context.title }}
+
+  .workbench-header__actions
+    button.cfnext-btn-secondary-action(ui-sref="spaces.detail.settings.webhooks.list")
+      | Cancel
+    button.cfnext-btn-secondary-action(ui-command="remove")
+      | Delete
+    button.cfnext-btn-primary-action(type="submit" ui-command="save")
+      | Save
+
+.workbench-main.x--content
+  form.workbench-main__middle-content(submit="save()")
+    .cfnext-form__field
+      label(for="f_url") URL:
+      input.cfnext-form__input--full-size(id="f_url" ng-model="webhook.url")
+    .cfnext-form__field
+      label(for="f_http_user") HTTP Basic Auth username:
+      input.cfnext-form__input--full-size(id="f_http_user" ng-model="webhook.httpBasicUsername")
+    .cfnext-form__field
+      label(for="f_http_pass") HTTP Basic Auth password:
+      input.cfnext-form__input--full-size(id="f_http_pass" ng-model="webhook.httpBasicPassword")
