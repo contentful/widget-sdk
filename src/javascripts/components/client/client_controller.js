@@ -220,7 +220,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       title: 'Space templates',
       template: 'space_templates_dialog',
       scope: scope,
-      backgroundClose: false
+      backgroundClose: false,
+      persistOnNavigation: true
     })
     .promise
     .then(function (template) {
@@ -240,6 +241,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     return modalDialog.open({
       title: 'Select Persona', // Not displayed, just for analytics
       template: 'user_persona_dialog',
+      persistOnNavigation: true,
       scopeData: {
         userName: $scope.user.firstName
       },
