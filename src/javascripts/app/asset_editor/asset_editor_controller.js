@@ -77,6 +77,17 @@ angular.module('contentful')
     $scope.hasErrorOnFields = false;
 
     _.each(errors, function (error) {
+      if (!_.isObject(error)) {
+        // TODO We have seen errors on bugsnag where path is not an
+        // object. This is some temporary logging to gather some data.
+        logger.logError('Validation error is not an object', {
+          data: {
+            validationErrors: errors,
+            assetFields: dotty.get($scope.asset, 'data.fields')
+          }
+        });
+      }
+
       if (error.path[0] !== 'fields') return;
       var field      = error.path[1];
       $scope.errorPaths[field] = $scope.errorPaths[field] || [];

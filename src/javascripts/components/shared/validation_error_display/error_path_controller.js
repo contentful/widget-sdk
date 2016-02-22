@@ -1,9 +1,10 @@
 'use strict';
 
 angular.module('contentful')
-.controller('ErrorPathController', ['$scope', '$attrs',
-function ErrorPathController($scope, $attrs) {
+.controller('ErrorPathController', ['$scope', '$attrs', '$injector',
+function ErrorPathController($scope, $attrs, $injector) {
   var controller = this;
+  var logger = $injector.get('logger');
 
   controller.messages = [];
 
@@ -11,7 +12,19 @@ function ErrorPathController($scope, $attrs) {
     var pathPattern = $scope.$eval($attrs.cfErrorPath);
 
     var fieldErrors = _.filter(errors, function (error) {
-      return matchesPath(pathPattern, error.path);
+      try {
+        return matchesPath(pathPattern, error.path);
+      } catch (e) {
+        // TODO We have seen `matchesPath` throw on bugsnag. This is
+        // some temporary logging to gather some data.
+        logger.logError('Cannot match validation result', {
+          error: e,
+          data: {
+            errorPathPattern: pathPattern,
+            validationErrors: errors
+          }
+        });
+      }
     });
 
     var hasErrors = fieldErrors.length > 0;
