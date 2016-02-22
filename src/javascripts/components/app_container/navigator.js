@@ -569,6 +569,26 @@ angular.module('contentful').config([
   });
 
   /**
+   * Settings > Webhooks
+   */
+
+  $stateProvider.state('spaces.detail.settings.webhooks', {
+    url: '/webhooks',
+    abstract: true,
+    template: '<ui-view />'
+  });
+
+  $stateProvider.state('spaces.detail.settings.webhooks.list', base({
+    url: '',
+    ncyBreadcrumb: { label: 'Webhooks' },
+    loadingText: 'Loading Webhooks...',
+    template: '<cf-webhook-list class="workbench webhook-list" />',
+    controller: ['$scope', function ($scope) {
+      $scope.context = {};
+    }]
+  }));
+
+  /**
    * Settings > iframe views
    */
 
