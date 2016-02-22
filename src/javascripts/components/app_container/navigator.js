@@ -421,6 +421,20 @@ angular.module('contentful').config([
   });
 
   /**
+   * Settings > Space Settings
+   */
+
+  $stateProvider.state('spaces.detail.settings.space', base({
+    url: '/space',
+    ncyBreadcrumb: {label: 'Space Settings'},
+    loadingText: 'Loading Space Settings...',
+    template: '<cf-space-settings />',
+    controller: ['$scope', function ($scope) {
+      $scope.context = {};
+    }]
+  }));
+
+  /**
    * Settings > Locale
    */
 
@@ -587,34 +601,6 @@ angular.module('contentful').config([
       $scope.context = {};
     }]
   }));
-
-  /**
-   * Settings > iframe views
-   */
-
-  $stateProvider.state('spaces.detail.settings.iframe', {
-    url: '',
-    abstract: true,
-    template: '<cf-space-settings>'
-  });
-
-  $stateProvider.state('spaces.detail.settings.iframe.pathSuffix', {
-    url: '/{pathSuffix:PathSuffix}',
-    params: {
-      pathSuffix: 'edit'
-    },
-    ncyBreadcrumb: {
-      label: '{{title}}'
-    },
-    template: '',
-    controller: ['$scope', '$stateParams', function ($scope, $stateParams) {
-      $scope.title = {
-        edit: 'Space',
-        webhook_definitions: 'Webhooks'
-      }[$stateParams.pathSuffix];
-    }]
-  });
-
 
   $stateProvider.state('account', {
     url: '/account',

@@ -57,8 +57,8 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
         ul.context-menu__items
           li(
             role="menuitem"
-            ng-class="{'selected': $stateParams.pathSuffix === 'edit'}"
-            ui-sref="spaces.detail.settings.iframe.pathSuffix({ pathSuffix: 'edit' })")
+            ng-class="{'selected': $state.includes('spaces.detail.settings.space')}"
+            ui-sref="spaces.detail.settings.space")
             | Space
           li(
             role="menuitem"
