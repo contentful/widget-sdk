@@ -43,7 +43,7 @@ describe('widgets/API', function () {
     it('sends entry param', function () {
       this.entryData = 'ENTRY';
       this.createAPI().connect();
-      expect(this.postMessage.args[0][0].params.entry).toEqual('ENTRY');
+      expect(this.postMessage.args[0][0].params[0].entry).toEqual('ENTRY');
     });
 
     it('sends field param', function () {
@@ -57,7 +57,7 @@ describe('widgets/API', function () {
         internal_code: 'LOCALE-internal'
       };
       this.createAPI().connect();
-      expect(this.postMessage.args[0][0].params.field).toEqual({
+      expect(this.postMessage.args[0][0].params[0].field).toEqual({
         id: 'FID-public', locale: 'LOCALE', value: 'VALUE'
       });
     });
@@ -76,7 +76,7 @@ describe('widgets/API', function () {
       };
 
       this.createAPI().connect();
-      expect(this.postMessage.args[0][0].params.fieldInfo).toEqual([{
+      expect(this.postMessage.args[0][0].params[0].fieldInfo).toEqual([{
         id: 'X-public', values: {'en': 'VAL'}, localized: false, locales: ['en']
       }]);
     });
@@ -84,8 +84,8 @@ describe('widgets/API', function () {
     it('sends locales param', function () {
       this.setLocales([{code: 'A'}, {code: 'B'}]);
       this.createAPI().connect();
-      expect(this.postMessage.args[0][0].params.locales.default).toEqual('A');
-      expect(this.postMessage.args[0][0].params.locales.available).toEqual(['A', 'B']);
+      expect(this.postMessage.args[0][0].params[0].locales.default).toEqual('A');
+      expect(this.postMessage.args[0][0].params[0].locales.available).toEqual(['A', 'B']);
     });
   });
 

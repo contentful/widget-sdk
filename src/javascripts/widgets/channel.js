@@ -63,6 +63,9 @@ angular.module('contentful')
    * @param {Array<any>} params
    */
   Channel.prototype.send = function (message, params) {
+    if(!Array.isArray(params)) {
+      throw new Error( '`params` is expected to be an array' );
+    }
     if (this.connected) {
       this._send(message, params);
     } else {
@@ -75,7 +78,8 @@ angular.module('contentful')
       throw new Error('Widget Channel already connected');
     }
     this.connected = true;
-    this._send('connect', _.extend({id: this.id}, data));
+    var params = [_.extend({id: this.id}, data)];
+    this._send('connect', params);
     var self = this;
     _.forEach(this.messageQueue, function (args) {
       self._send.apply(self, args);
