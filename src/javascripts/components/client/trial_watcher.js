@@ -95,6 +95,7 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
     modalDialog.open({
       title: 'Paywall', // For generic Modal Dialog tracking.
       template: 'paywall_dialog',
+      persistOnNavigation: true,
       scopeData: {
         offerToSetUpPayment: userOwnsOrganization,
         setUpPayment: newUpgradeAction(organization, trackPaywallPlanUpgrade),
