@@ -21,8 +21,6 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
 
   $scope.entityStatusController = $controller('EntityStatusController', { $scope: $scope });
 
-  $scope.archivedStateRef = 'spaces.detail.assets.list({searchTerm: "status:archived"})';
-
   $scope.shouldHide = accessChecker.shouldHide;
   $scope.shouldDisable = accessChecker.shouldDisable;
 

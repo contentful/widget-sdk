@@ -19,8 +19,7 @@ describe('The Asset list directive', function () {
         getSelected: sinon.stub(),
         isSelected: sinon.stub()
       },
-      spaceContext: {},
-      archivedStateRef: 'other'
+      spaceContext: {}
     };
   });
 

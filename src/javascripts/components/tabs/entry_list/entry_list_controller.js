@@ -25,8 +25,6 @@ angular.module('contentful')
 
   var entryLoader = new PromisedLoader();
 
-  $scope.archivedStateRef = 'spaces.detail.entries.list({searchTerm: "status:archived"})';
-
   $scope.paginator = new Paginator();
   $scope.selection = new Selection();
 
