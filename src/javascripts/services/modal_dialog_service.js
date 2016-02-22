@@ -34,6 +34,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
   var $rootScope = $injector.get('$rootScope');
   var debounce   = $injector.get('debounce');
   var $timeout   = $injector.get('$timeout');
+  var logger     = $injector.get('logger');
   var opened     = [];
 
   function Dialog(params) {
@@ -174,6 +175,14 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
     },
 
     destroy: function () {
+      if (this._isDestroyed) {
+        logger.logError('Cannot destroy modal dialog twice', {
+          data: {template: this.params.template}
+        });
+        return;
+      }
+      this._isDestroyed = true;
+
       var self = this;
       $($window).off('keyup', this._handleKeys);
       function destroyModal() {
