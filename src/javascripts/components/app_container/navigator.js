@@ -109,7 +109,7 @@ angular.module('contentful').config([
 
 
   $stateProvider.state('spaces.detail.entries.list', base({
-    url: '?searchTerm',
+    url: '',
     ncyBreadcrumb: {
       label: 'Entries'
     },
@@ -187,7 +187,7 @@ angular.module('contentful').config([
 
 
   $stateProvider.state('spaces.detail.assets.list', base({
-    url: '?searchTerm',
+    url: '',
     ncyBreadcrumb: {
       label: 'Media Library'
     },
