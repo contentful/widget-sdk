@@ -70,7 +70,7 @@ angular.module('contentful')
   function getLocalesWithActiveFlag (locales) {
     return _.map(locales, function (locale) {
       return _.extend({
-        active: localeStore.localeIsActive(locale),
+        active: localeStore.isLocaleActive(locale)
       }, locale);
     });
   }

@@ -64,11 +64,9 @@ angular.module('contentful').config([
         var tokenStore     = $injector.get('tokenStore');
         var spaceContext   = $injector.get('spaceContext');
         var analytics      = $injector.get('analytics');
-        var TheLocaleStore = $injector.get('TheLocaleStore');
         return tokenStore.getSpace($stateParams.spaceId)
         .then(function (space) {
           spaceContext.resetWithSpace(space);
-          TheLocaleStore.resetWithSpace(space);
           analytics.setSpace(space);
           return space;
         });
@@ -306,8 +304,17 @@ angular.module('contentful').config([
       isNew: false
     },
     resolve: {
-      contentType: ['$stateParams', 'space', function ($stateParams, space) {
-        return space.getContentType($stateParams.contentTypeId);
+      contentType: ['$injector', '$stateParams', 'space', function ($injector, $stateParams, space) {
+        var ctHelpers = $injector.get('data/ContentTypes');
+        return space.getContentType($stateParams.contentTypeId)
+        .then(function (ct) {
+          // Some legacy content types do not have a name. If it is
+          // missing we set it to 'Untitled' so we can display
+          // something in the UI. Note that the API requires new
+          // Content Types to have a name.
+          ctHelpers.assureName(ct.data);
+          return ct;
+        });
       }],
       publishedContentType: ['contentType', function (contentType) {
         return contentType.getPublishedStatus().catch(function (err) {

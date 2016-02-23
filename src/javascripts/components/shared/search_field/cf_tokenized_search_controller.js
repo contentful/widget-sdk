@@ -9,7 +9,13 @@
  * - depending on the parse tree and the current position of the cursor we display autocompletions.
  * - certain keypresses are redirected to the autocompletions instead of editing the text input
  */
-angular.module('contentful').controller('cfTokenizedSearchController', ['$scope', 'searchQueryHelper', 'keycodes', '$attrs', '$parse', function ($scope, searchQueryHelper, keycodes, $attrs, $parse) {
+angular.module('contentful')
+.controller('cfTokenizedSearchController', ['$scope', '$injector', '$attrs', function ($scope, $injector, $attrs) {
+
+  var searchQueryHelper   = $injector.get('searchQueryHelper');
+  var keycodes            = $injector.get('keycodes');
+  var $parse              = $injector.get('$parse');
+
   $scope.inner = { term: null };
   $scope.position = null;
   $scope.showAutocompletions = false; // Indicate if completions should be shown
@@ -56,10 +62,21 @@ angular.module('contentful').controller('cfTokenizedSearchController', ['$scope'
     $scope.$emit('tokenizedSearchInputChanged', $scope.inner.term);
   };
 
-  $scope.keyReleased = function () {
+  $scope.keyReleased = function (event) {
+
     if ($scope.position !== $scope.getPosition()) {
       $scope.position = $scope.getPosition();
       $scope.updateAutocompletions();
+    }
+
+    if (event.keyCode !== keycodes.DOWN &&
+        event.keyCode !== keycodes.UP &&
+        event.keyCode !== keycodes.LEFT &&
+        event.keyCode !== keycodes.RIGHT &&
+        event.keyCode !== keycodes.ESC &&
+        !$scope.showAutocompletions
+    ) {
+      $scope.submitSearch($scope.inner.term);
     }
   };
 
@@ -88,12 +105,10 @@ angular.module('contentful').controller('cfTokenizedSearchController', ['$scope'
         var e = $scope.$broadcast('submitAutocompletion');
         if (e.defaultPrevented) {
           $scope.submitSearch($scope.inner.term);
+          toggleAutocompletions(false);
         } else {
           $scope.confirmAutocompletion();
         }
-      toggleAutocompletions(false);
-      } else {
-        $scope.submitSearch($scope.inner.term);
       }
       event.preventDefault();
     }
@@ -130,7 +145,7 @@ angular.module('contentful').controller('cfTokenizedSearchController', ['$scope'
 
   $scope.submitSearch = function (term) {
     setSearchTerm($scope.$parent, term);
-    $scope.$emit('searchSubmitted', term);
+    $scope.$emit('searchSubmitted');
   };
 
   $scope.hasFocus = false;
@@ -186,7 +201,10 @@ angular.module('contentful').controller('cfTokenizedSearchController', ['$scope'
                        /*token.type === Key*/      operator(token.content) + ' ';
     $scope.inner.term = spliceSlice(originalString, token.end, 0, appendString);
     $scope.clearBackupString();
-    if(token.type === 'Value') $scope.submitSearch($scope.inner.term);
+    if(token.type === 'Value')  {
+      $scope.submitSearch($scope.inner.term);
+      toggleAutocompletions(false);
+    }
     $scope.selectRange(token.end + appendString.length, 0)
     .then(function () {
       if($scope){

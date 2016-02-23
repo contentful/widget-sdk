@@ -17,7 +17,6 @@
 angular.module('contentful')
 .provider('analytics', ['environment', function (environment) {
   var load = !environment.env.match(/acceptance|development|preview|test/);
-  this.dontLoad  = function () { load = false;  };
   this.forceLoad = function () { load = true; };
 
   this.$get = [ '$injector', function ($injector) {
@@ -47,8 +46,8 @@ angular.module('contentful')
 
       setSpace: function (space) {
         if (space) {
-          this._organizationData = space.data.organization;
           try {
+            this._organizationData = space.data.organization;
             this._spaceData = {
               spaceIsTutorial:                       space.data.tutorial,
               spaceSubscriptionKey:                  space.data.organization.sys.id,
@@ -57,11 +56,11 @@ angular.module('contentful')
               spaceSubscriptionSubscriptionPlanKey:  space.data.organization.subscriptionPlan.sys.id,
               spaceSubscriptionSubscriptionPlanName: space.data.organization.subscriptionPlan.name
             };
-          } catch(exp){
+          } catch (error) {
             logger.logError('Analytics space organizations exception', {
               data: {
                 space: space,
-                exp: exp
+                error: error
               }
             });
           }
@@ -104,95 +103,48 @@ angular.module('contentful')
        * @param {string} module
        */
       trackTotango: function (event, module) {
-        return totango.track(event, module);
-      },
-
-      knowledgeBase: function (section) {
-        this.track('Clicked KBP link', {
-          section: section
-        });
-      },
-
-      modifiedContentType: function (event, contentType, field, action) {
-        var data = {};
-        if (contentType) {
-          _.extend(data, {
-            contentTypeId: contentType.getId(),
-            contentTypeName: contentType.getName()
+        try {
+          totango.track(event, module);
+        } catch (error) {
+          logger.logError('Analytics totango.track() exception', {
+            data: {
+              event: event,
+              module: module,
+              error: error
+            }
           });
         }
-        if (field) {
-          _.extend(data, {
-            fieldId: field.id,
-            fieldName: field.name,
-            fieldType: field.type,
-            fieldSubtype: dotty.get(field, 'items.type') || null,
-            fieldLocalized: field.localized,
-            fieldRequired: field.required
-          });
-        }
-        if (action) {
-          data.action = action;
-        }
-        this.track(event, data);
-      },
-
-      toggleAuxPanel: function (visible, stateName) {
-        var action = visible ? 'Opened Aux-Panel' : 'Closed Aux-Panel';
-        this.track(action, {
-          currentState: stateName
-        });
       },
 
       _initialize: function(){
-
         if (this._userData) {
-          var analyticsUserData = getAnalyticsUserData(this._userData);
+          var analyticsUserData;
 
-          this.addIdentifyingData(analyticsUserData);
+          shieldFromInvalidUserData(function () {
+            analyticsUserData = getAnalyticsUserData(this._userData);
+            this.addIdentifyingData(analyticsUserData);
+          }.bind(this))();
 
-          if (this._organizationData) {
-            totango.initialize(analyticsUserData, this._organizationData);
-          }
-        }
-
-        function parseCookie(cookieName, prop) {
-          try {
-            var cookie = cookieStore.get(cookieName);
-            return JSON.parse(cookie)[prop];
-          } catch (e) {}
-        }
-
-        // On first login, send referrer, campaign and A/B test data to
-        // segment and totango if it has been set by marketing website cookie
-
-        function getAnalyticsUserData(userData) {
-          // Remove circular references
-          userData = JSON.parse(stringifySafe(userData));
-
-          if (userData.signInCount === 1) {
-            var firstVisitData = _.pick({
-              firstReferrer: parseCookie('cf_first_visit', 'referer'),
-              campaignName: parseCookie('cf_first_visit', 'campaign_name'),
-              lastReferrer: parseCookie('cf_last_visit', 'referer'),
-              experimentId: parseCookie('cf_experiment', 'experiment_id'),
-              experimentVariationId: parseCookie('cf_experiment', 'variation_id')
-            }, function (val) {
-              return val !== null && typeof val !== 'undefined';
-            });
-
-            return _.merge(firstVisitData, userData);
-
-          } else {
-            return userData;
+          if (analyticsUserData && this._organizationData) {
+            try {
+              totango.initialize(analyticsUserData, this._organizationData);
+            } catch (error) {
+              logger.logError('Analytics totango.initialize() exception', {
+                data: {
+                  userData: analyticsUserData,
+                  organizationData: this._organizationData,
+                  error: error
+                }
+              });
+            }
           }
         }
       },
 
       // Send further identifying user data to segment
-      addIdentifyingData: function(data) {
+      addIdentifyingData: shieldFromInvalidUserData(function(data) {
         segment.identify(this._userData.sys.id, data);
-      },
+      }),
 
       stateActivated: function (state, stateParams, fromState, fromStateParams) {
         totango.setModule(state.name);
@@ -212,6 +164,50 @@ angular.module('contentful')
         });
       }
     };
+
+    function shieldFromInvalidUserData (cb) {
+      return function () {
+        try {
+          return cb.apply(this, arguments);
+        } catch (error) {
+          logger.logError('Analytics user data exception', {
+            data: {
+              userData: analytics._userData,
+              error: error
+            }
+          });
+        }
+      };
+    }
+
+    function getAnalyticsUserData(userData) {
+      // Remove circular references
+      userData = JSON.parse(stringifySafe(userData));
+
+      // On first login, send referrer, campaign and A/B test data to
+      // segment and totango if it has been set by marketing website cookie
+      if (userData.signInCount === 1) {
+        var firstVisitData = _.pick({
+          firstReferrer: parseCookie('cf_first_visit', 'referer'),
+          campaignName: parseCookie('cf_first_visit', 'campaign_name'),
+          lastReferrer: parseCookie('cf_last_visit', 'referer'),
+          experimentId: parseCookie('cf_experiment', 'experiment_id'),
+          experimentVariationId: parseCookie('cf_experiment', 'variation_id')
+        }, function (val) {
+          return val !== null && val !== undefined;
+        });
+        return _.merge(firstVisitData, userData);
+      } else {
+        return userData;
+      }
+    }
+
+    function parseCookie(cookieName, prop) {
+      try {
+        var cookie = cookieStore.get(cookieName);
+        return JSON.parse(cookie)[prop];
+      } catch (e) {}
+    }
 
     if (forceDevMode()) {
       return devService();
@@ -239,7 +235,7 @@ angular.module('contentful')
     }
 
     /**
-     * Simliar to `noopService()`, but the track methods are replaced
+     * Similar to `noopService()`, but the track methods are replaced
      * with functions that log the events to the console. This is
      * helpful for debugging.
      */

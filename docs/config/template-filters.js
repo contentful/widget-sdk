@@ -65,8 +65,8 @@ addTag('memberSyntax', function (member, prefix) {
     rendered += prefix + '.';
 
   rendered += member.name;
-  if (member.typeExpression)
-    rendered += ': ' + member.typeExpression;
+  if (member.type && member.type.typeExpression)
+    rendered += ': ' + member.type.typeExpression;
   return rendered;
 });
 

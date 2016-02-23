@@ -7,8 +7,9 @@ describe('The ApiKey list directive', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      $provide.removeDirectives('relative');
+      $provide.removeDirectives('relative', 'cfKnowledgeBase');
     });
+
     inject(function ($rootScope, $compile, enforcements, $q, spaceContext, _accessChecker_) {
       scope = $rootScope.$new();
       spaceContext.space = {

@@ -1,0 +1,28 @@
+include ./create_entry_button.mixin.jade
+
+.cfnext-advice
+  header.advice__title
+    | You have no entries yet
+  button.cfnext-btn-action--large-popout-icon.ct-empty-list__action(
+    type="button"
+    ng-click="entityCreationController.newContentType()"
+    ng-hide="spaceContext.publishedContentTypes.length > 0 || shouldHide('createContentType')"
+    ng-disabled="shouldDisable('createContentType')"
+    cf-when-disabled="createContentType")
+    cf-icon(name="new-ct")
+    | Create content type
+  +create-entry-button(large=true)
+
+  p.ct-empty-list__description
+    | Entries are your content itself. These depend on the field
+    | types you created in the Content Type editor
+
+  .advice__note(ng-if="hasArchivedEntries")
+    i.fa.fa-info-circle.advice__note-icon
+    | You can lookup old entries in the
+    | <a ng-click="loadView({searchTerm: 'status:archived'})">Archive</a>
+
+  p.ct-empty-list__additional
+    | If you are not sure what content types and entries are,<br>
+    | consider reading the&nbsp;
+    cf-knowledge-base(target="entry" text="introduction to Contentful content model")

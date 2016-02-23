@@ -7,18 +7,9 @@ angular.module('contentful').controller('SpaceController', ['$scope', '$injector
   var authentication = $injector.get('authentication');
   var authorization  = $injector.get('authorization');
   var enforcements   = $injector.get('enforcements');
-  var TheLocaleStore = $injector.get('TheLocaleStore');
 
   $controller('UiConfigController', {$scope: $scope});
   $scope.entityCreationController = $controller('EntityCreationController', {$scope: $scope});
-
-  $scope.$watch(function () {
-    return _.map(TheLocaleStore.getPrivateLocales(), function (locale) {
-      return locale.internal_code;
-    });
-  }, function (codes) {
-    if (!_.isEmpty(codes)) TheLocaleStore.refreshLocales();
-  }, true);
 
   $scope.$watch(function () {
     return authorization.isUpdated(authentication.tokenLookup, $scope.spaceContext.space) && authentication.tokenLookup;

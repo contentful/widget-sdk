@@ -7,7 +7,8 @@ angular.module('contentful').controller('EntryLinkEditorController', [
 
   var EntityCache = $injector.get('EntityCache');
   var $controller = $injector.get('$controller');
-  $scope.$state   = $injector.get('$state');
+
+  $scope.$state = $injector.get('$state');
 
   $controller('LinkEditorController', {
     $scope: $scope,
@@ -68,15 +69,9 @@ angular.module('contentful').controller('EntryLinkEditorController', [
   }
 
   function linkDescription(entity) {
-    if(entityExists(entity)){
-      var contentType = $scope.spaceContext.publishedTypeForEntry(entity);
-      var field = _.find(contentType.data.fields, function(field){
-        return field.id !== contentType.data.displayField && field.type == 'Text';
-      });
-      if(field)
-        return $scope.spaceContext.localizedField(entity, 'data.fields.'+field.id);
+    if (entityExists(entity)) {
+      return $scope.spaceContext.entityDescription(entity);
     }
-    return null;
   }
 
   function entityExists(entity) {

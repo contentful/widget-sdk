@@ -21,6 +21,9 @@ angular.module('contentful')
   var ReloadNotification = $injector.get('ReloadNotification');
   var notification       = $injector.get('notification');
   var logger             = $injector.get('logger');
+  var TheLocaleStore     = $injector.get('TheLocaleStore');
+  var createUserCache    = $injector.get('data/userCache');
+  var ctHelpers          = $injector.get('data/ContentTypes');
 
   var spaceContext = {
     /**
@@ -37,6 +40,12 @@ angular.module('contentful')
       this._publishedContentTypesHash = {};
       this._publishedContentTypeIsMissing = {};
       this.refreshContentTypes();
+      this.users = null;
+
+      if (space) {
+        this.users = createUserCache(space);
+        TheLocaleStore.resetWithSpace(space);
+      }
     },
 
     /**
@@ -94,6 +103,15 @@ angular.module('contentful')
       this.loadingPromise = this.space.getContentTypes({order: 'name', limit: 1000})
       .then(function (contentTypes) {
         self.contentTypes = filterAndSortContentTypes(contentTypes);
+
+        // Some legacy content types do not have a name. If it is
+        // missing we set it to 'Untitled' so we can display
+        // something in the UI. Note that the API requires new
+        // Content Types to have a name.
+        _.forEach(self.contentTypes, function (ct) {
+          ctHelpers.assureName(ct.data);
+        });
+
         return refreshPublishedContentTypes(spaceContext).then(function () {
           return contentTypes;
         });
@@ -275,6 +293,31 @@ angular.module('contentful')
         }
       } catch (e) {
         return defaultTitle;
+      }
+    },
+
+    /**
+     * @ngdoc method
+     * @name spaceContext#entityDescription
+     * @param {Client.Entity} entry
+     * @description
+     * Gets the localized value of the first text field that is not the
+     * display field. May return undefined.
+     *
+     * @return {string?}
+     */
+    entityDescription: function (entity) {
+      var contentType = this.publishedTypeForEntry(entity);
+      if (!contentType) {
+        return;
+      }
+
+      var field = _.find(contentType.data.fields, function (field){
+        return field.id !== contentType.data.displayField && field.type == 'Text';
+      });
+
+      if (field) {
+        return this.localizedField(entity, 'data.fields.' + field.id);
       }
     },
 

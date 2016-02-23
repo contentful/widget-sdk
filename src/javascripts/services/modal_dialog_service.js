@@ -60,13 +60,15 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
         backgroundClose: true,
         ignoreEnter: true,
         ignoreEsc: false,
-        disableTopCloseButton: false
+        disableTopCloseButton: false,
+        persistOnNavigation: false
       },
       _.pick(params,
         'title', 'message',
         'template', 'confirmLabel', 'cancelLabel',
         'attachTo', 'enterAction', 'backgroundClose',
-        'ignoreEnter', 'ignoreEsc', 'disableTopCloseButton')
+        'ignoreEnter', 'ignoreEsc', 'disableTopCloseButton',
+        'persistOnNavigation')
     );
 
     this._deferred = $q.defer();
@@ -192,8 +194,18 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
     open:                     openDialog,
     openConfirmDialog:        openConfirmDialog,
     openConfirmDeleteDialog:  openConfirmDeleteDialog,
-    getOpened:                getOpened
+    getOpened:                getOpened,
+    closeAll:                 closeAll
   };
+
+  // Closes all modals with persistOnNaviagation = false
+  function closeAll () {
+    _.forEachRight(opened, function(dialog) {
+      if (!dialog.persistOnNavigation) {
+        dialog.cancel();
+      }
+    });
+  }
 
   /**
    * @ngdoc method

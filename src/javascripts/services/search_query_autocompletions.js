@@ -27,7 +27,7 @@
 angular.module('contentful')
 .factory('searchQueryAutocompletions', ['$injector',function($injector) {
 
-  var userCache        = $injector.get('userCache');
+  var spaceContext     = $injector.get('spaceContext');
   var mimetype         = $injector.get('mimetype');
   var AssetContentType = $injector.get('AssetContentType');
   var $q               = $injector.get('$q');
@@ -95,8 +95,8 @@ angular.module('contentful')
     },
     author: {
       description: 'User who created the item',
-      complete: function (contentType, space) {
-        return getUserMap(space).then(function (userMap) {
+      complete: function () {
+        return getUserMap().then(function (userMap) {
           return makeListCompletion(_(userMap).keys().map(function (userName) {
             return {value: '"'+userName+'"', description: userName};
           }).value());
@@ -243,8 +243,8 @@ angular.module('contentful')
   // User names are "First Last"
   // If this results in duplicates, the duplicates are returned as "First Last (ID)"
   // BOTH
-  function getUserMap(space) {
-    return userCache.getAll(space).then(function (users) {
+  function getUserMap () {
+    return spaceContext.users.getAll().then(function (users) {
       var names = _.map(users, 'getName');
       var occurences = _.countBy(names);
       return _.transform(users, function (map, user) {

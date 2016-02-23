@@ -25,13 +25,18 @@ describe('Client Controller', function () {
       setMockOnContext(self, 'analyticsStubs', [
         'enable',
         'disable',
-        'toggleAuxPanel',
         'track',
         'setSpace',
         'setUserData',
         'stateActivated'
       ]);
       $provide.value('analytics', self.analyticsStubs);
+
+      setMockOnContext(self, 'analyticsEventsStubs', [
+        'trackToggleAuxPanel'
+      ]);
+
+      $provide.value('analyticsEvents', self.analyticsEventsStubs);
 
       self.authorizationStubs = {
         setTokenLookup: sinon.stub(),
@@ -129,6 +134,8 @@ describe('Client Controller', function () {
       spaceContext = this.$inject('spaceContext');
       var space = this.$inject('cfStub').space('');
       space.getId = stubs.spaceId;
+      var TheLocaleStore = this.$inject('TheLocaleStore');
+      TheLocaleStore.resetWithSpace = sinon.stub();
 
       sinon.stub(spaceContext, 'refreshContentTypes');
       spaceContext.resetWithSpace(space);
@@ -154,7 +161,7 @@ describe('Client Controller', function () {
     });
 
     it('analytics is triggered', function () {
-      sinon.assert.calledWith(this.analyticsStubs.toggleAuxPanel, true, '');
+      sinon.assert.calledWith(this.analyticsEventsStubs.trackToggleAuxPanel, true, '');
     });
   });
 

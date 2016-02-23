@@ -21,7 +21,6 @@ function ContentTypeEditorController($scope, $injector) {
   var $controller       = $injector.get('$controller');
   var $q                = $injector.get('$q');
   var $state            = $injector.get('$state');
-  var analytics         = $injector.get('analytics');
   var validation        = $injector.get('validation');
   var hints             = $injector.get('hints');
   var editingInterfaces = $injector.get('editingInterfaces');
@@ -29,26 +28,27 @@ function ContentTypeEditorController($scope, $injector) {
   var openFieldDialog   = $injector.get('openFieldDialog');
   var leaveConfirmator  = $injector.get('navigation/confirmLeaveEditor');
   var metadataDialog    = $injector.get('contentTypeEditor/metadataDialog');
+  var Command           = $injector.get('command');
+  var accessChecker     = $injector.get('accessChecker');
+  var ctHelpers         = $injector.get('data/ContentTypes');
+  var trackContentTypeChange = $injector.get('analyticsEvents').trackContentTypeChange;
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
   $scope.hints = hints;
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.runSave);
-
-  $scope.fieldSchema                        = validation(validation.schemas.ContentType.at(['fields']).items);
-  $scope.regulateDisplayField               = regulateDisplayField;
-  $scope.updatePublishedContentType         = updatePublishedContentType;
-  $scope.showNewFieldDialog                 = showNewFieldDialog;
+  $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
+  $scope.updatePublishedContentType = updatePublishedContentType;
 
   $scope.$watch('contentType.data.fields',       checkForDirtyForm, true);
   $scope.$watch('contentType.data.displayField', checkForDirtyForm);
   $scope.$watch('contentTypeForm.$dirty',        setDirtyState);
   $scope.$watch('context.isNew',                 setDirtyState);
 
-  $scope.$watch('contentType.data.fields.length', function(length, old) {
+  $scope.$watch('contentType.data.fields.length', function (length) {
     $scope.hasFields = length > 0;
-    assureTitleField(length-old > 0 ? 'add' : 'delete');
+    ctHelpers.assureDisplayField($scope.contentType.data);
     setDirtyState();
   });
 
@@ -177,30 +177,40 @@ function ContentTypeEditorController($scope, $injector) {
    * @ngdoc method
    * @name ContentTypeEditorController#$scope.showMetadataDialog
   */
-  $scope.showMetadataDialog = function showMetadataDialog () {
+  $scope.showMetadataDialog = Command.create(function () {
     metadataDialog.openEditDialog($scope.contentType)
     .then(applyContentTypeMetadata());
-  };
+  }, {
+    disabled: function () {
+      return accessChecker.shouldDisable('updateContentType') ||
+             accessChecker.shouldDisable('publishContentType');
+    }
+  });
 
   /**
-   * @ngdoc method
-   * @name ContentTypeEditorController#scope#showNewFieldDialog
-  */
-  function showNewFieldDialog() {
+   * @ngdoc property
+   * @name ContentTypeEditorController#$scope.showNewFieldDialog
+   */
+  $scope.showNewFieldDialog = Command.create(function () {
     modalDialog.open({
       template: 'add_field_dialog',
       scope: $scope
     }).promise
     .then(addField);
-  }
+  }, {
+    disabled: function () {
+      return accessChecker.shouldDisable('updateContentType') ||
+             accessChecker.shouldDisable('publishContentType');
+    }
+  });
 
   function addField(newField) {
     var data = $scope.contentType.data;
     data.fields = data.fields || [];
     data.fields.push(newField);
-    $scope.$broadcast('fieldAdded', data.fields.length - 1);
+    $scope.$broadcast('fieldAdded');
     syncEditingInterface();
-    analytics.modifiedContentType('Modified ContentType', $scope.contentType, newField, 'add');
+    trackContentTypeChange('Modified ContentType', $scope.contentType, newField, 'add');
   }
 
   /**
@@ -208,55 +218,5 @@ function ContentTypeEditorController($scope, $injector) {
    */
   function syncEditingInterface () {
     editingInterfaces.syncWidgets($scope.contentType, $scope.editingInterface);
-  }
-
-  /**
-   * Accounts for displayField value inconsistencies for content types which existed
-   * before the internal apiName content type property.
-   */
-  function regulateDisplayField() {
-    var data = $scope.contentType.data;
-    var valid = _.isUndefined(data.displayField) || data.displayField === null || hasFieldUsedAsTitle();
-    if (!valid) {
-      data.displayField = null;
-    }
-  }
-
-  /**
-   * Checks if on the list of fields there is a object with id that is currently set
-   * on Content Type as a "displayField" property
-   */
-  function hasFieldUsedAsTitle() {
-    var data = $scope.contentType.data;
-    return _.any(data.fields, {id: data.displayField});
-  }
-
-  /**
-   * If there's no field selected as a title, use first found
-   */
-  function assureTitleField(action) {
-    var data = $scope.contentType.data;
-    var usableFields = findFieldsUsableAsTitle();
-
-    // this the first usable field added
-    if (action === 'add' && usableFields.length === 1) {
-      data.displayField = usableFields.shift();
-    }
-
-    // deleted field was used as title
-    if (action === 'delete' && data.displayField && !hasFieldUsedAsTitle()) {
-      data.displayField = usableFields.shift();
-    }
-  }
-
-  function findFieldsUsableAsTitle() {
-    return  _($scope.contentType.data.fields).
-      filter(isUsable).
-      pluck('id').
-      value();
-
-    function isUsable(field) {
-      return _.contains(['Symbol', 'Text'], field.type) && !field.disabled;
-    }
   }
 }]);

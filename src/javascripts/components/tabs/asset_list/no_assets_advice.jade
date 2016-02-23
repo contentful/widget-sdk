@@ -1,0 +1,34 @@
+.cfnext-advice
+  header.advice__title
+    | You have no assets yet
+  button.cfnext-btn-action--large.ct-empty-list__action(
+    cf-context-menu-trigger
+    ng-hide="shouldHide('createAsset')"
+    ng-disabled="shouldDisable('createAsset')"
+    cf-when-disabled="createAsset"
+    data-test-id="create-asset-menu-trigger")
+    cf-icon.btn-icon.inverted(name="plus")
+    cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+    | Create an Asset
+  .context-menu(
+    role="menu" cf-context-menu
+    aria-label="Create Asset" data-test-id="create-asset-menu")
+    ul.context-menu__items
+      li(role="menuitem" ng-click="entityCreationController.newAsset()")
+        | Single Asset
+      li(role="menuitem" ng-click="createMultipleAssets()" ng-hide="shouldHide('updateAsset')")
+        | Multiple Assets
+
+  p.ct-empty-list__description
+    | Assets are external documents that you can link to your
+    | Entries.
+    br
+    | They can be any file you wish, form sounds to images or
+    | videos to text documents.
+
+  .advice__note(ng-if="hasArchivedAssets")
+    i.fa.fa-info-circle.advice__note-icon
+    | You can lookup old assets in the
+    | <a ng-click="loadView({searchTerm: 'status:archived'})">Archive</a>
+
+  cf-knowledge-base(target="asset" text="Visit the Knowledge Base Pages")

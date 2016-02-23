@@ -3,13 +3,21 @@
 describe('spaceContext', function () {
 
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', function ($provide) {
+      $provide.value('data/userCache', sinon.stub());
+    });
     this.spaceContext = this.$inject('spaceContext');
+    this.theLocaleStore = this.$inject('TheLocaleStore');
+    this.theLocaleStore.resetWithSpace = sinon.stub();
   });
 
   describe('with no space', function () {
     it('has no space', function () {
       expect(this.spaceContext.space).toBeNull();
+    });
+
+    it('did not reset locale store', function () {
+      sinon.assert.notCalled(this.theLocaleStore.resetWithSpace);
     });
 
     describe('refreshes content types', function () {
@@ -27,7 +35,7 @@ describe('spaceContext', function () {
     });
   });
 
-  describe('resetting with a space', function () {
+  describe('#resetWithSpace()', function () {
     var SPACE = {};
     beforeEach(function () {
       sinon.stub(this.spaceContext, 'refreshContentTypes');
@@ -45,6 +53,19 @@ describe('spaceContext', function () {
 
     it('refreshes content types', function () {
       sinon.assert.called(this.spaceContext.refreshContentTypes);
+    });
+
+    it('refreshes locales', function () {
+      sinon.assert.calledOnce(this.theLocaleStore.resetWithSpace);
+    });
+
+    it('creates the user cache', function () {
+      var userCache = {};
+      var createUserCache = this.$inject('data/userCache');
+      createUserCache.reset().returns(userCache);
+      this.spaceContext.resetWithSpace(SPACE);
+      sinon.assert.calledWithExactly(createUserCache, SPACE);
+      expect(this.spaceContext.users).toBe(userCache);
     });
   });
 
@@ -472,6 +493,52 @@ describe('spaceContext', function () {
       this.spaceContext.getPublishedContentType('contentTypeId');
       expect(this.spaceContext.refreshContentTypes.callCount).toBe(1);
     });
+  });
+
+  describe('#entityDescription()', function () {
+
+    it('returns value of first text field', function () {
+      var ct = {
+        data: {
+          fields: [
+            {type: 'Text', id: 'DESC'}
+          ]
+        }
+      };
+      this.spaceContext.publishedTypeForEntry = sinon.stub().returns(ct);
+
+      var entry = {
+        data: {
+          fields: {
+            'DESC': {en: 'VAL'}
+          }
+        }
+      };
+      var desc = this.spaceContext.entityDescription(entry);
+      expect(desc).toEqual('VAL');
+    });
+
+    it('skips display field', function () {
+      var ct = {
+        data: {
+          displayField: 'DESC',
+          fields: [
+            {type: 'Text', id: 'DESC'}
+          ]
+        }
+      };
+      this.spaceContext.publishedTypeForEntry = sinon.stub().returns(ct);
+
+      var desc = this.spaceContext.entityDescription({});
+      expect(desc).toEqual(undefined);
+    });
+
+    it('returns undefined if content type is not available', function () {
+      this.spaceContext.publishedTypeForEntry = sinon.stub().returns(null);
+      var desc = this.spaceContext.entityDescription({});
+      expect(desc).toEqual(undefined);
+    });
+
   });
 
 });

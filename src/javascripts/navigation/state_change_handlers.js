@@ -20,6 +20,7 @@ angular.module('cf.app')
   var spaceTools     = $injector.get('spaceTools');
   var contextHistory = $injector.get('contextHistory');
   var logger         = $injector.get('logger');
+  var modalDialog    = $injector.get('modalDialog');
 
   // Result of confirmation dialog
   var navigationConfirmed = false;
@@ -97,6 +98,9 @@ angular.module('cf.app')
       });
       return;
     }
+
+    // Close all modals which have persistOnNavigation = false
+    modalDialog.closeAll();
 
     if (!toStateParams.addToContext) {
       contextHistory.purge();

@@ -1,7 +1,7 @@
 'use strict';
 
 describe('ContentType Actions Controller', function () {
-  var controller, scope, stubs, logger, notification;
+  var controller, scope, stubs, $q, logger, notification, accessChecker, ReloadNotification;
   var space, contentType;
 
   function FormStub () {
@@ -36,17 +36,18 @@ describe('ContentType Actions Controller', function () {
     this.$state = this.$inject('$state');
     this.$state.go = sinon.stub().resolves();
 
+    $q = this.$inject('$q');
     logger = this.$inject('logger');
     notification = this.$inject('notification');
+    accessChecker = this.$inject('accessChecker');
+    accessChecker.canPerformActionOnEntryOfType = sinon.stub().returns(true);
+    ReloadNotification = this.$inject('ReloadNotification');
+    ReloadNotification.basicErrorHandler = sinon.spy();
 
-    var $q = this.$inject('$q');
     var cfStub = this.$inject('cfStub');
 
     space = cfStub.space('spaceid');
     contentType = cfStub.contentType(space, 'typeid', 'typename');
-
-    this.updatePublishedContentTypeStub = sinon.stub();
-    this.actionDeferred = $q.defer();
     var contentTypeData = cfStub.contentTypeData('type1');
 
     scope = $rootScope.$new();
@@ -54,7 +55,6 @@ describe('ContentType Actions Controller', function () {
     scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
     scope.contentType = contentType;
     scope.broadcastFromSpace = sinon.stub();
-    scope.regulateDisplayField = sinon.stub();
 
     var $controller = this.$inject('$controller');
     controller = $controller('ContentTypeActionsController', {$scope: scope});
@@ -130,16 +130,53 @@ describe('ContentType Actions Controller', function () {
       });
     });
 
-    it('notifies the user when there are entries', function () {
-      scope.ctEditorController.countEntries.resolves(1);
-      controller.delete.execute();
-      this.$apply();
+    describe('delete flow interruptions', function () {
+      function testForbiddenRemoval(dialog, data) {
+        var matchObj = {
+          template: 'content_type_removal_forbidden_dialog',
+          scopeData: data || {}
+        };
 
-      sinon.assert.calledWith(
-        this.modalDialog.open,
-        sinon.match({template: 'content_type_removal_forbidden_dialog'})
-      );
-      sinon.assert.notCalled(contentType.delete);
+        controller.delete.execute();
+        scope.$apply();
+        sinon.assert.calledWith(dialog.open, sinon.match(matchObj));
+        sinon.assert.notCalled(contentType.delete);
+      }
+
+      function testEndpointError() {
+        controller.delete.execute();
+        scope.$apply();
+        sinon.assert.calledOnce(ReloadNotification.basicErrorHandler);
+      }
+
+      it('notifies the user when entries endpoint cannot be read', function () {
+        accessChecker.canPerformActionOnEntryOfType.returns(false);
+        scope.ctEditorController.countEntries.rejects({statusCode: 404});
+        testForbiddenRemoval(this.modalDialog, {count: ''});
+      });
+
+      it('notifies the user when entries cannot be read due to policy', function () {
+        accessChecker.canPerformActionOnEntryOfType.returns(false);
+        scope.ctEditorController.countEntries.resolves(0);
+        testForbiddenRemoval(this.modalDialog, {count: ''});
+      });
+
+      it('notifies the user when there are entries', function () {
+        scope.ctEditorController.countEntries.resolves(1);
+        testForbiddenRemoval(this.modalDialog, {count: 1});
+      });
+
+      it('fails for 404 when entries can be read by policy', function () {
+        accessChecker.canPerformActionOnEntryOfType.returns(true);
+        scope.ctEditorController.countEntries.rejects({statusCode: 404});
+        testEndpointError();
+      });
+
+      it('fails for non-404 status codes', function () {
+        accessChecker.canPerformActionOnEntryOfType.returns(true);
+        scope.ctEditorController.countEntries.rejects({statusCode: 500});
+        testEndpointError();
+      });
     });
 
     describe('when CT is not published', function () {
@@ -321,7 +358,6 @@ describe('ContentType Actions Controller', function () {
 
       describe('after unpublishing', function () {
         pit('retains local content type data', function () {
-          var $q = this.$inject('$q');
           scope.contentType.data = 'LOCAL';
           scope.contentType.unpublish = function () {
             this.data = 'UNPULBISHED';
@@ -334,7 +370,6 @@ describe('ContentType Actions Controller', function () {
         });
 
         pit('updates version', function () {
-          var $q = this.$inject('$q');
           scope.contentType.data = {};
           scope.contentType.unpublish = function () {
             this.data = {sys: 'NEW SYS'};
@@ -345,15 +380,6 @@ describe('ContentType Actions Controller', function () {
             expect(scope.contentType.data.sys).toEqual('NEW SYS');
           });
         });
-      });
-    });
-
-    pit('sets default name', function () {
-      var ct = scope.contentType;
-      delete ct.data.name;
-      return controller.save.execute()
-      .then(function () {
-        expect(ct.data.name).toEqual('Untitled');
       });
     });
   });

@@ -21,6 +21,7 @@ describe('Space Controller', function () {
       $provide.value('analytics', self.analyticsMock);
 
       self.TheLocaleStoreMock = {
+        resetWithSpace: sinon.stub(),
         getPrivateLocales: sinon.stub(),
         refreshLocales: sinon.stub()
       };
@@ -35,17 +36,6 @@ describe('Space Controller', function () {
     this.scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
 
     this.$inject('$controller')('SpaceController', {$scope: this.scope});
-  });
-
-  describe('watches for new locales', function () {
-    it('refreshes locales if new locales are available', function () {
-      this.TheLocaleStoreMock.getPrivateLocales.returns([
-        {code: 'en-US'},
-        {code: 'pt-PT'}
-      ]);
-      this.scope.$digest();
-      sinon.assert.called(this.TheLocaleStoreMock.refreshLocales);
-    });
   });
 
   describe('watches for updated tokenLookup', function () {

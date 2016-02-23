@@ -35,6 +35,7 @@ angular.module('contentful')
   var Command          = $injector.get('command');
   var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
   var $state           = $injector.get('$state');
+  var spaceContext     = $injector.get('spaceContext');
 
   var formWasDirty = false;
 
@@ -87,7 +88,7 @@ angular.module('contentful')
     return $scope.locale.delete()
     .then(function deletedSuccesfully () {
       return tokenStore.getUpdatedToken().then(function () {
-        TheLocaleStore.refreshLocales();
+        TheLocaleStore.resetWithSpace(spaceContext.space);
         return $scope.closeState();
       }).finally(function () {
         notification.info('Locale deleted successfully');
@@ -145,7 +146,7 @@ angular.module('contentful')
     $scope.context.dirty = false;
     return tokenStore.getUpdatedToken().then(function () {
       updateInitialLocaleCode();
-      TheLocaleStore.refreshLocales();
+      TheLocaleStore.resetWithSpace(spaceContext.space);
       notification.info('Locale saved successfully');
       trackSave('Saved Successful Locale');
       if ($scope.context.isNew) {
