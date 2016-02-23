@@ -110,6 +110,7 @@ angular.module('contentful')
     var widgetId = $scope.widgetSettings.id;
     _.extend(widget, {
       widgetId: widgetId,
+      fieldId: $scope.field.apiName,
       widgetParams: Widgets.filteredParams(widgetId, params)
     });
 
