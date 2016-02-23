@@ -188,12 +188,7 @@ describe('Widget types service', function () {
         expect(widgets.defaultWidgetId(field, contentType)).toBe('singleLine');
       });
 
-      it('and content type is asset', function() {
-        contentType.getId.returns('asset');
-        expect(widgets.defaultWidgetId(field, contentType)).toBe('singleLine');
-      });
-
-      it('is no display field or asset', function() {
+      it('is not a display field', function() {
         expect(widgets.defaultWidgetId(field, contentType)).toBe('markdown');
       });
     });
@@ -208,11 +203,6 @@ describe('Widget types service', function () {
       field.type = 'Link';
       field.linkType = 'Asset';
       expect(widgets.defaultWidgetId(field, contentType)).toBe('assetLinkEditor');
-    });
-
-    it('if field is File', function() {
-      field.type = 'File';
-      expect(widgets.defaultWidgetId(field, contentType)).toBe('fileEditor');
     });
 
     it('if field is a list of Assets', function() {

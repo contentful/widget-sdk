@@ -86,9 +86,7 @@ angular.module('contentful')
   }
 
   function getEditingInterface (contentType) {
-    if (contentType.getId() === 'asset') {
-      return $q.when(makeAssetInterface(contentType));
-    } else if (contentType.getVersion() === 0) {
+    if (contentType.getVersion() === 0) {
       return $q.when(defaultInterface(contentType));
     } else {
       return contentType.getEditingInterface('default');
@@ -98,13 +96,6 @@ angular.module('contentful')
   function defaultInterface (contentType) {
     var data = makeDefaultInterfaceData(contentType);
     return contentType.newEditingInterface(data);
-  }
-
-  function makeAssetInterface (contentType) {
-    // TODO We should hardcode the parameter since it is always called
-    // with the same content type, namely that for assets.
-    var data = makeDefaultInterfaceData(contentType);
-    return { data: data };
   }
 
   function makeDefaultInterfaceData (contentType) {

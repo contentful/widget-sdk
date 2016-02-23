@@ -88,7 +88,6 @@ angular.module('contentful')
     'Date':     'datePicker',
     'Location': 'locationEditor',
     'Object':   'objectEditor',
-    'File':     'fileEditor',
     'Entry':    'entryLinkEditor',
     'Entries':  'entryLinksEditor',
     'Asset':    'assetLinkEditor',
@@ -201,8 +200,6 @@ angular.module('contentful')
    *   where it gets switched to singleLine
    * - Any field that allows for predefined values: gets changed to a dropdown
    *   in the presence of the 'in' validation
-   * It also returns a default widget for the File type which actually
-   * doesn't exist in the backend and is only used in the asset editor
   */
   function defaultWidgetId(field, contentType) {
     var fieldType = fieldFactory.getTypeName(field);
@@ -217,7 +214,7 @@ angular.module('contentful')
 
     if (fieldType === 'Text') {
       var isDisplayField = contentType.data.displayField === field.id;
-      if (isDisplayField || contentType.getId() === 'asset') {
+      if (isDisplayField) {
         return 'singleLine';
       } else {
         return 'markdown';
