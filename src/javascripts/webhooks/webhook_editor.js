@@ -12,9 +12,11 @@ angular.module('contentful')
 
 .controller('WebhookEditorController', ['$scope', '$injector', function ($scope, $injector) {
 
+  var $rootScope         = $injector.get('$rootScope');
   var $q                 = $injector.get('$q');
   var Command            = $injector.get('command');
   var $state             = $injector.get('$state');
+  var modalDialog        = $injector.get('modalDialog');
   var leaveConfirmator   = $injector.get('navigation/confirmLeaveEditor');
   var spaceContext       = $injector.get('spaceContext');
   var webhookRepo        = $injector.get('WebhookRepository').getInstance(spaceContext.space);
@@ -36,9 +38,7 @@ angular.module('contentful')
     disabled: function () { return !$scope.context.dirty; }
   });
 
-  $scope.remove = Command.create(remove, {
-    available: function () { return !$scope.context.isNew; }
-  });
+  $scope.openRemovalDialog = openRemovalDialog;
 
   function save() {
     var method = $scope.context.isNew ? 'create' : 'save';
@@ -58,6 +58,19 @@ angular.module('contentful')
 
   function handleError(res) {
     console.log(res);
+  }
+
+  function openRemovalDialog() {
+    return modalDialog.open({
+      noNewScope: true,
+      ignoreEsc: true,
+      backgroundClose: false,
+      template: 'webhook_removal_confirm_dialog',
+      scope: _.extend($rootScope.$new(), {
+        webhook: $scope.webhook,
+        remove: Command.create(remove)
+      })
+    });
   }
 
   function remove() {
