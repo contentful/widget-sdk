@@ -41,8 +41,7 @@ angular.module('contentful')
         }
       })
       .then(_.partial(syncWidgets, contentType))
-      .then(addDefaultParams)
-      .then(widgetMigrator(contentType));
+      .then(addDefaultParams);
     },
 
     syncWidgets: syncWidgets
@@ -66,11 +65,12 @@ angular.module('contentful')
    */
   function syncWidgets(contentType, editingInterface) {
     var fields = contentType.data.fields;
-    var migratedWidgets = migrateWidgetsToApiNames(fields, editingInterface.data.widgets);
+    var mappedWidgets = migrateWidgetsToApiNames(fields, editingInterface.data.widgets);
     var syncedWidgets = _.map(fields, function (field) {
-      return eiHelpers.findWidget(migratedWidgets, field) || defaultWidget(contentType, field);
+      return eiHelpers.findWidget(mappedWidgets, field) || defaultWidget(contentType, field);
     });
-    editingInterface.data.widgets = syncedWidgets;
+    var migratedWidgets = _.map(syncedWidgets, widgetMigrator(contentType.data));
+    editingInterface.data.widgets = migratedWidgets;
     return editingInterface;
   }
 
