@@ -10,29 +10,41 @@ angular.module('contentful').factory('WebhookRepository', [function () {
       getAll: getAll,
       get: get,
       create: create,
+      save: save,
       remove: remove
     };
 
     function getAll() {
-      return space.endpoint('webhook_definitions')
+      return getBaseCall()
       .payload({ limit: 100 })
       .get().then(function (res) { return res.items; });
     }
 
     function get(id) {
-      return space.endpoint('webhook_definitions', id)
-      .get();
+      return getBaseCall(id).get();
     }
 
     function create(webhook) {
-      return space.endpoint('webhook_definitions')
+      return getBaseCall()
       .payload(webhook)
       .post();
     }
 
+    function save(webhook) {
+      return getBaseCall(webhook.sys.id, webhook.sys.version)
+      .payload(_.omit(webhook, 'sys'))
+      .put();
+    }
+
     function remove(webhook) {
-      return space.endpoint('webhook_definitions', webhook.sys.id)
-      .delete();
+      return getBaseCall(webhook.sys.id).delete();
+    }
+
+    function getBaseCall(id, version) {
+      var headers = {};
+      if (version) { headers['X-Contentful-Version'] = version; }
+
+      return space.endpoint('webhook_definitions', id).headers(headers);
     }
   }
 

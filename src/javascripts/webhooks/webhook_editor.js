@@ -25,9 +25,10 @@ angular.module('contentful')
   $scope.context.touched = $scope.context.isNew ? 0 : -1;
   $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
 
-  $scope.$watch('webhook', function (webhook) {
-    $scope.context.title = _.isEmpty(webhook.url) ? 'Unspecified' : webhook.url;
+  $scope.$watch('webhook', function (webhook, prev) {
+    $scope.context.title = isEmpty('url') ? 'Unspecified' : webhook.url;
     $scope.context.touched += 1;
+    if (webhook === prev) { checkCredentials(); }
   }, true);
 
   $scope.$watch('context.touched', function () {
@@ -42,6 +43,7 @@ angular.module('contentful')
 
   function save() {
     var method = $scope.context.isNew ? 'create' : 'save';
+    prepareCredentials();
     return webhookRepo[method]($scope.webhook).then(handleWebhook, handleError);
   }
 
@@ -51,13 +53,14 @@ angular.module('contentful')
       return $state.go('spaces.detail.settings.webhooks.detail', {webhookId: webhook.sys.id});
     } else {
       $scope.webhook = webhook;
+      checkCredentials();
       $scope.context.touched = -1;
       return $q.when(webhook);
     }
   }
 
   function handleError(res) {
-    console.log(res);
+    window.alert(JSON.stringify(dotty.get(res, 'body.details', {}), null, 2));
   }
 
   function openRemovalDialog() {
@@ -78,5 +81,23 @@ angular.module('contentful')
       $scope.context.dirty = false;
       return $state.go('spaces.detail.settings.webhooks.list');
     }, ReloadNotification.basicErrorHandler);
+  }
+
+  function checkCredentials() {
+    $scope.apiHasAuthCredentials = !isEmpty('httpBasicUsername');
+  }
+
+  function prepareCredentials() {
+    if (isEmpty('httpBasicUsername')) {
+      $scope.webhook.httpBasicUsername = null;
+      if (isEmpty('httpBasicPassword')) {
+        $scope.webhook.httpBasicPassword = null;
+      }
+    }
+  }
+
+  function isEmpty(prop) {
+    var value = dotty.get($scope, 'webhook.' + prop, null);
+    return !_.isString(value) || value.length < 1;
   }
 }]);

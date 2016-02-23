@@ -20,4 +20,7 @@ header.workbench-header
       input.cfnext-form__input--full-size(id="f_http_user" ng-model="webhook.httpBasicUsername")
     .cfnext-form__field
       label(for="f_http_pass") HTTP Basic Auth password:
-      input.cfnext-form__input--full-size(id="f_http_pass" ng-model="webhook.httpBasicPassword")
+      input.cfnext-form__input--full-size(
+        id="f_http_pass" type="password"
+        placeholder="{{ (webhook.httpBasicUsername && apiHasAuthCredentials && 'use previously provided password') || '' }}"
+        ng-model="webhook.httpBasicPassword")
