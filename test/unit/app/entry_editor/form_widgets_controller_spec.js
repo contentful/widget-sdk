@@ -30,12 +30,10 @@ describe('FormWidgetsController#widgets', function () {
 
     var cfStub = this.$inject('cfStub');
     var space = cfStub.space('testSpace');
-    this.contentType = cfStub.contentType(space, 'testType', 'testType');
+    var contentType = cfStub.contentType(space, 'testType', 'testType');
 
     field = cfStub.field('foo');
-    this.contentType.data.fields = [field];
-
-    scope.contentType = this.contentType;
+    contentType.data.fields = [field];
 
     this.setupWidgets = function (ws) {
       getStoreWidgets = sinon.stub().resolves(ws);
@@ -46,12 +44,13 @@ describe('FormWidgetsController#widgets', function () {
     };
 
     this.createController = function () {
-      var editingInterfaces = this.$inject('editingInterfaces');
       var $controller = this.$inject('$controller');
+      var widgetLinks = [{widgetId: 'foo', fieldId: 'foo'}];
+      var ei = {data: {widgets: widgetLinks}};
       $controller('FormWidgetsController', {
         $scope: scope,
-        contentType: this.contentType,
-        editingInterface: editingInterfaces.defaultInterface(this.contentType)
+        contentType: contentType,
+        editingInterface: ei
       });
       this.$apply();
     };
@@ -60,7 +59,6 @@ describe('FormWidgetsController#widgets', function () {
 
 
   it('provides the widget template', function() {
-    field.type = 'foo';
     this.setupWidgets({
       foo: {
         template: '<span class=foo></span>',
@@ -71,7 +69,6 @@ describe('FormWidgetsController#widgets', function () {
   });
 
   it('filters sidebar widgets', function () {
-    field.type = 'foo';
     this.setupWidgets({
       foo: {
         template: '<span class=foo></span>',

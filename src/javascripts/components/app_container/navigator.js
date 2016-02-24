@@ -290,7 +290,7 @@ angular.module('contentful').config([
         return space.newContentType({sys: {type: 'ContentType'}, fields: []});
       }],
       editingInterface: ['contentType', 'editingInterfaces', function (contentType, editingInterfaces) {
-        return editingInterfaces.defaultInterface(contentType);
+        return editingInterfaces.forContentType(contentType);
       }],
       publishedContentType: [function () {
         return null;

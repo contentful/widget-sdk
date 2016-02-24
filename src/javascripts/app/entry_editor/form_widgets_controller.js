@@ -37,7 +37,7 @@ angular.module('contentful')
     analytics.trackWidgetEventIfCustom(
       'Custom Widget rendered',
       widget, widget.field,
-      { contentTypeId: $scope.contentType.getId() }
+      { contentTypeId: contentType.getId() }
     );
   }
 
