@@ -1,7 +1,7 @@
 'use strict';
 
-describe('Trial Watcher', function () {
-  var $rootScope, spaceContext, authentication, $window, $q;
+describe('TrialWatcher', function () {
+  var $rootScope, spaceContext, authentication, $q;
   var broadcastStub, momentDiffStub, momentIsAfterStub, openDialogStub;
 
   function makeSpace(organization) {
@@ -46,7 +46,6 @@ describe('Trial Watcher', function () {
     $rootScope = this.$inject('$rootScope');
     spaceContext = this.$inject('spaceContext');
     authentication = this.$inject('authentication');
-    $window = this.$inject('$window');
     $q = this.$inject('$q');
 
     broadcastStub = sinon.stub($rootScope, '$broadcast').returns({});
