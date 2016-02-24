@@ -125,6 +125,9 @@ angular.module('contentful')
    * Gets all widgets for a space and saves the object into the `WIDGETS`
    * variable. Always gets the latest custom widgets from the widgets endpoint.
    *
+   * Only `spaceContext.resetWithSpace()` is responsible for calling
+   * this method.
+   *
    * @param {Client.Space} space
    * @returns {Promise<Void>}
    */

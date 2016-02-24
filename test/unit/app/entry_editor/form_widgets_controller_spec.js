@@ -24,6 +24,7 @@ describe('FormWidgetsController#widgets', function () {
       $provide.factory('widgets/store', mockWidgetStore);
       $provide.value('TheLocaleStore', TheLocaleStore);
     });
+    getStoreWidgets = sinon.stub();
 
 
     scope = this.$inject('$rootScope').$new();
@@ -36,7 +37,7 @@ describe('FormWidgetsController#widgets', function () {
     contentType.data.fields = [field];
 
     this.setupWidgets = function (ws) {
-      getStoreWidgets = sinon.stub().resolves(ws);
+      getStoreWidgets.resolves(ws);
       var widgets = this.$inject('widgets');
       widgets.setSpace();
       this.$apply();
@@ -54,7 +55,6 @@ describe('FormWidgetsController#widgets', function () {
       });
       this.$apply();
     };
-
   });
 
 

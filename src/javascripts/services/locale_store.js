@@ -46,6 +46,9 @@ angular.module('contentful')
    * @description
    * Updates the state of this service with the data set for the
    * current space.
+   *
+   * Only `spaceContext.resetWithSpace()` is responsible for calling
+   * this method.
    */
   function resetWithSpace(space) {
     currentSpaceId = space ? space.getId()             : null;

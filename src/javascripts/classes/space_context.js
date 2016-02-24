@@ -7,8 +7,8 @@ angular.module('contentful')
  * @name spaceContext
  *
  * @description
- * This service holds all context related to a space, including contentTypes,
- * locales, and helper methods.
+ * This service holds all context related to a space, including
+ * contentTypes, users, widgets, and helper methods.
  *
  * @property {Client.ContentType[]} contentTypes
  * @property {Client.ContentType[]} publishedContentTypes
@@ -24,6 +24,7 @@ angular.module('contentful')
   var TheLocaleStore     = $injector.get('TheLocaleStore');
   var createUserCache    = $injector.get('data/userCache');
   var ctHelpers          = $injector.get('data/ContentTypes');
+  var Widgets            = $injector.get('widgets');
 
   var spaceContext = {
     /**
@@ -32,20 +33,26 @@ angular.module('contentful')
      * @param {Client.Space} space
      * @description
      * This method resets a space context with a given space
-    */
-    resetWithSpace: function(space){
-      this.space = space;
-      this.contentTypes = [];
-      this.publishedContentTypes = [];
-      this._publishedContentTypesHash = {};
-      this._publishedContentTypeIsMissing = {};
-      this.refreshContentTypes();
-      this.users = null;
-
-      if (space) {
-        this.users = createUserCache(space);
-        TheLocaleStore.resetWithSpace(space);
-      }
+     *
+     * It also sets the space on the [Widgets][] and [TheLocaleStore][]
+     * services to
+     *
+     * [Widgets]: api/contentful/app/service/widgets
+     * [TheLocaleStore]: api/contentful/app/service/TheLocaleStore
+     *
+     * @param {Client.Space} space
+     * @returns {Client.Space}
+     */
+    resetWithSpace: function (space){
+      var self = this;
+      resetMembers(self);
+      self.space = space;
+      self.users = createUserCache(space);
+      TheLocaleStore.resetWithSpace(space);
+      return Widgets.setSpace(space).then(function (widgets) {
+        self.widgets = widgets;
+        return self;
+      });
     },
 
     /**
@@ -346,6 +353,10 @@ angular.module('contentful')
     }
   };
 
+  resetMembers(spaceContext);
+  return spaceContext;
+
+
   function refreshPublishedContentTypes() {
     return spaceContext.space.getPublishedContentTypes()
     .then(function (contentTypes) {
@@ -380,7 +391,14 @@ angular.module('contentful')
     return contentTypes;
   }
 
-  spaceContext.resetWithSpace(null);
-  return spaceContext;
+  function resetMembers (spaceContext) {
+    spaceContext.contentTypes = [];
+    spaceContext.publishedContentTypes = [];
+    spaceContext._publishedContentTypesHash = {};
+    spaceContext._publishedContentTypeIsMissing = {};
+    spaceContext.refreshContentTypes();
+    spaceContext.users = null;
+    spaceContext.widgets = null;
+  }
 
 }]);
