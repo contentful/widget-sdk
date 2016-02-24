@@ -20,6 +20,8 @@ angular.module('contentful')
   var leaveConfirmator   = $injector.get('navigation/confirmLeaveEditor');
   var spaceContext       = $injector.get('spaceContext');
   var webhookRepo        = $injector.get('WebhookRepository').getInstance(spaceContext.space);
+  var notification       = $injector.get('notification');
+  var logger             = $injector.get('logger');
   var ReloadNotification = $injector.get('ReloadNotification');
 
   $scope.context.touched = $scope.context.isNew ? 0 : -1;
@@ -48,6 +50,8 @@ angular.module('contentful')
   }
 
   function handleWebhook(webhook) {
+    notification.info('Webhook calling ' + $scope.webhook.url + ' saved successfully.');
+
     if ($scope.context.isNew) {
       $scope.context.dirty = false;
       return $state.go('spaces.detail.settings.webhooks.detail', {webhookId: webhook.sys.id});
@@ -60,7 +64,36 @@ angular.module('contentful')
   }
 
   function handleError(res) {
-    window.alert(JSON.stringify(dotty.get(res, 'body.details', {}), null, 2));
+    var errors = dotty.get(res, 'body.details.errors', null);
+    var error = _.isObject(errors[0]) ? errors[0] : {};
+
+    switch (error.path) {
+      case 'url':
+        handleUrlError(error);
+        break;
+
+      case 'http_basic_password':
+      case 'http_basic_username':
+        notification.error([
+          'Please provide a valid user/password combination.',
+          'If you don\'t want to use HTTP Basic Authentication, please clear both fields.'
+        ].join(' '));
+        break;
+
+      default:
+        notification.error('Error saving webhook. Please try again.');
+        logger.logServerWarn('Error saving webhook', { errors: errors });
+    }
+
+    return $q.reject(error);
+  }
+
+  function handleUrlError(error) {
+    if (error.name === 'taken') {
+      notification.error('This webhook URL is already used.');
+    } else {
+      notification.error('Please provide a valid webhook URL.');
+    }
   }
 
   function openRemovalDialog() {
@@ -79,6 +112,7 @@ angular.module('contentful')
   function remove() {
     return webhookRepo.remove($scope.webhook).then(function () {
       $scope.context.dirty = false;
+      notification.info('Webhook calling ' + $scope.webhook.url + ' deleted successfully.');
       return $state.go('spaces.detail.settings.webhooks.list');
     }, ReloadNotification.basicErrorHandler);
   }
