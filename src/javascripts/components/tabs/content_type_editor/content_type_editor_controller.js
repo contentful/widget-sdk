@@ -32,6 +32,7 @@ function ContentTypeEditorController($scope, $injector) {
   var accessChecker     = $injector.get('accessChecker');
   var ctHelpers         = $injector.get('data/ContentTypes');
   var trackContentTypeChange = $injector.get('analyticsEvents').trackContentTypeChange;
+  var eiHelpers = $injector.get('editingInterfaces/helpers');
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
@@ -134,7 +135,8 @@ function ContentTypeEditorController($scope, $injector) {
    * @param {Client.ContentType.Field} field
    */
   controller.openFieldDialog = function (field) {
-    return openFieldDialog($scope, field)
+    var widget = eiHelpers.findWidget($scope.editingInterface.data.widgets, field);
+    return openFieldDialog($scope, field, widget)
     .then(function () {
       $scope.contentTypeForm.$setDirty();
     });

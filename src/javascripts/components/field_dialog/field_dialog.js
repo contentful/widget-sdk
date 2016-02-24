@@ -12,17 +12,19 @@ angular.module('contentful')
  *
  * @param {Scope}                    $scope
  * @param {Client.ContentType}       $scope.contentType
- * @param {Client.EditingInterface}  $scope.editingInterface
  * @param {Client.ContentType.Field} field
+ * @param {API.Widget}               widget
  * @return {Promise<void>}
  */
 .factory('openFieldDialog', ['$injector', function ($injector) {
   var analytics = $injector.get('analyticsEvents');
   var modalDialog  = $injector.get('modalDialog');
 
-  return function openFieldDialog($scope, field) {
-    var scope = $scope.$new();
-    _.extend(scope, {field: field});
+  return function openFieldDialog ($scope, field, widget) {
+    var scope = _.extend($scope.$new(), {
+      field: field,
+      widget: widget
+    });
     trackOpenSettingsDialog(field);
     return modalDialog.open({
       scope: scope,
@@ -48,7 +50,7 @@ angular.module('contentful')
  *
  * @scope.requires {Client.ContentType.Field}  field
  * @scope.requires {Client.ContentType}        contentType
- * @scope.requires {Client.EditingInterface}   editingInterface
+ * @scope.requires {API.EditingInterface}      editingInterface
  *
  * @property {string} $scope.widgetSettings.id
  * @property {object} $scope.widgetSettings.params
@@ -63,15 +65,13 @@ angular.module('contentful')
   var fieldFactory      = $injector.get('fieldFactory');
   var Widgets           = $injector.get('widgets');
   var features          = $injector.get('features');
-  var eiHelpers         = $injector.get('editingInterfaces/helpers');
 
   $scope.decoratedField = field.decorate($scope.field, $scope.contentType);
   $scope.validations = validations.decorateFieldValidations($scope.field);
 
   $scope.currentTitleField = getTitleField($scope.contentType);
 
-  var eiWidgets = $scope.editingInterface.data.widgets;
-  var widget = eiHelpers.findWidget(eiWidgets, $scope.field);
+  var widget = $scope.widget;
   var initialWidgetId = widget.widgetId;
 
   $scope.widgetSettings = {
