@@ -29,7 +29,7 @@ var path        = require('path');
 var through     = require('through2').obj;
 var yargs       = require('yargs');
 var child_process = require('child_process');
-var runSequenceP = Promise.denodeify(runSequence)
+var runSequenceP = Promise.denodeify(runSequence);
 
 var argv = yargs
 .boolean('verbose')
@@ -47,8 +47,12 @@ var gitRevision;
 var settings = _.omit(require('./config/environment.json'), 'fog');
 
 var src = {
-  templates:   'src/javascripts/**/*.jade',
-  components:  'src/javascripts/**/*.js',
+  templates: 'src/javascripts/**/*.jade',
+  // All Angular modules except 'cf.lib'
+  components: [
+    'src/javascripts/**/*.js',
+    '!src/javascripts/libs/*.js',
+  ],
   stylesheets: 'src/stylesheets/**/*',
   vendorScripts: {
     main: [
@@ -197,7 +201,7 @@ gulp.task('js/vendor/main', function () {
 gulp.task('js/vendor/markdown', function () {
   var dest = gulp.dest('./public/app/');
   return browserify()
-    .add('./src/markdown_vendors.js')
+    .add('./src/javascripts/libs/markdown_vendors.js')
     .bundle()
     .on('error', passError(dest))
     .pipe(source('markdown_vendors.js'))
@@ -218,7 +222,7 @@ gulp.task('js/external-bundle', function () {
 });
 
 gulp.task('js/app', ['git-revision', 'icons/prepare'], function () {
-  return gulp.src([src.components, src.svg.outputFile])
+  return gulp.src(src.components.concat([src.svg.outputFile]))
     .pipe(gulpif('**/environment.js',
       replace({ regex: 'GULP_GIT_REVISION', replace: gitRevision})))
     .pipe(sourceMaps.init())
@@ -353,7 +357,7 @@ gulp.task('watchify', function(){
 
 function createBrowserify(args) {
   return browserify(_.extend({debug: true}, args))
-    .add('./src/user_interface')
+    .add('./src/javascripts/libs')
     .transform({optimize: 'size'}, 'browserify-pegjs');
 }
 
@@ -361,7 +365,7 @@ function bundleBrowserify(browserify) {
   var dest = gulp.dest('./public/app/');
   return browserify.bundle()
     .on('error', passError(dest))
-    .pipe(source('user_interface.js'))
+    .pipe(source('libs.js'))
     .pipe(dest);
 }
 
@@ -493,7 +497,7 @@ gulp.task('rev-dynamic', function(){
 
     'public/app/templates.js',
     'public/app/vendor.js',
-    'public/app/user_interface.js',
+    'public/app/libs.js',
     'public/app/components.js',
   ], {base: 'public'})
     .pipe(sourceMaps.init({ loadMaps: true }))
@@ -520,7 +524,7 @@ gulp.task('rev-dynamic', function(){
 gulp.task('rev-app', function () {
   return gulp.src([
     'build/app/vendor-*.js',
-    'build/app/user_interface-*.js',
+    'build/app/libs-*.js',
     'build/app/components-*.js',
     'build/app/templates-*.js',
   ], {base: 'build'})

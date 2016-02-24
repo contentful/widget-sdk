@@ -9,7 +9,7 @@ angular.module('cf.app', []);
 
 angular.module('contentful', [
   'contentful/environment',
-  'contentful/user_interface',
+  'cf.libs',
   'cf.app',
   'cf.ui',
   'cf.forms',
