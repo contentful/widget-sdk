@@ -29,6 +29,7 @@ describe('ContentTypeEditor Controller', function () {
         $setDirty: sinon.stub()
       },
       context: {},
+      editingInterface: { data: {} }
     });
 
 
@@ -193,7 +194,6 @@ describe('ContentTypeEditor Controller', function () {
       syncWidgets = ei.syncWidgets = sinon.stub();
 
       scope.$broadcast = sinon.stub();
-      scope.editingInterface = {};
 
       createContentType();
 
@@ -251,6 +251,19 @@ describe('ContentTypeEditor Controller', function () {
     describe('without entries', function () {
       beforeEach(function () {
         this.controller.countEntries = sinon.stub().resolves(0);
+      });
+
+      it('removes the editing interface widget', function () {
+        scope.editingInterface = {
+          data: {
+            widgets: [{ fieldId: 'FID' }]
+          }
+        };
+        expect(contentType.data.fields.length).toEqual(1);
+
+        this.controller.deleteField('FID');
+        this.$apply();
+        expect(scope.editingInterface.data.widgets.length).toEqual(0);
       });
 
       it('removes the field', function () {

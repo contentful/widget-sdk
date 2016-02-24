@@ -107,10 +107,10 @@ function ContentTypeEditorController($scope, $injector) {
           cancelLabel: null,
           confirmLabel: 'Okay, got it'
         });
-
       } else {
         var fields = $scope.contentType.data.fields;
         _.remove(fields, {id: id});
+        syncEditingInterface();
       }
     });
   };
