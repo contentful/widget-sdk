@@ -64,7 +64,7 @@ angular.module('contentful')
   }
 
   function handleError(res) {
-    var errors = dotty.get(res, 'body.details.errors', null);
+    var errors = dotty.get(res, 'body.details.errors', []);
     var error = _.isObject(errors[0]) ? errors[0] : {};
 
     switch (error.path) {
@@ -82,7 +82,7 @@ angular.module('contentful')
 
       default:
         notification.error('Error saving webhook. Please try again.');
-        logger.logServerWarn('Error saving webhook', { errors: errors });
+        logger.logServerWarn('Error saving webhook.', { errors: errors });
     }
 
     return $q.reject(error);
