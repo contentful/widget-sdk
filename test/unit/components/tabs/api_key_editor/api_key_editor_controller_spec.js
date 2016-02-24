@@ -17,6 +17,7 @@ describe('API key editor controller', function () {
         'createPreviewApiKey'
       ]);
       $provide.constant('environment', {
+        env: 'unittest',
         settings: {
           cdn_host: 'cdn_host'
         }
