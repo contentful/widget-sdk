@@ -260,7 +260,9 @@ angular.module('contentful')
    */
   function paramDefaults(widgetId) {
     return _.transform(optionsForWidget(widgetId), function (defaults, option) {
-      defaults[option.param] = option.default;
+      if (option.default !== undefined) {
+        defaults[option.param] = option.default;
+      }
     }, {});
   }
 
