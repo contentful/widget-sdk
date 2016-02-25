@@ -10,17 +10,47 @@ header.workbench-header
     button.cfnext-btn-primary-action(ui-command="save")
       | Save
 
+.workbench-nav
+  ul.workbench-nav__tabs
+    li(ui-tab="settings") Webhook settings
+    li(ui-tab="activity") Activity log
+
 .workbench-main.x--content
-  .workbench-main__middle-content
-    .cfnext-form__field
-      label(for="webhook-url") URL:
-      input.cfnext-form__input--full-size(id="webhook-url" ng-model="webhook.url")
-    .cfnext-form__field
-      label(for="webhook-http-basic-user") HTTP Basic Auth username:
-      input.cfnext-form__input--full-size(id="webhook-http-basic-user" ng-model="webhook.httpBasicUsername")
-    .cfnext-form__field
-      label(for="webhook-http-basic-password") HTTP Basic Auth password:
-      input.cfnext-form__input--full-size(
+
+  div(ui-tabpanel="settings")
+    .workbench-main__middle-content
+      .cfnext-form__field
+        label(for="webhook-url") URL:
+        input.cfnext-form__input--full-size(id="webhook-url" ng-model="webhook.url")
+      .cfnext-form__field
+        label(for="webhook-http-basic-user") HTTP Basic Auth username:
+        input.cfnext-form__input--full-size(id="webhook-http-basic-user" ng-model="webhook.httpBasicUsername")
+      .cfnext-form__field
+        label(for="webhook-http-basic-password") HTTP Basic Auth password:
+        input.cfnext-form__input--full-size(
         id="webhook-http-basic-password" type="password"
         placeholder="{{ (webhook.httpBasicUsername && apiHasAuthCredentials && 'use previously provided password') || '' }}"
         ng-model="webhook.httpBasicPassword")
+
+  div(ui-tabpanel="activity")
+    p(ng-show="loadingLogs") Loading logs...
+    table.result-list.main-results.main-header(ng-show="logs")
+      thead
+        tr
+          th.cell-time Webhook called at
+          th.cell-result Call result
+          th.cell-actions Actions
+    .main-results-wrapper
+      table.result-list.main-results
+        tbody
+          tr(ng-repeat="log in logs track by log.sys.id"
+          ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail.call({ callId: log.sys.id })'"
+          ui-sref="{{entityNavState}}")
+            td.cell-time
+              a.entity-list-link(ui-sref="{{entityNavState}}") {{ log.requestAt }}
+            td.cell-result
+              a.entity-list-link(ui-sref="{{entityNavState}}")
+                span(ng-show="log.code") HTTP {{ log.code }}
+                span(ng-show="log.errors[0] === 'TimeoutError'") Timeout
+            td.cell-actions
+              a.entity-list-link(ui-sref="{{entityNavState}}") View details

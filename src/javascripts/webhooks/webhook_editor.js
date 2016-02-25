@@ -18,10 +18,12 @@ angular.module('contentful')
   var modalDialog        = $injector.get('modalDialog');
   var leaveConfirmator   = $injector.get('navigation/confirmLeaveEditor');
   var spaceContext       = $injector.get('spaceContext');
-  var webhookRepo        = $injector.get('WebhookRepository').getInstance(spaceContext.space);
+  var space              = spaceContext.space;
+  var webhookRepo        = $injector.get('WebhookRepository').getInstance(space);
   var notification       = $injector.get('notification');
   var logger             = $injector.get('logger');
   var ReloadNotification = $injector.get('ReloadNotification');
+  var ActivityRepository = $injector.get('WebhookActivityRepository');
 
   var touched = getInitialTouchCount();
 
@@ -35,6 +37,15 @@ angular.module('contentful')
 
   $scope.$watch(function () { return touched; }, function () {
     $scope.context.dirty = touched > 0;
+  });
+
+  $scope.$watch('context.isNew', function (isNew) {
+    if (!isNew && !$scope.logs && !$scope.loadingLogs) {
+      $scope.loadingLogs = ActivityRepository.getOverview(space, $scope.webhook).then(function (result) {
+        $scope.logs = result;
+        $scope.loadingLogs = false;
+      });
+    }
   });
 
   $scope.save = Command.create(save, {

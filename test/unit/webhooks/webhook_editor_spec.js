@@ -12,6 +12,9 @@ describe('Webhook Editor directive', function () {
     this.notification.info = sinon.stub();
     this.notification.error = sinon.stub();
 
+    this.$inject('spaceContext').space = {getId: _.constant('spaceid')};
+    this.$inject('WebhookActivityRepository').getOverview = sinon.stub().resolves([]);
+
     this.repo = {
       save: sinon.stub(),
       remove: sinon.stub()
@@ -21,7 +24,7 @@ describe('Webhook Editor directive', function () {
 
     this.compile = function (context, webhook) {
       var data = {context: context || {}, webhook: webhook || {}};
-      this.element = this.$compile('<cf-webhook-editor>', data);
+      this.element = this.$compile('<div cf-ui-tab><cf-webhook-editor /></div>', data);
       this.scope = this.element.scope();
     }.bind(this);
 

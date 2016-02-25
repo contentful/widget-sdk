@@ -38,6 +38,29 @@ angular.module('contentful')
     }]
   };
 
+  var call = {
+    name: 'call',
+    url: '/call/:callId',
+    ncyBreadcrumb: {
+      parent: 'spaces.detail.settings.webhooks.detail',
+      label: 'Call details ({{ call.requestAt }})'
+    },
+    resolve: {
+      call: ['WebhookActivityRepository', 'space', 'webhook', '$stateParams', function (WebhookActivityRepository, space, webhook, $stateParams) {
+        return WebhookActivityRepository.getDetails(space, webhook, $stateParams.callId);
+      }]
+    },
+    views: {
+      '@spaces.detail.settings.webhooks': {
+        template: '<pre>{{ call | json }}</pre>',
+        controller: ['$scope', '$stateParams', 'webhook', 'call', function ($scope, $stateParams, webhook, call) {
+          $scope.call = call;
+          $scope.context = {parentTitle: webhook.url};
+        }]
+      }
+    }
+  };
+
   var detail = {
     name: 'detail',
     url: '/:webhookId',
@@ -57,7 +80,8 @@ angular.module('contentful')
     controller: ['$scope', '$state', 'webhook', function ($scope, $state, webhook) {
       $scope.context = $state.current.data;
       $scope.webhook = webhook;
-    }]
+    }],
+    children: [call]
   };
 
   return {
