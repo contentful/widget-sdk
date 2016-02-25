@@ -27,6 +27,10 @@ window.ppit = function (desc, run) {
   return createPromiseSpec(window.iit, desc, run);
 };
 
+window.fpit = function (desc, run) {
+  return createPromiseSpec(window.fit, desc, run);
+};
+
 function createPromiseSpec (specFactory, desc, run) {
   var spec = specFactory(desc, function (done) {
     var promise = run.call(this);
