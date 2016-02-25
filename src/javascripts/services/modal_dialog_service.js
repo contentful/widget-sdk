@@ -22,7 +22,6 @@
  *     console.log('going to close ok');
  *     dialog.confirm();
  *   }, 3000);
- *
  */
 angular.module('contentful').factory('modalDialog', ['$injector', function ($injector) {
   var $compile   = $injector.get('$compile');
@@ -64,7 +63,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
         persistOnNavigation: false
       },
       _.pick(params,
-        'title', 'message',
+        'title', 'message', 'messageTemplate',
         'template', 'confirmLabel', 'cancelLabel',
         'attachTo', 'enterAction', 'backgroundClose',
         'ignoreEnter', 'ignoreEsc', 'disableTopCloseButton',
@@ -79,6 +78,10 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
 
     attach: function () {
       var scope = this.scope;
+
+      if (this.params.messageTemplate) {
+        this.params.message = JST[this.params.messageTemplate]();
+      }
 
       this.domElement = $(JST[this.params.template]());
 

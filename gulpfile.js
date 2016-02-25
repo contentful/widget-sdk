@@ -70,6 +70,7 @@ var src = {
       'bower_components/angular-ui-sortable/sortable.js',
       'bower_components/angular-ui-router/release/angular-ui-router.js',
       'bower_components/angular-breadcrumb/dist/angular-breadcrumb.js',
+      'bower_components/angular-bind-html-compile/angular-bind-html-compile.js',
       'bower_components/bootstrap/js/tooltip.js',
       'node_modules/share/node_modules/browserchannel/dist/bcsocket-uncompressed.js',
       'node_modules/share/webclient/share.uncompressed.js',

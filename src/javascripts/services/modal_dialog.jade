@@ -4,11 +4,10 @@
       h1 {{dialog.title}}
       button.modal-dialog__close(ng-show="!dialog.disableTopCloseButton" ng-click="dialog.cancel()")
     .modal-dialog__content
-      p.modal-dialog__richtext(ng-bind-html="dialog.message")
+      p.modal-dialog__richtext(bind-html-compile="dialog.message")
     .modal-dialog__controls
       button.cfnext-btn-primary-action(ng-click="dialog.confirm()")
         | {{dialog.confirmLabel}}
       button.cfnext-btn-secondary-action(
         ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
         | {{dialog.cancelLabel}}
-
