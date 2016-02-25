@@ -9,7 +9,6 @@ angular.module('contentful').factory('WebhookRepository', [function () {
     return {
       getAll: getAll,
       get: get,
-      create: create,
       save: save,
       remove: remove
     };
@@ -24,16 +23,20 @@ angular.module('contentful').factory('WebhookRepository', [function () {
       return getBaseCall(id).get();
     }
 
+    function save(webhook) {
+      if (!dotty.get(webhook, 'sys.id')) {
+        return create(webhook);
+      }
+
+      return getBaseCall(webhook.sys.id, webhook.sys.version)
+      .payload(webhook)
+      .put();
+    }
+
     function create(webhook) {
       return getBaseCall()
       .payload(webhook)
       .post();
-    }
-
-    function save(webhook) {
-      return getBaseCall(webhook.sys.id, webhook.sys.version)
-      .payload(_.omit(webhook, 'sys'))
-      .put();
     }
 
     function remove(webhook) {

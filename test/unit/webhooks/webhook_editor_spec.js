@@ -13,7 +13,6 @@ describe('Webhook Editor directive', function () {
     this.notification.error = sinon.stub();
 
     this.repo = {
-      create: sinon.stub(),
       save: sinon.stub(),
       remove: sinon.stub()
     };
@@ -153,13 +152,13 @@ describe('Webhook Editor directive', function () {
       beforeEach(function () {
         this.compile({isNew: true});
         this.scope.webhook.url = 'http://test.com';
-        this.repo.create.resolves(_.extend({sys: {id: 'whid'}}, this.scope.webhook));
+        this.repo.save.resolves(_.extend({sys: {id: 'whid'}}, this.scope.webhook));
         this.scope.$apply();
         this.button('Save').click();
       });
 
-      it('calls "create" method of repository', function () {
-        sinon.assert.calledOnce(this.repo.create);
+      it('calls "save" method of repository', function () {
+        sinon.assert.calledOnce(this.repo.save);
       });
 
       it('redirects from /new to /:id page', function () {
@@ -203,7 +202,7 @@ describe('Webhook Editor directive', function () {
       beforeEach(function () {
         this.rejectWithError = function (err) {
           this.compile({isNew: true});
-          this.repo.create.rejects({body: {details: {errors: [err]}}});
+          this.repo.save.rejects({body: {details: {errors: [err]}}});
           this.scope.$apply();
           this.button('Save').click();
         }.bind(this);

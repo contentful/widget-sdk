@@ -46,9 +46,8 @@ angular.module('contentful')
   });
 
   function save() {
-    var method = $scope.context.isNew ? 'create' : 'save';
     prepareCredentials();
-    return webhookRepo[method]($scope.webhook).then(handleWebhook, handleError);
+    return webhookRepo.save($scope.webhook).then(handleWebhook, handleError);
   }
 
   function handleWebhook(webhook) {
