@@ -13,6 +13,7 @@ angular.module('contentful')
 .factory('TheLocaleStore', ['$injector', function ($injector){
   var TheStore = $injector.get('TheStore');
 
+  var currentSpace = null;
   var currentSpaceId = null;
   var defaultLocale = null;
 
@@ -31,6 +32,7 @@ angular.module('contentful')
 
   return {
     resetWithSpace:    resetWithSpace,
+    refresh:           refreshLocales,
     getDefaultLocale:  getDefaultLocale,
     getActiveLocales:  getActiveLocales,
     getPrivateLocales: getPrivateLocales,
@@ -42,18 +44,32 @@ angular.module('contentful')
   /**
    * @ngdoc method
    * @name TheLocaleStore#resetWithSpace
+   * @description
+   * Updates the state of this service with the data set for the
+   * given space.
+   *
+   * Only `spaceContext.resetWithSpace()` is responsible for calling
+   * this method.
    * @param {API.Space} space
+   */
+  function resetWithSpace (space) {
+    currentSpace = space;
+    refreshLocales();
+  }
+
+  /**
+   * @ngdoc method
+   * @name TheLocaleStore#refresh
    * @description
    * Updates the state of this service with the data set for the
    * current space.
    *
-   * Only `spaceContext.resetWithSpace()` is responsible for calling
-   * this method.
+   * This is called by the `locale_editor_directive`.
    */
-  function resetWithSpace(space) {
-    currentSpaceId = space ? space.getId()             : null;
-    privateLocales = space ? space.getPrivateLocales() : [];
-    defaultLocale  = space ? space.getDefaultLocale()  : [];
+  function refreshLocales () {
+    currentSpaceId = currentSpace.getId();
+    privateLocales = currentSpace.getPrivateLocales();
+    defaultLocale  = currentSpace.getDefaultLocale();
 
     var storedLocaleCodes = getStoredActiveLocales();
     var storedLocales = _.filter(privateLocales, function (locale) {

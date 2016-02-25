@@ -17,7 +17,7 @@ describe('Locale editor controller', function () {
       openConfirmDialog: sinon.stub()
     };
     this.TheLocaleStoreMock = {
-      resetWithSpace: sinon.stub()
+      refresh: sinon.stub()
     };
 
     module('contentful/test', function ($provide) {
@@ -32,13 +32,8 @@ describe('Locale editor controller', function () {
     this.$inject('tokenStore').getUpdatedToken = sinon.stub().returns(this.$q.when());
     this.scope = this.$inject('$rootScope').$new();
 
-    this.scope.spaceContext = {
-      defaultLocale: {
-        name: 'U.S. English',
-        code: 'en-US'
-      }
-    };
-    dotty.put(this.scope.spaceContext, 'space.data.organization.subscriptionPlan.name', 'Unlimited');
+    var spaceContext = this.$inject('spaceContext');
+    dotty.put(spaceContext, 'space.data.organization.subscriptionPlan.name', 'Unlimited');
 
     this.scope.context = {};
 
@@ -182,7 +177,7 @@ describe('Locale editor controller', function () {
       });
 
       it('refreshes locales', function() {
-        sinon.assert.called(this.TheLocaleStoreMock.resetWithSpace);
+        sinon.assert.called(this.TheLocaleStoreMock.refresh);
       });
 
       it('is logged to analytics', function () {
