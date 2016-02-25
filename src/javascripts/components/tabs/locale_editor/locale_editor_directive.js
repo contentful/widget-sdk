@@ -16,7 +16,6 @@ angular.module('contentful')
  * @name LocaleEditorController
  *
  * @scope.requires  context
- * @scope.requires  spaceContext
  * @scope.requires  locale
  * @scope.requires  localeForm
  *
@@ -88,7 +87,8 @@ angular.module('contentful')
     return $scope.locale.delete()
     .then(function deletedSuccesfully () {
       return tokenStore.getUpdatedToken().then(function () {
-        TheLocaleStore.resetWithSpace(spaceContext.space);
+        // TODO Should probably be handled by the token store
+        TheLocaleStore.refresh();
         return $scope.closeState();
       }).finally(function () {
         notification.info('Locale deleted successfully');
@@ -146,7 +146,8 @@ angular.module('contentful')
     $scope.context.dirty = false;
     return tokenStore.getUpdatedToken().then(function () {
       updateInitialLocaleCode();
-      TheLocaleStore.resetWithSpace(spaceContext.space);
+      // TODO Should probably be handled by the token store
+      TheLocaleStore.refresh();
       notification.info('Locale saved successfully');
       trackSave('Saved Successful Locale');
       if ($scope.context.isNew) {
@@ -246,7 +247,7 @@ angular.module('contentful')
   }
 
   function getSubscriptionPlanName() {
-    return $scope.spaceContext.space.data.organization.subscriptionPlan.name;
+    return spaceContext.space.data.organization.subscriptionPlan.name;
   }
 
 }]);

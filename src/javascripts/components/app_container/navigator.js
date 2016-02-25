@@ -60,29 +60,27 @@ angular.module('contentful').config([
   $stateProvider.state('spaces.detail', {
     url: '/:spaceId',
     resolve: {
-      space: ['$injector', '$stateParams', function ($injector, $stateParams) {
+      spaceContext: ['$injector', '$stateParams', function ($injector, $stateParams) {
         var tokenStore     = $injector.get('tokenStore');
         var spaceContext   = $injector.get('spaceContext');
         var analytics      = $injector.get('analytics');
         return tokenStore.getSpace($stateParams.spaceId)
         .then(function (space) {
-          spaceContext.resetWithSpace(space);
-          analytics.setSpace(space);
-          return space;
+          analytics.setSpace(spaceContext.space);
+          return spaceContext.resetWithSpace(space);
         });
       }],
-      widgets: ['$injector', 'space', function ($injector, space) {
-        var Widgets = $injector.get('widgets');
-        return Widgets.setSpace(space);
+      space: ['spaceContext', function (spaceContext) {
+        return spaceContext.space;
+      }],
+      widgets: ['spaceContext', function (spaceContext) {
+        return spaceContext.widgets;
       }]
     },
     ncyBreadcrumb: {
       skip: true
     },
-    // FIXME we depend on 'widgets' to load the service. We cannot use
-    // the 'onEnter' handler because it does not wait until the promise
-    // has been resolved.
-    controller: ['$scope', 'space', 'sectionAccess', 'widgets', function ($scope, space, sectionAccess) {
+    controller: ['$scope', 'space', 'sectionAccess', function ($scope, space, sectionAccess) {
       $scope.label = space.data.name;
 
       if (sectionAccess.hasAccessToAny()) {
