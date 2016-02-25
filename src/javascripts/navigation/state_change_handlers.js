@@ -25,6 +25,10 @@ angular.module('cf.app')
   // Result of confirmation dialog
   var navigationConfirmed = false;
 
+  // True when we are showing a confirmation dialog.
+  // Used for detecting inconsistent state changes.
+  var confirmationInProgress = false;
+
   return {
     setup: setupHandlers
   };
@@ -81,6 +85,15 @@ angular.module('cf.app')
       return;
     }
 
+    if (confirmationInProgress) {
+      logger.logError('Change state during state change confirmation', {
+        state: {
+          from: fromState.name,
+          to: toState.name
+        }
+      });
+    }
+
     // Decide if it is OK to do the transition (unsaved changes etc)
     var stateData = fromState.data || {};
     var requestLeaveConfirmation = stateData.requestLeaveConfirmation;
@@ -90,11 +103,15 @@ angular.module('cf.app')
     navigationConfirmed = false;
     if (needConfirmation) {
       event.preventDefault();
+      confirmationInProgress = true;
       requestLeaveConfirmation().then(function (confirmed) {
+        confirmationInProgress = false;
         if (confirmed) {
           navigationConfirmed = true;
           $state.go(toState.name, toStateParams);
         }
+      }, function () {
+        confirmationInProgress = false;
       });
       return;
     }
