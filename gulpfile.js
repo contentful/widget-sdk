@@ -78,14 +78,14 @@ var src = {
       'node_modules/share/webclient/textarea.js'
     ],
     kaltura: [
-      'kaltura*/webtoolkit.md5.js',
-      'kaltura*/ox.ajast.js',
-      'kaltura*/KalturaClientBase.js',
-      'kaltura*/KalturaTypes.js',
-      'kaltura*/KalturaVO.js',
-      'kaltura*/KalturaServices.js',
-      'kaltura*/KalturaClient.js'
-    ]
+      'vendor/kaltura-16-01-2014/webtoolkit.md5.js',
+      'vendor/kaltura-16-01-2014/ox.ajast.js',
+      'vendor/kaltura-16-01-2014/KalturaClientBase.js',
+      'vendor/kaltura-16-01-2014/KalturaTypes.js',
+      'vendor/kaltura-16-01-2014/KalturaVO.js',
+      'vendor/kaltura-16-01-2014/KalturaServices.js',
+      'vendor/kaltura-16-01-2014/KalturaClient.js'
+    ],
   },
   images: [
     'src/images/**/*',
