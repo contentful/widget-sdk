@@ -35,13 +35,11 @@ describe('Webhook Editor directive', function () {
     it('marks as dirty for a new webhook', function () {
       this.compile({isNew: true});
       expect(this.scope.context.dirty).toBe(true);
-      expect(this.scope.context.touched).toBe(1);
     });
 
     it('marks as non-dirty for a fetched webhook', function () {
       this.compile({isNew: false});
       expect(this.scope.context.dirty).toBe(false);
-      expect(this.scope.context.touched).toBe(0);
     });
 
     it('increments "touched" counter, switches "dirty" flag', function () {
@@ -50,7 +48,6 @@ describe('Webhook Editor directive', function () {
       expect(this.scope.context.dirty).toBe(false);
       this.$apply();
       expect(this.scope.context.dirty).toBe(true);
-      expect(this.scope.context.touched).toBe(1);
     });
   });
 
@@ -85,6 +82,8 @@ describe('Webhook Editor directive', function () {
   });
 
   describe('Checks if API has Basic Auth credentials', function () {
+    var PASSWORD_FIELD_ID = '#webhook-http-basic-password';
+
     it('looks for username on initialization', function () {
       this.compile(undefined, {httpBasicUsername: 'jakub'});
       expect(this.scope.apiHasAuthCredentials).toBe(true);
@@ -101,13 +100,13 @@ describe('Webhook Editor directive', function () {
 
     it('sets placeholder if has credentials and username', function () {
       this.compile({isNew: false}, {httpBasicUsername: 'jakub'});
-      var el = this.element.find('#f_http_pass');
+      var el = this.element.find(PASSWORD_FIELD_ID);
       expect(el.attr('placeholder')).toBe('use previously provided password');
     });
 
     it('keeps placeholder empty if there is no username', function () {
       this.compile({isNew: false}, undefined);
-      var el = this.element.find('#f_http_pass');
+      var el = this.element.find(PASSWORD_FIELD_ID);
       expect(el.attr('placeholder')).toBe('');
     });
 
@@ -115,7 +114,7 @@ describe('Webhook Editor directive', function () {
       this.compile({isNew: false}, {httpBasicUsername: 'jakub'});
       this.scope.webhook.httpBasicUsername = '';
       this.$apply();
-      var el = this.element.find('#f_http_pass');
+      var el = this.element.find(PASSWORD_FIELD_ID);
       expect(el.attr('placeholder')).toBe('');
     });
   });
@@ -189,8 +188,7 @@ describe('Webhook Editor directive', function () {
         sinon.assert.calledOnce(this.repo.save);
       });
 
-      it('sets "touched" counter, dirty state and entity', function () {
-        expect(this.scope.context.touched).toBe(0);
+      it('sets dirty state and entity', function () {
         expect(this.scope.context.dirty).toBe(false);
         expect(this.scope.webhook.sys.version).toBe(2);
       });
@@ -252,13 +250,13 @@ describe('Webhook Editor directive', function () {
     it('opens confirmation dialog', function () {
       sinon.assert.calledOnce(modal.open);
       expect(this.args.template).toBe('webhook_removal_confirm_dialog');
-      expect(this.args.scope.webhook.sys.id).toBe('whid');
+      expect(this.args.scopeData.webhook.sys.id).toBe('whid');
     });
 
     pit('calls repository with a webhook object, shows message and redirects to list', function () {
       this.repo.remove.resolves();
 
-      return this.args.scope.remove.execute().then(function () {
+      return this.args.scopeData.remove.execute().then(function () {
         sinon.assert.calledOnce(this.repo.remove);
         expect(this.repo.remove.firstCall.args[0].sys.id).toBe('whid');
         sinon.assert.calledWith(this.notification.info, 'Webhook calling http://test.com deleted successfully.');
@@ -271,7 +269,7 @@ describe('Webhook Editor directive', function () {
       ReloadNotification.basicErrorHandler = sinon.spy();
       this.repo.remove.rejects();
 
-      return this.args.scope.remove.execute().then(_.noop, function () {
+      return this.args.scopeData.remove.execute().then(_.noop, function () {
         sinon.assert.calledOnce(ReloadNotification.basicErrorHandler);
       });
     });

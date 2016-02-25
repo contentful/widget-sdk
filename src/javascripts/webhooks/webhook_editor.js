@@ -12,7 +12,6 @@ angular.module('contentful')
 
 .controller('WebhookEditorController', ['$scope', '$injector', function ($scope, $injector) {
 
-  var $rootScope         = $injector.get('$rootScope');
   var $q                 = $injector.get('$q');
   var Command            = $injector.get('command');
   var $state             = $injector.get('$state');
@@ -24,24 +23,27 @@ angular.module('contentful')
   var logger             = $injector.get('logger');
   var ReloadNotification = $injector.get('ReloadNotification');
 
-  $scope.context.touched = $scope.context.isNew ? 0 : -1;
+  var touched = getInitialTouchCount();
+
   $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
 
   $scope.$watch('webhook', function (webhook, prev) {
+    touched += 1;
     $scope.context.title = isEmpty('url') ? 'Unspecified' : webhook.url;
-    $scope.context.touched += 1;
     if (webhook === prev) { checkCredentials(); }
   }, true);
 
-  $scope.$watch('context.touched', function () {
-    $scope.context.dirty = $scope.context.touched > 0;
+  $scope.$watch(function () { return touched; }, function () {
+    $scope.context.dirty = touched > 0;
   });
 
   $scope.save = Command.create(save, {
     disabled: function () { return !$scope.context.dirty; }
   });
 
-  $scope.openRemovalDialog = openRemovalDialog;
+  $scope.openRemovalDialog = Command.create(openRemovalDialog, {
+    available: function () { return !$scope.context.isNew; }
+  });
 
   function save() {
     var method = $scope.context.isNew ? 'create' : 'save';
@@ -58,7 +60,7 @@ angular.module('contentful')
     } else {
       $scope.webhook = webhook;
       checkCredentials();
-      $scope.context.touched = -1;
+      touched = getInitialTouchCount();
       return $q.when(webhook);
     }
   }
@@ -97,16 +99,17 @@ angular.module('contentful')
   }
 
   function openRemovalDialog() {
-    return modalDialog.open({
-      noNewScope: true,
+    modalDialog.open({
       ignoreEsc: true,
       backgroundClose: false,
       template: 'webhook_removal_confirm_dialog',
-      scope: _.extend($rootScope.$new(), {
+      scopeData: {
         webhook: $scope.webhook,
         remove: Command.create(remove)
-      })
+      }
     });
+
+    return $q.when();
   }
 
   function remove() {
@@ -131,7 +134,11 @@ angular.module('contentful')
   }
 
   function isEmpty(prop) {
-    var value = dotty.get($scope, 'webhook.' + prop, null);
+    var value = dotty.get($scope, ['webhook', prop], null);
     return !_.isString(value) || value.length < 1;
+  }
+
+  function getInitialTouchCount() {
+    return $scope.context.isNew ? 0 : -1;
   }
 }]);

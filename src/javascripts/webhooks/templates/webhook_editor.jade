@@ -5,22 +5,22 @@ header.workbench-header
   .workbench-header__actions
     button.cfnext-btn-secondary-action(ui-sref="spaces.detail.settings.webhooks.list")
       | Cancel
-    button.cfnext-btn-secondary-action(ng-click="openRemovalDialog()" ng-hide="context.isNew")
+    button.cfnext-btn-secondary-action(ui-command="openRemovalDialog")
       | Remove
-    button.cfnext-btn-primary-action(type="submit" ui-command="save")
+    button.cfnext-btn-primary-action(ui-command="save")
       | Save
 
 .workbench-main.x--content
-  form.workbench-main__middle-content(submit="save()")
+  .workbench-main__middle-content
     .cfnext-form__field
-      label(for="f_url") URL:
-      input.cfnext-form__input--full-size(id="f_url" ng-model="webhook.url")
+      label(for="webhook-url") URL:
+      input.cfnext-form__input--full-size(id="webhook-url" ng-model="webhook.url")
     .cfnext-form__field
-      label(for="f_http_user") HTTP Basic Auth username:
-      input.cfnext-form__input--full-size(id="f_http_user" ng-model="webhook.httpBasicUsername")
+      label(for="webhook-http-basic-user") HTTP Basic Auth username:
+      input.cfnext-form__input--full-size(id="webhook-http-basic-user" ng-model="webhook.httpBasicUsername")
     .cfnext-form__field
-      label(for="f_http_pass") HTTP Basic Auth password:
+      label(for="webhook-http-basic-password") HTTP Basic Auth password:
       input.cfnext-form__input--full-size(
-        id="f_http_pass" type="password"
+        id="webhook-http-basic-password" type="password"
         placeholder="{{ (webhook.httpBasicUsername && apiHasAuthCredentials && 'use previously provided password') || '' }}"
         ng-model="webhook.httpBasicPassword")
