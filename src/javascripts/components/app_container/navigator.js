@@ -421,6 +421,20 @@ angular.module('contentful').config([
   });
 
   /**
+   * Settings > Space Settings
+   */
+
+  $stateProvider.state('spaces.detail.settings.space', base({
+    url: '/space',
+    ncyBreadcrumb: {label: 'Space Settings'},
+    loadingText: 'Loading Space Settings...',
+    template: '<cf-space-settings />',
+    controller: ['$scope', function ($scope) {
+      $scope.context = {};
+    }]
+  }));
+
+  /**
    * Settings > Locale
    */
 
@@ -569,32 +583,65 @@ angular.module('contentful').config([
   });
 
   /**
-   * Settings > iframe views
+   * Settings > Webhooks
    */
 
-  $stateProvider.state('spaces.detail.settings.iframe', {
-    url: '',
+  $stateProvider.state('spaces.detail.settings.webhooks', {
+    url: '/webhooks',
     abstract: true,
-    template: '<cf-space-settings>'
+    template: '<ui-view />'
   });
 
-  $stateProvider.state('spaces.detail.settings.iframe.pathSuffix', {
-    url: '/{pathSuffix:PathSuffix}',
-    params: {
-      pathSuffix: 'edit'
+  $stateProvider.state('spaces.detail.settings.webhooks.list', base({
+    url: '',
+    ncyBreadcrumb: { label: 'Webhooks' },
+    loadingText: 'Loading Webhooks...',
+    template: '<cf-webhook-list class="workbench webhook-list" />',
+    controller: ['$scope', function ($scope) {
+      $scope.context = {};
+    }]
+  }));
+
+  $stateProvider.state('spaces.detail.settings.webhooks.new', {
+    url: '/new',
+    data: {
+      isNew: true
     },
     ncyBreadcrumb: {
-      label: '{{title}}'
+      parent: 'spaces.detail.settings.webhooks.list',
+      label: '{{ context.title + (context.dirty ? "*" : "") }}'
     },
-    template: '',
-    controller: ['$scope', '$stateParams', function ($scope, $stateParams) {
-      $scope.title = {
-        edit: 'Space',
-        webhook_definitions: 'Webhooks'
-      }[$stateParams.pathSuffix];
+    template: '<cf-webhook-editor class="workbench webhook-editor" />',
+    controller: ['$scope', '$state', function ($scope, $state) {
+      $scope.context = $state.current.data;
+      $scope.webhook = {};
     }]
   });
 
+  $stateProvider.state('spaces.detail.settings.webhooks.detail', {
+    url: '/:webhookId',
+    data: {
+      isNew: false
+    },
+    ncyBreadcrumb: {
+      parent: 'spaces.detail.settings.webhooks.list',
+      label: '{{ context.title + (context.dirty ? "*" : "") }}'
+    },
+    resolve: {
+      webhook: ['WebhookRepository', 'space', '$stateParams', function (WebhookRepository, space, $stateParams) {
+        return WebhookRepository.getInstance(space).get($stateParams.webhookId);
+      }]
+    },
+    template: '<cf-webhook-editor class="workbench webhook-editor" />',
+    controller: ['$scope', '$state', 'webhook', function ($scope, $state, webhook) {
+      $scope.context = $state.current.data;
+      $scope.webhook = webhook;
+    }]
+  });
+
+  /**
+   * Account view
+   */
 
   $stateProvider.state('account', {
     url: '/account',
@@ -605,7 +652,6 @@ angular.module('contentful').config([
       }
     }
   });
-
 
   $stateProvider.state('account.pathSuffix', {
     url: '/{pathSuffix:PathSuffix}',

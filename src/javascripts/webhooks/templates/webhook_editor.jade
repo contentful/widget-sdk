@@ -1,0 +1,26 @@
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-settings")
+  h1.workbench-header__title Webhook: {{ context.title }}
+
+  .workbench-header__actions
+    button.cfnext-btn-secondary-action(ui-sref="spaces.detail.settings.webhooks.list")
+      | Cancel
+    button.cfnext-btn-secondary-action(ui-command="openRemovalDialog")
+      | Remove
+    button.cfnext-btn-primary-action(ui-command="save")
+      | Save
+
+.workbench-main.x--content
+  .workbench-main__middle-content
+    .cfnext-form__field
+      label(for="webhook-url") URL:
+      input.cfnext-form__input--full-size(id="webhook-url" ng-model="webhook.url")
+    .cfnext-form__field
+      label(for="webhook-http-basic-user") HTTP Basic Auth username:
+      input.cfnext-form__input--full-size(id="webhook-http-basic-user" ng-model="webhook.httpBasicUsername")
+    .cfnext-form__field
+      label(for="webhook-http-basic-password") HTTP Basic Auth password:
+      input.cfnext-form__input--full-size(
+        id="webhook-http-basic-password" type="password"
+        placeholder="{{ (webhook.httpBasicUsername && apiHasAuthCredentials && 'use previously provided password') || '' }}"
+        ng-model="webhook.httpBasicPassword")
