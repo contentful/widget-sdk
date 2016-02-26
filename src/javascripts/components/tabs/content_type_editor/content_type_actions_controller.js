@@ -230,7 +230,7 @@ function ContentTypeActionsController($scope, $injector) {
     .then(publishContentType)
     .then(saveEditingInterface)
     .catch(triggerApiErrorNotification)
-    .then(setFormPristine)
+    .then(setPristine)
     .then(function () {
       if (redirect && $scope.context.isNew) {
         return goToDetails();
@@ -281,11 +281,14 @@ function ContentTypeActionsController($scope, $injector) {
     return $scope.editingInterface.save();
   }
 
-  function setFormPristine () {
+  function setPristine () {
     // Since this is called by asynchronously the scope data may have
     // already been removed.
     if ($scope.contentTypeForm) {
       $scope.contentTypeForm.$setPristine();
+    }
+    if ($scope.context) {
+      $scope.context.dirty = false;
     }
   }
 

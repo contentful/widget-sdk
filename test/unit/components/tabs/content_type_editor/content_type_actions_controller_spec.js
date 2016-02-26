@@ -232,9 +232,11 @@ describe('ContentType Actions Controller', function () {
       scope.updatePublishedContentType = sinon.stub();
     });
 
-    pit('resets form to pristine state', function () {
+    pit('resets form and state context to pristine state', function () {
+      scope.context.dirty = true;
       return controller.save.execute()
       .then(function () {
+        expect(scope.context.dirty).toBe(false);
         expect(scope.contentTypeForm.$pristine).toBe(true);
       });
     });
