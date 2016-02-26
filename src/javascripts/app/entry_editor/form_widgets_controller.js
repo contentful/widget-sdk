@@ -15,13 +15,10 @@ angular.module('contentful')
  * error paths determine dynamically for which fields and which locales
  * widgets should be rendered.
  */
-// TODO dependency on content type is only there because of id. We
-// should only depend on 'contentTypeId'.
 .controller('FormWidgetsController',
-  ['$scope', '$injector', 'contentType', 'widgets',
-  function($scope, $injector, contentType, widgets) {
+  ['$scope', '$injector', 'contentTypeId', 'widgets',
+  function($scope, $injector, contentTypeId, widgets) {
 
-  var Widgets = $injector.get('widgets');
   var analytics = $injector.get('analyticsEvents');
 
   $scope.$watchGroup(
@@ -38,19 +35,12 @@ angular.module('contentful')
     analytics.trackWidgetEventIfCustom(
       'Custom Widget rendered',
       widget, widget.field,
-      { contentTypeId: contentType.getId() }
+      { contentTypeId: contentTypeId }
     );
   }
 
-  /**
-   * Retrieve the widgets from the current editingInterface, build the
-   * form widgets, and add them to the scope.
-   */
   function updateWidgets () {
-    $scope.widgets = _(widgets)
-      .map(Widgets.buildRenderable)
-      .filter(widgetIsVisible)
-      .value();
+    $scope.widgets = _.filter(widgets, widgetIsVisible);
   }
 
   function widgetIsVisible(widget) {
@@ -62,6 +52,9 @@ angular.module('contentful')
   }
 
   function fieldIsVisible (field) {
+    if (!field) {
+      return false;
+    }
     var isNotDisabled = !field.disabled || $scope.preferences.showDisabledFields;
     var hasErrors = $scope.errorPaths && $scope.errorPaths[field.id];
     return isNotDisabled || hasErrors;

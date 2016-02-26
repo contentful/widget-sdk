@@ -51,8 +51,7 @@ angular.module('contentful')
     filterOptions:       filterOptions,
     applyDefaults:       applyDefaults,
     filteredParams:      filteredParams,
-    setSpace:            setSpace,
-    buildSidebarWidgets: buildSidebarWidgets
+    setSpace:            setSpace
   };
   return widgetsService;
 
@@ -204,43 +203,31 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name widgets#buildSidebarWidgets
-   * @description
-   * From a list of widget definition from the editing interface build
-   * a list of renderable widgets that can be passed to the
-   * `cfWidgetRenderer` directive.
-   *
-   * The list includes only widgets that have the `sidebar` property
-   * set to a truthy value.
-   *
-   * The function is used to setup the entry editor state.
-   *
-   * TODO Remove duplication with FormWidgetsController.
-   *
-   * @param {API.Widget[]} widgets
-   * @param {API.Fields[]} fields
-   * @return {Widget.Renderable[]}
-   */
-  function buildSidebarWidgets (apiWidgets) {
-    return  _(apiWidgets)
-      .map(buildRenderable)
-      .filter(function (widget) {
-        return widget.sidebar && widget.field;
-      })
-      .value();
-  }
-
-  /**
-   * @ngdoc method
    * @name widgets#buildRenderable
    * @description
    * Create an object that contains all the necessary data to render a
    * widget.
    *
-   * @param {API.Widget} widget
-   * @return {Widget.Renderable}
+   * @param {Data.Widget[]} widget
+   * @return {object}
    */
-  function buildRenderable (widget) {
+  function buildRenderable (widgets) {
+    var renderable = {sidebar: [], form: []};
+    _.forEach(widgets, function (widget) {
+      if (!widget.field) {
+        return;
+      }
+      widget = buildOneRenderable(widget);
+      if (widget.sidebar) {
+        renderable.sidebar.push(widget);
+      } else {
+        renderable.form.push(widget);
+      }
+    });
+    return renderable;
+  }
+
+  function buildOneRenderable (widget) {
     var id = widget.widgetId;
     widget = _.cloneDeep(widget);
 

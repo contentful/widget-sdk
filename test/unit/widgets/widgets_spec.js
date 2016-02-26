@@ -261,103 +261,82 @@ describe('widgets', function () {
 
   describe('#buildRenderable()', function () {
 
+    var descriptor;
+
     beforeEach(function() {
-      this.setupWidgets();
+      descriptor = {};
+      this.setupWidgets({
+        'WIDGET': descriptor
+      });
+      this.build = widgets.buildRenderable;
     });
 
-    it('has widget’s template property', function () {
-      var renderable = widgets.buildRenderable({widgetId: 'singleLine'});
-      var template = widgets.get('singleLine').template;
-      expect(renderable.template).toEqual(template);
+    it('returns object with widget arrays', function () {
+      var renderable = this.build([]);
+      expect(renderable.form).toEqual([]);
+      expect(renderable.sidebar).toEqual([]);
+    });
+
+    it('filters widgets without field', function () {
+      var renderable = this.build([
+        {widgetId: 'HAS_FIELD', field: {}},
+        {widgetId: 'NO_FIELD'},
+      ]);
+      expect(renderable.form.length).toBe(1);
+      expect(renderable.form[0].widgetId).toBe('HAS_FIELD');
+    });
+
+    it('adds sidebar widges to sidebar collection', function () {
+      descriptor.sidebar = true;
+      var renderable = this.build([{widgetId: 'WIDGET', field: {}}]);
+      expect(renderable.form.length).toBe(0);
+      expect(renderable.sidebar.length).toBe(1);
+      expect(renderable.sidebar[0].widgetId).toBe('WIDGET');
+    });
+
+    it('adds widget’s template property', function () {
+      descriptor.template = 'TEMPLATE';
+      var renderable = this.build([{widgetId: 'WIDGET', field: {}}]);
+      expect(renderable.form[0].template).toEqual('TEMPLATE');
+    });
+
+    it('sets fallback template if widget does not exist', function () {
+      var renderable = this.build([{widgetId: 'does not exist', field: {}}]);
+      expect(renderable.form[0].template)
+      .toMatch('Unknown editor widget "does not exist"');
     });
 
     it('keeps widgetParams property', function () {
       var params = 'MY PARAMS';
-      var widget = {widgetId: 'singleLine', widgetParams: params};
-      var renderable = widgets.buildRenderable(widget);
-      expect(renderable.widgetParams).toBe(params);
+      var widget = {widgetId: 'W', widgetParams: params, field: {}};
+      var renderable = this.build([widget]);
+      expect(renderable.form[0].widgetParams).toBe(params);
     });
 
-    it('sets "sidebar" property', function () {
-      this.setupWidgets({
-        'WIDGET': {sidebar: true}
-      });
-      var renderable = widgets.buildRenderable({widgetId: 'WIDGET'});
-      expect(renderable.sidebar).toBe(true);
-    });
-
-    it('sets fallback template if widget does not exist', function () {
-      var renderable = widgets.buildRenderable({widgetId: 'does not exist'});
-      expect(renderable.template).toMatch('Unknown editor widget "does not exist"');
-    });
 
     it('adds default parameters if there are no parameters', function () {
-      this.setupWidgets({
-        'WIDGET': {
-          options: [
-            {param: 'foo', default: 'bar'}
-          ]
-        }
-      });
-      var renderable = widgets.buildRenderable({widgetId: 'WIDGET'});
-      expect(renderable.widgetParams).toEqual({foo: 'bar'});
+      descriptor.options = [
+        {param: 'foo', default: 'bar'}
+      ];
+      var renderable = this.build([{widgetId: 'WIDGET', field: {}}]);
+      expect(renderable.form[0].widgetParams).toEqual({foo: 'bar'});
     });
 
     it('applies default parameters without overiding existing ones', function () {
-      this.setupWidgets({
-        'WIDGET': {
-          options: [
-            {param: 'x', default: 'DEF_X'},
-            {param: 'y', default: 'DEF_Y'}
-          ]
-        }
-      });
-      var renderable = widgets.buildRenderable({
+      descriptor.options = [
+        {param: 'x', default: 'DEF_X'},
+        {param: 'y', default: 'DEF_Y'}
+      ];
+
+      var renderable = this.build([{
         widgetId: 'WIDGET',
-        widgetParams: {x: true}
-      });
-      expect(renderable.widgetParams).toEqual({
+        widgetParams: {x: true},
+        field: {}
+      }]);
+      expect(renderable.form[0].widgetParams).toEqual({
         x: true,
         y: 'DEF_Y'
       });
-    });
-  });
-
-  describe('#buildSidebarWidgets()', function () {
-    var widget;
-
-    beforeEach(function () {
-      widget = {fieldId: 'FIELD', widgetId: 'WIDGET', field: {}};
-      this.setupWidgets({
-        'WIDGET': {sidebar: true, template: 'TEMPLATE'}
-      });
-    });
-
-    it('adds descriptor data to the widget', function () {
-      var renderable = widgets.buildSidebarWidgets([widget]);
-      expect(renderable[0].sidebar).toEqual(true);
-      expect(renderable[0].template).toEqual('TEMPLATE');
-    });
-
-    it('filters non-sidebar widgets', function () {
-      var widgetDescriptor = {sidebar: true};
-      this.setupWidgets({ 'WIDGET': widgetDescriptor });
-
-      var renderable = widgets.buildSidebarWidgets([widget]);
-      expect(renderable.length).toEqual(1);
-
-      widgetDescriptor.sidebar = false;
-      renderable = widgets.buildSidebarWidgets([widget]);
-      expect(renderable.length).toEqual(0);
-    });
-
-    it('filters widgets without fields', function () {
-      var renderable = widgets.buildSidebarWidgets([widget]);
-      expect(renderable.length).toEqual(1);
-
-      delete widget.field;
-      renderable = widgets.buildSidebarWidgets([widget]);
-      expect(renderable.length).toEqual(0);
     });
   });
 });

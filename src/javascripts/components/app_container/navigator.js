@@ -143,18 +143,18 @@ angular.module('contentful').config([
         var ctId = entry.data.sys.contentType.sys.id;
         return spaceContext.fetchPublishedContentType(ctId);
       }],
-      sidebarWidgets: ['editingInterface', 'spaceContext', function (ei, spaceContext) {
-          return spaceContext.widgets.buildSidebarWidgets(ei.widgets);
-        }]
+      editorWidgets: ['editingInterface', 'spaceContext', function (ei, spaceContext) {
+        return spaceContext.widgets.buildRenderable(ei.widgets);
+      }]
     },
-    controller: ['$state', '$scope', 'entry', 'editingInterface', 'contentType', 'contextHistory', 'sidebarWidgets',
-                 function ($state, $scope, entry, editingInterface, contentType, contextHistory, sidebarWidgets) {
+    controller: ['$state', '$scope', 'entry', 'editorWidgets', 'contentType', 'contextHistory',
+                 function ($state, $scope, entry, editorWidgets, contentType, contextHistory) {
       $state.current.data = $scope.context = {};
       $scope.entry = entry;
       $scope.entity = entry;
-      $scope.fieldWidgets = editingInterface.widgets;
       $scope.contentType = contentType;
-      $scope.sidebarWidgets = sidebarWidgets;
+      $scope.formWidgets = editorWidgets.form;
+      $scope.sidebarWidgets = editorWidgets.sidebar;
       contextHistory.addEntity(entry);
     }],
     template:
@@ -198,29 +198,18 @@ angular.module('contentful').config([
           return asset;
         });
       }],
-      // TODO I doubt this is needed for applications logic. We should
-      // figure out how to remove it.
-      contentType: ['$injector', function ($injector) {
-        var AssetContentType = $injector.get('AssetContentType');
-        return {
-          data: AssetContentType,
-          getId: _.constant('asset'),
-        };
+      formWidgets: ['$injector', 'spaceContext', function ($injector, spaceContext) {
+        var ei = $injector.get('data/editingInterfaces/asset');
+        return spaceContext.widgets.buildRenderable(ei.widgets).form;
       }]
     },
-    controller: ['$injector', '$scope', 'asset', 'contentType',
-                 function ($injector, $scope, asset, contentType) {
+    controller: ['$injector', '$scope', 'asset', 'formWidgets',
+                 function ($injector, $scope, asset, formWidgets) {
       var $state = $injector.get('$state');
-      var editingInterfaceData = $injector.get('data/editingInterfaces/asset');
       $injector.get('contextHistory').addEntity(asset);
-
       $state.current.data = $scope.context = {};
       $scope.asset = $scope.entity = asset;
-      // Because the entry and asset editors are treated uniformly the
-      // directives and controllers expect $scope.editingInterface to
-      // have the structure of an Entity instance of the 'client' library.
-      $scope.fieldWidgets = editingInterfaceData.widgets;
-      $scope.contentType = contentType;
+      $scope.formWidgets = formWidgets;
     }],
     template:
     '<div ' + [
