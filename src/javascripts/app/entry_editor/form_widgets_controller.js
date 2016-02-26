@@ -15,12 +15,13 @@ angular.module('contentful')
  * error paths determine dynamically for which fields and which locales
  * widgets should be rendered.
  */
+// TODO dependency on content type is only there because of id. We
+// should only depend on 'contentTypeId'.
 .controller('FormWidgetsController',
-  ['$scope', '$injector', 'contentType', 'editingInterface',
-  function($scope, $injector, contentType, editingInterface) {
+  ['$scope', '$injector', 'contentType', 'widgets',
+  function($scope, $injector, contentType, widgets) {
 
   var Widgets = $injector.get('widgets');
-  var eiHelpers = $injector.get('editingInterfaces/helpers');
   var analytics = $injector.get('analyticsEvents');
 
   $scope.$watchGroup(
@@ -46,19 +47,11 @@ angular.module('contentful')
    * form widgets, and add them to the scope.
    */
   function updateWidgets () {
-    $scope.widgets = _(editingInterface.data.widgets)
-      .map(buildWidget)
+    $scope.widgets = _(widgets)
+      .map(Widgets.buildRenderable)
       .filter(widgetIsVisible)
       .value();
   }
-
-  function buildWidget (widget) {
-    var field = eiHelpers.findField(contentType.data.fields, widget);
-    var renderable = Widgets.buildRenderable(widget);
-    renderable.field = field;
-    return renderable;
-  }
-
 
   function widgetIsVisible(widget) {
     if (widget.sidebar){

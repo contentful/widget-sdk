@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Widget types service', function () {
+describe('widgets', function () {
   var widgets;
 
   beforeEach(function () {
@@ -324,23 +324,17 @@ describe('Widget types service', function () {
   });
 
   describe('#buildSidebarWidgets()', function () {
-    var apiWidgets, fields;
+    var widget;
 
     beforeEach(function () {
-      apiWidgets = [{fieldId: 'FIELD', widgetId: 'WIDGET'}];
-      fields = [{id: 'FIELD'}];
+      widget = {fieldId: 'FIELD', widgetId: 'WIDGET', field: {}};
       this.setupWidgets({
         'WIDGET': {sidebar: true, template: 'TEMPLATE'}
       });
     });
 
-    it('adds field data to the widget', function () {
-      var renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
-      expect(renderable[0].field).toBe(fields[0]);
-    });
-
     it('adds descriptor data to the widget', function () {
-      var renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
+      var renderable = widgets.buildSidebarWidgets([widget]);
       expect(renderable[0].sidebar).toEqual(true);
       expect(renderable[0].template).toEqual('TEMPLATE');
     });
@@ -349,19 +343,20 @@ describe('Widget types service', function () {
       var widgetDescriptor = {sidebar: true};
       this.setupWidgets({ 'WIDGET': widgetDescriptor });
 
-      var renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
+      var renderable = widgets.buildSidebarWidgets([widget]);
       expect(renderable.length).toEqual(1);
 
       widgetDescriptor.sidebar = false;
-      renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
+      renderable = widgets.buildSidebarWidgets([widget]);
       expect(renderable.length).toEqual(0);
     });
 
     it('filters widgets without fields', function () {
-      var renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
+      var renderable = widgets.buildSidebarWidgets([widget]);
       expect(renderable.length).toEqual(1);
 
-      renderable = widgets.buildSidebarWidgets(apiWidgets, [{id: 'OTHER'}]);
+      delete widget.field;
+      renderable = widgets.buildSidebarWidgets([widget]);
       expect(renderable.length).toEqual(0);
     });
   });

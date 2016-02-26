@@ -5,6 +5,7 @@ describe('spaceContext', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.value('data/userCache', sinon.stub());
+      $provide.value('data/editingInterfaces', sinon.stub());
     });
     this.spaceContext = this.$inject('spaceContext');
     this.theLocaleStore = this.$inject('TheLocaleStore');
@@ -15,13 +16,17 @@ describe('spaceContext', function () {
     var SPACE, result, Widgets;
 
     beforeEach(function () {
+      var createEditingInterfaces = this.$inject('data/editingInterfaces');
+      createEditingInterfaces.returns('EI');
+
       Widgets = this.$inject('widgets');
       Widgets.setSpace = sinon.stub().defers();
 
       SPACE = {
         endpoint: sinon.stub().returns({
           get: sinon.stub().rejects()
-        })
+        }),
+        getId: sinon.stub().returns('SPACE_ID')
       };
       sinon.stub(this.spaceContext, 'refreshContentTypes');
       this.spaceContext.contentTypes = [{}];
@@ -73,6 +78,12 @@ describe('spaceContext', function () {
       Widgets.setSpace.resolve();
       this.$apply();
       sinon.assert.called(done);
+    });
+
+    it('sets #editingInterfaces', function () {
+      var createEditingInterfaces = this.$inject('data/editingInterfaces');
+      sinon.assert.calledOnce(createEditingInterfaces);
+      expect(this.spaceContext.editingInterfaces).toEqual('EI');
     });
   });
 

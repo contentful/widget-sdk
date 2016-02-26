@@ -190,8 +190,9 @@ describe('ContentTypeEditor Controller', function () {
     var syncWidgets;
 
     beforeEach(function() {
-      var ei = this.$inject('editingInterfaces');
-      syncWidgets = ei.syncWidgets = sinon.stub();
+      var spaceContext = this.$inject('spaceContext');
+      syncWidgets = sinon.stub();
+      spaceContext.editingInterfaces = {syncWidgets: syncWidgets};
 
       scope.$broadcast = sinon.stub();
 
@@ -215,7 +216,7 @@ describe('ContentTypeEditor Controller', function () {
       sinon.assert.notCalled(syncWidgets);
       this.$apply();
       sinon.assert.calledWithExactly(syncWidgets,
-                                     scope.contentType,
+                                     scope.contentType.data,
                                      scope.editingInterface);
     });
 
@@ -239,7 +240,13 @@ describe('ContentTypeEditor Controller', function () {
   });
 
   describe('#deleteField(id)', function () {
+    var syncWidgets;
+
     beforeEach(function () {
+      var spaceContext = this.$inject('spaceContext');
+      syncWidgets = sinon.stub();
+      spaceContext.editingInterfaces = {syncWidgets: syncWidgets};
+
       this.controller = createContentType([{id: 'FID'}]);
       scope.publishedContentType = {
         data: scope.contentType.data
@@ -253,17 +260,14 @@ describe('ContentTypeEditor Controller', function () {
         this.controller.countEntries = sinon.stub().resolves(0);
       });
 
-      it('removes the editing interface widget', function () {
-        scope.editingInterface = {
-          data: {
-            widgets: [{ fieldId: 'FID' }]
-          }
-        };
-        expect(contentType.data.fields.length).toEqual(1);
-
+      it('syncs the editing interface', function () {
+        scope.editingInterface = {};
         this.controller.deleteField('FID');
         this.$apply();
-        expect(scope.editingInterface.data.widgets.length).toEqual(0);
+        sinon.assert.calledWith(
+          syncWidgets,
+          contentType.data, scope.editingInterface
+        );
       });
 
       it('removes the field', function () {

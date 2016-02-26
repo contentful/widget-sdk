@@ -11,7 +11,6 @@ angular.module('contentful')
   var checks       = $injector.get('widgets/checks');
   var deprecations = $injector.get('widgets/deprecations');
   var WidgetStore  = $injector.get('widgets/store');
-  var eiHelpers    = $injector.get('editingInterfaces/helpers');
 
   /**
    * @ngdoc type
@@ -151,11 +150,11 @@ angular.module('contentful')
     var options = optionsForWidget(widgetId);
     return _.transform(options, function (filtered, option) {
       var param = params[option.param];
-      if (!_.isUndefined(param))
+      if (!_.isUndefined(param)) {
         filtered[option.param] = param;
+      }
     }, {});
   }
-
 
 
   /**
@@ -222,15 +221,9 @@ angular.module('contentful')
    * @param {API.Fields[]} fields
    * @return {Widget.Renderable[]}
    */
-  function buildSidebarWidgets (apiWidgets, fields) {
+  function buildSidebarWidgets (apiWidgets) {
     return  _(apiWidgets)
-      .map(function (widget) {
-        var field = eiHelpers.findField(fields, widget);
-        var desc = getWidget(widget.widgetId);
-        return _.extend({
-          field: field
-        }, widget, desc);
-      })
+      .map(buildRenderable)
       .filter(function (widget) {
         return widget.sidebar && widget.field;
       })
@@ -249,6 +242,7 @@ angular.module('contentful')
    */
   function buildRenderable (widget) {
     var id = widget.widgetId;
+    widget = _.cloneDeep(widget);
 
     var template = widgetTemplate(id);
     widget.template = template;
@@ -265,7 +259,6 @@ angular.module('contentful')
         sidebar: !!descriptor.sidebar
       });
     }
-
     return widget;
   }
 

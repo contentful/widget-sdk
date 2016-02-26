@@ -23,7 +23,6 @@ function ContentTypeEditorController($scope, $injector) {
   var $state            = $injector.get('$state');
   var validation        = $injector.get('validation');
   var hints             = $injector.get('hints');
-  var editingInterfaces = $injector.get('editingInterfaces');
   var modalDialog       = $injector.get('modalDialog');
   var openFieldDialog   = $injector.get('openFieldDialog');
   var leaveConfirmator  = $injector.get('navigation/confirmLeaveEditor');
@@ -31,8 +30,10 @@ function ContentTypeEditorController($scope, $injector) {
   var Command           = $injector.get('command');
   var accessChecker     = $injector.get('accessChecker');
   var ctHelpers         = $injector.get('data/ContentTypes');
+  var eiHelpers         = $injector.get('editingInterfaces/helpers');
+  var spaceContext      = $injector.get('spaceContext');
+  var editingInterfaces = spaceContext.editingInterfaces;
   var trackContentTypeChange = $injector.get('analyticsEvents').trackContentTypeChange;
-  var eiHelpers = $injector.get('editingInterfaces/helpers');
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
@@ -135,7 +136,7 @@ function ContentTypeEditorController($scope, $injector) {
    * @param {Client.ContentType.Field} field
    */
   controller.openFieldDialog = function (field) {
-    var widget = eiHelpers.findWidget($scope.editingInterface.data.widgets, field);
+    var widget = eiHelpers.findWidget($scope.editingInterface.widgets, field);
     return openFieldDialog($scope, field, widget)
     .then(function () {
       $scope.contentTypeForm.$setDirty();
@@ -219,6 +220,6 @@ function ContentTypeEditorController($scope, $injector) {
    * Make sure that each field has a widget and vice versa.
    */
   function syncEditingInterface () {
-    editingInterfaces.syncWidgets($scope.contentType, $scope.editingInterface);
+    editingInterfaces.syncWidgets($scope.contentType.data, $scope.editingInterface);
   }
 }]);

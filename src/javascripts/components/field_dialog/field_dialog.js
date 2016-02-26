@@ -282,12 +282,11 @@ angular.module('contentful')
   };
 
   function updateOptionsAndParams () {
-    if (!$scope.widget) return;
-
-    var widgetId = $scope.widget.id;
-    var options = $scope.widget.options;
-    var params = $scope.widgetParams;
-    Widgets.applyDefaults(widgetId, params);
-    $scope.widgetOptions = Widgets.filterOptions(options, params);
+    var widget = $scope.widget;
+    if (widget) {
+      var params = $scope.widgetParams;
+      Widgets.applyDefaults(widget.id, params);
+      $scope.widgetOptions = Widgets.filterOptions(widget.options, params);
+    }
   }
 }]);
