@@ -3,91 +3,194 @@
 describe('Token store service', function () {
 
   beforeEach(function(){
-    var self = this;
-    module('contentful/test', function($provide){
-      self.authStubs = {
-        getTokenLookup: sinon.stub()
+    module('contentful/test');
+
+    this.tokenStore = this.$inject('tokenStore');
+
+    this.auth = this.$inject('authentication');
+    this.auth.getTokenLookup = sinon.stub();
+
+    this.client = this.$inject('client');
+    this.client.newSpace = sinon.stub();
+
+    this.user = {firstName: 'hello'};
+
+    this.rawSpaces = _.map(['a-space', 'b-space', 'c-space'], function (name) {
+      return {sys: {id: name + '-id'}, name: name};
+    });
+
+    this.spaces = _.map(this.rawSpaces, function (raw) {
+      return {
+        data: _.cloneDeep(raw),
+        getId: _.constant(raw.sys.id),
+        update: sinon.stub()
       };
-      $provide.value('authentication', self.authStubs);
-
-      self.clientStubs = {
-        newSpace: sinon.stub()
-      };
-      $provide.value('client', self.clientStubs);
     });
-    inject(function (tokenStore, $q, $rootScope) {
-      this.$q = $q;
-      this.$rootScope = $rootScope;
-      this.user = {firstName: 'hello'};
-      this.spaces = [
-        {getId: sinon.stub(), update: sinon.stub(), data: {val: 'data'}}
-      ];
-      this.rawSpaces = [
-        {sys: {id: '123'}, data: {val: 'data'}}
-      ];
 
-      this.clientStubs.newSpace.returns(this.spaces[0]);
-      this.tokenStore = tokenStore;
+    this.refresh = function () {
+      this.tokenStore.refreshWithLookup({
+        sys: {createdBy: this.user},
+        spaces: Array.prototype.slice.apply(arguments)
+      });
+    }.bind(this);
+  });
+
+  describe('#refreshWithLookup', function () {
+    beforeEach(function () {
+      this.listener = sinon.stub();
+      this.tokenStore.changed.attach(this.listener);
+      this.client.newSpace.returns(this.spaces[0]);
+      this.refresh(this.rawSpaces[0]);
+    });
+
+    it('notifies listeners attached to "changed" signal', function () {
+      sinon.assert.calledOnce(this.listener);
+    });
+
+    it('stores user object', function () {
+      expect(this.listener.firstCall.args[0].user).toBe(this.user);
+    });
+
+    it('stores space object', function () {
+      expect(this.listener.firstCall.args[0].spaces[0]).toBe(this.spaces[0]);
+    });
+
+    it('modifies space object if already stored', function () {
+      this.refresh(this.rawSpaces[0]);
+      sinon.assert.calledTwice(this.listener);
+      sinon.assert.calledOnce(this.spaces[0].update.withArgs(this.rawSpaces[0]));
+    });
+
+    it('stores added, new space', function () {
+      this.client.newSpace.returns(this.spaces[1]);
+      this.refresh(this.rawSpaces[0], this.rawSpaces[1]);
+
+      sinon.assert.calledTwice(this.client.newSpace);
+      sinon.assert.calledTwice(this.listener);
+
+      var spaces = this.listener.secondCall.args[0].spaces;
+      expect(spaces[0]).toBe(this.spaces[0]);
+      expect(spaces[1]).toBe(this.spaces[1]);
+    });
+
+    it('sorts spaces by name', function () {
+      this.client.newSpace.returns(this.spaces[2]);
+      this.refresh(this.rawSpaces[2], this.rawSpaces[0]);
+
+      var spaceIds = _.map(this.listener.secondCall.args[0].spaces, function (space) {
+        return space.getId();
+      });
+
+      expect(spaceIds[0]).toBe('a-space-id');
+      expect(spaceIds[1]).toBe('c-space-id');
+    });
+
+    it('removes stored space if not present in a new token', function () {
+      this.client.newSpace.returns(this.spaces[1]);
+      this.refresh(this.rawSpaces[0], this.rawSpaces[1]);
+
+      sinon.assert.calledTwice(this.listener);
+      expect(this.listener.secondCall.args[0].spaces[1]).toBe(this.spaces[1]);
+
+      this.refresh(this.rawSpaces[0]);
+
+      sinon.assert.calledThrice(this.listener);
+      var spaces = this.listener.thirdCall.args[0].spaces;
+      expect(spaces.length).toBe(1);
+      expect(spaces[0]).toBe(this.spaces[0]);
     });
   });
 
-  it('has no token in default state', function() {
-    expect(this.tokenStore.hasToken()).toBeFalsy();
-  });
-
-  describe('updates token from a tokenLookup object with existing spaces', function() {
-    var newRawSpace;
-    beforeEach(function() {
-      this.spaces[0].getId.returns('123');
-      this.tokenStore._currentToken = {
-        spaces: this.spaces
-      };
-      newRawSpace = {sys: {id: '123'}, data: {val: 'newdata'}};
-      this.tokenStore.updateTokenFromTokenLookup({
-        sys: {
-          createdBy: this.user
-        },
-        spaces: [newRawSpace]
+  describe('#refresh()', function () {
+    pit('fetches token returns promise of token refresh', function () {
+      this.client.newSpace.returns(this.spaces[0]);
+      this.auth.getTokenLookup.resolves({
+        sys: {createdBy: this.user},
+        spaces: [this.rawSpaces[0]]
       });
 
-      this.listener = sinon.spy();
-      this.tokenStore.subscribe(this.listener);
-    });
-
-    it('updates token', function() {
-      sinon.assert.called(this.listener);
-    });
-
-    it('updates with spaces', function() {
-      sinon.assert.calledWith(this.spaces[0].update, newRawSpace);
+      return this.tokenStore.refresh().then(function () {
+        sinon.assert.calledOnce(this.auth.getTokenLookup);
+      }.bind(this));
     });
   });
 
-  describe('gets updated token', function() {
-    it('returns inflight promise if it exists', function() {
-      this.tokenStore._inFlightUpdate = this.$q.when();
-      expect(this.tokenStore.getUpdatedToken()).toEqual(this.tokenStore._inFlightUpdate);
+  it('reuses promise if requests is in progress', function () {
+    var d = this.$inject('$q').defer();
+    this.auth.getTokenLookup.returns(d.promise);
+
+    var promise = this.tokenStore.refresh();
+    expect(this.tokenStore.refresh()).toBe(promise);
+
+    d.resolve({sys: {createdBy: this.user}, spaces: []});
+    this.$apply();
+    expect(this.tokenStore.refresh()).not.toBe(promise);
+  });
+
+  it('shows dialog and clears auth data on 401', function () {
+    var dialog = this.$inject('modalDialog');
+    dialog.open = sinon.stub().returns({promise: this.$inject('$q').when()});
+    this.auth.clearAndLogin = sinon.spy();
+    this.auth.getTokenLookup.rejects({statusCode: 401});
+
+    this.tokenStore.refresh();
+    this.$apply();
+    sinon.assert.calledOnce(dialog.open);
+    sinon.assert.calledOnce(this.auth.clearAndLogin);
+  });
+
+  it('reloads app on =/= 401', function () {
+    var notification = this.$inject('ReloadNotification');
+    notification.trigger = sinon.spy();
+    this.auth.getTokenLookup.rejects({statusCode: 404});
+
+    this.tokenStore.refresh();
+    this.$apply();
+    sinon.assert.calledOnce(notification.trigger);
+  });
+
+  describe('#getSpaces()', function () {
+    pit('returns promise resolving to currently stored spaces', function () {
+      this.client.newSpace.returns(this.spaces[0]);
+      this.refresh(this.rawSpaces[0]);
+
+      return this.tokenStore.getSpaces().then(function (spaces) {
+        expect(spaces.length).toBe(1);
+        expect(spaces[0]).toBe(this.spaces[0]);
+      }.bind(this));
     });
 
-    describe('if no inflight exists', function() {
-      var tokenLookup;
-      var promise;
-      beforeEach(function() {
-        tokenLookup = {sys:{}};
-        this.tokenStore.updateTokenFromTokenLookup = sinon.stub();
-        this.authStubs.getTokenLookup.returns(this.$q.when(tokenLookup));
-        promise = this.tokenStore.getUpdatedToken();
-        this.$rootScope.$digest();
-      });
+    it('waits for a request in progress', function () {
+      var d = this.$inject('$q').defer();
+      this.auth.getTokenLookup.returns(d.promise);
+      this.tokenStore.refresh();
 
-      it('returns promise', function() {
-        expect(promise.then).toBeDefined();
-      });
+      var spaceHandler = sinon.spy();
+      this.tokenStore.getSpace('a-space-id').then(spaceHandler);
+      sinon.assert.notCalled(spaceHandler);
 
-      it('updates from token lookup', function() {
-        sinon.assert.calledWith(this.tokenStore.updateTokenFromTokenLookup, tokenLookup);
-      });
+      this.client.newSpace.returns(this.spaces[0]);
+      d.resolve({sys: {createdBy: this.user}, spaces: [this.rawSpaces[0]]});
+      this.$apply();
+      sinon.assert.calledOnce(spaceHandler);
     });
   });
 
+  describe('#getSpace()', function () {
+    pit('returns promise resolving to requested space', function () {
+      this.client.newSpace.returns(this.spaces[0]);
+      this.refresh(this.rawSpaces[0]);
+
+      return this.tokenStore.getSpace('a-space-id').then(function (space) {
+        expect(space).toBe(this.spaces[0]);
+      }.bind(this));
+    });
+
+    pit('returns rejected promise if space cannot be found', function () {
+      return this.tokenStore.getSpace('xyz').then(_.noop, function (err) {
+        expect(err instanceof Error).toBe(true);
+        expect(err.message).toBe('No space with given ID could be found.');
+      });
+    });
+  });
 });

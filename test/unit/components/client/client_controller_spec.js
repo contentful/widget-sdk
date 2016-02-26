@@ -48,10 +48,10 @@ describe('Client Controller', function () {
       $provide.value('authorization', self.authorizationStubs);
 
       setMockOnContext(self, 'tokenStoreStubs', [
-        'updateTokenFromTokenLookup',
-        'getUpdatedToken',
-        'subscribe'
+        'refreshWithLookup',
+        'refresh'
       ]);
+      self.tokenStoreStubs.changed = {attach: sinon.stub()};
       $provide.value('tokenStore', self.tokenStoreStubs);
 
       self.featuresStubs = {
@@ -337,12 +337,12 @@ describe('Client Controller', function () {
           type: 'space',
           action: 'delete',
         };
-        this.tokenStoreStubs.getUpdatedToken.returns(this.$q.when());
+        this.tokenStoreStubs.refresh.returns(this.$q.when());
         childScope.$emit('iframeMessage', data);
       });
 
       it('performs token lookup', function() {
-        sinon.assert.called(this.tokenStoreStubs.getUpdatedToken);
+        sinon.assert.called(this.tokenStoreStubs.refresh);
       });
     });
 
@@ -350,12 +350,12 @@ describe('Client Controller', function () {
     describe('for other messages', function () {
       beforeEach(function () {
         data = {};
-        this.tokenStoreStubs.getUpdatedToken.returns(this.$q.when());
+        this.tokenStoreStubs.refresh.returns(this.$q.when());
         childScope.$emit('iframeMessage', data);
       });
 
       it('performs token lookup', function() {
-        sinon.assert.called(this.tokenStoreStubs.getUpdatedToken);
+        sinon.assert.called(this.tokenStoreStubs.refresh);
       });
     });
 
@@ -426,14 +426,14 @@ describe('Client Controller', function () {
       this.spaces = [];
       this.user = {sys: {}};
       this.revisionStubs.hasNewVersion = sinon.stub().resolves(true);
-      this.tokenStoreStubs.getUpdatedToken.returns(this.$q.when({
+      this.tokenStoreStubs.refresh.returns(this.$q.when({
         spaces: this.spaces,
         user: this.user
       }));
       this.broadcastStub = sinon.stub(this.$rootScope, '$broadcast');
       jasmine.clock().install();
       scope.initClient();
-      this.tokenStoreStubs.subscribe.firstCall.args[0]({
+      this.tokenStoreStubs.changed.attach.firstCall.args[0]({
         spaces: this.spaces,
         user: this.user
       });
@@ -475,7 +475,7 @@ describe('Client Controller', function () {
     describe('presence timeout is fired', function () {
       beforeEach(function () {
         this.presenceStubs.isActive.returns(true);
-        this.tokenStoreStubs.getUpdatedToken.returns(this.$q.reject());
+        this.tokenStoreStubs.refresh.returns(this.$q.reject());
         jasmine.clock().tick(50*60*1000);
         scope.$digest();
       });
@@ -511,7 +511,7 @@ describe('Client Controller', function () {
         org3 = {org3: true};
 
         this.prepare = function () {
-          var subscriber = this.tokenStoreStubs.subscribe.firstCall.args[0];
+          var subscriber = this.tokenStoreStubs.changed.attach.firstCall.args[0];
           subscriber({user: { organizationMemberships: [
             {organization: org1}, {organization: org2}, {organization: org3}
           ]}});

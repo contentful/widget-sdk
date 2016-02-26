@@ -1,128 +1,112 @@
 'use strict';
 
-angular.module('contentful').service('tokenStore', ['$injector', function($injector) {
-  var $rootScope     = $injector.get('$rootScope');
-  var $q             = $injector.get('$q');
-  var client         = $injector.get('client');
-  var authentication = $injector.get('authentication');
-  var modalDialog    = $injector.get('modalDialog');
-  var notifyReload   = $injector.get('ReloadNotification').trigger;
-  var logger         = $injector.get('logger');
+angular.module('contentful').factory('tokenStore', ['$injector', function ($injector) {
 
-  var tokenStore = this;
-  var subscribers = [];
+  var $rootScope         = $injector.get('$rootScope');
+  var $q                 = $injector.get('$q');
+  var client             = $injector.get('client');
+  var authentication     = $injector.get('authentication');
+  var modalDialog        = $injector.get('modalDialog');
+  var ReloadNotification = $injector.get('ReloadNotification');
+  var logger             = $injector.get('logger');
+  var createSignal       = $injector.get('signal');
 
-  tokenStore._currentToken = null;
-  tokenStore._inFlightUpdate = null;
+  var currentToken = null;
+  var inFlightUpdate = null;
+  var changed  = createSignal();
 
-  tokenStore.subscribe = function (cb) {
-    subscribers.push(cb);
-    cb(tokenStore._currentToken);
+  return {
+    changed:           changed,
+    refresh:           refresh,
+    refreshWithLookup: refreshWithLookup,
+    getSpaces:         getSpaces,
+    getSpace:          getSpace
   };
 
-  function notify() {
-    _.forEach(subscribers, function (cb) {
-      cb(tokenStore._currentToken);
-    });
+  function refreshWithLookup(tokenLookup) {
+    currentToken = {
+      user: tokenLookup.sys.createdBy,
+      spaces: updateSpaces(tokenLookup.spaces)
+    };
+    changed.dispatch(currentToken);
   }
 
-  tokenStore.hasToken = function () {
-    return !!tokenStore._currentToken;
-  };
+  function refresh() {
+    if (inFlightUpdate) {
+      return inFlightUpdate;
+    }
 
-  tokenStore.updateTokenFromTokenLookup = function(tokenLookup) {
-    var existingSpaces = tokenStore._currentToken ? tokenStore._currentToken.spaces : [];
-    tokenStore._currentToken = {
-      user: tokenLookup.sys.createdBy,
-      spaces: updateSpaces(tokenLookup.spaces, existingSpaces)
-    };
-    notify();
-  };
-
-  tokenStore.getToken = function() {
-    return tokenStore._currentToken;
-  };
-
-  tokenStore.getUpdatedToken = function() {
-    if(tokenStore._inFlightUpdate)
-      return tokenStore._inFlightUpdate;
-
-    tokenStore._inFlightUpdate = authentication.getTokenLookup()
-    .then(function (tokenLookup) {
-      tokenStore.updateTokenFromTokenLookup(tokenLookup);
-      tokenStore._inFlightUpdate = null;
-      return tokenStore._currentToken;
+    inFlightUpdate = authentication.getTokenLookup()
+    .then(refreshWithLookup)
+    .then(function () {
+      inFlightUpdate = null;
     })
     .catch(tokenErrorHandler);
-    return tokenStore._inFlightUpdate;
-  };
 
-  tokenStore.getSpaces = createTokenPropertyGetter('spaces', []);
-  tokenStore.getUser = createTokenPropertyGetter('user', {});
-
-  tokenStore.getSpace = function (id) {
-    if(tokenStore._inFlightUpdate){
-      return tokenStore._inFlightUpdate.then(function () {
-        return getLoadedSpace(id);
-      });
-    } else {
-      return $q.when(getLoadedSpace(id));
-    }
-  };
-
-  function createTokenPropertyGetter(property, defaultValue) {
-    return function () {
-      if(tokenStore._inFlightUpdate)
-        return tokenStore._inFlightUpdate.then(function () {
-          return tokenStore._currentToken[property];
-        });
-      else
-        return $q.when(tokenStore._currentToken ? tokenStore._currentToken[property] : defaultValue);
-    };
+    return inFlightUpdate;
   }
 
-  function updateSpaces(rawSpaces, existingSpaces) {
-    var newSpaceList = _.map(rawSpaces, function (rawSpace) {
-      var existing = getSpaceFromList(rawSpace.sys.id, existingSpaces);
-      if (existing) {
-        existing.update(rawSpace);
-        return existing;
-      } else {
-        var space = client.newSpace(rawSpace);
-        space.save = function () { throw new Error('Saving space not allowed'); };
-        return space;
-      }
+  function getSpace(id) {
+    return inFlightUpdate ? inFlightUpdate.then(promiseSpace) : promiseSpace();
+
+    function promiseSpace() {
+      var space = findSpace(id);
+      return space ? $q.when(space) : $q.reject(new Error('No space with given ID could be found.'));
+    }
+  }
+
+  function getSpaces() {
+    return inFlightUpdate ? inFlightUpdate.then(promiseSpaces) : promiseSpaces();
+
+    function promiseSpaces() {
+      return $q.when(getCurrentSpaces());
+    }
+  }
+
+  function updateSpaces(rawSpaces) {
+    var updated = _.map(rawSpaces, updateSpace);
+    updated.sort(getSorter(updated));
+    return updated;
+  }
+
+  function updateSpace(rawSpace) {
+    var existing = findSpace(rawSpace.sys.id);
+    if (existing) {
+      existing.update(rawSpace);
+      return existing;
+    } else {
+      var space = client.newSpace(rawSpace);
+      space.save = function () { throw new Error('Saving space is not allowed.'); };
+      return space;
+    }
+  }
+
+  function findSpace(id) {
+    return _.find(getCurrentSpaces(), function (space) {
+      return space.getId() === id;
     });
-    newSpaceList.sort(function (a,b) {
+  }
+
+  function getCurrentSpaces() {
+    return currentToken ? currentToken.spaces : [];
+  }
+
+  function getSorter(spaces) {
+    return function sortByName(a, b) {
       try {
         return a.data.name.localeCompare(b.data.name);
-      } catch(exp) {
-        logger.logError('Space is not defined', {
+      } catch (e) {
+        logger.logError('Space is not defined.', {
           data: {
-            msg: exp.message,
-            exp: exp,
-            spaces: _.map(newSpaceList, function (space) {
+            msg: e.message,
+            exp: e,
+            spaces: _.map(spaces, function (space) {
               return _.pluck(space, 'data');
             })
           }
         });
       }
-    });
-    return newSpaceList;
-  }
-
-  function getLoadedSpace(id) {
-    var space = getSpaceFromList(id, tokenStore._currentToken.spaces);
-    if(space)
-      return space;
-    else
-      return $q.reject(new Error('Space not found in token'));
-  }
-
-  function getSpaceFromList(id, existingSpaces) {
-    return _.find(existingSpaces, function (existingSpace) {
-      return existingSpace.getId() === id;
-    });
+    };
   }
 
   function tokenErrorHandler(err) {
@@ -141,8 +125,9 @@ angular.module('contentful').service('tokenStore', ['$injector', function($injec
         authentication.clearAndLogin();
       });
     } else {
-      notifyReload('The browser was unable to obtain the login token.');
+      ReloadNotification.trigger('The browser was unable to obtain the login token.');
     }
+
     return $q.reject(err);
   }
 

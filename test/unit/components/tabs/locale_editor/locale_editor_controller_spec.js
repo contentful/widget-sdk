@@ -29,7 +29,7 @@ describe('Locale editor controller', function () {
     });
 
     this.$q = this.$inject('$q');
-    this.$inject('tokenStore').getUpdatedToken = sinon.stub().returns(this.$q.when());
+    this.$inject('tokenStore').refresh = sinon.stub().returns(this.$q.when());
     this.scope = this.$inject('$rootScope').$new();
 
     var spaceContext = this.$inject('spaceContext');

@@ -44,7 +44,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     };
   }, spaceAndTokenWatchHandler);
 
-  tokenStore.subscribe(handleTokenData);
+  var off = tokenStore.changed.attach(handleTokenData);
+  $scope.$on('$destroy', off);
 
   $scope.$on('iframeMessage', iframeMessageWatchHandler);
   $scope.$on('$stateChangeSuccess', stateChangeSuccessHandler);
@@ -56,7 +57,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
 
   function initClient() {
-    tokenStore.getUpdatedToken()
+    tokenStore.refresh()
     .then(showOnboardingIfNecessary);
 
     setTimeout(newVersionCheck, 5000);
@@ -64,7 +65,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     setInterval(function () {
       if (presence.isActive()) {
         newVersionCheck();
-        tokenStore.getUpdatedToken().
+        tokenStore.refresh().
         catch(function () {
           ReloadNotification.trigger('Your authentication data needs to be refreshed. Please try logging in again.');
         });
@@ -98,7 +99,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       $scope.showCreateSpaceDialog(data.organizationId);
 
     } else if (msg('delete', 'space')) {
-      tokenStore.getUpdatedToken();
+      tokenStore.refresh();
       $location.url('/');
 
     } else if (data.type === 'flash') {
@@ -114,7 +115,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       updateToken(data.token);
 
     } else {
-      tokenStore.getUpdatedToken();
+      tokenStore.refresh();
     }
   }
 
@@ -137,7 +138,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   function updateToken(data) {
     authentication.updateTokenLookup(data);
     if(authentication.tokenLookup) {
-      tokenStore.updateTokenFromTokenLookup(authentication.tokenLookup);
+      tokenStore.refreshWithLookup(authentication.tokenLookup);
     } else {
       logger.logError('Token Lookup has not been set properly', {
         data: {

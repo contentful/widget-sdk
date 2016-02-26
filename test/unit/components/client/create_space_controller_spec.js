@@ -12,7 +12,7 @@ describe('Create Space controller', function () {
       ]);
 
       self.tokenStoreStubs = {
-        getUpdatedToken: sinon.stub(),
+        refresh: sinon.stub(),
         getSpace: sinon.stub()
       };
       $provide.value('tokenStore', self.tokenStoreStubs);
@@ -244,7 +244,7 @@ describe('Create Space controller', function () {
             scope.spaces = [space];
             this.client.createSpace.returns(this.$q.when(space));
             stubs.getId.returns('spaceid');
-            this.tokenStoreStubs.getUpdatedToken.returns(this.$q.when());
+            this.tokenStoreStubs.refresh.returns(this.$q.when());
             this.tokenStoreStubs.getSpace.returns(this.$q.when(space));
             spaceTools = this.$inject('spaceTools');
             sinon.stub(spaceTools, 'goTo');
@@ -270,7 +270,7 @@ describe('Create Space controller', function () {
           });
 
           it('performs token lookup', function() {
-            sinon.assert.called(this.tokenStoreStubs.getUpdatedToken);
+            sinon.assert.called(this.tokenStoreStubs.refresh);
           });
 
           it('gets space', function() {
