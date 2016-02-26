@@ -49,8 +49,8 @@ describe('Client Controller', function () {
 
       setMockOnContext(self, 'tokenStoreStubs', [
         'updateTokenFromTokenLookup',
-        'getToken',
-        'getUpdatedToken'
+        'getUpdatedToken',
+        'subscribe'
       ]);
       $provide.value('tokenStore', self.tokenStoreStubs);
 
@@ -266,16 +266,11 @@ describe('Client Controller', function () {
           token: authentication.tokenLookup
         };
 
-        this.tokenStoreStubs.getToken.returns({spaces: spaces, user: user});
         childScope.$emit('iframeMessage', data);
       }));
 
       it('sets token lookup', function() {
         sinon.assert.calledWith(this.authenticationStubs.updateTokenLookup, token);
-      });
-
-      it('sets user', function() {
-        expect(scope.user).toBe(user);
       });
     });
 
@@ -438,6 +433,10 @@ describe('Client Controller', function () {
       this.broadcastStub = sinon.stub(this.$rootScope, '$broadcast');
       jasmine.clock().install();
       scope.initClient();
+      this.tokenStoreStubs.subscribe.firstCall.args[0]({
+        spaces: this.spaces,
+        user: this.user
+      });
       scope.$digest();
     });
 
@@ -510,38 +509,33 @@ describe('Client Controller', function () {
         org1 = {org1: true};
         org2 = {org2: true};
         org3 = {org3: true};
-        scope.user = {
-          organizationMemberships: [
-            {organization: org1},
-            {organization: org2},
-            {organization: org3}
-          ]
-        };
+
+        this.prepare = function () {
+          var subscriber = this.tokenStoreStubs.subscribe.firstCall.args[0];
+          subscriber({user: { organizationMemberships: [
+            {organization: org1}, {organization: org2}, {organization: org3}
+          ]}});
+        }.bind(this);
       });
 
       it('are set', function() {
-        scope.$digest();
+        this.prepare();
         expect(OrganizationList.getAll()).toEqual([org1, org2, org3]);
       });
 
       it('sets analytics user data and enables tracking', function() {
-        scope.$digest();
+        this.prepare();
         sinon.assert.called(this.analyticsStubs.setUserData);
         sinon.assert.called(this.analyticsStubs.enable);
         sinon.assert.called(logger.enable);
       });
 
-      describe('when analytics are disallowed', function() {
-        beforeEach(function() {
-          this.featuresStubs.shouldAllowAnalytics.returns(false);
-        });
-
-        it('should not set or enable anything', function() {
-          scope.$digest();
-          sinon.assert.notCalled(this.analyticsStubs.setUserData);
-          sinon.assert.called(this.analyticsStubs.disable);
-          sinon.assert.called(logger.disable);
-        });
+      it('should not set or enable anything when analytics are disallowed', function() {
+        this.featuresStubs.shouldAllowAnalytics.returns(false);
+        this.prepare();
+        sinon.assert.notCalled(this.analyticsStubs.setUserData);
+        sinon.assert.called(this.analyticsStubs.disable);
+        sinon.assert.called(logger.disable);
       });
     });
   });

@@ -35,40 +35,9 @@ describe('Token store service', function () {
     expect(this.tokenStore.hasToken()).toBeFalsy();
   });
 
-  it('updates token with a given object', function() {
-    var token = {spaces: this.spaces};
-    this.tokenStore.updateToken(token);
-    expect(this.tokenStore.getToken()).toBe(token);
-  });
-
-  describe('updates token from a tokenLookup object', function() {
-    beforeEach(function() {
-      this.tokenStore.updateToken = sinon.stub();
-      this.tokenStore.updateTokenFromTokenLookup({
-        sys: {
-          createdBy: this.user
-        },
-        spaces: this.rawSpaces
-      });
-    });
-
-    it('updates token', function() {
-      sinon.assert.called(this.tokenStore.updateToken);
-    });
-
-    it('updates with user', function() {
-      expect(this.tokenStore.updateToken.args[0][0].user).toEqual(this.user);
-    });
-
-    it('updates with spaces', function() {
-      expect(this.tokenStore.updateToken.args[0][0].spaces).toEqual(this.spaces);
-    });
-  });
-
   describe('updates token from a tokenLookup object with existing spaces', function() {
     var newRawSpace;
     beforeEach(function() {
-      this.tokenStore.updateToken = sinon.stub();
       this.spaces[0].getId.returns('123');
       this.tokenStore._currentToken = {
         spaces: this.spaces
@@ -80,10 +49,13 @@ describe('Token store service', function () {
         },
         spaces: [newRawSpace]
       });
+
+      this.listener = sinon.spy();
+      this.tokenStore.subscribe(this.listener);
     });
 
     it('updates token', function() {
-      sinon.assert.called(this.tokenStore.updateToken);
+      sinon.assert.called(this.listener);
     });
 
     it('updates with spaces', function() {

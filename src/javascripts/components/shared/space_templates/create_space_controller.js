@@ -53,7 +53,6 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
     }
 
     function handleSpaceCreation(token, newSpace) {
-      $scope.setTokenDataOnScope(token);
       tokenStore.getSpace(newSpace.getId())
       .then(function (space) {
         var broadcastSpaceCreated = $rootScope.$on('$stateChangeSuccess', function () {

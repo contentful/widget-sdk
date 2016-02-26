@@ -45,8 +45,6 @@ describe('Create Space controller', function () {
       scope.organizations = [org];
       scope.newSpaceForm = {};
 
-      scope.setTokenDataOnScope = sinon.stub();
-
       createController = function () {
         createSpaceCtrl = $controller('CreateSpaceDialogController', {$scope: scope});
       };
@@ -277,10 +275,6 @@ describe('Create Space controller', function () {
 
           it('gets space', function() {
             sinon.assert.called(this.tokenStoreStubs.getSpace);
-          });
-
-          it('sets token data on scope', function() {
-            sinon.assert.called(scope.setTokenDataOnScope);
           });
 
           it('reuses existing space with same id', function() {

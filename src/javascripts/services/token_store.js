@@ -10,24 +10,33 @@ angular.module('contentful').service('tokenStore', ['$injector', function($injec
   var logger         = $injector.get('logger');
 
   var tokenStore = this;
+  var subscribers = [];
 
   tokenStore._currentToken = null;
   tokenStore._inFlightUpdate = null;
+
+  tokenStore.subscribe = function (cb) {
+    subscribers.push(cb);
+    cb(tokenStore._currentToken);
+  };
+
+  function notify() {
+    _.forEach(subscribers, function (cb) {
+      cb(tokenStore._currentToken);
+    });
+  }
 
   tokenStore.hasToken = function () {
     return !!tokenStore._currentToken;
   };
 
-  tokenStore.updateToken = function(token) {
-    tokenStore._currentToken = token;
-  };
-
   tokenStore.updateTokenFromTokenLookup = function(tokenLookup) {
     var existingSpaces = tokenStore._currentToken ? tokenStore._currentToken.spaces : [];
-    tokenStore.updateToken({
+    tokenStore._currentToken = {
       user: tokenLookup.sys.createdBy,
       spaces: updateSpaces(tokenLookup.spaces, existingSpaces)
-    });
+    };
+    notify();
   };
 
   tokenStore.getToken = function() {
