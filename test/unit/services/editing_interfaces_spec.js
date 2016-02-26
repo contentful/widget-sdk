@@ -19,8 +19,10 @@ describe('Editing interfaces service', function () {
           return {data: data};
         }),
         getId: sinon.stub(),
-        getVersion: sinon.stub(),
-        data: {fields: [ {id: 'id1',  apiName: 'apiName1'}]}
+        data: {
+          sys: {revision: 1},
+          fields: [ {id: 'id1',  apiName: 'apiName1'}]
+        }
       };
 
       this.getEditingInterface = function () {
@@ -77,7 +79,7 @@ describe('Editing interfaces service', function () {
     describe('if content type is new', function () {
       beforeEach(function () {
         this.contentType.data.fields = [];
-        this.contentType.getVersion.returns(0);
+        delete this.contentType.data.sys.revision;
         this.contentType.newEditingInterface = sinon.spy(function (data) {
           return {data: data};
         });
@@ -173,10 +175,12 @@ describe('Editing interfaces service', function () {
     describe('#forContentType()', function() {
       function makeContentType(fields, editingInterface) {
         return {
-          data: {fields: fields},
+          data: {
+            sys: {revision: 1},
+            fields: fields
+          },
           getEditingInterface: sinon.stub().resolves(editingInterface),
           getId: sinon.stub(),
-          getVersion: sinon.stub()
         };
       }
 

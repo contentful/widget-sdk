@@ -83,10 +83,14 @@ angular.module('contentful')
   }
 
   function getEditingInterface (contentType) {
-    if (contentType.getVersion() === 0) {
-      return $q.when(defaultInterface(contentType));
-    } else {
+    var version = dotty.get(contentType, 'data.sys.version');
+    var revision = dotty.get(contentType, 'data.sys.revision');
+    if (version || revision ) {
       return contentType.getEditingInterface('default');
+    } else {
+      // Content Type has not been persisted yet or is not published, so
+      // there exists no editing interface.
+      return $q.when(defaultInterface(contentType));
     }
   }
 
