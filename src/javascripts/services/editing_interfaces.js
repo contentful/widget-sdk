@@ -11,6 +11,7 @@ angular.module('contentful')
   var widgetMigrator = $injector.get('widgets/migrations');
   var logger         = $injector.get('logger');
   var eiHelpers      = $injector.get('editingInterfaces/helpers');
+  var getDefaultWidgetId = $injector.get('widgets/default');
 
   return {
     /**
@@ -119,7 +120,7 @@ angular.module('contentful')
     var identifier = field.apiName || field.id;
     return {
       fieldId: identifier,
-      widgetId: widgets.defaultWidgetId(field, contentType),
+      widgetId: getDefaultWidgetId(field, contentType),
       widgetParams: {}
     };
   }

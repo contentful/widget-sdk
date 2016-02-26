@@ -257,8 +257,9 @@ angular.module('contentful')
 .controller('FieldDialogAppearanceController',
 ['$scope', '$injector', function ($scope, $injector) {
   var widgets = $injector.get('widgets');
+  var getDefaultWidgetId = $injector.get('widgets/default');
 
-  $scope.defaultWidgetId = widgets.defaultWidgetId($scope.field, $scope.contentType);
+  $scope.defaultWidgetId = getDefaultWidgetId($scope.field, $scope.contentType);
   $scope.widgetParams = $scope.widgetSettings.params;
   $scope.$watch('widgetParams', updateWidgetOptions, true);
   $scope.$watch('widget.options', updateWidgetOptions);

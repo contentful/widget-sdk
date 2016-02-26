@@ -45,29 +45,10 @@ angular.module('contentful')
 
   var store;
 
-  // Maps type names to builtin widget IDs. Type names are those
-  // returned by `fieldFactory.getTypeName`.
-  var DEFAULT_WIDGETS = {
-    'Text':     'markdown',
-    'Symbol':   'singleLine',
-    'Symbols':  'listInput',
-    'Integer':  'numberEditor',
-    'Number':   'numberEditor',
-    'Boolean':  'boolean',
-    'Date':     'datePicker',
-    'Location': 'locationEditor',
-    'Object':   'objectEditor',
-    'Entry':    'entryLinkEditor',
-    'Entries':  'entryLinksEditor',
-    'Asset':    'assetLinkEditor',
-    'Assets':   'assetLinksEditor',
-  };
-
   var widgetsService = {
     get:                 getWidget,
     getAvailable:        getAvailable,
     buildRenderable:     buildRenderable,
-    defaultWidgetId:     defaultWidgetId,
     filterOptions:       filterOptions,
     paramDefaults:       paramDefaults,
     applyDefaults:       applyDefaults,
@@ -149,53 +130,6 @@ angular.module('contentful')
     } else {
       return $q.when(widgets);
     }
-  }
-
-  /**
-   * @ngdoc method
-   * @name widgets#defaultWidgetId
-   * @param {API.ContentType.Field} field
-   * @param {Client.ContentType} contentType
-   * @return {string}
-   *
-   * @description
-   * This method determines the default widget for a given field.
-   *
-   * It accounts for legacy behavior for when there were no user selectable
-   * widgets for a given field and some fields would have different widgets
-   * in different occasions, specifically:
-   * - Text field: defaults to markdown, unless it is a title field.
-   *   where it gets switched to singleLine
-   * - Any field that allows for predefined values: gets changed to a dropdown
-   *   in the presence of the 'in' validation
-  */
-  function defaultWidgetId(field, contentType) {
-    var fieldType = fieldFactory.getTypeName(field);
-
-    // FIXME We create the editing interface, and thus the widget ids
-    // before any validation can be set. So I think this is not need.
-    var shouldUseDropdown = hasInValidation(field.validations);
-    var canUseDropdown = _.contains(dotty.get(WIDGETS, ['dropdown', 'fieldTypes']), fieldType);
-    if (shouldUseDropdown && canUseDropdown) {
-      return 'dropdown';
-    }
-
-    if (fieldType === 'Text') {
-      var isDisplayField = contentType.data.displayField === field.id;
-      if (isDisplayField) {
-        return 'singleLine';
-      } else {
-        return 'markdown';
-      }
-    }
-
-    return DEFAULT_WIDGETS[fieldType];
-  }
-
-  function hasInValidation(validations) {
-    return _.find(validations, function (validation) {
-      return 'in' in validation;
-    });
   }
 
   function optionsForWidget(widgetId) {
