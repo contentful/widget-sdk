@@ -76,7 +76,8 @@ angular.module('contentful')
 
   $scope.widgetSettings = {
     id: widget.widgetId,
-    params: _.cloneDeep(widget.widgetParams)
+    // Need to clone so we do not mutate data if we cancel the dialog
+    params: _.cloneDeep(widget.widgetParams || {})
   };
 
 
@@ -256,13 +257,13 @@ angular.module('contentful')
  */
 .controller('FieldDialogAppearanceController',
 ['$scope', '$injector', function ($scope, $injector) {
-  var widgets = $injector.get('widgets');
+  var Widgets = $injector.get('widgets');
   var getDefaultWidgetId = $injector.get('widgets/default');
 
   $scope.defaultWidgetId = getDefaultWidgetId($scope.field, $scope.contentType);
   $scope.widgetParams = $scope.widgetSettings.params;
-  $scope.$watch('widgetParams', updateWidgetOptions, true);
-  $scope.$watch('widget.options', updateWidgetOptions);
+  $scope.$watch('widgetParams', updateOptionsAndParams, true);
+  $scope.$watch('widget.id', updateOptionsAndParams);
 
   $scope.$watch('availableWidgets', function (available) {
     if (!available) { return; }
@@ -280,12 +281,13 @@ angular.module('contentful')
     $scope.widgetSettings.id = widget.id;
   };
 
-  function updateWidgetOptions () {
+  function updateOptionsAndParams () {
     if (!$scope.widget) return;
 
+    var widgetId = $scope.widget.id;
     var options = $scope.widget.options;
     var params = $scope.widgetParams;
-    widgets.applyDefaults(params, options);
-    $scope.widgetOptions = widgets.filterOptions(options, params);
+    Widgets.applyDefaults(widgetId, params);
+    $scope.widgetOptions = Widgets.filterOptions(options, params);
   }
 }]);

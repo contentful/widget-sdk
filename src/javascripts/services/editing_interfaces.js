@@ -7,7 +7,6 @@ angular.module('contentful')
  */
 .factory('editingInterfaces', ['$injector', function($injector){
   var $q             = $injector.get('$q');
-  var widgets        = $injector.get('widgets');
   var widgetMigrator = $injector.get('widgets/migrations');
   var logger         = $injector.get('logger');
   var eiHelpers      = $injector.get('editingInterfaces/helpers');
@@ -41,8 +40,7 @@ angular.module('contentful')
           return $q.reject(err);
         }
       })
-      .then(_.partial(syncWidgets, contentType))
-      .then(addDefaultParams);
+      .then(_.partial(syncWidgets, contentType));
     },
 
     syncWidgets: syncWidgets
@@ -73,14 +71,6 @@ angular.module('contentful')
     var migratedWidgets = _.map(syncedWidgets, widgetMigrator(contentType.data));
     editingInterface.data.widgets = migratedWidgets;
     return editingInterface;
-  }
-
-  function addDefaultParams(interf) {
-    _.each(interf.data.widgets, function (widget) {
-      var defaults = widgets.paramDefaults(widget.widgetId);
-      _.defaults(widget.widgetParams, defaults);
-    });
-    return interf;
   }
 
   function getEditingInterface (contentType) {

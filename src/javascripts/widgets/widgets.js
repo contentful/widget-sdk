@@ -50,7 +50,6 @@ angular.module('contentful')
     getAvailable:        getAvailable,
     buildRenderable:     buildRenderable,
     filterOptions:       filterOptions,
-    paramDefaults:       paramDefaults,
     applyDefaults:       applyDefaults,
     filteredParams:      filteredParams,
     setSpace:            setSpace,
@@ -188,37 +187,15 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name widgets#paramDefaults
-   * @param {string} widgetId
-   * @returns {object}
-   */
-  function paramDefaults(widgetId) {
-    return _.transform(optionsForWidget(widgetId), function (defaults, option) {
-      if (option.default !== undefined) {
-        defaults[option.param] = option.default;
-      }
-    }, {});
-  }
-
-  function widgetTemplate(widgetId) {
-    var widget = WIDGETS[widgetId];
-    if (widget) {
-      return widget.template;
-    } else {
-      return '<div class="missing-widget-template">Unknown editor widget "'+widgetId+'"</div>';
-    }
-  }
-
-  /**
-   * @ngdoc method
    * @name widgets#applyDefaults
    * @description
    * Sets each widget paramter to its default value if it is not set yet.
    *
+   * @param {string} widgetId
    * @param {object} params
-   * @param {Widget.Option[]} options
    */
-  function applyDefaults (params, options) {
+  function applyDefaults (widgetId, params) {
+    var options = optionsForWidget(widgetId);
     return _.forEach(options, function (option) {
       if ('default' in option && !(option.param in params)) {
         params[option.param] = option.default;
@@ -271,17 +248,15 @@ angular.module('contentful')
    * @return {Widget.Renderable}
    */
   function buildRenderable (widget) {
-    widget = Object.create(widget);
+    var id = widget.widgetId;
 
-    var template = widgetTemplate(widget.widgetId);
+    var template = widgetTemplate(id);
     widget.template = template;
 
-    applyWidgetProperties(widget);
-    return widget;
-  }
+    widget.widgetParams = widget.widgetParams || {};
+    applyDefaults(id, widget.widgetParams);
 
-  function applyWidgetProperties (widget) {
-    var descriptor = getWidget(widget.widgetId);
+    var descriptor = getWidget(id);
     if (descriptor) {
       _.extend(widget, {
         rendersHelpText: descriptor.rendersHelpText,
@@ -289,6 +264,17 @@ angular.module('contentful')
         isFocusable: !descriptor.notFocusable,
         sidebar: !!descriptor.sidebar
       });
+    }
+
+    return widget;
+  }
+
+  function widgetTemplate(widgetId) {
+    var widget = WIDGETS[widgetId];
+    if (widget) {
+      return widget.template;
+    } else {
+      return '<div class="missing-widget-template">Unknown editor widget "'+widgetId+'"</div>';
     }
   }
 }]);

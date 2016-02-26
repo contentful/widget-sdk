@@ -66,14 +66,6 @@ describe('Editing interfaces service', function () {
         expect(widgets[0].fieldId).toBe('apiName1');
         expect(widgets[1].fieldId).toBe('apiName2');
       });
-
-      it('sets default widget parameters', function(){
-        var widgets = this.$inject('widgets');
-        sinon.stub(widgets, 'paramDefaults').returns({foo: 'bar'});
-        var widgetArr = this.getEditingInterface().data.widgets;
-        sinon.assert.called(widgets.paramDefaults);
-        expect(widgetArr[0].widgetParams).toEqual({foo: 'bar'});
-      });
     });
 
     describe('if content type is new', function () {

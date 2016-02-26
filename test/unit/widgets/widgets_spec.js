@@ -165,53 +165,27 @@ describe('Widget types service', function () {
     });
   });
 
-  describe('#paramDefaults()', function () {
-    it('should contain the defaults for every param', function() {
-      this.setupWidgets({'herp': {
-        options: [
-          {param: 'foo', default: 123 },
-          {param: 'bar', default: 'derp' },
-        ]
-      }});
-      var defaultParams = widgets.paramDefaults('herp');
-      expect(defaultParams.foo).toBe(123);
-      expect(defaultParams.bar).toBe('derp');
-    });
-
-    it('does not include properties without defaults', function() {
-      this.setupWidgets({'herp': {
-        options: [
-          {param: 'bar'},
-        ]
-      }});
-
-      var defaultParams = widgets.paramDefaults('herp');
-      expect('bar' in defaultParams).toBe(false);
-    });
-
-    it('should be an empty object for unknown widgets', function(){
-      expect(widgets.paramDefaults('lolnope')).toEqual({});
-    });
-  });
-
-  describe('#applyDefaults(widget)', function () {
+  describe('#applyDefaults()', function () {
     beforeEach(function () {
+      this.setupWidgets({
+        'WIDGET': {
+          options: [
+            { param: 'x', default: 'DEFAULT' }
+          ]
+        }
+      });
       this.widgets = this.$inject('widgets');
-      this.options = [{
-        param: 'x',
-        default: 'DEFAULT'
-      }];
     });
 
     it('sets missing parameters to default value', function () {
       var params = {};
-      this.widgets.applyDefaults(params, this.options);
+      this.widgets.applyDefaults('WIDGET', params);
       expect(params.x).toEqual('DEFAULT');
     });
 
     it('does not overwrite existing params', function () {
       var params = {x: 'VALUE'};
-      this.widgets.applyDefaults(params, this.options);
+      this.widgets.applyDefaults('WIDGET', params);
       expect(params.x).toEqual('VALUE');
     });
   });
@@ -317,6 +291,36 @@ describe('Widget types service', function () {
       expect(renderable.template).toMatch('Unknown editor widget "does not exist"');
     });
 
+    it('adds default parameters if there are no parameters', function () {
+      this.setupWidgets({
+        'WIDGET': {
+          options: [
+            {param: 'foo', default: 'bar'}
+          ]
+        }
+      });
+      var renderable = widgets.buildRenderable({widgetId: 'WIDGET'});
+      expect(renderable.widgetParams).toEqual({foo: 'bar'});
+    });
+
+    it('applies default parameters without overiding existing ones', function () {
+      this.setupWidgets({
+        'WIDGET': {
+          options: [
+            {param: 'x', default: 'DEF_X'},
+            {param: 'y', default: 'DEF_Y'}
+          ]
+        }
+      });
+      var renderable = widgets.buildRenderable({
+        widgetId: 'WIDGET',
+        widgetParams: {x: true}
+      });
+      expect(renderable.widgetParams).toEqual({
+        x: true,
+        y: 'DEF_Y'
+      });
+    });
   });
 
   describe('#buildSidebarWidgets()', function () {
