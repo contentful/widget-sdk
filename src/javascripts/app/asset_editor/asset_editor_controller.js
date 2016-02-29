@@ -107,8 +107,8 @@ angular.module('contentful')
   // Building the form
   $controller('FormWidgetsController', {
     $scope: $scope,
-    contentType: $scope.contentType,
-    widgets: $scope.fieldWidgets
+    contentTypeId: '__cf_asset',
+    widgets: $scope.formWidgets
   });
 
   // File uploads
