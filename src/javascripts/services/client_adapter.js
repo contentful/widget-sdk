@@ -35,7 +35,7 @@ angular.module('contentful').provider('clientAdapter', ['$injector', function Cl
       if (this.token)
         this.setHeader('Authorization', 'Bearer ' + this.token);
       var response = BaseAdapter.prototype.request.apply(this, arguments);
-      return $q.when(response);
+      return $q.resolve(response);
     };
 
     return new Adapter(server);

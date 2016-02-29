@@ -78,7 +78,7 @@ describe('ListViewsController', function () {
   describe('saveViews', function () {
     it('should call saveUiConfig and return the promise', function () {
       var handler = sinon.stub();
-      scope.saveUiConfig = sinon.stub().returns($q.when());
+      scope.saveUiConfig = sinon.stub().returns($q.resolve());
       scope.saveViews().then(handler);
       scope.$apply();
       sinon.assert.called(scope.saveUiConfig);

@@ -58,7 +58,7 @@ angular.module('contentful')
   }
 
   function _resolveWith(val) {
-    return function() { return $q.when({ misconfigured: val }); };
+    return function() { return $q.resolve({ misconfigured: val }); };
   }
 
 }]);

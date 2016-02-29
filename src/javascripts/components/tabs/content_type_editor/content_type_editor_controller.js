@@ -92,7 +92,7 @@ function ContentTypeEditorController($scope, $injector) {
         return !count;
       });
     } else {
-      isDeletable = $q.when(true);
+      isDeletable = $q.resolve(true);
     }
 
     isDeletable.then(function (deletable) {
@@ -118,7 +118,7 @@ function ContentTypeEditorController($scope, $injector) {
   // ContentTypeActionsController needs it, too.
   controller.countEntries = function () {
     if (!$scope.contentType.getPublishedVersion()) {
-      return $q.when(0);
+      return $q.resolve(0);
     }
     return $scope.spaceContext.space.getEntries({
       content_type: $scope.contentType.data.sys.id

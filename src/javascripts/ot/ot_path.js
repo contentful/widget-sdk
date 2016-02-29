@@ -130,7 +130,7 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
           // TODO should this really be `null` an not an empty string?
           return ShareJS.mkpathAndSetValue(doc, path, newValue || null);
         } else if (oldValue === newValue) {
-          return $q.when();
+          return $q.resolve();
         } else {
           var commonStart = 0;
           var commonEnd = 0;

@@ -22,7 +22,7 @@ describe('cfEmbedlyPreview Directive', function () {
         }
       };
 
-      return $q.when(stubbedEmbedly);
+      return $q.resolve(stubbedEmbedly);
     };
 
     this.compileElement = function (defaultValue) {

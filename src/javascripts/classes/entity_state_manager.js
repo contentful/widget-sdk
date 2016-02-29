@@ -73,7 +73,7 @@ angular.module('contentful')
   StateManager.prototype.archive = function () {
     var entity = this.entity;
     return this._withLockedState(function () {
-      var unpublish = $q.when();
+      var unpublish = $q.resolve();
       if (entity.isPublished()) {
         unpublish = entity.unpublish();
       }
@@ -92,7 +92,7 @@ angular.module('contentful')
   StateManager.prototype.publish = function () {
     var entity = this.entity;
     return this._withLockedState(function () {
-      var unarchive = $q.when();
+      var unarchive = $q.resolve();
       if (entity.isArchived()) {
         unarchive = entity.unarchive();
       }
@@ -117,7 +117,7 @@ angular.module('contentful')
       } else if (state === 'archived') {
         return entity.unarchive();
       } else {
-        return $q.when();
+        return $q.resolve();
       }
     });
   };
@@ -130,7 +130,7 @@ angular.module('contentful')
   StateManager.prototype.delete = function () {
     var entity = this.entity;
     return this._withLockedState(function () {
-      var unpublish = $q.when();
+      var unpublish = $q.resolve();
       if (entity.isPublished()) {
         unpublish = entity.unpublish();
       }

@@ -61,7 +61,7 @@ function ContentTypeActionsController($scope, $injector) {
     var canRead = accessChecker.canPerformActionOnEntryOfType('read', $scope.contentType.getId());
 
     if (!isPublished) {
-      return $q.when(createStatusObject(true));
+      return $q.resolve(createStatusObject(true));
     }
 
     return $scope.ctEditorController.countEntries().then(function(count) {
@@ -84,7 +84,7 @@ function ContentTypeActionsController($scope, $injector) {
   }
 
   function remove (isPublished) {
-    var unpub = isPublished ? unpublish() : $q.when();
+    var unpub = isPublished ? unpublish() : $q.resolve();
     return unpub.then(sendDeleteRequest);
   }
 
@@ -222,7 +222,7 @@ function ContentTypeActionsController($scope, $injector) {
         $scope.contentType.data = oldData;
       });
     } else {
-      unpublish = $q.when();
+      unpublish = $q.resolve();
     }
 
     return unpublish

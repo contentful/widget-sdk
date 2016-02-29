@@ -15,7 +15,7 @@ describe('GoogleMaps Controller', function () {
       var stubbedGMap = {
         Geocoder: stubs.geocoder
       };
-      return $q.when(stubbedGMap);
+      return $q.resolve(stubbedGMap);
     };
 
     this.stubs = stubs;

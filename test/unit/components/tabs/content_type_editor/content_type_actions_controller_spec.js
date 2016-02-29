@@ -349,7 +349,7 @@ describe('ContentType Actions Controller', function () {
           scope.contentType.data = 'LOCAL';
           scope.contentType.unpublish = function () {
             this.data = 'UNPULBISHED';
-            return $q.when(this);
+            return $q.resolve(this);
           };
           return controller.save.execute()
           .then(function () {
@@ -361,7 +361,7 @@ describe('ContentType Actions Controller', function () {
           scope.contentType.data = {};
           scope.contentType.unpublish = function () {
             this.data = {sys: 'NEW SYS'};
-            return $q.when(this);
+            return $q.resolve(this);
           };
           return controller.save.execute()
           .then(function () {

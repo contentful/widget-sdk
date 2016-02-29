@@ -16,7 +16,7 @@ describe('cfLocationEditor Directive', function () {
       $provide.stubDirective('otPath', {
         controller: function ($scope, $q) {
           $scope.otSubDoc = {
-            changeValue: sinon.stub().returns($q.when())
+            changeValue: sinon.stub().returns($q.resolve())
           };
         }
       });

@@ -36,7 +36,7 @@ describe('ListQuery service', function () {
     });
 
     pit('for entries', function () {
-      var ctPromise = $q.when({ data: { fields: [] }, getId: _.constant('test') });
+      var ctPromise = $q.resolve({ data: { fields: [] }, getId: _.constant('test') });
       sinon.stub(spaceContext, 'fetchPublishedContentType').returns(ctPromise);
 
       return ListQuery.getForEntries(_.extend({ contentTypeId: 'test' }, OPTS))

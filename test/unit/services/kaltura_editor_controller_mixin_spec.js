@@ -19,7 +19,7 @@ describe('Kaltura Editor Controller Mixin', function() {
     });
 
     inject(function($injector, $q){
-      kalturaClientWrapperMock.init.returns($q.when());
+      kalturaClientWrapperMock.init.returns($q.resolve());
 
     });
 
