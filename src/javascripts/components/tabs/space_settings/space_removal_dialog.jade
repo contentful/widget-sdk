@@ -1,0 +1,20 @@
+.modal-background
+  .modal-dialog
+    header.modal-dialog__header
+      h1 Remove Space
+
+    .modal-dialog__content
+      .modal-dialog__richtext
+        p
+          | You are about to remove space <span class="modal-dialog__highlight">{{ space.data.name }}</span>.
+        p
+          strong All space contents and the space itself will removed. This operation cannot be undone.
+        p
+          | To confirm, type the name of the space in the field below:
+        input.cfnext-form__input--full-size(ng-model="input.spaceName")
+
+    .modal-dialog__controls
+      button.cfnext-btn-caution(ui-command="remove")
+        | Remove
+      button.cfnext-btn-secondary-action(ng-click="dialog.cancel()")
+        | Don't remove
