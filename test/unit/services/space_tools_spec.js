@@ -77,4 +77,15 @@ describe('Space tools service', function () {
       expect(TheAccountView.isActive()).toBeFalsy();
     });
   });
+
+  it('leaving current space', function () {
+    var spies = [
+      spaceContext.purge = sinon.spy(),
+      this.$inject('tokenStore').refresh = sinon.spy(),
+      this.$inject('$location').url = sinon.spy()
+    ];
+
+    spaceTools.leaveCurrent();
+    spies.forEach(sinon.assert.calledOnce);
+  });
 });

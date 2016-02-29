@@ -33,6 +33,7 @@ describe('Locale editor controller', function () {
     this.scope = this.$inject('$rootScope').$new();
 
     var spaceContext = this.$inject('spaceContext');
+    spaceContext.space = {};
     dotty.put(spaceContext, 'space.data.organization.subscriptionPlan.name', 'Unlimited');
 
     this.scope.context = {};

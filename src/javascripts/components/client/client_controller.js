@@ -23,6 +23,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var TheAccountView     = $injector.get('TheAccountView');
   var TheStore           = $injector.get('TheStore');
   var OrganizationList   = $injector.get('OrganizationList');
+  var spaceTools         = $injector.get('spaceTools');
 
   $scope.featureController = $controller('FeatureController', {$scope: $scope});
   $scope.spaceContext = spaceContext;
@@ -99,8 +100,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       $scope.showCreateSpaceDialog(data.organizationId);
 
     } else if (msg('delete', 'space')) {
-      tokenStore.refresh();
-      $location.url('/');
+      spaceTools.leaveCurrent();
 
     } else if (data.type === 'flash') {
       showFlashMessage(data);
