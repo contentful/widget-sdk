@@ -231,32 +231,44 @@ angular.module('contentful')
     var id = widget.widgetId;
     widget = _.cloneDeep(widget);
 
-    var template = widgetTemplate(id);
-    widget.template = template;
-
     if (!_.isObject(widget.settings)) {
       widget.settings = {};
     }
+
     applyDefaults(id, widget.settings);
 
     var descriptor = getWidget(id);
-    if (descriptor) {
-      _.extend(widget, {
-        rendersHelpText: descriptor.rendersHelpText,
-        defaultHelpText: descriptor.defaultHelpText,
-        isFocusable: !descriptor.notFocusable,
-        sidebar: !!descriptor.sidebar
-      });
+    if (!descriptor) {
+      widget.template = getWarningTemplate(id, 'missing');
+      return widget;
     }
+
+    _.extend(widget, {
+      template: descriptor.template,
+      rendersHelpText: descriptor.rendersHelpText,
+      defaultHelpText: descriptor.defaultHelpText,
+      isFocusable: !descriptor.notFocusable,
+      sidebar: !!descriptor.sidebar
+    });
+
+    if (!isCompatibleWithField(descriptor, widget.field)) {
+      widget.template = getWarningTemplate(id, 'incompatible');
+    }
+
     return widget;
   }
 
-  function widgetTemplate(widgetId) {
-    var widget = WIDGETS[widgetId];
-    if (widget) {
-      return widget.template;
-    } else {
-      return '<div class="missing-widget-template">Unknown editor widget "'+widgetId+'"</div>';
-    }
+  function getWarningTemplate (widgetId, message) {
+    var accessChecker = $injector.get('accessChecker');
+    return JST.editor_control_warning({
+      label: widgetId,
+      message: message,
+      canUpdateContentTypes: !accessChecker.shouldHide('updateContentType')
+    });
+  }
+
+  function isCompatibleWithField (widgetDescriptor, field) {
+    var fieldType = fieldFactory.getTypeName(field);
+    return _.contains(widgetDescriptor.fieldTypes, fieldType);
   }
 }]);
