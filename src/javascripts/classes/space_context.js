@@ -25,6 +25,10 @@ angular.module('contentful')
   var createUserCache    = $injector.get('data/userCache');
   var ctHelpers          = $injector.get('data/ContentTypes');
   var Widgets            = $injector.get('widgets');
+  var spaceEndpoint      = $injector.get('data/spaceEndpoint');
+  var authentication     = $injector.get('authentication');
+  var environment        = $injector.get('environment');
+  var createEIRepo       = $injector.get('data/editingInterfaces');
 
   var spaceContext = {
     /**
@@ -45,9 +49,16 @@ angular.module('contentful')
      */
     resetWithSpace: function (space){
       var self = this;
+      var endpoint = spaceEndpoint.create(
+        authentication.token,
+        '//' + environment.settings.api_host,
+        space.getId()
+      );
+
       resetMembers(self);
       self.space = space;
       self.users = createUserCache(space);
+      self.editingInterfaces = createEIRepo(endpoint);
       TheLocaleStore.resetWithSpace(space);
       return Widgets.setSpace(space).then(function (widgets) {
         self.widgets = widgets;

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Widget types service', function () {
+describe('widgets', function () {
   var widgets;
 
   beforeEach(function () {
@@ -128,113 +128,6 @@ describe('Widget types service', function () {
     });
   });
 
-  describe('#defaultWidgetId()', function() {
-    var contentType, field;
-
-    beforeEach(function() {
-      contentType = {
-        data: {},
-        getId: sinon.stub()
-      };
-      field = {};
-      this.setupWidgets();
-    });
-
-    it('with an unexistent field', function() {
-      field.type = 'unsupportedtype';
-      expect(widgets.defaultWidgetId(field, contentType)).toBeUndefined();
-    });
-
-    describe('if validations exist but are different', function() {
-      beforeEach(function() {
-        field.validations = [{'size': {max: 500, min: 0}}];
-      });
-
-      it('for a type with a dropdown widget', function() {
-        field.type = 'Symbol';
-        expect(widgets.defaultWidgetId(field, contentType)).toBe('singleLine');
-      });
-
-      it('for a type with no dropdown widget', function() {
-        field.type = 'Date';
-        expect(widgets.defaultWidgetId(field, contentType)).toBe('datePicker');
-      });
-    });
-
-    describe('if validations exist', function() {
-      beforeEach(function() {
-        field.validations = [{'in': ['123']}];
-      });
-
-      it('for a type with a dropdown widget', function() {
-        field.type = 'Symbol';
-        expect(widgets.defaultWidgetId(field, contentType)).toBe('dropdown');
-      });
-
-      it('for a type with no dropdown widget', function() {
-        field.type = 'Date';
-        expect(widgets.defaultWidgetId(field, contentType)).toBe('datePicker');
-      });
-    });
-
-    describe('if field is Text', function() {
-      beforeEach(function() {
-        field.type = 'Text';
-        field.id = 'textfield';
-      });
-
-      it('and is display field', function() {
-        contentType.data.displayField = 'textfield';
-        expect(widgets.defaultWidgetId(field, contentType)).toBe('singleLine');
-      });
-
-      it('is not a display field', function() {
-        expect(widgets.defaultWidgetId(field, contentType)).toBe('markdown');
-      });
-    });
-
-    it('if field is Entry', function() {
-      field.type = 'Link';
-      field.linkType = 'Entry';
-      expect(widgets.defaultWidgetId(field, contentType)).toBe('entryLinkEditor');
-    });
-
-    it('if field is Asset', function() {
-      field.type = 'Link';
-      field.linkType = 'Asset';
-      expect(widgets.defaultWidgetId(field, contentType)).toBe('assetLinkEditor');
-    });
-
-    it('if field is a list of Assets', function() {
-      field.type = 'Array';
-      field.items = {type: 'Link', linkType: 'Asset'};
-      expect(widgets.defaultWidgetId(field, contentType)).toBe('assetLinksEditor');
-    });
-
-    it('if field is a list of Entries', function() {
-      field.type = 'Array';
-      field.items = {type: 'Link', linkType: 'Entry'};
-      expect(widgets.defaultWidgetId(field, contentType)).toBe('entryLinksEditor');
-    });
-
-    it('returns builtin widget id for each type', function () {
-      var fieldFactory = this.$inject('fieldFactory');
-      var builtins = this.$inject('widgets/builtin');
-
-      _.forEach(fieldFactory.types, function (typeDescriptor) {
-        var field = fieldFactory.createTypeInfo(typeDescriptor);
-        var widgetId = widgets.defaultWidgetId(field, contentType);
-        expect(widgetId in builtins).toBe(true);
-
-        if (typeDescriptor.hasListVariant) {
-          field = fieldFactory.createTypeInfo(typeDescriptor, true);
-          widgetId = widgets.defaultWidgetId(field, contentType);
-          expect(widgetId in builtins).toBe(true);
-        }
-      });
-    });
-  });
-
   describe('#filteredParams()', function () {
     beforeEach(function () {
       this.setupWidgets({
@@ -272,53 +165,27 @@ describe('Widget types service', function () {
     });
   });
 
-  describe('#paramDefaults()', function () {
-    it('should contain the defaults for every param', function() {
-      this.setupWidgets({'herp': {
-        options: [
-          {param: 'foo', default: 123 },
-          {param: 'bar', default: 'derp' },
-        ]
-      }});
-      var defaultParams = widgets.paramDefaults('herp');
-      expect(defaultParams.foo).toBe(123);
-      expect(defaultParams.bar).toBe('derp');
-    });
-
-    it('does not include properties without defaults', function() {
-      this.setupWidgets({'herp': {
-        options: [
-          {param: 'bar'},
-        ]
-      }});
-
-      var defaultParams = widgets.paramDefaults('herp');
-      expect('bar' in defaultParams).toBe(false);
-    });
-
-    it('should be an empty object for unknown widgets', function(){
-      expect(widgets.paramDefaults('lolnope')).toEqual({});
-    });
-  });
-
-  describe('#applyDefaults(widget)', function () {
+  describe('#applyDefaults()', function () {
     beforeEach(function () {
+      this.setupWidgets({
+        'WIDGET': {
+          options: [
+            { param: 'x', default: 'DEFAULT' }
+          ]
+        }
+      });
       this.widgets = this.$inject('widgets');
-      this.options = [{
-        param: 'x',
-        default: 'DEFAULT'
-      }];
     });
 
     it('sets missing parameters to default value', function () {
       var params = {};
-      this.widgets.applyDefaults(params, this.options);
+      this.widgets.applyDefaults('WIDGET', params);
       expect(params.x).toEqual('DEFAULT');
     });
 
     it('does not overwrite existing params', function () {
       var params = {x: 'VALUE'};
-      this.widgets.applyDefaults(params, this.options);
+      this.widgets.applyDefaults('WIDGET', params);
       expect(params.x).toEqual('VALUE');
     });
   });
@@ -424,26 +291,50 @@ describe('Widget types service', function () {
       expect(renderable.template).toMatch('Unknown editor widget "does not exist"');
     });
 
+    it('adds default parameters if there are no parameters', function () {
+      this.setupWidgets({
+        'WIDGET': {
+          options: [
+            {param: 'foo', default: 'bar'}
+          ]
+        }
+      });
+      var renderable = widgets.buildRenderable({widgetId: 'WIDGET'});
+      expect(renderable.widgetParams).toEqual({foo: 'bar'});
+    });
+
+    it('applies default parameters without overiding existing ones', function () {
+      this.setupWidgets({
+        'WIDGET': {
+          options: [
+            {param: 'x', default: 'DEF_X'},
+            {param: 'y', default: 'DEF_Y'}
+          ]
+        }
+      });
+      var renderable = widgets.buildRenderable({
+        widgetId: 'WIDGET',
+        widgetParams: {x: true}
+      });
+      expect(renderable.widgetParams).toEqual({
+        x: true,
+        y: 'DEF_Y'
+      });
+    });
   });
 
   describe('#buildSidebarWidgets()', function () {
-    var apiWidgets, fields;
+    var widget;
 
     beforeEach(function () {
-      apiWidgets = [{fieldId: 'FIELD', widgetId: 'WIDGET'}];
-      fields = [{id: 'FIELD'}];
+      widget = {fieldId: 'FIELD', widgetId: 'WIDGET', field: {}};
       this.setupWidgets({
         'WIDGET': {sidebar: true, template: 'TEMPLATE'}
       });
     });
 
-    it('adds field data to the widget', function () {
-      var renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
-      expect(renderable[0].field).toBe(fields[0]);
-    });
-
     it('adds descriptor data to the widget', function () {
-      var renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
+      var renderable = widgets.buildSidebarWidgets([widget]);
       expect(renderable[0].sidebar).toEqual(true);
       expect(renderable[0].template).toEqual('TEMPLATE');
     });
@@ -452,19 +343,20 @@ describe('Widget types service', function () {
       var widgetDescriptor = {sidebar: true};
       this.setupWidgets({ 'WIDGET': widgetDescriptor });
 
-      var renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
+      var renderable = widgets.buildSidebarWidgets([widget]);
       expect(renderable.length).toEqual(1);
 
       widgetDescriptor.sidebar = false;
-      renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
+      renderable = widgets.buildSidebarWidgets([widget]);
       expect(renderable.length).toEqual(0);
     });
 
     it('filters widgets without fields', function () {
-      var renderable = widgets.buildSidebarWidgets(apiWidgets, fields);
+      var renderable = widgets.buildSidebarWidgets([widget]);
       expect(renderable.length).toEqual(1);
 
-      renderable = widgets.buildSidebarWidgets(apiWidgets, [{id: 'OTHER'}]);
+      delete widget.field;
+      renderable = widgets.buildSidebarWidgets([widget]);
       expect(renderable.length).toEqual(0);
     });
   });

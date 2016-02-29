@@ -272,13 +272,8 @@ function ContentTypeActionsController($scope, $injector) {
     return diff.length > 0;
   }
 
-  function saveEditingInterface(contentType) {
-    if(!$scope.editingInterface.getVersion()){
-      var data = _.clone($scope.editingInterface.data);
-      data.contentTypeId = contentType.getId();
-      $scope.editingInterface = contentType.newEditingInterface(data);
-    }
-    return $scope.editingInterface.save();
+  function saveEditingInterface (contentType) {
+    return spaceContext.editingInterfaces.save(contentType.data, $scope.editingInterface);
   }
 
   function setPristine () {

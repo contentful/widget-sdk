@@ -26,15 +26,7 @@ describe('FormWidgetsController#widgets', function () {
     });
     getStoreWidgets = sinon.stub();
 
-
     scope = this.$inject('$rootScope').$new();
-
-    var cfStub = this.$inject('cfStub');
-    var space = cfStub.space('testSpace');
-    var contentType = cfStub.contentType(space, 'testType', 'testType');
-
-    field = cfStub.field('foo');
-    contentType.data.fields = [field];
 
     this.setupWidgets = function (ws) {
       getStoreWidgets.resolves(ws);
@@ -44,14 +36,22 @@ describe('FormWidgetsController#widgets', function () {
       this.createController();
     };
 
+    field = {
+      id: 'foo',
+      apiName: 'foo'
+    };
     this.createController = function () {
       var $controller = this.$inject('$controller');
-      var widgetLinks = [{widgetId: 'foo', fieldId: 'foo'}];
-      var ei = {data: {widgets: widgetLinks}};
+      var widgets = [{
+        widgetId: 'foo',
+        fieldId: 'foo',
+        field: field
+      }];
+      var contentType = {getId: sinon.stub()};
       $controller('FormWidgetsController', {
         $scope: scope,
         contentType: contentType,
-        editingInterface: ei
+        widgets: widgets
       });
       this.$apply();
     };
@@ -62,7 +62,6 @@ describe('FormWidgetsController#widgets', function () {
     this.setupWidgets({
       foo: {
         template: '<span class=foo></span>',
-        fieldTypes: ['foo']
       }
     });
     expect(scope.widgets[0].template).toBe('<span class=foo></span>');
@@ -72,7 +71,6 @@ describe('FormWidgetsController#widgets', function () {
     this.setupWidgets({
       foo: {
         template: '<span class=foo></span>',
-        fieldTypes: ['foo'],
         sidebar: true
       }
     });
@@ -84,7 +82,11 @@ describe('FormWidgetsController#widgets', function () {
     beforeEach(function () {
       scope.preferences = {};
       field.disabled = true;
-      this.createController();
+      this.setupWidgets({
+        foo: {
+          template: '<span class=foo></span>',
+        }
+      });
     });
 
     it('does not show the field', function () {

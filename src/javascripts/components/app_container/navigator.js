@@ -117,6 +117,10 @@ angular.module('contentful').config([
     template: '<div cf-entry-list class="workbench entry-list entity-list"></div>'
   }));
 
+  editingInterfaceResolver.$inject = ['spaceContext', 'contentType'];
+  function editingInterfaceResolver (spaceContext, contentType) {
+    return spaceContext.editingInterfaces.get(contentType.data);
+  }
 
   $stateProvider.state('spaces.detail.entries.detail', {
     url: '/:entryId',
@@ -133,27 +137,14 @@ angular.module('contentful').config([
         });
 
       }],
-      // TODO we need to depend on 'widgets' so they get loaded before
-      // the editing interface is created. It depends on the presence
-      // of widgets if we construct the default interface. We MUST find
-      // a proper solution for this. This also applies to
-      // 'spaces.details.assets.detail
-      editingInterface: ['$injector', 'contentType', 'widgets', function ($injector, contentType) {
-        var editingInterfaces = $injector.get('editingInterfaces');
-        return editingInterfaces.forContentType(contentType);
-      }],
+      editingInterface: editingInterfaceResolver,
       contentType: ['$injector', 'entry', function ($injector, entry) {
         var spaceContext = $injector.get('spaceContext');
-
-        return spaceContext.fetchPublishedContentType(entry.data.sys.contentType.sys.id);
+        var ctId = entry.data.sys.contentType.sys.id;
+        return spaceContext.fetchPublishedContentType(ctId);
       }],
-      sidebarWidgets: [
-        'editingInterface', 'contentType', 'widgets',
-        function (editingInterface, contentType, Widgets) {
-          return Widgets.buildSidebarWidgets(
-            editingInterface.data.widgets,
-            contentType.data.fields
-          );
+      sidebarWidgets: ['editingInterface', 'spaceContext', function (ei, spaceContext) {
+          return spaceContext.widgets.buildSidebarWidgets(ei.widgets);
         }]
     },
     controller: ['$state', '$scope', 'entry', 'editingInterface', 'contentType', 'contextHistory', 'sidebarWidgets',
@@ -161,7 +152,7 @@ angular.module('contentful').config([
       $state.current.data = $scope.context = {};
       $scope.entry = entry;
       $scope.entity = entry;
-      $scope.editingInterface = editingInterface;
+      $scope.fieldWidgets = editingInterface.widgets;
       $scope.contentType = contentType;
       $scope.sidebarWidgets = sidebarWidgets;
       contextHistory.addEntity(entry);
@@ -220,17 +211,16 @@ angular.module('contentful').config([
     controller: ['$injector', '$scope', 'asset', 'contentType',
                  function ($injector, $scope, asset, contentType) {
       var $state = $injector.get('$state');
-      var contextHistory = $injector.get('contextHistory');
       var editingInterfaceData = $injector.get('data/editingInterfaces/asset');
+      $injector.get('contextHistory').addEntity(asset);
+
       $state.current.data = $scope.context = {};
-      $scope.asset = asset;
-      $scope.entity = asset;
+      $scope.asset = $scope.entity = asset;
       // Because the entry and asset editors are treated uniformly the
       // directives and controllers expect $scope.editingInterface to
       // have the structure of an Entity instance of the 'client' library.
-      $scope.editingInterface = {data: editingInterfaceData};
+      $scope.fieldWidgets = editingInterfaceData.widgets;
       $scope.contentType = contentType;
-      contextHistory.addEntity(asset);
     }],
     template:
     '<div ' + [
@@ -266,7 +256,9 @@ angular.module('contentful').config([
       parent: 'spaces.detail.content_types.list',
       label: '{{contentType.getName() + (context.dirty ? "*" : "")}}'
     },
-    controller: ['$state', '$scope', 'contentType', 'editingInterface', 'publishedContentType', function ($state, $scope, contentType, editingInterface, publishedContentType) {
+    controller:
+      ['$state', '$scope', 'contentType', 'editingInterface', 'publishedContentType',
+        function ($state, $scope, contentType, editingInterface, publishedContentType) {
       $scope.context = $state.current.data;
       $scope.contentType = contentType;
       $scope.editingInterface = editingInterface;
@@ -290,9 +282,7 @@ angular.module('contentful').config([
       contentType: ['space', function (space) {
         return space.newContentType({sys: {type: 'ContentType'}, fields: []});
       }],
-      editingInterface: ['contentType', 'editingInterfaces', function (contentType, editingInterfaces) {
-        return editingInterfaces.forContentType(contentType);
-      }],
+      editingInterface: editingInterfaceResolver,
       publishedContentType: [function () {
         return null;
       }]
@@ -326,9 +316,7 @@ angular.module('contentful').config([
           }
         });
       }],
-      editingInterface: ['contentType', 'editingInterfaces', function (contentType, editingInterfaces) {
-        return editingInterfaces.forContentType(contentType);
-      }]
+      editingInterface: editingInterfaceResolver,
     },
   }, contentTypeEditorState));
 

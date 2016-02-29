@@ -11,7 +11,6 @@ angular.module('contentful')
   var checks       = $injector.get('widgets/checks');
   var deprecations = $injector.get('widgets/deprecations');
   var WidgetStore  = $injector.get('widgets/store');
-  var eiHelpers    = $injector.get('editingInterfaces/helpers');
 
   /**
    * @ngdoc type
@@ -45,31 +44,11 @@ angular.module('contentful')
 
   var store;
 
-  // Maps type names to builtin widget IDs. Type names are those
-  // returned by `fieldFactory.getTypeName`.
-  var DEFAULT_WIDGETS = {
-    'Text':     'markdown',
-    'Symbol':   'singleLine',
-    'Symbols':  'listInput',
-    'Integer':  'numberEditor',
-    'Number':   'numberEditor',
-    'Boolean':  'boolean',
-    'Date':     'datePicker',
-    'Location': 'locationEditor',
-    'Object':   'objectEditor',
-    'Entry':    'entryLinkEditor',
-    'Entries':  'entryLinksEditor',
-    'Asset':    'assetLinkEditor',
-    'Assets':   'assetLinksEditor',
-  };
-
   var widgetsService = {
     get:                 getWidget,
     getAvailable:        getAvailable,
     buildRenderable:     buildRenderable,
-    defaultWidgetId:     defaultWidgetId,
     filterOptions:       filterOptions,
-    paramDefaults:       paramDefaults,
     applyDefaults:       applyDefaults,
     filteredParams:      filteredParams,
     setSpace:            setSpace,
@@ -151,53 +130,6 @@ angular.module('contentful')
     }
   }
 
-  /**
-   * @ngdoc method
-   * @name widgets#defaultWidgetId
-   * @param {API.ContentType.Field} field
-   * @param {Client.ContentType} contentType
-   * @return {string}
-   *
-   * @description
-   * This method determines the default widget for a given field.
-   *
-   * It accounts for legacy behavior for when there were no user selectable
-   * widgets for a given field and some fields would have different widgets
-   * in different occasions, specifically:
-   * - Text field: defaults to markdown, unless it is a title field.
-   *   where it gets switched to singleLine
-   * - Any field that allows for predefined values: gets changed to a dropdown
-   *   in the presence of the 'in' validation
-  */
-  function defaultWidgetId(field, contentType) {
-    var fieldType = fieldFactory.getTypeName(field);
-
-    // FIXME We create the editing interface, and thus the widget ids
-    // before any validation can be set. So I think this is not need.
-    var shouldUseDropdown = hasInValidation(field.validations);
-    var canUseDropdown = _.contains(dotty.get(WIDGETS, ['dropdown', 'fieldTypes']), fieldType);
-    if (shouldUseDropdown && canUseDropdown) {
-      return 'dropdown';
-    }
-
-    if (fieldType === 'Text') {
-      var isDisplayField = contentType.data.displayField === field.id;
-      if (isDisplayField) {
-        return 'singleLine';
-      } else {
-        return 'markdown';
-      }
-    }
-
-    return DEFAULT_WIDGETS[fieldType];
-  }
-
-  function hasInValidation(validations) {
-    return _.find(validations, function (validation) {
-      return 'in' in validation;
-    });
-  }
-
   function optionsForWidget(widgetId) {
     return dotty.get(WIDGETS, [widgetId, 'options'], []);
   }
@@ -218,11 +150,11 @@ angular.module('contentful')
     var options = optionsForWidget(widgetId);
     return _.transform(options, function (filtered, option) {
       var param = params[option.param];
-      if (!_.isUndefined(param))
+      if (!_.isUndefined(param)) {
         filtered[option.param] = param;
+      }
     }, {});
   }
-
 
 
   /**
@@ -254,37 +186,15 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name widgets#paramDefaults
-   * @param {string} widgetId
-   * @returns {object}
-   */
-  function paramDefaults(widgetId) {
-    return _.transform(optionsForWidget(widgetId), function (defaults, option) {
-      if (option.default !== undefined) {
-        defaults[option.param] = option.default;
-      }
-    }, {});
-  }
-
-  function widgetTemplate(widgetId) {
-    var widget = WIDGETS[widgetId];
-    if (widget) {
-      return widget.template;
-    } else {
-      return '<div class="missing-widget-template">Unknown editor widget "'+widgetId+'"</div>';
-    }
-  }
-
-  /**
-   * @ngdoc method
    * @name widgets#applyDefaults
    * @description
    * Sets each widget paramter to its default value if it is not set yet.
    *
+   * @param {string} widgetId
    * @param {object} params
-   * @param {Widget.Option[]} options
    */
-  function applyDefaults (params, options) {
+  function applyDefaults (widgetId, params) {
+    var options = optionsForWidget(widgetId);
     return _.forEach(options, function (option) {
       if ('default' in option && !(option.param in params)) {
         params[option.param] = option.default;
@@ -311,15 +221,9 @@ angular.module('contentful')
    * @param {API.Fields[]} fields
    * @return {Widget.Renderable[]}
    */
-  function buildSidebarWidgets (apiWidgets, fields) {
+  function buildSidebarWidgets (apiWidgets) {
     return  _(apiWidgets)
-      .map(function (widget) {
-        var field = eiHelpers.findField(fields, widget);
-        var desc = getWidget(widget.widgetId);
-        return _.extend({
-          field: field
-        }, widget, desc);
-      })
+      .map(buildRenderable)
       .filter(function (widget) {
         return widget.sidebar && widget.field;
       })
@@ -337,17 +241,16 @@ angular.module('contentful')
    * @return {Widget.Renderable}
    */
   function buildRenderable (widget) {
-    widget = Object.create(widget);
+    var id = widget.widgetId;
+    widget = _.cloneDeep(widget);
 
-    var template = widgetTemplate(widget.widgetId);
+    var template = widgetTemplate(id);
     widget.template = template;
 
-    applyWidgetProperties(widget);
-    return widget;
-  }
+    widget.widgetParams = widget.widgetParams || {};
+    applyDefaults(id, widget.widgetParams);
 
-  function applyWidgetProperties (widget) {
-    var descriptor = getWidget(widget.widgetId);
+    var descriptor = getWidget(id);
     if (descriptor) {
       _.extend(widget, {
         rendersHelpText: descriptor.rendersHelpText,
@@ -355,6 +258,16 @@ angular.module('contentful')
         isFocusable: !descriptor.notFocusable,
         sidebar: !!descriptor.sidebar
       });
+    }
+    return widget;
+  }
+
+  function widgetTemplate(widgetId) {
+    var widget = WIDGETS[widgetId];
+    if (widget) {
+      return widget.template;
+    } else {
+      return '<div class="missing-widget-template">Unknown editor widget "'+widgetId+'"</div>';
     }
   }
 }]);

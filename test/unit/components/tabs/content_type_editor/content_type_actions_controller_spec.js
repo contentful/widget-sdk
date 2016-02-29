@@ -48,11 +48,9 @@ describe('ContentType Actions Controller', function () {
 
     space = cfStub.space('spaceid');
     contentType = cfStub.contentType(space, 'typeid', 'typename');
-    var contentTypeData = cfStub.contentTypeData('type1');
 
     scope = $rootScope.$new();
     scope.context = {};
-    scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
     scope.contentType = contentType;
     scope.broadcastFromSpace = sinon.stub();
 
@@ -211,23 +209,24 @@ describe('ContentType Actions Controller', function () {
   });
 
   describe('#save command', function() {
+    var spaceContext;
+
     beforeEach(function() {
+      var cfStub = this.$inject('cfStub');
+      spaceContext = cfStub.spaceContext(space, []);
+      spaceContext.editingInterfaces = {
+        save: sinon.stub()
+      };
 
       scope.contentTypeForm = new FormStub();
       scope.contentTypeForm.$setDirty();
 
       scope.validate = sinon.stub().returns(true);
 
-      scope.editingInterface = {
-        data: {},
-        save: sinon.stub().returns(this.when()),
-        getVersion: sinon.stub()
-      };
-      scope.editingInterface.getVersion.returns(0);
+      scope.editingInterface = {};
 
       scope.contentType.save = sinon.stub().returns(this.when(scope.contentType));
       scope.contentType.publish = sinon.stub().returns(this.when(scope.contentType));
-      scope.contentType.newEditingInterface = sinon.stub().returns(scope.editingInterface);
 
       scope.updatePublishedContentType = sinon.stub();
     });
@@ -252,17 +251,10 @@ describe('ContentType Actions Controller', function () {
       });
     });
 
-    pit('creates new editing interface', function () {
-      return controller.save.execute()
-      .then(function () {
-        sinon.assert.calledOnce(scope.contentType.newEditingInterface);
-      });
-    });
-
     pit('saves editing interface', function () {
       return controller.save.execute()
       .then(function () {
-        sinon.assert.calledOnce(scope.editingInterface.save);
+        sinon.assert.calledOnce(spaceContext.editingInterfaces.save);
       });
     });
 
@@ -275,7 +267,7 @@ describe('ContentType Actions Controller', function () {
       pit('does not save entities', function () {
         return controller.save.execute()
         .catch(function () {
-          sinon.assert.notCalled(scope.editingInterface.save);
+          sinon.assert.notCalled(spaceContext.editingInterfaces.save);
           sinon.assert.notCalled(scope.contentType.save);
         });
       });

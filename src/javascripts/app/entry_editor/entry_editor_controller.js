@@ -120,7 +120,7 @@ angular.module('contentful')
   $controller('FormWidgetsController', {
     $scope: $scope,
     contentType: $scope.contentType,
-    editingInterface: $scope.editingInterface
+    widgets: $scope.fieldWidgets
   });
 
   var contentTypeFields = $scope.contentType.data.fields;

@@ -49,14 +49,15 @@ describe('FieldDialogAppearanceController', function () {
     });
 
     it('applies the default parameters', function () {
-      expect(this.scope.widgetParams.myparam).toBeUndefined();
-      this.scope.availableWidgets[1].options = [{
-        param: 'myparam', default: true
-      }];
+      var Widgets = this.$inject('widgets');
+      Widgets.applyDefaults = sinon.stub();
       this.scope.selectWidget(1);
       this.$apply();
-
-      expect(this.scope.widgetParams.myparam).toBe(true);
+      sinon.assert.calledOnce(Widgets.applyDefaults);
+      sinon.assert.calledWith(
+        Widgets.applyDefaults,
+        this.scope.widget.id, this.scope.widgetParams
+      );
     });
   });
 });
