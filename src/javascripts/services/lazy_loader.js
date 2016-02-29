@@ -116,7 +116,7 @@ angular.module('contentful').factory('LazyLoader/scripts', ['$injector', functio
       globalObject: 'KalturaClient'
     },
     googleMaps: {
-      url: 'https://maps.googleapis.com/maps/api/js?key=' +
+      url: 'https://maps.googleapis.com/maps/api/js?v=3&key=' +
             environment.settings.google.maps_api_key,
       globalObject: 'google.maps'
     }
