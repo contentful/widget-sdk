@@ -188,12 +188,7 @@ describe('Widget types service', function () {
         expect(widgets.defaultWidgetId(field, contentType)).toBe('singleLine');
       });
 
-      it('and content type is asset', function() {
-        contentType.getId.returns('asset');
-        expect(widgets.defaultWidgetId(field, contentType)).toBe('singleLine');
-      });
-
-      it('is no display field or asset', function() {
+      it('is not a display field', function() {
         expect(widgets.defaultWidgetId(field, contentType)).toBe('markdown');
       });
     });
@@ -208,11 +203,6 @@ describe('Widget types service', function () {
       field.type = 'Link';
       field.linkType = 'Asset';
       expect(widgets.defaultWidgetId(field, contentType)).toBe('assetLinkEditor');
-    });
-
-    it('if field is File', function() {
-      field.type = 'File';
-      expect(widgets.defaultWidgetId(field, contentType)).toBe('fileEditor');
     });
 
     it('if field is a list of Assets', function() {
@@ -282,20 +272,28 @@ describe('Widget types service', function () {
     });
   });
 
-  describe('paramDefaults', function(){
+  describe('#paramDefaults()', function () {
     it('should contain the defaults for every param', function() {
       this.setupWidgets({'herp': {
         options: [
           {param: 'foo', default: 123 },
-          {param: 'bar', default: 'derp'},
-          {param: 'baz'}
+          {param: 'bar', default: 'derp' },
+        ]
+      }});
+      var defaultParams = widgets.paramDefaults('herp');
+      expect(defaultParams.foo).toBe(123);
+      expect(defaultParams.bar).toBe('derp');
+    });
+
+    it('does not include properties without defaults', function() {
+      this.setupWidgets({'herp': {
+        options: [
+          {param: 'bar'},
         ]
       }});
 
-      var d = widgets.paramDefaults('herp');
-      expect(d.foo).toBe(123);
-      expect(d.bar).toBe('derp');
-      expect(d.baz).toBe(undefined);
+      var defaultParams = widgets.paramDefaults('herp');
+      expect('bar' in defaultParams).toBe(false);
     });
 
     it('should be an empty object for unknown widgets', function(){

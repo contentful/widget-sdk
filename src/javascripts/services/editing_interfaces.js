@@ -7,13 +7,10 @@ angular.module('contentful')
  */
 .factory('editingInterfaces', ['$injector', function($injector){
   var $q             = $injector.get('$q');
-  var random         = $injector.get('random');
   var widgets        = $injector.get('widgets');
   var widgetMigrator = $injector.get('widgets/migrations');
   var logger         = $injector.get('logger');
   var eiHelpers      = $injector.get('editingInterfaces/helpers');
-
-  var widgetIdsByContentType = {};
 
   return {
     /**
@@ -36,7 +33,7 @@ angular.module('contentful')
       return getEditingInterface(contentType)
       // This is triggered when a CT has been created via the API, but has no EI
       .catch(function (err) {
-        if(err && err.statusCode === 404) {
+        if (err && err.statusCode === 404) {
           return defaultInterface(contentType);
         } else {
           // We should be able to throw the error but $q sucks at this.
@@ -44,8 +41,7 @@ angular.module('contentful')
         }
       })
       .then(_.partial(syncWidgets, contentType))
-      .then(addDefaultParams)
-      .then(widgetMigrator(contentType));
+      .then(addDefaultParams);
     },
 
     syncWidgets: syncWidgets
@@ -69,11 +65,12 @@ angular.module('contentful')
    */
   function syncWidgets(contentType, editingInterface) {
     var fields = contentType.data.fields;
-    var migratedWidgets = migrateWidgetsToApiNames(fields, editingInterface.data.widgets);
+    var mappedWidgets = migrateWidgetsToApiNames(fields, editingInterface.data.widgets);
     var syncedWidgets = _.map(fields, function (field) {
-      return eiHelpers.findWidget(migratedWidgets, field) || defaultWidget(contentType, field);
+      return eiHelpers.findWidget(mappedWidgets, field) || defaultWidget(contentType, field);
     });
-    editingInterface.data.widgets = syncedWidgets;
+    var migratedWidgets = _.map(syncedWidgets, widgetMigrator(contentType.data));
+    editingInterface.data.widgets = migratedWidgets;
     return editingInterface;
   }
 
@@ -86,25 +83,20 @@ angular.module('contentful')
   }
 
   function getEditingInterface (contentType) {
-    if (contentType.getId() === 'asset') {
-      return $q.when(makeAssetInterface(contentType));
-    } else if (contentType.getVersion() === 0) {
-      return $q.when(defaultInterface(contentType));
-    } else {
+    var version = dotty.get(contentType, 'data.sys.version');
+    var revision = dotty.get(contentType, 'data.sys.revision');
+    if (version || revision ) {
       return contentType.getEditingInterface('default');
+    } else {
+      // Content Type has not been persisted yet or is not published, so
+      // there exists no editing interface.
+      return $q.when(defaultInterface(contentType));
     }
   }
 
   function defaultInterface (contentType) {
     var data = makeDefaultInterfaceData(contentType);
     return contentType.newEditingInterface(data);
-  }
-
-  function makeAssetInterface (contentType) {
-    // TODO We should hardcode the parameter since it is always called
-    // with the same content type, namely that for assets.
-    var data = makeDefaultInterfaceData(contentType);
-    return { data: data };
   }
 
   function makeDefaultInterfaceData (contentType) {
@@ -126,21 +118,10 @@ angular.module('contentful')
   function defaultWidget(contentType, field) {
     var identifier = field.apiName || field.id;
     return {
-      id: generateId(identifier, contentType.getId()),
       fieldId: identifier,
       widgetId: widgets.defaultWidgetId(field, contentType),
       widgetParams: {}
     };
-  }
-
-  function generateId(fieldId, ctId) {
-    if(!widgetIdsByContentType[ctId])
-      widgetIdsByContentType[ctId] = {};
-
-    if(!widgetIdsByContentType[ctId][fieldId])
-      widgetIdsByContentType[ctId][fieldId] = fieldId + random.id();
-
-    return widgetIdsByContentType[ctId][fieldId];
   }
 
   // This function only serves migration purposes. It remaps old editing

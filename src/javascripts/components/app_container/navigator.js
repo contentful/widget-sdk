@@ -207,25 +207,28 @@ angular.module('contentful').config([
           return asset;
         });
       }],
+      // TODO I doubt this is needed for applications logic. We should
+      // figure out how to remove it.
       contentType: ['$injector', function ($injector) {
         var AssetContentType = $injector.get('AssetContentType');
         return {
           data: AssetContentType,
           getId: _.constant('asset'),
         };
-      }],
-      // TODO duplicates code in 'entries.details' state
-      editingInterface: ['$injector', 'contentType', 'widgets', function ($injector, contentType) {
-        var editingInterfaces = $injector.get('editingInterfaces');
-        return editingInterfaces.forContentType(contentType);
-      }],
+      }]
     },
-    controller: ['$state', '$scope', 'asset', 'contentType', 'editingInterface', 'contextHistory',
-                 function ($state, $scope, asset, contentType, editingInterface, contextHistory) {
+    controller: ['$injector', '$scope', 'asset', 'contentType',
+                 function ($injector, $scope, asset, contentType) {
+      var $state = $injector.get('$state');
+      var contextHistory = $injector.get('contextHistory');
+      var editingInterfaceData = $injector.get('data/editingInterfaces/asset');
       $state.current.data = $scope.context = {};
       $scope.asset = asset;
       $scope.entity = asset;
-      $scope.editingInterface = editingInterface;
+      // Because the entry and asset editors are treated uniformly the
+      // directives and controllers expect $scope.editingInterface to
+      // have the structure of an Entity instance of the 'client' library.
+      $scope.editingInterface = {data: editingInterfaceData};
       $scope.contentType = contentType;
       contextHistory.addEntity(asset);
     }],

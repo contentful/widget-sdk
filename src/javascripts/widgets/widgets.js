@@ -11,7 +11,6 @@ angular.module('contentful')
   var checks       = $injector.get('widgets/checks');
   var deprecations = $injector.get('widgets/deprecations');
   var WidgetStore  = $injector.get('widgets/store');
-  var schemaErrors = $injector.get('validation').errors;
   var eiHelpers    = $injector.get('editingInterfaces/helpers');
 
   /**
@@ -46,36 +45,6 @@ angular.module('contentful')
 
   var store;
 
-  // TODO move this to validation library
-  var widgetSchema = {
-    type: 'Object',
-    properties: {
-      id: {
-        type: 'Symbol',
-        required: true
-      },
-      fieldId: {
-        type: 'Symbol',
-        required: true,
-      },
-      widgetId: {
-        type: 'Symbol',
-        required: true
-      },
-      widgetParams: {
-        type: 'Object',
-        properties: {
-          helpText: {
-            type: 'Text',
-            validations: [{size: {max: 300}}]
-          }
-        },
-        additionalProperties: true
-      }
-    },
-    additionalProperties: true
-  };
-
   // Maps type names to builtin widget IDs. Type names are those
   // returned by `fieldFactory.getTypeName`.
   var DEFAULT_WIDGETS = {
@@ -88,7 +57,6 @@ angular.module('contentful')
     'Date':     'datePicker',
     'Location': 'locationEditor',
     'Object':   'objectEditor',
-    'File':     'fileEditor',
     'Entry':    'entryLinkEditor',
     'Entries':  'entryLinksEditor',
     'Asset':    'assetLinkEditor',
@@ -103,7 +71,6 @@ angular.module('contentful')
     filterOptions:       filterOptions,
     paramDefaults:       paramDefaults,
     applyDefaults:       applyDefaults,
-    validate:            validate,
     filteredParams:      filteredParams,
     setSpace:            setSpace,
     buildSidebarWidgets: buildSidebarWidgets
@@ -201,8 +168,6 @@ angular.module('contentful')
    *   where it gets switched to singleLine
    * - Any field that allows for predefined values: gets changed to a dropdown
    *   in the presence of the 'in' validation
-   * It also returns a default widget for the File type which actually
-   * doesn't exist in the backend and is only used in the asset editor
   */
   function defaultWidgetId(field, contentType) {
     var fieldType = fieldFactory.getTypeName(field);
@@ -217,7 +182,7 @@ angular.module('contentful')
 
     if (fieldType === 'Text') {
       var isDisplayField = contentType.data.displayField === field.id;
-      if (isDisplayField || contentType.getId() === 'asset') {
+      if (isDisplayField) {
         return 'singleLine';
       } else {
         return 'markdown';
@@ -295,7 +260,9 @@ angular.module('contentful')
    */
   function paramDefaults(widgetId) {
     return _.transform(optionsForWidget(widgetId), function (defaults, option) {
-      defaults[option.param] = option.default;
+      if (option.default !== undefined) {
+        defaults[option.param] = option.default;
+      }
     }, {});
   }
 
@@ -323,19 +290,6 @@ angular.module('contentful')
         params[option.param] = option.default;
       }
     });
-  }
-
-  /**
-   * @ngdoc method
-   * @name widgets#validate
-   * @description
-   * Validate the widget against the schema and return a list of
-   * errors.
-   * @param {Widget} widget
-   * @return {Error[]}
-   */
-  function validate (widget) {
-    return schemaErrors(widget, widgetSchema);
   }
 
   /**
