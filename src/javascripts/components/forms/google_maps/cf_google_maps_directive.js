@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('contentful').directive('cfGoogleMaps', ['$injector', function ($injector) {
-  var googleMapsLoader      = $injector.get('googleMapsLoader'),
-      defer                 = $injector.get('defer'),
-      MAP_DOM_ELEMENT_CLASS = '.google-map';
+  var LazyLoader            = $injector.get('LazyLoader');
+  var defer                 = $injector.get('defer');
+  var MAP_DOM_ELEMENT_CLASS = '.google-map';
 
   return {
     restrict    : 'E',
@@ -15,7 +15,7 @@ angular.module('contentful').directive('cfGoogleMaps', ['$injector', function ($
       element.on('$destroy', function () {
         destroyed = true;
       });
-      googleMapsLoader.load().then(function (GMaps) {
+      LazyLoader.get('googleMaps').then(function (GMaps) {
         if (destroyed) {
           return;
         }

@@ -74,7 +74,7 @@ angular.module('contentful').factory('LazyLoader', ['$injector', function ($inje
     // issue HTTP request to get service value
     var loadPromise = load(script.url).then(function () {
       if (script.globalObject) {
-        store[name] = window[script.globalObject];
+        store[name] = dotty.get(window, script.globalObject);
       }
       var value = store[name];
       return value ? value : $q.reject(new Error('Script loaded, but no value provided.'));
@@ -88,6 +88,7 @@ angular.module('contentful').factory('LazyLoader', ['$injector', function ($inje
 angular.module('contentful').factory('LazyLoader/scripts', ['$injector', function ($injector) {
 
   var assetLoader = $injector.get('AssetLoader');
+  var environment = $injector.get('environment');
 
   /**
    * Options:
@@ -113,6 +114,11 @@ angular.module('contentful').factory('LazyLoader/scripts', ['$injector', functio
     kaltura: {
       url: assetLoader.getAssetUrl('/app/kaltura.js'),
       globalObject: 'KalturaClient'
+    },
+    googleMaps: {
+      url: 'https://maps.googleapis.com/maps/api/js?key=' +
+            environment.settings.google.maps_api_key,
+      globalObject: 'google.maps'
     }
   };
 }]);

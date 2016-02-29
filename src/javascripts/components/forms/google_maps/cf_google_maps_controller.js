@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('contentful').controller('GoogleMapsController', ['$scope', '$injector', function ($scope, $injector) {
-  var googleMapsLoader = $injector.get('googleMapsLoader');
+  var LazyLoader = $injector.get('LazyLoader');
 
-  googleMapsLoader.load().then(function (GMaps) {
+  LazyLoader.get('googleMaps').then(function (GMaps) {
     $scope.$watch('searchTerm', function (searchTerm, old, scope) {
       if (searchTerm && searchTerm != old) { //changed Searchterm
         //console.log('search term changed', searchTerm);
