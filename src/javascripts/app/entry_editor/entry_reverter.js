@@ -1,7 +1,7 @@
 'use strict';
 angular.module('contentful')
 .factory('entryReverter', [function () {
-  return function create (getEntry) {
+  return function create (entry) {
     var originalEntryData;
     var trackedPublishedVersion;
     var trackedPreviousVersion;
@@ -17,7 +17,6 @@ angular.module('contentful')
     };
 
     function init () {
-      var entry = getEntry();
       originalEntryData = _.cloneDeep(entry.data);
       trackedPublishedVersion = entry.getPublishedVersion();
       trackedPreviousVersion = entry.getVersion();
@@ -28,19 +27,16 @@ angular.module('contentful')
     }
 
     function revertedToPrevious () {
-      var entry = getEntry();
-      if (trackedPreviousVersion === (trackedPublishedVersion + 1)) {
-        trackedPublishedVersion = entry.getVersion() - 1;
-      }
+      // Reset the published version in case it was already reverted earlier
+      trackedPublishedVersion = entry.getPublishedVersion();
       trackedPreviousVersion = entry.getVersion();
     }
 
     function canRevertToPrevious () {
-      return getEntry().getVersion() > trackedPreviousVersion;
+      return entry.getVersion() > trackedPreviousVersion;
     }
 
     function revertedToPublished () {
-      var entry = getEntry();
       if (trackedPreviousVersion === (trackedPublishedVersion + 1)) {
         trackedPreviousVersion = entry.getVersion() + 1;
       }
@@ -48,13 +44,12 @@ angular.module('contentful')
     }
 
     function canRevertToPublished () {
-      var entry = getEntry();
       return entry.isPublished() &&
              entry.getVersion() > (trackedPublishedVersion + 1);
     }
 
     function publishedNewVersion () {
-      var publishedVersion = getEntry().getPublishedVersion();
+      var publishedVersion = entry.getPublishedVersion();
       if (trackedPreviousVersion === publishedVersion) {
         trackedPreviousVersion = publishedVersion + 1;
       }
