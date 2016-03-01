@@ -10,7 +10,7 @@ header.workbench-header
     button.cfnext-btn-primary-action(ui-command="save")
       | Save
 
-.workbench-nav
+.workbench-nav(ng-hide="context.isNew")
   ul.workbench-nav__tabs
     li(ui-tab="settings") Webhook settings
     li(ui-tab="activity") Activity log

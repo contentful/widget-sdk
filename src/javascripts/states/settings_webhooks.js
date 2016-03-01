@@ -52,7 +52,7 @@ angular.module('contentful')
     },
     views: {
       '@spaces.detail.settings.webhooks': {
-        template: '<pre>{{ call | json }}</pre>',
+        template: '<cf-webhook-call class="workbench webhook-call" />',
         controller: ['$scope', '$stateParams', 'webhook', 'call', function ($scope, $stateParams, webhook, call) {
           $scope.call = call;
           $scope.context = {parentTitle: webhook.url};

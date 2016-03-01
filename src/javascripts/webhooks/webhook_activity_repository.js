@@ -6,8 +6,9 @@ angular.module('contentful').factory('WebhookActivityRepository', ['$injector', 
   var $q       = $injector.get('$q');
   var moment   = $injector.get('moment');
   var random   = $injector.get('random');
+  var store    = $injector.get('TheStore').forKey('__webhook_log_cache');
 
-  var cache = {};
+  var cache = store.get() || {};
 
   return {
     getDetails: function (space, webhook, callId) {
@@ -87,6 +88,7 @@ angular.module('contentful').factory('WebhookActivityRepository', ['$injector', 
     }).value()};
 
     cache[key] = response;
+    store.set(cache);
     return response;
   }
 

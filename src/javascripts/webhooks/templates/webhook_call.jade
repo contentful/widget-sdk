@@ -1,0 +1,25 @@
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-settings")
+  h1.workbench-header__title Call details ({{ call.requestAt }})
+
+  .workbench-header__actions
+    button.cfnext-btn-secondary-action(ui-sref="spaces.detail.settings.webhooks.detail")
+      | Go back
+
+.workbench-main
+  .workbench-main__content
+
+    .webhook-call__details
+      .webhook-call__header
+        strong.webhook-call__header-item {{ call.url }}
+        span.webhook-call__header-item {{ call.requestAt }}
+        span.webhook-call__header-item(ng-show="call.code") HTTP {{ call.code }}
+        span.webhook-call__header-item(ng-show="call.errors[0] === 'TimeoutError'") Timeout
+
+      .webhook-call__columns
+        .webhook-call__column
+          strong Request
+          pre {{ call.request | json }}
+        .webhook-call__column
+          strong Response
+          pre {{ call.response | json }}
