@@ -273,7 +273,10 @@ function ContentTypeActionsController($scope, $injector) {
   }
 
   function saveEditingInterface (contentType) {
-    return spaceContext.editingInterfaces.save(contentType.data, $scope.editingInterface);
+    return spaceContext.editingInterfaces.save(contentType.data, $scope.editingInterface)
+    .then(function (editingInterface) {
+      $scope.editingInterface = editingInterface;
+    });
   }
 
   function setPristine () {
