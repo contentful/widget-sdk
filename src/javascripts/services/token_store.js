@@ -68,6 +68,8 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
     refreshDeferred.reject(err);
     refreshDeferred = null;
     communicateError(err);
+
+    return $q.reject(err);
   }
 
   function getSpace(id) {
@@ -99,9 +101,7 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
       existing.update(rawSpace);
       return existing;
     } else {
-      var space = client.newSpace(rawSpace);
-      space.save = function () { throw new Error('Saving space is not allowed.'); };
-      return space;
+      return client.newSpace(rawSpace);
     }
   }
 
@@ -150,8 +150,6 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
     } else {
       ReloadNotification.trigger('The browser was unable to obtain the login token.');
     }
-
-    return $q.reject(err);
   }
 
 }]);

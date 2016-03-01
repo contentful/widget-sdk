@@ -15,13 +15,13 @@ angular.module('contentful')
   var $q                 = $injector.get('$q');
   var $rootScope         = $injector.get('$rootScope');
   var spaceContext       = $injector.get('spaceContext');
-  var client             = $injector.get('client');
   var Command            = $injector.get('command');
   var tokenStore         = $injector.get('tokenStore');
   var spaceTools         = $injector.get('spaceTools');
   var modalDialog        = $injector.get('modalDialog');
   var notification       = $injector.get('notification');
   var ReloadNotification = $injector.get('ReloadNotification');
+  var repo               = $injector.get('SpaceSettingsController/createRepo').call();
 
   $scope.context.ready = true;
   $scope.spaceId = spaceContext.space.getId();
@@ -30,18 +30,16 @@ angular.module('contentful')
   $scope.openRemovalDialog = Command.create(openRemovalDialog);
 
   function save() {
-    return endpoint().payload($scope.model)
-    .headers(header())
-    .put()
+    return repo.rename($scope.model.name)
+    .then(tokenStore.refresh)
     .then(function () {
       notification.info('Space renamed to ' + $scope.model.name + ' successfully.');
     })
-    .then(tokenStore.refresh)
     .catch(handleSaveError);
   }
 
   function handleSaveError(err) {
-    if (dotty.get(err, 'body.details.errors', []).length > 0) {
+    if (dotty.get(err, 'data.details.errors', []).length > 0) {
       notification.error('Please provide a valid space name.');
     } else {
       ReloadNotification.basicErrorHandler();
@@ -49,21 +47,13 @@ angular.module('contentful')
   }
 
   function remove() {
-    return endpoint().delete()
+    return repo.remove()
+    .then(tokenStore.refresh)
+    .then(spaceTools.leaveCurrent)
     .then(function () {
       notification.info('Space ' + $scope.model.name + ' deleted successfully.');
     })
-    .then(tokenStore.refresh)
-    .then(spaceTools.leaveCurrent)
     .catch(ReloadNotification.basicErrorHandler);
-  }
-
-  function endpoint() {
-    return client.endpoint('spaces', spaceContext.space.getId());
-  }
-
-  function header() {
-    return {'X-Contentful-Version': spaceContext.space.getVersion()};
   }
 
   function isSaveDisabled() {
@@ -93,4 +83,37 @@ angular.module('contentful')
 
     return $q.when();
   }
+}])
+
+.factory('SpaceSettingsController/createRepo', ['$injector', function ($injector) {
+
+  var spaceContext   = $injector.get('spaceContext');
+  var spaceEndpoint  = $injector.get('data/spaceEndpoint');
+  var authentication = $injector.get('authentication');
+  var environment    = $injector.get('environment');
+
+  return function createSpaceRepo() {
+    var makeRequest = spaceEndpoint.create(
+      authentication.token,
+      '//' + environment.settings.api_host,
+      spaceContext.space.getId()
+    );
+
+    return {
+      rename: rename,
+      remove: remove
+    };
+
+    function rename(newName) {
+      return makeRequest({
+        method: 'PUT',
+        version: spaceContext.space.getVersion(),
+        data: {name: newName}
+      });
+    }
+
+    function remove() {
+      return makeRequest({method: 'DELETE'});
+    }
+  };
 }]);
