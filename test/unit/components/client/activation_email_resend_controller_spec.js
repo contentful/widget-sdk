@@ -16,7 +16,7 @@ describe('activationEmailResendController', function () {
     userMock = {
       name: 'Some User',
       email: 'user@example.com',
-      activated: false
+      confirmed: false
     };
     storeMock = {
       set: sinon.spy(),
@@ -57,7 +57,7 @@ describe('activationEmailResendController', function () {
 
   describe('with user already activated', function () {
     beforeEach(function () {
-      userMock.activated = true;
+      userMock.confirmed = true;
       $rootScope.$apply();
     });
 
@@ -74,7 +74,7 @@ describe('activationEmailResendController', function () {
     beforeEach(function () {
       jasmine.clock().install();
       jasmine.clock().mockDate(new Date(2016, 1, 1));
-      userMock.activated = false;
+      userMock.confirmed = false;
     });
 
     afterEach(jasmine.clock().uninstall);
@@ -104,7 +104,7 @@ describe('activationEmailResendController', function () {
 
       it('does not open the dialog after 24 hours if meanwhile the user got activated', function () {
         jasmine.clock().tick(A_DAY);
-        userMock.activated = true;
+        userMock.confirmed = true;
         $rootScope.$apply();
         sinon.assert.callCount(openDialogStub, 0);
       });
@@ -131,7 +131,7 @@ describe('activationEmailResendController', function () {
 
       it('does not reopen the dialog after 24 hours if meanwhile the user got activated', function () {
         sinon.assert.callCount(openDialogStub, 1);
-        userMock.activated = true;
+        userMock.confirmed = true;
         jasmine.clock().tick(A_DAY);
         sinon.assert.callCount(openDialogStub, 1);
       });
@@ -157,7 +157,7 @@ describe('activationEmailResendController', function () {
       });
 
       it('does not open the dialog after 12 hours if meanwhile the user got activated', function () {
-        userMock.activated = true;
+        userMock.confirmed = true;
         jasmine.clock().tick(A_DAY / 2);
         sinon.assert.callCount(openDialogStub, 0);
       });
