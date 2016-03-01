@@ -2,7 +2,6 @@
 
 angular.module('contentful').factory('tokenStore', ['$injector', function ($injector) {
 
-  var $rootScope         = $injector.get('$rootScope');
   var $q                 = $injector.get('$q');
   var client             = $injector.get('client');
   var authentication     = $injector.get('authentication');
@@ -12,8 +11,9 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
   var createSignal       = $injector.get('signal');
 
   var currentToken = null;
-  var inFlightUpdate = null;
   var changed  = createSignal();
+  var refreshDeferred = null;
+  var refreshRequests = 0;
 
   return {
     changed:           changed,
@@ -32,22 +32,46 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
   }
 
   function refresh() {
-    if (inFlightUpdate) {
-      return inFlightUpdate;
+    if (!refreshDeferred || refreshRequests < 1) {
+      refreshRequests = 1;
+      refreshDeferred = $q.defer();
+      getNextTokenLookup();
+    } else {
+      refreshRequests += 1;
     }
 
-    inFlightUpdate = authentication.getTokenLookup()
-    .then(refreshWithLookup)
-    .then(function () {
-      inFlightUpdate = null;
-    })
-    .catch(tokenErrorHandler);
+    return refreshDeferred.promise;
+  }
 
-    return inFlightUpdate;
+  function getNextTokenLookup() {
+    authentication.getTokenLookup()
+    .then(handleToken)
+    .catch(handleTokenError);
+  }
+
+  function handleToken(token) {
+    if (!refreshDeferred) {
+      return $q.reject();
+    }
+
+    refreshRequests -= 1;
+    if (refreshRequests > 0) {
+      getNextTokenLookup();
+    } else {
+      refreshWithLookup(token);
+      refreshDeferred.resolve();
+      refreshDeferred = null;
+    }
+  }
+
+  function handleTokenError(err) {
+    refreshDeferred.reject(err);
+    refreshDeferred = null;
+    communicateError(err);
   }
 
   function getSpace(id) {
-    return inFlightUpdate ? inFlightUpdate.then(promiseSpace) : promiseSpace();
+    return refreshDeferred ? refreshDeferred.promise.then(promiseSpace) : promiseSpace();
 
     function promiseSpace() {
       var space = findSpace(id);
@@ -56,7 +80,7 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
   }
 
   function getSpaces() {
-    return inFlightUpdate ? inFlightUpdate.then(promiseSpaces) : promiseSpaces();
+    return refreshDeferred ? refreshDeferred.promise.then(promiseSpaces) : promiseSpaces();
 
     function promiseSpaces() {
       return $q.when(getCurrentSpaces());
@@ -109,12 +133,11 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
     };
   }
 
-  function tokenErrorHandler(err) {
+  function communicateError(err) {
     if (err && err.statusCode === 401) {
       modalDialog.open({
         title: 'Your login token is invalid',
         message: 'You need to login again to refresh your login token.',
-        scope: $rootScope,
         cancelLabel: null,
         confirmLabel: 'Login',
         backgroundClose: false,

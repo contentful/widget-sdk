@@ -115,16 +115,33 @@ describe('Token store service', function () {
     });
   });
 
-  it('reuses promise if requests is in progress', function () {
-    var d = this.$inject('$q').defer();
-    this.auth.getTokenLookup.returns(d.promise);
-
+  it('reuses promise if some requests are in progress', function () {
+    var d = this.auth.getTokenLookup.defers();
     var promise = this.tokenStore.refresh();
     expect(this.tokenStore.refresh()).toBe(promise);
 
     d.resolve({sys: {createdBy: this.user}, spaces: []});
     this.$apply();
     expect(this.tokenStore.refresh()).not.toBe(promise);
+  });
+
+  it('resolves to the latest token refresh call result', function () {
+    var d = this.auth.getTokenLookup.defers();
+    var subscriberSpy = sinon.spy();
+
+    this.tokenStore.changed.attach(subscriberSpy);
+    this.tokenStore.refresh();
+    this.tokenStore.refresh();
+
+    d.resolve(this.user);
+    d = this.auth.getTokenLookup.defers();
+    this.$apply();
+
+    d.resolve({sys: {createdBy: {firstName: 'Jakub'}}, spaces: []});
+    this.$apply();
+
+    sinon.assert.calledOnce(subscriberSpy);
+    expect(subscriberSpy.firstCall.args[0].user.firstName).toBe('Jakub');
   });
 
   it('shows dialog and clears auth data on 401', function () {
@@ -161,8 +178,7 @@ describe('Token store service', function () {
     });
 
     it('waits for a request in progress', function () {
-      var d = this.$inject('$q').defer();
-      this.auth.getTokenLookup.returns(d.promise);
+      var d = this.auth.getTokenLookup.defers();
       this.tokenStore.refresh();
 
       var spaceHandler = sinon.spy();
