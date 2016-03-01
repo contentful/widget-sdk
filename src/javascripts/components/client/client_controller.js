@@ -149,20 +149,17 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function handleTokenData(token) {
-    if (!_.isObject(token)) {
-      return;
-    }
+    var user = dotty.get(token, 'user');
+    if (!_.isObject(user)) { return; }
 
-    $scope.spaces = token.spaces;
-    $scope.user = token.user;
-
-    enforcements.setUser(token.user);
-    OrganizationList.resetWithUser(token.user);
+    $scope.user = user;
+    enforcements.setUser(user);
+    OrganizationList.resetWithUser(user);
 
     if (features.shouldAllowAnalytics()) {
       logger.enable();
       analytics.enable();
-      analytics.setUserData(token.user);
+      analytics.setUserData(user);
     } else {
       logger.disable();
       analytics.disable();
@@ -186,12 +183,12 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     var signInCount = $scope.user.signInCount;
     if (signInCount === 1 && !seenOnboarding) {
       showUserPersonaOnboardingModal()
-      .finally(function(organizationId) {
-        if (_.isEmpty($scope.spaces)) {
-          showSpaceTemplatesModal(organizationId);
-        }
+      .finally(function() {
         TheStore.set('seenOnboarding', true);
         analytics.track('Viewed Onboarding');
+        tokenStore.getSpaces().then(function (spaces) {
+          if (_.isEmpty(spaces)) { showSpaceTemplatesModal(); }
+        });
       });
     }
   }

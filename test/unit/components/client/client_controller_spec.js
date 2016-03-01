@@ -199,8 +199,6 @@ describe('Client Controller', function () {
     });
 
     it('location in account flag is false', function() {
-      var space = this.$inject('cfStub').space('123');
-      scope.spaces = [space];
       this.$stateParams.spaceId = '123';
       childScope.$emit('$stateChangeSuccess');
       expect(TheAccountView.isActive()).toBeFalsy();
@@ -209,7 +207,7 @@ describe('Client Controller', function () {
   });
 
   describe('handle iframe messages', function () {
-    var childScope, data, user, spaces;
+    var childScope, data, user;
     beforeEach(function () {
       scope.showCreateSpaceDialog = sinon.stub();
 
@@ -250,15 +248,11 @@ describe('Client Controller', function () {
     describe('on token change', function() {
       var token;
       beforeEach(inject(function (authentication) {
-        spaces = [{
-          sys: {id: 123}
-        }];
-
         token = {
           sys: {
             createdBy: user
           },
-          spaces: spaces
+          spaces: []
         };
         authentication.tokenLookup = token;
 
@@ -423,18 +417,17 @@ describe('Client Controller', function () {
 
   describe('initializes client', function () {
     beforeEach(function () {
-      this.spaces = [];
       this.user = {sys: {}};
       this.revisionStubs.hasNewVersion = sinon.stub().resolves(true);
       this.tokenStoreStubs.refresh.returns(this.$q.when({
-        spaces: this.spaces,
+        spaces: [],
         user: this.user
       }));
       this.broadcastStub = sinon.stub(this.$rootScope, '$broadcast');
       jasmine.clock().install();
       scope.initClient();
       this.tokenStoreStubs.changed.attach.firstCall.args[0]({
-        spaces: this.spaces,
+        spaces: [],
         user: this.user
       });
       scope.$digest();
@@ -451,10 +444,6 @@ describe('Client Controller', function () {
 
     it('sets user', function() {
       expect(scope.user).toEqual(this.user);
-    });
-
-    it('sets spaces', function() {
-      expect(scope.spaces).toEqual(this.spaces);
     });
 
     describe('fires an initial version check', function () {
