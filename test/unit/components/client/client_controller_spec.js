@@ -123,7 +123,6 @@ describe('Client Controller', function () {
       $provide.value('enforcements', self.enforcementsStubs);
     });
     inject(function (){
-      this.$q = this.$inject('$q');
       this.$rootScope = this.$inject('$rootScope');
       this.$state = this.$inject('$state');
       this.$stateParams = this.$inject('$stateParams');
@@ -331,7 +330,7 @@ describe('Client Controller', function () {
           type: 'space',
           action: 'delete',
         };
-        this.tokenStoreStubs.refresh.returns(this.$q.when());
+        this.tokenStoreStubs.refresh.resolves();
         childScope.$emit('iframeMessage', data);
       });
 
@@ -344,7 +343,7 @@ describe('Client Controller', function () {
     describe('for other messages', function () {
       beforeEach(function () {
         data = {};
-        this.tokenStoreStubs.refresh.returns(this.$q.when());
+        this.tokenStoreStubs.refresh.resolves();
         childScope.$emit('iframeMessage', data);
       });
 
@@ -380,15 +379,15 @@ describe('Client Controller', function () {
   });
 
   describe('shows create space dialog', function () {
-    beforeEach(inject(function ($q, OrganizationList) {
-      OrganizationList.resetWithUser({
+    beforeEach(function () {
+      this.$inject('OrganizationList').resetWithUser({
         organizationMemberships: [
           {organization: {sys: {id: 'abc'}}},
           {organization: {sys: {id: 'def'}}}
         ]
       });
-      this.modalDialogStubs.open.returns({promise: $q.when()});
-    }));
+      this.modalDialogStubs.open.returns({promise: this.$inject('$q').when()});
+    });
 
     it('opens dialog', function () {
       scope.showCreateSpaceDialog();
@@ -419,10 +418,7 @@ describe('Client Controller', function () {
     beforeEach(function () {
       this.user = {sys: {}};
       this.revisionStubs.hasNewVersion = sinon.stub().resolves(true);
-      this.tokenStoreStubs.refresh.returns(this.$q.when({
-        spaces: [],
-        user: this.user
-      }));
+      this.tokenStoreStubs.refresh.resolves();
       this.broadcastStub = sinon.stub(this.$rootScope, '$broadcast');
       jasmine.clock().install();
       scope.initClient();
@@ -464,7 +460,7 @@ describe('Client Controller', function () {
     describe('presence timeout is fired', function () {
       beforeEach(function () {
         this.presenceStubs.isActive.returns(true);
-        this.tokenStoreStubs.refresh.returns(this.$q.reject());
+        this.tokenStoreStubs.refresh.rejects();
         jasmine.clock().tick(50*60*1000);
         scope.$digest();
       });

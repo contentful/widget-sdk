@@ -24,7 +24,6 @@ describe('Create Space controller', function () {
     inject(function ($controller, $injector) {
       this.$rootScope = $injector.get('$rootScope');
       this.logger = $injector.get('logger');
-      this.$q = $injector.get('$q');
       this.client = $injector.get('client');
       this.enforcements = $injector.get('enforcements');
       this.accessChecker = $injector.get('accessChecker');
@@ -150,13 +149,13 @@ describe('Create Space controller', function () {
 
         describe('if remote call fails with no specific error', function() {
           beforeEach(function() {
-            this.client.createSpace.returns(this.$q.reject({
+            this.client.createSpace.rejects({
               body: {
                 details: {
                   errors: []
                 }
               }
-            }));
+            });
             scope.createSpace();
             scope.$digest();
           });
@@ -194,7 +193,7 @@ describe('Create Space controller', function () {
 
         describe('if remote call fails with a specific error', function() {
           beforeEach(function() {
-            this.client.createSpace.returns(this.$q.reject({
+            this.client.createSpace.rejects({
               body: {
                 details: {
                   errors: [
@@ -202,7 +201,7 @@ describe('Create Space controller', function () {
                   ]
                 }
               }
-            }));
+            });
             scope.createSpace();
             scope.$digest();
           });
@@ -242,10 +241,10 @@ describe('Create Space controller', function () {
 
             space = {getId: stubs.getId, data: {name: 'newspace'}};
             scope.spaces = [space];
-            this.client.createSpace.returns(this.$q.when(space));
+            this.client.createSpace.resolves(space);
             stubs.getId.returns('spaceid');
-            this.tokenStoreStubs.refresh.returns(this.$q.when());
-            this.tokenStoreStubs.getSpace.returns(this.$q.when(space));
+            this.tokenStoreStubs.refresh.resolves();
+            this.tokenStoreStubs.getSpace.resolves(space);
             spaceTools = this.$inject('spaceTools');
             sinon.stub(spaceTools, 'goTo');
             scope.createSpace();
