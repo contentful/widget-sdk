@@ -79,6 +79,13 @@ describe('analytics', function () {
       sinon.assert.calledWith(this.segment.identify, 'h4nswur5t', this.userData);
       sinon.assert.calledWith(this.totango.initialize, this.userData, this.space.data.organization);
     });
+
+    it('calls identify with new data', function() {
+      this.analytics.setUserData(this.userData);
+      this.analytics.addIdentifyingData({data: 'lolcat'});
+      sinon.assert.calledTwice(this.segment.identify);
+      sinon.assert.calledWith(this.segment.identify, 'h4nswur5t', {data: 'lolcat'});
+    });
   });
 
   it('should track', function(){

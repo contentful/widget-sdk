@@ -26,6 +26,7 @@ angular.module('contentful')
     disable: disable,
     setSpace: setSpace,
     setUserData: setUserData,
+    addIdentifyingData: addIdentifyingData,
     /**
      * @ngdoc method
      * @name analytics#track
