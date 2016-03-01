@@ -173,7 +173,7 @@ angular.module('contentful')
 
   function shieldFromInvalidUserData (cb) {
     try {
-      return cb.apply(null, arguments);
+      cb();
     } catch (error) {
       logger.logError('Analytics user data exception', {
         data: {
