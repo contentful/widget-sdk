@@ -215,7 +215,7 @@ describe('ContentType Actions Controller', function () {
       var cfStub = this.$inject('cfStub');
       spaceContext = cfStub.spaceContext(space, []);
       spaceContext.editingInterfaces = {
-        save: sinon.stub()
+        save: sinon.stub().resolves()
       };
 
       scope.contentTypeForm = new FormStub();
@@ -256,6 +256,13 @@ describe('ContentType Actions Controller', function () {
       .then(function () {
         sinon.assert.calledOnce(spaceContext.editingInterfaces.save);
       });
+    });
+
+    it('updates editing interface on scope', function () {
+      spaceContext.editingInterfaces.save.resolves('NEW EI');
+      controller.save.execute();
+      this.$apply();
+      expect(scope.editingInterface).toBe('NEW EI');
     });
 
     describe('with invalid data', function () {
