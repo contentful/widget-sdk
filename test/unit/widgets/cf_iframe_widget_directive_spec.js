@@ -73,9 +73,10 @@ describe('cfIframeWidget directive', function () {
       .withArgs('PUBLIC FIELD', 'PUBLIC LOCALE')
       .returns(['docpath']);
 
-      this.setValueHandler =
-        widgetAPI.registerHandler
-        .withArgs('setValue').firstCall.args[1];
+      this.setValue = function (value) {
+        var handler = widgetAPI.registerHandler.withArgs('setValue').args[0][1];
+        return handler('PUBLIC FIELD', 'PUBLIC LOCALE', value);
+      };
 
       this.scope.otDoc = {
         doc: new OtDoc(),
@@ -83,21 +84,49 @@ describe('cfIframeWidget directive', function () {
       };
     });
 
-    it('updates the ot document', function () {
-      var snapshot = {docpath: 'OLD'};
-      this.scope.otDoc.doc.snapshot = snapshot;
+    describe('to set a value with `value !== undefined`', function () {
+      it('updates the ot document', function () {
+        var snapshot = {docpath: 'OLD'};
+        this.scope.otDoc.doc.snapshot = snapshot;
 
-      this.setValueHandler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VALUE');
-      expect(snapshot.docpath).toEqual('VALUE');
+        this.setValue('VALUE');
+        expect(snapshot.docpath).toEqual('VALUE');
+      });
+
+      it('updates the entity data through the otDocFor directive', function () {
+        this.setValue('VALUE');
+        sinon.assert.calledOnce(this.scope.otDoc.updateEntityData);
+      });
+
+      pit('resolves promise when value got changed', function () {
+        return this.setValue('VALUE');
+      });
     });
 
-    it('updates the entity data through the otDocFor directive', function () {
-      this.setValueHandler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VALUE');
-      sinon.assert.calledOnce(this.scope.otDoc.updateEntityData);
-    });
+    describe('to remove a value with `value === undefined', function () {
+      beforeEach(function () {
+        this.scope.otDoc.doc.removeAt = sinon.spy(function (path, cb) {
+          cb();
+        });
+      });
 
-    pit('resolves promise when value is changed', function () {
-      return this.setValueHandler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VALUE');
+      it('updates the ot document', function () {
+        var snapshot = {docpath: 'OLD'};
+        this.scope.otDoc.doc.snapshot = snapshot;
+
+        this.setValue(undefined);
+        sinon.assert.calledOnce(this.scope.otDoc.doc.removeAt);
+        sinon.assert.calledWith(this.scope.otDoc.doc.removeAt, ['docpath']);
+      });
+
+      it('updates the entity data through the otDocFor directive', function () {
+        this.setValue(undefined);
+        sinon.assert.calledOnce(this.scope.otDoc.updateEntityData);
+      });
+
+      pit('resolves promise when value got removed', function () {
+        return this.setValue(undefined);
+      });
     });
   });
 });

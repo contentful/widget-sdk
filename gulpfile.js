@@ -70,6 +70,7 @@ var src = {
       'bower_components/angular-ui-sortable/sortable.js',
       'bower_components/angular-ui-router/release/angular-ui-router.js',
       'bower_components/angular-breadcrumb/dist/angular-breadcrumb.js',
+      'bower_components/angular-bind-html-compile/angular-bind-html-compile.js',
       'bower_components/bootstrap/js/tooltip.js',
       'node_modules/share/node_modules/browserchannel/dist/bcsocket-uncompressed.js',
       'node_modules/share/webclient/share.uncompressed.js',
@@ -77,14 +78,14 @@ var src = {
       'node_modules/share/webclient/textarea.js'
     ],
     kaltura: [
-      'kaltura*/webtoolkit.md5.js',
-      'kaltura*/ox.ajast.js',
-      'kaltura*/KalturaClientBase.js',
-      'kaltura*/KalturaTypes.js',
-      'kaltura*/KalturaVO.js',
-      'kaltura*/KalturaServices.js',
-      'kaltura*/KalturaClient.js'
-    ]
+      'vendor/kaltura-16-01-2014/webtoolkit.md5.js',
+      'vendor/kaltura-16-01-2014/ox.ajast.js',
+      'vendor/kaltura-16-01-2014/KalturaClientBase.js',
+      'vendor/kaltura-16-01-2014/KalturaTypes.js',
+      'vendor/kaltura-16-01-2014/KalturaVO.js',
+      'vendor/kaltura-16-01-2014/KalturaServices.js',
+      'vendor/kaltura-16-01-2014/KalturaClient.js'
+    ],
   },
   images: [
     'src/images/**/*',

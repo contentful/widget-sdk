@@ -28,7 +28,7 @@ describe('navigation/stateChangeHandlers', function () {
   });
 
   describe('state change', function () {
-    xit('closes opened modal dialog', function () {
+    it('closes opened modal dialog', function () {
       $rootScope.$emit('$stateChangeStart', {name: 'page1'}, {}, {name: 'page2'}, {});
       sinon.assert.calledOnce(modalCloseStub);
     });
@@ -100,6 +100,27 @@ describe('navigation/stateChangeHandlers', function () {
 
     it('does not close modals', function() {
       sinon.assert.notCalled(modalCloseStub);
+    });
+  });
+
+  describe('leave confirmation', function () {
+    it('logs error when changing state during confirmation', function () {
+      var logger = this.$inject('logger');
+      logger.logError = sinon.stub();
+
+      var $q = this.$inject('$q');
+      var requestLeaveConfirmation = sinon.stub().returns($q.defer().promise);
+      var from = {
+        name: 'any',
+        data: {
+          dirty: true,
+          requestLeaveConfirmation: requestLeaveConfirmation
+        }
+      };
+
+      $rootScope.$emit('$stateChangeStart', {}, {}, from, {});
+      $rootScope.$emit('$stateChangeStart', {}, {}, from, {});
+      sinon.assert.calledWith(logger.logError, 'Change state during state change confirmation');
     });
   });
 });

@@ -42,12 +42,9 @@ angular.module('contentful')
   var eiHelpers = $injector.get('editingInterfaces/helpers');
 
   return function editingInterfaceMigrator (contentType) {
-    return function (editingInterface) {
-      _.each(editingInterface.data.widgets, function (widget) {
-        var field = eiHelpers.findField(contentType.data.fields, widget);
-        migrateWidget(widget, field);
-      });
-      return editingInterface;
+    return function (widget) {
+      var field = eiHelpers.findField(contentType.fields, widget);
+      return migrateWidget(widget, field);
     };
   };
 
@@ -64,7 +61,11 @@ angular.module('contentful')
     });
 
     if (migration) {
-      widget.widgetId = migration.to;
+      return _.defaults({
+        widgetId: migration.to
+      }, widget);
+    } else {
+      return widget;
     }
   }
 

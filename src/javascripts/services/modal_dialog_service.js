@@ -22,7 +22,6 @@
  *     console.log('going to close ok');
  *     dialog.confirm();
  *   }, 3000);
- *
  */
 angular.module('contentful').factory('modalDialog', ['$injector', function ($injector) {
   var $compile   = $injector.get('$compile');
@@ -34,6 +33,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
   var $rootScope = $injector.get('$rootScope');
   var debounce   = $injector.get('debounce');
   var $timeout   = $injector.get('$timeout');
+  var logger     = $injector.get('logger');
   var opened     = [];
 
   function Dialog(params) {
@@ -64,7 +64,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
         persistOnNavigation: false
       },
       _.pick(params,
-        'title', 'message',
+        'title', 'message', 'messageTemplate',
         'template', 'confirmLabel', 'cancelLabel',
         'attachTo', 'enterAction', 'backgroundClose',
         'ignoreEnter', 'ignoreEsc', 'disableTopCloseButton',
@@ -79,6 +79,10 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
 
     attach: function () {
       var scope = this.scope;
+
+      if (this.params.messageTemplate) {
+        this.params.message = JST[this.params.messageTemplate]();
+      }
 
       this.domElement = $(JST[this.params.template]());
 
@@ -174,6 +178,14 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
     },
 
     destroy: function () {
+      if (this._isDestroyed) {
+        logger.logError('Cannot destroy modal dialog twice', {
+          data: {template: this.params.template}
+        });
+        return;
+      }
+      this._isDestroyed = true;
+
       var self = this;
       $($window).off('keyup', this._handleKeys);
       function destroyModal() {

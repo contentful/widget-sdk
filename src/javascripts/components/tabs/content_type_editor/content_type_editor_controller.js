@@ -23,7 +23,6 @@ function ContentTypeEditorController($scope, $injector) {
   var $state            = $injector.get('$state');
   var validation        = $injector.get('validation');
   var hints             = $injector.get('hints');
-  var editingInterfaces = $injector.get('editingInterfaces');
   var modalDialog       = $injector.get('modalDialog');
   var openFieldDialog   = $injector.get('openFieldDialog');
   var leaveConfirmator  = $injector.get('navigation/confirmLeaveEditor');
@@ -31,13 +30,16 @@ function ContentTypeEditorController($scope, $injector) {
   var Command           = $injector.get('command');
   var accessChecker     = $injector.get('accessChecker');
   var ctHelpers         = $injector.get('data/ContentTypes');
+  var eiHelpers         = $injector.get('editingInterfaces/helpers');
+  var spaceContext      = $injector.get('spaceContext');
+  var editingInterfaces = spaceContext.editingInterfaces;
   var trackContentTypeChange = $injector.get('analyticsEvents').trackContentTypeChange;
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
   $scope.hints = hints;
 
-  $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.runSave);
+  $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.saveAndClose);
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
   $scope.updatePublishedContentType = updatePublishedContentType;
 
@@ -107,10 +109,10 @@ function ContentTypeEditorController($scope, $injector) {
           cancelLabel: null,
           confirmLabel: 'Okay, got it'
         });
-
       } else {
         var fields = $scope.contentType.data.fields;
         _.remove(fields, {id: id});
+        syncEditingInterface();
       }
     });
   };
@@ -134,7 +136,8 @@ function ContentTypeEditorController($scope, $injector) {
    * @param {Client.ContentType.Field} field
    */
   controller.openFieldDialog = function (field) {
-    return openFieldDialog($scope, field)
+    var widget = eiHelpers.findWidget($scope.editingInterface.widgets, field);
+    return openFieldDialog($scope, field, widget)
     .then(function () {
       $scope.contentTypeForm.$setDirty();
     });
@@ -217,6 +220,6 @@ function ContentTypeEditorController($scope, $injector) {
    * Make sure that each field has a widget and vice versa.
    */
   function syncEditingInterface () {
-    editingInterfaces.syncWidgets($scope.contentType, $scope.editingInterface);
+    editingInterfaces.syncWidgets($scope.contentType.data, $scope.editingInterface);
   }
 }]);

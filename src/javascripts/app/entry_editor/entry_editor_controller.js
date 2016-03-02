@@ -119,8 +119,8 @@ angular.module('contentful')
   // Building the form
   $controller('FormWidgetsController', {
     $scope: $scope,
-    contentType: $scope.contentType,
-    editingInterface: $scope.editingInterface
+    contentTypeId: $scope.contentType.getId(),
+    widgets: $scope.formWidgets
   });
 
   var contentTypeFields = $scope.contentType.data.fields;

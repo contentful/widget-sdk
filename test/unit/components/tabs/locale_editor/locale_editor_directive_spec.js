@@ -15,12 +15,7 @@ describe('Locale Editor Directive', function () {
       ]);
     });
 
-    var spaceContext = {
-      defaultLocale: {
-        name: 'German',
-        code: 'de'
-      }
-    };
+    var spaceContext = this.$inject('spaceContext');
     dotty.put(spaceContext, 'space.data.organization.subscriptionPlan.name');
 
     this.element = this.$compile('<cf-locale-editor>', {

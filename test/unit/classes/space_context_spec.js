@@ -5,42 +5,32 @@ describe('spaceContext', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.value('data/userCache', sinon.stub());
+      $provide.value('data/editingInterfaces', sinon.stub());
     });
     this.spaceContext = this.$inject('spaceContext');
     this.theLocaleStore = this.$inject('TheLocaleStore');
     this.theLocaleStore.resetWithSpace = sinon.stub();
   });
 
-  describe('with no space', function () {
-    it('has no space', function () {
-      expect(this.spaceContext.space).toBeNull();
-    });
-
-    it('did not reset locale store', function () {
-      sinon.assert.notCalled(this.theLocaleStore.resetWithSpace);
-    });
-
-    describe('refreshes content types', function () {
-      beforeEach(function () {
-        this.spaceContext.refreshContentTypes();
-      });
-
-      it('but has no content types', function () {
-        expect(this.spaceContext.contentTypes.length).toEqual(0);
-      });
-
-      it('but has no content types', function () {
-        expect(this.spaceContext.publishedContentTypes.length).toEqual(0);
-      });
-    });
-  });
-
   describe('#resetWithSpace()', function () {
-    var SPACE = {};
+    var SPACE, result, Widgets;
+
     beforeEach(function () {
+      var createEditingInterfaces = this.$inject('data/editingInterfaces');
+      createEditingInterfaces.returns('EI');
+
+      Widgets = this.$inject('widgets');
+      Widgets.setSpace = sinon.stub().defers();
+
+      SPACE = {
+        endpoint: sinon.stub().returns({
+          get: sinon.stub().rejects()
+        }),
+        getId: sinon.stub().returns('SPACE_ID')
+      };
       sinon.stub(this.spaceContext, 'refreshContentTypes');
       this.spaceContext.contentTypes = [{}];
-      this.spaceContext.resetWithSpace(SPACE);
+      result = this.spaceContext.resetWithSpace(SPACE);
     });
 
     it('sets space on context', function () {
@@ -66,6 +56,34 @@ describe('spaceContext', function () {
       this.spaceContext.resetWithSpace(SPACE);
       sinon.assert.calledWithExactly(createUserCache, SPACE);
       expect(this.spaceContext.users).toBe(userCache);
+    });
+
+    it('resets Widgets store', function () {
+      sinon.assert.calledWith(Widgets.setSpace, SPACE);
+    });
+
+    it('sets the widgets property from the widgets service', function () {
+      expect(this.spaceContext.widgets).toBe(null);
+      Widgets.setSpace.resolve('WIDGETS');
+      this.$apply();
+      expect(this.spaceContext.widgets).toBe('WIDGETS');
+    });
+
+    it('resolves when widgets are set', function () {
+      var done = sinon.stub();
+      result.then(done);
+      this.$apply();
+      sinon.assert.notCalled(done);
+
+      Widgets.setSpace.resolve();
+      this.$apply();
+      sinon.assert.called(done);
+    });
+
+    it('sets #editingInterfaces', function () {
+      var createEditingInterfaces = this.$inject('data/editingInterfaces');
+      sinon.assert.calledOnce(createEditingInterfaces);
+      expect(this.spaceContext.editingInterfaces).toEqual('EI');
     });
   });
 

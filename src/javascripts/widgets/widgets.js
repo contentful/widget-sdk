@@ -11,8 +11,6 @@ angular.module('contentful')
   var checks       = $injector.get('widgets/checks');
   var deprecations = $injector.get('widgets/deprecations');
   var WidgetStore  = $injector.get('widgets/store');
-  var schemaErrors = $injector.get('validation').errors;
-  var eiHelpers    = $injector.get('editingInterfaces/helpers');
 
   /**
    * @ngdoc type
@@ -46,49 +44,14 @@ angular.module('contentful')
 
   var store;
 
-  // TODO move this to validation library
-  var widgetSchema = {
-    type: 'Object',
-    properties: {
-      id: {
-        type: 'Symbol',
-        required: true
-      },
-      fieldId: {
-        type: 'Symbol',
-        required: true,
-      },
-      widgetId: {
-        type: 'Symbol',
-        required: true
-      },
-      widgetParams: {
-        type: 'Object',
-        properties: {
-          helpText: {
-            type: 'Text',
-            validations: [{size: {max: 300}}]
-          }
-        },
-        additionalProperties: true
-      }
-    },
-    additionalProperties: true
-  };
-
   var widgetsService = {
     get:                 getWidget,
     getAvailable:        getAvailable,
     buildRenderable:     buildRenderable,
-    defaultWidgetId:     defaultWidgetId,
-    optionsForWidget:    optionsForWidget,
     filterOptions:       filterOptions,
-    paramDefaults:       paramDefaults,
     applyDefaults:       applyDefaults,
-    validate:            validate,
     filteredParams:      filteredParams,
-    setSpace:            setSpace,
-    buildSidebarWidgets: buildSidebarWidgets
+    setSpace:            setSpace
   };
   return widgetsService;
 
@@ -106,6 +69,9 @@ angular.module('contentful')
    * @description
    * Gets all widgets for a space and saves the object into the `WIDGETS`
    * variable. Always gets the latest custom widgets from the widgets endpoint.
+   *
+   * Only `spaceContext.resetWithSpace()` is responsible for calling
+   * this method.
    *
    * @param {Client.Space} space
    * @returns {Promise<Void>}
@@ -163,63 +129,8 @@ angular.module('contentful')
     }
   }
 
-  /**
-   * @ngdoc method
-   * @name widgets#defaultWidgetId
-   * @param {API.ContentType.Field} field
-   * @param {Client.ContentType} contentType
-   * @return {string}
-   *
-   * @description
-   * This method determines the default widget for a given field.
-   *
-   * It accounts for legacy behavior for when there were no user selectable
-   * widgets for a given field and some fields would have different widgets
-   * in different occasions, specifically:
-   * - Text field: defaults to markdown, unless it is a title field.
-   *   where it gets switched to singleLine
-   * - Any field that allows for predefined values: gets changed to a dropdown
-   *   in the presence of the 'in' validation
-   * It also returns a default widget for the File type which actually
-   * doesn't exist in the backend and is only used in the asset editor
-  */
-  function defaultWidgetId(field, contentType) {
-    var fieldType = fieldFactory.getTypeName(field);
-    var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
-    if(hasValidations && _.contains(WIDGETS['dropdown'].fieldTypes, fieldType)) return 'dropdown';
-    if (fieldType === 'Text') {
-      if (contentType.data.displayField === field.id ||
-          contentType.getId() === 'asset') {
-        return 'singleLine';
-      } else {
-        return 'markdown';
-      }
-    }
-    if (fieldType === 'Entry') return 'entryLinkEditor';
-    if (fieldType === 'Asset') return 'assetLinkEditor';
-    if (fieldType === 'Entries') return 'entryLinksEditor';
-    if (fieldType === 'Assets' ) return 'assetLinksEditor';
-    // File is a special field type, only used in the Asset Editor and not on the backend.
-    if (fieldType === 'File') return 'fileEditor';
-    if (fieldType === 'Boolean') return 'boolean';
-
-    return _.findKey(WIDGETS, function (widget) {
-      return _.contains(widget.fieldTypes, fieldType);
-    });
-  }
-
-  function getFieldValidationsOfType(field, type) {
-    return _.filter(_.pluck(field.validations, type));
-  }
-
-  // TODO Remove this method
   function optionsForWidget(widgetId) {
-    var widget = WIDGETS[widgetId];
-    if (widget) {
-      return widget.options || [];
-    } else {
-      return [];
-    }
+    return dotty.get(WIDGETS, [widgetId, 'options'], []);
   }
 
 
@@ -238,11 +149,11 @@ angular.module('contentful')
     var options = optionsForWidget(widgetId);
     return _.transform(options, function (filtered, option) {
       var param = params[option.param];
-      if (!_.isUndefined(param))
+      if (!_.isUndefined(param)) {
         filtered[option.param] = param;
+      }
     }, {});
   }
-
 
 
   /**
@@ -274,35 +185,15 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name widgets#paramDefaults
-   * @param {string} widgetId
-   * @returns {object}
-   */
-  function paramDefaults(widgetId) {
-    return _.transform(optionsForWidget(widgetId), function (defaults, option) {
-      defaults[option.param] = option.default;
-    }, {});
-  }
-
-  function widgetTemplate(widgetId) {
-    var widget = WIDGETS[widgetId];
-    if (widget) {
-      return widget.template;
-    } else {
-      return '<div class="missing-widget-template">Unknown editor widget "'+widgetId+'"</div>';
-    }
-  }
-
-  /**
-   * @ngdoc method
    * @name widgets#applyDefaults
    * @description
    * Sets each widget paramter to its default value if it is not set yet.
    *
+   * @param {string} widgetId
    * @param {object} params
-   * @param {Widget.Option[]} options
    */
-  function applyDefaults (params, options) {
+  function applyDefaults (widgetId, params) {
+    var options = optionsForWidget(widgetId);
     return _.forEach(options, function (option) {
       if ('default' in option && !(option.param in params)) {
         params[option.param] = option.default;
@@ -312,73 +203,41 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name widgets#validate
-   * @description
-   * Validate the widget against the schema and return a list of
-   * errors.
-   * @param {Widget} widget
-   * @return {Error[]}
-   */
-  function validate (widget) {
-    return schemaErrors(widget, widgetSchema);
-  }
-
-  /**
-   * @ngdoc method
-   * @name widgets#buildSidebarWidgets
-   * @description
-   * From a list of widget definition from the editing interface build
-   * a list of renderable widgets that can be passed to the
-   * `cfWidgetRenderer` directive.
-   *
-   * The list includes only widgets that have the `sidebar` property
-   * set to a truthy value.
-   *
-   * The function is used to setup the entry editor state.
-   *
-   * TODO Remove duplication with FormWidgetsController.
-   *
-   * @param {API.Widget[]} widgets
-   * @param {API.Fields[]} fields
-   * @return {Widget.Renderable[]}
-   */
-  function buildSidebarWidgets (apiWidgets, fields) {
-    return  _(apiWidgets)
-      .map(function (widget) {
-        var field = eiHelpers.findField(fields, widget);
-        var desc = getWidget(widget.widgetId);
-        return _.extend({
-          field: field
-        }, widget, desc);
-      })
-      .filter(function (widget) {
-        return widget.sidebar && widget.field;
-      })
-      .value();
-  }
-
-  /**
-   * @ngdoc method
    * @name widgets#buildRenderable
    * @description
    * Create an object that contains all the necessary data to render a
    * widget.
    *
-   * @param {API.Widget} widget
-   * @return {Widget.Renderable}
+   * @param {Data.Widget[]} widget
+   * @return {object}
    */
-  function buildRenderable (widget) {
-    widget = Object.create(widget);
-
-    var template = widgetTemplate(widget.widgetId);
-    widget.template = template;
-
-    applyWidgetProperties(widget);
-    return widget;
+  function buildRenderable (widgets) {
+    var renderable = {sidebar: [], form: []};
+    _.forEach(widgets, function (widget) {
+      if (!widget.field) {
+        return;
+      }
+      widget = buildOneRenderable(widget);
+      if (widget.sidebar) {
+        renderable.sidebar.push(widget);
+      } else {
+        renderable.form.push(widget);
+      }
+    });
+    return renderable;
   }
 
-  function applyWidgetProperties (widget) {
-    var descriptor = getWidget(widget.widgetId);
+  function buildOneRenderable (widget) {
+    var id = widget.widgetId;
+    widget = _.cloneDeep(widget);
+
+    var template = widgetTemplate(id);
+    widget.template = template;
+
+    widget.widgetParams = widget.widgetParams || {};
+    applyDefaults(id, widget.widgetParams);
+
+    var descriptor = getWidget(id);
     if (descriptor) {
       _.extend(widget, {
         rendersHelpText: descriptor.rendersHelpText,
@@ -386,6 +245,16 @@ angular.module('contentful')
         isFocusable: !descriptor.notFocusable,
         sidebar: !!descriptor.sidebar
       });
+    }
+    return widget;
+  }
+
+  function widgetTemplate(widgetId) {
+    var widget = WIDGETS[widgetId];
+    if (widget) {
+      return widget.template;
+    } else {
+      return '<div class="missing-widget-template">Unknown editor widget "'+widgetId+'"</div>';
     }
   }
 }]);

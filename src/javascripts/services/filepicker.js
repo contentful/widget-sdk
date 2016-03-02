@@ -12,7 +12,12 @@ angular.module('contentful').factory('filepicker', ['$injector', function ($inje
 
   var settings = {
     policy: environment.settings.filepicker.policy,
-    signature: environment.settings.filepicker.signature
+    signature: environment.settings.filepicker.signature,
+    // Enable all filepicker services except cropping step before upload ('CONVERT').
+    services: ['ALFRESCO', 'BOX', 'CLOUDDRIVE', 'COMPUTER', 'DROPBOX', 'FACEBOOK',
+      'GITHUB', 'GOOGLE_DRIVE', 'FLICKR', 'EVERNOTE', 'GMAIL', 'INSTAGRAM',
+      'SKYDRIVE', 'IMAGE_SEARCH', 'URL', 'WEBCAM', 'VIDEO', 'PICASA', 'FTP',
+      'WEBDAV', 'CLOUDAPP', 'IMGUR']
   };
 
   function setup(fp) {

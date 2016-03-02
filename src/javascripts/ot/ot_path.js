@@ -95,7 +95,8 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
       function remoteOpHandler(event, op) {
         var scope = event.currentScope;
         if (angular.equals(op.p, scope.otPath)) {
-          scope.$broadcast('otValueChanged', scope.otPath, scope.otDoc.doc.getAt(op.p));
+          var value = ShareJS.peek(scope.otDoc.doc, op.p);
+          scope.$broadcast('otValueChanged', scope.otPath, value);
         }
       }
 

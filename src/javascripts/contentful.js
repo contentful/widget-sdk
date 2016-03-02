@@ -20,6 +20,7 @@ angular.module('contentful', [
   'ngSanitize',
   'ui.sortable',
   'ui.router',
+  'angular-bind-html-compile',
   'ncy-angular-breadcrumb'
 ])
 .config(['$locationProvider', 'clientAdapterProvider', 'authenticationProvider', 'environment', '$sceDelegateProvider', '$compileProvider',
@@ -44,4 +45,5 @@ angular.module('contentful', [
   $injector.get('contextMenu').init();
   $injector.get('notification').setupClearMessageHooks();
   $injector.get('TrialWatcher').init();
+  $injector.get('activationEmailResendController').init();
 }]);

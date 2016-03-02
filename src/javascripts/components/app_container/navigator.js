@@ -60,29 +60,27 @@ angular.module('contentful').config([
   $stateProvider.state('spaces.detail', {
     url: '/:spaceId',
     resolve: {
-      space: ['$injector', '$stateParams', function ($injector, $stateParams) {
+      spaceContext: ['$injector', '$stateParams', function ($injector, $stateParams) {
         var tokenStore     = $injector.get('tokenStore');
         var spaceContext   = $injector.get('spaceContext');
         var analytics      = $injector.get('analytics');
         return tokenStore.getSpace($stateParams.spaceId)
         .then(function (space) {
-          spaceContext.resetWithSpace(space);
-          analytics.setSpace(space);
-          return space;
+          analytics.setSpace(spaceContext.space);
+          return spaceContext.resetWithSpace(space);
         });
       }],
-      widgets: ['$injector', 'space', function ($injector, space) {
-        var Widgets = $injector.get('widgets');
-        return Widgets.setSpace(space);
+      space: ['spaceContext', function (spaceContext) {
+        return spaceContext.space;
+      }],
+      widgets: ['spaceContext', function (spaceContext) {
+        return spaceContext.widgets;
       }]
     },
     ncyBreadcrumb: {
       skip: true
     },
-    // FIXME we depend on 'widgets' to load the service. We cannot use
-    // the 'onEnter' handler because it does not wait until the promise
-    // has been resolved.
-    controller: ['$scope', 'space', 'sectionAccess', 'widgets', function ($scope, space, sectionAccess) {
+    controller: ['$scope', 'space', 'sectionAccess', function ($scope, space, sectionAccess) {
       $scope.label = space.data.name;
 
       if (sectionAccess.hasAccessToAny()) {
@@ -119,6 +117,10 @@ angular.module('contentful').config([
     template: '<div cf-entry-list class="workbench entry-list entity-list"></div>'
   }));
 
+  editingInterfaceResolver.$inject = ['spaceContext', 'contentType'];
+  function editingInterfaceResolver (spaceContext, contentType) {
+    return spaceContext.editingInterfaces.get(contentType.data);
+  }
 
   $stateProvider.state('spaces.detail.entries.detail', {
     url: '/:entryId',
@@ -135,37 +137,24 @@ angular.module('contentful').config([
         });
 
       }],
-      // TODO we need to depend on 'widgets' so they get loaded before
-      // the editing interface is created. It depends on the presence
-      // of widgets if we construct the default interface. We MUST find
-      // a proper solution for this. This also applies to
-      // 'spaces.details.assets.detail
-      editingInterface: ['$injector', 'contentType', 'widgets', function ($injector, contentType) {
-        var editingInterfaces = $injector.get('editingInterfaces');
-        return editingInterfaces.forContentType(contentType);
-      }],
+      editingInterface: editingInterfaceResolver,
       contentType: ['$injector', 'entry', function ($injector, entry) {
         var spaceContext = $injector.get('spaceContext');
-
-        return spaceContext.fetchPublishedContentType(entry.data.sys.contentType.sys.id);
+        var ctId = entry.data.sys.contentType.sys.id;
+        return spaceContext.fetchPublishedContentType(ctId);
       }],
-      sidebarWidgets: [
-        'editingInterface', 'contentType', 'widgets',
-        function (editingInterface, contentType, Widgets) {
-          return Widgets.buildSidebarWidgets(
-            editingInterface.data.widgets,
-            contentType.data.fields
-          );
-        }]
+      editorWidgets: ['editingInterface', 'spaceContext', function (ei, spaceContext) {
+        return spaceContext.widgets.buildRenderable(ei.widgets);
+      }]
     },
-    controller: ['$state', '$scope', 'entry', 'editingInterface', 'contentType', 'contextHistory', 'sidebarWidgets',
-                 function ($state, $scope, entry, editingInterface, contentType, contextHistory, sidebarWidgets) {
+    controller: ['$state', '$scope', 'entry', 'editorWidgets', 'contentType', 'contextHistory',
+                 function ($state, $scope, entry, editorWidgets, contentType, contextHistory) {
       $state.current.data = $scope.context = {};
       $scope.entry = entry;
       $scope.entity = entry;
-      $scope.editingInterface = editingInterface;
       $scope.contentType = contentType;
-      $scope.sidebarWidgets = sidebarWidgets;
+      $scope.formWidgets = editorWidgets.form;
+      $scope.sidebarWidgets = editorWidgets.sidebar;
       contextHistory.addEntity(entry);
     }],
     template:
@@ -209,27 +198,18 @@ angular.module('contentful').config([
           return asset;
         });
       }],
-      contentType: ['$injector', function ($injector) {
-        var AssetContentType = $injector.get('AssetContentType');
-        return {
-          data: AssetContentType,
-          getId: _.constant('asset'),
-        };
-      }],
-      // TODO duplicates code in 'entries.details' state
-      editingInterface: ['$injector', 'contentType', 'widgets', function ($injector, contentType) {
-        var editingInterfaces = $injector.get('editingInterfaces');
-        return editingInterfaces.forContentType(contentType);
-      }],
+      formWidgets: ['$injector', 'spaceContext', function ($injector, spaceContext) {
+        var ei = $injector.get('data/editingInterfaces/asset');
+        return spaceContext.widgets.buildRenderable(ei.widgets).form;
+      }]
     },
-    controller: ['$state', '$scope', 'asset', 'contentType', 'editingInterface', 'contextHistory',
-                 function ($state, $scope, asset, contentType, editingInterface, contextHistory) {
+    controller: ['$injector', '$scope', 'asset', 'formWidgets',
+                 function ($injector, $scope, asset, formWidgets) {
+      var $state = $injector.get('$state');
+      $injector.get('contextHistory').addEntity(asset);
       $state.current.data = $scope.context = {};
-      $scope.asset = asset;
-      $scope.entity = asset;
-      $scope.editingInterface = editingInterface;
-      $scope.contentType = contentType;
-      contextHistory.addEntity(asset);
+      $scope.asset = $scope.entity = asset;
+      $scope.formWidgets = formWidgets;
     }],
     template:
     '<div ' + [
@@ -265,7 +245,9 @@ angular.module('contentful').config([
       parent: 'spaces.detail.content_types.list',
       label: '{{contentType.getName() + (context.dirty ? "*" : "")}}'
     },
-    controller: ['$state', '$scope', 'contentType', 'editingInterface', 'publishedContentType', function ($state, $scope, contentType, editingInterface, publishedContentType) {
+    controller:
+      ['$state', '$scope', 'contentType', 'editingInterface', 'publishedContentType',
+        function ($state, $scope, contentType, editingInterface, publishedContentType) {
       $scope.context = $state.current.data;
       $scope.contentType = contentType;
       $scope.editingInterface = editingInterface;
@@ -289,9 +271,7 @@ angular.module('contentful').config([
       contentType: ['space', function (space) {
         return space.newContentType({sys: {type: 'ContentType'}, fields: []});
       }],
-      editingInterface: ['contentType', 'editingInterfaces', function (contentType, editingInterfaces) {
-        return editingInterfaces.defaultInterface(contentType);
-      }],
+      editingInterface: editingInterfaceResolver,
       publishedContentType: [function () {
         return null;
       }]
@@ -325,9 +305,7 @@ angular.module('contentful').config([
           }
         });
       }],
-      editingInterface: ['contentType', 'editingInterfaces', function (contentType, editingInterfaces) {
-        return editingInterfaces.forContentType(contentType);
-      }]
+      editingInterface: editingInterfaceResolver,
     },
   }, contentTypeEditorState));
 
@@ -419,6 +397,20 @@ angular.module('contentful').config([
     abstract: true,
     template: '<ui-view/>'
   });
+
+  /**
+   * Settings > Space Settings
+   */
+
+  $stateProvider.state('spaces.detail.settings.space', base({
+    url: '/space',
+    ncyBreadcrumb: {label: 'Space Settings'},
+    loadingText: 'Loading Space Settings...',
+    template: '<cf-space-settings />',
+    controller: ['$scope', function ($scope) {
+      $scope.context = {};
+    }]
+  }));
 
   /**
    * Settings > Locale
@@ -569,32 +561,65 @@ angular.module('contentful').config([
   });
 
   /**
-   * Settings > iframe views
+   * Settings > Webhooks
    */
 
-  $stateProvider.state('spaces.detail.settings.iframe', {
-    url: '',
+  $stateProvider.state('spaces.detail.settings.webhooks', {
+    url: '/webhooks',
     abstract: true,
-    template: '<cf-space-settings>'
+    template: '<ui-view />'
   });
 
-  $stateProvider.state('spaces.detail.settings.iframe.pathSuffix', {
-    url: '/{pathSuffix:PathSuffix}',
-    params: {
-      pathSuffix: 'edit'
+  $stateProvider.state('spaces.detail.settings.webhooks.list', base({
+    url: '',
+    ncyBreadcrumb: { label: 'Webhooks' },
+    loadingText: 'Loading Webhooks...',
+    template: '<cf-webhook-list class="workbench webhook-list" />',
+    controller: ['$scope', function ($scope) {
+      $scope.context = {};
+    }]
+  }));
+
+  $stateProvider.state('spaces.detail.settings.webhooks.new', {
+    url: '/new',
+    data: {
+      isNew: true
     },
     ncyBreadcrumb: {
-      label: '{{title}}'
+      parent: 'spaces.detail.settings.webhooks.list',
+      label: '{{ context.title + (context.dirty ? "*" : "") }}'
     },
-    template: '',
-    controller: ['$scope', '$stateParams', function ($scope, $stateParams) {
-      $scope.title = {
-        edit: 'Space',
-        webhook_definitions: 'Webhooks'
-      }[$stateParams.pathSuffix];
+    template: '<cf-webhook-editor class="workbench webhook-editor" />',
+    controller: ['$scope', '$state', function ($scope, $state) {
+      $scope.context = $state.current.data;
+      $scope.webhook = {};
     }]
   });
 
+  $stateProvider.state('spaces.detail.settings.webhooks.detail', {
+    url: '/:webhookId',
+    data: {
+      isNew: false
+    },
+    ncyBreadcrumb: {
+      parent: 'spaces.detail.settings.webhooks.list',
+      label: '{{ context.title + (context.dirty ? "*" : "") }}'
+    },
+    resolve: {
+      webhook: ['WebhookRepository', 'space', '$stateParams', function (WebhookRepository, space, $stateParams) {
+        return WebhookRepository.getInstance(space).get($stateParams.webhookId);
+      }]
+    },
+    template: '<cf-webhook-editor class="workbench webhook-editor" />',
+    controller: ['$scope', '$state', 'webhook', function ($scope, $state, webhook) {
+      $scope.context = $state.current.data;
+      $scope.webhook = webhook;
+    }]
+  });
+
+  /**
+   * Account view
+   */
 
   $stateProvider.state('account', {
     url: '/account',
@@ -605,7 +630,6 @@ angular.module('contentful').config([
       }
     }
   });
-
 
   $stateProvider.state('account.pathSuffix', {
     url: '/{pathSuffix:PathSuffix}',

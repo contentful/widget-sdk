@@ -16,11 +16,9 @@ angular.module('contentful')
  * widgets should be rendered.
  */
 .controller('FormWidgetsController',
-  ['$scope', '$injector', 'contentType', 'editingInterface',
-  function($scope, $injector, contentType, editingInterface) {
+  ['$scope', '$injector', 'contentTypeId', 'widgets',
+  function($scope, $injector, contentTypeId, widgets) {
 
-  var Widgets = $injector.get('widgets');
-  var eiHelpers = $injector.get('editingInterfaces/helpers');
   var analytics = $injector.get('analyticsEvents');
 
   $scope.$watchGroup(
@@ -37,28 +35,13 @@ angular.module('contentful')
     analytics.trackWidgetEventIfCustom(
       'Custom Widget rendered',
       widget, widget.field,
-      { contentTypeId: $scope.contentType.getId() }
+      { contentTypeId: contentTypeId }
     );
   }
 
-  /**
-   * Retrieve the widgets from the current editingInterface, build the
-   * form widgets, and add them to the scope.
-   */
   function updateWidgets () {
-    $scope.widgets = _(editingInterface.data.widgets)
-      .map(buildWidget)
-      .filter(widgetIsVisible)
-      .value();
+    $scope.widgets = _.filter(widgets, widgetIsVisible);
   }
-
-  function buildWidget (widget) {
-    var field = eiHelpers.findField(contentType.data.fields, widget);
-    var renderable = Widgets.buildRenderable(widget);
-    renderable.field = field;
-    return renderable;
-  }
-
 
   function widgetIsVisible(widget) {
     if (widget.sidebar){
@@ -69,6 +52,9 @@ angular.module('contentful')
   }
 
   function fieldIsVisible (field) {
+    if (!field) {
+      return false;
+    }
     var isNotDisabled = !field.disabled || $scope.preferences.showDisabledFields;
     var hasErrors = $scope.errorPaths && $scope.errorPaths[field.id];
     return isNotDisabled || hasErrors;

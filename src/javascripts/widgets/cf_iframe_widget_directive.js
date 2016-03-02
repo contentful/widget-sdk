@@ -49,15 +49,9 @@ angular.module('contentful')
         var path = widgetAPI.buildDocPath(apiName, localeCode);
         var doc = scope.otDoc.doc;
         if (doc) {
-          return updateDocValue(doc, path, value);
-        }
-      });
-
-      widgetAPI.registerHandler('removeValue', function (apiName, localeCode) {
-        var path = widgetAPI.buildDocPath(apiName, localeCode);
-        var doc = scope.otDoc.doc;
-        if (doc) {
-          return removeDocValue(doc, path);
+          return value === undefined ?
+            removeDocValue(doc, path) :
+            updateDocValue(doc, path, value);
         }
       });
 
@@ -88,7 +82,7 @@ angular.module('contentful')
             }
           });
         });
-        // TODO Other widgets mostyl use `scope.entry.data` to determine
+        // TODO Other widgets mostly use `scope.entry.data` to determine
         // their value. Thus changes in the OT document do not update
         // the view. This should be handled uniformly in the `otDocFor`
         // and `cfFieldEditor` directives.
@@ -102,7 +96,9 @@ angular.module('contentful')
           // value along the path does not exist.
           try {
             doc.removeAt(path, cb);
-          } catch (e) {}
+          } catch (e) {
+            cb();
+          }
           scope.otDoc.updateEntityData();
         });
       }

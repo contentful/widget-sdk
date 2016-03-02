@@ -12,17 +12,19 @@ angular.module('contentful')
  *
  * @param {Scope}                    $scope
  * @param {Client.ContentType}       $scope.contentType
- * @param {Client.EditingInterface}  $scope.editingInterface
  * @param {Client.ContentType.Field} field
+ * @param {API.Widget}               widget
  * @return {Promise<void>}
  */
 .factory('openFieldDialog', ['$injector', function ($injector) {
   var analytics = $injector.get('analyticsEvents');
   var modalDialog  = $injector.get('modalDialog');
 
-  return function openFieldDialog($scope, field) {
-    var scope = $scope.$new();
-    _.extend(scope, {field: field});
+  return function openFieldDialog ($scope, field, widget) {
+    var scope = _.extend($scope.$new(), {
+      field: field,
+      widget: widget
+    });
     trackOpenSettingsDialog(field);
     return modalDialog.open({
       scope: scope,
@@ -48,7 +50,7 @@ angular.module('contentful')
  *
  * @scope.requires {Client.ContentType.Field}  field
  * @scope.requires {Client.ContentType}        contentType
- * @scope.requires {Client.EditingInterface}   editingInterface
+ * @scope.requires {API.EditingInterface}      editingInterface
  *
  * @property {string} $scope.widgetSettings.id
  * @property {object} $scope.widgetSettings.params
@@ -63,20 +65,19 @@ angular.module('contentful')
   var fieldFactory      = $injector.get('fieldFactory');
   var Widgets           = $injector.get('widgets');
   var features          = $injector.get('features');
-  var eiHelpers         = $injector.get('editingInterfaces/helpers');
 
   $scope.decoratedField = field.decorate($scope.field, $scope.contentType);
   $scope.validations = validations.decorateFieldValidations($scope.field);
 
   $scope.currentTitleField = getTitleField($scope.contentType);
 
-  var eiWidgets = $scope.editingInterface.data.widgets;
-  var widget = eiHelpers.findWidget(eiWidgets, $scope.field);
+  var widget = $scope.widget;
   var initialWidgetId = widget.widgetId;
 
   $scope.widgetSettings = {
     id: widget.widgetId,
-    params: _.cloneDeep(widget.widgetParams)
+    // Need to clone so we do not mutate data if we cancel the dialog
+    params: _.cloneDeep(widget.widgetParams || {})
   };
 
 
@@ -110,6 +111,7 @@ angular.module('contentful')
     var widgetId = $scope.widgetSettings.id;
     _.extend(widget, {
       widgetId: widgetId,
+      fieldId: $scope.field.apiName,
       widgetParams: Widgets.filteredParams(widgetId, params)
     });
 
@@ -255,12 +257,13 @@ angular.module('contentful')
  */
 .controller('FieldDialogAppearanceController',
 ['$scope', '$injector', function ($scope, $injector) {
-  var widgets = $injector.get('widgets');
+  var Widgets = $injector.get('widgets');
+  var getDefaultWidgetId = $injector.get('widgets/default');
 
-  $scope.defaultWidgetId = widgets.defaultWidgetId($scope.field, $scope.contentType);
+  $scope.defaultWidgetId = getDefaultWidgetId($scope.field, $scope.contentType);
   $scope.widgetParams = $scope.widgetSettings.params;
-  $scope.$watch('widgetParams', updateWidgetOptions, true);
-  $scope.$watch('widget.options', updateWidgetOptions);
+  $scope.$watch('widgetParams', updateOptionsAndParams, true);
+  $scope.$watch('widget.id', updateOptionsAndParams);
 
   $scope.$watch('availableWidgets', function (available) {
     if (!available) { return; }
@@ -278,12 +281,12 @@ angular.module('contentful')
     $scope.widgetSettings.id = widget.id;
   };
 
-  function updateWidgetOptions () {
-    if (!$scope.widget) return;
-
-    var options = $scope.widget.options;
-    var params = $scope.widgetParams;
-    widgets.applyDefaults(params, options);
-    $scope.widgetOptions = widgets.filterOptions(options, params);
+  function updateOptionsAndParams () {
+    var widget = $scope.widget;
+    if (widget) {
+      var params = $scope.widgetParams;
+      Widgets.applyDefaults(widget.id, params);
+      $scope.widgetOptions = Widgets.filterOptions(widget.options, params);
+    }
   }
 }]);

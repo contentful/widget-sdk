@@ -1,0 +1,76 @@
+'use strict';
+
+
+/**
+ * @ngdoc service
+ * @name widgets/default
+ */
+angular.module('contentful')
+.factory('widgets/default', ['$injector', function($injector) {
+  var fieldFactory = $injector.get('fieldFactory');
+
+  // Maps type names to builtin widget IDs. Type names are those
+  // returned by `fieldFactory.getTypeName`.
+  var DEFAULT_WIDGETS = {
+    'Text':     'markdown',
+    'Symbol':   'singleLine',
+    'Symbols':  'listInput',
+    'Integer':  'numberEditor',
+    'Number':   'numberEditor',
+    'Boolean':  'boolean',
+    'Date':     'datePicker',
+    'Location': 'locationEditor',
+    'Object':   'objectEditor',
+    'Entry':    'entryLinkEditor',
+    'Entries':  'entryLinksEditor',
+    'Asset':    'assetLinkEditor',
+    'Assets':   'assetLinksEditor',
+  };
+
+
+  // We can use a dropdown widget for these field types
+  var DROPDOWN_TYPES = ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'];
+
+  /**
+   * @ngdoc method
+   * @name widgets/default#
+   * @param {API.ContentType.Field} field
+   * @param {Client.ContentType} contentType
+   * @return {string}
+   *
+   * @description
+   * Get the default widget ID for a field
+   *
+   * It accounts for legacy behavior for when there were no user selectable
+   * widgets for a given field and some fields would have different widgets
+   * in different occasions, specifically:
+   * - Text field: defaults to markdown, unless it is a title field.
+   *   where it gets switched to singleLine
+   * - Any field that allows for predefined values: gets changed to a dropdown
+   *   in the presence of the 'in' validation
+   */
+  return function getDefaultWidgetId (field, contentType) {
+    var fieldType = fieldFactory.getTypeName(field);
+
+    // FIXME We create the editing interface, and thus the widget ids
+    // before any validation can be set. So I think this is not need.
+    var shouldUseDropdown = hasInValidation(field.validations);
+    var canUseDropdown = _.contains(DROPDOWN_TYPES, fieldType);
+    if (shouldUseDropdown && canUseDropdown) {
+      return 'dropdown';
+    }
+
+    if (fieldType === 'Text') {
+      var isDisplayField = contentType.data.displayField === field.id;
+      return isDisplayField ? 'singleLine' : 'markdown';
+    }
+
+    return DEFAULT_WIDGETS[fieldType];
+  };
+
+  function hasInValidation(validations) {
+    return _.find(validations, function (validation) {
+      return 'in' in validation;
+    });
+  }
+}]);

@@ -2,8 +2,9 @@
 
 describe('analytics', function () {
   beforeEach(function () {
-    module('contentful/test', function (analyticsProvider) {
-      analyticsProvider.forceLoad();
+
+    module('contentful/test', function (environment) {
+      environment.env = 'production';
     });
 
     this.userData = {
@@ -77,6 +78,13 @@ describe('analytics', function () {
       this.analytics.setUserData(this.userData);
       sinon.assert.calledWith(this.segment.identify, 'h4nswur5t', this.userData);
       sinon.assert.calledWith(this.totango.initialize, this.userData, this.space.data.organization);
+    });
+
+    it('calls identify with new data', function() {
+      this.analytics.setUserData(this.userData);
+      this.analytics.addIdentifyingData({data: 'lolcat'});
+      sinon.assert.calledTwice(this.segment.identify);
+      sinon.assert.calledWith(this.segment.identify, 'h4nswur5t', {data: 'lolcat'});
     });
   });
 
