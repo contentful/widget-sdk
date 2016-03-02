@@ -112,7 +112,7 @@ describe('otSubdoc', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.stubDirective('otDocFor', {
-        controller: function() { }
+        controller: _.noop
       });
     });
     var $rootScope    = this.$inject('$rootScope');

@@ -19,7 +19,7 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
       scope.$on('cfFileDropped', fileEventHandler);
       scope.$on('gettyFileAuthorized', fileEventHandler);
       scope.$on('fileProcessingFailed', function () {
-        setFPFile(null);
+        deleteFile();
       });
 
       scope.toggleMeta = toggleMeta;
@@ -52,8 +52,7 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
       }
 
       function deleteFile() {
-        setFPFile(null);
-        scope.validate();
+        setFPFile(null).then(scope.validate);
       }
 
       function fileEventHandler(event, file) {
@@ -61,13 +60,15 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
       }
 
       function setFPFile(FPFile) {
-        scope.file = filepicker.parseFPFile(FPFile);
-        scope.otBindObjectValueCommit().then(notify);
         aviary.close();
+        scope.file = filepicker.parseFPFile(FPFile);
+        return scope.otBindObjectValueCommit().then(notify);
       }
 
       function notify() {
-        if (scope.file) scope.$emit('fileUploaded', scope.file, scope.locale);
+        if (scope.file) {
+          scope.$emit('fileUploaded', scope.file, scope.locale);
+        }
       }
 
       function editFile() {
