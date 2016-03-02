@@ -123,4 +123,39 @@ describe('navigation/stateChangeHandlers', function () {
       sinon.assert.calledWith(logger.logError, 'Change state during state change confirmation');
     });
   });
+
+  describe('addToContext', function () {
+    it('prevents transition when only "addToContext" has changed', function () {
+      var change = $rootScope.$emit(
+        '$stateChangeStart',
+        {name: 'A'},
+        {addToContext: true},
+        {name: 'A'},
+        {addToContext: false}
+      );
+      expect(change.defaultPrevented).toBe(true);
+    });
+
+    it('does not prevent transition when "addToContext" is missing', function () {
+      var change = $rootScope.$emit(
+        '$stateChangeStart',
+        {name: 'A'},
+        {other: true},
+        {name: 'A'},
+        {other: true}
+      );
+      expect(change.defaultPrevented).toBe(false);
+    });
+
+    it('does not prevent transition when name is different', function () {
+      var change = $rootScope.$emit(
+        '$stateChangeStart',
+        {name: 'A'},
+        {addToContext: true},
+        {name: 'B'},
+        {addToContext: false}
+      );
+      expect(change.defaultPrevented).toBe(false);
+    });
+  });
 });
