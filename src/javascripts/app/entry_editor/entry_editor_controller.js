@@ -120,7 +120,7 @@ angular.module('contentful')
   $controller('FormWidgetsController', {
     $scope: $scope,
     contentTypeId: $scope.contentType.getId(),
-    widgets: $scope.formWidgets
+    controls: $scope.formControls
   });
 
   var contentTypeFields = $scope.contentType.data.fields;

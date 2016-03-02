@@ -17,7 +17,7 @@ describe('data/editingInterfaces/transformer', function () {
       this.fromAPI = Transformer.fromAPI;
     });
 
-    it('adds default widgets if widget is missing', function () {
+    it('adds default controls if control is missing', function () {
       var contentType = {
         fields: [
           {apiName: 'MISSING'},
@@ -25,32 +25,32 @@ describe('data/editingInterfaces/transformer', function () {
         ]
       };
       var editingInterface = {
-        widgets: [
+        controls: [
           {fieldId: 'AAA'}
         ]
       };
       getDefaultWidget.withArgs({apiName: 'MISSING'}).returns('DEF');
 
-      var widgets = this.fromAPI(contentType, editingInterface).widgets;
-      expect(widgets.length).toBe(2);
-      expect(widgets[0].widgetId).toEqual('DEF');
-      expect(widgets[0].fieldId).toEqual('MISSING');
+      var controls = this.fromAPI(contentType, editingInterface).controls;
+      expect(controls.length).toBe(2);
+      expect(controls[0].widgetId).toEqual('DEF');
+      expect(controls[0].fieldId).toEqual('MISSING');
     });
 
-    it('removes widgets for missing fields', function () {
+    it('removes controls for missing fields', function () {
       var contentType = {
         fields: [{apiName: 'AAA'}]
       };
       var editingInterface = {
-        widgets: [
+        controls: [
           { fieldId: 'MISSING' },
           { fieldId: 'AAA' }
         ]
       };
 
-      var widgets = this.fromAPI(contentType, editingInterface).widgets;
-      expect(widgets.length).toBe(1);
-      expect(widgets[0].fieldId).toEqual('AAA');
+      var controls = this.fromAPI(contentType, editingInterface).controls;
+      expect(controls.length).toBe(1);
+      expect(controls[0].fieldId).toEqual('AAA');
     });
 
     it('migrates deprecated widgets', function () {
@@ -64,11 +64,11 @@ describe('data/editingInterfaces/transformer', function () {
         fields: [{ apiName: 'AAA' }]
       };
       var editingInterface = {
-        widgets: [{ fieldId: 'AAA', widgetId: 'OLD' }]
+        controls: [{ fieldId: 'AAA', widgetId: 'OLD' }]
       };
 
-      var widgets = this.fromAPI(contentType, editingInterface).widgets;
-      expect(widgets[0].widgetId).toEqual('NEW');
+      var controls = this.fromAPI(contentType, editingInterface).controls;
+      expect(controls[0].widgetId).toEqual('NEW');
     });
 
     describe('fieldId migration', function () {
@@ -79,14 +79,14 @@ describe('data/editingInterfaces/transformer', function () {
           { id: 'id3', apiName: 'apiName3' }
         ]};
 
-        var editingInterface = {widgets: [
+        var editingInterface = {controls: [
           { fieldId: 'id1' },
           { fieldId: 'apiName2' },
           { fieldId: 'id3' }
         ]};
 
-        var widgets = this.fromAPI(contentType, editingInterface).widgets;
-        var fieldIds = _.map(widgets, 'fieldId');
+        var controls = this.fromAPI(contentType, editingInterface).controls;
+        var fieldIds = _.map(controls, 'fieldId');
         expect(fieldIds).toEqual(['apiName1', 'apiName2', 'apiName3']);
       });
 
@@ -95,12 +95,12 @@ describe('data/editingInterfaces/transformer', function () {
           { id: 'id1' },
         ]};
 
-        var editingInterface = {widgets: [
+        var editingInterface = {controls: [
           { fieldId: 'id1' },
         ]};
 
-        var widgets = this.fromAPI(contentType, editingInterface).widgets;
-        expect(widgets[0].fieldId).toEqual('id1');
+        var controls = this.fromAPI(contentType, editingInterface).controls;
+        expect(controls[0].fieldId).toEqual('id1');
       });
 
       xit('prefers the apiName over the field id', function() {
@@ -109,12 +109,12 @@ describe('data/editingInterfaces/transformer', function () {
           { id: 'AAA', apiName: 'apiName1' },
         ]};
 
-        var editingInterface = {widgets: [
+        var editingInterface = {controls: [
           { fieldId: 'AAA' },
         ]};
 
-        var widgets = this.fromAPI(contentType, editingInterface).widgets;
-        var fieldIds = _.map(widgets, 'fieldId');
+        var controls = this.fromAPI(contentType, editingInterface).controls;
+        var fieldIds = _.map(controls, 'fieldId');
         expect(fieldIds).toEqual(['AAA', 'apiName1']);
       });
     });

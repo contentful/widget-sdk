@@ -19,7 +19,7 @@ angular.module('cf.data')
 
       /**
        * @ngdoc method
-       * @name data/editingInterfaces#syncWidgets
+       * @name data/editingInterfaces#syncControls
        * @description
        * Reexport of the [transformer method][1].
        *
@@ -28,7 +28,7 @@ angular.module('cf.data')
        * @param {Data.ContentType} ct
        * @param {Data.EditingInterface} ei
        */
-      syncWidgets: Transformer.syncWidgets
+      syncControls: Transformer.syncControls
     };
 
     /**

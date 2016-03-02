@@ -12,7 +12,7 @@ describe('DateTime Editor', function () {
     scope.otSubDoc = {
       changeValue: sinon.stub().returns($q.when())
     };
-    scope.widget = {widgetParams: {
+    scope.widget = {settings: {
       format: 'timeZ',
       ampm: '24'
     }};
@@ -214,7 +214,7 @@ describe('DateTime Editor', function () {
 
   describe('AM/PM mode', function () {
     beforeEach(function(){
-      scope.widget.widgetParams.ampm = '12';
+      scope.widget.settings.ampm = '12';
     });
 
     it('should not allow invalid times', function() {

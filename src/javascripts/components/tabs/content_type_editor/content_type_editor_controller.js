@@ -136,8 +136,8 @@ function ContentTypeEditorController($scope, $injector) {
    * @param {Client.ContentType.Field} field
    */
   controller.openFieldDialog = function (field) {
-    var widget = eiHelpers.findWidget($scope.editingInterface.widgets, field);
-    return openFieldDialog($scope, field, widget)
+    var control = eiHelpers.findWidget($scope.editingInterface.controls, field);
+    return openFieldDialog($scope, field, control)
     .then(function () {
       $scope.contentTypeForm.$setDirty();
     });
@@ -220,6 +220,6 @@ function ContentTypeEditorController($scope, $injector) {
    * Make sure that each field has a widget and vice versa.
    */
   function syncEditingInterface () {
-    editingInterfaces.syncWidgets($scope.contentType.data, $scope.editingInterface);
+    editingInterfaces.syncControls($scope.contentType.data, $scope.editingInterface);
   }
 }]);

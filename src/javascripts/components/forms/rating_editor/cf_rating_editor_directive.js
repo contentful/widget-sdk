@@ -19,7 +19,7 @@ angular.module('contentful').directive('cfRatingEditor', [function(){
       }
     },
     controller: ['$scope', function ($scope) {
-      $scope.$watch('widget.widgetParams.stars', setStars);
+      $scope.$watch('widget.settings.stars', setStars);
       $scope.pendingValue = -1;
 
       $scope.setPending = setPending;

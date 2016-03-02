@@ -77,7 +77,7 @@ angular.module('contentful')
   $scope.widgetSettings = {
     id: widget.widgetId,
     // Need to clone so we do not mutate data if we cancel the dialog
-    params: _.cloneDeep(widget.widgetParams || {})
+    params: _.cloneDeep(widget.settings || {})
   };
 
 
@@ -112,7 +112,7 @@ angular.module('contentful')
     _.extend(widget, {
       widgetId: widgetId,
       fieldId: $scope.field.apiName,
-      widgetParams: Widgets.filteredParams(widgetId, params)
+      settings: Widgets.filteredParams(widgetId, params)
     });
 
     if (widgetId !== initialWidgetId) {
