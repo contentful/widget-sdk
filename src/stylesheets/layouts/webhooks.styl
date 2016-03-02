@@ -33,3 +33,20 @@
   border-left: 1px solid $colors.element-mid
   left: 50%
   right: 0
+
+.webhook-calls__paginator
+  display: flex
+  justify-content: center
+  padding: $rhythm(1)
+
+.webhook-calls__paginator-item
+  display: block
+  padding: $rhythm(.4)
+  padding-top: $rhythm(.25)
+  padding-bottom: $rhythm(.2)
+  margin: 0 $rhythm(.3)
+  background: $colors.element-light
+  &.x--active
+    background: $colors.blue-dark
+    color: white
+    font-weight: bold

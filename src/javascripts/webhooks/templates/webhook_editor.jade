@@ -33,8 +33,9 @@ header.workbench-header
         ng-model="webhook.httpBasicPassword")
 
   div(ui-tabpanel="activity")
-    p(ng-show="loadingLogs") Loading logs...
-    table.result-list.main-results.main-header(ng-show="logs")
+    p(ng-show="activity.loading") Loading logs...
+
+    table.result-list.main-results.main-header(ng-show="activity.visible")
       thead
         tr
           th.cell-time Webhook called at
@@ -43,7 +44,7 @@ header.workbench-header
     .main-results-wrapper
       table.result-list.main-results
         tbody
-          tr(ng-repeat="log in logs track by log.sys.id"
+          tr(ng-repeat="log in activity.visible track by log.sys.id"
           ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail.call({ callId: log.sys.id })'"
           ui-sref="{{entityNavState}}")
             td.cell-time
@@ -54,3 +55,18 @@ header.workbench-header
                 span(ng-show="log.errors[0] === 'TimeoutError'") Timeout
             td.cell-actions
               a.entity-list-link(ui-sref="{{entityNavState}}") View details
+
+    .webhook-calls__paginator
+      a.webhook-calls__paginator-item(
+        ng-show="activity.page > 0"
+        href="" ng-click="activity.page = activity.page-1")
+        | &laquo;
+      a.webhook-calls__paginator-item(
+        ng-class="{'x--active': activity.page === page}"
+        ng-repeat="page in activity.pages track by page"
+        href="" ng-click="activity.page = page")
+        | {{ page+1 }}
+      a.webhook-calls__paginator-item(
+        ng-show="activity.page < activity.pages.length-1"
+        href="" ng-click="activity.page = activity.page+1")
+        | &raquo;

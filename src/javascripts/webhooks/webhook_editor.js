@@ -25,9 +25,12 @@ angular.module('contentful')
   var ReloadNotification = $injector.get('ReloadNotification');
   var ActivityRepository = $injector.get('WebhookActivityRepository');
 
+  var PER_PAGE = 30;
+
   var touched = getInitialTouchCount();
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
+  $scope.activity = {loading: false};
 
   $scope.$watch('webhook', function (webhook, prev) {
     touched += 1;
@@ -40,11 +43,14 @@ angular.module('contentful')
   });
 
   $scope.$watch('context.isNew', function (isNew) {
-    if (!isNew && !$scope.logs && !$scope.loadingLogs) {
-      $scope.loadingLogs = ActivityRepository.getOverview(space, $scope.webhook).then(function (result) {
-        $scope.logs = result;
-        $scope.loadingLogs = false;
-      });
+    if (!isNew && !$scope.activity.items && !$scope.activity.loading) {
+      $scope.activity.loading = fetchActivity();
+    }
+  });
+
+  $scope.$watch('activity.page', function (page) {
+    if (_.isNumber(page) && $scope.activity.items) {
+      $scope.activity.visible = $scope.activity.items.slice(page*PER_PAGE, (page+1)*PER_PAGE);
     }
   });
 
@@ -150,5 +156,14 @@ angular.module('contentful')
 
   function getInitialTouchCount() {
     return $scope.context.isNew ? 0 : -1;
+  }
+
+  function fetchActivity() {
+    return ActivityRepository.getOverview(space, $scope.webhook).then(function (result) {
+      $scope.activity.items = result;
+      $scope.activity.pages = _.range(0, Math.ceil(result.length / PER_PAGE));
+      $scope.activity.loading = false;
+      $scope.activity.page = 0;
+    });
   }
 }]);
