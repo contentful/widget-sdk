@@ -54,6 +54,7 @@ describe('The Locale list directive', function () {
     ];
 
     this.scope = this.$inject('$rootScope').$new();
+    this.scope.context = {};
     this.scope.spaceContext = {
       space: {
         data: {
