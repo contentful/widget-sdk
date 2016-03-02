@@ -23,7 +23,6 @@ angular.module('contentful')
   var notification       = $injector.get('notification');
   var logger             = $injector.get('logger');
   var ReloadNotification = $injector.get('ReloadNotification');
-  var ActivityRepository = $injector.get('WebhookActivityRepository');
 
   var PER_PAGE = 30;
 
@@ -159,9 +158,9 @@ angular.module('contentful')
   }
 
   function fetchActivity() {
-    return ActivityRepository.getOverview(space, $scope.webhook).then(function (result) {
-      $scope.activity.items = result;
-      $scope.activity.pages = _.range(0, Math.ceil(result.length / PER_PAGE));
+    return space.endpoint('webhooks/' + $scope.webhook.sys.id + '/calls').get().then(function (res) {
+      $scope.activity.items = res.items;
+      $scope.activity.pages = _.range(0, Math.ceil(res.items.length / PER_PAGE));
       $scope.activity.loading = false;
       $scope.activity.page = 0;
     });

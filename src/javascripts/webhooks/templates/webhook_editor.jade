@@ -51,7 +51,7 @@ header.workbench-header
               a.entity-list-link(ui-sref="{{entityNavState}}") {{ log.requestAt }}
             td.cell-result
               a.entity-list-link(ui-sref="{{entityNavState}}")
-                span(ng-show="log.code") HTTP {{ log.code }}
+                span(ng-show="log.statusCode") HTTP {{ log.statusCode }}
                 span(ng-show="log.errors[0] === 'TimeoutError'") Timeout
             td.cell-actions
               a.entity-list-link(ui-sref="{{entityNavState}}") View details

@@ -12,8 +12,10 @@ describe('Webhook Editor directive', function () {
     this.notification.info = sinon.stub();
     this.notification.error = sinon.stub();
 
-    this.$inject('spaceContext').space = {getId: _.constant('spaceid')};
-    this.$inject('WebhookActivityRepository').getOverview = sinon.stub().resolves([]);
+    this.$inject('spaceContext').space = {
+      getId: _.constant('spaceid'),
+      endpoint: sinon.stub().returns({get: sinon.stub().resolves({items: []})})
+    };
 
     this.repo = {
       save: sinon.stub(),
@@ -24,6 +26,7 @@ describe('Webhook Editor directive', function () {
 
     this.compile = function (context, webhook) {
       var data = {context: context || {}, webhook: webhook || {}};
+      data.webhook.sys = data.webhook.sys || {};
       this.element = this.$compile('<div cf-ui-tab><cf-webhook-editor /></div>', data);
       this.scope = this.element.scope();
     }.bind(this);
@@ -155,7 +158,9 @@ describe('Webhook Editor directive', function () {
       beforeEach(function () {
         this.compile({isNew: true});
         this.scope.webhook.url = 'http://test.com';
-        this.repo.save.resolves(_.extend({sys: {id: 'whid'}}, this.scope.webhook));
+        var saved = _.cloneDeep(this.scope.webhook);
+        saved.sys.id = 'whid';
+        this.repo.save.resolves(saved);
         this.scope.$apply();
         this.button('Save').click();
       });

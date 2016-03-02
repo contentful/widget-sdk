@@ -13,13 +13,15 @@ header.workbench-header
       .webhook-call__header
         strong.webhook-call__header-item {{ call.url }}
         span.webhook-call__header-item {{ call.requestAt }}
-        span.webhook-call__header-item(ng-show="call.code") HTTP {{ call.code }}
+        span.webhook-call__header-item(ng-show="call.statusCode") HTTP {{ call.statusCode }}
         span.webhook-call__header-item(ng-show="call.errors[0] === 'TimeoutError'") Timeout
 
       .webhook-call__columns
         .webhook-call__column
-          strong Request
+          strong Request details
           pre {{ call.request | json }}
+          strong(ng-show="body") Request body
+          pre(ng-show="body")  {{ body | json }}
         .webhook-call__column
-          strong Response
+          strong Complete response
           pre {{ call.response | json }}

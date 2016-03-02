@@ -46,8 +46,9 @@ angular.module('contentful')
       label: 'Call details ({{ call.requestAt }})'
     },
     resolve: {
-      call: ['WebhookActivityRepository', 'space', 'webhook', '$stateParams', function (WebhookActivityRepository, space, webhook, $stateParams) {
-        return WebhookActivityRepository.getDetails(space, webhook, $stateParams.callId);
+      call: ['space', 'webhook', '$stateParams', function (space, webhook, $stateParams) {
+        var path = 'webhooks/' + webhook.sys.id + '/calls/' + $stateParams.callId;
+        return space.endpoint(path).get();
       }]
     },
     views: {

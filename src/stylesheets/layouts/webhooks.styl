@@ -23,11 +23,20 @@
   left: 0
   right: 50%
   bottom: 0
-  padding: $rhythm(1)
+  padding: $rhythm(1.5)
+  overflow-y: scroll
 
   strong
     display: block
-    margin-bottom: $rhythm(1)
+    margin: $rhythm(1) 0
+  strong:first-child
+    margin-top: 0
+  pre
+    white-space: pre-wrap
+    white-space: -moz-pre-wrap
+    white-space: -pre-wrap
+    white-space: -o-pre-wrap
+    word-wrap: break-word
 
 .webhook-call__column:last-child
   border-left: 1px solid $colors.element-mid
