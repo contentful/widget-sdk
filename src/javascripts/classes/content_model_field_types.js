@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('contentful').constant('contentModelFieldTypes', {
   Symbol: {
     jsonType: 'String',

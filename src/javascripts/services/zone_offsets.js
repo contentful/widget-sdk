@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('contentful').constant('zoneOffsets', [
   '-12:00',
   '-11:00',
