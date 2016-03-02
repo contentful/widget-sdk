@@ -406,7 +406,7 @@ angular.module('contentful').config([
     url: '/space',
     ncyBreadcrumb: {label: 'Space Settings'},
     loadingText: 'Loading Space Settings...',
-    template: '<cf-space-settings />',
+    template: '<cf-space-settings class="workbench space-settings" />',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
     }]

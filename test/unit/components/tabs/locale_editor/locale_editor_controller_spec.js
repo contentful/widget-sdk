@@ -28,11 +28,11 @@ describe('Locale editor controller', function () {
       $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
     });
 
-    this.$q = this.$inject('$q');
-    this.$inject('tokenStore').getUpdatedToken = sinon.stub().returns(this.$q.when());
+    this.$inject('tokenStore').refresh = sinon.stub().resolves();
     this.scope = this.$inject('$rootScope').$new();
 
     var spaceContext = this.$inject('spaceContext');
+    spaceContext.space = {};
     dotty.put(spaceContext, 'space.data.organization.subscriptionPlan.name', 'Unlimited');
 
     this.scope.context = {};
@@ -48,8 +48,8 @@ describe('Locale editor controller', function () {
       data: {},
       getName: sinon.stub().returns('localeName'),
       getId: getIdStub.returns('someId'),
-      delete: sinon.stub().returns(this.$q.when()),
-      save: sinon.stub().returns(this.$q.when({getId: getIdStub})),
+      delete: sinon.stub().resolves(),
+      save: sinon.stub().resolves({getId: getIdStub}),
       getCode: sinon.stub(),
       isDefault: sinon.stub(),
       getVersion: sinon.stub()
@@ -128,8 +128,8 @@ describe('Locale editor controller', function () {
     var error = { body: { message: 'errorMessage' }};
     beforeEach(function () {
       this.scope.localeForm.$dirty = true;
-      this.scope.locale.delete.returns(this.$q.reject(error));
-      this.modalDialog.openConfirmDialog.returns(this.$q.when({confirmed: true}));
+      this.scope.locale.delete.rejects(error);
+      this.modalDialog.openConfirmDialog.resolves({confirmed: true});
       this.controller.delete.execute();
       this.$apply();
     });
@@ -201,7 +201,7 @@ describe('Locale editor controller', function () {
 
       describe('with confirmation', function() {
         beforeEach(function() {
-          this.modalDialog.openConfirmDialog.returns(this.$q.when({confirmed: true}));
+          this.modalDialog.openConfirmDialog.resolves({confirmed: true});
           this.controller.save.execute();
           this.$apply();
         });
@@ -221,7 +221,7 @@ describe('Locale editor controller', function () {
 
       describe('with no confirmation', function() {
         beforeEach(function() {
-          this.modalDialog.openConfirmDialog.returns(this.$q.when({}));
+          this.modalDialog.openConfirmDialog.resolves({});
           this.controller.save.execute();
           this.$apply();
         });
@@ -244,7 +244,7 @@ describe('Locale editor controller', function () {
 
   describe('#save command fails', function () {
     beforeEach(function () {
-      this.scope.locale.save.returns(this.$q.reject({}));
+      this.scope.locale.save.rejects({});
       this.scope.localeForm.$dirty = true;
       this.controller.save.execute();
       this.$apply();

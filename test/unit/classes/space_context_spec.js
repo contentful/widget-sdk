@@ -12,6 +12,20 @@ describe('spaceContext', function () {
     this.theLocaleStore.resetWithSpace = sinon.stub();
   });
 
+  describe('#purge', function () {
+    it('gets rid of all space-related data', function () {
+      var sc = this.spaceContext;
+      sc.purge();
+
+      ['space', 'users', 'widgets'].forEach(function (field) {
+        expect(sc[field]).toEqual(null);
+      });
+      ['contentTypes', 'publishedContentTypes'].forEach(function (field) {
+        expect(sc[field]).toEqual([]);
+      });
+    });
+  });
+
   describe('#resetWithSpace()', function () {
     var SPACE, result, Widgets;
 

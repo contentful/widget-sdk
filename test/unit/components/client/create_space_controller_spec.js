@@ -12,7 +12,7 @@ describe('Create Space controller', function () {
       ]);
 
       self.tokenStoreStubs = {
-        getUpdatedToken: sinon.stub(),
+        refresh: sinon.stub(),
         getSpace: sinon.stub()
       };
       $provide.value('tokenStore', self.tokenStoreStubs);
@@ -24,7 +24,6 @@ describe('Create Space controller', function () {
     inject(function ($controller, $injector) {
       this.$rootScope = $injector.get('$rootScope');
       this.logger = $injector.get('logger');
-      this.$q = $injector.get('$q');
       this.client = $injector.get('client');
       this.enforcements = $injector.get('enforcements');
       this.accessChecker = $injector.get('accessChecker');
@@ -44,8 +43,6 @@ describe('Create Space controller', function () {
       org = {sys: {id: 'orgid'}};
       scope.organizations = [org];
       scope.newSpaceForm = {};
-
-      scope.setTokenDataOnScope = sinon.stub();
 
       createController = function () {
         createSpaceCtrl = $controller('CreateSpaceDialogController', {$scope: scope});
@@ -152,13 +149,13 @@ describe('Create Space controller', function () {
 
         describe('if remote call fails with no specific error', function() {
           beforeEach(function() {
-            this.client.createSpace.returns(this.$q.reject({
+            this.client.createSpace.rejects({
               body: {
                 details: {
                   errors: []
                 }
               }
-            }));
+            });
             scope.createSpace();
             scope.$digest();
           });
@@ -196,7 +193,7 @@ describe('Create Space controller', function () {
 
         describe('if remote call fails with a specific error', function() {
           beforeEach(function() {
-            this.client.createSpace.returns(this.$q.reject({
+            this.client.createSpace.rejects({
               body: {
                 details: {
                   errors: [
@@ -204,7 +201,7 @@ describe('Create Space controller', function () {
                   ]
                 }
               }
-            }));
+            });
             scope.createSpace();
             scope.$digest();
           });
@@ -244,10 +241,10 @@ describe('Create Space controller', function () {
 
             space = {getId: stubs.getId, data: {name: 'newspace'}};
             scope.spaces = [space];
-            this.client.createSpace.returns(this.$q.when(space));
+            this.client.createSpace.resolves(space);
             stubs.getId.returns('spaceid');
-            this.tokenStoreStubs.getUpdatedToken.returns(this.$q.when());
-            this.tokenStoreStubs.getSpace.returns(this.$q.when(space));
+            this.tokenStoreStubs.refresh.resolves();
+            this.tokenStoreStubs.getSpace.resolves(space);
             spaceTools = this.$inject('spaceTools');
             sinon.stub(spaceTools, 'goTo');
             scope.createSpace();
@@ -272,15 +269,11 @@ describe('Create Space controller', function () {
           });
 
           it('performs token lookup', function() {
-            sinon.assert.called(this.tokenStoreStubs.getUpdatedToken);
+            sinon.assert.called(this.tokenStoreStubs.refresh);
           });
 
           it('gets space', function() {
             sinon.assert.called(this.tokenStoreStubs.getSpace);
-          });
-
-          it('sets token data on scope', function() {
-            sinon.assert.called(scope.setTokenDataOnScope);
           });
 
           it('reuses existing space with same id', function() {

@@ -86,7 +86,7 @@ angular.module('contentful')
     trackDelete();
     return $scope.locale.delete()
     .then(function deletedSuccesfully () {
-      return tokenStore.getUpdatedToken().then(function () {
+      return tokenStore.refresh().then(function () {
         // TODO Should probably be handled by the token store
         TheLocaleStore.refresh();
         return $scope.closeState();
@@ -144,7 +144,7 @@ angular.module('contentful')
   function saveSuccessHandler(response) {
     $scope.localeForm.$setPristine();
     $scope.context.dirty = false;
-    return tokenStore.getUpdatedToken().then(function () {
+    return tokenStore.refresh().then(function () {
       updateInitialLocaleCode();
       // TODO Should probably be handled by the token store
       TheLocaleStore.refresh();

@@ -1,127 +1,191 @@
 'use strict';
 
-angular.module('contentful').service('tokenStore', ['$injector', function($injector) {
-  var $rootScope     = $injector.get('$rootScope');
-  var $q             = $injector.get('$q');
-  var client         = $injector.get('client');
-  var authentication = $injector.get('authentication');
-  var modalDialog    = $injector.get('modalDialog');
-  var notifyReload   = $injector.get('ReloadNotification').trigger;
-  var logger         = $injector.get('logger');
+/**
+ * @ngdoc service
+ * @name tokenStore
+ *
+ * @description
+ * This service is responsible for fetching, storing and exposing
+ * data included in an access token.
+ */
+angular.module('contentful').factory('tokenStore', ['$injector', function ($injector) {
 
-  var tokenStore = this;
+  var $q                 = $injector.get('$q');
+  var client             = $injector.get('client');
+  var authentication     = $injector.get('authentication');
+  var modalDialog        = $injector.get('modalDialog');
+  var ReloadNotification = $injector.get('ReloadNotification');
+  var logger             = $injector.get('logger');
+  var createSignal       = $injector.get('signal');
 
-  tokenStore._currentToken = null;
-  tokenStore._inFlightUpdate = null;
+  var currentToken = null;
+  var changed  = createSignal();
+  var refreshDeferred = null;
+  var refreshRequests = 0;
 
-  tokenStore.hasToken = function () {
-    return !!tokenStore._currentToken;
+  return {
+    changed:           changed,
+    refresh:           refresh,
+    refreshWithLookup: refreshWithLookup,
+    getSpaces:         getSpaces,
+    getSpace:          getSpace
   };
 
-  tokenStore.updateToken = function(token) {
-    tokenStore._currentToken = token;
-  };
-
-  tokenStore.updateTokenFromTokenLookup = function(tokenLookup) {
-    var existingSpaces = tokenStore._currentToken ? tokenStore._currentToken.spaces : [];
-    tokenStore.updateToken({
+  /**
+   * @ngdoc method
+   * @name tokenStore#refreshWithLookup
+   * @param {object} tokenLookup
+   * @description
+   * This (synchronous) method takes a token lookup object and:
+   * - stores user
+   * - stores updated spaces (existing space objects are updated, not recreated)
+   * - notifies all subscribers of "changed" signal
+   */
+  function refreshWithLookup(tokenLookup) {
+    currentToken = {
       user: tokenLookup.sys.createdBy,
-      spaces: updateSpaces(tokenLookup.spaces, existingSpaces)
-    });
-  };
-
-  tokenStore.getToken = function() {
-    return tokenStore._currentToken;
-  };
-
-  tokenStore.getUpdatedToken = function() {
-    if(tokenStore._inFlightUpdate)
-      return tokenStore._inFlightUpdate;
-
-    tokenStore._inFlightUpdate = authentication.getTokenLookup()
-    .then(function (tokenLookup) {
-      tokenStore.updateTokenFromTokenLookup(tokenLookup);
-      tokenStore._inFlightUpdate = null;
-      return tokenStore._currentToken;
-    })
-    .catch(tokenErrorHandler);
-    return tokenStore._inFlightUpdate;
-  };
-
-  tokenStore.getSpaces = createTokenPropertyGetter('spaces', []);
-  tokenStore.getUser = createTokenPropertyGetter('user', {});
-
-  tokenStore.getSpace = function (id) {
-    if(tokenStore._inFlightUpdate){
-      return tokenStore._inFlightUpdate.then(function () {
-        return getLoadedSpace(id);
-      });
-    } else {
-      return $q.when(getLoadedSpace(id));
-    }
-  };
-
-  function createTokenPropertyGetter(property, defaultValue) {
-    return function () {
-      if(tokenStore._inFlightUpdate)
-        return tokenStore._inFlightUpdate.then(function () {
-          return tokenStore._currentToken[property];
-        });
-      else
-        return $q.when(tokenStore._currentToken ? tokenStore._currentToken[property] : defaultValue);
+      spaces: updateSpaces(tokenLookup.spaces)
     };
+    changed.dispatch(currentToken);
   }
 
-  function updateSpaces(rawSpaces, existingSpaces) {
-    var newSpaceList = _.map(rawSpaces, function (rawSpace) {
-      var existing = getSpaceFromList(rawSpace.sys.id, existingSpaces);
-      if (existing) {
-        existing.update(rawSpace);
-        return existing;
-      } else {
-        var space = client.newSpace(rawSpace);
-        space.save = function () { throw new Error('Saving space not allowed'); };
-        return space;
-      }
+  /**
+   * @ngdoc method
+   * @name tokenStore#refreshWithLookup
+   * @returns {Promise<void>}
+   * @description
+   * This method should be called when token data needs to be refreshed.
+   * Subsequent calls are queued and performed one after another.
+   * Returned promise is resolved with a value of the last call!
+   *
+   * On failure we call "communicateError", what basically forces an user
+   * to reload the app. On success we call "refreshWithLookup" (see docs above).
+   */
+  function refresh() {
+    if (!refreshDeferred || refreshRequests < 1) {
+      refreshRequests = 1;
+      refreshDeferred = $q.defer();
+      getNextTokenLookup();
+    } else {
+      refreshRequests += 1;
+    }
+
+    return refreshDeferred.promise;
+  }
+
+  function getNextTokenLookup() {
+    authentication.getTokenLookup()
+    .then(handleToken)
+    .catch(handleTokenError);
+  }
+
+  function handleToken(token) {
+    if (!refreshDeferred) {
+      return $q.reject();
+    }
+
+    refreshRequests -= 1;
+    if (refreshRequests > 0) {
+      getNextTokenLookup();
+    } else {
+      refreshWithLookup(token);
+      refreshDeferred.resolve();
+      refreshDeferred = null;
+    }
+  }
+
+  function handleTokenError(err) {
+    refreshDeferred.reject(err);
+    refreshDeferred = null;
+    communicateError(err);
+
+    return $q.reject(err);
+  }
+
+  /**
+   * @ngdoc method
+   * @name tokenStore#getSpace
+   * @param {string} id
+   * @returns {Promise<API.Space>}
+   * @description
+   * This method returns a promise of a single stored space
+   * If some calls are in progress, we're waiting until these are done.
+   * Promise is rejected if space with a provided ID couldn't be found.
+   */
+  function getSpace(id) {
+    return refreshDeferred ? refreshDeferred.promise.then(promiseSpace) : promiseSpace();
+
+    function promiseSpace() {
+      var space = findSpace(id);
+      return space ? $q.when(space) : $q.reject(new Error('No space with given ID could be found.'));
+    }
+  }
+
+  /**
+   * @ngdoc method
+   * @name tokenStore#getSpaces
+   * @returns {Promise<API.Space[]>}
+   * @description
+   * This method returns a promise of all stored spaces.
+   * If some calls are in progress, we're waiting until these are done.
+   */
+  function getSpaces() {
+    return refreshDeferred ? refreshDeferred.promise.then(promiseSpaces) : promiseSpaces();
+
+    function promiseSpaces() {
+      return $q.when(getCurrentSpaces());
+    }
+  }
+
+  function updateSpaces(rawSpaces) {
+    var updated = _.map(rawSpaces, updateSpace);
+    updated.sort(getSorter(updated));
+    return updated;
+  }
+
+  function updateSpace(rawSpace) {
+    var existing = findSpace(rawSpace.sys.id);
+    if (existing) {
+      existing.update(rawSpace);
+      return existing;
+    } else {
+      return client.newSpace(rawSpace);
+    }
+  }
+
+  function findSpace(id) {
+    return _.find(getCurrentSpaces(), function (space) {
+      return space.getId() === id;
     });
-    newSpaceList.sort(function (a,b) {
+  }
+
+  function getCurrentSpaces() {
+    return currentToken ? currentToken.spaces : [];
+  }
+
+  function getSorter(spaces) {
+    return function sortByName(a, b) {
       try {
         return a.data.name.localeCompare(b.data.name);
-      } catch(exp) {
-        logger.logError('Space is not defined', {
+      } catch (e) {
+        logger.logError('Space is not defined.', {
           data: {
-            msg: exp.message,
-            exp: exp,
-            spaces: _.map(newSpaceList, function (space) {
+            msg: e.message,
+            exp: e,
+            spaces: _.map(spaces, function (space) {
               return _.pluck(space, 'data');
             })
           }
         });
       }
-    });
-    return newSpaceList;
+    };
   }
 
-  function getLoadedSpace(id) {
-    var space = getSpaceFromList(id, tokenStore._currentToken.spaces);
-    if(space)
-      return space;
-    else
-      return $q.reject(new Error('Space not found in token'));
-  }
-
-  function getSpaceFromList(id, existingSpaces) {
-    return _.find(existingSpaces, function (existingSpace) {
-      return existingSpace.getId() === id;
-    });
-  }
-
-  function tokenErrorHandler(err) {
+  function communicateError(err) {
     if (err && err.statusCode === 401) {
       modalDialog.open({
         title: 'Your login token is invalid',
         message: 'You need to login again to refresh your login token.',
-        scope: $rootScope,
         cancelLabel: null,
         confirmLabel: 'Login',
         backgroundClose: false,
@@ -132,9 +196,8 @@ angular.module('contentful').service('tokenStore', ['$injector', function($injec
         authentication.clearAndLogin();
       });
     } else {
-      notifyReload('The browser was unable to obtain the login token.');
+      ReloadNotification.trigger('The browser was unable to obtain the login token.');
     }
-    return $q.reject(err);
   }
 
 }]);

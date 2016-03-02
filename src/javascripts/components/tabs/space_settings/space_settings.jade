@@ -1,0 +1,26 @@
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-settings")
+  h1.workbench-header__title Space Settings
+
+  .workbench-header__actions
+    button.cfnext-btn-caution(ui-command="openRemovalDialog")
+      | Remove space and all its contents
+    button.cfnext-btn-primary-action(ui-command="save")
+      | Save
+
+.workbench-main.x--content
+  .workbench-main__middle-content
+    .cfnext-form__field
+      label(for="space-id") Space ID:
+      input.cfnext-form__input--full-size(
+        type="text"
+        id="space-id"
+        value="{{ spaceId }}"
+        readonly="readonly"
+        cf-select-all-input)
+    .cfnext-form__field
+      label(for="space-name") Space name:
+      input.cfnext-form__input--full-size(
+        type="text"
+        id="space-name"
+        ng-model="model.name")

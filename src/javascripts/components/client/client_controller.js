@@ -23,6 +23,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var TheAccountView     = $injector.get('TheAccountView');
   var TheStore           = $injector.get('TheStore');
   var OrganizationList   = $injector.get('OrganizationList');
+  var spaceTools         = $injector.get('spaceTools');
 
   $scope.featureController = $controller('FeatureController', {$scope: $scope});
   $scope.spaceContext = spaceContext;
@@ -44,7 +45,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     };
   }, spaceAndTokenWatchHandler);
 
-  $scope.$watch('user', userWatchHandler);
+  var off = tokenStore.changed.attach(handleTokenData);
+  $scope.$on('$destroy', off);
 
   $scope.$on('iframeMessage', iframeMessageWatchHandler);
   $scope.$on('$stateChangeSuccess', stateChangeSuccessHandler);
@@ -53,23 +55,18 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.$on('showCreateSpaceDialog', function(e, id) { showCreateSpaceDialog(id); });
 
   $scope.initClient = initClient;
-  $scope.setTokenDataOnScope = setTokenDataOnScope;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
 
   function initClient() {
-    tokenStore.getUpdatedToken()
-    .then(function(data) {
-      setTokenDataOnScope(data);
-      analytics.setUserData($scope.user);
-      showOnboardingIfNecessary();
-    });
+    tokenStore.refresh()
+    .then(showOnboardingIfNecessary);
 
     setTimeout(newVersionCheck, 5000);
 
     setInterval(function () {
       if (presence.isActive()) {
         newVersionCheck();
-        performTokenLookup().
+        tokenStore.refresh().
         catch(function () {
           ReloadNotification.trigger('Your authentication data needs to be refreshed. Please try logging in again.');
         });
@@ -93,21 +90,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     }
   }
 
-  // @todo this shouldn't be $watch handler - it can be called by `setTokenDataOnScope`
-  function userWatchHandler(user) {
-    if(user){
-      OrganizationList.resetWithUser(user);
-      if (features.shouldAllowAnalytics()) {
-        logger.enable();
-        analytics.enable();
-        analytics.setUserData(user);
-      } else {
-        logger.disable();
-        analytics.disable();
-      }
-    }
-  }
-
   function iframeMessageWatchHandler(event, data) {
     var msg = makeMsgResponder(data);
 
@@ -118,8 +100,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       $scope.showCreateSpaceDialog(data.organizationId);
 
     } else if (msg('delete', 'space')) {
-      performTokenLookup();
-      $location.url('/');
+      spaceTools.leaveCurrent();
 
     } else if (data.type === 'flash') {
       showFlashMessage(data);
@@ -134,7 +115,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       updateToken(data.token);
 
     } else {
-      performTokenLookup();
+      tokenStore.refresh();
     }
   }
 
@@ -157,8 +138,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   function updateToken(data) {
     authentication.updateTokenLookup(data);
     if(authentication.tokenLookup) {
-      tokenStore.updateTokenFromTokenLookup(authentication.tokenLookup);
-      setTokenDataOnScope(tokenStore.getToken());
+      tokenStore.refreshWithLookup(authentication.tokenLookup);
     } else {
       logger.logError('Token Lookup has not been set properly', {
         data: {
@@ -168,14 +148,22 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     }
   }
 
-  function performTokenLookup() {
-    return tokenStore.getUpdatedToken().then(setTokenDataOnScope);
-  }
+  function handleTokenData(token) {
+    var user = dotty.get(token, 'user');
+    if (!_.isObject(user)) { return; }
 
-  function setTokenDataOnScope(token) {
-    $scope.user = token.user;
-    enforcements.setUser(token.user);
-    $scope.spaces = token.spaces;
+    $scope.user = user;
+    enforcements.setUser(user);
+    OrganizationList.resetWithUser(user);
+
+    if (features.shouldAllowAnalytics()) {
+      logger.enable();
+      analytics.enable();
+      analytics.setUserData(user);
+    } else {
+      logger.disable();
+      analytics.disable();
+    }
   }
 
   function newVersionCheck() {
@@ -195,12 +183,12 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     var signInCount = $scope.user.signInCount;
     if (signInCount === 1 && !seenOnboarding) {
       showUserPersonaOnboardingModal()
-      .finally(function(organizationId) {
-        if (_.isEmpty($scope.spaces)) {
-          showSpaceTemplatesModal(organizationId);
-        }
+      .finally(function() {
         TheStore.set('seenOnboarding', true);
         analytics.track('Viewed Onboarding');
+        tokenStore.getSpaces().then(function (spaces) {
+          if (_.isEmpty(spaces)) { showSpaceTemplatesModal(); }
+        });
       });
     }
   }

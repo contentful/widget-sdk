@@ -48,10 +48,10 @@ describe('Client Controller', function () {
       $provide.value('authorization', self.authorizationStubs);
 
       setMockOnContext(self, 'tokenStoreStubs', [
-        'updateTokenFromTokenLookup',
-        'getToken',
-        'getUpdatedToken'
+        'refreshWithLookup',
+        'refresh'
       ]);
+      self.tokenStoreStubs.changed = {attach: sinon.stub()};
       $provide.value('tokenStore', self.tokenStoreStubs);
 
       self.featuresStubs = {
@@ -123,7 +123,6 @@ describe('Client Controller', function () {
       $provide.value('enforcements', self.enforcementsStubs);
     });
     inject(function (){
-      this.$q = this.$inject('$q');
       this.$rootScope = this.$inject('$rootScope');
       this.$state = this.$inject('$state');
       this.$stateParams = this.$inject('$stateParams');
@@ -199,8 +198,6 @@ describe('Client Controller', function () {
     });
 
     it('location in account flag is false', function() {
-      var space = this.$inject('cfStub').space('123');
-      scope.spaces = [space];
       this.$stateParams.spaceId = '123';
       childScope.$emit('$stateChangeSuccess');
       expect(TheAccountView.isActive()).toBeFalsy();
@@ -209,7 +206,7 @@ describe('Client Controller', function () {
   });
 
   describe('handle iframe messages', function () {
-    var childScope, data, user, spaces;
+    var childScope, data, user;
     beforeEach(function () {
       scope.showCreateSpaceDialog = sinon.stub();
 
@@ -250,15 +247,11 @@ describe('Client Controller', function () {
     describe('on token change', function() {
       var token;
       beforeEach(inject(function (authentication) {
-        spaces = [{
-          sys: {id: 123}
-        }];
-
         token = {
           sys: {
             createdBy: user
           },
-          spaces: spaces
+          spaces: []
         };
         authentication.tokenLookup = token;
 
@@ -266,16 +259,11 @@ describe('Client Controller', function () {
           token: authentication.tokenLookup
         };
 
-        this.tokenStoreStubs.getToken.returns({spaces: spaces, user: user});
         childScope.$emit('iframeMessage', data);
       }));
 
       it('sets token lookup', function() {
         sinon.assert.calledWith(this.authenticationStubs.updateTokenLookup, token);
-      });
-
-      it('sets user', function() {
-        expect(scope.user).toBe(user);
       });
     });
 
@@ -342,12 +330,12 @@ describe('Client Controller', function () {
           type: 'space',
           action: 'delete',
         };
-        this.tokenStoreStubs.getUpdatedToken.returns(this.$q.when());
+        this.tokenStoreStubs.refresh.resolves();
         childScope.$emit('iframeMessage', data);
       });
 
       it('performs token lookup', function() {
-        sinon.assert.called(this.tokenStoreStubs.getUpdatedToken);
+        sinon.assert.called(this.tokenStoreStubs.refresh);
       });
     });
 
@@ -355,12 +343,12 @@ describe('Client Controller', function () {
     describe('for other messages', function () {
       beforeEach(function () {
         data = {};
-        this.tokenStoreStubs.getUpdatedToken.returns(this.$q.when());
+        this.tokenStoreStubs.refresh.resolves();
         childScope.$emit('iframeMessage', data);
       });
 
       it('performs token lookup', function() {
-        sinon.assert.called(this.tokenStoreStubs.getUpdatedToken);
+        sinon.assert.called(this.tokenStoreStubs.refresh);
       });
     });
 
@@ -391,15 +379,15 @@ describe('Client Controller', function () {
   });
 
   describe('shows create space dialog', function () {
-    beforeEach(inject(function ($q, OrganizationList) {
-      OrganizationList.resetWithUser({
+    beforeEach(function () {
+      this.$inject('OrganizationList').resetWithUser({
         organizationMemberships: [
           {organization: {sys: {id: 'abc'}}},
           {organization: {sys: {id: 'def'}}}
         ]
       });
-      this.modalDialogStubs.open.returns({promise: $q.when()});
-    }));
+      this.modalDialogStubs.open.returns({promise: this.$inject('$q').when()});
+    });
 
     it('opens dialog', function () {
       scope.showCreateSpaceDialog();
@@ -428,16 +416,16 @@ describe('Client Controller', function () {
 
   describe('initializes client', function () {
     beforeEach(function () {
-      this.spaces = [];
       this.user = {sys: {}};
       this.revisionStubs.hasNewVersion = sinon.stub().resolves(true);
-      this.tokenStoreStubs.getUpdatedToken.returns(this.$q.when({
-        spaces: this.spaces,
-        user: this.user
-      }));
+      this.tokenStoreStubs.refresh.resolves();
       this.broadcastStub = sinon.stub(this.$rootScope, '$broadcast');
       jasmine.clock().install();
       scope.initClient();
+      this.tokenStoreStubs.changed.attach.firstCall.args[0]({
+        spaces: [],
+        user: this.user
+      });
       scope.$digest();
     });
 
@@ -452,10 +440,6 @@ describe('Client Controller', function () {
 
     it('sets user', function() {
       expect(scope.user).toEqual(this.user);
-    });
-
-    it('sets spaces', function() {
-      expect(scope.spaces).toEqual(this.spaces);
     });
 
     describe('fires an initial version check', function () {
@@ -476,7 +460,7 @@ describe('Client Controller', function () {
     describe('presence timeout is fired', function () {
       beforeEach(function () {
         this.presenceStubs.isActive.returns(true);
-        this.tokenStoreStubs.getUpdatedToken.returns(this.$q.reject());
+        this.tokenStoreStubs.refresh.rejects();
         jasmine.clock().tick(50*60*1000);
         scope.$digest();
       });
@@ -510,38 +494,33 @@ describe('Client Controller', function () {
         org1 = {org1: true};
         org2 = {org2: true};
         org3 = {org3: true};
-        scope.user = {
-          organizationMemberships: [
-            {organization: org1},
-            {organization: org2},
-            {organization: org3}
-          ]
-        };
+
+        this.prepare = function () {
+          var subscriber = this.tokenStoreStubs.changed.attach.firstCall.args[0];
+          subscriber({user: { organizationMemberships: [
+            {organization: org1}, {organization: org2}, {organization: org3}
+          ]}});
+        }.bind(this);
       });
 
       it('are set', function() {
-        scope.$digest();
+        this.prepare();
         expect(OrganizationList.getAll()).toEqual([org1, org2, org3]);
       });
 
       it('sets analytics user data and enables tracking', function() {
-        scope.$digest();
+        this.prepare();
         sinon.assert.called(this.analyticsStubs.setUserData);
         sinon.assert.called(this.analyticsStubs.enable);
         sinon.assert.called(logger.enable);
       });
 
-      describe('when analytics are disallowed', function() {
-        beforeEach(function() {
-          this.featuresStubs.shouldAllowAnalytics.returns(false);
-        });
-
-        it('should not set or enable anything', function() {
-          scope.$digest();
-          sinon.assert.notCalled(this.analyticsStubs.setUserData);
-          sinon.assert.called(this.analyticsStubs.disable);
-          sinon.assert.called(logger.disable);
-        });
+      it('should not set or enable anything when analytics are disallowed', function() {
+        this.featuresStubs.shouldAllowAnalytics.returns(false);
+        this.prepare();
+        sinon.assert.notCalled(this.analyticsStubs.setUserData);
+        sinon.assert.called(this.analyticsStubs.disable);
+        sinon.assert.called(logger.disable);
       });
     });
   });
