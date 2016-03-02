@@ -34,7 +34,7 @@ angular.module('contentful')
     }
     var msUntilReopen = getMillisecondsUntilDialogCanBeReopened();
 
-    if (!user.activated && user.email) {
+    if (user.confirmed === false && user.email) {
       if (msUntilReopen <= 0) {
         showDialog(user.email);
         storeDialogLastShownTimestamp();
