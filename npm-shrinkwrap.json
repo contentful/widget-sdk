@@ -6045,16 +6045,6 @@
                   }
                 }
               }
-            },
-            "once": {
-              "version": "1.3.2",
-              "from": "once@1.3.2",
-              "dependencies": {
-                "wrappy": {
-                  "version": "1.0.1",
-                  "from": "wrappy@1.0.1"
-                }
-              }
             }
           }
         },
@@ -6075,6 +6065,64 @@
         "wrench": {
           "version": "1.5.8",
           "from": "wrench@1.5.8"
+        },
+        "yargs": {
+          "version": "3.32.0",
+          "from": "yargs@>=3.8.0 <4.0.0",
+          "dependencies": {
+            "camelcase": {
+              "version": "2.1.0",
+              "from": "camelcase@>=2.0.1 <3.0.0"
+            },
+            "cliui": {
+              "version": "3.1.0",
+              "from": "cliui@>=3.0.3 <4.0.0",
+              "dependencies": {
+                "wrap-ansi": {
+                  "version": "1.0.0",
+                  "from": "wrap-ansi@>=1.0.0 <2.0.0"
+                }
+              }
+            },
+            "decamelize": {
+              "version": "1.1.2",
+              "from": "decamelize@>=1.1.1 <2.0.0",
+              "dependencies": {
+                "escape-string-regexp": {
+                  "version": "1.0.5",
+                  "from": "escape-string-regexp@>=1.0.4 <2.0.0"
+                }
+              }
+            },
+            "os-locale": {
+              "version": "1.4.0",
+              "from": "os-locale@>=1.4.0 <2.0.0",
+              "dependencies": {
+                "lcid": {
+                  "version": "1.0.0",
+                  "from": "lcid@>=1.0.0 <2.0.0",
+                  "dependencies": {
+                    "invert-kv": {
+                      "version": "1.0.0",
+                      "from": "invert-kv@>=1.0.0 <2.0.0"
+                    }
+                  }
+                }
+              }
+            },
+            "string-width": {
+              "version": "1.0.1",
+              "from": "string-width@>=1.0.1 <2.0.0"
+            },
+            "window-size": {
+              "version": "0.1.4",
+              "from": "window-size@>=0.1.4 <0.2.0"
+            },
+            "y18n": {
+              "version": "3.2.0",
+              "from": "y18n@>=3.2.0 <4.0.0"
+            }
+          }
         }
       }
     },
@@ -7563,58 +7611,6 @@
               "from": "is-relative@0.1.3"
             }
           }
-        }
-      }
-    },
-    "yargs": {
-      "version": "3.29.0",
-      "from": "yargs@3.29.0",
-      "dependencies": {
-        "camelcase": {
-          "version": "1.2.1",
-          "from": "camelcase@1.2.1"
-        },
-        "cliui": {
-          "version": "3.0.3",
-          "from": "cliui@3.0.3",
-          "dependencies": {
-            "string-width": {
-              "version": "1.0.1",
-              "from": "string-width@1.0.1"
-            },
-            "wrap-ansi": {
-              "version": "1.0.0",
-              "from": "wrap-ansi@1.0.0"
-            }
-          }
-        },
-        "decamelize": {
-          "version": "1.1.1",
-          "from": "decamelize@1.1.1"
-        },
-        "os-locale": {
-          "version": "1.4.0",
-          "from": "os-locale@1.4.0",
-          "dependencies": {
-            "lcid": {
-              "version": "1.0.0",
-              "from": "lcid@1.0.0",
-              "dependencies": {
-                "invert-kv": {
-                  "version": "1.0.0",
-                  "from": "invert-kv@1.0.0"
-                }
-              }
-            }
-          }
-        },
-        "window-size": {
-          "version": "0.1.2",
-          "from": "window-size@0.1.2"
-        },
-        "y18n": {
-          "version": "3.2.0",
-          "from": "y18n@3.2.0"
         }
       }
     }
