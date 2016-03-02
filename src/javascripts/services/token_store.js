@@ -1,5 +1,13 @@
 'use strict';
 
+/**
+ * @ngdoc service
+ * @name tokenStore
+ *
+ * @description
+ * This service is responsible for fetching, storing and exposing
+ * data included in an access token.
+ */
 angular.module('contentful').factory('tokenStore', ['$injector', function ($injector) {
 
   var $q                 = $injector.get('$q');
@@ -23,6 +31,16 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
     getSpace:          getSpace
   };
 
+  /**
+   * @ngdoc method
+   * @name tokenStore#refreshWithLookup
+   * @param {object} tokenLookup
+   * @description
+   * This (synchronous) method takes a token lookup object and:
+   * - stores user
+   * - stores updated spaces (existing space objects are updated, not recreated)
+   * - notifies all subscribers of "changed" signal
+   */
   function refreshWithLookup(tokenLookup) {
     currentToken = {
       user: tokenLookup.sys.createdBy,
@@ -31,6 +49,18 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
     changed.dispatch(currentToken);
   }
 
+  /**
+   * @ngdoc method
+   * @name tokenStore#refreshWithLookup
+   * @returns {Promise<void>}
+   * @description
+   * This method should be called when token data needs to be refreshed.
+   * Subsequent calls are queued and performed one after another.
+   * Returned promise is resolved with a value of the last call!
+   *
+   * On failure we call "communicateError", what basically forces an user
+   * to reload the app. On success we call "refreshWithLookup" (see docs above).
+   */
   function refresh() {
     if (!refreshDeferred || refreshRequests < 1) {
       refreshRequests = 1;
@@ -72,6 +102,16 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
     return $q.reject(err);
   }
 
+  /**
+   * @ngdoc method
+   * @name tokenStore#getSpace
+   * @param {string} id
+   * @returns {Promise<API.Space>}
+   * @description
+   * This method returns a promise of a single stored space
+   * If some calls are in progress, we're waiting until these are done.
+   * Promise is rejected if space with a provided ID couldn't be found.
+   */
   function getSpace(id) {
     return refreshDeferred ? refreshDeferred.promise.then(promiseSpace) : promiseSpace();
 
@@ -81,6 +121,14 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
     }
   }
 
+  /**
+   * @ngdoc method
+   * @name tokenStore#getSpaces
+   * @returns {Promise<API.Space[]>}
+   * @description
+   * This method returns a promise of all stored spaces.
+   * If some calls are in progress, we're waiting until these are done.
+   */
   function getSpaces() {
     return refreshDeferred ? refreshDeferred.promise.then(promiseSpaces) : promiseSpaces();
 
