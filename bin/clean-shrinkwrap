@@ -28,12 +28,19 @@ function cleanDependency (dep) {
   }
 
   if (dep.dependencies) {
-    dep.dependencies = _.mapValues(dep.dependencies, cleanDependency);
+    dep.dependencies = sortByKey(_.mapValues(dep.dependencies, cleanDependency));
   }
 
   return dep;
 }
 
+function sortByKey (object) {
+  var keys = _.sortBy(_.keys(object))
+  return _.transform(keys, function (sorted, key) {
+    sorted[key] = object[key];
+  }, {});
+
+}
 function stringify (obj) {
   return JSON.stringify(obj, null, 2);
 }
