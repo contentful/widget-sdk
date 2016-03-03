@@ -4,7 +4,9 @@ header.workbench-header
 
   .workbench-header__actions
     button.cfnext-btn-secondary-action(ui-sref="spaces.detail.settings.webhooks.list")
-      | Cancel
+      | Go back
+    button.cfnext-btn-secondary-action(ui-command="refreshLogs")
+      | Refresh logs
     button.cfnext-btn-secondary-action(ui-command="openRemovalDialog")
       | Remove
     button.cfnext-btn-primary-action(ui-command="save")
@@ -33,9 +35,7 @@ header.workbench-header
         ng-model="webhook.httpBasicPassword")
 
   div(ui-tabpanel="activity")
-    p(ng-show="activity.loading") Loading logs...
-
-    table.result-list.main-results.main-header(ng-show="activity.visible")
+    table.result-list.main-results.main-header
       thead
         tr
           th.cell-time Webhook called at
@@ -44,9 +44,11 @@ header.workbench-header
     .main-results-wrapper
       table.result-list.main-results
         tbody
-          tr(ng-repeat="log in activity.visible track by log.sys.id"
-          ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail.call({ callId: log.sys.id })'"
-          ui-sref="{{entityNavState}}")
+          tr(
+            ng-show="activity.visible && !activity.loading"
+            ng-repeat="log in activity.visible track by log.sys.id"
+            ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail.call({ callId: log.sys.id })'"
+            ui-sref="{{entityNavState}}")
             td.cell-time
               a.entity-list-link(ui-sref="{{entityNavState}}") {{ log.requestAt }}
             td.cell-result
@@ -54,8 +56,14 @@ header.workbench-header
                 cf-webhook-call-status(call="log")
             td.cell-actions
               a.entity-list-link(ui-sref="{{entityNavState}}") View details
+          tr(ng-show="activity.visible.length < 1")
+            td(colspan="3")
+              a.entity-list-link No webhook calls yet!
+          tr(ng-show="activity.loading")
+            td(colspan="3")
+              a.entity-list-link Loading logs...
 
-    .webhook-calls__paginator
+    .webhook-calls__paginator(ng-show="!activity.loading && activity.pages.length > 1")
       a.webhook-calls__paginator-item(
         ng-show="activity.page > 0"
         href="" ng-click="activity.page = activity.page-1")

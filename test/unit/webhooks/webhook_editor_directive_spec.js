@@ -29,6 +29,8 @@ describe('Webhook Editor directive', function () {
       data.webhook.sys = data.webhook.sys || {};
       this.element = this.$compile('<div cf-ui-tab><cf-webhook-editor /></div>', data);
       this.scope = this.element.scope();
+      this.scope.tabController.activate('settings');
+      this.$apply();
     }.bind(this);
 
     this.button = function (label) {
@@ -57,10 +59,9 @@ describe('Webhook Editor directive', function () {
   });
 
   describe('Action buttons', function () {
-    it('navigates to list when "cancel" is clicked', function () {
-
+    it('navigates to list when "go back" is clicked', function () {
       this.compile({isNew: false});
-      this.button('Cancel').click();
+      this.button('Go back').click();
       this.$inject('$timeout').flush(); // ui-sref performs transition within `$timeout` cb
       sinon.assert.calledOnce(this.go);
       expect(this.go.firstCall.args[0]).toBe('spaces.detail.settings.webhooks.list');

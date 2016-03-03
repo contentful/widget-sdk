@@ -6,7 +6,12 @@ angular.module('contentful')
   return {
     restrict: 'E',
     template: JST['webhook_editor'](),
-    controller: 'WebhookEditorController'
+    controller: 'WebhookEditorController',
+    link: function (scope) {
+      if (!scope.context.isNew) {
+        scope.tabController.activate('activity');
+      }
+    }
   };
 })
 
@@ -50,16 +55,27 @@ angular.module('contentful')
   $scope.$watch('activity.page', function (page) {
     if (_.isNumber(page) && $scope.activity.items) {
       $scope.activity.visible = $scope.activity.items.slice(page*PER_PAGE, (page+1)*PER_PAGE);
+    } else {
+      $scope.activity.visible = null;
     }
   });
 
   $scope.save = Command.create(save, {
-    disabled: function () { return !$scope.context.dirty; }
+    disabled: function () { return !$scope.context.dirty; },
+    available: function () { return isTabActive('settings'); }
   });
 
   $scope.openRemovalDialog = Command.create(openRemovalDialog, {
-    available: function () { return !$scope.context.isNew; }
+    available: function () { return !$scope.context.isNew && isTabActive('settings'); }
   });
+
+  $scope.refreshLogs = Command.create(refreshActivity, {
+    available: function () { return isTabActive('activity'); }
+  });
+
+  function isTabActive(name) {
+    return $scope.tabController.get(name).active;
+  }
 
   function save() {
     prepareCredentials();
@@ -157,8 +173,15 @@ angular.module('contentful')
     return $scope.context.isNew ? 0 : -1;
   }
 
+  function refreshActivity() {
+    $scope.activity.page = null;
+    $scope.activity.loading = fetchActivity();
+    return $scope.activity.loading;
+  }
+
   function fetchActivity() {
-    return space.endpoint('webhooks/' + $scope.webhook.sys.id + '/calls').get().then(function (res) {
+    return space.endpoint('webhooks/' + $scope.webhook.sys.id + '/calls?limit=500')
+    .get().then(function (res) {
       $scope.activity.items = res.items;
       $scope.activity.pages = _.range(0, Math.ceil(res.items.length / PER_PAGE));
       $scope.activity.loading = false;
