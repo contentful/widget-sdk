@@ -215,12 +215,10 @@ angular.module('cf.ui')
 
       scope.$watch('command.isAvailable()', function (isAvailable) {
         element.toggleClass('ng-hide', !isAvailable);
-        setDisabled(element, !isAvailable);
+        setDisabled(scope.command.isDisabled());
       });
 
-      scope.$watch('command.isDisabled()', function (isDisabled) {
-        setDisabled(element, isDisabled);
-      });
+      scope.$watch('command.isDisabled()', setDisabled);
 
       scope.$watch('command.inProgress()', function (inProgress) {
         element.toggleClass('is-loading', inProgress);
@@ -231,7 +229,7 @@ angular.module('cf.ui')
         }
       });
 
-      function setDisabled (element, isDisabled) {
+      function setDisabled (isDisabled) {
         if (element.is('button')) {
           element.prop('disabled', isDisabled);
         }

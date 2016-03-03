@@ -14,7 +14,7 @@ describe('cfContentTypePreview directive', function () {
 
     this.element = this.$compile('<cf-content-type-preview>', {
       contentType: {data: {sys: {publishedVersion: false}}},
-      actions: { save: 'stub' }
+      actions: { save: this.$inject('command').create(_.noop) }
     });
     this.scope = this.element.scope();
   });
