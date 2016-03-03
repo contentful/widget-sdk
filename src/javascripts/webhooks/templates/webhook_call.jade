@@ -3,7 +3,7 @@ header.workbench-header
   h1.workbench-header__title Call details ({{ call.requestAt }})
 
   .workbench-header__actions
-    button.cfnext-btn-secondary-action(ui-sref="spaces.detail.settings.webhooks.detail")
+    button.cfnext-btn-secondary-action(ui-sref="spaces.detail.settings.webhooks.detail" ui-sref-opts="{reload: true}")
       | Go back
 
 .workbench-main

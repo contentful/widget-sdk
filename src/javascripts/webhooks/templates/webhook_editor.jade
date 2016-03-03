@@ -3,7 +3,7 @@ header.workbench-header
   h1.workbench-header__title Webhook: {{ context.title }}
 
   .workbench-header__actions
-    button.cfnext-btn-secondary-action(ui-sref="spaces.detail.settings.webhooks.list")
+    button.cfnext-btn-secondary-action(ui-sref="spaces.detail.settings.webhooks.list" ui-sref-opts="{reload: true}")
       | Go back
     button.cfnext-btn-secondary-action(ui-command="refreshLogs")
       | Refresh logs
