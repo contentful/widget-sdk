@@ -59,3 +59,16 @@
     background: $colors.blue-dark
     color: white
     font-weight: bold
+
+.webhook-call__status-indicator
+  display: inline-block
+  width: 12px
+  height: 12px
+  border-radius: 6px
+  margin-right: 6px
+  &.x--ok
+    background: $colors.green-dark
+  &.x--warn
+    background: $colors.orange-dark
+  &.x--fail
+    background: $colors.red-dark

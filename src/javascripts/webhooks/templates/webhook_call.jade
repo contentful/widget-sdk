@@ -13,8 +13,7 @@ header.workbench-header
       .webhook-call__header
         strong.webhook-call__header-item {{ call.url }}
         span.webhook-call__header-item {{ call.requestAt }}
-        span.webhook-call__header-item(ng-show="call.statusCode") HTTP {{ call.statusCode }}
-        span.webhook-call__header-item(ng-show="call.errors[0] === 'TimeoutError'") Timeout
+        cf-webhook-call-status.webhook-call__header-item(call="call")
 
       .webhook-call__columns
         .webhook-call__column
