@@ -1,6 +1,6 @@
 'use strict';
 
-describe('activationEmailResendController', function () {
+xdescribe('activationEmailResendController', function () {
   var $rootScope, $q, authentication, moment;
   var openDialogStub, dialogConfirmSpy, resendConfirmationEmailStub;
   var userMock, storeMock;
