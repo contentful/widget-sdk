@@ -422,13 +422,17 @@ angular.module('contentful').config([
     template: '<ui-view/>'
   });
 
-  $stateProvider.state('spaces.detail.settings.locales.list', {
+  $stateProvider.state('spaces.detail.settings.locales.list', base({
     url: '',
     ncyBreadcrumb: {
       label: 'Locales'
     },
-    template: '<div cf-locale-list class="workbench locale-list entity-list"></div>'
-  });
+    loadingText: 'Loading Locales...',
+    template: '<div cf-locale-list class="workbench locale-list entity-list"></div>',
+    controller: ['$scope', function ($scope) {
+      $scope.context = {};
+    }]
+  }));
 
   var localeEditorState = {
     template: '<cf-locale-editor class="workbench">',
