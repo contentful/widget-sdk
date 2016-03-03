@@ -60,6 +60,24 @@ describe('uiCommand directive element', function () {
       expect(el.attr('aria-disabled')).toBe('true');
     });
 
+    it('remains false when "available" property switches to true', function () {
+      var available = sinon.stub().returns(false);
+      var disabled = sinon.stub().returns(true);
+      var cmd = this.createCommand(sinon.stub(), {available: available, disabled: disabled});
+      var el = this.$compile('<button ui-command=cmd>', {cmd: cmd});
+
+      this.$apply();
+      expect(el).toBeNgHidden();
+      expect(el.prop('disabled')).toBe(true);
+      expect(el.attr('aria-disabled')).toBe('true');
+
+      available.returns(true);
+      this.$apply();
+      expect(el).not.toBeNgHidden();
+      expect(el.prop('disabled')).toBe(true);
+      expect(el.attr('aria-disabled')).toBe('true');
+    });
+
     it('is true when command is in progress', function () {
       var action = this.$inject('$q').defer();
       var run = sinon.stub().returns(action.promise);
