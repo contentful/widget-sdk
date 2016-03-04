@@ -260,7 +260,6 @@ describe('widgets', function () {
   });
 
   describe('#buildRenderable()', function () {
-
     var descriptor;
 
     beforeEach(function() {
@@ -307,10 +306,10 @@ describe('widgets', function () {
     });
 
     it('keeps widgetParams property', function () {
-      var params = 'MY PARAMS';
+      var params = {param: 'MY PARAMS'};
       var widget = {widgetId: 'W', widgetParams: params, field: {}};
       var renderable = this.build([widget]);
-      expect(renderable.form[0].widgetParams).toBe(params);
+      expect(renderable.form[0].widgetParams).toEqual(params);
     });
 
 
@@ -319,6 +318,18 @@ describe('widgets', function () {
         {param: 'foo', default: 'bar'}
       ];
       var renderable = this.build([{widgetId: 'WIDGET', field: {}}]);
+      expect(renderable.form[0].widgetParams).toEqual({foo: 'bar'});
+    });
+
+    it('adds default parameters data does not contain an object', function () {
+      descriptor.options = [
+        {param: 'foo', default: 'bar'}
+      ];
+      var renderable = this.build([{
+        widgetId: 'WIDGET',
+        field: {},
+        widgetParams: 'not an object'
+      }]);
       expect(renderable.form[0].widgetParams).toEqual({foo: 'bar'});
     });
 

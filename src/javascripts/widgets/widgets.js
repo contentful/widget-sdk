@@ -234,7 +234,9 @@ angular.module('contentful')
     var template = widgetTemplate(id);
     widget.template = template;
 
-    widget.widgetParams = widget.widgetParams || {};
+    if (!_.isObject(widget.widgetParams)) {
+      widget.widgetParams = {};
+    }
     applyDefaults(id, widget.widgetParams);
 
     var descriptor = getWidget(id);
