@@ -73,11 +73,9 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     }, 5 * 60 * 1000);
   }
 
-  function stateChangeSuccessHandler(event, toState, toStateParams, fromState, fromStateParams) {
+  function stateChangeSuccessHandler() {
     // TODO should be done be `onEnter` and `onExit` callbacks of the 'accounts' state.
     TheAccountView.check();
-    // TODO should be done by purpse handler, e.g. in the analytics service
-    analytics.stateActivated(toState, toStateParams, fromState, fromStateParams);
   }
 
   function spaceAndTokenWatchHandler(collection) {

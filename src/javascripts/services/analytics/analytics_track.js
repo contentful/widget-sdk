@@ -18,8 +18,10 @@ angular.module('contentful')
   var logger        = $injector.get('logger');
   var cookieStore   = $injector.get('TheStore/cookieStore');
   var stringifySafe = $injector.get('stringifySafe');
+  var $rootScope    = $injector.get('$rootScope');
 
   var organizationData, spaceData, userData;
+  var turnOffStateChangeListener = null;
 
   var analytics = {
     enable: enable,
@@ -51,8 +53,7 @@ angular.module('contentful')
      * @param {string} module
      */
     trackTotango: trackTotango,
-    trackPersistentNotificationAction: trackPersistentNotificationAction,
-    stateActivated: stateActivated
+    trackPersistentNotificationAction: trackPersistentNotificationAction
   };
   return analytics;
 
@@ -60,11 +61,18 @@ angular.module('contentful')
     segment.enable();
     totango.enable();
     fontsdotcom.enable();
+    turnOffStateChangeListener = $rootScope.$on('$stateChangeSuccess', trackStateChange);
   }
 
   function disable () {
     segment.disable();
     totango.disable();
+
+    if (_.isFunction(turnOffStateChangeListener)) {
+      turnOffStateChangeListener();
+      turnOffStateChangeListener = null;
+    }
+
     _.forEach(analytics, function (value, key) {
       analytics[key] = _.noop;
     });
@@ -153,7 +161,7 @@ angular.module('contentful')
     });
   }
 
-  function stateActivated (state, stateParams, fromState, fromStateParams) {
+  function trackStateChange (event, state, stateParams, fromState, fromStateParams) {
     totango.setModule(state.name);
     segment.page(state.name, stateParams);
     track('Switched State', {
