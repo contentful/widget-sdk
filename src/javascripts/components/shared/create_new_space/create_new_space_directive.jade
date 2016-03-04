@@ -101,7 +101,7 @@ form(
     button.cfnext-btn-action(
       ng-class="{'is-loading': createSpace.createSpaceInProgress}"
       ng-disabled="createSpace.createSpaceInProgress || !createSpace.newSpace.data.name.length")
-      | OK
+      | Create Space
 
 //- Space creation in progress
 div(ng-show="createSpace.viewState === 'creatingTemplate'")
