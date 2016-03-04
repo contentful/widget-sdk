@@ -11,7 +11,7 @@ describe('GoogleMaps Controller', function () {
     stubs.geocode = sinon.stub();
     stubs.geocoder = sinon.stub().returns({ geocode: stubs.geocode });
 
-    this.$inject('googleMapsLoader').load = function () {
+    this.$inject('LazyLoader').get = function () {
       var stubbedGMap = {
         Geocoder: stubs.geocoder
       };

@@ -12,6 +12,9 @@ describe('Filepicker service', function () {
           filepicker: {
             policy: 'policy',
             signature: 'signature'
+          },
+          google: {
+            maps_api_key: 'google'
           }
         }
       });
