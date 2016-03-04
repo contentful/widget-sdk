@@ -47,12 +47,11 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
   var off = tokenStore.changed.attach(handleTokenData);
   $scope.$on('$destroy', off);
-
   $scope.$on('iframeMessage', iframeMessageWatchHandler);
   $scope.$on('$stateChangeSuccess', stateChangeSuccessHandler);
 
   // @todo remove it - temporary proxy event handler
-  $scope.$on('showCreateSpaceDialog', function(e, id) { showCreateSpaceDialog(id); });
+  $scope.$on('showCreateSpaceDialog', showCreateSpaceDialog);
 
   $scope.initClient = initClient;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
@@ -97,7 +96,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       authentication.goodbye();
 
     } else if (msg('new', 'space')) {
-      $scope.showCreateSpaceDialog(data.organizationId);
+      $scope.showCreateSpaceDialog();
 
     } else if (msg('delete', 'space')) {
       spaceTools.leaveCurrent();
@@ -182,61 +181,48 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     var seenOnboarding = TheStore.get('seenOnboarding');
     var signInCount = $scope.user.signInCount;
     if (signInCount === 1 && !seenOnboarding) {
-      showUserPersonaOnboardingModal()
-      .finally(function() {
-        TheStore.set('seenOnboarding', true);
-        analytics.track('Viewed Onboarding');
-        tokenStore.getSpaces().then(function (spaces) {
-          if (_.isEmpty(spaces)) { showSpaceTemplatesModal(); }
-        });
-      });
+      showOnboardingModal();
     }
   }
 
-  function showCreateSpaceDialog(organizationId) {
+  function showCreateSpaceDialog() {
     analytics.track('Clicked Create-Space');
-    showSpaceTemplatesModal(organizationId);
-  }
-
-  function showSpaceTemplatesModal(organizationId) {
-    var scope = _.extend($scope.$new(), {
-      organizations: OrganizationList.getWithOnTop(organizationId)
-    });
-
-    analytics.track('Viewed Space Template Selection Modal');
     modalDialog.open({
       title: 'Space templates',
-      template: 'space_templates_dialog',
-      scope: scope,
+      template: 'create_new_space_dialog',
       backgroundClose: false,
       persistOnNavigation: true
     })
     .promise
-    .then(function (template) {
-      if(template){
-        analytics.track('Created Space Template', {template: template.name});
-        $rootScope.$broadcast('templateWasCreated');
-        refreshContentTypes();
-      }
-    })
+    .then(handleTemplateCreation)
     .catch(function() {
       analytics.track('Closed Space Template Selection Modal');
       refreshContentTypes();
     });
   }
 
-  function showUserPersonaOnboardingModal() {
-    return modalDialog.open({
-      title: 'Select Persona', // Not displayed, just for analytics
-      template: 'user_persona_dialog',
+
+  function showOnboardingModal() {
+    modalDialog.open({
+      title: 'Onboarding', // Not displayed, just for analytics
+      template: 'onboarding_dialog',
       persistOnNavigation: true,
-      scopeData: {
-        userName: $scope.user.firstName
-      },
       backgroundClose: false,
-      ignoreEsc: true
+      ignoreEsc: true,
+      scopeData: {
+        isOnboarding: true
+      }
     })
-    .promise;
+    .promise
+    .then(handleTemplateCreation);
+  }
+
+  function handleTemplateCreation(template) {
+    if (template) {
+      analytics.track('Created Space Template', {template: template.name});
+      $rootScope.$broadcast('reloadEntries');
+      refreshContentTypes();
+    }
   }
 
   function refreshContentTypes() {

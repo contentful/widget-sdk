@@ -71,7 +71,7 @@ angular.module('contentful').factory('spaceTools', ['$injector', function($injec
       });
     }
     TheStore.set('lastUsedSpace', space.getId());
-    $state.go('spaces.detail', { spaceId: space.getId() });
+    return $state.go('spaces.detail', { spaceId: space.getId() });
   }
 
   /**
