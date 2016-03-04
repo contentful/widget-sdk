@@ -123,4 +123,27 @@ describe('analytics', function () {
     });
   });
 
+  describe('trackPersistentNotificationAction()', function () {
+    describe('without organization data available', function () {
+      it('tracks to segment', function () {
+        this.analytics.trackPersistentNotificationAction('ACTION_NAME');
+        sinon.assert.calledWith(this.segment.track, sinon.match.string, {
+          action: 'ACTION_NAME',
+          currentPlan: null
+        });
+      });
+    });
+
+    describe('with organization data set', function () {
+      it('tracks to segment and contains current plan name', function () {
+        this.analytics.setSpace(this.space);
+        this.analytics.trackPersistentNotificationAction('ACTION_NAME');
+        sinon.assert.calledWith(this.segment.track, sinon.match.string, sinon.match({
+          action: 'ACTION_NAME',
+          currentPlan: 'subscriptionPlanName'
+        }));
+      });
+    });
+  });
+
 });
