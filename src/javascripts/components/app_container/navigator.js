@@ -571,7 +571,10 @@ angular.module('contentful').config([
   $stateProvider.state('spaces.detail.settings.webhooks', {
     url: '/webhooks',
     abstract: true,
-    template: '<ui-view />'
+    template: '<ui-view />',
+    onEnter: ['analytics', function (analytics) {
+      analytics.track('Opened Webhooks view');
+    }]
   });
 
   $stateProvider.state('spaces.detail.settings.webhooks.list', base({
