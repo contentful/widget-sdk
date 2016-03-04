@@ -66,12 +66,6 @@ describe('ContentTypeEditor Controller', function () {
       sinon.assert.notCalled(scope.validate);
     });
 
-    it('updates published content type', function () {
-      var publishedCT = {published: true};
-      scope.updatePublishedContentType(publishedCT);
-      expect(scope.publishedContentType).toEqual(publishedCT);
-    });
-
     it('has no fields', function () {
       expect(scope.hasFields).toBeFalsy();
     });

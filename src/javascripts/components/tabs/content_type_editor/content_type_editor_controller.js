@@ -41,7 +41,6 @@ function ContentTypeEditorController($scope, $injector) {
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.saveAndClose);
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
-  $scope.updatePublishedContentType = updatePublishedContentType;
 
   $scope.$watch('contentType.data.fields',       checkForDirtyForm, true);
   $scope.$watch('contentType.data.displayField', checkForDirtyForm);
@@ -164,16 +163,6 @@ function ContentTypeEditorController($scope, $injector) {
         scope.closeState();
       }
     }
-  }
-
-  /**
-   * @ngdoc method
-   * @name ContentTypeEditorController#scope#updatePublishedContentType
-   *
-   * @param {Object} publishedContentType
-  */
-  function updatePublishedContentType (publishedContentType) {
-    $scope.publishedContentType = publishedContentType;
   }
 
   /**

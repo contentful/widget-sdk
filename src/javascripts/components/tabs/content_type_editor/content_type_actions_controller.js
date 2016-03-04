@@ -129,7 +129,7 @@ function ContentTypeActionsController($scope, $injector) {
   }
 
   function unpublishSuccessHandler(publishedContentType){
-    $scope.updatePublishedContentType(null);
+    $scope.publishedContentType = null;
     spaceContext.unregisterPublishedContentType(publishedContentType);
     spaceContext.refreshContentTypes();
     trackUnpublishedContentType($scope.contentType);
@@ -244,9 +244,6 @@ function ContentTypeActionsController($scope, $injector) {
     .then(function (published) {
       contentType.setPublishedVersion(version);
       $scope.publishedContentType = published;
-
-      // TODO this methods seem to do the same thing
-      $scope.updatePublishedContentType(published);
       spaceContext.registerPublishedContentType(published);
 
       // If the content type was created for the first time the API

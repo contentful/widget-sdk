@@ -68,7 +68,6 @@ describe('ContentType Actions Controller', function () {
       contentType.unpublish = sinon.stub().resolves();
       contentType.isPublished = sinon.stub().returns(true);
 
-      scope.updatePublishedContentType = sinon.stub();
       scope.ctEditorController = {
         countEntries: sinon.stub().resolves()
       };
@@ -227,8 +226,6 @@ describe('ContentType Actions Controller', function () {
 
       scope.contentType.save = sinon.stub().returns(this.when(scope.contentType));
       scope.contentType.publish = sinon.stub().returns(this.when(scope.contentType));
-
-      scope.updatePublishedContentType = sinon.stub();
     });
 
     pit('resets form and state context to pristine state', function () {
@@ -246,7 +243,7 @@ describe('ContentType Actions Controller', function () {
         var ct = scope.contentType;
         sinon.assert.calledOnce(ct.save);
         sinon.assert.calledOnce(ct.publish);
-        sinon.assert.calledOnce(scope.updatePublishedContentType);
+        expect(scope.publishedContentType).toBe(ct);
         expect(ct.getPublishedVersion()).toEqual(ct.getVersion());
       });
     });
