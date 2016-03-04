@@ -229,14 +229,6 @@ describe('ContentTypeEditor Controller', function () {
     });
   });
 
-  it('closesState if entityDeleted event is broadcast', function() {
-    scope.closeState = sinon.stub();
-    createContentType([{}]);
-    var $rootScope = this.$inject('$rootScope');
-    $rootScope.$broadcast('entityDeleted', scope.contentType);
-    sinon.assert.calledOnce(scope.closeState);
-  });
-
   describe('#deleteField(id)', function () {
     var syncControls;
 

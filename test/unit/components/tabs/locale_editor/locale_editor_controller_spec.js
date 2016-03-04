@@ -19,6 +19,7 @@ describe('Locale editor controller', function () {
     this.TheLocaleStoreMock = {
       refresh: sinon.stub()
     };
+    this.closeStateSpy = sinon.spy();
 
     module('contentful/test', function ($provide) {
       $provide.value('logger', self.logger);
@@ -26,6 +27,7 @@ describe('Locale editor controller', function () {
       $provide.value('analytics', self.analytics);
       $provide.value('modalDialog', self.modalDialog);
       $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
+      $provide.value('navigation/closeState', self.closeStateSpy);
     });
 
     this.$inject('tokenStore').refresh = sinon.stub().resolves();
@@ -83,7 +85,6 @@ describe('Locale editor controller', function () {
 
     describe('with confirmation', function () {
       beforeEach(function () {
-        this.scope.closeState = sinon.stub();
         this.modalDialog.openConfirmDialog.resolves({confirmed: true});
         this.controller.delete.execute();
         this.$apply();
@@ -103,7 +104,7 @@ describe('Locale editor controller', function () {
       });
 
       it('closes the current state', function() {
-        sinon.assert.calledOnce(this.scope.closeState);
+        sinon.assert.calledOnce(this.closeStateSpy);
       });
     });
 

@@ -12,6 +12,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   var userAgent        = $injector.get('userAgent');
   var $state           = $injector.get('$state');
   var accessChecker    = $injector.get('accessChecker');
+  var closeState       = $injector.get('navigation/closeState');
 
   var notify = notifier(function getTitle () {
     return truncate($scope.apiKey.getName(), 50);
@@ -93,7 +94,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     if (event.currentScope !== event.targetScope) {
       var scope = event.currentScope;
       if (apiKey === scope.apiKey) {
-        scope.closeState();
+        closeState();
       }
     }
   });

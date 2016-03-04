@@ -33,6 +33,8 @@ function ContentTypeEditorController($scope, $injector) {
   var eiHelpers         = $injector.get('editingInterfaces/helpers');
   var spaceContext      = $injector.get('spaceContext');
   var editingInterfaces = spaceContext.editingInterfaces;
+  var closeState        = $injector.get('navigation/closeState');
+
   var trackContentTypeChange = $injector.get('analyticsEvents').trackContentTypeChange;
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
@@ -160,7 +162,7 @@ function ContentTypeEditorController($scope, $injector) {
     if (event.currentScope !== event.targetScope) {
       var scope = event.currentScope;
       if (contentType === scope.contentType) {
-        scope.closeState();
+        closeState();
       }
     }
   }
