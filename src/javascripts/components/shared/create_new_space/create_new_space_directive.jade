@@ -33,6 +33,7 @@ form(
           label
             strong Language
           select.cfnext-select-box(
+            data-test-id="select-locale"
             ng-model="createSpace.newSpace.data.defaultLocale"
             ng-options="opt.code as opt.displayName for opt in createSpace.localesList"
             ng-disabled="createSpace.createSpaceInProgress")
@@ -42,6 +43,7 @@ form(
           label
             strong Organization
           select.cfnext-select-box(
+            data-test-id="select-organization"
             ng-model="createSpace.newSpace.organization"
             ng-options="opt as opt.name for opt in createSpace.writableOrganizations"
             ng-disabled="createSpace.createSpaceInProgress")
@@ -135,7 +137,8 @@ div(ng-show="createSpace.viewState === 'creatingTemplate'")
 
   .modal-dialog__controls.create-new-space-dialog__controls--centered
     button.cfnext-btn-action(
-       ng-disabled="createSpace.createTemplateInProgress"
-       ng-click="createSpace.finishedSpaceCreation()")
+      data-test-id="create-space"
+      ng-disabled="createSpace.createTemplateInProgress"
+      ng-click="createSpace.finishedSpaceCreation()")
       | Get started
 
