@@ -635,7 +635,9 @@ angular.module('contentful').config([
       'content': {
         template: '<cf-account-view>'
       }
-    }
+    },
+    onEnter: ['TheAccountView', function (view) { view.enter(); }],
+    onExit:  ['TheAccountView', function (view) { view.exit();  }]
   });
 
   $stateProvider.state('account.pathSuffix', {
