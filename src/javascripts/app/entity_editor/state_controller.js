@@ -148,8 +148,10 @@ function ($scope, $injector, entity, notify, handlePublishError) {
 
   controller.delete = Command.create(function () {
     return stateManager.delete()
-    .then(closeState)
-    .then(notify.deleteSuccess, notify.deleteFail);
+    .then(function () {
+      notify.deleteSuccess();
+      return closeState();
+    }, notify.deleteFail);
   }, {
     disabled: function () {
       switch (stateManager.getState()) {

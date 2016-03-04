@@ -1,7 +1,7 @@
 'use strict';
 
 describe('ContentType Actions Controller', function () {
-  var controller, scope, stubs, $q, logger, notification, accessChecker, ReloadNotification;
+  var controller, scope, $q, logger, notification, accessChecker, ReloadNotification;
   var space, contentType;
 
   function FormStub () {
@@ -22,16 +22,10 @@ describe('ContentType Actions Controller', function () {
   }
 
   beforeEach(function () {
+    var self = this;
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs([ 'track']);
-
-      $provide.value('analytics', {
-        track: stubs.track
-      });
+      $provide.value('navigation/closeState', self.closeSpy = sinon.spy());
     });
-
-    var $rootScope = this.$inject('$rootScope');
-    this.broadcastStub = sinon.spy($rootScope, '$broadcast');
 
     this.$state = this.$inject('$state');
     this.$state.go = sinon.stub().resolves();
@@ -49,17 +43,13 @@ describe('ContentType Actions Controller', function () {
     space = cfStub.space('spaceid');
     contentType = cfStub.contentType(space, 'typeid', 'typename');
 
-    scope = $rootScope.$new();
+    scope = this.$inject('$rootScope').$new();
     scope.context = {};
     scope.contentType = contentType;
     scope.broadcastFromSpace = sinon.stub();
 
     var $controller = this.$inject('$controller');
     controller = $controller('ContentTypeActionsController', {$scope: scope});
-  });
-
-  afterEach(function () {
-    this.broadcastStub.restore();
   });
 
   describe('#delete command', function() {
@@ -120,10 +110,10 @@ describe('ContentType Actions Controller', function () {
         sinon.assert.called(notification.info);
       });
 
-      it('broadcasts event', function() {
+      it('closes state', function() {
         controller.delete.execute();
         this.$apply();
-        sinon.assert.calledWith(this.broadcastStub, 'entityDeleted');
+        sinon.assert.calledOnce(this.closeSpy);
       });
     });
 

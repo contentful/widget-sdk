@@ -23,6 +23,7 @@ function ContentTypeActionsController($scope, $injector) {
   var accessChecker      = $injector.get('accessChecker');
   var ReloadNotification = $injector.get('ReloadNotification');
   var ctHelpers          = $injector.get('data/ContentTypes');
+  var closeState         = $injector.get('navigation/closeState');
 
   /**
    * @ngdoc property
@@ -145,7 +146,8 @@ function ContentTypeActionsController($scope, $injector) {
     return $scope.contentType.delete()
     .then(function () {
       notify.deleteSuccess();
-      $rootScope.$broadcast('entityDeleted', $scope.contentType);
+      spaceContext.removeContentType($scope.contentType);
+      return closeState();
     }, notify.deleteFail);
   }
 
