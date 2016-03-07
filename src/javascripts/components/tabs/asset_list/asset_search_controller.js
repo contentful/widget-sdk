@@ -18,14 +18,6 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
   this.paginator = new Paginator();
   $scope.assetContentType = searchQueryHelper.assetContentType;
 
-  $scope.$on('entityDeleted', function (event, entity) {
-    var scope = event.currentScope;
-    var index = _.indexOf(scope.assets, entity);
-    if (index > -1) {
-      scope.assets.splice(index, 1);
-    }
-  });
-
   this.resetAssets = function(resetPage) {
     $scope.context.loading = true;
     if (resetPage) { this.paginator.page = 0; }

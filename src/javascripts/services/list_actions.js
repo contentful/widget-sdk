@@ -2,7 +2,6 @@
 
 angular.module('contentful').factory('listActions', ['$injector', function($injector){
   var $q           = $injector.get('$q');
-  var $rootScope   = $injector.get('$rootScope');
   var analytics    = $injector.get('analytics');
   var notification = $injector.get('notification');
 
@@ -41,6 +40,7 @@ angular.module('contentful').factory('listActions', ['$injector', function($inje
 
     callAction: function (entity, params) {
       var args = [];
+      var onDelete = dotty.get(this, 'params.onDelete', _.noop);
 
       if(params.getterForMethodArgs){
         args.unshift.apply(args, _.map(params.getterForMethodArgs, function (getter) {
@@ -49,14 +49,15 @@ angular.module('contentful').factory('listActions', ['$injector', function($inje
       }
 
       return entity[params.method].apply(entity, args)
-      .then(function(changedEntity){
-        if(params.event)
-          $rootScope.$broadcast(params.event, changedEntity);
+      .then(function (changedEntity){
+        if (params.method === 'delete') {
+          onDelete(changedEntity);
+        }
       })
       .catch(function(err){
         if(err.statusCode === ERRORS.NOT_FOUND){
           entity.setDeleted();
-          $rootScope.$broadcast('entityDeleted', entity);
+          onDelete(entity);
           return $q.when();
         } else
           return $q.reject({err: err});

@@ -30,7 +30,15 @@ angular.module('contentful').controller('EntryListActionsController', ['$scope',
     clearSelection: clearSelection,
     entityName: 'Entry',
     entityNamePlural: 'Entries',
+    onDelete: removeFromList
   });
+
+  function removeFromList(entity) {
+    var index = _.indexOf($scope.entries, entity);
+    if (index > -1) {
+      $scope.entries.splice(index, 1);
+    }
+  }
 
   $scope.publishSelected = function() {
     batchPerformer.perform({
@@ -84,8 +92,7 @@ angular.module('contentful').controller('EntryListActionsController', ['$scope',
   $scope.deleteSelected = function() {
     batchPerformer.perform({
       method: 'delete',
-      callback: batchPerformer.makeBatchResultsNotifier('deleted'),
-      event: 'entityDeleted'
+      callback: batchPerformer.makeBatchResultsNotifier('deleted')
     });
   };
 

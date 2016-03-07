@@ -102,37 +102,6 @@ describe('Entry List Controller', function () {
 
   });
 
-  describe('handles entityDeleted event', function() {
-
-    beforeEach(inject(function(cfStub) {
-      var space = cfStub.space('test');
-      var removedEntity = cfStub.entry(space, 'entry2', 'type', {}, {sys: {version:1}});
-      scope.entries = [
-        cfStub.entry(space, 'entry1'),
-        removedEntity,
-        cfStub.entry(space, 'entry3')
-      ];
-
-      scope.entry = removedEntity;
-
-      var $rootScope = this.$inject('$rootScope');
-      $rootScope.$broadcast('entityDeleted', removedEntity);
-      scope.$digest();
-    }));
-
-    it('has 2 entries after deletion', function () {
-      expect(scope.entries.length).toEqual(2);
-    });
-
-    it('has entry1', function () {
-      expect(scope.entries[0].getId()).toEqual('entry1');
-    });
-
-    it('has entry3', function () {
-      expect(scope.entries[1].getId()).toEqual('entry3');
-    });
-  });
-
   describe('page parameters change trigger entries reset', function () {
     beforeEach(function () {
       scope.$digest();
