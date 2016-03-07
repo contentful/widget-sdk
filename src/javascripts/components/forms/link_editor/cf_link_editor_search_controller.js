@@ -19,6 +19,7 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
   var buildSearchQuery  = $injector.get('search/queryBuilder');
   var $state            = $injector.get('$state');
   var accessChecker     = $injector.get('accessChecker');
+  var spaceContext      = $injector.get('spaceContext');
 
   var controller = this;
   var entityLoader = new PromisedLoader();
@@ -40,12 +41,11 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
     $scope.entityMimeTypeGroup = entityMimeTypeGroup;
   });
   $scope.$watchCollection('[entityType, entityContentTypes, entityMimeTypeGroup]', updateEntityName);
-  $scope.$watch('entityContentTypes', function (contentTypes) {
-    if (_.isEmpty(contentTypes)) {
-      $scope.addableContentTypes = $scope.spaceContext.publishedContentTypes;
-    } else {
-      $scope.addableContentTypes = contentTypes;
-    }
+  $scope.$watch('entityContentTypes', function (cts) {
+    cts = _.isEmpty(cts) ? spaceContext.publishedContentTypes : cts;
+    $scope.addableContentTypes = _.filter(cts, function (ct) {
+      return accessChecker.canPerformActionOnEntryOfType('create', ct.getId());
+    });
   });
 
   function updateEntityName() {
@@ -119,7 +119,7 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
   };
 
   $scope.addNewEntry = function(contentType) {
-    return $scope.spaceContext.space.createEntry(contentType.getId(), {})
+    return spaceContext.space.createEntry(contentType.getId(), {})
     .then(function createEntityHandler(entry) {
       return addEntity(entry)
       .then(function addLinkHandler() {
@@ -146,7 +146,7 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
   };
 
   $scope.addNewAsset = function() {
-    $scope.spaceContext.space.createAsset({})
+    spaceContext.space.createAsset({})
     .then(function createEntityHandler(asset) {
       return addEntity(asset)
       .then(function addLinkHandler() {
@@ -196,7 +196,7 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
     return buildQuery()
     .then(function (query) {
       return entityLoader.loadPromise(function(){
-        return $scope.spaceContext.space[fetchMethod](query);
+        return spaceContext.space[fetchMethod](query);
       });
     });
   };
@@ -263,7 +263,7 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
       }
     }
 
-    return buildSearchQuery($scope.spaceContext.space, contentType, $scope.searchTerm)
+    return buildSearchQuery(spaceContext.space, contentType, $scope.searchTerm)
     .then(function (searchQuery) {
       return _.extend(searchQuery, queryObject);
     });
