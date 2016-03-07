@@ -17,6 +17,10 @@ describe('ContentTypeEditor Controller', function () {
       $provide.value('modalDialog', {
         open: self.modalDialogOpenStub
       });
+
+      $provide.factory('openFieldDialog', function () {
+        return sinon.stub();
+      });
     });
 
     var cfStub = this.$inject('cfStub');
@@ -29,7 +33,7 @@ describe('ContentTypeEditor Controller', function () {
         $setDirty: sinon.stub()
       },
       context: {},
-      editingInterface: { data: {} }
+      editingInterface: {}
     });
 
 
@@ -187,12 +191,12 @@ describe('ContentTypeEditor Controller', function () {
   });
 
   describe('#showNewFieldDialog command', function() {
-    var syncWidgets;
+    var syncControls;
 
     beforeEach(function() {
       var spaceContext = this.$inject('spaceContext');
-      syncWidgets = sinon.stub();
-      spaceContext.editingInterfaces = {syncWidgets: syncWidgets};
+      syncControls = sinon.stub();
+      spaceContext.editingInterfaces = {syncControls: syncControls};
 
       scope.$broadcast = sinon.stub();
 
@@ -213,9 +217,9 @@ describe('ContentTypeEditor Controller', function () {
     });
 
     it('syncs editing interface widgets with fields', function () {
-      sinon.assert.notCalled(syncWidgets);
+      sinon.assert.notCalled(syncControls);
       this.$apply();
-      sinon.assert.calledWithExactly(syncWidgets,
+      sinon.assert.calledWithExactly(syncControls,
                                      scope.contentType.data,
                                      scope.editingInterface);
     });
@@ -240,12 +244,12 @@ describe('ContentTypeEditor Controller', function () {
   });
 
   describe('#deleteField(id)', function () {
-    var syncWidgets;
+    var syncControls;
 
     beforeEach(function () {
       var spaceContext = this.$inject('spaceContext');
-      syncWidgets = sinon.stub();
-      spaceContext.editingInterfaces = {syncWidgets: syncWidgets};
+      syncControls = sinon.stub();
+      spaceContext.editingInterfaces = {syncControls: syncControls};
 
       this.controller = createContentType([{id: 'FID'}]);
       scope.publishedContentType = {
@@ -265,7 +269,7 @@ describe('ContentTypeEditor Controller', function () {
         this.controller.deleteField('FID');
         this.$apply();
         sinon.assert.calledWith(
-          syncWidgets,
+          syncControls,
           contentType.data, scope.editingInterface
         );
       });
@@ -369,6 +373,41 @@ describe('ContentTypeEditor Controller', function () {
       expect(contentType.data.name).toEqual('NAME');
       expect(contentType.data.description).toEqual('DESCRIPTION');
       expect(contentType.data.sys.id).not.toEqual('ID');
+    });
+  });
+
+  describe('#openFieldDialog', function () {
+    var openFieldDialog, controller;
+
+    beforeEach(function () {
+      openFieldDialog = this.$inject('openFieldDialog');
+      openFieldDialog.defers();
+      controller = createContentType();
+    });
+
+    it('opens the field dialog with correct arguments', function () {
+      var field = {apiName: 'FIELD'};
+      var control = {fieldId: 'FIELD'};
+      scope.editingInterface = {
+        controls: [control]
+      };
+
+      controller.openFieldDialog(field);
+      sinon.assert.calledWith(openFieldDialog, scope, field, control);
+    });
+
+    it('sets form to dirty when dialog is confirmed', function () {
+      controller.openFieldDialog();
+      openFieldDialog.resolve();
+      this.$apply();
+      sinon.assert.calledOnce(scope.contentTypeForm.$setDirty);
+    });
+
+    it('does not set form to dirty when dialog is canceled', function () {
+      controller.openFieldDialog();
+      openFieldDialog.reject();
+      this.$apply();
+      sinon.assert.notCalled(scope.contentTypeForm.$setDirty);
     });
   });
 });

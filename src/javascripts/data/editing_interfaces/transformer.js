@@ -20,7 +20,7 @@ angular.module('cf.data')
     fromAPI: fromAPI,
     toAPI: toAPI,
     makeDefault: makeDefault,
-    syncWidgets: syncWidgets
+    syncControls: syncControls
   };
 
 
@@ -47,46 +47,46 @@ angular.module('cf.data')
       sys: {
         contentType: contentTypeLink
       },
-      widgets: [],
+      controls: [],
     };
 
-    syncWidgets(contentType, ei);
+    syncControls(contentType, ei);
     return ei;
   }
 
   /**
    * @ngdoc method
-   * @name data/editingInterfaces/transformer#syncWidgets
+   * @name data/editingInterfaces/transformer#syncControls
    * @description
    * Mutate the widgets so there is a one-to-one mapping between fields and widgets.
    *
    * Specifically
-   * - Widgets are ordered according to the fields
-   * - Extraneous widgets (i.e. those that can not be mapped to a
+   * - Controls are ordered according to the fields
+   * - Extraneous controls (i.e. those that can not be mapped to a
    *   field) are removed.
-   * - If there is no widget for a field a default widget is added.
-   * - Set each widgets `field` property to the matching field. Uses
+   * - If there is no control for a field the default control is added.
+   * - Set each controls `field` property to the matching field. Uses
    *   references, so any changes to the content type field will be
    *   reflected in the widget.
    *
    * @param {Data.ContentType} contentType
    * @param {Data.EditingInterface} editingInterface
    */
-  function syncWidgets (contentType, ei) {
-    ei.widgets = alignWidgets(contentType, ei.widgets);
+  function syncControls (contentType, ei) {
+    ei.controls = alignControls(contentType, ei.controls);
   }
 
   /**
    * @pure
    */
-  function alignWidgets (contentType, widgets) {
+  function alignControls (contentType, controls) {
     return _.map(contentType.fields, function (field) {
-      var widget =
-        eiHelpers.findWidget(widgets, field) ||
-        defaultWidget(contentType, field);
-      widget = _.cloneDeep(widget);
-      widget.field = field;
-      return widget;
+      var control =
+        eiHelpers.findWidget(controls, field) ||
+        defaultControl(contentType, field);
+      control = _.cloneDeep(control);
+      control.field = field;
+      return control;
     });
   }
 
@@ -106,31 +106,38 @@ angular.module('cf.data')
    * @param {API.EditingInterface} editingInterface
    * @returns {Data.EditingInterface}
    */
-  function fromAPI (contentType, editingInterface) {
-    var widgets = widgetsFromApi(contentType, editingInterface.widgets);
+  function fromAPI (contentType, ei) {
+    var controls;
+    if (_.isArray(ei.controls)) {
+      controls = ei.controls;
+    } else if (_.isArray(ei.widgets)) {
+      controls = ei.widgets;
+    }
+    controls = controlsFromApi(contentType, controls);
     return {
-      sys: editingInterface.sys,
-      widgets: widgets
+      sys: ei.sys,
+      controls: controls
     };
   }
 
   /**
    * @pure
    * @param {API.ContentType} contentType
-   * @param {API.WidgetLink[]} widgets
+   * @param {API.WidgetLink[]} controls
    * @returns {API.WidgetLink[]}
    */
-  function widgetsFromApi (contentType, widgets) {
+  function controlsFromApi (contentType, controls) {
     var fields = contentType.fields;
     // TODO simplify this
-    widgets = _.map(widgets, cleanAPIWidget);
-    widgets = migrateWidgetsToApiNames(fields, widgets);
-    widgets = alignWidgets(contentType, widgets);
-    widgets = _.map(widgets, widgetMigrator(contentType));
-    return widgets;
+    controls = _.map(controls, migrateApiControl);
+    controls = _.map(controls, cleanApiControl);
+    controls = migrateWidgetsToApiNames(fields, controls);
+    controls = alignControls(contentType, controls);
+    controls = _.map(controls, widgetMigrator(contentType));
+    return controls;
   }
 
-  function defaultWidget (contentType, field) {
+  function defaultControl (contentType, field) {
     // TODO Content Types should always have an api name. The UI must
     // make sure to set the default if it retrieves one from the
     // server.
@@ -147,8 +154,8 @@ angular.module('cf.data')
    * @ngdoc method
    * @name data/editingInterfaces/transformer#toAPI
    * @description
-   * Calls `#syncWidgets()` on the editing interface and removes
-   * extraneous data like empty `widgetParams` and the `field` object
+   * Calls `#syncControls()` on the editing interface and removes
+   * extraneous data like empty `settings` and the `field` object
    * from all widgets
    *
    * @param {API.ContentType} contentType
@@ -157,20 +164,27 @@ angular.module('cf.data')
    */
   function toAPI (contentType, ei) {
     ei = _.cloneDeep(ei);
-    syncWidgets(contentType, ei);
-    ei.widgets = _.map(ei.widgets, cleanAPIWidget);
+    syncControls(contentType, ei);
+    ei.controls = _.map(ei.controls, cleanApiControl);
     return ei;
+  }
+
+  function migrateApiControl (control) {
+    if (!_.isObject(control.settings)) {
+      control.settings = control.widgetParams;
+    }
+    return control;
   }
 
   /**
    * Removes all properties that should not be stored in the API
    */
-  function cleanAPIWidget (widget) {
-    widget = _.pick(widget, ['fieldId', 'widgetId', 'widgetParams']);
-    if (_.isEmpty(widget.widgetParams)) {
-      delete widget.widgetParams;
+  function cleanApiControl (control) {
+    control = _.pick(control, ['fieldId', 'widgetId', 'settings']);
+    if (_.isEmpty(control.settings)) {
+      delete control.settings;
     }
-    return _.cloneDeep(widget);
+    return _.cloneDeep(control);
   }
 
   // This function only serves migration purposes. It remaps old editing

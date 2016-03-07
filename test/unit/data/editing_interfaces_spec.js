@@ -41,7 +41,7 @@ describe('data/editingInterfaces', function () {
       describe('with API response', function () {
         beforeEach(function() {
           spaceEndpoint.resolves({
-            widgets: [{
+            controls: [{
               fieldId: 'FIELD',
               widgetId: 'WIDGET'
             }]
@@ -51,7 +51,7 @@ describe('data/editingInterfaces', function () {
         pit('returns editing interface with widgets', function() {
           return editingInterfaces.get(contentType)
           .then(function (ei) {
-            expect(ei.widgets.length).toEqual(1);
+            expect(ei.controls.length).toEqual(1);
           });
         });
       });
@@ -63,7 +63,7 @@ describe('data/editingInterfaces', function () {
         spaceEndpoint.rejects({status: 404});
         return editingInterfaces.get(contentType)
         .then(function (ei) {
-          expect(ei.widgets[0].widgetId).toEqual('DEFAULT');
+          expect(ei.controls[0].widgetId).toEqual('DEFAULT');
         });
       });
 
@@ -94,7 +94,7 @@ describe('data/editingInterfaces', function () {
 
         return editingInterfaces.get(contentType)
         .then(function (ei) {
-          expect(ei.widgets[0].widgetId).toEqual('DEFAULT');
+          expect(ei.controls[0].widgetId).toEqual('DEFAULT');
         });
       });
     });
@@ -119,23 +119,23 @@ describe('data/editingInterfaces', function () {
     it('removes field property from request payload', function () {
       editingInterfaces.save(contentType, {
         sys: {},
-        widgets: [
+        controls: [
           {fieldId: 'FIELD', field: {}}
         ]
       });
       var data = spaceEndpoint.args[0][0].data;
-      expect(data.widgets[0].field).toBe(undefined);
+      expect(data.controls[0].field).toBe(undefined);
     });
 
     it('removes empty widget parameters from request payload', function () {
       editingInterfaces.save(contentType, {
         sys: {},
-        widgets: [
-          {fieldId: 'FIELD', widgetParams: {}}
+        controls: [
+          {fieldId: 'FIELD', settings: {}}
         ]
       });
       var data = spaceEndpoint.args[0][0].data;
-      expect(data.widgets[0].widgetParams).toBe(undefined);
+      expect(data.controls[0].settings).toBe(undefined);
     });
   });
 });

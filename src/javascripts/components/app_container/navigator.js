@@ -143,18 +143,18 @@ angular.module('contentful').config([
         var ctId = entry.data.sys.contentType.sys.id;
         return spaceContext.fetchPublishedContentType(ctId);
       }],
-      editorWidgets: ['editingInterface', 'spaceContext', function (ei, spaceContext) {
-        return spaceContext.widgets.buildRenderable(ei.widgets);
+      fieldControls: ['editingInterface', 'spaceContext', function (ei, spaceContext) {
+        return spaceContext.widgets.buildRenderable(ei.controls);
       }]
     },
-    controller: ['$state', '$scope', 'entry', 'editorWidgets', 'contentType', 'contextHistory',
-                 function ($state, $scope, entry, editorWidgets, contentType, contextHistory) {
+    controller: ['$state', '$scope', 'entry', 'fieldControls', 'contentType', 'contextHistory',
+                 function ($state, $scope, entry, fieldControls, contentType, contextHistory) {
       $state.current.data = $scope.context = {};
       $scope.entry = entry;
       $scope.entity = entry;
       $scope.contentType = contentType;
-      $scope.formWidgets = editorWidgets.form;
-      $scope.sidebarWidgets = editorWidgets.sidebar;
+      $scope.formControls = fieldControls.form;
+      $scope.sidebarControls = fieldControls.sidebar;
       contextHistory.addEntity(entry);
     }],
     template:
@@ -198,18 +198,18 @@ angular.module('contentful').config([
           return asset;
         });
       }],
-      formWidgets: ['$injector', 'spaceContext', function ($injector, spaceContext) {
+      formControls: ['$injector', 'spaceContext', function ($injector, spaceContext) {
         var ei = $injector.get('data/editingInterfaces/asset');
         return spaceContext.widgets.buildRenderable(ei.widgets).form;
       }]
     },
-    controller: ['$injector', '$scope', 'asset', 'formWidgets',
-                 function ($injector, $scope, asset, formWidgets) {
+    controller: ['$injector', '$scope', 'asset', 'formControls',
+                 function ($injector, $scope, asset, formControls) {
       var $state = $injector.get('$state');
       $injector.get('contextHistory').addEntity(asset);
       $state.current.data = $scope.context = {};
       $scope.asset = $scope.entity = asset;
-      $scope.formWidgets = formWidgets;
+      $scope.formControls = formControls;
     }],
     template:
     '<div ' + [

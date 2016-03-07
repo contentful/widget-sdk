@@ -27,7 +27,7 @@ angular.module('contentful')
    * @ngdoc type
    * @name Widget.Renderable
    * @property {string} template
-   * @property {object} widgetParams
+   * @property {object} settings
    * @property {string} defaultHelpText
    * @property {boolean} rendersHelpText
    * @property {boolean} isFocusable
@@ -38,7 +38,7 @@ angular.module('contentful')
    * @ngdoc type
    * @name API.Widget
    * @property {string} widgetId
-   * @property {[string]: any} widgetParams
+   * @property {[string]: any} settings
    */
   var WIDGETS = {};
 
@@ -162,8 +162,8 @@ angular.module('contentful')
    * @param {Widget.Option[]} options
    * @param {object} params
    */
-  function filterOptions(widgetOptions, widgetParams) {
-    widgetParams = _.isObject(widgetParams) ? widgetParams : {};
+  function filterOptions(widgetOptions, settings) {
+    settings = _.isObject(settings) ? settings : {};
     return _.filter(widgetOptions || [], shouldOptionBeVisible);
 
     function shouldOptionBeVisible(option) {
@@ -179,7 +179,7 @@ angular.module('contentful')
 
     function areMet(acceptedValues, paramName) {
       acceptedValues = _.isArray(acceptedValues) ? acceptedValues : [acceptedValues];
-      return _.contains(acceptedValues, widgetParams[paramName]);
+      return _.contains(acceptedValues, settings[paramName]);
     }
   }
 
@@ -234,10 +234,10 @@ angular.module('contentful')
     var template = widgetTemplate(id);
     widget.template = template;
 
-    if (!_.isObject(widget.widgetParams)) {
-      widget.widgetParams = {};
+    if (!_.isObject(widget.settings)) {
+      widget.settings = {};
     }
-    applyDefaults(id, widget.widgetParams);
+    applyDefaults(id, widget.settings);
 
     var descriptor = getWidget(id);
     if (descriptor) {
