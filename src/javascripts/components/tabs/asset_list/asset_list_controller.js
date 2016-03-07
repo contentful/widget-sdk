@@ -23,6 +23,7 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
 
   $scope.shouldHide = accessChecker.shouldHide;
   $scope.shouldDisable = accessChecker.shouldDisable;
+  $scope.canUploadMultipleAssets = accessChecker.canUploadMultipleAssets;
 
   $scope.searchController = $controller('AssetSearchController', {
     $scope: $scope,

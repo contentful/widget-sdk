@@ -23,6 +23,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   var spaceContext     = $injector.get('spaceContext');
   var policyChecker    = $injector.get('accessChecker/policy');
   var cache            = $injector.get('accessChecker/responseCache');
+  var capitalize       = $injector.get('stringUtils').capitalize;
 
   var ACTIONS_FOR_ENTITIES = {
     contentType: ['create', 'read', 'update', 'delete', 'publish', 'unpublish'],
@@ -110,6 +111,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     canPerformActionOnEntryOfType:   canPerformActionOnEntryOfType,
     canUpdateEntry:                  canUpdateEntry,
     canUpdateAsset:                  canUpdateAsset,
+    canUploadMultipleAssets:         canUploadMultipleAssets,
     canModifyApiKeys:                canModifyApiKeys,
     canModifyRoles:                  canModifyRoles,
     canModifyUsers:                  canModifyUsers,
@@ -230,6 +232,10 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     return can(action, entity.data).can;
   }
 
+  function canPerformActionOnType(action, type) {
+    return can(action, capitalize(type)).can;
+  }
+
   /**
    * @ngdoc method
    * @name accessChecker#canUpdateEntry
@@ -268,6 +274,20 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     var currentUser = spaceContext.getData('spaceMembership.user.sys.id');
 
     return author === currentUser;
+  }
+
+  /**
+   * @ngdoc method
+   * @name accessChecker#canUploadMultipleAssets
+   * @returns {boolean}
+   * @description
+   * Returns true if multiple assets can be uploaded.
+   */
+  function canUploadMultipleAssets() {
+    var canCreate = canPerformActionOnType('create', 'asset');
+    var canUpdate = policyChecker.canUpdateAssets() || policyChecker.canUpdateOwnAssets();
+
+    return canCreate && canUpdate;
   }
 
   /**
