@@ -13,7 +13,7 @@ angular.module('cf.data')
 .factory('data/editingInterfaces/transformer', ['$injector', function ($injector) {
   var eiHelpers = $injector.get('editingInterfaces/helpers');
   var logger = $injector.get('logger');
-  var widgetMigrator = $injector.get('widgets/migrations');
+  var migrateWidgetId = $injector.get('widgets/migrations');
   var getDefaultWidgetId = $injector.get('widgets/default');
 
   return {
@@ -133,7 +133,7 @@ angular.module('cf.data')
     controls = _.map(controls, cleanApiControl);
     controls = migrateWidgetsToApiNames(fields, controls);
     controls = alignControls(contentType, controls);
-    controls = _.map(controls, widgetMigrator(contentType));
+    controls = _.map(controls, migrateWidgetId);
     return controls;
   }
 

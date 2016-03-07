@@ -33,6 +33,20 @@ angular.module('contentful')
    * @property {boolean} isFocusable
    */
 
+  /**
+   * @ngdoc type
+   * @name Data.FieldControl
+   * @description
+   * The Field Control object is used to create editor controls.
+   *
+   * All field controls for a Content Type are retrieved by the
+   * `data/editingInterfaces`. The API representation is then converted
+   * to this type.
+   * @property {string} fieldId
+   * @property {string} widgetId
+   * @property {object} settings
+   * @property {API.Field} field
+   */
 
   /**
    * @ngdoc type
@@ -206,22 +220,22 @@ angular.module('contentful')
    * @name widgets#buildRenderable
    * @description
    * Create an object that contains all the necessary data to render a
-   * widget.
+   * field control.
    *
-   * @param {Data.Widget[]} widget
+   * @param {Data.FieldControl[]} controls
    * @return {object}
    */
-  function buildRenderable (widgets) {
+  function buildRenderable (controls) {
     var renderable = {sidebar: [], form: []};
-    _.forEach(widgets, function (widget) {
-      if (!widget.field) {
+    _.forEach(controls, function (control) {
+      if (!control.field) {
         return;
       }
-      widget = buildOneRenderable(widget);
-      if (widget.sidebar) {
-        renderable.sidebar.push(widget);
+      control = buildOneRenderable(control);
+      if (control.sidebar) {
+        renderable.sidebar.push(control);
       } else {
-        renderable.form.push(widget);
+        renderable.form.push(control);
       }
     });
     return renderable;
