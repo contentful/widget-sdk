@@ -44,25 +44,17 @@ angular.module('contentful')
    * @ngdoc method
    * @name editingInterfaces/helpers#findWidget
    * @description
-   * Find a widget in an array of widget mappings that is related to a fields
-   * apiName or id.  Primarily we want to map via apiNames, but if a field does
-   * not have an apiName we need to fall back to the id.
+   * Find the widget that uses a given field
    *
+   * TODO I think we can use `widgets.field` to compare the ids. The
+   * first argument should always pass through the Editing Interface
+   * transformer.
    * @param {Array<API.Widget>} widgets
    * @param {API.Field} contentTypeField
    * @return {API.Widget?}
    */
-  function findWidget(widgets, contentTypeField) {
-    return _.find(widgets, function(widget) {
-      // Both widget.fieldId and field.apiName could be undefined due to legacy
-      // data. For this reason a comparison between a fieldId that is undefined
-      // and a apiName that is undefined would result in true, causing
-      // mismatched mapping and a subtle bug.
-      if(!_.isString(widget.fieldId)) {
-        return;
-      }
-      return widget.fieldId === contentTypeField.apiName || widget.fieldId === contentTypeField.id;
-    });
+  function findWidget(widgets, field) {
+    var fieldId = field.apiName || field.id;
+    return _.find(widgets, {fieldId: fieldId});
   }
-
 }]);

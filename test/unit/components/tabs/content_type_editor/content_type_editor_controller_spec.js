@@ -383,14 +383,14 @@ describe('ContentTypeEditor Controller', function () {
     });
 
     it('sets form to dirty when dialog is confirmed', function () {
-      controller.openFieldDialog();
+      controller.openFieldDialog({});
       openFieldDialog.resolve();
       this.$apply();
       sinon.assert.calledOnce(scope.contentTypeForm.$setDirty);
     });
 
     it('does not set form to dirty when dialog is canceled', function () {
-      controller.openFieldDialog();
+      controller.openFieldDialog({});
       openFieldDialog.reject();
       this.$apply();
       sinon.assert.notCalled(scope.contentTypeForm.$setDirty);

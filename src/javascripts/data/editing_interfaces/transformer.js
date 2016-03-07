@@ -12,7 +12,6 @@ angular.module('cf.data')
  */
 .factory('data/editingInterfaces/transformer', ['$injector', function ($injector) {
   var eiHelpers = $injector.get('editingInterfaces/helpers');
-  var logger = $injector.get('logger');
   var migrateWidgetId = $injector.get('widgets/migrations');
   var getDefaultWidgetId = $injector.get('widgets/default');
 
@@ -107,13 +106,7 @@ angular.module('cf.data')
    * @returns {Data.EditingInterface}
    */
   function fromAPI (contentType, ei) {
-    var controls;
-    if (_.isArray(ei.controls)) {
-      controls = ei.controls;
-    } else if (_.isArray(ei.widgets)) {
-      controls = ei.widgets;
-    }
-    controls = controlsFromApi(contentType, controls);
+    var controls = controlsFromApi(contentType, ei.controls);
     return {
       sys: ei.sys,
       controls: controls
@@ -121,20 +114,13 @@ angular.module('cf.data')
   }
 
   /**
-   * @pure
    * @param {API.ContentType} contentType
    * @param {API.WidgetLink[]} controls
-   * @returns {API.WidgetLink[]}
+   * @returns {Data.FieldControl[]}
    */
   function controlsFromApi (contentType, controls) {
-    var fields = contentType.fields;
-    // TODO simplify this
-    controls = _.map(controls, migrateApiControl);
-    controls = _.map(controls, cleanApiControl);
-    controls = migrateWidgetsToApiNames(fields, controls);
-    controls = alignControls(contentType, controls);
-    controls = _.map(controls, migrateWidgetId);
-    return controls;
+    return alignControls(contentType, controls)
+           .map(migrateWidgetId);
   }
 
   function defaultControl (contentType, field) {
@@ -169,13 +155,6 @@ angular.module('cf.data')
     return ei;
   }
 
-  function migrateApiControl (control) {
-    if (!_.isObject(control.settings)) {
-      control.settings = control.widgetParams;
-    }
-    return control;
-  }
-
   /**
    * Removes all properties that should not be stored in the API
    */
@@ -185,39 +164,5 @@ angular.module('cf.data')
       delete control.settings;
     }
     return _.cloneDeep(control);
-  }
-
-  // This function only serves migration purposes. It remaps old editing
-  // interfaces so that they use external id's (apiNames)) instead of internal
-  // ones (ids).  See user story at:
-  // https://contentful.tpondemand.com/entity/7098
-  // This function attempts to migrate editing interface widgets using a 'best
-  // case' scenario.  For each widget it tries to find the corresponding content
-  // type field. If a mapping does not exist or is corrupt it removes it.
-  function migrateWidgetsToApiNames (fields, widgets) {
-    return _.transform(widgets, function (migratedWidgets, widget) {
-      // Find the field that maps to our widget.
-      var matchingField = eiHelpers.findField(fields, widget);
-
-      // If the editor interface has no mapping, ignore it.
-      if (!matchingField) {
-        // Metadata used for logging in case we hit an error
-        var errMetaData = {
-          data: {
-            widget: widget,
-            contentTypeFields: fields
-          }
-        };
-        var errMsg = 'The widget has no mapping to a content type field.';
-        logger.logWarn(errMsg, errMetaData);
-        return;
-      }
-
-      var newWidget = _.cloneDeep(widget);
-      if (widget.fieldId === matchingField.id && matchingField.apiName) {
-        newWidget.fieldId = matchingField.apiName;
-      }
-      migratedWidgets.push(newWidget);
-    }, []);
   }
 }]);
