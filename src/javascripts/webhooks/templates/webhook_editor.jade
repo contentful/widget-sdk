@@ -48,14 +48,14 @@ header.workbench-header
             ng-show="activity.visible && !activity.loading"
             ng-repeat="log in activity.visible track by log.sys.id"
             ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail.call({ callId: log.sys.id })'"
-            ui-sref="{{entityNavState}}")
+            ui-sref="{{ entityNavState }}")
             td.cell-time
               a.entity-list-link(ui-sref="{{entityNavState}}") {{ log.requestAt }}
             td.cell-result
-              a.entity-list-link(ui-sref="{{entityNavState}}")
+              a.entity-list-link(ui-sref="{{ entityNavState }}")
                 cf-webhook-call-status(call="log")
             td.cell-actions
-              a.entity-list-link(ui-sref="{{entityNavState}}") View details
+              a(ui-sref="{{ entityNavState }}") View details
           tr(ng-show="activity.visible.length < 1")
             td(colspan="3")
               a.entity-list-link No webhook calls yet!

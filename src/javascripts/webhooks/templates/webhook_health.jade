@@ -1,0 +1,4 @@
+span(ng-show="status === 'loading'") Loading...
+span(ng-show="status === 'nodata'") No data collected yet
+span.webhook-call__status-indicator(ng-show="status === 'ready'" ng-class="cssClass")
+span(ng-show="status === 'ready'") {{ percentage }}%
