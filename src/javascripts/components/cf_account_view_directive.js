@@ -7,6 +7,7 @@ angular.module('contentful')
   var logger         = $injector.get('logger');
   var TheAccountView = $injector.get('TheAccountView');
   var $stateParams   = $injector.get('$stateParams');
+  var channel        = $injector.get('iframeChannel');
 
   return {
     template: JST.iframe_view(),
@@ -15,7 +16,7 @@ angular.module('contentful')
     link: function (scope, elem) {
       scope.iframeId = 'accountViewFrame';
 
-      scope.$on('iframeMessage', function (event, data, iframe) {
+      channel.message.attach(function (data, iframe) {
         if (iframe !== elem.find('iframe')[0]) return;
         scope.hasLoaded = true;
         if (data.path && data.action === 'update') internalNavigationTo(data.path, data);

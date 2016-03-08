@@ -46,4 +46,5 @@ angular.module('contentful', [
   $injector.get('notification').setupClearMessageHooks();
   $injector.get('states').loadAll();
   $injector.get('dialogsInitController').init();
+  $injector.get('iframeChannel').init();
 }]);

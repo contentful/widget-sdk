@@ -21,6 +21,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var ReloadNotification = $injector.get('ReloadNotification');
   var OrganizationList   = $injector.get('OrganizationList');
   var spaceTools         = $injector.get('spaceTools');
+  var iframeChannel      = $injector.get('iframeChannel');
 
   // TODO remove this eventually. All components should access it as a service
   $scope.spaceContext = spaceContext;
@@ -44,7 +45,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
   var off = tokenStore.changed.attach(handleTokenData);
   $scope.$on('$destroy', off);
-  $scope.$on('iframeMessage', iframeMessageWatchHandler);
+  off = iframeChannel.message.attach(handlePostMessage);
+  $scope.$on('$destroy', off);
 
   // @todo remove it - temporary proxy event handler
   $scope.$on('showCreateSpaceDialog', showCreateSpaceDialog);
@@ -77,7 +79,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     }
   }
 
-  function iframeMessageWatchHandler(event, data) {
+  function handlePostMessage(data) {
     var msg = makeMsgResponder(data);
 
     if (msg('create', 'UserCancellation')) {
