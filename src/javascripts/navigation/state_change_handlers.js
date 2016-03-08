@@ -79,8 +79,7 @@ angular.module('cf.app')
       return;
     }
 
-    if (fromState.name === toState.name &&
-        getAddToContext(fromStateParams) === getAddToContext(toStateParams)) {
+    if (onlyAddToContextParamChanged(toState, toStateParams, fromState, fromStateParams)) {
       event.preventDefault();
       return;
     }
@@ -189,7 +188,16 @@ angular.module('cf.app')
     }
   }
 
-  function getAddToContext(params) {
-    return JSON.stringify(_.omit(params, 'addToContext'));
+  /**
+   * Compares a state transition and returns true if everything except
+   * the `addToContext` property of the parameters stays the same.
+   */
+  function onlyAddToContextParamChanged (to, toParams, from, fromParams) {
+    return to.name === from.name &&
+           ('addToContext' in toParams) && ('addToContext' in fromParams) &&
+           _.isEqual(
+             _.omit(toParams, 'addToContext'),
+             _.omit(fromParams, 'addToContext')
+           );
   }
 }]);
