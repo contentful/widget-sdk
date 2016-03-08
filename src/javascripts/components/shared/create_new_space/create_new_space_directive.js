@@ -36,7 +36,6 @@ angular.module('contentful')
   // `true` if the directive is being used as part of the onboarding flow
   controller.isOnboarding         = $scope.isOnboarding;
   controller.organizations        = OrganizationList.getAll();
-
   // Keep track of the view state
   controller.viewState = 'createSpaceForm';
 
@@ -140,22 +139,23 @@ angular.module('contentful')
       return spaceTools.goTo(space, true);
     })
     .then(function() {
+      controller.createTemplateInProgress = true;
+      controller.viewState = 'creatingTemplate';
       if (template.name === 'Blank') {
-        controller.finishedSpaceCreation();
+        return createApiKey();
       } else {
-        // Go to next screen and copy template
-        controller.createTemplateInProgress = true;
-        controller.viewState = 'creatingTemplate';
-        loadSelectedTemplate();
+        return loadSelectedTemplate();
       }
     })
     .finally(function() {
+      // Just show the success message whatever happens
+      controller.createTemplateInProgress = false;
       controller.createSpaceInProgress = false;
     });
   }
 
   function createTemplate(template, retried) {
-    controller.templateCreator.create(template)
+    return controller.templateCreator.create(template)
     .catch(function (data) {
       if (retried) {
         _.each(data.errors, function (error) {
@@ -168,9 +168,6 @@ angular.module('contentful')
       } else {
         createTemplate(data.template, true);
       }
-    }).finally(function () {
-      // Just show the success message whatever happens
-      controller.createTemplateInProgress = false;
     });
   }
 
@@ -181,8 +178,14 @@ angular.module('contentful')
       onItemError: function() {}
     });
 
-    spaceTemplateLoader.getTemplate(controller.newSpace.selectedTemplate)
+    return spaceTemplateLoader.getTemplate(controller.newSpace.selectedTemplate)
     .then(createTemplate);
+  }
+
+  // Create an API key for blank templates
+  function createApiKey() {
+    var key = { name: 'My App', description: 'Access token for My App' };
+    return spaceContext.space.createDeliveryApiKey(key);
   }
 
   function sendTemplateSelectedAnalyticsEvent(templateName) {

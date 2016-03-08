@@ -48,6 +48,11 @@ describe('cfCreateNewSpace directive', function() {
       },
       OrganizationList: {
         getAll: sinon.stub()
+      },
+      spaceContext: {
+        space: {
+          createDeliveryApiKey: sinon.stub()
+        }
       }
     };
 
@@ -62,6 +67,7 @@ describe('cfCreateNewSpace directive', function() {
       $provide.value('tokenStore', stubs.tokenStore);
       $provide.value('spaceTools', stubs.spaceTools);
       $provide.value('OrganizationList', stubs.OrganizationList);
+      $provide.value('spaceContext', stubs.spaceContext);
       $provide.removeDirectives('cfIcon');
     });
 
@@ -242,6 +248,7 @@ describe('cfCreateNewSpace directive', function() {
           stubs.tokenStore.refresh.resolves();
           stubs.client.createSpace.resolves(space);
           stubs.tokenStore.getSpace.resolves(space);
+          stubs.spaceContext.space.createDeliveryApiKey.resolves();
           stubs.spaceTemplateLoader.getTemplate.resolves();
           this.setupDirective();
         });
@@ -285,8 +292,8 @@ describe('cfCreateNewSpace directive', function() {
             sinon.assert.calledWith(stubs.spaceTools.goTo, space);
           });
 
-          it('closes dialog', function() {
-            sinon.assert.called(stubs.dialog.confirm);
+          it('creates one Delivery API key', function() {
+            sinon.assert.calledOnce(stubs.spaceContext.space.createDeliveryApiKey);
           });
         });
 
