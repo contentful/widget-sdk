@@ -63,7 +63,10 @@ angular.module('contentful').controller('cfVideoEditorController', ['$scope', '$
   }
 
   function persistInput(input) {
-    $scope.otSubDoc.changeValue(input);
+    var current = $scope.otSubDoc.getValue();
+    if (current !== input) {
+      $scope.otSubDoc.changeValue(input);
+    }
   }
 
   function resetAsset() {
