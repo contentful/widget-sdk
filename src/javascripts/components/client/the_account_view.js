@@ -10,8 +10,9 @@ angular.module('contentful').factory('TheAccountView', ['$injector', function($i
   return {
     goTo:             goTo,
     goToSubscription: goToSubscription,
-    check:            check,
-    isActive:         function() { return isActive; }
+    enter:            function () { isActive = true;  },
+    exit:             function () { isActive = false; },
+    isActive:         function () { return isActive;  }
   };
 
   function goTo(pathSuffix, options) {
@@ -23,9 +24,5 @@ angular.module('contentful').factory('TheAccountView', ['$injector', function($i
     if (organizationId) {
       goTo('organizations/' + organizationId + '/subscription', { reload: true });
     }
-  }
-
-  function check() {
-    isActive = $state.includes('account');
   }
 }]);

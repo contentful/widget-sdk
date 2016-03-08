@@ -571,7 +571,10 @@ angular.module('contentful').config([
   $stateProvider.state('spaces.detail.settings.webhooks', {
     url: '/webhooks',
     abstract: true,
-    template: '<ui-view />'
+    template: '<ui-view />',
+    onEnter: ['analytics', function (analytics) {
+      analytics.track('Opened Webhooks view');
+    }]
   });
 
   $stateProvider.state('spaces.detail.settings.webhooks.list', base({
@@ -632,7 +635,9 @@ angular.module('contentful').config([
       'content': {
         template: '<cf-account-view>'
       }
-    }
+    },
+    onEnter: ['TheAccountView', function (view) { view.enter(); }],
+    onExit:  ['TheAccountView', function (view) { view.exit();  }]
   });
 
   $stateProvider.state('account.pathSuffix', {

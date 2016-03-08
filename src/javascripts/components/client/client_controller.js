@@ -20,7 +20,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var enforcements       = $injector.get('enforcements');
   var revision           = $injector.get('revision');
   var ReloadNotification = $injector.get('ReloadNotification');
-  var TheAccountView     = $injector.get('TheAccountView');
   var TheStore           = $injector.get('TheStore');
   var OrganizationList   = $injector.get('OrganizationList');
   var spaceTools         = $injector.get('spaceTools');
@@ -48,7 +47,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var off = tokenStore.changed.attach(handleTokenData);
   $scope.$on('$destroy', off);
   $scope.$on('iframeMessage', iframeMessageWatchHandler);
-  $scope.$on('$stateChangeSuccess', stateChangeSuccessHandler);
 
   // @todo remove it - temporary proxy event handler
   $scope.$on('showCreateSpaceDialog', showCreateSpaceDialog);
@@ -71,13 +69,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
         });
       }
     }, 5 * 60 * 1000);
-  }
-
-  function stateChangeSuccessHandler(event, toState, toStateParams, fromState, fromStateParams) {
-    // TODO should be done be `onEnter` and `onExit` callbacks of the 'accounts' state.
-    TheAccountView.check();
-    // TODO should be done by purpse handler, e.g. in the analytics service
-    analytics.stateActivated(toState, toStateParams, fromState, fromStateParams);
   }
 
   function spaceAndTokenWatchHandler(collection) {
