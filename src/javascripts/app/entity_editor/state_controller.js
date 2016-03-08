@@ -29,10 +29,7 @@ function ($scope, $injector, entity, notify, handlePublishError) {
     });
   });
 
-  // TODO we do not need to pass a function here.
-  var entryReverter = createEntryReverter(function () {
-    return entity;
-  });
+  var entryReverter = createEntryReverter(entity);
 
   function hasPermission (action) {
     return accessChecker.canPerformActionOnEntity(action, entity);
