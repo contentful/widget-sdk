@@ -20,6 +20,7 @@ angular.module('contentful')
   .then(function (locales) {
     $scope.locales = locales;
     $scope.localesUsageState = getLocalesUsageState();
+    $scope.context.ready = true;
   })
   .catch(ReloadNotification.apiErrorHandler);
 

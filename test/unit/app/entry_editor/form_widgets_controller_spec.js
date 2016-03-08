@@ -13,7 +13,7 @@ describe('FormWidgetsController#widgets', function () {
       apiName: 'foo'
     };
 
-    var widgets = [{
+    var controls = [{
       widgetId: 'foo',
       fieldId: 'foo',
       field: field
@@ -24,7 +24,7 @@ describe('FormWidgetsController#widgets', function () {
       $controller('FormWidgetsController', {
         $scope: scope,
         contentTypeId: '',
-        widgets: widgets
+        controls: controls
       });
       this.$apply();
     };

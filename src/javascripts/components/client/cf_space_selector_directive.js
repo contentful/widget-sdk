@@ -7,7 +7,6 @@ angular.module('contentful')
     template: JST.cf_space_selector(),
     restrict: 'E',
     replace: true,
-    scope: {spaces: '='},
     controller: 'cfSpaceSelectorController'
   };
 })
@@ -20,7 +19,14 @@ angular.module('contentful')
   var spaceTools       = $injector.get('spaceTools');
   var OrganizationList = $injector.get('OrganizationList');
   var accessChecker    = $injector.get('accessChecker');
+  var tokenStore       = $injector.get('tokenStore');
 
+  // load initial spaces:
+  tokenStore.getSpaces().then(storeSpaces);
+  // subscribe to changes of spaces in token:
+  var off = tokenStore.changed.attach(storeSpaces);
+  $scope.$on('$destroy', off);
+  // group spaces when changed:
   $scope.$watch('spaces', groupSpacesByOrganization);
 
   $scope.spaceContext = spaceContext;
@@ -31,8 +37,12 @@ angular.module('contentful')
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
   $scope.selectSpace = spaceTools.goTo;
 
-  function groupSpacesByOrganization(spaces) {
-    $scope.spacesByOrganization = _.groupBy(spaces || [], function(space) {
+  function storeSpaces(tokenOrSpaces) {
+    $scope.spaces = _.isArray(tokenOrSpaces) ? tokenOrSpaces : tokenOrSpaces.spaces;
+  }
+
+  function groupSpacesByOrganization() {
+    $scope.spacesByOrganization = _.groupBy($scope.spaces || [], function(space) {
       return space.data.organization.sys.id;
     });
   }

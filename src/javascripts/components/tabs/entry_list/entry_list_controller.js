@@ -272,7 +272,7 @@ angular.module('contentful')
     return 'cell-'+ type +sizeClass;
   };
 
-  $scope.$on('templateWasCreated', function () {
+  $scope.$on('reloadEntries', function () {
     $scope.resetEntries();
   });
 }]);

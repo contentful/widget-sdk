@@ -1,0 +1,100 @@
+@import '../variables/colors'
+
+.onboarding-dialog
+  &.modal-dialog
+    width: 750px
+    text-align: center
+  &__content.modal-dialog__content
+    padding: 0 30px 30px 30px
+  &__heading
+    line-height: 1.3em
+  &__subheading
+    font-size: 1.05em
+    line-height: 1.3em
+    color: $colors.text-mid
+
+  &__nav
+    display: flex
+    align-items: center
+    justify-content: center
+    padding: 30px 0 10px 0
+    text-transform: uppercase
+    font-size: 0.85em
+    .x__step
+      display: flex
+      color: $colors.text-lightest
+      fill: $colors.text-lightest
+      &.active
+        font-weight: bold
+        color: $colors.green-mid
+        fill: $colors.green-mid
+    .x__separator
+      width: 40px
+      margin: 0 16px
+      background-color: $colors.element-light
+      height: 2px
+
+  &__controls--right
+    justify-content: flex-end
+
+
+.persona-selection
+  &__options
+    display: flex
+    padding: 20px 0
+  &-option
+    width: 25%
+    padding: 0 20px
+    &__icon
+      cursor: pointer
+      display: block
+      width: 80px
+      height: 80px
+      padding: 24px
+      margin: 0 auto 18px
+      border: 1px solid $colors.element-mid
+      box-shadow: 0 1px 3px 0 rgba(black, 0.08)
+      border-radius: 2px
+      &:hover
+        border-color: $colors.element-darkest
+      &.selected, &.selected:hover
+        border-color: $colors.green-mid
+      svg
+        margin: 0 auto
+    &__title
+      color: $colors.text-dark
+      line-height: 2em
+      font-weight: bold
+    &__description
+      color: $colors.text-mid
+      line-height: 1.4em
+
+  &__other
+    position: absolute
+    background-color: rgba(white, 0.9)
+    bottom: 70px
+    left: 0
+    right: 0
+    padding: 40px 180px 100px 180px
+    opacity: 1
+    &.ng-hide-animate
+      transition 0.15s opacity ease-in-out, 0.15s transform ease-in-out
+    &.ng-hide
+      opacity: 0
+      transform: scale(0.85)
+
+    &__label
+      line-height: 3em
+      &-question
+        font-weight: bold
+      &-hint
+        color: $colors.text-light
+
+    &__form
+      display: flex
+      input[type="text"]
+        height: 40px
+        border-color: $colors.element-mid
+        width: 300px
+      button
+        margin-left: 0.5em

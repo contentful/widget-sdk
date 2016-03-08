@@ -9,7 +9,6 @@
   //- link to entry or entries
   button.cfnext-btn-secondary-action.link-editor__add-button(type="button"
     ng-if="entityType=='Entry' && addableContentTypes.length > 1"
-    ng-hide="shouldHide('createEntry')"
     ng-disabled="shouldDisable('createEntry')"
     cf-when-disabled="createEntry"
     cf-context-menu-trigger
@@ -31,7 +30,6 @@
   //- link to entry or entries with restriction on the type
   button.cfnext-btn-secondary-action.link-editor__add-button(type="button"
       ng-if="entityType=='Entry' && addableContentTypes.length === 1"
-      ng-hide="shouldHide('createEntry')"
       ng-disabled="shouldDisable('createEntry')"
       cf-when-disabled="createEntry"
       ng-click="addNewEntry(addableContentTypes[0])")

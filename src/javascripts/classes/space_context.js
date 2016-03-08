@@ -33,6 +33,15 @@ angular.module('contentful')
   var spaceContext = {
     /**
      * @ngdoc method
+     * @name spaceContext#purge
+     * @description
+     * This method purges a space context, so it doesn't contain space any longer
+     */
+    purge: function () {
+      resetMembers(spaceContext);
+    },
+    /**
+     * @ngdoc method
      * @name spaceContext#resetWithSpace
      * @param {Client.Space} space
      * @description
@@ -403,6 +412,7 @@ angular.module('contentful')
   }
 
   function resetMembers (spaceContext) {
+    spaceContext.space = null;
     spaceContext.contentTypes = [];
     spaceContext.publishedContentTypes = [];
     spaceContext._publishedContentTypesHash = {};

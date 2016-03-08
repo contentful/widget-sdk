@@ -7,6 +7,7 @@ describe('Locale List Controller', function () {
     this.$q = this.$inject('$q');
     this.apiErrorHandler = this.$inject('ReloadNotification').apiErrorHandler;
 
+    this.scope.context = {};
     this.scope.spaceContext = {
       space: {
         getLocales: sinon.stub().returns(this.$q.when({})),

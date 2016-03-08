@@ -5,7 +5,7 @@ angular.module('contentful')
   return {
     template: JST['cf_radio_editor'](),
     controller: ['$scope', function ($scope) {
-      var params = $scope.widget.widgetParams;
+      var params = $scope.widget.settings;
       this.valuesList = [
         {value: true,  label: params.trueLabel || 'Yes'},
         {value: false, label: params.falseLabel || 'No'},

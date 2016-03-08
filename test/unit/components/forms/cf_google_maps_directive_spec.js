@@ -34,8 +34,8 @@ describe('cfGoogleMaps Directive', function () {
       }
     };
 
-    var googleMapsLoader = this.$inject('googleMapsLoader');
-    this.loadGoogleMaps = sinon.stub(googleMapsLoader, 'load');
+    var LazyLoader = this.$inject('LazyLoader');
+    this.loadGoogleMaps = sinon.stub(LazyLoader, 'get');
     this.loadGoogleMaps.resolves(this.googleMapsStub);
 
     this.stubs = stubs;

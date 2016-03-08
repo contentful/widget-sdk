@@ -49,11 +49,11 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$injector', functio
       else
         scope.maxTime = '12:59:59';
 
-      scope.$watch('widget.widgetParams.ampm', function(){
+      scope.$watch('widget.settings.ampm', function(){
         ngModelCtrl.$render();
       });
 
-      scope.$watch('widget.widgetParams.format', function (format) {
+      scope.$watch('widget.settings.format', function (format) {
         scope.hasTime     = format != 'dateonly';
         scope.hasTimezone = format == 'timeZ';
       });
@@ -224,7 +224,7 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$injector', functio
 
       function parseTimeInput (value) {
         var localTimeRx = TIME_RX;
-        if (scope.widget && scope.widget.widgetParams.ampm === '12')
+        if (scope.widget && scope.widget.settings.ampm === '12')
           localTimeRx = TIME_RX_12;
 
         var inputMatcher = '^\\s*('+localTimeRx+')?\\s*$';
@@ -266,7 +266,7 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$injector', functio
       }
 
       function show24hClock () {
-        return !(scope.widget && scope.widget.widgetParams.ampm === '12');
+        return !(scope.widget && scope.widget.settings.ampm === '12');
       }
 
     }

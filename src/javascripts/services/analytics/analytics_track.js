@@ -165,9 +165,10 @@ angular.module('contentful')
   }
 
   function trackPersistentNotificationAction (name) {
+    var currentPlan = dotty.get(organizationData, 'subscriptionPlan.name');
     track('Clicked Top Banner CTA Button', {
       action: name,
-      currentPlan: organizationData.subscriptionPlan.name
+      currentPlan: currentPlan !== undefined ? currentPlan : null
     });
   }
 

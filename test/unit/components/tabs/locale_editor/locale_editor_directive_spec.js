@@ -16,6 +16,7 @@ describe('Locale Editor Directive', function () {
     });
 
     var spaceContext = this.$inject('spaceContext');
+    spaceContext.space = {};
     dotty.put(spaceContext, 'space.data.organization.subscriptionPlan.name');
 
     this.element = this.$compile('<cf-locale-editor>', {

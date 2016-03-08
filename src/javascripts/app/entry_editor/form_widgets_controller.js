@@ -16,8 +16,8 @@ angular.module('contentful')
  * widgets should be rendered.
  */
 .controller('FormWidgetsController',
-  ['$scope', '$injector', 'contentTypeId', 'widgets',
-  function($scope, $injector, contentTypeId, widgets) {
+  ['$scope', '$injector', 'contentTypeId', 'controls',
+  function($scope, $injector, contentTypeId, controls) {
 
   var analytics = $injector.get('analyticsEvents');
 
@@ -40,7 +40,7 @@ angular.module('contentful')
   }
 
   function updateWidgets () {
-    $scope.widgets = _.filter(widgets, widgetIsVisible);
+    $scope.widgets = _.filter(controls, widgetIsVisible);
   }
 
   function widgetIsVisible(widget) {

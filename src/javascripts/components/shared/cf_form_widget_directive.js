@@ -22,7 +22,7 @@ angular.module('contentful')
         $scope.field = field;
       });
 
-      $scope.$watch('widget.widgetParams.helpText', function (helpText) {
+      $scope.$watch('widget.settings.helpText', function (helpText) {
         $scope.helpText = helpText || $scope.widget.defaultHelpText;
       });
 

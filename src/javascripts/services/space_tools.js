@@ -14,12 +14,14 @@ angular.module('contentful').factory('spaceTools', ['$injector', function($injec
   var $state         = $injector.get('$state');
   var spaceContext   = $injector.get('spaceContext');
   var tokenStore     = $injector.get('tokenStore');
+  var $location      = $injector.get('$location');
 
   return {
     getLastUsed:      getLastUsed,
     getFromList:      getFromList,
     goTo:             goTo,
-    goToInitialSpace: goToInitialSpace
+    goToInitialSpace: goToInitialSpace,
+    leaveCurrent:     leaveCurrent
   };
 
   /**
@@ -69,7 +71,7 @@ angular.module('contentful').factory('spaceTools', ['$injector', function($injec
       });
     }
     TheStore.set('lastUsedSpace', space.getId());
-    $state.go('spaces.detail', { spaceId: space.getId() });
+    return $state.go('spaces.detail', { spaceId: space.getId() });
   }
 
   /**
@@ -99,5 +101,17 @@ angular.module('contentful').factory('spaceTools', ['$injector', function($injec
     }
 
     return spaceList[0];
+  }
+
+  /**
+   * @ngdoc method
+   * @name spaceTools#leaveCurrent
+   * @description
+   * This method clears all space-related data and navigates to "/".
+   */
+  function leaveCurrent() {
+    spaceContext.purge();
+    tokenStore.refresh();
+    $location.url('/');
   }
 }]);

@@ -1,0 +1,44 @@
+include ./onboarding_nav.mixin.jade
+
+.onboarding-dialog__content.modal-dialog__content
+  div(ng-show="personaController.showCreateSpace")
+    +onboarding-dialog-nav(step="1")
+  h2.onboarding-dialog__heading
+    | What do you do?
+  p.onboarding-dialog__subheaiding
+    | We'll remember your area of expertise to adjust the app according to your needs.
+  .persona-selection__options
+    .persona-selection-option(ng-repeat="(id, opt) in personaController.personaOptions")
+      a.persona-selection-option__icon(
+        role="button"
+        ng-click="personaController.selectOption(id)"
+        ng-class="{selected: personaController.selectedPersona === id}")
+        cf-icon(name="{{ opt.svg }}")
+      .persona-selection-option__title
+        | {{ opt.title }}
+      .persona-selection-option__description
+        | {{ opt.description }}
+  form.persona-selection__other(
+    ng-show="personaController.showOtherText")
+    .persona-selection__other__label
+      span.persona-selection__other__label-question
+        | Mind telling us exactly what you do?
+      span &nbsp;
+      span.persona-selection__other__label-hint (optional)
+    .persona-selection__other__form
+      input.cfnext-form__input(
+        type="text"
+        ng-model="personaController.customPersonaName"
+        cf-focus-watched-expression="personaController.showOtherText")
+      button.cfnext-btn-secondary-action(type="button"
+        ng-click="personaController.closeOtherText()")
+        | Back
+
+.modal-dialog__controls.onboarding-dialog__controls--right
+  button.cfnext-btn-plain(
+    ng-click="personaController.skipSelection()")
+    | Skip this step
+  button.cfnext-btn-action(
+    ng-click="personaController.submitPersonaSelection()"
+    ng-disabled="!personaController.selectedPersona")
+    | OK

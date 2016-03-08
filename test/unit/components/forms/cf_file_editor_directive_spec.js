@@ -1,20 +1,22 @@
 'use strict';
 
 describe('cfFileEditor Directive', function () {
-  var element, scope;
-  var stubs;
+  var element, scope, stubs;
+  var $q;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
+
       stubs = $provide.makeStubs([
         'pick', 'then', 'serverError', 'parseFPFile'
       ]);
       $provide.removeControllers('NgModelCtrl');
       $provide.stubDirective('otPath', {
-        controller: function ($scope, $q) {
-          $scope.otSubDoc = {
-            changeValue: sinon.stub().returns($q.when())
-          };
+        controller: _.noop
+      });
+      $provide.stubDirective('otBindObjectValue', {
+        controller: function ($scope) {
+          $scope.otBindObjectValueCommit = sinon.stub().returns($q.resolve());
         }
       });
       $provide.removeDirectives('cfFileDrop');
@@ -28,24 +30,20 @@ describe('cfFileEditor Directive', function () {
       stubs.pick.returns({then: stubs.then});
     });
 
-    inject(function ($compile, $rootScope) {
-      scope = $rootScope.$new();
+    var $rootScope = this.$inject('$rootScope');
+    var $compile = this.$inject('$compile');
+    $q = this.$inject('$q');
 
-      scope.otDoc = {doc: {}, state: {}};
-      scope.isEditable = _.constant(true);
+    scope = $rootScope.$new();
+    scope.otDoc = {doc: {}, state: {}};
+    scope.isEditable = _.constant(true);
+    scope.fieldData = {
+      fileName: 'file.jpg',
+      fileType: 'image/jpeg'
+    };
 
-      scope.fieldData = {
-        fileName: 'file.jpg',
-        fileType: 'image/jpeg'
-      };
-
-      element = $compile('<div ot-path=""><div cf-file-editor cf-file-display ng-model="fieldData" ot-bind-object-value="file"></div></div>')(scope);
-      scope.$apply();
-    });
-  });
-
-  it('file is defined', function() {
-    expect(scope.file).toBeDefined();
+    element = $compile('<div ot-path=""><div cf-file-editor cf-file-display ng-model="fieldData" ot-bind-object-value="file"></div></div>')(scope);
+    scope.$apply();
   });
 
   it('toggles meta info', function() {
@@ -76,20 +74,16 @@ describe('cfFileEditor Directive', function () {
         scope.$apply();
       });
 
-      afterEach(function () {
-        this.emitStub.restore();
-      });
-
       it('calls filepickers pick', function() {
         sinon.assert.called(stubs.pick);
       });
 
-      it('calls otchangevalue', function() {
-        sinon.assert.called(scope.otSubDoc.changeValue);
+      it('calls otBindObjectValueCommit', function() {
+        sinon.assert.called(scope.otBindObjectValueCommit);
       });
 
       it('file object is parsed', function() {
-        stubs.parseFPFile.calledWith(file);
+        sinon.assert.calledWith(stubs.parseFPFile, file);
       });
 
       it('file now has url', function() {
@@ -117,7 +111,7 @@ describe('cfFileEditor Directive', function () {
 
   describe('uploading a file fails because validation', function() {
     beforeEach(function() {
-      scope.validate = sinon.stub();
+      scope.validate = sinon.spy();
       stubs.then.callsArgWith(1, {code: 101});
     });
 
@@ -133,7 +127,7 @@ describe('cfFileEditor Directive', function () {
 
   describe('uploading a file fails because reasons', function() {
     beforeEach(function() {
-      scope.validate = sinon.stub();
+      scope.validate = sinon.spy();
       stubs.then.callsArgWith(1, {code: 500});
     });
 
@@ -148,20 +142,32 @@ describe('cfFileEditor Directive', function () {
 
   describe('deleting a file succeeds', function() {
     beforeEach(function() {
-      scope.validate = sinon.stub();
+      this.emitStub = sinon.stub(scope, '$emit');
+      scope.validate = sinon.spy();
+      stubs.parseFPFile.withArgs(null).returns(null);
     });
 
     describe('and updating the otDoc value succeeds', function() {
       beforeEach(function() {
         scope.deleteFile();
+        scope.$apply();
+      });
+
+      it('calls `parseFPFile()` with null and sets the file to null', function () {
+        sinon.assert.calledWith(stubs.parseFPFile, null);
+        expect(scope.file).toBe(null);
+      });
+
+      it('does not emit `fileUploaded`', function () {
+        sinon.assert.notCalled(this.emitStub);
       });
 
       it('validates scope', function() {
         sinon.assert.called(scope.validate);
       });
 
-      it('calls otchangevalue', function() {
-        sinon.assert.called(scope.otSubDoc.changeValue);
+      it('calls otBindObjectValueCommit', function() {
+        sinon.assert.called(scope.otBindObjectValueCommit);
       });
 
       it('file is null', function() {
@@ -185,8 +191,8 @@ describe('cfFileEditor Directive', function () {
         });
       });
 
-      it('calls otchangevalue', function() {
-        sinon.assert.called(scope.otSubDoc.changeValue);
+      it('calls otBindObjectValueCommit', function() {
+        sinon.assert.called(scope.otBindObjectValueCommit);
       });
 
       it('file now has url', function() {
