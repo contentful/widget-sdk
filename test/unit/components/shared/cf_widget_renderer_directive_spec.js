@@ -5,7 +5,10 @@ describe('cfWidgetRenderer Directive', function () {
     module('contentful/test');
     this.widget = {};
     this.compile = function () {
-      return this.$compile('<cf-widget-renderer>', {widget: this.widget});
+      return this.$compile('<cf-widget-renderer>', {
+        widget: this.widget,
+        contentType: {getId: sinon.stub().returns('CTID')}
+      });
     };
   });
 
@@ -25,6 +28,13 @@ describe('cfWidgetRenderer Directive', function () {
 
     expect(el.find('.foo').length).toBe(0);
     expect(el.find('.bar').length).toBe(1);
+  });
+
+  it('has scope#contentTypeStateRef property', function() {
+    this.widget.template = '<p>{{contentTypeHref}}</p>';
+    var el = this.compile();
+    expect(el.find('p').text())
+    .toEqual('/spaces//content_types/CTID');
   });
 
 });

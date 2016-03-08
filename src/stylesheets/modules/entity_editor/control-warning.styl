@@ -1,0 +1,32 @@
+/*
+Editor Control Warning
+
+Markup:
+.editor-control-warning
+  cf-icon(name="close" scale="2")
+  div
+    p
+      | The “number” editor widget cannot be used with this field.
+    p
+      | Please select an appropriate widget in the
+      | <a href="#">Content Type field settings</a>.
+
+Styleguide: 8.1
+*/
+.editor-control-warning
+  line-height: 1.5
+  // TODO make the colors variables
+  background: #fffde2
+  border: 1px solid #F9E900
+  padding: $new-rhythm(0.5) 1.4em
+
+  display: flex
+
+  > cf-icon
+    align-self: center
+    margin-right: 1.5em
+    path
+      fill: #F9E900
+
+  p
+    margin: 0

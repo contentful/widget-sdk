@@ -2,9 +2,14 @@
 
 import highlight from './highlight';
 import marked, {Renderer} from 'marked';
+import {defaults} from 'lodash-node'
 
 export function render (content) {
   return marked(content, {renderer: createRenderer()});
+}
+
+export function compile (tokens, options) {
+  return marked.parser(tokens, defaults(options, marked.defaults));
 }
 
 export function createRenderer () {

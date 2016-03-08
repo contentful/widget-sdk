@@ -64,9 +64,7 @@ function ($scope, $location, $state, MODULES_INDEX, PAGES) {
   })
   .state('guides', {
     url: '/guides',
-    template: '<div class="guide-profile" ui-view>' +
-                '<div ng-include="contentPath"></div>' +
-              '</div>',
+    template: '<div class="guide-profile" ui-view>'
   })
   .state('guides.doc', {
     url: '*path',

@@ -1,11 +1,31 @@
-@import './sidebar.styl'
+@require './sidebar.styl'
+@require './control-warning.styl'
 
+/*
+Entity Editor
+
+Styleguide: 8
+*/
 
 .entity-editor-form
   padding-left: 2rem
   padding-right: 2rem
 
 
+/*
+Notification
+
+This module has a negative margin on the top to compensate for the
+`workbench` container.
+
+Markup:
+.workbench-main__content
+  .entity-editor__notification(role="alert")
+    p
+      | OMG! Something went wrong.
+
+Styleguide: 8.2
+*/
 .entity-editor__notification
   padding: $rhythm(0.66) 2rem 0
   border-bottom: 1px solid #D0A2A0

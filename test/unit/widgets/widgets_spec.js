@@ -260,24 +260,32 @@ describe('widgets', function () {
   });
 
   describe('#buildRenderable()', function () {
-    var descriptor;
+    var descriptor, field;
 
     beforeEach(function() {
-      descriptor = {};
+      descriptor = { fieldTypes: ['Symbol'] };
+      field = { type: 'Symbol' };
+
       this.setupWidgets({
         'WIDGET': descriptor
       });
-      this.build = widgets.buildRenderable;
+
+      this.buildOne = function (widget) {
+        return widgets.buildRenderable([_.defaults(widget || {}, {
+          widgetId: 'WIDGET',
+          field: field
+        })]);
+      };
     });
 
     it('returns object with widget arrays', function () {
-      var renderable = this.build([]);
+      var renderable = widgets.buildRenderable([]);
       expect(renderable.form).toEqual([]);
       expect(renderable.sidebar).toEqual([]);
     });
 
     it('filters widgets without field', function () {
-      var renderable = this.build([
+      var renderable = widgets.buildRenderable([
         {widgetId: 'HAS_FIELD', field: {}},
         {widgetId: 'NO_FIELD'},
       ]);
@@ -287,7 +295,7 @@ describe('widgets', function () {
 
     it('adds sidebar widges to sidebar collection', function () {
       descriptor.sidebar = true;
-      var renderable = this.build([{widgetId: 'WIDGET', field: {}}]);
+      var renderable = this.buildOne();
       expect(renderable.form.length).toBe(0);
       expect(renderable.sidebar.length).toBe(1);
       expect(renderable.sidebar[0].widgetId).toBe('WIDGET');
@@ -295,29 +303,34 @@ describe('widgets', function () {
 
     it('adds widget’s template property', function () {
       descriptor.template = 'TEMPLATE';
-      var renderable = this.build([{widgetId: 'WIDGET', field: {}}]);
+      var renderable = this.buildOne();
       expect(renderable.form[0].template).toEqual('TEMPLATE');
     });
 
-    it('sets fallback template if widget does not exist', function () {
-      var renderable = this.build([{widgetId: 'does not exist', field: {}}]);
+    it('sets warning template if widget does not exist', function () {
+      var renderable = this.buildOne({widgetId: 'foo'});
       expect(renderable.form[0].template)
-      .toMatch('Unknown editor widget "does not exist"');
+      .toMatch('The editor widget “foo” does not exist');
+    });
+
+    it('sets warning template if widget is incompatible', function () {
+      field.type = 'other type';
+      var renderable = this.buildOne();
+      expect(renderable.form[0].template)
+      .toMatch('The “WIDGET” editor widget cannot be used with this field');
     });
 
     it('keeps settings property', function () {
       var params = {param: 'MY PARAMS'};
-      var widget = {widgetId: 'W', settings: params, field: {}};
-      var renderable = this.build([widget]);
+      var renderable = this.buildOne({settings: params});
       expect(renderable.form[0].settings).toEqual(params);
     });
-
 
     it('adds default parameters if there are no parameters', function () {
       descriptor.options = [
         {param: 'foo', default: 'bar'}
       ];
-      var renderable = this.build([{widgetId: 'WIDGET', field: {}}]);
+      var renderable = this.buildOne();
       expect(renderable.form[0].settings).toEqual({foo: 'bar'});
     });
 
@@ -325,11 +338,7 @@ describe('widgets', function () {
       descriptor.options = [
         {param: 'foo', default: 'bar'}
       ];
-      var renderable = this.build([{
-        widgetId: 'WIDGET',
-        field: {},
-        settings: 'not an object'
-      }]);
+      var renderable = this.buildOne({ settings: 'not an object' });
       expect(renderable.form[0].settings).toEqual({foo: 'bar'});
     });
 
@@ -338,12 +347,7 @@ describe('widgets', function () {
         {param: 'x', default: 'DEF_X'},
         {param: 'y', default: 'DEF_Y'}
       ];
-
-      var renderable = this.build([{
-        widgetId: 'WIDGET',
-        settings: {x: true},
-        field: {}
-      }]);
+      var renderable = this.buildOne({settings: {x: true}});
       expect(renderable.form[0].settings).toEqual({
         x: true,
         y: 'DEF_Y'

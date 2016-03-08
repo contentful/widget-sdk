@@ -6,6 +6,7 @@
  */
 angular.module('contentful').directive('cfWidgetRenderer', ['$injector', function($injector) {
   var $compile = $injector.get('$compile');
+  var $state = $injector.get('$state');
 
   return {
     restrict: 'E',
@@ -39,6 +40,13 @@ angular.module('contentful').directive('cfWidgetRenderer', ['$injector', functio
         return;
 
       scope = parentScope.$new();
+      // TODO We should replace this with a helper method that generates a state
+      // reference. The template then should use the `ui-sref`
+      // directive.
+      scope.contentTypeHref = $state.href(
+        'spaces.detail.content_types.detail',
+        {contentTypeId: parentScope.contentType.getId()}
+      );
       var $widget = $(template);
       element.append($widget);
       $compile($widget)(scope);
