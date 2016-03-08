@@ -74,7 +74,7 @@ angular.module('contentful')
     name: 'Dropdown',
     icon: 'dropdown',
     notFocusable: true,
-    template: '<div cf-dropdown-editor ng-model="fieldData.value" ot-bind-object-value="valuesController.selected"></div>'
+    template: '<cf-dropdown-editor />'
   });
 
   registerWidget('radio',{
@@ -82,7 +82,7 @@ angular.module('contentful')
     name: 'Radio',
     icon: 'radio',
     notFocusable: true,
-    template: '<cf-radio-editor ng-model="fieldData.value" ot-bind-object-value="valuesController.selected"></cf-radio-editor>'
+    template: '<cf-radio-editor />'
   });
 
   registerWidget('boolean', {
@@ -90,7 +90,7 @@ angular.module('contentful')
     name: 'Radio',
     icon: 'radio',
     notFocusable: true,
-    template: '<cf-widget-boolean ng-model="fieldData.value" ot-bind-object-value="valuesController.selected">',
+    template: '<cf-widget-boolean />',
     options: [{
       name: 'True condition custom label',
       param: 'trueLabel',

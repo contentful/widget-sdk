@@ -1,0 +1,9 @@
+label.cf-radio-editor__option(
+  ng-repeat="option in options")
+  input.cf-radio-editor__radio(type="radio"
+    name="{{radioGroupName}}"
+    ng-model="data.selected"
+    ng-value="option.value"
+    ng-disabled="isDisabled")
+  span.cf-radio-editor__label
+    | {{option.label}}

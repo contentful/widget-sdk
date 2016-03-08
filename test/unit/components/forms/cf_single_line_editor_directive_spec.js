@@ -23,7 +23,8 @@ describe('cfSingleLineEditor directive', function () {
         isDisabled: sinon.stub(),
         otDoc: {
           updateEntityData: sinon.stub()
-        }
+        },
+        locale: {}
       });
 
       // TODO(mudit): Mock the WidgetApiController

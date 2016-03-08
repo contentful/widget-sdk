@@ -24,7 +24,8 @@ describe('cfWidgetApi directive', function () {
       },
       otDoc: {
         updateEntityData: sinon.stub()
-      }
+      },
+      locale: {}
     });
 
     widgetApi = $controller('WidgetApiController', {
