@@ -44,7 +44,7 @@ header.workbench-header
         .l-form-controls(ng-if="field")
           .l-form-locale(ng-repeat="locale in locales track by locale.internal_code"
               ot-field-presence="['fields', field.id, locale.internal_code]"
-              data-locale="{{locale.internal_code}}")
+              data-locale="{{locale.code}}")
             cf-widget-renderer.l-field-editor(
               cf-focus-ot-input="hasInitialFocus"
               ot-path="['fields', field.id, locale.internal_code]"
