@@ -91,8 +91,9 @@ angular.module('contentful')
   }, refreshEntityCaches, true);
 
   $scope.typeNameOr = function (or) {
+    var id;
     try {
-      var id = dotty.get($scope, 'context.view.contentTypeId');
+      id = dotty.get($scope, 'context.view.contentTypeId');
       if (!id) return or;
       var ct = spaceContext.getPublishedContentType(id);
       if (!ct) return or;

@@ -1,9 +1,8 @@
 {
-  "globalstrict": true,
   "node": true,
   "browser": true,
   "quotmark": "single",
-  "strict": true,
+  "strict": "global",
   "trailing": true,
   "unused": true,
   "sub": true,
