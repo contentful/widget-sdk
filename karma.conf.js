@@ -18,7 +18,7 @@ module.exports = function(config) {
       'public/app/vendor.js',
       'public/app/markdown_vendors.js',
       'public/app/templates.js',
-      'public/app/user_interface.js',
+      'public/app/libs.js',
       'src/javascripts/*.js',
       'src/javascripts/*/**/*.js',
       'bower_components/angular-mocks/angular-mocks.js',
@@ -31,6 +31,7 @@ module.exports = function(config) {
 
     // list of files to exclude
     exclude: [
+      'src/javascripts/libs/**/*.js',
     ],
 
 
