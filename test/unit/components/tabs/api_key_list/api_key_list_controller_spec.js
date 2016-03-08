@@ -20,35 +20,6 @@ describe('API Key List Controller', function () {
     });
   });
 
-  describe('handles entityDeleted event', function() {
-    beforeEach(inject(function(cfStub) {
-      var space = cfStub.space('test');
-      var removedEntity = cfStub.apiKey(space, 'entity2', 'name', {});
-      scope.apiKeys = [
-        cfStub.apiKey(space, 'entity1'),
-        removedEntity,
-        cfStub.apiKey(space, 'entity3')
-      ];
-
-      scope.apiKey = removedEntity;
-
-      this.$rootScope.$broadcast('entityDeleted', removedEntity);
-      scope.$digest();
-    }));
-
-    it('has 2 entities after deletion', function () {
-      expect(scope.apiKeys.length).toEqual(2);
-    });
-
-    it('has entity1', function () {
-      expect(scope.apiKeys[0].getId()).toEqual('entity1');
-    });
-
-    it('has entity3', function () {
-      expect(scope.apiKeys[1].getId()).toEqual('entity3');
-    });
-  });
-
   describe('empty marker', function() {
     it('is true', function() {
       scope.apiKeys = [];

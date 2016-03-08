@@ -14,7 +14,8 @@ describe('API key editor controller', function () {
         'serverError',
         'error',
         'logServerWarn',
-        'createPreviewApiKey'
+        'createPreviewApiKey',
+        'closeState'
       ]);
       $provide.constant('environment', {
         env: 'unittest',
@@ -29,6 +30,7 @@ describe('API key editor controller', function () {
       $provide.value('logger', {
         logServerWarn: stubs.logServerWarn
       });
+      $provide.value('navigation/closeState', stubs.closeState);
     });
     inject(function ($controller, $injector, spaceContext) {
       $q = $injector.get('$q');
@@ -134,7 +136,7 @@ describe('API key editor controller', function () {
     });
 
     it('event is broadcasted from space', function () {
-      sinon.assert.calledWith(stubs.broadcast, 'entityDeleted', apiKey);
+      sinon.assert.calledOnce(stubs.closeState);
     });
   });
 

@@ -24,10 +24,11 @@ describe('List Actions Service', function () {
   });
 
   describe('batch performer', function() {
-    var performer;
+    var performer, onDeleteSpy;
     beforeEach(function() {
       performer = listActions.createBatchPerformer({
-        entityNamePlural: 'entities'
+        entityNamePlural: 'entities',
+        onDelete: onDeleteSpy = sinon.spy()
       });
     });
 
@@ -117,9 +118,15 @@ describe('List Actions Service', function () {
           $rootScope.$apply();
           expect(resolved).toBe(true);
         });
+      });
 
-        it('event is broadcasted', function() {
-          sinon.assert.calledWith($rootScope.$broadcast, 'eventname', changedEntity);
+      describe('when successfully deleting', function () {
+        it('calls "onDelete" function', function () {
+          var entity = {delete: sinon.stub()};
+          entity.delete.resolves(entity);
+          performer.callAction(entity, {method: 'delete'});
+          this.$apply();
+          sinon.assert.calledOnce(onDeleteSpy.withArgs(entity));
         });
       });
 
@@ -160,8 +167,8 @@ describe('List Actions Service', function () {
           expect(resolved).toBe(true);
         });
 
-        it('entityDeleted event is broadcasted', function() {
-          sinon.assert.calledWith($rootScope.$broadcast, 'entityDeleted', entity);
+        it('calls "onDelete" function', function() {
+          sinon.assert.calledOnce(onDeleteSpy.withArgs(entity));
         });
       });
     });

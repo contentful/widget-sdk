@@ -4,7 +4,6 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   var controller       = this;
   var environment      = $injector.get('environment');
   var notifier         = $injector.get('apiKeyEditor/notifications');
-  var $rootScope       = $injector.get('$rootScope');
   var Command          = $injector.get('command');
   var truncate         = $injector.get('stringUtils').truncate;
   var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
@@ -12,6 +11,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   var userAgent        = $injector.get('userAgent');
   var $state           = $injector.get('$state');
   var accessChecker    = $injector.get('accessChecker');
+  var closeState       = $injector.get('navigation/closeState');
 
   var notify = notifier(function getTitle () {
     return truncate($scope.apiKey.getName(), 50);
@@ -83,20 +83,11 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
 
   $scope.delete = function() {
     $scope.apiKey.delete()
-    .then(function(){
+    .then(function () {
       notify.deleteSuccess();
-      $rootScope.$broadcast('entityDeleted', $scope.apiKey);
+      return closeState();
     }, notify.deleteFail);
   };
-
-  $scope.$on('entityDeleted', function (event, apiKey) {
-    if (event.currentScope !== event.targetScope) {
-      var scope = event.currentScope;
-      if (apiKey === scope.apiKey) {
-        scope.closeState();
-      }
-    }
-  });
 
   $scope.regenerateAccessToken = function (type) {
     // not used, but necessary to trigger digest cycle

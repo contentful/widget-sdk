@@ -26,10 +26,6 @@ angular.module('contentful').controller('SpaceController', ['$scope', '$injector
     }
   });
 
-  $scope.$on('entityDeleted', function (event, contentType) {
-    $scope.spaceContext.removeContentType(contentType);
-  });
-
   $scope.logoClicked = function () {
     analytics.track('Clicked Logo');
   };

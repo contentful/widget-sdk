@@ -2,10 +2,13 @@
 
 describe('entityEditor/StateController', function () {
   beforeEach(function () {
-    module('contentful/test');
+    var closeStateSpy = this.closeStateSpy = sinon.spy();
+
+    module('contentful/test', function ($provide) {
+      $provide.value('navigation/closeState', closeStateSpy);
+    });
+
     var cfStub = this.$inject('cfStub');
-
-
     var space = cfStub.space('spaceid');
     var entry = cfStub.entry(space, 'entryid', 'typeid');
 
@@ -48,14 +51,14 @@ describe('entityEditor/StateController', function () {
       this.entity.delete = sinon.stub().resolves();
       this.controller.delete.execute();
       this.$apply();
-      sinon.assert.calledOnce(this.scope.closeState);
+      sinon.assert.calledOnce(this.notify.deleteSuccess);
     });
 
     it('closes the current state', function() {
       this.entity.delete = sinon.stub().resolves();
       this.controller.delete.execute();
       this.$apply();
-      sinon.assert.calledOnce(this.notify.deleteSuccess);
+      sinon.assert.calledOnce(this.closeStateSpy);
     });
 
     it('sends failure notification with API error', function () {

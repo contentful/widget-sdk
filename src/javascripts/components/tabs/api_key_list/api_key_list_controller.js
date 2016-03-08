@@ -23,13 +23,5 @@ function ApiKeyListController ($scope, $injector) {
     $scope.empty = _.isEmpty(apiKeys);
   });
 
-  $scope.$on('entityDeleted', function (event, entity) {
-    var scope = event.currentScope;
-    var index = _.indexOf(scope.apiKeys, entity);
-    if (index > -1) {
-      scope.apiKeys.splice(index, 1);
-    }
-  });
-
   $scope.refreshApiKeys();
 }]);

@@ -66,12 +66,6 @@ describe('ContentTypeEditor Controller', function () {
       sinon.assert.notCalled(scope.validate);
     });
 
-    it('updates published content type', function () {
-      var publishedCT = {published: true};
-      scope.updatePublishedContentType(publishedCT);
-      expect(scope.publishedContentType).toEqual(publishedCT);
-    });
-
     it('has no fields', function () {
       expect(scope.hasFields).toBeFalsy();
     });
@@ -233,14 +227,6 @@ describe('ContentTypeEditor Controller', function () {
       this.$apply();
       sinon.assert.called(this.trackContentTypeChangeStub);
     });
-  });
-
-  it('closesState if entityDeleted event is broadcast', function() {
-    scope.closeState = sinon.stub();
-    createContentType([{}]);
-    var $rootScope = this.$inject('$rootScope');
-    $rootScope.$broadcast('entityDeleted', scope.contentType);
-    sinon.assert.calledOnce(scope.closeState);
   });
 
   describe('#deleteField(id)', function () {

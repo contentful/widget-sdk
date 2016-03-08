@@ -6,13 +6,13 @@ angular.module('contentful')
 function ($scope, $injector, entity, notify, handlePublishError) {
 
   var controller          = this;
-  var $rootScope          = $injector.get('$rootScope');
   var $q                  = $injector.get('$q');
   var Command             = $injector.get('command');
   var createEntryReverter = $injector.get('entryReverter');
   var StateManager        = $injector.get('EntityStateManager');
   var analytics           = $injector.get('analytics');
   var accessChecker       = $injector.get('accessChecker');
+  var closeState          = $injector.get('navigation/closeState');
 
   var stateManager = new StateManager(entity);
 
@@ -148,15 +148,10 @@ function ($scope, $injector, entity, notify, handlePublishError) {
 
   controller.delete = Command.create(function () {
     return stateManager.delete()
-    .then(function(){
-      $scope.closeState();
-
-      // TODO this is probably not needed: All listeners are in the
-      // Entity list controllers, but those are never active when this
-      // controller is active.
-      $rootScope.$broadcast('entityDeleted', entity);
-    })
-    .then(notify.deleteSuccess, notify.deleteFail);
+    .then(function () {
+      notify.deleteSuccess();
+      return closeState();
+    }, notify.deleteFail);
   }, {
     disabled: function () {
       switch (stateManager.getState()) {
