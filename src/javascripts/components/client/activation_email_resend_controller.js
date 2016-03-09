@@ -51,6 +51,7 @@ angular.module('contentful')
     var dialog = modalDialog.open({
       title: 'Please confirm your email address',
       template: 'activation_email_resend_dialog',
+      persistOnNavigation: true,
       confirmLabel: 'OK, I got it',
       cancelLabel: false,
       scopeData: {
