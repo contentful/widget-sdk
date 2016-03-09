@@ -12,6 +12,8 @@ run_vagrant_build.sh
 karma-specs.json
 bower_components
 
+
+
 # Build artifacts
 gh-pages/
 build/
