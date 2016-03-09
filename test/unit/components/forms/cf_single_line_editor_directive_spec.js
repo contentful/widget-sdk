@@ -1,27 +1,68 @@
 'use strict';
 
-describe('Single Line Editor widget', function() {
+describe('cfSingleLineEditor directive', function () {
   beforeEach(function () {
+    module('contentful/test');
 
-    module('contentful/test', function ($provide) {
-      $provide.removeDirectives('otBindText');
-    });
-
-    this.compileElement = function(value, validations, fieldType) {
+    this.compileElement = function (validations, fieldType) {
       var widget = {};
+      var $injector = this.$inject('$injector');
+      var $controller = this.$inject('$controller');
+
+      this.controllerScope = this.$inject('$rootScope').$new();
+
       dotty.put(widget, 'field.validations', validations);
       dotty.put(widget, 'field.type', fieldType);
-      var el = this.$compile('<cf-single-line-editor>', {
-        fieldData: {value: value},
-        widget: widget
+
+      _.extend(this.controllerScope, {
+        widget: widget,
+        otSubDoc: {
+          changeString: sinon.stub(),
+          getValue: sinon.stub()
+        },
+        isDisabled: sinon.stub(),
+        otDoc: {
+          updateEntityData: sinon.stub()
+        }
       });
-      this.$apply();
+
+      // TODO(mudit): Mock the WidgetApiController
+      var cfWidgetApi = $controller('WidgetApiController', {
+        '$scope': this.controllerScope,
+        '$injector': $injector
+      });
+
+      var el = this.$compile('<cf-single-line-editor>', {}, {
+        cfWidgetApi: cfWidgetApi
+      });
+
       return el;
+    };
+
+    // TODO(mudit): Remove dependency on this once WidgetApiController
+    // is mocked.
+    this.emitOtValueChanged = function (value) {
+      this.controllerScope.$emit('otValueChanged', [], value);
+      this.$apply();
     };
 
   });
 
-  it('counts characters correctly', function() {
+  it('updates correctly when value change is indicated by sharejs', function () {
+    var $el = this.compileElement();
+
+    this.emitOtValueChanged('test');
+    expect($el.children('input').val()).toEqual('test');
+  });
+
+  it('input event on text field calls changeString (via setString)', function(){
+    var $el = this.compileElement();
+
+    $el.children('input').trigger('input', 'what');
+    sinon.assert.calledOnce(this.controllerScope.otSubDoc.changeString);
+  });
+
+  it('counts characters correctly', function () {
 
     var testData = [
       {input: 'Test', expected: '4 characters'},
@@ -30,14 +71,16 @@ describe('Single Line Editor widget', function() {
       {input: undefined, expected: '0 characters'}
     ];
 
-    testData.forEach(function(data) {
-      var txt = this.compileElement(data.input).text();
-      expect(txt).toBe(data.expected);
+    testData.forEach(function (data) {
+      var $el = this.compileElement();
+
+      this.emitOtValueChanged(data.input);
+      expect($el.text()).toBe(data.expected);
     }, this);
 
   });
 
-  it('displays validation hints', function() {
+  it('displays validation hints', function () {
     var testData = [
       {
         validations: [{size: {max: 20, min: 10}}],
@@ -50,13 +93,15 @@ describe('Single Line Editor widget', function() {
         hint: 'Requires less than 20 characters'
       }
     ];
-    testData.forEach(function(data) {
-      var txt = this.compileElement(data.input, data.validations).text();
-      expect(txt).toMatch(data.hint);
+    testData.forEach(function (data) {
+      var $el = this.compileElement(data.validations);
+
+      this.emitOtValueChanged('');
+      expect($el.text()).toMatch(data.hint);
     }, this);
   });
 
-  it('changes color according to maxlength validation', function() {
+  it('changes color according to maxlength validation', function () {
     var testData = [
       {
         input: 'This text should turn orange',
@@ -69,25 +114,33 @@ describe('Single Line Editor widget', function() {
         expectedClass: '.colors__red'
       }
     ];
-    testData.forEach(function(data) {
-      var el = this.compileElement(data.input, data.validations);
+    testData.forEach(function (data) {
+      var el = this.compileElement(data.validations);
+
+      this.emitOtValueChanged(data.input);
       expect(el.find(data.expectedClass).length).toBe(1);
     }, this);
 
   });
 
   it('adds max constraints for symbol fields', function () {
-    var elem = this.compileElement('', false, 'Symbol');
+    var elem = this.compileElement(false, 'Symbol');
+
+    this.emitOtValueChanged('');
     expect(elem.text()).toMatch('Requires less than 256 characters');
   });
 
   it('adds max constraints to symbol fields with min validation', function () {
-    var elem = this.compileElement('', [{size: {min: 20, max: null}}], 'Symbol');
+    var elem = this.compileElement([{size: {min: 20, max: null}}], 'Symbol');
+
+    this.emitOtValueChanged('');
     expect(elem.text()).toMatch('Requires between 20 and 256 characters');
   });
 
   it('does not overwrite constraints for symbol fields', function () {
-    var elem = this.compileElement('', [{size: {min: null, max: 50}}], 'Symbol');
+    var elem = this.compileElement([{size: {min: null, max: 50}}], 'Symbol');
+
+    this.emitOtValueChanged('');
     expect(elem.text()).toMatch('Requires less than 50 characters');
   });
 
