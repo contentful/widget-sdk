@@ -3,14 +3,12 @@
 angular.module('contentful').controller('ClientController', ['$scope', '$injector', function ClientController($scope, $injector) {
   var $rootScope         = $injector.get('$rootScope');
   var $timeout           = $injector.get('$timeout');
-  var $location          = $injector.get('$location');
   var $state             = $injector.get('$state');
   var features           = $injector.get('features');
   var logger             = $injector.get('logger');
   var spaceContext       = $injector.get('spaceContext');
   var authentication     = $injector.get('authentication');
   var tokenStore         = $injector.get('tokenStore');
-  var notification       = $injector.get('notification');
   var analytics          = $injector.get('analytics');
   var analyticsEvents    = $injector.get('analyticsEvents');
   var authorization      = $injector.get('authorization');
@@ -20,8 +18,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var revision           = $injector.get('revision');
   var ReloadNotification = $injector.get('ReloadNotification');
   var OrganizationList   = $injector.get('OrganizationList');
-  var spaceTools         = $injector.get('spaceTools');
-  var iframeChannel      = $injector.get('iframeChannel');
 
   // TODO remove this eventually. All components should access it as a service
   $scope.spaceContext = spaceContext;
@@ -45,10 +41,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
   var off = tokenStore.changed.attach(handleTokenData);
   $scope.$on('$destroy', off);
-  off = iframeChannel.message.attach(handlePostMessage);
-  $scope.$on('$destroy', off);
 
-  // @todo remove it - temporary proxy event handler
+  // @todo remove it - temporary proxy event handler (2 usages)
   $scope.$on('showCreateSpaceDialog', showCreateSpaceDialog);
 
   $scope.initClient = initClient;
@@ -76,64 +70,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       if (collection.space && authorization.authContext && authorization.authContext.hasSpace(collection.space.getId())) {
         authorization.setSpace(collection.space);
       }
-    }
-  }
-
-  function handlePostMessage(data) {
-    var msg = makeMsgResponder(data);
-
-    if (msg('create', 'UserCancellation')) {
-      authentication.goodbye();
-
-    } else if (msg('new', 'space')) {
-      $scope.showCreateSpaceDialog();
-
-    } else if (msg('delete', 'space')) {
-      spaceTools.leaveCurrent();
-
-    } else if (data.type === 'flash') {
-      showFlashMessage(data);
-
-    } else if (msg('navigate', 'location')) {
-      $location.url(data.path);
-
-    } else if (msg('update', 'location')) {
-      return;
-
-    } else if (data.token) {
-      updateToken(data.token);
-
-    } else {
-      tokenStore.refresh();
-    }
-  }
-
-  function makeMsgResponder(data) {
-    //console.log('iframe message: ', data);
-    return function msg(action, type) {
-      return data &&
-        data.action && data.action.toLowerCase() === action.toLowerCase() &&
-        data.type && data.type.toLowerCase() === type.toLowerCase();
-    };
-  }
-
-  function showFlashMessage(data) {
-    var level = data.resource.type;
-    if (level && level.match(/error/)) level = 'warn';
-    else if (level && !level.match(/info/) || !level) level = 'info';
-    notification[level](data.resource.message);
-  }
-
-  function updateToken(data) {
-    authentication.updateTokenLookup(data);
-    if(authentication.tokenLookup) {
-      tokenStore.refreshWithLookup(authentication.tokenLookup);
-    } else {
-      logger.logError('Token Lookup has not been set properly', {
-        data: {
-          iframeData: data
-        }
-      });
     }
   }
 

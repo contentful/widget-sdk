@@ -16,8 +16,7 @@ describe('Client Controller', function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'numVisible',
-        'spaceId',
-        'go',
+        'spaceId'
       ]);
 
       $provide.value('$document', [{ title: '' }]);
@@ -55,16 +54,6 @@ describe('Client Controller', function () {
         allowAnalytics: sinon.stub().returns(true)
       };
       $provide.value('features', self.featuresStubs);
-
-      setMockOnContext(self, 'authenticationStubs', [
-        'logout',
-        'supportUrl',
-        'goodbye',
-        'setTokenLookup',
-        'updateTokenLookup',
-        'getTokenLookup'
-      ]);
-      $provide.value('authentication', self.authenticationStubs);
 
       self.windowStubs = {
         open: sinon.stub()
@@ -120,7 +109,6 @@ describe('Client Controller', function () {
     });
     inject(function (){
       this.$rootScope = this.$inject('$rootScope');
-      this.$state = this.$inject('$state');
       this.$stateParams = this.$inject('$stateParams');
 
       notification = this.$inject('notification');
@@ -138,7 +126,6 @@ describe('Client Controller', function () {
 
       scope = this.$rootScope.$new();
       clientController = this.$inject('$controller')('ClientController', {$scope: scope});
-      this.$state.go = stubs.go;
     });
   });
 
@@ -161,13 +148,13 @@ describe('Client Controller', function () {
   });
 
   describe('on space and token lookup updates', function () {
-    beforeEach(inject(function (authentication) {
+    beforeEach(function () {
       stubs.spaceId.returns(123);
       this.authorizationStubs.authContext.hasSpace.withArgs(123).returns(true);
       spaceContext.space = _.extend(spaceContext.space, {cloned: true});
-      authentication.tokenLookup = {};
+      this.$inject('authentication').tokenLookup = {};
       scope.$digest();
-    }));
+    });
 
     it('token lookup is called', function () {
       sinon.assert.called(this.authorizationStubs.setTokenLookup);
@@ -199,179 +186,6 @@ describe('Client Controller', function () {
       expect(TheAccountView.isActive()).toBeFalsy();
     });
 
-  });
-
-  describe('handle iframe messages', function () {
-    var childScope, data, user;
-    beforeEach(function () {
-      scope.showCreateSpaceDialog = sinon.stub();
-
-      user = { user: true };
-      childScope = scope.$new();
-    });
-
-
-    describe('new space', function () {
-      beforeEach(function () {
-        data = {
-          action: 'new',
-          type: 'space',
-          organizationId: '123abc'
-        };
-        childScope.$emit('iframeMessage', data);
-      });
-
-      it('shows create space dialog', function() {
-        sinon.assert.called(scope.showCreateSpaceDialog);
-      });
-    });
-
-    describe('user cancellation', function () {
-      beforeEach(function () {
-        data = {
-          action: 'create',
-          type: 'UserCancellation'
-        };
-        childScope.$emit('iframeMessage', data);
-      });
-
-      it('calls authentication goodbye', function () {
-        sinon.assert.called(this.authenticationStubs.goodbye);
-      });
-    });
-
-    describe('on token change', function() {
-      var token;
-      beforeEach(inject(function (authentication) {
-        token = {
-          sys: {
-            createdBy: user
-          },
-          spaces: []
-        };
-        authentication.tokenLookup = token;
-
-        data = {
-          token: authentication.tokenLookup
-        };
-
-        childScope.$emit('iframeMessage', data);
-      }));
-
-      it('sets token lookup', function() {
-        sinon.assert.calledWith(this.authenticationStubs.updateTokenLookup, token);
-      });
-    });
-
-    describe('flash message', function () {
-      it('calls warn notification', function () {
-        data = {
-          type: 'flash',
-          resource: {
-            type: 'error',
-            message: 'hai'
-          }
-        };
-        childScope.$emit('iframeMessage', data);
-        sinon.assert.calledWith(notification.warn, 'hai');
-      });
-
-      it('calls info notification', function () {
-        data = {
-          type: 'flash',
-          resource: {
-            type: '',
-            message: 'hai'
-          }
-        };
-        childScope.$emit('iframeMessage', data);
-        sinon.assert.calledWith(notification.info, 'hai');
-      });
-    });
-
-    describe('requests navigation', function () {
-      beforeEach(function () {
-        data = {
-          type: 'location',
-          action: 'navigate',
-          path: '/foobar/baz'
-        };
-        childScope.$emit('iframeMessage', data);
-
-      });
-
-      it('calls into location', function() {
-        sinon.assert.calledWith(this.locationStubs.url, '/foobar/baz');
-      });
-    });
-
-    describe('location update', function () {
-      beforeEach(function () {
-        data = {
-          type: 'location',
-          action: 'update',
-          path: '/foobar/baz'
-        };
-        childScope.$emit('iframeMessage', data);
-      });
-
-      it('performs no token lookup', function() {
-        sinon.assert.notCalled(this.authenticationStubs.getTokenLookup);
-      });
-    });
-
-    describe('space deleted', function () {
-      beforeEach(function () {
-        data = {
-          type: 'space',
-          action: 'delete',
-        };
-        this.tokenStoreStubs.refresh.resolves();
-        childScope.$emit('iframeMessage', data);
-      });
-
-      it('performs token lookup', function() {
-        sinon.assert.called(this.tokenStoreStubs.refresh);
-      });
-    });
-
-
-    describe('for other messages', function () {
-      beforeEach(function () {
-        data = {};
-        this.tokenStoreStubs.refresh.resolves();
-        childScope.$emit('iframeMessage', data);
-      });
-
-      it('performs token lookup', function() {
-        sinon.assert.called(this.tokenStoreStubs.refresh);
-      });
-    });
-
-  });
-
-  describe('redirects to profile', function () {
-    beforeEach(function() {
-      TheAccountView.goTo();
-    });
-
-    it('goes there', function() {
-      sinon.assert.calledWith(stubs.go, 'account.pathSuffix', {
-        pathSuffix: undefined
-      });
-    });
-  });
-
-  describe('redirects to profile with a suffix', function () {
-    beforeEach(function() {
-      TheAccountView.goTo('section');
-    });
-
-    it('goes there', function() {
-      sinon.assert.calledWith(stubs.go, 'account.pathSuffix', {
-        pathSuffix: 'section'
-      });
-    });
   });
 
   describe('shows create space dialog', function () {
