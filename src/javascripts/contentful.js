@@ -4,7 +4,7 @@
  * @ngdoc module
  * @name cf.app
  */
-angular.module('cf.app', []);
+angular.module('cf.app', ['ui.router']);
 
 
 angular.module('contentful', [
