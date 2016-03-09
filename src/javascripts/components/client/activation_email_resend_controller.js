@@ -32,14 +32,6 @@ angular.module('contentful')
     if (!user) {
       return;
     }
-
-    // TODO: Enable controller logic to display the modal again after solving issues
-    //       with Onboarding modal and https://contentful.tpondemand.com/entity/8663
-    var DISABLE_ACTIVATION_EMAIL_RESEND_MODAL = true;
-    if (DISABLE_ACTIVATION_EMAIL_RESEND_MODAL) {
-      return;
-    }
-
     var msUntilReopen = getMillisecondsUntilDialogCanBeReopened();
 
     if (user.confirmed === false && user.email) {
