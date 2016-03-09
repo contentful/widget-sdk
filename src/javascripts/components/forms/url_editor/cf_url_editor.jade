@@ -1,11 +1,9 @@
 input.form-control(
   type="text"
-  ng-model="fieldData.value"
-  ot-bind-text
-  ng-disabled="isDisabled(field, locale)")
+  ng-disabled="isDisabled")
 
 cf-embedly-status(url-status="urlStatus")
 
 .form-widget__help-text {{ helpText }}
 
-cf-embedly-preview(field-data="fieldData" url-status="urlStatus")
+cf-embedly-preview(preview-url="previewUrl" url-status="urlStatus")

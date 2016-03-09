@@ -62,4 +62,36 @@ angular.module('contentful')
     required: !!ctField.required,
     validations: ctField.validations
   };
+}])
+.factory('WidgetApiController/caretPosition', [function () {
+  return {
+    getPreservedCaretPosition: function (currentCaretPosition, currentValue, newValue) {
+      if (currentValue === newValue) {
+        return currentCaretPosition;
+      }
+
+      // sharejs sets newValue to `null` when it's "empty"
+      // This makes sure newValue.length doesn't blow up
+      newValue = newValue || '';
+
+      // preserve caret position for more natural editing
+      var commonStart = 0;
+      var caretPosition = currentCaretPosition;
+      var noOfCharsModified = newValue.length - currentValue.length;
+
+      if (!newValue) {
+        caretPosition = 0;
+      }
+      else {
+        while(currentValue.charAt(commonStart) === newValue.charAt(commonStart)) {
+          commonStart++;
+        }
+        if (commonStart <= caretPosition) {
+          caretPosition += noOfCharsModified;
+        }
+      }
+
+      return caretPosition;
+    }
+  };
 }]);
