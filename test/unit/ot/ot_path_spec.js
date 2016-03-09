@@ -34,22 +34,35 @@ describe('otPath', function() {
   });
 
   describe('receiving otRemoteOp', function () {
+    beforeEach(function() {
+      sinon.stub(scope, '$broadcast');
+    });
+
     describe('with the exact Path', function () {
-      var op = {p: ['FOO', 'bar']};
       it('should broadCast otValueChanged', function () {
-        spyOn(scope, '$broadcast');
-        scope.$emit('otRemoteOp', op);
-        expect(scope.$broadcast).toHaveBeenCalledWith('otValueChanged', scope.otPath, aValue);
+        scope.$emit('otRemoteOp', {p: ['FOO', 'bar']});
+        sinon.assert.calledWith(scope.$broadcast, 'otValueChanged', scope.otPath, aValue);
       });
     });
 
     describe('with a different Path', function () {
-      var op = {p: ['FOO', 'bar2']};
       it('should not broadcast otValueChanged', function () {
-        spyOn(scope, '$broadcast');
-        scope.$emit('otRemoteOp', op);
-        expect(scope.$broadcast).not.toHaveBeenCalled();
+        scope.$emit('otRemoteOp', {p: ['FOO', 'bar2']});
+        sinon.assert.notCalled(scope.$broadcast);
       });
+
+    describe('when otPath is prefix of operation path', function() {
+      it('should broadcast otValueChanged', function() {
+        var op = {p: scope.otPath.slice(0)};
+
+        // make operation path longer than otPath
+        op.p.push(100);
+        expect(op.p.length).toBeGreaterThan(scope.otPath.length);
+
+        scope.$emit('otRemoteOp', op);
+        sinon.assert.calledWith(scope.$broadcast, 'otValueChanged', scope.otPath, aValue);
+      });
+    });
 
     });
   });
