@@ -22,6 +22,9 @@ header.workbench-header
   div(ui-tabpanel="settings")
     .workbench-main__middle-content
       .cfnext-form__field
+        label(for="webhook-name") Name:
+        input.cfnext-form__input--full-size(id="webhook-name" ng-model="webhook.name")
+      .cfnext-form__field
         label(for="webhook-url") URL:
         input.cfnext-form__input--full-size(id="webhook-url" ng-model="webhook.url")
       .cfnext-form__field
@@ -30,9 +33,12 @@ header.workbench-header
       .cfnext-form__field
         label(for="webhook-http-basic-password") HTTP Basic Auth password:
         input.cfnext-form__input--full-size(
-        id="webhook-http-basic-password" type="password"
-        placeholder="{{ (webhook.httpBasicUsername && apiHasAuthCredentials && 'use previously provided password') || '' }}"
-        ng-model="webhook.httpBasicPassword")
+          id="webhook-http-basic-password" type="password"
+          placeholder="{{ (webhook.httpBasicUsername && apiHasAuthCredentials && 'use previously provided password') || '' }}"
+          ng-model="webhook.httpBasicPassword")
+
+      strong Custom headers:
+      cf-webhook-headers(headers="headers")
 
   div(ui-tabpanel="activity")
     table.result-list.main-results.main-header

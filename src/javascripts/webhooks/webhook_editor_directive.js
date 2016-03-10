@@ -33,6 +33,10 @@ angular.module('contentful')
 
   var touched = getInitialTouchCount();
 
+  $scope.headers = {
+    test: 'hello'
+  };
+
   $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
   $scope.activity = {loading: false};
 

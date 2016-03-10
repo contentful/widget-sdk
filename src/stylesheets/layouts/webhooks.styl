@@ -72,3 +72,25 @@
     background: $colors.orange-dark
   &.x--fail
     background: $colors.red-dark
+
+.webhook-header, .webhook-new-header
+  background: $colors.element-lightest
+  border-radius: 3px
+  border: 1px solid $colors.element-light
+  border-width: 0 1px 1px 0
+  padding: $rhythm(.5)
+  margin-bottom $rhythm(.4)
+  display: flex
+  justify-content: space-between
+  align-items: center
+  button
+    padding: $rhythm(.2) $rhythm(.8)
+  input
+    margin-bottom: 0
+    font-family monospace
+
+.webhook-header__actions
+  display: flex
+
+.x--jsonlike
+  font-family: monospace
