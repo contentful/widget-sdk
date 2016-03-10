@@ -1,5 +1,8 @@
 'use strict';
 
+// TODO: Move code for handling the notifications and paywall modal into a
+//  separate TrialWatchController. The TrialWatchController should use TrialWatcher
+//  as a service reduced to expose trial related information.
 angular.module('contentful').factory('TrialWatcher', ['$injector', function ($injector) {
 
   var $rootScope     = $injector.get('$rootScope');
