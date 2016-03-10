@@ -8,7 +8,7 @@ Tests are written in [Jasmine][jasmine] (version `2.3.x`) and run with
 [Karma][karma].  The tests use [Sinon][sinon] to create function stubs.
 The tests files are contained in `test/unit` and `test/integration`,
 helpers are contained in `test/helpers`. To see a list of available
-test helpers go to the [`test` module][module:test] documentation.
+test helpers go to the [`test/helpers` service][service:helpers] documentation.
 
 You can run the tests with
 ~~~bash
