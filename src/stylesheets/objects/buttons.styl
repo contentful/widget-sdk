@@ -47,6 +47,7 @@ $cfnext-button($color, $text)
   $cfnext-button-loading($text)
 
 
+
 /**
  * Applies layout and typography styles
  */
@@ -68,6 +69,9 @@ $cfnext-button-large()
   font-size: 1.15rem
   padding: 1rem 2.5rem
 
+$cfnext-button-small()
+  font-size: 0.75rem
+  padding: 0.5rem 1.25rem
 
 /**
  * Applies background, text and border colors for the various states.
@@ -146,11 +150,16 @@ $btn-action()
     border-color: $colors.blue-darkest
 
 .cfnext-btn-action,
-.cfnext-btn-action--large
+.cfnext-btn-action--large,
+.cfnext-btn-action--small
   $btn-action()
 
 .cfnext-btn-action--large
   $cfnext-button-large()
+
+.cfnext-btn-action--small
+  $cfnext-button-small()
+
 
 /*
 Primary Action Button
@@ -178,11 +187,15 @@ $btn-primary()
     border-color: $colors.green-darkest
 
 .cfnext-btn-primary-action,
-.cfnext-btn-primary-action--large
+.cfnext-btn-primary-action--large,
+.cfnext-btn-primary-action--small
   $btn-primary()
 
 .cfnext-btn-primary-action--large
   $cfnext-button-large()
+
+.cfnext-btn-primary-action--small
+  $cfnext-button-small()
 
 /*
 Secondary Action Button
@@ -204,7 +217,8 @@ Styleguide 4.3
 $btn-secondary-text = $colors.text-mid
 $btn-secondary-bg = $colors.element-light
 .cfnext-btn-secondary-action,
-.cfnext-btn-secondary-action--large
+.cfnext-btn-secondary-action--large,
+.cfnext-btn-secondary-action--small
   $cfnext-button($btn-secondary-bg, $btn-secondary-text)
   border-color: $colors.element-dark
 
@@ -220,6 +234,9 @@ $btn-secondary-bg = $colors.element-light
 
 .cfnext-btn-secondary-action--large
   $cfnext-button-large()
+
+.cfnext-btn-secondary-action--small
+  $cfnext-button-small()
 
 
 /**
