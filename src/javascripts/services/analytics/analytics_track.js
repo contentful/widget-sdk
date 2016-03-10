@@ -27,7 +27,6 @@ angular.module('contentful')
     enable: enable,
     disable: disable,
     setSpace: setSpace,
-    setUserData: setUserData,
     addIdentifyingData: addIdentifyingData,
     /**
      * @ngdoc method
@@ -57,11 +56,18 @@ angular.module('contentful')
   };
   return analytics;
 
-  function enable () {
+  /**
+   * @ngdoc method
+   * @name analytics#enable
+   * @param {API.User} user
+   */
+  function enable (user) {
     segment.enable();
     totango.enable();
     fontsdotcom.enable();
     turnOffStateChangeListener = $rootScope.$on('$stateChangeSuccess', trackStateChange);
+    userData = user;
+    initialize();
   }
 
   function disable () {
@@ -103,11 +109,6 @@ angular.module('contentful')
       spaceData = null;
       organizationData = null;
     }
-  }
-
-  function setUserData (user) {
-    userData = user;
-    initialize();
   }
 
   function track (event, data) {

@@ -147,8 +147,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
     if (features.allowAnalytics(user)) {
       logger.enable(user);
-      analytics.enable();
-      analytics.setUserData(user);
+      analytics.enable(user);
     } else {
       logger.disable();
       analytics.disable();

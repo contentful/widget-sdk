@@ -26,9 +26,6 @@ describe('Client Controller', function () {
         'enable',
         'disable',
         'track',
-        'setSpace',
-        'setUserData',
-        'stateActivated'
       ]);
       $provide.value('analytics', self.analyticsStubs);
 
@@ -421,10 +418,6 @@ describe('Client Controller', function () {
       this.broadcastStub.restore();
     });
 
-    it('tracks login', function () {
-      sinon.assert.called(this.analyticsStubs.setUserData);
-    });
-
     it('sets user', function() {
       expect(scope.user).toEqual(this.user);
     });
@@ -500,15 +493,14 @@ describe('Client Controller', function () {
 
       it('sets analytics user data and enables tracking', function() {
         this.prepare();
-        sinon.assert.called(this.analyticsStubs.setUserData);
-        sinon.assert.called(this.analyticsStubs.enable);
+        sinon.assert.calledWithExactly(this.analyticsStubs.enable, user);
         sinon.assert.calledWithExactly(logger.enable, user);
       });
 
       it('should not set or enable anything when analytics are disallowed', function() {
         this.featuresStubs.allowAnalytics.returns(false);
         this.prepare();
-        sinon.assert.notCalled(this.analyticsStubs.setUserData);
+        sinon.assert.notCalled(this.analyticsStubs.enable);
         sinon.assert.called(this.analyticsStubs.disable);
         sinon.assert.called(logger.disable);
       });
