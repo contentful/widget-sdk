@@ -98,7 +98,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     /**
      * @ngdoc method
      * @name accessChecker#shouldDisable
-     * * @param {string} actionName
+     * @param {string} actionName
      * @returns {boolean}
      * @description
      * Returns true if action with a given name should be disabled.
