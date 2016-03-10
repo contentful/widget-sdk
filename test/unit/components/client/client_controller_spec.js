@@ -476,17 +476,20 @@ describe('Client Controller', function () {
     });
 
     describe('if user exists', function() {
-      var org1, org2, org3;
+      var user, org1, org2, org3;
       beforeEach(function() {
         org1 = {org1: true};
         org2 = {org2: true};
         org3 = {org3: true};
+        user = {
+          organizationMemberships: [
+            {organization: org1}, {organization: org2}, {organization: org3}
+          ]
+        };
 
         this.prepare = function () {
           var subscriber = this.tokenStoreStubs.changed.attach.firstCall.args[0];
-          subscriber({user: { organizationMemberships: [
-            {organization: org1}, {organization: org2}, {organization: org3}
-          ]}});
+          subscriber({user: user});
         }.bind(this);
       });
 
@@ -499,7 +502,7 @@ describe('Client Controller', function () {
         this.prepare();
         sinon.assert.called(this.analyticsStubs.setUserData);
         sinon.assert.called(this.analyticsStubs.enable);
-        sinon.assert.called(logger.enable);
+        sinon.assert.calledWithExactly(logger.enable, user);
       });
 
       it('should not set or enable anything when analytics are disallowed', function() {

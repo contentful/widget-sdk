@@ -41,36 +41,6 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
   var environment    = $injector.get('environment');
   var stringifySafe  = $injector.get('stringifySafe');
 
-  function setUserInfo() {
-    // Prevents circular dependency
-    var authentication = $injector.get('authentication');
-
-    var user = authentication.getUser();
-    if (dotty.exists(user, 'sys.id') && bugsnag.needsUser()){
-      bugsnag.setUser({
-        id: dotty.get(user, 'sys.id'),
-        firstName: dotty.get(user, 'firstName'),
-        lastName: dotty.get(user, 'lastName'),
-        adminLink: getAdminLink(user),
-        organizations: getOrganizations(),
-      });
-    }
-  }
-
-  function getOrganizations() {
-    var authentication = $injector.get('authentication');
-    var user = authentication.getUser();
-    var organizationNames = _.map(user.organizationMemberships, function(m){
-      return m.organization.name;
-    });
-    return organizationNames.join(', ');
-  }
-
-  function getAdminLink(user) {
-    var id = dotty.get(user, 'sys.id');
-    return 'https://admin.' + environment.settings.main_domain + '/admin/users/' + id;
-  }
-
   function getParams() {
     var stateName = $injector.get('$state').current.name;
     var stateParams = $injector.get('$stateParams');
@@ -117,11 +87,12 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * @ngdoc method
      * @name logger#enable
      * @description
-     * Enables the logger service
-     * any 3rd party services running
+     * Load bugsnag and set the user data.
+     *
+     * @param {API.User} user
      */
-    enable: function(){
-      bugsnag.enable();
+    enable: function (user) {
+      bugsnag.enable(user);
     },
 
     /**
@@ -148,7 +119,6 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * @param {Object} metadata.data  Additional data (other objects). Shows up on the bugsnag data tab.
      */
     logException: function (exception, metaData) {
-      setUserInfo();
       if (environment.env !== 'production' && environment.env !== 'unittest') {
         console.error(exception);
       }
@@ -287,7 +257,6 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
     _log: function(type, severity, message, metaData) {
       metaData = metaData || {};
       metaData.groupingHash = metaData.groupingHash || message;
-      setUserInfo();
       if (environment.env !== 'production' && environment.env !== 'unittest') {
         logToConsole(type, severity, message);
       }

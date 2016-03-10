@@ -146,7 +146,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     OrganizationList.resetWithUser(user);
 
     if (features.allowAnalytics(user)) {
-      logger.enable();
+      logger.enable(user);
       analytics.enable();
       analytics.setUserData(user);
     } else {

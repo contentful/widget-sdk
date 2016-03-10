@@ -20,8 +20,8 @@ describe('logger service', function () {
   });
 
   it('should enable', function(){
-    this.logger.enable();
-    sinon.assert.called(this.bugsnag.enable);
+    this.logger.enable('USER');
+    sinon.assert.calledWithExactly(this.bugsnag.enable, 'USER');
   });
 
   it('should disable', function(){
@@ -81,8 +81,7 @@ describe('logger service', function () {
 
   describe('message processing', function(){
     beforeEach(function(){
-      this.authentication = this.$inject('authentication');
-      sinon.stub(this.authentication, 'getUser').returns({
+      this.logger.enable({
         firstName: 'Hans',
         lastName: 'Wurst',
         sys: { id: 'h4nswur5t' },
@@ -90,19 +89,6 @@ describe('logger service', function () {
           {organization: {name: 'Conglom-O' }},
           {organization: {name: 'ACME' }}
         ]
-      });
-      sinon.stub(this.bugsnag, 'needsUser').returns(true);
-      sinon.stub(this.bugsnag, 'setUser');
-    });
-
-    it('should set user info before logging', function(){
-      this.logger.logError('error');
-      sinon.assert.calledWith(this.bugsnag.setUser, {
-        firstName:      'Hans',
-        lastName:       'Wurst',
-        id:             'h4nswur5t',
-        organizations:  'Conglom-O, ACME',
-        adminLink:      'https://admin.contentful.com/admin/users/h4nswur5t',
       });
     });
 
