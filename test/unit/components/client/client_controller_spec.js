@@ -55,9 +55,8 @@ describe('Client Controller', function () {
       $provide.value('tokenStore', self.tokenStoreStubs);
 
       self.featuresStubs = {
-        shouldAllowAnalytics: sinon.stub()
+        allowAnalytics: sinon.stub().returns(true)
       };
-      self.featuresStubs.shouldAllowAnalytics.returns(true);
       $provide.value('features', self.featuresStubs);
 
       setMockOnContext(self, 'authenticationStubs', [
@@ -504,7 +503,7 @@ describe('Client Controller', function () {
       });
 
       it('should not set or enable anything when analytics are disallowed', function() {
-        this.featuresStubs.shouldAllowAnalytics.returns(false);
+        this.featuresStubs.allowAnalytics.returns(false);
         this.prepare();
         sinon.assert.notCalled(this.analyticsStubs.setUserData);
         sinon.assert.called(this.analyticsStubs.disable);

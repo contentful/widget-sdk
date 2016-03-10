@@ -2,7 +2,6 @@
 
 angular.module('contentful').controller('ClientController', ['$scope', '$injector', function ClientController($scope, $injector) {
   var $rootScope         = $injector.get('$rootScope');
-  var $controller        = $injector.get('$controller');
   var $timeout           = $injector.get('$timeout');
   var $location          = $injector.get('$location');
   var $state             = $injector.get('$state');
@@ -24,7 +23,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var OrganizationList   = $injector.get('OrganizationList');
   var spaceTools         = $injector.get('spaceTools');
 
-  $scope.featureController = $controller('FeatureController', {$scope: $scope});
+  // TODO remove this eventually. All components should access it as a service
   $scope.spaceContext = spaceContext;
 
   $scope.preferences = {
@@ -146,7 +145,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     enforcements.setUser(user);
     OrganizationList.resetWithUser(user);
 
-    if (features.shouldAllowAnalytics()) {
+    if (features.allowAnalytics(user)) {
       logger.enable();
       analytics.enable();
       analytics.setUserData(user);
