@@ -10,8 +10,12 @@ cache:
   - node_modules
   - bower_components
 env:
-  - SLIMERJS_BIN=bin/slimerjs
-
+  global:
+    - SLIMERJS_BIN=bin/slimerjs
+    # JENKINS_PASSWORD
+    - secure: "RWpHqk1nc4k4qIJ6TgM8ofrwHL2nMkp5kg5B2jevJtW8UlSnzkVuagQN9Req9dTjaMX/ZsB1Pt4CQE5K1W/xQJTKAnbtyQ8fZOXU4kQvOH+TptdwK+oMwjfITktCYuj1c1/aMD0dzkIaPvjX/OwXZPtCRq2s762YXuCyPjx3ERU="
+    # JENKINS_TOKEN
+    - secure: "eXBRhtfrIBfoszICbvyBmIQxLf+JEp9+OeEh1FGbqWmKWXlDTApyt6+vsOEaD0Akrc4yYdIw+DdP43tFn9VbXzun1AL/RCjDqo6l9yNvCvA5k7rF2w9rAd+ZHKYRMGLvpQ4vfNEuWwiwtjdzLA9VvrDYU/484XuH/1pSpt0rOyw="
 before_install:
 - echo $'@contentful:registry=https://registry.npmjs.org/\n//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> ~/.npmrc
 install:
@@ -38,6 +42,11 @@ deploy:
     upload-dir: archive
     on:
       all_branches: true
+  # Deploys the previously uploaded package
+  - provider: script
+    script: bin/trigger-packagebot
+    on:
+      branch: [master, production, preview]
   - provider: s3
     access_key_id: AKIAI35UEY5UVV5IT6BQ
     secret_access_key:
@@ -48,8 +57,9 @@ deploy:
     skip_cleanup: true
     on:
       all_branches: true
-after_deploy:
-  - bin/trigger-packagebot
+after_script:
+  - bin/travis-run-jenkins
+
 notifications:
   slack:
     secure: lc+kwmitAcp5htZI5ETV5x5ZwP0TGzJKwenaMMyqGCCUlDgK76hBirkg9LgBhG5500Kks+udT6flZLJ0p/gNvbgqEaCR1GZBmCdneqxpkow8kAy2HUGR1MmkA3+zs1YMJ4Rp3nC78ygVKPzreqgEpmfCovYls0PmpO37khqzBnY=

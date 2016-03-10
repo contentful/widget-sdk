@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# This script triggers a build of the UI Integration Test Suite on Jenkins.
+#
+# The script is run after the deployment and triggers a test run
+# against the built commit on `app.quirely.com`. Jenkins then sets the
+# CI status on Github.
+#
+# The jenkins credentials are provided in encrypted form in
+# `.travis.yml`. They are defined in the Jenkins Job configuration.
+
+set -ev
+
+# abort if tests failed
+if [[ "$TRAVIS_TEST_RESULT" != "0" ]]; then exit 0; fi
+
+# abort if not a feature branch
+if [[ "$TRAVIS_BRANCH" =~ (preview|master|production) ]]; then exit 0; fi
+
+AUTH="cf-ci:$JENKINS_PASSWORD"
+QUERY="token=$JENKINS_TOKEN&Git_Commit_Hash=$TRAVIS_COMMIT"
+JOB="User Interface Pull Request"
+
+curl -X POST -i -u "$AUTH" "https://jenkins.quirely.com/job/$JOB/buildWithParameters?$QUERY"
