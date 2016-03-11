@@ -20,6 +20,7 @@ angular.module('contentful')
   };
 }])
 .controller('WidgetApiController', ['$scope', '$injector', function ($scope, $injector) {
+  var $q = $injector.get('$q');
   var newSignal = $injector.get('signal');
   var valueChangedSignal = newSignal($scope.otSubDoc.getValue());
   var isDisabledSignal = newSignal($scope.isDisabled($scope.field, $scope.locale));
@@ -40,7 +41,9 @@ angular.module('contentful')
   this.field = {
     onValueChanged: valueChangedSignal.attach,
     setValue: function (value) {
-      if (value !== $scope.otSubDoc.getValue()) {
+      if (value === $scope.otSubDoc.getValue()) {
+        return $q.resolve(value);
+      } else {
         return $scope.otSubDoc.changeValue(value);
       }
     },
