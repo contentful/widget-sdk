@@ -17,11 +17,12 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
   var ReloadNotification = $injector.get('ReloadNotification');
   var logger             = $injector.get('logger');
   var createSignal       = $injector.get('signal');
+  var createQueue        = $injector.get('overridingRequestQueue');
 
   var currentToken = null;
   var changed  = createSignal();
-  var refreshDeferred = null;
-  var refreshRequests = 0;
+  var request = createQueue(function () { return authentication.getTokenLookup(); });
+  var refreshPromise = null;
 
   return {
     changed:           changed,
@@ -62,44 +63,13 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
    * to reload the app. On success we call "refreshWithLookup" (see docs above).
    */
   function refresh() {
-    if (!refreshDeferred || refreshRequests < 1) {
-      refreshRequests = 1;
-      refreshDeferred = $q.defer();
-      getNextTokenLookup();
-    } else {
-      refreshRequests += 1;
-    }
+    refreshPromise = request(function (promise) {
+      promise.then(function (lookup) {
+        refreshWithLookup(lookup);
+      }, communicateError);
+    });
 
-    return refreshDeferred.promise;
-  }
-
-  function getNextTokenLookup() {
-    authentication.getTokenLookup()
-    .then(handleToken)
-    .catch(handleTokenError);
-  }
-
-  function handleToken(token) {
-    if (!refreshDeferred) {
-      return $q.reject();
-    }
-
-    refreshRequests -= 1;
-    if (refreshRequests > 0) {
-      getNextTokenLookup();
-    } else {
-      refreshWithLookup(token);
-      refreshDeferred.resolve();
-      refreshDeferred = null;
-    }
-  }
-
-  function handleTokenError(err) {
-    refreshDeferred.reject(err);
-    refreshDeferred = null;
-    communicateError(err);
-
-    return $q.reject(err);
+    return refreshPromise;
   }
 
   /**
@@ -113,7 +83,7 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
    * Promise is rejected if space with a provided ID couldn't be found.
    */
   function getSpace(id) {
-    return refreshDeferred ? refreshDeferred.promise.then(promiseSpace) : promiseSpace();
+    return refreshPromise ? refreshPromise.then(promiseSpace) : promiseSpace();
 
     function promiseSpace() {
       var space = findSpace(id);
@@ -130,7 +100,7 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
    * If some calls are in progress, we're waiting until these are done.
    */
   function getSpaces() {
-    return refreshDeferred ? refreshDeferred.promise.then(promiseSpaces) : promiseSpaces();
+    return refreshPromise ? refreshPromise.then(promiseSpaces) : promiseSpaces();
 
     function promiseSpaces() {
       return $q.when(getCurrentSpaces());
