@@ -15,21 +15,10 @@ angular.module('contentful')
       definition.loadingText = label ? ('Loading your ' + label + '...') : 'Loading...';
     }
 
-    definition.template = [
-      '<div ng-show="context.ready && !context.forbidden">',
-        definition.template,
-      '</div>',
-      '<div ng-show="!context.ready && !context.forbidden" class="workbench workbench-loading x--center">',
-        '<div class="workbench-loading__spinner"></div>',
-        '<div class="workbench-loading__message">',
-          definition.loadingText,
-        '</div>',
-      '</div>',
-      '<div ng-show="context.forbidden" class="workbench workbench-forbidden x--center">',
-        '<div class="workbench-forbidden__headline">You don\'t have permission to access this view.</div>',
-        '<div class="workbench-forbidden__message">Get in touch with the person administering Contentful at your company to learn more.</div>',
-      '</div>'
-    ].join('');
+    definition.template = JST.base_state_view({
+      template: definition.template,
+      loadingText: definition.loadingText
+    });
 
     return definition;
   };
