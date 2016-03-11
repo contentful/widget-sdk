@@ -69,10 +69,6 @@ $cfnext-button-large()
   font-size: 1.15rem
   padding: 1rem 2.5rem
 
-$cfnext-button-small()
-  font-size: 0.75rem
-  padding: 0.5rem 1.25rem
-
 /**
  * Applies background, text and border colors for the various states.
  */
@@ -99,7 +95,7 @@ $cfnext-button-colors($bg, $text)
   &, &:hover, &:active
     outline: 0
 
-  &:disabled, &[aria-disabled=true]
+  &:disabled, &[aria-disabled=true], &.disabled
     opacity: 0.4
     cursor: default
     // This overides any other state styles, like hover or active
@@ -150,15 +146,11 @@ $btn-action()
     border-color: $colors.blue-darkest
 
 .cfnext-btn-action,
-.cfnext-btn-action--large,
-.cfnext-btn-action--small
+.cfnext-btn-action--large
   $btn-action()
 
 .cfnext-btn-action--large
   $cfnext-button-large()
-
-.cfnext-btn-action--small
-  $cfnext-button-small()
 
 
 /*
@@ -187,15 +179,11 @@ $btn-primary()
     border-color: $colors.green-darkest
 
 .cfnext-btn-primary-action,
-.cfnext-btn-primary-action--large,
-.cfnext-btn-primary-action--small
+.cfnext-btn-primary-action--large
   $btn-primary()
 
 .cfnext-btn-primary-action--large
   $cfnext-button-large()
-
-.cfnext-btn-primary-action--small
-  $cfnext-button-small()
 
 /*
 Secondary Action Button
@@ -217,8 +205,7 @@ Styleguide 4.3
 $btn-secondary-text = $colors.text-mid
 $btn-secondary-bg = $colors.element-light
 .cfnext-btn-secondary-action,
-.cfnext-btn-secondary-action--large,
-.cfnext-btn-secondary-action--small
+.cfnext-btn-secondary-action--large
   $cfnext-button($btn-secondary-bg, $btn-secondary-text)
   border-color: $colors.element-dark
 
@@ -234,9 +221,6 @@ $btn-secondary-bg = $colors.element-light
 
 .cfnext-btn-secondary-action--large
   $cfnext-button-large()
-
-.cfnext-btn-secondary-action--small
-  $cfnext-button-small()
 
 
 /**

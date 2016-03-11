@@ -13,6 +13,7 @@ angular.module('contentful').factory('sectionAccess', ['$injector', function ($i
   var accessChecker = $injector.get('accessChecker');
   var $state        = $injector.get('$state');
   var $stateParams  = $injector.get('$stateParams');
+  var spaceContext  = $injector.get('spaceContext');
 
   var BASE_STATE = 'spaces.detail';
 
@@ -58,14 +59,23 @@ angular.module('contentful').factory('sectionAccess', ['$injector', function ($i
    *
    * We check current state because `spaces.detail` controller
    * is instantiated for child states, too. Caller should use `hasAccessToAny` first.
+   *
+   * If a user has sign in count == 1 and has access to either Entries or
+   * Content Types, go to `Learn`. This is temporary and will be be replaced
+   * by the `Space Home` where all users will be automatically directed
    */
   function redirectToFirstAccessible() {
     var currentStateName = dotty.get($state, '$current.name');
-    var firstAccessible = getFirstAccessibleSection();
-    var targetStateName = [BASE_STATE, firstAccessible].join('.');
+    var firstAccessible  = getFirstAccessibleSection();
+    var targetStateName  = [BASE_STATE, firstAccessible].join('.');
+    var visibility       = accessChecker.getSectionVisibility();
+    var signInCount      = dotty.get(spaceContext, 'space.data.spaceMembership.user.signInCount');
 
     if (currentStateName === BASE_STATE) {
-      if (firstAccessible) {
+      if ((signInCount === 1) &&
+          (visibility.contentType || visibility.entry)) {
+        $state.go('spaces.detail.learn', {spaceId: $stateParams.spaceId});
+      } else if (firstAccessible) {
         $state.go(targetStateName, {spaceId: $stateParams.spaceId});
       } else {
         throw new Error('No section to redirect to.');

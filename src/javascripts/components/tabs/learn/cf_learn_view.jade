@@ -1,240 +1,276 @@
 .workbench
-  .workbench-main(ng-if="context.ready")
-    .workbench-main.x--content
-      .workbench-main__middle-content.x--learn-home
-        //- Onboarding steps
-        .learn-onboarding
-          h2 Set up the basics
-          p.text-dimmed
-            | Complete these three steps to get started creating and fetching your content.
+  .workbench-main.x--content(ng-if="context.ready")
+    .workbench-main__middle-content.x--learn-home
+      //- Onboarding steps
+      .learn-onboarding
+        h2 Set up the basics
+        p.learn-subheading
+          | Complete these three steps to get started creating and fetching your content.
 
-          .learn-onboarding__steps
-            .learn-onboarding__step(
-              ng-class="{inactive: !learn.canAccessContentTypes}"
-              ng-show="learn.hasContentTypes")
+        .learn-onboarding__steps
+          .learn-onboarding__step(ng-show="learn.hasAccessibleContentTypes")
+            .icon-wrapper
+              cf-icon(name="page-ct")
+            .step__title
+              h3.step__title__inner
+                cf-icon(name="checkmark-alt")
+                span Define the structure
+            p.step__description
+              | Create your content model. It’s comprised of content types, which define the structure of your entries.
+            .step__actions
+              button.cfnext-btn-secondary-action(
+                ng-disabled="!learn.canAccessContentTypes"
+                ui-sref="spaces.detail.content_types.list({ spaceId: learn.spaceId })")
+                | View your content model
+
+          .learn-onboarding__step(ng-show="!learn.hasAccessibleContentTypes")
+            .icon-wrapper
+              cf-icon(name="page-ct")
+            .step__title
+              h3.step__title__inner
+                | Define the structure
+            p.step__description
+              | The content model is comprised of content types, which define the structure of your entries.
+            .step__actions
+              //- User has access
+              button.cfnext-btn-action(
+                ng-show="learn.canAccessContentTypes"
+                ui-sref="spaces.detail.content_types.new({ spaceId: learn.spaceId })")
+                | Create a content type
+              //- User has no access
+              button.cfnext-btn-action.disabled(
+                ng-show="!learn.canAccessContentTypes"
+                tooltip="You don\'t have permission to access content types")
+                | Create a content type
+
+          .learn-onboarding__step(
+            ng-class="{inactive: !learn.canAccessEntries}"
+            ng-show="learn.hasEntries")
+            .icon-wrapper
+              cf-icon(name="page-entries")
+            .step__title
+              h3.step__title__inner
+                cf-icon(name="checkmark-alt")
+                | Create your content
+            p.step__description
+              | Entries are your actual pieces of content, based on the content types you have created.
+            .step__actions
+              button.cfnext-btn-secondary-action(
+                ui-sref="spaces.detail.entries.list({ spaceId: learn.spaceId })")
+                | View your entries
+
+          .learn-onboarding__step(
+            ng-class="{inactive: !learn.hasAccessibleContentTypes || !learn.canAccessEntries}"
+            ng-show="!learn.hasEntries")
+            .icon-wrapper
+              cf-icon(name="page-entries")
+            .step__title
+              h3.step__title__inner
+                | Create your content
+            p.step__description
+              | Entries are your actual pieces of content, based on the content types you have created.
+            .step__actions
+              //- No accessible entries
+              button.cfnext-btn-action.disabled(
+                ng-show="learn.accessibleContentTypes.length === 0"
+                tooltip="You don\'t have permission to access entries"
+                ng-disabled="!learn.hasAccessibleContentTypes")
+                | Add an entry
+              //- One entry
+              button.cfnext-btn-action(
+                ng-show="learn.accessibleContentTypes.length === 1"
+                ng-click="entityCreationController.newEntry(learn.accessibleContentTypes[0])")
+                | Add an entry
+              //- More than one entry
+              div(ng-show="learn.accessibleContentTypes.length > 1")
+                button.cfnext-btn-action(cf-context-menu-trigger)
+                  span Add an entry&nbsp;
+                  cf-icon(name="dd-arrow-down")
+                .context-menu(role="menu" cf-context-menu aria-label="Add an entry")
+                  div(ng-repeat="contentType in learn.accessibleContentTypes"
+                    role="menuitem"
+                    ng-click="entityCreationController.newEntry(contentType)")
+                    | {{contentType.data.name}}
+
+          .learn-onboarding__step(
+            ng-class="{inactive: !learn.hasContentTypes || !learn.hasEntries}")
+            .icon-wrapper
+              cf-icon(name="page-api")
+            .step__title
+              h3.step__title__inner
+                | Fetch your content
+            p.step__description
+              | Use the API to see your content wherever you like. We’ll show you different ways of delivering your content.
+            .step__actions
+              //- Can access API keys
+              button.cfnext-btn-action(
+                ng-show="learn.canAccessApiKeys"
+                ng-click="learn.goToApiKeySection()"
+                ng-disabled="!learn.hasContentTypes")
+                | Use the API
+              button.cfnext-btn-action.disabled(
+                ng-show="!learn.canAccessApiKeys"
+                tooltip="You don\'t have permission to access API keys")
+                | Use the API
+
+      //- Build with Contentful
+      .learn-language
+        h2 Build with Contentful
+        p.learn-subheading Choose your language to access relevant SDKs, tools, tutorials and more.
+        .learn-language__group
+          .learn-language__item(
+            ng-repeat="data in learn.languageData"
+            data-current-index="{{$index}}")
+            a.learn-language__link(
+              ng-class="{'is-active': $index === learn.selectedLanguageIndex, 'is-open': learn.selectedLanguageIndex !== undefined}"
+              ng-click="learn.selectIndex($index)")
+              cf-icon(name="{{data.icon}}")
+              .learn-language__name {{data.name}}
+        .learn-language__detail(ng-class="{'x--visible': learn.selectedLanguageIndex !== undefined}")
+          cf-icon(
+            name="arrow-up"
+            cf-position-relative-to-language
+            position-relative-to=".learn-language__item[data-current-index=\"{{learn.selectedLanguageIndex}}\"]")
+          //- JavaScript
+          .learn-language__references(ng-show="learn.selectedLanguageName === 'JavaScript'")
+            .learn-language__reference
               .icon-wrapper
-                cf-icon(name="page-ct")
-              .step__title
-                h3.step__title__inner
-                  cf-icon(name="checkmark-alt")
-                  span Define the structure
-              p.step__description
-                | Create your content model. It’s comprised of content types, which define the structure of your entries.
-              .step__actions
-                button.cfnext-btn-secondary-action--small(
-                  ui-sref="spaces.detail.content_types.list({ spaceId: learn.spaceId })")
-                  | View your content model
-
-            .learn-onboarding__step(
-              ng-class="{inactive: !learn.canAccessContentTypes}"
-              ng-show="!learn.hasContentTypes")
+                cf-icon(name="learn-documentation")
+              h3 Documentation
+              p.language-description
+                | SDKs, tutorials, integrations and example applications will help you get started with Contentful and JavaScript.
+              a.language-link(href="https://www.contentful.com/developers/docs/javascript/")
+                | Read the documentation
+            .learn-language__reference
               .icon-wrapper
-                cf-icon(name="page-ct")
-              .step__title
-                h3.step__title__inner
-                  | Define the structure
-              p.step__description
-                | The content model is comprised of content types, which define the structure of your entries.
-              .step__actions
-                button.cfnext-btn-action--small(
-                  ui-sref="spaces.detail.content_types.list({ spaceId: learn.spaceId })")
-                  | Create a content type
-
-            .learn-onboarding__step(
-              ng-class="{inactive: !learn.canAccessEntries}"
-              ng-show="learn.hasEntries")
+                cf-icon(name="learn-api_demo")
+              h3 API Demo
+              p.language-description
+                | This guide shows how to make a call to the Contentful API with JavaScript, using some example content we’ve prepared.
+              a.language-link(href="https://www.contentful.com/developers/api-demo/javascript/")
+                | View the API demo
+            .learn-language__reference
               .icon-wrapper
-                cf-icon(name="page-entries")
-              .step__title
-                h3.step__title__inner
-                  cf-icon(name="checkmark-alt")
-                  | Create your content
-              p.step__description
-                | Entries are your actual pieces of content, based on the content types you have created.
-              .step__actions
-                button.cfnext-btn-secondary-action--small(
-                  ui-sref="spaces.detail.entries.list({ spaceId: learn.spaceId })")
-                  | View your entries
-
-            .learn-onboarding__step(
-              ng-class="{inactive: !learn.hasContentTypes || !learn.canAccessEntries}"
-              ng-show="!learn.hasEntries")
+                cf-icon(name="learn-github")
+              h3 GitHub
+              p.language-description
+                | Download the library or view the source code on GitHub.
+              a.language-link(href="https://github.com/contentful/contentful.js")
+                | Go to GitHub
+          //- PHP
+          .learn-language__references(ng-show="learn.selectedLanguageName === 'PHP'")
+            .learn-language__reference
               .icon-wrapper
-                cf-icon(name="page-entries")
-              .step__title
-                h3.step__title__inner
-                  | Create your content
-              p.step__description
-                | Entries are your actual pieces of content, based on the content types you have created.
-              .step__actions
-                button.cfnext-btn-action--small(
-                  ui-sref="spaces.detail.entries.list({ spaceId: learn.spaceId })"
-                  ng-disabled="!learn.hasContentTypes")
-                  | Add an entry
-
-            .learn-onboarding__step(
-              ng-class="{inactive: !learn.hasContentTypes || !learn.hasEntries || !learn.canAccessApiKeys}")
+                cf-icon(name="learn-documentation")
+              h3 Documentation
+              p.language-description
+                | SDKs, tutorials, integrations and example applications will help you get started with Contentful and PHP.
+              a.language-link(href="https://www.contentful.com/developers/docs/php/")
+                | Read the documentation
+            .learn-language__reference
               .icon-wrapper
-                cf-icon(name="page-api")
-              .step__title
-                h3.step__title__inner
-                  | Fetch your content
-              p.step__description
-                | Use the API to see your content wherever you like. We’ll show you different ways of delivering your content.
-              .step__actions
-                button.cfnext-btn-action--small(
-                  ui-sref="spaces.detail.api.home({ spaceId: learn.spaceId })"
-                  ng-disabled="!learn.hasContentTypes")
-                  | Use the API
-
-        //- Build with Contentful
-        .learn-language
-          h2 Build with Contentful
-          p.text-dimmed Choose your language to access relevant SDKs, tools, tutorials and more.
-          .learn-language__group
-            .learn-language__item(
-              ng-repeat="data in learn.languageData"
-              data-current-index="{{$index}}")
-              a.learn-language__link(
-                ng-class="{active: $index === learn.selectedLanguageIndex}"
-                ng-click="learn.selectIndex($index)")
-                cf-icon(name="{{data.icon}}")
-                .learn-language__name {{data.name}}
-          .learn-language__detail
-            cf-icon(
-              name="arrow-up"
-              cf-position-relative-to-language
-              position-relative-to=".learn-language__item[data-current-index=\"{{learn.selectedLanguageIndex}}\"]")
-            //- JavaScript
-            .learn-language__references(ng-show="learn.selectedLanguageName === 'JavaScript'")
-              .learn-language__reference
-                .icon-wrapper
-                  cf-icon(name="learn-documentation")
-                h3 Documentation
-                p.language-description
-                  | SDKs, tutorials, integrations and example applications will help you get started with Contentful and JavaScript.
-                a.language-link(href="https://www.contentful.com/developers/docs/javascript/")
-                  | Read the documentation
-              .learn-language__reference
-                .icon-wrapper
-                  cf-icon(name="learn-api_demo")
-                h3 API Demo
-                p.language-description
-                  | This guide shows how to make a call to the Contentful API with JavaScript, using some example content we’ve prepared.
-                a.language-link(href="https://www.contentful.com/developers/api-demo/javascript/")
-                  | View the API demo
-              .learn-language__reference
-                h3 GitHub
-                p.language-description
-                  | Download the library or view the source code on GitHub.
-                a.language-link(href="https://github.com/contentful/contentful.js")
-                  | Go to GitHub
-            //- PHP
-            .learn-language__references(ng-show="learn.selectedLanguageName === 'PHP'")
-              .learn-language__reference
-                .icon-wrapper
-                  cf-icon(name="learn-documentation")
-                h3 Documentation
-                p.language-description
-                  | SDKs, tutorials, integrations and example applications will help you get started with Contentful and PHP.
-                a.language-link(href="https://www.contentful.com/developers/docs/php/")
-                  | Read the documentation
-              .learn-language__reference
-                .icon-wrapper
-                  cf-icon(name="learn-api_demo")
-                h3 API Demo
-                p.language-description
-                  | This guide shows how to make a call to the Contentful API with PHP, using some example content we’ve prepared.
-                a.language-link(href="https://www.contentful.com/developers/api-demo/php/")
-                  | View the API demo
-              .learn-language__reference
-                h3 GitHub
-                p.language-description
-                  | Download the library or view the source code on GitHub.
-                a.language-link(href="https://github.com/contentful/contentful.php")
-                  | Go to GitHub
-            //- Ruby
-            .learn-language__references(ng-show="learn.selectedLanguageName === 'Ruby'")
-              .learn-language__reference
-                .icon-wrapper
-                  cf-icon(name="learn-documentation")
-                h3 Documentation
-                p.language-description
-                  | SDKs, tutorials, integrations and example applications will help you get started with Contentful and Ruby.
-                a.language-link(href="https://www.contentful.com/developers/docs/ruby/")
-                  | Read the documentation
-              .learn-language__reference
-                .icon-wrapper
-                  cf-icon(name="learn-api_demo")
-                h3 API Demo
-                p.language-description
-                  | This guide shows how to make a call to the Contentful API with Ruby, using some example content we’ve prepared.
-                a.language-link(href="https://www.contentful.com/developers/api-demo/ruby/")
-                  | View the API demo
-              .learn-language__reference
-                h3 GitHub
-                p.language-description
-                  | Download the library or view the source code on GitHub.
-                a.language-link(href="https://github.com/contentful/contentful.rb")
-                  | Go to GitHub
-            //- iOS
-            .learn-language__references(ng-show="learn.selectedLanguageName === 'iOS'")
-              .learn-language__reference
-                .icon-wrapper
-                  cf-icon(name="learn-documentation")
-                h3 Documentation
-                p.language-description
-                  | SDKs, tutorials, integrations and example applications will help you get started with Contentful and iOS.
-                a.language-link(href="https://www.contentful.com/developers/docs/ios/")
-                  | Read the documentation
-              .learn-language__reference
-                .icon-wrapper
-                  cf-icon(name="learn-api_demo")
-                h3 API Demo
-                p.language-description
-                  | This guide shows how to make a call to the Contentful API with iOS, using some example content we’ve prepared.
-                a.language-link(href="https://www.contentful.com/developers/api-demo/swift/")
-                  | View the API demo
-              .learn-language__reference
-                h3 GitHub
-                p.language-description
-                  | Download the library or view the source code on GitHub.
-                a.language-link(href="https://github.com/contentful/contentful.swift")
-                  | Swift SDK
-                span &nbsp;|&nbsp;
-                a.language-link(href="https://github.com/contentful/contentful.objc")
-                  | Objective-C SDK
-            //- Android
-            .learn-language__references(ng-show="learn.selectedLanguageName === 'Android'")
-              .learn-language__reference
-                .icon-wrapper
-                  cf-icon(name="learn-documentation")
-                h3 Documentation
-                p.language-description
-                  | SDKs, tutorials, integrations and example applications will help you get started with Contentful and Java.
-                a.language-link(href="https://www.contentful.com/developers/docs/java/")
-                  | Read the documentation
-              .learn-language__reference
-                .icon-wrapper
-                  cf-icon(name="learn-api_demo")
-                h3 API Demo
-                p.language-description
-                  | This guide shows how to make a call to the Contentful API with Android, using some example content we’ve prepared.
-                a.language-link(href="https://www.contentful.com/developers/api-demo/android/")
-                  | View the API demo
-              .learn-language__reference
-                h3 GitHub
-                p.language-description
-                  | Download the library or view the source code on GitHub.
-                a.language-link(href="https://github.com/contentful/contentful.java")
-                  | Go to GitHub
-            //- HTTP
-            .learn-language__references(ng-show="learn.selectedLanguageName === 'HTTP'")
-              .learn-language__reference
-                .icon-wrapper
-                  cf-icon(name="learn-documentation")
-                h3 Documentation
-                p View the API reference
-                a.language-link(href="https://www.contentful.com/developers/docs/#api-references")
-                  | API Reference    
+                cf-icon(name="learn-api_demo")
+              h3 API Demo
+              p.language-description
+                | This guide shows how to make a call to the Contentful API with PHP, using some example content we’ve prepared.
+              a.language-link(href="https://www.contentful.com/developers/api-demo/php/")
+                | View the API demo
+            .learn-language__reference
+              .icon-wrapper
+                cf-icon(name="learn-github")
+              h3 GitHub
+              p.language-description
+                | Download the library or view the source code on GitHub.
+              a.language-link(href="https://github.com/contentful/contentful.php")
+                | Go to GitHub
+          //- Ruby
+          .learn-language__references(ng-show="learn.selectedLanguageName === 'Ruby'")
+            .learn-language__reference
+              .icon-wrapper
+                cf-icon(name="learn-documentation")
+              h3 Documentation
+              p.language-description
+                | SDKs, tutorials, integrations and example applications will help you get started with Contentful and Ruby.
+              a.language-link(href="https://www.contentful.com/developers/docs/ruby/")
+                | Read the documentation
+            .learn-language__reference
+              .icon-wrapper
+                cf-icon(name="learn-api_demo")
+              h3 API Demo
+              p.language-description
+                | This guide shows how to make a call to the Contentful API with Ruby, using some example content we’ve prepared.
+              a.language-link(href="https://www.contentful.com/developers/api-demo/ruby/")
+                | View the API demo
+            .learn-language__reference
+              .icon-wrapper
+                cf-icon(name="learn-github")
+              h3 GitHub
+              p.language-description
+                | Download the library or view the source code on GitHub.
+              a.language-link(href="https://github.com/contentful/contentful.rb")
+                | Go to GitHub
+          //- iOS
+          .learn-language__references(ng-show="learn.selectedLanguageName === 'iOS'")
+            .learn-language__reference
+              .icon-wrapper
+                cf-icon(name="learn-documentation")
+              h3 Documentation
+              p.language-description
+                | SDKs, tutorials, integrations and example applications will help you get started with Contentful and iOS.
+              a.language-link(href="https://www.contentful.com/developers/docs/ios/")
+                | Read the documentation
+            .learn-language__reference
+              .icon-wrapper
+                cf-icon(name="learn-api_demo")
+              h3 API Demo
+              p.language-description
+                | This guide shows how to make a call to the Contentful API with iOS, using some example content we’ve prepared.
+              a.language-link(href="https://www.contentful.com/developers/api-demo/swift/")
+                | View the API demo
+            .learn-language__reference
+              .icon-wrapper
+                cf-icon(name="learn-github")
+              h3 GitHub
+              p.language-description
+                | Download the library or view the source code on GitHub.
+              a.language-link(href="https://github.com/contentful/contentful.swift")
+                | Swift SDK
+              span &nbsp;|&nbsp;
+              a.language-link(href="https://github.com/contentful/contentful.objc")
+                | Objective-C SDK
+          //- Android
+          .learn-language__references(ng-show="learn.selectedLanguageName === 'Android'")
+            .learn-language__reference
+              .icon-wrapper
+                cf-icon(name="learn-documentation")
+              h3 Documentation
+              p.language-description
+                | SDKs, tutorials, integrations and example applications will help you get started with Contentful and Android.
+              a.language-link(href="https://www.contentful.com/developers/docs/android/")
+                | Read the documentation
+            .learn-language__reference
+              .icon-wrapper
+                cf-icon(name="learn-api_demo")
+              h3 API Demo
+              p.language-description
+                | This guide shows how to make a call to the Contentful API with Java, using some example content we’ve prepared.
+              a.language-link(href="https://www.contentful.com/developers/api-demo/java/")
+                | View the API demo
+            .learn-language__reference
+              .icon-wrapper
+                cf-icon(name="learn-github")
+              h3 GitHub
+              p.language-description
+                | Download the library or view the source code on GitHub.
+              a.language-link(href="https://github.com/contentful/contentful.java")
+                | Go to GitHub
+          //- HTTP
+          .learn-language__references(ng-show="learn.selectedLanguageName === 'HTTP'")
+            .learn-language__reference
+              .icon-wrapper
+                cf-icon(name="learn-documentation")
+              h3 Documentation
+              p View the API reference
+              a.language-link(href="https://www.contentful.com/developers/docs/#api-references")
+                | API Reference
 

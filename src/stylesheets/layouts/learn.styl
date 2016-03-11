@@ -8,11 +8,11 @@ $learn-content-box()
     margin-right: 3.5%
   > .icon-wrapper
     position: absolute
-    left: 50%;
-    margin-left: -25px;
-    width: 50px;
-    background: white;
-    top: -17px;
+    left: 50%
+    margin-left: -25px
+    width: 50px
+    background: white
+    top: -17px
     > cf-icon
       display: inline-block
       margin: 0 auto
@@ -22,9 +22,15 @@ $learn-content-box()
   width: 85%
   min-width: 1000px
   max-width: 1280px
+  overflow: visible
+
+.learn-subheading
+  font-size: 16px
+  color: $colors.text-mid
 
 .learn-language
   margin-top: 50px
+  margin-bottom: 50px
   &__group
     display: flex
     margin: 40px 0 20px 0
@@ -48,7 +54,10 @@ $learn-content-box()
     display: block
     max-width: 80px
     margin: 0 auto
-    &.active
+    &.is-open
+      path
+        fill: $colors.text-lightest
+    &.is-active
       path
         fill: $colors.text-dark
   &__name
@@ -57,20 +66,23 @@ $learn-content-box()
     color: $colors.text-mid
     text-decoration: underline
   &__detail
+    height: 0
+    overflow: hidden
+    transition: height 0.2s linear
     position: relative
-    border-top: 1px solid $colors.element-mid
-    margin-bottom: 50px
     cf-icon[name="arrow-up"]
       position: absolute
       left: -6px
       top: -13px
       transform: scale(1.2)
-      transition-property: margin-left
-      transition-duration: 0.2s
-      transition-timing-function: ease-in-out
+      transition: margin-left 0.2s ease-in-out
       path
         fill: white
         stroke: $colors.element-mid
+    &.x--visible
+      height: 230px
+      overflow: visible
+      border-top: 1px solid $colors.element-mid
   &__references
     display: flex
     margin-top: 50px
@@ -84,7 +96,8 @@ $learn-content-box()
         color: $colors.blue-darkest
     .language-description
       color: $colors.text-mid
-  
+      line-height: 1.4em
+
 .learn-onboarding
   &__steps
     display: flex
@@ -109,7 +122,8 @@ $learn-content-box()
             margin-right: 4px
       &__description
         color: $colors.text-mid
-        margin-bottom: 54px
+        line-height: 1.4em
+        margin-bottom: 64px
       &__actions
         position: absolute
         left: 0
