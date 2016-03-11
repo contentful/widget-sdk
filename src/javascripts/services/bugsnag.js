@@ -8,16 +8,18 @@
 */
 angular.module('contentful')
 .factory('bugsnag', ['$injector', function($injector){
-  var $window = $injector.get('$window');
   var CallBuffer = $injector.get('CallBuffer');
   var environment = $injector.get('environment');
+  var memoize = $injector.get('utils/memoize');
 
-  var apiKey = 'b253f10d5d0184a99e1773cec7b726e8';
-  var SCRIPT_SRC = '//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js';
+  // TODO this should be stored in the environment configuration. Need
+  // to work with devops get this done.
+  var API_KEY = 'b253f10d5d0184a99e1773cec7b726e8';
 
   var loaderPromise;
   var bugsnag;
   var callBuffer = new CallBuffer();
+  var loadOnce = memoize(load);
 
   return {
     /**
@@ -34,23 +36,7 @@ angular.module('contentful')
      * @returns {Promise<void>}
      */
     enable: function (user) {
-      if (!loaderPromise) {
-        var angularLoad = $injector.get('angularLoad');
-        var environment = $injector.get('environment');
-        loaderPromise = angularLoad.loadScript(SCRIPT_SRC)
-        .then(function () {
-          bugsnag = $window.Bugsnag;//.noConflict();
-          bugsnag.apiKey              = apiKey;
-          bugsnag.notifyReleaseStages = ['staging', 'production'];
-          bugsnag.releaseStage        = environment.env;
-          bugsnag.appVersion          = environment.gitRevision;
-          setUserInfo(user, bugsnag);
-          callBuffer.resolve();
-        }, function () {
-          callBuffer.disable();
-        });
-      }
-      return loaderPromise;
+      return loadOnce(user);
     },
 
     disable: function(){
@@ -75,6 +61,23 @@ angular.module('contentful')
       if (bugsnag) bugsnag.refresh();
     },
   };
+
+  function load (user) {
+    // Prevent circular dependency
+    var LazyLoader = $injector.get('LazyLoader');
+    return LazyLoader.get('bugsnag')
+    .then(function (_bugsnag) {
+      bugsnag = _bugsnag;
+      bugsnag.apiKey              = API_KEY;
+      bugsnag.notifyReleaseStages = ['staging', 'production'];
+      bugsnag.releaseStage        = environment.env;
+      bugsnag.appVersion          = environment.gitRevision;
+      setUserInfo(user, bugsnag);
+      callBuffer.resolve();
+    }, function () {
+      callBuffer.disable();
+    });
+  }
 
   function setUserInfo (user, bugsnag) {
     if (dotty.exists(user, 'sys.id')) {
