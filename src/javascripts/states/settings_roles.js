@@ -63,6 +63,9 @@ angular.module('contentful')
     resolve: {
       role: ['RoleRepository', 'space', '$stateParams', function (RoleRepository, space, $stateParams) {
         return RoleRepository.getInstance(space).get($stateParams.roleId);
+      }],
+      contentTypes: ['spaceContext', function (spaceContext) {
+        return spaceContext.refreshContentTypes();
       }]
     },
     template: '<cf-role-editor class="workbench role-editor" />',
