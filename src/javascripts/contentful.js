@@ -46,4 +46,5 @@ angular.module('contentful', [
   $injector.get('notification').setupClearMessageHooks();
   $injector.get('TrialWatcher').init();
   $injector.get('activationEmailResendController').init();
+  $injector.get('states').loadAll();
 }]);

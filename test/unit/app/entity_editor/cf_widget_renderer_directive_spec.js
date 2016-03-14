@@ -2,9 +2,13 @@
 
 describe('cfWidgetRenderer Directive', function () {
   beforeEach(function () {
-    // TODO should only use 'cf.app'. But we depend on state stuff that
-    // we cannot load independantely.
-    module('contentful/test');
+    module('cf.app', function ($provide) {
+      $provide.value('$state', {
+        href: function (state, params) {
+          return '/spaceHref/' + params.contentTypeId;
+        }
+      });
+    });
 
     this.widget = {};
     this.contentType = {
@@ -29,7 +33,7 @@ describe('cfWidgetRenderer Directive', function () {
     this.widget.template = '<p>{{contentTypeHref}}</p>';
     var el = this.compile();
     expect(el.find('p').text())
-    .toEqual('/spaces//content_types/CTID');
+    .toEqual('/spaceHref/CTID');
   });
 
   it('does not have scope#contentTypeStateRef property if there is no content type', function() {
