@@ -214,6 +214,16 @@ describe('cfWidgetApi directive', function () {
         });
       });
 
+      describe('New value is non-string', function() {
+        it('should coerece it internally and work as described', function() {
+          var currentCaretPosition = 3;
+          var currentValue = 1234;
+          var newValue = 91234;
+          var getPreservedCaretPosition = this.$inject('WidgetApiController/caretPosition').getPreservedCaretPosition;
+
+          expect(getPreservedCaretPosition(currentCaretPosition, currentValue, newValue)).toEqual(4);
+        });
+      });
     });
   });
 

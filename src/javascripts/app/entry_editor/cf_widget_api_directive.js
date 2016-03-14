@@ -70,13 +70,24 @@ angular.module('contentful')
         return currentCaretPosition;
       }
 
+      if (isUndefinedOrNull(currentValue)) {
+        currentValue = '';
+      }
+
       // sharejs sets newValue to `null` when it's "empty"
-      // This makes sure newValue.length doesn't blow up
-      newValue = newValue || '';
+      if (isUndefinedOrNull(newValue)) {
+        newValue = '';
+      }
+
+      // This makes sure newValue`.length doesn't blow up
+      newValue = newValue.toString();
+
+      // safe guard against non-string values for currentValue
+      currentValue = currentValue.toString();
 
       // preserve caret position for more natural editing
       var commonStart = 0;
-      var caretPosition = currentCaretPosition;
+      var caretPosition = currentCaretPosition || 0;
       var noOfCharsModified = newValue.length - currentValue.length;
 
       if (!newValue) {
@@ -94,4 +105,8 @@ angular.module('contentful')
       return caretPosition;
     }
   };
+
+  function isUndefinedOrNull (value) {
+    return _.isUndefined(value) || _.isNull(value);
+  }
 }]);
