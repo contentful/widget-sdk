@@ -17,10 +17,9 @@ describe('cfOoyalaEditorController', function () {
       $provide.value('ooyalaClient', ooyalaClientSpy);
     });
 
-    inject(function($injector, $controller){
-      var scope = $injector.get('$rootScope').$new();
-      scope.spaceContext = {space: {getOrganizationId: sinon.stub().returns('org-123')}};
-      OoyalaEditorController = $controller('cfOoyalaEditorController', {$scope: scope});
+    inject(function(spaceContext, $controller){
+      spaceContext.space = { getOrganizationId: sinon.stub().returns('org-123') };
+      OoyalaEditorController = $controller('cfOoyalaEditorController');
     });
 
     ooyalaSearchInstanceSpy = jasmine.createSpyObj('ooyalaSearchInstanceMock', ['where', 'limit']);

@@ -1,10 +1,12 @@
 'use strict';
 
-angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '$injector', function($scope, $injector){
+angular.module('contentful')
+.controller('cfOoyalaEditorController', ['$injector', function($injector){
   var ooyalaClient = $injector.get('ooyalaClient');
   var OoyalaSearch = $injector.get('OoyalaSearch');
+  var spaceContext = $injector.get('spaceContext');
 
-  ooyalaClient.setOrganizationId($scope.spaceContext.space.getOrganizationId());
+  ooyalaClient.setOrganizationId(spaceContext.space.getOrganizationId());
 
   this.customAttrsForPlayer = customAttrsForPlayer;
   this.customAttrsForPlayerInSearchDialog = customAttrsForPlayerInSearchDialog;

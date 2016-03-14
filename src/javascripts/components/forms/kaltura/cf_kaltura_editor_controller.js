@@ -1,12 +1,12 @@
 'use strict';
 
-angular.module('contentful').controller('cfKalturaEditorController', ['$injector', '$scope', function($injector, $scope){
+angular.module('contentful')
+.controller('cfKalturaEditorController', ['$injector', function($injector){
   var KalturaEditorControllerMixin = $injector.get('KalturaEditorControllerMixin');
-  var kalturaClientWrapper         = $injector.get('kalturaClientWrapper');
+  var kalturaClientWrapper = $injector.get('kalturaClientWrapper');
+  var spaceContext = $injector.get('spaceContext');
 
-  var controller                   = this;
+  kalturaClientWrapper.setOrganizationId(spaceContext.space.getOrganizationId());
 
-  kalturaClientWrapper.setOrganizationId($scope.spaceContext.space.getOrganizationId());
-
-  _.extend(controller, KalturaEditorControllerMixin);
+  _.extend(this, KalturaEditorControllerMixin);
 }]);
