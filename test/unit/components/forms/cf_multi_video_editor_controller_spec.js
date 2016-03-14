@@ -1,11 +1,11 @@
 'use strict';
 
 describe('Multi Video Editor Controller', function() {
-  var attrs, scope, multiVideoEditorController, ShareJSMock,
+  var scope, multiVideoEditorController, ShareJSMock,
       callbackWithApplyDeferred, $rootScope;
 
   afterEach(function () {
-    attrs = scope = multiVideoEditorController = ShareJSMock =
+    scope = multiVideoEditorController = ShareJSMock =
       callbackWithApplyDeferred = $rootScope = null;
   });
 
@@ -36,10 +36,9 @@ describe('Multi Video Editor Controller', function() {
       scope                               = $rootScope.$new();
       scope.fieldData                     = {};
       scope.providerVideoEditorController = jasmine.createSpyObj('providerVideoEditorControllerMock', providerVideoControllerCallbackNames);
+      scope.providerVideoEditorController.widgetPlayerDirective = 'cf-widget-player-directive';
 
-      attrs = {};
-
-      multiVideoEditorController = $controller('cfMultiVideoEditorController', {$scope: scope, $attrs: attrs});
+      multiVideoEditorController = $controller('cfMultiVideoEditorController', {$scope: scope});
     });
   });
 
@@ -50,7 +49,7 @@ describe('Multi Video Editor Controller', function() {
   describe('multiVideoEditor scope properties', function() {
     describe('search config', function() {
       it('sets the "widgetPlayerDirective" property to the value of the "$attrs.widgetPlayerDirective"', function() {
-        expect(scope.multiVideoEditor.searchConfig.widgetPlayerDirective).toEqual(attrs.widgetPlayerDirective);
+        expect(scope.multiVideoEditor.searchConfig.widgetPlayerDirective).toEqual('cf-widget-player-directive');
       });
 
       it('sets the #prepareSearch callback method to the #prepareSearch method on the provider editor controller', function() {
@@ -84,7 +83,7 @@ describe('Multi Video Editor Controller', function() {
     });
 
     it('sets the "widgetPlayerDirective" property to the value of the "$attrs.widgetPlayerDirective"', function() {
-      expect(scope.multiVideoEditor.widgetPlayerDirective).toEqual(attrs.widgetPlayerDirective);
+      expect(scope.multiVideoEditor.widgetPlayerDirective).toEqual('cf-widget-player-directive');
     });
   });
 

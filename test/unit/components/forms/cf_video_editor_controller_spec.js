@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Video Editor Controller', function() {
-  var attrs, scope, videoEditorController;
+  var scope, videoEditorController;
 
   beforeEach(function() {
     module('contentful/test');
@@ -21,10 +21,9 @@ describe('Video Editor Controller', function() {
       scope                               = $rootScope.$new();
       scope.fieldData                     = {};
       scope.providerVideoEditorController = jasmine.createSpyObj('providerVideoEditorControllerMock', providerVideoControllerCallbackNames);
+      scope.providerVideoEditorController.widgetPlayerDirective = 'cf-widget-player-directive';
 
-      attrs = {widgetPlayerDirective: 'cf-widget-directive'};
-
-      videoEditorController = $controller('cfVideoEditorController', {$scope: scope, $attrs: attrs});
+      videoEditorController = $controller('cfVideoEditorController', {$scope: scope});
     });
   });
 
@@ -35,7 +34,7 @@ describe('Video Editor Controller', function() {
   describe('videoEditor scope properties', function() {
     describe('search config', function() {
       it('sets the "widgetPlayerDirective" property to the value of the "$attrs.widgetPlayerDirective"', function() {
-        expect(scope.videoEditor.searchConfig.widgetPlayerDirective).toEqual(attrs.widgetPlayerDirective);
+        expect(scope.videoEditor.searchConfig.widgetPlayerDirective).toEqual('cf-widget-player-directive');
       });
 
       it('sets the #prepareSearch callback method to the #prepareSearch method on the provider editor controller', function() {
@@ -76,7 +75,7 @@ describe('Video Editor Controller', function() {
     });
 
     it('sets the "widgetPlayerDirective" property to the value of the "$attrs.widgetPlayerDirective"', function() {
-      expect(scope.videoEditor.widgetPlayerDirective).toEqual(attrs.widgetPlayerDirective);
+      expect(scope.videoEditor.widgetPlayerDirective).toEqual('cf-widget-player-directive');
     });
   });
 

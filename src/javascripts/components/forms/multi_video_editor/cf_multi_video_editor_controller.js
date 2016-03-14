@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('cfMultiVideoEditorController', ['$attrs', '$scope', '$injector', function($attrs, $scope, $injector){
+angular.module('contentful').controller('cfMultiVideoEditorController', ['$scope', '$injector', function($scope, $injector){
   var ShareJS = $injector.get('ShareJS');
   var $q      = $injector.get('$q');
 
@@ -15,13 +15,13 @@ angular.module('contentful').controller('cfMultiVideoEditorController', ['$attrs
       onSelection     : useSelectedAssets,
       scope           : $scope,
       template        : 'cf_video_search_dialog',
-      widgetPlayerDirective : $attrs.widgetPlayerDirective,
+      widgetPlayerDirective : providerVideoEditorController.widgetPlayerDirective,
       prepareSearch         : providerVideoEditorController.prepareSearch,
       processSearchResults  : providerVideoEditorController.processSearchResults,
       customAttrsForPlayer  : providerVideoEditorController.customAttrsForPlayerInSearchDialog,
       isMultipleSelectionEnabled: true
     },
-    widgetPlayerDirective : $attrs.widgetPlayerDirective
+    widgetPlayerDirective : providerVideoEditorController.widgetPlayerDirective
   };
 
   $scope.$watch('fielData.value', function(){

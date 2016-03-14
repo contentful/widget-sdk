@@ -5,16 +5,17 @@ angular.module('contentful').factory('OoyalaEditorControllerMixin', ['$injector'
   var OoyalaSearch = $injector.get('OoyalaSearch');
 
   var mixin = {
-    customAttrsForPlayer               : customAttrsForPlayer,
-    customAttrsForPlayerInSearchDialog : customAttrsForPlayerInSearchDialog,
-    isWidgetReady                      : isWidgetReady,
-    isWidgetStatus                     : isWidgetStatus,
-    processLookupInProviderResult      : processLookupInProviderResult,
-    loadingFeedbackMessage             : loadingFeedbackMessage,
-    lookupVideoInProvider              : lookupVideoInProvider,
-    shouldRenderVideoPlayer            : shouldRenderVideoPlayer,
-    prepareSearch                      : prepareSearch,
-    processSearchResults               : processSearchResults
+    customAttrsForPlayer: customAttrsForPlayer,
+    customAttrsForPlayerInSearchDialog: customAttrsForPlayerInSearchDialog,
+    isWidgetReady: isWidgetReady,
+    isWidgetStatus: isWidgetStatus,
+    processLookupInProviderResult: processLookupInProviderResult,
+    loadingFeedbackMessage: loadingFeedbackMessage,
+    lookupVideoInProvider: lookupVideoInProvider,
+    shouldRenderVideoPlayer: shouldRenderVideoPlayer,
+    prepareSearch: prepareSearch,
+    processSearchResults: processSearchResults,
+    widgetPlayerDirective: 'cf-ooyala-player'
   };
 
   return mixin;

@@ -26,12 +26,15 @@ describe('Multi Video Item Controller', function() {
 
       attrs               = {
         asset                   : 'asset',
-        widgetPlayerDirective   : '_playerDirective',
         widgetPlayerCustomAttrs : '_attributesForThePlayer',
         lookupAsset             : jasmine.createSpy(),
         removeAsset             : jasmine.createSpy()
       };
       attrs.lookupAsset.and.returnValue(lookupAssetDeferred.promise);
+
+      scope.multiVideoEditor = {
+        widgetPlayerDirective: '_playerDirective'
+      };
 
       multiVideoItemController = $controller('cfMultiVideoItemController', {$scope: scope, $attrs: attrs});
     });
@@ -79,7 +82,7 @@ describe('Multi Video Item Controller', function() {
     });
 
     it('sets the widgetPlayerDirective property to the value it its widgetPlayerDirective attribute', function() {
-      expect(scope.multiVideoItem.widgetPlayerDirective).toEqual(scope._playerDirective);
+      expect(scope.multiVideoItem.widgetPlayerDirective).toEqual('_playerDirective');
     });
 
     it('sets the customAttrsForPlayer property to the value in its widgetPlayerCustomAttrs', function() {

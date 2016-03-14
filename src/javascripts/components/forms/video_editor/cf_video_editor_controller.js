@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('contentful').controller('cfVideoEditorController', ['$scope', '$attrs', function($scope, $attrs){
+angular.module('contentful')
+.controller('cfVideoEditorController', ['$scope', function($scope){
   var providerVideoEditorController = $scope.providerVideoEditorController;
 
   $scope.videoEditor = {
@@ -12,12 +13,12 @@ angular.module('contentful').controller('cfVideoEditorController', ['$scope', '$
       onSelection : useSelectedAsset,
       scope       : $scope,
       template    : 'cf_video_search_dialog',
-      widgetPlayerDirective : $attrs.widgetPlayerDirective,
+      widgetPlayerDirective : providerVideoEditorController.widgetPlayerDirective,
       prepareSearch         : providerVideoEditorController.prepareSearch,
       processSearchResults  : providerVideoEditorController.processSearchResults,
       customAttrsForPlayer  : providerVideoEditorController.customAttrsForPlayerInSearchDialog
     },
-    widgetPlayerDirective : $attrs.widgetPlayerDirective
+    widgetPlayerDirective: providerVideoEditorController.widgetPlayerDirective,
   };
 
   this.addAsset                        = addAsset;

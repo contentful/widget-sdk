@@ -19,16 +19,17 @@ angular.module('contentful')
   }
 
   var mixin = {
-    customAttrsForPlayer               : customAttrsForPlayer,
-    customAttrsForPlayerInSearchDialog : customAttrsForPlayerInSearchDialog,
-    isWidgetReady                      : isWidgetReady,
-    isWidgetStatus                     : isWidgetStatus,
-    loadingFeedbackMessage             : loadingFeedbackMessage,
-    lookupVideoInProvider              : lookupVideoInProvider,
-    processLookupInProviderResult      : processLookupInProviderResult,
-    shouldRenderVideoPlayer            : shouldRenderVideoPlayer,
-    prepareSearch                      : prepareSearch,
-    processSearchResults               : processSearchResults
+    customAttrsForPlayer: customAttrsForPlayer,
+    customAttrsForPlayerInSearchDialog: customAttrsForPlayerInSearchDialog,
+    isWidgetReady: isWidgetReady,
+    isWidgetStatus: isWidgetStatus,
+    loadingFeedbackMessage: loadingFeedbackMessage,
+    lookupVideoInProvider: lookupVideoInProvider,
+    processLookupInProviderResult: processLookupInProviderResult,
+    shouldRenderVideoPlayer: shouldRenderVideoPlayer,
+    prepareSearch: prepareSearch,
+    processSearchResults: processSearchResults,
+    widgetPlayerDirective: 'cf-kaltura-player'
   };
 
   return mixin;
