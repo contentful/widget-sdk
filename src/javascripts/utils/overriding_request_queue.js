@@ -14,46 +14,50 @@ angular.module('cf.utils')
  *
  * @usage[js]
  * var createQueue = $injector.get('overridingRequestQueue')
- * var request = createQueue(asyncFunctionReturningPromise);
- *
- * var resultPromise = request(function (resultPromise) {
- *   // this code will be executed once for all consecutive calls
- *   // helpful for attaching final handlers
+ * var request = createQueue(fnReturningPromise, function (resultPromise) {
+ *   // This (provided optionally) function will be executed once for all
+ *   // consecutive calls with a promise of a result. It's helpful for
+ *   // attaching final handlers.
  *   resultPromise.then(doSomethingWithData, handleError);
  * });
  *
- * request();
+ * var resultPromise = request();
+ * request(secondFnReturningPromise);
  * request();
  *
- * // "asyncFunctionReturningPromise" was called 3 times
- * // "doSomethingWithData" was called once with a result
- * // of the last call
+ * // - "fnReturningPromise" was called two times
+ * // - "secondFnReturningPromise" was called once
+ * // - "doSomethingWithData" was called once with a result of the last call
  */
 .factory('overridingRequestQueue', ['$injector', function ($injector) {
 
   var $q = $injector.get('$q');
 
-  return function createQueue(requestFn) {
+  return function createQueue(defaultRequestFn, onceFn) {
     var deferred = null;
-    var requests = 0;
+    var requests = [];
 
-    return function request(onceFn) {
-      if (!deferred || requests < 1) {
-        requests = 1;
+    return function request(requestFn) {
+      if (!deferred || requests.length < 1) {
+        pushRequest(requestFn);
         deferred = $q.defer();
         if (_.isFunction(onceFn)) {
           onceFn(deferred.promise);
         }
         requestNext();
       } else {
-        requests += 1;
+        pushRequest(requestFn);
       }
 
       return deferred.promise;
     };
 
+    function pushRequest(requestFn) {
+      requests.push(requestFn || defaultRequestFn);
+    }
+
     function requestNext() {
-      requestFn()
+      requests[requests.length-1]()
       .then(handleResponse)
       .catch(handleError);
     }
@@ -63,18 +67,20 @@ angular.module('cf.utils')
         return;
       }
 
-      requests -= 1;
-      if (requests > 0) {
+      requests.pop();
+      if (requests.length > 0) {
         requestNext();
       } else {
         deferred.resolve(response);
         deferred = null;
+        requests = [];
       }
     }
 
     function handleError(err) {
       deferred.reject(err);
       deferred = null;
+      requests = [];
     }
   };
 }]);

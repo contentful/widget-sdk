@@ -17,6 +17,7 @@ angular.module('contentful')
 .factory('spaceContext', ['$injector', function($injector){
   var $parse             = $injector.get('$parse');
   var $q                 = $injector.get('$q');
+  var $timeout           = $injector.get('$timeout');
   var ReloadNotification = $injector.get('ReloadNotification');
   var notification       = $injector.get('notification');
   var logger             = $injector.get('logger');
@@ -30,9 +31,7 @@ angular.module('contentful')
   var createEIRepo       = $injector.get('data/editingInterfaces');
   var createQueue        = $injector.get('overridingRequestQueue');
 
-  var requestContentTypes = createQueue(function () {
-    return spaceContext.space.getContentTypes({order: 'name', limit: 1000});
-  });
+  var requestContentTypes = createQueue(fetchContentTypes);
 
   var spaceContext = {
     /**
@@ -119,10 +118,46 @@ angular.module('contentful')
         return $q.resolve(this.contentTypes);
       }
 
-      return requestContentTypes(function (promise) {
-        promise
-        .then(refreshContentTypes)
-        .catch(ReloadNotification.apiErrorHandler);
+      return requestContentTypes();
+    },
+
+    /**
+     * @ngdoc method
+     * @name spaceContext#refreshContentTypesUntilChanged
+     * @description
+     * Refreshes all Content Type related information in the context.
+     * If refresh doesn't change state of content types, it tries
+     * again (with limit of 5 tries and 1500ms of delay between requests).
+     * It's needed because if the content type was created for the first
+     * time the API will not include it immediately.
+     */
+    refreshContentTypesUntilChanged: function () {
+      if (!_.isNumber(this.refreshTriesLeft)) {
+        this.refreshTriesLeft = 5;
+      } else if (this.refreshTriesLeft > 1) {
+        this.refreshTriesLeft -= 1;
+      } else {
+        this.refreshTriesLeft = null;
+        return $q.when(this.publishedContentTypes);
+      }
+
+      return requestContentTypes(function () {
+        var idsBefore = getContentTypeIds();
+        var d = $q.defer();
+
+        fetchContentTypes().then(function (result) {
+          if (idsBefore !== getContentTypeIds()) {
+            d.resolve(result);
+            return;
+          }
+
+          $timeout(function () {
+            spaceContext.refreshContentTypesUntilChanged();
+            d.resolve(result);
+          }, 1500);
+        });
+
+        return d.promise;
       });
     },
 
@@ -351,6 +386,18 @@ angular.module('contentful')
   resetMembers(spaceContext);
   return spaceContext;
 
+  function fetchContentTypes() {
+    return spaceContext.space.getContentTypes({order: 'name', limit: 1000})
+    .then(refreshContentTypes)
+    .catch(ReloadNotification.apiErrorHandler);
+  }
+
+  function getContentTypeIds() {
+    return  _(spaceContext.contentTypes).map(function (ct) {
+      return ct.getId();
+    }).sortBy().join(',');
+  }
+
   function refreshContentTypes(contentTypes) {
     spaceContext.contentTypes = filterAndSortContentTypes(contentTypes);
 
@@ -362,9 +409,7 @@ angular.module('contentful')
       ctHelpers.assureName(ct.data);
     });
 
-    return refreshPublishedContentTypes().then(function () {
-      return contentTypes;
-    });
+    return refreshPublishedContentTypes();
   }
 
   function refreshPublishedContentTypes() {

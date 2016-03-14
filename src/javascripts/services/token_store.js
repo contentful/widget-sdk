@@ -21,7 +21,7 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
 
   var currentToken = null;
   var changed  = createSignal();
-  var request = createQueue(function () { return authentication.getTokenLookup(); });
+  var request = createQueue(getTokenLookup, setupLookupHandler);
   var refreshPromise = null;
 
   return {
@@ -31,6 +31,17 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
     getSpaces:         getSpaces,
     getSpace:          getSpace
   };
+
+  function getTokenLookup() {
+    return authentication.getTokenLookup();
+  }
+
+  function setupLookupHandler(promise) {
+    refreshPromise = promise;
+    promise.then(function (lookup) {
+      refreshWithLookup(lookup);
+    }, communicateError);
+  }
 
   /**
    * @ngdoc method
@@ -56,20 +67,17 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
    * @returns {Promise<void>}
    * @description
    * This method should be called when token data needs to be refreshed.
-   * Subsequent calls are queued and performed one after another.
-   * Returned promise is resolved with a value of the last call!
    *
+   * For requesting data we're using a queue:
+   * - subsequent calls are queued and performed one after another
+   * - returned promise is resolved with a value of the last call!
+   *
+   * As defined in "setupLookupHandler":
    * On failure we call "communicateError", what basically forces an user
    * to reload the app. On success we call "refreshWithLookup" (see docs above).
    */
   function refresh() {
-    refreshPromise = request(function (promise) {
-      promise.then(function (lookup) {
-        refreshWithLookup(lookup);
-      }, communicateError);
-    });
-
-    return refreshPromise;
+    return request();
   }
 
   /**

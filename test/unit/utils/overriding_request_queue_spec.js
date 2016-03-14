@@ -51,12 +51,26 @@ describe('overridingRequestQueue', function () {
   it('sets up one-time final actions', function () {
     var d = sinon.stub().resolves();
     var spy = sinon.spy();
-    var request = this.createQueue(function () { return d(); });
-    var promise = request(spy);
+    var request = this.createQueue(function () { return d(); }, spy);
+    var promise = request();
 
     request();
     this.$apply();
     sinon.assert.calledTwice(d);
     sinon.assert.calledOnce(spy.withArgs(promise));
+  });
+
+  it('allows to alter default request function', function () {
+    var d1 = sinon.stub().resolves();
+    var request = this.createQueue(function () { return d1(); });
+    var d2 = sinon.stub().resolves();
+
+    request();
+    request(function () { return d2(); });
+    request();
+    this.$apply();
+
+    sinon.assert.calledTwice(d1);
+    sinon.assert.calledOnce(d2);
   });
 });

@@ -17,7 +17,6 @@ function ContentTypeActionsController($scope, $injector) {
   var $q                 = $injector.get('$q');
   var modalDialog        = $injector.get('modalDialog');
   var Command            = $injector.get('command');
-  var $timeout           = $injector.get('$timeout');
   var spaceContext       = $injector.get('spaceContext');
   var $state             = $injector.get('$state');
   var accessChecker      = $injector.get('accessChecker');
@@ -249,12 +248,11 @@ function ContentTypeActionsController($scope, $injector) {
       $scope.publishedContentType = published;
       spaceContext.registerPublishedContentType(published);
 
-      // If the content type was created for the first time the API
-      // will not include it immediately. In effect, not showing in the
-      // new content type in the content type list.
-      $timeout(function () {
+      if (version === 1) {
+        spaceContext.refreshContentTypesUntilChanged();
+      } else {
         spaceContext.refreshContentTypes();
-      }, 2000);
+      }
 
       return contentType;
     });
