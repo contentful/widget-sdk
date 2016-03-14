@@ -14,6 +14,7 @@ describe('onboardingController', function () {
       signInCount: 1
     };
     storeMock = {
+      set: sinon.spy(),
       get: sinon.stub()
     };
 
@@ -55,12 +56,16 @@ describe('onboardingController', function () {
         beforeEach(function () {
           $rootScope.$emit('skipPersonaSelection');
         });
+
+        itStoresOnboardingSeenInfo();
       });
 
       describe('$rootScope emitting `submitPersonaSelection`', function () {
         beforeEach(function () {
           $rootScope.$emit('submitPersonaSelection');
         });
+
+        itStoresOnboardingSeenInfo();
       });
     });
 
@@ -92,6 +97,13 @@ describe('onboardingController', function () {
   function itDoesNotShowTheOnboardingDialog () {
     it('shows no onboarding dialog', function () {
       sinon.assert.notCalled(openDialogStub);
+    });
+  }
+
+  function itStoresOnboardingSeenInfo () {
+    it('sets the `seenOnboarding` information in the store', function () {
+      sinon.assert.calledWithExactly(storeMock.set,
+        SEEN_ONBOARDING_STORE_KEY, true);
     });
   }
 

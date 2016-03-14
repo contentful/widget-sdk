@@ -23,6 +23,9 @@ angular.module('contentful')
     $rootScope.$watch(function () {
       return dotty.get(authentication, 'tokenLookup.sys.createdBy');
     }, watcher);
+
+    $rootScope.$on('skipPersonaSelection', storeSeenOnboarding);
+    $rootScope.$on('submitPersonaSelection', storeSeenOnboarding);
   }
 
   function watcher (user) {
@@ -32,7 +35,7 @@ angular.module('contentful')
   }
 
   function showOnboardingIfNecessary (user) {
-    var seenOnboarding = TheStore.get(SEEN_ONBOARDING_STORE_KEY);
+    var seenOnboarding = fetchSeenOnboarding();
     var signInCount = user.signInCount;
     if (signInCount === 1 && !seenOnboarding) {
       showOnboarding();
@@ -63,6 +66,14 @@ angular.module('contentful')
         spaceContext.refreshContentTypes();
       }, 1000);
     }
+  }
+
+  function fetchSeenOnboarding () {
+    return TheStore.get(SEEN_ONBOARDING_STORE_KEY);
+  }
+
+  function storeSeenOnboarding () {
+    TheStore.set(SEEN_ONBOARDING_STORE_KEY, true);
   }
 
 }]);

@@ -101,7 +101,7 @@ angular.module('contentful')
   }
 
   function getMillisecondsUntilDialogCanBeReopened () {
-    var lastMoment = getDialogLastShownTimestamp();
+    var lastMoment = fetchDialogLastShownTimestamp();
     if (lastMoment) {
       var msSinceLastShown = moment().diff(lastMoment, 'milliseconds');
       // Use Math.abs() since the user might have messed around with the clock and
@@ -113,7 +113,7 @@ angular.module('contentful')
     }
   }
 
-  function getDialogLastShownTimestamp () {
+  function fetchDialogLastShownTimestamp () {
     var lastUnixTimestamp = TheStore.get(LAST_REMINDER_STORE_KEY);
     if (lastUnixTimestamp) {
       var lastShown = moment.unix(lastUnixTimestamp);
