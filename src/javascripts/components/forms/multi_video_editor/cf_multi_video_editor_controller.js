@@ -1,16 +1,18 @@
 'use strict';
 
-angular.module('contentful').controller('cfMultiVideoEditorController', ['$scope', '$injector', function($scope, $injector){
+angular.module('contentful')
+.controller('cfMultiVideoEditorController', ['$scope', '$injector', function($scope, $injector){
   var ShareJS = $injector.get('ShareJS');
   var $q      = $injector.get('$q');
 
   var controller                    = this;
   var providerVideoEditorController = $scope.providerVideoEditorController;
 
+
   $scope.multiVideoEditor = {
     assets           : [],
     error            : undefined,
-    isSortingEnabled : $scope.$eval($attrs.isSortingEnabled),
+    isSortingEnabled : providerVideoEditorController.isSortingEnabled,
     searchConfig: {
       onSelection     : useSelectedAssets,
       scope           : $scope,

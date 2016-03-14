@@ -17,6 +17,7 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
   this.prepareSearch = prepareSearch;
   this.processSearchResults = processSearchResults;
   this.widgetPlayerDirective = 'cf-ooyala-player';
+  this.isSortingEnabled = true;
 
   function customAttrsForPlayer(video) {
     return video;
