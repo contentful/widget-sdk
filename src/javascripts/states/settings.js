@@ -10,7 +10,7 @@ angular.module('contentful')
   var base = $injector.get('states/base');
 
   var space = base({
-    name: '.space',
+    name: 'space',
     url: '/space',
     ncyBreadcrumb: {label: 'Space Settings'},
     loadingText: 'Loading Space Settings...',
@@ -21,7 +21,7 @@ angular.module('contentful')
   });
 
   return {
-    name: '.settings',
+    name: 'settings',
     url: '/settings',
     abstract: true,
     template: '<ui-view/>',

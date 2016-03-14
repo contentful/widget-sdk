@@ -11,7 +11,7 @@ angular.module('contentful')
   var filterDeletedLocales = $injector.get('states/entityLocaleFilter');
 
   var list = base({
-    name: '.list',
+    name: 'list',
     url: '',
     ncyBreadcrumb: {
       label: 'Media Library'
@@ -20,7 +20,7 @@ angular.module('contentful')
   });
 
   var detail = {
-    name: '.detail',
+    name: 'detail',
     url: '/:assetId',
     params: { addToContext: false },
     ncyBreadcrumb: {
@@ -58,7 +58,7 @@ angular.module('contentful')
   };
 
   return {
-    name: '.assets',
+    name: 'assets',
     url: '/assets',
     abstract: true,
     template: '<ui-view/>',

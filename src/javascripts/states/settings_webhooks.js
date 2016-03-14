@@ -11,7 +11,7 @@ angular.module('contentful')
   var base = $injector.get('states/base');
 
   var list = base({
-    name: '.list',
+    name: 'list',
     url: '',
     ncyBreadcrumb: { label: 'Webhooks' },
     loadingText: 'Loading Webhooks...',
@@ -22,7 +22,7 @@ angular.module('contentful')
   });
 
   var newWebhook = {
-    name: '.new',
+    name: 'new',
     url: '/new',
     data: {
       isNew: true
@@ -39,7 +39,7 @@ angular.module('contentful')
   };
 
   var detail = {
-    name: '.detail',
+    name: 'detail',
     url: '/:webhookId',
     data: {
       isNew: false
@@ -61,7 +61,7 @@ angular.module('contentful')
   };
 
   return {
-    name: '.webhooks',
+    name: 'webhooks',
     url: '/webhooks',
     abstract: true,
     template: '<ui-view />',

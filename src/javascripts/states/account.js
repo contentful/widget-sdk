@@ -7,7 +7,7 @@ angular.module('contentful')
  */
 .factory('states/account', [function () {
   var pathSuffix = {
-    name: '.pathSuffix',
+    name: 'pathSuffix',
     url: '/{pathSuffix:PathSuffix}',
     params: {
       pathSuffix: 'profile/user'

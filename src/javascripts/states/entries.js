@@ -12,7 +12,7 @@ angular.module('contentful')
   var resolvers = $injector.get('states/resolvers');
 
   var list = base({
-    name: '.list',
+    name: 'list',
     url: '',
     ncyBreadcrumb: {
       label: 'Entries'
@@ -24,7 +24,7 @@ angular.module('contentful')
   });
 
   var detail = {
-    name: '.detail',
+    name: 'detail',
     url: '/:entryId',
     params: { addToContext: false },
     ncyBreadcrumb: {
@@ -71,7 +71,7 @@ angular.module('contentful')
 
 
   return {
-    name: '.entries',
+    name: 'entries',
     url: '/entries',
     abstract: true,
     template: '<ui-view/>',

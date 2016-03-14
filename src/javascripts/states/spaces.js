@@ -9,7 +9,7 @@ angular.module('contentful')
 
 .factory('states/spaces', ['$injector', function ($injector) {
   var newSpace = {
-    name: '.new',
+    name: 'new',
     url: '_new',
     template: JST.cf_create_space_advice(),
     controller: ['$scope', 'accessChecker', function($scope, accessChecker) {
@@ -36,7 +36,7 @@ angular.module('contentful')
 
 .factory('states/spaces/detail', ['$injector', function ($injector) {
   return {
-    name: '.detail',
+    name: 'detail',
     url: '/:spaceId',
     resolve: {
       spaceContext: ['$injector', '$stateParams', function ($injector, $stateParams) {

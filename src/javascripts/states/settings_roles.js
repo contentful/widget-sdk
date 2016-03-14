@@ -10,7 +10,7 @@ angular.module('contentful')
   var base = $injector.get('states/base');
 
   var list = base({
-    name: '.list',
+    name: 'list',
     url: '',
     ncyBreadcrumb: { label: 'Roles' },
     loadingText: 'Loading Roles...',
@@ -21,7 +21,7 @@ angular.module('contentful')
   });
 
   var newRole = {
-    name: '.new',
+    name: 'new',
     url: '/new',
     params: {
       baseRoleId: null
@@ -51,7 +51,7 @@ angular.module('contentful')
   };
 
   var detail = {
-    name: '.detail',
+    name: 'detail',
     url: '/:roleId',
     data: {
       isNew: false
@@ -73,7 +73,7 @@ angular.module('contentful')
   };
 
   return {
-    name: '.roles',
+    name: 'roles',
     url: '/roles',
     abstract: true,
     template: '<ui-view />',

@@ -10,7 +10,7 @@ angular.module('contentful')
   var base = $injector.get('states/base');
 
   var list = base({
-    name: '.list',
+    name: 'list',
     url: '',
     ncyBreadcrumb: {
       label: 'Locales'
@@ -35,7 +35,7 @@ angular.module('contentful')
   };
 
   var newLocale = _.extend({
-    name: '.new',
+    name: 'new',
     url: '_new',
     data: {
       isNew: true
@@ -52,7 +52,7 @@ angular.module('contentful')
   }, localeEditorState);
 
   var detail = _.extend({
-    name: '.detail',
+    name: 'detail',
     url: '/:localeId',
     data: {
       isNew: false
@@ -65,7 +65,7 @@ angular.module('contentful')
   }, localeEditorState);
 
   return {
-    name: '.locales',
+    name: 'locales',
     url: '/locales',
     abstract: true,
     template: '<ui-view/>',

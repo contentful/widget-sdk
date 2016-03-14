@@ -10,7 +10,7 @@ angular.module('contentful')
   var base = $injector.get('states/base');
 
   var home = {
-    name: '.home',
+    name: 'home',
     url: '',
     ncyBreadcrumb: {
       label: 'APIs'
@@ -20,7 +20,7 @@ angular.module('contentful')
 
 
   var contentModel = {
-    name: '.content_model',
+    name: 'content_model',
     url: '/content_model',
     ncyBreadcrumb: {
       label: 'Content Model',
@@ -34,7 +34,7 @@ angular.module('contentful')
 
 
   var keyList = base({
-    name: '.list',
+    name: 'list',
     url: '/',
     ncyBreadcrumb: {
       label: 'Delivery Keys',
@@ -62,7 +62,7 @@ angular.module('contentful')
   };
 
   var newKey =  _.extend({
-    name: '.new',
+    name: 'new',
     url: '_new',
     resolve: {
       apiKey: ['space', function (space) {
@@ -72,7 +72,7 @@ angular.module('contentful')
   }, apiKeyEditorState);
 
   var keyDetail = _.extend({
-    name: '.detail',
+    name: 'detail',
     url: '/:apiKeyId',
     resolve: {
       apiKey: ['$stateParams', 'space', function ($stateParams, space) {
@@ -82,7 +82,7 @@ angular.module('contentful')
   }, apiKeyEditorState);
 
   var keys = {
-    name: '.keys',
+    name: 'keys',
     abstract: true,
     url: '/keys',
     template: '<ui-view/>',
@@ -90,7 +90,7 @@ angular.module('contentful')
   };
 
   return {
-    name: '.api',
+    name: 'api',
     url: '/api',
     abstract: true,
     template: '<ui-view/>',

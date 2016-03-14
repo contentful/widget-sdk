@@ -49,13 +49,19 @@ angular.module('contentful')
    * @param {object} state
    */
   function add (state) {
-    addChildren('', [state]);
+    addChildren(null, [state]);
   }
 
   function addChildren (parentName, children) {
     _.forEach(children, function (state) {
       var children = state.children;
-      var name = parentName + state.name;
+      var name;
+      if (parentName) {
+        name = parentName + '.' + state.name;
+      } else {
+        name = state.name;
+      }
+
       state = _.omit(state, ['children']);
       state.name = name;
       states.push(state);

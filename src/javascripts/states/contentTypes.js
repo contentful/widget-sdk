@@ -11,7 +11,7 @@ angular.module('contentful')
   var resolvers = $injector.get('states/resolvers');
 
   var list = base({
-    name: '.list',
+    name: 'list',
     url: '',
     ncyBreadcrumb: {
       label: 'Content Types'
@@ -23,7 +23,7 @@ angular.module('contentful')
   });
 
   var newState = editorBase({
-    name: '.new',
+    name: 'new',
     url: '_new',
     data: {
       isNew: true
@@ -40,7 +40,7 @@ angular.module('contentful')
   });
 
   var detail = editorBase({
-    name: '.detail',
+    name: 'detail',
     url: '/:contentTypeId',
     data: {
       isNew: false
@@ -72,7 +72,7 @@ angular.module('contentful')
   });
 
   return {
-    name: '.content_types',
+    name: 'content_types',
     url: '/content_types',
     abstract: true,
     template: '<ui-view/>',

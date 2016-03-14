@@ -10,7 +10,7 @@ angular.module('contentful')
   var base = $injector.get('states/base');
 
   var list = base({
-    name: '.list',
+    name: 'list',
     url: '',
     ncyBreadcrumb: { label: 'Users' },
     loadingText: 'Loading Users...',
@@ -21,7 +21,7 @@ angular.module('contentful')
   });
 
   return {
-    name: '.users',
+    name: 'users',
     url: '/users',
     abstract: true,
     template: '<ui-view />',
