@@ -12,7 +12,6 @@ angular.module('contentful').controller('cfMultiVideoEditorController', ['$attrs
     error            : undefined,
     isSortingEnabled : $scope.$eval($attrs.isSortingEnabled),
     searchConfig: {
-      isSearchEnabled : $scope.$eval($attrs.isSearchEnabled),
       onSelection     : useSelectedAssets,
       scope           : $scope,
       template        : 'cf_video_search_dialog',

@@ -16,9 +16,6 @@ angular.module('contentful').controller('cfVideoInputController', ['$attrs', '$s
     searchConfig  : $scope.$eval($attrs.searchConfig)
   };
 
-  $scope.videoInput.searchEnabled = $scope.videoInput.searchConfig.isSearchEnabled;
-
-
   var valueReference = $attrs.value;
   if (valueReference) {
     $scope.$watch(valueReference, updateAssetId);

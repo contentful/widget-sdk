@@ -9,7 +9,6 @@ angular.module('contentful').controller('cfVideoEditorController', ['$scope', '$
     isPlayerReady : false,
     selectedAsset : {},
     searchConfig: {
-      isSearchEnabled : $scope.$eval($attrs.isSearchEnabled),
       onSelection : useSelectedAsset,
       scope       : $scope,
       template    : 'cf_video_search_dialog',
