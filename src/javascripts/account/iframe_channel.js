@@ -27,9 +27,9 @@ angular.module('contentful').factory('iframeChannel', ['$injector', function ($i
   };
 
   function createMessageDispatcher(iframe, message) {
-    return function processMessage (event) {
+    return function dispatchMessage (event) {
       try {
-        // trust only our own domains:
+        // @todo looks like it never throws
         $sce.getTrustedResourceUrl(event.origin);
       } catch (e) {
         return;
@@ -46,7 +46,7 @@ angular.module('contentful').factory('iframeChannel', ['$injector', function ($i
         }
       }
 
-      if (iframe.get(0) === event.source) {
+      if (iframe[0].contentWindow === event.source) {
         $rootScope.$apply(function () {
           message.dispatch(event.data);
         });

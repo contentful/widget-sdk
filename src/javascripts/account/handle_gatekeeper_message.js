@@ -46,7 +46,7 @@ angular.module('contentful')
       var messageAction = dotty.get(data, 'action', '').toLowerCase();
       var messageType   = dotty.get(data, 'type',   '').toLowerCase();
 
-      return action === messageAction && type === messageType;
+      return action.toLowerCase() === messageAction && type.toLowerCase() === messageType;
     };
   }
 
