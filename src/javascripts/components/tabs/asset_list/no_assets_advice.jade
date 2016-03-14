@@ -16,7 +16,7 @@
     ul.context-menu__items
       li(role="menuitem" ng-click="entityCreationController.newAsset()")
         | Single Asset
-      li(role="menuitem" ng-click="createMultipleAssets()" ng-hide="shouldHide('updateAsset')")
+      li(role="menuitem" ng-click="createMultipleAssets()" ng-show="canUploadMultipleAssets()")
         | Multiple Assets
 
   p.ct-empty-list__description

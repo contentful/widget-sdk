@@ -264,34 +264,40 @@ describe('Access Checker', function () {
   });
 
   describe('#canUploadMultipleAssets', function () {
-    function setup(canCreate, canUpdate, canUpdateOwn) {
+    function setup(canCreate, canUpdate, canUpdateWithPolicy, canUpdateOwn) {
       getResStub.withArgs('create', 'Asset').returns(canCreate);
-      policyChecker.canUpdateAssets = sinon.stub().returns(canUpdate);
+      getResStub.withArgs('update', 'Asset').returns(canUpdate);
+      policyChecker.canUpdateAssets = sinon.stub().returns(canUpdateWithPolicy);
       policyChecker.canUpdateOwnAssets = sinon.stub().returns(canUpdateOwn);
     }
 
     it('returns false if assets cannot be created', function () {
-      setup(false, false, false);
+      setup(false, false, false, false);
       expect(ac.canUploadMultipleAssets()).toBe(false);
     });
 
     it('returns false if assets cannot be updated', function () {
-      setup(true, false, false);
+      setup(true, false, false, false);
       expect(ac.canUploadMultipleAssets()).toBe(false);
     });
 
-    it('returns false if own assets cannot be updated', function () {
-      setup(true, false, false);
+    it('returns false if assets and own assets cannot be updated', function () {
+      setup(true, false, false, false);
       expect(ac.canUploadMultipleAssets()).toBe(false);
     });
 
     it('returns true if assets can be created and updated', function () {
-      setup(true, true, false);
+      setup(true, true, false, false);
+      expect(ac.canUploadMultipleAssets()).toBe(true);
+    });
+
+    it('returns true if assets can be created and updated with policy', function () {
+      setup(true, false, true, false);
       expect(ac.canUploadMultipleAssets()).toBe(true);
     });
 
     it('returns true if assets can be created and own assets can be updated', function () {
-      setup(true, false, true);
+      setup(true, false, false, true);
       expect(ac.canUploadMultipleAssets()).toBe(true);
     });
   });

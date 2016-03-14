@@ -285,9 +285,10 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    */
   function canUploadMultipleAssets() {
     var canCreate = canPerformActionOnType('create', 'asset');
-    var canUpdate = policyChecker.canUpdateAssets() || policyChecker.canUpdateOwnAssets();
+    var canUpdate = canPerformActionOnType('update', 'asset');
+    var canUpdateWithPolicy = policyChecker.canUpdateAssets() || policyChecker.canUpdateOwnAssets();
 
-    return canCreate && canUpdate;
+    return canCreate && (canUpdate || canUpdateWithPolicy);
   }
 
   /**
