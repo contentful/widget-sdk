@@ -21,7 +21,11 @@ angular.module('contentful')
     LAST_REMINDER_STORE_KEY: LAST_REMINDER_STORE_KEY
   };
 
-  function init () {
+  function init (options) {
+    options = options || {};
+    if (options.skipOnce) { // Wait 24h before showing the dialog.
+      storeDialogLastShownTimestamp();
+    }
     $rootScope.$watch(function () {
       return dotty.get(authentication, 'tokenLookup.sys.createdBy');
     }, watcher);
@@ -32,16 +36,14 @@ angular.module('contentful')
     if (!user) {
       return;
     }
-    var msUntilReopen = getMillisecondsUntilDialogCanBeReopened();
-
     if (user.confirmed === false && user.email) {
-      if (msUntilReopen <= 0) {
+      if (getMillisecondsUntilDialogCanBeReopened() <= 0) {
         showDialog(user.email);
         storeDialogLastShownTimestamp();
-        msUntilReopen = HOUR_IN_MS * HOURS_BEFORE_REOPEN_DIALOG;
       }
       // Makes sure to show the dialog again if user keeps the tab open.
-      setTimeout(watcher.bind(null, user), msUntilReopen);
+      setTimeout(watcher.bind(null, user),
+        getMillisecondsUntilDialogCanBeReopened());
     } else {
       TheStore.remove(LAST_REMINDER_STORE_KEY);
     }

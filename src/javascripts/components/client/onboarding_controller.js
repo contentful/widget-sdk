@@ -13,6 +13,8 @@ angular.module('contentful')
 
   var SEEN_ONBOARDING_STORE_KEY = 'seenOnboarding';
 
+  var unwatch;
+
   return {
     init: init,
     SEEN_ONBOARDING_STORE_KEY: SEEN_ONBOARDING_STORE_KEY
@@ -20,7 +22,7 @@ angular.module('contentful')
 
   function init () {
     // Watch until we get the user object to work with.
-    $rootScope.$watch(function () {
+    unwatch = $rootScope.$watch(function () {
       return dotty.get(authentication, 'tokenLookup.sys.createdBy');
     }, watcher);
 
@@ -30,15 +32,17 @@ angular.module('contentful')
 
   function watcher (user) {
     if (user) {
+      unwatch();
       showOnboardingIfNecessary(user);
     }
   }
 
   function showOnboardingIfNecessary (user) {
-    var seenOnboarding = fetchSeenOnboarding();
-    var signInCount = user.signInCount;
-    if (signInCount === 1 && !seenOnboarding) {
+    var userSeenOnboarding = fetchSeenOnboarding();
+    if (user.signInCount === 1 && !userSeenOnboarding) {
       showOnboarding();
+    } else {
+      $rootScope.$broadcast('cfOmitOnboarding');
     }
   }
 
@@ -54,7 +58,10 @@ angular.module('contentful')
       }
     })
     .promise
-    .then(handleSpaceCreationSuccess);
+    .then(handleSpaceCreationSuccess)
+    .finally(function () {
+      $rootScope.$broadcast('cfAfterOnboarding');
+    });
   }
 
   // TODO: This is duplicate code from `ClientController`. Find out where to move it.
