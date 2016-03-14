@@ -1,8 +1,7 @@
 input.form-control(
-  ng-disabled="isDisabled(field, locale)"
-  ng-model="fieldData.value"
-  ot-bind-text=""
-  type="text")
+  type="text"
+  ng-disabled="isDisabled")
+
 .form-widget__help-text--full-width
   span(
     ng-class="{'colors__red': charCountStatus === 'exceeded', 'colors__orange': charCountStatus === 'approaching'}")
