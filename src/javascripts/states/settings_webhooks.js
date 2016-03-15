@@ -31,7 +31,7 @@ angular.module('contentful')
       parent: 'spaces.detail.settings.webhooks.list',
       label: '{{ context.title + (context.dirty ? "*" : "") }}'
     },
-    template: '<cf-webhook-editor class="workbench webhook-editor" />',
+    template: '<cf-webhook-editor cf-ui-tab class="workbench webhook-editor" />',
     controller: ['$scope', '$state', function ($scope, $state) {
       $scope.context = $state.current.data;
       $scope.webhook = {};
@@ -70,14 +70,14 @@ angular.module('contentful')
     },
     ncyBreadcrumb: {
       parent: 'spaces.detail.settings.webhooks.list',
-      label: '{{ context.title + (context.dirty ? "*" : "") }}'
+      label: '{{ context.parentTitle || (context.title + (context.dirty ? "*" : "")) }}'
     },
     resolve: {
       webhook: ['WebhookRepository', 'space', '$stateParams', function (WebhookRepository, space, $stateParams) {
         return WebhookRepository.getInstance(space).get($stateParams.webhookId);
       }]
     },
-    template: '<cf-webhook-editor class="workbench webhook-editor" />',
+    template: '<cf-webhook-editor cf-ui-tab class="workbench webhook-editor" />',
     controller: ['$scope', '$state', 'webhook', function ($scope, $state, webhook) {
       $scope.context = $state.current.data;
       $scope.webhook = webhook;
