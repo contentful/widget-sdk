@@ -56,7 +56,7 @@ describe('analytics', function () {
   describe('setSpace', function(){
     beforeEach(function(){
       this.userData.signInCount = 1;
-      this.analytics.setUserData(this.userData);
+      this.analytics.enable(this.userData);
     });
 
     it('setSpace should set space data and initialize', function() {
@@ -67,7 +67,7 @@ describe('analytics', function () {
     });
   });
 
-  describe('setUserData', function(){
+  describe('#enable', function(){
     beforeEach(function(){
       this.analytics.setSpace(this.space);
     });
@@ -75,13 +75,13 @@ describe('analytics', function () {
     it('setSpace should set space data and initialize', function() {
       sinon.assert.notCalled(this.segment.identify);
       sinon.assert.notCalled(this.totango.initialize);
-      this.analytics.setUserData(this.userData);
+      this.analytics.enable(this.userData);
       sinon.assert.calledWith(this.segment.identify, 'h4nswur5t', this.userData);
       sinon.assert.calledWith(this.totango.initialize, this.userData, this.space.data.organization);
     });
 
     it('calls identify with new data', function() {
-      this.analytics.setUserData(this.userData);
+      this.analytics.enable(this.userData);
       this.analytics.addIdentifyingData({data: 'lolcat'});
       sinon.assert.calledTwice(this.segment.identify);
       sinon.assert.calledWith(this.segment.identify, 'h4nswur5t', {data: 'lolcat'});

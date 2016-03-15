@@ -65,27 +65,4 @@ describe('widgets/deprecations', function() {
 
     expect(filtered).toEqual([{id: 'DEPRECATED', deprecation: 'INFO'}]);
   });
-
-  it('retains preview widget if preview is enabled', function () {
-    var widgets = [{id: 'DEPRECATED'}];
-
-    deprecate('DEPRECATED', {preview: true});
-
-    var filter = createFilter(null, {}, true);
-    var filtered = filter(widgets);
-
-    expect(filtered).toEqual([{id: 'DEPRECATED', deprecation: {preview: true}}]);
-  });
-
-  it('removes preview widget if preview is disabled', function () {
-    var widgets = [{id: 'DEPRECATED'}];
-
-    deprecate('DEPRECATED', {preview: true});
-
-    var filter = createFilter(null, {}, false);
-    var filtered = filter(widgets);
-
-    expect(filtered.length).toBe(0);
-  });
-
 });

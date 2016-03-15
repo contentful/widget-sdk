@@ -119,6 +119,10 @@ angular.module('contentful').factory('LazyLoader/scripts', ['$injector', functio
       url: 'https://maps.googleapis.com/maps/api/js?v=3&key=' +
             environment.settings.google.maps_api_key,
       globalObject: 'google.maps'
+    },
+    bugsnag: {
+      url: 'https://d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js',
+      globalObject: 'Bugsnag'
     }
   };
 }]);

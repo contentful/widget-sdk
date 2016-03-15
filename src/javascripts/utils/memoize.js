@@ -1,0 +1,30 @@
+'use strict';
+
+angular.module('cf.utils')
+
+/**
+ * @ngdoc service
+ * @module cf.utils
+ * @name utils/memoize
+ * @usage[js]
+ * var memoize = $injector.get('utils/memoize')
+ * var runOnce = memoize(function () {
+ *   console.log('run')
+ *   return true
+ * })
+ * runOnce() // Returns true and logs 'run'
+ * runOnce() // Returns true
+ */
+.factory('utils/memoize', [function () {
+  return function memoize (fn) {
+    var result;
+    var called = false;
+    return function () {
+      if (!called) {
+        result = fn();
+        called = true;
+      }
+      return result;
+    };
+  };
+}]);
