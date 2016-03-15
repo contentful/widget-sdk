@@ -9,12 +9,6 @@ angular.module('contentful').directive('cfWebhookCallStatus', [function () {
     ProtocolError: 'Invalid protocol'
   };
 
-  var CLASSES = {
-    OK: 'x--ok',
-    WARN: 'x--warn',
-    FAIL: 'x--fail'
-  };
-
   return {
     restrict: 'E',
     template: JST['webhook_call_status'](),
@@ -22,13 +16,13 @@ angular.module('contentful').directive('cfWebhookCallStatus', [function () {
     controller: ['$scope', function ($scope) {
       var code = dotty.get($scope, 'call.statusCode');
       var hasStatusCode = _.isNumber(code);
-      $scope.cssClass = CLASSES.FAIL;
+      $scope.cssClass = 'x--fail';
 
       if (hasStatusCode) {
         if (code < 300) {
-          $scope.cssClass = CLASSES.OK;
+          $scope.cssClass = 'x--ok';
         } else if (code < 400) {
-          $scope.cssClass = CLASSES.WARN;
+          $scope.cssClass = 'x--warn';
         }
       } else {
         var errorName = _.first(dotty.get($scope, 'call.errors', []));
