@@ -1,27 +1,25 @@
 'use strict';
 
-describe('Kaltura Editor Controller', function () {
-  var kalturaMultiVideoEditorController, kalturaClientWrapperMock;
+describe('cfKalturaEditor directive', function () {
+  var kalturaClientWrapperMock;
 
   beforeEach(function() {
-    module('contentful/test');
-    module(function($provide){
+    module('contentful/test', function ($provide) {
       kalturaClientWrapperMock = jasmine.createSpyObj('kalturaClientWrapperMock', ['setOrganizationId']);
       $provide.value('kalturaClientWrapper', kalturaClientWrapperMock);
     });
 
-    inject(function($controller, spaceContext){
-      spaceContext.space = { getOrganizationId: sinon.stub().returns('org-123') };
-      kalturaMultiVideoEditorController = $controller('cfKalturaEditorController');
-    });
+    var spaceContext = this.$inject('spaceContext');
+    spaceContext.space = { getOrganizationId: sinon.stub().returns('org-123') };
   });
 
   afterEach(inject(function ($log) {
-    kalturaMultiVideoEditorController = kalturaClientWrapperMock;
     $log.assertEmpty();
+    kalturaClientWrapperMock = null;
   }));
 
   it('calls the #setOrganizationId method of the kaltura client wrapper', function() {
+    this.$compile('<cf-kaltura-editor />');
     expect(kalturaClientWrapperMock.setOrganizationId).toHaveBeenCalledWith('org-123');
   });
 });
