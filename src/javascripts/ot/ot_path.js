@@ -4,6 +4,9 @@
  * @ngdoc directive
  * @name otPath
  * @scope.requires otDoc
+ * @scope.requires entity
+ * @scope.requires field
+ * @scope.requires locale
  * @property otPath
  *
  * @description
@@ -196,7 +199,10 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
         if ($scope.otDoc.doc) {
           return ShareJS.peek($scope.otDoc.doc, $scope.otPath);
         } else {
-          return void(0);
+          // we don't use $scope.otPath here since it is initialized in the link method
+          // of this directive and hence is undefined when otGetValue is called as a
+          // part of initializing the controller for this directive
+          return dotty.get($scope.entity.data.fields, [$scope.field.id, $scope.locale.internal_code]);
         }
       }
 
