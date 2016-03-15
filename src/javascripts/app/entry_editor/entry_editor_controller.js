@@ -129,12 +129,6 @@ angular.module('contentful')
     }
   });
 
-  // Helper methods on the scope
-  $scope.getFieldValidationsOfType = function(field, type) {//TODO this should go in a service
-    return _.filter(_.pluck(field.validations, type))[0];
-  };
-
-
   $scope.$watch('entry.data.fields', function (fields) {
     if (!fields) {
       $scope.entry.data.fields = {};

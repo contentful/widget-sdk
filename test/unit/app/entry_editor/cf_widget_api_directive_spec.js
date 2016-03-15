@@ -24,7 +24,8 @@ describe('cfWidgetApi directive', function () {
       },
       otDoc: {
         updateEntityData: sinon.stub()
-      }
+      },
+      locale: {}
     });
 
     widgetApi = $controller('WidgetApiController', {
@@ -55,6 +56,35 @@ describe('cfWidgetApi directive', function () {
       scope.$emit('otValueChanged', [], value);
       sinon.assert.calledWithExactly(cb, value);
       sinon.assert.calledOnce(cb);
+    });
+  });
+
+  describe('#setValue()', function () {
+    var doc;
+
+    beforeEach(function () {
+      doc = scope.otSubDoc;
+      doc.changeValue = sinon.stub().resolves();
+    });
+
+    it('calls otSubDoc.changeValue when value is different', function () {
+      doc.getValue.returns('OLD');
+      widgetApi.field.setValue('NEW');
+      sinon.assert.calledOnce(doc.changeValue);
+      sinon.assert.calledWithExactly(doc.changeValue, 'NEW');
+    });
+
+    it('does not call otSubDoc.changeValue when value is the same', function () {
+      doc.getValue.returns('SAME');
+      widgetApi.field.setValue('SAME');
+      sinon.assert.notCalled(doc.changeValue);
+    });
+
+    it('returns a promise', function () {
+      var handler = sinon.spy();
+      widgetApi.field.setValue('NEW').then(handler);
+      this.$apply();
+      sinon.assert.calledOnce(handler);
     });
   });
 

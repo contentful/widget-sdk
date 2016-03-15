@@ -1,0 +1,7 @@
+.dropdown-editor
+  select.cfnext-select-box(
+    ng-disabled="isDisabled"
+    ng-model="data.selected"
+    ng-required="required"
+    ng-options="o.value as o.value for o in options")
+    option(value="") Choose a value
