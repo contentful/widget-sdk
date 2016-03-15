@@ -132,6 +132,21 @@ describe('otSubdoc', function () {
     var $compile      = this.$inject('$compile');
 
     $rootScope.otDoc = makeDoc();
+    $rootScope.entity = {
+      data: {
+        fields: {
+          someField: {
+            'en_US': 'test'
+          }
+        }
+      }
+    };
+    $rootScope.field = {
+      id: 'someField'
+    };
+    $rootScope.locale = {
+      internal_code: 'en_US'
+    };
     $rootScope.otPath = ['path'];
     elem = $compile('<div ot-doc-for><div ot-path="[\'fields\', \'field\']"></div></div>')($rootScope).find('*[ot-path]');
     scope = elem.scope();
@@ -189,6 +204,14 @@ describe('otSubdoc', function () {
       scope.otSubDoc.removeValue().catch(errorHandler);
       this.$apply();
       sinon.assert.called(errorHandler);
+    });
+  });
+
+  describe('#getValue()', function() {
+    it('should return initial value from entity data when sharejs doc is not defined', function () {
+      scope.otDoc.doc = undefined;
+
+      expect(scope.otSubDoc.getValue()).toEqual('test');
     });
   });
 
