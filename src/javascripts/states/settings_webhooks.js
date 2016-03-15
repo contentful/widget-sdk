@@ -34,7 +34,7 @@ angular.module('contentful')
     template: '<cf-webhook-editor cf-ui-tab class="workbench webhook-editor" />',
     controller: ['$scope', '$state', function ($scope, $state) {
       $scope.context = $state.current.data;
-      $scope.webhook = {};
+      $scope.webhook = {headers: {}};
     }]
   };
 
@@ -56,7 +56,8 @@ angular.module('contentful')
         template: '<cf-webhook-call class="workbench webhook-call" />',
         controller: ['$scope', '$stateParams', 'webhook', 'call', function ($scope, $stateParams, webhook, call) {
           $scope.call = call;
-          $scope.context = {parentTitle: webhook.url};
+          $scope.webhook = webhook;
+          $scope.context = {parentTitle: webhook.name};
         }]
       }
     }

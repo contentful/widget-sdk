@@ -12,7 +12,8 @@ header.workbench-header
   table.result-list.main-results.main-header
     thead
       tr
-        th.cell-url Webhook URL
+        th.cell-wh-name Webhook name
+        th.cell-url URL
         th.cell-health % of successful calls
         th.cell-http-basic Using HTTP Basic Auth?
         th.cell-actions Actions
@@ -22,6 +23,8 @@ header.workbench-header
         tr(ng-repeat="webhook in webhooks track by webhook.sys.id"
           ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail({ webhookId: webhook.sys.id })'"
           ui-sref="{{ entityNavState }}")
+          td.cell-wh-name
+            a.entity-list-link(ui-sref="{{ entityNavState }}") {{ webhook.name }}
           td.cell-url
             a.entity-list-link(ui-sref="{{ entityNavState }}") {{ webhook.url }}
           td.cell-health
@@ -33,5 +36,5 @@ header.workbench-header
           td.cell-actions
             a(ui-sref="{{ entityNavState }}") View details
         tr(ng-show="webhooks.length < 1")
-          td(colspan="4")
+          td(colspan="5")
             a.entity-list-link No webhooks yet!

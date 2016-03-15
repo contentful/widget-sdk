@@ -126,7 +126,7 @@ describe('Webhook Editor directive', function () {
   });
 
   describe('Saving webhook', function () {
-    var SUCCESS_MSG = 'Webhook calling http://test.com saved successfully.';
+    var SUCCESS_MSG = 'Webhook "test" saved successfully.';
 
     describe('Model handling', function () {
       it('nullifies username and password', function () {
@@ -157,8 +157,7 @@ describe('Webhook Editor directive', function () {
 
     describe('New webhook', function () {
       beforeEach(function () {
-        this.compile({isNew: true});
-        this.scope.webhook.url = 'http://test.com';
+        this.compile({isNew: true}, {url: 'http://test.com', name: 'test'});
         var saved = _.cloneDeep(this.scope.webhook);
         saved.sys.id = 'whid';
         this.repo.save.resolves(saved);
@@ -183,9 +182,9 @@ describe('Webhook Editor directive', function () {
 
     describe('Existing webhook', function () {
       beforeEach(function () {
-        this.compile({isNew: false}, {sys: {id: 'whid'}});
-        this.scope.webhook.url = 'http://test.com';
-        var response = _.clone(this.scope.webhook, true);
+        this.compile({isNew: false}, {sys: {id: 'whid'}, url: 'http://test.com', name: 'old'});
+        this.scope.webhook.name = 'test';
+        var response = _.cloneDeep(this.scope.webhook);
         response.sys.version = 2;
         this.repo.save.resolves(response);
         this.scope.$apply();
@@ -250,7 +249,7 @@ describe('Webhook Editor directive', function () {
     beforeEach(function () {
       modal = this.$inject('modalDialog');
       modal.open = sinon.spy();
-      this.compile({isNew: false}, {sys: {id: 'whid'}, url: 'http://test.com'});
+      this.compile({isNew: false}, {sys: {id: 'whid'}, url: 'http://test.com', name: 'test'});
       this.button('Remove').click();
       this.args = modal.open.firstCall.args[0];
     });
@@ -267,7 +266,7 @@ describe('Webhook Editor directive', function () {
       return this.args.scopeData.remove.execute().then(function () {
         sinon.assert.calledOnce(this.repo.remove);
         expect(this.repo.remove.firstCall.args[0].sys.id).toBe('whid');
-        sinon.assert.calledWith(this.notification.info, 'Webhook calling http://test.com deleted successfully.');
+        sinon.assert.calledWith(this.notification.info, 'Webhook "test" deleted successfully.');
         sinon.assert.calledWith(this.go, 'spaces.detail.settings.webhooks.list');
       }.bind(this));
     });

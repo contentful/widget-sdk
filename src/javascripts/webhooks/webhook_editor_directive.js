@@ -33,16 +33,12 @@ angular.module('contentful')
 
   var touched = getInitialTouchCount();
 
-  $scope.headers = {
-    test: 'hello'
-  };
-
   $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
   $scope.activity = {loading: false};
 
   $scope.$watch('webhook', function (webhook, prev) {
     touched += 1;
-    $scope.context.title = isEmpty('url') ? 'Unspecified' : webhook.url;
+    $scope.context.title = isEmpty('name') ? 'Unnamed' : webhook.name;
     if (webhook === prev) { checkCredentials(); }
   }, true);
 
@@ -87,7 +83,7 @@ angular.module('contentful')
   }
 
   function handleWebhook(webhook) {
-    notification.info('Webhook calling ' + $scope.webhook.url + ' saved successfully.');
+    notification.info('Webhook "' + $scope.webhook.name + '" saved successfully.');
 
     if ($scope.context.isNew) {
       $scope.context.dirty = false;
@@ -150,7 +146,7 @@ angular.module('contentful')
   function remove() {
     return webhookRepo.remove($scope.webhook).then(function () {
       $scope.context.dirty = false;
-      notification.info('Webhook calling ' + $scope.webhook.url + ' deleted successfully.');
+      notification.info('Webhook "' + $scope.webhook.name + '" deleted successfully.');
       return $state.go('spaces.detail.settings.webhooks.list');
     }, ReloadNotification.basicErrorHandler);
   }

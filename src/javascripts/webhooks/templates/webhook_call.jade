@@ -1,6 +1,6 @@
 header.workbench-header
   cf-icon.workbench-header__icon(name="page-settings")
-  h1.workbench-header__title Call details ({{ call.requestAt }})
+  h1.workbench-header__title Call details for {{ webhook.name }} at {{ call.requestAt }}
 
   .workbench-header__actions
     button.cfnext-btn-secondary-action(ui-sref="spaces.detail.settings.webhooks.detail" ui-sref-opts="{reload: true}")
@@ -11,7 +11,7 @@ header.workbench-header
 
     .webhook-call__details
       .webhook-call__header
-        strong.webhook-call__header-item {{ call.url }}
+        strong.webhook-call__header-item {{ webhook.name }} ({{ call.url }})
         span.webhook-call__header-item {{ call.requestAt }}
         cf-webhook-call-status.webhook-call__header-item(call="call")
 
