@@ -84,7 +84,7 @@ functions that return promises.
 ~~~js
 // Equivalent: Function that returns a resolved promise
 sinon.stub().resolves('yeah')
-sinon.stub().returns($q.when('yeah'))
+sinon.stub().returns($q.resolve('yeah'))
 
 // Equivalent: Function that returns a rejected promise
 sinon.stub().rejects(new Error())

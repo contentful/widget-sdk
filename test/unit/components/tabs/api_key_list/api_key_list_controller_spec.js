@@ -38,7 +38,7 @@ describe('API Key List Controller', function () {
     var getApiKeysStub;
     beforeEach(function() {
       getApiKeysStub = sinon.stub(scope.spaceContext.space, 'getDeliveryApiKeys');
-      getApiKeysStub.returns($q.when({}));
+      getApiKeysStub.returns($q.resolve({}));
       scope.refreshApiKeys();
       scope.$apply();
     });

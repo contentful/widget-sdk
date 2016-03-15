@@ -355,7 +355,7 @@ describe('Asset List Controller', function () {
         getAssets.resolve(assets);
         scope.searchController.paginator.page = 1;
         scope.$apply(); //trigger resetAssets
-        stubs.getAssets.returns($q.when());
+        stubs.getAssets.returns($q.resolve());
         sinon.spy(scope.assets, 'push');
         scope.searchController.loadMore();
         scope.$apply(); //trigger loadMore promises
@@ -399,23 +399,23 @@ describe('Asset List Controller', function () {
       scope.spaceContext.space.getDefaultLocale = sinon.stub();
       scope.spaceContext.space.getDefaultLocale.returns({code: 'en-US'});
       scope.spaceContext.space.createAsset = sinon.stub();
-      stubs.pickMultiple.returns($q.when(files));
+      stubs.pickMultiple.returns($q.resolve(files));
       stubs.getVersion.returns(2);
       stubs.parseFPFile.returns({fileName: 'file_name.jpg'});
       entity = {process: stubs.process, getVersion: stubs.getVersion, publish: stubs.publish};
 
 
       scope.spaceContext.space.createAsset
-        .onCall(0).returns($q.when(entity))
-        .onCall(1).returns($q.when(entity));
+        .onCall(0).returns($q.resolve(entity))
+        .onCall(1).returns($q.resolve(entity));
       stubs.publish
-        .onCall(0).returns($q.when())
-        .onCall(1).returns($q.when());
+        .onCall(0).returns($q.resolve())
+        .onCall(1).returns($q.resolve());
       stubs.process
-        .onCall(0).returns($q.when())
-        .onCall(1).returns($q.when())
-        .onCall(2).returns($q.when())
-        .onCall(3).returns($q.when());
+        .onCall(0).returns($q.resolve())
+        .onCall(1).returns($q.resolve())
+        .onCall(2).returns($q.resolve())
+        .onCall(3).returns($q.resolve());
 
       scope.createMultipleAssets();
       $rootScope.$apply();

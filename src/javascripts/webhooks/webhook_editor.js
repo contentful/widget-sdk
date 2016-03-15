@@ -60,7 +60,7 @@ angular.module('contentful')
       $scope.webhook = webhook;
       checkCredentials();
       touched = getInitialTouchCount();
-      return $q.when(webhook);
+      return $q.resolve(webhook);
     }
   }
 
@@ -108,7 +108,7 @@ angular.module('contentful')
       }
     });
 
-    return $q.when();
+    return $q.resolve();
   }
 
   function remove() {

@@ -188,7 +188,7 @@ describe('List Actions Service', function () {
       describe('with a supplied action callback and multiple results', function() {
         beforeEach(inject(function() {
           params.actionCallback = sinon.spy(function (entity) {
-            return $q.when(results[entity.index]);
+            return $q.resolve(results[entity.index]);
           });
           performer.params.getSelected.returns([{index: 0}, {index: 1}]);
           performer.perform(params);
@@ -211,7 +211,7 @@ describe('List Actions Service', function () {
       describe('with the default action callback', function() {
         beforeEach(inject(function() {
           sinon.stub(performer, 'callAction', function () {
-            return $q.when(results[0]);
+            return $q.resolve(results[0]);
           });
           performer.params.getSelected.returns([{}]);
           performer.perform(params);

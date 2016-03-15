@@ -135,7 +135,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
 
     createContentType: function(contentType) {
       var handlers = this.makeHandlers(contentType, 'create', 'ContentType');
-      if(handlers.itemWasHandled) return $q.when(handlers.response);
+      if(handlers.itemWasHandled) return $q.resolve(handlers.response);
       return this.spaceContext.space.createContentType(contentType)
       .then(handlers.success)
       .catch(handlers.error);
@@ -146,7 +146,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       return $q.all(_.map(_.filter(contentTypes), function (contentType) {
         if(contentType) {
           var handlers = self.makeHandlers(contentType, 'publish', 'ContentType');
-          if(handlers.itemWasHandled) return $q.when();
+          if(handlers.itemWasHandled) return $q.resolve();
           var version = dotty.get(contentType, 'data.sys.version');
           return contentType.publish(version)
           .then(handlers.success)
@@ -157,7 +157,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
 
     createEditingInterface: function(editingInterface) {
       var handlers = this.makeHandlers(editingInterface, 'create', 'EditingInterface');
-      if(handlers.itemWasHandled) return $q.when(handlers.response);
+      if(handlers.itemWasHandled) return $q.resolve(handlers.response);
       var space = this.spaceContext.space;
       return space.getContentType(editingInterface.contentTypeId)
       .then(function(contentType) {
@@ -169,7 +169,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
 
     createAsset: function(asset) {
       var handlers = this.makeHandlers(asset, 'create', 'Asset');
-      if(handlers.itemWasHandled) return $q.when();
+      if(handlers.itemWasHandled) return $q.resolve();
       return this.spaceContext.space.createAsset(asset)
       .then(handlers.success)
       .catch(handlers.error);
@@ -180,7 +180,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       return $q.all(_.map(_.filter(assets), function (asset) {
         if(asset) {
           var handlers = self.makeHandlers(asset, 'process', 'Asset');
-          if(handlers.itemWasHandled) return $q.when();
+          if(handlers.itemWasHandled) return $q.resolve();
           var version = dotty.get(asset, 'data.sys.version');
           var locale = _.keys(dotty.get(asset, 'data.fields.file'))[0];
           return self.processAsset(asset, version, locale)
@@ -234,7 +234,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       return $q.all(_.map(assets, function (asset) {
         if(asset) {
           var handlers = self.makeHandlers(asset, 'publish', 'Asset');
-          if(handlers.itemWasHandled) return $q.when();
+          if(handlers.itemWasHandled) return $q.resolve();
           var version = dotty.get(asset, 'data.sys.version');
           return asset.publish(version+1)
           .then(handlers.success)
@@ -245,7 +245,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
 
     createEntry: function(entry) {
       var handlers = this.makeHandlers(entry, 'create', 'Entry');
-      if(handlers.itemWasHandled) return $q.when(handlers.response);
+      if(handlers.itemWasHandled) return $q.resolve(handlers.response);
       var contentTypeId = dotty.get(entry, 'sys.contentType.sys.id');
       delete entry.contentType;
       return this.spaceContext.space.createEntry(contentTypeId, entry)
@@ -260,7 +260,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
         $q.all(_.map(_.filter(entries), function (entry) {
           if(entry) {
             var handlers = self.makeHandlers(entry, 'publish', 'Entry');
-            if(handlers.itemWasHandled) return $q.when();
+            if(handlers.itemWasHandled) return $q.resolve();
             var version = dotty.get(entry, 'data.sys.version');
             return entry.publish(version)
             .then(handlers.success)
@@ -273,7 +273,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
 
     createApiKey: function(apiKey) {
       var handlers = this.makeHandlers(apiKey, 'create', 'ApiKey');
-      if(handlers.itemWasHandled) return $q.when(handlers.response);
+      if(handlers.itemWasHandled) return $q.resolve(handlers.response);
       return this.spaceContext.space.createDeliveryApiKey(apiKey)
       .then(handlers.success)
       .catch(handlers.error);

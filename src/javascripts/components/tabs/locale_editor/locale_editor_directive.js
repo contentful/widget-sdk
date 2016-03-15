@@ -178,7 +178,7 @@ angular.module('contentful')
         scope: $scope
       });
     }
-    return $q.when({confirmed: true});
+    return $q.resolve({confirmed: true});
   }
 
   function findLocaleByCode(code) {

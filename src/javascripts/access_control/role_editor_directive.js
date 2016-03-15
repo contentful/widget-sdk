@@ -127,7 +127,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
     } else {
       $scope.role = role;
       $scope.context.touched = -1;
-      return $q.when(role);
+      return $q.resolve(role);
     }
   }
 

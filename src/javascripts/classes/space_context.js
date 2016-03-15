@@ -117,7 +117,7 @@ angular.module('contentful')
         this.contentTypes = [];
         this.publishedContentTypes = [];
         this._publishedContentTypesHash = {};
-        return $q.when(this.contentTypes);
+        return $q.resolve(this.contentTypes);
       }
 
       if (this.loadingPromise) {
@@ -242,7 +242,7 @@ angular.module('contentful')
     fetchPublishedContentType: function (contentTypeId) {
       var self = this;
       var contentType = pick();
-      if (contentType) { return $q.when(contentType); }
+      if (contentType) { return $q.resolve(contentType); }
 
       return this.refreshContentTypes().then(pick);
 

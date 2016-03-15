@@ -66,7 +66,7 @@ describe('ReloadNotification service', function () {
       }
 
       it('when success', function () {
-        run($q.when('derp'));
+        run($q.resolve('derp'));
         sinon.assert.calledWith(successHandler, 'derp');
         sinon.assert.notCalled(errorHandler);
       });

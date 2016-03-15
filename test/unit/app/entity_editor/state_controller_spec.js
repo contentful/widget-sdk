@@ -263,7 +263,7 @@ describe('entityEditor/StateController', function () {
       entry.publish = function () {
         entry.data.sys.publishedVersion = entry.data.sys.version;
         entry.data.sys.version += 1;
-        return $q.when();
+        return $q.resolve();
       };
 
       this.entity.data.fields = {field1: 'one'};

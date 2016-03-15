@@ -136,7 +136,7 @@ describe('LinkEditorController', function () {
     describe('in single entry mode', function () {
       beforeEach(function () {
         linkParams.multiple = false;
-        stubs.getAll.returns($q.when([entry]));
+        stubs.getAll.returns($q.resolve([entry]));
         createController();
       });
 
@@ -179,7 +179,7 @@ describe('LinkEditorController', function () {
     describe('in multiple entry mode', function () {
       beforeEach(function () {
         linkParams.multiple = true;
-        stubs.getAll.returns($q.when([entry]));
+        stubs.getAll.returns($q.resolve([entry]));
         createController();
       });
 
@@ -252,7 +252,7 @@ describe('LinkEditorController', function () {
     describe('attaches a list of previously loaded entries', function () {
       beforeEach(function() {
         createController();
-        stubs.getAll.returns($q.when([entry, undefined]));
+        stubs.getAll.returns($q.resolve([entry, undefined]));
         scope.links = [
           { sys: { id: 'entry1', linkType: 'Entry', type: 'Link' } },
           { sys: { id: 'entry2', linkType: 'Entry', type: 'Link' } }

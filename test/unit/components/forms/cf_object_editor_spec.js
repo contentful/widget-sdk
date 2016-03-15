@@ -13,7 +13,7 @@ describe('cfObjectEditor', function () {
       $rootScope.otDoc.state.editable = true;
       $rootScope.fieldData = {value: null};
       $rootScope.otSubDoc = {
-        changeValue: sinon.stub().returns($q.when())
+        changeValue: sinon.stub().returns($q.resolve())
       };
       elem = $compile('<div cf-object-editor ng-model="fieldData.value"></div>')($rootScope);
       textarea = elem.find('textarea');

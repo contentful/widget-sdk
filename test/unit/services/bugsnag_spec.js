@@ -16,7 +16,7 @@ describe('Bugsnag service', function(){
 
     this.angularLoad.loadScript = function () {
       this.$window.Bugsnag = this.BugsnagStub;
-      return $q.when();
+      return $q.resolve();
     }.bind(this);
   });
 

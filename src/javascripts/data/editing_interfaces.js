@@ -41,7 +41,7 @@ angular.module('cf.data')
       // We may pass published content type data so we need to check
       // revision
       if (!contentType.sys.revision && !contentType.sys.version) {
-        return $q.when(Transformer.makeDefault(contentType));
+        return $q.resolve(Transformer.makeDefault(contentType));
       }
 
       return spaceEndpoint({

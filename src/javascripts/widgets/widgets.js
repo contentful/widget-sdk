@@ -125,7 +125,7 @@ angular.module('contentful')
     if (_.isEmpty(widgets)) {
       return $q.reject(new Error('Field type '+fieldType+' is not supported by any widget.'));
     } else {
-      return $q.when(widgets);
+      return $q.resolve(widgets);
     }
   }
 

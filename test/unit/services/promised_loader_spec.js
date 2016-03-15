@@ -26,7 +26,7 @@ describe('Promised loader service', function () {
 
   describe('load entities successfully', function() {
     beforeEach(function() {
-      stubs.method.returns($q.when({}));
+      stubs.method.returns($q.resolve({}));
       loader.loadPromise(stubs.method).then(stubs.success, stubs.error);
       loader._loadPromise.invokeDelayed();
       $rootScope.$apply();

@@ -185,7 +185,7 @@ function ($scope, $injector, entity, notify, handlePublishError) {
 
   controller.revertToPrevious = Command.create(function () {
     if(!$scope.otDoc.doc) {
-      return $q.when();
+      return $q.resolve();
     }
     var fields = entryReverter.getPreviousData().fields;
     return setDocFields($scope.otDoc.doc, fields)

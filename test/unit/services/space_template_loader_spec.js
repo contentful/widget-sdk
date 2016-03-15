@@ -33,7 +33,7 @@ describe('Space Template loading service', function () {
   describe('gets template list from contentful', function() {
     beforeEach(function() {
       var self = this;
-      this.client.entries.returns(this.$q.when([
+      this.client.entries.returns(this.$q.resolve([
         {fields: {id: 3}},
         {fields: {id: 2, order: 1}},
         {fields: {id: 1, order: 0}}
@@ -67,10 +67,10 @@ describe('Space Template loading service', function () {
         ]
       };
 
-      this.client.contentTypes.returns(this.$q.when(sourceContentTypes));
-      this.client.entries.returns(this.$q.when(sourceEntries));
-      this.client.assets.returns(this.$q.when(sourceAssets));
-      this.client.editingInterface.returns(this.$q.when(sourceEditingInterfaces[0]));
+      this.client.contentTypes.returns(this.$q.resolve(sourceContentTypes));
+      this.client.entries.returns(this.$q.resolve(sourceEntries));
+      this.client.assets.returns(this.$q.resolve(sourceAssets));
+      this.client.editingInterface.returns(this.$q.resolve(sourceEditingInterfaces[0]));
 
       this.spaceTemplateLoader.getTemplate(templateInfo).then(function (_template_) {
         template = _template_;

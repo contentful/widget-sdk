@@ -88,7 +88,7 @@ angular.module('contentful')
     id: {
       description: 'Unique identifier',
       convert: function (operator, value) {
-        return $q.when({
+        return $q.resolve({
           'sys.id': value
         });
       }

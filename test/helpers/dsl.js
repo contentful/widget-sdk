@@ -5,7 +5,7 @@
  *
  * ~~~js
  * pit('this is async', function () {
- *   return $q.when(false)
+ *   return $q.resolve(false)
  *   .then(function(res) {
  *     expect(res).toBe(true);
  *   });

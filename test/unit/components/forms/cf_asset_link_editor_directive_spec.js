@@ -103,7 +103,7 @@ describe('cfAssetLinkEditor Directive', function () {
       var $rootScope  = this.$inject('$rootScope');
 
       LazyLoader.get = function () {
-        return $q.when({
+        return $q.resolve({
           setKey: _.noop,
           makeDropPane: _.noop
         });
