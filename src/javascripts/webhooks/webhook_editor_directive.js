@@ -73,6 +73,8 @@ angular.module('contentful')
     available: function () { return isTabActive('activity'); }
   });
 
+  $scope.isTabActive = isTabActive;
+
   function isTabActive(name) {
     return $scope.tabController.get(name).active;
   }
