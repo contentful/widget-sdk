@@ -11,9 +11,8 @@ angular.module('contentful').controller('cfVideoInputController', ['$attrs', '$s
   assert.defined($attrs.assetLookup, 'Video Input Directive needs a callback to lookup details about the given asset id');
 
   $scope.videoInput = {
-    isLoading     : false,
-    assetId       : $attrs.value,
-    searchConfig  : $scope.$eval($attrs.searchConfig)
+    isLoading: false,
+    searchConfig: $scope.$eval($attrs.searchConfig)
   };
 
   var valueReference = $attrs.value;

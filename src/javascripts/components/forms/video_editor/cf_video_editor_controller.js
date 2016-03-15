@@ -75,6 +75,7 @@ angular.module('contentful')
 
   function resetEditorInput() {
     $scope.otSubDoc.removeValue();
+    $scope.fieldData.value = undefined;
   }
 
   function resetErrors() {
