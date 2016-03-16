@@ -12,8 +12,8 @@ angular.module('contentful')
     template: JST['webhook_headers'](),
     scope: {headers: '='},
     link: function (scope, el) {
-      scope.focusNewName = function () {
-        el.find('#webhook-new-header-name').focus();
+      scope.focusNewKey = function () {
+        el.find('#webhook-new-header-key').focus();
       };
       scope.focusFirst = function () {
         el.find('input:visible').first().focus();
@@ -25,21 +25,21 @@ angular.module('contentful')
       $scope.addWithEnter = addWithEnter;
       $scope.edit = edit;
       $scope.update = update;
-      $scope.isEditing = function (name) { return $scope.model.existing.editing === name; };
+      $scope.isEditing = isEditing;
       $scope.canUpdate = canUpdate;
       $scope.updateWithEnter = updateWithEnter;
-      $scope.remove = function (name) { delete $scope.headers[name]; };
+      $scope.remove = remove;
 
       function add() {
         var m = $scope.model.fresh;
-        $scope.headers[m.name] = m.value;
+        $scope.headers.push({key: m.key, value: m.value});
         $scope.model.fresh = {};
-        $scope.focusNewName();
+        $scope.focusNewKey();
       }
 
       function cannotAdd() {
         var m = $scope.model.fresh;
-        return !m.name || !m.value || $scope.headers[m.name];
+        return !m.key || !m.value || _.find($scope.headers, {key: m.key});
       }
 
       function addWithEnter($event) {
@@ -48,20 +48,24 @@ angular.module('contentful')
         }
       }
 
-      function edit(name) {
+      function edit(header) {
         var m = $scope.model.existing;
-        m.editing = name;
-        if (name) {
-          m.value = $scope.headers[name];
+        m.editing = header;
+        if (header) {
+          m.value = header.value;
           $timeout($scope.focusFirst);
         }
+      }
+
+      function isEditing(header) {
+        return $scope.model.existing.editing === header;
       }
 
       function update() {
         var m = $scope.model.existing;
         if (m.editing) {
-          $scope.headers[m.editing] = m.value;
-          edit(false);
+          m.editing.value = m.value;
+          edit(null);
         }
       }
 
@@ -74,7 +78,14 @@ angular.module('contentful')
         if ($event.which === 13 && canUpdate()) {
           update();
         } else if ($event.which === 27) {
-          edit(false);
+          edit(null);
+        }
+      }
+
+      function remove(header) {
+        var index = $scope.headers.indexOf(header);
+        if (index > -1) {
+          $scope.headers.splice(index, 1);
         }
       }
     }]
