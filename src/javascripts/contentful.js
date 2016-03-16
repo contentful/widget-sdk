@@ -44,7 +44,6 @@ angular.module('contentful', [
   $injector.get('navigation/stateChangeHandlers').setup();
   $injector.get('contextMenu').init();
   $injector.get('notification').setupClearMessageHooks();
-  $injector.get('TrialWatcher').init();
-  $injector.get('activationEmailResendController').init();
   $injector.get('states').loadAll();
+  $injector.get('dialogsInitController').init();
 }]);

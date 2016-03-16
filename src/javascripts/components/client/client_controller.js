@@ -19,7 +19,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var enforcements       = $injector.get('enforcements');
   var revision           = $injector.get('revision');
   var ReloadNotification = $injector.get('ReloadNotification');
-  var TheStore           = $injector.get('TheStore');
   var OrganizationList   = $injector.get('OrganizationList');
   var spaceTools         = $injector.get('spaceTools');
 
@@ -54,8 +53,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
 
   function initClient() {
-    tokenStore.refresh()
-    .then(showOnboardingIfNecessary);
+    tokenStore.refresh();
 
     setTimeout(newVersionCheck, 5000);
 
@@ -166,14 +164,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     });
   }
 
-  function showOnboardingIfNecessary() {
-    var seenOnboarding = TheStore.get('seenOnboarding');
-    var signInCount = $scope.user.signInCount;
-    if (signInCount === 1 && !seenOnboarding) {
-      showOnboardingModal();
-    }
-  }
-
   function showCreateSpaceDialog() {
     analytics.track('Clicked Create-Space');
     modalDialog.open({
@@ -183,30 +173,14 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       persistOnNavigation: true
     })
     .promise
-    .then(handleTemplateCreation)
+    .then(handleSpaceCreationSuccess)
     .catch(function() {
       analytics.track('Closed Space Template Selection Modal');
       refreshContentTypes();
     });
   }
 
-
-  function showOnboardingModal() {
-    modalDialog.open({
-      title: 'Onboarding', // Not displayed, just for analytics
-      template: 'onboarding_dialog',
-      persistOnNavigation: true,
-      backgroundClose: false,
-      ignoreEsc: true,
-      scopeData: {
-        isOnboarding: true
-      }
-    })
-    .promise
-    .then(handleTemplateCreation);
-  }
-
-  function handleTemplateCreation(template) {
+  function handleSpaceCreationSuccess (template) {
     if (template) {
       analytics.track('Created Space Template', {template: template.name});
       $rootScope.$broadcast('reloadEntries');
@@ -215,7 +189,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function refreshContentTypes() {
-    return $timeout(function () {
+    $timeout(function () {
       spaceContext.refreshContentTypes();
     }, 1000);
   }

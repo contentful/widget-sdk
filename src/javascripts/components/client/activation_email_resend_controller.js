@@ -21,7 +21,11 @@ angular.module('contentful')
     LAST_REMINDER_STORE_KEY: LAST_REMINDER_STORE_KEY
   };
 
-  function init () {
+  function init (options) {
+    options = options || {};
+    if (options.skipOnce) { // Wait 24h before showing the dialog.
+      storeDialogLastShownTimestamp();
+    }
     $rootScope.$watch(function () {
       return dotty.get(authentication, 'tokenLookup.sys.createdBy');
     }, watcher);
@@ -32,24 +36,14 @@ angular.module('contentful')
     if (!user) {
       return;
     }
-
-    // TODO: Enable controller logic to display the modal again after solving issues
-    //       with Onboarding modal and https://contentful.tpondemand.com/entity/8663
-    var DISABLE_ACTIVATION_EMAIL_RESEND_MODAL = true;
-    if (DISABLE_ACTIVATION_EMAIL_RESEND_MODAL) {
-      return;
-    }
-
-    var msUntilReopen = getMillisecondsUntilDialogCanBeReopened();
-
     if (user.confirmed === false && user.email) {
-      if (msUntilReopen <= 0) {
+      if (getMillisecondsUntilDialogCanBeReopened() <= 0) {
         showDialog(user.email);
         storeDialogLastShownTimestamp();
-        msUntilReopen = HOUR_IN_MS * HOURS_BEFORE_REOPEN_DIALOG;
       }
       // Makes sure to show the dialog again if user keeps the tab open.
-      setTimeout(watcher.bind(null, user), msUntilReopen);
+      setTimeout(watcher.bind(null, user),
+        getMillisecondsUntilDialogCanBeReopened());
     } else {
       TheStore.remove(LAST_REMINDER_STORE_KEY);
     }
@@ -59,6 +53,7 @@ angular.module('contentful')
     var dialog = modalDialog.open({
       title: 'Please confirm your email address',
       template: 'activation_email_resend_dialog',
+      persistOnNavigation: true,
       confirmLabel: 'OK, I got it',
       cancelLabel: false,
       scopeData: {
@@ -108,7 +103,7 @@ angular.module('contentful')
   }
 
   function getMillisecondsUntilDialogCanBeReopened () {
-    var lastMoment = getDialogLastShownTimestamp();
+    var lastMoment = fetchDialogLastShownTimestamp();
     if (lastMoment) {
       var msSinceLastShown = moment().diff(lastMoment, 'milliseconds');
       // Use Math.abs() since the user might have messed around with the clock and
@@ -120,7 +115,7 @@ angular.module('contentful')
     }
   }
 
-  function getDialogLastShownTimestamp () {
+  function fetchDialogLastShownTimestamp () {
     var lastUnixTimestamp = TheStore.get(LAST_REMINDER_STORE_KEY);
     if (lastUnixTimestamp) {
       var lastShown = moment.unix(lastUnixTimestamp);

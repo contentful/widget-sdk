@@ -13,7 +13,6 @@ angular.module('contentful')
 
   var controller = this;
   var analytics  = $injector.get('analytics');
-  var TheStore   = $injector.get('TheStore');
 
   // Should the space creation step be shown?
   $attrs.$observe('showCreateSpace', function(showCreateSpace) {
@@ -43,7 +42,6 @@ angular.module('contentful')
   controller.skipSelection = function() {
     analytics.track('Skipped Persona Selection');
     $scope.$emit('skipPersonaSelection');
-    trackSeenStatus();
   };
 
   controller.submitPersonaSelection = function() {
@@ -52,7 +50,6 @@ angular.module('contentful')
       customPersonaName: controller.customPersonaName
     });
     $scope.$emit('submitPersonaSelection');
-    trackSeenStatus();
   };
 
   function getPersonaOptions() {
@@ -102,10 +99,6 @@ angular.module('contentful')
       other: 'Other'
     };
     return map[personaName];
-  }
-
-  function trackSeenStatus() {
-    TheStore.set('seenOnboarding', true);
   }
 
 }]);
