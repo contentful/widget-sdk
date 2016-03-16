@@ -17,23 +17,68 @@ angular.module('contentful')
 
 .controller('WebhookEditorController', ['$scope', '$injector', function ($scope, $injector) {
 
+  var $q               = $injector.get('$q');
+  var $controller      = $injector.get('$controller');
+  var Command          = $injector.get('command');
+  var modalDialog      = $injector.get('modalDialog');
+  var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
+  var spaceContext     = $injector.get('spaceContext');
+  var webhookRepo      = $injector.get('WebhookRepository').getInstance(spaceContext.space);
+
+  var activityController = $controller('WebhookEditorController/activity', {
+    $scope: $scope, repo: webhookRepo
+  });
+
+  var settingsController = $controller('WebhookEditorController/settings', {
+    $scope: $scope, repo: webhookRepo
+  });
+
+  $scope.context.requestLeaveConfirmation = leaveConfirmator(settingsController.save);
+
+  $scope.save = Command.create(settingsController.save, {
+    disabled: function () { return !$scope.context.dirty; },
+    available: function () { return isTabActive('settings'); }
+  });
+
+  $scope.openRemovalDialog = Command.create(openRemovalDialog, {
+    available: function () { return !$scope.context.isNew && isTabActive('settings'); }
+  });
+
+  $scope.refreshLogs = Command.create(activityController.refresh, {
+    available: function () { return isTabActive('activity'); }
+  });
+
+  function isTabActive(name) {
+    return $scope.tabController.get(name).active;
+  }
+
+  function openRemovalDialog() {
+    modalDialog.open({
+      ignoreEsc: true,
+      backgroundClose: false,
+      template: 'webhook_removal_confirm_dialog',
+      scopeData: {
+        webhook: $scope.webhook,
+        remove: Command.create(settingsController.remove)
+      }
+    });
+
+    return $q.resolve();
+  }
+}])
+
+.controller('WebhookEditorController/settings', ['$scope', 'repo', '$injector', function ($scope, repo, $injector) {
+
   var $q                 = $injector.get('$q');
-  var Command            = $injector.get('command');
   var $state             = $injector.get('$state');
-  var modalDialog        = $injector.get('modalDialog');
-  var leaveConfirmator   = $injector.get('navigation/confirmLeaveEditor');
-  var spaceContext       = $injector.get('spaceContext');
-  var webhookRepo        = $injector.get('WebhookRepository').getInstance(spaceContext.space);
   var notification       = $injector.get('notification');
   var logger             = $injector.get('logger');
   var ReloadNotification = $injector.get('ReloadNotification');
 
-  var PER_PAGE = 30;
-
   var touched = getInitialTouchCount();
 
-  $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
-  $scope.activity = {loading: $scope.context.isNew ? false : fetchActivity()};
+  this.save = save;
+  this.remove = remove;
 
   $scope.$watch('webhook', function (webhook, prev) {
     touched += 1;
@@ -45,34 +90,9 @@ angular.module('contentful')
     $scope.context.dirty = touched > 0;
   });
 
-  $scope.$watch('activity.page', function (page) {
-    if (_.isNumber(page) && $scope.activity.items) {
-      $scope.activity.visible = $scope.activity.items.slice(page*PER_PAGE, (page+1)*PER_PAGE);
-    } else {
-      $scope.activity.visible = null;
-    }
-  });
-
-  $scope.save = Command.create(save, {
-    disabled: function () { return !$scope.context.dirty; },
-    available: function () { return isTabActive('settings'); }
-  });
-
-  $scope.openRemovalDialog = Command.create(openRemovalDialog, {
-    available: function () { return !$scope.context.isNew && isTabActive('settings'); }
-  });
-
-  $scope.refreshLogs = Command.create(refreshActivity, {
-    available: function () { return isTabActive('activity'); }
-  });
-
-  function isTabActive(name) {
-    return $scope.tabController.get(name).active;
-  }
-
   function save() {
     prepareCredentials();
-    return webhookRepo.save($scope.webhook).then(handleWebhook, handleError);
+    return repo.save($scope.webhook).then(handleWebhook, handleError);
   }
 
   function handleWebhook(webhook) {
@@ -122,22 +142,8 @@ angular.module('contentful')
     }
   }
 
-  function openRemovalDialog() {
-    modalDialog.open({
-      ignoreEsc: true,
-      backgroundClose: false,
-      template: 'webhook_removal_confirm_dialog',
-      scopeData: {
-        webhook: $scope.webhook,
-        remove: Command.create(remove)
-      }
-    });
-
-    return $q.resolve();
-  }
-
   function remove() {
-    return webhookRepo.remove($scope.webhook).then(function () {
+    return repo.remove($scope.webhook).then(function () {
       $scope.context.dirty = false;
       notification.info('Webhook "' + $scope.webhook.name + '" deleted successfully.');
       return $state.go('spaces.detail.settings.webhooks.list');
@@ -165,6 +171,24 @@ angular.module('contentful')
   function getInitialTouchCount() {
     return $scope.context.isNew ? 0 : -1;
   }
+}])
+
+.controller('WebhookEditorController/activity', ['$scope', 'repo', function ($scope, repo) {
+
+  var PER_PAGE = 30;
+  var items = [];
+
+  this.refresh = refreshActivity;
+  $scope.activity = {};
+  if (!$scope.context.isNew) { refreshActivity(); }
+
+  $scope.$watch('activity.page', function (page) {
+    if (_.isNumber(page) && _.isArray(items)) {
+      $scope.activity.visible = items.slice(page*PER_PAGE, (page+1)*PER_PAGE);
+    } else {
+      $scope.activity.visible = null;
+    }
+  });
 
   function refreshActivity() {
     $scope.activity.page = null;
@@ -173,9 +197,8 @@ angular.module('contentful')
   }
 
   function fetchActivity() {
-    return webhookRepo.logs.getCalls($scope.webhook.sys.id)
-    .then(function (res) {
-      $scope.activity.items = res.items;
+    return repo.logs.getCalls($scope.webhook.sys.id).then(function (res) {
+      items = res.items;
       $scope.activity.pages = _.range(0, Math.ceil(res.items.length / PER_PAGE));
       $scope.activity.loading = false;
       $scope.activity.page = 0;
