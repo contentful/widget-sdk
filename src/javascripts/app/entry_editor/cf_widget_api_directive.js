@@ -48,7 +48,16 @@ angular.module('contentful')
       }
     },
     setString: function (value) {
-      return $scope.otSubDoc.changeString(value);
+      if (value !== this.getValue()) {
+        var stringChangedPromise = $scope.otSubDoc.changeString(value);
+
+        // TODO(mudit/thomas): Super inefficient
+        // Fix this
+        $scope.otDoc.updateEntityData();
+        return stringChangedPromise;
+      } else {
+        return $q.resolve(value);
+      }
     },
     getValue: function () {
       return $scope.otSubDoc.getValue();

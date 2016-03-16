@@ -6,11 +6,11 @@ angular.module('contentful')
 
   return {
     scope: {},
-    require: ['^cfWidgetApi'],
+    require: '^cfWidgetApi',
     restrict: 'E',
     template: JST['cf_single_line_editor'](),
-    link: function (scope, $el, attributes, controllers) {
-      var field = controllers[0].field;
+    link: function (scope, $el, attributes, widgetApi) {
+      var field = widgetApi.field;
       var constraints = _(field.validations).pluck('size').filter().first() || {};
       var $inputEl = $el.children('input');
       var rawInputEl = $inputEl.get(0);
@@ -36,10 +36,8 @@ angular.module('contentful')
       $inputEl.on('input change', function () {
         var val = $inputEl.val();
 
+        field.setString(val);
         updateCharCount(val);
-        if (val !== field.getValue()) {
-          field.setString(val);
-        }
       });
 
       function updateInputValue (newValue) {
