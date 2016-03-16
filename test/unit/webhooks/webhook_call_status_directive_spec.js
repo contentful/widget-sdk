@@ -10,8 +10,8 @@ describe('Webhook Call Status directive', function () {
       this.element = this.$compile('<cf-webhook-call-status call="call" />', data);
     }.bind(this);
 
-    this.testClass = function (expected) {
-      expect(this.element.find('.webhook-call__status-indicator').hasClass(expected)).toBe(true);
+    this.testStatus = function (expected) {
+      expect(this.element.find('.webhook-call__status-indicator').attr('data-status')).toBe(expected);
     }.bind(this);
 
     this.testContent = function (index, expected) {
@@ -21,27 +21,27 @@ describe('Webhook Call Status directive', function () {
 
   it('shows green light when code < 300', function () {
     this.compile(200);
-    this.testClass('x--ok');
+    this.testStatus('success');
   });
 
   it('shows yellow light when code >= 300 and code < 400', function () {
     this.compile(301);
-    this.testClass('x--warn');
+    this.testStatus('warning');
   });
 
   it('shows red light if code >= 400', function () {
     this.compile(500);
-    this.testClass('x--fail');
+    this.testStatus('failure');
   });
 
   it('shows red light if has some error', function () {
     this.compile(undefined, 'TimeoutError');
-    this.testClass('x--fail');
+    this.testStatus('failure');
   });
 
   it('shows red light if has both invalid code and some error', function () {
     this.compile(400, 'TimeoutError');
-    this.testClass('x--fail');
+    this.testStatus('failure');
   });
 
   it('shows a label for errors', function () {

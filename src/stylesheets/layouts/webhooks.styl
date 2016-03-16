@@ -66,11 +66,11 @@
   height: 12px
   border-radius: 6px
   margin-right: 6px
-  &.x--ok
+  &[data-status="success"]
     background: $colors.green-dark
-  &.x--warn
+  &[data-status="warning"]
     background: $colors.orange-dark
-  &.x--fail
+  &[data-status="failure"]
     background: $colors.red-dark
 
 .webhook-header, .webhook-new-header

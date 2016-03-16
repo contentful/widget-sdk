@@ -12,21 +12,20 @@ angular.module('contentful').directive('cfWebhookHealth', ['$injector', function
     scope: {webhookId: '='},
     controller: ['$scope', 'spaceContext', function ($scope, spaceContext) {
       var repo = WebhookRepository.getInstance(spaceContext.space);
-      $scope.status = 'loading';
+      $scope.state = 'loading';
 
-      repo.logs.getHealth($scope.webhookId)
-      .then(function (data) {
+      repo.logs.getHealth($scope.webhookId).then(function (data) {
         var percentage = Math.round(data.calls.healthy/data.calls.total*100);
 
         if (_.isNumber(percentage) && percentage >= 0 && percentage <= 100) {
-          var cssClass      = percentage > THRESHOLD.WARN ? 'x--warn' : 'x--fail';
-          $scope.cssClass   = percentage > THRESHOLD.OK   ? 'x--ok'   : cssClass;
+          var status       = percentage > THRESHOLD.WARN ? 'warning' : 'failure';
+          $scope.status    = percentage > THRESHOLD.OK   ? 'success' : status;
           $scope.percentage = percentage;
-          $scope.status     = 'ready';
+          $scope.state      = 'ready';
         } else { noData(); }
       }, noData);
 
-      function noData() { $scope.status = 'nodata'; }
+      function noData() { $scope.state = 'nodata'; }
     }]
   };
 }]);

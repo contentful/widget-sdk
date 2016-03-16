@@ -6,25 +6,22 @@ describe('Webhook Health directive', function () {
     module('contentful/test');
 
     this.getStub = sinon.stub().resolves({calls: {}});
-    this.endpointStub = sinon.stub().returns({get: this.getStub});
-
-    this.$inject('spaceContext').space = {endpoint: this.endpointStub};
+    this.$inject('WebhookRepository').getInstance = _.constant({logs: {getHealth: this.getStub}});
 
     this.compile = function (webhookId) {
       var data = {webhook: {id: 'whid' || webhookId}};
       this.element = this.$compile('<cf-webhook-health webhook-id="webhook.id" />', data);
     }.bind(this);
 
-    this.testClass = function (expected) {
+    this.testStatus = function (expected) {
       this.compile();
-      expect(this.element.find('.webhook-call__status-indicator').hasClass(expected)).toBe(true);
+      expect(this.element.find('.webhook-call__status-indicator').attr('data-status')).toBe(expected);
     }.bind(this);
   });
 
   it('fetches health status when mounted', function () {
     this.compile();
-    sinon.assert.calledOnce(this.endpointStub.withArgs('webhooks/whid/health'));
-    sinon.assert.calledOnce(this.getStub);
+    sinon.assert.calledOnce(this.getStub.withArgs('whid'));
   });
 
   it('calculates percentage', function () {
@@ -35,16 +32,16 @@ describe('Webhook Health directive', function () {
 
   it('shows red light', function () {
     this.getStub.resolves({calls: {total: 2, healthy: 1}});
-    this.testClass('x--fail');
+    this.testStatus('failure');
   });
 
   it('shows yellow light', function () {
     this.getStub.resolves({calls: {total: 4, healthy: 3}});
-    this.testClass('x--warn');
+    this.testStatus('warning');
   });
 
   it('shows green light', function () {
     this.getStub.resolves({calls: {total: 2, healthy: 2}});
-    this.testClass('x--ok');
+    this.testStatus('success');
   });
 });
