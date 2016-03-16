@@ -22,6 +22,9 @@ angular.module('contentful')
         {value: false, label: settings.falseLabel || 'No'},
       ];
       selectionController.create(widgetApi, scope, options);
+
+      var field = widgetApi.field;
+      scope.radioGroupName = ['entity', field.id, field.locale].join('.');
     }
   };
 

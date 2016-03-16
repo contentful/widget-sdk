@@ -73,6 +73,16 @@ describe('cfRadioEditor Directive', function () {
     expect(input.prop('disabled')).toBe(true);
   });
 
+  it('assigns name attribute to input', function () {
+    fieldApi.id = 'FID';
+    fieldApi.locale = 'en';
+    fieldApi.validations = [{in: ['a', 'b', 'c']}];
+    var input = this.compile().find('input');
+    input.each(function () {
+      expect(this.getAttribute('name')).toEqual('entity.FID.en');
+    });
+  });
+
 
   describe('selecting an option', function() {
     beforeEach(function() {

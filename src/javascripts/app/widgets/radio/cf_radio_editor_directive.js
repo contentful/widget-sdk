@@ -17,7 +17,7 @@ angular.module('cf.app')
       selectionController.createFromValidations(widgetApi, scope);
 
       var field = widgetApi.field;
-      scope.radioGroupName = ['entity', 'radio', field.id, field.locale].join('-');
+      scope.radioGroupName = ['entity', field.id, field.locale].join('.');
     }
   };
 }]);
