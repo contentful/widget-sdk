@@ -41,20 +41,9 @@ angular.module('contentful', [
     return;
   }
 
-  var $rootScope = $injector.get('$rootScope');
-  var activationEmailResendController = $injector.get('activationEmailResendController');
-
-  // Make sure activation email resend dialog is not shown together with onboarding.
-  // After onboarding wait 24h before reminding the user about the activation email.
-  $rootScope.$on('cfOmitOnboarding',
-    activationEmailResendController.init);
-  $rootScope.$on('cfAfterOnboarding',
-    activationEmailResendController.init.bind(null, { skipOnce: true }));
-
   $injector.get('navigation/stateChangeHandlers').setup();
   $injector.get('contextMenu').init();
   $injector.get('notification').setupClearMessageHooks();
-  $injector.get('onboardingController').init();
-  $injector.get('TrialWatcher').init();
   $injector.get('states').loadAll();
+  $injector.get('dialogsInitController').init();
 }]);
