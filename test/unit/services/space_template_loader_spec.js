@@ -332,31 +332,8 @@ describe('Space Template loading service', function () {
     });
 
     it('editing interface is formatted correctly', function() {
-      expect(template.editingInterfaces[0]).toEqualObj({
-        title: 'Default',
-        contentTypeId: '68VvdXqINiM0MCoqwa8CQC',
-        widgets: [
-          {
-            id: 'ljZpnZHxIk2voQXaz8h83ggfM3zPgayp',
-            fieldId: 'ljZpnZHxIk2voQXa',
-            widgetId: 'multipleLine',
-            widgetParams: {}
-          }
-        ],
-        sys: {
-          id: 'default',
-          type: 'EditorInterface',
-          contentType: {
-            sys: {
-              type: 'Link',
-              linkType: 'ContentType',
-              id: '68VvdXqINiM0MCoqwa8CQC'
-            }
-          },
-        }
-      });
+      expect(template.editingInterfaces[0]).toEqualObj(sourceEditingInterfaces[0]);
     });
-
   });
 
   sourceContentTypes = [
@@ -437,51 +414,12 @@ describe('Space Template loading service', function () {
 
   sourceEditingInterfaces = [
     {
-      'title': 'Default',
-      'contentTypeId': '68VvdXqINiM0MCoqwa8CQC',
-      'widgets': [
+      'controls': [
         {
-          'id': 'ljZpnZHxIk2voQXaz8h83ggfM3zPgayp',
           'fieldId': 'ljZpnZHxIk2voQXa',
           'widgetId': 'multipleLine',
-          'widgetParams': {}
         }
       ],
-      'sys': {
-        'id': 'default',
-        'type': 'EditorInterface',
-        'version': 2,
-        'createdAt': '2015-01-07T13:57:01.414Z',
-        'createdBy': {
-          'sys': {
-            'type': 'Link',
-            'linkType': 'User',
-            'id': '2u3AlPOpmEvvt47kzdCclj'
-          }
-        },
-        'space': {
-          'sys': {
-            'type': 'Link',
-            'linkType': 'Space',
-            'id': '4o9zrkqge2wv'
-          }
-        },
-        'contentType': {
-          'sys': {
-            'type': 'Link',
-            'linkType': 'ContentType',
-            'id': '68VvdXqINiM0MCoqwa8CQC'
-          }
-        },
-        'updatedAt': '2015-01-07T14:05:19.146Z',
-        'updatedBy': {
-          'sys': {
-            'type': 'Link',
-            'linkType': 'User',
-            'id': '2u3AlPOpmEvvt47kzdCclj'
-          }
-        }
-      }
     }
   ];
 
