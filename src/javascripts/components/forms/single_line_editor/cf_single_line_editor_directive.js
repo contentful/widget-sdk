@@ -1,6 +1,9 @@
 'use strict';
 
-angular.module('contentful').directive('cfSingleLineEditor', function () {
+angular.module('contentful')
+.directive('cfSingleLineEditor', ['$injector', 'cfUiCaretHelper', function ($injector, cfUiCaretHelper) {
+  var getPreservedCaretPosition = cfUiCaretHelper.getPreservedCaretPosition;
+
   return {
     scope: {},
     require: ['^cfWidgetApi'],
@@ -46,36 +49,10 @@ angular.module('contentful').directive('cfSingleLineEditor', function () {
           return;
         }
 
-        // sharejs sets newValue to `null` when it's "empty"
-        // This makes sure newValue.length doesn't blow up
-        newValue = newValue || '';
-
-        var commonStart = 0;
-        var caretPosition = rawInputEl.selectionStart;
-        var noOfCharsModified = newValue.length - currentValue.length;
-
-        /**
-         * If newValue.length - currentValue.length is -ve, chars were deleted and vice-versa.
-         * Find the first index at which the characters in two strings diverge (commonStart)
-         * If commonStart >= current caret position, preserve current caret position
-         * If commonStart < current caret position
-         *   Get numbers of chars modified (abs(currentValue.length - newValue.length))
-         *   If operation was delete, move caret back by "chars modified" places
-         *   If operation was append, move caret forward by "chars modified" places
-         */
-        if (!newValue) {
-          caretPosition = 0;
-        } else {
-          while(currentValue.charAt(commonStart) === newValue.charAt(commonStart)) {
-            commonStart++;
-          }
-          if (commonStart <= caretPosition) {
-            caretPosition += noOfCharsModified;
-          }
-        }
+        var newCaretPosition = getPreservedCaretPosition(rawInputEl.selectionStart, currentValue, newValue);
 
         $inputEl.val(newValue);
-        rawInputEl.selectionStart = rawInputEl.selectionEnd = caretPosition;
+        rawInputEl.selectionStart = rawInputEl.selectionEnd = newCaretPosition;
         updateCharCount(newValue);
       }
 
@@ -113,4 +90,4 @@ angular.module('contentful').directive('cfSingleLineEditor', function () {
       return '';
     }
   }
-});
+}]);
