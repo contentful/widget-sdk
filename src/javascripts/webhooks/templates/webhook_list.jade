@@ -12,28 +12,28 @@ header.workbench-header
   table.result-list.main-results.main-header
     thead
       tr
-        th.cell-wh-name Webhook name
-        th.cell-url URL
-        th.cell-health % of successful calls
-        th.cell-http-basic Using HTTP Basic Auth?
-        th.cell-actions Actions
+        th Webhook name
+        th URL
+        th % of successful calls
+        th Using HTTP Basic Auth?
+        th Actions
   .main-results-wrapper
     table.result-list.main-results
       tbody
         tr(ng-repeat="webhook in webhooks track by webhook.sys.id"
           ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail({ webhookId: webhook.sys.id })'"
           ui-sref="{{ entityNavState }}")
-          td.cell-wh-name
+          td
             a.entity-list-link(ui-sref="{{ entityNavState }}") {{ webhook.name }}
-          td.cell-url
+          td
             a.entity-list-link(ui-sref="{{ entityNavState }}") {{ webhook.url }}
-          td.cell-health
+          td
             a.entity-list-link(ui-sref="{{ entityNavState }}")
               cf-webhook-health(webhook-id="webhook.sys.id")
-          td.cell-http-basic
+          td
             a.entity-list-link(ui-sref="{{ entityNavState }}")
               | {{ webhook.httpBasicUsername ? 'yes' : 'no' }}
-          td.cell-actions
+          td
             a(ui-sref="{{ entityNavState }}") View details
         tr(ng-show="webhooks.length < 1")
           td(colspan="5")
