@@ -17,74 +17,29 @@ header.workbench-header
     li(ui-tab="settings") Webhook settings
     li(ui-tab="activity") Activity log
 
-.workbench-main
+.workbench-main(ui-tabpanel="settings")
   .workbench-main__content
-    div(ui-tabpanel="settings")
-      .workbench-main__middle-content
-        .cfnext-form__field
-          label(for="webhook-name") Name (required):
-          input.cfnext-form__input--full-size(id="webhook-name" ng-model="webhook.name")
-        .cfnext-form__field
-          label(for="webhook-url") URL (required):
-          input.cfnext-form__input--full-size(id="webhook-url" ng-model="webhook.url")
-        .cfnext-form__field
-          label(for="webhook-http-basic-user") HTTP Basic Auth username:
-          input.cfnext-form__input--full-size(id="webhook-http-basic-user" ng-model="webhook.httpBasicUsername")
-        .cfnext-form__field
-          label(for="webhook-http-basic-password") HTTP Basic Auth password:
-          input.cfnext-form__input--full-size(
-            id="webhook-http-basic-password" type="password"
-            placeholder="{{ (webhook.httpBasicUsername && apiHasAuthCredentials && 'use previously provided password') || '' }}"
-            ng-model="webhook.httpBasicPassword")
-
-        strong Custom headers:
+    .workbench-main__middle-content
+      .cfnext-form__field
+        label(for="webhook-name") Name (required):
+        input.cfnext-form__input--full-size(id="webhook-name" ng-model="webhook.name")
+      .cfnext-form__field
+        label(for="webhook-url") URL (required):
+        input.cfnext-form__input--full-size(id="webhook-url" ng-model="webhook.url")
+      .cfnext-form__field
+        label(for="webhook-http-basic-user") HTTP Basic Auth username:
+        input.cfnext-form__input--full-size(id="webhook-http-basic-user" ng-model="webhook.httpBasicUsername")
+      .cfnext-form__field
+        label(for="webhook-http-basic-password") HTTP Basic Auth password:
+        input.cfnext-form__input--full-size(
+          id="webhook-http-basic-password" type="password"
+          placeholder="{{ (webhook.httpBasicUsername && apiHasAuthCredentials && 'use previously provided password') || '' }}"
+          ng-model="webhook.httpBasicPassword")
+      .cfnext-form__field
+        label Custom headers:
         cf-webhook-headers(headers="webhook.headers")
 
-    div(ui-tabpanel="activity")
-      table.result-list.main-results.main-header
-        thead
-          tr
-            th.cell-time Webhook called at
-            th.cell-result Call result
-            th.cell-actions Actions
-      .main-results-wrapper
-        table.result-list.main-results
-          tbody
-            tr(
-              ng-show="activity.visible && !activity.loading"
-              ng-repeat="log in activity.visible track by log.sys.id"
-              ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail.call({ callId: log.sys.id })'"
-              ui-sref="{{ entityNavState }}")
-              td.cell-time
-                a.entity-list-link(ui-sref="{{entityNavState}}") {{ log.requestAt }}
-              td.cell-result
-                a.entity-list-link(ui-sref="{{ entityNavState }}")
-                  cf-webhook-call-status(call="log")
-              td.cell-actions
-                a(ui-sref="{{ entityNavState }}") View details
-            tr(ng-show="activity.visible.length < 1")
-              td(colspan="3")
-                a.entity-list-link No webhook calls yet!
-            tr(ng-show="activity.loading")
-              td(colspan="3")
-                a.entity-list-link Loading logs...
-
-      .webhook-calls__paginator(ng-show="!activity.loading && activity.pages.length > 1")
-        a.webhook-calls__paginator-item(
-          ng-show="activity.page > 0"
-          href="" ng-click="activity.page = activity.page-1")
-          | &laquo;
-        a.webhook-calls__paginator-item(
-          ng-class="{'x--active': activity.page === page}"
-          ng-repeat="page in activity.pages track by page"
-          href="" ng-click="activity.page = page")
-          | {{ page+1 }}
-        a.webhook-calls__paginator-item(
-          ng-show="activity.page < activity.pages.length-1"
-          href="" ng-click="activity.page = activity.page+1")
-          | &raquo;
-
-  .workbench-main__entity-sidebar(ng-show="isTabActive('settings')")
+  .workbench-main__entity-sidebar
     .entity-sidebar
       h2.entity-sidebar__heading Webhook URL requirements
       p
@@ -104,3 +59,48 @@ header.workbench-header
         | If in order to configure webhooks in your network you need more information about their IP range visit&#32;
         a(href="http://docs.aws.amazon.com/general/latest/gr/aws-ip-ranges.html" target="_blank") this page
         | .
+
+.workbench-main(ui-tabpanel="activity")
+  .workbench-main__content
+    table.result-list.main-results.main-header
+      thead
+        tr
+          th.cell-time Webhook called at
+          th.cell-result Call result
+          th.cell-actions Actions
+    .main-results-wrapper
+      table.result-list.main-results
+        tbody
+          tr(
+            ng-show="activity.visible && !activity.loading"
+            ng-repeat="log in activity.visible track by log.sys.id"
+            ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail.call({ callId: log.sys.id })'"
+            ui-sref="{{ entityNavState }}")
+            td.cell-time
+              a.entity-list-link(ui-sref="{{entityNavState}}") {{ log.requestAt }}
+            td.cell-result
+              a.entity-list-link(ui-sref="{{ entityNavState }}")
+                cf-webhook-call-status(call="log")
+            td.cell-actions
+              a(ui-sref="{{ entityNavState }}") View details
+          tr(ng-show="activity.visible.length < 1")
+            td(colspan="3")
+              a.entity-list-link No webhook calls yet!
+          tr(ng-show="activity.loading")
+            td(colspan="3")
+              a.entity-list-link Loading logs...
+
+    .webhook-calls__paginator(ng-show="!activity.loading && activity.pages.length > 1")
+      a.webhook-calls__paginator-item(
+        ng-show="activity.page > 0"
+        href="" ng-click="activity.page = activity.page-1")
+        | &laquo;
+      a.webhook-calls__paginator-item(
+        ng-class="{'x--active': activity.page === page}"
+        ng-repeat="page in activity.pages track by page"
+        href="" ng-click="activity.page = page")
+        | {{ page+1 }}
+      a.webhook-calls__paginator-item(
+        ng-show="activity.page < activity.pages.length-1"
+        href="" ng-click="activity.page = activity.page+1")
+        | &raquo;

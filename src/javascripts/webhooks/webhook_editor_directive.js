@@ -33,7 +33,7 @@ angular.module('contentful')
   var touched = getInitialTouchCount();
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
-  $scope.activity = {loading: false};
+  $scope.activity = {loading: $scope.context.isNew ? false : fetchActivity()};
 
   $scope.$watch('webhook', function (webhook, prev) {
     touched += 1;
@@ -43,12 +43,6 @@ angular.module('contentful')
 
   $scope.$watch(function () { return touched; }, function () {
     $scope.context.dirty = touched > 0;
-  });
-
-  $scope.$watch('context.isNew', function (isNew) {
-    if (!isNew && !$scope.activity.items && !$scope.activity.loading) {
-      $scope.activity.loading = fetchActivity();
-    }
   });
 
   $scope.$watch('activity.page', function (page) {
@@ -71,8 +65,6 @@ angular.module('contentful')
   $scope.refreshLogs = Command.create(refreshActivity, {
     available: function () { return isTabActive('activity'); }
   });
-
-  $scope.isTabActive = isTabActive;
 
   function isTabActive(name) {
     return $scope.tabController.get(name).active;
