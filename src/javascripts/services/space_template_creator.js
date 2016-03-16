@@ -159,12 +159,17 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       var handlers = this.makeHandlers(editingInterface, 'create', 'EditingInterface');
       if(handlers.itemWasHandled) return $q.when(handlers.response);
       var space = this.spaceContext.space;
-      return space.getContentType(editingInterface.contentTypeId)
-      .then(function(contentType) {
-        return contentType.createEditingInterface(editingInterface);
-      })
-      .then(handlers.success)
-      .catch(handlers.error);
+      var contentTypeId = dotty.get(editingInterface, ['sys', 'contentType', 'sys', 'id']);
+      if (contentTypeId) {
+        return space.getContentType(contentTypeId)
+        .then(function(contentType) {
+          return contentType.createEditingInterface(editingInterface);
+        })
+        .then(handlers.success)
+        .catch(handlers.error);
+      } else {
+        return $q.resolve();
+      }
     },
 
     createAsset: function(asset) {
