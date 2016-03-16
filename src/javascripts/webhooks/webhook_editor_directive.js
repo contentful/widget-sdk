@@ -23,8 +23,7 @@ angular.module('contentful')
   var modalDialog        = $injector.get('modalDialog');
   var leaveConfirmator   = $injector.get('navigation/confirmLeaveEditor');
   var spaceContext       = $injector.get('spaceContext');
-  var space              = spaceContext.space;
-  var webhookRepo        = $injector.get('WebhookRepository').getInstance(space);
+  var webhookRepo        = $injector.get('WebhookRepository').getInstance(spaceContext.space);
   var notification       = $injector.get('notification');
   var logger             = $injector.get('logger');
   var ReloadNotification = $injector.get('ReloadNotification');
@@ -182,8 +181,8 @@ angular.module('contentful')
   }
 
   function fetchActivity() {
-    return space.endpoint('webhooks/' + $scope.webhook.sys.id + '/calls?limit=500')
-    .get().then(function (res) {
+    return webhookRepo.logs.getCalls($scope.webhook.sys.id)
+    .then(function (res) {
       $scope.activity.items = res.items;
       $scope.activity.pages = _.range(0, Math.ceil(res.items.length / PER_PAGE));
       $scope.activity.loading = false;

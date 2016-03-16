@@ -1,6 +1,8 @@
 'use strict';
 
-angular.module('contentful').directive('cfWebhookHealth', [function () {
+angular.module('contentful').directive('cfWebhookHealth', ['$injector', function ($injector) {
+
+  var WebhookRepository = $injector.get('WebhookRepository');
 
   var THRESHOLD = {WARN: 70, OK: 90};
 
@@ -9,10 +11,11 @@ angular.module('contentful').directive('cfWebhookHealth', [function () {
     template: JST['webhook_health'](),
     scope: {webhookId: '='},
     controller: ['$scope', 'spaceContext', function ($scope, spaceContext) {
-      var endpoint = spaceContext.space.endpoint('webhooks/' + $scope.webhookId + '/health');
+      var repo = WebhookRepository.getInstance(spaceContext.space);
       $scope.status = 'loading';
 
-      endpoint.get().then(function (data) {
+      repo.logs.getHealth($scope.webhookId)
+      .then(function (data) {
         var percentage = Math.round(data.calls.healthy/data.calls.total*100);
 
         if (_.isNumber(percentage) && percentage >= 0 && percentage <= 100) {

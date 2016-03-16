@@ -3,7 +3,9 @@
 describe('Webhook Editor directive', function () {
 
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', function ($provide) {
+      $provide.removeDirectives('uiSref');
+    });
 
     this.go = sinon.stub();
     this.$inject('$state').go = this.go;
@@ -12,14 +14,10 @@ describe('Webhook Editor directive', function () {
     this.notification.info = sinon.stub();
     this.notification.error = sinon.stub();
 
-    this.$inject('spaceContext').space = {
-      getId: _.constant('spaceid'),
-      endpoint: sinon.stub().returns({get: sinon.stub().resolves({items: []})})
-    };
-
     this.repo = {
       save: sinon.stub(),
-      remove: sinon.stub()
+      remove: sinon.stub(),
+      logs: {getCalls: sinon.stub().resolves({items: []})}
     };
 
     this.$inject('WebhookRepository').getInstance = sinon.stub().returns(this.repo);
@@ -59,14 +57,6 @@ describe('Webhook Editor directive', function () {
   });
 
   describe('Action buttons', function () {
-    it('navigates to list when "go back" is clicked', function () {
-      this.compile({isNew: false});
-      this.button('Go back').click();
-      this.$inject('$timeout').flush(); // ui-sref performs transition within `$timeout` cb
-      sinon.assert.calledOnce(this.go);
-      expect(this.go.firstCall.args[0]).toBe('spaces.detail.settings.webhooks.list');
-    });
-
     it('hides "delete" button for new webhooks', function () {
       this.compile({isNew: true});
       expect(this.button('Remove')).toBeNgHidden();

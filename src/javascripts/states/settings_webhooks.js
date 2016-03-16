@@ -46,18 +46,22 @@ angular.module('contentful')
       label: 'Call details ({{ call.requestAt }})'
     },
     resolve: {
-      call: ['space', 'webhook', '$stateParams', function (space, webhook, $stateParams) {
-        var path = 'webhooks/' + webhook.sys.id + '/calls/' + $stateParams.callId;
-        return space.endpoint(path).get();
+      call: ['WebhookRepository', 'space', 'webhook', '$stateParams', function (WebhookRepository, space, webhook, $stateParams) {
+        return WebhookRepository.getInstance(space).logs.getCall(webhook.sys.id, $stateParams.callId);
       }]
     },
     views: {
       '@spaces.detail.settings.webhooks': {
-        template: '<cf-webhook-call class="workbench webhook-call" />',
+        template: JST['webhook_call'](),
         controller: ['$scope', '$stateParams', 'webhook', 'call', function ($scope, $stateParams, webhook, call) {
           $scope.call = call;
           $scope.webhook = webhook;
           $scope.context = {parentTitle: webhook.name};
+
+          try {
+            $scope.body = JSON.parse($scope.call.request.body);
+            $scope.call.request = _.omit($scope.call.request, ['body']);
+          } catch (e) {}
         }]
       }
     }

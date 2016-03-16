@@ -10,7 +10,12 @@ angular.module('contentful').factory('WebhookRepository', [function () {
       getAll: getAll,
       get: get,
       save: save,
-      remove: remove
+      remove: remove,
+      logs: {
+        getCall: getCall,
+        getCalls: getCalls,
+        getHealth: getHealth
+      }
     };
 
     function getAll() {
@@ -21,6 +26,18 @@ angular.module('contentful').factory('WebhookRepository', [function () {
 
     function get(id) {
       return getBaseCall(id).get();
+    }
+
+    function getCall(webhookId, callId) {
+      return space.endpoint('webhooks/' + webhookId + '/calls/' + callId).get();
+    }
+
+    function getCalls(webhookId) {
+      return space.endpoint('webhooks/' + webhookId + '/calls?limit=500').get();
+    }
+
+    function getHealth(webhookId) {
+      return space.endpoint('webhooks/' + webhookId + '/health').get();
     }
 
     function save(webhook) {
