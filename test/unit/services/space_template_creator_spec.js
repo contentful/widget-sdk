@@ -35,7 +35,10 @@ describe('Space Template creation service', function () {
           {sys: {id: 'ct1'}, publish: stubs.ctPublish},
           {sys: {id: 'ct2'}, publish: stubs.ctPublish},
           {sys: {id: 'ct3'}, publish: stubs.ctPublish}],
-        editingInterfaces: [{sys: {id: 'ei1'}}, {sys: {id: 'ei2'}}],
+        editingInterfaces: [
+          {sys: {id: 'ei1', contentType: {sys: {id: 'ct1'}}}},
+          {sys: {id: 'ei2', contentType: {sys: {id: 'ct2'}}}},
+        ],
         assets: [
           {sys: {id: 'a1'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish },
           {sys: {id: 'a2'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish },
