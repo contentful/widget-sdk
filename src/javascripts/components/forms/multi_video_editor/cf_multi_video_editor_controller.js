@@ -1,11 +1,9 @@
 'use strict';
 
 angular.module('contentful')
-.controller('cfMultiVideoEditorController', ['$scope', '$injector', function($scope, $injector){
-  var ShareJS = $injector.get('ShareJS');
-  var $q      = $injector.get('$q');
-
-  var controller                    = this;
+.controller('cfMultiVideoEditorController',
+  ['$scope', '$injector', 'widgetApi', function($scope, $injector, widgetApi) {
+  var field = widgetApi.field;
   var providerVideoEditorController = $scope.providerVideoEditorController;
 
 
@@ -53,28 +51,19 @@ angular.module('contentful')
   }
 
   function storeAsset(asset) {
-    var promise;
-    var assetObject = initAssetObject(asset.assetId);
-    var doc = $scope.otDoc.doc;
-    var path = $scope.otPath;
-    if (_.isArray(ShareJS.peek(doc, path))) {
-      promise = $q.denodeify(function (cb) {
-        doc.at(path).insert(0, asset.assetId, cb);
-      });
-    } else {
-      promise = ShareJS.mkpathAndSetValue(doc, path, [asset.assetId]);
-    }
-
-    promise.then(function () {
+    field.insertValue(0, asset.assetId)
+    .then(function () {
+      var assetObject = initAssetObject(asset.assetId);
       $scope.multiVideoEditor.assets.unshift(assetObject);
       $scope.videoInputController().clearField();
     });
   }
 
   function removeAsset(index) {
-    var cb = $q.callbackWithApply();
-    $scope.otDoc.doc.at($scope.otPath.concat(index)).remove(cb);
-    cb.promise.then(function () { $scope.multiVideoEditor.assets.splice(index,1); });
+    field.removeValueAt(index)
+    .then(function () {
+      $scope.multiVideoEditor.assets.splice(index, 1);
+    });
   }
 
   function lookupAsset(assetId) {
@@ -100,7 +89,9 @@ angular.module('contentful')
   function useSelectedAssets(selection) {
     // use controller.storeAsset rather than only
     // storeAsset for testing purposes
-    _.each(selection, function(video){ controller.storeAsset({assetId: video.id}); });
+    _.each(selection, function(video){
+      storeAsset({assetId: video.id});
+    });
   }
 
   function createAssetObjects(assetIds) {

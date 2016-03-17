@@ -47,38 +47,17 @@ describe('Multi Video Editor Controller', function() {
   }));
 
   describe('multiVideoEditor scope properties', function() {
-    describe('search config', function() {
-      it('sets the "widgetPlayerDirective" property to the value of the "$attrs.widgetPlayerDirective"', function() {
-        expect(scope.multiVideoEditor.searchConfig.widgetPlayerDirective).toEqual('cf-widget-player-directive');
+    describe('#onSelection search config method', function() {
+      beforeEach(function() {
+        this.fieldApi.insertValue = sinon.stub().resolves();
       });
 
-      it('sets the #prepareSearch callback method to the #prepareSearch method on the provider editor controller', function() {
-        expect(scope.multiVideoEditor.searchConfig.prepareSearch).toEqual(scope.providerVideoEditorController.prepareSearch);
-      });
-
-      it('sets the #processSearchResults callback method to the #processSearchResults method on the provider editor controller', function() {
-        expect(scope.multiVideoEditor.searchConfig.processSearchResults).toEqual(scope.providerVideoEditorController.processSearchResults);
-      });
-
-      it('sets the #customAttrsForPlayer callback method to the #customAttrsForPlayerInSearchDialog method on the provider editor controller', function() {
-        expect(scope.multiVideoEditor.searchConfig.customAttrsForPlayer).toEqual(scope.providerVideoEditorController.customAttrsForPlayerInSearchDialog);
-      });
-
-      describe('#onSelection callback method', function() {
-        var asset1, asset2;
-        beforeEach(function() {
-          asset1 = {id: 'other-selection'};
-          asset2 = {id: 'selection-id'};
-
-          spyOn(multiVideoEditorController, 'storeAsset');
-          scope.multiVideoEditor.searchConfig.onSelection([asset1, asset2]);
-        });
-
-        it('calls the #storeAsset method with each one of the selected assets', function() {
-          expect(multiVideoEditorController.storeAsset.calls.count()).toEqual(2);
-          expect(multiVideoEditorController.storeAsset.calls.argsFor(0)).toEqual([{assetId: 'other-selection'}]);
-          expect(multiVideoEditorController.storeAsset.calls.argsFor(1)).toEqual([{assetId: 'selection-id'}]);
-        });
+      it('inserts each selected asset', function() {
+        var selection = [{id: 'A'}, {id: 'B'}];
+        scope.multiVideoEditor.searchConfig.onSelection(selection);
+        sinon.assert.callCount(this.fieldApi.insertValue, 2);
+        sinon.assert.calledWithExactly(this.fieldApi.insertValue, 0, 'A');
+        sinon.assert.calledWithExactly(this.fieldApi.insertValue, 0, 'B');
       });
     });
 
