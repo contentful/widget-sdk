@@ -55,10 +55,6 @@ describe('spaceContext', function () {
       expect(this.spaceContext.contentTypes.length).toEqual(0);
     });
 
-    it('refreshes content types', function () {
-      sinon.assert.called(this.spaceContext.refreshContentTypes);
-    });
-
     it('refreshes locales', function () {
       sinon.assert.calledOnce(this.theLocaleStore.resetWithSpace);
     });
@@ -240,8 +236,8 @@ describe('spaceContext', function () {
 
           return p.then(function (data) {
             expect(data.length).toBe(2);
-            // (1) initial refresh, (2-6) retries
-            expect(getContentTypes.callCount).toBe(6);
+            // (1) initial refresh, (2) first request, (3-7) retries
+            expect(getContentTypes.callCount).toBe(7);
           });
         });
       });

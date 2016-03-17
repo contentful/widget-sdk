@@ -2,7 +2,7 @@
 
 describe('overridingRequestQueue', function () {
   beforeEach(function () {
-    module('cf.utils');
+    module('contentful');
     this.createQueue = this.$inject('overridingRequestQueue');
   });
 
@@ -28,23 +28,43 @@ describe('overridingRequestQueue', function () {
   });
 
   pit('resolves with a result of the last call', function () {
-    var d = sinon.stub().defers();
+    var $q = this.$inject('$q');
+    var d = sinon.stub();
+    d.onFirstCall().returns($q.resolve('this result value will be lost'));
+    d.onSecondCall().returns($q.resolve(true));
+
     var requestFn = sinon.spy(function () { return d(); });
     var request = this.createQueue(requestFn);
     var promise = request();
-
     request();
-
-    d.resolve('this result value will be lost');
-    d = sinon.stub().defers();
-    this.$apply();
-
-    d.resolve(true);
-    this.$apply();
 
     return promise.then(function (result) {
       expect(result).toBe(true);
       sinon.assert.calledTwice(requestFn);
+    });
+  });
+
+  pit('allows to define request as required', function () {
+    var $timeout = this.$inject('$timeout');
+    var spy = sinon.stub().resolves();
+    var wasCalled = false;
+
+    var request = this.createQueue(function () {
+      if (wasCalled) {
+        return spy('second call');
+      } else {
+        wasCalled = true;
+        return $timeout(spy);
+      }
+    });
+
+    var promise = request.hasToFinish();
+    request();
+    $timeout.flush();
+
+    return promise.then(function () {
+      sinon.assert.calledTwice(spy);
+      sinon.assert.calledOnce(spy.withArgs('second call'));
     });
   });
 
@@ -53,24 +73,16 @@ describe('overridingRequestQueue', function () {
     var spy = sinon.spy();
     var request = this.createQueue(function () { return d(); }, spy);
     var promise = request();
-
     request();
-    this.$apply();
+
     sinon.assert.calledTwice(d);
     sinon.assert.calledOnce(spy.withArgs(promise));
   });
 
-  it('allows to alter default request function', function () {
-    var d1 = sinon.stub().resolves();
-    var request = this.createQueue(function () { return d1(); });
-    var d2 = sinon.stub().resolves();
-
-    request();
-    request(function () { return d2(); });
-    request();
-    this.$apply();
-
-    sinon.assert.calledTwice(d1);
-    sinon.assert.calledOnce(d2);
+  it('passes arguments from a call to a base function', function () {
+    var spy = sinon.stub().resolves();
+    var request = this.createQueue(spy);
+    request('test', true);
+    sinon.assert.calledOnce(spy.withArgs('test', true));
   });
 });

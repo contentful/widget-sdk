@@ -31,7 +31,26 @@ angular.module('contentful')
   var createEIRepo       = $injector.get('data/editingInterfaces');
   var createQueue        = $injector.get('overridingRequestQueue');
 
-  var requestContentTypes = createQueue(fetchContentTypes);
+  var requestContentTypes = createQueue(function (extraHandler) {
+    return spaceContext.space.getContentTypes({order: 'name', limit: 1000})
+    .then(refreshContentTypes, ReloadNotification.apiErrorHandler)
+    .then(extraHandler || _.identity);
+  });
+
+  var waiter = {
+    reset: function () {
+      this.attempts = _.range(5);
+      return this;
+    },
+    canWait: function () {
+      return _.isNumber(this.attempts.pop());
+    },
+    waitAndRetry: function () {
+      return $timeout(function () {
+        spaceContext.refreshContentTypesUntilChanged();
+      }, 1500);
+    }
+  }.reset();
 
   var spaceContext = {
     /**
@@ -111,14 +130,11 @@ angular.module('contentful')
      * Refreshes all Content Type related information in the context
      */
     refreshContentTypes: function() {
-      if (!this.space) {
-        this.contentTypes = [];
-        this.publishedContentTypes = [];
-        this._publishedContentTypesHash = {};
-        return $q.resolve(this.contentTypes);
+      if (this.space) {
+        return requestContentTypes();
+      } else {
+        throw new Error('Cannot refresh content types: no space in the context.');
       }
-
-      return requestContentTypes();
     },
 
     /**
@@ -132,33 +148,18 @@ angular.module('contentful')
      * time the API will not include it immediately.
      */
     refreshContentTypesUntilChanged: function () {
-      if (!_.isNumber(this.refreshTriesLeft)) {
-        this.refreshTriesLeft = 5;
-      } else if (this.refreshTriesLeft > 1) {
-        this.refreshTriesLeft -= 1;
-      } else {
-        this.refreshTriesLeft = null;
-        return $q.when(this.publishedContentTypes);
+      var before = getContentTypeIds(spaceContext.contentTypes);
+      return requestContentTypes.hasToFinish(retryIfNotChanged);
+
+      function retryIfNotChanged(response) {
+        var after = getContentTypeIds(spaceContext.contentTypes);
+        if (after === before && waiter.canWait()) {
+          return waiter.waitAndRetry();
+        } else {
+          waiter.reset();
+          return response;
+        }
       }
-
-      return requestContentTypes(function () {
-        var idsBefore = getContentTypeIds();
-        var d = $q.defer();
-
-        fetchContentTypes().then(function (result) {
-          if (idsBefore !== getContentTypeIds()) {
-            d.resolve(result);
-            return;
-          }
-
-          $timeout(function () {
-            spaceContext.refreshContentTypesUntilChanged();
-            d.resolve(result);
-          }, 1500);
-        });
-
-        return d.promise;
-      });
     },
 
     /**
@@ -386,14 +387,8 @@ angular.module('contentful')
   resetMembers(spaceContext);
   return spaceContext;
 
-  function fetchContentTypes() {
-    return spaceContext.space.getContentTypes({order: 'name', limit: 1000})
-    .then(refreshContentTypes)
-    .catch(ReloadNotification.apiErrorHandler);
-  }
-
-  function getContentTypeIds() {
-    return  _(spaceContext.contentTypes).map(function (ct) {
+  function getContentTypeIds(cts) {
+    return _(cts).map(function (ct) {
       return ct.getId();
     }).sortBy().join(',');
   }
@@ -452,7 +447,6 @@ angular.module('contentful')
     spaceContext.publishedContentTypes = [];
     spaceContext._publishedContentTypesHash = {};
     spaceContext._publishedContentTypeIsMissing = {};
-    spaceContext.refreshContentTypes();
     spaceContext.users = null;
     spaceContext.widgets = null;
   }

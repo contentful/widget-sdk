@@ -22,7 +22,7 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
   var currentToken = null;
   var changed  = createSignal();
   var request = createQueue(getTokenLookup, setupLookupHandler);
-  var refreshPromise = null;
+  var refreshPromise = $q.resolve();
 
   return {
     changed:           changed,
@@ -37,7 +37,6 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
   }
 
   function setupLookupHandler(promise) {
-    refreshPromise = promise;
     promise.then(function (lookup) {
       refreshWithLookup(lookup);
     }, communicateError);
@@ -77,7 +76,8 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
    * to reload the app. On success we call "refreshWithLookup" (see docs above).
    */
   function refresh() {
-    return request();
+    refreshPromise = request();
+    return refreshPromise;
   }
 
   /**
@@ -91,12 +91,10 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
    * Promise is rejected if space with a provided ID couldn't be found.
    */
   function getSpace(id) {
-    return refreshPromise ? refreshPromise.then(promiseSpace) : promiseSpace();
-
-    function promiseSpace() {
+    return refreshPromise.then(function () {
       var space = findSpace(id);
-      return space ? $q.when(space) : $q.reject(new Error('No space with given ID could be found.'));
-    }
+      return space ? space : $q.reject(new Error('No space with given ID could be found.'));
+    });
   }
 
   /**
@@ -108,11 +106,7 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
    * If some calls are in progress, we're waiting until these are done.
    */
   function getSpaces() {
-    return refreshPromise ? refreshPromise.then(promiseSpaces) : promiseSpaces();
-
-    function promiseSpaces() {
-      return $q.when(getCurrentSpaces());
-    }
+    return refreshPromise.then(getCurrentSpaces);
   }
 
   function updateSpaces(rawSpaces) {
