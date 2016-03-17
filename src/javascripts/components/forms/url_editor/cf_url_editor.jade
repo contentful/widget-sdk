@@ -1,8 +1,10 @@
+include ../embedly_preview/embedly_status.mixin.jade
+
 input.form-control(
   type="text"
   ng-disabled="isDisabled")
 
-cf-embedly-status(url-status="urlStatus")
++embedly-status
 
 .form-widget__help-text {{ helpText }}
 
