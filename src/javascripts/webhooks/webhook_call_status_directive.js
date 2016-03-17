@@ -6,7 +6,9 @@ angular.module('contentful').directive('cfWebhookCallStatus', [function () {
     TimeoutError: 'Timeout',
     ConnectionResetError: 'Connection reset',
     HostUnreachableError: 'Host unreachable',
-    ProtocolError: 'Invalid protocol'
+    ProtocolError: 'Invalid protocol',
+    IPForbiddenError: 'Forbidden IP address',
+    NameResolutionError: 'Name unresolvable'
   };
 
   return {
