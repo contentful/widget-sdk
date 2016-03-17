@@ -19,6 +19,7 @@
               | Create your content model. It’s comprised of content types, which define the structure of your entries.
             .step__actions
               button.cfnext-btn-secondary-action(
+                ng-click="learn.trackClickedButton('View your content model')"
                 ng-disabled="!learn.canAccessContentTypes"
                 ui-sref="spaces.detail.content_types.list({ spaceId: learn.spaceId })")
                 | View your content model
@@ -35,6 +36,7 @@
               //- User has access
               button.cfnext-btn-action(
                 ng-show="learn.canAccessContentTypes"
+                ng-click="learn.trackClickedButton('Create a content type')"
                 ui-sref="spaces.detail.content_types.new({ spaceId: learn.spaceId })")
                 | Create a content type
               //- User has no access
@@ -56,6 +58,7 @@
               | Entries are your actual pieces of content, based on the content types you have created.
             .step__actions
               button.cfnext-btn-secondary-action(
+                ng-click="learn.trackClickedButton('View your entries')"
                 ui-sref="spaces.detail.entries.list({ spaceId: learn.spaceId })")
                 | View your entries
 
@@ -79,7 +82,7 @@
               //- One entry
               button.cfnext-btn-action(
                 ng-show="learn.accessibleContentTypes.length === 1"
-                ng-click="entityCreationController.newEntry(learn.accessibleContentTypes[0])")
+                ng-click="learn.trackClickedButton('Add an entry'); entityCreationController.newEntry(learn.accessibleContentTypes[0])")
                 | Add an entry
               //- More than one entry
               div(ng-show="learn.accessibleContentTypes.length > 1")
@@ -89,7 +92,7 @@
                 .context-menu(role="menu" cf-context-menu aria-label="Add an entry")
                   div(ng-repeat="contentType in learn.accessibleContentTypes"
                     role="menuitem"
-                    ng-click="entityCreationController.newEntry(contentType)")
+                    ng-click="learn.trackClickedButton('Add an entry'); entityCreationController.newEntry(contentType)")
                     | {{contentType.data.name}}
 
           .learn-onboarding__step(
@@ -139,7 +142,9 @@
               h3 Documentation
               p.language-description
                 | SDKs, tutorials, integrations and example applications will help you get started with Contentful and JavaScript.
-              a.language-link(href="https://www.contentful.com/developers/docs/javascript/")
+              a.language-link(
+                ng-click="learn.trackResourceLink('Documentation', 'JavaScript')"
+                href="https://www.contentful.com/developers/docs/javascript/")
                 | Read the documentation
             .learn-language__reference
               .icon-wrapper
@@ -147,7 +152,9 @@
               h3 API Demo
               p.language-description
                 | This guide shows how to make a call to the Contentful API with JavaScript, using some example content we’ve prepared.
-              a.language-link(href="https://www.contentful.com/developers/api-demo/javascript/")
+              a.language-link(
+                ng-click="learn.trackResourceLink('API Demo', 'JavaScript')"
+                href="https://www.contentful.com/developers/api-demo/javascript/")
                 | View the API demo
             .learn-language__reference
               .icon-wrapper
@@ -155,7 +162,9 @@
               h3 GitHub
               p.language-description
                 | Download the library or view the source code on GitHub.
-              a.language-link(href="https://github.com/contentful/contentful.js")
+              a.language-link(
+                ng-click="learn.trackResourceLink('GitHub', 'JavaScript')"
+                href="https://github.com/contentful/contentful.js")
                 | Go to GitHub
           //- PHP
           .learn-language__references(ng-show="learn.selectedLanguageName === 'PHP'")
@@ -165,7 +174,9 @@
               h3 Documentation
               p.language-description
                 | SDKs, tutorials, integrations and example applications will help you get started with Contentful and PHP.
-              a.language-link(href="https://www.contentful.com/developers/docs/php/")
+              a.language-link(
+                ng-click="learn.trackResourceLink('Documentation', 'PHP')"
+                href="https://www.contentful.com/developers/docs/php/")
                 | Read the documentation
             .learn-language__reference
               .icon-wrapper
@@ -173,7 +184,9 @@
               h3 API Demo
               p.language-description
                 | This guide shows how to make a call to the Contentful API with PHP, using some example content we’ve prepared.
-              a.language-link(href="https://www.contentful.com/developers/api-demo/php/")
+              a.language-link(
+                ng-click="learn.trackResourceLink('API Demo', 'PHP')"
+                href="https://www.contentful.com/developers/api-demo/php/")
                 | View the API demo
             .learn-language__reference
               .icon-wrapper
@@ -181,7 +194,9 @@
               h3 GitHub
               p.language-description
                 | Download the library or view the source code on GitHub.
-              a.language-link(href="https://github.com/contentful/contentful.php")
+              a.language-link(
+                ng-click="learn.trackResourceLink('GitHub', 'PHP')"
+                href="https://github.com/contentful/contentful.php")
                 | Go to GitHub
           //- Ruby
           .learn-language__references(ng-show="learn.selectedLanguageName === 'Ruby'")
@@ -191,7 +206,9 @@
               h3 Documentation
               p.language-description
                 | SDKs, tutorials, integrations and example applications will help you get started with Contentful and Ruby.
-              a.language-link(href="https://www.contentful.com/developers/docs/ruby/")
+              a.language-link(
+                ng-click="learn.trackResourceLink('Documentation', 'Ruby')"
+                href="https://www.contentful.com/developers/docs/ruby/")
                 | Read the documentation
             .learn-language__reference
               .icon-wrapper
@@ -199,7 +216,9 @@
               h3 API Demo
               p.language-description
                 | This guide shows how to make a call to the Contentful API with Ruby, using some example content we’ve prepared.
-              a.language-link(href="https://www.contentful.com/developers/api-demo/ruby/")
+              a.language-link(
+                ng-click="learn.trackResourceLink('API Demo', 'Ruby')"
+                href="https://www.contentful.com/developers/api-demo/ruby/")
                 | View the API demo
             .learn-language__reference
               .icon-wrapper
@@ -207,7 +226,9 @@
               h3 GitHub
               p.language-description
                 | Download the library or view the source code on GitHub.
-              a.language-link(href="https://github.com/contentful/contentful.rb")
+              a.language-link(
+                ng-click="learn.trackResourceLink('GitHub', 'Ruby')"
+                href="https://github.com/contentful/contentful.rb")
                 | Go to GitHub
           //- iOS
           .learn-language__references(ng-show="learn.selectedLanguageName === 'iOS'")
@@ -217,7 +238,9 @@
               h3 Documentation
               p.language-description
                 | SDKs, tutorials, integrations and example applications will help you get started with Contentful and iOS.
-              a.language-link(href="https://www.contentful.com/developers/docs/ios/")
+              a.language-link(
+                ng-click="learn.trackResourceLink('Documentation', 'iOS')"
+                href="https://www.contentful.com/developers/docs/ios/")
                 | Read the documentation
             .learn-language__reference
               .icon-wrapper
@@ -225,7 +248,9 @@
               h3 API Demo
               p.language-description
                 | This guide shows how to make a call to the Contentful API with iOS, using some example content we’ve prepared.
-              a.language-link(href="https://www.contentful.com/developers/api-demo/swift/")
+              a.language-link(
+                ng-click="learn.trackResourceLink('API Demo', 'iOS')"
+                href="https://www.contentful.com/developers/api-demo/swift/")
                 | View the API demo
             .learn-language__reference
               .icon-wrapper
@@ -233,10 +258,14 @@
               h3 GitHub
               p.language-description
                 | Download the library or view the source code on GitHub.
-              a.language-link(href="https://github.com/contentful/contentful.swift")
+              a.language-link(
+                ng-click="learn.trackResourceLink('GitHub - swift', 'iOS')"
+                href="https://github.com/contentful/contentful.swift")
                 | Swift SDK
               span &nbsp;|&nbsp;
-              a.language-link(href="https://github.com/contentful/contentful.objc")
+              a.language-link(
+                ng-click="learn.trackResourceLink('GitHub - Objective-C', 'iOS')"
+                href="https://github.com/contentful/contentful.objc")
                 | Objective-C SDK
           //- Android
           .learn-language__references(ng-show="learn.selectedLanguageName === 'Android'")
@@ -246,7 +275,9 @@
               h3 Documentation
               p.language-description
                 | SDKs, tutorials, integrations and example applications will help you get started with Contentful and Android.
-              a.language-link(href="https://www.contentful.com/developers/docs/android/")
+              a.language-link(
+                ng-click="learn.trackResourceLink('Documentation', 'Android')"
+                href="https://www.contentful.com/developers/docs/android/")
                 | Read the documentation
             .learn-language__reference
               .icon-wrapper
@@ -254,7 +285,9 @@
               h3 API Demo
               p.language-description
                 | This guide shows how to make a call to the Contentful API with Java, using some example content we’ve prepared.
-              a.language-link(href="https://www.contentful.com/developers/api-demo/java/")
+              a.language-link(
+                ng-click="learn.trackResourceLink('API Demo', 'Android')"
+                href="https://www.contentful.com/developers/api-demo/java/")
                 | View the API demo
             .learn-language__reference
               .icon-wrapper
@@ -262,7 +295,9 @@
               h3 GitHub
               p.language-description
                 | Download the library or view the source code on GitHub.
-              a.language-link(href="https://github.com/contentful/contentful.java")
+              a.language-link(
+                ng-click="learn.trackResourceLink('GitHub', 'Android')"
+                href="https://github.com/contentful/contentful.java")
                 | Go to GitHub
           //- HTTP
           .learn-language__references(ng-show="learn.selectedLanguageName === 'HTTP'")
@@ -271,6 +306,8 @@
                 cf-icon(name="learn-documentation")
               h3 Documentation
               p View the API reference
-              a.language-link(href="https://www.contentful.com/developers/docs/#api-references")
+              a.language-link(
+                ng-click="learn.trackResourceLink('API Reference', 'HTTP')"
+                href="https://www.contentful.com/developers/docs/#api-references")
                 | API Reference
 

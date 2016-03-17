@@ -20,6 +20,7 @@ angular.module('contentful')
   var stateParams     = $injector.get('$stateParams');
   var accessChecker   = $injector.get('accessChecker');
   var $state          = $injector.get('$state');
+  var analytics       = $injector.get('analytics');
 
   controller.canAccessContentTypes = accessChecker.getSectionVisibility().contentType;
   controller.canAccessEntries = accessChecker.getSectionVisibility().entry;
@@ -68,11 +69,8 @@ angular.module('contentful')
   });
 
   controller.goToApiKeySection = function() {
+    controller.trackClickedButton('Use the API');
     $state.go(apiKeyPath.path, apiKeyPath.params);
-  };
-
-  controller.addAnEntry = function(ctId) {
-    $state.go('spaces.detail.entries.detail', {contentTypeId: ctId});
   };
 
   // Languages and SDKs
@@ -86,7 +84,9 @@ angular.module('contentful')
 
     controller.selectedLanguageIndex = idx;
     controller.selectedLanguageName = controller.languageData[idx].name;
-
+    analytics.track('Selected Language at the Dashboard', {
+      language: controller.selectedLanguageName
+    });
   };
 
   controller.languageData = [
@@ -98,4 +98,15 @@ angular.module('contentful')
     {name: 'HTTP', icon: 'language-http'}
   ];
 
+  controller.trackClickedButton = function(name) {
+    var eventName = 'Clicked the \'' + name + '\' button from Learn';
+    analytics.track(eventName);
+  };
+
+  controller.trackResourceLink = function(linkName, language) {
+    analytics.track('Selected Content at the Dashboard', {
+      resource: linkName,
+      language: language
+    });
+  };
 }]);
