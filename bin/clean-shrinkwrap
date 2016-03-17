@@ -1,30 +1,46 @@
 #!/usr/bin/env node
+'use strict';
 
 /**
- * This script removes all the `resolved` properties from
- * 'npm-shrinkwrap.json'.
+ * This script removes unnecessary properties from
+ * 'npm-shrinkwrap.json'. This reduces diff noise and makes `npm
+ * install && npm shrinkwrap` idempotent.
+ *
+ * In particular we remove the `resolved` property and the `from`
+ * property if it is not a URL.
  */
-'use strict';
 
 var _ = require('lodash-node');
 var fs = require('fs');
 
-
+var URL_MATCHER = /^[\w+]+:\/\//;
 var SHRINKWRAP = __dirname + '/../npm-shrinkwrap.json';
 var dependencies = require(SHRINKWRAP);
-var cleaned = cleanResolve(dependencies);
+var cleaned = cleanDependency(dependencies);
 
 fs.writeFileSync(SHRINKWRAP, stringify(cleaned) + '\n', 'utf-8');
 
-function cleanResolve (dep) {
+function cleanDependency (dep) {
   dep = _.omit(dep, 'resolved');
+
+  if (!URL_MATCHER.test(dep.from)) {
+    delete dep.from;
+  }
+
   if (dep.dependencies) {
-    dep.dependencies = _.mapValues(dep.dependencies, cleanResolve);
+    dep.dependencies = sortByKey(_.mapValues(dep.dependencies, cleanDependency));
   }
 
   return dep;
 }
 
+function sortByKey (object) {
+  var keys = _.sortBy(_.keys(object))
+  return _.transform(keys, function (sorted, key) {
+    sorted[key] = object[key];
+  }, {});
+
+}
 function stringify (obj) {
   return JSON.stringify(obj, null, 2);
 }

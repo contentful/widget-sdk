@@ -21,7 +21,7 @@ describe('cfZenmode', function () {
     var scopeProps = { zenApi: apiMock, preview: {} };
 
     sinon.stub(LazyLoader, 'get', function () {
-      return $q.when(libs);
+      return $q.resolve(libs);
     });
 
     var elem = this.$compile('<cf-zenmode zen-api="zenApi" />', scopeProps);

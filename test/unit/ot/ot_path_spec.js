@@ -34,22 +34,35 @@ describe('otPath', function() {
   });
 
   describe('receiving otRemoteOp', function () {
+    beforeEach(function() {
+      sinon.stub(scope, '$broadcast');
+    });
+
     describe('with the exact Path', function () {
-      var op = {p: ['FOO', 'bar']};
       it('should broadCast otValueChanged', function () {
-        spyOn(scope, '$broadcast');
-        scope.$emit('otRemoteOp', op);
-        expect(scope.$broadcast).toHaveBeenCalledWith('otValueChanged', scope.otPath, aValue);
+        scope.$emit('otRemoteOp', {p: ['FOO', 'bar']});
+        sinon.assert.calledWith(scope.$broadcast, 'otValueChanged', scope.otPath, aValue);
       });
     });
 
     describe('with a different Path', function () {
-      var op = {p: ['FOO', 'bar2']};
       it('should not broadcast otValueChanged', function () {
-        spyOn(scope, '$broadcast');
-        scope.$emit('otRemoteOp', op);
-        expect(scope.$broadcast).not.toHaveBeenCalled();
+        scope.$emit('otRemoteOp', {p: ['FOO', 'bar2']});
+        sinon.assert.notCalled(scope.$broadcast);
       });
+
+    describe('when otPath is prefix of operation path', function() {
+      it('should broadcast otValueChanged', function() {
+        var op = {p: scope.otPath.slice(0)};
+
+        // make operation path longer than otPath
+        op.p.push(100);
+        expect(op.p.length).toBeGreaterThan(scope.otPath.length);
+
+        scope.$emit('otRemoteOp', op);
+        sinon.assert.calledWith(scope.$broadcast, 'otValueChanged', scope.otPath, aValue);
+      });
+    });
 
     });
   });
@@ -119,6 +132,21 @@ describe('otSubdoc', function () {
     var $compile      = this.$inject('$compile');
 
     $rootScope.otDoc = makeDoc();
+    $rootScope.entity = {
+      data: {
+        fields: {
+          someField: {
+            'en_US': 'test'
+          }
+        }
+      }
+    };
+    $rootScope.field = {
+      id: 'someField'
+    };
+    $rootScope.locale = {
+      internal_code: 'en_US'
+    };
     $rootScope.otPath = ['path'];
     elem = $compile('<div ot-doc-for><div ot-path="[\'fields\', \'field\']"></div></div>')($rootScope).find('*[ot-path]');
     scope = elem.scope();
@@ -176,6 +204,14 @@ describe('otSubdoc', function () {
       scope.otSubDoc.removeValue().catch(errorHandler);
       this.$apply();
       sinon.assert.called(errorHandler);
+    });
+  });
+
+  describe('#getValue()', function() {
+    it('should return initial value from entity data when sharejs doc is not defined', function () {
+      scope.otDoc.doc = undefined;
+
+      expect(scope.otSubDoc.getValue()).toEqual('test');
     });
   });
 

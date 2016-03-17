@@ -8,7 +8,7 @@ Tests are written in [Jasmine][jasmine] (version `2.3.x`) and run with
 [Karma][karma].  The tests use [Sinon][sinon] to create function stubs.
 The tests files are contained in `test/unit` and `test/integration`,
 helpers are contained in `test/helpers`. To see a list of available
-test helpers go to the [`test` module][module:test] documentation.
+test helpers go to the [`test/helpers` service][service:helpers] documentation.
 
 You can run the tests with
 ~~~bash
@@ -54,6 +54,23 @@ it('renders', function () {
 })
 ~~~
 
+If any of the compiled directives [`require`][require] the controller of another
+directive you can pass it as shown below.
+
+~~~js
+angular.module('contentful')
+.directive('myAwesomeDirective', [function () {
+  return {
+    require: '^customController'
+  }
+}])
+
+// we want to compile `myAwesomeDirective`
+var $el = this.$compile('<my-awesome-directive>', {somePropOnScope: 10}, {
+  customController: instanceOfCustomController
+})
+~~~
+
 
 Mocks and Stubs
 ---------------
@@ -67,7 +84,7 @@ functions that return promises.
 ~~~js
 // Equivalent: Function that returns a resolved promise
 sinon.stub().resolves('yeah')
-sinon.stub().returns($q.when('yeah'))
+sinon.stub().returns($q.resolve('yeah'))
 
 // Equivalent: Function that returns a rejected promise
 sinon.stub().rejects(new Error())
@@ -142,3 +159,4 @@ the test run. You can choose a reporter by passing the
 [module:test]: api/contentful/test
 [tape]: https://github.com/substack/tape
 [service:helpers]: api/contentful/test/service/helpers
+[require]: https://docs.angularjs.org/api/ng/service/$compile#-require-

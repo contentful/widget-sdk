@@ -1,8 +1,8 @@
 'use strict';
 
 describe('cfVideoInput Controller', function() {
-  var assetLookupDeferred, attrs, controller, modalDialogStub, modalDialogDeferred,
-      observeCb, scope;
+  var assetLookupDeferred, attrs, controller;
+  var modalDialogStub, modalDialogDeferred, scope;
 
   beforeEach(function() {
     module('contentful/test');
@@ -12,16 +12,16 @@ describe('cfVideoInput Controller', function() {
     });
 
     inject(function($rootScope, $controller, $q, modalDialog){
-      scope      = $rootScope.$new();
+      scope = $rootScope.$new();
       scope.onSelectionSpy = jasmine.createSpy();
-      attrs      = {
-        onReset          : jasmine.createSpy(),
-        onChange         : jasmine.createSpy(),
-        onValidAssetId   : jasmine.createSpy(),
-        onInvalidAssetId : jasmine.createSpy(),
-        assetLookup      : jasmine.createSpy(),
-        searchConfig     : '{scope: {}, template: "template", onSelection: onSelectionSpy}',
-        $observe         : function(v, cb){observeCb = cb;}
+      attrs = {
+        value: 'fieldValue',
+        onReset: jasmine.createSpy(),
+        onChange: jasmine.createSpy(),
+        onValidAssetId: jasmine.createSpy(),
+        onInvalidAssetId: jasmine.createSpy(),
+        assetLookup: jasmine.createSpy(),
+        searchConfig: '{scope: {}, template: "template", onSelection: onSelectionSpy}'
       };
 
       assetLookupDeferred = $q.defer();
@@ -107,7 +107,8 @@ describe('cfVideoInput Controller', function() {
 
   describe('on "value" attr change', function() {
     beforeEach(function() {
-      observeCb('value-changed');
+      scope[attrs.value] = 'value-changed';
+      scope.$apply();
     });
 
     it('updates the input value', function() {

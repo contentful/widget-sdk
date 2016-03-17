@@ -4,12 +4,12 @@ angular.module('contentful')
 .controller('EntryEditorController', ['$scope', '$injector', function EntryEditorController($scope, $injector) {
   var $controller    = $injector.get('$controller');
   var logger         = $injector.get('logger');
-  var TheLocaleStore = $injector.get('TheLocaleStore');
   var spaceContext   = $injector.get('spaceContext');
   var fieldFactory   = $injector.get('fieldFactory');
   var notifier       = $injector.get('entryEditor/notifications');
   var truncate       = $injector.get('stringUtils').truncate;
   var accessChecker  = $injector.get('accessChecker');
+  var ShareJS        = $injector.get('ShareJS');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
@@ -123,17 +123,11 @@ angular.module('contentful')
     controls: $scope.formControls
   });
 
-  var contentTypeFields = $scope.contentType.data.fields;
-  if(contentTypeFields && contentTypeFields.length > 0){
-    cleanupEntryFields(contentTypeFields);
-  }
-
-
-  // Helper methods on the scope
-  $scope.getFieldValidationsOfType = function(field, type) {//TODO this should go in a service
-    return _.filter(_.pluck(field.validations, type))[0];
-  };
-
+  $scope.$watch('otDoc.doc', function (doc) {
+    if (doc) {
+      cleanSnapshot($scope.contentType.data.fields, doc);
+    }
+  });
 
   $scope.$watch('entry.data.fields', function (fields) {
     if (!fields) {
@@ -141,59 +135,27 @@ angular.module('contentful')
     }
   });
 
-  // Prevents badly created fields via the API from breaking the editor
-  function cleanupEntryFields(contentTypeFields) {
-    // FIXME Because of the `::` eval once feature of AngularJS this
-    // code highly relies on undefined vs. falsy semantics and hides
-    // the fact that we only want to execute this once.
-    // Instead We should remove the watcher once the cleanup is done.
-    $scope.$watchGroup(['::entry', '::otDoc.doc'], function (values) {
-      if(!_.isEmpty($scope.entry.data.fields) && areValuesDefined(values)){
-        _.each($scope.entry.data.fields, _.partial(setupFieldLocales, contentTypeFields));
+
+  /**
+   * Makes sure that the OT doc has the correct structure. That is
+   * `fields` is an object and has a id-object pair for each content
+   * type field.
+   */
+  function cleanSnapshot(ctFields, doc) {
+    var fields = ShareJS.peek(doc, ['fields']);
+
+    if (!_.isObject(fields)) {
+      ShareJS.setDeep(doc, ['fields'], {});
+    }
+
+    _.forEach(ctFields, function (ctField) {
+      var id = ctField.id;
+      var field = ShareJS.peek(doc, ['fields', id]);
+      if (!_.isObject(field)) {
+        ShareJS.setDeep(doc, ['fields', id], {});
       }
     });
   }
-
-  function areValuesDefined(values) {
-    return _.all(values, function(val){return !_.isUndefined(val);});
-  }
-
-  /*
-   * If a field is null or empty, initializes it with the necessary locale
-   * placeholder objects
-   *
-   * TODO: Check if this function can be removed entirely. After doing some
-   * inspections on the data before and after manipulating the shareJS object
-   * it seems like calling `$scope.otDoc.doc.at([fields, id]).set(newField)`
-   * doesn't do very much if `newField` contains keys where values are
-   * undefined.
-   * Setting keys to undefined solves BUG#6696, but doesn't persist data to
-   * shareJS. Inspect if this can be removed entirely if it doesn't break
-   * anything.
-   */
-  function setupFieldLocales(contentTypeFields, field, fieldId) {
-    //1) If the field is a primitive, e.g an object, function, regex.
-    //Note: new String() or new Number() are not considered primitives to lodash
-    //unlike number and string
-    //2) If the field is an object with more than one key or a collection
-    //with a length that is larger than 0
-    if(!_.isObject(field) || _.isEmpty(field)){
-      var newField = {};
-      var fieldType = _.find(contentTypeFields, {id: fieldId});
-      //Either initialize one field with the default locale or initialize all
-      //localized fields depending on wether the field is localizable
-      if(fieldType.localized){
-        _.each(TheLocaleStore.getPrivateLocales(), function (locale) {
-          newField[locale.internal_code] = undefined;
-        });
-      } else {
-        newField[TheLocaleStore.getDefaultLocale().internal_code] = undefined;
-      }
-      $scope.otDoc.doc.at(['fields', fieldId]).set(newField);
-    }
-  }
-
-
 
   /**
    * TODO This is way to complicated: We should only care about the

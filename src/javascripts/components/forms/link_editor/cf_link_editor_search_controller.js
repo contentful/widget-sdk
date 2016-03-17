@@ -231,7 +231,7 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
   function addEntity(entity) {
     // See scope checks comment at the top
     if($scope) {
-      return $q.when($scope.$eval($attrs.addEntity, {entity: entity}));
+      return $q.resolve($scope.$eval($attrs.addEntity, {entity: entity}));
     }
     return $q.reject();
   }

@@ -14,7 +14,7 @@ describe('cfMarkdownEditor', function () {
     var scopeProps = { fieldData: { value: 'test' }, field: {} };
 
     sinon.stub(LazyLoader, 'get', function () {
-      return $q.when(libs);
+      return $q.resolve(libs);
     });
 
     elem = this.$compile('<cf-markdown-editor field-data="fieldData" field="field" />', scopeProps);

@@ -9,7 +9,7 @@
 
 div(ng-if="videoEditorController.isVideoWidgetReady()")
   cf-video-input.form-widget__input-row(
-    value="{{fieldData.value}}"
+    value="fieldData.value"
     asset-lookup="videoEditorController.lookupAsset(assetId)"
     search-config="videoEditor.searchConfig"
     on-change="videoEditorController.resetErrors(); videoEditorController.resetAsset(); videoEditorController.persistInput(input)"

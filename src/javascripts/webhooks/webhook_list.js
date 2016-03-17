@@ -20,8 +20,8 @@ angular.module('contentful')
 
   function reload() {
     return webhookRepo.getAll().then(function (items) {
-      $scope.context.ready = true;
       $scope.webhooks = items;
+      $scope.context.ready = true;
     });
   }
 }]);

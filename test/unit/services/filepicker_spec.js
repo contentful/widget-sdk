@@ -25,7 +25,7 @@ describe('Filepicker service', function () {
     $rootScope      = this.$inject('$rootScope');
 
     LazyLoader.get = function () {
-      return $q.when({
+      return $q.resolve({
         setKey: _.noop,
         makeDropPane: (makeDropPaneStub = sinon.stub()),
         pick: (pickStub = sinon.stub()),

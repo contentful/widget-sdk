@@ -31,11 +31,12 @@ header.workbench-header
         .l-form-controls
           .l-form-locale(ng-repeat="locale in locales track by locale.internal_code"
               ot-field-presence="['fields', widget.field.id, locale.internal_code]"
-              data-locale="{{locale.internal_code}}")
+              data-locale="{{locale.code}}")
             cf-widget-renderer.l-field-editor(
               cf-focus-ot-input="hasInitialFocus"
               cf-field-editor="asset.data.fields[field.id][locale.internal_code]"
-              ot-path="['fields', field.id, locale.internal_code]")
+              ot-path="['fields', field.id, locale.internal_code]"
+              cf-widget-api)
             .form-widget__rights-info(
               ng-show="otDoc.state.editable && isDisabled(field, locale)"
               tooltip="You don't have a permission to edit this field. To change your permission setting contact your space administrator."

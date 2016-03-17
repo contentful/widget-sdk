@@ -30,7 +30,8 @@ angular.module('cf.app')
   var confirmationInProgress = false;
 
   return {
-    setup: setupHandlers
+    setup: setupHandlers,
+    setNavigationConfirmed: function (isConfirmed) { navigationConfirmed = isConfirmed; }
   };
 
   function setupHandlers () {
@@ -43,33 +44,6 @@ angular.module('cf.app')
     $rootScope.$on('$stateChangeStart', stateChangeStartHandler);
     $rootScope.$on('$stateChangeError', stateChangeErrorHandler);
     $rootScope.$on('$stateNotFound', stateChangeErrorHandler);
-
-    // TODO Should not be a scope method
-    $rootScope.closeState = closeState;
-  }
-
-  function goToEntityState(entity) {
-    if (entity.getType() === 'Entry') {
-      $state.go('spaces.detail.entries.detail', {
-        entryId: entity.getId(), addToContext: true
-      });
-    } else if (entity.getType() === 'Asset') {
-      $state.go('spaces.detail.assets.detail', {
-        assetId: entity.getId(), addToContext: true
-      });
-    }
-  }
-
-  function closeState() {
-    var currentState = $state.$current;
-
-    navigationConfirmed = true;
-    contextHistory.pop();
-    if (!contextHistory.isEmpty()) {
-      goToEntityState(contextHistory.getLast());
-    } else {
-      $state.go((currentState.ncyBreadcrumb && currentState.ncyBreadcrumb.parent) || '');
-    }
   }
 
   function stateChangeStartHandler(event, toState, toStateParams, fromState, fromStateParams) {
@@ -79,8 +53,7 @@ angular.module('cf.app')
       return;
     }
 
-    if (fromState.name === toState.name &&
-        getAddToContext(fromStateParams) === getAddToContext(toStateParams)) {
+    if (onlyAddToContextParamChanged(toState, toStateParams, fromState, fromStateParams)) {
       event.preventDefault();
       return;
     }
@@ -189,7 +162,16 @@ angular.module('cf.app')
     }
   }
 
-  function getAddToContext(params) {
-    return JSON.stringify(_.omit(params, 'addToContext'));
+  /**
+   * Compares a state transition and returns true if everything except
+   * the `addToContext` property of the parameters stays the same.
+   */
+  function onlyAddToContextParamChanged (to, toParams, from, fromParams) {
+    return to.name === from.name &&
+           ('addToContext' in toParams) && ('addToContext' in fromParams) &&
+           _.isEqual(
+             _.omit(toParams, 'addToContext'),
+             _.omit(fromParams, 'addToContext')
+           );
   }
 }]);

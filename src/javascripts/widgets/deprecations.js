@@ -3,10 +3,6 @@
 angular.module('contentful')
 
 .value('widgets/deprecations/data', {
-  youtubeEditor: {
-    alternative: 'URL',
-    preview: true
-  },
   dropdown: {
     alternative: 'Radio',
     field: ['Boolean']
@@ -35,10 +31,9 @@ angular.module('contentful')
    *
    * @param {string} skipId
    * @param {API.ContentType.field} field
-   * @param {boolean} previe
    * @returns {(Widget[]) => Widget[]}
    */
-  function createFilter (skipId, field, preview) {
+  function createFilter (skipId, field) {
     return function (widgets) {
       return _.filter(widgets, function (widget) {
         var deprecation = DEPRECATIONS[widget.id];
@@ -53,10 +48,6 @@ angular.module('contentful')
         widget.deprecation = deprecation;
 
         if (widget.id === skipId) {
-          return true;
-        }
-
-        if (deprecation.preview && preview) {
           return true;
         }
 

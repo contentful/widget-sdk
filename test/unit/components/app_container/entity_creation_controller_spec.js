@@ -83,7 +83,7 @@ describe('EntityCreationController', function () {
 
     describe('creation suceeds', function () {
       beforeEach(function () {
-        createStub.returns(this.$q.when({ getId: sinon.stub().returns('someEntryId') }));
+        createStub.returns(this.$q.resolve({ getId: sinon.stub().returns('someEntryId') }));
         this.entityCreationController.newEntry(contentType);
         this.scope.$apply();
       });
@@ -143,7 +143,7 @@ describe('EntityCreationController', function () {
 
     describe('creation suceeds', function () {
       beforeEach(inject(function (cfStub) {
-        createStub.returns(this.$q.when(cfStub.asset(this.scope.spaceContext.space, 'someAssetId')));
+        createStub.returns(this.$q.resolve(cfStub.asset(this.scope.spaceContext.space, 'someAssetId')));
         this.entityCreationController.newAsset();
         this.scope.$apply();
       }));

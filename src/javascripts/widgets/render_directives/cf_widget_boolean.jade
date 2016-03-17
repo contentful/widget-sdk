@@ -1,9 +1,0 @@
-label.cf-widget-boolean__option(
-  ng-repeat="value in valuesController.valuesList track by value.value")
-  input.cf-widget-boolean__radio(type="radio"
-    ng-model="valuesController.selected"
-    ng-change="otBindInternalChangeHandler()"
-    ng-value="value.value"
-    ng-disabled="!otEditable")
-  span.cf-widget-boolean__label
-    | {{value.label}}

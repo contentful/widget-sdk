@@ -39,34 +39,32 @@ angular.module('contentful')
  */
 .factory('widgets/migrations', ['$injector', function ($injector) {
   var MIGRATIONS = $injector.get('widgets/migrations/data');
-  var eiHelpers = $injector.get('editingInterfaces/helpers');
-
-  return function editingInterfaceMigrator (contentType) {
-    return function (widget) {
-      var field = eiHelpers.findField(contentType.fields, widget);
-      return migrateWidget(widget, field);
-    };
-  };
-
 
   /**
-   * @param {API.Widget} widget
-   * @param {API.Field} field
+   * @ngdoc method
+   * @name widget/migrations#
+   * @description
+   * Migrate the widget ID of the field control if the original widget
+   * has been replaced by a different one
+   *
+   * @param {Data.FieldControl}
+   * @returns {Data.FieldControl}
    */
-  function migrateWidget (widget, field) {
-    var id = widget.widgetId;
+  return function migrateWidgetId (control) {
+    var widgetId = control.widgetId;
+    var field = control.field;
     var migration = _.find(MIGRATIONS, function (migration) {
-      var fieldMatches = !migration.fieldTypes || _.contains(migration.fieldTypes, field.type);
-      return fieldMatches && migration.from === id;
+      var appliesToFieldType = !migration.fieldTypes || _.contains(migration.fieldTypes, field.type);
+      return appliesToFieldType && migration.from === widgetId;
     });
 
     if (migration) {
       return _.defaults({
         widgetId: migration.to
-      }, widget);
+      }, control);
     } else {
-      return widget;
+      return control;
     }
-  }
+  };
 
 }]);

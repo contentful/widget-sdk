@@ -4,6 +4,9 @@
  * @ngdoc directive
  * @name otPath
  * @scope.requires otDoc
+ * @scope.requires entity
+ * @scope.requires field
+ * @scope.requires locale
  * @property otPath
  *
  * @description
@@ -94,8 +97,8 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
 
       function remoteOpHandler(event, op) {
         var scope = event.currentScope;
-        if (angular.equals(op.p, scope.otPath)) {
-          var value = ShareJS.peek(scope.otDoc.doc, op.p);
+        if (_.isEqual(op.p.slice(0, scope.otPath.length), scope.otPath)) {
+          var value = ShareJS.peek(scope.otDoc.doc, scope.otPath);
           scope.$broadcast('otValueChanged', scope.otPath, value);
         }
       }
@@ -130,7 +133,7 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
           // TODO should this really be `null` an not an empty string?
           return ShareJS.mkpathAndSetValue(doc, path, newValue || null);
         } else if (oldValue === newValue) {
-          return $q.when();
+          return $q.resolve();
         } else {
           var commonStart = 0;
           var commonEnd = 0;
@@ -196,7 +199,10 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
         if ($scope.otDoc.doc) {
           return ShareJS.peek($scope.otDoc.doc, $scope.otPath);
         } else {
-          return void(0);
+          // we don't use $scope.otPath here since it is initialized in the link method
+          // of this directive and hence is undefined when otGetValue is called as a
+          // part of initializing the controller for this directive
+          return dotty.get($scope.entity.data.fields, [$scope.field.id, $scope.locale.internal_code]);
         }
       }
 

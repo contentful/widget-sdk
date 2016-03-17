@@ -41,7 +41,6 @@ function ContentTypeEditorController($scope, $injector) {
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.saveAndClose);
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
-  $scope.updatePublishedContentType = updatePublishedContentType;
 
   $scope.$watch('contentType.data.fields',       checkForDirtyForm, true);
   $scope.$watch('contentType.data.displayField', checkForDirtyForm);
@@ -58,8 +57,6 @@ function ContentTypeEditorController($scope, $injector) {
     scope.publishedIds = _.pluck(fields, 'id');
     scope.publishedApiNames = _.pluck(fields, 'apiName');
   });
-
-  $scope.$on('entityDeleted', handleEntityDeleted);
 
   if ($scope.context.isNew) {
     metadataDialog.openCreateDialog()
@@ -95,7 +92,7 @@ function ContentTypeEditorController($scope, $injector) {
         return !count;
       });
     } else {
-      isDeletable = $q.when(true);
+      isDeletable = $q.resolve(true);
     }
 
     isDeletable.then(function (deletable) {
@@ -121,7 +118,7 @@ function ContentTypeEditorController($scope, $injector) {
   // ContentTypeActionsController needs it, too.
   controller.countEntries = function () {
     if (!$scope.contentType.getPublishedVersion()) {
-      return $q.when(0);
+      return $q.resolve(0);
     }
     return $scope.spaceContext.space.getEntries({
       content_type: $scope.contentType.data.sys.id
@@ -155,25 +152,6 @@ function ContentTypeEditorController($scope, $injector) {
       modified = false;
     }
     $scope.context.dirty = !!modified;
-  }
-
-  function handleEntityDeleted(event, contentType) {
-    if (event.currentScope !== event.targetScope) {
-      var scope = event.currentScope;
-      if (contentType === scope.contentType) {
-        scope.closeState();
-      }
-    }
-  }
-
-  /**
-   * @ngdoc method
-   * @name ContentTypeEditorController#scope#updatePublishedContentType
-   *
-   * @param {Object} publishedContentType
-  */
-  function updatePublishedContentType (publishedContentType) {
-    $scope.publishedContentType = publishedContentType;
   }
 
   /**

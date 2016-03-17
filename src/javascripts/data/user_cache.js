@@ -27,7 +27,8 @@ angular.module('cf.data')
  *   // ...
  * })
  */
-.factory('data/userCache', [function () {
+.factory('data/userCache', ['$injector', function ($injector) {
+  var memoize = $injector.get('utils/memoize');
 
   return function createCache (space) {
     var getUserMap = createUserFetcher(space);
@@ -56,17 +57,5 @@ angular.module('cf.data')
     return _.transform(users, function (map, user) {
       map[user.getId()] = user;
     }, {});
-  }
-
-  function memoize (fn) {
-    var result;
-    var called = false;
-    return function () {
-      if (!called) {
-        result = fn();
-        called = true;
-      }
-      return result;
-    };
   }
 }]);

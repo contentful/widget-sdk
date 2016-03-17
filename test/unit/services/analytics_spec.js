@@ -56,7 +56,7 @@ describe('analytics', function () {
   describe('setSpace', function(){
     beforeEach(function(){
       this.userData.signInCount = 1;
-      this.analytics.setUserData(this.userData);
+      this.analytics.enable(this.userData);
     });
 
     it('setSpace should set space data and initialize', function() {
@@ -67,7 +67,7 @@ describe('analytics', function () {
     });
   });
 
-  describe('setUserData', function(){
+  describe('#enable', function(){
     beforeEach(function(){
       this.analytics.setSpace(this.space);
     });
@@ -75,13 +75,13 @@ describe('analytics', function () {
     it('setSpace should set space data and initialize', function() {
       sinon.assert.notCalled(this.segment.identify);
       sinon.assert.notCalled(this.totango.initialize);
-      this.analytics.setUserData(this.userData);
+      this.analytics.enable(this.userData);
       sinon.assert.calledWith(this.segment.identify, 'h4nswur5t', this.userData);
       sinon.assert.calledWith(this.totango.initialize, this.userData, this.space.data.organization);
     });
 
     it('calls identify with new data', function() {
-      this.analytics.setUserData(this.userData);
+      this.analytics.enable(this.userData);
       this.analytics.addIdentifyingData({data: 'lolcat'});
       sinon.assert.calledTwice(this.segment.identify);
       sinon.assert.calledWith(this.segment.identify, 'h4nswur5t', {data: 'lolcat'});
@@ -101,25 +101,50 @@ describe('analytics', function () {
   describe('stateActivated', function() {
     beforeEach(function(){
       this.state = {
-        name: 'spaces.detail.entries.detail',
+        name: 'spaces.detail.entries.detail'
       };
       this.stateParams = {
         spaceId: 'spaceId',
         entryId: 'entryId'
       };
-      this.analytics.stateActivated(this.state, this.stateParams);
+
+      var $rootScope = this.$inject('$rootScope');
+      this.broadcast = function () {
+        $rootScope.$broadcast('$stateChangeSuccess', this.state, this.stateParams);
+      }.bind(this);
     });
 
-    it('should set the section in totango', function(){
-      sinon.assert.calledWith(this.totango.setModule, this.state.name);
+    describe('When enabled', function () {
+      beforeEach(function () {
+        this.analytics.enable();
+        this.broadcast();
+      });
+
+      it('should set the section in totango', function(){
+        sinon.assert.calledWith(this.totango.setModule, this.state.name);
+      });
+
+      it('should set the page in segment', function() {
+        sinon.assert.calledWith(this.segment.page, this.state.name, this.stateParams);
+      });
+
+      it('should track segment', function(){
+        sinon.assert.called(this.segment.track);
+      });
     });
 
-    it('should set the page in segment', function() {
-      sinon.assert.calledWith(this.segment.page, this.state.name, { spaceId: 'spaceId', entryId: 'entryId'});
-    });
+    describe('When disabled', function () {
+      it('does not track by default', function () {
+        this.broadcast();
+        sinon.assert.notCalled(this.segment.track);
+      });
 
-    it('should track segment', function(){
-      sinon.assert.called(this.segment.track);
+      it('does not track if was enabled and disabled', function () {
+        this.analytics.enable();
+        this.analytics.disable();
+        this.broadcast();
+        sinon.assert.notCalled(this.segment.track);
+      });
     });
   });
 

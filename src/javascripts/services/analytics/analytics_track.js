@@ -18,14 +18,15 @@ angular.module('contentful')
   var logger        = $injector.get('logger');
   var cookieStore   = $injector.get('TheStore/cookieStore');
   var stringifySafe = $injector.get('stringifySafe');
+  var $rootScope    = $injector.get('$rootScope');
 
   var organizationData, spaceData, userData;
+  var turnOffStateChangeListener = null;
 
   var analytics = {
     enable: enable,
     disable: disable,
     setSpace: setSpace,
-    setUserData: setUserData,
     addIdentifyingData: addIdentifyingData,
     /**
      * @ngdoc method
@@ -51,20 +52,33 @@ angular.module('contentful')
      * @param {string} module
      */
     trackTotango: trackTotango,
-    trackPersistentNotificationAction: trackPersistentNotificationAction,
-    stateActivated: stateActivated
+    trackPersistentNotificationAction: trackPersistentNotificationAction
   };
   return analytics;
 
-  function enable () {
+  /**
+   * @ngdoc method
+   * @name analytics#enable
+   * @param {API.User} user
+   */
+  function enable (user) {
     segment.enable();
     totango.enable();
     fontsdotcom.enable();
+    turnOffStateChangeListener = $rootScope.$on('$stateChangeSuccess', trackStateChange);
+    userData = user;
+    initialize();
   }
 
   function disable () {
     segment.disable();
     totango.disable();
+
+    if (_.isFunction(turnOffStateChangeListener)) {
+      turnOffStateChangeListener();
+      turnOffStateChangeListener = null;
+    }
+
     _.forEach(analytics, function (value, key) {
       analytics[key] = _.noop;
     });
@@ -95,11 +109,6 @@ angular.module('contentful')
       spaceData = null;
       organizationData = null;
     }
-  }
-
-  function setUserData (user) {
-    userData = user;
-    initialize();
   }
 
   function track (event, data) {
@@ -153,7 +162,7 @@ angular.module('contentful')
     });
   }
 
-  function stateActivated (state, stateParams, fromState, fromStateParams) {
+  function trackStateChange (event, state, stateParams, fromState, fromStateParams) {
     totango.setModule(state.name);
     segment.page(state.name, stateParams);
     track('Switched State', {

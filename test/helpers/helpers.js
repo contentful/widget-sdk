@@ -83,13 +83,29 @@ beforeEach(function () {
    *
    * @param {string} template
    * @param {object} scopeProperties
+   * @param {object} controllers Object with controller names as keys and controller
+   *                 instances as values
    * @return {JQueryElement}
    */
-  this.$compile = function (template, scopeProperties) {
+  this.$compile = function (template, scopeProperties, controllers) {
     var $compile = this.$inject('$compile');
     var $rootScope = this.$inject('$rootScope');
     var scope = _.extend($rootScope.$new(true), scopeProperties);
-    var element = $compile(template)(scope);
+    var transcludeControllers = {};
+
+    if (controllers) {
+      // convert controllers to a form `$compile` understands
+      transcludeControllers = _.mapValues(controllers, function(controllerInstance) {
+        return {
+          instance: controllerInstance
+        };
+      });
+    }
+
+    var element = $compile(template)(scope, undefined, {
+      transcludeControllers: transcludeControllers
+    });
+
     scope.$digest();
     return element;
   };

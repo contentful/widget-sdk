@@ -1,0 +1,14 @@
+div(ng-show="context.ready && !context.forbidden")
+  | ${{template}}
+div.workbench.workbench-loading.x--center(
+  ng-show="!context.ready && !context.forbidden")
+  div.workbench-loading__spinner
+  div.workbench-loading__message
+    | ${{loadingText}}
+div.workbench.workbench-forbidden.x--center(
+  ng-show="context.forbidden")
+  div.workbench-forbidden__headline
+    | You don’t have permission to access this view
+  div.workbench-forbidden__message
+    | Get in touch with the person administering
+    | Contentful at your company to learn more

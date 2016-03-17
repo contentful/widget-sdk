@@ -69,7 +69,7 @@ describe('The Locale list directive', function () {
             }
           }
         },
-        getLocales: sinon.stub().returns(this.$q.when(locales)),
+        getLocales: sinon.stub().returns(this.$q.resolve(locales)),
         getOrganizationId: sinon.stub().returns('id')
       }
     };

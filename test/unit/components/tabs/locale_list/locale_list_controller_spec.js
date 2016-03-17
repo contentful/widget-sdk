@@ -10,7 +10,7 @@ describe('Locale List Controller', function () {
     this.scope.context = {};
     this.scope.spaceContext = {
       space: {
-        getLocales: sinon.stub().returns(this.$q.when({})),
+        getLocales: sinon.stub().returns(this.$q.resolve({})),
         getOrganizationId: sinon.stub()
       }
     };

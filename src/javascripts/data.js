@@ -6,4 +6,4 @@
  * @description
  * Contains all the business logic and communication with the APIs.
  */
-angular.module('cf.data', []);
+angular.module('cf.data', ['cf.utils']);

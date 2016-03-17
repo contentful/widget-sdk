@@ -26,9 +26,6 @@ describe('Client Controller', function () {
         'enable',
         'disable',
         'track',
-        'setSpace',
-        'setUserData',
-        'stateActivated'
       ]);
       $provide.value('analytics', self.analyticsStubs);
 
@@ -55,9 +52,8 @@ describe('Client Controller', function () {
       $provide.value('tokenStore', self.tokenStoreStubs);
 
       self.featuresStubs = {
-        shouldAllowAnalytics: sinon.stub()
+        allowAnalytics: sinon.stub().returns(true)
       };
-      self.featuresStubs.shouldAllowAnalytics.returns(true);
       $provide.value('features', self.featuresStubs);
 
       setMockOnContext(self, 'authenticationStubs', [
@@ -422,10 +418,6 @@ describe('Client Controller', function () {
       this.broadcastStub.restore();
     });
 
-    it('tracks login', function () {
-      sinon.assert.called(this.analyticsStubs.setUserData);
-    });
-
     it('sets user', function() {
       expect(scope.user).toEqual(this.user);
     });
@@ -477,17 +469,20 @@ describe('Client Controller', function () {
     });
 
     describe('if user exists', function() {
-      var org1, org2, org3;
+      var user, org1, org2, org3;
       beforeEach(function() {
         org1 = {org1: true};
         org2 = {org2: true};
         org3 = {org3: true};
+        user = {
+          organizationMemberships: [
+            {organization: org1}, {organization: org2}, {organization: org3}
+          ]
+        };
 
         this.prepare = function () {
           var subscriber = this.tokenStoreStubs.changed.attach.firstCall.args[0];
-          subscriber({user: { organizationMemberships: [
-            {organization: org1}, {organization: org2}, {organization: org3}
-          ]}});
+          subscriber({user: user});
         }.bind(this);
       });
 
@@ -498,15 +493,14 @@ describe('Client Controller', function () {
 
       it('sets analytics user data and enables tracking', function() {
         this.prepare();
-        sinon.assert.called(this.analyticsStubs.setUserData);
-        sinon.assert.called(this.analyticsStubs.enable);
-        sinon.assert.called(logger.enable);
+        sinon.assert.calledWithExactly(this.analyticsStubs.enable, user);
+        sinon.assert.calledWithExactly(logger.enable, user);
       });
 
       it('should not set or enable anything when analytics are disallowed', function() {
-        this.featuresStubs.shouldAllowAnalytics.returns(false);
+        this.featuresStubs.allowAnalytics.returns(false);
         this.prepare();
-        sinon.assert.notCalled(this.analyticsStubs.setUserData);
+        sinon.assert.notCalled(this.analyticsStubs.enable);
         sinon.assert.called(this.analyticsStubs.disable);
         sinon.assert.called(logger.disable);
       });

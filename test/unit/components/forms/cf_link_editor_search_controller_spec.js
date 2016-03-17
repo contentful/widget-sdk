@@ -57,7 +57,7 @@ describe('cfLinkEditorSearch Controller', function () {
       beforeEach(inject(function($rootScope) {
         spyOn(cfLinkEditorSearchCtrl, 'clearSearch');
         var result = {result: true};
-        scope.addLink = sinon.stub().returns($q.when());
+        scope.addLink = sinon.stub().returns($q.resolve());
         $rootScope.$broadcast('autocompleteResultPicked', 0, result);
       }));
 
@@ -125,7 +125,7 @@ describe('cfLinkEditorSearch Controller', function () {
       beforeEach(function() {
         spyOn(cfLinkEditorSearchCtrl, 'clearSearch');
         entity = {entity: true};
-        scope.addLink = sinon.stub().returns($q.when());
+        scope.addLink = sinon.stub().returns($q.resolve());
         scope.pick(entity);
         scope.$apply();
       });
@@ -162,8 +162,8 @@ describe('cfLinkEditorSearch Controller', function () {
 
       describe('successfully', function() {
         beforeEach(function() {
-          scope.addLink.returns($q.when(null));
-          createEntityStub.returns($q.when(entity));
+          scope.addLink.returns($q.resolve(null));
+          createEntityStub.returns($q.resolve(entity));
           scope['addNew'+uppercasedEntityType](contentType);
           scope.$apply();
         });
@@ -201,7 +201,7 @@ describe('cfLinkEditorSearch Controller', function () {
 
       describe('fails on create'+uppercasedEntityType, function() {
         beforeEach(function() {
-          scope.addLink.returns($q.when(null));
+          scope.addLink.returns($q.resolve(null));
           createEntityStub.returns($q.reject({}));
           scope['addNew'+uppercasedEntityType](contentType);
           scope.$apply();
@@ -235,8 +235,8 @@ describe('cfLinkEditorSearch Controller', function () {
         beforeEach(function() {
           scope.addLink.returns($q.reject({}));
           sinon.stub(entity, 'delete');
-          createEntityStub.returns($q.when(entity));
-          entity.delete.returns($q.when());
+          createEntityStub.returns($q.resolve(entity));
+          entity.delete.returns($q.resolve());
           scope['addNew'+uppercasedEntityType](contentType);
           scope.$apply();
         });
@@ -276,7 +276,7 @@ describe('cfLinkEditorSearch Controller', function () {
         beforeEach(function() {
           scope.addLink.returns($q.reject({}));
           sinon.stub(entity, 'delete');
-          createEntityStub.returns($q.when(entity));
+          createEntityStub.returns($q.resolve(entity));
           scope['addNew'+uppercasedEntityType](contentType);
           entity.delete.returns($q.reject({}));
           scope.$apply();
@@ -398,7 +398,7 @@ describe('cfLinkEditorSearch Controller', function () {
         0: entity,
         total: 30
       };
-      sinon.stub(cfLinkEditorSearchCtrl, '_loadEntities').returns($q.when(entities));
+      sinon.stub(cfLinkEditorSearchCtrl, '_loadEntities').returns($q.resolve(entities));
       sinon.spy(cfLinkEditorSearchCtrl, 'clearSearch');
       scope.paginator.pageLength = 3;
       scope.paginator.skipItems = sinon.stub();
@@ -447,7 +447,7 @@ describe('cfLinkEditorSearch Controller', function () {
         setBaseSize: sinon.stub()
       };
 
-      sinon.stub(cfLinkEditorSearchCtrl, '_loadEntities').returns($q.when(entities));
+      sinon.stub(cfLinkEditorSearchCtrl, '_loadEntities').returns($q.resolve(entities));
       scope.paginator.atLast = sinon.stub();
       scope.paginator.atLast.returns(false);
     });

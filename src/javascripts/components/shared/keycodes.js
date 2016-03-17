@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('contentful').constant('keycodes', {
   LEFT       : 37,
   UP         : 38,

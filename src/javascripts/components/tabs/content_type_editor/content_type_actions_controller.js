@@ -23,6 +23,7 @@ function ContentTypeActionsController($scope, $injector) {
   var accessChecker      = $injector.get('accessChecker');
   var ReloadNotification = $injector.get('ReloadNotification');
   var ctHelpers          = $injector.get('data/ContentTypes');
+  var closeState         = $injector.get('navigation/closeState');
 
   /**
    * @ngdoc property
@@ -60,7 +61,7 @@ function ContentTypeActionsController($scope, $injector) {
     var canRead = accessChecker.canPerformActionOnEntryOfType('read', $scope.contentType.getId());
 
     if (!isPublished) {
-      return $q.when(createStatusObject(true));
+      return $q.resolve(createStatusObject(true));
     }
 
     return $scope.ctEditorController.countEntries().then(function(count) {
@@ -83,7 +84,7 @@ function ContentTypeActionsController($scope, $injector) {
   }
 
   function remove (isPublished) {
-    var unpub = isPublished ? unpublish() : $q.when();
+    var unpub = isPublished ? unpublish() : $q.resolve();
     return unpub.then(sendDeleteRequest);
   }
 
@@ -129,7 +130,7 @@ function ContentTypeActionsController($scope, $injector) {
   }
 
   function unpublishSuccessHandler(publishedContentType){
-    $scope.updatePublishedContentType(null);
+    $scope.publishedContentType = null;
     spaceContext.unregisterPublishedContentType(publishedContentType);
     spaceContext.refreshContentTypes();
     trackUnpublishedContentType($scope.contentType);
@@ -145,7 +146,8 @@ function ContentTypeActionsController($scope, $injector) {
     return $scope.contentType.delete()
     .then(function () {
       notify.deleteSuccess();
-      $rootScope.$broadcast('entityDeleted', $scope.contentType);
+      spaceContext.removeContentType($scope.contentType);
+      return closeState();
     }, notify.deleteFail);
   }
 
@@ -220,7 +222,7 @@ function ContentTypeActionsController($scope, $injector) {
         $scope.contentType.data = oldData;
       });
     } else {
-      unpublish = $q.when();
+      unpublish = $q.resolve();
     }
 
     return unpublish
@@ -244,9 +246,6 @@ function ContentTypeActionsController($scope, $injector) {
     .then(function (published) {
       contentType.setPublishedVersion(version);
       $scope.publishedContentType = published;
-
-      // TODO this methods seem to do the same thing
-      $scope.updatePublishedContentType(published);
       spaceContext.registerPublishedContentType(published);
 
       // If the content type was created for the first time the API

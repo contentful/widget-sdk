@@ -19,7 +19,11 @@ angular.module('contentful').controller('cfVideoInputController', ['$attrs', '$s
   $scope.videoInput.searchEnabled = $scope.videoInput.searchConfig.isSearchEnabled;
 
 
-  $attrs.$observe('value', updateAssetId);
+  var valueReference = $attrs.value;
+  if (valueReference) {
+    $scope.$watch(valueReference, updateAssetId);
+  }
+
   $scope.$watch('videoInput.assetId', processNewAssetId);
 
   this.clearField         = clearField;

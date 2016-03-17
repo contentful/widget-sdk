@@ -78,7 +78,7 @@ describe('Entry List Actions Controller', function () {
     return entity;
   }
 
-  function makePerformTests(action, actionIndex, extraSpecs){
+  function makePerformTests(action, extraSpecs){
     describe(action+' selected entries', function () {
       beforeEach(function () {
         stubs.getVersion.returns(3);
@@ -143,7 +143,7 @@ describe('Entry List Actions Controller', function () {
     });
   }
 
-  makePerformTests('publish', 1, function () {
+  makePerformTests('publish', function () {
     it('gets version of selected entries', function () {
       expect(stubs.getVersion.callCount).toBe(4);
     });
@@ -153,22 +153,18 @@ describe('Entry List Actions Controller', function () {
     });
   });
 
-  makePerformTests('unpublish', 0);
-  makePerformTests('delete', 0, function () {
-    it('broadcasts event for sucessfully deleted entry', function () {
-      sinon.assert.calledWith(stubs.broadcast, 'entityDeleted');
-    });
-  });
+  makePerformTests('unpublish');
+  makePerformTests('delete');
 
-  makePerformTests('archive', 0);
-  makePerformTests('unarchive', 0);
+  makePerformTests('archive');
+  makePerformTests('unarchive');
 
   describe('duplicates selected entries', function () {
     beforeEach(function () {
       stubs.size.returns(2);
       stubs.action1.returns({contentType: {sys: {id: 'foo'}}});
       stubs.action2.returns({contentType: {sys: {id: 'bar'}}});
-      stubs.createEntry.withArgs('foo').returns($q.when());
+      stubs.createEntry.withArgs('foo').returns($q.resolve());
       stubs.createEntry.withArgs('bar').returns($q.reject({}));
       scope.entries = [];
       stubs.getSelected.returns([

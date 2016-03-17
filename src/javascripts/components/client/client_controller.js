@@ -2,7 +2,6 @@
 
 angular.module('contentful').controller('ClientController', ['$scope', '$injector', function ClientController($scope, $injector) {
   var $rootScope         = $injector.get('$rootScope');
-  var $controller        = $injector.get('$controller');
   var $timeout           = $injector.get('$timeout');
   var $location          = $injector.get('$location');
   var $state             = $injector.get('$state');
@@ -20,12 +19,10 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var enforcements       = $injector.get('enforcements');
   var revision           = $injector.get('revision');
   var ReloadNotification = $injector.get('ReloadNotification');
-  var TheAccountView     = $injector.get('TheAccountView');
-  var TheStore           = $injector.get('TheStore');
   var OrganizationList   = $injector.get('OrganizationList');
   var spaceTools         = $injector.get('spaceTools');
 
-  $scope.featureController = $controller('FeatureController', {$scope: $scope});
+  // TODO remove this eventually. All components should access it as a service
   $scope.spaceContext = spaceContext;
 
   $scope.preferences = {
@@ -48,7 +45,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var off = tokenStore.changed.attach(handleTokenData);
   $scope.$on('$destroy', off);
   $scope.$on('iframeMessage', iframeMessageWatchHandler);
-  $scope.$on('$stateChangeSuccess', stateChangeSuccessHandler);
 
   // @todo remove it - temporary proxy event handler
   $scope.$on('showCreateSpaceDialog', showCreateSpaceDialog);
@@ -57,8 +53,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
 
   function initClient() {
-    tokenStore.refresh()
-    .then(showOnboardingIfNecessary);
+    tokenStore.refresh();
 
     setTimeout(newVersionCheck, 5000);
 
@@ -71,13 +66,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
         });
       }
     }, 5 * 60 * 1000);
-  }
-
-  function stateChangeSuccessHandler(event, toState, toStateParams, fromState, fromStateParams) {
-    // TODO should be done be `onEnter` and `onExit` callbacks of the 'accounts' state.
-    TheAccountView.check();
-    // TODO should be done by purpse handler, e.g. in the analytics service
-    analytics.stateActivated(toState, toStateParams, fromState, fromStateParams);
   }
 
   function spaceAndTokenWatchHandler(collection) {
@@ -155,10 +143,9 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     enforcements.setUser(user);
     OrganizationList.resetWithUser(user);
 
-    if (features.shouldAllowAnalytics()) {
-      logger.enable();
-      analytics.enable();
-      analytics.setUserData(user);
+    if (features.allowAnalytics(user)) {
+      logger.enable(user);
+      analytics.enable(user);
     } else {
       logger.disable();
       analytics.disable();
@@ -177,14 +164,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     });
   }
 
-  function showOnboardingIfNecessary() {
-    var seenOnboarding = TheStore.get('seenOnboarding');
-    var signInCount = $scope.user.signInCount;
-    if (signInCount === 1 && !seenOnboarding) {
-      showOnboardingModal();
-    }
-  }
-
   function showCreateSpaceDialog() {
     analytics.track('Clicked Create-Space');
     modalDialog.open({
@@ -194,30 +173,14 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       persistOnNavigation: true
     })
     .promise
-    .then(handleTemplateCreation)
+    .then(handleSpaceCreationSuccess)
     .catch(function() {
       analytics.track('Closed Space Template Selection Modal');
       refreshContentTypes();
     });
   }
 
-
-  function showOnboardingModal() {
-    modalDialog.open({
-      title: 'Onboarding', // Not displayed, just for analytics
-      template: 'onboarding_dialog',
-      persistOnNavigation: true,
-      backgroundClose: false,
-      ignoreEsc: true,
-      scopeData: {
-        isOnboarding: true
-      }
-    })
-    .promise
-    .then(handleTemplateCreation);
-  }
-
-  function handleTemplateCreation(template) {
+  function handleSpaceCreationSuccess (template) {
     if (template) {
       analytics.track('Created Space Template', {template: template.name});
       $rootScope.$broadcast('reloadEntries');
@@ -226,7 +189,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function refreshContentTypes() {
-    return $timeout(function () {
+    $timeout(function () {
       spaceContext.refreshContentTypes();
     }, 1000);
   }

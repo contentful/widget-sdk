@@ -113,7 +113,7 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$injector', functio
         if (scope.otSubDoc) {
           updated = scope.otSubDoc.changeValue(value);
         } else {
-          updated = $q.when();
+          updated = $q.resolve();
         }
 
         updated

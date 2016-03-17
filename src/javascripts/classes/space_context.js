@@ -17,7 +17,6 @@ angular.module('contentful')
 .factory('spaceContext', ['$injector', function($injector){
   var $parse             = $injector.get('$parse');
   var $q                 = $injector.get('$q');
-  var $rootScope         = $injector.get('$rootScope');
   var ReloadNotification = $injector.get('ReloadNotification');
   var notification       = $injector.get('notification');
   var logger             = $injector.get('logger');
@@ -118,7 +117,7 @@ angular.module('contentful')
         this.contentTypes = [];
         this.publishedContentTypes = [];
         this._publishedContentTypesHash = {};
-        return $q.when(this.contentTypes);
+        return $q.resolve(this.contentTypes);
       }
 
       if (this.loadingPromise) {
@@ -170,7 +169,6 @@ angular.module('contentful')
       if (!this._publishedContentTypesHash[contentType.getId()]) {
         this.publishedContentTypes.push(contentType);
         this._publishedContentTypesHash[contentType.getId()] = contentType;
-        $rootScope.$broadcast('contentTypePublished', contentType);
       }
     },
 
@@ -187,7 +185,6 @@ angular.module('contentful')
       this._publishedContentTypesHash = _.omit(this._publishedContentTypesHash, function (ct) {
         return ct === publishedContentType;
       });
-      $rootScope.$broadcast('contentTypeUnpublished', publishedContentType);
     },
 
     /**
@@ -245,7 +242,7 @@ angular.module('contentful')
     fetchPublishedContentType: function (contentTypeId) {
       var self = this;
       var contentType = pick();
-      if (contentType) { return $q.when(contentType); }
+      if (contentType) { return $q.resolve(contentType); }
 
       return this.refreshContentTypes().then(pick);
 

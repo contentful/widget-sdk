@@ -35,6 +35,7 @@ angular.module('contentful')
   var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
   var $state           = $injector.get('$state');
   var spaceContext     = $injector.get('spaceContext');
+  var closeState       = $injector.get('navigation/closeState');
 
   var formWasDirty = false;
 
@@ -89,7 +90,7 @@ angular.module('contentful')
       return tokenStore.refresh().then(function () {
         // TODO Should probably be handled by the token store
         TheLocaleStore.refresh();
-        return $scope.closeState();
+        return closeState();
       }).finally(function () {
         notification.info('Locale deleted successfully');
       });
@@ -177,7 +178,7 @@ angular.module('contentful')
         scope: $scope
       });
     }
-    return $q.when({confirmed: true});
+    return $q.resolve({confirmed: true});
   }
 
   function findLocaleByCode(code) {

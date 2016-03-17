@@ -10,7 +10,7 @@ import combine from 'stream-combiner';
 import gutil from 'gulp-util';
 
 import * as utils from './utils';
-import {createRenderer} from '../lib/markdown-render';
+import * as markdown from '../lib/markdown-render';
 
 /**
  * Pipeline that renders markdown files and generates an index file for
@@ -47,14 +47,15 @@ function markdownLex () {
  * the the file extension with '.html'.
  */
 function markdownRender () {
-  let renderer = createRenderer();
+  let renderer = markdown.createRenderer();
 
   return utils.forEach(function (file) {
-    var tokens = file.markdown;
+    let tokens = file.markdown;
     if (!tokens)
       return;
 
-    var rendered = marked.parser(tokens, {renderer});
+    let rendered = markdown.compile(tokens, {renderer});
+    rendered = `<div ng-non-bindable>${rendered}</div>`
     file.path = gutil.replaceExtension(file.path, '.html');
     file.contents = new Buffer(rendered);
   });
@@ -63,7 +64,7 @@ function markdownRender () {
 
 /**
  * Stream transformer that renders files that have a `template` and
- * `data` property.
+ * `data` property through Nunjucks.
  */
 function renderTemplate () {
   var templateDir = path.resolve(__dirname, '..', 'templates');

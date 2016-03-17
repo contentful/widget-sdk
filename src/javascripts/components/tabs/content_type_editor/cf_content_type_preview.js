@@ -75,7 +75,7 @@ angular.module('contentful')
   }
 
   function fromData (contentType) {
-    return $q.when(contentType.data).then(orderPreviewKeys);
+    return $q.resolve(contentType.data).then(orderPreviewKeys);
   }
 
   // We rely on the fact the keys are displayed in the order they

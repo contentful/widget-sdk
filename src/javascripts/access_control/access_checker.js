@@ -98,7 +98,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     /**
      * @ngdoc method
      * @name accessChecker#shouldDisable
-     * * @param {string} actionName
+     * @param {string} actionName
      * @returns {boolean}
      * @description
      * Returns true if action with a given name should be disabled.
@@ -285,9 +285,10 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    */
   function canUploadMultipleAssets() {
     var canCreate = canPerformActionOnType('create', 'asset');
-    var canUpdate = policyChecker.canUpdateAssets() || policyChecker.canUpdateOwnAssets();
+    var canUpdate = canPerformActionOnType('update', 'asset');
+    var canUpdateWithPolicy = policyChecker.canUpdateAssets() || policyChecker.canUpdateOwnAssets();
 
-    return canCreate && canUpdate;
+    return canCreate && (canUpdate || canUpdateWithPolicy);
   }
 
   /**
@@ -396,7 +397,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     return function (res) {
       if (_.contains([403, 404], parseInt(dotty.get(res, 'statusCode'), 10))) {
         context.forbidden = true;
-        return $q.when(context);
+        return $q.resolve(context);
       } else {
         return $q.reject(res);
       }

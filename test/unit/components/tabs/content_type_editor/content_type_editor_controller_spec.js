@@ -66,12 +66,6 @@ describe('ContentTypeEditor Controller', function () {
       sinon.assert.notCalled(scope.validate);
     });
 
-    it('updates published content type', function () {
-      var publishedCT = {published: true};
-      scope.updatePublishedContentType(publishedCT);
-      expect(scope.publishedContentType).toEqual(publishedCT);
-    });
-
     it('has no fields', function () {
       expect(scope.hasFields).toBeFalsy();
     });
@@ -235,14 +229,6 @@ describe('ContentTypeEditor Controller', function () {
     });
   });
 
-  it('closesState if entityDeleted event is broadcast', function() {
-    scope.closeState = sinon.stub();
-    createContentType([{}]);
-    var $rootScope = this.$inject('$rootScope');
-    $rootScope.$broadcast('entityDeleted', scope.contentType);
-    sinon.assert.calledOnce(scope.closeState);
-  });
-
   describe('#deleteField(id)', function () {
     var syncControls;
 
@@ -397,14 +383,14 @@ describe('ContentTypeEditor Controller', function () {
     });
 
     it('sets form to dirty when dialog is confirmed', function () {
-      controller.openFieldDialog();
+      controller.openFieldDialog({});
       openFieldDialog.resolve();
       this.$apply();
       sinon.assert.calledOnce(scope.contentTypeForm.$setDirty);
     });
 
     it('does not set form to dirty when dialog is canceled', function () {
-      controller.openFieldDialog();
+      controller.openFieldDialog({});
       openFieldDialog.reject();
       this.$apply();
       sinon.assert.notCalled(scope.contentTypeForm.$setDirty);

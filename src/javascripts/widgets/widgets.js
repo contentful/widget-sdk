@@ -33,6 +33,20 @@ angular.module('contentful')
    * @property {boolean} isFocusable
    */
 
+  /**
+   * @ngdoc type
+   * @name Data.FieldControl
+   * @description
+   * The Field Control object is used to create editor controls.
+   *
+   * All field controls for a Content Type are retrieved by the
+   * `data/editingInterfaces`. The API representation is then converted
+   * to this type.
+   * @property {string} fieldId
+   * @property {string} widgetId
+   * @property {object} settings
+   * @property {API.Field} field
+   */
 
   /**
    * @ngdoc type
@@ -125,7 +139,7 @@ angular.module('contentful')
     if (_.isEmpty(widgets)) {
       return $q.reject(new Error('Field type '+fieldType+' is not supported by any widget.'));
     } else {
-      return $q.when(widgets);
+      return $q.resolve(widgets);
     }
   }
 
@@ -206,22 +220,22 @@ angular.module('contentful')
    * @name widgets#buildRenderable
    * @description
    * Create an object that contains all the necessary data to render a
-   * widget.
+   * field control.
    *
-   * @param {Data.Widget[]} widget
+   * @param {Data.FieldControl[]} controls
    * @return {object}
    */
-  function buildRenderable (widgets) {
+  function buildRenderable (controls) {
     var renderable = {sidebar: [], form: []};
-    _.forEach(widgets, function (widget) {
-      if (!widget.field) {
+    _.forEach(controls, function (control) {
+      if (!control.field) {
         return;
       }
-      widget = buildOneRenderable(widget);
-      if (widget.sidebar) {
-        renderable.sidebar.push(widget);
+      control = buildOneRenderable(control);
+      if (control.sidebar) {
+        renderable.sidebar.push(control);
       } else {
-        renderable.form.push(widget);
+        renderable.form.push(control);
       }
     });
     return renderable;
@@ -231,32 +245,44 @@ angular.module('contentful')
     var id = widget.widgetId;
     widget = _.cloneDeep(widget);
 
-    var template = widgetTemplate(id);
-    widget.template = template;
-
     if (!_.isObject(widget.settings)) {
       widget.settings = {};
     }
+
     applyDefaults(id, widget.settings);
 
     var descriptor = getWidget(id);
-    if (descriptor) {
-      _.extend(widget, {
-        rendersHelpText: descriptor.rendersHelpText,
-        defaultHelpText: descriptor.defaultHelpText,
-        isFocusable: !descriptor.notFocusable,
-        sidebar: !!descriptor.sidebar
-      });
+    if (!descriptor) {
+      widget.template = getWarningTemplate(id, 'missing');
+      return widget;
     }
+
+    _.extend(widget, {
+      template: descriptor.template,
+      rendersHelpText: descriptor.rendersHelpText,
+      defaultHelpText: descriptor.defaultHelpText,
+      isFocusable: !descriptor.notFocusable,
+      sidebar: !!descriptor.sidebar
+    });
+
+    if (!isCompatibleWithField(descriptor, widget.field)) {
+      widget.template = getWarningTemplate(id, 'incompatible');
+    }
+
     return widget;
   }
 
-  function widgetTemplate(widgetId) {
-    var widget = WIDGETS[widgetId];
-    if (widget) {
-      return widget.template;
-    } else {
-      return '<div class="missing-widget-template">Unknown editor widget "'+widgetId+'"</div>';
-    }
+  function getWarningTemplate (widgetId, message) {
+    var accessChecker = $injector.get('accessChecker');
+    return JST.editor_control_warning({
+      label: widgetId,
+      message: message,
+      canUpdateContentTypes: !accessChecker.shouldHide('updateContentType')
+    });
+  }
+
+  function isCompatibleWithField (widgetDescriptor, field) {
+    var fieldType = fieldFactory.getTypeName(field);
+    return _.contains(widgetDescriptor.fieldTypes, fieldType);
   }
 }]);

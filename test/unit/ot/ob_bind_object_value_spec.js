@@ -12,7 +12,7 @@ describe('otBindObjectValue', function () {
   beforeEach(inject(function ($rootScope, $compile, $q) {
     scope = $rootScope.$new();
     scope.otSubDoc = {
-      changeValue: sinon.stub().returns($q.when())
+      changeValue: sinon.stub().returns($q.resolve())
     };
     scope.otPath        = 'path' ;
     scope.external      = {value: 'foo'};

@@ -4,12 +4,12 @@
  * @ngdoc module
  * @name cf.app
  */
-angular.module('cf.app', []);
+angular.module('cf.app', ['ui.router']);
 
 
 angular.module('contentful', [
   'contentful/environment',
-  'contentful/user_interface',
+  'cf.libs',
   'cf.app',
   'cf.ui',
   'cf.forms',
@@ -44,6 +44,6 @@ angular.module('contentful', [
   $injector.get('navigation/stateChangeHandlers').setup();
   $injector.get('contextMenu').init();
   $injector.get('notification').setupClearMessageHooks();
-  $injector.get('TrialWatcher').init();
-  $injector.get('activationEmailResendController').init();
+  $injector.get('states').loadAll();
+  $injector.get('dialogsInitController').init();
 }]);

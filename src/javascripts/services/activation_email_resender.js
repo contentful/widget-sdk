@@ -20,9 +20,8 @@ angular.module('contentful')
 
   return {
     /**
-     * @ngdoc function
+     * @ngdoc method
      * @name activationEmailResender#resend
-     * @methodOf activationEmailResender
      *
      * @description
      * Makes Gatekeeper resend the activation email already sent to the user with

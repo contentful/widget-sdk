@@ -48,14 +48,6 @@ angular.module('contentful')
     return spaceContext.getPublishedContentType(id);
   };
 
-  $scope.$on('entityDeleted', function (event, entity) {
-    var scope = event.currentScope;
-    var index = _.indexOf(scope.entries, entity);
-    if (index > -1) {
-      scope.entries.splice(index, 1);
-    }
-  });
-
   $scope.$watchCollection(function () {
     return {
       cts: spaceContext.publishedContentTypes,
@@ -91,8 +83,9 @@ angular.module('contentful')
   }, refreshEntityCaches, true);
 
   $scope.typeNameOr = function (or) {
+    var id;
     try {
-      var id = dotty.get($scope, 'context.view.contentTypeId');
+      id = dotty.get($scope, 'context.view.contentTypeId');
       if (!id) return or;
       var ct = spaceContext.getPublishedContentType(id);
       if (!ct) return or;

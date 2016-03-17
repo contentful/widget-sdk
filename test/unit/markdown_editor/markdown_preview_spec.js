@@ -17,7 +17,7 @@ describe('Markdown preview', function() {
 
     var $q = this.$inject('$q');
     var LazyLoader = this.$inject('LazyLoader');
-    sinon.stub(LazyLoader, 'get', function () { return $q.when(libs); });
+    sinon.stub(LazyLoader, 'get', function () { return $q.resolve(libs); });
   });
 
   afterEach(function () { content = null; });

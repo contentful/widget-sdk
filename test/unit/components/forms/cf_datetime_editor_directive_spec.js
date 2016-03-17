@@ -10,7 +10,7 @@ describe('DateTime Editor', function () {
     moment = _moment_;
     scope = $rootScope;
     scope.otSubDoc = {
-      changeValue: sinon.stub().returns($q.when())
+      changeValue: sinon.stub().returns($q.resolve())
     };
     scope.widget = {settings: {
       format: 'timeZ',

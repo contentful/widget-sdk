@@ -68,7 +68,7 @@ describe('Space Template creation service', function () {
           createAsset: sinon.stub(),
           createDeliveryApiKey: sinon.stub(),
           getContentType: function() {
-            return $q.when({
+            return $q.resolve({
               createEditingInterface: spaceContext.createEditingInterface
             });
           }
@@ -76,28 +76,28 @@ describe('Space Template creation service', function () {
       };
 
       _.times(2, function (n) {
-        spaceContext.space.createContentType.onCall(n).returns($q.when(template.contentTypes[n]));
+        spaceContext.space.createContentType.onCall(n).returns($q.resolve(template.contentTypes[n]));
       });
       spaceContext.space.createContentType.onThirdCall().returns($q.reject());
-      stubs.ctPublish.returns($q.when());
+      stubs.ctPublish.returns($q.resolve());
 
-      spaceContext.createEditingInterface.returns($q.when());
+      spaceContext.createEditingInterface.returns($q.resolve());
       spaceContext.createEditingInterface.onSecondCall().returns($q.reject());
 
       _.times(2, function (n) {
-        spaceContext.space.createAsset.onCall(n).returns($q.when(template.assets[n]));
+        spaceContext.space.createAsset.onCall(n).returns($q.resolve(template.assets[n]));
       });
       spaceContext.space.createAsset.onThirdCall().returns($q.reject());
-      stubs.assetProcess.returns($q.when());
-      stubs.assetPublish.returns($q.when());
+      stubs.assetProcess.returns($q.resolve());
+      stubs.assetPublish.returns($q.resolve());
 
       _.times(2, function (n) {
-        spaceContext.space.createEntry.onCall(n).returns($q.when(template.entries[n]));
+        spaceContext.space.createEntry.onCall(n).returns($q.resolve(template.entries[n]));
       });
       spaceContext.space.createEntry.onThirdCall().returns($q.reject());
-      stubs.entryPublish.returns($q.when());
+      stubs.entryPublish.returns($q.resolve());
 
-      spaceContext.space.createDeliveryApiKey.returns($q.when());
+      spaceContext.space.createDeliveryApiKey.returns($q.resolve());
 
       creator = spaceTemplateCreator.getCreator(
         spaceContext,
@@ -200,21 +200,21 @@ describe('Space Template creation service', function () {
         spaceContext.space.createDeliveryApiKey   = sinon.stub();
         spaceContext.createEditingInterface       = sinon.stub();
 
-        spaceContext.space.createContentType.returns($q.when({sys: {id: 'ct3'}, publish: stubs.ctPublish}));
-        stubs.ctPublish.returns($q.when());
+        spaceContext.space.createContentType.returns($q.resolve({sys: {id: 'ct3'}, publish: stubs.ctPublish}));
+        stubs.ctPublish.returns($q.resolve());
 
-        spaceContext.createEditingInterface.returns($q.when());
+        spaceContext.createEditingInterface.returns($q.resolve());
 
-        spaceContext.space.createAsset.returns($q.when({
+        spaceContext.space.createAsset.returns($q.resolve({
           sys: {id: 'a3'},
           process: stubs.assetProcess,
           publish: stubs.assetPublish
         }));
-        stubs.assetProcess.returns($q.when());
-        stubs.assetPublish.returns($q.when());
+        stubs.assetProcess.returns($q.resolve());
+        stubs.assetPublish.returns($q.resolve());
 
-        spaceContext.space.createEntry.returns($q.when({sys: {id: 'e3'}, publish: stubs.entryPublish}));
-        stubs.entryPublish.returns($q.when());
+        spaceContext.space.createEntry.returns($q.resolve({sys: {id: 'e3'}, publish: stubs.entryPublish}));
+        stubs.entryPublish.returns($q.resolve());
 
         stubs.on.reset();
         stubs.timeout.reset();

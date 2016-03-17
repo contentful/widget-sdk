@@ -29,7 +29,7 @@ describe('SlugEditorController', function () {
     this.scope.otSubDoc = {
       changeString: function (value) {
         scope.otSubDoc.getValue.returns(value || null);
-        return $q.when();
+        return $q.resolve();
       },
       getValue: sinon.stub().returns(null)
     };
@@ -144,7 +144,7 @@ describe('SlugEditorController', function () {
       var $q = this.$q;
       // Let the server respond with zero entries
       this.scope.spaceContext.space.getEntries = function () {
-        return $q.when({ total: 0 });
+        return $q.resolve({ total: 0 });
       };
       // Set a new title.
       this.scope.spaceContext.entryTitle = sinon.stub().returns('New Title');
@@ -157,7 +157,7 @@ describe('SlugEditorController', function () {
       var $q = this.$q;
       // Let the server respond with one entry
       this.scope.spaceContext.space.getEntries = function () {
-        return $q.when({ total: 1 });
+        return $q.resolve({ total: 1 });
       };
       // Set a new title.
       this.scope.spaceContext.entryTitle = sinon.stub().returns('New Title');

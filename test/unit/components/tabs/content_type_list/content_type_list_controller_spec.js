@@ -25,7 +25,7 @@ describe('Content Type List Controller', function () {
     cfStub = this.$inject('cfStub');
     $q = this.$inject('$q');
     spaceContext = this.$inject('spaceContext');
-    sinon.stub(spaceContext, 'refreshContentTypes').returns($q.when([]));
+    sinon.stub(spaceContext, 'refreshContentTypes').returns($q.resolve([]));
 
     scope = $rootScope.$new();
     scope.context = {};

@@ -64,7 +64,6 @@ angular.module('contentful')
   var analyticsEvents   = $injector.get('analyticsEvents');
   var fieldFactory      = $injector.get('fieldFactory');
   var Widgets           = $injector.get('widgets');
-  var features          = $injector.get('features');
 
   $scope.decoratedField = field.decorate($scope.field, $scope.contentType);
   $scope.validations = validations.decorateFieldValidations($scope.field);
@@ -86,9 +85,8 @@ angular.module('contentful')
    * @name FieldDialogController#availableWidgets
    * @type {Widgets.Descriptor[]}
    */
-  var preview = features.isPreviewEnabled();
   var currentWidgetId = widget.widgetId;
-  Widgets.getAvailable($scope.field, currentWidgetId, preview)
+  Widgets.getAvailable($scope.field, currentWidgetId)
   .then(function (available) {
     $scope.availableWidgets = available;
   });

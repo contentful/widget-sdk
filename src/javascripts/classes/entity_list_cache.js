@@ -74,7 +74,7 @@ angular.module('contentful')
           _.forEach(linkedEntities, self.save.bind(self));
         });
       } else {
-        return $q.when();
+        return $q.resolve();
       }
     },
 

@@ -43,7 +43,7 @@ angular.module('contentful')
 
   function unlockEditing() {
     if (controller._unlocked)
-      return $q.when(true);
+      return $q.resolve(true);
 
     return modalDialog.open({
       title: 'Edit field ID',
