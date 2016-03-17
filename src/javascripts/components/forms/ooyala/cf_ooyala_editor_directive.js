@@ -1,15 +1,19 @@
 'use strict';
 
-angular.module('contentful').directive('cfOoyalaEditor', [function(){
+angular.module('contentful')
+.directive('cfOoyalaEditor', ['$injector', function ($injector) {
+  var $controller = $injector.get('$controller');
   return {
     restrict: 'E',
     scope: true,
     template: JST['cf_video_editor'](),
-    controller: ['$injector', '$scope', function ($injector, $scope) {
-      var $controller = $injector.get('$controller');
-
+    require: '^cfWidgetApi',
+    link: function ($scope, $el, $attrs, widgetApi) {
       $scope.providerVideoEditorController = $controller('cfOoyalaEditorController');
-      $scope.videoEditorController = $controller('cfVideoEditorController', {$scope: $scope});
-    }]
+      $scope.videoEditorController = $controller('cfVideoEditorController', {
+        $scope: $scope,
+        widgetApi: widgetApi
+      });
+    }
   };
 }]);

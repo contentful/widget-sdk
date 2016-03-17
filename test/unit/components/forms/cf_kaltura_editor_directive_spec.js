@@ -19,7 +19,13 @@ describe('cfKalturaEditor directive', function () {
   }));
 
   it('calls the #setOrganizationId method of the kaltura client wrapper', function() {
-    this.$compile('<cf-kaltura-editor />');
+    this.$compile('<cf-kaltura-editor />', {}, {
+      cfWidgetApi: {
+        field: {
+          onValueChanged: sinon.stub()
+        }
+      }
+    });
     expect(kalturaClientWrapperMock.setOrganizationId).toHaveBeenCalledWith('org-123');
   });
 });

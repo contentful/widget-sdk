@@ -1,8 +1,16 @@
 'use strict';
 
 angular.module('contentful')
-.controller('cfVideoEditorController', ['$scope', function($scope){
+.controller('cfVideoEditorController', ['$scope', 'widgetApi', function($scope, widgetApi){
   var providerVideoEditorController = $scope.providerVideoEditorController;
+  var field = widgetApi.field;
+
+  $scope.fieldData = {};
+  var detachFieldValueChanged = field.onValueChanged(function (val) {
+    $scope.fieldData.value = val;
+  });
+
+  $scope.$on('$destroy', detachFieldValueChanged);
 
   $scope.videoEditor = {
     errorMessage : undefined,
@@ -63,10 +71,7 @@ angular.module('contentful')
   }
 
   function persistInput(input) {
-    var current = $scope.otSubDoc.getValue();
-    if (current !== input) {
-      $scope.otSubDoc.changeValue(input);
-    }
+    field.setValue(input);
   }
 
   function resetAsset() {
@@ -74,7 +79,7 @@ angular.module('contentful')
   }
 
   function resetEditorInput() {
-    $scope.otSubDoc.removeValue();
+    field.removeValue();
     $scope.fieldData.value = undefined;
   }
 
