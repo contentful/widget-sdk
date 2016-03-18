@@ -23,7 +23,7 @@ describe('Webhook Editor directive', function () {
     this.$inject('WebhookRepository').getInstance = sinon.stub().returns(this.repo);
 
     this.compile = function (context, webhook) {
-      var data = {context: context || {}, webhook: webhook || {}};
+      var data = {context: context || {}, webhook: webhook || {headers: [], topics: []}};
       data.webhook.sys = data.webhook.sys || {};
       this.element = this.$compile('<div cf-ui-tab><cf-webhook-editor /></div>', data);
       this.scope = this.element.scope();

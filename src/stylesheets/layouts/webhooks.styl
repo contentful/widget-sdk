@@ -6,6 +6,9 @@
 .webhook-editor .workbench-nav__tabs
   margin-left: $rhythm(1)
 
+.webhook-editor__settings
+  margin: $rhythm(1.5)
+
 .webhook-call__header
   padding: $rhythm(1)
   display: flex
@@ -99,3 +102,33 @@
 
 .x--jsonlike
   font-family: monospace
+
+.webhook-segmentation__matrix
+  border-collapse: collapse
+  margin: $rhythm(1) 0
+  width: 100%
+
+  td, th
+    padding: $rhythm(.4)
+    border: 1px solid $colors.element-light
+  td:first-child
+    border-left-width: 0
+    white-space: nowrap
+  td:last-child
+    border-right-width: 0
+  tr:last-child
+    td, th
+      border-width: 0
+  .x--clickable-cell
+    cursor: pointer
+    *
+      cursor: pointer
+  .x--centered-cell
+    text-align: center
+    span
+      color: $colors.text-lightest
+  .x--highlighted-cell
+    background: $colors.element-lightest
+
+.webhook-segmentation__option
+  margin-bottom: $rhythm(.4)
