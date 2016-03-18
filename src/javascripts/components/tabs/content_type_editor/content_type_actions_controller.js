@@ -301,6 +301,10 @@ function ContentTypeActionsController($scope, $injector) {
       notify.invalid();
     } else if (errorId === 'VersionMismatch') {
       if ($scope.contentType.getVersion()) {
+        logger.logServerWarn('Error activating outdated Content Type', {
+          error: err,
+          contentType: $scope.contentType
+        });
         notify.saveOutdated();
       } else {
         notify.saveIdExists();
