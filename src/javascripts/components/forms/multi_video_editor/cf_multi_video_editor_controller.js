@@ -12,7 +12,6 @@ angular.module('contentful')
   $scope.multiVideoEditor = {
     assets           : [],
     error            : undefined,
-    isSortingEnabled : providerVideoEditorController.isSortingEnabled,
     searchConfig: {
       onSelection     : useSelectedAssets,
       scope           : $scope,

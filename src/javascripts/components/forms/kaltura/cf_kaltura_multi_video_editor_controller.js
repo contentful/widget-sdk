@@ -10,7 +10,6 @@ angular.module('contentful').controller('cfKalturaMultiVideoEditorController', [
 
   //overwrite this function
   this.customAttrsForPlayer = customAttrsForPlayer;
-  this.isSortingEnabled = false;
 
   function customAttrsForPlayer(video) {
     //TODO: remove coupling with assetId
