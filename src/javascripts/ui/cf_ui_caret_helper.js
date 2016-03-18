@@ -9,7 +9,8 @@ angular.module('cf.ui')
  */
 .factory('cfUiCaretHelper', [function () {
   return {
-    getPreservedCaretPosition: getPreservedCaretPosition
+    getPreservedCaretPosition: getPreservedCaretPosition,
+    getCaretPreservingInputUpdater: getCaretPreservingInputUpdater
   };
 
   /**
@@ -24,24 +25,13 @@ angular.module('cf.ui')
    * @return {integer} reconciled caret position
    */
   function getPreservedCaretPosition (currentCaretPosition, currentValue, newValue) {
+    currentValue = currentValue || '';
+    // sharejs sets newValue to `null` when it's "empty" or when validations fail
+    newValue = newValue || '';
+
     if (currentValue === newValue) {
       return currentCaretPosition;
     }
-
-    if (isUndefinedOrNull(currentValue)) {
-      currentValue = '';
-    }
-
-    // sharejs sets newValue to `null` when it's "empty"
-    if (isUndefinedOrNull(newValue)) {
-      newValue = '';
-    }
-
-    // This makes sure newValue`.length doesn't blow up
-    newValue = newValue.toString();
-
-    // safe guard against non-string values for currentValue
-    currentValue = currentValue.toString();
 
     /**
      * The basic idea is as follows:
@@ -69,10 +59,31 @@ angular.module('cf.ui')
       }
     }
 
-    return caretPosition;
+    return caretPosition < 0 ? 0 : caretPosition;
   }
 
-  function isUndefinedOrNull (value) {
-    return _.isUndefined(value) || _.isNull(value);
+  /**
+   * @ngdoc method
+   * @name cfUiCaretHelper#getCaretPreservingInputUpdater
+   * @description
+   * Returns a function that can update an text input field
+   * while preserving the caret position
+   *
+   * @param {jQuery element} $inputEl
+   * @return {function}
+   */
+  function getCaretPreservingInputUpdater ($inputEl) {
+    var rawInputEl = $inputEl.get(0);
+
+    return function (value) {
+      var currentValue = $inputEl.val();
+
+      if (currentValue !== value) {
+        var newCaretPosition = getPreservedCaretPosition(rawInputEl.selectionStart, currentValue, value);
+
+        $inputEl.val(value);
+        rawInputEl.selectionStart = rawInputEl.selectionEnd = newCaretPosition;
+      }
+    };
   }
 }]);

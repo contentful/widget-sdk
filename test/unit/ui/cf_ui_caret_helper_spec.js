@@ -1,15 +1,18 @@
 'use strict';
 
-describe('cfUiCaretHelper service', function() {
+describe('cfUiCaretHelper service', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    this.getPreservedCaretPosition = this.$inject('cfUiCaretHelper').getPreservedCaretPosition;
+    var cfUiCaretHelper = this.$inject('cfUiCaretHelper');
+
+    this.getPreservedCaretPosition = cfUiCaretHelper.getPreservedCaretPosition;
+    this.getCaretPreservingInputUpdater = cfUiCaretHelper.getCaretPreservingInputUpdater;
   });
 
-  describe('#getPreservedCaretPosition()', function() {
-    describe('Characters added before caret', function() {
-      it('should return current caret position + number of chars added', function() {
+  describe('#getPreservedCaretPosition()', function () {
+    describe('Characters added before caret', function () {
+      it('should return current caret position + number of chars added', function () {
         var currentCaretPosition = 3;
         var currentValue = 'abcd';
         var newValue = 'xabcd';
@@ -18,8 +21,8 @@ describe('cfUiCaretHelper service', function() {
       });
     });
 
-    describe('Characters added after caret', function() {
-      it('should return current caret position unchanged', function() {
+    describe('Characters added after caret', function () {
+      it('should return current caret position unchanged', function () {
         var currentCaretPosition = 3;
         var currentValue = 'abcd';
         var newValue = 'abcd x';
@@ -28,8 +31,8 @@ describe('cfUiCaretHelper service', function() {
       });
     });
 
-    describe('Characters removed before caret', function() {
-      it('should return current caret position - number of chars removed', function() {
+    describe('Characters removed before caret', function () {
+      it('should return current caret position - number of chars removed', function () {
         var currentCaretPosition = 3;
         var currentValue = 'abcd';
         var newValue = 'cd';
@@ -39,8 +42,8 @@ describe('cfUiCaretHelper service', function() {
       });
     });
 
-    describe('Characters removed after caret', function() {
-      it('should return current caret position unchanged', function() {
+    describe('Characters removed after caret', function () {
+      it('should return current caret position unchanged', function () {
         var currentCaretPosition = 3;
         var currentValue = 'abcdef';
         var newValue = 'abcd';
@@ -49,8 +52,8 @@ describe('cfUiCaretHelper service', function() {
       });
     });
 
-    describe('Nothing is changed', function() {
-      it('should return current caret position', function() {
+    describe('Nothing is changed', function () {
+      it('should return current caret position', function () {
         var currentCaretPosition = 3;
         var currentValue = 'abcd';
         var newValue = 'abcd';
@@ -59,14 +62,45 @@ describe('cfUiCaretHelper service', function() {
       });
     });
 
-    describe('New value is non-string', function() {
-      it('should coerece it internally and work as described', function() {
+    describe('New or current value is non-string', function () {
+      it('should throw', function () {
         var currentCaretPosition = 3;
         var currentValue = 1234;
         var newValue = 91234;
 
-        expect(this.getPreservedCaretPosition(currentCaretPosition, currentValue, newValue)).toEqual(4);
+        expect(this.getPreservedCaretPosition.bind(this, currentCaretPosition, currentValue, newValue)).toThrow();
       });
     });
   });
+
+  describe('#getCaretPreservingInputUpdater()', function () {
+    var $inputEl = $('<input type="text" />');
+    var rawInputEl = $inputEl.get(0);
+
+    function resetInputAndCaret() {
+      $inputEl.val('thisissparta');
+      rawInputEl.selectionStart = rawInputEl.selectionEnd = 3;
+    }
+
+    it('should return a function that updates an input field while preserving caret position', function () {
+      var updateWhilePreservingCaret = this.getCaretPreservingInputUpdater($inputEl);
+
+      resetInputAndCaret();
+      updateWhilePreservingCaret('xthisissparta');
+      expect(rawInputEl.selectionStart).toEqual(4);
+
+      resetInputAndCaret();
+      updateWhilePreservingCaret('thisissparta');
+      expect(rawInputEl.selectionStart).toEqual(3);
+
+      resetInputAndCaret();
+      updateWhilePreservingCaret('sparta');
+      expect(rawInputEl.selectionStart).toEqual(0);
+
+      resetInputAndCaret();
+      updateWhilePreservingCaret('thisisspartatotallybruv');
+      expect(rawInputEl.selectionStart).toEqual(3);
+    });
+  });
+
 });

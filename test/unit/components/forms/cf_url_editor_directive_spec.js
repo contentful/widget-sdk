@@ -23,13 +23,13 @@ describe('cfUrlEditor directive', function () {
     };
   });
 
-  it('should update when new value is received over the wire', function () {
+  it('updates when new value is received over the wire', function () {
     var $el = this.compileElement();
 
     expect($el.children('input.form-control').val()).toEqual('omgwhat');
   });
 
-  it('should send data over the wire when url is modified by calling changeString', function () {
+  it('updates when url is modified by calling changeString', function () {
     var $inputEl = this.compileElement().children('input.form-control');
 
     $inputEl.val('unicorns');
