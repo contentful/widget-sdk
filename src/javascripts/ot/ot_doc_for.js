@@ -25,7 +25,6 @@ angular.module('contentful')
  * @property {ShareJSDoc} doc
  * @property {otDoc.state} state
  * @property {function()} getEntity
- * @property {function()} updateEntityData
 */
 
 /**
@@ -102,8 +101,7 @@ angular.module('contentful')
     // TODO should be removed from the public interface
     getEntity: function () {
       return entity;
-    },
-    updateEntityData: otUpdateEntityData
+    }
   };
 
 
@@ -212,7 +210,7 @@ angular.module('contentful')
     otDoc.state.editable = true;
     $scope.$emit('otBecameEditable', entity);
     $scope.$broadcast('otDocReady', doc);
-    updateIfValid();
+    otUpdateEntityData();
   }
 
   function filterDeletedLocales(data) {
@@ -235,23 +233,6 @@ angular.module('contentful')
     }
   }
 
-  function updateIfValid() {
-    // Sanity check to make sure there's actually something in the snapshot
-    if (dotty.get(otDoc, 'doc.snapshot.sys.id')) {
-      otUpdateEntityData();
-    } else {
-      // TODO I think this will never be called. If so, we can remove
-      // this whole function in the future and replace it by a call to
-      // 'otUpdateEntityData()'.
-      logger.logError('OT document does not provide id', {
-        data: {
-          entitySys: dotty.get(entity, 'data.sys'),
-          docSnapshot: dotty.get(otDoc, 'doc.snapshot')
-        }
-      });
-    }
-  }
-
   function otUpdateEntityData() {
     if (otDoc.doc) {
       var data = _.cloneDeep(otDoc.doc.snapshot);
@@ -262,7 +243,7 @@ angular.module('contentful')
         throw new Error('Failed to update entity: sys not available');
       }
 
-      if (otDoc.doc.version > entity.getVersion()) {
+      if (otDoc.doc.version > entity.data.sys.version) {
         data.sys.updatedAt = moment().toISOString();
       } else {
         data.sys.updatedAt = entity.data.sys.updatedAt;
@@ -282,12 +263,14 @@ angular.module('contentful')
   function installListeners (doc) {
     doc.on('remoteop', remoteOpListener);
     doc.on('change', broadcastOtChange);
+    doc.on('change', applyEntityDataUpdate);
     doc.on('acknowledge', updateHandler);
   }
 
   function removeListeners (doc) {
     doc.removeListener('remoteop', remoteOpListener);
     doc.removeListener('change', broadcastOtChange);
+    doc.removeListener('change', applyEntityDataUpdate);
     doc.removeListener('acknowledge', updateHandler);
   }
 
@@ -296,7 +279,6 @@ angular.module('contentful')
       _.each(ops, function (op) {
         scope.$broadcast('otRemoteOp', op);
       });
-      otUpdateEntityData();
     });
   }
 
@@ -308,6 +290,11 @@ angular.module('contentful')
     $scope.$applyAsync(function () {
       $scope.$broadcast('otChange', $scope.otDoc.doc, op);
     });
+  }
+
+  function applyEntityDataUpdate () {
+    // See comment above for use of `$applyAsync()`
+    $scope.$applyAsync(otUpdateEntityData);
   }
 
   function handleScopeDestruction() {

@@ -21,9 +21,6 @@ describe('cfSingleLineEditor directive', function () {
           getValue: sinon.stub()
         },
         isDisabled: sinon.stub(),
-        otDoc: {
-          updateEntityData: sinon.stub()
-        },
         locale: {}
       });
 
