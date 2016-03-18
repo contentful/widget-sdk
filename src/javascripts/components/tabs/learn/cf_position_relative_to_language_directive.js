@@ -1,12 +1,9 @@
 'use strict';
 
-angular.module('contentful').directive('cfPositionRelativeToLanguage', ['$injector', function($injector){
-  var defer    = $injector.get('defer');
-
+angular.module('contentful').directive('cfPositionRelativeToLanguage', function(){
   return {
     restrict: 'A',
     link: function(scope, elem, attrs) {
-      defer(reposition);
       attrs.$observe('positionRelativeTo', reposition);
 
       function reposition() {
@@ -18,4 +15,4 @@ angular.module('contentful').directive('cfPositionRelativeToLanguage', ['$inject
       }
     }
   };
-}]);
+});

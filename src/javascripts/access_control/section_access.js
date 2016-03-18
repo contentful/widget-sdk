@@ -67,15 +67,15 @@ angular.module('contentful').factory('sectionAccess', ['$injector', function ($i
   function redirectToFirstAccessible() {
     var currentStateName = dotty.get($state, '$current.name');
     var firstAccessible  = getFirstAccessibleSection();
-    var targetStateName  = [BASE_STATE, firstAccessible].join('.');
     var visibility       = accessChecker.getSectionVisibility();
-    var signInCount      = dotty.get(spaceContext, 'space.data.spaceMembership.user.signInCount');
+    var signInCount      = spaceContext.getData('spaceMembership.user.signInCount');
+    var shouldGoToLearn  = signInCount === 1 &&
+                           (visibility.contentType || visibility.entry);
+    var targetStateName  = [BASE_STATE, shouldGoToLearn ? 'learn' : firstAccessible]
+                           .join('.');
 
     if (currentStateName === BASE_STATE) {
-      if ((signInCount === 1) &&
-          (visibility.contentType || visibility.entry)) {
-        $state.go('spaces.detail.learn', {spaceId: $stateParams.spaceId});
-      } else if (firstAccessible) {
+      if (shouldGoToLearn || firstAccessible) {
         $state.go(targetStateName, {spaceId: $stateParams.spaceId});
       } else {
         throw new Error('No section to redirect to.');

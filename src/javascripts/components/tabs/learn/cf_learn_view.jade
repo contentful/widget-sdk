@@ -1,5 +1,5 @@
 .workbench
-  .workbench-main.x--content(ng-if="context.ready")
+  .workbench-main.x--content
     .workbench-main__middle-content.x--learn-home
       //- Onboarding steps
       .learn-onboarding
@@ -16,12 +16,18 @@
                 cf-icon(name="checkmark-alt")
                 span Define the structure
             p.step__description
-              | Create your content model. It’s comprised of content types, which define the structure of your entries.
+              | The content model is comprised of content types, which define the structure of your entries.
             .step__actions
+              //- User has access
               button.cfnext-btn-secondary-action(
+                ng-show="learn.canAccessContentTypes"
                 ng-click="learn.trackClickedButton('View your content model')"
-                ng-disabled="!learn.canAccessContentTypes"
                 ui-sref="spaces.detail.content_types.list({ spaceId: learn.spaceId })")
+                | View your content model
+              //- User has no access
+              button.cfnext-btn-secondary-action.disabled(
+                ng-show="!learn.canAccessContentTypes"
+                tooltip="You don\'t have permission to access content types")
                 | View your content model
 
           .learn-onboarding__step(ng-show="!learn.hasAccessibleContentTypes")
@@ -31,7 +37,7 @@
               h3.step__title__inner
                 | Define the structure
             p.step__description
-              | The content model is comprised of content types, which define the structure of your entries.
+              | Create your content model. It’s comprised of content types, which define the structure of your entries.
             .step__actions
               //- User has access
               button.cfnext-btn-action(
@@ -120,22 +126,23 @@
       .learn-language
         h2 Build with Contentful
         p.learn-subheading Choose your language to access relevant SDKs, tools, tutorials and more.
-        .learn-language__group
+        .learn-language__group(
+          ng-class="{'is-open': learn.selectedLanguage}")
           .learn-language__item(
-            ng-repeat="data in learn.languageData"
-            data-current-index="{{$index}}")
+            ng-repeat="lang in learn.languageData track by lang.id"
+            data-current-language="{{lang.id}}")
             a.learn-language__link(
-              ng-class="{'is-active': $index === learn.selectedLanguageIndex, 'is-open': learn.selectedLanguageIndex !== undefined}"
-              ng-click="learn.selectIndex($index)")
-              cf-icon(name="{{data.icon}}")
-              .learn-language__name {{data.name}}
-        .learn-language__detail(ng-class="{'x--visible': learn.selectedLanguageIndex !== undefined}")
+              ng-class="{'is-active': lang === learn.selectedLanguage}"
+              ng-click="learn.selectLanguage(lang)")
+              cf-icon(name="{{lang.icon}}")
+              .learn-language__name {{lang.name}}
+        .learn-language__detail(ng-class="{'x--visible': learn.selectedLanguage}")
           cf-icon(
             name="arrow-up"
             cf-position-relative-to-language
-            position-relative-to=".learn-language__item[data-current-index=\"{{learn.selectedLanguageIndex}}\"]")
+            position-relative-to=".learn-language__item[data-current-language=\"{{learn.selectedLanguage.id}}\"]")
           //- JavaScript
-          .learn-language__references(ng-show="learn.selectedLanguageName === 'JavaScript'")
+          .learn-language__references(ng-show="learn.selectedLanguage.id === 'js'")
             .learn-language__reference
               .icon-wrapper
                 cf-icon(name="learn-documentation")
@@ -170,7 +177,7 @@
                 target="_blank")
                 | Get the SDK
           //- PHP
-          .learn-language__references(ng-show="learn.selectedLanguageName === 'PHP'")
+          .learn-language__references(ng-show="learn.selectedLanguage.id === 'php'")
             .learn-language__reference
               .icon-wrapper
                 cf-icon(name="learn-documentation")
@@ -205,7 +212,7 @@
                 target="_blank")
                 | Get the SDK
           //- Ruby
-          .learn-language__references(ng-show="learn.selectedLanguageName === 'Ruby'")
+          .learn-language__references(ng-show="learn.selectedLanguage.id === 'ruby'")
             .learn-language__reference
               .icon-wrapper
                 cf-icon(name="learn-documentation")
@@ -240,7 +247,7 @@
                 target="_blank")
                 | Get the SDK
           //- iOS
-          .learn-language__references(ng-show="learn.selectedLanguageName === 'iOS'")
+          .learn-language__references(ng-show="learn.selectedLanguage.id === 'ios'")
             .learn-language__reference
               .icon-wrapper
                 cf-icon(name="learn-documentation")
@@ -281,7 +288,7 @@
                 target="_blank")
                 | Objective-C SDK
           //- Android
-          .learn-language__references(ng-show="learn.selectedLanguageName === 'Android'")
+          .learn-language__references(ng-show="learn.selectedLanguage.id === 'android'")
             .learn-language__reference
               .icon-wrapper
                 cf-icon(name="learn-documentation")
@@ -316,7 +323,7 @@
                 target="_blank")
                 | Get the SDK
           //- HTTP
-          .learn-language__references(ng-show="learn.selectedLanguageName === 'HTTP'")
+          .learn-language__references(ng-show="learn.selectedLanguage.id === 'http'")
             .learn-language__reference
               .icon-wrapper
                 cf-icon(name="learn-documentation")

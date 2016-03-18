@@ -82,8 +82,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
             | Webhooks
     li.app-top-bar__action.nav-bar__list-item--right
       a.nav-bar__link(
-          ng-class="{'is-active': $state.includes('spaces.detail.learn') ,\
-                    'is-section-index': $state.$current.name === 'spaces.detail.learn'}"
+          ng-class="{'is-active': $state.is('spaces.detail.learn')}"
           ui-sref="spaces.detail.learn({ spaceId: $stateParams.spaceId })"
           data-view-type="learn"
           tabindex="0")

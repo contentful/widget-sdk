@@ -12,9 +12,10 @@ describe('cfLearnView directive', function() {
       spaceContext: {
         space: {
           getEntries: sinon.stub(),
-          getContentTypes: sinon.stub(),
           getDeliveryApiKeys: sinon.stub()
-        }
+        },
+        refreshContentTypes: sinon.stub(),
+        getFilteredAndSortedContentTypes: sinon.stub()
       },
       accessChecker: {
         getSectionVisibility: function() {
@@ -23,7 +24,8 @@ describe('cfLearnView directive', function() {
             entry: sinon.stub(),
             apiKey: sinon.stub()
           };
-        }
+        },
+        shouldDisable: sinon.stub()
       }
     };
 
@@ -37,7 +39,8 @@ describe('cfLearnView directive', function() {
     stubs.accessChecker.getSectionVisibility().contentType.returns(true);
     stubs.accessChecker.getSectionVisibility().entry.returns(true);
     stubs.accessChecker.getSectionVisibility().apiKey.returns(true);
-
+    stubs.accessChecker.shouldDisable.returns(false);
+    stubs.spaceContext.refreshContentTypes.resolves();
 
     this.compile = function() {
       element = this.$compile('<cf-learn-view />', {
@@ -50,19 +53,18 @@ describe('cfLearnView directive', function() {
 
   describe('no content types', function() {
     beforeEach(function() {
-      stubs.spaceContext.space.getContentTypes.resolves([]);
+      stubs.spaceContext.getFilteredAndSortedContentTypes.returns([]);
       stubs.spaceContext.space.getDeliveryApiKeys.resolves([]);
       this.compile();
     });
 
     it('requests content types', function() {
-      sinon.assert.calledOnce(stubs.spaceContext.space.getContentTypes);
+      sinon.assert.calledOnce(stubs.spaceContext.getFilteredAndSortedContentTypes);
       expect(controller.hasContentTypes).toBe(false);
     });
 
     it('requests delivery API keys', function() {
       sinon.assert.calledOnce(stubs.spaceContext.space.getDeliveryApiKeys);
-      // expect(controller.hasContentTypes).toBe(false);
     });
 
     it('does not request entries', function() {
@@ -75,14 +77,14 @@ describe('cfLearnView directive', function() {
   describe('has accessible content types', function() {
     beforeEach(function() {
       stubs.accessChecker.canPerformActionOnEntryOfType = sinon.stub().returns(true);
-      stubs.spaceContext.space.getContentTypes.resolves([{getId: _.noop}]);
+      stubs.spaceContext.getFilteredAndSortedContentTypes.returns([{getId: _.noop}]);
       stubs.spaceContext.space.getEntries.resolves(true);
       stubs.spaceContext.space.getDeliveryApiKeys.resolves([]);
       this.compile();
     });
 
     it('sets content type data', function() {
-      sinon.assert.calledOnce(stubs.spaceContext.space.getContentTypes);
+      sinon.assert.calledOnce(stubs.spaceContext.getFilteredAndSortedContentTypes);
       expect(controller.accessibleContentTypes.length).toBe(1);
       expect(controller.hasContentTypes).toBe(true);
       expect(controller.hasAccessibleContentTypes).toBe(true);
@@ -92,14 +94,14 @@ describe('cfLearnView directive', function() {
   describe('has non accessible content types', function() {
     beforeEach(function() {
       stubs.accessChecker.canPerformActionOnEntryOfType = sinon.stub().returns(false);
-      stubs.spaceContext.space.getContentTypes.resolves([{getId: _.noop}]);
+      stubs.spaceContext.getFilteredAndSortedContentTypes.returns([{getId: _.noop}]);
       stubs.spaceContext.space.getEntries.resolves(true);
       stubs.spaceContext.space.getDeliveryApiKeys.resolves([]);
       this.compile();
     });
 
     it('sets content type data', function() {
-      sinon.assert.calledOnce(stubs.spaceContext.space.getContentTypes);
+      sinon.assert.calledOnce(stubs.spaceContext.getFilteredAndSortedContentTypes);
       expect(controller.accessibleContentTypes.length).toBe(0);
       expect(controller.hasContentTypes).toBe(true);
       expect(controller.hasAccessibleContentTypes).toBe(false);
@@ -108,10 +110,13 @@ describe('cfLearnView directive', function() {
 
   describe('select language', function() {
     beforeEach(function() {
-      controller.selectIndex(0);
+      stubs.spaceContext.getFilteredAndSortedContentTypes.returns([]);
+      stubs.spaceContext.space.getDeliveryApiKeys.resolves([]);
+      this.compile();
+      controller.selectLanguage(controller.languageData[0]);
     });
     it('shows selected language', function() {
-      controller.selectedLanguageName = 'Javascript';
+      controller.selectedLanguage.name = 'Javascript';
     });
   });
 });

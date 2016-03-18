@@ -34,6 +34,10 @@ $learn-content-box()
   &__group
     display: flex
     margin: 40px 0 20px 0
+    &.is-open
+      path
+        fill: $colors.text-lightest
+
   &__item
     flex-grow: 1
     text-align: center
@@ -54,9 +58,6 @@ $learn-content-box()
     display: block
     max-width: 80px
     margin: 0 auto
-    &.is-open
-      path
-        fill: $colors.text-lightest
     &.is-active
       path
         fill: $colors.text-dark

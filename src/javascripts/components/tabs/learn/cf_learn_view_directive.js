@@ -22,31 +22,36 @@ angular.module('contentful')
   var $state          = $injector.get('$state');
   var analytics       = $injector.get('analytics');
 
-  controller.canAccessContentTypes = accessChecker.getSectionVisibility().contentType;
-  controller.canAccessEntries = accessChecker.getSectionVisibility().entry;
-  controller.canAccessApiKeys = accessChecker.getSectionVisibility().apiKey;
+  var visibility = accessChecker.getSectionVisibility();
 
-  $scope.context.ready = false;
+  controller.canAccessContentTypes = visibility.contentType &&
+                                     !accessChecker.shouldDisable('createContentType');
+  controller.canAccessEntries      = visibility.entry;
+  controller.canAccessApiKeys      = visibility.apiKey;
 
   controller.spaceId = stateParams.spaceId;
 
-  spaceContext.space.getContentTypes()
-  .then(function(cts) {
+  spaceContext.refreshContentTypes().then(function() {
+    var cts = spaceContext.getFilteredAndSortedContentTypes();
+
     controller.allContentTypes = cts;
     controller.accessibleContentTypes = _.filter(cts || [], function (ct) {
-      return accessChecker.canPerformActionOnEntryOfType('create', ct.getId());
+      var check = _.partialRight(accessChecker.canPerformActionOnEntryOfType, ct.getId());
+      return _.every(['create', 'edit'], check);
     });
     controller.hasContentTypes = !!cts.length;
     controller.hasAccessibleContentTypes = !!controller.accessibleContentTypes.length;
 
     if (controller.hasAccessibleContentTypes) {
       spaceContext.space.getEntries()
-      .then(function(entries) {
-        controller.hasEntries = !!entries.length;
-        $scope.context.ready = true;
-      });
+      .then(handleEntries)
+      .catch(handleEntries.bind(null, []));
     } else {
-      controller.hasEntries = false;
+      handleEntries([]);
+    }
+
+    function handleEntries(entries) {
+      controller.hasEntries = !!entries.length;
       $scope.context.ready = true;
     }
 
@@ -56,46 +61,46 @@ angular.module('contentful')
 
   // Clicking `Use the API` goes to the delivery API key if there is exactly
   // one otherwise API home
-  var apiKeyPath = {
-    path: 'spaces.detail.api.home'
+  var apiKeyState = {
+    name: 'spaces.detail.api.home'
   };
 
   spaceContext.space.getDeliveryApiKeys()
   .then(function(keys) {
     if (keys.length === 1) {
-      apiKeyPath.path = 'spaces.detail.api.keys.detail';
-      apiKeyPath.params = { apiKeyId: keys[0].data.sys.id };
+      apiKeyState.name = 'spaces.detail.api.keys.detail';
+      apiKeyState.params = { apiKeyId: keys[0].data.sys.id };
     }
   });
 
   controller.goToApiKeySection = function() {
     controller.trackClickedButton('Use the API');
-    $state.go(apiKeyPath.path, apiKeyPath.params);
+    $state.go(apiKeyState.name, apiKeyState.params);
   };
 
   // Languages and SDKs
-  controller.selectIndex = function(idx) {
+  controller.selectLanguage = function(language) {
 
-    if (_.isUndefined(controller.selectedLanguageIndex)) {
+    if (!controller.selectedLanguage) {
       // Scroll to the bottom of the page
       var container = $element.find('.workbench-main');
       container.animate({scrollTop: container.scrollTop() + 260}, 'linear');
     }
 
-    controller.selectedLanguageIndex = idx;
-    controller.selectedLanguageName = controller.languageData[idx].name;
+    controller.selectedLanguage = language;
+
     analytics.track('Selected Language at the Dashboard', {
-      language: controller.selectedLanguageName
+      language: controller.selectedLanguage.name
     });
   };
 
   controller.languageData = [
-    {name: 'JavaScript', icon: 'language-js'},
-    {name: 'PHP', icon: 'language-php'},
-    {name: 'Ruby', icon: 'language-ruby'},
-    {name: 'iOS', icon: 'language-ios'},
-    {name: 'Android', icon: 'language-android'},
-    {name: 'HTTP', icon: 'language-http'}
+    {id: 'js', name: 'JavaScript', icon: 'language-js'},
+    {id: 'php', name: 'PHP', icon: 'language-php'},
+    {id: 'ruby', name: 'Ruby', icon: 'language-ruby'},
+    {id: 'ios', name: 'iOS', icon: 'language-ios'},
+    {id: 'android', name: 'Android', icon: 'language-android'},
+    {id: 'http', name: 'HTTP', icon: 'language-http'}
   ];
 
   controller.trackClickedButton = function(name) {
