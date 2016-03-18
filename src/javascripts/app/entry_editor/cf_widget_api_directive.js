@@ -41,32 +41,32 @@ angular.module('contentful')
   this.field = {
     onValueChanged: valueChangedSignal.attach,
     onDisabledStatusChanged: isDisabledSignal.attach,
-    setValue: function (value) {
-      if (value === this.getValue()) {
-        return $q.resolve(value);
-      } else {
-        return $scope.otSubDoc.changeValue(value);
-      }
-    },
-    setString: function (value) {
-      if (value === this.getValue()) {
-        return $q.resolve(value);
-      } else {
-        return $scope.otSubDoc.changeString(value);
-      }
-    },
-    getValue: function () {
-      return $scope.otSubDoc.getValue();
-    },
-    removeValue: function () {
-      return $scope.otSubDoc.removeValue();
-    },
-
-    // we only want to expose the public ID
-    id: ctField.apiName,
+    getValue: getValue,
+    setValue: createSetter('changeValue'),
+    setString: createSetter('changeString'),
+    removeValue: removeValue,
+    id: ctField.apiName, // we only want to expose the public ID
     locale: $scope.locale.code,
     type: ctField.type,
     required: !!ctField.required,
     validations: ctField.validations
   };
+
+  function getValue () {
+    return $scope.otSubDoc.getValue();
+  }
+
+  function createSetter(method) {
+    return function setValue (value) {
+      if (value === getValue()) {
+        return $q.resolve(value);
+      } else {
+        return $scope.otSubDoc[method](value);
+      }
+    };
+  }
+
+  function removeValue() {
+    return $scope.otSubDoc.removeValue();
+  }
 }]);

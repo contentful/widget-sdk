@@ -66,7 +66,7 @@ angular.module('contentful')
     fieldTypes: ['Text'],
     name: 'Markdown',
     icon: 'markdown',
-    template: '<cf-markdown-editor-bridge />'
+    template: '<cf-markdown-editor />'
   });
 
   registerWidget('dropdown',{

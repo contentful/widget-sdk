@@ -46,20 +46,20 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
         hasRedo: function () { return editor.getHistorySize('redo') > 0; }
       },
       events: {
-        onScroll: function (fn) { editor.attachEvent('scroll', fn, 150); },
-        onChange: function (fn) { editor.attachEvent('change', fn);      }
+        onScroll: function (fn) { editor.attachEvent('scroll', fn, 150);        },
+        onChange: function (fn) { editor.attachEvent('change', wrapChange(fn)); }
       },
       tie: {
         previewToEditor: tiePreviewToEdiotr,
         editorToEditor:  tieEditorToEditor,
         editorToPreview: tieEditorToPreview
       },
-      insert:          editor.insertAtCursor,
-      focus:           editor.focus,
-      getContent:      editor.getValue,
-      destroy:         editor.destroy,
-      setContent:      setContent,
-      getWrapper:      function () { return editor; }
+      insert:     editor.insertAtCursor,
+      focus:      editor.focus,
+      getContent: editor.getValue,
+      destroy:    editor.destroy,
+      setContent: setContent,
+      getWrapper: function () { return editor; }
     };
 
     editor.addKeyShortcuts({
@@ -86,6 +86,12 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       // here so we cannot undo setting initial value (first "setValue"
       // call)
       editor.opt('undoDepth', 200);
+    }
+
+    function wrapChange(fn) {
+      return function (e, ch) {
+        fn(editor.getValue(), e, ch);
+      };
     }
 
     function tiePreviewToEdiotr(el) {
