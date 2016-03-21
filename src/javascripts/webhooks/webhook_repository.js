@@ -29,15 +29,22 @@ angular.module('contentful').factory('WebhookRepository', [function () {
     }
 
     function getCall(webhookId, callId) {
-      return space.endpoint('webhooks/' + webhookId + '/calls/' + callId).get();
+      return getLogsBaseCall(webhookId)
+      .paths(['calls', callId])
+      .get();
     }
 
     function getCalls(webhookId) {
-      return space.endpoint('webhooks/' + webhookId + '/calls?limit=500').get();
+      return getLogsBaseCall(webhookId)
+      .paths(['calls'])
+      .payload({ limit: 500 })
+      .get();
     }
 
     function getHealth(webhookId) {
-      return space.endpoint('webhooks/' + webhookId + '/health').get();
+      return getLogsBaseCall(webhookId)
+      .paths(['health'])
+      .get();
     }
 
     function save(webhook) {
@@ -65,6 +72,10 @@ angular.module('contentful').factory('WebhookRepository', [function () {
       if (version) { headers['X-Contentful-Version'] = version; }
 
       return space.endpoint('webhook_definitions', id).headers(headers);
+    }
+
+    function getLogsBaseCall(webhookId) {
+      return space.endpoint('webhooks/' + webhookId);
     }
   }
 
