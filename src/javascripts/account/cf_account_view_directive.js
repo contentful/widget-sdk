@@ -10,7 +10,7 @@ angular.module('contentful')
   var handleGK       = $injector.get('handleGatekeeperMessage');
 
   return {
-    template: '<div class="account-container"><iframe width="100%" height="100%" /></div>',
+    template: '<div class="account-container"><iframe width="100%" height="100%" id="accountViewFrame" /></div>',
     restrict: 'E',
     link: function (scope, elem) {
       var iframe  = elem.find('iframe');
