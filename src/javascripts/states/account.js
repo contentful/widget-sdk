@@ -5,29 +5,26 @@ angular.module('contentful')
  * @ngdoc service
  * @name states/account
  */
-.factory('states/account', [function () {
-  var pathSuffix = {
-    name: 'pathSuffix',
-    url: '/{pathSuffix:PathSuffix}',
-    params: {
-      pathSuffix: 'profile/user'
-    },
-    ncyBreadcrumb: {
-      label: 'Account'
-    }
-  };
+.factory('states/account', ['$injector', function ($injector) {
+  var base = $injector.get('states/base');
 
   return {
     name: 'account',
     url: '/account',
     abstract: true,
     views: {
-      'content': {
-        template: '<cf-account-view>'
-      }
+      'content': base({
+        template: '<cf-account-view />',
+        controller: ['$scope', function ($scope) {
+          $scope.context = {};
+        }]
+      })
     },
     onEnter: ['TheAccountView', function (view) { view.enter(); }],
     onExit:  ['TheAccountView', function (view) { view.exit();  }],
-    children: [pathSuffix]
+    children: [{
+      name: 'pathSuffix',
+      url: '/{pathSuffix:PathSuffix}'
+    }]
   };
 }]);
