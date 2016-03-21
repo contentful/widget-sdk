@@ -102,7 +102,8 @@ function ContentTypeActionsController($scope, $injector) {
     return modalDialog.open({
       template: 'content_type_removal_confirm_dialog',
       scope: prepareRemovalDialogScope(isPublished),
-      noNewScope: true
+      noNewScope: true,
+      persistOnNavigation: true
     });
   }
 
