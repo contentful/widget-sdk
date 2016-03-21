@@ -31,7 +31,7 @@ describe('cfWidgetApi directive', function () {
     });
   });
 
-  describe('#onValueChanged', function () {
+  describe('#onValueChanged()', function () {
     it('attaches a handler and returns its detach counterpart', function () {
       var cb = sinon.spy();
       var detachCb = widgetApi.field.onValueChanged(cb);
@@ -85,7 +85,7 @@ describe('cfWidgetApi directive', function () {
     });
   });
 
-  describe('#setString', function () {
+  describe('#setString()', function () {
     it('sets new string value using changeString method on otSubDoc', function () {
       widgetApi.field.setString('test');
 
@@ -97,13 +97,22 @@ describe('cfWidgetApi directive', function () {
       scope.otSubDoc.changeString.resolves('test');
 
       return widgetApi.field.setString('test')
-      .then(function (val) {
-        expect(val).toEqual('test');
-      });
+        .then(function (val) {
+          expect(val).toEqual('test');
+        });
+    });
+
+    pit('should not call changeString if old and new value are the same', function() {
+      scope.otSubDoc.getValue.returns('test');
+
+      return widgetApi.field.setString('test')
+        .then(function () {
+          sinon.assert.notCalled(scope.otSubDoc.changeString);
+        });
     });
   });
 
-  describe('#getValue', function () {
+  describe('#getValue()', function () {
     it('gets value set using setString', function () {
       var value;
 
@@ -120,7 +129,7 @@ describe('cfWidgetApi directive', function () {
     });
   });
 
-  describe('#onDisabledStatusChanged', function () {
+  describe('#onDisabledStatusChanged()', function () {
     it('attaches a handler and returns its detach counterpart', function () {
       var cb = sinon.spy();
       var detachCb = widgetApi.field.onDisabledStatusChanged(cb);
@@ -153,5 +162,4 @@ describe('cfWidgetApi directive', function () {
       sinon.assert.calledOnce(cb);
     });
   });
-
 });

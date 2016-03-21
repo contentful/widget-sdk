@@ -8,7 +8,6 @@
  * Provides an interface similar to the new widget api.
  *
  * @scope.requires {Object} otSubDoc
- * @scope.requires (Object) otDoc
  * @scope.requires {Object} widget
  * @scope.requires {Function} isDisabled
  */
@@ -40,20 +39,24 @@ angular.module('contentful')
 
   this.field = {
     onValueChanged: valueChangedSignal.attach,
+    onDisabledStatusChanged: isDisabledSignal.attach,
     setValue: function (value) {
-      if (value === $scope.otSubDoc.getValue()) {
+      if (value === this.getValue()) {
         return $q.resolve(value);
       } else {
         return $scope.otSubDoc.changeValue(value);
       }
     },
     setString: function (value) {
-      return $scope.otSubDoc.changeString(value);
+      if (value === this.getValue()) {
+        return $q.resolve(value);
+      } else {
+        return $scope.otSubDoc.changeString(value);
+      }
     },
     getValue: function () {
       return $scope.otSubDoc.getValue();
     },
-    onDisabledStatusChanged: isDisabledSignal.attach,
 
     // we only want to expose the public ID
     id: ctField.apiName,

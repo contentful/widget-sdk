@@ -9,7 +9,7 @@ angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', functio
   return {
     restrict: 'E',
     scope: {
-      fieldData: '=',
+      previewUrl: '=',
       urlStatus: '='
     },
     link: function (scope, element) {
@@ -22,7 +22,7 @@ angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', functio
         var debouncedRequestPreview = debounce(requestPreview, 500);
         var loadCheck = null;
 
-        scope.$watch('fieldData.value', handleValueChange);
+        scope.$watch('previewUrl', handleValueChange);
         embedly('on', 'card.rendered', markAsLoaded);
 
         function requestPreview(url) {
