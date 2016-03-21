@@ -123,7 +123,7 @@ describe('DateTime Editor', function () {
     moment.suppressDeprecationWarnings = false;
     scope.$apply();
     expect(scope.localDate).toBe(null);
-    expect(scope.localTime).toBe(null);
+    expect(scope.localTime).toBe(undefined);
   });
 
   it('should assume local time when no timezone given in ISO', function () {
