@@ -1,13 +1,13 @@
 'use strict';
 
-describe('cfUiCaretHelper service', function () {
+describe('ui/caretHelper service', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    var cfUiCaretHelper = this.$inject('cfUiCaretHelper');
+    var uiCaretHelper = this.$inject('ui/caretHelper');
 
-    this.getPreservedCaretPosition = cfUiCaretHelper.getPreservedCaretPosition;
-    this.getCaretPreservingInputUpdater = cfUiCaretHelper.getCaretPreservingInputUpdater;
+    this.getPreservedCaretPosition = uiCaretHelper.getPreservedCaretPosition;
+    this.makeInputUpdater = uiCaretHelper.makeInputUpdater;
   });
 
   describe('#getPreservedCaretPosition()', function () {
@@ -73,7 +73,7 @@ describe('cfUiCaretHelper service', function () {
     });
   });
 
-  describe('#getCaretPreservingInputUpdater()', function () {
+  describe('#makeInputUpdater()', function () {
     var $inputEl = $('<input type="text" />');
     var rawInputEl = $inputEl.get(0);
 
@@ -83,7 +83,7 @@ describe('cfUiCaretHelper service', function () {
     }
 
     it('should return a function that updates an input field while preserving caret position', function () {
-      var updateWhilePreservingCaret = this.getCaretPreservingInputUpdater($inputEl);
+      var updateWhilePreservingCaret = this.makeInputUpdater($inputEl);
 
       resetInputAndCaret();
       updateWhilePreservingCaret('xthisissparta');

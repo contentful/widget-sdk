@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 .directive('cfSingleLineEditor', ['$injector', function ($injector) {
-  var getCaretPreservingInputUpdater = $injector.get('cfUiCaretHelper').getCaretPreservingInputUpdater;
+  var makeInputUpdater = $injector.get('ui/caretHelper').makeInputUpdater;
 
   return {
     scope: {},
@@ -22,7 +22,7 @@ angular.module('contentful')
       scope.constraintsType = constraintsType(constraints);
 
       // update input field value when new synced value received via ot magic
-      var detachOnValueChangedHandler = field.onValueChanged(getCaretPreservingInputUpdater($inputEl), true);
+      var detachOnValueChangedHandler = field.onValueChanged(makeInputUpdater($inputEl), true);
       // call handler when the disabled status of the field changes
       var detachOnFieldDisabledHandler = field.onDisabledStatusChanged(updateIsDisabledFlag, true);
 

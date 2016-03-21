@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 .directive('cfUrlEditor', ['$injector', function ($injector) {
-  var getCaretPreservingInputUpdater = $injector.get('cfUiCaretHelper').getCaretPreservingInputUpdater;
+  var makeInputUpdater = $injector.get('ui/caretHelper').makeInputUpdater;
 
   return {
     restrict: 'E',
@@ -18,7 +18,7 @@ angular.module('contentful')
       });
 
       // update input field value when new synced value received via ot magic
-      var detachOnValueChangedHandler = field.onValueChanged(getCaretPreservingInputUpdater($inputEl), true);
+      var detachOnValueChangedHandler = field.onValueChanged(makeInputUpdater($inputEl), true);
       // call handler when the disabled status of the field changes
       var detachOnFieldDisabledHandler = field.onDisabledStatusChanged(updateDisabledStatus, true);
 

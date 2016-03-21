@@ -3,19 +3,19 @@
 angular.module('cf.ui')
 /**
  * @ngdoc service
- * @name cfUiCaretHelper
+ * @name ui/caretHelper
  * @description
  * Provides helpers for caret manipulation of text fields
  */
-.factory('cfUiCaretHelper', [function () {
+.factory('ui/caretHelper', [function () {
   return {
     getPreservedCaretPosition: getPreservedCaretPosition,
-    getCaretPreservingInputUpdater: getCaretPreservingInputUpdater
+    makeInputUpdater: makeInputUpdater
   };
 
   /**
    * @ngdoc method
-   * @name cfUiCaretHelper#getPreservedCaretPosition
+   * @name ui/caretHelper#getPreservedCaretPosition
    * @description
    * Preserve caret position for more natural editing
    *
@@ -64,7 +64,7 @@ angular.module('cf.ui')
 
   /**
    * @ngdoc method
-   * @name cfUiCaretHelper#getCaretPreservingInputUpdater
+   * @name ui/caretHelper#makeInputUpdater
    * @description
    * Returns a function that can update an text input field
    * while preserving the caret position
@@ -72,7 +72,7 @@ angular.module('cf.ui')
    * @param {jQuery element} $inputEl
    * @return {function}
    */
-  function getCaretPreservingInputUpdater ($inputEl) {
+  function makeInputUpdater ($inputEl) {
     var rawInputEl = $inputEl.get(0);
 
     return function (value) {
