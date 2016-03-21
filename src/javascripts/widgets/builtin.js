@@ -70,7 +70,7 @@ angular.module('contentful')
   });
 
   registerWidget('dropdown',{
-    fieldTypes: ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'],
+    fieldTypes: ['Text', 'Symbol', 'Integer', 'Number'],
     name: 'Dropdown',
     icon: 'dropdown',
     notFocusable: true,
