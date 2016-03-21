@@ -48,12 +48,7 @@ angular.module('contentful')
       }
     },
     setString: function (value) {
-      var stringChangedPromise = $scope.otSubDoc.changeString(value);
-
-      // TODO(mudit/thomas): Super inefficient
-      // Fix this
-      $scope.otDoc.updateEntityData();
-      return stringChangedPromise;
+      return $scope.otSubDoc.changeString(value);
     },
     getValue: function () {
       return $scope.otSubDoc.getValue();

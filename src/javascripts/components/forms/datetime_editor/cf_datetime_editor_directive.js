@@ -153,12 +153,12 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$injector', functio
         if (tokens) {
           var dateTime = tokens.tzString ? moment(iso).utcOffset(iso) : moment(iso);
           scope.localDate = dateTime.format(DATE_FORMAT_INTERNAL);
-          scope.localTime = tokens.time ? makeLocalTime(tokens.time) : null;
+          scope.localTime = tokens.time ? makeLocalTime(tokens.time) : scope.localTime;
           scope.ampm      = dateTime.format('a');
           scope.tzOffset  = tokens.tzString ? dateTime.format('Z') : null;
         } else {
           scope.localDate = null;
-          scope.localTime = null;
+          scope.localTime = scope.localTime;
           scope.ampm      = 'am';
           scope.tzOffset  = LOCAL_TIMEZONE;
         }

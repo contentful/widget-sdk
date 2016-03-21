@@ -25,12 +25,19 @@ describe('otBindText', function () {
         attach_textarea: sinon.stub().returns(unbindTextArea = sinon.stub()),
         path: ['value']
       }),
-      snapshot: {}
+      snapshot: {sys: {}}
     });
 
     jasmine.clock().install();
     $rootScope.entity = {value: 'xx'};
-    elem = $compile('<input type="text" ng-model="entity.value" ot-doc-for="entity" ot-path="[\'value\']" ot-bind-text>')($rootScope);
+    var template = '<input type="text" ng-model="entity.value" ot-doc-for="entity" ot-path="[\'value\']" ot-bind-text>';
+    elem = this.$compile(template, {
+      value: 'xx',
+      entity: {
+        data: {sys: {}},
+        update: sinon.stub()
+      }
+    });
     scope = elem.scope();
     scope.otDoc.state.disabled = false;
     controller = elem.controller('ngModel');

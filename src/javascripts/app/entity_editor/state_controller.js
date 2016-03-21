@@ -171,7 +171,6 @@ function ($scope, $injector, entity, notify, handlePublishError) {
     $scope.entry.getPublishedState().then(function (data) {
       return setDocFields($scope.otDoc.doc, data.fields);
     }).then(function () {
-      $scope.otDoc.updateEntityData();
       entryReverter.revertedToPublished();
     })
     .then(notify.revertToPublishedSuccess, notify.revertToPublishedFail);
@@ -190,7 +189,6 @@ function ($scope, $injector, entity, notify, handlePublishError) {
     var fields = entryReverter.getPreviousData().fields;
     return setDocFields($scope.otDoc.doc, fields)
     .then(function () {
-      $scope.otDoc.updateEntityData();
       entryReverter.revertedToPrevious();
     })
     .then(notify.revertToPreviousSuccess, notify.revertToPreviousFail);

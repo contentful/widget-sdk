@@ -22,9 +22,6 @@ describe('cfWidgetApi directive', function () {
         changeString: sinon.stub(),
         getValue: sinon.stub()
       },
-      otDoc: {
-        updateEntityData: sinon.stub()
-      },
       locale: {}
     });
 

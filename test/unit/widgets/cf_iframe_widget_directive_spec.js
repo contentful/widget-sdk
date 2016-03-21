@@ -80,7 +80,6 @@ describe('cfIframeWidget directive', function () {
 
       this.scope.otDoc = {
         doc: new OtDoc(),
-        updateEntityData: sinon.stub()
       };
     });
 
@@ -91,11 +90,6 @@ describe('cfIframeWidget directive', function () {
 
         this.setValue('VALUE');
         expect(snapshot.docpath).toEqual('VALUE');
-      });
-
-      it('updates the entity data through the otDocFor directive', function () {
-        this.setValue('VALUE');
-        sinon.assert.calledOnce(this.scope.otDoc.updateEntityData);
       });
 
       pit('resolves promise when value got changed', function () {
@@ -117,11 +111,6 @@ describe('cfIframeWidget directive', function () {
         this.setValue(undefined);
         sinon.assert.calledOnce(this.scope.otDoc.doc.removeAt);
         sinon.assert.calledWith(this.scope.otDoc.doc.removeAt, ['docpath']);
-      });
-
-      it('updates the entity data through the otDocFor directive', function () {
-        this.setValue(undefined);
-        sinon.assert.calledOnce(this.scope.otDoc.updateEntityData);
       });
 
       pit('resolves promise when value got removed', function () {

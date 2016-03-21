@@ -193,8 +193,6 @@ describe('entityEditor/StateController', function () {
   });
 
   describe('reverting', function () {
-    var entry;
-
     function canBeReverted(states) {
       if(states.toPublished) {
         it('entry can be reverted to published', function() {
@@ -230,11 +228,6 @@ describe('entityEditor/StateController', function () {
         editable: true
       };
 
-      this.updateEntityData = function () {
-        entity.data = this.doc.snapshot;
-        entity.data.sys.version += 1;
-      };
-
       this.getEntity = function () {
         return entity;
       };
@@ -250,6 +243,8 @@ describe('entityEditor/StateController', function () {
 
         function set (data, cb) {
           dotty.put(doc.snapshot, path, data);
+          doc.snapshot.sys.version += 1;
+          entity.data = doc.snapshot;
           if (cb) {
             cb();
           }
@@ -259,16 +254,16 @@ describe('entityEditor/StateController', function () {
 
     beforeEach(function () {
       var $q = this.$inject('$q');
-      entry = this.scope.entry;
-      entry.publish = function () {
-        entry.data.sys.publishedVersion = entry.data.sys.version;
-        entry.data.sys.version += 1;
+
+      this.entity.publish = function () {
+        this.data.sys.publishedVersion = this.data.sys.version;
+        this.data.sys.version += 1;
         return $q.resolve();
       };
 
       this.entity.data.fields = {field1: 'one'};
 
-      this.otDoc = new OtDoc(entry);
+      this.otDoc = new OtDoc(this.entity);
       this.scope.otDoc = this.otDoc;
       this.scope.validate = sinon.stub().returns(true);
       this.$apply();
@@ -280,13 +275,13 @@ describe('entityEditor/StateController', function () {
 
     describe('published entry with changes', function () {
       beforeEach(function() {
+        // publish
         this.controller.primary.execute();
         this.$apply();
-        // TODO we should not need this
-        this.otDoc.updateSnapshot();
 
+        // make changes
+        this.otDoc.updateSnapshot();
         this.otDoc.doc.at('fields.field1').set('two');
-        this.otDoc.updateEntityData();
         this.$apply();
       });
 
@@ -294,13 +289,13 @@ describe('entityEditor/StateController', function () {
 
       describe('#revertToPublished command', function () {
         beforeEach(function() {
-          entry.getPublishedState = sinon.stub().resolves({fields: 'published'});
+          this.entity.getPublishedState = sinon.stub().resolves({fields: 'published'});
           this.controller.revertToPublished.execute();
           this.$apply();
         });
 
         it('reverts the field data', function() {
-          expect(entry.data.fields).toBe('published');
+          expect(this.otDoc.doc.snapshot.fields).toBe('published');
         });
 
         describe('afterwards', function () {
@@ -318,7 +313,6 @@ describe('entityEditor/StateController', function () {
     describe('unpublished entry with changes', function () {
       beforeEach(function() {
         this.otDoc.doc.at('fields.field1').set('two');
-        this.otDoc.updateEntityData();
         this.$apply();
       });
 
@@ -327,19 +321,10 @@ describe('entityEditor/StateController', function () {
       describe('#revertToPrevious command', function() {
 
         it('reverts the field data', function() {
-          expect(entry.data.fields.field1).toBe('two');
           expect(this.otDoc.doc.snapshot.fields.field1).toBe('two');
           this.controller.revertToPrevious.execute();
           this.$apply();
-          expect(entry.data.fields.field1).toBe('one');
           expect(this.otDoc.doc.snapshot.fields.field1).toBe('one');
-        });
-
-        it('increments version', function () {
-          expect(entry.data.sys.version).toEqual(2);
-          this.controller.revertToPrevious.execute();
-          this.$apply();
-          expect(entry.data.sys.version).toEqual(3);
         });
 
         describe('afterwards', function () {
