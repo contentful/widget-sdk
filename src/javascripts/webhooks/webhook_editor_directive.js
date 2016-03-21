@@ -36,21 +36,14 @@ angular.module('contentful')
   $scope.context.requestLeaveConfirmation = leaveConfirmator(settingsController.save);
 
   $scope.save = Command.create(settingsController.save, {
-    disabled: function () { return !$scope.context.dirty; },
-    available: function () { return isTabActive('settings'); }
+    disabled: function () { return !$scope.context.dirty; }
   });
 
   $scope.openRemovalDialog = Command.create(openRemovalDialog, {
-    available: function () { return !$scope.context.isNew && isTabActive('settings'); }
+    available: function () { return !$scope.context.isNew; }
   });
 
-  $scope.refreshLogs = Command.create(activityController.refresh, {
-    available: function () { return isTabActive('activity'); }
-  });
-
-  function isTabActive(name) {
-    return $scope.tabController.get(name).active;
-  }
+  $scope.refreshLogs = Command.create(activityController.refresh);
 
   function openRemovalDialog() {
     modalDialog.open({
