@@ -29,6 +29,12 @@ describe('cfWidgetApi directive', function () {
     });
   });
 
+  afterEach(function () {
+    scope.$destroy();
+    scope = null;
+    widgetApi = null;
+  });
+
   describe('#onValueChanged()', function () {
     it('attaches a handler and returns its detach counterpart', function () {
       var cb = sinon.spy();
@@ -124,6 +130,14 @@ describe('cfWidgetApi directive', function () {
       };
       widgetApi.field.setString('test string');
       expect(widgetApi.field.getValue()).toEqual('test string');
+    });
+  });
+
+  describe('#removeValue()', function () {
+    it('delegates call to "otSubDoc"', function () {
+      scope.otSubDoc.removeValue = sinon.stub();
+      widgetApi.field.removeValue();
+      sinon.assert.calledOnce(scope.otSubDoc.removeValue);
     });
   });
 
