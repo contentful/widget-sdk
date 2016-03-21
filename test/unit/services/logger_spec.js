@@ -116,6 +116,17 @@ describe('logger service', function () {
         var actual = this.bugsnag.notify.args[0][2];
         expect(actual.data).toEqual({ foo: { bar: { baz: '[Circular ~]' } } });
       });
+
+      it('removes Authorization header from server errors', function() {
+        var data = {
+          foo: 'bar',
+          error: {request: {headers: {Authorization: 'Bearer 123123123', 'Content-Type': 'ct'}}}
+        };
+        this.logger.logServerError('error', data);
+        var actual = this.bugsnag.notify.args[0][2];
+        expect(actual.error.request.headers.Authorization).toBeUndefined();
+      });
+
     });
   });
 
