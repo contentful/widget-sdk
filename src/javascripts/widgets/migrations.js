@@ -28,6 +28,11 @@ angular.module('contentful')
     fieldTypes: ['Boolean']
   },
   {
+    from: 'dropdown',
+    to: 'boolean',
+    fieldTypes: ['Boolean']
+  },
+  {
     from: 'newMarkdown',
     to: 'markdown'
   }
