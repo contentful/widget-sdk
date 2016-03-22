@@ -9,7 +9,6 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
   var logger         = $injector.get('logger');
   var notification   = $injector.get('notification');
   var stringUtils    = $injector.get('stringUtils');
-  var throttle       = $injector.get('throttle');
   var TheLocaleStore = $injector.get('TheLocaleStore');
   var spaceContext   = $injector.get('spaceContext');
   var accessChecker  = $injector.get('accessChecker');
@@ -77,39 +76,41 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
     });
   }
 
-  var throttledListRefresh = throttle(function () {
-    delay(function () {
-      $scope.searchController.resetAssets();
-    }, 3000);
-  }, 2000);
-
   $scope.createMultipleAssets = function () {
     filepicker.pickMultiple().
-    then(function (FPFiles) {
-      return $q.all(_.map(FPFiles, createAssetForFile)).then(function (entities) {
-        entities = _.filter(entities);
-        notification.info('Assets uploaded. Processing...');
-        throttledListRefresh();
-        return $q.all(_.map(entities, processAssetForFile)).then(function () {
-          notification.info('Assets processed');
-          throttledListRefresh();
-        }).catch(function (err) {
-          notification.warn('Some assets failed to process');
-          throttledListRefresh();
-          return $q.reject(err);
-        });
-      }).catch(function (err) {
-        logger.logServerWarn('Some assets failed to upload', {error: err });
-        notification.error('Some assets failed to upload');
-        throttledListRefresh();
-        return $q.reject(err);
-      });
-    }, function (FPError) {
+    then(uploadFPFiles, function (FPError) {
       if (FPError.code !== 101) {
         throw new Error(FPError);
       }
     });
   };
+
+  function uploadFPFiles (fpFiles) {
+    return $q.all(_.map(fpFiles, createAssetForFile))
+    .finally(function () {
+      // We reload all assets to get the new ones. Unfortunately the
+      // CMA is not immediately consistent so we have to wait.
+      // TODO Instead of querying the collection endpoint we should
+      // add the assets manually
+      delay(function () {
+        $scope.searchController.resetAssets();
+      }, 5000);
+    })
+    .then(function (entities) {
+      entities = _.filter(entities);
+      notification.info('Assets uploaded. Processing...');
+      return $q.all(_.map(entities, processAssetForFile)).then(function () {
+        notification.info('Assets processed');
+      }).catch(function (err) {
+        notification.warn('Some assets failed to process');
+        return $q.reject(err);
+      });
+    }, function (err) {
+      logger.logServerWarn('Some assets failed to upload', {error: err });
+      notification.error('Some assets failed to upload');
+      return $q.reject(err);
+    });
+  }
 
   function createAssetForFile(FPFile) {
     var file = filepicker.parseFPFile(FPFile);
