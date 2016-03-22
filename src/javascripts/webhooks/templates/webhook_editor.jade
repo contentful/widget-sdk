@@ -69,9 +69,9 @@ header.workbench-header
     table.result-list.main-results.main-header
       thead
         tr
-          th Webhook called at
-          th Call result
-          th Actions
+          th.cell-time Webhook called at
+          th.cell-result Call result
+          th.cell-actions Actions
     .main-results-wrapper
       table.result-list.main-results
         tbody
@@ -80,12 +80,12 @@ header.workbench-header
             ng-repeat="log in activity.visible track by log.sys.id"
             ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail.call({ callId: log.sys.id })'"
             ui-sref="{{ entityNavState }}")
-            td
+            td.cell-time
               a.entity-list-link(ui-sref="{{entityNavState}}") {{ log.requestAt }}
-            td
+            td.cell-result
               a.entity-list-link(ui-sref="{{ entityNavState }}")
                 cf-webhook-call-status(call="log")
-            td
+            td.cell-actions
               a(ui-sref="{{ entityNavState }}") View details
           tr(ng-show="activity.visible.length < 1")
             td(colspan="3")
