@@ -47,6 +47,7 @@ $cfnext-button($color, $text)
   $cfnext-button-loading($text)
 
 
+
 /**
  * Applies layout and typography styles
  */
@@ -67,7 +68,6 @@ $cfnext-button-layout()
 $cfnext-button-large()
   font-size: 1.15rem
   padding: 1rem 2.5rem
-
 
 /**
  * Applies background, text and border colors for the various states.
@@ -95,7 +95,7 @@ $cfnext-button-colors($bg, $text)
   &, &:hover, &:active
     outline: 0
 
-  &:disabled, &[aria-disabled=true]
+  &:disabled, &[aria-disabled=true], &.disabled
     opacity: 0.4
     cursor: default
     // This overides any other state styles, like hover or active
@@ -151,6 +151,7 @@ $btn-action()
 
 .cfnext-btn-action--large
   $cfnext-button-large()
+
 
 /*
 Primary Action Button

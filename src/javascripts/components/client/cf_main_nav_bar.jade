@@ -80,3 +80,11 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
             ng-class="{'selected': $state.includes('spaces.detail.settings.webhooks')}"
             ui-sref="spaces.detail.settings.webhooks.list")
             | Webhooks
+    li.app-top-bar__action.nav-bar__list-item--right
+      a.nav-bar__link(
+          ng-class="{'is-active': $state.is('spaces.detail.learn')}"
+          ui-sref="spaces.detail.learn({ spaceId: $stateParams.spaceId })"
+          data-view-type="learn"
+          tabindex="0")
+        cf-icon(name="nav-learn")
+        span.nav-bar__list-label Learn
