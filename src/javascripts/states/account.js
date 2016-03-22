@@ -24,7 +24,8 @@ angular.module('contentful')
     onExit:  ['TheAccountView', function (view) { view.exit();  }],
     children: [{
       name: 'pathSuffix',
-      url: '/{pathSuffix:PathSuffix}'
+      url: '/{pathSuffix:PathSuffix}',
+      ncyBreadcrumb: {label: 'Account'}
     }]
   };
 }]);
