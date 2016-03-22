@@ -21,7 +21,7 @@
             strong Request details
             pre {{ call.request | json }}
             strong(ng-show="body") Request body
-            pre(ng-show="body")  {{ body | json }}
+            pre(ng-show="body") {{ body | json }}
           .webhook-call__column
             strong Complete response
             pre {{ call.response | json }}
