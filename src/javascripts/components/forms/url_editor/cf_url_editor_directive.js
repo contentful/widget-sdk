@@ -12,13 +12,15 @@ angular.module('contentful')
     link: function (scope, $el, attrs, widgetApi) {
       var field = widgetApi.field;
       var $inputEl = $el.children('input.form-control');
+      var updateInput = makeInputUpdater($inputEl);
 
-      _.extend(scope, {
-        urlStatus: 'ok'
-      });
+      scope.urlStatus = 'ok';
 
-      // update input field value when new synced value received via ot magic
-      var detachOnValueChangedHandler = field.onValueChanged(makeInputUpdater($inputEl), true);
+      var detachOnValueChangedHandler = field.onValueChanged(function (val) {
+        // Might be `null` or `undefined` when value is not present
+        updateInput(val || '');
+      }, true);
+
       // call handler when the disabled status of the field changes
       var detachOnFieldDisabledHandler = field.onDisabledStatusChanged(updateDisabledStatus, true);
 
