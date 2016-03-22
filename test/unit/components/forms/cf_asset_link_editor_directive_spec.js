@@ -5,6 +5,10 @@ describe('cfAssetLinkEditor Directive', function () {
   var compileElement;
   var stubs;
 
+  afterEach(function () {
+    element = scope = compileElement = stubs = null;
+  });
+
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
@@ -196,8 +200,5 @@ describe('cfAssetLinkEditor Directive', function () {
         sinon.assert.calledWith(stubs.localizedField, scope.linkedEntities[1], 'data.fields.file', 'en-US');
       });
     });
-
   });
-
-
 });

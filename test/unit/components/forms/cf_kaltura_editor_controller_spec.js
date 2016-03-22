@@ -20,6 +20,7 @@ describe('Kaltura Editor Controller', function () {
   });
 
   afterEach(inject(function ($log) {
+    kalturaMultiVideoEditorController = kalturaClientWrapperMock = scope = null;
     $log.assertEmpty();
   }));
 

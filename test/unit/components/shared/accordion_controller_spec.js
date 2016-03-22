@@ -2,12 +2,17 @@
 
 describe('Accordion Controller', function () {
   var controller, scope;
+
   beforeEach(function () {
     module('contentful/test');
     inject(function ($compile, $rootScope, $controller){
       scope = $rootScope.$new();
       controller = $controller('AccordionController', {$scope: scope});
     });
+  });
+
+  afterEach(function () {
+    controller = scope = null;
   });
 
   describe('toggle an item', function () {

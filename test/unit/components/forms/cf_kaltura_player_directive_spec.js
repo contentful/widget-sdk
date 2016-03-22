@@ -4,6 +4,12 @@ describe('Kaltura Player Directive', function() {
   var kalturaCredentials, kalturaCredentialsDeferred, kalturaWidgetLoader, kalturaWidgetLoaderDeferred,
       scope, $rootScope, $window;
 
+  afterEach(function () {
+    kalturaCredentials = kalturaCredentialsDeferred =
+      kalturaWidgetLoader = kalturaWidgetLoaderDeferred =
+      scope = $rootScope = $window = null;
+  });
+
   beforeEach(function() {
     module('contentful/test');
     module(function($provide){
@@ -25,7 +31,7 @@ describe('Kaltura Player Directive', function() {
       kalturaWidgetLoaderDeferred = $q.defer();
       kalturaWidgetLoader.load.and.returnValue(kalturaWidgetLoaderDeferred.promise);
 
-      scope              = $rootScope.$new();
+      scope              = {};
       scope.spaceContext = {space: { getOrganizationId: sinon.stub() }};
       scope.spaceContext.space.getOrganizationId.returns('org-123');
 
@@ -44,7 +50,7 @@ describe('Kaltura Player Directive', function() {
         '/>'
       ].join(' ');
 
-      $compile(directive)(scope);
+      this.$compile(directive, scope);
     });
   });
 

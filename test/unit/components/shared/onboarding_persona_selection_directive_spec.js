@@ -4,6 +4,10 @@ describe('cfOnboardingPersonaSelection directive', function() {
 
   var $scope, controller, stubs;
 
+  afterEach(function () {
+    $scope = controller = stubs = null;
+  });
+
   beforeEach(function () {
     stubs = {
       analytics: {

@@ -9,6 +9,12 @@ describe('Access Checker', function () {
     $rootScope.$apply();
   }
 
+  afterEach(function () {
+    $rootScope = spaceContext = authorization =
+      enforcements = OrganizationList = policyChecker =
+      ac = getResStub = reasonsDeniedStub = null;
+  });
+
   beforeEach(function () {
     module('contentful/test');
 

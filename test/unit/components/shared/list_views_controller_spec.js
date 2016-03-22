@@ -4,6 +4,11 @@ describe('ListViewsController', function () {
   var controller, scope, $q;
   var getBlankView, generateDefaultViews, resetList;
 
+  afterEach(function () {
+    scope = $q = controller = null;
+    getBlankView = generateDefaultViews = resetList = null;
+  });
+
   beforeEach(function () {
     module('contentful/test');
     var $controller = this.$inject('$controller');

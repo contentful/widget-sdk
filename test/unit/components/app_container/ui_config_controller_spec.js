@@ -3,6 +3,10 @@
 describe('UiConfigController', function () {
   var scope, controller, get, set;
 
+  afterEach(function () {
+    scope = controller = get = set = null;
+  });
+
   beforeEach(module('contentful/test'));
   beforeEach(inject(function ($controller, $rootScope, $q) {
     scope = $rootScope.$new();

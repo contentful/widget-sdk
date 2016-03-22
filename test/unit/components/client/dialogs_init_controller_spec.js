@@ -4,6 +4,11 @@ describe('dialogsInitController', function () {
   var $rootScope;
   var initEmailSpy, initOnboardingSpy, initTrialSpy;
 
+  afterEach(function () {
+    $rootScope = initEmailSpy =
+      initOnboardingSpy = initTrialSpy = null;
+  });
+
   beforeEach(function () {
     initEmailSpy = sinon.spy();
     initOnboardingSpy = sinon.spy();

@@ -2,6 +2,11 @@
 
 describe('cfFieldEditor Controller', function () {
   var scope, createController;
+
+  afterEach(function () {
+    scope = createController = null;
+  });
+
   beforeEach(function () {
     module('contentful/test');
     inject(function ($controller, $rootScope) {

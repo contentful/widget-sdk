@@ -4,6 +4,11 @@ describe('Client Controller', function () {
   var clientController, scope, notification, TheAccountView, spaceContext;
   var stubs;
 
+  afterEach(function () {
+    clientController = scope = notification =
+      TheAccountView = spaceContext = stubs = null;
+  });
+
   function setMockOnContext(context, mockKey, stubsList) {
       context[mockKey] = {};
       _.each(stubsList, function (val) {
@@ -175,9 +180,14 @@ describe('Client Controller', function () {
 
   describe('handle route change', function () {
     var childScope;
+
     beforeEach(function () {
       childScope = scope.$new();
       spaceContext.getId = sinon.stub().returns(321);
+    });
+
+    afterEach(function () {
+      childScope = null;
     });
 
     it('location in account flag is false', function() {
@@ -276,6 +286,10 @@ describe('Client Controller', function () {
     beforeEach(function () {
       OrganizationList = this.$inject('OrganizationList');
       logger = this.$inject('logger');
+    });
+
+    afterEach(function () {
+      OrganizationList = logger = null;
     });
 
     it('are initially not set', function() {

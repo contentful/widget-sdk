@@ -5,6 +5,12 @@ describe('LinkEditorController', function () {
   var scope, entry, $q, stubs;
   var shareJSMock, entityCacheMock, linkParams;
 
+  afterEach(function () {
+    linkEditorCtrl = createController =
+      scope = entry = $q = stubs =
+      shareJSMock = entityCacheMock = linkParams = null;
+  });
+
   function validationParser(arg) {
     return arg;
   }

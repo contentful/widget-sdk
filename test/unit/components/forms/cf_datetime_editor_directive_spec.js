@@ -25,6 +25,7 @@ describe('DateTime Editor', function () {
   afterEach(function () {
     element.find('.date').datepicker('destroy');
     element.remove();
+    element = scope = moment = null;
   });
 
   function enter(date, time, zone, ampm) {

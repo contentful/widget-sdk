@@ -3,6 +3,10 @@
 describe('ErrorPathController', function () {
   var controller, scope, attrs;
 
+  afterEach(function () {
+    controller = scope = attrs = null;
+  });
+
   beforeEach(module('contentful/test'));
 
   beforeEach(function () {

@@ -12,6 +12,11 @@ describe('cfPersistentNotification Directive', function () {
     element = $compile('<cf-persistent-notification></cf-persistent-notification>')(scope);
   }));
 
+  afterEach(function () {
+    element.remove();
+    element = scope = $rootScope = null;
+  });
+
   it('should show message', function () {
     $rootScope.$broadcast('persistentNotification', {
       message: 'some message'
