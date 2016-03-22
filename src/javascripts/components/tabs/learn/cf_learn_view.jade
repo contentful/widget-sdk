@@ -41,13 +41,13 @@
             .step__actions
               //- User has access
               button.cfnext-btn-action(
-                ng-show="learn.canAccessContentTypes"
+                ng-if="learn.canAccessContentTypes"
                 ng-click="learn.trackClickedButton('Create a content type')"
                 ui-sref="spaces.detail.content_types.new({ spaceId: learn.spaceId })")
                 | Create a content type
               //- User has no access
               button.cfnext-btn-action.disabled(
-                ng-show="!learn.canAccessContentTypes"
+                ng-if="!learn.canAccessContentTypes"
                 tooltip="You don\'t have permission to access content types")
                 | Create a content type
 
@@ -81,13 +81,13 @@
             .step__actions
               //- No accessible entries
               button.cfnext-btn-action.disabled(
-                ng-show="learn.accessibleContentTypes.length === 0"
+                ng-if="learn.accessibleContentTypes.length === 0"
                 tooltip="You don\'t have permission to access entries"
                 ng-disabled="!learn.hasAccessibleContentTypes")
                 | Add an entry
               //- One entry
               button.cfnext-btn-action(
-                ng-show="learn.accessibleContentTypes.length === 1"
+                ng-if="learn.accessibleContentTypes.length === 1"
                 ng-click="learn.trackClickedButton('Add an entry'); entityCreationController.newEntry(learn.accessibleContentTypes[0])")
                 | Add an entry
               //- More than one entry
@@ -113,12 +113,12 @@
             .step__actions
               //- Can access API keys
               button.cfnext-btn-action(
-                ng-show="learn.canAccessApiKeys"
+                ng-if="learn.canAccessApiKeys"
                 ng-click="learn.goToApiKeySection()"
                 ng-disabled="!learn.hasContentTypes")
                 | Use the API
               button.cfnext-btn-action.disabled(
-                ng-show="!learn.canAccessApiKeys"
+                ng-if="!learn.canAccessApiKeys"
                 tooltip="You don\'t have permission to access API keys")
                 | Use the API
 
