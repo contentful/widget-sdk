@@ -1,3 +1,5 @@
+include ../../components/forms/embedly_preview/embedly_status.mixin.jade
+
 .modal-background
   .modal-dialog.embed-content-dialog
     header.modal-dialog__header
@@ -15,7 +17,7 @@
         name="url"
         autocomplete="off"
         cf-focus-on-render="model")
-        cf-embedly-status(url-status="urlStatus")
+        +embedly-status
         .cfnext-form__hint Please include protocol (e.g. <code>http://</code>).
 
       .cfnext-form__field
@@ -52,7 +54,7 @@
         a(href="http://embed.ly/docs/products/cards" target="_blank") Embedly's platform.js
         |  on your development environment
 
-      cf-embedly-preview(field-data="model" url-status="urlStatus")
+      cf-embedly-preview(preview-url="model.value" url-status="urlStatus")
 
     .modal-dialog__controls
       button.cfnext-btn-primary-action.modal-dialog__controls-confirm(
