@@ -1,5 +1,12 @@
 'use strict';
 
+
+afterEach(inject(function ($rootElement, $rootScope) {
+  $rootScope.$destroy();
+  $rootElement.remove();
+}));
+
+
 beforeEach(function () {
   this._angularElements = [];
 });

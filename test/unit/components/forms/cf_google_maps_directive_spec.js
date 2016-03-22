@@ -30,7 +30,8 @@ describe('cfGoogleMaps Directive', function () {
         ROADMAP: 'roadmap',
       },
       event: {
-        addListener: sinon.stub()
+        addListener: sinon.stub(),
+        clearInstanceListeners: sinon.stub()
       }
     };
 

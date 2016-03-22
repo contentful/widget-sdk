@@ -25,7 +25,9 @@ describe('otBindText', function () {
         attach_textarea: sinon.stub().returns(unbindTextArea = sinon.stub()),
         path: ['value']
       }),
-      snapshot: {sys: {}}
+      snapshot: {sys: {}},
+      close: sinon.stub(),
+      removeListener: sinon.stub()
     });
 
     jasmine.clock().install();
