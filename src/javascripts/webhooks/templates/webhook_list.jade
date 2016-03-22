@@ -12,18 +12,29 @@ header.workbench-header
   table.result-list.main-results.main-header
     thead
       tr
-        th.cell-url Webhook URL
-        th.cell-http-basic Has HTTP Basic Auth credentials?
+        th Webhook name
+        th URL
+        th % of successful calls
+        th Using HTTP Basic Auth?
+        th Actions
   .main-results-wrapper
     table.result-list.main-results
       tbody
         tr(ng-repeat="webhook in webhooks track by webhook.sys.id"
           ng-init="entityNavState = 'spaces.detail.settings.webhooks.detail({ webhookId: webhook.sys.id })'"
-          ui-sref="{{entityNavState}}")
-          td.cell-url
-            a.entity-list-link(ui-sref="{{entityNavState}}") {{ webhook.url }}
-          td.cell-http-basic
-            a.entity-list-link(ui-sref="{{entityNavState}}") {{ webhook.httpBasicUsername ? 'yes' : 'no' }}
+          ui-sref="{{ entityNavState }}")
+          td
+            a.entity-list-link(ui-sref="{{ entityNavState }}") {{ webhook.name }}
+          td
+            a.entity-list-link(ui-sref="{{ entityNavState }}") {{ webhook.url }}
+          td
+            a.entity-list-link(ui-sref="{{ entityNavState }}")
+              cf-webhook-health(webhook-id="webhook.sys.id")
+          td
+            a.entity-list-link(ui-sref="{{ entityNavState }}")
+              | {{ webhook.httpBasicUsername ? 'yes' : 'no' }}
+          td
+            a(ui-sref="{{ entityNavState }}") View details
         tr(ng-show="webhooks.length < 1")
-          td(colspan="2")
+          td(colspan="5")
             a.entity-list-link No webhooks yet!
