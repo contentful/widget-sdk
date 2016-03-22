@@ -13,6 +13,7 @@ angular.module('contentful')
       var field = widgetApi.field;
       var constraints = _(field.validations).pluck('size').filter().first() || {};
       var $inputEl = $el.children('input');
+      var updateInput = makeInputUpdater($inputEl);
 
       if (field.type === 'Symbol' && !_.isNumber(constraints.max)) {
         constraints.max = 256;
@@ -22,7 +23,10 @@ angular.module('contentful')
       scope.constraintsType = constraintsType(constraints);
 
       // update input field value when new synced value received via ot magic
-      var detachOnValueChangedHandler = field.onValueChanged(makeInputUpdater($inputEl), true);
+      var detachOnValueChangedHandler = field.onValueChanged(function (val) {
+        // Might be `null` or `undefined` when value is not present
+        updateInput(val || '');
+      }, true);
       // call handler when the disabled status of the field changes
       var detachOnFieldDisabledHandler = field.onDisabledStatusChanged(updateIsDisabledFlag, true);
 

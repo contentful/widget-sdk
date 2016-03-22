@@ -19,47 +19,24 @@ angular.module('cf.ui')
    * @description
    * Preserve caret position for more natural editing
    *
-   * @param {integer} currentCaretPosition
-   * @param {string} currentValue
+   * This only works if the string has been modified with a single
+   * insert or delete at some position.
+   *
+   * @param {integer} caretPosition
+   * @param {string} oldValue
    * @param {string} newValue
    * @return {integer} reconciled caret position
    */
-  function getPreservedCaretPosition (currentCaretPosition, currentValue, newValue) {
-    currentValue = currentValue || '';
-    // sharejs sets newValue to `null` when it's "empty" or when validations fail
-    newValue = newValue || '';
-
-    if (currentValue === newValue) {
-      return currentCaretPosition;
+  function getPreservedCaretPosition (caretPosition, oldValue, newValue) {
+    var equalUpTo = getCommonPrefixLength(oldValue, newValue);
+    if (equalUpTo <= caretPosition) {
+      // Insert or delete before the cursor
+      var diffLength = newValue.length - oldValue.length;
+      return Math.max(caretPosition + diffLength, 0);
+    } else {
+      // Insert or delete after the cursor. Nothing to do
+      return caretPosition;
     }
-
-    /**
-     * The basic idea is as follows:
-     *
-     * Find the first index at which the characters in two strings diverge (commonStart)
-     * If commonStart > current caret position, retain current caret position
-     * If commonStart <= current caret position
-     *   Get numbers of chars modified (abs(currentValue.length - newValue.length))
-     *   If operation was delete, move caret back by "chars modified" places
-     *   If operation was append, move caret forward by "chars modified" places
-     */
-    var commonStart = 0;
-    var caretPosition = parseInt(currentCaretPosition, 10) || 0;
-    var noOfCharsModified = newValue.length - currentValue.length;
-
-    if (!newValue) {
-      caretPosition = 0;
-    }
-    else {
-      while(currentValue.charAt(commonStart) === newValue.charAt(commonStart)) {
-        commonStart++;
-      }
-      if (commonStart <= caretPosition) {
-        caretPosition += noOfCharsModified;
-      }
-    }
-
-    return caretPosition < 0 ? 0 : caretPosition;
   }
 
   /**
@@ -85,5 +62,21 @@ angular.module('cf.ui')
         rawInputEl.selectionStart = rawInputEl.selectionEnd = newCaretPosition;
       }
     };
+  }
+
+  function getCommonPrefixLength (a, b) {
+    if (a === b) {
+      return a.length;
+    }
+
+    if (!a || !b) {
+      return 0;
+    }
+
+    var length = 0;
+    while (a.charAt(length) === b.charAt(length)) {
+      length++;
+    }
+    return length;
   }
 }]);
