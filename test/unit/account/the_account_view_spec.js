@@ -26,8 +26,8 @@ describe('TheAccountView service', function () {
   });
 
   describe('navigation', function () {
-    it('#goToDefault navigates to user profile', function () {
-      this.view.goToDefault();
+    it('#goToUserProfile navigates to user profile', function () {
+      this.view.goToUserProfile();
       sinon.assert.calledOnce(this.go.withArgs('account.pathSuffix', {pathSuffix: 'profile/user'}));
     });
 

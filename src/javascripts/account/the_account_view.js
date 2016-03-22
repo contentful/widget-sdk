@@ -16,12 +16,10 @@ angular.module('contentful')
   var $state       = $injector.get('$state');
   var spaceContext = $injector.get('spaceContext');
 
-  var DEFAULT_PATH_SUFFIX = 'profile/user';
-
   var isActive = false;
 
   return {
-    goToDefault:         goToDefault,
+    goToUserProfile:     goToUserProfile,
     goToSubscription:    goToSubscription,
     silentlyChangeState: silentlyChangeState,
 
@@ -54,12 +52,12 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name TheAccountView#goToDefault
+   * @name TheAccountView#goToUserProfile
    * @description
-   * Navigates to the default page in the "account" section.
+   * Navigates to the current user's user profile.
    */
-  function goToDefault() {
-    return goTo(DEFAULT_PATH_SUFFIX);
+  function goToUserProfile () {
+    return goTo('profile/user', {reload: true});
   }
 
   /**
