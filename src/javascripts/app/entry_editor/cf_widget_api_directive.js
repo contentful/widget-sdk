@@ -57,6 +57,9 @@ angular.module('contentful')
     getValue: function () {
       return $scope.otSubDoc.getValue();
     },
+    removeValue: function () {
+      return $scope.otSubDoc.removeValue();
+    },
 
     // we only want to expose the public ID
     id: ctField.apiName,

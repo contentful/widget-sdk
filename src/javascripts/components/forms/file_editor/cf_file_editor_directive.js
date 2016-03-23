@@ -8,19 +8,30 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
   var notification = $injector.get('notification');
   var stringUtils  = $injector.get('stringUtils');
 
+  // TODO use isolated scope.
+  // This is not possible right now because the widget depends on a
+  // few helper methods from the scope.
   return {
-    restrict: 'A',
-    require: ['ngModel', '^otPath'],
+    restrict: 'E',
+    require: '^cfWidgetApi',
+    template: JST.cf_file_display(),
     controller: 'ThumbnailController',
-    link: function (scope, elem) {
+    link: function (scope, elem, attrs, widgetApi) {
+      var field = widgetApi.field;
+
       scope.enableUpload = true;
       scope.showMeta = false;
 
       scope.$on('cfFileDropped', fileEventHandler);
       scope.$on('gettyFileAuthorized', fileEventHandler);
-      scope.$on('fileProcessingFailed', function () {
-        deleteFile();
-      });
+      scope.$on('fileProcessingFailed', deleteFile);
+
+      var removeUpdateListener = field.onValueChanged(function (file) {
+        scope.file = file;
+      }, true);
+
+
+      scope.$on('$destroy', removeUpdateListener);
 
       scope.toggleMeta = toggleMeta;
       scope.uploadFile = uploadFile;
@@ -59,15 +70,16 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
         setFPFile(file);
       }
 
-      function setFPFile(FPFile) {
+      function setFPFile(fpFile) {
         aviary.close();
-        scope.file = filepicker.parseFPFile(FPFile);
-        return scope.otBindObjectValueCommit().then(notify);
-      }
-
-      function notify() {
-        if (scope.file) {
-          scope.$emit('fileUploaded', scope.file, scope.locale);
+        var file = scope.file = filepicker.parseFPFile(fpFile);
+        if (file) {
+          return field.setValue(file)
+          .then(function () {
+            scope.$emit('fileUploaded', file, scope.locale);
+          });
+        } else {
+          return field.removeValue();
         }
       }
 

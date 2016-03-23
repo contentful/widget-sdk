@@ -181,7 +181,7 @@ angular.module('contentful')
   registerWidget('fileEditor',{
     fieldTypes: ['File'],
     name: 'File',
-    template: '<div class="widget-file-editor" cf-file-display cf-file-editor ng-model="fieldData.value" ot-bind-object-value="file"></div>'
+    template: '<cf-file-editor class="widget-file-editor" />'
   });
 
   registerWidget('entryLinkEditor',{

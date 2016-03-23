@@ -1,7 +1,7 @@
 'use strict';
 
 describe('cfWidgetApi directive', function () {
-  var scope, widgetApi, random;
+  var scope, widgetApi;
 
   beforeEach(function () {
     module('contentful/test');
@@ -15,9 +15,7 @@ describe('cfWidgetApi directive', function () {
       widget: {
         field: {}
       },
-      isDisabled: function () {
-        return random;
-      },
+      isDisabled: sinon.stub(),
       otSubDoc: {
         changeString: sinon.stub(),
         getValue: sinon.stub()
@@ -29,6 +27,12 @@ describe('cfWidgetApi directive', function () {
       '$scope': scope,
       '$injector': $injector
     });
+  });
+
+  afterEach(function () {
+    scope.$destroy();
+    scope = null;
+    widgetApi = null;
   });
 
   describe('#onValueChanged()', function () {
@@ -129,37 +133,35 @@ describe('cfWidgetApi directive', function () {
     });
   });
 
+  describe('#removeValue()', function () {
+    it('delegates call to "otSubDoc"', function () {
+      scope.otSubDoc.removeValue = sinon.stub();
+      widgetApi.field.removeValue();
+      sinon.assert.calledOnce(scope.otSubDoc.removeValue);
+    });
+  });
+
   describe('#onDisabledStatusChanged()', function () {
-    it('attaches a handler and returns its detach counterpart', function () {
+    it('is dispatched with initial value', function () {
       var cb = sinon.spy();
-      var detachCb = widgetApi.field.onDisabledStatusChanged(cb);
-
-      // change value returned by scope.isDisabled
-      random = Date.now();
+      scope.isDisabled.returns('FOO');
       this.$apply();
-
-      sinon.assert.called(cb);
-      detachCb();
-
-      // change value returned by scope.isDisabled again
-      // so that onDisabledStatusChanged cb is called again
-      random = Date.now();
-      this.$apply();
-
+      widgetApi.field.onDisabledStatusChanged(cb, true);
       sinon.assert.calledOnce(cb);
+      sinon.assert.calledWithExactly(cb, 'FOO');
     });
 
-    it('callback given to onDisabledStatusChanged is called when input value changes', function () {
+    it('is dispatched when value changes', function () {
       var cb = sinon.spy();
-      var value = Date.now();
-
-      widgetApi.field.onDisabledStatusChanged(cb);
-
-      random = value;
+      scope.isDisabled.returns('FOO');
       this.$apply();
+      widgetApi.field.onDisabledStatusChanged(cb);
+      sinon.assert.notCalled(cb);
 
-      sinon.assert.calledWithExactly(cb, value);
+      scope.isDisabled.returns('BAR');
+      this.$apply();
       sinon.assert.calledOnce(cb);
+      sinon.assert.calledWithExactly(cb, 'BAR');
     });
   });
 });
