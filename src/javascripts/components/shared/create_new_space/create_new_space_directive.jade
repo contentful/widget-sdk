@@ -49,7 +49,7 @@ form(
             ng-disabled="createSpace.createSpaceInProgress")
           div
             | {{createSpace.newSpace.errors.fields.organization}}
-      .cfnext-form__fieldset(ng-show="createSpace.errors.form")
+      .cfnext-form__fieldset(ng-show="createSpace.newSpace.errors.form")
         .cfnext-form__field
           .cfnext-form__field-error
           | {{createSpace.newSpace.errors.form}}
