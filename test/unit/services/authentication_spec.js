@@ -192,6 +192,7 @@ describe('Authentication service', function () {
 
     beforeEach(inject(function ($window) {
       $window.location = {};
+      this.$location.hash.returns('');
     }));
 
     it('deletes the token entry', function () {
