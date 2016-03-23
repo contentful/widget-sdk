@@ -28,6 +28,9 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$injector', functio
                    ':([0-5][\\d])'+ //minutes
                    '(?::([0-5][\\d])(?:\\.(\\d{3}))?)?';  //seconds + milliseconds :XX.YYY
 
+  // WARNING!
+  // This directive is also used in "cf_validation_date_select.jade"!
+  // Please keep it in mind when rewriting to use widgetApi
   return {
     restrict: 'A',
     template: JST['cf_datetime_editor'],
@@ -266,7 +269,7 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$injector', functio
       }
 
       function show24hClock () {
-        return !(scope.widget && scope.widget.settings.ampm === '12');
+        return dotty.get(scope, 'widget.settings.ampm') !== '12';
       }
 
     }
