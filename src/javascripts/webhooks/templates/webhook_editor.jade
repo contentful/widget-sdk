@@ -41,7 +41,7 @@ header.workbench-header
           ng-model="webhook.httpBasicPassword")
       .cfnext-form__field
         label Custom headers:
-        cf-webhook-headers(headers="webhook.headers")
+        cf-webhook-headers(headers="webhook.headers" is-dirty="context.headersDirty")
 
   .workbench-main__entity-sidebar
     .entity-sidebar
