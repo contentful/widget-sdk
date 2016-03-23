@@ -79,6 +79,10 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
       flattened.reasons = _.clone(flattened.details.reasons);
       delete flattened.details.reasons;
     }
+    var headers = dotty.get(flattened, 'error.request.headers');
+    if(headers && headers.Authorization) {
+      delete headers.Authorization;
+    }
     return flattened;
   }
 

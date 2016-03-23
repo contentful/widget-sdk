@@ -2,7 +2,7 @@
 
 describe('Section Access', function () {
 
-  var sectionAccess, accessChecker, $state, $stateParams;
+  var sectionAccess, accessChecker, $state, $stateParams, spaceContext;
   var visibilityStub, goStub;
 
   var allTrue = {
@@ -20,6 +20,7 @@ describe('Section Access', function () {
     accessChecker = this.$inject('accessChecker');
     $state        = this.$inject('$state');
     $stateParams  = this.$inject('$stateParams');
+    spaceContext  = this.$inject('spaceContext');
 
     accessChecker.getSectionVisibility = visibilityStub = sinon.stub().returns(allTrue);
     $state.go = goStub = sinon.stub();
@@ -87,6 +88,16 @@ describe('Section Access', function () {
       sinon.assert.calledOnce(goStub);
       expect(goStub.args[0][0]).toBe('spaces.detail.content_types.list');
       expect(goStub.args[0][1].spaceId).toBe('anothersid');
+    });
+
+    it('redirects to `Learn` on first sign in', function() {
+      $state.$current.name = 'spaces.detail';
+      $stateParams.spaceId = 'yetanothersid';
+      spaceContext.space = {data: {spaceMembership: {user: {signInCount: 1}}}};
+      sectionAccess.redirectToFirstAccessible();
+      sinon.assert.calledOnce(goStub);
+      expect(goStub.args[0][0]).toBe('spaces.detail.learn');
+      expect(goStub.args[0][1].spaceId).toBe('yetanothersid');
     });
   });
 });

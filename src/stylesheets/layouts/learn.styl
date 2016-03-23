@@ -1,0 +1,136 @@
+$learn-content-box()
+  position: relative
+  width: 31%
+  text-align: center
+  border: 1px solid $colors.element-mid
+  padding: 24px 30px
+  &:not(:last-child)
+    margin-right: 3.5%
+  > .icon-wrapper
+    position: absolute
+    left: 50%
+    margin-left: -25px
+    width: 50px
+    background: white
+    top: -17px
+    > cf-icon
+      display: inline-block
+      margin: 0 auto
+
+
+.workbench-main__middle-content.x--learn-home
+  width: 85%
+  min-width: 1000px
+  max-width: 1280px
+  overflow: visible
+
+.learn-subheading
+  font-size: 16px
+  color: $colors.text-mid
+
+.learn-language
+  margin-top: 50px
+  margin-bottom: 50px
+  &__group
+    display: flex
+    margin: 40px 0 20px 0
+    &.is-open
+      path
+        fill: $colors.text-lightest
+
+  &__item
+    flex-grow: 1
+    text-align: center
+    position: relative
+    &:not(:last-child):after
+      display: block
+      position: absolute
+      right: 0
+      content: ''
+      width: 1px
+      height: 30px
+      top: 6px
+      background-color: $colors.element-mid
+    svg
+      margin: 0 auto
+  &__link
+    cursor: pointer
+    display: block
+    max-width: 80px
+    margin: 0 auto
+    &.is-active
+      path
+        fill: $colors.text-dark
+  &__name
+    display: block
+    padding: 10px 0
+    color: $colors.text-mid
+    text-decoration: underline
+  &__detail
+    height: 0
+    overflow: hidden
+    transition: height 0.2s linear
+    position: relative
+    cf-icon[name="arrow-up"]
+      position: absolute
+      left: -6px
+      top: -13px
+      transform: scale(1.2)
+      transition: margin-left 0.2s ease-in-out
+      path
+        fill: white
+        stroke: $colors.element-mid
+    &.x--visible
+      height: 230px
+      overflow: visible
+      border-top: 1px solid $colors.element-mid
+  &__references
+    display: flex
+    margin-top: 50px
+  &__reference
+    $learn-content-box()
+    a.language-link
+      cursor: pointer
+      color: $colors.blue-dark
+      text-decoration: underline
+      &:hover, &:visited, &:active
+        color: $colors.blue-darkest
+    .language-description
+      color: $colors.text-mid
+      line-height: 1.4em
+
+.learn-onboarding
+  &__steps
+    display: flex
+    margin-top: 50px
+  &__step
+    $learn-content-box()
+    &.inactive
+      &:after
+        content: ''
+        position: absolute
+        top: -20px
+        bottom: -1px
+        left: -1px
+        right: -1px
+        background-color: rgba(255,255,255,0.6)
+    .step
+      &__title
+        display: inline-block
+        &__inner
+          display: flex
+          > cf-icon[name="checkmark-alt"]
+            margin-right: 4px
+      &__description
+        color: $colors.text-mid
+        line-height: 1.4em
+        margin-bottom: 64px
+      &__actions
+        position: absolute
+        left: 0
+        right:0
+        bottom: 24px
+
+
+
+

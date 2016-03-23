@@ -94,7 +94,7 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
       contentTypes: parseContentTypes(contents.contentTypes),
       entries: sortEntries(parseEntries(contents.entries)),
       assets: parseAssets(contents.assets),
-      editingInterfaces: parseEditingInterfaces(contents.editingInterfaces)
+      editingInterfaces: contents.editingInterfaces
     };
   }
 
@@ -268,21 +268,6 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
       });
       return contents;
     };
-  }
-
-  function parseEditingInterfaces(editingInterfaces) {
-    return _.map(editingInterfaces, function (editingInterface) {
-      return {
-        title: editingInterface.title,
-        contentTypeId: editingInterface.contentTypeId,
-        widgets: editingInterface.widgets,
-        sys: {
-          id: editingInterface.sys.id,
-          type: editingInterface.sys.type,
-          contentType: editingInterface.sys.contentType
-        }
-      };
-    });
   }
 
   function isEntryLink(item) {

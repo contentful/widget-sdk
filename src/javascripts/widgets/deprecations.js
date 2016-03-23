@@ -3,10 +3,12 @@
 angular.module('contentful')
 
 .value('widgets/deprecations/data', {
-  dropdown: {
-    alternative: 'Radio',
-    field: ['Boolean']
-  }
+  // Format looks like this
+  //
+  // dropdown: {
+  //   alternative: 'Radio',
+  //   field: ['Boolean']
+  // }
 })
 
 

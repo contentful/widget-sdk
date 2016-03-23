@@ -7,10 +7,13 @@
 
 .nav-bar__list-item
   float: left
-  display: inline-block
-  height: inherit
-  list-style-type: none
-  margin: 0
+  &, &--right
+    display: inline-block
+    height: inherit
+    list-style-type: none
+    margin: 0
+  &--right
+    float: right
 
 .nav-bar__link
   display: flex

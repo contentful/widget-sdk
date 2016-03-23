@@ -1,0 +1,95 @@
+'use strict';
+
+angular.module('contentful')
+
+/**
+ * @ngdoc service
+ * @module contentful
+ * @name TheAccountView
+ * @description
+ * This service holds the current state of the GK "account" section
+ * and exposes some helper methods for URL manipulation.
+ */
+.factory('TheAccountView', ['$injector', function($injector) {
+
+  var $q           = $injector.get('$q');
+  var $state       = $injector.get('$state');
+  var spaceContext = $injector.get('spaceContext');
+
+  var DEFAULT_PATH_SUFFIX = 'profile/user';
+
+  var isActive = false;
+
+  return {
+    goToDefault:         goToDefault,
+    goToSubscription:    goToSubscription,
+    silentlyChangeState: silentlyChangeState,
+
+    /**
+     * @ngdoc method
+     * @name TheAccountView#enter
+     * @description
+     * Marks the "account" section as active.
+     */
+    enter:               function () { isActive = true;  },
+    /**
+     * @ngdoc method
+     * @name TheAccountView#exit
+     * @description
+     * Marks the "account" section as inactive.
+     */
+    exit:                function () { isActive = false; },
+    /**
+     * @ngdoc method
+     * @name TheAccountView#isActive
+     * @description
+     * Checks if the "account" section is active.
+     */
+    isActive:            function () { return isActive;  }
+  };
+
+  function goTo(pathSuffix, options) {
+    return $state.go('account.pathSuffix', { pathSuffix: pathSuffix }, options);
+  }
+
+  /**
+   * @ngdoc method
+   * @name TheAccountView#goToDefault
+   * @description
+   * Navigates to the default page in the "account" section.
+   */
+  function goToDefault() {
+    return goTo(DEFAULT_PATH_SUFFIX);
+  }
+
+  /**
+   * @ngdoc method
+   * @name TheAccountView#goToSubscription
+   * @description
+   * Navigates to the subscription details page for a current space.
+   */
+  function goToSubscription() {
+    var organizationId = spaceContext.getData('organization.sys.id');
+
+    if (organizationId) {
+      var pathSuffix = 'organizations/' + organizationId + '/subscription';
+      return goTo(pathSuffix, {reload: true});
+    } else {
+      return $q.reject();
+    }
+  }
+
+  /**
+   * @ngdoc method
+   * @name TheAccountView#silentlyChangeState
+   * @description
+   * Changes URL, without any other side effects.
+   */
+  function silentlyChangeState(pathSuffix) {
+    if (pathSuffix) {
+      return goTo(pathSuffix, {location: 'replace'});
+    } else {
+      return $q.reject();
+    }
+  }
+}]);

@@ -1,0 +1,96 @@
+.webhook-editor .workbench-nav__tabs
+  margin-left: $rhythm(1)
+
+.webhook-call__header
+  padding: $rhythm(1)
+  display: flex
+  justify-content: center
+
+.webhook-call__header-item
+  margin: 0 $rhythm(1)
+
+.webhook-call .workbench-main__content
+  position: relative
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+
+.webhook-call__column
+  border-top: 1px solid $colors.element-mid
+  position: absolute
+  top: $rhythm(4)
+  left: 0
+  right: 50%
+  bottom: 0
+  padding: $rhythm(1.5)
+  overflow-y: scroll
+
+  strong
+    display: block
+    margin: $rhythm(1) 0
+  strong:first-child
+    margin-top: 0
+  pre
+    white-space: pre-wrap
+    white-space: -moz-pre-wrap
+    white-space: -pre-wrap
+    white-space: -o-pre-wrap
+    word-wrap: break-word
+
+.webhook-call__column:last-child
+  border-left: 1px solid $colors.element-mid
+  left: 50%
+  right: 0
+
+.webhook-calls__paginator
+  display: flex
+  justify-content: center
+  padding: $rhythm(1)
+
+.webhook-calls__paginator-item
+  display: block
+  padding: $rhythm(.4)
+  padding-top: $rhythm(.25)
+  padding-bottom: $rhythm(.2)
+  margin: 0 $rhythm(.3)
+  background: $colors.element-light
+  &.x--active
+    background: $colors.blue-dark
+    color: white
+    font-weight: bold
+
+.webhook-call__status-indicator
+  display: inline-block
+  width: 12px
+  height: 12px
+  border-radius: 6px
+  margin-right: 6px
+  &[data-status="success"]
+    background: $colors.green-dark
+  &[data-status="warning"]
+    background: $colors.orange-dark
+  &[data-status="failure"]
+    background: $colors.red-dark
+
+.webhook-header, .webhook-new-header
+  background: $colors.element-lightest
+  border-radius: 3px
+  border: 1px solid $colors.element-light
+  border-width: 0 1px 1px 0
+  padding: $rhythm(.5)
+  margin-bottom $rhythm(.4)
+  display: flex
+  justify-content: space-between
+  align-items: center
+  button
+    padding: $rhythm(.2) $rhythm(.8)
+  input
+    margin-bottom: 0
+    font-family monospace
+
+.webhook-header__actions
+  display: flex
+
+.x--jsonlike
+  font-family: monospace

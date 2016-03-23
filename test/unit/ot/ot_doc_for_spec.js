@@ -8,7 +8,7 @@ describe('otDocFor', function () {
       on: sinon.stub(),
       close: sinon.stub(),
       removeListener: sinon.stub(),
-      snapshot: snapshot || {}
+      snapshot: snapshot || {sys: {}}
     };
   }
 
@@ -41,9 +41,6 @@ describe('otDocFor', function () {
       update: sinon.spy(function (data) {
         this.data = data;
       }),
-      getVersion: function () {
-        return this.data.sys.version;
-      },
       setVersion: sinon.stub(),
       data: {
         sys: {
@@ -187,15 +184,24 @@ describe('otDocFor', function () {
     });
   });
 
-  describe('#updateEntityData()', function () {
+  describe('update entity data on "change" event', function () {
 
     beforeEach(function () {
       var moment = this.$inject('moment');
       this.clock = sinon.useFakeTimers(1234, 'Date');
       this.now = moment();
-      scope.otDoc.doc = {
-        snapshot: {foo: 'bar', baz: {}, sys: {version: 100, updatedAt: 'foo'}},
-        version: 123
+
+      this.otDoc = makeOtDocStub({
+        sys: {version: 100, updatedAt: 'foo'},
+        foo: 'bar', baz: {},
+      });
+      this.openDocument.resolves(this.otDoc);
+      this.connect();
+      this.entity.update.reset();
+
+      this.fireChange = function () {
+        this.otDoc.on.withArgs('change').yield();
+        this.$apply();
       };
     });
 
@@ -204,7 +210,8 @@ describe('otDocFor', function () {
     });
 
     it('updates the entity data with a copy of the snapshot', function () {
-      scope.otDoc.updateEntityData();
+      sinon.assert.notCalled(this.entity.update);
+      this.fireChange();
       sinon.assert.calledOnce(this.entity.update);
       var data = this.entity.data;
       expect(data).not.toBe(scope.otDoc.doc.snapshot);
@@ -214,7 +221,7 @@ describe('otDocFor', function () {
     it('it updates the entity version', function () {
       this.entity.data.sys.version = '';
       scope.otDoc.doc.version = 'NEW VERSION';
-      scope.otDoc.updateEntityData();
+      this.fireChange();
       expect(this.entity.data.sys.version).toBe('NEW VERSION');
     });
 
@@ -222,7 +229,7 @@ describe('otDocFor', function () {
       this.entity.data.sys.updatedAt = 'UPDATED AT';
       this.entity.data.sys.version = 0;
       scope.otDoc.doc.version = 1;
-      scope.otDoc.updateEntityData();
+      this.fireChange();
       expect(this.entity.data.sys.updatedAt).toBe(this.now.toISOString());
     });
 
@@ -230,7 +237,7 @@ describe('otDocFor', function () {
       this.entity.data.sys.updatedAt = 'UPDATED AT';
       this.entity.data.sys.version = 1;
       scope.otDoc.doc.version = 1;
-      scope.otDoc.updateEntityData();
+      this.fireChange();
       expect(this.entity.data.sys.updatedAt).toBe('UPDATED AT');
     });
   });
@@ -306,21 +313,6 @@ describe('otDocFor', function () {
       this.otDoc.version = 'VERSION';
       this.otDoc.on.withArgs('acknowledge').yield();
       sinon.assert.calledWith(scope.entity.setVersion, 'VERSION');
-    });
-
-    it('updates entity timestamp if remote operation is received', function () {
-      scope.entity.data.sys.updatedAt = null;
-      scope.entity.data.sys.version = 0;
-      this.otDoc.version = 1;
-
-      this.otDoc.on.withArgs('remoteop').yield();
-      expect(scope.entity.data.sys.updatedAt).toEqual(this.now.toISOString());
-    });
-
-    it('updates version if remote operation is received', function () {
-      this.otDoc.version = 'VERSION';
-      this.otDoc.on.withArgs('remoteop').yield();
-      expect(scope.entity.data.sys.version).toEqual('VERSION');
     });
 
     it('broadcasts change event to scope', function () {

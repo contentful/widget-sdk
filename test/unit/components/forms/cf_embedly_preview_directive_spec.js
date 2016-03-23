@@ -27,8 +27,8 @@ describe('cfEmbedlyPreview Directive', function () {
 
     this.compileElement = function (defaultValue) {
       defaultValue = defaultValue || null;
-      var scopeProps = { fieldData: { value: dotty.get(this, 'scope.fieldData.value') || defaultValue } };
-      this.element = this.$compile('<cf-embedly-preview field-data="fieldData" />', scopeProps);
+      var scopeProps = { previewUrl: dotty.get(this, 'scope.previewUrl') || defaultValue };
+      this.element = this.$compile('<cf-embedly-preview preview-url="previewUrl" />', scopeProps);
       this.scope = this.element.isolateScope();
       this.$apply();
     }.bind(this);
@@ -54,11 +54,11 @@ describe('cfEmbedlyPreview Directive', function () {
     it('changes cards when the value changes', function () {
       this.compileElement('http://contentful.com');
       expect(this.element[0].firstChild.innerHTML).toBe('I am a card from http://contentful.com');
-      this.scope.fieldData.value = 'http://joistio.com';
+      this.scope.previewUrl = 'http://joistio.com';
       this.compileElement();
       expect(this.element[0].children.length).toBe(1);
       expect(this.element[0].firstChild.innerHTML).toBe('I am a card from http://joistio.com');
-      this.scope.fieldData.value = 'meh, a boring string';
+      this.scope.previewUrl = 'meh, a boring string';
       this.compileElement();
       expect(this.element[0].children.length).toBe(0);
     });

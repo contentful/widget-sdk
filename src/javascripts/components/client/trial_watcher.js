@@ -75,7 +75,7 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
       var params = {message: message};
       if (userOwnsOrganization) {
         params.actionMessage = 'Upgrade';
-        params.action = newUpgradeAction(organization, trackPlanUpgrade);
+        params.action = newUpgradeAction(trackPlanUpgrade);
       }
       $rootScope.$broadcast('persistentNotification', params);
 
@@ -101,7 +101,7 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
       persistOnNavigation: true,
       scopeData: {
         offerToSetUpPayment: userOwnsOrganization,
-        setUpPayment: newUpgradeAction(organization, trackPaywallPlanUpgrade),
+        setUpPayment: newUpgradeAction(trackPaywallPlanUpgrade),
         openIntercom: intercom.open
       }
     }).promise
@@ -123,11 +123,10 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
     }
   }
 
-  function newUpgradeAction(organization, trackingFn){
-    var organizationId = organization.sys.id;
+  function newUpgradeAction(trackingFn){
     return function upgradeAction() {
       trackingFn();
-      TheAccountView.goToSubscription(organizationId);
+      TheAccountView.goToSubscription();
     };
   }
 

@@ -102,7 +102,8 @@ function ContentTypeActionsController($scope, $injector) {
     return modalDialog.open({
       template: 'content_type_removal_confirm_dialog',
       scope: prepareRemovalDialogScope(isPublished),
-      noNewScope: true
+      noNewScope: true,
+      persistOnNavigation: true
     });
   }
 
@@ -301,6 +302,10 @@ function ContentTypeActionsController($scope, $injector) {
       notify.invalid();
     } else if (errorId === 'VersionMismatch') {
       if ($scope.contentType.getVersion()) {
+        logger.logServerWarn('Error activating outdated Content Type', {
+          error: err,
+          contentType: $scope.contentType
+        });
         notify.saveOutdated();
       } else {
         notify.saveIdExists();

@@ -80,7 +80,8 @@ angular.module('contentful')
       $injector.get('states/entries'),
       $injector.get('states/assets'),
       $injector.get('states/api'),
-      $injector.get('states/settings')
+      $injector.get('states/settings'),
+      $injector.get('states/learn')
     ]
   };
 }]);
