@@ -13,6 +13,8 @@ angular.module('contentful').directive('cfLinkEditor', [function(){
         }
       };
 
+      // TODO Don’t think this is needed anymore. Everything is taken
+      // care of by the link editor controller through ShareJS
       scope.updateModel = function () {
         ngModelCtrl.$setViewValue(scope.links);
       };
