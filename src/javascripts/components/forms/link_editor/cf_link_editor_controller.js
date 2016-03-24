@@ -82,26 +82,19 @@ angular.module('contentful').controller('LinkEditorController',
 
     entityCache.save(entity);
 
-    var promise;
     var doc = $scope.otDoc.doc;
     var path = $scope.otPath;
     if ($scope.linkSingle) {
-      promise = $scope.otSubDoc.changeValue(link)
-      .then(function () { $scope.links = [link]; });
+      return $scope.otSubDoc.changeValue(link);
     } else {
       if (_.isArray(ShareJS.peek(doc, path))) {
-        promise = $q.denodeify(function (cb) {
+        return $q.denodeify(function (cb) {
           doc.at(path).push(link, cb);
-        }).then(function () { $scope.links.push(link); });
+        });
       } else {
-        promise = ShareJS.mkpathAndSetValue(doc, path, [link])
-        .then(function () { $scope.links = [link]; });
+        return ShareJS.mkpathAndSetValue(doc, path, [link]);
       }
     }
-
-    return promise.then(function () {
-      $scope.updateModel();
-    });
   };
 
   $scope.removeLink = function(index, entity) {
@@ -134,11 +127,7 @@ angular.module('contentful').controller('LinkEditorController',
     function removeValue() {
       //Note: $scope.otSubDoc.changeValue may return a $q exception which is
       //never dealt with here...
-      return $scope.otSubDoc.changeValue(undefined)
-      .then(function(){
-        $scope.links.length = 0;
-        $scope.updateModel();
-      });
+      return $scope.otSubDoc.changeValue(undefined);
     }
 
     function removeLink(index) {
@@ -156,10 +145,7 @@ angular.module('contentful').controller('LinkEditorController',
           }
         });
       }
-      return cb.promise.then(function () {
-        $scope.links.splice(index,1);
-        $scope.updateModel();
-      });
+      return cb.promise;
     }
   };
 
