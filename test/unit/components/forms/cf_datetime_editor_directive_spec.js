@@ -215,6 +215,7 @@ describe('DateTime Editor', function () {
   describe('AM/PM mode', function () {
     beforeEach(function(){
       scope.widget.settings.ampm = '12';
+      scope.widget.settings.format = 'time';
     });
 
     it('should not allow invalid times', function() {
