@@ -13,6 +13,7 @@ describe('cfSingleLineEditor directive', function () {
 
       dotty.put(widget, 'field.validations', validations);
       dotty.put(widget, 'field.type', fieldType);
+      dotty.put(widget, 'settings.helpText', 'wat');
 
       _.extend(this.controllerScope, {
         widget: widget,

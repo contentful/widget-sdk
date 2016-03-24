@@ -13,7 +13,12 @@ describe('cfUrlEditor directive', function () {
           cb(true);
         },
         setString: sinon.stub()
-      }
+      },
+      settings: {}
+    };
+
+    this.setHelpText = function (helpText) {
+      this.cfWidgetApi.settings.helpText = helpText;
     };
 
     this.compileElement = function () {
@@ -21,6 +26,20 @@ describe('cfUrlEditor directive', function () {
         cfWidgetApi: this.cfWidgetApi
       });
     };
+  });
+
+  it('shows configured help text', function () {
+    this.setHelpText('some help text');
+
+    var helpText = this.compileElement().children('.form-widget__help-text').text();
+    expect(helpText).toEqual('some help text');
+  });
+
+  it('shows nothing when no help text configured', function () {
+    this.setHelpText(undefined);
+
+    var helpText = this.compileElement().children('.form-widget__help-text').text();
+    expect(helpText).toEqual('');
   });
 
   it('updates when new value is received over the wire', function () {
