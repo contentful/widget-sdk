@@ -2,13 +2,11 @@
 
 angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$injector', function($scope, $injector) {
   var controller       = this;
-  var environment      = $injector.get('environment');
   var notifier         = $injector.get('apiKeyEditor/notifications');
   var Command          = $injector.get('command');
   var truncate         = $injector.get('stringUtils').truncate;
   var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
   var spaceContext     = $injector.get('spaceContext');
-  var userAgent        = $injector.get('userAgent');
   var $state           = $injector.get('$state');
   var accessChecker    = $injector.get('accessChecker');
   var closeState       = $injector.get('navigation/closeState');
@@ -19,45 +17,13 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
 
-  $scope.authCodeExample = {
-    lang: 'http',
-    api: 'cda'
-  };
-
-  $scope.isIos = userAgent.isIOS();
-  $scope.isDev = environment.env === 'development';
-  $scope.isProd = environment.env === 'production';
-  $scope.isNotProd = environment.env !== 'production';
   $scope.isReadOnly = function () { return !accessChecker.canModifyApiKeys(); };
-
-  $scope.getSelectedAccessToken = function () {
-    var apiKey = isPreviewApiSelected() ? $scope.previewApiKey : $scope.apiKey;
-    return apiKey.data.accessToken;
-  };
-
-  $scope.getApiUrl = function () {
-    return environment.settings.cdn_host.replace('cdn', isPreviewApiSelected() ? 'preview': 'cdn');
-  };
 
   $scope.getSpaceId = function () {
     return spaceContext.getId();
   };
 
-  $scope.$watch('apiKey.data.accessToken', function(accessToken) {
-    $scope.exampleUrl =
-      'http://' +
-      environment.settings.cdn_host +
-      '/spaces/' +
-      spaceContext.getId() +
-      '/entries?access_token=' +
-      accessToken;
-
-    $scope.iosMobileAppUrl =
-      'contentful://open/space/' +
-      spaceContext.getId() +
-      '?access_token=' +
-      accessToken;
-
+  $scope.$watch('apiKey.data.accessToken', function() {
     if ($scope.apiKey.getId() && !dotty.exists($scope, 'apiKey.data.preview_api_key')) {
       generatePreviewApiKey();
     }
@@ -127,10 +93,6 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     .then(function (previewApiKey) {
       $scope.previewApiKey = previewApiKey;
     });
-  }
-
-  function isPreviewApiSelected() {
-    return $scope.authCodeExample.api == 'preview';
   }
 
 }])
