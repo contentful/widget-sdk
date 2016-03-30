@@ -29,9 +29,8 @@ header.workbench-header
       p You have read-only access to this API key. If you need to edit it please contact your administrator.
     form.api-key-editor__form(name="apiKeyForm" submit="save()")
       .api-key-editor__two-col
-        h3.api-key-editor__subheading
+        h3.api-key-editor__heading
           | General information
-
         .cfnext-form__field
           label
             strong Name
@@ -49,7 +48,7 @@ header.workbench-header
             ng-disabled="isReadOnly()"
             placeholder="API key for website")
 
-        h3.api-key-editor__subheading
+        h3.api-key-editor__heading
           | API keys
 
         .cfnext-form__field
@@ -132,9 +131,9 @@ header.workbench-header
               | What do I need the Space ID for?
 
       .api-key-editor__two-col
-        h3.api-key-editor__subheading
+        h3.api-key-editor__heading
           | See your content live
-        p
+        p.api-key-editor__subheading
           | Apps for mobile &amp; web allow you to see your content on your preferred platform.
 
         .discovery-app
@@ -180,6 +179,46 @@ header.workbench-header
                 a(href="https://github.com/contentful/discovery-app-android"
                   target="_blank")
                   | Get source code from GitHub
+
+        h3.api-key-editor__heading
+          | Build with Contentful
+        p.api-key-editor__subheading
+          | Choose your language to access relevant SDKs, tools, tutorials and more.
+        .build-with-contentful.x--stack-vertical
+          .build-with-contentful__languages(
+            ng-class="{'is-open': selectedLanguage}")
+            .build-with-contentful__language(
+              ng-repeat="lang in languages track by lang.id"
+              data-current-language="{{lang.id}}")
+              a.build-with-contentful__link(
+                ng-class="{'is-active': lang === selectedLanguage}"
+                ng-click="selectLanguage(lang)")
+                cf-icon(name="{{lang.icon}}" scale="0.65")
+                .build-with-contentful__name {{lang.name}}
+          .build-with-contentful__detail(ng-class="{'x--visible': selectedLanguage}")
+            cf-icon(
+              name="arrow-up"
+              cf-position-relative-to-language
+              position-relative-to=".build-with-contentful__language[data-current-language=\"{{selectedLanguage.id}}\"]")
+
+            .build-with-contentful__references(ng-show="selectedLanguage.id")
+              .build-with-contentful__reference(ng-repeat="(key, item) in selectedLanguage.data track by item.name")
+                .icon-wrapper
+                  cf-icon(name="{{item.icon}}")
+                .build-with-contentful__reference-name {{item.name}}
+                p.build-with-contentful__reference-description
+                  | {{item.description}}
+                span(ng-repeat="link in item.links track by item.name")
+                  a.build-with-contentful__reference-link(
+                    ng-click="learn.trackResourceLink(item.name, learn.selectedLanguage.name)"
+                    href="{{link.url}}"
+                    target="_blank")
+                    | {{link.text}}
+                  span(ng-if="!$last")
+                    | &#32;|&#32;
+        .advice__note
+          i.fa.fa-info-circle.advice__note-icon
+          | You're not a developer? You can <a ui-sref="spaces.detail.settings.users.list">invite</a> users to help get you started
 
   .workbench-main__info-sidebar.entity-info-panel(
     ng-class="preferences.showAuxPanel && 'x--show'")

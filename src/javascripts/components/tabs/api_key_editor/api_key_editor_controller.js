@@ -10,6 +10,8 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   var $state           = $injector.get('$state');
   var accessChecker    = $injector.get('accessChecker');
   var closeState       = $injector.get('navigation/closeState');
+  var sdkInfoProvider  = $injector.get('sdkInfoProvider');
+  var analytics        = $injector.get('analytics');
 
   var notify = notifier(function getTitle () {
     return truncate($scope.apiKey.getName(), 50);
@@ -59,6 +61,17 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     // not used, but necessary to trigger digest cycle
     var apiKey = type == 'preview' ? $scope.previewApiKey : $scope.apiKey;
     apiKey.regenerateAccessToken();
+  };
+
+  var documentationList = ['documentation', 'gettingStarted', 'deliveryApi'];
+
+  $scope.languages = sdkInfoProvider.get(documentationList);
+
+  $scope.selectLanguage = function (language) {
+    $scope.selectedLanguage = language;
+    analytics.track('Selected Language at the API Key Page', {
+      language: $scope.selectedLanguage.name
+    });
   };
 
   controller.save = Command.create(save, {

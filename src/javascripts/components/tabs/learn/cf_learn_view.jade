@@ -123,37 +123,38 @@
                 | Use the API
 
       //- Build with Contentful
-      .learn-language
+      .learn__build-with-contentful
         h2 Build with Contentful
         p.learn-subheading Choose your language to access relevant SDKs, tools, tutorials and more.
-        .learn-language__group(
-          ng-class="{'is-open': learn.selectedLanguage}")
-          .learn-language__item(
-            ng-repeat="lang in learn.languageData track by lang.id"
-            data-current-language="{{lang.id}}")
-            a.learn-language__link(
-              ng-class="{'is-active': lang === learn.selectedLanguage}"
-              ng-click="learn.selectLanguage(lang)")
-              cf-icon(name="{{lang.icon}}")
-              .learn-language__name {{lang.name}}
-        .learn-language__detail(ng-class="{'x--visible': learn.selectedLanguage}")
-          cf-icon(
-            name="arrow-up"
-            cf-position-relative-to-language
-            position-relative-to=".learn-language__item[data-current-language=\"{{learn.selectedLanguage.id}}\"]")
+        .build-with-contentful
+          .build-with-contentful__languages(
+            ng-class="{'is-open': learn.selectedLanguage}")
+            .build-with-contentful__language(
+              ng-repeat="lang in learn.languageData track by lang.id"
+              data-current-language="{{lang.id}}")
+              a.build-with-contentful__link(
+                ng-class="{'is-active': lang === learn.selectedLanguage}"
+                ng-click="learn.selectLanguage(lang)")
+                cf-icon(name="{{lang.icon}}")
+                .build-with-contentful__name {{lang.name}}
+          .build-with-contentful__detail(ng-class="{'x--visible': learn.selectedLanguage}")
+            cf-icon(
+              name="arrow-up"
+              cf-position-relative-to-language
+              position-relative-to=".build-with-contentful__language[data-current-language=\"{{learn.selectedLanguage.id}}\"]")
 
-          .learn-language__references(ng-show="learn.selectedLanguage.id")
-            .learn-language__reference(ng-repeat="(key, item) in learn.selectedLanguage.data track by item.name")
-              .icon-wrapper
-                cf-icon(name="{{item.icon}}")
-              h3 {{item.name}}
-              p.language-description
-                | {{item.description}}
-              span(ng-repeat="link in item.links")
-                a.language-link(
-                  ng-click="learn.trackResourceLink(item.name, learn.selectedLanguage.name)"
-                  href="{{link.url}}"
-                  target="_blank")
-                  | {{link.text}}
-                span(ng-if="!$last")
-                  | &#32;|&#32;
+            .build-with-contentful__references(ng-show="learn.selectedLanguage.id")
+              .build-with-contentful__reference(ng-repeat="(key, item) in learn.selectedLanguage.data track by item.name")
+                .icon-wrapper
+                  cf-icon(name="{{item.icon}}")
+                .build-with-contentful__reference-name {{item.name}}
+                p.build-with-contentful__reference-description
+                  | {{item.description}}
+                span(ng-repeat="link in item.links")
+                  a.build-with-contentful__reference-link(
+                    ng-click="learn.trackResourceLink(item.name, learn.selectedLanguage.name)"
+                    href="{{link.url}}"
+                    target="_blank")
+                    | {{link.text}}
+                  span(ng-if="!$last")
+                    | &#32;|&#32;

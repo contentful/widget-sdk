@@ -18,6 +18,8 @@ describe('apiKeyEditor Directive', function () {
         open: stubs.open
       });
 
+      $provide.removeDirectives('cfIcon');
+
       environmentMock = {
         env: 'development',
         settings: {
