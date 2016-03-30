@@ -36,6 +36,7 @@ angular.module('contentful')
   });
 
   this.settings = $scope.widget.settings;
+  this.settings.helpText = this.settings.helpText || $scope.widget.defaultHelpText;
 
   this.field = {
     onValueChanged: valueChangedSignal.attach,
