@@ -21,6 +21,7 @@ angular.module('contentful')
   var accessChecker   = $injector.get('accessChecker');
   var $state          = $injector.get('$state');
   var analytics       = $injector.get('analytics');
+  var sdkInfoProvider = $injector.get('sdkInfoProvider');
 
   var visibility = accessChecker.getSectionVisibility();
 
@@ -80,7 +81,6 @@ angular.module('contentful')
 
   // Languages and SDKs
   controller.selectLanguage = function(language) {
-
     if (!controller.selectedLanguage) {
       // Scroll to the bottom of the page
       var container = $element.find('.workbench-main');
@@ -94,15 +94,8 @@ angular.module('contentful')
     });
   };
 
-  controller.languageData = [
-    {id: 'js', name: 'JavaScript', icon: 'language-js'},
-    {id: 'php', name: 'PHP', icon: 'language-php'},
-    {id: 'ruby', name: 'Ruby', icon: 'language-ruby'},
-    {id: 'ios', name: 'iOS', icon: 'language-ios'},
-    {id: 'android', name: 'Android', icon: 'language-android'},
-    {id: 'http', name: 'HTTP', icon: 'language-http'}
-  ];
-
+  var documentationList = ['documentation', 'apidemo', 'deliveryApi'];
+  controller.languageData = sdkInfoProvider.get(documentationList);
   controller.trackClickedButton = function(name) {
     var eventName = 'Clicked the \'' + name + '\' button from Learn';
     analytics.track(eventName);
