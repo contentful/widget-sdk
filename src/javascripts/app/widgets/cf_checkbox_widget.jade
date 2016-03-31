@@ -1,0 +1,11 @@
+div.checkbox-editor__options(
+  ng-class="isDisabled && 'x--disabled'")
+  label.checkbox-editor__option(
+    ng-repeat="option in options track by option.id")
+    input.checkbox-editor__input(
+      type="checkbox"
+      id="{{options.id}}"
+      ng-model="option.selected"
+      ng-disabled="isDisabled")
+    span.checkbox-editor__label
+      | {{ option.value }}

@@ -48,7 +48,8 @@ angular.module('contentful')
     locale: $scope.locale.code,
     type: ctField.type,
     required: !!ctField.required,
-    validations: ctField.validations
+    validations: ctField.validations,
+    itemValidations: dotty.get(ctField, ['items', 'validations'])
   };
 
   function getValue () {
