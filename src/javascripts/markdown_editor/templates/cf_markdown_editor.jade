@@ -1,4 +1,4 @@
-.markdown-loading(ng-if="!isReady() && !hasCrashed")
+.markdown-loading(ng-if="!isReady && !hasCrashed")
   | Initializing Markdown editor&nbsp;
   i.fa.fa-spinner.fa-spin
 
@@ -6,7 +6,7 @@
   | Markdown editor has crashed, please refresh the page&nbsp;
   i.fa.fa-warning
 
-.markdown-loaded(ng-class="{'visible': isReady() && !hasCrashed}")
+.markdown-loaded(ng-class="{'visible': isReady && !hasCrashed}")
   .markdown-tabs
     a(href ng-click="setMode('preview')" ng-class="{'inactive': !inMode('preview')}")
       | Preview
