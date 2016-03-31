@@ -4,6 +4,12 @@ describe('TrialWatcher', function () {
   var $rootScope, spaceContext, authentication, $q;
   var broadcastStub, momentDiffStub, momentIsAfterStub, openDialogStub;
 
+  afterEach(function () {
+    $rootScope = spaceContext = authentication = $q =
+      broadcastStub = momentDiffStub = momentIsAfterStub =
+      openDialogStub = null;
+  });
+
   function makeSpace(organization) {
     organization.sys = {id: '42'};
     return {

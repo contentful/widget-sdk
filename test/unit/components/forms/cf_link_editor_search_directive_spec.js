@@ -3,6 +3,10 @@
 describe('cfLinkEditorSearch Directive', function () {
   var element, scope, stubs, compileElement, searchField;
 
+  afterEach(function () {
+    element = scope = stubs = compileElement = searchField = null;
+  });
+
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([

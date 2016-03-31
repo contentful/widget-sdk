@@ -5,6 +5,10 @@ describe('cfAutocompleteResultsController', function () {
 
   beforeEach(module('contentful/test'));
 
+  afterEach(function () {
+    controller = scope = null;
+  });
+
   beforeEach(inject(function ($controller, $rootScope){
     scope = $rootScope;
     scope.searchController = {

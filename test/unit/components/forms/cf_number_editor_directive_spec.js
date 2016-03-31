@@ -2,6 +2,12 @@
 
 describe('Number widgets', function () {
   var elem, scope;
+
+  afterEach(function () {
+    elem.remove();
+    elem = scope = null;
+  });
+
   beforeEach(function() {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('otBindNgModel');

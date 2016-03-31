@@ -3,6 +3,10 @@
 describe('Account Dropdown Controller', function () {
   var scope;
 
+  afterEach(function () {
+    scope = null;
+  });
+
   beforeEach(function() {
     var self = this;
 

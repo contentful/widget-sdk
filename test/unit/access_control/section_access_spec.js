@@ -12,6 +12,10 @@ describe('Section Access', function () {
     apiKey: true,
     settings: true
   };
+  afterEach(function () {
+    sectionAccess = accessChecker = $state =
+      $stateParams = visibilityStub = goStub  = null;
+  });
 
   beforeEach(function () {
     module('contentful/test');

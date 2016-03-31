@@ -9,7 +9,12 @@ describe('cfZenmode', function () {
     registerChild: sinon.spy(),
     syncToParent: sinon.spy(),
     getParent: function () {
-      return { tie: { editorToEditor: tieSpy } };
+      return {
+        tie: {
+          editorToEditor: tieSpy,
+        },
+        restoreCursor: sinon.stub()
+      };
     }
   };
 

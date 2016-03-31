@@ -5,6 +5,13 @@ describe('cfLinkEditorSearch Controller', function () {
   var scope, stubs, attrs, space;
   var $q, notification, logger;
 
+  afterEach(function () {
+    cfLinkEditorSearchCtrl = createController =
+      scope = stubs = attrs = space;
+      $q = notification = logger = null;
+  });
+
+
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([

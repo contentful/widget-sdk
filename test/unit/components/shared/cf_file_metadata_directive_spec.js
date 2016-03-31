@@ -32,6 +32,11 @@ describe('cfFileMetadata Directive', function () {
     });
   });
 
+  afterEach(function () {
+    element.remove();
+    element = scope = parentScope = compileElement = null;
+  });
+
   describe('default state with no attrs set', function() {
     beforeEach(function() {
       compileElement();

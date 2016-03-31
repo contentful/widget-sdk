@@ -16,6 +16,10 @@ describe('ViewMenuController', function () {
     scope.$apply();
   }));
 
+  afterEach(function () {
+    controller = scope = $q = null;
+  });
+
   describe('viewIsActive', function () {
     it('should return true if view matches tab view', function () {
       scope.context = { view: {id: 'foo'} };

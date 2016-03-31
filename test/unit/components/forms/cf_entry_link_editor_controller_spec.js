@@ -9,6 +9,12 @@ describe('EntryLinkEditorController', function () {
     return arg;
   }
 
+  afterEach(function () {
+    linkEditorCtrl = createController =
+      scope = entry = $q = stubs = attrs =
+      shareJSMock = entityCacheMock = null;
+  });
+
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([

@@ -3,6 +3,10 @@
 describe('EntityCreationController', function () {
   var stubs;
 
+  afterEach(function () {
+    stubs = null;
+  });
+
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([

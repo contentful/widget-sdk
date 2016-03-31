@@ -5,6 +5,10 @@ describe('contextHistory service', function () {
   var ch, $stateParams;
   function e(id) { return {getId: _.constant(id)}; }
 
+  afterEach(function () {
+    ch = $stateParams = null;
+  });
+
   beforeEach(function () {
     module('contentful/test');
     ch = this.$inject('contextHistory');

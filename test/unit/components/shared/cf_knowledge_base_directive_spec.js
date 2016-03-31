@@ -19,6 +19,10 @@ describe('cfKnowledgeBase directive', function () {
     scope = this.$inject('$rootScope');
   });
 
+  afterEach(function () {
+    el = scope = trackFollowedKbpLinkSpy = null;
+  });
+
   describe('points to knowledge base', function () {
     beforeEach(function () {
       el = this.$compile('<cf-knowledge-base target="entry" />');

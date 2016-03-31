@@ -4,6 +4,11 @@ describe('Multi Video Editor Controller', function() {
   var attrs, scope, multiVideoEditorController, ShareJSMock,
       callbackWithApplyDeferred, $rootScope;
 
+  afterEach(function () {
+    attrs = scope = multiVideoEditorController = ShareJSMock =
+      callbackWithApplyDeferred = $rootScope = null;
+  });
+
   beforeEach(function() {
     module('contentful/test');
     module(function($provide){

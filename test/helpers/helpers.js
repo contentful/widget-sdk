@@ -106,6 +106,8 @@ beforeEach(function () {
       transcludeControllers: transcludeControllers
     });
 
+    this._angularElements.push(element);
+
     scope.$digest();
     return element;
   };
