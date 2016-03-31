@@ -31,16 +31,19 @@ describe('Kaltura Player Directive', function() {
       kalturaWidgetLoaderDeferred = $q.defer();
       kalturaWidgetLoader.load.and.returnValue(kalturaWidgetLoaderDeferred.promise);
 
-      scope              = {};
-      scope.spaceContext = {space: { getOrganizationId: sinon.stub() }};
-      scope.spaceContext.space.getOrganizationId.returns('org-123');
-
+      scope = {};
       scope.videoWidgetPlayer = {
         attrs: {},
         callbacks: {
           onInit: jasmine.createSpy()
         }
       };
+
+      var spaceContext = $injector.get('spaceContext');
+      spaceContext.space = {
+        getOrganizationId: sinon.stub().returns('org-123')
+      };
+
 
       directive = [
         '<cf-kaltura-player',

@@ -24,8 +24,7 @@ div(ng-if="videoEditorController.isVideoWidgetReady()")
     .video-widget-editor__warning-message {{videoEditor.errorMessage}}
 
   .video-widget-editor__loading-info(
-    ng-if="videoEditorController.shouldShowPlayerLoadingFeedback()"
-    ng-class="{'video-widget-editor__loading-info--wide': !videoEditor.searchConfig.isSearchEnabled}")
+    ng-if="videoEditorController.shouldShowPlayerLoadingFeedback()")
     p {{videoEditorController.loadingPlayerFeedbackMessage()}}
     i.fa.fa-spinner.fa-spin
 
