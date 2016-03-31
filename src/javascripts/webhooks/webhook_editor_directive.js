@@ -67,6 +67,7 @@ angular.module('contentful')
   var notification       = $injector.get('notification');
   var logger             = $injector.get('logger');
   var ReloadNotification = $injector.get('ReloadNotification');
+  var modalDialog        = $injector.get('modalDialog');
 
   var touched = getInitialTouchCount();
 
@@ -84,8 +85,20 @@ angular.module('contentful')
   });
 
   function save() {
-    prepareCredentials();
-    return repo.save($scope.webhook).then(handleWebhook, handleError);
+    var promise = $q.resolve();
+    if ($scope.context.headersDirty) {
+      promise = modalDialog.open({
+        title: 'Check your custom headers',
+        message: 'There is an unsaved custom header. You have to click the "Add" button if you want to save it.',
+        confirmLabel: 'Continue without adding',
+        cancelLabel: 'Cancel'
+      }).promise;
+    }
+
+    promise.then(function () {
+      prepareCredentials();
+      return repo.save($scope.webhook).then(handleWebhook, handleError);
+    });
   }
 
   function handleWebhook(webhook) {

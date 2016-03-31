@@ -10,7 +10,7 @@ angular.module('contentful')
   return {
     restrict: 'E',
     template: JST['webhook_headers'](),
-    scope: {headers: '='},
+    scope: {headers: '=', isDirty: '='},
     link: function (scope, el) {
       scope.focusNewKey = function () {
         el.find('#webhook-new-header-key').focus();
@@ -29,6 +29,10 @@ angular.module('contentful')
       $scope.canUpdate = canUpdate;
       $scope.updateWithEnter = updateWithEnter;
       $scope.remove = remove;
+
+      $scope.$watchCollection('model.fresh', function (m) {
+        $scope.isDirty = !!(m.key && m.value);
+      });
 
       function add() {
         var m = $scope.model.fresh;
