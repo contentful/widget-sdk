@@ -13,8 +13,8 @@ describe('entityEditor/StateController', function () {
     var entry = cfStub.entry(space, 'entryid', 'typeid');
 
 
-    var $rootScope = this.$inject('$rootScope');
-    this.scope = $rootScope.$new();
+    this.rootScope = this.$inject('$rootScope');
+    this.scope = this.rootScope.$new();
     this.scope.entry = entry;
 
     this.$inject('accessChecker').canPerformActionOnEntity = sinon.stub().returns(true);
@@ -29,8 +29,6 @@ describe('entityEditor/StateController', function () {
       entity: entry,
       handlePublishError: null,
     });
-
-    this.broadcastStub = sinon.stub($rootScope, '$broadcast');
   });
 
   describe('#delete command execution', function() {
@@ -289,19 +287,31 @@ describe('entityEditor/StateController', function () {
 
       describe('#revertToPublished command', function () {
         beforeEach(function() {
-          this.entity.getPublishedState = sinon.stub().resolves({fields: 'published'});
+          this.entity.getPublishedState = sinon.stub().resolves({fields: {'some-field': {'de-DE': 'published'}}});
           this.controller.revertToPublished.execute();
           this.$apply();
         });
 
         it('reverts the field data', function() {
-          expect(this.otDoc.doc.snapshot.fields).toBe('published');
+          expect(this.otDoc.doc.snapshot.fields['some-field']['de-DE']).toBe('published');
         });
 
         describe('afterwards', function () {
           beforeEach(function () {
+            sinon.stub(this.rootScope, '$broadcast');
             this.controller.revertToPublished.execute();
             this.$apply();
+          });
+
+          afterEach(function () {
+            this.rootScope.$broadcast.restore();
+          });
+
+          it('broadcasts reverted values', function () {
+            sinon.assert.calledOnce(this.rootScope.$broadcast);
+            var args = this.rootScope.$broadcast.args[0];
+            expect(args[1].join(',')).toBe('fields,some-field,de-DE');
+            expect(args[2]).toBe('published');
           });
 
           canBeReverted({toPublished: false, toPrevious: false});

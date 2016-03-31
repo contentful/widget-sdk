@@ -6,6 +6,7 @@ angular.module('contentful')
 function ($scope, $injector, entity, notify, handlePublishError) {
 
   var controller          = this;
+  var $rootScope          = $injector.get('$rootScope');
   var $q                  = $injector.get('$q');
   var Command             = $injector.get('command');
   var createEntryReverter = $injector.get('entryReverter');
@@ -202,7 +203,19 @@ function ($scope, $injector, entity, notify, handlePublishError) {
 
   function setDocFields (doc, data) {
     return $q.denodeify(function (handler) {
-      doc.at('fields').set(data, handler);
+      doc.at('fields').set(data, function (err) {
+        if (!err) { broadcastRevertedValues(data); }
+        handler.apply(null, arguments);
+      });
+    });
+  }
+
+  function broadcastRevertedValues (data) {
+    _.forEach(data, function (field, fieldId) {
+      _.forEach(field, function (value, localeId) {
+        var path = ['fields', fieldId, localeId];
+        $rootScope.$broadcast('otValueReverted', path, value);
+      });
     });
   }
 

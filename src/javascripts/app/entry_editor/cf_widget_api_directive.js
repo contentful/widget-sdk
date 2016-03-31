@@ -25,9 +25,8 @@ angular.module('contentful')
   var isDisabledSignal = newSignal($scope.isDisabled($scope.field, $scope.locale));
   var ctField = $scope.widget.field;
 
-  $scope.$on('otValueChanged', function (e, path, value) {
-    valueChangedSignal.dispatch(value);
-  });
+  $scope.$on('otValueChanged', createValueChangedSignalDispatcher(true));
+  $scope.$on('otValueReverted', createValueChangedSignalDispatcher());
 
   $scope.$watch(function () {
     return $scope.isDisabled($scope.field, $scope.locale);
@@ -69,4 +68,21 @@ angular.module('contentful')
   function removeValue() {
     return $scope.otSubDoc.removeValue();
   }
+
+  function createValueChangedSignalDispatcher(shouldCheckPath) {
+    return function dispatchValueChangedSignal (e, path, value) {
+      if (!shouldCheckPath || isPathMatching(path)) {
+        valueChangedSignal.dispatch(value);
+      }
+    };
+  }
+
+  function isPathMatching (path) {
+    if (!_.isArray($scope.otPath) || !_.isArray(path)) {
+      throw new Error('Path should be an array of strings.');
+    }
+
+    return _.isEqual($scope.otPath, path);
+  }
+
 }]);

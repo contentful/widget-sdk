@@ -63,7 +63,9 @@ mixin entity-sidebar
           ng-disabled="!state.revertToPublished.isAvailable() && !state.revertToPrevious.isAvailable()")
           | Revert
         .context-menu(
-          cf-context-menu="bottom-left"
+          role="menu"
+          cf-context-menu="bottom-right"
+          aria-label="Revert"
           data-test-id="revert-menu")
           div(role="menuitem" ui-command="state.revertToPublished")
             | Revert to published
