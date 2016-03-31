@@ -17,9 +17,6 @@ if [[ "$TRAVIS_TEST_RESULT" != "0" ]]; then exit 0; fi
 # abort if not a pull request
 if [[ "$TRAVIS_PULL_REQUEST" = "false" ]]; then exit 0; fi
 
-# abort if it is a production deploy, i.e. a PR from master
-if [[ "$TRAVIS_BRANCH" = "master" ]]; then exit 0; fi
-
 AUTH="cf-ci:$JENKINS_PASSWORD"
 QUERY="token=$JENKINS_TOKEN&Git_Commit_Hash=$TRAVIS_COMMIT"
 JOB="User Interface Pull Request"
