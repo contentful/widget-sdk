@@ -30,11 +30,9 @@ angular.module('contentful')
       $scope.updateWithEnter = updateWithEnter;
       $scope.remove = remove;
 
-      $scope.$watch('model.fresh', function (m) {
-        $scope.isDirty =
-          (_.isString(m.key) && m.key.length > 0) ||
-          (_.isString(m.value) && m.value.length > 0);
-      }, true);
+      $scope.$watchCollection('model.fresh', function (m) {
+        $scope.isDirty = !!(m.key && m.value);
+      });
 
       function add() {
         var m = $scope.model.fresh;
