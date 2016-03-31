@@ -22,6 +22,12 @@
  * div.cfnext-form__field
  *   label Bio
  *   textarea.cfnext-form__input
+ * div.cfnext-form__field
+ *   label Disabled input
+ *   input.cfnext-form__input(disabled type="text" value="This field is disabled")
+ * div.cfnext-form__field
+ *   label Disabled textarea
+ *   textarea.cfnext-form__input(disabled)
  *
  * Styleguide 30.1
  */
@@ -46,9 +52,9 @@ $cfnext-form-input()
     border-color: $colors.blue
     outline: none
   &[readonly], &[disabled], &:disabled
-    color: $gray-medium
-    background-color: $gray-lighter
-    border: 1px solid $gray
+    color: $colors.text-mid
+    background-color: $colors.element-lightest
+    border: 1px solid $colors.element-dark
     box-shadow: none
     transition: none
   &[aria-invalid="true"]
