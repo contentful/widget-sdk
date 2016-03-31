@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('contentful').constant('keycodes', {
+angular.module('cf.utils')
+.constant('keycodes', {
   LEFT       : 37,
   UP         : 38,
   RIGHT      : 39,
