@@ -3,6 +3,11 @@
 describe('Entry Editor Controller', function () {
   var scope;
 
+  afterEach(function () {
+    scope.$destroy();
+    scope = null;
+  });
+
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeControllers(
@@ -54,23 +59,22 @@ describe('Entry Editor Controller', function () {
   });
 
   describe('sets the otDoc.state.disabled flag', function () {
-    var accessChecker;
     beforeEach(function(){
       scope = this.createController();
       scope.otDoc = { state: { disabled: false } };
-      accessChecker = this.$inject('accessChecker');
-      accessChecker.canUpdateEntry = sinon.stub().returns(true);
+      this.accessChecker = this.$inject('accessChecker');
+      this.accessChecker.canUpdateEntry = sinon.stub().returns(true);
       scope.$apply();
     });
 
     it('to disabled', function () {
-      accessChecker.canUpdateEntry.returns(true);
+      this.accessChecker.canUpdateEntry.returns(true);
       scope.$apply();
       expect(scope.otDoc.state.disabled).toBe(false);
     });
 
     it('to enabled', function () {
-      accessChecker.canUpdateEntry.returns(false);
+      this.accessChecker.canUpdateEntry.returns(false);
       scope.$apply();
       expect(scope.otDoc.state.disabled).toBe(true);
     });
@@ -126,37 +130,17 @@ describe('Entry Editor Controller', function () {
     sinon.assert.called(scope.validate);
   });
 
-  describe('snapshot sanitization', function () {
-    var doc;
+  it('when doc loads adds objects for every field', function () {
+    scope = this.createController();
+    scope.entry.data.fields = {
+      A: {},
+      B: {}
+    };
+    var doc = scope.otDoc.doc;
+    expect(doc.snapshot.fields).toBe(undefined);
 
-    beforeEach(function () {
-      // Fresh setup with sanitization
-      scope = this.createController();
-      doc = scope.otDoc.doc;
-    });
-
-    it('sets missing fields object', function () {
-      expect(doc.snapshot.fields).toBe(undefined);
-      this.$apply();
-      expect(doc.snapshot.fields).toEqual({});
-    });
-
-    it('replaces fields value with object', function () {
-      doc.snapshot.field = 'some val';
-      this.$apply();
-      expect(doc.snapshot.fields).toEqual({});
-    });
-
-    it('adds objects for every field', function () {
-      var fieldIds = ['A', 'B'];
-      scope.contentType.data.fields = _.map(fieldIds, function (id) {
-        return {id: id};
-      });
-      expect(doc.snapshot.fields).toBe(undefined);
-      this.$apply();
-      _.forEach(fieldIds, function (fieldId) {
-        expect(doc.snapshot.fields[fieldId]).toEqual({});
-      });
-    });
+    this.$apply();
+    expect(doc.snapshot.fields['A']).toEqual({});
+    expect(doc.snapshot.fields['B']).toEqual({});
   });
 });
