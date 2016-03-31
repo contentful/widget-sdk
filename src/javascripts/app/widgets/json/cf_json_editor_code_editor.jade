@@ -1,0 +1,21 @@
+div.json-editor__toolbar
+  div.json-editor__title
+    | JSON Editor
+  button.json-editor__undo(ui-command="editor.undo")
+    | Undo
+  button.json-editor__redo(ui-command="editor.redo")
+    | Redo
+
+div.json-editor__editor(data-editor)
+
+div.json-editor__status.x--ok(
+  ng-if="editor.valid === true"
+  role="status"
+  data-status="valid")
+  cf-icon(name="checkmark")
+  | Valid JSON format
+div.json-editor__status.x--invalid(
+  ng-if="editor.valid === false"
+  role="status"
+  data-status="invalid")
+  | This is not valid JSON
