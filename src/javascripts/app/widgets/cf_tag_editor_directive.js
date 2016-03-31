@@ -1,0 +1,103 @@
+'use strict';
+
+angular.module('cf.app')
+/**
+ * @ngdoc directive
+ * @module cf.app
+ * @name cfTagEditor
+ */
+.directive('cfTagEditor', ['$injector', function ($injector) {
+  var KEYCODES = $injector.get('keycodes');
+
+  return {
+    restrict: 'E',
+    scope: {},
+    require: '^cfWidgetApi',
+    template: JST.cf_tag_editor(),
+    link: function ($scope, $el, $attrs, widgetApi) {
+      var field = widgetApi.field;
+
+      /**
+       * @ngdoc property
+       * @name cfTagEditor#$scope.constraintsType
+       * @type {string}
+       * @description
+       * One of 'min-max', 'min', and 'max'.
+       */
+      $scope.constraints = _(field.validations).pluck('size').filter().first() || {};
+      $scope.constraintsType = constraintsType($scope.constraints);
+
+      /**
+       * @ngdoc method
+       * @name cfTagEditor#$scope.items
+       * @type {string[]}
+       */
+      field.onValueChanged(function (items) {
+        items = items || [];
+        // We make a copy so we do not modify the object in the
+        // snapshot.
+        $scope.items = items.slice();
+      });
+
+
+      /**
+       * @ngdoc property
+       * @name cfTagEditor#$scope.isEmpty
+       * @type {boolean}
+       */
+      $scope.$watch('items.length', function (length) {
+        $scope.isEmpty = length === 0;
+      });
+
+      /**
+       * @ngdoc method
+       * @name cfTagEditor#$scope.isDisabled
+       * @type {boolean}
+       */
+      field.onDisabledStatusChanged(function (isDisabled) {
+        $scope.isDisabled = isDisabled;
+      });
+
+
+      /**
+       * @ngdoc method
+       * @name cfTagEditor#$scope.addItem
+       * @param {Event} event
+       */
+      $scope.addItem = function (ev) {
+        var value = ev.target.value;
+        if (ev.keyCode === KEYCODES.ENTER && value) {
+          $scope.items.push(value);
+          field.pushValue(value);
+          ev.target.value = '';
+        }
+      };
+
+      /**
+       * @ngdoc method
+       * @name cfTagEditor#$scope.removeItem
+       * @param {number} index
+       */
+      $scope.removeItem = function (i) {
+        $scope.items.splice(i, 1);
+        if ($scope.items.length === 0) {
+          field.removeValue();
+        } else {
+          field.removeValueAt(i);
+        }
+      };
+    }
+  };
+
+  function constraintsType (sizeConstraints) {
+    if (_.isNumber(sizeConstraints.min) && _.isNumber(sizeConstraints.max)) {
+      return 'min-max';
+    } else if (_.isNumber(sizeConstraints.min)) {
+      return 'min';
+    } else if (_.isNumber(sizeConstraints.max)) {
+      return 'max';
+    } else {
+      return null;
+    }
+  }
+}]);
