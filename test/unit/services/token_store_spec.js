@@ -126,18 +126,16 @@ describe('Token store service', function () {
   });
 
   it('resolves to the latest token refresh call result', function () {
-    var d = this.auth.getTokenLookup.defers();
+    var $q = this.$inject('$q');
     var subscriberSpy = sinon.spy();
+
+    this.auth.getTokenLookup
+      .onFirstCall().returns($q.resolve({sys: {createdBy: this.user}, spaces: []}))
+      .onSecondCall().returns($q.resolve({sys: {createdBy: {firstName: 'Jakub'}}, spaces: []}));
 
     this.tokenStore.changed.attach(subscriberSpy);
     this.tokenStore.refresh();
     this.tokenStore.refresh();
-
-    d.resolve(this.user);
-    d = this.auth.getTokenLookup.defers();
-    this.$apply();
-
-    d.resolve({sys: {createdBy: {firstName: 'Jakub'}}, spaces: []});
     this.$apply();
 
     sinon.assert.calledOnce(subscriberSpy);
@@ -146,7 +144,7 @@ describe('Token store service', function () {
 
   it('shows dialog and clears auth data on 401', function () {
     var dialog = this.$inject('modalDialog');
-    dialog.open = sinon.stub().returns({promise: this.$inject('$q').when()});
+    dialog.open = sinon.stub().returns({promise: this.$inject('$q').resolve()});
     this.auth.clearAndLogin = sinon.spy();
     this.auth.getTokenLookup.rejects({statusCode: 401});
 

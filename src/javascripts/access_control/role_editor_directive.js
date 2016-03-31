@@ -49,19 +49,8 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
     $scope.internal = PolicyBuilder.toInternal(role);
   }, true);
 
-  $scope.$watchCollection(function () {
-    return {
-      internal: $scope.internal,
-      cts: spaceContext.publishedContentTypes,
-      locales: TheLocaleStore.getPrivateLocales()
-    };
-  }, function (args) {
-    if (_.isObject(args.internal) && _.isArray(args.cts) && _.isArray(args.locales)) {
-      $scope.autofixed = PolicyBuilder.removeOutdatedRules($scope.internal, args.cts, args.locales);
-      if ($scope.autofixed) {
-        $scope.context.touched += 1;
-      }
-    }
+  $scope.$watch('internal', function (current, prev) {
+    if (current === prev) { autofixPolicies(); }
   });
 
   $scope.$watch('internal', function (internal) {
@@ -127,6 +116,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
     } else {
       $scope.role = role;
       $scope.context.touched = -1;
+      $scope.autofixed = false;
       return $q.resolve(role);
     }
   }
@@ -175,5 +165,14 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
     }
 
     analytics.track(eventName, data);
+  }
+
+  function autofixPolicies() {
+    var cts = spaceContext.publishedContentTypes;
+    var locales = TheLocaleStore.getPrivateLocales();
+    $scope.autofixed = PolicyBuilder.removeOutdatedRules($scope.internal, cts, locales);
+    if ($scope.autofixed) {
+      $scope.context.touched += 1;
+    }
   }
 }]);

@@ -17,6 +17,7 @@ angular.module('contentful')
 .factory('spaceContext', ['$injector', function($injector){
   var $parse             = $injector.get('$parse');
   var $q                 = $injector.get('$q');
+  var $timeout           = $injector.get('$timeout');
   var ReloadNotification = $injector.get('ReloadNotification');
   var notification       = $injector.get('notification');
   var logger             = $injector.get('logger');
@@ -28,6 +29,28 @@ angular.module('contentful')
   var authentication     = $injector.get('authentication');
   var environment        = $injector.get('environment');
   var createEIRepo       = $injector.get('data/editingInterfaces');
+  var createQueue        = $injector.get('overridingRequestQueue');
+
+  var requestContentTypes = createQueue(function (extraHandler) {
+    return spaceContext.space.getContentTypes({order: 'name', limit: 1000})
+    .then(refreshContentTypes, ReloadNotification.apiErrorHandler)
+    .then(extraHandler || _.identity);
+  });
+
+  var waiter = {
+    reset: function () {
+      this.attempts = _.range(5);
+      return this;
+    },
+    canWait: function () {
+      return _.isNumber(this.attempts.pop());
+    },
+    waitAndRetry: function () {
+      return $timeout(function () {
+        spaceContext.refreshContentTypesUntilChanged();
+      }, 1500);
+    }
+  }.reset();
 
   var spaceContext = {
     /**
@@ -106,46 +129,37 @@ angular.module('contentful')
      * @description
      * Refreshes all Content Type related information in the context
      */
-    // FIXME This is a potential source of a race condition
-    // Consider the case where we call `refreshContentTypes()`, then
-    // `resetSpace()` and then `refreshContenTypes()` again. If the
-    // first query for content types is resolved after the latter
-    // one, the space context will have the content types of the
-    // wrong space
     refreshContentTypes: function() {
-      if (!this.space) {
-        this.contentTypes = [];
-        this.publishedContentTypes = [];
-        this._publishedContentTypesHash = {};
-        return $q.resolve(this.contentTypes);
+      if (this.space) {
+        return requestContentTypes();
+      } else {
+        throw new Error('Cannot refresh content types: no space in the context.');
       }
+    },
 
-      if (this.loadingPromise) {
-        return this.loadingPromise;
+    /**
+     * @ngdoc method
+     * @name spaceContext#refreshContentTypesUntilChanged
+     * @description
+     * Refreshes all Content Type related information in the context.
+     * If refresh doesn't change state of content types, it tries
+     * again (with limit of 5 tries and 1500ms of delay between requests).
+     * It's needed because if the content type was created for the first
+     * time the API will not include it immediately.
+     */
+    refreshContentTypesUntilChanged: function () {
+      var before = getContentTypeIds(spaceContext.contentTypes);
+      return requestContentTypes.hasToFinish(retryIfNotChanged);
+
+      function retryIfNotChanged(response) {
+        var after = getContentTypeIds(spaceContext.contentTypes);
+        if (after === before && waiter.canWait()) {
+          return waiter.waitAndRetry();
+        } else {
+          waiter.reset();
+          return response;
+        }
       }
-
-      var self = this;
-
-      this.loadingPromise = this.space.getContentTypes({order: 'name', limit: 1000})
-      .then(function (contentTypes) {
-        self.contentTypes = filterAndSortContentTypes(contentTypes);
-
-        // Some legacy content types do not have a name. If it is
-        // missing we set it to 'Untitled' so we can display
-        // something in the UI. Note that the API requires new
-        // Content Types to have a name.
-        _.forEach(self.contentTypes, function (ct) {
-          ctHelpers.assureName(ct.data);
-        });
-
-        return refreshPublishedContentTypes(spaceContext).then(function () {
-          return contentTypes;
-        });
-      })
-      .catch(ReloadNotification.apiErrorHandler)
-      .finally(function () { spaceContext.loadingPromise = null; });
-
-      return this.loadingPromise;
     },
 
     /**
@@ -373,6 +387,25 @@ angular.module('contentful')
   resetMembers(spaceContext);
   return spaceContext;
 
+  function getContentTypeIds(cts) {
+    return _(cts).map(function (ct) {
+      return ct.getId();
+    }).sortBy().join(',');
+  }
+
+  function refreshContentTypes(contentTypes) {
+    spaceContext.contentTypes = filterAndSortContentTypes(contentTypes);
+
+    // Some legacy content types do not have a name. If it is
+    // missing we set it to 'Untitled' so we can display
+    // something in the UI. Note that the API requires new
+    // Content Types to have a name.
+    _.forEach(spaceContext.contentTypes, function (ct) {
+      ctHelpers.assureName(ct.data);
+    });
+
+    return refreshPublishedContentTypes();
+  }
 
   function refreshPublishedContentTypes() {
     return spaceContext.space.getPublishedContentTypes()
@@ -414,7 +447,6 @@ angular.module('contentful')
     spaceContext.publishedContentTypes = [];
     spaceContext._publishedContentTypesHash = {};
     spaceContext._publishedContentTypeIsMissing = {};
-    spaceContext.refreshContentTypes();
     spaceContext.users = null;
     spaceContext.widgets = null;
   }
