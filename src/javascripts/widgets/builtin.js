@@ -52,7 +52,7 @@ angular.module('contentful')
     fieldTypes: ['Integer', 'Number'],
     name: 'Number Editor',
     icon: 'number',
-    template: '<div cf-number-editor class="cf-number-editor"></div>'
+    template: '<cf-number-editor class="cf-number-editor" />'
   });
 
   registerWidget('multipleLine',{
