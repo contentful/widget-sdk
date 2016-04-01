@@ -13,13 +13,13 @@ div(
 
   div.cfnext-form__field(ng-controller="ApiNameController as apiNameController")
     label Field ID
-    div.form-control--with-icon
+    div.cfnext-form__input-group
       input.cfnext-form__input(
         name="apiName" type="text" size="40"
         ng-model="field.apiName"
         cf-validate-model
         ng-disabled="!apiNameController.isEditable()")
-      button.form-control__icon-suffix.fa.fa-lock(
+      button.cfnext-form__icon-suffix.fa.fa-lock(
         ng-if="!apiNameController.isEditable()"
         ng-click="apiNameController.unlockEditing()")
     span.cfnext-form__field-suffix-error(cf-field-error-for="apiName")

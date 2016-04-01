@@ -22,9 +22,16 @@
  * div.cfnext-form__field
  *   label Bio
  *   textarea.cfnext-form__input
+ * div.cfnext-form__field
+ *   label Disabled input
+ *   input.cfnext-form__input(disabled type="text" value="This field is disabled")
+ * div.cfnext-form__field
+ *   label Disabled textarea
+ *   textarea.cfnext-form__input(disabled)
  *
  * Styleguide 30.1
  */
+
 .cfnext-form__field
   margin-bottom: $rhythm(1.5)
   > label
@@ -46,9 +53,9 @@ $cfnext-form-input()
     border-color: $colors.blue
     outline: none
   &[readonly], &[disabled], &:disabled
-    color: $gray-medium
-    background-color: $gray-lighter
-    border: 1px solid $gray
+    color: $colors.text-mid
+    background-color: $colors.element-lightest
+    border: 1px solid $colors.element-dark
     box-shadow: none
     transition: none
   &[aria-invalid="true"]
@@ -272,3 +279,44 @@ Styleguide 30.5
     margin-right: $rhythm(2)
   .cfnext-form-option:last-child
     margin-right: 0
+
+/**
+ * Form with icon
+ *
+ * Markup:
+ * .cfnext-form__field
+ *   label Regular input with icon suffix
+ *   .cfnext-form__input-group
+ *     input.cfnext-form__input(type="text")
+ *     button.cfnext-form__icon-suffix.fa.fa-lock
+ * .cfnext-form__field
+ *   label Full size input with icon suffix
+ *   .cfnext-form__input-group--full-size
+ *     input.cfnext-form__input--full-size(type="text")
+ *     button.cfnext-form__icon-suffix.fa.fa-lock
+ *
+ * Styleguide 30.7
+ */
+
+.cfnext-form__input-group
+  position: relative
+  display: inline-block
+
+.cfnext-form__input-group--full-size
+  position: relative
+  display: block
+
+.cfnext-form__icon-suffix
+  border: 0
+  background: none
+  outline: 0
+  cursor: pointer
+
+  padding-left:  1.0em
+  padding-right: 1.0em
+
+  position: absolute
+  top: 0; bottom: 0; right: 0;
+
+  &[disabled]
+    cursor: not-allowed
