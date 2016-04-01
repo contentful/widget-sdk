@@ -36,8 +36,7 @@ header.workbench-header
           data-field-id="{{field.id}}"
           data-field-api-name="{{field.apiName}}"
           data-field-type="{{field.type}}"
-          data-field-items-type="{{field.items.type}}"
-          ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
+          data-field-items-type="{{field.items.type}}")
         label
           | {{field.name}}&nbsp;
           span(ng-show="field.required") (required)
