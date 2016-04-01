@@ -80,16 +80,17 @@ describe('Asset List Actions Controller', function () {
       beforeEach(function () {
         stubs.getVersion.returns(3);
         stubs.size.returns(2);
-        action1.resolve();
-        action2.reject({});
-        action3.resolve();
-        action4.resolve();
-        stubs.getSelected.returns([
+        var entities = [
           makeEntity(action, stubs.action1),
           makeEntity(action, stubs.action2),
           makeEntity(action, stubs.action3),
           makeEntity(action, stubs.action4)
-        ]);
+        ];
+        action1.resolve(entities[0]);
+        action2.reject(new Error('boom'));
+        action3.resolve(entities[2]);
+        action4.resolve(entities[3]);
+        stubs.getSelected.returns(entities);
         stubs.timeout.callsArg(0);
 
         scope[action+'Selected']();

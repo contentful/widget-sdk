@@ -42,6 +42,7 @@ function ($scope, $injector, generateDefaultViews, getBlankView, resetList, view
   };
 
   $scope.loadView = function (view) {
+    $scope.selection.clear();
     replaceView(view);
     resetList();
   };

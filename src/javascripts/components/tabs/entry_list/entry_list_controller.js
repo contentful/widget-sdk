@@ -7,7 +7,6 @@ angular.module('contentful')
  */
 .controller('EntryListController', ['$scope', '$injector', function EntryListController($scope, $injector) {
   var $controller           = $injector.get('$controller');
-  var $q                    = $injector.get('$q');
   var EntityListCache       = $injector.get('EntityListCache');
   var Paginator             = $injector.get('Paginator');
   var PromisedLoader        = $injector.get('PromisedLoader');
@@ -221,10 +220,6 @@ angular.module('contentful')
       $scope.paginator.numEntries = entries.total;
       entries = _.difference(entries, $scope.entries);
       $scope.entries.push.apply($scope.entries, entries);
-    }, function (err) {
-      // TODO not needed since we crash the app anyway
-      $scope.paginator.page--;
-      return $q.reject(err);
     })
     .catch(ReloadNotification.apiErrorHandler);
   };

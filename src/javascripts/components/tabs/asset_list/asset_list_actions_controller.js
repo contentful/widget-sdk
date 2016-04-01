@@ -1,11 +1,12 @@
 'use strict';
 
-angular.module('contentful').controller('AssetListActionsController',
-  ['$scope', 'listActions', '$injector', function AssetListActionsController($scope, listActions, $injector) {
+angular.module('contentful')
+.controller('AssetListActionsController', ['$scope', '$injector', function AssetListActionsController ($scope, $injector) {
 
-  var accessChecker = $injector.get('accessChecker');
+  var accessChecker        = $injector.get('accessChecker');
+  var createBatchPerformer = $injector.get('batchPerformer');
 
-  var batchPerformer = listActions.createBatchPerformer({
+  var batchPerformer = createBatchPerformer({
     getSelected: $scope.selection.getSelected,
     clearSelection: $scope.selection.clear,
     entityName: 'Asset',
@@ -21,38 +22,37 @@ angular.module('contentful').controller('AssetListActionsController',
   }
 
   $scope.publishSelected = function() {
-    batchPerformer.perform({
+    batchPerformer.run({
       method: 'publish',
-      getterForMethodArgs: ['getVersion'],
-      callback: batchPerformer.makeBatchResultsNotifier('published')
+      callback: batchPerformer.makeResultNotifier('published')
     });
   };
 
   $scope.unpublishSelected = function() {
-    batchPerformer.perform({
+    batchPerformer.run({
       method: 'unpublish',
-      callback: batchPerformer.makeBatchResultsNotifier('unpublished')
+      callback: batchPerformer.makeResultNotifier('unpublished')
     });
   };
 
   $scope.deleteSelected = function() {
-    batchPerformer.perform({
+    batchPerformer.run({
       method: 'delete',
-      callback: batchPerformer.makeBatchResultsNotifier('deleted')
+      callback: batchPerformer.makeResultNotifier('deleted')
     });
   };
 
   $scope.archiveSelected = function() {
-    batchPerformer.perform({
+    batchPerformer.run({
       method: 'archive',
-      callback: batchPerformer.makeBatchResultsNotifier('archived')
+      callback: batchPerformer.makeResultNotifier('archived')
     });
   };
 
   $scope.unarchiveSelected = function() {
-    batchPerformer.perform({
+    batchPerformer.run({
       method: 'unarchive',
-      callback: batchPerformer.makeBatchResultsNotifier('unarchived')
+      callback: batchPerformer.makeResultNotifier('unarchived')
     });
   };
 

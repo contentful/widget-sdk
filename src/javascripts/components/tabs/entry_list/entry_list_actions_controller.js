@@ -1,13 +1,12 @@
 'use strict';
 
-angular.module('contentful').controller('EntryListActionsController', ['$scope', '$injector', function EntryListActionsController($scope, $injector) {
-  var $q            = $injector.get('$q');
-  var $timeout      = $injector.get('$timeout');
-  var listActions   = $injector.get('listActions');
-  var logger        = $injector.get('logger');
-  var accessChecker = $injector.get('accessChecker');
+angular.module('contentful')
+.controller('EntryListActionsController', ['$scope', '$injector', function EntryListActionsController ($scope, $injector) {
 
-  var batchPerformer = listActions.createBatchPerformer({
+  var accessChecker        = $injector.get('accessChecker');
+  var createBatchPerformer = $injector.get('batchPerformer');
+
+  var batchPerformer = createBatchPerformer({
     getSelected: $scope.selection.getSelected,
     clearSelection: $scope.selection.clear,
     entityName: 'Entry',
@@ -19,76 +18,55 @@ angular.module('contentful').controller('EntryListActionsController', ['$scope',
     var index = _.indexOf($scope.entries, entity);
     if (index > -1) {
       $scope.entries.splice(index, 1);
+      $scope.paginator.numEntries -= 1;
     }
   }
 
   $scope.publishSelected = function() {
-    batchPerformer.perform({
+    batchPerformer.run({
       method: 'publish',
-      getterForMethodArgs: ['getVersion'],
-      callback: batchPerformer.makeBatchResultsNotifier('published')
+      callback: batchPerformer.makeResultNotifier('published')
     });
   };
 
   $scope.unpublishSelected = function() {
-    batchPerformer.perform({
+    batchPerformer.run({
       method: 'unpublish',
-      callback: batchPerformer.makeBatchResultsNotifier('unpublished')
+      callback: batchPerformer.makeResultNotifier('unpublished')
     });
   };
 
   $scope.duplicateSelected = function() {
-    var notifier = batchPerformer.makeBatchResultsNotifier('duplicated');
+    var notifier = batchPerformer.makeResultNotifier('duplicated');
 
-    batchPerformer.perform({
+    batchPerformer.run({
       method: 'duplicate',
-      callback: function (results, length) {
-        var successes =  _.reject(results, 'err');
-        $scope.entries.unshift.apply($scope.entries, successes);
-        notifier(results, length);
-      },
-      actionCallback: duplicateCallback
+      callback: function (succeeded, failed) {
+        $scope.entries.unshift.apply($scope.entries, succeeded);
+        $scope.paginator.numEntries += succeeded.length;
+        notifier(succeeded, failed);
+      }
     });
   };
 
-  function duplicateCallback(entry, params) {
-    var sys = entry.getSys();
-    if(!dotty.exists(sys, 'contentType.sys.id')){
-      logger.logWarn('Content type does not exist', {
-        data: {
-          entry: entry
-        }
-      });
-    }
-    var contentType = dotty.get(sys, 'contentType.sys.id');
-    var data = _.omit(entry.data, 'sys');
-    return $scope.spaceContext.space.createEntry(contentType, data)
-    .catch(function(err){
-      if(err.statusCode === batchPerformer.getErrors().TOO_MANY_REQUESTS)
-        return $timeout(_.partial(duplicateCallback, entry, params), batchPerformer.getRetryTimeout());
-      else
-        return $q.reject({err: err});
-    });
-  }
-
   $scope.deleteSelected = function() {
-    batchPerformer.perform({
+    batchPerformer.run({
       method: 'delete',
-      callback: batchPerformer.makeBatchResultsNotifier('deleted')
+      callback: batchPerformer.makeResultNotifier('deleted')
     });
   };
 
   $scope.archiveSelected = function() {
-    batchPerformer.perform({
+    batchPerformer.run({
       method: 'archive',
-      callback: batchPerformer.makeBatchResultsNotifier('archived')
+      callback: batchPerformer.makeResultNotifier('archived')
     });
   };
 
   $scope.unarchiveSelected = function() {
-    batchPerformer.perform({
+    batchPerformer.run({
       method: 'unarchive',
-      callback: batchPerformer.makeBatchResultsNotifier('unarchived')
+      callback: batchPerformer.makeResultNotifier('unarchived')
     });
   };
 
