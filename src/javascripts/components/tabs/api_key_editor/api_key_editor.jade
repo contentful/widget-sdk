@@ -82,28 +82,35 @@ header.workbench-header
             type="text"
             readonly="readonly"
             value="The token will be automatically generated once you save the existing key.")
-          input.cfnext-form__input--full-size(
-            ng-show="apiKey.data.accessToken"
-            type="text"
-            cf-select-all-input
-            ng-model="apiKey.data.accessToken"
-            readonly="readonly")
-
+          .cfnext-form__input-group--full-size(
+            ng-show="apiKey.data.accessToken")
+            input.cfnext-form__input--full-size(
+              type="text"
+              cf-select-all-input
+              ng-model="apiKey.data.accessToken"
+              readonly="readonly")
+            cf-copy-to-clipboard(
+              ng-show="showCopy"
+              text="{{apiKey.data.accessToken}}")
         .cfnext-form__field
           label.api-key-editor__label
             strong Preview
-            span(ng-show="previewApiKey.data.accessToken")
+            span(ng-show="previewApiKey.data.accessToken  && !isReadOnly()")
               a.api-key-editor__label--right(
                 ng-click="regenerateAccessToken('preview')"
                 href="#")
                 i.fa.fa-refresh
                 span &#32;Regenerate
-          input.cfnext-form__input--full-size(
-            type="text"
-            cf-select-all-input
-            ng-model="previewApiKey.data.accessToken"
-            ng-show="previewApiKey.data.accessToken"
-            readonly="readonly")
+          .cfnext-form__input-group--full-size(
+            ng-show="previewApiKey.data.accessToken")
+            input.cfnext-form__input--full-size(
+              type="text"
+              cf-select-all-input
+              ng-model="previewApiKey.data.accessToken"
+              readonly="readonly")
+            cf-copy-to-clipboard(
+              ng-show="showCopy"
+              text="{{previewApiKey.data.accessToken}}")
           input.cfnext-form__input--full-size(
             type="text"
             readonly="readonly"
@@ -117,13 +124,17 @@ header.workbench-header
 
 
         .cfnext-form__field
-          label
+          label.api-key-editor__label
             strong Space ID
-          input.cfnext-form__input--full-size(
-            type="text"
-            cf-select-all-input
-            value="{{getSpaceId()}}"
-            readonly="readonly")
+          .cfnext-form__input-group--full-size
+            input.cfnext-form__input--full-size(
+              type="text"
+              cf-select-all-input
+              value="{{getSpaceId()}}"
+              readonly="readonly")
+            cf-copy-to-clipboard(
+              ng-show="showCopy && apiKey.data.accessToken"
+              text="{{getSpaceId()}}")
           .cfnext-form__hint
             a(
               href="#"

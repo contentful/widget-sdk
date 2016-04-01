@@ -23,6 +23,7 @@ angular.module('contentful').factory('userAgent', ['$injector', function ($injec
    */
   var tests = {
     ie: /msie/i.test(userAgent),
+    safari: /^((?!chrome|android).)*safari/i.test(userAgent),
     ios: /(iphone os|ipad|iphone|ipod)/i.test(userAgent) && !$window.MSStream,
     apple: false
   };
@@ -68,6 +69,12 @@ angular.module('contentful').factory('userAgent', ['$injector', function ($injec
      * @name userAgent#isApple
      * @description Returns true if user is using Apple device
      */
-    isApple: _.constant(tests.apple)
+    isApple: _.constant(tests.apple),
+    /**
+     * @ngdoc method
+     * @name userAgent#isSafari
+     * @description Returns true if user is using Safari
+     */
+    isSafari: _.constant(tests.safari)
   };
 }]);
