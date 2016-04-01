@@ -145,15 +145,10 @@ describe('Asset List Controller', function () {
   describe('resetting assets', function() {
     var assets;
     beforeEach(function() {
-      stubs.switch = sinon.stub();
       assets = {
         total: 30
       };
       getAssets.resolve(assets);
-
-      scope.selection = {
-        switchBaseSet: stubs.switch
-      };
 
       scope.searchController.paginator.pageLength = 3;
       scope.searchController.paginator.skipItems = sinon.stub();
@@ -183,12 +178,6 @@ describe('Asset List Controller', function () {
       scope.searchController.resetAssets();
       scope.$apply();
       expect(scope.assets).toBe(assets);
-    });
-
-    it('switches the selection base set', function() {
-      scope.searchController.resetAssets();
-      scope.$apply();
-      sinon.assert.called(stubs.switch);
     });
 
     describe('creates a query object', function() {
@@ -278,16 +267,11 @@ describe('Asset List Controller', function () {
 
       scope.assets = new Array(60);
 
-      stubs.switch = sinon.stub();
       // loadMore triggers resetEntries which in reality will not
       // run because the promisedLoader prevents that. In this test
       // the PromisedLoader is stubbed, so we need to fake
       // resetEntries not running:
       scope.searchController.resetAssets = sinon.stub();
-      scope.selection = {
-        setBaseSize: sinon.stub(),
-        switchBaseSet: stubs.switch
-      };
 
       scope.searchController.paginator.atLast = sinon.stub();
       scope.searchController.paginator.atLast.returns(false);
@@ -342,11 +326,6 @@ describe('Asset List Controller', function () {
       it('appends assets to scope', function () {
         scope.$apply();
         expect(scope.assets.slice(60)).toEqual(assets);
-      });
-
-      it('sets selection base size', function () {
-        scope.$apply();
-        expect(scope.selection.setBaseSize.args[0][0]).toBe(60);
       });
     });
 

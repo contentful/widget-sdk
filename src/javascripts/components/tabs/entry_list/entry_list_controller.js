@@ -12,7 +12,7 @@ angular.module('contentful')
   var Paginator             = $injector.get('Paginator');
   var PromisedLoader        = $injector.get('PromisedLoader');
   var ReloadNotification    = $injector.get('ReloadNotification');
-  var Selection             = $injector.get('Selection');
+  var createSelection       = $injector.get('selection');
   var analytics             = $injector.get('analytics');
   var ListQuery             = $injector.get('ListQuery');
   var logger                = $injector.get('logger');
@@ -26,7 +26,7 @@ angular.module('contentful')
   var entryLoader = new PromisedLoader();
 
   $scope.paginator = new Paginator();
-  $scope.selection = new Selection();
+  $scope.selection = createSelection();
 
   $scope.shouldHide = accessChecker.shouldHide;
   $scope.shouldDisable = accessChecker.shouldDisable;
@@ -130,7 +130,6 @@ angular.module('contentful')
     $scope.context.loading = false;
     $scope.paginator.numEntries = entries.total;
     $scope.entries = entries;
-    $scope.selection.switchBaseSet($scope.entries.length);
     // Check if a refresh is necessary in cases where no pageParameters change
     refreshEntityCaches();
   }
@@ -222,7 +221,6 @@ angular.module('contentful')
       $scope.paginator.numEntries = entries.total;
       entries = _.difference(entries, $scope.entries);
       $scope.entries.push.apply($scope.entries, entries);
-      $scope.selection.setBaseSize($scope.entries.length);
     }, function (err) {
       // TODO not needed since we crash the app anyway
       $scope.paginator.page--;

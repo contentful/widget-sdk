@@ -7,27 +7,9 @@ angular.module('contentful').controller('EntryListActionsController', ['$scope',
   var logger        = $injector.get('logger');
   var accessChecker = $injector.get('accessChecker');
 
-  var _cacheSelected;
-
-  // At the beginning of every digest cycle destroy the cache of selected entries
-  $scope.$watch(function () { _cacheSelected = null; });
-
-  var getSelected = function () {
-    // Memoize result of getSelected call for duration of cycle
-    if (_cacheSelected === null || _cacheSelected === undefined) {
-      _cacheSelected = $scope.selection.getSelected($scope.entries);
-    }
-    return _cacheSelected;
-  };
-
-  var clearSelection = function () {
-    $scope.selection.removeAll();
-    _cacheSelected = null;
-  };
-
   var batchPerformer = listActions.createBatchPerformer({
-    getSelected: getSelected,
-    clearSelection: clearSelection,
+    getSelected: $scope.selection.getSelected,
+    clearSelection: $scope.selection.clear,
     entityName: 'Entry',
     entityNamePlural: 'Entries',
     onDelete: removeFromList
@@ -122,7 +104,7 @@ angular.module('contentful').controller('EntryListActionsController', ['$scope',
 
   function createShowChecker(action, predicate) {
     return function () {
-      var selected = getSelected();
+      var selected = $scope.selection.getSelected();
       return _.isArray(selected) && selected.length > 0 &&  _.every(selected, function (entry) {
         return accessChecker.canPerformActionOnEntity(action, entry) && entry[predicate]();
       });
@@ -132,7 +114,7 @@ angular.module('contentful').controller('EntryListActionsController', ['$scope',
   $scope.publishButtonName = function () {
     var published = 0;
     var unpublished = 0;
-    _.each(getSelected(), function (entry) {
+    _.each($scope.selection.getSelected(), function (entry) {
       if (entry.isPublished()) {
         published++;
       } else {

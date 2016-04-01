@@ -37,7 +37,7 @@ header.workbench-header
       thead
         tr
           th.cell-select
-            input(type="checkbox" cf-selection ng-show="entries.length > 0" tabindex="-1")
+            input(type="checkbox" cf-selection="entries" ng-show="entries.length > 0" tabindex="-1")
           th.cell-content-type(ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden") Content Type
           th.cell-display-name(ng-if="!context.view.contentTypeId || !displayFieldForFilteredContentType()") Name
           th.cell-display-name(ng-if="context.view.contentTypeId && displayFieldForFilteredContentType()" ng-init="field=displayFieldForFilteredContentType()" cf-field-order-header="displayField")

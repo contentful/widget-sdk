@@ -13,7 +13,7 @@ describe('Asset List Actions Controller', function () {
         'size',
         'createAsset',
         'getSelected',
-        'removeAll',
+        'clear',
         'action1',
         'action2',
         'action3',
@@ -50,7 +50,7 @@ describe('Asset List Actions Controller', function () {
       scope.selection = {
         size: stubs.size,
         getSelected: stubs.getSelected,
-        removeAll: stubs.removeAll
+        clear: stubs.clear
       };
 
       scope.spaceContext = {
@@ -129,7 +129,7 @@ describe('Asset List Actions Controller', function () {
       });
 
       it('clears selection', function () {
-        sinon.assert.called(stubs.removeAll);
+        sinon.assert.called(stubs.clear);
       });
 
       it('tracks analytics event', function () {

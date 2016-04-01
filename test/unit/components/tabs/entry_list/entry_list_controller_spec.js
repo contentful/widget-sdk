@@ -171,12 +171,6 @@ describe('Entry List Controller', function () {
       expect(scope.entries).toBe(entries);
     });
 
-    it('switches the selection base set', function() {
-      scope.selection.switchBaseSet = sinon.stub();
-      scope.$apply();
-      sinon.assert.called(scope.selection.switchBaseSet);
-    });
-
     describe('creates a query object', function() {
       it('with a default order', function() {
         scope.resetEntries();
@@ -386,13 +380,6 @@ describe('Entry List Controller', function () {
         scope.$apply();
         expect(scope.entries.slice(30)).toEqual(entries);
       });
-
-      it('sets selection base size', function () {
-        scope.selection.setBaseSize = sinon.stub();
-        scope.$apply();
-        expect(scope.selection.setBaseSize.args[0][0]).toBe(60);
-      });
-
     });
 
     it('discards entries already in the list', function () {

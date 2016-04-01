@@ -4,7 +4,7 @@ angular.module('contentful').controller('InsertAssetDialogController', ['$scope'
   var $controller       = $injector.get('$controller');
   var keycodes          = $injector.get('keycodes');
   var searchQueryHelper = $injector.get('searchQueryHelper');
-  var Selection         = $injector.get('Selection');
+  var createSelection   = $injector.get('selection');
   var spaceContext      = $injector.get('spaceContext');
 
   $scope.assetContentType = searchQueryHelper.assetContentType;
@@ -12,7 +12,7 @@ angular.module('contentful').controller('InsertAssetDialogController', ['$scope'
   $scope.canEditUiConfig  = false;
   $scope.context          = { view: { searchTerm: null } };
   $scope.assets           = [];
-  $scope.selection        = new Selection();
+  $scope.selection        = createSelection();
 
   $controller('UiConfigController', { $scope: $scope });
 

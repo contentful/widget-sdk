@@ -1,17 +1,17 @@
 'use strict';
 
 angular.module('contentful').controller('AssetListController',['$scope', '$injector', function AssetListController($scope, $injector) {
-  var $controller    = $injector.get('$controller');
-  var $q             = $injector.get('$q');
-  var Selection      = $injector.get('Selection');
-  var delay          = $injector.get('delay');
-  var filepicker     = $injector.get('filepicker');
-  var logger         = $injector.get('logger');
-  var notification   = $injector.get('notification');
-  var stringUtils    = $injector.get('stringUtils');
-  var TheLocaleStore = $injector.get('TheLocaleStore');
-  var spaceContext   = $injector.get('spaceContext');
-  var accessChecker  = $injector.get('accessChecker');
+  var $controller     = $injector.get('$controller');
+  var $q              = $injector.get('$q');
+  var createSelection = $injector.get('selection');
+  var delay           = $injector.get('delay');
+  var filepicker      = $injector.get('filepicker');
+  var logger          = $injector.get('logger');
+  var notification    = $injector.get('notification');
+  var stringUtils     = $injector.get('stringUtils');
+  var TheLocaleStore  = $injector.get('TheLocaleStore');
+  var spaceContext    = $injector.get('spaceContext');
+  var accessChecker   = $injector.get('accessChecker');
 
   $controller('AssetListViewsController', {
     $scope: $scope,
@@ -29,7 +29,7 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
     getSearchTerm: getSearchTerm
   });
 
-  $scope.selection = new Selection();
+  $scope.selection = createSelection();
   $scope.getAssetDimensions = getAssetDimensions;
 
   $scope.$watch(function pageParameters(){
@@ -129,14 +129,6 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
     var locale = TheLocaleStore.getDefaultLocale().internal_code;
     return entity.process(entity.version, locale);
   }
-
-  $scope.$on('didResetAssets', function (event, assets) {
-    $scope.selection.switchBaseSet(assets.length);
-  });
-
-  $scope.$on('didLoadMoreAssets', function (event, assets) {
-    $scope.selection.setBaseSize(assets.length);
-  });
 
   function getSearchTerm() {
     return $scope.context.view.searchTerm;

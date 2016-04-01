@@ -20,7 +20,7 @@
             .asset-title(title="{{spaceContext.assetTitle(asset)}}") {{spaceContext.assetTitle(asset)}}
     .modal-dialog__controls
       button.cfnext-btn-primary-action.modal-dialog__controls-confirm(
-        ng-click="dialog.confirm(selection.getSelected(assets))" type="button")
+        ng-click="dialog.confirm(selection.getSelected())" type="button")
         | Insert selected
       button.cfnext-btn-secondary-action(
         ng-click="dialog.cancel()" type="button"
