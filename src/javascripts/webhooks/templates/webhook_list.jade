@@ -4,9 +4,12 @@ header.workbench-header
 
   .workbench-header__actions
     button.cfnext-btn-action.add-entity(
+      ng-show="webhooks.length < limit"
       ui-sref="spaces.detail.settings.webhooks.new")
       cf-icon.btn-icon.inverted(name="plus")
       | Add webhook
+    div(ng-show="webhooks.length >= limit")
+      | You can't create more than {{ limit }} webhooks.
 
 .workbench-main.x--content
   table.result-list.main-results.main-header
