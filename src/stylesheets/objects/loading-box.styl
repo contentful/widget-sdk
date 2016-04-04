@@ -1,0 +1,26 @@
+/*
+Loading Box
+
+Markup:
+.loading-box(style="height: 10em")
+  .loading-box__spinner
+  .loading-box__message
+    | Your content is being loaded
+
+Styleguide loading-box
+*/
+.loading-box
+  display: flex
+  align-items: center
+  justify-content: center
+  border: 1px dashed $colors.element-darkest
+
+.loading-box__spinner
+  margin-right: 0.6em
+  $spinner-base()
+  +$spinner-active(black, 26px)
+    display: block
+
+.loading-box__message
+  color: $colors.text-light
+

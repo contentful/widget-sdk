@@ -8,4 +8,10 @@ input.form-control(
 
 .form-widget__help-text {{ helpText }}
 
-cf-embedly-preview(preview-url="previewUrl" url-status="urlStatus")
+div(ng-show="urlStatus === 'loading'")
+  .loading-box(style="height: 470px")
+    .loading-box__spinner
+    .loading-box__message
+      | Preview will be ready in a few moments
+div(ng-hide="urlStatus === 'loading'")
+  cf-embedly-preview(preview-url="previewUrl" url-status="urlStatus")

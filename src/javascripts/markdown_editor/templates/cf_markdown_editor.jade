@@ -1,12 +1,14 @@
-.markdown-loading(ng-if="!isReady && !hasCrashed")
-  | Initializing Markdown editor&nbsp;
-  i.fa.fa-spinner.fa-spin
+div(ng-show="!isReady && !hasCrashed")
+  .loading-box(style="height: 300px")
+    .loading-box__spinner
+    .loading-box__message
+      | Initializing Markdown editor
 
-.markdown-crashed(ng-if="hasCrashed")
+div(ng-if="hasCrashed")
   | Markdown editor has crashed, please refresh the page&nbsp;
   i.fa.fa-warning
 
-.markdown-loaded(ng-class="{'visible': isReady && !hasCrashed}")
+div(ng-show="isReady && !hasCrashed")
   .markdown-tabs
     a(href ng-click="setMode('preview')" ng-class="{'inactive': !inMode('preview')}")
       | Preview

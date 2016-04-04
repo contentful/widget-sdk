@@ -26,7 +26,12 @@ angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', functio
         embedly('on', 'card.rendered', markAsLoaded);
 
         function requestPreview(url) {
-          var previewElement = $('<a/>', { href: url, 'data-card-controls': 0 });
+          var previewElement = $('<a/>', {
+            href: url,
+            'data-card-controls': 0,
+            'data-card-chrome': 0,
+            'data-card-align': 'left'
+          });
           element.append(previewElement);
           embedly('card', previewElement.get(0));
 
