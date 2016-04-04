@@ -47,12 +47,9 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$injector', functio
       scope.timezones = zoneOffsets;
       scope.tzOffset = LOCAL_TIMEZONE;
       scope.ampm = 'am';
-      if (show24hClock())
-        scope.maxTime = '23:59:59';
-      else
-        scope.maxTime = '12:59:59';
+      scope.maxTime = uses24hMode() ? '23:59:59' : '12:59:59';
 
-      scope.$watch('widget.settings.ampm', function(){
+      scope.$watch(uses24hMode, function () {
         ngModelCtrl.$render();
       });
 
@@ -229,10 +226,7 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$injector', functio
       }
 
       function parseTimeInput (value) {
-        var localTimeRx = TIME_RX;
-        if (scope.widget && scope.widget.settings.ampm === '12')
-          localTimeRx = TIME_RX_12;
-
+        var localTimeRx = uses24hMode() ? TIME_RX : TIME_RX_12;
         var inputMatcher = '^\\s*('+localTimeRx+')?\\s*$';
         var match = value.match(inputMatcher);
         var time = match && match[1];
@@ -242,8 +236,7 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$injector', functio
       }
 
       function make24hTime(localTime, ampm) {
-        if (show24hClock())
-          return localTime;
+        if (uses24hMode()) { return localTime; }
 
         var seg  = localTime.split(':');
         var hour = parseInt(seg[0], 10);
@@ -257,8 +250,7 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$injector', functio
       }
 
       function makeLocalTime(timeStr) {
-        if (show24hClock())
-          return timeStr;
+        if (uses24hMode()) { return timeStr; }
 
         var seg  = timeStr.split(':');
         var hour = parseInt(seg[0], 10);
@@ -271,7 +263,7 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$injector', functio
         return seg.join(':');
       }
 
-      function show24hClock () {
+      function uses24hMode () {
         return dotty.get(scope, 'widget.settings.ampm') !== '12';
       }
 
