@@ -6,17 +6,17 @@ angular.module('contentful')
  * @name EntryListController
  */
 .controller('EntryListController', ['$scope', '$injector', function EntryListController($scope, $injector) {
-  var $controller           = $injector.get('$controller');
-  var EntityListCache       = $injector.get('EntityListCache');
-  var Paginator             = $injector.get('Paginator');
-  var PromisedLoader        = $injector.get('PromisedLoader');
-  var ReloadNotification    = $injector.get('ReloadNotification');
-  var createSelection       = $injector.get('selection');
-  var analytics             = $injector.get('analytics');
-  var ListQuery             = $injector.get('ListQuery');
-  var logger                = $injector.get('logger');
-  var spaceContext          = $injector.get('spaceContext');
-  var accessChecker         = $injector.get('accessChecker');
+  var $controller        = $injector.get('$controller');
+  var EntityListCache    = $injector.get('EntityListCache');
+  var Paginator          = $injector.get('Paginator');
+  var PromisedLoader     = $injector.get('PromisedLoader');
+  var ReloadNotification = $injector.get('ReloadNotification');
+  var createSelection    = $injector.get('selection');
+  var analytics          = $injector.get('analytics');
+  var ListQuery          = $injector.get('ListQuery');
+  var logger             = $injector.get('logger');
+  var spaceContext       = $injector.get('spaceContext');
+  var accessChecker      = $injector.get('accessChecker');
 
   $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('EntryListViewsController', {$scope: $scope});

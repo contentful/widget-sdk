@@ -8,31 +8,33 @@ angular.module('contentful').factory('batchPerformer', ['$injector', function ($
   var analytics    = $injector.get('analytics');
   var notification = $injector.get('notification');
 
+  var ACTION_NAMES = {
+    publish: 'published',
+    unpublish: 'unpublished',
+    delete: 'deleted',
+    archive: 'archived',
+    unarchive: 'unarchived',
+    duplicate: 'duplicated'
+  };
+
+  var ENTITY_NAMES = {
+    entry: ['Entry', 'Entries'],
+    asset: ['Asset', 'Assets']
+  };
+
   return function createBatchPerformer (config) {
 
-    return {
-      makeResultNotifier: makeResultNotifier,
-      run: run
-    };
+    return _.transform(ACTION_NAMES, function (acc, actionName, action) {
+      acc[action] = _.partial(run, action);
+    }, {});
 
-    function makeResultNotifier (actionName) {
-      return function notifyBatchResult (succeeded, failed) {
-        if (succeeded.length > 0) {
-          notification.info(succeeded.length + ' ' + config.entityNamePlural + ' ' + actionName + ' successfully');
-        }
-        if (failed.length > 0) {
-          notification.warn(failed.length + ' ' + config.entityNamePlural + ' could not be ' + actionName);
-        }
-      };
-    }
-
-    function run (params) {
+    function run (method, cb) {
       var selected = config.getSelected();
       var results = [];
       var pushResult = _.bind(results.push, results);
 
       var actions = _.map(selected, function (entity) {
-        return performAction(entity, params.method)
+        return performAction(entity, method)
         .then(pushResult, pushResult);
       });
 
@@ -40,9 +42,10 @@ angular.module('contentful').factory('batchPerformer', ['$injector', function ($
       .then(function handleResults () {
         var failed = _.filter(results, 'err');
         var succeeded = _.difference(results, failed);
-        params.callback(succeeded, failed);
+        notifyBatchResult(method, succeeded, failed);
+        if (_.isFunction(cb)) { cb(succeeded, failed); }
         config.clearSelection();
-        analytics.track('Performed ' + config.entityName + ' list action', {action: params.method});
+        analytics.track('Performed ' + ENTITY_NAMES[config.entityType][0] + ' list action', {action: method});
       });
     }
 
@@ -90,6 +93,18 @@ angular.module('contentful').factory('batchPerformer', ['$injector', function ($
         config.onDelete(entity);
         return $q.when(entity);
       });
+    }
+
+    function notifyBatchResult (method, succeeded, failed) {
+      var actionName = ACTION_NAMES[method];
+      var entityName = ENTITY_NAMES[config.entityType][1];
+
+      if (succeeded.length > 0) {
+        notification.info(succeeded.length + ' ' + entityName + ' ' + actionName + ' successfully');
+      }
+      if (failed.length > 0) {
+        notification.warn(failed.length + ' ' + entityName + ' could not be ' + actionName);
+      }
     }
   };
 }]);
