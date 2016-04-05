@@ -310,9 +310,9 @@ angular.module('contentful')
      * include only explicitly requested keys
      */
     get: function(keys) {
+      var pick = _.partialRight(_.pick, keys);
       return _.map(languageData, function(language) {
-        language.data = _.partialRight(_.pick, keys)(language.data);
-        return language;
+        return _.extend({}, language, {data: pick(language.data)});
       });
     }
   };
