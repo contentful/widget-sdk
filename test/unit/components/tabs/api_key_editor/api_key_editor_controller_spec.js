@@ -80,28 +80,12 @@ describe('API key editor controller', function () {
     expect(scope.context.title).toEqual('api name');
   });
 
-  it('sets an example url', function () {
-    scope.apiKey.data.accessToken = 'accessToken';
-    stubs.spaceGetId.returns('spaceid');
-    scope.$apply();
-    expect(scope.exampleUrl).toEqual('http://cdn_host/spaces/spaceid/entries?access_token=accessToken');
-  });
-
   it('sets the dirty param on the tab', function () {
     scope.apiKeyForm = {
       '$dirty': true
     };
     scope.$apply();
     expect(scope.context.dirty).toBeTruthy();
-  });
-
-  it('gets the api url', function() {
-    expect(scope.getApiUrl()).toEqual('cdn_host');
-  });
-
-  it('gets the api url for the preview api', function() {
-    scope.authCodeExample.api = 'preview';
-    expect(scope.getApiUrl()).toEqual('preview_host');
   });
 
   it('does not create a preview api for a blank key', function() {

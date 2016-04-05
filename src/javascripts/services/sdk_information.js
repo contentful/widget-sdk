@@ -37,6 +37,17 @@ angular.module('contentful')
             }
           ]
         },
+        gettingStarted: {
+          name: 'Getting started guide',
+          icon: 'learn-getting-started',
+          description: 'This tutorial will walk you through your first steps in using Contentful within your JavaScript application.',
+          links: [
+            {
+              text: 'Read the guide',
+              url: 'https://www.contentful.com/developers/docs/javascript/tutorials/using-js-cda-sdk/'
+            }
+          ]
+        },
         deliveryApi: {
           name: 'SDK for Delivery API',
           icon: 'learn-github',
@@ -74,6 +85,17 @@ angular.module('contentful')
             {
               text: 'View the API demo',
               url: 'https://www.contentful.com/developers/api-demo/php/'
+            }
+          ]
+        },
+        gettingStarted: {
+          name: 'Getting started guide',
+          icon: 'learn-getting-started',
+          description: 'This tutorial will walk you through your first steps in using Contentful within your PHP application.',
+          links: [
+            {
+              text: 'Read the guide',
+              url: 'https://www.contentful.com/developers/docs/php/tutorials/getting-started-with-contentful-and-php/'
             }
           ]
         },
@@ -117,6 +139,17 @@ angular.module('contentful')
             }
           ]
         },
+        gettingStarted: {
+          name: 'Getting started guide',
+          icon: 'learn-getting-started',
+          description: 'This tutorial will walk you through your first steps in using Contentful within your Ruby application.',
+          links: [
+            {
+              text: 'Read the guide',
+              url: 'https://www.contentful.com/developers/docs/ruby/tutorials/getting-started-with-contentful-and-ruby/'
+            }
+          ]
+        },
         deliveryApi: {
           name: 'SDK for Delivery API',
           icon: 'learn-github',
@@ -154,6 +187,17 @@ angular.module('contentful')
             {
               text: 'View the API demo',
               url: 'https://www.contentful.com/developers/api-demo/swift/'
+            }
+          ]
+        },
+        gettingStarted: {
+          name: 'Getting started guide',
+          icon: 'learn-getting-started',
+          description: 'This tutorial will walk you through your first steps in using Contentful within your iOS application.',
+          links: [
+            {
+              text: 'Read the guide',
+              url: 'https://www.contentful.com/developers/docs/ios/tutorials/using-delivery-api-on-ios/'
             }
           ]
         },
@@ -198,6 +242,17 @@ angular.module('contentful')
             {
               text: 'View the API demo',
               url: 'https://www.contentful.com/developers/api-demo/java/'
+            }
+          ]
+        },
+        gettingStarted: {
+          name: 'Getting started guide',
+          icon: 'learn-getting-started',
+          description: 'This tutorial will walk you through your first steps in using Contentful within your Android application.',
+          links: [
+            {
+              text: 'Read the guide',
+              url: 'https://www.contentful.com/developers/docs/android/tutorials/getting-started-with-contentful-and-android/'
             }
           ]
         },
@@ -255,9 +310,9 @@ angular.module('contentful')
      * include only explicitly requested keys
      */
     get: function(keys) {
+      var pick = _.partialRight(_.pick, keys);
       return _.map(languageData, function(language) {
-        language.data = _.partialRight(_.pick, keys)(language.data);
-        return language;
+        return _.extend({}, language, {data: pick(language.data)});
       });
     }
   };
