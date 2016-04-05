@@ -23,11 +23,13 @@ angular.module('contentful')
     widgetPlayerDirective : providerVideoEditorController.widgetPlayerDirective
   };
 
-  $scope.$watch('fielData.value', function(){
-    if (_.isArray($scope.fieldData.value)) {
-      $scope.multiVideoEditor.assets = createAssetObjects($scope.fieldData.value);
+  var offValueChanged = field.onValueChanged(function (videoIds) {
+    if (_.isArray(videoIds)) {
+      $scope.multiVideoEditor.assets = createAssetObjects(videoIds);
     }
   });
+
+  $scope.$on('$destroy', offValueChanged);
 
   this.customAttrsForPlayer = customAttrsForPlayer;
   this.isVideoWidgetReady   = isVideoWidgetReady;

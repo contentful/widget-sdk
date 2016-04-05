@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Kaltura Multi Video Editor Controller', function () {
-  var kalturaMultiVideoEditorController, kalturaClientWrapperMock, scope;
+  var kalturaMultiVideoEditorController, kalturaClientWrapperMock;
 
   beforeEach(function() {
     module('contentful/test');
@@ -10,17 +10,17 @@ describe('Kaltura Multi Video Editor Controller', function () {
       $provide.value('kalturaClientWrapper', kalturaClientWrapperMock);
     });
 
-    inject(function($controller, $rootScope){
-      scope = $rootScope.$new();
-      scope.spaceContext = {space: { getOrganizationId: sinon.stub() }};
-      scope.spaceContext.space.getOrganizationId.returns('org-123');
+    var spaceContext = this.$inject('spaceContext');
+    spaceContext.space = {
+      getOrganizationId: sinon.stub().returns('org-123')
+    };
 
-      kalturaMultiVideoEditorController = $controller('cfKalturaMultiVideoEditorController', {$scope: scope});
-    });
+    var $controller = this.$inject('$controller');
+    kalturaMultiVideoEditorController = $controller('cfKalturaMultiVideoEditorController');
   });
 
   afterEach(inject(function ($log) {
-    kalturaMultiVideoEditorController = kalturaClientWrapperMock = scope = null;
+    kalturaMultiVideoEditorController = kalturaClientWrapperMock = null;
     $log.assertEmpty();
   }));
 

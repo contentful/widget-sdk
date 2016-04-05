@@ -8,11 +8,10 @@ angular.module('contentful')
     restrict: 'E',
     scope: true,
     template: JST['cf_multi_video_editor'](),
-    require: '^cfWidgetApi',
-    link: function (scope, elem, attrs, widgetApi) {
+    link: function (scope, elem) {
       scope.multiVideoEditorController = $controller('cfMultiVideoEditorController', {
         $scope: scope,
-        widgetApi: widgetApi
+        widgetApi: scope.widgetApi
       });
 
       scope.videoInputController = videoInputController;
