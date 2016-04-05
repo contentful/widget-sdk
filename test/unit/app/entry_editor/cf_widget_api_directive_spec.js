@@ -67,27 +67,42 @@ describe('cfWidgetApi directive', function () {
 
 
   describe('#onValueChanged()', function () {
+    var path = ['fields', 'fid', 'lid'];
+
+    beforeEach(function () {
+      this.cb = sinon.spy();
+      this.scope.otPath = path;
+
+      this.testEvent = function (eventName) {
+        var detach = this.widgetApi.field.onValueChanged(this.cb);
+        var value = 'test';
+        this.scope.$emit(eventName, path, value);
+        sinon.assert.calledWithExactly(this.cb, value);
+        sinon.assert.calledOnce(this.cb);
+        return detach;
+      }.bind(this);
+    });
+
     it('attaches a handler and returns its detach counterpart', function () {
-      var cb = sinon.spy();
-      var detachCb = this.widgetApi.field.onValueChanged(cb);
-
-      this.scope.$emit('otValueChanged');
-      sinon.assert.called(cb);
-
+      var detachCb = this.testEvent('otValueChanged');
       detachCb();
-      this.scope.$emit('otValueChanged');
-      sinon.assert.calledOnce(cb);
+      this.scope.$emit('otValueChanged', path);
+      sinon.assert.calledOnce(this.cb);
     });
 
     it('callback given to onValueChanged is called when input value changes', function () {
-      var cb = sinon.spy();
-      var value = 'test';
+      this.testEvent('otValueChanged');
+    });
 
-      this.widgetApi.field.onValueChanged(cb);
+    it('callback will be called when entry is revered', function () {
+      this.testEvent('otValueReverted');
+    });
 
-      this.scope.$emit('otValueChanged', [], value);
-      sinon.assert.calledWithExactly(cb, value);
-      sinon.assert.calledOnce(cb);
+    it('callback will not be called if OT path does not match', function () {
+      this.widgetApi.field.onValueChanged(this.cb);
+      this.scope.$emit('otValueChanged', path);
+      this.scope.$emit('otValueChanged', ['fields', 'some-other-field', 'de-DE']);
+      sinon.assert.calledOnce(this.cb);
     });
   });
 

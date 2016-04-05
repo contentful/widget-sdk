@@ -4,12 +4,15 @@ describe('cfSingleLineEditor directive', function () {
   beforeEach(function () {
     module('contentful/test');
 
+    var path = ['fields', 'single_line', 'de-DE'];
+
     this.compileElement = function (validations, fieldType) {
       var widget = {};
       var $injector = this.$inject('$injector');
       var $controller = this.$inject('$controller');
 
       this.controllerScope = this.$inject('$rootScope').$new();
+      this.controllerScope.otPath = path;
 
       dotty.put(widget, 'field.validations', validations);
       dotty.put(widget, 'field.type', fieldType);
@@ -41,7 +44,7 @@ describe('cfSingleLineEditor directive', function () {
     // TODO(mudit): Remove dependency on this once WidgetApiController
     // is mocked.
     this.emitOtValueChanged = function (value) {
-      this.controllerScope.$emit('otValueChanged', [], value);
+      this.controllerScope.$emit('otValueChanged', path, value);
       this.$apply();
     };
 
