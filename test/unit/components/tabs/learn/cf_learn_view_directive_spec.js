@@ -2,11 +2,11 @@
 
 describe('cfLearnView directive', function() {
 
-  var controller, stubs;
+  var controller, stubs, $rootScope;
 
   beforeEach(function() {
 
-    var $rootScope, element;
+    var element;
 
     stubs = {
       spaceContext: {
@@ -105,6 +105,12 @@ describe('cfLearnView directive', function() {
       expect(controller.accessibleContentTypes.length).toBe(0);
       expect(controller.hasContentTypes).toBe(true);
       expect(controller.hasAccessibleContentTypes).toBe(false);
+    });
+
+    it('refreshes when `cfAfterOnboarding` is broadcast', function() {
+      $rootScope.$broadcast('cfAfterOnboarding');
+      $rootScope.$digest();
+      sinon.assert.calledTwice(stubs.spaceContext.getFilteredAndSortedContentTypes);
     });
   });
 

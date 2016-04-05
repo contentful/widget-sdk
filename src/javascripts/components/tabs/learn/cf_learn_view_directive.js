@@ -32,33 +32,39 @@ angular.module('contentful')
 
   controller.spaceId = stateParams.spaceId;
 
-  spaceContext.refreshContentTypes().then(function() {
-    var cts = spaceContext.getFilteredAndSortedContentTypes();
+  function initLearnPage() {
+    spaceContext.refreshContentTypes().then(function() {
+      var cts = spaceContext.getFilteredAndSortedContentTypes();
 
-    controller.allContentTypes = cts;
-    controller.accessibleContentTypes = _.filter(cts || [], function (ct) {
-      var check = _.partialRight(accessChecker.canPerformActionOnEntryOfType, ct.getId());
-      return _.every(['create', 'edit'], check);
-    });
-    controller.hasContentTypes = !!cts.length;
-    controller.hasAccessibleContentTypes = !!controller.accessibleContentTypes.length;
+      controller.allContentTypes = cts;
+      controller.accessibleContentTypes = _.filter(cts || [], function (ct) {
+        var check = _.partialRight(accessChecker.canPerformActionOnEntryOfType, ct.getId());
+        return _.every(['create', 'edit'], check);
+      });
+      controller.hasContentTypes = !!cts.length;
+      controller.hasAccessibleContentTypes = !!controller.accessibleContentTypes.length;
 
-    if (controller.hasAccessibleContentTypes) {
-      spaceContext.space.getEntries()
-      .then(handleEntries)
-      .catch(handleEntries.bind(null, []));
-    } else {
-      handleEntries([]);
-    }
+      if (controller.hasAccessibleContentTypes) {
+        spaceContext.space.getEntries()
+        .then(handleEntries)
+        .catch(handleEntries.bind(null, []));
+      } else {
+        handleEntries([]);
+      }
 
-    function handleEntries(entries) {
-      controller.hasEntries = !!entries.length;
+      function handleEntries(entries) {
+        controller.hasEntries = !!entries.length;
+        $scope.context.ready = true;
+      }
+
+    }).catch(function() {
       $scope.context.ready = true;
-    }
+    });
+  }
 
-  }).catch(function() {
-    $scope.context.ready = true;
-  });
+  initLearnPage();
+  // Refresh after onboarding as content types and entries might have been created
+  $scope.$on('cfAfterOnboarding', initLearnPage);
 
   // Clicking `Use the API` goes to the delivery API key if there is exactly
   // one otherwise API home
