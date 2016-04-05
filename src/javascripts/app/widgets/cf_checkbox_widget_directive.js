@@ -11,6 +11,11 @@ angular.module('cf.app')
       var field = widgetApi.field;
       var options = scope.options = getOptions(field);
 
+      if (options.length === 0) {
+        scope.misconfigured = true;
+        return;
+      }
+
       scope.$watch('options', function (options) {
         var selected = _.filter(options, 'selected');
         var values = _.map(selected, 'value');

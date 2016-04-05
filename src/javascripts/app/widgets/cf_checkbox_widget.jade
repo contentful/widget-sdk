@@ -1,4 +1,14 @@
+div.editor-control-warning(
+  ng-if="misconfigured"
+  role="alert")
+  cf-icon(name="plug")
+  p
+    | The widget failed to initialize.
+    | You can fix the problem by providing predefined values
+    | under the validations tab in the field settings.
+
 div.checkbox-editor__options(
+  ng-if="!misconfigured"
   ng-class="isDisabled && 'x--disabled'")
   label.checkbox-editor__option(
     ng-repeat="option in options track by option.id")
