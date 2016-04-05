@@ -181,6 +181,7 @@ angular.module('contentful')
   registerWidget('checkbox', {
     fieldTypes: ['Symbols'],
     name: 'Checkbox',
+    icon: 'checkbox',
     template: '<cf-checkbox-widget />'
   });
 
