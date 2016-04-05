@@ -37,8 +37,6 @@ angular.module('contentful')
         scope.previewUrl = value;
       });
 
-      // run validations when data in input field is modified
-      // and send updated field value over the wire via sharejs
       $inputEl.on('input change', function () {
         field.setString($inputEl.val());
       });

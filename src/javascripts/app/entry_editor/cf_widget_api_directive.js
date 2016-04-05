@@ -8,7 +8,6 @@
  * Provides an interface similar to the new widget api.
  *
  * @scope.requires {object} entry
- * @scope.requires {object} field
  * @scope.requires {object} locale
  * @scope.requires {object} otSubDoc
  * @scope.requires {object} fields
@@ -31,7 +30,6 @@ angular.module('contentful')
 
   var valueChangedSignal = newSignal($scope.otSubDoc.getValue());
   var isDisabledSignal = newSignal(isEditingDisabled());
-
   var ctField = $scope.widget.field;
 
   $scope.$on('otValueChanged', createValueChangedSignalDispatcher());

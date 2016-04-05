@@ -50,7 +50,7 @@ angular.module('contentful')
   function createField (id, otChange, entity) {
     return {
       getValue: getValue,
-      onValueChanged: onValueChanged,
+      onValueChanged: onValueChanged
     };
 
     function getValue (locale) {

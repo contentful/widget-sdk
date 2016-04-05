@@ -49,7 +49,7 @@ describe('cfWidgetApi directive', function () {
       });
 
       return $controller('WidgetApiController', {
-        $scope: this.scope,
+        $scope: this.scope
       });
     };
 
