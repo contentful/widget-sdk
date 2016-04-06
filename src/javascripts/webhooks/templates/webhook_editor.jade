@@ -42,9 +42,10 @@ header.workbench-header
       .cfnext-form__field
         label Custom headers:
         cf-webhook-headers(headers="webhook.headers" is-dirty="context.headersDirty")
-      .cfnext-form__field
-        label Trigger this webhook for:
-        cf-webhook-segmentation(topics="webhook.topics")
+      // @todo uncomment when GK endpoint will support "topics" property
+      //.cfnext-form__field
+      //  label Trigger this webhook for:
+      //  cf-webhook-segmentation(topics="webhook.topics")
 
   .workbench-main__entity-sidebar
     .entity-sidebar
