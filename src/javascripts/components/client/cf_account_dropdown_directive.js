@@ -18,7 +18,8 @@ angular.module('contentful')
   var analytics      = $injector.get('analytics');
   var intercom       = $injector.get('intercom');
 
-  $scope.goToAccount = TheAccountView.goToDefault;
+  $scope.goToUserProfile = TheAccountView.goToUserProfile;
+  $scope.goToSubscription = TheAccountView.goToSubscription;
   $scope.clickedProfileButton = clickedProfileButton;
   $scope.openSupport = openSupport;
   $scope.openIntercom = intercom.open;
