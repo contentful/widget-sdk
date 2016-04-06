@@ -219,9 +219,9 @@ header.workbench-header
                 .build-with-contentful__reference-name {{item.name}}
                 p.build-with-contentful__reference-description
                   | {{item.description}}
-                span(ng-repeat="link in item.links track by item.name")
+                span(ng-repeat="link in item.links track by $index")
                   a.build-with-contentful__reference-link(
-                    ng-click="learn.trackResourceLink(item.name, learn.selectedLanguage.name)"
+                    ng-click="trackResourceLink(item.name, selectedLanguage.name)"
                     href="{{link.url}}"
                     target="_blank")
                     | {{link.text}}
