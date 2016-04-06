@@ -25,8 +25,8 @@ angular.module('contentful')
   var isDisabledSignal = newSignal($scope.isDisabled($scope.field, $scope.locale));
   var ctField = $scope.widget.field;
 
-  $scope.$on('otValueChanged', createValueChangedSignalDispatcher(true));
-  $scope.$on('otValueReverted', createValueChangedSignalDispatcher());
+  $scope.$on('otValueChanged', createValueChangedSignalDispatcher());
+  $scope.$on('otValueReverted', createValueChangedSignalDispatcher(true));
 
   $scope.$watch(function () {
     return $scope.isDisabled($scope.field, $scope.locale);

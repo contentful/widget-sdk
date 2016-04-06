@@ -100,8 +100,8 @@ describe('cfWidgetApi directive', function () {
 
     it('callback will not be called if OT path does not match', function () {
       this.widgetApi.field.onValueChanged(this.cb);
-      this.scope.$emit('otValueChanged', path);
-      this.scope.$emit('otValueChanged', ['fields', 'some-other-field', 'de-DE']);
+      this.scope.$emit('otValueReverted', path);
+      this.scope.$emit('otValueReverted', ['fields', 'some-other-field', 'de-DE']);
       sinon.assert.calledOnce(this.cb);
     });
   });
