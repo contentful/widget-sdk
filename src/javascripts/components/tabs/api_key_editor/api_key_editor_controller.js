@@ -25,6 +25,8 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     return spaceContext.getId();
   };
 
+  $scope.canAccessUsers = accessChecker.getSectionVisibility().settings;
+
   $scope.$watch('apiKey.data.accessToken', function() {
     if ($scope.apiKey.getId() && !dotty.exists($scope, 'apiKey.data.preview_api_key')) {
       generatePreviewApiKey();

@@ -227,7 +227,7 @@ header.workbench-header
                     | {{link.text}}
                   span(ng-if="!$last")
                     | &#32;|&#32;
-        .advice__note
+        .advice__note(ng-show="canAccessUsers")
           i.fa.fa-info-circle.advice__note-icon
           | You're not a developer? You can <a ui-sref="spaces.detail.settings.users.list">invite</a> users to help get you started
 
