@@ -160,8 +160,7 @@ angular.module('contentful')
   registerWidget('locationEditor',{
     fieldTypes: ['Location'],
     name: 'Location',
-    // Show the google maps widget alongwith the location editor widget. They share the same 'location' model.
-    template: '<cf-google-maps ng-model="location" ot-bind-object-value="location"></cf-google-maps><div cf-location-editor class="widget-location-editor" ng-model="fieldData.value" ot-bind-object-value="location"></div>'
+    template: '<cf-location-editor />'
   });
 
   registerWidget('objectEditor',{

@@ -13,7 +13,7 @@ angular.module('cf.ui')
  * It uses the JQuery `element.hide()` method to hide the element. To
  * show it again you need to call `element.show()`.
  */
-.directive('uiCloseOnClick', ['$injector', function ($injector) {
+.directive('uiHideOnClick', ['$injector', function ($injector) {
   var $document = $injector.get('$document');
   return {
     restrict: 'A',
@@ -21,14 +21,12 @@ angular.module('cf.ui')
       $document.on('click', hideElement);
 
       element.on('$destroy', function () {
-        console.log('destroy')
         $document.off('click', hideElement);
       });
 
       function hideElement () {
         element.hide();
       }
-
     }
   };
 }]);
