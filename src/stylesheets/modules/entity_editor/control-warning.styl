@@ -10,6 +10,13 @@ Markup:
     p
       | Please select an appropriate widget in the
       | <a href="#">Content Type field settings</a>.
+h3 With plug icon
+.editor-control-warning
+  cf-icon(name="plug")
+  p
+    | The widget failed to initialize.
+    | You can fix the problem by providing predefined values
+    | under the validations tab in the field settings.
 
 Styleguide: 8.1
 */
@@ -21,11 +28,12 @@ Styleguide: 8.1
   padding: $new-rhythm(0.5) 1.4em
 
   display: flex
+  align-items: center
 
   > cf-icon
-    align-self: center
     margin-right: 1.5em
-    path
+
+  > cf-icon[name="close"] path
       fill: #F9E900
 
   p
