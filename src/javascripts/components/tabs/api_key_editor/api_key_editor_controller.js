@@ -25,6 +25,8 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     return spaceContext.getId();
   };
 
+  $scope.canAccessUsers = accessChecker.getSectionVisibility().settings;
+
   $scope.$watch('apiKey.data.accessToken', function() {
     if ($scope.apiKey.getId() && !dotty.exists($scope, 'apiKey.data.preview_api_key')) {
       generatePreviewApiKey();
@@ -71,6 +73,13 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     $scope.selectedLanguage = language;
     analytics.track('Selected Language at the API Key Page', {
       language: $scope.selectedLanguage.name
+    });
+  };
+
+  $scope.trackResourceLink = function(linkName, language) {
+    analytics.track('Selected Content at the API key page', {
+      resource: linkName,
+      language: language
     });
   };
 
