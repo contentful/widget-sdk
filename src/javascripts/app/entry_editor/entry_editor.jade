@@ -36,12 +36,11 @@ header.workbench-header
           data-field-id="{{field.id}}"
           data-field-api-name="{{field.apiName}}"
           data-field-type="{{field.type}}"
-          data-field-items-type="{{field.items.type}}"
-          ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
-        label(ng-if="field")
+          data-field-items-type="{{field.items.type}}")
+        label
           | {{field.name}}&nbsp;
-          sup(ng-show="field.required") (required)
-        .l-form-controls(ng-if="field")
+          span(ng-show="field.required") (required)
+        .l-form-controls
           .l-form-locale(ng-repeat="locale in locales track by locale.internal_code"
               ot-field-presence="['fields', field.id, locale.internal_code]"
               data-locale="{{locale.code}}")
@@ -50,19 +49,12 @@ header.workbench-header
               ot-path="['fields', field.id, locale.internal_code]"
               cf-field-editor="entry.data.fields[field.id][locale.internal_code]"
               cf-widget-api)
-            .form-widget__rights-info(
-              ng-show="otDoc.state.editable && isDisabled(field, locale)"
-              tooltip="You don't have a permission to edit this field. To change your permission setting contact your space administrator."
-              tooltip-placement="left")
-              .fa.fa-lock
+            +field-permission-info
             .locale-label(ng-show="locales.length > 1")
               | {{locale.name}}
             +editor-field-collaborators
             cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.internal_code,'*']")
           .form-widget__help-text(ng-if="showHelpText") {{helpText}}
-          cf-error-list.form-box-error(cf-error-path="['fields', field.id]")
-        .l-form-controls(ng-if="!field")
-          cf-widget-renderer
 
   .workbench-main__entity-sidebar
     +entity-sidebar(revert=true)

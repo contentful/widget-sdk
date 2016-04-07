@@ -100,24 +100,6 @@ filters.filter('fileExtension', ['mimetype', function (mimetype) {
   };
 }]);
 
-filters.filter('isFieldLink', function () {
-  return function (field) {
-    return field && (field.type == 'Link' || field.type == 'Array' && dotty.get(field, 'items.type') == 'Link');
-  };
-});
-
-filters.filter('isFieldBoolean', function () {
-  return function (field) {
-    return field && field.type == 'Boolean';
-  };
-});
-
-filters.filter('isFieldStringList', function () {
-  return function (field) {
-    return field && field.type == 'Array' && dotty.get(field, 'items.type') == 'String';
-  };
-});
-
 filters.filter('userNameDisplay', function () {
   return function (currentUser, user) {
     if(!currentUser || !user) return '';
