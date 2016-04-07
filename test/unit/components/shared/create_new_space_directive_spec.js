@@ -5,6 +5,10 @@ describe('cfCreateNewSpace directive', function() {
   var element, $scope, $rootScope, $q, controller;
   var stubs;
 
+  afterEach(function () {
+    element = $scope = $rootScope = $q = controller = stubs = null;
+  });
+
   beforeEach(function() {
     stubs = {
       spaceTemplateLoader: {
@@ -241,6 +245,10 @@ describe('cfCreateNewSpace directive', function() {
 
       describe('if remote call succeeds', function() {
         var space;
+        afterEach(function () {
+          space = null;
+        });
+
         beforeEach(function() {
           space = {getId: stubs.space.getId, data: {name: 'oldspace'}};
           stubs.space.getId.returns('spaceid');

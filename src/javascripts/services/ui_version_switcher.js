@@ -48,7 +48,7 @@ angular.module('contentful').factory('uiVersionSwitcher', ['$injector', function
     $document.find('body')
     .append(
       '<div class="cf-ui-version-display">Contentful UI Version: '+
-      uiVersion+
+      '<a href="?ui_version=' + uiVersion + '">' + uiVersion + '</a> ' +
       '<a href="#" data-cf-ui-version-reload>Clear</a></div>'
     );
 

@@ -1,7 +1,16 @@
 'use strict';
 
-angular.module('contentful').controller('cfVideoEditorController', ['$scope', '$attrs', function($scope, $attrs){
+angular.module('contentful')
+.controller('cfVideoEditorController', ['$scope', 'widgetApi', function($scope, widgetApi){
   var providerVideoEditorController = $scope.providerVideoEditorController;
+  var field = widgetApi.field;
+
+  $scope.fieldData = {};
+  var detachFieldValueChanged = field.onValueChanged(function (val) {
+    $scope.fieldData.value = val;
+  });
+
+  $scope.$on('$destroy', detachFieldValueChanged);
 
   $scope.videoEditor = {
     errorMessage : undefined,
@@ -9,16 +18,15 @@ angular.module('contentful').controller('cfVideoEditorController', ['$scope', '$
     isPlayerReady : false,
     selectedAsset : {},
     searchConfig: {
-      isSearchEnabled : $scope.$eval($attrs.isSearchEnabled),
       onSelection : useSelectedAsset,
       scope       : $scope,
       template    : 'cf_video_search_dialog',
-      widgetPlayerDirective : $attrs.widgetPlayerDirective,
+      widgetPlayerDirective : providerVideoEditorController.widgetPlayerDirective,
       prepareSearch         : providerVideoEditorController.prepareSearch,
       processSearchResults  : providerVideoEditorController.processSearchResults,
       customAttrsForPlayer  : providerVideoEditorController.customAttrsForPlayerInSearchDialog
     },
-    widgetPlayerDirective : $attrs.widgetPlayerDirective
+    widgetPlayerDirective: providerVideoEditorController.widgetPlayerDirective,
   };
 
   this.addAsset                        = addAsset;
@@ -63,10 +71,7 @@ angular.module('contentful').controller('cfVideoEditorController', ['$scope', '$
   }
 
   function persistInput(input) {
-    var current = $scope.otSubDoc.getValue();
-    if (current !== input) {
-      $scope.otSubDoc.changeValue(input);
-    }
+    field.setValue(input);
   }
 
   function resetAsset() {
@@ -74,7 +79,8 @@ angular.module('contentful').controller('cfVideoEditorController', ['$scope', '$
   }
 
   function resetEditorInput() {
-    $scope.otSubDoc.removeValue();
+    field.removeValue();
+    $scope.fieldData.value = undefined;
   }
 
   function resetErrors() {

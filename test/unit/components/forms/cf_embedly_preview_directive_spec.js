@@ -1,14 +1,16 @@
 'use strict';
 
 describe('cfEmbedlyPreview Directive', function () {
-  var $q, $timeout;
   var deferredEmbedlyResponse;
+
+  afterEach(function () {
+    deferredEmbedlyResponse = null;
+  });
 
   beforeEach(function () {
     module('contentful/test');
 
-    $q = this.$inject('$q');
-    $timeout = this.$inject('$timeout');
+    var $q = this.$inject('$q');
     deferredEmbedlyResponse = $q.defer();
 
     this.$inject('LazyLoader').get = function () {
@@ -75,7 +77,7 @@ describe('cfEmbedlyPreview Directive', function () {
       this.compileElement('http://404site.com');
       expect(this.scope.urlStatus).toBe('loading');
       // Simulate a 404 by flushing timers without resolving
-      $timeout.flush();
+      this.$inject('$timeout').flush();
       expect(this.scope.urlStatus).toBe('broken');
     });
   });

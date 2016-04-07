@@ -125,7 +125,7 @@ angular.module('contentful')
 
   $scope.$watch('otDoc.doc', function (doc) {
     if (doc) {
-      cleanSnapshot($scope.contentType.data.fields, doc);
+      cleanSnapshot($scope.entry.data, doc);
     }
   });
 
@@ -137,21 +137,17 @@ angular.module('contentful')
 
 
   /**
-   * Makes sure that the OT doc has the correct structure. That is
-   * `fields` is an object and has a id-object pair for each content
-   * type field.
+   * Makes sure that the snapshot of the OT doc looks like the object
+   * we get from the CMA. In particular each field should be undefined
+   * or an object that maps locales to values.
+   *
+   * TODO It is unclear if this is necessary. There might be some
+   * corrupt data where a field is not an object.
    */
-  function cleanSnapshot(ctFields, doc) {
-    var fields = ShareJS.peek(doc, ['fields']);
-
-    if (!_.isObject(fields)) {
-      ShareJS.setDeep(doc, ['fields'], {});
-    }
-
-    _.forEach(ctFields, function (ctField) {
-      var id = ctField.id;
-      var field = ShareJS.peek(doc, ['fields', id]);
-      if (!_.isObject(field)) {
+  function cleanSnapshot(entryData, doc) {
+    _.forEach(entryData.fields, function (field, id) {
+      var docField = ShareJS.peek(doc, ['fields', id]);
+      if (!_.isObject(docField)) {
         ShareJS.setDeep(doc, ['fields', id], {});
       }
     });

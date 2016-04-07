@@ -5,6 +5,12 @@ describe('AssetLinkEditorController', function () {
   var scope, entry, $q, stubs, attrs;
   var shareJSMock, entityCacheMock;
 
+  afterEach(function () {
+    linkEditorCtrl = createController =
+      scope = entry = $q = stubs = attrs =
+      shareJSMock = entityCacheMock = null;
+  });
+
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([

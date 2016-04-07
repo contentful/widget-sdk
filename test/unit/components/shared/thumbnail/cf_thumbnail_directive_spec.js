@@ -19,6 +19,12 @@ describe('cfThumbnailDirective', function () {
     });
   });
 
+  afterEach(function () {
+    element.remove();
+    scope = asset = element = src =
+      $compile = hasPreviewStub = null;
+  });
+
   function createElement(attrs) {
     var defaults = { file: 'asset' };
     attrs        = _.defaults(attrs || {}, defaults);

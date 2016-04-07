@@ -21,6 +21,7 @@ angular.module('contentful')
   var accessChecker   = $injector.get('accessChecker');
   var $state          = $injector.get('$state');
   var analytics       = $injector.get('analytics');
+  var sdkInfoProvider = $injector.get('sdkInfoProvider');
 
   var visibility = accessChecker.getSectionVisibility();
 
@@ -31,33 +32,39 @@ angular.module('contentful')
 
   controller.spaceId = stateParams.spaceId;
 
-  spaceContext.refreshContentTypes().then(function() {
-    var cts = spaceContext.getFilteredAndSortedContentTypes();
+  function initLearnPage() {
+    spaceContext.refreshContentTypes().then(function() {
+      var cts = spaceContext.getFilteredAndSortedContentTypes();
 
-    controller.allContentTypes = cts;
-    controller.accessibleContentTypes = _.filter(cts || [], function (ct) {
-      var check = _.partialRight(accessChecker.canPerformActionOnEntryOfType, ct.getId());
-      return _.every(['create', 'edit'], check);
-    });
-    controller.hasContentTypes = !!cts.length;
-    controller.hasAccessibleContentTypes = !!controller.accessibleContentTypes.length;
+      controller.allContentTypes = cts;
+      controller.accessibleContentTypes = _.filter(cts || [], function (ct) {
+        var check = _.partialRight(accessChecker.canPerformActionOnEntryOfType, ct.getId());
+        return _.every(['create', 'edit'], check);
+      });
+      controller.hasContentTypes = !!cts.length;
+      controller.hasAccessibleContentTypes = !!controller.accessibleContentTypes.length;
 
-    if (controller.hasAccessibleContentTypes) {
-      spaceContext.space.getEntries()
-      .then(handleEntries)
-      .catch(handleEntries.bind(null, []));
-    } else {
-      handleEntries([]);
-    }
+      if (controller.hasAccessibleContentTypes) {
+        spaceContext.space.getEntries()
+        .then(handleEntries)
+        .catch(handleEntries.bind(null, []));
+      } else {
+        handleEntries([]);
+      }
 
-    function handleEntries(entries) {
-      controller.hasEntries = !!entries.length;
+      function handleEntries(entries) {
+        controller.hasEntries = !!entries.length;
+        $scope.context.ready = true;
+      }
+
+    }).catch(function() {
       $scope.context.ready = true;
-    }
+    });
+  }
 
-  }).catch(function() {
-    $scope.context.ready = true;
-  });
+  initLearnPage();
+  // Refresh after onboarding as content types and entries might have been created
+  $scope.$on('cfAfterOnboarding', initLearnPage);
 
   // Clicking `Use the API` goes to the delivery API key if there is exactly
   // one otherwise API home
@@ -80,7 +87,6 @@ angular.module('contentful')
 
   // Languages and SDKs
   controller.selectLanguage = function(language) {
-
     if (!controller.selectedLanguage) {
       // Scroll to the bottom of the page
       var container = $element.find('.workbench-main');
@@ -94,15 +100,8 @@ angular.module('contentful')
     });
   };
 
-  controller.languageData = [
-    {id: 'js', name: 'JavaScript', icon: 'language-js'},
-    {id: 'php', name: 'PHP', icon: 'language-php'},
-    {id: 'ruby', name: 'Ruby', icon: 'language-ruby'},
-    {id: 'ios', name: 'iOS', icon: 'language-ios'},
-    {id: 'android', name: 'Android', icon: 'language-android'},
-    {id: 'http', name: 'HTTP', icon: 'language-http'}
-  ];
-
+  var documentationList = ['documentation', 'apidemo', 'deliveryApi'];
+  controller.languageData = sdkInfoProvider.get(documentationList);
   controller.trackClickedButton = function(name) {
     var eventName = 'Clicked the \'' + name + '\' button from Learn';
     analytics.track(eventName);

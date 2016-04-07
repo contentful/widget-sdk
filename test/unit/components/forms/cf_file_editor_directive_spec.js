@@ -1,49 +1,38 @@
 'use strict';
 
 describe('cfFileEditor Directive', function () {
-  var element, scope, stubs;
-  var $q;
+  var scope, fieldApi;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-
-      stubs = $provide.makeStubs([
-        'pick', 'then', 'serverError', 'parseFPFile'
-      ]);
-      $provide.removeControllers('NgModelCtrl');
-      $provide.stubDirective('otPath', {
-        controller: _.noop
-      });
-      $provide.stubDirective('otBindObjectValue', {
-        controller: function ($scope) {
-          $scope.otBindObjectValueCommit = sinon.stub().returns($q.resolve());
-        }
-      });
       $provide.removeDirectives('cfFileDrop');
       $provide.value('filepicker', {
-        pick: stubs.pick,
-        parseFPFile: stubs.parseFPFile
+        pick: sinon.stub(),
+        parseFPFile: sinon.stub(),
       });
-      $provide.value('notification', {
-        serverError: stubs.serverError
-      });
-      stubs.pick.returns({then: stubs.then});
     });
 
-    var $rootScope = this.$inject('$rootScope');
-    var $compile = this.$inject('$compile');
-    $q = this.$inject('$q');
-
-    scope = $rootScope.$new();
-    scope.otDoc = {doc: {}, state: {}};
-    scope.isEditable = _.constant(true);
-    scope.fieldData = {
-      fileName: 'file.jpg',
-      fileType: 'image/jpeg'
+    fieldApi = {
+      onValueChanged: sinon.stub(),
+      onDisabledStatusChanged: sinon.stub(),
     };
 
-    element = $compile('<div ot-path=""><div cf-file-editor cf-file-display ng-model="fieldData" ot-bind-object-value="file"></div></div>')(scope);
+    scope = this.$compile('<cf-file-editor />', {
+      isEditable: _.constant(true),
+      fieldData: {
+        fileName: 'file.jpg',
+        fileType: 'image/jpeg'
+      }
+    }, {
+      cfWidgetApi: {field: fieldApi}
+    }).scope();
+
     scope.$apply();
+  });
+
+  afterEach(function () {
+    scope.$destroy();
+    scope = fieldApi = null;
   });
 
   it('toggles meta info', function() {
@@ -51,163 +40,109 @@ describe('cfFileEditor Directive', function () {
     expect(scope.showMeta).toBeTruthy();
   });
 
-  describe('uploading a file succeeds', function() {
-    var file;
-    beforeEach(function() {
-      file = {
-        url: 'newurl',
-        filename: 'newfilename',
-        mimetype: 'newmimetype'
-      };
-      stubs.then.callsArgWith(0, file);
-      stubs.parseFPFile.returns({
-        upload: 'newurl',
-        fileName: 'newfilename',
-        contentType: 'newmimetype'
-      });
-    });
+  describe('scope.uploadFile()', function () {
+    beforeEach(function () {
+      fieldApi.setValue = sinon.stub().resolves();
 
-    describe('and updating the otDoc value succeeds', function() {
-      beforeEach(function() {
-        this.emitStub = sinon.stub(scope, '$emit');
-        scope.uploadFile();
-        scope.$apply();
-      });
+      var FP = this.$inject('filepicker');
+      FP.pick.resolves('FP FILE');
+      FP.parseFPFile.returns('FILE DATA');
 
-      it('calls filepickers pick', function() {
-        sinon.assert.called(stubs.pick);
-      });
+      scope.$emit = sinon.stub();
 
-      it('calls otBindObjectValueCommit', function() {
-        sinon.assert.called(scope.otBindObjectValueCommit);
-      });
-
-      it('file object is parsed', function() {
-        sinon.assert.calledWith(stubs.parseFPFile, file);
-      });
-
-      it('file now has url', function() {
-        expect(scope.file.upload).toEqual('newurl');
-      });
-
-      it('file now has new name', function() {
-        expect(scope.file.fileName).toEqual('newfilename');
-      });
-
-      it('file now has new mimetype', function() {
-        expect(scope.file.contentType).toEqual('newmimetype');
-      });
-
-      it('emits fileUploaded event', function() {
-        sinon.assert.calledWith(this.emitStub, 'fileUploaded', {
-          upload: 'newurl',
-          fileName: 'newfilename',
-          contentType: 'newmimetype'
-        }, scope.locale);
-      });
-
-    });
-  });
-
-  describe('uploading a file fails because validation', function() {
-    beforeEach(function() {
-      scope.validate = sinon.spy();
-      stubs.then.callsArgWith(1, {code: 101});
-    });
-
-    it('does not throw on call', function() {
-      expect(scope.uploadFile).not.toThrow();
-    });
-
-    it('validate gets called', function() {
       scope.uploadFile();
-      sinon.assert.called(scope.validate);
+      this.$apply();
+    });
+
+    it('calls filepickers pick', function () {
+      var FP = this.$inject('filepicker');
+      sinon.assert.called(FP.pick);
+    });
+
+    it('sets the file on the field API', function () {
+      sinon.assert.calledOnce(fieldApi.setValue);
+      sinon.assert.calledWithExactly(fieldApi.setValue, 'FILE DATA');
+    });
+
+    it('sets "scope.file"', function () {
+      expect(scope.file).toEqual('FILE DATA');
+    });
+
+    it('emits fileUploaded event', function () {
+      sinon.assert.calledWith(scope.$emit, 'fileUploaded', 'FILE DATA', scope.locale);
+    });
+
+    it('runs validations on file picker 101 error', function () {
+      var FP = this.$inject('filepicker');
+      FP.pick.rejects({code: 101});
+      scope.validate = sinon.stub();
+
+      scope.uploadFile();
+      this.$apply();
+      sinon.assert.calledOnce(scope.validate);
     });
   });
 
-  describe('uploading a file fails because reasons', function() {
+  describe('scope.deleteFile()', function () {
     beforeEach(function() {
-      scope.validate = sinon.spy();
-      stubs.then.callsArgWith(1, {code: 500});
+      scope.$emit = sinon.stub();
+      fieldApi.removeValue = sinon.stub().resolves();
+
+      var FP = this.$inject('filepicker');
+      FP.parseFPFile.withArgs(null).returns(null);
+
+      scope.deleteFile();
+      this.$apply();
     });
 
-    it('throws on call', function() {
-      expect(scope.uploadFile).toThrow();
+    it('removes the value from the field API', function() {
+      sinon.assert.calledOnce(fieldApi.removeValue);
     });
 
-    it('validate does not get called', function() {
-      sinon.assert.notCalled(scope.validate);
-    });
-  });
-
-  describe('deleting a file succeeds', function() {
-    beforeEach(function() {
-      this.emitStub = sinon.stub(scope, '$emit');
-      scope.validate = sinon.spy();
-      stubs.parseFPFile.withArgs(null).returns(null);
+    it('sets "scope.file" to "null"', function () {
+      expect(scope.file).toBe(null);
     });
 
-    describe('and updating the otDoc value succeeds', function() {
-      beforeEach(function() {
-        scope.deleteFile();
-        scope.$apply();
-      });
-
-      it('calls `parseFPFile()` with null and sets the file to null', function () {
-        sinon.assert.calledWith(stubs.parseFPFile, null);
-        expect(scope.file).toBe(null);
-      });
-
-      it('does not emit `fileUploaded`', function () {
-        sinon.assert.notCalled(this.emitStub);
-      });
-
-      it('validates scope', function() {
-        sinon.assert.called(scope.validate);
-      });
-
-      it('calls otBindObjectValueCommit', function() {
-        sinon.assert.called(scope.otBindObjectValueCommit);
-      });
-
-      it('file is null', function() {
-        expect(scope.file).toBeFalsy();
-      });
+    it('it does not emit "fileUploaded" event', function() {
+      sinon.assert.notCalled(scope.$emit);
     });
   });
 
-  describe('uploading a file via drop succeeds', function() {
-    describe('and updating the otDoc value succeeds', function() {
-      beforeEach(function() {
-        stubs.parseFPFile.returns({
-          upload: 'newurl',
-          fileName: 'newfilename',
-          contentType: 'newmimetype'
-        });
-        scope.$broadcast('cfFileDropped', {
-          url: 'newurl',
-          filename: 'newfilename',
-          mimetype: 'newmimetype'
-        });
-      });
+  describe('on "cfFileDropped" event', function() {
+    beforeEach(function () {
+      fieldApi.setValue = sinon.stub().resolves();
 
-      it('calls otBindObjectValueCommit', function() {
-        sinon.assert.called(scope.otBindObjectValueCommit);
-      });
+      var FP = this.$inject('filepicker');
+      FP.pick.resolves('FP FILE');
+      FP.parseFPFile.returns('FILE DATA');
 
-      it('file now has url', function() {
-        expect(scope.file.upload).toEqual('newurl');
-      });
+      scope.$emit = sinon.stub();
 
-      it('file now has new name', function() {
-        expect(scope.file.fileName).toEqual('newfilename');
-      });
+      scope.$broadcast('cfFileDropped', 'FP FILE');
+      this.$apply();
+    });
 
-      it('file now has new mimetype', function() {
-        expect(scope.file.contentType).toEqual('newmimetype');
-      });
+    it('sets the file on the field API', function () {
+      sinon.assert.calledOnce(fieldApi.setValue);
+      sinon.assert.calledWithExactly(fieldApi.setValue, 'FILE DATA');
+    });
+
+    it('sets "scope.file"', function () {
+      expect(scope.file).toEqual('FILE DATA');
+    });
+
+    it('emits fileUploaded event', function () {
+      sinon.assert.calledWith(scope.$emit, 'fileUploaded', 'FILE DATA', scope.locale);
+    });
+
+    it('runs validations on file picker 101 error', function () {
+      var FP = this.$inject('filepicker');
+      FP.pick.rejects({code: 101});
+      scope.validate = sinon.stub();
+
+      scope.uploadFile();
+      this.$apply();
+      sinon.assert.calledOnce(scope.validate);
     });
   });
-
-
 });

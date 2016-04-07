@@ -2,13 +2,13 @@
 
 angular.module('contentful').controller('cfMultiVideoItemController', ['$attrs', '$scope', function($attrs, $scope){
   $scope.multiVideoItem = {
-    isSortingEnabled : $scope.$eval($attrs.isSortingEnabled),
-    isAssetValid     : false,
-    isPlayerReady    : false,
-    errorMessage     : undefined,
-    asset            : $scope.$eval($attrs.asset),
-    widgetPlayerDirective : $scope.$eval($attrs.widgetPlayerDirective),
-    customAttrsForPlayer  : $scope.$eval($attrs.widgetPlayerCustomAttrs)
+    isSortingEnabled: $scope.$eval($attrs.isSortingEnabled),
+    isAssetValid: false,
+    isPlayerReady: false,
+    errorMessage: undefined,
+    asset: $scope.$eval($attrs.asset),
+    widgetPlayerDirective: $scope.multiVideoEditor.widgetPlayerDirective,
+    customAttrsForPlayer: $scope.$eval($attrs.widgetPlayerCustomAttrs)
   };
 
   this.notifyPlayerIsReady        = notifyPlayerIsReady;

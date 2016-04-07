@@ -2,16 +2,15 @@
 
 angular.module('contentful').controller('cfKalturaMultiVideoEditorController', ['$injector', '$scope', function($injector, $scope){
   var KalturaEditorControllerMixin = $injector.get('KalturaEditorControllerMixin');
-  var kalturaClientWrapper         = $injector.get('kalturaClientWrapper');
-
-  var controller                   = this;
+  var kalturaClientWrapper = $injector.get('kalturaClientWrapper');
 
   kalturaClientWrapper.setOrganizationId($scope.spaceContext.space.getOrganizationId());
 
-  _.extend(controller, KalturaEditorControllerMixin);
+  _.extend(this, KalturaEditorControllerMixin);
 
   //overwrite this function
   this.customAttrsForPlayer = customAttrsForPlayer;
+  this.isSortingEnabled = false;
 
   function customAttrsForPlayer(video) {
     //TODO: remove coupling with assetId

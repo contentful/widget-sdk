@@ -1,30 +1,38 @@
 'use strict';
 
 describe('Video Editor Controller', function() {
-  var attrs, scope, videoEditorController;
+  var scope, videoEditorController, widgetApi;
 
   beforeEach(function() {
     module('contentful/test');
 
-    inject(function ($controller, $injector, $q, $rootScope) {
-      var providerVideoControllerCallbackNames = [
-        'prepareSearch',
-        'processSearchResults',
-        'customAttrsForPlayerInSearchDialog',
-        'processLookupInProviderResult',
-        'customAttrsForPlayer',
-        'loadingFeedbackMessage',
-        'lookupVideoInProvider',
-        'shouldRenderVideoPlayer',
-        'isWidgetReady'];
+    var $controller = this.$inject('$controller');
+    scope = this.$inject('$rootScope').$new();
+    var providerVideoControllerCallbackNames = [
+      'prepareSearch',
+      'processSearchResults',
+      'customAttrsForPlayerInSearchDialog',
+      'processLookupInProviderResult',
+      'customAttrsForPlayer',
+      'loadingFeedbackMessage',
+      'lookupVideoInProvider',
+      'shouldRenderVideoPlayer',
+      'isWidgetReady'
+    ];
 
-      scope                               = $rootScope.$new();
-      scope.fieldData                     = {};
-      scope.providerVideoEditorController = jasmine.createSpyObj('providerVideoEditorControllerMock', providerVideoControllerCallbackNames);
+    scope.fieldData = {};
+    scope.providerVideoEditorController = jasmine.createSpyObj('providerVideoEditorControllerMock', providerVideoControllerCallbackNames);
+    scope.providerVideoEditorController.widgetPlayerDirective = 'cf-widget-player-directive';
 
-      attrs = {widgetPlayerDirective: 'cf-widget-directive'};
+    widgetApi = {
+      field: {
+        onValueChanged: sinon.stub(),
+      }
+    };
 
-      videoEditorController = $controller('cfVideoEditorController', {$scope: scope, $attrs: attrs});
+    videoEditorController = $controller('cfVideoEditorController', {
+      $scope: scope,
+      widgetApi: widgetApi
     });
   });
 
@@ -35,7 +43,7 @@ describe('Video Editor Controller', function() {
   describe('videoEditor scope properties', function() {
     describe('search config', function() {
       it('sets the "widgetPlayerDirective" property to the value of the "$attrs.widgetPlayerDirective"', function() {
-        expect(scope.videoEditor.searchConfig.widgetPlayerDirective).toEqual(attrs.widgetPlayerDirective);
+        expect(scope.videoEditor.searchConfig.widgetPlayerDirective).toEqual('cf-widget-player-directive');
       });
 
       it('sets the #prepareSearch callback method to the #prepareSearch method on the provider editor controller', function() {
@@ -76,7 +84,7 @@ describe('Video Editor Controller', function() {
     });
 
     it('sets the "widgetPlayerDirective" property to the value of the "$attrs.widgetPlayerDirective"', function() {
-      expect(scope.videoEditor.widgetPlayerDirective).toEqual(attrs.widgetPlayerDirective);
+      expect(scope.videoEditor.widgetPlayerDirective).toEqual('cf-widget-player-directive');
     });
   });
 
@@ -267,9 +275,9 @@ describe('Video Editor Controller', function() {
 
   describe('#resetEditorInput', function () {
     it('removes the value from the otSubDoc', function () {
-      scope.otSubDoc = {removeValue: sinon.stub()};
+      widgetApi.field.removeValue = sinon.stub();
       videoEditorController.resetEditorInput();
-      sinon.assert.calledOnce(scope.otSubDoc.removeValue);
+      sinon.assert.calledOnce(widgetApi.field.removeValue);
     });
   });
 

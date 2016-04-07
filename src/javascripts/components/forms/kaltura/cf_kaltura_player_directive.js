@@ -1,8 +1,11 @@
 'use strict';
 
-angular.module('contentful').directive('cfKalturaPlayer', ['$injector', '$window', function($injector, $window){
+angular.module('contentful')
+.directive('cfKalturaPlayer', ['$injector', function($injector){
   var kalturaWidgetLoader = $injector.get('kalturaWidgetLoader');
-  var kalturaCredentials  = $injector.get('kalturaCredentials');
+  var kalturaCredentials = $injector.get('kalturaCredentials');
+  var spaceContext = $injector.get('spaceContext');
+  var $window = $injector.get('$window');
 
   var ID_PREFIX = 'kaltura-player-';
 
@@ -12,7 +15,7 @@ angular.module('contentful').directive('cfKalturaPlayer', ['$injector', '$window
     template   : JST['cf_kaltura_player'](),
     link: function(scope, elem) {
       var entryId, player, isPlayerEmbedded;
-      var organizationId = scope.spaceContext.space.getOrganizationId();
+      var organizationId = spaceContext.space.getOrganizationId();
 
       entryId            = scope.videoWidgetPlayer.attrs.entryId;
       isPlayerEmbedded   = scope.videoWidgetPlayer.attrs.embedded;

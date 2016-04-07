@@ -16,6 +16,8 @@ angular.module('contentful')
   var webhookRepo        = $injector.get('WebhookRepository').getInstance(spaceContext.space);
   var ReloadNotification = $injector.get('ReloadNotification');
 
+  $scope.limit = 20;
+
   reload().catch(ReloadNotification.basicErrorHandler);
 
   function reload() {

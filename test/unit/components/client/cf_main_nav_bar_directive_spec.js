@@ -26,6 +26,8 @@ describe('Main nav bar directive', function () {
 
   afterEach(function () {
     container.remove();
+    container = scope = accessChecker =
+      stubs = compileElement = null;
   });
 
   it('main navigation not shown if space is defined but hibernated', function () {

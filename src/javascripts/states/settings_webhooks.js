@@ -34,7 +34,11 @@ angular.module('contentful')
     template: '<cf-webhook-editor cf-ui-tab class="workbench webhook-editor" />',
     controller: ['$scope', '$state', function ($scope, $state) {
       $scope.context = $state.current.data;
-      $scope.webhook = {headers: []};
+      $scope.webhook = {
+        headers: [],
+        // @todo uncomment when GK endpoint will support "topics" property
+        //topics: ['*.publish', '*.unpublish']
+      };
     }]
   };
 

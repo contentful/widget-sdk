@@ -14,6 +14,11 @@ describe('cfSearch Directive', function () {
     });
   });
 
+  afterEach(function () {
+    element.remove();
+    element = scope = isolateScope = compileElement = null;
+  });
+
   describe('sets properties on scope', function() {
     beforeEach(function() {
       scope.searchTerm = 'term';

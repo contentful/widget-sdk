@@ -52,7 +52,7 @@ angular.module('contentful')
     fieldTypes: ['Integer', 'Number'],
     name: 'Number Editor',
     icon: 'number',
-    template: '<div cf-number-editor class="cf-number-editor"></div>'
+    template: '<cf-number-editor class="cf-number-editor" />'
   });
 
   registerWidget('multipleLine',{
@@ -66,7 +66,7 @@ angular.module('contentful')
     fieldTypes: ['Text'],
     name: 'Markdown',
     icon: 'markdown',
-    template: '<cf-markdown-editor-bridge />'
+    template: '<cf-markdown-editor />'
   });
 
   registerWidget('dropdown',{
@@ -181,7 +181,7 @@ angular.module('contentful')
   registerWidget('fileEditor',{
     fieldTypes: ['File'],
     name: 'File',
-    template: '<div class="widget-file-editor" cf-file-display cf-file-editor ng-model="fieldData.value" ot-bind-object-value="file"></div>'
+    template: '<cf-file-editor class="widget-file-editor" />'
   });
 
   registerWidget('entryLinkEditor',{

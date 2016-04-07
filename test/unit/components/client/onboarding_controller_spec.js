@@ -7,6 +7,11 @@ describe('onboardingController', function () {
 
   var SEEN_ONBOARDING_STORE_KEY;
 
+  afterEach(function () {
+    $rootScope = $q = openDialogStub =
+      dialogConfirmSpy = userMock = storeMock = null;
+  });
+
   beforeEach(function () {
     openDialogStub = sinon.stub();
     dialogConfirmSpy = sinon.spy();

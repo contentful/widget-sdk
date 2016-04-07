@@ -1,12 +1,17 @@
 'use strict';
 
 describe('Multi Video Item Controller', function() {
-  var attrs, scope, multiVideoItemController, lookupAssetDeferred, $rootScope;
+  var attrs, scope, multiVideoItemController, lookupAssetDeferred;
+
+  afterEach(function () {
+    attrs = scope = multiVideoItemController =
+      lookupAssetDeferred = null;
+  });
 
   beforeEach(function() {
     module('contentful/test');
     inject(function ($controller, $q, $injector) {
-      $rootScope          = $injector.get('$rootScope');
+      var $rootScope          = $injector.get('$rootScope');
 
       lookupAssetDeferred = $q.defer();
 
@@ -21,12 +26,15 @@ describe('Multi Video Item Controller', function() {
 
       attrs               = {
         asset                   : 'asset',
-        widgetPlayerDirective   : '_playerDirective',
         widgetPlayerCustomAttrs : '_attributesForThePlayer',
         lookupAsset             : jasmine.createSpy(),
         removeAsset             : jasmine.createSpy()
       };
       attrs.lookupAsset.and.returnValue(lookupAssetDeferred.promise);
+
+      scope.multiVideoEditor = {
+        widgetPlayerDirective: '_playerDirective'
+      };
 
       multiVideoItemController = $controller('cfMultiVideoItemController', {$scope: scope, $attrs: attrs});
     });
@@ -44,7 +52,7 @@ describe('Multi Video Item Controller', function() {
     describe('on successful lookup', function() {
       beforeEach(function() {
         lookupAssetDeferred.resolve({name: 'some asset title'});
-        $rootScope.$apply();
+        this.$apply();
       });
 
       it('sets the isAssetValid flag to true', function() {
@@ -59,7 +67,7 @@ describe('Multi Video Item Controller', function() {
     describe('on failed lookup', function() {
       beforeEach(function() {
         lookupAssetDeferred.reject({message: 'failed'});
-        $rootScope.$apply();
+        this.$apply();
       });
 
       it('sets the errorMessage property', function() {
@@ -74,7 +82,7 @@ describe('Multi Video Item Controller', function() {
     });
 
     it('sets the widgetPlayerDirective property to the value it its widgetPlayerDirective attribute', function() {
-      expect(scope.multiVideoItem.widgetPlayerDirective).toEqual(scope._playerDirective);
+      expect(scope.multiVideoItem.widgetPlayerDirective).toEqual('_playerDirective');
     });
 
     it('sets the customAttrsForPlayer property to the value in its widgetPlayerCustomAttrs', function() {

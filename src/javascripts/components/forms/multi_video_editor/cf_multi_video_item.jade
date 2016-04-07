@@ -8,8 +8,7 @@
       ng-click="multiVideoItemController.removeAsset()")
 
 .video-widget-editor__loading-info(
-  ng-show="!multiVideoItem.isPlayerReady && !multiVideoItem.errorMessage"
-  ng-class="{'video-widget-editor__loading-info--wide': !multiVideoEditor.searchConfig.isSearchEnabled}")
+  ng-show="!multiVideoItem.isPlayerReady && !multiVideoItem.errorMessage")
   | Loading player for video with id {{asset.assetId}}
   i.fa.fa-spinner.fa-spin
 

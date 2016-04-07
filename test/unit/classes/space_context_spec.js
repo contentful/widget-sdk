@@ -55,10 +55,6 @@ describe('spaceContext', function () {
       expect(this.spaceContext.contentTypes.length).toEqual(0);
     });
 
-    it('refreshes content types', function () {
-      sinon.assert.called(this.spaceContext.refreshContentTypes);
-    });
-
     it('refreshes locales', function () {
       sinon.assert.calledOnce(this.theLocaleStore.resetWithSpace);
     });
@@ -151,42 +147,103 @@ describe('spaceContext', function () {
                              { displayField: 'title' }),
           cfStub.contentType(space, 'content_type2', 'contentType2')
         ];
-        this.spaceContext.space.getContentTypes = getContentTypes = sinon.stub().returns($q.defer().promise);
-        this.spaceContext.space.getPublishedContentTypes = getPublishedContentTypes = sinon.stub().returns($q.defer().promise);
+        this.spaceContext.space.getContentTypes = getContentTypes = sinon.stub().resolves(contentTypes);
+        this.spaceContext.space.getPublishedContentTypes = getPublishedContentTypes = sinon.stub().resolves(contentTypes);
       });
 
       it('refreshes content types', function () {
-        getContentTypes.returns($q.resolve(contentTypes.concat().reverse()));
-        getPublishedContentTypes.returns($q.resolve(contentTypes));
+        getContentTypes.returns($q.when(contentTypes.concat().reverse()));
         this.spaceContext.refreshContentTypes();
         rootScope.$apply();
         expect(this.spaceContext.contentTypes[0].getName()).toEqual('contentType1');
         sinon.assert.called(getPublishedContentTypes);
       });
 
-      it('makes only a single call to the server for quick refreshes', function () {
+      it('enqueues requests for content types', function () {
+        getContentTypes.returns($q.when(contentTypes.concat().reverse()));
         var p1 = this.spaceContext.refreshContentTypes();
         var p2 = this.spaceContext.refreshContentTypes();
         rootScope.$apply();
-        expect(getContentTypes.callCount).toBe(1);
-        expect(p1 === p2).toBe(true);
+        expect(p1).toBe(p2);
+        sinon.assert.calledTwice(getContentTypes);
       });
 
       it('results in an error message if API broken', function () {
-        var handler;
-        inject(function (ReloadNotification) {
-          handler = ReloadNotification.apiErrorHandler;
-        });
+        var handler = this.$inject('ReloadNotification').apiErrorHandler;
         getContentTypes.returns($q.reject({statusCode: 500}));
         this.spaceContext.refreshContentTypes();
         rootScope.$apply();
         sinon.assert.called(handler);
       });
 
+      describe('refresh with waiting for changes', function () {
+        beforeEach(function () {
+          this.spaceContext.refreshContentTypes();
+          this.$apply();
+
+          var $timeout = this.$inject('$timeout');
+          this.flush = function () {
+            this.$apply();
+            $timeout.flush();
+          }.bind(this);
+
+          this.removeSecondCt =  function () {
+            this.spaceContext.unregisterPublishedContentType(contentTypes[1]);
+            var slice = contentTypes.slice(0, 1);
+            getContentTypes.resolves(slice);
+            getPublishedContentTypes.resolves(slice);
+          }.bind(this);
+        });
+
+        pit('resolves with content types when one was added', function () {
+          var newCt = cfStub.contentType(space, 'content_type3', 'contentType3');
+          var cts = contentTypes.concat(newCt);
+          getContentTypes.resolves(cts);
+          getPublishedContentTypes.resolves(cts);
+          return this.spaceContext.refreshContentTypesUntilChanged().then(function (data) {
+            expect(data.length).toBe(3);
+            expect(data[2]).toBe(newCt);
+          });
+        });
+
+        pit('resolves with content types when it one was removed', function () {
+          this.removeSecondCt();
+          return this.spaceContext.refreshContentTypesUntilChanged().then(function (data) {
+            expect(data.length).toBe(1);
+            expect(data[0]).toBe(contentTypes[0]);
+          });
+        });
+
+        pit('it retries if content types are not changed', function () {
+          var p = this.spaceContext.refreshContentTypesUntilChanged();
+
+          this.removeSecondCt();
+          this.flush();
+
+          return p.then(function (data) {
+            expect(data.length).toBe(1);
+            // asserting that was called thrice:
+            // (1) initial refresh, (2) no data changed, (3) changed data
+            sinon.assert.calledThrice(getContentTypes);
+            sinon.assert.calledThrice(getPublishedContentTypes);
+          });
+        });
+
+        pit('it tries 5 times and resolves this old content types if not changed', function () {
+          var p = this.spaceContext.refreshContentTypesUntilChanged();
+
+          _.range(5).forEach(this.flush);
+
+          return p.then(function (data) {
+            expect(data.length).toBe(2);
+            // (1) initial refresh, (2) first request, (3-7) retries
+            expect(getContentTypes.callCount).toBe(7);
+          });
+        });
+      });
+
       describe('refreshes published content types', function () {
         it('has content types', function () {
-          getContentTypes.returns($q.resolve(contentTypes));
-          getPublishedContentTypes.returns($q.resolve(contentTypes));
           this.spaceContext.refreshContentTypes();
           rootScope.$apply();
           expect(this.spaceContext.publishedContentTypes.length).toBeGreaterThan(0);
@@ -195,8 +252,6 @@ describe('spaceContext', function () {
 
         it('merges context types from client and server together', function () {
           this.spaceContext.publishedContentTypes = [ contentTypes[0] ];
-          getContentTypes.returns($q.resolve(contentTypes));
-          getPublishedContentTypes.returns($q.resolve(contentTypes));
           this.spaceContext.refreshContentTypes();
           rootScope.$apply();
           expect(this.spaceContext.publishedContentTypes.length).toBe(2);
@@ -204,8 +259,6 @@ describe('spaceContext', function () {
 
         it('does not include deleted published content Types', function () {
           sinon.stub(contentTypes[1], 'isDeleted').returns(true);
-          getContentTypes.returns($q.resolve(contentTypes));
-          getPublishedContentTypes.returns($q.resolve(contentTypes));
           this.spaceContext.refreshContentTypes();
           rootScope.$apply();
           expect(this.spaceContext.publishedContentTypes.length).toBe(1);
@@ -220,7 +273,6 @@ describe('spaceContext', function () {
 
         it('removes a content type', function () {
           // TODO test this without refresh calls
-          getContentTypes.returns($q.resolve(contentTypes));
           this.spaceContext.refreshContentTypes();
           rootScope.$apply();
           this.spaceContext.removeContentType(contentTypes[0]);
@@ -229,8 +281,6 @@ describe('spaceContext', function () {
 
         it('gets a published type for a given entry', function () {
           // TODO test this without refresh calls
-          getContentTypes.returns($q.resolve(contentTypes));
-          getPublishedContentTypes.returns($q.resolve(contentTypes));
           this.spaceContext.refreshContentTypes();
           rootScope.$apply();
           var entry = cfStub.entry(space, 'entry2', 'content_type1');

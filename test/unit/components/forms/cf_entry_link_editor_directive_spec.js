@@ -6,6 +6,10 @@ describe('cfEntryLinkEditor Directive', function () {
   var searchField;
   var stubs;
 
+  afterEach(function () {
+    element = scope = compileElement = searchField = stubs = null;
+  });
+
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([

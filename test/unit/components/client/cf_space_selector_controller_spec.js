@@ -3,6 +3,10 @@
 describe('Space Selector Controller', function () {
   var scope, analytics, $stateParams;
 
+  afterEach(function () {
+    scope = analytics = $stateParams = null;
+  });
+
   beforeEach(function () {
     module('contentful/test');
 

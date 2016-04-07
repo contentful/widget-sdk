@@ -67,7 +67,7 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
     clearAndLogin: function () {
       TheStore.remove('token');
-      this.redirectToLogin();
+      this.login();
     },
 
     logout: function() {

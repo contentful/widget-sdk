@@ -25,9 +25,8 @@ angular.module('contentful')
   var isDisabledSignal = newSignal($scope.isDisabled($scope.field, $scope.locale));
   var ctField = $scope.widget.field;
 
-  $scope.$on('otValueChanged', function (e, path, value) {
-    valueChangedSignal.dispatch(value);
-  });
+  $scope.$on('otValueChanged', createValueChangedSignalDispatcher());
+  $scope.$on('otValueReverted', createValueChangedSignalDispatcher(true));
 
   $scope.$watch(function () {
     return $scope.isDisabled($scope.field, $scope.locale);
@@ -36,33 +35,54 @@ angular.module('contentful')
   });
 
   this.settings = $scope.widget.settings;
+  this.settings.helpText = this.settings.helpText || $scope.widget.defaultHelpText;
 
   this.field = {
     onValueChanged: valueChangedSignal.attach,
     onDisabledStatusChanged: isDisabledSignal.attach,
-    setValue: function (value) {
-      if (value === this.getValue()) {
-        return $q.resolve(value);
-      } else {
-        return $scope.otSubDoc.changeValue(value);
-      }
-    },
-    setString: function (value) {
-      if (value === this.getValue()) {
-        return $q.resolve(value);
-      } else {
-        return $scope.otSubDoc.changeString(value);
-      }
-    },
-    getValue: function () {
-      return $scope.otSubDoc.getValue();
-    },
-
-    // we only want to expose the public ID
-    id: ctField.apiName,
+    getValue: getValue,
+    setValue: createSetter('changeValue'),
+    setString: createSetter('changeString'),
+    removeValue: removeValue,
+    id: ctField.apiName, // we only want to expose the public ID
     locale: $scope.locale.code,
     type: ctField.type,
     required: !!ctField.required,
     validations: ctField.validations
   };
+
+  function getValue () {
+    return $scope.otSubDoc.getValue();
+  }
+
+  function createSetter(method) {
+    return function setValue (value) {
+      if (value === getValue()) {
+        return $q.resolve(value);
+      } else {
+        return $scope.otSubDoc[method](value);
+      }
+    };
+  }
+
+  function removeValue() {
+    return $scope.otSubDoc.removeValue();
+  }
+
+  function createValueChangedSignalDispatcher(shouldCheckPath) {
+    return function dispatchValueChangedSignal (e, path, value) {
+      if (!shouldCheckPath || isPathMatching(path)) {
+        valueChangedSignal.dispatch(value);
+      }
+    };
+  }
+
+  function isPathMatching (path) {
+    if (!_.isArray($scope.otPath) || !_.isArray(path)) {
+      throw new Error('Path should be an array of strings.');
+    }
+
+    return _.isEqual($scope.otPath, path);
+  }
+
 }]);

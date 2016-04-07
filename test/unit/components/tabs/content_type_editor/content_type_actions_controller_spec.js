@@ -1,7 +1,7 @@
 'use strict';
 
 describe('ContentType Actions Controller', function () {
-  var controller, scope, $q, logger, notification, accessChecker, ReloadNotification;
+  var controller, scope, $q, logger, notification, accessChecker, ReloadNotification, spaceContext;
   var space, contentType;
 
   function FormStub () {
@@ -41,6 +41,8 @@ describe('ContentType Actions Controller', function () {
     var cfStub = this.$inject('cfStub');
 
     space = cfStub.space('spaceid');
+    spaceContext = this.$inject('spaceContext');
+    spaceContext.space = space;
     contentType = cfStub.contentType(space, 'typeid', 'typename');
 
     scope = this.$inject('$rootScope').$new();
@@ -198,11 +200,7 @@ describe('ContentType Actions Controller', function () {
   });
 
   describe('#save command', function() {
-    var spaceContext;
-
     beforeEach(function() {
-      var cfStub = this.$inject('cfStub');
-      spaceContext = cfStub.spaceContext(space, []);
       spaceContext.editingInterfaces = {
         save: sinon.stub().resolves()
       };

@@ -1,25 +1,12 @@
 $markdown-radius = 2px
 
-.markdown-transfer-textarea
-  display: none
-
-.markdown-loaded
-  visibility: hidden
-  height: 1px
-  &.visible
-    visibility: visible
-    height: auto
-    margin-top: -25px
-
-/**
- * Toolbar
- */
-
 .markdown-tabs
   position: relative
   z-index: 10
   overflow: hidden
   margin-bottom: -1px
+  // Tab buttons bleed into label. Roughly the tab height
+  margin-top: -32px
 
 .markdown-tabs a
   color: $colors.text-mid

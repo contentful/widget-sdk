@@ -49,7 +49,7 @@ form(
             ng-disabled="createSpace.createSpaceInProgress")
           div
             | {{createSpace.newSpace.errors.fields.organization}}
-      .cfnext-form__fieldset(ng-show="createSpace.errors.form")
+      .cfnext-form__fieldset(ng-show="createSpace.newSpace.errors.form")
         .cfnext-form__field
           .cfnext-form__field-error
           | {{createSpace.newSpace.errors.form}}
@@ -124,17 +124,31 @@ div(ng-show="createSpace.viewState === 'creatingTemplate'")
         cf-icon(name="page-ct")
         .create-new-space__templates__entity__description
           h3 Content Types
-          p A content type works like a stencil which defines the structure of entries. We’re creating a few different content types for you to see how it works.
+          p A content type works like a stencil which defines the structure of entries.
+            span(ng-if="createSpace.newSpace.useTemplate")
+              | &#32;We’re creating a few different content types for you to see how it works.
       .create-new-space__templates__entity
         cf-icon(name="page-entries")
         .create-new-space__templates__entity__description
           h3 Entries
-          p Entries are your actual pieces of content. The space will include a couple of entries based on the content types mentioned above.
+          p Entries are your actual pieces of content.
+            span(ng-if="createSpace.newSpace.useTemplate")
+              | &#32;The space will include a couple of entries based on the content types mentioned above.
+      .create-new-space__templates__entity
+        cf-icon(name="page-media")
+        .create-new-space__templates__entity__description
+          h3 Assets
+          p Assets are external documents, from sounds to images or videos to text.
+            span(ng-if="createSpace.newSpace.useTemplate")
+              | &#32;Your entries will have a few assets to complement them.
+
       .create-new-space__templates__entity
         cf-icon(name="page-api")
         .create-new-space__templates__entity__description
           h3 API Keys
-          p An API key is the token that you’ll use to retrieve your content. We created a few API keys so that you can get started fetching your content right away.
+          p An API key is the token that you’ll use to retrieve your content.
+            span(ng-if="createSpace.newSpace.useTemplate")
+              | &#32;We created a few API keys so that you can get started fetching your content right away.
 
   .modal-dialog__controls.create-new-space-dialog__controls--centered
     button.cfnext-btn-action(

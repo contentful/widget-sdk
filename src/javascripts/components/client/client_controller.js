@@ -2,7 +2,6 @@
 
 angular.module('contentful').controller('ClientController', ['$scope', '$injector', function ClientController($scope, $injector) {
   var $rootScope         = $injector.get('$rootScope');
-  var $timeout           = $injector.get('$timeout');
   var $state             = $injector.get('$state');
   var features           = $injector.get('features');
   var logger             = $injector.get('logger');
@@ -114,7 +113,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     .then(handleSpaceCreationSuccess)
     .catch(function() {
       analytics.track('Closed Space Template Selection Modal');
-      refreshContentTypes();
     });
   }
 
@@ -122,14 +120,9 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     if (template) {
       analytics.track('Created Space Template', {template: template.name});
       $rootScope.$broadcast('reloadEntries');
-      refreshContentTypes();
+      spaceContext.refreshContentTypesUntilChanged();
+    } else {
+      spaceContext.refreshContentTypes();
     }
   }
-
-  function refreshContentTypes() {
-    $timeout(function () {
-      spaceContext.refreshContentTypes();
-    }, 1000);
-  }
-
 }]);

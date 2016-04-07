@@ -3,8 +3,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
     li.app-top-bar__action.nav-bar__list-item(
       ng-if="canNavigateTo.contentType")
       a.nav-bar__link(
-          ng-class="{'is-active': $state.includes('spaces.detail.content_types') ,\
-                    'is-section-index': $state.$current.name === 'spaces.detail.content_types.list'}"
+          ng-class="{'is-active': $state.includes('spaces.detail.content_types')}"
           ui-sref="spaces.detail.content_types.list({ spaceId: $stateParams.spaceId })"
           data-view-type="content-type-list"
           tabindex="0")
@@ -13,8 +12,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
     li.app-top-bar__action.nav-bar__list-item(
       ng-if="canNavigateTo.entry")
       a.nav-bar__link(
-          ng-class="{'is-active': $state.includes('spaces.detail.entries') ,\
-                    'is-section-index': $state.$current.name === 'spaces.detail.entries.list'}"
+          ng-class="{'is-active': $state.includes('spaces.detail.entries')}"
           ui-sref="spaces.detail.entries.list({ spaceId: $stateParams.spaceId })"
           data-view-type="entry-list"
           tabindex="0")
@@ -23,8 +21,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
     li.app-top-bar__action.nav-bar__list-item(
       ng-if="canNavigateTo.asset")
       a.nav-bar__link(
-          ng-class="{'is-active': $state.includes('spaces.detail.assets') ,\
-                    'is-section-index': $state.$current.name === 'spaces.detail.assets.list'}"
+          ng-class="{'is-active': $state.includes('spaces.detail.assets')}"
           ui-sref="spaces.detail.assets.list({ spaceId: $stateParams.spaceId })"
           data-view-type="asset-list"
           tabindex="0")
@@ -33,8 +30,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
     li.app-top-bar__action.nav-bar__list-item(
       ng-if="canNavigateTo.apiKey")
       a.nav-bar__link(
-          ng-class="{'is-active': $state.includes('spaces.detail.api') ,\
-                    'is-section-index': $state.$current.name === 'spaces.detail.api.home'}"
+          ng-class="{'is-active': $state.includes('spaces.detail.api')}"
           ui-sref="spaces.detail.api.home({ spaceId: $stateParams.spaceId })"
           data-view-type="api-home"
           tabindex="0")

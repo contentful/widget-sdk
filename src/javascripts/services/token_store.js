@@ -17,11 +17,12 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
   var ReloadNotification = $injector.get('ReloadNotification');
   var logger             = $injector.get('logger');
   var createSignal       = $injector.get('signal');
+  var createQueue        = $injector.get('overridingRequestQueue');
 
   var currentToken = null;
   var changed  = createSignal();
-  var refreshDeferred = null;
-  var refreshRequests = 0;
+  var request = createQueue(getTokenLookup, setupLookupHandler);
+  var refreshPromise = $q.resolve();
 
   return {
     changed:           changed,
@@ -30,6 +31,16 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
     getSpaces:         getSpaces,
     getSpace:          getSpace
   };
+
+  function getTokenLookup() {
+    return authentication.getTokenLookup();
+  }
+
+  function setupLookupHandler(promise) {
+    promise.then(function (lookup) {
+      refreshWithLookup(lookup);
+    }, communicateError);
+  }
 
   /**
    * @ngdoc method
@@ -55,51 +66,18 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
    * @returns {Promise<void>}
    * @description
    * This method should be called when token data needs to be refreshed.
-   * Subsequent calls are queued and performed one after another.
-   * Returned promise is resolved with a value of the last call!
    *
+   * For requesting data we're using a queue:
+   * - subsequent calls are queued and performed one after another
+   * - returned promise is resolved with a value of the last call!
+   *
+   * As defined in "setupLookupHandler":
    * On failure we call "communicateError", what basically forces an user
    * to reload the app. On success we call "refreshWithLookup" (see docs above).
    */
   function refresh() {
-    if (!refreshDeferred || refreshRequests < 1) {
-      refreshRequests = 1;
-      refreshDeferred = $q.defer();
-      getNextTokenLookup();
-    } else {
-      refreshRequests += 1;
-    }
-
-    return refreshDeferred.promise;
-  }
-
-  function getNextTokenLookup() {
-    authentication.getTokenLookup()
-    .then(handleToken)
-    .catch(handleTokenError);
-  }
-
-  function handleToken(token) {
-    if (!refreshDeferred) {
-      return $q.reject();
-    }
-
-    refreshRequests -= 1;
-    if (refreshRequests > 0) {
-      getNextTokenLookup();
-    } else {
-      refreshWithLookup(token);
-      refreshDeferred.resolve();
-      refreshDeferred = null;
-    }
-  }
-
-  function handleTokenError(err) {
-    refreshDeferred.reject(err);
-    refreshDeferred = null;
-    communicateError(err);
-
-    return $q.reject(err);
+    refreshPromise = request();
+    return refreshPromise;
   }
 
   /**
@@ -113,12 +91,10 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
    * Promise is rejected if space with a provided ID couldn't be found.
    */
   function getSpace(id) {
-    return refreshDeferred ? refreshDeferred.promise.then(promiseSpace) : promiseSpace();
-
-    function promiseSpace() {
+    return refreshPromise.then(function () {
       var space = findSpace(id);
-      return space ? $q.when(space) : $q.reject(new Error('No space with given ID could be found.'));
-    }
+      return space ? space : $q.reject(new Error('No space with given ID could be found.'));
+    });
   }
 
   /**
@@ -130,11 +106,7 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
    * If some calls are in progress, we're waiting until these are done.
    */
   function getSpaces() {
-    return refreshDeferred ? refreshDeferred.promise.then(promiseSpaces) : promiseSpaces();
-
-    function promiseSpaces() {
-      return $q.when(getCurrentSpaces());
-    }
+    return refreshPromise.then(getCurrentSpaces);
   }
 
   function updateSpaces(rawSpaces) {

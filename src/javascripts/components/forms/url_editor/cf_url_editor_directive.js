@@ -14,7 +14,10 @@ angular.module('contentful')
       var $inputEl = $el.children('input.form-control');
       var updateInput = makeInputUpdater($inputEl);
 
-      scope.urlStatus = 'ok';
+      _.extend(scope, {
+        urlStatus: 'ok',
+        helpText: widgetApi.settings.helpText
+      });
 
       var detachOnValueChangedHandler = field.onValueChanged(function (val) {
         // Might be `null` or `undefined` when value is not present
@@ -37,9 +40,7 @@ angular.module('contentful')
       // run validations when data in input field is modified
       // and send updated field value over the wire via sharejs
       $inputEl.on('input change', function () {
-        var val = $inputEl.val();
-
-        field.setString(val);
+        field.setString($inputEl.val());
       });
 
       function updateDisabledStatus (disabledStatus) {

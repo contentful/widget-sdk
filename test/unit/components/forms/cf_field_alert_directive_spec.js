@@ -1,33 +1,25 @@
 'use strict';
 
 describe('cfFieldAlert Directive', function () {
-  var element, scope;
-
   beforeEach(function () {
     module('contentful/test');
-
-    inject(function ($compile, $rootScope) {
-      scope = $rootScope.$new();
-
-      element = $compile('<div cf-field-alert="message" class="cf-field-alert"></div>')(scope);
-      scope.$digest();
-    });
+    this.element = this.$compile('<div cf-field-alert="message" class="cf-field-alert"></div>');
   });
 
   it('element exists', function() {
-    expect(element.get(0)).toBeDefined();
+    expect(this.element.get(0)).toBeDefined();
   });
 
   it('element exists and has class name', function() {
-    expect(element).toHaveClass('cf-field-alert');
+    expect(this.element).toHaveClass('cf-field-alert');
   });
 
   it('tag was replaced', function() {
-    expect(element.get(0).tagName.toLowerCase()).toBe('i');
+    expect(this.element.get(0).tagName.toLowerCase()).toBe('i');
   });
 
   it('has tooltip message via attr', function() {
-    expect(element.attr('tooltip')).toEqual('message');
+    expect(this.element.attr('tooltip')).toEqual('message');
   });
 
 });
