@@ -96,15 +96,14 @@ angular.module('contentful')
       // We need to provide a proper interface for this.
       disabled: true, // otDoc.state.disabled
       editable: false, // otDoc.state.editable
-      error: false
+      error: false,
+      saving: false,
     },
     // TODO should be removed from the public interface
     getEntity: function () {
       return entity;
     }
   };
-
-
 
   $scope.otDoc = otDoc;
 
@@ -118,6 +117,12 @@ angular.module('contentful')
     } else if (otDoc.doc) {
       closeDoc(otDoc.doc);
     }
+  });
+
+  // Watch Doc internals to determine if we have sent operations to the
+  // server that have yet to be acknowledged.
+  $scope.$watchGroup(['otDoc.doc.inflightOp', 'otDoc.doc.pendingOp'], function (ops) {
+    otDoc.state.saving = _.any(ops);
   });
 
   $scope.$watch(function () {
