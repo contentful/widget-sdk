@@ -59,7 +59,7 @@ angular.module('contentful')
     fieldTypes: ['Text'],
     name: 'Multiple Line',
     icon: 'multipleline',
-    template: '<textarea class="form-control" ng-disabled="isDisabled(field, locale)" ng-model="fieldData.value" ot-bind-text></textarea>'
+    template: '<cf-multi-line-editor />'
   });
 
   registerWidget('markdown',{
