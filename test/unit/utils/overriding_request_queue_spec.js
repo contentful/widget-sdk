@@ -4,6 +4,7 @@ describe('overridingRequestQueue', function () {
   beforeEach(function () {
     module('contentful');
     this.createQueue = this.$inject('overridingRequestQueue');
+    this.$q = this.$inject('$q');
   });
 
   pit('handles single request', function () {
@@ -28,19 +29,33 @@ describe('overridingRequestQueue', function () {
   });
 
   pit('resolves with a result of the last call', function () {
-    var $q = this.$inject('$q');
-    var d = sinon.stub();
-    d.onFirstCall().returns($q.resolve('this result value will be lost'));
-    d.onSecondCall().returns($q.resolve(true));
+    var requestFn = sinon.stub();
+    requestFn.onFirstCall().returns(this.$q.resolve('this result value will be lost'));
+    requestFn.onSecondCall().returns(this.$q.resolve(true));
 
-    var requestFn = sinon.spy(function () { return d(); });
     var request = this.createQueue(requestFn);
-    var promise = request();
-    request();
+    var promise = request(); request();
 
     return promise.then(function (result) {
       expect(result).toBe(true);
       sinon.assert.calledTwice(requestFn);
+    });
+  });
+
+  pit('rejects if call ends up with an error', function () {
+    var requestFn = sinon.stub();
+    requestFn.onFirstCall().returns(this.$q.reject('boom'));
+    requestFn.onSecondCall().returns(this.$q.reject('kaboom'));
+    requestFn.onThirdCall().returns(this.$q.resolve(true));
+
+    var request = this.createQueue(requestFn);
+    var promise = request(); request(); request();
+
+    return promise.then(function () {
+      throw new Error('Should not end up here, rejecting first!');
+    }, function (err) {
+      expect(err).toBe('boom');
+      sinon.assert.calledThrice(requestFn);
     });
   });
 
