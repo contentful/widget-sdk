@@ -7,6 +7,10 @@
 angular.module('cf.app', ['ui.router', 'cf.ui']);
 
 
+/**
+ * @ngdoc module
+ * @name contentful
+ */
 angular.module('contentful', [
   'contentful/environment',
   'cf.libs',
