@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('cf.app')
-.directive('cfCheckboxWidget', [function () {
+.directive('cfCheckboxEditor', [function () {
   return {
     restrict: 'E',
     scope: {},
-    template: JST.cf_checkbox_widget(),
+    template: JST.cf_checkbox_editor(),
     require: '^cfWidgetApi',
     link: function (scope, elem, attrs, widgetApi) {
       var field = widgetApi.field;

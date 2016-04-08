@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfCheckboxWidget directive', function () {
+describe('cfCheckboxEditor directive', function () {
   beforeEach(function () {
     module('cf.app');
     this.fieldApi = {
@@ -10,14 +10,14 @@ describe('cfCheckboxWidget directive', function () {
       onDisabledStatusChanged: sinon.stub(),
       itemValidations: [{in: ['A', 'B', 'C']}]
     };
-    this.el = this.$compile('<cf-checkbox-widget />', {}, {
+    this.el = this.$compile('<cf-checkbox-editor />', {}, {
       cfWidgetApi: {field: this.fieldApi}
     });
   });
 
   it('shows warning when there are no item validations', function () {
     this.fieldApi.itemValidations = undefined;
-    var el = this.$compile('<cf-checkbox-widget />', {}, {
+    var el = this.$compile('<cf-checkbox-editor />', {}, {
       cfWidgetApi: {field: this.fieldApi}
     });
     var alert = el.find('[role=alert]');

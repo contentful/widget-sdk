@@ -182,7 +182,7 @@ angular.module('contentful')
     fieldTypes: ['Symbols'],
     name: 'Checkbox',
     icon: 'checkbox',
-    template: '<cf-checkbox-widget />'
+    template: '<cf-checkbox-editor />'
   });
 
   registerWidget('fileEditor',{
