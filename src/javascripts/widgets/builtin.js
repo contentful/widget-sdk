@@ -178,6 +178,13 @@ angular.module('contentful')
     template: '<input cf-list-identity-fix class="form-control" ng-disabled="isDisabled(field, locale)" ng-list cf-empty-list ng-model="fieldData.value" ot-bind-ng-model type="text">'
   });
 
+  registerWidget('checkbox', {
+    fieldTypes: ['Symbols'],
+    name: 'Checkbox',
+    icon: 'checkbox',
+    template: '<cf-checkbox-editor />'
+  });
+
   registerWidget('fileEditor',{
     fieldTypes: ['File'],
     name: 'File',

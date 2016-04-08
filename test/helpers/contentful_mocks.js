@@ -1,6 +1,12 @@
 'use strict';
 
 
+angular.module('cf.ui')
+// We do not load the file containing the icons. Therefore we need to
+// create a dummy service.
+.constant('icons', {});
+
+
 /**
  * @ngdoc module
  * @name contentful/mocks
