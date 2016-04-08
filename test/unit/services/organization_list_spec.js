@@ -58,24 +58,4 @@ describe('Orgniaztion list', function () {
       expect(OrganizationList.getName('123')).toEqual('');
     });
   });
-
-  describe('#getWithOnTop', function () {
-    var last = { sys: { id: '3' } };
-    var organizations = [{ sys: { id: '1' } }, { sys: { id: '2' } }, last];
-
-    beforeEach(function () {
-      OrganizationList.resetWithUser(makeUser(organizations));
-    });
-
-    it('returns copy with selected organization on top', function () {
-      var organizations = OrganizationList.getWithOnTop(last.sys.id);
-      expect(organizations[0]).toBe(last);
-    });
-
-    it('returns shallow copy', function () {
-      var copy = OrganizationList.getWithOnTop('3');
-      expect(copy === organizations).toBe(false);
-      expect(copy[0] === last).toBe(true);
-    });
-  });
 });

@@ -17,8 +17,7 @@ angular.module('contentful').factory('OrganizationList', function () {
     isEmpty: isEmpty,
     get: get,
     getName: getName,
-    getAll: getAll,
-    getWithOnTop: getWithOnTop
+    getAll: getAll
   };
 
   /**
@@ -78,43 +77,5 @@ angular.module('contentful').factory('OrganizationList', function () {
    */
   function getAll() {
     return organizations;
-  }
-
-  /**
-   * @ngdoc method
-   * @name OrganizationList#getCopy
-   * @returns {object[]}
-   * @description
-   * Returns shallow copy of the organization array.
-   */
-  function getCopy() {
-    return _.clone(organizations);
-  }
-
-  /**
-   * @ngdoc method
-   * @name OrganizationList#getWithOnTop
-   * @param {string} id
-   * @returns {object[]}
-   * @description
-   * Returns shallow copy of the organization array.
-   * If list contains organization with the provided id,
-   * then it'll be the first one in returned array.
-   */
-  function getWithOnTop(id) {
-    var organizations = getCopy();
-    if (id) {
-      organizations.sort(idComparator(id));
-    }
-
-    return organizations;
-  }
-
-  function idComparator(id) {
-    return function (a, b) {
-      if (a.sys.id === id) { return -1; }
-      if (b.sys.id === id) { return  1; }
-      return 0;
-    };
   }
 });
