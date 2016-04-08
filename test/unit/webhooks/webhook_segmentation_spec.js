@@ -108,16 +108,16 @@ describe('Webhook Segmentation directive', function () {
   describe('wildcard selections', function () {
     it('selects all horizontal checkboxes for entity wildcard, stores selection', function () {
       var inputs = function () {
-        return this.element.find('tbody tr:first-child input');
+        return this.element.find('tbody tr:nth-child(2) input');
       }.bind(this);
 
-      this.compile(['ContentType.save']);
+      this.compile(['Entry.save']);
       inputs().first().prop('checked', true).click();
       this.$apply();
 
       inputs().each(function () { expect(this.checked).toBe(true); });
-      expect(this.scope.selection['ContentType.*']).toBe(true);
-      expect(this.scope.selection['ContentType.save']).toBe(true);
+      expect(this.scope.selection['Entry.*']).toBe(true);
+      expect(this.scope.selection['Entry.save']).toBe(true);
     });
 
     it('selects all vertical checkboxes for action wildcard, stores selection', function () {
