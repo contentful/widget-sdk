@@ -20,7 +20,7 @@ angular.module('contentful/app', ['contentful'])
   'authentication', 'clientAdapter', 'ShareJS', 'uiVersionSwitcher',
   function(authentication, clientAdapter, ShareJS, uiVersionSwitcher) {
   authentication.login();
-  clientAdapter.token = authentication.token;
+  clientAdapter.setToken(authentication.token);
   ShareJS.connect(authentication.token);
   uiVersionSwitcher.checkIfVersionShouldBeSwitched();
 }]);

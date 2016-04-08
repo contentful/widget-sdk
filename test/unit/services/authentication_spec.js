@@ -6,10 +6,6 @@ describe('Authentication service', function () {
       environment.settings.base_host = 'basehost';
       environment.settings.marketing_url = 'marketinghost';
 
-      $provide.constant('privateContentfulClient', {
-        QueryLinkResolver: { resolveQueryLinks: sinon.stub() }
-      });
-
       $provide.value('$window', { addEventListener: sinon.stub() });
       $provide.value('$document', [{ label: '' }]);
     });
@@ -394,7 +390,7 @@ describe('Authentication service', function () {
     var tokenLookup;
     beforeEach(function () {
       tokenLookup = {token: 'lookup'};
-      this.QueryLinkResolver.resolveQueryLinks.returns(['resolvedLink']);
+      this.QueryLinkResolver.resolveQueryLinks = sinon.stub().returns(['resolvedLink']);
       this.authentication.setTokenLookup(tokenLookup);
     });
 
