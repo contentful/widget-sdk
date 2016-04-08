@@ -1,19 +1,29 @@
 'use strict';
 
-angular.module('contentful')
+angular.module('cf.app')
 /**
  * @ngdoc directive
- * @name cfFormWidget
+ * @module cf.app
+ * @name cfEntityField
  *
- * @property {API.Field}    field
- * @property {API.Locale[]} locales
- * @property {string}       showHelpText
- * @property {string}       helpText
+ * @property {API.Field}    $scope.field
+ * @property {API.Locale[]} $scope.locales
+ * @property {string}       $scope.showHelpText
+ * @property {string}       $scope.helpText
+ *
+ * @scope.requires {object} errorPath
+ * Maps internal field IDs to lists of internal locale codes that have
+ * errors. Provided by the `Entry/AssetEditorController`.
+ *
+ * @scope.requires {object} widget
+ * Has field data and specifications to render the control. Provided by
+ * `FromWidgetsController`.
  */
-.directive('cfFormWidget', ['$injector', function ($injector) {
+.directive('cfEntityField', ['$injector', function ($injector) {
   var TheLocaleStore = $injector.get('TheLocaleStore');
   return {
     restrict: 'E',
+    template: JST.cf_entity_field(),
     controller: ['$scope', function($scope) {
       $scope.hasInitialFocus = $scope.$index === 0 &&
                                $scope.widget.isFocusable;

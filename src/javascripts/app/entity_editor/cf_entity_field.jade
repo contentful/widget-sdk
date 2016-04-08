@@ -1,0 +1,56 @@
+mixin editor-field-collaborators
+  ul.entity-editor__field-collaborators
+    li(
+      cf-user
+      ng-repeat="link in fieldLocale.collaborators track by link.sys.id"
+      link="link" as="presentUser"
+      tooltip="{{presentUser| userNameDisplay:user}}")
+      img(ng-src="{{presentUser.data.avatarUrl}}")
+
+mixin field-permission-info
+  div.entity-editor__no-permission-info(
+    data-test-id="field-locale-permissions"
+    ng-show="otDoc.state.editable && isDisabled(field, locale)"
+    tooltip="You don't have a permission to edit this field. To change your permission setting contact your space administrator."
+    tooltip-placement="left")
+    cf-icon(name="lock")
+    | This field is locked
+
+mixin field-locale-errors
+  div.form-box-error(ng-if="fieldLocale.errors")
+    ul
+      li(ng-repeat="error in fieldLocale.errors")
+        | {{ error.message }}
+
+div.entity-editor__field-group(
+  data-field-id="{{field.id}}"
+  data-field-api-name="{{field.apiName}}"
+  data-field-type="{{field.type}}"
+  data-field-items-type="{{field.items.type}}")
+
+  div.entity-editor__field-locale(
+    ng-repeat="locale in locales track by locale.internal_code"
+    ng-controller="FieldLocaleController as fieldLocale"
+    data-locale="{{locale.code}}")
+
+    div.entity-editor__field-heading
+      label(data-test-id="field-locale-label")
+        | {{ field.name }}
+        span(ng-if="field.required") &#32;(required)
+        span(ng-if="locales.length > 1")
+          | &#32;&ndash; {{locale.name}}
+      +field-permission-info
+
+    div.entity-editor__control-group
+      cf-widget-renderer.entity-editor__control(
+        cf-focus-ot-input="hasInitialFocus"
+        ot-path="['fields', field.id, locale.internal_code]"
+        cf-field-editor="entry.data.fields[field.id][locale.internal_code]"
+        cf-widget-api)
+      +editor-field-collaborators
+    +field-locale-errors
+
+  div.entity-editor__field-hint(
+    ng-if="showHelpText"
+    data-test-id="field-hint")
+    | {{helpText}}
