@@ -29,11 +29,11 @@ angular.module('cf.app')
         _.forEach(options, function (option) {
           option.selected = values && values.indexOf(option.value) > -1;
         });
-      }, true);
+      });
 
       var removeDisabledStatusListener = field.onDisabledStatusChanged(function (disabled) {
         scope.isDisabled = disabled;
-      }, true);
+      });
 
       scope.$on('destroy', function () {
         removeChangeListener();

@@ -55,8 +55,8 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         var stopPreview = startLivePreview(field.getValue, updatePreview);
         editor.events.onChange(field.setString);
 
-        var detachValueHandler = field.onValueChanged(handleFieldChange, true);
-        var detachStateHandler = field.onDisabledStatusChanged(handleStateChange, true);
+        var detachValueHandler = field.onValueChanged(handleFieldChange);
+        var detachStateHandler = field.onDisabledStatusChanged(handleStateChange);
 
         scope.isReady = true;
 

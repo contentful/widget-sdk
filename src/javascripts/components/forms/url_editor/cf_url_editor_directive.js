@@ -22,10 +22,10 @@ angular.module('contentful')
       var detachOnValueChangedHandler = field.onValueChanged(function (val) {
         // Might be `null` or `undefined` when value is not present
         updateInput(val || '');
-      }, true);
+      });
 
       // call handler when the disabled status of the field changes
-      var detachOnFieldDisabledHandler = field.onDisabledStatusChanged(updateDisabledStatus, true);
+      var detachOnFieldDisabledHandler = field.onDisabledStatusChanged(updateDisabledStatus);
 
       // remove attached handlers when element is evicted from dom
       scope.$on('$destroy', detachOnValueChangedHandler);
