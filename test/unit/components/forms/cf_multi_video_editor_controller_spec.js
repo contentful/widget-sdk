@@ -1,44 +1,30 @@
 'use strict';
 
 describe('Multi Video Editor Controller', function() {
-  var scope, multiVideoEditorController, ShareJSMock,
-      callbackWithApplyDeferred, $rootScope;
+  var scope, multiVideoEditorController;
 
   afterEach(function () {
-    scope = multiVideoEditorController = ShareJSMock =
-      callbackWithApplyDeferred = $rootScope = null;
+    scope = multiVideoEditorController = null;
   });
 
   beforeEach(function() {
     module('contentful/test');
-    module(function($provide){
-      ShareJSMock = {};
-      $provide.value('ShareJS', ShareJSMock);
-    });
 
-    inject(function ($controller, $injector, $q) {
-      var providerVideoControllerCallbackNames = [
-        'prepareSearch',
-        'processSearchResults',
-        'customAttrsForPlayerInSearchDialog',
-        'customAttrsForPlayer',
-        'isWidgetReady',
-        'lookupVideoInProvider'];
+    var $rootScope = this.$inject('$rootScope');
+    var $controller = this.$inject('$controller');
 
-      var callbackWithApplyStub = sinon.stub();
+    scope = $rootScope.$new();
+    scope.providerVideoEditorController = {
+      widgetPlayerDirective: 'cf-widget-player-directive'
+    };
 
-      $rootScope = $injector.get('$rootScope');
+    this.fieldApi = {
+      onValueChanged: sinon.stub().returns(_.noop)
+    };
 
-      callbackWithApplyDeferred     = $q.defer();
-      callbackWithApplyStub.promise = callbackWithApplyDeferred.promise;
-      $q.callbackWithApply          = sinon.stub().returns(callbackWithApplyStub);
-
-      scope                               = $rootScope.$new();
-      scope.fieldData                     = {};
-      scope.providerVideoEditorController = jasmine.createSpyObj('providerVideoEditorControllerMock', providerVideoControllerCallbackNames);
-      scope.providerVideoEditorController.widgetPlayerDirective = 'cf-widget-player-directive';
-
-      multiVideoEditorController = $controller('cfMultiVideoEditorController', {$scope: scope});
+    multiVideoEditorController = $controller('cfMultiVideoEditorController', {
+      $scope: scope,
+      widgetApi: {field: this.fieldApi}
     });
   });
 
@@ -47,38 +33,17 @@ describe('Multi Video Editor Controller', function() {
   }));
 
   describe('multiVideoEditor scope properties', function() {
-    describe('search config', function() {
-      it('sets the "widgetPlayerDirective" property to the value of the "$attrs.widgetPlayerDirective"', function() {
-        expect(scope.multiVideoEditor.searchConfig.widgetPlayerDirective).toEqual('cf-widget-player-directive');
+    describe('#onSelection search config method', function() {
+      beforeEach(function() {
+        this.fieldApi.insertValue = sinon.stub().resolves();
       });
 
-      it('sets the #prepareSearch callback method to the #prepareSearch method on the provider editor controller', function() {
-        expect(scope.multiVideoEditor.searchConfig.prepareSearch).toEqual(scope.providerVideoEditorController.prepareSearch);
-      });
-
-      it('sets the #processSearchResults callback method to the #processSearchResults method on the provider editor controller', function() {
-        expect(scope.multiVideoEditor.searchConfig.processSearchResults).toEqual(scope.providerVideoEditorController.processSearchResults);
-      });
-
-      it('sets the #customAttrsForPlayer callback method to the #customAttrsForPlayerInSearchDialog method on the provider editor controller', function() {
-        expect(scope.multiVideoEditor.searchConfig.customAttrsForPlayer).toEqual(scope.providerVideoEditorController.customAttrsForPlayerInSearchDialog);
-      });
-
-      describe('#onSelection callback method', function() {
-        var asset1, asset2;
-        beforeEach(function() {
-          asset1 = {id: 'other-selection'};
-          asset2 = {id: 'selection-id'};
-
-          spyOn(multiVideoEditorController, 'storeAsset');
-          scope.multiVideoEditor.searchConfig.onSelection([asset1, asset2]);
-        });
-
-        it('calls the #storeAsset method with each one of the selected assets', function() {
-          expect(multiVideoEditorController.storeAsset.calls.count()).toEqual(2);
-          expect(multiVideoEditorController.storeAsset.calls.argsFor(0)).toEqual([{assetId: 'other-selection'}]);
-          expect(multiVideoEditorController.storeAsset.calls.argsFor(1)).toEqual([{assetId: 'selection-id'}]);
-        });
+      it('inserts each selected asset', function() {
+        var selection = [{id: 'A'}, {id: 'B'}];
+        scope.multiVideoEditor.searchConfig.onSelection(selection);
+        sinon.assert.callCount(this.fieldApi.insertValue, 2);
+        sinon.assert.calledWithExactly(this.fieldApi.insertValue, 0, 'A');
+        sinon.assert.calledWithExactly(this.fieldApi.insertValue, 0, 'B');
       });
     });
 
@@ -88,79 +53,49 @@ describe('Multi Video Editor Controller', function() {
   });
 
   describe('#customAttrsForPlayer', function() {
-    var customAttrs;
     beforeEach(function() {
-      scope.providerVideoEditorController.customAttrsForPlayer.and.returnValue('attrs');
-      customAttrs = multiVideoEditorController.customAttrsForPlayer('asset');
+      scope.providerVideoEditorController.customAttrsForPlayer = sinon.stub().returns('attrs');
     });
 
     it('calls the #customAttrsForPlayer callback method on the provider editor controller', function() {
-      expect(scope.providerVideoEditorController.customAttrsForPlayer).toHaveBeenCalledWith('asset');
+      multiVideoEditorController.customAttrsForPlayer('asset');
+      sinon.assert.calledWithExactly(
+        scope.providerVideoEditorController.customAttrsForPlayer,
+        'asset'
+      );
     });
 
     it('returns the value returned from the callback', function() {
+      var customAttrs = multiVideoEditorController.customAttrsForPlayer('asset');
       expect(customAttrs).toEqual('attrs');
     });
   });
 
   describe('#isVideoWidgetReady', function() {
-    var isReady;
     beforeEach(function() {
-      scope.providerVideoEditorController.isWidgetReady.and.returnValue(true);
-      isReady = multiVideoEditorController.isVideoWidgetReady();
+      scope.providerVideoEditorController.isWidgetReady = sinon.stub().returns('READY');
     });
 
     it('calls the #isWidgetReady callback method on the provider editor controller', function() {
-      expect(scope.providerVideoEditorController.isWidgetReady).toHaveBeenCalled();
+      multiVideoEditorController.isVideoWidgetReady();
+      sinon.assert.calledOnce(scope.providerVideoEditorController.isWidgetReady);
     });
 
     it('returns the value returned from the callback', function() {
-      expect(isReady).toBeTruthy();
+      var isReady = multiVideoEditorController.isVideoWidgetReady();
+      expect(isReady).toBe('READY');
     });
   });
 
   describe('#storeAsset', function() {
-    var insertOpMock;
     beforeEach(function() {
-      ShareJSMock.mkpathAndSetValue = sinon.stub().resolves();
-      ShareJSMock.peek = sinon.stub();
-      insertOpMock = jasmine.createSpyObj('insertOpMock', ['insert']);
-      scope.otDoc  = {
-        doc: jasmine.createSpyObj('otDocMock', ['at'])
-      };
-      scope.otDoc.doc.at.and.returnValue(insertOpMock);
-
-      scope.otPath = 'ot-path';
+      this.fieldApi.insertValue = sinon.stub().resolves();
     });
 
-    describe('when there are already items in the document', function() {
-      beforeEach(function() {
-        ShareJSMock.peek.returns([]);
-        multiVideoEditorController.storeAsset({assetId: 'asset-id'});
-      });
-
-      it('finds the path in the document', function() {
-        expect(scope.otDoc.doc.at).toHaveBeenCalledWith(scope.otPath);
-      });
-
-      it('prepends the new asset', function() {
-        expect(insertOpMock.insert).toHaveBeenCalledWith(0, 'asset-id', jasmine.any(Function));
-      });
-    });
-
-    describe('when there are no items in the document', function() {
-      beforeEach(function() {
-        ShareJSMock.peek.returns();
-        multiVideoEditorController.storeAsset({assetId: 'asset-id'});
-      });
-
-      it('creates a path in the document', function() {
-        sinon.assert.calledOnce(ShareJSMock.mkpathAndSetValue);
-        sinon.assert.calledWith(
-          ShareJSMock.mkpathAndSetValue,
-          scope.otDoc.doc, scope.otPath, ['asset-id']
-        );
-      });
+    it('prepends the new asset', function() {
+      multiVideoEditorController.storeAsset({assetId: 'asset-id'});
+      sinon.assert.calledOnce(this.fieldApi.insertValue);
+      sinon.assert.calledWithExactly(this.fieldApi.insertValue, 0, 'asset-id');
     });
 
     describe('when the asset is successfully saved', function() {
@@ -185,17 +120,20 @@ describe('Multi Video Editor Controller', function() {
   });
 
   describe('#lookupAsset', function() {
-    var asset;
     beforeEach(function() {
-      scope.providerVideoEditorController.lookupVideoInProvider.and.returnValue('asset');
-      asset = multiVideoEditorController.lookupAsset('asset-1');
+      scope.providerVideoEditorController.lookupVideoInProvider = sinon.stub().returns('asset');
     });
 
     it('calls the #lookupVideoInProvider callback method on the provider editor controller', function() {
-      expect(scope.providerVideoEditorController.lookupVideoInProvider).toHaveBeenCalledWith('asset-1');
+      multiVideoEditorController.lookupAsset('asset-1');
+      sinon.assert.calledWithExactly(
+        scope.providerVideoEditorController.lookupVideoInProvider,
+        'asset-1'
+      );
     });
 
     it('returns the value returned from the callback', function() {
+      var asset = multiVideoEditorController.lookupAsset('asset-1');
       expect(asset).toEqual('asset');
     });
   });
