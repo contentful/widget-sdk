@@ -10,7 +10,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   var $state           = $injector.get('$state');
   var accessChecker    = $injector.get('accessChecker');
   var closeState       = $injector.get('navigation/closeState');
-  var sdkInfoProvider  = $injector.get('sdkInfoProvider');
+  var sdkInfoSupplier  = $injector.get('sdkInfoSupplier');
   var analytics        = $injector.get('analytics');
 
   var notify = notifier(function getTitle () {
@@ -67,7 +67,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
 
   var documentationList = ['documentation', 'gettingStarted', 'deliveryApi'];
 
-  $scope.languages = sdkInfoProvider.get(documentationList);
+  $scope.languages = sdkInfoSupplier.get(documentationList);
 
   $scope.selectLanguage = function (language) {
     $scope.selectedLanguage = language;

@@ -2,12 +2,12 @@
 
 /**
  * @ngdoc service
- * @name sdkInfoProvider
+ * @name sdkInfoSupplier
  * @description
  * Provides information about SDKs and language specific libraries
  */
 angular.module('contentful')
-.factory('sdkInfoProvider', function () {
+.factory('sdkInfoSupplier', function () {
 
   var languageData = [
     {

@@ -21,7 +21,7 @@ angular.module('contentful')
   var accessChecker   = $injector.get('accessChecker');
   var $state          = $injector.get('$state');
   var analytics       = $injector.get('analytics');
-  var sdkInfoProvider = $injector.get('sdkInfoProvider');
+  var sdkInfoSupplier = $injector.get('sdkInfoSupplier');
 
   var visibility = accessChecker.getSectionVisibility();
 
@@ -101,7 +101,7 @@ angular.module('contentful')
   };
 
   var documentationList = ['documentation', 'apidemo', 'deliveryApi'];
-  controller.languageData = sdkInfoProvider.get(documentationList);
+  controller.languageData = sdkInfoSupplier.get(documentationList);
   controller.trackClickedButton = function(name) {
     var eventName = 'Clicked the \'' + name + '\' button from Learn';
     analytics.track(eventName);
