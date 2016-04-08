@@ -13,7 +13,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var authorization      = $injector.get('authorization');
   var modalDialog        = $injector.get('modalDialog');
   var presence           = $injector.get('presence');
-  var enforcements       = $injector.get('enforcements');
   var revision           = $injector.get('revision');
   var ReloadNotification = $injector.get('ReloadNotification');
   var OrganizationList   = $injector.get('OrganizationList');
@@ -77,7 +76,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     if (!_.isObject(user)) { return; }
 
     $scope.user = user;
-    enforcements.setUser(user);
     OrganizationList.resetWithUser(user);
 
     if (features.allowAnalytics(user)) {

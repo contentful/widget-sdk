@@ -325,8 +325,10 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   }
 
   function isAdminOrOwner() {
-    var isSpaceAdmin = spaceContext.getData('spaceMembership.admin', false);
-    return isSpaceAdmin || _.contains(['owner', 'admin'], getRoleInOrganization());
+    var isSpaceAdmin   = spaceContext.getData('spaceMembership.admin', false);
+    var organizationId = spaceContext.getData('organization.sys.id');
+
+    return isSpaceAdmin || OrganizationList.isAdminOrOwner(organizationId);
   }
 
   /**
@@ -431,18 +433,6 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
 
   function getReasonsDenied(action, entity) {
     return authorization.spaceContext.reasonsDenied(action, entity);
-  }
-
-  function getRoleInOrganization() {
-    var organizationId = spaceContext.getData('organization.sys.id');
-    var memberships    = spaceContext.getData('spaceMembership.user.organizationMemberships', []);
-    var found          = null;
-
-    if (organizationId && memberships.length > 0) {
-      found = _.findWhere(memberships, {organization: {sys: {id: organizationId }}});
-    }
-
-    return dotty.get(found, 'role');
   }
 
   function getContentTypeIdFor(entry) {

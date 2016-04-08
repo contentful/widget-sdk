@@ -1,75 +1,55 @@
 'use strict';
 
 describe('TrialWatcher', function () {
-  var $rootScope, spaceContext, authentication, $q;
-  var broadcastStub, momentDiffStub, momentIsAfterStub, openDialogStub;
-
-  afterEach(function () {
-    $rootScope = spaceContext = authentication = $q =
-      broadcastStub = momentDiffStub = momentIsAfterStub =
-      openDialogStub = null;
-  });
-
-  function makeSpace(organization) {
-    organization.sys = {id: '42'};
-    return {
-      data: {
-        organization: organization
-      }
-    };
-  }
-
-  function makeScopeUserOwnScopeSpaceOrganization () {
-    makeUserOwnOrganization(authentication.tokenLookup.sys.createdBy, spaceContext.space.data.organization);
-  }
-
-  function makeUserOwnOrganization (user, organization) {
-    user.organizationMemberships = [{
-      organization: organization,
-      role: 'owner'
-    }];
-  }
-
-  function trialHoursLeft( hours ) {
-    momentDiffStub.returns(Math.floor(hours));
-    momentIsAfterStub.returns( hours !== 0 );
-  }
+  var broadcastStub, openDialogStub;
 
   beforeEach(function () {
-    openDialogStub = sinon.spy(function() {
-      return {promise: $q.defer().promise};
-    });
-
-    module('contentful/test', function ($provide) {
-      $provide.value('modalDialog', {
-        open: openDialogStub
-      });
-    });
+    module('contentful/test');
 
     var TrialWatcher = this.$inject('TrialWatcher');
     var moment = this.$inject('moment');
-
-    $rootScope = this.$inject('$rootScope');
-    spaceContext = this.$inject('spaceContext');
-    authentication = this.$inject('authentication');
-    $q = this.$inject('$q');
+    var OrganizationList = this.$inject('OrganizationList');
+    var spaceContext = this.$inject('spaceContext');
+    var $q = this.$inject('$q');
+    var $rootScope = this.$inject('$rootScope');
+    var modalDialog = this.$inject('modalDialog');
 
     broadcastStub = sinon.stub($rootScope, '$broadcast').returns({});
-    moment.fn.diff = momentDiffStub = sinon.stub();
-    moment.fn.isAfter = momentIsAfterStub = sinon.stub();
-    authentication.tokenLookup = {sys: {createdBy: {organizationMemberships: []}}};
+    openDialogStub = modalDialog.open = sinon.spy(function() {
+      return {promise: $q.defer().promise};
+    });
 
+    var membership = {organization: {sys: {id: 42}}};
+    OrganizationList.resetWithUser({organizationMemberships: [membership]});
     TrialWatcher.init();
+
+    this.setupOrganization = function (extension) {
+      _.extend(membership.organization, extension);
+      spaceContext.space = {
+        getId: _.constant('some-space-id'),
+        data: {organization: membership.organization}
+      };
+    };
+
+    this.makeOwner = function () {
+      membership.role = 'owner';
+    };
+
+    this.trialHoursLeft = function (hours) {
+      moment.fn.diff = sinon.stub().returns(Math.floor(hours));
+      moment.fn.isAfter = sinon.stub().returns(hours !== 0);
+    };
   });
 
   afterEach(function () {
     broadcastStub.restore();
+    broadcastStub = openDialogStub = null;
   });
 
   describe('without trial user', function () {
     beforeEach(function () {
-      spaceContext.space =  makeSpace({subscriptionState: 'testState'});
-      $rootScope.$apply();
+      this.setupOrganization({subscriptionState: 'testState'});
+      this.$apply();
     });
 
     describe('removal of old notification (e.g. after switch orga)', function () {
@@ -94,8 +74,8 @@ describe('TrialWatcher', function () {
     });
 
     describe('for a trial subscription', function () {
-      beforeEach(function(){
-        spaceContext.space = makeSpace({
+      beforeEach(function (){
+        this.setupOrganization({
           subscriptionState: 'trial',
           trialPeriodEndsAt: '2013-12-13T13:28:44Z',
           name: 'TEST_ORGA_NAME'
@@ -103,14 +83,14 @@ describe('TrialWatcher', function () {
       });
 
       describe('already ended', function () {
-        beforeEach(function() {
-          trialHoursLeft(0);
+        beforeEach(function () {
+          this.trialHoursLeft(0);
         });
 
         describe('for user owning the organization', function () {
-          beforeEach(function() {
-            makeScopeUserOwnScopeSpaceOrganization();
-            $rootScope.$apply();
+          beforeEach(function () {
+            this.makeOwner();
+            this.$apply();
           });
 
           itShowsAMessage(/Your trial has ended.*TEST_ORGA_NAME organization/);
@@ -125,7 +105,7 @@ describe('TrialWatcher', function () {
 
         describe('for user not owning the organization', function () {
           beforeEach(function () {
-            $rootScope.$apply();
+            this.$apply();
           });
 
           itShowsAMessage(/Your trial has ended.*TEST_ORGA_NAME organization/);
@@ -141,9 +121,9 @@ describe('TrialWatcher', function () {
 
       describe('ending in less than an hour', function () {
         beforeEach(function () {
-          makeScopeUserOwnScopeSpaceOrganization();
-          trialHoursLeft(0.2);
-          $rootScope.$apply();
+          this.makeOwner();
+          this.trialHoursLeft(0.2);
+          this.$apply();
         });
 
         itShowsAMessage(/organization TEST_ORGA_NAME/);
@@ -158,9 +138,9 @@ describe('TrialWatcher', function () {
 
       describe('ending in less than a day', function () {
         beforeEach(function () {
-          makeScopeUserOwnScopeSpaceOrganization();
-          trialHoursLeft(20);
-          $rootScope.$apply();
+          this.makeOwner();
+          this.trialHoursLeft(20);
+          this.$apply();
         });
 
         itShowsAMessage(/organization TEST_ORGA_NAME/);
@@ -176,9 +156,9 @@ describe('TrialWatcher', function () {
 
       describe('ending in a few days', function () {
         beforeEach(function () {
-          makeScopeUserOwnScopeSpaceOrganization();
-          trialHoursLeft(76);
-          $rootScope.$apply();
+          this.makeOwner();
+          this.trialHoursLeft(76);
+          this.$apply();
         });
 
         itShowsAnActionMessage();
@@ -190,7 +170,7 @@ describe('TrialWatcher', function () {
 
       describe('no action', function () {
         beforeEach(function () {
-          $rootScope.$apply();
+          this.$apply();
         });
 
         itDoesNotShowAnActionMessage();
@@ -201,20 +181,20 @@ describe('TrialWatcher', function () {
     });
 
     describe('for a free subscription', function () {
-      beforeEach(function(){
-        spaceContext.space = makeSpace({
+      beforeEach(function (){
+        this.setupOrganization({
           subscriptionState: 'active',
           subscriptionPlan: {
             paid: false,
             kind: 'default'
           }
         });
-    });
+      });
 
       describe('with an action', function () {
         beforeEach(function () {
-          makeScopeUserOwnScopeSpaceOrganization();
-          $rootScope.$apply();
+          this.makeOwner();
+          this.$apply();
         });
 
         itShowsAMessage('free version');
@@ -228,7 +208,7 @@ describe('TrialWatcher', function () {
 
       describe('no action', function () {
         beforeEach(function () {
-          $rootScope.$apply();
+          this.$apply();
         });
 
         itDoesNotShowAnActionMessage();

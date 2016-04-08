@@ -58,4 +58,28 @@ describe('Orgniaztion list', function () {
       expect(OrganizationList.getName('123')).toEqual('');
     });
   });
+
+  describe('#isAdminOrOwner', function () {
+    beforeEach(function () {
+      var user = makeUser([{sys: {id: '123'}}, {sys: {id: '456'}}]);
+      this.memberships = user.organizationMemberships;
+      OrganizationList.resetWithUser(user);
+    });
+
+    it('returns false for an unknown organization ID', function () {
+      expect(OrganizationList.isAdminOrOwner('unknown-id')).toBe(false);
+    });
+
+    it('returns false if user is a normal member', function () {
+      this.memberships[0].role = 'member';
+      expect(OrganizationList.isAdminOrOwner('123')).toBe(false);
+    });
+
+    it('returns true if is an owner or an admin', function () {
+      this.memberships[0].role = 'admin';
+      this.memberships[1].role = 'owner';
+      expect(OrganizationList.isAdminOrOwner('123')).toBe(true);
+      expect(OrganizationList.isAdminOrOwner('456')).toBe(true);
+    });
+  });
 });

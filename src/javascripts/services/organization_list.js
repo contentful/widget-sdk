@@ -10,6 +10,7 @@
  */
 angular.module('contentful').factory('OrganizationList', function () {
 
+  var currentUser = null;
   var organizations = [];
 
   return {
@@ -17,7 +18,8 @@ angular.module('contentful').factory('OrganizationList', function () {
     isEmpty: isEmpty,
     get: get,
     getName: getName,
-    getAll: getAll
+    getAll: getAll,
+    isAdminOrOwner: isAdminOrOwner
   };
 
   /**
@@ -27,8 +29,9 @@ angular.module('contentful').factory('OrganizationList', function () {
    * @description
    * Gets user object and initializes list with organizations.
    */
-  function resetWithUser(user) {
-    organizations = _.pluck(user.organizationMemberships, 'organization');
+  function resetWithUser (user) {
+    currentUser = user;
+    organizations = _.map(user.organizationMemberships, 'organization');
   }
 
   /**
@@ -38,7 +41,7 @@ angular.module('contentful').factory('OrganizationList', function () {
    * @description
    * Returns true if there are no organizations, false otherwise.
    */
-  function isEmpty() {
+  function isEmpty () {
     return organizations.length === 0;
   }
 
@@ -50,7 +53,7 @@ angular.module('contentful').factory('OrganizationList', function () {
    * @description
    * Gets organization by the provided ID.
    */
-  function get(id) {
+  function get (id) {
     var result = _.where(organizations, { sys: { id: id } });
     return result.length > 0 ? result[0] : null;
   }
@@ -63,9 +66,24 @@ angular.module('contentful').factory('OrganizationList', function () {
    * @description
    * Gets name of organization (by ID).
    */
-  function getName(id) {
+  function getName (id) {
     var organization = get(id);
     return organization ? organization.name : '';
+  }
+
+  /**
+   * @ngdoc method
+   * @name OrganizationList#isAdminOrOwner
+   * @param {string} id
+   * @returns {boolean}
+   * @description
+   * Checks if user is an owner or an admin of organization with a given ID.
+   */
+  function isAdminOrOwner (id) {
+    var memberships = currentUser.organizationMemberships;
+    var found = _.findWhere(memberships, {organization: {sys: {id: id }}});
+
+    return _.contains(['owner', 'admin'], dotty.get(found, 'role'));
   }
 
   /**
@@ -75,7 +93,7 @@ angular.module('contentful').factory('OrganizationList', function () {
    * @description
    * Gets all organizations as an array.
    */
-  function getAll() {
+  function getAll () {
     return organizations;
   }
 });

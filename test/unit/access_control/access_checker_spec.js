@@ -318,50 +318,39 @@ describe('Access Checker', function () {
   });
 
   describe('#canModifyRoles', function () {
-    function spaceData(hasFeature, role) {
-      return {data: {
+
+    function changeSpace(hasFeature, isSpaceAdmin) {
+      spaceContext.space = {data: {
         organization: {
           sys: {id: 'orgid'},
           subscriptionPlan: {limits: {features: {customRoles: hasFeature}}}
         },
-        spaceMembership: {user: {organizationMemberships: [
-          {organization: {sys: {id: 'orgid'}}, role: role}
-        ]}}
+        spaceMembership: {admin: isSpaceAdmin}
       }};
+      $rootScope.$apply();
     }
 
-    it('collects features on organization change', function () {
+    it('returns true when has feature and is admin of space, false otherwise', function () {
+      OrganizationList.resetWithUser({organizationMemberships: []});
+      changeSpace(false, true);
       expect(ac.canModifyRoles()).toBe(false);
-      spaceContext.space = spaceData(true, 'admin');
-      $rootScope.$apply();
+      changeSpace(true, false);
+      expect(ac.canModifyRoles()).toBe(false);
+      changeSpace(true, true);
       expect(ac.canModifyRoles()).toBe(true);
     });
 
-    it('returns false if is not an admin or owner', function () {
-      spaceContext.space = spaceData(true, 'member');
-      $rootScope.$apply();
-      expect(ac.canModifyRoles()).toBe(false);
-    });
-  });
+    it('returns true when has feature, is not admin of space but is admin or owner of organization', function () {
+      var user = {organizationMemberships: [
+        {organization: {sys: {id: 'org1id'}}, role: 'admin'},
+        {organization: {sys: {id: 'org2id'}}, role: 'member'},
+        {organization: {sys: {id: 'org3id'}}, role: 'owner'}
+      ]};
 
-  describe('#canModifyRoles', function () {
-    it('returns true when is admin of a space', function () {
+      OrganizationList.resetWithUser(user);
+      changeSpace(true, false);
+
       expect(ac.canModifyUsers()).toBe(false);
-      spaceContext.space = {data: {spaceMembership: {admin: true}}};
-      expect(ac.canModifyUsers()).toBe(true);
-    });
-
-    it('returns true when is admin or owner of organization, false otherwise', function () {
-      expect(ac.canModifyUsers()).toBe(false);
-      spaceContext.space = {data: {
-        organization: {sys: {id: null}},
-        spaceMembership: {user: {organizationMemberships: [
-          {organization: {sys: {id: 'org1id'}}, role: 'admin'},
-          {organization: {sys: {id: 'org2id'}}, role: 'member'},
-          {organization: {sys: {id: 'org3id'}}, role: 'owner'}
-        ]}}
-      }};
-
       t('org1id', true);
       t('org2id', false);
       t('org3id', true);
