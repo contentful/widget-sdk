@@ -24,8 +24,7 @@ header.workbench-header
         .l-form-controls
           cf-error-list.form-box-error(cf-error-path="['fields']")
       cf-form-widget.l-form-row(ng-repeat="widget in widgets"
-          data-field-id="{{field.id}}"
-          ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
+          data-field-id="{{field.id}}")
         label {{field.name}}
           sup(ng-show="field.required")  (required)
         .l-form-controls
@@ -37,15 +36,11 @@ header.workbench-header
               cf-field-editor="asset.data.fields[field.id][locale.internal_code]"
               ot-path="['fields', field.id, locale.internal_code]"
               cf-widget-api)
-            .form-widget__rights-info(
-              ng-show="otDoc.state.editable && isDisabled(field, locale)"
-              tooltip="You don't have a permission to edit this field. To change your permission setting contact your space administrator."
-              tooltip-placement="left")
-                .fa.fa-lock
+            +field-permission-info
             .locale-label(ng-show="locales.length > 1") {{locale.name}}
             +editor-field-collaborators
             cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.internal_code,'*']")
-          cf-error-list.form-box-error(cf-error-path="['fields', field.id]")
 
+          cf-error-list.form-box-error(cf-error-path="['fields', field.id]")
   .workbench-main__entity-sidebar
     +entity-sidebar(revert=false)

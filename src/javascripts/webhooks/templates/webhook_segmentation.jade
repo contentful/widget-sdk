@@ -28,7 +28,9 @@ table.webhook-segmentation__matrix(ng-if="!selection['*.*']")
         input(
           ng-if="availability[entity][action] && !isWildcarded(entity, action)"
           ng-model="selection[entity + '.' + action]" type="checkbox")
-        span(ng-if="!availability[entity][action]") &times;
+        input.x--unavailable-checkbox(
+          ng-if="!availability[entity][action]"
+          type="checkbox" disabled)
     tr
       td
       td.x--highlighted-cell.x--centered-cell.x--clickable-cell(

@@ -221,7 +221,7 @@ gulp.task('js/external-bundle', function () {
   return bundleBrowserify(createBrowserify());
 });
 
-gulp.task('js/app', ['git-revision', 'icons/prepare'], function () {
+gulp.task('js/app', ['git-revision', 'icons'], function () {
   return gulp.src(src.components.concat([src.svg.outputFile]))
     .pipe(gulpif('**/environment.js',
       replace({ regex: 'GULP_GIT_REVISION', replace: gitRevision})))
@@ -238,7 +238,11 @@ gulp.task('git-revision', function(cb){
   });
 });
 
-gulp.task('icons/cleanup', function () {
+/**
+ * Compress and strip SVG source files and put them into
+ * 'public/app/svg'.
+ */
+gulp.task('svg', function () {
   mkdirp(path.dirname(src.svg.outputDirectory));
   return spawnOnlyStderr('svgo', [
     '--enable', 'removeTitle',
@@ -247,7 +251,11 @@ gulp.task('icons/cleanup', function () {
   ]);
 });
 
-gulp.task('icons/prepare', ['icons/cleanup'], function () {
+/**
+ * Inline SVGs from 'public/app/svg' as angular service in
+ * 'public/app/contentful_icons.js'.
+ */
+gulp.task('icons', ['svg'], function () {
   mkdirp(path.dirname(src.svg.outputFile));
   return spawnOnlyStderr('./bin/prepare_svg.js', [
     src.svg.outputDirectory,
@@ -299,7 +307,8 @@ gulp.task('styleguide/stylesheets', function () {
 gulp.task('serve', ['styleguide'], function () {
   var builds = {};
   var taskId = 0;
-  watchTask(src['components'], ['js/app']);
+  var svgPattern = path.join(src.svg.sourceDirectory, '**/*.svg');
+  watchTask([src.components, svgPattern], ['js/app']);
   watchTask(src['templates'], ['templates']);
   watchTask('styleguide/**/*', ['styleguide']);
   watchTask(src['stylesheets'], ['stylesheets', 'styleguide']);

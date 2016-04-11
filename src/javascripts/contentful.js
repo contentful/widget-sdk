@@ -4,9 +4,13 @@
  * @ngdoc module
  * @name cf.app
  */
-angular.module('cf.app', ['ui.router']);
+angular.module('cf.app', ['ui.router', 'cf.ui']);
 
 
+/**
+ * @ngdoc module
+ * @name contentful
+ */
 angular.module('contentful', [
   'contentful/environment',
   'cf.libs',
@@ -23,8 +27,8 @@ angular.module('contentful', [
   'angular-bind-html-compile',
   'ncy-angular-breadcrumb'
 ])
-.config(['$locationProvider', 'clientAdapterProvider', 'authenticationProvider', 'environment', '$sceDelegateProvider', '$compileProvider', '$animateProvider',
-  function($locationProvider, clientAdapterProvider, authenticationProvider, environment, $sceDelegateProvider, $compileProvider, $animateProvider){
+.config(['$locationProvider', 'authenticationProvider', 'environment', '$sceDelegateProvider', '$compileProvider', '$animateProvider',
+  function($locationProvider, authenticationProvider, environment, $sceDelegateProvider, $compileProvider, $animateProvider){
   var env = environment.settings;
 
   $locationProvider.html5Mode({
@@ -33,7 +37,6 @@ angular.module('contentful', [
   }).hashPrefix('!');
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
   $sceDelegateProvider.resourceUrlWhitelist(env.resourceUrlWhiteListRegexp);
-  clientAdapterProvider.server('//'+env.api_host);
   $animateProvider.classNameFilter(/animate/);
 }])
 

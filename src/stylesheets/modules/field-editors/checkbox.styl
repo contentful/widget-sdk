@@ -1,0 +1,57 @@
+/*
+Checkbox
+
+Markup:
+.checkbox-editor__options
+  label.checkbox-editor__option
+    input(type="checkbox")
+    span
+      | GoPro Acquires Two Mobile Editing Companies in Software Push
+  label.checkbox-editor__option
+    input(type="checkbox")
+    span
+      | Google Unveils Neural Network with “Superhuman” Ability to Determine the Location
+  label.checkbox-editor__option
+    input(type="checkbox")
+    span
+      | Free Android app costs MWC attendees millions of Euros
+h3 Disabled
+.checkbox-editor__options.x--disabled
+  label.checkbox-editor__option
+    input(type="checkbox" disabled)
+    span
+      | GoPro Acquires Two Mobile Editing Companies in Software Push
+  label.checkbox-editor__option
+    input(type="checkbox" disabled)
+    span
+      | Google Unveils Neural Network with “Superhuman” Ability to Determine the Location
+  label.checkbox-editor__option
+    input(type="checkbox" disabled)
+    span
+      | Free Android app costs MWC attendees millions of Euros
+
+Styleguide field-editors.checkbox
+*/
+
+@require '/variables/colors'
+
+.checkbox-editor__options
+  &.x--disabled
+    padding: 0 0.5em
+    color: $colors.text-light
+    background: $colors.element-lightest
+    // Include option margins
+    overflow: hidden
+
+.checkbox-editor__option
+  display: block
+  cursor: pointer
+  line-height: $new-rhythm(1)
+  margin: $new-rhythm(0.25) 0
+  // Overide '.l-form-row' styles
+  padding: 0 !important
+
+  > input[type="checkbox"]
+    vertical-align: middle
+    // Overide user agent styles and fix alignment
+    margin: -3px 0.6em 0 0

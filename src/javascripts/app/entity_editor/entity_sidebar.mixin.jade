@@ -49,12 +49,12 @@ mixin entity-sidebar
               | {{ command.status }}
 
     .entity-sidebar__status-more
-      .entity-sidebar__save-status(ng-controller="SaveStatusController")
-        i.entity-sidebar__saving-spinner(ng-class="saveStatus == 'saving' && 'x--active'")
-        span.entity-sidebar__last-saved(ng-hide="saveStatus == 'saving'")
+      .entity-sidebar__save-status
+        i.entity-sidebar__saving-spinner(ng-class="otDoc.state.saving && 'x--active'")
+        span.entity-sidebar__last-saved(ng-hide="otDoc.state.saving")
           | Last saved&nbsp;
           time(datetime="{{entity.getUpdatedAt()}}" cf-relative-datetime)
-        span.entity-sidebar__saving(ng-show="saveStatus == 'saving'")
+        span.entity-sidebar__saving(ng-show="otDoc.state.saving")
           | Saving
       if attributes.revert
         button.entity-sidebar__revert.cfnext-btn-link(
