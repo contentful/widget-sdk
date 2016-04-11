@@ -23,7 +23,7 @@ describe('Webhook Editor directive', function () {
     this.$inject('WebhookRepository').getInstance = sinon.stub().returns(this.repo);
 
     this.compile = function (context, webhook) {
-      var data = {context: context || {}, webhook: webhook || {headers: [], topics: []}};
+      var data = {context: context || {}, webhook: webhook || {headers: [], topics: ['*.*']}};
       data.webhook.sys = data.webhook.sys || {};
       this.element = this.$compile('<div cf-ui-tab><cf-webhook-editor /></div>', data);
       this.scope = this.element.scope();
@@ -119,8 +119,11 @@ describe('Webhook Editor directive', function () {
     var SUCCESS_MSG = 'Webhook "test" saved successfully.';
 
     describe('Model handling', function () {
+      beforeEach(function () {
+        this.compile({isNew: false}, {name: 'test', url: 'http://test.com', topics: ['*.*']});
+      });
+
       it('nullifies username and password', function () {
-        this.compile({isNew: false});
         this.scope.webhook.httpBasicUsername = '';
         this.scope.webhook.httpBasicPassword = '';
         this.scope.$apply();
@@ -133,7 +136,6 @@ describe('Webhook Editor directive', function () {
       });
 
       it('leaves password as undefined when username is defined', function () {
-        this.compile({isNew: false});
         this.scope.webhook.httpBasicUsername = 'test';
         this.scope.$apply();
         var webhookPreSave = this.scope.webhook;
@@ -147,7 +149,7 @@ describe('Webhook Editor directive', function () {
 
     describe('New webhook', function () {
       beforeEach(function () {
-        this.compile({isNew: true}, {url: 'http://test.com', name: 'test'});
+        this.compile({isNew: true}, {name: 'test', url: 'http://test.com', topics: ['*.*']});
         var saved = _.cloneDeep(this.scope.webhook);
         saved.sys.id = 'whid';
         this.repo.save.resolves(saved);
@@ -172,7 +174,7 @@ describe('Webhook Editor directive', function () {
 
     describe('Existing webhook', function () {
       beforeEach(function () {
-        this.compile({isNew: false}, {sys: {id: 'whid'}, url: 'http://test.com', name: 'old'});
+        this.compile({isNew: false}, {sys: {id: 'whid'}, name: 'old', url: 'http://test.com', topics: ['*.*']});
         this.scope.webhook.name = 'test';
         var response = _.cloneDeep(this.scope.webhook);
         response.sys.version = 2;
@@ -196,10 +198,35 @@ describe('Webhook Editor directive', function () {
       });
     });
 
+    describe('Frontend validation', function () {
+      beforeEach(function () {
+        this.clickSave = function (wh) {
+          this.compile({isNew: true}, wh);
+          this.button('Save').click();
+        }.bind(this);
+      });
+
+      it('handles invalid name', function () {
+        this.clickSave({url: 'http://test.com', topics: ['*.*']});
+        sinon.assert.calledWith(this.notification.error, 'Please provide a valid webhook name.');
+      });
+
+      it('handles invalid URL', function () {
+        this.clickSave({name: 'test', topics: ['*.*']});
+        sinon.assert.calledWith(this.notification.error, 'Please provide a valid webhook URL.');
+      });
+
+      it('handles invalid topics', function () {
+        this.clickSave({name: 'test', url: 'http://test.com', topics: []});
+        sinon.assert.calledOnce(this.notification.error);
+        expect(this.notification.error.firstCall.args[0]).toMatch(/triggering event/);
+      });
+    });
+
     describe('Server errors', function () {
       beforeEach(function () {
         this.rejectWithError = function (err) {
-          this.compile({isNew: true});
+          this.compile({isNew: true}, {name: 'test', url: 'http://test.com', topics: ['*.*']});
           this.repo.save.rejects({body: {details: {errors: [err]}}});
           this.scope.$apply();
           this.button('Save').click();
