@@ -130,7 +130,6 @@ angular.module('contentful')
   var joinAnd               = $injector.get('stringUtils').joinAnd;
   var mimetypeGroupNames    = $injector.get('mimetype').getGroupNames();
   var buildBaseErrorMessage = $injector.get('baseErrorMessageBuilder');
-  var sizeMessage           = buildBaseErrorMessage.size;
 
   var messages = {
     linkMimetypeGroup: function (error) {
@@ -205,7 +204,7 @@ angular.module('contentful')
 
   function buildContentTypeError (error) {
     if (error.name === 'size' && error.path.length === 1 && error.path[0] === 'fields')
-      return sizeMessage(error.min, error.max, 'fields');
+      return 'You have reached the maximum number of ' + error.max + ' fields per content type.';
     if (error.name === 'uniqueFieldIds')
       return 'Field ID must be unique';
     if (error.name === 'uniqueFieldApiNames')
