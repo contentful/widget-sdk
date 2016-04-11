@@ -99,7 +99,9 @@ angular.module('cf.utils')
     }
 
     function handleError(err) {
-      deferred.reject(err);
+      // reject only if wasn't resolved or rejected yet
+      if (deferred) { deferred.reject(err); }
+
       reset();
     }
 
