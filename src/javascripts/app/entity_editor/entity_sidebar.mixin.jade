@@ -100,7 +100,7 @@ mixin entity-sidebar
         img(ng-src="{{presenceUser.data.avatarUrl}}")
 
     .entity-sidebar__widget(
-      ng-repeat="widget in sidebarWidgets"
+      ng-repeat="widget in sidebarControls"
       ng-controller="SidebarWidgetRenderController")
       h2.entity-sidebar__heading
         | {{widget.name}}
