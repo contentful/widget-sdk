@@ -204,7 +204,7 @@ angular.module('contentful')
         deliveryApi: {
           name: 'SDK for Delivery API',
           icon: 'learn-github',
-          description: 'Get the Ruby SDK for Contentful’s Delivery API (CDA) directly from GitHub to get started delivering content.',
+          description: 'Get the SDKs for Contentful’s Delivery API (CDA) directly from GitHub to get started delivering content.',
           links: [
             {
               text: 'Swift SDK',
