@@ -16,6 +16,10 @@ div(ng-show="multiVideoItem.isPlayerReady")
 
   i.fa.fa-times-circle(ng-click="multiVideoItemController.removeAsset()")
 
+  .multi-video-widget-item__handle(ng-if="multiVideoItem.isSortingEnabled")
+    i.fa.fa-ellipsis-v
+    i.fa.fa-ellipsis-v
+
   .video-widget-player__title
     | {{asset.title}}
 

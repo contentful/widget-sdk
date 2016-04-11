@@ -5,7 +5,7 @@ describe('cfWidgetApi directive', function () {
     module('contentful/test');
 
     var $controller = this.$inject('$controller');
-    var OtDoc = this.$inject('mocks/OtDoc');
+    var $injector   = this.$inject('$injector');
 
     this.scope = this.$inject('$rootScope').$new();
     this.widget = {
@@ -21,14 +21,13 @@ describe('cfWidgetApi directive', function () {
         isDisabled: sinon.stub(),
         otSubDoc: {
           changeString: sinon.stub(),
-          getValue: sinon.stub(),
-          doc: new OtDoc({myfield: {}}, ['myfield'])
+          getValue: sinon.stub()
         },
         locale: {}
       });
-
       return $controller('WidgetApiController', {
-        $scope: this.scope,
+        '$scope': this.scope,
+        '$injector': $injector
       });
     };
 
@@ -185,45 +184,6 @@ describe('cfWidgetApi directive', function () {
       this.scope.otSubDoc.removeValue = sinon.stub();
       this.widgetApi.field.removeValue();
       sinon.assert.calledOnce(this.scope.otSubDoc.removeValue);
-    });
-  });
-
-  describe('#removeValueAt()', function () {
-    it('delegates call to "doc.remove()"', function () {
-      var success = sinon.stub();
-      this.scope.otSubDoc.doc.set(['A', 'B', 'C']);
-
-      this.widgetApi.field.removeValueAt(1).then(success);
-      this.$apply();
-
-      expect(this.scope.otSubDoc.doc.get()).toEqual(['A', 'C']);
-      sinon.assert.calledOnce(success);
-    });
-  });
-
-  describe('#insertValue()', function () {
-    it('delegates call to "doc.insert()" if array exists', function () {
-      var success = sinon.stub();
-      this.scope.otSubDoc.getValue.returns('something');
-      this.scope.otSubDoc.doc.set(['A', 'C']);
-
-      this.widgetApi.field.insertValue(1, 'B').then(success);
-      this.$apply();
-
-      expect(this.scope.otSubDoc.doc.get()).toEqual(['A', 'B', 'C']);
-      sinon.assert.calledOnce(success);
-    });
-
-    it('creates new array if value is missing', function () {
-      var success = sinon.stub();
-      this.scope.otSubDoc.getValue.returns(undefined);
-      this.scope.otSubDoc.doc.set(undefined);
-
-      this.widgetApi.field.insertValue(0, 'A').then(success);
-      this.$apply();
-
-      expect(this.scope.otSubDoc.doc.get()).toEqual(['A']);
-      sinon.assert.calledOnce(success);
     });
   });
 

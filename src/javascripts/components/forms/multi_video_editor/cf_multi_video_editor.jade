@@ -23,11 +23,13 @@ div(ng-if="multiVideoEditorController.isVideoWidgetReady()")
     .video-widget-editor__warning-message
       | {{multiVideoEditor.error}}
 
-  ul.multi-video-widget__items
+  ul.multi-video-widget__items(ui-sortable="linkSortOptions" ng-model="multiVideoEditor.assets")
     li.multi-video-widget__item(
       ng-repeat="asset in multiVideoEditor.assets track by asset._trackId")
 
       cf-multi-video-item(
+        cf-drag-handle
+        is-sorting-enabled="multiVideoEditor.isSortingEnabled"
         asset="asset"
         widget-player-custom-attrs="multiVideoEditorController.customAttrsForPlayer(asset)"
         remove-asset="multiVideoEditorController.removeAsset($index, asset)"

@@ -1,15 +1,18 @@
 'use strict';
 
 angular.module('contentful')
-.controller('cfMultiVideoEditorController',
-  ['$scope', '$injector', 'widgetApi', function($scope, $injector, widgetApi) {
-  var field = widgetApi.field;
+.controller('cfMultiVideoEditorController', ['$scope', '$injector', function($scope, $injector){
+  var ShareJS = $injector.get('ShareJS');
+  var $q      = $injector.get('$q');
+
+  var controller                    = this;
   var providerVideoEditorController = $scope.providerVideoEditorController;
 
 
   $scope.multiVideoEditor = {
     assets           : [],
     error            : undefined,
+    isSortingEnabled : providerVideoEditorController.isSortingEnabled,
     searchConfig: {
       onSelection     : useSelectedAssets,
       scope           : $scope,
@@ -23,13 +26,11 @@ angular.module('contentful')
     widgetPlayerDirective : providerVideoEditorController.widgetPlayerDirective
   };
 
-  var offValueChanged = field.onValueChanged(function (videoIds) {
-    if (_.isArray(videoIds)) {
-      $scope.multiVideoEditor.assets = createAssetObjects(videoIds);
+  $scope.$watch('fielData.value', function(){
+    if (_.isArray($scope.fieldData.value)) {
+      $scope.multiVideoEditor.assets = createAssetObjects($scope.fieldData.value);
     }
   });
-
-  $scope.$on('$destroy', offValueChanged);
 
   this.customAttrsForPlayer = customAttrsForPlayer;
   this.isVideoWidgetReady   = isVideoWidgetReady;
@@ -53,19 +54,28 @@ angular.module('contentful')
   }
 
   function storeAsset(asset) {
-    field.insertValue(0, asset.assetId)
-    .then(function () {
-      var assetObject = initAssetObject(asset.assetId);
+    var promise;
+    var assetObject = initAssetObject(asset.assetId);
+    var doc = $scope.otDoc.doc;
+    var path = $scope.otPath;
+    if (_.isArray(ShareJS.peek(doc, path))) {
+      promise = $q.denodeify(function (cb) {
+        doc.at(path).insert(0, asset.assetId, cb);
+      });
+    } else {
+      promise = ShareJS.mkpathAndSetValue(doc, path, [asset.assetId]);
+    }
+
+    promise.then(function () {
       $scope.multiVideoEditor.assets.unshift(assetObject);
       $scope.videoInputController().clearField();
     });
   }
 
   function removeAsset(index) {
-    field.removeValueAt(index)
-    .then(function () {
-      $scope.multiVideoEditor.assets.splice(index, 1);
-    });
+    var cb = $q.callbackWithApply();
+    $scope.otDoc.doc.at($scope.otPath.concat(index)).remove(cb);
+    cb.promise.then(function () { $scope.multiVideoEditor.assets.splice(index,1); });
   }
 
   function lookupAsset(assetId) {
@@ -91,9 +101,7 @@ angular.module('contentful')
   function useSelectedAssets(selection) {
     // use controller.storeAsset rather than only
     // storeAsset for testing purposes
-    _.each(selection, function(video){
-      storeAsset({assetId: video.id});
-    });
+    _.each(selection, function(video){ controller.storeAsset({assetId: video.id}); });
   }
 
   function createAssetObjects(assetIds) {

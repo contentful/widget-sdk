@@ -2,6 +2,7 @@
 
 angular.module('contentful').controller('cfMultiVideoItemController', ['$attrs', '$scope', function($attrs, $scope){
   $scope.multiVideoItem = {
+    isSortingEnabled: $scope.$eval($attrs.isSortingEnabled),
     isAssetValid: false,
     isPlayerReady: false,
     errorMessage: undefined,

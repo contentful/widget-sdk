@@ -28,13 +28,23 @@ angular.module('contentful/mocks')
     this.base = base || [];
   }
 
+  function assertParentContainer (obj, path) {
+    if (path.length < 1) {
+      return;
+    }
+
+    path = path.slice(0, -1);
+    if (!_.isObject(dotty.get(obj, path))) {
+      throw new Error('Parent container does not exist');
+    }
+
+  }
+
   OtDoc.prototype.setAt = function (path, value, cb) {
     path = this.base.concat(path);
     assertParentContainer(this.snapshot, path);
     dotty.put(this.snapshot, path, value);
-    if (cb) {
-      cb();
-    }
+    cb();
   };
 
   OtDoc.prototype.getAt = function (path) {
@@ -57,34 +67,5 @@ angular.module('contentful/mocks')
     this.setAt([], val, cb);
   };
 
-  OtDoc.prototype.remove = function (cb) {
-    var containerPath = this.base.slice(0, -1);
-    var index = this.base.slice(-1)[0];
-    var container = dotty.get(this.snapshot, containerPath);
-    container.splice(index, 1);
-    if (cb) {
-      cb();
-    }
-  };
-
-  OtDoc.prototype.insert = function (index, value, cb) {
-    this.get().splice(index, 0, value);
-    if (cb) {
-      cb();
-    }
-  };
-
   return OtDoc;
-
-
-  function assertParentContainer (obj, path) {
-    if (path.length < 1) {
-      return;
-    }
-
-    path = path.slice(0, -1);
-    if (!_.isObject(dotty.get(obj, path))) {
-      throw new Error('Parent container does not exist');
-    }
-  }
 }]);
