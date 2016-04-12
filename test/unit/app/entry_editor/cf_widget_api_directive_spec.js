@@ -75,6 +75,7 @@ describe('cfWidgetApi directive', function () {
 
       this.testEvent = function (eventName) {
         var detach = this.widgetApi.field.onValueChanged(this.cb);
+        this.cb.reset();
         var value = 'test';
         this.scope.$emit(eventName, path, value);
         sinon.assert.calledWithExactly(this.cb, value);
@@ -99,10 +100,12 @@ describe('cfWidgetApi directive', function () {
     });
 
     it('callback will not be called if OT path does not match', function () {
-      this.widgetApi.field.onValueChanged(this.cb);
+      var cb = sinon.spy();
+      this.widgetApi.field.onValueChanged(cb);
+      cb.reset();
       this.scope.$emit('otValueReverted', path);
       this.scope.$emit('otValueReverted', ['fields', 'some-other-field', 'de-DE']);
-      sinon.assert.calledOnce(this.cb);
+      sinon.assert.calledOnce(cb);
     });
   });
 
@@ -192,7 +195,7 @@ describe('cfWidgetApi directive', function () {
       var cb = sinon.spy();
       this.scope.isDisabled.returns('FOO');
       this.$apply();
-      this.widgetApi.field.onDisabledStatusChanged(cb, true);
+      this.widgetApi.field.onDisabledStatusChanged(cb);
       sinon.assert.calledOnce(cb);
       sinon.assert.calledWithExactly(cb, 'FOO');
     });
@@ -202,7 +205,7 @@ describe('cfWidgetApi directive', function () {
       this.scope.isDisabled.returns('FOO');
       this.$apply();
       this.widgetApi.field.onDisabledStatusChanged(cb);
-      sinon.assert.notCalled(cb);
+      cb.reset();
 
       this.scope.isDisabled.returns('BAR');
       this.$apply();

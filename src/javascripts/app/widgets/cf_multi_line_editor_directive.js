@@ -17,11 +17,11 @@ angular.module('cf.app')
       var offValueChanged = field.onValueChanged(function (val) {
         // Might be `null` or `undefined` when value is not present
         updateInput(val || '');
-      }, true);
+      });
       // call handler when the disabled status of the field changes
       var offDisabledStatusChanged = field.onDisabledStatusChanged(function (isDisabled) {
         $scope.isDisabled = isDisabled;
-      }, true);
+      });
 
       $scope.$on('$destroy', offValueChanged);
       $scope.$on('$destroy', offDisabledStatusChanged);

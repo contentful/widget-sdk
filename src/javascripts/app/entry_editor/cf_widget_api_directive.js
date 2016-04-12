@@ -20,7 +20,7 @@ angular.module('contentful')
 }])
 .controller('WidgetApiController', ['$scope', '$injector', function ($scope, $injector) {
   var $q = $injector.get('$q');
-  var newSignal = $injector.get('signal');
+  var newSignal = $injector.get('signal').createMemoized;
   var valueChangedSignal = newSignal($scope.otSubDoc.getValue());
   var isDisabledSignal = newSignal($scope.isDisabled($scope.field, $scope.locale));
   var ctField = $scope.widget.field;

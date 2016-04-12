@@ -28,7 +28,7 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
 
       var removeUpdateListener = field.onValueChanged(function (file) {
         scope.file = file;
-      }, true);
+      });
 
 
       scope.$on('$destroy', removeUpdateListener);
