@@ -11,7 +11,7 @@ angular.module('contentful')
     assets           : [],
     error            : undefined,
     searchConfig: {
-      onSelection     : useSelectedAssets,
+      onSelection     : prependVideos,
       scope           : $scope,
       template        : 'cf_video_search_dialog',
       widgetPlayerDirective : providerVideoEditorController.widgetPlayerDirective,
@@ -88,12 +88,15 @@ angular.module('contentful')
     $scope.multiVideoEditor.error = error.message;
   }
 
-  function useSelectedAssets(selection) {
-    // use controller.storeAsset rather than only
-    // storeAsset for testing purposes
-    _.each(selection, function(video){
-      storeAsset({assetId: video.id});
+  function prependVideos (videos) {
+    var currentAssets = $scope.multiVideoEditor.assets || [];
+    var newAssets = _.map(videos, function (video) {
+      return initAssetObject(video.id);
     });
+    var assets = newAssets.concat(currentAssets) ;
+    $scope.multiVideoEditor.assets = assets;
+    $scope.videoInputController().clearField();
+    field.setValue(_.map(assets, 'assetId'));
   }
 
   function createAssetObjects(assetIds) {
@@ -101,4 +104,3 @@ angular.module('contentful')
   }
 
 }]);
-

@@ -17,6 +17,10 @@ describe('Multi Video Editor Controller', function() {
     scope.providerVideoEditorController = {
       widgetPlayerDirective: 'cf-widget-player-directive'
     };
+    var videoInputController = {
+      clearField: sinon.stub()
+    };
+    scope.videoInputController = sinon.stub().returns(videoInputController);
 
     this.fieldApi = {
       onValueChanged: sinon.stub().returns(_.noop)
@@ -35,15 +39,15 @@ describe('Multi Video Editor Controller', function() {
   describe('multiVideoEditor scope properties', function() {
     describe('#onSelection search config method', function() {
       beforeEach(function() {
-        this.fieldApi.insertValue = sinon.stub().resolves();
+        this.fieldApi.setValue = sinon.stub().resolves();
       });
 
       it('inserts each selected asset', function() {
-        var selection = [{id: 'A'}, {id: 'B'}];
+        scope.multiVideoEditor.assets = [{assetId: 'A'}];
+        var selection = [{id: 'B'}, {id: 'C'}];
         scope.multiVideoEditor.searchConfig.onSelection(selection);
-        sinon.assert.callCount(this.fieldApi.insertValue, 2);
-        sinon.assert.calledWithExactly(this.fieldApi.insertValue, 0, 'A');
-        sinon.assert.calledWithExactly(this.fieldApi.insertValue, 0, 'B');
+        sinon.assert.calledOnce(this.fieldApi.setValue);
+        sinon.assert.calledWithExactly(this.fieldApi.setValue, ['B', 'C', 'A']);
       });
     });
 
