@@ -43,6 +43,7 @@ header.workbench-header
         .l-form-controls
           .l-form-locale(ng-repeat="locale in locales track by locale.internal_code"
               ot-field-presence="['fields', field.id, locale.internal_code]"
+              ng-controller="FieldLocaleController as fieldLocale"
               data-locale="{{locale.code}}")
             cf-widget-renderer.l-field-editor(
               cf-focus-ot-input="hasInitialFocus"
@@ -53,9 +54,8 @@ header.workbench-header
             .locale-label(ng-show="locales.length > 1")
               | {{locale.name}}
             +editor-field-collaborators
-            cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.internal_code,'*']")
+            +field-locale-errors
           .form-widget__help-text(ng-if="showHelpText") {{helpText}}
-          cf-error-list.form-box-error(cf-error-path="['fields', field.id]")
 
   .workbench-main__entity-sidebar
     +entity-sidebar(revert=true)
