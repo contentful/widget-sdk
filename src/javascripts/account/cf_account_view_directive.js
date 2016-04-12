@@ -6,6 +6,7 @@ angular.module('contentful')
 
   var $timeout       = $injector.get('$timeout');
   var $stateParams   = $injector.get('$stateParams');
+  var $location      = $injector.get('$location');
   var authentication = $injector.get('authentication');
   var modalDialog    = $injector.get('modalDialog');
   var createChannel  = $injector.get('iframeChannel').create;
@@ -48,14 +49,16 @@ angular.module('contentful')
     modalDialog.open({
       title: 'We need to check your credentials',
       message: 'Before continuing to account settings we need to verify your identity.',
-      cancelLabel: null,
       confirmLabel: 'Go to login form',
+      cancelLabel: 'Cancel',
       backgroundClose: false,
       disableTopCloseButton: true,
       ignoreEsc: true,
       attachTo: 'body'
     }).promise.then(function () {
       authentication.clearAndLogin();
+    }, function () {
+      $location.url('/');
     });
   }
 }]);
