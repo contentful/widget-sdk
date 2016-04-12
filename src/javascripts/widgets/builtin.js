@@ -268,7 +268,7 @@ angular.module('contentful')
     name: 'Ooyala (multiple assets)',
     icon: 'video-preview',
     rendersHelpText: true,
-    template: '<cf-ooyala-multi-video-editor ng-model="fieldData.value" ot-bind-object-value="selectedAssets"></cf-ooyala-multi-video-editor>'
+    template: '<cf-ooyala-multi-video-editor />'
   });
 
   registerWidget('kalturaEditor',{
@@ -284,7 +284,7 @@ angular.module('contentful')
     name: 'Kaltura (multiple videos)',
     icon: 'video-preview',
     rendersHelpText: true,
-    template: '<cf-kaltura-multi-video-editor ng-model="fieldData.value" ot-bind-object-value="selectedAssets"></cf-kaltura-multi-video-editor>'
+    template: '<cf-kaltura-multi-video-editor />'
   });
 
   return _widgets;
