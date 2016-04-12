@@ -83,6 +83,13 @@ describe('cfRadioEditor Directive', function () {
     });
   });
 
+  it('shows warning when there are no predefined values', function () {
+    fieldApi.validations = [];
+    var el = this.compile();
+    var alert = el.find('[role=alert]');
+    expect(alert.text()).toMatch('The widget failed to initialize');
+  });
+
 
   describe('selecting an option', function() {
     beforeEach(function() {

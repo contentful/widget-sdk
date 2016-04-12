@@ -1,11 +1,6 @@
-div.editor-control-warning(
-  ng-if="misconfigured"
-  role="alert")
-  cf-icon(name="plug")
-  p
-    | The widget failed to initialize.
-    | You can fix the problem by providing predefined values
-    | under the validations tab in the field settings.
+include ./field_editor.mixins.jade
+
++predefined-values-warning(ng-if="misconfigured")
 
 div.checkbox-editor__options(
   ng-if="!misconfigured"

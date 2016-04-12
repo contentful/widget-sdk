@@ -68,11 +68,19 @@ describe('cfDropdownEditor Directive', function () {
   });
 
   it('is disbled when widgetApi emits disabled event', function () {
+    fieldApi.validations = [{in: ['value']}];
     var select = this.compile().find('select');
     expect(select.prop('disabled')).toBe(false);
     fieldApi.onDisabledStatusChanged.yield(true);
     this.$apply();
     expect(select.prop('disabled')).toBe(true);
+  });
+
+  it('shows warning when there are no predefined values', function () {
+    fieldApi.validations = [];
+    var el = this.compile();
+    var alert = el.find('[role=alert]');
+    expect(alert.text()).toMatch('The widget failed to initialize');
   });
 
 
