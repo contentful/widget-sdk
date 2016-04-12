@@ -12,7 +12,7 @@
     aria-label="Account Menu" data-test-id="account-menu")
     ul.context-menu__items
       li(role="menuitem" ng-click="goToUserProfile()") User Profile
-      li(role="menuitem" ng-click="goToSubscription()") Organizations
+      li(role="menuitem" ng-click="goToSubscription()" ng-show="canGoToSubscription") Organizations
       li(role="menuitem" ng-click="openIntercom()" ng-if="isIntercomLoaded()") Talk to Us
       li(role="menuitem" ng-click="openSupport()") Get Support
       li(role="menuitem" ng-click="logout()") Log out

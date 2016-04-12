@@ -43,7 +43,7 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
 
     var organization = spaceContext.getData('organization');
     var organizationId = dotty.get(organization, 'sys.id');
-    var userOwnsOrganization = OrganizationList.isAdminOrOwner(organizationId);
+    var userOwnsOrganization = OrganizationList.isOwner(organizationId);
 
     if (organizationHasTrialSubscription(organization)) {
       if (hasTrialEnded(organization)) {

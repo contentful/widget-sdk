@@ -31,9 +31,8 @@ describe('TrialWatcher', function () {
       };
     };
 
-    this.makeOwner = function () {
-      membership.role = 'owner';
-    };
+    this.makeOwner = function () { membership.role = 'owner'; };
+    this.makeAdmin = function () { membership.role = 'admin'; };
 
     this.trialHoursLeft = function (hours) {
       moment.fn.diff = sinon.stub().returns(Math.floor(hours));
@@ -101,6 +100,22 @@ describe('TrialWatcher', function () {
           itHasAnAction();
 
           itOpensPaywallForSettingUpPayment();
+        });
+
+        describe('for user who is an admin in the organization', function () {
+          beforeEach(function () {
+            this.makeAdmin();
+            this.$apply();
+          });
+
+          itShowsAMessage(/Your trial has ended.*TEST_ORGA_NAME organization/);
+          itShowsAMessage(/contact the account owner/);
+
+          itDoesNotShowAnActionMessage();
+
+          itDoesNotHaveAnAction();
+
+          itOpensPaywallToNotifyTheUser();
         });
 
         describe('for user not owning the organization', function () {

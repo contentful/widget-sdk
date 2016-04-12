@@ -59,7 +59,7 @@ describe('Orgniaztion list', function () {
     });
   });
 
-  describe('#isAdminOrOwner', function () {
+  describe('#isAdmin and #isOwner', function () {
     beforeEach(function () {
       var user = makeUser([{sys: {id: '123'}}, {sys: {id: '456'}}]);
       this.memberships = user.organizationMemberships;
@@ -67,19 +67,23 @@ describe('Orgniaztion list', function () {
     });
 
     it('returns false for an unknown organization ID', function () {
-      expect(OrganizationList.isAdminOrOwner('unknown-id')).toBe(false);
+      expect(OrganizationList.isAdmin('unknown-id')).toBe(false);
+      expect(OrganizationList.isOwner('unknown-id')).toBe(false);
     });
 
     it('returns false if user is a normal member', function () {
       this.memberships[0].role = 'member';
-      expect(OrganizationList.isAdminOrOwner('123')).toBe(false);
+      expect(OrganizationList.isAdmin('123')).toBe(false);
+      expect(OrganizationList.isOwner('123')).toBe(false);
     });
 
     it('returns true if is an owner or an admin', function () {
       this.memberships[0].role = 'admin';
       this.memberships[1].role = 'owner';
-      expect(OrganizationList.isAdminOrOwner('123')).toBe(true);
-      expect(OrganizationList.isAdminOrOwner('456')).toBe(true);
+      expect(OrganizationList.isAdmin('123')).toBe(true);
+      expect(OrganizationList.isAdmin('456')).toBe(false);
+      expect(OrganizationList.isOwner('123')).toBe(false);
+      expect(OrganizationList.isOwner('456')).toBe(true);
     });
   });
 });

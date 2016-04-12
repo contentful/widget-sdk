@@ -19,7 +19,24 @@ angular.module('contentful').factory('OrganizationList', function () {
     get: get,
     getName: getName,
     getAll: getAll,
-    isAdminOrOwner: isAdminOrOwner
+    /**
+     * @ngdoc method
+     * @name OrganizationList#isAdmin
+     * @param {string} id
+     * @returns {boolean}
+     * @description
+     * Checks if user is an admin of organization with a given ID.
+     */
+    isAdmin: createRoleChecker('admin'),
+    /**
+     * @ngdoc method
+     * @name OrganizationList#isOwner
+     * @param {string} id
+     * @returns {boolean}
+     * @description
+     * Checks if user is an owner of organization with a given ID.
+     */
+    isOwner: createRoleChecker('owner')
   };
 
   /**
@@ -73,21 +90,6 @@ angular.module('contentful').factory('OrganizationList', function () {
 
   /**
    * @ngdoc method
-   * @name OrganizationList#isAdminOrOwner
-   * @param {string} id
-   * @returns {boolean}
-   * @description
-   * Checks if user is an owner or an admin of organization with a given ID.
-   */
-  function isAdminOrOwner (id) {
-    var memberships = currentUser.organizationMemberships;
-    var found = _.findWhere(memberships, {organization: {sys: {id: id }}});
-
-    return _.contains(['owner', 'admin'], dotty.get(found, 'role'));
-  }
-
-  /**
-   * @ngdoc method
    * @name OrganizationList#getAll
    * @returns {object[]}
    * @description
@@ -95,5 +97,13 @@ angular.module('contentful').factory('OrganizationList', function () {
    */
   function getAll () {
     return organizations;
+  }
+
+  function createRoleChecker (role) {
+    return function checkRole (id) {
+      var memberships = dotty.get(currentUser, 'organizationMemberships', []);
+      var found = _.findWhere(memberships, {organization: {sys: {id: id}}});
+      return role === dotty.get(found, 'role');
+    };
   }
 });

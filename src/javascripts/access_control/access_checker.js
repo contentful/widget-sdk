@@ -309,8 +309,8 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * @description
    * Returns true if Roles can be modified.
    */
-  function canModifyRoles() {
-    return isAdminOrOwner() && dotty.get(features, 'customRoles', false);
+  function canModifyRoles () {
+    return isSuperUser() && dotty.get(features, 'customRoles', false);
   }
 
   /**
@@ -320,15 +320,17 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * @description
    * Returns true if Users can be modified.
    */
-  function canModifyUsers() {
-    return isAdminOrOwner();
+  function canModifyUsers () {
+    return isSuperUser();
   }
 
-  function isAdminOrOwner() {
-    var isSpaceAdmin   = spaceContext.getData('spaceMembership.admin', false);
-    var organizationId = spaceContext.getData('organization.sys.id');
+  function isSuperUser () {
+    var isSpaceAdmin        = spaceContext.getData('spaceMembership.admin', false);
+    var organizationId      = spaceContext.getData('organization.sys.id');
+    var isOrganizationAdmin = OrganizationList.isAdmin(organizationId);
+    var isOrganizationOwner = OrganizationList.isOwner(organizationId);
 
-    return isSpaceAdmin || OrganizationList.isAdminOrOwner(organizationId);
+    return isSpaceAdmin || isOrganizationAdmin || isOrganizationOwner;
   }
 
   /**

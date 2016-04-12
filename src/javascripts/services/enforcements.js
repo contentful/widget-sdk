@@ -11,7 +11,7 @@ angular.module('contentful').factory('enforcements', ['$injector', function Enfo
 
   function isOwner() {
     var organizationId = spaceContext.getData('organization.sys.id');
-    return OrganizationList.isAdminOrOwner(organizationId);
+    return OrganizationList.isOwner(organizationId);
   }
 
   function getOrgId() {

@@ -34,8 +34,12 @@ describe('TheAccountView service', function () {
     it('#goToSubscription navigates to plan details', function () {
       var organizationId = 'XYZ';
       var expectedParams = {pathSuffix: 'organizations/' + organizationId + '/subscription'};
-      var space = this.$inject('spaceContext').space = {};
-      dotty.put(space, 'data.organization.sys.id', organizationId);
+
+      var spaceContext = this.$inject('spaceContext');
+      spaceContext.space = {};
+      dotty.put(spaceContext, 'space.data.organization.sys.id', organizationId);
+      this.$inject('OrganizationList').isOwner = _.constant(true);
+
       this.view.goToSubscription();
       sinon.assert.calledOnce(this.go.withArgs('account.pathSuffix', expectedParams, {reload: true}));
     });
