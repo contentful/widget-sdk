@@ -220,12 +220,12 @@ describe('cfWidgetApi directive', function () {
     it('creates new array if value is missing', function () {
       var success = sinon.stub();
       this.scope.otSubDoc.getValue.returns(undefined);
-      this.scope.otSubDoc.doc.set(undefined);
+      this.scope.otSubDoc.changeValue = sinon.stub().resolves();
 
       this.widgetApi.field.insertValue(0, 'A').then(success);
       this.$apply();
 
-      expect(this.scope.otSubDoc.doc.get()).toEqual(['A']);
+      sinon.assert.calledWithExactly(this.scope.otSubDoc.changeValue, ['A']);
       sinon.assert.calledOnce(success);
     });
   });

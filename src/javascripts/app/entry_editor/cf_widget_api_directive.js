@@ -102,9 +102,7 @@ angular.module('contentful')
         $scope.otSubDoc.doc.insert(i, x, cb);
       });
     } else if (i === 0) {
-      return $q.denodeify(function (cb) {
-        $scope.otSubDoc.doc.set([x], cb);
-      });
+      return $scope.otSubDoc.changeValue([x]);
     } else {
       return $q.reject(new Error('Cannot insert index ' + i + 'into empty container'));
     }
