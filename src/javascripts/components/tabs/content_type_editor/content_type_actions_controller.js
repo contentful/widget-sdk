@@ -368,10 +368,14 @@ function ContentTypeActionsController($scope, $injector) {
         return fieldNames[error.path[1]];
       }));
 
+      var errorWithoutFieldName = _.first(_.map(errors, function(error) {
+        return error.message;
+      }));
+
       if (errorFieldName) {
         notification.error(saveError + 'Invalid field “' + truncate(errorFieldName, 12) + '”');
       } else {
-        notification.error(messages.save.invalid);
+        notification.error(errorWithoutFieldName || messages.save.invalid);
       }
     },
 
