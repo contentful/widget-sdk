@@ -42,7 +42,6 @@ header.workbench-header
           span(ng-show="field.required") (required)
         .l-form-controls
           .l-form-locale(ng-repeat="locale in locales track by locale.internal_code"
-              ot-field-presence="['fields', field.id, locale.internal_code]"
               ng-controller="FieldLocaleController as fieldLocale"
               data-locale="{{locale.code}}")
             cf-widget-renderer.l-field-editor(

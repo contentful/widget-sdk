@@ -28,7 +28,7 @@ mixin editor-field-collaborators
     ul.field-list
       li.avatar(
         cf-user
-        ng-repeat="link in otFieldPresence.users track by link.sys.id"
+        ng-repeat="link in fieldLocale.collaborators track by link.sys.id"
         link="link" as="presentUser"
         tooltip="{{presentUser| userNameDisplay:user}}")
         img(ng-src="{{presentUser.data.avatarUrl}}")
