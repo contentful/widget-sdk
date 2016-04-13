@@ -104,12 +104,6 @@ angular.module('contentful')
     return spaceContext.displayFieldForType($scope.context.view.contentTypeId);
   };
 
-  // TODO this code is duplicated in the asset list controller
-  $scope.visibleInCurrentList = function(entry){
-    // TODO: This needs to basically emulate the API :(
-    return !entry.isDeleted();
-  };
-
   $scope.resetEntries = function (resetPage) {
     $scope.context.loading = true;
     if (resetPage) { $scope.paginator.page = 0; }

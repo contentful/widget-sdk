@@ -55,7 +55,7 @@ header.workbench-header
     .main-results-wrapper.endless-container(cf-endless-container at-bottom="searchController.loadMore()" num-elements="searchController.paginator.page")
       table.result-list.main-results
         tbody
-          tr(ng-repeat="asset in visibleAssets = (assets | filter:visibleInCurrentList) track by asset.getId()"
+          tr(ng-repeat="asset in assets track by asset.getId()"
               ng-init="entityNavState='spaces.detail.assets.detail({ assetId: asset.getId() })'; file=spaceContext.localizedField(asset, 'data.fields.file')"
               ui-sref="{{entityNavState}}")
             td.cell-select(ng-click="selection.toggle(asset);$event.stopPropagation()")
@@ -82,7 +82,7 @@ header.workbench-header
                 .status-bar
       .loading(ng-hide="searchController.paginator.atLast()")
 
-    .advice(ng-show="visibleAssets | isEmpty")
+    .advice(ng-show="assets | isEmpty")
       .advice__frame
         i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
         header.advice__title There are no matches to your search

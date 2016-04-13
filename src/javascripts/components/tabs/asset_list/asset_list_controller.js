@@ -44,12 +44,6 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
   }, true);
 
   // TODO this code is duplicated in the entry list controller
-  $scope.visibleInCurrentList = function(asset){
-    // TODO: This needs to basically emulate the API :(
-    return !asset.isDeleted();
-  };
-
-  // TODO this code is duplicated in the entry list controller
   $scope.showNoAssetsAdvice = function () {
     var view = $scope.context.view;
     var hasQuery = !_.isEmpty(view.searchTerm);
