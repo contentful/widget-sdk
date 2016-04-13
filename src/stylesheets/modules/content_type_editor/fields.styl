@@ -78,7 +78,7 @@ $ct__field-padding = 0.8em
     left: 67px
     cf-icon
       transform: scale(1.5) rotate(2deg)
-    p
+    .ui-hint-content
       top: -15px
       left: 95px
       width: 175px
@@ -123,3 +123,20 @@ $ct__field-padding = 0.8em
     font-size: 1.1em
     line-height: 1.5
     margin: 0
+
+.ct-max-fields-advice
+  right: 80%
+  margin: $rhythm(2) $rhythm(2) 0 $rhythm(2)
+  max-width: 300px
+  .ui-hint-content
+    position: relative
+    display: flex
+  &__text
+    color: $colors.text-mid
+    margin-bottom: 6px
+  cf-icon
+    margin-right: 10px
+    svg use
+      fill: $colors.blue-mid
+  &__dismiss
+    text-decoration: underline
