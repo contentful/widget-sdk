@@ -85,7 +85,7 @@ angular.module('contentful')
   });
 
   function save () {
-    askAboutHeader().then(function () {
+    return askAboutHeader().then(function () {
       prepareCredentials();
       var validationError = validation.validate($scope.webhook);
       if (validationError) {
