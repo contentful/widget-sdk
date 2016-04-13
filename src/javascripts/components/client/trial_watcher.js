@@ -5,63 +5,53 @@
 //  as a service reduced to expose trial related information.
 angular.module('contentful').factory('TrialWatcher', ['$injector', function ($injector) {
 
-  var $rootScope     = $injector.get('$rootScope');
-  var intercom       = $injector.get('intercom');
-  var analytics      = $injector.get('analytics');
-  var TheAccountView = $injector.get('TheAccountView');
-  var modalDialog    = $injector.get('modalDialog');
-  var spaceContext   = $injector.get('spaceContext');
-  var authentication = $injector.get('authentication');
-  var TrialInfo      = $injector.get('TrialInfo');
-  var htmlEncode     = $injector.get('encoder').htmlEncode;
+  var $rootScope       = $injector.get('$rootScope');
+  var intercom         = $injector.get('intercom');
+  var analytics        = $injector.get('analytics');
+  var TheAccountView   = $injector.get('TheAccountView');
+  var modalDialog      = $injector.get('modalDialog');
+  var spaceContext     = $injector.get('spaceContext');
+  var OrganizationList = $injector.get('OrganizationList');
+  var htmlEncode       = $injector.get('encoder').htmlEncode;
+  var moment           = $injector.get('moment');
 
-  var UNKNOWN_USER_ID = {};
-  var previousUserId  = UNKNOWN_USER_ID;
-  var hasTrialEnded   = false;
-  var paywallIsOpen   = false;
+  var lastSpaceId   = spaceContext.getId();
+  var trialHasEnded = false;
+  var paywallIsOpen = false;
 
   return {
     init:     init,
-    hasEnded: function () { return hasTrialEnded; }
+    hasEnded: function () { return trialHasEnded; }
   };
 
   function init() {
     $rootScope.$watchCollection(function () {
       return {
-        space: spaceContext.space,
-        user: dotty.get(authentication, 'tokenLookup.sys.createdBy')
+        spaceId: spaceContext.getId(),
+        isInitialized: !OrganizationList.isEmpty()
       };
     }, trialWatcher);
   }
 
-  function trialWatcher (args, prev) {
-    var space = args.space;
-    var user = args.user;
-    var userId = dotty.get(args.user, 'sys.id');
-
-    // Break if there's not enough data
-    if (!space || !user) {
-      return;
-    }
-    // Break if both user and space didn't change
-    if (userId === previousUserId && args.space === prev.space) {
+  function trialWatcher (args) {
+    if (!args.spaceId || !args.isInitialized || args.spaceId === lastSpaceId) {
       return;
     }
 
-    previousUserId = userId;
-    hasTrialEnded  = false;
+    lastSpaceId   = args.spaceId;
+    trialHasEnded = false;
 
-    var organization = space.data.organization;
-    var userOwnsOrganization = isUserOrganizationOwner(user, organization);
+    var organization = spaceContext.getData('organization');
+    var organizationId = dotty.get(organization, 'sys.id');
+    var userOwnsOrganization = OrganizationList.isOwner(organizationId);
 
     if (organizationHasTrialSubscription(organization)) {
-      var trial = TrialInfo.create(organization);
-      if (trial.hasEnded()) {
-        hasTrialEnded = true;
+      if (hasTrialEnded(organization)) {
+        trialHasEnded = true;
         notify(trialHasEndedMsg(organization, userOwnsOrganization));
-        showPaywall(user, trial);
+        showPaywall(organization.name, userOwnsOrganization);
       } else {
-        notify(timeLeftInTrialMsg(trial.getHoursLeft(), organization, userOwnsOrganization));
+        notify(timeLeftInTrialMsg(organization, userOwnsOrganization));
       }
     } else if (organizationHasLimitedFreeSubscription(organization)) {
       notify(limitedFreeVersionMsg());
@@ -85,12 +75,10 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
     }
   }
 
-  function showPaywall (user, trial) {
+  function showPaywall (organizationName, userOwnsOrganization) {
     if (paywallIsOpen) {
       return;
     }
-    var organization = trial.getOrganization();
-    var userOwnsOrganization = isUserOrganizationOwner(user, organization);
 
     trackPaywall('Viewed Paywall');
 
@@ -115,10 +103,11 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
     function trackPaywallPlanUpgrade () {
       trackPaywall('Clicked Paywall Plan Upgrade Button');
     }
+
     function trackPaywall (event) {
       analytics.track(event, {
         userCanUpgradePlan: userOwnsOrganization,
-        organizationName: organization.name
+        organizationName: organizationName
       });
     }
   }
@@ -143,7 +132,8 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
     return message;
   }
 
-  function timeLeftInTrialMsg (hours, organization, userIsOrganizationOwner) {
+  function timeLeftInTrialMsg (organization, userIsOrganizationOwner) {
+    var hours = getTrialHoursLeft(organization);
     var timePeriod;
     if (hours / 24 <= 1) {
       timePeriod = {length: hours, unit: 'hours'};
@@ -185,34 +175,11 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
     return organization.subscriptionState === 'trial';
   }
 
-  function isUserOrganizationOwner (user, organization) {
-    var organizationMembership =
-      _.find(user.organizationMemberships, function (membership) {
-        return membership.organization.sys.id === organization.sys.id;
-      });
-    return !!organizationMembership &&
-      organizationMembership.role === 'owner';
+  function getTrialHoursLeft (organization) {
+    return moment(organization.trialPeriodEndsAt).diff(moment(), 'hours');
   }
-}]);
 
-angular.module('contentful').factory('TrialInfo', ['$injector', function ($injector) {
-  var moment = $injector.get('moment');
-
-  return { create: create };
-
-  function create (organization) {
-    var endMoment = moment(organization.trialPeriodEndsAt);
-
-    return {
-      getHoursLeft: function () {
-        return endMoment.diff(moment(), 'hours');
-      },
-      hasEnded: function () {
-        return !endMoment.isAfter(moment());
-      },
-      getOrganization: function () {
-        return organization;
-      }
-    };
+  function hasTrialEnded (organization) {
+    return !moment(organization.trialPeriodEndsAt).isAfter(moment());
   }
 }]);

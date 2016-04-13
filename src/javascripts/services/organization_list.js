@@ -10,6 +10,7 @@
  */
 angular.module('contentful').factory('OrganizationList', function () {
 
+  var currentUser = null;
   var organizations = [];
 
   return {
@@ -18,7 +19,24 @@ angular.module('contentful').factory('OrganizationList', function () {
     get: get,
     getName: getName,
     getAll: getAll,
-    getWithOnTop: getWithOnTop
+    /**
+     * @ngdoc method
+     * @name OrganizationList#isAdmin
+     * @param {string} id
+     * @returns {boolean}
+     * @description
+     * Checks if user is an admin of organization with a given ID.
+     */
+    isAdmin: createRoleChecker('admin'),
+    /**
+     * @ngdoc method
+     * @name OrganizationList#isOwner
+     * @param {string} id
+     * @returns {boolean}
+     * @description
+     * Checks if user is an owner of organization with a given ID.
+     */
+    isOwner: createRoleChecker('owner')
   };
 
   /**
@@ -28,8 +46,9 @@ angular.module('contentful').factory('OrganizationList', function () {
    * @description
    * Gets user object and initializes list with organizations.
    */
-  function resetWithUser(user) {
-    organizations = _.pluck(user.organizationMemberships, 'organization');
+  function resetWithUser (user) {
+    currentUser = user;
+    organizations = _.map(user.organizationMemberships, 'organization');
   }
 
   /**
@@ -39,7 +58,7 @@ angular.module('contentful').factory('OrganizationList', function () {
    * @description
    * Returns true if there are no organizations, false otherwise.
    */
-  function isEmpty() {
+  function isEmpty () {
     return organizations.length === 0;
   }
 
@@ -51,7 +70,7 @@ angular.module('contentful').factory('OrganizationList', function () {
    * @description
    * Gets organization by the provided ID.
    */
-  function get(id) {
+  function get (id) {
     var result = _.where(organizations, { sys: { id: id } });
     return result.length > 0 ? result[0] : null;
   }
@@ -64,7 +83,7 @@ angular.module('contentful').factory('OrganizationList', function () {
    * @description
    * Gets name of organization (by ID).
    */
-  function getName(id) {
+  function getName (id) {
     var organization = get(id);
     return organization ? organization.name : '';
   }
@@ -76,45 +95,15 @@ angular.module('contentful').factory('OrganizationList', function () {
    * @description
    * Gets all organizations as an array.
    */
-  function getAll() {
+  function getAll () {
     return organizations;
   }
 
-  /**
-   * @ngdoc method
-   * @name OrganizationList#getCopy
-   * @returns {object[]}
-   * @description
-   * Returns shallow copy of the organization array.
-   */
-  function getCopy() {
-    return _.clone(organizations);
-  }
-
-  /**
-   * @ngdoc method
-   * @name OrganizationList#getWithOnTop
-   * @param {string} id
-   * @returns {object[]}
-   * @description
-   * Returns shallow copy of the organization array.
-   * If list contains organization with the provided id,
-   * then it'll be the first one in returned array.
-   */
-  function getWithOnTop(id) {
-    var organizations = getCopy();
-    if (id) {
-      organizations.sort(idComparator(id));
-    }
-
-    return organizations;
-  }
-
-  function idComparator(id) {
-    return function (a, b) {
-      if (a.sys.id === id) { return -1; }
-      if (b.sys.id === id) { return  1; }
-      return 0;
+  function createRoleChecker (role) {
+    return function checkRole (id) {
+      var memberships = dotty.get(currentUser, 'organizationMemberships', []);
+      var found = _.findWhere(memberships, {organization: {sys: {id: id}}});
+      return role === dotty.get(found, 'role');
     };
   }
 });

@@ -1,18 +1,17 @@
 'use strict';
 angular.module('contentful').factory('enforcements', ['$injector', function Enforcements($injector) {
 
-  var $location    = $injector.get('$location');
-  var $window      = $injector.get('$window');
-  var stringUtils  = $injector.get('stringUtils');
-  var analytics    = $injector.get('analytics');
-  var logger       = $injector.get('logger');
-  var spaceContext = $injector.get('spaceContext');
-  var user;
+  var $location        = $injector.get('$location');
+  var $window          = $injector.get('$window');
+  var stringUtils      = $injector.get('stringUtils');
+  var analytics        = $injector.get('analytics');
+  var logger           = $injector.get('logger');
+  var spaceContext     = $injector.get('spaceContext');
+  var OrganizationList = $injector.get('OrganizationList');
 
   function isOwner() {
-    if(!user.sys) throw new Error('Bad user object');
-    if(!dotty.exists(spaceContext, 'space.data.sys')) throw new Error('Bad space object');
-    return dotty.get(user, 'sys.id') === dotty.get(spaceContext, 'space.data.sys.createdBy.sys.id');
+    var organizationId = spaceContext.getData('organization.sys.id');
+    return OrganizationList.isOwner(organizationId);
   }
 
   function getOrgId() {
@@ -167,7 +166,6 @@ angular.module('contentful').factory('enforcements', ['$injector', function Enfo
   return {
     determineEnforcement: determineEnforcement,
     computeUsage: computeUsage,
-    getPeriodUsage: getPeriodUsage,
-    setUser: function (u) { user = u; }
+    getPeriodUsage: getPeriodUsage
   };
 }]);
