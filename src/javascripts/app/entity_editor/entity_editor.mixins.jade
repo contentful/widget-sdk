@@ -43,3 +43,9 @@ mixin field-permission-info
     tooltip="You don't have a permission to edit this field. To change your permission setting contact your space administrator."
     tooltip-placement="left")
     div.fa.fa-lock
+
+mixin field-locale-errors
+  div.form-box-error(ng-if="fieldLocale.errors")
+    ul
+      li(ng-repeat="error in fieldLocale.errors")
+        | {{ error.message }}
