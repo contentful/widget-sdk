@@ -11,57 +11,72 @@ angular.module('contentful').factory('batchPerformer', ['$injector', function ($
   var ACTION_NAMES = {
     publish: 'published',
     unpublish: 'unpublished',
-    delete: 'deleted',
     archive: 'archived',
     unarchive: 'unarchived',
+    delete: 'deleted',
     duplicate: 'duplicated'
   };
 
-  var ENTITY_NAMES = {
-    entry: ['Entry', 'Entries'],
-    asset: ['Asset', 'Assets']
+  var ENTITY_PLURAL_NAMES = {
+    Entry: 'Entries',
+    Asset: 'Assets'
   };
 
-  return function createBatchPerformer (config) {
+  return {create: createBatchPerformer};
 
-    return _.transform(ACTION_NAMES, function (acc, actionName, action) {
+  function createBatchPerformer (config) {
+
+    return _.transform(_.keys(ACTION_NAMES), function (acc, action) {
       acc[action] = _.partial(run, action);
     }, {});
 
     function run (method, cb) {
-      var selected = config.getSelected();
-      var results = [];
-      var pushResult = _.bind(results.push, results);
-
-      var actions = _.map(selected, function (entity) {
-        return performAction(entity, method)
-        .then(pushResult, pushResult);
+      var actions = _.map(config.getSelected(), function (entity) {
+        return performAction(entity, method);
       });
 
       return $q.all(actions)
-      .then(function handleResults () {
-        var failed = _.filter(results, 'err');
-        var succeeded = _.difference(results, failed);
-        notifyBatchResult(method, succeeded, failed);
-        if (_.isFunction(cb)) { cb(succeeded, failed); }
-        config.clearSelection();
-        analytics.track('Performed ' + ENTITY_NAMES[config.entityType][0] + ' list action', {action: method});
+      .then(function handleResults (results) {
+        results = groupBySuccess(results);
+        notifyBatchResult(method, results);
+        if (_.isFunction(cb)) { cb(results.succeeded, results.failed); }
+        if (_.isFunction(config.finally)) { config.finally(); }
+        analytics.track('Performed ' + config.entityType + ' list action', {action: method});
+        return results;
       });
     }
 
     function performAction (entity, method) {
-      return call(entity, method)
-      .catch(function handleError (err) {
-        if (err.statusCode === 404) {
-          entity.setDeleted();
-          config.onDelete(entity);
-          return $q.when(entity);
-        } else if (err.statusCode === 429) {
-          return $timeout(_.partial(performAction, entity, method), 1000);
+      var request = _.partial(call, entity, method);
+      var handleError = _.partial(handleEntityError, entity);
+
+      return retryOnRateLimit(request)
+      .then(handleSuccess, handleError);
+    }
+
+    function retryOnRateLimit (request) {
+      return request()
+      .catch(function (err) {
+        if (err && err.statusCode === 429) {
+          return $timeout(_.partial(retryOnRateLimit, request), 1000);
         } else {
-          return $q.reject({err: err});
+          return $q.reject(err);
         }
       });
+    }
+
+    function handleSuccess (entity) {
+      return {entity: entity};
+    }
+
+    function handleEntityError (entity, err) {
+      if (err && err.statusCode === 404) {
+        entity.setDeleted();
+        config.onDelete(entity);
+        return handleSuccess(entity);
+      } else {
+        return {err: err};
+      }
     }
 
     function call (entity, method) {
@@ -69,8 +84,6 @@ angular.module('contentful').factory('batchPerformer', ['$injector', function ($
         return callDuplicate(entity);
       } else if (method === 'delete') {
         return callDelete(entity);
-      } else if (method === 'publish') {
-        return entity.publish(entity.getVersion());
       } else {
         return entity[method]();
       }
@@ -83,7 +96,7 @@ angular.module('contentful').factory('batchPerformer', ['$injector', function ($
         var data = _.omit(entity.data, 'sys');
         return spaceContext.space.createEntry(ctId, data);
       } else {
-        return $q.reject({err: new Error('Only entries can be duplicated')});
+        return $q.reject(new Error('Only entries can be duplicated'));
       }
     }
 
@@ -91,20 +104,27 @@ angular.module('contentful').factory('batchPerformer', ['$injector', function ($
       return entity.delete()
       .then(function () {
         config.onDelete(entity);
-        return $q.when(entity);
+        return entity;
       });
     }
 
-    function notifyBatchResult (method, succeeded, failed) {
-      var actionName = ACTION_NAMES[method];
-      var entityName = ENTITY_NAMES[config.entityType][1];
+    function groupBySuccess (results) {
+      return _.transform(results, function (acc, result) {
+        var key = result.err ? 'failed' : 'succeeded';
+        acc[key].push(result[result.err ? 'err' : 'entity']);
+      }, {failed: [], succeeded: []});
+    }
 
-      if (succeeded.length > 0) {
-        notification.info(succeeded.length + ' ' + entityName + ' ' + actionName + ' successfully');
+    function notifyBatchResult (method, results) {
+      var actionName = ACTION_NAMES[method];
+      var entityName = ENTITY_PLURAL_NAMES[config.entityType];
+
+      if (results.succeeded.length > 0) {
+        notification.info(results.succeeded.length + ' ' + entityName + ' ' + actionName + ' successfully');
       }
-      if (failed.length > 0) {
-        notification.warn(failed.length + ' ' + entityName + ' could not be ' + actionName);
+      if (results.failed.length > 0) {
+        notification.warn(results.failed.length + ' ' + entityName + ' could not be ' + actionName);
       }
     }
-  };
+  }
 }]);

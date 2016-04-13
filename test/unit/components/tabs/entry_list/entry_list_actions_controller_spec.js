@@ -18,7 +18,6 @@ describe('Entry List Actions Controller', function () {
         'action2',
         'action3',
         'action4',
-        'getVersion',
         'timeout',
         'broadcast'
       ]);
@@ -72,16 +71,12 @@ describe('Entry List Actions Controller', function () {
   function makeEntity(action, stub) {
     var entity = {};
     entity[action] = stub;
-    if(action == 'publish'){
-      entity.getVersion = stubs.getVersion;
-    }
     return entity;
   }
 
   function makePerformTests(action, extraSpecs){
     describe(action+' selected entries', function () {
       beforeEach(function () {
-        stubs.getVersion.returns(3);
         stubs.size.returns(2);
         var entities = [
           makeEntity(action, stubs.action1),
@@ -144,19 +139,9 @@ describe('Entry List Actions Controller', function () {
     });
   }
 
-  makePerformTests('publish', function () {
-    it('gets version of selected entries', function () {
-      expect(stubs.getVersion.callCount).toBe(4);
-    });
-
-    it('publishes 3rd version', function () {
-      expect(stubs.getVersion.getCall(0).returnValue).toBe(3);
-    });
-  });
-
+  makePerformTests('publish');
   makePerformTests('unpublish');
   makePerformTests('delete');
-
   makePerformTests('archive');
   makePerformTests('unarchive');
 

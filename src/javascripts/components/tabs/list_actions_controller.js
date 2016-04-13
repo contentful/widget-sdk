@@ -3,29 +3,31 @@
 angular.module('contentful')
 .controller('ListActionsController', ['$scope', '$injector', 'entityType', function ListActionsController ($scope, $injector, entityType) {
 
-  var accessChecker        = $injector.get('accessChecker');
-  var createBatchPerformer = $injector.get('batchPerformer');
+  var accessChecker  = $injector.get('accessChecker');
+  var batchPerformer = $injector.get('batchPerformer');
 
-  var collection = entityType === 'entry' ? 'entries' : 'assets';
+  var collection = entityType === 'Entry' ? 'entries' : 'assets';
 
-  var batchPerformer = this.batchPerformer = createBatchPerformer({
+  var performer = batchPerformer.create({
     entityType: entityType,
     getSelected: $scope.selection.getSelected,
-    clearSelection: $scope.selection.clear,
+    finally: $scope.selection.clear,
     onDelete: removeFromList
   });
 
+  this.duplicate = performer.duplicate;
+
   $scope.publishButtonName = publishButtonName;
   $scope.showPublish       = createShowChecker('publish', 'canPublish');
-  $scope.publishSelected   = batchPerformer.publish;
+  $scope.publishSelected   = performer.publish;
   $scope.showUnpublish     = createShowChecker('unpublish', 'canUnpublish');
-  $scope.unpublishSelected = batchPerformer.unpublish;
+  $scope.unpublishSelected = performer.unpublish;
   $scope.showDelete        = createShowChecker('delete', 'canDelete');
-  $scope.deleteSelected    = batchPerformer.delete;
+  $scope.deleteSelected    = performer.delete;
   $scope.showArchive       = createShowChecker('archive', 'canArchive');
-  $scope.archiveSelected   = batchPerformer.archive;
+  $scope.archiveSelected   = performer.archive;
   $scope.showUnarchive     = createShowChecker('unarchive', 'canUnarchive');
-  $scope.unarchiveSelected = batchPerformer.unarchive;
+  $scope.unarchiveSelected = performer.unarchive;
 
   function createShowChecker (action, predicate) {
     return function () {
@@ -40,7 +42,9 @@ angular.module('contentful')
     var index = _.indexOf($scope[collection], entity);
     if (index > -1) {
       $scope[collection].splice(index, 1);
-      $scope.paginator.numEntries -= 1;
+      if (_.isNumber(dotty.get($scope, 'paginator.numEntries'))) {
+        $scope.paginator.numEntries -= 1;
+      }
     }
   }
 

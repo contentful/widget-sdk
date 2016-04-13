@@ -8,7 +8,7 @@ angular.module('contentful')
 
   var listActionsController = $controller('ListActionsController', {
     $scope: $scope,
-    entityType: 'entry'
+    entityType: 'Entry'
   });
 
   $scope.showDuplicate     = showDuplicate;
@@ -19,7 +19,8 @@ angular.module('contentful')
   }
 
   function duplicate () {
-    listActionsController.batchPerformer.duplicate(function (succeeded) {
+    listActionsController.duplicate().then(function (results) {
+      var succeeded = results.succeeded;
       $scope.entries.unshift.apply($scope.entries, succeeded);
       $scope.paginator.numEntries += succeeded.length;
     });
