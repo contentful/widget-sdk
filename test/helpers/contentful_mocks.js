@@ -384,6 +384,23 @@ function ($delegate, mock) {
   }
 })
 
+.constant('debounceQueue', (function () {
+  function debounce (fn) {
+    return function () {
+      debounce.queue.push({fn: fn, args: arguments});
+    };
+  }
+
+  debounce.queue = [];
+  debounce.flush = function () {
+    debounce.queue.forEach(function (call) {
+      call.fn.apply(null, call.args);
+    });
+  };
+
+  return debounce;
+})())
+
 .config(['environment', function (environment) {
   environment.settings.marketing_url = '//example.com';
 }])

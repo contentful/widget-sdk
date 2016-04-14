@@ -167,7 +167,7 @@ angular.module('contentful')
   registerWidget('objectEditor',{
     fieldTypes: ['Object'],
     name: 'Object',
-    template: '<div cf-object-editor class="cf-object-editor" ng-model="fieldData.value"></div>'
+    template: '<cf-json-editor />'
   });
 
   registerWidget('listInput',{

@@ -6,6 +6,9 @@ var libs = {
   React:      require('react')
 };
 
+require('codemirror/addon/edit/closebrackets');
+require('codemirror/mode/javascript/javascript');
+
 require('codemirror/addon/mode/overlay');
 require('codemirror/mode/xml/xml');
 require('codemirror/mode/markdown/markdown');

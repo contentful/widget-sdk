@@ -80,7 +80,7 @@ $cfnext-button-colors($bg, $text)
   transition-timing-function: ease-in-out
   transition-duration: 0.1s
 
-  &:hover
+  &:hover:not(:disabled)
     background-position: 0 100%
 
   &.active,&:active
@@ -204,6 +204,14 @@ Styleguide 4.3
 */
 $btn-secondary-text = $colors.text-mid
 $btn-secondary-bg = $colors.element-light
+$button-secondary-colors()
+  $cfnext-button-colors($btn-secondary-bg, $btn-secondary-text)
+  border-color: $colors.element-dark
+
+  &:hover:not(:disabled), &.active
+    background-color: $colors.element-mid
+    border-color: $colors.element-darkest
+
 .cfnext-btn-secondary-action,
 .cfnext-btn-secondary-action--large
   $cfnext-button($btn-secondary-bg, $btn-secondary-text)
