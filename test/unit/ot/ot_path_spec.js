@@ -74,9 +74,7 @@ describe('otPath directive', function() {
 
   describe('#getValue()', function() {
     it('returns value from entity data when sharejs doc is not defined', function () {
-      dotty.put(scope, ['entity', 'data', 'fields', 'FID', 'LID'], 'ENTITY VALUE');
-      scope.field = {id: 'FID'};
-      scope.locale = {internal_code: 'LID'};
+      dotty.put(scope, ['entity', 'data'].concat(scope.otPath), 'ENTITY VALUE');
       scope.otDoc.doc = undefined;
       expect(scope.otSubDoc.getValue()).toEqual('ENTITY VALUE');
     });
