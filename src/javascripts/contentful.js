@@ -4,7 +4,11 @@
  * @ngdoc module
  * @name cf.app
  */
-angular.module('cf.app', ['ui.router', 'cf.ui']);
+angular.module('cf.app', [
+  'ui.router',
+  'cf.utils',
+  'cf.ui'
+]);
 
 
 /**

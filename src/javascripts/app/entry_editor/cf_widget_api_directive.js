@@ -46,6 +46,7 @@ angular.module('contentful')
     removeValue: removeValue,
     removeValueAt: removeValueAt,
     insertValue: insertValue,
+    pushValue: pushValue,
 
     id: ctField.apiName, // we only want to expose the public ID
     locale: $scope.locale.code,
@@ -105,6 +106,18 @@ angular.module('contentful')
       return $scope.otSubDoc.changeValue([x]);
     } else {
       return $q.reject(new Error('Cannot insert index ' + i + 'into empty container'));
+    }
+  }
+
+  function pushValue (x) {
+    // TODO Move this into otPath directive
+    var current = $scope.otSubDoc.getValue();
+    if (current) {
+      return $q.denodeify(function (cb) {
+        $scope.otSubDoc.doc.insert(current.length, x, cb);
+      });
+    } else {
+      return $scope.otSubDoc.changeValue([x]);
     }
   }
 }]);

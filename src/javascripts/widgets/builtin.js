@@ -185,6 +185,13 @@ angular.module('contentful')
     template: '<cf-checkbox-editor />'
   });
 
+  registerWidget('tagEditor', {
+    fieldTypes: ['Symbols'],
+    name: 'Tag',
+    icon: 'tags',
+    template: '<cf-tag-editor />'
+  });
+
   registerWidget('fileEditor',{
     fieldTypes: ['File'],
     name: 'File',
