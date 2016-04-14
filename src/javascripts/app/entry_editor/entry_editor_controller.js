@@ -80,7 +80,6 @@ angular.module('contentful')
 
   $scope.$watch('validationResult.errors', function (errors) {
     $scope.errorPaths = {};
-    $scope.hasErrorOnFields = false;
 
     _.each(errors, function (error) {
       if (error.path[0] !== 'fields') return;
@@ -103,9 +102,7 @@ angular.module('contentful')
         return;
       }
 
-      if (error.path.length == 1 && error.path[0] == 'fields') {
-        $scope.hasErrorOnFields = error.path.length == 1 && error.path[0] == 'fields';
-      } else if (error.path.length == 2) {
+      if (error.path.length == 2) {
         var localeCodes = fieldFactory.getLocaleCodes(field);
         $scope.errorPaths[fieldId].push.apply($scope.errorPaths[fieldId], localeCodes);
       } else {
