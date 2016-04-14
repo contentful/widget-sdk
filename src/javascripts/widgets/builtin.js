@@ -120,7 +120,7 @@ angular.module('contentful')
       }
     ],
     notFocusable: true,
-    template: '<cf-rating-editor ng-model="fieldData.value" ot-bind-object-value="rating"></cf-rating-editor>'
+    template: '<cf-rating-editor />'
   });
 
   registerWidget('datePicker',{
