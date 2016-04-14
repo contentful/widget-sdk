@@ -1,33 +1,23 @@
 'use strict';
 
-angular.module('contentful').directive('cfMultiVideoEditor', [function(){
+angular.module('contentful')
+.directive('cfMultiVideoEditor', ['$injector', function ($injector) {
+  var $controller = $injector.get('$controller');
+
   return {
-    restrict   : 'E',
-    scope      : true,
-    template   : JST['cf_multi_video_editor'](),
-    controller : 'cfMultiVideoEditorController',
-    controllerAs: 'multiVideoEditorController',
-    link: function(scope, elem) {
+    restrict: 'E',
+    scope: true,
+    template: JST['cf_multi_video_editor'](),
+    link: function (scope, elem) {
+      scope.multiVideoEditorController = $controller('cfMultiVideoEditorController', {
+        $scope: scope,
+        widgetApi: scope.widgetApi
+      });
+
       scope.videoInputController = videoInputController;
-
-      if (scope.multiVideoEditor.isSortingEnabled)
-        scope.linkSortOptions = {
-          handle: '[cf-drag-handle]',
-          cursor: 'move',
-          forceHelperSize: true,
-          forcePlaceholderSize: true,
-          containment: 'document',
-          tolerance: 'pointer',
-          update: function(e, ui) {
-            var oldIndex = ui.item.sortable.index;
-            var newIndex = ui.item.sortable.dropindex;
-            scope.otDoc.doc.at(scope.otPath).move(oldIndex, newIndex);
-          }
-        };
-
-        function videoInputController() {
-          return elem.find('cf-video-input').controller('cfVideoInput');
-        }
+      function videoInputController() {
+        return elem.find('cf-video-input').controller('cfVideoInput');
+      }
     }
   };
 }]);

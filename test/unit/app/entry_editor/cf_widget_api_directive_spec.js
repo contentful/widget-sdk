@@ -5,7 +5,7 @@ describe('cfWidgetApi directive', function () {
     module('contentful/test');
 
     var $controller = this.$inject('$controller');
-    var $injector   = this.$inject('$injector');
+    var OtDoc = this.$inject('mocks/OtDoc');
 
     this.scope = this.$inject('$rootScope').$new();
     this.widget = {
@@ -21,13 +21,14 @@ describe('cfWidgetApi directive', function () {
         isDisabled: sinon.stub(),
         otSubDoc: {
           changeString: sinon.stub(),
-          getValue: sinon.stub()
+          getValue: sinon.stub(),
+          doc: new OtDoc({myfield: {}}, ['myfield'])
         },
         locale: {}
       });
+
       return $controller('WidgetApiController', {
-        '$scope': this.scope,
-        '$injector': $injector
+        $scope: this.scope,
       });
     };
 
@@ -75,6 +76,7 @@ describe('cfWidgetApi directive', function () {
 
       this.testEvent = function (eventName) {
         var detach = this.widgetApi.field.onValueChanged(this.cb);
+        this.cb.reset();
         var value = 'test';
         this.scope.$emit(eventName, path, value);
         sinon.assert.calledWithExactly(this.cb, value);
@@ -99,10 +101,12 @@ describe('cfWidgetApi directive', function () {
     });
 
     it('callback will not be called if OT path does not match', function () {
-      this.widgetApi.field.onValueChanged(this.cb);
+      var cb = sinon.spy();
+      this.widgetApi.field.onValueChanged(cb);
+      cb.reset();
       this.scope.$emit('otValueReverted', path);
       this.scope.$emit('otValueReverted', ['fields', 'some-other-field', 'de-DE']);
-      sinon.assert.calledOnce(this.cb);
+      sinon.assert.calledOnce(cb);
     });
   });
 
@@ -187,12 +191,51 @@ describe('cfWidgetApi directive', function () {
     });
   });
 
+  describe('#removeValueAt()', function () {
+    it('delegates call to "doc.remove()"', function () {
+      var success = sinon.stub();
+      this.scope.otSubDoc.doc.set(['A', 'B', 'C']);
+
+      this.widgetApi.field.removeValueAt(1).then(success);
+      this.$apply();
+
+      expect(this.scope.otSubDoc.doc.get()).toEqual(['A', 'C']);
+      sinon.assert.calledOnce(success);
+    });
+  });
+
+  describe('#insertValue()', function () {
+    it('delegates call to "doc.insert()" if array exists', function () {
+      var success = sinon.stub();
+      this.scope.otSubDoc.getValue.returns('something');
+      this.scope.otSubDoc.doc.set(['A', 'C']);
+
+      this.widgetApi.field.insertValue(1, 'B').then(success);
+      this.$apply();
+
+      expect(this.scope.otSubDoc.doc.get()).toEqual(['A', 'B', 'C']);
+      sinon.assert.calledOnce(success);
+    });
+
+    it('creates new array if value is missing', function () {
+      var success = sinon.stub();
+      this.scope.otSubDoc.getValue.returns(undefined);
+      this.scope.otSubDoc.changeValue = sinon.stub().resolves();
+
+      this.widgetApi.field.insertValue(0, 'A').then(success);
+      this.$apply();
+
+      sinon.assert.calledWithExactly(this.scope.otSubDoc.changeValue, ['A']);
+      sinon.assert.calledOnce(success);
+    });
+  });
+
   describe('#onDisabledStatusChanged()', function () {
     it('is dispatched with initial value', function () {
       var cb = sinon.spy();
       this.scope.isDisabled.returns('FOO');
       this.$apply();
-      this.widgetApi.field.onDisabledStatusChanged(cb, true);
+      this.widgetApi.field.onDisabledStatusChanged(cb);
       sinon.assert.calledOnce(cb);
       sinon.assert.calledWithExactly(cb, 'FOO');
     });
@@ -202,7 +245,7 @@ describe('cfWidgetApi directive', function () {
       this.scope.isDisabled.returns('FOO');
       this.$apply();
       this.widgetApi.field.onDisabledStatusChanged(cb);
-      sinon.assert.notCalled(cb);
+      cb.reset();
 
       this.scope.isDisabled.returns('BAR');
       this.$apply();

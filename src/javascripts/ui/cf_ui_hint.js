@@ -6,15 +6,19 @@ angular.module('cf.ui')
  * @ngdoc directive
  * @name cfUiHint
  * @description
- * Shows an hovering hint with an arrow, with a transcluded message
+ * Displays a hint which can optionally show a hovering arrow, with a
+ * transcluded message.
+ *
+ * arrow=true to show the arrow
  *
  * Each hint will need to set their own positioning and the message
  * positioning via CSS and should also be used inside a relatively or
  * absolutely positioned element.
  *
+ *
  * @usage
  * // jade
- * cf-ui-hint(name="hint-name")
+ * cf-ui-hint(name="hint-name" arrow="true")
  *   This is a hint
  *
  * // stylus
@@ -32,16 +36,17 @@ angular.module('cf.ui')
     transclude: true,
     template:
       '<div class="ui-hint">'+
-      '<cf-icon name="hint-arrow"></cf-icon>'+
-      '<p><ng-transclude /></p>'+
+      '<cf-icon name="hint-arrow" ng-if="showArrow"></cf-icon>'+
+      '<p ng-transclude class="ui-hint-content"></p>'+
       '</div>',
     compile: function (elem, attrs) {
-      if(!hints.shouldShow(attrs.name)){
-        return function (scope, elem){
+      if (!hints.shouldShow(attrs.name)) {
+        return function (scope, elem) {
           elem.remove();
         };
       } else {
         return function (scope, elem, attrs) {
+          scope.showArrow = attrs.arrow;
           hints.setAsSeen(attrs.name);
         };
       }

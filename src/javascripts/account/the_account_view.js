@@ -12,9 +12,10 @@ angular.module('contentful')
  */
 .factory('TheAccountView', ['$injector', function($injector) {
 
-  var $q           = $injector.get('$q');
-  var $state       = $injector.get('$state');
-  var spaceContext = $injector.get('spaceContext');
+  var $q               = $injector.get('$q');
+  var $state           = $injector.get('$state');
+  var spaceContext     = $injector.get('spaceContext');
+  var OrganizationList = $injector.get('OrganizationList');
 
   var isActive = false;
 
@@ -29,21 +30,21 @@ angular.module('contentful')
      * @description
      * Marks the "account" section as active.
      */
-    enter:               function () { isActive = true;  },
+    enter: function () { isActive = true;  },
     /**
      * @ngdoc method
      * @name TheAccountView#exit
      * @description
      * Marks the "account" section as inactive.
      */
-    exit:                function () { isActive = false; },
+    exit: function () { isActive = false; },
     /**
      * @ngdoc method
      * @name TheAccountView#isActive
      * @description
      * Checks if the "account" section is active.
      */
-    isActive:            function () { return isActive;  }
+    isActive: function () { return isActive;  }
   };
 
   function goTo(pathSuffix, options) {
@@ -69,7 +70,7 @@ angular.module('contentful')
   function goToSubscription() {
     var organizationId = spaceContext.getData('organization.sys.id');
 
-    if (organizationId) {
+    if (OrganizationList.isOwner(organizationId)) {
       var pathSuffix = 'organizations/' + organizationId + '/subscription';
       return goTo(pathSuffix, {reload: true});
     } else {

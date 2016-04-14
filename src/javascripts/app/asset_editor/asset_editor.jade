@@ -39,8 +39,7 @@ header.workbench-header
             +field-permission-info
             .locale-label(ng-show="locales.length > 1") {{locale.name}}
             +editor-field-collaborators
-            cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.internal_code,'*']")
+            +field-locale-errors
 
-          cf-error-list.form-box-error(cf-error-path="['fields', field.id]")
   .workbench-main__entity-sidebar
     +entity-sidebar(revert=false)

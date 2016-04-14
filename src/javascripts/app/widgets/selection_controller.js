@@ -21,11 +21,11 @@ angular.module('contentful')
 
     var removeChangeListener = field.onValueChanged(function (value) {
       scope.data.selected = value;
-    }, true);
+    });
 
     var removeDisabledStatusListener = field.onDisabledStatusChanged(function (disabled) {
       scope.isDisabled = disabled;
-    }, true);
+    });
 
     scope.$watch('data.selected', function (value) {
       // ngModel uses 'null' when nothing is selected

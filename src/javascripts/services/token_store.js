@@ -16,7 +16,7 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
   var modalDialog        = $injector.get('modalDialog');
   var ReloadNotification = $injector.get('ReloadNotification');
   var logger             = $injector.get('logger');
-  var createSignal       = $injector.get('signal');
+  var createSignal       = $injector.get('signal').create;
   var createQueue        = $injector.get('overridingRequestQueue');
 
   var currentToken = null;

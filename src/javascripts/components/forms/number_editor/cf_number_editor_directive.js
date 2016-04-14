@@ -22,9 +22,9 @@ angular.module('contentful')
       // update input field value when new synced value received via ot magic
       var detachOnValueChangedHandler = field.onValueChanged(function (val) {
         updateInput(val === 0 ? String(val) : (val ? String(val) : ''));
-      }, true);
+      });
       // call handler when the disabled status of the field changes
-      var detachOnFieldDisabledHandler = field.onDisabledStatusChanged(updateDisabledStatus, true);
+      var detachOnFieldDisabledHandler = field.onDisabledStatusChanged(updateDisabledStatus);
 
       // remove attached handlers when element is evicted from dom
       scope.$on('$destroy', detachOnValueChangedHandler);

@@ -309,8 +309,8 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * @description
    * Returns true if Roles can be modified.
    */
-  function canModifyRoles() {
-    return isAdminOrOwner() && dotty.get(features, 'customRoles', false);
+  function canModifyRoles () {
+    return isSuperUser() && dotty.get(features, 'customRoles', false);
   }
 
   /**
@@ -320,13 +320,17 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * @description
    * Returns true if Users can be modified.
    */
-  function canModifyUsers() {
-    return isAdminOrOwner();
+  function canModifyUsers () {
+    return isSuperUser();
   }
 
-  function isAdminOrOwner() {
-    var isSpaceAdmin = spaceContext.getData('spaceMembership.admin', false);
-    return isSpaceAdmin || _.contains(['owner', 'admin'], getRoleInOrganization());
+  function isSuperUser () {
+    var isSpaceAdmin        = spaceContext.getData('spaceMembership.admin', false);
+    var organizationId      = spaceContext.getData('organization.sys.id');
+    var isOrganizationAdmin = OrganizationList.isAdmin(organizationId);
+    var isOrganizationOwner = OrganizationList.isOwner(organizationId);
+
+    return isSpaceAdmin || isOrganizationAdmin || isOrganizationOwner;
   }
 
   /**
@@ -431,18 +435,6 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
 
   function getReasonsDenied(action, entity) {
     return authorization.spaceContext.reasonsDenied(action, entity);
-  }
-
-  function getRoleInOrganization() {
-    var organizationId = spaceContext.getData('organization.sys.id');
-    var memberships    = spaceContext.getData('spaceMembership.user.organizationMemberships', []);
-    var found          = null;
-
-    if (organizationId && memberships.length > 0) {
-      found = _.findWhere(memberships, {organization: {sys: {id: organizationId }}});
-    }
-
-    return dotty.get(found, 'role');
   }
 
   function getContentTypeIdFor(entry) {

@@ -3,7 +3,7 @@
 angular.module('contentful')
 .factory('EntityStateManager', ['$injector', function ($injector) {
   var $q           = $injector.get('$q');
-  var createSignal = $injector.get('signal');
+  var createSignal = $injector.get('signal').create;
 
   /**
    * @ngdoc type

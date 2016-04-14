@@ -6,7 +6,7 @@ angular.module('contentful').factory('iframeChannel', ['$injector', function ($i
   var $rootScope   = $injector.get('$rootScope');
   var $sce         = $injector.get('$sce');
   var userAgent    = $injector.get('userAgent');
-  var createSignal = $injector.get('signal');
+  var createSignal = $injector.get('signal').create;
 
   return {
     create: function (iframe) {

@@ -21,7 +21,7 @@ angular.module('cf.ui')
  * })
  */
 .factory('command', ['$injector', function ($injector) {
-  var createSignal = $injector.get('signal');
+  var createSignal = $injector.get('signal').create;
   var $q = $injector.get('$q');
 
   /**

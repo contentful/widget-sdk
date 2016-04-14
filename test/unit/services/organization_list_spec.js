@@ -59,23 +59,31 @@ describe('Orgniaztion list', function () {
     });
   });
 
-  describe('#getWithOnTop', function () {
-    var last = { sys: { id: '3' } };
-    var organizations = [{ sys: { id: '1' } }, { sys: { id: '2' } }, last];
-
+  describe('#isAdmin and #isOwner', function () {
     beforeEach(function () {
-      OrganizationList.resetWithUser(makeUser(organizations));
+      var user = makeUser([{sys: {id: '123'}}, {sys: {id: '456'}}]);
+      this.memberships = user.organizationMemberships;
+      OrganizationList.resetWithUser(user);
     });
 
-    it('returns copy with selected organization on top', function () {
-      var organizations = OrganizationList.getWithOnTop(last.sys.id);
-      expect(organizations[0]).toBe(last);
+    it('returns false for an unknown organization ID', function () {
+      expect(OrganizationList.isAdmin('unknown-id')).toBe(false);
+      expect(OrganizationList.isOwner('unknown-id')).toBe(false);
     });
 
-    it('returns shallow copy', function () {
-      var copy = OrganizationList.getWithOnTop('3');
-      expect(copy === organizations).toBe(false);
-      expect(copy[0] === last).toBe(true);
+    it('returns false if user is a normal member', function () {
+      this.memberships[0].role = 'member';
+      expect(OrganizationList.isAdmin('123')).toBe(false);
+      expect(OrganizationList.isOwner('123')).toBe(false);
+    });
+
+    it('returns true if is an owner or an admin', function () {
+      this.memberships[0].role = 'admin';
+      this.memberships[1].role = 'owner';
+      expect(OrganizationList.isAdmin('123')).toBe(true);
+      expect(OrganizationList.isAdmin('456')).toBe(false);
+      expect(OrganizationList.isOwner('123')).toBe(false);
+      expect(OrganizationList.isOwner('456')).toBe(true);
     });
   });
 });

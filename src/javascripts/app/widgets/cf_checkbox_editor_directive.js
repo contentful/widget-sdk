@@ -21,7 +21,11 @@ angular.module('cf.app')
         var values = _.map(selected, 'value');
         var oldValues = field.getValue();
         if (!_.isEqual(oldValues, values)) {
-          field.setValue(values);
+          if (values.length === 0) {
+            field.removeValue();
+          } else {
+            field.setValue(values);
+          }
         }
       }, true);
 
@@ -29,11 +33,11 @@ angular.module('cf.app')
         _.forEach(options, function (option) {
           option.selected = values && values.indexOf(option.value) > -1;
         });
-      }, true);
+      });
 
       var removeDisabledStatusListener = field.onDisabledStatusChanged(function (disabled) {
         scope.isDisabled = disabled;
-      }, true);
+      });
 
       scope.$on('destroy', function () {
         removeChangeListener();

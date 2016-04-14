@@ -34,7 +34,7 @@ ul(cf-ui-sortable ng-model="contentType.data.fields")
       aria-label="Settings"
       ng-click="fieldController.openSettingsDialog()")
       | Settings
-      cf-ui-hint(ng-if="index===0" name="ct-field-settings")
+      cf-ui-hint(ng-if="index===0" name="ct-field-settings" arrow="true")
         | Change field settings, add validations, default values or define the appearance of this field
     button.ct-field__actions.cfnext-btn-inline(type="button"
       aria-label="Actions" cf-context-menu-trigger)

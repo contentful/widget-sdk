@@ -20,7 +20,7 @@ angular.module('contentful')
 }])
 .controller('WidgetApiController', ['$scope', '$injector', function ($scope, $injector) {
   var $q = $injector.get('$q');
-  var newSignal = $injector.get('signal');
+  var newSignal = $injector.get('signal').createMemoized;
   var valueChangedSignal = newSignal($scope.otSubDoc.getValue());
   var isDisabledSignal = newSignal($scope.isDisabled($scope.field, $scope.locale));
   var ctField = $scope.widget.field;
@@ -44,6 +44,9 @@ angular.module('contentful')
     setValue: createSetter('changeValue'),
     setString: createSetter('changeString'),
     removeValue: removeValue,
+    removeValueAt: removeValueAt,
+    insertValue: insertValue,
+
     id: ctField.apiName, // we only want to expose the public ID
     locale: $scope.locale.code,
     type: ctField.type,
@@ -86,4 +89,22 @@ angular.module('contentful')
     return _.isEqual($scope.otPath, path);
   }
 
+  function removeValueAt (i) {
+    return $q.denodeify(function (cb) {
+      $scope.otSubDoc.doc.at(i).remove(cb);
+    });
+  }
+
+  function insertValue (i, x) {
+    // TODO Move this into otPath directive
+    if ($scope.otSubDoc.getValue()) {
+      return $q.denodeify(function (cb) {
+        $scope.otSubDoc.doc.insert(i, x, cb);
+      });
+    } else if (i === 0) {
+      return $scope.otSubDoc.changeValue([x]);
+    } else {
+      return $q.reject(new Error('Cannot insert index ' + i + 'into empty container'));
+    }
+  }
 }]);
