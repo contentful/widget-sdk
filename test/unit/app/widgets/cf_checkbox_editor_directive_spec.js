@@ -6,6 +6,7 @@ describe('cfCheckboxEditor directive', function () {
     this.fieldApi = {
       getValue: sinon.stub(),
       setValue: sinon.stub(),
+      removeValue: sinon.stub(),
       onValueChanged: sinon.stub(),
       onDisabledStatusChanged: sinon.stub(),
       itemValidations: [{in: ['A', 'B', 'C']}]
@@ -74,5 +75,18 @@ describe('cfCheckboxEditor directive', function () {
 
     sinon.assert.calledOnce(this.fieldApi.setValue);
     sinon.assert.calledWithExactly(this.fieldApi.setValue, ['A']);
+  });
+
+  it('completely removes value when all boxes are unchecked', function () {
+    this.fieldApi.onValueChanged.yield(['A']);
+    this.$apply();
+
+    this.fieldApi.removeValue.reset();
+    this.el.find('label:contains(A)')
+    .find('input[type=checkbox]')
+    .prop('checked', false).trigger('click');
+    this.$apply();
+
+    sinon.assert.calledOnce(this.fieldApi.removeValue);
   });
 });

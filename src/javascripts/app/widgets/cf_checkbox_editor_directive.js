@@ -21,7 +21,11 @@ angular.module('cf.app')
         var values = _.map(selected, 'value');
         var oldValues = field.getValue();
         if (!_.isEqual(oldValues, values)) {
-          field.setValue(values);
+          if (values.length === 0) {
+            field.removeValue();
+          } else {
+            field.setValue(values);
+          }
         }
       }, true);
 
