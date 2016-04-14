@@ -31,6 +31,10 @@ angular.module('cf.app')
       var $widget = $(template);
       element.append($widget);
       $compile($widget)(scope);
+
+      element.on('focus keydown', 'input, textarea', function () {
+        scope.$applyAsync(scope.fieldLocale.announcePresence);
+      });
     }
   };
 

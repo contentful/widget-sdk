@@ -169,47 +169,7 @@ angular.module('contentful').
   directive('otDocPresence', function() {
     return {
       require: '^otDocFor',
-      controller: 'otDocPresenceController'
-    };
-  }).
-
-  /**
-   * @ngdoc type
-   * @name otFieldPresenceController
-   * @scope.requires otPresence
-   * @property {string} otFieldPresenceId
-   * @property {object} otFieldPresence
-   * @description
-   * This controller looks for information about the current field in the document
-   * presence and populates some properties to indicate the current field presence
-  */
-  controller('otFieldPresenceController', ['$scope', '$attrs', function($scope, $attrs) {
-    var unregister;
-    $scope.$watch($attrs.otFieldPresence, function(v) {
-      var id = $scope.otFieldPresenceId = v.join('.');
-      var fp = 'otPresence.fields["' + id + '"]';
-      if (unregister) unregister();
-      unregister = $scope.$watch(fp, function (fp) {
-        $scope.otFieldPresence = fp;
-      });
-    }, true);
-  }]).
-
-  /**
-   * @ngdoc directive
-   * @name otFieldPresence
-  */
-  directive('otFieldPresence', function() {
-    return {
-      require: '^otDocPresence',
-      controller: 'otFieldPresenceController',
-      link: function(scope, element, attrs, otPresenceController) {
-        function focus() {
-          if (!scope.otFieldPresenceId) return;
-          otPresenceController.focus(scope.otFieldPresenceId);
-        }
-
-        element.on('focus keydown', 'input, textarea', focus);
-      }
+      controller: 'otDocPresenceController',
+      controllerAs: 'docPresence'
     };
   });
