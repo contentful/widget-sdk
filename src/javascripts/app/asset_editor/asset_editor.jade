@@ -20,9 +20,7 @@ header.workbench-header
     +editor-notification
 
     form.entity-editor-form(name="assetForm")
-      .l-form-row--no-label(ng-show="hasErrorOnFields")
-        .l-form-controls
-          cf-error-list.form-box-error(cf-error-path="['fields']")
+      cf-error-list.form-box-error(cf-error-path="['fields']")
       cf-form-widget.l-form-row(ng-repeat="widget in widgets"
           data-field-id="{{field.id}}")
         label {{field.name}}
