@@ -68,21 +68,18 @@ angular.module('contentful')
 
   // Clicking `Use the API` goes to the delivery API key if there is exactly
   // one otherwise API home
-  var apiKeyState = {
-    name: 'spaces.detail.api.home'
-  };
-
-  spaceContext.space.getDeliveryApiKeys()
-  .then(function(keys) {
-    if (keys.length === 1) {
-      apiKeyState.name = 'spaces.detail.api.keys.detail';
-      apiKeyState.params = { apiKeyId: keys[0].data.sys.id };
-    }
-  });
-
   controller.goToApiKeySection = function() {
     controller.trackClickedButton('Use the API');
-    $state.go(apiKeyState.name, apiKeyState.params);
+    spaceContext.space.getDeliveryApiKeys()
+    .then(function(keys) {
+      if (keys.length === 1) {
+        var name = 'spaces.detail.api.keys.detail';
+        var params = { apiKeyId: keys[0].data.sys.id };
+        $state.go(name, params);
+      } else {
+        $state.go('spaces.detail.api.home');
+      }
+    });
   };
 
   // Languages and SDKs
