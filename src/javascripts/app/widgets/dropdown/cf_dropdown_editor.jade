@@ -1,7 +1,11 @@
-.dropdown-editor
-  select.cfnext-select-box(
-    ng-disabled="isDisabled"
-    ng-model="data.selected"
-    ng-required="required"
-    ng-options="o.value as o.value for o in options")
-    option(value="") Choose a value
+include ../field_editor.mixins.jade
+
++predefined-values-warning(ng-if="misconfigured")
+
+select.cfnext-select-box(
+  ng-if="!misconfigured"
+  ng-disabled="isDisabled"
+  ng-model="data.selected"
+  ng-required="required"
+  ng-options="o.value as o.value for o in options")
+  option(value="") Choose a value

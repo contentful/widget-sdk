@@ -1,0 +1,74 @@
+/*
+Radio
+
+Markup:
+h3 Vertical
+div.radio-editor__options.x--vertical
+  label.radio-editor__option
+    input.radio-editor__input(type="radio" name="r")
+    span.radio-editor__label
+      | GoPro Acquires Two Mobile Editing Companies in Software Push
+  label.radio-editor__option
+    input.radio-editor__input(type="radio" name="r")
+    span.radio-editor__label
+      | Google Unveils Neural Network with “Superhuman” Ability to Determine the Location of Almost Any Image
+  label.radio-editor__option
+    input.radio-editor__input(type="radio" name="r")
+    span.radio-editor__label
+      | Free Android app costs MWC attendees millions of Euros
+h3 Disabled
+div.radio-editor__options.x--vertical.x--disabled
+  label.radio-editor__option
+    input.radio-editor__input(type="radio" name="r" disabled)
+    span.radio-editor__label
+      | GoPro Acquires Two Mobile Editing Companies in Software Push
+  label.radio-editor__option
+    input.radio-editor__input(type="radio" name="r" disabled)
+    span.radio-editor__label
+      | Free Android app costs MWC attendees millions of Euros
+h3 Horizontal
+div.radio-editor__options
+  label.radio-editor__option
+    input.radio-editor__input(type="radio" name="r")
+    span.radio-editor__label
+      | GoPro Acquires Two Mobile Editing Companies in Software Push
+  label.radio-editor__option
+    input.radio-editor__input(type="radio" name="r")
+    span.radio-editor__label
+      | Free Android app
+  label.radio-editor__option
+    input.radio-editor__input(type="radio" name="r")
+    span.radio-editor__label
+      | Google Unveils Neural Network with “Superhuman” Ability to Determine the Location of Almost Any Image
+
+Styleguide field-editors.radio
+*/
+
+@require '/variables/colors'
+
+cf-radio-editor
+  display: block
+
+.radio-editor__options
+  display: flex
+  flex-direction: row
+  flex-wrap: wrap
+  &.x--vertical
+    flex-direction: column
+  &.x--disabled
+    padding: 0 0.5em
+    color: $colors.text-light
+    background: $colors.element-lightest
+
+.radio-editor__option
+  cursor: pointer
+  display: block
+  line-height: $new-rhythm(1)
+  margin: $new-rhythm(0.25) 1em $new-rhythm(0.25) 0
+  // Overrides for 'l-form-row' styles !tableflip
+  width: auto !important
+  padding: 0 !important
+
+.radio-editor__input
+  vertical-align: middle
+  margin: 0 0.6em 0 0
