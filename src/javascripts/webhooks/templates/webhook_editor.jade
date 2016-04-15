@@ -48,24 +48,28 @@ header.workbench-header
 
   .workbench-main__entity-sidebar
     .entity-sidebar
-      h2.entity-sidebar__heading Webhook URL requirements
-      p
-        | When creating a new webhook keep in mind that the URL field will reject:
-      ul
-        li Private IPs (10.x, 192.x, etc.)
-        li Localhost
-        li Hostnames without a Top Level Domain
-        li URLs that resolve to localhost or redirects
-      p
-        | For further information please visit&#32;
-        a(href="http://docs.contentfulcma.apiary.io/#reference/webhooks" target="_blank") our Content Management API reference
-        | .
+      h2.entity-sidebar__heading
+        | Webhook URL requirements
+      .entity-sidebar__text-profile
+        p
+          | When creating a new webhook keep in mind that the URL field will reject:
+        ul
+          li Private IPs (10.x, 192.x, etc.)
+          li Localhost
+          li Hostnames without a Top Level Domain
+          li URLs that resolve to localhost or redirects
+        p
+          | For further information please visit&#32;
+          a(href="http://docs.contentfulcma.apiary.io/#reference/webhooks" target="_blank") our Content Management API reference
+          | .
 
-      h2.entity-sidebar__heading Webhook IP Sources
-      p
-        | If in order to configure webhooks in your network you need more information about their IP range visit&#32;
-        a(href="http://docs.aws.amazon.com/general/latest/gr/aws-ip-ranges.html" target="_blank") this page
-        | .
+      h2.entity-sidebar__heading
+        | Webhook IP Sources
+      .entity-sidebar__text-profile
+        p
+          | If in order to configure webhooks in your network you need more information about their IP range visit&#32;
+          a(href="http://docs.aws.amazon.com/general/latest/gr/aws-ip-ranges.html" target="_blank") this page
+          | .
 
 .workbench-main(ui-tabpanel="activity")
   .workbench-main__content

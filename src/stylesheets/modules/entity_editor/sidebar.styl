@@ -1,5 +1,15 @@
 @import '../mixins/spinner'
 
+/*
+Sidebar
+
+Styles for the right-hand sidebar in the application workbench.
+
+TODO Use `.workbench-sidebar` prefix instead of `.entity-sidebar`.
+
+Styleguide sidebar
+*/
+
 $entity-sidebar-content()
   $stretch(0, 0, 0, 0)
   padding: $rhythm(1) 1.6rem
@@ -147,3 +157,29 @@ $entity-sidebar-content()
     flex-wrap: wrap
     > img
       display: block
+
+
+/*
+Text profile
+
+Formats `<p>` and `<ul>` tags for display text.
+
+Markup:
+.entity-sidebar__text-profile(style="width: 45ex")
+  p A paragraph with bottom margin
+  ul
+    li This list
+    li has discs for
+    li every item.
+  p
+    | Another paragraph that is slightly longer to show case line
+    | wrapping and the line height
+
+Styleguide sidebar.text-profile
+*/
+.entity-sidebar__text-profile
+  p, ul
+    margin-bottom: $rhythm(0.5)
+  ul > li
+    list-style: disc inside
+    margin-bottom: $rhythm(0.25)
