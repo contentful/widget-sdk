@@ -10,7 +10,7 @@ mixin editor-field-collaborators
 mixin field-permission-info
   div.entity-editor__no-permission-info(
     data-test-id="field-locale-permissions"
-    ng-show="otDoc.state.editable && isDisabled(field, locale)"
+    ng-show="fieldLocale.access.denied"
     tooltip="You don't have a permission to edit this field. To change your permission setting contact your space administrator."
     tooltip-placement="left")
     cf-icon(name="lock")
