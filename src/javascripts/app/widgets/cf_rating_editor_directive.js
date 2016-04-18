@@ -54,7 +54,7 @@ angular.module('cf.app')
       };
 
       $scope.setRating = function (rating) {
-        if ($scope.isDiabled) {
+        if ($scope.isDisabled) {
           return;
         }
 
