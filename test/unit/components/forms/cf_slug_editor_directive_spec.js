@@ -4,26 +4,9 @@ describe('SlugEditor directive', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    var $q = this.$inject('$q');
-
-    this.$q = $q;
-
-    this.initialSys = {
-      id: 'eins',
-      publishedVersion: 0,
-      createdAt: '2015-01-28T10:38:28.989Z',
-      contentType: {
-        sys: {
-          id: 'zwei'
-        }
-      }
-    };
-
     var newSignal = this.$inject('signal').createMemoized;
-    var valueChangedSignal = newSignal('');
     var disabledStatusSignal = newSignal(false);
-
-    this.sysChangedSignal = newSignal(this.initialSys);
+    this.valueChangedSignal = newSignal('');
     this.titleChangedSignal = newSignal('');
 
     this.title = {
@@ -33,9 +16,13 @@ describe('SlugEditor directive', function () {
       }.bind(this)
     };
 
+    var entrySys = this.entrySys = {
+      contentType: {sys: {id: 'CTID'}}
+    };
+
     this.cfWidgetApi = {
       field: {
-        onValueChanged: valueChangedSignal.attach,
+        onValueChanged: this.valueChangedSignal.attach,
         onDisabledStatusChanged: disabledStatusSignal.attach,
         locale: 'en-US',
         setString: sinon.stub(),
@@ -43,10 +30,10 @@ describe('SlugEditor directive', function () {
         id: 'slug'
       },
       entry: {
+        getSys: sinon.stub().returns(entrySys),
         fields: {
           title: this.title
-        },
-        onSysChanged: this.sysChangedSignal.attach
+        }
       },
       space: {
         getEntries: sinon.stub().resolves({ total: 0 })
@@ -69,18 +56,11 @@ describe('SlugEditor directive', function () {
       $inputEl.val(slug);
       this.cfWidgetApi.field.getValue = sinon.stub().returns(slug);
     };
-
-    function setAndDispatchPublishVersion(obj, version) {
-      obj.initialSys.publishedVersion = version;
-      obj.sysChangedSignal.dispatch(obj.initialSys);
-    }
-
-    this.publishEntry = setAndDispatchPublishVersion.bind(null, this, 1);
-    this.unpublishEntry = setAndDispatchPublishVersion.bind(null, this, 0);
   });
 
   describe('#titleToSlug', function () {
     it('should use an "untitled" slug with the entry creation time, when the title is empty', function () {
+      this.entrySys.createdAt = '2015-01-28T10:38:28.989Z';
       var $inputEl = this.compileElement().children('input');
 
       expect($inputEl.val()).toEqual('untitled-entry-2015-01-28-at-10-38-28');
@@ -119,39 +99,18 @@ describe('SlugEditor directive', function () {
       expect($inputEl.val()).toEqual('this-is-the-second-title');
     });
 
-    it('should not track the title if the entry has been published', function () {
+    it('does not track the title if it is published', function () {
       var $inputEl = this.compileElement().children('input');
 
-      // Write a title
       this.titleChangedSignal.dispatch('This is the first title');
+      this.entrySys.publishedVersion = 1;
 
-      // Publish the entry
-      this.publishEntry();
-
-      // Change the title
       this.titleChangedSignal.dispatch('This is the second title');
-
-      // Notice the slug is still the first title
       expect($inputEl.val()).toEqual('this-is-the-first-title');
-    });
 
-    it('should resume tracking title if the entry has been published and unpublished', function () {
-      var $inputEl = this.compileElement().children('input');
-
-      // Write a title
-      this.titleChangedSignal.dispatch('This is the first title');
-
-      // Publish the entry
-      this.publishEntry();
-
-      // Unpublish the entry
-      this.unpublishEntry();
-
-      // Change the title
-      this.titleChangedSignal.dispatch('This is the second title');
-
-      // Notice the slug is updated
-      expect($inputEl.val()).toEqual('this-is-the-second-title');
+      this.entrySys.publishedVersion = null;
+      this.titleChangedSignal.dispatch('This is the third title');
+      expect($inputEl.val()).toEqual('this-is-the-third-title');
     });
 
     describe('field locale is different from default locale', function () {
@@ -184,7 +143,7 @@ describe('SlugEditor directive', function () {
   describe('#alreadyPublished', function () {
     beforeEach(function () {
       this.inputEl = this.compileElement().children('input');
-      this.publishEntry();
+      this.entrySys.publishedVersion = 1;
       this.title.getValue = sinon.stub().returns('old title');
       this.inputEl.val('old-title');
     });
@@ -240,48 +199,38 @@ describe('SlugEditor directive', function () {
 
       // The server responds with zero entries by default
       expect(scope.state).toEqual('unique');
-      expect($inputEl.val()).toEqual('untitled-entry-2015-01-28-at-10-38-28');
     });
 
-    it('should show the state as unique when there are matching entries in the query result', function () {
+    it('is "duplicate" when there are matching entries in the query result', function () {
       var $inputEl = this.compileElement().children('input');
       var scope = $inputEl.scope();
 
       // Let the server respond with one entry
       this.cfWidgetApi.space.getEntries = sinon.stub().resolves({ total: 1 });
 
-      // Set a new title.
+      // Trigger status update
       this.titleChangedSignal.dispatch('New Title');
-
-      // settle the getEntries promise
       this.$apply();
       expect(scope.state).toEqual('duplicate');
-      expect($inputEl.val()).toEqual('new-title');
     });
 
-    it('should show the state as "checking" when the query has not been resolved', function () {
-      var $q = this.$q;
-      var responsePDeferred = $q.defer();
+    it('is "checking" when the query has not been resolved', function () {
+      var getEntries = sinon.stub().defers();
+      this.cfWidgetApi.space.getEntries = getEntries;
 
-      // Return a promise without resolving it yet, to mimic a delay in the server's response
-      this.cfWidgetApi.space.getEntries = function () {
-        return responsePDeferred.promise;
-      };
       var $inputEl = this.compileElement().children('input');
       var scope = $inputEl.scope();
 
-      // Set a new title
+      // Trigger status update
       this.titleChangedSignal.dispatch('New Title');
       this.$apply();
 
       expect(scope.state).toEqual('checking');
 
       // Now 'receive' the server response by resolving the promise.
-      responsePDeferred.resolve({ total: 0 });
+      getEntries.resolve({ total: 0 });
       this.$apply();
-
       expect(scope.state).toEqual('unique');
-      expect($inputEl.val()).toEqual('new-title');
     });
   });
 });

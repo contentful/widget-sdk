@@ -24,15 +24,18 @@ angular.module('contentful')
       var title       = entry.fields[contentType.displayField];
 
       var debouncedPerformDuplicityCheck = debounce(performDuplicityCheck, 500);
+
       var useDefaultLocaleTitleForSlug = true;
 
-      var detachOnSysChangeHandler = entry.onSysChanged(updateEntryData, true);
+      // Is set to false when entry is published or the initial slug is
+      // not the slugified version of the title.
+      var updateFromTitle = true;
+
       var detachOnValueChangedHandler = field.onValueChanged(function (val) {
         // Might be `null` or `undefined` when value is not present
         val = val || '';
         updateInput(val);
-        updateStateFromSlug(val);
-      }, true);
+      });
       // call handler when the disabled status of the field changes
       var detachOnFieldDisabledHandler = field.onDisabledStatusChanged(updateDisabledStatus);
       var detachCurrentLocaleTitleChangeHandler = title.onValueChanged(field.locale, function (titleField) {
@@ -59,7 +62,6 @@ angular.module('contentful')
       }
 
       // remove attached handlers when element is evicted from dom
-      scope.$on('$destroy', detachOnSysChangeHandler);
       scope.$on('$destroy', detachOnValueChangedHandler);
       scope.$on('$destroy', detachOnFieldDisabledHandler);
       scope.$on('$destroy', detachCurrentLocaleTitleChangeHandler);
@@ -77,18 +79,9 @@ angular.module('contentful')
 
       function buildSlugUsingTitle (title) {
         if (!scope.isDisabled) {
-          updateDivergedStatus(field.getValue());
+          updateFrozenState(field.getValue());
           updateSlugFromTitle(title);
         }
-      }
-
-      function updateEntryData (sys) {
-        scope.entry = {
-          isPublished: !!sys.publishedVersion,
-          id: sys.id,
-          contentTypeId: sys.contentType.sys.id,
-          createdAt: sys.createdAt
-        };
       }
 
       function updateDisabledStatus (disabledStatus) {
@@ -97,27 +90,23 @@ angular.module('contentful')
       }
 
       function untitledSlug () {
-        return slugUtils.slugify('Untitled entry ' + moment.utc(scope.entry.createdAt).format('YYYY MM DD [at] hh mm ss'), 'en-US');
+        var createdAt = entry.getSys().createdAt;
+        var createdAtFormatted =
+          moment.utc(createdAt)
+          .format('YYYY MM DD [at] hh mm ss');
+        return slugUtils.slugify('Untitled entry ' + createdAtFormatted, 'en-US');
       }
 
-      /**
-       * Checks if the slug and title have diverged, and stores
-       * that in scope.hasDiverged.
-       * If the slug is not the ID, and also not representative of the title,
-       * then mark it as diverged.
-       * If the entry is already published, then the slug should not be changed
-       * automatically, hence that is also treated as divergence.
-       */
-      function updateDivergedStatus (value) {
-        if (scope.entry.isPublished) {
-          scope.hasDiverged = true;
+      function updateFrozenState (value) {
+        if (entry.getSys().publishedVersion) {
+          updateFromTitle = false;
         } else if (value &&
                    value !== untitledSlug() &&
                    value !== slugUtils.slugify(currentTitle(), field.locale)) {
 
-          scope.hasDiverged = true;
+          updateFromTitle = false;
         } else {
-          scope.hasDiverged = false;
+          updateFromTitle = true;
         }
       }
 
@@ -126,12 +115,13 @@ angular.module('contentful')
        * information about uniqueness from the server.
        */
       function updateStateFromSlug (val) {
-        delete scope.state;
         if (val) {
           scope.state = 'checking';
           debouncedPerformDuplicityCheck(val);
+        } else {
+          scope.state = null;
         }
-        updateDivergedStatus(val);
+        updateFrozenState(val);
       }
 
       /**
@@ -142,12 +132,11 @@ angular.module('contentful')
        * 2. If a title is provided, the slug is updated to match the current title.
        */
       function updateSlugFromTitle (currentTitle) {
-        var slug;
-
-        if (scope.hasDiverged) {
+        if (!updateFromTitle) {
           return;
         }
 
+        var slug;
         if (!currentTitle) {
           slug = untitledSlug();
         } else {
@@ -178,9 +167,9 @@ angular.module('contentful')
         var req = {};
 
         if (value) {
-          req['content_type'] = scope.entry.contentTypeId;
+          req['content_type'] = entry.getSys().contentType.sys.id;
           req['fields.' + field.id] = value;
-          req['sys.id[ne]'] = scope.entry.id;
+          req['sys.id[ne]'] = entry.getSys().id;
           req['sys.publishedAt[exists]'] = true;
           space.getEntries(req).then(function (res) {
             scope.state = (res.total !== 0) ? 'duplicate' : 'unique';
