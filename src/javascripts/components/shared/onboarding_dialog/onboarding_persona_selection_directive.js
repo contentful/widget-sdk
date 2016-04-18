@@ -25,29 +25,16 @@ angular.module('contentful')
   // User clicks an option
   controller.selectOption = function(opt) {
     controller.selectedPersona = opt;
-    if (opt === 'other') {
-      controller.showOtherText = true;
-    }
   };
-
-  // Close the `other` option
-  controller.closeOtherText = function() {
-    controller.showOtherText = false;
-    controller.customPersonaName = '';
-    controller.selectedPersona = undefined;
-  };
-
-  controller.showOtherText = false;
 
   controller.skipSelection = function() {
     analytics.track('Skipped Persona Selection');
     $scope.$emit('skipPersonaSelection');
   };
 
-  controller.submitPersonaSelection = function() {
+  controller.submitPersonaSelection = function(personaSelected) {
     makeSelection({
-      personaName: getSegmentName(controller.selectedPersona),
-      customPersonaName: controller.customPersonaName
+      personaName: getSegmentName(personaSelected)
     });
     $scope.$emit('submitPersonaSelection');
   };
@@ -56,22 +43,22 @@ angular.module('contentful')
     return {
       code: {
         title: 'I write code',
-        description: 'Developers, Technical PMs, CTOs',
+        description: 'Developers, technical PMs, CTOs',
         svg: 'onboarding-persona-code'
       },
       content: {
         title: 'I work with content',
-        description: 'Marketers, Editors, Content Strategists',
+        description: 'Marketers, editors, content strategists',
         svg: 'onboarding-persona-content'
       },
       project: {
         title: 'I manage projects',
-        description: 'Product/Project Managers',
+        description: 'Product/project managers',
         svg: 'onboarding-persona-project'
       },
       other: {
         title: 'Other',
-        description: 'An astronaut? Tell us more!',
+        description: 'An astronaut? That\'s fine as well.',
         svg: 'onboarding-persona-question-mark'
       }
     };
