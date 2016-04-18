@@ -45,7 +45,7 @@ header.workbench-header
           th.cell-status Status
     .view-customizer(cf-view-customizer)
 
-    .main-results-wrapper.endless-container(cf-endless-container at-bottom="loadMore()" num-elements="paginator.page")
+    .main-results-wrapper.endless-container(cf-endless-container at-bottom="loadNextPage()" num-elements="paginator.page")
       table.result-list.main-results.animated
         tbody
           tr(ng-repeat="entry in entries track by entry.getId()"
