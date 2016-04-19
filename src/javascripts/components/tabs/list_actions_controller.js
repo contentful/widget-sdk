@@ -11,7 +11,7 @@ angular.module('contentful')
   var performer = batchPerformer.create({
     entityType: entityType,
     getSelected: $scope.selection.getSelected,
-    finally: $scope.selection.clear,
+    onComplete: $scope.selection.clear,
     onDelete: removeFromList
   });
 

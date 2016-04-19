@@ -60,7 +60,7 @@ describe('Batch performer service', function () {
       this.performer = this.create({
         entityType: this.entityType = entityType,
         getSelected: _.constant(this.entities),
-        finally: this.finally = sinon.spy(),
+        onComplete: this.onComplete = sinon.spy(),
         onDelete: this.onDelete = sinon.spy()
       });
     };
@@ -103,9 +103,8 @@ describe('Batch performer service', function () {
 
   function testSharedBehavior (action) {
     itCallsAction(action);
-    itCallsCallback(action);
     itResolvesWithResult(action);
-    itCallsFinallyCallback(action);
+    itCallsCompleteListener(action);
     itNotifiesAboutResult(action);
     itTracksAnalytics(action);
     itHandles429(action);
@@ -121,24 +120,11 @@ describe('Batch performer service', function () {
     });
   }
 
-  function itCallsFinallyCallback (action) {
-    pit('calls finally callback', function () {
+  function itCallsCompleteListener (action) {
+    pit('calls complete listener', function () {
       return this.performer[action]().then(function () {
-        sinon.assert.calledOnce(this.finally);
+        sinon.assert.calledOnce(this.onComplete);
       }.bind(this));
-    });
-  }
-
-  function itCallsCallback (action) {
-    pit('calls callback with 2 arrays of: successful and failed calls', function () {
-      var cb = sinon.spy();
-      this.actionStubs[1].rejects('boom!');
-
-      return this.performer[action](cb).then(function () {
-        sinon.assert.calledOnce(cb);
-        expect(cb.args[0][0].length).toBe(2);
-        expect(cb.args[0][1].length).toBe(1);
-      });
     });
   }
 

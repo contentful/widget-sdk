@@ -30,7 +30,7 @@ angular.module('contentful').factory('batchPerformer', ['$injector', function ($
       acc[action] = _.partial(run, action);
     }, {});
 
-    function run (method, cb) {
+    function run (method) {
       var actions = _.map(config.getSelected(), function (entity) {
         return performAction(entity, method);
       });
@@ -39,8 +39,7 @@ angular.module('contentful').factory('batchPerformer', ['$injector', function ($
       .then(function handleResults (results) {
         results = groupBySuccess(results);
         notifyBatchResult(method, results);
-        if (_.isFunction(cb)) { cb(results.succeeded, results.failed); }
-        if (_.isFunction(config.finally)) { config.finally(); }
+        if (_.isFunction(config.onComplete)) { config.onComplete(); }
         analytics.track('Performed ' + config.entityType + ' list action', {action: method});
         return results;
       });
