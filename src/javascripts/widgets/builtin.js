@@ -167,7 +167,7 @@ angular.module('contentful')
   registerWidget('objectEditor',{
     fieldTypes: ['Object'],
     name: 'Object',
-    template: '<div cf-object-editor class="cf-object-editor" ng-model="fieldData.value"></div>'
+    template: '<cf-json-editor />'
   });
 
   registerWidget('listInput',{
@@ -183,6 +183,13 @@ angular.module('contentful')
     name: 'Checkbox',
     icon: 'checkbox',
     template: '<cf-checkbox-editor />'
+  });
+
+  registerWidget('tagEditor', {
+    fieldTypes: ['Symbols'],
+    name: 'Tag',
+    icon: 'tags',
+    template: '<cf-tag-editor />'
   });
 
   registerWidget('fileEditor',{

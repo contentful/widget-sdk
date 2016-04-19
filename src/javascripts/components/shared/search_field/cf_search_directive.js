@@ -41,10 +41,6 @@ angular.module('contentful').directive('cfSearch', ['keycodes', 'debounce', func
         term: ''
       };
 
-      $scope.searchFieldFocused = function () {
-        $scope.$emit('searchFieldFocused');
-      };
-
       $scope.updateFromButton = function () {
         if(!$scope.inner.term) $scope.inner.term = '';
         $scope.update({

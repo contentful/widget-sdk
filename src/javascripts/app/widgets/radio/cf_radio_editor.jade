@@ -1,9 +1,16 @@
-label.cf-radio-editor__option(
-  ng-repeat="option in options")
-  input.cf-radio-editor__radio(type="radio"
-    name="{{radioGroupName}}"
-    ng-model="data.selected"
-    ng-value="option.value"
-    ng-disabled="isDisabled")
-  span.cf-radio-editor__label
-    | {{option.label}}
+include ../field_editor.mixins.jade
+
++predefined-values-warning(ng-if="misconfigured")
+
+div.radio-editor__options(
+  ng-if="!misconfigured"
+  ng-class="{'x--vertical': !horizontalLayout, 'x--disabled': isDisabled}")
+  label.radio-editor__option(
+    ng-repeat="option in options")
+    input.radio-editor__input(type="radio"
+      name="{{radioGroupName}}"
+      ng-model="data.selected"
+      ng-value="option.value"
+      ng-disabled="isDisabled")
+    span.radio-editor__label
+      | {{option.label}}

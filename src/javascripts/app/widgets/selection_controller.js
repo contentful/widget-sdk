@@ -14,6 +14,11 @@ angular.module('contentful')
     scope.required = field.required;
     scope.options = options;
 
+    if (options.length === 0) {
+      scope.misconfigured = true;
+      return;
+    }
+
     // We need to store field value in an object so we can mutate it
     // in child scopes.
     scope.data = {};

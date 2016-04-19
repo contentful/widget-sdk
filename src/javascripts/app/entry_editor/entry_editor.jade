@@ -29,9 +29,7 @@ header.workbench-header
     +editor-notification
 
     form.entity-editor-form(name="entryForm")
-      .l-form-row--no-label(ng-show="hasErrorOnFields")
-        .l-form-controls
-          cf-error-list.form-box-error(cf-error-path="['fields']")
+      cf-error-list.form-box-error(cf-error-path="['fields']")
       cf-form-widget.l-form-row(ng-repeat="widget in widgets"
           data-field-id="{{field.id}}"
           data-field-api-name="{{field.apiName}}"
@@ -42,7 +40,6 @@ header.workbench-header
           span(ng-show="field.required") (required)
         .l-form-controls
           .l-form-locale(ng-repeat="locale in locales track by locale.internal_code"
-              ot-field-presence="['fields', field.id, locale.internal_code]"
               ng-controller="FieldLocaleController as fieldLocale"
               data-locale="{{locale.code}}")
             cf-widget-renderer.l-field-editor(

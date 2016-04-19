@@ -25,6 +25,7 @@ angular.module('contentful')
 
       var field = widgetApi.field;
       scope.radioGroupName = ['entity', field.id, field.locale].join('.');
+      scope.horizontalLayout = true;
     }
   };
 

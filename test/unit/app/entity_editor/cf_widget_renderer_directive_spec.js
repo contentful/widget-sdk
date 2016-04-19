@@ -18,7 +18,8 @@ describe('cfWidgetRenderer Directive', function () {
     this.compile = function () {
       return this.$compile('<cf-widget-renderer>', {
         widget: this.widget,
-        contentType: this.contentType
+        contentType: this.contentType,
+        fieldLocale: {announcePresence: sinon.stub()}
       });
     };
   });
@@ -42,5 +43,13 @@ describe('cfWidgetRenderer Directive', function () {
     var el = this.compile();
     expect(el.find('p').text())
     .toEqual('');
+  });
+
+  it('calls "fieldLocale.announcePresence" when input is changed', function () {
+    this.widget.template = '<input>';
+    var el = this.compile();
+    el.find('input').trigger('keydown');
+    this.$apply();
+    sinon.assert.calledOnce(el.scope().fieldLocale.announcePresence);
   });
 });

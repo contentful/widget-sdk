@@ -74,7 +74,6 @@ angular.module('contentful')
   });
   $scope.$watch('validationResult.errors', function (errors) {
     $scope.errorPaths = {};
-    $scope.hasErrorOnFields = false;
 
     _.each(errors, function (error) {
       if (!_.isObject(error)) {
@@ -92,9 +91,7 @@ angular.module('contentful')
       var field      = error.path[1];
       $scope.errorPaths[field] = $scope.errorPaths[field] || [];
 
-      if (error.path.length == 1 && error.path[0] == 'fields') {
-        $scope.hasErrorOnFields = error.path.length == 1 && error.path[0] == 'fields';
-      } else if (error.path.length == 2) {
+      if (error.path.length == 2) {
         $scope.errorPaths[field].push(TheLocaleStore.getDefaultLocale().internal_code);
       } else {
         var localeCode = error.path[2];
