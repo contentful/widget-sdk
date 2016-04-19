@@ -62,6 +62,17 @@ describe('cfRatingEditor directive', function () {
     sinon.assert.calledWithExactly(this.fieldApi.setValue, 3);
   });
 
+  it('does not set rating when field is disabled', function () {
+    this.fieldApi.setValue = sinon.stub();
+    var el = this.compile();
+    this.$apply();
+    this.fieldApi.onDisabledStatusChanged.yield(true);
+
+    el.find('[role="button"][aria-label="3"]').click();
+    this.$apply();
+    sinon.assert.notCalled(this.fieldApi.setValue);
+  });
+
   it('removes value when "clear" button is clicked', function () {
     this.fieldApi.removeValue = sinon.stub();
     var el = this.compile();
