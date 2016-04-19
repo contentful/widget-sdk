@@ -6,18 +6,16 @@
 angular.module('contentful').factory('TrialWatcher', ['$injector', function ($injector) {
 
   var $rootScope       = $injector.get('$rootScope');
-  var intercom         = $injector.get('intercom');
   var analytics        = $injector.get('analytics');
   var TheAccountView   = $injector.get('TheAccountView');
-  var modalDialog      = $injector.get('modalDialog');
   var spaceContext     = $injector.get('spaceContext');
   var OrganizationList = $injector.get('OrganizationList');
   var htmlEncode       = $injector.get('encoder').htmlEncode;
   var moment           = $injector.get('moment');
+  var openPaywall      = $injector.get('paywallOpener').openPaywall;
 
   var lastSpaceId   = spaceContext.getId();
   var trialHasEnded = false;
-  var paywallIsOpen = false;
 
   return {
     init:     init,
@@ -49,7 +47,7 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
       if (hasTrialEnded(organization)) {
         trialHasEnded = true;
         notify(trialHasEndedMsg(organization, userOwnsOrganization));
-        showPaywall(organization.name, userOwnsOrganization);
+        openPaywall(organization, {offerPlanUpgrade: userOwnsOrganization});
       } else {
         notify(timeLeftInTrialMsg(organization, userOwnsOrganization));
       }
@@ -72,43 +70,6 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
       function trackPlanUpgrade () {
         analytics.trackPersistentNotificationAction('Plan Upgrade');
       }
-    }
-  }
-
-  function showPaywall (organizationName, userOwnsOrganization) {
-    if (paywallIsOpen) {
-      return;
-    }
-
-    trackPaywall('Viewed Paywall');
-
-    paywallIsOpen = true;
-    modalDialog.open({
-      title: 'Paywall', // For generic Modal Dialog tracking.
-      template: 'paywall_dialog',
-      persistOnNavigation: true,
-      scopeData: {
-        offerToSetUpPayment: userOwnsOrganization,
-        setUpPayment: newUpgradeAction(trackPaywallPlanUpgrade),
-        openIntercom: intercom.open
-      }
-    }).promise
-    .catch(function (){
-      trackPaywall('Cancelled Paywall');
-    })
-    .finally(function () {
-      paywallIsOpen = false;
-    });
-
-    function trackPaywallPlanUpgrade () {
-      trackPaywall('Clicked Paywall Plan Upgrade Button');
-    }
-
-    function trackPaywall (event) {
-      analytics.track(event, {
-        userCanUpgradePlan: userOwnsOrganization,
-        organizationName: organizationName
-      });
     }
   }
 
