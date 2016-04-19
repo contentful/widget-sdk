@@ -1,0 +1,136 @@
+/*
+Entry Editor Controls
+
+From controls used in the Entry and Asset Editors.
+
+Styleguide entry-editor-controls
+*/
+
+
+/*
+Single Line
+
+Uses `display: block` and `width: 100%`.
+
+Styles are also exported as the `$entry-editor__input()` mixin.
+
+Markup:
+h3 Placeholder
+input.entry-editor__input(type="text"
+  placeholder="Type something in here")
+h3 With value
+input.entry-editor__input(type="text"
+  value="8 Life Lessons From The Dalai Lama")
+h3 Invalid
+input.entry-editor__input(type="text"
+  value="8 Life Lessons From The Dalai Lama"
+  aria-invalid="true")
+h3 Disabled
+input.entry-editor__input(type="text"
+  value="8 Life Lessons From The Dalai Lama"
+  disabled)
+h3 With size property
+input.entry-editor__input(type="text" size="10")
+p
+  | We use <code>width: auto</code> and let the property determine the size.
+
+Styleguide entry-editor-controls.input
+*/
+
+
+// Common base for <input> and <textarea>
+$entry-editor__input-base()
+  font-size: 16px
+  color: $colors.text-dark
+  $sans-font()
+
+  display: block
+  width: 100%
+  line-height: 1.5
+  outline: 0
+  padding: 0
+  border-width: 1px
+  background: none
+  border-image-source: url("/app/svg/dotted-border.svg")
+  border-image-repeat: repeat
+  border-image-slice: 1 1
+
+  &[aria-invalid="true"]
+    padding-left: 0.3em
+    padding-right: 0.3em
+    background: #FFF2F1
+
+  &[aria-disabled="true"], &[disabled], &:disabled
+    padding-left: 0.3em
+    padding-right: 0.3em
+    background: #F7F9FA
+    color: $colors.text-lightest
+    border: 1px transparent
+
+
+$entry-editor__input()
+  $entry-editor__input-base()
+  height: 36px
+  // If the size property is set it determines the width
+  &[size]
+    width: auto
+
+.entry-editor__input
+  $entry-editor__input()
+
+
+/*
+Textarea
+
+Styles are also exported as the `$entry-editor__textarea()` mixin.
+
+Markup:
+h3 Placeholder
+textarea.entry-editor__textarea(placeholder="Placeholder")
+h3 Invalid
+textarea.entry-editor__textarea(aria-invalid="true")
+h3 Disabled
+textarea.entry-editor__textarea(disabled)
+
+Styleguide entry-editor-controls.textarea
+*/
+
+$entry-editor__textarea()
+  $entry-editor__input-base()
+  padding-top: 0.2em
+  // Prevents user resizing
+  max-width: 100%
+
+
+.entry-editor__textarea
+  $entry-editor__textarea()
+
+
+/*
+Single Line with Spinner
+
+Markup:
+div.entry-editor__input-group(style="width: 10em")
+  input(type="text" value="Input has padding to the right")
+  div.entry-editor__input-spinner
+
+Styleguide entry-editor-controls.input-spinner
+*/
+
+@require '/mixins/spinner'
+
+.entry-editor__input-group
+  position: relative
+  display: block
+  height: 36px
+  > input
+    $entry-editor__input()
+    padding-right: calc(18px + 0.8em)
+
+.entry-editor__input-spinner
+  position: absolute
+  top: 9px
+  right: 0
+  $spinner-base()
+  +$spinner-active(black, 18px)
+    display: block
