@@ -85,7 +85,7 @@ angular.module('contentful')
     if (controller.newSpace.useTemplate) {
       createNewSpace(controller.newSpace.selectedTemplate);
     } else {
-      createNewSpace({name: 'Blank'});
+      createNewSpace();
     }
   };
 
@@ -112,6 +112,10 @@ angular.module('contentful')
   }
 
   function createNewSpace(template) {
+    if (!template) {
+      template = {name: 'Blank'};
+    }
+
     var data = controller.newSpace.data;
     var orgId = dotty.get(controller, 'newSpace.organization.sys.id');
 
