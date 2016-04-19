@@ -6,18 +6,17 @@ angular.module('contentful')
  * @name EntryListController
  */
 .controller('EntryListController', ['$scope', '$injector', function EntryListController($scope, $injector) {
-  var $controller           = $injector.get('$controller');
-  var $q                    = $injector.get('$q');
-  var EntityListCache       = $injector.get('EntityListCache');
-  var Paginator             = $injector.get('Paginator');
-  var PromisedLoader        = $injector.get('PromisedLoader');
-  var ReloadNotification    = $injector.get('ReloadNotification');
-  var Selection             = $injector.get('Selection');
-  var analytics             = $injector.get('analytics');
-  var ListQuery             = $injector.get('ListQuery');
-  var logger                = $injector.get('logger');
-  var spaceContext          = $injector.get('spaceContext');
-  var accessChecker         = $injector.get('accessChecker');
+  var $controller        = $injector.get('$controller');
+  var EntityListCache    = $injector.get('EntityListCache');
+  var Paginator          = $injector.get('Paginator');
+  var PromisedLoader     = $injector.get('PromisedLoader');
+  var ReloadNotification = $injector.get('ReloadNotification');
+  var createSelection    = $injector.get('selection');
+  var analytics          = $injector.get('analytics');
+  var ListQuery          = $injector.get('ListQuery');
+  var logger             = $injector.get('logger');
+  var spaceContext       = $injector.get('spaceContext');
+  var accessChecker      = $injector.get('accessChecker');
 
   $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('EntryListViewsController', {$scope: $scope});
@@ -26,7 +25,7 @@ angular.module('contentful')
   var entryLoader = new PromisedLoader();
 
   $scope.paginator = new Paginator();
-  $scope.selection = new Selection();
+  $scope.selection = createSelection();
 
   $scope.shouldHide = accessChecker.shouldHide;
   $scope.shouldDisable = accessChecker.shouldDisable;
@@ -105,12 +104,6 @@ angular.module('contentful')
     return spaceContext.displayFieldForType($scope.context.view.contentTypeId);
   };
 
-  // TODO this code is duplicated in the asset list controller
-  $scope.visibleInCurrentList = function(entry){
-    // TODO: This needs to basically emulate the API :(
-    return !entry.isDeleted();
-  };
-
   $scope.resetEntries = function (resetPage) {
     $scope.context.loading = true;
     if (resetPage) { $scope.paginator.page = 0; }
@@ -130,7 +123,6 @@ angular.module('contentful')
     $scope.context.loading = false;
     $scope.paginator.numEntries = entries.total;
     $scope.entries = entries;
-    $scope.selection.switchBaseSet($scope.entries.length);
     // Check if a refresh is necessary in cases where no pageParameters change
     refreshEntityCaches();
   }
@@ -222,11 +214,6 @@ angular.module('contentful')
       $scope.paginator.numEntries = entries.total;
       entries = _.difference(entries, $scope.entries);
       $scope.entries.push.apply($scope.entries, entries);
-      $scope.selection.setBaseSize($scope.entries.length);
-    }, function (err) {
-      // TODO not needed since we crash the app anyway
-      $scope.paginator.page--;
-      return $q.reject(err);
     })
     .catch(ReloadNotification.apiErrorHandler);
   };

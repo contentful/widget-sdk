@@ -37,7 +37,7 @@ header.workbench-header
       thead
         tr
           th.cell-select
-            input(type="checkbox" cf-selection ng-show="entries.length > 0" tabindex="-1")
+            input(type="checkbox" cf-selection="entries" ng-show="entries.length > 0" tabindex="-1")
           th.cell-content-type(ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden") Content Type
           th.cell-display-name(ng-if="!context.view.contentTypeId || !displayFieldForFilteredContentType()") Name
           th.cell-display-name(ng-if="context.view.contentTypeId && displayFieldForFilteredContentType()" ng-init="field=displayFieldForFilteredContentType()" cf-field-order-header="displayField")
@@ -48,7 +48,7 @@ header.workbench-header
     .main-results-wrapper.endless-container(cf-endless-container at-bottom="loadMore()" num-elements="paginator.page")
       table.result-list.main-results.animated
         tbody
-          tr(ng-repeat="entry in visibleEntries = (entries | filter:visibleInCurrentList) track by entry.getId()"
+          tr(ng-repeat="entry in entries track by entry.getId()"
               ng-init="entityNavState='spaces.detail.entries.detail({ entryId: entry.getId() })'"
               ui-sref="{{entityNavState}}")
             td.cell-select(ng-click="selection.toggle(entry);$event.stopPropagation()")
@@ -67,7 +67,7 @@ header.workbench-header
                 .status-bar
       .loading(ng-hide="paginator.atLast()")
 
-    .advice(ng-show="visibleEntries | isEmpty")
+    .advice(ng-show="entries | isEmpty")
       .advice__frame
         i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
         header.advice__title There are no matches to your search

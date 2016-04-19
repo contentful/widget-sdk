@@ -13,12 +13,11 @@ describe('Entry List Actions Controller', function () {
         'size',
         'createEntry',
         'getSelected',
-        'removeAll',
+        'clear',
         'action1',
         'action2',
         'action3',
         'action4',
-        'getVersion',
         'timeout',
         'broadcast'
       ]);
@@ -34,7 +33,7 @@ describe('Entry List Actions Controller', function () {
       $provide.value('$timeout', stubs.timeout);
     });
 
-    inject(function ($rootScope, $controller, _$q_, _accessChecker_) {
+    inject(function ($rootScope, $controller, _$q_, _accessChecker_, _spaceContext_) {
       $rootScope.$broadcast = stubs.broadcast;
       scope = $rootScope.$new();
       $q = _$q_;
@@ -51,14 +50,14 @@ describe('Entry List Actions Controller', function () {
       scope.selection = {
         size: stubs.size,
         getSelected: stubs.getSelected,
-        removeAll: stubs.removeAll
+        clear: stubs.clear
       };
 
-      scope.spaceContext = {
-        space: {
-          createEntry: stubs.createEntry
-        }
+      _spaceContext_.space = {
+        createEntry: stubs.createEntry
       };
+
+      scope.paginator = {numEntries: 0};
 
       accessChecker = _accessChecker_;
       accessChecker.shouldHide = sinon.stub().returns(false);
@@ -72,27 +71,24 @@ describe('Entry List Actions Controller', function () {
   function makeEntity(action, stub) {
     var entity = {};
     entity[action] = stub;
-    if(action == 'publish'){
-      entity.getVersion = stubs.getVersion;
-    }
     return entity;
   }
 
   function makePerformTests(action, extraSpecs){
     describe(action+' selected entries', function () {
       beforeEach(function () {
-        stubs.getVersion.returns(3);
         stubs.size.returns(2);
-        action1.resolve();
-        action2.reject({});
-        action3.resolve();
-        action4.resolve();
-        stubs.getSelected.returns([
+        var entities = [
           makeEntity(action, stubs.action1),
           makeEntity(action, stubs.action2),
           makeEntity(action, stubs.action3),
           makeEntity(action, stubs.action4)
-        ]);
+        ];
+        action1.resolve(entities[0]);
+        action2.reject(new Error('boom'));
+        action3.resolve(entities[2]);
+        action4.resolve(entities[3]);
+        stubs.getSelected.returns(entities);
         stubs.timeout.callsArg(0);
 
         scope[action+'Selected']();
@@ -132,7 +128,7 @@ describe('Entry List Actions Controller', function () {
       });
 
       it('clears selection', function () {
-        sinon.assert.called(stubs.removeAll);
+        sinon.assert.called(stubs.clear);
       });
 
       it('tracks analytics event', function () {
@@ -143,29 +139,19 @@ describe('Entry List Actions Controller', function () {
     });
   }
 
-  makePerformTests('publish', function () {
-    it('gets version of selected entries', function () {
-      expect(stubs.getVersion.callCount).toBe(4);
-    });
-
-    it('publishes 3rd version', function () {
-      expect(stubs.getVersion.getCall(0).returnValue).toBe(3);
-    });
-  });
-
+  makePerformTests('publish');
   makePerformTests('unpublish');
   makePerformTests('delete');
-
   makePerformTests('archive');
   makePerformTests('unarchive');
 
   describe('duplicates selected entries', function () {
     beforeEach(function () {
       stubs.size.returns(2);
-      stubs.action1.returns({contentType: {sys: {id: 'foo'}}});
-      stubs.action2.returns({contentType: {sys: {id: 'bar'}}});
-      stubs.createEntry.withArgs('foo').returns($q.resolve());
-      stubs.createEntry.withArgs('bar').returns($q.reject({}));
+      stubs.action1.returns({type: 'Entry', contentType: {sys: {id: 'foo'}}});
+      stubs.action2.returns({type: 'Entry', contentType: {sys: {id: 'bar'}}});
+      stubs.createEntry.withArgs('foo').resolves({});
+      stubs.createEntry.withArgs('bar').rejects(new Error('boom'));
       scope.entries = [];
       stubs.getSelected.returns([
         { getSys: stubs.action1, data: {sys: {}}},
@@ -201,11 +187,15 @@ describe('Entry List Actions Controller', function () {
     });
 
     it('clears selection', function () {
-      sinon.assert.called(stubs.removeAll);
+      sinon.assert.called(stubs.clear);
     });
 
     it('tracks analytics event', function () {
       sinon.assert.called(stubs.track);
+    });
+
+    it('increases paginator value', function () {
+      expect(scope.paginator.numEntries).toBe(1);
     });
   });
 

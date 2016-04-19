@@ -24,7 +24,7 @@ header.workbench-header
     .main-results-wrapper
       table.result-list.main-results.animated
         tbody
-          tr(ng-repeat-start="contentType in visibleContentTypes = (contentTypes | filter:visibleInCurrentList) track by contentType.getId()" cf-click-local="toggleDisplay(contentType.getId())")
+          tr(ng-repeat-start="contentType in contentTypes track by contentType.getId()" cf-click-local="toggleDisplay(contentType.getId())")
             td.cell-select
               a.toggle-collapse(ng-class="{open: isExpanded(contentType.getId())}") ▶
             td.cell-display-name.cell-anchor(cf-click-local="toggleDisplay(contentType.getId())")
@@ -51,5 +51,5 @@ header.workbench-header
                       span(tooltip="{{getHelpText(field.type)}}" tooltip-html="true")
                         | {{field.type}}
 
-      p(ng-show="visibleContentTypes | isEmpty")
+      p(ng-show="contentTypes | isEmpty")
         | There are no Content Types yet.

@@ -1,42 +1,33 @@
 'use strict';
-angular.module('contentful').directive('cfSelection', ['Selection', function(Selection){
+
+angular.module('contentful').directive('cfSelection', [function () {
   return {
     restrict: 'A',
-    link: function($scope, element, attr) {
-      $scope.$watch(function isSelectedWatcher(scope) {
-        var entity = scope.$eval(attr.cfSelection);
-        if (entity) {
-          return scope.selection.isSelected(entity);
-        } else {
-          return scope.selection.mode == Selection.ALL;
-        }
-      }, function(isSelected) {
-        element.prop('checked', isSelected);
+    link: function (scope, el, attrs) {
+      scope.$watch(function () {
+        return _.every(getEntities(), scope.selection.isSelected);
+      }, function (isSelected) {
+        el.prop('checked', isSelected);
       });
 
-      element.click(function(event) {
-        event.stopPropagation();
-      });
-
-      element.change(function() {
-        $scope.$apply(function(scope) {
-          var entity = scope.$eval(attr.cfSelection);
-          if (entity) {
-            if (element.prop('checked')) {
-              scope.selection.add(entity);
-            } else {
-              scope.selection.remove(entity);
-            }
-          } else {
-            if (element.prop('checked')) {
-              scope.selection.addAll();
-            } else {
-              scope.selection.removeAll();
-            }
-          }
+      el.on('change', function () {
+        scope.$apply(function () {
+          var method = el.prop('checked') ? 'add' : 'remove';
+          _.forEach(getEntities(), scope.selection[method]);
         });
       });
 
+      function getEntities() {
+        var entities = scope.$eval(attrs.cfSelection);
+
+        if (_.isArray(entities)) {
+          return entities;
+        } else if (_.isObject(entities)) {
+          return [entities];
+        } else {
+          return [];
+        }
+      }
     }
   };
 }]);
