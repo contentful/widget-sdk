@@ -22,9 +22,10 @@ describe('activationEmailResender', function () {
   afterEach(function () {
     $httpBackend.verifyNoOutstandingExpectation();
     $httpBackend.verifyNoOutstandingRequest();
+    $httpBackend = resend = null;
   });
 
-  describe('#resend() without email', function () {
+  describe('.resend() without email', function () {
     it('throws an error since no email is given', function () {
       expect(function () {
         resend();
@@ -32,7 +33,7 @@ describe('activationEmailResender', function () {
     });
   });
 
-  describe('#resend(email)', function () {
+  describe('resend(email)', function () {
     beforeEach(function () {
       this.promise = resend('user@example.com');
       this.respond = $httpBackend.whenPOST(
