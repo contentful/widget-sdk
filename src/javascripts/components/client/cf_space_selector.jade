@@ -6,7 +6,7 @@
     data-test-id="space-selector-trigger")
     span.space-selector__name.u-truncate(ng-bind="spaceContext.space.data.name || 'Spaces'")
     cf-icon.icon-dd-arrow-down(name="dd-arrow-down" size="10")
-  .space-selector__menu.context-menu--arrow-left.x--top-bar(
+  .space-selector__menu.context-menu.x--arrow-left.x--top-bar(
     role="menu" cf-context-menu="bottom-left"
     aria-label="Select Space" data-test-id="space-selector-menu")
     .space-selector__orgs(ng-if="spaces.length > 0")

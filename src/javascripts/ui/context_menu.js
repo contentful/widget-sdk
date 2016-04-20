@@ -136,10 +136,10 @@ angular.module('cf.ui')
     );
 
     var arrowClass = $menu.position().top < $trigger.position().top ?
-      'context-menu--arrow-down' :
-      'context-menu--arrow-up';
+      'x--arrow-down' :
+      'x--arrow-up';
 
-    $menu.removeClass('context-menu--arrow-down context-menu--arrow-up');
+    $menu.removeClass('x--arrow-down x--arrow-up');
     $menu.addClass(arrowClass);
 
   }
