@@ -15,7 +15,14 @@
  *   $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
  * });
  * var TheLocaleStore = this.$inject('TheLocaleStore');
- * TheLocaleStore.setLocales([{code: 'en', internal_code: 'en'}]);
+ * TheLocaleStore.setLocales([
+ *   // Tis is the default locale
+ *   {code: 'en'},
+ *   // Internal code defaults to 'de-internal'
+ *   {code: 'de'},
+ *   // This object will not be returned by 'localeStore.getActiveLocales()'
+ *   {code: 'fr', active: false}
+ * ]);
  */
 angular.module('contentful/mocks')
 .factory('mocks/TheLocaleStore', [function () {
@@ -54,7 +61,11 @@ angular.module('contentful/mocks')
      * @param {Array<API.Locale>} locales
      */
     setLocales: function (_locales) {
-      locales = _locales;
+      locales = _locales.map(function (locale) {
+        return _.extend({
+          internal_code: locale.code + '-internal'
+        }, locale);
+      });
       defaultLocale = locales[0];
     }
   };

@@ -30,29 +30,7 @@ header.workbench-header
 
     form.entity-editor-form(name="entryForm")
       cf-error-list.form-box-error(cf-error-path="['fields']")
-      cf-form-widget.l-form-row(ng-repeat="widget in widgets"
-          data-field-id="{{field.id}}"
-          data-field-api-name="{{field.apiName}}"
-          data-field-type="{{field.type}}"
-          data-field-items-type="{{field.items.type}}")
-        label
-          | {{field.name}}&nbsp;
-          span(ng-show="field.required") (required)
-        .l-form-controls
-          .l-form-locale(ng-repeat="locale in locales track by locale.internal_code"
-              ng-controller="FieldLocaleController as fieldLocale"
-              data-locale="{{locale.code}}")
-            cf-widget-renderer.l-field-editor(
-              cf-focus-ot-input="hasInitialFocus"
-              ot-path="['fields', field.id, locale.internal_code]"
-              cf-field-editor="entry.data.fields[field.id][locale.internal_code]"
-              cf-widget-api)
-            +field-permission-info
-            .locale-label(ng-show="locales.length > 1")
-              | {{locale.name}}
-            +editor-field-collaborators
-            +field-locale-errors
-          .form-widget__help-text(ng-if="showHelpText") {{helpText}}
+      cf-entity-field(ng-repeat="widget in widgets")
 
   .workbench-main__entity-sidebar
     +entity-sidebar(revert=true)
