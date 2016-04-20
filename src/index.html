@@ -19,7 +19,7 @@
     window.CF_ENV = 'development';
   </script>
 </head>
-<body cf-clear-outlines ng-app="contentful/app">
+<body ng-app="contentful/app">
   <div class="client" ng-controller="ClientController" ng-init="initClient()">
     <cf-app-container class="app-container ng-hide" ng-show="user"></cf-app-container>
     <div class="client-loading" ng-if="!user">
