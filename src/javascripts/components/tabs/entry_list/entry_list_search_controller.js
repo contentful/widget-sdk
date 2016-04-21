@@ -129,7 +129,9 @@ angular.module('contentful')
     }
     // 4. always refresh caches
     refreshEntityCaches();
-    // 5. mark view as ready (initialized) and not loading
+    // 5. clear selection
+    $scope.selection.clear();
+    // 6. mark view as ready (initialized) and not loading
     $scope.context.ready = true;
     $scope.context.loading = false;
   }
@@ -145,7 +147,7 @@ angular.module('contentful')
   function prepareQuery () {
     return ListQuery.getForEntries({
       contentTypeId: getViewItem('contentTypeId'),
-      searchTerm:    searchTerm,
+      searchTerm:    searchTerm || getViewItem('searchTerm'),
       order:         getViewItem('order'),
       paginator:     $scope.paginator
     });
