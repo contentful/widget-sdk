@@ -6,27 +6,21 @@ angular.module('contentful')
  * @name EntryListController
  */
 .controller('EntryListController', ['$scope', '$injector', function EntryListController($scope, $injector) {
-  var $controller           = $injector.get('$controller');
-  var $q                    = $injector.get('$q');
-  var EntityListCache       = $injector.get('EntityListCache');
-  var Paginator             = $injector.get('Paginator');
-  var PromisedLoader        = $injector.get('PromisedLoader');
-  var ReloadNotification    = $injector.get('ReloadNotification');
-  var Selection             = $injector.get('Selection');
-  var analytics             = $injector.get('analytics');
-  var ListQuery             = $injector.get('ListQuery');
-  var logger                = $injector.get('logger');
-  var spaceContext          = $injector.get('spaceContext');
-  var accessChecker         = $injector.get('accessChecker');
+  var $controller     = $injector.get('$controller');
+  var EntityListCache = $injector.get('EntityListCache');
+  var logger          = $injector.get('logger');
+  var Paginator       = $injector.get('Paginator');
+  var createSelection = $injector.get('selection');
+  var spaceContext    = $injector.get('spaceContext');
+  var accessChecker   = $injector.get('accessChecker');
 
+  var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('EntryListViewsController', {$scope: $scope});
   $scope.entityStatusController = $controller('EntityStatusController', {$scope: $scope});
 
-  var entryLoader = new PromisedLoader();
-
   $scope.paginator = new Paginator();
-  $scope.selection = new Selection();
+  $scope.selection = createSelection();
 
   $scope.shouldHide = accessChecker.shouldHide;
   $scope.shouldDisable = accessChecker.shouldDisable;
@@ -59,29 +53,6 @@ angular.module('contentful')
     });
   });
 
-  $scope.$watch(function pageParameters(){
-    return {
-      searchTerm: $scope.context.view.searchTerm,
-      page: $scope.paginator.page,
-      pageLength: $scope.paginator.pageLength,
-      contentTypeId: $scope.context.view.contentTypeId,
-      spaceId: spaceContext.getId()
-    };
-  }, function(pageParameters, old, scope){
-    scope.resetEntries(pageParameters.page === old.page);
-  }, true);
-
-  $scope.$watch(function cacheParameters(scope){
-    return {
-      contentTypeId: scope.context.view.contentTypeId,
-      displayedFieldIds: scope.context.view.displayedFieldIds,
-      entriesLength: scope.entries && scope.entries.length,
-      page: scope.paginator.page,
-      orderDirection: scope.context.view.order.direction,
-      orderFieldId: scope.context.view.order.fieldId
-    };
-  }, refreshEntityCaches, true);
-
   $scope.typeNameOr = function (or) {
     var id;
     try {
@@ -97,52 +68,13 @@ angular.module('contentful')
   };
 
   $scope.selectedContentType = function () {
-    $scope.context.view.searchTerm = null;
+    searchController.resetSearchTerm();
     $scope.resetDisplayFields();
   };
 
   $scope.displayFieldForFilteredContentType = function () {
     return spaceContext.displayFieldForType($scope.context.view.contentTypeId);
   };
-
-  // TODO this code is duplicated in the asset list controller
-  $scope.visibleInCurrentList = function(entry){
-    // TODO: This needs to basically emulate the API :(
-    return !entry.isDeleted();
-  };
-
-  $scope.resetEntries = function (resetPage) {
-    $scope.context.loading = true;
-    if (resetPage) { $scope.paginator.page = 0; }
-
-    return prepareQuery()
-    .then(function (query) {
-      return entryLoader.loadPromise(function(){
-        return spaceContext.space.getEntries(query);
-      });
-    })
-    .then(handleEntriesResponse, accessChecker.wasForbidden($scope.context))
-    .catch(ReloadNotification.apiErrorHandler);
-  };
-
-  function handleEntriesResponse(entries) {
-    $scope.context.ready = true;
-    $scope.context.loading = false;
-    $scope.paginator.numEntries = entries.total;
-    $scope.entries = entries;
-    $scope.selection.switchBaseSet($scope.entries.length);
-    // Check if a refresh is necessary in cases where no pageParameters change
-    refreshEntityCaches();
-  }
-
-  function refreshEntityCaches() {
-    if($scope.context.view.contentTypeId){
-      $scope.entryCache.setDisplayedFieldIds($scope.context.view.displayedFieldIds);
-      $scope.entryCache.resolveLinkedEntities($scope.entries);
-      $scope.assetCache.setDisplayedFieldIds($scope.context.view.displayedFieldIds);
-      $scope.assetCache.resolveLinkedEntities($scope.entries);
-    }
-  }
 
   /**
    * @ngdoc method
@@ -156,9 +88,7 @@ angular.module('contentful')
    * @return {boolean}
    */
   $scope.showNoEntriesAdvice = function () {
-    var view = $scope.context.view;
-    var hasQuery = !_.isEmpty(view.searchTerm) ||
-                   !_.isEmpty(view.contentTypeId);
+    var hasQuery = searchController.hasQuery();
     var hasEntries = $scope.entries && $scope.entries.length > 0;
     return !hasEntries && !hasQuery && !$scope.context.loading;
   };
@@ -194,54 +124,6 @@ angular.module('contentful')
     });
   }
 
-  $scope.loadMore = function () {
-    if ($scope.paginator.atLast()) return;
-    // FIXME It should suffice to just increase the page and not fetch
-    // the entries: Changing `$scope.paginator.page` will trigger the
-    // `resetEntries` watcher and thus do the heavy lifting.
-    $scope.paginator.page++;
-    var queryForDebug;
-    return prepareQuery()
-    .then(function (query) {
-      analytics.track('Scrolled EntryList');
-      queryForDebug = query;
-      return entryLoader.loadPromise(function(){
-        return spaceContext.space.getEntries(query);
-      });
-    })
-    .then(function (entries) {
-      if(!entries){
-        logger.logError('Failed to load more entries', {
-          data: {
-            entries: entries,
-            query: queryForDebug
-          }
-        });
-        return;
-      }
-      $scope.paginator.numEntries = entries.total;
-      entries = _.difference(entries, $scope.entries);
-      $scope.entries.push.apply($scope.entries, entries);
-      $scope.selection.setBaseSize($scope.entries.length);
-    }, function (err) {
-      // TODO not needed since we crash the app anyway
-      $scope.paginator.page--;
-      return $q.reject(err);
-    })
-    .catch(ReloadNotification.apiErrorHandler);
-  };
-
-  function prepareQuery() {
-    var view = $scope.context.view;
-
-    return ListQuery.getForEntries({
-      contentTypeId: view.contentTypeId,
-      order:         view.order,
-      searchTerm:    view.searchTerm,
-      paginator:     $scope.paginator
-    });
-  }
-
   var narrowFieldTypes = [
     'integer',
     'number',
@@ -266,6 +148,6 @@ angular.module('contentful')
   };
 
   $scope.$on('reloadEntries', function () {
-    $scope.resetEntries();
+    $scope.updateEntries();
   });
 }]);

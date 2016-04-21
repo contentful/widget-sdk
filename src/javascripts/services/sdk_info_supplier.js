@@ -277,7 +277,7 @@ angular.module('contentful')
         documentation: {
           name: 'Documentation',
           icon: 'learn-documentation',
-          description: 'View the API reference',
+          description: 'The reference documentation explains how to interact with the Contentful APIs, independent of the programming language.',
           links: [
             {
               text: 'API Reference',

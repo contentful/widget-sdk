@@ -33,7 +33,6 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
       $scope.context.loading = false;
       controller.paginator.numEntries = assets.total;
       $scope.assets = assets;
-      $scope.$broadcast('didResetAssets', $scope.assets);
     }, accessChecker.wasForbidden($scope.context))
     .catch(ReloadNotification.apiErrorHandler);
   };
@@ -64,7 +63,6 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
       controller.paginator.numEntries = assets.total;
       assets = _.difference(assets, $scope.assets);
       $scope.assets.push.apply($scope.assets, assets);
-      $scope.$broadcast('didLoadMoreAssets', $scope.assets);
     }, function (err) {
       controller.paginator.page--;
       return $q.reject(err);

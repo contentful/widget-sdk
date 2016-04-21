@@ -17,6 +17,7 @@ describe('ListViewsController', function () {
 
     scope = this.$inject('$rootScope').$new();
     scope.context = {};
+    scope.selection = {clear: sinon.spy()};
     FilterQS.create = _.constant({ readView: _.constant({ from_qs: 'test' }), update: _.noop });
 
     controller = $controller('ListViewsController', {
@@ -77,6 +78,7 @@ describe('ListViewsController', function () {
       expect(scope.context.view).not.toBe(view);
       expect(scope.context.view.title).toBe('New View');
       sinon.assert.called(resetList);
+      sinon.assert.called(scope.selection.clear);
     });
   });
 

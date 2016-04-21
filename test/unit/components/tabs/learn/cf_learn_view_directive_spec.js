@@ -26,12 +26,18 @@ describe('cfLearnView directive', function() {
           };
         },
         shouldDisable: sinon.stub()
+      },
+      $state: {
+        current: {},
+        href: _.noop,
+        go: sinon.stub()
       }
     };
 
     module('contentful/test', function($provide) {
       $provide.value('spaceContext', stubs.spaceContext);
       $provide.value('accessChecker', stubs.accessChecker);
+      $provide.value('$state', stubs.$state);
     });
 
     $rootScope = this.$inject('$rootScope');
@@ -61,10 +67,6 @@ describe('cfLearnView directive', function() {
     it('requests content types', function() {
       sinon.assert.calledOnce(stubs.spaceContext.getFilteredAndSortedContentTypes);
       expect(controller.hasContentTypes).toBe(false);
-    });
-
-    it('requests delivery API keys', function() {
-      sinon.assert.calledOnce(stubs.spaceContext.space.getDeliveryApiKeys);
     });
 
     it('does not request entries', function() {
@@ -111,6 +113,43 @@ describe('cfLearnView directive', function() {
       $rootScope.$broadcast('cfAfterOnboarding');
       $rootScope.$digest();
       sinon.assert.calledTwice(stubs.spaceContext.getFilteredAndSortedContentTypes);
+    });
+  });
+
+  describe('clicked `Use the API`', function() {
+    beforeEach(function() {
+      stubs.accessChecker.canPerformActionOnEntryOfType = sinon.stub().returns(true);
+      stubs.spaceContext.getFilteredAndSortedContentTypes.returns([{getId: _.noop}]);
+      stubs.spaceContext.space.getEntries.resolves(true);
+      stubs.$state.go.returns();
+    });
+
+    it('requests delivery API keys', function() {
+      stubs.spaceContext.space.getDeliveryApiKeys.resolves([]);
+      this.compile();
+      controller.goToApiKeySection();
+      sinon.assert.calledOnce(stubs.spaceContext.space.getDeliveryApiKeys);
+    });
+
+    it('navigates to API home when there are no keys', function() {
+      stubs.spaceContext.space.getDeliveryApiKeys.resolves([]);
+      this.compile();
+      controller.goToApiKeySection();
+      $rootScope.$digest();
+      sinon.assert.calledWithExactly(stubs.$state.go, 'spaces.detail.api.home');
+    });
+
+    it('navigates to API key page when there is one key', function() {
+      var apiKeys = [{data: {sys: {id: 1}}}];
+      stubs.spaceContext.space.getDeliveryApiKeys.resolves(apiKeys);
+      this.compile();
+      controller.goToApiKeySection();
+      $rootScope.$digest();
+      sinon.assert.calledWithExactly(
+        stubs.$state.go,
+        'spaces.detail.api.keys.detail',
+        { apiKeyId: 1 }
+      );
     });
   });
 

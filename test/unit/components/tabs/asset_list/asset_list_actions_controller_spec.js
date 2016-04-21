@@ -13,12 +13,11 @@ describe('Asset List Actions Controller', function () {
         'size',
         'createAsset',
         'getSelected',
-        'removeAll',
+        'clear',
         'action1',
         'action2',
         'action3',
         'action4',
-        'getVersion',
         'timeout',
         'broadcast'
       ]);
@@ -50,7 +49,7 @@ describe('Asset List Actions Controller', function () {
       scope.selection = {
         size: stubs.size,
         getSelected: stubs.getSelected,
-        removeAll: stubs.removeAll
+        clear: stubs.clear
       };
 
       scope.spaceContext = {
@@ -69,27 +68,24 @@ describe('Asset List Actions Controller', function () {
   function makeEntity(action, stub) {
     var entity = {};
     entity[action] = stub;
-    if(action == 'publish'){
-      entity.getVersion = stubs.getVersion;
-    }
     return entity;
   }
 
   function makePerformTests(action, extraSpecs){
     describe(action+' selected assets', function () {
       beforeEach(function () {
-        stubs.getVersion.returns(3);
         stubs.size.returns(2);
-        action1.resolve();
-        action2.reject({});
-        action3.resolve();
-        action4.resolve();
-        stubs.getSelected.returns([
+        var entities = [
           makeEntity(action, stubs.action1),
           makeEntity(action, stubs.action2),
           makeEntity(action, stubs.action3),
           makeEntity(action, stubs.action4)
-        ]);
+        ];
+        action1.resolve(entities[0]);
+        action2.reject(new Error('boom'));
+        action3.resolve(entities[2]);
+        action4.resolve(entities[3]);
+        stubs.getSelected.returns(entities);
         stubs.timeout.callsArg(0);
 
         scope[action+'Selected']();
@@ -129,7 +125,7 @@ describe('Asset List Actions Controller', function () {
       });
 
       it('clears selection', function () {
-        sinon.assert.called(stubs.removeAll);
+        sinon.assert.called(stubs.clear);
       });
 
       it('tracks analytics event', function () {
@@ -140,19 +136,9 @@ describe('Asset List Actions Controller', function () {
     });
   }
 
-  makePerformTests('publish', function () {
-    it('gets version of selected assets', function () {
-      expect(stubs.getVersion.callCount).toBe(4);
-    });
-
-    it('publishes 3rd version', function () {
-      expect(stubs.getVersion.getCall(0).returnValue).toBe(3);
-    });
-  });
-
+  makePerformTests('publish');
   makePerformTests('unpublish');
   makePerformTests('delete');
-
   makePerformTests('archive');
   makePerformTests('unarchive');
 
