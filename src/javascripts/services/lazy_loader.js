@@ -72,11 +72,19 @@ angular.module('contentful').factory('LazyLoader', ['$injector', function ($inje
     if (cached) { return cached; }
 
     // issue HTTP request to get service value
-    var loadPromise = load(script.url).then(function () {
+    var loadPromise = load(script.url)
+    .then(function () {
       if (script.globalObject) {
         store[name] = dotty.get(window, script.globalObject);
       }
+
       var value = store[name];
+
+      // Immediately run any setup scripts if available
+      if (_.isFunction(script.setup)) {
+        value = script.setup(value);
+      }
+
       return value ? value : $q.reject(new Error('Script loaded, but no value provided.'));
     });
 
@@ -95,6 +103,7 @@ angular.module('contentful').factory('LazyLoader/scripts', ['$injector', functio
    * - url - absolute (in rare cases can be relative) URL
    * - globalObject - if scripts registers itself by global value,
    *                  it should be a key name within window object
+   * - setup - optional function run immediately after the script is loaded
    */
   return {
     markdown: {
@@ -102,7 +111,8 @@ angular.module('contentful').factory('LazyLoader/scripts', ['$injector', functio
     },
     embedly: {
       url: 'https://cdn.embedly.com/widgets/platform.js',
-      globalObject: 'embedly'
+      globalObject: 'embedly',
+      setup: setupEmbedly
     },
     filepicker: {
       url: 'https://api.filepicker.io/v2/filepicker.js',
@@ -125,4 +135,15 @@ angular.module('contentful').factory('LazyLoader/scripts', ['$injector', functio
       globalObject: 'Bugsnag'
     }
   };
+
+  function setupEmbedly(embedly) {
+    embedly('defaults', {
+      cards: {
+        key: environment.settings.embedly.api_key
+      }
+    });
+    return embedly;
+  }
+
 }]);
+
