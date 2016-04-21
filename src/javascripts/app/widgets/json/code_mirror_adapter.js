@@ -76,7 +76,8 @@ angular.module('cf.app')
     }
 
     function destroy () {
-      element.remove();
+      // IE 11 does not support ChildNode.remove()
+      $(element).remove();
     }
 
     function validateAndSave (ev) {
