@@ -153,6 +153,7 @@ describe('Asset List Controller', function () {
       scope.searchController.paginator.pageLength = 3;
       scope.searchController.paginator.skipItems = sinon.stub();
       scope.searchController.paginator.skipItems.returns(true);
+      scope.selection.updateList = sinon.spy();
     });
 
     it('sets loading flag', function () {
@@ -178,6 +179,12 @@ describe('Asset List Controller', function () {
       scope.searchController.resetAssets();
       scope.$apply();
       expect(scope.assets).toBe(assets);
+    });
+
+    it('updates selected items with retrieved list', function () {
+      scope.searchController.resetAssets();
+      scope.$apply();
+      sinon.assert.called(scope.selection.updateList.withArgs(assets));
     });
 
     describe('creates a query object', function() {
