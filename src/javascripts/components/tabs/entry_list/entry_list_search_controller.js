@@ -129,8 +129,8 @@ angular.module('contentful')
     }
     // 4. always refresh caches
     refreshEntityCaches();
-    // 5. clear selection
-    $scope.selection.clear();
+    // 5. update selection with new list
+    $scope.selection.updateList($scope.entries);
     // 6. mark view as ready (initialized) and not loading
     $scope.context.ready = true;
     $scope.context.loading = false;
