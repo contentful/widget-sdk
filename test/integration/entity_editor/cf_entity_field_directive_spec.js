@@ -11,8 +11,8 @@ describe('cfEntityField directive integration', function () {
     var TheLocaleStore = this.$inject('TheLocaleStore');
     this.setLocales = TheLocaleStore.setLocales;
     this.setLocales([
-      {internal_code: 'DEF', name: 'Default'},
-      {internal_code: 'EN', name: 'English'},
+      {code: 'DEF', name: 'Default'},
+      {code: 'EN', name: 'English'},
     ]);
 
     this.widget = {
@@ -34,7 +34,7 @@ describe('cfEntityField directive integration', function () {
   describe('labels', function () {
 
     it('shows field name for single locale', function () {
-      this.setLocales([{internal_code: 'EN'}]);
+      this.setLocales([{code: 'EN'}]);
       var el = this.compile();
       var label = el.find('[data-test-id="field-locale-label"]');
       expect(label.length).toEqual(1);
@@ -63,20 +63,25 @@ describe('cfEntityField directive integration', function () {
   });
 
   describe('editing permissions', function () {
-    it('shows message if field is locked', function () {
-      var el = this.compile();
-      var scope = el.scope();
-      dotty.put(scope, 'otDoc.state.editable', true);
-      scope.isDisabled = function (field, locale) {
-        return locale.internal_code === 'EN';
-      };
-      this.$apply();
+    it('shows message if user does not have editing permissions', function () {
+      var accessChecker = this.$inject('accessChecker');
+      accessChecker.getFieldChecker = sinon.stub().returns({
+        isEditable: function (field, locale) {
+          return locale.code === 'EN';
+        }
+      });
 
-      var info = el.find('[data-test-id="field-locale-permissions"]');
-      expect(info.length).toEqual(2);
-      expect(info.eq(0).is('.ng-hide')).toBe(true);
-      expect(info.eq(1).is('.ng-hide')).toBe(false);
+      var el = this.compile();
+      expect(findPermissionInfo(el, 'EN')).toBeNgHidden();
+      expect(findPermissionInfo(el, 'DEF')).not.toBeNgHidden();
     });
+
+    function findPermissionInfo (parent, locale) {
+      return parent.find('[data-locale]')
+      .filter(function () {
+        return $(this).data('locale') === locale;
+      }).find('[data-test-id="field-locale-permissions"]');
+    }
   });
 
   describe('hint', function () {

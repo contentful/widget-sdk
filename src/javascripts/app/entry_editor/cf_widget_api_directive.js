@@ -22,15 +22,14 @@ angular.module('contentful')
   var $q = $injector.get('$q');
   var newSignal = $injector.get('signal').createMemoized;
   var valueChangedSignal = newSignal($scope.otSubDoc.getValue());
-  var isDisabledSignal = newSignal($scope.isDisabled($scope.field, $scope.locale));
+  var isDisabledSignal = newSignal(isEditingDisabled());
   var ctField = $scope.widget.field;
 
   $scope.$on('otValueChanged', createValueChangedSignalDispatcher());
   $scope.$on('otValueReverted', createValueChangedSignalDispatcher(true));
 
-  $scope.$watch(function () {
-    return $scope.isDisabled($scope.field, $scope.locale);
-  }, function (value) {
+  $scope.$watch(isEditingDisabled, function (value) {
+    // Do not send other listener arguments to signal
     isDisabledSignal.dispatch(value);
   });
 
@@ -120,4 +119,9 @@ angular.module('contentful')
       return $scope.otSubDoc.changeValue([x]);
     }
   }
+
+  function isEditingDisabled () {
+    return $scope.fieldLocale.access.disabled;
+  }
+
 }]);

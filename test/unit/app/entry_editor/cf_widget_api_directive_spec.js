@@ -18,13 +18,15 @@ describe('cfWidgetApi directive', function () {
     this.getWidgetApi = function () {
       _.extend(this.scope, {
         widget: this.widget,
-        isDisabled: sinon.stub(),
         otSubDoc: {
           changeString: sinon.stub(),
           getValue: sinon.stub(),
           doc: new OtDoc({myfield: {}}, ['myfield'])
         },
-        locale: {}
+        locale: {},
+        fieldLocale: {
+          access: {}
+        }
       });
 
       return $controller('WidgetApiController', {
@@ -233,24 +235,24 @@ describe('cfWidgetApi directive', function () {
   describe('#onDisabledStatusChanged()', function () {
     it('is dispatched with initial value', function () {
       var cb = sinon.spy();
-      this.scope.isDisabled.returns('FOO');
+      this.scope.fieldLocale.access.disabled = true;
       this.$apply();
       this.widgetApi.field.onDisabledStatusChanged(cb);
       sinon.assert.calledOnce(cb);
-      sinon.assert.calledWithExactly(cb, 'FOO');
+      sinon.assert.calledWithExactly(cb, true);
     });
 
     it('is dispatched when value changes', function () {
       var cb = sinon.spy();
-      this.scope.isDisabled.returns('FOO');
+      this.scope.fieldLocale.access.disabled = true;
       this.$apply();
       this.widgetApi.field.onDisabledStatusChanged(cb);
       cb.reset();
 
-      this.scope.isDisabled.returns('BAR');
+      this.scope.fieldLocale.access.disabled = false;
       this.$apply();
       sinon.assert.calledOnce(cb);
-      sinon.assert.calledWithExactly(cb, 'BAR');
+      sinon.assert.calledWithExactly(cb, false);
     });
   });
 });

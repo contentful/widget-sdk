@@ -24,8 +24,10 @@ describe('cfSingleLineEditor directive', function () {
           changeString: sinon.stub(),
           getValue: sinon.stub()
         },
-        isDisabled: sinon.stub(),
-        locale: {}
+        locale: {},
+        fieldLocale: {
+          access: {}
+        }
       });
 
       // TODO(mudit): Mock the WidgetApiController
