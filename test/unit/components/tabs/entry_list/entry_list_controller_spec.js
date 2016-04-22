@@ -47,6 +47,7 @@ describe('Entry List Controller', function () {
 
     var $controller = this.$inject('$controller');
     $controller('EntryListController', {$scope: scope});
+    scope.selection.updateList = sinon.stub();
   });
 
   describe('#loadView()', function() {
@@ -149,6 +150,12 @@ describe('Entry List Controller', function () {
       entries.forEach(function (entry, i) {
         expect(scope.entries[i]).toBe(entry);
       });
+    });
+
+    it('updates selected items with retrieved list', function () {
+      scope.updateEntries();
+      scope.$apply();
+      sinon.assert.called(scope.selection.updateList.withArgs(scope.entries));
     });
 
     describe('creates a query object', function() {

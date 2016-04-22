@@ -12,6 +12,7 @@ angular.module('contentful').factory('selection', ['analytics', function (analyt
       remove:      remove,
       toggle:      toggle,
       isSelected:  isSelected,
+      updateList:  updateList,
       clear:       function () { selectedById = {}; sync();  },
       size:        function () { return _.size(selected);    },
       isEmpty:     function () { return _.isEmpty(selected); },
@@ -40,6 +41,16 @@ angular.module('contentful').factory('selection', ['analytics', function (analyt
       } else {
         add(entity);
       }
+    }
+
+    function updateList (entities) {
+      selectedById = _.transform(entities, function (acc, entity) {
+        if (isSelected(entity)) {
+          acc[entity.getId()] = entity;
+        }
+      }, {});
+
+      sync();
     }
 
     function sync () {

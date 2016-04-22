@@ -78,7 +78,6 @@ describe('ListViewsController', function () {
       expect(scope.context.view).not.toBe(view);
       expect(scope.context.view.title).toBe('New View');
       sinon.assert.called(resetList);
-      sinon.assert.called(scope.selection.clear);
     });
   });
 
