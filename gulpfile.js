@@ -29,7 +29,7 @@ var path        = require('path');
 var through     = require('through2').obj;
 var yargs       = require('yargs');
 var child_process = require('child_process');
-var runSequenceP = Promise.denodeify(runSequence);
+var serve = require('./tasks/serve');
 
 var argv = yargs
 .boolean('verbose')
@@ -303,48 +303,18 @@ gulp.task('styleguide/stylesheets', function () {
   return buildStylus('styleguide/custom.styl', './public/styleguide');
 });
 
-gulp.task('serve', ['styleguide'], function () {
-  var builds = {};
-  var taskId = 0;
+gulp.task('serve', function () {
   var svgPattern = path.join(src.svg.sourceDirectory, '**/*.svg');
-  watchTask([src.components, svgPattern], ['js/app']);
-  watchTask(src['templates'], ['templates']);
-  watchTask('styleguide/**/*', ['styleguide']);
-  watchTask(src['stylesheets'], ['stylesheets', 'styleguide']);
+  var appSrc = [svgPattern].concat(src.components);
 
-  function watchTask (source, tasks) {
-    var thisTaskId = taskId++;
-    if (process.env.NO_WATCHING) {
-      build();
-    } else {
-      gulp.watch(source, build);
-    }
+  var patternTaskMap = [
+    [appSrc, ['js/app']],
+    [src.templates, ['templates']],
+    ['styleguide/**/*', ['styleguide']],
+    [src.stylesheets, ['stylesheets', 'styleguide']]
+  ];
 
-    function build () {
-      builds[thisTaskId] = runSequenceP.apply(null, tasks);
-    }
-  }
-
-  var publicDir = path.resolve(__dirname, 'public');
-  var docIndex = sendIndex(path.join(publicDir, 'docs'));
-  var appIndex = sendIndex(publicDir);
-
-  var app = express();
-  app.use(express.static(publicDir));
-  app.use('/docs/', docIndex);
-  app.get('*', function(req, res, next) {
-    Promise.all(_.values(builds)).then(function () {
-      appIndex(req, res, next);
-    }, function (err) {
-      res
-      .status(500)
-      .type('text')
-      .send(err.message + '\n' + err.err.message)
-      .end();
-    });
-  });
-  app.use(respond404);
-  app.listen(3001);
+  return serve(patternTaskMap);
 });
 
 gulp.task('watchify', function(){
