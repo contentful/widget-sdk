@@ -279,16 +279,6 @@ gulp.task('stylesheets/app', function () {
   return buildStylus(src.mainStylesheets, './public/app');
 });
 
-function buildStylus(sources, dest) {
-  dest = gulp.dest(dest);
-  return gulp.src(sources)
-    .pipe(sourceMaps.init())
-    .pipe(stylus({use: nib()}))
-    .on('error', passError(dest))
-    .pipe(sourceMaps.write({sourceRoot: '/stylesheets'}))
-    .pipe(dest);
-}
-
 gulp.task('styleguide', ['styleguide/stylesheets'], function () {
   return spawnOnlyStderr('kss-node', [
     '--template', 'styleguide',
