@@ -27,6 +27,9 @@
   "aviary": {
     "api_key": "b7fe4d3302834e61b0f65913f156c067"
   },
+  "embedly": {
+    "api_key": "5aba1269adbf42919bd1dd3308b84652"
+  },
   "segment_io": "uwr64jkg06",
   "totango": "SP-7136-01",
   "google" : {
