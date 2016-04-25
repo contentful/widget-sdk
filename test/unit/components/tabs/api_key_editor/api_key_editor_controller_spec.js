@@ -31,6 +31,7 @@ describe('API key editor controller', function () {
         logServerWarn: stubs.logServerWarn
       });
       $provide.value('navigation/closeState', stubs.closeState);
+      $provide.value('analytics', {});
     });
     inject(function ($controller, $injector, spaceContext) {
       $q = $injector.get('$q');

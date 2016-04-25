@@ -118,6 +118,14 @@ angular.module('contentful').factory('LazyLoader/resources', ['$injector', funct
    * - setup - optional function run immediately after the resource is loaded
    */
   return {
+    // CSS:
+    fontsDotCom: {
+      // Empty stylesheet. The request happening to the file is misused by
+      // fonts.com for tracking and resembles the logic in their own
+      // http://fast.fonts.net/t/trackingCode.js
+      url: '//fast.fonts.net/t/1.css?apiType=css&projectid=' +
+           dotty.get(environment, 'settings.fonts_dot_com.project_id')
+    },
     // JavaScript:
     markdown: {
       url: assetLoader.getAssetUrl('/app/markdown_vendors.js')
