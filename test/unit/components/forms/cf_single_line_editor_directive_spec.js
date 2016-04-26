@@ -2,7 +2,9 @@
 
 describe('cfSingleLineEditor directive', function () {
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', function ($provide) {
+      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+    });
 
     var path = ['fields', 'single_line', 'de-DE'];
 
@@ -27,7 +29,8 @@ describe('cfSingleLineEditor directive', function () {
         locale: {},
         fieldLocale: {
           access: {}
-        }
+        },
+        entity: {data: {sys: {}}}
       });
 
       // TODO(mudit): Mock the WidgetApiController
