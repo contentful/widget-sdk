@@ -1,0 +1,40 @@
+'use strict';
+
+angular.module('cf.ui')
+/**
+ * @ngdoc service
+ * @module cf.ui
+ * @name datepicker
+ * @usage[js]
+ * var createDatepicker = $injector.get('datepicker').create
+ * var datePicker = createDatepicker({
+ *   // same API as Pikaday
+ * })
+ */
+.service('datepicker', ['$injector', function ($injector) {
+  var Pikaday = $injector.get('Pikaday');
+
+  var I18N = {
+    previousMonth: 'Previous Month',
+    nextMonth: 'Next Month',
+    months: [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ],
+    weekdaysShort: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+    weekdays: [
+      'Sunday', 'Monday', 'Tuesday', 'Wednesday',
+      'Thursday', 'Friday', 'Saturday'
+    ]
+  };
+
+  var DEFAULTS = {
+    i18n: I18N
+  };
+
+  return {
+    create: function (opts) {
+      return new Pikaday(_.assign({}, DEFAULTS, opts));
+    }
+  };
+}]);
