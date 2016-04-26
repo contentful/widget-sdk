@@ -57,18 +57,18 @@ describe('Account Dropdown Controller', function () {
     });
   });
 
-  describe('allows navigation to organization settings', function () {
+  describe('navigation to organization settings', function () {
     beforeEach(function () {
       var OrganizationList = this.$inject('OrganizationList');
       this.isOwnerStub = OrganizationList.isOwner = sinon.stub().returns(false);
       this.$apply();
     });
 
-    it('disables if is not an owner of an organization', function () {
+    it('is disabled if the user is not an organization owner', function () {
       expect(this.scope.canGoToSubscription).toBe(false);
     });
 
-    it('enables if is an owner of an organization', function () {
+    it('is enabled if is the user is an organization owner', function () {
       this.isOwnerStub.returns(true);
       this.$inject('spaceContext').space = {data: {organization: {sys: {id: 42}}}};
       this.$apply();

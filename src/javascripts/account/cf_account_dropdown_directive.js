@@ -19,13 +19,11 @@ angular.module('contentful')
   var authentication   = $injector.get('authentication');
   var analytics        = $injector.get('analytics');
   var intercom         = $injector.get('intercom');
-  var spaceContext     = $injector.get('spaceContext');
-  var OrganizationList = $injector.get('OrganizationList');
 
   $scope.$watch(function () {
-    return spaceContext.getData('organization.sys.id');
-  }, function (organizationId) {
-    $scope.canGoToSubscription = OrganizationList.isOwner(organizationId);
+    return TheAccountView.getGoToSubscriptionOrganization();
+  }, function (organizationToGoTo) {
+    $scope.canGoToSubscription = !!organizationToGoTo;
   });
 
   $scope.goToUserProfile = TheAccountView.goToUserProfile;
