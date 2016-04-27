@@ -199,10 +199,8 @@ test/unit/ui/command_spec.js
 test/unit/ui/context_menu_spec.js
 test/unit/ui/cf_ui_caret_helper_spec.js
 test/unit/ui/command_directive_spec.js
-test/unit/utils/encoder.js
 test/unit/utils/overriding_request_queue_spec.js
 test/unit/utils/signal_spec.js
-test/unit/notifications_spec.js
 test/unit/access_control/access_checker_spec.js
 test/unit/access_control/policy_access_checker_spec.js
 test/unit/access_control/policy_builder_default_rule_spec.js
@@ -216,7 +214,6 @@ test/unit/account/cf_account_view_directive_spec.js
 test/unit/account/handle_gatekeeper_message_spec.js
 test/unit/account/iframe_channel_spec.js
 test/unit/account/the_account_view_spec.js
-test/unit/states/space_spec.js
 test/unit/webhooks/webhook_call_status_directive_spec.js
 test/unit/webhooks/webhook_editor_directive_spec.js
 test/unit/webhooks/webhook_headers_directive_spec.js
@@ -234,7 +231,6 @@ test/helpers/timing-reporter.js
 test/helpers/contentful_mocks.js
 test/helpers/dsl.js
 test/helpers/helpers.js
-test/helpers/hooks.js
 test/helpers/sinon.js
 test/integration/field_validation_dialog_spec.js
 src/javascripts/components/client/cf_activity_breadcrumbs_directive.js
@@ -471,7 +467,6 @@ src/javascripts/services/filter_query_string.js
 src/javascripts/services/fontsdotcom.js
 src/javascripts/services/get.js
 src/javascripts/services/getty_images.js
-src/javascripts/services/intercom.js
 src/javascripts/services/kaltura_widget_loader.js
 src/javascripts/services/lodash_timing.js
 src/javascripts/services/lookupLinksForEntityCache.js
@@ -483,7 +478,6 @@ src/javascripts/services/q_decorator.js
 src/javascripts/services/random.js
 src/javascripts/services/revision.js
 src/javascripts/services/search_query_helper.js
-src/javascripts/services/slug.js
 src/javascripts/services/totango.js
 src/javascripts/services/validation_dialog_error_messages.js
 src/javascripts/services/validation_views.js
@@ -536,7 +530,6 @@ src/javascripts/ui/sortable.js
 src/javascripts/ui/cf_icon_directive.js
 src/javascripts/ui/cf_ui_caret_helper.js
 src/javascripts/ui/cf_ui_hint.js
-src/javascripts/ui/command.js
 src/javascripts/ui/context_menu.js
 src/javascripts/widgets/id_map.js
 src/javascripts/widgets/api.js
@@ -576,14 +569,12 @@ src/javascripts/utils/encoder.js
 src/javascripts/utils/keycodes.js
 src/javascripts/utils/memoize.js
 src/javascripts/utils/overriding_request_queue.js
-src/javascripts/utils/signal.js
 src/javascripts/libs/dottie_wrapper.js
 src/javascripts/libs/index.js
 src/javascripts/libs/markdown_vendors.js
 src/javascripts/forms.js
 src/javascripts/kaltura_credentials.js
 src/javascripts/ui.js
-src/javascripts/utils.js
 src/javascripts/environment.js
 src/javascripts/access_control/access_checker.js
 src/javascripts/access_control/cf_rule.js
@@ -607,7 +598,6 @@ src/javascripts/account/iframe_channel.js
 src/javascripts/account/the_account_view.js
 src/javascripts/application.js
 src/javascripts/contentful.js
-src/javascripts/data.js
 src/javascripts/filters.js
 src/javascripts/states/account.js
 src/javascripts/states/api.js
