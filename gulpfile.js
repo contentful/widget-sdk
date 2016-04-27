@@ -112,8 +112,7 @@ var src = {
     './node_modules/codemirror/lib/codemirror.css'
   ],
   mainStylesheets: [
-    'src/stylesheets/main.styl',
-    'src/stylesheets/ie9.css'
+    'src/stylesheets/main.styl'
   ],
   styleguideStylesheets: [
     'styleguide/public/custom.styl'
@@ -501,7 +500,6 @@ gulp.task('rev-static', function () {
 gulp.task('rev-dynamic', function(){
   return gulp.src([
     'public/app/main.css',
-    'public/app/ie9.css',
     'public/app/vendor.css',
 
     'public/app/templates.js',
