@@ -25,49 +25,49 @@
  * ]);
  */
 angular.module('contentful/mocks')
-.factory('mocks/TheLocaleStore', [function () {
+.factory('mocks/TheLocaleStore', ['$injector', function ($injector) {
+  var createBase = $injector.get('TheLocaleStore/implementation').create;
+  var TheStore = $injector.get('TheStore');
   var locales = [
     {code: 'en', internal_code: 'en-internal'},
     {code: 'de', internal_code: 'de-internal'}
   ];
 
-  var defaultLocale = locales[0];
+  var localeStoreMock = createBase(TheStore);
 
-  return {
-    getDefaultLocale: function () {
-      return defaultLocale;
-    },
-
-    getPrivateLocales: function () {
-      return locales;
-    },
-
-    getActiveLocales: function () {
-      return _.filter(locales, function (locale) {
-        return locale.active !== false;
-      });
-    },
-
-    /**
-     * @ngdoc method
-     * @name mocks/TheLocaleStore#setLocales
-     * @module contentful/mocks
-     * @description
-     * Set the value to be returned by `getPrivateLocales()`.
-     *
-     * The first value in the array will be the value returned by
-     * `getDefaultLocale()`.
-     *
-     * @param {Array<API.Locale>} locales
-     */
-    setLocales: function (_locales) {
-      locales = _locales.map(function (locale) {
-        return _.extend({
-          internal_code: locale.code + '-internal'
-        }, locale);
-      });
-      defaultLocale = locales[0];
-    }
+  /**
+   * @ngdoc method
+   * @name mocks/TheLocaleStore#setLocales
+   * @module contentful/mocks
+   * @description
+   * Set the value to be returned by `getPrivateLocales()`.
+   *
+   * The first value in the array will be the value returned by
+   * `getDefaultLocale()`.
+   *
+   * @param {Array<API.Locale>} locales
+   */
+  localeStoreMock.setLocales = function (locales) {
+    locales = locales.map(function (locale) {
+      return _.extend({
+        internal_code: locale.code + '-internal'
+      }, locale);
+    });
+    localeStoreMock.resetWithSpace(createSpaceMock(locales));
+    localeStoreMock.setActiveLocales(_.reject(locales, function (locale) {
+      return 'active' in locale && !locale.active;
+    }));
   };
 
+  localeStoreMock.setLocales(locales);
+
+  return localeStoreMock;
+
+  function createSpaceMock (locales) {
+    return {
+      getId: _.constant('SID'),
+      getPrivateLocales: _.constant(locales),
+      getDefaultLocale: _.constant(locales[0])
+    };
+  }
 }]);

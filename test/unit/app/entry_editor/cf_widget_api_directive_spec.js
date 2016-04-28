@@ -2,7 +2,18 @@
 
 describe('cfWidgetApi directive', function () {
   beforeEach(function () {
-    module('contentful/test');
+    var self = this;
+
+    this.getEntries = sinon.stub();
+
+    module('contentful/test', function ($provide) {
+      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+      $provide.value('spaceContext', {
+        space: {
+          getEntries: self.getEntries
+        }
+      });
+    });
 
     var $controller = this.$inject('$controller');
     var OtDoc = this.$inject('mocks/OtDoc');
@@ -12,6 +23,11 @@ describe('cfWidgetApi directive', function () {
       field: {},
       settings: {
         helpText: 'wat'
+      }
+    };
+    this.entry = {
+      data: {
+        sys: {}
       }
     };
 
@@ -26,7 +42,10 @@ describe('cfWidgetApi directive', function () {
         locale: {},
         fieldLocale: {
           access: {}
-        }
+        },
+        entity: this.entry,
+        fields: {},
+        transformedContentTypeData: {}
       });
 
       return $controller('WidgetApiController', {
@@ -68,7 +87,38 @@ describe('cfWidgetApi directive', function () {
     });
   });
 
+  describe('#entry', function () {
+    describe('#getSys()', function () {
+      it('returns sys data from entry object', function () {
+        this.entry.data.sys = 'wat';
+        expect(this.widgetApi.entry.getSys()).toEqual('wat');
+      });
+    });
 
+    describe('#onSysChanged()', function () {
+      it('calls callback if "entry.data.sys" changes', function () {
+        var cb = sinon.spy();
+        this.widgetApi.entry.onSysChanged(cb);
+        cb.reset();
+        this.entry.data.sys = 'new sys';
+        this.$apply();
+        sinon.assert.calledWithExactly(cb, 'new sys');
+        sinon.assert.calledOnce(cb);
+      });
+    });
+  });
+
+  // #space
+  describe('#getEntries()', function () {
+    it('should proxy the call to getEntries defined by spaceContext', function () {
+      this.widgetApi.space.getEntries('wat');
+      sinon.assert.calledOnce(this.getEntries);
+      sinon.assert.calledWithExactly(this.getEntries, 'wat');
+    });
+  });
+
+
+  // #field
   describe('#onValueChanged()', function () {
     var path = ['fields', 'fid', 'lid'];
 
@@ -98,7 +148,7 @@ describe('cfWidgetApi directive', function () {
       this.testEvent('otValueChanged');
     });
 
-    it('callback will be called when entry is revered', function () {
+    it('callback will be called when entry is reverted', function () {
       this.testEvent('otValueReverted');
     });
 
@@ -158,7 +208,7 @@ describe('cfWidgetApi directive', function () {
         });
     });
 
-    pit('should not call changeString if old and new value are the same', function() {
+    pit('should not call changeString if old and new value are the same', function () {
       this.scope.otSubDoc.getValue.returns('test');
 
       return this.widgetApi.field.setString('test')

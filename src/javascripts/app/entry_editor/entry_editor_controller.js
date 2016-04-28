@@ -2,14 +2,16 @@
 
 angular.module('contentful')
 .controller('EntryEditorController', ['$scope', '$injector', function EntryEditorController($scope, $injector) {
-  var $controller    = $injector.get('$controller');
-  var logger         = $injector.get('logger');
-  var spaceContext   = $injector.get('spaceContext');
-  var fieldFactory   = $injector.get('fieldFactory');
-  var notifier       = $injector.get('entryEditor/notifications');
-  var truncate       = $injector.get('stringUtils').truncate;
-  var accessChecker  = $injector.get('accessChecker');
-  var ShareJS        = $injector.get('ShareJS');
+  var $controller         = $injector.get('$controller');
+  var logger              = $injector.get('logger');
+  var spaceContext        = $injector.get('spaceContext');
+  var fieldFactory        = $injector.get('fieldFactory');
+  var notifier            = $injector.get('entryEditor/notifications');
+  var truncate            = $injector.get('stringUtils').truncate;
+  var accessChecker       = $injector.get('accessChecker');
+  var ShareJS             = $injector.get('ShareJS');
+  var DataFields          = $injector.get('EntityEditor/DataFields');
+  var ContentTypes        = $injector.get('data/ContentTypes');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
@@ -132,6 +134,16 @@ angular.module('contentful')
     }
   });
 
+  /**
+   * Build the `entry.fields` api of the widget-sdk at one
+   * place and put it on $scope so that we don't rebuild it
+   * for every widget. Instead, we share this version in every
+   * cfWidgetApi instance.
+   */
+  var contentTypeData = $scope.contentType.data;
+  var fields = contentTypeData.fields;
+  $scope.fields = DataFields.create(fields, $scope);
+  $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);
 
   /**
    * Makes sure that the snapshot of the OT doc looks like the object
