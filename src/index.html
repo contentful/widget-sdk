@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="contentful/app" ng-controller="ClientController" ng-init="initClient()">
 <head>
   <meta charset="UTF-8">
   <title>Contentful</title>
   <link href="/app/vendor.css" media="all" rel="stylesheet" type="text/css">
   <link href="/app/main.css" media="all" rel="stylesheet" type="text/css">
+  <link ng-href="//{{ baseHost }}/gatekeeper/plan_cards.css" media="all" rel="stylesheet" type="text/css">
   <!--[if IE 9]>
     <link href="/app/ie9.css" media="all" rel="stylesheet" type="text/css">
   <![endif]-->
@@ -20,7 +21,7 @@
   </script>
 </head>
 <body ng-app="contentful/app">
-  <div class="client" ng-controller="ClientController" ng-init="initClient()">
+  <div class="client">
     <cf-app-container class="app-container ng-hide" ng-show="user"></cf-app-container>
     <div class="client-loading" ng-if="!user">
       <div class="client-loading__container">
