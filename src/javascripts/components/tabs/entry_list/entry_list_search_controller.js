@@ -10,11 +10,17 @@ angular.module('contentful')
   var accessChecker      = $injector.get('accessChecker');
   var debounce           = $injector.get('debounce');
 
+  var MODE_APPEND  = 'append';
+  var MODE_REPLACE = 'replace';
+  var MODE_RESET   = 'reset';
+
   var searchTerm = null;
+
   var isResettingPage = false;
   var isResettingTerm = false;
+  var isAppendingPage = false;
 
-  var debouncedUpdateWithTerm = debounce(updateWithTerm, 300);
+  var debouncedUpdateWithTerm = debounce(updateWithTerm, 500);
   var updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
 
   /**
@@ -31,47 +37,56 @@ angular.module('contentful')
    * Watches: triggering list updates
    */
 
-  $scope.$watch('paginator.page', function pageChanged () {
+  $scope.$watch('paginator.page', function () {
     if (isResettingPage) {
       isResettingPage = false;
-      return;
+    } else {
+      updateEntries(isAppendingPage ? MODE_APPEND : MODE_REPLACE);
+      isAppendingPage = false;
     }
-
-    updateEntries(false);
   });
 
-  $scope.$watch('context.view.searchTerm', function termChanged (value, prev) {
-    if (value === prev || isResettingTerm) {
+  $scope.$watchCollection(function () {
+    return {
+      value: getViewItem('searchTerm'),
+      view: dotty.get($scope, 'context.view.id')
+    };
+  }, function (next, prev) {
+    var value = next.value;
+    var viewChanged = next.view !== prev.view;
+    var hasTerm = _.isString(value) && value.length > 0;
+
+    // for initial run or resetting term just set search term w/o list update
+    if (value === prev.value || isResettingTerm) {
       searchTerm = value;
       isResettingTerm = false;
-      return;
     }
-
-    if (_.isString(value) && value.length > 0) {
-      // use debounced version when user is actively typing
-      debouncedUpdateWithTerm(value);
-    } else {
+    // if view was changed or term was cleared then update immediately
+    else if (viewChanged || !hasTerm) {
       updateWithTerm(value);
     }
-  });
-
-  $scope.$watch('context.view.contentTypeId', function ctIdChanged (value, prev) {
-    if (value !== prev) {
-      updateEntries(true);
+    // use debounced version when user is actively typing
+    else if (hasTerm) {
+      debouncedUpdateWithTerm(value);
     }
   });
 
-  $scope.$watch(function getCacheParameters (scope) {
+  $scope.$watch('context.view.contentTypeId', function (value, prev) {
+    if (value !== prev) {
+      updateEntries();
+    }
+  });
+
+  $scope.$watch(function () {
     return {
       contentTypeId:     getViewItem('contentTypeId'),
       displayedFieldIds: getViewItem('displayedFieldIds'),
-      entriesLength:     scope.entries && scope.entries.length,
-      page:              scope.paginator.page,
+      entriesLength:     $scope.entries && $scope.entries.length,
+      page:              $scope.paginator.page,
       orderDirection:    getViewItem('order.direction'),
       orderFieldId:      getViewItem('order.fieldId')
     };
   }, refreshEntityCaches, true);
-
 
   function resetSearchTerm () {
     isResettingTerm = true;
@@ -84,12 +99,14 @@ angular.module('contentful')
 
   function updateWithTerm (term) {
     searchTerm = term;
-    updateEntries(true);
+    updateEntries();
   }
 
-  function requestEntries (shouldReset) {
+  function requestEntries (mode) {
+    mode = mode || MODE_RESET;
     $scope.context.loading = true;
-    if (shouldReset && $scope.paginator.page !== 0) {
+
+    if (mode == MODE_RESET && $scope.paginator.page !== 0) {
       $scope.paginator.page = 0;
       isResettingPage = true;
     }
@@ -99,7 +116,10 @@ angular.module('contentful')
       return spaceContext.space.getEntries(query);
     })
     .then(function (entries) {
-      return {shouldReset: shouldReset, entries: entries};
+      return {
+        shouldReset: mode !== MODE_APPEND,
+        entries: entries
+      };
     });
   }
 
@@ -142,6 +162,7 @@ angular.module('contentful')
   function loadNextPage () {
     if (!$scope.paginator.atLast()) {
       $scope.$apply(function () {
+        isAppendingPage = true;
         $scope.paginator.page += 1;
       });
     }

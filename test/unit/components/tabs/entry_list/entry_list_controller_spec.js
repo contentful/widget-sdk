@@ -62,9 +62,9 @@ describe('Entry List Controller', function () {
         searchTerm: 'search term',
         contentTypeId: 'ctid',
         contentTypeHidden: false,
-        displayedFieldIds: ['field1', 'field2'],
+        displayedFieldIds: ['createAt', 'updatedAt'],
         order: {
-          fieldId: 'fieldid',
+          fieldId: 'createdAt',
           direction: 'descending'
         }
       };
@@ -80,6 +80,7 @@ describe('Entry List Controller', function () {
     });
 
     it('resets entries', function() {
+      scope.$apply();
       sinon.assert.calledOnce(scope.updateEntries);
     });
 
