@@ -23,6 +23,7 @@ function ContentTypeActionsController($scope, $injector) {
   var ReloadNotification = $injector.get('ReloadNotification');
   var ctHelpers          = $injector.get('data/ContentTypes');
   var closeState         = $injector.get('navigation/closeState');
+  var random             = $injector.get('random');
 
   /**
    * @ngdoc property
@@ -230,6 +231,10 @@ function ContentTypeActionsController($scope, $injector) {
       return $scope.contentType.save();
     })
     .then(publishContentType)
+    .then(function (published) {
+      $scope.publishedContentType = published;
+      return published;
+    })
     .then(saveEditingInterface)
     .catch(triggerApiErrorNotification)
     .then(setPristine)
@@ -245,7 +250,6 @@ function ContentTypeActionsController($scope, $injector) {
     return contentType.publish(version)
     .then(function (published) {
       contentType.setPublishedVersion(version);
-      $scope.publishedContentType = published;
       spaceContext.registerPublishedContentType(published);
 
       if (version === 1) {
@@ -288,9 +292,9 @@ function ContentTypeActionsController($scope, $injector) {
     }
   }
 
-  function goToDetails () {
+  function goToDetails (contentType) {
     return $state.go('spaces.detail.content_types.detail', {
-      contentTypeId: $scope.contentType.getId()
+      contentTypeId: contentType ? contentType.getId() : $scope.contentType.getId()
     });
   }
 
@@ -330,6 +334,111 @@ function ContentTypeActionsController($scope, $injector) {
     return _.all(contentType.data.fields, 'disabled');
   }
 
+  /**
+   * @ngdoc property
+   * @name ContentTypeActionsController#duplicate
+   * @type {Command}
+   */
+  controller.duplicate = Command.create(openDuplicateDialog, {
+    disabled: function () {
+      var isNew       = $scope.context.isNew;
+      var isDenied    = accessChecker.shouldDisable('updateContentType') ||
+                        accessChecker.shouldDisable('publishContentType');
+      var isDirty     = $scope.contentTypeForm.$dirty ||
+                        !$scope.contentType.getPublishedVersion();
+      var isPublished = $scope.contentType.isPublished();
+
+      return isNew || isDenied || isDirty || !isPublished;
+    }
+  });
+
+  function openDuplicateDialog () {
+    return modalDialog.open({
+      template: 'content_type_duplicate_dialog',
+      scope: prepareDuplicateDialogScope(),
+      noNewScope: true
+    }).promise;
+  }
+
+  function prepareDuplicateDialogScope () {
+    var scope = $rootScope.$new();
+    return _.extend(scope, {
+      input: {
+        name: '',
+        description: $scope.contentType.data.description
+      },
+      contentTypeName: $scope.contentType.data.name,
+      duplicate: Command.create(function () {
+        return duplicate(scope.input);
+      }, {
+        disabled: function () {
+          return !scope.input.name;
+        }
+      })
+    });
+  }
+
+  function duplicate (name) {
+    var duplicated = prepareDuplicate(name);
+    copyFields($scope.contentType.data, duplicated.data);
+
+    return duplicated.save()
+    .then(publishContentType)
+    .then(function (ct) {
+      return spaceContext.editingInterfaces.get(ct.data);
+    })
+    .then(function (ei) {
+      syncControls($scope.editingInterface, ei);
+      return spaceContext.editingInterfaces.save(duplicated.data, ei);
+    })
+    .then(askAboutRedirection(duplicated))
+    .then(setPristine)
+    .then(notify.duplicateSuccess, notify.duplicateError);
+  }
+
+  function prepareDuplicate (input) {
+    return spaceContext.space.newContentType({
+      sys: {type: 'ContentType'},
+      name: input.name,
+      description: input.description || '',
+      fields: [],
+      displayField: undefined
+    });
+  }
+
+  function copyFields (original, duplicated) {
+    _.forEach(original.fields, function (field) {
+      var id = random.id();
+      var copiedField = _.extend(_.cloneDeep(field), {id: id});
+      duplicated.fields.push(copiedField);
+      if (field.id === original.displayField) {
+        duplicated.displayField = id;
+      }
+    });
+  }
+
+  function syncControls (original, duplicated) {
+    _.forEach(original.controls, function (control, i) {
+      _.extend(duplicated.controls[i], {
+        widgetId: control.widgetId,
+        settings: _.cloneDeep(control.settings)
+      });
+    });
+  }
+
+  function askAboutRedirection (duplicated) {
+    return function () {
+      var navigate = _.partial(goToDetails, duplicated);
+      modalDialog.closeAll();
+
+      return modalDialog.open({
+        title: 'Duplicated content type',
+        message: 'Content type was successfully duplicated. What do you want to do now?',
+        confirmLabel: 'Go to the duplicated content type',
+        cancelLabel: null
+      }).promise.then(navigate, _.noop);
+    };
+  }
 }])
 
 .factory('contentType/notifications', ['$injector', function ($injector) {
@@ -346,6 +455,10 @@ function ContentTypeActionsController($scope, $injector) {
     },
     create: {
       exists: 'A Content Type with this ID already exists'
+    },
+    duplicate: {
+      success: 'Content type duplicated successfully',
+      error: 'Unable to duplicate content type: '
     }
   };
 
@@ -395,6 +508,14 @@ function ContentTypeActionsController($scope, $injector) {
       var message = saveError + getServerMessage(err);
       notification.error(message);
       logger.logServerWarn('Error activating Content Type', {error: err});
+    },
+
+    duplicateSuccess: function () {
+      notification.info(messages.duplicate.success);
+    },
+
+    duplicateError: function (err) {
+      notification.error(messages.duplicate.error + getServerMessage(err));
     }
   };
 
