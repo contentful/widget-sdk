@@ -1,25 +1,26 @@
 'use strict';
 
 describe('TrialWatcher', function () {
-  var broadcastStub, openDialogStub;
+  var broadcastStub, openPaywallStub;
 
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', function ($provide) {
+      $provide.value('paywallOpener', {
+        openPaywall: sinon.stub()
+      });
+    });
 
     var TrialWatcher = this.$inject('TrialWatcher');
     var moment = this.$inject('moment');
     var OrganizationList = this.$inject('OrganizationList');
     var spaceContext = this.$inject('spaceContext');
-    var $q = this.$inject('$q');
     var $rootScope = this.$inject('$rootScope');
-    var modalDialog = this.$inject('modalDialog');
 
     broadcastStub = sinon.stub($rootScope, '$broadcast').returns({});
-    openDialogStub = modalDialog.open = sinon.spy(function() {
-      return {promise: $q.defer().promise};
-    });
+    openPaywallStub = this.$inject('paywallOpener').openPaywall;
 
-    var membership = {organization: {sys: {id: 42}}};
+    this.organization = {sys: {id: 42}};
+    var membership = {organization: this.organization};
     OrganizationList.resetWithUser({organizationMemberships: [membership]});
     TrialWatcher.init();
 
@@ -42,7 +43,7 @@ describe('TrialWatcher', function () {
 
   afterEach(function () {
     broadcastStub.restore();
-    broadcastStub = openDialogStub = null;
+    broadcastStub = openPaywallStub = null;
   });
 
   describe('without trial user', function () {
@@ -73,7 +74,7 @@ describe('TrialWatcher', function () {
     });
 
     describe('for a trial subscription', function () {
-      beforeEach(function (){
+      beforeEach(function () {
         this.setupOrganization({
           subscriptionState: 'trial',
           trialPeriodEndsAt: '2013-12-13T13:28:44Z',
@@ -269,7 +270,8 @@ describe('TrialWatcher', function () {
     itOpensPaywall();
 
     it('allows setting up payment', function () {
-      expect(openDialogStub.args[0][0].scopeData.offerToSetUpPayment).toBe(true);
+      sinon.assert.calledWith(openPaywallStub,
+        sinon.match.any, sinon.match.has('offerPlanUpgrade', true));
     });
   }
 
@@ -277,19 +279,21 @@ describe('TrialWatcher', function () {
     itOpensPaywall();
 
     it('does not allow setting up payment', function () {
-      expect(openDialogStub.args[0][0].scopeData.offerToSetUpPayment).toBe(false);
+      sinon.assert.neverCalledWith(openPaywallStub,
+        sinon.match.any, sinon.match.has('offerPlanUpgrade', true));
     });
   }
 
   function itOpensPaywall () {
-    it('opens the paywall modal dialog', function () {
-      expect(openDialogStub.calledOnce).toBe(true);
+    it('opens the paywall modal dialog for the test organization', function () {
+      sinon.assert.calledOnce(openPaywallStub);
+      sinon.assert.calledWith(openPaywallStub, this.organization);
     });
   }
 
   function itDoesNotOpenPaywall () {
     it('does not open the paywall modal dialog', function () {
-      expect(openDialogStub.called).toBe(false);
+      sinon.assert.notCalled(openPaywallStub);
     });
   }
 });
