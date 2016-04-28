@@ -90,11 +90,14 @@ angular.module('contentful')
       container.animate({scrollTop: container.scrollTop() + 260}, 'linear');
     }
 
-    controller.selectedLanguage = language;
-
-    analytics.track('Selected Language at the Dashboard', {
-      language: controller.selectedLanguage.name
-    });
+    if (controller.selectedLanguage === language) {
+      controller.selectedLanguage = undefined;
+    } else {
+      controller.selectedLanguage = language;
+      analytics.track('Selected Language at the Dashboard', {
+        language: controller.selectedLanguage.name
+      });
+    }
   };
 
   var documentationList = ['documentation', 'apidemo', 'deliveryApi'];

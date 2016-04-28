@@ -33,6 +33,7 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
       $scope.context.loading = false;
       controller.paginator.numEntries = assets.total;
       $scope.assets = assets;
+      $scope.selection.updateList(assets);
     }, accessChecker.wasForbidden($scope.context))
     .catch(ReloadNotification.apiErrorHandler);
   };

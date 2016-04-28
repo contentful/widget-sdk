@@ -3,9 +3,8 @@
     We’re sorry to say that, but your account will be inactive until you set up
     payment.
 
-  p.
-    We would highly recommend our most popular plan: Pro Annual. If you purchase
-    an entire year upfront, it would cost $166 per month – saving you 17%.
+  div(ng-show="planRecommendationReasonHtml" ng-bind-html="planRecommendationReasonHtml")
+
   p.
     If you’ve tried Contentful and liked it, please set up your
     preferred payment method and continue managing content.
@@ -20,6 +19,6 @@
     a(ng-click="openIntercom()" role="button") talk to us
     |  directly.
 
-.paywall__recommended-subscription
+.paywall__recommended-subscription(ng-show="planHtml")
   h2 Recommended plan
-  include paywall_recommended_subscription
+  div(ng-bind-html="planHtml")

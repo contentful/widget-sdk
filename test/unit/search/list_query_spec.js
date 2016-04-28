@@ -14,6 +14,7 @@ describe('ListQuery service', function () {
     expect(q.limit).toBe(30);
     expect(q.skip).toBe(0);
     expect(q.query).toBe('test');
+    expect(q['sys.archivedAt[exists]']).toBe('false');
   }
 
   beforeEach(function () {
@@ -22,6 +23,10 @@ describe('ListQuery service', function () {
     ListQuery = this.$inject('ListQuery');
     spaceContext = this.$inject('spaceContext');
     searchQueryHelper = this.$inject('searchQueryHelper');
+
+    spaceContext.fetchPublishedContentType = sinon.stub().resolves({
+      data: { fields: [] }, getId: _.constant('test')
+    });
   });
 
   describe('Returns promise of a query', function () {
@@ -36,13 +41,43 @@ describe('ListQuery service', function () {
     });
 
     pit('for entries', function () {
-      var ctPromise = $q.resolve({ data: { fields: [] }, getId: _.constant('test') });
-      sinon.stub(spaceContext, 'fetchPublishedContentType').returns(ctPromise);
-
       return ListQuery.getForEntries(_.extend({ contentTypeId: 'test' }, OPTS))
       .then(function (q) {
         testQuery(q);
         expect(q.content_type).toBe('test');
+      });
+    });
+  });
+
+  describe('special search terms', function () {
+    function queryFor(term) {
+      return ListQuery.getForEntries(_.extend({contentTypeId: 'test'}, OPTS, {searchTerm  : term}));
+    }
+
+    pit('for published list', function() {
+      return queryFor('status:published').then(function (q) {
+        expect(q['sys.publishedAt[exists]']).toBe('true');
+      });
+    });
+
+    pit('for changed list', function() {
+      return queryFor('status:changed').then(function (q) {
+        expect(q['sys.archivedAt[exists]']).toBe('false');
+        expect(q.changed).toBe('true');
+      });
+    });
+
+    pit('for draft list', function() {
+      return queryFor('status:draft').then(function (q) {
+        expect(q['sys.archivedAt[exists]']).toBe('false');
+        expect(q['sys.publishedVersion[exists]']).toBe('false');
+        expect(q.changed).toBe('true');
+      });
+    });
+
+    it('for archived list', function() {
+      return queryFor('status:archived').then(function (q) {
+        expect(q['sys.archivedAt[exists]']).toBe('true');
       });
     });
   });

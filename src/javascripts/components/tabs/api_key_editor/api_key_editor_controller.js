@@ -70,10 +70,14 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   $scope.languages = sdkInfoSupplier.get(documentationList);
 
   $scope.selectLanguage = function (language) {
-    $scope.selectedLanguage = language;
-    analytics.track('Selected Language at the API Key Page', {
-      language: $scope.selectedLanguage.name
-    });
+    if ($scope.selectedLanguage === language) {
+      $scope.selectedLanguage = undefined;
+    } else {
+      $scope.selectedLanguage = language;
+      analytics.track('Selected Language at the API Key Page', {
+        language: $scope.selectedLanguage.name
+      });
+    }
   };
 
   $scope.trackResourceLink = function(linkName, language) {
