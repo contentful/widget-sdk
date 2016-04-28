@@ -124,7 +124,10 @@ angular.module('contentful')
       // set paginator's total count
       $scope.paginator.numEntries = res.entries.total;
       // add new entries to the list
-      var entriesToAdd = _.difference(res.entries, $scope.entries);
+      var entriesToAdd = _(res.entries)
+      .difference($scope.entries)
+      .filter(function (entry) { return !entry.isDeleted(); })
+      .value();
       $scope.entries.push.apply($scope.entries, entriesToAdd);
     }
     // 4. always refresh caches

@@ -4,9 +4,9 @@ describe('Entry List Controller', function () {
   var scope, spaceContext;
   var getEntries;
 
-  function createEntries(n) {
+  function createEntries (n) {
     var entries = _.map(new Array(n), function () {
-      return { data: { fields: [] } };
+      return { isDeleted: _.constant(false), data: { fields: [] } };
     });
     Object.defineProperty(entries, 'total', {value: n});
     return entries;
@@ -150,6 +150,14 @@ describe('Entry List Controller', function () {
       entries.forEach(function (entry, i) {
         expect(scope.entries[i]).toBe(entry);
       });
+    });
+
+    it('filters out deleted entries', function () {
+      entries[0].isDeleted = _.constant(true);
+      scope.updateEntries();
+      scope.$apply();
+      expect(scope.entries.length).toBe(29);
+      expect(scope.entries.indexOf(entries[0])).toBe(-1);
     });
 
     it('updates selected items with retrieved list', function () {
@@ -305,11 +313,12 @@ describe('Entry List Controller', function () {
     });
 
     it('discards entries already in the list', function () {
-      scope.entries = ['a'];
-      spaceContext.space.getEntries.resolves(['a', 'b', 'c']);
+      scope.entries = createEntries(1);
+      var nextResponse = scope.entries.concat(createEntries(2));
+      spaceContext.space.getEntries.resolves(nextResponse);
       scope.loadNextPage();
       scope.$apply();
-      expect(scope.entries).toEqual(['a', 'b', 'c']);
+      expect(scope.entries).toEqual(nextResponse);
     });
   });
 
