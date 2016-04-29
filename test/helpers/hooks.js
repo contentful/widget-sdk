@@ -17,4 +17,3 @@ afterEach(function () {
   });
   delete this._angularElements;
 });
-
