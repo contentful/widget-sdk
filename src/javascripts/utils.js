@@ -26,18 +26,19 @@ angular.module('cf.utils', [])
 
   this.$get = ['stringUtils', function (stringUtils) {
     return function pluralize (word) {
-      if (!word)
+      if (!word) {
         return '';
+      }
 
       var lower = word.toLowerCase();
       var plural = irregular[lower] || lower + 's';
-      if (lower[0] !== word[0])
+      if (lower[0] !== word[0]) {
         return stringUtils.capitalize(plural);
-      else
+      } else {
         return plural;
+      }
     };
   }];
-
 }).config(['pluralizeProvider', function (pluralizeProvider) {
   pluralizeProvider.addIrregulars({
     'entry': 'entries'

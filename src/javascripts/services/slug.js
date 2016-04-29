@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('contentful').factory('slug', ['$injector', function ($injector) {
+angular.module('contentful')
+.factory('slug', ['$injector', function ($injector) {
   var getSlug = $injector.get('speakingurl');
 
   // Languages supported by SpeakingURL.
@@ -11,7 +12,7 @@ angular.module('contentful').factory('slug', ['$injector', function ($injector) 
    * Extracts the first two lowercased characters from the locale,
    * and returns the supported language prefix.
    */
-  function supportedLanguage(locale) {
+  function supportedLanguage (locale) {
     var prefix = locale.slice(0, 2).toLowerCase();
     return languages[languages.indexOf(prefix)];
   }
@@ -23,14 +24,14 @@ angular.module('contentful').factory('slug', ['$injector', function ($injector) 
    * is english.
    * Slug suggestions are limited to 75 characters.
    */
-  function slugify(text, locale) {
+  function slugify (text, locale) {
     return getSlug(text, {
       separator: '-',
       lang: supportedLanguage(locale) || 'en',
       truncate: 75,
       custom: {
         '\'': '',
-        '`':  ''
+        '`': ''
       }
     });
   }

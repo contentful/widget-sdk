@@ -1,0 +1,7 @@
+env:
+  jasmine: true
+globals:
+  sinon: true
+  pit: true
+  inject: true
+  module: true
