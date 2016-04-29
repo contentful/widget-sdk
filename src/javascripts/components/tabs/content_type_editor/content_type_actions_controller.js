@@ -23,7 +23,7 @@ function ContentTypeActionsController ($scope, $injector) {
   var ReloadNotification = $injector.get('ReloadNotification');
   var ctHelpers = $injector.get('data/ContentTypes');
   var closeState = $injector.get('navigation/closeState');
-  var random = $injector.get('random');
+  var metadataDialog = $injector.get('contentTypeEditor/metadataDialog');
 
   /**
    * @ngdoc property
@@ -340,7 +340,12 @@ function ContentTypeActionsController ($scope, $injector) {
    * @name ContentTypeActionsController#duplicate
    * @type {Command}
    */
-  controller.duplicate = Command.create(openDuplicateDialog, {
+  controller.duplicate = Command.create(function () {
+    return metadataDialog
+    .openDuplicateDialog($scope.contentType, duplicate)
+    .then(askAboutRedirection)
+    .then(notify.duplicateSuccess);
+  }, {
     disabled: function () {
       var isNew = $scope.context.isNew;
       var isDenied = accessChecker.shouldDisable('updateContentType') ||
@@ -353,92 +358,43 @@ function ContentTypeActionsController ($scope, $injector) {
     }
   });
 
-  function openDuplicateDialog () {
-    return modalDialog.open({
-      template: 'content_type_duplicate_dialog',
-      scope: prepareDuplicateDialogScope(),
-      noNewScope: true
-    }).promise;
-  }
+  function duplicate (metadata) {
+    var duplicate = prepareDuplicate(metadata);
 
-  function prepareDuplicateDialogScope () {
-    var scope = $rootScope.$new();
-    return _.extend(scope, {
-      input: {
-        name: '',
-        description: $scope.contentType.data.description
-      },
-      contentTypeName: $scope.contentType.data.name,
-      duplicate: Command.create(function () {
-        return duplicate(scope.input);
-      }, {
-        disabled: function () {
-          return !scope.input.name;
-        }
-      })
-    });
-  }
-
-  function duplicate (name) {
-    var duplicated = prepareDuplicate(name);
-    copyFields($scope.contentType.data, duplicated.data);
-
-    return duplicated.save()
+    return duplicate.save()
     .then(publishContentType)
     .then(function (ct) {
-      return spaceContext.editingInterfaces.get(ct.data);
+      return spaceContext.editingInterfaces.save(ct.data, $scope.editingInterface);
     })
-    .then(function (ei) {
-      syncControls($scope.editingInterface, ei);
-      return spaceContext.editingInterfaces.save(duplicated.data, ei);
-    })
-    .then(askAboutRedirection(duplicated))
-    .then(setPristine)
-    .then(notify.duplicateSuccess, notify.duplicateError);
+    .then(function () {
+      return duplicate;
+    }, function (err) {
+      notify.duplicateError();
+      return $q.reject(err);
+    });
   }
 
-  function prepareDuplicate (input) {
+  function prepareDuplicate (metadata) {
+    var data = $scope.contentType.data;
     return spaceContext.space.newContentType({
-      sys: {type: 'ContentType'},
-      name: input.name,
-      description: input.description || '',
-      fields: [],
-      displayField: undefined
-    });
-  }
-
-  function copyFields (original, duplicated) {
-    _.forEach(original.fields, function (field) {
-      var id = random.id();
-      var copiedField = _.extend(_.cloneDeep(field), {id: id});
-      duplicated.fields.push(copiedField);
-      if (field.id === original.displayField) {
-        duplicated.displayField = id;
-      }
-    });
-  }
-
-  function syncControls (original, duplicated) {
-    _.forEach(original.controls, function (control, i) {
-      _.extend(duplicated.controls[i], {
-        widgetId: control.widgetId,
-        settings: _.cloneDeep(control.settings)
-      });
+      sys: {type: 'ContentType', id: metadata.id},
+      name: metadata.name,
+      description: metadata.description || '',
+      fields: _.cloneDeep(data.fields),
+      displayField: data.displayField
     });
   }
 
   function askAboutRedirection (duplicated) {
-    return function () {
-      var navigate = _.partial(goToDetails, duplicated);
-      modalDialog.closeAll();
-
-      return modalDialog.open({
-        title: 'Duplicated content type',
-        message: 'Content type was successfully duplicated. What do you want to do now?',
-        confirmLabel: 'Go to the duplicated content type',
-        cancelLabel: null
-      }).promise.then(navigate, _.noop);
-    };
+    return modalDialog.open({
+      title: 'Duplicated content type',
+      message: 'Content type was successfully duplicated. What do you want to do now?',
+      confirmLabel: 'Go to the duplicated content type',
+      cancelLabel: null
+    }).promise.then(function () {
+      setPristine();
+      return goToDetails(duplicated);
+    }, _.noop);
   }
 }])
 

@@ -9,10 +9,12 @@ angular.module('contentful')
 .factory('contentTypeEditor/metadataDialog', ['$injector', function ($injector) {
   var $rootScope = $injector.get('$rootScope');
   var modalDialog = $injector.get('modalDialog');
+  var Command = $injector.get('command');
 
   return {
     openCreateDialog: openCreateDialog,
-    openEditDialog:   openEditDialog,
+    openEditDialog: openEditDialog,
+    openDuplicateDialog: openDuplicateDialog
   };
 
   /**
@@ -48,15 +50,37 @@ angular.module('contentful')
     });
   }
 
-  function openDialog (params) {
-    var scope = _.extend($rootScope.$new(true), {
-      contentTypeMetadata: {
-        name: params.name || '',
-        description: params.description || '',
-        id: ''
-      },
-      contentTypeIsNew: params.isNew
+  function openDuplicateDialog (contentType, duplicate) {
+    var scope = prepareScope({
+      description: contentType.data.description,
+      isNew: true,
+      namePlaceholder: 'Duplicate of "' + contentType.data.name + '"'
     });
+
+    scope.originalName = contentType.data.name;
+    scope.duplicate = Command.create(function () {
+      var d = scope.dialog;
+      var form = d.formController;
+
+      if (form.$valid) {
+        return duplicate(scope.contentTypeMetadata)
+        .then(_.bind(d.confirm, d), _.bind(d.cancel, d));
+      } else {
+        form.showErrors = true;
+      }
+    });
+
+    return modalDialog.open({
+      template: 'duplicate_content_type_dialog',
+      noBackgroundClose: true,
+      scope: scope,
+      ignoreEnter: true,
+      noNewScope: true
+    }).promise;
+  }
+
+  function openDialog (params) {
+    var scope = prepareScope(params);
 
     return modalDialog.open({
       title: params.labels.title,
@@ -64,13 +88,24 @@ angular.module('contentful')
       template: 'edit_content_type_metadata_dialog',
       noBackgroundClose: true,
       scope: scope,
-      ignoreEnter: true
+      ignoreEnter: true,
+      noNewScope: true
     }).promise.then(function () {
       return scope.contentTypeMetadata;
     });
-
   }
 
+  function prepareScope (params) {
+    return _.extend($rootScope.$new(true), {
+      contentTypeMetadata: {
+        name: params.name || '',
+        description: params.description || '',
+        id: ''
+      },
+      contentTypeIsNew: params.isNew,
+      namePlaceholder: params.namePlaceholder || 'For example Product, Blog Post, Author'
+    });
+  }
 }])
 
 /**

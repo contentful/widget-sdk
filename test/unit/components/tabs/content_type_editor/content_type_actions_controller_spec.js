@@ -418,9 +418,14 @@ describe('ContentType Actions Controller', function () {
     beforeEach(function () {
       sinon.stub(this.$inject('modalDialog'), 'open', function (params) {
         if (params.scope && params.scope.duplicate) {
-          params.scope.input.name = 'test';
-          return {promise: params.scope.duplicate.execute()};
+          _.extend(params.scope.contentTypeMetadata, {name: 'test', id: 'test'});
+          var confirm = sinon.spy();
+          params.scope.dialog = {confirm: confirm, cancel: sinon.spy(), formController: {$valid: true}};
+          params.scope.duplicate.execute();
+          scope.$apply();
+          return {promise: $q.resolve(confirm.firstCall.args[0])};
         }
+
         if (params.title === 'Duplicated content type') {
           return {promise: $q.resolve()};
         }
@@ -453,31 +458,24 @@ describe('ContentType Actions Controller', function () {
       });
     });
 
-    pit('saves a duplicate with new field IDs and display field', function () {
+    pit('saves a duplicate with the same field IDs and display field', function () {
       contentType.data.displayField = 'field-id-2-disp';
       contentType.data.fields = [{id: 'field-id-1'}, {id: 'field-id-2-disp'}];
 
       return controller.duplicate.execute().then(function () {
-        sinon.assert.called(spaceContext.editingInterfaces.get);
         var ct = getCreatedCt();
         sinon.assert.calledOnce(ct.save);
         expect(typeof ct.data.displayField).toBe('string');
-        expect(ct.data.displayField).not.toEqual(contentType.data.displayField);
+        expect(ct.data.displayField).toBe(contentType.data.displayField);
         expect(ct.data.displayField).toBe(ct.data.fields[1].id);
-        expect(ct.data.fields[0].id).not.toEqual(contentType.data.fields[0].id);
-        expect(ct.data.fields[1].id).not.toEqual(contentType.data.fields[1].id);
+        expect(ct.data.fields[0].id).toBe(contentType.data.fields[0].id);
+        expect(ct.data.fields[1].id).toBe(contentType.data.fields[1].id);
       });
     });
 
     pit('publishes content type duplicate', function () {
       return controller.duplicate.execute().then(function () {
         sinon.assert.calledOnce(getCreatedCt().publish);
-      });
-    });
-
-    pit('gets EI for the new content type', function () {
-      return controller.duplicate.execute().then(function () {
-        sinon.assert.calledOnce(spaceContext.editingInterfaces.get.withArgs(getCreatedCt().data));
       });
     });
 
