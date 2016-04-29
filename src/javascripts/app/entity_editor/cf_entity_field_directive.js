@@ -24,7 +24,7 @@ angular.module('cf.app')
   return {
     restrict: 'E',
     template: JST.cf_entity_field(),
-    controller: ['$scope', function($scope) {
+    controller: ['$scope', function ($scope) {
       $scope.hasInitialFocus = $scope.$index === 0 &&
                                $scope.widget.isFocusable;
 
@@ -43,7 +43,7 @@ angular.module('cf.app')
       $scope.$watchCollection(getActiveLocaleCodes, updateLocales);
       $scope.$watch('errorPaths', updateLocales);
 
-      function getActiveLocaleCodes() {
+      function getActiveLocaleCodes () {
         return _.pluck(TheLocaleStore.getActiveLocales(), 'internal_code');
       }
 
@@ -57,7 +57,7 @@ angular.module('cf.app')
         $scope.locales = locales;
       }
 
-      function getFieldLocales(field) {
+      function getFieldLocales (field) {
         if (field.localized) {
           return TheLocaleStore.getActiveLocales();
         } else {
@@ -65,7 +65,7 @@ angular.module('cf.app')
         }
       }
 
-      function getErrorLocales(field) {
+      function getErrorLocales (field) {
         if ($scope.errorPaths) {
           var availableLocales = TheLocaleStore.getPrivateLocales();
           return _.map($scope.errorPaths[field.id], function (code) {

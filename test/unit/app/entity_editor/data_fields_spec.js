@@ -12,10 +12,10 @@ describe('EntityEditor/DataFields', function () {
       var ctFields = [
         {
           apiName: 'A',
-          id: 'FIELD_A',
+          id: 'FIELD_A'
         }, {
           apiName: 'B',
-          id: 'FIELD_B',
+          id: 'FIELD_B'
         }
       ];
 

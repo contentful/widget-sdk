@@ -307,7 +307,7 @@ describe('LocationEditor integration', function () {
       Geocoder: sinon.stub().returns(geocoder),
 
       MapTypeId: {
-        ROADMAP: 'roadmap',
+        ROADMAP: 'roadmap'
       },
       event: {
         addListener: sinon.stub(),
@@ -331,7 +331,7 @@ describe('LocationEditor integration', function () {
   function createLatLng (lat, lng) {
     return {
       lat: sinon.stub().returns(lat),
-      lng: sinon.stub().returns(lng),
+      lng: sinon.stub().returns(lng)
     };
   }
 });

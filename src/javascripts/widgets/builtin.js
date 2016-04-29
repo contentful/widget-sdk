@@ -1,6 +1,6 @@
 'use strict';
 angular.module('contentful')
-.factory('widgets/builtin', [function() {
+.factory('widgets/builtin', [function () {
   var _widgets = {};
 
   function registerWidget (id, desc) {
@@ -16,7 +16,7 @@ angular.module('contentful')
       name: 'Help text',
       type: 'Text',
       description: 'This help text will show up below the field'
-    },
+    }
   ];
 
   /**
@@ -33,7 +33,7 @@ angular.module('contentful')
    * @property {boolean} rendersHelpText
    */
 
-  registerWidget('singleLine',{
+  registerWidget('singleLine', {
     fieldTypes: ['Text', 'Symbol'],
     name: 'Single Line',
     icon: 'singleline',
@@ -48,28 +48,28 @@ angular.module('contentful')
     template: '<cf-url-editor class="widget-url-editor"></cf-url-editor>'
   });
 
-  registerWidget('numberEditor',{
+  registerWidget('numberEditor', {
     fieldTypes: ['Integer', 'Number'],
     name: 'Number Editor',
     icon: 'number',
     template: '<cf-number-editor class="cf-number-editor" />'
   });
 
-  registerWidget('multipleLine',{
+  registerWidget('multipleLine', {
     fieldTypes: ['Text'],
     name: 'Multiple Line',
     icon: 'multipleline',
     template: '<cf-multi-line-editor />'
   });
 
-  registerWidget('markdown',{
+  registerWidget('markdown', {
     fieldTypes: ['Text'],
     name: 'Markdown',
     icon: 'markdown',
     template: '<cf-markdown-editor />'
   });
 
-  registerWidget('dropdown',{
+  registerWidget('dropdown', {
     fieldTypes: ['Text', 'Symbol', 'Integer', 'Number'],
     name: 'Dropdown',
     icon: 'dropdown',
@@ -77,7 +77,7 @@ angular.module('contentful')
     template: '<cf-dropdown-editor />'
   });
 
-  registerWidget('radio',{
+  registerWidget('radio', {
     fieldTypes: ['Text', 'Symbol', 'Integer', 'Number'],
     name: 'Radio',
     icon: 'radio',
@@ -94,19 +94,19 @@ angular.module('contentful')
     options: [{
       name: 'True condition custom label',
       param: 'trueLabel',
-      type:  'short-text',
+      type: 'short-text',
       description: 'Yes',
       default: 'Yes'
     }, {
       name: 'False condition custom label',
       param: 'falseLabel',
-      type:  'short-text',
+      type: 'short-text',
       description: 'No',
       default: 'No'
     }]
   });
 
-  registerWidget('rating',{
+  registerWidget('rating', {
     fieldTypes: ['Integer', 'Number'],
     name: 'Rating',
     icon: 'rating',
@@ -123,7 +123,7 @@ angular.module('contentful')
     template: '<cf-rating-editor />'
   });
 
-  registerWidget('datePicker',{
+  registerWidget('datePicker', {
     fieldTypes: ['Date'],
     name: 'Date Picker',
     template: '<div cf-datetime-editor class="widget-datetime-editor" ng-model="fieldData.value"></div>',
@@ -135,9 +135,8 @@ angular.module('contentful')
         type: 'Predefined',
         values: {
           dateonly: 'Date only',
-          time:     'Date and time without timezone',
-          timeZ:    'Date and time with timezone',
-          //unixtime: 'Unix Timestamp'
+          time: 'Date and time without timezone',
+          timeZ: 'Date and time with timezone'
         },
         default: 'timeZ'
       },
@@ -157,19 +156,19 @@ angular.module('contentful')
     ]
   });
 
-  registerWidget('locationEditor',{
+  registerWidget('locationEditor', {
     fieldTypes: ['Location'],
     name: 'Location',
     template: '<cf-location-editor />'
   });
 
-  registerWidget('objectEditor',{
+  registerWidget('objectEditor', {
     fieldTypes: ['Object'],
     name: 'Object',
     template: '<cf-json-editor />'
   });
 
-  registerWidget('listInput',{
+  registerWidget('listInput', {
     fieldTypes: ['Symbols'],
     defaultHelpText: 'Insert comma separated values',
     name: 'List',
@@ -191,13 +190,13 @@ angular.module('contentful')
     template: '<cf-tag-editor />'
   });
 
-  registerWidget('fileEditor',{
+  registerWidget('fileEditor', {
     fieldTypes: ['File'],
     name: 'File',
     template: '<cf-file-editor class="widget-file-editor" />'
   });
 
-  registerWidget('entryLinkEditor',{
+  registerWidget('entryLinkEditor', {
     fieldTypes: ['Entry'],
     name: 'Entry Link',
     icon: 'reference',
@@ -205,7 +204,7 @@ angular.module('contentful')
     template: '<div cf-entry-link-editor cf-link-editor ng-model="fieldData.value"></div>'
   });
 
-  registerWidget('assetLinkEditor',{
+  registerWidget('assetLinkEditor', {
     fieldTypes: ['Asset'],
     name: 'Asset Link',
     icon: 'media-reference',
@@ -213,7 +212,7 @@ angular.module('contentful')
     template: '<div cf-asset-link-editor cf-link-editor ng-model="fieldData.value"></div>'
   });
 
-  registerWidget('entryLinksEditor',{
+  registerWidget('entryLinksEditor', {
     fieldTypes: ['Entries'],
     name: 'Entry Links List',
     icon: 'references',
@@ -221,7 +220,7 @@ angular.module('contentful')
     template: '<div cf-entry-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
 
-  registerWidget('entryCardEditor',{
+  registerWidget('entryCardEditor', {
     fieldTypes: ['Entry'],
     name: 'Entry Card',
     icon: 'reference-card',
@@ -229,7 +228,7 @@ angular.module('contentful')
     template: '<div cf-entry-card-editor cf-link-editor ng-model="fieldData.value"></div>'
   });
 
-  registerWidget('entryCardsEditor',{
+  registerWidget('entryCardsEditor', {
     fieldTypes: ['Entries'],
     name: 'Entry Cards',
     icon: 'references-card',
@@ -237,7 +236,7 @@ angular.module('contentful')
     template: '<div cf-entry-card-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
 
-  registerWidget('assetLinksEditor',{
+  registerWidget('assetLinksEditor', {
     fieldTypes: ['Assets'],
     name: 'Asset Links List',
     icon: 'media-references',
@@ -245,7 +244,7 @@ angular.module('contentful')
     template: '<div cf-asset-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
 
-  registerWidget('assetGalleryEditor',{
+  registerWidget('assetGalleryEditor', {
     fieldTypes: ['Assets'],
     name: 'Asset Gallery',
     icon: 'media-previews',
@@ -260,7 +259,7 @@ angular.module('contentful')
     template: '<cf-slug-editor class="widget-slug-editor"></cf-slug-editor>'
   });
 
-  registerWidget('ooyalaEditor',{
+  registerWidget('ooyalaEditor', {
     fieldTypes: ['Symbol'],
     name: 'Ooyala',
     icon: 'video-preview',
@@ -268,7 +267,7 @@ angular.module('contentful')
     template: '<cf-ooyala-editor></cf-ooyala-editor>'
   });
 
-  registerWidget('ooyalaMultiAssetEditor',{
+  registerWidget('ooyalaMultiAssetEditor', {
     fieldTypes: ['Symbols'],
     name: 'Ooyala (multiple assets)',
     icon: 'video-preview',
@@ -276,7 +275,7 @@ angular.module('contentful')
     template: '<cf-ooyala-multi-video-editor />'
   });
 
-  registerWidget('kalturaEditor',{
+  registerWidget('kalturaEditor', {
     fieldTypes: ['Symbol'],
     name: 'Kaltura',
     icon: 'video-preview',
@@ -284,7 +283,7 @@ angular.module('contentful')
     template: '<cf-kaltura-editor></cf-kaltura-editor>'
   });
 
-  registerWidget('kalturaMultiVideoEditor',{
+  registerWidget('kalturaMultiVideoEditor', {
     fieldTypes: ['Symbols'],
     name: 'Kaltura (multiple videos)',
     icon: 'video-preview',

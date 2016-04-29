@@ -25,7 +25,7 @@ angular.module('contentful')
 .controller('WidgetApiController', ['$scope', '$injector', function ($scope, $injector) {
   var $q = $injector.get('$q');
   var newSignal = $injector.get('signal').createMemoized;
-  var spaceContext  = $injector.get('spaceContext');
+  var spaceContext = $injector.get('spaceContext');
   var TheLocaleStore = $injector.get('TheLocaleStore');
 
   var valueChangedSignal = newSignal($scope.otSubDoc.getValue());
@@ -96,7 +96,7 @@ angular.module('contentful')
     return $scope.otSubDoc.getValue();
   }
 
-  function createSetter(method) {
+  function createSetter (method) {
     return function setValue (value) {
       if (value === getValue()) {
         return $q.resolve(value);
@@ -106,11 +106,11 @@ angular.module('contentful')
     };
   }
 
-  function removeValue() {
+  function removeValue () {
     return $scope.otSubDoc.removeValue();
   }
 
-  function createValueChangedSignalDispatcher(shouldCheckPath) {
+  function createValueChangedSignalDispatcher (shouldCheckPath) {
     return function dispatchValueChangedSignal (e, path, value) {
       if (!shouldCheckPath || isPathMatching(path)) {
         valueChangedSignal.dispatch(value);

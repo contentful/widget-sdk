@@ -12,7 +12,7 @@ describe('cfEntityField directive integration', function () {
     this.setLocales = TheLocaleStore.setLocales;
     this.setLocales([
       {code: 'DEF', name: 'Default'},
-      {code: 'EN', name: 'English'},
+      {code: 'EN', name: 'English'}
     ]);
 
     this.widget = {
@@ -112,7 +112,7 @@ describe('cfEntityField directive integration', function () {
 
     it('only shows default locale when field is not localized', function () {
       this.setLocales([
-        {code: 'en'}, {code: 'de'}, {code: 'fr'},
+        {code: 'en'}, {code: 'de'}, {code: 'fr'}
       ]);
       this.widget.field.localized = false;
       var el = this.compile();
@@ -123,13 +123,13 @@ describe('cfEntityField directive integration', function () {
       this.setLocales([
         {code: 'en'},
         {code: 'de', active: false},
-        {code: 'fr'},
+        {code: 'fr'}
       ]);
       var el = this.compile();
       expect(getDataLocaleAttr(el)).toEqual(['en', 'fr']);
       this.setLocales([
         {code: 'en'},
-        {code: 'de'},
+        {code: 'de'}
       ]);
       this.$apply();
       expect(getDataLocaleAttr(el)).toEqual(['en', 'de']);
@@ -138,7 +138,7 @@ describe('cfEntityField directive integration', function () {
     it('adds locales with error', function () {
       this.setLocales([
         {code: 'en'},
-        {code: 'de', active: false, internal_code: 'de-internal'},
+        {code: 'de', active: false, internal_code: 'de-internal'}
       ]);
       var el = this.compile();
       expect(getDataLocaleAttr(el)).toEqual(['en']);

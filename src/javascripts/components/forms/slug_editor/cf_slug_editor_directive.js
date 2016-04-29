@@ -2,9 +2,9 @@
 
 angular.module('contentful')
 .directive('cfSlugEditor', ['$injector', function ($injector) {
-  var slugUtils   = $injector.get('slug');
-  var moment      = $injector.get('moment');
-  var debounce    = $injector.get('debounce');
+  var slugUtils = $injector.get('slug');
+  var moment = $injector.get('moment');
+  var debounce = $injector.get('debounce');
   var caretHelper = $injector.get('ui/caretHelper');
 
   return {
@@ -13,15 +13,15 @@ angular.module('contentful')
     require: '^cfWidgetApi',
     template: JST['cf_slug_editor'](),
     link: function (scope, $el, attrs, widgetApi) {
-      var field       = widgetApi.field;
-      var entry       = widgetApi.entry;
-      var space       = widgetApi.space;
-      var locales     = widgetApi.locales;
+      var field = widgetApi.field;
+      var entry = widgetApi.entry;
+      var space = widgetApi.space;
+      var locales = widgetApi.locales;
       var contentType = widgetApi.contentType;
 
-      var $inputEl    = $el.children('input');
+      var $inputEl = $el.children('input');
       var updateInput = caretHelper.makeInputUpdater($inputEl);
-      var title       = entry.fields[contentType.displayField];
+      var title = entry.fields[contentType.displayField];
 
       var debouncedPerformDuplicityCheck = debounce(performDuplicityCheck, 500);
 

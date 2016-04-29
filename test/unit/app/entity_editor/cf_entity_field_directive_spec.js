@@ -13,7 +13,7 @@ describe('cfEntityField directive', function () {
       var TheLocaleStore = this.$inject('TheLocaleStore');
       TheLocaleStore.setLocales([
         {internal_code: 'DEF'},
-        {internal_code: 'EN'},
+        {internal_code: 'EN'}
       ]);
 
       this.compile = function (field) {

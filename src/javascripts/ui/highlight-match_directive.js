@@ -26,7 +26,7 @@ angular.module('cf.ui')
           $el.empty().append([
             document.createTextNode(prefix),
             strong,
-            document.createTextNode(suffix),
+            document.createTextNode(suffix)
           ]);
         } else {
           $el.text(base);

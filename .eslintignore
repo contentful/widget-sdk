@@ -30,7 +30,6 @@ test/unit/components/forms/cf_multi_video_item_spec.js
 test/unit/components/forms/cf_number_editor_directive_spec.js
 test/unit/components/forms/cf_ooyala_editor_controller_spec.js
 test/unit/components/forms/cf_single_line_editor_directive_spec.js
-test/unit/components/forms/cf_slug_editor_controller_spec.js
 test/unit/components/forms/cf_url_editor_directive_spec.js
 test/unit/components/forms/cf_video_editor_controller_spec.js
 test/unit/components/forms/cf_video_input_controller_spec.js
@@ -172,7 +171,6 @@ test/unit/app/entity_editor/locales_controller_spec.js
 test/unit/app/entity_editor/state_controller_spec.js
 test/unit/app/entity_editor/status_notifications_controller_spec.js
 test/unit/app/entry_editor/entry_actions_controller_spec.js
-test/unit/app/entry_editor/cf_widget_api_directive_spec.js
 test/unit/app/entry_editor/entry_editor_controller_spec.js
 test/unit/app/entry_editor/entry_reverter_spec.js
 test/unit/app/entry_editor/form_widgets_controller_spec.js
@@ -375,8 +373,6 @@ src/javascripts/components/forms/ooyala/cf_ooyala_player_directive.js
 src/javascripts/components/forms/ooyala/cf_ooyala_editor_controller.js
 src/javascripts/components/forms/ooyala/cf_ooyala_editor_directive.js
 src/javascripts/components/forms/ooyala/cf_ooyala_multi_video_editor_directive.js
-src/javascripts/components/forms/slug_editor/cf_slug_editor_directive.js
-src/javascripts/components/forms/slug_editor/cf_slug_editor_controller.js
 src/javascripts/components/forms/url_editor/cf_url_editor_directive.js
 src/javascripts/components/forms/video_editor/cf_video_editor_controller.js
 src/javascripts/components/forms/video_input/cf_video_input_directive.js
@@ -388,10 +384,6 @@ src/javascripts/components/forms/video_search/cf_video_search_directive.js
 src/javascripts/components/forms/video_search/cf_video_search_result_controller.js
 src/javascripts/components/forms/video_search/cf_video_search_result_directive.js
 src/javascripts/components/forms/single_line_editor/cf_single_line_editor_directive.js
-src/javascripts/components/forms/google_maps/cf_google_maps_controller.js
-src/javascripts/components/forms/google_maps/cf_google_maps_directive.js
-src/javascripts/components/forms/location_editor/cf_location_editor_controller.js
-src/javascripts/components/forms/location_editor/cf_location_editor_directive.js
 src/javascripts/components/notifications/cf_notifications_directive.js
 src/javascripts/components/notifications/index.js
 src/javascripts/app/asset_editor/asset_editor_directive.js
@@ -399,7 +391,6 @@ src/javascripts/app/asset_editor/notifications.js
 src/javascripts/app/asset_editor/asset_editor_controller.js
 src/javascripts/app/entry_editor/entry_editor_directive.js
 src/javascripts/app/entry_editor/notifications.js
-src/javascripts/app/entry_editor/cf_widget_api_directive.js
 src/javascripts/app/entry_editor/entry_actions_controller.js
 src/javascripts/app/entry_editor/entry_editor_controller.js
 src/javascripts/app/entry_editor/entry_reverter.js
@@ -539,7 +530,6 @@ src/javascripts/ui/cf_ui_hint.js
 src/javascripts/ui/context_menu.js
 src/javascripts/widgets/id_map.js
 src/javascripts/widgets/api.js
-src/javascripts/widgets/builtin.js
 src/javascripts/widgets/cf_iframe_widget_directive.js
 src/javascripts/widgets/channel.js
 src/javascripts/widgets/checks.js

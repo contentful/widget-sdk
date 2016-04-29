@@ -53,7 +53,7 @@ angular.module('cf.app')
       controller.error = null;
       resultsAvailable.dispatch();
     }
-  } , function (error) {
+  }, function (error) {
     controller.results = null;
     controller.error = {
       code: 'address-search-failed',
@@ -76,7 +76,7 @@ angular.module('cf.app')
   controller.updateAddressFromLocation();
 
   function convertResults (rawResults) {
-    return rawResults.map(function(result) {
+    return rawResults.map(function (result) {
       return {
         location: {
           lat: result.geometry.location.lat(),
@@ -84,8 +84,8 @@ angular.module('cf.app')
         },
         viewport: result.geometry.viewport,
         strippedLocation: {
-          lat: result.geometry.location.lat().toString().slice(0,8),
-          lon: result.geometry.location.lng().toString().slice(0,8)
+          lat: result.geometry.location.lat().toString().slice(0, 8),
+          lon: result.geometry.location.lng().toString().slice(0, 8)
         },
         address: result.formatted_address
       };
