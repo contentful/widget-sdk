@@ -38,6 +38,7 @@ test/unit/components/app_container/context_history_spec.js
 test/unit/components/app_container/entity_creation_controller_spec.js
 test/unit/components/app_container/space_controller_spec.js
 test/unit/components/app_container/ui_config_controller_spec.js
+test/unit/components/app_container/ui_config_spec.js
 test/unit/components/client/activation_email_resend_controller_spec.js
 test/unit/components/client/cf_main_nav_bar_directive_spec.js
 test/unit/components/client/cf_space_selector_controller_spec.js
@@ -152,6 +153,8 @@ test/unit/services/space_tools_spec.js
 test/unit/services/string_utils_spec.js
 test/unit/services/the_store_spec.js
 test/unit/services/token_store_spec.js
+test/unit/services/paywall_opener_spec.js
+test/unit/services/subscription_plan_recommender_spec.js
 test/unit/widgets/checks_spec.js
 test/unit/widgets/api_spec.js
 test/unit/widgets/builtin_spec.js
@@ -288,6 +291,9 @@ src/javascripts/components/shared/cf_form_widget_directive.js
 src/javascripts/components/shared/cf_selection_directive.js
 src/javascripts/components/shared/cf_user_directive.js
 src/javascripts/components/shared/list_views_controller.js
+src/javascripts/components/shared/ui_config/ui_config.js
+src/javascripts/components/shared/ui_config/ui_config_controller.js
+src/javascripts/components/shared/ui_config/ui_config_defaults.js
 src/javascripts/components/tabs/api_home/api_home_directive.js
 src/javascripts/components/tabs/api_key_editor/api_key_editor_directive.js
 src/javascripts/components/tabs/api_key_editor/api_key_editor_controller.js
@@ -329,7 +335,6 @@ src/javascripts/components/tabs/list_actions_controller.js
 src/javascripts/components/app_container/cf_app_container_directive.js
 src/javascripts/components/app_container/context_history.js
 src/javascripts/components/app_container/entity_creation_controller.js
-src/javascripts/components/app_container/ui_config_controller.js
 src/javascripts/components/app_container/space_controller.js
 src/javascripts/components/field_dialog/cf_position_relative_to_widget_list_directive.js
 src/javascripts/components/field_dialog/cf_validation_date_select_directive.js
@@ -481,7 +486,6 @@ src/javascripts/services/search_query_helper.js
 src/javascripts/services/totango.js
 src/javascripts/services/validation_dialog_error_messages.js
 src/javascripts/services/validation_views.js
-src/javascripts/services/scope_helpers.js
 src/javascripts/services/moment.js
 src/javascripts/services/activation_email_resender.js
 src/javascripts/services/analytics/analytics.js
@@ -520,6 +524,8 @@ src/javascripts/services/token_store.js
 src/javascripts/services/ui_version_switcher.js
 src/javascripts/services/user_agent.js
 src/javascripts/services/zone_offsets.js
+src/javascripts/services/paywall_opener.js
+src/javascripts/services/subscription_plan_recommender.js
 src/javascripts/forms/errors.js
 src/javascripts/forms/validation.js
 src/javascripts/navigation/confirm_leave_editor.js
