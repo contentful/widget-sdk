@@ -8,22 +8,22 @@
  */
 angular.module('contentful')
 .controller('ContentTypeActionsController', ['$scope', '$injector',
-function ContentTypeActionsController($scope, $injector) {
-  var controller         = this;
-  var $rootScope         = $injector.get('$rootScope');
-  var analytics          = $injector.get('analytics');
-  var logger             = $injector.get('logger');
-  var notify             = $injector.get('contentType/notifications');
-  var $q                 = $injector.get('$q');
-  var modalDialog        = $injector.get('modalDialog');
-  var Command            = $injector.get('command');
-  var spaceContext       = $injector.get('spaceContext');
-  var $state             = $injector.get('$state');
-  var accessChecker      = $injector.get('accessChecker');
+function ContentTypeActionsController ($scope, $injector) {
+  var controller = this;
+  var $rootScope = $injector.get('$rootScope');
+  var analytics = $injector.get('analytics');
+  var logger = $injector.get('logger');
+  var notify = $injector.get('contentType/notifications');
+  var $q = $injector.get('$q');
+  var modalDialog = $injector.get('modalDialog');
+  var Command = $injector.get('command');
+  var spaceContext = $injector.get('spaceContext');
+  var $state = $injector.get('$state');
+  var accessChecker = $injector.get('accessChecker');
   var ReloadNotification = $injector.get('ReloadNotification');
-  var ctHelpers          = $injector.get('data/ContentTypes');
-  var closeState         = $injector.get('navigation/closeState');
-  var random             = $injector.get('random');
+  var ctHelpers = $injector.get('data/ContentTypes');
+  var closeState = $injector.get('navigation/closeState');
+  var random = $injector.get('random');
 
   /**
    * @ngdoc property
@@ -64,7 +64,7 @@ function ContentTypeActionsController($scope, $injector) {
       return $q.resolve(createStatusObject(true));
     }
 
-    return $scope.ctEditorController.countEntries().then(function(count) {
+    return $scope.ctEditorController.countEntries().then(function (count) {
       return createStatusObject(canRead && count < 1, count);
     }, function (response) {
       if (parseInt(response.statusCode, 10) === 404 && !canRead) {
@@ -74,7 +74,7 @@ function ContentTypeActionsController($scope, $injector) {
       }
     });
 
-    function createStatusObject(isRemovable, entryCount) {
+    function createStatusObject (isRemovable, entryCount) {
       return {
         isPublished: isPublished,
         isRemovable: isRemovable,
@@ -88,7 +88,7 @@ function ContentTypeActionsController($scope, $injector) {
     return unpub.then(sendDeleteRequest);
   }
 
-  function forbidRemoval(count) {
+  function forbidRemoval (count) {
     return modalDialog.open({
       template: 'content_type_removal_forbidden_dialog',
       scopeData: {
@@ -98,7 +98,7 @@ function ContentTypeActionsController($scope, $injector) {
     });
   }
 
-  function confirmRemoval(isPublished) {
+  function confirmRemoval (isPublished) {
     return modalDialog.open({
       template: 'content_type_removal_confirm_dialog',
       scope: prepareRemovalDialogScope(isPublished),
@@ -107,14 +107,14 @@ function ContentTypeActionsController($scope, $injector) {
     });
   }
 
-  function prepareRemovalDialogScope(isPublished) {
+  function prepareRemovalDialogScope (isPublished) {
     var scope = $rootScope.$new();
     return _.extend(scope, {
       input: {},
       contentTypeName: $scope.contentType.data.name,
       delete: Command.create(function () {
         return remove(isPublished)
-        .finally(function() {
+        .finally(function () {
           scope.dialog.confirm();
         });
       }, {
@@ -125,12 +125,12 @@ function ContentTypeActionsController($scope, $injector) {
     });
   }
 
-  function unpublish() {
+  function unpublish () {
     return $scope.contentType.unpublish()
       .then(unpublishSuccessHandler, unpublishErrorHandler);
   }
 
-  function unpublishSuccessHandler(publishedContentType){
+  function unpublishSuccessHandler (publishedContentType) {
     $scope.publishedContentType = null;
     spaceContext.unregisterPublishedContentType(publishedContentType);
     spaceContext.refreshContentTypes();
@@ -138,7 +138,7 @@ function ContentTypeActionsController($scope, $injector) {
     return publishedContentType;
   }
 
-  function unpublishErrorHandler(err){
+  function unpublishErrorHandler (err) {
     logger.logServerWarn('Error deactivating Content Type', {error: err});
     return $q.reject(err);
   }
@@ -156,7 +156,7 @@ function ContentTypeActionsController($scope, $injector) {
    * @ngdoc analytics-event
    * @name Unpublished Content Type
    */
-  function trackUnpublishedContentType(contentType) {
+  function trackUnpublishedContentType (contentType) {
     analytics.track('Unpublished ContentType', {
       contentTypeId: contentType.getId(),
       contentTypeName: contentType.getName(),
@@ -240,12 +240,13 @@ function ContentTypeActionsController($scope, $injector) {
     .then(setPristine)
     .then(function () {
       if (redirect && $scope.context.isNew) {
-        return goToDetails();
+        return goToDetails($scope.contentType);
       }
-    }).then(notify.saveSuccess);
+    })
+    .then(notify.saveSuccess);
   }
 
-  function publishContentType(contentType) {
+  function publishContentType (contentType) {
     var version = contentType.getVersion();
     return contentType.publish(version)
     .then(function (published) {
@@ -294,11 +295,11 @@ function ContentTypeActionsController($scope, $injector) {
 
   function goToDetails (contentType) {
     return $state.go('spaces.detail.content_types.detail', {
-      contentTypeId: contentType ? contentType.getId() : $scope.contentType.getId()
+      contentTypeId: contentType.getId()
     });
   }
 
-  function triggerApiErrorNotification(err) {
+  function triggerApiErrorNotification (err) {
     var errorId = dotty.get(err, 'body.sys.id');
     if (errorId === 'ValidationFailed') {
       notify.invalid();
@@ -341,11 +342,11 @@ function ContentTypeActionsController($scope, $injector) {
    */
   controller.duplicate = Command.create(openDuplicateDialog, {
     disabled: function () {
-      var isNew       = $scope.context.isNew;
-      var isDenied    = accessChecker.shouldDisable('updateContentType') ||
-                        accessChecker.shouldDisable('publishContentType');
-      var isDirty     = $scope.contentTypeForm.$dirty ||
-                        !$scope.contentType.getPublishedVersion();
+      var isNew = $scope.context.isNew;
+      var isDenied = accessChecker.shouldDisable('updateContentType') ||
+                     accessChecker.shouldDisable('publishContentType');
+      var isDirty = $scope.contentTypeForm.$dirty ||
+                    !$scope.contentType.getPublishedVersion();
       var isPublished = $scope.contentType.isPublished();
 
       return isNew || isDenied || isDirty || !isPublished;
@@ -442,16 +443,16 @@ function ContentTypeActionsController($scope, $injector) {
 }])
 
 .factory('contentType/notifications', ['$injector', function ($injector) {
-  var logger       = $injector.get('logger');
+  var logger = $injector.get('logger');
   var notification = $injector.get('notification');
-  var truncate     = $injector.get('stringUtils').truncate;
+  var truncate = $injector.get('stringUtils').truncate;
 
   var saveError = 'Unable to save Content Type: ';
   var messages = {
     save: {
       success: 'Content Type saved successfully',
       invalid: saveError + 'Data is invalid',
-      outdated:  saveError + 'Your version is outdated. Please reload and try again'
+      outdated: saveError + 'Your version is outdated. Please reload and try again'
     },
     create: {
       exists: 'A Content Type with this ID already exists'
@@ -481,7 +482,7 @@ function ContentTypeActionsController($scope, $injector) {
         return fieldNames[error.path[1]];
       }));
 
-      var errorWithoutFieldName = _.first(_.map(errors, function(error) {
+      var errorWithoutFieldName = _.first(_.map(errors, function (error) {
         return error.message;
       }));
 

@@ -54,8 +54,8 @@ describe('ContentType Actions Controller', function () {
     controller = $controller('ContentTypeActionsController', {$scope: scope});
   });
 
-  describe('#delete command', function() {
-    beforeEach(function() {
+  describe('#delete command', function () {
+    beforeEach(function () {
       contentType.delete = sinon.stub().resolves();
       contentType.unpublish = sinon.stub().resolves();
       contentType.isPublished = sinon.stub().returns(true);
@@ -98,7 +98,7 @@ describe('ContentType Actions Controller', function () {
         sinon.assert.notCalled(contentType.delete);
       });
 
-      it('notifies of server errors', function() {
+      it('notifies of server errors', function () {
         contentType.delete.rejects({error: true});
         controller.delete.execute();
         this.$apply();
@@ -106,13 +106,13 @@ describe('ContentType Actions Controller', function () {
         sinon.assert.called(logger.logServerWarn);
       });
 
-      it('shows notification', function() {
+      it('shows notification', function () {
         controller.delete.execute();
         this.$apply();
         sinon.assert.called(notification.info);
       });
 
-      it('closes state', function() {
+      it('closes state', function () {
         controller.delete.execute();
         this.$apply();
         sinon.assert.calledOnce(this.closeSpy);
@@ -120,7 +120,7 @@ describe('ContentType Actions Controller', function () {
     });
 
     describe('delete flow interruptions', function () {
-      function testForbiddenRemoval(dialog, data) {
+      function testForbiddenRemoval (dialog, data) {
         var matchObj = {
           template: 'content_type_removal_forbidden_dialog',
           scopeData: data || {}
@@ -132,7 +132,7 @@ describe('ContentType Actions Controller', function () {
         sinon.assert.notCalled(contentType.delete);
       }
 
-      function testEndpointError() {
+      function testEndpointError () {
         controller.delete.execute();
         scope.$apply();
         sinon.assert.calledOnce(ReloadNotification.basicErrorHandler);
@@ -194,13 +194,13 @@ describe('ContentType Actions Controller', function () {
 
   });
 
-  it('when cancelling navigates back to list', function() {
+  it('when cancelling navigates back to list', function () {
     controller.cancel.execute();
     sinon.assert.called(this.$state.go, '^.list');
   });
 
-  describe('#save command', function() {
-    beforeEach(function() {
+  describe('#save command', function () {
+    beforeEach(function () {
       spaceContext.editingInterfaces = {
         save: sinon.stub().resolves()
       };
@@ -306,7 +306,7 @@ describe('ContentType Actions Controller', function () {
       });
     });
 
-    pit('redirects if the content type is new', function() {
+    pit('redirects if the content type is new', function () {
       var goStub = this.$state.go;
       scope.context.isNew = true;
       return controller.save.execute()
@@ -373,7 +373,7 @@ describe('ContentType Actions Controller', function () {
   describe('#save command disabled', function () {
     beforeEach(function () {
       scope.contentTypeForm = {
-        $dirty: true,
+        $dirty: true
       };
       scope.contentType.data.fields = [
         { disabled: false },
@@ -415,7 +415,7 @@ describe('ContentType Actions Controller', function () {
       return spaceContext.space.newContentType.returnValues[0];
     }
 
-    beforeEach(function() {
+    beforeEach(function () {
       sinon.stub(this.$inject('modalDialog'), 'open', function (params) {
         if (params.scope && params.scope.duplicate) {
           params.scope.input.name = 'test';

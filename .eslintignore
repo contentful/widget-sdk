@@ -55,7 +55,6 @@ test/unit/components/tabs/content_type_editor/cf_list_type_for_spec.js
 test/unit/components/tabs/content_type_editor/content_type_field_controller_spec.js
 test/unit/components/tabs/content_type_editor/metadata_dialog_spec.js
 test/unit/components/tabs/content_type_editor/cf_content_type_preview_spec.js
-test/unit/components/tabs/content_type_editor/content_type_actions_controller_spec.js
 test/unit/components/tabs/content_type_editor/content_type_editor_controller_spec.js
 test/unit/components/tabs/content_type_list/content_type_list_directive_spec.js
 test/unit/components/tabs/content_type_list/content_type_list_controller_spec.js
@@ -276,7 +275,6 @@ src/javascripts/components/tabs/content_type_editor/content_type_field_controlle
 src/javascripts/components/tabs/content_type_editor/metadata_dialog.js
 src/javascripts/components/tabs/content_type_editor/api_name_controller.js
 src/javascripts/components/tabs/content_type_editor/cf_content_type_preview.js
-src/javascripts/components/tabs/content_type_editor/content_type_actions_controller.js
 src/javascripts/components/tabs/content_type_editor/content_type_editor_controller.js
 src/javascripts/components/tabs/content_type_editor/content_type_editor_directive.js
 src/javascripts/components/tabs/content_type_list/content_type_list_directive.js
