@@ -47,36 +47,14 @@ describe('cfOnboardingPersonaSelection directive', function() {
         personaName: 'Coder'
       };
 
-      controller.selectOption('code');
-      controller.customPersonaName = '';
-      controller.submitPersonaSelection();
+      controller.submitPersonaSelection('code');
 
-      sinon.assert.calledWith(stubs.analytics.addIdentifyingData, segmentObj);
-      sinon.assert.calledWith(stubs.analytics.track, 'Selected Persona', segmentObj);
-    });
-
-    it('toggles view if other is clicked', function() {
-      var personaId = 'other';
-      expect(controller.showOtherText).toBe(false);
-      controller.selectOption(personaId);
-      expect(controller.showOtherText).toBe(true);
-    });
-
-    it('sends custom persona data to segment', function() {
-      var segmentObj = {
-        personaName: 'Other',
-        customPersonaName: 'Gardener'
-      };
-      controller.selectedPersona = 'other';
-      controller.customPersonaName = 'Gardener';
-      controller.submitPersonaSelection();
       sinon.assert.calledWith(stubs.analytics.addIdentifyingData, segmentObj);
       sinon.assert.calledWith(stubs.analytics.track, 'Selected Persona', segmentObj);
     });
 
     it('emits submitPersonaSelection event', function() {
       controller.selectOption('code');
-      controller.customPersonaName = '';
       controller.submitPersonaSelection();
       sinon.assert.calledWith(stubs.$emit, 'submitPersonaSelection');
     });

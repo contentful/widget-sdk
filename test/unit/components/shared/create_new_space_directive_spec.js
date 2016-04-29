@@ -141,6 +141,7 @@ describe('cfCreateNewSpace directive', function() {
       beforeEach(function() {
         stubs.accessChecker.canCreateSpaceInOrganization.returns(false);
         this.setupDirective();
+        controller.newSpace.data.name = 'My new space';
         controller.requestSpaceCreation();
         $rootScope.$digest();
       });
