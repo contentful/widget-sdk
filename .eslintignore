@@ -527,7 +527,6 @@ src/javascripts/libs/index.js
 src/javascripts/libs/markdown_vendors.js
 src/javascripts/kaltura_credentials.js
 src/javascripts/ui.js
-src/javascripts/environment.js
 src/javascripts/access_control/access_checker.js
 src/javascripts/access_control/cf_rule.js
 src/javascripts/access_control/cf_rule_list.js

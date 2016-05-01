@@ -151,19 +151,59 @@ describe('Client Controller', function () {
       expect(scope.user).toEqual(this.user);
     });
 
-    describe('fires an initial version check', function () {
+    describe('new version check', function () {
+      var A_SECOND = 1000;
+      var A_MINUTE = 60 * A_SECOND;
+
       beforeEach(function () {
-        var $rootScope = this.$inject('$rootScope');
-        this.broadcastStub = sinon.stub($rootScope, '$broadcast');
-        this.clock.tick(5000);
-        scope.$digest();
-      });
-      it('checks for new version', function () {
-        sinon.assert.called(this.hasNewVersion);
+        var env = this.$inject('environment');
+        env.settings.disableUpdateCheck = false;
       });
 
-      it('broadcasts event if new version is available', function () {
-        sinon.assert.called(this.broadcastStub);
+      it('is run five seconds after loading', function () {
+        sinon.assert.notCalled(this.hasNewVersion);
+        this.clock.tick(5 * A_SECOND);
+        this.$apply();
+        sinon.assert.calledOnce(this.hasNewVersion);
+      });
+
+      it('is run five minutes after loading', function () {
+        this.clock.tick(5 * A_SECOND);
+        this.$apply();
+        this.hasNewVersion.reset();
+        this.clock.tick(5 * A_MINUTE);
+        this.$apply();
+        sinon.assert.calledOnce(this.hasNewVersion);
+      });
+
+      it('is not run five minutes after loading if user is inactive', function () {
+        var presence = this.$inject('presence');
+        presence.isActive = sinon.stub().returns(false);
+
+        this.clock.tick(5 * A_SECOND);
+        this.$apply();
+        this.hasNewVersion.reset();
+        this.clock.tick(5 * A_MINUTE);
+        this.$apply();
+        sinon.assert.notCalled(this.hasNewVersion);
+      });
+
+      it('broadcasts notification only if there is a new version', function () {
+        var $rootScope = this.$inject('$rootScope');
+        var onNotification = sinon.stub();
+        $rootScope.$on('persistentNotification', onNotification);
+
+        this.hasNewVersion.resolves(false);
+        this.clock.tick(5 * A_MINUTE);
+        this.$apply();
+        sinon.assert.called(this.hasNewVersion);
+        sinon.assert.notCalled(onNotification);
+
+        this.hasNewVersion.resolves(true);
+        this.clock.tick(5 * A_MINUTE);
+        this.$apply();
+        sinon.assert.called(this.hasNewVersion);
+        sinon.assert.called(onNotification);
       });
     });
 
@@ -191,7 +231,6 @@ describe('Client Controller', function () {
         sinon.assert.called(ReloadNotification.trigger);
       });
     });
-
   });
 
   describe('organizations on the scope', function () {

@@ -1831,35 +1831,6 @@
         }
       }
     },
-    "gulp-if": {
-      "version": "1.2.5",
-      "dependencies": {
-        "gulp-match": {
-          "version": "0.2.1",
-          "dependencies": {
-            "minimatch": {
-              "version": "1.0.0",
-              "dependencies": {
-                "lru-cache": {
-                  "version": "2.7.0"
-                },
-                "sigmund": {
-                  "version": "1.0.1"
-                }
-              }
-            }
-          }
-        },
-        "ternary-stream": {
-          "version": "1.2.3",
-          "dependencies": {
-            "fork-stream": {
-              "version": "0.0.4"
-            }
-          }
-        }
-      }
-    },
     "gulp-inject": {
       "version": "1.0.2",
       "dependencies": {

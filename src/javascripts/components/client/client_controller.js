@@ -93,6 +93,9 @@ angular.module('contentful')
   }
 
   function newVersionCheck () {
+    if (environment.settings.disableUpdateCheck) {
+      return;
+    }
     revision.hasNewVersion().then(function (hasNewVersion) {
       if (hasNewVersion) {
         $rootScope.$broadcast('persistentNotification', {
