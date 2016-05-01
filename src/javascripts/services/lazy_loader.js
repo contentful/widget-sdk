@@ -131,7 +131,7 @@ angular.module('contentful').factory('LazyLoader/resources', ['$injector', funct
     },
     // JavaScript:
     markdown: {
-      url: assetLoader.getAssetUrl('/app/markdown_vendors.js')
+      url: assetLoader.getAssetUrl('app/markdown_vendors.js')
     },
     embedly: {
       url: 'https://cdn.embedly.com/widgets/platform.js',
@@ -146,7 +146,7 @@ angular.module('contentful').factory('LazyLoader/resources', ['$injector', funct
       url: 'https://api.filepicker.io/v1/filepicker_debug.js'
     },
     kaltura: {
-      url: assetLoader.getAssetUrl('/app/kaltura.js'),
+      url: assetLoader.getAssetUrl('app/kaltura.js'),
       globalObject: 'KalturaClient'
     },
     googleMaps: {

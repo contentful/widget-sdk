@@ -12,7 +12,6 @@ var fingerprint = require('gulp-fingerprint');
 var mkdirp = require('mkdirp');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
-var inject = require('gulp-inject');
 var jade = require('gulp-jade');
 var jstConcat = require('./tasks/build-template');
 var nib = require('nib');
@@ -402,13 +401,10 @@ function sendIndex (dir) {
 gulp.task('build', function (done) {
   runSequence(
     'clean',
-    'all',
-    'rev-static',
-    'rev-dynamic',
-    'rev-app',
-    'rev-index',
-    'revision',
-    done
+    [
+      'build/index', 'build/revision',
+      'build/js', 'build/styles', 'build/static'
+    ], done
   );
 });
 
@@ -445,7 +441,10 @@ function writeBuild (dir) {
  * Copy all non-JS and non-CS files from `public/app` to `build` and
  * create a manifest for them.
  */
-gulp.task('rev-static', function () {
+gulp.task('build/static', [
+  'js/external-bundle', 'js/vendor',
+  'copy-static', 'copy-images'
+], function () {
   var files = glob.sync('public/app/**/*.!(js|css)');
   files.push('public/app/kaltura.js');
   files.push('public/app/markdown_vendors.js');
@@ -468,7 +467,7 @@ gulp.task('rev-static', function () {
  * - Extracts source maps contained in the files and writes them
  *   to a separate `.maps` file.
  */
-gulp.task('rev-dynamic', function () {
+gulp.task('build/styles', ['build/static', 'stylesheets'], function () {
   return gulp.src([
     'public/app/main.css',
     'public/app/vendor.css'
@@ -492,7 +491,7 @@ gulp.task('rev-dynamic', function () {
     .pipe(writeBuild())
     .pipe(sourceMaps.write('.', {sourceRoot: '/'}))
     .pipe(writeBuild())
-    .pipe(rev.manifest('dynamic-manifest.json'))
+    .pipe(rev.manifest('styles-manifest.json'))
     .pipe(writeBuild());
 });
 
@@ -500,7 +499,7 @@ gulp.task('rev-dynamic', function () {
  * Concatenates and minifies application JS files to
  * `application.min.js` and creates a manifest.
  */
-gulp.task('rev-app', function () {
+gulp.task('build/js', ['js', 'templates'], function () {
   return gulp.src([
     'public/app/templates.js',
     'public/app/vendor.js',
@@ -510,12 +509,6 @@ gulp.task('rev-app', function () {
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(concat('app/application.min.js'))
     .pipe(uglify())
-    .pipe(fingerprint(
-      'build/static-manifest.json', {
-        mode: 'replace',
-        verbose: false,
-        prefix: '/'
-      }))
     // TODO we do not actually need to rewrite the non-fingerprinted version.
     // This is basically for renaming and source maps
     .pipe(writeBuild())
@@ -534,21 +527,35 @@ gulp.task('rev-app', function () {
  *
  * Also replaces all JavaScripts with the single, concatenated file.
  */
-gulp.task('rev-index', function () {
+gulp.task('build/index', ['build/js', 'build/styles', 'build/static'], function () {
+  var staticManifest = require('./build/static-manifest.json');
+  var scriptManifest = _.pick(staticManifest, function (path) {
+    return path.match(/\.js$/);
+  });
   var manifest = _.extend(
-    require('./build/static-manifest.json'),
-    require('./build/dynamic-manifest.json'),
+    staticManifest,
+    require('./build/styles-manifest.json'),
     require('./build/app-manifest.json')
   );
-  var javascriptSrc = gulp.src('app/application.min.js', {read: false, cwd: 'build'});
 
   return gulp.src('src/index.html')
-    .pipe(inject(javascriptSrc))
+    .pipe(through(function (file, _enc, push) {
+      var contents = file.contents.toString();
+      contents = contents.replace(
+        /window\.CF_MANIFEST =.*/,
+        'window.CF_MANIFEST = ' + JSON.stringify(scriptManifest) + ';'
+      ).replace(
+        /<!-- inject:js -->(\s|.)*?<!-- endinject -->/,
+        '<script src="app/application.min.js"></script>'
+      );
+      file.contents = new Buffer(contents);
+      push(null, file);
+    }))
     .pipe(fingerprint(manifest, {prefix: '//' + settings.asset_host + '/'}))
     .pipe(writeBuild());
 });
 
-gulp.task('revision', ['git-revision'], function () {
+gulp.task('build/revision', ['git-revision'], function () {
   var stream = source('revision.json');
   stream.end(JSON.stringify({revision: gitRevision}));
   return stream.pipe(writeBuild());

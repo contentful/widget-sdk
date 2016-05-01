@@ -6,16 +6,16 @@
 // Returns the full file path with the asset host specified by the environment
 
 angular.module('contentful')
-.factory('AssetLoader', ['$injector', function($injector) {
-
+.factory('AssetLoader', ['$injector', function ($injector) {
   var env = $injector.get('environment');
+  var manifest = env.manifest;
+  var assetHost = env.settings.asset_host;
+  var baseUrl = assetHost ? '//' + assetHost.replace(/\/*$/, '') : '';
 
   return {
-    getAssetUrl: function(file) {
-      var assetHost = dotty.get(env, 'settings.asset_host');
-      var prefix =  assetHost ? '//' + assetHost.replace(/\/*$/, '') : '';
-      return prefix + '/' + file.replace(/^\/*/, '');
+    getAssetUrl: function (file) {
+      file = manifest[file] || file;
+      return baseUrl + '/' + file.replace(/^\/*/, '');
     }
   };
-
 }]);

@@ -16,7 +16,8 @@ describe('Filepicker service', function () {
           google: {
             maps_api_key: 'google'
           }
-        }
+        },
+        manifest: {}
       });
     });
 
