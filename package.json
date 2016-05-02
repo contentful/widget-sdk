@@ -69,10 +69,12 @@
     "vinyl-source-stream": "~1.0.0"
   },
   "devDependencies": {
+    "anymatch": "^1.3.0",
     "babel": "^5.1.10",
     "bluebird": "^3.0.5",
     "canonical-path": "0.0.2",
     "cheerio": "^0.20.0",
+    "chokidar": "^1.4.3",
     "dgeni": "^0.4.1",
     "dgeni-packages": "^0.11.1",
     "front-matter": "^1.0.0",
