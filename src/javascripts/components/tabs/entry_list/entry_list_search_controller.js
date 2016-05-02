@@ -42,7 +42,6 @@ angular.module('contentful')
       isResettingPage = false;
     } else {
       updateEntries(isAppendingPage ? MODE_APPEND : MODE_REPLACE);
-      isAppendingPage = false;
     }
   });
 
@@ -131,6 +130,11 @@ angular.module('contentful')
   function handleEntriesResponse (res) {
     // 1. if list should be reset or entries list is not initialized:
     if (res.shouldReset || !$scope.entries) {
+      // @todo DOM hack: scroll endless container to top
+      var container = $('[cf-endless-container]').first().get(0);
+      if (container) {
+        container.scrollTop = 0;
+      }
       // initialize with an empty array
       $scope.entries  = [];
     }
@@ -157,15 +161,18 @@ angular.module('contentful')
     // 6. mark view as ready (initialized) and not loading
     $scope.context.ready = true;
     $scope.context.loading = false;
+    isAppendingPage = false;
   }
 
   function loadNextPage () {
-    if (!$scope.paginator.atLast()) {
-      $scope.$apply(function () {
-        isAppendingPage = true;
-        $scope.paginator.page += 1;
-      });
+    if ($scope.paginator.atLast() || isAppendingPage || $scope.context.loading) {
+      return;
     }
+
+    $scope.$apply(function () {
+      isAppendingPage = true;
+      $scope.paginator.page += 1;
+    });
   }
 
   function prepareQuery () {
