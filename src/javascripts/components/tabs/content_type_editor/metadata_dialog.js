@@ -122,14 +122,13 @@ angular.module('contentful')
   var spaceContext = $injector.get('spaceContext');
 
   var contentTypeIds = _.map(spaceContext.contentTypes, function (ct) {
-     return ct.getId();
+    return ct.getId();
   });
 
   var ID_REGEXP = /^[a-zA-Z0-9-_.]*$/;
 
   $scope.$watch('newContentTypeForm.contentTypeId', function (ctrl) {
-    if (!ctrl)
-      return;
+    if (!ctrl) { return; }
 
     ctrl.errorDetails = {
       unique: {message: 'A content type with this ID already exists'},
