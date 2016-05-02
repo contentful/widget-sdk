@@ -16,6 +16,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var revision           = $injector.get('revision');
   var ReloadNotification = $injector.get('ReloadNotification');
   var OrganizationList   = $injector.get('OrganizationList');
+  var environment        = $injector.get('environment');
 
   // TODO remove this eventually. All components should access it as a service
   $scope.spaceContext = spaceContext;
@@ -45,6 +46,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
   $scope.initClient = initClient;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
+  $scope.baseHost = environment.settings.base_host;
 
   function initClient() {
     tokenStore.refresh();
