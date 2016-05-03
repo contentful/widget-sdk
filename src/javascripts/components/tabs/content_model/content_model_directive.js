@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('contentful').directive('cfContentModel', ['$injector', function($injector) {
+angular.module('contentful')
+.directive('cfContentModel', ['$injector', function ($injector) {
   var contentModelFieldTypes = $injector.get('contentModelFieldTypes');
   return {
     template: JST['content_model'](),
@@ -21,8 +22,11 @@ angular.module('contentful').directive('cfContentModel', ['$injector', function(
 
       scope.getHelpText = function (type) {
         var fieldType = contentModelFieldTypes[type];
-        if(!fieldType) throw new Error('No type for '+type);
-        return '<p>'+fieldType.description +'</p><p><strong>JSON Primitive:</strong> '+fieldType.jsonType+'</p>';
+        if (!fieldType) {
+          throw new Error('No type for ' + type);
+        }
+        return '<p>' + fieldType.description + '</p>' +
+               '<p><strong>JSON Primitive:</strong> ' + fieldType.jsonType + '</p>';
       };
     }
   };

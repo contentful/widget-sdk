@@ -39,10 +39,6 @@ test/unit/components/shared/create_new_space_directive_spec.js
 test/unit/components/shared/list_views_controller_spec.js
 test/unit/components/shared/onboarding_persona_selection_directive_spec.js
 test/unit/components/shared/view_menu_controller_spec.js
-test/unit/components/tabs/api_key_editor/api_key_editor_controller_spec.js
-test/unit/components/tabs/api_key_editor/api_key_editor_directive_spec.js
-test/unit/components/tabs/api_key_list/api_key_list_controller_spec.js
-test/unit/components/tabs/api_key_list/api_key_list_directive_spec.js
 test/unit/components/tabs/asset_list/asset_list_actions_controller_spec.js
 test/unit/components/tabs/asset_list/asset_list_controller_spec.js
 test/unit/components/tabs/content_type_editor/add_field_dialog_spec.js
@@ -226,16 +222,10 @@ src/javascripts/components/shared/cf_form_widget_directive.js
 src/javascripts/components/shared/cf_selection_directive.js
 src/javascripts/components/shared/cf_user_directive.js
 src/javascripts/components/shared/list_views_controller.js
-src/javascripts/components/tabs/api_home/api_home_directive.js
-src/javascripts/components/tabs/api_key_editor/api_key_editor_directive.js
-src/javascripts/components/tabs/api_key_editor/api_key_editor_controller.js
-src/javascripts/components/tabs/api_key_list/api_key_list_directive.js
-src/javascripts/components/tabs/api_key_list/api_key_list_controller.js
 src/javascripts/components/tabs/asset_list/asset_list_directive.js
 src/javascripts/components/tabs/asset_list/asset_list_actions_controller.js
 src/javascripts/components/tabs/asset_list/asset_list_controller.js
 src/javascripts/components/tabs/asset_list/asset_search_controller.js
-src/javascripts/components/tabs/content_model/content_model_directive.js
 src/javascripts/components/tabs/content_type_editor/add_field_dialog_controller.js
 src/javascripts/components/tabs/content_type_editor/cf_api_name_shadow_directive.js
 src/javascripts/components/tabs/content_type_editor/cf_list_type_for_directive.js

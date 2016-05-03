@@ -1,7 +1,7 @@
 'use strict';
 
 describe('API Key List Controller', function () {
-  var controller, scope, apiErrorHandler, $q;
+  var scope, apiErrorHandler, $q;
 
   beforeEach(function () {
     module('contentful/test');
@@ -16,45 +16,45 @@ describe('API Key List Controller', function () {
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
       scope.context = {};
 
-      controller = $controller('ApiKeyListController', {$scope: scope});
+      $controller('ApiKeyListController', {$scope: scope});
     });
   });
 
-  describe('empty marker', function() {
-    it('is true', function() {
+  describe('empty marker', function () {
+    it('is true', function () {
       scope.apiKeys = [];
       scope.$digest();
       expect(scope.empty).toBeTruthy();
     });
 
-    it('is false', function() {
+    it('is false', function () {
       scope.apiKeys = [{}];
       scope.$digest();
       expect(scope.empty).toBeFalsy();
     });
   });
 
-  describe('refreshing api keys', function() {
+  describe('refreshing api keys', function () {
     var getApiKeysStub;
-    beforeEach(function() {
+    beforeEach(function () {
       getApiKeysStub = sinon.stub(scope.spaceContext.space, 'getDeliveryApiKeys');
       getApiKeysStub.returns($q.resolve({}));
       scope.refreshApiKeys();
       scope.$apply();
     });
 
-    it('calls api keys getter', function() {
+    it('calls api keys getter', function () {
       sinon.assert.called(getApiKeysStub);
     });
 
-    it('saves api keys on scope', function() {
+    it('saves api keys on scope', function () {
       expect(scope.apiKeys).toEqual({});
     });
   });
 
   describe('refreshing api keys fails', function () {
     var getApiKeysStub;
-    beforeEach(function() {
+    beforeEach(function () {
       getApiKeysStub = sinon.stub(scope.spaceContext.space, 'getDeliveryApiKeys');
       getApiKeysStub.returns($q.reject({statusCode: 500}));
       scope.refreshApiKeys();

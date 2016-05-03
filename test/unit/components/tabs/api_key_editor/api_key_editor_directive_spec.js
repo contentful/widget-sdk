@@ -1,7 +1,7 @@
 'use strict';
 
 describe('apiKeyEditor Directive', function () {
-  var element, scope, compileElement, stubs, environmentMock, accessChecker;
+  var element, scope, compileElement, stubs, accessChecker;
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([

@@ -4,13 +4,13 @@ angular.module('contentful')
 .controller('ApiKeyListController', ['$scope', '$injector',
 function ApiKeyListController ($scope, $injector) {
   var ReloadNotification = $injector.get('ReloadNotification');
-  var spaceContext       = $injector.get('spaceContext');
-  var accessChecker      = $injector.get('accessChecker');
+  var spaceContext = $injector.get('spaceContext');
+  var accessChecker = $injector.get('accessChecker');
 
   $scope.shouldHide = accessChecker.shouldHide;
   $scope.shouldDisable = accessChecker.shouldDisable;
 
-  $scope.refreshApiKeys = function() {
+  $scope.refreshApiKeys = function () {
     return spaceContext.space.getDeliveryApiKeys({limit: 1000})
     .then(function (apiKeys) {
       $scope.apiKeys = apiKeys;
@@ -19,7 +19,7 @@ function ApiKeyListController ($scope, $injector) {
     .catch(ReloadNotification.apiErrorHandler);
   };
 
-  $scope.$watch('apiKeys', function(apiKeys) {
+  $scope.$watch('apiKeys', function (apiKeys) {
     $scope.empty = _.isEmpty(apiKeys);
   });
 

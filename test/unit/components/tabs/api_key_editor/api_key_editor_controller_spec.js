@@ -22,7 +22,7 @@ describe('API key editor controller', function () {
 
       $provide.value('notification', {
         info: stubs.info,
-        error: stubs.error,
+        error: stubs.error
       });
       $provide.value('logger', {
         logServerWarn: stubs.logServerWarn
@@ -86,22 +86,22 @@ describe('API key editor controller', function () {
     expect(scope.context.dirty).toBeTruthy();
   });
 
-  it('does not create a preview api for a blank key', function() {
+  it('does not create a preview api for a blank key', function () {
     sinon.assert.notCalled(stubs.createPreviewApiKey);
   });
 
-  describe('creates a preview api if none exists', function() {
-    beforeEach(function() {
+  describe('creates a preview api if none exists', function () {
+    beforeEach(function () {
       scope.apiKey.data.accessToken = 'accessToken';
       apiKey.getId.returns('123');
       scope.$apply();
     });
 
-    it('calls the creation method', function() {
+    it('calls the creation method', function () {
       sinon.assert.called(stubs.createPreviewApiKey);
     });
 
-    it('gets the delivery api key id', function() {
+    it('gets the delivery api key id', function () {
       expect(stubs.createPreviewApiKey.args[0][0].apiKeyId).toBe('123');
     });
   });

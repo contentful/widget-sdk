@@ -13,8 +13,8 @@ describe('The ApiKey list directive', function () {
     inject(function ($rootScope, $compile, enforcements, $q, spaceContext, _accessChecker_) {
       scope = $rootScope.$new();
       spaceContext.space = {
-          data: {sys: {createdBy: {sys: {id: ''}}}},
-          getDeliveryApiKeys: sinon.stub().returns($q.defer().promise)
+        data: {sys: {createdBy: {sys: {id: ''}}}},
+        getDeliveryApiKeys: sinon.stub().returns($q.defer().promise)
       };
 
       accessChecker = _accessChecker_;
@@ -33,10 +33,10 @@ describe('The ApiKey list directive', function () {
   });
 
 
-  describe('list of api keys', function() {
+  describe('list of api keys', function () {
     var list;
     var idStub1, idStub2, nameStub;
-    beforeEach(function() {
+    beforeEach(function () {
       idStub1 = sinon.stub();
       idStub1.returns(1);
       idStub2 = sinon.stub();
@@ -67,7 +67,5 @@ describe('The ApiKey list directive', function () {
     compileElement();
     expect(container.find('.advice button').attr('disabled')).toBeUndefined();
   });
-
-
 
 });

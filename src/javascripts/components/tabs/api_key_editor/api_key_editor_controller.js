@@ -1,17 +1,18 @@
 'use strict';
 
-angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$injector', function($scope, $injector) {
-  var controller       = this;
-  var notifier         = $injector.get('apiKeyEditor/notifications');
-  var Command          = $injector.get('command');
-  var truncate         = $injector.get('stringUtils').truncate;
+angular.module('contentful')
+.controller('ApiKeyEditorController', ['$scope', '$injector', function ($scope, $injector) {
+  var controller = this;
+  var notifier = $injector.get('apiKeyEditor/notifications');
+  var Command = $injector.get('command');
+  var truncate = $injector.get('stringUtils').truncate;
   var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
-  var spaceContext     = $injector.get('spaceContext');
-  var $state           = $injector.get('$state');
-  var accessChecker    = $injector.get('accessChecker');
-  var closeState       = $injector.get('navigation/closeState');
-  var sdkInfoSupplier  = $injector.get('sdkInfoSupplier');
-  var analytics        = $injector.get('analytics');
+  var spaceContext = $injector.get('spaceContext');
+  var $state = $injector.get('$state');
+  var accessChecker = $injector.get('accessChecker');
+  var closeState = $injector.get('navigation/closeState');
+  var sdkInfoSupplier = $injector.get('sdkInfoSupplier');
+  var analytics = $injector.get('analytics');
 
   var notify = notifier(function getTitle () {
     return truncate($scope.apiKey.getName(), 50);
@@ -27,14 +28,14 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
 
   $scope.canAccessUsers = accessChecker.getSectionVisibility().settings;
 
-  $scope.$watch('apiKey.data.accessToken', function() {
+  $scope.$watch('apiKey.data.accessToken', function () {
     if ($scope.apiKey.getId() && !dotty.exists($scope, 'apiKey.data.preview_api_key')) {
       generatePreviewApiKey();
     }
   });
 
   $scope.$watch('apiKey.data.preview_api_key', function (previewApiKey) {
-    if(previewApiKey) {
+    if (previewApiKey) {
       var id = previewApiKey.sys.id;
       spaceContext.space.getPreviewApiKey(id)
       .then(function (apiKey) {
@@ -51,7 +52,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     $scope.context.title = title || 'New Api Key';
   });
 
-  $scope.delete = function() {
+  $scope.delete = function () {
     $scope.apiKey.delete()
     .then(function () {
       notify.deleteSuccess();
@@ -61,7 +62,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
 
   $scope.regenerateAccessToken = function (type) {
     // not used, but necessary to trigger digest cycle
-    var apiKey = type == 'preview' ? $scope.previewApiKey : $scope.apiKey;
+    var apiKey = type === 'preview' ? $scope.previewApiKey : $scope.apiKey;
     apiKey.regenerateAccessToken();
   };
 
@@ -80,7 +81,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     }
   };
 
-  $scope.trackResourceLink = function(linkName, language) {
+  $scope.trackResourceLink = function (linkName, language) {
     analytics.track('Selected Content at the API key page', {
       resource: linkName,
       language: language
@@ -98,7 +99,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
 
   function save () {
     return $scope.apiKey.save()
-    .then(function(){
+    .then(function () {
       // The form might already have been destroyed. This happens when
       // navigating away before the save is successfull
       if ($scope.apiKeyForm) {
@@ -112,7 +113,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   }
 
 
-  function generatePreviewApiKey() {
+  function generatePreviewApiKey () {
     var data = _.omit($scope.apiKey.data, 'sys', 'preview_api_key', 'accessToken', 'policies');
     data.apiKeyId = $scope.apiKey.getId();
     spaceContext.space.createPreviewApiKey(data)
@@ -124,7 +125,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
 }])
 
 .factory('apiKeyEditor/notifications', ['$injector', function ($injector) {
-  var logger       = $injector.get('logger');
+  var logger = $injector.get('logger');
   var notification = $injector.get('notification');
 
   return function (getTitle) {
@@ -137,7 +138,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
         notification.error('“' + getTitle() + '” could not be saved');
         // HTTP 422: Unprocessable entity
         if (dotty.get(error, 'statusCode') !== 422) {
-          logger.logServerWarn('ApiKey could not be saved', {error: error });
+          logger.logServerWarn('ApiKey could not be saved', {error: error});
         }
       },
 
