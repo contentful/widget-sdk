@@ -3,13 +3,13 @@
 angular.module('contentful')
 .factory('uiConfig', ['$injector', function ($injector) {
 
-  var uiConfigDefaults  = $injector.get('uiConfig/defaults');
-  var $q                = $injector.get('$q');
-  var spaceContext      = $injector.get('spaceContext');
-  var logger            = $injector.get('logger');
+  var uiConfigDefaults = $injector.get('uiConfig/defaults');
+  var $q = $injector.get('$q');
+  var spaceContext = $injector.get('spaceContext');
+  var logger = $injector.get('logger');
 
-  var currentConfig     = {};
-  var isConfigSaved     = false;
+  var currentConfig = {};
+  var isConfigSaved = false;
 
   return {
     load: load,
@@ -19,19 +19,19 @@ angular.module('contentful')
     resetAssets: resetAssets
   };
 
-  function resetEntries(contentTypes) {
+  function resetEntries (contentTypes) {
     var defaults = uiConfigDefaults.getEntryViews(contentTypes);
     currentConfig.entryListViews = defaults;
     return defaults;
   }
 
-  function resetAssets() {
+  function resetAssets () {
     var defaults = uiConfigDefaults.getAssetViews();
     currentConfig.assetListViews = defaults;
     return defaults;
   }
 
-  function load() {
+  function load () {
     return spaceContext.space.getUIConfig()
     .then(function (config) {
       currentConfig = config;
@@ -40,7 +40,7 @@ angular.module('contentful')
     }, function (err) {
       isConfigSaved = false;
       var statusCode = dotty.get(err, 'statusCode');
-      if(statusCode === 404) {
+      if (statusCode === 404) {
         currentConfig = {};
         return currentConfig;
       }
@@ -49,9 +49,9 @@ angular.module('contentful')
     });
   }
 
-  function save(uiConfig) {
+  function save (uiConfig) {
     return spaceContext.space.setUIConfig(uiConfig)
-    .then(function(config) {
+    .then(function (config) {
       currentConfig = config;
       return currentConfig;
     });
@@ -60,16 +60,16 @@ angular.module('contentful')
   // If a new content type is created and there is a folder with the title
   // "Content Type" present, automatically add the new view here.
   // If there is no UI config set up yet, do nothing.
-  function addNewCt(contentType) {
+  function addNewCt (contentType) {
     if (!isConfigSaved) {
       return;
     }
 
-    var contentTypeFolder = _.find(currentConfig.entryListViews, function(folder) {
+    var contentTypeFolder = _.find(currentConfig.entryListViews, function (folder) {
       return folder.title === 'Content Type';
     });
 
-    var viewExists = _.some(contentTypeFolder.views, function(view) {
+    var viewExists = _.some(contentTypeFolder.views, function (view) {
       return view.title === contentType.data.name;
     });
 

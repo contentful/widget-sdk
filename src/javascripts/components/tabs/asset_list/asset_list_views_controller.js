@@ -4,7 +4,7 @@ angular.module('contentful')
 .controller('AssetListViewsController',
 ['$scope', '$injector', 'preserveState', function ($scope, $injector, preserveState) {
 
-  var $controller  = $injector.get('$controller');
+  var $controller = $injector.get('$controller');
   var uiConfig = $injector.get('uiConfig');
 
   return $controller('ListViewsController', {
@@ -18,12 +18,11 @@ angular.module('contentful')
     }
   });
 
-  function getBlankView() {
+  function getBlankView () {
     return {
       id: null,
       title: 'New View',
       searchTerm: null
     };
   }
-
 }]);

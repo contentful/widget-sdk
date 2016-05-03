@@ -1,7 +1,7 @@
 'use strict';
 
 describe('UiConfigController', function () {
-  var scope, controller, stubs;
+  var scope, stubs;
 
   stubs = {
     uiConfig: {
@@ -19,11 +19,11 @@ describe('UiConfigController', function () {
   };
 
   afterEach(function () {
-    scope = controller = null;
+    scope = null;
   });
 
-  beforeEach(function() {
-    module('contentful/test', function($provide) {
+  beforeEach(function () {
+    module('contentful/test', function ($provide) {
       $provide.value('uiConfig', stubs.uiConfig);
       $provide.value('spaceContext', stubs.spaceContext);
     });
@@ -37,12 +37,12 @@ describe('UiConfigController', function () {
     stubs.spaceContext.space.getUIConfig.returns(get.promise);
     stubs.spaceContext.space.getUIConfig.returns(set.promise);
     stubs.spaceContext.space.isAdmin.returns(true);
-    controller = $controller('UiConfigController', {$scope: scope});
+    $controller('UiConfigController', {$scope: scope});
     scope.$apply();
   }));
 
-  describe('loading a space', function() {
-    it('calls the uiConfig load method', function() {
+  describe('loading a space', function () {
+    it('calls the uiConfig load method', function () {
       stubs.uiConfig.save.resolves();
       sinon.assert.calledOnce(stubs.uiConfig.load);
     });

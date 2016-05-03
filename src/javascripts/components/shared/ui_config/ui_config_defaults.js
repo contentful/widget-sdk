@@ -10,8 +10,8 @@
 angular.module('contentful')
 .factory('uiConfig/defaults', ['$injector', function ($injector) {
 
-  var random       = $injector.get('random');
-  var mimetype     = $injector.get('mimetype');
+  var random = $injector.get('random');
+  var mimetype = $injector.get('mimetype');
   var systemFields = $injector.get('systemFields');
   var defaultOrder = systemFields.getDefaultOrder();
 
@@ -21,7 +21,7 @@ angular.module('contentful')
     createContentTypeView: createContentTypeView
   };
 
-  function getEntryViews(contentTypes) {
+  function getEntryViews (contentTypes) {
     return [
       {
         id: 'default',
@@ -51,7 +51,7 @@ angular.module('contentful')
     ];
   }
 
-  function getAssetViews() {
+  function getAssetViews () {
     return [
       {
         id: 'default',
@@ -66,9 +66,9 @@ angular.module('contentful')
         title: 'Status',
         views: [
           {title: 'Published', searchTerm: 'status:published', id: random.id()},
-          {title: 'Changed',   searchTerm: 'status:changed'  , id: random.id()},
-          {title: 'Draft',     searchTerm: 'status:draft'    , id: random.id()},
-          {title: 'Archived',  searchTerm: 'status:archived' , id: random.id()}
+          {title: 'Changed', searchTerm: 'status:changed', id: random.id()},
+          {title: 'Draft', searchTerm: 'status:draft', id: random.id()},
+          {title: 'Archived', searchTerm: 'status:archived', id: random.id()}
         ]
       },
       {
@@ -79,7 +79,7 @@ angular.module('contentful')
     ];
   }
 
-  function createEntryStatusView(title, searchTerm) {
+  function createEntryStatusView (title, searchTerm) {
     return {
       title: title,
       searchTerm: searchTerm,
@@ -89,19 +89,19 @@ angular.module('contentful')
     };
   }
 
-  function getDefaultFieldIds() {
-    return _.reject(_.map(systemFields.getList(), 'id'), function(fieldId) {
+  function getDefaultFieldIds () {
+    return _.reject(_.map(systemFields.getList(), 'id'), function (fieldId) {
       return _.contains(['createdAt', 'publishedAt'], fieldId);
     });
   }
 
-  function contentTypeViews(contentTypes) {
+  function contentTypeViews (contentTypes) {
     return _.map(contentTypes, function (contentType) {
       return createContentTypeView(contentType);
     });
   }
 
-  function createContentTypeView(contentType) {
+  function createContentTypeView (contentType) {
     return {
       title: contentType.data.name,
       contentTypeId: contentType.getId(),
@@ -111,11 +111,11 @@ angular.module('contentful')
     };
   }
 
-  function fileTypeViews() {
+  function fileTypeViews () {
     return _.map(mimetype.getGroupNames(), function (name, label) {
       return {
         title: name,
-        searchTerm: 'type:'+label,
+        searchTerm: 'type:' + label,
         id: random.id()
       };
     });

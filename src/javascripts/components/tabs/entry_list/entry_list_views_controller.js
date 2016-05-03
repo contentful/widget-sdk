@@ -1,9 +1,10 @@
 'use strict';
 
-angular.module('contentful').controller('EntryListViewsController', ['$scope', '$injector', function($scope, $injector) {
+angular.module('contentful')
+.controller('EntryListViewsController', ['$scope', '$injector', function ($scope, $injector) {
 
-  var $controller  = $injector.get('$controller');
-  var uiConfig     = $injector.get('uiConfig');
+  var $controller = $injector.get('$controller');
+  var uiConfig = $injector.get('uiConfig');
   var systemFields = $injector.get('systemFields');
   var defaultOrder = systemFields.getDefaultOrder();
 
@@ -36,13 +37,15 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
   };
 
   $scope.orderColumnBy = function (field) {
-    if(!$scope.isOrderField(field)) setOrderField(field);
+    if (!$scope.isOrderField(field)) {
+      setOrderField(field);
+    }
     $scope.context.view.order.direction = switchOrderDirection($scope.context.view.order.direction);
     $scope.updateEntries();
   };
 
   $scope.$watch('context.view.displayedFieldIds', function (displayedFieldIds) {
-    if(!_.contains(displayedFieldIds, $scope.context.view.order.fieldId)){
+    if (!_.contains(displayedFieldIds, $scope.context.view.order.fieldId)) {
       setOrderField(determineFallbackSortField(displayedFieldIds));
       $scope.updateEntries();
     }
@@ -67,15 +70,15 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
     resetList: _.noop
   });
 
-  function setOrderField(field) {
+  function setOrderField (field) {
     $scope.context.view.order = _.defaults({ fieldId: field.id }, defaultOrder);
   }
 
-  function switchOrderDirection(direction) {
+  function switchOrderDirection (direction) {
     return direction === 'ascending' ? 'descending' : 'ascending';
   }
 
-  function getBlankView() {
+  function getBlankView () {
     return {
       title: 'New View',
       searchTerm: null,
@@ -95,16 +98,16 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
     return systemFields.get(fallbackId) || {id: undefined};
   }
 
-  function getDefaultFieldIds() {
+  function getDefaultFieldIds () {
     return _.reject(_.map(systemFields.getList(), 'id'), function (fieldId) {
-      return fieldId == 'createdAt' || fieldId == 'publishedAt';
+      return fieldId === 'createdAt' || fieldId === 'publishedAt';
     });
   }
 
-  function generateDefaultViews(wait) {
+  function generateDefaultViews (wait) {
     var cts = $scope.spaceContext.publishedContentTypes;
     if (wait) {
-      var off = $scope.$watch('spaceContext.publishedContentTypes.length', function(len) {
+      var off = $scope.$watch('spaceContext.publishedContentTypes.length', function (len) {
         if (len > 0) {
           off();
           cts = $scope.spaceContext.publishedContentTypes;

@@ -1,12 +1,12 @@
 'use strict';
 angular.module('contentful')
-.controller('UiConfigController', ['$scope', '$injector', function($scope, $injector) {
+.controller('UiConfigController', ['$scope', '$injector', function ($scope, $injector) {
 
-  var $q            = $injector.get('$q');
-  var uiConfig      = $injector.get('uiConfig');
-  var spaceContext  = $injector.get('spaceContext');
+  var $q = $injector.get('$q');
+  var uiConfig = $injector.get('uiConfig');
+  var spaceContext = $injector.get('spaceContext');
 
-  $scope.$watch(function() {
+  $scope.$watch(function () {
     return spaceContext.space;
   }, function (space) {
     if (space) {
@@ -16,31 +16,31 @@ angular.module('contentful')
     }
   });
 
-  $scope.$watch(function() {
+  $scope.$watch(function () {
     var user = spaceContext.getData('spaceMembership.user');
     return spaceContext.space && spaceContext.space.isAdmin(user);
-  }, function(can) {
+  }, function (can) {
     $scope.canEditUiConfig = !!can;
   });
 
-  $scope.saveUiConfig = function() {
+  $scope.saveUiConfig = function () {
     if (!$scope.canEditUiConfig) {
       return $q.reject('Not allowed');
     }
 
     // TODO client-side verification
     return uiConfig.save($scope.uiConfig)
-    .then(function(config) {
+    .then(function (config) {
       $scope.uiConfig = config;
     })
-    .catch(function() {
+    .catch(function () {
       loadUiConfig();
     });
   };
 
-  function loadUiConfig() {
+  function loadUiConfig () {
     uiConfig.load()
-    .then(function(config) {
+    .then(function (config) {
       $scope.uiConfig = config;
     });
   }

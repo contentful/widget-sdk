@@ -1,14 +1,14 @@
 'use strict';
 
-describe('uiConfig service', function() {
+describe('uiConfig service', function () {
 
   var config;
 
   beforeEach(function () {
     module('contentful/test');
     this.$rootScope = this.$inject('$rootScope');
-    this.uiConfig   = this.$inject('uiConfig');
-    this.cfStub     = this.$inject('cfStub');
+    this.uiConfig = this.$inject('uiConfig');
+    this.cfStub = this.$inject('cfStub');
     this.$rootScope.$apply();
 
     var space = this.cfStub.space('test');
@@ -20,7 +20,7 @@ describe('uiConfig service', function() {
       assetListViews: {}
     };
 
-    this.initUiConfig = function(configIsDefined) {
+    this.initUiConfig = function (configIsDefined) {
       if (configIsDefined) {
         this.spaceContext.space.getUIConfig = sinon.stub().resolves(config);
       } else {
@@ -31,39 +31,39 @@ describe('uiConfig service', function() {
     };
   });
 
-  describe('#load', function() {
-    it('calls getUIConfig method', function() {
+  describe('#load', function () {
+    it('calls getUIConfig method', function () {
       this.initUiConfig(true);
       sinon.assert.calledOnce(this.spaceContext.space.getUIConfig);
     });
 
-    pit('returns config if available', function() {
+    pit('returns config if available', function () {
       this.initUiConfig(true);
-      return this.loadPromise.then(function(val) {
+      return this.loadPromise.then(function (val) {
         expect(val).toBe(config);
       });
     });
 
-    pit('resolves to empty object if server returns 404', function() {
+    pit('resolves to empty object if server returns 404', function () {
       this.initUiConfig(false);
-      return this.loadPromise.then(function(val) {
+      return this.loadPromise.then(function (val) {
         expect(val).toEqual({});
       });
     });
 
-    pit('rejects if non-404 server error', function() {
+    pit('rejects if non-404 server error', function () {
       var err = { statusCode: 502 };
       this.spaceContext.space.getUIConfig = sinon.stub().rejects(err);
       this.loadPromise = this.uiConfig.load();
 
-      return this.loadPromise.catch(function(val) {
+      return this.loadPromise.catch(function (val) {
         expect(val).toBe(err);
       });
     });
   });
 
-  describe('#save', function() {
-    it('calls setUIConfig method', function() {
+  describe('#save', function () {
+    it('calls setUIConfig method', function () {
       this.initUiConfig(true);
       this.spaceContext.space.setUIConfig = sinon.stub().resolves();
       this.loadPromise = this.uiConfig.save();
@@ -72,12 +72,12 @@ describe('uiConfig service', function() {
 
   });
 
-  describe('#addNewCt', function() {
-    beforeEach(function() {
+  describe('#addNewCt', function () {
+    beforeEach(function () {
       this.spaceContext.space.setUIConfig = sinon.stub().resolves();
     });
-    describe('no config defined', function() {
-      it('does nothing', function() {
+    describe('no config defined', function () {
+      it('does nothing', function () {
         var contentType = { foo: '' };
 
         this.initUiConfig(false);
@@ -86,17 +86,17 @@ describe('uiConfig service', function() {
       });
     });
 
-    describe('config is defined', function() {
-      it('does nothing if there is no `Content Type` folder', function() {
+    describe('config is defined', function () {
+      it('does nothing if there is no `Content Type` folder', function () {
         var contentType = { foo: '' };
         this.initUiConfig(true);
         this.uiConfig.addNewCt(contentType);
         sinon.assert.notCalled(this.spaceContext.space.setUIConfig);
       });
 
-      describe('there is a `Content Type` folder', function() {
+      describe('there is a `Content Type` folder', function () {
         var contentType;
-        beforeEach(function() {
+        beforeEach(function () {
           config = {
             entryListViews: [
               {
@@ -117,12 +117,12 @@ describe('uiConfig service', function() {
           this.uiConfig.addNewCt(contentType);
         });
 
-        it('setUIConfig is called', function() {
+        it('setUIConfig is called', function () {
           sinon.assert.calledOnce(this.spaceContext.space.setUIConfig);
         });
 
-        it('updates views', function() {
-          return this.loadPromise.then(function(val) {
+        it('updates views', function () {
+          return this.loadPromise.then(function (val) {
             expect(_.first(val.entryListViews).views.length).toBe(1);
           });
         });
