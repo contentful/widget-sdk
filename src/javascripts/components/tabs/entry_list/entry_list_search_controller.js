@@ -10,11 +10,17 @@ angular.module('contentful')
   var accessChecker      = $injector.get('accessChecker');
   var debounce           = $injector.get('debounce');
 
+  var MODE_APPEND  = 'append';
+  var MODE_REPLACE = 'replace';
+  var MODE_RESET   = 'reset';
+
   var searchTerm = null;
+
   var isResettingPage = false;
   var isResettingTerm = false;
+  var isAppendingPage = false;
 
-  var debouncedUpdateWithTerm = debounce(updateWithTerm, 300);
+  var debouncedUpdateWithTerm = debounce(updateWithTerm, 500);
   var updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
 
   /**
@@ -31,47 +37,55 @@ angular.module('contentful')
    * Watches: triggering list updates
    */
 
-  $scope.$watch('paginator.page', function pageChanged () {
+  $scope.$watch('paginator.page', function () {
     if (isResettingPage) {
       isResettingPage = false;
-      return;
+    } else {
+      updateEntries(isAppendingPage ? MODE_APPEND : MODE_REPLACE);
     }
-
-    updateEntries(false);
   });
 
-  $scope.$watch('context.view.searchTerm', function termChanged (value, prev) {
-    if (value === prev || isResettingTerm) {
+  $scope.$watchCollection(function () {
+    return {
+      value: getViewItem('searchTerm'),
+      view: dotty.get($scope, 'context.view.id')
+    };
+  }, function (next, prev) {
+    var value = next.value;
+    var viewChanged = next.view !== prev.view;
+    var hasTerm = _.isString(value) && value.length > 0;
+
+    // for initial run or resetting term just set search term w/o list update
+    if (value === prev.value || isResettingTerm) {
       searchTerm = value;
       isResettingTerm = false;
-      return;
     }
-
-    if (_.isString(value) && value.length > 0) {
-      // use debounced version when user is actively typing
-      debouncedUpdateWithTerm(value);
-    } else {
+    // if view was changed or term was cleared then update immediately
+    else if (viewChanged || !hasTerm) {
       updateWithTerm(value);
     }
-  });
-
-  $scope.$watch('context.view.contentTypeId', function ctIdChanged (value, prev) {
-    if (value !== prev) {
-      updateEntries(true);
+    // use debounced version when user is actively typing
+    else if (hasTerm) {
+      debouncedUpdateWithTerm(value);
     }
   });
 
-  $scope.$watch(function getCacheParameters (scope) {
+  $scope.$watch('context.view.contentTypeId', function (value, prev) {
+    if (value !== prev) {
+      updateEntries();
+    }
+  });
+
+  $scope.$watch(function () {
     return {
       contentTypeId:     getViewItem('contentTypeId'),
       displayedFieldIds: getViewItem('displayedFieldIds'),
-      entriesLength:     scope.entries && scope.entries.length,
-      page:              scope.paginator.page,
+      entriesLength:     $scope.entries && $scope.entries.length,
+      page:              $scope.paginator.page,
       orderDirection:    getViewItem('order.direction'),
       orderFieldId:      getViewItem('order.fieldId')
     };
   }, refreshEntityCaches, true);
-
 
   function resetSearchTerm () {
     isResettingTerm = true;
@@ -84,12 +98,14 @@ angular.module('contentful')
 
   function updateWithTerm (term) {
     searchTerm = term;
-    updateEntries(true);
+    updateEntries();
   }
 
-  function requestEntries (shouldReset) {
+  function requestEntries (mode) {
+    mode = mode || MODE_RESET;
     $scope.context.loading = true;
-    if (shouldReset && $scope.paginator.page !== 0) {
+
+    if (mode == MODE_RESET && $scope.paginator.page !== 0) {
       $scope.paginator.page = 0;
       isResettingPage = true;
     }
@@ -99,7 +115,10 @@ angular.module('contentful')
       return spaceContext.space.getEntries(query);
     })
     .then(function (entries) {
-      return {shouldReset: shouldReset, entries: entries};
+      return {
+        shouldReset: mode !== MODE_APPEND,
+        entries: entries
+      };
     });
   }
 
@@ -111,6 +130,11 @@ angular.module('contentful')
   function handleEntriesResponse (res) {
     // 1. if list should be reset or entries list is not initialized:
     if (res.shouldReset || !$scope.entries) {
+      // @todo DOM hack: scroll endless container to top
+      var container = $('[cf-endless-container]').first().get(0);
+      if (container) {
+        container.scrollTop = 0;
+      }
       // initialize with an empty array
       $scope.entries  = [];
     }
@@ -124,7 +148,10 @@ angular.module('contentful')
       // set paginator's total count
       $scope.paginator.numEntries = res.entries.total;
       // add new entries to the list
-      var entriesToAdd = _.difference(res.entries, $scope.entries);
+      var entriesToAdd = _(res.entries)
+      .difference($scope.entries)
+      .filter(function (entry) { return !entry.isDeleted(); })
+      .value();
       $scope.entries.push.apply($scope.entries, entriesToAdd);
     }
     // 4. always refresh caches
@@ -134,14 +161,18 @@ angular.module('contentful')
     // 6. mark view as ready (initialized) and not loading
     $scope.context.ready = true;
     $scope.context.loading = false;
+    isAppendingPage = false;
   }
 
   function loadNextPage () {
-    if (!$scope.paginator.atLast()) {
-      $scope.$apply(function () {
-        $scope.paginator.page += 1;
-      });
+    if ($scope.paginator.atLast() || isAppendingPage || $scope.context.loading) {
+      return;
     }
+
+    $scope.$apply(function () {
+      isAppendingPage = true;
+      $scope.paginator.page += 1;
+    });
   }
 
   function prepareQuery () {
