@@ -21,6 +21,7 @@ angular.module('contentful')
 
   return {
     goToUserProfile: goToUserProfile,
+    getSubscriptionState: getSubscriptionState,
     goToSubscription: goToSubscription,
     silentlyChangeState: silentlyChangeState,
     getGoToSubscriptionOrganization: getGoToSubscriptionOrganization,
@@ -60,6 +61,21 @@ angular.module('contentful')
    */
   function goToUserProfile () {
     return goTo('profile/user', {reload: true});
+  }
+
+  /**
+   * @ngdoc method
+   * @name TheAccountView#getSubscriptionState
+   * @description
+   * Returns the state path for the account/subscription view if the user has
+   * permission to access it otherwise returns undefined.
+   */
+  function getSubscriptionState () {
+    var org = getGoToSubscriptionOrganization();
+    if (org) {
+      var pathSuffix = 'organizations/' + org.sys.id + '/subscription';
+      return 'account.pathSuffix({ pathSuffix: \'' + pathSuffix + '\'})';
+    }
   }
 
   /**

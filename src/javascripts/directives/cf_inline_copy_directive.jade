@@ -1,0 +1,9 @@
+div(ng-show="showCopy")
+  a.content-model__id__link(
+    ng-click="copyToClipboard()"
+    tooltip="Copy to clipboard")
+    | {{text}}
+  span.fa.fa-check(
+    ng-class="{'x--is-visible' : showCopySuccess}")
+div(ng-show="!showCopy")
+  | {{text}}

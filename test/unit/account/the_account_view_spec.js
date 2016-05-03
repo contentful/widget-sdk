@@ -100,6 +100,24 @@ describe('TheAccountView service', function () {
     });
   });
 
+  describe('getSubScriptionState()', function () {
+    beforeEach(function () {
+      this.org = {subscriptionState: 'active', sys: {id: 'ORG_0'}};
+      this.spaceContext.getData.withArgs('organization').returns(this.org);
+    });
+
+    it('returns path if user has permission', function () {
+      this.OrganizationList.isOwnerOrAdmin.returns(true);
+      var path = 'account.pathSuffix({ pathSuffix: \'organizations/ORG_0/subscription\'})';
+      expect(this.view.getSubscriptionState()).toBe(path);
+    });
+
+    it('returns undefined if user does not have permission to access path', function () {
+      this.OrganizationList.isOwnerOrAdmin.returns(false);
+      expect(this.view.getSubscriptionState()).toBe(undefined);
+    });
+  });
+
   describe('silentlyChangeState()', function () {
     once(function () {
       this.view.silentlyChangeState('x/y');

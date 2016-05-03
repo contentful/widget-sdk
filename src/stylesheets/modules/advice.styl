@@ -46,6 +46,41 @@ Styleguide 20.1
   > *
     flex: 0 0 auto
 
+/*
+Advice box
+
+Markup:
+div(style="position:relative;height:300px;")
+  .cfnext-advice-box
+    .cfnext-advice-box__frame
+      h1.cfnext-advice-box__title
+        | Whoops, looks like you don't have any API keys yet
+      .cfnext-advice-box__sub-title
+        | Add your first key to get started delivering content.
+      button.cfnext-btn-action
+        | OK
+
+Styleguide 20.2
+*/
+
+.cfnext-advice-box
+  $stretch()
+  display: flex
+  flex-direction: column
+  justify-content: center
+  &__frame
+    margin: 0 auto
+    text-align: center
+    background-color: $colors.element-lightest
+    border: 1px solid $colors.element-mid
+    padding: $rhythm(1.5) $rhythm(2.5)
+    min-width: 500px
+  &__title
+    font-size: 1.33em
+    margin: $rhythm(0.33) 0 $rhythm(0.33)
+  &__sub-title
+    font-size: 1.1em
+    margin-bottom: $rhythm(1)
 
 // TODO deprecated
 .advice

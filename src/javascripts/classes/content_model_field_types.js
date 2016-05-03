@@ -7,7 +7,7 @@ angular.module('contentful').constant('contentModelFieldTypes', {
   },
   Text: {
     jsonType: 'String',
-    description: 'Same as Symbol, but can be filtered via <a href="https://www.contentful.com/developers/documentation/content-delivery-api/#search-filter-full-text">Full-Text Search</a>. Maximum length is 50,000.'
+    description: 'Basic list of characters. Filterable via full-text search. Maximum length is 50,000.'
   },
   Integer: {
     jsonType: 'Number',
@@ -19,7 +19,7 @@ angular.module('contentful').constant('contentModelFieldTypes', {
   },
   Date: {
     jsonType: 'String',
-    description: 'See <a href="https://www.contentful.com/developers/documentation/content-delivery-api/#date-time-format">Date & Time Format</a>.'
+    description: 'Date/Time in ISO 8601 format.'
   },
   Boolean: {
     jsonType: 'Boolean',
@@ -27,7 +27,7 @@ angular.module('contentful').constant('contentModelFieldTypes', {
   },
   Link: {
     jsonType: 'Object',
-    description: 'See <a href="https://www.contentful.com/developers/documentation/content-delivery-api/#links">Links<a/>.'
+    description: 'A reference to an entry or asset. The type of the referenced item is defined by the linkType property.'
   },
   Array: {
     jsonType: 'Array',

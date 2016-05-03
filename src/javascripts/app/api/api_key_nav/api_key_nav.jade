@@ -1,0 +1,13 @@
+header.workbench-header.x--with-nav
+  .page-header
+    cf-icon.workbench-header__icon(name="page-api")
+    h1.workbench-header__title
+      | APIs
+      cf-knowledge-base.workbench-header__kb-link(target="api_key")
+  nav.workbench-nav__tabs
+    a(
+      role="tab"
+      ui-sref="{{tab.state}}"
+      ng-repeat="tab in navController.tabs track by $index"
+      aria-selected='{{tab.selected}}')
+      | {{tab.name}}

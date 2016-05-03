@@ -1,5 +1,55 @@
+/*
+Entity list item
+
+List of items with clickable rows
+
+Markup:
+table.result-list
+  tr.entity-list__item
+    td First result
+  tr.entity-list__item
+    td Second result
+
+Styleguide 8.3
+*/
+
 .entity-list__item
   $tr-clickable()
+
+/*
+Entity list item with icon
+
+List of items with icon and clickable rows
+
+Markup:
+div
+  .entity-list__item.x--with-icon
+    span First result
+    cf-icon(name="dd-arrow-down")
+  .entity-list__item.x--with-icon
+    span Second result
+    cf-icon(name="dd-arrow-down")
+
+Styleguide 8.4
+*/
+
+.entity-list__item.x--with-icon
+  display: flex
+  align-items: center
+  border-bottom: 1px solid $colors.element-light
+  padding: 20px 25px 19px
+  &, &:link, &:hover, &:active
+    color: $colors.text-light
+  &:hover
+    background-color: $colors.element-lightest
+  cf-icon[name="dd-arrow-down"]
+    margin-left: auto
+    transform: rotate(-90deg)
+    path
+      fill: $colors.text-lightest
+  &__heading
+    margin-top: 0
+
 
 /* Cleanup notes
 some stuff here should go into components, other into layout
@@ -27,3 +77,10 @@ some stuff here should go into components, other into layout
     .dropdown-toggle
       line-height: 28px
       margin-right: 5px
+
+  &__heading
+    margin: 8px 0
+  &__description
+    display: block
+    margin: 8px 0
+

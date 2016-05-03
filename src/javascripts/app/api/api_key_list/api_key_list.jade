@@ -1,0 +1,80 @@
+cf-api-key-nav
+
+//- Loading screen
+.workbench-main(ng-if="!apiKeys")
+  .loading-box--full-screen
+    .loading-box__spinner
+    .loading-box__message
+      | Loading API keys
+
+.workbench-main(ng-if="apiKeys")
+  //- Non empty state
+  .workbench-main__content(ng-if="!empty")
+    .api-key-list.entity-list
+      a.entity-list__item.x--with-icon(
+        ng-repeat="apiKey in apiKeys track by apiKey.getId()"
+        ui-sref="spaces.detail.api.keys.detail({ apiKeyId: apiKey.getId() })")
+        span
+          h3.entity-list__heading {{apiKey.getName()}}
+          span.entity__description {{apiKey.data.description}}
+        cf-icon(name="dd-arrow-down")
+
+  //- Empty state
+  .workbench-main__content(ng-if="empty")
+    .api-key-list
+      a.entity-list__item.x--with-icon.api-key-list__placeholder(
+        ng-repeat="apiKey in placeholderApiKeys track by $index")
+        span
+          h3.api-key-list__heading {{apiKey.name}}
+          span.api-key-list__description {{apiKey.description}}
+        cf-icon(name="dd-arrow-down")
+    .cfnext-advice-box.api-key-list__advice
+      .cfnext-advice-box__frame
+        h1.cfnext-advice-box__title
+          | Whoops, looks like you don't have any API keys
+        .cfnext-advice-box__sub-title
+          | Add your first key to get started delivering content.
+        button.cfnext-btn-action(ui-command="createApiKey")
+          div
+            cf-icon.btn-icon.inverted(name="plus")
+            | Add API key
+
+  //- Sidebar
+  .workbench-main__entity-sidebar
+    .entity-sidebar
+      h2.entity-sidebar__heading(ng-if="!empty && showCreateApiKey")
+        | Add API keys
+      div(ng-if="!empty")
+        p(ng-if="!reachedLimit")
+          | Your space is using {{apiKeys.length}} out of {{limit}} API keys.
+        p(ng-if="reachedLimit")
+          | Your space is using <span class="api-key-list__reached-limit">{{apiKeys.length}} out of {{limit}}</span> API keys.&#32;
+          | If you want to create additional keys, you need to either delete an existing one or&#32;
+          | <a class="entity-sidebar__link" ui-sref="{{subscriptionState}}">upgrade your account</a>.
+        button.cfnext-btn-action.x--block(
+          ui-command="createApiKey")
+          div
+            cf-icon.btn-icon.inverted(name="plus")
+            | Add API key
+
+      h2.entity-sidebar__heading
+        | Hint from our staff
+      .staff-hint
+        i.fa.fa-quote-left
+        div.staff-hint__quote
+          .staff-hint__content
+            | Create separate API keys if you have multiple platforms you need to deliver content to.
+          .staff-hint__author
+            .staff-hint__author-photo.x--cesar
+            .staff-hint__author-name
+              strong César Jardim
+              p Product manager at Contentful
+
+      h2.entity-sidebar__heading
+        | Documentation
+      .entity-sidebar__text-profile
+        ul
+          li
+            | Learn more about the <cf-knowledge-base target="content_apis" text="four content APIs" inline-text="true"></cf-knowledge-base>.
+          li
+            | Read the <cf-knowledge-base target="delivery_api" text="reference docs for the content delivery API" inline-text="true"></cf-knowledge-base>.

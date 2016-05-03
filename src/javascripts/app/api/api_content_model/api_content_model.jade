@@ -1,0 +1,17 @@
+.workbench
+  cf-api-key-nav
+
+  //- Loading screen
+  .workbench-main(ng-if="!contentTypes")
+    .loading-box--full-screen
+      .loading-box__spinner
+      .loading-box__message
+        | Loading content model
+
+  .workbench-main.x--content(ng-if="contentTypes")
+    .api-cm-list.entity-list(ng-hide="contentTypes | isEmpty")
+      cf-api-content-type(
+        ng-repeat="contentType in contentTypes track by contentType.getId()")
+    //- Empty state
+    p(ng-if="contentTypes | isEmpty")
+      | There are no Content Types yet.
