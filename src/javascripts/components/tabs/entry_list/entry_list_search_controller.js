@@ -10,6 +10,8 @@ angular.module('contentful')
   var accessChecker      = $injector.get('accessChecker');
   var debounce           = $injector.get('debounce');
 
+  var AUTOTRIGGER_MIN_LEN = 4;
+
   var MODE_APPEND  = 'append';
   var MODE_REPLACE = 'replace';
   var MODE_RESET   = 'reset';
@@ -65,7 +67,8 @@ angular.module('contentful')
       updateWithTerm(value);
     }
     // use debounced version when user is actively typing
-    else if (hasTerm) {
+    // we autotrigger only when query is long enough
+    else if (hasTerm && value.length >= AUTOTRIGGER_MIN_LEN) {
       debouncedUpdateWithTerm(value);
     }
   });
@@ -86,6 +89,15 @@ angular.module('contentful')
       orderFieldId:      getViewItem('order.fieldId')
     };
   }, refreshEntityCaches, true);
+
+  // "forceSearch" event is emitted by the tokenized search directive when:
+  // - Enter is pressed and not selecting an autocompletion item
+  // - "magnifying glass" icon next to input is clicked
+  $scope.$on('forceSearch', function () {
+    if (!$scope.context.loading) {
+      updateEntries();
+    }
+  });
 
   function resetSearchTerm () {
     isResettingTerm = true;
