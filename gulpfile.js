@@ -58,19 +58,20 @@ var src = {
     main: [
       'bower_components/jquery/dist/jquery.js',
       'bower_components/jquery-ui/ui/jquery.ui.core.js',
+      // Required by 'ui/context-menu' service
       'bower_components/jquery-ui/ui/jquery.ui.position.js',
       'bower_components/jquery-ui/ui/jquery.ui.widget.js',
       'bower_components/jquery-ui/ui/jquery.ui.mouse.js',
+      // Required by 'angular-ui-sortable'
+      // Requires 'jquery.ui.core', 'jquery.ui.mouse', 'jquery.ui.widget'
       'bower_components/jquery-ui/ui/jquery.ui.sortable.js',
-      'bower_components/jquery-ui/ui/jquery.ui.draggable.js',
-      'bower_components/jquery-ui/ui/jquery.ui.autocomplete.js',
+      // Requires 'jquery.ui.core'
       'bower_components/jquery-ui/ui/jquery.ui.datepicker.js',
       'bower_components/jquery-textrange/jquery-textrange.js',
       'bower_components/angular/angular.js',
       'bower_components/angular-animate/angular-animate.js',
       'bower_components/angular-load/angular-load.js',
       'bower_components/angular-sanitize/angular-sanitize.js',
-      'bower_components/angular-route/angular-route.js',
       'bower_components/angular-ui-sortable/sortable.js',
       'bower_components/angular-ui-router/release/angular-ui-router.js',
       'bower_components/angular-breadcrumb/dist/angular-breadcrumb.js',
