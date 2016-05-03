@@ -201,7 +201,6 @@ src/javascripts/components/client/cf_breadcrumbs_directive.js
 src/javascripts/components/client/activation_email_resend_controller.js
 src/javascripts/components/client/cf_main_nav_bar_directive.js
 src/javascripts/components/client/cf_space_selector_directive.js
-src/javascripts/components/client/client_controller.js
 src/javascripts/components/client/dialogsInitController.js
 src/javascripts/components/client/onboarding_controller.js
 src/javascripts/components/client/trial_watcher.js
