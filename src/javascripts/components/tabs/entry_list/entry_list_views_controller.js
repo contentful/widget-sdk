@@ -2,9 +2,9 @@
 
 angular.module('contentful').controller('EntryListViewsController', ['$scope', '$injector', function($scope, $injector) {
 
-  var systemFields = $injector.get('systemFields');
-  var random       = $injector.get('random');
   var $controller  = $injector.get('$controller');
+  var uiConfig     = $injector.get('uiConfig');
+  var systemFields = $injector.get('systemFields');
   var defaultOrder = systemFields.getDefaultOrder();
 
   var SORTABLE_TYPES = [
@@ -87,7 +87,7 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
     };
   }
 
-  function determineFallbackSortField(displayedFieldIds) {
+  function determineFallbackSortField (displayedFieldIds) {
     var fallbackId = _.find(FALLBACK_FIELDS, function (fieldId) {
       return _.contains(displayedFieldIds, fieldId);
     });
@@ -102,63 +102,18 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
   }
 
   function generateDefaultViews(wait) {
-    var contentTypes;
+    var cts = $scope.spaceContext.publishedContentTypes;
     if (wait) {
-      contentTypes = [];
-      $scope.waitFor('spaceContext.publishedContentTypes.length > 0', function () {
-        contentTypes.push.apply(contentTypes, contentTypeViews());
+      var off = $scope.$watch('spaceContext.publishedContentTypes.length', function(len) {
+        if (len > 0) {
+          off();
+          cts = $scope.spaceContext.publishedContentTypes;
+          return uiConfig.resetEntries(cts);
+        }
       });
     } else {
-      contentTypes = contentTypeViews();
-    }
-    return [
-      {
-        id: 'default',
-        title: 'Views',
-        views: [{
-          id: random.id(),
-          title: 'All',
-          order: defaultOrder,
-          displayedFieldIds: getDefaultFieldIds()
-        }]
-      },
-      {
-        id: random.id(),
-        title: 'Status',
-        views: [
-          createStatusView('Published', 'status:published'),
-          createStatusView('Changed', 'status:changed'),
-          createStatusView('Draft', 'status:draft'),
-          createStatusView('Archived', 'status:archived')
-        ]
-      },
-      {
-        id: random.id(),
-        title: 'Content type',
-        views: contentTypes
-      }
-    ];
-
-    function createStatusView(title, searchTerm) {
-      return {
-        title: title,
-        searchTerm: searchTerm,
-        id: random.id(),
-        order: defaultOrder,
-        displayedFieldIds: getDefaultFieldIds()
-      };
-    }
-
-    function contentTypeViews() {
-      return _.map($scope.spaceContext.publishedContentTypes, function (contentType) {
-        return {
-          title: contentType.data.name,
-          contentTypeId: contentType.getId(),
-          id: random.id(),
-          order: defaultOrder,
-          displayedFieldIds: getDefaultFieldIds()
-        };
-      });
+      return uiConfig.resetEntries(cts);
     }
   }
+
 }]);
