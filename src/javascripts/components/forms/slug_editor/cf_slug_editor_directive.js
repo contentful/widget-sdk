@@ -19,7 +19,7 @@ angular.module('contentful')
       var locales = widgetApi.locales;
       var contentType = widgetApi.contentType;
 
-      var $inputEl = $el.children('input');
+      var $inputEl = $el.find('input');
       var updateInput = caretHelper.makeInputUpdater($inputEl);
       var title = entry.fields[contentType.displayField];
 
