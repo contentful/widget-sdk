@@ -604,7 +604,6 @@ src/javascripts/account/cf_account_view_directive.js
 src/javascripts/account/handle_gatekeeper_message.js
 src/javascripts/account/iframe_channel.js
 src/javascripts/account/the_account_view.js
-src/javascripts/application.js
 src/javascripts/contentful.js
 src/javascripts/filters.js
 src/javascripts/states/account.js
