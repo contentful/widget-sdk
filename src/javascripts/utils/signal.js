@@ -89,5 +89,4 @@ angular.module('cf.utils')
       }
     };
   }
-
 }]);

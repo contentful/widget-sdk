@@ -1,0 +1,14 @@
+env:
+  # Do not use this. We want to fail if 'fdescribe', etc. is used.
+  jasmine: false
+globals:
+  sinon: false
+  inject: false
+  module: false
+
+  describe: false
+  beforeEach: false
+  afterEach: false
+  it: false
+  pit: false
+  expect: false

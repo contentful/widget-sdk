@@ -29,13 +29,13 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
   $scope.orderColumnBy = function (field) {
     if(!$scope.isOrderField(field)) setOrderField(field);
     $scope.context.view.order.direction = switchOrderDirection($scope.context.view.order.direction);
-    $scope.updateEntries(true);
+    $scope.updateEntries();
   };
 
   $scope.$watch('context.view.displayedFieldIds', function (displayedFieldIds) {
     if(!_.contains(displayedFieldIds, $scope.context.view.order.fieldId)){
       setOrderField(determineFallbackSortField(displayedFieldIds));
-      $scope.updateEntries(true);
+      $scope.updateEntries();
     }
   }, true);
 
@@ -55,9 +55,7 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
     viewCollectionName: 'entryListViews',
     generateDefaultViews: generateDefaultViews,
     preserveStateAs: 'entries',
-    resetList: function () {
-      $scope.updateEntries(true);
-    }
+    resetList: _.noop
   });
 
   function setOrderField(field) {

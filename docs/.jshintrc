@@ -1,8 +1,0 @@
-{
-  "node": true,
-  "quotmark": "single",
-  "trailing": true,
-  "unused": true,
-  "esnext": true,
-  "globalstrict": true
-}

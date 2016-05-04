@@ -48,7 +48,7 @@ angular.module('cf.ui')
    *
    * @returns {Command}
    */
-  function createCommand(run, options, extension) {
+  function createCommand (run, options, extension) {
     var command = new Command(run, options, executions);
     return _.extend(command, extension);
   }
