@@ -16,6 +16,12 @@ angular.module('contentful/app', ['contentful'])
   }
 })
 
+.config(['environment', '$compileProvider', function (environment, $compileProvider) {
+  if (environment.env === 'production') {
+    $compileProvider.debugInfoEnabled(false);
+  }
+}])
+
 .run(['$injector', function ($injector) {
   var get = $injector.get;
   var authentication = get('authentication');
