@@ -32,8 +32,8 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
       $scope.context.ready = true;
       $scope.context.loading = false;
       controller.paginator.numEntries = assets.total;
-      $scope.assets = assets;
-      $scope.selection.updateList(assets);
+      $scope.assets = filterOutDeleted(assets);
+      $scope.selection.updateList($scope.assets);
     }, accessChecker.wasForbidden($scope.context))
     .catch(ReloadNotification.apiErrorHandler);
   };
@@ -63,7 +63,8 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
       }
       controller.paginator.numEntries = assets.total;
       assets = _.difference(assets, $scope.assets);
-      $scope.assets.push.apply($scope.assets, assets);
+      $scope.assets.push.apply($scope.assets, filterOutDeleted(assets));
+      $scope.selection.updateList($scope.assets);
     }, function (err) {
       controller.paginator.page--;
       return $q.reject(err);
@@ -71,7 +72,13 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
     .catch(ReloadNotification.apiErrorHandler);
   };
 
-  function prepareQuery() {
+  function filterOutDeleted (assets) {
+    return _.filter(assets, function (asset) {
+      return !asset.isDeleted();
+    });
+  }
+
+  function prepareQuery () {
     return ListQuery.getForAssets({
       paginator:  controller.paginator,
       order:      systemFields.getDefaultOrder(),

@@ -3,6 +3,14 @@
 describe('Asset List Controller', function () {
   var controller, scope, stubs, $q, $rootScope, getAssets;
 
+  function createAssets (n) {
+    var assets = _.map(new Array(n), function () {
+      return { isDeleted: _.constant(false), data: { fields: [] } };
+    });
+    Object.defineProperty(assets, 'total', {value: n});
+    return assets;
+  }
+
   beforeEach(function () {
     var self = this;
     module('contentful/test', function ($provide) {
@@ -65,6 +73,7 @@ describe('Asset List Controller', function () {
     space.getAssets = stubs.getAssets;
 
     controller = $controller('AssetListController', {$scope: scope});
+    scope.selection.updateList = sinon.stub();
   });
 
 
@@ -145,15 +154,12 @@ describe('Asset List Controller', function () {
   describe('resetting assets', function() {
     var assets;
     beforeEach(function() {
-      assets = {
-        total: 30
-      };
+      assets = createAssets(30);
       getAssets.resolve(assets);
 
       scope.searchController.paginator.pageLength = 3;
       scope.searchController.paginator.skipItems = sinon.stub();
       scope.searchController.paginator.skipItems.returns(true);
-      scope.selection.updateList = sinon.spy();
     });
 
     it('sets loading flag', function () {
@@ -178,7 +184,15 @@ describe('Asset List Controller', function () {
     it('sets assets on scope', function() {
       scope.searchController.resetAssets();
       scope.$apply();
-      expect(scope.assets).toBe(assets);
+      expect(scope.assets).toEqual(assets);
+    });
+
+    it('filters out deleted assets', function () {
+      assets[0].isDeleted = _.constant(true);
+      scope.searchController.resetAssets();
+      scope.$apply();
+      expect(scope.assets.length).toBe(29);
+      expect(scope.assets.indexOf(assets[0])).toBe(-1);
     });
 
     it('updates selected items with retrieved list', function () {
@@ -207,42 +221,6 @@ describe('Asset List Controller', function () {
         scope.$apply();
         expect(stubs.getAssets.args[0][0].skip).toBeTruthy();
       });
-
-      // TODO these tests should go into a test for the search query helper
-      it('for all list', function() {
-        scope.searchController.resetAssets();
-        scope.$apply();
-        expect(stubs.getAssets.args[0][0]['sys.archivedAt[exists]']).toBe('false');
-      });
-
-      it('for published list', function() {
-        scope.context.view.searchTerm = 'status:published';
-        scope.searchController.resetAssets();
-        scope.$apply();
-        expect(stubs.getAssets.args[0][0]['sys.publishedAt[exists]']).toBe('true');
-      });
-
-      it('for changed list', function() {
-        scope.context.view.searchTerm = 'status:changed';
-        scope.searchController.resetAssets();
-        scope.$apply();
-        expect(stubs.getAssets.args[0][0]['sys.archivedAt[exists]']).toBe('false');
-        expect(stubs.getAssets.args[0][0].changed).toBe('true');
-      });
-
-      it('for archived list', function() {
-        scope.context.view.searchTerm = 'status:archived';
-        scope.searchController.resetAssets();
-        scope.$apply();
-        expect(stubs.getAssets.args[0][0]['sys.archivedAt[exists]']).toBe('true');
-      });
-
-      it('for search term', function() {
-        scope.context.view.searchTerm = 'term';
-        scope.searchController.resetAssets();
-        scope.$apply();
-        expect(stubs.getAssets.args[0][0].query).toBe('term');
-      });
     });
   });
 
@@ -269,10 +247,9 @@ describe('Asset List Controller', function () {
   describe('loadMore', function () {
     var assets;
     beforeEach(function() {
-      assets = [];
-      Object.defineProperty(assets, 'total', {value: 30});
+      assets = createAssets(30);
 
-      scope.assets = new Array(60);
+      scope.assets = createAssets(60);
 
       // loadMore triggers resetEntries which in reality will not
       // run because the promisedLoader prevents that. In this test
@@ -332,7 +309,9 @@ describe('Asset List Controller', function () {
 
       it('appends assets to scope', function () {
         scope.$apply();
-        expect(scope.assets.slice(60)).toEqual(assets);
+        scope.assets.slice(60).forEach(function (asset, i) {
+          expect(assets[i]).toBe(asset);
+        });
       });
     });
 
