@@ -38,7 +38,7 @@ angular.module('contentful', [
   $locationProvider.html5Mode({
     enabled: true,
     requireBase: false
-  }).hashPrefix('!');
+  });
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
   $sceDelegateProvider.resourceUrlWhitelist(env.resourceUrlWhiteListRegexp);
   $animateProvider.classNameFilter(/animate/);
