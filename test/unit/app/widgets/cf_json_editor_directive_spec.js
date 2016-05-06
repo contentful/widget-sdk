@@ -15,7 +15,7 @@ describe('cfJsonEditor directive', function () {
       },
       refresh: sinon.stub(),
       clearHistory: sinon.stub(),
-      historySize: sinon.stub().returns({}),
+      historySize: sinon.stub().returns({})
     };
 
     var CodeMirror = sinon.stub().returns(cmEditor);
@@ -24,13 +24,11 @@ describe('cfJsonEditor directive', function () {
       .withArgs('markdown')
       .resolves({CodeMirror: CodeMirror});
 
-    fieldApi = {
-      onValueChanged: sinon.stub().returns(_.noop),
-      onDisabledStatusChanged: sinon.stub().returns(_.noop)
-    };
+    var widgetApi = this.$inject('mocks/widgetApi')();
+    fieldApi = widgetApi.field;
 
     element = this.$compile('<cf-json-editor />', {}, {
-      cfWidgetApi: {field: fieldApi}
+      cfWidgetApi: widgetApi
     });
   });
 

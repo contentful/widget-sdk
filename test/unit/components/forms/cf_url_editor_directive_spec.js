@@ -4,26 +4,20 @@ describe('cfUrlEditor directive', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    this.cfWidgetApi = {
+    this.widgetApi = this.$inject('mocks/widgetApi')({
       field: {
-        onValueChanged: function (cb) {
-          cb('omgwhat');
-        },
-        onDisabledStatusChanged: function (cb) {
-          cb(true);
-        },
-        setString: sinon.stub()
-      },
-      settings: {}
-    };
+        onValueChanged: sinon.stub().yields('omgwhat'),
+        onDisabledStatusChanged: sinon.stub().yields(true)
+      }
+    });
 
     this.setHelpText = function (helpText) {
-      this.cfWidgetApi.settings.helpText = helpText;
+      this.widgetApi.settings.helpText = helpText;
     };
 
     this.compileElement = function () {
       return this.$compile('<cf-url-editor>', {}, {
-        cfWidgetApi: this.cfWidgetApi
+        cfWidgetApi: this.widgetApi
       });
     };
   });
@@ -54,8 +48,8 @@ describe('cfUrlEditor directive', function () {
     $inputEl.val('unicorns');
     $inputEl.trigger('input');
 
-    sinon.assert.calledOnce(this.cfWidgetApi.field.setString);
-    sinon.assert.calledWithExactly(this.cfWidgetApi.field.setString, 'unicorns');
+    sinon.assert.calledOnce(this.widgetApi.field.setString);
+    sinon.assert.calledWithExactly(this.widgetApi.field.setString, 'unicorns');
   });
 
   it('should be disabled when disabled flag is set', function () {

@@ -4,16 +4,13 @@ describe('Number widgets', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    this.fieldApi = {
-      onValueChanged: sinon.stub(),
-      onDisabledStatusChanged: sinon.stub(),
-      type: '',
-      setValue: sinon.stub()
-    };
+    var widgetApi = this.$inject('mocks/widgetApi')();
+
+    this.fieldApi = widgetApi.field;
 
     this.compileElement = function () {
       return this.$compile('<cf-number-editor class="cf-number-editor" />', {}, {
-        cfWidgetApi: {field: this.fieldApi}
+        cfWidgetApi: widgetApi
       });
     };
 
