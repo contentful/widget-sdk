@@ -1,7 +1,7 @@
 'use strict';
 
 describe('otBindText', function () {
-  var scope, doc, subdoc, unbindTextArea, elem, controller;
+  var scope, subdoc, unbindTextArea, elem, controller;
 
   beforeEach(module('contentful/test', function ($provide) {
     $provide.value('ShareJS', {
@@ -18,10 +18,10 @@ describe('otBindText', function () {
 
   beforeEach(inject(function ($rootScope, $compile, ShareJS) {
     ShareJS.mkpathAndSetValue.resolves();
-    ShareJS.open.resolves(doc = {
+    ShareJS.open.resolves({
       // otDoc
       on: sinon.stub(),
-      at: sinon.stub().returns(subdoc ={
+      at: sinon.stub().returns(subdoc = {
         attach_textarea: sinon.stub().returns(unbindTextArea = sinon.stub()),
         path: ['value']
       }),
@@ -83,13 +83,13 @@ describe('otBindText', function () {
    * See BUG#6696
    */
   it('should call shareJS with undefined when clearing out a field',
-  function() {
+  function () {
     scope.otSubDoc.changeValue = sinon.spy();
-    //Simulate input changes. This can also be done by changing
-    //`controller.$modelValue`, but wont trigger `$scope.viewChangeListeners`
+    // Simulate input changes. This can also be done by changing
+    // `controller.$modelValue`, but wont trigger `$scope.viewChangeListeners`
     elem.val('some text which will be removed').trigger('input');
-    //NOTE: Angular treats `''` and `null` as the same when passed to
-    //`elem.val()` but test both just to be sure
+    // NOTE: Angular treats `''` and `null` as the same when passed to
+    // `elem.val()` but test both just to be sure
     elem.val('').trigger('input');
     elem.val('some text which will be removed').trigger('input');
     elem.val(null).trigger('input');
