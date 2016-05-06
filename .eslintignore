@@ -27,7 +27,6 @@ test/unit/components/forms/cf_link_editor_search_directive_spec.js
 test/unit/components/forms/cf_location_editor_directive_spec.js
 test/unit/components/forms/cf_multi_video_editor_controller_spec.js
 test/unit/components/forms/cf_multi_video_item_spec.js
-test/unit/components/forms/cf_number_editor_directive_spec.js
 test/unit/components/forms/cf_ooyala_editor_controller_spec.js
 test/unit/components/forms/cf_single_line_editor_directive_spec.js
 test/unit/components/forms/cf_url_editor_directive_spec.js
@@ -368,7 +367,6 @@ src/javascripts/components/forms/multi_video_editor/cf_multi_video_item_directiv
 src/javascripts/components/forms/multi_video_editor/cf_multi_video_editor_controller.js
 src/javascripts/components/forms/multi_video_editor/cf_multi_video_editor_directive.js
 src/javascripts/components/forms/multi_video_editor/cf_multi_video_item_controller.js
-src/javascripts/components/forms/number_editor/cf_number_editor_directive.js
 src/javascripts/components/forms/ooyala/cf_ooyala_player_directive.js
 src/javascripts/components/forms/ooyala/cf_ooyala_editor_controller.js
 src/javascripts/components/forms/ooyala/cf_ooyala_editor_directive.js
