@@ -12,3 +12,4 @@ globals:
   it: false
   pit: false
   expect: false
+  spyOn: false

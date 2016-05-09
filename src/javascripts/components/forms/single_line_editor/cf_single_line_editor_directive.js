@@ -3,6 +3,7 @@
 angular.module('contentful')
 .directive('cfSingleLineEditor', ['$injector', function ($injector) {
   var makeInputUpdater = $injector.get('ui/caretHelper').makeInputUpdater;
+  var debounce = $injector.get('debounce');
 
   return {
     scope: {},
@@ -39,15 +40,10 @@ angular.module('contentful')
         return $inputEl.val();
       }, function (val) {
         updateCharCount(val);
-      });
-
-      // run field.validations when data in input field is modified
-      // and send updated field value over the wire via sharejs
-      $inputEl.on('input change', function () {
-        var val = $inputEl.val();
-
         field.setString(val);
       });
+
+      $inputEl.on('input change', debounce(scope.$apply.bind(scope), 200));
 
       function updateCharCount (val) {
         scope.charCount = (val || '').length;

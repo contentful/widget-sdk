@@ -18,10 +18,10 @@
  *   <part-editor ot-path="['fields', 'fieldId', 'locale']">
 */
 
-angular.module('contentful').directive('otPath', ['$injector', function($injector){
-  var $q          = $injector.get('$q');
-  var ShareJS     = $injector.get('ShareJS');
-  var logger      = $injector.get('logger');
+angular.module('contentful').directive('otPath', ['$injector', function ($injector) {
+  var $q = $injector.get('$q');
+  var ShareJS = $injector.get('ShareJS');
+  var logger = $injector.get('logger');
 
   return {
     restrict: 'AC',
@@ -29,9 +29,9 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
     require: '^otDocFor',
     scope: true,
 
-    link: function(scope, elem, attr) {
+    link: function (scope, elem, attr) {
       // TODO no need for watchers. The attributes do not change
-      scope.$watch(attr['otPath'], function(otPath, old, scope) {
+      scope.$watch(attr['otPath'], function (otPath, old, scope) {
         scope.otPath = otPath;
       }, true);
 
@@ -43,9 +43,9 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
    * @ngdoc type
    * @name otSubDoc
    * @property {otSubDoc} doc
-   * @property {function()} getValue
+   * @property {function ()} getValue
    * Returns the value at the path in the document or undefined if the path is not found
-   * @property {function()} changeStringValue
+   * @property {function ()} changeStringValue
    * Update the string at the path to a new string.
    * Calculates the string difference using the algorithm from the ShareJS text binding to generate a insert and/or delete operation.
    * Returns a promise.
@@ -61,7 +61,7 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
    * Broadcasts the following events:
    * - otValueChanged(path, newValue), broadcast: Whenever the value at this path changes
    */
-    controller: ['$scope', function otPathController($scope) {
+    controller: ['$scope', function otPathController ($scope) {
       $scope.otSubDoc = {
         doc: undefined,
         changeString: otChangeString,
@@ -75,27 +75,27 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
 
       $scope.$on('otRemoteOp', remoteOpHandler);
 
-      function init(val) {
+      function init (val) {
         if ($scope.otPath && $scope.otDoc.doc) {
           updateSubDoc(val);
           $scope.$broadcast('otValueChanged', $scope.otPath, otGetValue());
-        } else if($scope.otSubDoc.doc){
+        } else if ($scope.otSubDoc.doc) {
           $scope.otSubDoc.doc = undefined;
         }
       }
 
-      function updateSubDoc(path) {
+      function updateSubDoc (path) {
         var pathUpdated = path === $scope.otPath;
         if (pathUpdated && $scope.otSubDoc.doc) {
           // if the path has been changed, manipulate path in subdoc
-          $scope.otSubDoc.doc.path =  angular.copy($scope.otPath);
+          $scope.otSubDoc.doc.path = angular.copy($scope.otPath);
         } else {
           // if the path has been replaced, replace subdoc
           $scope.otSubDoc.doc = $scope.otDoc.doc.at($scope.otPath);
         }
       }
 
-      function remoteOpHandler(event, op) {
+      function remoteOpHandler (event, op) {
         var scope = event.currentScope;
         if (_.isEqual(op.p.slice(0, scope.otPath.length), scope.otPath)) {
           var value = ShareJS.peek(scope.otDoc.doc, scope.otPath);
@@ -118,7 +118,7 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
        *
        * Additional note: this essentially replicates attach_textarea from ShareJS
        */
-      function otChangeString(newValue) {
+      function otChangeString (newValue) {
         var doc = $scope.otDoc.doc;
         var path = $scope.otPath;
 
@@ -130,8 +130,7 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
         var oldValue = otGetValue();
 
         if (!oldValue || !newValue) {
-          // TODO should this really be `null` an not an empty string?
-          return ShareJS.mkpathAndSetValue(doc, path, newValue || null);
+          return ShareJS.setDeep(doc, path, newValue || null);
         } else if (oldValue === newValue) {
           return $q.resolve();
         } else {
@@ -172,7 +171,7 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
        * @param {any} value
        * @returns {Promise<void>}
        */
-      function otChangeValue(value) {
+      function otChangeValue (value) {
         var doc = $scope.otDoc.doc;
         var path = $scope.otPath;
         if (!doc) {
@@ -180,7 +179,7 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
         }
 
         // Ensure that no nulls are passed to `doc.setAt()`. See BUG#6696
-        if(value === null) {
+        if (value === null) {
           var err = 'Do not call otChangeValue() with null. This causes ' +
             'ShareJS to keep null placeholders for keys which we want to avoid.';
           logger.logWarn(err);
@@ -195,7 +194,7 @@ angular.module('contentful').directive('otPath', ['$injector', function($injecto
         });
       }
 
-      function otGetValue() {
+      function otGetValue () {
         if ($scope.otDoc.doc) {
           return ShareJS.peek($scope.otDoc.doc, $scope.otPath);
         } else {
