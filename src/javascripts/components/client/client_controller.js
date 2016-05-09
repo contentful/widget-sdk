@@ -22,6 +22,8 @@ angular.module('contentful')
   // TODO remove this eventually. All components should access it as a service
   $scope.spaceContext = spaceContext;
 
+  // TODO this does not belong here. We should move it to the
+  // controller that actually uses it
   $scope.preferences = {
     showAuxPanel: false,
     toggleAuxPanel: function () {
