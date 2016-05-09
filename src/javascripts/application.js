@@ -17,9 +17,11 @@ angular.module('contentful/app', ['contentful'])
 })
 
 .config(['environment', '$compileProvider', function (environment, $compileProvider) {
-  if (environment.env === 'production') {
-    $compileProvider.debugInfoEnabled(false);
-  }
+  // TODO temporarily disabled because it breaks `element.scope()`
+  // which we use in a couple of places.
+  // if (environment.env === 'production') {
+  //   $compileProvider.debugInfoEnabled(false);
+  // }
 }])
 
 .run(['$injector', function ($injector) {
