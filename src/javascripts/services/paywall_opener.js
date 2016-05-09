@@ -9,10 +9,9 @@
 angular.module('contentful')
 .factory('paywallOpener', ['$injector', function ($injector) {
 
-  var $document        = $injector.get('$document');
   var $q               = $injector.get('$q');
   var $sce             = $injector.get('$sce');
-  var environment      = $injector.get('environment');
+  var lazyLoad         = $injector.get('LazyLoader').get;
   var modalDialog      = $injector.get('modalDialog');
   var recommendPlan    = $injector.get('subscriptionPlanRecommender').recommend;
   var intercom         = $injector.get('intercom');
@@ -20,7 +19,6 @@ angular.module('contentful')
   var TheAccountView   = $injector.get('TheAccountView');
 
   var paywallIsOpen = false;
-  var includedPlanCss = false;
 
   return {
     openPaywall: openPaywall
@@ -64,8 +62,13 @@ angular.module('contentful')
       };
 
       if (options.offerPlanUpgrade) {
-        includePlanCss(); // Request css before requesting plans from GK.
-        return recommendPlan(organizationId)
+        var loadPlanCardCss = lazyLoad('gkPlanCardStyles');
+        var loadPlanCard = recommendPlan(organizationId);
+
+        return $q.all([loadPlanCardCss, loadPlanCard])
+        .then(function (data) {
+          return data[1];
+        })
         .then(returnScopeWithPlan, resolveWithScope);
       } else {
         return resolveWithScope();
@@ -97,22 +100,6 @@ angular.module('contentful')
         trackPaywall('Clicked Paywall Plan Upgrade Button');
         TheAccountView.goToSubscription();
       };
-    }
-  }
-
-  function includePlanCss () {
-    if (!includedPlanCss) {
-      includedPlanCss = true;
-
-      var document = $document[0];
-      var link = document.createElement('link');
-      link.type = 'text/css';
-      link.rel  = 'stylesheet';
-      link.href = '//' + environment.settings.base_host + '/gatekeeper/plan_cards.css';
-
-      // Insert our link before the first script element.
-      var first = document.getElementsByTagName('script')[0];
-      first.parentNode.insertBefore(link, first);
     }
   }
 

@@ -14,6 +14,9 @@ describe('paywallOpener', function () {
     this.analytics = {
       track: sinon.spy()
     };
+    this.LazyLoader = {
+      get: sinon.stub().withArgs('gkPlanCardStyles')
+    };
     this.TheAccountView = {
       goToSubscription: sinon.spy()
     };
@@ -23,6 +26,7 @@ describe('paywallOpener', function () {
       $provide.value('modalDialog',                 self.modalDialog);
       $provide.value('subscriptionPlanRecommender', subscriptionPlanRecommender);
       $provide.value('analytics',                   self.analytics);
+      $provide.value('LazyLoader',                  self.LazyLoader);
       $provide.value('TheAccountView',              self.TheAccountView);
     });
 
@@ -43,14 +47,18 @@ describe('paywallOpener', function () {
   describeOpenPaywall('with plan upgrading option', {offerPlanUpgrade: true}, function () {
     describe('with recommendPlan() failing', function () {
       beforeEach(function () {
-        this.recommendPlan.returns($q.reject());
+        this.recommendPlan.rejects();
       });
 
-      it('opens a modal dialog nonetheless', function () {
-        this.openPaywall();
-        $rootScope.$digest();
-        sinon.assert.calledOnce(this.modalDialog.open);
+      it('opens a modal dialog nonetheless', testOpensPaywallModalDialog);
+    });
+
+    describe('with plan cards CSS not being able to load', function () {
+      beforeEach(function () {
+        this.LazyLoader.get.withArgs('gkPlanCardStyles').rejects();
       });
+
+      it('opens a modal dialog nonetheless', testOpensPaywallModalDialog);
     });
   });
 
@@ -66,12 +74,14 @@ describe('paywallOpener', function () {
 
     beforeEach(function () {
       if (userCanUpgrade) {
-        this.recommendPlan.returns($q.resolve({plan: {}, reason: '...'}));
+        this.recommendPlan.resolves({plan: {}, reason: '...'});
+        this.LazyLoader.get.withArgs('gkPlanCardStyles').resolves();
       }
 
       var openPaywall = this.$inject('paywallOpener').openPaywall;
       this.openPaywall = function () {
         openPaywall(this.org, openPaywallOptions);
+        $rootScope.$digest();
       };
       this.org = {
         name: 'TEST_ORGANIZATION',
@@ -88,21 +98,14 @@ describe('paywallOpener', function () {
       expect(ret).toBe(undefined);
     });
 
-    it('opens a modal dialog', function () {
-      this.openPaywall();
-      $rootScope.$digest();
-      sinon.assert.calledOnce(this.modalDialog.open);
-    });
+    it('opens a modal dialog', testOpensPaywallModalDialog);
 
     describe('while paywall is open', function () {
       beforeEach(function () {
         this.openPaywall();
-        $rootScope.$digest();
       });
 
-      it('does not open more than one dialogs at a time', function () {
-        assertCanReopen(false);
-      });
+      it('does not open more than one dialogs at a time', testCanReopen(false));
 
       describeNthAnalyticsEvent(0, 'Viewed Paywall');
     });
@@ -111,12 +114,9 @@ describe('paywallOpener', function () {
       beforeEach(function () {
         this.modalDialog.open.returns({promise: $q.reject()});
         this.openPaywall();
-        $rootScope.$digest();
       });
 
-      it('allows to reopen the paywall', function () {
-        assertCanReopen(true);
-      });
+      it('allows to reopen the paywall', testCanReopen(true));
 
       describeNthAnalyticsEvent(1, 'Cancelled Paywall');
     });
@@ -125,15 +125,12 @@ describe('paywallOpener', function () {
       beforeEach(function () {
         this.modalDialog.open.returns({promise: $q.resolve()});
         this.openPaywall();
-        $rootScope.$digest();
         var upgrade = this.modalDialog.open.args[0][0].scopeData.setUpPayment;
         upgrade();
         $rootScope.$digest();
       });
 
-      it('allows to reopen the paywall', function () {
-        assertCanReopen(true);
-      });
+      it('allows to reopen the paywall', testCanReopen(true));
 
       it('redirects the user to the account view', function () {
         sinon.assert.calledOnce(this.TheAccountView.goToSubscription);
@@ -162,12 +159,18 @@ describe('paywallOpener', function () {
       });
     }
 
-    function assertCanReopen (canReopen) {
-      var initialCallCount = self.modalDialog.open.callCount;
-      self.openPaywall();
-      $rootScope.$digest();
-      sinon.assert.callCount(self.modalDialog.open, initialCallCount + canReopen);
+    function testCanReopen (canReopen) {
+      return function () {
+        var initialCallCount = self.modalDialog.open.callCount;
+        self.openPaywall();
+        sinon.assert.callCount(self.modalDialog.open, initialCallCount + canReopen);
+      }
     }
+  }
+
+  function testOpensPaywallModalDialog () {
+    self.openPaywall();
+    sinon.assert.calledOnce(self.modalDialog.open);
   }
 
 });

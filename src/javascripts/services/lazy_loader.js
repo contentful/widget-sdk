@@ -119,6 +119,9 @@ angular.module('contentful').factory('LazyLoader/resources', ['$injector', funct
    */
   return {
     // CSS:
+    gkPlanCardStyles: {
+      url: '//' + environment.settings.base_host + '/gatekeeper/plan_cards.css'
+    },
     fontsDotCom: {
       // Empty stylesheet. The request happening to the file is misused by
       // fonts.com for tracking and resembles the logic in their own
