@@ -115,7 +115,7 @@ angular.module('contentful')
   }
 
   function findOwnedOrgWithState(orgs, state) {
-    return orgs.find(filter);
+    return _.find(orgs, filter);
 
     function filter (organization) {
       var organizationId = dotty.get(organization, 'sys.id');
