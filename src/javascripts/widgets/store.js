@@ -61,8 +61,7 @@ angular.module('contentful')
     return space.endpoint('widgets').get()
     .then(function (response) {
       return createCustomWidgetMap(response.items);
-    }, function (err) {
-      logger.logServerError('Failed to get custom widgets', {error: err});
+    }, function () {
       return {};
     });
   }

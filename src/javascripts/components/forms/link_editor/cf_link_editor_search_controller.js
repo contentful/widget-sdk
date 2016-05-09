@@ -173,23 +173,31 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
   };
 
   this.clearSearch = function () {
-    $scope.paginator.page = 0;
-    $scope.entities = [];
-    $scope.selectedEntity = null;
-    controller.hideSearchResults();
+    if ($scope) {
+      // Method is called asynchronously, so scope might have been
+      // destroyed.
+      $scope.paginator.page = 0;
+      $scope.entities = [];
+      $scope.selectedEntity = null;
+      controller.hideSearchResults();
+    }
   };
 
   this._resetEntities = function() {
     this.clearSearch();
-    this._loadEntities()
-    .then(function (entities) {
-      if($scope) {
-        controller.showSearchResults();
-        $scope.paginator.numEntries = entities.total;
-        $scope.entities = entities;
-        $scope.selectedEntity = entities[0];
-      }
-    });
+    if ($scope) {
+      // Method is called asynchronously, so scope might have been
+      // destroyed.
+      this._loadEntities()
+      .then(function (entities) {
+        if ($scope) {
+          controller.showSearchResults();
+          $scope.paginator.numEntries = entities.total;
+          $scope.entities = entities;
+          $scope.selectedEntity = entities[0];
+        }
+      });
+    }
   };
 
   this._loadEntities = function () {

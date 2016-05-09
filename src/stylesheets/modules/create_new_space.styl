@@ -1,4 +1,4 @@
-@import '../variables/colors'
+@require '../variables/colors'
 
 .create-new-space-dialog
   &.modal-dialog
@@ -24,18 +24,23 @@
 .create-new-space__form
   text-align: left
   padding: 20px 12px 0 12px
-  .cfnext-form__fieldset__flex
-    display: flex
-    > .cfnext-form__field
-        width: 50%
-        &:first-child
-          padding-right: 10px
-        &:last-child
-          padding-left: 10px
-        > select, > input
-          width: 100%
-  .create-new-space__form__option
+  &__option
     margin-bottom: 10px
+  &__label-description
+    color: $colors.text-mid
+  &__radios
+    margin-bottom: 20px
+
+.create-new-space__fieldset
+  display: flex
+  > .cfnext-form__field
+    margin-right: 30px
+    width: 50%
+    &:last-child
+      margin-right: 0
+    > select, > input
+      width: 100%
+
 .create-new-space__templates
   position: relative
   text-align: left
@@ -48,7 +53,7 @@
     height: 310px
   &__inner
     padding: 30px 42px
-    margin-top: 11px;
+    margin-top: 11px
     background-color: $colors.element-lightest
     border-top: 1px solid $colors.element-mid
     border-bottom: 1px solid $colors.element-mid
@@ -71,6 +76,7 @@
     border: 1px solid $colors.element-mid
     border-left-width: 0
     padding: 8px
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out
     path
       fill: $colors.text-light
     &.selected
@@ -81,6 +87,9 @@
         fill: $colors.green-mid
     &__icon
       padding-right: 5px
+    &:hover:not(.selected)
+      background-color: $colors.element-light
+      color: $colors.text-mid
 
   &__description
     overflow: auto
@@ -88,7 +97,9 @@
     background-color: white
     padding: 20px
     border: 1px solid $colors.element-mid
-    border-top-width: 0
+    margin-top: -1px
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08)
+
   &__image
     width: 220px
     min-width: 220px
@@ -99,6 +110,7 @@
   &__text
     display: flex
     align-items: center
+    color: $colors.text-mid
   &__entities
     margin: 20px 0
   &__entity
