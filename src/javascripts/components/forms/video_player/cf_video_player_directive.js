@@ -25,8 +25,8 @@ angular.module('contentful').directive('cfVideoPlayer', ['$compile', function($c
       directive  = $compile('<' + scope.$eval(attrs.widgetPlayerDirective) + '/>')(scope);
 
       scope.videoPlayer = {
-        play  : directive.scope().play,
-        pause : directive.scope().pause
+        play  : scope.play,
+        pause : scope.pause
       };
 
       elem.append(directive);
