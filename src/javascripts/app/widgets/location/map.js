@@ -18,7 +18,13 @@ angular.module('cf.app')
     LazyLoader.get('googleMaps')
     .then(function (GMaps) {
       if (!destroyed) {
-        initMap(scope, GMaps, mapSlotElement);
+        // We first set 'isLoading' to false so that the map slot is
+        // displayed in the dom after the apply cycle. This prevents
+        // rendering issues with Google Maps.
+        scope.isLoading = false;
+        scope.$applyAsync(function () {
+          initMap(scope, GMaps, mapSlotElement);
+        });
       }
     }, function () {
       scope.loadError = true;
