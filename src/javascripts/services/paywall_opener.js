@@ -9,14 +9,14 @@
 angular.module('contentful')
 .factory('paywallOpener', ['$injector', function ($injector) {
 
-  var $q               = $injector.get('$q');
-  var $sce             = $injector.get('$sce');
-  var lazyLoad         = $injector.get('LazyLoader').get;
-  var modalDialog      = $injector.get('modalDialog');
-  var recommendPlan    = $injector.get('subscriptionPlanRecommender').recommend;
-  var intercom         = $injector.get('intercom');
-  var analytics        = $injector.get('analytics');
-  var TheAccountView   = $injector.get('TheAccountView');
+  var $q = $injector.get('$q');
+  var $sce = $injector.get('$sce');
+  var lazyLoad = $injector.get('LazyLoader').get;
+  var modalDialog = $injector.get('modalDialog');
+  var recommendPlan = $injector.get('subscriptionPlanRecommender').recommend;
+  var intercom = $injector.get('intercom');
+  var analytics = $injector.get('analytics');
+  var TheAccountView = $injector.get('TheAccountView');
 
   var paywallIsOpen = false;
 
@@ -96,7 +96,7 @@ angular.module('contentful')
     }
 
     function newUpgradeAction () {
-      return function upgradeAction() {
+      return function upgradeAction () {
         trackPaywall('Clicked Paywall Plan Upgrade Button');
         TheAccountView.goToSubscription();
       };

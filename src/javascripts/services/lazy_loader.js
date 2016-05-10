@@ -14,14 +14,14 @@
  */
 angular.module('contentful').factory('LazyLoader', ['$injector', function ($injector) {
 
-  var $q         = $injector.get('$q');
-  var $window    = $injector.get('$window');
+  var $q = $injector.get('$q');
+  var $window = $injector.get('$window');
   var $rootScope = $injector.get('$rootScope');
-  var loader     = $injector.get('angularLoad');
-  var resources  = $injector.get('LazyLoader/resources');
+  var loader = $injector.get('angularLoad');
+  var resources = $injector.get('LazyLoader/resources');
 
-  var store      = {};
-  var cache      = {};
+  var store = {};
+  var cache = {};
 
   $window.cfFeedLazyLoader = function (name, value) {
     $rootScope.$apply(function () {
@@ -43,7 +43,7 @@ angular.module('contentful').factory('LazyLoader', ['$injector', function ($inje
    * Feed Lazy Loader with the value for the given name.
    * There's no way to override already registered value.
    */
-  function provide(name, value) {
+  function provide (name, value) {
     store[name] = store[name] || value;
   }
 
@@ -60,7 +60,7 @@ angular.module('contentful').factory('LazyLoader', ['$injector', function ($inje
    * - failed loading,
    * - loaded, but extracting value wasn't possible.
    */
-  function get(name) {
+  function get (name) {
     // no resource definition at all
     var resource = resources[name];
     if (!resource) {
@@ -89,18 +89,18 @@ angular.module('contentful').factory('LazyLoader', ['$injector', function ($inje
         value = resource.setup(value);
       }
 
-      return value ? value : $q.reject(new Error('Script loaded, but no value provided.'));
+      return value || $q.reject(new Error('Script loaded, but no value provided.'));
     });
 
     cache[name] = loadPromise;
     return loadPromise;
   }
 
-  function getLoaderFor(resource) {
+  function getLoaderFor (resource) {
     return isStylesheet(resource) ? loader.loadCSS : loader.loadScript;
   }
 
-  function isStylesheet(resource) {
+  function isStylesheet (resource) {
     return resource.url.match(/\.css(?:\?.*)?$/);
   }
 }]);
@@ -151,7 +151,7 @@ angular.module('contentful').factory('LazyLoader/resources', ['$injector', funct
     },
     googleMaps: {
       url: 'https://maps.googleapis.com/maps/api/js?v=3&key=' +
-            environment.settings.google.maps_api_key,
+      environment.settings.google.maps_api_key,
       globalObject: 'google.maps'
     },
     bugsnag: {
@@ -160,7 +160,7 @@ angular.module('contentful').factory('LazyLoader/resources', ['$injector', funct
     }
   };
 
-  function setupEmbedly(embedly) {
+  function setupEmbedly (embedly) {
     embedly('defaults', {
       cards: {
         key: environment.settings.embedly.api_key

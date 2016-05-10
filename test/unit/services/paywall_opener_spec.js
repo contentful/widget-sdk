@@ -23,15 +23,15 @@ describe('paywallOpener', function () {
 
     self = this;
     module('contentful/test', function ($provide) {
-      $provide.value('modalDialog',                 self.modalDialog);
+      $provide.value('modalDialog', self.modalDialog);
       $provide.value('subscriptionPlanRecommender', subscriptionPlanRecommender);
-      $provide.value('analytics',                   self.analytics);
-      $provide.value('LazyLoader',                  self.LazyLoader);
-      $provide.value('TheAccountView',              self.TheAccountView);
+      $provide.value('analytics', self.analytics);
+      $provide.value('LazyLoader', self.LazyLoader);
+      $provide.value('TheAccountView', self.TheAccountView);
     });
 
     $rootScope = this.$inject('$rootScope');
-    $q         = this.$inject('$q');
+    $q = this.$inject('$q');
 
     this.modalDialog.open.returns({promise: $q.defer().promise});
   });
@@ -62,7 +62,7 @@ describe('paywallOpener', function () {
     });
   });
 
-  function describeOpenPaywall(caseMsg, options, moreTests) {
+  function describeOpenPaywall (caseMsg, options, moreTests) {
     describe('.openPaywall() ' + caseMsg, function () {
       testOpenPaywall(options, moreTests);
     });
@@ -85,7 +85,7 @@ describe('paywallOpener', function () {
       };
       this.org = {
         name: 'TEST_ORGANIZATION',
-        sys: {id:'TEST_ID'}
+        sys: {id: 'TEST_ID'}
       };
     });
 
@@ -139,7 +139,7 @@ describe('paywallOpener', function () {
       describeNthAnalyticsEvent(1, 'Clicked Paywall Plan Upgrade Button');
     });
 
-    function describeNthAnalyticsEvent(n, event) {
+    function describeNthAnalyticsEvent (n, event) {
       describe('“' + event + '” analytics event', function () {
         beforeEach(function () {
           this.nthTrack = this.analytics.track.getCall(n);
