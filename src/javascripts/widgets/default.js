@@ -38,13 +38,16 @@ angular.module('contentful')
     // before any validation can be set. So I think this is not need.
     var shouldUseDropdown = hasInValidation(field.validations);
     var canUseDropdown = _.contains(DROPDOWN_TYPES, fieldType);
+
     if (shouldUseDropdown && canUseDropdown) {
       return 'dropdown';
     }
 
-    if (fieldType === 'Text') {
-      var isDisplayField = contentType.data.displayField === field.id;
-      return isDisplayField ? 'singleLine' : 'markdown';
+    var isTextField = fieldType === 'Text';
+    var isDisplayField = contentType.data.displayField === field.id;
+
+    if (isTextField && isDisplayField) {
+      return 'singleLine';
     }
 
     return widgetMap.DEFAULTS[fieldType];
