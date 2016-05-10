@@ -8,25 +8,7 @@
 angular.module('contentful')
 .factory('widgets/default', ['$injector', function($injector) {
   var fieldFactory = $injector.get('fieldFactory');
-
-  // Maps type names to builtin widget IDs. Type names are those
-  // returned by `fieldFactory.getTypeName`.
-  var DEFAULT_WIDGETS = {
-    'Text':     'markdown',
-    'Symbol':   'singleLine',
-    'Symbols':  'listInput',
-    'Integer':  'numberEditor',
-    'Number':   'numberEditor',
-    'Boolean':  'boolean',
-    'Date':     'datePicker',
-    'Location': 'locationEditor',
-    'Object':   'objectEditor',
-    'Entry':    'entryLinkEditor',
-    'Entries':  'entryLinksEditor',
-    'Asset':    'assetLinkEditor',
-    'Assets':   'assetLinksEditor',
-  };
-
+  var widgetMap = $injector.get('widgetMap');
 
   // We can use a dropdown widget for these field types
   var DROPDOWN_TYPES = ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'];
@@ -65,7 +47,7 @@ angular.module('contentful')
       return isDisplayField ? 'singleLine' : 'markdown';
     }
 
-    return DEFAULT_WIDGETS[fieldType];
+    return widgetMap.DEFAULTS[fieldType];
   };
 
   function hasInValidation(validations) {
