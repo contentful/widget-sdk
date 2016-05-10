@@ -1,0 +1,48 @@
+.ct-hint.note-box.note-box--blue(ng-if="hints.shouldShow('ct-field-max')")
+  cf-icon(name="info")
+  div
+    h1 Field limits
+    p Keep in mind that the maximum number of fields per Content Type is 50.
+    a.ct-hint__dismiss.cfnext-btn-link(ng-click="hints.dismiss('ct-field-max')") Dismiss
+
+.ct-hint.note-box.note-box--blue(ng-if="hints.lifecycle.shouldShow('neutral')")
+  cf-icon(name="info")
+  div
+    h1 Disabling fields
+    p
+      | You can now disable fields in a&nbsp;couple different ways. Have a&nbsp;look at the ​
+      cf-knowledge-base(target="field_lifecycle" text="field lifecycle")
+      |​ to learn more.
+    a.ct-hint__dismiss.cfnext-btn-link(ng-click="hints.lifecycle.dismiss('neutral')") Dismiss
+
+.ct-hint.note-box.note-box--blue(ng-if="hints.lifecycle.shouldShow('disabled')")
+  cf-icon(name="info")
+  div
+    h1 Editing disabled for some fields
+    p
+      | These fields will disappear from the editor, so you won't be
+      | able to edit their content anymore. Have a&nbsp;look at the ​
+      cf-knowledge-base(target="field_lifecycle" text="field lifecycle")
+      |​ to learn more.
+    a.ct-hint__dismiss.cfnext-btn-link(ng-click="hints.lifecycle.dismiss('disabled')") Dismiss
+
+.ct-hint.note-box.note-box--blue(ng-if="hints.lifecycle.shouldShow('omitted')")
+  cf-icon(name="info")
+  div
+    h1 Some fields are disabled from the response
+    p
+      | You won't be able to fetch them via the Delivery or Preview APIs. Have a&nbsp;look at the ​
+      cf-knowledge-base(target="field_lifecycle" text="field lifecycle")
+      |​ to learn more.
+    a.ct-hint__dismiss.cfnext-btn-link(ng-click="hints.lifecycle.dismiss('omitted')") Dismiss
+
+.ct-hint.note-box.note-box--blue(ng-if="hints.lifecycle.shouldShow('both')")
+  cf-icon(name="info")
+  div
+    h1 Some fields are completely disabled
+    p
+      | Not only would these fields disappear from the editor &ndash; you also
+      | won't be able to fetch the content via API. Have a&nbsp;look at the ​
+      cf-knowledge-base(target="field_lifecycle" text="field lifecycle")
+      |​ to learn more.
+    a.ct-hint__dismiss.cfnext-btn-link(ng-click="hints.lifecycle.dismiss('both')") Dismiss

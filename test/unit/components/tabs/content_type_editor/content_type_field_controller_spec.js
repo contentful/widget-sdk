@@ -39,42 +39,43 @@ describe('Content Type Field Controller', function () {
     sinon.assert.calledWith(this.ctEditorController.openFieldDialog, this.field);
   });
 
-  describe('disable/enable action', function () {
-    it('disables a field', function () {
-      this.field.disabled = false;
-      this.fieldElement.find('[aria-label=Actions]').click();
-      this.$apply();
-      this.fieldElement.find('[role=menuitem]:contains(Disable)').click();
-      this.$apply();
-      expect(this.field.disabled).toBe(true);
+  describeFieldPropertyActions('omitted');
+  describeFieldPropertyActions('disabled');
+
+  function describeFieldPropertyActions (prop) {
+    describe('field "' + prop + '" property toggling actions', function () {
+      beforeEach(function () {
+        this.click = function (label) {
+          this.fieldElement.find('[aria-label=Actions]').click();
+          this.$apply();
+          this.fieldElement.find('[role=menuitem]:contains(' + label + ')').click();
+          this.$apply();
+        };
+      });
+
+      it('marks a field as ' + prop, function () {
+        this.field[prop] = false;
+        this.click('Disable');
+        expect(this.field[prop]).toBe(true);
+      });
+
+      it('marks a field as not ' + prop, function () {
+        this.field[prop] = true;
+        this.click('Enable');
+        expect(this.field[prop]).toBe(false);
+      });
+
+      it('shows notification when marking title field as ' + prop, function () {
+        var modalDialog = this.$inject('modalDialog');
+        var open = sinon.stub(modalDialog, 'open');
+        this.field[prop] = false;
+        this.contentType.data.displayField = this.field.id;
+        this.click('Disable');
+        expect(this.field[prop]).toBe(false);
+        sinon.assert.called(open);
+      });
     });
-
-    it('enables a field', function () {
-      this.field.disabled = true;
-      this.$apply();
-      this.fieldElement.find('[aria-label=Actions]').click();
-      this.$apply();
-      this.fieldElement.find('[role=menuitem]:contains(Enable)').click();
-      this.$apply();
-      expect(this.field.disabled).toBe(false);
-    });
-
-    it('shows notification when disabling title field', function () {
-      var modalDialog = this.$inject('modalDialog');
-      var open = sinon.stub(modalDialog, 'open');
-
-      this.field.disabled = false;
-      this.contentType.data.displayField = this.field.id;
-      this.$apply();
-      this.fieldElement.find('[aria-label=Actions]').click();
-      this.$apply();
-      this.fieldElement.find('[role=menuitem]:contains(Disable)').click();
-      this.$apply();
-
-      expect(this.field.disabled).toBe(false);
-      sinon.assert.called(open);
-    });
-  });
+  }
 
   describe('title action', function () {
     it('sets field as title', function () {
@@ -104,6 +105,13 @@ describe('Content Type Field Controller', function () {
 
     it('is not shown if field is disabled', function () {
       this.field.disabled = true;
+      this.$apply();
+      var setEntryButton = this.fieldElement.find('[role=menuitem]:contains(Set field as Entry title)');
+      expect(setEntryButton.length).toBe(0);
+    });
+
+    it('is not shown if field is omitted', function () {
+      this.field.omitted = true;
       this.$apply();
       var setEntryButton = this.fieldElement.find('[role=menuitem]:contains(Set field as Entry title)');
       expect(setEntryButton.length).toBe(0);

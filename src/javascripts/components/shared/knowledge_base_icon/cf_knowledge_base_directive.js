@@ -39,7 +39,8 @@ angular.module('contentful').factory('KnowledgeBase/getUrl', ['$injector', funct
     locale:           'developers/docs/concepts/locales/',
     space_template:   'developers/docs/', // @todo needs proper article
     id_change:        'developers/docs/', // @todo needs proper article,
-    roles:            'r/knowledgebase/roles-and-permissions/'
+    roles:            'r/knowledgebase/roles-and-permissions/',
+    field_lifecycle:  'faq/basics/#what-is-the-lifecycle-of-a-field'
   };
 
   return function getKnowledgeBaseUrl(name) {

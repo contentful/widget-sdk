@@ -26,11 +26,12 @@ function ($scope, $injector) {
 
   /**
    * @ngdoc method
-   * @name ContentTypeFieldController#toggleDisable
+   * @name ContentTypeFieldController#toggle
    */
-  controller.toggleDisable = function () {
-    var isDisabled = !$scope.field.disabled;
-    if ($scope.fieldIsTitle && isDisabled) {
+  controller.toggle = function toggle (property) {
+    var toggled = !$scope.field[property];
+
+    if ($scope.fieldIsTitle && toggled) {
       modalDialog.open({
         title: 'This field can\'t be disabled right now.',
         message: 'The field <span class="modal-dialog__highlight">' + $scope.field.name + '</span> acts as a title for this content type. '+
@@ -40,9 +41,10 @@ function ($scope, $injector) {
       });
       return;
     }
-    $scope.field.disabled = isDisabled;
 
-    var actionName = isDisabled ? 'disable' : 'enable';
+    $scope.field[property] = toggled;
+
+    var actionName = [toggled ? 'on' : 'off', property].join('-');
     trackFieldAction(actionName, $scope.field);
   };
 
@@ -72,10 +74,11 @@ function ($scope, $injector) {
     $scope.fieldIsTitle = isTitle;
   });
 
-  $scope.$watchGroup(['fieldIsTitle', 'field.disabled'], function () {
+  $scope.$watchGroup(['fieldIsTitle', 'field.disabled', 'field.omitted'], function () {
     var isTitle = $scope.fieldIsTitle;
     var disabled = $scope.field.disabled;
-    $scope.fieldCanBeTitle = isTitleType && !isTitle && !disabled;
+    var omitted = $scope.field.omitted;
+    $scope.fieldCanBeTitle = isTitleType && !isTitle && !disabled && !omitted;
   });
 
   $scope.$watchCollection('publishedContentType.data.fields', function (fields) {

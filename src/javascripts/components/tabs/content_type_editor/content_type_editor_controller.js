@@ -22,7 +22,7 @@ function ContentTypeEditorController($scope, $injector) {
   var $q                = $injector.get('$q');
   var $state            = $injector.get('$state');
   var validation        = $injector.get('validation');
-  var hints             = $injector.get('hints');
+  var hints             = $injector.get('ContentTypeEditorController/hints')();
   var modalDialog       = $injector.get('modalDialog');
   var openFieldDialog   = $injector.get('openFieldDialog');
   var leaveConfirmator  = $injector.get('navigation/confirmLeaveEditor');
@@ -38,14 +38,19 @@ function ContentTypeEditorController($scope, $injector) {
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
   $scope.hints = hints;
+  $scope.settingsHintShown = hints.shouldShow('ct-field-settings')
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.saveAndClose);
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
 
-  $scope.$watch('contentType.data.fields',       checkForDirtyForm, true);
   $scope.$watch('contentType.data.displayField', checkForDirtyForm);
   $scope.$watch('contentTypeForm.$dirty',        setDirtyState);
   $scope.$watch('context.isNew',                 setDirtyState);
+
+  $scope.$watch('contentType.data.fields', function (newVal, oldVal) {
+    checkForDirtyForm(newVal, oldVal);
+    hints.updateFields(newVal);
+  }, true);
 
   $scope.$watch('contentType.data.fields.length', function (length) {
     $scope.hasFields = length > 0;
@@ -199,5 +204,65 @@ function ContentTypeEditorController($scope, $injector) {
    */
   function syncEditingInterface () {
     editingInterfaces.syncControls($scope.contentType.data, $scope.editingInterface);
+  }
+}])
+
+.factory('ContentTypeEditorController/hints', ['$injector', function ($injector) {
+
+  var hints = $injector.get('hints');
+
+  return function prepareContentTypeHints () {
+    var fieldPropertyCounts = countFieldProperties([]);
+
+    return {
+      updateFields: function (fields) {
+        fieldPropertyCounts = countFieldProperties(fields);
+      },
+      shouldShow: shouldShowHint,
+      dismiss: dismissHint,
+      lifecycle: {
+        shouldShow: function (id) {
+          return shouldShowLifecycleHint(fieldPropertyCounts, id);
+        },
+        dismiss: dismissLifecycleHint
+      }
+    };
+  };
+
+  function shouldShowLifecycleHint (propertyCounts, id) {
+    var pc = propertyCounts;
+    var shouldShow = shouldShowHint(getLifecycleHintId(id));
+
+    switch (id) {
+      case 'neutral':  return pc.omitted < 1 && pc.disabled < 1 && shouldShow;
+      case 'disabled': return pc.both    < 1 && pc.disabled > 0 && shouldShow;
+      case 'omitted':  return pc.both    < 1 && pc.omitted  > 0 && shouldShow;
+      case 'both':     return pc.both    > 0                    && shouldShow;
+      default:         return false;
+    }
+  }
+
+  function dismissLifecycleHint (id) {
+    dismissHint(getLifecycleHintId(id));
+  }
+
+  function shouldShowHint (id) {
+    return hints.shouldShow(id);
+  }
+
+  function dismissHint (id) {
+    hints.setAsSeen(id);
+  }
+
+  function getLifecycleHintId (id) {
+    return 'ct-field-lifecycle-' + id;
+  }
+
+  function countFieldProperties (fields) {
+    return _.transform(fields, function (acc, field) {
+      if (field.disabled) { acc.disabled += 1; }
+      if (field.omitted) { acc.omitted += 1; }
+      if (field.disabled && field.omitted) { acc.both += 1; }
+    }, {disabled: 0, omitted: 0, both: 0});
   }
 }]);

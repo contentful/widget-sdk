@@ -1,0 +1,38 @@
+/**
+Field hints
+
+Markup:
+.ct-hint.note-box.note-box--blue
+  cf-icon(name="info")
+  div
+    h1 Field limits
+    p Keep in mind that the maximum number of fields per Content Type is 50.
+    a.ct-hint__dismiss.cfnext-btn-link(href="#") Dismiss
+
+Styleguide content-type-editor.hints
+*/
+
+.content-type-hints
+  margin: $rhythm(1)
+  max-width: 300px
+
+.ct-hint
+  display: flex
+  margin-top: 0
+  cf-knowledge-base
+    display: inline
+  h1, p
+    display: block
+    margin: 0
+    margin-bottom: 6px
+    color: $colors.text-mid
+  h1
+    font-size: 1em
+    margin-top: 2px
+    line-height: 18px
+  cf-icon
+    flex: 0 0 30px
+    svg use
+      fill: $colors.blue-mid
+  &__dismiss
+    text-decoration: underline
