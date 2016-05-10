@@ -170,6 +170,10 @@ describe('cfWidgetApi directive', function () {
       doc.changeValue = sinon.stub().resolves();
     });
 
+    afterEach(function () {
+      doc = null;
+    });
+
     it('calls otSubDoc.changeValue when value is different', function () {
       doc.getValue.returns('OLD');
       this.widgetApi.field.setValue('NEW');
@@ -182,6 +186,15 @@ describe('cfWidgetApi directive', function () {
       this.widgetApi.field.setValue('SAME');
       sinon.assert.notCalled(doc.changeValue);
     });
+
+    it('calls otSubDoc.changeValue when object reference is the same', function () {
+      var obj = {}
+      doc.getValue.returns(obj);
+      this.widgetApi.field.setValue(obj);
+      sinon.assert.calledOnce(doc.changeValue);
+      sinon.assert.calledWithExactly(doc.changeValue, obj);
+    });
+
 
     it('returns a promise', function () {
       var handler = sinon.spy();
