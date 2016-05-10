@@ -73,8 +73,6 @@ angular.module('cf.app')
     });
   });
 
-  controller.updateAddressFromLocation();
-
   function convertResults (rawResults) {
     return rawResults.map(function (result) {
       return {

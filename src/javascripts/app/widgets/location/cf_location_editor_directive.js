@@ -19,13 +19,20 @@ angular.module('cf.app')
         $scope.isDisabled = disabled;
       });
 
-      var offValueChanged = field.onValueChanged(function (location) {
-        $scope.location = location || {};
-      });
-
       $scope.COORDINATES = 'coordinates';
       $scope.ADDRESS = 'address';
       $scope.inputMethod = $scope.ADDRESS;
+
+      $scope.search = $controller('LocationEditorSearchController', {$scope: $scope});
+
+      $scope.search.onResultsAvailable(function () {
+        searchResultsMenu.show();
+      });
+
+      var offValueChanged = field.onValueChanged(function (location) {
+        $scope.location = location || {};
+        $scope.search.updateAddressFromLocation();
+      });
 
       $scope.$on('$destroy', offValueChanged);
       $scope.$on('$destroy', offDisabledStatusChanged);
@@ -36,12 +43,6 @@ angular.module('cf.app')
         } else {
           field.removeValue();
         }
-      });
-
-      $scope.search = $controller('LocationEditorSearchController', {$scope: $scope});
-
-      $scope.search.onResultsAvailable(function () {
-        searchResultsMenu.show();
       });
 
       LocationMap.init($scope, mapSlotElement);
