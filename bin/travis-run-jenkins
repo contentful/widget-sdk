@@ -9,16 +9,27 @@
 # The jenkins credentials are provided in encrypted form in
 # `.travis.yml`. They are defined in the Jenkins Job configuration.
 
-set -ev
+set -e
 
 # abort if tests failed
 if [[ "$TRAVIS_TEST_RESULT" != "0" ]]; then exit 0; fi
 
+# abort if testing a merge commit
+if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
+  echo "Skipping integration tests for PR"
+  exit 0;
+fi
+
 # abort if not a feature branch
-if [[ "$TRAVIS_BRANCH" =~ (preview|master|production) ]]; then exit 0; fi
+if [[ "$TRAVIS_BRANCH" =~ (preview|master|production) ]]; then
+  echo "Skipping integration tests for $TRAVIS_BRANCH branch builds"
+  exit 0;
+fi
 
 AUTH="cf-ci:$JENKINS_PASSWORD"
 QUERY="token=$JENKINS_TOKEN&Git_Commit_Hash=$TRAVIS_COMMIT"
 JOB="User Interface Pull Request"
+URL="https://jenkins.quirely.com/job/$JOB/buildWithParameters?$QUERY"
 
-curl -X POST -i -u "$AUTH" "https://jenkins.quirely.com/job/$JOB/buildWithParameters?$QUERY"
+echo "POST $URL"
+curl -X POST -i -u "$AUTH" "$URL"
