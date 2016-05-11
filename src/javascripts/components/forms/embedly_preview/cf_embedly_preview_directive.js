@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', function ($injector) {
-  var $timeout   = $injector.get('$timeout');
-  var LazyLoader = $injector.get('LazyLoader');
-  var debounce   = $injector.get('debounce');
-  var urlUtils   = $injector.get('urlUtils');
+  var $timeout      = $injector.get('$timeout');
+  var debounce      = $injector.get('debounce');
+  var urlUtils      = $injector.get('urlUtils');
+  var LazyLoader    = $injector.get('LazyLoader');
 
   return {
     restrict: 'E',

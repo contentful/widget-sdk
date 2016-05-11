@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Segment service', function () {
-  var segment, $window, document, logger;
+  var segment, $window, document;
   var logSpy;
 
   beforeEach(function () {
@@ -19,10 +19,9 @@ describe('Segment service', function () {
         logError: logSpy
       });
     });
-    segment  = this.$inject('segment');
-    $window  = this.$inject('$window');
+    segment = this.$inject('segment');
+    $window = this.$inject('$window');
     document = this.$inject('$document')[0];
-    logger   = this.$inject('logger');
   });
 
   afterEach(function () {
@@ -59,7 +58,7 @@ describe('Segment service', function () {
   describeSegmentFunction('identify');
   describeSegmentFunction('track');
 
-  function describeSegmentFunction ( fnName) {
+  function describeSegmentFunction (fnName) {
     describe(fnName + '()', function () {
       beforeEach(function () {
         document.createElement = sinon.spy(function () {

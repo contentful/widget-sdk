@@ -9,6 +9,8 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
 
     options = options || {};
 
+    var LF = '\n';
+
     var EDITOR_SIZE = {
       min: options.height || 300,
       max: 500,
@@ -24,7 +26,10 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
       matchBrackets: true,
       lineWrapping: true,
       theme: 'elegant',
-      lineSeparator: '\n',
+      // When `lineSeparator === null` the document will be split
+      // on CRLFs as well as lone CRs and LFs. A single LF will
+      // be used as line separator in all output
+      lineSeparator: null,
       tabSize: 2,
       indentWithTabs: false,
       indentUnit: 2
@@ -270,7 +275,7 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
 
     function getNl(n) {
       if (n < 1) { return ''; }
-      return repeat(opt('lineSeparator'), n || 1);
+      return repeat(LF, n || 1);
     }
 
     function getValue() {

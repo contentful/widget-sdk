@@ -20,9 +20,10 @@ angular.module('contentful')
   var isActive = false;
 
   return {
-    goToUserProfile:     goToUserProfile,
-    goToSubscription:    goToSubscription,
-    silentlyChangeState: silentlyChangeState,
+    goToUserProfile:                 goToUserProfile,
+    goToSubscription:                goToSubscription,
+    silentlyChangeState:             silentlyChangeState,
+    getGoToSubscriptionOrganization: getGoToSubscriptionOrganization,
 
     /**
      * @ngdoc method
@@ -65,17 +66,38 @@ angular.module('contentful')
    * @ngdoc method
    * @name TheAccountView#goToSubscription
    * @description
-   * Navigates to the subscription details page for a current space.
+   * Navigates to the subscription details page for the current space or - if the
+   * user hasn't got any space yet - for the the user's next best organization.
+   * Only organization owners get navigated.
    */
-  function goToSubscription() {
-    var organizationId = spaceContext.getData('organization.sys.id');
-
-    if (OrganizationList.isOwner(organizationId)) {
-      var pathSuffix = 'organizations/' + organizationId + '/subscription';
+  function goToSubscription () {
+    var org = getGoToSubscriptionOrganization();
+    if (org) {
+      var pathSuffix = 'organizations/' + org.sys.id + '/subscription';
       return goTo(pathSuffix, {reload: true});
     } else {
       return $q.reject();
     }
+  }
+
+  /**
+   * @ngdoc method
+   * @name TheAccountView#getGoToSubscriptionOrganization
+   * @returns {API.Organization?}
+   * @description
+   * Returns the current space's organization if it is owned by the user or - if the
+   * user hasn't got any space yet - the next best current user owned organization.
+   */
+  function getGoToSubscriptionOrganization () {
+    var orgs = [spaceContext.getData('organization')];
+    if (!orgs[0]) {
+      // No space yet, get next best organization.
+      orgs = OrganizationList.getAll();
+    }
+    return findOwnedOrgWithState(orgs, 'trial') ||
+      findOwnedOrgWithState(orgs, 'active') ||
+      findOwnedOrgWithState(orgs, '*') ||
+      null;
   }
 
   /**
@@ -89,6 +111,17 @@ angular.module('contentful')
       return goTo(pathSuffix, {location: 'replace'});
     } else {
       return $q.reject();
+    }
+  }
+
+  function findOwnedOrgWithState(orgs, state) {
+    return _.find(orgs, filter);
+
+    function filter (organization) {
+      var organizationId = dotty.get(organization, 'sys.id');
+      return organizationId &&
+        OrganizationList.isOwner(organizationId) &&
+        (organization.subscriptionState === state || state === '*');
     }
   }
 }]);

@@ -1,4 +1,4 @@
-@import '../variables/colors'
+@require '../variables/colors'
 
 .onboarding-dialog
   &.modal-dialog
@@ -8,6 +8,8 @@
     padding: 0 30px 30px 30px
   &__heading
     line-height: 1.3em
+    &.x--no-nav
+      margin-top: 30px
   &__subheading
     font-size: 1.05em
     line-height: 1.3em
@@ -28,6 +30,8 @@
         font-weight: bold
         color: $colors.green-mid
         fill: $colors.green-mid
+      cf-icon
+        margin-right: 3px
     .x__separator
       width: 40px
       margin: 0 16px
@@ -37,11 +41,15 @@
   &__controls--right
     justify-content: flex-end
 
+  &__skip
+    text-decoration: underline
+    color: $colors.text-mid
+
 
 .persona-selection
   &__options
     display: flex
-    padding: 20px 0
+    padding: 20px 0 10px 0
   &-option
     width: 25%
     padding: 0 20px
@@ -55,6 +63,7 @@
       border: 1px solid $colors.element-mid
       box-shadow: 0 1px 3px 0 rgba(black, 0.08)
       border-radius: 2px
+      transition: border 0.2s ease-in-out
       &:hover
         border-color: $colors.element-darkest
       &.selected, &.selected:hover

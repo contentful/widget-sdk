@@ -17,7 +17,7 @@ angular.module('contentful')
 });
 
 angular.module('contentful')
-.controller('createSpaceController', ['$scope', '$injector', function($scope, $injector) {
+.controller('createSpaceController', ['$scope', '$injector', '$element', function($scope, $injector, $element) {
   var controller           = this;
   var $rootScope           = $injector.get('$rootScope');
   var client               = $injector.get('client');
@@ -72,6 +72,15 @@ angular.module('contentful')
     };
   });
 
+  // Scroll to bottom if example templates are opened and templates loaded
+  $scope.$watch(function() {
+    return controller.newSpace.useTemplate;
+  }, function(usingTemplate) {
+    if (usingTemplate && controller.templates) {
+      $element.animate({scrollTop: $element.scrollTop() + 260}, 'linear');
+    }
+  });
+
   // Switch space template
   controller.selectTemplate = function(template) {
     if (!controller.createSpaceInProgress) {
@@ -81,6 +90,10 @@ angular.module('contentful')
 
   // Request space creation
   controller.requestSpaceCreation = function() {
+    if (!validate(controller.newSpace.data)) {
+      return;
+    }
+
     controller.createSpaceInProgress = true;
     if (controller.newSpace.useTemplate) {
       createNewSpace(controller.newSpace.selectedTemplate);
@@ -109,6 +122,14 @@ angular.module('contentful')
 
     // Select default template
     controller.newSpace.selectedTemplate = _.first(controller.templates);
+  }
+
+  function validate(data) {
+    var hasSpaceName = data.name && data.name.length;
+    if (!hasSpaceName) {
+      showFormError('Please provide space name');
+    }
+    return hasSpaceName;
   }
 
   function createNewSpace(template) {
@@ -143,11 +164,12 @@ angular.module('contentful')
       return spaceTools.goTo(space, true);
     })
     .then(function() {
-      controller.createTemplateInProgress = true;
-      controller.viewState = 'creatingTemplate';
       if (template.name === 'Blank') {
-        return createApiKey();
+        createApiKey();
+        controller.finishedSpaceCreation();
       } else {
+        controller.createTemplateInProgress = true;
+        controller.viewState = 'creatingTemplate';
         return loadSelectedTemplate();
       }
     })

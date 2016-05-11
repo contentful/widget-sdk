@@ -23,7 +23,7 @@ describe('cfMultiLineEditor directive', function () {
     expect($el.find('textarea').val()).toEqual('test');
   });
 
-  it('input event on text field calls "setString()"', function(){
+  it('input event on text field calls "setString()"', function () {
     this.fieldApi.setString = sinon.stub();
     var $el = this.compile();
 
@@ -33,7 +33,7 @@ describe('cfMultiLineEditor directive', function () {
     sinon.assert.calledWithExactly(this.fieldApi.setString, 'NEW');
   });
 
-  it('enables and disables textare based on field status', function(){
+  it('enables and disables textare based on field status', function () {
     var $el = this.compile();
     var textarea = $el.find('textarea');
 

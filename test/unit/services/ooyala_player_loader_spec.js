@@ -1,76 +1,76 @@
 'use strict';
 
-describe('ooyalaPlayerLoader', function() {
-  var angularLoadDeferred, angularLoadSpy, ooyalaPlayerLoader,
-      ooyalaPlayerLoaderPromise, baseUrl, $window, $rootScope;
+describe('ooyalaPlayerLoader', function () {
+  var angularLoadDeferred, angularLoadSpy, ooyalaPlayerLoader;
+  var ooyalaPlayerLoaderPromise, baseUrl, $window, $rootScope;
 
-  beforeEach(function() {
+  beforeEach(function () {
     module('contentful/test');
-    module(function($provide){
+    module(function ($provide) {
       angularLoadSpy = {loadScript: jasmine.createSpy()};
       $provide.value('angularLoad', angularLoadSpy);
     });
 
-    inject(function($q, $injector){
-      $rootScope         = $injector.get('$rootScope');
-      $window            = $injector.get('$window');
+    inject(function ($q, $injector) {
+      $rootScope = $injector.get('$rootScope');
+      $window = $injector.get('$window');
       ooyalaPlayerLoader = $injector.get('ooyalaPlayerLoader');
 
       angularLoadDeferred = $q.defer();
       angularLoadSpy.loadScript.and.returnValue(angularLoadDeferred.promise);
 
-      $window.OO = {ready : jasmine.createSpy()};
+      $window.OO = {ready: jasmine.createSpy()};
 
     });
 
-    baseUrl =  '//player.ooyala.com/v3/:player_id?platform=priority-html5';
+    baseUrl = '//player.ooyala.com/v3/:player_id?platform=priority-html5';
   });
 
-  describe('#load', function() {
+  describe('#load', function () {
     var expectedUrl, url;
 
-    beforeEach(function() {
+    beforeEach(function () {
       ooyalaPlayerLoaderPromise = ooyalaPlayerLoader.load('123');
-      expectedUrl               = baseUrl.replace(':player_id', '123');
-      url                       = angularLoadSpy.loadScript.calls.mostRecent().args[0];
+      expectedUrl = baseUrl.replace(':player_id', '123');
+      url = angularLoadSpy.loadScript.calls.mostRecent().args[0];
     });
 
-    it('uses the right url', function() {
+    it('uses the right url', function () {
       expect(url).toBe(expectedUrl);
     });
 
-    describe('on sucess', function() {
-      beforeEach(function() {
+    describe('on sucess', function () {
+      beforeEach(function () {
         angularLoadDeferred.resolve();
         $rootScope.$apply();
       });
 
-      it('installs a callback to know when the player is ready', function() {
+      it('installs a callback to know when the player is ready', function () {
         expect($window.OO.ready).toHaveBeenCalled();
       });
 
-      describe('on player ready', function() {
+      describe('on player ready', function () {
         var player;
 
-        beforeEach(function() {
-          ooyalaPlayerLoaderPromise.then(function(_player_){ player = _player_; });
+        beforeEach(function () {
+          ooyalaPlayerLoaderPromise.then(function (_player_) { player = _player_; });
           $window.OO.ready.calls.mostRecent().args[0](); // call the 'readyCallback'
           $rootScope.$apply();
         });
 
-        it('resolves the promise passing the player as parameter', function() {
+        it('resolves the promise passing the player as parameter', function () {
           expect(player).toBe($window.OO);
         });
       });
     });
 
-    describe('on failure', function() {
-      beforeEach(function() {
+    describe('on failure', function () {
+      beforeEach(function () {
         angularLoadDeferred.reject();
         $rootScope.$apply();
       });
 
-      it('does not install a callback to know when the player is ready', function() {
+      it('does not install a callback to know when the player is ready', function () {
         expect($window.OO.ready).not.toHaveBeenCalled();
       });
     });

@@ -29,7 +29,7 @@ describe('CodeMirror wrapper', function () {
       expect(opt('mode')).toBe('gfm');
       expect(opt('lineNumbers')).toBe(false);
       expect(opt('undoDepth')).toBe(0);
-      expect(opt('lineSeparator')).toBe('\n');
+      expect(opt('lineSeparator')).toBe(null);
       expect(opt('indentUnit')).toBe(2);
     });
 

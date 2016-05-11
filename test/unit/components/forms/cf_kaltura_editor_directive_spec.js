@@ -3,7 +3,7 @@
 describe('cfKalturaEditor directive', function () {
   var kalturaClientWrapperMock;
 
-  beforeEach(function() {
+  beforeEach(function () {
     module('contentful/test', function ($provide) {
       kalturaClientWrapperMock = jasmine.createSpyObj('kalturaClientWrapperMock', ['setOrganizationId']);
       $provide.value('kalturaClientWrapper', kalturaClientWrapperMock);
@@ -18,7 +18,7 @@ describe('cfKalturaEditor directive', function () {
     kalturaClientWrapperMock = null;
   }));
 
-  it('calls the #setOrganizationId method of the kaltura client wrapper', function() {
+  it('calls the #setOrganizationId method of the kaltura client wrapper', function () {
     this.$compile('<cf-kaltura-editor />', {}, {
       cfWidgetApi: {
         field: {
@@ -29,4 +29,3 @@ describe('cfKalturaEditor directive', function () {
     expect(kalturaClientWrapperMock.setOrganizationId).toHaveBeenCalledWith('org-123');
   });
 });
-

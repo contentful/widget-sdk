@@ -23,7 +23,6 @@ function ContentTypeActionsController($scope, $injector) {
   var ReloadNotification = $injector.get('ReloadNotification');
   var ctHelpers          = $injector.get('data/ContentTypes');
   var closeState         = $injector.get('navigation/closeState');
-  var uiConfig           = $injector.get('uiConfig');
 
   /**
    * @ngdoc property
@@ -238,11 +237,7 @@ function ContentTypeActionsController($scope, $injector) {
       if (redirect && $scope.context.isNew) {
         return goToDetails();
       }
-    })
-    .then(function() {
-      uiConfig.addNewCt($scope.contentType);
-    })
-    .then(notify.saveSuccess);
+    }).then(notify.saveSuccess);
   }
 
   function publishContentType(contentType) {

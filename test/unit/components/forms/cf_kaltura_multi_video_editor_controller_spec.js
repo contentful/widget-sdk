@@ -3,9 +3,9 @@
 describe('Kaltura Multi Video Editor Controller', function () {
   var kalturaMultiVideoEditorController, kalturaClientWrapperMock;
 
-  beforeEach(function() {
+  beforeEach(function () {
     module('contentful/test');
-    module(function($provide){
+    module(function ($provide) {
       kalturaClientWrapperMock = jasmine.createSpyObj('kalturaClientWrapperMock', ['setOrganizationId']);
       $provide.value('kalturaClientWrapper', kalturaClientWrapperMock);
     });
@@ -24,17 +24,17 @@ describe('Kaltura Multi Video Editor Controller', function () {
     $log.assertEmpty();
   }));
 
-  it('calls the #setOrganizationId method of the kaltura client wrapper', function() {
+  it('calls the #setOrganizationId method of the kaltura client wrapper', function () {
     expect(kalturaClientWrapperMock.setOrganizationId).toHaveBeenCalledWith('org-123');
   });
 
-  describe('overwrites the #customAttrsForPlayer method', function() {
+  describe('overwrites the #customAttrsForPlayer method', function () {
     var attrs;
-    beforeEach(function() {
+    beforeEach(function () {
       attrs = kalturaMultiVideoEditorController.customAttrsForPlayer({assetId: 'assedId-1'});
     });
 
-    it('sets the entryId property of the returnerd object to the value of the assetId property of the passed object', function() {
+    it('sets the entryId property of the returnerd object to the value of the assetId property of the passed object', function () {
       expect(attrs.entryId).toEqual('assedId-1');
     });
   });
