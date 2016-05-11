@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Multi Video Item Controller', function() {
+describe('Multi Video Item Controller', function () {
   var attrs, scope, multiVideoItemController, lookupAssetDeferred;
 
   afterEach(function () {
@@ -8,27 +8,27 @@ describe('Multi Video Item Controller', function() {
       lookupAssetDeferred = null;
   });
 
-  beforeEach(function() {
+  beforeEach(function () {
     module('contentful/test');
     inject(function ($controller, $q, $injector) {
-      var $rootScope          = $injector.get('$rootScope');
+      var $rootScope = $injector.get('$rootScope');
 
       lookupAssetDeferred = $q.defer();
 
-      scope                         = $rootScope.$new();
-      scope.asset                   = {};
+      scope = $rootScope.$new();
+      scope.asset = {};
 
       // The following properties are set on this scope
       // for testing purpose but actually the'll coming
       // from somewhere else
-      scope._playerDirective        = 'player-directive';
+      scope._playerDirective = 'player-directive';
       scope._attributesForThePlayer = 'attrs';
 
-      attrs               = {
-        asset                   : 'asset',
-        widgetPlayerCustomAttrs : '_attributesForThePlayer',
-        lookupAsset             : jasmine.createSpy(),
-        removeAsset             : jasmine.createSpy()
+      attrs = {
+        asset: 'asset',
+        widgetPlayerCustomAttrs: '_attributesForThePlayer',
+        lookupAsset: jasmine.createSpy(),
+        removeAsset: jasmine.createSpy()
       };
       attrs.lookupAsset.and.returnValue(lookupAssetDeferred.promise);
 
@@ -40,81 +40,81 @@ describe('Multi Video Item Controller', function() {
     });
   });
 
-  afterEach(inject(function($log){
+  afterEach(inject(function ($log) {
     $log.assertEmpty();
   }));
 
-  describe('fetches asset information', function() {
-    it('calls the callback on it lookupAsset attribute', function() {
+  describe('fetches asset information', function () {
+    it('calls the callback on it lookupAsset attribute', function () {
       expect(attrs.lookupAsset).toHaveBeenCalled();
     });
 
-    describe('on successful lookup', function() {
-      beforeEach(function() {
+    describe('on successful lookup', function () {
+      beforeEach(function () {
         lookupAssetDeferred.resolve({name: 'some asset title'});
         this.$apply();
       });
 
-      it('sets the isAssetValid flag to true', function() {
+      it('sets the isAssetValid flag to true', function () {
         expect(scope.multiVideoItem.isAssetValid).toBeTruthy();
       });
 
-      it('sets the asset title property to the response title', function() {
+      it('sets the asset title property to the response title', function () {
         expect(scope.multiVideoItem.asset.title).toEqual('some asset title');
       });
     });
 
-    describe('on failed lookup', function() {
-      beforeEach(function() {
+    describe('on failed lookup', function () {
+      beforeEach(function () {
         lookupAssetDeferred.reject({message: 'failed'});
         this.$apply();
       });
 
-      it('sets the errorMessage property', function() {
+      it('sets the errorMessage property', function () {
         expect(scope.multiVideoItem.errorMessage).toBeDefined();
       });
     });
   });
 
-  describe('multiVideoItem scope properties', function() {
-    it('sets the asset property to the value in its asset attribute', function() {
+  describe('multiVideoItem scope properties', function () {
+    it('sets the asset property to the value in its asset attribute', function () {
       expect(scope.multiVideoItem.asset).toEqual(scope.asset);
     });
 
-    it('sets the widgetPlayerDirective property to the value it its widgetPlayerDirective attribute', function() {
+    it('sets the widgetPlayerDirective property to the value it its widgetPlayerDirective attribute', function () {
       expect(scope.multiVideoItem.widgetPlayerDirective).toEqual('_playerDirective');
     });
 
-    it('sets the customAttrsForPlayer property to the value in its widgetPlayerCustomAttrs', function() {
+    it('sets the customAttrsForPlayer property to the value in its widgetPlayerCustomAttrs', function () {
       expect(scope.multiVideoItem.customAttrsForPlayer).toEqual(scope._attributesForThePlayer);
     });
   });
 
 
-  describe('#removeAsset', function() {
-    beforeEach(function() { multiVideoItemController.removeAsset(); });
+  describe('#removeAsset', function () {
+    beforeEach(function () { multiVideoItemController.removeAsset(); });
 
-    it('executes the callback on its removeAsset attribute', function() {
+    it('executes the callback on its removeAsset attribute', function () {
       expect(attrs.removeAsset).toHaveBeenCalled();
     });
   });
 
-  describe('#notifyPlayerIsReady', function() {
-    beforeEach(function() {
+  describe('#notifyPlayerIsReady', function () {
+    beforeEach(function () {
       multiVideoItemController.notifyPlayerIsReady();
     });
 
-    it('sets the isPlayerReady flag to true', function() {
+    it('sets the isPlayerReady flag to true', function () {
       expect(scope.multiVideoItem.isPlayerReady).toBeTruthy();
     });
   });
 
-  describe('#showFailedToLoadVideoError', function() {
-    beforeEach(function() {
+  describe('#showFailedToLoadVideoError', function () {
+    beforeEach(function () {
       multiVideoItemController.showFailedToLoadVideoError();
     });
 
-    it('sets the errorMessage property', function() {
+    it('sets the errorMessage property', function () {
       expect(scope.multiVideoItem.errorMessage).toBeDefined();
     });
   });

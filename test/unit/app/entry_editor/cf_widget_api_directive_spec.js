@@ -2,7 +2,18 @@
 
 describe('cfWidgetApi directive', function () {
   beforeEach(function () {
-    module('contentful/test');
+    var self = this;
+
+    this.getEntries = sinon.stub();
+
+    module('contentful/test', function ($provide) {
+      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+      $provide.value('spaceContext', {
+        space: {
+          getEntries: self.getEntries
+        }
+      });
+    });
 
     var $controller = this.$inject('$controller');
     var OtDoc = this.$inject('mocks/OtDoc');
@@ -14,21 +25,31 @@ describe('cfWidgetApi directive', function () {
         helpText: 'wat'
       }
     };
+    this.entry = {
+      data: {
+        sys: {}
+      }
+    };
 
     this.getWidgetApi = function () {
       _.extend(this.scope, {
         widget: this.widget,
-        isDisabled: sinon.stub(),
         otSubDoc: {
           changeString: sinon.stub(),
           getValue: sinon.stub(),
           doc: new OtDoc({myfield: {}}, ['myfield'])
         },
-        locale: {}
+        locale: {},
+        fieldLocale: {
+          access: {}
+        },
+        entity: this.entry,
+        fields: {},
+        transformedContentTypeData: {}
       });
 
       return $controller('WidgetApiController', {
-        $scope: this.scope,
+        $scope: this.scope
       });
     };
 
@@ -66,7 +87,38 @@ describe('cfWidgetApi directive', function () {
     });
   });
 
+  describe('#entry', function () {
+    describe('#getSys()', function () {
+      it('returns sys data from entry object', function () {
+        this.entry.data.sys = 'wat';
+        expect(this.widgetApi.entry.getSys()).toEqual('wat');
+      });
+    });
 
+    describe('#onSysChanged()', function () {
+      it('calls callback if "entry.data.sys" changes', function () {
+        var cb = sinon.spy();
+        this.widgetApi.entry.onSysChanged(cb);
+        cb.reset();
+        this.entry.data.sys = 'new sys';
+        this.$apply();
+        sinon.assert.calledWithExactly(cb, 'new sys');
+        sinon.assert.calledOnce(cb);
+      });
+    });
+  });
+
+  // #space
+  describe('#getEntries()', function () {
+    it('should proxy the call to getEntries defined by spaceContext', function () {
+      this.widgetApi.space.getEntries('wat');
+      sinon.assert.calledOnce(this.getEntries);
+      sinon.assert.calledWithExactly(this.getEntries, 'wat');
+    });
+  });
+
+
+  // #field
   describe('#onValueChanged()', function () {
     var path = ['fields', 'fid', 'lid'];
 
@@ -96,7 +148,7 @@ describe('cfWidgetApi directive', function () {
       this.testEvent('otValueChanged');
     });
 
-    it('callback will be called when entry is revered', function () {
+    it('callback will be called when entry is reverted', function () {
       this.testEvent('otValueReverted');
     });
 
@@ -118,6 +170,10 @@ describe('cfWidgetApi directive', function () {
       doc.changeValue = sinon.stub().resolves();
     });
 
+    afterEach(function () {
+      doc = null;
+    });
+
     it('calls otSubDoc.changeValue when value is different', function () {
       doc.getValue.returns('OLD');
       this.widgetApi.field.setValue('NEW');
@@ -130,6 +186,15 @@ describe('cfWidgetApi directive', function () {
       this.widgetApi.field.setValue('SAME');
       sinon.assert.notCalled(doc.changeValue);
     });
+
+    it('calls otSubDoc.changeValue when object reference is the same', function () {
+      var obj = {}
+      doc.getValue.returns(obj);
+      this.widgetApi.field.setValue(obj);
+      sinon.assert.calledOnce(doc.changeValue);
+      sinon.assert.calledWithExactly(doc.changeValue, obj);
+    });
+
 
     it('returns a promise', function () {
       var handler = sinon.spy();
@@ -156,7 +221,7 @@ describe('cfWidgetApi directive', function () {
         });
     });
 
-    pit('should not call changeString if old and new value are the same', function() {
+    pit('should not call changeString if old and new value are the same', function () {
       this.scope.otSubDoc.getValue.returns('test');
 
       return this.widgetApi.field.setString('test')
@@ -233,24 +298,24 @@ describe('cfWidgetApi directive', function () {
   describe('#onDisabledStatusChanged()', function () {
     it('is dispatched with initial value', function () {
       var cb = sinon.spy();
-      this.scope.isDisabled.returns('FOO');
+      this.scope.fieldLocale.access.disabled = true;
       this.$apply();
       this.widgetApi.field.onDisabledStatusChanged(cb);
       sinon.assert.calledOnce(cb);
-      sinon.assert.calledWithExactly(cb, 'FOO');
+      sinon.assert.calledWithExactly(cb, true);
     });
 
     it('is dispatched when value changes', function () {
       var cb = sinon.spy();
-      this.scope.isDisabled.returns('FOO');
+      this.scope.fieldLocale.access.disabled = true;
       this.$apply();
       this.widgetApi.field.onDisabledStatusChanged(cb);
       cb.reset();
 
-      this.scope.isDisabled.returns('BAR');
+      this.scope.fieldLocale.access.disabled = false;
       this.$apply();
       sinon.assert.calledOnce(cb);
-      sinon.assert.calledWithExactly(cb, 'BAR');
+      sinon.assert.calledWithExactly(cb, false);
     });
   });
 });

@@ -1,22 +1,23 @@
 'use strict';
 
-describe('cfFormWidget directive', function () {
+describe('cfEntityField directive', function () {
 
   describe('#locales', function () {
 
     beforeEach(function () {
       module('contentful/test', function ($provide) {
         $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+        $provide.removeDirectives('otPath', 'cfWidgetApi', 'cfWidgetRenderer');
       });
 
       var TheLocaleStore = this.$inject('TheLocaleStore');
       TheLocaleStore.setLocales([
         {internal_code: 'DEF'},
-        {internal_code: 'EN'},
+        {internal_code: 'EN'}
       ]);
 
       this.compile = function (field) {
-        return this.$compile('<cf-form-widget>', {
+        return this.$compile('<cf-entity-field>', {
           widget: _.extend({field: field})
         }).scope();
       };

@@ -1,11 +1,7 @@
 # Ignore all files by default and only selectively check files that
 # have been migrated.
 
-test/unit/components/forms/cf_ooyala_player_directive_spec.js
-test/unit/components/forms/cf_video_player_controller_spec.js
 test/unit/components/forms/cf_video_player_directive_spec.js
-test/unit/components/forms/cf_video_search_controller_spec.js
-test/unit/components/forms/cf_video_search_result_controller_spec.js
 test/unit/components/forms/cf_location_editor_controller_spec.js
 test/unit/components/forms/cf_asset_link_editor_controller_spec.js
 test/unit/components/forms/cf_asset_link_editor_directive_spec.js
@@ -18,22 +14,13 @@ test/unit/components/forms/cf_field_alert_directive_spec.js
 test/unit/components/forms/cf_file_editor_directive_spec.js
 test/unit/components/forms/cf_google_maps_controller_spec.js
 test/unit/components/forms/cf_google_maps_directive_spec.js
-test/unit/components/forms/cf_kaltura_editor_directive_spec.js
-test/unit/components/forms/cf_kaltura_multi_video_editor_controller_spec.js
-test/unit/components/forms/cf_kaltura_player_directive_spec.js
 test/unit/components/forms/cf_link_editor_controller_spec.js
 test/unit/components/forms/cf_link_editor_search_controller_spec.js
 test/unit/components/forms/cf_link_editor_search_directive_spec.js
 test/unit/components/forms/cf_location_editor_directive_spec.js
 test/unit/components/forms/cf_multi_video_editor_controller_spec.js
-test/unit/components/forms/cf_multi_video_item_spec.js
-test/unit/components/forms/cf_number_editor_directive_spec.js
-test/unit/components/forms/cf_ooyala_editor_controller_spec.js
 test/unit/components/forms/cf_single_line_editor_directive_spec.js
-test/unit/components/forms/cf_slug_editor_controller_spec.js
 test/unit/components/forms/cf_url_editor_directive_spec.js
-test/unit/components/forms/cf_video_editor_controller_spec.js
-test/unit/components/forms/cf_video_input_controller_spec.js
 test/unit/components/app_container/context_history_spec.js
 test/unit/components/app_container/entity_creation_controller_spec.js
 test/unit/components/app_container/space_controller_spec.js
@@ -42,10 +29,8 @@ test/unit/components/app_container/ui_config_spec.js
 test/unit/components/client/activation_email_resend_controller_spec.js
 test/unit/components/client/cf_main_nav_bar_directive_spec.js
 test/unit/components/client/cf_space_selector_controller_spec.js
-test/unit/components/client/client_controller_spec.js
 test/unit/components/client/dialogs_init_controller_spec.js
 test/unit/components/client/onboarding_controller_spec.js
-test/unit/components/client/trial_watcher_spec.js
 test/unit/components/shared/thumbnail/thumbnail_controller_spec.js
 test/unit/components/shared/thumbnail/cf_thumbnail_directive_spec.js
 test/unit/components/shared/data_size_scale_controller_spec.js
@@ -105,7 +90,6 @@ test/unit/navigator/state_change_handlers_spec.js
 test/unit/ot/ot_bind_ng_model_spec.js
 test/unit/ot/ot_doc_presence_controller_spec.js
 test/unit/ot/ob_bind_object_value_spec.js
-test/unit/ot/ot_bind_text_spec.js
 test/unit/ot/ot_doc_for_spec.js
 test/unit/ot/ot_path_spec.js
 test/unit/services/assert_spec.js
@@ -116,11 +100,7 @@ test/unit/services/exception_handler_spec.js
 test/unit/services/field_factory_spec.js
 test/unit/services/filter_query_string_spec.js
 test/unit/services/intercom_spec.js
-test/unit/services/kaltura_client_wrapper_spec.js
 test/unit/services/kaltura_search_spec.js
-test/unit/services/ooyala_client_spec.js
-test/unit/services/ooyala_player_loader_spec.js
-test/unit/services/ooyala_search_spec.js
 test/unit/services/revision_spec.js
 test/unit/services/search_parser_spec.js
 test/unit/services/totango_spec.js
@@ -136,7 +116,6 @@ test/unit/services/editing_interfaces_helpers_spec.js
 test/unit/services/enforcements_spec.js
 test/unit/services/features_spec.js
 test/unit/services/filepicker_spec.js
-test/unit/services/kaltura_editor_controller_mixin_spec.js
 test/unit/services/locale_store_spec.js
 test/unit/services/logger_spec.js
 test/unit/services/modal_dialog_spec.js
@@ -144,7 +123,6 @@ test/unit/services/organization_list_spec.js
 test/unit/services/promised_loader_spec.js
 test/unit/services/reload_notification_spec.js
 test/unit/services/sdk_info_supplier_spec.js
-test/unit/services/segment_spec.js
 test/unit/services/sharejs_client_spec.js
 test/unit/services/sharejs_spec.js
 test/unit/services/space_template_creator_spec.js
@@ -172,7 +150,6 @@ test/unit/app/entity_editor/locales_controller_spec.js
 test/unit/app/entity_editor/state_controller_spec.js
 test/unit/app/entity_editor/status_notifications_controller_spec.js
 test/unit/app/entry_editor/entry_actions_controller_spec.js
-test/unit/app/entry_editor/cf_widget_api_directive_spec.js
 test/unit/app/entry_editor/entry_editor_controller_spec.js
 test/unit/app/entry_editor/entry_reverter_spec.js
 test/unit/app/entry_editor/form_widgets_controller_spec.js
@@ -229,8 +206,6 @@ test/helpers/mocks/ot_doc.js
 test/helpers/mocks/the_store.js
 test/helpers/application.js
 test/helpers/deep_diff.js
-test/helpers/matchers.js
-test/helpers/timing-reporter.js
 test/helpers/contentful_mocks.js
 test/helpers/dsl.js
 test/helpers/helpers.js
@@ -371,13 +346,10 @@ src/javascripts/components/forms/multi_video_editor/cf_multi_video_item_directiv
 src/javascripts/components/forms/multi_video_editor/cf_multi_video_editor_controller.js
 src/javascripts/components/forms/multi_video_editor/cf_multi_video_editor_directive.js
 src/javascripts/components/forms/multi_video_editor/cf_multi_video_item_controller.js
-src/javascripts/components/forms/number_editor/cf_number_editor_directive.js
 src/javascripts/components/forms/ooyala/cf_ooyala_player_directive.js
 src/javascripts/components/forms/ooyala/cf_ooyala_editor_controller.js
 src/javascripts/components/forms/ooyala/cf_ooyala_editor_directive.js
 src/javascripts/components/forms/ooyala/cf_ooyala_multi_video_editor_directive.js
-src/javascripts/components/forms/slug_editor/cf_slug_editor_directive.js
-src/javascripts/components/forms/slug_editor/cf_slug_editor_controller.js
 src/javascripts/components/forms/url_editor/cf_url_editor_directive.js
 src/javascripts/components/forms/video_editor/cf_video_editor_controller.js
 src/javascripts/components/forms/video_input/cf_video_input_directive.js
@@ -389,10 +361,6 @@ src/javascripts/components/forms/video_search/cf_video_search_directive.js
 src/javascripts/components/forms/video_search/cf_video_search_result_controller.js
 src/javascripts/components/forms/video_search/cf_video_search_result_directive.js
 src/javascripts/components/forms/single_line_editor/cf_single_line_editor_directive.js
-src/javascripts/components/forms/google_maps/cf_google_maps_controller.js
-src/javascripts/components/forms/google_maps/cf_google_maps_directive.js
-src/javascripts/components/forms/location_editor/cf_location_editor_controller.js
-src/javascripts/components/forms/location_editor/cf_location_editor_directive.js
 src/javascripts/components/notifications/cf_notifications_directive.js
 src/javascripts/components/notifications/index.js
 src/javascripts/app/asset_editor/asset_editor_directive.js
@@ -400,7 +368,6 @@ src/javascripts/app/asset_editor/notifications.js
 src/javascripts/app/asset_editor/asset_editor_controller.js
 src/javascripts/app/entry_editor/entry_editor_directive.js
 src/javascripts/app/entry_editor/notifications.js
-src/javascripts/app/entry_editor/cf_widget_api_directive.js
 src/javascripts/app/entry_editor/entry_actions_controller.js
 src/javascripts/app/entry_editor/entry_editor_controller.js
 src/javascripts/app/entry_editor/entry_reverter.js
@@ -541,7 +508,6 @@ src/javascripts/ui/cf_ui_hint.js
 src/javascripts/ui/context_menu.js
 src/javascripts/widgets/id_map.js
 src/javascripts/widgets/api.js
-src/javascripts/widgets/builtin.js
 src/javascripts/widgets/cf_iframe_widget_directive.js
 src/javascripts/widgets/channel.js
 src/javascripts/widgets/checks.js

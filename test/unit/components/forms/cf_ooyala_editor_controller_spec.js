@@ -4,10 +4,10 @@ describe('cfOoyalaEditorController', function () {
   var OoyalaEditorController, ooyalaClientSpy;
   var ooyalaSearchStub, ooyalaSearchInstanceSpy;
 
-  beforeEach(function() {
+  beforeEach(function () {
     module('contentful/test');
-    module(function($provide){
-      ooyalaClientSpy  = jasmine.createSpyObj(
+    module(function ($provide) {
+      ooyalaClientSpy = jasmine.createSpyObj(
         'ooyalaClientSpy',
         ['asset', 'setOrganizationId']
       );
@@ -17,7 +17,7 @@ describe('cfOoyalaEditorController', function () {
       $provide.value('ooyalaClient', ooyalaClientSpy);
     });
 
-    inject(function(spaceContext, $controller){
+    inject(function (spaceContext, $controller) {
       spaceContext.space = { getOrganizationId: sinon.stub().returns('org-123') };
       OoyalaEditorController = $controller('cfOoyalaEditorController');
     });
@@ -31,126 +31,126 @@ describe('cfOoyalaEditorController', function () {
     $log.assertEmpty();
   }));
 
-  it('calls the #setOrganizationId method of the Ooyala client', function() {
+  it('calls the #setOrganizationId method of the Ooyala client', function () {
     expect(ooyalaClientSpy.setOrganizationId).toHaveBeenCalledWith('org-123');
   });
 
-  describe('#isWidgetReady', function() {
-    it('returns true', function() {
+  describe('#isWidgetReady', function () {
+    it('returns true', function () {
       expect(OoyalaEditorController.isWidgetReady()).toBeTruthy();
     });
   });
 
-  describe('#customAttrsForPlayer', function() {
-    it('returns the passed object', function() {
+  describe('#customAttrsForPlayer', function () {
+    it('returns the passed object', function () {
       expect(OoyalaEditorController.customAttrsForPlayer('object')).toEqual('object');
     });
   });
 
-  describe('#customAttrsForPlayerInSearchDialog', function() {
-    describe('the returned object', function() {
+  describe('#customAttrsForPlayerInSearchDialog', function () {
+    describe('the returned object', function () {
       var attrs;
-      beforeEach(function() {
+      beforeEach(function () {
         attrs = OoyalaEditorController.customAttrsForPlayerInSearchDialog({id: 'assetId-1'});
       });
 
-      it('has the property "assetId" with the value of the "id" property in the passed object', function() {
+      it('has the property "assetId" with the value of the "id" property in the passed object', function () {
         expect(attrs.assetId).toEqual('assetId-1');
       });
     });
   });
 
-  describe('#loadingFeedbackMessage', function() {
+  describe('#loadingFeedbackMessage', function () {
     var message;
-    beforeEach(function() {
+    beforeEach(function () {
       message = OoyalaEditorController.loadingFeedbackMessage({assetId: 'assetId-1'});
     });
 
-    it('returns a string with a feedback message for the player of the given video', function() {
+    it('returns a string with a feedback message for the player of the given video', function () {
       expect(message).toEqual('Loading player for video assetId-1');
     });
   });
 
-  describe('#processLookupInProviderResult', function() {
-    describe('the returned object', function() {
+  describe('#processLookupInProviderResult', function () {
+    describe('the returned object', function () {
       var video;
-      beforeEach(function() {
+      beforeEach(function () {
         video = OoyalaEditorController.processLookupInProviderResult({embed_code: 'assetId-1', player_id: 'player-123', name: 'name-abc'});
       });
 
-      it('has the property "assetId" with the value of the "embed_code" property in the passed object', function(){
+      it('has the property "assetId" with the value of the "embed_code" property in the passed object', function () {
         expect(video.assetId).toEqual('assetId-1');
       });
 
-      it('has the property "playerId" with the value of the "player_id" property in the passed object', function() {
+      it('has the property "playerId" with the value of the "player_id" property in the passed object', function () {
         expect(video.playerId).toEqual('player-123');
       });
 
-      it('has the property "name" with the value of the "name" property in the passed object', function() {
+      it('has the property "name" with the value of the "name" property in the passed object', function () {
         expect(video.name).toEqual('name-abc');
       });
     });
   });
 
-  describe('#lookupVideoInProvider', function() {
-    beforeEach(function() {
+  describe('#lookupVideoInProvider', function () {
+    beforeEach(function () {
       OoyalaEditorController.lookupVideoInProvider('asset-1');
     });
 
-    it('calls #asset method in ooyalaClient', function() {
+    it('calls #asset method in ooyalaClient', function () {
       expect(ooyalaClientSpy.asset).toHaveBeenCalledWith('asset-1');
     });
   });
 
-  describe('#shouldRenderVideoPlayer', function() {
+  describe('#shouldRenderVideoPlayer', function () {
     var shouldRender;
-    describe('when the "playerId" property is present in the given object', function() {
-      beforeEach(function() {
+    describe('when the "playerId" property is present in the given object', function () {
+      beforeEach(function () {
         shouldRender = OoyalaEditorController.shouldRenderVideoPlayer({playerId: 'player-123'});
       });
 
-      it('returns true', function() {
+      it('returns true', function () {
         expect(shouldRender).toBeTruthy();
       });
     });
-    describe('when the "playerId" property is not present in the given object', function() {
-      beforeEach(function() {
+    describe('when the "playerId" property is not present in the given object', function () {
+      beforeEach(function () {
         shouldRender = OoyalaEditorController.shouldRenderVideoPlayer({});
       });
 
-      it('returns false', function() {
+      it('returns false', function () {
         expect(shouldRender).toBeFalsy();
       });
     });
   });
 
-  describe('#prepareSearch', function() {
-    beforeEach(function() {
+  describe('#prepareSearch', function () {
+    beforeEach(function () {
       OoyalaEditorController.prepareSearch('query value');
     });
 
-    it('instantiates a OoyalaSearch object', function() {
+    it('instantiates a OoyalaSearch object', function () {
       expect(ooyalaSearchStub).toHaveBeenCalled();
     });
 
-    it('calls the #where method in the search object', function() {
+    it('calls the #where method in the search object', function () {
       expect(ooyalaSearchInstanceSpy.where).toHaveBeenCalledWith('name', 'query value');
     });
 
-    it('calls the #limit method in the search object', function() {
+    it('calls the #limit method in the search object', function () {
       expect(ooyalaSearchInstanceSpy.limit).toHaveBeenCalledWith(10);
     });
   });
 
-  describe('#processSearchResults', function() {
-    describe('for every search result', function() {
+  describe('#processSearchResults', function () {
+    describe('for every search result', function () {
       var result, descriptor;
-      beforeEach(function() {
-        result     = { embed_code: 1, duration: 99, player_id: 'player-123', name: 'name', preview_image_url: 'url' };
+      beforeEach(function () {
+        result = { embed_code: 1, duration: 99, player_id: 'player-123', name: 'name', preview_image_url: 'url' };
         descriptor = OoyalaEditorController.processSearchResults([result])[0];
       });
 
-      it('returns an object that describes the search result', function() {
+      it('returns an object that describes the search result', function () {
         expect(descriptor.id).toEqual(result.embed_code);
         expect(descriptor.duration).toEqual(result.duration);
         expect(descriptor.playerId).toEqual(result.player_id);

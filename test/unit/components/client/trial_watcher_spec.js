@@ -197,7 +197,7 @@ describe('TrialWatcher', function () {
     });
 
     describe('for a free subscription', function () {
-      beforeEach(function (){
+      beforeEach(function () {
         this.setupOrganization({
           subscriptionState: 'active',
           subscriptionPlan: {

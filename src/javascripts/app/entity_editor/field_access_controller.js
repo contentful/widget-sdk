@@ -1,6 +1,9 @@
 'use strict';
 
 angular.module('contentful')
+// TODO Remove this controller. The provided scope API is only used in
+// legacy widgets. Also make sure to remove the unused second argument
+// of the `getFieldChecker()` method.
 .controller('entityEditor/FieldAccessController',
 ['$scope', '$injector', function ($scope, $injector) {
 

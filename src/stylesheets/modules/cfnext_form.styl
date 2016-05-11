@@ -132,7 +132,7 @@ $cfnext-form-input()
  *   label Name
  *   input.cfnext-form__input(type="text" aria-invalid="true")
  *   span.cfnext-form__field-suffix-error
- *     | Something went wrong!
+ *     | Something went <strong>wrong!</strong>
  * div.cfnext-form__field
  *   label Name
  *   input.cfnext-form__input(type="text" aria-invalid="true")
@@ -152,6 +152,9 @@ $cfnext-form-input()
 .cfnext-form__field-errors
   margin-top: $rhythm(0.5)
   color: $red
+  // TODO overide because strong sets color !tableflip
+  strong
+    color: inherit
 
 .cfnext-form__field-errors > li
   margin-bottom: $rhythm(0.5)
