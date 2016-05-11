@@ -38,7 +38,7 @@ ng-switch(on="displayType(field)")
 
       //- If it's another kind of array, just display the data
       li(ng-if="!isEntryArray(entry, field) && !isAssetArray(entry, field)")
-        {{dataForField(entry, field)}}
+        | {{dataForField(entry, field)}}
 
   a.entity-list-link(ng-switch-default ui-sref="{{entityNavState}}") {{dataForField(entry, field)}}
 
