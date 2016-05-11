@@ -14,7 +14,8 @@ angular.module('cf.libs', [])
   .constant('speakingurl', require('speakingurl'))
   .constant('Cookies', require('js-cookie'))
   .constant('worf', require('@contentful/worf'))
-  .constant('validation', require('@contentful/validation'));
+  .constant('validation', require('@contentful/validation'))
+  .constant('widgetMap', require('@contentful/widget-map'));
 window.dotty = require('./dottie_wrapper.js');
 
 // This needs to be called after everything else so we override any

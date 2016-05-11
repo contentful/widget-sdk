@@ -22,6 +22,9 @@
     "@contentful/validation": {
       "version": "5.11.1"
     },
+    "@contentful/widget-map": {
+      "version": "1.0.1"
+    },
     "@contentful/worf": {
       "version": "3.6.1",
       "dependencies": {
