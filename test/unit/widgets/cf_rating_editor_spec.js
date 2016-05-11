@@ -6,16 +6,14 @@ describe('cfRatingEditor directive', function () {
       // Disable cfIcon directive
       $provide.value('cfIconDirective', {});
     });
+    module('contentful/test');
 
-    this.fieldApi = {
-      onValueChanged: sinon.stub().returns(_.noop),
-      onDisabledStatusChanged: sinon.stub().returns(_.noop)
-    };
-
-    this.widgetApi = {
-      field: this.fieldApi,
-      settings: {stars: 5}
-    };
+    this.widgetApi = this.$inject('mocks/widgetApi')({
+      settings: {
+        stars: 5
+      }
+    });
+    this.fieldApi = this.widgetApi.field;
 
     this.compile = function () {
       return this.$compile('<cf-rating-editor />', {}, {

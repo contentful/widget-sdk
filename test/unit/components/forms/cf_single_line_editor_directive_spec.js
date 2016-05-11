@@ -6,50 +6,27 @@ describe('cfSingleLineEditor directive', function () {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
-    var path = ['fields', 'single_line', 'de-DE'];
+    var widgetApi = this.$inject('mocks/widgetApi')({
+      settings: {
+        helpText: 'wat'
+      }
+    });
+
+    this.setString = widgetApi.field.setString;
 
     this.compileElement = function (validations, fieldType) {
-      var widget = {};
-      var $injector = this.$inject('$injector');
-      var $controller = this.$inject('$controller');
-
-      this.controllerScope = this.$inject('$rootScope').$new();
-      this.controllerScope.otPath = path;
-
-      dotty.put(widget, 'field.validations', validations);
-      dotty.put(widget, 'field.type', fieldType);
-      dotty.put(widget, 'settings.helpText', 'wat');
-
-      _.extend(this.controllerScope, {
-        widget: widget,
-        otSubDoc: {
-          changeString: sinon.stub(),
-          getValue: sinon.stub()
-        },
-        locale: {},
-        fieldLocale: {
-          access: {}
-        },
-        entity: {data: {sys: {}}}
-      });
-
-      // TODO(mudit): Mock the WidgetApiController
-      var cfWidgetApi = $controller('WidgetApiController', {
-        '$scope': this.controllerScope,
-        '$injector': $injector
-      });
+      widgetApi.field.validations = validations;
+      widgetApi.field.type = fieldType;
 
       var el = this.$compile('<cf-single-line-editor>', {}, {
-        cfWidgetApi: cfWidgetApi
+        cfWidgetApi: widgetApi
       });
 
       return el;
     };
 
-    // TODO(mudit): Remove dependency on this once WidgetApiController
-    // is mocked.
-    this.emitOtValueChanged = function (value) {
-      this.controllerScope.$emit('otValueChanged', path, value);
+    this.dispatchValue = function (value) {
+      widgetApi.field.onValueChanged.yield(value);
       this.$apply();
     };
 
@@ -58,15 +35,15 @@ describe('cfSingleLineEditor directive', function () {
   it('updates correctly when value change is indicated by sharejs', function () {
     var $el = this.compileElement();
 
-    this.emitOtValueChanged('test');
+    this.dispatchValue('test');
     expect($el.children('input').val()).toEqual('test');
   });
 
-  it('input event on text field calls changeString (via setString)', function(){
+  it('input event on text field calls changeString (via setString)', function () {
     var $el = this.compileElement();
 
     $el.children('input').trigger('input', 'what');
-    sinon.assert.calledOnce(this.controllerScope.otSubDoc.changeString);
+    sinon.assert.calledOnce(this.setString);
   });
 
   it('counts characters correctly', function () {
@@ -81,7 +58,7 @@ describe('cfSingleLineEditor directive', function () {
     testData.forEach(function (data) {
       var $el = this.compileElement();
 
-      this.emitOtValueChanged(data.input);
+      this.dispatchValue(data.input);
       expect($el.text()).toBe(data.expected);
     }, this);
 
@@ -103,7 +80,7 @@ describe('cfSingleLineEditor directive', function () {
     testData.forEach(function (data) {
       var $el = this.compileElement(data.validations);
 
-      this.emitOtValueChanged('');
+      this.dispatchValue('');
       expect($el.text()).toMatch(data.hint);
     }, this);
   });
@@ -124,7 +101,7 @@ describe('cfSingleLineEditor directive', function () {
     testData.forEach(function (data) {
       var el = this.compileElement(data.validations);
 
-      this.emitOtValueChanged(data.input);
+      this.dispatchValue(data.input);
       expect(el.find(data.expectedClass).length).toBe(1);
     }, this);
 
@@ -133,21 +110,21 @@ describe('cfSingleLineEditor directive', function () {
   it('adds max constraints for symbol fields', function () {
     var elem = this.compileElement(false, 'Symbol');
 
-    this.emitOtValueChanged('');
+    this.dispatchValue('');
     expect(elem.text()).toMatch('Requires less than 256 characters');
   });
 
   it('adds max constraints to symbol fields with min validation', function () {
     var elem = this.compileElement([{size: {min: 20, max: null}}], 'Symbol');
 
-    this.emitOtValueChanged('');
+    this.dispatchValue('');
     expect(elem.text()).toMatch('Requires between 20 and 256 characters');
   });
 
   it('does not overwrite constraints for symbol fields', function () {
     var elem = this.compileElement([{size: {min: null, max: 50}}], 'Symbol');
 
-    this.emitOtValueChanged('');
+    this.dispatchValue('');
     expect(elem.text()).toMatch('Requires less than 50 characters');
   });
 

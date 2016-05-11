@@ -2,16 +2,14 @@
 
 describe('cfMultiLineEditor directive', function () {
   beforeEach(function () {
-    module('cf.app');
+    module('contentful/test');
 
-    this.fieldApi = {
-      onValueChanged: sinon.stub().returns(_.noop),
-      onDisabledStatusChanged: sinon.stub().returns(_.noop)
-    };
+    var widgetApi = this.$inject('mocks/widgetApi')();
+    this.fieldApi = widgetApi.field;
 
     this.compile = function () {
       return this.$compile('<cf-multi-line-editor>', {}, {
-        cfWidgetApi: {field: this.fieldApi}
+        cfWidgetApi: widgetApi
       });
     };
   });

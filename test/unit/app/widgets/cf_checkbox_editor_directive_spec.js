@@ -2,17 +2,17 @@
 
 describe('cfCheckboxEditor directive', function () {
   beforeEach(function () {
-    module('cf.app');
-    this.fieldApi = {
-      getValue: sinon.stub(),
-      setValue: sinon.stub(),
-      removeValue: sinon.stub(),
-      onValueChanged: sinon.stub(),
-      onDisabledStatusChanged: sinon.stub(),
-      itemValidations: [{in: ['A', 'B', 'C']}]
-    };
+    module('contentful/test');
+    var widgetApi = this.$inject('mocks/widgetApi')({
+      field: {
+        itemValidations: [{in: ['A', 'B', 'C']}]
+      }
+    });
+
+    this.fieldApi = widgetApi.field;
+
     this.el = this.$compile('<cf-checkbox-editor />', {}, {
-      cfWidgetApi: {field: this.fieldApi}
+      cfWidgetApi: widgetApi
     });
   });
 
