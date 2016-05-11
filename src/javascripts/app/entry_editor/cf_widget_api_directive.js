@@ -98,7 +98,9 @@ angular.module('contentful')
 
   function createSetter (method) {
     return function setValue (value) {
-      if (value === getValue()) {
+      // We only test for equality when the value is guaranteed to be
+      // equal.
+      if (!_.isObject(value) && value === getValue()) {
         return $q.resolve(value);
       } else {
         return $scope.otSubDoc[method](value);
