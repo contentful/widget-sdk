@@ -21,23 +21,7 @@ header.workbench-header
 
     form.entity-editor-form(name="assetForm")
       cf-error-list.form-box-error(cf-error-path="['fields']")
-      cf-form-widget.l-form-row(ng-repeat="widget in widgets"
-          data-field-id="{{field.id}}")
-        label {{field.name}}
-          sup(ng-show="field.required")  (required)
-        .l-form-controls
-          .l-form-locale(ng-repeat="locale in locales track by locale.internal_code"
-              ng-controller="FieldLocaleController as fieldLocale"
-              data-locale="{{locale.code}}")
-            cf-widget-renderer.l-field-editor(
-              cf-focus-ot-input="hasInitialFocus"
-              cf-field-editor="asset.data.fields[field.id][locale.internal_code]"
-              ot-path="['fields', field.id, locale.internal_code]"
-              cf-widget-api)
-            +field-permission-info
-            .locale-label(ng-show="locales.length > 1") {{locale.name}}
-            +editor-field-collaborators
-            +field-locale-errors
+      cf-entity-field(ng-repeat="widget in widgets")
 
   .workbench-main__entity-sidebar
     +entity-sidebar(revert=false)

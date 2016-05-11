@@ -16,41 +16,40 @@ describe('Number widgets', function () {
         cfWidgetApi: {field: this.fieldApi}
       });
     };
+
+    this.assertValAndErrorStatus = function (val, errorStatus) {
+      this.$inputEl.val(val).trigger('input');
+      expect(this.$inputEl.val()).toBe(val);
+      expect(this.$errorEl.css('display')).toBe(errorStatus);
+    };
+
+    this.assertSetValueOnInvalidInput = function (val) {
+      this.$inputEl.val(val).trigger('input');
+      sinon.assert.neverCalledWith(this.fieldApi.setValue, val);
+      expect(this.elem.find('input').val()).toBe(val);
+    };
   });
 
   describe('Number widget', function () {
     beforeEach(function () {
       this.fieldApi.type = 'Number';
       this.elem = this.compileElement();
+      this.$inputEl = this.elem.find('input');
+      this.$errorEl = this.elem.find('div.cfnext-form__field-error');
     });
-    it('should generate the right value', function () {
-      this.elem.find('input').val('0').trigger('input');
-      expect(this.elem.children('input').val()).toBe('0');
-      expect(this.elem.find('.cf-field-alert').css('display')).toBe('none');
-
-      this.elem.find('input').val('10.0').trigger('input');
-      expect(this.elem.children('input').val()).toBe('10.0');
-      expect(this.elem.find('.cf-field-alert').css('display')).toBe('none');
-
-      this.elem.find('input').val('10.012').trigger('input');
-      expect(this.elem.children('input').val()).toBe('10.012');
-      expect(this.elem.find('.cf-field-alert').css('display')).toBe('none');
+    it('should generate the correct value', function () {
+      this.assertValAndErrorStatus('0', 'none');
+      this.assertValAndErrorStatus('10.0', 'none');
+      this.assertValAndErrorStatus('10.012', 'none');
     });
 
     it('should not call setValue for invalid input', function () {
-      this.elem.find('input').val('foo').trigger('input');
-      sinon.assert.neverCalledWith(this.fieldApi.setValue, 'foo');
-      expect(this.elem.find('input').val()).toBe('foo');
+      this.assertSetValueOnInvalidInput('foo');
     });
 
     it('should generate a warning for characters and invalid inputs', function () {
-      this.elem.find('input').val('6.').trigger('input');
-      expect(this.elem.find('input').val()).toBe('6.');
-      expect(this.elem.find('.cf-field-alert').css('display')).toBe('inline');
-
-      this.elem.find('input').val('asd').trigger('input');
-      expect(this.elem.find('input').val()).toBe('asd');
-      expect(this.elem.find('.cf-field-alert').css('display')).toBe('inline');
+      this.assertValAndErrorStatus('6.', 'block');
+      this.assertValAndErrorStatus('asd', 'block');
     });
   });
 
@@ -58,40 +57,24 @@ describe('Number widgets', function () {
     beforeEach(function () {
       this.fieldApi.type = 'Integer';
       this.elem = this.compileElement();
+      this.$inputEl = this.elem.find('input');
+      this.$errorEl = this.elem.find('div.cfnext-form__field-error');
     });
 
     it('should generate 0', function () {
-      this.elem.find('input').val('0').trigger('input');
-      expect(this.elem.children('input').val()).toBe('0');
-      expect(this.elem.find('.cf-field-alert').css('display')).toBe('none');
+      this.assertValAndErrorStatus('0', 'none');
     });
 
     it('should not call setValue for invalid input', function () {
-      this.elem.find('input').val('foo').trigger('input');
-      sinon.assert.neverCalledWith(this.fieldApi.setValue, 'foo');
-      expect(this.elem.find('input').val()).toBe('foo');
-
-      this.elem.find('input').val('6.0').trigger('input');
-      sinon.assert.neverCalledWith(this.fieldApi.setValue, '6.0');
-      expect(this.elem.find('input').val()).toBe('6.0');
-
-      this.elem.find('input').val('112.1231').trigger('input');
-      sinon.assert.neverCalledWith(this.fieldApi.setValue, '112.1231');
-      expect(this.elem.find('input').val()).toBe('112.1231');
-
-      this.elem.find('input').val('.1231').trigger('input');
-      sinon.assert.neverCalledWith(this.fieldApi.setValue, '.1231');
-      expect(this.elem.find('input').val()).toBe('.1231');
+      this.assertSetValueOnInvalidInput('foo');
+      this.assertSetValueOnInvalidInput('6.0');
+      this.assertSetValueOnInvalidInput('112.1231');
+      this.assertSetValueOnInvalidInput('.1231');
     });
 
     it('should generate a warning for characters and invalid inputs', function () {
-      this.elem.find('input').val('asd').trigger('input');
-      expect(this.elem.find('input').val()).toBe('asd');
-      expect(this.elem.find('.cf-field-alert').css('display')).toBe('inline');
-
-      this.elem.find('input').val('6.7').trigger('input');
-      expect(this.elem.find('input').val()).toBe('6.7');
-      expect(this.elem.find('.cf-field-alert').css('display')).toBe('inline');
+      this.assertValAndErrorStatus('asd', 'block');
+      this.assertValAndErrorStatus('6.7', 'block');
     });
   });
 });
@@ -103,7 +86,8 @@ describe('cfNumberEditor/parseNumber', function () {
     module('contentful/test');
     parseNumber = this.$inject('cfNumberEditor/parseNumber');
   });
-  describe('parse numbers', function() {
+
+  describe('parse numbers', function () {
     it('should parse numbers correctly', function () {
       var specs = [
         ['12', true],
@@ -131,7 +115,7 @@ describe('cfNumberEditor/parseNumber', function () {
     });
   });
 
-  describe('parse integers', function() {
+  describe('parse integers', function () {
     it('should parse integers correctly', function () {
       var specs = [
         ['12', true],

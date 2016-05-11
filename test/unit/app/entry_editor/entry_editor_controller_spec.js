@@ -59,7 +59,7 @@ describe('Entry Editor Controller', function () {
   });
 
   describe('sets the otDoc.state.disabled flag', function () {
-    beforeEach(function(){
+    beforeEach(function () {
       scope = this.createController();
       scope.otDoc = { state: { disabled: false } };
       this.accessChecker = this.$inject('accessChecker');
