@@ -11,7 +11,6 @@ var express = require('express');
 var fingerprint = require('gulp-fingerprint');
 var mkdirp = require('mkdirp');
 var gulp = require('gulp');
-var gulpif = require('gulp-if');
 var gutil = require('gulp-util');
 var inject = require('gulp-inject');
 var jade = require('gulp-jade');
@@ -221,10 +220,8 @@ gulp.task('js/external-bundle', function () {
   return bundleBrowserify(createBrowserify());
 });
 
-gulp.task('js/app', ['git-revision', 'icons'], function () {
+gulp.task('js/app', ['icons'], function () {
   return gulp.src(src.components.concat([src.svg.outputFile]))
-    .pipe(gulpif('**/environment.js',
-      replace({ regex: 'GULP_GIT_REVISION', replace: gitRevision })))
     .pipe(sourceMaps.init())
     .pipe(concat('components.js'))
     .pipe(sourceMaps.write({sourceRoot: '/components'}))

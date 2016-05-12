@@ -201,7 +201,6 @@ src/javascripts/components/client/cf_breadcrumbs_directive.js
 src/javascripts/components/client/activation_email_resend_controller.js
 src/javascripts/components/client/cf_main_nav_bar_directive.js
 src/javascripts/components/client/cf_space_selector_directive.js
-src/javascripts/components/client/client_controller.js
 src/javascripts/components/client/dialogsInitController.js
 src/javascripts/components/client/onboarding_controller.js
 src/javascripts/components/client/trial_watcher.js
@@ -528,7 +527,6 @@ src/javascripts/libs/index.js
 src/javascripts/libs/markdown_vendors.js
 src/javascripts/kaltura_credentials.js
 src/javascripts/ui.js
-src/javascripts/environment.js
 src/javascripts/access_control/access_checker.js
 src/javascripts/access_control/cf_rule.js
 src/javascripts/access_control/cf_rule_list.js
