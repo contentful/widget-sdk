@@ -9,8 +9,14 @@ header.workbench-header
   .workbench-header__actions
     button.cfnext-btn-secondary-action(ui-command="actions.cancel")
       | Cancel
-    button.cfnext-btn-secondary-action(ui-command="actions.delete")
-      | Delete
+    button.cfnext-btn-secondary-action(cf-context-menu-trigger)
+      cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+      | Actions
+    .context-menu(cf-context-menu)
+      div(role="menuitem" ui-command="actions.duplicate")
+        | Duplicate
+      div(role="menuitem" ui-command="actions.delete")
+        | Delete
     button.cfnext-btn-primary-action(ui-command="actions.save")
       | Save
 
