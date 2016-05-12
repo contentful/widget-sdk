@@ -152,7 +152,6 @@ test/unit/services/space_tools_spec.js
 test/unit/services/string_utils_spec.js
 test/unit/services/the_store_spec.js
 test/unit/services/token_store_spec.js
-test/unit/services/paywall_opener_spec.js
 test/unit/services/subscription_plan_recommender_spec.js
 test/unit/widgets/checks_spec.js
 test/unit/widgets/api_spec.js
@@ -505,7 +504,6 @@ src/javascripts/services/error_message_builder.js
 src/javascripts/services/features.js
 src/javascripts/services/filepicker.js
 src/javascripts/services/hints.js
-src/javascripts/services/lazy_loader.js
 src/javascripts/services/locale_store.js
 src/javascripts/services/logger.js
 src/javascripts/services/modal_dialog_service.js
@@ -524,7 +522,6 @@ src/javascripts/services/token_store.js
 src/javascripts/services/ui_version_switcher.js
 src/javascripts/services/user_agent.js
 src/javascripts/services/zone_offsets.js
-src/javascripts/services/paywall_opener.js
 src/javascripts/services/subscription_plan_recommender.js
 src/javascripts/forms/errors.js
 src/javascripts/forms/validation.js
