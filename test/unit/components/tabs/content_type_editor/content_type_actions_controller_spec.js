@@ -38,12 +38,12 @@ describe('ContentType Actions Controller', function () {
     ReloadNotification = this.$inject('ReloadNotification');
     ReloadNotification.basicErrorHandler = sinon.spy();
 
-    var cfStub = this.$inject('cfStub');
+    this.cfStub = this.$inject('cfStub');
 
-    space = cfStub.space('spaceid');
+    space = this.cfStub.space('spaceid');
     spaceContext = this.$inject('spaceContext');
-    spaceContext.space = space;
-    contentType = cfStub.contentType(space, 'typeid', 'typename');
+    spaceContext.resetWithSpace(space);
+    contentType = this.cfStub.contentType(space, 'typeid', 'typename');
 
     scope = this.$inject('$rootScope').$new();
     scope.context = {};
@@ -54,8 +54,8 @@ describe('ContentType Actions Controller', function () {
     controller = $controller('ContentTypeActionsController', {$scope: scope});
   });
 
-  describe('#delete command', function() {
-    beforeEach(function() {
+  describe('#delete command', function () {
+    beforeEach(function () {
       contentType.delete = sinon.stub().resolves();
       contentType.unpublish = sinon.stub().resolves();
       contentType.isPublished = sinon.stub().returns(true);
@@ -98,7 +98,7 @@ describe('ContentType Actions Controller', function () {
         sinon.assert.notCalled(contentType.delete);
       });
 
-      it('notifies of server errors', function() {
+      it('notifies of server errors', function () {
         contentType.delete.rejects({error: true});
         controller.delete.execute();
         this.$apply();
@@ -106,13 +106,13 @@ describe('ContentType Actions Controller', function () {
         sinon.assert.called(logger.logServerWarn);
       });
 
-      it('shows notification', function() {
+      it('shows notification', function () {
         controller.delete.execute();
         this.$apply();
         sinon.assert.called(notification.info);
       });
 
-      it('closes state', function() {
+      it('closes state', function () {
         controller.delete.execute();
         this.$apply();
         sinon.assert.calledOnce(this.closeSpy);
@@ -120,7 +120,7 @@ describe('ContentType Actions Controller', function () {
     });
 
     describe('delete flow interruptions', function () {
-      function testForbiddenRemoval(dialog, data) {
+      function testForbiddenRemoval (dialog, data) {
         var matchObj = {
           template: 'content_type_removal_forbidden_dialog',
           scopeData: data || {}
@@ -132,7 +132,7 @@ describe('ContentType Actions Controller', function () {
         sinon.assert.notCalled(contentType.delete);
       }
 
-      function testEndpointError() {
+      function testEndpointError () {
         controller.delete.execute();
         scope.$apply();
         sinon.assert.calledOnce(ReloadNotification.basicErrorHandler);
@@ -194,13 +194,13 @@ describe('ContentType Actions Controller', function () {
 
   });
 
-  it('when cancelling navigates back to list', function() {
+  it('when cancelling navigates back to list', function () {
     controller.cancel.execute();
     sinon.assert.called(this.$state.go, '^.list');
   });
 
-  describe('#save command', function() {
-    beforeEach(function() {
+  describe('#save command', function () {
+    beforeEach(function () {
       spaceContext.editingInterfaces = {
         save: sinon.stub().resolves()
       };
@@ -306,7 +306,7 @@ describe('ContentType Actions Controller', function () {
       });
     });
 
-    pit('redirects if the content type is new', function() {
+    pit('redirects if the content type is new', function () {
       var goStub = this.$state.go;
       scope.context.isNew = true;
       return controller.save.execute()
@@ -373,7 +373,7 @@ describe('ContentType Actions Controller', function () {
   describe('#save command disabled', function () {
     beforeEach(function () {
       scope.contentTypeForm = {
-        $dirty: true,
+        $dirty: true
       };
       scope.contentType.data.fields = [
         { disabled: false },
@@ -410,4 +410,122 @@ describe('ContentType Actions Controller', function () {
     });
   });
 
+  describe('#duplicate command', function () {
+    function getCreatedCt () {
+      return spaceContext.space.newContentType.returnValues[0];
+    }
+
+    beforeEach(function () {
+      sinon.stub(this.$inject('modalDialog'), 'open', function (params) {
+        if (params.scope && params.scope.duplicate) {
+          _.extend(params.scope.contentTypeMetadata, {name: 'test', id: 'test'});
+          var confirm = sinon.spy();
+          params.scope.dialog = {confirm: confirm, cancel: sinon.spy(), formController: {$valid: true}};
+          params.scope.duplicate.execute();
+          scope.$apply();
+          return {promise: $q.resolve(confirm.firstCall.args[0])};
+        }
+
+        if (params.title === 'Duplicated content type') {
+          return {promise: $q.resolve()};
+        }
+      });
+
+      sinon.stub(spaceContext.space, 'newContentType', function (data) {
+        var ct = this.cfStub.contentType(space, 'ct-id', 'ct-name');
+        _.extend(ct.data, data);
+        ct.save = sinon.stub().resolves(ct);
+        ct.publish = sinon.stub().resolves(ct);
+        return ct;
+      }.bind(this));
+
+      scope.editingInterface = {controls: []};
+      spaceContext.editingInterfaces.save = sinon.stub().resolves();
+
+      sinon.stub(spaceContext.editingInterfaces, 'get', function (ctData) {
+        return $q.resolve({
+          controls: _.map(ctData.fields, function (field) {
+            return {field: field, widgetId: 'some-widget'};
+          })
+        });
+      });
+    });
+
+    pit('creates new content types type with a provided name', function () {
+      return controller.duplicate.execute().then(function () {
+        sinon.assert.calledOnce(spaceContext.space.newContentType);
+        expect(spaceContext.space.newContentType.firstCall.args[0].name).toBe('test');
+      });
+    });
+
+    pit('saves a duplicate with the same field IDs and display field', function () {
+      contentType.data.displayField = 'field-id-2-disp';
+      contentType.data.fields = [{id: 'field-id-1'}, {id: 'field-id-2-disp'}];
+
+      return controller.duplicate.execute().then(function () {
+        var ct = getCreatedCt();
+        sinon.assert.calledOnce(ct.save);
+        expect(typeof ct.data.displayField).toBe('string');
+        expect(ct.data.displayField).toBe(contentType.data.displayField);
+        expect(ct.data.displayField).toBe(ct.data.fields[1].id);
+        expect(ct.data.fields[0].id).toBe(contentType.data.fields[0].id);
+        expect(ct.data.fields[1].id).toBe(contentType.data.fields[1].id);
+      });
+    });
+
+    pit('publishes content type duplicate', function () {
+      return controller.duplicate.execute().then(function () {
+        sinon.assert.calledOnce(getCreatedCt().publish);
+      });
+    });
+
+    pit('synchronizes controls in the new EI', function () {
+      contentType.data.fields = [{id: 'xyz'}, {id: 'boom'}];
+      scope.editingInterface.controls = [
+        {widgetId: 'margarita-making-widget'},
+        {widgetId: 'some-other-widget'}
+      ];
+
+      return controller.duplicate.execute().then(function () {
+        sinon.assert.calledOnce(spaceContext.editingInterfaces.save);
+        var ei = spaceContext.editingInterfaces.save.firstCall.args[1];
+        expect(ei.controls[0].widgetId).toBe('margarita-making-widget');
+        expect(ei.controls[1].widgetId).toBe('some-other-widget');
+      });
+    });
+  });
+
+  describe('#duplicate command disabled', function () {
+    beforeEach(function () {
+      scope.context.isNew = false;
+      scope.contentTypeForm = {$dirty: false};
+      scope.contentType.data.sys.publishedVersion = 100;
+      scope.contentType.isPublished = _.constant(true);
+      accessChecker.shouldDisable = _.constant(false);
+      expect(controller.duplicate.isDisabled()).toBe(false);
+    });
+
+    it('is true when content type is new', function () {
+      scope.context.isNew = true;
+      expect(controller.duplicate.isDisabled()).toBe(true);
+    });
+
+    it('is true when from is dirty', function () {
+      scope.contentTypeForm.$dirty = true;
+      expect(controller.duplicate.isDisabled()).toBe(true);
+      scope.contentTypeForm.$dirty = false;
+      delete scope.contentType.data.sys.publishedVersion;
+      expect(controller.duplicate.isDisabled()).toBe(true);
+    });
+
+    it('is true when update/create are denied', function () {
+      accessChecker.shouldDisable = _.constant(true);
+      expect(controller.duplicate.isDisabled()).toBe(true);
+    });
+
+    it('is true when content type is not published', function () {
+      scope.contentType.isPublished = _.constant(false);
+      expect(controller.duplicate.isDisabled()).toBe(true);
+    });
+  });
 });

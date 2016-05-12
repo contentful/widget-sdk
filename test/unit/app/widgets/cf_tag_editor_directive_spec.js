@@ -2,16 +2,14 @@
 
 describe('cfTagEditor directive', function () {
   beforeEach(function () {
-    module('cf.app');
+    module('contentful/test');
 
-    this.fieldApi = {
-      onValueChanged: sinon.stub(),
-      onDisabledStatusChanged: sinon.stub()
-    };
+    var widgetApi = this.$inject('mocks/widgetApi')();
+    this.fieldApi = widgetApi.field;
 
     this.compile = function (items) {
       var el = this.$compile('<cf-tag-editor />', {}, {
-        cfWidgetApi: {field: this.fieldApi}
+        cfWidgetApi: widgetApi
       });
       this.fieldApi.onValueChanged.yield(items);
       this.$apply();

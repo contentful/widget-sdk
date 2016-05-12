@@ -11,7 +11,6 @@ test/unit/components/forms/cf_embedly_preview_directive_spec.js
 test/unit/components/forms/cf_entry_link_editor_controller_spec.js
 test/unit/components/forms/cf_entry_link_editor_directive_spec.js
 test/unit/components/forms/cf_field_alert_directive_spec.js
-test/unit/components/forms/cf_file_editor_directive_spec.js
 test/unit/components/forms/cf_google_maps_controller_spec.js
 test/unit/components/forms/cf_google_maps_directive_spec.js
 test/unit/components/forms/cf_link_editor_controller_spec.js
@@ -19,8 +18,6 @@ test/unit/components/forms/cf_link_editor_search_controller_spec.js
 test/unit/components/forms/cf_link_editor_search_directive_spec.js
 test/unit/components/forms/cf_location_editor_directive_spec.js
 test/unit/components/forms/cf_multi_video_editor_controller_spec.js
-test/unit/components/forms/cf_single_line_editor_directive_spec.js
-test/unit/components/forms/cf_url_editor_directive_spec.js
 test/unit/components/app_container/context_history_spec.js
 test/unit/components/app_container/entity_creation_controller_spec.js
 test/unit/components/app_container/space_controller_spec.js
@@ -56,9 +53,7 @@ test/unit/components/tabs/content_type_editor/add_field_dialog_spec.js
 test/unit/components/tabs/content_type_editor/api_name_controller_spec.js
 test/unit/components/tabs/content_type_editor/cf_list_type_for_spec.js
 test/unit/components/tabs/content_type_editor/content_type_field_controller_spec.js
-test/unit/components/tabs/content_type_editor/metadata_dialog_spec.js
 test/unit/components/tabs/content_type_editor/cf_content_type_preview_spec.js
-test/unit/components/tabs/content_type_editor/content_type_actions_controller_spec.js
 test/unit/components/tabs/content_type_editor/content_type_editor_controller_spec.js
 test/unit/components/tabs/content_type_list/content_type_list_directive_spec.js
 test/unit/components/tabs/content_type_list/content_type_list_controller_spec.js
@@ -137,7 +132,6 @@ test/unit/widgets/checks_spec.js
 test/unit/widgets/api_spec.js
 test/unit/widgets/builtin_spec.js
 test/unit/widgets/cf_iframe_widget_directive_spec.js
-test/unit/widgets/cf_rating_editor_spec.js
 test/unit/widgets/channel_spec.js
 test/unit/widgets/default_spec.js
 test/unit/widgets/deprecations_spec.js
@@ -153,12 +147,6 @@ test/unit/app/entry_editor/entry_actions_controller_spec.js
 test/unit/app/entry_editor/entry_editor_controller_spec.js
 test/unit/app/entry_editor/entry_reverter_spec.js
 test/unit/app/entry_editor/form_widgets_controller_spec.js
-test/unit/app/widgets/cf_checkbox_editor_directive_spec.js
-test/unit/app/widgets/cf_dropdown_editor_directive_spec.js
-test/unit/app/widgets/cf_json_editor_directive_spec.js
-test/unit/app/widgets/cf_multi_line_editor_directive_spec.js
-test/unit/app/widgets/cf_radio_editor_directive_spec.js
-test/unit/app/widgets/cf_tag_editor_directive_spec.js
 test/unit/data/api_client_spec.js
 test/unit/data/content_types_spec.js
 test/unit/data/editing_interfaces/transformer_spec.js
@@ -170,7 +158,6 @@ test/unit/markdown_editor/link_organizer_spec.js
 test/unit/markdown_editor/markdown_codemirror_wrapper_spec.js
 test/unit/markdown_editor/markdown_requirements_spec.js
 test/unit/markdown_editor/markdown_tree_spec.js
-test/unit/markdown_editor/cf_markdown_editor_directive_spec.js
 test/unit/markdown_editor/cf_zenmode_spec.js
 test/unit/markdown_editor/markdown_editor_spec.js
 test/unit/markdown_editor/markdown_preview_spec.js
@@ -284,10 +271,8 @@ src/javascripts/components/tabs/content_type_editor/add_field_dialog_controller.
 src/javascripts/components/tabs/content_type_editor/cf_api_name_shadow_directive.js
 src/javascripts/components/tabs/content_type_editor/cf_list_type_for_directive.js
 src/javascripts/components/tabs/content_type_editor/content_type_field_controller.js
-src/javascripts/components/tabs/content_type_editor/metadata_dialog.js
 src/javascripts/components/tabs/content_type_editor/api_name_controller.js
 src/javascripts/components/tabs/content_type_editor/cf_content_type_preview.js
-src/javascripts/components/tabs/content_type_editor/content_type_actions_controller.js
 src/javascripts/components/tabs/content_type_editor/content_type_editor_controller.js
 src/javascripts/components/tabs/content_type_editor/content_type_editor_directive.js
 src/javascripts/components/tabs/content_type_list/content_type_list_directive.js
@@ -546,7 +531,6 @@ src/javascripts/utils/overriding_request_queue.js
 src/javascripts/libs/dottie_wrapper.js
 src/javascripts/libs/index.js
 src/javascripts/libs/markdown_vendors.js
-src/javascripts/forms.js
 src/javascripts/kaltura_credentials.js
 src/javascripts/ui.js
 src/javascripts/environment.js

@@ -8,14 +8,12 @@ describe('cfFileEditor Directive', function () {
       $provide.removeDirectives('cfFileDrop');
       $provide.value('filepicker', {
         pick: sinon.stub(),
-        parseFPFile: sinon.stub(),
+        parseFPFile: sinon.stub()
       });
     });
 
-    fieldApi = {
-      onValueChanged: sinon.stub(),
-      onDisabledStatusChanged: sinon.stub(),
-    };
+    var widgetApi = this.$inject('mocks/widgetApi')();
+    fieldApi = widgetApi.field;
 
     scope = this.$compile('<cf-file-editor />', {
       isEditable: _.constant(true),
@@ -24,7 +22,7 @@ describe('cfFileEditor Directive', function () {
         fileType: 'image/jpeg'
       }
     }, {
-      cfWidgetApi: {field: fieldApi}
+      cfWidgetApi: widgetApi
     }).scope();
 
     scope.$apply();
@@ -35,7 +33,7 @@ describe('cfFileEditor Directive', function () {
     scope = fieldApi = null;
   });
 
-  it('toggles meta info', function() {
+  it('toggles meta info', function () {
     scope.toggleMeta();
     expect(scope.showMeta).toBeTruthy();
   });
@@ -84,7 +82,7 @@ describe('cfFileEditor Directive', function () {
   });
 
   describe('scope.deleteFile()', function () {
-    beforeEach(function() {
+    beforeEach(function () {
       scope.$emit = sinon.stub();
       fieldApi.removeValue = sinon.stub().resolves();
 
@@ -95,7 +93,7 @@ describe('cfFileEditor Directive', function () {
       this.$apply();
     });
 
-    it('removes the value from the field API', function() {
+    it('removes the value from the field API', function () {
       sinon.assert.calledOnce(fieldApi.removeValue);
     });
 
@@ -103,12 +101,12 @@ describe('cfFileEditor Directive', function () {
       expect(scope.file).toBe(null);
     });
 
-    it('it does not emit "fileUploaded" event', function() {
+    it('it does not emit "fileUploaded" event', function () {
       sinon.assert.notCalled(scope.$emit);
     });
   });
 
-  describe('on "cfFileDropped" event', function() {
+  describe('on "cfFileDropped" event', function () {
     beforeEach(function () {
       fieldApi.setValue = sinon.stub().resolves();
 

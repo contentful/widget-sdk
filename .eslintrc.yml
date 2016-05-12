@@ -1,7 +1,7 @@
 extends: standard
 rules:
   padded-blocks: off
-  semi: off
+  semi: ["error", "always"]
   no-multiple-empty-lines: off
 globals:
   angular: true
