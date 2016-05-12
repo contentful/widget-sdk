@@ -20,4 +20,4 @@ angular.module('contentful/app', ['contentful'])
   get('clientAdapter').setToken(authentication.token);
   get('ShareJS').connect(authentication.token);
   get('uiVersionSwitcher').checkIfVersionShouldBeSwitched();
-}])
+}]);

@@ -6,12 +6,9 @@ describe('cfMarkdownEditor', function () {
 
     this.$inject('LazyLoader').get = sinon.stub().resolves(window.cfLibs.markdown);
 
-    this.fieldStubs = {
-      getValue: sinon.stub().returns('test'),
-      setString: sinon.stub(),
-      onValueChanged: sinon.stub(),
-      onDisabledStatusChanged: sinon.stub()
-    };
+    var widgetApi = this.$inject('mocks/widgetApi')();
+    widgetApi.field.getValue.returns('test');
+    this.fieldStubs = widgetApi.field;
 
     this.notifyChange = function () {
       var notifyFn = this.fieldStubs.onValueChanged.firstCall.args[0];

@@ -10,13 +10,10 @@ angular.module('contentful')
     scope: {},
     restrict: 'E',
     require: '^cfWidgetApi',
-    template: [
-      '<input type="text" class="form-control" ng-disabled="isDisabled">',
-      '<i cf-field-alert="{{parseWarning}}" tooltip-placement="left"></i>'
-    ].join(''),
+    template: JST['cf_number_editor'](),
     link: function (scope, $el, attrs, widgetApi) {
       var field = widgetApi.field;
-      var $inputEl = $el.children('input');
+      var $inputEl = $el.find('input');
       var updateInput = makeInputUpdater($inputEl);
 
       // update input field value when new synced value received via ot magic

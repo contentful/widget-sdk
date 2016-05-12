@@ -7,9 +7,13 @@
  * @description
  * Provides an interface similar to the new widget api.
  *
- * @scope.requires {Object} otSubDoc
- * @scope.requires {Object} widget
- * @scope.requires {Function} isDisabled
+ * @scope.requires {object} entry
+ * @scope.requires {object} locale
+ * @scope.requires {object} otSubDoc
+ * @scope.requires {object} fields
+ * @scope.requires {object} transformedContentTypeData
+ * @scope.requires {object} widget
+ * @scope.requires {function} isDisabled
  */
 angular.module('contentful')
 .directive('cfWidgetApi', [function () {
@@ -21,21 +25,53 @@ angular.module('contentful')
 .controller('WidgetApiController', ['$scope', '$injector', function ($scope, $injector) {
   var $q = $injector.get('$q');
   var newSignal = $injector.get('signal').createMemoized;
+  var spaceContext = $injector.get('spaceContext');
+  var TheLocaleStore = $injector.get('TheLocaleStore');
+
   var valueChangedSignal = newSignal($scope.otSubDoc.getValue());
-  var isDisabledSignal = newSignal($scope.isDisabled($scope.field, $scope.locale));
+  var isDisabledSignal = newSignal(isEditingDisabled());
   var ctField = $scope.widget.field;
 
   $scope.$on('otValueChanged', createValueChangedSignalDispatcher());
   $scope.$on('otValueReverted', createValueChangedSignalDispatcher(true));
 
-  $scope.$watch(function () {
-    return $scope.isDisabled($scope.field, $scope.locale);
-  }, function (value) {
+  $scope.$watch(isEditingDisabled, function (value) {
+    // Do not send other listener arguments to signal
     isDisabledSignal.dispatch(value);
+  });
+
+
+  // TODO: consolidate entity data at one place instead of
+  // splitting it across a sharejs doc as well as global
+  // entity data
+  var sysChangedSignal = newSignal($scope.entity.data.sys);
+  $scope.$watch('entity.data.sys', function (sys) {
+    sysChangedSignal.dispatch(sys);
   });
 
   this.settings = $scope.widget.settings;
   this.settings.helpText = this.settings.helpText || $scope.widget.defaultHelpText;
+
+  this.locales = {
+    default: getDefaultLocaleCode(),
+    available: getAvailableLocaleCodes()
+  };
+
+  this.contentType = $scope.transformedContentTypeData;
+
+  this.entry = {
+    getSys: function () {
+      return $scope.entity.data.sys;
+    },
+    onSysChanged: sysChangedSignal.attach,
+    fields: $scope.fields // comes from entry editor controller
+  };
+
+  this.space = {
+    getEntries: function (query) {
+      return spaceContext.space.getEntries(query);
+    }
+  };
 
   this.field = {
     onValueChanged: valueChangedSignal.attach,
@@ -60,9 +96,11 @@ angular.module('contentful')
     return $scope.otSubDoc.getValue();
   }
 
-  function createSetter(method) {
+  function createSetter (method) {
     return function setValue (value) {
-      if (value === getValue()) {
+      // We only test for equality when the value is guaranteed to be
+      // equal.
+      if (!_.isObject(value) && value === getValue()) {
         return $q.resolve(value);
       } else {
         return $scope.otSubDoc[method](value);
@@ -70,11 +108,11 @@ angular.module('contentful')
     };
   }
 
-  function removeValue() {
+  function removeValue () {
     return $scope.otSubDoc.removeValue();
   }
 
-  function createValueChangedSignalDispatcher(shouldCheckPath) {
+  function createValueChangedSignalDispatcher (shouldCheckPath) {
     return function dispatchValueChangedSignal (e, path, value) {
       if (!shouldCheckPath || isPathMatching(path)) {
         valueChangedSignal.dispatch(value);
@@ -119,5 +157,17 @@ angular.module('contentful')
     } else {
       return $scope.otSubDoc.changeValue([x]);
     }
+  }
+
+  function isEditingDisabled () {
+    return $scope.fieldLocale.access.disabled;
+  }
+
+  function getDefaultLocaleCode () {
+    return TheLocaleStore.getDefaultLocale().code;
+  }
+
+  function getAvailableLocaleCodes () {
+    return _.pluck(TheLocaleStore.getPrivateLocales(), 'code');
   }
 }]);

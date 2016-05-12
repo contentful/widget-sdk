@@ -5,7 +5,7 @@
 beforeEach(function () {
   jasmine.addMatchers({
 
-    toLookEqual: function() {
+    toLookEqual: function () {
       return {
         compare: function (actual, expected) {
           return {
@@ -23,7 +23,7 @@ beforeEach(function () {
           var notText = pass ? 'not ' : '';
           return {
             pass: pass,
-            message: 'Expected element ' + notText + 'to have class '+expected
+            message: 'Expected element ' + notText + 'to have class ' + expected
           };
         }
       };
@@ -46,32 +46,32 @@ beforeEach(function () {
       return {
         compare: function (actual, expected) {
           var pass, tag;
-          if(actual.tagName){
+          if (actual.tagName) {
             tag = actual.tagName.toLowerCase();
-          } else if(actual.get && actual.get(0) && actual.get(0).tagName){
+          } else if (actual.get && actual.get(0) && actual.get(0).tagName) {
             tag = actual.get(0).tagName.toLowerCase();
           }
           pass = tag && tag === expected;
           var notText = pass ? 'not ' : '';
           return {
             pass: pass,
-            message: 'Expected element with tag '+tag+' '+notText+'to have tag name '+expected
+            message: 'Expected element with tag ' + tag + ' ' + notText + 'to have tag name ' + expected
           };
         }
       };
     },
 
-    toBeInstanceOf: function() {
+    toBeInstanceOf: function () {
       return {
-        compare: function(actual, expected) {
+        compare: function (actual, expected) {
           var pass, notText;
 
-          pass    = (actual instanceof expected);
+          pass = (actual instanceof expected);
           notText = pass ? ' not' : '';
 
           return {
-            pass    : pass,
-            message : 'Expected ' + actual.constructor.name + notText + ' to be an instance of ' + expected.name
+            pass: pass,
+            message: 'Expected ' + actual.constructor.name + notText + ' to be an instance of ' + expected.name
           };
         }
       };
@@ -85,10 +85,10 @@ beforeEach(function () {
         'A': 'change occurred within an array'
       };
 
-      function formatDiff(objdiff) {
+      function formatDiff (objdiff) {
         return objdiff.map(function (diff) {
-          return '\t'+diff.kind +' at '+ diff.path.join('.') +'\n'+
-            '\t'+diff.actual +' should be '+ diff.expected;
+          return '\t' + diff.kind + ' at ' + diff.path.join('.') + '\n' +
+            '\t' + diff.actual + ' should be ' + diff.expected;
         }).join('\n\n');
       }
 
@@ -104,10 +104,9 @@ beforeEach(function () {
             };
           });
 
-          //console.log(actual, expected, objdiff);
           return {
-            pass    : objdiff.length === 0,
-            message : 'Expected object not to have differences\n\n' + formatDiff(objdiff)
+            pass: objdiff.length === 0,
+            message: 'Expected object not to have differences\n\n' + formatDiff(objdiff)
           };
 
         }
@@ -130,12 +129,11 @@ beforeEach(function () {
           var pass = _.isEqual(flattenedArgs, expected);
           return {
             pass: pass,
-            message: pass ? 'Expected arguments '+JSON.stringify(actual)+' not to equal ' + JSON.stringify(expected)
-                          : 'Expected arguments '+JSON.stringify(actual)+' to equal ' + JSON.stringify(expected)
+            message: pass ? 'Expected arguments ' + JSON.stringify(actual) + ' not to equal ' + JSON.stringify(expected)
+                          : 'Expected arguments ' + JSON.stringify(actual) + ' to equal ' + JSON.stringify(expected)
           };
         }
       };
     }
-
   });
 });

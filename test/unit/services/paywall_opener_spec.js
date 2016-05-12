@@ -164,7 +164,7 @@ describe('paywallOpener', function () {
         var initialCallCount = self.modalDialog.open.callCount;
         self.openPaywall();
         sinon.assert.callCount(self.modalDialog.open, initialCallCount + canReopen);
-      }
+      };
     }
   }
 

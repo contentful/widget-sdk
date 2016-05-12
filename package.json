@@ -99,7 +99,7 @@
   "scripts": {
     "start": "gulp all serve",
     "test": "xvfb-run karma start --single-run --browsers SlimerJS --reporters dots",
-    "hint": "eslint src test",
+    "hint": "eslint src test gulpfile.js",
     "cloc": "cloc --read-lang-def .cloc.def src",
     "clean": "rm -rf bower_components node_modules",
     "publish-styleguide": "./bin/publish-styleguide.sh"

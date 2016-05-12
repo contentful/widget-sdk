@@ -79,7 +79,7 @@ header.workbench-header
             | Save changes
           button.btn-action-select__selector(cf-context-menu-trigger ng-if="role.sys.id && canModifyRoles()")
             cf-icon.btn-action-select__icon(name="dd-arrow-down")
-          .context-menu.context-menu--arrow-right(cf-context-menu="bottom-right")
+          .context-menu.x--arrow-right(cf-context-menu="bottom-right")
             a(role="menuitem" href="" ng-click="duplicateRole()") Duplicate
             a(role="menuitem" href="" ng-click="removeRole()" ng-if="removeRole") Delete permanently
       .rule-list__note.note-box--blue(ng-show="autofixed")

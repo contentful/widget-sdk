@@ -1,19 +1,19 @@
 'use strict';
 
+/* eslint-disable no-unused-vars */
 describe('Client Controller', function () {
-  var clientController, scope, notification, TheAccountView, spaceContext;
+  var clientController, scope, TheAccountView, spaceContext;
   var stubs;
 
   afterEach(function () {
-    clientController = scope = notification =
-      TheAccountView = spaceContext = stubs = null;
+    clientController = scope = TheAccountView = spaceContext = stubs = null;
   });
 
-  function setMockOnContext(context, mockKey, stubsList) {
-      context[mockKey] = {};
-      _.each(stubsList, function (val) {
-        context[mockKey][val] = sinon.stub();
-      }, context);
+  function setMockOnContext (context, mockKey, stubsList) {
+    context[mockKey] = {};
+    _.each(stubsList, function (val) {
+      context[mockKey][val] = sinon.stub();
+    }, context);
   }
 
   beforeEach(function () {
@@ -29,7 +29,7 @@ describe('Client Controller', function () {
       setMockOnContext(self, 'analyticsStubs', [
         'enable',
         'disable',
-        'track',
+        'track'
       ]);
       $provide.value('analytics', self.analyticsStubs);
 
@@ -43,7 +43,7 @@ describe('Client Controller', function () {
         setTokenLookup: sinon.stub(),
         setSpace: sinon.stub(),
         authContext: {
-          hasSpace: sinon.stub(),
+          hasSpace: sinon.stub()
         }
       };
       $provide.value('authorization', self.authorizationStubs);
@@ -72,7 +72,7 @@ describe('Client Controller', function () {
         'goToSpace',
         'goToOrganization',
         'getSpaceId',
-        'getRoute',
+        'getRoute'
       ]);
       $provide.value('routing', self.routingStubs);
 
@@ -112,11 +112,10 @@ describe('Client Controller', function () {
       };
       $provide.value('enforcements', self.enforcementsStubs);
     });
-    inject(function (){
+    inject(function () {
       this.$rootScope = this.$inject('$rootScope');
       this.$stateParams = this.$inject('$stateParams');
 
-      notification = this.$inject('notification');
       TheAccountView = this.$inject('TheAccountView');
 
       spaceContext = this.$inject('spaceContext');
@@ -190,7 +189,7 @@ describe('Client Controller', function () {
       childScope = null;
     });
 
-    it('location in account flag is false', function() {
+    it('location in account flag is false', function () {
       this.$stateParams.spaceId = '123';
       childScope.$emit('$stateChangeSuccess');
       expect(TheAccountView.isActive()).toBeFalsy();
@@ -242,12 +241,12 @@ describe('Client Controller', function () {
       this.broadcastStub.restore();
     });
 
-    it('sets user', function() {
+    it('sets user', function () {
       expect(scope.user).toEqual(this.user);
     });
 
     describe('fires an initial version check', function () {
-      beforeEach(function() {
+      beforeEach(function () {
         jasmine.clock().tick(5000);
         scope.$digest();
       });
@@ -265,7 +264,7 @@ describe('Client Controller', function () {
       beforeEach(function () {
         this.presenceStubs.isActive.returns(true);
         this.tokenStoreStubs.refresh.rejects();
-        jasmine.clock().tick(50*60*1000);
+        jasmine.clock().tick(50 * 60 * 1000);
         scope.$digest();
       });
 
@@ -280,7 +279,7 @@ describe('Client Controller', function () {
 
   });
 
-  describe('organizations on the scope', function() {
+  describe('organizations on the scope', function () {
     var OrganizationList, logger;
 
     beforeEach(function () {
@@ -292,13 +291,13 @@ describe('Client Controller', function () {
       OrganizationList = logger = null;
     });
 
-    it('are initially not set', function() {
+    it('are initially not set', function () {
       expect(OrganizationList.isEmpty()).toBe(true);
     });
 
-    describe('if user exists', function() {
+    describe('if user exists', function () {
       var user, org1, org2, org3;
-      beforeEach(function() {
+      beforeEach(function () {
         org1 = {org1: true};
         org2 = {org2: true};
         org3 = {org3: true};
@@ -314,18 +313,18 @@ describe('Client Controller', function () {
         }.bind(this);
       });
 
-      it('are set', function() {
+      it('are set', function () {
         this.prepare();
         expect(OrganizationList.getAll()).toEqual([org1, org2, org3]);
       });
 
-      it('sets analytics user data and enables tracking', function() {
+      it('sets analytics user data and enables tracking', function () {
         this.prepare();
         sinon.assert.calledWithExactly(this.analyticsStubs.enable, user);
         sinon.assert.calledWithExactly(logger.enable, user);
       });
 
-      it('should not set or enable anything when analytics are disallowed', function() {
+      it('should not set or enable anything when analytics are disallowed', function () {
         this.featuresStubs.allowAnalytics.returns(false);
         this.prepare();
         sinon.assert.notCalled(this.analyticsStubs.enable);

@@ -1,34 +1,34 @@
 'use strict';
 
-var _           = require('lodash-node/modern');
-var Promise     = require('promise');
-var browserify  = require('browserify');
-var glob        = require('glob');
-var clean       = require('gulp-clean');
-var concat      = require('gulp-concat');
-var exec        = require('child_process').exec;
-var express     = require('express');
+var _ = require('lodash-node/modern');
+var Promise = require('promise');
+var browserify = require('browserify');
+var glob = require('glob');
+var clean = require('gulp-clean');
+var concat = require('gulp-concat');
+var exec = require('child_process').exec;
+var express = require('express');
 var fingerprint = require('gulp-fingerprint');
-var mkdirp      = require('mkdirp');
-var gulp        = require('gulp');
-var gulpif      = require('gulp-if');
-var gutil       = require('gulp-util');
-var inject      = require('gulp-inject');
-var jade        = require('gulp-jade');
-var jstConcat   = require('./tasks/build-template');
-var nib         = require('nib');
-var replace     = require('gulp-regex-replace');
-var rev         = require('gulp-rev');
+var mkdirp = require('mkdirp');
+var gulp = require('gulp');
+var gulpif = require('gulp-if');
+var gutil = require('gulp-util');
+var inject = require('gulp-inject');
+var jade = require('gulp-jade');
+var jstConcat = require('./tasks/build-template');
+var nib = require('nib');
+var replace = require('gulp-regex-replace');
+var rev = require('gulp-rev');
 var runSequence = require('run-sequence');
-var source      = require('vinyl-source-stream');
-var buffer      = require('vinyl-buffer');
-var sourceMaps  = require('gulp-sourcemaps');
-var stylus      = require('gulp-stylus');
-var uglify      = require('gulp-uglify');
-var path        = require('path');
-var through     = require('through2').obj;
-var yargs       = require('yargs');
-var child_process = require('child_process');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+var sourceMaps = require('gulp-sourcemaps');
+var stylus = require('gulp-stylus');
+var uglify = require('gulp-uglify');
+var path = require('path');
+var through = require('through2').obj;
+var yargs = require('yargs');
+var childProcess = require('child_process');
 var serve = require('./tasks/serve');
 
 var argv = yargs
@@ -51,7 +51,7 @@ var src = {
   // All Angular modules except 'cf.lib'
   components: [
     'src/javascripts/**/*.js',
-    '!src/javascripts/libs/*.js',
+    '!src/javascripts/libs/*.js'
   ],
   stylesheets: 'src/stylesheets/**/*',
   vendorScripts: {
@@ -90,7 +90,7 @@ var src = {
       'vendor/kaltura-16-01-2014/KalturaVO.js',
       'vendor/kaltura-16-01-2014/KalturaServices.js',
       'vendor/kaltura-16-01-2014/KalturaClient.js'
-    ],
+    ]
   },
   images: [
     'src/images/**/*',
@@ -99,7 +99,7 @@ var src = {
   svg: {
     sourceDirectory: 'src/svg',
     outputDirectory: 'public/app/svg',
-    outputFile:      'public/app/contentful_icons.js'
+    outputFile: 'public/app/contentful_icons.js'
   },
   static: [
     'vendor/font-awesome/*.+(eot|svg|ttf|woff)',
@@ -127,7 +127,7 @@ gulp.task('all', [
   'js',
   'copy-images',
   'copy-static',
-  'stylesheets',
+  'stylesheets'
 ]);
 
 
@@ -158,11 +158,11 @@ gulp.task('copy-images', function () {
     .pipe(gulp.dest('./public/app/images'));
 });
 
-gulp.task('index', function(){
+gulp.task('index', function () {
   gulp.src('src/index.html')
     .pipe(replace({
-      regex:   'window.CF_CONFIG =.*',
-      replace: 'window.CF_CONFIG = '+JSON.stringify(settings)+';'
+      regex: 'window.CF_CONFIG =.*',
+      replace: 'window.CF_CONFIG = ' + JSON.stringify(settings) + ';'
     }))
     .pipe(gulp.dest('public'));
 });
@@ -224,15 +224,15 @@ gulp.task('js/external-bundle', function () {
 gulp.task('js/app', ['git-revision', 'icons'], function () {
   return gulp.src(src.components.concat([src.svg.outputFile]))
     .pipe(gulpif('**/environment.js',
-      replace({ regex: 'GULP_GIT_REVISION', replace: gitRevision})))
+      replace({ regex: 'GULP_GIT_REVISION', replace: gitRevision })))
     .pipe(sourceMaps.init())
     .pipe(concat('components.js'))
     .pipe(sourceMaps.write({sourceRoot: '/components'}))
     .pipe(gulp.dest('./public/app/'));
 });
 
-gulp.task('git-revision', function(cb){
-  exec('git log -1 --pretty=format:%H', function(err, sha){
+gulp.task('git-revision', function (cb) {
+  exec('git log -1 --pretty=format:%H', function (err, sha) {
     gitRevision = sha;
     cb(err);
   });
@@ -269,7 +269,7 @@ gulp.task('stylesheets', [
 ]);
 
 gulp.task('stylesheets/vendor', function () {
-   return gulp.src(src.vendorStylesheets)
+  return gulp.src(src.vendorStylesheets)
     .pipe(sourceMaps.init())
     .pipe(concat('vendor.css'))
     .pipe(sourceMaps.write({sourceRoot: '/vendor'}))
@@ -308,15 +308,15 @@ gulp.task('serve', function () {
   return serve(patternTaskMap);
 });
 
-gulp.task('watchify', function(){
+gulp.task('watchify', function () {
   var watchify = require('watchify');
   var ui = watchify(createBrowserify(watchify.args));
   bundleBrowserify(ui);
 
-  ui.on('update', function() {
+  ui.on('update', function () {
     gutil.log('Rebuilding \'user_interface\' bundle...');
     bundleBrowserify(ui)
-    .on('end', function(){
+    .on('end', function () {
       gutil.log('Rebuilding \'user_interface\' bundle done');
     });
   });
@@ -324,13 +324,13 @@ gulp.task('watchify', function(){
 
 
 
-function createBrowserify(args) {
+function createBrowserify (args) {
   return browserify(_.extend({debug: true}, args))
     .add('./src/javascripts/libs')
     .transform({optimize: 'size'}, 'browserify-pegjs');
 }
 
-function bundleBrowserify(browserify) {
+function bundleBrowserify (browserify) {
   var dest = gulp.dest('./public/app/');
   return browserify.bundle()
     .on('error', passError(dest))
@@ -338,7 +338,7 @@ function bundleBrowserify(browserify) {
     .pipe(dest);
 }
 
-function buildStylus(sources, dest) {
+function buildStylus (sources, dest) {
   dest = gulp.dest(dest);
   return gulp.src(sources)
     .pipe(sourceMaps.init())
@@ -389,7 +389,7 @@ function sendIndex (dir) {
  * - `rev.manifest()` is a transformer that creates a json file that
  *   maps each non-fingerprinted file to its fingerprinted version.
  */
-gulp.task('build', function(done){
+gulp.task('build', function (done) {
   runSequence(
     'clean',
     'all',
@@ -458,7 +458,7 @@ gulp.task('rev-static', function () {
  * - Extracts source maps contained in the files and writes them
  *   to a separate `.maps` file.
  */
-gulp.task('rev-dynamic', function(){
+gulp.task('rev-dynamic', function () {
   return gulp.src([
     'public/app/main.css',
     'public/app/vendor.css',
@@ -466,7 +466,7 @@ gulp.task('rev-dynamic', function(){
     'public/app/templates.js',
     'public/app/vendor.js',
     'public/app/libs.js',
-    'public/app/components.js',
+    'public/app/components.js'
   ], {base: 'public'})
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(removeSourceRoot())
@@ -494,7 +494,7 @@ gulp.task('rev-app', function () {
     'build/app/vendor-*.js',
     'build/app/libs-*.js',
     'build/app/components-*.js',
-    'build/app/templates-*.js',
+    'build/app/templates-*.js'
   ], {base: 'build'})
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(concat('app/application.min.js'))
@@ -524,11 +524,11 @@ gulp.task('rev-index', function () {
 
   return gulp.src('src/index.html')
     .pipe(inject(javascriptSrc))
-    .pipe(fingerprint(manifest, { prefix: '//'+settings.asset_host+'/'}))
+    .pipe(fingerprint(manifest, {prefix: '//' + settings.asset_host + '/'}))
     .pipe(writeBuild());
 });
 
-gulp.task('revision', ['git-revision'], function(){
+gulp.task('revision', ['git-revision'], function () {
   var stream = source('revision.json');
   stream.end(JSON.stringify({revision: gitRevision}));
   return stream.pipe(writeBuild());
@@ -554,16 +554,17 @@ function removeSourceRoot () {
   });
 }
 
-function spawn(cmd, args, opts) {
+function spawn (cmd, args, opts) {
   return new Promise(function (resolve, reject) {
-    child_process.spawn(cmd, args, opts)
+    childProcess.spawn(cmd, args, opts)
     .on('exit', function (code, signal) {
-      if (code === 0)
+      if (code === 0) {
         resolve();
-      else if (signal)
+      } else if (signal) {
         reject(new Error('Process killed by signal ' + signal));
-      else
+      } else {
         reject(new Error('Process exited with status code ' + code));
+      }
     })
     .on('error', function (err) {
       reject(err);

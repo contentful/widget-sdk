@@ -1,0 +1,121 @@
+/*
+Entity Editor Field
+
+Structure
+~~~jade
+div.entity-editor__field-group
+  // Repeated for each locale
+  div.entity-editor__field-locale
+    div.entity-editor__field-heading
+      label
+      div.entity-editor__no-permission-info
+    div.entity-editor__control-group
+      div.entity-editor__control
+        // Widget rendered
+      ul.entity-editor__field-collaborators
+  div.entity-editor__field-hint
+~~~
+
+Markup:
+div.entity-editor__field-group
+  div.entity-editor__field-locale
+    div.entity-editor__field-heading
+      label Title - English
+    div.entity-editor__control-group
+      div.entity-editor__control
+        input.form-control(type="text")
+      ul.entity-editor__field-collaborators
+        li
+          img(src="/app/images/avatar-1.jpg")
+        li
+          img(src="/app/images/avatar-2.jpg")
+        li
+          img(src="/app/images/avatar-3.jpg")
+        li
+          img(src="/app/images/avatar-4.jpg")
+  div.entity-editor__field-locale
+    div.entity-editor__field-heading
+      label Title - German
+      div.entity-editor__no-permission-info
+        cf-icon(name="lock")
+        | This field is locked
+    div.entity-editor__control-group
+      div.entity-editor__control
+        textarea.form-control
+  div.entity-editor__field-hint
+    | This is a very helpful hint
+
+Styleguide entity-editor-field
+*/
+
+// Width of left-hand main content.
+// We only show the field collaborators on the right
+$entity-editor__field-width = 80%
+
+.entity-editor__field-group
+  display: block
+  margin-bottom: 48px
+
+  // TODO legacy styles to replicate old form layout behavior.
+  // Should be removed.
+  label
+    width: 100%
+    padding-bottom: 10px
+  .form-control
+    display: block
+    margin: 0
+    width: $form-controlwidth-inner
+
+
+.entity-editor__field-locale
+  margin-top: 18px
+  &:first-child
+    margin-top: 0
+
+
+.entity-editor__field-heading
+  display: flex
+  font-size: 14px
+  line-height: 24px
+  color: $colors.text-light
+  width: $entity-editor__field-width
+
+.entity-editor__no-permission-info
+  margin-left: auto
+  white-space: nowrap
+  > cf-icon
+    display: inline-block
+    margin-right: 0.5em
+    path
+      fill: $colors.text-light
+
+
+.entity-editor__control-group
+  display: flex
+  justify-content: space-between
+
+.entity-editor__control
+  width: $entity-editor__field-width
+
+
+.entity-editor__field-hint
+  width: $entity-editor__field-width
+  color: $colors.text-light
+  margin: $rhythm(0.5) 0
+
+
+.entity-editor__field-collaborators
+  margin: 0 0 0 2em
+  margin-left: $form-offset
+  display: flex
+  flex-wrap: wrap
+  > li
+    $image-size = 30px
+    overflow: hidden
+    margin-right: 5px
+    border-radius: 50%
+    width: $image-size
+    height: $image-size
+    > img
+      display: block
+      height: $image-size
