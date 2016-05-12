@@ -458,12 +458,7 @@ gulp.task('rev-static', function () {
 gulp.task('rev-dynamic', function () {
   return gulp.src([
     'public/app/main.css',
-    'public/app/vendor.css',
-
-    'public/app/templates.js',
-    'public/app/vendor.js',
-    'public/app/libs.js',
-    'public/app/components.js'
+    'public/app/vendor.css'
   ], {base: 'public'})
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(removeSourceRoot())
@@ -473,6 +468,8 @@ gulp.task('rev-dynamic', function () {
         verbose: false,
         prefix: '/'
       }))
+    // TODO we do not actually need to rewrite the non-fingerprinted version.
+    // This is basically for renaming and source maps
     .pipe(writeBuild())
     .pipe(rev())
     .pipe(writeBuild())
@@ -488,14 +485,22 @@ gulp.task('rev-dynamic', function () {
  */
 gulp.task('rev-app', function () {
   return gulp.src([
-    'build/app/vendor-*.js',
-    'build/app/libs-*.js',
-    'build/app/components-*.js',
-    'build/app/templates-*.js'
-  ], {base: 'build'})
+    'public/app/templates.js',
+    'public/app/vendor.js',
+    'public/app/libs.js',
+    'public/app/components.js'
+  ])
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(concat('app/application.min.js'))
     .pipe(uglify())
+    .pipe(fingerprint(
+      'build/static-manifest.json', {
+        mode: 'replace',
+        verbose: false,
+        prefix: '/'
+      }))
+    // TODO we do not actually need to rewrite the non-fingerprinted version.
+    // This is basically for renaming and source maps
     .pipe(writeBuild())
     .pipe(rev())
     .pipe(writeBuild())
