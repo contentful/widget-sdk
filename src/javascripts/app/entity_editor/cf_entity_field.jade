@@ -36,7 +36,7 @@ div.entity-editor__field-group(
     div.entity-editor__field-heading
       label(data-test-id="field-locale-label")
         | {{ field.name }}
-        span(ng-if="field.required") &#32;(required)
+        span(ng-if="field.required && !locale.optional") &#32;(required)
         span(ng-if="locales.length > 1")
           | &#32;&ndash; {{locale.name}}
       +field-permission-info
