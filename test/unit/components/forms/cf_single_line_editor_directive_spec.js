@@ -57,7 +57,7 @@ describe('cfSingleLineEditor directive', function () {
     expect($el.children('input').val()).toEqual('test');
   });
 
-  it('input event on text field calls changeString (via setString)', function(){
+  it('input event on text field calls changeString (via setString)', function () {
     var $el = this.compileElement();
 
     $el.children('input').trigger('input', 'what');
