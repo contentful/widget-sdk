@@ -188,7 +188,7 @@ describe('cfWidgetApi directive', function () {
     });
 
     it('calls otSubDoc.changeValue when object reference is the same', function () {
-      var obj = {}
+      var obj = {};
       doc.getValue.returns(obj);
       this.widgetApi.field.setValue(obj);
       sinon.assert.calledOnce(doc.changeValue);
