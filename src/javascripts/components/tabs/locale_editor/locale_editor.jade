@@ -34,9 +34,9 @@ header.workbench-header
         input(id="cma" type="checkbox" ng-model="locale.data.contentManagementApi" ng-disabled="locale.data.default")
         div.cfnext-form-option__desc
           label(for="cma") Enable editing for this locale
-          p Displays locale to editors, within the entry editor
+          p Displays locale to editors and enables it in Management API
       .cfnext-form-option
         input(id="optional" type="checkbox" ng-model="locale.data.optional" ng-disabled="locale.data.default")
         div.cfnext-form-option__desc
           label(for="optional") Allow empty fields for this locale
-          p Fields can still be published if locale is empty
+          p Entries with required fields can still be published if locale is empty
