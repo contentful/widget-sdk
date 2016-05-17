@@ -39,16 +39,28 @@ angular.module('contentful')
    * @type {Array<Error>?}
    */
   $scope.$watch('validationResult.errors', function (errors) {
-    errors = _.filter(errors, function (error) {
-      var path = error.path;
-      return _.isEqual(path.slice(0, 3), localePath) || _.isEqual(path, fieldPath);
-    });
-    if (errors.length > 0) {
-      controller.errors = errors;
-    } else {
-      controller.errors = null;
-    }
+    errors = _(errors)
+    .filter(matchPath)
+    .filter(isFieldRequiredButLocaleOptional)
+    .value();
+
+    controller.errors = errors.length > 0 ? errors : null;
   });
+
+  function matchPath (error) {
+    var path = error.path;
+    return _.isEqual(path.slice(0, 3), localePath) || _.isEqual(path, fieldPath);
+  }
+
+  // If a field is required and none of field-locale pairs is provided,
+  // validation library reports an error on a [fields, fid] path.
+  // In this case we don't want to have a visual hint for optional locale
+  function isFieldRequiredButLocaleOptional (error) {
+    var fieldRequired = _.isEqual(error.path, fieldPath) && error.name === 'required';
+    var localeOptional = $scope.locale.optional;
+
+    return !fieldRequired || !localeOptional;
+  }
 
   /**
    * @ngdoc property
