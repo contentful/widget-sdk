@@ -364,7 +364,6 @@ src/javascripts/app/widgets/cf_checkbox_editor_directive.js
 src/javascripts/app/widgets/cf_list_input_editor_directive.js
 src/javascripts/app/widgets/cf_multi_line_editor_directive.js
 src/javascripts/app/widgets/cf_rating_editor_directive.js
-src/javascripts/app/widgets/cf_tag_editor_directive.js
 src/javascripts/app/widgets/cf_widget_boolean_directive.js
 src/javascripts/app/widgets/dropdown/cf_dropdown_editor_directive.js
 src/javascripts/app/widgets/json/cf_json_editor_code_editor_directive.js
