@@ -1,12 +1,10 @@
-.cfnext-form__field
-  label Slug Widget
-  input.cfnext-form__input--full-size(
-    type="text"
-    ng-disabled="isDisabled")
-  i.fa.fa-spinner(
-    ng-show="state === 'checking'")
-  .cfnext-form__field-error(
-    role="status"
-    data-status-code="entry.slug.duplicate"
-    ng-show="state === 'duplicate'")
-    | This slug has already been published in another entry
+input.cfnext-form__input--full-size(
+  type="text"
+  ng-disabled="isDisabled")
+i.fa.fa-spinner(
+  ng-show="state === 'checking'")
+.cfnext-form__field-error(
+  role="status"
+  data-status-code="entry.slug.duplicate"
+  ng-show="state === 'duplicate'")
+  | This slug has already been published in another entry
