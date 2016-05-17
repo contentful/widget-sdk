@@ -7,9 +7,9 @@ angular.module('cf.app')
   return {
     restrict: 'E',
     scope: {},
-    template: '<textarea class="form-control" ng-disabled="isDisabled">',
+    template: '<textarea class="entry-editor__textarea" ng-disabled="isDisabled" aria-invalid="{{hasErrors}}">',
     require: '^cfWidgetApi',
-    link: function ($scope, $el, $attrs, widgetApi) {
+    link: function ($scope, $el, _$attrs, widgetApi) {
       var field = widgetApi.field;
       var $inputEl = $el.children('textarea');
       var updateInput = makeInputUpdater($inputEl);
@@ -23,8 +23,13 @@ angular.module('cf.app')
         $scope.isDisabled = isDisabled;
       });
 
+      var offSchemaErrorsChanged = field.onSchemaErrorsChanged(function (errors) {
+        $scope.hasErrors = errors && errors.length > 0;
+      });
+
       $scope.$on('$destroy', offValueChanged);
       $scope.$on('$destroy', offDisabledStatusChanged);
+      $scope.$on('$destroy', offSchemaErrorsChanged);
 
       $inputEl.on('input change', function () {
         field.setString($inputEl.val());

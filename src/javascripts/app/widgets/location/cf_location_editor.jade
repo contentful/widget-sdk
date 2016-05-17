@@ -68,6 +68,7 @@ div.location-editor__address-search(ng-show="inputMethod === ADDRESS")
       name="address"
       ng-model="search.address"
       ng-change="search.search()"
+      aria-invalid="{{!!search.error}}"
       ng-disabled="isDisabled")
     div.entry-editor__input-spinner(ng-show="search.inProgress")
   div(ng-if="search.error" ng-switch="search.error.code")

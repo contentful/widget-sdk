@@ -52,6 +52,10 @@ angular.module('contentful')
         buildSlugUsingTitle(titleField);
       });
 
+      var offSchemaErrorsChanged = field.onSchemaErrorsChanged(function (errors) {
+        scope.hasErrors = errors && errors.length > 0;
+      });
+
       if (field.locale !== locales.default) {
         var detachDefaultLocaleTitleChangeHandler = title.onValueChanged(locales.default, function (title) {
           if (useDefaultLocaleTitleForSlug) {
@@ -65,6 +69,7 @@ angular.module('contentful')
       scope.$on('$destroy', detachOnValueChangedHandler);
       scope.$on('$destroy', detachOnFieldDisabledHandler);
       scope.$on('$destroy', detachCurrentLocaleTitleChangeHandler);
+      scope.$on('$destroy', offSchemaErrorsChanged);
 
       scope.$watch(function () {
         return $inputEl.val();

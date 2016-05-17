@@ -43,4 +43,16 @@ describe('cfMultiLineEditor directive', function () {
     this.$apply();
     expect(textarea.prop('disabled')).toBe(false);
   });
+
+  it('sets textarea invalid when there are schema errors', function () {
+    var $el = this.compile();
+    var textarea = $el.find('textarea');
+
+    this.fieldApi.onSchemaErrorsChanged.yield(null);
+    this.$apply();
+    expect(textarea.attr('aria-invalid')).toBe('');
+    this.fieldApi.onSchemaErrorsChanged.yield([{}]);
+    this.$apply();
+    expect(textarea.attr('aria-invalid')).toBe('true');
+  });
 });

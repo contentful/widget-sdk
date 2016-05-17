@@ -53,13 +53,15 @@ describe('Number widgets', function () {
     });
 
     it('shows warning if input cannot be parsed', function () {
-      this.$apply();
+      expect(this.el.inputEl.attr('aria-invalid')).toEqual('false');
       expect(this.el.isStatusVisible()).toEqual(false);
 
       this.el.setInput('6.');
+      expect(this.el.inputEl.attr('aria-invalid')).toEqual('true');
       expect(this.el.isStatusVisible()).toEqual(true);
 
       this.el.setInput('asd');
+      expect(this.el.inputEl.attr('aria-invalid')).toEqual('true');
       expect(this.el.isStatusVisible()).toEqual(true);
     });
   });
