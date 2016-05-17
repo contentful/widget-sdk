@@ -239,7 +239,9 @@ angular.module('contentful')
 
       if (!contentType && !this._publishedContentTypeIsMissing[contentTypeId]) {
         this._publishedContentTypeIsMissing[contentTypeId] = true;
-        this.refreshContentTypes();
+        if (requestContentTypes.isIdle()) {
+          this.refreshContentTypes();
+        }
       }
       return contentType;
     },
