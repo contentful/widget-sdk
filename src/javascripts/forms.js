@@ -23,7 +23,7 @@ angular.module('cf.forms', [])
   return {
     restrict: 'A',
     require: 'ngModel',
-    link: function (scope, elem, attrs, modelCtrl) {
+    link: function (_scope, _elem, _attrs, modelCtrl) {
       modelCtrl.$parsers.push(function (value) {
         return value || null;
       });
@@ -48,7 +48,7 @@ angular.module('cf.forms', [])
   return {
     restrict: 'A',
     require: 'ngModel',
-    link: function (scope, elem, attrs, modelCtrl) {
+    link: function (scope, _elem, _attrs, modelCtrl) {
       modelCtrl.$setDirty = _.noop;
       scope.$on('ngModel:update', stopThisPropagation);
       scope.$on('ngModel:commit', stopThisPropagation);
@@ -77,7 +77,7 @@ angular.module('cf.forms', [])
 .directive('ngModel', [function () {
   return {
     require: 'ngModel',
-    link: function (scope, elem, attrs, modelCtrl) {
+    link: function (scope, elem, _attrs, modelCtrl) {
       listenOnViewChange(emitUpdateEvent);
 
       if (elem.prop('tagName') === 'INPUT') {
@@ -146,7 +146,7 @@ angular.module('cf.forms', [])
 .directive('ngModel', [function () {
   return {
     require: ['ngModel', '?^form'],
-    link: function (scope, elem, attrs, ctrls) {
+    link: function (scope, _elem, attrs, ctrls) {
       var modelCtrl = ctrls[0];
       var formCtrl = ctrls[1];
       modelCtrl.hideErrors = true;
@@ -176,7 +176,7 @@ angular.module('cf.forms', [])
     restrict: 'A',
     require: 'form',
     controller: function () {},
-    link: function (scope, elem, attrs, formCtrl) {
+    link: function (scope, _elem, attrs, formCtrl) {
       scope.$form = formCtrl;
 
       if ('showErrors' in attrs) {
@@ -244,7 +244,7 @@ angular.module('cf.forms', [])
   return {
     restrict: 'A',
     require: 'form',
-    link: function (scope, element, attrs, formCtrl) {
+    link: function (scope, _element, attrs, formCtrl) {
       formCtrl.submit = function () {
         formCtrl.showErrors = true;
         scope.$eval(attrs.cfOnSubmit);

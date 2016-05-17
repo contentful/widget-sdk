@@ -16,7 +16,7 @@ describe('otBindText', function () {
     });
   }));
 
-  beforeEach(inject(function ($rootScope, $compile, ShareJS) {
+  beforeEach(inject(function ($rootScope, ShareJS) {
     ShareJS.mkpathAndSetValue.resolves();
     ShareJS.open.resolves({
       // otDoc
