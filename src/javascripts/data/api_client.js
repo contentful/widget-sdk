@@ -34,7 +34,7 @@ angular.module('cf.data')
   Client.prototype._getResource = function (path, id) {
     return this._request({
       method: 'GET',
-      path: [path, id],
+      path: [path, id]
     });
   };
 
@@ -86,7 +86,7 @@ angular.module('cf.data')
   };
 
   Client.prototype.createEntry = function (contentType, data) {
-    return this._createResource('entries', data, { 'X-Contentful-Content-Type': contentType })
+    return this._createResource('entries', data, { 'X-Contentful-Content-Type': contentType });
   };
 
   Client.prototype.createAsset = function (data) {
@@ -136,7 +136,7 @@ angular.module('cf.data')
     var id = getId(data);
     return this._request({
       method: 'DELETE',
-      path: [name, id, flag],
+      path: [name, id, flag]
     });
   };
 
@@ -193,7 +193,7 @@ angular.module('cf.data')
     var id = getId(data);
     return this._request({
       method: 'DELETE',
-      path: [name, id],
+      path: [name, id]
     })
     // do not return anything
     .then(function () {});
@@ -257,7 +257,7 @@ angular.module('cf.data')
 
   return Client;
 
-  function getId(identifiable) {
+  function getId (identifiable) {
     if (_.isString(identifiable)) {
       return identifiable;
     } else {
@@ -265,7 +265,7 @@ angular.module('cf.data')
     }
   }
 
-  function getVersion(resource) {
+  function getVersion (resource) {
     return dotty.get(resource, ['sys', 'version']);
   }
 }]);
