@@ -44,6 +44,15 @@ describe('FieldLocaleController', function () {
       this.$apply();
       expect(scope.fieldLocale.errors).toEqual(null);
     });
+
+    it('excludes field-level "required" error if a locale is optional', function () {
+      var requiredError = {path: ['fields', 'FID'], name: 'required'};
+      var scope = this.init();
+      scope.locale.optional = true;
+      scope.validationResult = {errors: [requiredError]};
+      this.$apply();
+      expect(scope.fieldLocale.errors).toEqual(null);
+    });
   });
 
   describe('#collaborators', function () {

@@ -20,8 +20,10 @@ header.workbench-header
     thead
       tr
         th.cell-name Locale
-        th.cell-status
-        th.cell-enabled-for Enabled for
+        th Include in response
+        th Allow editing
+        th Can be empty
+        th
   .main-results-wrapper
     table.result-list.main-results
       tbody
@@ -29,11 +31,20 @@ header.workbench-header
             ng-init="entityNavState='spaces.detail.settings.locales.detail({ localeId: locale.getId() })'"
             ui-sref="{{entityNavState}}")
           td.cell-name
-            a.entity-list-link(ui-sref="{{entityNavState}}") {{locale.getName()}} ({{locale.getCode()}})
-          td.cell-status
-            a.entity-list-link(ui-sref="{{entityNavState}}") {{locale.isDefault() ? "Default" : ""}}
-          td.cell-enabled-for
-            a.entity-list-link(ui-sref="{{entityNavState}}") {{getEnabledInfo(locale)}}
+            a.entity-list-link(ui-sref="{{entityNavState}}")
+              | {{ locale.getName() }} ({{ locale.getCode() }})
+              span.entity-list-badge(ng-if="locale.isDefault()") Default
+          td
+            a.entity-list-link(ui-sref="{{entityNavState}}")
+              | {{ locale.data.contentDeliveryApi ? 'Enabled' : 'Disabled' }}
+          td
+            a.entity-list-link(ui-sref="{{entityNavState}}")
+              | {{ locale.data.contentManagementApi ? 'Enabled' : 'Disabled' }}
+          td
+            a.entity-list-link(ui-sref="{{entityNavState}}")
+              | {{ locale.data.optional ? 'Yes' : 'No' }}
+          td
+            a(ui-sref="{{entityNavState}}") Change
 
     .advice.locale-list__advice
       .advice__frame.locale-list__advice-frame

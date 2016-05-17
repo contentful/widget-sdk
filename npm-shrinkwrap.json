@@ -20,7 +20,7 @@
       }
     },
     "@contentful/validation": {
-      "version": "5.11.1"
+      "version": "5.14.1"
     },
     "@contentful/worf": {
       "version": "3.6.1",
@@ -5551,7 +5551,7 @@
           "version": "1.0.33",
           "dependencies": {
             "core-util-is": {
-              "version": "1.0.2"
+              "version": "1.0.1"
             }
           }
         },

@@ -51,6 +51,18 @@ describe('cfEntityField directive integration', function () {
       });
     });
 
+    it('does not show "required" if a locale is optional', function () {
+      this.setLocales([
+        {code: 'DEF', name: 'Default'},
+        {code: 'EN', name: 'English', optional: true}
+      ]);
+      this.widget.field.required = true;
+      var el = this.compile();
+      var labels = el.find('[data-test-id="field-locale-label"]');
+      expect(labels.eq(0).text()).toMatch('(required)');
+      expect(labels.eq(1).text()).not.toMatch('(required)');
+    });
+
     it('shows locale name for multiple locales', function () {
       this.widget.field.required = true;
       var el = this.compile();

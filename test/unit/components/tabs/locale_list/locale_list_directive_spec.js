@@ -18,7 +18,8 @@ describe('The Locale list directive', function () {
         isDefault: sinon.stub().returns(true),
         data: {
           contentManagementApi: true,
-          contentDeliveryApi: true
+          contentDeliveryApi: true,
+          optional: false
         }
       },
       {
@@ -28,7 +29,8 @@ describe('The Locale list directive', function () {
         isDefault: sinon.stub().returns(false),
         data: {
           contentManagementApi: false,
-          contentDeliveryApi: true
+          contentDeliveryApi: false,
+          optional: true
         }
       },
       {
@@ -48,7 +50,7 @@ describe('The Locale list directive', function () {
         isDefault: sinon.stub().returns(false),
         data: {
           contentManagementApi: false,
-          contentDeliveryApi: false
+          contentDeliveryApi: true
         }
       }
     ];
@@ -108,25 +110,24 @@ describe('The Locale list directive', function () {
       expect(this.list.find('tr').length).toBe(4);
     });
 
-    describe('enabled column', function () {
-      beforeEach(function() {
-        this.tableCell = this.list.find('td.cell-enabled-for');
+    describe('locale flags', function () {
+      beforeEach(function () {
+        this.tableCell = this.list.find('td');
       });
 
-      it('publishing and editing', function() {
-        expect(this.tableCell.get(0).textContent).toMatch('Publishing and editing');
+      it('available via CDA', function () {
+        expect(this.tableCell.get(1).textContent).toMatch('Enabled');
+        expect(this.tableCell.get(6).textContent).toMatch('Disabled');
       });
 
-      it('publishing only', function() {
-        expect(this.tableCell.get(1).textContent).toMatch('Publishing only');
+      it('available via CMA', function () {
+        expect(this.tableCell.get(2).textContent).toMatch('Enabled');
+        expect(this.tableCell.get(7).textContent).toMatch('Disabled');
       });
 
-      it('editing only', function() {
-        expect(this.tableCell.get(2).textContent).toMatch('Editing only');
-      });
-
-      it('empty', function() {
-        expect(this.tableCell.get(3).textContent).toMatch('-');
+      it('optional for publishing', function () {
+        expect(this.tableCell.get(3).textContent).toMatch('No');
+        expect(this.tableCell.get(8).textContent).toMatch('Yes');
       });
     });
   });
