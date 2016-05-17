@@ -25,10 +25,7 @@ angular.module('cf.forms', [])
     require: 'ngModel',
     link: function (scope, elem, attrs, modelCtrl) {
       modelCtrl.$parsers.push(function (value) {
-        if (!value)
-          return null;
-        else
-          return value;
+        return value || null;
       });
     }
   };
@@ -83,12 +80,9 @@ angular.module('cf.forms', [])
     link: function (scope, elem, attrs, modelCtrl) {
       listenOnViewChange(emitUpdateEvent);
 
-      var composer;
       if (elem.prop('tagName') === 'INPUT') {
-        composer = true;
         elem.on('blur', emitCommitEvent);
       } else {
-        composer = false;
         listenOnViewChange(emitCommitEvent);
       }
 
@@ -161,8 +155,9 @@ angular.module('cf.forms', [])
                ('showErrors' in attrs) ||
                (formCtrl && formCtrl.showErrors);
       }, function (show) {
-        if (show)
+        if (show) {
           modelCtrl.hideErrors = false;
+        }
       });
     }
   };
@@ -216,8 +211,9 @@ angular.module('cf.forms', [])
     restrict: 'A',
     require: '^form',
     link: function (scope, element, attrs, formCtrl) {
-      if (!attrs.type)
+      if (!attrs.type) {
         attrs.$set('type', 'submit');
+      }
 
       element.on('click', function (ev) {
         ev.preventDefault();

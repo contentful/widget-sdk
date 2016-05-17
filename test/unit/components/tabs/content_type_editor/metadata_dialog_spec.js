@@ -4,6 +4,7 @@ describe('contentTypeEditor/metadataDialog', function () {
   beforeEach(function () {
     module('contentful/test');
     this.dialogContainer = $('<div class="client">').appendTo('body');
+    this.metadataDialog = this.$inject('contentTypeEditor/metadataDialog');
   });
 
   afterEach(function () {
@@ -13,8 +14,7 @@ describe('contentTypeEditor/metadataDialog', function () {
 
   describe('#openEditDialog()', function () {
     it('shows the content type name and description', function () {
-      var metadataDialog = this.$inject('contentTypeEditor/metadataDialog');
-      metadataDialog.openEditDialog({data: {name: 'NAME', description: 'DESC'}});
+      this.metadataDialog.openEditDialog({data: {name: 'NAME', description: 'DESC'}});
       this.$apply();
 
       var nameInput = this.dialogContainer.find('input[name=contentTypeName]');
@@ -24,9 +24,8 @@ describe('contentTypeEditor/metadataDialog', function () {
     });
 
     it('changes the content type name and description', function () {
-      var metadataDialog = this.$inject('contentTypeEditor/metadataDialog');
       var handleMetadataChange = sinon.stub();
-      metadataDialog.openEditDialog({data: {}}).then(handleMetadataChange);
+      this.metadataDialog.openEditDialog({data: {}}).then(handleMetadataChange);
       this.$apply();
 
       var nameInput = this.dialogContainer.find('input[name=contentTypeName]');
@@ -47,9 +46,8 @@ describe('contentTypeEditor/metadataDialog', function () {
 
   describe('#openCreateDialog()', function () {
     it('sets the content type id from the content type name', function () {
-      var metadataDialog = this.$inject('contentTypeEditor/metadataDialog');
       var handleMetadataChange = sinon.stub();
-      metadataDialog.openCreateDialog().then(handleMetadataChange);
+      this.metadataDialog.openCreateDialog().then(handleMetadataChange);
       this.$apply();
 
       var nameInput = this.dialogContainer.find('input[name=contentTypeName]');
@@ -64,6 +62,29 @@ describe('contentTypeEditor/metadataDialog', function () {
       var newMetadata = handleMetadataChange.firstCall.args[0];
       expect(newMetadata.name).toEqual('NEW NAME');
       expect(newMetadata.id).toEqual('newName');
+    });
+  });
+
+  describe('#openDuplicateDialog()', function () {
+    it('duplicates a provided content type', function () {
+      var duplicate = sinon.stub().resolves();
+      this.metadataDialog.openDuplicateDialog({data: {name: 'test', description: 'xyz'}}, duplicate);
+      this.$apply();
+
+      var nameInput = this.dialogContainer.find('input[name=contentTypeName]');
+      expect(nameInput.attr('placeholder')).toBe('Duplicate of "test"');
+      nameInput.val('NEW NAME').trigger('input');
+      this.$apply();
+
+      var submitButton = this.dialogContainer.find('button:contains(Duplicate)');
+      submitButton.trigger('click');
+      this.$apply();
+
+      sinon.assert.called(duplicate);
+      var newMetadata = duplicate.firstCall.args[0];
+      expect(newMetadata.name).toEqual('NEW NAME');
+      expect(newMetadata.id).toEqual('newName');
+      expect(newMetadata.description).toEqual('xyz');
     });
   });
 });
