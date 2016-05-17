@@ -450,11 +450,11 @@ gulp.task('build/static', [
   files.push('public/app/markdown_vendors.js');
 
   return gulp.src(files, {base: 'public'})
-    .pipe(writeBuild())
+    .pipe(changeBase('build'))
     .pipe(rev())
-    .pipe(writeBuild())
-    .pipe(rev.manifest(('static-manifest.json')))
-    .pipe(writeBuild());
+    .pipe(writeFile())
+    .pipe(rev.manifest('build/static-manifest.json'))
+    .pipe(writeFile());
 });
 
 /**
@@ -484,15 +484,13 @@ gulp.task('build/styles', ['build/static', 'stylesheets'], function () {
         verbose: false,
         prefix: '/'
       }))
-    // TODO we do not actually need to rewrite the non-fingerprinted version.
-    // This is basically for renaming and source maps
-    .pipe(writeBuild())
+    .pipe(changeBase('build'))
     .pipe(rev())
-    .pipe(writeBuild())
+    .pipe(writeFile())
     .pipe(sourceMaps.write('.', {sourceRoot: '/'}))
-    .pipe(writeBuild())
-    .pipe(rev.manifest('styles-manifest.json'))
-    .pipe(writeBuild());
+    .pipe(writeFile())
+    .pipe(rev.manifest('build/styles-manifest.json'))
+    .pipe(writeFile());
 });
 
 /**
@@ -509,16 +507,14 @@ gulp.task('build/js', ['js', 'templates'], function () {
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(concat('app/application.min.js'))
     .pipe(uglify())
-    // TODO we do not actually need to rewrite the non-fingerprinted version.
-    // This is basically for renaming and source maps
-    .pipe(writeBuild())
+    .pipe(changeBase('build'))
     .pipe(rev())
-    .pipe(writeBuild())
+    .pipe(writeFile())
     // 'uglify' already prepends a slash to every source path
     .pipe(sourceMaps.write('.', {sourceRoot: null}))
-    .pipe(writeBuild())
-    .pipe(rev.manifest('app-manifest.json'))
-    .pipe(writeBuild());
+    .pipe(writeFile())
+    .pipe(rev.manifest('build/app-manifest.json'))
+    .pipe(writeFile());
 });
 
 /**
@@ -617,4 +613,20 @@ function spawnOnlyStderr (cmd, args, opts) {
     stdio: ['ignore', stdout, process.stderr]
   });
   return spawn(cmd, args, opts);
+}
+
+function changeBase (base) {
+  return through(function (file, _, push) {
+    base = path.resolve(base);
+    var filePath = path.join(base, file.relative);
+    file.base = base;
+    file.path = filePath;
+    push(null, file);
+  });
+}
+
+function writeFile () {
+  return gulp.dest(function (file) {
+    return file.base;
+  });
 }
