@@ -190,10 +190,11 @@ gulp.task('js/vendor', [
 ]);
 
 gulp.task('js/vendor/main', function () {
-  return gulp.src(src.vendorScripts.main)
+  // Use `base: '.'` for correct source map paths
+  return gulp.src(src.vendorScripts.main, {base: '.'})
     .pipe(sourceMaps.init())
     .pipe(concat('vendor.js'))
-    .pipe(sourceMaps.write({sourceRoot: '/vendor'}))
+    .pipe(sourceMaps.write({sourceRoot: '/'}))
     .pipe(gulp.dest('./public/app'));
 });
 
@@ -221,10 +222,12 @@ gulp.task('js/external-bundle', function () {
 });
 
 gulp.task('js/app', ['icons'], function () {
-  return gulp.src(src.components.concat([src.svg.outputFile]))
+  var srcs = src.components.concat([src.svg.outputFile]);
+  // Use `base: '.'` for correct source map paths
+  return gulp.src(srcs, {base: '.'})
     .pipe(sourceMaps.init())
     .pipe(concat('components.js'))
-    .pipe(sourceMaps.write({sourceRoot: '/components'}))
+    .pipe(sourceMaps.write({sourceRoot: '/'}))
     .pipe(gulp.dest('./public/app/'));
 });
 
@@ -266,10 +269,11 @@ gulp.task('stylesheets', [
 ]);
 
 gulp.task('stylesheets/vendor', function () {
-  return gulp.src(src.vendorStylesheets)
+  // Use `base: '.'` for correct source map paths
+  return gulp.src(src.vendorStylesheets, {base: '.'})
     .pipe(sourceMaps.init())
     .pipe(concat('vendor.css'))
-    .pipe(sourceMaps.write({sourceRoot: '/vendor'}))
+    .pipe(sourceMaps.write({sourceRoot: '/'}))
     .pipe(gulp.dest('./public/app'));
 });
 
@@ -332,6 +336,10 @@ function bundleBrowserify (browserify) {
   return browserify.bundle()
     .on('error', passError(dest))
     .pipe(source('libs.js'))
+    .pipe(buffer())
+    // Add root to source map
+    .pipe(sourceMaps.init({loadMaps: true}))
+    .pipe(sourceMaps.write({sourceRoot: '/'}))
     .pipe(dest);
 }
 
@@ -339,11 +347,18 @@ function buildStylus (sources, dest) {
   dest = gulp.dest(dest);
   return gulp.src(sources)
     .pipe(sourceMaps.init())
-    .pipe(stylus({use: nib()}))
+    .pipe(stylus({
+      use: nib(),
+      sourcemap: {inline: true}
+    }))
     .on('error', passError(dest))
-    .pipe(sourceMaps.write({sourceRoot: '/stylesheets'}))
+    .pipe(mapSourceMapPaths(function (src) {
+      return path.join('src/stylesheets', src);
+    }))
+    .pipe(sourceMaps.write({sourceRoot: '/'}))
     .pipe(dest);
 }
+
 
 function respond404 (req, res) {
   res.sendStatus(404);
@@ -462,6 +477,10 @@ gulp.task('rev-dynamic', function () {
   ], {base: 'public'})
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(removeSourceRoot())
+    .pipe(mapSourceMapPaths(function (src) {
+      // `gulp-sourcemaps` prepends 'app' to all the paths.
+      return path.relative('app', src);
+    }))
     .pipe(fingerprint(
       'build/static-manifest.json', {
         mode: 'replace',
@@ -473,7 +492,7 @@ gulp.task('rev-dynamic', function () {
     .pipe(writeBuild())
     .pipe(rev())
     .pipe(writeBuild())
-    .pipe(sourceMaps.write('.'))
+    .pipe(sourceMaps.write('.', {sourceRoot: '/'}))
     .pipe(writeBuild())
     .pipe(rev.manifest('dynamic-manifest.json'))
     .pipe(writeBuild());
@@ -504,7 +523,8 @@ gulp.task('rev-app', function () {
     .pipe(writeBuild())
     .pipe(rev())
     .pipe(writeBuild())
-    .pipe(sourceMaps.write('.', { sourceRoot: '/javascript' }))
+    // 'uglify' already prepends a slash to every source path
+    .pipe(sourceMaps.write('.', {sourceRoot: null}))
     .pipe(writeBuild())
     .pipe(rev.manifest('app-manifest.json'))
     .pipe(writeBuild());
@@ -551,6 +571,18 @@ function removeSourceRoot () {
   return through(function (file, e, push) {
     if (file.sourceMap) {
       file.sourceMap.sourceRoot = null;
+    }
+    push(null, file);
+  });
+}
+
+/**
+ * Stream transformer that for every file applies a function to all source map paths.
+ */
+function mapSourceMapPaths (fn) {
+  return through(function (file, e, push) {
+    if (file.sourceMap) {
+      file.sourceMap.sources = _.map(file.sourceMap.sources, fn);
     }
     push(null, file);
   });
