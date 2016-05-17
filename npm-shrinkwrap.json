@@ -4426,14 +4426,6 @@
     "minimist": {
       "version": "1.2.0"
     },
-    "mkdirp": {
-      "version": "0.5.1",
-      "dependencies": {
-        "minimist": {
-          "version": "0.0.8"
-        }
-      }
-    },
     "moment": {
       "version": "2.11.2"
     },

@@ -1,0 +1,42 @@
+{
+  "environment": "development",
+  "base_host": "be.joistio.com:8888",
+  "api_host": "api.joistio.com:8888",
+  "app_host": "app.joistio.com:8888",
+  "cdn_host": "cdn.joistio.com:8888",
+  "asset_host": "static.joistio.com:8888",
+  "ot_host": "ot.joistio.com:8888",
+  "exception_tracking_host": "cf-track-107d49294b11c1.appspot.com",
+  "marketing_url": "http://www.joistio.com:8888",
+  "main_domain": "joistio.com:8888",
+  "additional_domains": ["joistio.com", "app.joistio.com", "static.joistio.com"],
+  "contentful": {
+    "apiUrl": "api.contentful.com",
+    "cdaApiUrl": "cdn.contentful.com",
+    "previewApiUrl": "preview.contentful.com",
+    "space": "l1ay9bp8gv68",
+    "accessToken": "0c783036ae7540a10db86150e1cb564c8c0bad53482794604f227dc199e6dde1",
+    "previewAccessToken": "2fcfe1abd171477eabd73e64088fe1c1eb2578ac0158332902a1d8e5279356e4",
+    "spaceTemplatesUserReadOnlyToken": "8adea107285afc11819019618341f5b98e5808c84b957cba9ede1e57c6026475",
+    "spaceTemplateEntryContentTypeId": "17WjnjeALEOeSyuiMI4QOW"
+  },
+  "filepicker": {
+    "api_key": "AQGV4TMRPGovR9AIjMi6Az",
+    "policy": "eyJleHBpcnkiOjE1MzQ3NTM0NjIsImNhbGwiOlsicGljayIsInN0b3JlIl19",
+    "signature": "abc143fa9ea5fe44c399343c5c6e44f3b46ca63d751a6be6396a2124edb62af7"
+  },
+  "aviary": {
+    "api_key": "b7fe4d3302834e61b0f65913f156c067"
+  },
+  "embedly": {
+    "api_key": "5aba1269adbf42919bd1dd3308b84652"
+  },
+  "segment_io": "uwr64jkg06",
+  "totango": "SP-7136-01",
+  "google" : {
+    "maps_api_key": "AIzaSyDskFlzw1ujRovNWNG3K64EUsncYTbRPfM"
+  },
+  "fonts_dot_com": {
+    "project_id": "fonts-dot-com-test-project-id"
+  }
+}
