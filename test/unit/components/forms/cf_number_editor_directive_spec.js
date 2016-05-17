@@ -32,7 +32,7 @@ describe('Number widgets', function () {
       this.fieldApi.type = 'Number';
       this.elem = this.compileElement();
       this.$inputEl = this.elem.find('input');
-      this.$errorEl = this.elem.find('div.cfnext-form__field-error');
+      this.$errorEl = this.elem.find('[role=status]');
     });
     it('should generate the correct value', function () {
       this.assertValAndErrorStatus('0', 'none');
@@ -55,7 +55,7 @@ describe('Number widgets', function () {
       this.fieldApi.type = 'Integer';
       this.elem = this.compileElement();
       this.$inputEl = this.elem.find('input');
-      this.$errorEl = this.elem.find('div.cfnext-form__field-error');
+      this.$errorEl = this.elem.find('[role=status]');
     });
 
     it('should generate 0', function () {
