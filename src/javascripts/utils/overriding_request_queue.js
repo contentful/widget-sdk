@@ -40,8 +40,15 @@ angular.module('cf.utils')
   return function createQueue(requestFn, onceFn) {
     var deferred, requests, required, performed;
     reset();
+    
     request.hasToFinish = requestRequired;
+    request.isIdle = isIdle;
+
     return request;
+
+    function isIdle() {
+      return requests.length === 0;
+    }
 
     function requestRequired() {
       return performRequest(prepareOpts(arguments, true));
