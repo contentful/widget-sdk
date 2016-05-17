@@ -12,7 +12,7 @@ angular.module('contentful')
     scope: {},
     require: '^cfWidgetApi',
     template: JST['cf_slug_editor'](),
-    link: function (scope, $el, attrs, widgetApi) {
+    link: function (scope, $el, _attrs, widgetApi) {
       var field = widgetApi.field;
       var entry = widgetApi.entry;
       var space = widgetApi.space;

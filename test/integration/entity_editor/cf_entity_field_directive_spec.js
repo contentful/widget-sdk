@@ -78,7 +78,7 @@ describe('cfEntityField directive integration', function () {
     it('shows message if user does not have editing permissions', function () {
       var accessChecker = this.$inject('accessChecker');
       accessChecker.getFieldChecker = sinon.stub().returns({
-        isEditable: function (field, locale) {
+        isEditable: function (_field, locale) {
           return locale.code === 'EN';
         }
       });

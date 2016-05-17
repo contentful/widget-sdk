@@ -347,7 +347,7 @@ function buildStylus (sources, dest) {
     .pipe(dest);
 }
 
-function respond404 (req, res) {
+function respond404 (_, res) {
   res.sendStatus(404);
 }
 
@@ -545,7 +545,7 @@ function passError (target) {
  * file’s source maps.
  */
 function removeSourceRoot () {
-  return through(function (file, e, push) {
+  return through(function (file, _, push) {
     if (file.sourceMap) {
       file.sourceMap.sourceRoot = null;
     }
