@@ -11,7 +11,7 @@ angular.module('contentful')
     restrict: 'E',
     require: '^cfWidgetApi',
     template: JST['cf_number_editor'](),
-    link: function (scope, $el, attrs, widgetApi) {
+    link: function (scope, $el, _attrs, widgetApi) {
       var field = widgetApi.field;
       var $inputEl = $el.find('input');
       var updateInput = makeInputUpdater($inputEl);

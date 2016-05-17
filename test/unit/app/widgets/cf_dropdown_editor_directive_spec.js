@@ -31,7 +31,7 @@ describe('cfDropdownEditor Directive', function () {
     var predefined = ['banana', 'orange', 'strawberry'];
     fieldApi.validations = [{ in: predefined }];
     var element = this.compile();
-    var labels = element.find('option').map(function (i, option) {
+    var labels = element.find('option').map(function (_, option) {
       return $(option).text();
     }).get();
 
