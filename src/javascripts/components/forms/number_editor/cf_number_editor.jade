@@ -1,8 +1,8 @@
-.cfnext-form__field
-  label Number Widget
-  input.cfnext-form__input--full-size(
-    type="text"
-    ng-disabled="isDisabled")
-  .cfnext-form__field-error(
-    ng-hide="!parseWarning.length")
+input.cfnext-form__input--full-size(
+  type="text"
+  ng-disabled="isDisabled")
+.cfnext-form__field-error(
+  role="status"
+  data-error-code="entry.number.parseError"
+  ng-show="parseWarning.length")
     | {{parseWarning}}
