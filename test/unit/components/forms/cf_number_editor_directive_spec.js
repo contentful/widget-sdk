@@ -9,7 +9,7 @@ describe('Number widgets', function () {
     this.fieldApi = widgetApi.field;
 
     this.compileElement = function () {
-      var el = this.$compile('<cf-number-editor class="cf-number-editor" />', {}, {
+      var el = this.$compile('<cf-number-editor />', {}, {
         cfWidgetApi: widgetApi
       });
 
