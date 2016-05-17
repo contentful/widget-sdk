@@ -22,7 +22,7 @@ describe('Locale List Controller', function () {
   });
 
   describe('refreshing locales', function () {
-    beforeEach(function() {
+    beforeEach(function () {
       this.createController();
     });
 
