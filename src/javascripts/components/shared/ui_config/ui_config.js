@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * @ngdoc service
+ * @name uiConfig
+ *
+ * @description
+ * This service exposes methods to load, update and save UI configuration.
+ */
 angular.module('contentful')
 .factory('uiConfig', ['$injector', function ($injector) {
 
@@ -19,18 +26,44 @@ angular.module('contentful')
     resetAssets: resetAssets
   };
 
+  /**
+   * @ngdoc method
+   * @name uiConfig#resetEntries
+   * @param {Array<object>} contentTypes
+   * @returns {Array<object>}
+   *
+   * @description
+   * Resets entries views to the default configuration.
+   */
   function resetEntries (contentTypes) {
     var defaults = uiConfigDefaults.getEntryViews(contentTypes);
     currentConfig.entryListViews = defaults;
     return defaults;
   }
 
+  /**
+   * @ngdoc method
+   * @name uiConfig#resetAssets
+   * @returns {Array}
+   *
+   * @description
+   * Resets assets views to the default configuration.
+   */
   function resetAssets () {
     var defaults = uiConfigDefaults.getAssetViews();
     currentConfig.assetListViews = defaults;
     return defaults;
   }
 
+  /**
+   * @ngdoc method
+   * @name uiConfig#load
+   * @returns {Promise<object>}
+   *
+   * @description
+   * Loads UI config from the server and returns a promise that resolves
+   * to the config object.
+   */
   function load () {
     return spaceContext.space.getUIConfig()
     .then(function (config) {
@@ -49,6 +82,16 @@ angular.module('contentful')
     });
   }
 
+  /**
+   * @ngdoc method
+   * @name uiConfig#save
+   * @param {Array<object>} uiConfig
+   * @returns {Promise<object>}
+   *
+   * @description
+   * Saves the UiConfig provided and returns a promise that resolves to the config
+   * object.
+   */
   function save (uiConfig) {
     return spaceContext.space.setUIConfig(uiConfig)
     .then(function (config) {
@@ -57,9 +100,17 @@ angular.module('contentful')
     });
   }
 
-  // If a new content type is created and there is a folder with the title
-  // "Content Type" present, automatically add the new view here.
-  // If there is no UI config set up yet, do nothing.
+  /**
+   * @ngdoc method
+   * @name uiConfig#addNewCt
+   * @param {Object<Client.ContentType>} contentType
+   * @returns {Promise<UiConfig> | undefined}
+   *
+   * @description
+   * Adds new content type under the `Content Type` folder if it exists and no view
+   * with the same name is present. If there is no UI Config defined, do nothing.
+   * Returns undefined or a promise that resolves to the config object.
+   */
   function addNewCt (contentType) {
     if (!isConfigSaved) {
       return;
