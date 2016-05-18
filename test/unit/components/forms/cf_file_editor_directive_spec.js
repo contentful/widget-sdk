@@ -12,7 +12,7 @@ describe('cfFileEditor Directive', function () {
       });
     });
 
-    var widgetApi = this.$inject('mocks/widgetApi')();
+    var widgetApi = this.$inject('mocks/widgetApi').create();
     fieldApi = widgetApi.field;
 
     scope = this.$compile('<cf-file-editor />', {

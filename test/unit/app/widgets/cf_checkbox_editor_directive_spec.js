@@ -3,7 +3,7 @@
 describe('cfCheckboxEditor directive', function () {
   beforeEach(function () {
     module('contentful/test');
-    var widgetApi = this.$inject('mocks/widgetApi')({
+    var widgetApi = this.$inject('mocks/widgetApi').create({
       field: {
         itemValidations: [{in: ['A', 'B', 'C']}]
       }

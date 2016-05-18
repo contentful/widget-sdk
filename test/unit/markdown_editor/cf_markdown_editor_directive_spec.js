@@ -6,7 +6,7 @@ describe('cfMarkdownEditor', function () {
 
     this.$inject('LazyLoader').get = sinon.stub().resolves(window.cfLibs.markdown);
 
-    var widgetApi = this.$inject('mocks/widgetApi')();
+    var widgetApi = this.$inject('mocks/widgetApi').create();
     widgetApi.field.getValue.returns('test');
     this.fieldStubs = widgetApi.field;
 

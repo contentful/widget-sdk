@@ -4,7 +4,7 @@ describe('cfUrlEditor directive', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    this.widgetApi = this.$inject('mocks/widgetApi')({
+    this.widgetApi = this.$inject('mocks/widgetApi').create({
       field: {
         onValueChanged: sinon.stub().yields('omgwhat'),
         onDisabledStatusChanged: sinon.stub().yields(true)

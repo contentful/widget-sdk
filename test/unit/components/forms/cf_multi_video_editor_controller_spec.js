@@ -22,7 +22,7 @@ describe('Multi Video Editor Controller', function () {
     };
     scope.videoInputController = sinon.stub().returns(videoInputController);
 
-    var widgetApi = this.$inject('mocks/widgetApi')();
+    var widgetApi = this.$inject('mocks/widgetApi').create();
     this.fieldApi = widgetApi.field;
 
     multiVideoEditorController = $controller('cfMultiVideoEditorController', {
