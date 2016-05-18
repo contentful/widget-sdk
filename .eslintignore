@@ -79,9 +79,7 @@ test/unit/forms/ng_no_form_spec.js
 test/unit/navigator/leave_editor_confirmation_spec.js
 test/unit/navigator/confirm_leave_editor_spec.js
 test/unit/navigator/state_change_handlers_spec.js
-test/unit/ot/ot_bind_ng_model_spec.js
 test/unit/ot/ot_doc_presence_controller_spec.js
-test/unit/ot/ob_bind_object_value_spec.js
 test/unit/ot/ot_doc_for_spec.js
 test/unit/services/assert_spec.js
 test/unit/services/asset_loader_spec.js
@@ -394,9 +392,6 @@ src/javascripts/directives/cf_custom_logo_directive.js
 src/javascripts/directives/cf_schema_directives.js
 src/javascripts/directives/cf_copy_to_clipboard_directive.js
 src/javascripts/directives/cf_when_disabled.js
-src/javascripts/ot/ot_bind_ng_model.js
-src/javascripts/ot/ot_bind_object_value.js
-src/javascripts/ot/ot_bind_text.js
 src/javascripts/ot/ot_doc_for.js
 src/javascripts/ot/ot_presence.js
 src/javascripts/services/assert.js
