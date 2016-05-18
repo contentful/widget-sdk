@@ -9,69 +9,72 @@ describe('Number widgets', function () {
     this.fieldApi = widgetApi.field;
 
     this.compileElement = function () {
-      return this.$compile('<cf-number-editor class="cf-number-editor" />', {}, {
+      var el = this.$compile('<cf-number-editor />', {}, {
         cfWidgetApi: widgetApi
       });
-    };
 
-    this.assertValAndErrorStatus = function (val, errorStatus) {
-      this.$inputEl.val(val).trigger('input');
-      expect(this.$inputEl.val()).toBe(val);
-      expect(this.$errorEl.css('display')).toBe(errorStatus);
-    };
+      var inputEl = el.find('input');
+      var statusEl = el.find('[role=status]');
 
-    this.assertSetValueOnInvalidInput = function (val) {
-      this.$inputEl.val(val).trigger('input');
-      sinon.assert.neverCalledWith(this.fieldApi.setValue, val);
-      expect(this.elem.find('input').val()).toBe(val);
+      return _.assign(el, {
+        inputEl: inputEl,
+        setInput: function (val) {
+          inputEl.val(val).trigger('input');
+          this.$apply();
+        }.bind(this),
+        isStatusVisible: function () {
+          return statusEl.css('display') !== 'none';
+        }
+      });
     };
   });
 
   describe('Number widget', function () {
     beforeEach(function () {
       this.fieldApi.type = 'Number';
-      this.elem = this.compileElement();
-      this.$inputEl = this.elem.find('input');
-      this.$errorEl = this.elem.find('div.cfnext-form__field-error');
-    });
-    it('should generate the correct value', function () {
-      this.assertValAndErrorStatus('0', 'none');
-      this.assertValAndErrorStatus('10.0', 'none');
-      this.assertValAndErrorStatus('10.012', 'none');
+      this.el = this.compileElement();
     });
 
-    it('should not call setValue for invalid input', function () {
-      this.assertSetValueOnInvalidInput('foo');
+    it('sets field value', function () {
+      this.el.setInput('0');
+      sinon.assert.calledWith(this.fieldApi.setValue, 0);
+
+      this.el.setInput('10.0');
+      sinon.assert.calledWith(this.fieldApi.setValue, 10);
+
+      this.el.setInput('10.012');
+      sinon.assert.calledWith(this.fieldApi.setValue, 10.012);
     });
 
-    it('should generate a warning for characters and invalid inputs', function () {
-      this.assertValAndErrorStatus('6.', 'block');
-      this.assertValAndErrorStatus('asd', 'block');
+    it('does not set field value for invalid input', function () {
+      this.fieldApi.setValue.reset();
+      this.el.setInput('foo');
+      sinon.assert.notCalled(this.fieldApi.setValue);
+    });
+
+    it('shows warning if input cannot be parsed', function () {
+      this.$apply();
+      expect(this.el.isStatusVisible()).toEqual(false);
+
+      this.el.setInput('6.');
+      expect(this.el.isStatusVisible()).toEqual(true);
+
+      this.el.setInput('asd');
+      expect(this.el.isStatusVisible()).toEqual(true);
     });
   });
 
   describe('Integer widget', function () {
     beforeEach(function () {
       this.fieldApi.type = 'Integer';
-      this.elem = this.compileElement();
-      this.$inputEl = this.elem.find('input');
-      this.$errorEl = this.elem.find('div.cfnext-form__field-error');
+      this.el = this.compileElement();
     });
-
-    it('should generate 0', function () {
-      this.assertValAndErrorStatus('0', 'none');
-    });
-
-    it('should not call setValue for invalid input', function () {
-      this.assertSetValueOnInvalidInput('foo');
-      this.assertSetValueOnInvalidInput('6.0');
-      this.assertSetValueOnInvalidInput('112.1231');
-      this.assertSetValueOnInvalidInput('.1231');
-    });
-
-    it('should generate a warning for characters and invalid inputs', function () {
-      this.assertValAndErrorStatus('asd', 'block');
-      this.assertValAndErrorStatus('6.7', 'block');
+    it('does not set value for invalid input', function () {
+      this.fieldApi.setValue.reset();
+      this.el.setInput('6.0');
+      this.el.setInput('112.1231');
+      this.el.setInput('.1231');
+      sinon.assert.notCalled(this.fieldApi.setValue);
     });
   });
 });

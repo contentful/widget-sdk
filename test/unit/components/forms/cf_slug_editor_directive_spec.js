@@ -61,20 +61,20 @@ describe('SlugEditor directive', function () {
   describe('#titleToSlug', function () {
     it('should use an "untitled" slug with the entry creation time, when the title is empty', function () {
       this.entrySys.createdAt = '2015-01-28T10:38:28.989Z';
-      var $inputEl = this.compileElement().children('input');
+      var $inputEl = this.compileElement().find('input');
 
       expect($inputEl.val()).toEqual('untitled-entry-2015-01-28-at-10-38-28');
     });
 
     it('should set the slug to a representation of the title', function () {
       this.titleChangedSignal.dispatch('This is a title');
-      var $inputEl = this.compileElement().children('input');
+      var $inputEl = this.compileElement().find('input');
       expect($inputEl.val()).toEqual('this-is-a-title');
     });
 
     it('should not track the title if both fields have diverged', function () {
       var slug = 'das-ist-ein-weiterer-titel';
-      var $inputEl = this.compileElement().children('input');
+      var $inputEl = this.compileElement().find('input');
 
       this.setNewSlug($inputEl, slug);
 
@@ -86,7 +86,7 @@ describe('SlugEditor directive', function () {
     });
 
     it('should track the title if both fields have not diverged', function () {
-      var $inputEl = this.compileElement().children('input');
+      var $inputEl = this.compileElement().find('input');
 
       // Set similar slug and title
       this.setNewSlug($inputEl, 'this-is-the-first-title');
@@ -100,7 +100,7 @@ describe('SlugEditor directive', function () {
     });
 
     it('does not track the title if it is published', function () {
-      var $inputEl = this.compileElement().children('input');
+      var $inputEl = this.compileElement().find('input');
 
       this.titleChangedSignal.dispatch('This is the first title');
       this.entrySys.publishedVersion = 1;
@@ -128,7 +128,7 @@ describe('SlugEditor directive', function () {
           this.cfWidgetApi.field.locale = 'hi';
           this.cfWidgetApi.entry.fields.title.getValue = sinon.stub().returns('a title');
 
-          var $inputEl = this.compileElement().children('input');
+          var $inputEl = this.compileElement().find('input');
 
           this.cfWidgetApi.entry.fields.title.getValue.reset();
           this.titleChangedSignal.dispatch(this.cfWidgetApi.field.locale, '');
@@ -142,7 +142,7 @@ describe('SlugEditor directive', function () {
 
   describe('#alreadyPublished', function () {
     beforeEach(function () {
-      this.inputEl = this.compileElement().children('input');
+      this.inputEl = this.compileElement().find('input');
       this.entrySys.publishedVersion = 1;
       this.title.getValue = sinon.stub().returns('old title');
       this.inputEl.val('old-title');
@@ -158,7 +158,7 @@ describe('SlugEditor directive', function () {
 
   describe('uniquenness state', function () {
     it('queries duplicates when input value changes', function () {
-      var $inputEl = this.compileElement().children('input');
+      var $inputEl = this.compileElement().find('input');
       var getEntries = this.cfWidgetApi.space.getEntries;
       getEntries.reset();
 
@@ -194,7 +194,7 @@ describe('SlugEditor directive', function () {
     });
 
     it('is "unique" when there are no duplicates', function () {
-      var $inputEl = this.compileElement().children('input');
+      var $inputEl = this.compileElement().find('input');
       var scope = $inputEl.scope();
 
       // The server responds with zero entries by default
@@ -202,7 +202,7 @@ describe('SlugEditor directive', function () {
     });
 
     it('is "duplicate" when there are matching entries in the query result', function () {
-      var $inputEl = this.compileElement().children('input');
+      var $inputEl = this.compileElement().find('input');
       var scope = $inputEl.scope();
 
       // Let the server respond with one entry
@@ -218,7 +218,7 @@ describe('SlugEditor directive', function () {
       var getEntries = sinon.stub().defers();
       this.cfWidgetApi.space.getEntries = getEntries;
 
-      var $inputEl = this.compileElement().children('input');
+      var $inputEl = this.compileElement().find('input');
       var scope = $inputEl.scope();
 
       // Trigger status update

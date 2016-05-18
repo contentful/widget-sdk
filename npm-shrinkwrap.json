@@ -4555,6 +4555,9 @@
     "pegjs": {
       "version": "0.8.0"
     },
+    "pikaday": {
+      "version": "1.4.0"
+    },
     "promise": {
       "version": "6.1.0",
       "dependencies": {

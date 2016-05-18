@@ -52,7 +52,7 @@ angular.module('contentful')
     fieldTypes: ['Integer', 'Number'],
     name: 'Number Editor',
     icon: 'number',
-    template: '<cf-number-editor class="cf-number-editor" />'
+    template: '<cf-number-editor />'
   });
 
   registerWidget('multipleLine', {
@@ -126,7 +126,7 @@ angular.module('contentful')
   registerWidget('datePicker', {
     fieldTypes: ['Date'],
     name: 'Date Picker',
-    template: '<div cf-datetime-editor class="widget-datetime-editor" ng-model="fieldData.value"></div>',
+    template: '<cf-entry-datetime-editor />',
     notFocusable: true,
     options: [
       {

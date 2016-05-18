@@ -1,17 +1,10 @@
-input.form-control(
+input.cfnext-form__input--full-size(
   type="text"
-  ng-disabled="isDisabled"
-)
-
-i.fa.fa-exclamation-triangle.is-slug-duplicate(
-  ng-show="state === 'duplicate'"
-  tooltip="This slug has already been published in another entry"
-  tooltip-placement="left")
-i.fa.fa-check-circle.is-slug-unique(
-  ng-show="state === 'unique'"
-  tooltip="This is a unique slug"
-  tooltip-placement="left")
+  ng-disabled="isDisabled")
 i.fa.fa-spinner(
-  ng-show="state === 'checking'"
-  tooltip="Checking if this slug is unique"
-  tooltip-placement="left")
+  ng-show="state === 'checking'")
+.cfnext-form__field-error(
+  role="status"
+  data-status-code="entry.slug.duplicate"
+  ng-show="state === 'duplicate'")
+  | This slug has already been published in another entry
