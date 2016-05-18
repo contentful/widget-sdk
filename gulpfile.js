@@ -11,7 +11,6 @@ var express = require('express');
 var fingerprint = require('gulp-fingerprint');
 var mkdirp = require('mkdirp');
 var gulp = require('gulp');
-var gulpif = require('gulp-if');
 var gutil = require('gulp-util');
 var inject = require('gulp-inject');
 var jade = require('gulp-jade');
@@ -58,19 +57,20 @@ var src = {
     main: [
       'bower_components/jquery/dist/jquery.js',
       'bower_components/jquery-ui/ui/jquery.ui.core.js',
+      // Required by 'ui/context-menu' service
       'bower_components/jquery-ui/ui/jquery.ui.position.js',
       'bower_components/jquery-ui/ui/jquery.ui.widget.js',
       'bower_components/jquery-ui/ui/jquery.ui.mouse.js',
+      // Required by 'angular-ui-sortable'
+      // Requires 'jquery.ui.core', 'jquery.ui.mouse', 'jquery.ui.widget'
       'bower_components/jquery-ui/ui/jquery.ui.sortable.js',
-      'bower_components/jquery-ui/ui/jquery.ui.draggable.js',
-      'bower_components/jquery-ui/ui/jquery.ui.autocomplete.js',
+      // Requires 'jquery.ui.core'
       'bower_components/jquery-ui/ui/jquery.ui.datepicker.js',
       'bower_components/jquery-textrange/jquery-textrange.js',
       'bower_components/angular/angular.js',
       'bower_components/angular-animate/angular-animate.js',
       'bower_components/angular-load/angular-load.js',
       'bower_components/angular-sanitize/angular-sanitize.js',
-      'bower_components/angular-route/angular-route.js',
       'bower_components/angular-ui-sortable/sortable.js',
       'bower_components/angular-ui-router/release/angular-ui-router.js',
       'bower_components/angular-breadcrumb/dist/angular-breadcrumb.js',
@@ -190,10 +190,11 @@ gulp.task('js/vendor', [
 ]);
 
 gulp.task('js/vendor/main', function () {
-  return gulp.src(src.vendorScripts.main)
+  // Use `base: '.'` for correct source map paths
+  return gulp.src(src.vendorScripts.main, {base: '.'})
     .pipe(sourceMaps.init())
     .pipe(concat('vendor.js'))
-    .pipe(sourceMaps.write({sourceRoot: '/vendor'}))
+    .pipe(sourceMaps.write({sourceRoot: '/'}))
     .pipe(gulp.dest('./public/app'));
 });
 
@@ -220,13 +221,13 @@ gulp.task('js/external-bundle', function () {
   return bundleBrowserify(createBrowserify());
 });
 
-gulp.task('js/app', ['git-revision', 'icons'], function () {
-  return gulp.src(src.components.concat([src.svg.outputFile]))
-    .pipe(gulpif('**/environment.js',
-      replace({ regex: 'GULP_GIT_REVISION', replace: gitRevision })))
+gulp.task('js/app', ['icons'], function () {
+  var srcs = src.components.concat([src.svg.outputFile]);
+  // Use `base: '.'` for correct source map paths
+  return gulp.src(srcs, {base: '.'})
     .pipe(sourceMaps.init())
     .pipe(concat('components.js'))
-    .pipe(sourceMaps.write({sourceRoot: '/components'}))
+    .pipe(sourceMaps.write({sourceRoot: '/'}))
     .pipe(gulp.dest('./public/app/'));
 });
 
@@ -268,10 +269,11 @@ gulp.task('stylesheets', [
 ]);
 
 gulp.task('stylesheets/vendor', function () {
-  return gulp.src(src.vendorStylesheets)
+  // Use `base: '.'` for correct source map paths
+  return gulp.src(src.vendorStylesheets, {base: '.'})
     .pipe(sourceMaps.init())
     .pipe(concat('vendor.css'))
-    .pipe(sourceMaps.write({sourceRoot: '/vendor'}))
+    .pipe(sourceMaps.write({sourceRoot: '/'}))
     .pipe(gulp.dest('./public/app'));
 });
 
@@ -334,6 +336,10 @@ function bundleBrowserify (browserify) {
   return browserify.bundle()
     .on('error', passError(dest))
     .pipe(source('libs.js'))
+    .pipe(buffer())
+    // Add root to source map
+    .pipe(sourceMaps.init({loadMaps: true}))
+    .pipe(sourceMaps.write({sourceRoot: '/'}))
     .pipe(dest);
 }
 
@@ -341,13 +347,19 @@ function buildStylus (sources, dest) {
   dest = gulp.dest(dest);
   return gulp.src(sources)
     .pipe(sourceMaps.init())
-    .pipe(stylus({use: nib()}))
+    .pipe(stylus({
+      use: nib(),
+      sourcemap: {inline: true}
+    }))
     .on('error', passError(dest))
-    .pipe(sourceMaps.write({sourceRoot: '/stylesheets'}))
+    .pipe(mapSourceMapPaths(function (src) {
+      return path.join('src/stylesheets', src);
+    }))
+    .pipe(sourceMaps.write({sourceRoot: '/'}))
     .pipe(dest);
 }
 
-function respond404 (req, res) {
+function respond404 (_, res) {
   res.sendStatus(404);
 }
 
@@ -460,25 +472,26 @@ gulp.task('rev-static', function () {
 gulp.task('rev-dynamic', function () {
   return gulp.src([
     'public/app/main.css',
-    'public/app/vendor.css',
-
-    'public/app/templates.js',
-    'public/app/vendor.js',
-    'public/app/libs.js',
-    'public/app/components.js'
+    'public/app/vendor.css'
   ], {base: 'public'})
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(removeSourceRoot())
+    .pipe(mapSourceMapPaths(function (src) {
+      // `gulp-sourcemaps` prepends 'app' to all the paths.
+      return path.relative('app', src);
+    }))
     .pipe(fingerprint(
       'build/static-manifest.json', {
         mode: 'replace',
         verbose: false,
         prefix: '/'
       }))
+    // TODO we do not actually need to rewrite the non-fingerprinted version.
+    // This is basically for renaming and source maps
     .pipe(writeBuild())
     .pipe(rev())
     .pipe(writeBuild())
-    .pipe(sourceMaps.write('.'))
+    .pipe(sourceMaps.write('.', {sourceRoot: '/'}))
     .pipe(writeBuild())
     .pipe(rev.manifest('dynamic-manifest.json'))
     .pipe(writeBuild());
@@ -490,18 +503,27 @@ gulp.task('rev-dynamic', function () {
  */
 gulp.task('rev-app', function () {
   return gulp.src([
-    'build/app/vendor-*.js',
-    'build/app/libs-*.js',
-    'build/app/components-*.js',
-    'build/app/templates-*.js'
-  ], {base: 'build'})
+    'public/app/templates.js',
+    'public/app/vendor.js',
+    'public/app/libs.js',
+    'public/app/components.js'
+  ])
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(concat('app/application.min.js'))
     .pipe(uglify())
+    .pipe(fingerprint(
+      'build/static-manifest.json', {
+        mode: 'replace',
+        verbose: false,
+        prefix: '/'
+      }))
+    // TODO we do not actually need to rewrite the non-fingerprinted version.
+    // This is basically for renaming and source maps
     .pipe(writeBuild())
     .pipe(rev())
     .pipe(writeBuild())
-    .pipe(sourceMaps.write('.', { sourceRoot: '/javascript' }))
+    // 'uglify' already prepends a slash to every source path
+    .pipe(sourceMaps.write('.', {sourceRoot: null}))
     .pipe(writeBuild())
     .pipe(rev.manifest('app-manifest.json'))
     .pipe(writeBuild());
@@ -545,9 +567,21 @@ function passError (target) {
  * file’s source maps.
  */
 function removeSourceRoot () {
-  return through(function (file, e, push) {
+  return through(function (file, _, push) {
     if (file.sourceMap) {
       file.sourceMap.sourceRoot = null;
+    }
+    push(null, file);
+  });
+}
+
+/**
+ * Stream transformer that for every file applies a function to all source map paths.
+ */
+function mapSourceMapPaths (fn) {
+  return through(function (file, _e, push) {
+    if (file.sourceMap) {
+      file.sourceMap.sources = _.map(file.sourceMap.sources, fn);
     }
     push(null, file);
   });

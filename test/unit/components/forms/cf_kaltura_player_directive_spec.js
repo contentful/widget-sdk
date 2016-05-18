@@ -18,7 +18,7 @@ describe('Kaltura Player Directive', function () {
       $provide.value('kalturaWidgetLoader', jasmine.createSpyObj('kalturaWidgetLoaderMock', ['load']));
     });
 
-    inject(function ($compile, $injector, $q) {
+    inject(function ($injector, $q) {
       var directive;
 
       kalturaWidgetLoader = $injector.get('kalturaWidgetLoader');

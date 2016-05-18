@@ -1,9 +1,9 @@
 'use strict';
 
-describe('otPath directive', function() {
+describe('otPath directive', function () {
   var scope;
 
-  beforeEach(function() {
+  beforeEach(function () {
     module('contentful/test');
     var OtDoc = this.$inject('mocks/OtDoc');
 
@@ -14,7 +14,7 @@ describe('otPath directive', function() {
     scope = this.$compile('<div ot-path="[\'foo\', \'bar\']" />', {
       otDoc: {
         doc: this.rootDoc
-      },
+      }
     }, {
       otDocFor: {}
     }).scope();
@@ -25,7 +25,7 @@ describe('otPath directive', function() {
     scope = null;
   });
 
-  it('provides "otPath" on the scope', function() {
+  it('provides "otPath" on the scope', function () {
     expect(scope.otPath).toEqual(['foo', 'bar']);
   });
 
@@ -72,7 +72,7 @@ describe('otPath directive', function() {
     });
   });
 
-  describe('#getValue()', function() {
+  describe('#getValue()', function () {
     it('returns value from entity data when sharejs doc is not defined', function () {
       dotty.put(scope, ['entity', 'data'].concat(scope.otPath), 'ENTITY VALUE');
       scope.otDoc.doc = undefined;
@@ -82,7 +82,7 @@ describe('otPath directive', function() {
 
 
   describe('on "otRemoteOp" event', function () {
-    beforeEach(function() {
+    beforeEach(function () {
       sinon.stub(scope, '$broadcast');
     });
 
@@ -102,8 +102,8 @@ describe('otPath directive', function() {
       });
     });
 
-    describe('when otPath is prefix of operation path', function() {
-      it('broadcasts otValueChanged', function() {
+    describe('when otPath is prefix of operation path', function () {
+      it('broadcasts otValueChanged', function () {
         scope.$emit('otRemoteOp', {p: ['foo', 'bar', 'x']});
         sinon.assert.calledWith(scope.$broadcast, 'otValueChanged', scope.otPath, 'INITIAL');
       });
@@ -153,6 +153,15 @@ describe('otPath directive', function() {
         var logger = this.$inject('logger');
         scope.otSubDoc.changeValue(null);
         sinon.assert.called(logger.logWarn);
+      });
+    });
+  });
+
+  describe('#changeString()', function () {
+    pit('should update value in doc at path', function () {
+      dotty.put(scope.otDoc.doc.snapshot, scope.otPath, '');
+      return scope.otSubDoc.changeString('value').then(function () {
+        expect(scope.otDoc.doc.getAt(scope.otPath)).toBe('value');
       });
     });
   });

@@ -113,7 +113,7 @@ angular.module('contentful')
   }
 
   function createValueChangedSignalDispatcher (shouldCheckPath) {
-    return function dispatchValueChangedSignal (e, path, value) {
+    return function dispatchValueChangedSignal (_event, path, value) {
       if (!shouldCheckPath || isPathMatching(path)) {
         valueChangedSignal.dispatch(value);
       }

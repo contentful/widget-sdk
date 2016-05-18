@@ -190,7 +190,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       $($window).off('keyup', this._handleKeys);
       function destroyModal() {
         if(self.domElement){
-          self.domElement.scope().$destroy();
+          self.scope.$destroy();
           self.domElement.remove();
         }
         if(self.scope) self.scope.$destroy();

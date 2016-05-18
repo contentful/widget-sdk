@@ -29,7 +29,7 @@ angular.module('cf.app')
     scope: {},
     require: '^cfWidgetApi',
     template: JST.cf_entry_datetime_editor(),
-    link: function ($scope, $el, $attrs, widgetApi) {
+    link: function ($scope, $el, _$attrs, widgetApi) {
       var settings = widgetApi.settings || {};
       var field = widgetApi.field;
       var dateInputEl = $el.find('[name="datetime.date"]');
@@ -54,7 +54,7 @@ angular.module('cf.app')
 
       // We replace the parsed user date with the normalized date when
       // the date input is blurred.
-      dateController.$viewChangeListeners.push(function (date) {
+      dateController.$viewChangeListeners.push(function () {
         if (dateController.$valid) {
           dateController.$viewValue = Data.formatDateDisplay(dateController.$modelValue);
           dateController.$render();

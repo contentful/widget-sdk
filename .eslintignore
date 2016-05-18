@@ -84,7 +84,6 @@ test/unit/ot/ot_bind_ng_model_spec.js
 test/unit/ot/ot_doc_presence_controller_spec.js
 test/unit/ot/ob_bind_object_value_spec.js
 test/unit/ot/ot_doc_for_spec.js
-test/unit/ot/ot_path_spec.js
 test/unit/services/assert_spec.js
 test/unit/services/asset_loader_spec.js
 test/unit/services/call_buffer_spec.js
@@ -124,7 +123,6 @@ test/unit/services/space_tools_spec.js
 test/unit/services/string_utils_spec.js
 test/unit/services/the_store_spec.js
 test/unit/services/token_store_spec.js
-test/unit/services/paywall_opener_spec.js
 test/unit/services/subscription_plan_recommender_spec.js
 test/unit/widgets/checks_spec.js
 test/unit/widgets/api_spec.js
@@ -145,7 +143,6 @@ test/unit/app/entry_editor/entry_actions_controller_spec.js
 test/unit/app/entry_editor/entry_editor_controller_spec.js
 test/unit/app/entry_editor/entry_reverter_spec.js
 test/unit/app/entry_editor/form_widgets_controller_spec.js
-test/unit/data/api_client_spec.js
 test/unit/data/content_types_spec.js
 test/unit/data/editing_interfaces/transformer_spec.js
 test/unit/data/editing_interfaces_spec.js
@@ -200,7 +197,6 @@ src/javascripts/components/client/cf_breadcrumbs_directive.js
 src/javascripts/components/client/activation_email_resend_controller.js
 src/javascripts/components/client/cf_main_nav_bar_directive.js
 src/javascripts/components/client/cf_space_selector_directive.js
-src/javascripts/components/client/client_controller.js
 src/javascripts/components/client/dialogsInitController.js
 src/javascripts/components/client/onboarding_controller.js
 src/javascripts/components/client/trial_watcher.js
@@ -363,7 +359,6 @@ src/javascripts/app/widgets/cf_checkbox_editor_directive.js
 src/javascripts/app/widgets/cf_list_input_editor_directive.js
 src/javascripts/app/widgets/cf_multi_line_editor_directive.js
 src/javascripts/app/widgets/cf_rating_editor_directive.js
-src/javascripts/app/widgets/cf_tag_editor_directive.js
 src/javascripts/app/widgets/cf_widget_boolean_directive.js
 src/javascripts/app/widgets/dropdown/cf_dropdown_editor_directive.js
 src/javascripts/app/widgets/json/cf_json_editor_code_editor_directive.js
@@ -406,7 +401,6 @@ src/javascripts/ot/ot_bind_ng_model.js
 src/javascripts/ot/ot_bind_object_value.js
 src/javascripts/ot/ot_bind_text.js
 src/javascripts/ot/ot_doc_for.js
-src/javascripts/ot/ot_path.js
 src/javascripts/ot/ot_presence.js
 src/javascripts/services/assert.js
 src/javascripts/services/asset_loader.js
@@ -454,7 +448,6 @@ src/javascripts/services/error_message_builder.js
 src/javascripts/services/features.js
 src/javascripts/services/filepicker.js
 src/javascripts/services/hints.js
-src/javascripts/services/lazy_loader.js
 src/javascripts/services/locale_store.js
 src/javascripts/services/logger.js
 src/javascripts/services/modal_dialog_service.js
@@ -473,7 +466,6 @@ src/javascripts/services/token_store.js
 src/javascripts/services/ui_version_switcher.js
 src/javascripts/services/user_agent.js
 src/javascripts/services/zone_offsets.js
-src/javascripts/services/paywall_opener.js
 src/javascripts/services/subscription_plan_recommender.js
 src/javascripts/forms/errors.js
 src/javascripts/forms/validation.js
@@ -496,7 +488,6 @@ src/javascripts/widgets/deprecations.js
 src/javascripts/widgets/migrations.js
 src/javascripts/widgets/store.js
 src/javascripts/widgets/widgets.js
-src/javascripts/data/api_client.js
 src/javascripts/data/content_types.js
 src/javascripts/data/editing_interfaces.js
 src/javascripts/data/editing_interfaces/asset_interface.js
@@ -528,7 +519,6 @@ src/javascripts/libs/index.js
 src/javascripts/libs/markdown_vendors.js
 src/javascripts/kaltura_credentials.js
 src/javascripts/ui.js
-src/javascripts/environment.js
 src/javascripts/access_control/access_checker.js
 src/javascripts/access_control/cf_rule.js
 src/javascripts/access_control/cf_rule_list.js

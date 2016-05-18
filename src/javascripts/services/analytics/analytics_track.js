@@ -12,9 +12,9 @@
 angular.module('contentful')
 .factory('analytics/track', ['$injector', function ($injector) {
 
+  var lazyLoad      = $injector.get('LazyLoader').get;
   var segment       = $injector.get('segment');
   var totango       = $injector.get('totango');
-  var fontsdotcom   = $injector.get('fontsdotcom');
   var logger        = $injector.get('logger');
   var cookieStore   = $injector.get('TheStore/cookieStore');
   var stringifySafe = $injector.get('stringifySafe');
@@ -64,7 +64,7 @@ angular.module('contentful')
   function enable (user) {
     segment.enable();
     totango.enable();
-    fontsdotcom.enable();
+    lazyLoad('fontsDotCom');
     turnOffStateChangeListener = $rootScope.$on('$stateChangeSuccess', trackStateChange);
     userData = user;
     initialize();

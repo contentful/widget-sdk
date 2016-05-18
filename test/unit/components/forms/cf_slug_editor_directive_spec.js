@@ -11,7 +11,7 @@ describe('SlugEditor directive', function () {
 
     this.title = {
       getValue: sinon.stub().returns(''),
-      onValueChanged: function (locale, cb) {
+      onValueChanged: function (_, cb) {
         return this.titleChangedSignal.attach(cb);
       }.bind(this)
     };

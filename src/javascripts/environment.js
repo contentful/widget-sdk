@@ -1,25 +1,85 @@
 'use strict';
 
-angular.module('contentful/environment', []).constant('environment', {
-  env:         window.CF_ENV     ? window.CF_ENV : 'development',
-  settings:    window.CF_CONFIG  ? window.CF_CONFIG : {filepicker: {}, aviary: {}, google: {}, contentful: {}},
-  gitRevision: 'GULP_GIT_REVISION'
-}).config(['environment', function (environment) {
-  if (window.CF_CONFIG ) environment.settings = window.CF_CONFIG;
-  if (window.CF_ENV    ) environment.env      = window.CF_ENV;
+/**
+ * @ngdoc service
+ * @name environment
+ * @description
+ * Exposes configuration for the application that depends on the envrionment
+ *
+ * Uses `window.CF_ENV`, `window.CF_CONFIG`, `window.CF_UI_VERSION` to load the
+ * configuration.
+ */
+angular.module('contentful/environment', [])
+.constant('environment', (function () {
+  // Mainly used for test which do not have 'window.CF_CONFIG' set.
+  var DEFAULT_SETTINGS = {
+    main_domain: 'contentful.com',
+    filepicker: {},
+    aviary: {},
+    google: {},
+    contentful: {}
+  };
 
-  var s = environment.settings;
+  /**
+   *
+   * @ngdoc property
+   * @name environment#env
+   * @type {string}
+   * @description
+   * Current environment name.
+   *
+   * Possible values are `development`, `procuction`, and `staging` (used on the
+   * `quirely.com` and `flinkly.com` domains.
+   *
+   * The tests also use the `unittest` value.
+   */
+  var env = window.CF_ENV ? window.CF_ENV : 'development';
 
-  s.main_domain = s.main_domain || 'contentful.com'; // Safety fallback
+  var isDev = env === 'development';
+  var settings = _.extend(DEFAULT_SETTINGS, window.CF_CONFIG);
+  var gitRevision = window.CF_UI_VERSION;
 
-  // for sceDelegateProvider
-  var domains = _([s.asset_host, s.main_domain])
-    .union(s.additional_domains)
-    .compact()
-    .map(function(domain){ return domain.replace('.', '\\.').replace(/:\d+$/, ''); })
-    .uniq()
-    .value()
-    .join('|');
-  //                                          __proto___      __maybe_subdomain_             __port__
-  s.resourceUrlWhiteListRegexp = [new RegExp('(https?:)?\\/\\/([^:\\/.?&;]*\\.)?('+domains+')(:\\d+)?.*'), 'self'];
-}]);
+  _.extend(settings, {
+    // for sceDelegateProvider
+    resourceUrlWhiteListRegexp: makeResourceUrlList(
+      [settings.asset_host, settings.main_domain]
+      .concat(settings.additional_domains)
+    ),
+
+    /**
+     * @ngdoc property
+     * @name environment#settings.disableUpdateCheck.
+     * @type {boolean}
+     * @description
+     * If not set, query the API for the currently available version of the app
+     * and display a notification if a newer version is available.
+     *
+     * It defaults to `false` and is set to `true` in the development
+     * environment.
+     *
+     * Used in 'ClientController'.
+     */
+    disableUpdateCheck: isDev
+  });
+
+  return {
+    env: env,
+    settings: settings,
+    gitRevision: gitRevision
+  };
+
+  function makeResourceUrlList (hosts) {
+    var domains = _(hosts)
+      .compact()
+      .map(function (domain) {
+        return domain.replace('.', '\\.').replace(/:\d+$/, '');
+      })
+      .uniq()
+      .value()
+      .join('|');
+    return [
+      new RegExp('^(https?:)?//([^:/.?&;]*\\.)?(' + domains + ')(:\\d+)?(/.*|$)'),
+      'self'
+    ];
+  }
+}()));

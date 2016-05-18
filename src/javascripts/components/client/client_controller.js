@@ -1,29 +1,32 @@
 'use strict';
 
-angular.module('contentful').controller('ClientController', ['$scope', '$injector', function ClientController($scope, $injector) {
-  var $rootScope         = $injector.get('$rootScope');
-  var $state             = $injector.get('$state');
-  var features           = $injector.get('features');
-  var logger             = $injector.get('logger');
-  var spaceContext       = $injector.get('spaceContext');
-  var authentication     = $injector.get('authentication');
-  var tokenStore         = $injector.get('tokenStore');
-  var analytics          = $injector.get('analytics');
-  var analyticsEvents    = $injector.get('analyticsEvents');
-  var authorization      = $injector.get('authorization');
-  var modalDialog        = $injector.get('modalDialog');
-  var presence           = $injector.get('presence');
-  var revision           = $injector.get('revision');
+angular.module('contentful')
+.controller('ClientController', ['$scope', '$injector', function ClientController ($scope, $injector) {
+  var $rootScope = $injector.get('$rootScope');
+  var $state = $injector.get('$state');
+  var features = $injector.get('features');
+  var logger = $injector.get('logger');
+  var spaceContext = $injector.get('spaceContext');
+  var authentication = $injector.get('authentication');
+  var tokenStore = $injector.get('tokenStore');
+  var analytics = $injector.get('analytics');
+  var analyticsEvents = $injector.get('analyticsEvents');
+  var authorization = $injector.get('authorization');
+  var modalDialog = $injector.get('modalDialog');
+  var presence = $injector.get('presence');
+  var revision = $injector.get('revision');
   var ReloadNotification = $injector.get('ReloadNotification');
-  var OrganizationList   = $injector.get('OrganizationList');
-  var environment        = $injector.get('environment');
+  var OrganizationList = $injector.get('OrganizationList');
+  var environment = $injector.get('environment');
 
   // TODO remove this eventually. All components should access it as a service
   $scope.spaceContext = spaceContext;
 
+  // TODO this does not belong here. We should move it to the
+  // controller that actually uses it
   $scope.preferences = {
     showAuxPanel: false,
-    toggleAuxPanel: function() {
+    toggleAuxPanel: function () {
       var showAuxPanel = !$scope.preferences.showAuxPanel;
       $scope.preferences.showAuxPanel = showAuxPanel;
       analyticsEvents.trackToggleAuxPanel(showAuxPanel, $state.current.name);
@@ -48,7 +51,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
   $scope.baseHost = environment.settings.base_host;
 
-  function initClient() {
+  function initClient () {
     tokenStore.refresh();
 
     setTimeout(newVersionCheck, 5000);
@@ -56,15 +59,15 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     setInterval(function () {
       if (presence.isActive()) {
         newVersionCheck();
-        tokenStore.refresh().
-        catch(function () {
+        tokenStore.refresh()
+        .catch(function () {
           ReloadNotification.trigger('Your authentication data needs to be refreshed. Please try logging in again.');
         });
       }
     }, 5 * 60 * 1000);
   }
 
-  function spaceAndTokenWatchHandler(collection) {
+  function spaceAndTokenWatchHandler (collection) {
     if (collection.tokenLookup) {
       authorization.setTokenLookup(collection.tokenLookup);
       if (collection.space && authorization.authContext && authorization.authContext.hasSpace(collection.space.getId())) {
@@ -73,7 +76,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     }
   }
 
-  function handleTokenData(token) {
+  function handleTokenData (token) {
     var user = dotty.get(token, 'user');
     if (!_.isObject(user)) { return; }
 
@@ -89,7 +92,10 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     }
   }
 
-  function newVersionCheck() {
+  function newVersionCheck () {
+    if (environment.settings.disableUpdateCheck) {
+      return;
+    }
     revision.hasNewVersion().then(function (hasNewVersion) {
       if (hasNewVersion) {
         $rootScope.$broadcast('persistentNotification', {
@@ -101,7 +107,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     });
   }
 
-  function showCreateSpaceDialog() {
+  function showCreateSpaceDialog () {
     analytics.track('Clicked Create-Space');
     modalDialog.open({
       title: 'Space templates',
@@ -111,7 +117,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     })
     .promise
     .then(handleSpaceCreationSuccess)
-    .catch(function() {
+    .catch(function () {
       analytics.track('Closed Space Template Selection Modal');
     });
   }

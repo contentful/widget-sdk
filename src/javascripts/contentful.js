@@ -38,7 +38,12 @@ angular.module('contentful', [
   $locationProvider.html5Mode({
     enabled: true,
     requireBase: false
-  }).hashPrefix('!');
+  });
+
+  // This is not actually used but prevents gobbling of fragments in
+  // the URL, like the authentication token passed by gatekeeper.
+  $locationProvider.hashPrefix('!!!');
+
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
   $sceDelegateProvider.resourceUrlWhitelist(env.resourceUrlWhiteListRegexp);
   $animateProvider.classNameFilter(/animate/);
