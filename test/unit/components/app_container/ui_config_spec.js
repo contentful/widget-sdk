@@ -16,8 +16,8 @@ describe('uiConfig service', function () {
     this.spaceContext = this.cfStub.spaceContext(space, [contentTypeData]);
 
     config = {
-      entryListViews: {},
-      assetListViews: {}
+      entryListViews: [{}],
+      assetListViews: [{}]
     };
 
     this.initUiConfig = function (configIsDefined) {
@@ -59,6 +59,20 @@ describe('uiConfig service', function () {
       return this.loadPromise.catch(function (val) {
         expect(val).toBe(err);
       });
+    });
+  });
+
+  describe('#resetEntries', function () {
+    it('returns defaults', function () {
+      this.initUiConfig();
+      expect(this.uiConfig.resetEntries().length).toBe(3);
+    });
+  });
+
+  describe('#resetAssets', function () {
+    it('returns defaults', function () {
+      this.initUiConfig();
+      expect(this.uiConfig.resetAssets().length).toBe(3);
     });
   });
 
