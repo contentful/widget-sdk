@@ -70,8 +70,9 @@ describe('cfEmbedlyPreview Directive', function () {
     it('updates state when the field changes', function () {
       // Initial state is invalid
       this.compileElement();
-      expect(this.scope.urlStatus).toBe('invalid');
+      expect(this.scope.urlStatus).toBe('ok');
     });
+
     it('changes state to loading and then broken when URL is broken', function () {
       // Add a URL
       this.compileElement('http://404site.com');
@@ -79,6 +80,14 @@ describe('cfEmbedlyPreview Directive', function () {
       // Simulate a 404 by flushing timers without resolving
       this.$inject('$timeout').flush();
       expect(this.scope.urlStatus).toBe('broken');
+    });
+
+    it('changes state to "ok" when URL is empty', function () {
+      this.compileElement('http://404site.com');
+      expect(this.scope.urlStatus).toBe('loading');
+      this.scope.previewUrl = '';
+      this.$inject('$timeout').flush();
+      expect(this.scope.urlStatus).toBe('ok');
     });
   });
 });

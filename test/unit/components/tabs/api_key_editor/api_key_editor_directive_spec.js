@@ -29,6 +29,8 @@ describe('apiKeyEditor Directive', function () {
       };
 
       $provide.constant('environment', environmentMock);
+
+      $provide.value('analytics', {});
     });
 
     inject(function ($compile, $rootScope, enforcements, spaceContext, _accessChecker_) {

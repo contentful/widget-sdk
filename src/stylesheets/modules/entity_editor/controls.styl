@@ -48,24 +48,24 @@ $entry-editor__input-base()
   width: 100%
   line-height: 1.5
   outline: 0
-  padding: 0
-  border-width: 0 0 1px 0
+  padding: 0 2px
   background: none
+  // Set both properties to fix some browser inconsistencies
+  border-width: 0 0 1px 0
+  border-style: solid
+  border-color: transparent
+  border-image-width: 0 0 1px 0
   border-image-source: url("/app/svg/dotted-border.svg")
-  border-image-repeat: repeat
+  border-image-repeat: round
   border-image-slice: 1 1
 
   &[aria-invalid="true"]
-    padding-left: 0.3em
-    padding-right: 0.3em
     background: #FFF2F1
 
   &[aria-disabled="true"], &[disabled], &:disabled
-    padding-left: 0.3em
-    padding-right: 0.3em
     background: #F7F9FA
     color: $colors.text-lightest
-    border: 1px transparent
+    border-image: none
 
 
 $entry-editor__input()
@@ -113,6 +113,9 @@ Markup:
 div.entry-editor__input-group(style="width: 10em")
   input(type="text" value="Input has padding to the right")
   div.entry-editor__input-spinner
+div.entry-editor__input-group(style="width: 10em")
+  input(type="text" value="Input has padding to the right")
+  cf-icon(name="calendar")
 
 Styleguide entry-editor-controls.input-spinner
 */
@@ -127,6 +130,12 @@ Styleguide entry-editor-controls.input-spinner
     $entry-editor__input()
     padding-right: calc(18px + 0.8em)
 
+  > cf-icon
+    position: absolute
+    top: 8px
+    right: 2px
+    cursor: default
+
 .entry-editor__input-spinner
   position: absolute
   top: 9px
@@ -134,3 +143,33 @@ Styleguide entry-editor-controls.input-spinner
   $spinner-base()
   +$spinner-active(black, 18px)
     display: block
+
+
+/*
+Select
+
+Markup:
+select.entry-editor__select-control
+  option This is a value
+  option This is another value
+
+Styleguide entry-editor-controls.select
+*/
+
+@require '/objects/select_box'
+.entry-editor__select-control
+  $select-box-reset()
+  $entry-editor__input-base()
+  width: auto;
+  padding-right: 1em
+  padding-left: 0.5em
+  height: 36px
+
+  > option
+    text-overflow: ellipsis
+    overflow: hidden
+
+  background-image:    $select-box-caret
+  background-position: center right
+  background-repeat:   no-repeat
+  background-size:     0.7em

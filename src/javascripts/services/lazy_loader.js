@@ -7,21 +7,21 @@
  * @description
  * This service can be used to lazily load script dependencies.
  *
- * All the dependencies are defined in "LazyLoader/scripts" subservice.
- * If we "own" script that is lazy-load-enabled, we should call function
- * window.cfFeedLazyLoader with script name and an exported value.
- * If script just adds global value, define "globalObject" property.
+ * All the dependencies are defined in "LazyLoader/resources".
+ * If we "own" a script that is lazy-load-enabled, we should call the function
+ * window.cfFeedLazyLoader() with the script's name and an exported value.
+ * If a script just adds a global value, define the "globalObject" property.
  */
 angular.module('contentful').factory('LazyLoader', ['$injector', function ($injector) {
 
-  var $q         = $injector.get('$q');
-  var $window    = $injector.get('$window');
+  var $q = $injector.get('$q');
+  var $window = $injector.get('$window');
   var $rootScope = $injector.get('$rootScope');
-  var load       = $injector.get('angularLoad').loadScript;
-  var scripts    = $injector.get('LazyLoader/scripts');
+  var loader = $injector.get('angularLoad');
+  var resources = $injector.get('LazyLoader/resources');
 
-  var store      = {};
-  var cache      = {};
+  var store = {};
+  var cache = {};
 
   $window.cfFeedLazyLoader = function (name, value) {
     $rootScope.$apply(function () {
@@ -43,7 +43,7 @@ angular.module('contentful').factory('LazyLoader', ['$injector', function ($inje
    * Feed Lazy Loader with the value for the given name.
    * There's no way to override already registered value.
    */
-  function provide(name, value) {
+  function provide (name, value) {
     store[name] = store[name] || value;
   }
 
@@ -55,45 +55,57 @@ angular.module('contentful').factory('LazyLoader', ['$injector', function ($inje
    * @description
    * Lazy load the value with the given name.
    * This method returns promise of this value.
-   * It will be rejected if requested script:
+   * It will be rejected if requested resource:
    * - is not registered,
    * - failed loading,
    * - loaded, but extracting value wasn't possible.
    */
-  function get(name) {
-    // no script definition at all
-    var script = scripts[name];
-    if (!script) {
-      return $q.reject(new Error('No script with requested name.'));
+  function get (name) {
+    // no resource definition at all
+    var resource = resources[name];
+    if (!resource) {
+      return $q.reject(new Error('No resource with requested name "' + name + '"'));
     }
 
     // use cached promise
     var cached = cache[name];
     if (cached) { return cached; }
 
+    if (isStylesheet(resource)) {
+      provide(name, $q.resolve());
+    }
+
     // issue HTTP request to get service value
-    var loadPromise = load(script.url)
-    .then(function () {
-      if (script.globalObject) {
-        store[name] = dotty.get(window, script.globalObject);
+    var load = getLoaderFor(resource);
+    var loadPromise = load(resource.url).then(function () {
+      if (resource.globalObject) {
+        store[name] = dotty.get(window, resource.globalObject);
       }
 
       var value = store[name];
 
       // Immediately run any setup scripts if available
-      if (_.isFunction(script.setup)) {
-        value = script.setup(value);
+      if (_.isFunction(resource.setup)) {
+        value = resource.setup(value);
       }
 
-      return value ? value : $q.reject(new Error('Script loaded, but no value provided.'));
+      return value || $q.reject(new Error('Script loaded, but no value provided.'));
     });
 
     cache[name] = loadPromise;
     return loadPromise;
   }
+
+  function getLoaderFor (resource) {
+    return isStylesheet(resource) ? loader.loadCSS : loader.loadScript;
+  }
+
+  function isStylesheet (resource) {
+    return resource.url.match(/\.css(?:\?.*)?$/);
+  }
 }]);
 
-angular.module('contentful').factory('LazyLoader/scripts', ['$injector', function ($injector) {
+angular.module('contentful').factory('LazyLoader/resources', ['$injector', function ($injector) {
 
   var assetLoader = $injector.get('AssetLoader');
   var environment = $injector.get('environment');
@@ -101,11 +113,23 @@ angular.module('contentful').factory('LazyLoader/scripts', ['$injector', functio
   /**
    * Options:
    * - url - absolute (in rare cases can be relative) URL
-   * - globalObject - if scripts registers itself by global value,
+   * - globalObject - if resource registers itself by global value,
    *                  it should be a key name within window object
-   * - setup - optional function run immediately after the script is loaded
+   * - setup - optional function run immediately after the resource is loaded
    */
   return {
+    // CSS:
+    gkPlanCardStyles: {
+      url: '//' + environment.settings.base_host + '/gatekeeper/plan_cards.css'
+    },
+    fontsDotCom: {
+      // Empty stylesheet. The request happening to the file is misused by
+      // fonts.com for tracking and resembles the logic in their own
+      // http://fast.fonts.net/t/trackingCode.js
+      url: '//fast.fonts.net/t/1.css?apiType=css&projectid=' +
+           dotty.get(environment, 'settings.fonts_dot_com.project_id')
+    },
+    // JavaScript:
     markdown: {
       url: assetLoader.getAssetUrl('/app/markdown_vendors.js')
     },
@@ -127,7 +151,7 @@ angular.module('contentful').factory('LazyLoader/scripts', ['$injector', functio
     },
     googleMaps: {
       url: 'https://maps.googleapis.com/maps/api/js?v=3&key=' +
-            environment.settings.google.maps_api_key,
+      environment.settings.google.maps_api_key,
       globalObject: 'google.maps'
     },
     bugsnag: {
@@ -136,7 +160,7 @@ angular.module('contentful').factory('LazyLoader/scripts', ['$injector', functio
     }
   };
 
-  function setupEmbedly(embedly) {
+  function setupEmbedly (embedly) {
     embedly('defaults', {
       cards: {
         key: environment.settings.embedly.api_key
@@ -146,4 +170,3 @@ angular.module('contentful').factory('LazyLoader/scripts', ['$injector', functio
   }
 
 }]);
-

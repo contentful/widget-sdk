@@ -17,6 +17,10 @@ describe('data/ApiClient', function () {
     this.client = new Client('SPACE', 'TOKEN');
   });
 
+  afterEach(function () {
+    $http = null;
+  });
+
   describe('single resource', function () {
 
     beforeEach(function () {
@@ -44,6 +48,21 @@ describe('data/ApiClient', function () {
       .then(assertRequestResponse('DATA', {
         method: 'GET',
         url: '//api.test.local/spaces/SPACE/assets/ID'
+      }));
+    });
+
+    pit('createEntry(ctId, data)', function () {
+      var entry = {'fields': 'MY FIELDS'};
+      return this.client.createEntry('CTID', entry)
+      .then(assertRequestResponse('DATA', {
+        method: 'POST',
+        url: '//api.test.local/spaces/SPACE/entries/',
+        data: entry,
+        headers: {
+          'X-Contentful-Content-Type': 'CTID',
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+          'Authorization': 'Bearer TOKEN'
+        }
       }));
     });
   });

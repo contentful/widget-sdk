@@ -22,6 +22,9 @@
     "@contentful/validation": {
       "version": "5.14.1"
     },
+    "@contentful/widget-map": {
+      "version": "1.0.1"
+    },
     "@contentful/worf": {
       "version": "3.6.1",
       "dependencies": {
@@ -1823,35 +1826,6 @@
                   "version": "0.4.0"
                 }
               }
-            }
-          }
-        }
-      }
-    },
-    "gulp-if": {
-      "version": "1.2.5",
-      "dependencies": {
-        "gulp-match": {
-          "version": "0.2.1",
-          "dependencies": {
-            "minimatch": {
-              "version": "1.0.0",
-              "dependencies": {
-                "lru-cache": {
-                  "version": "2.7.0"
-                },
-                "sigmund": {
-                  "version": "1.0.1"
-                }
-              }
-            }
-          }
-        },
-        "ternary-stream": {
-          "version": "1.2.3",
-          "dependencies": {
-            "fork-stream": {
-              "version": "0.0.4"
             }
           }
         }
@@ -4580,6 +4554,9 @@
     },
     "pegjs": {
       "version": "0.8.0"
+    },
+    "pikaday": {
+      "version": "1.4.0"
     },
     "promise": {
       "version": "6.1.0",

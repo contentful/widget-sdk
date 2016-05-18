@@ -23,10 +23,10 @@ beforeEach(function () {
    * @param {string} service
    * @return {any}
    */
-  this.$inject = function(serviceName){
+  this.$inject = function (serviceName) {
     if (!this.$injector) {
       var self = this;
-      inject(function($injector){
+      inject(function ($injector) {
         self.$injector = $injector;
       });
     }
@@ -79,7 +79,8 @@ beforeEach(function () {
    * Creates a new scope with the given properties and compile the HTML
    * string with that scope. Returns the compiled JQuery element.
    *
-   * To retrieve the scope use `element.scope()`
+   * To retrieve the scope use `element.scope()`.
+   * If the element has an isolated scope, use `element.isolateScope()`.
    *
    * @param {string} template
    * @param {object} scopeProperties
@@ -95,7 +96,7 @@ beforeEach(function () {
 
     if (controllers) {
       // convert controllers to a form `$compile` understands
-      transcludeControllers = _.mapValues(controllers, function(controllerInstance) {
+      transcludeControllers = _.mapValues(controllers, function (controllerInstance) {
         return {
           instance: controllerInstance
         };

@@ -2,6 +2,7 @@
 
 angular.module('contentful')
 .directive('cfUrlEditor', ['$injector', function ($injector) {
+  var debounce = $injector.get('debounce');
   var makeInputUpdater = $injector.get('ui/caretHelper').makeInputUpdater;
 
   return {
@@ -11,7 +12,7 @@ angular.module('contentful')
     template: JST.cf_url_editor(),
     link: function (scope, $el, attrs, widgetApi) {
       var field = widgetApi.field;
-      var $inputEl = $el.children('input.form-control');
+      var $inputEl = $el.find('input');
       var updateInput = makeInputUpdater($inputEl);
 
       _.extend(scope, {
@@ -35,11 +36,10 @@ angular.module('contentful')
         return $inputEl.val();
       }, function (value) {
         scope.previewUrl = value;
+        field.setString(value);
       });
 
-      $inputEl.on('input change', function () {
-        field.setString($inputEl.val());
-      });
+      $inputEl.on('input change', debounce(scope.$apply.bind(scope), 200));
 
       function updateDisabledStatus (disabledStatus) {
         scope.isDisabled = disabledStatus;
