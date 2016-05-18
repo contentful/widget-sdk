@@ -53,7 +53,10 @@ $cfnext-button($color, $text)
  */
 $button-vertical-padding = (10 / 16) * 1rem
 $cfnext-button-layout()
-  display: inline-block
+  display: inline-flex
+  vertical-align: baseline
+  justify-content: center
+  align-items: baseline
   padding: $button-vertical-padding 1.5rem
   cursor: pointer
   text-align: center
@@ -108,14 +111,12 @@ $cfnext-button-colors($bg, $text)
  * state.
  */
 $cfnext-button-loading($text)
-  > *
-    display: inline-block
-  +$spinner-base()
-    display: inline-block
+  $spinner-base()
   &.is-loading
     &:disabled
       opacity: 1
     +$spinner-active($text)
+      top: 1px
       margin-left: 5px
 
 
@@ -293,7 +294,7 @@ Styleguide 4.6
 */
 
 $x--block()
-  display: block
+  display: flex
   width: 100%
   position: relative
   &:after
@@ -340,7 +341,7 @@ Styleguide 4.7
 
 .cfnext-btn-link
   $button-reset();
-  display: block
+  display: flex
   color: $colors.blue-mid
   transition: all ease-in-out .1s
 
@@ -373,8 +374,7 @@ Styleguide 4.8
 */
 
 $btn-icon()
-  display: inline-block
-  float: left
+  align-self: stretch
   margin-right: 0.55em
   margin-left: -0.7em
   > svg
@@ -417,11 +417,9 @@ Styleguide 4.9
 
 .btn-dropdown-icon,
 .btn-dropdown-icon--up
-  float: right
-  margin-left: 0.4em
+  order: 1 // Display behind button label.
+  margin-left: 0.6em
   margin-right: -0.2em
-  svg
-    display: inline-block
 
 .btn-dropdown-icon--up
   transform: rotate(180deg)
