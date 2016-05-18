@@ -145,7 +145,6 @@ test/unit/app/entry_editor/entry_actions_controller_spec.js
 test/unit/app/entry_editor/entry_editor_controller_spec.js
 test/unit/app/entry_editor/entry_reverter_spec.js
 test/unit/app/entry_editor/form_widgets_controller_spec.js
-test/unit/data/api_client_spec.js
 test/unit/data/content_types_spec.js
 test/unit/data/editing_interfaces/transformer_spec.js
 test/unit/data/editing_interfaces_spec.js
@@ -496,7 +495,6 @@ src/javascripts/widgets/deprecations.js
 src/javascripts/widgets/migrations.js
 src/javascripts/widgets/store.js
 src/javascripts/widgets/widgets.js
-src/javascripts/data/api_client.js
 src/javascripts/data/content_types.js
 src/javascripts/data/editing_interfaces.js
 src/javascripts/data/editing_interfaces/asset_interface.js

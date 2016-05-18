@@ -34,7 +34,7 @@ angular.module('cf.data')
   Client.prototype._getResource = function (path, id) {
     return this._request({
       method: 'GET',
-      path: [path, id],
+      path: [path, id]
     });
   };
 
@@ -71,22 +71,22 @@ angular.module('cf.data')
     return this._getResource('assets', id);
   };
 
-  Client.prototype._createResource = function (name, data) {
+  Client.prototype._createResource = function (name, data, headers) {
     var id = getId(data);
     var method = id ? 'PUT' : 'POST';
     return this._request({
       method: method,
       path: [name, id],
       data: data
-    });
+    }, headers);
   };
 
   Client.prototype.createContentType = function (data) {
     return this._createResource('content_types', data);
   };
 
-  Client.prototype.createEntry = function (data) {
-    return this._createResource('entries', data);
+  Client.prototype.createEntry = function (contentType, data) {
+    return this._createResource('entries', data, { 'X-Contentful-Content-Type': contentType });
   };
 
   Client.prototype.createAsset = function (data) {
@@ -136,7 +136,7 @@ angular.module('cf.data')
     var id = getId(data);
     return this._request({
       method: 'DELETE',
-      path: [name, id, flag],
+      path: [name, id, flag]
     });
   };
 
@@ -193,7 +193,7 @@ angular.module('cf.data')
     var id = getId(data);
     return this._request({
       method: 'DELETE',
-      path: [name, id],
+      path: [name, id]
     })
     // do not return anything
     .then(function () {});
@@ -228,16 +228,16 @@ angular.module('cf.data')
   };
 
 
-  Client.prototype._request = function (req) {
+  Client.prototype._request = function (req, headers) {
     var httpReq = _.pick(req, ['method', 'params', 'data']);
 
     var url = [this._baseURL].concat(req.path).join('/');
     httpReq.url = url;
 
-    httpReq.headers = {
+    httpReq.headers = _.extend(headers || {}, {
       'Content-Type': 'application/vnd.contentful.management.v1+json',
       'Authorization': 'Bearer ' + this._token
-    };
+    });
 
     if (req.version) {
       httpReq.headers['X-Contentful-Version'] = req.version;
@@ -257,7 +257,7 @@ angular.module('cf.data')
 
   return Client;
 
-  function getId(identifiable) {
+  function getId (identifiable) {
     if (_.isString(identifiable)) {
       return identifiable;
     } else {
@@ -265,7 +265,7 @@ angular.module('cf.data')
     }
   }
 
-  function getVersion(resource) {
+  function getVersion (resource) {
     return dotty.get(resource, ['sys', 'version']);
   }
 }]);
