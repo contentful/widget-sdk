@@ -42,10 +42,12 @@ div.entity-editor__field-group(
       +field-permission-info
 
     div.entity-editor__control-group
+      // @todo remove ct-field-editor directive when fieldData won't be used anymore
+      // (widgets in asset editor already don't use fieldData)
       cf-widget-renderer.entity-editor__control(
         cf-focus-ot-input="hasInitialFocus"
         ot-path="['fields', field.id, locale.internal_code]"
-        cf-field-editor="entry.data.fields[field.id][locale.internal_code]"
+        cf-field-editor="entry && entry.data.fields[field.id][locale.internal_code]"
         cf-widget-api)
       +editor-field-collaborators
     +field-locale-errors
