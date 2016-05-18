@@ -76,6 +76,21 @@ angular.module('contentful')
   });
 
   /**
+   * @ngdoc property
+   * @name FieldLocaleController#isRequired
+   * @type {boolean}
+   * @description
+   * Holds information if a field-locale pair is required.
+   *
+   * See the asset schema:
+   * https://github.com/contentful/contentful-validation/blob/master/lib/schemas/asset.js
+   */
+  controller.isRequired = field.required;
+  if (($scope.entry && locale.optional) || ($scope.asset && !locale.default)) {
+    controller.isRequired = false;
+  }
+
+  /**
    * @ngdoc method
    * @name FieldLocaleController#announcePresence
    * @description

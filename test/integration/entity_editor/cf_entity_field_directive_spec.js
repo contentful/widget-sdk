@@ -26,7 +26,8 @@ describe('cfEntityField directive integration', function () {
 
     this.compile = function () {
       return this.$compile('<cf-entity-field>', {
-        widget: this.widget
+        widget: this.widget,
+        entry: {}
       });
     };
   });
