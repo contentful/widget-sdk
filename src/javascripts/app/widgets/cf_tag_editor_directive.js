@@ -14,7 +14,7 @@ angular.module('cf.app')
     scope: {},
     require: '^cfWidgetApi',
     template: JST.cf_tag_editor(),
-    link: function ($scope, $el, $attrs, widgetApi) {
+    link: function ($scope, _el, _attrs, widgetApi) {
       var field = widgetApi.field;
 
       /**
@@ -32,12 +32,13 @@ angular.module('cf.app')
        * @name cfTagEditor#$scope.items
        * @type {string[]}
        */
-      field.onValueChanged(function (items) {
+      var offValueChanged = field.onValueChanged(function (items) {
         items = items || [];
         // We make a copy so we do not modify the object in the
         // snapshot.
         $scope.items = items.slice();
       });
+      $scope.$on('$destroy', offValueChanged);
 
 
       /**

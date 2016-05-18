@@ -17,7 +17,7 @@ angular.module('cf.ui')
   var $document = $injector.get('$document');
   return {
     restrict: 'A',
-    link: function (scope, element) {
+    link: function (_scope, element) {
       $document.on('click', hideElement);
 
       element.on('$destroy', function () {
