@@ -16,6 +16,15 @@ describe('overridingRequestQueue', function () {
     });
   });
 
+  it('checks if is idle', function () {
+    var request = this.createQueue(_.constant(this.$q.resolve()));
+    expect(request.isIdle()).toBe(true);
+    request();
+    expect(request.isIdle()).toBe(false);
+    this.$apply();
+    expect(request.isIdle()).toBe(true);
+  });
+
   it('reuses promise for consecutive calls', function () {
     var d = sinon.stub().defers();
     var request = this.createQueue(function () { return d(); });

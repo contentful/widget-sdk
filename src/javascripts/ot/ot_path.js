@@ -55,17 +55,17 @@ angular.module('contentful')
   $scope.$watch('otDoc.doc', init);
   $scope.$on('otRemoteOp', remoteOpHandler);
 
-  function init() {
+  function init () {
     if ($scope.otDoc.doc) {
       $scope.otSubDoc.doc = $scope.otDoc.doc.at($scope.otPath);
       $scope.otSubDoc.doc.path = angular.copy($scope.otPath);
       $scope.$broadcast('otValueChanged', $scope.otPath, otGetValue());
-    } else if($scope.otSubDoc.doc){
+    } else if ($scope.otSubDoc.doc) {
       $scope.otSubDoc.doc = undefined;
     }
   }
 
-  function remoteOpHandler(event, op) {
+  function remoteOpHandler (event, op) {
     var scope = event.currentScope;
     if (_.isEqual(op.p.slice(0, scope.otPath.length), scope.otPath)) {
       var value = ShareJS.peek(scope.otDoc.doc, scope.otPath);
@@ -88,7 +88,7 @@ angular.module('contentful')
    *
    * Additional note: this essentially replicates attach_textarea from ShareJS
    */
-  function otChangeString(newValue) {
+  function otChangeString (newValue) {
     var doc = $scope.otDoc.doc;
     var path = $scope.otPath;
 
@@ -100,8 +100,7 @@ angular.module('contentful')
     var oldValue = otGetValue();
 
     if (!oldValue || !newValue) {
-      // TODO should this really be `null` an not an empty string?
-      return ShareJS.mkpathAndSetValue(doc, path, newValue || null);
+      return ShareJS.setDeep(doc, path, newValue || null);
     } else if (oldValue === newValue) {
       return $q.resolve();
     } else {
@@ -142,7 +141,7 @@ angular.module('contentful')
    * @param {any} value
    * @returns {Promise<void>}
    */
-  function otChangeValue(value) {
+  function otChangeValue (value) {
     var doc = $scope.otDoc.doc;
     var path = $scope.otPath;
     if (!doc) {
@@ -150,7 +149,7 @@ angular.module('contentful')
     }
 
     // Ensure that no nulls are passed to `doc.setAt()`. See BUG#6696
-    if(value === null) {
+    if (value === null) {
       var err = 'Do not call otChangeValue() with null. This causes ' +
         'ShareJS to keep null placeholders for keys which we want to avoid.';
       logger.logWarn(err);
@@ -165,7 +164,7 @@ angular.module('contentful')
     });
   }
 
-  function otGetValue() {
+  function otGetValue () {
     if ($scope.otDoc.doc) {
       return ShareJS.peek($scope.otDoc.doc, $scope.otPath);
     } else {

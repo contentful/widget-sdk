@@ -13,6 +13,9 @@ describe('FieldDialogAppearanceController', function () {
       widgetSettings: {
         id: 'numberEditor',
         params: {},
+      },
+      contentType: {
+        data: {}
       }
     });
 
