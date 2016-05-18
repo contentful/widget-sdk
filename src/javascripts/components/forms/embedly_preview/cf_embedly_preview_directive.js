@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', function ($injector) {
-  var $timeout      = $injector.get('$timeout');
-  var debounce      = $injector.get('debounce');
-  var urlUtils      = $injector.get('urlUtils');
-  var LazyLoader    = $injector.get('LazyLoader');
+  var $timeout = $injector.get('$timeout');
+  var debounce = $injector.get('debounce');
+  var urlUtils = $injector.get('urlUtils');
+  var LazyLoader = $injector.get('LazyLoader');
 
   return {
     restrict: 'E',
@@ -18,14 +18,14 @@ angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', functio
 
       LazyLoader.get('embedly').then(setup);
 
-      function setup(embedly) {
+      function setup (embedly) {
         var debouncedRequestPreview = debounce(requestPreview, 500);
         var loadCheck = null;
 
         scope.$watch('previewUrl', handleValueChange);
         embedly('on', 'card.rendered', markAsLoaded);
 
-        function requestPreview(url) {
+        function requestPreview (url) {
           var previewElement = $('<a/>', {
             href: url,
             'data-card-controls': 0,
@@ -39,14 +39,14 @@ angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', functio
           loadCheck = $timeout(function () { changeStatus('broken'); }, TIMEOUT);
         }
 
-        function markAsLoaded() {
+        function markAsLoaded () {
           $timeout.cancel(loadCheck);
-          scope.$apply(function() {
+          scope.$apply(function () {
             changeStatus('ok');
           });
         }
 
-        function handleValueChange(value) {
+        function handleValueChange (value) {
           element.empty();
           if (urlUtils.isValid(value)) {
             changeStatus('loading');
@@ -56,7 +56,7 @@ angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', functio
           }
         }
 
-        function changeStatus(status) {
+        function changeStatus (status) {
           scope.urlStatus = status;
           scope.$emit('centerOn:reposition');
         }
