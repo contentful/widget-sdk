@@ -7,7 +7,6 @@ test/unit/components/forms/cf_asset_link_editor_controller_spec.js
 test/unit/components/forms/cf_asset_link_editor_directive_spec.js
 test/unit/components/forms/cf_autocomplete_results_controller_spec.js
 test/unit/components/forms/cf_datetime_editor_directive_spec.js
-test/unit/components/forms/cf_embedly_preview_directive_spec.js
 test/unit/components/forms/cf_entry_link_editor_controller_spec.js
 test/unit/components/forms/cf_entry_link_editor_directive_spec.js
 test/unit/components/forms/cf_field_alert_directive_spec.js
@@ -305,7 +304,6 @@ src/javascripts/components/forms/asset_link_editor/cf_asset_link_editor_controll
 src/javascripts/components/forms/autocomplete_results/cf_autocomplete_results_controller.js
 src/javascripts/components/forms/autocomplete_results/cf_autocomplete_results_directive.js
 src/javascripts/components/forms/datetime_editor/cf_datetime_editor_directive.js
-src/javascripts/components/forms/embedly_preview/cf_embedly_preview_directive.js
 src/javascripts/components/forms/entry_card_editor/cf_entry_card_editor_directive.js
 src/javascripts/components/forms/entry_card_editor/cf_entry_card_item_controller.js
 src/javascripts/components/forms/entry_link_editor/cf_entry_link_editor_directive.js
