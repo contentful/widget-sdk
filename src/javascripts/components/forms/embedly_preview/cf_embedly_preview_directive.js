@@ -48,7 +48,9 @@ angular.module('contentful').directive('cfEmbedlyPreview', ['$injector', functio
 
         function handleValueChange (value) {
           element.empty();
-          if (urlUtils.isValid(value)) {
+          if (!value) {
+            changeStatus('ok');
+          } else if (urlUtils.isValid(value)) {
             changeStatus('loading');
             debouncedRequestPreview(value);
           } else {
