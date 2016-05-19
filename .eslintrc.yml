@@ -2,8 +2,10 @@ extends: standard
 rules:
   padded-blocks: off
   semi: ["error", "always"]
-  no-multiple-empty-lines: off
+  no-multiple-empty-lines: ["error", {max: 2, maxBOF: 0, maxEOF: 0}]
   no-unused-vars: ['error', {vars: 'all', args: 'all', argsIgnorePattern: '^_'}]
+  eol-last: "error"
+
 globals:
   angular: true
   _: true
