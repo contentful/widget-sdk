@@ -174,7 +174,6 @@ test/unit/account/cf_account_dropdown_controller_spec.js
 test/unit/account/cf_account_view_directive_spec.js
 test/unit/account/handle_gatekeeper_message_spec.js
 test/unit/account/iframe_channel_spec.js
-test/unit/account/the_account_view_spec.js
 test/unit/webhooks/webhook_call_status_directive_spec.js
 test/unit/webhooks/webhook_editor_directive_spec.js
 test/unit/webhooks/webhook_headers_directive_spec.js
@@ -536,7 +535,6 @@ src/javascripts/account/cf_account_dropdown_directive.js
 src/javascripts/account/cf_account_view_directive.js
 src/javascripts/account/handle_gatekeeper_message.js
 src/javascripts/account/iframe_channel.js
-src/javascripts/account/the_account_view.js
 src/javascripts/contentful.js
 src/javascripts/filters.js
 src/javascripts/states/account.js

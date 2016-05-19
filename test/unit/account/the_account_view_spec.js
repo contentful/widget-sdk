@@ -14,11 +14,11 @@ describe('TheAccountView service', function () {
     };
 
     module('contentful/test', function ($provide) {
-      $provide.value('spaceContext',     self.spaceContext);
+      $provide.value('spaceContext', self.spaceContext);
       $provide.value('OrganizationList', self.OrganizationList);
     });
 
-    this.view  = this.$inject('TheAccountView');
+    this.view = this.$inject('TheAccountView');
     var $state = this.$inject('$state');
 
     this.go = $state.go = sinon.spy();
@@ -109,7 +109,7 @@ describe('TheAccountView service', function () {
 
   function once (setup) {
     return {
-      itGoesTo:                  itGoesTo,
+      itGoesTo: itGoesTo,
       itGoesToTheSubscriptionOf: itGoesToTheSubscriptionOf
     };
 
@@ -148,7 +148,7 @@ describe('TheAccountView service', function () {
     once(_.noop).itGoesToTheSubscriptionOf.apply(null, arguments);
   }
 
-  function itRejectsToNavigateNonOrganizationOwners() {
+  function itRejectsToNavigateNonOrganizationOwners () {
     it('rejects for users who aren`t organization owners', function (done) {
       this.OrganizationList.isOwnerOrAdmin.returns(false);
       this.view.goToSubscription().catch(done);
