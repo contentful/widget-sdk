@@ -102,6 +102,16 @@ describe('FieldLocaleController', function () {
       });
     });
 
+    it('is "disabled" and "editing_disabled" if a field is disabled', function () {
+      this.hasEditingPermission.returns(true);
+      var field = {field: {disabled: true}};
+      var scope = this.init(_.extend(field, withEditableDoc));
+      expect(scope.fieldLocale.access).toEqual({
+        editing_disabled: true,
+        disabled: true
+      });
+    });
+
     it('is "disabled" and "denied" without permissions and with connection', function () {
       this.hasEditingPermission.returns(false);
       var scope = this.init(withEditableDoc);
