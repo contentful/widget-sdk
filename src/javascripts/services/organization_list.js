@@ -13,6 +13,9 @@ angular.module('contentful').factory('OrganizationList', function () {
   var currentUser = null;
   var organizations = [];
 
+  var isAdmin = createRoleChecker('admin');
+  var isOwner = createRoleChecker('owner');
+
   return {
     resetWithUser: resetWithUser,
     isEmpty: isEmpty,
@@ -27,7 +30,7 @@ angular.module('contentful').factory('OrganizationList', function () {
      * @description
      * Checks if user is an admin of organization with a given ID.
      */
-    isAdmin: createRoleChecker('admin'),
+    isAdmin: isAdmin,
     /**
      * @ngdoc method
      * @name OrganizationList#isOwner
@@ -36,7 +39,8 @@ angular.module('contentful').factory('OrganizationList', function () {
      * @description
      * Checks if user is an owner of organization with a given ID.
      */
-    isOwner: createRoleChecker('owner')
+    isOwner: isOwner,
+    isOwnerOrAdmin: isOwnerOrAdmin
   };
 
   /**
@@ -98,6 +102,18 @@ angular.module('contentful').factory('OrganizationList', function () {
   function getAll () {
     return organizations;
   }
+
+  /**
+   * @ngdoc method
+   * @name OrganizationList#isOwnerOrAdmin
+   * @param {string} id
+   * @description
+   * Checks if the user is an owner or admin of the organization with the given ID.
+   */
+  function isOwnerOrAdmin (id) {
+    return isOwner(id) || isAdmin(id);
+  }
+
 
   function createRoleChecker (role) {
     return function checkRole (id) {
