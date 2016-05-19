@@ -121,7 +121,7 @@ Used to run Tests on Travis in SlimerJS.
 
 ### npm run hint
 
-Used to run jshint in the relevant directories.
+Used to run eslint in the relevant directories.
 
 ### npm run cloc
 
