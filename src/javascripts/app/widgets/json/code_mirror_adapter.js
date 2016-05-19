@@ -156,4 +156,3 @@ angular.module('cf.app')
     }
   }
 }]);
-
