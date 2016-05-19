@@ -40,7 +40,8 @@ angular.module('contentful').factory('uiVersionSwitcher', ['$injector', function
 
   function addVersionNotification () {
     var previewVersion = Cookies.get('ui_version');
-    if (!previewVersion)
+    var isTestRun = !!Cookies.get('cf_test_run');
+    if (!previewVersion || isTestRun)
       return;
 
     var uiVersion = window.CF_UI_VERSION;
