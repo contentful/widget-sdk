@@ -102,7 +102,6 @@ test/unit/services/bugsnag_spec.js
 test/unit/services/editing_interfaces_helpers_spec.js
 test/unit/services/enforcements_spec.js
 test/unit/services/features_spec.js
-test/unit/services/filepicker_spec.js
 test/unit/services/locale_store_spec.js
 test/unit/services/logger_spec.js
 test/unit/services/modal_dialog_spec.js
