@@ -9,7 +9,7 @@ describe('TheAccountView service', function () {
     };
 
     this.OrganizationList = {
-      isOwner: sinon.stub(),
+      isOwnerOrAdmin: sinon.stub(),
       getAll: sinon.stub()
     };
 
@@ -56,7 +56,7 @@ describe('TheAccountView service', function () {
     ];
 
     beforeEach(function () {
-      this.OrganizationList.isOwner.returns(true);
+      this.OrganizationList.isOwnerOrAdmin.returns(true);
     });
 
     describe('with at least one space', function () {
@@ -77,21 +77,21 @@ describe('TheAccountView service', function () {
       itGoesToTheSubscriptionOf('the next best organization', orgs[0]);
 
       once(function () {
-        this.OrganizationList.isOwner.withArgs('ORG_1').returns(false);
+        this.OrganizationList.isOwnerOrAdmin.withArgs('ORG_1').returns(false);
         orgs[1].subscriptionState = 'trial'; // Trial but not owned.
         orgs[2].subscriptionState = 'trial';
       })
       .itGoesToTheSubscriptionOf('the next best owned trial organization', orgs[2]);
 
       once(function () {
-        this.OrganizationList.isOwner.withArgs('ORG_0').returns(false);
+        this.OrganizationList.isOwnerOrAdmin.withArgs('ORG_0').returns(false);
         orgs[1].subscriptionState = 'inactive';
       })
       .itGoesToTheSubscriptionOf('the next best owned active organization', orgs[2]);
 
       once(function () {
-        this.OrganizationList.isOwner.withArgs('ORG_0').returns(false);
-        this.OrganizationList.isOwner.withArgs('ORG_2').returns(false);
+        this.OrganizationList.isOwnerOrAdmin.withArgs('ORG_0').returns(false);
+        this.OrganizationList.isOwnerOrAdmin.withArgs('ORG_2').returns(false);
         orgs[1].subscriptionState = 'inactive';
       })
       .itGoesToTheSubscriptionOf('the next best owned organization', orgs[1]);
@@ -150,13 +150,13 @@ describe('TheAccountView service', function () {
 
   function itRejectsToNavigateNonOrganizationOwners() {
     it('rejects for users who aren`t organization owners', function (done) {
-      this.OrganizationList.isOwner.returns(false);
+      this.OrganizationList.isOwnerOrAdmin.returns(false);
       this.view.goToSubscription().catch(done);
       this.$inject('$rootScope').$digest();
     });
 
     it('returns null instead of an organization', function () {
-      this.OrganizationList.isOwner.returns(false);
+      this.OrganizationList.isOwnerOrAdmin.returns(false);
       expect(this.view.getGoToSubscriptionOrganization()).toBe(null);
     });
   }
