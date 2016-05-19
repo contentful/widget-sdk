@@ -6,7 +6,7 @@ describe('cfSingleLineEditor directive', function () {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
-    var widgetApi = this.$inject('mocks/widgetApi')({
+    var widgetApi = this.$inject('mocks/widgetApi').create({
       settings: {
         helpText: 'wat'
       }

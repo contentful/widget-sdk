@@ -6,7 +6,12 @@ angular.module('contentful/mocks')
     contentType: {sys: {id: 'CTID'}}
   };
 
-  return function (overrides) {
+  return {
+    create: create,
+    createField: createField
+  };
+
+  function create (overrides) {
     var api = {
       settings: {
         helpText: ''
@@ -24,7 +29,7 @@ angular.module('contentful/mocks')
       },
       field: {
         onValueChanged: sinon.stub().returns(_.noop),
-        onDisabledStatusChanged: sinon.stub().returns(_.noop),
+        onDisabledStatusChanged: sinon.stub().returns(_.noop).yields(false),
         getValue: sinon.stub(),
         setValue: sinon.stub(),
         setString: sinon.stub(),
@@ -42,5 +47,13 @@ angular.module('contentful/mocks')
     };
 
     return _.merge(api, overrides);
-  };
+  }
+
+
+  function createField () {
+    return {
+      getValue: sinon.stub(),
+      onValueChanged: sinon.stub().returns(_.noop)
+    };
+  }
 }]);
