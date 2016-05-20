@@ -16,36 +16,36 @@
 */
 angular.module('contentful')
 .controller('ContentTypeEditorController', ['$scope', '$injector',
-function ContentTypeEditorController($scope, $injector) {
-  var controller        = this;
-  var $controller       = $injector.get('$controller');
-  var $q                = $injector.get('$q');
-  var $state            = $injector.get('$state');
-  var validation        = $injector.get('validation');
-  var hints             = $injector.get('ContentTypeEditorController/hints')();
-  var modalDialog       = $injector.get('modalDialog');
-  var openFieldDialog   = $injector.get('openFieldDialog');
-  var leaveConfirmator  = $injector.get('navigation/confirmLeaveEditor');
-  var metadataDialog    = $injector.get('contentTypeEditor/metadataDialog');
-  var Command           = $injector.get('command');
-  var accessChecker     = $injector.get('accessChecker');
-  var ctHelpers         = $injector.get('data/ContentTypes');
-  var eiHelpers         = $injector.get('editingInterfaces/helpers');
-  var spaceContext      = $injector.get('spaceContext');
+function ContentTypeEditorController ($scope, $injector) {
+  var controller = this;
+  var $controller = $injector.get('$controller');
+  var $q = $injector.get('$q');
+  var $state = $injector.get('$state');
+  var validation = $injector.get('validation');
+  var hints = $injector.get('ContentTypeEditorController/hints')();
+  var modalDialog = $injector.get('modalDialog');
+  var openFieldDialog = $injector.get('openFieldDialog');
+  var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
+  var metadataDialog = $injector.get('contentTypeEditor/metadataDialog');
+  var Command = $injector.get('command');
+  var accessChecker = $injector.get('accessChecker');
+  var ctHelpers = $injector.get('data/ContentTypes');
+  var eiHelpers = $injector.get('editingInterfaces/helpers');
+  var spaceContext = $injector.get('spaceContext');
   var editingInterfaces = spaceContext.editingInterfaces;
   var trackContentTypeChange = $injector.get('analyticsEvents').trackContentTypeChange;
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
   $scope.hints = hints;
-  $scope.settingsHintShown = hints.shouldShow('ct-field-settings')
+  $scope.settingsHintShown = hints.shouldShow('ct-field-settings');
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.saveAndClose);
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
 
   $scope.$watch('contentType.data.displayField', checkForDirtyForm);
-  $scope.$watch('contentTypeForm.$dirty',        setDirtyState);
-  $scope.$watch('context.isNew',                 setDirtyState);
+  $scope.$watch('contentTypeForm.$dirty', setDirtyState);
+  $scope.$watch('context.isNew', setDirtyState);
 
   $scope.$watch('contentType.data.fields', function (newVal, oldVal) {
     checkForDirtyForm(newVal, oldVal);
@@ -58,9 +58,9 @@ function ContentTypeEditorController($scope, $injector) {
     setDirtyState();
   });
 
-  $scope.$watch('publishedContentType.data.fields', function (fields, old, scope) {
-    scope.publishedIds = _.pluck(fields, 'id');
-    scope.publishedApiNames = _.pluck(fields, 'apiName');
+  $scope.$watch('publishedContentType.data.fields', function (fields) {
+    $scope.publishedIds = _.pluck(fields, 'id');
+    $scope.publishedApiNames = _.pluck(fields, 'apiName');
   });
 
   if ($scope.context.isNew) {
@@ -127,7 +127,7 @@ function ContentTypeEditorController($scope, $injector) {
     }
     return $scope.spaceContext.space.getEntries({
       content_type: $scope.contentType.data.sys.id
-    }).then(function(response) {
+    }).then(function (response) {
       return response.length;
     });
   };
@@ -145,13 +145,13 @@ function ContentTypeEditorController($scope, $injector) {
     });
   };
 
-  function checkForDirtyForm(newVal, oldVal) {
+  function checkForDirtyForm (newVal, oldVal) {
     if (newVal !== oldVal) {
       $scope.contentTypeForm.$setDirty();
     }
   }
 
-  function setDirtyState() {
+  function setDirtyState () {
     var modified = $scope.contentTypeForm.$dirty;
     if (modified === true && $scope.context.isNew && $scope.contentType.data.fields.length < 1) {
       modified = false;
@@ -190,7 +190,7 @@ function ContentTypeEditorController($scope, $injector) {
     }
   });
 
-  function addField(newField) {
+  function addField (newField) {
     var data = $scope.contentType.data;
     data.fields = data.fields || [];
     data.fields.push(newField);
@@ -234,11 +234,16 @@ function ContentTypeEditorController($scope, $injector) {
     var shouldShow = shouldShowHint(getLifecycleHintId(id));
 
     switch (id) {
-      case 'neutral':  return pc.omitted < 1 && pc.disabled < 1 && shouldShow;
-      case 'disabled': return pc.both    < 1 && pc.disabled > 0 && shouldShow;
-      case 'omitted':  return pc.both    < 1 && pc.omitted  > 0 && shouldShow;
-      case 'both':     return pc.both    > 0                    && shouldShow;
-      default:         return false;
+      case 'neutral':
+        return shouldShow && pc.omitted < 1 && pc.disabled < 1;
+      case 'disabled':
+        return shouldShow && pc.both < 1 && pc.disabled > 0;
+      case 'omitted':
+        return shouldShow && pc.both < 1 && pc.omitted > 0;
+      case 'both':
+        return shouldShow && pc.both > 0;
+      default:
+        return false;
     }
   }
 

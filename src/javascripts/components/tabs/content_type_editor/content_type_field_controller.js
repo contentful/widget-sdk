@@ -5,14 +5,12 @@ angular.module('contentful')
  * @ngdoc type
  * @name ContentTypeFieldController
  */
-.controller('ContentTypeFieldController', ['$scope', '$injector',
-function ($scope, $injector) {
+.controller('ContentTypeFieldController', ['$scope', '$injector', function ($scope, $injector) {
   var controller = this;
-
   var fieldFactory = $injector.get('fieldFactory');
-  var trackField   = $injector.get('analyticsEvents').trackField;
-  var modalDialog  = $injector.get('modalDialog');
-  var Field        = $injector.get('fieldDecorator');
+  var trackField = $injector.get('analyticsEvents').trackField;
+  var modalDialog = $injector.get('modalDialog');
+  var Field = $injector.get('fieldDecorator');
 
   var isTitleType = Field.isTitleType($scope.field.type);
 
@@ -20,7 +18,7 @@ function ($scope, $injector) {
    * @ngdoc method
    * @name ContentTypeFieldController#openSettingsDialog
    */
-  controller.openSettingsDialog = function openSettingsDialog() {
+  controller.openSettingsDialog = function openSettingsDialog () {
     return $scope.ctEditorController.openFieldDialog($scope.field);
   };
 
@@ -34,7 +32,7 @@ function ($scope, $injector) {
     if ($scope.fieldIsTitle && toggled) {
       modalDialog.open({
         title: 'This field can\'t be disabled right now.',
-        message: 'The field <span class="modal-dialog__highlight">' + $scope.field.name + '</span> acts as a title for this content type. '+
+        message: 'The field <span class="modal-dialog__highlight">' + $scope.field.name + '</span> acts as a title for this content type. ' +
                  'Before disabling it you need too choose another field as title.',
         cancelLabel: null,
         confirmLabel: 'Okay, got it'
@@ -64,7 +62,7 @@ function ($scope, $injector) {
   // TODO Does not need to be a watcher
   $scope.$watchGroup(['field.type', 'field.linkType', 'field.items.type', 'field.items.linkType'], function () {
     $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
-    $scope.iconId = fieldFactory.getIconId($scope.field)+'-small';
+    $scope.iconId = fieldFactory.getIconId($scope.field) + '-small';
   });
 
 
@@ -94,7 +92,7 @@ function ($scope, $injector) {
    */
   function trackFieldAction (actionName, field) {
     trackField('Clicked Field Actions Button', field, {
-      action: actionName,
+      action: actionName
     });
   }
 

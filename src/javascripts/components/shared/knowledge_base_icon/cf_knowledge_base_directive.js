@@ -25,25 +25,25 @@ angular.module('contentful').directive('cfKnowledgeBase', ['$injector', function
 angular.module('contentful').factory('KnowledgeBase/getUrl', ['$injector', function ($injector) {
 
   var environment = $injector.get('environment');
-  var BASE        = environment.settings.marketing_url.replace(/\/*$/, '/');
+  var BASE = environment.settings.marketing_url.replace(/\/*$/, '/');
 
   var items = {
-    space:            'faq/terminology/#what-is-a-space',
-    content_type:     'faq/terminology/#what-is-a-content-type',
-    space_creation:   'faq/terminology/#what-is-the-difference-between-a-content-type-and-a-space',
-    hibernation:      'developers/docs/', // @todo needs proper article
-    entry:            'developers/docs/concepts/data-model/',
-    asset:            'developers/docs/concepts/data-model/',
-    api_key:          'developers/docs/references/authentication/#the-delivery-api-and-preview-api',
+    space: 'faq/terminology/#what-is-a-space',
+    content_type: 'faq/terminology/#what-is-a-content-type',
+    space_creation: 'faq/terminology/#what-is-the-difference-between-a-content-type-and-a-space',
+    hibernation: 'developers/docs/', // @todo needs proper article
+    entry: 'developers/docs/concepts/data-model/',
+    asset: 'developers/docs/concepts/data-model/',
+    api_key: 'developers/docs/references/authentication/#the-delivery-api-and-preview-api',
     predefined_value: 'faq/basics/#predefined-values-validation',
-    locale:           'developers/docs/concepts/locales/',
-    space_template:   'developers/docs/', // @todo needs proper article
-    id_change:        'developers/docs/', // @todo needs proper article,
-    roles:            'r/knowledgebase/roles-and-permissions/',
-    field_lifecycle:  'faq/basics/#what-is-the-lifecycle-of-a-field'
+    locale: 'developers/docs/concepts/locales/',
+    space_template: 'developers/docs/', // @todo needs proper article
+    id_change: 'developers/docs/', // @todo needs proper article,
+    roles: 'r/knowledgebase/roles-and-permissions/',
+    field_lifecycle: 'faq/basics/#what-is-the-lifecycle-of-a-field'
   };
 
-  return function getKnowledgeBaseUrl(name) {
+  return function getKnowledgeBaseUrl (name) {
     if (items[name]) {
       return BASE + items[name];
     }
