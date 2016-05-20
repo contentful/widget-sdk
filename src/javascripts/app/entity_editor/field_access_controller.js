@@ -10,8 +10,13 @@ angular.module('contentful')
   var accessChecker      = $injector.get('accessChecker');
   var fieldAccessChecker = accessChecker.getFieldChecker($scope.entity, isOtDocEditable);
 
-  $scope.isEditable = fieldAccessChecker.isEditable;
-  $scope.isDisabled = fieldAccessChecker.isDisabled;
+  $scope.isEditable = function (field, locale) {
+    return fieldAccessChecker.isEditable(field, locale) && !field.disabled;
+  };
+
+  $scope.isDisabled = function (field, locale) {
+    return fieldAccessChecker.isDisabled(field, locale) || field.disabled;
+  };
 
   function isOtDocEditable() {
     return dotty.get($scope, 'otDoc.state.editable', false);
