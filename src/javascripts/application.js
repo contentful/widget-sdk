@@ -17,7 +17,7 @@ angular.module('contentful/app', ['contentful'])
   var authentication = get('authentication');
   authentication.login();
 
-  get('clientAdapter').initialize(authentication.token);
+  get('client').init(authentication.token);
   get('ShareJS').connect(authentication.token);
   get('uiVersionSwitcher').checkIfVersionShouldBeSwitched();
   get('navigation/stateChangeHandlers').setup();
