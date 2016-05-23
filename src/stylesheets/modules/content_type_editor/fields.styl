@@ -6,6 +6,7 @@ $content-type-field-empty-style()
   position: relative
   max-width: 50em
   margin-top: $rhythm(1)
+  flex-grow: 1
 
   .sortable-placeholder
     $content-type-field-empty-style()
@@ -24,7 +25,7 @@ $ct__field-padding = 0.8em
   box-shadow: 1px 1px 2px 0 $colors.light-gray
   background-color: white
 
-  &.is-disabled
+  &.x--disabled, &.x--omitted
     // We need to explicitly overide the button color
     &, .cfnext-btn-inline
       color: $text-dimmed
@@ -43,7 +44,7 @@ $ct__field-padding = 0.8em
     margin-right: 1em
     color: $text-dimmed
 
-  &__is-title
+  &__is-title, &__is-disabled
     margin-right: 2em
 
   &__actions
@@ -66,9 +67,12 @@ $ct__field-padding = 0.8em
     cursor: -webkit-grabbing
     cursor: -moz-grab
     cursor: -moz-grabbing
-    .is-disabled &
+    .x--disabled &
       background-color: transparentify($colors.gray, 0.2)
       border: 1px solid transparentify($colors.green, 0.2)
+    .x--omitted &
+      background-color: transparentify($colors.red, 0.2)
+      border: 1px solid transparentify($colors.red, 0.2)
 
   &__settings
     position: relative
@@ -123,20 +127,3 @@ $ct__field-padding = 0.8em
     font-size: 1.1em
     line-height: 1.5
     margin: 0
-
-.ct-max-fields-advice
-  right: 80%
-  margin: $rhythm(2) $rhythm(2) 0 $rhythm(2)
-  max-width: 300px
-  .ui-hint-content
-    position: relative
-    display: flex
-  &__text
-    color: $colors.text-mid
-    margin-bottom: 6px
-  cf-icon
-    margin-right: 10px
-    svg use
-      fill: $colors.blue-mid
-  &__dismiss
-    text-decoration: underline

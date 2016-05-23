@@ -6,7 +6,7 @@ describe('cfRadioEditor Directive', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    var widgetApi = this.$inject('mocks/widgetApi')();
+    var widgetApi = this.$inject('mocks/widgetApi').create();
     fieldApi = widgetApi.field;
 
     this.compile = function () {

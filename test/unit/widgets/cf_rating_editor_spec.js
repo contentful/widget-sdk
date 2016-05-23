@@ -8,7 +8,7 @@ describe('cfRatingEditor directive', function () {
     });
     module('contentful/test');
 
-    this.widgetApi = this.$inject('mocks/widgetApi')({
+    this.widgetApi = this.$inject('mocks/widgetApi').create({
       settings: {
         stars: 5
       }

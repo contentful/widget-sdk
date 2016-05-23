@@ -15,6 +15,13 @@ mixin field-permission-info
     tooltip-placement="left")
     cf-icon(name="lock")
     | This field is locked
+  div.entity-editor__no-permission-info(
+    data-test-id="field-locale-disabled"
+    ng-show="fieldLocale.access.editing_disabled"
+    tooltip="Editing of this field is disabled. To change your content model contact your space administrator."
+    tooltip-placement="left")
+      cf-icon(name="lock")
+      | This field is disabled
 
 mixin field-locale-errors
   div.form-box-error(ng-if="fieldLocale.errors")

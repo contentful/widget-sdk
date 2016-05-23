@@ -24,7 +24,7 @@ describe('cfJsonEditor directive', function () {
       .withArgs('markdown')
       .resolves({CodeMirror: CodeMirror});
 
-    var widgetApi = this.$inject('mocks/widgetApi')();
+    var widgetApi = this.$inject('mocks/widgetApi').create();
     fieldApi = widgetApi.field;
 
     element = this.$compile('<cf-json-editor />', {}, {

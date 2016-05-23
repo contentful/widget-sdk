@@ -5,8 +5,10 @@ mixin actions-dropdown
     ul.context-menu__items
       li(role="menuitem" ng-click="fieldController.setAsTitle()" ng-if="fieldCanBeTitle")
         | Set field as Entry title
-      li(role="menuitem" ng-click="fieldController.toggleDisable()")
-        | {{ field.disabled ? 'Enable' : 'Disable' }}
+      li(role="menuitem" ng-click="fieldController.toggle('disabled')")
+        | {{ field.disabled ? 'Enable editing' : 'Disable editing' }}
+      li(role="menuitem" ng-click="fieldController.toggle('omitted')")
+        | {{ field.omitted ? 'Enable in response' : 'Disable in response' }}
       li(role="menuitem" ng-click="fieldController.deleteField()")
         | Delete
 
@@ -15,19 +17,22 @@ ul(cf-ui-sortable ng-model="contentType.data.fields")
   li.ct-field(
     ng-controller="ContentTypeFieldController as fieldController"
     ng-repeat="(index, field) in contentType.data.fields track by field.id"
-    ng-class="{'is-disabled': field.disabled}"
-    role="toolbar"
-  )
+    ng-class="{'x--disabled': field.disabled, 'x--omitted': field.omitted}"
+    role="toolbar")
 
     .ct-field__drag-handle(data-drag-handle)
     .ct-field__icon
       cf-icon(ng-if="iconId" name="{{iconId}}")
     .ct-field__name
       | {{field | displayedFieldName}}
-    .ct-field__type(ng-if="!field.disabled")
+    .ct-field__type
       | {{fieldTypeLabel}}
-    .ct-field__type(ng-if="field.disabled")
-      | {{fieldTypeLabel}}, disabled
+    .ct-field__is-disabled(ng-if="field.disabled && !field.omitted")
+      | Editing disabled
+    .ct-field__is-disabled(ng-if="!field.disabled && field.omitted")
+      | Disabled in response
+    .ct-field__is-disabled(ng-if="field.disabled && field.omitted")
+      | Disabled completely
     .ct-field__is-title(ng-if="fieldIsTitle")
       | Entry title
     button.ct-field__settings.cfnext-btn-inline(
