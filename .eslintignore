@@ -454,7 +454,6 @@ src/javascripts/services/space_template_loader.js
 src/javascripts/services/space_tools.js
 src/javascripts/services/the_store.js
 src/javascripts/services/token_store.js
-src/javascripts/services/ui_version_switcher.js
 src/javascripts/services/user_agent.js
 src/javascripts/services/zone_offsets.js
 src/javascripts/services/subscription_plan_recommender.js
