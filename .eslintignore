@@ -381,7 +381,6 @@ src/javascripts/services/authentication.js
 src/javascripts/services/authorization.js
 src/javascripts/services/batch_performer.js
 src/javascripts/services/bugsnag.js
-src/javascripts/services/client_adapter.js
 src/javascripts/services/editing_interfaces_helpers.js
 src/javascripts/services/enforcements.js
 src/javascripts/services/entity_cache.js
