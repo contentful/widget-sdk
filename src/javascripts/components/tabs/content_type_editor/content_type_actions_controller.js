@@ -190,7 +190,7 @@ function ContentTypeActionsController ($scope, $injector) {
     disabled: function () {
       var dirty = $scope.contentTypeForm.$dirty ||
                   !$scope.contentType.getPublishedVersion();
-      var valid = !allFieldsDisabled($scope.contentType);
+      var valid = !allFieldsInactive($scope.contentType);
       var denied = accessChecker.shouldDisable('updateContentType') ||
                    accessChecker.shouldDisable('publishContentType');
 
@@ -331,8 +331,10 @@ function ContentTypeActionsController ($scope, $injector) {
     });
   }
 
-  function allFieldsDisabled (contentType) {
-    return _.all(contentType.data.fields, 'disabled');
+  function allFieldsInactive (contentType) {
+    return _.every(contentType.data.fields, function (field) {
+      return field.disabled || field.omitted;
+    });
   }
 
   /**

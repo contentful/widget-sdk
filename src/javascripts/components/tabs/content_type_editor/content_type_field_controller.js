@@ -5,14 +5,12 @@ angular.module('contentful')
  * @ngdoc type
  * @name ContentTypeFieldController
  */
-.controller('ContentTypeFieldController', ['$scope', '$injector',
-function ($scope, $injector) {
+.controller('ContentTypeFieldController', ['$scope', '$injector', function ($scope, $injector) {
   var controller = this;
-
   var fieldFactory = $injector.get('fieldFactory');
-  var trackField   = $injector.get('analyticsEvents').trackField;
-  var modalDialog  = $injector.get('modalDialog');
-  var Field        = $injector.get('fieldDecorator');
+  var trackField = $injector.get('analyticsEvents').trackField;
+  var modalDialog = $injector.get('modalDialog');
+  var Field = $injector.get('fieldDecorator');
 
   var isTitleType = Field.isTitleType($scope.field.type);
 
@@ -20,29 +18,31 @@ function ($scope, $injector) {
    * @ngdoc method
    * @name ContentTypeFieldController#openSettingsDialog
    */
-  controller.openSettingsDialog = function openSettingsDialog() {
+  controller.openSettingsDialog = function openSettingsDialog () {
     return $scope.ctEditorController.openFieldDialog($scope.field);
   };
 
   /**
    * @ngdoc method
-   * @name ContentTypeFieldController#toggleDisable
+   * @name ContentTypeFieldController#toggle
    */
-  controller.toggleDisable = function () {
-    var isDisabled = !$scope.field.disabled;
-    if ($scope.fieldIsTitle && isDisabled) {
+  controller.toggle = function toggle (property) {
+    var toggled = !$scope.field[property];
+
+    if ($scope.fieldIsTitle && toggled) {
       modalDialog.open({
         title: 'This field can\'t be disabled right now.',
-        message: 'The field <span class="modal-dialog__highlight">' + $scope.field.name + '</span> acts as a title for this content type. '+
+        message: 'The field <span class="modal-dialog__highlight">' + $scope.field.name + '</span> acts as a title for this content type. ' +
                  'Before disabling it you need too choose another field as title.',
         cancelLabel: null,
         confirmLabel: 'Okay, got it'
       });
       return;
     }
-    $scope.field.disabled = isDisabled;
 
-    var actionName = isDisabled ? 'disable' : 'enable';
+    $scope.field[property] = toggled;
+
+    var actionName = [toggled ? 'on' : 'off', property].join('-');
     trackFieldAction(actionName, $scope.field);
   };
 
@@ -62,7 +62,7 @@ function ($scope, $injector) {
   // TODO Does not need to be a watcher
   $scope.$watchGroup(['field.type', 'field.linkType', 'field.items.type', 'field.items.linkType'], function () {
     $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
-    $scope.iconId = fieldFactory.getIconId($scope.field)+'-small';
+    $scope.iconId = fieldFactory.getIconId($scope.field) + '-small';
   });
 
 
@@ -72,10 +72,11 @@ function ($scope, $injector) {
     $scope.fieldIsTitle = isTitle;
   });
 
-  $scope.$watchGroup(['fieldIsTitle', 'field.disabled'], function () {
+  $scope.$watchGroup(['fieldIsTitle', 'field.disabled', 'field.omitted'], function () {
     var isTitle = $scope.fieldIsTitle;
     var disabled = $scope.field.disabled;
-    $scope.fieldCanBeTitle = isTitleType && !isTitle && !disabled;
+    var omitted = $scope.field.omitted;
+    $scope.fieldCanBeTitle = isTitleType && !isTitle && !disabled && !omitted;
   });
 
   $scope.$watchCollection('publishedContentType.data.fields', function (fields) {
@@ -91,7 +92,7 @@ function ($scope, $injector) {
    */
   function trackFieldAction (actionName, field) {
     trackField('Clicked Field Actions Button', field, {
-      action: actionName,
+      action: actionName
     });
   }
 

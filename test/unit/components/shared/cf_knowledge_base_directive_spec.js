@@ -3,12 +3,12 @@
 describe('cfKnowledgeBase directive', function () {
   var el, scope, trackFollowedKbpLinkSpy;
 
-  function getLink() { return el.find('a').first(); }
+  function getLink () { return el.find('a').first(); }
 
   beforeEach(function () {
     trackFollowedKbpLinkSpy = sinon.spy();
 
-    module('contentful/test', function($provide) {
+    module('contentful/test', function ($provide) {
       $provide.value('analyticsEvents', {
         trackFollowedKbpLink: trackFollowedKbpLinkSpy
       });

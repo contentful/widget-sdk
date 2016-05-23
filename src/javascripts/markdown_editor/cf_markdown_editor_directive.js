@@ -102,7 +102,9 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       function setMode (mode) {
         // 1. froze element height
         var areas = el.find('.markdown-areas');
-        areas.height(areas.height());
+        var height = areas.height();
+        height = height > 40 ? height : 40;
+        areas.height(height);
 
         // 2. change mode
         var nextMode = 'preview';
