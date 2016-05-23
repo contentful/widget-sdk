@@ -88,7 +88,6 @@ test/unit/services/analytics_events_spec.js
 test/unit/services/analytics_spec.js
 test/unit/services/authentication_spec.js
 test/unit/services/authorization_spec.js
-test/unit/services/batch_performer_spec.js
 test/unit/services/bugsnag_spec.js
 test/unit/services/editing_interfaces_helpers_spec.js
 test/unit/services/enforcements_spec.js
@@ -379,7 +378,6 @@ src/javascripts/services/analytics/analytics_track.js
 src/javascripts/services/analytics_events.js
 src/javascripts/services/authentication.js
 src/javascripts/services/authorization.js
-src/javascripts/services/batch_performer.js
 src/javascripts/services/bugsnag.js
 src/javascripts/services/editing_interfaces_helpers.js
 src/javascripts/services/enforcements.js

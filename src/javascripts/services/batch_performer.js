@@ -2,10 +2,9 @@
 
 angular.module('contentful').factory('batchPerformer', ['$injector', function ($injector) {
 
-  var $q           = $injector.get('$q');
-  var $timeout     = $injector.get('$timeout');
+  var $q = $injector.get('$q');
   var spaceContext = $injector.get('spaceContext');
-  var analytics    = $injector.get('analytics');
+  var analytics = $injector.get('analytics');
   var notification = $injector.get('notification');
 
   var ACTION_NAMES = {
@@ -49,19 +48,8 @@ angular.module('contentful').factory('batchPerformer', ['$injector', function ($
       var request = _.partial(call, entity, method);
       var handleError = _.partial(handleEntityError, entity);
 
-      return retryOnRateLimit(request)
-      .then(handleSuccess, handleError);
-    }
-
-    function retryOnRateLimit (request) {
       return request()
-      .catch(function (err) {
-        if (err && err.statusCode === 429) {
-          return $timeout(_.partial(retryOnRateLimit, request), 1000);
-        } else {
-          return $q.reject(err);
-        }
-      });
+      .then(handleSuccess, handleError);
     }
 
     function handleSuccess (entity) {
