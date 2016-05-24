@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <rect id="a" width="13.665" height="13.314" y="2.175" rx="2"/>
+    <mask id="b" width="13.665" height="13.314" x="0" y="0" fill="white">
+      <use xlink:href="#a"/>
+    </mask>
+  </defs>
+  <g fill="none" fill-rule="evenodd" stroke="#5B9FEF">
+    <path fill="#DDECFF" d="M2,2.17262348 C2,3.00000002 2,2.18027057 2,2.18027057 C2,1.07289554 2.89659061,0.175190705 4.00162452,0.175190705 L13.6632505,0.175190705 C14.7687172,0.175190705 15.664875,1.06946663 15.664875,2.16850492 L15.664875,11.4963701 C15.664875,12.5972471 14.7602965,13.4896843 13.6555613,13.4896843 L13.5996094,13.4896843"/>
+    <use fill="#FFFFFF" stroke-width="2" mask="url(#b)" xlink:href="#a"/>
+    <polyline fill="none" points=".438 10.376 4.813 6.876 10.5 14.751" stroke-linecap="round" stroke-linejoin="round"/>
+    <polyline fill="none" points="8.313 10.813 10.063 9.063 13.125 11.798" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="8.969" cy="5.782" r="1.094" fill="none"/>
+  </g>
+</svg>

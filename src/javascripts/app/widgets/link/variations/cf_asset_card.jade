@@ -1,0 +1,37 @@
+.asset-card
+  cf-thumbnail(
+    file="file" size="123" fit="thumb"
+    cf-context-menu-trigger
+    ng-if="asThumb"
+  )
+  cf-thumbnail(
+    file="file" height="270" fit="scale"
+    cf-context-menu-trigger
+    ng-if="!asThumb"
+  )
+
+  .entity-status(ng-class="entityStatusController.getClassname(entity)")
+    .status-bar
+
+  .asset-card__title(
+    ng-click="openEntity()"
+    ng-class="{'asset-card__title--missing': !title}"
+    )
+      span(ng-if="title") {{ title | truncateMiddle:30:10 }}
+      span(ng-if="!title") Untitled
+
+  .asset-card__tooltip.context-menu(cf-context-menu role="menu")
+    ul.asset-card__details
+      li.asset-card__file-name
+        | {{file.fileName | truncateMiddle:22:7}}
+      li.asset-card__type
+        | {{file | mimeGroup}}
+      li.asset-card__file-size(ng-if="file.details.size")
+        | {{file.details.size | fileSize}}
+      li.asset-card__image-resolution(ng-if="file.details.image")
+        | {{file.details.image.width}}&times;{{file.details.image.height}}
+    .asset-card__custom-tooltip-content(ng-transclude)
+
+  .asset-card__custom-card-content(ng-transclude)
+
+

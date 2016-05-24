@@ -4,7 +4,7 @@ angular.module('contentful').directive('cfEntryCardEditor', [function(){
   return {
     restrict: 'A',
     template: JST['cf_entry_card_editor'],
-    controller: 'EntryLinkEditorController',
+    controller: 'EntityLinkEditorController',
     controllerAs: 'entryLinkController',
     scope: true
   };

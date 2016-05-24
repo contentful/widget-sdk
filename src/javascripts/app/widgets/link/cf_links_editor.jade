@@ -1,0 +1,34 @@
+.link-editor(
+  ng-class="{" +
+    "'link-editor--empty': !links.length," +
+    "'link-editor--single': singleLink," +
+    "'link-editor--multiple': !singleLink" +
+    "}"
+  class="link-editor--{{ linksDirective }}"
+)
+  ol.link-editor__links(cf-ui-sortable ng-model="links")
+    li.link-editor__link(
+      ng-class="{'link-editor__link--only-link': links.length === 1}"
+      ng-repeat="(index, link) in links"
+    )
+      cf-links-editor-link(
+        index="index"
+        link="link"
+        links-api="linksApi"
+        link-style="{{ linkStyle }}"
+        single-link="{{ singleLink }}"
+        locale="{{ locale }}"
+      )
+
+  .link-editor__actions(
+    ng-if="!singleLink || !links.length"
+  )
+    // TODO: “Add new and link” button.
+
+    button.cfnext-btn-action.cfnext-btn-link.link-editor__link-btn
+      //- TODO: Fix SVG ids bug to have icons displayed properly.
+      //- cf-icon.btn-icon(name="{{ typePlural.toLowerCase() }}")
+      | {{ singleLink
+      | ? "Add an existing " + type.toLowerCase()
+      | : "Add some existing " + typePlural.toLowerCase()
+      | }}

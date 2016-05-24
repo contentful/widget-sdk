@@ -1,0 +1,28 @@
+// TODO: Probably just rename to entity-link as it takes care of asset links too.
+.entity-link
+
+  .entity-link__image(
+    ng-if="showDetails"
+    ng-class="{'entity-link__image--missing': !entityImgUrl}"
+  )
+    cf-thumbnail(file="imageFile" size="123" fit="thumb")
+
+  .entity-status(ng-class="entityStatusController.getClassname(entity)")
+    .status-bar
+
+  .entity-link__text
+
+    .entity-link__title(
+      ng-click="openEntity()"
+      ng-class="{'entity-link__title--missing': !title}"
+    )
+      span(ng-if="title") {{ title | truncateMiddle:30:10 }}
+      span(ng-if="!title") Untitled
+
+    .entity-link__description(
+      ng-if="showDetails"
+      ng-class="{'entity-link__description--missing': !description}")
+        span(ng-if="description") {{ description }}
+        span(ng-if="!description") No description available
+
+  .entity-link__custom-content(ng-transclude)

@@ -32,6 +32,7 @@ angular.module('contentful')
  * Exposed by the `cfWidgetApi` directive.
  */
 .controller('WidgetApiController', ['$scope', '$injector', function ($scope, $injector) {
+  var $state = $injector.get('$state');
   var newSignal = $injector.get('signal').createMemoized;
   var spaceContext = $injector.get('spaceContext');
   var TheLocaleStore = $injector.get('TheLocaleStore');
@@ -77,6 +78,20 @@ angular.module('contentful')
   };
 
   this.space = spaceContext.cma;
+
+  this.state = {
+    goToEntity: function (entity, options) {
+      var pluralsByType = {Entry: 'entries', Asset: 'assets'};
+      var typePlural = pluralsByType[entity.getType()];
+      var path = 'spaces.detail.' + typePlural + '.detail';
+      var entityIdKey = entity.getType().toLowerCase() + 'Id'; // entryId, assetId
+
+      options = _.clone(options || {});
+      options[entityIdKey] = entity.getId();
+
+      return $state.go(path, options);
+    }
+  };
 
   this.field = {
     onDisabledStatusChanged: isDisabledSignal.attach,
