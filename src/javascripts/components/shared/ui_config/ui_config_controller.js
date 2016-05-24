@@ -17,6 +17,14 @@ angular.module('contentful')
   });
 
   $scope.$watch(function () {
+    return uiConfig.get();
+  }, function (config) {
+    if (dotty.get(config, 'sys.version') > dotty.get($scope.uiConfig, 'sys.version')) {
+      $scope.uiConfig = config;
+    }
+  });
+
+  $scope.$watch(function () {
     var user = spaceContext.getData('spaceMembership.user');
     return spaceContext.space && spaceContext.space.isAdmin(user);
   }, function (can) {

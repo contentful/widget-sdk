@@ -19,6 +19,7 @@ angular.module('contentful')
   var isConfigSaved = false;
 
   return {
+    get: get,
     load: load,
     save: save,
     addOrEditCt: addOrEditCt,
@@ -53,6 +54,18 @@ angular.module('contentful')
     var defaults = uiConfigDefaults.getAssetViews();
     currentConfig.assetListViews = defaults;
     return defaults;
+  }
+
+  /**
+   * @ngdoc method
+   * @name uiConfig#get
+   * @returns <object>
+   *
+   * @description
+   * Returns the current UI config
+   */
+  function get () {
+    return currentConfig;
   }
 
   /**
