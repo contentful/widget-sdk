@@ -6,7 +6,7 @@ angular.module('contentful')
   var $http = $injector.get('$http');
   var $q = $injector.get('$q');
   var environment = $injector.get('environment');
-  var createRequestQueue = $injector.get('client/requestQueue');
+  var createRequestQueue = $injector.get('client/requestQueue').create;
   var Client = $injector.get('libs/@contentful/client').Client;
 
   var baseUrl = null;
@@ -55,6 +55,7 @@ angular.module('contentful')
     .then(function (res) {
       return res.data;
     }, function (res) {
+      // @todo most likely we should reject with an Error instance
       return $q.reject({
         statusCode: parseInt(res.status, 10),
         body: res.data,
@@ -76,61 +77,12 @@ angular.module('contentful')
   var DEFAULT_TTL = 5;
   var RATE_LIMIT_EXCEEDED = 429;
 
-  return function createRequestQueue (requestFn) {
+  return {create: createRequestQueue};
+
+  function createRequestQueue (requestFn) {
 
     var inFlight = 0;
     var queue = [];
-
-    function shift () {
-      if (inFlight >= CALLS_IN_PERIOD || queue.length < 1) {
-        return;
-      }
-
-      var start = now();
-      var call = queue.shift();
-      inFlight += 1;
-
-      $timeout(call.wait)
-      .then(doCall)
-      .then(handleSuccess, handleError)
-      .then(completePeriod)
-      .then(finalize);
-
-      function doCall () {
-        return requestFn.apply(null, call.args);
-      }
-
-      function handleSuccess (res) {
-        call.deferred.resolve(res);
-      }
-
-      function handleError (err) {
-        if (err.statusCode === RATE_LIMIT_EXCEEDED && call.ttl > 0) {
-          queue.unshift(backOff(call));
-        } else {
-          call.deferred.reject(err);
-        }
-      }
-
-      function backOff (call) {
-        call.ttl -= 1;
-        var attempt = DEFAULT_TTL - call.ttl;
-        call.wait = Math.pow(2, attempt) * PERIOD;
-        return call;
-      }
-
-      function completePeriod () {
-        var duration = now() - start;
-        if (duration < PERIOD) {
-          return $timeout(PERIOD - duration);
-        }
-      }
-
-      function finalize () {
-        inFlight -= 1;
-        shift();
-      }
-    }
 
     return function push () {
       var deferred = $q.defer();
@@ -145,7 +97,54 @@ angular.module('contentful')
 
       return deferred.promise;
     };
-  };
+
+    function shift () {
+      if (inFlight >= CALLS_IN_PERIOD || queue.length < 1) {
+        return;
+      }
+
+      var start = now();
+      var call = queue.shift();
+      inFlight += 1;
+
+      $timeout(call.wait)
+      .then(function () {
+        return requestFn.apply(null, call.args);
+      })
+      .then(handleSuccess, handleError)
+      .then(completePeriod)
+      .then(function () {
+        inFlight -= 1;
+        shift();
+      });
+
+      function handleSuccess (res) {
+        call.deferred.resolve(res);
+      }
+
+      function handleError (err) {
+        if (err.statusCode === RATE_LIMIT_EXCEEDED && call.ttl > 0) {
+          queue.unshift(backOff(call));
+        } else {
+          call.deferred.reject(err);
+        }
+      }
+
+      function completePeriod () {
+        var duration = now() - start;
+        if (duration < PERIOD) {
+          return $timeout(PERIOD - duration);
+        }
+      }
+    }
+  }
+
+  function backOff (call) {
+    call.ttl -= 1;
+    var attempt = DEFAULT_TTL - call.ttl;
+    call.wait = Math.pow(2, attempt) * PERIOD;
+    return call;
+  }
 
   function now () {
     return moment().valueOf();
