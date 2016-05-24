@@ -55,6 +55,56 @@ describe('FieldLocaleController', function () {
     });
   });
 
+  describe('#isRequired', function () {
+    describe('for entries', function () {
+      beforeEach(function () {
+        this.isRequired = function (required, optional) {
+          return this.init({
+            entry: {},
+            field: {required: required},
+            locale: {optional: optional}
+          }).fieldLocale.isRequired;
+        };
+      });
+
+      it('is required when field is required and locale is not optional', function () {
+        expect(this.isRequired(true, false)).toBe(true);
+      });
+
+      it('is not required when field is not required', function () {
+        expect(this.isRequired(false, false)).toBe(false);
+      });
+
+      it('is not required when field is required but locale is optional', function () {
+        expect(this.isRequired(true, true)).toBe(false);
+      });
+    });
+
+    describe('for assets', function () {
+      beforeEach(function () {
+        this.isRequired = function (required, def) {
+          return this.init({
+            asset: {},
+            field: {required: required},
+            locale: {default: def}
+          }).fieldLocale.isRequired;
+        };
+      });
+
+      it('is required for required fields for the default locale', function () {
+        expect(this.isRequired(true, true)).toBe(true);
+      });
+
+      it('is not required for required fields for non-default locales', function () {
+        expect(this.isRequired(true, false)).toBe(false);
+      });
+
+      it('is not required for non-required fields in the default locale', function () {
+        expect(this.isRequired(false, true)).toBe(false);
+      });
+    });
+  });
+
   describe('#collaborators', function () {
     it('watches "otPresence" with path', function () {
       var scope = this.init();

@@ -8,10 +8,12 @@
 // provided on `scope.fieldData`.
 //
 
+// @todo this directive should be removed when fieldData won't be used anymore
+
 angular.module('contentful').controller('CfFieldEditorController', ['$scope', '$attrs', '$parse', function CfFieldEditorController($scope, $attrs, $parse){
 
-  var getExternal = $parse($attrs.cfFieldEditor),
-      setExternal = getExternal.assign;
+  var getExternal = $parse($attrs.cfFieldEditor);
+  var setExternal = _.isFunction(getExternal.assign) ? getExternal.assign : _.noop;
 
   $scope.fieldData = {value: getExternal()};
   var oldValue = $scope.fieldData.value;
