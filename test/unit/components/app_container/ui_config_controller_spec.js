@@ -65,4 +65,3 @@ describe('UiConfigController', function () {
     });
   });
 });
-

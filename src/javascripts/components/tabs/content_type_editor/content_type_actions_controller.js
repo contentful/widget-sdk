@@ -236,7 +236,7 @@ function ContentTypeActionsController ($scope, $injector) {
       }
     })
     .then(function () {
-      uiConfig.addNewCt($scope.contentType);
+      return uiConfig.addOrEditCt($scope.contentType);
     })
     .then(notify.saveSuccess);
   }

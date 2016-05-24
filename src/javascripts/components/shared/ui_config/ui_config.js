@@ -21,7 +21,7 @@ angular.module('contentful')
   return {
     load: load,
     save: save,
-    addNewCt: addNewCt,
+    addOrEditCt: addOrEditCt,
     resetEntries: resetEntries,
     resetAssets: resetAssets
   };
@@ -102,16 +102,17 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name uiConfig#addNewCt
+   * @name uiConfig#addOrEditCt
    * @param {Object<Client.ContentType>} contentType
-   * @returns {Promise<UiConfig> | undefined}
+   * @returns {Promise<object>|undefined}
    *
    * @description
-   * Adds new content type under the `Content Type` folder if it exists and no view
-   * with the same name is present. If there is no UI Config defined, do nothing.
-   * Returns undefined or a promise that resolves to the config object.
+   * Adds new content type under the `Content Type` folder or updates its title if
+   * it already exists.
+   *
+   * If there is no UI Config defined, do nothing.
    */
-  function addNewCt (contentType) {
+  function addOrEditCt (contentType) {
     if (!isConfigSaved) {
       return;
     }
@@ -120,15 +121,28 @@ angular.module('contentful')
       return folder.title === 'Content Type';
     });
 
-    var viewExists = _.some(contentTypeFolder.views, function (view) {
-      return view.title === contentType.data.name;
+    if (!contentTypeFolder) {
+      return;
+    }
+
+    var viewIndex = _.findIndex(contentTypeFolder.views, function (view) {
+      return view.contentTypeId === contentType.getId();
     });
 
-    if (_.isArray(contentTypeFolder.views) && !viewExists) {
+    var viewExists = viewIndex > -1;
+
+    if (viewExists) {
+      var view = contentTypeFolder.views[viewIndex];
+      if (view.title) {
+        view.title = contentType.data.name;
+      }
+    } else {
       var newView = uiConfigDefaults.createContentTypeView(contentType);
       contentTypeFolder.views.push(newView);
-      return save(currentConfig);
     }
+
+    return save(currentConfig);
+
   }
 
 }]);
