@@ -14,9 +14,12 @@ div.datetime-field-editor
 
   input.entry-editor__input(
     ng-show="usesTime"
-    type="text" size="5"
+    type="text"
+    size="5" maxlength="5"
     name="datetime.time"
     aria-label="Time"
+    inputmethod="verbatim"
+    autocomplete="off"
     ng-model="data.time"
     ng-disabled="isDisabled"
     ng-model-options="{updateOn: 'change'}"
