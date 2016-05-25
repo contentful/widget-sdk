@@ -24,7 +24,7 @@ var sourceMaps = require('gulp-sourcemaps');
 var stylus = require('gulp-stylus');
 var uglify = require('gulp-uglify');
 var path = require('path');
-var through = require('through2').obj;
+var through = require('through2');
 var yargs = require('yargs');
 var childProcess = require('child_process');
 var serve = require('./tasks/serve');
@@ -535,7 +535,7 @@ gulp.task('build/index', ['build/js', 'build/styles', 'build/static'], function 
   );
 
   return gulp.src('src/index.html')
-    .pipe(through(function (file, _enc, push) {
+    .pipe(streamMap(function (file) {
       var contents = file.contents.toString();
       contents = contents.replace(
         /window\.CF_MANIFEST =.*/,
@@ -545,7 +545,7 @@ gulp.task('build/index', ['build/js', 'build/styles', 'build/static'], function 
         '<script src="app/application.min.js"></script>'
       );
       file.contents = new Buffer(contents);
-      push(null, file);
+      return file;
     }))
     .pipe(fingerprint(manifest, {prefix: '//' + settings.asset_host + '/'}))
     .pipe(writeBuild());
@@ -569,11 +569,11 @@ function passError (target) {
  * file’s source maps.
  */
 function removeSourceRoot () {
-  return through(function (file, _, push) {
+  return streamMap(function (file) {
     if (file.sourceMap) {
       file.sourceMap.sourceRoot = null;
     }
-    push(null, file);
+    return file;
   });
 }
 
@@ -581,11 +581,11 @@ function removeSourceRoot () {
  * Stream transformer that for every file applies a function to all source map paths.
  */
 function mapSourceMapPaths (fn) {
-  return through(function (file, _e, push) {
+  return streamMap(function (file) {
     if (file.sourceMap) {
       file.sourceMap.sources = _.map(file.sourceMap.sources, fn);
     }
-    push(null, file);
+    return file;
   });
 }
 
@@ -616,17 +616,23 @@ function spawnOnlyStderr (cmd, args, opts) {
 }
 
 function changeBase (base) {
-  return through(function (file, _, push) {
+  return streamMap(function (file) {
     base = path.resolve(base);
     var filePath = path.join(base, file.relative);
     file.base = base;
     file.path = filePath;
-    push(null, file);
+    return file;
   });
 }
 
 function writeFile () {
   return gulp.dest(function (file) {
     return file.base;
+  });
+}
+
+function streamMap (fn) {
+  return through.obj(function (file, _, push) {
+    push(null, fn(file));
   });
 }
