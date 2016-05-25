@@ -8,14 +8,8 @@ div.json-editor__toolbar
 
 div.json-editor__editor(data-editor)
 
-div.json-editor__status.x--ok(
-  ng-if="editor.valid === true"
-  role="status"
-  data-status="valid")
-  cf-icon(name="checkmark")
-  | Valid JSON format
-div.json-editor__status.x--invalid(
+div.json-editor__status-invalid(
   ng-if="editor.valid === false"
   role="status"
-  data-status="invalid")
+  data-status-code="json-editor.invalid-json")
   | This is not valid JSON

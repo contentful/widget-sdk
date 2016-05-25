@@ -119,7 +119,7 @@ angular.module('cf.app')
     if (str === '') {
       return {
         value: undefined,
-        valid: undefined,
+        valid: undefined
       };
     } else if (isValidJson(str)) {
       return {
@@ -128,7 +128,7 @@ angular.module('cf.app')
       };
     } else {
       return {
-        valid: false,
+        valid: false
       };
     }
   }
@@ -156,4 +156,3 @@ angular.module('cf.app')
     }
   }
 }]);
-

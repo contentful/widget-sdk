@@ -72,13 +72,6 @@ $circled-green-checkmark()
     .CodeMirror-vscrollbar
       overflow: hidden
 
-  &__status
+  &__status-invalid
     line-height: $rhythm(2)
-
-    &.x--ok
-      color: $colors.green-mid
-      > cf-icon
-        $circled-green-checkmark()
-
-    &.x--invalid
-      color: $colors.red-dark
+    color: $colors.red-dark

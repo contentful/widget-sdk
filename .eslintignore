@@ -356,10 +356,6 @@ src/javascripts/app/widgets/cf_multi_line_editor_directive.js
 src/javascripts/app/widgets/cf_rating_editor_directive.js
 src/javascripts/app/widgets/cf_widget_boolean_directive.js
 src/javascripts/app/widgets/dropdown/cf_dropdown_editor_directive.js
-src/javascripts/app/widgets/json/cf_json_editor_code_editor_directive.js
-src/javascripts/app/widgets/json/cf_json_editor_directive.js
-src/javascripts/app/widgets/json/code_editor.js
-src/javascripts/app/widgets/json/code_mirror_adapter.js
 src/javascripts/app/widgets/radio/cf_radio_editor_directive.js
 src/javascripts/app/widgets/selection_controller.js
 src/javascripts/classes/asset_content_type.js
