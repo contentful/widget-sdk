@@ -4,21 +4,26 @@ describe('Datetime Editor', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    this.fieldApi = {
-      onValueChanged: sinon.stub().returns(_.noop).yields(null),
-      onDisabledStatusChanged: sinon.stub().returns(_.noop),
-      removeValue: sinon.stub(),
-      setValue: sinon.stub()
-    };
+    var widgetApi = this.$inject('mocks/widgetApi').create({
+      settings: {format: 'timeZ'}
+    });
+
+    this.fieldApi = widgetApi.field;
+    this.fieldApi.onValueChanged.yields(null);
 
     this.compile = function (settings) {
-      settings = _.assign({
-        format: 'timeZ'
-      }, settings);
+      _.assign(widgetApi.settings, settings);
       return this.$compile('<cf-entry-datetime-editor>', {}, {
-        cfWidgetApi: {field: this.fieldApi, settings: settings}
+        cfWidgetApi: widgetApi
       });
     };
+  });
+
+  it('does not update field value when value is set externally', function () {
+    this.compile();
+    this.fieldApi.onValueChanged.yield('2000-01-01T12:00');
+    this.$apply();
+    sinon.assert.notCalled(this.fieldApi.setValue);
   });
 
   describe('rendering', function () {
