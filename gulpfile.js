@@ -27,6 +27,9 @@ var path = require('path');
 var through = require('through2');
 var yargs = require('yargs');
 var childProcess = require('child_process');
+var rework = require('rework');
+var reworkUrlRewrite = require('rework-plugin-url');
+var URL = require('url');
 var serve = require('./tasks/serve');
 
 var argv = yargs
@@ -43,6 +46,8 @@ loadSubtasks(gulp, 'docs');
 var pexec = Promise.denodeify(exec);
 var gitRevision;
 var settings = _.omit(require('./config/environment.json'), 'fog');
+
+var CSS_COMMENT_RE = /\/\*[^*]*\*+([^/*][^*]*\*+)*\//g;
 
 var src = {
   templates: 'src/javascripts/**/*.jade',
@@ -270,6 +275,12 @@ gulp.task('stylesheets', [
 gulp.task('stylesheets/vendor', function () {
   // Use `base: '.'` for correct source map paths
   return gulp.src(src.vendorStylesheets, {base: '.'})
+    // Some of the vendor styles contain CSS comments that
+    // break 'rework'. We remove them here.
+    // See https://github.com/reworkcss/css/issues/24
+    .pipe(mapFileContents(function (contents) {
+      return contents.replace(CSS_COMMENT_RE, '');
+    }))
     .pipe(sourceMaps.init())
     .pipe(concat('vendor.css'))
     .pipe(sourceMaps.write({sourceRoot: '/'}))
@@ -468,6 +479,8 @@ gulp.task('build/static', [
  *   to a separate `.maps` file.
  */
 gulp.task('build/styles', ['build/static', 'stylesheets'], function () {
+  var staticManifest = require('./build/static-manifest.json');
+  var manifestResolver = createManifestResolver(staticManifest, '/app');
   return gulp.src([
     'public/app/main.css',
     'public/app/vendor.css'
@@ -475,15 +488,17 @@ gulp.task('build/styles', ['build/static', 'stylesheets'], function () {
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(removeSourceRoot())
     .pipe(mapSourceMapPaths(function (src) {
-      // `gulp-sourcemaps` prepends 'app' to all the paths.
+      // `gulp-sourcemaps` prepends 'app' to all the paths because that
+      // is the base. But we want the path relative to the working dir.
       return path.relative('app', src);
     }))
-    .pipe(fingerprint(
-      'build/static-manifest.json', {
-        mode: 'replace',
-        verbose: false,
-        prefix: '/'
-      }))
+    .pipe(mapFileContents(function (contents, file) {
+      return rework(contents, {source: file.path})
+        .use(reworkUrlRewrite(manifestResolver))
+        .toString({compress: true, sourcemaps: true});
+    }))
+    // Need to reload the source maps because 'rework' inlines them.
+    .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(changeBase('build'))
     .pipe(rev())
     .pipe(writeFile())
@@ -635,4 +650,28 @@ function streamMap (fn) {
   return through.obj(function (file, _, push) {
     push(null, fn(file));
   });
+}
+
+function mapFileContents (fn) {
+  return streamMap(function (file) {
+    var contents = file.contents.toString();
+    contents = fn(contents, file);
+    file.contents = new Buffer(contents, 'utf8');
+    return file;
+  });
+}
+
+function createManifestResolver (manifest, base) {
+  return function (url) {
+    var urlObj = URL.parse(URL.resolve(base + '/', url));
+    if (urlObj.protocol) {
+      return url;
+    }
+    var fingerprinted = manifest[urlObj.pathname.substr(1)];
+    if (!fingerprinted) {
+      throw new Error('Could not get fingerprinted path for "' + url + '"');
+    }
+    urlObj.pathname = fingerprinted;
+    return '/' + URL.format(urlObj);
+  };
 }
