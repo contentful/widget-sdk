@@ -1,13 +1,13 @@
 'use strict';
 
 angular.module('cf.app')
-.directive('cfListInputEditor', [function(){
+.directive('cfListInputEditor', [function () {
   return {
     restrict: 'E',
     scope: {},
-    template: '<input type="text" class="form-control" ng-list ng-model="items" ng-disabled="isDisabled">',
+    template: JST.cf_list_input_editor(),
     require: '^cfWidgetApi',
-    link: function ($scope, $el, attrs, widgetApi) {
+    link: function ($scope, _$el, _attrs, widgetApi) {
       var field = widgetApi.field;
 
       var removeChangeListener = field.onValueChanged(function (items) {
@@ -18,9 +18,14 @@ angular.module('cf.app')
         $scope.isDisabled = disabled;
       }, true);
 
+      var offSchemaErrorsChanged = field.onSchemaErrorsChanged(function (errors) {
+        $scope.hasErrors = errors && errors.length > 0;
+      });
+
       $scope.$on('$destroy', function () {
         removeChangeListener();
         removeDisabledStatusListener();
+        offSchemaErrorsChanged();
       });
 
       $scope.$watchCollection('items', function (items) {

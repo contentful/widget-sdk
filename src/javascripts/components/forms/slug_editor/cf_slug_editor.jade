@@ -1,8 +1,9 @@
-input.cfnext-form__input--full-size(
-  type="text"
-  ng-disabled="isDisabled")
-i.fa.fa-spinner(
-  ng-show="state === 'checking'")
+div.entry-editor__input-group
+  input(
+    type="text"
+    aria-invalid="{{hasErrors || state === 'duplicate'}}"
+    ng-disabled="isDisabled")
+  div.entry-editor__input-spinner(ng-show="state === 'checking'")
 .cfnext-form__field-error(
   role="status"
   data-status-code="entry.slug.duplicate"

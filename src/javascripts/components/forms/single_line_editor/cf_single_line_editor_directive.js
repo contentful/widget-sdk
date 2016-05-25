@@ -10,7 +10,7 @@ angular.module('contentful')
     require: '^cfWidgetApi',
     restrict: 'E',
     template: JST['cf_single_line_editor'](),
-    link: function (scope, $el, attributes, widgetApi) {
+    link: function (scope, $el, _attributes, widgetApi) {
       var field = widgetApi.field;
       var constraints = _(field.validations).pluck('size').filter().first() || {};
       var $inputEl = $el.children('input');
@@ -31,9 +31,14 @@ angular.module('contentful')
       // call handler when the disabled status of the field changes
       var detachOnFieldDisabledHandler = field.onDisabledStatusChanged(updateIsDisabledFlag);
 
+      var offSchemaErrorsChanged = field.onSchemaErrorsChanged(function (errors) {
+        scope.hasErrors = errors && errors.length > 0;
+      });
+
       // remove attached handlers when element is evicted from dom
       scope.$on('$destroy', detachOnValueChangedHandler);
       scope.$on('$destroy', detachOnFieldDisabledHandler);
+      scope.$on('$destroy', offSchemaErrorsChanged);
 
       // update char count whenever input value changes
       scope.$watch(function () {

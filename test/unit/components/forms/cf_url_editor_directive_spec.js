@@ -4,12 +4,7 @@ describe('cfUrlEditor directive', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    this.widgetApi = this.$inject('mocks/widgetApi').create({
-      field: {
-        onValueChanged: sinon.stub().yields('omgwhat'),
-        onDisabledStatusChanged: sinon.stub().yields(true)
-      }
-    });
+    this.widgetApi = this.$inject('mocks/widgetApi').create();
 
     this.setHelpText = function (helpText) {
       this.widgetApi.settings.helpText = helpText;
@@ -42,11 +37,6 @@ describe('cfUrlEditor directive', function () {
     this.scope = this.$el.isolateScope();
   });
 
-  afterEach(function () {
-    this.$el = null;
-    this.scope.$destroy();
-  });
-
   it('shows configured help text', function () {
     this.setHelpText('some help text');
 
@@ -62,6 +52,7 @@ describe('cfUrlEditor directive', function () {
   });
 
   it('updates when new value is received over the wire', function () {
+    this.widgetApi.field.onValueChanged.yield('omgwhat');
     expect(this.$el.find('input').val()).toEqual('omgwhat');
   });
 
@@ -85,7 +76,10 @@ describe('cfUrlEditor directive', function () {
   });
 
   it('should be disabled when disabled flag is set', function () {
-    expect(this.$el.find('input').attr('disabled')).toEqual('disabled');
+    expect(this.$el.find('input').prop('disabled')).toEqual(false);
+    this.widgetApi.field.onDisabledStatusChanged.yield(true);
+    this.$apply();
+    expect(this.$el.find('input').prop('disabled')).toEqual(true);
   });
 
   it('should show no errors when url is valid', function () {
@@ -94,12 +88,16 @@ describe('cfUrlEditor directive', function () {
   });
 
   it('should show error on invalid url', function () {
+    expect(this.$el.find('input').attr('aria-invalid')).toEqual('false');
     this.setStatus('invalid');
+    expect(this.$el.find('input').attr('aria-invalid')).toEqual('true');
     this.assertStatus([['invalid', 'block'], ['broken', 'none']]);
   });
 
   it('should show error on broken url', function () {
+    expect(this.$el.find('input').attr('aria-invalid')).toEqual('false');
     this.setStatus('broken');
+    expect(this.$el.find('input').attr('aria-invalid')).toEqual('true');
     this.assertStatus([['invalid', 'none'], ['broken', 'block']]);
   });
 });
