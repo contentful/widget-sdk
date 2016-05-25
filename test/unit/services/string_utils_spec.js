@@ -51,7 +51,21 @@ describe('stringUtils service', function () {
     it('ommits orphaned letters', function () {
       expect(truncate('abc xyz', 5)).toEqual('abc…');
     });
+  });
 
+  describe('#truncateMiddle()', function () {
+    var truncateMiddle;
+    beforeEach(function () {
+      truncateMiddle = this.$inject('stringUtils').truncateMiddle;
+    });
+
+    it('retains short string', function () {
+      expect(truncateMiddle('abc', 3, 1)).toEqual('abc');
+    });
+
+    it('truncates long strings with ellipses', function () {
+      expect(truncateMiddle('abcd', 3, 1)).toEqual('ab…d');
+    });
   });
 
   describe('#startsWithVowel', function () {

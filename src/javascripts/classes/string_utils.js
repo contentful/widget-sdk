@@ -138,7 +138,7 @@ angular.module('contentful')
    * @ngdoc method
    * @name stringUtils#truncate
    * @usage[js]
-   * truncate('Hello world', 6)
+   * truncate('Hello world', 5)
    * // => 'Hello…'
    *
    * @param {string} str
@@ -153,6 +153,27 @@ angular.module('contentful')
     } else {
       return str;
     }
+  }
+
+  /**
+   * @ngdoc method
+   * @name stringUtils#truncateMiddle
+   * @usage[js]
+   * truncateMiddle('Hello world wide web', 8, 3)
+   * // => 'Hello…web'
+   *
+   * @param {string} str
+   * @param {number} length
+   * @param {number} endOfStrLength
+   * @returns {string}
+   */
+  function truncateMiddle (str, length, endOfStrLength) {
+    if(str && str.length > length) {
+      var startOfStr = str.substr(0, length - endOfStrLength);
+      var endOfStr = str.substr(str.length - endOfStrLength, str.length);
+      return startOfStr + '…' + endOfStr;
+    }
+    return str;
   }
 
   /**
@@ -187,6 +208,7 @@ angular.module('contentful')
     titleToFileName: titleToFileName,
     getEntityLabel: getEntityLabel,
     truncate: truncate,
+    truncateMiddle: truncateMiddle,
     startsWithVowel: startsWithVowel
   };
 })())

@@ -136,17 +136,9 @@ filters.filter('truncate', ['stringUtils', function (stringUtils) {
   return stringUtils.truncate;
 }]);
 
-
-filters.filter('truncateMiddle', function () {
-  return function (str, maxLength, endOfStrLength) {
-    if(str && str.length > maxLength) {
-      var startOfStr = str.substr(0, maxLength - endOfStrLength);
-      var endOfStr = str.substr(str.length - endOfStrLength, str.length);
-      return startOfStr + '...' + endOfStr;
-    }
-    return str;
-  };
-});
+filters.filter('truncateMiddle', ['stringUtils', function (stringUtils) {
+  return stringUtils.truncateMiddle;
+}]);
 
 filters.filter('prefixAssetHost', ['environment', function(environment){
   return function (path) {
