@@ -300,7 +300,7 @@ function ContentTypeActionsController ($scope, $injector) {
   }
 
   function triggerApiErrorNotification (err) {
-    var errorId = dotty.get(err, 'body.sys.id');
+    var errorId = dotty.get(err, 'body.sys.id') || dotty.get(err, 'sys.id');
     if (errorId === 'ValidationFailed') {
       notify.invalid();
     } else if (errorId === 'VersionMismatch') {
@@ -480,8 +480,9 @@ function ContentTypeActionsController ($scope, $injector) {
 
 
   function getServerMessage (err) {
-    return dotty.get(err, 'body.message') ||
-           dotty.get(err, 'body.sys.id') ||
+    err = err.body || err;
+    return dotty.get(err, 'message') ||
+           dotty.get(err, 'sys.id') ||
            'Unknown server error';
   }
 
