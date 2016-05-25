@@ -147,9 +147,10 @@ angular.module('contentful')
    */
   function truncate (str, length) {
     if (str && str.length > length) {
-      str = str.substr(0, length);
-      str = str.replace(/\s.\s*$/, '');
-      return str + '…';
+      return str && str
+      .substr(0, length + 1) // +1 to look ahead and be replaced below.
+      // Get rid of orphan letters but not one letter words (I, a, 2):
+      .replace(/(\s+\S(?=\S)|\s*).$/, '…');
     } else {
       return str;
     }
@@ -168,12 +169,16 @@ angular.module('contentful')
    * @returns {string}
    */
   function truncateMiddle (str, length, endOfStrLength) {
-    if(str && str.length > length) {
-      var startOfStr = str.substr(0, length - endOfStrLength);
-      var endOfStr = str.substr(str.length - endOfStrLength, str.length);
-      return startOfStr + '…' + endOfStr;
+    if(length < endOfStrLength) {
+      throw new Error('`length` has to be greater or equal to `endOfStrLength`');
     }
-    return str;
+    if (str && str.length > length) {
+      var endOfStr = str.substr(-endOfStrLength);
+      var beginningOfStr = truncate(str, length - endOfStrLength);
+      return beginningOfStr + endOfStr;
+    } else {
+      return str;
+    }
   }
 
   /**

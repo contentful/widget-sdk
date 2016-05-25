@@ -44,12 +44,26 @@ describe('stringUtils service', function () {
       expect(truncate('abcd', 3)).toEqual('abc…');
     });
 
-    it('ommits trailing spaces', function () {
+    it('omits trailing spaces', function () {
       expect(truncate('abc \t\n\r xyz', 8)).toEqual('abc…');
     });
 
-    it('ommits orphaned letters', function () {
-      expect(truncate('abc xyz', 5)).toEqual('abc…');
+    it('omits orphaned letters', function () {
+      expect(truncate('go 22 ahead', 4)).toEqual('go…');
+    });
+
+    it('does not mistake single chars for orphaned letters', function () {
+      expect(truncate('go 2 start', 4)).toEqual('go 2…');
+    });
+
+    it('cuts off spaces before ellipsis', function () {
+      expect(truncate('abc  d', 5)).toEqual('abc…');
+      expect(truncate('go 2 start', 5)).toEqual('go 2…');
+      expect(truncate('go 2  start', 6)).toEqual('go 2…');
+    });
+
+    it('does currently not honor word boundaries other than spaces', function () {
+      expect(truncate('go-22-ahead', 4)).toEqual('go-2…');
     });
   });
 
@@ -59,12 +73,25 @@ describe('stringUtils service', function () {
       truncateMiddle = this.$inject('stringUtils').truncateMiddle;
     });
 
+    it('throws an error if string end greater than total length param', function () {
+      var call = truncateMiddle.bind(null, 'foo', 10, 11);
+      expect(call).toThrow()
+    });
+
     it('retains short string', function () {
       expect(truncateMiddle('abc', 3, 1)).toEqual('abc');
     });
 
-    it('truncates long strings with ellipses', function () {
+    it('truncates long strings with ellipses at the middle', function () {
       expect(truncateMiddle('abcd', 3, 1)).toEqual('ab…d');
+    });
+
+    it('retains short string', function () {
+      expect(truncateMiddle('abcd', 3, 3)).toEqual('…bcd');
+    });
+
+    it('omits orphaned letters before the middle', function () {
+      expect(truncateMiddle('ab cdefgh xyz', 7, 3)).toEqual('ab…xyz');
     });
   });
 
