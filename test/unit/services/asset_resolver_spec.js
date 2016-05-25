@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Asset loader service', function () {
+describe('AssetResolver service', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -13,12 +13,12 @@ describe('Asset loader service', function () {
         }
       });
     });
-    this.assetLoader = this.$inject('AssetLoader');
+    this.resolve = this.$inject('AssetResolver').resolve;
   });
 
   it('returns the correct URL', function () {
     var path = 'images/my-asset.jpg';
-    expect(this.assetLoader.getAssetUrl(path))
+    expect(this.resolve(path))
       .toBe('//static.test.com/images/fingerprinted.jpg');
   });
 
