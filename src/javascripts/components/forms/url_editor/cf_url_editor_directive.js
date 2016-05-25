@@ -10,7 +10,7 @@ angular.module('contentful')
     require: '^cfWidgetApi',
     scope: {},
     template: JST.cf_url_editor(),
-    link: function (scope, $el, attrs, widgetApi) {
+    link: function (scope, $el, _attrs, widgetApi) {
       var field = widgetApi.field;
       var $inputEl = $el.find('input');
       var updateInput = makeInputUpdater($inputEl);
@@ -28,9 +28,14 @@ angular.module('contentful')
       // call handler when the disabled status of the field changes
       var detachOnFieldDisabledHandler = field.onDisabledStatusChanged(updateDisabledStatus);
 
+      var offSchemaErrorsChanged = field.onSchemaErrorsChanged(function (errors) {
+        scope.hasErrors = errors && errors.length > 0;
+      });
+
       // remove attached handlers when element is evicted from dom
       scope.$on('$destroy', detachOnValueChangedHandler);
       scope.$on('$destroy', detachOnFieldDisabledHandler);
+      scope.$on('$destroy', offSchemaErrorsChanged);
 
       scope.$watch(function () {
         return $inputEl.val();

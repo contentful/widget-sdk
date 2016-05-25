@@ -1,6 +1,7 @@
 @require '/variables/colors'
 @require '/mixins/typography'
 @require '/objects/buttons'
+@require '/modules/entity_editor/controls'
 
 // TODO Can be reused by the field setting’s widget selector
 $circled-green-checkmark()
@@ -59,7 +60,7 @@ $circled-green-checkmark()
     cursor: text
     padding-top: $rhythm(0.5)
     padding-bottom: $rhythm(0.5)
-    border-bottom: 1px dotted $colors.element-dark
+    $entry-editor__input-border()
 
     .CodeMirror
       height: auto

@@ -1,5 +1,6 @@
-input.cfnext-form__input--full-size(
+input.entry-editor__input(
   type="text"
+  aria-invalid="{{hasErrors || urlStatus === 'broken' || urlStatus === 'invalid'}}"
   ng-disabled="isDisabled")
 .cfnext-form__field-error(
   role="status"
