@@ -9,7 +9,7 @@
     "@contentful/client": "^14.0.1",
     "@contentful/hostname-transformer": "^1.2.6",
     "@contentful/mimetype": "^1.0.1",
-    "@contentful/validation": "^5.14.1",
+    "@contentful/validation": "^5.15.0",
     "@contentful/widget-map": "^1.0.1",
     "@contentful/worf": "^3.4.0",
     "bower": "^1.7.7",

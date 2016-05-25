@@ -49,6 +49,7 @@ describe('ContentType Actions Controller', function () {
     scope.context = {};
     scope.contentType = contentType;
     scope.broadcastFromSpace = sinon.stub();
+    scope.ctEditorController = {registerPublishedFields: sinon.spy()};
 
     var $controller = this.$inject('$controller');
     controller = $controller('ContentTypeActionsController', {$scope: scope});
@@ -60,9 +61,7 @@ describe('ContentType Actions Controller', function () {
       contentType.unpublish = sinon.stub().resolves();
       contentType.isPublished = sinon.stub().returns(true);
 
-      scope.ctEditorController = {
-        countEntries: sinon.stub().resolves()
-      };
+      space.getEntries = sinon.stub().resolves([]);
 
       this.modalDialog = this.$inject('modalDialog');
       sinon.stub(this.modalDialog, 'open', function (params) {
@@ -73,10 +72,6 @@ describe('ContentType Actions Controller', function () {
     });
 
     describe('without entries', function () {
-      beforeEach(function () {
-        scope.ctEditorController.countEntries.resolves(0);
-      });
-
       it('calls unpublish and then delete', function () {
         controller.delete.execute();
         this.$apply();
@@ -140,30 +135,30 @@ describe('ContentType Actions Controller', function () {
 
       it('notifies the user when entries endpoint cannot be read', function () {
         accessChecker.canPerformActionOnEntryOfType.returns(false);
-        scope.ctEditorController.countEntries.rejects({statusCode: 404});
+        space.getEntries.rejects({statusCode: 404});
         testForbiddenRemoval(this.modalDialog, {count: ''});
       });
 
       it('notifies the user when entries cannot be read due to policy', function () {
         accessChecker.canPerformActionOnEntryOfType.returns(false);
-        scope.ctEditorController.countEntries.resolves(0);
+        space.getEntries.resolves([]);
         testForbiddenRemoval(this.modalDialog, {count: ''});
       });
 
       it('notifies the user when there are entries', function () {
-        scope.ctEditorController.countEntries.resolves(1);
+        space.getEntries.resolves([{data: {sys: {id: 'entry'}}}]);
         testForbiddenRemoval(this.modalDialog, {count: 1});
       });
 
       it('fails for 404 when entries can be read by policy', function () {
         accessChecker.canPerformActionOnEntryOfType.returns(true);
-        scope.ctEditorController.countEntries.rejects({statusCode: 404});
+        space.getEntries.rejects({statusCode: 404});
         testEndpointError();
       });
 
       it('fails for non-404 status codes', function () {
         accessChecker.canPerformActionOnEntryOfType.returns(true);
-        scope.ctEditorController.countEntries.rejects({statusCode: 500});
+        space.getEntries.rejects({statusCode: 500});
         testEndpointError();
       });
     });
@@ -176,7 +171,7 @@ describe('ContentType Actions Controller', function () {
       it('does not count entries', function () {
         controller.delete.execute();
         this.$apply();
-        sinon.assert.notCalled(scope.ctEditorController.countEntries);
+        sinon.assert.notCalled(space.getEntries);
       });
 
       it('does not call unpublish', function () {
@@ -231,7 +226,7 @@ describe('ContentType Actions Controller', function () {
         var ct = scope.contentType;
         sinon.assert.calledOnce(ct.save);
         sinon.assert.calledOnce(ct.publish);
-        expect(scope.publishedContentType).toBe(ct);
+        sinon.assert.calledOnce(scope.ctEditorController.registerPublishedFields);
         expect(ct.getPublishedVersion()).toEqual(ct.getVersion());
       });
     });
@@ -312,60 +307,6 @@ describe('ContentType Actions Controller', function () {
       return controller.save.execute()
       .then(function () {
         sinon.assert.called(goStub, 'spaces.detail.content_types.detail', {contentTypeId: 'typeid'});
-      });
-    });
-
-    describe('field removal', function () {
-
-      beforeEach(function () {
-        var published = { data: {fields: [{id: 'A'}]} };
-        scope.publishedContentType = published;
-        scope.contentType.unpublish = sinon.stub().resolves(published);
-      });
-
-      pit('unpublishes content type', function () {
-        return controller.save.execute()
-        .then(function () {
-          sinon.assert.callOrder(
-            scope.contentType.unpublish,
-            scope.contentType.save,
-            scope.contentType.publish
-          );
-        });
-      });
-
-      pit('does not unpublish if no field removed', function () {
-        scope.contentType.data.fields = [{id: 'A'}, {id: 'B'}];
-        return controller.save.execute()
-        .then(function () {
-          sinon.assert.notCalled(scope.contentType.unpublish);
-        });
-      });
-
-      describe('after unpublishing', function () {
-        pit('retains local content type data', function () {
-          scope.contentType.data = 'LOCAL';
-          scope.contentType.unpublish = function () {
-            this.data = 'UNPULBISHED';
-            return $q.resolve(this);
-          };
-          return controller.save.execute()
-          .then(function () {
-            expect(scope.contentType.data).toEqual('LOCAL');
-          });
-        });
-
-        pit('updates version', function () {
-          scope.contentType.data = {};
-          scope.contentType.unpublish = function () {
-            this.data = {sys: 'NEW SYS'};
-            return $q.resolve(this);
-          };
-          return controller.save.execute()
-          .then(function () {
-            expect(scope.contentType.data.sys).toEqual('NEW SYS');
-          });
-        });
       });
     });
   });
