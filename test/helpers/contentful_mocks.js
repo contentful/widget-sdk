@@ -50,6 +50,7 @@ function ($delegate, mock) {
     return {
       enable: sinon.stub(),
       disable: sinon.stub(),
+      findActualServerError: sinon.stub(),
       logException: sinon.stub(),
       logError: sinon.stub(),
       logServerError: sinon.stub(),

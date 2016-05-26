@@ -193,7 +193,7 @@ angular.module('contentful')
         .catch(function (err) {
           return $q.reject({
             code: err.code,
-            data: err.body
+            data: err.body // Cyborg?
           });
         });
       },
