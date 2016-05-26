@@ -197,7 +197,7 @@ angular.module('contentful')
   }
 
   function setValidationErrors (err) {
-    $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
+    $scope.validator.setErrors(dotty.get(err, 'body.details.errors'));
   }
 
   function isLinkValidationError (err) {

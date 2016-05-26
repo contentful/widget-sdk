@@ -134,7 +134,7 @@ angular.module('contentful')
   function handlePublishError (error) {
     var errorId = dotty.get(error, 'body.sys.id');
     if (errorId === 'ValidationFailed') {
-      $scope.setValidationErrors(dotty.get(error, 'body.details.errors'));
+      $scope.validator.setErrors(dotty.get(error, 'body.details.errors'));
       notify.publishValidationFail();
     } else if (errorId === 'VersionMismatch') {
       notify.publishFail('Can only publish most recent version');

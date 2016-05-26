@@ -103,8 +103,6 @@ function ValidationController ($scope, $attrs, $timeout) {
     this.errors = $scope.validationResult.errors;
     this.valid = _.isEmpty(this.errors);
   };
-  // TODO deprecated
-  $scope.setValidationErrors = _.bind(controller.setErrors, controller);
 
   /**
    * @ngdoc method
