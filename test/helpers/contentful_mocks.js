@@ -337,11 +337,7 @@ function ($delegate, mock) {
   $provide.value('throttle', immediateInvocationStub);
   $provide.value('defer', noDeferStub);
   $provide.value('delay', noDelayStub);
-  $provide.constant('noDeferStub', noDeferStub);
-  $provide.constant('noDelayStub', noDelayStub);
   $provide.constant('delayedInvocationStub', delayedInvocationStub);
-  $provide.constant('immediateInvocationStub', immediateInvocationStub);
-  $provide.constant('icons', {});
 
   function noDeferStub (f) {
     var args = _.rest(arguments);
