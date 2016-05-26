@@ -270,28 +270,6 @@ function ($delegate, mock) {
     throw e;
   });
 
-  $provide.decorator('ShareJS', ['$delegate', function ($delegate) {
-    function FakeShareJSDoc (entity) {
-      this.entity = entity;
-      this.snapshot = angular.copy(entity.data);
-      if (this.snapshot && this.snapshot.sys) delete this.snapshot.sys.version;
-      if (this.snapshot && this.snapshot.sys) delete this.snapshot.sys.updatedAt;
-    }
-
-    FakeShareJSDoc.prototype = {
-      removeListener: angular.noop,
-      on: angular.noop
-    };
-
-    return _.defaults({
-      _noMock: $delegate,
-      open: function (entity, callback) {
-        _.defer(callback, null, new FakeShareJSDoc(entity));
-      },
-      isConnected: _.constant(true)
-    }, $delegate);
-  }]);
-
   $provide.decorator('ReloadNotification', ['$delegate', function ($delegate) {
     for (var prop in $delegate) {
       sinon.stub($delegate, prop);
