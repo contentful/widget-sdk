@@ -24,9 +24,14 @@ describe('cfEntityField directive integration', function () {
       settings: {}
     };
 
+    this.validator = {
+      hasError: sinon.stub().returns(false)
+    };
+
     this.compile = function () {
       return this.$compile('<cf-entity-field>', {
         widget: this.widget,
+        validator: this.validator,
         entry: {}
       });
     };
@@ -151,14 +156,20 @@ describe('cfEntityField directive integration', function () {
     it('adds locales with error', function () {
       this.setLocales([
         {code: 'en'},
-        {code: 'de', active: false, internal_code: 'de-internal'}
+        {code: 'de', active: false},
+        {code: 'fr', active: false}
       ]);
+
       var el = this.compile();
       expect(getDataLocaleAttr(el)).toEqual(['en']);
-      el.scope().errorPaths = {
-        'FID': ['de-internal']
-      };
+
+      this.validator.hasError
+        .withArgs(sinon.match(['fields', 'FID', 'de-internal']))
+        .returns(true);
+      // we need to fire a watcher.
+      this.validator.errors = {};
       this.$apply();
+
       expect(getDataLocaleAttr(el)).toEqual(['en', 'de']);
     });
 

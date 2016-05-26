@@ -24,6 +24,9 @@ angular.module('contentful')
 function ValidationController ($scope, $attrs, $timeout) {
   var controller = this;
 
+  // Caches values for #hasError()
+  var errorTree = {};
+
   controller.errors = [];
 
   $scope.validationResult = {};
@@ -100,6 +103,7 @@ function ValidationController ($scope, $attrs, $timeout) {
    */
   controller.setErrors = function (errors) {
     $scope.validationResult = makeValidationResult(errors, getData(), $scope.schema);
+    errorTree = $scope.validationResult.errorTree;
     this.errors = $scope.validationResult.errors;
     this.valid = _.isEmpty(this.errors);
   };
@@ -116,6 +120,10 @@ function ValidationController ($scope, $attrs, $timeout) {
    */
   controller.getPathErrors = function (path, parent) {
     return _.filter(this.errors, errorPathMatcher(path, parent));
+  };
+
+  controller.hasError = function (path) {
+    return !!dotty.get(errorTree, path);
   };
 
 
@@ -149,17 +157,27 @@ function ValidationController ($scope, $attrs, $timeout) {
     };
   }
 
-
-  function makeTree (xs, dataProperty) {
-    dataProperty = dataProperty || '$data';
+  /**
+   * Satisfies the following property
+   * ~~~
+   * var tree = makeTree(items)
+   * items.forEach(function (item) {
+   *   assertEqual(
+   *     dotty.get(tree, item.path).$data,
+   *     item
+   *   )
+   * })
+   * ~~~
+   */
+  function makeTree (items) {
     var root = {};
-    _.forEach(xs, function (x) {
+    _.forEach(items, function (item) {
       var node = root;
-      var path = normalizePath(x.path);
+      var path = normalizePath(item.path);
       _.forEach(path, function (segment) {
         node = node[segment] = node[segment] || {};
       });
-      node[dataProperty] = x;
+      node['$data'] = item;
     });
     return root;
   }

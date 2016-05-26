@@ -4,7 +4,6 @@ angular.module('contentful')
 .controller('AssetEditorController', ['$scope', '$injector', function AssetEditorController ($scope, $injector) {
   var $controller = $injector.get('$controller');
   var ShareJS = $injector.get('ShareJS');
-  var TheLocaleStore = $injector.get('TheLocaleStore');
   var logger = $injector.get('logger');
   var notification = $injector.get('notification');
   var stringUtils = $injector.get('stringUtils');
@@ -64,7 +63,6 @@ angular.module('contentful')
   });
 
   // Validations
-  $scope.errorPaths = {};
   $scope.$watch('asset.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
     if (publishedVersion > oldVersion) scope.validate();
   });
@@ -72,34 +70,6 @@ angular.module('contentful')
     var scope = event.currentScope;
     if (!_.isEmpty(scope.asset.data.fields)) scope.validate();
     firstValidate();
-  });
-  $scope.$watch('validationResult.errors', function (errors) {
-    $scope.errorPaths = {};
-
-    _.each(errors, function (error) {
-      if (!_.isObject(error)) {
-        // TODO We have seen errors on bugsnag where path is not an
-        // object. This is some temporary logging to gather some data.
-        logger.logError('Validation error is not an object', {
-          data: {
-            validationErrors: errors,
-            assetFields: dotty.get($scope.asset, 'data.fields')
-          }
-        });
-      }
-
-      if (error.path[0] !== 'fields') return;
-      var field = error.path[1];
-      $scope.errorPaths[field] = $scope.errorPaths[field] || [];
-
-      if (error.path.length === 2) {
-        $scope.errorPaths[field].push(TheLocaleStore.getDefaultLocale().internal_code);
-      } else {
-        var localeCode = error.path[2];
-        $scope.errorPaths[field].push(localeCode);
-      }
-      $scope.errorPaths[field] = _.unique($scope.errorPaths[field]);
-    });
   });
 
   // Building the form

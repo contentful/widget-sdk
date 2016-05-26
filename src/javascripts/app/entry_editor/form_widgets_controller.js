@@ -21,8 +21,11 @@ function ($scope, $injector, contentTypeId, controls) {
 
   var analytics = $injector.get('analyticsEvents');
 
+  // TODO Changes to 'validator.errors' change the behavior of
+  // 'validator.hasError()'. We should make this dependency explicity
+  // by listening to signal on the validator.
   $scope.$watchGroup(
-    ['preferences.showDisabledFields', 'errorPaths'],
+    ['preferences.showDisabledFields', 'validator.errors'],
     updateWidgets
   );
 
@@ -56,7 +59,7 @@ function ($scope, $injector, contentTypeId, controls) {
       return false;
     }
     var isNotDisabled = !field.disabled || $scope.preferences.showDisabledFields;
-    var hasErrors = $scope.errorPaths && $scope.errorPaths[field.id];
+    var hasErrors = $scope.validator.hasError(['fields', field.id]);
     return isNotDisabled || hasErrors;
   }
 

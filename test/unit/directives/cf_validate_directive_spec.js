@@ -152,6 +152,30 @@ describe('cfValidate', function () {
       this.$apply();
       sinon.assert.calledOnce(this.validator.run);
     });
+    describe('#hasError()', function () {
+      beforeEach(function () {
+        this.setErrors = function (paths) {
+          this.validator.setErrors(paths.map(function (path) {
+            return {path: path};
+          }));
+        };
+      });
+
+      it('returns true when exact path has error', function () {
+        this.setErrors([['a', 'b'], ['other']]);
+        expect(this.validator.hasError(['a', 'b'])).toBe(true);
+      });
+
+      it('returns true when exact child path has error', function () {
+        this.setErrors([['a', 'b', 'c'], ['other']]);
+        expect(this.validator.hasError(['a', 'b'])).toBe(true);
+      });
+
+      it('returns false when parent path has error', function () {
+        this.setErrors([['a']]);
+        expect(this.validator.hasError(['a', 'b'])).toBe(false);
+      });
+    });
   });
 
   describe('with cfEntrySchema', function () {

@@ -11,10 +11,6 @@ angular.module('cf.app')
  * @property {string}       $scope.showHelpText
  * @property {string}       $scope.helpText
  *
- * @scope.requires {object} errorPath
- * Maps internal field IDs to lists of internal locale codes that have
- * errors. Provided by the `Entry/AssetEditorController`.
- *
  * @scope.requires {object} widget
  * Has field data and specifications to render the control. Provided by
  * `FromWidgetsController`.
@@ -28,6 +24,7 @@ angular.module('cf.app')
       $scope.hasInitialFocus = $scope.$index === 0 &&
                                $scope.widget.isFocusable;
 
+      // TODO I think this never changes
       $scope.$watch('widget.field', function (field) {
         $scope.field = field;
       });
@@ -41,7 +38,11 @@ angular.module('cf.app')
       });
 
       $scope.$watchCollection(getActiveLocaleCodes, updateLocales);
-      $scope.$watch('errorPaths', updateLocales);
+
+      // TODO Changes to 'validator.errors' change the behavior of
+      // 'validator.hasError()'. We should make this dependency explicity
+      // by listening to signal on the validator.
+      $scope.$watch('validator.errors', updateLocales);
 
       function getActiveLocaleCodes () {
         return _.pluck(TheLocaleStore.getActiveLocales(), 'internal_code');
@@ -49,30 +50,19 @@ angular.module('cf.app')
 
       function updateLocales () {
         var field = $scope.widget.field;
-        var locales = _(getFieldLocales(field))
-          .union(getErrorLocales(field))
-          .filter(_.isObject)
-          .uniq('internal_code')
-          .value();
-        $scope.locales = locales;
+
+        $scope.locales = _.filter(getFieldLocales(field), function (locale) {
+          var isActive = TheLocaleStore.isLocaleActive(locale);
+          var hasError = $scope.validator.hasError(['fields', field.id, locale.internal_code]);
+          return isActive || hasError;
+        });
       }
 
       function getFieldLocales (field) {
         if (field.localized) {
-          return TheLocaleStore.getActiveLocales();
+          return TheLocaleStore.getPrivateLocales();
         } else {
           return [TheLocaleStore.getDefaultLocale()];
-        }
-      }
-
-      function getErrorLocales (field) {
-        if ($scope.errorPaths) {
-          var availableLocales = TheLocaleStore.getPrivateLocales();
-          return _.map($scope.errorPaths[field.id], function (code) {
-            return _.find(availableLocales, {internal_code: code});
-          });
-        } else {
-          return [];
         }
       }
     }]
