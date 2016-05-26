@@ -23,7 +23,8 @@ describe('Extension SDK', function () {
 
     const field = {
       id: 'FID-internal',
-      apiName: 'FID'
+      apiName: 'FID',
+      type: 'Text'
     };
 
 
@@ -46,7 +47,16 @@ describe('Extension SDK', function () {
         internal_code: 'de-internal'
       },
       otDoc: {
-        setValueAt: sinon.stub().resolves(true)
+        setValueAt: sinon.stub().resolves(true),
+        removeValueAt: sinon.stub().resolves(true)
+      },
+      fieldLocale: {
+        access: {
+          disabled: false
+        }
+      },
+      fieldController: {
+        setInvalid: sinon.spy()
       }
     };
 
@@ -100,6 +110,7 @@ describe('Extension SDK', function () {
       it('calls callback after otChange event is fired', function* (api, scope) {
         const valueChanged = sinon.stub();
         api.field.onValueChanged(valueChanged);
+        valueChanged.reset();
         emitOtChange(scope, ['fields', 'FID-internal', 'de-internal'], 'VALUE');
         yield;
         sinon.assert.calledOnce(valueChanged);
@@ -111,33 +122,97 @@ describe('Extension SDK', function () {
         // We make sure that it is called once in order to prevent
         // errors when the event is not dispatched at all.
         api.field.onValueChanged(valueChanged);
+
         const detach = api.field.onValueChanged(valueChanged);
+        valueChanged.reset();
         detach();
         emitOtChange(scope, ['fields', 'FID-internal', 'de-internal'], 'VALUE');
         yield;
         sinon.assert.calledOnce(valueChanged);
       });
+
+      it('does not call callback in the window that called setValue', function* (api) {
+        const valueChanged = sinon.spy();
+        api.field.onValueChanged(valueChanged);
+        valueChanged.reset();
+        api.field.setValue('VALUE');
+        yield;
+        sinon.assert.notCalled(valueChanged);
+      });
+
+      it('calls callback with most recently dispatched value', function* (api, scope) {
+        const valueChanged = sinon.spy();
+        emitOtChange(scope, ['fields', 'FID-internal', 'de-internal'], 'VALUE');
+        yield;
+        api.field.onValueChanged(valueChanged);
+        sinon.assert.calledOnce(valueChanged);
+        sinon.assert.calledWithExactly(valueChanged, 'VALUE');
+      });
+    });
+
+    describe('#onIsDisabledChanged', function () {
+      it('calls callback when disable status of field is changed', function* (api, scope) {
+        const isDisabledChanged = sinon.spy();
+        api.field.onIsDisabledChanged(isDisabledChanged);
+        yield;
+        isDisabledChanged.reset();
+        scope.fieldLocale.access.disabled = true;
+        yield;
+        sinon.assert.calledOnce(isDisabledChanged);
+        sinon.assert.calledWithExactly(isDisabledChanged, true);
+      });
+
+      it('does not call callback after detaching', function* (api, scope) {
+        const isDisabledChanged = sinon.spy();
+        api.field.onIsDisabledChanged(isDisabledChanged)(); // detach the listener
+        yield;
+        isDisabledChanged.reset();
+        scope.fieldLocale.access.disabled = true;
+        yield;
+        sinon.assert.notCalled(isDisabledChanged);
+      });
     });
 
     describe('#setValue()', function () {
-      it('calls "otDoc.setValueAt()" with current field path', function* (api, scope) {
-        yield api.field.setValue('VAL');
-        sinon.assert.calledWith(scope.otDoc.setValueAt, ['fields', 'FID-internal', 'de-internal'], 'VAL');
+      testValueMethods('setValue', 'VAL');
+    });
+
+    describe('#removeValue()', function () {
+      testValueMethods('removeValue');
+    });
+
+    describe('#setInvalid', function () {
+      it('proxies call to setInvalid method on scope.fieldController', function* (api, scope) {
+        api.field.setInvalid(true, scope.locale.code);
+        yield;
+        sinon.assert.calledWithExactly(scope.fieldController.setInvalid, scope.locale.code, true);
+      });
+    });
+
+    function testValueMethods (method, value) {
+      it(`calls "otDoc.${method}At()" with current field path`, function* (api, scope) {
+        if (_.isUndefined(value)) {
+          yield api.field[method]();
+          sinon.assert.calledWith(scope.otDoc[`${method}At`], ['fields', 'FID-internal', 'de-internal']);
+        } else {
+          yield api.field[method](value);
+          sinon.assert.calledWith(scope.otDoc[`${method}At`], ['fields', 'FID-internal', 'de-internal'], value);
+        }
       });
 
       it('resolves', function* (api) {
         const success = sinon.stub();
-        yield api.field.setValue('VAL').then(success);
-        sinon.assert.calledWith(success);
+        yield api.field[method](value).then(success);
+        sinon.assert.called(success);
       });
 
-      it('rejects when "otDoc.setValueAt()" fails', function* (api, scope) {
-        scope.otDoc.setValueAt.rejects();
+      it(`rejects when "otDoc.${method}At()" fails`, function* (api, scope) {
+        scope.otDoc[`${method}At`].rejects();
         const errored = sinon.stub();
-        yield api.field.setValue('VAL').catch(errored);
+        yield api.field[method](value).catch(errored);
         sinon.assert.calledWith(errored);
       });
-    });
+    }
   });
 
   describe('#entry', function () {

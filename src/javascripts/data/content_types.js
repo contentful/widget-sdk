@@ -122,6 +122,7 @@ angular.module('cf.data')
 
     result.name = data.name;
     result.sys = data.sys;
+    result.description = data.description;
     result.fields = _.map(data.fields, function (field) {
       var newField = _.assign({}, field);
 

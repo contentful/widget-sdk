@@ -44,7 +44,7 @@ angular.module('cf.app')
        * @name cfEntityField#fieldController.setInvalid
        * @description
        *
-       * @param {string} localeId
+       * @param {string} localeId Public locale code
        * @param {boolean} isInvalid
        */
       this.setInvalid = function (localeId, isInvalid) {

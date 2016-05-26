@@ -101,6 +101,23 @@ describe('data/ApiClient', function () {
       }));
     });
 
+    pit('getPublishedAssets(query)', function () {
+      return this.client.getPublishedAssets('QUERY')
+      .then(assertRequestResponse('DATA', {
+        method: 'GET',
+        url: '//api.test.local/spaces/SPACE/public/assets',
+        params: 'QUERY'
+      }));
+    });
+
+    pit('getPublishedEntries(query)', function () {
+      return this.client.getPublishedEntries('QUERY')
+      .then(assertRequestResponse('DATA', {
+        method: 'GET',
+        url: '//api.test.local/spaces/SPACE/public/entries',
+        params: 'QUERY'
+      }));
+    });
   });
 
   /**

@@ -41,6 +41,7 @@ function ($scope, $injector, entity) {
   var moment = $injector.get('moment');
   var TheLocaleStore = $injector.get('TheLocaleStore');
   var controller = this;
+  var diff = $injector.get('utils/StringDiff').diff;
 
   var shouldOpen = false;
 
@@ -53,6 +54,10 @@ function ($scope, $injector, entity) {
     },
     getValueAt: getValueAt,
     setValueAt: setValueAt,
+    /**
+     * TODO: Do not expose this and switch it's usage to setValueAt
+     */
+    setStringAt: setStringAt,
     removeValueAt: removeValueAt,
     open: open,
     close: close
@@ -103,6 +108,17 @@ function ($scope, $injector, entity) {
   }
 
   function setValueAt (path, value) {
+    var stringFieldTypes = ['Symbol', 'Text'];
+
+    if ($scope.field && _.includes(stringFieldTypes, $scope.field.type)) {
+      return setStringAt(path, value);
+    } else {
+      return _setValueAt(path, value);
+    }
+  }
+
+  function _setValueAt (path, value) {
+
     if (value === undefined) {
       return removeValueAt(path);
     }
@@ -121,6 +137,32 @@ function ($scope, $injector, entity) {
     }
   }
 
+  function setStringAt (path, newValue) {
+    var oldValue = getValueAt(path);
+
+    if (!oldValue || !newValue) {
+      // TODO Do not set this to null. Set it to undefined!
+      return _setValueAt(path, newValue || null);
+    } else if (oldValue === newValue) {
+      return $q.resolve(newValue);
+    } else {
+      var doc = controller.doc && controller.doc.at(path);
+      var patches = diff(oldValue, newValue);
+      var ops = patches.map(function (p) {
+        if (p.insert) {
+          return $q.denodeify(function (cb) {
+            doc.insert(p.insert[0], p.insert[1], cb);
+          });
+        } else if (p.delete) {
+          return $q.denodeify(function (cb) {
+            doc.del(p.delete[0], p.delete[1], cb);
+          });
+        }
+      });
+      return $q.all(ops);
+    }
+  }
+
   function removeValueAt (path) {
     return $q.denodeify(function (cb) {
       // We catch synchronous errors since they tell us that a
@@ -136,13 +178,11 @@ function ($scope, $injector, entity) {
 
   function open () {
     shouldOpen = true;
-
   }
 
   function close () {
     shouldOpen = false;
   }
-
 
   function shouldOpenDoc () {
     return ShareJS.isConnected() && shouldOpen;

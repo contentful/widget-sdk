@@ -377,6 +377,66 @@ describe('entityEditor/Document', function () {
       this.doc.setValueAt(['a', 'b'], 'VAL');
       expect(this.doc.getValueAt(['a', 'b'])).toBe('VAL');
     });
+
+    // Test setStringAt via setValueAt
+    // Not creating a new fixture for setStringAt since we will be making
+    // it private anyway.
+    it('calls setString for Text and Symbol widget types', function () {
+      var stringFieldTypes = ['Text', 'Symbol'];
+      var self = this;
+      var path = ['a', 'id'];
+
+      this.connectAndOpen();
+
+      stringFieldTypes.forEach((fieldType) => {
+
+        scope.field = {
+          id: 'id',
+          type: fieldType
+        };
+
+        // !old value path
+        self.doc.setValueAt(path, 'VAL');
+        expect(self.doc.getValueAt(path)).toBe('VAL');
+
+        // old value === new value code path
+        self.doc.setValueAt(path, 'VAL');
+        expect(self.doc.getValueAt(path)).toBe('VAL');
+
+        // insert code path
+        self.doc.setValueAt(path, 'VAIL');
+        expect(self.doc.getValueAt(path)).toBe('VAIL');
+
+        // delete code path
+        self.doc.setValueAt(path, 'VIL');
+        expect(self.doc.getValueAt(path)).toBe('VIL');
+
+        // insert multiple code path
+        self.doc.setValueAt(path, 'PILS');
+        expect(self.doc.getValueAt(path)).toBe('PILS');
+
+        // delete multiple code path
+        self.doc.setValueAt(path, 'S');
+        expect(self.doc.getValueAt(path)).toBe('S');
+      });
+
+      var doc = this.doc.doc.at(path);
+
+      // set initial value at path
+      this.doc.setValueAt(path, 'ABC');
+      expect(this.doc.getValueAt(path)).toBe('ABC');
+
+      doc.insert.reset();
+      doc.del.reset();
+
+      this.doc.setValueAt(path, 'ABCD');
+      sinon.assert.calledOnce(doc.insert);
+      sinon.assert.calledWith(doc.insert, 3, 'D');
+
+      this.doc.setValueAt(path, 'A');
+      sinon.assert.calledOnce(doc.del);
+      sinon.assert.calledWith(doc.del, 1, 3);
+    });
   });
 
   describe('#removeValueAt()', function () {

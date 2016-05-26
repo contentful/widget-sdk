@@ -16,6 +16,16 @@ angular.module('contentful')
  * @scope.requires {API.ContentType.Field} field
  */
 .directive('cfIframeWidget', ['$injector', function ($injector) {
+  var ERRORS = {
+    codes: {
+      EBADUPDATE: 'ENTRY UPDATE FAILED'
+    },
+    messages: {
+      MFAILUPDATE: 'Could not update entry field',
+      MFAILREMOVAL: 'Could not remove value for field'
+    }
+  };
+
   return {
     restrict: 'E',
     template: '<iframe style="width:100%" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe>',
@@ -37,8 +47,8 @@ angular.module('contentful')
       }, {});
 
       var widgetAPI = new WidgetAPI(
-        spaceContext.cma, fields, scope.entry.data,
-        {field: scope.field, locale: scope.locale}, iframe
+        spaceContext.cma, fields, scope.entry.data, scope.transformedContentTypeData,
+        {field: scope.field, locale: scope.locale, isDisabled: scope.fieldLocale.access.disabled}, iframe
       );
 
       scope.$on('$destroy', function () {
@@ -47,22 +57,42 @@ angular.module('contentful')
 
       widgetAPI.registerHandler('setValue', function (apiName, localeCode, value) {
         var path = widgetAPI.buildDocPath(apiName, localeCode);
+
         return scope.otDoc.setValueAt(path, value)
-        .catch(function (e) {
+        .catch(makeErrorHandler(ERRORS.codes.EBADUPDATE, ERRORS.messages.MFAILUPDATE));
+      });
+
+      widgetAPI.registerHandler('removeValue', function (apiName, localeCode) {
+        var path = widgetAPI.buildDocPath(apiName, localeCode);
+
+        return scope.otDoc.removeValueAt(path)
+        .catch(makeErrorHandler(ERRORS.codes.EBADUPDATE, ERRORS.messages.MFAILREMOVAL));
+      });
+
+      widgetAPI.registerHandler('setInvalid', function (isInvalid, localeCode) {
+        scope.fieldController.setInvalid(localeCode, isInvalid);
+      });
+
+      widgetAPI.registerHandler('setActive', function (isActive) {
+        scope.fieldLocale.setActive(isActive);
+      });
+
+      initializeIframe();
+
+      function makeErrorHandler (code, msg) {
+        return function (e) {
           if (e && e.message) {
             e = e.message;
           }
           return $q.reject({
-            code: 'ENTRY UPDATE FAILED',
-            message: 'Could not update entry field',
+            code: code,
+            message: msg,
             data: {
               shareJSCode: e
             }
           });
-        });
-      });
-
-      initializeIframe();
+        };
+      }
 
       function initializeIframe () {
         iframe.addEventListener('load', function () {
@@ -93,6 +123,16 @@ angular.module('contentful')
           updateWidgetValue(doc, path[1], path[2]);
         });
       });
+
+      // Send a message when the disabled status of the field changes
+      scope.$watch(isEditingDisabled, function (isDisabled) {
+        widgetAPI.send('isDisabledChanged', [isDisabled]);
+      });
+
+      // Retrieve whether field is disabled or not
+      function isEditingDisabled () {
+        return scope.fieldLocale.access.disabled;
+      }
 
       /**
        * Retrieves the field value at the given path from the document
