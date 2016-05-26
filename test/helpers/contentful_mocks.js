@@ -27,20 +27,20 @@ function ($delegate, mock) {
 }])
 
 .factory('TestingAdapter', function ($q) {
-  function Adapter() {
+  function Adapter () {
     this.requests = [];
   }
 
   Adapter.prototype = {
     requests: null, // initialized in constructor
 
-    request: function(options) {
+    request: function (options) {
       var self = this;
       var deferred = $q.defer();
       self.requests.push({
         options: options,
         resolve: _.bind(deferred.resolve, deferred),
-        reject:  _.bind(deferred.reject , deferred)
+        reject: _.bind(deferred.reject, deferred)
       });
       return deferred.promise;
     },
@@ -50,7 +50,7 @@ function ($delegate, mock) {
       req.resolve(value);
     },
 
-    resolveLast: function(value) {
+    resolveLast: function (value) {
       var req = this.requests.pop();
       this.requests.length = 0;
       req.resolve(value);
@@ -61,7 +61,7 @@ function ($delegate, mock) {
       req.reject(error);
     },
 
-    rejectLast: function(value) {
+    rejectLast: function (value) {
       var req = this.requests.pop();
       this.requests.length = 0;
       req.resolve(value);
@@ -72,10 +72,10 @@ function ($delegate, mock) {
 })
 
 .factory('cfStub', function ($injector) {
-  var $rootScope       = $injector.get('$rootScope');
-  var spaceContext     = $injector.get('spaceContext');
+  var $rootScope = $injector.get('$rootScope');
+  var spaceContext = $injector.get('spaceContext');
   var contentfulClient = $injector.get('privateContentfulClient');
-  var Adapter          = $injector.get('TestingAdapter');
+  var Adapter = $injector.get('TestingAdapter');
 
   var Client = contentfulClient.Client;
   var adapter = new Adapter();
@@ -105,7 +105,7 @@ function ($delegate, mock) {
     var client = new Client(adapter);
     var testSpace;
     client.getSpace(id)
-    .then(function(space) {
+    .then(function (space) {
       testSpace = space;
     });
     adapter.resolveLast(_.merge({
@@ -169,7 +169,7 @@ function ($delegate, mock) {
   cfStub.contentType = function (space, id, name, fields, extraData) {
     var contentType;
     space.getContentType(id)
-    .then(function(res){
+    .then(function (res) {
       contentType = res;
     });
     var data = cfStub.contentTypeData(id, fields, {
@@ -226,7 +226,7 @@ function ($delegate, mock) {
       sys: {
         id: id,
         type: 'Asset',
-        version: 1,
+        version: 1
       },
       fields: _.merge({
         title: '',
@@ -248,7 +248,7 @@ function ($delegate, mock) {
       sys: {
         id: id,
         version: 1,
-        type: 'ApiKey',
+        type: 'ApiKey'
       }
     }, extraData || {}));
     $rootScope.$apply();
@@ -266,12 +266,12 @@ function ($delegate, mock) {
 })
 
 .config(['$provide', function ($provide) {
-  $provide.value('$exceptionHandler', function(e){
+  $provide.value('$exceptionHandler', function (e) {
     throw e;
   });
 
   $provide.decorator('ShareJS', ['$delegate', function ($delegate) {
-    function FakeShareJSDoc(entity) {
+    function FakeShareJSDoc (entity) {
       this.entity = entity;
       this.snapshot = angular.copy(entity.data);
       if (this.snapshot && this.snapshot.sys) delete this.snapshot.sys.version;
@@ -280,14 +280,13 @@ function ($delegate, mock) {
 
     FakeShareJSDoc.prototype = {
       removeListener: angular.noop,
-      //addListener: angular.noop,
       on: angular.noop
     };
 
     return _.defaults({
       _noMock: $delegate,
       open: function (entity, callback) {
-      _.defer(callback, null, new FakeShareJSDoc(entity));
+        _.defer(callback, null, new FakeShareJSDoc(entity));
       },
       isConnected: _.constant(true)
     }, $delegate);
@@ -300,34 +299,34 @@ function ($delegate, mock) {
     return $delegate;
   }]);
 
-  $provide.provider('realLogger', function(loggerProvider){
+  $provide.provider('realLogger', function (loggerProvider) {
     return loggerProvider;
   });
 
-  $provide.provider('realNotification', function(notificationProvider){
+  $provide.provider('realNotification', function (notificationProvider) {
     return notificationProvider;
   });
 
-  $provide.factory('logger', function(){
+  $provide.factory('logger', function () {
     return {
-      enable:           sinon.stub(),
-      disable:          sinon.stub(),
-      logException:     sinon.stub(),
-      logError:         sinon.stub(),
-      logServerError:   sinon.stub(),
-      logServerWarn:    sinon.stub(),
-      logSharejsError:  sinon.stub(),
-      logSharejsWarn:   sinon.stub(),
-      logWarn:          sinon.stub(),
-      log:              sinon.stub()
+      enable: sinon.stub(),
+      disable: sinon.stub(),
+      logException: sinon.stub(),
+      logError: sinon.stub(),
+      logServerError: sinon.stub(),
+      logServerWarn: sinon.stub(),
+      logSharejsError: sinon.stub(),
+      logSharejsWarn: sinon.stub(),
+      logWarn: sinon.stub(),
+      log: sinon.stub()
     };
   });
 
-  $provide.factory('notification', function(){
+  $provide.factory('notification', function () {
     return {
       error: sinon.stub(),
-      warn:  sinon.stub(),
-      info:  sinon.stub(),
+      warn: sinon.stub(),
+      info: sinon.stub()
     };
   });
 
@@ -336,34 +335,31 @@ function ($delegate, mock) {
 .config(function ($provide) {
   $provide.value('debounce', immediateInvocationStub);
   $provide.value('throttle', immediateInvocationStub);
-  $provide.value('defer',    noDeferStub);
-  $provide.value('delay',    noDelayStub);
+  $provide.value('defer', noDeferStub);
+  $provide.value('delay', noDelayStub);
   $provide.constant('noDeferStub', noDeferStub);
   $provide.constant('noDelayStub', noDelayStub);
   $provide.constant('delayedInvocationStub', delayedInvocationStub);
   $provide.constant('immediateInvocationStub', immediateInvocationStub);
   $provide.constant('icons', {});
 
-  function noDeferStub(f) {
-    /*jshint validthis:true */
+  function noDeferStub (f) {
     var args = _.rest(arguments);
     f.apply(this, args);
   }
 
-  function noDelayStub(f/*, delay*/) {
-    /*jshint validthis:true */
+  function noDelayStub (f/*, delay*/) {
     var args = _.rest(arguments, 2);
     f.apply(this, args);
   }
 
-  function immediateInvocationStub(f) {
+  function immediateInvocationStub (f) {
     return f;
   }
 
   function delayedInvocationStub (originalFunction) {
     var result;
-    function delayedFunction() {
-      /*jshint validthis:true */
+    function delayedFunction () {
       delayedFunction.calls.push({
         thisArg: this,
         arguments: arguments
@@ -411,7 +407,7 @@ function ($delegate, mock) {
       return [_.extend({
         name: name,
         restrict: 'A',
-        priority: 0,
+        priority: 0
       }, definition)];
     });
   };
@@ -436,11 +432,13 @@ function ($delegate, mock) {
   };
 
   $provide.stubFilter = function (filterName, returnValue) {
-    $provide.value(filterName+'Filter', function () {return returnValue || '';});
+    $provide.value(filterName + 'Filter', function () { return returnValue || ''; });
   };
 
-  $provide.makeStubs = function makeStubs(stubList) {
-    if(!_.isArray(stubList)) stubList = _.flatten(arguments);
+  $provide.makeStubs = function makeStubs (stubList) {
+    if (!_.isArray(stubList)) {
+      stubList = _.flatten(arguments);
+    }
     var stubs = {};
     _.each(stubList, function (val) {
       stubs[val] = sinon.stub();
