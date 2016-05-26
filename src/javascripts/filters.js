@@ -29,7 +29,9 @@ filters.filter('fileSize', function () {
       i++;
     } while (fileSizeInBytes > 1024);
 
-    return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
+    var size = Math.max(fileSizeInBytes, 0.1);
+    var fixed = Math.round(size) < 100 ? 1 : 0;
+    return size.toFixed(fixed) + byteUnits[i];
   };
 });
 
