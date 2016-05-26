@@ -1,7 +1,7 @@
 'use strict';
 
 describe('ApiNameController', function () {
-  beforeEach(module('contentful'));
+  beforeEach(module('contentful/test'));
 
   beforeEach(function () {
     var $controller = this.$inject('$controller');

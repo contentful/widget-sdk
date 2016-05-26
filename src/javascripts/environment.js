@@ -11,15 +11,6 @@
  */
 angular.module('contentful/environment', [])
 .constant('environment', (function () {
-  // Mainly used for test which do not have 'window.CF_CONFIG' set.
-  var DEFAULT_SETTINGS = {
-    main_domain: 'contentful.com',
-    filepicker: {},
-    aviary: {},
-    google: {},
-    contentful: {}
-  };
-
   /**
    *
    * @ngdoc property
@@ -36,7 +27,7 @@ angular.module('contentful/environment', [])
   var env = window.CF_ENV ? window.CF_ENV : 'development';
 
   var isDev = env === 'development';
-  var settings = _.extend(DEFAULT_SETTINGS, window.CF_CONFIG);
+  var settings = window.CF_CONFIG || {};
   var gitRevision = window.CF_UI_VERSION;
 
   _.extend(settings, {
