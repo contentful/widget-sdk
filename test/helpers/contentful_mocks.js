@@ -181,16 +181,6 @@ function ($delegate, mock) {
     return contentType;
   };
 
-  cfStub.field = function (id, extraData) {
-    return _.extend({
-      'id': id,
-      'name': id,
-      'required': false,
-      'localized': true,
-      'type': 'Text'
-    }, extraData || {});
-  };
-
   cfStub.entry = function (space, id, contentTypeId, fields, extraData) {
     fields = fields || {};
     var entry;
@@ -236,30 +226,6 @@ function ($delegate, mock) {
     }, extraData || {}));
     $rootScope.$apply();
     return asset;
-  };
-
-  cfStub.apiKey = function (space, id, name, extraData) {
-    var apiKey;
-    space.getDeliveryApiKey(id).then(function (res) {
-      apiKey = res;
-    });
-    adapter.resolveLast(_.merge({
-      name: name,
-      sys: {
-        id: id,
-        version: 1,
-        type: 'ApiKey'
-      }
-    }, extraData || {}));
-    $rootScope.$apply();
-    return apiKey;
-  };
-
-  cfStub.collection = function (items, total) {
-    if (_.isNumber(items)) items = new Array(items);
-    total = total === undefined ? items.length : total;
-    Object.defineProperty(items, 'total', {value: total});
-    return items;
   };
 
   return cfStub;
