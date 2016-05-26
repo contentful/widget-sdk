@@ -65,7 +65,8 @@ angular.module('contentful/environment', [])
   return {
     env: env,
     settings: settings,
-    gitRevision: gitRevision
+    gitRevision: gitRevision,
+    manifest: window.CF_MANIFEST || {}
   };
 
   function makeResourceUrlList (hosts) {
