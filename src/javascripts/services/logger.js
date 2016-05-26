@@ -168,10 +168,11 @@ angular.module('contentful')
      * @param {Object} metaData.data  Additional data (other objects). Shows up on the bugsnag data tab.
      */
     logException: function (exception, metaData) {
+      var augmentedMetadata = augmentMetadata(metaData);
       if (environment.env !== 'production' && environment.env !== 'unittest') {
-        console.error(exception);
+        console.error(exception, augmentedMetadata);
       }
-      bugsnag.notifyException(exception, null, augmentMetadata(metaData), 'error');
+      bugsnag.notifyException(exception, null, augmentedMetadata, 'error');
     },
 
     /**
@@ -310,27 +311,28 @@ angular.module('contentful')
      * Additional info to show in bugsnag. Each key creates a tab that
      * displays the corresponding value.
     */
-    _log: function (type, severity, message, metaData) {
-      metaData = metaData || {};
-      metaData.groupingHash = metaData.groupingHash || message;
+    _log: function (type, severity, message, metadata) {
+      metadata = metadata || {};
+      metadata.groupingHash = metadata.groupingHash || message;
+      var augmentedMetadata = augmentMetadata(metadata);
       if (environment.env !== 'production' && environment.env !== 'unittest') {
-        logToConsole(type, severity, message);
+        logToConsole(type, severity, message, augmentedMetadata);
       }
-      bugsnag.notify(type, message, augmentMetadata(metaData), severity);
+      bugsnag.notify(type, message, augmentedMetadata, severity);
     }
   };
 
-  function logToConsole (type, severity, message) {
+  function logToConsole (type, severity, message, metadata) {
     message = type + ': ' + message;
     switch (severity) {
       case 'error':
-        console.error(message);
+        console.error(message, metadata);
         break;
       case 'warning':
-        console.warn(message);
+        console.warn(message, metadata);
         break;
       default:
-        console.log(message);
+        console.log(message, metadata);
     }
   }
 }]);
