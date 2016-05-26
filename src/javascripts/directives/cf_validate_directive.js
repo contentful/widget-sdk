@@ -59,8 +59,9 @@ function ValidationController ($scope, $attrs, $timeout) {
     var data = getData();
     var errors = $scope.schema.errors(data);
 
-    if (_.isUndefined(errors))
+    if (_.isUndefined(errors)) {
       return this.valid;
+    }
 
     if (path) {
       var matchesPath = errorPathMatcher(path, parent);
@@ -100,7 +101,7 @@ function ValidationController ($scope, $attrs, $timeout) {
   controller.setErrors = function (errors) {
     $scope.validationResult = makeValidationResult(errors, getData(), $scope.schema);
     this.errors = $scope.validationResult.errors;
-    this.valid  = _.isEmpty(this.errors);
+    this.valid = _.isEmpty(this.errors);
   };
   // TODO deprecated
   $scope.setValidationErrors = _.bind(controller.setErrors, controller);
@@ -120,14 +121,14 @@ function ValidationController ($scope, $attrs, $timeout) {
   };
 
 
-  function getData() {
+  function getData () {
     return $scope.$eval($attrs.cfValidate);
   }
 
   function makeValidationResult (errors, data, schema) {
     errors = _.filter(errors, function (error) {
       if (error && error.path) {
-        return error.path[error.path.length - 1] != '$$hashKey';
+        return error.path[error.path.length - 1] !== '$$hashKey';
       } else {
         return true;
       }
@@ -144,14 +145,14 @@ function ValidationController ($scope, $attrs, $timeout) {
       data: data,
       schema: schema,
       errors: errors,
-      valid:  valid,
+      valid: valid,
       // This is not used currently
       errorTree: makeTree(errors)
     };
   }
 
 
-  function makeTree(xs, dataProperty) {
+  function makeTree (xs, dataProperty) {
     dataProperty = dataProperty || '$data';
     var root = {};
     _.forEach(xs, function (x) {
@@ -165,27 +166,30 @@ function ValidationController ($scope, $attrs, $timeout) {
     return root;
   }
 
-  function errorPathMatcher(path, parent) {
+  function errorPathMatcher (path, parent) {
     return function (error) {
       return matchesPath(path, error.path, parent);
     };
   }
 
-  function normalizePath(path) {
-    if (typeof path === 'undefined' || path === null)
+  function normalizePath (path) {
+    if (typeof path === 'undefined' || path === null) {
       return [];
-    if (typeof path === 'string')
+    }
+    if (typeof path === 'string') {
       return path ? path.split('.') : [];
-    else if (Array.isArray(path))
-      return _.map(path, function (path) {return path.toString(); });
-    else
+    } else if (Array.isArray(path)) {
+      return _.map(path, function (path) { return path.toString(); });
+    } else {
       throw new TypeError('Path is not an array or dot-separated strings');
+    }
   }
 
-  function matchesPath(pattern, target, parent) {
+  function matchesPath (pattern, target, parent) {
     pattern = normalizePath(pattern);
-    if (parent === true)
+    if (parent === true) {
       pattern.push('*');
+    }
 
     target = normalizePath(target);
 

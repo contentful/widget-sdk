@@ -65,7 +65,6 @@ test/unit/classes/entity_cache_spec.js
 test/unit/classes/entity_state_manager_spec.js
 test/unit/classes/space_context_spec.js
 test/unit/directives/cf_copy_to_clipboard_directive_spec.js
-test/unit/directives/cf_validate_directive_spec.js
 test/unit/forms/cf_null_empty_input_spec.js
 test/unit/forms/cf_validate_form_spec.js
 test/unit/forms/cf_validate_model_spec.js
@@ -125,15 +124,12 @@ test/unit/widgets/deprecations_spec.js
 test/unit/widgets/migrations_spec.js
 test/unit/widgets/store_spec.js
 test/unit/widgets/widgets_spec.js
-test/unit/app/asset_editor/asset_editor_controller_spec.js
 test/unit/app/entity_editor/cf_widget_renderer_directive_spec.js
 test/unit/app/entity_editor/locales_controller_spec.js
 test/unit/app/entity_editor/state_controller_spec.js
 test/unit/app/entity_editor/status_notifications_controller_spec.js
 test/unit/app/entry_editor/entry_actions_controller_spec.js
-test/unit/app/entry_editor/entry_editor_controller_spec.js
 test/unit/app/entry_editor/entry_reverter_spec.js
-test/unit/app/entry_editor/form_widgets_controller_spec.js
 test/unit/data/content_types_spec.js
 test/unit/data/editing_interfaces/transformer_spec.js
 test/unit/data/editing_interfaces_spec.js
@@ -325,13 +321,10 @@ src/javascripts/components/notifications/cf_notifications_directive.js
 src/javascripts/components/notifications/index.js
 src/javascripts/app/asset_editor/asset_editor_directive.js
 src/javascripts/app/asset_editor/notifications.js
-src/javascripts/app/asset_editor/asset_editor_controller.js
 src/javascripts/app/entry_editor/entry_editor_directive.js
 src/javascripts/app/entry_editor/notifications.js
 src/javascripts/app/entry_editor/entry_actions_controller.js
-src/javascripts/app/entry_editor/entry_editor_controller.js
 src/javascripts/app/entry_editor/entry_reverter.js
-src/javascripts/app/entry_editor/form_widgets_controller.js
 src/javascripts/app/entity_editor/cf_widget_renderer_directive.js
 src/javascripts/app/entity_editor/locales_controller.js
 src/javascripts/app/entity_editor/sidebar_widgets_controller.js
@@ -367,7 +360,6 @@ src/javascripts/directives/cf_focus_watched_expression_directive.js
 src/javascripts/directives/cf_on_blur_component.js
 src/javascripts/directives/cf_relative_datetime.js
 src/javascripts/directives/cf_select_all_input.js
-src/javascripts/directives/cf_validate_directive.js
 src/javascripts/directives/tooltip_directive.js
 src/javascripts/directives/cf_custom_logo_directive.js
 src/javascripts/directives/cf_schema_directives.js

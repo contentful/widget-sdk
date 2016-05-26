@@ -1,17 +1,17 @@
 'use strict';
 
 angular.module('contentful')
-.controller('AssetEditorController', ['$scope', '$injector', function AssetEditorController($scope, $injector) {
-  var $controller       = $injector.get('$controller');
-  var ShareJS           = $injector.get('ShareJS');
-  var TheLocaleStore    = $injector.get('TheLocaleStore');
-  var logger            = $injector.get('logger');
-  var notification      = $injector.get('notification');
-  var stringUtils       = $injector.get('stringUtils');
-  var notifier          = $injector.get('entryEditor/notifications');
-  var spaceContext      = $injector.get('spaceContext');
-  var truncate          = $injector.get('stringUtils').truncate;
-  var accessChecker     = $injector.get('accessChecker');
+.controller('AssetEditorController', ['$scope', '$injector', function AssetEditorController ($scope, $injector) {
+  var $controller = $injector.get('$controller');
+  var ShareJS = $injector.get('ShareJS');
+  var TheLocaleStore = $injector.get('TheLocaleStore');
+  var logger = $injector.get('logger');
+  var notification = $injector.get('notification');
+  var stringUtils = $injector.get('stringUtils');
+  var notifier = $injector.get('entryEditor/notifications');
+  var spaceContext = $injector.get('spaceContext');
+  var truncate = $injector.get('stringUtils').truncate;
+  var accessChecker = $injector.get('accessChecker');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
@@ -43,22 +43,23 @@ angular.module('contentful')
 
   $scope.$watch(function (scope) {
     if (scope.otDoc.doc && scope.asset) {
-      if (angular.isDefined(scope.asset.getPublishedVersion()))
+      if (angular.isDefined(scope.asset.getPublishedVersion())) {
         return scope.otDoc.doc.version > scope.asset.getPublishedVersion() + 1;
-      else
+      } else {
         return 'draft';
+      }
     } else {
       return undefined;
     }
-  }, function (modified, old, scope) {
-    if (modified !== undefined) scope.context.dirty = modified;
+  }, function (modified) {
+    if (modified !== undefined) $scope.context.dirty = modified;
   });
 
 
   // OT Stuff
-  $scope.$watch(function assetEditorDisabledWatcher(scope) {
+  $scope.$watch(function assetEditorDisabledWatcher (scope) {
     return scope.asset.isArchived() || isReadOnly();
-  }, function assetEditorDisabledHandler(disabled) {
+  }, function assetEditorDisabledHandler (disabled) {
     $scope.otDoc.state.disabled = disabled;
   });
 
@@ -88,10 +89,10 @@ angular.module('contentful')
       }
 
       if (error.path[0] !== 'fields') return;
-      var field      = error.path[1];
+      var field = error.path[1];
       $scope.errorPaths[field] = $scope.errorPaths[field] || [];
 
-      if (error.path.length == 2) {
+      if (error.path.length === 2) {
         $scope.errorPaths[field].push(TheLocaleStore.getDefaultLocale().internal_code);
       } else {
         var localeCode = error.path[2];
@@ -109,7 +110,7 @@ angular.module('contentful')
   });
 
   // File uploads
-  $scope.$on('fileUploaded', function (event, file, locale) {
+  $scope.$on('fileUploaded', function (_event, file, locale) {
     setTitleOnDoc(file, locale.internal_code);
     $scope.asset.process($scope.otDoc.doc.version, locale.internal_code)
     .catch(function (err) {
@@ -118,11 +119,11 @@ angular.module('contentful')
       logger.logServerWarn('There has been a problem processing the Asset.', {error: err});
     });
   });
-  function setTitleOnDoc(file, localeCode) {
+  function setTitleOnDoc (file, localeCode) {
     var doc = $scope.otDoc.doc;
     var otPath = ['fields', 'title', localeCode];
     var fileName = stringUtils.fileNameToTitle(file.fileName);
-    if(!ShareJS.peek(doc, otPath)) {
+    if (!ShareJS.peek(doc, otPath)) {
       ShareJS.mkpathAndSetValue(doc, otPath, fileName);
     }
   }
@@ -130,19 +131,19 @@ angular.module('contentful')
     if (file !== old) scope.validate();
   }, true);
 
-  function handlePublishError (error){
+  function handlePublishError (error) {
     var errorId = dotty.get(error, 'body.sys.id');
     if (errorId === 'ValidationFailed') {
       $scope.setValidationErrors(dotty.get(error, 'body.details.errors'));
       notify.publishValidationFail();
-    } else if (errorId === 'VersionMismatch'){
+    } else if (errorId === 'VersionMismatch') {
       notify.publishFail('Can only publish most recent version');
     } else {
       notify.publishServerFail(error);
     }
   }
 
-  function isReadOnly() {
+  function isReadOnly () {
     return !accessChecker.canUpdateAsset($scope.asset);
   }
 }]);
