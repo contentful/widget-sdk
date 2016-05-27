@@ -7,11 +7,6 @@ angular.module('contentful').directive('cfContentTypeEditor', ['$timeout', funct
     controller: 'ContentTypeEditorController',
     controllerAs: 'ctEditorController',
     link: function (scope, element) {
-
-      scope.dismissHint = function() {
-        scope.hintDismissed = true;
-      };
-
       var fieldList = element.find('[ng-model="contentType.data.fields"]');
       var scrollContainer = fieldList.scrollParent();
       scope.$on('fieldAdded', function () {

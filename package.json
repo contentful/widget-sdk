@@ -24,7 +24,6 @@
     "gulp-clean": "^0.3.1",
     "gulp-concat": "~2.4.2",
     "gulp-fingerprint": "git://github.com/contentful/gulp-fingerprint#sourcemaps",
-    "gulp-inject": "~1.0.2",
     "gulp-jade": "~0.10.0",
     "gulp-regex-replace": "~0.2.3",
     "gulp-rename": "^1.2.2",

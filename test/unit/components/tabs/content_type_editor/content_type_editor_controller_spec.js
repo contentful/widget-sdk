@@ -48,8 +48,8 @@ describe('ContentTypeEditor Controller', function () {
     };
   });
 
-  describe('on load, with no fields', function() {
-    beforeEach(function() {
+  describe('on load, with no fields', function () {
+    beforeEach(function () {
       scope.validate = sinon.stub();
       createContentType();
     });
@@ -58,11 +58,11 @@ describe('ContentTypeEditor Controller', function () {
       expect(scope.contentType).toEqual(contentType);
     });
 
-    it('has no title field', function() {
+    it('has no title field', function () {
       expect(scope.contentType.data.displayField).toBeUndefined();
     });
 
-    it('fires no initial validation', function() {
+    it('fires no initial validation', function () {
       sinon.assert.notCalled(scope.validate);
     });
 
@@ -76,15 +76,15 @@ describe('ContentTypeEditor Controller', function () {
       expect(scope.hasFields).toBeTruthy();
     });
 
-    describe('uses first added text field as title', function() {
-      it('ignores non-text fields', function() {
+    describe('uses first added text field as title', function () {
+      it('ignores non-text fields', function () {
         scope.contentType.data.fields.push({id: 1, type: 'Number'});
         scope.$digest();
         expect(scope.contentType.data.displayField).toBeUndefined();
       });
 
-      ['Symbol', 'Text'].forEach(function(type) {
-        it('catches up "' + type + '" fields', function() {
+      ['Symbol', 'Text'].forEach(function (type) {
+        it('catches up "' + type + '" fields', function () {
           var id = type + '_field';
           scope.contentType.data.fields.push({id: id, type: type});
           scope.$digest();
@@ -93,8 +93,8 @@ describe('ContentTypeEditor Controller', function () {
       });
     });
 
-    describe('tries to select title field when current is deleted', function() {
-      it('clears "displayField" property when no field was found', function() {
+    describe('tries to select title field when current is deleted', function () {
+      it('clears "displayField" property when no field was found', function () {
         var data = scope.contentType.data;
         data.fields.push({id: 1, type: 'Text'});
         scope.$digest();
@@ -104,7 +104,7 @@ describe('ContentTypeEditor Controller', function () {
         expect(data.displayField).toBeUndefined();
       });
 
-      it('gets the next one when available', function() {
+      it('gets the next one when available', function () {
         var data = scope.contentType.data;
         data.fields.push({id: 1, type: 'Text'});
         scope.$digest();
@@ -117,28 +117,28 @@ describe('ContentTypeEditor Controller', function () {
       });
     });
 
-    it('doesn\'t try to set the form to dirty', function() {
+    it('doesn\'t try to set the form to dirty', function () {
       sinon.assert.notCalled(scope.contentTypeForm.$setDirty);
     });
 
-    describe('sets the form to dirty if fields change', function() {
-      beforeEach(function() {
+    describe('sets the form to dirty if fields change', function () {
+      beforeEach(function () {
         scope.contentType.data.fields.push({});
         scope.$digest();
       });
 
-      it('when a new field is added', function() {
+      it('when a new field is added', function () {
         sinon.assert.called(scope.contentTypeForm.$setDirty);
       });
 
-      it('when an existing field is changed', function() {
+      it('when an existing field is changed', function () {
         scope.contentType.data.fields[0].required = true;
         scope.$digest();
         sinon.assert.calledTwice(scope.contentTypeForm.$setDirty);
       });
     });
 
-    it('sets the form to dirty if displayField changes', function() {
+    it('sets the form to dirty if displayField changes', function () {
       scope.contentType.data.displayField = 'something';
       scope.$digest();
       sinon.assert.called(scope.contentTypeForm.$setDirty);
@@ -170,8 +170,8 @@ describe('ContentTypeEditor Controller', function () {
 
   });
 
-  describe('on load, with fields', function() {
-    beforeEach(function() {
+  describe('on load, with fields', function () {
+    beforeEach(function () {
       createContentType([{}]);
     });
 
@@ -184,10 +184,10 @@ describe('ContentTypeEditor Controller', function () {
     });
   });
 
-  describe('#showNewFieldDialog command', function() {
+  describe('#showNewFieldDialog command', function () {
     var syncControls;
 
-    beforeEach(function() {
+    beforeEach(function () {
       var spaceContext = this.$inject('spaceContext');
       syncControls = sinon.stub();
       spaceContext.editingInterfaces = {syncControls: syncControls};
@@ -200,11 +200,11 @@ describe('ContentTypeEditor Controller', function () {
       scope.showNewFieldDialog.execute();
     });
 
-    it('opens dialog', function() {
+    it('opens dialog', function () {
       sinon.assert.called(this.modalDialogOpenStub);
     });
 
-    it('adds field to content type', function() {
+    it('adds field to content type', function () {
       expect(scope.contentType.data.fields[0]).toBeUndefined();
       this.$apply();
       expect(scope.contentType.data.fields[0]).toBeDefined();
@@ -332,15 +332,15 @@ describe('ContentTypeEditor Controller', function () {
     });
   });
 
-  describe('#showMetadataDialog command', function() {
+  describe('#showMetadataDialog command', function () {
     var openEditDialog;
-    beforeEach(function() {
+    beforeEach(function () {
       var metadataDialog = this.$inject('contentTypeEditor/metadataDialog');
       openEditDialog = metadataDialog.openEditDialog = sinon.stub();
       createContentType();
     });
 
-    it('opens the edit metadata dialog', function() {
+    it('opens the edit metadata dialog', function () {
       openEditDialog.resolves({});
       scope.showMetadataDialog.execute();
       sinon.assert.calledOnce(openEditDialog);

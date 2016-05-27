@@ -318,4 +318,17 @@ describe('cfWidgetApi directive', function () {
       sinon.assert.calledWithExactly(cb, false);
     });
   });
+
+  describe('#onSchemaErrorsChanged()', function () {
+    it('emits errors when "fieldLocale.errors" changes', function () {
+      var cb = sinon.spy();
+      this.widgetApi.field.onSchemaErrorsChanged(cb);
+      cb.reset();
+
+      this.scope.fieldLocale.errors = 'ERRORS';
+      this.$apply();
+      sinon.assert.calledOnce(cb);
+      sinon.assert.calledWithExactly(cb, 'ERRORS');
+    });
+  });
 });

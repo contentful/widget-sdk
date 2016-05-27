@@ -12,24 +12,22 @@ describe('cfSingleLineEditor directive', function () {
       }
     });
 
+    this.fieldApi = widgetApi.field;
     this.setString = widgetApi.field.setString;
 
     this.compileElement = function (validations, fieldType) {
       widgetApi.field.validations = validations;
       widgetApi.field.type = fieldType;
 
-      var el = this.$compile('<cf-single-line-editor>', {}, {
+      return this.$compile('<cf-single-line-editor>', {}, {
         cfWidgetApi: widgetApi
       });
-
-      return el;
     };
 
     this.dispatchValue = function (value) {
       widgetApi.field.onValueChanged.yield(value);
       this.$apply();
     };
-
   });
 
   it('updates correctly when value change is indicated by sharejs', function () {
@@ -47,7 +45,6 @@ describe('cfSingleLineEditor directive', function () {
   });
 
   it('counts characters correctly', function () {
-
     var testData = [
       {input: 'Test', expected: '4 characters'},
       {input: 'A  sentence with lots of  spaces', expected: '32 characters'},
@@ -61,7 +58,6 @@ describe('cfSingleLineEditor directive', function () {
       this.dispatchValue(data.input);
       expect($el.text()).toBe(data.expected);
     }, this);
-
   });
 
   it('displays validation hints', function () {
@@ -128,4 +124,14 @@ describe('cfSingleLineEditor directive', function () {
     expect(elem.text()).toMatch('Requires less than 50 characters');
   });
 
+  it('sets input to invalid when there are schema errors', function () {
+    var input = this.compileElement().find('input');
+
+    this.fieldApi.onSchemaErrorsChanged.yield(null);
+    this.$apply();
+    expect(input.attr('aria-invalid')).toBe('');
+    this.fieldApi.onSchemaErrorsChanged.yield([{}]);
+    this.$apply();
+    expect(input.attr('aria-invalid')).toBe('true');
+  });
 });

@@ -30,6 +30,7 @@ angular.module('contentful')
 
   var valueChangedSignal = newSignal($scope.otSubDoc.getValue());
   var isDisabledSignal = newSignal(isEditingDisabled());
+  var schemaErrorsSignal = newSignal(null);
   var ctField = $scope.widget.field;
 
   $scope.$on('otValueChanged', createValueChangedSignalDispatcher());
@@ -40,6 +41,9 @@ angular.module('contentful')
     isDisabledSignal.dispatch(value);
   });
 
+  $scope.$watch('fieldLocale.errors', function (errors) {
+    schemaErrorsSignal.dispatch(errors);
+  });
 
   // TODO: consolidate entity data at one place instead of
   // splitting it across a sharejs doc as well as global
@@ -76,6 +80,7 @@ angular.module('contentful')
   this.field = {
     onValueChanged: valueChangedSignal.attach,
     onDisabledStatusChanged: isDisabledSignal.attach,
+    onSchemaErrorsChanged: schemaErrorsSignal.attach,
     getValue: getValue,
     setValue: createSetter('changeValue'),
     setString: createSetter('changeString'),

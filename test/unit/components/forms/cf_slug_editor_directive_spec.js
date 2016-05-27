@@ -181,6 +181,7 @@ describe('SlugEditor directive', function () {
       this.title.onValueChanged.yield('New Title');
       this.$apply();
       expect(scope.state).toEqual('duplicate');
+      expect($inputEl.attr('aria-invalid')).toEqual('true');
     });
 
     it('is "checking" when the query has not been resolved', function () {

@@ -16,13 +16,14 @@ describe('Filepicker service', function () {
           google: {
             maps_api_key: 'google'
           }
-        }
+        },
+        manifest: {}
       });
     });
 
-    var $q          = this.$inject('$q');
-    var LazyLoader  = this.$inject('LazyLoader');
-    $rootScope      = this.$inject('$rootScope');
+    var $q = this.$inject('$q');
+    var LazyLoader = this.$inject('LazyLoader');
+    $rootScope = this.$inject('$rootScope');
 
     LazyLoader.get = function () {
       return $q.resolve({
@@ -36,6 +37,10 @@ describe('Filepicker service', function () {
     filepicker = this.$inject('filepicker');
 
     $rootScope.$apply();
+  });
+
+  afterEach(function () {
+    filepicker = makeDropPaneStub = pickStub = storeStub = $rootScope = null;
   });
 
   it('filepicker service exists', function () {
@@ -76,18 +81,18 @@ describe('Filepicker service', function () {
       expect(makeDropPaneStub.args[0][1].signature).toBe('signature');
     });
 
-    it('has an extra option', function() {
+    it('has an extra option', function () {
       expect(makeDropPaneStub.args[0][1].extraoption).toBe('extra');
     });
 
-    it('extra option disappears if called again', function() {
+    it('extra option disappears if called again', function () {
       this.callMakeDropPane(myDropPane, {});
       expect(makeDropPaneStub.args[1][1].extraoption).toBeUndefined();
     });
 
   });
 
-  describe('pick is called', function () {    
+  describe('pick is called', function () {
     it('returns a file', function () {
       var successStub = sinon.stub();
       var file = {file: 'name'};
@@ -102,13 +107,13 @@ describe('Filepicker service', function () {
       var errorStub = sinon.stub();
       var error = new Error('fileerror');
       pickStub.callsArgWith(2, error);
-      filepicker.pick().catch(errorStub).finally(function() {
+      filepicker.pick().catch(errorStub).finally(function () {
         $rootScope.$apply();
         sinon.assert.calledWith(errorStub, error);
       });
     });
 
-    it('has no extra option if passed previously', function() {
+    it('has no extra option if passed previously', function () {
       filepicker.makeDropPane({}, {extraoption: 'extra'});
       filepicker.pick();
       $rootScope.$apply();
@@ -117,7 +122,7 @@ describe('Filepicker service', function () {
 
   });
 
-  describe('store is called', function() {
+  describe('store is called', function () {
 
     it('returns a file', function () {
       var successStub = sinon.stub();
@@ -145,7 +150,7 @@ describe('Filepicker service', function () {
       });
     });
 
-    it('has no extra option if passed previously', function() {
+    it('has no extra option if passed previously', function () {
       filepicker.makeDropPane({}, {extraoption: 'extra'});
       filepicker.store('', {details: {}});
       $rootScope.$apply();

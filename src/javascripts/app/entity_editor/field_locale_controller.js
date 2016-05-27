@@ -30,6 +30,7 @@ angular.module('contentful')
 
   // Values for controller.access
   var DENIED = {denied: true, disabled: true};
+  var EDITING_DISABLED = {editing_disabled: true, disabled: true};
   var EDITABLE = {editable: true};
   var DISCONNECTED = {disconnected: true, disabled: true};
 
@@ -106,7 +107,7 @@ angular.module('contentful')
    * @name FieldLocaleController#access
    * @type {object}
    * @description
-   * Information about the acces to the current field locale.
+   * Information about the access to the current field locale.
    *
    * The object has a number of boolean properties that are set
    * according to the connection state and editing permissions. See
@@ -119,6 +120,15 @@ angular.module('contentful')
    * @description
    * True if there is no connction to ShareJS or if the user does not
    * have permissions to the edit the field locale.
+   */
+  /**
+   * @ngdoc property
+   * @name FieldLocaleController#access.editing_disabled
+   * @type {boolean}
+   * @description
+   * True if the field is disabled on a content type level.
+   *
+   * Implies `access.disabled === true`.
    */
   /**
    * @ngdoc property
@@ -143,7 +153,9 @@ angular.module('contentful')
   $scope.$watchGroup(['otDoc.state.editable', hasEditingPermission], function (access) {
     var docOpen = access[0];
     var editingAllowed = access[1];
-    if (!editingAllowed) {
+    if (field.disabled) {
+      controller.access = EDITING_DISABLED;
+    } else if (!editingAllowed) {
       controller.access = DENIED;
     } else if (docOpen) {
       controller.access = EDITABLE;

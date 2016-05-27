@@ -38,6 +38,16 @@ Styleguide entry-editor-controls.input
 */
 
 
+$entry-editor__input-border()
+  // Set both properties to fix some browser inconsistencies
+  border-width: 0 0 1px 0
+  border-style: solid
+  border-color: transparent
+  border-image-width: 0 0 1px 0
+  border-image-source: url("/app/svg/dotted-border.svg")
+  border-image-repeat: round
+  border-image-slice: 1 1
+
 // Common base for <input> and <textarea>
 $entry-editor__input-base()
   font-size: 16px
@@ -49,15 +59,11 @@ $entry-editor__input-base()
   line-height: 1.5
   outline: 0
   padding: 0 2px
-  background: none
-  // Set both properties to fix some browser inconsistencies
-  border-width: 0 0 1px 0
-  border-style: solid
-  border-color: transparent
-  border-image-width: 0 0 1px 0
-  border-image-source: url("/app/svg/dotted-border.svg")
-  border-image-repeat: round
-  border-image-slice: 1 1
+  background: transparent
+  $entry-editor__input-border()
+
+  transition: 0.2s linear
+  transition-property: padding, background-color
 
   &[aria-invalid="true"]
     background: #FFF2F1

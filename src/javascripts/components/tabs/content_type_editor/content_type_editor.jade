@@ -33,19 +33,14 @@ header.workbench-header
 
 
 .workbench-main
-  cf-ui-hint.ct-max-fields-advice.note-box.note-box--blue(
-    name="ct-field-max"
-    ng-if="!hintDismissed")
-    cf-icon(name="info")
-    div
-      .ct-max-fields-advice__text Keep in mind that the maximum number of fields per Content Type is 50.
-      a.ct-max-fields-advice__dismiss.cfnext-btn-link(ng-click="dismissHint()") Dismiss
   form.workbench-main__right-content(name="contentTypeForm")
     div(ui-tabpanel="json")
       cf-content-type-preview.u-bce
 
-    div(ui-tabpanel="fields")
+    .content-type-tab(ui-tabpanel="fields")
       .content-type-fields(ng-if="hasFields")
         include ./content_type_field_list
+      .content-type-hints(ng-if="hasFields && !settingsHintShown")
+        include ./content_type_field_hints
       .content-type-fields(ng-if="!hasFields")
         include ./content_type_field_list_empty
