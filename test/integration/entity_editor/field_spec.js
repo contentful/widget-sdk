@@ -1,12 +1,22 @@
 'use strict';
 
-describe('cfEntityField directive integration', function () {
+/**
+ * Tests the integration of
+ * - cfEntityField directive
+ * - FieldLocale controller
+ * - FieldControls/Focus
+ *
+ * Does not render the widget.
+ */
+describe('entity editor field integration', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
       $provide.removeDirectives('otPath', 'cfWidgetApi', 'cfWidgetRenderer');
     });
+
+    var Focus = this.$inject('FieldControls/Focus');
 
     var TheLocaleStore = this.$inject('TheLocaleStore');
     this.setLocales = TheLocaleStore.setLocales;
@@ -29,11 +39,16 @@ describe('cfEntityField directive integration', function () {
     };
 
     this.compile = function () {
-      return this.$compile('<cf-entity-field>', {
+      this.focus = Focus.create();
+      var el = this.$compile('<cf-entity-field>', {
         widget: this.widget,
         validator: this.validator,
+        focus: this.focus,
         entry: {}
       });
+      el.fieldController = el.scope().fieldController;
+      el.field = el.find('[data-test-id="entity-field-controls"]');
+      return el;
     };
   });
 
@@ -199,6 +214,75 @@ describe('cfEntityField directive integration', function () {
       expect(hasErrorStatus(enLocale, 'entry.schema.en-error-1')).toBe(true);
       expect(hasErrorStatus(enLocale, 'entry.schema.en-error-2')).toBe(true);
     });
+
+    it('sets field’s invalid state if there are schema errors', function () {
+      var el = this.compile();
+      assertInvalidState(el.field, false);
+
+      this.validator.hasError
+        .withArgs(sinon.match(['fields', 'FID']))
+        .returns(true);
+      this.validator.errors = {};
+      this.$apply();
+      assertInvalidState(el.field, true);
+
+      this.validator.hasError = sinon.stub().returns(false);
+      this.validator.errors = {};
+      this.$apply();
+      assertInvalidState(el.field, false);
+    });
+
+    it('sets field’s invalid state if a field control is invalid', function () {
+      var el = this.compile();
+      assertInvalidState(el.field, false);
+
+      el.fieldController.setInvalid('DEF', true);
+      el.fieldController.setInvalid('EN', true);
+      this.$apply();
+      assertInvalidState(el.field, true);
+
+      el.fieldController.setInvalid('EN', false);
+      this.$apply();
+      assertInvalidState(el.field, true);
+
+      el.fieldController.setInvalid('DEF', false);
+      this.$apply();
+      assertInvalidState(el.field, false);
+    });
+  });
+
+  describe('focus', function () {
+    it('is set when widget activates this field', function () {
+      var el = this.compile();
+
+      this.focus.set('FID');
+      this.$apply();
+      assertAriaFlag(el.field, 'current', true);
+    });
+
+    it('is unset when other field activates', function () {
+      var el = this.compile();
+
+      this.focus.set('FID');
+      this.$apply();
+      assertAriaFlag(el.field, 'current', true);
+
+      this.focus.set('other');
+      this.$apply();
+      assertAriaFlag(el.field, 'current', false);
+    });
+
+    it('is unset when widget deactivates this field', function () {
+      var el = this.compile();
+
+      this.focus.set('FID');
+      this.$apply();
+      assertAriaFlag(el.field, 'current', true);
+
+      this.focus.unset('FID');
+      this.$apply();
+      assertAriaFlag(el.field, 'current', false);
+    });
   });
 
   function hasErrorStatus (el, errorCode) {
@@ -207,5 +291,22 @@ describe('cfEntityField directive integration', function () {
       selector += '[data-error-code^="' + errorCode + '"]';
     }
     return el.find(selector).length > 0;
+  }
+
+  function assertInvalidState (el, isInvalid) {
+    assertAriaFlag(el, 'invalid', isInvalid);
+  }
+
+  function assertAriaFlag (el, flag, value) {
+    if (value === undefined) {
+      value = true;
+    }
+
+    var attrValue = el.attr('aria-' + flag);
+    var flagValue = !!(attrValue && attrValue !== 'false');
+
+    if (flagValue !== value) {
+      throw new Error('Expected element to have "aria-' + flag + '" set to ' + value);
+    }
   }
 });

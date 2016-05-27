@@ -95,13 +95,22 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name FieldLocaleController#announcePresence
+   * @name FieldLocaleController#setActive
    * @description
    * Tells the main document that the user is currently editing this
    * field locale.
+   *
+   * Used by `cfWidgetRenderer` directive.
+   *
+   * @param {boolean} active
    */
-  controller.announcePresence = function () {
-    $scope.docPresence.focus(localePath.join('.'));
+  controller.setActive = function (isActive) {
+    if (isActive) {
+      $scope.docPresence.focus(localePath.join('.'));
+      $scope.focus.set(field.id);
+    } else {
+      $scope.focus.unset(field.id);
+    }
   };
 
   /**

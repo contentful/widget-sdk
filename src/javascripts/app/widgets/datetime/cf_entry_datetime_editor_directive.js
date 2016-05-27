@@ -69,6 +69,12 @@ angular.module('cf.app')
         $scope.isDisabled = isDisabled;
       });
 
+      $scope.$watch(function () {
+        return dateController.$valid && timeController.$valid;
+      }, function (isValid) {
+        field.setInvalid(!isValid);
+      });
+
       var datepicker = Datepicker.create({
         field: $el.find('[data-datepicker-slot]').get(0),
         trigger: dateInputEl.get(0),

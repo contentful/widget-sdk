@@ -33,10 +33,13 @@ mixin field-locale-errors
       | {{ error.message }}
 
 div.entity-editor__field-group(
+  data-test-id="entity-field-controls"
   data-field-id="{{field.id}}"
   data-field-api-name="{{field.apiName}}"
   data-field-type="{{field.type}}"
-  data-field-items-type="{{field.items.type}}")
+  data-field-items-type="{{field.items.type}}"
+  aria-current="{{fieldHasFocus}}"
+  aria-invalid="{{fieldHasErrors}}")
 
   div.entity-editor__field-locale(
     ng-repeat="locale in locales track by locale.internal_code"

@@ -20,6 +20,11 @@ angular.module('contentful')
         helpText: widgetApi.settings.helpText
       });
 
+      scope.$watch('urlStatus', function (urlStatus) {
+        var isInvalid = urlStatus === 'broken' || urlStatus === 'invalid';
+        field.setInvalid(isInvalid);
+      });
+
       var detachOnValueChangedHandler = field.onValueChanged(function (val) {
         // Might be `null` or `undefined` when value is not present
         updateInput(val || '');

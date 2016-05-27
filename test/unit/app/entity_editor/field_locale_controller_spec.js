@@ -119,14 +119,34 @@ describe('FieldLocaleController', function () {
     });
   });
 
-  describe('#announcePresence()', function () {
-    it('delegates to "docPresence.focus()"', function () {
-      var focus = sinon.stub();
-      var scope = this.init({
-        docPresence: {focus: focus}
+  describe('#setActive()', function () {
+
+    beforeEach(function () {
+      this.scope = this.init({
+        docPresence: {focus: sinon.stub()},
+        focus: {
+          set: sinon.stub(),
+          unset: sinon.stub()
+        }
       });
-      scope.fieldLocale.announcePresence();
+    });
+
+    it('calls "docPresence.focus()" if set to true', function () {
+      this.scope.fieldLocale.setActive(true);
+      var focus = this.scope.docPresence.focus;
       sinon.assert.calledWithExactly(focus, 'fields.FID.LID');
+    });
+
+    it('calls "scope.focus.set()" if set to true', function () {
+      this.scope.fieldLocale.setActive(true);
+      var setFocus = this.scope.focus.set;
+      sinon.assert.calledWithExactly(setFocus, 'FID');
+    });
+
+    it('calls "scope.focus.unset()" if set to false', function () {
+      this.scope.fieldLocale.setActive(false);
+      var unsetFocus = this.scope.focus.unset;
+      sinon.assert.calledWithExactly(unsetFocus, 'FID');
     });
   });
 

@@ -4,17 +4,17 @@ describe('Datetime Editor', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    var widgetApi = this.$inject('mocks/widgetApi').create({
+    this.widgetApi = this.$inject('mocks/widgetApi').create({
       settings: {format: 'timeZ'}
     });
 
-    this.fieldApi = widgetApi.field;
+    this.fieldApi = this.widgetApi.field;
     this.fieldApi.onValueChanged.yields(null);
 
     this.compile = function (settings) {
-      _.assign(widgetApi.settings, settings);
+      _.assign(this.widgetApi.settings, settings);
       return this.$compile('<cf-entry-datetime-editor>', {}, {
-        cfWidgetApi: widgetApi
+        cfWidgetApi: this.widgetApi
       });
     };
   });
@@ -137,6 +137,7 @@ describe('Datetime Editor', function () {
       setInputValue(this.el, 'datetime.date', 'say what');
       this.$apply();
       expect(hasStatus(this.el, 'datetime.date-parse-error')).toBe(true);
+      expect(this.widgetApi._state.isInvalid).toBe(true);
     });
 
     it('removes field value when emptied', function () {
@@ -176,6 +177,7 @@ describe('Datetime Editor', function () {
       setInputValue(this.el, 'datetime.time', 'say what');
       this.$apply();
       expect(hasStatus(this.el, 'datetime.time-parse-error')).toBe(true);
+      expect(this.widgetApi._state.isInvalid).toBe(true);
     });
 
     describe('with 12h clock', function () {
