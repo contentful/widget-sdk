@@ -71,67 +71,6 @@ function ($delegate, mock) {
 
 }])
 
-.config(function ($provide) {
-  $provide.value('debounce', immediateInvocationStub);
-  $provide.value('throttle', immediateInvocationStub);
-  $provide.value('defer', noDeferStub);
-  $provide.value('delay', noDelayStub);
-  $provide.constant('delayedInvocationStub', delayedInvocationStub);
-
-  function noDeferStub (f) {
-    var args = _.rest(arguments);
-    f.apply(this, args);
-  }
-
-  function noDelayStub (f/*, delay*/) {
-    var args = _.rest(arguments, 2);
-    f.apply(this, args);
-  }
-
-  function immediateInvocationStub (f) {
-    return f;
-  }
-
-  function delayedInvocationStub (originalFunction) {
-    var result;
-    function delayedFunction () {
-      delayedFunction.calls.push({
-        thisArg: this,
-        arguments: arguments
-      });
-      return result;
-    }
-    delayedFunction.calls = [];
-    delayedFunction.invokeDelayed = function () {
-      var call = this.calls.shift();
-      result = originalFunction.apply(call.thisArg, call.arguments);
-    };
-    delayedFunction.invokeAll = function () {
-      while (this.calls.length > 0) {
-        this.invokeDelayed();
-      }
-    };
-    return delayedFunction;
-  }
-})
-
-.constant('debounceQueue', (function () {
-  function debounce (fn) {
-    return function () {
-      debounce.queue.push({fn: fn, args: arguments});
-    };
-  }
-
-  debounce.queue = [];
-  debounce.flush = function () {
-    debounce.queue.forEach(function (call) {
-      call.fn.apply(null, call.args);
-    });
-  };
-
-  return debounce;
-})())
-
 .config(['environment', function (environment) {
   environment.settings.marketing_url = '//example.com';
 }])
