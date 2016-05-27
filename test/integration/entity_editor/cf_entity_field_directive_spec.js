@@ -179,4 +179,35 @@ describe('cfEntityField directive integration', function () {
       }).get();
     }
   });
+
+  describe('errors', function () {
+    it('shows field locale errors', function () {
+      var el = this.compile();
+      expect(hasErrorStatus(el)).toBe(false);
+
+      el.scope().validationResult = {
+        errors: [
+          {path: ['fields', 'FID', 'DEF-internal'], name: 'def-error'},
+          {path: ['fields', 'FID', 'EN-internal'], name: 'en-error-1'},
+          {path: ['fields', 'FID', 'EN-internal'], name: 'en-error-2'}
+        ]
+      };
+      this.$apply();
+
+      var defLocale = el.find('[data-locale=DEF]');
+      expect(hasErrorStatus(defLocale, 'entry.schema.def-error')).toBe(true);
+
+      var enLocale = el.find('[data-locale=EN]');
+      expect(hasErrorStatus(enLocale, 'entry.schema.en-error-1')).toBe(true);
+      expect(hasErrorStatus(enLocale, 'entry.schema.en-error-2')).toBe(true);
+    });
+  });
+
+  function hasErrorStatus (el, errorCode) {
+    var selector = '[role="status"]';
+    if (errorCode) {
+      selector += '[data-error-code^="' + errorCode + '"]';
+    }
+    return el.find(selector).length > 0;
+  }
 });
