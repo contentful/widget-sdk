@@ -15,14 +15,14 @@ include ./create_entry_button.mixin.jade
 
   p.ct-empty-list__description
     | Entries are your content itself. These depend on the field
-    | types you created in the Content Type editor
+    | types you created in the content type builder.
 
   .advice__note(ng-if="hasArchivedEntries")
     i.fa.fa-info-circle.advice__note-icon
     | You can lookup old entries in the
-    | <a ng-click="loadView({searchTerm: 'status:archived'})">Archive</a>
+    | <a ng-click="loadView({searchTerm: 'status:archived'})">archive</a>
 
   p.ct-empty-list__additional
     | If you are not sure what content types and entries are,<br>
     | consider reading the&nbsp;
-    cf-knowledge-base(target="entry" text="introduction to Contentful content model")
+    cf-knowledge-base(target="entry" text="introduction to the Contentful content model")

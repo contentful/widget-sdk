@@ -319,7 +319,7 @@ xdescribe('validation dialog', function() {
     }
 
     function settings() {
-      return dialog.domElement.find('[aria-label="Predefined Values"]');
+      return dialog.domElement.find('[aria-label="Predefined values"]');
     }
 
     it('can be added and enabled', function() {

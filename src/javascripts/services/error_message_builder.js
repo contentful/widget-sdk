@@ -142,9 +142,9 @@ angular.module('contentful')
     linkContentType: function(error, spaceContext) {
       var ct = spaceContext.getPublishedContentType(error.contentTypeId);
       if (!ct)
-        return 'Invalid Content Type';
+        return 'Invalid content type';
       else
-        return 'Linked Entry\'s Content Type must be ' + ct.getName() + '.';
+        return 'Linked Entry\'s content type must be ' + ct.getName() + '.';
     },
 
     dateRange: function (error) {

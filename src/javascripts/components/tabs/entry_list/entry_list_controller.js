@@ -60,7 +60,7 @@ angular.module('contentful')
       if (!id) return or;
       var ct = spaceContext.getPublishedContentType(id);
       if (!ct) return or;
-      return ct.getName();
+      return 'entries of the content type "' + ct.getName() + '"';
     } catch (e) {
       logger.logException(e, {data: {contentTypeId: id}});
       return or;

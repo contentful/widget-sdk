@@ -31,10 +31,10 @@ header.workbench-header
         label(for="webhook-url") URL (required):
         input.cfnext-form__input--full-size(id="webhook-url" ng-model="webhook.url")
       .cfnext-form__field
-        label(for="webhook-http-basic-user") HTTP Basic Auth username:
+        label(for="webhook-http-basic-user") HTTP basic auth username:
         input.cfnext-form__input--full-size(id="webhook-http-basic-user" ng-model="webhook.httpBasicUsername")
       .cfnext-form__field
-        label(for="webhook-http-basic-password") HTTP Basic Auth password:
+        label(for="webhook-http-basic-password") HTTP basic auth password:
         input.cfnext-form__input--full-size(
           id="webhook-http-basic-password" type="password"
           placeholder="{{ (webhook.httpBasicUsername && apiHasAuthCredentials && 'use previously provided password') || '' }}"
@@ -56,15 +56,15 @@ header.workbench-header
         ul
           li Private IPs (10.x, 192.x, etc.)
           li Localhost
-          li Hostnames without a Top Level Domain
+          li Hostnames without a top-level domain
           li URLs that resolve to localhost or redirects
         p
           | For further information please visit&#32;
-          a(href="http://docs.contentfulcma.apiary.io/#reference/webhooks" target="_blank") our Content Management API reference
+          a(href="http://docs.contentfulcma.apiary.io/#reference/webhooks" target="_blank") our content management API reference
           | .
 
       h2.entity-sidebar__heading
-        | Webhook IP Sources
+        | Webhook IP sources
       .entity-sidebar__text-profile
         p
           | If in order to configure webhooks in your network you need more information about their IP range visit&#32;

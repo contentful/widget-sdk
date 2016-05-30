@@ -130,7 +130,7 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
       },
       {
         id: random.id(),
-        title: 'Content Type',
+        title: 'Content type',
         views: contentTypes
       }
     ];

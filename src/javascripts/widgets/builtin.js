@@ -35,7 +35,7 @@ angular.module('contentful')
 
   registerWidget('singleLine', {
     fieldTypes: ['Text', 'Symbol'],
-    name: 'Single Line',
+    name: 'Single line',
     icon: 'singleline',
     template: '<cf-single-line-editor />'
   });
@@ -50,14 +50,14 @@ angular.module('contentful')
 
   registerWidget('numberEditor', {
     fieldTypes: ['Integer', 'Number'],
-    name: 'Number Editor',
+    name: 'Number editor',
     icon: 'number',
     template: '<cf-number-editor />'
   });
 
   registerWidget('multipleLine', {
     fieldTypes: ['Text'],
-    name: 'Multiple Line',
+    name: 'Multiple line',
     icon: 'multipleline',
     template: '<cf-multi-line-editor />'
   });
@@ -125,7 +125,7 @@ angular.module('contentful')
 
   registerWidget('datePicker', {
     fieldTypes: ['Date'],
-    name: 'Date Picker',
+    name: 'Date picker',
     template: '<cf-entry-datetime-editor />',
     notFocusable: true,
     options: [
@@ -142,7 +142,7 @@ angular.module('contentful')
       },
       {
         param: 'ampm',
-        name: 'Time Mode',
+        name: 'Time mode',
         type: 'Predefined',
         values: {
           '12': 'AM/PM',
@@ -198,7 +198,7 @@ angular.module('contentful')
 
   registerWidget('entryLinkEditor', {
     fieldTypes: ['Entry'],
-    name: 'Entry Link',
+    name: 'Entry link',
     icon: 'reference',
     rendersHelpText: true,
     template: '<div cf-entry-link-editor cf-link-editor ng-model="fieldData.value"></div>'
@@ -206,7 +206,7 @@ angular.module('contentful')
 
   registerWidget('assetLinkEditor', {
     fieldTypes: ['Asset'],
-    name: 'Asset Link',
+    name: 'Asset link',
     icon: 'media-reference',
     rendersHelpText: true,
     template: '<div cf-asset-link-editor cf-link-editor ng-model="fieldData.value"></div>'
@@ -214,7 +214,7 @@ angular.module('contentful')
 
   registerWidget('entryLinksEditor', {
     fieldTypes: ['Entries'],
-    name: 'Entry Links List',
+    name: 'Entry links list',
     icon: 'references',
     rendersHelpText: true,
     template: '<div cf-entry-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
@@ -222,7 +222,7 @@ angular.module('contentful')
 
   registerWidget('entryCardEditor', {
     fieldTypes: ['Entry'],
-    name: 'Entry Card',
+    name: 'Entry card',
     icon: 'reference-card',
     rendersHelpText: true,
     template: '<div cf-entry-card-editor cf-link-editor ng-model="fieldData.value"></div>'
@@ -230,7 +230,7 @@ angular.module('contentful')
 
   registerWidget('entryCardsEditor', {
     fieldTypes: ['Entries'],
-    name: 'Entry Cards',
+    name: 'Entry cards',
     icon: 'references-card',
     rendersHelpText: true,
     template: '<div cf-entry-card-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
@@ -238,7 +238,7 @@ angular.module('contentful')
 
   registerWidget('assetLinksEditor', {
     fieldTypes: ['Assets'],
-    name: 'Asset Links List',
+    name: 'Asset links list',
     icon: 'media-references',
     rendersHelpText: true,
     template: '<div cf-asset-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
@@ -246,7 +246,7 @@ angular.module('contentful')
 
   registerWidget('assetGalleryEditor', {
     fieldTypes: ['Assets'],
-    name: 'Asset Gallery',
+    name: 'Asset gallery',
     icon: 'media-previews',
     rendersHelpText: true,
     template: '<div cf-asset-gallery-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'

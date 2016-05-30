@@ -25,7 +25,7 @@ angular.module('contentful')
     return openDialog({
       isNew: true,
       labels: {
-        title: 'Create a new Content Type',
+        title: 'Create new content type',
         save: 'Create'
       }
     });
@@ -44,7 +44,7 @@ angular.module('contentful')
       description: desc,
       isNew: false,
       labels: {
-        title: 'Edit Content Type',
+        title: 'Edit content type',
         save: 'Save'
       }
     });

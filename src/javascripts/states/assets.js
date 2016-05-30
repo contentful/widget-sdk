@@ -14,8 +14,9 @@ angular.module('contentful')
     name: 'list',
     url: '',
     ncyBreadcrumb: {
-      label: 'Media Library'
+      label: 'Media'
     },
+    loadingText: 'Loading media...',
     template: '<div cf-asset-list class="workbench asset-list entity-list"></div>'
   });
 

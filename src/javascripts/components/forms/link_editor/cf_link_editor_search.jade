@@ -14,7 +14,7 @@
     cf-context-menu-trigger
     data-test-id="add-new-entry-menu-trigger")
     cf-icon.btn-icon(name="plus")
-    | Add New
+    | Add {{entityName}}
   //- TODO the ng-if condition for the dropdown has to be synced
   //- manually with the confidtion above
   .context-menu(
@@ -34,7 +34,7 @@
       cf-when-disabled="createEntry"
       ng-click="addNewEntry(addableContentTypes[0])")
     cf-icon.btn-icon(name="plus")
-    | Add New
+    | Add {{entityName}}
 
   //- link to asset (with or without restriction)
   button.cfnext-btn-secondary-action.link-editor__add-button(type="button"
@@ -44,7 +44,7 @@
       cf-when-disabled="createAsset"
       ng-click="addNewAsset()")
     cf-icon.btn-icon(name="plus")
-    | Add New
+    | Add {{entityName}}
 
 
 .search-results.search-options-on.result-list-empty(
@@ -54,9 +54,9 @@
      cf-click-outside-when="searchController.areResultsVisible()"
      cf-click-outside="clickOutsideHandler()")
   div(ng-switch-when="Entry")
-    p No Entries created yet.
+    p No entries created yet.
   div(ng-switch-when="Asset")
-    p No Assets created yet.
+    p No assets created yet.
 
 
 .search-results.search-options-on(ng-show="searchController.isResultsState()"

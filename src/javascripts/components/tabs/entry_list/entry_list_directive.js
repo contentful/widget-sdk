@@ -68,7 +68,7 @@ angular.module('contentful').directive('cfEntryList', ['$timeout', function($tim
       }
 
       scope.getGroupName = function () {
-        return 'Content Types';
+        return 'Content types';
       };
 
     }

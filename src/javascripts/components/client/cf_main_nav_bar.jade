@@ -8,7 +8,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
           data-view-type="content-type-list"
           tabindex="0")
         cf-icon(name="nav-ct")
-        span.nav-bar__list-label Content Types
+        span.nav-bar__list-label Content model
     li.app-top-bar__action.nav-bar__list-item(
       ng-if="canNavigateTo.entry")
       a.nav-bar__link(
@@ -17,7 +17,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
           data-view-type="entry-list"
           tabindex="0")
         cf-icon(name="nav-entries")
-        span.nav-bar__list-label Entries
+        span.nav-bar__list-label Content
     li.app-top-bar__action.nav-bar__list-item(
       ng-if="canNavigateTo.asset")
       a.nav-bar__link(
@@ -26,7 +26,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
           data-view-type="asset-list"
           tabindex="0")
         cf-icon(name="nav-media")
-        span.nav-bar__list-label Media Library
+        span.nav-bar__list-label Media
     li.app-top-bar__action.nav-bar__list-item(
       ng-if="canNavigateTo.apiKey")
       a.nav-bar__link(
