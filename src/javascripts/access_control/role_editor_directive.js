@@ -67,6 +67,9 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
   $scope.canModifyRoles = canModifyRoles;
   $scope.resetPolicies  = resetPolicies;
 
+  // check if we should show the 'translator' role
+  $scope.showTranslator = showTranslator();
+
   // setup "Remove" button:
   listHandler.reset().then(function () {
     $scope.removeRole = function () {
@@ -77,6 +80,14 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
       }).call(null, $scope.role);
     };
   });
+
+  function showTranslator () {
+    var organization = spaceContext.getData('organization');
+    var subscriptionHasAdvancedRoles = dotty.get(organization, 'subscriptionPlan.limits.features.advancedRoles');
+    var nameStartsWithTranslator = /^Translator/.test($scope.role.name);
+    return subscriptionHasAdvancedRoles && nameStartsWithTranslator;
+  }
+
 
   function duplicateRole() {
     if (dotty.get($scope, 'role.sys.id')) {
