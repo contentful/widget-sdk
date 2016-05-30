@@ -110,7 +110,6 @@ test/unit/services/promised_loader_spec.js
 test/unit/services/reload_notification_spec.js
 test/unit/services/sdk_info_supplier_spec.js
 test/unit/services/sharejs_client_spec.js
-test/unit/services/sharejs_spec.js
 test/unit/services/space_template_creator_spec.js
 test/unit/services/space_template_loader_spec.js
 test/unit/services/space_tools_spec.js
@@ -182,7 +181,6 @@ test/helpers/mocks/ot_doc.js
 test/helpers/mocks/the_store.js
 test/helpers/application.js
 test/helpers/deep_diff.js
-test/helpers/contentful_mocks.js
 test/helpers/dsl.js
 test/helpers/sinon.js
 test/integration/field_validation_dialog_spec.js
