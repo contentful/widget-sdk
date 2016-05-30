@@ -185,13 +185,11 @@ describe('cfEntityField directive integration', function () {
       var el = this.compile();
       expect(hasErrorStatus(el)).toBe(false);
 
-      el.scope().validationResult = {
-        errors: [
-          {path: ['fields', 'FID', 'DEF-internal'], name: 'def-error'},
-          {path: ['fields', 'FID', 'EN-internal'], name: 'en-error-1'},
-          {path: ['fields', 'FID', 'EN-internal'], name: 'en-error-2'}
-        ]
-      };
+      this.validator.errors = [
+        {path: ['fields', 'FID', 'DEF-internal'], name: 'def-error'},
+        {path: ['fields', 'FID', 'EN-internal'], name: 'en-error-1'},
+        {path: ['fields', 'FID', 'EN-internal'], name: 'en-error-2'}
+      ];
       this.$apply();
 
       var defLocale = el.find('[data-locale=DEF]');

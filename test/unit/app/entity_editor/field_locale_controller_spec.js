@@ -12,13 +12,14 @@ describe('FieldLocaleController', function () {
       };
       var scope = _.extend($rootScope.$new(), defaultScopeProps, scopeProps);
       scope.fieldLocale = $controller('FieldLocaleController', {$scope: scope});
+      scope.validator = {};
       this.$apply();
       return scope;
     };
   });
 
   describe('#errors', function () {
-    it('get filtered items from "validationResult.errors"', function () {
+    it('get filtered items from "validator.errors"', function () {
       var scope = this.init();
 
       var fieldLocaleErrors = [
@@ -33,14 +34,14 @@ describe('FieldLocaleController', function () {
         {path: ['fields', 'FID-2']}
       ];
 
-      scope.validationResult = {errors: fieldLocaleErrors.concat(otherErrors)};
+      scope.validator.errors = fieldLocaleErrors.concat(otherErrors);
       this.$apply();
       expect(scope.fieldLocale.errors).toEqual(fieldLocaleErrors);
     });
 
     it('is set to "null" if no errors match', function () {
       var scope = this.init();
-      scope.validationResult = {errors: [{path: 'does not match'}]};
+      scope.validator.errors = [{path: 'does not match'}];
       this.$apply();
       expect(scope.fieldLocale.errors).toEqual(null);
     });
@@ -49,7 +50,7 @@ describe('FieldLocaleController', function () {
       var requiredError = {path: ['fields', 'FID'], name: 'required'};
       var scope = this.init();
       scope.locale.optional = true;
-      scope.validationResult = {errors: [requiredError]};
+      scope.validator.errors = [requiredError];
       this.$apply();
       expect(scope.fieldLocale.errors).toEqual(null);
     });
