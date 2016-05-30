@@ -109,7 +109,6 @@ function configScript (uiVersion, config, resolve) {
   return h('script', [
     `
     window.CF_CONFIG = ${JSON.stringify(config)};
-    window.CF_ENV = '${config.environment}';
     window.CF_UI_VERSION = '${uiVersion}';
     window.CF_MANIFEST = ${JSON.stringify(appManifest)};
     `

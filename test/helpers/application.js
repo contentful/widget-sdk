@@ -16,7 +16,7 @@
  * ~~~
  *
  */
-window.CF_ENV = 'unittest';
+
 angular.module('contentful/test', ['contentful', 'contentful/mocks'])
 
 .constant('environment', (function () {

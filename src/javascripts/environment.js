@@ -6,11 +6,11 @@
  * @description
  * Exposes configuration for the application that depends on the envrionment
  *
- * Uses `window.CF_ENV`, `window.CF_CONFIG`, `window.CF_UI_VERSION` to load the
- * configuration.
+ * Uses `window.CF_CONFIG` and `window.CF_UI_VERSION` to load the configuration.
  */
 angular.module('contentful/environment', [])
 .constant('environment', (function () {
+  // TODO Should throw when CF_CONFIG is undefined, but currently required for tests
   var settings = window.CF_CONFIG || {};
   /**
    *
