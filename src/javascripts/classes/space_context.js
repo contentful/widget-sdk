@@ -428,7 +428,7 @@ angular.module('contentful')
       if(message) {
         notification.warn(message);
       } else {
-        notification.warn('Could not get published Content Types');
+        notification.warn('Could not get published content types');
         logger.logServerError('Could not get published Content Types', { error: err });
       }
       return $q.reject(err);

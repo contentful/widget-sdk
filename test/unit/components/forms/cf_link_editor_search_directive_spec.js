@@ -58,7 +58,7 @@ describe('cfLinkEditorSearch Directive', function () {
       ];
 
       compileElement();
-      newButton = element.find('button:contains("Add New")');
+      newButton = element.find('button:contains("Add")');
     });
 
     it('to have button', function () {
@@ -84,7 +84,7 @@ describe('cfLinkEditorSearch Directive', function () {
       ];
 
       compileElement();
-      newButton = element.find('button:contains("Add New")');
+      newButton = element.find('button:contains("Add")');
     });
 
     it('to have button', function () {
@@ -102,7 +102,7 @@ describe('cfLinkEditorSearch Directive', function () {
       scope.entityType = 'Asset';
 
       compileElement();
-      newButton = element.find('button:contains("Add New")');
+      newButton = element.find('button:contains("Add")');
     });
 
     it('to have button', function () {

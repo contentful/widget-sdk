@@ -405,15 +405,15 @@ function ContentTypeActionsController ($scope, $injector) {
   var notification = $injector.get('notification');
   var truncate = $injector.get('stringUtils').truncate;
 
-  var saveError = 'Unable to save Content Type: ';
+  var saveError = 'Unable to save content type: ';
   var messages = {
     save: {
-      success: 'Content Type saved successfully',
+      success: 'Content type saved successfully',
       invalid: saveError + 'Data is invalid',
       outdated: saveError + 'Your version is outdated. Please reload and try again'
     },
     create: {
-      exists: 'A Content Type with this ID already exists'
+      exists: 'A content type with this ID already exists'
     },
     duplicate: {
       success: 'Content type duplicated successfully',
@@ -423,11 +423,11 @@ function ContentTypeActionsController ($scope, $injector) {
 
   return {
     deleteSuccess: function () {
-      notification.info('Content Type deleted successfully');
+      notification.info('Content type deleted successfully');
     },
 
     deleteFail: function (err) {
-      notification.error('Deleting Content Type failed: ' + getServerMessage(err));
+      notification.error('Deleting content type failed: ' + getServerMessage(err));
       logger.logServerWarn('Error deleting Content Type', {error: err});
     },
 

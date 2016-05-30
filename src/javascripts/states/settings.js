@@ -12,8 +12,8 @@ angular.module('contentful')
   var space = base({
     name: 'space',
     url: '/space',
-    ncyBreadcrumb: {label: 'Space Settings'},
-    loadingText: 'Loading Space Settings...',
+    ncyBreadcrumb: {label: 'Space settings'},
+    loadingText: 'Loading space settings...',
     template: '<cf-space-settings class="workbench space-settings" />',
     controller: ['$scope', function ($scope) {
       $scope.context = {};

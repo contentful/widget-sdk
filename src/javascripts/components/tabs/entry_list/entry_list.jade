@@ -4,7 +4,7 @@ header.workbench-header
   .workbench-header__left
     cf-icon.workbench-header__icon(name="page-entries")
     h1.workbench-header__title
-      | Entries
+      | Content
       cf-knowledge-base.workbench-header__kb-link(target="entry")
 
   .workbench-header__search.search-area--with-filter(
@@ -18,7 +18,7 @@ header.workbench-header
     .search-area__input(
       cf-tokenized-search="context.view.searchTerm"
       search-content-type="getSearchContentType()"
-      placeholder="Search for {{typeNameOr('Entries')}}"
+      placeholder="Search for {{typeNameOr('entries')}}"
       cf-on-blur-component="leftSearch($event)"
       cf-on-blur-component-when="showAutocompletions")
 
@@ -38,7 +38,7 @@ header.workbench-header
         tr
           th.cell-select
             input(type="checkbox" cf-selection="entries" ng-show="entries.length > 0" tabindex="-1")
-          th.cell-content-type(ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden") Content Type
+          th.cell-content-type(ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden") Content type
           th.cell-display-name(ng-if="!context.view.contentTypeId || !displayFieldForFilteredContentType()") Name
           th.cell-display-name(ng-if="context.view.contentTypeId && displayFieldForFilteredContentType()" ng-init="field=displayFieldForFilteredContentType()" cf-field-order-header="displayField")
           th(ng-repeat="field in displayedFields track by field.id" cf-field-order-header data-field-id="{{field.id}}" ng-class="[getFieldClass(field)]")

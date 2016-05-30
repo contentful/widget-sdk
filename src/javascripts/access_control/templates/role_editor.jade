@@ -17,11 +17,11 @@ header.workbench-header
           textarea.cfnext-form__input--full-size(id="opt_description" ng-model="internal.description" ng-disabled="!canModifyRoles()")
 
       .role-details__section(ng-if="internal.uiCompatible")
-        h3 Entries
+        h3 Content
         cf-rule-list(rules="internal.entries" entity="entry" is-disabled="!canModifyRoles()")
 
       .role-details__section(ng-if="internal.uiCompatible")
-        h3 Media Library
+        h3 Media
         cf-rule-list(rules="internal.assets" entity="asset" is-disabled="!canModifyRoles()")
 
       .role-details__section(ng-if="!internal.uiCompatible")
@@ -36,12 +36,12 @@ header.workbench-header
           textarea.cfnext-form__input--full-size(ng-model="internal.policyString" rows="10" ng-disabled="!canModifyRoles()")
 
       .role-details__section
-        h3 Content Types
+        h3 Content model
         .cfnext-form-option
           input(id="opt_content_types_access" type="checkbox" ng-model="internal.contentModel.manage" ng-disabled="!canModifyRoles()")
           label(for="opt_content_types_access")
-            | Can modify Content Types
-            |  <em>(the Content Type Editor is only shown to users who have this permission)</em>.
+            | Can modify content types
+            |  <em>(the content type builder is only shown to users who have this permission)</em>.
 
       .role-details__section
         h3 API keys
@@ -66,7 +66,7 @@ header.workbench-header
         .cfnext-form-option
           input(id="opt_space_settings_access" type="checkbox" ng-model="internal.settings.manage" ng-disabled="!canModifyRoles()")
           label(for="opt_space_settings_access")
-            | Can modify Space Settings. This permission allows users to modify locales, webhooks, the space name, and logo image.
+            | Can modify space settings. This permission allows users to modify locales, webhooks, the space name, and logo image.
             |  It does <strong>not</strong> grant permission to update users roles or delete the space.
 
   .workbench-main__entity-sidebar

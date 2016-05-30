@@ -2,13 +2,13 @@ header.workbench-header
   .workbench-header__left
     cf-icon.workbench-header__icon(name="page-ct")
     h1.workbench-header__title
-      | Content Types
+      | Content model
       cf-knowledge-base.workbench-header__kb-link(target="content_type")
 
   .workbench-header__search.search-area
     .search-field(
       cf-search="searchTerm"
-      placeholder="Search for Content Types")
+      placeholder="Search for content types")
 
   .workbench-header__actions
     button.cfnext-btn-action(
@@ -17,7 +17,7 @@ header.workbench-header
       ng-disabled="shouldDisable('createContentType')"
       cf-when-disabled="createContentType")
       cf-icon.btn-icon.inverted(name="plus")
-      | New Content Type
+      | Add content type
 
 .workbench-main.x--content(ng-show="!hasContentTypes()")
   .cfnext-advice
@@ -40,7 +40,7 @@ header.workbench-header
     p.ct-empty-list__additional
       | If you are not sure what content types and entries are, <br>
       | consider reading the&nbsp;
-      cf-knowledge-base(target="content_type" text="introduction to Contentful content model")
+      cf-knowledge-base(target="content_type" text="introduction to the Contentful content model")
 
 .workbench-main(ng-show="hasContentTypes()")
   .workbench-main__left-sidebar

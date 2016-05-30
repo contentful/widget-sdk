@@ -22,7 +22,7 @@ describe('data/editingInterfaces', function () {
 
   describe('#get()', function () {
 
-    describe('with saved Content Type', function() {
+    describe('with saved content type', function() {
       beforeEach(function() {
         contentType.sys.version = 1;
         spaceEndpoint.resolves();

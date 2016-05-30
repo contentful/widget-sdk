@@ -25,12 +25,12 @@ angular.module('contentful')
     {
       name: 'Symbol',
       hasListVariant: true,
-      label: 'Short Text',
-      listLabel: 'Short Text, list',
+      label: 'Short text',
+      listLabel: 'Short text, list',
     },
     {
       name: 'Text',
-      label: 'Long Text',
+      label: 'Long text',
     },
     {
       name: 'Integer',
@@ -38,12 +38,12 @@ angular.module('contentful')
     },
     {
       name: 'Number',
-      label: 'Decimal Number',
+      label: 'Decimal number',
       icon: 'decimal',
     },
     {
       name: 'Date',
-      label: 'Date & Time',
+      label: 'Date & time',
       icon: 'calendar',
     },
     {
@@ -61,7 +61,7 @@ angular.module('contentful')
     },
     {
       name: 'Object',
-      label: 'JSON Object',
+      label: 'JSON object',
       icon: 'json',
     },
     {
@@ -109,7 +109,7 @@ angular.module('contentful')
     types: ['Boolean']
   }, {
     name: 'json',
-    label: 'JSON Object',
+    label: 'JSON object',
     description: 'Data in JSON format',
     types: ['Object']
   }, {

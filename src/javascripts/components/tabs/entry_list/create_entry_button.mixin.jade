@@ -17,14 +17,14 @@ mixin create-entry-button
     +create-entry-button-wrapper(
       large=attributes.large
       ng-click="entityCreationController.newEntry(accessibleCts[0])")
-      | Add New {{accessibleCts[0].getName()}}
+      | Add {{accessibleCts[0].getName()}}
   div(ng-if="accessibleCts.length > 1")
     +create-entry-button-wrapper(
       large=attributes.large
       cf-context-menu-trigger
       data-test-id="add-entry-menu-trigger")
       cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-      | Add New Entry
+      | Add entry
     .context-menu(
       role="menu" cf-context-menu
       aria-label="Add Entry" data-test-id="add-entry-menu")
