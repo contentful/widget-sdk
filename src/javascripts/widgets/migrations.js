@@ -47,7 +47,7 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name widget/migrations#
+   * @name widgets/migrations#
    * @description
    * Migrate the widget ID of the field control if the original widget
    * has been replaced by a different one

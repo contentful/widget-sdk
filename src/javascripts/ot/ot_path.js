@@ -134,7 +134,7 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name otSubDoc#changeValue
+   * @name otPath#changeValue
    * @description
    * Updates the value at the path to the new value.
    *
