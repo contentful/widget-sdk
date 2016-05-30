@@ -16,13 +16,16 @@ angular.module('contentful')
  * widgets should be rendered.
  */
 .controller('FormWidgetsController',
-  ['$scope', '$injector', 'contentTypeId', 'controls',
-  function($scope, $injector, contentTypeId, controls) {
+['$scope', '$injector', 'contentTypeId', 'controls',
+function ($scope, $injector, contentTypeId, controls) {
 
   var analytics = $injector.get('analyticsEvents');
 
+  // TODO Changes to 'validator.errors' change the behavior of
+  // 'validator.hasError()'. We should make this dependency explicity
+  // by listening to signal on the validator.
   $scope.$watchGroup(
-    ['preferences.showDisabledFields', 'errorPaths'],
+    ['preferences.showDisabledFields', 'validator.errors'],
     updateWidgets
   );
 
@@ -43,8 +46,8 @@ angular.module('contentful')
     $scope.widgets = _.filter(controls, widgetIsVisible);
   }
 
-  function widgetIsVisible(widget) {
-    if (widget.sidebar){
+  function widgetIsVisible (widget) {
+    if (widget.sidebar) {
       return false;
     } else {
       return fieldIsVisible(widget.field);
@@ -56,7 +59,7 @@ angular.module('contentful')
       return false;
     }
     var isNotDisabled = !field.disabled || $scope.preferences.showDisabledFields;
-    var hasErrors = $scope.errorPaths && $scope.errorPaths[field.id];
+    var hasErrors = $scope.validator.hasError(['fields', field.id]);
     return isNotDisabled || hasErrors;
   }
 

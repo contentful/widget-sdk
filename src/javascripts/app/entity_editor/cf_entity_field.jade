@@ -24,10 +24,13 @@ mixin field-permission-info
       | This field is disabled
 
 mixin field-locale-errors
-  div.form-box-error(ng-if="fieldLocale.errors")
-    ul
-      li(ng-repeat="error in fieldLocale.errors")
-        | {{ error.message }}
+  ul.cfnext-form__field-errors(ng-if="fieldLocale.errors")
+    li(
+      ng-repeat="error in fieldLocale.errors"
+      role="status"
+      aria-roledescription="field-locale-schema"
+      data-error-code="entry.schema.{{error.name}}")
+      | {{ error.message }}
 
 div.entity-editor__field-group(
   data-field-id="{{field.id}}"
