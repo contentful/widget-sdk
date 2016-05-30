@@ -35,13 +35,14 @@
  * [bugsnag-tab]: https://bugsnag.com/docs/notifiers/js#metadata
  * [bugsnag-doc]: https://bugsnag.com/docs/notifiers/js
 */
-angular.module('contentful').factory('logger', ['$injector', function ($injector) {
-  var $window        = $injector.get('$window');
-  var bugsnag        = $injector.get('bugsnag');
-  var environment    = $injector.get('environment');
-  var stringifySafe  = $injector.get('stringifySafe');
+angular.module('contentful')
+.factory('logger', ['$injector', function ($injector) {
+  var $window = $injector.get('$window');
+  var bugsnag = $injector.get('bugsnag');
+  var environment = $injector.get('environment');
+  var stringifySafe = $injector.get('stringifySafe');
 
-  function getParams() {
+  function getParams () {
     var stateName = $injector.get('$state').current.name;
     var stateParams = $injector.get('$stateParams');
     return _.extend({
@@ -51,7 +52,7 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
     }, stateParams);
   }
 
-  function augmentMetadata(metaData) {
+  function augmentMetadata (metaData) {
     metaData = metaData || {};
     metaData.params = getParams();
     return _.mapValues(metaData, serializeObject);
@@ -73,14 +74,14 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
     }
   }
 
-  function flattenServerErrors(err) {
+  function flattenServerErrors (err) {
     var flattened = dotty.get(err, 'body') || err;
-    if(flattened.details && flattened.details.reasons) {
+    if (flattened.details && flattened.details.reasons) {
       flattened.reasons = _.clone(flattened.details.reasons);
       delete flattened.details.reasons;
     }
     var headers = dotty.get(flattened, 'error.request.headers');
-    if(headers && headers.Authorization) {
+    if (headers && headers.Authorization) {
       delete headers.Authorization;
     }
     return flattened;
@@ -106,9 +107,9 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * Disables the logger service because of customers who wish to not have
      * any 3rd party services running
      */
-    disable: function(){
+    disable: function () {
       bugsnag.disable();
-      _.forEach(this, function(value, key){
+      _.forEach(this, function (value, key) {
         this[key] = _.noop;
       }, this);
     },
@@ -243,7 +244,7 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * @param {object} metadata.data   Shows up on the bugsnag data tab.
      * @param {object} metadata.error  Shows up on the bugsnag error tab.
      */
-    _logCorsWarn: function(message, metaData) {
+    _logCorsWarn: function (message, metaData) {
       this._log('CORS Warning', 'warning', message, metaData);
     },
 
@@ -258,7 +259,7 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * Additional info to show in bugsnag. Each key creates a tab that
      * displays the corresponding value.
     */
-    _log: function(type, severity, message, metaData) {
+    _log: function (type, severity, message, metaData) {
       metaData = metaData || {};
       metaData.groupingHash = metaData.groupingHash || message;
       if (environment.env !== 'production' && environment.env !== 'unittest') {
