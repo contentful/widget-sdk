@@ -5,7 +5,7 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
   var systemFields = $injector.get('systemFields');
   var random       = $injector.get('random');
   var $controller  = $injector.get('$controller');
-  var defaultOrder = _.clone(systemFields.getDefaultOrder());
+  var defaultOrder = systemFields.getDefaultOrder();
 
   var SORTABLE_TYPES = [
     'Boolean',
@@ -14,6 +14,15 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
     'Number',
     'Symbol',
     'Location'
+  ];
+
+  // @todo some old todo stated that "status" should
+  // be the first of fallback fields when it'll be supported.
+  // Revisit when rewriting entity lists.
+  var FALLBACK_FIELDS = [
+    'publishedAt',
+    'createdAt',
+    'updatedAt'
   ];
 
   $scope.getDefaultFieldIds = getDefaultFieldIds;
@@ -79,16 +88,11 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
   }
 
   function determineFallbackSortField(displayedFieldIds) {
-    if(_.contains(displayedFieldIds, 'publishedAt'))
-      return systemFields.get('publishedAt');
-    if(_.contains(displayedFieldIds, 'createdAt'))
-      return systemFields.get('createdAt');
-    // TODO this should be the first condition in this function
-    // move it there when sorting is allowed by status
-    if(_.contains(displayedFieldIds, 'updatedAt'))
-      return systemFields.get('updatedAt');
-    //if(_.contains(displayedFieldIds, 'status'))
-    //return updatedAtField;
+    var fallbackId = _.find(FALLBACK_FIELDS, function (fieldId) {
+      return _.contains(displayedFieldIds, fieldId);
+    });
+
+    return systemFields.get(fallbackId) || {id: undefined};
   }
 
   function getDefaultFieldIds() {
