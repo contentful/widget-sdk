@@ -2,7 +2,7 @@
 
 /**
  * @ngdoc service
- * @name modalDialog
+ * @name paywallOpener
  * @description
  * Opens the paywall.
  */

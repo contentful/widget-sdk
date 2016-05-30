@@ -4,8 +4,8 @@ describe('cfJsonEditor directive', function () {
   var cmEditor, fieldApi, element;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide, debounceQueue) {
-      $provide.value('debounce', debounceQueue);
+    module('contentful/test', function ($provide, createQueuedDebounce) {
+      $provide.value('debounce', createQueuedDebounce());
     });
 
     cmEditor = {

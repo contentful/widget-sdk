@@ -56,10 +56,14 @@ angular.module('contentful')
     }
   };
 }])
+/**
+ * @ngdoc service
+ * @name cfNumberEditor/parseNumber
+ */
 .factory('cfNumberEditor/parseNumber', [function () {
   /**
    * @ngdoc method
-   * @name cfNumberEditor#parseNumber
+   * @name cfNumberEditor/parseNumber#
    * @description
    * Tries to parse given string as number
    *
