@@ -51,7 +51,10 @@ var loadSubtasks = require('./tasks/subtasks');
 loadSubtasks(gulp, 'docs');
 
 var getGitRevision = _.memoize(function () {
-  return U.exec('git log -1 --pretty=format:%H');
+  return U.exec('git rev-parse HEAD')
+    .then(function (rev) {
+      return rev.trim();
+    });
 });
 
 var CSS_COMMENT_RE = /\/\*[^*]*\*+([^/*][^*]*\*+)*\//g;
