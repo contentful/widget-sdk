@@ -47,12 +47,19 @@ angular.module('contentful')
 
       widgetAPI.registerHandler('setValue', function (apiName, localeCode, value) {
         var path = widgetAPI.buildDocPath(apiName, localeCode);
-        var doc = scope.otDoc.doc;
-        if (doc) {
-          return value === undefined
-            ? removeDocValue(doc, path)
-            : updateDocValue(doc, path, value);
-        }
+        return scope.otDoc.setValueAt(path, value)
+        .catch(function (e) {
+          if (e && e.message) {
+            e = e.message;
+          }
+          return $q.reject({
+            code: 'ENTRY UPDATE FAILED',
+            message: 'Could not update entry field',
+            data: {
+              shareJSCode: e
+            }
+          });
+        });
       });
 
       initializeIframe();
@@ -67,33 +74,6 @@ angular.module('contentful')
         } else {
           $iframe.attr('srcdoc', descriptor.srcdoc);
         }
-      }
-
-      function updateDocValue (doc, path, value) {
-        return ShareJS.setDeep(doc, path, value)
-        .catch(function (e) {
-          // Should only throw an error when `value` does not have the
-          // correct type. Then `e` will be "forbidden".
-          return $q.reject({
-            code: 'ENTRY UPDATE FAILED',
-            message: 'Could not update entry field',
-            data: {
-              shareJSCode: e
-            }
-          });
-        });
-      }
-
-      function removeDocValue (doc, path) {
-        return $q.denodeify(function (cb) {
-          // We catch synchronous errors since they tell us that a
-          // value along the path does not exist.
-          try {
-            doc.removeAt(path, cb);
-          } catch (e) {
-            cb();
-          }
-        });
       }
 
       scope.$watch('entry.data.sys', function (sys) {

@@ -3,7 +3,6 @@
 angular.module('contentful')
 .controller('AssetEditorController', ['$scope', '$injector', function AssetEditorController ($scope, $injector) {
   var $controller = $injector.get('$controller');
-  var ShareJS = $injector.get('ShareJS');
   var logger = $injector.get('logger');
   var notification = $injector.get('notification');
   var stringUtils = $injector.get('stringUtils');
@@ -93,12 +92,12 @@ angular.module('contentful')
       logger.logServerWarn('There has been a problem processing the Asset.', {error: err});
     });
   });
+
   function setTitleOnDoc (file, localeCode) {
-    var doc = $scope.otDoc.doc;
-    var otPath = ['fields', 'title', localeCode];
+    var path = ['fields', 'title', localeCode];
     var fileName = stringUtils.fileNameToTitle(file.fileName);
-    if (!ShareJS.peek(doc, otPath)) {
-      ShareJS.mkpathAndSetValue(doc, otPath, fileName);
+    if (!$scope.otDoc.getValueAt(path)) {
+      $scope.otDoc.setValueAt(path, fileName);
     }
   }
   $scope.$watch('asset.data.fields.file', function (file, old, scope) {

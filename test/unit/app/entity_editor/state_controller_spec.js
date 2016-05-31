@@ -1,12 +1,16 @@
 'use strict';
 
 describe('entityEditor/StateController', function () {
+  var $q;
+
   beforeEach(function () {
     var closeStateSpy = this.closeStateSpy = sinon.spy();
 
     module('contentful/test', function ($provide) {
       $provide.value('navigation/closeState', closeStateSpy);
     });
+
+    $q = this.$inject('$q');
 
     var cfStub = this.$inject('cfStub');
     var space = cfStub.space('spaceid');
@@ -29,6 +33,10 @@ describe('entityEditor/StateController', function () {
       entity: entry,
       handlePublishError: null
     });
+  });
+
+  afterEach(function () {
+    $q = null;
   });
 
   describe('#delete command execution', function () {
@@ -217,38 +225,23 @@ describe('entityEditor/StateController', function () {
      * Mock object providing the interface from the `ot-doc-for`
      * directive.
      */
-    function OtDoc (entity) {
-      var doc = this.doc = {
-        at: createSubDoc
-      };
-
-      this.state = {
-        editable: true
-      };
-
-      this.updateSnapshot = function () {
-        doc.snapshot = _.cloneDeep(entity.data);
-      };
-
-      this.updateSnapshot();
-
-      function createSubDoc (path) {
-        return { set: set };
-
-        function set (data, cb) {
-          dotty.put(doc.snapshot, path, data);
-          doc.snapshot.sys.version += 1;
-          entity.data = doc.snapshot;
-          if (cb) {
-            cb();
-          }
+    function OtDoc (data) {
+      var snapshot = _.cloneDeep(data);
+      return {
+        getValueAt: function (path) {
+          return dotty.get(snapshot, path);
+        },
+        setValueAt: function (path, value) {
+          dotty.put(snapshot, path, value);
+          return $q.resolve(value);
+        },
+        state: {
+          editable: true
         }
-      }
+      };
     }
 
     beforeEach(function () {
-      var $q = this.$inject('$q');
-
       this.entity.publish = function () {
         this.data.sys.publishedVersion = this.data.sys.version;
         this.data.sys.version += 1;
@@ -257,7 +250,7 @@ describe('entityEditor/StateController', function () {
 
       this.entity.data.fields = {field1: 'one'};
 
-      this.otDoc = new OtDoc(this.entity);
+      this.otDoc = new OtDoc(this.entity.data);
       this.scope.otDoc = this.otDoc;
       this.scope.validate = sinon.stub().returns(true);
       this.$apply();
@@ -273,9 +266,9 @@ describe('entityEditor/StateController', function () {
         this.controller.primary.execute();
         this.$apply();
 
-        // make changes
-        this.otDoc.updateSnapshot();
-        this.otDoc.doc.at('fields.field1').set('two');
+        // add changes
+        this.entity.data.sys.version++;
+        this.otDoc.setValueAt(['fields', 'field1'], 'changed');
         this.$apply();
       });
 
@@ -289,7 +282,7 @@ describe('entityEditor/StateController', function () {
         });
 
         it('reverts the field data', function () {
-          expect(this.otDoc.doc.snapshot.fields['some-field']['de-DE']).toBe('published');
+          expect(this.otDoc.getValueAt(['fields', 'some-field', 'de-DE'])).toBe('published');
         });
 
         describe('afterwards', function () {
@@ -318,7 +311,8 @@ describe('entityEditor/StateController', function () {
 
     describe('unpublished entry with changes', function () {
       beforeEach(function () {
-        this.otDoc.doc.at('fields.field1').set('two');
+        this.entity.data.sys.version++;
+        this.otDoc.setValueAt(['fields', 'field1'], 'changed');
         this.$apply();
       });
 
@@ -327,10 +321,10 @@ describe('entityEditor/StateController', function () {
       describe('#revertToPrevious command', function () {
 
         it('reverts the field data', function () {
-          expect(this.otDoc.doc.snapshot.fields.field1).toBe('two');
+          expect(this.otDoc.getValueAt(['fields', 'field1'])).toBe('changed');
           this.controller.revertToPrevious.execute();
           this.$apply();
-          expect(this.otDoc.doc.snapshot.fields.field1).toBe('one');
+          expect(this.otDoc.getValueAt(['fields', 'field1'])).toBe('one');
         });
 
         describe('afterwards', function () {

@@ -52,7 +52,7 @@ angular.module('contentful')
  * @property {otDoc} otDoc
  */
 .controller('otDocForController', ['$scope', '$attrs', '$injector', function OtDocForController ($scope, $attrs, $injector) {
-
+  var $q = $injector.get('$q');
   var ShareJS = $injector.get('ShareJS');
   var logger = $injector.get('logger');
   var defer = $injector.get('defer');
@@ -70,6 +70,9 @@ angular.module('contentful')
       error: false,
       saving: false
     },
+    getValueAt: getValueAt,
+    setValueAt: setValueAt,
+    removeValueAt: removeValueAt,
     open: open,
     close: close
   };
@@ -106,6 +109,46 @@ angular.module('contentful')
   });
 
   $scope.$on('$destroy', handleScopeDestruction);
+
+  function getValueAt (path) {
+    if (otDoc.doc) {
+      return ShareJS.peek(otDoc.doc, path);
+    } else {
+      return dotty.get(entity.data, path);
+    }
+  }
+
+  function setValueAt (path, value) {
+    if (value === undefined) {
+      return removeValueAt(path);
+    }
+    // TODO this should actually reject when doc is not available
+    var doc = otDoc.doc;
+    if (doc) {
+      // We only test for equality when the value is guaranteed to be
+      // equal. Other wise the some properties might have changed.
+      if (!_.isObject(value) && value === getValueAt(path)) {
+        return $q.resolve(value);
+      } else {
+        return ShareJS.setDeep(doc, path, value);
+      }
+    } else {
+      return $q.reject(new Error('Cannot set value on document'));
+    }
+  }
+
+  function removeValueAt (path) {
+    return $q.denodeify(function (cb) {
+      // We catch synchronous errors since they tell us that a
+      // value along the path does not exist.
+      // TODO this should actually reject when doc is not available
+      try {
+        otDoc.doc.removeAt(path, cb);
+      } catch (e) {
+        cb();
+      }
+    });
+  }
 
   function open () {
     shouldOpen = true;
