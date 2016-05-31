@@ -43,7 +43,7 @@ describe('Asset editor controller', function () {
       logger = $injector.get('logger');
       notification = $injector.get('notification');
       scope = $rootScope.$new();
-      scope.otDoc = {doc: {}, state: {}};
+      scope.otDoc = {doc: {}, open: sinon.stub()};
 
       accessChecker = _accessChecker_;
       accessChecker.canUpdateAsset = sinon.stub().returns(true);
@@ -74,32 +74,10 @@ describe('Asset editor controller', function () {
     expect(scope.context.title).toBe('title');
   });
 
-  describe('sets the otDoc.state.disabled flag', function () {
-    beforeEach(function () {
-      scope.otDoc = {
-        doc: {},
-        state: { disabled: false }
-      };
-      stubs.isArchived.returns(false);
-    });
-
-    it('to disabled', function () {
-      accessChecker.canUpdateAsset.returns(true);
-      scope.$apply();
-      expect(scope.otDoc.state.disabled).toBe(false);
-    });
-
-    it('to enabled', function () {
-      accessChecker.canUpdateAsset.returns(false);
-      scope.$apply();
-      expect(scope.otDoc.state.disabled).toBe(true);
-    });
-  });
-
   describe('validation on publish', function () {
     beforeEach(inject(function ($rootScope, $controller, cfStub) {
       scope = $rootScope.$new();
-      scope.otDoc = {doc: {}, state: {}};
+      scope.otDoc = {doc: {}, open: sinon.stub()};
       accessChecker.canUpdateAsset.returns(true);
 
       var space = cfStub.space('test');

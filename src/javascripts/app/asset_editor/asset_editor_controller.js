@@ -59,7 +59,11 @@ angular.module('contentful')
   $scope.$watch(function assetEditorDisabledWatcher (scope) {
     return scope.asset.isArchived() || isReadOnly();
   }, function assetEditorDisabledHandler (disabled) {
-    $scope.otDoc.state.disabled = disabled;
+    if (disabled) {
+      $scope.otDoc.close();
+    } else {
+      $scope.otDoc.open();
+    }
   });
 
   // Validations

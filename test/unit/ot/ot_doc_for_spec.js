@@ -53,7 +53,7 @@ describe('otDocFor', function () {
     scope = this.$compile('<div ot-doc-for="entity">', {
       entity: this.entity
     }).scope();
-    scope.otDoc.state.disabled = false;
+    scope.otDoc.open();
   });
 
   it('otDoc is initially undefined', function () {

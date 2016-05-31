@@ -48,33 +48,7 @@ angular.module('contentful')
  * - otBecameReadonly(entity), emit:
  *   Whenever otDoc.state.editable becomes false
  *
- * The directive watches several conditions determining if the ShareJS doc should be
- * opened or closed:
- * - connected status of the sharejs service
- * - otDoc.state.disabled flag
- *
  * It also ensures that the version in the entity is always up-to-date
- *
- *  The following describes the initialization flow of this directive
- *  - if doc is connected, not disabled and there is an entity
- *    - attemptToOpenOtDoc
- *      - if entity
- *        - ShareJS.open
- *        - openOtDocFor
- *          - if successful
- *            - setup closed events
- *            - if doc is open
- *              - setupOtDoc
- *               - filterDeletedLocales
- *               - setVersionUpdater
- *               - updateIfValid
- *                 - otUpdateEntityData
- *            - else closeOtDoc
- *          - else handleOtDocOpeningFailure
- *      - else false (not connected or no entity or disabled)
- *        - handleLackOfEntity
- *          - closeOtDoc
- *
  * @property {otDoc} otDoc
  */
 .controller('otDocForController', ['$scope', '$attrs', '$injector', function OtDocForController ($scope, $attrs, $injector) {
@@ -87,17 +61,17 @@ angular.module('contentful')
 
   var entity = $scope.$eval($attrs.otDocFor);
 
+  var shouldOpen = false;
+
   var otDoc = {
     doc: undefined,
     state: {
-      // initialized to true to prevent editing until otDoc is ready
-      // TODO this is changed from the outside (e.g. the entry editor).
-      // We need to provide a proper interface for this.
-      disabled: true, // otDoc.state.disabled
-      editable: false, // otDoc.state.editable
+      editable: false,
       error: false,
       saving: false
-    }
+    },
+    open: open,
+    close: close
   };
 
   $scope.otDoc = otDoc;
@@ -133,9 +107,18 @@ angular.module('contentful')
 
   $scope.$on('$destroy', handleScopeDestruction);
 
+  function open () {
+    shouldOpen = true;
+
+  }
+
+  function close () {
+    shouldOpen = false;
+  }
+
 
   function shouldOpenDoc () {
-    return ShareJS.isConnected() && !otDoc.state.disabled;
+    return ShareJS.isConnected() && shouldOpen;
   }
 
   function openDoc () {
