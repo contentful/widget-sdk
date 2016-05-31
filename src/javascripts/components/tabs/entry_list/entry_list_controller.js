@@ -14,6 +14,16 @@ angular.module('contentful')
   var spaceContext    = $injector.get('spaceContext');
   var accessChecker   = $injector.get('accessChecker');
 
+  var openSelector = $injector.get('entitySelector').open;
+  window.OPEN = function (type, multiple) {
+    openSelector({
+      entityType: type || 'entry',
+      multiple: multiple
+    }).then(function (result) {
+      console.log(result);
+    });
+  };
+
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('EntryListViewsController', {$scope: $scope});

@@ -1,0 +1,73 @@
+mixin single-entity
+  td.cell-name
+    i.fa.fa-circle(ng-class="getStatusClassname(entity)")
+    span(ng-if="isEntry()" title="{{ spaceContext.entryTitle(entity) }}")
+      |  {{ spaceContext.entryTitle(entity) }}
+    span(ng-if="!isEntry()" title="{{ spaceContext.assetTitle(entity) }}")
+      |  {{ spaceContext.assetTitle(entity) }}
+  td.cell-content-type
+    span(ng-if="isEntry()")
+      | {{ spaceContext.publishedTypeForEntry(entity).getName() }}
+  td.cell-updated
+    date(
+      ng-if="entity.getUpdatedAt()"
+      datetime="{{ entity.getUpdatedAt() }}"
+      cf-relative-datetime)
+
+.modal-background
+  .modal-dialog.entity-selector-dialog(ng-controller="EntitySelectorController")
+    header.modal-dialog__header
+      h1 {{ labels.title }}
+      button.modal-dialog__close(ng-click="dialog.cancel()")
+
+    .modal-dialog__content
+      .entity-selector__view-toggle(ng-if="config.multiple")
+        a(href ng-click="view.mode = SELECTED" ng-if="view.mode === AVAILABLE")
+          | Show selected entities ({{ selected.length }})
+        a(href ng-click="view.mode = AVAILABLE" ng-if="view.mode === SELECTED")
+          | Hide selected entities ({{ selected.length }})
+
+      .entity-selector__search(
+        cf-tokenized-search="view.searchTerm"
+        search-content-type="getSearchContentType()"
+        placeholder="{{ labels.placeholder }}"
+        cf-on-blur-component="leftSearch($event)"
+        cf-on-blur-component-when="showAutocompletions")
+
+      .entity-selector__item-list.endless-container(
+        ng-if="view.mode === AVAILABLE"
+        cf-endless-container
+        at-bottom="loadMore()"
+        num-elements="paginator.page")
+        .entity-selector__item-list-placeholder(ng-if="!isLoading && !isInitialized")
+          | Search result will appear here as you type
+        table.search-results__list
+          tbody
+            tr(
+              ng-repeat="entity in items track by entity.getId()"
+              ng-click="select(entity)"
+              ng-class="{selected: selectedIds[entity.getId()]}")
+              +single-entity
+        .loading(ng-hide="paginator.atLast()")
+
+      .entity-selector__item-list(ng-if="view.mode === SELECTED")
+        .entity-selector__item-list-placeholder(ng-if="selected.length < 1")
+          | No items selected yet.
+        table.search-results__list
+          tbody
+            tr(
+              ng-repeat="entity in selected track by entity.getId()"
+              ng-click="deselect(entity)")
+              +single-entity
+
+      .note-box-small.note-box--blue(
+        ng-if="!config.multiple"
+        ng-bind="labels.info")
+
+    .modal-dialog__controls(ng-if="config.multiple")
+      button.cfnext-btn-primary-action.modal-dialog__controls-confirm(
+        type="button"
+        ng-click="dialog.confirm(selected)"
+        ng-disabled="selected.length < 1")
+        | {{ labels.button }}
+        span(ng-if="selected.length > 0") &nbsp;({{ selected.length }})
