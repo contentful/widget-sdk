@@ -42,6 +42,7 @@ angular.module('contentful')
   var $q = $injector.get('$q');
   var ShareJS = $injector.get('ShareJS');
   var logger = $injector.get('logger');
+  var diff = $injector.get('utils/StringDiff').diff;
   $scope.otPath = $scope.$eval($attrs.otPath);
 
   $scope.otSubDoc = {
@@ -73,21 +74,6 @@ angular.module('contentful')
     }
   }
 
-  /**
-   * Replaces a string type field in the document  with a new string value by
-   * computing the difference and generating a set of ShareJS operations to
-   * manipulate the older string. This is useful in keeping the workflow natural
-   * for editors in the scenario when a field is being hand-edited by one editor
-   * but programmatically updated in the client of the other editor.
-   * It also optimistically sends small operations whenever required instead of
-   * sending the entire replacement string, which would be expensive with the kind
-   * of incremental changes performed during typing.
-   *
-   * TL;DR - Simulates manual editing of the old string into the new string
-   * for more natural collaboration.
-   *
-   * Additional note: this essentially replicates attach_textarea from ShareJS
-   */
   function otChangeString (newValue) {
     var doc = $scope.otDoc.doc;
     var path = $scope.otPath;
@@ -104,30 +90,18 @@ angular.module('contentful')
     } else if (oldValue === newValue) {
       return $q.resolve();
     } else {
-      var commonStart = 0;
-      var commonEnd = 0;
-      var oldEnd = oldValue.length - 1;
-      var newEnd = newValue.length - 1;
-
-      while (oldValue.charAt(commonStart) === newValue.charAt(commonStart)) {
-        commonStart += 1;
-      }
-      while (oldValue.charAt(oldEnd - commonEnd) === newValue.charAt(newEnd - commonEnd) &&
-             commonStart + commonEnd < oldValue.length && commonStart + commonEnd < newValue.length) {
-        commonEnd += 1;
-      }
-
-      var ops = [];
-      if (oldValue.length !== commonStart + commonEnd) {
-        ops.push($q.denodeify(function (cb) {
-          doc.deleteTextAt(path, oldValue.length - commonStart - commonEnd, commonStart, cb);
-        }));
-      }
-      if (newValue.length !== commonStart + commonEnd) {
-        ops.push($q.denodeify(function (cb) {
-          doc.insertAt(path, commonStart, newValue.slice(commonStart, newValue.length - commonEnd), cb);
-        }));
-      }
+      var patches = diff(oldValue, newValue);
+      var ops = patches.map(function (p) {
+        if (p.insert) {
+          return $q.denodeify(function (cb) {
+            doc.insertAt(path, p.insert[0], p.insert[1], cb);
+          });
+        } else if (p.delete) {
+          return $q.denodeify(function (cb) {
+            doc.deleteTextAt(path, p.delete[1], p.delete[0], cb);
+          });
+        }
+      });
       return $q.all(ops);
     }
   }

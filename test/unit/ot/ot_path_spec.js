@@ -158,9 +158,10 @@ describe('otPath directive', function () {
   });
 
   describe('#changeString()', function () {
-    pit('should update value in doc at path', function () {
+    pit('set value if previous value is empty string', function () {
       dotty.put(scope.otDoc.doc.snapshot, scope.otPath, '');
-      return scope.otSubDoc.changeString('value').then(function () {
+      return scope.otSubDoc.changeString('value')
+      .then(function () {
         expect(scope.otDoc.doc.getAt(scope.otPath)).toBe('value');
       });
     });
