@@ -82,6 +82,7 @@
     "front-matter": "^1.0.0",
     "fs-extra": "^0.30.0",
     "highlight.js": "^9.2.0",
+    "karma-babel-preprocessor": "^6.0.1",
     "karma-chrome-launcher": "~0.2.0",
     "karma-jasmine": "~0.3.6",
     "karma-mocha-reporter": "^1.0.2",

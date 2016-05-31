@@ -17,6 +17,7 @@ angular.module('contentful')
   var $window = $injector.get('$window');
   var $q = $injector.get('$q');
   var random = $injector.get('random');
+  var $rootScope = $injector.get('$rootScope');
 
   /**
    * @ngdoc type
@@ -36,10 +37,12 @@ angular.module('contentful')
 
     var self = this;
     this.messageListener = function (ev) {
-      var data = ev.data;
-      if (data.source === self.id) {
-        self._dispatch(data.method, data.id, data.params);
-      }
+      $rootScope.$apply(function () {
+        var data = ev.data;
+        if (data.source === self.id) {
+          self._dispatch(data.method, data.id, data.params);
+        }
+      })
     };
 
     $window.addEventListener('message', this.messageListener);
