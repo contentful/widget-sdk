@@ -39,7 +39,7 @@ angular.module('contentful').directive('cfLinkEditor', [function(){
         update: function(e, ui) {
           var oldIndex = ui.item.sortable.index;
           var newIndex = ui.item.sortable.dropindex;
-          scope.otDoc.doc.at(scope.otPath).move(oldIndex, newIndex);
+          scope.otSubDoc.move(oldIndex, newIndex);
         }
       };
 

@@ -2,87 +2,76 @@
 
 describe('EntryLinkEditorController', function () {
   var linkEditorCtrl, createController;
-  var scope, stubs, attrs;
-  var shareJSMock, entityCacheMock;
-
-  function validationParser (arg) {
-    return arg;
-  }
+  var scope, stubs;
+  var entityCacheMock;
 
   afterEach(function () {
     linkEditorCtrl = createController =
-      scope = stubs = attrs =
-      shareJSMock = entityCacheMock = null;
+      scope = stubs =
+      entityCacheMock = null;
   });
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'getEntries',
-        'save',
-        'getAll',
         'entryTitle',
         'publishedTypeForEntry',
         'localizedField'
       ]);
 
-      shareJSMock = {
-        peek: sinon.stub(),
-        mkpathAndSetValue: sinon.stub()
-      };
-
       entityCacheMock = sinon.stub();
       entityCacheMock.returns({
-        save: stubs.save,
-        getAll: stubs.getAll
+        save: sinon.stub(),
+        getAll: sinon.stub()
       });
 
-      $provide.value('ShareJS', shareJSMock);
       $provide.value('EntityCache', entityCacheMock);
       $provide.constant('validation', {
         Validation: {
-          parse: validationParser
+          parse: _.identity
         }
       });
     });
 
-    inject(function ($rootScope, $controller, _$q_, cfStub) {
-      scope = $rootScope.$new();
+    scope = this.$inject('$rootScope').$new();
 
-      var space = cfStub.space('test');
-      var contentTypeData = cfStub.contentTypeData('content_type1');
-      scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
-      scope.spaceContext.space.getEntries = stubs.getEntries;
-      scope.spaceContext.entryTitle = stubs.entryTitle;
-      scope.spaceContext.localizedField = stubs.localizedField;
-      scope.spaceContext.publishedTypeForEntry = stubs.publishedTypeForEntry;
+    var cfStub = this.$inject('cfStub');
+    var space = cfStub.space('test');
+    var contentTypeData = cfStub.contentTypeData('content_type1');
+    scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
+    scope.spaceContext.entryTitle = stubs.entryTitle;
+    scope.spaceContext.localizedField = stubs.localizedField;
+    scope.spaceContext.publishedTypeForEntry = stubs.publishedTypeForEntry;
 
-      scope.locale = {
-        code: 'en-US',
-        internal_code: 'en-US'
-      };
+    scope.locale = {
+      code: 'en-US',
+      internal_code: 'en-US'
+    };
 
-      scope.field = {
-        type: 'Link',
-        validations: []
-      };
+    scope.field = {
+      type: 'Link',
+      validations: []
+    };
 
-      attrs = {
-        ngModel: 'fieldData.value',
-        linkMultiple: false
-      };
+    scope.otSubDoc = {
+      onValueChanged: sinon.stub().returns(_.noop)
+    };
 
-      scope.isDisabled = sinon.stub().returns(false);
+    var attrs = {
+      ngModel: 'fieldData.value',
+      linkMultiple: false
+    };
 
-      createController = function () {
-        linkEditorCtrl = $controller('EntryLinkEditorController', {
-          $scope: scope,
-          $attrs: attrs
-        });
-        scope.$digest();
-      };
+    scope.isDisabled = sinon.stub().returns(false);
 
-    });
+    var $controller = this.$inject('$controller');
+    createController = function () {
+      linkEditorCtrl = $controller('EntryLinkEditorController', {
+        $scope: scope,
+        $attrs: attrs
+      });
+      scope.$digest();
+    };
   });
 
   describe('initial state', function () {

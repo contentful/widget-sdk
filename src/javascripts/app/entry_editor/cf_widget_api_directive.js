@@ -32,18 +32,14 @@ angular.module('contentful')
  * Exposed by the `cfWidgetApi` directive.
  */
 .controller('WidgetApiController', ['$scope', '$injector', function ($scope, $injector) {
-  var $q = $injector.get('$q');
   var newSignal = $injector.get('signal').createMemoized;
   var spaceContext = $injector.get('spaceContext');
   var TheLocaleStore = $injector.get('TheLocaleStore');
 
-  var valueChangedSignal = newSignal($scope.otSubDoc.getValue());
+  var fieldLocaleDoc = $scope.otSubDoc;
   var isDisabledSignal = newSignal(isEditingDisabled());
   var schemaErrorsSignal = newSignal(null);
   var ctField = $scope.widget.field;
-
-  $scope.$on('otValueChanged', createValueChangedSignalDispatcher());
-  $scope.$on('otValueReverted', createValueChangedSignalDispatcher(true));
 
   $scope.$watch(isEditingDisabled, function (value) {
     // Do not send other listener arguments to signal
@@ -88,17 +84,18 @@ angular.module('contentful')
 
 
   this.field = {
-    onValueChanged: valueChangedSignal.attach,
     onDisabledStatusChanged: isDisabledSignal.attach,
     onSchemaErrorsChanged: schemaErrorsSignal.attach,
     setInvalid: setInvalid,
-    getValue: getValue,
-    setValue: createSetter('changeValue'),
-    setString: createSetter('changeString'),
-    removeValue: removeValue,
-    removeValueAt: removeValueAt,
-    insertValue: insertValue,
-    pushValue: pushValue,
+
+    onValueChanged: fieldLocaleDoc.onValueChanged,
+    getValue: fieldLocaleDoc.get,
+    setValue: fieldLocaleDoc.set,
+    setString: fieldLocaleDoc.setString,
+    removeValue: fieldLocaleDoc.remove,
+    removeValueAt: fieldLocaleDoc.removeAt,
+    insertValue: fieldLocaleDoc.insert,
+    pushValue: fieldLocaleDoc.push,
 
     id: ctField.apiName, // we only want to expose the public ID
     locale: $scope.locale.code,
@@ -122,73 +119,6 @@ angular.module('contentful')
   function setInvalid (isInvalid) {
     $scope.fieldController.setInvalid($scope.locale.code, isInvalid);
   };
-
-  function getValue () {
-    return $scope.otSubDoc.getValue();
-  }
-
-  function createSetter (method) {
-    return function setValue (value) {
-      // We only test for equality when the value is guaranteed to be
-      // equal.
-      if (!_.isObject(value) && value === getValue()) {
-        return $q.resolve(value);
-      } else {
-        return $scope.otSubDoc[method](value);
-      }
-    };
-  }
-
-  function removeValue () {
-    return $scope.otSubDoc.removeValue();
-  }
-
-  function createValueChangedSignalDispatcher (shouldCheckPath) {
-    return function dispatchValueChangedSignal (_event, path, value) {
-      if (!shouldCheckPath || isPathMatching(path)) {
-        valueChangedSignal.dispatch(value);
-      }
-    };
-  }
-
-  function isPathMatching (path) {
-    if (!_.isArray($scope.otPath) || !_.isArray(path)) {
-      throw new Error('Path should be an array of strings.');
-    }
-
-    return _.isEqual($scope.otPath, path);
-  }
-
-  function removeValueAt (i) {
-    return $q.denodeify(function (cb) {
-      $scope.otSubDoc.doc.at(i).remove(cb);
-    });
-  }
-
-  function insertValue (i, x) {
-    // TODO Move this into otPath directive
-    if ($scope.otSubDoc.getValue()) {
-      return $q.denodeify(function (cb) {
-        $scope.otSubDoc.doc.insert(i, x, cb);
-      });
-    } else if (i === 0) {
-      return $scope.otSubDoc.changeValue([x]);
-    } else {
-      return $q.reject(new Error('Cannot insert index ' + i + 'into empty container'));
-    }
-  }
-
-  function pushValue (x) {
-    // TODO Move this into otPath directive
-    var current = $scope.otSubDoc.getValue();
-    if (current) {
-      return $q.denodeify(function (cb) {
-        $scope.otSubDoc.doc.insert(current.length, x, cb);
-      });
-    } else {
-      return $scope.otSubDoc.changeValue([x]);
-    }
-  }
 
   function isEditingDisabled () {
     return $scope.fieldLocale.access.disabled;

@@ -2,67 +2,56 @@
 
 describe('AssetLinkEditorController', function () {
   var createController;
-  var scope, stubs, attrs;
-  var shareJSMock, entityCacheMock;
+  var scope;
+  var entityCacheMock;
 
   afterEach(function () {
     createController =
-      scope = stubs = attrs =
-      shareJSMock = entityCacheMock = null;
+      scope =
+      entityCacheMock = null;
   });
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs([
-        'getEntries',
-        'otDocPush',
-        'remove',
-        'save',
-        'getAll'
-      ]);
-
-      shareJSMock = {
-        peek: sinon.stub(),
-        mkpathAndSetValue: sinon.stub()
-      };
 
       entityCacheMock = sinon.stub();
       entityCacheMock.returns({
-        save: stubs.save,
-        getAll: stubs.getAll
+        save: sinon.stub(),
+        getAll: sinon.stub()
       });
 
-      $provide.value('ShareJS', shareJSMock);
       $provide.value('EntityCache', entityCacheMock);
     });
 
-    inject(function ($rootScope, $controller, _$q_, cfStub) {
-      scope = $rootScope.$new();
+    scope = this.$inject('$rootScope').$new();
 
-      var space = cfStub.space('test');
-      var contentTypeData = cfStub.contentTypeData('content_type1');
-      scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
-      scope.spaceContext.space.getEntries = stubs.getEntries;
+    var cfStub = this.$inject('cfStub');
+    var space = cfStub.space('test');
+    var contentTypeData = cfStub.contentTypeData('content_type1');
+    scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
 
-      scope.field = {
-        type: 'Link',
-        validations: []
-      };
+    scope.field = {
+      type: 'Link',
+      validations: []
+    };
 
-      attrs = {
-        ngModel: 'fieldData.value',
-        linkMultiple: false
-      };
+    scope.otSubDoc = {
+      onValueChanged: sinon.stub().returns(_.noop)
+    };
 
-      createController = function () {
-        $controller('AssetLinkEditorController', {
-          $scope: scope,
-          $attrs: attrs
-        });
-        scope.$digest();
-      };
+    var attrs = {
+      ngModel: 'fieldData.value',
+      linkMultiple: false
+    };
 
-    });
+    var $controller = this.$inject('$controller');
+    createController = function () {
+      $controller('AssetLinkEditorController', {
+        $scope: scope,
+        $attrs: attrs
+      });
+      scope.$digest();
+    };
   });
 
   describe('initial state', function () {
