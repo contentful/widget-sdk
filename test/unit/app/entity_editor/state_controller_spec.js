@@ -27,32 +27,32 @@ describe('entityEditor/StateController', function () {
       $scope: this.scope,
       notify: this.notify,
       entity: entry,
-      handlePublishError: null,
+      handlePublishError: null
     });
   });
 
-  describe('#delete command execution', function() {
-    beforeEach(function() {
+  describe('#delete command execution', function () {
+    beforeEach(function () {
       this.notify.deleteFail = sinon.stub();
       this.notify.deleteSuccess = sinon.stub();
       this.scope.closeState = sinon.stub();
     });
 
-    it('calls entity.delete()', function() {
+    it('calls entity.delete()', function () {
       this.entity.delete = sinon.stub().resolves();
       this.controller.delete.execute();
       this.$apply();
       sinon.assert.calledOnce(this.entity.delete);
     });
 
-    it('send success notification', function() {
+    it('send success notification', function () {
       this.entity.delete = sinon.stub().resolves();
       this.controller.delete.execute();
       this.$apply();
       sinon.assert.calledOnce(this.notify.deleteSuccess);
     });
 
-    it('closes the current state', function() {
+    it('closes the current state', function () {
       this.entity.delete = sinon.stub().resolves();
       this.controller.delete.execute();
       this.$apply();
@@ -69,7 +69,7 @@ describe('entityEditor/StateController', function () {
   });
 
   describe('in published state without changes', function () {
-    beforeEach(function() {
+    beforeEach(function () {
       this.entity.data.sys.publishedVersion = 42;
       this.entity.data.sys.version = 43;
       this.entity.data.sys.archivedVersion = null;
@@ -120,7 +120,7 @@ describe('entityEditor/StateController', function () {
   });
 
   describe('in draft state', function () {
-    beforeEach(function() {
+    beforeEach(function () {
       this.entity.data.sys.version = 1;
       this.entity.data.sys.publishedVersion = null;
       this.entity.data.sys.archivedVersion = null;
@@ -191,23 +191,23 @@ describe('entityEditor/StateController', function () {
   });
 
   describe('reverting', function () {
-    function canBeReverted(states) {
-      if(states.toPublished) {
-        it('entry can be reverted to published', function() {
+    function canBeReverted (states) {
+      if (states.toPublished) {
+        it('entry can be reverted to published', function () {
           expect(this.controller.revertToPublished.isAvailable()).toBeTruthy();
         });
       } else {
-        it('entry cannot be reverted to published', function() {
+        it('entry cannot be reverted to published', function () {
           expect(this.controller.revertToPublished.isAvailable()).toBeFalsy();
         });
       }
 
-      if(states.toPrevious) {
-        it('entry can be reverted to previous state', function() {
+      if (states.toPrevious) {
+        it('entry can be reverted to previous state', function () {
           expect(this.controller.revertToPrevious.isAvailable()).toBeTruthy();
         });
       } else {
-        it('entry cannot be reverted to previous state', function() {
+        it('entry cannot be reverted to previous state', function () {
           expect(this.controller.revertToPrevious.isAvailable()).toBeFalsy();
         });
       }
@@ -272,7 +272,7 @@ describe('entityEditor/StateController', function () {
     });
 
     describe('published entry with changes', function () {
-      beforeEach(function() {
+      beforeEach(function () {
         // publish
         this.controller.primary.execute();
         this.$apply();
@@ -286,13 +286,13 @@ describe('entityEditor/StateController', function () {
       canBeReverted({toPublished: true, toPrevious: true});
 
       describe('#revertToPublished command', function () {
-        beforeEach(function() {
+        beforeEach(function () {
           this.entity.getPublishedState = sinon.stub().resolves({fields: {'some-field': {'de-DE': 'published'}}});
           this.controller.revertToPublished.execute();
           this.$apply();
         });
 
-        it('reverts the field data', function() {
+        it('reverts the field data', function () {
           expect(this.otDoc.doc.snapshot.fields['some-field']['de-DE']).toBe('published');
         });
 
@@ -321,16 +321,16 @@ describe('entityEditor/StateController', function () {
 
 
     describe('unpublished entry with changes', function () {
-      beforeEach(function() {
+      beforeEach(function () {
         this.otDoc.doc.at('fields.field1').set('two');
         this.$apply();
       });
 
       canBeReverted({toPublished: false, toPrevious: true});
 
-      describe('#revertToPrevious command', function() {
+      describe('#revertToPrevious command', function () {
 
-        it('reverts the field data', function() {
+        it('reverts the field data', function () {
           expect(this.otDoc.doc.snapshot.fields.field1).toBe('two');
           this.controller.revertToPrevious.execute();
           this.$apply();

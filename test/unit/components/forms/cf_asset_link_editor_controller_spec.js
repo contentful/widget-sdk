@@ -1,13 +1,13 @@
 'use strict';
 
 describe('AssetLinkEditorController', function () {
-  var linkEditorCtrl, createController;
-  var scope, entry, $q, stubs, attrs;
+  var createController;
+  var scope, stubs, attrs;
   var shareJSMock, entityCacheMock;
 
   afterEach(function () {
-    linkEditorCtrl = createController =
-      scope = entry = $q = stubs = attrs =
+    createController =
+      scope = stubs = attrs =
       shareJSMock = entityCacheMock = null;
   });
 
@@ -37,13 +37,11 @@ describe('AssetLinkEditorController', function () {
     });
 
     inject(function ($rootScope, $controller, _$q_, cfStub) {
-      $q = _$q_;
       scope = $rootScope.$new();
 
       var space = cfStub.space('test');
       var contentTypeData = cfStub.contentTypeData('content_type1');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
-      entry = cfStub.entry(space, 'entry1', 'content_type1');
       scope.spaceContext.space.getEntries = stubs.getEntries;
 
       scope.field = {
@@ -57,7 +55,7 @@ describe('AssetLinkEditorController', function () {
       };
 
       createController = function () {
-        linkEditorCtrl = $controller('AssetLinkEditorController', {
+        $controller('AssetLinkEditorController', {
           $scope: scope,
           $attrs: attrs
         });
@@ -80,15 +78,15 @@ describe('AssetLinkEditorController', function () {
       expect(scope.linkedEntities).toEqual([]);
     });
 
-    it('initializes entity cache', function() {
+    it('initializes entity cache', function () {
       sinon.assert.calledWith(entityCacheMock, scope.spaceContext.space, 'getAssets');
     });
 
-    it('initializes link content types', function() {
+    it('initializes link content types', function () {
       expect(scope.linkContentTypes).toBeFalsy();
     });
 
-    it('initializes link mimetype group', function() {
+    it('initializes link mimetype group', function () {
       expect(scope.linkMimetypeGroup).toBeFalsy();
     });
 

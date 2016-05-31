@@ -1,17 +1,17 @@
 'use strict';
 
 describe('LinkEditorController', function () {
-  var linkEditorCtrl, createController;
+  var createController;
   var scope, entry, $q, stubs;
   var shareJSMock, entityCacheMock, linkParams;
 
   afterEach(function () {
-    linkEditorCtrl = createController =
+    createController =
       scope = entry = $q = stubs =
       shareJSMock = entityCacheMock = linkParams = null;
   });
 
-  function validationParser(arg) {
+  function validationParser (arg) {
     return arg;
   }
 
@@ -66,7 +66,7 @@ describe('LinkEditorController', function () {
       };
 
       createController = function () {
-        linkEditorCtrl = $controller('LinkEditorController', {
+        $controller('LinkEditorController', {
           $scope: scope,
           ngModel: 'fieldData.value',
           linkParams: linkParams,
@@ -91,15 +91,15 @@ describe('LinkEditorController', function () {
       expect(scope.linkedEntities).toEqual([]);
     });
 
-    it('initializes entity cache', function() {
+    it('initializes entity cache', function () {
       sinon.assert.calledWith(entityCacheMock, scope.spaceContext.space, 'getEntries');
     });
 
   });
 
-  describe('methods', function() {
+  describe('methods', function () {
 
-    beforeEach(function() {
+    beforeEach(function () {
       linkParams.type = 'Entry';
 
       scope.fieldData = {value: 'formfieldvalue'};
@@ -127,7 +127,7 @@ describe('LinkEditorController', function () {
     });
 
     describe('attaches a list of previously loaded entries', function () {
-      beforeEach(function() {
+      beforeEach(function () {
         createController();
         stubs.getAll.returns($q.resolve([entry, undefined]));
         scope.links = [
@@ -137,11 +137,11 @@ describe('LinkEditorController', function () {
         scope.$apply();
       });
 
-      it('has linked entities', function() {
+      it('has linked entities', function () {
         expect(scope.linkedEntities.length).toBe(2);
       });
 
-      it('one of the entities is missing', function() {
+      it('one of the entities is missing', function () {
         expect(scope.linkedEntities[1].isMissing).toBeTruthy();
       });
     });
@@ -164,7 +164,7 @@ describe('LinkEditorController', function () {
     });
 
     it('is called when validation changes', function () {
-      scope.field.validations = [{ linkContentType: ['ct-id']}];
+      scope.field.validations = [{linkContentType: ['ct-id']}];
       createController();
       sinon.assert.calledWith(stubs.setValidationType,
                               {linkContentType: ['ct-id']});
@@ -176,7 +176,7 @@ describe('LinkEditorController', function () {
     });
 
     it('is called when validation is removed', function () {
-      scope.field.validations = [{ linkContentType: ['ct-id']}];
+      scope.field.validations = [{linkContentType: ['ct-id']}];
       createController();
 
       scope.field.validations.pop();
@@ -208,21 +208,21 @@ describe('LinkEditorController', function () {
     });
 
     it('is called when removing a link and linkSingle=true',
-    function() {
+    function () {
       scope.linkSingle = true;
       scope.links = [
         {sys: {id: 'entry1'}},
-        {sys: {id: 'entry2'}},
+        {sys: {id: 'entry2'}}
       ];
       scope.removeLink();
       sinon.assert.calledWith(scope.otSubDoc.changeValue, undefined);
     });
 
     it('is called when linkSingle=false and we\'re removing the last link ',
-    function() {
+    function () {
       scope.linkSingle = false;
       scope.links = [
-        {sys: {id: 'entry1'}},
+        {sys: {id: 'entry1'}}
       ];
       scope.removeLink();
       sinon.assert.calledWith(scope.otSubDoc.changeValue, undefined);

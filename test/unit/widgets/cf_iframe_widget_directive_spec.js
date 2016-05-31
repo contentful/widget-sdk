@@ -48,7 +48,7 @@ describe('cfIframeWidget directive', function () {
       var doc = new OtDoc({fields: {
         'FIELD': {
           'LOC A': 'VAL A',
-          'LOC B': 'VAL B',
+          'LOC B': 'VAL B'
         }
       }});
 
@@ -80,7 +80,7 @@ describe('cfIframeWidget directive', function () {
       };
 
       this.scope.otDoc = {
-        doc: new OtDoc(),
+        doc: new OtDoc()
       };
     });
 
@@ -100,7 +100,7 @@ describe('cfIframeWidget directive', function () {
 
     describe('to remove a value with `value === undefined', function () {
       beforeEach(function () {
-        this.scope.otDoc.doc.removeAt = sinon.spy(function (path, cb) {
+        this.scope.otDoc.doc.removeAt = sinon.spy(function (_path, cb) {
           cb();
         });
       });

@@ -15,7 +15,7 @@ angular.module('contentful')
  * @scope.requires {API.Locale} locale
  * @scope.requires {API.ContentType.Field} field
  */
-.directive('cfIframeWidget', ['$injector', function($injector) {
+.directive('cfIframeWidget', ['$injector', function ($injector) {
   return {
     restrict: 'E',
     template: '<iframe style="width:100%" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe>',
@@ -25,8 +25,8 @@ angular.module('contentful')
       var spaceContext = $injector.get('spaceContext');
       var $q = $injector.get('$q');
 
-      var $iframe  = element.find('iframe');
-      var iframe   = $iframe.get(0);
+      var $iframe = element.find('iframe');
+      var iframe = $iframe.get(0);
       var WidgetAPI = $injector.get('widgets/API');
       var Widgets = $injector.get('widgets');
 
@@ -49,15 +49,15 @@ angular.module('contentful')
         var path = widgetAPI.buildDocPath(apiName, localeCode);
         var doc = scope.otDoc.doc;
         if (doc) {
-          return value === undefined ?
-            removeDocValue(doc, path) :
-            updateDocValue(doc, path, value);
+          return value === undefined
+            ? removeDocValue(doc, path)
+            : updateDocValue(doc, path, value);
         }
       });
 
       initializeIframe();
 
-      function initializeIframe() {
+      function initializeIframe () {
         iframe.addEventListener('load', function () {
           widgetAPI.connect();
         });
@@ -100,11 +100,11 @@ angular.module('contentful')
         widgetAPI.send('sysChanged', [sys]);
       }, true);
 
-      scope.$on('otDocReady', function (ev, doc) {
+      scope.$on('otDocReady', function (_ev, doc) {
         updateWidgetFields(doc);
       });
 
-      scope.$on('otChange', function (ev, doc, ops) {
+      scope.$on('otChange', function (_ev, doc, ops) {
         var paths = _.pluck(ops, 'p');
         paths = _.filter(paths, function (path) {
           return path[0] === 'fields';

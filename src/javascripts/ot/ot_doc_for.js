@@ -78,12 +78,12 @@ angular.module('contentful')
  *
  * @property {otDoc} otDoc
  */
-.controller('otDocForController', ['$scope', '$attrs', '$injector', function OtDocForController($scope, $attrs, $injector) {
+.controller('otDocForController', ['$scope', '$attrs', '$injector', function OtDocForController ($scope, $attrs, $injector) {
 
   var ShareJS = $injector.get('ShareJS');
-  var logger  = $injector.get('logger');
-  var defer   = $injector.get('defer');
-  var moment  = $injector.get('moment');
+  var logger = $injector.get('logger');
+  var defer = $injector.get('defer');
+  var moment = $injector.get('moment');
   var TheLocaleStore = $injector.get('TheLocaleStore');
 
   var entity = $scope.$eval($attrs.otDocFor);
@@ -97,7 +97,7 @@ angular.module('contentful')
       disabled: true, // otDoc.state.disabled
       editable: false, // otDoc.state.editable
       error: false,
-      saving: false,
+      saving: false
     },
     // TODO should be removed from the public interface
     getEntity: function () {
@@ -139,11 +139,11 @@ angular.module('contentful')
   $scope.$on('$destroy', handleScopeDestruction);
 
 
-  function shouldOpenDoc() {
+  function shouldOpenDoc () {
     return ShareJS.isConnected() && !otDoc.state.disabled;
   }
 
-  function openDoc() {
+  function openDoc () {
     ShareJS.open(entity)
     .then(function (doc) {
       setupClosedEventHandling(doc);
@@ -161,10 +161,10 @@ angular.module('contentful')
     });
   }
 
-  function closeDoc(doc) {
+  function closeDoc (doc) {
     try {
       doc.close();
-    } catch(e) {
+    } catch (e) {
       if (e.message !== 'Cannot send to a closed connection') {
         throw e;
       }
@@ -174,7 +174,7 @@ angular.module('contentful')
   }
 
 
-  function handleOtDocOpeningFailure(err, entity) {
+  function handleOtDocOpeningFailure (err, entity) {
     resetOtDoc();
     logger.logSharejsError('Failed to open sharejs doc', {
       data: {
@@ -184,7 +184,7 @@ angular.module('contentful')
     });
   }
 
-  function setupClosedEventHandling(doc) {
+  function setupClosedEventHandling (doc) {
     // Remove all event listeners when the document is closed.
     // TODO I’m not sure this accomplishes what we want. In any case
     // this should be done through the doc’s public API.
@@ -198,7 +198,7 @@ angular.module('contentful')
     });
   }
 
-  function resetOtDoc() {
+  function resetOtDoc () {
     if (otDoc.doc) {
       removeListeners(otDoc.doc);
     }
@@ -208,7 +208,7 @@ angular.module('contentful')
   }
 
 
-  function setupOtDoc(doc) {
+  function setupOtDoc (doc) {
     filterDeletedLocales(doc.snapshot);
     installListeners(doc);
     otDoc.doc = doc;
@@ -218,11 +218,11 @@ angular.module('contentful')
     otUpdateEntityData();
   }
 
-  function filterDeletedLocales(data) {
+  function filterDeletedLocales (data) {
     _.keys(data.fields).forEach(function (fieldId) {
-      _.keys(data.fields[fieldId]).forEach(function (internal_code) {
-        if (!_.find(TheLocaleStore.getPrivateLocales(), { internal_code: internal_code })) {
-          delete data.fields[fieldId][internal_code];
+      _.keys(data.fields[fieldId]).forEach(function (internalCode) {
+        if (!_.find(TheLocaleStore.getPrivateLocales(), { internal_code: internalCode })) {
+          delete data.fields[fieldId][internalCode];
         }
       });
     });
@@ -238,13 +238,13 @@ angular.module('contentful')
     }
   }
 
-  function otUpdateEntityData() {
+  function otUpdateEntityData () {
     if (otDoc.doc) {
       var data = _.cloneDeep(otDoc.doc.snapshot);
-      if(!data) {
+      if (!data) {
         throw new Error('Failed to update entity: data not available');
       }
-      if(!data.sys) {
+      if (!data.sys) {
         throw new Error('Failed to update entity: sys not available');
       }
 
@@ -279,8 +279,8 @@ angular.module('contentful')
     doc.removeListener('acknowledge', updateHandler);
   }
 
-  function remoteOpListener(ops) {
-    $scope.$apply(function(scope) {
+  function remoteOpListener (ops) {
+    $scope.$apply(function (scope) {
       _.each(ops, function (op) {
         scope.$broadcast('otRemoteOp', op);
       });
@@ -302,7 +302,7 @@ angular.module('contentful')
     $scope.$applyAsync(otUpdateEntityData);
   }
 
-  function handleScopeDestruction() {
+  function handleScopeDestruction () {
     if (otDoc.doc) {
       closeDoc(otDoc.doc);
       resetOtDoc(otDoc.doc);
