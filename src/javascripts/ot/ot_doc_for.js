@@ -24,7 +24,6 @@ angular.module('contentful')
  * @name otDoc
  * @property {ShareJSDoc} doc
  * @property {otDoc.state} state
- * @property {function()} getEntity
 */
 
 /**
@@ -98,10 +97,6 @@ angular.module('contentful')
       editable: false, // otDoc.state.editable
       error: false,
       saving: false
-    },
-    // TODO should be removed from the public interface
-    getEntity: function () {
-      return entity;
     }
   };
 

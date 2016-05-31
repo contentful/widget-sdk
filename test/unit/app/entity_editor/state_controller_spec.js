@@ -226,10 +226,6 @@ describe('entityEditor/StateController', function () {
         editable: true
       };
 
-      this.getEntity = function () {
-        return entity;
-      };
-
       this.updateSnapshot = function () {
         doc.snapshot = _.cloneDeep(entity.data);
       };
