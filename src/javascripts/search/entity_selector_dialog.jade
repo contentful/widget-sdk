@@ -29,7 +29,7 @@ mixin single-entity
 
       .entity-selector__search(
         cf-tokenized-search="view.searchTerm"
-        search-content-type="getSearchContentType()"
+        search-content-type="singleContentType"
         placeholder="{{ labels.placeholder }}"
         cf-on-blur-component="leftSearch($event)"
         cf-on-blur-component-when="showAutocompletions")
@@ -68,6 +68,6 @@ mixin single-entity
       button.cfnext-btn-primary-action.modal-dialog__controls-confirm(
         type="button"
         ng-click="dialog.confirm(selected)"
-        ng-disabled="selected.length < 1")
+        ng-disabled="selected.length < config.min || selected.length > config.max")
         | {{ labels.button }}
         span(ng-if="selected.length > 0") &nbsp;({{ selected.length }})

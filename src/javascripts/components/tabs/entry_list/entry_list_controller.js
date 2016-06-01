@@ -24,6 +24,23 @@ angular.module('contentful')
     });
   };
 
+  window.OPEN_WITH_FIELD = function () {
+    var field = {
+      validations: [{size: {min: 2, max: 5}}],
+      items: {
+        validations: [{linkContentType: ['test', 'qweqwe']}]
+      }
+    };
+
+    openSelector({
+      entityType: 'entry',
+      multiple: true,
+      field: field
+    }).then(function (result) {
+      console.log(result);
+    });
+  };
+
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('EntryListViewsController', {$scope: $scope});

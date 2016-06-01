@@ -3,17 +3,61 @@
 angular.module('contentful').factory('entitySelector', ['$injector', function ($injector) {
 
   var modalDialog = $injector.get('modalDialog');
+  var spaceContext = $injector.get('spaceContext');
+  var $q = $injector.get('$q');
+  var searchQueryHelper = $injector.get('searchQueryHelper');
 
-  return {
-    open: function (config) {
+  return {open: open};
+
+  function open (config) {
+    processValidations(config);
+
+    return getSingleContentType(config)
+    .then(openDialog);
+
+    function openDialog (singleContentType) {
       return modalDialog.open({
         template: 'entity_selector_dialog',
         ignoreEsc: true,
         noNewScope: true,
-        scopeData: {config: config}
+        scopeData: {
+          config: config,
+          singleContentType: singleContentType
+        }
       }).promise;
     }
-  };
+  }
+
+  function processValidations (c) {
+    var size = findValidation(c, 'validations', 'size', {});
+    c.min = _.isNumber(c.min) ? c.min : (size.min || 0);
+    c.max = _.isNumber(c.max) ? c.max : (size.max || +Infinity);
+    c.multiple = c.max < 2 ? false : c.multiple;
+
+    c.linkedContentTypeIds = findValidation(c, 'items.validations', 'linkContentType', []);
+  }
+
+  function findValidation (config, path, property, defaultValue) {
+    var validations = dotty.get(config, ['field', path].join('.'), []);
+    var found = _.find(validations, function (v) {
+      return _.isObject(v[property]);
+    });
+
+    return (found && found[property]) || defaultValue;
+  }
+
+  function getSingleContentType (config) {
+    if (config.entityType === 'asset') {
+      return $q.resolve(searchQueryHelper.assetContentType);
+    }
+
+    var linked = config.linkedContentTypeIds;
+    if (linked.length === 1) {
+      return spaceContext.fetchPublishedContentType(linked[0]);
+    } else {
+      return $q.resolve(null);
+    }
+  }
 }])
 
 .controller('EntitySelectorController', ['$injector', '$scope', function EntitySelectorController ($injector, $scope) {
@@ -70,9 +114,7 @@ angular.module('contentful').factory('entitySelector', ['$injector', function ($
     deselect: deselect,
     loadMore: loadMore,
     getStatusClassname: $controller('EntityStatusController', {$scope: $scope}).getClassname,
-    isEntry: _.constant($scope.config.entityType === 'entry'),
-    // @todo implement for a single CT
-    getSearchContentType: _.constant(undefined)
+    isEntry: _.constant($scope.config.entityType === 'entry')
   });
 
   var load = createQueue(function () {
@@ -86,14 +128,27 @@ angular.module('contentful').factory('entitySelector', ['$injector', function ($
   $scope.$on('forceSearch', resetAndLoad);
 
   function getQuery () {
-    var method = $scope.isEntry() ? 'getForEntries' : 'getForAssets';
     var params = {
       searchTerm: $scope.view.searchTerm,
       order: ORDER,
       paginator: $scope.paginator
     };
 
-    return ListQuery[method](params);
+    var method = $scope.isEntry() ? 'getForEntries' : 'getForAssets';
+    var extension = {};
+
+    if ($scope.isEntry()) {
+      if ($scope.singleContentType) {
+        params.contentType = $scope.singleContentType;
+      } else if ($scope.config.linkedContentTypeIds.length > 1) {
+        extension['sys.contentType.sys.id[in]'] = $scope.config.linkedContentTypeIds.join(',');
+      }
+    }
+
+    return ListQuery[method](params)
+    .then(function (query) {
+      return _.extend(query, extension);
+    });
   }
 
   function executeQuery (query) {
