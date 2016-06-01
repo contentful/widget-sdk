@@ -12,7 +12,7 @@ angular.module('contentful')
 
       var tabs = [
         {
-          name: 'Content delivery keys',
+          name: 'Content delivery / preview keys',
           state: 'spaces.detail.api.keys.list'
         },
         {
@@ -20,7 +20,7 @@ angular.module('contentful')
           state: 'spaces.detail.api.cma_keys'
         },
         {
-          name: 'Content model schema',
+          name: 'Content model explorer',
           state: 'spaces.detail.api.content_model'
         }
       ];

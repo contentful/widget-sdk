@@ -6,7 +6,7 @@
     &__toggle
       display: flex
       cursor: pointer
-      padding: 10px 0
+      padding: 12px 0
       cf-icon[name="dd-arrow-down"]
         transition: transform 0.2s ease-in-out
         margin-left: 8px
@@ -30,7 +30,11 @@
     justify-content: space-between
     padding: 20px 25px 19px
   &__info
+    display: flex
+    flex-direction: column
+    justify-content: center
     width: 300px
+    height: 44px
   &__id
     width: 300px
   &__id__title
@@ -38,12 +42,11 @@
     color: $colors.text-light
     margin-bottom: 8px
   &__name
-    margin: 0
+    margin: 8px 0
   &__description
     color: $colors.text-light
-    margin-top: 8px
   &__fields
-    padding: 0 25px 25px
+    padding: 0 25px 30px
     width: 100%
     th, td
       padding: 10px
@@ -55,7 +58,6 @@
     td
       border-bottom: 1px solid $colors.element-mid
     .cell-name
-      font-weight: bold
       width: 200px
     .cell-identifier
       width: 200px
