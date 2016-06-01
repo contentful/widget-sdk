@@ -5,22 +5,18 @@ describe('Revision service', function () {
   var $httpBackend, $rootScope;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
-      $provide.constant('environment', {
-        gitRevision: 'git_revision',
-        settings: {}
-      });
+    module('contentful/test', function (environment) {
+      environment.settings.gitRevision = 'git_revision';
     });
-    inject(function (_revision_, _$httpBackend_, _$rootScope_) {
-      $httpBackend = _$httpBackend_;
-      $rootScope = _$rootScope_;
-      revision = _revision_;
-    });
+    $httpBackend = this.$inject('$httpBackend');
+    $rootScope = this.$inject('$rootScope');
+    revision = this.$inject('revision');
   });
 
   afterEach(function () {
     $httpBackend.verifyNoOutstandingExpectation();
     $httpBackend.verifyNoOutstandingRequest();
+    $httpBackend = $rootScope = revision = null;
   });
 
   it('has a new version', function () {

@@ -7,7 +7,7 @@ var markdown = require('../lib/markdown-render');
 
 var Package = require('dgeni').Package;
 
-var templateFilters = require('./template-filters');
+var templateFilters = require('./template-filters').default;
 
 // Create and export a new Dgeni package called angularjs. This package depends upon
 // the ngdoc,nunjucks and examples packages defined in the dgeni-packages npm module.
@@ -22,17 +22,17 @@ module.exports = new Package('angularjs', [
 .factory(require('./services/getMinerrInfo'))
 .factory(require('./services/getVersion'))
 .factory(require('./services/gitData'))
-.factory(require('./services/extract-type-transform'))
+.factory(require('./services/extract-type-transform').default)
 .factory(require('./inline-tag-defs/type'))
 
 .factory(function renderMarkdown () {
   return markdown.render;
 })
 
-.processor(require('./processors/git-url'))
-.processor(require('./processors/source-code'))
+.processor(require('./processors/git-url').default)
+.processor(require('./processors/source-code').default)
 .processor(require('./processors/keywords'))
-.processor(require('./processors/doc-label'))
+.processor(require('./processors/doc-label').default)
 .processor(require('./processors/api-index'))
 
 .processor(function analyticsDocsProcessor () {

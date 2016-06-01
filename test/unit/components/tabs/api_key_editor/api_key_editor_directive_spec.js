@@ -20,16 +20,6 @@ describe('apiKeyEditor Directive', function () {
 
       $provide.removeDirectives('cfIcon');
 
-      environmentMock = {
-        env: 'development',
-        settings: {
-          cdn_host: 'cdn_host',
-          marketing_url: 'marketing_url',
-        }
-      };
-
-      $provide.constant('environment', environmentMock);
-
       $provide.value('analytics', {});
     });
 

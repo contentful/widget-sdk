@@ -3,23 +3,21 @@
 describe('AssetResolver service', function () {
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
-      $provide.constant('environment', {
-        settings: {
-          asset_host: 'static.test.com'
-        },
-        manifest: {
-          'images/my-asset.jpg': 'images/fingerprinted.jpg'
-        }
-      });
-    });
+    module('contentful/test');
+    var manifest = this.$inject('environment').manifest;
+    manifest['asset.jpg'] = 'http://fingerprinted.jpg';
+
     this.resolve = this.$inject('AssetResolver').resolve;
   });
 
-  it('returns the correct URL', function () {
-    var path = 'images/my-asset.jpg';
-    expect(this.resolve(path))
-      .toBe('//static.test.com/images/fingerprinted.jpg');
+  it('resolves a URL in the manifest', function () {
+    expect(this.resolve('asset.jpg')).toBe('http://fingerprinted.jpg');
+  });
+
+  it('throws when URL is not in manifest', function () {
+    expect(function () {
+      this.resolve('unknonw');
+    }.bind(this)).toThrow();
   });
 
 });

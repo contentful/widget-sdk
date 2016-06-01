@@ -1,5 +1,5 @@
 'use strict';
-require('babel/register');
+require('babel-register');
 
 var _ = require('lodash-node');
 var gulp = require('gulp');
@@ -28,7 +28,7 @@ gulp.task('api', function() {
 });
 
 
-var guidesPipe = require('./tasks/guides');
+var guidesPipe = require('./tasks/guides').default;
 var guides = ['guides/**/*.md'];
 gulp.task('guides', function () {
   var guidesSrc = gulp.src(guides, {base: '.'});
