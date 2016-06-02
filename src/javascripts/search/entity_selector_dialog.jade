@@ -1,12 +1,12 @@
 mixin single-entity
   td.cell-name
     i.fa.fa-circle(ng-class="getStatusClassname(entity)")
-    span(ng-if="isEntry()" title="{{ spaceContext.entryTitle(entity) }}")
+    span(ng-if="config.linksEntry" title="{{ spaceContext.entryTitle(entity) }}")
       |  {{ spaceContext.entryTitle(entity) }}
-    span(ng-if="!isEntry()" title="{{ spaceContext.assetTitle(entity) }}")
+    span(ng-if="config.linksAsset" title="{{ spaceContext.assetTitle(entity) }}")
       |  {{ spaceContext.assetTitle(entity) }}
   td.cell-content-type
-    span(ng-if="isEntry()")
+    span(ng-if="config.linksEntry")
       | {{ spaceContext.publishedTypeForEntry(entity).getName() }}
   td.cell-updated
     date(

@@ -1,78 +1,13 @@
 'use strict';
 
-angular.module('contentful').factory('entitySelector', ['$injector', function ($injector) {
+angular.module('contentful')
+.factory('entitySelector', ['$injector', function ($injector) {
 
   var modalDialog = $injector.get('modalDialog');
   var spaceContext = $injector.get('spaceContext');
   var $q = $injector.get('$q');
   var searchQueryHelper = $injector.get('searchQueryHelper');
-
-  return {open: open};
-
-  function open (config) {
-    processValidations(config);
-
-    return getSingleContentType(config)
-    .then(openDialog);
-
-    function openDialog (singleContentType) {
-      return modalDialog.open({
-        template: 'entity_selector_dialog',
-        ignoreEsc: true,
-        noNewScope: true,
-        scopeData: {
-          config: config,
-          singleContentType: singleContentType
-        }
-      }).promise;
-    }
-  }
-
-  function processValidations (c) {
-    var size = findValidation(c, 'validations', 'size', {});
-    c.min = _.isNumber(c.min) ? c.min : (size.min || 0);
-    c.max = _.isNumber(c.max) ? c.max : (size.max || +Infinity);
-    c.multiple = c.max < 2 ? false : c.multiple;
-
-    c.linkedContentTypeIds = findValidation(c, 'items.validations', 'linkContentType', []);
-  }
-
-  function findValidation (config, path, property, defaultValue) {
-    var validations = dotty.get(config, ['field', path].join('.'), []);
-    var found = _.find(validations, function (v) {
-      return _.isObject(v[property]);
-    });
-
-    return (found && found[property]) || defaultValue;
-  }
-
-  function getSingleContentType (config) {
-    if (config.entityType === 'asset') {
-      return $q.resolve(searchQueryHelper.assetContentType);
-    }
-
-    var linked = config.linkedContentTypeIds;
-    if (linked.length === 1) {
-      return spaceContext.fetchPublishedContentType(linked[0]);
-    } else {
-      return $q.resolve(null);
-    }
-  }
-}])
-
-.controller('EntitySelectorController', ['$injector', '$scope', function EntitySelectorController ($injector, $scope) {
-
-  var spaceContext = $injector.get('spaceContext');
-  var ListQuery = $injector.get('ListQuery');
-  var Paginator = $injector.get('Paginator');
-  var $timeout = $injector.get('$timeout');
-  var createQueue = $injector.get('overridingRequestQueue');
-  var $controller = $injector.get('$controller');
-
-  var ORDER = {
-    fieldId: 'updatedAt',
-    direction: 'descending'
-  };
+  var mimetype = $injector.get('mimetype');
 
   var LABELS = {
     entry_single: {
@@ -97,120 +32,114 @@ angular.module('contentful').factory('entitySelector', ['$injector', function ($
     }
   };
 
-  var MODES = {
-    AVAILABLE: 1,
-    SELECTED: 2
-  };
+  return {open: open};
 
-  _.extend($scope, MODES, {
-    labels: getLabels(),
-    spaceContext: spaceContext,
-    view: {mode: MODES.AVAILABLE},
-    paginator: new Paginator(),
-    items: [],
-    selected: [],
-    selectedIds: {},
-    select: select,
-    deselect: deselect,
-    loadMore: loadMore,
-    getStatusClassname: $controller('EntityStatusController', {$scope: $scope}).getClassname,
-    isEntry: _.constant($scope.config.entityType === 'entry')
-  });
+  function open (field, min, max) {
+    var config = prepareConfig(field, min, max);
 
-  var load = createQueue(function () {
-    $scope.isLoading = true;
-    return getQuery().then(executeQuery);
-  }, function (resultPromise) {
-    resultPromise.then(handleItems);
-  });
+    return getSingleContentType(config)
+    .then(function openDialog (singleContentType) {
+      return modalDialog.open({
+        template: 'entity_selector_dialog',
+        ignoreEsc: true,
+        noNewScope: true,
+        scopeData: {
+          config: config,
+          labels: getLabels(config),
+          singleContentType: singleContentType
+        }
+      }).promise;
+    });
+  }
 
-  $scope.$watch('view.searchTerm', handleTermChange);
-  $scope.$on('forceSearch', resetAndLoad);
+  function prepareConfig (field, min, max) {
+    field = field || {};
 
-  function getQuery () {
-    var params = {
-      searchTerm: $scope.view.searchTerm,
-      order: ORDER,
-      paginator: $scope.paginator
+    var size = findValidation(field, 'size', {});
+    var config = {
+      multiple: field.type === 'Array',
+      linksEntry: field.linkType === 'Entry' || dotty.get(field, 'items.linkType') === 'Entry',
+      linksAsset: field.linkType === 'Asset' || dotty.get(field, 'items.linkType') === 'Asset',
+      min: _.isNumber(min) ? min : (size.min || 1),
+      max: _.isNumber(max) ? max : (size.max || +Infinity),
+      linkedContentTypeIds: findValidation(field, 'linkContentType', []),
+      linkedMimetypeGroups: findValidation(field, 'linkMimetypeGroup', []),
+      linkedFileSize: findValidation(field, 'assetFileSize', {}),
+      linkedImageDimensions: findValidation(field, 'assetImageDimensions', {})
     };
 
-    var method = $scope.isEntry() ? 'getForEntries' : 'getForAssets';
-    var extension = {};
+    return _.extend(config, {queryExtension: prepareQueryExtension(config)});
+  }
 
-    if ($scope.isEntry()) {
-      if ($scope.singleContentType) {
-        params.contentType = $scope.singleContentType;
-      } else if ($scope.config.linkedContentTypeIds.length > 1) {
-        extension['sys.contentType.sys.id[in]'] = $scope.config.linkedContentTypeIds.join(',');
+  function findValidation (field, property, defaultValue) {
+    var validations = [].concat(
+      dotty.get(field, 'validations', []),
+      dotty.get(field, 'items.validations', [])
+    );
+
+    var found = _.find(validations, function (v) {
+      return _.isObject(v[property]);
+    });
+
+    return (found && found[property]) || defaultValue;
+  }
+
+  function getSingleContentType (config) {
+    if (config.linksAsset) {
+      return $q.resolve(searchQueryHelper.assetContentType);
+    }
+
+    if (config.linksEntry) {
+      var linked = config.linkedContentTypeIds;
+      if (linked.length === 1) {
+        return spaceContext.fetchPublishedContentType(linked[0]);
+      } else {
+        return $q.resolve(null);
       }
     }
 
-    return ListQuery[method](params)
-    .then(function (query) {
-      return _.extend(query, extension);
-    });
+    return $q.reject(new Error('Provide a valid field object.'));
   }
 
-  function executeQuery (query) {
-    var method = $scope.isEntry() ? 'getEntries' : 'getAssets';
-    return spaceContext.space[method](query);
-  }
+  function prepareQueryExtension (config) {
+    var extension = {};
 
-  function select (entity) {
-    if (!$scope.config.multiple) {
-      $scope.dialog.confirm([entity]);
-      return;
+    if (config.linksEntry && config.linkedContentTypeIds.length > 1) {
+      extension['sys.contentType.sys.id[in]'] = config.linkedContentTypeIds.join(',');
     }
 
-    if (!$scope.selectedIds[entity.getId()]) {
-      $scope.selected.push(entity);
-      $scope.selectedIds[entity.getId()] = true;
-    } else {
-      $scope.deselect(entity);
-    }
-  }
+    if (config.linksAsset) {
+      var groups = config.linkedMimetypeGroups;
+      if (groups.length > 0) {
+        extension['fields.file.contentType[in]'] = _.reduce(groups, function (cts, group) {
+          return cts.concat(mimetype.getTypesForGroup(group));
+        }, []).join(',');
+      }
 
-  function deselect (entity) {
-    delete $scope.selectedIds[entity.getId()];
-    var index = $scope.selected.indexOf(entity);
-    if (index > -1) {
-      $scope.selected.splice(index, 1);
+      applySizeConstraint('fields.file.details.size', config.linkedFileSize);
+      applySizeConstraint('fields.file.details.width', config.linkedImageDimensions.width);
+      applySizeConstraint('fields.file.details.height', config.linkedImageDimensions.height);
     }
-  }
 
-  function handleTermChange (term, prev) {
-    if (_.isString(term) && term.length >= 4) {
-      resetAndLoad();
-    } else if (_.isString(prev) && (!_.isString(term) || term.length < prev.length)) {
-      resetAndLoad();
+    return extension;
+
+    function applySizeConstraint (path, constraint) {
+      constraint = _.isObject(constraint) ? constraint : {};
+      if (constraint.min) {
+        extension[path + '[gte]'] = constraint.min;
+      }
+      if (constraint.max) {
+        extension[path + '[lte]'] = constraint.max;
+      }
     }
   }
 
-  function handleItems (items) {
-    $scope.paginator.numEntries = items.total;
-    $scope.items.push.apply($scope.items, items);
-    $timeout(function () {
-      $scope.isInitialized = true;
-      $scope.isLoading = false;
-    });
-  }
+  function getLabels (config) {
+    var key = [
+      (config.linksEntry ? 'entry' : 'asset'),
+      (config.multiple ? 'multiple' : 'single')
+    ].join('_');
 
-  function resetAndLoad () {
-    $scope.paginator.page = 0;
-    $scope.items = [];
-    load();
-  }
-
-  function loadMore () {
-    if (!$scope.isLoading && !$scope.paginator.atLast()) {
-      $scope.paginator.page += 1;
-      load();
-    }
-  }
-
-  function getLabels () {
-    var c = $scope.config;
-    var key = [c.entityType, (c.multiple ? 'multiple' : 'single')].join('_');
     return LABELS[key];
   }
 }]);

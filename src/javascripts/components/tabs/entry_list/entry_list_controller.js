@@ -14,30 +14,20 @@ angular.module('contentful')
   var spaceContext    = $injector.get('spaceContext');
   var accessChecker   = $injector.get('accessChecker');
 
-  var openSelector = $injector.get('entitySelector').open;
-  window.OPEN = function (type, multiple) {
-    openSelector({
-      entityType: type || 'entry',
-      multiple: multiple
-    }).then(function (result) {
-      console.log(result);
-    });
-  };
-
   window.OPEN_WITH_FIELD = function () {
-    var field = {
+    $injector.get('entitySelector').open({
       validations: [{size: {min: 2, max: 5}}],
+      type: 'Array',
       items: {
-        validations: [{linkContentType: ['test', 'qweqwe']}]
+        linkType: 'Entry',
+        validations: [
+          {linkContentType: ['test', 'qweqwe']}
+        ]
       }
-    };
-
-    openSelector({
-      entityType: 'entry',
-      multiple: true,
-      field: field
     }).then(function (result) {
-      console.log(result);
+      console.log('result: ', result);
+    }, function () {
+      console.log('error: ', arguments);
     });
   };
 
