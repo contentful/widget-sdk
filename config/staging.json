@@ -1,0 +1,44 @@
+{
+  "environment": "staging",
+  "base_host" : "be.flinkly.com",
+  "api_host" : "api.flinkly.com",
+  "app_host" : "app.flinkly.com",
+  "cdn_host" : "cdn.flinkly.com",
+  "asset_host" : "staticflinkly-thriventures.netdna-ssl.com",
+  "ot_host" : "ot.flinkly.com",
+  "exception_tracking_host" : "cf-track-107d49294b11c1.appspot.com",
+  "marketing_url" : "//www.flinkly.com",
+  "main_domain" : "flinkly.com",
+  "contentful" : {
+    "apiUrl" : "api.contentful.com",
+    "cdaApiUrl" : "cdn.contentful.com",
+    "spaceTemplateEntryContentTypeId" : "17WjnjeALEOeSyuiMI4QOW",
+    "previewAccessToken" : "2fcfe1abd171477eabd73e64088fe1c1eb2578ac0158332902a1d8e5279356e4",
+    "previewApiUrl" : "preview.contentful.com",
+    "space" : "l1ay9bp8gv68",
+    "spaceTemplatesUserReadOnlyToken" : "8adea107285afc11819019618341f5b98e5808c84b957cba9ede1e57c6026475",
+    "accessToken" : "0c783036ae7540a10db86150e1cb564c8c0bad53482794604f227dc199e6dde1"
+  },
+  "filepicker" : {
+    "api_key" : "AhHWTqaWRiG08OT14xd5Qz",
+    "signature" : "7d05aaf92295dea900c7b85e3e4aa4b10c95d42c1a0ae449ab8aca554082f188",
+    "policy" : "eyJleHBpcnkiOjE1MzQ3NTcwMjgsImNhbGwiOlsicGljayIsInN0b3JlIl19"
+  },
+  "aviary" : {
+    "api_key" : "b7fe4d3302834e61b0f65913f156c067"
+  },
+  "intercom" : {
+    "secret" : "13gvdwUHBfyDcRvq8WJQLwDkQTp4nZl5Dq5V2RmZ"
+  },
+  "embedly" : {
+    "api_key" : "5aba1269adbf42919bd1dd3308b84652"
+  },
+  "segment_io" : "2z8un4c6u4",
+  "totango" : "SP-7136-01",
+  "google" : {
+    "maps_api_key" : "AIzaSyDskFlzw1ujRovNWNG3K64EUsncYTbRPfM"
+  },
+  "fonts_dot_com" : {
+    "project_id" : "fonts-dot-com-test-project-id"
+  }
+}

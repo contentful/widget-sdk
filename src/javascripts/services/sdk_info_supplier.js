@@ -303,7 +303,7 @@ angular.module('contentful')
   return {
     /**
      * @ngdoc method
-     * @name sdkInformation#get
+     * @name sdkInfoSupplier#get
      * @param {Array<string>}
      * @returns {Array}
      * Returns the list of languages with their `data` attribute filtered to
