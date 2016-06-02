@@ -211,7 +211,7 @@ function ContentTypeActionsController ($scope, $injector) {
 
     if (!$scope.validate()) {
       var fieldNames = _.pluck($scope.contentType.data.fields, 'name');
-      notify.invalid($scope.validationResult.errors, fieldNames);
+      notify.invalidAccordingToScope($scope.validationResult.errors, fieldNames);
       return $q.reject();
     }
 
@@ -299,24 +299,9 @@ function ContentTypeActionsController ($scope, $injector) {
     });
   }
 
-  function triggerApiErrorNotification (err) {
-    var errorId = dotty.get(err, 'body.sys.id');
-    if (errorId === 'ValidationFailed') {
-      notify.invalid();
-    } else if (errorId === 'VersionMismatch') {
-      if ($scope.contentType.getVersion()) {
-        logger.logServerWarn('Error activating outdated Content Type', {
-          error: err,
-          contentType: $scope.contentType
-        });
-        notify.saveOutdated();
-      } else {
-        notify.saveIdExists();
-      }
-    } else {
-      notify.saveApiError(err);
-    }
-    return $q.reject(err);
+  function triggerApiErrorNotification (errOrErrContainer) {
+    notify.saveFailure(errOrErrContainer, $scope.contentType);
+    return $q.reject(errOrErrContainer);
   }
 
   /**
@@ -421,7 +406,7 @@ function ContentTypeActionsController ($scope, $injector) {
     }
   };
 
-  return {
+  var self = {
     deleteSuccess: function () {
       notification.info('Content type deleted successfully');
     },
@@ -431,7 +416,7 @@ function ContentTypeActionsController ($scope, $injector) {
       logger.logServerWarn('Error deleting Content Type', {error: err});
     },
 
-    invalid: function (errors, fieldNames) {
+    invalidAccordingToScope: function (errors, fieldNames) {
       var fieldErrors = _.filter(errors, function (error) {
         return error.path && error.path[0] === 'fields';
       });
@@ -451,37 +436,67 @@ function ContentTypeActionsController ($scope, $injector) {
       }
     },
 
+    saveFailure: function (errData, contentType) {
+      var err = logger.findActualServerError(errData);
+      var errorId = dotty.get(err, 'sys.id');
+      if (errorId === 'ValidationFailed') {
+        self.saveInvalidError(errData, contentType);
+      } else if (errorId === 'VersionMismatch') {
+        if (contentType.getVersion()) {
+          self.saveOutdatedError(errData, contentType);
+        } else {
+          self.saveIdExists();
+        }
+      } else {
+        self.saveApiError(errData);
+      }
+    },
+
     saveSuccess: function () {
       notification.info(messages.save.success);
     },
 
-    saveOutdated: function () {
+    saveInvalidError: function (errData, contentType) {
+      notification.error(messages.save.invalid);
+      logger.logServerWarn('Error saving invalid Content Type', {
+        error: errData,
+        contentType: contentType.data
+      });
+    },
+
+    saveOutdatedError: function (errData, contentType) {
       notification.error(messages.save.outdated);
+      logger.logServerWarn('Error activating outdated Content Type', {
+        error: errData,
+        contentType: contentType.data
+      });
     },
 
     saveIdExists: function () {
       notification.warn(messages.create.exists);
     },
 
-    saveApiError: function (err) {
-      var message = saveError + getServerMessage(err);
+    saveApiError: function (errData) {
+      var message = saveError + getServerMessage(errData);
       notification.error(message);
-      logger.logServerWarn('Error activating Content Type', {error: err});
+      logger.logServerWarn('Error activating Content Type', {error: errData});
     },
 
     duplicateSuccess: function () {
       notification.info(messages.duplicate.success);
     },
 
-    duplicateError: function (err) {
-      notification.error(messages.duplicate.error + getServerMessage(err));
+    duplicateError: function (errData) {
+      notification.error(messages.duplicate.error + getServerMessage(errData));
     }
   };
 
+  return self;
 
-  function getServerMessage (err) {
-    return dotty.get(err, 'body.message') ||
-           dotty.get(err, 'body.sys.id') ||
+  function getServerMessage (errData) {
+    var err = logger.findActualServerError(errData);
+    return dotty.get(err, 'message') ||
+           dotty.get(err, 'sys.id') ||
            'Unknown server error';
   }
 

@@ -50,6 +50,7 @@ function ($delegate, mock) {
     return {
       enable: sinon.stub(),
       disable: sinon.stub(),
+      findActualServerError: sinon.stub(),
       logException: sinon.stub(),
       logError: sinon.stub(),
       logServerError: sinon.stub(),
@@ -106,13 +107,13 @@ function ($delegate, mock) {
   };
 
   $provide.stubFilter = function (filterName, returnValue) {
-    $provide.value(filterName + 'Filter', function () { return returnValue || ''; });
+    $provide.value(filterName + 'Filter', function () {
+      return returnValue || '';
+    });
   };
 
   $provide.makeStubs = function makeStubs (stubList) {
-    if (!_.isArray(stubList)) {
-      stubList = _.flatten(arguments);
-    }
+    if (!_.isArray(stubList)) stubList = _.flatten(arguments);
     var stubs = {};
     _.each(stubList, function (val) {
       stubs[val] = sinon.stub();

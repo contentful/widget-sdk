@@ -100,7 +100,6 @@ test/unit/services/editing_interfaces_helpers_spec.js
 test/unit/services/enforcements_spec.js
 test/unit/services/features_spec.js
 test/unit/services/locale_store_spec.js
-test/unit/services/logger_spec.js
 test/unit/services/modal_dialog_spec.js
 test/unit/services/organization_list_spec.js
 test/unit/services/promised_loader_spec.js
@@ -411,7 +410,6 @@ src/javascripts/services/features.js
 src/javascripts/services/filepicker.js
 src/javascripts/services/hints.js
 src/javascripts/services/locale_store.js
-src/javascripts/services/logger.js
 src/javascripts/services/modal_dialog_service.js
 src/javascripts/services/organization_list.js
 src/javascripts/services/promised_loader.js
@@ -440,7 +438,6 @@ src/javascripts/ui/cf_ui_caret_helper.js
 src/javascripts/ui/cf_ui_hint.js
 src/javascripts/ui/context_menu.js
 src/javascripts/widgets/id_map.js
-src/javascripts/widgets/api.js
 src/javascripts/widgets/cf_iframe_widget_directive.js
 src/javascripts/widgets/channel.js
 src/javascripts/widgets/checks.js
