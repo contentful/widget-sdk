@@ -6,13 +6,8 @@ describe('activationEmailResender', function () {
   var resend;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
-      $provide.constant('environment', {
-        settings: { base_host: 'be.contentful.com:443' }
-      });
-      $provide.value('logger', {
-        logError: sinon.spy()
-      });
+    module('contentful/test', function (environment) {
+      environment.settings.base_host = 'be.contentful.com:443'
     });
 
     resend = this.$inject('activationEmailResender').resend;

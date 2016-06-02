@@ -8,7 +8,7 @@ describe('ShareJS', function () {
     module('contentful/test', function ($provide) {
       $provide.value('ShareJS/Client', ShareJSClient);
     });
-    ShareJS = this.$inject('ShareJS')._noMock;
+    ShareJS = this.$inject('ShareJS');
   });
 
   describe('#connect()', function () {
@@ -42,7 +42,7 @@ describe('ShareJS', function () {
       this.mkpathAndSetValue = ShareJS.mkpathAndSetValue;
       var self = this;
       this.getValues = [];
-      this.at  = sinon.spy(function () { return self.doc;  });
+      this.at = sinon.spy(function () { return self.doc; });
       this.set = sinon.stub().yields();
       this.get = sinon.spy(function () { return self.getValues.shift(); });
       this.doc = {

@@ -12,7 +12,8 @@
  * window.cfFeedLazyLoader() with the script's name and an exported value.
  * If a script just adds a global value, define the "globalObject" property.
  */
-angular.module('contentful').factory('LazyLoader', ['$injector', function ($injector) {
+angular.module('contentful')
+.factory('LazyLoader', ['$injector', function ($injector) {
 
   var $q = $injector.get('$q');
   var $window = $injector.get('$window');
@@ -103,11 +104,10 @@ angular.module('contentful').factory('LazyLoader', ['$injector', function ($inje
   function isStylesheet (resource) {
     return resource.url.match(/\.css(?:\?.*)?$/);
   }
-}]);
+}])
 
-angular.module('contentful').factory('LazyLoader/resources', ['$injector', function ($injector) {
-
-  var assetLoader = $injector.get('AssetLoader');
+.factory('LazyLoader/resources', ['$injector', function ($injector) {
+  var AssetResolver = $injector.get('AssetResolver');
   var environment = $injector.get('environment');
 
   /**
@@ -131,7 +131,7 @@ angular.module('contentful').factory('LazyLoader/resources', ['$injector', funct
     },
     // JavaScript:
     markdown: {
-      url: assetLoader.getAssetUrl('/app/markdown_vendors.js')
+      url: AssetResolver.resolve('app/markdown_vendors.js')
     },
     embedly: {
       url: 'https://cdn.embedly.com/widgets/platform.js',
@@ -146,7 +146,7 @@ angular.module('contentful').factory('LazyLoader/resources', ['$injector', funct
       url: 'https://api.filepicker.io/v1/filepicker_debug.js'
     },
     kaltura: {
-      url: assetLoader.getAssetUrl('/app/kaltura.js'),
+      url: AssetResolver.resolve('app/kaltura.js'),
       globalObject: 'KalturaClient'
     },
     googleMaps: {
