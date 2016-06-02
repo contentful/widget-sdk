@@ -49,6 +49,7 @@ angular.module('contentful')
 
   $scope.initClient = initClient;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
+  $scope.baseHost = environment.settings.base_host;
 
   function initClient () {
     tokenStore.refresh();

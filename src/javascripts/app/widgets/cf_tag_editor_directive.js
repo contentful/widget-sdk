@@ -17,8 +17,6 @@ angular.module('cf.app')
     link: function ($scope, _el, _attrs, widgetApi) {
       var field = widgetApi.field;
 
-      $scope.constraints = _(field.validations).pluck('size').filter().first() || {};
-
       /**
        * @ngdoc property
        * @name cfTagEditor#$scope.constraintsType
@@ -26,6 +24,7 @@ angular.module('cf.app')
        * @description
        * One of 'min-max', 'min', and 'max'.
        */
+      $scope.constraints = _(field.validations).pluck('size').filter().first() || {};
       $scope.constraintsType = constraintsType($scope.constraints);
 
       /**

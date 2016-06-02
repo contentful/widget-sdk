@@ -8,6 +8,9 @@ describe('Space Template loading service', function () {
       $provide.value('contentfulClient', {
         newClient: sinon.stub()
       });
+      $provide.constant('environment', {
+        settings: { contentful: {} }
+      });
     });
 
     this.$q = this.$inject('$q');

@@ -7,7 +7,7 @@ describe('API key editor controller', function () {
   var apiKey;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide, environment) {
+    module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'spaceGetId',
         'info',
@@ -17,9 +17,12 @@ describe('API key editor controller', function () {
         'createPreviewApiKey',
         'closeState'
       ]);
-
-      environment.settings.cdn_host = 'cdn_host';
-
+      $provide.constant('environment', {
+        env: 'unittest',
+        settings: {
+          cdn_host: 'cdn_host'
+        }
+      });
       $provide.value('notification', {
         info: stubs.info,
         error: stubs.error,
