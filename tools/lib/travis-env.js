@@ -1,7 +1,7 @@
 import {transform, camelCase, keys, includes} from 'lodash'
 
 const BRANCH_ENV_MAP = {
-  'prodcution': 'production',
+  'production': 'production',
   'master': 'staging',
   'preview': 'preview'
 }
