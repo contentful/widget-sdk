@@ -81,7 +81,6 @@ test/unit/ot/ot_doc_presence_controller_spec.js
 test/unit/ot/ob_bind_object_value_spec.js
 test/unit/ot/ot_doc_for_spec.js
 test/unit/services/assert_spec.js
-test/unit/services/asset_loader_spec.js
 test/unit/services/call_buffer_spec.js
 test/unit/services/contentful_client_spec.js
 test/unit/services/exception_handler_spec.js
@@ -103,7 +102,6 @@ test/unit/services/bugsnag_spec.js
 test/unit/services/editing_interfaces_helpers_spec.js
 test/unit/services/enforcements_spec.js
 test/unit/services/features_spec.js
-test/unit/services/filepicker_spec.js
 test/unit/services/locale_store_spec.js
 test/unit/services/logger_spec.js
 test/unit/services/modal_dialog_spec.js
@@ -112,7 +110,6 @@ test/unit/services/promised_loader_spec.js
 test/unit/services/reload_notification_spec.js
 test/unit/services/sdk_info_supplier_spec.js
 test/unit/services/sharejs_client_spec.js
-test/unit/services/sharejs_spec.js
 test/unit/services/space_template_creator_spec.js
 test/unit/services/space_template_loader_spec.js
 test/unit/services/space_tools_spec.js
@@ -184,7 +181,6 @@ test/helpers/mocks/ot_doc.js
 test/helpers/mocks/the_store.js
 test/helpers/application.js
 test/helpers/deep_diff.js
-test/helpers/contentful_mocks.js
 test/helpers/dsl.js
 test/helpers/sinon.js
 test/integration/field_validation_dialog_spec.js
@@ -390,7 +386,6 @@ src/javascripts/ot/ot_bind_text.js
 src/javascripts/ot/ot_doc_for.js
 src/javascripts/ot/ot_presence.js
 src/javascripts/services/assert.js
-src/javascripts/services/asset_loader.js
 src/javascripts/services/aviary.js
 src/javascripts/services/call_buffer.js
 src/javascripts/services/client.js

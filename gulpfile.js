@@ -1,22 +1,19 @@
 'use strict';
 
+require('babel-register');
+require('regenerator-runtime/runtime');
+
 var _ = require('lodash-node/modern');
-var Promise = require('promise');
+var B = require('bluebird');
 var browserify = require('browserify');
 var glob = require('glob');
 var clean = require('gulp-clean');
 var concat = require('gulp-concat');
-var exec = require('child_process').exec;
 var express = require('express');
-var fingerprint = require('gulp-fingerprint');
-var mkdirp = require('mkdirp');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
-var inject = require('gulp-inject');
 var jade = require('gulp-jade');
-var jstConcat = require('./tasks/build-template');
 var nib = require('nib');
-var replace = require('gulp-regex-replace');
 var rev = require('gulp-rev');
 var runSequence = require('run-sequence');
 var source = require('vinyl-source-stream');
@@ -25,10 +22,22 @@ var sourceMaps = require('gulp-sourcemaps');
 var stylus = require('gulp-stylus');
 var uglify = require('gulp-uglify');
 var path = require('path');
-var through = require('through2').obj;
+var through = require('through2');
 var yargs = require('yargs');
 var childProcess = require('child_process');
+var rework = require('rework');
+var reworkUrlRewrite = require('rework-plugin-url');
+var FS = B.promisifyAll(require('fs'));
+
+var U = require('./tools/lib/utils');
+var jstConcat = require('./tasks/build-template');
 var serve = require('./tasks/serve');
+var IndexPage = require('./tools/lib/index-page');
+var configureIndex = require('./tools/lib/index-configure').default;
+var createManifestResolver = require('./tools/lib/manifest-resolver').create;
+var TravisEnv = require('./tools/lib/travis-env');
+
+var travis = TravisEnv.load();
 
 var argv = yargs
 .boolean('verbose')
@@ -41,9 +50,14 @@ process.env['PATH'] += ':./node_modules/.bin';
 var loadSubtasks = require('./tasks/subtasks');
 loadSubtasks(gulp, 'docs');
 
-var pexec = Promise.denodeify(exec);
-var gitRevision;
-var settings = _.omit(require('./config/environment.json'), 'fog');
+var getGitRevision = _.memoize(function () {
+  return U.exec('git rev-parse HEAD')
+    .then(function (rev) {
+      return rev.trim();
+    });
+});
+
+var CSS_COMMENT_RE = /\/\*[^*]*\*+([^/*][^*]*\*+)*\//g;
 
 var src = {
   templates: 'src/javascripts/**/*.jade',
@@ -157,13 +171,14 @@ gulp.task('copy-images', function () {
     .pipe(gulp.dest('./public/app/images'));
 });
 
+// TODO We should not build the index file. Instead, the server should
+// generate it on the fly.
 gulp.task('index', function () {
-  gulp.src('src/index.html')
-    .pipe(replace({
-      regex: 'window.CF_CONFIG =.*',
-      replace: 'window.CF_CONFIG = ' + JSON.stringify(settings) + ';'
-    }))
-    .pipe(gulp.dest('public'));
+  return U.readJSON('config/development.json')
+  .then(function (config) {
+    var index = IndexPage.renderDev(config);
+    return FS.writeFileAsync('public/index.html', index, 'utf8');
+  });
 });
 
 gulp.task('templates', function () {
@@ -231,24 +246,19 @@ gulp.task('js/app', ['icons'], function () {
     .pipe(gulp.dest('./public/app/'));
 });
 
-gulp.task('git-revision', function (cb) {
-  exec('git log -1 --pretty=format:%H', function (err, sha) {
-    gitRevision = sha;
-    cb(err);
-  });
-});
-
 /**
  * Compress and strip SVG source files and put them into
  * 'public/app/svg'.
  */
 gulp.task('svg', function () {
-  mkdirp(path.dirname(src.svg.outputDirectory));
-  return spawnOnlyStderr('svgo', [
-    '--enable', 'removeTitle',
-    '-f', src.svg.sourceDirectory,
-    '-o', src.svg.outputDirectory
-  ]);
+  return U.mkdirp(path.dirname(src.svg.outputDirectory))
+  .then(function () {
+    return spawnOnlyStderr('svgo', [
+      '--enable', 'removeTitle',
+      '-f', src.svg.sourceDirectory,
+      '-o', src.svg.outputDirectory
+    ]);
+  });
 });
 
 /**
@@ -256,11 +266,13 @@ gulp.task('svg', function () {
  * 'public/app/contentful_icons.js'.
  */
 gulp.task('icons', ['svg'], function () {
-  mkdirp(path.dirname(src.svg.outputFile));
-  return spawnOnlyStderr('./bin/prepare_svg.js', [
-    src.svg.outputDirectory,
-    src.svg.outputFile
-  ]);
+  return U.mkdirp(path.dirname(src.svg.outputDirectory))
+  .then(function () {
+    return spawnOnlyStderr('./bin/prepare_svg.js', [
+      src.svg.outputDirectory,
+      src.svg.outputFile
+    ]);
+  });
 });
 
 gulp.task('stylesheets', [
@@ -271,6 +283,12 @@ gulp.task('stylesheets', [
 gulp.task('stylesheets/vendor', function () {
   // Use `base: '.'` for correct source map paths
   return gulp.src(src.vendorStylesheets, {base: '.'})
+    // Some of the vendor styles contain CSS comments that
+    // break 'rework'. We remove them here.
+    // See https://github.com/reworkcss/css/issues/24
+    .pipe(mapFileContents(function (contents) {
+      return contents.replace(CSS_COMMENT_RE, '');
+    }))
     .pipe(sourceMaps.init())
     .pipe(concat('vendor.css'))
     .pipe(sourceMaps.write({sourceRoot: '/'}))
@@ -383,6 +401,7 @@ function sendIndex (dir) {
  *
  * This task creates the production build in the `build` directory.
  *
+ * TODO rewrite
  * It uses the files created by the `all` tasks in `public/app`.
  * The `rev-static`, `rev-dynamic` and `rev-app` tasks fingerprint
  * these files and create manfests for them. The `rev-index` task then
@@ -402,13 +421,10 @@ function sendIndex (dir) {
 gulp.task('build', function (done) {
   runSequence(
     'clean',
-    'all',
-    'rev-static',
-    'rev-dynamic',
-    'rev-app',
-    'rev-index',
-    'revision',
-    done
+    [
+      'build/index', 'build/revision',
+      'build/js', 'build/styles', 'build/static'
+    ], done
   );
 });
 
@@ -434,7 +450,6 @@ gulp.task('serve-production', function () {
   app.use(sendIndex(buildDir));
   app.use(respond404);
   app.listen(3001);
-  return pexec('./bin/process_hosts');
 });
 
 function writeBuild (dir) {
@@ -445,17 +460,20 @@ function writeBuild (dir) {
  * Copy all non-JS and non-CS files from `public/app` to `build` and
  * create a manifest for them.
  */
-gulp.task('rev-static', function () {
+gulp.task('build/static', [
+  'js/external-bundle', 'js/vendor',
+  'copy-static', 'copy-images'
+], function () {
   var files = glob.sync('public/app/**/*.!(js|css)');
   files.push('public/app/kaltura.js');
   files.push('public/app/markdown_vendors.js');
 
   return gulp.src(files, {base: 'public'})
-    .pipe(writeBuild())
+    .pipe(changeBase('build'))
     .pipe(rev())
-    .pipe(writeBuild())
-    .pipe(rev.manifest(('static-manifest.json')))
-    .pipe(writeBuild());
+    .pipe(writeFile())
+    .pipe(rev.manifest('build/static-manifest.json'))
+    .pipe(writeFile());
 });
 
 /**
@@ -468,7 +486,9 @@ gulp.task('rev-static', function () {
  * - Extracts source maps contained in the files and writes them
  *   to a separate `.maps` file.
  */
-gulp.task('rev-dynamic', function () {
+gulp.task('build/styles', ['build/static', 'stylesheets'], function () {
+  var staticManifest = require('./build/static-manifest.json');
+  var manifestResolver = createManifestResolver(staticManifest, '/app');
   return gulp.src([
     'public/app/main.css',
     'public/app/vendor.css'
@@ -476,31 +496,31 @@ gulp.task('rev-dynamic', function () {
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(removeSourceRoot())
     .pipe(mapSourceMapPaths(function (src) {
-      // `gulp-sourcemaps` prepends 'app' to all the paths.
+      // `gulp-sourcemaps` prepends 'app' to all the paths because that
+      // is the base. But we want the path relative to the working dir.
       return path.relative('app', src);
     }))
-    .pipe(fingerprint(
-      'build/static-manifest.json', {
-        mode: 'replace',
-        verbose: false,
-        prefix: '/'
-      }))
-    // TODO we do not actually need to rewrite the non-fingerprinted version.
-    // This is basically for renaming and source maps
-    .pipe(writeBuild())
+    .pipe(mapFileContents(function (contents, file) {
+      return rework(contents, {source: file.path})
+        .use(reworkUrlRewrite(manifestResolver))
+        .toString({compress: true, sourcemaps: true});
+    }))
+    // Need to reload the source maps because 'rework' inlines them.
+    .pipe(sourceMaps.init({ loadMaps: true }))
+    .pipe(changeBase('build'))
     .pipe(rev())
-    .pipe(writeBuild())
+    .pipe(writeFile())
     .pipe(sourceMaps.write('.', {sourceRoot: '/'}))
-    .pipe(writeBuild())
-    .pipe(rev.manifest('dynamic-manifest.json'))
-    .pipe(writeBuild());
+    .pipe(writeFile())
+    .pipe(rev.manifest('build/styles-manifest.json'))
+    .pipe(writeFile());
 });
 
 /**
  * Concatenates and minifies application JS files to
  * `application.min.js` and creates a manifest.
  */
-gulp.task('rev-app', function () {
+gulp.task('build/js', ['js', 'templates'], function () {
   return gulp.src([
     'public/app/templates.js',
     'public/app/vendor.js',
@@ -510,48 +530,42 @@ gulp.task('rev-app', function () {
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(concat('app/application.min.js'))
     .pipe(uglify())
-    .pipe(fingerprint(
-      'build/static-manifest.json', {
-        mode: 'replace',
-        verbose: false,
-        prefix: '/'
-      }))
-    // TODO we do not actually need to rewrite the non-fingerprinted version.
-    // This is basically for renaming and source maps
-    .pipe(writeBuild())
+    .pipe(changeBase('build'))
     .pipe(rev())
-    .pipe(writeBuild())
+    .pipe(writeFile())
     // 'uglify' already prepends a slash to every source path
     .pipe(sourceMaps.write('.', {sourceRoot: null}))
-    .pipe(writeBuild())
-    .pipe(rev.manifest('app-manifest.json'))
-    .pipe(writeBuild());
+    .pipe(writeFile())
+    .pipe(rev.manifest('build/app-manifest.json'))
+    .pipe(writeFile());
 });
 
-/**
- * Copy `index.html` to the build directory and link to fingerprinted
- * assets.
- *
- * Also replaces all JavaScripts with the single, concatenated file.
- */
-gulp.task('rev-index', function () {
-  var manifest = _.extend(
-    require('./build/static-manifest.json'),
-    require('./build/dynamic-manifest.json'),
-    require('./build/app-manifest.json')
-  );
-  var javascriptSrc = gulp.src('app/application.min.js', {read: false, cwd: 'build'});
+var MANIFEST_PATHS = [
+  'build/static-manifest.json',
+  'build/styles-manifest.json',
+  'build/app-manifest.json'
+];
 
-  return gulp.src('src/index.html')
-    .pipe(inject(javascriptSrc))
-    .pipe(fingerprint(manifest, {prefix: '//' + settings.asset_host + '/'}))
-    .pipe(writeBuild());
+gulp.task('build/index', ['build/js', 'build/styles', 'build/static'], function () {
+  var configPath = 'config/' + travis.targetEnv + '.json';
+  return getGitRevision()
+  .then(function (revision) {
+    console.log(
+      'Configuring revision %s for environment "%s"',
+      revision.substr(0, 8), travis.targetEnv
+    );
+    return configureIndex(
+      revision, configPath, MANIFEST_PATHS,
+      'build/index.html'
+    );
+  });
 });
 
-gulp.task('revision', ['git-revision'], function () {
-  var stream = source('revision.json');
-  stream.end(JSON.stringify({revision: gitRevision}));
-  return stream.pipe(writeBuild());
+gulp.task('build/revision', function () {
+  return getGitRevision()
+  .then(function (revision) {
+    return U.writeJSON('build/revision.json', {revision: revision});
+  });
 });
 
 
@@ -566,11 +580,11 @@ function passError (target) {
  * file’s source maps.
  */
 function removeSourceRoot () {
-  return through(function (file, _, push) {
+  return streamMap(function (file) {
     if (file.sourceMap) {
       file.sourceMap.sourceRoot = null;
     }
-    push(null, file);
+    return file;
   });
 }
 
@@ -578,16 +592,16 @@ function removeSourceRoot () {
  * Stream transformer that for every file applies a function to all source map paths.
  */
 function mapSourceMapPaths (fn) {
-  return through(function (file, _e, push) {
+  return streamMap(function (file) {
     if (file.sourceMap) {
       file.sourceMap.sources = _.map(file.sourceMap.sources, fn);
     }
-    push(null, file);
+    return file;
   });
 }
 
 function spawn (cmd, args, opts) {
-  return new Promise(function (resolve, reject) {
+  return new B(function (resolve, reject) {
     childProcess.spawn(cmd, args, opts)
     .on('exit', function (code, signal) {
       if (code === 0) {
@@ -610,4 +624,35 @@ function spawnOnlyStderr (cmd, args, opts) {
     stdio: ['ignore', stdout, process.stderr]
   });
   return spawn(cmd, args, opts);
+}
+
+function changeBase (base) {
+  return streamMap(function (file) {
+    base = path.resolve(base);
+    var filePath = path.join(base, file.relative);
+    file.base = base;
+    file.path = filePath;
+    return file;
+  });
+}
+
+function writeFile () {
+  return gulp.dest(function (file) {
+    return file.base;
+  });
+}
+
+function streamMap (fn) {
+  return through.obj(function (file, _, push) {
+    push(null, fn(file));
+  });
+}
+
+function mapFileContents (fn) {
+  return streamMap(function (file) {
+    var contents = file.contents.toString();
+    contents = fn(contents, file);
+    file.contents = new Buffer(contents, 'utf8');
+    return file;
+  });
 }

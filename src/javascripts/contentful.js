@@ -47,16 +47,4 @@ angular.module('contentful', [
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
   $sceDelegateProvider.resourceUrlWhitelist(env.resourceUrlWhiteListRegexp);
   $animateProvider.classNameFilter(/animate/);
-}])
-
-.run(['$injector', function ($injector) {
-  if (window.CF_ENV === 'unittest') {
-    return;
-  }
-
-  $injector.get('navigation/stateChangeHandlers').setup();
-  $injector.get('contextMenu').init();
-  $injector.get('notification').setupClearMessageHooks();
-  $injector.get('states').loadAll();
-  $injector.get('dialogsInitController').init();
 }]);
