@@ -1,6 +1,6 @@
-.entity-selector__view-toggle
-  margin-bottom: 10px
-  text-align: right
+.entity-selector__input-label
+  display: flex
+  justify-content: space-between
 
 .entity-selector__search
   margin-bottom: 20px
@@ -15,3 +15,17 @@
     text-align: center
     margin-top: 100px
     color: $colors.text-light
+
+.entity-selector-dialog
+  tr.selected
+    background: $colors.element-mid
+    color: $colors.text-mid
+  .cell-selected
+    width: 5%
+    text-align: center
+  .cell-name
+    width: 40%
+  .cell-content-type
+    width: 25%
+  .cell-updated
+    width: 30%

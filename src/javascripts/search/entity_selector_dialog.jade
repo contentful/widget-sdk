@@ -1,4 +1,6 @@
 mixin single-entity
+  td.cell-selected
+    i.fa.fa-check(ng-if="selectedIds[entity.getId()]")
   td.cell-name
     i.fa.fa-circle(ng-class="getStatusClassname(entity)")
     span(ng-if="config.linksEntry" title="{{ spaceContext.entryTitle(entity) }}")
@@ -21,16 +23,18 @@ mixin single-entity
       button.modal-dialog__close(ng-click="dialog.cancel()")
 
     .modal-dialog__content
-      .entity-selector__view-toggle(ng-if="config.multiple")
-        a(href ng-click="view.mode = SELECTED" ng-if="view.mode === AVAILABLE")
-          | Show selected entities ({{ selected.length }})
-        a(href ng-click="view.mode = AVAILABLE" ng-if="view.mode === SELECTED")
-          | Hide selected entities ({{ selected.length }})
+      .entity-selector__input-label
+        p {{ labels.input }}
+        p(ng-if="config.multiple")
+          a(href ng-click="view.mode = SELECTED" ng-if="view.mode === AVAILABLE")
+            | Show {{ labels.selected }} ({{ selected.length }})
+          a(href ng-click="view.mode = AVAILABLE" ng-if="view.mode === SELECTED")
+            | Hide {{ labels.selected }} ({{ selected.length }})
 
       .entity-selector__search(
         cf-tokenized-search="view.searchTerm"
         search-content-type="singleContentType"
-        placeholder="{{ labels.placeholder }}"
+        placeholder="Type to search, press down arrow key for help"
         cf-on-blur-component="leftSearch($event)"
         cf-on-blur-component-when="showAutocompletions")
 
@@ -39,8 +43,10 @@ mixin single-entity
         cf-endless-container
         at-bottom="loadMore()"
         num-elements="paginator.page")
-        .entity-selector__item-list-placeholder(ng-if="!isLoading && !isInitialized")
-          | Search result will appear here as you type
+        .entity-selector__item-list-placeholder(ng-if="!isLoading && items.length < 1")
+          | {{ labels.empty }} found
+          span(ng-if="view.searchTerm.length > 0")
+            |  for <strong>{{ view.searchTerm }}</strong>
         table.search-results__list
           tbody
             tr(
@@ -48,11 +54,11 @@ mixin single-entity
               ng-click="select(entity)"
               ng-class="{selected: selectedIds[entity.getId()]}")
               +single-entity
-        .loading(ng-hide="paginator.atLast()")
+        .loading(ng-show="isLoading")
 
       .entity-selector__item-list(ng-if="view.mode === SELECTED")
         .entity-selector__item-list-placeholder(ng-if="selected.length < 1")
-          | No items selected yet.
+          | {{ labels.empty }} selected yet
         table.search-results__list
           tbody
             tr(
@@ -69,5 +75,5 @@ mixin single-entity
         type="button"
         ng-click="dialog.confirm(selected)"
         ng-disabled="selected.length < config.min || selected.length > config.max")
-        | {{ labels.button }}
+        | Insert {{ labels.selected }}
         span(ng-if="selected.length > 0") &nbsp;({{ selected.length }})

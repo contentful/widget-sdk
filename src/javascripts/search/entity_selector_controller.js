@@ -37,6 +37,8 @@ angular.module('contentful')
   $scope.$watch('view.searchTerm', handleTermChange);
   $scope.$on('forceSearch', resetAndLoad);
 
+  resetAndLoad();
+
   function fetch () {
     $scope.isLoading = true;
     return ListQuery[queryMethod](getParams())
@@ -94,14 +96,14 @@ angular.module('contentful')
     $scope.paginator.numEntries = items.total;
     $scope.items.push.apply($scope.items, items);
     $timeout(function () {
-      $scope.isInitialized = true;
       $scope.isLoading = false;
     });
   }
 
   function resetAndLoad () {
-    $scope.paginator.page = 0;
     $scope.items = [];
+    $scope.paginator.numEntries = 0;
+    $scope.paginator.page = 0;
     load();
   }
 

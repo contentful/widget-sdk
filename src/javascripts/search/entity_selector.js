@@ -12,23 +12,27 @@ angular.module('contentful')
   var LABELS = {
     entry_single: {
       title: 'Insert existing entry',
-      placeholder: 'Search for an entry',
-      info: 'You can insert only one entry. Click on any entry to insert it.'
+      input: 'Search for an entry:',
+      info: 'You can insert only one entry. Click on any entry to insert it.',
+      empty: 'No entries'
     },
     entry_multiple: {
       title: 'Insert existing entries',
-      placeholder: 'Search for entries',
-      button: 'Insert selected entries'
+      input: 'Search for entries:',
+      selected: 'selected entries',
+      empty: 'No entries'
     },
     asset_single: {
       title: 'Insert existing asset',
-      placeholder: 'Search for an asset',
-      info: 'You can insert only one asset. Click on any asset to insert it.'
+      input: 'Search for a media asset:',
+      info: 'You can insert only one asset. Click on any asset to insert it.',
+      empty: 'No assets'
     },
     asset_multiple: {
       title: 'Insert existing assets',
-      placeholder: 'Search for assets',
-      button: 'Insert selected assets'
+      input: 'Search for assets:',
+      selected: 'selected assets',
+      empty: 'No assets'
     }
   };
 
