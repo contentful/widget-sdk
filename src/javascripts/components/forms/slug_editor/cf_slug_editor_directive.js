@@ -71,6 +71,10 @@ angular.module('contentful')
       scope.$on('$destroy', detachCurrentLocaleTitleChangeHandler);
       scope.$on('$destroy', offSchemaErrorsChanged);
 
+      scope.$watch('state', function (state) {
+        field.setInvalid(state === 'duplicate');
+      });
+
       scope.$watch(function () {
         return $inputEl.val();
       }, function (val) {

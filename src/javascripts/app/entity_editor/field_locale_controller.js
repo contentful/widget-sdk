@@ -37,30 +37,32 @@ angular.module('contentful')
   /**
    * @ngdoc property
    * @name FieldLocaleController#errors
+   * @description
+   * An array of schema errors for this field locale.
+   *
    * @type {Array<Error>?}
    */
-  $scope.$watch('validationResult.errors', function (errors) {
-    errors = _(errors)
-    .filter(matchPath)
-    .filter(isFieldRequiredButLocaleOptional)
-    .value();
-
+  $scope.$watch('validator.errors', function (errors) {
+    errors = filterLocaleErrors(errors);
     controller.errors = errors.length > 0 ? errors : null;
   });
 
-  function matchPath (error) {
-    var path = error.path;
-    return _.isEqual(path.slice(0, 3), localePath) || _.isEqual(path, fieldPath);
-  }
+  // Only retuns errors that apply to this field locale
+  function filterLocaleErrors (errors) {
+    return _.filter(errors, function (error) {
+      var path = error.path;
 
-  // If a field is required and none of field-locale pairs is provided,
-  // validation library reports an error on a [fields, fid] path.
-  // In this case we don't want to have a visual hint for optional locale
-  function isFieldRequiredButLocaleOptional (error) {
-    var fieldRequired = _.isEqual(error.path, fieldPath) && error.name === 'required';
-    var localeOptional = $scope.locale.optional;
+      // If a field is required and none of field-locale pairs is provided,
+      // validation library reports an error on a [fields, fid] path.
+      // In this case we don't want to have a visual hint for optional locale
+      if (_.isEqual(path, fieldPath)) {
+        var fieldRequired = error.name === 'required';
+        var localeOptional = $scope.locale.optional;
+        return !fieldRequired || !localeOptional;
+      }
 
-    return !fieldRequired || !localeOptional;
+      return _.isEqual(path.slice(0, 3), localePath);
+    });
   }
 
   /**
@@ -93,13 +95,22 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name FieldLocaleController#announcePresence
+   * @name FieldLocaleController#setActive
    * @description
    * Tells the main document that the user is currently editing this
    * field locale.
+   *
+   * Used by `cfWidgetRenderer` directive.
+   *
+   * @param {boolean} active
    */
-  controller.announcePresence = function () {
-    $scope.docPresence.focus(localePath.join('.'));
+  controller.setActive = function (isActive) {
+    if (isActive) {
+      $scope.docPresence.focus(localePath.join('.'));
+      $scope.focus.set(field.id);
+    } else {
+      $scope.focus.unset(field.id);
+    }
   };
 
   /**

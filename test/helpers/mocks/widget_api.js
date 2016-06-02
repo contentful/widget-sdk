@@ -1,6 +1,13 @@
 'use strict';
 
 angular.module('contentful/mocks')
+/**
+ * Create a mock implementation of the widget API.
+ *
+ * Methods are either stubbed or replaced by a mock implementation.
+ *
+ * Use `mockWidgetApi._state` to inspect internal state modified by methods.
+ */
 .factory('mocks/widgetApi', [function () {
   var entrySys = {
     contentType: {sys: {id: 'CTID'}}
@@ -12,7 +19,13 @@ angular.module('contentful/mocks')
   };
 
   function create (overrides) {
+    var state = {
+      // Set by field.isInvalid()
+      isInvalid: false
+    };
+
     var api = {
+      _state: state,
       settings: {
         helpText: ''
       },
@@ -31,6 +44,9 @@ angular.module('contentful/mocks')
         onValueChanged: sinon.stub().returns(_.noop),
         onDisabledStatusChanged: sinon.stub().returns(_.noop).yields(false),
         onSchemaErrorsChanged: sinon.stub().returns(_.noop),
+        setInvalid: sinon.spy(function (isInvalid) {
+          state.isInvalid = isInvalid;
+        }),
         getValue: sinon.stub(),
         setValue: sinon.stub(),
         setString: sinon.stub(),

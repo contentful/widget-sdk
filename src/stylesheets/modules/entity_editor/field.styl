@@ -23,7 +23,7 @@ div.entity-editor__field-group
       label Title - English
     div.entity-editor__control-group
       div.entity-editor__control
-        input.form-control(type="text")
+        input.entry-editor__input(type="text")
       ul.entity-editor__field-collaborators
         li
           img(src="/app/images/avatar-1.jpg")
@@ -41,12 +41,45 @@ div.entity-editor__field-group
         | This field is locked
     div.entity-editor__control-group
       div.entity-editor__control
-        textarea.form-control
+        textarea.entry-editor__textarea
   div.entity-editor__field-hint
     | This is a very helpful hint
 
 Styleguide entity-editor-field
 */
+
+/*
+Field Group States
+
+Markup:
+div.entity-editor__field-group
+  div.entity-editor__field-locale
+    div.entity-editor__field-heading
+      label Title - English
+    div.entity-editor__control-group
+      div.entity-editor__control
+        input.entry-editor__input(type="text")
+div.entity-editor__field-group(aria-current="true")
+  div.entity-editor__field-locale
+    div.entity-editor__field-heading
+      label Title - English
+    div.entity-editor__control-group
+      div.entity-editor__control
+        input.entry-editor__input(type="text")
+div.entity-editor__field-group(aria-invalid="true")
+  div.entity-editor__field-locale
+    div.entity-editor__field-heading
+      label Title - English
+    div.entity-editor__control-group
+      div.entity-editor__control
+        input.entry-editor__input(type="text" aria-invalid="true")
+    div.cfnext-form__field-error
+      | This field is required
+
+
+Styleguide entity-editor-field.states
+*/
+
 
 // Width of left-hand main content.
 // We only show the field collaborators on the right
@@ -55,17 +88,13 @@ $entity-editor__field-width = 80%
 .entity-editor__field-group
   display: block
   margin-bottom: 48px
-
-  // TODO legacy styles to replicate old form layout behavior.
-  // Should be removed.
-  label
-    width: 100%
-    padding-bottom: 10px
-  .form-control
-    display: block
-    margin: 0
-    width: $form-controlwidth-inner
-
+  padding-left: 1em
+  border-left: 3px solid #C5D2D8
+  transition: border-color 0.18s linear
+  &[aria-current="true"]
+    border-left-color: $colors.blue-mid
+  &[aria-invalid="true"]
+    border-left-color: $colors.red-mid
 
 .entity-editor__field-locale
   margin-top: 18px
