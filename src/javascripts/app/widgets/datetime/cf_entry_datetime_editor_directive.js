@@ -3,7 +3,7 @@
 angular.module('cf.app')
 /**
  * @ngdoc directive
- * @module cf.app
+ * @moduel cf.app
  * @name cfEntryDatetimeEditor
  */
 .directive('cfEntryDatetimeEditor', ['$injector', function ($injector) {

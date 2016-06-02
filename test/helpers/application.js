@@ -16,24 +16,5 @@
  * ~~~
  *
  */
-
-angular.module('contentful/test', ['contentful', 'contentful/mocks'])
-
-.constant('environment', (function () {
-  return {
-    settings: {
-      main_domain: 'contentful.com',
-      filepicker: {},
-      aviary: {},
-      google: {},
-      contentful: {},
-      marketing_url: '//example.com'
-    },
-    manifest: {
-      'app/markdown_vendors.js': 'x',
-      'app/kaltura.js': 'x'
-    },
-    isDev: false,
-    env: 'unittest'
-  }
-})());
+window.CF_ENV = 'unittest';
+angular.module('contentful/test', ['contentful', 'contentful/mocks']);

@@ -16,8 +16,10 @@ describe('subscriptionPlanRecommender', function () {
   var REASON_CLASS = {'class': 'z-subscription-plan-recommendation-reason'};
 
   beforeEach(function () {
-    module('contentful/test', function ($provide, environment) {
-      environment.settings.base_host = HOST
+    module('contentful/test', function ($provide) {
+      $provide.constant('environment', {
+        settings: { base_host: HOST }
+      });
       $provide.value('authentication', {
         token: TEST_TOKEN
       });

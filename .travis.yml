@@ -30,8 +30,7 @@ script:
 - bin/travis-audit
 - bin/travis-test
 before_deploy:
-- bin/create-package-dist archive
-- tools/bin/create-file-dist.js build upload
+- bin/travis-prepare-deploy
 deploy:
   - provider: s3
     access_key_id: AKIAJBRHNHEFAA552JLQ
@@ -42,11 +41,10 @@ deploy:
     skip_cleanup: true
     upload-dir: archive
     on:
-      branch: [master, production, preview]
+      all_branches: true
   # Deploys the previously uploaded package
   - provider: script
     script: bin/trigger-packagebot
-    skip_cleanup: true
     on:
       branch: [master, production, preview]
   - provider: s3
@@ -54,7 +52,6 @@ deploy:
     secret_access_key:
       secure: "Azx2DWNKfcFZhQoB1eR6dJ1F0QClJYLohozyzutOhpp86mUuoGXtBPOaiD0kfM8sNFdlhyjagVZo30wMCXBw5t9qSDqEpCOOhZk4kRNnInCh+ha/H14FFbxki7TaWn9RQXmTIoGh5JSmIZ5RDYRJZRyoL4Da11CojildoBD7wJ8="
     bucket: cf-preview-static-cdnorigin
-    region: eu-west-1
     local-dir: upload
     acl: public_read
     skip_cleanup: true

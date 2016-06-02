@@ -8,11 +8,13 @@ describe('cfKnowledgeBase directive', function () {
   beforeEach(function () {
     trackFollowedKbpLinkSpy = sinon.spy();
 
-    module('contentful/test', function ($provide, environment) {
+    module('contentful/test', function ($provide) {
       $provide.value('analyticsEvents', {
         trackFollowedKbpLink: trackFollowedKbpLinkSpy
       });
-      environment.settings.marketing_url = 'http://test.com';
+      $provide.constant('environment', {
+        settings: { marketing_url: 'http://test.com' }
+      });
     });
     scope = this.$inject('$rootScope');
   });

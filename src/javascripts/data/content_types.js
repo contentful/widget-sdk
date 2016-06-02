@@ -105,7 +105,7 @@ angular.module('cf.data')
 
   /**
    * @ngdoc method
-   * @name data/ContentTypes#internalToPublic
+   * @name data/ContentType#internalToPublic
    * @description
    * Return the public representation of a Content Type from the
    * internal one.
