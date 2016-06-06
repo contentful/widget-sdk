@@ -45,7 +45,7 @@ angular.module('contentful')
     name: 'URL',
     icon: 'preview',
     rendersHelpText: true,
-    template: '<cf-url-editor class="widget-url-editor"></cf-url-editor>'
+    template: '<cf-url-editor />'
   });
 
   registerWidget('numberEditor', {
@@ -256,7 +256,7 @@ angular.module('contentful')
     fieldTypes: ['Symbol'],
     name: 'Slug',
     icon: 'slug',
-    template: '<cf-slug-editor class="widget-slug-editor"></cf-slug-editor>'
+    template: '<cf-slug-editor />'
   });
 
   registerWidget('ooyalaEditor', {
