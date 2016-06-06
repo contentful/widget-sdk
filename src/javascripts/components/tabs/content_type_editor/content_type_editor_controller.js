@@ -10,16 +10,12 @@
  *
  * @scope.provides  contentType
  * @scope.provides  hasFields
- * @scope.provides  publishedIds
- * @scope.provides  publishedApiNames
- * @scope.provides  publishedContentType
-*/
+ */
 angular.module('contentful')
 .controller('ContentTypeEditorController', ['$scope', '$injector',
 function ContentTypeEditorController ($scope, $injector) {
   var controller = this;
   var $controller = $injector.get('$controller');
-  var $q = $injector.get('$q');
   var $state = $injector.get('$state');
   var validation = $injector.get('validation');
   var hints = $injector.get('ContentTypeEditorController/hints')();
@@ -58,11 +54,6 @@ function ContentTypeEditorController ($scope, $injector) {
     setDirtyState();
   });
 
-  $scope.$watch('publishedContentType.data.fields', function (fields) {
-    $scope.publishedIds = _.pluck(fields, 'id');
-    $scope.publishedApiNames = _.pluck(fields, 'apiName');
-  });
-
   if ($scope.context.isNew) {
     metadataDialog.openCreateDialog()
     .then(applyContentTypeMetadata(true), function () {
@@ -84,52 +75,37 @@ function ContentTypeEditorController ($scope, $injector) {
 
   /**
    * @ngdoc method
-   * @name ContentTypeEditorController#deleteField
+   * @name ContentTypeEditorController#registerPublishedFields
+   * @param {Client.ContentType} contentType
+   */
+  controller.registerPublishedFields = registerPublishedFields;
+
+  var publishedFields = [];
+  registerPublishedFields($scope.publishedContentType);
+
+  function registerPublishedFields (contentType) {
+    publishedFields = _.cloneDeep(dotty.get(contentType, 'data.fields', []));
+  }
+
+  /**
+   * @ngdoc method
+   * @name ContentTypeEditorController#getPublishedField
    * @param {string} id
    */
-  controller.deleteField = function (id) {
-    var publishedFields = dotty.get($scope.publishedContentType, 'data.fields');
-    var isPublished = _.any(publishedFields, {id: id});
-    var isDeletable;
 
-    if (isPublished) {
-      isDeletable = this.countEntries().then(function (count) {
-        return !count;
-      });
-    } else {
-      isDeletable = $q.resolve(true);
-    }
-
-    isDeletable.then(function (deletable) {
-      if (!deletable) {
-        modalDialog.open({
-          title: 'This field can\'t be deleted right now.',
-          message: '<p>Please delete all entries linked to this content type before trying to delete a field. ' +
-                   'Fields can only be deleted on content types that have no entries associated with them.</p> ' +
-                   '<p>To simply stop a field from appearing on the entry editor, disable it. ' +
-                   'Disabling fields can be done at any time regardless of the number of associated entries.</p>',
-          cancelLabel: null,
-          confirmLabel: 'Okay, got it'
-        });
-      } else {
-        var fields = $scope.contentType.data.fields;
-        _.remove(fields, {id: id});
-        syncEditingInterface();
-      }
-    });
+  controller.getPublishedField = function (id) {
+    return _.find(publishedFields, {id: id});
   };
 
-  // TODO This should b a service. It is here because the
-  // ContentTypeActionsController needs it, too.
-  controller.countEntries = function () {
-    if (!$scope.contentType.getPublishedVersion()) {
-      return $q.resolve(0);
-    }
-    return $scope.spaceContext.space.getEntries({
-      content_type: $scope.contentType.data.sys.id
-    }).then(function (response) {
-      return response.length;
-    });
+  /**
+   * @ngdoc method
+   * @name ContentTypeEditorController#removeField
+   * @param {string} id
+   */
+  controller.removeField = function (id) {
+    var fields = $scope.contentType.data.fields;
+    _.remove(fields, {id: id});
+    syncEditingInterface();
   };
 
   /**

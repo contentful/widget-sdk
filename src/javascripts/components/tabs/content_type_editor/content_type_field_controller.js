@@ -9,10 +9,13 @@ angular.module('contentful')
   var controller = this;
   var fieldFactory = $injector.get('fieldFactory');
   var trackField = $injector.get('analyticsEvents').trackField;
-  var modalDialog = $injector.get('modalDialog');
   var Field = $injector.get('fieldDecorator');
+  var dialogs = $injector.get('ContentTypeFieldController/dialogs');
 
   var isTitleType = Field.isTitleType($scope.field.type);
+
+  $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
+  $scope.iconId = fieldFactory.getIconId($scope.field) + '-small';
 
   /**
    * @ngdoc method
@@ -30,20 +33,11 @@ angular.module('contentful')
     var toggled = !$scope.field[property];
 
     if ($scope.fieldIsTitle && toggled) {
-      modalDialog.open({
-        title: 'This field can\'t be disabled right now.',
-        message: 'The field <span class="modal-dialog__highlight">' + $scope.field.name + '</span> acts as a title for this content type. ' +
-                 'Before disabling it you need too choose another field as title.',
-        cancelLabel: null,
-        confirmLabel: 'Okay, got it'
-      });
-      return;
+      dialogs.openDisallowDialog($scope.field, 'disable');
+    } else {
+      $scope.field[property] = toggled;
+      trackFieldAction(property, $scope.field);
     }
-
-    $scope.field[property] = toggled;
-
-    var actionName = [toggled ? 'on' : 'off', property].join('-');
-    trackFieldAction(actionName, $scope.field);
   };
 
   /**
@@ -54,17 +48,41 @@ angular.module('contentful')
     $scope.contentType.data.displayField = $scope.field.id;
   };
 
+  /**
+   * @ngdoc method
+   * @name ContentTypeFieldController#delete
+   */
+  controller.delete = function () {
+    var publishedField = $scope.ctEditorController.getPublishedField($scope.field.id);
+    var publishedOmitted = publishedField && publishedField.omitted;
 
-  controller.deleteField = function () {
-    $scope.ctEditorController.deleteField($scope.field.id);
+    var isOmittedInApiAndUi = publishedOmitted && $scope.field.omitted;
+    var isOmittedInUiOnly = !publishedOmitted && $scope.field.omitted;
+
+    if ($scope.fieldIsTitle) {
+      dialogs.openDisallowDialog($scope.field, 'delete');
+    } else if (!publishedField) {
+      $scope.ctEditorController.removeField($scope.field.id);
+    } else if (isOmittedInApiAndUi) {
+      $scope.field.deleted = true;
+    } else if (isOmittedInUiOnly) {
+      dialogs.openSaveDialog().then(function () {
+        return $scope.actions.save.execute();
+      });
+    } else {
+      dialogs.openOmitDialog().then(function () {
+        controller.toggle('omitted');
+      });
+    }
   };
 
-  // TODO Does not need to be a watcher
-  $scope.$watchGroup(['field.type', 'field.linkType', 'field.items.type', 'field.items.linkType'], function () {
-    $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
-    $scope.iconId = fieldFactory.getIconId($scope.field) + '-small';
-  });
-
+  /**
+   * @ngdoc method
+   * @name ContentTypeFieldController#undelete
+   */
+  controller.undelete = function () {
+    delete $scope.field.deleted;
+  };
 
   $scope.$watch(function (scope) {
     return scope.contentType.data.displayField === scope.field.id;
@@ -79,21 +97,68 @@ angular.module('contentful')
     $scope.fieldCanBeTitle = isTitleType && !isTitle && !disabled && !omitted;
   });
 
-  $scope.$watchCollection('publishedContentType.data.fields', function (fields) {
-    $scope.isPublished = !!_.find(fields, {id: $scope.field.id});
-  });
-
   /**
    * @ngdoc analytics-event
    * @name Clicked Field Actions Button
-   * @param action
-   * @param fieldId
-   * @param originatingFieldType
+   * @param property
+   * @param field
    */
-  function trackFieldAction (actionName, field) {
+  function trackFieldAction (property, field) {
     trackField('Clicked Field Actions Button', field, {
-      action: actionName
+      action: [field[property] ? 'on' : 'off', property].join('-')
     });
   }
+}])
 
+.factory('ContentTypeFieldController/dialogs', ['$injector', function ($injector) {
+
+  var modalDialog = $injector.get('modalDialog');
+
+  return {
+    openDisallowDialog: openDisallowDialog,
+    openOmitDialog: openOmitDialog,
+    openSaveDialog: openSaveDialog
+  };
+
+  function openDisallowDialog (field, action) {
+    action = action === 'disable' ? ['disabled', 'disabling'] : ['deleted', 'deleting'];
+
+    return modalDialog.open({
+      title: 'This field can’t be ' + action[0] + ' right now',
+      message: [
+        'The field <span class="modal-dialog__highlight">', field.name,
+        '</span> acts as a title for this content type. Before ', action[1],
+        ' it you need too choose another field as title.'
+      ].join(''),
+      confirmLabel: 'Okay, got it',
+      cancelLabel: null
+    }).promise;
+  }
+
+  function openOmitDialog () {
+    return modalDialog.open({
+      title: 'You can’t delete an active field',
+      message: [
+        'Please <em>disable in response</em> and save your content type before ',
+        'deleting a&nbsp;field. This way you can preview how your responses will ',
+        'look like after deletion. We prevent deleting active fields for security ',
+        'reasons &ndash;&nbsp;we don’t want you to lose your precious content or ',
+        'break your apps.'
+      ].join(''),
+      confirmLabel: 'Okay, disable field in response',
+      cancelLabel: null
+    }).promise;
+  }
+
+  function openSaveDialog () {
+    return modalDialog.open({
+      title: 'You can’t delete the field yet',
+      message: [
+        'Please save the content type first. You’ve disabled the field, and this ',
+        'setting needs to be saved.'
+      ].join(''),
+      confirmLabel: 'Save content type',
+      cancelLabel: null
+    }).promise;
+  }
 }]);

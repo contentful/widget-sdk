@@ -2,15 +2,18 @@ mixin actions-dropdown
   .ct-field__actions-menu.context-menu(
     role="menu" cf-context-menu="bottom-4"
     aria-label="Field Actions" data-test-id="field-actions-menu")
-    ul.context-menu__items
+    ul.context-menu__items(ng-if="!field.deleted")
       li(role="menuitem" ng-click="fieldController.setAsTitle()" ng-if="fieldCanBeTitle")
         | Set field as Entry title
       li(role="menuitem" ng-click="fieldController.toggle('disabled')")
         | {{ field.disabled ? 'Enable editing' : 'Disable editing' }}
       li(role="menuitem" ng-click="fieldController.toggle('omitted')")
         | {{ field.omitted ? 'Enable in response' : 'Disable in response' }}
-      li(role="menuitem" ng-click="fieldController.deleteField()")
+      li(role="menuitem" ng-click="fieldController.delete()")
         | Delete
+    ul.context-menu__items(ng-if="field.deleted")
+      li(role="menuitem" ng-click="fieldController.undelete()")
+        | Undelete
 
 
 ul(cf-ui-sortable ng-model="contentType.data.fields")
@@ -27,16 +30,19 @@ ul(cf-ui-sortable ng-model="contentType.data.fields")
       | {{field | displayedFieldName}}
     .ct-field__type
       | {{fieldTypeLabel}}
-    .ct-field__is-disabled(ng-if="field.disabled && !field.omitted")
+    .ct-field__status(ng-if="!field.deleted && field.disabled && !field.omitted")
       | Editing disabled
-    .ct-field__is-disabled(ng-if="!field.disabled && field.omitted")
+    .ct-field__status(ng-if="!field.deleted && !field.disabled && field.omitted")
       | Disabled in response
-    .ct-field__is-disabled(ng-if="field.disabled && field.omitted")
+    .ct-field__status(ng-if="!field.deleted && field.disabled && field.omitted")
       | Disabled completely
-    .ct-field__is-title(ng-if="fieldIsTitle")
+    .ct-field__status(ng-if="field.deleted")
+      | Deleted
+    .ct-field__status(ng-if="fieldIsTitle")
       | Entry title
     button.ct-field__settings.cfnext-btn-inline(
       aria-label="Settings"
+      ng-if="!field.deleted"
       ng-click="fieldController.openSettingsDialog()")
       | Settings
       cf-ui-hint(ng-if="index===0" name="ct-field-settings" arrow="true")
