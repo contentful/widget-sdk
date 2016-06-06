@@ -17,15 +17,14 @@ describe('Content Type Field Controller', function () {
       data: { fields: [this.field] }
     };
 
-    this.publishedContentType = {
-      data: { fields: [] }
-    };
+    this.context = {isNew: false};
 
     this.createFieldElements = function () {
       this.fieldElement = this.$compile(JST.content_type_field_list(), {
         contentType: this.contentType,
-        publishedContentType: this.publishedContentType,
-        ctEditorController: this.ctEditorController
+        publishedFields: [],
+        ctEditorController: this.ctEditorController,
+        context: this.context
       });
     };
     this.createFieldElements();
@@ -66,13 +65,13 @@ describe('Content Type Field Controller', function () {
       });
 
       it('shows notification when marking title field as ' + prop, function () {
-        var modalDialog = this.$inject('modalDialog');
-        var open = sinon.stub(modalDialog, 'open');
+        var dialogs = this.$inject('ContentTypeFieldController/dialogs');
+        dialogs.openDisallowDialog = sinon.spy();
         this.field[prop] = false;
         this.contentType.data.displayField = this.field.id;
         this.click('Disable');
         expect(this.field[prop]).toBe(false);
-        sinon.assert.called(open);
+        sinon.assert.called(dialogs.openDisallowDialog);
       });
     });
   }
@@ -119,15 +118,58 @@ describe('Content Type Field Controller', function () {
   });
 
   describe('delete action', function () {
-    it('deletes a field', function () {
-      var deleteField = sinon.stub();
-      this.ctEditorController.deleteField = deleteField;
+    beforeEach(function () {
+      this.dialogs = this.$inject('ContentTypeFieldController/dialogs');
+      this.getPublishedField = sinon.stub();
+      this.ctEditorController.getPublishedField = this.getPublishedField;
 
-      var deleteButton = this.fieldElement.find('[role=menuitem]:contains(Delete)');
-      deleteButton.click();
+      this.click = function () {
+        var deleteButton = this.fieldElement.find('[role=menuitem]:contains(Delete)');
+        deleteButton.click();
+        this.$apply();
+      };
+    });
+
+    it('shows notification if field is used as a title', function () {
+      this.contentType.data.displayField = this.field.id;
       this.$apply();
+      this.dialogs.openDisallowDialog = sinon.spy();
+      this.click();
+      sinon.assert.called(this.dialogs.openDisallowDialog);
+    });
 
-      sinon.assert.called(deleteField);
+    it('deletes a field if field is not published', function () {
+      var removeField = sinon.stub();
+      this.ctEditorController.removeField = removeField;
+      this.click();
+      sinon.assert.called(removeField);
+    });
+
+    it('marks field as deleted if is omitted in both API and UI', function () {
+      this.field.omitted = true;
+      this.getPublishedField.returns(_.clone(this.field));
+      this.click();
+      expect(this.field.deleted).toBe(true);
+    });
+
+    it('asks about saving pending changes', function () {
+      this.field.omitted = true;
+      this.getPublishedField.returns(_.defaults({omitted: false}, this.field));
+      var save = sinon.spy();
+      this.scope.actions = {save: {execute: save}};
+      this.dialogs.openSaveDialog = sinon.stub().resolves();
+      this.click();
+      sinon.assert.called(this.dialogs.openSaveDialog);
+      sinon.assert.called(save);
+    });
+
+    it('asks for omitting the field', function () {
+      this.field.omitted = false;
+      this.getPublishedField.returns(_.clone(this.field));
+      this.dialogs.openOmitDialog = sinon.stub().resolves();
+      this.click();
+      sinon.assert.called(this.dialogs.openOmitDialog);
+      expect(this.field.omitted).toBe(true);
     });
   });
 });

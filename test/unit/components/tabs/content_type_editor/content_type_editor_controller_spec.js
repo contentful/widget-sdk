@@ -5,6 +5,10 @@ describe('ContentTypeEditor Controller', function () {
   var contentType;
   var createContentType;
 
+  afterEach(function () {
+    scope = contentType = createContentType = null;
+  });
+
   beforeEach(function () {
     var self = this;
     module('contentful/test', function ($provide) {
@@ -143,44 +147,39 @@ describe('ContentTypeEditor Controller', function () {
       scope.$digest();
       sinon.assert.called(scope.contentTypeForm.$setDirty);
     });
-
-    describe('sets arrays with published content type info', function () {
-      beforeEach(function () {
-        scope.publishedContentType = {
-          data: {
-            fields: [
-              {apiName: 'a1', id: 'i1'},
-              {apiName: 'a2', id: 'i2'},
-              {apiName: 'a3', id: 'i3'}
-            ]
-          }
-        };
-        scope.$digest();
-      });
-
-      it('for field apiNames', function () {
-        expect(scope.publishedApiNames).toEqual(['a1', 'a2', 'a3']);
-      });
-
-      it('for field IDs', function () {
-        expect(scope.publishedIds).toEqual(['i1', 'i2', 'i3']);
-      });
-    });
-
-
   });
 
-  describe('on load, with fields', function () {
-    beforeEach(function () {
-      createContentType([{}]);
+  describe('sets array with published content fields', function () {
+    var fields = [
+      {apiName: 'a1', id: 'i1'},
+      {apiName: 'a2', id: 'i2'},
+      {apiName: 'a3', id: 'i3'}
+    ];
+
+    it('handles initial published content type', function () {
+      scope.publishedContentType = {data: {fields: fields}};
+      var ctrl = createContentType([]);
+      expect(ctrl.getPublishedField('i2')).toEqual(fields[1]);
     });
 
-    it('sets contentType on the scope', function () {
-      expect(scope.contentType).toEqual(contentType);
+    it('handles lack of initial published content type', function () {
+      scope.publishedContentType = null;
+      var ctrl = createContentType([]);
+      expect(ctrl.getPublishedField('i2')).toBeUndefined();
     });
 
-    it('has fields', function () {
-      expect(scope.hasFields).toBeTruthy();
+    it('registers published content type field', function () {
+      var ctrl = createContentType([]);
+      ctrl.registerPublishedFields({data: {fields: fields}});
+      expect(ctrl.getPublishedField('i2')).toEqual(fields[1]);
+    });
+
+    it('clears published content type fields if call with null', function () {
+      var ctrl = createContentType([]);
+      ctrl.registerPublishedFields({data: {fields: fields}});
+      expect(ctrl.getPublishedField('i2')).toEqual(fields[1]);
+      ctrl.registerPublishedFields(null);
+      expect(ctrl.getPublishedField('i2')).toBeUndefined();
     });
   });
 
@@ -229,7 +228,7 @@ describe('ContentTypeEditor Controller', function () {
     });
   });
 
-  describe('#deleteField(id)', function () {
+  describe('#removeField(id)', function () {
     var syncControls;
 
     beforeEach(function () {
@@ -238,59 +237,24 @@ describe('ContentTypeEditor Controller', function () {
       spaceContext.editingInterfaces = {syncControls: syncControls};
 
       this.controller = createContentType([{id: 'FID'}]);
-      scope.publishedContentType = {
-        data: scope.contentType.data
-      };
-      this.modalDialog = this.$inject('modalDialog');
-      this.modalDialog.open = sinon.stub();
     });
 
-    describe('without entries', function () {
-      beforeEach(function () {
-        this.controller.countEntries = sinon.stub().resolves(0);
-      });
-
-      it('syncs the editing interface', function () {
-        scope.editingInterface = {};
-        this.controller.deleteField('FID');
-        this.$apply();
-        sinon.assert.calledWith(
-          syncControls,
-          contentType.data, scope.editingInterface
-        );
-      });
-
-      it('removes the field', function () {
-        expect(contentType.data.fields.length).toEqual(1);
-
-        this.controller.deleteField('FID');
-        this.$apply();
-        expect(contentType.data.fields.length).toEqual(0);
-      });
+    it('syncs the editing interface', function () {
+      scope.editingInterface = {};
+      this.controller.removeField('FID');
+      this.$apply();
+      sinon.assert.calledWith(
+        syncControls,
+        contentType.data, scope.editingInterface
+      );
     });
 
-    describe('with entries', function () {
-      beforeEach(function () {
-        this.controller.countEntries = sinon.stub().resolves(1);
-      });
+    it('removes the field', function () {
+      expect(contentType.data.fields.length).toEqual(1);
 
-      it('notifies the user if there are entries', function () {
-        expect(contentType.data.fields.length).toEqual(1);
-
-        this.controller.deleteField('FID');
-        this.$apply();
-        sinon.assert.called(this.modalDialog.open);
-        expect(contentType.data.fields.length).toEqual(1);
-      });
-
-      it('deletes the field if it is not published', function () {
-        scope.publishedContentType.data = {fields: []};
-        expect(contentType.data.fields.length).toEqual(1);
-
-        this.controller.deleteField('FID');
-        this.$apply();
-        expect(contentType.data.fields.length).toEqual(0);
-      });
+      this.controller.removeField('FID');
+      this.$apply();
+      expect(contentType.data.fields.length).toEqual(0);
     });
   });
 

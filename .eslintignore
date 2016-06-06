@@ -254,7 +254,6 @@ src/javascripts/components/tabs/content_model/content_model_directive.js
 src/javascripts/components/tabs/content_type_editor/add_field_dialog_controller.js
 src/javascripts/components/tabs/content_type_editor/cf_api_name_shadow_directive.js
 src/javascripts/components/tabs/content_type_editor/cf_list_type_for_directive.js
-src/javascripts/components/tabs/content_type_editor/api_name_controller.js
 src/javascripts/components/tabs/content_type_editor/cf_content_type_preview.js
 src/javascripts/components/tabs/content_type_editor/content_type_editor_directive.js
 src/javascripts/components/tabs/content_type_list/content_type_list_directive.js
