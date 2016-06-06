@@ -72,10 +72,6 @@ function ($delegate, mock) {
 
 }])
 
-.config(['environment', function (environment) {
-  environment.settings.marketing_url = '//example.com';
-}])
-
 .config(['$provide', '$controllerProvider', function ($provide, $controllerProvider) {
   $provide.stubDirective = function (name, definition) {
     $provide.factory(name + 'Directive', function () {

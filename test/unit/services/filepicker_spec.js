@@ -6,19 +6,11 @@ describe('Filepicker service', function () {
   var $rootScope;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
-      $provide.constant('environment', {
-        settings: {
-          filepicker: {
-            policy: 'policy',
-            signature: 'signature'
-          },
-          google: {
-            maps_api_key: 'google'
-          }
-        },
-        manifest: {}
-      });
+    module('contentful/test', function (environment) {
+      environment.settings.filepicker = {
+        policy: 'policy',
+        signature: 'signature'
+      };
     });
 
     var $q = this.$inject('$q');

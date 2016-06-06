@@ -16,17 +16,19 @@ angular.module('contentful')
  * var AssetResolver = $injector.get('AssetResolver')
  * AssetResolver.resolve('app/kaltura.js')
  * // '//static.contentful.com/app/kaltura-5x3jd.js'
+ *
  */
 .factory('AssetResolver', ['$injector', function ($injector) {
-  var env = $injector.get('environment');
-  var manifest = env.manifest;
-  var assetHost = env.settings.asset_host;
-  var baseUrl = assetHost ? '//' + assetHost.replace(/\/*$/, '') : '';
+  var manifest = $injector.get('environment').manifest;
 
   return {
     resolve: function (file) {
-      file = manifest[file] || file;
-      return baseUrl + '/' + file.replace(/^\/*/, '');
+      var resolved = manifest[file];
+      if (!resolved) {
+        throw new Error('Cannot resolve asset "' + file + '"');
+      }
+
+      return resolved;
     }
   };
 }]);

@@ -1,9 +1,11 @@
 'use strict';
 
 describe('ApiNameController', function () {
-  beforeEach(module('contentful'));
-
   beforeEach(function () {
+    module('contentful/test', function ($provide) {
+      $provide.value('KnowledgeBase/getUrl', sinon.spy());
+    });
+
     var $controller = this.$inject('$controller');
 
     this.modalDialog = this.$inject('modalDialog');
@@ -11,10 +13,9 @@ describe('ApiNameController', function () {
     this.scope = this.$inject('$rootScope').$new();
     this.scope.field = {id: 'field-id'};
 
-    this.scope.publishedContentType = {
-      data: {
-        fields: [{id: 'field-id'}]
-      }
+    this.getPublishedField = sinon.stub().returns({id: 'field-id'});
+    this.scope.ctEditorController = {
+      getPublishedField: this.getPublishedField
     };
 
     this.apiNameController = $controller('ApiNameController', {$scope: this.scope});
@@ -24,7 +25,7 @@ describe('ApiNameController', function () {
 
   describe('isEditable()', function() {
     it('is true if field not published', function() {
-      this.scope.publishedContentType = null;
+      this.getPublishedField.returns(undefined);
       this.$apply();
       expect(this.apiNameController.isEditable()).toBe(true);
     });

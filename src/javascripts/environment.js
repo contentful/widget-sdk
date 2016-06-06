@@ -6,20 +6,12 @@
  * @description
  * Exposes configuration for the application that depends on the envrionment
  *
- * Uses `window.CF_ENV`, `window.CF_CONFIG`, `window.CF_UI_VERSION` to load the
- * configuration.
+ * Uses `window.CF_CONFIG` and `window.CF_UI_VERSION` to load the configuration.
  */
 angular.module('contentful/environment', [])
 .constant('environment', (function () {
-  // Mainly used for test which do not have 'window.CF_CONFIG' set.
-  var DEFAULT_SETTINGS = {
-    main_domain: 'contentful.com',
-    filepicker: {},
-    aviary: {},
-    google: {},
-    contentful: {}
-  };
-
+  // TODO Should throw when CF_CONFIG is undefined, but currently required for tests
+  var settings = window.CF_CONFIG || {};
   /**
    *
    * @ngdoc property
@@ -28,15 +20,13 @@ angular.module('contentful/environment', [])
    * @description
    * Current environment name.
    *
-   * Possible values are `development`, `procuction`, and `staging` (used on the
+   * Possible values are `development`, `production`, and `staging` (used on the
    * `quirely.com` and `flinkly.com` domains.
    *
    * The tests also use the `unittest` value.
    */
-  var env = window.CF_ENV ? window.CF_ENV : 'development';
-
+  var env = settings.environment;
   var isDev = env === 'development';
-  var settings = _.extend(DEFAULT_SETTINGS, window.CF_CONFIG);
   var gitRevision = window.CF_UI_VERSION;
 
   _.extend(settings, {
