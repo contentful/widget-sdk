@@ -189,6 +189,7 @@ angular.module('contentful')
         return apiClient[methodName].apply(apiClient, args)
         .catch(function (err) {
           return $q.reject({
+            message: 'Request failed',
             code: err.code,
             data: err.body // Cyborg?
           });

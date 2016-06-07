@@ -2,23 +2,26 @@
 
 describe('Extension SDK', function () {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', ($provide) => {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
-    var widgets = this.$inject('widgets');
+    const widgets = this.$inject('widgets');
     widgets.get = sinon.stub().returns({
       srcdoc:
         '<!doctype html>' +
         '<script src="/base/vendor/contentful-widget-sdk/dist/cf-widget-api.js"></script>'
     });
 
-    var spaceContext = this.$inject('spaceContext');
+    const spaceContext = this.$inject('spaceContext');
     spaceContext.space = { data: {sys: {}} };
+
+    this.apiClient = {};
+    spaceContext.cma = this.apiClient;
 
     this.container = $('<div>').appendTo('body');
 
-    var field = {
+    const field = {
       id: 'FID-internal',
       apiName: 'FID'
     };
@@ -50,13 +53,13 @@ describe('Extension SDK', function () {
 
     this.loadApi = () => {
       return new Promise((resolve, reject) => {
-        var el = this.$compile('<cf-iframe-widget>', this.scope);
+        const el = this.$compile('<cf-iframe-widget>', this.scope);
         this.scope = el.scope();
-        var iframe = el.find('iframe')[0];
+        const iframe = el.find('iframe')[0];
         iframe.removeAttribute('sandbox');
         iframe.addEventListener('load', () => {
           try {
-            var w = iframe.contentWindow;
+            const w = iframe.contentWindow;
             w.console = window.console;
             w.contentfulWidget.init(resolve);
           } catch (e) {
@@ -72,10 +75,9 @@ describe('Extension SDK', function () {
     this.container.remove();
   });
 
-  var it = makeApiTestDescriptor(window.it);
+  const it = makeApiTestDescriptor(window.it);
 
   describe('#field', function () {
-
 
     describe('#getValue()', function () {
       beforeEach(function () {
@@ -96,7 +98,7 @@ describe('Extension SDK', function () {
 
     describe('#onValueChanged()', function () {
       it('calls callback after otChange event is fired', function* (api, scope) {
-        var valueChanged = sinon.stub();
+        const valueChanged = sinon.stub();
         api.field.onValueChanged(valueChanged);
         emitOtChange(scope, ['fields', 'FID-internal', 'de-internal'], 'VALUE');
         yield;
@@ -105,18 +107,17 @@ describe('Extension SDK', function () {
       });
 
       it('does not call callback after detaching', function* (api, scope) {
-        var valueChanged = sinon.stub();
+        const valueChanged = sinon.stub();
         // We make sure that it is called once in order to prevent
         // errors when the event is not dispatched at all.
         api.field.onValueChanged(valueChanged);
-        var detach = api.field.onValueChanged(valueChanged);
+        const detach = api.field.onValueChanged(valueChanged);
         detach();
         emitOtChange(scope, ['fields', 'FID-internal', 'de-internal'], 'VALUE');
         yield;
         sinon.assert.calledOnce(valueChanged);
       });
     });
-
 
     describe('#setValue()', function () {
       it('calls "otDoc.setValueAt()" with current field path', function* (api, scope) {
@@ -125,23 +126,190 @@ describe('Extension SDK', function () {
       });
 
       it('resolves', function* (api) {
-        var success = sinon.stub();
+        const success = sinon.stub();
         yield api.field.setValue('VAL').then(success);
         sinon.assert.calledWith(success);
       });
 
       it('rejects when "otDoc.setValueAt()" fails', function* (api, scope) {
         scope.otDoc.setValueAt.rejects();
-        var errored = sinon.stub();
+        const errored = sinon.stub();
         yield api.field.setValue('VAL').catch(errored);
         sinon.assert.calledWith(errored);
       });
     });
   });
 
+  describe('#entry', function () {
+    const SYS_0 = 'initial sys value';
+    const SYS_1 = 'new sys value';
+
+    beforeEach(function () {
+      this.scope.entry.data.sys = SYS_0;
+    });
+
+    describe('#getSys()', function () {
+      it('returns the initial sys object', function* (api) {
+        const sys = api.entry.getSys();
+        expect(sys).toEqual(SYS_0);
+      });
+
+      it('returns updated value when scope property changes', function* (api) {
+        expect(api.entry.getSys()).toEqual(SYS_0);
+        this.scope.entry.data.sys = SYS_1;
+        yield;
+        expect(api.entry.getSys()).toEqual(SYS_1);
+      });
+    });
+
+    describe('#onSysChanged()', function () {
+      // TODO Not correctly implemented yet
+      xit('calls listener with initial value', function* (api) {
+        const listener = sinon.stub();
+        api.entry.onSysChanged(listener);
+        sinon.assert.calledWith(listener, SYS_0);
+      });
+
+      it('calls listener when scope property changes', function* (api) {
+        const listener = sinon.stub();
+        api.entry.onSysChanged(listener);
+        listener.reset();
+        this.scope.entry.data.sys = SYS_1;
+        yield;
+        sinon.assert.calledWith(listener, SYS_1);
+      });
+    });
+  });
+
+  describe('#fields', function () {
+    beforeEach(function () {
+      this.scope.contentType.data.fields = [
+        this.scope.field,
+        {id: 'f2-internal', apiName: 'f2', localized: true},
+        {id: 'f3-internal', apiName: 'f3', localized: false}
+      ];
+
+      this.scope.entry.data.fields = {
+        'f2-internal': {
+          'en-internal': 'INITIAL en',
+          'de-internal': 'INITIAL de'
+        }
+      };
+    });
+
+    it('has #id property', function* (api) {
+      expect(api.entry.fields.f2.id).toEqual('f2');
+    });
+
+    it('has #locales property for localized field', function* (api) {
+      expect(api.entry.fields.f2.locales).toEqual(['en', 'de']);
+    });
+
+    it('has #locales property for non-localized field', function* (api) {
+      expect(api.entry.fields.f3.locales).toEqual(['en']);
+    });
+
+    describe('#getValue()', function () {
+      it('returns initial value', function* (api) {
+        expect(api.entry.fields.f2.getValue()).toEqual('INITIAL en');
+        expect(api.entry.fields.f2.getValue('de')).toEqual('INITIAL de');
+      });
+
+      it('returns updated value after otChange event', function* (api, scope) {
+        emitOtChange(scope, ['fields', 'f2-internal', 'en'], 'VAL en');
+        yield;
+        expect(api.entry.fields.f2.getValue()).toEqual('VAL en');
+
+        emitOtChange(scope, ['fields', 'f2-internal', 'de', 5], 'VAL de');
+        yield;
+        expect(api.entry.fields.f2.getValue('de')).toEqual('VAL de');
+      });
+    });
+
+    describe('#setValue()', function () {
+      it('calls "otDoc.setValueAt()" with current field path', function* (api, scope) {
+        const field = api.entry.fields.f2;
+        yield field.setValue('VAL');
+        sinon.assert.calledWith(scope.otDoc.setValueAt, ['fields', 'f2-internal', 'en-internal'], 'VAL');
+        yield field.setValue('VAL', 'de');
+        sinon.assert.calledWith(scope.otDoc.setValueAt, ['fields', 'f2-internal', 'de-internal'], 'VAL');
+      });
+
+      it('throws if locale is unknown', function* (api) {
+        expect(() => {
+          api.entry.fields.f2.setValue('VAL', 'unknown');
+        }).toThrow();
+
+        expect(() => {
+          api.entry.fields.f3.setValue('VAL', 'de');
+        }).toThrow();
+      });
+
+      it('resolves', function* (api) {
+        const success = sinon.stub();
+        yield api.entry.fields.f2.setValue('VAL').then(success);
+        sinon.assert.calledWith(success);
+      });
+
+      it('rejects when "otDoc.setValueAt()" fails', function* (api, scope) {
+        scope.otDoc.setValueAt.rejects();
+        const errored = sinon.stub();
+        yield api.entry.fields.f2.setValue('VAL').catch(errored);
+        sinon.assert.calledWith(errored);
+      });
+    });
+  });
+
+  describe('#locales', function () {
+    beforeEach(function () {
+      const LocaleStore = this.$inject('TheLocaleStore');
+      LocaleStore.setLocales([
+        {code: 'en', internal_code: 'en-internal'},
+        {code: 'de', internal_code: 'de-internal'}
+      ]);
+    });
+
+    it('provides the default locale code', function* (api) {
+      expect(api.locales.default).toEqual('en');
+    });
+
+    it('provides all available locales codes', function* (api) {
+      expect(api.locales.available).toEqual(['en', 'de']);
+    });
+  });
+
+  describe('#space methods', function () {
+    it('delegates to API client and responds with data', function* (api) {
+      for (let method of Object.keys(api.space)) {
+        this.apiClient[method] = sinon.stub().resolves('DATA');
+        const response = yield api.space[method]('X', 'Y');
+        sinon.assert.calledOnce(this.apiClient[method]);
+        sinon.assert.calledWithExactly(this.apiClient[method], 'X', 'Y');
+        expect(response).toEqual('DATA');
+      }
+    });
+
+    it('delegates to API and throws error', function* (api) {
+      for (let method of Object.keys(api.space)) {
+        this.apiClient[method] = sinon.stub().rejects({code: 'CODE', body: 'BODY'});
+        const error = yield api.space[method]('X', 'Y').catch((e) => e);
+        expect(error).toEqual({code: 'CODE', data: 'BODY', message: 'Request failed'});
+      }
+    });
+
+    it('has a ApiClient method for each space method', function* (api) {
+      const widgetApiMethods = Object.keys(api.space);
+      const ApiClient = this.$inject('data/ApiClient');
+      const cma = new ApiClient();
+      for (let method of widgetApiMethods) {
+        expect(typeof cma[method]).toBe('function');
+      }
+    });
+  });
+
 
   function emitOtChange (scope, path, value) {
-    var doc = {
+    const doc = {
       getAt: sinon.stub().withArgs(path).returns(value)
     };
     scope.$emit('otChange', doc, [{p: path}]);
@@ -151,10 +319,10 @@ describe('Extension SDK', function () {
   function makeApiTestDescriptor (testFactory) {
     return function defineTest (desc, runner) {
       testFactory(desc, function (done) {
-        var $apply = this.$apply.bind(this);
+        const $apply = this.$apply.bind(this);
         this.loadApi()
         .then((api) => {
-          var gen = runner(api, this.scope);
+          const gen = runner.call(this, api, this.scope);
           return runGenerator(gen, $apply);
         })
         .then(done, done.fail);
@@ -165,14 +333,14 @@ describe('Extension SDK', function () {
 
   function runGenerator (gen, $apply) {
     return new Promise((resolve, reject) => {
-      var next = makeDispatcher('next');
-      var throwTo = makeDispatcher('throw');
+      const next = makeDispatcher('next');
+      const throwTo = makeDispatcher('throw');
 
       next();
 
       function makeDispatcher (method) {
         return function (val) {
-          var ret;
+          let ret;
           try {
             ret = gen[method](val);
           } catch (e) {
@@ -192,14 +360,14 @@ describe('Extension SDK', function () {
 
         if (ret.value) {
           ret.value.then(next, throwTo);
+          $apply();
         } else {
           $apply();
           setTimeout(function () {
             next(ret.value);
-          }, 3);
+          }, 4);
         }
       }
     });
-
   }
 });

@@ -214,7 +214,7 @@ angular.module('cf.data')
   };
 
 
-  Client.prototype.processAssetFile = function (asset, fileId, version) {
+  Client.prototype.processAsset = function (asset, fileId, version) {
     var id = getId(asset);
     version = version || getVersion(asset);
     return this._request({
