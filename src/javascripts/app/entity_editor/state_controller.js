@@ -5,15 +5,15 @@ angular.module('contentful')
 ['$scope', '$injector', 'entity', 'notify', 'handlePublishError',
 function ($scope, $injector, entity, notify, handlePublishError) {
 
-  var controller          = this;
-  var $rootScope          = $injector.get('$rootScope');
-  var $q                  = $injector.get('$q');
-  var Command             = $injector.get('command');
+  var controller = this;
+  var $rootScope = $injector.get('$rootScope');
+  var $q = $injector.get('$q');
+  var Command = $injector.get('command');
   var createEntryReverter = $injector.get('entryReverter');
-  var StateManager        = $injector.get('EntityStateManager');
-  var analytics           = $injector.get('analytics');
-  var accessChecker       = $injector.get('accessChecker');
-  var closeState          = $injector.get('navigation/closeState');
+  var StateManager = $injector.get('EntityStateManager');
+  var analytics = $injector.get('analytics');
+  var accessChecker = $injector.get('accessChecker');
+  var closeState = $injector.get('navigation/closeState');
 
   var stateManager = new StateManager(entity);
 
@@ -92,7 +92,7 @@ function ($scope, $injector, entity, notify, handlePublishError) {
   }, {
     label: 'Archive',
     status: 'Archived',
-    targetStateId: 'archived',
+    targetStateId: 'archived'
   });
 
   var unarchive = Command.create(function () {
@@ -103,7 +103,7 @@ function ($scope, $injector, entity, notify, handlePublishError) {
   }, {
     label: 'Unarchive',
     status: 'Draft',
-    targetStateId: 'draft',
+    targetStateId: 'draft'
   });
 
 
@@ -115,14 +115,14 @@ function ($scope, $injector, entity, notify, handlePublishError) {
   }, {
     label: 'Unpublish',
     status: 'Draft',
-    targetStateId: 'draft',
+    targetStateId: 'draft'
   });
 
   var publishChanges = Command.create(publishEntity, {
     disabled: disabledChecker('publish')
   }, {
     label: 'Publish changes',
-    targetStateId: 'published',
+    targetStateId: 'published'
   });
 
   var publish = Command.create(publishEntity, {
@@ -130,7 +130,7 @@ function ($scope, $injector, entity, notify, handlePublishError) {
   }, {
     label: 'Publish',
     status: 'Published',
-    targetStateId: 'published',
+    targetStateId: 'published'
   });
 
   function publishEntity () {
@@ -153,10 +153,10 @@ function ($scope, $injector, entity, notify, handlePublishError) {
   }, {
     disabled: function () {
       switch (stateManager.getState()) {
-        case 'draft':     return !hasPermission('delete');
-        case 'archive':   return !hasPermission('delete');
+        case 'draft': return !hasPermission('delete');
+        case 'archive': return !hasPermission('delete');
         case 'published': return !hasPermission('unpublish') || !hasPermission('delete');
-        default:          return true;
+        default: return true;
       }
     }
   });
@@ -170,7 +170,7 @@ function ($scope, $injector, entity, notify, handlePublishError) {
 
   controller.revertToPublished = Command.create(function () {
     $scope.entry.getPublishedState().then(function (data) {
-      return setDocFields($scope.otDoc.doc, data.fields);
+      return setDocFields(data.fields);
     }).then(function () {
       entryReverter.revertedToPublished();
     })
@@ -184,11 +184,8 @@ function ($scope, $injector, entity, notify, handlePublishError) {
   });
 
   controller.revertToPrevious = Command.create(function () {
-    if(!$scope.otDoc.doc) {
-      return $q.resolve();
-    }
     var fields = entryReverter.getPreviousData().fields;
-    return setDocFields($scope.otDoc.doc, fields)
+    return setDocFields(fields)
     .then(function () {
       entryReverter.revertedToPrevious();
     })
@@ -201,12 +198,10 @@ function ($scope, $injector, entity, notify, handlePublishError) {
     }
   });
 
-  function setDocFields (doc, data) {
-    return $q.denodeify(function (handler) {
-      doc.at('fields').set(data, function (err) {
-        if (!err) { broadcastRevertedValues(data); }
-        handler.apply(null, arguments);
-      });
+  function setDocFields (fields) {
+    return $scope.otDoc.setValueAt(['fields'], fields)
+    .then(function () {
+      broadcastRevertedValues(fields);
     });
   }
 

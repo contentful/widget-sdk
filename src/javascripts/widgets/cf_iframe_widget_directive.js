@@ -15,7 +15,7 @@ angular.module('contentful')
  * @scope.requires {API.Locale} locale
  * @scope.requires {API.ContentType.Field} field
  */
-.directive('cfIframeWidget', ['$injector', function($injector) {
+.directive('cfIframeWidget', ['$injector', function ($injector) {
   return {
     restrict: 'E',
     template: '<iframe style="width:100%" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe>',
@@ -25,8 +25,8 @@ angular.module('contentful')
       var spaceContext = $injector.get('spaceContext');
       var $q = $injector.get('$q');
 
-      var $iframe  = element.find('iframe');
-      var iframe   = $iframe.get(0);
+      var $iframe = element.find('iframe');
+      var iframe = $iframe.get(0);
       var WidgetAPI = $injector.get('widgets/API');
       var Widgets = $injector.get('widgets');
 
@@ -47,17 +47,24 @@ angular.module('contentful')
 
       widgetAPI.registerHandler('setValue', function (apiName, localeCode, value) {
         var path = widgetAPI.buildDocPath(apiName, localeCode);
-        var doc = scope.otDoc.doc;
-        if (doc) {
-          return value === undefined ?
-            removeDocValue(doc, path) :
-            updateDocValue(doc, path, value);
-        }
+        return scope.otDoc.setValueAt(path, value)
+        .catch(function (e) {
+          if (e && e.message) {
+            e = e.message;
+          }
+          return $q.reject({
+            code: 'ENTRY UPDATE FAILED',
+            message: 'Could not update entry field',
+            data: {
+              shareJSCode: e
+            }
+          });
+        });
       });
 
       initializeIframe();
 
-      function initializeIframe() {
+      function initializeIframe () {
         iframe.addEventListener('load', function () {
           widgetAPI.connect();
         });
@@ -69,42 +76,15 @@ angular.module('contentful')
         }
       }
 
-      function updateDocValue (doc, path, value) {
-        return ShareJS.setDeep(doc, path, value)
-        .catch(function (e) {
-          // Should only throw an error when `value` does not have the
-          // correct type. Then `e` will be "forbidden".
-          return $q.reject({
-            code: 'ENTRY UPDATE FAILED',
-            message: 'Could not update entry field',
-            data: {
-              shareJSCode: e
-            }
-          });
-        });
-      }
-
-      function removeDocValue (doc, path) {
-        return $q.denodeify(function (cb) {
-          // We catch synchronous errors since they tell us that a
-          // value along the path does not exist.
-          try {
-            doc.removeAt(path, cb);
-          } catch (e) {
-            cb();
-          }
-        });
-      }
-
       scope.$watch('entry.data.sys', function (sys) {
         widgetAPI.send('sysChanged', [sys]);
       }, true);
 
-      scope.$on('otDocReady', function (ev, doc) {
+      scope.$on('otDocReady', function (_ev, doc) {
         updateWidgetFields(doc);
       });
 
-      scope.$on('otChange', function (ev, doc, ops) {
+      scope.$on('otChange', function (_ev, doc, ops) {
         var paths = _.pluck(ops, 'p');
         paths = _.filter(paths, function (path) {
           return path[0] === 'fields';

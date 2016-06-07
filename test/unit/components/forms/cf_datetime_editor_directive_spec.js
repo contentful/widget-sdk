@@ -9,14 +9,10 @@ describe('DateTime Editor', function () {
   beforeEach(inject(function ($compile, $rootScope, $q, _moment_){
     moment = _moment_;
     scope = $rootScope;
-    scope.otSubDoc = {
-      changeValue: sinon.stub().returns($q.resolve())
-    };
     scope.widget = {settings: {
       format: 'timeZ',
       ampm: '24'
     }};
-    scope.otPath = [];
     scope.fieldData = {value: null};
     element = $compile('<div cf-datetime-editor ng-model="fieldData.value"></div>')(scope);
     scope.$apply();
@@ -82,12 +78,6 @@ describe('DateTime Editor', function () {
   });
 
   it('should recognize in the scope changes in the DOM', function () {
-    enter('2013-12-24', '5:23', '+03:00');
-    expectScope('2013-12-24', '05:23', '+03:00');
-  });
-
-  it('should sets model value without otSubDoc', function () {
-    delete scope.otSubDoc;
     enter('2013-12-24', '5:23', '+03:00');
     expectScope('2013-12-24', '05:23', '+03:00');
   });

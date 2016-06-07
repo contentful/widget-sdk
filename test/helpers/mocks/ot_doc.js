@@ -26,6 +26,10 @@ angular.module('contentful/mocks')
   function OtDoc (snapshot, base) {
     this.snapshot = snapshot || {};
     this.base = base || [];
+
+    this.on = sinon.stub();
+    this.removeListener = sinon.stub();
+    this.close = sinon.stub();
   }
 
   OtDoc.prototype.setAt = function (path, value, cb) {

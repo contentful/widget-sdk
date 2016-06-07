@@ -2,69 +2,42 @@
 
 describe('Asset editor controller', function () {
 
-  var scope, stubs, logger, notification, accessChecker;
-  var process;
+  var scope;
 
   beforeEach(function () {
-    var self = this;
-    self.TheLocaleStoreMock = {
-      getLocalesState: sinon.stub().returns({})
-    };
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs([
-        'assetTitle',
-        'isArchived',
-        'process',
-        'peek',
-        'mkpathAndSetValue',
-        'fileNameToTitle',
-        'serverError',
-        'getPublishedVersion',
-        'fileProcessingFailed'
-      ]);
       $provide.removeControllers(
         'FormWidgetsController',
         'entityEditor/LocalesController',
         'entityEditor/StatusNotificationsController'
       );
-
-      $provide.value('ShareJS', {
-        peek: stubs.peek,
-        mkpathAndSetValue: stubs.mkpathAndSetValue
-      });
-
-      $provide.value('stringUtils', {
-        fileNameToTitle: stubs.fileNameToTitle
-      });
-
-      $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
     });
-    inject(function ($rootScope, $controller, $q, $injector, cfStub, _accessChecker_) {
-      logger = $injector.get('logger');
-      notification = $injector.get('notification');
-      scope = $rootScope.$new();
-      scope.otDoc = {doc: {}, state: {}};
 
-      accessChecker = _accessChecker_;
-      accessChecker.canUpdateAsset = sinon.stub().returns(true);
+    scope = this.$inject('$rootScope').$new();
+    scope.otDoc = {
+      doc: {},
+      getValueAt: sinon.stub(),
+      setValueAt: sinon.stub(),
+      open: sinon.stub(),
+      close: sinon.stub()
+    };
 
-      scope.validate = sinon.stub();
+    var accessChecker = this.$inject('accessChecker');
+    accessChecker.canUpdateAsset = sinon.stub().returns(true);
 
-      process = $q.defer();
-      var space = cfStub.space('testSpace');
-      var asset = cfStub.asset(space, 'testAsset', 'testType');
-      asset = _.extend(asset, {
-        isArchived: stubs.isArchived,
-        process: stubs.process.returns(process.promise),
-        getPublishedVersion: stubs.getPublishedVersion
-      });
+    var cfStub = this.$inject('cfStub');
+    var space = cfStub.space('testSpace');
+    var asset = cfStub.asset(space, 'testAsset', 'testType');
+    scope.asset = asset;
+    scope.context = {};
 
-      scope.asset = asset;
-      scope.context = {};
+    var $controller = this.$inject('$controller');
+    $controller('AssetEditorController', {$scope: scope});
+    scope.$apply();
+  });
 
-      $controller('AssetEditorController', {$scope: scope});
-      scope.$apply();
-    });
+  afterEach(function () {
+    scope = null;
   });
 
   it('gets a title set', function () {
@@ -74,112 +47,46 @@ describe('Asset editor controller', function () {
     expect(scope.context.title).toBe('title');
   });
 
-  describe('sets the otDoc.state.disabled flag', function () {
-    beforeEach(function () {
-      scope.otDoc = {
-        doc: {},
-        state: { disabled: false }
-      };
-      stubs.isArchived.returns(false);
-    });
+  it('validates if the published version has changed', function () {
+    scope.asset.data.sys.publishedVersion = 1;
+    scope.asset.isArchived = sinon.stub().returns(false);
+    scope.$digest();
 
-    it('to disabled', function () {
-      accessChecker.canUpdateAsset.returns(true);
-      scope.$apply();
-      expect(scope.otDoc.state.disabled).toBe(false);
-    });
-
-    it('to enabled', function () {
-      accessChecker.canUpdateAsset.returns(false);
-      scope.$apply();
-      expect(scope.otDoc.state.disabled).toBe(true);
-    });
+    scope.validate = sinon.spy();
+    scope.asset.data.sys.publishedVersion = 2;
+    scope.$digest();
+    sinon.assert.called(scope.validate);
   });
 
-  describe('validation on publish', function () {
-    beforeEach(inject(function ($rootScope, $controller, cfStub) {
-      scope = $rootScope.$new();
-      scope.otDoc = {doc: {}, state: {}};
-      accessChecker.canUpdateAsset.returns(true);
+  describe('"fileUpload" event', function () {
+    it('sets the document title if it is not yet present', function () {
+      scope.$emit('fileUploaded', {fileName: 'file.jpg'}, {internal_code: 'en-US'});
+      sinon.assert.calledWith(scope.otDoc.setValueAt, ['fields', 'title', 'en-US'], 'file');
+    });
 
-      var space = cfStub.space('test');
-      var asset = cfStub.asset(space, 'asset1', {}, {
-        sys: {
-          publishedVersion: 1
-        }
-      });
+    it('does not set the document title if it present', function () {
+      scope.otDoc.getValueAt.withArgs(['fields', 'title', 'en-US']).returns('title');
+      scope.$emit('fileUploaded', {fileName: 'file.jpg'}, {internal_code: 'en-US'});
+      sinon.assert.notCalled(scope.otDoc.setValueAt);
+    });
 
-      asset.isArchived = sinon.stub().returns(false);
-      scope.asset = asset;
-      scope.context = {};
+    it('processes the asset', function () {
+      scope.asset.process = sinon.stub().resolves();
+      scope.otDoc.doc.version = 123;
+      scope.$emit('fileUploaded', {fileName: ''}, {internal_code: 'en-US'});
+      sinon.assert.calledWith(scope.asset.process, 123, 'en-US');
+    });
 
-      $controller('AssetEditorController', {$scope: scope});
-      scope.$digest();
-    }));
+    it('shows error when asset processing fails', function () {
+      var notification = this.$inject('notification');
 
-    it('should validate if the published version has changed', function () {
-      scope.validate = sinon.spy();
-      scope.asset.data.sys.publishedVersion = 2;
-      scope.$digest();
-      sinon.assert.called(scope.validate);
+      scope.asset.process = sinon.stub().rejects();
+      var processingFailed = sinon.stub();
+      scope.$on('fileProcessingFailed', processingFailed);
+      scope.$emit('fileUploaded', {fileName: ''}, {internal_code: 'en-US'});
+      this.$apply();
+      sinon.assert.called(notification.error);
+      sinon.assert.called(processingFailed);
     });
   });
-
-  describe('handles a fileUploaded event from CfFileEditor controller', function () {
-    var otPath;
-    beforeEach(function () {
-      scope.otDoc = { doc: {version: 123} };
-      otPath = ['fields', 'title', 'en-US'];
-      var fileObj = {fileName: 'file.jpg'};
-      scope.$on('fileProcessingFailed', stubs.fileProcessingFailed);
-      scope.$emit('fileUploaded', fileObj, {internal_code: 'en-US'});
-    });
-
-    it('calls asset processing', function () {
-      sinon.assert.called(scope.asset.process);
-    });
-
-    describe('on success', function () {
-      beforeEach(function () {
-        process.resolve({});
-        stubs.peek.returns(null);
-        stubs.fileNameToTitle.returns('file');
-        scope.$apply();
-      });
-
-      it('looks for otDoc with locale', function () {
-        sinon.assert.calledWith(stubs.peek, scope.otDoc.doc, otPath);
-      });
-
-      it('creates otDoc', function () {
-        sinon.assert.called(stubs.mkpathAndSetValue);
-      });
-
-      it('creates otDoc with doc path and filename', function () {
-        sinon.assert.calledOnce(stubs.mkpathAndSetValue);
-        sinon.assert.calledWith(
-          stubs.mkpathAndSetValue,
-          scope.otDoc.doc, otPath, 'file'
-        );
-      });
-    });
-
-    describe('on error', function () {
-      beforeEach(function () {
-        process.reject({});
-        scope.$apply();
-      });
-
-      it('calls error notification', function () {
-        sinon.assert.called(notification.error);
-        sinon.assert.called(logger.logServerWarn);
-      });
-
-      it('emits file processing failure event', function () {
-        sinon.assert.called(stubs.fileProcessingFailed);
-      });
-    });
-  });
-
-  // TODO test dirty flag
 });

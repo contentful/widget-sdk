@@ -3,16 +3,13 @@
 
 test/unit/components/forms/cf_video_player_directive_spec.js
 test/unit/components/forms/cf_location_editor_controller_spec.js
-test/unit/components/forms/cf_asset_link_editor_controller_spec.js
 test/unit/components/forms/cf_asset_link_editor_directive_spec.js
 test/unit/components/forms/cf_autocomplete_results_controller_spec.js
 test/unit/components/forms/cf_datetime_editor_directive_spec.js
-test/unit/components/forms/cf_entry_link_editor_controller_spec.js
 test/unit/components/forms/cf_entry_link_editor_directive_spec.js
 test/unit/components/forms/cf_field_alert_directive_spec.js
 test/unit/components/forms/cf_google_maps_controller_spec.js
 test/unit/components/forms/cf_google_maps_directive_spec.js
-test/unit/components/forms/cf_link_editor_controller_spec.js
 test/unit/components/forms/cf_link_editor_search_controller_spec.js
 test/unit/components/forms/cf_link_editor_search_directive_spec.js
 test/unit/components/forms/cf_location_editor_directive_spec.js
@@ -76,7 +73,6 @@ test/unit/navigator/leave_editor_confirmation_spec.js
 test/unit/navigator/confirm_leave_editor_spec.js
 test/unit/navigator/state_change_handlers_spec.js
 test/unit/ot/ot_doc_presence_controller_spec.js
-test/unit/ot/ot_doc_for_spec.js
 test/unit/services/assert_spec.js
 test/unit/services/call_buffer_spec.js
 test/unit/services/contentful_client_spec.js
@@ -116,7 +112,6 @@ test/unit/services/subscription_plan_recommender_spec.js
 test/unit/widgets/checks_spec.js
 test/unit/widgets/api_spec.js
 test/unit/widgets/builtin_spec.js
-test/unit/widgets/cf_iframe_widget_directive_spec.js
 test/unit/widgets/channel_spec.js
 test/unit/widgets/default_spec.js
 test/unit/widgets/deprecations_spec.js
@@ -124,7 +119,6 @@ test/unit/widgets/migrations_spec.js
 test/unit/widgets/store_spec.js
 test/unit/widgets/widgets_spec.js
 test/unit/app/entity_editor/locales_controller_spec.js
-test/unit/app/entity_editor/state_controller_spec.js
 test/unit/app/entity_editor/status_notifications_controller_spec.js
 test/unit/app/entry_editor/entry_actions_controller_spec.js
 test/unit/app/entry_editor/entry_reverter_spec.js
@@ -324,7 +318,6 @@ src/javascripts/app/entry_editor/entry_actions_controller.js
 src/javascripts/app/entry_editor/entry_reverter.js
 src/javascripts/app/entity_editor/locales_controller.js
 src/javascripts/app/entity_editor/sidebar_widgets_controller.js
-src/javascripts/app/entity_editor/state_controller.js
 src/javascripts/app/entity_editor/status_notifications_controller.js
 src/javascripts/app/widgets/cf_checkbox_editor_directive.js
 src/javascripts/app/widgets/cf_rating_editor_directive.js
@@ -361,7 +354,6 @@ src/javascripts/directives/cf_custom_logo_directive.js
 src/javascripts/directives/cf_schema_directives.js
 src/javascripts/directives/cf_copy_to_clipboard_directive.js
 src/javascripts/directives/cf_when_disabled.js
-src/javascripts/ot/ot_doc_for.js
 src/javascripts/ot/ot_presence.js
 src/javascripts/services/assert.js
 src/javascripts/services/aviary.js
@@ -437,7 +429,6 @@ src/javascripts/ui/cf_ui_caret_helper.js
 src/javascripts/ui/cf_ui_hint.js
 src/javascripts/ui/context_menu.js
 src/javascripts/widgets/id_map.js
-src/javascripts/widgets/cf_iframe_widget_directive.js
 src/javascripts/widgets/channel.js
 src/javascripts/widgets/checks.js
 src/javascripts/widgets/default.js
@@ -471,7 +462,6 @@ src/javascripts/utils/encoder.js
 src/javascripts/utils/keycodes.js
 src/javascripts/utils/memoize.js
 src/javascripts/utils/overriding_request_queue.js
-src/javascripts/libs/dottie_wrapper.js
 src/javascripts/libs/index.js
 src/javascripts/libs/markdown_vendors.js
 src/javascripts/kaltura_credentials.js

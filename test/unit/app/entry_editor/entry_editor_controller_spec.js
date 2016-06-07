@@ -30,7 +30,11 @@ describe('Entry Editor Controller', function () {
 
       var OtDoc = this.$inject('mocks/OtDoc');
       var doc = new OtDoc();
-      scope.otDoc = {doc: doc, state: {}};
+      scope.otDoc = {
+        doc: doc,
+        open: sinon.stub(),
+        close: sinon.stub()
+      };
 
       var ctData = cfStub.contentTypeData();
       scope.contentType = {data: ctData, getId: _.constant(ctData.sys.id)};
@@ -56,28 +60,6 @@ describe('Entry Editor Controller', function () {
     scope.entry.data.sys.publishedVersion = 2;
     scope.$digest();
     sinon.assert.called(scope.validate);
-  });
-
-  describe('sets the otDoc.state.disabled flag', function () {
-    beforeEach(function () {
-      scope = this.createController();
-      scope.otDoc = { state: { disabled: false } };
-      this.accessChecker = this.$inject('accessChecker');
-      this.accessChecker.canUpdateEntry = sinon.stub().returns(true);
-      scope.$apply();
-    });
-
-    it('to disabled', function () {
-      this.accessChecker.canUpdateEntry.returns(true);
-      scope.$apply();
-      expect(scope.otDoc.state.disabled).toBe(false);
-    });
-
-    it('to enabled', function () {
-      this.accessChecker.canUpdateEntry.returns(false);
-      scope.$apply();
-      expect(scope.otDoc.state.disabled).toBe(true);
-    });
   });
 
   describe('when the entry title changes', function () {

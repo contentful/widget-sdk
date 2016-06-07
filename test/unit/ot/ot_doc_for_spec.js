@@ -12,23 +12,29 @@ describe('otDocFor', function () {
     };
   }
 
-  beforeEach(function() {
-    var ShareJS = {
-      isConnected: sinon.stub().returns(true),
-      connectionFailed: sinon.stub().returns(false),
-      open: sinon.stub()
-    };
-    this.openDocument = ShareJS.open;
+  beforeEach(function () {
+    module('contentful/test');
 
-    module('contentful/test', function ($provide) {
-      $provide.value('ShareJS', ShareJS);
-    });
+    var ShareJS = this.$inject('ShareJS');
+    ShareJS.isConnected = sinon.stub().returns(true);
+    ShareJS.connectionFailed = sinon.stub().returns(false);
+    this.openDocument = ShareJS.open = sinon.stub();
 
+    var OtDoc = this.$inject('mocks/OtDoc');
 
     this.connect = function () {
       ShareJS.isConnected.returns(true);
       ShareJS.connectionFailed.returns(false);
       this.$apply();
+    };
+
+    this.connectAndOpen = function (data) {
+      ShareJS.isConnected.returns(true);
+      ShareJS.connectionFailed.returns(false);
+      var doc = new OtDoc(_.cloneDeep(data || this.entity.data));
+      this.openDocument.resolves(doc);
+      this.$apply();
+      return doc;
     };
 
     this.disconnect = function () {
@@ -46,22 +52,26 @@ describe('otDocFor', function () {
         sys: {
           id: 'id',
           version: 8
-        },
+        }
       }
     };
 
     scope = this.$compile('<div ot-doc-for="entity">', {
-      entity: this.entity,
+      entity: this.entity
     }).scope();
-    scope.otDoc.state.disabled = false;
+    scope.otDoc.open();
   });
 
-  it('otDoc is initially undefined', function(){
+  afterEach(function () {
+    scope = null;
+  });
+
+  it('otDoc is initially undefined', function () {
     expect(scope.otDoc.doc).toBeUndefined();
   });
 
-  describe('successful initialization flow', function(){
-    beforeEach(function(){
+  describe('successful initialization flow', function () {
+    beforeEach(function () {
       var localeStore = this.$inject('TheLocaleStore');
       localeStore.getPrivateLocales = sinon.stub().returns([{internal_code: 'en'}]);
 
@@ -74,14 +84,11 @@ describe('otDocFor', function () {
         }
       };
 
-      this.otDoc = makeOtDocStub(this.entity.data);
-      this.openDocument.resolves(this.otDoc);
       scope.$broadcast = sinon.stub();
-
-      this.connect();
+      this.otDoc = this.connectAndOpen();
     });
 
-    it('sharejs.open is called', function(){
+    it('sharejs.open is called', function () {
       sinon.assert.calledOnce(this.openDocument);
       sinon.assert.calledWith(this.openDocument, this.entity);
     });
@@ -90,25 +97,25 @@ describe('otDocFor', function () {
       sinon.assert.calledWith(scope.otDoc.doc.on, 'closed');
     });
 
-    it('filters deleted locales', function(){
+    it('filters deleted locales', function () {
       expect(scope.otDoc.doc.snapshot.fields.field1.del).toBeUndefined();
     });
 
-    it('keeps non deleted locales', function(){
+    it('keeps non deleted locales', function () {
       expect(scope.otDoc.doc.snapshot.fields.field2.en).toBeDefined();
     });
 
-    it('sets acknowledge and remoteop event handelrs', function(){
+    it('sets acknowledge and remoteop event handelrs', function () {
       sinon.assert.calledWith(scope.otDoc.doc.on, 'acknowledge');
       sinon.assert.calledWith(scope.otDoc.doc.on, 'remoteop');
     });
 
-    it('updated version if updateHandler called', function(){
+    it('updated version if updateHandler called', function () {
       this.otDoc.on.withArgs('acknowledge').yield();
       sinon.assert.called(this.entity.setVersion);
     });
 
-    it('calls otUpdateEntityData', function(){
+    it('calls otUpdateEntityData', function () {
       sinon.assert.called(this.entity.update);
     });
 
@@ -117,8 +124,8 @@ describe('otDocFor', function () {
     });
   });
 
-  describe('initialization flow fails because document is not ready', function(){
-    beforeEach(function(){
+  describe('initialization flow fails because document is not ready', function () {
+    beforeEach(function () {
       // triggers a first digest cycle with different settings because
       // the initialization already made this watcher fail
       var $q = this.$inject('$q');
@@ -131,21 +138,21 @@ describe('otDocFor', function () {
       this.disconnect();
     });
 
-    it('sharejs.open is called only once', function(){
+    it('sharejs.open is called only once', function () {
       sinon.assert.calledOnce(this.openDocument);
     });
 
-    it('otdoc is closed', function(){
+    it('otdoc is closed', function () {
       sinon.assert.called(this.otDoc.close);
     });
 
-    it('otdoc.doc is removed', function(){
+    it('otdoc.doc is removed', function () {
       expect(scope.otDoc.doc).toBeUndefined();
     });
   });
 
-  describe('initialization flow fails because opening the doc failed', function(){
-    beforeEach(function(){
+  describe('initialization flow fails because opening the doc failed', function () {
+    beforeEach(function () {
       this.logger = this.$inject('logger');
       this.logger.logShareJsError = sinon.stub();
 
@@ -153,33 +160,30 @@ describe('otDocFor', function () {
       this.connect();
     });
 
-    it('sharejs.open is called', function(){
+    it('sharejs.open is called', function () {
       sinon.assert.called(this.openDocument);
     });
 
-    it('otDoc.doc is undefined', function(){
+    it('otDoc.doc is undefined', function () {
       expect(scope.otDoc.doc).toBeUndefined();
     });
 
-    it('logger sharejs error is called', function(){
+    it('logger sharejs error is called', function () {
       sinon.assert.called(this.logger.logSharejsError);
     });
   });
 
-  describe('initialization flow fails because doc became unusable after opening', function(){
-    beforeEach(function(){
-      this.otDoc = makeOtDocStub();
-      this.openDocument.resolves(this.otDoc);
-
-      this.connect();
+  describe('initialization flow fails because doc became unusable after opening', function () {
+    beforeEach(function () {
+      this.otDoc = this.connectAndOpen();
       this.disconnect();
     });
 
-    it('sharejs.open is called', function(){
+    it('sharejs.open is called', function () {
       sinon.assert.called(this.openDocument);
     });
 
-    it('doc is closed', function(){
+    it('doc is closed', function () {
       sinon.assert.called(this.otDoc.close);
     });
   });
@@ -191,12 +195,10 @@ describe('otDocFor', function () {
       this.clock = sinon.useFakeTimers(1234, 'Date');
       this.now = moment();
 
-      this.otDoc = makeOtDocStub({
+      this.otDoc = this.connectAndOpen({
         sys: {version: 100, updatedAt: 'foo'},
-        foo: 'bar', baz: {},
+        foo: 'bar', baz: {}
       });
-      this.openDocument.resolves(this.otDoc);
-      this.connect();
       this.entity.update.reset();
 
       this.fireChange = function () {
@@ -242,22 +244,22 @@ describe('otDocFor', function () {
     });
   });
 
-  describe('on scope destruction', function(){
-    beforeEach(function(){
+  describe('on scope destruction', function () {
+    beforeEach(function () {
       this.otDoc = makeOtDocStub();
       scope.otDoc.doc = this.otDoc;
       scope.$destroy();
     });
 
-    it('removes the remote op listener', function(){
+    it('removes the remote op listener', function () {
       sinon.assert.calledWith(this.otDoc.removeListener, 'remoteop');
     });
 
-    it('removes the change listener', function(){
+    it('removes the change listener', function () {
       sinon.assert.calledWith(this.otDoc.removeListener, 'change');
     });
 
-    it('closes the doc', function(){
+    it('closes the doc', function () {
       sinon.assert.called(this.otDoc.close);
     });
   });
@@ -294,9 +296,7 @@ describe('otDocFor', function () {
     beforeEach(function () {
       this.clock = sinon.useFakeTimers(1000, 'Date');
       this.now = this.$inject('moment')();
-      this.otDoc = makeOtDocStub(this.entity.data);
-      this.openDocument.resolves(this.otDoc);
-      this.connect();
+      this.otDoc = this.connectAndOpen();
     });
 
     afterEach(function () {
@@ -320,6 +320,63 @@ describe('otDocFor', function () {
       this.otDoc.on.withArgs('change').yield('OPERATION');
       this.$apply();
       sinon.assert.calledWith(scope.$broadcast, 'otChange', this.otDoc, 'OPERATION');
+    });
+  });
+
+  describe('#getValueAt()', function () {
+    it('gets value from snapshot if doc is connected', function () {
+      var doc = this.connectAndOpen();
+      dotty.put(doc.snapshot, ['a', 'b'], 'VAL');
+      expect(scope.otDoc.getValueAt(['a', 'b'])).toEqual('VAL');
+    });
+
+    it('gets value from entity data if doc is not connected', function () {
+      dotty.put(this.entity.data, ['a', 'b'], 'VAL');
+      expect(scope.otDoc.getValueAt(['a', 'b'])).toEqual('VAL');
+    });
+  });
+
+  describe('#setValueAt()', function () {
+    it('rejects when doc is not defined', function () {
+      scope.otDoc.close();
+      var errored = sinon.stub();
+      scope.otDoc.setValueAt(['PATH'], 'VAL').catch(errored);
+      this.$apply();
+      sinon.assert.called(errored);
+    });
+
+    it('sets deep value', function () {
+      this.connectAndOpen();
+      expect(scope.otDoc.getValueAt(['a', 'b'])).toBe(undefined);
+      scope.otDoc.setValueAt(['a', 'b'], 'VAL');
+      expect(scope.otDoc.getValueAt(['a', 'b'])).toBe('VAL');
+    });
+  });
+
+  describe('#removeValueAt()', function () {
+    it('delegates to ShareJS document', function () {
+      var doc = this.connectAndOpen();
+      doc.removeAt = sinon.stub();
+      scope.otDoc.removeValueAt('PATH');
+      sinon.assert.calledWith(doc.removeAt, 'PATH');
+    });
+
+    it('resolves when ShareJS callback is called', function () {
+      var doc = this.connectAndOpen();
+      doc.removeAt = sinon.stub().yields();
+      var resolved = sinon.stub();
+      scope.otDoc.removeValueAt('PATH').then(resolved);
+      this.$apply();
+      sinon.assert.called(resolved);
+    });
+
+    it('resolves quietly when doc.removeAt() throws', function () {
+      var doc = this.connectAndOpen();
+      doc.removeAt = sinon.stub().throws('ERROR');
+      var resolved = sinon.stub();
+      scope.otDoc.removeValueAt('PATH').then(resolved);
+      this.$apply();
+      sinon.assert.called(resolved);
     });
   });
 });

@@ -24,7 +24,6 @@ angular.module('contentful')
  * @name otDoc
  * @property {ShareJSDoc} doc
  * @property {otDoc.state} state
- * @property {function()} getEntity
 */
 
 /**
@@ -49,60 +48,33 @@ angular.module('contentful')
  * - otBecameReadonly(entity), emit:
  *   Whenever otDoc.state.editable becomes false
  *
- * The directive watches several conditions determining if the ShareJS doc should be
- * opened or closed:
- * - connected status of the sharejs service
- * - otDoc.state.disabled flag
- *
  * It also ensures that the version in the entity is always up-to-date
- *
- *  The following describes the initialization flow of this directive
- *  - if doc is connected, not disabled and there is an entity
- *    - attemptToOpenOtDoc
- *      - if entity
- *        - ShareJS.open
- *        - openOtDocFor
- *          - if successful
- *            - setup closed events
- *            - if doc is open
- *              - setupOtDoc
- *               - filterDeletedLocales
- *               - setVersionUpdater
- *               - updateIfValid
- *                 - otUpdateEntityData
- *            - else closeOtDoc
- *          - else handleOtDocOpeningFailure
- *      - else false (not connected or no entity or disabled)
- *        - handleLackOfEntity
- *          - closeOtDoc
- *
  * @property {otDoc} otDoc
  */
-.controller('otDocForController', ['$scope', '$attrs', '$injector', function OtDocForController($scope, $attrs, $injector) {
-
+.controller('otDocForController', ['$scope', '$attrs', '$injector', function OtDocForController ($scope, $attrs, $injector) {
+  var $q = $injector.get('$q');
   var ShareJS = $injector.get('ShareJS');
-  var logger  = $injector.get('logger');
-  var defer   = $injector.get('defer');
-  var moment  = $injector.get('moment');
+  var logger = $injector.get('logger');
+  var defer = $injector.get('defer');
+  var moment = $injector.get('moment');
   var TheLocaleStore = $injector.get('TheLocaleStore');
 
   var entity = $scope.$eval($attrs.otDocFor);
 
+  var shouldOpen = false;
+
   var otDoc = {
     doc: undefined,
     state: {
-      // initialized to true to prevent editing until otDoc is ready
-      // TODO this is changed from the outside (e.g. the entry editor).
-      // We need to provide a proper interface for this.
-      disabled: true, // otDoc.state.disabled
-      editable: false, // otDoc.state.editable
+      editable: false,
       error: false,
-      saving: false,
+      saving: false
     },
-    // TODO should be removed from the public interface
-    getEntity: function () {
-      return entity;
-    }
+    getValueAt: getValueAt,
+    setValueAt: setValueAt,
+    removeValueAt: removeValueAt,
+    open: open,
+    close: close
   };
 
   $scope.otDoc = otDoc;
@@ -138,12 +110,61 @@ angular.module('contentful')
 
   $scope.$on('$destroy', handleScopeDestruction);
 
-
-  function shouldOpenDoc() {
-    return ShareJS.isConnected() && !otDoc.state.disabled;
+  function getValueAt (path) {
+    if (otDoc.doc) {
+      return ShareJS.peek(otDoc.doc, path);
+    } else {
+      return dotty.get(entity.data, path);
+    }
   }
 
-  function openDoc() {
+  function setValueAt (path, value) {
+    if (value === undefined) {
+      return removeValueAt(path);
+    }
+    // TODO this should actually reject when doc is not available
+    var doc = otDoc.doc;
+    if (doc) {
+      // We only test for equality when the value is guaranteed to be
+      // equal. Other wise the some properties might have changed.
+      if (!_.isObject(value) && value === getValueAt(path)) {
+        return $q.resolve(value);
+      } else {
+        return ShareJS.setDeep(doc, path, value);
+      }
+    } else {
+      return $q.reject(new Error('Cannot set value on document'));
+    }
+  }
+
+  function removeValueAt (path) {
+    return $q.denodeify(function (cb) {
+      // We catch synchronous errors since they tell us that a
+      // value along the path does not exist.
+      // TODO this should actually reject when doc is not available
+      try {
+        otDoc.doc.removeAt(path, cb);
+      } catch (e) {
+        cb();
+      }
+    });
+  }
+
+  function open () {
+    shouldOpen = true;
+
+  }
+
+  function close () {
+    shouldOpen = false;
+  }
+
+
+  function shouldOpenDoc () {
+    return ShareJS.isConnected() && shouldOpen;
+  }
+
+  function openDoc () {
     ShareJS.open(entity)
     .then(function (doc) {
       setupClosedEventHandling(doc);
@@ -161,10 +182,10 @@ angular.module('contentful')
     });
   }
 
-  function closeDoc(doc) {
+  function closeDoc (doc) {
     try {
       doc.close();
-    } catch(e) {
+    } catch (e) {
       if (e.message !== 'Cannot send to a closed connection') {
         throw e;
       }
@@ -174,7 +195,7 @@ angular.module('contentful')
   }
 
 
-  function handleOtDocOpeningFailure(err, entity) {
+  function handleOtDocOpeningFailure (err, entity) {
     resetOtDoc();
     logger.logSharejsError('Failed to open sharejs doc', {
       data: {
@@ -184,7 +205,7 @@ angular.module('contentful')
     });
   }
 
-  function setupClosedEventHandling(doc) {
+  function setupClosedEventHandling (doc) {
     // Remove all event listeners when the document is closed.
     // TODO I’m not sure this accomplishes what we want. In any case
     // this should be done through the doc’s public API.
@@ -198,7 +219,7 @@ angular.module('contentful')
     });
   }
 
-  function resetOtDoc() {
+  function resetOtDoc () {
     if (otDoc.doc) {
       removeListeners(otDoc.doc);
     }
@@ -208,7 +229,7 @@ angular.module('contentful')
   }
 
 
-  function setupOtDoc(doc) {
+  function setupOtDoc (doc) {
     filterDeletedLocales(doc.snapshot);
     installListeners(doc);
     otDoc.doc = doc;
@@ -218,11 +239,11 @@ angular.module('contentful')
     otUpdateEntityData();
   }
 
-  function filterDeletedLocales(data) {
+  function filterDeletedLocales (data) {
     _.keys(data.fields).forEach(function (fieldId) {
-      _.keys(data.fields[fieldId]).forEach(function (internal_code) {
-        if (!_.find(TheLocaleStore.getPrivateLocales(), { internal_code: internal_code })) {
-          delete data.fields[fieldId][internal_code];
+      _.keys(data.fields[fieldId]).forEach(function (internalCode) {
+        if (!_.find(TheLocaleStore.getPrivateLocales(), { internal_code: internalCode })) {
+          delete data.fields[fieldId][internalCode];
         }
       });
     });
@@ -238,13 +259,13 @@ angular.module('contentful')
     }
   }
 
-  function otUpdateEntityData() {
+  function otUpdateEntityData () {
     if (otDoc.doc) {
       var data = _.cloneDeep(otDoc.doc.snapshot);
-      if(!data) {
+      if (!data) {
         throw new Error('Failed to update entity: data not available');
       }
-      if(!data.sys) {
+      if (!data.sys) {
         throw new Error('Failed to update entity: sys not available');
       }
 
@@ -279,8 +300,8 @@ angular.module('contentful')
     doc.removeListener('acknowledge', updateHandler);
   }
 
-  function remoteOpListener(ops) {
-    $scope.$apply(function(scope) {
+  function remoteOpListener (ops) {
+    $scope.$apply(function (scope) {
       _.each(ops, function (op) {
         scope.$broadcast('otRemoteOp', op);
       });
@@ -302,7 +323,7 @@ angular.module('contentful')
     $scope.$applyAsync(otUpdateEntityData);
   }
 
-  function handleScopeDestruction() {
+  function handleScopeDestruction () {
     if (otDoc.doc) {
       closeDoc(otDoc.doc);
       resetOtDoc(otDoc.doc);

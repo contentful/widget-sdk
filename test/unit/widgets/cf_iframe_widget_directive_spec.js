@@ -48,7 +48,7 @@ describe('cfIframeWidget directive', function () {
       var doc = new OtDoc({fields: {
         'FIELD': {
           'LOC A': 'VAL A',
-          'LOC B': 'VAL B',
+          'LOC B': 'VAL B'
         }
       }});
 
@@ -68,55 +68,26 @@ describe('cfIframeWidget directive', function () {
 
   describe('"setValue" handler', function () {
     beforeEach(function () {
-      widgetAPI.buildDocPath = sinon.stub();
+      widgetAPI.buildDocPath = sinon.stub()
+        .withArgs('PUBLIC FIELD', 'PUBLIC LOCALE')
+        .returns(['internal', 'path']);
 
-      widgetAPI.buildDocPath
-      .withArgs('PUBLIC FIELD', 'PUBLIC LOCALE')
-      .returns(['docpath']);
-
-      this.setValue = function (value) {
-        var handler = widgetAPI.registerHandler.withArgs('setValue').args[0][1];
-        return handler('PUBLIC FIELD', 'PUBLIC LOCALE', value);
-      };
-
-      this.scope.otDoc = {
-        doc: new OtDoc(),
-      };
+      this.scope.otDoc = {setValueAt: sinon.stub().resolves()};
     });
 
-    describe('to set a value with `value !== undefined`', function () {
-      it('updates the ot document', function () {
-        var snapshot = {docpath: 'OLD'};
-        this.scope.otDoc.doc.snapshot = snapshot;
-
-        this.setValue('VALUE');
-        expect(snapshot.docpath).toEqual('VALUE');
-      });
-
-      pit('resolves promise when value got changed', function () {
-        return this.setValue('VALUE');
-      });
+    it('delegates with path translated path to "otDoc"', function () {
+      var handler = widgetAPI.registerHandler.withArgs('setValue').args[0][1];
+      handler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VAL');
+      sinon.assert.calledWithExactly(this.scope.otDoc.setValueAt, ['internal', 'path'], 'VAL');
     });
 
-    describe('to remove a value with `value === undefined', function () {
-      beforeEach(function () {
-        this.scope.otDoc.doc.removeAt = sinon.spy(function (path, cb) {
-          cb();
-        });
-      });
-
-      it('updates the ot document', function () {
-        var snapshot = {docpath: 'OLD'};
-        this.scope.otDoc.doc.snapshot = snapshot;
-
-        this.setValue(undefined);
-        sinon.assert.calledOnce(this.scope.otDoc.doc.removeAt);
-        sinon.assert.calledWith(this.scope.otDoc.doc.removeAt, ['docpath']);
-      });
-
-      pit('resolves promise when value got removed', function () {
-        return this.setValue(undefined);
-      });
+    it('rejects with API error code when update fails', function () {
+      this.scope.otDoc.setValueAt.rejects();
+      var handler = widgetAPI.registerHandler.withArgs('setValue').args[0][1];
+      var errored = sinon.stub();
+      handler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VAL').catch(errored);
+      this.$apply();
+      sinon.assert.calledWithExactly(errored, sinon.match({code: 'ENTRY UPDATE FAILED'}));
     });
   });
 });
