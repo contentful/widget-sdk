@@ -119,7 +119,11 @@ var src = {
     'vendor/fonts.com/*.+(woff|woff2)'
   ],
   vendorStylesheets: [
-    './vendor/**/*.css',
+    './vendor/font-awesome/font-awesome.css',
+    // Required by gatekeeper
+    './vendor/formtastic.css',
+    // Not sure if we need this
+    './vendor/html5reset-1.6.1.css',
     './bower_components/jquery-ui/themes/base/jquery-ui.css',
     './bower_components/jquery-ui/themes/base/jquery.ui.autocomplete.css',
     './bower_components/jquery-ui/themes/base/jquery.ui.datepicker.css',

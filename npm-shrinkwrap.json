@@ -3393,52 +3393,6 @@
         }
       }
     },
-    "karma-slimerjs-launcher": {
-      "version": "0.2.0",
-      "dependencies": {
-        "slimerjs": {
-          "version": "0.9.6",
-          "dependencies": {
-            "adm-zip": {
-              "version": "0.4.7"
-            },
-            "kew": {
-              "version": "0.6.0"
-            },
-            "ncp": {
-              "version": "2.0.0"
-            },
-            "npmconf": {
-              "version": "2.1.2",
-              "dependencies": {
-                "config-chain": {
-                  "version": "1.1.9",
-                  "dependencies": {
-                    "proto-list": {
-                      "version": "1.2.4"
-                    }
-                  }
-                },
-                "nopt": {
-                  "version": "3.0.4",
-                  "dependencies": {
-                    "abbrev": {
-                      "version": "1.0.7"
-                    }
-                  }
-                },
-                "semver": {
-                  "version": "4.3.6"
-                },
-                "uid-number": {
-                  "version": "0.0.5"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "kss": {
       "version": "2.4.0",
       "dependencies": {

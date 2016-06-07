@@ -1,7 +1,14 @@
 // Karma configuration
 // Generated on Sat Aug 09 2014 23:18:39 GMT+0200 (CEST)
 
-module.exports = function(config) {
+require('babel-register');
+
+module.exports = function (config) {
+
+  config.plugins.push(
+    require('./tools/lib/karma-slimer-launcher').default
+  );
+
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -31,7 +38,7 @@ module.exports = function(config) {
 
     // list of files to exclude
     exclude: [
-      'src/javascripts/libs/**/*.js',
+      'src/javascripts/libs/**/*.js'
     ],
 
 
