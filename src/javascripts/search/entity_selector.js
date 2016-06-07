@@ -41,6 +41,10 @@ angular.module('contentful')
   function open (field, min, max) {
     var config = prepareConfig(field, min, max);
 
+    if (!config.linksEntry && !config.linksAsset) {
+      return $q.reject(new Error('Provide a valid field object.'));
+    }
+
     return getSingleContentType(config)
     .then(function openDialog (singleContentType) {
       return modalDialog.open({
@@ -93,16 +97,12 @@ angular.module('contentful')
       return $q.resolve(searchQueryHelper.assetContentType);
     }
 
-    if (config.linksEntry) {
-      var linked = config.linkedContentTypeIds;
-      if (linked.length === 1) {
-        return spaceContext.fetchPublishedContentType(linked[0]);
-      } else {
-        return $q.resolve(null);
-      }
+    var linked = config.linkedContentTypeIds;
+    if (config.linksEntry && linked.length === 1) {
+      return spaceContext.fetchPublishedContentType(linked[0]);
     }
 
-    return $q.reject(new Error('Provide a valid field object.'));
+    return $q.resolve(null);
   }
 
   function prepareQueryExtension (config) {
