@@ -21,4 +21,4 @@ window.dotty = require('./dottie_wrapper.js');
 
 // This needs to be called after everything else so we override any
 // previously imported versions of lodash
-window._ = require('lodash-node/modern');
+window._ = require('lodash');

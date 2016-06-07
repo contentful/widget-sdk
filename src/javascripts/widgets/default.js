@@ -37,7 +37,7 @@ angular.module('contentful')
     // FIXME We create the editing interface, and thus the widget ids
     // before any validation can be set. So I think this is not need.
     var shouldUseDropdown = hasInValidation(field.validations);
-    var canUseDropdown = _.contains(DROPDOWN_TYPES, fieldType);
+    var canUseDropdown = _.includes(DROPDOWN_TYPES, fieldType);
 
     if (shouldUseDropdown && canUseDropdown) {
       return 'dropdown';

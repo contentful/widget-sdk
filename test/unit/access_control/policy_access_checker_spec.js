@@ -69,7 +69,7 @@ describe('Policy Access Checker', function () {
   }
 
   function clone(x) {
-    return _.clone(x, true);
+    return _.cloneDeep(x, true);
   }
 
   describe('#canAccessEntries', function () {

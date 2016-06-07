@@ -79,7 +79,7 @@ angular.module('contentful')
   }
 
   function isCombinationValid (entityType, action) {
-    return !(entityType === 'ContentType' && _.contains(['auto_save', 'archive', 'unarchive'], action));
+    return !(entityType === 'ContentType' && _.includes(['auto_save', 'archive', 'unarchive'], action));
   }
 
   function processSelection (selection) {

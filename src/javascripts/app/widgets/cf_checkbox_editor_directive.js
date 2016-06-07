@@ -47,7 +47,7 @@ angular.module('cf.app')
 
       function getOptions (field) {
         // Get first object that has a 'in' property
-        var predefinedValues = _.filter(_.pluck(field.itemValidations, 'in'))[0];
+        var predefinedValues = _.filter(_.map(field.itemValidations, 'in'))[0];
         return _.map(predefinedValues, function (value, index) {
           return {
             id: ['entity', field.id, field.locale, index].join('.'),

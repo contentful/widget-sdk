@@ -53,7 +53,7 @@ angular.module('contentful')
     },
 
     // List of available autocompletions for current position
-    offerCompletion: _.compose($q.when, function (space, contentType, queryString, cursorPos) {
+    offerCompletion: _.flowRight($q.when, function (space, contentType, queryString, cursorPos) {
       var token = api.currentToken(queryString, cursorPos);
 
       if (token && token.type === 'Pair') {

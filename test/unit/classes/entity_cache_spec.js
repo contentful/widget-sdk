@@ -38,7 +38,7 @@ describe('Entity cache', function(){
     });
 
     it('should return entities from the cache and from remote', function () {
-      _.each(locals, entityCache.save, entityCache);
+      _.each(locals, _.bind(entityCache.save, entityCache));
       entityCache.getAll([8,9,10,11,12,13])
       .then(function (entities) {
         expect(entities[0].getId()).toBe( 8);

@@ -4,12 +4,12 @@ angular.module('contentful/mocks')
 .value('throttle', _.identity)
 
 .value('defer', function (f) {
-  var args = _.rest(arguments);
+  var args = _.tail(arguments);
   f.apply(this, args);
 })
 
 .value('delay', function (f) {
-  var args = _.rest(arguments, 2);
+  var args = _.drop(arguments, 2);
   f.apply(this, args);
 })
 

@@ -29,7 +29,7 @@ angular.module('contentful')
   $scope.getDefaultFieldIds = getDefaultFieldIds;
 
   $scope.fieldIsSortable = function (field) {
-    return _.contains(SORTABLE_TYPES, field.type) && field.id !== 'author';
+    return _.includes(SORTABLE_TYPES, field.type) && field.id !== 'author';
   };
 
   $scope.isOrderField = function (field) {
@@ -45,7 +45,7 @@ angular.module('contentful')
   };
 
   $scope.$watch('context.view.displayedFieldIds', function (displayedFieldIds) {
-    if (!_.contains(displayedFieldIds, $scope.context.view.order.fieldId)) {
+    if (!_.includes(displayedFieldIds, $scope.context.view.order.fieldId)) {
       setOrderField(determineFallbackSortField(displayedFieldIds));
       $scope.updateEntries();
     }
@@ -92,7 +92,7 @@ angular.module('contentful')
 
   function determineFallbackSortField (displayedFieldIds) {
     var fallbackId = _.find(FALLBACK_FIELDS, function (fieldId) {
-      return _.contains(displayedFieldIds, fieldId);
+      return _.includes(displayedFieldIds, fieldId);
     });
 
     return systemFields.get(fallbackId) || {id: undefined};

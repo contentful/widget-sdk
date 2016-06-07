@@ -41,7 +41,7 @@ angular.module('contentful').factory('FilterQueryString', ['$injector', function
   }
 
   function processView(view) {
-    view = _.omit(view, function (item, key) {
+    view = _.omitBy(view, function (item, key) {
       return key === 'title' || _.isNull(item) || _.isUndefined(item) || item === '';
     });
 

@@ -50,7 +50,7 @@ angular.module('contentful').factory('createRoleRemover', ['$injector', function
 
       function moveUsersAndRemoveRole() {
         var users = listHandler.getUsersByRole(role.sys.id);
-        var memberships = _.pluck(users, 'membership');
+        var memberships = _.map(users, 'membership');
         var moveToRoleId = scope.input.id;
         var method = 'changeRoleTo';
 

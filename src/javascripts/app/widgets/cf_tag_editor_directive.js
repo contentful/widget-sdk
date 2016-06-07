@@ -17,7 +17,7 @@ angular.module('cf.app')
     link: function ($scope, _el, _attrs, widgetApi) {
       var field = widgetApi.field;
 
-      $scope.constraints = _(field.validations).pluck('size').filter().first() || {};
+      $scope.constraints = _(field.validations).map('size').filter().first() || {};
 
       /**
        * @ngdoc property

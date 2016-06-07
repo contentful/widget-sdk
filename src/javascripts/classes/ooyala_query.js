@@ -38,7 +38,7 @@ angular.module('contentful').factory('OoyalaQuery', function(){
     },
 
     toQueryString: function() {
-      return _.invoke(this.parameters, 'toQueryStringElement').join('&');
+      return _.invokeMap(this.parameters, 'toQueryStringElement').join('&');
     },
 
     _buildParameter: function(name, value) {

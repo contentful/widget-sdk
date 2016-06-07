@@ -105,7 +105,7 @@ angular.module('cf.app')
 
   function redirect (event, toState, toStateParams) {
     if (
-      _.contains(['otherwise', 'spaces'], toState.name) ||
+      _.includes(['otherwise', 'spaces'], toState.name) ||
       (toState.name === 'spaces.detail' && _.isEmpty(toStateParams.spaceId))
     ) {
       event.preventDefault();
@@ -176,8 +176,8 @@ angular.module('cf.app')
     return to.name === from.name &&
            ('addToContext' in toParams) && ('addToContext' in fromParams) &&
            _.isEqual(
-             _.omit(toParams, 'addToContext'),
-             _.omit(fromParams, 'addToContext')
+             _.omit(toParams, ['addToContext']),
+             _.omit(fromParams, ['addToContext'])
            );
   }
 }]);

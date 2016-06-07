@@ -18,7 +18,7 @@ angular.module('contentful')
 
   controller.duplicate = Command.create(function () {
     var contentType = $scope.entry.getSys().contentType.sys.id;
-    var data = _.omit($scope.entry.data, 'sys');
+    var data = _.omit($scope.entry.data, ['sys']);
 
     return $scope.spaceContext.space.createEntry(contentType, data)
     .then(function(entry){

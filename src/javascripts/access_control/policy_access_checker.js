@@ -156,7 +156,7 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
 
   function updatePoliciesOnly(collection) {
     return _.filter(collection, function (p) {
-      return _.contains(['update', 'all'], p.action);
+      return _.includes(['update', 'all'], p.action);
     });
   }
 
@@ -170,8 +170,8 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
       return noPath || fieldOnlyPathMatched || localeOnlyPathMatched || bothMatched;
     });
 
-    function matchField(field)   { return _.contains([CONFIG.ALL_FIELDS, fieldId], field);       }
-    function matchLocale(locale) { return _.contains([CONFIG.ALL_LOCALES, localeCode], locale);  }
+    function matchField(field)   { return _.includes([CONFIG.ALL_FIELDS, fieldId], field);       }
+    function matchLocale(locale) { return _.includes([CONFIG.ALL_LOCALES, localeCode], locale);  }
   }
 
   function isNotString(value) { return !_.isString(value); }

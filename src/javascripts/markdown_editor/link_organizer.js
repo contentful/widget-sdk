@@ -118,7 +118,7 @@ angular.module('contentful').factory('LinkOrganizer', ['$injector', function ($i
       textOrLabels = findLabels(textOrLabels);
     }
 
-    var ids = _(textOrLabels).pluck('id')
+    var ids = _(textOrLabels).map('id')
       .map(function (x) { return parseInt(x, 10); })
       .filter(function (x) { return _.isFinite(x) && x > 0; })
       .value();
