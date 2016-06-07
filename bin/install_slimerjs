@@ -1,15 +1,15 @@
 #!/bin/bash
 #
 # This script checks if SLIMERJS_BIN exists and is SlimerJS with
-# version 0.9.5. If not, it will download and install SlimerJS to
-# 'slimerjs-0.9.5/slimerjs'.
+# the specified version If not, it will download and install SlimerJS to
+# 'vendor/slimerjs/slimerjs-X.Y.Z'.
 #
 # If you make changes to this script, be sure to also check the Travis
 # configuration and the 'bin/slimerjs' script.
 #
 
 
-SLIMER_VERSION="0.9.6"
+SLIMER_VERSION="0.10.0"
 SLIMER_DIST="slimerjs-${SLIMER_VERSION}"
 SLIMER_ARCHIVE="${SLIMER_DIST}.zip"
 DOWNLOAD_URL="http://download.slimerjs.org/releases/${SLIMER_VERSION}/${SLIMER_ARCHIVE}"
@@ -19,6 +19,8 @@ if [[ -x "${SLIMERJS_BIN}" ]]; then
   if [[ $? -eq 0 ]] && [[ "$SLIMER_AVAILABLE" =~ "SlimerJS $SLIMER_VERSION" ]]; then
     echo "SlimerJS v${SLIMER_VERSION} installed"
     exit 0
+  else
+    echo "Available SlimerJS version is not ${SLIMER_VERSION}"
   fi
 fi
 
@@ -27,5 +29,6 @@ set -e
 echo "Downloading SlimerJS v${SLIMER_VERSION}..."
 rm -rf "${SLIMER_DIST}" "${SLIMER_ARCHIVE}"
 curl -O --progress-bar "${DOWNLOAD_URL}"
-unzip -qq "${SLIMER_ARCHIVE}"
+unzip -qq "${SLIMER_ARCHIVE}" -d vendor/slimerjs
+rm "${SLIMER_ARCHIVE}"
 echo "SlimerJS installed"

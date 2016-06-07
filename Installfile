@@ -2,6 +2,8 @@
 
 set -ev
 
-npm install
+SLIMERJS_BIN=bin/slimerjs
 
-node_modules/bower/bin/bower install
+./bin/install_slimerjs
+npm install --no-optional
+./node_modules/bower/bin/bower install
