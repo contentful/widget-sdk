@@ -10,19 +10,19 @@ angular.module('contentful')
  * This service holds the current state of the GK "account" section
  * and exposes some helper methods for URL manipulation.
  */
-.factory('TheAccountView', ['$injector', function($injector) {
+.factory('TheAccountView', ['$injector', function ($injector) {
 
-  var $q               = $injector.get('$q');
-  var $state           = $injector.get('$state');
-  var spaceContext     = $injector.get('spaceContext');
+  var $q = $injector.get('$q');
+  var $state = $injector.get('$state');
+  var spaceContext = $injector.get('spaceContext');
   var OrganizationList = $injector.get('OrganizationList');
 
   var isActive = false;
 
   return {
-    goToUserProfile:                 goToUserProfile,
-    goToSubscription:                goToSubscription,
-    silentlyChangeState:             silentlyChangeState,
+    goToUserProfile: goToUserProfile,
+    goToSubscription: goToSubscription,
+    silentlyChangeState: silentlyChangeState,
     getGoToSubscriptionOrganization: getGoToSubscriptionOrganization,
 
     /**
@@ -31,7 +31,7 @@ angular.module('contentful')
      * @description
      * Marks the "account" section as active.
      */
-    enter: function () { isActive = true;  },
+    enter: function () { isActive = true; },
     /**
      * @ngdoc method
      * @name TheAccountView#exit
@@ -45,10 +45,10 @@ angular.module('contentful')
      * @description
      * Checks if the "account" section is active.
      */
-    isActive: function () { return isActive;  }
+    isActive: function () { return isActive; }
   };
 
-  function goTo(pathSuffix, options) {
+  function goTo (pathSuffix, options) {
     return $state.go('account.pathSuffix', { pathSuffix: pathSuffix }, options);
   }
 
@@ -106,7 +106,7 @@ angular.module('contentful')
    * @description
    * Changes URL, without any other side effects.
    */
-  function silentlyChangeState(pathSuffix) {
+  function silentlyChangeState (pathSuffix) {
     if (pathSuffix) {
       return goTo(pathSuffix, {location: 'replace'});
     } else {
@@ -114,13 +114,13 @@ angular.module('contentful')
     }
   }
 
-  function findOwnedOrgWithState(orgs, state) {
+  function findOwnedOrgWithState (orgs, state) {
     return _.find(orgs, filter);
 
     function filter (organization) {
       var organizationId = dotty.get(organization, 'sys.id');
       return organizationId &&
-        OrganizationList.isOwner(organizationId) &&
+        OrganizationList.isOwnerOrAdmin(organizationId) &&
         (organization.subscriptionState === state || state === '*');
     }
   }

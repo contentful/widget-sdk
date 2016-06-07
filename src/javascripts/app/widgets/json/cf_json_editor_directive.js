@@ -9,7 +9,7 @@ angular.module('cf.app')
     scope: {},
     template: JST['cf_json_editor'](),
     require: '^cfWidgetApi',
-    link: function(scope, $el, attr, widgetApi){
+    link: function (scope, _$el, _attr, widgetApi) {
       var field = widgetApi.field;
       var offValueChanged = field.onValueChanged(function (json) {
         scope.content = stringifyJSON(json);
@@ -47,6 +47,3 @@ angular.module('cf.app')
     }
   }
 }]);
-
-
-

@@ -9,11 +9,12 @@
  *
  * @scope.requires {Widget.Renderable} widget
  * @scope.requires {Client.ContentType?} contentType
+ * @scope.requires {FieldLocaleController} fieldLocale
  *
  * @property {string} $scope.contentTypeHref
  */
 angular.module('cf.app')
-.directive('cfWidgetRenderer', ['$injector', function($injector) {
+.directive('cfWidgetRenderer', ['$injector', function ($injector) {
   var $compile = $injector.get('$compile');
   var $state = $injector.get('$state');
 
@@ -32,8 +33,16 @@ angular.module('cf.app')
       element.append($widget);
       $compile($widget)(scope);
 
-      element.on('focus keydown', 'input, textarea', function () {
-        scope.$applyAsync(scope.fieldLocale.announcePresence);
+      element.on('focusin', function () {
+        scope.$applyAsync(function () {
+          scope.fieldLocale.setActive(true);
+        });
+      });
+
+      element.on('focusout', function () {
+        scope.$applyAsync(function () {
+          scope.fieldLocale.setActive(false);
+        });
       });
     }
   };

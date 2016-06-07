@@ -13,7 +13,7 @@
  * @scope.requires {object} fields
  * @scope.requires {object} transformedContentTypeData
  * @scope.requires {object} widget
- * @scope.requires {function} isDisabled
+ * @scope.requires {object} fieldController
  */
 angular.module('contentful')
 .directive('cfWidgetApi', [function () {
@@ -22,6 +22,15 @@ angular.module('contentful')
     controller: 'WidgetApiController'
   };
 }])
+
+/**
+ * @ngdoc type
+ * @name WidgetApiController
+ * @description
+ * Interface for a widget to communicate with an entry.
+ *
+ * Exposed by the `cfWidgetApi` directive.
+ */
 .controller('WidgetApiController', ['$scope', '$injector', function ($scope, $injector) {
   var $q = $injector.get('$q');
   var newSignal = $injector.get('signal').createMemoized;
@@ -77,10 +86,12 @@ angular.module('contentful')
     }
   };
 
+
   this.field = {
     onValueChanged: valueChangedSignal.attach,
     onDisabledStatusChanged: isDisabledSignal.attach,
     onSchemaErrorsChanged: schemaErrorsSignal.attach,
+    setInvalid: setInvalid,
     getValue: getValue,
     setValue: createSetter('changeValue'),
     setString: createSetter('changeString'),
@@ -95,6 +106,21 @@ angular.module('contentful')
     required: !!ctField.required,
     validations: ctField.validations,
     itemValidations: dotty.get(ctField, ['items', 'validations'])
+  };
+
+  /**
+   * @ngdoc method
+   * @name WidgetApiController#field.setInvalid
+   * @description
+   * Set to true to indicate that the user input is invalid.
+   *
+   * If true this will set the field state to invalid and show a red side
+   * border.
+   *
+   * @param {boolean} isInvalid
+   */
+  function setInvalid (isInvalid) {
+    $scope.fieldController.setInvalid($scope.locale.code, isInvalid);
   };
 
   function getValue () {

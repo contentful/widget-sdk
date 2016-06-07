@@ -109,7 +109,7 @@ include ./../onboarding_dialog/onboarding_nav.mixin.jade
         ng-class="{'is-loading': createSpace.createSpaceInProgress}"
         ng-disabled="createSpace.createSpaceInProgress"
         data-test-id="create-space")
-        | Create Space
+        | Create space
 
   //- Space creation in progress
   div(ng-show="createSpace.viewState === 'creatingTemplate'")
@@ -128,23 +128,23 @@ include ./../onboarding_dialog/onboarding_nav.mixin.jade
         .create-new-space__templates__entity
           cf-icon(name="page-ct")
           .create-new-space__templates__entity__description
-            h3 Content Types
-            p A content type works like a stencil which defines the structure of entries. We’re creating a few different content types for you to see how it works.
+            h3 Content model
+            p The content model is comprised of content types, they work like a stencil which defines the structure of entries. We’re creating a few different content types for you to see how it works.
         .create-new-space__templates__entity
           cf-icon(name="page-entries")
           .create-new-space__templates__entity__description
-            h3 Entries
-            p Entries are your actual pieces of content. The space will include a couple of entries based on the content types mentioned above.
+            h3 Content
+            p Your content is made up of entries. The space will include a couple of entries based on the content types mentioned above.
         .create-new-space__templates__entity
           cf-icon(name="page-media")
           .create-new-space__templates__entity__description
-            h3 Assets
-            p Assets are external documents, from sounds to images or videos to text. Your entries will have a few assets to complement them.
+            h3 Media
+            p Your media consists of assets, which are external files, from images or videos to documents. Your entries will have a few assets to complement them.
 
         .create-new-space__templates__entity
           cf-icon(name="page-api")
           .create-new-space__templates__entity__description
-            h3 API Keys
+            h3 API keys
             p An API key is the token that you’ll use to retrieve your content. We created a few API keys so that you can get started fetching your content right away.
 
     .modal-dialog__controls.create-new-space-dialog__controls--centered

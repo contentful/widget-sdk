@@ -2,7 +2,7 @@ header.workbench-header
   .workbench-header__left
     cf-icon.workbench-header__icon(name="page-media")
     h1.workbench-header__title
-      | Media Library
+      | Media
       cf-knowledge-base.workbench-headr__kb-link(target="asset")
 
   .workbench-header__search.search-area(
@@ -10,7 +10,7 @@ header.workbench-header
     .search-area__input(
       cf-tokenized-search="context.view.searchTerm"
       search-content-type="assetContentType"
-      placeholder="Search for Assets")
+      placeholder="Search for assets")
 
     .search-results-position(cf-search-results-position paginator="searchController.paginator" ng-hide="!searchController.paginator.numEntries")
 
@@ -23,15 +23,15 @@ header.workbench-header
       data-test-id="add-asset-menu-trigger")
       cf-icon.btn-icon.inverted(name="plus")
       cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-      | Add New Asset
+      | Add asset
     .context-menu(
       role="menu" cf-context-menu
       aria-label="Add Assets" data-test-id="add-asset-menu")
       ul.context-menu__items
         li(role="menuitem" ng-click="entityCreationController.newAsset()")
-          | Single Asset
+          | Single asset
         li(role="menuitem" ng-click="createMultipleAssets()" ng-show="canUploadMultipleAssets()")
-          | Multiple Assets
+          | Multiple assets
 
 .workbench-main(ng-hide="showNoAssetsAdvice()")
   .workbench-main__left-sidebar(

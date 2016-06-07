@@ -35,7 +35,7 @@ angular.module('contentful').factory('KnowledgeBase/getUrl', ['$injector', funct
     entry: 'developers/docs/concepts/data-model/',
     asset: 'developers/docs/concepts/data-model/',
     api_key: 'developers/docs/references/authentication/#the-delivery-api-and-preview-api',
-    predefined_value: 'faq/basics/#predefined-values-validation',
+    predefined_value: 'faq/basics/#how-can-i-use-predefined-values',
     locale: 'developers/docs/concepts/locales/',
     space_template: 'developers/docs/', // @todo needs proper article
     id_change: 'developers/docs/', // @todo needs proper article,

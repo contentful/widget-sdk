@@ -1,15 +1,15 @@
 header.workbench-header
   cf-icon.workbench-header__icon(name="page-api")
   h1.workbench-header__title
-    | Content Model
+    | Content model explorer
 
 .workbench-main
   .workbench-main__left-sidebar
     header.filter-list-header
-      | Content Delivery API
+      | Content delivery API
     ul(cf-cda-links)
     header.filter-list-header
-      | Content Management API
+      | Content management API
     ul(cf-cma-links)
 
   .workbench-main__right-content
@@ -39,8 +39,8 @@ header.workbench-header
                 thead
                   tr
                     th.cell-display-name Name
-                    th.cell-identifier Field Identifier
-                    th.cell-description Field Type
+                    th.cell-identifier Field identifier
+                    th.cell-description Field type
               table.result-list.inner-result-list
                 tbody
                   tr(ng-repeat="field in contentType.data.fields track by field.id")
@@ -52,4 +52,4 @@ header.workbench-header
                         | {{field.type}}
 
       p(ng-show="contentTypes | isEmpty")
-        | There are no Content Types yet.
+        | Your content model is empty.

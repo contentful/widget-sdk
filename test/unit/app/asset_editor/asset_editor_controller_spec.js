@@ -3,7 +3,6 @@
 describe('Asset editor controller', function () {
 
   var scope, stubs, logger, notification, accessChecker;
-  var assetEditorCtrl;
   var process;
 
   beforeEach(function () {
@@ -63,7 +62,7 @@ describe('Asset editor controller', function () {
       scope.asset = asset;
       scope.context = {};
 
-      assetEditorCtrl = $controller('AssetEditorController', {$scope: scope});
+      $controller('AssetEditorController', {$scope: scope});
       scope.$apply();
     });
   });
@@ -98,7 +97,7 @@ describe('Asset editor controller', function () {
   });
 
   describe('validation on publish', function () {
-    beforeEach(inject(function ($compile, $rootScope, $controller, cfStub){
+    beforeEach(inject(function ($rootScope, $controller, cfStub) {
       scope = $rootScope.$new();
       scope.otDoc = {doc: {}, state: {}};
       accessChecker.canUpdateAsset.returns(true);
@@ -114,7 +113,7 @@ describe('Asset editor controller', function () {
       scope.asset = asset;
       scope.context = {};
 
-      assetEditorCtrl = $controller('AssetEditorController', {$scope: scope});
+      $controller('AssetEditorController', {$scope: scope});
       scope.$digest();
     }));
 
@@ -126,10 +125,9 @@ describe('Asset editor controller', function () {
     });
   });
 
-  describe('handles a fileUploaded event from CfFileEditor controller', function() {
-    var otPath, childScope;
-    beforeEach(function() {
-      childScope = scope.$new();
+  describe('handles a fileUploaded event from CfFileEditor controller', function () {
+    var otPath;
+    beforeEach(function () {
       scope.otDoc = { doc: {version: 123} };
       otPath = ['fields', 'title', 'en-US'];
       var fileObj = {fileName: 'file.jpg'};
@@ -141,23 +139,23 @@ describe('Asset editor controller', function () {
       sinon.assert.called(scope.asset.process);
     });
 
-    describe('on success', function() {
-      beforeEach(function() {
+    describe('on success', function () {
+      beforeEach(function () {
         process.resolve({});
         stubs.peek.returns(null);
         stubs.fileNameToTitle.returns('file');
         scope.$apply();
       });
 
-      it('looks for otDoc with locale', function() {
+      it('looks for otDoc with locale', function () {
         sinon.assert.calledWith(stubs.peek, scope.otDoc.doc, otPath);
       });
 
-      it('creates otDoc', function() {
+      it('creates otDoc', function () {
         sinon.assert.called(stubs.mkpathAndSetValue);
       });
 
-      it('creates otDoc with doc path and filename', function() {
+      it('creates otDoc with doc path and filename', function () {
         sinon.assert.calledOnce(stubs.mkpathAndSetValue);
         sinon.assert.calledWith(
           stubs.mkpathAndSetValue,
@@ -166,18 +164,18 @@ describe('Asset editor controller', function () {
       });
     });
 
-    describe('on error', function() {
-      beforeEach(function() {
+    describe('on error', function () {
+      beforeEach(function () {
         process.reject({});
         scope.$apply();
       });
 
-      it('calls error notification', function() {
+      it('calls error notification', function () {
         sinon.assert.called(notification.error);
         sinon.assert.called(logger.logServerWarn);
       });
 
-      it('emits file processing failure event', function() {
+      it('emits file processing failure event', function () {
         sinon.assert.called(stubs.fileProcessingFailed);
       });
     });

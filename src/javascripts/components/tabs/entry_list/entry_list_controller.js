@@ -51,6 +51,19 @@ angular.module('contentful')
     $scope.accessibleCts = _.filter(spaceContext.publishedContentTypes || [], function (ct) {
       return accessChecker.canPerformActionOnEntryOfType('create', ct.getId());
     });
+
+    // @todo remove when a reason will be eliminated
+    var accessibleCtIds = _.map($scope.accessibleCts, function (ct) {
+      return ct.getId();
+    });
+    var uniqueAccessibleCtIds = _.uniq(accessibleCtIds);
+    if (accessibleCtIds.length > uniqueAccessibleCtIds.length) {
+      logger.logError('Non-unique accessible Content Type', {
+        spaceContextLen: (spaceContext.publishedContentTypes || []).length,
+        accessibleCtIds: accessibleCtIds,
+        uniqueAccessibleCtIds: uniqueAccessibleCtIds
+      });
+    }
   });
 
   $scope.typeNameOr = function (or) {
@@ -60,7 +73,7 @@ angular.module('contentful')
       if (!id) return or;
       var ct = spaceContext.getPublishedContentType(id);
       if (!ct) return or;
-      return ct.getName();
+      return 'entries of the content type "' + ct.getName() + '"';
     } catch (e) {
       logger.logException(e, {data: {contentTypeId: id}});
       return or;

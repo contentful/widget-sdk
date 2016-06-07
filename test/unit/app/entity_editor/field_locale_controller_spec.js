@@ -12,13 +12,14 @@ describe('FieldLocaleController', function () {
       };
       var scope = _.extend($rootScope.$new(), defaultScopeProps, scopeProps);
       scope.fieldLocale = $controller('FieldLocaleController', {$scope: scope});
+      scope.validator = {};
       this.$apply();
       return scope;
     };
   });
 
   describe('#errors', function () {
-    it('get filtered items from "validationResult.errors"', function () {
+    it('get filtered items from "validator.errors"', function () {
       var scope = this.init();
 
       var fieldLocaleErrors = [
@@ -33,14 +34,14 @@ describe('FieldLocaleController', function () {
         {path: ['fields', 'FID-2']}
       ];
 
-      scope.validationResult = {errors: fieldLocaleErrors.concat(otherErrors)};
+      scope.validator.errors = fieldLocaleErrors.concat(otherErrors);
       this.$apply();
       expect(scope.fieldLocale.errors).toEqual(fieldLocaleErrors);
     });
 
     it('is set to "null" if no errors match', function () {
       var scope = this.init();
-      scope.validationResult = {errors: [{path: 'does not match'}]};
+      scope.validator.errors = [{path: 'does not match'}];
       this.$apply();
       expect(scope.fieldLocale.errors).toEqual(null);
     });
@@ -49,9 +50,59 @@ describe('FieldLocaleController', function () {
       var requiredError = {path: ['fields', 'FID'], name: 'required'};
       var scope = this.init();
       scope.locale.optional = true;
-      scope.validationResult = {errors: [requiredError]};
+      scope.validator.errors = [requiredError];
       this.$apply();
       expect(scope.fieldLocale.errors).toEqual(null);
+    });
+  });
+
+  describe('#isRequired', function () {
+    describe('for entries', function () {
+      beforeEach(function () {
+        this.isRequired = function (required, optional) {
+          return this.init({
+            entry: {},
+            field: {required: required},
+            locale: {optional: optional}
+          }).fieldLocale.isRequired;
+        };
+      });
+
+      it('is required when field is required and locale is not optional', function () {
+        expect(this.isRequired(true, false)).toBe(true);
+      });
+
+      it('is not required when field is not required', function () {
+        expect(this.isRequired(false, false)).toBe(false);
+      });
+
+      it('is not required when field is required but locale is optional', function () {
+        expect(this.isRequired(true, true)).toBe(false);
+      });
+    });
+
+    describe('for assets', function () {
+      beforeEach(function () {
+        this.isRequired = function (required, def) {
+          return this.init({
+            asset: {},
+            field: {required: required},
+            locale: {default: def}
+          }).fieldLocale.isRequired;
+        };
+      });
+
+      it('is required for required fields for the default locale', function () {
+        expect(this.isRequired(true, true)).toBe(true);
+      });
+
+      it('is not required for required fields for non-default locales', function () {
+        expect(this.isRequired(true, false)).toBe(false);
+      });
+
+      it('is not required for non-required fields in the default locale', function () {
+        expect(this.isRequired(false, true)).toBe(false);
+      });
     });
   });
 
@@ -68,14 +119,34 @@ describe('FieldLocaleController', function () {
     });
   });
 
-  describe('#announcePresence()', function () {
-    it('delegates to "docPresence.focus()"', function () {
-      var focus = sinon.stub();
-      var scope = this.init({
-        docPresence: {focus: focus}
+  describe('#setActive()', function () {
+
+    beforeEach(function () {
+      this.scope = this.init({
+        docPresence: {focus: sinon.stub()},
+        focus: {
+          set: sinon.stub(),
+          unset: sinon.stub()
+        }
       });
-      scope.fieldLocale.announcePresence();
+    });
+
+    it('calls "docPresence.focus()" if set to true', function () {
+      this.scope.fieldLocale.setActive(true);
+      var focus = this.scope.docPresence.focus;
       sinon.assert.calledWithExactly(focus, 'fields.FID.LID');
+    });
+
+    it('calls "scope.focus.set()" if set to true', function () {
+      this.scope.fieldLocale.setActive(true);
+      var setFocus = this.scope.focus.set;
+      sinon.assert.calledWithExactly(setFocus, 'FID');
+    });
+
+    it('calls "scope.focus.unset()" if set to false', function () {
+      this.scope.fieldLocale.setActive(false);
+      var unsetFocus = this.scope.focus.unset;
+      sinon.assert.calledWithExactly(unsetFocus, 'FID');
     });
   });
 

@@ -90,6 +90,8 @@ Textarea
 
 Styles are also exported as the `$entry-editor__textarea()` mixin.
 
+Default height is three lines.
+
 Markup:
 h3 Placeholder
 textarea.entry-editor__textarea(placeholder="Placeholder")
@@ -104,7 +106,8 @@ Styleguide entry-editor-controls.textarea
 $entry-editor__textarea()
   $entry-editor__input-base()
   padding-top: 0.2em
-  // Prevents user resizing
+  height: ($new-rhythm(3) + 0.3em)
+  // Prevents horizontal user resizing
   max-width: 100%
 
 

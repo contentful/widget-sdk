@@ -100,4 +100,15 @@ describe('cfUrlEditor directive', function () {
     expect(this.$el.find('input').attr('aria-invalid')).toEqual('true');
     this.assertStatus([['invalid', 'none'], ['broken', 'block']]);
   });
+
+  it('sets field validity according to URL status', function () {
+    expect(this.widgetApi._state.isInvalid).toEqual(false);
+    this.setStatus('broken');
+    expect(this.widgetApi._state.isInvalid).toEqual(true);
+    this.setStatus('ok');
+    expect(this.widgetApi._state.isInvalid).toEqual(false);
+    this.setStatus('invalid');
+    expect(this.widgetApi._state.isInvalid).toEqual(true);
+  });
+
 });

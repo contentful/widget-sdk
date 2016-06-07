@@ -1,7 +1,7 @@
 header.workbench-header
   cf-icon.workbench-header__icon(name="page-api")
   h1.workbench-header__title
-    | Content Delivery API Keys
+    | Content delivery API keys
     cf-knowledge-base.workbench-header__kb-link(target="api_key")
 
   .workbench-header__actions(ng-hide="empty")
@@ -10,15 +10,15 @@ header.workbench-header
       ng-disabled="shouldDisable('createApiKey')"
       cf-when-disabled="createApiKey")
       cf-icon.btn-icon.inverted(name="plus")
-      | Add API Key
+      | Add API key
 
 .workbench-main(ng-hide="empty")
   .workbench-main__left-sidebar
     header.filter-list-header
-      | Content Delivery API
+      | Content delivery API
     ul.u-list(cf-cda-links)
     header.filter-list-header
-      | Content Management API
+      | Content management API
     ul.u-list(cf-cma-links)
 
   .workbench-main__right-content
@@ -50,11 +50,11 @@ header.workbench-header
 .workbench-main.x--content(ng-show="empty")
   .cfnext-advice
     i.fa.fa-random.advice__giant-icon
-    header.advice__title There are no API Keys yet.
-    p.advice__description API Keys open the door to your content. One should be created for each application that accesses your content.
+    header.advice__title There are no API keys yet.
+    p.advice__description API keys open the door to your content. One should be created for each application that accesses your content.
     button.advice__action(type="button" ng-click="entityCreationController.newApiKey()"
         ng-hide="shouldHide('createApiKey')"
         ng-disabled="shouldDisable('createApiKey')"
         cf-when-disabled="createApiKey")
-      | Create API Key
-    cf-knowledge-base(target="api_key" text="Visit the Knowledge Base Pages")
+      | Create API key
+    cf-knowledge-base(target="api_key" text="Visit the knowledge base pages")

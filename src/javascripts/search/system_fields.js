@@ -53,8 +53,9 @@ angular.module('contentful').factory('systemFields', [function () {
   };
 
   return {
-    get     :        function (name) { return map[name]; },
-    getList:         _.constant(list),
-    getDefaultOrder: _.constant(defaultOrder)
+    get: function (name) { return map[name]; },
+    getList: _.constant(list),
+    // we clone the object so UI manipulation won't change defaults
+    getDefaultOrder: function () { return _.clone(defaultOrder); }
   };
 }]);

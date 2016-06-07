@@ -15,8 +15,9 @@ angular.module('contentful')
     name: 'list',
     url: '',
     ncyBreadcrumb: {
-      label: 'Entries'
+      label: 'Content'
     },
+    loadingText: 'Loading content...',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
     }],

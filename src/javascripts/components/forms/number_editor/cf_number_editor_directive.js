@@ -38,6 +38,7 @@ angular.module('contentful')
         var parseResult = parseNumber(val.trim(), field.type);
 
         scope.parseWarning = parseResult.warning;
+        field.setInvalid(!parseResult.isValid);
         if (parseResult.isValid) {
           field.setValue(parseResult.value);
         }

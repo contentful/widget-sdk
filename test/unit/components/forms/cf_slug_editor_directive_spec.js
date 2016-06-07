@@ -182,6 +182,7 @@ describe('SlugEditor directive', function () {
       this.$apply();
       expect(scope.state).toEqual('duplicate');
       expect($inputEl.attr('aria-invalid')).toEqual('true');
+      expect(this.cfWidgetApi._state.isInvalid).toBe(true);
     });
 
     it('is "checking" when the query has not been resolved', function () {
