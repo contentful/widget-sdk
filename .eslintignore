@@ -339,7 +339,6 @@ src/javascripts/classes/entity_state_manager.js
 src/javascripts/classes/kaltura_controller_mixin.js
 src/javascripts/classes/paginator.js
 src/javascripts/classes/selection.js
-src/javascripts/classes/space_context.js
 src/javascripts/classes/string_utils.js
 src/javascripts/directives/cf_click_local_directive.js
 src/javascripts/directives/cf_click_outside_directive.js

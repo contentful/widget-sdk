@@ -14,8 +14,6 @@ angular.module('contentful')
   var TheLocaleStore = $injector.get('TheLocaleStore');
   var createIDMap = $injector.get('widgets/IDMap');
   var $q = $injector.get('$q');
-  var APIClient = $injector.get('data/ApiClient');
-  var authentication = $injector.get('authentication');
 
   /**
    * @ngdoc method
@@ -29,14 +27,13 @@ angular.module('contentful')
    * @param {API.Locale} current.locale
    * @param {IFrame} iframe
    */
-  function API (space, fields, entryData, current, iframe) {
+  function API (apiClient, fields, entryData, current, iframe) {
     this.channel = new Channel(iframe);
     this.idMap = createIDMap(fields);
     this.current = current;
     this.fields = fields;
     this.entryData = entryData;
-    this.apiClient = new APIClient(space.data.sys.id, authentication.token);
-    this.channel.handlers = createHandlers(this.apiClient, iframe);
+    this.channel.handlers = createHandlers(apiClient, iframe);
   }
 
   /**

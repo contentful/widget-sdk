@@ -13,23 +13,25 @@ angular.module('contentful')
  * @property {Client.ContentType[]} contentTypes
  * @property {Client.ContentType[]} publishedContentTypes
  * @property {Client.Space} space
+ * @property {Data.APIClient} cma
  */
-.factory('spaceContext', ['$injector', function($injector){
-  var $parse             = $injector.get('$parse');
-  var $q                 = $injector.get('$q');
-  var $timeout           = $injector.get('$timeout');
+.factory('spaceContext', ['$injector', function ($injector) {
+  var $parse = $injector.get('$parse');
+  var $q = $injector.get('$q');
+  var $timeout = $injector.get('$timeout');
   var ReloadNotification = $injector.get('ReloadNotification');
-  var notification       = $injector.get('notification');
-  var logger             = $injector.get('logger');
-  var TheLocaleStore     = $injector.get('TheLocaleStore');
-  var createUserCache    = $injector.get('data/userCache');
-  var ctHelpers          = $injector.get('data/ContentTypes');
-  var Widgets            = $injector.get('widgets');
-  var spaceEndpoint      = $injector.get('data/spaceEndpoint');
-  var authentication     = $injector.get('authentication');
-  var environment        = $injector.get('environment');
-  var createEIRepo       = $injector.get('data/editingInterfaces');
-  var createQueue        = $injector.get('overridingRequestQueue');
+  var notification = $injector.get('notification');
+  var logger = $injector.get('logger');
+  var TheLocaleStore = $injector.get('TheLocaleStore');
+  var createUserCache = $injector.get('data/userCache');
+  var ctHelpers = $injector.get('data/ContentTypes');
+  var Widgets = $injector.get('widgets');
+  var spaceEndpoint = $injector.get('data/spaceEndpoint');
+  var authentication = $injector.get('authentication');
+  var environment = $injector.get('environment');
+  var createEIRepo = $injector.get('data/editingInterfaces');
+  var createQueue = $injector.get('overridingRequestQueue');
+  var ApiClient = $injector.get('data/ApiClient');
 
   var requestContentTypes = createQueue(function (extraHandler) {
     return spaceContext.space.getContentTypes({order: 'name', limit: 1000})
@@ -78,7 +80,7 @@ angular.module('contentful')
      * @param {Client.Space} space
      * @returns {Client.Space}
      */
-    resetWithSpace: function (space){
+    resetWithSpace: function (space) {
       var self = this;
       var endpoint = spaceEndpoint.create(
         authentication.token,
@@ -88,6 +90,7 @@ angular.module('contentful')
 
       resetMembers(self);
       self.space = space;
+      self.cma = new ApiClient(endpoint);
       self.users = createUserCache(space);
       self.editingInterfaces = createEIRepo(endpoint);
       TheLocaleStore.resetWithSpace(space);
@@ -129,7 +132,7 @@ angular.module('contentful')
      * @description
      * Refreshes all Content Type related information in the context
      */
-    refreshContentTypes: function() {
+    refreshContentTypes: function () {
       if (this.space) {
         return requestContentTypes();
       } else {
@@ -151,7 +154,7 @@ angular.module('contentful')
       var before = getContentTypeIds(spaceContext.contentTypes);
       return requestContentTypes.hasToFinish(retryIfNotChanged);
 
-      function retryIfNotChanged(response) {
+      function retryIfNotChanged (response) {
         var after = getContentTypeIds(spaceContext.contentTypes);
         if (after === before && waiter.canWait()) {
           return waiter.waitAndRetry();
@@ -206,7 +209,7 @@ angular.module('contentful')
      * @name spaceContext#removeContentType
      * @param {Client.ContentType} contentType
     */
-    removeContentType: function(contentType) {
+    removeContentType: function (contentType) {
       var index = _.indexOf(this.contentTypes, contentType);
       if (index === -1) return;
       this.contentTypes.splice(index, 1);
@@ -221,7 +224,7 @@ angular.module('contentful')
      * @description
      * Returns the published content type for a given entry
     */
-    publishedTypeForEntry: function(entry) {
+    publishedTypeForEntry: function (entry) {
       var contentTypeId = entry.getContentTypeId();
       return this.getPublishedContentType(contentTypeId);
     },
@@ -262,7 +265,7 @@ angular.module('contentful')
 
       return this.refreshContentTypes().then(pick);
 
-      function pick() {
+      function pick () {
         return self._publishedContentTypesHash[contentTypeId];
       }
     },
@@ -291,7 +294,7 @@ angular.module('contentful')
      * Given an entity (entry/asset), and a field path, returns the field
      * content for a given locale
     */
-    localizedField: function(entity, path, localeCode) {
+    localizedField: function (entity, path, localeCode) {
       var getField = $parse(path);
       var field = getField(entity);
       var defaultLocale = this.space && this.space.getDefaultLocale();
@@ -316,15 +319,15 @@ angular.module('contentful')
      * when no title is present. If false or left unspecified, the
      * UI string indicating that is returned, which is 'Untitled'.
      */
-    entryTitle: function(entry, localeCode, modelValue) {
-      var defaultTitle = Boolean(modelValue) ? null : 'Untitled';
+    entryTitle: function (entry, localeCode, modelValue) {
+      var defaultTitle = modelValue ? null : 'Untitled';
 
       try {
         var displayField = this.publishedTypeForEntry(entry).data.displayField;
         if (!displayField) {
           return defaultTitle;
         } else {
-          var title = this.localizedField(entry, 'data.fields.'+displayField, localeCode);
+          var title = this.localizedField(entry, 'data.fields.' + displayField, localeCode);
           if (!title || title.match(/^\s*$/)) {
             return defaultTitle;
           } else {
@@ -352,8 +355,8 @@ angular.module('contentful')
         return;
       }
 
-      var field = _.find(contentType.data.fields, function (field){
-        return field.id !== contentType.data.displayField && field.type == 'Text';
+      var field = _.find(contentType.data.fields, function (field) {
+        return field.id !== contentType.data.displayField && field.type === 'Text';
       });
 
       if (field) {
@@ -380,7 +383,7 @@ angular.module('contentful')
         } else {
           return title;
         }
-      } catch(e) {
+      } catch (e) {
         return defaultTitle;
       }
     }
@@ -389,13 +392,13 @@ angular.module('contentful')
   resetMembers(spaceContext);
   return spaceContext;
 
-  function getContentTypeIds(cts) {
+  function getContentTypeIds (cts) {
     return _(cts).map(function (ct) {
       return ct.getId();
     }).sortBy().join(',');
   }
 
-  function refreshContentTypes(contentTypes) {
+  function refreshContentTypes (contentTypes) {
     spaceContext.contentTypes = filterAndSortContentTypes(contentTypes);
 
     // Some legacy content types do not have a name. If it is
@@ -409,14 +412,14 @@ angular.module('contentful')
     return refreshPublishedContentTypes();
   }
 
-  function refreshPublishedContentTypes() {
+  function refreshPublishedContentTypes () {
     return spaceContext.space.getPublishedContentTypes()
     .then(function (contentTypes) {
       contentTypes = _.union(contentTypes, spaceContext.publishedContentTypes);
       contentTypes = filterAndSortContentTypes(contentTypes);
       spaceContext.publishedContentTypes = contentTypes;
 
-      spaceContext._publishedContentTypesHash = _.transform(contentTypes, function(acc, ct) {
+      spaceContext._publishedContentTypesHash = _.transform(contentTypes, function (acc, ct) {
         var id = ct.getId();
         acc[id] = ct;
         spaceContext._publishedContentTypeIsMissing[id] = false;
@@ -425,7 +428,7 @@ angular.module('contentful')
       return contentTypes;
     }, function (err) {
       var message = dotty.get(err, 'body.message');
-      if(message) {
+      if (message) {
         notification.warn(message);
       } else {
         notification.warn('Could not get published content types');
@@ -435,9 +438,9 @@ angular.module('contentful')
     });
   }
 
-  function filterAndSortContentTypes(contentTypes) {
+  function filterAndSortContentTypes (contentTypes) {
     contentTypes = _.reject(contentTypes, function (ct) { return ct.isDeleted(); });
-    contentTypes.sort(function (a,b) {
+    contentTypes.sort(function (a, b) {
       return a.getName().localeCompare(b.getName());
     });
     return contentTypes;

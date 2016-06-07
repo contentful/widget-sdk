@@ -76,12 +76,7 @@ angular.module('contentful')
     fields: $scope.fields // comes from entry editor controller
   };
 
-  this.space = {
-    getEntries: function (query) {
-      return spaceContext.space.getEntries(query);
-    }
-  };
-
+  this.space = spaceContext.cma;
 
   this.field = {
     onDisabledStatusChanged: isDisabledSignal.attach,

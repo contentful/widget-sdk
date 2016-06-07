@@ -2,16 +2,10 @@
 
 describe('cfWidgetApi directive', function () {
   beforeEach(function () {
-    var self = this;
-
-    this.getEntries = sinon.stub();
-
     module('contentful/test', function ($provide) {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
       $provide.value('spaceContext', {
-        space: {
-          getEntries: self.getEntries
-        }
+        cma: {}
       });
     });
 
@@ -108,12 +102,11 @@ describe('cfWidgetApi directive', function () {
     });
   });
 
-  // #space
-  describe('#getEntries()', function () {
-    it('should proxy the call to getEntries defined by spaceContext', function () {
-      this.widgetApi.space.getEntries('wat');
-      sinon.assert.calledOnce(this.getEntries);
-      sinon.assert.calledWithExactly(this.getEntries, 'wat');
+
+  describe('#space', function () {
+    it('exposes spaceContext.cma', function () {
+      var spaceContext = this.$inject('spaceContext');
+      expect(this.widgetApi.space).toEqual(spaceContext.cma);
     });
   });
 
