@@ -300,39 +300,38 @@ describe('spaceContext', function () {
           });
 
           it('fetched successfully', function () {
-            expect(this.spaceContext.entryTitle(entry)).toEqual('the title');
+            expect(this.spaceContext.entryTitle(entry)).toBe('the title');
+            expect(this.spaceContext.entryTitle(entry, 'en-US', true)).toBe('the title');
+            expect(this.spaceContext.entityTitle(entry)).toBe('the title');
           });
 
           it('gets no title, falls back to default', function () {
             sinon.stub(this.spaceContext, 'publishedTypeForEntry').returns({
               data: {}
             });
-            expect(this.spaceContext.entryTitle(entry)).toEqual('Untitled');
+            expect(this.spaceContext.entryTitle(entry)).toBe('Untitled');
+            expect(this.spaceContext.entryTitle(entry, 'en-US', true)).toBe(null);
+            expect(this.spaceContext.entityTitle(entry)).toBe(null);
           });
 
           it('handles an exception, falls back to default', function () {
             sinon.stub(this.spaceContext, 'publishedTypeForEntry').returns({});
-            expect(this.spaceContext.entryTitle(entry)).toEqual('Untitled');
+            expect(this.spaceContext.entryTitle(entry)).toBe('Untitled');
+            expect(this.spaceContext.entityTitle(entry)).toBe(null);
           });
 
           it('fetched successfully but title is empty', function () {
             entry.data.fields.title = '   ';
-            expect(this.spaceContext.entryTitle(entry)).toEqual('Untitled');
-          });
-
-          it('fetched title successfully but title is empty (modelValue)', function () {
-            entry.data.fields.title = '     ';
-            expect(this.spaceContext.entryTitle(entry, undefined, true)).toEqual(null);
+            expect(this.spaceContext.entryTitle(entry)).toBe('Untitled');
+            expect(this.spaceContext.entryTitle(entry, undefined, true)).toBe(null);
+            expect(this.spaceContext.entityTitle(entry)).toBe(null);
           });
 
           it('fetched successfully but title doesn\'t exist', function () {
             delete entry.data.fields.title;
             expect(this.spaceContext.entryTitle(entry)).toEqual('Untitled');
-          });
-
-          it('fetched title successfully but title doesn\'t exist (modelValue)', function () {
-            delete entry.data.fields.title;
             expect(this.spaceContext.entryTitle(entry, undefined, true)).toEqual(null);
+            expect(this.spaceContext.entityTitle(entry)).toEqual(null);
           });
 
           describe('unregistering a published Content Type', function () {
@@ -366,31 +365,38 @@ describe('spaceContext', function () {
           });
 
           it('fetched successfully', function () {
-            expect(this.spaceContext.assetTitle(asset)).toEqual('the title');
+            expect(this.spaceContext.assetTitle(asset)).toBe('the title');
+            expect(this.spaceContext.assetTitle(asset, 'en-US', true)).toBe('the title');
+            expect(this.spaceContext.entityTitle(asset)).toBe('the title');
           });
 
           it('gets no title, falls back to default', function () {
             asset.data = {fields: {}};
-            expect(this.spaceContext.assetTitle(asset)).toEqual('Untitled');
+            expect(this.spaceContext.assetTitle(asset)).toBe('Untitled');
+            expect(this.spaceContext.assetTitle(asset, 'en-US', true)).toBe(null);
+            expect(this.spaceContext.entityTitle(asset)).toBe(null);
           });
 
           it('handles an exception, falls back to default', function () {
             asset.data = {};
-            expect(this.spaceContext.assetTitle(asset)).toEqual('Untitled');
+            expect(this.spaceContext.assetTitle(asset)).toBe('Untitled');
+            expect(this.spaceContext.entityTitle(asset)).toBe(null);
           });
 
           it('fetched successfully but title is empty', function () {
             asset.data.fields.title = '   ';
-            expect(this.spaceContext.assetTitle(asset)).toEqual('Untitled');
+            expect(this.spaceContext.assetTitle(asset)).toBe('Untitled');
+            expect(this.spaceContext.entityTitle(asset)).toBe(null);
           });
 
           it('fetched successfully but title doesn\'t exist', function () {
             delete asset.data.fields.title;
-            expect(this.spaceContext.assetTitle(asset)).toEqual('Untitled');
+            expect(this.spaceContext.assetTitle(asset)).toBe('Untitled');
+            expect(this.spaceContext.entityTitle(asset)).toBe(null);
           });
 
           it('gets a localized field', function () {
-            expect(this.spaceContext.localizedField(asset, 'data.fields.title')).toEqual('the title');
+            expect(this.spaceContext.localizedField(asset, 'data.fields.title')).toBe('the title');
           });
         });
 

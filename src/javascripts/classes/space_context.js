@@ -312,7 +312,8 @@ angular.module('contentful')
      * @param {Client.Entry} entry
      * @param {string} localeCode
      * @param {Object} modelValue
-     * @return {Object}
+     * @return {string|null}
+     * @deprecated Use entityTitle() instead.
      * @description
      * Returns the title for a given entry and locale.
      * The `modelValue` flag, if true, causes `null` to be returned
@@ -369,12 +370,17 @@ angular.module('contentful')
      * @name spaceContext#assetTitle
      * @param {Client.Asset} asset
      * @param {string} localeCode
+     * @param {Object} modelValue
      * @return {Object}
+     * @deprecated Use entityTitle() instead.
      * @description
      * Returns the title for a given asset and locale.
+     * The `modelValue` flag, if true, causes `null` to be returned
+     * when no title is present. If false or left unspecified, the
+     * UI string indicating that is returned, which is 'Untitled'.
      */
-    assetTitle: function (asset, localeCode) {
-      var defaultTitle = 'Untitled';
+    assetTitle: function (asset, localeCode, modelValue) {
+      var defaultTitle = modelValue ? null : 'Untitled';
 
       try {
         var title = this.localizedField(asset, 'data.fields.title', localeCode);
@@ -386,6 +392,25 @@ angular.module('contentful')
       } catch (e) {
         return defaultTitle;
       }
+    },
+
+    /**
+     * @ngdoc method
+     * @name spaceContext#entityTitle
+     * @param {Client.Entity} entity
+     * @param {string} localeCode
+     * @return {string|null}
+     * @description
+     * Returns the title for a given entity and locale. Returns null if
+     * no title can be found for the entity.
+     */
+    entityTitle: function (entity, localeCode) {
+      var type = entity.getType();
+      if(!_.includes(['Entry', 'Asset'], type)) {
+        return null;
+      }
+      var getterName = type.toLowerCase() + 'Title'; // entryTitle() or assetTitle()
+      return this[getterName](entity, localeCode, true);
     }
   };
 
