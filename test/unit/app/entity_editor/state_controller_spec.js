@@ -287,20 +287,8 @@ describe('entityEditor/StateController', function () {
 
         describe('afterwards', function () {
           beforeEach(function () {
-            sinon.stub(this.rootScope, '$broadcast');
             this.controller.revertToPublished.execute();
             this.$apply();
-          });
-
-          afterEach(function () {
-            this.rootScope.$broadcast.restore();
-          });
-
-          it('broadcasts reverted values', function () {
-            sinon.assert.calledOnce(this.rootScope.$broadcast);
-            var args = this.rootScope.$broadcast.args[0];
-            expect(args[1].join(',')).toBe('fields,some-field,de-DE');
-            expect(args[2]).toBe('published');
           });
 
           canBeReverted({toPublished: false, toPrevious: false});

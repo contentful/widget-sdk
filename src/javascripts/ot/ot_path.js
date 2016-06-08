@@ -29,16 +29,44 @@ angular.module('contentful')
   };
 }])
 
+/**
+ * @ngdoc type
+ * @name OtPathController
+ */
+// TODO remove dependency on scope and make this a service
 .controller('OtPathController', ['$injector', '$scope', '$attrs', function ($injector, $scope, $attrs) {
   var $q = $injector.get('$q');
-  var Signal = $injector.get('signal');
+  var K = $injector.get('utils/kefir');
 
   var otDoc = $scope.otDoc;
   var path = $scope.$eval($attrs.otPath);
 
   // ShareJS document instance attached to this path
   var doc = null;
-  var valueChangedSignal = Signal.createMemoized(get());
+
+  // The most recent value passed to `set()`.
+  // We use this to filter change events that originate from a call to
+  // `set()`.
+  var lastSetValue = get();
+
+
+  /**
+   * @ngdoc property
+   * @name OtPathController#valueProperty
+   * @description
+   * A property that contains the most recent value at the given
+   * document path.
+   *
+   * Change events are not triggered when `set()` is called.
+   *
+   * @type {Property<any>}
+   */
+  var valueProperty = otDoc.valuePropertyAt(path)
+    .filter(function (value) {
+      return value !== lastSetValue;
+    })
+    .toProperty(get);
+
 
   _.extend(this, {
     setString: $scope.otDoc.setStringAt.bind(null, path),
@@ -49,31 +77,20 @@ angular.module('contentful')
     push: push,
     insert: insert,
     move: move,
-
-    // Signal is triggered with current value of this document when we
-    // 1. Receive an remote operation
-    // 2. Revert the entity through the entity state manager
-    // TODO This approach does not cover all edge cases. E.g. a widget
-    // might change a different field. This will not dispatch this
-    // signal.
-    onValueChanged: valueChangedSignal.attach
-  });
-
-  $scope.$watch('otDoc.doc', init);
-  $scope.$on('otRemoteOp', function (_event, op) {
-    if (pathAffects(op.p, path)) {
-      valueChangedSignal.dispatch(get());
+    valueProperty: valueProperty,
+    // TODO remove this. Only exists for compatibility with
+    // `CfLinkEditorController`.
+    onValueChanged: function (cb) {
+      return K.onValue(valueProperty, cb);
     }
   });
 
-  $scope.$on('otValueReverted', function () {
-    valueChangedSignal.dispatch(get());
-  });
+  // TODO replace watcher with stream
+  $scope.$watch('otDoc.doc', init);
 
   function init () {
     if ($scope.otDoc.doc) {
       doc = $scope.otDoc.doc.at(path);
-      valueChangedSignal.dispatch(get());
     } else if (doc) {
       doc = null;
     }
@@ -89,7 +106,12 @@ angular.module('contentful')
    * @returns {Promise<void>}
    */
   function set (value) {
-    return otDoc.setValueAt(path, value);
+    lastSetValue = value;
+    return otDoc.setValueAt(path, value)
+    .catch(function (error) {
+      lastSetValue = get();
+      return $q.reject(error);
+    });
   }
 
   function get () {
@@ -139,19 +161,5 @@ angular.module('contentful')
     return $q.denodeify(function (cb) {
       doc.move(i, j, cb);
     });
-  }
-
-  /**
-   * Returns true if a change to the value at 'changePath' in an object
-   * affects the value of 'valuePath'.
-   *
-   * ~~~
-   * pathAffects(['a'], ['a', 'b']) // => true
-   * pathAffects(['a', 'b'], ['a', 'b']) // => true
-   * pathAffects(['a', 'b', 'c'], ['a', 'b']) // => true
-   */
-  function pathAffects (changePath, valuePath) {
-    var m = Math.min(changePath.length, valuePath.length);
-    return _.isEqual(changePath.slice(0, m), valuePath.slice(0, m));
   }
 }]);

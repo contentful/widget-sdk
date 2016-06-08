@@ -27,6 +27,7 @@ describe('Extension SDK', function () {
       type: 'Text'
     };
 
+    this.doc = this.$inject('mocks/entityEditor/Document').create();
 
     this.scope = {
       widget: {},
@@ -46,10 +47,7 @@ describe('Extension SDK', function () {
         code: 'de',
         internal_code: 'de-internal'
       },
-      otDoc: {
-        setValueAt: sinon.stub().resolves(true),
-        removeValueAt: sinon.stub().resolves(true)
-      },
+      otDoc: this.doc,
       fieldLocale: {
         access: {
           disabled: false
@@ -86,6 +84,11 @@ describe('Extension SDK', function () {
         el.appendTo(this.container);
       });
     };
+
+    this.setDocValueAt = function (path, value) {
+      this.doc.setValueAt(path, value);
+      this.doc.changes.emit(path);
+    };
   });
 
   afterEach(function () {
@@ -99,7 +102,9 @@ describe('Extension SDK', function () {
 
     describe('#getValue()', function () {
       beforeEach(function () {
-        this.scope.entry.data.fields['FID-internal'] = {'de-internal': 'INITIAL'};
+        this.doc.setValueAt(['fields'], {
+          'FID-internal': {'de-internal': 'INITIAL'}
+        });
         dotty.put(this.scope.entry.data, ['fields', 'FID-internal', 'de-internal'], 'INITIAL');
       });
 
@@ -107,25 +112,25 @@ describe('Extension SDK', function () {
         expect(api.field.getValue()).toEqual('INITIAL');
       });
 
-      it('gets updated value after otChange event is fired', function* (api, scope) {
-        emitOtChange(scope, ['fields', 'FID-internal', 'de-internal'], 'VALUE');
+      it('gets updated value when document is changed', function* (api) {
+        this.setDocValueAt(['fields', 'FID-internal', 'de-internal'], 'VALUE');
         yield api.nextTick();
         expect(api.field.getValue()).toEqual('VALUE');
       });
     });
 
     describe('#onValueChanged()', function () {
-      it('calls callback after otChange event is fired', function* (api, scope) {
+      it('calls callback after when document changes', function* (api) {
         const valueChanged = sinon.stub();
         api.field.onValueChanged(valueChanged);
         valueChanged.reset();
-        emitOtChange(scope, ['fields', 'FID-internal', 'de-internal'], 'VALUE');
+        this.setDocValueAt(['fields', 'FID-internal', 'de-internal'], 'VALUE');
         yield api.nextTick();
         sinon.assert.calledOnce(valueChanged);
         sinon.assert.calledWithExactly(valueChanged, 'VALUE');
       });
 
-      it('does not call callback after detaching', function* (api, scope) {
+      it('does not call callback after detaching', function* (api) {
         const valueChanged = sinon.stub();
         // We make sure that it is called once in order to prevent
         // errors when the event is not dispatched at all.
@@ -134,9 +139,8 @@ describe('Extension SDK', function () {
         const detach = api.field.onValueChanged(valueChanged);
         valueChanged.reset();
         detach();
-        emitOtChange(scope, ['fields', 'FID-internal', 'de-internal'], 'VALUE');
+        this.setDocValueAt(['fields', 'FID-internal', 'de-internal'], 'VALUE');
         yield api.nextTick();
-        sinon.assert.calledOnce(valueChanged);
       });
 
       it('does not call callback in the window that called setValue', function* (api) {
@@ -148,9 +152,9 @@ describe('Extension SDK', function () {
         sinon.assert.notCalled(valueChanged);
       });
 
-      it('calls callback with most recently dispatched value', function* (api, scope) {
+      it('calls callback with most recently dispatched value', function* (api) {
         const valueChanged = sinon.spy();
-        emitOtChange(scope, ['fields', 'FID-internal', 'de-internal'], 'VALUE');
+        this.setDocValueAt(['fields', 'FID-internal', 'de-internal'], 'VALUE');
         yield api.nextTick();
         api.field.onValueChanged(valueChanged);
         sinon.assert.calledOnce(valueChanged);
@@ -215,7 +219,7 @@ describe('Extension SDK', function () {
       });
 
       it(`rejects when "otDoc.${method}At()" fails`, function* (api, scope) {
-        scope.otDoc[`${method}At`].rejects();
+        scope.otDoc[`${method}At`] = sinon.stub().rejects();
         const errored = sinon.stub();
         yield api.field[method](value).catch(errored);
         sinon.assert.calledWith(errored);
@@ -297,12 +301,12 @@ describe('Extension SDK', function () {
         expect(api.entry.fields.f2.getValue('de')).toEqual('INITIAL de');
       });
 
-      it('returns updated value after otChange event', function* (api, scope) {
-        emitOtChange(scope, ['fields', 'f2-internal', 'en'], 'VAL en');
+      it('returns updated value when document changes', function* (api) {
+        this.setDocValueAt(['fields', 'f2-internal', 'en'], 'VAL en');
         yield api.nextTick();
         expect(api.entry.fields.f2.getValue()).toEqual('VAL en');
 
-        emitOtChange(scope, ['fields', 'f2-internal', 'de', 5], 'VAL de');
+        this.setDocValueAt(['fields', 'f2-internal', 'de'], 'VAL de');
         yield api.nextTick();
         expect(api.entry.fields.f2.getValue('de')).toEqual('VAL de');
       });
@@ -334,7 +338,7 @@ describe('Extension SDK', function () {
       });
 
       it('rejects when "otDoc.setValueAt()" fails', function* (api, scope) {
-        scope.otDoc.setValueAt.rejects();
+        scope.otDoc.setValueAt = sinon.stub().rejects();
         const errored = sinon.stub();
         yield api.entry.fields.f2.setValue('VAL').catch(errored);
         sinon.assert.calledWith(errored);
@@ -388,14 +392,6 @@ describe('Extension SDK', function () {
       }
     });
   });
-
-
-  function emitOtChange (scope, path, value) {
-    const doc = {
-      getAt: sinon.stub().withArgs(path).returns(value)
-    };
-    scope.$emit('otChange', doc, [{p: path}]);
-  }
 
 
   function makeApiTestDescriptor (testFactory) {

@@ -35,6 +35,7 @@ angular.module('contentful')
   var newSignal = $injector.get('signal').createMemoized;
   var spaceContext = $injector.get('spaceContext');
   var TheLocaleStore = $injector.get('TheLocaleStore');
+  var K = $injector.get('utils/kefir');
 
   var fieldLocaleDoc = $scope.otSubDoc;
   var isDisabledSignal = newSignal(isEditingDisabled());
@@ -82,8 +83,9 @@ angular.module('contentful')
     onDisabledStatusChanged: isDisabledSignal.attach,
     onSchemaErrorsChanged: schemaErrorsSignal.attach,
     setInvalid: setInvalid,
-
-    onValueChanged: fieldLocaleDoc.onValueChanged,
+    onValueChanged: function (cb) {
+      return K.onValue(fieldLocaleDoc.valueProperty, cb);
+    },
     getValue: fieldLocaleDoc.get,
     setValue: fieldLocaleDoc.set,
     setString: fieldLocaleDoc.setString,
