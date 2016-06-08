@@ -1,7 +1,7 @@
 .modal-background
   .modal-dialog.insert-asset-dialog(ng-controller="InsertAssetDialogController" ng-keyup="handleKeys($event)")
     header.modal-dialog__header
-      h1 Insert Media
+      h1 Insert media
       button.modal-dialog__close(ng-click="dialog.cancel()")
     .modal-dialog__content
       div.menu-with-buttons(
@@ -11,7 +11,7 @@
         .l-search-w-autocomplete(
           cf-tokenized-search="context.view.searchTerm"
           search-content-type="assetContentType"
-          placeholder="Search for asset"
+          placeholder="Search for assets"
           cf-on-blur-component="leftSearch($event)")
         .assets.endless-container(cf-endless-container at-bottom="searchController.loadMore()" num-elements="searchController.paginator.page")
           .asset(ng-repeat="asset in assets" ng-click="selectAsset(asset)")

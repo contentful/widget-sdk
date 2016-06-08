@@ -17,7 +17,7 @@ header.workbench-header
 .workbench-main.x--content
   form.workbench-main__middle-content(name="localeForm" submit="save()")
     .cfnext-form__field
-      label Locale and Code
+      label Locale and code
       select.cfnext-select-box(
           ng-model="locale.data.code"
           ng-options="item.code as (item.name + ' (' + item.code + ')') for item in locales")

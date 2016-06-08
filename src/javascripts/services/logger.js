@@ -35,13 +35,14 @@
  * [bugsnag-tab]: https://bugsnag.com/docs/notifiers/js#metadata
  * [bugsnag-doc]: https://bugsnag.com/docs/notifiers/js
 */
-angular.module('contentful').factory('logger', ['$injector', function ($injector) {
-  var $window        = $injector.get('$window');
-  var bugsnag        = $injector.get('bugsnag');
-  var environment    = $injector.get('environment');
-  var stringifySafe  = $injector.get('stringifySafe');
+angular.module('contentful')
+.factory('logger', ['$injector', function ($injector) {
+  var $window = $injector.get('$window');
+  var bugsnag = $injector.get('bugsnag');
+  var environment = $injector.get('environment');
+  var stringifySafe = $injector.get('stringifySafe');
 
-  function getParams() {
+  function getParams () {
     var stateName = $injector.get('$state').current.name;
     var stateParams = $injector.get('$stateParams');
     return _.extend({
@@ -51,7 +52,7 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
     }, stateParams);
   }
 
-  function augmentMetadata(metaData) {
+  function augmentMetadata (metaData) {
     metaData = metaData || {};
     metaData.params = getParams();
     return _.mapValues(metaData, serializeObject);
@@ -73,17 +74,59 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
     }
   }
 
-  function flattenServerErrors(err) {
-    var flattened = dotty.get(err, 'body') || err;
-    if(flattened.details && flattened.details.reasons) {
-      flattened.reasons = _.clone(flattened.details.reasons);
-      delete flattened.details.reasons;
+
+  /**
+   * Bugsnag doesn't serialize objects past a certain level and it's better to
+   * flatten these errors than running a fork of their JS reporter that serializes
+   * objects deeper.
+   */
+  function flattenServerErrors (metaData) {
+    // Don't ever affect outside references as they travel through the whole app!
+    metaData = _.cloneDeep(metaData || {});
+    var errOrResponse = metaData.error;
+
+    if (errOrResponse) {
+      var err = findActualServerError(errOrResponse);
+
+      // Never send auth token.
+      var headers = dotty.get(errOrResponse, 'request.headers');
+      if (headers && headers.Authorization) {
+        headers.Authorization = '[SECRET]';
+      }
+
+      // “ERROR DETAILS” tab
+      if (err && err.details) {
+        metaData.errorDetails = err.details;
+        // Indicate this info can be found in another tab.
+        err.details = '[@ERROR_DETAILS tab]';
+      }
+
+      if (err !== errOrResponse) {
+        // SERVER RESPONSE tab (with `body` or `data` containing actual error)
+        // Also contains additional info (e.g. `request` and `statusCode`)
+        metaData.serverResponse = errOrResponse;
+        delete metaData.error;
+        // TODO: Also have ERROR tab and replace `body` or `data` with [@ERROR tab]
+      }
     }
-    var headers = dotty.get(flattened, 'error.request.headers');
-    if(headers && headers.Authorization) {
-      delete headers.Authorization;
-    }
-    return flattened;
+    return metaData;
+  }
+
+  /**
+   * @ngdoc method
+   * @name logger#findActualServerError
+   * @description
+   * Takes an Object which is expected to be or to contain a server (CMA) error
+   * and returns the error. Null if no error is found.
+   * @param {Object|null} errOrErrContainer
+   *
+   * TODO: Find a better place for this or even better - make it obsolete.
+   */
+  function findActualServerError (errOrErrContainer) {
+    errOrErrContainer = errOrErrContainer || {};
+    var actualErr =
+      errOrErrContainer.body || errOrErrContainer.data || errOrErrContainer;
+    return dotty.get(actualErr, 'sys.type') === 'Error' ? actualErr : undefined;
   }
 
   return {
@@ -106,12 +149,14 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * Disables the logger service because of customers who wish to not have
      * any 3rd party services running
      */
-    disable: function(){
+    disable: function () {
       bugsnag.disable();
-      _.forEach(this, function(value, key){
+      _.forEach(this, function (value, key) {
         this[key] = _.noop;
       }, this);
     },
+
+    findActualServerError: findActualServerError,
 
     /**
      * @ngdoc method
@@ -119,14 +164,15 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * @description
      * Mostly used by the $uncaughtException service
      * @param {Error} exception  Exception Error object
-     * @param {Object} metadata  Metadata object. Can take any of the expected bugsnag metadata parameters.
-     * @param {Object} metadata.data  Additional data (other objects). Shows up on the bugsnag data tab.
+     * @param {Object} metaData  Metadata object. Can take any of the expected bugsnag metadata parameters.
+     * @param {Object} metaData.data  Additional data (other objects). Shows up on the bugsnag data tab.
      */
     logException: function (exception, metaData) {
+      var augmentedMetadata = augmentMetadata(metaData);
       if (environment.env !== 'production' && environment.env !== 'unittest') {
-        console.error(exception);
+        console.error(exception, augmentedMetadata);
       }
-      bugsnag.notifyException(exception, null, augmentMetadata(metaData), 'error');
+      bugsnag.notifyException(exception, null, augmentedMetadata, 'error');
     },
 
     /**
@@ -135,9 +181,9 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * @description
      * Log with error level
      * @param {string} message
-     * @param {object} metadata        Can take any of the expected bugsnag metadata properties.
-     * @param {object} metadata.data   Shows up on the bugsnag data tab.
-     * @param {object} metadata.error  Shows up on the bugsnag error tab.
+     * @param {object} metaData       Can take any of the expected bugsnag metadata properties.
+     * @param {object} metaData.data  Shows up on the bugsnag data tab.
+     * @param {object} metaData.error Shows up on the bugsnag error tab.
      */
     logError: function (message, metaData) {
       this._log('Logged Error', 'error', message, metaData);
@@ -151,9 +197,9 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * given message.
      *
      * @param {string} message
-     * @param {object} metadata        Can take any of the expected bugsnag metadata properties.
-     * @param {object} metadata.data   Shows up on the bugsnag data tab.
-     * @param {object} metadata.error  Shows up on the bugsnag error tab.
+     * @param {object} metaData       Can take any of the expected bugsnag metadata properties.
+     * @param {object} metaData.data  Shows up on the bugsnag data tab.
+     * @param {object} metaData.error Shows up on the bugsnag error tab.
     */
     logWarn: function (message, metaData) {
       this._log('Logged Warning', 'warning', message, metaData);
@@ -163,9 +209,9 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * @ngdoc method
      * @name logger#logServerError
      * @description
-     * Log an error from the Contentful API to Bugsnag.
+     * Logs an error from the Contentful API to Bugsnag.
      *
-     * The Bugsnag title of the error will be 'Logged Server Error'.
+     * The Bugsnag title of the error will be “Logged Server Error”.
      *
      * ~~~js
      * cfServerAPICall()
@@ -176,9 +222,11 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * ~~~
      *
      * @param {string} message
-     * @param {object} metadata        Can take any of the expected bugsnag metadata properties.
-     * @param {object} metadata.data   Shows up on the bugsnag data tab.
-     * @param {object} metadata.error  Shows up on the bugsnag error tab.
+     * @param {object} metaData       Can take any of the expected bugsnag metadata properties.
+     * @param {object} metaData.data  Shows up on the bugsnag data tab.
+     * @param {object} metaData.error Shows up on the bugsnag error tab. Either the API error
+     *                                itself or a server response object with `body` or `data`
+     *                                field holding the actual API error.
      */
     logServerError: function (message, metaData) {
       if (dotty.get(metaData, 'error.statusCode') === 0) {
@@ -192,11 +240,16 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * @ngdoc method
      * @name logger#logServerWarn
      * @description
-     * Log an error from the Contentful API with warn level
+     * Logs an error from the Contentful API with warn level
+     *
+     * The Bugsnag title of the error will be “Logged Server Warning”.
+     *
      * @param {string} message
-     * @param {object} metadata        Can take any of the expected bugsnag metadata properties.
-     * @param {object} metadata.data   Shows up on the bugsnag data tab.
-     * @param {object} metadata.error  Shows up on the bugsnag error tab.
+     * @param {object} metaData       Can take any of the expected bugsnag metadata properties.
+     * @param {object} metaData.data  Shows up on the bugsnag data tab.
+     * @param {object} metaData.error Shows up on the bugsnag error tab. Either the API error
+     *                                itself or a server response object with `body` or `data`
+     *                                field holding the actual API error.
      */
     logServerWarn: function (message, metaData) {
       if (dotty.get(metaData, 'error.statusCode') === 0) {
@@ -212,9 +265,9 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * @description
      * Log an error specific to ShareJS with error level
      * @param {string} message
-     * @param {object} metadata        Can take any of the expected bugsnag metadata properties.
-     * @param {object} metadata.data   Shows up on the bugsnag data tab.
-     * @param {object} metadata.error  Shows up on the bugsnag error tab.
+     * @param {object} metaData       Can take any of the expected bugsnag metadata properties.
+     * @param {object} metaData.data  Shows up on the bugsnag data tab.
+     * @param {object} metaData.error Shows up on the bugsnag error tab.
      */
     logSharejsError: function (message, metaData) {
       this._log('Logged ShareJS Error', 'error', message, metaData);
@@ -226,9 +279,9 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * @description
      * Log an error specific to ShareJS with warn level
      * @param {string} message
-     * @param {object} metadata        Can take any of the expected bugsnag metadata properties.
-     * @param {object} metadata.data   Shows up on the bugsnag data tab.
-     * @param {object} metadata.error  Shows up on the bugsnag error tab.
+     * @param {object} metaData       Can take any of the expected bugsnag metadata properties.
+     * @param {object} metaData.data  Shows up on the bugsnag data tab.
+     * @param {object} metaData.error Shows up on the bugsnag error tab.
      */
     logSharejsWarn: function (message, metaData) {
       this._log('Logged ShareJS Warning', 'warning', message, metaData);
@@ -239,11 +292,11 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * @description
      * Log detected CORS warnings
      * @param {string} message
-     * @param {object} metadata        Can take any of the expected bugsnag metadata properties.
-     * @param {object} metadata.data   Shows up on the bugsnag data tab.
-     * @param {object} metadata.error  Shows up on the bugsnag error tab.
+     * @param {object} metaData       Can take any of the expected bugsnag metadata properties.
+     * @param {object} metaData.data  Shows up on the bugsnag data tab.
+     * @param {object} metaData.error Shows up on the bugsnag error tab.
      */
-    _logCorsWarn: function(message, metaData) {
+    _logCorsWarn: function (message, metaData) {
       this._log('CORS Warning', 'warning', message, metaData);
     },
 
@@ -258,27 +311,28 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
      * Additional info to show in bugsnag. Each key creates a tab that
      * displays the corresponding value.
     */
-    _log: function(type, severity, message, metaData) {
-      metaData = metaData || {};
-      metaData.groupingHash = metaData.groupingHash || message;
+    _log: function (type, severity, message, metadata) {
+      metadata = metadata || {};
+      metadata.groupingHash = metadata.groupingHash || message;
+      var augmentedMetadata = augmentMetadata(metadata);
       if (environment.env !== 'production' && environment.env !== 'unittest') {
-        logToConsole(type, severity, message);
+        logToConsole(type, severity, message, augmentedMetadata);
       }
-      bugsnag.notify(type, message, augmentMetadata(metaData), severity);
+      bugsnag.notify(type, message, augmentedMetadata, severity);
     }
   };
 
-  function logToConsole (type, severity, message) {
+  function logToConsole (type, severity, message, metadata) {
     message = type + ': ' + message;
     switch (severity) {
       case 'error':
-        console.error(message);
+        console.error(message, metadata);
         break;
       case 'warning':
-        console.warn(message);
+        console.warn(message, metadata);
         break;
       default:
-        console.log(message);
+        console.log(message, metadata);
     }
   }
 }]);

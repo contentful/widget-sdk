@@ -4,13 +4,13 @@ describe('Number widgets', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    var widgetApi = this.$inject('mocks/widgetApi').create();
+    this.widgetApi = this.$inject('mocks/widgetApi').create();
 
-    this.fieldApi = widgetApi.field;
+    this.fieldApi = this.widgetApi.field;
 
     this.compileElement = function () {
       var el = this.$compile('<cf-number-editor />', {}, {
-        cfWidgetApi: widgetApi
+        cfWidgetApi: this.widgetApi
       });
 
       var inputEl = el.find('input');
@@ -63,6 +63,14 @@ describe('Number widgets', function () {
       this.el.setInput('asd');
       expect(this.el.inputEl.attr('aria-invalid')).toEqual('true');
       expect(this.el.isStatusVisible()).toEqual(true);
+    });
+
+    it('set field invalid when input cannot be parsed', function () {
+      this.el.setInput('6.');
+      expect(this.widgetApi._state.isInvalid).toBe(true);
+
+      this.el.setInput('6');
+      expect(this.widgetApi._state.isInvalid).toBe(false);
     });
   });
 

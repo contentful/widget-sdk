@@ -87,16 +87,14 @@ describe('cfJsonEditor directive', function () {
       sinon.assert.notCalled(fieldApi.setValue);
     });
 
-    it('updates the status to "valid" if content is valid', function () {
+    it('shows status message if content is invalid', function () {
       this.emitContentChange('not json');
       this.flush();
-      expect(element.find('[role=status][data-status=valid]').length).toBe(0);
-      expect(element.find('[role=status][data-status=invalid]').length).toBe(1);
+      expect(getStatusElement(element, 'invalid-json').length).toBe(1);
 
       this.emitContentChange(beautifyJSON({json: true}));
       this.flush();
-      expect(element.find('[role=status][data-status=valid]').length).toBe(1);
-      expect(element.find('[role=status][data-status=invalid]').length).toBe(0);
+      expect(getStatusElement(element, 'invalid-json').length).toBe(0);
     });
 
     it('shows no validation status when content is empty', function () {
@@ -106,6 +104,13 @@ describe('cfJsonEditor directive', function () {
       expect(element.find('[role=status]').length).toBe(0);
     });
   });
+
+  function getStatusElement ($el, code) {
+    return $el.find(
+      '[role=status]' +
+      '[data-status-code="json-editor.' + code + '"]'
+    );
+  }
 
 
   function beautifyJSON (obj) {

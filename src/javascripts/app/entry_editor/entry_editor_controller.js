@@ -1,17 +1,15 @@
 'use strict';
 
 angular.module('contentful')
-.controller('EntryEditorController', ['$scope', '$injector', function EntryEditorController($scope, $injector) {
-  var $controller         = $injector.get('$controller');
-  var logger              = $injector.get('logger');
-  var spaceContext        = $injector.get('spaceContext');
-  var fieldFactory        = $injector.get('fieldFactory');
-  var notifier            = $injector.get('entryEditor/notifications');
-  var truncate            = $injector.get('stringUtils').truncate;
-  var accessChecker       = $injector.get('accessChecker');
-  var ShareJS             = $injector.get('ShareJS');
-  var DataFields          = $injector.get('EntityEditor/DataFields');
-  var ContentTypes        = $injector.get('data/ContentTypes');
+.controller('EntryEditorController', ['$scope', '$injector', function EntryEditorController ($scope, $injector) {
+  var $controller = $injector.get('$controller');
+  var spaceContext = $injector.get('spaceContext');
+  var notifier = $injector.get('entryEditor/notifications');
+  var truncate = $injector.get('stringUtils').truncate;
+  var accessChecker = $injector.get('accessChecker');
+  var ShareJS = $injector.get('ShareJS');
+  var DataFields = $injector.get('EntityEditor/DataFields');
+  var ContentTypes = $injector.get('data/ContentTypes');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
@@ -49,26 +47,25 @@ angular.module('contentful')
 
   $scope.$watch(function (scope) {
     if (scope.otDoc.doc && scope.entry) {
-      if (angular.isDefined(scope.entry.getPublishedVersion()))
+      if (angular.isDefined(scope.entry.getPublishedVersion())) {
         return scope.otDoc.doc.version > scope.entry.getPublishedVersion() + 1;
-      else
+      } else {
         return 'draft';
+      }
     } else {
       return undefined;
     }
-  }, function (modified, old, scope) {
+  }, function (modified, _old, scope) {
     if (modified !== undefined) scope.context.dirty = modified;
   });
 
   // OT Stuff
-  $scope.$watch(function entryEditorDisabledWatcher() {
+  $scope.$watch(function entryEditorDisabledWatcher () {
     return $scope.entry.isArchived() || isReadOnly();
-  }, function entryEditorDisabledHandler(disabled) {
+  }, function entryEditorDisabledHandler (disabled) {
     $scope.otDoc.state.disabled = disabled;
   });
 
-  // Validations
-  $scope.errorPaths = {};
   $scope.$watch('entry.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
     if (publishedVersion > oldVersion) scope.validate();
   });
@@ -78,41 +75,6 @@ angular.module('contentful')
     if (!_.isEmpty(scope.entry.data.fields)) scope.validate();
     firstValidate();
     firstValidate = null;
-  });
-
-  $scope.$watch('validationResult.errors', function (errors) {
-    $scope.errorPaths = {};
-
-    _.each(errors, function (error) {
-      if (error.path[0] !== 'fields') return;
-      var fieldId      = error.path[1];
-      var field        = _.find($scope.contentType.data.fields, {id: fieldId});
-
-      if(error.path.length > 1) {
-        $scope.errorPaths[fieldId] = $scope.errorPaths[fieldId] || [];
-      }
-
-      if (!field) {
-        logger.logError('Field object does not exist', {
-          data: {
-            allErrors: errors,
-            currentError: error,
-            entryData: $scope.entry.data,
-            entryFields: $scope.contentType.data.fields
-          }
-        });
-        return;
-      }
-
-      if (error.path.length == 2) {
-        var localeCodes = fieldFactory.getLocaleCodes(field);
-        $scope.errorPaths[fieldId].push.apply($scope.errorPaths[fieldId], localeCodes);
-      } else {
-        var localeCode = error.path[2];
-        $scope.errorPaths[fieldId].push(localeCode);
-      }
-      $scope.errorPaths[fieldId] = _.unique($scope.errorPaths[fieldId]);
-    });
   });
 
   // Building the form
@@ -153,8 +115,8 @@ angular.module('contentful')
    * TODO It is unclear if this is necessary. There might be some
    * corrupt data where a field is not an object.
    */
-  function cleanSnapshot(entryData, doc) {
-    _.forEach(entryData.fields, function (field, id) {
+  function cleanSnapshot (entryData, doc) {
+    _.forEach(entryData.fields, function (_field, id) {
       var docField = ShareJS.peek(doc, ['fields', id]);
       if (!_.isObject(docField)) {
         ShareJS.setDeep(doc, ['fields', id], {});
@@ -170,12 +132,12 @@ angular.module('contentful')
    *
    * For this to happen the CMA needs to be refactored.
    */
-  function handlePublishError(err) {
+  function handlePublishError (err) {
     var errorId = dotty.get(err, 'body.sys.id');
     if (errorId === 'ValidationFailed') {
       setValidationErrors(err);
       notify.publishValidationFail();
-    } else if (errorId === 'VersionMismatch'){
+    } else if (errorId === 'VersionMismatch') {
       notify.publishFail('Can only publish most recent version');
     } else if (errorId === 'UnresolvedLinks') {
       setValidationErrors(err);
@@ -195,29 +157,29 @@ angular.module('contentful')
     }
   }
 
-  function setValidationErrors(err) {
-    $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
+  function setValidationErrors (err) {
+    $scope.validator.setErrors(dotty.get(err, 'body.details.errors'));
   }
 
-  function isLinkValidationError(err) {
-      var errors = dotty.get(err, 'body.details.errors');
-      return err.body.message === 'Validation error' &&
+  function isLinkValidationError (err) {
+    var errors = dotty.get(err, 'body.details.errors');
+    return err.body.message === 'Validation error' &&
              errors.length > 0 &&
-             errors[0].name == 'linkContentType';
+             errors[0].name === 'linkContentType';
   }
 
-  function getLinkValidationErrorMessage(err) {
+  function getLinkValidationErrorMessage (err) {
     var error = _.first(dotty.get(err, 'body.details.errors'));
     var contentTypeId = _.first(error.contentTypeId);
     var contentType = _.findWhere(spaceContext.publishedContentTypes, {data: {sys: {id: contentTypeId}}});
-    if(contentType) {
+    if (contentType) {
       return error.details.replace(contentTypeId, contentType.data.name);
     } else {
       return 'This reference requires an entry of an unexistent content type';
     }
   }
 
-  function isReadOnly() {
+  function isReadOnly () {
     return !accessChecker.canUpdateEntry($scope.entry);
   }
 }]);

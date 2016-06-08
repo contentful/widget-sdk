@@ -1,12 +1,22 @@
 'use strict';
 
-describe('cfEntityField directive integration', function () {
+/**
+ * Tests the integration of
+ * - cfEntityField directive
+ * - FieldLocale controller
+ * - FieldControls/Focus
+ *
+ * Does not render the widget.
+ */
+describe('entity editor field integration', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
       $provide.removeDirectives('otPath', 'cfWidgetApi', 'cfWidgetRenderer');
     });
+
+    var Focus = this.$inject('FieldControls/Focus');
 
     var TheLocaleStore = this.$inject('TheLocaleStore');
     this.setLocales = TheLocaleStore.setLocales;
@@ -24,10 +34,21 @@ describe('cfEntityField directive integration', function () {
       settings: {}
     };
 
+    this.validator = {
+      hasError: sinon.stub().returns(false)
+    };
+
     this.compile = function () {
-      return this.$compile('<cf-entity-field>', {
-        widget: this.widget
+      this.focus = Focus.create();
+      var el = this.$compile('<cf-entity-field>', {
+        widget: this.widget,
+        validator: this.validator,
+        focus: this.focus,
+        entry: {}
       });
+      el.fieldController = el.scope().fieldController;
+      el.field = el.find('[data-test-id="entity-field-controls"]');
+      return el;
     };
   });
 
@@ -150,14 +171,20 @@ describe('cfEntityField directive integration', function () {
     it('adds locales with error', function () {
       this.setLocales([
         {code: 'en'},
-        {code: 'de', active: false, internal_code: 'de-internal'}
+        {code: 'de', active: false},
+        {code: 'fr', active: false}
       ]);
+
       var el = this.compile();
       expect(getDataLocaleAttr(el)).toEqual(['en']);
-      el.scope().errorPaths = {
-        'FID': ['de-internal']
-      };
+
+      this.validator.hasError
+        .withArgs(sinon.match(['fields', 'FID', 'de-internal']))
+        .returns(true);
+      // we need to fire a watcher.
+      this.validator.errors = {};
       this.$apply();
+
       expect(getDataLocaleAttr(el)).toEqual(['en', 'de']);
     });
 
@@ -167,4 +194,119 @@ describe('cfEntityField directive integration', function () {
       }).get();
     }
   });
+
+  describe('errors', function () {
+    it('shows field locale errors', function () {
+      var el = this.compile();
+      expect(hasErrorStatus(el)).toBe(false);
+
+      this.validator.errors = [
+        {path: ['fields', 'FID', 'DEF-internal'], name: 'def-error'},
+        {path: ['fields', 'FID', 'EN-internal'], name: 'en-error-1'},
+        {path: ['fields', 'FID', 'EN-internal'], name: 'en-error-2'}
+      ];
+      this.$apply();
+
+      var defLocale = el.find('[data-locale=DEF]');
+      expect(hasErrorStatus(defLocale, 'entry.schema.def-error')).toBe(true);
+
+      var enLocale = el.find('[data-locale=EN]');
+      expect(hasErrorStatus(enLocale, 'entry.schema.en-error-1')).toBe(true);
+      expect(hasErrorStatus(enLocale, 'entry.schema.en-error-2')).toBe(true);
+    });
+
+    it('sets field’s invalid state if there are schema errors', function () {
+      var el = this.compile();
+      assertInvalidState(el.field, false);
+
+      this.validator.hasError
+        .withArgs(sinon.match(['fields', 'FID']))
+        .returns(true);
+      this.validator.errors = {};
+      this.$apply();
+      assertInvalidState(el.field, true);
+
+      this.validator.hasError = sinon.stub().returns(false);
+      this.validator.errors = {};
+      this.$apply();
+      assertInvalidState(el.field, false);
+    });
+
+    it('sets field’s invalid state if a field control is invalid', function () {
+      var el = this.compile();
+      assertInvalidState(el.field, false);
+
+      el.fieldController.setInvalid('DEF', true);
+      el.fieldController.setInvalid('EN', true);
+      this.$apply();
+      assertInvalidState(el.field, true);
+
+      el.fieldController.setInvalid('EN', false);
+      this.$apply();
+      assertInvalidState(el.field, true);
+
+      el.fieldController.setInvalid('DEF', false);
+      this.$apply();
+      assertInvalidState(el.field, false);
+    });
+  });
+
+  describe('focus', function () {
+    it('is set when widget activates this field', function () {
+      var el = this.compile();
+
+      this.focus.set('FID');
+      this.$apply();
+      assertAriaFlag(el.field, 'current', true);
+    });
+
+    it('is unset when other field activates', function () {
+      var el = this.compile();
+
+      this.focus.set('FID');
+      this.$apply();
+      assertAriaFlag(el.field, 'current', true);
+
+      this.focus.set('other');
+      this.$apply();
+      assertAriaFlag(el.field, 'current', false);
+    });
+
+    it('is unset when widget deactivates this field', function () {
+      var el = this.compile();
+
+      this.focus.set('FID');
+      this.$apply();
+      assertAriaFlag(el.field, 'current', true);
+
+      this.focus.unset('FID');
+      this.$apply();
+      assertAriaFlag(el.field, 'current', false);
+    });
+  });
+
+  function hasErrorStatus (el, errorCode) {
+    var selector = '[role="status"]';
+    if (errorCode) {
+      selector += '[data-error-code^="' + errorCode + '"]';
+    }
+    return el.find(selector).length > 0;
+  }
+
+  function assertInvalidState (el, isInvalid) {
+    assertAriaFlag(el, 'invalid', isInvalid);
+  }
+
+  function assertAriaFlag (el, flag, value) {
+    if (value === undefined) {
+      value = true;
+    }
+
+    var attrValue = el.attr('aria-' + flag);
+    var flagValue = !!(attrValue && attrValue !== 'false');
+
+    if (flagValue !== value) {
+      throw new Error('Expected element to have "aria-' + flag + '" set to ' + value);
+    }
+  }
 });

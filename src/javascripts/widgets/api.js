@@ -173,9 +173,9 @@ angular.module('contentful')
 
   function buildFieldInfo (idMap, entryData, fields) {
     return _.map(fields, function (field) {
-      var locales = field.localized ?
-                      TheLocaleStore.getPrivateLocales()
-                    : [TheLocaleStore.getDefaultLocale()];
+      var locales = field.localized
+        ? TheLocaleStore.getPrivateLocales()
+        : [TheLocaleStore.getDefaultLocale()];
       var values = entryData.fields[field.id];
       return {
         id: field.apiName,
@@ -193,7 +193,7 @@ angular.module('contentful')
         .catch(function (err) {
           return $q.reject({
             code: err.code,
-            data: err.body
+            data: err.body // Cyborg?
           });
         });
       },

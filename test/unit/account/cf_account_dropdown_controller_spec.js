@@ -60,7 +60,7 @@ describe('Account Dropdown Controller', function () {
   describe('navigation to organization settings', function () {
     beforeEach(function () {
       var OrganizationList = this.$inject('OrganizationList');
-      this.isOwnerStub = OrganizationList.isOwner = sinon.stub().returns(false);
+      this.isOwnerStub = OrganizationList.isOwnerOrAdmin = sinon.stub().returns(false);
       this.$apply();
     });
 

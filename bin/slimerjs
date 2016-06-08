@@ -9,14 +9,16 @@
 #
 
 export SLIMERJSLAUNCHER=$(which firefox)
-SLIMERJS_BIN="slimerjs-0.9.6/slimerjs"
+SLIMERJS_BIN="$(dirname $0)/../vendor/slimerjs/slimerjs-0.10.0/slimerjs"
 
 if [[ ! -x "${SLIMERJS_BIN}" ]]; then
+  echo "${SLIMERJS_BIN} is not executable"
+  echo "Please run bin/install_slimerjs"
   exit 1
 fi
 
 if [[ "$@" == "--version" ]]; then
-  exec "${SLIMERJS_BIN}" "$@"
+  exec "${SLIMERJS_BIN}" --version
 else
   exec "${SLIMERJS_BIN}" "$@" >/dev/null
 fi

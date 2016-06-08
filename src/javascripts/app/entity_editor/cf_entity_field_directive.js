@@ -11,26 +11,46 @@ angular.module('cf.app')
  * @property {string}       $scope.showHelpText
  * @property {string}       $scope.helpText
  *
- * @scope.requires {object} errorPath
- * Maps internal field IDs to lists of internal locale codes that have
- * errors. Provided by the `Entry/AssetEditorController`.
- *
  * @scope.requires {object} widget
  * Has field data and specifications to render the control. Provided by
  * `FromWidgetsController`.
+ * @scope.requires {FieldControls/Focus} focus
+ * @scope.requires {object} validator
+ * Provided by the `cfValidate` directive.
+ *
  */
 .directive('cfEntityField', ['$injector', function ($injector) {
   var TheLocaleStore = $injector.get('TheLocaleStore');
   return {
     restrict: 'E',
     template: JST.cf_entity_field(),
+    controllerAs: 'fieldController',
     controller: ['$scope', function ($scope) {
       $scope.hasInitialFocus = $scope.$index === 0 &&
                                $scope.widget.isFocusable;
 
+      $scope.field = $scope.widget.field;
+      // TODO I think this never changes
       $scope.$watch('widget.field', function (field) {
         $scope.field = field;
       });
+
+      // Records the 'invalid' flag for each locale’s control. Keys are public
+      // locale codes.
+      var invalidControls = {};
+
+      /**
+       * @ngdoc method
+       * @name cfEntityField#fieldController.setInvalid
+       * @description
+       *
+       * @param {string} localeId
+       * @param {boolean} isInvalid
+       */
+      this.setInvalid = function (localeId, isInvalid) {
+        invalidControls[localeId] = isInvalid;
+        updateErrorStatus();
+      };
 
       $scope.$watch('widget.settings.helpText', function (helpText) {
         $scope.helpText = helpText || $scope.widget.defaultHelpText;
@@ -41,7 +61,26 @@ angular.module('cf.app')
       });
 
       $scope.$watchCollection(getActiveLocaleCodes, updateLocales);
-      $scope.$watch('errorPaths', updateLocales);
+
+      // TODO Changes to 'validator.errors' change the behavior of
+      // 'validator.hasError()'. We should make this dependency explicity
+      // by listening to signal on the validator.
+      $scope.$watch('validator.errors', updateLocales);
+      $scope.$watch('validator.errors', updateErrorStatus);
+
+      var offFocusChanged = $scope.focus.onChanged(function (value) {
+        $scope.fieldHasFocus = value === $scope.field.id;
+      });
+
+      $scope.$on('$destroy', function () {
+        offFocusChanged();
+      });
+
+      function updateErrorStatus () {
+        var hasSchemaErrors = $scope.validator.hasError(['fields', $scope.field.id]);
+        var hasControlErrors = _.any(invalidControls);
+        $scope.fieldHasErrors = hasSchemaErrors || hasControlErrors;
+      }
 
       function getActiveLocaleCodes () {
         return _.pluck(TheLocaleStore.getActiveLocales(), 'internal_code');
@@ -49,30 +88,19 @@ angular.module('cf.app')
 
       function updateLocales () {
         var field = $scope.widget.field;
-        var locales = _(getFieldLocales(field))
-          .union(getErrorLocales(field))
-          .filter(_.isObject)
-          .uniq('internal_code')
-          .value();
-        $scope.locales = locales;
+
+        $scope.locales = _.filter(getFieldLocales(field), function (locale) {
+          var isActive = TheLocaleStore.isLocaleActive(locale);
+          var hasError = $scope.validator.hasError(['fields', field.id, locale.internal_code]);
+          return isActive || hasError;
+        });
       }
 
       function getFieldLocales (field) {
         if (field.localized) {
-          return TheLocaleStore.getActiveLocales();
+          return TheLocaleStore.getPrivateLocales();
         } else {
           return [TheLocaleStore.getDefaultLocale()];
-        }
-      }
-
-      function getErrorLocales (field) {
-        if ($scope.errorPaths) {
-          var availableLocales = TheLocaleStore.getPrivateLocales();
-          return _.map($scope.errorPaths[field.id], function (code) {
-            return _.find(availableLocales, {internal_code: code});
-          });
-        } else {
-          return [];
         }
       }
     }]

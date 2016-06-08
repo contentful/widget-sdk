@@ -23,7 +23,7 @@ angular.module('contentful')
     name: 'content_model',
     url: '/content_model',
     ncyBreadcrumb: {
-      label: 'Content Model',
+      label: 'Content model explorer',
       parent: 'spaces.detail.api.home'
     },
     controller: ['$scope', function ($scope) {
@@ -37,9 +37,10 @@ angular.module('contentful')
     name: 'list',
     url: '/',
     ncyBreadcrumb: {
-      label: 'Delivery Keys',
+      label: 'Delivery keys',
       parent: 'spaces.detail.api.home'
     },
+    loadingText: 'Loading delivery keys...',
     template: '<div cf-api-key-list class="workbench entity-list"></div>',
     controller: ['$scope', function ($scope) {
       $scope.context = {};

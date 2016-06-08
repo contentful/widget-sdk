@@ -9,7 +9,7 @@
     .column-lists
       ul.u-list.displayed-fields
         li.non-customizable(ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden")
-          p Content Type
+          p Content type
           a.close-button(ng-click="toggleContentType($event)")
         li.non-customizable
           p Name
@@ -23,11 +23,11 @@
 
       hr(ng-hide="hiddenFields.length == 0")
 
-      h3(ng-hide="hiddenFields.length == 0") Available Columns
+      h3(ng-hide="hiddenFields.length == 0") Available columns
       ul.u-list.hidden-fields(ng-hide="hiddenFields.length == 0")
         li(ng-show="!context.view.contentTypeId && context.view.contentTypeHidden")
           a(ng-click="toggleContentType($event)")
-            | Content Type
+            | Content type
         li(ng-repeat="field in hiddenFields track by field.id")
           a(ng-if="field.type != 'Object' && !field.disabled" ng-click="displayField($event, field)")
             | {{field.name}}

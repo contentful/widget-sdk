@@ -24,16 +24,22 @@ mixin field-permission-info
       | This field is disabled
 
 mixin field-locale-errors
-  div.form-box-error(ng-if="fieldLocale.errors")
-    ul
-      li(ng-repeat="error in fieldLocale.errors")
-        | {{ error.message }}
+  ul.cfnext-form__field-errors(ng-if="fieldLocale.errors")
+    li(
+      ng-repeat="error in fieldLocale.errors"
+      role="status"
+      aria-roledescription="field-locale-schema"
+      data-error-code="entry.schema.{{error.name}}")
+      | {{ error.message }}
 
 div.entity-editor__field-group(
+  data-test-id="entity-field-controls"
   data-field-id="{{field.id}}"
   data-field-api-name="{{field.apiName}}"
   data-field-type="{{field.type}}"
-  data-field-items-type="{{field.items.type}}")
+  data-field-items-type="{{field.items.type}}"
+  aria-current="{{fieldHasFocus}}"
+  aria-invalid="{{fieldHasErrors}}")
 
   div.entity-editor__field-locale(
     ng-repeat="locale in locales track by locale.internal_code"
@@ -43,21 +49,24 @@ div.entity-editor__field-group(
     div.entity-editor__field-heading
       label(data-test-id="field-locale-label")
         | {{ field.name }}
-        span(ng-if="field.required && !locale.optional") &#32;(required)
+        span(ng-if="fieldLocale.isRequired") &#32;(required)
         span(ng-if="locales.length > 1")
           | &#32;&ndash; {{locale.name}}
       +field-permission-info
 
     div.entity-editor__control-group
+      // @todo remove ct-field-editor directive when fieldData won't be used anymore
+      // (widgets in asset editor already don't use fieldData)
       cf-widget-renderer.entity-editor__control(
         cf-focus-ot-input="hasInitialFocus"
         ot-path="['fields', field.id, locale.internal_code]"
-        cf-field-editor="entry.data.fields[field.id][locale.internal_code]"
+        cf-field-editor="entry && entry.data.fields[field.id][locale.internal_code]"
         cf-widget-api)
       +editor-field-collaborators
     +field-locale-errors
 
   div.entity-editor__field-hint(
     ng-if="showHelpText"
+    role="note"
     data-test-id="field-hint")
     | {{helpText}}

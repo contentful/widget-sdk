@@ -254,6 +254,8 @@ $btn-caution-bg = linear-gradient(to top, $colors.red-dark, $colors.red-light)
 /**
 Plain Action Button
 
+TODO: Support `button.cfnext-btn-plain.is-loading`, and `button.cfnext-btn-plain(disabled)`
+
 Markup:
 button.cfnext-btn-primary-action
   | One
@@ -278,11 +280,16 @@ Block button
 
 Markup:
 p
-  | Click here
+  | Normal
   button.cfnext-btn-primary-action.x--block Action Button
 p
   | Loading
   button.cfnext-btn-primary-action.x--block.is-loading Loading
+p
+  | Icon
+  button.cfnext-btn-primary-action.x--block
+    cf-icon.btn-icon.inverted(name="plus")
+    | Action
 
 Styleguide 4.6
 */
@@ -326,9 +333,13 @@ Link Style Button
 Markup:
 button.cfnext-btn-link
   | Action
-p
 button.cfnext-btn-link(disabled)
   | Disabled
+button.cfnext-btn-link.is-loading
+  | Loading
+button.cfnext-btn-link
+  cf-icon.btn-icon(name="plus")
+  | Action
 
 Styleguide 4.7
 */
@@ -359,6 +370,9 @@ button.cfnext-btn-action
   | Action
 button.cfnext-btn-secondary-action
   cf-icon.btn-icon.inverted(name="plus")
+  | Action
+button.cfnext-btn-plain
+  cf-icon.btn-icon(name="plus")
   | Action
 button.cfnext-btn-action--large-popout-icon
   cf-icon(name="new-ct")

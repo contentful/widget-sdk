@@ -8,6 +8,8 @@ describe('FormWidgetsController#widgets', function () {
 
     scope = this.$inject('$rootScope').$new();
 
+    scope.validator = {hasError: sinon.stub().returns(false)};
+
     field = {
       id: 'foo',
       apiName: 'foo'
@@ -55,7 +57,8 @@ describe('FormWidgetsController#widgets', function () {
     });
 
     it('shows the field if it has errors', function () {
-      scope.errorPaths = {'foo': true};
+      scope.validator.errors = {};
+      scope.validator.hasError.returns(true);
       this.$apply();
       expect(scope.widgets.length).toBe(1);
     });

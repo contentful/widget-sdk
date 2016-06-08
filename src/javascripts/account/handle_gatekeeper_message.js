@@ -12,6 +12,7 @@ angular.module('contentful')
   var spaceTools         = $injector.get('spaceTools');
   var tokenStore         = $injector.get('tokenStore');
   var ReloadNotification = $injector.get('ReloadNotification');
+  var logger = $injector.get('logger');
 
   return function handleGatekeeperMessage(data) {
     var match = makeMessageMatcher(data);
@@ -64,8 +65,18 @@ angular.module('contentful')
   }
 
   function updateState(data) {
-    var suffix = data.path.match(/account\/(.*$)/);
-    TheAccountView.silentlyChangeState(suffix && suffix[1]);
+    var valid = _.isObject(data) && _.isString(data.path);
+
+    // @todo in a long run we want to detect when GK is sending
+    // "update location" message w/o a path
+    if (valid) {
+      var suffix = data.path.match(/account\/(.*)$/);
+      TheAccountView.silentlyChangeState(suffix && suffix[1]);
+    } else {
+      logger.logError('Path for location update not given', {
+        gatekeeperData: data
+      });
+    }
   }
 
   function updateToken(data) {

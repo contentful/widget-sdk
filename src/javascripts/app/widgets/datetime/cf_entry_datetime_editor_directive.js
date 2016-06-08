@@ -69,6 +69,12 @@ angular.module('cf.app')
         $scope.isDisabled = isDisabled;
       });
 
+      $scope.$watch(function () {
+        return dateController.$valid && timeController.$valid;
+      }, function (isValid) {
+        field.setInvalid(!isValid);
+      });
+
       var datepicker = Datepicker.create({
         field: $el.find('[data-datepicker-slot]').get(0),
         trigger: dateInputEl.get(0),
@@ -94,17 +100,19 @@ angular.module('cf.app')
         datepicker.destroy();
       });
 
-      $scope.$watchCollection('data.date', function (date) {
-        if (!date) {
+      // This is emitted whenever the user changes on of the input fields.
+      $scope.$on('ngModel:update', function () {
+        if (!$scope.data.date) {
           $scope.data.time = null;
         }
         // Prevent calling the datepicker’s `onSelect` method which
         // would lead to an infinite loop.
-        datepicker.setMoment(date, true);
-      });
+        datepicker.setMoment($scope.data.date, true);
 
-      $scope.$watchCollection('data', function (data) {
-        var value = Data.buildFieldValue(data, $scope.uses12hClock, $scope.usesTime, $scope.usesTimezone);
+        var value = Data.buildFieldValue(
+          $scope.data,
+          $scope.uses12hClock, $scope.usesTime, $scope.usesTimezone
+        );
         if (value.valid === null) {
           field.removeValue();
         } else if (value.valid) {

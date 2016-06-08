@@ -7,7 +7,7 @@ angular.module('contentful')
   var segmentation = $injector.get('webhookSegmentation');
 
   var LABELS = {
-    ContentType: 'Content Type',
+    ContentType: 'Content type',
     Entry: 'Entry',
     Asset: 'Asset',
     create: 'Create',

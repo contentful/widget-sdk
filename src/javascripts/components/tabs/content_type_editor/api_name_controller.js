@@ -52,7 +52,7 @@ angular.module('contentful')
                'Change the field ID only if you plan to update your client applications ' +
                'as well.</p>' +
                '<p>Consult our <a href="' + getKnowledgeBaseUrl('id_change') + '">' +
-               'Knowledge base</a> for more information on updating published Content Types.</p>',
+               'knowledge base</a> for more information on updating published content types.</p>',
       html: true,
       scope: $scope,
       confirmLabel: 'Edit field ID'

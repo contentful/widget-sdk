@@ -331,4 +331,14 @@ describe('cfWidgetApi directive', function () {
       sinon.assert.calledWithExactly(cb, 'ERRORS');
     });
   });
+
+  describe('#field.setInvalid()', function () {
+    it('delegates to $scope.fieldController with locale code', function () {
+      var setInvalid = sinon.stub();
+      this.scope.fieldController = {setInvalid: setInvalid};
+      this.scope.locale.code = 'LC';
+      this.widgetApi.field.setInvalid('VAL');
+      sinon.assert.calledWith(setInvalid, 'LC', 'VAL');
+    });
+  });
 });

@@ -36,7 +36,7 @@ angular.module('contentful')
     range: 'Specify allowed number range',
     dateRange: 'Specify allowed date range',
     regexp: 'Match a specific pattern',
-    in: 'Predefined Values',
+    in: 'Predefined values',
     linkContentType: 'Specify allowed entry type',
     linkMimetypeGroup: 'Specify allowed file types',
     assetFileSize: 'Specify allowed file size',
@@ -206,7 +206,7 @@ angular.module('contentful')
   function getValidationLabel(field, type) {
     if (field.type == 'Array' && type == 'size') {
       var itemType = field.items.type == 'Link' ? field.items.linkType : field.items.type;
-      return 'Specify number of ' + pluralize(itemType);
+      return 'Specify number of ' + pluralize(itemType.toLowerCase());
     }
 
     var label = validationLabels[type];
