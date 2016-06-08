@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+# Installs system dependencies on Ubuntu 14.04. That is 'firefox' and
+# 'unzip'.
+
+packages=()
+if [[ ! -x $(which firefox) ]]; then
+  packages+=(firefox)
+fi
+
+if [[ ! -x $(which unzip) ]]; then
+  packages+=(unzip)
+fi
+
+if [[ ${#packages[@]} -gt 0 ]]; then
+  echo ${packages[@]}
+  sudo apt-get install "${packages[@]}"
+fi
