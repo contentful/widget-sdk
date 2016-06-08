@@ -23,7 +23,6 @@ angular.module('contentful')
   return {
     restrict: 'A',
     priority: 600,
-    require: '^otDocFor',
     scope: true,
     controller: 'OtPathController',
     controllerAs: 'otSubDoc'

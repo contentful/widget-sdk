@@ -12,6 +12,7 @@ describe('Entry Editor Controller', function () {
     module('contentful/test', function ($provide) {
       $provide.removeControllers(
         'FormWidgetsController',
+        'entityEditor/Document',
         'entityEditor/LocalesController',
         'entityEditor/StatusNotificationsController'
       );
@@ -30,12 +31,6 @@ describe('Entry Editor Controller', function () {
 
       var OtDoc = this.$inject('mocks/OtDoc');
       var doc = new OtDoc();
-      scope.otDoc = {
-        doc: doc,
-        open: sinon.stub(),
-        close: sinon.stub()
-      };
-
       var ctData = cfStub.contentTypeData();
       scope.contentType = {data: ctData, getId: _.constant(ctData.sys.id)};
       scope.context = {};
@@ -48,6 +43,13 @@ describe('Entry Editor Controller', function () {
 
       var $controller = this.$inject('$controller');
       $controller('EntryEditorController', {$scope: scope});
+
+      scope.otDoc = {
+        doc: doc,
+        open: sinon.stub(),
+        close: sinon.stub()
+      };
+
       return scope;
     };
 

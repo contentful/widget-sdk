@@ -1,34 +1,11 @@
 'use strict';
 
-angular.module('contentful')
-
-/**
- * @ngdoc directive
- * @name otDocFor
- * @description
- * See the otDocForController for more details on what this directive provides
- *
- * @usage[html]
- * <... ot-doc-for="entity">
- */
-.directive('otDocFor', function () {
-  return {
-    restrict: 'A',
-    priority: -100,
-    controller: 'otDocForController'
-  };
-})
+angular.module('cf.app')
 
 /**
  * @ngdoc type
- * @name otDoc
- * @property {ShareJSDoc} doc
- * @property {otDoc.state} state
-*/
-
-/**
- * @ngdoc type
- * @name otDoc.state
+ * @module cf.app
+ * @name Document
  * @property {boolean} disabled
  * @property {boolean} editable
  * @property {boolean} error
@@ -36,34 +13,38 @@ angular.module('contentful')
 
 /**
  * @ngdoc type
- * @name otDocForController
+ * @module cf.app
+ * @name Document
  * @description
- * Installs a otDoc property on the scope that corresponds to an entity
+ * Used to edit an entry or asset through ShareJS
+ *
  * It emits the following events:
  *
  * - otRemoteOp(op), broadcast:
  *   distribute every incoming remote ot operation to the component
  * - otBecameEditable(entity), emit:
- *   Whenever otDoc.state.editable becomes true
+ *   Whenever controller.state.editable becomes true
  * - otBecameReadonly(entity), emit:
- *   Whenever otDoc.state.editable becomes false
+ *   Whenever controller.state.editable becomes false
  *
  * It also ensures that the version in the entity is always up-to-date
- * @property {otDoc} otDoc
+ *
+ * @property {Document.State} state
  */
-.controller('otDocForController', ['$scope', '$attrs', '$injector', function OtDocForController ($scope, $attrs, $injector) {
+.controller('entityEditor/Document',
+['$scope', '$injector', 'entity',
+function ($scope, $injector, entity) {
   var $q = $injector.get('$q');
   var ShareJS = $injector.get('ShareJS');
   var logger = $injector.get('logger');
   var defer = $injector.get('defer');
   var moment = $injector.get('moment');
   var TheLocaleStore = $injector.get('TheLocaleStore');
-
-  var entity = $scope.$eval($attrs.otDocFor);
+  var controller = this;
 
   var shouldOpen = false;
 
-  var otDoc = {
+  Object.assign(controller, {
     doc: undefined,
     state: {
       editable: false,
@@ -75,9 +56,7 @@ angular.module('contentful')
     removeValueAt: removeValueAt,
     open: open,
     close: close
-  };
-
-  $scope.otDoc = otDoc;
+  });
 
   // If the document connection state changes, this watcher is triggered
   // Connection failures during editing are handled from this point onwards.
@@ -86,15 +65,20 @@ angular.module('contentful')
   }, function (shouldOpen) {
     if (shouldOpen) {
       openDoc();
-    } else if (otDoc.doc) {
-      closeDoc(otDoc.doc);
+    } else if (controller.doc) {
+      closeDoc(controller.doc);
     }
   });
 
   // Watch Doc internals to determine if we have sent operations to the
   // server that have yet to be acknowledged.
-  $scope.$watchGroup(['otDoc.doc.inflightOp', 'otDoc.doc.pendingOp'], function (ops) {
-    otDoc.state.saving = _.any(ops);
+  // TODO Instead of watching trigger the update manually on some
+  // events on the document.
+  $scope.$watchGroup([
+    function () { return controller.doc && controller.doc.inflightOp; },
+    function () { return controller.doc && controller.doc.pendingOp; }
+  ], function (ops) {
+    controller.state.saving = _.any(ops);
   });
 
   $scope.$watch(function () {
@@ -104,15 +88,15 @@ angular.module('contentful')
     // opening. Therefore we only set the error to `true` and to to
     // `failed`.
     if (failed) {
-      otDoc.state.error = true;
+      controller.state.error = true;
     }
   });
 
   $scope.$on('$destroy', handleScopeDestruction);
 
   function getValueAt (path) {
-    if (otDoc.doc) {
-      return ShareJS.peek(otDoc.doc, path);
+    if (controller.doc) {
+      return ShareJS.peek(controller.doc, path);
     } else {
       return dotty.get(entity.data, path);
     }
@@ -123,7 +107,7 @@ angular.module('contentful')
       return removeValueAt(path);
     }
     // TODO this should actually reject when doc is not available
-    var doc = otDoc.doc;
+    var doc = controller.doc;
     if (doc) {
       // We only test for equality when the value is guaranteed to be
       // equal. Other wise the some properties might have changed.
@@ -143,7 +127,7 @@ angular.module('contentful')
       // value along the path does not exist.
       // TODO this should actually reject when doc is not available
       try {
-        otDoc.doc.removeAt(path, cb);
+        controller.doc.removeAt(path, cb);
       } catch (e) {
         cb();
       }
@@ -171,13 +155,13 @@ angular.module('contentful')
       // Check a second time if we have disconnected or the document
       // has been disabled.
       if (shouldOpenDoc()) {
-        otDoc.state.error = false;
+        controller.state.error = false;
         setupOtDoc(doc);
       } else {
         closeDoc(doc);
       }
     }, function (err) {
-      otDoc.state.error = true;
+      controller.state.error = true;
       handleOtDocOpeningFailure(err, entity);
     });
   }
@@ -220,11 +204,11 @@ angular.module('contentful')
   }
 
   function resetOtDoc () {
-    if (otDoc.doc) {
-      removeListeners(otDoc.doc);
+    if (controller.doc) {
+      removeListeners(controller.doc);
     }
-    delete otDoc.doc;
-    otDoc.state.editable = false;
+    delete controller.doc;
+    controller.state.editable = false;
     $scope.$emit('otBecameReadonly', entity);
   }
 
@@ -233,8 +217,8 @@ angular.module('contentful')
     filterDeletedLocales(doc.snapshot);
     filterDeletedFields(doc.snapshot);
     installListeners(doc);
-    otDoc.doc = doc;
-    otDoc.state.editable = true;
+    controller.doc = doc;
+    controller.state.editable = true;
     $scope.$emit('otBecameEditable', entity);
     $scope.$broadcast('otDocReady', doc);
     otUpdateEntityData();
@@ -275,17 +259,17 @@ angular.module('contentful')
   }
 
   function updateHandler () {
-    if (otDoc.doc) {
+    if (controller.doc) {
       $scope.$apply(function () {
-        entity.setVersion(otDoc.doc.version);
+        entity.setVersion(controller.doc.version);
         entity.data.sys.updatedAt = moment().toISOString();
       });
     }
   }
 
   function otUpdateEntityData () {
-    if (otDoc.doc) {
-      var data = _.cloneDeep(otDoc.doc.snapshot);
+    if (controller.doc) {
+      var data = _.cloneDeep(controller.doc.snapshot);
       if (!data) {
         throw new Error('Failed to update entity: data not available');
       }
@@ -293,18 +277,18 @@ angular.module('contentful')
         throw new Error('Failed to update entity: sys not available');
       }
 
-      if (otDoc.doc.version > entity.data.sys.version) {
+      if (controller.doc.version > entity.data.sys.version) {
         data.sys.updatedAt = moment().toISOString();
       } else {
         data.sys.updatedAt = entity.data.sys.updatedAt;
       }
-      data.sys.version = otDoc.doc.version;
+      data.sys.version = controller.doc.version;
       entity.update(data);
     } else {
       logger.logSharejsError('otUpdateEntityData did not update', {
         data: {
           entity: entity,
-          otDoc: $scope.otDoc.doc
+          otDoc: controller.doc
         }
       });
     }
@@ -338,7 +322,7 @@ angular.module('contentful')
     // changes the document. We therefore must use `$applyAsync()`
     // instead of `$apply()`.
     $scope.$applyAsync(function () {
-      $scope.$broadcast('otChange', $scope.otDoc.doc, op);
+      $scope.$broadcast('otChange', controller.doc, op);
     });
   }
 
@@ -348,9 +332,9 @@ angular.module('contentful')
   }
 
   function handleScopeDestruction () {
-    if (otDoc.doc) {
-      closeDoc(otDoc.doc);
-      resetOtDoc(otDoc.doc);
+    if (controller.doc) {
+      closeDoc(controller.doc);
+      resetOtDoc(controller.doc);
     }
   }
 
