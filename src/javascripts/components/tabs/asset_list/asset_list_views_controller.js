@@ -1,65 +1,28 @@
 'use strict';
 
-angular.module('contentful').controller('AssetListViewsController',
-['$scope', '$controller', 'mimetype', 'random', 'preserveState',
-function ($scope, $controller, mimetype, random, preserveState) {
+angular.module('contentful')
+.controller('AssetListViewsController',
+['$scope', '$injector', 'preserveState', function ($scope, $injector, preserveState) {
+
+  var $controller = $injector.get('$controller');
+  var uiConfig = $injector.get('uiConfig');
 
   return $controller('ListViewsController', {
     $scope: $scope,
     getBlankView: getBlankView,
     viewCollectionName: 'assetListViews',
-    generateDefaultViews: generateDefaultViews,
+    generateDefaultViews: uiConfig.resetAssets,
     preserveStateAs: preserveState ? 'assets' : null,
     resetList: function () {
       $scope.searchController.resetAssets(true);
     }
   });
 
-  function getBlankView() {
+  function getBlankView () {
     return {
       id: null,
       title: 'New View',
       searchTerm: null
     };
   }
-
-  function generateDefaultViews() {
-    return [
-      {
-        id: 'default',
-        title: 'Views',
-        views: [{
-          id: random.id(),
-          title: 'All'
-        }]
-      },
-      {
-        id: random.id(),
-        title: 'Status',
-        views: [
-          {title: 'Published', searchTerm: 'status:published', id: random.id()},
-          {title: 'Changed',   searchTerm: 'status:changed'  , id: random.id()},
-          {title: 'Draft',     searchTerm: 'status:draft'    , id: random.id()},
-          {title: 'Archived',  searchTerm: 'status:archived' , id: random.id()}
-        ]
-      },
-      {
-        id: random.id(),
-        title: 'File Type',
-        views: fileTypeViews()
-      }
-    ];
-
-    function fileTypeViews() {
-      return _.map(mimetype.getGroupNames(), function (name, label) {
-        return {
-          title: name,
-          searchTerm: 'type:'+label,
-          id: random.id()
-        };
-      });
-    }
-
-  }
-
 }]);
