@@ -37,7 +37,7 @@ angular.module('contentful')
       }, {});
 
       var widgetAPI = new WidgetAPI(
-        spaceContext.space, fields, scope.entry.data,
+        spaceContext.cma, fields, scope.entry.data,
         {field: scope.field, locale: scope.locale}, iframe
       );
 

@@ -12,9 +12,10 @@ describe('data/ApiClient', function () {
       });
     });
 
-
+    var SpaceEndpoint = this.$inject('data/spaceEndpoint');
     var Client = this.$inject('data/ApiClient');
-    this.client = new Client('SPACE', 'TOKEN');
+    var makeRequest = SpaceEndpoint.create('TOKEN', '//api.test.local', 'SPACE');
+    this.client = new Client(makeRequest);
   });
 
   afterEach(function () {
@@ -56,7 +57,7 @@ describe('data/ApiClient', function () {
       return this.client.createEntry('CTID', entry)
       .then(assertRequestResponse('DATA', {
         method: 'POST',
-        url: '//api.test.local/spaces/SPACE/entries/',
+        url: '//api.test.local/spaces/SPACE/entries',
         data: entry,
         headers: {
           'X-Contentful-Content-Type': 'CTID',
