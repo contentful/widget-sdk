@@ -98,7 +98,7 @@ angular.module('contentful')
           });
         } else if (p.delete) {
           return $q.denodeify(function (cb) {
-            doc.del(p.delete[1], p.delete[0], cb);
+            doc.del(p.delete[0], p.delete[1], cb);
           });
         }
       });
