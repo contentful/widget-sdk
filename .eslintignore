@@ -439,7 +439,6 @@ src/javascripts/markdown_editor/markdown_preview.js
 src/javascripts/markdown_editor/markdown_requirements.js
 src/javascripts/markdown_editor/markdown_special_characters.js
 src/javascripts/markdown_editor/markdown_tree.js
-src/javascripts/markdown_editor/cf_markdown_editor_directive.js
 src/javascripts/markdown_editor/cf_zenmode_directive.js
 src/javascripts/markdown_editor/insert_asset_dialog_controller.js
 src/javascripts/markdown_editor/markdown_codemirror_wrapper.js

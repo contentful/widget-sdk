@@ -2,12 +2,12 @@
 
 angular.module('contentful').directive('cfMarkdownEditor', ['$injector', function ($injector) {
 
-  var $timeout         = $injector.get('$timeout');
-  var LazyLoader       = $injector.get('LazyLoader');
-  var MarkdownEditor   = $injector.get('MarkdownEditor');
-  var actions          = $injector.get('MarkdownEditor/actions');
+  var $timeout = $injector.get('$timeout');
+  var LazyLoader = $injector.get('LazyLoader');
+  var MarkdownEditor = $injector.get('MarkdownEditor');
+  var actions = $injector.get('MarkdownEditor/actions');
   var startLivePreview = $injector.get('MarkdownEditor/preview');
-  var notification     = $injector.get('notification');
+  var notification = $injector.get('notification');
 
   return {
     restrict: 'E',
@@ -15,11 +15,11 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
     scope: {},
     require: '^cfWidgetApi',
     link: function (scope, el, attrs, api) {
-      var field       = api.field;
-      var textarea    = el.find('textarea').get(0);
-      var preview     = el.find('.markdown-preview').first();
+      var field = api.field;
+      var textarea = el.find('textarea').get(0);
+      var preview = el.find('.markdown-preview').first();
       var currentMode = 'md';
-      var editor      = null;
+      var editor = null;
       var childEditor = null;
 
       // @todo find a better way of hiding header in Zen Mode
@@ -27,15 +27,15 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
       scope.preview = {};
       scope.setMode = setMode;
-      scope.inMode  = inMode;
+      scope.inMode = inMode;
       scope.canEdit = canEdit;
 
       // simple bus that is used to synchronize between Zen Mode and main editor
       scope.zenApi = {
-        syncToParent:  syncFromChildToParent,
+        syncToParent: syncFromChildToParent,
         registerChild: registerChildEditor,
-        getParent:     function () { return editor; },
-        toggle:        toggleZenMode
+        getParent: function () { return editor; },
+        toggle: toggleZenMode
       };
 
       // No need to handle response:
@@ -87,7 +87,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         scope.preview = _.extend(preview, {
           field: scope.field,
           value: editor.getContent(),
-          hasCrashed: err ? true : false
+          hasCrashed: !!err
         });
       }
 
