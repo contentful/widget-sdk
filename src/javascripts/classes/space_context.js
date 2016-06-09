@@ -285,25 +285,69 @@ angular.module('contentful')
 
     /**
      * @ngdoc method
+     * @name spaceContext#localizedValue
+     * @param {Object} field Object with locales as keys.
+     * @param {string?} localeCode
+     * @returns {Object?}
+     * @description
+     * Returns a localized value from a field. Optionally takes a localeCode and
+     * falls back to the space's default locale or any other defined locale.
+     */
+    localizedValue: function (field, localeCode) {
+      if (!field) {
+        return;
+      }
+      var defaultLocale = this.space && this.space.getDefaultLocale();
+      var defaultLocaleCode = defaultLocale && defaultLocale.internal_code;
+      var firstLocaleCode = Object.keys(field)[0];
+
+      localeCode = localeCode || defaultLocaleCode || firstLocaleCode;
+
+      return field[localeCode] || field[defaultLocaleCode] || field[firstLocaleCode];
+    },
+
+    /**
+     * @ngdoc method
      * @name spaceContext#localizedField
      * @param {Object} entity
-     * @param {Array} path
+     * @param {string|Array} path
      * @param {string} localeCode
-     * @return {Object}
+     * @return {Object?}
      * @description
      * Given an entity (entry/asset), and a field path, returns the field
-     * content for a given locale
+     * content for a given locale.
     */
     localizedField: function (entity, path, localeCode) {
       var getField = $parse(path);
       var field = getField(entity);
-      var defaultLocale = this.space && this.space.getDefaultLocale();
-      var defaultLocaleCode = defaultLocale && defaultLocale.internal_code;
-      var firstLocaleCode = _.first(_.keys(field));
 
-      localeCode = localeCode || defaultLocaleCode || firstLocaleCode;
+      return this.localizedValue(field, localeCode);
+    },
 
-      return field && (field[localeCode] || field[defaultLocaleCode] || field[firstLocaleCode]);
+    /**
+     * @ngdoc method
+     * @name spaceContext#findLocalizedField
+     * @param {Object} entity
+     * @param {string?} localeCode
+     * @param {Object|function} fieldDefinition Part of a field definition, e.g.
+     *        `{type: 'Link', linkType: 'Entry'}`.
+     * @returns {Object?}
+     * @description
+     * Given an entity (entry/asset), and part of a field definition, returns
+     * the field content for a given locale.
+     */
+    findLocalizedField: function (entity, localeCode, fieldDefinition) {
+      fieldDefinition = fieldDefinition || localeCode;
+
+      var contentType = this.publishedTypeForEntry(entity);
+      if (!contentType) {
+        return;
+      }
+      var field = _.find(contentType.data.fields, fieldDefinition);
+      if (field) {
+        var fieldPath = 'data.fields.' + field.id;
+        return this.localizedField(entity, fieldPath, localeCode);
+      }
     },
 
     /**
@@ -344,25 +388,24 @@ angular.module('contentful')
      * @ngdoc method
      * @name spaceContext#entityDescription
      * @param {Client.Entity} entry
+     * @param {string?} localeCode
      * @description
      * Gets the localized value of the first text field that is not the
      * display field. May return undefined.
      *
      * @return {string?}
      */
-    entityDescription: function (entity) {
+    entityDescription: function (entity, localeCode) {
       var contentType = this.publishedTypeForEntry(entity);
       if (!contentType) {
         return;
       }
+      var displayFieldId = contentType.data.displayField;
 
-      var field = _.find(contentType.data.fields, function (field) {
-        return field.id !== contentType.data.displayField && field.type === 'Text';
+      return this.findLocalizedField(entity, localeCode, function (field) {
+        return field.type === 'Text' &&
+          field.id !== displayFieldId
       });
-
-      if (field) {
-        return this.localizedField(entity, 'data.fields.' + field.id);
-      }
     },
 
     /**

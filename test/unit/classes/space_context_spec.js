@@ -583,50 +583,128 @@ describe('spaceContext', function () {
     });
   });
 
-  describe('#entityDescription()', function () {
+  describe('finding entity fields', function () {
+    const ASSET_LINK_XX = {
+      sys: {id: 'ASSET_1'}
+    };
+    const ASSET_LINK_IT = {
+      sys: {id: 'ASSET_2'}
+    };
 
-    it('returns value of first text field', function () {
-      var ct = {
+    beforeEach(function () {
+      this.default_locale = {internal_code: 'xx'};
+      this.spaceContext.space = {
+        getDefaultLocale: sinon.stub().returns(this.default_locale)
+      };
+
+      this.fields = [
+        {type: 'Symbol', id: 'SYMBOL'},
+        {type: 'Text', id: 'TEXT'},
+        {type: 'Link', linkType: 'Entry', id: 'ENTRY'},
+        {type: 'Link', linkType: 'Asset', id: 'ASSET'},
+        {type: 'Symbol', id: 'SYMBOL 2'}
+      ];
+      this.ct = {
         data: {
-          fields: [
-            {type: 'Text', id: 'DESC'}
-          ]
+          fields: this.fields
         }
       };
-      this.spaceContext.publishedTypeForEntry = sinon.stub().returns(ct);
 
-      var entry = {
+      this.entry = {
         data: {
           fields: {
-            'DESC': {en: 'VAL'}
+            SYMBOL: {xx: 'SYMBOL VAL'},
+            TEXT: {en: 'VAL EN', xx: 'VAL', de: 'VAL DE'},
+            ASSET: {xx: ASSET_LINK_XX, it: ASSET_LINK_IT}
           }
         }
       };
-      var desc = this.spaceContext.entityDescription(entry);
-      expect(desc).toEqual('VAL');
+
+      this.spaceContext.publishedTypeForEntry =
+        sinon.stub().withArgs(this.entry).returns(this.ct);
     });
 
-    it('skips display field', function () {
-      var ct = {
-        data: {
-          displayField: 'DESC',
-          fields: [
-            {type: 'Text', id: 'DESC'}
-          ]
-        }
-      };
-      this.spaceContext.publishedTypeForEntry = sinon.stub().returns(ct);
+    describe('#findLocalizedField()', function () {
+      it('returns undefined if no field can be found', function () {
+        const val = this.spaceContext.findLocalizedField(
+          this.entry, {type: 'AnotherType'});
 
-      var desc = this.spaceContext.entityDescription({});
-      expect(desc).toEqual(undefined);
+        expect(val).toBe(undefined);
+      });
+
+      it('returns value of first matching field`s value', function () {
+        const val = this.spaceContext.findLocalizedField(
+          this.entry, {type: 'Symbol'});
+
+        expect(val).toBe('SYMBOL VAL');
+      });
+
+      it('returns value for given locale', function () {
+        const val = this.spaceContext.findLocalizedField(
+          this.entry, 'it', {type: 'Link', linkType: 'Asset'});
+
+        expect(val).toBe(ASSET_LINK_IT);
+      });
+
+      it('returns value for enity`s first locale code', function () {
+        delete this.entry.data.fields.TEXT.xx; // Delete default field
+
+        const val = this.spaceContext.findLocalizedField(
+          this.entry, {type: 'Text'});
+
+        expect(val).toBe('VAL EN');
+      });
+
+      it('accepts a callback for the search', function () {
+        var fields = [];
+        const val = this.spaceContext.findLocalizedField(
+          this.entry, function (field) {
+            fields.push(field)
+          });
+
+        expect(fields).toEqual(this.fields);
+        expect(val).toEqual(undefined);
+      });
     });
 
-    it('returns undefined if content type is not available', function () {
-      this.spaceContext.publishedTypeForEntry = sinon.stub().returns(null);
-      var desc = this.spaceContext.entityDescription({});
-      expect(desc).toEqual(undefined);
-    });
+    describe('#entityDescription()', function () {
+      it('returns value of first text field, falls back to default locale', function () {
+        const desc = this.spaceContext.entityDescription(this.entry);
+        expect(desc).toBe('VAL');
+      });
 
+      it('returns value of first text field for given locale', function () {
+        const desc = this.spaceContext.entityDescription(this.entry, 'de');
+        expect(desc).toBe('VAL DE');
+      });
+
+      describe('skips display field', function () {
+        beforeEach(function () {
+          this.ct.data.displayField = 'TEXT';
+        });
+
+        it('returns undefined if there is not other field', function () {
+          const desc = this.spaceContext.entityDescription(this.entry);
+          expect(desc).toBe(undefined);
+        });
+
+        it('returns value of the next text field', function () {
+          this.ct.data.fields.push({type: 'Text', id: 'TEXT_2'});
+          this.entry.data.fields.TEXT_2 = {xx: 'VAL 2', de: 'VAL 2 DE'};
+
+          const desc = this.spaceContext.entityDescription(this.entry);
+          expect(desc).toBe('VAL 2');
+          const descDe = this.spaceContext.entityDescription(this.entry, 'de');
+          expect(descDe).toBe('VAL 2 DE');
+        });
+      });
+
+      it('returns undefined if content type is not available', function () {
+        this.spaceContext.publishedTypeForEntry = sinon.stub().returns(null);
+        const desc = this.spaceContext.entityDescription({});
+        expect(desc).toEqual(undefined);
+      });
+    });
   });
 
 });
