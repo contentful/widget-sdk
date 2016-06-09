@@ -1,0 +1,13 @@
+.copy-to-clipboard
+  color: $colors.text-mid
+  a
+    cursor: pointer
+    text-decoration: underline
+    color: $colors.text-mid
+  .fa-check
+    color: $colors.green-dark
+    opacity: 0
+    transition opacity .2s ease-in-out, margin-left .2s ease-in-out
+    &.x--is-visible
+      opacity: 1
+      margin-left: 5px

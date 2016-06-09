@@ -19,6 +19,13 @@ describe('Datetime Editor', function () {
     };
   });
 
+  it('does not update field value when value is set externally', function () {
+    this.compile();
+    this.fieldApi.onValueChanged.yield('2000-01-01T12:00');
+    this.$apply();
+    sinon.assert.notCalled(this.fieldApi.setValue);
+  });
+
   describe('rendering', function () {
     it('leaves date and time field empty without value', function () {
       var el = this.compile();

@@ -158,6 +158,10 @@ $entity-sidebar-content()
     > img
       display: block
 
+  &__link
+    cursor: pointer
+    text-decoration: underline
+
 
 /*
 Text profile
@@ -180,6 +184,8 @@ Styleguide sidebar.text-profile
 .entity-sidebar__text-profile
   p, ul
     margin-bottom: $rhythm(0.5)
+  ul
+    margin-left: 15px
   ul > li
-    list-style: disc inside
+    list-style: disc
     margin-bottom: $rhythm(0.25)

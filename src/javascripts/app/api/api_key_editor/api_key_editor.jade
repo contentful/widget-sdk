@@ -1,0 +1,236 @@
+header.workbench-header
+  cf-icon.workbench-header__icon(name="page-api")
+  h1.workbench-header__title
+    | {{ context.title | truncate:50 }}
+    cf-knowledge-base.workbench-header__kb-link(target="api_key")
+
+  .workbench-header__actions
+    button.cfnext-btn-secondary-action(type="button"
+      ng-click="preferences.toggleAuxPanel()"
+      ng-class="{active: preferences.showAuxPanel}")
+      | Info
+    button.cfnext-btn-secondary-action.delete(type="button"
+      ng-show="apiKey.getId() && !isReadOnly()"
+      cf-context-menu-trigger
+      data-test-id="delete-api-key")
+      | Delete
+    .delete-confirm.context-menu.x--arrow-right(cf-context-menu="bottom-left")
+      p You are about to delete {{context.title}}
+      button.cfnext-btn-caution(type="button" ng-click="delete()") Delete
+      button.cfnext-btn-secondary-action(type="button") Don't Delete
+    button.cfnext-btn-primary-action.save(type="submit"
+      ui-command="apiKeyEditorController.save"
+      cf-when-disabled="createApiKey")
+      | Save
+
+.workbench-main
+  .workbench-main__content.api-key-editor
+    .entity-editor__notification(ng-if="isReadOnly()" role="alert")
+      p You have read-only access to this API key. If you need to edit it please contact your administrator.
+    form.api-key-editor__form(name="apiKeyForm")
+      .api-key-editor__two-col
+        h3.api-key-editor__heading
+          | General information
+        .cfnext-form__field
+          label
+            strong Name
+          input.cfnext-form__input--full-size(
+            type="text"
+            ng-model="apiKey.data.name"
+            required
+            ng-disabled="isReadOnly()"
+            placeholder="My API key")
+        .cfnext-form__field
+          label
+            strong Description
+          textarea.cfnext-form__input--full-size(
+            ng-model="apiKey.data.description"
+            ng-disabled="isReadOnly()"
+            placeholder="API key for website")
+
+        h3.api-key-editor__heading
+          | API keys
+
+        .cfnext-form__field
+          label.api-key-editor__label
+            strong Production
+            span(ng-show="apiKey.data.accessToken && !isReadOnly()")
+              a.api-key-editor__label--right.u-locked-action(
+                ng-show="!regenerateProductionToken"
+                cf-context-menu-trigger
+                data-test-id="unlock-access-token-regeneration"
+                href="#")
+                i.fa.fa-lock
+                span &#32;Unlock
+              a.api-key-editor__label--right(
+                ng-click="regenerateAccessToken()"
+                ng-show="regenerateProductionToken"
+                href="#")
+                i.fa.fa-refresh
+                span &#32;Regenerate Access Token
+              .delete-confirm(cf-context-menu)
+                h2
+                  i.fa.fa-exclamation-circle
+                  |  Warning
+                p Regenerating the production API access token will break the connection to your apps
+                button.cfnext-btn-caution(type="button" ng-click="regenerateProductionToken=true") Unlock
+                | &nbsp;
+                button.cfnext-btn-secondary-action(type="button") Cancel
+
+          input.cfnext-form__input--full-size(
+            ng-hide="apiKey.data.accessToken"
+            type="text"
+            readonly="readonly"
+            value="The token will be automatically generated once you save the existing key.")
+          .cfnext-form__input-group--full-size(
+            ng-show="apiKey.data.accessToken")
+            input.cfnext-form__input--full-size(
+              type="text"
+              cf-select-all-input
+              ng-model="apiKey.data.accessToken"
+              readonly="readonly")
+            cf-copy-to-clipboard(
+              ng-show="showCopy"
+              text="{{apiKey.data.accessToken}}")
+        .cfnext-form__field
+          label.api-key-editor__label
+            strong Preview
+            span(ng-show="previewApiKey.data.accessToken  && !isReadOnly()")
+              a.api-key-editor__label--right(
+                ng-click="regenerateAccessToken('preview')"
+                href="#")
+                i.fa.fa-refresh
+                span &#32;Regenerate
+          .cfnext-form__input-group--full-size(
+            ng-show="previewApiKey.data.accessToken")
+            input.cfnext-form__input--full-size(
+              type="text"
+              cf-select-all-input
+              ng-model="previewApiKey.data.accessToken"
+              readonly="readonly")
+            cf-copy-to-clipboard(
+              ng-show="showCopy"
+              text="{{previewApiKey.data.accessToken}}")
+          input.cfnext-form__input--full-size(
+            type="text"
+            readonly="readonly"
+            ng-hide="previewApiKey.data.accessToken"
+            value="The token will be automatically generated once you save the existing key.")
+          .cfnext-form__hint
+            a(
+              href="https://www.contentful.com/developers/docs/concepts/apis/"
+              target="_blank")
+              | What's the difference between production and preview?
+
+
+        .cfnext-form__field
+          label.api-key-editor__label
+            strong Space ID
+          .cfnext-form__input-group--full-size
+            input.cfnext-form__input--full-size(
+              type="text"
+              cf-select-all-input
+              value="{{getSpaceId()}}"
+              readonly="readonly")
+            cf-copy-to-clipboard(
+              ng-show="showCopy && apiKey.data.accessToken"
+              text="{{getSpaceId()}}")
+          .cfnext-form__hint
+            a(
+              href="#"
+              tooltip="To fetch content you need to authenticate with both the Space ID and an Access token")
+              | What do I need the Space ID for?
+
+      .api-key-editor__two-col
+        h3.api-key-editor__heading
+          | See your content live
+        p.api-key-editor__subheading
+          | Apps for mobile &amp; web allow you to see your content on your preferred platform.
+
+        .discovery-app
+          .discovery-app__platform
+            .discovery-app__icon
+              cf-icon(name="language-browser")
+            .discovery-app__platform--description
+              div
+               strong Discovery for Web (JavaScript)
+              .discovery-app__links
+                a(href="https://contentful.github.io/discovery-app-react/?space_id={{getSpaceId()}}&access_token={{apiKey.data.accessToken}}&preview_access_token={{previewApiKey.data.accessToken}}"
+                  target="_blank")
+                  | Open the App
+                .discovery-app__separator
+                a(href="https://github.com/contentful/discovery-app-react"
+                  target="_blank")
+                  | Get source code from GitHub
+          .discovery-app__platform
+            .discovery-app__icon
+              cf-icon(name="language-ios")
+            .discovery-app__description
+              div
+                strong Discovery for iOS
+              .discovery-app__links
+                a(href="https://itunes.apple.com/app/id892840015"
+                  target="_blank")
+                  | Download from App Store
+                .discovery-app__separator
+                a(href="https://github.com/contentful/discovery-app"
+                  target="_blank")
+                  | Get source code from GitHub
+          .discovery-app__platform
+            .discovery-app__icon
+              cf-icon(name="language-android")
+            .discovery-app__description
+              div
+                strong Discovery for Android
+              .discovery-app__links
+                a(href="https://play.google.com/store/apps/details?id=discovery.contentful"
+                  target="_blank")
+                  | Download from Google Play
+                .discovery-app__separator
+                a(href="https://github.com/contentful/discovery-app-android"
+                  target="_blank")
+                  | Get source code from GitHub
+
+        h3.api-key-editor__heading
+          | Build with Contentful
+        p.api-key-editor__subheading
+          | Choose your language to access relevant SDKs, tools, tutorials and more.
+        .build-with-contentful.x--stack-vertical
+          .build-with-contentful__languages(
+            ng-class="{'is-open': selectedLanguage}")
+            .build-with-contentful__language(
+              ng-repeat="lang in languages track by lang.id"
+              data-current-language="{{lang.id}}")
+              a.build-with-contentful__link(
+                ng-class="{'is-active': lang === selectedLanguage}"
+                ng-click="selectLanguage(lang)")
+                cf-icon(name="{{lang.icon}}" scale="0.65")
+                .build-with-contentful__name {{lang.name}}
+          .build-with-contentful__detail(ng-class="{'x--visible': selectedLanguage}")
+            cf-icon(
+              name="arrow-up"
+              cf-position-relative-to-language
+              position-relative-to=".build-with-contentful__language[data-current-language=\"{{selectedLanguage.id}}\"]")
+
+            .build-with-contentful__references(ng-show="selectedLanguage.id")
+              .build-with-contentful__reference(ng-repeat="(key, item) in selectedLanguage.data track by item.name")
+                .icon-wrapper
+                  cf-icon(name="{{item.icon}}")
+                .build-with-contentful__reference-name {{item.name}}
+                p.build-with-contentful__reference-description
+                  | {{item.description}}
+                span(ng-repeat="link in item.links track by $index")
+                  a.build-with-contentful__reference-link(
+                    ng-click="trackResourceLink(item.name, selectedLanguage.name)"
+                    href="{{link.url}}"
+                    target="_blank")
+                    | {{link.text}}
+                  span(ng-if="!$last")
+                    | &#32;|&#32;
+        .advice__note(ng-show="canAccessUsers")
+          i.fa.fa-info-circle.advice__note-icon
+          | You're not a developer? You can <a ui-sref="spaces.detail.settings.users.list">invite</a> users to help get you started
+
+  .workbench-main__info-sidebar.entity-info-panel(
+    ng-class="preferences.showAuxPanel && 'x--show'")
+    div(cf-entity-info-panel="apiKey.getSys()")

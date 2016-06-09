@@ -60,6 +60,18 @@ Markup:
 Styleguide 21.2
 */
 
+/*
+Note box with icon
+
+Markup:
+.note-box.note-box--blue.x--with-icon
+  cf-icon(name="info")
+  p Here is some info next to an icon!
+
+Styleguide 21.3
+*/
+
+
 $note-box()
   clear: both
   overflow: hidden
@@ -82,6 +94,11 @@ $note-box()
 
 .note-box
   $note-box()
+
+  &.x--with-icon
+    display: flex
+    cf-icon
+      margin-right: 10px
 
 .note-box-large
   $note-box()

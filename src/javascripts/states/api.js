@@ -15,9 +15,8 @@ angular.module('contentful')
     ncyBreadcrumb: {
       label: 'APIs'
     },
-    template: '<div cf-api-home class="workbench"></div>'
+    redirectTo: 'spaces.detail.api.keys.list'
   };
-
 
   var contentModel = {
     name: 'content_model',
@@ -26,10 +25,18 @@ angular.module('contentful')
       label: 'Content model explorer',
       parent: 'spaces.detail.api.home'
     },
-    controller: ['$scope', function ($scope) {
-      $scope.context = {};
-    }],
-    template: '<div cf-content-model class="workbench content-model entity-list"></div>'
+    controller: 'apiContentModelController',
+    template: JST['api_content_model']()
+  };
+
+  var cmaKeys = {
+    name: 'cma_keys',
+    url: '/cma_keys',
+    ncyBreadcrumb: {
+      label: 'Content Management API Keys',
+      parent: 'spaces.detail.api.home'
+    },
+    template: JST.api_cma_keys()
   };
 
 
@@ -37,11 +44,10 @@ angular.module('contentful')
     name: 'list',
     url: '/',
     ncyBreadcrumb: {
-      label: 'Delivery keys',
+      label: 'Content Delivery API Keys',
       parent: 'spaces.detail.api.home'
     },
-    loadingText: 'Loading delivery keys...',
-    template: '<div cf-api-key-list class="workbench entity-list"></div>',
+    template: '<cf-api-key-list class="workbench" />',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
     }]
@@ -56,10 +62,7 @@ angular.module('contentful')
       $state.current.data = $scope.context = {};
       $scope.apiKey = apiKey;
     }],
-    template:
-    '<div cf-api-key-editor ' +
-      'class="workbench"' +
-    '</div>'
+    template: '<cf-api-key-editor class="workbench" />'
   };
 
   var newKey =  _.extend({
@@ -82,7 +85,7 @@ angular.module('contentful')
     }
   }, apiKeyEditorState);
 
-  var keys = {
+  var cdaKeys = {
     name: 'keys',
     abstract: true,
     url: '/keys',
@@ -95,6 +98,8 @@ angular.module('contentful')
     url: '/api',
     abstract: true,
     template: '<ui-view/>',
-    children: [home, contentModel, keys]
+    children: [home, cdaKeys, cmaKeys, contentModel],
+    controller: 'ApiKeyController',
+    controllerAs: 'apiKeyController'
   };
 }]);
