@@ -70,7 +70,7 @@ angular.module('contentful/mocks')
   function createField () {
     return {
       getValue: sinon.stub(),
-      onValueChanged: sinon.stub().returns(_.noop)
+      onValueChanged: sinon.stub().returns(_.noop).yields()
     };
   }
 }]);

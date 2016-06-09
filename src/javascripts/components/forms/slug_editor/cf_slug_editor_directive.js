@@ -21,54 +21,76 @@ angular.module('contentful')
 
       var $inputEl = $el.find('input');
       var updateInput = caretHelper.makeInputUpdater($inputEl);
-      var title = entry.fields[contentType.displayField];
+      var titleField = entry.fields[contentType.displayField];
+
+      // The most recent value of the title field.
+      // It is used to check if the slug is currently tracking the
+      // title when the title field changes it’s value.
+      var trackingTitle;
 
       var debouncedPerformDuplicityCheck = debounce(performDuplicityCheck, 500);
 
-      var useDefaultLocaleTitleForSlug = true;
-
-      // Is set to false when entry is published or the initial slug is
-      // not the slugified version of the title.
-      var updateFromTitle = true;
-
-      var detachOnValueChangedHandler = field.onValueChanged(function (val) {
-        // Might be `null` or `undefined` when value is not present
-        val = val || '';
-        updateInput(val);
-      });
-      // call handler when the disabled status of the field changes
-      var detachOnFieldDisabledHandler = field.onDisabledStatusChanged(updateDisabledStatus);
-      var detachCurrentLocaleTitleChangeHandler = title.onValueChanged(field.locale, function (titleField) {
-        if (!titleField) {
-          useDefaultLocaleTitleForSlug = true;
-
-          if (field.locale !== locales.default) {
-            titleField = title.getValue(); // get value for entry title in default locale
-          }
-        } else {
-          useDefaultLocaleTitleForSlug = false;
-        }
-
-        buildSlugUsingTitle(titleField);
+      var detachOnFieldDisabledHandler = field.onDisabledStatusChanged(function (disabledStatus) {
+        scope.isDisabled = disabledStatus;
       });
 
       var offSchemaErrorsChanged = field.onSchemaErrorsChanged(function (errors) {
         scope.hasErrors = errors && errors.length > 0;
       });
 
-      if (field.locale !== locales.default) {
-        var detachDefaultLocaleTitleChangeHandler = title.onValueChanged(locales.default, function (title) {
-          if (useDefaultLocaleTitleForSlug) {
-            buildSlugUsingTitle(title);
-          }
-        });
-        scope.$on('$destroy', detachDefaultLocaleTitleChangeHandler);
+      var detachOnValueChangedHandler = field.onValueChanged(function (val) {
+        if (val === undefined) {
+          setSlugFromCurrentTitle();
+        } else {
+          val = val || '';
+          updateInput(val);
+        }
+      });
+
+      // The content type’s display field might not exist.
+      if (titleField) {
+        var detachLocaleTitleChangeHandler = titleField.onValueChanged(field.locale, setTitle);
+        scope.$on('$destroy', detachLocaleTitleChangeHandler);
+
+        if (field.locale !== locales.default) {
+          var detachDefaultLocaleTitleChangeHandler = titleField.onValueChanged(locales.default, function (titleValue) {
+            if (!titleField.getValue(field.locale)) {
+              setTitle(titleValue);
+            }
+          });
+          scope.$on('$destroy', detachDefaultLocaleTitleChangeHandler);
+        }
+      }
+
+      // TODO remove this once `onValueChanged` is called immediately
+      // on registering the callback
+      setSlugFromCurrentTitle();
+
+
+      function setTitle (title) {
+        if (isTracking()) {
+          updateInput(makeSlug(title));
+        }
+        trackingTitle = title;
+      }
+
+      /**
+       * Returns true if we should update the field value with a new
+       * value build from a title
+       *
+       * `false` if the entry is published
+       * `true` if the current value is empty
+       * `true` if the current value was built from the previous title
+       */
+      function isTracking () {
+        var isPublished = entry.getSys().publishedVersion;
+        var value = $inputEl.val();
+        return !isPublished && (value === makeSlug(trackingTitle) || !value);
       }
 
       // remove attached handlers when element is evicted from dom
       scope.$on('$destroy', detachOnValueChangedHandler);
       scope.$on('$destroy', detachOnFieldDisabledHandler);
-      scope.$on('$destroy', detachCurrentLocaleTitleChangeHandler);
       scope.$on('$destroy', offSchemaErrorsChanged);
 
       scope.$watch('state', function (state) {
@@ -86,38 +108,6 @@ angular.module('contentful')
         scope.$apply();
       }, 200));
 
-      function buildSlugUsingTitle (title) {
-        if (!scope.isDisabled) {
-          updateFrozenState(field.getValue());
-          updateSlugFromTitle(title);
-        }
-      }
-
-      function updateDisabledStatus (disabledStatus) {
-        scope.isDisabled = disabledStatus;
-        buildSlugUsingTitle(currentTitle());
-      }
-
-      function untitledSlug () {
-        var createdAt = entry.getSys().createdAt;
-        var createdAtFormatted =
-          moment.utc(createdAt)
-          .format('YYYY MM DD [at] hh mm ss');
-        return slugUtils.slugify('Untitled entry ' + createdAtFormatted, 'en-US');
-      }
-
-      function updateFrozenState (value) {
-        if (entry.getSys().publishedVersion) {
-          updateFromTitle = false;
-        } else if (value &&
-                   value !== untitledSlug() &&
-                   value !== slugUtils.slugify(currentTitle(), field.locale)) {
-
-          updateFromTitle = false;
-        } else {
-          updateFromTitle = true;
-        }
-      }
 
       /**
        * Resets the slug's uniqueness state to 'checking' and requests
@@ -130,40 +120,16 @@ angular.module('contentful')
         } else {
           scope.state = null;
         }
-        updateFrozenState(val);
       }
 
-      /**
-       * State machine for binding the slug to the entry's title. This
-       * call is run whenever the title changes, and as long as the slug
-       * has not already diverged:
-       * 1. If no title is provided, the slug string is the entry's ID.
-       * 2. If a title is provided, the slug is updated to match the current title.
-       */
-      function updateSlugFromTitle (currentTitle) {
-        if (!updateFromTitle) {
-          return;
-        }
 
-        var slug;
-        if (!currentTitle) {
-          slug = untitledSlug();
-        } else {
-          slug = slugUtils.slugify(currentTitle, field.locale);
-        }
-
-        field.setString(slug);
-        $inputEl.val(slug);
+      // TODO remove this once `onValueChanged` is called immediately
+      // on registering the callback
+      function setSlugFromCurrentTitle () {
+        var title = titleField.getValue(field.locale) || titleField.getValue();
+        setTitle(title);
       }
 
-      /**
-       * Returns the title of the entry in the current scope. If a title in the
-       * current locale is unavailable, the default locale is tried. If no
-       * title exists, null is returned.
-       */
-      function currentTitle () {
-        return title.getValue(field.locale) || title.getValue();
-      }
 
       /**
        * Check the uniqueness of the slug in the current space.
@@ -184,6 +150,20 @@ angular.module('contentful')
             scope.state = (res.total !== 0) ? 'duplicate' : 'unique';
           });
         }
+      }
+
+      function makeSlug (title) {
+        return title
+          ? slugUtils.slugify(title, field.locale)
+          : untitledSlug();
+      }
+
+      function untitledSlug () {
+        var createdAt = entry.getSys().createdAt;
+        var createdAtFormatted =
+          moment.utc(createdAt)
+          .format('YYYY MM DD [at] hh mm ss');
+        return slugUtils.slugify('Untitled entry ' + createdAtFormatted, 'en-US');
       }
     }
   };
