@@ -38,6 +38,7 @@ describe('otDocFor', function () {
     };
 
     this.entity = {
+      getType: _.constant('Entry'),
       update: sinon.spy(function (data) {
         this.data = data;
       }),
@@ -54,6 +55,7 @@ describe('otDocFor', function () {
       entity: this.entity,
     }).scope();
     scope.otDoc.state.disabled = false;
+    scope.contentType = {data: {fields: []}};
   });
 
   it('otDoc is initially undefined', function(){
@@ -64,6 +66,7 @@ describe('otDocFor', function () {
     beforeEach(function(){
       var localeStore = this.$inject('TheLocaleStore');
       localeStore.getPrivateLocales = sinon.stub().returns([{internal_code: 'en'}]);
+      scope.contentType.data.fields = [{id: 'field1'}, {id: 'field2'}];
 
       this.entity.data.fields = {
         field1: {
@@ -71,6 +74,9 @@ describe('otDocFor', function () {
         },
         field2: {
           en: 'english'
+        },
+        deletedField: {
+          en: 'some value'
         }
       };
 
@@ -92,11 +98,25 @@ describe('otDocFor', function () {
 
     it('filters deleted locales', function(){
       expect(scope.otDoc.doc.snapshot.fields.field1.del).toBeUndefined();
+      expect(this.entity.data.fields.field1.del).toBeUndefined();
     });
 
     it('keeps non deleted locales', function(){
       expect(scope.otDoc.doc.snapshot.fields.field2.en).toBeDefined();
+      expect(this.entity.data.fields.field2.en).toBeDefined();
     });
+
+    it('filters deleted fields', function () {
+      expect(scope.otDoc.doc.snapshot.fields.deletedField).toBeUndefined();
+      expect(this.entity.data.fields.deletedField).toBeUndefined();
+    });
+
+    it('keeps non deleted fields', function () {
+      expect(scope.otDoc.doc.snapshot.fields.field1).toBeDefined();
+      expect(this.entity.data.fields.field1).toBeDefined();
+      expect(scope.otDoc.doc.snapshot.fields.field2).toBeDefined();
+      expect(this.entity.data.fields.field2).toBeDefined();
+    })
 
     it('sets acknowledge and remoteop event handelrs', function(){
       sinon.assert.calledWith(scope.otDoc.doc.on, 'acknowledge');
