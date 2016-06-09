@@ -81,6 +81,7 @@ angular.module('cf.app')
         onSelect: function (date) {
           $scope.$apply(function () {
             $scope.data.date = moment(date);
+            setValueFromInputData();
           });
           dateInputEl.blur();
         }
@@ -101,7 +102,9 @@ angular.module('cf.app')
       });
 
       // This is emitted whenever the user changes on of the input fields.
-      $scope.$on('ngModel:update', function () {
+      $scope.$on('ngModel:update', setValueFromInputData);
+
+      function setValueFromInputData () {
         if (!$scope.data.date) {
           $scope.data.time = null;
         }
@@ -118,7 +121,7 @@ angular.module('cf.app')
         } else if (value.valid) {
           field.setValue(value.valid);
         }
-      });
+      };
 
       $scope.$watchCollection(function () {
         return [].concat(
