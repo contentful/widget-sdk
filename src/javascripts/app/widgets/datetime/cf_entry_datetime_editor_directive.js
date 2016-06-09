@@ -81,6 +81,7 @@ angular.module('cf.app')
         onSelect: function (date) {
           $scope.$apply(function () {
             $scope.data.date = moment(date);
+            setValueFromInputData();
           });
           dateInputEl.blur();
         }
@@ -100,23 +101,27 @@ angular.module('cf.app')
         datepicker.destroy();
       });
 
-      $scope.$watchCollection('data.date', function (date) {
-        if (!date) {
+      // This is emitted whenever the user changes on of the input fields.
+      $scope.$on('ngModel:update', setValueFromInputData);
+
+      function setValueFromInputData () {
+        if (!$scope.data.date) {
           $scope.data.time = null;
         }
         // Prevent calling the datepicker’s `onSelect` method which
         // would lead to an infinite loop.
-        datepicker.setMoment(date, true);
-      });
+        datepicker.setMoment($scope.data.date, true);
 
-      $scope.$watchCollection('data', function (data) {
-        var value = Data.buildFieldValue(data, $scope.uses12hClock, $scope.usesTime, $scope.usesTimezone);
+        var value = Data.buildFieldValue(
+          $scope.data,
+          $scope.uses12hClock, $scope.usesTime, $scope.usesTimezone
+        );
         if (value.valid === null) {
           field.removeValue();
         } else if (value.valid) {
           field.setValue(value.valid);
         }
-      });
+      };
 
       $scope.$watchCollection(function () {
         return [].concat(
