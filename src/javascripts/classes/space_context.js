@@ -410,6 +410,35 @@ angular.module('contentful')
 
     /**
      * @ngdoc method
+     * @name spaceContext#entryImage
+     * @param {Client.Entry} entry
+     * @param {string?} localeCode
+     * @return {Promise<Object|null>}
+     * @description
+     * Gets a promise resolving with a localized asset image field representing a
+     * given entities image. The promise may resolve with null.
+     */
+    entryImage: function (entry, localeCode) {
+      var link = spaceContext.findLocalizedField(
+        entry, localeCode, {type: 'Link', linkType: 'Asset'});
+
+      var assetId = dotty.get(link, 'sys.id');
+      if (link && assetId) {
+        return this.space.getAsset(assetId).then(function (asset) {
+          var fileField = dotty.get(asset, 'data.fields.file');
+          var file = this.localizedValue(fileField, localeCode);
+          var isImage = dotty.get(file, 'details.image');
+          return isImage ? file : null;
+        }.bind(this), function () {
+          return null;
+        });
+      } else {
+        return $q.resolve(null);
+      }
+    },
+
+    /**
+     * @ngdoc method
      * @name spaceContext#assetTitle
      * @param {Client.Asset} asset
      * @param {string} localeCode
