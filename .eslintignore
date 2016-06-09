@@ -130,7 +130,6 @@ test/unit/data/user_cache_spec.js
 test/unit/markdown_editor/insert_asset_dialog_controller_spec.js
 test/unit/markdown_editor/link_organizer_spec.js
 test/unit/markdown_editor/markdown_codemirror_wrapper_spec.js
-test/unit/markdown_editor/markdown_requirements_spec.js
 test/unit/markdown_editor/markdown_tree_spec.js
 test/unit/markdown_editor/cf_zenmode_spec.js
 test/unit/markdown_editor/markdown_editor_spec.js
@@ -436,7 +435,6 @@ src/javascripts/markdown_editor/cf_markdown_action_directive.js
 src/javascripts/markdown_editor/link_organizer.js
 src/javascripts/markdown_editor/markdown_actions.js
 src/javascripts/markdown_editor/markdown_preview.js
-src/javascripts/markdown_editor/markdown_requirements.js
 src/javascripts/markdown_editor/markdown_special_characters.js
 src/javascripts/markdown_editor/markdown_tree.js
 src/javascripts/markdown_editor/cf_zenmode_directive.js

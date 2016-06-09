@@ -30,6 +30,10 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.inMode = inMode;
       scope.canEdit = canEdit;
 
+      var constraints = _(field.validations).map('size').filter().first() || {};
+
+      scope.constraints = constraints;
+
       // simple bus that is used to synchronize between Zen Mode and main editor
       scope.zenApi = {
         syncToParent: syncFromChildToParent,

@@ -3,14 +3,6 @@ input.entry-editor__input(
   aria-invalid="{{ hasErrors }}"
   ng-disabled="isDisabled")
 
-.single-line-editor__info
-  div(
-    ng-class="{'colors__red': charCountStatus === 'exceeded', 'colors__orange': charCountStatus === 'approaching'}")
-      | {{ charCount }} characters
-  div(ng-switch="constraintsType")
-    span(ng-switch-when="min")
-      |  Requires at least {{ constraints.min }} characters
-    span(ng-switch-when="max")
-      |  Requires less than {{ constraints.max }} characters
-    span(ng-switch-when="min-max")
-      |  Requires between {{ constraints.min }} and {{ constraints.max }} characters
+cf-editor-character-info(
+  constraints="constraints"
+  char-count="charCount")
