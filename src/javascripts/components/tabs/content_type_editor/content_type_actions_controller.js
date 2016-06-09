@@ -24,6 +24,7 @@ function ContentTypeActionsController ($scope, $injector) {
   var ctHelpers = $injector.get('data/ContentTypes');
   var closeState = $injector.get('navigation/closeState');
   var metadataDialog = $injector.get('contentTypeEditor/metadataDialog');
+  var uiConfig = $injector.get('uiConfig');
 
   /**
    * @ngdoc property
@@ -233,6 +234,9 @@ function ContentTypeActionsController ($scope, $injector) {
       if (redirect && $scope.context.isNew) {
         return goToDetails($scope.contentType);
       }
+    })
+    .then(function () {
+      return uiConfig.addOrEditCt($scope.contentType);
     })
     .then(notify.saveSuccess);
   }

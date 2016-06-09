@@ -95,6 +95,12 @@ angular.module('cf.app')
     if (!toStateParams.addToContext) {
       contextHistory.purge();
     }
+
+    // Redirect if redirectTo is set
+    if (toState.redirectTo) {
+      event.preventDefault();
+      $state.go(toState.redirectTo, toStateParams);
+    }
   }
 
   function redirect (event, toState, toStateParams) {

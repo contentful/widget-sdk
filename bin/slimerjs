@@ -8,7 +8,12 @@
 # We also need to provide output for the `bin/install_slimerjs` script.
 #
 
-export SLIMERJSLAUNCHER=$(which firefox)
+export SLIMERJSLAUNCHER=$(which firefox 2>/dev/null)
+if [[ ! -x "${SLIMERJSLAUNCHER}" ]]; then
+  echo 'Cannot find "firefox" in PATH' 1>&2
+  exit 1
+fi
+
 SLIMERJS_BIN="$(dirname $0)/../vendor/slimerjs/slimerjs-0.10.0/slimerjs"
 
 if [[ ! -x "${SLIMERJS_BIN}" ]]; then

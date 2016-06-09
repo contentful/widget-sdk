@@ -101,6 +101,14 @@ describe('navigation/stateChangeHandlers', function () {
     it('does not close modals', function() {
       sinon.assert.notCalled(modalCloseStub);
     });
+
+    it('redirects if `redirectTo` property is provided', function () {
+      $state.go.returns();
+      var to = {name: 'spaces.detail.entries', redirectTo: 'spaces.detail.content_types'};
+      var change = $rootScope.$emit('$stateChangeStart', to, {}, {}, {});
+      sinon.assert.calledWith($state.go, to.redirectTo, {})
+    });
+
   });
 
   describe('leave confirmation', function () {

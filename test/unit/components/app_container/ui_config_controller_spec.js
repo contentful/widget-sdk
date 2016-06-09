@@ -1,96 +1,67 @@
 'use strict';
 
 describe('UiConfigController', function () {
-  var scope, controller, get, set;
+  var scope, stubs;
 
   afterEach(function () {
-    scope = controller = get = set = null;
+    scope = stubs = null;
   });
 
-  beforeEach(module('contentful/test'));
-  beforeEach(inject(function ($controller, $rootScope, $q) {
-    scope = $rootScope.$new();
-    get = $q.defer();
-    set = $q.defer();
-    scope.spaceContext = {
-      space: {
-        getUIConfig: sinon.stub().returns(get.promise),
-        setUIConfig: sinon.stub().returns(set.promise),
-        isAdmin: sinon.stub().returns(true)
+  beforeEach(function () {
+    stubs = {
+      uiConfig: {
+        load: sinon.stub(),
+        save: sinon.stub(),
+        get: _.noop
+      },
+      spaceContext: {
+        space: {
+          getUIConfig: sinon.stub(),
+          setUIConfig: sinon.stub(),
+          isAdmin: sinon.stub()
+        },
+        getData: sinon.stub()
       }
     };
-    controller = $controller('UiConfigController', {$scope: scope});
-    scope.$apply();
-  }));
+
+    module('contentful/test', function ($provide) {
+      $provide.value('uiConfig', stubs.uiConfig);
+      $provide.value('spaceContext', stubs.spaceContext);
+    });
+    inject(function ($controller, $rootScope, $q) {
+      stubs.uiConfig.load.resolves({});
+      stubs.uiConfig.save.resolves();
+      scope = $rootScope.$new();
+      var get = $q.defer();
+      var set = $q.defer();
+      stubs.spaceContext.space.getUIConfig.returns(get.promise);
+      stubs.spaceContext.space.getUIConfig.returns(set.promise);
+      stubs.spaceContext.space.isAdmin.returns(true);
+      $controller('UiConfigController', {$scope: scope});
+      scope.$apply();
+    });
+  });
+
 
   describe('loading a space', function () {
-    describe('loads ui config', function() {
-      it('initializes a non existing config', function() {
-        get.reject({statusCode: 404});
-        scope.$apply();
-        expect(scope.uiConfig).toEqual({});
-      });
-
-      it('loads an existing config', function() {
-        get.resolve('config');
-        scope.$apply();
-        expect(scope.uiConfig).toBe('config');
-      });
+    it('calls the uiConfig load method', function () {
+      sinon.assert.calledOnce(stubs.uiConfig.load);
     });
   });
 
-  describe('unloading a space', function () {
-    beforeEach(function () {
-      get.resolve('config');
-      scope.$apply();
-      expect(scope.uiConfig).toBe('config');
-    });
-
-    it('removes a ui config', function () {
-      scope.spaceContext = {};
-      scope.$apply();
-      expect(scope.uiConfig).toBe(null);
-    });
-  });
-  
-  describe('saving ui config', function () {
-    it('should cancel the save if not allowed', function () {
-      scope.canEditUiConfig = false;
-      scope.saveUiConfig().catch(function (err) {
-        expect(err).toBe('Not allowed');
-      });
-      scope.$apply();
-    });
-
-    it('should replace the current uiConfig with the value from the server', function () {
-      scope.saveUiConfig().then(function (config) {
-        expect(config).toBe('config');
-      });
-      set.resolve('config');
-      scope.$apply();
-      expect(scope.uiConfig).toBe('config');
-    });
-
-    it('should load ui config on failure', function () {
-      scope.saveUiConfig();
-      set.reject('error');
-      scope.$apply();
-      get.resolve('oldConfig');
-      scope.$apply();
-      expect(scope.uiConfig).toBe('oldConfig');
-    });
-  });
-
-  describe('determining editability', function () {
+  describe('saving UI config', function () {
     it('should allow editing for admins', function () {
+      scope.saveUiConfig();
       expect(scope.canEditUiConfig).toBe(true);
+      sinon.assert.calledOnce(stubs.uiConfig.save);
     });
 
     it('should not allow editing for non-admins', function () {
-      scope.spaceContext.space.isAdmin.returns(false);
+      stubs.spaceContext.space.isAdmin.returns(false);
       scope.$apply();
+      scope.saveUiConfig();
+      sinon.assert.notCalled(stubs.uiConfig.save);
       expect(scope.canEditUiConfig).toBe(false);
     });
   });
 });
-

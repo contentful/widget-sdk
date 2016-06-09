@@ -231,6 +231,7 @@ angular.module('contentful')
 
   function setupOtDoc (doc) {
     filterDeletedLocales(doc.snapshot);
+    filterDeletedFields(doc.snapshot);
     installListeners(doc);
     otDoc.doc = doc;
     otDoc.state.editable = true;
@@ -247,6 +248,29 @@ angular.module('contentful')
         }
       });
     });
+    return data;
+  }
+
+  function filterDeletedFields (data) {
+    if (entity.getType() !== 'Entry') {
+      return data;
+    }
+
+    var ctFields = dotty.get($scope.contentType, 'data.fields');
+    if (!ctFields) {
+      return data;
+    }
+
+    var ctFieldIds = _.map(ctFields, function (field) {
+      return field.id;
+    });
+
+    _.forEach(data.fields, function (_fieldValue, fieldId) {
+      if (ctFieldIds.indexOf(fieldId) < 0) {
+        delete data.fields[fieldId];
+      }
+    });
+
     return data;
   }
 

@@ -2,6 +2,8 @@
 
 set -ev
 
+./bin/provision
+
 SLIMERJS_BIN=bin/slimerjs
 
 ./bin/install_slimerjs

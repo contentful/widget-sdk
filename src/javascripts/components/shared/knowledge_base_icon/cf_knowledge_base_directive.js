@@ -1,5 +1,8 @@
 'use strict';
 
+// TODO: should use transclusion
+// e.g. <cf-knowledge-base target="roles">text to be displayed</cf-knowlege-base>
+
 angular.module('contentful').directive('cfKnowledgeBase', ['$injector', function ($injector) {
 
   var getUrl = $injector.get('KnowledgeBase/getUrl');
@@ -11,7 +14,8 @@ angular.module('contentful').directive('cfKnowledgeBase', ['$injector', function
     scope: {
       text: '@',
       tooltipText: '@',
-      target: '@'
+      target: '@',
+      inlineText: '@'
     },
     link: function (scope, el) {
       scope.url = getUrl(scope.target);
@@ -40,7 +44,10 @@ angular.module('contentful').factory('KnowledgeBase/getUrl', ['$injector', funct
     space_template: 'developers/docs/', // @todo needs proper article
     id_change: 'developers/docs/', // @todo needs proper article,
     roles: 'r/knowledgebase/roles-and-permissions/',
-    field_lifecycle: 'faq/basics/#what-is-the-lifecycle-of-a-field'
+    field_lifecycle: 'faq/basics/#what-is-the-lifecycle-of-a-field',
+    content_apis: 'developers/docs/concepts/apis/',
+    delivery_api: 'developers/docs/references/content-delivery-api',
+    management_api: 'developers/docs/references/content-management-api'
   };
 
   return function getKnowledgeBaseUrl (name) {

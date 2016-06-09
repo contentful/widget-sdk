@@ -1,0 +1,49 @@
+/*
+Staff hint
+
+Display hints from staff on the entity sidebar
+
+Markup:
+div(style="width:200px;")
+  .staff-hint
+    i.fa.fa-quote-left
+    div.staff-hint__quote
+      .staff-hint__content
+        | Create separate API keys if you have multiple platforms you need to deliver content to.
+      .staff-hint__author
+        .staff-hint__author-photo.x--cesar
+        .staff-hint__author-name
+          strong César Jardim
+          p Product manager at Contentful
+
+Styleguide staff-hint
+*/
+
+.staff-hint
+  color: $colors.text-light
+  display: flex
+  i
+    margin-right: 12px
+
+.staff-hint__content
+  margin-bottom: 10px
+  font-style: italic
+
+.staff-hint__author
+  display: flex
+  align-items: center
+  strong
+    display: block
+    color: $colors.text-dark
+    padding: 4px 0 2px
+
+.staff-hint__author-photo
+  display: block
+  margin-right: 10px
+  width: 50px
+  height: 50px
+  background-image: url('/app/images/faces/stephen.jpg')
+  background-size: 100% auto
+  background-repeat: no-repeat
+  &.x--cesar
+    background-image: url('/app/images/faces/cesar.jpg')
