@@ -179,6 +179,10 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
   z-index: 1
   > *
     flex-shrink: 0
+  &.x--with-nav
+    display: block
+    > *
+      display: flex
 
   &__icon
     margin-right: 1em
@@ -289,6 +293,29 @@ Styleguide 9.5
   $tab-list()
 
 
+/*
+Workbench header with nav
+
+The `.x--with-nav` modifier allows subnavigation with tabs to be included
+underneath the page header section
+
+Markup:
+.workbench-header.x--with-nav
+  .page-header
+    cf-icon.workbench-header__icon(name="page-api")
+    h1.workbench-header__title Title
+  .workbench-nav
+    ul.workbench-nav__tabs
+      li(role="tab") First Tab
+      li(role="tab" aria-selected="true") Active Tab
+      li(role="tab") Last Tab
+
+Styleguide 9.6
+*/
+
+
+
+
 /**
 Loading Message
 
@@ -300,7 +327,7 @@ Markup:
     .workbench-loading__message
       | Loading entries...
 
-Styleguide 9.6
+Styleguide 9.7
 */
 
 @require "../mixins/spinner"
