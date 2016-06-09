@@ -80,10 +80,10 @@ describe('widgets/channel', function () {
     sinon.assert.notCalled(handler);
   });
 
-
   it('sends result when handler returns a value', function () {
     var handler = sinon.stub().returns('RESULT');
     this.channel.handlers['MY_METHOD'] = handler;
+    sinon.assert.notCalled(this.postMessage);
     this.addEventListener.yield({
       data: {
         method: 'MY_METHOD',
@@ -91,8 +91,6 @@ describe('widgets/channel', function () {
         id: 'CALL ID'
       }
     });
-    sinon.assert.notCalled(this.postMessage);
-    this.$apply();
     sinon.assert.calledWith(this.postMessage, {id: 'CALL ID', result: 'RESULT'});
   });
 
