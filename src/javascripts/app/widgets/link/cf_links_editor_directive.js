@@ -1,9 +1,12 @@
 'use strict';
 
 angular.module('cf.app')
-// TODO: Rename to “cfLinkEditor” once the legacy one got removed.
-.directive('cfLinksEditor', [function () {
+// TODO: rename to “cfLinkEditor” once the legacy one got removed.
+.directive('cfLinksEditor', ['$injector', function ($injector) {
   var LINK_TYPES = ['Entry', 'Asset'];
+
+  var entitySelector = $injector.get('entitySelector');
+  var $q = $injector.get('$q');
 
   return {
     restrict: 'E',
@@ -53,6 +56,17 @@ angular.module('cf.app')
       ignoreNextLinksChange = true;
     });
 
+    $scope.addExisting = function () {
+      return entitySelector.open(field, $scope.links)
+      .then(function (entries) {
+        var links = _.map(entries, createLink);
+        return $q.all(_.map(links, function (link) {
+          $scope.links.push(link);
+          return field.pushValue(link);
+        }));
+      });
+    };
+
     /**
      * @ngdoc property
      * @name cfLinksEditor#$scope.linksApi
@@ -95,6 +109,16 @@ angular.module('cf.app')
       value = $scope.singleLink ? value[0] : value;
       field.setValue(value);
     }
+  }
+
+  function createLink (entity) {
+    return {
+      sys: {
+        id: entity.getId(),
+        linkType: entity.getType(),
+        type: 'Link'
+      }
+    };
   }
 
 }]);

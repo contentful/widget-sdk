@@ -14,23 +14,6 @@ angular.module('contentful')
   var spaceContext    = $injector.get('spaceContext');
   var accessChecker   = $injector.get('accessChecker');
 
-  window.OPEN_WITH_FIELD = function () {
-    $injector.get('entitySelector').open({
-      validations: [{size: {min: 2, max: 5}}],
-      type: 'Array',
-      items: {
-        linkType: 'Entry',
-        validations: [
-          {linkContentType: ['test', 'qweqwe']}
-        ]
-      }
-    }).then(function (result) {
-      console.log('result: ', result);
-    }, function () {
-      console.log('error: ', arguments);
-    });
-  };
-
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('EntryListViewsController', {$scope: $scope});

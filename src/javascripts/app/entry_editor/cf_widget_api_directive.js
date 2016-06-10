@@ -110,9 +110,11 @@ angular.module('contentful')
     id: ctField.apiName, // we only want to expose the public ID
     locale: $scope.locale.code,
     type: ctField.type,
+    linkType: ctField.linkType,
+    itemLinkType: dotty.get(ctField, ['items', 'linkType']),
     required: !!ctField.required,
-    validations: ctField.validations,
-    itemValidations: dotty.get(ctField, ['items', 'validations'])
+    validations: ctField.validations || [],
+    itemValidations: dotty.get(ctField, ['items', 'validations'], [])
   };
 
   /**

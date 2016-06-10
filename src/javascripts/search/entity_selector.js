@@ -38,8 +38,8 @@ angular.module('contentful')
 
   return {open: open};
 
-  function open (field, min, max) {
-    var config = prepareConfig(field, min, max);
+  function open (field, links) {
+    var config = prepareConfig(field, links);
 
     if (!config.linksEntry && !config.linksAsset) {
       return $q.reject(new Error('Provide a valid field object.'));
@@ -60,16 +60,24 @@ angular.module('contentful')
     });
   }
 
-  function prepareConfig (field, min, max) {
+  function prepareConfig (field, links) {
     field = field || {};
+    links = _.map(links || [], function (link) {
+      return link.sys.id;
+    });
 
     var size = findValidation(field, 'size', {});
+    var max = (size.max || +Infinity) - links.length;
+    var min = (size.min || 1) - links.length;
+    min = min < 1 ? 1 : min;
+
     var config = {
-      multiple: field.type === 'Array',
-      linksEntry: field.linkType === 'Entry' || dotty.get(field, 'items.linkType') === 'Entry',
-      linksAsset: field.linkType === 'Asset' || dotty.get(field, 'items.linkType') === 'Asset',
-      min: _.isNumber(min) ? min : (size.min || 1),
-      max: _.isNumber(max) ? max : (size.max || +Infinity),
+      multiple: max !== min && field.type === 'Array',
+      max: max,
+      min: min,
+      linksEntry: field.linkType === 'Entry' || field.itemLinkType === 'Entry',
+      linksAsset: field.linkType === 'Asset' || field.itemLinkType === 'Asset',
+      linkedEntityIds: links,
       linkedContentTypeIds: findValidation(field, 'linkContentType', []),
       linkedMimetypeGroups: findValidation(field, 'linkMimetypeGroup', []),
       linkedFileSize: findValidation(field, 'assetFileSize', {}),
@@ -80,11 +88,7 @@ angular.module('contentful')
   }
 
   function findValidation (field, property, defaultValue) {
-    var validations = [].concat(
-      dotty.get(field, 'validations', []),
-      dotty.get(field, 'items.validations', [])
-    );
-
+    var validations = [].concat(field.validations || [], field.itemValidations || []);
     var found = _.find(validations, function (v) {
       return _.isObject(v[property]);
     });

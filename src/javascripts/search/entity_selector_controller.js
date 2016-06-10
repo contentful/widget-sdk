@@ -11,6 +11,7 @@ angular.module('contentful')
   var createQueue = $injector.get('overridingRequestQueue');
   var entityStatusController = $controller('EntityStatusController');
 
+  var MINIMAL_TRIGGERING_LEN = 4;
   var ORDER = {fieldId: 'updatedAt', direction: 'descending'};
   var MODES = {AVAILABLE: 1, SELECTED: 2};
 
@@ -27,8 +28,9 @@ angular.module('contentful')
     getStatusClassname: entityStatusController.getClassname
   });
 
-  var queryMethod = $scope.config.linksEntry ? 'getForEntries' : 'getForAssets';
-  var fetchMethod = $scope.config.linksEntry ? 'getEntries' : 'getAssets';
+  var config = $scope.config;
+  var queryMethod = config.linksEntry ? 'getForEntries' : 'getForAssets';
+  var fetchMethod = config.linksEntry ? 'getEntries' : 'getAssets';
 
   var load = createQueue(fetch, function (resultPromise) {
     resultPromise.then(handleItems);
@@ -43,7 +45,7 @@ angular.module('contentful')
     $scope.isLoading = true;
     return ListQuery[queryMethod](getParams())
     .then(function (query) {
-      query = _.extend(query, $scope.config.queryExtension);
+      query = _.extend(query, config.queryExtension);
       return spaceContext.space[fetchMethod](query);
     });
   }
@@ -55,20 +57,17 @@ angular.module('contentful')
       paginator: $scope.paginator
     };
 
-    if ($scope.config.linksEntry && $scope.singleContentType) {
-      params.contentType = $scope.singleContentType;
+    if (config.linksEntry && $scope.singleContentType) {
+      params.contentTypeId = $scope.singleContentType.getId();
     }
 
     return params;
   }
 
   function select (entity) {
-    if (!$scope.config.multiple) {
+    if (!config.multiple) {
       $scope.dialog.confirm([entity]);
-      return;
-    }
-
-    if (!$scope.selectedIds[entity.getId()]) {
+    } else if (!$scope.selectedIds[entity.getId()]) {
       $scope.selected.push(entity);
       $scope.selectedIds[entity.getId()] = true;
     } else {
@@ -85,11 +84,17 @@ angular.module('contentful')
   }
 
   function handleTermChange (term, prev) {
-    if (_.isString(term) && term.length >= 4) {
-      resetAndLoad();
-    } else if (_.isString(prev) && (!_.isString(term) || term.length < prev.length)) {
+    if (isTermTriggering(term) || isClearingTerm(term, prev)) {
       resetAndLoad();
     }
+  }
+
+  function isTermTriggering (term) {
+    return _.isString(term) && term.length >= MINIMAL_TRIGGERING_LEN;
+  }
+
+  function isClearingTerm (term, prev) {
+    return _.isString(prev) && (!_.isString(term) || term.length < prev.length);
   }
 
   function handleItems (items) {
