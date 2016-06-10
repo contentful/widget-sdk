@@ -8,20 +8,13 @@ describe('Asset editor controller', function () {
     module('contentful/test', function ($provide) {
       $provide.removeControllers(
         'FormWidgetsController',
+        'entityEditor/Document',
         'entityEditor/LocalesController',
         'entityEditor/StatusNotificationsController'
       );
     });
 
     scope = this.$inject('$rootScope').$new();
-    scope.otDoc = {
-      doc: {},
-      getValueAt: sinon.stub(),
-      setValueAt: sinon.stub(),
-      open: sinon.stub(),
-      close: sinon.stub()
-    };
-
     var accessChecker = this.$inject('accessChecker');
     accessChecker.canUpdateAsset = sinon.stub().returns(true);
 
@@ -33,6 +26,15 @@ describe('Asset editor controller', function () {
 
     var $controller = this.$inject('$controller');
     $controller('AssetEditorController', {$scope: scope});
+
+    scope.otDoc = {
+      doc: {},
+      getValueAt: sinon.stub(),
+      setValueAt: sinon.stub(),
+      open: sinon.stub(),
+      close: sinon.stub()
+    };
+
     scope.$apply();
   });
 
