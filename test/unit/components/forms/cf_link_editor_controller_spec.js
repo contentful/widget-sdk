@@ -149,30 +149,32 @@ describe('LinkEditorController', function () {
 
   describe('setValidation', function () {
     it('is called with initial validation', function () {
-      var validation = {linkContentType: ['ct-id']};
+      var validation = {name: 'linkContentType', contentTypeId: ['ct-id']};
       scope.field.validations.push(validation);
+      linkParams.validationType = 'linkContentType';
       createController();
       sinon.assert.calledWith(stubs.setValidationType, validation);
     });
 
     it('is called with initial item validation', function () {
-      var validation = {linkContentType: ['ct-id']};
+      var validation = {name: 'linkContentType', contentTypeId: ['ct-id']};
       scope.field.type = 'Array';
       scope.field.items = {validations: [validation]};
+      linkParams.validationType = 'linkContentType';
       createController();
       sinon.assert.calledWith(stubs.setValidationType, validation);
     });
 
     it('is called when validation changes', function () {
-      scope.field.validations = [{ linkContentType: ['ct-id']}];
+      var validation = {name: 'linkContentType', contentTypeId: ['ct-id']}
+      var changedValidation = {name: 'linkContentType', contentTypeId: ['another-ct-id']}
+      linkParams.validationType = 'linkContentType';
+      scope.field.validations = [validation];
       createController();
-      sinon.assert.calledWith(stubs.setValidationType,
-                              {linkContentType: ['ct-id']});
-
-      scope.field.validations[0] = {linkContentType: ['another-ct-id']};
+      sinon.assert.calledWith(stubs.setValidationType, validation);
+      scope.field.validations[0] = changedValidation;
       scope.$apply();
-      sinon.assert.calledWith(stubs.setValidationType,
-                              {linkContentType: ['another-ct-id']});
+      sinon.assert.calledWith(stubs.setValidationType, changedValidation);
     });
 
     it('is called when validation is removed', function () {

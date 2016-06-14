@@ -2,7 +2,7 @@
 
 describe('Authentication service', function () {
   beforeEach(function () {
-    module('contentful/test', function ($provide, authenticationProvider, environment) {
+    module('contentful/test', function ($provide, environment) {
       environment.settings.base_host = 'basehost';
       environment.settings.marketing_url = 'marketinghost';
 
@@ -23,17 +23,13 @@ describe('Authentication service', function () {
     sinon.stub(this.TheStore, 'get');
     sinon.stub(this.TheStore, 'remove');
 
-    this.QueryLinkResolver = this.$inject('privateContentfulClient').QueryLinkResolver;
+    this.QueryLinkResolver = this.$inject('libs/@contentful/client').QueryLinkResolver;
   });
 
   afterEach(function () {
     this.TheStore.get.restore();
     this.TheStore.set.restore();
     this.TheStore.remove.restore();
-  });
-
-  it('has a client', function () {
-    expect(this.authentication.client).toBeDefined();
   });
 
   describe('login with existing token from hash param', function () {
@@ -245,17 +241,6 @@ describe('Authentication service', function () {
     }));
   });
 
-  describe('is logged in', function () {
-    it('is true', function () {
-      this.authentication.token = {};
-      expect(this.authentication.isLoggedIn()).toBeTruthy();
-    });
-
-    it('is false', function () {
-      expect(this.authentication.isLoggedIn()).toBeFalsy();
-    });
-  });
-
   it('account url', function () {
     expect(this.authentication.accountUrl()).toEqual('//basehost/account');
   });
@@ -295,7 +280,8 @@ describe('Authentication service', function () {
   describe('getting token lookup', function () {
     var clientTokenLookupStub;
     beforeEach(function () {
-      clientTokenLookupStub = sinon.stub(this.authentication.client, 'getTokenLookup');
+      var client = this.$inject('client');
+      clientTokenLookupStub = sinon.stub(client, 'getTokenLookup');
     });
 
     afterEach(function () {
@@ -407,9 +393,9 @@ describe('Authentication service', function () {
     });
   });
 
-  describe('update token lookup', function() {
-    beforeEach(function() {
-      this.QueryLinkResolver.resolveQueryLinks = function(u){ return [u]; };
+  describe('update token lookup', function () {
+    beforeEach(function () {
+      this.QueryLinkResolver.resolveQueryLinks = function (u) { return [u]; };
       this.oldTokenLookup = {
         includes: {
           Foo: [
@@ -440,7 +426,7 @@ describe('Authentication service', function () {
       this.authentication.tokenLookup = this.oldTokenLookup;
     });
 
-    it('should merge includes', function(){
+    it('should merge includes', function () {
       this.authentication.updateTokenLookup(this.newTokenLookup);
       var t = this.authentication.tokenLookup;
       expect(t.includes.Foo[0].updated).toBe(undefined);
@@ -448,14 +434,14 @@ describe('Authentication service', function () {
       expect(t.includes.Bar[0].sys.id).toBe('3');
     });
 
-    it('should update spaces', function(){
+    it('should update spaces', function () {
       this.authentication.updateTokenLookup(this.newTokenLookup);
       var t = this.authentication.tokenLookup;
       expect(t.items[0].spaces[0].updated).toBe(true);
       expect(t.items[0].spaces[1].updated).toBe(undefined);
     });
 
-    it('should append new includes and items', function(){
+    it('should append new includes and items', function () {
       this.newTokenLookup.includes.Foo.push({sys: {id: 'new3'}});
       this.newTokenLookup.items[0].spaces.push({
         name: 'HerpDerp', sys: {id: 'herpderp'}

@@ -85,7 +85,7 @@ angular.module('contentful')
 
       var storedLocaleCodes = getStoredActiveLocales();
       var storedLocales = _.filter(privateLocales, function (locale) {
-        return _.contains(storedLocaleCodes, locale.code);
+        return _.includes(storedLocaleCodes, locale.code);
       });
 
       setActiveLocales(storedLocales);

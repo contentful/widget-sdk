@@ -243,7 +243,7 @@ angular.module('contentful')
 
   Client.prototype.connectionFailed = function () {
     var state = this._connection.state;
-    return !_.contains(VALID_STATES, state);
+    return !_.includes(VALID_STATES, state);
   };
 
   function entityMetadataToKey (sys) {

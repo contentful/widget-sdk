@@ -28,7 +28,7 @@ angular.module('contentful')
   function markMisconfigured(widgets) {
     var promises = _(widgets)
       .map(getCheck)
-      .invoke('call')
+      .invokeMap('call')
       .value();
 
     return $q.all(promises).then(mark);

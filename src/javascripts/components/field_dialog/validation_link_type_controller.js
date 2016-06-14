@@ -30,7 +30,7 @@ angular.module('contentful')
   }
 
   function isSelected(contentTypeId) {
-    return _.contains($scope.validation.settings, contentTypeId);
+    return _.includes($scope.validation.settings, contentTypeId);
   }
 
 }]);

@@ -35,27 +35,27 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       self.creationErrors = [];
 
       // content types
-      $q.all(_.map(template.contentTypes, self.createContentType, self))
+      $q.all(_.map(template.contentTypes, _.bind(self.createContentType, self)))
       .then(_.bind(self.publishContentTypes, self))
       // editing interfaces
       .then(function () {
-        return $q.all(_.map(template.editingInterfaces, self.createEditingInterface, self));
+        return $q.all(_.map(template.editingInterfaces, _.bind(self.createEditingInterface, self)));
       })
       // assets
       .then(function () {
         var assets = setDefaultLocale(template.assets, self._getDefaultLocale());
-        return $q.all(_.map(assets, self.createAsset, self));
+        return $q.all(_.map(assets, _.bind(self.createAsset, self)));
       })
       .then(_.bind(self.processAssets, self))
       .then(_.bind(self.publishAssets, self))
       // entries
       .then(function () {
         var entries = setDefaultLocale(template.entries, self._getDefaultLocale());
-        return $q.all(_.map(entries, self.createEntry, self));
+        return $q.all(_.map(entries, _.bind(self.createEntry, self)));
       })
       .then(_.bind(self.publishEntries, self))
       // api keys
-      .then($q.all(_.map(template.apiKeys, self.createApiKey, self)))
+      .then($q.all(_.map(template.apiKeys, _.bind(self.createApiKey, self))))
       // end it
       .then(function () {
         if(self.creationErrors.length > 0)
@@ -76,13 +76,13 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
           performedActions: [],
           response: response
         };
-      if(!_.contains(this.handledItems[itemKey].performedActions, actionData.action))
+      if(!_.includes(this.handledItems[itemKey].performedActions, actionData.action))
         this.handledItems[itemKey].performedActions.push(actionData.action);
     },
 
     itemIsHandled: function (item, actionData) {
       var itemKey = generateItemId(item, actionData);
-      return itemKey in this.handledItems && _.contains(this.handledItems[itemKey].performedActions, actionData.action);
+      return itemKey in this.handledItems && _.includes(this.handledItems[itemKey].performedActions, actionData.action);
     },
 
     getHandledItemResponse: function (item, actionData) {

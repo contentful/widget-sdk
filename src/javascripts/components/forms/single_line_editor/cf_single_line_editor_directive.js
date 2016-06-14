@@ -12,7 +12,7 @@ angular.module('contentful')
     template: JST['cf_single_line_editor'](),
     link: function (scope, $el, _attributes, widgetApi) {
       var field = widgetApi.field;
-      var constraints = _(field.validations).pluck('size').filter().first() || {};
+      var constraints = _(field.validations).map('size').map().first() || {};
       var $inputEl = $el.children('input');
       var updateInput = makeInputUpdater($inputEl);
 

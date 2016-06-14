@@ -35,7 +35,7 @@ angular.module('contentful').factory('PromisedLoader', ['$q', '$rootScope', 'deb
 
     loadPromise: function (promiseLoader/*, args[]*/) {
       var deferred = $q.defer();
-      var args = _.rest(arguments, 1);
+      var args = _.drop(arguments, 1);
       if (this.inProgress){
         deferred.reject(PromisedLoader.IN_PROGRESS);
         return deferred.promise;

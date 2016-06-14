@@ -171,7 +171,7 @@ angular.module('contentful')
   function getLinkValidationErrorMessage (err) {
     var error = _.first(dotty.get(err, 'body.details.errors'));
     var contentTypeId = _.first(error.contentTypeId);
-    var contentType = _.findWhere(spaceContext.publishedContentTypes, {data: {sys: {id: contentTypeId}}});
+    var contentType = _.find(spaceContext.publishedContentTypes, {data: {sys: {id: contentTypeId}}});
     if (contentType) {
       return error.details.replace(contentTypeId, contentType.data.name);
     } else {

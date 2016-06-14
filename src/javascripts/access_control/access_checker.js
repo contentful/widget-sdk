@@ -399,7 +399,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    */
   function wasForbidden(context) {
     return function (res) {
-      if (_.contains([403, 404], parseInt(dotty.get(res, 'statusCode'), 10))) {
+      if (_.includes([403, 404], parseInt(dotty.get(res, 'statusCode'), 10))) {
         context.forbidden = true;
         return $q.resolve(context);
       } else {

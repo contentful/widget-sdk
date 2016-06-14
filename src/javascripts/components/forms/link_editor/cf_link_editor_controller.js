@@ -151,9 +151,9 @@ angular.module('contentful').controller('LinkEditorController',
 
   function setLinkValidation(validations) {
     var linkTypeValidation = _(validations)
-      .map(validation.Validation.parse)
-      .where({name: linkParams.validationType})
-      .first();
+    .map(validation.Validation.parse)
+    .filter({name: linkParams.validationType})
+    .first();
 
     setValidation(linkTypeValidation);
   }

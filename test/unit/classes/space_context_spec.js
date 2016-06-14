@@ -262,7 +262,7 @@ describe('spaceContext', function () {
           this.spaceContext.refreshContentTypes();
           rootScope.$apply();
           expect(this.spaceContext.publishedContentTypes.length).toBe(1);
-          expect(_.contains(this.spaceContext.publishedContentTypes, contentTypes[1])).toBe(false);
+          expect(_.includes(this.spaceContext.publishedContentTypes, contentTypes[1])).toBe(false);
         });
 
         it('registers a published content type', function () {

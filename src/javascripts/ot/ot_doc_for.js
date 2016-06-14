@@ -122,7 +122,7 @@ angular.module('contentful')
   // Watch Doc internals to determine if we have sent operations to the
   // server that have yet to be acknowledged.
   $scope.$watchGroup(['otDoc.doc.inflightOp', 'otDoc.doc.pendingOp'], function (ops) {
-    otDoc.state.saving = _.any(ops);
+    otDoc.state.saving = _.some(ops);
   });
 
   $scope.$watch(function () {

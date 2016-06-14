@@ -66,7 +66,7 @@ angular.module('contentful')
 
   function makeSelection(obj) {
     // Remove unnecessary values from object
-    var segmentObj = _.pick(obj, hasValue);
+    var segmentObj = _.pickBy(obj, hasValue);
 
     // Add to user data, and track event
     analytics.addIdentifyingData(segmentObj);

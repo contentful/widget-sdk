@@ -43,7 +43,7 @@ angular.module('contentful')
           return true;
         }
 
-        if (deprecation.field && !_.contains(deprecation.field, field.type)) {
+        if (deprecation.field && !_.includes(deprecation.field, field.type)) {
           return true;
         }
 

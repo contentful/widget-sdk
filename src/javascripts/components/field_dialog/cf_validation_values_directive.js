@@ -97,7 +97,7 @@ angular.module('contentful')
           return false;
         }
 
-        if (_.contains($scope.valueList, value)){
+        if (_.includes($scope.valueList, value)){
           setError('This value already exists on the list');
           return false;
         } else {

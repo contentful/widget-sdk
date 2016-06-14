@@ -107,7 +107,6 @@ describe('Batch performer service', function () {
     itCallsCompleteListener(action);
     itNotifiesAboutResult(action);
     itTracksAnalytics(action);
-    itHandles429(action);
     itHandles404(action);
   }
 
@@ -158,18 +157,6 @@ describe('Batch performer service', function () {
         sinon.assert.calledOnce(this.analytics.track);
         expect(this.analytics.track.args[0][0]).toMatch(/list action/);
       }.bind(this));
-    });
-  }
-
-  function itHandles429 (action) {
-    it('retries for 429 HTTP errors', function () {
-      var actionStub = this.actionStubs[1];
-      actionStub.rejects({statusCode: 429});
-      this.performer[action]();
-      this.$apply();
-      actionStub.resolves(this.entities[1]);
-      this.$inject('$timeout').flush();
-      sinon.assert.calledTwice(actionStub);
     });
   }
 
