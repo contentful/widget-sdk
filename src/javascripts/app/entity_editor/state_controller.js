@@ -74,7 +74,7 @@ function ($scope, $injector, entity, notify, handlePublishError) {
   });
 
   $scope.$watch(function () {
-    return _.all(controller.secondary, function (cmd) {
+    return _.every(controller.secondary, function (cmd) {
       // TODO this uses the private API
       return cmd._isDisabled();
     });

@@ -124,6 +124,6 @@ angular.module('contentful')
   }
 
   function getAvailableLocaleCodes () {
-    return _.pluck(TheLocaleStore.getPrivateLocales(), 'code');
+    return _.map(TheLocaleStore.getPrivateLocales(), 'code');
   }
 }]);

@@ -199,7 +199,7 @@ angular.module('contentful')
       if (index === -1) return;
 
       this.publishedContentTypes.splice(index, 1);
-      this._publishedContentTypesHash = _.omit(this._publishedContentTypesHash, function (ct) {
+      this._publishedContentTypesHash = _.omitBy(this._publishedContentTypesHash, function (ct) {
         return ct === publishedContentType;
       });
     },

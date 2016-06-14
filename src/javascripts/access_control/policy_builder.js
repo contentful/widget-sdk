@@ -67,7 +67,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
       version: dotty.get(external, 'sys.version', null),
       name: external.name,
       description: external.description
-    }, (_.clone(external.permissions, true) || {}), translatePolicies(external));
+    }, (_.cloneDeep(external.permissions) || {}), translatePolicies(external));
   };
 
   function translatePolicies(external) {
@@ -124,7 +124,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
 
     if (as === 'all') {
       return 'all';
-    } else if (isArrayOfLength(1) && !_.contains(glued, as[0])) {
+    } else if (isArrayOfLength(1) && !_.includes(glued, as[0])) {
       return as[0];
     } else if (isArrayOfLength(2) && containsBoth.apply(null, glued.slice(0, 2))) {
       return 'publish';
@@ -187,7 +187,7 @@ angular.module('contentful').factory('PolicyBuilder/toInternal', ['$injector', f
 
   function findEntityConstraint(cs) {
     return searchResult(cs, _.findIndex(cs, function (c) {
-      return docEq(c, 'sys.type') && _.contains(['Entry', 'Asset'], c.equals[1]);
+      return docEq(c, 'sys.type') && _.includes(['Entry', 'Asset'], c.equals[1]);
     }));
   }
 
@@ -268,7 +268,7 @@ angular.module('contentful').factory('PolicyBuilder/toExternal', ['$injector', f
       .map(addScopeConstraint)
       .map(addContentTypeConstraint)
       .map(addPathConstraint)
-      .pluck('result')
+      .map('result')
       .value();
   }
 

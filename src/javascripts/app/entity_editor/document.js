@@ -78,7 +78,7 @@ function ($scope, $injector, entity) {
     function () { return controller.doc && controller.doc.inflightOp; },
     function () { return controller.doc && controller.doc.pendingOp; }
   ], function (ops) {
-    controller.state.saving = _.any(ops);
+    controller.state.saving = _.some(ops);
   });
 
   $scope.$watch(function () {

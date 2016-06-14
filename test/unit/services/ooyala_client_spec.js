@@ -1,15 +1,15 @@
 'use strict';
 
 describe('Ooyala Client', function () {
-  var baseUrl, clientAdapter, clientAdapterDeferred, ooyalaClient;
-  var OoyalaErrorMessages, clientAdapterPromise;
+  var baseUrl, client, clientDeferred, ooyalaClient;
+  var OoyalaErrorMessages, clientPromise;
   var $rootScope;
 
   beforeEach(function () {
     module('contentful/test');
     module(function ($provide) {
-      clientAdapter = {request: jasmine.createSpy()};
-      $provide.value('clientAdapter', clientAdapter);
+      client = {request: jasmine.createSpy()};
+      $provide.value('client', client);
     });
 
     inject(function ($injector, $q) {
@@ -17,10 +17,10 @@ describe('Ooyala Client', function () {
       ooyalaClient = $injector.get('ooyalaClient');
       OoyalaErrorMessages = $injector.get('OoyalaErrorMessages');
 
-      clientAdapterDeferred = $q.defer();
-      clientAdapterPromise = clientAdapterDeferred.promise;
+      clientDeferred = $q.defer();
+      clientPromise = clientDeferred.promise;
 
-      clientAdapter.request.and.returnValue(clientAdapterPromise);
+      client.request.and.returnValue(clientPromise);
     });
 
     baseUrl = '/integrations/ooyala';
@@ -43,8 +43,8 @@ describe('Ooyala Client', function () {
         ooyalaClient.request('POST', baseUrl + '/v2/players', 'random stuff');
       });
 
-      it('uses the client adapter to execute a API request', function () {
-        expect(ooyalaClient.clientAdapter.request).toHaveBeenCalledWith({
+      it('uses the client to execute a API request', function () {
+        expect(client.request).toHaveBeenCalledWith({
           method: 'POST',
           path: '/integrations/ooyala/v2/players',
           payload: 'random stuff',
@@ -61,7 +61,7 @@ describe('Ooyala Client', function () {
         beforeEach(function () {
           ooyalaClient.setOrganizationId('ORG-ID');
           ooyalaClient.request('bla', 'bla', 'bla').catch(function (_error_) { error = _error_; });
-          clientAdapterDeferred.reject(response);
+          clientDeferred.reject(response);
           $rootScope.$apply();
         });
       }

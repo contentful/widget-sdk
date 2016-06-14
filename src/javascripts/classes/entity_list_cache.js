@@ -79,7 +79,7 @@ angular.module('contentful')
     },
 
     fieldIsDisplayed: function (fieldId) {
-      return _.contains(this.displayedFieldIds, fieldId);
+      return _.includes(this.displayedFieldIds, fieldId);
     },
 
     determineMissingEntityIds: function (entities) {
@@ -111,7 +111,7 @@ angular.module('contentful')
 
     pushFieldId: function (field) {
       if(field.sys.linkType == this.params.entityType &&
-         !_.contains(this.missingIds, getId(field)) &&
+         !_.includes(this.missingIds, getId(field)) &&
          !this.get(getId(field))
         ) {
         this.missingIds.push(getId(field));

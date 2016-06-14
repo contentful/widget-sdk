@@ -12,7 +12,7 @@ angular.module('contentful').config(['$provide', function ($provide) {
     $q.callbackWithApply = function () {
       var deferred = $q.defer();
       var callbackFunction = function (err) {
-        var args = _.rest(arguments);
+        var args = _.tail(arguments);
         $rootScope.$apply(function () {
           if (err) {
             deferred.reject(err);
@@ -28,7 +28,7 @@ angular.module('contentful').config(['$provide', function ($provide) {
     $q.callback = function () {
       var deferred = $q.defer();
       var callbackFunction = function (err) {
-        var args = _.rest(arguments);
+        var args = _.tail(arguments);
         if (err) {
           deferred.reject(err);
         } else {

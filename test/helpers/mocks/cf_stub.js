@@ -51,7 +51,7 @@ angular.module('contentful/mocks')
 .factory('cfStub', function ($injector) {
   var $rootScope = $injector.get('$rootScope');
   var spaceContext = $injector.get('spaceContext');
-  var contentfulClient = $injector.get('privateContentfulClient');
+  var contentfulClient = $injector.get('libs/@contentful/client');
   var Adapter = $injector.get('TestingAdapter');
 
   var Client = contentfulClient.Client;

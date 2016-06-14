@@ -137,7 +137,7 @@ angular.module('contentful')
     };
 
     ctrl.$validators.unique = function (value) {
-      return !_.contains(contentTypeIds, value);
+      return !_.includes(contentTypeIds, value);
     };
 
     ctrl.$validators.format = function (value) {

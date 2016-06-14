@@ -15,7 +15,7 @@ angular.module('contentful')
     return {
       name: name,
       label: label,
-      selected: _.contains($scope.validation.settings, name)
+      selected: _.includes($scope.validation.settings, name)
     };
   });
 

@@ -161,7 +161,7 @@ angular.module('contentful')
       },
       fieldInfo: fieldInfo,
       locales: {
-        available: _.pluck(TheLocaleStore.getPrivateLocales(), 'code'),
+        available: _.map(TheLocaleStore.getPrivateLocales(), 'code'),
         default: TheLocaleStore.getDefaultLocale().code
       },
       entry: entryData
@@ -177,7 +177,7 @@ angular.module('contentful')
       return {
         id: field.apiName,
         localized: field.localized,
-        locales: _.pluck(locales, 'code'),
+        locales: _.map(locales, 'code'),
         values: idMap.locale.valuesToPublic(values)
       };
     });

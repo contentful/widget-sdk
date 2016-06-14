@@ -53,7 +53,7 @@ angular.module('contentful')
         data: {
           email: email,
           request: _.extend({}, request, {headers: response.config.headers}),
-          response: _.pick(response, 'status', 'statusText', 'data')
+          response: _.pick(response, ['status', 'statusText', 'data'])
         }
       });
       return $q.reject(new Error('The email could not be sent'));

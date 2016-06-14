@@ -91,7 +91,7 @@ angular.module('contentful')
 
   function getDefaultFieldIds () {
     return _.reject(_.map(systemFields.getList(), 'id'), function (fieldId) {
-      return _.contains(['createdAt', 'publishedAt'], fieldId);
+      return _.includes(['createdAt', 'publishedAt'], fieldId);
     });
   }
 

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('cf.libs', [])
-  .constant('privateContentfulClient', require('@contentful/client'))
+  .constant('libs/@contentful/client', require('@contentful/client'))
   .constant('hostnameTransformer', require('@contentful/hostname-transformer'))
   .constant('mimetype', require('@contentful/mimetype'))
   .constant('raw/moment', require('moment'))
@@ -21,4 +21,4 @@ window.dotty = require('./dottie_wrapper.js');
 
 // This needs to be called after everything else so we override any
 // previously imported versions of lodash
-window._ = require('lodash-node/modern');
+window._ = require('lodash');

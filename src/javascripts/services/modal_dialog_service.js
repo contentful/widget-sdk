@@ -63,12 +63,12 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
         disableTopCloseButton: false,
         persistOnNavigation: false
       },
-      _.pick(params,
+      _.pick(params, [
         'title', 'message', 'messageTemplate',
         'template', 'confirmLabel', 'cancelLabel',
         'attachTo', 'enterAction', 'backgroundClose',
         'ignoreEnter', 'ignoreEsc', 'disableTopCloseButton',
-        'persistOnNavigation')
+        'persistOnNavigation'])
     );
 
     this._deferred = $q.defer();

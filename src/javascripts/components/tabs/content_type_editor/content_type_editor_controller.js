@@ -92,7 +92,6 @@ function ContentTypeEditorController ($scope, $injector) {
    * @name ContentTypeEditorController#getPublishedField
    * @param {string} id
    */
-
   controller.getPublishedField = function (id) {
     return _.find(publishedFields, {id: id});
   };

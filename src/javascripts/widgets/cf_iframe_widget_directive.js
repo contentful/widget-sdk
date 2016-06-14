@@ -84,8 +84,8 @@ angular.module('contentful')
         updateWidgetFields(doc);
       });
 
-      scope.$on('otChange', function (_ev, doc, ops) {
-        var paths = _.pluck(ops, 'p');
+      scope.$on('otChange', function (ev, doc, ops) {
+        var paths = _.map(ops, 'p');
         paths = _.filter(paths, function (path) {
           return path[0] === 'fields';
         });

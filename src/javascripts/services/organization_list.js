@@ -75,7 +75,7 @@ angular.module('contentful').factory('OrganizationList', function () {
    * Gets organization by the provided ID.
    */
   function get (id) {
-    var result = _.where(organizations, { sys: { id: id } });
+    var result = _.filter(organizations, { sys: { id: id } });
     return result.length > 0 ? result[0] : null;
   }
 
@@ -118,7 +118,7 @@ angular.module('contentful').factory('OrganizationList', function () {
   function createRoleChecker (role) {
     return function checkRole (id) {
       var memberships = dotty.get(currentUser, 'organizationMemberships', []);
-      var found = _.findWhere(memberships, {organization: {sys: {id: id}}});
+      var found = _.find(memberships, {organization: {sys: {id: id}}});
       return role === dotty.get(found, 'role');
     };
   }

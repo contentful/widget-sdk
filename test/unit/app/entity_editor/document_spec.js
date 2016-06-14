@@ -243,7 +243,7 @@ describe('entityEditor/Document', function () {
       sinon.assert.calledOnce(this.entity.update);
       var data = this.entity.data;
       expect(data).not.toBe(this.doc.doc.snapshot);
-      expect(_.omit(data, 'sys')).toLookEqual(_.omit(this.doc.doc.snapshot, 'sys'));
+      expect(_.omit(data, ['sys'])).toLookEqual(_.omit(this.doc.doc.snapshot, ['sys']));
     });
 
     it('it updates the entity version', function () {
