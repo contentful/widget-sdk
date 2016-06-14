@@ -1,19 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="15" height="19" viewBox="0 0 15 19" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <defs>
-    <rect id="a" width="13" height="16" x="2" y="2.375" rx="2"/>
-    <mask id="c" width="13" height="16" x="0" y="0" fill="white">
-      <use xlink:href="#a"/>
-    </mask>
-    <rect id="b" width="13" height="16" y=".375" rx="2"/>
-    <mask id="d" width="13" height="16" x="0" y="0" fill="white">
-      <use xlink:href="#b"/>
-    </mask>
-  </defs>
-  <g fill="none" fill-rule="evenodd" stroke="#5B9FEF">
-    <use fill="#DDECFF" stroke-width="2" mask="url(#c)" xlink:href="#a"/>
-    <use fill="#FFFFFF" stroke-width="2" mask="url(#d)" xlink:href="#b"/>
-    <g transform="translate(3 3)" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M.516133036 1.5L6.34946637 1.5M.516133036 3.5L6.34946637 3.5M.516133036 5.5L6.34946637 5.5M.516133036 7.5L6.34946637 7.5M.516133036 9.5L2.84946637 9.5"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="15" height="19" viewBox="0 0 15 19"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <rect id="a" width="13" height="16" x="2" y="2.375" rx="2"/>
+        <mask id="c" width="13" height="16" x="0" y="0" fill="white">
+            <use xlink:href="#a"/>
+        </mask>
+        <rect id="b" width="13" height="16" y=".375" rx="2"/>
+        <mask id="d" width="13" height="16" x="0" y="0" fill="white">
+            <use xlink:href="#b"/>
+        </mask>
+        <mask id="e">
+            <rect x="0" y="0" width="100%" height="100%" fill="white"/>
+            <use xlink:href="#b"/>
+        </mask>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="currentColor">
+        <use id="img-fg"  stroke-width="2" mask="url(#b)" xlink:href="#rect"/>
+        <g id="doc-bg" mask="url(#e)">
+            <use fill="currentColor" fill-opacity="0.1" stroke-width="2" mask="url(#c)" xlink:href="#a"/>
+        </g>
+        <use id="doc-fg" stroke-width="2" mask="url(#d)" xlink:href="#b"/>
+        <g id="text" transform="translate(3 3)" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M.516133036 1.5L6.34946637 1.5M.516133036 3.5L6.34946637 3.5M.516133036 5.5L6.34946637 5.5M.516133036 7.5L6.34946637 7.5M.516133036 9.5L2.84946637 9.5"/>
+        </g>
     </g>
-  </g>
 </svg>

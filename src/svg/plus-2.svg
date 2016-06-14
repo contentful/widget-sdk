@@ -1,7 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17">
-  <g fill="none" fill-rule="evenodd">
-    <path fill="#DDECFF" stroke="#4A90E2" d="M8.84314575,16.863961 C13.261424,16.863961 16.8431458,13.2822392 16.8431458,8.86396103 C16.8431458,4.44568281 13.261424,0.863961031 8.84314575,0.863961031 C4.42486753,0.863961031 0.843145751,4.44568281 0.843145751,8.86396103 C0.843145751,13.2822392 4.42486753,16.863961 8.84314575,16.863961 Z"/>
-    <rect width="2" height="8" x="8" y="5" fill="#3C80CF"/>
-    <rect width="2" height="8" x="8" y="5" fill="#3C80CF" transform="rotate(-90 9 9)"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17"
+	 xmlns:xlink="http://www.w3.org/1999/xlink">
+	<defs>
+		<rect id="stroke" width="2" height="8" x="7.5" y="4.5" fill="currentColor"/>
+	</defs>
+	<g fill="currentColor">
+		<g id="circle">
+			<circle cx="8.5" cy="8.5" r="49%" id="circle"
+					opacity="0.5"
+					filter="url(#brighten1)"/>
+			<circle cx="8.5" cy="8.5" r="46%" id="circle"
+					stroke="currentColor"
+					fill="transparent"
+					filter="url(#brighten2)"/>
+		</g>
+		<g id="plus">
+			<use xlink:href="#stroke"/>
+			<use xlink:href="#stroke" transform="rotate(-90 8.5 8.5)"/>
+		</g>
+	</g>
+	<filter id="brighten1">
+		<feColorMatrix in="SourceGraphic" type="saturate" values="1.1"/>
+		<feComponentTransfer>
+			<feFuncR type="gamma" exponent="0.2"/>
+			<feFuncG type="gamma" exponent="0.2"/>
+			<feFuncB type="gamma" exponent="0.2"/>
+		</feComponentTransfer>
+	</filter>
+	<filter id="brighten2">
+		<feColorMatrix in="SourceGraphic" type="saturate" values="1.05"/>
+		<feComponentTransfer>
+			<feFuncR type="gamma" exponent="0.8"/>
+			<feFuncG type="gamma" exponent="0.8"/>
+			<feFuncB type="gamma" exponent="0.8"/>
+		</feComponentTransfer>
+	</filter>
 </svg>
