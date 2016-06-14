@@ -130,7 +130,6 @@ test/unit/markdown_editor/markdown_preview_spec.js
 test/unit/search/list_query_spec.js
 test/unit/ui/command_spec.js
 test/unit/ui/context_menu_spec.js
-test/unit/ui/cf_ui_caret_helper_spec.js
 test/unit/ui/command_directive_spec.js
 test/unit/utils/overriding_request_queue_spec.js
 test/unit/utils/signal_spec.js
@@ -399,7 +398,6 @@ src/javascripts/navigation/state_change_handlers.js
 src/javascripts/ui/cf_ui_tab.js
 src/javascripts/ui/sortable.js
 src/javascripts/ui/cf_icon_directive.js
-src/javascripts/ui/cf_ui_caret_helper.js
 src/javascripts/ui/cf_ui_hint.js
 src/javascripts/ui/context_menu.js
 src/javascripts/widgets/id_map.js
