@@ -1,51 +1,26 @@
 'use strict';
 
-angular.module('contentful').provider('authentication', function AuthenticationProvider() {
-  var authApp, marketingApp, QueryLinkResolver;
+angular.module('contentful')
+.factory('authentication', ['$injector', function ($injector) {
+  var environment = $injector.get('environment');
+  var contentfulClient = $injector.get('libs/@contentful/client');
+  var $location = $injector.get('$location');
+  var $q = $injector.get('$q');
+  var $window = $injector.get('$window');
+  var $http = $injector.get('$http');
+  var assert = $injector.get('assert');
+  var notification = $injector.get('notification');
+  var logger = $injector.get('logger');
+  var TheStore = $injector.get('TheStore');
+  var client = $injector.get('client');
 
-  var logger, environment, contentfulClient, $window, $location, $q, $rootScope, notification, assert, TheStore;
+  var authApp = '//' + environment.settings.base_host + '/';
+  var marketingApp = environment.settings.marketing_url + '/';
+  var QueryLinkResolver = contentfulClient.QueryLinkResolver;
 
-  var $http;
-
-  function setEnvVars($injector) {
-    environment       = $injector.get('environment');
-    contentfulClient  = $injector.get('privateContentfulClient');
-    authApp           = '//'+environment.settings.base_host+'/';
-    marketingApp      = environment.settings.marketing_url+'/';
-    QueryLinkResolver = contentfulClient.QueryLinkResolver;
-  }
-
-  function Authentication(client){
-    this.client = client;
-  }
-
-  var helper = {
-    extractToken: function(hash) {
-      var match = hash.match(/access_token=(\w+)/);
-      return !!match && match[1];
-    },
-
-    loadToken: function() {
-      /*jshint boss:true*/
-      var token;
-
-      if (token = this.extractToken($location.hash())) {
-        $location.hash('');
-        TheStore.set('token', token);
-        return token;
-      }
-
-      if (token = TheStore.get('token')) {
-        return token;
-      }
-
-      return null;
-    }
-  };
-
-  Authentication.prototype = {
-    login: function() {
-      var token = helper.loadToken();
+  return {
+    login: function () {
+      var token = loadToken();
 
       if (token) {
         this.token = token;
@@ -70,14 +45,14 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       this.login();
     },
 
-    logout: function() {
+    logout: function () {
       TheStore.remove('token');
       var payload = $.param({token: this.token});
       return $http.post(authApp + 'oauth/revoke', payload, {
         headers: {
           'Authorization': 'Bearer ' + this.token,
           'Content-Type': 'application/x-www-form-urlencoded'
-        },
+        }
       }).finally(function () {
         $window.location = authApp + 'logout';
       });
@@ -88,23 +63,19 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       $window.location = marketingApp + 'goodbye';
     },
 
-    isLoggedIn: function() {
-      return !!this.token;
-    },
-
-    accountUrl: function() {
+    accountUrl: function () {
       return authApp + 'account';
     },
 
-    supportUrl: function() {
+    supportUrl: function () {
       return authApp + 'integrations/zendesk/login';
     },
 
     spaceSettingsUrl: function (spaceId) {
-      return authApp + 'settings/spaces/'+spaceId;
+      return authApp + 'settings/spaces/' + spaceId;
     },
 
-    redirectToLogin: function() {
+    redirectToLogin: function () {
       var params = $.param({
         response_type: 'token',
         client_id: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
@@ -115,26 +86,29 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       $window.location = authApp + 'oauth/authorize?' + params;
     },
 
-    getTokenLookup: function() {
+    getTokenLookup: function () {
       if (this.redirectingToLogin) {
         return $q.defer().promise; // never resolved lol
       }
       var self = this;
-      return this.client.getTokenLookup()
+      return client.getTokenLookup()
       .then(function (data) {
         // Data === undefined is in cases of notmodified
         if (data !== undefined) self.setTokenLookup(data);
         return self.tokenLookup;
       }, function (err) {
         var statusCode = dotty.get(err, 'statusCode');
-        if(statusCode !== 502 && statusCode !== 401)
-          logger.logError('getTokenLookup failed', { error: err });
+        if (statusCode !== 502 && statusCode !== 401) {
+          logger.logError('getTokenLookup failed', {error: err});
+        }
         return $q.reject(err);
       });
     },
 
     getUser: function () {
-      if (this.tokenLookup) return this.tokenLookup.sys.createdBy;
+      if (this.tokenLookup) {
+        return this.tokenLookup.sys.createdBy;
+      }
     },
 
     setTokenLookup: function (tokenLookup) {
@@ -143,12 +117,12 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       this.tokenLookup = QueryLinkResolver.resolveQueryLinks(tokenLookup)[0];
     },
 
-    updateTokenLookup: function(unresolvedUpdate){
+    updateTokenLookup: function (unresolvedUpdate) {
       assert.truthy(unresolvedUpdate.items.length === 1, 'Expected the token update to have exactly one element');
       var tokenLookup = angular.copy(this._unresolvedTokenLookup);
 
-      //merge includes
-      _.each(unresolvedUpdate.includes, function(newArray, className){
+      // merge includes
+      _.each(unresolvedUpdate.includes, function (newArray, className) {
         if (!tokenLookup.includes[className]) {
           tokenLookup.includes[className] = newArray;
         } else {
@@ -159,41 +133,46 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
       // Update space
       var existingSpaces = tokenLookup.items[0].spaces;
-      var newSpaces      = unresolvedUpdate.items[0].spaces;
+      var newSpaces = unresolvedUpdate.items[0].spaces;
       merge(existingSpaces, newSpaces);
       // We're skipping the other properties of the token,
       // since only the spaces array should have changed
 
       this.setTokenLookup(tokenLookup);
 
-      function merge(list, newList) {
-        _.each(newList, function(newEntity){
-          var index = _.findIndex(list, function(entity){
+      function merge (list, newList) {
+        _.each(newList, function (newEntity) {
+          var index = _.findIndex(list, function (entity) {
             return entity.sys.id === newEntity.sys.id;
           });
-          if (index >= 0) { list[index] = newEntity; }
-          else            { list.push(newEntity); }
+          if (index >= 0) {
+            list[index] = newEntity;
+          } else {
+            list.push(newEntity);
+          }
         });
       }
     }
-
   };
 
-  this.$get = ['$injector', function($injector){
-    $location    = $injector.get('$location');
-    $q           = $injector.get('$q');
-    $rootScope   = $injector.get('$rootScope');
-    $window      = $injector.get('$window');
-    $http        = $injector.get('$http');
-    assert       = $injector.get('assert');
-    notification = $injector.get('notification');
-    logger       = $injector.get('logger');
-    TheStore     = $injector.get('TheStore');
-    var client   = $injector.get('client');
+  function extractToken (hash) {
+    var match = hash.match(/access_token=(\w+)/);
+    return !!match && match[1];
+  }
 
-    var authentication = new Authentication(client);
-    setEnvVars($injector);
-    return authentication;
-  }];
+  function loadToken () {
+    var token = extractToken($location.hash());
+    if (token) {
+      $location.hash('');
+      TheStore.set('token', token);
+      return token;
+    }
 
-});
+    token = TheStore.get('token');
+    if (token) {
+      return token;
+    }
+
+    return null;
+  }
+}]);
