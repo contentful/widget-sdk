@@ -196,16 +196,18 @@ describe('ContentType Actions Controller', function () {
 
   describe('#save command', function () {
     beforeEach(function () {
-      spaceContext.editingInterfaces = {
-        save: sinon.stub().resolves()
-      };
+      spaceContext.editingInterfaces.save = sinon.stub().resolves();
+      spaceContext.editingInterfaces.get = sinon.stub().resolves({
+        sys: { version: 1 },
+        controls: []
+      });
 
       scope.contentTypeForm = new FormStub();
       scope.contentTypeForm.$setDirty();
 
       scope.validate = sinon.stub().returns(true);
 
-      scope.editingInterface = {};
+      scope.editingInterface = { sys: {} };
 
       scope.contentType.save = sinon.stub().returns(this.when(scope.contentType));
       scope.contentType.publish = sinon.stub().returns(this.when(scope.contentType));
@@ -232,9 +234,35 @@ describe('ContentType Actions Controller', function () {
     });
 
     pit('saves editing interface', function () {
+      spaceContext.editingInterfaces.get = sinon.stub().resolves({
+        sys: { version: 10 },
+        controls: []
+      });
+
+
       return controller.save.execute()
       .then(function () {
         sinon.assert.calledOnce(spaceContext.editingInterfaces.save);
+
+        var callArgs = spaceContext.editingInterfaces.save.getCall(0).args;
+
+        // First argument is the content type
+        expect(callArgs[0]).toEqual({
+          name: 'typename',
+          fields: [],
+          sys: {
+            id: 'typeid',
+            type: 'ContentType',
+            version: 1,
+            publishedVersion: 1
+          },
+          displayField: undefined
+        });
+
+        // Second argument is the editor interface
+        expect(callArgs[1]).toEqual({
+          sys: { version: 10 }
+        });
       });
     });
 
@@ -380,13 +408,14 @@ describe('ContentType Actions Controller', function () {
         return ct;
       }.bind(this));
 
-      scope.editingInterface = {controls: []};
+      scope.editingInterface = {sys: {}, controls: []};
       spaceContext.editingInterfaces.save = sinon.stub().resolves();
 
       sinon.stub(spaceContext.editingInterfaces, 'get', function (ctData) {
         return $q.resolve({
+          sys: { version: 1 },
           controls: _.map(ctData.fields, function (field) {
-            return {field: field, widgetId: 'some-widget'};
+            return { field: field, widgetId: 'some-widget' };
           })
         });
       });

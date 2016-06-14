@@ -12,17 +12,16 @@ angular.module('contentful/app', ['contentful'])
   }
 }])
 
-.run(['$injector', function ($injector) {
-  var get = $injector.get;
-  var authentication = get('authentication');
+.run(['require', function (require) {
+  var authentication = require('authentication');
   authentication.login();
 
-  get('client').init(authentication.token);
-  get('ShareJS').connect(authentication.token);
-  get('uiVersionSwitcher').checkIfVersionShouldBeSwitched();
-  get('navigation/stateChangeHandlers').setup();
-  get('contextMenu').init();
-  get('notification').setupClearMessageHooks();
-  get('states').loadAll();
-  get('dialogsInitController').init();
+  require('client').init(authentication.token);
+  require('ShareJS').connect(authentication.token);
+  require('uiVersionSwitcher').checkIfVersionShouldBeSwitched();
+  require('navigation/stateChangeHandlers').setup();
+  require('contextMenu').init();
+  require('notification').setupClearMessageHooks();
+  require('states').loadAll();
+  require('dialogsInitController').init();
 }]);
