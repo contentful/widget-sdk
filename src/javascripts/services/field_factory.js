@@ -264,7 +264,7 @@ angular.module('contentful')
     } else {
       locales = [TheLocaleStore.getDefaultLocale()];
     }
-    return _.pluck(locales, 'internal_code');
+    return _.map(locales, 'internal_code');
   }
 
 

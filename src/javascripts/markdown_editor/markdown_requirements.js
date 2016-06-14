@@ -40,7 +40,7 @@ angular.module('contentful').factory('MarkdownEditor/requirements', function () 
 
   function findSizeRequirements(validations) {
     return _(validations || [])
-      .pluck('size')
+      .map('size')
       .filter(_.isObject)
       .first() || {};
   }

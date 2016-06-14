@@ -22,7 +22,7 @@ angular.module('contentful').factory('EntityCache', ['$injector', function($inje
     getAll: function (ids) {
       var self = this;
 
-      var missingIds = _.reject(ids, this._isKnown, this);
+      var missingIds = _.reject(ids, _.bind(this._isKnown, this));
       this._resolveAll(missingIds);
 
       return $q.all(_.map(ids, function(id){
@@ -64,10 +64,10 @@ angular.module('contentful').factory('EntityCache', ['$injector', function($inje
     _resolveAll: function (ids) {
       var self = this;
       var batches = split(ids);
-      var promise = $q.all(_.map(batches, self._resolveBatch, self))
+      var promise = $q.all(_.map(batches, _.bind(self._resolveBatch, self)))
       .then(function (batches) {
         _.each(batches, function (entities) {
-          _.each(entities, self.save, self);
+          _.each(entities, _.bind(self.save, self));
         });
       });
       _.each(ids, function(id){

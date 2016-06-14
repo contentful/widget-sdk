@@ -123,7 +123,7 @@ angular.module('contentful').factory('contentfulClient', ['$injector', function 
     return _.extend(new ContentType(), {
       sys: Sys.parse(object.sys),
       fields: object.fields.map(Field.parse)
-    }, _.pick(object, 'name', 'displayField'));
+    }, _.pick(object, ['name', 'displayField']));
   };
 
   function Field() {}
@@ -164,7 +164,7 @@ angular.module('contentful').factory('contentfulClient', ['$injector', function 
   Sys.parse = function(object) {
     return _.extend(
       new Sys(),
-      _.pick(object, 'id', 'revision', 'type', 'locale'),
+      _.pick(object, ['id', 'revision', 'type', 'locale']),
       compacto({
         contentType: object.contentType && Link.parse(object.contentType),
         createdAt: object.createdAt && new Date(object.createdAt),

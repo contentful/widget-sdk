@@ -201,7 +201,7 @@ angular.module('contentful')
     // On first login, send referrer, campaign and A/B test data to
     // segment and totango if it has been set by marketing website cookie
     if (userData.signInCount === 1) {
-      var firstVisitData = _.pick({
+      var firstVisitData = _.pickBy({
         firstReferrer: parseCookie('cf_first_visit', 'referer'),
         campaignName: parseCookie('cf_first_visit', 'campaign_name'),
         lastReferrer: parseCookie('cf_last_visit', 'referer'),

@@ -151,9 +151,9 @@ angular.module('contentful')
      */
     disable: function () {
       bugsnag.disable();
-      _.forEach(this, function (value, key) {
+      _.forEach(this, _.bind(function (value, key) {
         this[key] = _.noop;
-      }, this);
+      }, this));
     },
 
     findActualServerError: findActualServerError,

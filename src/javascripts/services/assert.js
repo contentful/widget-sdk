@@ -16,7 +16,7 @@ angular.module('contentful').service('assert', ['$parse', function($parse) {
     if (obj === undefined) return undefined;
     if (keys.length === 0) return obj;
     if (obj === null) return undefined;
-    return getPath(obj[_.first(keys)], _.rest(keys));
+    return getPath(obj[_.first(keys)], _.tail(keys));
   }
 
   function isNotValid(result) {

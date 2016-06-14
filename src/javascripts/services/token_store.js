@@ -145,7 +145,7 @@ angular.module('contentful').factory('tokenStore', ['$injector', function ($inje
             msg: e.message,
             exp: e,
             spaces: _.map(spaces, function (space) {
-              return _.pluck(space, 'data');
+              return _.map(space, 'data');
             })
           }
         });

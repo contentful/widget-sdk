@@ -28,13 +28,13 @@ angular.module('contentful').controller('DisplayedFieldsController', ['$scope', 
     cleanDisplayedFieldIds(unavailableFieldIds);
 
     function fieldIsDisplayed(field) {
-      return _.contains(displayedFieldIds, field.id);
+      return _.includes(displayedFieldIds, field.id);
     }
   };
 
   function cleanDisplayedFieldIds(unavailableFieldIds) {
     $scope.context.view.displayedFieldIds = _.reject($scope.context.view.displayedFieldIds, function (id) {
-      return _.contains(unavailableFieldIds, id);
+      return _.includes(unavailableFieldIds, id);
     });
   }
 

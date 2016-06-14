@@ -23,7 +23,7 @@ angular.module('contentful').factory('accessChecker/responseCache', [function ()
     var key = getCanResponseKey(action, entity);
     if (key) {
       var response = cache[key];
-      if (!_.contains([true, false], response)) {
+      if (!_.includes([true, false], response)) {
         response = context.can(action, entity);
         cache[key] = response;
       }
@@ -40,7 +40,7 @@ angular.module('contentful').factory('accessChecker/responseCache', [function ()
     if (_.isObject(entity)) {
       id = dotty.get(entity, 'sys.id', null);
       var type = dotty.get(entity, 'sys.type', null);
-      category = _.contains(['Entry', 'Asset'], type) ? ('specific' + type) : null;
+      category = _.includes(['Entry', 'Asset'], type) ? ('specific' + type) : null;
     } else if (_.isString(entity)) {
       id = 'none';
       category = 'general' + entity;

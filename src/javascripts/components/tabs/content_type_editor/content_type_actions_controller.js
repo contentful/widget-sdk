@@ -215,7 +215,7 @@ function ContentTypeActionsController ($scope, $injector) {
     ctHelpers.assureDisplayField($scope.contentType.data);
 
     if (!$scope.validate()) {
-      var fieldNames = _.pluck($scope.contentType.data.fields, 'name');
+      var fieldNames = _.map($scope.contentType.data.fields, 'name');
       notify.invalidAccordingToScope($scope.validationResult.errors, fieldNames);
       return $q.reject();
     }

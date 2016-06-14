@@ -33,7 +33,7 @@ angular.module('contentful')
   return $injector.get(serviceName);
 
   function shouldLoadAnalytics () {
-    var load = _.contains(['production', 'staging'], environment.env);
+    var load = _.includes(['production', 'staging'], environment.env);
     return load || $location.search().forceAnalytics;
   }
 

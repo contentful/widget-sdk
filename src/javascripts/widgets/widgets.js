@@ -134,7 +134,7 @@ angular.module('contentful')
   function typesForField(field) {
     var fieldType = fieldFactory.getTypeName(field);
     var widgets = _.filter(WIDGETS, function (widget) {
-      return _.contains(widget.fieldTypes, fieldType);
+      return _.includes(widget.fieldTypes, fieldType);
     });
     if (_.isEmpty(widgets)) {
       return $q.reject(new Error('Field type '+fieldType+' is not supported by any widget.'));
@@ -182,18 +182,18 @@ angular.module('contentful')
 
     function shouldOptionBeVisible(option) {
       var dependencies = option.dependsOnEvery || option.dependsOnAny;
-      var everyOrAny = option.dependsOnEvery ? 'every' : 'any';
+      var everyOrSome = option.dependsOnEvery ? 'every' : 'some';
 
       if (!_.isObject(dependencies) || !_.keys(dependencies).length) {
         return true;
       }
 
-      return _[everyOrAny](dependencies, areMet);
+      return _[everyOrSome](dependencies, areMet);
     }
 
     function areMet(acceptedValues, paramName) {
       acceptedValues = _.isArray(acceptedValues) ? acceptedValues : [acceptedValues];
-      return _.contains(acceptedValues, settings[paramName]);
+      return _.includes(acceptedValues, settings[paramName]);
     }
   }
 
@@ -283,6 +283,6 @@ angular.module('contentful')
 
   function isCompatibleWithField (widgetDescriptor, field) {
     var fieldType = fieldFactory.getTypeName(field);
-    return _.contains(widgetDescriptor.fieldTypes, fieldType);
+    return _.includes(widgetDescriptor.fieldTypes, fieldType);
   }
 }]);

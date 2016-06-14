@@ -95,7 +95,7 @@ angular.module('contentful').factory('RoleRepository', [function () {
   }
 
   function map(role) {
-    role = _.omit(role, 'sys');
+    role = _.omit(role, ['sys']);
     role.permissions = flattenPermissions(role.permissions);
     return role;
   }
