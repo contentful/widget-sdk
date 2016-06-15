@@ -241,12 +241,19 @@ function ContentTypeActionsController ($scope, $injector) {
     .then(notify.saveSuccess);
   }
 
+  // TODO this should be handled by a content type repository
   function publishContentType (contentType) {
     var version = contentType.getVersion();
+
     return contentType.publish(version)
     .then(function (published) {
       contentType.setPublishedVersion(version);
       spaceContext.registerPublishedContentType(published);
+
+      return spaceContext.editingInterfaces.get(contentType.data);
+    }).then(function (editingInterface) {
+      // On publish the API also updates the editor interface
+      $scope.editingInterface.sys.version = editingInterface.sys.version;
 
       if (version === 1) {
         spaceContext.refreshContentTypesUntilChanged();
