@@ -36,7 +36,7 @@ angular.module('contentful/mocks')
 
 }])
 
-.factory('mockClient', ['$q', 'privateContentfulClient', function ($q, client) {
+.factory('mockClient', ['$q', 'libs/@contentful/client', function ($q, client) {
 
   return _.extend({
     mockPersistenceContext: mockPersistenceContext

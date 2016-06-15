@@ -78,12 +78,12 @@ angular.module('cf.app')
 
       function updateErrorStatus () {
         var hasSchemaErrors = $scope.validator.hasError(['fields', $scope.field.id]);
-        var hasControlErrors = _.any(invalidControls);
+        var hasControlErrors = _.some(invalidControls);
         $scope.fieldHasErrors = hasSchemaErrors || hasControlErrors;
       }
 
       function getActiveLocaleCodes () {
-        return _.pluck(TheLocaleStore.getActiveLocales(), 'internal_code');
+        return _.map(TheLocaleStore.getActiveLocales(), 'internal_code');
       }
 
       function updateLocales () {

@@ -59,7 +59,7 @@ angular.module('contentful')
     var widgetId = control.widgetId;
     var field = control.field;
     var migration = _.find(MIGRATIONS, function (migration) {
-      var appliesToFieldType = !migration.fieldTypes || _.contains(migration.fieldTypes, field.type);
+      var appliesToFieldType = !migration.fieldTypes || _.includes(migration.fieldTypes, field.type);
       return appliesToFieldType && migration.from === widgetId;
     });
 

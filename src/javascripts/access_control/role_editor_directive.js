@@ -124,7 +124,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
   function handleError(res) {
     var errors = dotty.get(res, 'body.details.errors', []);
 
-    if (_.contains([403, 404], parseInt(dotty.get(res, 'statusCode'), 10))) {
+    if (_.includes([403, 404], parseInt(dotty.get(res, 'statusCode'), 10))) {
       notification.error('Your plan does not include Custom Roles.');
       return $q.reject();
     }

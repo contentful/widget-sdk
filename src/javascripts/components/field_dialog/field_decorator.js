@@ -76,7 +76,7 @@ angular.module('contentful')
   function isLocalizable() {
     // @todo specify localizable content types
     /* var localizableTypes = [];
-    return _.contains(localizableTypes, fieldType); */
+    return _.includes(localizableTypes, fieldType); */
     return true;
   }
 

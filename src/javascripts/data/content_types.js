@@ -61,7 +61,7 @@ angular.module('cf.data')
    */
   function hasValidDisplayField (contentTypeData) {
     var displayField = contentTypeData.displayField;
-    return _.any(contentTypeData.fields, function (field) {
+    return _.some(contentTypeData.fields, function (field) {
       return displayField === field.id && isDisplayField(field);
     });
   }
@@ -95,12 +95,12 @@ angular.module('cf.data')
   function findFieldUsableAsTitle (fields) {
     return  _(fields)
       .filter(isDisplayField)
-      .pluck('id')
+      .map('id')
       .first();
   }
 
   function isDisplayField (field) {
-    return _.contains(['Symbol', 'Text'], field.type) && !field.disabled;
+    return _.includes(['Symbol', 'Text'], field.type) && !field.disabled;
   }
 
   /**

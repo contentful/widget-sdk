@@ -86,9 +86,7 @@ test/unit/services/validation_views_spec.js
 test/unit/services/activation_email_resender_spec.js
 test/unit/services/analytics_events_spec.js
 test/unit/services/analytics_spec.js
-test/unit/services/authentication_spec.js
 test/unit/services/authorization_spec.js
-test/unit/services/batch_performer_spec.js
 test/unit/services/bugsnag_spec.js
 test/unit/services/editing_interfaces_helpers_spec.js
 test/unit/services/enforcements_spec.js
@@ -347,7 +345,6 @@ src/javascripts/ot/ot_presence.js
 src/javascripts/services/assert.js
 src/javascripts/services/aviary.js
 src/javascripts/services/call_buffer.js
-src/javascripts/services/client.js
 src/javascripts/services/contentful_client.js
 src/javascripts/services/exception_handler.js
 src/javascripts/services/field_factory.js
@@ -376,11 +373,8 @@ src/javascripts/services/analytics/analytics_console_log.js
 src/javascripts/services/analytics/analytics_noop.js
 src/javascripts/services/analytics/analytics_track.js
 src/javascripts/services/analytics_events.js
-src/javascripts/services/authentication.js
 src/javascripts/services/authorization.js
-src/javascripts/services/batch_performer.js
 src/javascripts/services/bugsnag.js
-src/javascripts/services/client_adapter.js
 src/javascripts/services/editing_interfaces_helpers.js
 src/javascripts/services/enforcements.js
 src/javascripts/services/entity_cache.js
@@ -450,7 +444,6 @@ src/javascripts/utils/keycodes.js
 src/javascripts/utils/memoize.js
 src/javascripts/utils/overriding_request_queue.js
 src/javascripts/libs/dottie_wrapper.js
-src/javascripts/libs/index.js
 src/javascripts/libs/markdown_vendors.js
 src/javascripts/kaltura_credentials.js
 src/javascripts/ui.js

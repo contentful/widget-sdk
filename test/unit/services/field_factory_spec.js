@@ -20,12 +20,12 @@ describe('field factory', function () {
     });
 
     it('has a label', function () {
-      expect(_.all(types, 'label')).toBe(true);
+      expect(_.every(types, 'label')).toBe(true);
     });
 
     it('has list label if there is a list variatn', function () {
       var listTypes = _.filter(types, 'hasListVariant');
-      expect(_.all(listTypes, 'listLabel')).toBe(true);
+      expect(_.every(listTypes, 'listLabel')).toBe(true);
     });
 
   });

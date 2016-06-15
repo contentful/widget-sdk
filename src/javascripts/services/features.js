@@ -20,9 +20,9 @@ angular.module('contentful')
    * @return {boolean}
   */
   function allowAnalytics (user) {
-    var organizations = _.pluck(user.organizationMemberships, 'organization');
+    var organizations = _.map(user.organizationMemberships, 'organization');
     var disallowAnalytics = dotty.get(user, 'features.logAnalytics') === false;
-    disallowAnalytics = disallowAnalytics || _.any(organizations, function(org){
+    disallowAnalytics = disallowAnalytics || _.some(organizations, function(org){
       return org.disableAnalytics === true;
     });
 

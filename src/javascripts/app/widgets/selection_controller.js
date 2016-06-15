@@ -66,7 +66,7 @@ angular.module('contentful')
 
   function getOptions (field) {
     // Get first object that has a 'in' property
-    var predefinedValues = _.filter(_.pluck(field.validations, 'in'))[0];
+    var predefinedValues = _.filter(_.map(field.validations, 'in'))[0];
     return _.map(predefinedValues, function (value) {
       return { value: parseValue(value, field.type), label: String(value) };
     });

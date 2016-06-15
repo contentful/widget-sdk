@@ -44,7 +44,8 @@ angular.module('cf.data')
 
     var ei = {
       sys: {
-        contentType: contentTypeLink
+        contentType: contentTypeLink,
+        version: 0
       },
       controls: [],
     };

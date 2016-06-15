@@ -20,7 +20,7 @@ angular.module('contentful').directive('cfUserList', ['$injector', function ($in
   };
 
   function saveView(view) {
-    if (_.contains([VIEW_BY_NAME, VIEW_BY_ROLE], view)) {
+    if (_.includes([VIEW_BY_NAME, VIEW_BY_ROLE], view)) {
       store.set(view);
     }
   }
@@ -229,7 +229,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
 
     function isTaken(res) {
       var errors = dotty.get(res, 'body.details.errors', []);
-      var errorNames = _.pluck(errors, 'name');
+      var errorNames = _.map(errors, 'name');
       return errorNames.indexOf('taken') > -1;
     }
 

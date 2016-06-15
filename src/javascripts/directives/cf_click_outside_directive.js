@@ -20,7 +20,7 @@ angular.module('contentful').directive('cfClickOutside', ['$parse', '$document',
       });
 
       function elementShouldBeIgnored(target) {
-        return _.any(ignored, function (el) {
+        return _.some(ignored, function (el) {
           return el === target;
         });
       }

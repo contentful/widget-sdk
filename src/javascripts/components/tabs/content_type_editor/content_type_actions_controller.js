@@ -215,7 +215,7 @@ function ContentTypeActionsController ($scope, $injector) {
     ctHelpers.assureDisplayField($scope.contentType.data);
 
     if (!$scope.validate()) {
-      var fieldNames = _.pluck($scope.contentType.data.fields, 'name');
+      var fieldNames = _.map($scope.contentType.data.fields, 'name');
       notify.invalidAccordingToScope($scope.validationResult.errors, fieldNames);
       return $q.reject();
     }
@@ -241,12 +241,19 @@ function ContentTypeActionsController ($scope, $injector) {
     .then(notify.saveSuccess);
   }
 
+  // TODO this should be handled by a content type repository
   function publishContentType (contentType) {
     var version = contentType.getVersion();
+
     return contentType.publish(version)
     .then(function (published) {
       contentType.setPublishedVersion(version);
       spaceContext.registerPublishedContentType(published);
+
+      return spaceContext.editingInterfaces.get(contentType.data);
+    }).then(function (editingInterface) {
+      // On publish the API also updates the editor interface
+      $scope.editingInterface.sys.version = editingInterface.sys.version;
 
       if (version === 1) {
         spaceContext.refreshContentTypesUntilChanged();
