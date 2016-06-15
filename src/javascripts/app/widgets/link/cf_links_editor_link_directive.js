@@ -44,14 +44,15 @@ angular.module('cf.app')
 
     propagateUsedLinksDirectiveName($link);
 
-    linksApi.loadEntity(link)
-    .then(function (entity) {
-      $scope.entity = entity;
-      $link.attr('entity', 'entity');
+    linksApi.loadEntityInfo(link).then(insertLinkHtml);
+
+    function insertLinkHtml (entityInfo) {
+      $scope.entityInfo = entityInfo;
+      $link.attr('entity-info', 'entityInfo');
 
       $elem.html($link.get(0).outerHTML);
       $compile($elem.contents())($scope);
-    });
+    }
     // TODO: While pending, display placeholders? Pass promise to variation?
 
     function buildLinkNode () {

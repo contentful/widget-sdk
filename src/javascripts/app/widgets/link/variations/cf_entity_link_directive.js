@@ -27,33 +27,33 @@ function ($controller) {
   return {
     restrict: 'E',
     scope: {
-      entity: '=',
+      entityInfo: '=',
       locale: '@',
       showDetails: '='
     },
     transclude: true,
     template: JST.cf_entity_link(),
-    // TODO: Kill dependency, inject some sort of widgetApi.newEntityContext instead
-    require: '^cfWidgetApi',
     link: link
   };
 
-  function link ($scope, $elem, $attrs, widgetApi) {
-    var entity = $scope.entity;
+  function link ($scope) {
+    var entityInfo = $scope.entityInfo;
     var locale = $scope.locale;
 
+    $scope.entity = entityInfo && entityInfo.getEntity();
+
     // TODO: Nicen "isMissing" (e.g. no rights) case.
-    $scope.title = widgetApi.space.getEntityTitle(entity, locale);
+    $scope.title = entityInfo && entityInfo.getTitle(locale);
     if ($scope.showDetails) {
-      $scope.description = widgetApi.space.getEntityDescription(entity);
-      $scope.imageFile = widgetApi.space.getEntryImage(entity);
+      $scope.description = entityInfo && entityInfo.getDescription(locale);
+      // $scope.imageFile = widgetApi.space.getEntryImage(entity);
     }
 
     $scope.entityStatusController =
       $controller('EntityStatusController', {$scope: $scope});
 
     $scope.openEntity = function () {
-      widgetApi.state.goToEntity(entity, {addToContext: true});
+      // widgetApi.state.goToEntity(entity, {addToContext: true});
     };
   }
 

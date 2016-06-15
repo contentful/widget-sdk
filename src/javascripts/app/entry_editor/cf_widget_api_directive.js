@@ -36,6 +36,7 @@ angular.module('contentful')
   var newSignal = $injector.get('signal').createMemoized;
   var spaceContext = $injector.get('spaceContext');
   var TheLocaleStore = $injector.get('TheLocaleStore');
+  var EntityInfo = $injector.get('EntityInfo');
 
   var fieldLocaleDoc = $scope.otSubDoc;
   var isDisabledSignal = newSignal(isEditingDisabled());
@@ -78,6 +79,10 @@ angular.module('contentful')
   };
 
   this.space = spaceContext.cma;
+
+  this.newEntityInfo = function (entity, localeCode) {
+    return new EntityInfo(entity, spaceContext, localeCode);
+  };
 
   this.state = {
     goToEntity: function (entity, options) {

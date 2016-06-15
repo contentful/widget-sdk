@@ -74,14 +74,18 @@ angular.module('cf.app')
      */
     $scope.linksApi = {
       /**
-       * @name cfLinksEditor#$scope.linksApi.loadEntity
+       * @name cfLinksEditor#$scope.linksApi.loadEntityInfo
        * @param {Object} link
        * @returns {*}
        */
-      loadEntity: function (link) {
+      loadEntityInfo: function (link) {
         var entityId = getEntityId(link);
         var getter = 'get' + type; // getEntry() or getAsset()
-        return widgetApi.space[getter](entityId);
+        return widgetApi.space[getter](entityId)
+        .then(function (entity) {
+          var entityInfo = widgetApi.newEntityInfo(entity, $scope.locale);
+          return entityInfo;
+        });
       },
       /**
        * @name cfLinksEditor#$scope.linksApi.removeLink
