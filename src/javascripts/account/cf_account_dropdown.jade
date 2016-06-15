@@ -7,8 +7,8 @@
     img.account-dropdown__avatar(ng-src="{{user.avatarUrl}}")
     span.account-dropdown__name.u-truncate {{user.firstName}}
     cf-icon.icon-dd-arrow-down.pull-right(name="dd-arrow-down")
-  .context-menu.x--top-bar(
-    role="menu" cf-context-menu
+  .context-menu.x--top-bar.x--arrow-right(
+    role="menu" cf-context-menu="bottom-right"
     aria-label="Account Menu" data-test-id="account-menu")
     ul.context-menu__items
       li(role="menuitem" ng-click="goToUserProfile()")
