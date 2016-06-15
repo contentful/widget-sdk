@@ -45,7 +45,7 @@ angular.module('contentful')
         var analytics = require('analytics');
         return tokenStore.getSpace($stateParams.spaceId)
         .then(function (space) {
-          analytics.setSpace(spaceContext.space);
+          analytics.setSpace(space);
           return spaceContext.resetWithSpace(space);
         });
       }],

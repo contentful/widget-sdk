@@ -17,7 +17,11 @@ angular.module('contentful')
     trackWidgetEventIfCustom: trackWidgetEventIfCustom,
     trackFollowedKbpLink: trackFollowedKbpLink,
     trackContentTypeChange: trackContentTypeChange,
-    trackToggleAuxPanel: trackToggleAuxPanel
+    trackToggleAuxPanel: trackToggleAuxPanel,
+    persona: {
+      trackSelected: personaTrackSelected,
+      trackSkipped: personaTrackSkipped
+    }
   };
 
   /**
@@ -93,4 +97,27 @@ angular.module('contentful')
     });
   }
 
+  function personaTrackSelected (personaCode) {
+    var personaName = {
+      code: 'Coder',
+      content: 'Content Manager',
+      project: 'Project Manager',
+      other: 'Other'
+    }[personaCode];
+
+    if (!personaName) {
+      return;
+    }
+
+    analytics.addIdentifyingData({personaName: personaName});
+    analytics.track('Selected Persona', {personaName: personaName});
+    analytics.pushGtm({
+      event: 'user.persona',
+      userPersonaName: personaName
+    });
+  }
+
+  function personaTrackSkipped () {
+    analytics.track('Skipped Persona Selection');
+  }
 }]);

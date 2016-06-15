@@ -2,9 +2,15 @@
 
 describe('analytics', function () {
   beforeEach(function () {
+    this.gtm = {
+      enable: sinon.spy(),
+      disable: sinon.spy(),
+      push: sinon.spy()
+    };
 
-    module('contentful/test', function (environment) {
+    module('contentful/test', (environment, $provide) => {
       environment.env = 'production';
+      $provide.value('analytics/gtm', this.gtm);
     });
 
     this.userData = {
@@ -40,10 +46,26 @@ describe('analytics', function () {
     this.analytics = this.$inject('analytics');
   });
 
-  it('should enable', function () {
-    this.analytics.enable();
-    sinon.assert.called(this.segment.enable);
-    sinon.assert.called(this.totango.enable);
+  describe('#enable()', function () {
+    beforeEach(function () {
+      this.analytics.enable(this.userData);
+    });
+
+    it('enables segment', function () {
+      sinon.assert.called(this.segment.enable);
+    });
+
+    it('enables totango', function () {
+      sinon.assert.called(this.totango.enable);
+    });
+
+    it('enables GTM and identifies the user', function () {
+      sinon.assert.called(this.gtm.enable);
+      sinon.assert.calledWith(this.gtm.push, {
+        event: 'app.open',
+        userId: this.userData.sys.id
+      });
+    });
   });
 
   it('should disable', function () {
@@ -67,7 +89,7 @@ describe('analytics', function () {
     });
   });
 
-  describe('#enable', function () {
+  describe('identifying data', function () {
     beforeEach(function () {
       this.analytics.setSpace(this.space);
     });
@@ -114,9 +136,9 @@ describe('analytics', function () {
       }.bind(this);
     });
 
-    describe('When enabled', function () {
+    describe('enabled', function () {
       beforeEach(function () {
-        this.analytics.enable();
+        this.analytics.enable(this.userData);
         this.broadcast();
       });
 
@@ -140,7 +162,7 @@ describe('analytics', function () {
       });
 
       it('does not track if was enabled and disabled', function () {
-        this.analytics.enable();
+        this.analytics.enable(this.userData);
         this.analytics.disable();
         this.broadcast();
         sinon.assert.notCalled(this.segment.track);

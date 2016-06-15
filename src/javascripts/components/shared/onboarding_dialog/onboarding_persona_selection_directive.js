@@ -10,7 +10,7 @@ angular.module('contentful')
   };
 })
 .controller('OnboardingPersonaController', ['$scope', '$attrs', 'require', function ($scope, $attrs, require) {
-  var analytics = require('analytics');
+  var analytics = require('analyticsEvents');
   var controller = this;
 
   // Should the space creation step be shown?
@@ -27,14 +27,12 @@ angular.module('contentful')
   };
 
   controller.skipSelection = function () {
-    analytics.track('Skipped Persona Selection');
+    analytics.persona.trackSkipped();
     $scope.$emit('skipPersonaSelection');
   };
 
   controller.submitPersonaSelection = function (personaSelected) {
-    makeSelection({
-      personaName: getSegmentName(personaSelected)
-    });
+    analytics.persona.trackSelected(personaSelected);
     $scope.$emit('submitPersonaSelection');
   };
 
@@ -62,29 +60,4 @@ angular.module('contentful')
       }
     };
   }
-
-  function makeSelection (obj) {
-    // Remove unnecessary values from object
-    var segmentObj = _.pickBy(obj, hasValue);
-
-    // Add to user data, and track event
-    analytics.addIdentifyingData(segmentObj);
-    analytics.track('Selected Persona', segmentObj);
-
-    // Returns true if val is a non-empty string, otherwise false
-    function hasValue (val) {
-      return typeof val === 'string' && val.length;
-    }
-  }
-
-  function getSegmentName (personaName) {
-    var map = {
-      code: 'Coder',
-      content: 'Content Manager',
-      project: 'Project Manager',
-      other: 'Other'
-    };
-    return map[personaName];
-  }
-
 }]);

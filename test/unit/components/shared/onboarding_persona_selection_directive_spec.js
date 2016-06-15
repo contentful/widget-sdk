@@ -10,16 +10,19 @@ describe('cfOnboardingPersonaSelection directive', function() {
 
   beforeEach(function () {
     stubs = {
-      analytics: {
-        track: sinon.stub(),
-        addIdentifyingData: sinon.stub()
-      },
       $emit: sinon.stub()
     };
 
     module('contentful/test', function($provide) {
-      $provide.value('analytics', stubs.analytics);
+      $provide.value('analyticsEvents', {
+        persona: {
+          trackSelected: sinon.spy(),
+          trackSkipped: sinon.spy()
+        }
+      });
     });
+
+    this.analytics = this.$inject('analyticsEvents')
 
     var element = this.$compile('<cf-onboarding-persona-selection>', {
       $emit: stubs.$emit
@@ -43,14 +46,8 @@ describe('cfOnboardingPersonaSelection directive', function() {
     });
 
     it('sends values to segment', function() {
-      var segmentObj = {
-        personaName: 'Coder'
-      };
-
       controller.submitPersonaSelection('code');
-
-      sinon.assert.calledWith(stubs.analytics.addIdentifyingData, segmentObj);
-      sinon.assert.calledWith(stubs.analytics.track, 'Selected Persona', segmentObj);
+      sinon.assert.calledWith(this.analytics.persona.trackSelected, 'code');
     });
 
     it('emits submitPersonaSelection event', function() {
@@ -66,8 +63,7 @@ describe('cfOnboardingPersonaSelection directive', function() {
       controller.skipSelection();
     });
     it('tracks event if selection is skipped', function() {
-      var eventName = 'Skipped Persona Selection';
-      sinon.assert.calledWith(stubs.analytics.track, eventName);
+      sinon.assert.calledWith(this.analytics.persona.trackSkipped);
     });
     it('emits skipPersonaSelection event', function() {
       sinon.assert.called(stubs.$emit);
