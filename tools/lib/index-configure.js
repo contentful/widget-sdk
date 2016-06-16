@@ -2,10 +2,11 @@
 
 import * as P from 'path'
 import * as B from 'bluebird'
-import {mapValues} from 'lodash'
-import {render as renderIndexPage} from './index-page'
-import * as U from './utils'
 import * as URL from 'url'
+import {mapValues} from 'lodash'
+import * as U from './utils'
+import {render as renderIndexPage} from './index-page'
+import {validate as validateConfig} from './config-validator'
 
 let FS = B.promisifyAll(require('fs'))
 
@@ -20,6 +21,9 @@ let FS = B.promisifyAll(require('fs'))
  * Reads configuration and manifest files and creates a configured
  * `index.html` file.
  *
+ * The configuration data is validated against the schema defined in
+ * `./config-schema.js`.
+ *
  * @param {string} revision
  * @param {string} configPath
  * @param {string[]} manifestPaths
@@ -33,6 +37,9 @@ function* configure (revision, configPath, manifestPaths, outPath) {
     U.readMergeJSON(manifestPaths),
     U.readJSON(configPath)
   ])
+
+  validateConfig(config)
+
   manifest = mapValues(manifest, (path) => URL.resolve(`//${config.asset_host}`, path))
   let indexPage = renderIndexPage(revision, config, manifest)
   yield U.mkdirp(P.dirname(outPath))

@@ -25,10 +25,12 @@ install:
 - ./Installfile
 - npm prune
 - npm list --depth 0 || true
+- "export PATH=$PWD/.node_modules/.bin:$PATH"
 before_script:
 - bin/travis-build
 script:
 - bin/travis-audit || true
+- tools/bin/validate-config.js
 - bin/travis-test
 before_deploy:
 - bin/create-package-dist archive
