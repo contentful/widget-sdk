@@ -2,11 +2,8 @@
   "environment": "staging",
   "base_host" : "be.quirely.com",
   "api_host" : "api.quirely.com",
-  "app_host" : "app.quirely.com",
   "asset_host" : "static.quirely.com",
-  "cdn_host" : "cdn.quirely.com",
   "ot_host" : "ot.quirely.com",
-  "exception_tracking_host" : "cf-track-107d49294b11c1.appspot.com",
   "marketing_url" : "//www.quirely.com",
   "main_domain" : "quirely.com",
   "contentful" : {
@@ -26,9 +23,6 @@
   },
   "aviary" : {
     "api_key" : "b7fe4d3302834e61b0f65913f156c067"
-  },
-  "intercom" : {
-    "secret" : "13gvdwUHBfyDcRvq8WJQLwDkQTp4nZl5Dq5V2RmZ"
   },
   "embedly" : {
     "api_key" : "5aba1269adbf42919bd1dd3308b84652"

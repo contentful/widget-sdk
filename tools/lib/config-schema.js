@@ -15,8 +15,7 @@ const urlSchema = {
 // For each item 'x' we require a property 'x_host' with a domain and
 // optional port format.
 const HOST_KEYS = [
-  'base', 'api', 'app', 'cdn', 'asset',
-  'ot', 'exception_tracking'
+  'base', 'api', 'asset', 'ot'
 ]
 
 export default strictObject(Object.assign({
@@ -54,9 +53,6 @@ function integrations () {
     }),
     aviary: strictObject({
       api_key: hex(32)
-    }),
-    intercom: strictObject({
-      secret: alnum(40)
     }),
     embedly: strictObject({
       api_key: hex(32)

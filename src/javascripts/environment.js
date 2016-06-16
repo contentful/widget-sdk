@@ -31,10 +31,10 @@ angular.module('contentful/environment', [])
 
   _.extend(settings, {
     // for sceDelegateProvider
-    resourceUrlWhiteListRegexp: makeResourceUrlList(
-      [settings.asset_host, settings.main_domain]
-      .concat(settings.additional_domains)
-    ),
+    resourceUrlWhiteListRegexp: makeResourceUrlList([
+      settings.asset_host,
+      settings.main_domain
+    ]),
 
     /**
      * @ngdoc property
