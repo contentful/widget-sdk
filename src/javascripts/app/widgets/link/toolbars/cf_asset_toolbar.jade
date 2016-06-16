@@ -1,9 +1,0 @@
-.link-editor-link__toolbar
-  cf-icon(data-drag-handle name="drag-handle-2")
-  .link-editor-link__toolbar-actions
-    cf-icon(name="edit" ng-click="edit()")
-
-    a(href="{{ $parent.file.url | assetUrl }}" target="_blank")
-      cf-icon(name="download" ng-click="download()")
-
-    cf-icon(name="delete" ng-click="linksApi.remove(index)")

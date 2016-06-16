@@ -5,56 +5,78 @@
  * @module cf.app
  * @name cfEntityLink
  * @description
- * Directive for rendering an
- * - Asset link
- * - Entry link
- * - Entry card
- * NOTE: All of the above are similar in appearance. Should their appearance
- *       diverge in the future or this directive get too complex, then it should
- *       be considered to split this into separate directives.
- *
- * @property {Entry|Asset} entity Entity whose info will be shown in the link/card.
- *           TODO: Widget-API needs to be changed to return a plain object and
- *                 that'll be all we'll be able to work with in here.
- * @property {locale} Determines language of title, description and image.
- * @property {boolean} showDetails If true, an Entry's title and description will
- *           be displayed if available (basically an entry “Card”)
+ * Directive for rendering asset links and entry links/cards.
  */
 angular.module('cf.app')
-.directive('cfEntityLink', ['$controller',
-function ($controller) {
+.directive('cfEntityLink', ['cfEntityLink/infoFor', function (infoFor) {
 
   return {
     restrict: 'E',
     scope: {
-      entityInfo: '=',
-      locale: '@',
-      showDetails: '='
+      linksApi: '=',
+      link: '=',
+      showDetails: '=',
+      draggable: '='
     },
-    transclude: true,
     template: JST.cf_entity_link(),
-    link: link
+    link: function ($scope) {
+      $scope.linksApi.resolveLink($scope.link).then(init);
+
+      function init (data) {
+        var load = infoFor($scope, data);
+        load.basicInfo();
+        load.entryDetails(is(data, 'Entry') && $scope.showDetails);
+        load.assetDetails(is(data, 'Asset'));
+      }
+
+      function is (data, type) {
+        return data.sys.type === type;
+      }
+    }
   };
+}])
 
-  function link ($scope) {
-    var entityInfo = $scope.entityInfo;
-    var locale = $scope.locale;
+.factory('cfEntityLink/infoFor', function () {
+  return function (scope, data) {
+    return {
+      basicInfo: basicInfo,
+      entryDetails: entryDetails,
+      assetDetails: assetDetails
+    };
 
-    $scope.entity = entityInfo && entityInfo.getEntity();
-
-    // TODO: Nicen "isMissing" (e.g. no rights) case.
-    $scope.title = entityInfo && entityInfo.getTitle(locale);
-    if ($scope.showDetails) {
-      $scope.description = entityInfo && entityInfo.getDescription(locale);
-      // $scope.imageFile = widgetApi.space.getEntryImage(entity);
+    function basicInfo (shouldLoad) {
+      if (shouldLoad !== false) {
+        load('entityStatus', 'status');
+        load('entityTitle', 'title');
+      }
     }
 
-    $scope.entityStatusController =
-      $controller('EntityStatusController', {$scope: $scope});
+    function entryDetails (shouldLoad) {
+      if (shouldLoad !== false) {
+        load('entityDescription', 'description');
+        load('entryImage', 'image');
+      }
+    }
 
-    $scope.openEntity = function () {
-      // widgetApi.state.goToEntity(entity, {addToContext: true});
-    };
-  }
+    function load (getter, scopeProperty) {
+      scope.linksApi[getter](data).then(function (value) {
+        scope[scopeProperty] = value;
+      });
+    }
 
-}]);
+    function assetDetails () {
+      scope.linksApi.assetFile(data).then(function (file) {
+        scope.file = file;
+        downloadUrl(file);
+      });
+    }
+
+    function downloadUrl (file) {
+      if (_.isObject(file) && file.url) {
+        scope.linksApi.assetUrl(file.url).then(function (assetUrl) {
+          scope.downloadUrl = assetUrl;
+        });
+      }
+    }
+  };
+});

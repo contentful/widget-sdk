@@ -201,8 +201,7 @@ angular.module('contentful')
     name: 'Entry link',
     icon: 'reference',
     rendersHelpText: true,
-    // template: '<div cf-asset-link-editor cf-link-editor ng-model="fieldData.value"></div>'
-    template: '<cf-links-editor for-link-type="Entry" link-style="link" single-link="true" />'
+    template: '<cf-reference-editor type="Entry" style="link" single="true" />'
   });
 
   registerWidget('assetLinkEditor', {
@@ -210,8 +209,7 @@ angular.module('contentful')
     name: 'Asset link',
     icon: 'media-reference',
     rendersHelpText: true,
-    // template: '<div cf-asset-link-editor cf-link-editor ng-model="fieldData.value"></div>'
-    template: '<cf-links-editor for-link-type="Asset" link-style="card" single-link="true" />'
+    template: '<cf-reference-editor type="Asset" style="card" single="true" />'
   });
 
   registerWidget('entryLinksEditor', {
@@ -219,8 +217,7 @@ angular.module('contentful')
     name: 'Entry links list',
     icon: 'references',
     rendersHelpText: true,
-    // template: '<div cf-entry-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
-    template: '<cf-links-editor for-link-type="Entry" link-style="link" />'
+    template: '<cf-reference-editor type="Entry" style="link" />'
   });
 
   registerWidget('entryCardEditor', {
@@ -228,8 +225,7 @@ angular.module('contentful')
     name: 'Entry card',
     icon: 'reference-card',
     rendersHelpText: true,
-    // template: '<div cf-entry-card-editor cf-link-editor ng-model="fieldData.value"></div>'
-    template: '<cf-links-editor for-link-type="Entry" link-style="card" single-link="true" />'
+    template: '<cf-reference-editor type="Entry" style="card" single="true" />'
   });
 
   registerWidget('entryCardsEditor', {
@@ -237,8 +233,7 @@ angular.module('contentful')
     name: 'Entry cards',
     icon: 'references-card',
     rendersHelpText: true,
-    // template: '<div cf-entry-card-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
-    template: '<cf-links-editor for-link-type="Entry" link-style="card" />'
+    template: '<cf-reference-editor type="Entry" style="card" />'
   });
 
   registerWidget('assetLinksEditor', {
@@ -246,8 +241,7 @@ angular.module('contentful')
     name: 'Asset links list',
     icon: 'media-references',
     rendersHelpText: true,
-    // template: '<div cf-asset-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
-    template: '<cf-links-editor for-link-type="Asset" link-style="link" />'
+    template: '<cf-reference-editor type="Asset" style="link" />'
   });
 
   registerWidget('assetGalleryEditor', {
@@ -255,8 +249,7 @@ angular.module('contentful')
     name: 'Asset gallery',
     icon: 'media-previews',
     rendersHelpText: true,
-    // template: '<div cf-asset-gallery-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
-    template: '<cf-links-editor for-link-type="Asset" link-style="card" />'
+    template: '<cf-reference-editor type="Asset" style="card" />'
   });
 
   registerWidget('slugEditor', {

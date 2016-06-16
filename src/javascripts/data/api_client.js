@@ -24,9 +24,12 @@ angular.module('cf.data')
  * var client = new APIClient(SpaceEndpoint.create(...))
  * client.getEntries(query).then(handleResponses)
  */
-.factory('data/ApiClient', [function () {
+.factory('data/ApiClient', ['$injector', function ($injector) {
+
+  var createRequestQueue = $injector.get('client/requestQueue').create;
+
   function Client (spaceEndpoint) {
-    this._endpoint = spaceEndpoint;
+    this._endpoint = createRequestQueue(spaceEndpoint);
   }
 
   Client.prototype._getResource = function (path, id) {

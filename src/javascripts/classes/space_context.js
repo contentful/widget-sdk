@@ -403,8 +403,7 @@ angular.module('contentful')
       var displayFieldId = contentType.data.displayField;
 
       return this.findLocalizedField(entity, localeCode, function (field) {
-        return field.type === 'Text' &&
-          field.id !== displayFieldId
+        return _.includes(['Symbol', 'Text'], field.type) && field.id !== displayFieldId;
       });
     },
 
@@ -478,7 +477,7 @@ angular.module('contentful')
      */
     entityTitle: function (entity, localeCode) {
       var type = entity.getType();
-      if(!_.includes(['Entry', 'Asset'], type)) {
+      if (!_.includes(['Entry', 'Asset'], type)) {
         return null;
       }
       var getterName = type.toLowerCase() + 'Title'; // entryTitle() or assetTitle()

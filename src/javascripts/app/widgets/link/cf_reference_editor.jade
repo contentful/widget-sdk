@@ -1,34 +1,47 @@
 .link-editor(
   ng-class="{" +
     "'link-editor--empty': !links.length," +
-    "'link-editor--single': singleLink," +
-    "'link-editor--multiple': !singleLink" +
-    "}"
-  class="link-editor--{{ linksDirective }}"
-)
-  ol.link-editor__links(cf-ui-sortable ng-model="links")
-    li.link-editor__link(
-      ng-class="{'link-editor__link--only-link': links.length === 1}"
-      ng-repeat="(index, link) in links"
-    )
-      cf-links-editor-link(
-        index="index"
-        link="link"
-        links-api="linksApi"
-        link-style="{{ linkStyle }}"
-        single-link="{{ singleLink }}"
-        locale="{{ locale }}"
-      )
+    "'link-editor--single': single," +
+    "'link-editor--multiple': !single," +
+    "'link-editor--cf-entity-link': !is('Asset', 'card')," +
+    "'link-editor--cf-asset-card': is('Asset', 'card')" +
+    "}")
+  ol.link-editor__links(
+  cf-ui-sortable ng-model="links")
+    li.link-editor__link(ng-repeat="item in links")
 
-  .link-editor__actions(
-    ng-if="!singleLink || !links.length"
-  )
-    // TODO: “Add new and link” button.
+      cf-entity-link(
+        ng-if="is('Entry', 'link')"
+        links-api="linksApi"
+        link="item.link"
+        draggable="!single")
+
+      cf-entity-link(
+        ng-if="is('Entry', 'card')"
+        links-api="linksApi"
+        link="item.link"
+        show-details="true"
+        draggable="!single")
+
+      cf-entity-link(
+        ng-if="is('Asset', 'link')"
+        links-api="linksApi"
+        link="item.link"
+        draggable="!single")
+
+      cf-asset-card(
+        ng-if="is('Asset', 'card')"
+        links-api="linksApi"
+        link="item.link"
+        as-thumb="!single"
+        draggable="!single")
+
+  .link-editor__actions(ng-if="!single || !links.length")
+    button.cfnext-btn-action.cfnext-btn-link.link-editor__link-btn(ng-click="addNew()")
+      | Create new {{ type.toLowerCase() }} and link
 
     button.cfnext-btn-action.cfnext-btn-link.link-editor__link-btn(ng-click="addExisting()")
-      //- TODO: Fix SVG ids bug to have icons displayed properly.
-      //- cf-icon.btn-icon(name="{{ typePlural.toLowerCase() }}")
-      | {{ singleLink
-      | ? "Add an existing " + type.toLowerCase()
-      | : "Add some existing " + typePlural.toLowerCase()
-      | }}
+      span(ng-if="single")
+        | Add an existing {{ type.toLowerCase() }}
+      span(ng-if="!single")
+        | Add some existing {{ typePlural.toLowerCase() }}

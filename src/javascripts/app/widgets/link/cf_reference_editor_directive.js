@@ -1,69 +1,74 @@
 'use strict';
 
 angular.module('cf.app')
-// TODO: rename to “cfLinkEditor” once the legacy one got removed.
-.directive('cfLinksEditor', ['$injector', function ($injector) {
-  var LINK_TYPES = ['Entry', 'Asset'];
+.directive('cfReferenceEditor', ['$injector', function ($injector) {
 
-  var entitySelector = $injector.get('entitySelector');
   var $q = $injector.get('$q');
+  var $timeout = $injector.get('$timeout');
+  var entitySelector = $injector.get('entitySelector');
 
   return {
     restrict: 'E',
     scope: {
-      type: '@forLinkType',
-      singleLink: '=',
-      linkStyle: '@'
+      type: '@',
+      style: '@',
+      single: '='
     },
-    template: JST.cf_links_editor(),
+    template: JST.cf_reference_editor(),
+    controller: ['$scope', function ($scope) {
+      $scope.uiSortable = {update: _.noop};
+    }],
     require: '^cfWidgetApi',
-    link: linkCfLinkEditor
+    link: link
   };
 
-  function linkCfLinkEditor ($scope, $elem, $attrs, widgetApi) {
-    var ignoreNextLinksChange;
+  function link ($scope, _$elem, _$attrs, widgetApi) {
     var field = widgetApi.field;
-    var type = $scope.type;
+    var cache = [];
 
-    if (!_.includes(LINK_TYPES, type)) {
-      throw new Error(
-        '"for-link-type" is expected to be one of ' + LINK_TYPES.join('|'));
-    }
+    $scope.typePlural = {Entry: 'entries', Asset: 'assets'}[$scope.type];
+    $scope.uiSortable.update = function () {
+      // let uiSortable update the model, then sync
+      $timeout(syncValue);
+    };
 
-    $scope.locale = field.locale;
-    $scope.typePlural = {Entry: 'entries', Asset: 'assets'}[type];
-
-    $scope.$watchCollection('links', function (newLinks, oldLinks) {
-      if (ignoreNextLinksChange || newLinks === oldLinks) {
-        ignoreNextLinksChange = false;
-      } else if ($scope.links.length === 0) {
-        field.removeValue();
-      } else {
-        setValue(newLinks);
-      }
-    });
-
-    /**
-     * @ngdoc property
-     * @name cfLinksEditor#$scope.links
-     * @type {string[]}
-     */
     field.onValueChanged(function (links) {
       if (!Array.isArray(links)) {
         links = links ? [links] : [];
       }
-      $scope.links = links.slice();
-      ignoreNextLinksChange = true;
+      $scope.links = _.map(links, wrapLink);
     });
 
+    /**
+     * @ngdoc method
+     * @name cfLinksEditor#$scope.is
+     * @returns {boolean}
+     */
+    $scope.is = function (type, style) {
+      return type === $scope.type && style === $scope.style;
+    };
+
+    /**
+     * @ngdoc method
+     * @name cfLinksEditor#$scope.addNew
+     * @returns {void}
+     */
+    $scope.addNew = function () {
+      console.log('Not implemented yet.');
+    };
+
+    /**
+     * @ngdoc method
+     * @name cfLinksEditor#$scope.addExisting
+     * @returns {void}
+     */
     $scope.addExisting = function () {
-      return entitySelector.open(field, $scope.links)
-      .then(function (entries) {
-        var links = _.map(entries, createLink);
-        return $q.all(_.map(links, function (link) {
-          $scope.links.push(link);
-          return field.pushValue(link);
-        }));
+      entitySelector.open(field, unwrapLinks())
+      .then(function (entities) {
+        _.forEach(_.map(entities, createLink), function (link) {
+          $scope.links.push(wrapLink(link));
+        });
+        syncValue();
       });
     };
 
@@ -73,46 +78,70 @@ angular.module('cf.app')
      * @type {Object}
      */
     $scope.linksApi = {
-      /**
-       * @name cfLinksEditor#$scope.linksApi.loadEntityInfo
-       * @param {Object} link
-       * @returns {*}
-       */
-      loadEntityInfo: function (link) {
-        var entityId = getEntityId(link);
-        var getter = 'get' + type; // getEntry() or getAsset()
-        return widgetApi.space[getter](entityId)
-        .then(function (entity) {
-          var entityInfo = widgetApi.newEntityInfo(entity, $scope.locale);
-          return entityInfo;
-        });
-      },
-      /**
-       * @name cfLinksEditor#$scope.linksApi.removeLink
-       * @ngdoc method
-       * @param {number} index
-       */
-      remove: function (index) {
-        $scope.links.splice(index, 1);
-      },
-      /**
-       * @name cfLinksEditor#$scope.linksApi.setUsedLinksDirective
-       * @ngdoc method
-       * @param value
-       */
-      setUsedLinksDirective: function (value) {
-        $scope.linksDirective = value;
-      }
+      resolveLink: resolveLink,
+      removeFromList: removeFromList,
+      entityStatus: widgetApi.space.entityStatus,
+      entityTitle: withLocale(widgetApi.space.entityTitle),
+      entityDescription: withLocale(widgetApi.space.entityDescription),
+      entryImage: withLocale(widgetApi.space.entryImage),
+      assetFile: withLocale(widgetApi.space.assetFile),
+      assetUrl: widgetApi.space.assetUrl,
+      goToEditor: widgetApi.space.goToEditor
     };
 
-    function getEntityId (link) {
-      return dotty.get(link, 'sys.id');
+    function withLocale (fn) {
+      return _.partialRight(fn, field.locale);
     }
 
-    function setValue (value) {
-      value = $scope.singleLink ? value[0] : value;
-      field.setValue(value);
+    function resolveLink (link) {
+      var entityId = getEntityId(link);
+      var cached = cache[entityId];
+
+      if (cached) {
+        return $q.resolve(cached);
+      }
+
+      return widgetApi.space['get' + $scope.type](entityId)
+      .then(function (data) {
+        cache[entityId] = data;
+        return data;
+      });
     }
+
+    function removeFromList (link) {
+      var index = _.findIndex($scope.links, {link: link});
+      if (index > -1) {
+        $scope.links.splice(index, 1);
+        syncValue();
+      }
+    }
+
+    function syncValue () {
+      var links = unwrapLinks();
+      if (links.length < 1) {
+        field.removeValue();
+      } else {
+        links = $scope.single ? links[0] : links;
+        field.setValue(links);
+      }
+    }
+
+    function unwrapLinks () {
+      return _.map($scope.links, 'link');
+    }
+  }
+
+  /**
+   * We cannot use linked entity's ID to track list items
+   * because link to the same entity may occur on the list
+   * more than once.
+   *
+   * When not tracking, Angular adds $$hashKey property that
+   * may break putting values to ShareJS. As a workaround
+   * we use list of wrapped links that we unwrap before sync.
+   */
+  function wrapLink (link) {
+    return {link: link};
   }
 
   function createLink (entity) {
@@ -125,4 +154,7 @@ angular.module('cf.app')
     };
   }
 
+  function getEntityId (link) {
+    return dotty.get(link, 'sys.id');
+  }
 }]);

@@ -1,0 +1,15 @@
+mixin entity-link-actions
+  .link-editor-link__toolbar-actions
+    cf-icon(
+      name="edit"
+      ng-click="linksApi.goToEditor(link)")
+
+    a(
+      ng-if="downloadUrl"
+      ng-href="{{ downloadUrl }}"
+      target="_blank")
+      cf-icon(name="download")
+
+    cf-icon(
+      name="delete"
+      ng-click="linksApi.removeFromList(link)")

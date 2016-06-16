@@ -6,43 +6,27 @@
  * @name cfAssetCard
  * @description
  * Directive rendering an asset card.
- *
- * @property {Asset} entity Asset whose info will be shown in the card.
- * @property {string} locale Determines language of title and media.
- * @property {boolean} asThumb
  */
 angular.module('cf.app')
-.directive('cfAssetCard', ['$controller',
-function ($controller) {
+.directive('cfAssetCard', ['cfEntityLink/infoFor', function (infoFor) {
 
   return {
     restrict: 'E',
     scope: {
-      entityInfo: '=',
-      locale: '@',
-      asThumb: '='
+      linksApi: '=',
+      link: '=',
+      asThumb: '=',
+      draggable: '='
     },
-    transclude: true,
     template: JST.cf_asset_card(),
-    link: link
+    link: function ($scope) {
+      $scope.linksApi.resolveLink($scope.link).then(init);
+
+      function init (data) {
+        var load = infoFor($scope, data);
+        load.basicInfo();
+        load.assetDetails();
+      }
+    }
   };
-
-  function link ($scope) {
-    // TODO: Consider "isMissing", e.g. no rights.
-    var locale = $scope.locale;
-    var entityInfo = $scope.entityInfo;
-    var asset = entityInfo && entityInfo.getEntity();
-    var title = entityInfo && entityInfo.getTitle(locale);
-    var file = dotty.get(asset, 'data.fields.file.' + locale);
-
-    $scope.entity = asset;
-    $scope.title = title;
-    $scope.file = file;
-
-    $scope.openEntity = function () {
-      // widgetApi.state.goToEntity(asset, {addToContext: true});
-    };
-    $scope.entityStatusController =
-      $controller('EntityStatusController', {$scope: $scope});
-  }
 }]);
