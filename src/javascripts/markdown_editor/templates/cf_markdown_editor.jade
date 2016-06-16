@@ -75,9 +75,10 @@ div(ng-show="isReady && !hasCrashed")
     | Use Markdown syntax to format your text.&nbsp;
     a(href ng-click="actions.openHelp()") Help
 
-  .markdown-info
-    cf-markdown-stats(preview="preview")
-    cf-markdown-requirements(preview="preview")
+  cf-editor-character-info(
+    constraints="constraints"
+    word-count="preview.info.words"
+    char-count="preview.info.chars")
 
   cf-zenmode(
     ng-if="zen"

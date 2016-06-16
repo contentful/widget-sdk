@@ -1,0 +1,57 @@
+angular.module('contentful')
+.directive('cfEditorCharacterInfo', [function () {
+  // If the character count is less than this number of charachters
+  // away from the constraint we set the state to 'approaching'
+  var CLOSE_TO_CONSTRAINT = 10;
+
+  return {
+    scope: {
+      constraints: '=',
+      charCount: '=',
+      wordCount: '='
+    },
+    restrict: 'E',
+    template: JST.cf_editor_character_info(),
+    link: function ($scope) {
+      $scope.$watch('constraints', function (constraints) {
+        $scope.constraintsType = constraintsType(constraints);
+      });
+
+      $scope.$watch('wordCount', function (wordCount) {
+        $scope.hasWordCount = _.isNumber(wordCount);
+      });
+
+      $scope.$watch('charCount', function (count) {
+        if ($scope.constraints && $scope.constraints.max) {
+          $scope.charCountStatus = getCharCountStatus(count, $scope.constraints.max);
+        }
+      });
+    }
+  };
+
+  function getCharCountStatus (len, maxChars) {
+    if (!maxChars) {
+      return;
+    }
+
+    var charsLeft = maxChars - len;
+
+    if (charsLeft < 0) {
+      return 'exceeded';
+    } else if (charsLeft > -1 && charsLeft < CLOSE_TO_CONSTRAINT) {
+      return 'approaching';
+    }
+  }
+
+  function constraintsType (constraints) {
+    if (!constraints) {
+      return;
+    } else if (_.isNumber(constraints.min) && _.isNumber(constraints.max)) {
+      return 'min-max';
+    } else if (_.isNumber(constraints.min)) {
+      return 'min';
+    } else if (_.isNumber(constraints.max)) {
+      return 'max';
+    }
+  }
+}]);
