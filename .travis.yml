@@ -28,7 +28,7 @@ install:
 before_script:
 - bin/travis-build
 script:
-- bin/travis-audit
+- bin/travis-audit || true
 - bin/travis-test
 before_deploy:
 - bin/create-package-dist archive
