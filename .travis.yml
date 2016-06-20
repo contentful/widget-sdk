@@ -30,7 +30,7 @@ before_script:
 - bin/travis-build
 script:
 - bin/travis-audit || true
-- tools/bin/validate-config.js
+- tools/bin/validate-config.js config/*.json
 - bin/travis-test
 before_deploy:
 - bin/create-package-dist archive

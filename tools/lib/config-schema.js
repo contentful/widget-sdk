@@ -2,9 +2,18 @@
  * This module exports a JSON schema for the application configuration.
  */
 
+const domainPattern = '\\w[\\w-]*'
+
+const subdomainHostSchema = {
+  type: 'string',
+  // Matches `sub.main.tld:1234` where the host part is optional
+  pattern: `^(${domainPattern}\\.){2}(${domainPattern})(:\\d{2,4})?$`
+}
+
 const hostSchema = {
   type: 'string',
-  pattern: '^\\w[\\w.-]*\\w(:\\d{1,4})?$'
+  // Matches `main.tld:1234` where the host part is optional
+  pattern: `^(${domainPattern}\\.)(${domainPattern})(:\\d{2,4})?$`
 }
 
 const urlSchema = {
@@ -25,9 +34,9 @@ export default strictObject(Object.assign({
   contentful: strictObject({
     spaceTemplatesUserReadOnlyToken: hex(64),
     spaceTemplateEntryContentTypeId: alnum(21),
-    cdaApiUrl: hostSchema,
-    apiUrl: hostSchema,
-    previewApiUrl: hostSchema,
+    cdaApiUrl: subdomainHostSchema,
+    apiUrl: subdomainHostSchema,
+    previewApiUrl: subdomainHostSchema,
     accessToken: hex(64),
     space: alnum(12),
     previewAccessToken: hex(64)
@@ -38,7 +47,7 @@ export default strictObject(Object.assign({
 function hosts () {
   let props = {}
   for (let key of HOST_KEYS) {
-    props[key + '_host'] = hostSchema
+    props[key + '_host'] = subdomainHostSchema
   }
   return props
 }

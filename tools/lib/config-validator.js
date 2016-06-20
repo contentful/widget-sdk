@@ -11,6 +11,7 @@ export function validate (data) {
 export class ValidationError extends Error {
   constructor (errors) {
     super('\n' + JSON.stringify(errors, null, 2))
+    Error.captureStackTrace(this, ValidationError)
     this.errors = errors
   }
 }
