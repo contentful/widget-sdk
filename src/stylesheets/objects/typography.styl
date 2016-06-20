@@ -13,12 +13,21 @@ Markup: h2(class="section-title") This is a title
 Styleguide 2.1.1
 */
 .section-title
-  color: $metallic-gray-blueish
-  text-transform: uppercase
-  letter-spacing: 2px
-  font-weight: normal
+  position: relative
+  margin-top: 40px
+  font-size: 1.4em
   padding-bottom: 10px
-  border-bottom: 1px solid $metallic-gray-blueish
+  min-width: 40px
+  overflow: hidden
+  &:after
+    margin-left: 10px
+    content: ""
+    width: 100%
+    position: absolute
+    height: 1px
+    margin-top: 10px
+    background-color: $colors.element-light
+
 
 /*
 Uppercase

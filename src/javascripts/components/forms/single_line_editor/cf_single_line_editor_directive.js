@@ -12,7 +12,7 @@ angular.module('contentful')
     template: JST['cf_single_line_editor'](),
     link: function (scope, $el, _attributes, widgetApi) {
       var field = widgetApi.field;
-      var constraints = _(field.validations).map('size').map().first() || {};
+      var constraints = _(field.validations).map('size').filter().first() || {};
       var $inputEl = $el.children('input');
       var updateInput = makeInputUpdater($inputEl);
 
@@ -21,7 +21,6 @@ angular.module('contentful')
       }
 
       scope.constraints = constraints;
-      scope.constraintsType = constraintsType(constraints);
 
       // update input field value when new synced value received via ot magic
       var detachOnValueChangedHandler = field.onValueChanged(function (val) {
@@ -52,9 +51,6 @@ angular.module('contentful')
 
       function updateCharCount (val) {
         scope.charCount = (val || '').length;
-        if (scope.constraints && scope.constraints.max) {
-          scope.charCountStatus = getCharCountStatus(scope.charCount, scope.constraints.max);
-        }
       }
 
       function updateIsDisabledFlag (disabledStatus) {
@@ -62,26 +58,4 @@ angular.module('contentful')
       }
     }
   };
-
-  function getCharCountStatus (len, maxChars) {
-    var charsLeft = maxChars - len;
-
-    if (charsLeft < 0) {
-      return 'exceeded';
-    } else if (charsLeft > -1 && charsLeft < 10) {
-      return 'approaching';
-    }
-  }
-
-  function constraintsType (constraints) {
-    if (_.isNumber(constraints.min) && _.isNumber(constraints.max)) {
-      return 'min-max';
-    } else if (_.isNumber(constraints.min)) {
-      return 'min';
-    } else if (_.isNumber(constraints.max)) {
-      return 'max';
-    } else {
-      return '';
-    }
-  }
 }]);
