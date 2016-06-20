@@ -109,6 +109,10 @@ describe('data/ContentTypes', function () {
       };
       this.internalToPublic = this.$inject('data/ContentTypes').internalToPublic;
       this.ct = this.internalToPublic(this.data);
+      this.assertPublicProp = (internalObj, prop) => {
+        var publicData = this.internalToPublic(internalObj);
+        expect(prop in publicData).toBe(true);
+      };
     });
 
     it('sets "displayField" to apiName of referenced field', function () {
@@ -120,6 +124,24 @@ describe('data/ContentTypes', function () {
       };
       var publicData = this.internalToPublic(internalData);
       expect(publicData.displayField).toEqual('apiName');
+    });
+
+    it('has a description field', function () {
+      this.assertPublicProp({}, 'description');
+    });
+
+    it('has a sys field', function () {
+      this.assertPublicProp({}, 'sys');
+    });
+
+    it('has a name field', function () {
+      this.assertPublicProp({}, 'name');
+    });
+
+    it('has a fields array', function () {
+      this.assertPublicProp({}, 'fields');
+      var publicData = this.internalToPublic({});
+      expect(Array.isArray(publicData.fields)).toBe(true);
     });
 
     it('keeps internal "displayField" ID if apiName is not present', function () {

@@ -10,7 +10,8 @@ describe('otPath directive', function () {
     path = ['foo', 'bar'];
     this.otDoc = {
       doc: new OtDoc({foo: {bar: 'INITIAL'}}),
-      getValueAt: sinon.stub().withArgs(path).returns('INITIAL')
+      getValueAt: sinon.stub().withArgs(path).returns('INITIAL'),
+      setStringAt: sinon.stub()
     };
 
     this.scope = this.$compile('<div ot-path="[\'foo\', \'bar\']" />', {
@@ -27,15 +28,6 @@ describe('otPath directive', function () {
       this.otDoc.setValueAt = sinon.stub();
       this.subDoc.set('VAL');
       sinon.assert.calledWith(this.otDoc.setValueAt, path, 'VAL');
-    });
-  });
-
-  describe('#setString()', function () {
-    it('set value if previous value is empty string', function () {
-      this.otDoc.getValueAt.withArgs(path).returns(undefined);
-      this.otDoc.setValueAt = sinon.stub().resolves();
-      this.subDoc.setString('value');
-      sinon.assert.calledWithExactly(this.otDoc.setValueAt, path, 'value');
     });
   });
 

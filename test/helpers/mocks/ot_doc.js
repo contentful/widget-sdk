@@ -23,6 +23,9 @@
  */
 angular.module('contentful/mocks')
 .factory('mocks/OtDoc', [function () {
+  // TODO(mudit): Convert this from a contructor to a normal function
+  // that returns an object with the methods. This would make it easier
+  // to spy on stuff.
   function OtDoc (snapshot, base) {
     this.snapshot = snapshot || {};
     this.base = base || [];
@@ -50,7 +53,7 @@ angular.module('contentful/mocks')
   OtDoc.prototype.at = function (path) {
     // Assumes that `at` is only called with one segment. This might
     // not be true.
-    return new OtDoc(this.snapshot, this.base.concat([path]));
+    return new OtDoc(this.snapshot, this.base.concat(path));
   };
 
   OtDoc.prototype.get = function () {
@@ -72,14 +75,25 @@ angular.module('contentful/mocks')
   };
 
   OtDoc.prototype.insert = function (index, value, cb) {
-    this.get().splice(index, 0, value);
-    if (cb) {
-      cb();
-    }
+    var valAsArray = this.get().split('');
+    valAsArray.splice(index, 0, value);
+    var newValue = valAsArray.join('');
+    this.set(newValue, cb);
   };
 
-  return OtDoc;
+  OtDoc.prototype.del = function (index, length, cb) {
+    var valAsArray = this.get().split('');
+    valAsArray.splice(index, length);
+    var newValue = valAsArray.join('');
+    this.set(newValue, cb);
+  };
 
+  sinon.spy(OtDoc.prototype, 'insert');
+  sinon.spy(OtDoc.prototype, 'del');
+  sinon.spy(OtDoc.prototype, 'remove');
+  sinon.spy(OtDoc.prototype, 'set');
+
+  return OtDoc;
 
   function assertParentContainer (obj, path) {
     if (path.length < 1) {

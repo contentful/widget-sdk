@@ -31,7 +31,6 @@ angular.module('contentful')
 
 .controller('OtPathController', ['$injector', '$scope', '$attrs', function ($injector, $scope, $attrs) {
   var $q = $injector.get('$q');
-  var diff = $injector.get('utils/StringDiff').diff;
   var Signal = $injector.get('signal');
 
   var otDoc = $scope.otDoc;
@@ -42,7 +41,7 @@ angular.module('contentful')
   var valueChangedSignal = Signal.createMemoized(get());
 
   _.extend(this, {
-    setString: setString,
+    setString: $scope.otDoc.setStringAt.bind(null, path),
     set: set,
     get: get,
     remove: remove,
@@ -77,31 +76,6 @@ angular.module('contentful')
       valueChangedSignal.dispatch(get());
     } else if (doc) {
       doc = null;
-    }
-  }
-
-  function setString (newValue) {
-    var oldValue = get();
-
-    if (oldValue === newValue) {
-      return $q.resolve();
-    } else if (!oldValue || !newValue) {
-      // TODO Do not set this to null. Set it to undefined!
-      return set(newValue || null);
-    } else {
-      var patches = diff(oldValue, newValue);
-      var ops = patches.map(function (p) {
-        if (p.insert) {
-          return $q.denodeify(function (cb) {
-            doc.insert(p.insert[0], p.insert[1], cb);
-          });
-        } else if (p.delete) {
-          return $q.denodeify(function (cb) {
-            doc.del(p.delete[0], p.delete[1], cb);
-          });
-        }
-      });
-      return $q.all(ops);
     }
   }
 

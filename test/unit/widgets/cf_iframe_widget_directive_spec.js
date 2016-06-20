@@ -25,10 +25,55 @@ describe('cfIframeWidget directive', function () {
     this.scope = this.$compile('<cf-iframe-widget>', {
       widget: {},
       entry: {},
-      contentType: {data: {
-        fields: [{id: 'FIELD'}]
-      }}
+      contentType: {
+        data: {
+          fields: [{id: 'FIELD'}]
+        }
+      },
+      fieldLocale: {
+        access: {
+          disabled: true
+        },
+        setActive: sinon.spy()
+      },
+      fieldController: {
+        setInvalid: sinon.spy()
+      }
     }).scope();
+  });
+
+  describe('"setInvalid" handler', function () {
+    beforeEach(function () {
+      this.setInvalidHandler = widgetAPI.registerHandler.args[2][1];
+    });
+
+    it('dispatches call to setInvalid on field controller', function () {
+      var locale = 'en-public';
+
+      this.setInvalidHandler(true, locale);
+      sinon.assert.calledWithExactly(this.scope.fieldController.setInvalid, locale, true);
+    });
+  });
+
+  describe('"setActive" handler', function () {
+    beforeEach(function () {
+      this.setActiveHandler = widgetAPI.registerHandler.args[3][1];
+    });
+
+    it('dispatches call to setActive on field locale', function () {
+      this.setActiveHandler(true);
+      sinon.assert.calledWithExactly(this.scope.fieldLocale.setActive, true);
+    });
+  });
+
+  describe('"isDisabledChanged" handler', function () {
+    it('sends new isDisabled value using the widget api', function () {
+      widgetAPI.send.reset();
+      this.scope.fieldLocale.access.disabled = 'NEWVALUE';
+      this.$apply();
+      sinon.assert.calledOnce(widgetAPI.send);
+      sinon.assert.calledWithExactly(widgetAPI.send, 'isDisabledChanged', ['NEWVALUE']);
+    });
   });
 
   describe('"otChange" event handler', function () {
@@ -72,7 +117,9 @@ describe('cfIframeWidget directive', function () {
         .withArgs('PUBLIC FIELD', 'PUBLIC LOCALE')
         .returns(['internal', 'path']);
 
-      this.scope.otDoc = {setValueAt: sinon.stub().resolves()};
+      this.scope.otDoc = {
+        setValueAt: sinon.stub().resolves()
+      };
     });
 
     it('delegates with path translated path to "otDoc"', function () {

@@ -48,6 +48,18 @@ angular.module('cf.data')
     return this._getResources('assets', query);
   };
 
+  /*
+   * TODO (mudit): Switch from this deprecated end point
+   * once contentful-management.js is updated
+   */
+  Client.prototype.getPublishedEntries = function (query) {
+    return this._getResources('public/entries', query);
+  };
+
+  Client.prototype.getPublishedAssets = function (query) {
+    return this._getResources('public/assets', query);
+  };
+
   Client.prototype._getResources = function (name, query) {
     return this._request({
       method: 'GET',

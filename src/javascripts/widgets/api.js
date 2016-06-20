@@ -19,20 +19,20 @@ angular.module('contentful')
    * @ngdoc method
    * @name widgets/API#API
    *
-   * @param {Client.Space} space
+   * @param {Client.Space} apiClient
    * @param {Array<API.ContentType.Field>} fields
    * @param {API.Entry} entryData
+   * @param {API.ContentType.Data} contentTypeData
    * @param {object} current
-   * @param {API.ContentType.Field} current.field
-   * @param {API.Locale} current.locale
    * @param {IFrame} iframe
    */
-  function API (apiClient, fields, entryData, current, iframe) {
+  function API (apiClient, fields, entryData, contentTypeData, current, iframe) {
     this.channel = new Channel(iframe);
     this.idMap = createIDMap(fields);
     this.current = current;
     this.fields = fields;
     this.entryData = entryData;
+    this.contentTypeData = contentTypeData;
     this.channel.handlers = createHandlers(apiClient, iframe);
   }
 
@@ -47,7 +47,8 @@ angular.module('contentful')
    */
   API.prototype.connect = function () {
     this.channel.connect(buildContext(
-      this.idMap, this.current.field, this.current.locale, this.fields, this.entryData
+      this.idMap, this.current.field, this.current.locale, this.current.isDisabled,
+      this.fields, this.entryData, this.contentTypeData
     ));
   };
 
@@ -143,13 +144,21 @@ angular.module('contentful')
    * @param {API.Locale} locale
    * The locale the widget is attached to.
    *
+   * @param {Boolean} isDisabled
+   * Flag that indicates if field is disabled
+   *
    * @param {API.ContentType.Field[]} fields
    * The list of fields of the entry’s content type
    *
    * @param {API.Entry} entryData
    * The raw data for the entry.
+   *
+   * @param {API.ContentType.Data} contentTypeData
+   * Content type data with internal ids transformed to public ids
+   * and displayField property added.
+   *
    */
-  function buildContext (idMap, field, locale, fields, entryData) {
+  function buildContext (idMap, field, locale, isDisabled, fields, entryData, contentTypeData) {
     var apiName = field.apiName;
     var fieldValue = dotty.get(entryData, ['fields', field.id, locale.internal_code]);
     var fieldInfo = buildFieldInfo(idMap, entryData, fields);
@@ -157,14 +166,17 @@ angular.module('contentful')
       field: {
         id: apiName,
         locale: locale.code,
-        value: fieldValue
+        value: fieldValue,
+        isDisabled: isDisabled,
+        type: field.type
       },
       fieldInfo: fieldInfo,
       locales: {
         available: _.map(TheLocaleStore.getPrivateLocales(), 'code'),
         default: TheLocaleStore.getDefaultLocale().code
       },
-      entry: entryData
+      entry: entryData,
+      contentType: contentTypeData
     };
   }
 
