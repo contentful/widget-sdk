@@ -38,7 +38,8 @@ angular.module('contentful/mocks')
         return K.createMockProperty(dotty.get(data, path));
       }, function hashPath (path) {
         return path.join('!');
-      }))
+      })),
+      sysProperty: K.createMockProperty(dotty.get(data, 'sys'))
     };
 
     function setValueAt (path, value) {
