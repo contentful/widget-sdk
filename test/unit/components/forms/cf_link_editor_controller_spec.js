@@ -1,42 +1,34 @@
 'use strict';
 
 describe('LinkEditorController', function () {
-  var linkEditorCtrl, createController;
-  var scope, entry, $q, stubs;
-  var shareJSMock, entityCacheMock, linkParams;
+  var createController;
+  var scope, entry, stubs;
+  var entityCacheMock, linkParams;
 
   afterEach(function () {
-    linkEditorCtrl = createController =
-      scope = entry = $q = stubs =
-      shareJSMock = entityCacheMock = linkParams = null;
+    createController =
+      scope = entry = stubs =
+      entityCacheMock = linkParams = null;
   });
 
-  function validationParser(arg) {
+  function validationParser (arg) {
     return arg;
   }
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'otDocPush',
         'remove',
-        'save',
         'getAll',
         'setValidationType'
       ]);
 
-      shareJSMock = {
-        peek: sinon.stub(),
-        mkpathAndSetValue: sinon.stub()
-      };
-
       entityCacheMock = sinon.stub();
       entityCacheMock.returns({
-        save: stubs.save,
+        save: sinon.stub(),
         getAll: stubs.getAll
       });
 
-      $provide.value('ShareJS', shareJSMock);
       $provide.value('EntityCache', entityCacheMock);
       $provide.constant('validation', {
         Validation: {
@@ -45,37 +37,39 @@ describe('LinkEditorController', function () {
       });
     });
 
-    inject(function ($rootScope, $controller, _$q_, cfStub) {
-      $q = _$q_;
-      scope = $rootScope.$new();
+    scope = this.$inject('$rootScope').$new();
 
-      var space = cfStub.space('test');
-      var contentTypeData = cfStub.contentTypeData('content_type1');
-      scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
-      entry = cfStub.entry(space, 'entry1', 'content_type1');
+    var cfStub = this.$inject('cfStub');
+    var space = cfStub.space('test');
+    var contentTypeData = cfStub.contentTypeData('content_type1');
+    scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
+    entry = cfStub.entry(space, 'entry1', 'content_type1');
 
-      scope.field = {
-        type: 'Link',
-        validations: []
-      };
+    scope.field = {
+      type: 'Link',
+      validations: []
+    };
 
-      linkParams = {
-        type: 'Entry',
-        fetchMethod: 'getEntries',
-        multiple: false
-      };
+    linkParams = {
+      type: 'Entry',
+      fetchMethod: 'getEntries',
+      multiple: false
+    };
 
-      createController = function () {
-        linkEditorCtrl = $controller('LinkEditorController', {
-          $scope: scope,
-          ngModel: 'fieldData.value',
-          linkParams: linkParams,
-          setValidationType: stubs.setValidationType
-        });
-        scope.$digest();
-      };
+    scope.otSubDoc = {
+      onValueChanged: sinon.stub().returns(_.noop)
+    };
 
-    });
+    var $controller = this.$inject('$controller');
+    createController = function () {
+      $controller('LinkEditorController', {
+        $scope: scope,
+        ngModel: 'fieldData.value',
+        linkParams: linkParams,
+        setValidationType: stubs.setValidationType
+      });
+      scope.$digest();
+    };
   });
 
   describe('initial state', function () {
@@ -91,15 +85,15 @@ describe('LinkEditorController', function () {
       expect(scope.linkedEntities).toEqual([]);
     });
 
-    it('initializes entity cache', function() {
+    it('initializes entity cache', function () {
       sinon.assert.calledWith(entityCacheMock, scope.spaceContext.space, 'getEntries');
     });
 
   });
 
-  describe('methods', function() {
+  describe('methods', function () {
 
-    beforeEach(function() {
+    beforeEach(function () {
       linkParams.type = 'Entry';
 
       scope.fieldData = {value: 'formfieldvalue'};
@@ -108,28 +102,14 @@ describe('LinkEditorController', function () {
         validations: []
       };
 
-      this.changeValueDeferred = $q.defer();
-      scope.otSubDoc = {
-        changeValue: sinon.stub().returns(this.changeValueDeferred.promise)
-      };
+      scope.otSubDoc.set = sinon.stub().resolves();
       scope.updateModel = sinon.stub();
-
-      scope.otDoc = {
-        doc: {
-          at: sinon.stub()
-        }
-      };
-      scope.otDoc.doc.at.returns({
-        push: stubs.otDocPush,
-        remove: stubs.remove
-      });
-      scope.otPath = [];
     });
 
     describe('attaches a list of previously loaded entries', function () {
-      beforeEach(function() {
+      beforeEach(function () {
         createController();
-        stubs.getAll.returns($q.resolve([entry, undefined]));
+        stubs.getAll.resolves([entry, undefined]);
         scope.links = [
           { sys: { id: 'entry1', linkType: 'Entry', type: 'Link' } },
           { sys: { id: 'entry2', linkType: 'Entry', type: 'Link' } }
@@ -137,11 +117,11 @@ describe('LinkEditorController', function () {
         scope.$apply();
       });
 
-      it('has linked entities', function() {
+      it('has linked entities', function () {
         expect(scope.linkedEntities.length).toBe(2);
       });
 
-      it('one of the entities is missing', function() {
+      it('one of the entities is missing', function () {
         expect(scope.linkedEntities[1].isMissing).toBeTruthy();
       });
     });
@@ -166,8 +146,8 @@ describe('LinkEditorController', function () {
     });
 
     it('is called when validation changes', function () {
-      var validation = {name: 'linkContentType', contentTypeId: ['ct-id']}
-      var changedValidation = {name: 'linkContentType', contentTypeId: ['another-ct-id']}
+      var validation = {name: 'linkContentType', contentTypeId: ['ct-id']};
+      var changedValidation = {name: 'linkContentType', contentTypeId: ['another-ct-id']};
       linkParams.validationType = 'linkContentType';
       scope.field.validations = [validation];
       createController();
@@ -178,7 +158,7 @@ describe('LinkEditorController', function () {
     });
 
     it('is called when validation is removed', function () {
-      scope.field.validations = [{ linkContentType: ['ct-id']}];
+      scope.field.validations = [{linkContentType: ['ct-id']}];
       createController();
 
       scope.field.validations.pop();
@@ -205,29 +185,29 @@ describe('LinkEditorController', function () {
     beforeEach(function () {
       createController();
       scope.otSubDoc = {
-        changeValue: sinon.stub().returns($q.defer().promise)
+        remove: sinon.stub().resolves()
       };
     });
 
     it('is called when removing a link and linkSingle=true',
-    function() {
+    function () {
       scope.linkSingle = true;
       scope.links = [
         {sys: {id: 'entry1'}},
-        {sys: {id: 'entry2'}},
+        {sys: {id: 'entry2'}}
       ];
       scope.removeLink();
-      sinon.assert.calledWith(scope.otSubDoc.changeValue, undefined);
+      sinon.assert.called(scope.otSubDoc.remove);
     });
 
     it('is called when linkSingle=false and we\'re removing the last link ',
-    function() {
+    function () {
       scope.linkSingle = false;
       scope.links = [
-        {sys: {id: 'entry1'}},
+        {sys: {id: 'entry1'}}
       ];
       scope.removeLink();
-      sinon.assert.calledWith(scope.otSubDoc.changeValue, undefined);
+      sinon.assert.called(scope.otSubDoc.remove);
     });
   });
 

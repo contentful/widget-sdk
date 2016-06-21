@@ -35,6 +35,12 @@ angular.module('contentful')
     isReadOnly: isReadOnly
   });
 
+  // TODO rename the scope property
+  $scope.otDoc = $controller('entityEditor/Document', {
+    $scope: $scope,
+    entity: $scope.entity
+  });
+
   $controller('entityEditor/FieldAccessController', {$scope: $scope});
 
   $scope.$watch(function () {
@@ -63,7 +69,11 @@ angular.module('contentful')
   $scope.$watch(function entryEditorDisabledWatcher () {
     return $scope.entry.isArchived() || isReadOnly();
   }, function entryEditorDisabledHandler (disabled) {
-    $scope.otDoc.state.disabled = disabled;
+    if (disabled) {
+      $scope.otDoc.close();
+    } else {
+      $scope.otDoc.open();
+    }
   });
 
   $scope.$watch('entry.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {

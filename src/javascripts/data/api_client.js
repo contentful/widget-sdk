@@ -13,22 +13,20 @@ angular.module('cf.data')
  * It has almost the same interface as the [Javascript CMA
  * library][cma-js].
  *
+ * It requires a space endpoint request function as the constructor
+ * argument.
+ *
  * [cma-js]: https://github.com/contentful/contentful-management.js
  *
  * @usage[js]
  * var APIClient = $injector.get('data/APIClient')
- * var client = new APIClient(spaceID, accessToken)
+ * var SpaceEndpoint = $injector.get('data/spaceEndpoint')
+ * var client = new APIClient(SpaceEndpoint.create(...))
  * client.getEntries(query).then(handleResponses)
  */
-.factory('data/ApiClient', ['$injector', function ($injector) {
-  var $q = $injector.get('$q');
-  var $http = $injector.get('$http');
-  var env = $injector.get('environment');
-
-  function Client (spaceId, token) {
-    this._token = token;
-    this._spaceId = spaceId;
-    this._baseURL = '//' + env.settings.api_host + '/spaces/' + spaceId;
+.factory('data/ApiClient', [function () {
+  function Client (spaceEndpoint) {
+    this._endpoint = spaceEndpoint;
   }
 
   Client.prototype._getResource = function (path, id) {
@@ -50,12 +48,23 @@ angular.module('cf.data')
     return this._getResources('assets', query);
   };
 
+  /*
+   * TODO (mudit): Switch from this deprecated end point
+   * once contentful-management.js is updated
+   */
+  Client.prototype.getPublishedEntries = function (query) {
+    return this._getResources('public/entries', query);
+  };
+
+  Client.prototype.getPublishedAssets = function (query) {
+    return this._getResources('public/assets', query);
+  };
 
   Client.prototype._getResources = function (name, query) {
     return this._request({
       method: 'GET',
       path: [name],
-      params: query
+      query: query
     });
   };
 
@@ -217,7 +226,7 @@ angular.module('cf.data')
   };
 
 
-  Client.prototype.processAssetFile = function (asset, fileId, version) {
+  Client.prototype.processAsset = function (asset, fileId, version) {
     var id = getId(asset);
     version = version || getVersion(asset);
     return this._request({
@@ -229,30 +238,7 @@ angular.module('cf.data')
 
 
   Client.prototype._request = function (req, headers) {
-    var httpReq = _.pick(req, ['method', 'params', 'data']);
-
-    var url = [this._baseURL].concat(req.path).join('/');
-    httpReq.url = url;
-
-    httpReq.headers = _.extend(headers || {}, {
-      'Content-Type': 'application/vnd.contentful.management.v1+json',
-      'Authorization': 'Bearer ' + this._token
-    });
-
-    if (req.version) {
-      httpReq.headers['X-Contentful-Version'] = req.version;
-    }
-
-    return $http(httpReq)
-    .then(function (res) {
-      return res.data;
-    }, function (res) {
-      return $q.reject({
-        statusCode: res.status,
-        code: dotty.get(res, ['data', 'sys', 'id'], res.status),
-        body: res.data
-      });
-    });
+    return this._endpoint(req, headers);
   };
 
   return Client;

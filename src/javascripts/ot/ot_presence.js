@@ -168,7 +168,6 @@ angular.module('contentful').
   */
   directive('otDocPresence', function() {
     return {
-      require: '^otDocFor',
       controller: 'otDocPresenceController',
       controllerAs: 'docPresence'
     };

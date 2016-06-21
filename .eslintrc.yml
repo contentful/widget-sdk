@@ -6,6 +6,8 @@ rules:
   no-unused-vars: ['error', {vars: 'all', args: 'after-used', argsIgnorePattern: '^_'}]
   eol-last: "error"
   generator-star-spacing: ['error', {before: false, after: true}]
+  yield-star-spacing: ['error', {before: false, after: true}]
+
 globals:
   angular: true
   _: true

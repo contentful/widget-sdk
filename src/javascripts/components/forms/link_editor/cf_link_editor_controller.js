@@ -62,14 +62,15 @@ angular.module('contentful').controller('LinkEditorController',
     $scope.linksInitialized = true;
   }
 
-  $scope.$on('otValueChanged', function(event, path, value) {
-    if (path === event.currentScope.otPath) ngModelSet(event.currentScope, value);
+  var offValueChanged = $scope.otSubDoc.onValueChanged(function (value) {
+    ngModelSet($scope, value);
   });
 
   $scope.$on('$destroy', function () {
     entityCache =
     ngModelSet =
     ngModelGet = null;
+    offValueChanged();
   });
 
   $scope.addLink = function (entity) {
@@ -82,18 +83,10 @@ angular.module('contentful').controller('LinkEditorController',
 
     entityCache.save(entity);
 
-    var doc = $scope.otDoc.doc;
-    var path = $scope.otPath;
     if ($scope.linkSingle) {
-      return $scope.otSubDoc.changeValue(link);
+      return $scope.otSubDoc.set(link);
     } else {
-      if (_.isArray(ShareJS.peek(doc, path))) {
-        return $q.denodeify(function (cb) {
-          doc.at(path).push(link, cb);
-        });
-      } else {
-        return ShareJS.mkpathAndSetValue(doc, path, [link]);
-      }
+      return $scope.otSubDoc.push(link)
     }
   };
 
@@ -125,27 +118,11 @@ angular.module('contentful').controller('LinkEditorController',
     }
 
     function removeValue() {
-      //Note: $scope.otSubDoc.changeValue may return a $q exception which is
-      //never dealt with here...
-      return $scope.otSubDoc.changeValue(undefined);
+      return $scope.otSubDoc.remove();
     }
 
     function removeLink(index) {
-      cb = $q.callbackWithApply();
-      var path = $scope.otPath.concat(index);
-      try {
-        $scope.otDoc.doc.at(path).remove(cb);
-      } catch(ex){
-        logger.logError('No element at that path', {
-          data: {
-            exceptionMessage: ex.message,
-            path: path,
-            snapshot: dotty.get($scope.otDoc, 'doc.snapshot'),
-            linkList: dotty.get($scope.otDoc, ['doc', 'snapshot'].concat($scope.otPath))
-          }
-        });
-      }
-      return cb.promise;
+      return $scope.otSubDoc.removeAt(index)
     }
   };
 

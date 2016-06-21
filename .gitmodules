@@ -1,0 +1,3 @@
+[submodule "vendor/contentful-widget-sdk"]
+	path = vendor/contentful-widget-sdk
+	url = git@github.com:contentful/widget-sdk.git

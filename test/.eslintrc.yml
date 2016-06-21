@@ -9,6 +9,7 @@ globals:
 
   describe: false
   xdescribe: false
+  xit: false
   beforeEach: false
   afterEach: false
   it: false

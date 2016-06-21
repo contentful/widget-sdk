@@ -74,13 +74,25 @@ describe('ui/caretHelper service', function () {
   });
 
   describe('#makeInputUpdater()', function () {
-    var $inputEl = $('<input type="text" />');
-    var rawInputEl = $inputEl.get(0);
+    var $inputEl;
+    var rawInputEl;
 
-    function resetInputAndCaret(val, caretPosition) {
+    function resetInputAndCaret (val, caretPosition) {
       $inputEl.val(val);
       rawInputEl.selectionStart = caretPosition;
     }
+
+    beforeEach(function () {
+      $inputEl = $('<input type="text" />')
+        .appendTo('body')
+        .focus();
+      rawInputEl = $inputEl.get(0);
+    });
+
+    afterEach(function () {
+      $inputEl.remove();
+      $inputEl = rawInputEl = null;
+    });
 
     it('moves caret when changing before current position', function () {
       var updateWhilePreservingCaret = this.makeInputUpdater($inputEl);
@@ -125,7 +137,5 @@ describe('ui/caretHelper service', function () {
       updateWhilePreservingCaret('');
       expect(rawInputEl.selectionStart).toEqual(0);
     });
-
   });
-
 });
