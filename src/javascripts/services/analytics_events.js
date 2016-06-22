@@ -49,7 +49,7 @@ angular.module('contentful')
     var props = _.extend({
       widgetId: descriptor.id,
       widgetName: descriptor.name,
-      fieldType: getFieldLabel(field),
+      fieldType: getFieldLabel(field)
     }, extra);
 
     analytics.track(event, props);

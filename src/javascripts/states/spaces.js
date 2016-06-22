@@ -12,7 +12,7 @@ angular.module('contentful')
     name: 'new',
     url: '_new',
     template: JST.cf_create_space_advice(),
-    controller: ['$scope', 'accessChecker', function($scope, accessChecker) {
+    controller: ['$scope', 'accessChecker', function ($scope, accessChecker) {
       $scope.canCreateSpace = accessChecker.canCreateSpace;
     }]
   };
@@ -39,10 +39,10 @@ angular.module('contentful')
     name: 'detail',
     url: '/:spaceId',
     resolve: {
-      spaceContext: ['$injector', '$stateParams', function ($injector, $stateParams) {
-        var tokenStore     = $injector.get('tokenStore');
-        var spaceContext   = $injector.get('spaceContext');
-        var analytics      = $injector.get('analytics');
+      spaceContext: ['require', '$stateParams', function (require, $stateParams) {
+        var tokenStore = require('tokenStore');
+        var spaceContext = require('spaceContext');
+        var analytics = require('analytics');
         return tokenStore.getSpace($stateParams.spaceId)
         .then(function (space) {
           analytics.setSpace(spaceContext.space);

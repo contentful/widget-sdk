@@ -10,15 +10,14 @@
  * noops.
  */
 angular.module('contentful')
-.factory('analytics/track', ['$injector', function ($injector) {
-
-  var lazyLoad      = $injector.get('LazyLoader').get;
-  var segment       = $injector.get('segment');
-  var totango       = $injector.get('totango');
-  var logger        = $injector.get('logger');
-  var cookieStore   = $injector.get('TheStore/cookieStore');
-  var stringifySafe = $injector.get('stringifySafe');
-  var $rootScope    = $injector.get('$rootScope');
+.factory('analytics/track', ['require', function (require) {
+  var lazyLoad = require('LazyLoader').get;
+  var segment = require('segment');
+  var totango = require('totango');
+  var logger = require('logger');
+  var cookieStore = require('TheStore/cookieStore');
+  var stringifySafe = require('stringifySafe');
+  var $rootScope = require('$rootScope');
 
   var organizationData, spaceData, userData;
   var turnOffStateChangeListener = null;
@@ -89,11 +88,11 @@ angular.module('contentful')
       try {
         organizationData = space.data.organization;
         spaceData = {
-          spaceIsTutorial:                       space.data.tutorial,
-          spaceSubscriptionKey:                  space.data.organization.sys.id,
-          spaceSubscriptionState:                space.data.organization.subscriptionState,
-          spaceSubscriptionInvoiceState:         space.data.organization.invoiceState,
-          spaceSubscriptionSubscriptionPlanKey:  space.data.organization.subscriptionPlan.sys.id,
+          spaceIsTutorial: space.data.tutorial,
+          spaceSubscriptionKey: space.data.organization.sys.id,
+          spaceSubscriptionState: space.data.organization.subscriptionState,
+          spaceSubscriptionInvoiceState: space.data.organization.invoiceState,
+          spaceSubscriptionSubscriptionPlanKey: space.data.organization.subscriptionPlan.sys.id,
           spaceSubscriptionSubscriptionPlanName: space.data.organization.subscriptionPlan.name
         };
       } catch (error) {
