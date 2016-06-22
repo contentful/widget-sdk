@@ -10,22 +10,22 @@ angular.module('contentful').directive('cfRoleEditor', function () {
 
 angular.module('contentful').controller('RoleEditorController', ['$scope', '$injector', function ($scope, $injector) {
 
-  var $state            = $injector.get('$state');
-  var $q                = $injector.get('$q');
-  var Command           = $injector.get('command');
-  var spaceContext      = $injector.get('spaceContext');
-  var TheLocaleStore    = $injector.get('TheLocaleStore');
-  var space             = spaceContext.space;
-  var roleRepo          = $injector.get('RoleRepository').getInstance(space);
-  var listHandler       = $injector.get('UserListHandler').create();
+  var $state = $injector.get('$state');
+  var $q = $injector.get('$q');
+  var Command = $injector.get('command');
+  var spaceContext = $injector.get('spaceContext');
+  var TheLocaleStore = $injector.get('TheLocaleStore');
+  var space = spaceContext.space;
+  var roleRepo = $injector.get('RoleRepository').getInstance(space);
+  var listHandler = $injector.get('UserListHandler').create();
   var createRoleRemover = $injector.get('createRoleRemover');
-  var PolicyBuilder     = $injector.get('PolicyBuilder');
-  var leaveConfirmator  = $injector.get('navigation/confirmLeaveEditor');
-  var notification      = $injector.get('notification');
-  var analytics         = $injector.get('analytics');
-  var logger            = $injector.get('logger');
-  var accessChecker     = $injector.get('accessChecker');
-  var TrialWatcher      = $injector.get('TrialWatcher');
+  var PolicyBuilder = $injector.get('PolicyBuilder');
+  var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
+  var notification = $injector.get('notification');
+  var analytics = $injector.get('analytics');
+  var logger = $injector.get('logger');
+  var accessChecker = $injector.get('accessChecker');
+  var TrialWatcher = $injector.get('TrialWatcher');
 
   // 1. prepare "touch" counter (first touch for role->internal, next for dirty state)
   $scope.context.touched = $scope.context.isNew ? 0 : -1;
@@ -63,9 +63,12 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
     disabled: function () { return !$scope.context.dirty; }
   });
 
-  $scope.duplicateRole  = duplicateRole;
+  $scope.duplicateRole = duplicateRole;
   $scope.canModifyRoles = canModifyRoles;
-  $scope.resetPolicies  = resetPolicies;
+  $scope.resetPolicies = resetPolicies;
+
+  // check if we should show the 'translator' role
+  $scope.showTranslator = showTranslator();
 
   // setup "Remove" button:
   listHandler.reset().then(function () {
@@ -74,21 +77,29 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
         $scope.context.touched = 0;
         $scope.context.dirty = false;
         $state.go('spaces.detail.settings.roles.list');
-      }).call(null, $scope.role);
+      })($scope.role);
     };
   });
 
-  function duplicateRole() {
+  function showTranslator () {
+    var organization = spaceContext.getData('organization');
+    var subscriptionHasAdvancedRoles = dotty.get(organization, 'subscriptionPlan.limits.features.advancedRoles');
+    var nameStartsWithTranslator = /^Translator/.test($scope.role.name);
+    return subscriptionHasAdvancedRoles && nameStartsWithTranslator;
+  }
+
+
+  function duplicateRole () {
     if (dotty.get($scope, 'role.sys.id')) {
       $state.go('spaces.detail.settings.roles.new', {baseRoleId: $scope.role.sys.id});
     }
   }
 
-  function canModifyRoles() {
+  function canModifyRoles () {
     return accessChecker.canModifyRoles() && !TrialWatcher.hasEnded();
   }
 
-  function resetPolicies() {
+  function resetPolicies () {
     _.extend($scope.internal, {
       entries: {allowed: [], denied: []},
       assets: {allowed: [], denied: []},
@@ -96,7 +107,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
     });
   }
 
-  function save() {
+  function save () {
     if (!dotty.get($scope, 'external.policies', null)) {
       notification.error('Policies: invalid JSON.');
       return $q.reject();
@@ -106,8 +117,8 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
     return roleRepo[method]($scope.external).then(handleRole, handleError);
   }
 
-  function handleRole(role) {
-    notification.info($scope.context.title + ' role saved successfully');
+  function handleRole (role) {
+    notification.info(role.name + ' role saved successfully');
     trackRoleChange(role);
 
     if ($scope.context.isNew) {
@@ -121,7 +132,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
     }
   }
 
-  function handleError(res) {
+  function handleError (res) {
     var errors = dotty.get(res, 'body.details.errors', []);
 
     if (_.includes([403, 404], parseInt(dotty.get(res, 'statusCode'), 10))) {
@@ -148,14 +159,14 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
 
     return $q.reject();
 
-    function findError(errName) {
+    function findError (errName) {
       return _.find(errors, function (err) {
         return _.isObject(err) && err.name === errName && err.path === 'name';
       });
     }
   }
 
-  function trackRoleChange(changedRole) {
+  function trackRoleChange (changedRole) {
     var eventName = 'Role created in UI';
     var data = { changedRole: changedRole };
 
@@ -167,7 +178,7 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
     analytics.track(eventName, data);
   }
 
-  function autofixPolicies() {
+  function autofixPolicies () {
     var cts = spaceContext.publishedContentTypes;
     var locales = TheLocaleStore.getPrivateLocales();
     $scope.autofixed = PolicyBuilder.removeOutdatedRules($scope.internal, cts, locales);
