@@ -2,11 +2,8 @@
   "environment": "staging",
   "base_host" : "be.flinkly.com",
   "api_host" : "api.flinkly.com",
-  "app_host" : "app.flinkly.com",
-  "cdn_host" : "cdn.flinkly.com",
   "asset_host" : "staticflinkly-thriventures.netdna-ssl.com",
   "ot_host" : "ot.flinkly.com",
-  "exception_tracking_host" : "cf-track-107d49294b11c1.appspot.com",
   "marketing_url" : "//www.flinkly.com",
   "main_domain" : "flinkly.com",
   "contentful" : {
@@ -27,9 +24,6 @@
   "aviary" : {
     "api_key" : "b7fe4d3302834e61b0f65913f156c067"
   },
-  "intercom" : {
-    "secret" : "13gvdwUHBfyDcRvq8WJQLwDkQTp4nZl5Dq5V2RmZ"
-  },
   "embedly" : {
     "api_key" : "5aba1269adbf42919bd1dd3308b84652"
   },
@@ -39,6 +33,6 @@
     "maps_api_key" : "AIzaSyDskFlzw1ujRovNWNG3K64EUsncYTbRPfM"
   },
   "fonts_dot_com" : {
-    "project_id" : "fonts-dot-com-test-project-id"
+    "project_id" : "00000000-0000-0000-0000-000000000000"
   }
 }

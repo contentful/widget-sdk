@@ -1,70 +1,57 @@
 'use strict';
 
 describe('AssetLinkEditorController', function () {
-  var linkEditorCtrl, createController;
-  var scope, entry, $q, stubs, attrs;
-  var shareJSMock, entityCacheMock;
+  var createController;
+  var scope;
+  var entityCacheMock;
 
   afterEach(function () {
-    linkEditorCtrl = createController =
-      scope = entry = $q = stubs = attrs =
-      shareJSMock = entityCacheMock = null;
+    createController =
+      scope =
+      entityCacheMock = null;
   });
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs([
-        'getEntries',
-        'otDocPush',
-        'remove',
-        'save',
-        'getAll'
-      ]);
-
-      shareJSMock = {
-        peek: sinon.stub(),
-        mkpathAndSetValue: sinon.stub()
-      };
 
       entityCacheMock = sinon.stub();
       entityCacheMock.returns({
-        save: stubs.save,
-        getAll: stubs.getAll
+        save: sinon.stub(),
+        getAll: sinon.stub()
       });
 
-      $provide.value('ShareJS', shareJSMock);
       $provide.value('EntityCache', entityCacheMock);
     });
 
-    inject(function ($rootScope, $controller, _$q_, cfStub) {
-      $q = _$q_;
-      scope = $rootScope.$new();
+    scope = this.$inject('$rootScope').$new();
 
-      var space = cfStub.space('test');
-      var contentTypeData = cfStub.contentTypeData('content_type1');
-      scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
-      entry = cfStub.entry(space, 'entry1', 'content_type1');
-      scope.spaceContext.space.getEntries = stubs.getEntries;
+    var cfStub = this.$inject('cfStub');
+    var space = cfStub.space('test');
+    var contentTypeData = cfStub.contentTypeData('content_type1');
+    scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
 
-      scope.field = {
-        type: 'Link',
-        validations: []
-      };
+    scope.field = {
+      type: 'Link',
+      validations: []
+    };
 
-      attrs = {
-        ngModel: 'fieldData.value',
-        linkMultiple: false
-      };
+    scope.otSubDoc = {
+      onValueChanged: sinon.stub().returns(_.noop)
+    };
 
-      createController = function () {
-        linkEditorCtrl = $controller('AssetLinkEditorController', {
-          $scope: scope,
-          $attrs: attrs
-        });
-        scope.$digest();
-      };
+    var attrs = {
+      ngModel: 'fieldData.value',
+      linkMultiple: false
+    };
 
-    });
+    var $controller = this.$inject('$controller');
+    createController = function () {
+      $controller('AssetLinkEditorController', {
+        $scope: scope,
+        $attrs: attrs
+      });
+      scope.$digest();
+    };
   });
 
   describe('initial state', function () {
@@ -80,15 +67,15 @@ describe('AssetLinkEditorController', function () {
       expect(scope.linkedEntities).toEqual([]);
     });
 
-    it('initializes entity cache', function() {
+    it('initializes entity cache', function () {
       sinon.assert.calledWith(entityCacheMock, scope.spaceContext.space, 'getAssets');
     });
 
-    it('initializes link content types', function() {
+    it('initializes link content types', function () {
       expect(scope.linkContentTypes).toBeFalsy();
     });
 
-    it('initializes link mimetype group', function() {
+    it('initializes link mimetype group', function () {
       expect(scope.linkMimetypeGroup).toBeFalsy();
     });
 

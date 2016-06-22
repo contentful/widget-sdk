@@ -28,11 +28,15 @@ module.exports = function (config) {
       'public/app/libs.js',
       'src/javascripts/*.js',
       'src/javascripts/*/**/*.js',
+
+      // Test libraries
       'bower_components/angular-mocks/angular-mocks.js',
       'node_modules/sinon/pkg/sinon.js',
+
       'test/helpers/**/*.js',
       'test/unit/**/*.js',
-      'test/integration/**/*.js'
+      'test/integration/**/*.js',
+      {pattern: 'vendor/contentful-widget-sdk/dist/cf-widget-api.js', included: false}
     ],
 
 
@@ -45,6 +49,14 @@ module.exports = function (config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
+    },
+
+    // We do not yet use any features that do not run natively on
+    // modern browsers
+    babelPreprocessor: {
+      options: {
+        babelrc: false
+      }
     },
 
 

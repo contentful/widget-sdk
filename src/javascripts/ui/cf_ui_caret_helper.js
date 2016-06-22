@@ -53,13 +53,19 @@ angular.module('cf.ui')
     var rawInputEl = $inputEl.get(0);
 
     return function (value) {
-      var currentValue = $inputEl.val();
+      var currentValue = rawInputEl.value;
 
       if (currentValue !== value) {
-        var newCaretPosition = getPreservedCaretPosition(rawInputEl.selectionStart, currentValue, value);
-
-        $inputEl.val(value);
-        rawInputEl.selectionStart = rawInputEl.selectionEnd = newCaretPosition;
+        // Chrome has a bug where the element will receive focus after
+        // calling `setSelectionRange()`. We only update the caret
+        // position if the element is actually focused.
+        if (document.activeElement === rawInputEl) {
+          var newCaretPosition = getPreservedCaretPosition(rawInputEl.selectionStart, currentValue, value);
+          rawInputEl.value = value;
+          rawInputEl.setSelectionRange(newCaretPosition, newCaretPosition);
+        } else {
+          rawInputEl.value = value;
+        }
       }
     };
   }

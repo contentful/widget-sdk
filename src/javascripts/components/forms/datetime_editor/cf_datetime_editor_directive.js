@@ -109,20 +109,7 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$injector', functio
 
       function changeHandler() {
         var value = buildIsoString(scope.localDate, scope.localTime, scope.ampm, scope.tzOffset);
-        var updated;
-
-        if (scope.otSubDoc) {
-          updated = scope.otSubDoc.changeValue(value);
-        } else {
-          updated = $q.resolve();
-        }
-
-        updated
-        .then(function() {
-            ngModelCtrl.$setViewValue(value);
-        }, function() {
-            scope.setFromISO(ngModelCtrl.$modelValue);
-        });
+        ngModelCtrl.$setViewValue(value);
       }
 
       /**
@@ -177,12 +164,6 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$injector', functio
         return timeController.$error.format;
       }, function (invalid, old, scope) {
         scope.timeInvalid = invalid;
-      });
-
-      scope.$on('otValueChanged', function(event, path, value) {
-        if (path === event.currentScope.otPath) {
-          ngModelSet(event.currentScope, value);
-        }
       });
 
       function parseIso(isoString) {

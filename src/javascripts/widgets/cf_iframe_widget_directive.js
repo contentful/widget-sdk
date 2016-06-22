@@ -15,7 +15,17 @@ angular.module('contentful')
  * @scope.requires {API.Locale} locale
  * @scope.requires {API.ContentType.Field} field
  */
-.directive('cfIframeWidget', ['$injector', function($injector) {
+.directive('cfIframeWidget', ['$injector', function ($injector) {
+  var ERRORS = {
+    codes: {
+      EBADUPDATE: 'ENTRY UPDATE FAILED'
+    },
+    messages: {
+      MFAILUPDATE: 'Could not update entry field',
+      MFAILREMOVAL: 'Could not remove value for field'
+    }
+  };
+
   return {
     restrict: 'E',
     template: '<iframe style="width:100%" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe>',
@@ -25,8 +35,8 @@ angular.module('contentful')
       var spaceContext = $injector.get('spaceContext');
       var $q = $injector.get('$q');
 
-      var $iframe  = element.find('iframe');
-      var iframe   = $iframe.get(0);
+      var $iframe = element.find('iframe');
+      var iframe = $iframe.get(0);
       var WidgetAPI = $injector.get('widgets/API');
       var Widgets = $injector.get('widgets');
 
@@ -37,8 +47,8 @@ angular.module('contentful')
       }, {});
 
       var widgetAPI = new WidgetAPI(
-        spaceContext.space, fields, scope.entry.data,
-        {field: scope.field, locale: scope.locale}, iframe
+        spaceContext.cma, fields, scope.entry.data, scope.transformedContentTypeData,
+        {field: scope.field, locale: scope.locale, isDisabled: scope.fieldLocale.access.disabled}, iframe
       );
 
       scope.$on('$destroy', function () {
@@ -47,17 +57,44 @@ angular.module('contentful')
 
       widgetAPI.registerHandler('setValue', function (apiName, localeCode, value) {
         var path = widgetAPI.buildDocPath(apiName, localeCode);
-        var doc = scope.otDoc.doc;
-        if (doc) {
-          return value === undefined ?
-            removeDocValue(doc, path) :
-            updateDocValue(doc, path, value);
-        }
+
+        return scope.otDoc.setValueAt(path, value)
+        .catch(makeErrorHandler(ERRORS.codes.EBADUPDATE, ERRORS.messages.MFAILUPDATE));
+      });
+
+      widgetAPI.registerHandler('removeValue', function (apiName, localeCode) {
+        var path = widgetAPI.buildDocPath(apiName, localeCode);
+
+        return scope.otDoc.removeValueAt(path)
+        .catch(makeErrorHandler(ERRORS.codes.EBADUPDATE, ERRORS.messages.MFAILREMOVAL));
+      });
+
+      widgetAPI.registerHandler('setInvalid', function (isInvalid, localeCode) {
+        scope.fieldController.setInvalid(localeCode, isInvalid);
+      });
+
+      widgetAPI.registerHandler('setActive', function (isActive) {
+        scope.fieldLocale.setActive(isActive);
       });
 
       initializeIframe();
 
-      function initializeIframe() {
+      function makeErrorHandler (code, msg) {
+        return function (e) {
+          if (e && e.message) {
+            e = e.message;
+          }
+          return $q.reject({
+            code: code,
+            message: msg,
+            data: {
+              shareJSCode: e
+            }
+          });
+        };
+      }
+
+      function initializeIframe () {
         iframe.addEventListener('load', function () {
           widgetAPI.connect();
         });
@@ -69,38 +106,11 @@ angular.module('contentful')
         }
       }
 
-      function updateDocValue (doc, path, value) {
-        return ShareJS.setDeep(doc, path, value)
-        .catch(function (e) {
-          // Should only throw an error when `value` does not have the
-          // correct type. Then `e` will be "forbidden".
-          return $q.reject({
-            code: 'ENTRY UPDATE FAILED',
-            message: 'Could not update entry field',
-            data: {
-              shareJSCode: e
-            }
-          });
-        });
-      }
-
-      function removeDocValue (doc, path) {
-        return $q.denodeify(function (cb) {
-          // We catch synchronous errors since they tell us that a
-          // value along the path does not exist.
-          try {
-            doc.removeAt(path, cb);
-          } catch (e) {
-            cb();
-          }
-        });
-      }
-
       scope.$watch('entry.data.sys', function (sys) {
         widgetAPI.send('sysChanged', [sys]);
       }, true);
 
-      scope.$on('otDocReady', function (ev, doc) {
+      scope.$on('otDocReady', function (_ev, doc) {
         updateWidgetFields(doc);
       });
 
@@ -113,6 +123,16 @@ angular.module('contentful')
           updateWidgetValue(doc, path[1], path[2]);
         });
       });
+
+      // Send a message when the disabled status of the field changes
+      scope.$watch(isEditingDisabled, function (isDisabled) {
+        widgetAPI.send('isDisabledChanged', [isDisabled]);
+      });
+
+      // Retrieve whether field is disabled or not
+      function isEditingDisabled () {
+        return scope.fieldLocale.access.disabled;
+      }
 
       /**
        * Retrieves the field value at the given path from the document

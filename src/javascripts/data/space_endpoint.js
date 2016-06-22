@@ -43,9 +43,21 @@ angular.module('cf.data')
    * - `version` If given, its value is send as the
    *   `X-Contentful-Version` header.
    *
+   * The request function accepts a map of additional headers as a
+   * second argument.
+   *
    * The resolved response will contain the payload parsed as a JSON
    * object. If the request fails the promise will be rejected with an
    * error.
+   *
+   * The error will have the following properties
+   *
+   * - `status` The HTTP response code
+   * - `code` Either the `sys.id` property from the response or the
+   *   HTTP status code
+   * - `data` The HTTP response body
+   * - `request` The original request configuration
+   * - `headers` The HTTP response headers
    *
    * @param {string} token
    * @param {string} baseUrl
@@ -53,12 +65,12 @@ angular.module('cf.data')
    * @returns {function}
    */
   function create (token, baseUrl, spaceId) {
-    return function makeRequest (config) {
+    return function makeRequest (config, headers) {
       var url = joinPath([baseUrl, 'spaces', spaceId].concat(config.path));
       var request = {
         method: config.method,
         url: url,
-        headers: makeHeaders(config.version),
+        headers: makeHeaders(config.version, headers),
         data: config.data,
         params: config.query
       };
@@ -68,6 +80,7 @@ angular.module('cf.data')
       }, function (response) {
         var error = _.extend(new Error('API request failed'), {
           status: response.status,
+          code: dotty.get(response, ['data', 'sys', 'id'], response.status),
           data: response.data,
           headers: response.headers,
           request: redactAuthorizationHeader(request)
@@ -76,11 +89,11 @@ angular.module('cf.data')
       });
     };
 
-    function makeHeaders (version) {
-      var headers = {
+    function makeHeaders (version, additional) {
+      var headers = _.extend({
         'Content-Type': 'application/vnd.contentful.management.v1+json',
         'Authorization': 'Bearer ' + token
-      };
+      }, additional);
       if (version) {
         headers['X-Contentful-Version'] = version;
       }

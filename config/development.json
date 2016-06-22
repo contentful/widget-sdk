@@ -2,14 +2,10 @@
   "environment": "development",
   "base_host": "be.joistio.com:8888",
   "api_host": "api.joistio.com:8888",
-  "app_host": "app.joistio.com:8888",
-  "cdn_host": "cdn.joistio.com:8888",
   "asset_host": "static.joistio.com:8888",
   "ot_host": "ot.joistio.com:8888",
-  "exception_tracking_host": "cf-track-107d49294b11c1.appspot.com",
   "marketing_url": "http://www.joistio.com:8888",
   "main_domain": "joistio.com:8888",
-  "additional_domains": ["joistio.com", "app.joistio.com", "static.joistio.com"],
   "contentful": {
     "apiUrl": "api.contentful.com",
     "cdaApiUrl": "cdn.contentful.com",
@@ -37,6 +33,6 @@
     "maps_api_key": "AIzaSyDskFlzw1ujRovNWNG3K64EUsncYTbRPfM"
   },
   "fonts_dot_com": {
-    "project_id": "fonts-dot-com-test-project-id"
+    "project_id" : "00000000-0000-0000-0000-000000000000"
   }
 }

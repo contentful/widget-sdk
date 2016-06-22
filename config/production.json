@@ -2,11 +2,8 @@
   "environment": "production",
   "base_host" : "be.contentful.com",
   "api_host" : "api.contentful.com",
-  "app_host" : "app.contentful.com",
-  "cdn_host" : "cdn.contentful.com",
   "asset_host" : "static.contentful.com",
   "ot_host" : "ot.contentful.com",
-  "exception_tracking_host" : "cf-track-107d49294b11c1.appspot.com",
   "marketing_url" : "//www.contentful.com",
   "main_domain" : "contentful.com",
   "contentful" : {
@@ -26,9 +23,6 @@
   },
   "aviary" : {
     "api_key" : "b7fe4d3302834e61b0f65913f156c067"
-  },
-  "intercom" : {
-    "secret" : "DXHZn07Q6McgYyg3sfi8tbV1npqiBi27tADWRTjF"
   },
   "embedly" : {
     "api_key" : "5aba1269adbf42919bd1dd3308b84652"

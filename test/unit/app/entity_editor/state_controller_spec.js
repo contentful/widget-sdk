@@ -1,12 +1,16 @@
 'use strict';
 
 describe('entityEditor/StateController', function () {
+  var $q;
+
   beforeEach(function () {
     var closeStateSpy = this.closeStateSpy = sinon.spy();
 
     module('contentful/test', function ($provide) {
       $provide.value('navigation/closeState', closeStateSpy);
     });
+
+    $q = this.$inject('$q');
 
     var cfStub = this.$inject('cfStub');
     var space = cfStub.space('spaceid');
@@ -27,32 +31,36 @@ describe('entityEditor/StateController', function () {
       $scope: this.scope,
       notify: this.notify,
       entity: entry,
-      handlePublishError: null,
+      handlePublishError: null
     });
   });
 
-  describe('#delete command execution', function() {
-    beforeEach(function() {
+  afterEach(function () {
+    $q = null;
+  });
+
+  describe('#delete command execution', function () {
+    beforeEach(function () {
       this.notify.deleteFail = sinon.stub();
       this.notify.deleteSuccess = sinon.stub();
       this.scope.closeState = sinon.stub();
     });
 
-    it('calls entity.delete()', function() {
+    it('calls entity.delete()', function () {
       this.entity.delete = sinon.stub().resolves();
       this.controller.delete.execute();
       this.$apply();
       sinon.assert.calledOnce(this.entity.delete);
     });
 
-    it('send success notification', function() {
+    it('send success notification', function () {
       this.entity.delete = sinon.stub().resolves();
       this.controller.delete.execute();
       this.$apply();
       sinon.assert.calledOnce(this.notify.deleteSuccess);
     });
 
-    it('closes the current state', function() {
+    it('closes the current state', function () {
       this.entity.delete = sinon.stub().resolves();
       this.controller.delete.execute();
       this.$apply();
@@ -69,7 +77,7 @@ describe('entityEditor/StateController', function () {
   });
 
   describe('in published state without changes', function () {
-    beforeEach(function() {
+    beforeEach(function () {
       this.entity.data.sys.publishedVersion = 42;
       this.entity.data.sys.version = 43;
       this.entity.data.sys.archivedVersion = null;
@@ -120,7 +128,7 @@ describe('entityEditor/StateController', function () {
   });
 
   describe('in draft state', function () {
-    beforeEach(function() {
+    beforeEach(function () {
       this.entity.data.sys.version = 1;
       this.entity.data.sys.publishedVersion = null;
       this.entity.data.sys.archivedVersion = null;
@@ -191,23 +199,23 @@ describe('entityEditor/StateController', function () {
   });
 
   describe('reverting', function () {
-    function canBeReverted(states) {
-      if(states.toPublished) {
-        it('entry can be reverted to published', function() {
+    function canBeReverted (states) {
+      if (states.toPublished) {
+        it('entry can be reverted to published', function () {
           expect(this.controller.revertToPublished.isAvailable()).toBeTruthy();
         });
       } else {
-        it('entry cannot be reverted to published', function() {
+        it('entry cannot be reverted to published', function () {
           expect(this.controller.revertToPublished.isAvailable()).toBeFalsy();
         });
       }
 
-      if(states.toPrevious) {
-        it('entry can be reverted to previous state', function() {
+      if (states.toPrevious) {
+        it('entry can be reverted to previous state', function () {
           expect(this.controller.revertToPrevious.isAvailable()).toBeTruthy();
         });
       } else {
-        it('entry cannot be reverted to previous state', function() {
+        it('entry cannot be reverted to previous state', function () {
           expect(this.controller.revertToPrevious.isAvailable()).toBeFalsy();
         });
       }
@@ -217,42 +225,23 @@ describe('entityEditor/StateController', function () {
      * Mock object providing the interface from the `ot-doc-for`
      * directive.
      */
-    function OtDoc (entity) {
-      var doc = this.doc = {
-        at: createSubDoc
-      };
-
-      this.state = {
-        editable: true
-      };
-
-      this.getEntity = function () {
-        return entity;
-      };
-
-      this.updateSnapshot = function () {
-        doc.snapshot = _.cloneDeep(entity.data);
-      };
-
-      this.updateSnapshot();
-
-      function createSubDoc (path) {
-        return { set: set };
-
-        function set (data, cb) {
-          dotty.put(doc.snapshot, path, data);
-          doc.snapshot.sys.version += 1;
-          entity.data = doc.snapshot;
-          if (cb) {
-            cb();
-          }
+    function OtDoc (data) {
+      var snapshot = _.cloneDeep(data);
+      return {
+        getValueAt: function (path) {
+          return dotty.get(snapshot, path);
+        },
+        setValueAt: function (path, value) {
+          dotty.put(snapshot, path, value);
+          return $q.resolve(value);
+        },
+        state: {
+          editable: true
         }
-      }
+      };
     }
 
     beforeEach(function () {
-      var $q = this.$inject('$q');
-
       this.entity.publish = function () {
         this.data.sys.publishedVersion = this.data.sys.version;
         this.data.sys.version += 1;
@@ -261,7 +250,7 @@ describe('entityEditor/StateController', function () {
 
       this.entity.data.fields = {field1: 'one'};
 
-      this.otDoc = new OtDoc(this.entity);
+      this.otDoc = new OtDoc(this.entity.data);
       this.scope.otDoc = this.otDoc;
       this.scope.validate = sinon.stub().returns(true);
       this.$apply();
@@ -272,28 +261,28 @@ describe('entityEditor/StateController', function () {
     });
 
     describe('published entry with changes', function () {
-      beforeEach(function() {
+      beforeEach(function () {
         // publish
         this.controller.primary.execute();
         this.$apply();
 
-        // make changes
-        this.otDoc.updateSnapshot();
-        this.otDoc.doc.at('fields.field1').set('two');
+        // add changes
+        this.entity.data.sys.version++;
+        this.otDoc.setValueAt(['fields', 'field1'], 'changed');
         this.$apply();
       });
 
       canBeReverted({toPublished: true, toPrevious: true});
 
       describe('#revertToPublished command', function () {
-        beforeEach(function() {
+        beforeEach(function () {
           this.entity.getPublishedState = sinon.stub().resolves({fields: {'some-field': {'de-DE': 'published'}}});
           this.controller.revertToPublished.execute();
           this.$apply();
         });
 
-        it('reverts the field data', function() {
-          expect(this.otDoc.doc.snapshot.fields['some-field']['de-DE']).toBe('published');
+        it('reverts the field data', function () {
+          expect(this.otDoc.getValueAt(['fields', 'some-field', 'de-DE'])).toBe('published');
         });
 
         describe('afterwards', function () {
@@ -321,20 +310,21 @@ describe('entityEditor/StateController', function () {
 
 
     describe('unpublished entry with changes', function () {
-      beforeEach(function() {
-        this.otDoc.doc.at('fields.field1').set('two');
+      beforeEach(function () {
+        this.entity.data.sys.version++;
+        this.otDoc.setValueAt(['fields', 'field1'], 'changed');
         this.$apply();
       });
 
       canBeReverted({toPublished: false, toPrevious: true});
 
-      describe('#revertToPrevious command', function() {
+      describe('#revertToPrevious command', function () {
 
-        it('reverts the field data', function() {
-          expect(this.otDoc.doc.snapshot.fields.field1).toBe('two');
+        it('reverts the field data', function () {
+          expect(this.otDoc.getValueAt(['fields', 'field1'])).toBe('changed');
           this.controller.revertToPrevious.execute();
           this.$apply();
-          expect(this.otDoc.doc.snapshot.fields.field1).toBe('one');
+          expect(this.otDoc.getValueAt(['fields', 'field1'])).toBe('one');
         });
 
         describe('afterwards', function () {

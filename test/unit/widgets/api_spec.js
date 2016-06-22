@@ -15,9 +15,11 @@ describe('widgets/API', function () {
     this.space = {data: {sys: {id: 'SPACE_ID'}}};
     this.fields = [];
     this.entryData = {fields: {}};
+    this.contentTypeData = {};
     this.context = {
       field: {},
-      locale: {code: 'en_US'}
+      locale: {code: 'en_US'},
+      isDisabled: false
     };
     this.postMessage = sinon.stub();
     this.iframe = {
@@ -26,7 +28,7 @@ describe('widgets/API', function () {
 
     this.createAPI = function () {
       return new API(
-        this.space, this.fields, this.entryData,
+        this.space, this.fields, this.entryData, this.contentTypeData,
         this.context, this.iframe
       );
     };
@@ -46,19 +48,26 @@ describe('widgets/API', function () {
       expect(this.postMessage.args[0][0].params[0].entry).toEqual('ENTRY');
     });
 
+    it('sends content type param', function () {
+      this.contentTypeData = 'CONTENTTYPE';
+      this.createAPI().connect();
+      expect(this.postMessage.args[0][0].params[0].contentType).toEqual('CONTENTTYPE');
+    });
+
     it('sends field param', function () {
       this.entryData.fields = {
         'FID-internal': {'LOCALE-internal': 'VALUE'}
       };
       this.context.field.apiName = 'FID-public';
       this.context.field.id = 'FID-internal';
+      this.context.field.type = 'FIELD-TYPE';
       this.context.locale = {
         code: 'LOCALE',
         internal_code: 'LOCALE-internal'
       };
       this.createAPI().connect();
       expect(this.postMessage.args[0][0].params[0].field).toEqual({
-        id: 'FID-public', locale: 'LOCALE', value: 'VALUE'
+        id: 'FID-public', locale: 'LOCALE', value: 'VALUE', isDisabled: false, type: 'FIELD-TYPE'
       });
     });
 

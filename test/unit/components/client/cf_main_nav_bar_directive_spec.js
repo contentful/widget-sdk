@@ -8,7 +8,7 @@ describe('Main nav bar directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs(['section', 'viewType', 'isHibernated']);
-      $provide.removeDirectives('otDocFor', 'otDocPresence', 'entryEditor', 'apiKeyEditor', 'entryList', 'cfIcon');
+      $provide.removeDirectives('otDocPresence', 'entryEditor', 'apiKeyEditor', 'entryList', 'cfIcon');
       $provide.removeControllers('UiConfigController');
     });
 
