@@ -25,7 +25,7 @@ angular.module('contentful')
   });
 
   $scope.goToUserProfile = TheAccountView.goToUserProfile;
-  $scope.goToSubscription = TheAccountView.goToSubscription;
+  $scope.goToOrganizations = TheAccountView.goToOrganizations;
   $scope.clickedProfileButton = clickedProfileButton;
   $scope.openSupport = openSupport;
   $scope.openIntercom = intercom.open;

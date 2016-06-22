@@ -14,7 +14,7 @@
       //- TODO: Use `ui-sref` isntead of `ng-click`.
       li(role="menuitem" ng-click="goToUserProfile()")
         | User profile
-      li(role="menuitem" ng-click="goToSubscription()" ng-show="canGoToSubscription")
+      li(role="menuitem" ng-click="goToOrganizations()" ng-show="canGoToOrganizations")
         | Organizations & billing
       li(role="menuitem" ng-click="openIntercom()" ng-if="isIntercomLoaded()")
         | Talk to us

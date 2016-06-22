@@ -65,14 +65,14 @@ describe('Account Dropdown Controller', function () {
     });
 
     it('is disabled if the user is not an organization owner', function () {
-      expect(this.scope.canGoToSubscription).toBe(false);
+      expect(this.scope.canGoToOrganizations).toBe(false);
     });
 
     it('is enabled if is the user is an organization owner', function () {
       this.isOwnerStub.returns(true);
       this.$inject('spaceContext').space = {data: {organization: {sys: {id: 42}}}};
       this.$apply();
-      expect(this.scope.canGoToSubscription).toBe(true);
+      expect(this.scope.canGoToOrganizations).toBe(true);
     });
   });
 });
