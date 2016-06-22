@@ -16,6 +16,7 @@ angular.module('contentful')
   var activationEmailResendController = $injector.get('activationEmailResendController');
   var onboardingController            = $injector.get('onboardingController');
   var trialWatcher                    = $injector.get('TrialWatcher');
+  var billingNotificationsController = $injector.get('billingNotificationsController');
 
   return {
     init: init
@@ -32,6 +33,7 @@ angular.module('contentful')
 
     onboardingController.init();
     trialWatcher.init();
+    billingNotificationsController.init();
   }
 
 }]);
