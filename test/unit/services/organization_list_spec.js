@@ -66,17 +66,18 @@ describe('OrgniaztionList', function () {
       OrganizationList.resetWithUser(user);
     });
 
-    it('returns false for an unknown organization ID', function () {
-      expect(OrganizationList.isAdmin('unknown-id')).toBe(false);
-      expect(OrganizationList.isOwner('unknown-id')).toBe(false);
-      expect(OrganizationList.isOwnerOrAdmin('unknown-id')).toBe(false);
-    });
+    it('returns false if undefined is given',
+      () => returnsFalseWithArg(undefined));
+
+    it('returns false if null is given',
+      () => returnsFalseWithArg(null));
+
+    it('returns false for an unknown organization ID',
+      () => returnsFalseWithArg('unknown-id'));
 
     it('returns false if user is a normal member', function () {
       this.memberships[0].role = 'member';
-      expect(OrganizationList.isAdmin('123')).toBe(false);
-      expect(OrganizationList.isOwner('123')).toBe(false);
-      expect(OrganizationList.isOwnerOrAdmin('123')).toBe(false);
+      returnsFalseWithArg('123');
     });
 
     it('returns true if is an owner or an admin', function () {
@@ -89,5 +90,11 @@ describe('OrgniaztionList', function () {
       expect(OrganizationList.isOwnerOrAdmin('123')).toBe(true);
       expect(OrganizationList.isOwnerOrAdmin('456')).toBe(true);
     });
+
+    function returnsFalseWithArg (value) {
+      expect(OrganizationList.isAdmin(value)).toBe(false);
+      expect(OrganizationList.isOwner(value)).toBe(false);
+      expect(OrganizationList.isOwnerOrAdmin(value)).toBe(false);
+    }
   });
 });

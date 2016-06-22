@@ -20,10 +20,8 @@ angular.module('contentful')
   var analytics        = $injector.get('analytics');
   var intercom         = $injector.get('intercom');
 
-  $scope.$watch(function () {
-    return TheAccountView.getGoToSubscriptionOrganization();
-  }, function (organizationToGoTo) {
-    $scope.canGoToSubscription = !!organizationToGoTo;
+  $scope.$watch(TheAccountView.canGoToOrganizations, function (canGo) {
+    $scope.canGoToOrganizations = canGo;
   });
 
   $scope.goToUserProfile = TheAccountView.goToUserProfile;
