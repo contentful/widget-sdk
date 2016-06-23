@@ -14,5 +14,5 @@ fi
 
 if [[ ${#packages[@]} -gt 0 ]]; then
   echo ${packages[@]}
-  sudo apt-get install "${packages[@]}"
+  sudo apt-get install -y "${packages[@]}"
 fi
