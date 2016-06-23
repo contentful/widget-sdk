@@ -1,10 +1,9 @@
 'use strict';
 
 angular.module('contentful')
-.factory('billingNotificationsController', ['require', function (require) {
+.factory('billingNotifier', ['require', function (require) {
 
   var $rootScope = require('$rootScope');
-  var spaceContext = require('spaceContext');
   var OrganizationList = require('OrganizationList');
   var TheAccountView = require('TheAccountView');
 
@@ -26,29 +25,19 @@ angular.module('contentful')
     }
   };
 
-  var lastSpaceId = spaceContext.getId();
-
   return {
-    init: init
+  /**
+   * @ngdoc method
+   * @name billingNotifier#notifyAbout
+   * @param {Object} organization
+   * @description
+   * Sets/updates the notifier's context and will trigger the appropriate
+   * notifications.
+   */
+    notifyAbout: notifyAbout
   };
 
-  function init () {
-    $rootScope.$watchCollection(function () {
-      return {
-        spaceId: spaceContext.getId(),
-        isInitialized: !OrganizationList.isEmpty()
-      };
-    }, watcher);
-  }
-
-  function watcher (args) {
-    if (!args.spaceId || !args.isInitialized || args.spaceId === lastSpaceId) {
-      return;
-    }
-
-    lastSpaceId = args.spaceId;
-    var organization = spaceContext.getData('organization') || {};
-
+  function notifyAbout (organization) {
     if (!userOwnsOrganization(organization)) {
       return;
     }

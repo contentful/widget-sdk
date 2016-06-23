@@ -13,10 +13,14 @@ angular.module('contentful')
 .factory('dialogsInitController', ['$injector', function ($injector) {
 
   var $rootScope                      = $injector.get('$rootScope');
+  var spaceContext = $injector.get('spaceContext');
+  var OrganizationList = $injector.get('OrganizationList');
   var activationEmailResendController = $injector.get('activationEmailResendController');
   var onboardingController            = $injector.get('onboardingController');
   var trialWatcher                    = $injector.get('TrialWatcher');
-  var billingNotificationsController = $injector.get('billingNotificationsController');
+  var billingNotifier = $injector.get('billingNotifier');
+
+  var lastSpaceId = spaceContext.getId();
 
   return {
     init: init
@@ -33,7 +37,28 @@ angular.module('contentful')
 
     onboardingController.init();
     trialWatcher.init();
-    billingNotificationsController.init();
+
+    initSpaceWatcher();
+  }
+
+  function initSpaceWatcher () {
+    $rootScope.$watchCollection(function () {
+      return {
+        spaceId: spaceContext.getId(),
+        isInitialized: !OrganizationList.isEmpty()
+      };
+    }, watchSpace);
+  }
+
+  function watchSpace (args) {
+    if (!args.spaceId || !args.isInitialized || args.spaceId === lastSpaceId) {
+      return;
+    }
+
+    lastSpaceId = args.spaceId;
+    var organization = spaceContext.getData('organization') || {};
+
+    billingNotifier.notifyAbout(organization);
   }
 
 }]);
