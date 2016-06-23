@@ -71,7 +71,14 @@ describe('Extension SDK', function () {
           try {
             const w = iframe.contentWindow;
             w.console = window.console;
-            w.contentfulWidget.init(resolve);
+            w.contentfulWidget.init((api) => {
+              api.nextTick = function () {
+                return new Promise((resolve) => {
+                  w.setTimeout(resolve, 1);
+                });
+              };
+              resolve(api);
+            });
           } catch (e) {
             reject(e);
           }
@@ -86,6 +93,7 @@ describe('Extension SDK', function () {
   });
 
   const it = makeApiTestDescriptor(window.it);
+  const fit = makeApiTestDescriptor(window.fit);
 
   describe('#field', function () {
 
@@ -101,7 +109,7 @@ describe('Extension SDK', function () {
 
       it('gets updated value after otChange event is fired', function* (api, scope) {
         emitOtChange(scope, ['fields', 'FID-internal', 'de-internal'], 'VALUE');
-        yield;
+        yield api.nextTick();
         expect(api.field.getValue()).toEqual('VALUE');
       });
     });
@@ -112,7 +120,7 @@ describe('Extension SDK', function () {
         api.field.onValueChanged(valueChanged);
         valueChanged.reset();
         emitOtChange(scope, ['fields', 'FID-internal', 'de-internal'], 'VALUE');
-        yield;
+        yield api.nextTick();
         sinon.assert.calledOnce(valueChanged);
         sinon.assert.calledWithExactly(valueChanged, 'VALUE');
       });
@@ -127,7 +135,7 @@ describe('Extension SDK', function () {
         valueChanged.reset();
         detach();
         emitOtChange(scope, ['fields', 'FID-internal', 'de-internal'], 'VALUE');
-        yield;
+        yield api.nextTick();
         sinon.assert.calledOnce(valueChanged);
       });
 
@@ -136,14 +144,14 @@ describe('Extension SDK', function () {
         api.field.onValueChanged(valueChanged);
         valueChanged.reset();
         api.field.setValue('VALUE');
-        yield;
+        yield api.nextTick();
         sinon.assert.notCalled(valueChanged);
       });
 
       it('calls callback with most recently dispatched value', function* (api, scope) {
         const valueChanged = sinon.spy();
         emitOtChange(scope, ['fields', 'FID-internal', 'de-internal'], 'VALUE');
-        yield;
+        yield api.nextTick();
         api.field.onValueChanged(valueChanged);
         sinon.assert.calledOnce(valueChanged);
         sinon.assert.calledWithExactly(valueChanged, 'VALUE');
@@ -154,10 +162,10 @@ describe('Extension SDK', function () {
       it('calls callback when disable status of field is changed', function* (api, scope) {
         const isDisabledChanged = sinon.spy();
         api.field.onIsDisabledChanged(isDisabledChanged);
-        yield;
+        yield api.nextTick();
         isDisabledChanged.reset();
         scope.fieldLocale.access.disabled = true;
-        yield;
+        yield api.nextTick();
         sinon.assert.calledOnce(isDisabledChanged);
         sinon.assert.calledWithExactly(isDisabledChanged, true);
       });
@@ -165,10 +173,10 @@ describe('Extension SDK', function () {
       it('does not call callback after detaching', function* (api, scope) {
         const isDisabledChanged = sinon.spy();
         api.field.onIsDisabledChanged(isDisabledChanged)(); // detach the listener
-        yield;
+        yield api.nextTick();
         isDisabledChanged.reset();
         scope.fieldLocale.access.disabled = true;
-        yield;
+        yield api.nextTick();
         sinon.assert.notCalled(isDisabledChanged);
       });
     });
@@ -184,7 +192,7 @@ describe('Extension SDK', function () {
     describe('#setInvalid', function () {
       it('proxies call to setInvalid method on scope.fieldController', function* (api, scope) {
         api.field.setInvalid(true, scope.locale.code);
-        yield;
+        yield api.nextTick();
         sinon.assert.calledWithExactly(scope.fieldController.setInvalid, scope.locale.code, true);
       });
     });
@@ -232,7 +240,7 @@ describe('Extension SDK', function () {
       it('returns updated value when scope property changes', function* (api) {
         expect(api.entry.getSys()).toEqual(SYS_0);
         this.scope.entry.data.sys = SYS_1;
-        yield;
+        yield api.nextTick();
         expect(api.entry.getSys()).toEqual(SYS_1);
       });
     });
@@ -250,7 +258,7 @@ describe('Extension SDK', function () {
         api.entry.onSysChanged(listener);
         listener.reset();
         this.scope.entry.data.sys = SYS_1;
-        yield;
+        yield api.nextTick();
         sinon.assert.calledWith(listener, SYS_1);
       });
     });
@@ -292,11 +300,11 @@ describe('Extension SDK', function () {
 
       it('returns updated value after otChange event', function* (api, scope) {
         emitOtChange(scope, ['fields', 'f2-internal', 'en'], 'VAL en');
-        yield;
+        yield api.nextTick();
         expect(api.entry.fields.f2.getValue()).toEqual('VAL en');
 
         emitOtChange(scope, ['fields', 'f2-internal', 'de', 5], 'VAL de');
-        yield;
+        yield api.nextTick();
         expect(api.entry.fields.f2.getValue('de')).toEqual('VAL de');
       });
     });
@@ -430,17 +438,9 @@ describe('Extension SDK', function () {
       function handleYield (ret) {
         if (ret.done) {
           resolve();
-          return;
-        }
-
-        if (ret.value) {
+        } else {
           ret.value.then(next, throwTo);
           $apply();
-        } else {
-          $apply();
-          setTimeout(function () {
-            next(ret.value);
-          }, 4);
         }
       }
     });
