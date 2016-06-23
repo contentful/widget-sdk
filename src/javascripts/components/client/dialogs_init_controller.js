@@ -12,12 +12,12 @@
 angular.module('contentful')
 .factory('dialogsInitController', ['$injector', function ($injector) {
 
-  var $rootScope                      = $injector.get('$rootScope');
+  var $rootScope = $injector.get('$rootScope');
   var spaceContext = $injector.get('spaceContext');
   var OrganizationList = $injector.get('OrganizationList');
   var activationEmailResendController = $injector.get('activationEmailResendController');
-  var onboardingController            = $injector.get('onboardingController');
-  var trialWatcher                    = $injector.get('TrialWatcher');
+  var onboardingController = $injector.get('onboardingController');
+  var trialWatcher = $injector.get('TrialWatcher');
   var billingNotifier = $injector.get('billingNotifier');
 
   var lastSpaceId = spaceContext.getId();

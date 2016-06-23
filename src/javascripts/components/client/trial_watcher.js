@@ -5,24 +5,24 @@
 //  as a service reduced to expose trial related information.
 angular.module('contentful').factory('TrialWatcher', ['$injector', function ($injector) {
 
-  var $rootScope       = $injector.get('$rootScope');
-  var analytics        = $injector.get('analytics');
-  var TheAccountView   = $injector.get('TheAccountView');
-  var spaceContext     = $injector.get('spaceContext');
+  var $rootScope = $injector.get('$rootScope');
+  var analytics = $injector.get('analytics');
+  var TheAccountView = $injector.get('TheAccountView');
+  var spaceContext = $injector.get('spaceContext');
   var OrganizationList = $injector.get('OrganizationList');
-  var htmlEncode       = $injector.get('encoder').htmlEncode;
-  var moment           = $injector.get('moment');
-  var openPaywall      = $injector.get('paywallOpener').openPaywall;
+  var htmlEncode = $injector.get('encoder').htmlEncode;
+  var moment = $injector.get('moment');
+  var openPaywall = $injector.get('paywallOpener').openPaywall;
 
-  var lastSpaceId   = spaceContext.getId();
+  var lastSpaceId = spaceContext.getId();
   var trialHasEnded = false;
 
   return {
-    init:     init,
+    init: init,
     hasEnded: function () { return trialHasEnded; }
   };
 
-  function init() {
+  function init () {
     $rootScope.$watchCollection(function () {
       return {
         spaceId: spaceContext.getId(),
@@ -36,7 +36,7 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
       return;
     }
 
-    lastSpaceId   = args.spaceId;
+    lastSpaceId = args.spaceId;
     trialHasEnded = false;
 
     var organization = spaceContext.getData('organization');
@@ -73,8 +73,8 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
     }
   }
 
-  function newUpgradeAction(trackingFn){
-    return function upgradeAction() {
+  function newUpgradeAction (trackingFn) {
+    return function upgradeAction () {
       trackingFn();
       TheAccountView.goToSubscription();
     };
@@ -120,16 +120,16 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
       'please upgrade to a paid subscription plan.';
   }
 
-  function timeTpl(str, timePeriod) {
-    return str.
-      replace(/%length/g, timePeriod.length).
-      replace(/%unit/g, timePeriod.unit);
+  function timeTpl (str, timePeriod) {
+    return str
+      .replace(/%length/g, timePeriod.length)
+      .replace(/%unit/g, timePeriod.unit);
   }
 
   function organizationHasLimitedFreeSubscription (organization) {
-    return organization.subscriptionState == 'active' &&
+    return organization.subscriptionState === 'active' &&
       !organization.subscriptionPlan.paid &&
-      organization.subscriptionPlan.kind == 'default';
+      organization.subscriptionPlan.kind === 'default';
   }
 
   function organizationHasTrialSubscription (organization) {
