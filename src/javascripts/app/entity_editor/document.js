@@ -45,7 +45,7 @@ function ($scope, $injector, entity) {
 
   var shouldOpen = false;
 
-  Object.assign(controller, {
+  _.extend(controller, {
     doc: undefined,
     state: {
       editable: false,
