@@ -441,7 +441,6 @@ src/javascripts/access_control/policy_access_checker.js
 src/javascripts/access_control/policy_builder.js
 src/javascripts/access_control/remove_outdated_rules.js
 src/javascripts/access_control/response_cache.js
-src/javascripts/access_control/role_editor_directive.js
 src/javascripts/access_control/role_list_directive.js
 src/javascripts/access_control/role_remover.js
 src/javascripts/access_control/role_repository.js
