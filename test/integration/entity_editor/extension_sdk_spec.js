@@ -246,8 +246,7 @@ describe('Extension SDK', function () {
     });
 
     describe('#onSysChanged()', function () {
-      // TODO Not correctly implemented yet
-      xit('calls listener with initial value', function* (api) {
+      it('calls listener with initial value', function* (api) {
         const listener = sinon.stub();
         api.entry.onSysChanged(listener);
         sinon.assert.calledWith(listener, SYS_0);
