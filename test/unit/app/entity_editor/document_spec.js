@@ -3,6 +3,7 @@
 describe('entityEditor/Document', function () {
   var scope;
 
+  // TODO remove this
   function makeOtDocStub (snapshot) {
     return {
       on: sinon.stub(),
@@ -131,9 +132,8 @@ describe('entityEditor/Document', function () {
       expect(this.entity.data.fields.field2).toBeDefined();
     });
 
-    it('sets acknowledge and remoteop event handelrs', function () {
+    it('sets acknowledge event handler', function () {
       sinon.assert.calledWith(this.doc.doc.on, 'acknowledge');
-      sinon.assert.calledWith(this.doc.doc.on, 'remoteop');
     });
 
     it('updated version if updateHandler called', function () {
@@ -143,10 +143,6 @@ describe('entityEditor/Document', function () {
 
     it('calls otUpdateEntityData', function () {
       sinon.assert.called(this.entity.update);
-    });
-
-    it('broadcasts "otDocReady"', function () {
-      sinon.assert.calledWith(scope.$broadcast, 'otDocReady', this.otDoc);
     });
   });
 
@@ -228,7 +224,7 @@ describe('entityEditor/Document', function () {
       this.entity.update.reset();
 
       this.fireChange = function () {
-        this.otDoc.on.withArgs('change').yield();
+        this.otDoc.on.withArgs('change').yield([]);
         this.$apply();
       };
     });
@@ -277,10 +273,6 @@ describe('entityEditor/Document', function () {
       scope.$destroy();
     });
 
-    it('removes the remote op listener', function () {
-      sinon.assert.calledWith(this.otDoc.removeListener, 'remoteop');
-    });
-
     it('removes the change listener', function () {
       sinon.assert.calledWith(this.otDoc.removeListener, 'change');
     });
@@ -318,7 +310,7 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('doc events', function () {
+  describe('acknowledged operation', function () {
     beforeEach(function () {
       this.clock = sinon.useFakeTimers(1000, 'Date');
       this.now = this.$inject('moment')();
@@ -339,13 +331,6 @@ describe('entityEditor/Document', function () {
       this.otDoc.version = 'VERSION';
       this.otDoc.on.withArgs('acknowledge').yield();
       sinon.assert.calledWith(this.entity.setVersion, 'VERSION');
-    });
-
-    it('broadcasts change event to scope', function () {
-      scope.$broadcast = sinon.stub();
-      this.otDoc.on.withArgs('change').yield('OPERATION');
-      this.$apply();
-      sinon.assert.calledWith(scope.$broadcast, 'otChange', this.otDoc, 'OPERATION');
     });
   });
 
@@ -463,6 +448,76 @@ describe('entityEditor/Document', function () {
       this.doc.removeValueAt('PATH').then(resolved);
       this.$apply();
       sinon.assert.called(resolved);
+    });
+  });
+
+  describe('#valuePropertyAt()', function () {
+    it('gets initial value from entity if the doc is not opened', function () {
+      this.entity.data = {a: {b: 'VAL'}};
+      const cb = sinon.spy();
+      this.doc.valuePropertyAt(['a', 'b']).onValue(cb);
+      sinon.assert.calledWith(cb, 'VAL');
+    });
+
+    it('gets initial value from opened doc', function () {
+      this.connectAndOpen({a: {b: 'VAL'}, sys: {}});
+      const cb = sinon.spy();
+      this.doc.valuePropertyAt(['a', 'b']).onValue(cb);
+      sinon.assert.calledWith(cb, 'VAL');
+    });
+
+    it('gets initial value from opened doc', function () {
+      this.connectAndOpen({a: {b: 'VAL'}, sys: {}});
+      const cb = sinon.spy();
+      this.doc.valuePropertyAt(['a', 'b']).onValue(cb);
+      sinon.assert.calledWith(cb, 'VAL');
+    });
+
+    it('updates value when document is opened', function () {
+      const cb = sinon.spy();
+      this.doc.valuePropertyAt(['a', 'b']).onValue(cb);
+      cb.reset();
+
+      this.connectAndOpen({a: {b: 'VAL'}, sys: {}});
+      sinon.assert.calledWith(cb, 'VAL');
+    });
+
+    it('update value when "change" event is emitted with affected path', function () {
+      const paths = [
+        [],
+        ['foo'],
+        ['foo', 'bar'],
+        ['foo', 'bar', 'x'],
+        ['foo', 'bar', 'x', 'y']
+      ];
+      const doc = this.connectAndOpen({foo: {bar: false}, sys: {}});
+      const cb = sinon.spy();
+      this.doc.valuePropertyAt(['foo', 'bar']).onValue(cb);
+
+      paths.forEach(function (path, i) {
+        doc.setAt(['foo', 'bar'], i);
+        cb.reset();
+        doc.on.withArgs('change').yield([{p: path}]);
+        sinon.assert.calledWith(cb, i);
+      });
+    });
+
+    it('does not update value when path is not affected', function () {
+      const paths = [
+        ['x'],
+        ['foo', 'x'],
+        ['x', 'bar'],
+        ['x', 'bar', 'y']
+      ];
+      const doc = this.connectAndOpen();
+      const cb = sinon.spy();
+      this.doc.valuePropertyAt(['foo', 'bar']).onValue(cb);
+      cb.reset();
+
+      paths.forEach(function (path, i) {
+        doc.on.withArgs('change').yield([{p: path}]);
+        sinon.assert.notCalled(cb, i);
+      });
     });
   });
 });

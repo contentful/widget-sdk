@@ -42,8 +42,7 @@ describe('SlugEditor directive', function () {
       expect($inputEl.val()).toEqual('untitled-entry-2015-01-28-at-10-38-28');
     });
 
-    // TODO this will be implemented later
-    xit('sets slug to initial title', function () {
+    it('sets slug to initial title', function () {
       this.title.onValueChanged.yields('This is a title');
       var $inputEl = this.compileElement().find('input');
       expect($inputEl.val()).toEqual('this-is-a-title');

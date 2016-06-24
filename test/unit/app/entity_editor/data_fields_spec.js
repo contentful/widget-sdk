@@ -27,41 +27,25 @@ describe('EntityEditor/DataFields', function () {
         {code: 'hi', internal_code: 'hi-internal'}
       ]);
 
-      this.entity = {
-        data: {
-          fields: {
-            FIELD_A: {
-              'en-internal': 'A-EN',
-              'hi-internal': 'A-HI'
-            },
-            FIELD_B: {
-              'en-internal': 'B-EN',
-              'hi-internal': 'B-HI'
-            }
+      this.otDoc = this.$inject('mocks/entityEditor/Document').create({
+        fields: {
+          FIELD_A: {
+            'en-internal': 'A-EN',
+            'hi-internal': 'A-HI'
+          },
+          FIELD_B: {
+            'en-internal': 'B-EN',
+            'hi-internal': 'B-HI'
           }
         }
-      };
+      });
 
-      var scope = {
-        $on: sinon.stub(),
-        entity: this.entity
-      };
-
-      var OtDoc = this.$inject('mocks/OtDoc');
-      this.emitOtChange = function (path, value) {
-        var snapshot = {};
-        dotty.put(snapshot, path, value);
-        var doc = new OtDoc(snapshot);
-        var ops = [{p: path}];
-        scope.$on.withArgs('otChange').yield(null, doc, ops);
-      };
-
-      this.fieldsApi = createDataFields(ctFields, scope);
+      this.fieldsApi = createDataFields(ctFields, this.otDoc);
     });
 
     describe('#getValue()', function () {
       it('returns value of field for the default locale', function () {
-        var fieldData = this.entity.data.fields;
+        var fieldData = this.otDoc.getValueAt(['fields']);
         expect(this.fieldsApi.A.getValue())
         .toEqual(fieldData.FIELD_A['en-internal']);
         expect(this.fieldsApi.B.getValue())
@@ -69,7 +53,7 @@ describe('EntityEditor/DataFields', function () {
       });
 
       it('returns value of field if fo a given locale', function () {
-        var fieldData = this.entity.data.fields;
+        var fieldData = this.otDoc.getValueAt(['fields']);
         expect(this.fieldsApi.A.getValue('hi'))
         .toEqual(fieldData.FIELD_A['hi-internal']);
         expect(this.fieldsApi.B.getValue('hi'))
@@ -85,20 +69,22 @@ describe('EntityEditor/DataFields', function () {
     });
 
     describe('#onValueChanged()', function () {
-      it('triggers update for when base signal dispatches', function () {
+      it('call callback when value at locale changes', function () {
         var cb = sinon.spy();
         this.fieldsApi.A.onValueChanged('hi', cb);
-        this.emitOtChange(['fields', 'FIELD_A', 'hi-internal'], 'omg');
-        this.emitOtChange(['fields', 'FIELD_A', 'other'], 'omg');
-        this.emitOtChange(['fields', 'FIELD_B', 'hi-internal'], 'omg');
-        sinon.assert.calledWithExactly(cb, 'omg');
+        cb.reset();
+        this.otDoc.valuePropertyAt(['fields', 'FIELD_A', 'hi-internal']).set('omg');
+        this.$apply();
         sinon.assert.calledOnce(cb);
+        sinon.assert.calledWithExactly(cb, 'omg');
       });
 
-      it('uses default locale if locale isn’t specified', function () {
+      it('call callback when value at default locale changes', function () {
         var cb = sinon.spy();
         this.fieldsApi.A.onValueChanged(cb);
-        this.emitOtChange(['fields', 'FIELD_A', 'en-internal'], 'omg');
+        cb.reset();
+        this.otDoc.valuePropertyAt(['fields', 'FIELD_A', 'en-internal']).set('omg');
+        this.$apply();
         sinon.assert.calledOnce(cb);
         sinon.assert.calledWithExactly(cb, 'omg');
       });
@@ -108,22 +94,6 @@ describe('EntityEditor/DataFields', function () {
         expect(function () {
           field.onValueChanged('invalidLocale', sinon.spy());
         }).toThrowError('Unknown locale "invalidLocale"');
-      });
-
-      it('does not invoke the callback once it is detached', function () {
-        var cb = sinon.spy();
-        var detach = this.fieldsApi.A.onValueChanged(cb);
-
-        this.emit = function () {
-          this.emitOtChange(['fields', 'FIELD_A', 'en-internal'], 'omg');
-        };
-
-        this.emit();
-        sinon.assert.calledWithExactly(cb, 'omg');
-
-        detach();
-        this.emit();
-        sinon.assert.calledOnce(cb);
       });
     });
   });

@@ -94,6 +94,7 @@ angular.module('contentful')
     controls: $scope.formControls
   });
 
+  // TODO this should be handled by the Document controller
   $scope.$watch('otDoc.doc', function (doc) {
     if (doc) {
       cleanSnapshot($scope.entry.data, doc);
@@ -114,7 +115,7 @@ angular.module('contentful')
    */
   var contentTypeData = $scope.contentType.data;
   var fields = contentTypeData.fields;
-  $scope.fields = DataFields.create(fields, $scope);
+  $scope.fields = DataFields.create(fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);
 
   /**

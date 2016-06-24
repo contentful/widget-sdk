@@ -18,17 +18,6 @@ angular.module('cf.app')
  * @description
  * Used to edit an entry or asset through ShareJS
  *
- * It emits the following events:
- *
- * - otRemoteOp(op), broadcast:
- *   distribute every incoming remote ot operation to the component
- * - otBecameEditable(entity), emit:
- *   Whenever controller.state.editable becomes true
- * - otBecameReadonly(entity), emit:
- *   Whenever controller.state.editable becomes false
- *
- * It also ensures that the version in the entity is always up-to-date
- *
  * @property {Document.State} state
  */
 .controller('entityEditor/Document',
@@ -40,10 +29,56 @@ function ($scope, $injector, entity) {
   var defer = $injector.get('defer');
   var moment = $injector.get('moment');
   var TheLocaleStore = $injector.get('TheLocaleStore');
+  var K = $injector.get('utils/kefir');
   var controller = this;
   var diff = $injector.get('utils/StringDiff').diff;
 
   var shouldOpen = false;
+
+  var pathChangeBus = K.createBus($scope);
+
+  /**
+   * @ngdoc property
+   * @module cf.app
+   * @name Document#valueChangesAt
+   * @description
+   * A stream of changes on the document. Whenever a value at a given
+   * path is changed (either remotely or locally) we emit the path on
+   * the stream.
+   *
+   * @type {Property<string[]>}
+   */
+  var changes = pathChangeBus.stream;
+
+  // We sync the changes on the OT document snapshot to
+  // `$scope.entity.data`.
+  K.onValueScope($scope, changes, otUpdateEntityData);
+
+  /**
+   * @ngdoc method
+   * @module cf.app
+   * @name Document#valuePropertyAt
+   * @description
+   * Returns a property that always has the current value at the given
+   * path of the document.
+   *
+   * @param {string[]} path
+   * @returns {Property<any>}
+   */
+  var memoizedValuePropertyAt = _.memoize(valuePropertyAt, function (path) {
+    return path.join('!');
+  });
+
+  function valuePropertyAt (valuePath) {
+    return changes.filter(function (changePath) {
+      return pathAffects(changePath, valuePath);
+    })
+    .toProperty(_.constant(undefined))
+    .map(function () {
+      return getValueAt(valuePath);
+    });
+  }
+
 
   _.extend(controller, {
     doc: undefined,
@@ -52,6 +87,7 @@ function ($scope, $injector, entity) {
       error: false,
       saving: false
     },
+
     getValueAt: getValueAt,
     setValueAt: setValueAt,
     /**
@@ -59,6 +95,10 @@ function ($scope, $injector, entity) {
      */
     setStringAt: setStringAt,
     removeValueAt: removeValueAt,
+
+    changes: changes,
+    valuePropertyAt: memoizedValuePropertyAt,
+
     open: open,
     close: close
   });
@@ -74,6 +114,7 @@ function ($scope, $injector, entity) {
       closeDoc(controller.doc);
     }
   });
+
 
   // Watch Doc internals to determine if we have sent operations to the
   // server that have yet to be acknowledged.
@@ -249,7 +290,6 @@ function ($scope, $injector, entity) {
     }
     delete controller.doc;
     controller.state.editable = false;
-    $scope.$emit('otBecameReadonly', entity);
   }
 
 
@@ -259,8 +299,9 @@ function ($scope, $injector, entity) {
     installListeners(doc);
     controller.doc = doc;
     controller.state.editable = true;
+    // TODO remove this event
     $scope.$emit('otBecameEditable', entity);
-    $scope.$broadcast('otDocReady', doc);
+    pathChangeBus.emit([]);
     otUpdateEntityData();
   }
 
@@ -335,40 +376,19 @@ function ($scope, $injector, entity) {
   }
 
   function installListeners (doc) {
-    doc.on('remoteop', remoteOpListener);
-    doc.on('change', broadcastOtChange);
-    doc.on('change', applyEntityDataUpdate);
+    doc.on('change', emitChangeAtPath);
     doc.on('acknowledge', updateHandler);
   }
 
   function removeListeners (doc) {
-    doc.removeListener('remoteop', remoteOpListener);
-    doc.removeListener('change', broadcastOtChange);
-    doc.removeListener('change', applyEntityDataUpdate);
+    doc.removeListener('change', emitChangeAtPath);
     doc.removeListener('acknowledge', updateHandler);
   }
 
-  function remoteOpListener (ops) {
-    $scope.$apply(function (scope) {
-      _.each(ops, function (op) {
-        scope.$broadcast('otRemoteOp', op);
-      });
+  function emitChangeAtPath (ops) {
+    ops.forEach(function (op) {
+      pathChangeBus.emit(op.p);
     });
-  }
-
-  function broadcastOtChange (op) {
-    // The 'change' event on a document may be called synchronously
-    // from inside the Angular loop. For instance when a directive
-    // changes the document. We therefore must use `$applyAsync()`
-    // instead of `$apply()`.
-    $scope.$applyAsync(function () {
-      $scope.$broadcast('otChange', controller.doc, op);
-    });
-  }
-
-  function applyEntityDataUpdate () {
-    // See comment above for use of `$applyAsync()`
-    $scope.$applyAsync(otUpdateEntityData);
   }
 
   function handleScopeDestruction () {
@@ -378,4 +398,20 @@ function ($scope, $injector, entity) {
     }
   }
 
+  /**
+   * Returns true if a change to the value at 'changePath' in an object
+   * affects the value of 'valuePath'.
+   *
+   * ~~~
+   * pathAffects(['a'], ['a', 'b']) // => true
+   * pathAffects(['a', 'b'], ['a', 'b']) // => true
+   * pathAffects(['a', 'b', 'x'], ['a', 'b']) // => true
+   *
+   * pathAffects(['x'], ['a', 'b']) // => false
+   * pathAffects(['a', 'x'], ['a', 'b']) // => false
+   */
+  function pathAffects (changePath, valuePath) {
+    var m = Math.min(changePath.length, valuePath.length);
+    return _.isEqual(changePath.slice(0, m), valuePath.slice(0, m));
+  }
 }]);

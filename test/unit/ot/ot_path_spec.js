@@ -1,31 +1,26 @@
 'use strict';
 
 describe('otPath directive', function () {
-  var path;
+  let path;
 
   beforeEach(function () {
     module('contentful/test');
-    var OtDoc = this.$inject('mocks/OtDoc');
 
     path = ['foo', 'bar'];
-    this.otDoc = {
-      doc: new OtDoc({foo: {bar: 'INITIAL'}}),
-      getValueAt: sinon.stub().withArgs(path).returns('INITIAL'),
-      setStringAt: sinon.stub()
-    };
+    this.otDoc = this.$inject('mocks/entityEditor/Document').create({
+      foo: {bar: 'INITIAL'}
+    });
 
-    this.scope = this.$compile('<div ot-path="[\'foo\', \'bar\']" />', {
+    const scope = this.$compile('<div ot-path="[\'foo\', \'bar\']" />', {
       otDoc: this.otDoc
-    }, {
-      otDocFor: {}
     }).scope();
-    this.subDoc = this.scope.otSubDoc;
-    this.$apply();
+
+    this.subDoc = scope.otSubDoc;
   });
 
   describe('#set()', function () {
     it('delegates to otDoc', function () {
-      this.otDoc.setValueAt = sinon.stub();
+      this.otDoc.setValueAt.reset();
       this.subDoc.set('VAL');
       sinon.assert.calledWith(this.otDoc.setValueAt, path, 'VAL');
     });
@@ -47,61 +42,32 @@ describe('otPath directive', function () {
     });
   });
 
-  describe('#onValuechange()', function () {
-    beforeEach(function () {
-      this.onValueChanged = sinon.stub();
-      this.otDoc.getValueAt.withArgs(path).returns('VAL');
-      this.subDoc.onValueChanged(this.onValueChanged);
-      this.onValueChanged.reset();
-    });
+  describe('#valueProperty()', function () {
+    it('has initial value', function () {
+      this.otDoc.valuePropertyAt(path).set('VAL');
+      const changed = sinon.stub();
 
-    it('dispatches with initial value', function () {
-      var changed = sinon.stub();
       this.subDoc.onValueChanged(changed);
-      sinon.assert.calledWith(changed, 'INITIAL');
+      sinon.assert.calledWith(changed, 'VAL');
     });
 
-    it('dispatches when document changes', function () {
-      var OtDoc = this.$inject('mocks/OtDoc');
-      this.otDoc.doc = new OtDoc();
-      this.$apply();
-      sinon.assert.calledWithExactly(this.onValueChanged, 'VAL');
+    it('update value when root doc changes at path', function () {
+      const changed = sinon.stub();
+      this.subDoc.onValueChanged(changed);
+      changed.reset();
+
+      this.otDoc.valuePropertyAt(path).set('VAL');
+      sinon.assert.calledWith(changed, 'VAL');
     });
 
-    it('dispatches on "otValueReverted" event', function () {
-      this.scope.$emit('otValueReverted');
-      sinon.assert.calledWithExactly(this.onValueChanged, 'VAL');
-    });
+    it('does not update value when "set()" is called', function () {
+      const changed = sinon.stub();
+      this.subDoc.onValueChanged(changed);
+      changed.reset();
 
-    it('dispatches on remote op on affecting path', function () {
-      var remoteOpPaths = [
-        ['foo'],
-        ['foo', 'bar'],
-        ['foo', 'bar', 'x'],
-        ['foo', 'bar', 'x', 'y']
-      ];
-
-      remoteOpPaths.forEach(function (p) {
-        this.onValueChanged.reset();
-        this.scope.$emit('otRemoteOp', {p: p});
-        sinon.assert.calledWithExactly(this.onValueChanged, 'VAL');
-      }.bind(this));
-    });
-
-    it('does not dispatche on remote op on non-affecting path', function () {
-      var remoteOpPaths = [
-        ['x'],
-        ['foo', 'x'],
-        ['x', 'bar'],
-        ['x', 'bar', 'y']
-      ];
-
-      remoteOpPaths.forEach(function (p) {
-        this.onValueChanged.reset();
-        this.scope.$emit('otRemoteOp', {p: p});
-        sinon.assert.notCalled(this.onValueChanged, 'VAL');
-      }.bind(this));
+      this.subDoc.set('VAL');
+      this.otDoc.valuePropertyAt(path).set('VAL');
+      sinon.assert.notCalled(changed);
     });
   });
-
 });

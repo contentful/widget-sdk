@@ -6,7 +6,7 @@
  * @description
  * Various utility services that are not UI specific
  */
-angular.module('cf.utils', [])
+angular.module('cf.utils', ['cf.libs'])
 
 /**
  * @ngdoc service

@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('cf.libs', [])
+  .constant('libs/kefir', require('kefir'))
   .constant('libs/@contentful/client', require('@contentful/client'))
   .constant('hostnameTransformer', require('@contentful/hostname-transformer'))
   .constant('mimetype', require('@contentful/mimetype'))
