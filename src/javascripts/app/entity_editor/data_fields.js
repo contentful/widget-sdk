@@ -25,21 +25,37 @@ angular.module('contentful')
    */
   function buildFieldsApi (fields, otDoc) {
     return _.transform(fields, function (fieldsApi, field) {
-      var internalId = field.id;
-      var publicId = field.apiName || internalId;
-
-      fieldsApi[publicId] = createField(internalId, otDoc);
+      // TODO we should normalize fields so that the API name is always
+      // defined.
+      var publicId = field.apiName || field.id;
+      fieldsApi[publicId] = createField(field, otDoc);
     }, {});
   }
 
-  function createField (id, otDoc) {
+  function createField (field, otDoc) {
+    var internalId = field.id;
+    var publicId = field.apiName || internalId;
+    var locales = getPublicLocaleCodes(field);
+
     return {
+      id: publicId,
+      locales: locales,
       getValue: getValue,
+      setValue: setValue,
+      removeValue: removeValue,
       onValueChanged: onValueChanged
     };
 
     function getValue (locale) {
-      return otDoc.getValueAt(makeLocalePath(id, locale));
+      return otDoc.getValueAt(makeLocalePath(internalId, locale));
+    }
+
+    function setValue (value, locale) {
+      return otDoc.setValueAt(makeLocalePath(internalId, locale), value);
+    }
+
+    function removeValue (value, locale) {
+      return otDoc.removeValueAt(makeLocalePath(internalId, locale), value);
     }
 
     function onValueChanged (locale, cb) {
@@ -47,7 +63,7 @@ angular.module('contentful')
         cb = locale;
         locale = undefined;
       }
-      var path = makeLocalePath(id, locale);
+      var path = makeLocalePath(internalId, locale);
       return K.onValue(otDoc.valuePropertyAt(path), cb);
     }
   }
@@ -69,5 +85,15 @@ angular.module('contentful')
     } else {
       throw new Error('Unknown locale "' + publicCode + '"');
     }
+  }
+
+  function getPublicLocaleCodes (field) {
+    var locales;
+    if (field.localized) {
+      locales = TheLocaleStore.getPrivateLocales();
+    } else {
+      locales = [TheLocaleStore.getDefaultLocale()];
+    }
+    return _.map(locales, 'code');
   }
 }]);
