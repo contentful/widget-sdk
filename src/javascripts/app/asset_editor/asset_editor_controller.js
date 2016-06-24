@@ -75,10 +75,11 @@ angular.module('contentful')
   $scope.$watch('asset.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
     if (publishedVersion > oldVersion) scope.validate();
   });
-  var firstValidate = $scope.$on('otBecameEditable', function (event) {
-    var scope = event.currentScope;
-    if (!_.isEmpty(scope.asset.data.fields)) scope.validate();
-    firstValidate();
+
+  // We cannot call the method immediately since the directive is only
+  // added to the scope afterwards
+  $scope.$applyAsync(function () {
+    if (!_.isEmpty($scope.asset.data.fields)) $scope.validate();
   });
 
   // Building the form
