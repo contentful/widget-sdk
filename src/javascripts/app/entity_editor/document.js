@@ -299,8 +299,6 @@ function ($scope, $injector, entity) {
     installListeners(doc);
     controller.doc = doc;
     controller.state.editable = true;
-    // TODO remove this event
-    $scope.$emit('otBecameEditable', entity);
     pathChangeBus.emit([]);
     otUpdateEntityData();
   }

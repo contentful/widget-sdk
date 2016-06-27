@@ -50,6 +50,8 @@ describe('Entry Editor Controller', function () {
         close: sinon.stub()
       };
 
+      scope.validate = sinon.stub();
+
       return scope;
     };
 
@@ -58,7 +60,6 @@ describe('Entry Editor Controller', function () {
   });
 
   it('should validate if the published version has changed', function () {
-    scope.validate = sinon.spy();
     scope.entry.data.sys.publishedVersion = 2;
     scope.$digest();
     sinon.assert.called(scope.validate);
@@ -82,7 +83,6 @@ describe('Entry Editor Controller', function () {
 
   describe('when the published version changes', function () {
     it('should validate', function () {
-      scope.validate = sinon.spy();
       scope.entry.data.sys.publishedVersion++;
       scope.$digest();
       sinon.assert.called(scope.validate);
@@ -105,13 +105,6 @@ describe('Entry Editor Controller', function () {
       scope.$digest();
       expect(scope.context.dirty).toBe('draft');
     });
-  });
-
-  it('should validate when ot became editable', function () {
-    scope.validate = sinon.stub();
-    scope.entry.data.fields = {foo: {'en-US': 'bar'}};
-    scope.$broadcast('otBecameEditable');
-    sinon.assert.called(scope.validate);
   });
 
   it('when doc loads adds objects for every field', function () {

@@ -35,6 +35,8 @@ describe('Asset editor controller', function () {
       close: sinon.stub()
     };
 
+    scope.validate = sinon.stub();
+
     scope.$apply();
   });
 
@@ -54,7 +56,6 @@ describe('Asset editor controller', function () {
     scope.asset.isArchived = sinon.stub().returns(false);
     scope.$digest();
 
-    scope.validate = sinon.spy();
     scope.asset.data.sys.publishedVersion = 2;
     scope.$digest();
     sinon.assert.called(scope.validate);
