@@ -8,38 +8,29 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
   var $rootScope = $injector.get('$rootScope');
   var analytics = $injector.get('analytics');
   var TheAccountView = $injector.get('TheAccountView');
-  var spaceContext = $injector.get('spaceContext');
   var OrganizationList = $injector.get('OrganizationList');
   var htmlEncode = $injector.get('encoder').htmlEncode;
   var moment = $injector.get('moment');
   var openPaywall = $injector.get('paywallOpener').openPaywall;
 
-  var lastSpaceId = spaceContext.getId();
   var trialHasEnded = false;
 
   return {
-    init: init,
+    /**
+     * @ngdoc method
+     * @name trialWatcher#notifyAbout
+     * @param {Object} organization
+     * @description
+     * Sets/updates the notifier's context and will trigger the appropriate
+     * notifications and paywall.
+     */
+    notifyAbout: notifyAbout,
     hasEnded: function () { return trialHasEnded; }
   };
 
-  function init () {
-    $rootScope.$watchCollection(function () {
-      return {
-        spaceId: spaceContext.getId(),
-        isInitialized: !OrganizationList.isEmpty()
-      };
-    }, trialWatcher);
-  }
-
-  function trialWatcher (args) {
-    if (!args.spaceId || !args.isInitialized || args.spaceId === lastSpaceId) {
-      return;
-    }
-
-    lastSpaceId = args.spaceId;
+  function notifyAbout (organization) {
     trialHasEnded = false;
 
-    var organization = spaceContext.getData('organization');
     var organizationId = dotty.get(organization, 'sys.id');
     var userOwnsOrganization = OrganizationList.isOwner(organizationId);
 

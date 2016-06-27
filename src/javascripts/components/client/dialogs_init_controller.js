@@ -36,9 +36,15 @@ angular.module('contentful')
       activationEmailResendController.init.bind(null, { skipOnce: true }));
 
     onboardingController.init();
-    trialWatcher.init();
 
     initSpaceWatcher();
+  }
+
+  function onSpaceChanged () {
+    var organization = spaceContext.getData('organization') || {};
+
+    trialWatcher.notifyAbout(organization);
+    billingNotifier.notifyAbout(organization);
   }
 
   function initSpaceWatcher () {
@@ -54,11 +60,8 @@ angular.module('contentful')
     if (!args.spaceId || !args.isInitialized || args.spaceId === lastSpaceId) {
       return;
     }
-
     lastSpaceId = args.spaceId;
-    var organization = spaceContext.getData('organization') || {};
-
-    billingNotifier.notifyAbout(organization);
+    onSpaceChanged();
   }
 
 }]);

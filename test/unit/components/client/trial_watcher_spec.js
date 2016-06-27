@@ -10,7 +10,7 @@ describe('TrialWatcher', function () {
       });
     });
 
-    var TrialWatcher = this.$inject('TrialWatcher');
+    var dialogsInitController = this.$inject('dialogsInitController');
     var moment = this.$inject('moment');
     var OrganizationList = this.$inject('OrganizationList');
     var spaceContext = this.$inject('spaceContext');
@@ -22,7 +22,7 @@ describe('TrialWatcher', function () {
     this.organization = {sys: {id: 42}};
     var membership = {organization: this.organization};
     OrganizationList.resetWithUser({organizationMemberships: [membership]});
-    TrialWatcher.init();
+    dialogsInitController.init();
 
     this.setupOrganization = function (extension) {
       _.extend(membership.organization, extension);
