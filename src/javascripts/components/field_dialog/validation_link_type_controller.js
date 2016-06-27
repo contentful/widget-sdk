@@ -5,10 +5,13 @@
  * whether the content type is acceptable for this link field.
  */
 angular.module('contentful')
-.controller('ValidationLinkTypeController', ['$scope', function ($scope) {
+.controller('ValidationLinkTypeController', ['$scope', '$injector', function ($scope, $injector) {
 
-  $scope.$watch('spaceContext.publishedContentTypes', function (contentTypes) {
-    $scope.contentTypes = _.map(contentTypes, decorateContentType);
+  var spaceContext = $injector.get('spaceContext');
+
+  spaceContext.refreshContentTypes().then(function () {
+    var filtered = spaceContext.getFilteredAndSortedContentTypes();
+    $scope.contentTypes = _.map(filtered, decorateContentType);
   });
 
   $scope.update = function() {
