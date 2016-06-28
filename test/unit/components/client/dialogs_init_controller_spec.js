@@ -7,7 +7,7 @@ describe('dialogsInitController', function () {
     this.OrganizationList = { isEmpty: sinon.stub() };
     this.initEmailSpy = sinon.spy();
     this.initOnboardingSpy = sinon.spy();
-    this.trialWatcherNotify = sinon.spy();
+    this.subscriptionNotifierNotify = sinon.spy();
     this.billingNotifierNotify = sinon.spy();
 
     module('contentful/test', ($provide) => {
@@ -19,8 +19,8 @@ describe('dialogsInitController', function () {
       $provide.value('activationEmailResendController', {
         init: this.initEmailSpy
       });
-      $provide.value('TrialWatcher', {
-        notifyAbout: this.trialWatcherNotify
+      $provide.value('subscriptionNotifier', {
+        notifyAbout: this.subscriptionNotifierNotify
       });
       $provide.value('billingNotifier', {
         notifyAbout: this.billingNotifierNotify
@@ -74,9 +74,9 @@ describe('dialogsInitController', function () {
         this.$apply();
       });
 
-      it('calls `TrialWatcher.notifyAbout()`', function () {
+      it('calls `subscriptionNotifier.notifyAbout()`', function () {
         assertCalledServiceNTimesWith(
-          this.trialWatcherNotify, 1, ORGANIZATION);
+          this.subscriptionNotifierNotify, 1, ORGANIZATION);
       });
 
       it('calls `billingNotifier.notifyAbout()`', function () {
@@ -88,7 +88,7 @@ describe('dialogsInitController', function () {
         this.spaceContext.getId.returns('ANOTHER_SPACE_ID');
         this.$apply();
         assertCalledServiceNTimesWith(
-          this.trialWatcherNotify, 2, ORGANIZATION);
+          this.subscriptionNotifierNotify, 2, ORGANIZATION);
       });
 
       function assertCalledServiceNTimesWith (serviceSpy, timesCalled, arg) {

@@ -10,15 +10,15 @@
  * with eachother.
  */
 angular.module('contentful')
-.factory('dialogsInitController', ['$injector', function ($injector) {
+.factory('dialogsInitController', ['require', function (require) {
 
-  var $rootScope = $injector.get('$rootScope');
-  var spaceContext = $injector.get('spaceContext');
-  var OrganizationList = $injector.get('OrganizationList');
-  var activationEmailResendController = $injector.get('activationEmailResendController');
-  var onboardingController = $injector.get('onboardingController');
-  var trialWatcher = $injector.get('TrialWatcher');
-  var billingNotifier = $injector.get('billingNotifier');
+  var $rootScope = require('$rootScope');
+  var spaceContext = require('spaceContext');
+  var OrganizationList = require('OrganizationList');
+  var activationEmailResendController = require('activationEmailResendController');
+  var onboardingController = require('onboardingController');
+  var subscriptionNotifier = require('subscriptionNotifier');
+  var billingNotifier = require('billingNotifier');
 
   var lastSpaceId = spaceContext.getId();
 
@@ -43,7 +43,7 @@ angular.module('contentful')
   function onSpaceChanged () {
     var organization = spaceContext.getData('organization') || {};
 
-    trialWatcher.notifyAbout(organization);
+    subscriptionNotifier.notifyAbout(organization);
     billingNotifier.notifyAbout(organization);
   }
 

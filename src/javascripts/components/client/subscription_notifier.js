@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('contentful').factory('TrialWatcher', ['$injector', function ($injector) {
+angular.module('contentful')
+.factory('subscriptionNotifier', ['$injector', function ($injector) {
 
   var $rootScope = $injector.get('$rootScope');
   var analytics = $injector.get('analytics');
@@ -13,7 +14,7 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
   return {
     /**
      * @ngdoc method
-     * @name trialWatcher#notifyAbout
+     * @name subscriptionNotifier#notifyAbout
      * @param {Object} organization
      * @description
      * Sets/updates the notifier's context and will trigger the appropriate

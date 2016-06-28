@@ -1,6 +1,6 @@
 'use strict';
 
-describe('TrialWatcher', function () {
+describe('subscriptionNotifier', function () {
   var broadcastStub, openPaywallStub;
 
   beforeEach(function () {
