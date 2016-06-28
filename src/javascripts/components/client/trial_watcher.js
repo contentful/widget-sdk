@@ -1,8 +1,5 @@
 'use strict';
 
-// TODO: Move code for handling the notifications and paywall modal into a
-//  separate TrialWatchController. The TrialWatchController should use TrialWatcher
-//  as a service reduced to expose trial related information.
 angular.module('contentful').factory('TrialWatcher', ['$injector', function ($injector) {
 
   var $rootScope = $injector.get('$rootScope');
@@ -10,10 +7,8 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
   var TheAccountView = $injector.get('TheAccountView');
   var OrganizationList = $injector.get('OrganizationList');
   var htmlEncode = $injector.get('encoder').htmlEncode;
-  var moment = $injector.get('moment');
   var openPaywall = $injector.get('paywallOpener').openPaywall;
-
-  var trialHasEnded = false;
+  var subscriptionStore = $injector.get('subscriptionStore');
 
   return {
     /**
@@ -24,25 +19,25 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
      * Sets/updates the notifier's context and will trigger the appropriate
      * notifications and paywall.
      */
-    notifyAbout: notifyAbout,
-    hasEnded: function () { return trialHasEnded; }
+    notifyAbout: notifyAbout
   };
 
   function notifyAbout (organization) {
-    trialHasEnded = false;
-
     var organizationId = dotty.get(organization, 'sys.id');
     var userOwnsOrganization = OrganizationList.isOwner(organizationId);
+    var subscription = subscriptionStore.get(organizationId);
 
-    if (organizationHasTrialSubscription(organization)) {
-      if (hasTrialEnded(organization)) {
-        trialHasEnded = true;
+    if (!subscription) {
+      return;
+    } else if (subscription.isTrial()) {
+      if (subscription.hasTrialEnded()) {
         notify(trialHasEndedMsg(organization, userOwnsOrganization));
         openPaywall(organization, {offerPlanUpgrade: userOwnsOrganization});
       } else {
-        notify(timeLeftInTrialMsg(organization, userOwnsOrganization));
+        var hoursLeft = subscription.getTrialHoursLeft();
+        notify(timeLeftInTrialMsg(hoursLeft, organization, userOwnsOrganization));
       }
-    } else if (organizationHasLimitedFreeSubscription(organization)) {
+    } else if (subscription.isLimitedFree()) {
       notify(limitedFreeVersionMsg());
     } else {
       // Remove last notification. E.g. after switching into another
@@ -84,13 +79,12 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
     return message;
   }
 
-  function timeLeftInTrialMsg (organization, userIsOrganizationOwner) {
-    var hours = getTrialHoursLeft(organization);
+  function timeLeftInTrialMsg (hoursLeft, organization, userIsOrganizationOwner) {
     var timePeriod;
-    if (hours / 24 <= 1) {
-      timePeriod = {length: hours, unit: 'hours'};
+    if (hoursLeft / 24 <= 1) {
+      timePeriod = {length: hoursLeft, unit: 'hours'};
     } else {
-      timePeriod = {length: Math.floor(hours / 24), unit: 'days'};
+      timePeriod = {length: Math.floor(hoursLeft / 24), unit: 'days'};
     }
 
     var message = timeTpl('<strong>%length %unit left in trial.</strong> ' +
@@ -117,21 +111,4 @@ angular.module('contentful').factory('TrialWatcher', ['$injector', function ($in
       .replace(/%unit/g, timePeriod.unit);
   }
 
-  function organizationHasLimitedFreeSubscription (organization) {
-    return organization.subscriptionState === 'active' &&
-      !organization.subscriptionPlan.paid &&
-      organization.subscriptionPlan.kind === 'default';
-  }
-
-  function organizationHasTrialSubscription (organization) {
-    return organization.subscriptionState === 'trial';
-  }
-
-  function getTrialHoursLeft (organization) {
-    return moment(organization.trialPeriodEndsAt).diff(moment(), 'hours');
-  }
-
-  function hasTrialEnded (organization) {
-    return !moment(organization.trialPeriodEndsAt).isAfter(moment());
-  }
 }]);

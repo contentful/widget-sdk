@@ -70,7 +70,7 @@ angular.module('contentful').factory('OrganizationList', function () {
    * @ngdoc method
    * @name OrganizationList#get
    * @param {string} id
-   * @returns {object}
+   * @returns {object|null}
    * @description
    * Gets organization by the provided ID.
    */

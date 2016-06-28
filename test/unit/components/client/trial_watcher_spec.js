@@ -35,9 +35,8 @@ describe('TrialWatcher', function () {
     this.makeOwner = function () { membership.role = 'owner'; };
     this.makeAdmin = function () { membership.role = 'admin'; };
 
-    this.trialHoursLeft = function (hours) {
-      moment.fn.diff = sinon.stub().returns(Math.floor(hours));
-      moment.fn.isAfter = sinon.stub().returns(hours !== 0);
+    this.trialHoursLeft = (hours) => {
+      this.organization.trialPeriodEndsAt = moment().add(hours, 'h').toISOString();
     };
   });
 
@@ -67,6 +66,7 @@ describe('TrialWatcher', function () {
   describe('shows a persistent notification', function () {
     beforeEach(function () {
       jasmine.clock().install();
+      jasmine.clock().mockDate(new Date());
     });
 
     afterEach(function () {

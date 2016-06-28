@@ -59,7 +59,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   var notification = $injector.get('notification');
   var accessChecker = $injector.get('accessChecker');
   var TheAccountView = $injector.get('TheAccountView');
-  var TrialWatcher = $injector.get('TrialWatcher');
+  var subscriptionStore = $injector.get('subscriptionStore');
 
   var MODAL_OPTS_BASE = {
     noNewScope: true,
@@ -80,7 +80,9 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   reload().catch(ReloadNotification.basicErrorHandler);
 
   function canModifyUsers () {
-    return accessChecker.canModifyUsers() && !TrialWatcher.hasEnded();
+    var currentSubscription = subscriptionStore.getCurrent();
+    return accessChecker.canModifyUsers() &&
+      currentSubscription && currentSubscription.hasTrialEnded();
   }
 
   function canInviteUsers () {

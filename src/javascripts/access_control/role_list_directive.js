@@ -15,7 +15,7 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
   var listHandler = $injector.get('UserListHandler').create();
   var createRoleRemover = $injector.get('createRoleRemover');
   var accessChecker = $injector.get('accessChecker');
-  var TrialWatcher = $injector.get('TrialWatcher');
+  var subscriptionStore = $injector.get('subscriptionStore');
   var jumpToRoleMembers = $injector.get('UserListController/jumpToRole');
 
   $scope.duplicateRole = duplicateRole;
@@ -30,7 +30,9 @@ angular.module('contentful').controller('RoleListController', ['$scope', '$injec
   }
 
   function canModifyRoles () {
-    return accessChecker.canModifyRoles() && !TrialWatcher.hasEnded();
+    var currentSubscription = subscriptionStore.getCurrent();
+    return accessChecker.canModifyRoles() &&
+      currentSubscription && currentSubscription.hasTrialEnded();
   }
 
   function duplicateRole (role) {
