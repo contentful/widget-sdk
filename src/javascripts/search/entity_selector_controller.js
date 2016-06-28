@@ -4,36 +4,41 @@ angular.module('contentful')
 .controller('EntitySelectorController', ['$injector', '$scope', function EntitySelectorController ($injector, $scope) {
 
   var $timeout = $injector.get('$timeout');
-  var $controller = $injector.get('$controller');
   var spaceContext = $injector.get('spaceContext');
   var ListQuery = $injector.get('ListQuery');
   var Paginator = $injector.get('Paginator');
   var createQueue = $injector.get('overridingRequestQueue');
-  var entityStatusController = $controller('EntityStatusController');
+  var EntityHelpers = $injector.get('EntityHelpers');
+  var createEntityStore = $injector.get('EntityStore').create;
 
   var MINIMAL_TRIGGERING_LEN = 4;
   var ORDER = {fieldId: 'updatedAt', direction: 'descending'};
   var MODES = {AVAILABLE: 1, SELECTED: 2};
 
-  _.extend($scope, MODES, {
-    spaceContext: spaceContext,
-    view: {mode: MODES.AVAILABLE},
-    paginator: new Paginator(),
-    items: [],
-    selected: [],
-    selectedIds: {},
-    select: select,
-    deselect: deselect,
-    loadMore: loadMore,
-    getStatusClassname: entityStatusController.getClassname
-  });
-
   var config = $scope.config;
   var queryMethod = config.linksEntry ? 'getForEntries' : 'getForAssets';
   var fetchMethod = config.linksEntry ? 'getEntries' : 'getAssets';
 
+  var store = createEntityStore();
+  var selectedIds = {};
+
+  var linksApi = _.extend({
+    getEntity: store.get,
+    toggleSelected: toggleSelected
+  }, EntityHelpers.forLocale('en-US'));
+
   var load = createQueue(fetch, function (resultPromise) {
-    resultPromise.then(handleItems);
+    resultPromise.then(handleResponse);
+  });
+
+  _.extend($scope, MODES, {
+    spaceContext: spaceContext,
+    view: {mode: MODES.AVAILABLE},
+    paginator: new Paginator(),
+    links: [],
+    selected: [],
+    loadMore: loadMore,
+    linksApi: linksApi
   });
 
   $scope.$watch('view.searchTerm', handleTermChange);
@@ -46,7 +51,7 @@ angular.module('contentful')
     return ListQuery[queryMethod](getParams())
     .then(function (query) {
       query = _.extend(query, config.queryExtension);
-      return spaceContext.space[fetchMethod](query);
+      return spaceContext.cma[fetchMethod](query);
     });
   }
 
@@ -64,19 +69,20 @@ angular.module('contentful')
     return params;
   }
 
-  function select (entity) {
+  function toggleSelected (link) {
+    var entity = store.get(link);
     if (!config.multiple) {
       $scope.dialog.confirm([entity]);
-    } else if (!$scope.selectedIds[entity.getId()]) {
+    } else if (!selectedIds[entity.sys.id]) {
       $scope.selected.push(entity);
-      $scope.selectedIds[entity.getId()] = true;
+      selectedIds[entity.sys.id] = true;
     } else {
-      $scope.deselect(entity);
+      deselect(entity);
     }
   }
 
   function deselect (entity) {
-    delete $scope.selectedIds[entity.getId()];
+    delete selectedIds[entity.sys.id];
     var index = $scope.selected.indexOf(entity);
     if (index > -1) {
       $scope.selected.splice(index, 1);
@@ -97,18 +103,21 @@ angular.module('contentful')
     return _.isString(prev) && (!_.isString(term) || term.length < prev.length);
   }
 
-  function handleItems (items) {
-    $scope.paginator.numEntries = items.total;
-    $scope.items.push.apply($scope.items, items);
+  function handleResponse (res) {
+    _.forEach(res.items, store.add);
+    $scope.paginator.numEntries = res.total;
+    $scope.links.push.apply($scope.links, res.items);
+
     $timeout(function () {
       $scope.isLoading = false;
     });
   }
 
   function resetAndLoad () {
-    $scope.items = [];
+    $scope.links = [];
     $scope.paginator.numEntries = 0;
     $scope.paginator.page = 0;
+    store.reset();
     load();
   }
 

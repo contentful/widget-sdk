@@ -3,9 +3,9 @@
 angular.module('cf.app')
 .directive('cfReferenceEditor', ['$injector', function ($injector) {
 
-  var $q = $injector.get('$q');
   var $timeout = $injector.get('$timeout');
   var entitySelector = $injector.get('entitySelector');
+  var createEntityStore = $injector.get('EntityStore').create;
 
   return {
     restrict: 'E',
@@ -24,7 +24,8 @@ angular.module('cf.app')
 
   function link ($scope, _$elem, _$attrs, widgetApi) {
     var field = widgetApi.field;
-    var cache = [];
+    var fetchMethod = {Entry: 'getEntries', Asset: 'getAssets'}[$scope.type];
+    var store = createEntityStore(widgetApi.space, fetchMethod);
 
     $scope.typePlural = {Entry: 'entries', Asset: 'assets'}[$scope.type];
     $scope.uiSortable.update = function () {
@@ -36,7 +37,10 @@ angular.module('cf.app')
       if (!Array.isArray(links)) {
         links = links ? [links] : [];
       }
-      $scope.links = _.map(links, wrapLink);
+
+      store.prefetch(links).then(function () {
+        $scope.links = _.map(links, wrapLink);
+      });
     });
 
     /**
@@ -65,8 +69,9 @@ angular.module('cf.app')
     $scope.addExisting = function () {
       entitySelector.open(field, unwrapLinks())
       .then(function (entities) {
-        _.forEach(_.map(entities, createLink), function (link) {
-          $scope.links.push(wrapLink(link));
+        _.forEach(entities, function (entity) {
+          store.add(entity);
+          $scope.links.push(wrapLink(createLink(entity)));
         });
         syncValue();
       });
@@ -77,39 +82,17 @@ angular.module('cf.app')
      * @name cfLinksEditor#$scope.linksApi
      * @type {Object}
      */
-    $scope.linksApi = {
-      resolveLink: resolveLink,
+    $scope.linksApi = _.extend({
+      getEntity: store.get,
       removeFromList: removeFromList,
-      entityStatus: widgetApi.space.entityStatus,
-      entityTitle: withLocale(widgetApi.space.entityTitle),
-      entityDescription: withLocale(widgetApi.space.entityDescription),
-      entryImage: withLocale(widgetApi.space.entryImage),
-      assetFile: withLocale(widgetApi.space.assetFile),
-      assetUrl: widgetApi.space.assetUrl,
-      goToEditor: widgetApi.space.goToEditor
-    };
-
-    function withLocale (fn) {
-      return _.partialRight(fn, field.locale);
-    }
-
-    function resolveLink (link) {
-      var entityId = getEntityId(link);
-      var cached = cache[entityId];
-
-      if (cached) {
-        return $q.resolve(cached);
-      }
-
-      return widgetApi.space['get' + $scope.type](entityId)
-      .then(function (data) {
-        cache[entityId] = data;
-        return data;
-      });
-    }
+      goToEditor: widgetApi.state.goToEditor
+    }, widgetApi.entityHelpers);
 
     function removeFromList (link) {
-      var index = _.findIndex($scope.links, {link: link});
+      var index = _.findIndex($scope.links, function (item) {
+        return item.link === link;
+      });
+
       if (index > -1) {
         $scope.links.splice(index, 1);
         syncValue();
@@ -147,14 +130,10 @@ angular.module('cf.app')
   function createLink (entity) {
     return {
       sys: {
-        id: entity.getId(),
-        linkType: entity.getType(),
+        id: entity.sys.id,
+        linkType: entity.sys.type,
         type: 'Link'
       }
     };
-  }
-
-  function getEntityId (link) {
-    return dotty.get(link, 'sys.id');
   }
 }]);

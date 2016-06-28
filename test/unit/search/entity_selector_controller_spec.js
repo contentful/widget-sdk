@@ -9,9 +9,9 @@ describe('entitySelector', function () {
     var $timeout = this.$inject('$timeout');
     var spaceContext = this.$inject('spaceContext');
 
-    spaceContext.space = {
-      getEntries: this.getEntries = sinon.stub().resolves([]),
-      getAssets: this.getAssets = sinon.stub().resolves([])
+    spaceContext.cma = {
+      getEntries: this.getEntries = sinon.stub().resolves({items: []}),
+      getAssets: this.getAssets = sinon.stub().resolves({items: []})
     };
 
     this.createController = function (config) {
@@ -28,8 +28,9 @@ describe('entitySelector', function () {
     };
   });
 
+  var link = entity;
   function entity (id) {
-    return {getId: _.constant(id)};
+    return {sys: {id: id}};
   }
 
   it('sets view modes', function () {
@@ -104,72 +105,40 @@ describe('entitySelector', function () {
     });
 
     it('updates total number of entities', function () {
-      var items = [];
-      items.total = 123;
-      this.getEntries.resolves(items);
+      this.getEntries.resolves({total: 123, items: []});
       this.createController({linksEntry: true});
       expect(this.scope.paginator.numEntries).toBe(123);
     });
-
-    /**
-     * tests for multiple references to the same entity
-     * disabled for the time being
-     */
-
-    /** it('appends unique results to list of available items', function () {
-      var e1 = entity('e1');
-      this.getEntries.resolves([e1]);
-      this.createController({linksEntry: true});
-      this.getEntries.resolves([e1, entity('e2'), entity('e3')]);
-      this.loadMore();
-      expect(this.scope.items.length).toBe(3);
-    });
-
-    it('filters out items that are already selected', function () {
-      this.getEntries.resolves([entity('e1'), entity('e2')]);
-      this.createController({linksEntry: true, linkedEntityIds: ['e2', 'e3']});
-      expect(this.scope.items.length).toBe(1);
-      expect(this.scope.items[0].getId()).toBe('e1');
-
-      this.getEntries.resolves([entity('e3'), entity('e4')]);
-      this.loadMore();
-      expect(this.scope.items.length).toBe(2);
-      expect(this.scope.items[1].getId()).toBe('e4');
-    }); */
   });
 
   describe('selection', function () {
     beforeEach(function () {
       this.e1 = entity('e1');
       this.e3 = entity('e3');
-      this.getEntries.resolves([this.e1, entity('e2'), this.e3]);
+      this.getEntries.resolves({items: [this.e1, entity('e2'), this.e3]});
     });
 
     it('closes dialog with single entity', function () {
       this.createController({linksEntry: true, multiple: false});
       var confirm = sinon.spy();
       this.scope.dialog = {confirm: confirm};
-      this.scope.select(this.e1);
+      this.scope.linksApi.toggleSelected(link('e1'));
       sinon.assert.calledOnce(confirm.withArgs([this.e1]));
     });
 
     it('selects multiple entities', function () {
       this.createController({linksEntry: true, multiple: true});
-      this.scope.select(this.e1);
-      this.scope.select(this.e3);
+      this.scope.linksApi.toggleSelected(link('e1'));
+      this.scope.linksApi.toggleSelected(link('e3'));
       expect(this.scope.selected).toEqual([this.e1, this.e3]);
-      expect(this.scope.selectedIds.e1).toBe(true);
-      expect(this.scope.selectedIds.e3).toBe(true);
-      expect(Object.keys(this.scope.selectedIds).length).toBe(2);
     });
 
     it('deselects if entity is already selected', function () {
       this.createController({linksEntry: true, multiple: true});
-      this.scope.select(this.e1);
+      this.scope.linksApi.toggleSelected(link('e1'));
       expect(this.scope.selected).toEqual([this.e1]);
-      this.scope.deselect(this.e1);
+      this.scope.linksApi.toggleSelected(link('e1'));
       expect(this.scope.selected).toEqual([]);
-      expect(this.scope.selectedIds).toEqual({});
     });
   });
 });

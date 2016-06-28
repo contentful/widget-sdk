@@ -16,16 +16,19 @@ angular.module('cf.app')
       linksApi: '=',
       link: '=',
       asThumb: '=',
-      draggable: '='
+      draggable: '=',
+      selectable: '='
     },
     template: JST.cf_asset_card(),
     link: function ($scope) {
-      $scope.linksApi.resolveLink($scope.link).then(init);
+      var data = $scope.linksApi.getEntity($scope.link);
 
-      function init (data) {
+      if (data) {
         var load = infoFor($scope, data);
         load.basicInfo();
         load.assetDetails();
+      } else {
+        // @todo entity is missing or inaccessible
       }
     }
   };

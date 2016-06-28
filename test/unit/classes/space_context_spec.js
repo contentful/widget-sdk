@@ -598,11 +598,11 @@ describe('spaceContext', function () {
       };
 
       this.fields = [
+        {type: 'Number', id: 'NUMBER'},
         {type: 'Symbol', id: 'SYMBOL'},
         {type: 'Text', id: 'TEXT'},
         {type: 'Link', linkType: 'Entry', id: 'ENTRY'},
-        {type: 'Link', linkType: 'Asset', id: 'ASSET'},
-        {type: 'Symbol', id: 'SYMBOL 2'}
+        {type: 'Link', linkType: 'Asset', id: 'ASSET'}
       ];
       this.ct = {
         data: {
@@ -613,7 +613,8 @@ describe('spaceContext', function () {
       this.entry = {
         data: {
           fields: {
-            SYMBOL: {xx: 'SYMBOL VAL'},
+            NUMBER: {xx: 'NUMBER'},
+            SYMBOL: {xx: 'SYMBOL VAL', de: 'SYMBOL VAL DE'},
             TEXT: {en: 'VAL EN', xx: 'VAL', de: 'VAL DE'},
             ASSET: {xx: ASSET_LINK_XX, it: ASSET_LINK_IT}
           }
@@ -668,19 +669,23 @@ describe('spaceContext', function () {
     });
 
     describe('#entityDescription()', function () {
-      it('returns value of first text field, falls back to default locale', function () {
+      it('returns value of first text or symbol field, falls back to default locale', function () {
         const desc = this.spaceContext.entityDescription(this.entry);
-        expect(desc).toBe('VAL');
+        expect(desc).toBe('SYMBOL VAL');
       });
 
-      it('returns value of first text field for given locale', function () {
+      it('returns value of first text or symbol field for given locale', function () {
         const desc = this.spaceContext.entityDescription(this.entry, 'de');
-        expect(desc).toBe('VAL DE');
+        expect(desc).toBe('SYMBOL VAL DE');
       });
 
       describe('skips display field', function () {
         beforeEach(function () {
-          this.ct.data.displayField = 'TEXT';
+          _.remove(this.fields, function (field) {
+            return field.id === 'TEXT';
+          });
+          delete this.entry.data.fields.TEXT;
+          this.ct.data.displayField = 'SYMBOL';
         });
 
         it('returns undefined if there is not other field', function () {

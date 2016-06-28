@@ -16,27 +16,33 @@ angular.module('cf.app')
       linksApi: '=',
       link: '=',
       showDetails: '=',
-      draggable: '='
+      draggable: '=',
+      selectable: '='
     },
     template: JST.cf_entity_link(),
     link: function ($scope) {
-      $scope.linksApi.resolveLink($scope.link).then(init);
+      var data = $scope.linksApi.getEntity($scope.link);
 
-      function init (data) {
+      if (data) {
         var load = infoFor($scope, data);
         load.basicInfo();
-        load.entryDetails(is(data, 'Entry') && $scope.showDetails);
-        load.assetDetails(is(data, 'Asset'));
+        load.entryDetails(is('Entry') && !!$scope.showDetails);
+        load.assetDetails(is('Asset'));
+      } else {
+        // @todo entity is missing or inaccessible
       }
 
-      function is (data, type) {
+      function is (type) {
         return data.sys.type === type;
       }
     }
   };
 }])
 
-.factory('cfEntityLink/infoFor', function () {
+.factory('cfEntityLink/infoFor', ['$injector', function ($injector) {
+
+  var $q = $injector.get('$q');
+
   return function (scope, data) {
     return {
       basicInfo: basicInfo,
@@ -59,13 +65,13 @@ angular.module('cf.app')
     }
 
     function load (getter, scopeProperty) {
-      scope.linksApi[getter](data).then(function (value) {
+      maybeCall(getter, data).then(function (value) {
         scope[scopeProperty] = value;
       });
     }
 
     function assetDetails () {
-      scope.linksApi.assetFile(data).then(function (file) {
+      maybeCall('assetFile', data).then(function (file) {
         scope.file = file;
         downloadUrl(file);
       });
@@ -73,10 +79,18 @@ angular.module('cf.app')
 
     function downloadUrl (file) {
       if (_.isObject(file) && file.url) {
-        scope.linksApi.assetUrl(file.url).then(function (assetUrl) {
+        maybeCall('assetUrl', file.url).then(function (assetUrl) {
           scope.downloadUrl = assetUrl;
         });
       }
     }
+
+    function maybeCall (getter, arg) {
+      if (scope.linksApi[getter]) {
+        return scope.linksApi[getter](arg);
+      } else {
+        return $q.reject();
+      }
+    }
   };
-});
+}]);

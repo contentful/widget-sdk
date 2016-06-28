@@ -1,21 +1,3 @@
-mixin single-entity
-  td.cell-selected
-    i.fa.fa-check(ng-if="selectedIds[entity.getId()]")
-  td.cell-name
-    i.fa.fa-circle(ng-class="getStatusClassname(entity)")
-    span(ng-if="config.linksEntry" title="{{ spaceContext.entryTitle(entity) }}")
-      |  {{ spaceContext.entryTitle(entity) }}
-    span(ng-if="config.linksAsset" title="{{ spaceContext.assetTitle(entity) }}")
-      |  {{ spaceContext.assetTitle(entity) }}
-  td.cell-content-type
-    span(ng-if="config.linksEntry")
-      | {{ spaceContext.publishedTypeForEntry(entity).getName() }}
-  td.cell-updated
-    date(
-      ng-if="entity.getUpdatedAt()"
-      datetime="{{ entity.getUpdatedAt() }}"
-      cf-relative-datetime)
-
 .modal-background
   .modal-dialog.entity-selector-dialog(ng-controller="EntitySelectorController")
     header.modal-dialog__header
@@ -47,24 +29,42 @@ mixin single-entity
           | {{ labels.empty }} found
           span(ng-if="view.searchTerm.length > 0")
             |  for <strong>{{ view.searchTerm }}</strong>
-        table.search-results__list
-          tbody
-            tr(
-              ng-repeat="entity in items track by entity.getId()"
-              ng-click="select(entity)"
-              ng-class="{selected: selectedIds[entity.getId()]}")
-              +single-entity
+
+        cf-entity-link(
+          ng-if="config.linksEntry"
+          ng-repeat="link in links track by link.sys.id"
+          links-api="linksApi"
+          link="link"
+          show-details="true"
+          selectable="true")
+
+        cf-asset-card(
+          ng-if="config.linksAsset"
+          ng-repeat="link in links track by link.sys.id"
+          links-api="linksApi"
+          link="link"
+          selectable="true")
+
         .loading(ng-show="isLoading")
 
       .entity-selector__item-list(ng-if="view.mode === SELECTED")
         .entity-selector__item-list-placeholder(ng-if="selected.length < 1")
           | {{ labels.empty }} selected yet
-        table.search-results__list
-          tbody
-            tr(
-              ng-repeat="entity in selected track by entity.getId()"
-              ng-click="deselect(entity)")
-              +single-entity
+
+        cf-entity-link(
+          ng-if="config.linksEntry"
+          ng-repeat="link in selected track by link.sys.id"
+          links-api="linksApi"
+          link="link"
+          show-details="true"
+          selectable="true")
+
+        cf-asset-card(
+          ng-if="config.linksAsset"
+          ng-repeat="link in selected track by link.sys.id"
+          links-api="linksApi"
+          link="link"
+          selectable="true")
 
       .note-box-small.note-box--blue(
         ng-if="!config.multiple"

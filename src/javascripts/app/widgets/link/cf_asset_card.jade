@@ -1,26 +1,35 @@
-include ./entity_link_actions_mixin
+include ./entity_link_mixins
 
-.asset-card
+.asset-card(ng-click="selectable && linksApi.toggleSelected && linksApi.toggleSelected(link)")
   cf-thumbnail(
+    ng-if="asThumb && !selectable"
     file="file" size="123" fit="thumb"
-    cf-context-menu-trigger
-    ng-if="asThumb")
+    cf-context-menu-trigger)
 
   cf-thumbnail(
-    file="file" height="270" fit="scale"
-    cf-context-menu-trigger
-    ng-if="!asThumb")
+    ng-if="asThumb && selectable"
+    file="file" size="123" fit="thumb")
 
-  .entity-status(ng-class="status")
-    .status-bar
+  cf-thumbnail(
+    ng-if="!asThumb && !selectable"
+    file="file" height="270" fit="scale"
+    cf-context-menu-trigger)
+
+  cf-thumbnail(
+    ng-if="!asThumb && selectable"
+    file="file" height="270" fit="scale")
+
+  +entity-link-status
 
   .asset-card__title(
-    ng-click="linksApi.goToEditor(link)"
+    ng-click="!selectable && linksApi.goToEditor && linksApi.goToEditor(link)"
     ng-class="{'asset-card__title--missing': !title}")
     span(ng-if="title") {{ title | truncateMiddle:30:10 }}
     span(ng-if="!title") Untitled
 
-  .asset-card__tooltip.context-menu(cf-context-menu role="menu")
+  .asset-card__tooltip.context-menu(
+    ng-if="!selectable"
+    cf-context-menu role="menu")
     ul.asset-card__details
       li.asset-card__file-name
         | {{ file.fileName | truncateMiddle:22:7 }}
@@ -36,5 +45,5 @@ include ./entity_link_actions_mixin
         +entity-link-actions
 
   .asset-card__custom-card-content
-    .link-editor-link__toolbar
+    .link-editor-link__toolbar(ng-if="!selectable")
       cf-icon(ng-if="draggable" data-drag-handle name="drag-handle-2")

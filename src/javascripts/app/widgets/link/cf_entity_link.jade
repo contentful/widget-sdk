@@ -1,17 +1,16 @@
-include ./entity_link_actions_mixin
+include ./entity_link_mixins
 
-.entity-link
+.entity-link(ng-click="selectable && linksApi.toggleSelected && linksApi.toggleSelected(link)")
   .entity-link__image(
     ng-if="showDetails"
     ng-class="{'entity-link__image--missing': !image}")
     cf-thumbnail(file="image" size="56" fit="thumb")
 
-  .entity-status(ng-class="status")
-    .status-bar
+  +entity-link-status
 
   .entity-link__text
     .entity-link__title(
-      ng-click="linksApi.goToEditor(link)"
+      ng-click="!selectable && linksApi.goToEditor && linksApi.goToEditor(link)"
       ng-class="{'entity-link__title--missing': !title}")
       span(ng-if="title") {{ title | truncateMiddle:30:10 }}
       span(ng-if="!title") Untitled
@@ -19,7 +18,7 @@ include ./entity_link_actions_mixin
     .entity-link__description(
       ng-if="showDetails"
       ng-class="{'entity-link__description--missing': !description}")
-      span(ng-if="description") {{ description }}
+      span(ng-if="description") {{ description | truncate:150 }}
       span(ng-if="!description") No description available
 
   .link-editor-link__toolbar

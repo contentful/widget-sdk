@@ -32,9 +32,11 @@ angular.module('contentful')
  * Exposed by the `cfWidgetApi` directive.
  */
 .controller('WidgetApiController', ['$scope', '$injector', function ($scope, $injector) {
-
+  var $state = $injector.get('$state');
   var newSignal = $injector.get('signal').createMemoized;
   var TheLocaleStore = $injector.get('TheLocaleStore');
+  var spaceContext = $injector.get('spaceContext');
+  var EntityHelpers = $injector.get('EntityHelpers');
 
   var fieldLocaleDoc = $scope.otSubDoc;
   var isDisabledSignal = newSignal(isEditingDisabled());
@@ -76,7 +78,22 @@ angular.module('contentful')
     fields: $scope.fields // comes from entry editor controller
   };
 
-  this.space = $injector.get('WidgetApiController/space');
+  this.space = spaceContext.cma;
+  this.entityHelpers = EntityHelpers.forLocale($scope.locale.code);
+
+  this.state = {
+    goToEditor: function (linkOrData) {
+      var type = dotty.get(linkOrData, 'sys.linkType', dotty.get(linkOrData, 'sys.type'));
+      var typePlural = {Entry: 'entries', Asset: 'assets'}[type];
+      var path = 'spaces.detail.' + typePlural + '.detail';
+
+      var options = {addToContext: true};
+      var entityIdKey = type.toLowerCase() + 'Id';
+      options[entityIdKey] = dotty.get(linkOrData, 'sys.id');
+
+      return $state.go(path, options);
+    }
+  };
 
   this.field = {
     onDisabledStatusChanged: isDisabledSignal.attach,
@@ -127,85 +144,5 @@ angular.module('contentful')
 
   function getAvailableLocaleCodes () {
     return _.map(TheLocaleStore.getPrivateLocales(), 'code');
-  }
-}])
-
-.factory('WidgetApiController/space', ['$injector', function ($injector) {
-
-  var $q = $injector.get('$q');
-  var $state = $injector.get('$state');
-  var $controller = $injector.get('$controller');
-  var spaceContext = $injector.get('spaceContext');
-  var assetUrlFilter = $injector.get('$filter')('assetUrl');
-  var entityStatusController = $controller('EntityStatusController');
-
-  return _.extend({}, spaceContext.cma, {
-    entityStatus: entityStatus,
-    entityTitle: wrap('entityTitle'),
-    entityDescription: wrap('entityDescription'),
-    entryImage: wrap('entryImage'),
-    assetFile: assetFile,
-    assetUrl: assetUrl,
-    goToEditor: goToEditor
-  });
-
-  function entityStatus (data) {
-    var isPublished = !!data.sys.publishedVersion;
-    return $q.resolve(entityStatusController.getClassname({
-      isPublished: _.constant(isPublished),
-      hasUnpublishedChanges: _.constant(!isPublished || data.sys.version > data.sys.publishedVersion + 1),
-      isArchived: _.constant(!!data.sys.archivedVersion)
-    }));
-  }
-
-  function wrap (method) {
-    return function (data, localeCode) {
-      return dataToEntity(data).then(function (entity) {
-        return spaceContext[method](entity, localeCode);
-      });
-    };
-  }
-
-  function dataToEntity (data) {
-    var prepareFields = $q.resolve(data.fields);
-    var ctId = dotty.get(data, 'sys.contentType.sys.id');
-
-    if (data.sys.type === 'Entry') {
-      prepareFields = spaceContext
-      .fetchPublishedContentType(ctId)
-      .then(function (ct) {
-        return _.transform(ct.data.fields, function (acc, field) {
-          acc[field.id] = data.fields[field.apiName];
-        }, {});
-      });
-    }
-
-    return prepareFields.then(function (fields) {
-      return {
-        data: {fields: fields, sys: data.sys},
-        getType: _.constant(data.sys.type),
-        getContentTypeId: _.constant(ctId)
-      };
-    });
-  }
-
-  function assetFile (data, locale) {
-    return $q.resolve(dotty.get(data, 'fields.file.' + locale, null));
-  }
-
-  function assetUrl (url) {
-    return $q.resolve(assetUrlFilter(url));
-  }
-
-  function goToEditor (link) {
-    var pluralsByType = {Entry: 'entries', Asset: 'assets'};
-    var typePlural = pluralsByType[link.sys.linkType];
-    var path = 'spaces.detail.' + typePlural + '.detail';
-
-    var options = {addToContext: true};
-    var entityIdKey = link.sys.linkType.toLowerCase() + 'Id'; // entryId, assetId
-    options[entityIdKey] = link.sys.id;
-
-    return $state.go(path, options);
   }
 }]);
