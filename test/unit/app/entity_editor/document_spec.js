@@ -348,13 +348,7 @@ describe('entityEditor/Document', function () {
   });
 
   describe('#setValueAt()', function () {
-    it('rejects when doc is not defined', function () {
-      this.doc.close();
-      var errored = sinon.stub();
-      this.doc.setValueAt(['PATH'], 'VAL').catch(errored);
-      this.$apply();
-      sinon.assert.called(errored);
-    });
+    itRejectsWithoutDocument('setValueAt');
 
     it('sets deep value', function () {
       this.connectAndOpen();
@@ -425,6 +419,8 @@ describe('entityEditor/Document', function () {
   });
 
   describe('#removeValueAt()', function () {
+    itRejectsWithoutDocument('removeValueAt');
+
     it('delegates to ShareJS document', function () {
       var doc = this.connectAndOpen();
       doc.removeAt = sinon.stub();
@@ -448,6 +444,48 @@ describe('entityEditor/Document', function () {
       this.doc.removeValueAt('PATH').then(resolved);
       this.$apply();
       sinon.assert.called(resolved);
+    });
+  });
+
+  describe('#insertValueAt()', function () {
+    beforeEach(function () {
+      this.otDoc = this.connectAndOpen({a: [0, 1, 2], sys: {}});
+    });
+
+    itRejectsWithoutDocument('insertValueAt');
+
+    it('inserts value into ShareJS document', function () {
+      this.doc.insertValueAt(['a'], 1, 'X');
+      this.$apply();
+      expect(this.otDoc.snapshot.a).toEqual([0, 'X', 1, 2]);
+    });
+
+    it('sets value to singleton array', function () {
+      delete this.otDoc.snapshot.a;
+      this.doc.insertValueAt(['a'], 0, 'X');
+      this.$apply();
+      expect(this.otDoc.snapshot.a).toEqual(['X']);
+    });
+  });
+
+  describe('#pushValueAt()', function () {
+    beforeEach(function () {
+      this.otDoc = this.connectAndOpen({a: [0, 1, 2], sys: {}});
+    });
+
+    itRejectsWithoutDocument('insertValueAt');
+
+    it('pushes value into ShareJS document', function () {
+      this.doc.pushValueAt(['a'], 'X');
+      this.$apply();
+      expect(this.otDoc.snapshot.a).toEqual([0, 1, 2, 'X']);
+    });
+
+    it('sets value to singleton array', function () {
+      delete this.otDoc.snapshot.a;
+      this.doc.pushValueAt(['a'], 'X');
+      this.$apply();
+      expect(this.otDoc.snapshot.a).toEqual(['X']);
     });
   });
 
@@ -551,4 +589,14 @@ describe('entityEditor/Document', function () {
       sinon.assert.calledWith(cb, sinon.match({id: 'NEW ID'}));
     });
   });
+
+  function itRejectsWithoutDocument (method) {
+    it('rejects when document is not opened', function () {
+      this.doc.close();
+      var errored = sinon.stub();
+      this.doc[method]().catch(errored);
+      this.$apply();
+      sinon.assert.called(errored);
+    });
+  }
 });

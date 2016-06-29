@@ -37,7 +37,7 @@ angular.module('contentful')
   var TheLocaleStore = $injector.get('TheLocaleStore');
   var K = $injector.get('utils/kefir');
 
-  var fieldLocaleDoc = $scope.otSubDoc;
+  var fieldLocale = $scope.fieldLocale;
   var isDisabledSignal = newSignal(isEditingDisabled());
   var schemaErrorsSignal = newSignal(null);
   var ctField = $scope.widget.field;
@@ -84,14 +84,14 @@ angular.module('contentful')
     onSchemaErrorsChanged: schemaErrorsSignal.attach,
     setInvalid: setInvalid,
     onValueChanged: function (cb) {
-      return K.onValue(fieldLocaleDoc.valueProperty, cb);
+      return K.onValue(fieldLocale.doc.valueProperty, cb);
     },
-    getValue: fieldLocaleDoc.get,
-    setValue: fieldLocaleDoc.set,
-    removeValue: fieldLocaleDoc.remove,
-    removeValueAt: fieldLocaleDoc.removeAt,
-    insertValue: fieldLocaleDoc.insert,
-    pushValue: fieldLocaleDoc.push,
+    getValue: fieldLocale.doc.get,
+    setValue: fieldLocale.doc.set,
+    removeValue: fieldLocale.doc.remove,
+    removeValueAt: fieldLocale.doc.removeAt,
+    insertValue: fieldLocale.doc.insert,
+    pushValue: fieldLocale.doc.push,
 
     id: ctField.apiName, // we only want to expose the public ID
     locale: $scope.locale.code,
@@ -117,7 +117,7 @@ angular.module('contentful')
   };
 
   function isEditingDisabled () {
-    return $scope.fieldLocale.access.disabled;
+    return fieldLocale.access.disabled;
   }
 
   function getDefaultLocaleCode () {

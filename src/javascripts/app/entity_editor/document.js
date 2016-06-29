@@ -33,9 +33,14 @@ function ($scope, $injector, entity) {
   var controller = this;
   var diff = $injector.get('utils/StringDiff').diff;
 
+  // Field types that should use `setStringAt()` to set a value using a
+  // string diff.
+  var STRING_FIELD_TYPES = ['Symbol', 'Text'];
+
   var shouldOpen = false;
 
   var pathChangeBus = K.createBus($scope);
+
 
   /**
    * @ngdoc property
@@ -108,6 +113,9 @@ function ($scope, $injector, entity) {
     getValueAt: getValueAt,
     setValueAt: setValueAt,
     removeValueAt: removeValueAt,
+    insertValueAt: insertValueAt,
+    pushValueAt: pushValueAt,
+    moveValueAt: moveValueAt,
 
     changes: changes,
     valuePropertyAt: memoizedValuePropertyAt,
@@ -163,54 +171,47 @@ function ($scope, $injector, entity) {
   }
 
   function setValueAt (path, value) {
-    var stringFieldTypes = ['Symbol', 'Text'];
-
-    if ($scope.field && _.includes(stringFieldTypes, $scope.field.type)) {
-      return setStringAt(path, value);
-    } else {
-      return _setValueAt(path, value);
-    }
+    return withRawDoc(function (doc) {
+      if ($scope.field && _.includes(STRING_FIELD_TYPES, $scope.field.type)) {
+        return setDocumentStringAt(doc, path, value);
+      } else {
+        return setDocumentValueAt(doc, path, value);
+      }
+    });
   }
 
-  function _setValueAt (path, value) {
-
+  function setDocumentValueAt (doc, path, value) {
     if (value === undefined) {
       return removeValueAt(path);
     }
-    // TODO this should actually reject when doc is not available
-    var doc = controller.doc;
-    if (doc) {
-      // We only test for equality when the value is guaranteed to be
-      // equal. Other wise the some properties might have changed.
-      if (!_.isObject(value) && value === getValueAt(path)) {
-        return $q.resolve(value);
-      } else {
-        return ShareJS.setDeep(doc, path, value);
-      }
+    // We only test for equality when the value is guaranteed to be
+    // equal. Other wise the some properties might have changed.
+    if (!_.isObject(value) && value === getValueAt(path)) {
+      return $q.resolve(value);
     } else {
-      return $q.reject(new Error('Cannot set value on document'));
+      return ShareJS.setDeep(doc, path, value);
     }
   }
 
-  function setStringAt (path, newValue) {
+  function setDocumentStringAt (doc, path, newValue) {
     var oldValue = getValueAt(path);
 
     if (!oldValue || !newValue) {
       // TODO Do not set this to null. Set it to undefined!
-      return _setValueAt(path, newValue || null);
+      return setDocumentValueAt(doc, path, newValue || null);
     } else if (oldValue === newValue) {
       return $q.resolve(newValue);
     } else {
-      var doc = controller.doc && controller.doc.at(path);
+      var subDoc = doc.at(path);
       var patches = diff(oldValue, newValue);
       var ops = patches.map(function (p) {
         if (p.insert) {
           return $q.denodeify(function (cb) {
-            doc.insert(p.insert[0], p.insert[1], cb);
+            subDoc.insert(p.insert[0], p.insert[1], cb);
           });
         } else if (p.delete) {
           return $q.denodeify(function (cb) {
-            doc.del(p.delete[0], p.delete[1], cb);
+            subDoc.del(p.delete[0], p.delete[1], cb);
           });
         }
       });
@@ -219,15 +220,43 @@ function ($scope, $injector, entity) {
   }
 
   function removeValueAt (path) {
-    return $q.denodeify(function (cb) {
-      // We catch synchronous errors since they tell us that a
-      // value along the path does not exist.
-      // TODO this should actually reject when doc is not available
-      try {
-        controller.doc.removeAt(path, cb);
-      } catch (e) {
-        cb();
+    return withRawDoc(function (doc) {
+      return $q.denodeify(function (cb) {
+        // We catch and ignore synchronous errors since they tell us
+        // that a value along the path does not exist. I.e. it has
+        // already been removed.
+        try {
+          doc.removeAt(path, cb);
+        } catch (e) {
+          cb();
+        }
+      });
+    });
+  }
+
+  function insertValueAt (path, i, x) {
+    return withRawDoc(function (doc) {
+      if (getValueAt(path)) {
+        return $q.denodeify(function (cb) {
+          doc.insertAt(path, i, x, cb);
+        });
+      } else if (i === 0) {
+        return setValueAt(path, [x]);
+      } else {
+        return $q.reject(new Error('Cannot insert index ' + i + 'into empty container'));
       }
+    });
+  }
+
+  function pushValueAt (path, value) {
+    var current = getValueAt(path);
+    var pos = current ? current.length : 0;
+    return insertValueAt(path, pos, value);
+  }
+
+  function moveValueAt (path, from, to) {
+    return $q.denodeify(function (cb) {
+      controller.doc.moveAt(path, from, to, cb);
     });
   }
 
@@ -408,6 +437,14 @@ function ($scope, $injector, entity) {
     if (controller.doc) {
       closeDoc(controller.doc);
       resetOtDoc(controller.doc);
+    }
+  }
+
+  function withRawDoc (cb) {
+    if (controller.doc) {
+      return cb(controller.doc);
+    } else {
+      return $q.reject(new Error('ShareJS document is not connected'));
     }
   }
 

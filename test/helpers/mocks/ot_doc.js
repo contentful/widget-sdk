@@ -81,6 +81,12 @@ angular.module('contentful/mocks')
     this.set(newValue, cb);
   };
 
+  OtDoc.prototype.insertAt = function (path, pos, value, cb) {
+    var list = this.getAt(path);
+    list.splice(pos, 0, value);
+    cb();
+  };
+
   OtDoc.prototype.del = function (index, length, cb) {
     var valAsArray = this.get().split('');
     valAsArray.splice(index, length);
