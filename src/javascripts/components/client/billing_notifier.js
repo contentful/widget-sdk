@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * @ngdoc service
+ * @name billingNotifier
+ */
 angular.module('contentful')
 .factory('billingNotifier', ['require', function (require) {
 

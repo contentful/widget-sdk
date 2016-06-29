@@ -1,5 +1,11 @@
 'use strict';
 
+/**
+ * @covers dialogsInitController
+ * @covers subscriptionNotifier
+ * @covers OrganizationList
+ * @covers subscriptionStore
+ */
 describe('subscriptionNotifier', function () {
   var broadcastStub, openPaywallStub;
 

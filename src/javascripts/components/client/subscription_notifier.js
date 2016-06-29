@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * @ngdoc service
+ * @name subscriptionNotifier
+ */
 angular.module('contentful')
 .factory('subscriptionNotifier', ['$injector', function ($injector) {
 
