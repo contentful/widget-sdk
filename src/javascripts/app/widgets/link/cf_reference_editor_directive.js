@@ -6,6 +6,7 @@ angular.module('cf.app')
   var $timeout = $injector.get('$timeout');
   var entitySelector = $injector.get('entitySelector');
   var createEntityStore = $injector.get('EntityStore').create;
+  var createEntity = $injector.get('cfReferenceEditor/createEntity');
 
   return {
     restrict: 'E',
@@ -58,7 +59,12 @@ angular.module('cf.app')
      * @returns {void}
      */
     $scope.addNew = function () {
-      console.log('Not implemented yet.');
+      createEntity($scope.type, field, widgetApi.space)
+      .then(function (entity) {
+        linkEntity(entity);
+        syncValue();
+        widgetApi.state.goToEditor(entity);
+      });
     };
 
     /**
@@ -69,10 +75,7 @@ angular.module('cf.app')
     $scope.addExisting = function () {
       entitySelector.open(field, unwrapLinks())
       .then(function (entities) {
-        _.forEach(entities, function (entity) {
-          store.add(entity);
-          $scope.links.push(wrapLink(createLink(entity)));
-        });
+        _.forEach(entities, linkEntity);
         syncValue();
       });
     };
@@ -87,6 +90,11 @@ angular.module('cf.app')
       removeFromList: removeFromList,
       goToEditor: widgetApi.state.goToEditor
     }, widgetApi.entityHelpers);
+
+    function linkEntity (entity) {
+      store.add(entity);
+      $scope.links.push(wrapLink(createLink(entity)));
+    }
 
     function removeFromList (link) {
       var index = _.findIndex($scope.links, function (item) {
@@ -136,4 +144,62 @@ angular.module('cf.app')
       }
     };
   }
+}])
+
+.factory('cfReferenceEditor/createEntity', ['$injector', function ($injector) {
+
+  var modalDialog = $injector.get('modalDialog');
+  var $q = $injector.get('$q');
+
+  return function createEntity (entityType, field, space) {
+    if (entityType === 'Entry') {
+      return maybeAskAndCreateEntry();
+    } else if (entityType === 'Asset') {
+      return space.createAsset({});
+    }
+
+    return $q.reject();
+
+    function maybeAskAndCreateEntry () {
+      return getAvailableContentTypes()
+      .then(function (cts) {
+        if (cts.length === 1) {
+          return createEntry(cts[0]);
+        } else {
+          return askForContentType(cts)
+          .then(createEntry);
+        }
+      });
+    }
+
+    function getAvailableContentTypes () {
+      return space.getContentTypes()
+      .then(function (res) {
+        return _.filter(res.items, canCreate(field));
+      });
+    }
+
+    function canCreate (field) {
+      var validation = _.find(field.itemValidations, function (validation) {
+        return Array.isArray(validation.linkContentType);
+      });
+      var linkedCts = validation && validation.linkContentType;
+
+      return function (ct) {
+        var canLink = !linkedCts || linkedCts.indexOf(ct.sys.id) > -1;
+        return !!ct.sys.publishedVersion && canLink;
+      };
+    }
+
+    function askForContentType (cts) {
+      return modalDialog.open({
+        template: 'select_ct_of_new_entry',
+        scopeData: {cts: cts}
+      }).promise;
+    }
+
+    function createEntry (ct) {
+      return space.createEntry(ct.sys.id, {});
+    }
+  };
 }]);

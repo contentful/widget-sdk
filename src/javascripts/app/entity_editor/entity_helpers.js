@@ -57,8 +57,11 @@ angular.module('contentful')
       prepareFields = spaceContext
       .fetchPublishedContentType(ctId)
       .then(function (ct) {
-        return _.transform(ct.data.fields, function (acc, field) {
-          acc[field.id] = data.fields[field.apiName];
+        return _.transform(ct.data.fields, function (acc, ctField) {
+          var field = dotty.get(data, ['fields', ctField.apiName]);
+          if (field) {
+            acc[ctField.id] = field;
+          }
         }, {});
       });
     }
