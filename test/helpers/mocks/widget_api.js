@@ -9,10 +9,6 @@ angular.module('contentful/mocks')
  * Use `mockWidgetApi._state` to inspect internal state modified by methods.
  */
 .factory('mocks/widgetApi', [function () {
-  var entrySys = {
-    contentType: {sys: {id: 'CTID'}}
-  };
-
   return {
     create: create,
     createField: createField
@@ -22,6 +18,10 @@ angular.module('contentful/mocks')
     var state = {
       // Set by field.isInvalid()
       isInvalid: false
+    };
+
+    var entrySys = {
+      contentType: {sys: {id: 'CTID'}}
     };
 
     var api = {
