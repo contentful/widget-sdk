@@ -7,6 +7,7 @@
  * @covers Subscription
  */
 describe('subscriptionNotifier', function () {
+  var A_DAY = 24;
   var broadcastStub, openPaywallStub;
 
   beforeEach(function () {
@@ -99,12 +100,7 @@ describe('subscriptionNotifier', function () {
             this.$apply();
           });
 
-          itShowsAMessage(/Your trial has ended.*TEST_ORGA_NAME organization/);
-          itShowsAMessage(/insert your billing information/);
-
-          itShowsAnActionMessage();
-
-          itHasAnAction();
+          itShowsATrialEndNotification().forOwner();
 
           itOpensPaywallForSettingUpPayment();
         });
@@ -115,12 +111,7 @@ describe('subscriptionNotifier', function () {
             this.$apply();
           });
 
-          itShowsAMessage(/Your trial has ended.*TEST_ORGA_NAME organization/);
-          itShowsAMessage(/contact the account owner/);
-
-          itDoesNotShowAnActionMessage();
-
-          itDoesNotHaveAnAction();
+          itShowsATrialEndNotification().forUserOrAdmin();
 
           itOpensPaywallToNotifyTheUser();
         });
@@ -130,62 +121,43 @@ describe('subscriptionNotifier', function () {
             this.$apply();
           });
 
-          itShowsAMessage(/Your trial has ended.*TEST_ORGA_NAME organization/);
-          itShowsAMessage(/contact the account owner/);
-
-          itDoesNotShowAnActionMessage();
-
-          itDoesNotHaveAnAction();
+          itShowsATrialEndNotification().forUserOrAdmin();
 
           itOpensPaywallToNotifyTheUser();
         });
       });
 
-      describe('ending in less than an hour', function () {
+      describe('ending in less than an hour for an owner', function () {
         beforeEach(function () {
           this.makeOwner();
           this.trialHoursLeft(0.2);
           this.$apply();
         });
 
-        itShowsAMessage(/organization TEST_ORGA_NAME/);
-        itShowsAMessage(/0(.*)hours left in trial/);
-
-        itShowsAnActionMessage();
-
-        itHasAnAction();
+        itShowsATrialWillEndNotification('0 hours').forOwner();
 
         itDoesNotOpenPaywall();
       });
 
-      describe('ending in less than a day', function () {
+      describe('ending in less than a day for an user', function () {
         beforeEach(function () {
-          this.makeOwner();
           this.trialHoursLeft(20);
           this.$apply();
         });
 
-        itShowsAMessage(/organization TEST_ORGA_NAME/);
-        itShowsAMessage(/20(.*)hours left in trial/);
-        itShowsAMessage(/access to all features for 20 more hours/);
-
-        itShowsAnActionMessage();
-
-        itHasAnAction();
+        itShowsATrialWillEndNotification('20 hours').forUserOrAdmin();
 
         itDoesNotOpenPaywall();
       });
 
-      describe('ending in a few days', function () {
+      describe('ending in a few days for an admin', function () {
         beforeEach(function () {
-          this.makeOwner();
-          this.trialHoursLeft(76);
+          this.makeAdmin();
+          this.trialHoursLeft(3.2 * A_DAY);
           this.$apply();
         });
 
-        itShowsAnActionMessage();
-
-        itHasAnAction();
+        itShowsATrialWillEndNotification('3 days').forUserOrAdmin();
 
         itDoesNotOpenPaywall();
       });
@@ -242,6 +214,39 @@ describe('subscriptionNotifier', function () {
     });
   });
 
+  function itShowsATrialEndNotification () {
+    itShowsAMessage(/Your trial is over.*TEST_ORGA_NAME organization/);
+    return {
+      forOwner: () => {
+        itShowsAMessage(/please choose a plan/i);
+        itShowsAnActionMessage();
+        itHasAnAction();
+      },
+      forUserOrAdmin: () => {
+        itShowsAMessage(/talk to one of your organization owners/i);
+        itDoesNotShowAnActionMessage();
+        itDoesNotHaveAnAction();
+      }
+    };
+  }
+
+  function itShowsATrialWillEndNotification (time) {
+    itShowsAMessage(/TEST_ORGA_NAME organization/);
+    itShowsAMessage('trial will expire in ' + time);
+    return {
+      forOwner: () => {
+        itShowsAMessage(/choose a subscription plan/i);
+        itShowsAnActionMessage();
+        itHasAnAction();
+      },
+      forUserOrAdmin: () => {
+        itShowsAMessage(/subscription.*upgrade.*organization owners/i);
+        itDoesNotShowAnActionMessage();
+        itDoesNotHaveAnAction();
+      }
+    };
+  }
+
   function itShowsAMessage (match) {
     it('shows a message', function () {
       expect(broadcastStub.args[1][1].message).toMatch(match);
@@ -250,7 +255,7 @@ describe('subscriptionNotifier', function () {
 
   function itShowsAnActionMessage () {
     it('shows an action message', function () {
-      expect(broadcastStub.args[1][1].actionMessage).toMatch(/upgrade/i);
+      expect(broadcastStub.args[1][1].actionMessage).toBe('Choose a plan');
     });
   }
 
