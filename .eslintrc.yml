@@ -3,7 +3,7 @@ rules:
   padded-blocks: off
   semi: ["error", "always"]
   no-multiple-empty-lines: ["error", {max: 2, maxBOF: 0, maxEOF: 0}]
-  no-unused-vars: ['error', {vars: 'all', args: 'after-used', argsIgnorePattern: '^_'}]
+  no-unused-vars: ['error', {vars: 'all', args: 'all', argsIgnorePattern: '^_'}]
   eol-last: "error"
   generator-star-spacing: ['error', {before: false, after: true}]
   yield-star-spacing: ['error', {before: false, after: true}]

@@ -152,7 +152,6 @@ test/unit/webhooks/webhook_repository_spec.js
 test/unit/webhooks/webhook_segmentation_spec.js
 test/helpers/mocks/client.js
 test/helpers/mocks/locale_store.js
-test/helpers/mocks/ot_doc.js
 test/helpers/mocks/the_store.js
 test/helpers/application.js
 test/helpers/deep_diff.js
