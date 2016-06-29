@@ -32,7 +32,7 @@ angular.module('cf.app')
       $scope.$on('$destroy', offSchemaErrorsChanged);
 
       $inputEl.on('input change', function () {
-        field.setString($inputEl.val());
+        field.setValue($inputEl.val());
       });
     }
   };

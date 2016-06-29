@@ -107,10 +107,6 @@ function ($scope, $injector, entity) {
 
     getValueAt: getValueAt,
     setValueAt: setValueAt,
-    /**
-     * TODO: Do not expose this and switch it's usage to setValueAt
-     */
-    setStringAt: setStringAt,
     removeValueAt: removeValueAt,
 
     changes: changes,

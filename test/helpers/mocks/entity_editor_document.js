@@ -29,7 +29,6 @@ angular.module('contentful/mocks')
       }),
       // TODO this should trigger an event on valuePropertyAt
       setValueAt: sinon.spy(setValueAt),
-      setStringAt: sinon.spy(setValueAt),
       removeValueAt: sinon.spy(function (path) {
         return setValueAt(path, undefined);
       }),

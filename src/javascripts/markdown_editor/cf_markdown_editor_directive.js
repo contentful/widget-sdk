@@ -57,7 +57,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         scope.history = editor.history;
 
         var stopPreview = startLivePreview(field.getValue, updatePreview);
-        editor.events.onChange(field.setString);
+        editor.events.onChange(field.setValue);
 
         var detachValueHandler = field.onValueChanged(handleFieldChange);
         var detachStateHandler = field.onDisabledStatusChanged(handleStateChange);
@@ -146,7 +146,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       function syncFromChildToParent (value) {
         // it only changes field value
         // main editor will be updated when leaving Zen Mode
-        if (childEditor) { field.setString(value); }
+        if (childEditor) { field.setValue(value); }
       }
 
       function registerChildEditor (editor) {

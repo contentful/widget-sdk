@@ -49,7 +49,6 @@ angular.module('contentful/mocks')
         }),
         getValue: sinon.stub(),
         setValue: sinon.stub(),
-        setString: sinon.stub(),
         removeValue: sinon.stub(),
         removeValueAt: sinon.stub(),
         insertValue: sinon.stub(),
