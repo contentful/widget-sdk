@@ -91,8 +91,7 @@ angular.module('cf.data')
     return [
       'content_types',
       contentType.sys.id,
-      'editor_interfaces',
-      'default'
+      'editor_interface'
     ];
   }
 }]);

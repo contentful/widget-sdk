@@ -34,7 +34,7 @@ describe('data/editingInterfaces', function () {
         editingInterfaces.get(contentType);
         sinon.assert.calledWith(spaceEndpoint, {
           method: 'GET',
-          path: ['content_types', 'CTID', 'editor_interfaces', 'default']
+          path: ['content_types', 'CTID', 'editor_interface']
         });
       });
 
@@ -111,7 +111,7 @@ describe('data/editingInterfaces', function () {
       });
       sinon.assert.calledWith(spaceEndpoint, sinon.match({
         method: 'PUT',
-        path: ['content_types', 'CTID', 'editor_interfaces', 'default'],
+        path: ['content_types', 'CTID', 'editor_interface'],
         version: 'V'
       }));
     });
