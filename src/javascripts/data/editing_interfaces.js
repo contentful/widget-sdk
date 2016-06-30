@@ -46,7 +46,7 @@ angular.module('cf.data')
 
       return spaceEndpoint({
         method: 'GET',
-        path: makePath(contentType),
+        path: makePath(contentType)
       })
       .then(function (editingInterface) {
         return Transformer.fromAPI(contentType, editingInterface);

@@ -22,13 +22,13 @@ describe('data/editingInterfaces', function () {
 
   describe('#get()', function () {
 
-    describe('with saved content type', function() {
-      beforeEach(function() {
+    describe('with saved content type', function () {
+      beforeEach(function () {
         contentType.sys.version = 1;
         spaceEndpoint.resolves();
       });
 
-      it('sends GET request to the editing interface endpoint for the content type', function() {
+      it('sends GET request to the editing interface endpoint for the content type', function () {
         spaceEndpoint.resolves();
         contentType.sys.id = 'CTID';
         editingInterfaces.get(contentType);
@@ -39,7 +39,7 @@ describe('data/editingInterfaces', function () {
       });
 
       describe('with API response', function () {
-        beforeEach(function() {
+        beforeEach(function () {
           spaceEndpoint.resolves({
             controls: [{
               fieldId: 'FIELD',
@@ -48,7 +48,7 @@ describe('data/editingInterfaces', function () {
           });
         });
 
-        pit('returns editing interface with widgets', function() {
+        pit('returns editing interface with widgets', function () {
           return editingInterfaces.get(contentType)
           .then(function (ei) {
             expect(ei.controls.length).toEqual(1);
@@ -67,7 +67,7 @@ describe('data/editingInterfaces', function () {
         });
       });
 
-      it('fails if API responds with an error', function() {
+      it('fails if API responds with an error', function () {
         spaceEndpoint.rejects({status: 500});
 
         var errorHandler = sinon.stub();
@@ -112,7 +112,7 @@ describe('data/editingInterfaces', function () {
       sinon.assert.calledWith(spaceEndpoint, sinon.match({
         method: 'PUT',
         path: ['content_types', 'CTID', 'editor_interfaces', 'default'],
-        version: 'V',
+        version: 'V'
       }));
     });
 
