@@ -22,6 +22,9 @@ angular.module('contentful/mocks')
 
     return {
       doc: new OtDoc(data),
+      state: {
+        isDirty: K.createMockProperty()
+      },
       open: sinon.stub(),
       close: sinon.stub(),
       getValueAt: sinon.spy(function (path) {

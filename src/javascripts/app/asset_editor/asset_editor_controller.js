@@ -1,15 +1,16 @@
 'use strict';
 
 angular.module('contentful')
-.controller('AssetEditorController', ['$scope', '$injector', function AssetEditorController ($scope, $injector) {
-  var $controller = $injector.get('$controller');
-  var logger = $injector.get('logger');
-  var notification = $injector.get('notification');
-  var stringUtils = $injector.get('stringUtils');
-  var notifier = $injector.get('entryEditor/notifications');
-  var spaceContext = $injector.get('spaceContext');
-  var truncate = $injector.get('stringUtils').truncate;
-  var accessChecker = $injector.get('accessChecker');
+.controller('AssetEditorController', ['$scope', 'require', function AssetEditorController ($scope, require) {
+  var $controller = require('$controller');
+  var logger = require('logger');
+  var notification = require('notification');
+  var stringUtils = require('stringUtils');
+  var notifier = require('entryEditor/notifications');
+  var spaceContext = require('spaceContext');
+  var truncate = require('stringUtils').truncate;
+  var accessChecker = require('accessChecker');
+  var K = require('utils/kefir');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
@@ -46,20 +47,9 @@ angular.module('contentful')
     $scope.title = truncate(title, 50);
   });
 
-  $scope.$watch(function (scope) {
-    if (scope.otDoc.doc && scope.asset) {
-      if (angular.isDefined(scope.asset.getPublishedVersion())) {
-        return scope.otDoc.doc.version > scope.asset.getPublishedVersion() + 1;
-      } else {
-        return 'draft';
-      }
-    } else {
-      return undefined;
-    }
-  }, function (modified) {
-    if (modified !== undefined) $scope.context.dirty = modified;
+  K.onValueScope($scope, $scope.otDoc.state.isDirty, function (isDirty) {
+    $scope.context.dirty = isDirty;
   });
-
 
   // OT Stuff
   $scope.$watch(function assetEditorDisabledWatcher (scope) {

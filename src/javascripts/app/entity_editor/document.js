@@ -77,6 +77,26 @@ function ($scope, $injector, entity, contentType) {
       return entity.data.sys;
     });
 
+
+  /**
+   * @ngdoc property
+   * @module cf.app
+   * @name Document#state.isDirty
+   * @description
+   * Property that is `false` if and only if the document is published
+   * and does not contain changes relative to the published version.
+   *
+   * Note that an entry is in the same state as its published version
+   * if and only if its version is on more than the published version.
+   *
+   * @type {Property<boolean>}
+   */
+  var isDirty = sysProperty.map(function (sys) {
+    return sys.publishedVersion
+      ? sys.version > sys.publishedVersion + 1
+      : true;
+  });
+
   /**
    * @ngdoc method
    * @module cf.app
@@ -108,7 +128,8 @@ function ($scope, $injector, entity, contentType) {
     state: {
       editable: false,
       error: false,
-      saving: false
+      saving: false,
+      isDirty: isDirty
     },
 
     getValueAt: getValueAt,
