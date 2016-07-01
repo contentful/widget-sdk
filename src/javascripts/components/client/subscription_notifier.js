@@ -43,7 +43,7 @@ angular.module('contentful')
         notify(timeLeftInTrialMsg(hoursLeft, organization, userOwnsOrganization));
       }
     } else if (subscription.isLimitedFree()) {
-      notify(limitedFreeVersionMsg());
+      notify(limitedFreeVersionMsg(organization.subscriptionPlan));
     }
 
     function notify (message) {
@@ -99,9 +99,10 @@ angular.module('contentful')
     return baseMsg + (userIsOrganizationOwner ? ownerMsg : userMsg);
   }
 
-  function limitedFreeVersionMsg () {
-    return '<strong>Limited free version.</strong> You are currently ' +
-      'enjoying our limited Starter plan. To get access to all features, ' +
+  function limitedFreeVersionMsg (subscriptionPlan) {
+    var name = dotty.get(subscriptionPlan, 'name', 'free').toLowerCase();
+    return '<strong>Limited free version.</strong> You are currently enjoying ' +
+      'our limited ' + name + ' plan. To get access to all features, ' +
       'please upgrade to a paid subscription plan.';
   }
 
