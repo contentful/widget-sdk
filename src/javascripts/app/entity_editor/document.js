@@ -351,6 +351,7 @@ function ($scope, $injector, entity, contentType) {
       $scope.$apply(function () {
         entity.setVersion(controller.doc.version);
         entity.data.sys.updatedAt = moment().toISOString();
+        sysChangeBus.emit();
       });
     }
   }
