@@ -88,7 +88,6 @@ angular.module('contentful')
     },
     getValue: fieldLocaleDoc.get,
     setValue: fieldLocaleDoc.set,
-    setString: fieldLocaleDoc.setString,
     removeValue: fieldLocaleDoc.remove,
     removeValueAt: fieldLocaleDoc.removeAt,
     insertValue: fieldLocaleDoc.insert,

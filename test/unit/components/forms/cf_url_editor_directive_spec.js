@@ -61,18 +61,18 @@ describe('cfUrlEditor directive', function () {
 
     /*
      * Since onValueChanged handler is called when attached
-     * we reset call count setString as it is called
+     * we reset call count setValue as it is called
      * by the handler given to onValueChanged.
      * Handler is called when attached as the signal for it
      * is of type `memoized`. See createMemoized method in
      * signal.js
      */
-    this.widgetApi.field.setString.reset();
+    this.widgetApi.field.setValue.reset();
     $inputEl.val('unicorns');
     $inputEl.trigger('input');
 
-    sinon.assert.calledOnce(this.widgetApi.field.setString);
-    sinon.assert.calledWithExactly(this.widgetApi.field.setString, 'unicorns');
+    sinon.assert.calledOnce(this.widgetApi.field.setValue);
+    sinon.assert.calledWithExactly(this.widgetApi.field.setValue, 'unicorns');
   });
 
   it('should be disabled when disabled flag is set', function () {

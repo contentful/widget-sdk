@@ -93,7 +93,7 @@ angular.module('contentful')
         return $inputEl.val();
       }, function (val) {
         updateStateFromSlug(val);
-        field.setString(val);
+        field.setValue(val);
       });
 
       $inputEl.on('input change', debounce(function () {

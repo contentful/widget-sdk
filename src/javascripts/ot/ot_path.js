@@ -69,7 +69,6 @@ angular.module('contentful')
 
 
   _.extend(this, {
-    setString: $scope.otDoc.setStringAt.bind(null, path),
     set: set,
     get: get,
     remove: remove,
