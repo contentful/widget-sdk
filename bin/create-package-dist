@@ -12,7 +12,9 @@ if [[ -z "$TRAVIS_COMMIT" ]]; then
   exit 1
 fi
 
-which fpm >/dev/null || gem install fpm
+# Version 2.x of the json gem does not work with ruby<2 which is used
+# on travis by default.
+which fpm >/dev/null || gem install 'json:<2.0' fpm
 
 package_name="cf-user-interface"
 version="0.$(date '+%s')-g$(git log -1 --pretty=format:%h)"
