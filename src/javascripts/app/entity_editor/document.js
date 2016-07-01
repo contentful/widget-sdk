@@ -54,6 +54,23 @@ function ($scope, $injector, entity) {
   // `$scope.entity.data`.
   K.onValueScope($scope, changes, otUpdateEntityData);
 
+
+  /**
+   * @ngdoc property
+   * @module cf.app
+   * @name Document#sysProperty
+   * @description
+   * A property that keeps the value of the entity’s `sys` property.
+   *
+   * @type {Property<Data.Sys>}
+   */
+  var sysChangeBus = K.createBus($scope);
+  var sysProperty = sysChangeBus.stream
+    .toProperty(_.noop)
+    .map(function () {
+      return entity.data.sys;
+    });
+
   /**
    * @ngdoc method
    * @module cf.app
@@ -98,6 +115,7 @@ function ($scope, $injector, entity) {
 
     changes: changes,
     valuePropertyAt: memoizedValuePropertyAt,
+    sysProperty: sysProperty,
 
     open: open,
     close: close
@@ -363,6 +381,7 @@ function ($scope, $injector, entity) {
       }
       data.sys.version = controller.doc.version;
       entity.update(data);
+      sysChangeBus.emit();
     } else {
       logger.logSharejsError('otUpdateEntityData did not update', {
         data: {

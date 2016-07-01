@@ -107,10 +107,9 @@ angular.module('contentful')
         }
       }
 
-      // TODO use a stream instead of a watcher
-      scope.$watch('entry.data.sys', function (sys) {
+      K.onValueScope(scope, doc.sysProperty, function (sys) {
         widgetAPI.send('sysChanged', [sys]);
-      }, true);
+      });
 
       var fieldChanges = doc.changes.filter(function (path) {
         return path[0] === 'fields';

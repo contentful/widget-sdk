@@ -520,4 +520,35 @@ describe('entityEditor/Document', function () {
       });
     });
   });
+
+  describe('#sysProperty', function () {
+    it('holds entity.data.sys as initial value', function () {
+      this.entity.data.sys = 'SYS';
+      var cb = sinon.spy();
+      this.doc.sysProperty.onValue(cb);
+      sinon.assert.calledWith(cb, 'SYS');
+    });
+
+    it('updates value when "acknowledge" event is emitted on doc', function () {
+      var doc = this.connectAndOpen();
+      var cb = sinon.spy();
+      this.doc.sysProperty.onValue(cb);
+      cb.reset();
+
+      doc.snapshot.sys.id = 'NEW ID';
+      doc.on.withArgs('acknowledge').yield();
+      this.$apply();
+
+      sinon.assert.calledWith(cb, sinon.match({id: 'NEW ID'}));
+    });
+
+    it('updates value when document is opened', function () {
+      var cb = sinon.spy();
+      this.doc.sysProperty.onValue(cb);
+      cb.reset();
+
+      this.connectAndOpen({sys: {id: 'NEW ID'}});
+      sinon.assert.calledWith(cb, sinon.match({id: 'NEW ID'}));
+    });
+  });
 });

@@ -70,6 +70,7 @@ describe('cfIframeWidget directive', function () {
 
   describe('"isDisabledChanged" handler', function () {
     it('sends new isDisabled value using the widget api', function () {
+      this.$apply();
       widgetAPI.send.reset();
       this.scope.fieldLocale.access.disabled = 'NEWVALUE';
       this.$apply();

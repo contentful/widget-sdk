@@ -241,9 +241,9 @@ describe('Extension SDK', function () {
         expect(sys).toEqual(SYS_0);
       });
 
-      it('returns updated value when scope property changes', function* (api) {
+      it('returns updated value when document property changes', function* (api) {
         expect(api.entry.getSys()).toEqual(SYS_0);
-        this.scope.entry.data.sys = SYS_1;
+        this.doc.sysProperty.set(SYS_1);
         yield api.nextTick();
         expect(api.entry.getSys()).toEqual(SYS_1);
       });
@@ -256,11 +256,11 @@ describe('Extension SDK', function () {
         sinon.assert.calledWith(listener, SYS_0);
       });
 
-      it('calls listener when scope property changes', function* (api) {
+      it('calls listener when document property changes', function* (api) {
         const listener = sinon.stub();
         api.entry.onSysChanged(listener);
         listener.reset();
-        this.scope.entry.data.sys = SYS_1;
+        this.doc.sysProperty.set(SYS_1);
         yield api.nextTick();
         sinon.assert.calledWith(listener, SYS_1);
       });
