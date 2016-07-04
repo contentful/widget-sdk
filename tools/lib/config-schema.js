@@ -76,6 +76,10 @@ function integrations () {
     totango: {
       type: 'string',
       pattern: '^SP-\\d{4}-\\d{2}$'
+    },
+    googleTagManagerContainer: {
+      type: 'string',
+      pattern: '^GTM-\\w{6}$'
     }
   }
 }

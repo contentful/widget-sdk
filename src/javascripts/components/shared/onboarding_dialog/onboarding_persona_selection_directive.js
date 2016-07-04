@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.directive('cfOnboardingPersonaSelection', function() {
+.directive('cfOnboardingPersonaSelection', function () {
   return {
     restrict: 'E',
     template: JST['onboarding_persona_selection'](),
@@ -9,13 +9,12 @@ angular.module('contentful')
     controllerAs: 'personaController'
   };
 })
-.controller('OnboardingPersonaController', ['$scope', '$injector', '$attrs', function($scope, $injector, $attrs) {
-
+.controller('OnboardingPersonaController', ['$scope', '$attrs', 'require', function ($scope, $attrs, require) {
+  var analytics = require('analyticsEvents');
   var controller = this;
-  var analytics  = $injector.get('analytics');
 
   // Should the space creation step be shown?
-  $attrs.$observe('showCreateSpace', function(showCreateSpace) {
+  $attrs.$observe('showCreateSpace', function (showCreateSpace) {
     controller.showCreateSpace = showCreateSpace === 'true';
   });
 
@@ -23,23 +22,21 @@ angular.module('contentful')
   controller.personaOptions = getPersonaOptions();
 
   // User clicks an option
-  controller.selectOption = function(opt) {
+  controller.selectOption = function (opt) {
     controller.selectedPersona = opt;
   };
 
-  controller.skipSelection = function() {
-    analytics.track('Skipped Persona Selection');
+  controller.skipSelection = function () {
+    analytics.persona.trackSkipped();
     $scope.$emit('skipPersonaSelection');
   };
 
-  controller.submitPersonaSelection = function(personaSelected) {
-    makeSelection({
-      personaName: getSegmentName(personaSelected)
-    });
+  controller.submitPersonaSelection = function (personaSelected) {
+    analytics.persona.trackSelected(personaSelected);
     $scope.$emit('submitPersonaSelection');
   };
 
-  function getPersonaOptions() {
+  function getPersonaOptions () {
     return {
       code: {
         title: 'I write code',
@@ -63,30 +60,4 @@ angular.module('contentful')
       }
     };
   }
-
-  function makeSelection(obj) {
-    // Remove unnecessary values from object
-    var segmentObj = _.pickBy(obj, hasValue);
-
-    // Add to user data, and track event
-    analytics.addIdentifyingData(segmentObj);
-    analytics.track('Selected Persona', segmentObj);
-
-    // Returns true if val is a non-empty string, otherwise false
-    function hasValue(val) {
-      return typeof val === 'string' && val.length;
-    }
-  }
-
-  function getSegmentName(personaName) {
-    var map = {
-      code: 'Coder',
-      content: 'Content Manager',
-      project: 'Project Manager',
-      other: 'Other'
-    };
-    return map[personaName];
-  }
-
 }]);
-
