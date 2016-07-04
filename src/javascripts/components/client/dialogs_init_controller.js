@@ -14,13 +14,10 @@ angular.module('contentful')
 
   var $rootScope = require('$rootScope');
   var spaceContext = require('spaceContext');
-  var OrganizationList = require('OrganizationList');
   var activationEmailResendController = require('activationEmailResendController');
   var onboardingController = require('onboardingController');
   var subscriptionNotifier = require('subscriptionNotifier');
   var billingNotifier = require('billingNotifier');
-
-  var lastSpaceId = spaceContext.getId();
 
   return {
     init: init
@@ -40,7 +37,10 @@ angular.module('contentful')
     initSpaceWatcher();
   }
 
-  function onSpaceChanged () {
+  function onSpaceChanged (spaceId) {
+    if (!spaceId) {
+      return;
+    }
     var organization = spaceContext.getData('organization') || {};
 
     subscriptionNotifier.notifyAbout(organization);
@@ -48,20 +48,9 @@ angular.module('contentful')
   }
 
   function initSpaceWatcher () {
-    $rootScope.$watchCollection(function () {
-      return {
-        spaceId: spaceContext.getId(),
-        isInitialized: !OrganizationList.isEmpty()
-      };
-    }, watchSpace);
-  }
-
-  function watchSpace (args) {
-    if (!args.spaceId || !args.isInitialized || args.spaceId === lastSpaceId) {
-      return;
-    }
-    lastSpaceId = args.spaceId;
-    onSpaceChanged();
+    $rootScope.$watch(function () {
+      return spaceContext.getId();
+    }, onSpaceChanged);
   }
 
 }]);
