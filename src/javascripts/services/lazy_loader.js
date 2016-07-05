@@ -157,6 +157,11 @@ angular.module('contentful')
     bugsnag: {
       url: 'https://d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js',
       globalObject: 'Bugsnag'
+    },
+    googleTagManager: {
+      url: 'https://www.googletagmanager.com/gtm.js?l=gtmDataLayer&' +
+              'id=' + environment.settings.googleTagManagerContainer,
+      globalObject: 'gtmDataLayer'
     }
   };
 
