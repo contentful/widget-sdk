@@ -106,18 +106,4 @@ describe('Entry Editor Controller', function () {
       expect(scope.context.dirty).toBe('draft');
     });
   });
-
-  it('when doc loads adds objects for every field', function () {
-    scope = this.createController();
-    scope.entry.data.fields = {
-      A: {},
-      B: {}
-    };
-    var doc = scope.otDoc.doc;
-    expect(doc.snapshot.fields).toBe(undefined);
-
-    this.$apply();
-    expect(doc.snapshot.fields['A']).toEqual({});
-    expect(doc.snapshot.fields['B']).toEqual({});
-  });
 });

@@ -33,7 +33,8 @@ angular.module('contentful')
   // TODO rename the scope property
   $scope.otDoc = $controller('entityEditor/Document', {
     $scope: $scope,
-    entity: $scope.entity
+    entity: $scope.entity,
+    contentType: null
   });
 
   $controller('entityEditor/FieldAccessController', {$scope: $scope});
