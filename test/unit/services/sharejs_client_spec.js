@@ -22,6 +22,7 @@ describe('ShareJS/Client', function () {
 
     it('creates a new connection', function () {
       var $window = this.$inject('$window');
+      /* eslint no-new: "off" */
       new Client();
       sinon.assert.calledOnce($window.sharejs.Connection);
     });

@@ -146,10 +146,10 @@ angular.module('contentful')
   }
 }])
 
-.factory('ShareJS/Client', ['$injector', function ($injector) {
-  var $rootScope = $injector.get('$rootScope');
-  var $window = $injector.get('$window');
-  var $q = $injector.get('$q');
+.factory('ShareJS/Client', ['require', function (require) {
+  var $rootScope = require('$rootScope');
+  var $window = require('$window');
+  var $q = require('$q');
 
   // List of `connection.state` values that indicate no failure
   var VALID_STATES = ['connecting', 'handshaking', 'ok'];
