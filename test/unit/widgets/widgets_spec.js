@@ -4,23 +4,16 @@ describe('widgets', function () {
   var widgets;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
-      function mockWidgetStore () {
-        function WidgetStore (space) {
-          this.space = space;
-        }
-        WidgetStore.prototype.getMap = sinon.stub();
-        return WidgetStore;
-      }
+    module('contentful/test');
 
-      $provide.factory('widgets/store', mockWidgetStore);
-    });
+    const Store = this.$inject('widgets/store');
+    this.storeGetMap = sinon.stub();
+    Store.create = _.constant({getMap: this.storeGetMap});
 
     this.setupWidgets = function (ws) {
       var builtinWidgets = this.$inject('widgets/builtin');
 
-      var WidgetStore = this.$inject('widgets/store');
-      WidgetStore.prototype.getMap.resolves(ws || builtinWidgets);
+      this.storeGetMap.resolves(ws || builtinWidgets);
 
       widgets = this.$inject('widgets');
       widgets.setSpace();
@@ -29,19 +22,20 @@ describe('widgets', function () {
 
   });
 
+  afterEach(function () {
+    widgets = null;
+  });
+
   describe('#setSpace()', function () {
 
     beforeEach(function () {
-      var WidgetStore = this.$inject('widgets/store');
-      WidgetStore.prototype.getMap.resolves();
+      this.storeGetMap.resolves();
       widgets = this.$inject('widgets');
     });
 
     it('calls WidgetStore.getMap()', function () {
-      var WidgetStore = this.$inject('widgets/store');
-      var space = {};
-      widgets.setSpace(space);
-      sinon.assert.calledWithExactly(WidgetStore.prototype.getMap);
+      widgets.setSpace({});
+      sinon.assert.calledWithExactly(this.storeGetMap);
     });
 
     pit('returns the service when the store has fetched the widgets', function () {
@@ -65,11 +59,9 @@ describe('widgets', function () {
     });
 
     it('calls store.getMap()', function () {
-      var WidgetStore = this.$inject('widgets/store');
-      var getMap = WidgetStore.prototype.getMap;
-      sinon.assert.calledOnce(getMap);
+      this.storeGetMap.reset();
       widgets.getAvailable('number');
-      sinon.assert.calledTwice(getMap);
+      sinon.assert.calledOnce(this.storeGetMap);
     });
 
 

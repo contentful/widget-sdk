@@ -91,7 +91,7 @@ angular.module('contentful')
    * @returns {Promise<Void>}
    */
   function setSpace (space) {
-    store = new WidgetStore(space);
+    store = WidgetStore.create(space);
     return refreshWidgetCache();
   }
 
