@@ -5,8 +5,8 @@ describe('widgets', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      function mockWidgetStore() {
-        function WidgetStore(space) {
+      function mockWidgetStore () {
+        function WidgetStore (space) {
           this.space = space;
         }
         WidgetStore.prototype.getMap = sinon.stub();
@@ -16,7 +16,7 @@ describe('widgets', function () {
       $provide.factory('widgets/store', mockWidgetStore);
     });
 
-    this.setupWidgets = function(ws) {
+    this.setupWidgets = function (ws) {
       var builtinWidgets = this.$inject('widgets/builtin');
 
       var WidgetStore = this.$inject('widgets/store');
@@ -52,7 +52,7 @@ describe('widgets', function () {
     });
   });
 
-  describe('#getAvailable()', function(){
+  describe('#getAvailable()', function () {
     beforeEach(function () {
       // Disable checking if a widget is misconfigured since this
       // involves API requests.
@@ -64,7 +64,7 @@ describe('widgets', function () {
       this.setupWidgets();
     });
 
-    it('calls store.getMap()', function() {
+    it('calls store.getMap()', function () {
       var WidgetStore = this.$inject('widgets/store');
       var getMap = WidgetStore.prototype.getMap;
       sinon.assert.calledOnce(getMap);
@@ -74,26 +74,26 @@ describe('widgets', function () {
 
 
     function testAvailableForFieldType (fieldType) {
-      describe('for field type "' + fieldType + '"', function() {
+      describe('for field type "' + fieldType + '"', function () {
         var availableWidgets;
-        beforeEach(function() {
+        beforeEach(function () {
           widgets.getAvailable({type: fieldType}).then(function (_widgets) {
             availableWidgets = _widgets;
           });
           this.$apply();
         });
 
-        it('returns at least one widget', function() {
+        it('returns at least one widget', function () {
           expect(availableWidgets.length).toBeGreaterThan(0);
         });
 
-        it('each widget has "id" and "name" property', function() {
+        it('each widget has "id" and "name" property', function () {
           expect(_.every(availableWidgets, function (widget) {
             return widget.id && widget.name;
           })).toBe(true);
         });
 
-        it('has options property from builtin descriptor', function() {
+        it('has options property from builtin descriptor', function () {
           var builtins = this.$inject('widgets/builtin');
           availableWidgets.forEach(function (widget) {
             var builtin = builtins[widget.id];
@@ -118,7 +118,7 @@ describe('widgets', function () {
     testAvailableForFieldType('File');
     testAvailableForFieldType('Object');
 
-    it('rejects promise if field type has no widget', function() {
+    it('rejects promise if field type has no widget', function () {
       var err;
       widgets.getAvailable({type: 'unsupportedtype'}).catch(function (_err) {
         err = _err;
@@ -190,10 +190,10 @@ describe('widgets', function () {
     });
   });
 
-  describe('#filterOptions(opts, params)', function() {
+  describe('#filterOptions(opts, params)', function () {
     var filtered, options;
 
-    beforeEach(function() {
+    beforeEach(function () {
       options = [
         {param: 'x', default: 0},
         {param: 'y', default: 0}
@@ -203,58 +203,58 @@ describe('widgets', function () {
       });
     });
 
-    function feedTest(pairs) {
-      pairs.forEach(function(pair) {
+    function feedTest (pairs) {
+      pairs.forEach(function (pair) {
         var params = _.isObject(pair[0]) ? pair[0] : {x: pair[0]};
         filtered = widgets.filterOptions(options, params);
         expect(filtered.length).toEqual(pair[1]);
       });
     }
 
-    it('returns all options when no dependencies specified', function() {
-      feedTest([[1,2]]);
+    it('returns all options when no dependencies specified', function () {
+      feedTest([[1, 2]]);
     });
 
-    it('removes option if no dependencies are met (one acceptable value)', function() {
+    it('removes option if no dependencies are met (one acceptable value)', function () {
       options[1].dependsOnAny = {x: 'test'};
-      feedTest([[2,1], [null, 1], ['test', 2]]);
+      feedTest([[2, 1], [null, 1], ['test', 2]]);
     });
 
-    it('removes option if no dependencies are met (multiple acceptable values)', function() {
+    it('removes option if no dependencies are met (multiple acceptable values)', function () {
       options[1].dependsOnAny = {x: [1, 3, 8]};
-      feedTest([[2,1], ['test',1], [null, 1], [1,2], [3,2], [8,2]]);
+      feedTest([[2, 1], ['test', 1], [null, 1], [1, 2], [3, 2], [8, 2]]);
     });
 
-    it('removes option if no dependencies are met (depending on multiple params)', function() {
+    it('removes option if no dependencies are met (depending on multiple params)', function () {
       var deps = {};
       options.push({param: 'z', default: 0, dependsOnAny: deps});
       deps.x = [1000, 'test'];
       deps.y = 'hello';
 
       feedTest([
-        [{x: 1000,   y: 'foo'  }, 3],
-        [{x: 'test', y: 'foo'  }, 3],
-        [{x: 'bar',  y: 'hello'}, 3],
-        [{x: 1000,   y: 'hello'}, 3],
+        [{x: 1000, y: 'foo'}, 3],
+        [{x: 'test', y: 'foo'}, 3],
+        [{x: 'bar', y: 'hello'}, 3],
+        [{x: 1000, y: 'hello'}, 3],
         [{x: 'test', y: 'hello'}, 3],
-        [{x: -1,     y: -1     }, 2],
-        [{x: null,   y: -1     }, 2],
-        [{x: -1,     y: null   }, 2],
-        [{x: null,   y: null   }, 2]
+        [{x: -1, y: -1}, 2],
+        [{x: null, y: -1}, 2],
+        [{x: -1, y: null}, 2],
+        [{x: null, y: null}, 2]
       ]);
     });
 
-    it('removes option if some of dependencies are not met', function() {
+    it('removes option if some of dependencies are not met', function () {
       var deps = {};
       options.push({param: 'z', default: 0, dependsOnEvery: deps});
       deps.x = 42;
       deps.y = 'hello';
 
       feedTest([
-        [{x: 42,   y: 'hello'}, 3],
-        [{x: 42,   y: 'hi!'  }, 2],
-        [{x: -1,   y: 'hello'}, 2],
-        [{x: null, y: -1     }, 2]
+        [{x: 42, y: 'hello'}, 3],
+        [{x: 42, y: 'hi!'}, 2],
+        [{x: -1, y: 'hello'}, 2],
+        [{x: null, y: -1}, 2]
       ]);
     });
   });
@@ -262,7 +262,7 @@ describe('widgets', function () {
   describe('#buildRenderable()', function () {
     var descriptor, field;
 
-    beforeEach(function() {
+    beforeEach(function () {
       descriptor = { fieldTypes: ['Symbol'] };
       field = { type: 'Symbol' };
 
@@ -287,7 +287,7 @@ describe('widgets', function () {
     it('filters widgets without field', function () {
       var renderable = widgets.buildRenderable([
         {widgetId: 'HAS_FIELD', field: {}},
-        {widgetId: 'NO_FIELD'},
+        {widgetId: 'NO_FIELD'}
       ]);
       expect(renderable.form.length).toBe(1);
       expect(renderable.form[0].widgetId).toBe('HAS_FIELD');

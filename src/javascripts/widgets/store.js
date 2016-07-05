@@ -26,7 +26,7 @@ angular.module('contentful')
     'name', 'src', 'srcdoc', 'sidebar', 'options'
   ];
 
-  function WidgetStore(space) {
+  function WidgetStore (space) {
     this.space = space;
   }
 
@@ -46,7 +46,7 @@ angular.module('contentful')
    * @returns {Promise<object>}
    */
 
-  WidgetStore.prototype.getMap = function() {
+  WidgetStore.prototype.getMap = function () {
     if (!this.space) {
       return $q.reject(new Error('Space is not set'));
     }

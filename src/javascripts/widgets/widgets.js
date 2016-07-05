@@ -5,12 +5,12 @@
  * @name widgets
  */
 angular.module('contentful')
-.factory('widgets', ['$injector', function($injector) {
-  var $q           = $injector.get('$q');
-  var fieldFactory = $injector.get('fieldFactory');
-  var checks       = $injector.get('widgets/checks');
-  var deprecations = $injector.get('widgets/deprecations');
-  var WidgetStore  = $injector.get('widgets/store');
+.factory('widgets', ['require', function (require) {
+  var $q = require('$q');
+  var fieldFactory = require('fieldFactory');
+  var checks = require('widgets/checks');
+  var deprecations = require('widgets/deprecations');
+  var WidgetStore = require('widgets/store');
 
   /**
    * @ngdoc type
@@ -59,18 +59,18 @@ angular.module('contentful')
   var store;
 
   var widgetsService = {
-    get:                 getWidget,
-    getAvailable:        getAvailable,
-    buildRenderable:     buildRenderable,
-    filterOptions:       filterOptions,
-    applyDefaults:       applyDefaults,
-    filteredParams:      filteredParams,
-    setSpace:            setSpace
+    get: getWidget,
+    getAvailable: getAvailable,
+    buildRenderable: buildRenderable,
+    filterOptions: filterOptions,
+    applyDefaults: applyDefaults,
+    filteredParams: filteredParams,
+    setSpace: setSpace
   };
   return widgetsService;
 
-  function refreshWidgetCache() {
-    return store.getMap().then(function(widgets) {
+  function refreshWidgetCache () {
+    return store.getMap().then(function (widgets) {
       WIDGETS = widgets;
       return widgetsService;
     });
@@ -95,7 +95,7 @@ angular.module('contentful')
     return refreshWidgetCache();
   }
 
-  function getWidget(id) {
+  function getWidget (id) {
     return WIDGETS[id];
   }
 
@@ -131,19 +131,19 @@ angular.module('contentful')
     .then(checks.markMisconfigured);
   }
 
-  function typesForField(field) {
+  function typesForField (field) {
     var fieldType = fieldFactory.getTypeName(field);
     var widgets = _.filter(WIDGETS, function (widget) {
       return _.includes(widget.fieldTypes, fieldType);
     });
     if (_.isEmpty(widgets)) {
-      return $q.reject(new Error('Field type '+fieldType+' is not supported by any widget.'));
+      return $q.reject(new Error('Field type ' + fieldType + ' is not supported by any widget.'));
     } else {
       return $q.resolve(widgets);
     }
   }
 
-  function optionsForWidget(widgetId) {
+  function optionsForWidget (widgetId) {
     return dotty.get(WIDGETS, [widgetId, 'options'], []);
   }
 
@@ -176,11 +176,11 @@ angular.module('contentful')
    * @param {Widget.Option[]} options
    * @param {object} params
    */
-  function filterOptions(widgetOptions, settings) {
+  function filterOptions (widgetOptions, settings) {
     settings = _.isObject(settings) ? settings : {};
     return _.filter(widgetOptions || [], shouldOptionBeVisible);
 
-    function shouldOptionBeVisible(option) {
+    function shouldOptionBeVisible (option) {
       var dependencies = option.dependsOnEvery || option.dependsOnAny;
       var everyOrSome = option.dependsOnEvery ? 'every' : 'some';
 
@@ -191,7 +191,7 @@ angular.module('contentful')
       return _[everyOrSome](dependencies, areMet);
     }
 
-    function areMet(acceptedValues, paramName) {
+    function areMet (acceptedValues, paramName) {
       acceptedValues = _.isArray(acceptedValues) ? acceptedValues : [acceptedValues];
       return _.includes(acceptedValues, settings[paramName]);
     }
@@ -273,7 +273,7 @@ angular.module('contentful')
   }
 
   function getWarningTemplate (widgetId, message) {
-    var accessChecker = $injector.get('accessChecker');
+    var accessChecker = require('accessChecker');
     return JST.editor_control_warning({
       label: widgetId,
       message: message,
