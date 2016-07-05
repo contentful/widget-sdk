@@ -13,7 +13,7 @@ angular.module('contentful')
   var OrganizationList = $injector.get('OrganizationList');
   var htmlEncode = $injector.get('encoder').htmlEncode;
   var openPaywall = $injector.get('paywallOpener').openPaywall;
-  var subscriptionStore = $injector.get('subscriptionStore');
+  var Subscription = $injector.get('Subscription');
 
   return {
     /**
@@ -30,7 +30,7 @@ angular.module('contentful')
   function notifyAbout (organization) {
     var organizationId = dotty.get(organization, 'sys.id');
     var userOwnsOrganization = OrganizationList.isOwner(organizationId);
-    var subscription = subscriptionStore.get(organizationId);
+    var subscription = Subscription.newFromOrganization(organization);
 
     if (!subscription) {
       return;

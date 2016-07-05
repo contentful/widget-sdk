@@ -2,47 +2,27 @@
 
 /**
  * @ngdoc service
- * @name subscriptionStore
+ * @name Subscription
  *
  * @description
- * Uses global organizations state to build subscription objects.
+ * Represents an organization's subscription.
  */
 angular.module('contentful')
-.factory('subscriptionStore', ['$injector', function ($injector) {
+.factory('Subscription', ['$injector', function ($injector) {
 
-  var OrganizationList = $injector.get('OrganizationList');
-  var spaceContext = $injector.get('spaceContext');
   var moment = $injector.get('moment');
 
   return {
     /**
      * @ngdoc method
-     * @name subscriptionStore#get
-     * @param {string} organizationId
-     * @returns {object|null}
+     * @name subscription#get
+     * @param {object} organization
+     * @returns {object}
      * @description
-     * Gets the subscription of an organization by its provided ID.
+     * Creates a Subscription object from given organization data.
      */
-    get: get,
-    /**
-     * @ngdoc method
-     * @name subscriptionStore#getCurrent
-     * @returns {object|null}
-     * @description
-     * Gets the current space's organization's subscription.
-     */
-    getCurrent: getCurrent
+    newFromOrganization: newFromOrganization
   };
-
-  function get (organizationId) {
-    var org = OrganizationList.get(organizationId);
-    return org ? newFromOrganization(org) : null;
-  }
-
-  function getCurrent () {
-    var org = spaceContext.getData('organization');
-    return org ? newFromOrganization(org) : null;
-  }
 
   function newFromOrganization (org) {
     var trialEndMoment = moment(org.trialPeriodEndsAt);

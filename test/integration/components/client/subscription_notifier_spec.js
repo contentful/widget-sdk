@@ -4,7 +4,7 @@
  * @covers dialogsInitController
  * @covers subscriptionNotifier
  * @covers OrganizationList
- * @covers subscriptionStore
+ * @covers Subscription
  */
 describe('subscriptionNotifier', function () {
   var broadcastStub, openPaywallStub;

@@ -32,6 +32,7 @@ angular.module('contentful')
   var createEIRepo = $injector.get('data/editingInterfaces');
   var createQueue = $injector.get('overridingRequestQueue');
   var ApiClient = $injector.get('data/ApiClient');
+  var Subscription = $injector.get('Subscription');
 
   var requestContentTypes = createQueue(function (extraHandler) {
     return spaceContext.space.getContentTypes({order: 'name', limit: 1000})
@@ -93,6 +94,9 @@ angular.module('contentful')
       self.cma = new ApiClient(endpoint);
       self.users = createUserCache(space);
       self.editingInterfaces = createEIRepo(endpoint);
+      var organization = self.getData('organization') || null;
+      self.subscription =
+        organization && Subscription.newFromOrganization(organization);
       TheLocaleStore.resetWithSpace(space);
       return Widgets.setSpace(space).then(function (widgets) {
         self.widgets = widgets;
