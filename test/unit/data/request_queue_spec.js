@@ -1,10 +1,10 @@
 'use strict';
 
-describe('Client - request queue', function () {
+describe('data/requestQueue', function () {
   beforeEach(function () {
-    module('contentful/test');
+    module('cf.data', 'ngMock');
 
-    var wrap = this.$inject('client/requestQueue').create;
+    var wrap = this.$inject('data/requestQueue').create;
     this.$timeout = this.$inject('$timeout');
     this.$q = this.$inject('$q');
 
