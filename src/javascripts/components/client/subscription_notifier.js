@@ -44,10 +44,6 @@ angular.module('contentful')
       }
     } else if (subscription.isLimitedFree()) {
       notify(limitedFreeVersionMsg());
-    } else {
-      // Remove last notification. E.g. after switching into another
-      // organization's space without any trial issues.
-      $rootScope.$broadcast('persistentNotification', null);
     }
 
     function notify (message) {

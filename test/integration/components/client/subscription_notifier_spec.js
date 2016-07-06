@@ -244,31 +244,31 @@ describe('subscriptionNotifier', function () {
 
   function itShowsAMessage (match) {
     it('shows a message', function () {
-      expect(broadcastStub.args[0][1].message).toMatch(match);
+      expect(broadcastStub.args[1][1].message).toMatch(match);
     });
   }
 
   function itShowsAnActionMessage () {
     it('shows an action message', function () {
-      expect(broadcastStub.args[0][1].actionMessage).toMatch(/upgrade/i);
+      expect(broadcastStub.args[1][1].actionMessage).toMatch(/upgrade/i);
     });
   }
 
   function itDoesNotShowAnActionMessage () {
     it('does not show an action message', function () {
-      expect(broadcastStub.args[0][1].actionMessage).toBeUndefined();
+      expect(broadcastStub.args[1][1].actionMessage).toBeUndefined();
     });
   }
 
   function itHasAnAction () {
     it('has an action', function () {
-      expect(typeof broadcastStub.args[0][1].action).toBe('function');
+      expect(typeof broadcastStub.args[1][1].action).toBe('function');
     });
   }
 
   function itDoesNotHaveAnAction () {
     it('does not have an action', function () {
-      expect(broadcastStub.args[0][1].action).toBeUndefined();
+      expect(broadcastStub.args[1][1].action).toBeUndefined();
     });
   }
 
