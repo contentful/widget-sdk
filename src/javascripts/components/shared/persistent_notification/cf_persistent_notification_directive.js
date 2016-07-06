@@ -6,6 +6,7 @@ angular.module('contentful')
   var $sce = require('$sce');
   var $timeout = require('$timeout');
   var analytics = require('analytics');
+  var logger = require('logger');
 
   return {
     restrict: 'E',
@@ -49,6 +50,9 @@ angular.module('contentful')
 
       if (actualNotifications.length) {
         setNotification(actualNotifications[0]);
+        if (actualNotifications.length > 1) {
+          logConcurrentNotifications(notificationsOfCycle);
+        }
       } else if (includesReset) {
         resetNotification();
       }
@@ -72,4 +76,12 @@ angular.module('contentful')
     }
   }
 
+  function logConcurrentNotifications (notifications) {
+    notifications = notifications.map(function (params) {
+      return params || '*RESET NOTIFICATION*';
+    });
+    logger.logWarn('Concurrent persistent notifications', {
+      notifications: notifications
+    });
+  }
 }]);

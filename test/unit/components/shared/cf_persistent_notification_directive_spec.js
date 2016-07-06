@@ -5,7 +5,11 @@ describe('cfPersistentNotification Directive', function () {
   let $rootScope, $timeout;
 
   beforeEach(function () {
-    module('contentful/test');
+    this.logger = {};
+
+    module('contentful/test', ($provide) => {
+      $provide.value('logger', this.logger);
+    });
 
     $rootScope = this.$inject('$rootScope');
     $timeout = this.$inject('$timeout');
@@ -69,6 +73,7 @@ describe('cfPersistentNotification Directive', function () {
     const PARAMS_2 = { message: 'some message 2' };
 
     beforeEach(function () {
+      this.logger.logWarn = sinon.stub();
       $rootScope.$broadcast('persistentNotification', null);
       $rootScope.$broadcast('persistentNotification', PARAMS_1);
       $rootScope.$broadcast('persistentNotification', PARAMS_2);
@@ -80,6 +85,15 @@ describe('cfPersistentNotification Directive', function () {
 
     it('shows the first message and ignores resets', function () {
       expect($message().text()).toBe(PARAMS_1.message);
+    });
+
+    it('logs concurrent broadcasted notification params', function () {
+      const RESET_NOTE = '*RESET NOTIFICATION*';
+      sinon.assert.calledOnce(this.logger.logWarn);
+      sinon.assert.calledWithExactly(this.logger.logWarn,
+        sinon.match.string,
+        { notifications: [ RESET_NOTE, PARAMS_1, PARAMS_2, RESET_NOTE ] }
+      );
     });
   });
 
