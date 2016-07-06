@@ -71,6 +71,27 @@ mixin entity-sidebar
             | Revert to published
           div(role="menuitem" ui-command="state.revertToPrevious")
             | Revert current changes
+    div(ng-controller="contentPreviewSidebarController" ng-if="entity.getType() === 'Entry'")
+      div(ng-if="contentPreviewEnvironments && contentPreviewEnvironments.length")
+        h2.entity-sidebar__heading
+          | Preview
+        .entity-sidebar__preview
+          a.cfnext-btn-secondary-action.x--block(
+            ng-href="{{selectedEnvironment.compiledUrl}}"
+            target="_blank")
+            i.fa.fa-edit
+            span Open preview
+          .entity-sidebar__preview__toggle
+            div <strong>Platform:</strong> {{selectedEnvironment.name}}
+            a.entity-sidebar__preview__change(cf-context-menu-trigger)
+              | Change
+            .context-menu.x--arrow-right(cf-context-menu="bottom-right")
+              ul.context-menu__items
+                li(
+                  role="menuitem"
+                  ng-click="selectEnvironment(env)"
+                  ng-repeat="env in contentPreviewEnvironments")
+                  | {{env.name}}
 
     h2.entity-sidebar__heading
       | Translation
