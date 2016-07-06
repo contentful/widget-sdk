@@ -16,7 +16,7 @@ describe('widgets/store', function () {
     pit('returns an object including the builtin widgets', function () {
       var builtin = this.$inject('widgets/builtin');
       var builtinIds = _.keys(builtin);
-      var store = new Store(makeSpaceStub());
+      var store = Store.create(makeSpaceStub());
       return store.getMap()
       .then(function (widgets) {
         var widgetIds = _.keys(widgets);
@@ -34,7 +34,7 @@ describe('widgets/store', function () {
           fieldTypes: [{type: 'Array', items: {type: 'Link', linkType: 'Asset'}}]
         }
       };
-      var store = new Store(makeSpaceStub([custom]));
+      var store = Store.create(makeSpaceStub([custom]));
 
       return store.getMap().then(function (widgets) {
         var processed = widgets['CUSTOM'];
@@ -46,17 +46,8 @@ describe('widgets/store', function () {
       });
     });
 
-    it('rejects the promise if there is no space', function (done) {
-      var store = new Store(null);
-      store.getMap()
-      .catch(function () {
-        done();
-      });
-      this.$apply();
-    });
-
     pit('returns only builtins if response fails', function () {
-      var store = new Store({
+      var store = Store.create({
         endpoint: sinon.stub().returns({
           get: sinon.stub().rejects()
         })

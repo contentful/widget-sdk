@@ -107,8 +107,6 @@ test/unit/widgets/channel_spec.js
 test/unit/widgets/default_spec.js
 test/unit/widgets/deprecations_spec.js
 test/unit/widgets/migrations_spec.js
-test/unit/widgets/store_spec.js
-test/unit/widgets/widgets_spec.js
 test/unit/app/entity_editor/locales_controller_spec.js
 test/unit/app/entity_editor/status_notifications_controller_spec.js
 test/unit/app/entry_editor/entry_actions_controller_spec.js
@@ -400,8 +398,6 @@ src/javascripts/widgets/checks.js
 src/javascripts/widgets/default.js
 src/javascripts/widgets/deprecations.js
 src/javascripts/widgets/migrations.js
-src/javascripts/widgets/store.js
-src/javascripts/widgets/widgets.js
 src/javascripts/data/content_types.js
 src/javascripts/data/editing_interfaces/asset_interface.js
 src/javascripts/data/editing_interfaces/transformer.js
