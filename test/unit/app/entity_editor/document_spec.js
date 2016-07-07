@@ -36,6 +36,8 @@ describe('entityEditor/Document', function () {
       ShareJS.connectionFailed.returns(false);
       var doc = new OtDoc(_.cloneDeep(data || this.entity.data));
       this.openDocument.resolves(doc);
+      // Not sure why we need to apply twice. But tests fail otherwise.
+      this.$apply();
       this.$apply();
       return doc;
     };
@@ -114,24 +116,11 @@ describe('entityEditor/Document', function () {
       sinon.assert.calledWith(this.openDocument, this.entity);
     });
 
-    it('sets closed event listener on doc', function () {
-      sinon.assert.calledWith(this.doc.doc.on, 'closed');
-    });
-
     it('calls the document normalizer', function () {
       sinon.assert.calledWith(
         this.normalize,
         this.doc, this.doc.doc.snapshot, this.contentType, this.localeStore.getPrivateLocales()
       );
-    });
-
-    it('sets acknowledge event handler', function () {
-      sinon.assert.calledWith(this.doc.doc.on, 'acknowledge');
-    });
-
-    it('updated version if updateHandler called', function () {
-      this.otDoc.on.withArgs('acknowledge').yield();
-      sinon.assert.called(this.entity.setVersion);
     });
 
     it('calls otUpdateEntityData', function () {
@@ -217,7 +206,8 @@ describe('entityEditor/Document', function () {
       this.entity.update.reset();
 
       this.fireChange = function () {
-        this.otDoc.on.withArgs('change').yield([]);
+        this.otDoc.emit('change', [[]]);
+        this.$apply();
         this.$apply();
       };
     });
@@ -266,10 +256,6 @@ describe('entityEditor/Document', function () {
       scope.$destroy();
     });
 
-    it('removes the change listener', function () {
-      sinon.assert.calledWith(this.otDoc.removeListener, 'change');
-    });
-
     it('closes the doc', function () {
       sinon.assert.called(this.otDoc.close);
     });
@@ -316,13 +302,15 @@ describe('entityEditor/Document', function () {
 
     it('updates entity timestamp if operation was acknowleged', function () {
       this.entity.data.sys.updatedAt = null;
-      this.otDoc.on.withArgs('acknowledge').yield();
+      this.otDoc.emit('acknowledge');
+      this.$apply();
       expect(this.entity.data.sys.updatedAt).toEqual(this.now.toISOString());
     });
 
     it('updates version if operation was acknowleged', function () {
       this.otDoc.version = 'VERSION';
-      this.otDoc.on.withArgs('acknowledge').yield();
+      this.otDoc.emit('acknowledge');
+      this.$apply();
       sinon.assert.calledWith(this.entity.setVersion, 'VERSION');
     });
   });
@@ -528,7 +516,7 @@ describe('entityEditor/Document', function () {
       paths.forEach(function (path, i) {
         doc.setAt(['foo', 'bar'], i);
         cb.reset();
-        doc.on.withArgs('change').yield([{p: path}]);
+        doc.emit('change', [{p: path}]);
         sinon.assert.calledWith(cb, i);
       });
     });
@@ -546,7 +534,7 @@ describe('entityEditor/Document', function () {
       cb.reset();
 
       paths.forEach(function (path, i) {
-        doc.on.withArgs('change').yield([{p: path}]);
+        doc.emit('change', [{p: path}]);
         sinon.assert.notCalled(cb, i);
       });
     });
@@ -566,8 +554,8 @@ describe('entityEditor/Document', function () {
       this.doc.sysProperty.onValue(cb);
       cb.reset();
 
-      doc.snapshot.sys.id = 'NEW ID';
-      doc.on.withArgs('acknowledge').yield();
+      this.entity.data.sys.id = 'NEW ID';
+      doc.emit('acknowledge');
       this.$apply();
 
       sinon.assert.calledWith(cb, sinon.match({id: 'NEW ID'}));
@@ -599,7 +587,7 @@ describe('entityEditor/Document', function () {
       this.docUpdate = function (path, value) {
         this.otDoc.setAt(path, value);
         this.otDoc.version++;
-        this.otDoc.on.withArgs('change').yield([{p: path}]);
+        this.otDoc.emit('change', [{p: path}]);
         this.$apply();
       };
       this.isDirtyValues = K.extractValues(this.doc.state.isDirty);

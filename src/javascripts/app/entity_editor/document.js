@@ -26,7 +26,6 @@ function ($scope, $injector, entity, contentType) {
   var $q = $injector.get('$q');
   var ShareJS = $injector.get('ShareJS');
   var logger = $injector.get('logger');
-  var defer = $injector.get('defer');
   var moment = $injector.get('moment');
   var TheLocaleStore = $injector.get('TheLocaleStore');
   var K = $injector.get('utils/kefir');
@@ -40,7 +39,19 @@ function ($scope, $injector, entity, contentType) {
 
   var shouldOpen = false;
 
-  var pathChangeBus = K.createBus($scope);
+
+  // The stream for this bus contains all the events that come from the
+  // raw ShareJS doc. The data in this stream has the shape
+  // `{doc: doc, name: name, data: data}`.
+  var docEventsBus = K.createBus($scope);
+
+  var acknowledgeEvent = docEventsBus.stream.filter(function (event) {
+    return event.name === 'acknowledge';
+  });
+
+  K.onValueScope($scope, acknowledgeEvent, function (event) {
+    updateEntitySys(event.doc);
+  });
 
 
   /**
@@ -54,7 +65,19 @@ function ($scope, $injector, entity, contentType) {
    *
    * @type {Property<string[]>}
    */
-  var changes = pathChangeBus.stream;
+  var changes = docEventsBus.stream
+    .flatten(function (event) {
+      if (event.name === 'change') {
+        return event.data.map(function (op) {
+          return op.p;
+        });
+      } else if (event.name === 'open') {
+        // Emit the path of length zero
+        return [[]];
+      } else {
+        return [];
+      }
+    });
 
   // We sync the changes on the OT document snapshot to
   // `$scope.entity.data`.
@@ -329,23 +352,9 @@ function ($scope, $injector, entity, contentType) {
     }
   }
 
-  function setupClosedEventHandling (doc) {
-    // Remove all event listeners when the document is closed.
-    // TODO I’m not sure this accomplishes what we want. In any case
-    // this should be done through the doc’s public API.
-    doc.on('closed', function () {
-      defer(function () {
-        doc._listeners.length = 0;
-        _.each(doc._events, function (listeners) {
-          listeners.length = 0;
-        });
-      });
-    });
-  }
-
   function setDoc (doc) {
     if (controller.doc) {
-      removeListeners(controller.doc);
+      unplugDocEvents(controller.doc);
       closeDoc(controller.doc);
       delete controller.doc;
       controller.state.editable = false;
@@ -353,24 +362,17 @@ function ($scope, $injector, entity, contentType) {
 
     if (doc) {
       controller.state.error = false;
-      setupClosedEventHandling(doc);
       normalize(doc);
-      installListeners(doc);
       controller.doc = doc;
       controller.state.editable = true;
-      pathChangeBus.emit([]);
-      otUpdateEntityData();
+      plugDocEvents(doc);
     }
   }
 
-  function updateHandler () {
-    if (controller.doc) {
-      $scope.$apply(function () {
-        entity.setVersion(controller.doc.version);
-        entity.data.sys.updatedAt = moment().toISOString();
-        sysChangeBus.emit();
-      });
-    }
+  function updateEntitySys (doc) {
+    entity.setVersion(doc.version);
+    entity.data.sys.updatedAt = moment().toISOString();
+    sysChangeBus.emit();
   }
 
   function otUpdateEntityData () {
@@ -401,20 +403,17 @@ function ($scope, $injector, entity, contentType) {
     }
   }
 
-  function installListeners (doc) {
-    doc.on('change', emitChangeAtPath);
-    doc.on('acknowledge', updateHandler);
+  function plugDocEvents (doc) {
+    doc._originalEmit = doc.emit;
+    doc.emit = function (name, data) {
+      this._originalEmit.apply(this, arguments);
+      docEventsBus.emit({doc: doc, name: name, data: data});
+    };
+    docEventsBus.emit({doc: doc, name: 'open'});
   }
 
-  function removeListeners (doc) {
-    doc.removeListener('change', emitChangeAtPath);
-    doc.removeListener('acknowledge', updateHandler);
-  }
-
-  function emitChangeAtPath (ops) {
-    ops.forEach(function (op) {
-      pathChangeBus.emit(op.p);
-    });
+  function unplugDocEvents (doc) {
+    doc.emit = doc._originalEmit;
   }
 
   function withRawDoc (cb) {
