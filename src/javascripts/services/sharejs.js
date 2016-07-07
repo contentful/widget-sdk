@@ -12,12 +12,12 @@
  * - the mkpathAndSetValue does too much
  */
 angular.module('contentful')
-.factory('ShareJS', ['$injector', function ($injector) {
-  var environment   = $injector.get('environment');
-  var ShareJSClient = $injector.get('ShareJS/Client');
-  var $q            = $injector.get('$q');
+.factory('ShareJS', ['require', function (require) {
+  var environment = require('environment');
+  var ShareJSClient = require('ShareJS/Client');
+  var $q = require('$q');
 
-  var url = '//'+environment.settings.ot_host+'/channel';
+  var url = '//' + environment.settings.ot_host + '/channel';
   var client;
 
   var ShareJS = {
@@ -94,20 +94,20 @@ angular.module('contentful')
      *   'Foo'
      * });
      */
-    mkpathAndSetValue: function(doc, path, value){
+    mkpathAndSetValue: function (doc, path, value) {
       return $q.denodeify(function (callback) {
         var segments = path.slice();
         var tmp, prop, segment, currentVal;
 
-        //jshint boss:true
-        while(segment = segments.shift()) {
+        /* eslint no-cond-assign: "off" */
+        while (segment = segments.shift()) {
           doc = doc.at(segment);
           currentVal = doc.get();
           var hasNoContainer = segments.length && !(_.isObject(currentVal) || _.isArray(currentVal));
           if (hasNoContainer) {
             segments.unshift(segment);
             prop = segments.pop();
-            while(segments.length > 0) {
+            while (segments.length > 0) {
               segment = segments.pop();
               tmp = {};
               tmp[prop] = value;
@@ -122,12 +122,12 @@ angular.module('contentful')
           }
         }
         // If value at path doesn't match passed in value type replace it
-        if (_.isString(currentVal)  && _.isString(value) ) {_.defer(callback); return;}
-        if (_.isNumber(currentVal)  && _.isNumber(value) ) {_.defer(callback); return;}
-        if (_.isBoolean(currentVal) && _.isBoolean(value)) {_.defer(callback); return;}
-        if (_.isNull(currentVal)    && _.isNull(value)   ) {_.defer(callback); return;}
-        if (_.isObject(currentVal)  && _.isObject(value) &&
-            _.isArray(currentVal)  === _.isArray(value)) {_.defer(callback); return;}
+        if (_.isString(currentVal) && _.isString(value)) { _.defer(callback); return; }
+        if (_.isNumber(currentVal) && _.isNumber(value)) { _.defer(callback); return; }
+        if (_.isBoolean(currentVal) && _.isBoolean(value)) { _.defer(callback); return; }
+        if (_.isNull(currentVal) && _.isNull(value)) { _.defer(callback); return; }
+        if (_.isObject(currentVal) && _.isObject(value) &&
+            _.isArray(currentVal) === _.isArray(value)) { _.defer(callback); return; }
 
         doc.set(value, callback);
       });
@@ -184,11 +184,11 @@ angular.module('contentful')
      * @param {Array<string>} path
      * @return {any}
      */
-    peek: function(doc, path) {
+    peek: function (doc, path) {
       try {
         return doc.getAt(path);
-      } catch(e) {
-        return void(0);
+      } catch (e) {
+        return;
       }
     }
   };
