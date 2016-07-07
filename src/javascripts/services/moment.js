@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('contentful').factory('moment', ['raw/moment', function (moment) {
+angular.module('cf.utils')
+.factory('moment', ['raw/moment', function (moment) {
   moment.locale('en', {
     calendar: {
       lastDay : '[Yesterday], LT',

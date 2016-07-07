@@ -14,8 +14,13 @@ describe('data/ApiClient', function () {
 
     var SpaceEndpoint = this.$inject('data/spaceEndpoint');
     var Client = this.$inject('data/ApiClient');
-    var makeRequest = SpaceEndpoint.create('TOKEN', '//api.test.local', 'SPACE');
-    this.client = new Client(makeRequest);
+    var $timeout = this.$inject('$timeout');
+    var endpoint = SpaceEndpoint.create('TOKEN', '//api.test.local', 'SPACE');
+    this.client = new Client(function (...args) {
+      const response = endpoint(...args);
+      $timeout.flush();
+      return response;
+    });
   });
 
   afterEach(function () {

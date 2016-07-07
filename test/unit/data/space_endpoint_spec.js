@@ -3,8 +3,15 @@
 describe('data/spaceEndpoint', function () {
   beforeEach(function () {
     module('cf.data', 'ngMock');
-    var spaceEndpoint = this.$inject('data/spaceEndpoint');
-    this.makeRequest = spaceEndpoint.create('TOKEN', '//test.io', 'SPACE');
+
+    const spaceEndpoint = this.$inject('data/spaceEndpoint');
+    const request = spaceEndpoint.create('TOKEN', '//test.io', 'SPACE');
+    this.makeRequest = function (...args) {
+      const response = request(...args);
+      this.$inject('$timeout').flush();
+      return response;
+    };
+
     this.$http = this.$inject('$httpBackend');
   });
 
