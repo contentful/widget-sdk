@@ -32,6 +32,7 @@
   "google" : {
     "maps_api_key" : "AIzaSyDskFlzw1ujRovNWNG3K64EUsncYTbRPfM"
   },
+  "googleTagManagerContainer": "GTM-WSB7MK",
   "fonts_dot_com" : {
     "project_id" : "00000000-0000-0000-0000-000000000000"
   }

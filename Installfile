@@ -10,6 +10,8 @@ SLIMERJS_BIN=bin/slimerjs
 npm install --no-optional
 ./node_modules/bower/bin/bower install
 
+git submodule update --init
+
 pushd vendor/contentful-widget-sdk
   npm install --production --no-optional
   make

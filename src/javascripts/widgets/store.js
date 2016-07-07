@@ -6,8 +6,11 @@ angular.module('contentful')
  * @ngdoc service
  * @name widgets/store
  *
- * @usage
- *  ws = new WidgetStore();
+ * @usage[js]
+ * const Store = require('widgets/store')
+ * const store = Store.create(space)
+ * store.getMap()
+ * .then((map) => { ... })
  *
  * @description
  * Store custom and builtin widget implementations for the current
@@ -15,93 +18,73 @@ angular.module('contentful')
  *
  * This service gets the latest custom widgets from the server every time.
  */
-.factory('widgets/store', ['$injector', function ($injector) {
-  var $q = $injector.get('$q');
-  var builtinWidgets = $injector.get('widgets/builtin');
-  var logger = $injector.get('logger');
-  var fieldFactory = $injector.get('fieldFactory');
+.factory('widgets/store', ['require', function (require) {
+  var builtin = require('widgets/builtin');
+  var fieldFactory = require('fieldFactory');
 
-
-  var customWidgetProperties = [
+  var extensionProperties = [
     'name', 'src', 'srcdoc', 'sidebar', 'options'
   ];
 
-  function WidgetStore(space) {
-    this.space = space;
-  }
-
-  /**
-   * @ngdoc method
-   * @name widgets/store#getMap
-   *
-   * @usage
-   *  ws.getMap().then(function(widgets) {
-   *    console.log(widgets);
-   *  });
-   *
-   * @description
-   * Returns a a promise resolving to an object that maps widget ids to
-   * widget descriptions.
-   *
-   * @returns {Promise<object>}
-   */
-
-  WidgetStore.prototype.getMap = function() {
-    if (!this.space) {
-      return $q.reject(new Error('Space is not set'));
-    }
-
-    return getCustomWidgets(this.space)
-    .then(function (widgets) {
-      return _.extend({}, builtinWidgets, widgets);
-    });
+  return {
+    create: create
   };
 
-  function getCustomWidgets (space) {
+  function create (space) {
+    if (!space) {
+      throw new TypeError('Space is not set');
+    }
+
+    return {
+      getMap: getMap
+    };
+
+    function getMap () {
+      return getExtensions(space)
+      .then(function (widgets) {
+        return _.extend({}, builtin, widgets);
+      });
+    }
+  }
+
+  function getExtensions (space) {
+    // TODO rename the endpoint to 'extensions'
     return space.endpoint('widgets').get()
     .then(function (response) {
-      return createCustomWidgetMap(response.items);
+      return createExtensionsMap(response.items);
     }, function () {
       return {};
     });
   }
 
   /**
-   * Takes a list of Widgets returned by the server and builds widget
-   * descriptors to be used by the entry editor.
+   * Takes a list of extensions returned by the server and builds
+   * widget descriptors to be used by the entry editor.
    *
-   * @param {API.Widget[]} widgets
+   * @param {API.Extension[]} extensions
    * @returns {Map<string, Widget.Descriptor}
    */
-  function createCustomWidgetMap (widgets) {
-    return _.transform(widgets, function (byId, data) {
-      try {
-        var widget = buildCustomWidget(data);
-        byId[widget.id] = widget;
-      } catch (err) {
-        logger.logError('Failed to build custom widgets', {
-          data: {widget: data},
-          error: err
-        });
-      }
+  function createExtensionsMap (extension) {
+    return _.transform(extension, function (byId, data) {
+      var widget = buildExtensionWidget(data);
+      byId[widget.id] = widget;
     }, {});
   }
 
   /**
    * @param {API.Widget} data
-   * @returns {Widget.Descriptor}
+   * @returns {Extension.Descriptor}
    */
-  function buildCustomWidget (data) {
-    var widget = data.widget;
-    var fieldTypes = _.map(widget.fieldTypes, fieldFactory.getTypeName);
-    return _.extend(_.pick(widget, customWidgetProperties), {
+  function buildExtensionWidget (data) {
+    // For backwards compatibility we still look at data.widget. This
+    // should be remoed
+    var extension = data.extension || data.widget;
+    var fieldTypes = _.map(extension.fieldTypes, fieldFactory.getTypeName);
+    return _.extend(_.pick(extension, extensionProperties), {
       id: data.sys.id,
       fieldTypes: fieldTypes,
       template: '<cf-iframe-widget>',
       custom: true
     });
   }
-
-  return WidgetStore;
-
 }]);
