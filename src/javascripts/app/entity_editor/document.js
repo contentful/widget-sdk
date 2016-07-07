@@ -154,8 +154,8 @@ function ($scope, $injector, entity, contentType) {
   }, function (shouldOpen) {
     if (shouldOpen) {
       openDoc();
-    } else if (controller.doc) {
-      closeDoc(controller.doc);
+    } else {
+      setDoc(undefined);
     }
   });
 
@@ -182,7 +182,9 @@ function ($scope, $injector, entity, contentType) {
     }
   });
 
-  $scope.$on('$destroy', handleScopeDestruction);
+  $scope.$on('$destroy', function () {
+    setDoc(undefined);
+  });
 
   function getValueAt (path) {
     if (controller.doc) {
@@ -297,18 +299,23 @@ function ($scope, $injector, entity, contentType) {
   function openDoc () {
     ShareJS.open(entity)
     .then(function (doc) {
-      setupClosedEventHandling(doc);
       // Check a second time if we have disconnected or the document
       // has been disabled.
       if (shouldOpenDoc()) {
-        controller.state.error = false;
-        setupOtDoc(doc);
+        setDoc(doc);
       } else {
         closeDoc(doc);
+        setDoc(undefined);
       }
     }, function (err) {
       controller.state.error = true;
-      handleOtDocOpeningFailure(err, entity);
+      setDoc(undefined);
+      logger.logSharejsError('Failed to open sharejs doc', {
+        data: {
+          error: err,
+          entity: entity
+        }
+      });
     });
   }
 
@@ -319,20 +326,7 @@ function ($scope, $injector, entity, contentType) {
       if (e.message !== 'Cannot send to a closed connection') {
         throw e;
       }
-    } finally {
-      resetOtDoc();
     }
-  }
-
-
-  function handleOtDocOpeningFailure (err, entity) {
-    resetOtDoc();
-    logger.logSharejsError('Failed to open sharejs doc', {
-      data: {
-        error: err,
-        entity: entity
-      }
-    });
   }
 
   function setupClosedEventHandling (doc) {
@@ -349,22 +343,24 @@ function ($scope, $injector, entity, contentType) {
     });
   }
 
-  function resetOtDoc () {
+  function setDoc (doc) {
     if (controller.doc) {
       removeListeners(controller.doc);
+      closeDoc(controller.doc);
+      delete controller.doc;
+      controller.state.editable = false;
     }
-    delete controller.doc;
-    controller.state.editable = false;
-  }
 
-
-  function setupOtDoc (doc) {
-    normalize(doc);
-    installListeners(doc);
-    controller.doc = doc;
-    controller.state.editable = true;
-    pathChangeBus.emit([]);
-    otUpdateEntityData();
+    if (doc) {
+      controller.state.error = false;
+      setupClosedEventHandling(doc);
+      normalize(doc);
+      installListeners(doc);
+      controller.doc = doc;
+      controller.state.editable = true;
+      pathChangeBus.emit([]);
+      otUpdateEntityData();
+    }
   }
 
   function updateHandler () {
@@ -419,13 +415,6 @@ function ($scope, $injector, entity, contentType) {
     ops.forEach(function (op) {
       pathChangeBus.emit(op.p);
     });
-  }
-
-  function handleScopeDestruction () {
-    if (controller.doc) {
-      closeDoc(controller.doc);
-      resetOtDoc(controller.doc);
-    }
   }
 
   function withRawDoc (cb) {
