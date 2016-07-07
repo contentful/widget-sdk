@@ -1,5 +1,5 @@
 rules:
-  no-unused-vars: ['error', {vars: 'all', varsIgnorePattern: '^fit$', args: 'after-used', argsIgnorePattern: '^_'}]
+  no-unused-vars: ['error', {vars: 'all', varsIgnorePattern: '^fit$', args: 'all', argsIgnorePattern: '^_'}]
 env:
   # Do not use this. We want to fail if 'fdescribe', etc. is used.
   jasmine: false

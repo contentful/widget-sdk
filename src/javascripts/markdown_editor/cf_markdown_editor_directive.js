@@ -14,7 +14,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
     template: JST['cf_markdown_editor'](),
     scope: {},
     require: '^cfWidgetApi',
-    link: function (scope, el, attrs, api) {
+    link: function (scope, el, _attrs, api) {
       var field = api.field;
       var textarea = el.find('textarea').get(0);
       var preview = el.find('.markdown-preview').first();
