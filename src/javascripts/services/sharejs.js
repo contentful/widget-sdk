@@ -5,11 +5,6 @@
  *
  * @description
  * Initializes and provides access to ShareJS
- *
- * TODO
- * Future refactoring tips
- * - It would be good if the ShareJS callbacks were wrapped to return promises
- * - the mkpathAndSetValue does too much
  */
 angular.module('contentful')
 .factory('ShareJS', ['require', function (require) {
@@ -65,115 +60,7 @@ angular.module('contentful')
       return client.connectionFailed();
     },
 
-
-    /**
-     * @ngdoc method
-     * @name ShareJS#mkpathAndSetValue
-     * @description
-     * Creates a deeply nested property in a ShareJS JSON document
-     *
-     * The purpose is more on making sure that the path exists not
-     * that the value is the same value as supplied
-     *
-     * The behavior when the entire path exists already is to
-     * - keep the existing value when it is of the same type as the
-     *   `value` parameter
-     * - set it to the value parameter otherwise
-     *
-     * TODO not setting the value does not make sense at all!
-     *
-     * @param {OtDoc} doc The document to operate on
-     * @param {Array<string>} path An array describing the path in the JSON doc
-     * @param {any} value The initial value we want to be at the end of the path
-     * @returns {Promise<void>}
-     *
-     * @usage
-     * ShareJS.mkpathAndSetValue(
-     *   shareJsDoc,
-     *   ['foo', '12']
-     *   'Foo'
-     * });
-     */
-    mkpathAndSetValue: function (doc, path, value) {
-      return $q.denodeify(function (callback) {
-        var segments = path.slice();
-        var tmp, prop, segment, currentVal;
-
-        /* eslint no-cond-assign: "off" */
-        while (segment = segments.shift()) {
-          doc = doc.at(segment);
-          currentVal = doc.get();
-          var hasNoContainer = segments.length && !(_.isObject(currentVal) || _.isArray(currentVal));
-          if (hasNoContainer) {
-            segments.unshift(segment);
-            prop = segments.pop();
-            while (segments.length > 0) {
-              segment = segments.pop();
-              tmp = {};
-              tmp[prop] = value;
-              value = tmp;
-              prop = segment;
-            }
-            // TODO I am pretty sure this is not what we want: We
-            // only create *one* container, set the value and return
-            // from the function.
-            doc.set(value, callback);
-            return;
-          }
-        }
-        // If value at path doesn't match passed in value type replace it
-        if (_.isString(currentVal) && _.isString(value)) { _.defer(callback); return; }
-        if (_.isNumber(currentVal) && _.isNumber(value)) { _.defer(callback); return; }
-        if (_.isBoolean(currentVal) && _.isBoolean(value)) { _.defer(callback); return; }
-        if (_.isNull(currentVal) && _.isNull(value)) { _.defer(callback); return; }
-        if (_.isObject(currentVal) && _.isObject(value) &&
-            _.isArray(currentVal) === _.isArray(value)) { _.defer(callback); return; }
-
-        doc.set(value, callback);
-      });
-    },
-
-    /**
-     * @ngdoc method
-     * @name ShareJS#setDeep
-     * @description
-     * Sets the value at the given path in the document.
-     *
-     * Works like `doc.setAt(path, value)` but also creates missing
-     * intermediate containers with `mkPathAndSetValue`.
-     *
-     * The function does not cause an update if the current value in
-     * the document equals the new value.
-     *
-     * @todo We should remove the public `mkPathAndSetValue` in favor
-     * of this.
-     *
-     * @param {OtDoc} doc
-     * @param {Array<string>} path
-     * @param {any} value
-     * @return {Promise<void>}
-     */
-    setDeep: function (doc, path, value) {
-      if (!doc) {
-        throw new TypeError('No ShareJS document provided');
-      }
-      if (!path) {
-        throw new TypeError('No path provided');
-      }
-
-      var current = ShareJS.peek(doc, path);
-      if (value === current) {
-        return $q.resolve();
-      }
-
-      if (current === undefined) {
-        return ShareJS.mkpathAndSetValue(doc, path, value);
-      } else {
-        return $q.denodeify(function (cb) {
-          doc.setAt(path, value, cb);
-        });
-      }
-    },
+    setDeep: setDeep,
 
     /**
      * @ngdoc method
@@ -194,6 +81,69 @@ angular.module('contentful')
   };
 
   return ShareJS;
+
+
+  /**
+   * @ngdoc method
+   * @name ShareJS#setDeep
+   * @description
+   * Sets the value at the given path in the document.
+   *
+   * Works like `doc.setAt(path, value)` but also creates missing
+   * intermediate containers.
+   *
+   * The function does not cause an update if the current value in
+   * the document equals the new value.
+   *
+   * @param {OtDoc} doc
+   * @param {Array<string>} path
+   * @param {any} value
+   * @return {Promise<void>}
+   */
+  function setDeep (doc, path, value) {
+    if (!doc) {
+      throw new TypeError('No ShareJS document provided');
+    }
+    if (!path) {
+      throw new TypeError('No path provided');
+    }
+
+    var current = ShareJS.peek(doc, path);
+    if (value === current) {
+      return $q.resolve();
+    }
+
+    return $q.denodeify(function (callback) {
+      var container = getContainer(doc, path);
+      var wrappedValue = makeDeepObject(container.restPath, value);
+      container.doc.set(wrappedValue, callback);
+    });
+  }
+
+  function makeDeepObject (path, value) {
+    if (path.length === 0) {
+      return value;
+    } else {
+      var obj = {};
+      dotty.put(obj, path, value);
+      return obj;
+    }
+  }
+
+  function getContainer (doc, path) {
+    var segment;
+    path = path.slice();
+    /* eslint no-cond-assign: "off" */
+    while (segment = path.shift()) {
+      doc = doc.at(segment);
+      var value = doc.get();
+      var isContainer = _.isObject(value) || _.isArray(value);
+      if (!isContainer) {
+        break;
+      }
+    }
+    return {doc: doc, restPath: path};
+  }
 }])
 
 .factory('ShareJS/Client', ['$injector', function ($injector) {
