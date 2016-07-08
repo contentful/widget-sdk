@@ -39,6 +39,12 @@ function ($scope, $injector, entity, contentType) {
 
   var shouldOpen = false;
 
+  controller.state = {
+    editable: false,
+    error: false,
+    saving: false
+  };
+
 
   // The stream for this bus contains all the events that come from the
   // raw ShareJS doc. The data in this stream has the shape
@@ -51,6 +57,24 @@ function ($scope, $injector, entity, contentType) {
 
   K.onValueScope($scope, acknowledgeEvent, function (event) {
     updateEntitySys(event.doc);
+  });
+
+
+  // A boolean property that holds true if the document has
+  // changes unacknowledged by the server.
+  var hasPendingOps = docEventsBus.stream
+    .map(function (event) {
+      return event.doc;
+    })
+    .toProperty(function () {
+      return controller.doc;
+    })
+    .map(function (doc) {
+      return !!(doc && (doc.inflightOp || doc.pendingOp));
+    });
+
+  K.onValueScope($scope, hasPendingOps, function (hasPendingOps) {
+    controller.state.saving = hasPendingOps;
   });
 
 
@@ -114,7 +138,7 @@ function ($scope, $injector, entity, contentType) {
    *
    * @type {Property<boolean>}
    */
-  var isDirty = sysProperty.map(function (sys) {
+  controller.state.isDirty = sysProperty.map(function (sys) {
     return sys.publishedVersion
       ? sys.version > sys.publishedVersion + 1
       : true;
@@ -148,12 +172,6 @@ function ($scope, $injector, entity, contentType) {
 
   _.extend(controller, {
     doc: undefined,
-    state: {
-      editable: false,
-      error: false,
-      saving: false,
-      isDirty: isDirty
-    },
 
     getValueAt: getValueAt,
     setValueAt: setValueAt,
@@ -180,18 +198,6 @@ function ($scope, $injector, entity, contentType) {
     } else {
       setDoc(undefined);
     }
-  });
-
-
-  // Watch Doc internals to determine if we have sent operations to the
-  // server that have yet to be acknowledged.
-  // TODO Instead of watching trigger the update manually on some
-  // events on the document.
-  $scope.$watchGroup([
-    function () { return controller.doc && controller.doc.inflightOp; },
-    function () { return controller.doc && controller.doc.pendingOp; }
-  ], function (ops) {
-    controller.state.saving = _.some(ops);
   });
 
   $scope.$watch(function () {

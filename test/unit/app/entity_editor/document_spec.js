@@ -571,6 +571,27 @@ describe('entityEditor/Document', function () {
     });
   });
 
+  describe('#state.saving', function () {
+    it('is false if there is no document initially', function () {
+      expect(this.doc.state.saving).toBe(false);
+    });
+
+    it('changes to if document has inflight operation', function () {
+      this.otDoc = this.connectAndOpen();
+      expect(this.doc.state.saving).toBe(false);
+
+      this.otDoc.inflightOp = true;
+      this.otDoc.emit('change', []);
+      this.$apply();
+      expect(this.doc.state.saving).toBe(true);
+
+      this.otDoc.inflightOp = false;
+      this.otDoc.emit('acknowledge');
+      this.$apply();
+      expect(this.doc.state.saving).toBe(false);
+    });
+  });
+
   function itRejectsWithoutDocument (method) {
     it('rejects when document is not opened', function () {
       this.doc.close();
