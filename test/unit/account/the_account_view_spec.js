@@ -47,7 +47,7 @@ describe('TheAccountView service', function () {
   });
 
   describe('.goToOrganizations() and .canGoToOrganizations()', function () {
-    var orgs = [
+    var ORGS = [
       {subscriptionState: 'active', sys: {id: 'ORG_0'}},
       {subscriptionState: 'active', sys: {id: 'ORG_1'}},
       {subscriptionState: 'active', sys: {id: 'ORG_2'}}
@@ -59,40 +59,40 @@ describe('TheAccountView service', function () {
 
     describe('with at least one space', function () {
       beforeEach(function () {
-        this.spaceContext.getData.withArgs('organization').returns(orgs[0]);
+        this.spaceContext.getData.withArgs('organization').returns(ORGS[0]);
       });
 
-      itGoesToTheOrganizationOf('the next best organization', orgs[0]);
+      itGoesToTheOrganizationOf('the next best organization', ORGS[0]);
 
       itRejectsToNavigateNonOrganizationOwnersOrAdmins();
     });
 
     describe('without any space', function () {
       beforeEach(function () {
-        this.OrganizationList.getAll.returns(orgs);
+        this.OrganizationList.getAll.returns(ORGS);
       });
 
-      itGoesToTheOrganizationOf('the next best organization', orgs[0]);
+      itGoesToTheOrganizationOf('the next best organization', ORGS[0]);
 
       once(function () {
-        this.OrganizationList.isOwnerOrAdmin.withArgs('ORG_1').returns(false);
-        orgs[1].subscriptionState = 'trial'; // Trial but not owned.
-        orgs[2].subscriptionState = 'trial';
+        this.OrganizationList.isOwnerOrAdmin.withArgs(ORGS[1]).returns(false);
+        ORGS[1].subscriptionState = 'trial'; // Trial but not owned.
+        ORGS[2].subscriptionState = 'trial';
       })
-      .itGoesToTheOrganizationOf('the next best owned trial organization', orgs[2]);
+      .itGoesToTheOrganizationOf('the next best owned trial organization', ORGS[2]);
 
       once(function () {
-        this.OrganizationList.isOwnerOrAdmin.withArgs('ORG_0').returns(false);
-        orgs[1].subscriptionState = 'inactive';
+        this.OrganizationList.isOwnerOrAdmin.withArgs(ORGS[0]).returns(false);
+        ORGS[1].subscriptionState = 'inactive';
       })
-      .itGoesToTheOrganizationOf('the next best owned active organization', orgs[2]);
+      .itGoesToTheOrganizationOf('the next best owned active organization', ORGS[2]);
 
       once(function () {
-        this.OrganizationList.isOwnerOrAdmin.withArgs('ORG_0').returns(false);
-        this.OrganizationList.isOwnerOrAdmin.withArgs('ORG_2').returns(false);
-        orgs[1].subscriptionState = 'inactive';
+        this.OrganizationList.isOwnerOrAdmin.withArgs(ORGS[0]).returns(false);
+        this.OrganizationList.isOwnerOrAdmin.withArgs(ORGS[2]).returns(false);
+        ORGS[1].subscriptionState = 'inactive';
       })
-      .itGoesToTheOrganizationOf('the next best owned organization', orgs[1]);
+      .itGoesToTheOrganizationOf('the next best owned organization', ORGS[1]);
 
       itRejectsToNavigateNonOrganizationOwnersOrAdmins();
     });
