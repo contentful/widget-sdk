@@ -21,8 +21,8 @@ angular.module('cf.app')
  * @property {Document.State} state
  */
 .controller('entityEditor/Document',
-['$scope', '$injector', 'entity',
-function ($scope, $injector, entity) {
+['$scope', '$injector', 'entity', 'contentType',
+function ($scope, $injector, entity, contentType) {
   var $q = $injector.get('$q');
   var ShareJS = $injector.get('ShareJS');
   var logger = $injector.get('logger');
@@ -32,6 +32,7 @@ function ($scope, $injector, entity) {
   var K = $injector.get('utils/kefir');
   var controller = this;
   var diff = $injector.get('utils/StringDiff').diff;
+  var Normalizer = $injector.get('data/documentNormalizer');
 
   // Field types that should use `setStringAt()` to set a value using a
   // string diff.
@@ -337,47 +338,12 @@ function ($scope, $injector, entity) {
 
 
   function setupOtDoc (doc) {
-    filterDeletedLocales(doc.snapshot);
-    filterDeletedFields(doc.snapshot);
+    normalize(doc);
     installListeners(doc);
     controller.doc = doc;
     controller.state.editable = true;
     pathChangeBus.emit([]);
     otUpdateEntityData();
-  }
-
-  function filterDeletedLocales (data) {
-    _.keys(data.fields).forEach(function (fieldId) {
-      _.keys(data.fields[fieldId]).forEach(function (internalCode) {
-        if (!_.find(TheLocaleStore.getPrivateLocales(), { internal_code: internalCode })) {
-          delete data.fields[fieldId][internalCode];
-        }
-      });
-    });
-    return data;
-  }
-
-  function filterDeletedFields (data) {
-    if (entity.getType() !== 'Entry') {
-      return data;
-    }
-
-    var ctFields = dotty.get($scope.contentType, 'data.fields');
-    if (!ctFields) {
-      return data;
-    }
-
-    var ctFieldIds = _.map(ctFields, function (field) {
-      return field.id;
-    });
-
-    _.forEach(data.fields, function (_fieldValue, fieldId) {
-      if (ctFieldIds.indexOf(fieldId) < 0) {
-        delete data.fields[fieldId];
-      }
-    });
-
-    return data;
   }
 
   function updateHandler () {
@@ -463,5 +429,11 @@ function ($scope, $injector, entity) {
   function pathAffects (changePath, valuePath) {
     var m = Math.min(changePath.length, valuePath.length);
     return _.isEqual(changePath.slice(0, m), valuePath.slice(0, m));
+  }
+
+
+  function normalize (doc) {
+    var locales = TheLocaleStore.getPrivateLocales();
+    Normalizer.normalize(controller, doc.snapshot, contentType, locales);
   }
 }]);

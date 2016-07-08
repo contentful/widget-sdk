@@ -58,6 +58,8 @@ describe('entityEditor/Document', function () {
       }
     };
 
+    this.contentType = {data: {}};
+
     var $controller = this.$inject('$controller');
     var $rootScope = this.$inject('$rootScope');
 
@@ -65,7 +67,8 @@ describe('entityEditor/Document', function () {
     scope.contentType = {data: {fields: []}};
     this.doc = $controller('entityEditor/Document', {
       $scope: scope,
-      entity: this.entity
+      entity: this.entity,
+      contentType: this.contentType
     });
 
     this.doc.open();
@@ -81,9 +84,12 @@ describe('entityEditor/Document', function () {
 
   describe('successful initialization flow', function () {
     beforeEach(function () {
-      var localeStore = this.$inject('TheLocaleStore');
-      localeStore.getPrivateLocales = sinon.stub().returns([{internal_code: 'en'}]);
-      scope.contentType.data.fields = [{id: 'field1'}, {id: 'field2'}];
+      const Normalizer = this.$inject('data/documentNormalizer');
+      this.normalize = sinon.spy(Normalizer, 'normalize');
+
+      this.localeStore = this.$inject('TheLocaleStore');
+      this.localeStore.getPrivateLocales = sinon.stub().returns([{internal_code: 'en'}]);
+      this.contentType.data.fields = [{id: 'field1'}, {id: 'field2'}];
 
       this.entity.data.fields = {
         field1: {
@@ -110,26 +116,11 @@ describe('entityEditor/Document', function () {
       sinon.assert.calledWith(this.doc.doc.on, 'closed');
     });
 
-    it('filters deleted locales', function () {
-      expect(this.entity.data.fields.field1.del).toBeUndefined();
-      expect(this.doc.doc.snapshot.fields.field1.del).toBeUndefined();
-    });
-
-    it('keeps non deleted locales', function () {
-      expect(this.doc.doc.snapshot.fields.field2.en).toBeDefined();
-      expect(this.entity.data.fields.field2.en).toBeDefined();
-    });
-
-    it('filters deleted fields', function () {
-      expect(this.doc.doc.snapshot.fields.deletedField).toBeUndefined();
-      expect(this.entity.data.fields.deletedField).toBeUndefined();
-    });
-
-    it('keeps non deleted fields', function () {
-      expect(this.doc.doc.snapshot.fields.field1).toBeDefined();
-      expect(this.entity.data.fields.field1).toBeDefined();
-      expect(this.doc.doc.snapshot.fields.field2).toBeDefined();
-      expect(this.entity.data.fields.field2).toBeDefined();
+    it('calls the document normalizer', function () {
+      sinon.assert.calledWith(
+        this.normalize,
+        this.doc, this.doc.doc.snapshot, this.contentType, this.localeStore.getPrivateLocales()
+      );
     });
 
     it('sets acknowledge event handler', function () {

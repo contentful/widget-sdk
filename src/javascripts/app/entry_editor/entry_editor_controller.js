@@ -7,7 +7,6 @@ angular.module('contentful')
   var notifier = $injector.get('entryEditor/notifications');
   var truncate = $injector.get('stringUtils').truncate;
   var accessChecker = $injector.get('accessChecker');
-  var ShareJS = $injector.get('ShareJS');
   var DataFields = $injector.get('EntityEditor/DataFields');
   var ContentTypes = $injector.get('data/ContentTypes');
 
@@ -38,7 +37,8 @@ angular.module('contentful')
   // TODO rename the scope property
   $scope.otDoc = $controller('entityEditor/Document', {
     $scope: $scope,
-    entity: $scope.entity
+    entity: $scope.entity,
+    contentType: $scope.contentType
   });
 
   $controller('entityEditor/FieldAccessController', {$scope: $scope});
@@ -94,12 +94,6 @@ angular.module('contentful')
     controls: $scope.formControls
   });
 
-  // TODO this should be handled by the Document controller
-  $scope.$watch('otDoc.doc', function (doc) {
-    if (doc) {
-      cleanSnapshot($scope.entry.data, doc);
-    }
-  });
 
   $scope.$watch('entry.data.fields', function (fields) {
     if (!fields) {
@@ -118,22 +112,6 @@ angular.module('contentful')
   $scope.fields = DataFields.create(fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);
 
-  /**
-   * Makes sure that the snapshot of the OT doc looks like the object
-   * we get from the CMA. In particular each field should be undefined
-   * or an object that maps locales to values.
-   *
-   * TODO It is unclear if this is necessary. There might be some
-   * corrupt data where a field is not an object.
-   */
-  function cleanSnapshot (entryData, doc) {
-    _.forEach(entryData.fields, function (_field, id) {
-      var docField = ShareJS.peek(doc, ['fields', id]);
-      if (!_.isObject(docField)) {
-        ShareJS.setDeep(doc, ['fields', id], {});
-      }
-    });
-  }
 
   /**
    * TODO This is way to complicated: We should only care about the
