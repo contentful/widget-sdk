@@ -36,12 +36,7 @@ describe('spaceContext', function () {
       Widgets = this.$inject('widgets');
       Widgets.setSpace = sinon.stub().defers();
 
-      SPACE = {
-        endpoint: sinon.stub().returns({
-          get: sinon.stub().rejects()
-        }),
-        getId: sinon.stub().returns('SPACE_ID')
-      };
+      SPACE = makeSpaceMock();
       sinon.stub(this.spaceContext, 'refreshContentTypes');
       this.spaceContext.contentTypes = [{}];
       result = this.spaceContext.resetWithSpace(SPACE);
@@ -622,5 +617,40 @@ describe('spaceContext', function () {
     });
 
   });
+
+  describe('#docConnection', function () {
+    beforeEach(function () {
+      const ShareJSConnection = this.$inject('data/ShareJS/Connection');
+      this.createConnection = ShareJSConnection.create = sinon.stub();
+    });
+
+    it('is created on resetSpace', function () {
+      this.spaceContext.resetWithSpace(makeSpaceMock());
+      sinon.assert.calledOnce(this.createConnection);
+    });
+
+    it('is closed on resetSpace', function () {
+      const close = sinon.stub();
+      this.spaceContext.docConnection = {close};
+      this.spaceContext.resetWithSpace(makeSpaceMock());
+      sinon.assert.calledOnce(close);
+    });
+
+    it('is closed on purge', function () {
+      const close = sinon.stub();
+      this.spaceContext.docConnection = {close};
+      this.spaceContext.purge();
+      sinon.assert.calledOnce(close);
+    });
+  });
+
+  function makeSpaceMock () {
+    return {
+      endpoint: sinon.stub().returns({
+        get: sinon.stub().rejects()
+      }),
+      getId: sinon.stub().returns('SPACE_ID')
+    };
+  }
 
 });
