@@ -26,9 +26,9 @@ angular.module('contentful/mocks')
   // TODO(mudit): Convert this from a contructor to a normal function
   // that returns an object with the methods. This would make it easier
   // to spy on stuff.
-  function OtDoc (snapshot, base) {
+  function OtDoc (snapshot, path) {
     this.snapshot = snapshot || {};
-    this.base = base || [];
+    this.path = path || [];
 
     // TODO this should be automatically incremented when we change
     // something.
@@ -40,7 +40,7 @@ angular.module('contentful/mocks')
   }
 
   OtDoc.prototype.setAt = function (path, value, cb) {
-    path = this.base.concat(path);
+    path = this.path.concat(path);
     assertParentContainer(this.snapshot, path);
     dotty.put(this.snapshot, path, value);
     if (cb) {
@@ -49,7 +49,7 @@ angular.module('contentful/mocks')
   };
 
   OtDoc.prototype.getAt = function (path) {
-    path = this.base.concat(path);
+    path = this.path.concat(path);
     assertParentContainer(this.snapshot, path);
     return dotty.get(this.snapshot, path);
   };
@@ -57,7 +57,7 @@ angular.module('contentful/mocks')
   OtDoc.prototype.at = function (path) {
     // Assumes that `at` is only called with one segment. This might
     // not be true.
-    return new OtDoc(this.snapshot, this.base.concat(path));
+    return new OtDoc(this.snapshot, this.path.concat(path));
   };
 
   OtDoc.prototype.get = function () {
@@ -69,8 +69,8 @@ angular.module('contentful/mocks')
   };
 
   OtDoc.prototype.remove = function (cb) {
-    var containerPath = this.base.slice(0, -1);
-    var index = this.base.slice(-1)[0];
+    var containerPath = this.path.slice(0, -1);
+    var index = this.path.slice(-1)[0];
     var container = dotty.get(this.snapshot, containerPath);
     container.splice(index, 1);
     if (cb) {

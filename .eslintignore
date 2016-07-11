@@ -372,7 +372,6 @@ src/javascripts/services/reload_notification.js
 src/javascripts/services/sdk_info_supplier.js
 src/javascripts/services/search_query_autocompletions.js
 src/javascripts/services/segment.js
-src/javascripts/services/sharejs.js
 src/javascripts/services/space_template_creator.js
 src/javascripts/services/space_template_loader.js
 src/javascripts/services/space_tools.js
