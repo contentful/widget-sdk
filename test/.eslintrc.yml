@@ -18,3 +18,4 @@ globals:
   pit: false
   expect: false
   spyOn: false
+  fail: false
