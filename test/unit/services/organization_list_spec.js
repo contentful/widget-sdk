@@ -1,7 +1,8 @@
 'use strict';
 
 describe('OrgniaztionList', function () {
-  var OrganizationList;
+  let OrganizationList, ORG_1, ORG_2, ORG_3;
+  const UNKNOWN_ORG_ID = 'UNKNOWN_ORG_ID';
 
   function makeUser (organizations) {
     return {
@@ -14,60 +15,65 @@ describe('OrgniaztionList', function () {
   beforeEach(function () {
     module('contentful/test');
     OrganizationList = this.$inject('OrganizationList');
+
+    ORG_1 = { sys: { id: 'org1' }, name: '1st ORG' };
+    ORG_2 = { sys: { id: 'org2' }, name: '2nd ORG' };
+    ORG_3 = { sys: { id: 'org3' }, name: '3rd ORG' };
   });
 
   describe('#resetWithUser', function () {
     it('initially stores empty list', function () {
-      expect(OrganizationList.isEmpty()).toBe(true);
       expect(OrganizationList.getAll().length).toBe(0);
     });
 
     it('initializes with user data', function () {
-      OrganizationList.resetWithUser(makeUser([
-        { name: 'org1' }, { name: 'org2' }
-      ]));
+      const orgs = [ ORG_1, ORG_2 ];
+      OrganizationList.resetWithUser(makeUser(orgs));
+      expect(OrganizationList.getAll()).toEqual(orgs);
+    });
+  });
+
+  describe('#isEmpty', function () {
+    it('returns `false` initially', function () {
+      expect(OrganizationList.isEmpty()).toBe(true);
+    });
+
+    it('returns `true` if user data is given', function () {
+      OrganizationList.resetWithUser(makeUser([ ORG_1 ]));
       expect(OrganizationList.isEmpty()).toBe(false);
-      expect(OrganizationList.getAll().length).toBe(2);
-      expect(OrganizationList.getAll()[ 1 ].name).toBe('org2');
     });
   });
 
   describe('#get', function () {
+    beforeEach(function () {
+      OrganizationList.resetWithUser(makeUser([ ORG_1, ORG_2 ]));
+    });
+
     it('gets organization by id', function () {
-      var second = { sys: { id: '2' } };
-      OrganizationList.resetWithUser(makeUser([
-        { sys: { id: '1' } }, second
-      ]));
-      expect(OrganizationList.get('2')).toBe(second);
+      expect(OrganizationList.get(ORG_2.sys.id)).toBe(ORG_2);
     });
 
     it('returns null for non-existent organization', function () {
-      OrganizationList.resetWithUser(makeUser([]));
-      expect(OrganizationList.get('non-existent')).toBe(null);
+      expect(OrganizationList.get(UNKNOWN_ORG_ID)).toBe(null);
     });
   });
 
   describe('#getName', function () {
-    it('gets organization name', function () {
-      OrganizationList.resetWithUser(
-        makeUser([ { name: 'orgname', sys: { id: '123' } } ]));
-      expect(OrganizationList.getName('123')).toEqual('orgname');
+    beforeEach(function () {
+      OrganizationList.resetWithUser(makeUser([ ORG_1, ORG_2 ]));
     });
 
-    it('gets no organization name', function () {
-      OrganizationList.resetWithUser(makeUser([]));
-      expect(OrganizationList.getName('123')).toEqual('');
+    it('gets organization name', function () {
+      expect(OrganizationList.getName(ORG_2.sys.id)).toEqual(ORG_2.name);
+    });
+
+    it('gets an empty string for non-existent organization', function () {
+      expect(OrganizationList.getName(UNKNOWN_ORG_ID)).toEqual('');
     });
   });
 
   describe('#isAdmin, #isOwner and #isOwnerOrAdmin', function () {
-    let ORG_1, ORG_2, ORG_3;
-
     beforeEach(function () {
-      ORG_1 = { sys: { id: 'org1' }, name: '1st ORG' };
-      ORG_2 = { sys: { id: 'org2' }, name: '2nd ORG' };
-      ORG_3 = { sys: { id: 'org3' }, name: '3rd ORG' };
-
       var user = makeUser([ ORG_1, ORG_2, ORG_3 ]);
       user.organizationMemberships[0].role = 'member';
       user.organizationMemberships[1].role = 'admin';
