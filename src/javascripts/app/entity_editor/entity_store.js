@@ -13,8 +13,7 @@ angular.module('contentful')
     return {
       prefetch: prefetch,
       get: get,
-      add: add,
-      reset: reset
+      add: add
     };
 
     function prefetch (links) {
@@ -33,6 +32,7 @@ angular.module('contentful')
       return space[fetchMethod]({'sys.id[in]': ids.join(',')})
       .then(function (res) {
         _.forEach(res.items, add);
+        return store;
       });
     }
 
@@ -47,10 +47,6 @@ angular.module('contentful')
 
     function add (entity) {
       store[entity.sys.id] = entity;
-    }
-
-    function reset () {
-      store = {};
     }
   }
 }]);

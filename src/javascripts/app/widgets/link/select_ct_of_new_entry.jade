@@ -7,7 +7,7 @@
       .modal-dialog__richtext
         p(ng-repeat="ct in cts track by ct.sys.id")
           a(href ng-click="dialog.confirm(ct)") {{ ct.name }}
-          em  ({{ ct.description || 'no description' }})
+          em  ({{ (ct.description | truncate:100) || 'no description' }})
 
         p(ng-if="!cts || cts.length === 0")
           | Please create a content type first.

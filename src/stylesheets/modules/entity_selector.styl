@@ -16,16 +16,10 @@
     margin-top: 100px
     color: $colors.text-light
 
-.entity-selector-dialog
-  tr.selected
-    background: $colors.element-mid
-    color: $colors.text-mid
-  .cell-selected
-    width: 5%
-    text-align: center
-  .cell-name
-    width: 40%
-  .cell-content-type
-    width: 25%
-  .cell-updated
-    width: 30%
+.entity-selector__item
+  cursor: pointer
+  margin-bottom: $rhythm(.5)
+
+  &.x--selected
+    .entity-link, .asset-card
+      background: $colors.element-lightest

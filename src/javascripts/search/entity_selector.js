@@ -72,6 +72,7 @@ angular.module('contentful')
     min = min < 1 ? 1 : min;
 
     var config = {
+      locale: field.locale,
       multiple: max !== min && field.type === 'Array',
       max: max,
       min: min,

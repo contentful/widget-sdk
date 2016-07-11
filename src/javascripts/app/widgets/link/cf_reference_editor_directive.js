@@ -29,9 +29,41 @@ angular.module('cf.app')
     var store = createEntityStore(widgetApi.space, fetchMethod);
 
     $scope.typePlural = {Entry: 'entries', Asset: 'assets'}[$scope.type];
+    $scope.isAssetCard = is('Asset', 'card');
+
+    $scope.config = {
+      draggable: !$scope.single,
+      showDetails: is('Entry', 'card'),
+      asThumb: $scope.isAssetCard && !$scope.single
+    };
+
     $scope.uiSortable.update = function () {
       // let uiSortable update the model, then sync
       $timeout(syncValue);
+    };
+
+    $scope.store = store;
+    $scope.helpers = widgetApi.entityHelpers;
+    $scope.actions = {
+      removeFromList: removeFromList,
+      goToEditor: widgetApi.state.goToEditor
+    };
+
+    $scope.addNew = function () {
+      createEntity($scope.type, field, widgetApi.space)
+      .then(function (entity) {
+        linkEntity(entity);
+        syncValue();
+        widgetApi.state.goToEditor(entity);
+      });
+    };
+
+    $scope.addExisting = function () {
+      entitySelector.open(field, unwrapLinks())
+      .then(function (entities) {
+        _.forEach(entities, linkEntity);
+        syncValue();
+      });
     };
 
     field.onValueChanged(function (links) {
@@ -44,52 +76,9 @@ angular.module('cf.app')
       });
     });
 
-    /**
-     * @ngdoc method
-     * @name cfLinksEditor#$scope.is
-     * @returns {boolean}
-     */
-    $scope.is = function (type, style) {
+    function is (type, style) {
       return type === $scope.type && style === $scope.style;
-    };
-
-    /**
-     * @ngdoc method
-     * @name cfLinksEditor#$scope.addNew
-     * @returns {void}
-     */
-    $scope.addNew = function () {
-      createEntity($scope.type, field, widgetApi.space)
-      .then(function (entity) {
-        linkEntity(entity);
-        syncValue();
-        widgetApi.state.goToEditor(entity);
-      });
-    };
-
-    /**
-     * @ngdoc method
-     * @name cfLinksEditor#$scope.addExisting
-     * @returns {void}
-     */
-    $scope.addExisting = function () {
-      entitySelector.open(field, unwrapLinks())
-      .then(function (entities) {
-        _.forEach(entities, linkEntity);
-        syncValue();
-      });
-    };
-
-    /**
-     * @ngdoc property
-     * @name cfLinksEditor#$scope.linksApi
-     * @type {Object}
-     */
-    $scope.linksApi = _.extend({
-      getEntity: store.get,
-      removeFromList: removeFromList,
-      goToEditor: widgetApi.state.goToEditor
-    }, widgetApi.entityHelpers);
+    }
 
     function linkEntity (entity) {
       store.add(entity);

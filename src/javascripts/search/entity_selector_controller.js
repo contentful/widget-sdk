@@ -9,7 +9,6 @@ angular.module('contentful')
   var Paginator = $injector.get('Paginator');
   var createQueue = $injector.get('overridingRequestQueue');
   var EntityHelpers = $injector.get('EntityHelpers');
-  var createEntityStore = $injector.get('EntityStore').create;
 
   var MINIMAL_TRIGGERING_LEN = 4;
   var ORDER = {fieldId: 'updatedAt', direction: 'descending'};
@@ -19,14 +18,6 @@ angular.module('contentful')
   var queryMethod = config.linksEntry ? 'getForEntries' : 'getForAssets';
   var fetchMethod = config.linksEntry ? 'getEntries' : 'getAssets';
 
-  var store = createEntityStore();
-  var selectedIds = {};
-
-  var linksApi = _.extend({
-    getEntity: store.get,
-    toggleSelected: toggleSelected
-  }, EntityHelpers.forLocale('en-US'));
-
   var load = createQueue(fetch, function (resultPromise) {
     resultPromise.then(handleResponse);
   });
@@ -35,10 +26,12 @@ angular.module('contentful')
     spaceContext: spaceContext,
     view: {mode: MODES.AVAILABLE},
     paginator: new Paginator(),
-    links: [],
+    items: [],
     selected: [],
+    selectedIds: {},
+    toggleSelection: toggleSelection,
     loadMore: loadMore,
-    linksApi: linksApi
+    helpers: EntityHelpers.forLocale(config.locale)
   });
 
   $scope.$watch('view.searchTerm', handleTermChange);
@@ -69,20 +62,19 @@ angular.module('contentful')
     return params;
   }
 
-  function toggleSelected (link) {
-    var entity = store.get(link);
+  function toggleSelection (entity) {
     if (!config.multiple) {
       $scope.dialog.confirm([entity]);
-    } else if (!selectedIds[entity.sys.id]) {
+    } else if (!$scope.selectedIds[entity.sys.id]) {
       $scope.selected.push(entity);
-      selectedIds[entity.sys.id] = true;
+      $scope.selectedIds[entity.sys.id] = true;
     } else {
       deselect(entity);
     }
   }
 
   function deselect (entity) {
-    delete selectedIds[entity.sys.id];
+    delete $scope.selectedIds[entity.sys.id];
     var index = $scope.selected.indexOf(entity);
     if (index > -1) {
       $scope.selected.splice(index, 1);
@@ -104,9 +96,8 @@ angular.module('contentful')
   }
 
   function handleResponse (res) {
-    _.forEach(res.items, store.add);
     $scope.paginator.numEntries = res.total;
-    $scope.links.push.apply($scope.links, res.items);
+    $scope.items.push.apply($scope.items, res.items);
 
     $timeout(function () {
       $scope.isLoading = false;
@@ -114,10 +105,9 @@ angular.module('contentful')
   }
 
   function resetAndLoad () {
-    $scope.links = [];
+    $scope.items = [];
     $scope.paginator.numEntries = 0;
     $scope.paginator.page = 0;
-    store.reset();
     load();
   }
 

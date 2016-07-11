@@ -3,11 +3,11 @@ mixin entity-link-status
     .status-bar
 
 mixin entity-link-actions
-  .link-editor-link__toolbar-actions(ng-if="!selectable")
+  .link-editor-link__toolbar-actions(ng-if="!config.hideToolbar")
     cf-icon(
-      ng-if="linksApi.goToEditor"
+      ng-if="actions.goToEditor"
       name="edit"
-      ng-click="linksApi.goToEditor(link)")
+      ng-click="actions.goToEditor(entity || link)")
 
     a(
       ng-if="downloadUrl"
@@ -16,6 +16,6 @@ mixin entity-link-actions
       cf-icon(name="download")
 
     cf-icon(
-      ng-if="linksApi.removeFromList"
+      ng-if="actions.removeFromList"
       name="delete"
-      ng-click="linksApi.removeFromList(link)")
+      ng-click="actions.removeFromList(entity || link)")

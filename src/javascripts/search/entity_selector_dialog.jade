@@ -1,3 +1,20 @@
+mixin single-list-item
+  cf-entity-link(
+    ng-if="config.linksEntry"
+    ng-click="toggleSelection(entity)"
+    entity="entity"
+    entity-helpers="helpers"
+    actions="actions"
+    config="{showDetails: true, hideToolbar: true}")
+
+  cf-asset-card(
+    ng-if="config.linksAsset"
+    ng-click="toggleSelection(entity)"
+    entity="entity"
+    entity-helpers="helpers"
+    actions="actions"
+    config="{hideToolbar: true}")
+
 .modal-background
   .modal-dialog.entity-selector-dialog(ng-controller="EntitySelectorController")
     header.modal-dialog__header
@@ -30,20 +47,10 @@
           span(ng-if="view.searchTerm.length > 0")
             |  for <strong>{{ view.searchTerm }}</strong>
 
-        cf-entity-link(
-          ng-if="config.linksEntry"
-          ng-repeat="link in links track by link.sys.id"
-          links-api="linksApi"
-          link="link"
-          show-details="true"
-          selectable="true")
-
-        cf-asset-card(
-          ng-if="config.linksAsset"
-          ng-repeat="link in links track by link.sys.id"
-          links-api="linksApi"
-          link="link"
-          selectable="true")
+        .entity-selector__item(
+          ng-repeat="entity in items track by entity.sys.id"
+          ng-class="{'x--selected': selectedIds[entity.sys.id]}")
+          +single-list-item
 
         .loading(ng-show="isLoading")
 
@@ -51,20 +58,8 @@
         .entity-selector__item-list-placeholder(ng-if="selected.length < 1")
           | {{ labels.empty }} selected yet
 
-        cf-entity-link(
-          ng-if="config.linksEntry"
-          ng-repeat="link in selected track by link.sys.id"
-          links-api="linksApi"
-          link="link"
-          show-details="true"
-          selectable="true")
-
-        cf-asset-card(
-          ng-if="config.linksAsset"
-          ng-repeat="link in selected track by link.sys.id"
-          links-api="linksApi"
-          link="link"
-          selectable="true")
+        .entity-selector__item.x--selected(ng-repeat="entity in selected track by entity.sys.id")
+          +single-list-item
 
       .note-box-small.note-box--blue(
         ng-if="!config.multiple"

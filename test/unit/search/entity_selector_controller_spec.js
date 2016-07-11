@@ -28,7 +28,6 @@ describe('entitySelector', function () {
     };
   });
 
-  var link = entity;
   function entity (id) {
     return {sys: {id: id}};
   }
@@ -122,23 +121,26 @@ describe('entitySelector', function () {
       this.createController({linksEntry: true, multiple: false});
       var confirm = sinon.spy();
       this.scope.dialog = {confirm: confirm};
-      this.scope.linksApi.toggleSelected(link('e1'));
+      this.scope.toggleSelection(this.e1);
       sinon.assert.calledOnce(confirm.withArgs([this.e1]));
     });
 
     it('selects multiple entities', function () {
       this.createController({linksEntry: true, multiple: true});
-      this.scope.linksApi.toggleSelected(link('e1'));
-      this.scope.linksApi.toggleSelected(link('e3'));
+      this.scope.toggleSelection(this.e1);
+      this.scope.toggleSelection(this.e3);
       expect(this.scope.selected).toEqual([this.e1, this.e3]);
+      expect(this.scope.selectedIds).toEqual({e1: true, e3: true});
     });
 
     it('deselects if entity is already selected', function () {
       this.createController({linksEntry: true, multiple: true});
-      this.scope.linksApi.toggleSelected(link('e1'));
+      this.scope.toggleSelection(this.e1);
       expect(this.scope.selected).toEqual([this.e1]);
-      this.scope.linksApi.toggleSelected(link('e1'));
+      expect(this.scope.selectedIds).toEqual({e1: true});
+      this.scope.toggleSelection(this.e1);
       expect(this.scope.selected).toEqual([]);
+      expect(this.scope.selectedIds).toEqual({});
     });
   });
 });
