@@ -2,22 +2,35 @@
   $element-color = $colors.element-mid
   $element-background = alpha(white, 0.95)
 
+  $cf-links-editor-shadow()
+
   display: flex
   position: relative
-  padding: 0.85em
+  padding: .85em
+  padding-left: 30px
   border: 1px solid $element-color
   border-radius: 1px
   font-size: 14px
   background-color: $element-background
 
-  > .entity-status
+  .entity-status
     margin-top: 2px
     margin-right: 0.5em
-    > .status-bar
+    .status-bar
       width: 13px
       height: @width
       margin-top: 0.5 * (@font-size - @height)
       border-radius: 50%
+
+  [data-drag-handle]
+    position: absolute
+    left: 6px
+    padding: 0 5px // larger drag-handle surface
+    margin-top: -1px
+
+  .entity-link__actions
+    position: absolute
+    right: 0.8em
 
   &__image
     width: 4em

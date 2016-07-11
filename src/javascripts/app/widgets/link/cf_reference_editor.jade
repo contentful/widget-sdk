@@ -1,13 +1,5 @@
-.link-editor(
-  ng-class="{" +
-    "'link-editor--empty': !links.length," +
-    "'link-editor--single': single," +
-    "'link-editor--multiple': !single," +
-    "'link-editor--cf-entity-link': !isAssetCard," +
-    "'link-editor--cf-asset-card': isAssetCard" +
-    "}")
-  ol.link-editor__links(
-  cf-ui-sortable ng-model="links")
+.link-editor(ng-class="{'x--contains-asset-cards': isAssetCard}")
+  ol.link-editor__links(cf-ui-sortable ng-model="links")
     li.link-editor__link(ng-repeat="item in links")
 
       cf-entity-link(

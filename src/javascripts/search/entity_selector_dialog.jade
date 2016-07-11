@@ -5,7 +5,7 @@ mixin single-list-item
     entity="entity"
     entity-helpers="helpers"
     actions="actions"
-    config="{showDetails: true, hideToolbar: true}")
+    config="{showDetails: true}")
 
   cf-asset-card(
     ng-if="config.linksAsset"
@@ -13,7 +13,7 @@ mixin single-list-item
     entity="entity"
     entity-helpers="helpers"
     actions="actions"
-    config="{hideToolbar: true}")
+    config="{disableTooltip: true}")
 
 .modal-background
   .modal-dialog.entity-selector-dialog(ng-controller="EntitySelectorController")

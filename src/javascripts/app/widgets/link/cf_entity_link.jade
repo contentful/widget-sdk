@@ -6,6 +6,7 @@ include ./entity_link_mixins
     ng-class="{'entity-link__image--missing': !image}")
     cf-thumbnail(file="image" size="56" fit="thumb")
 
+  +entity-link-drag-handle
   +entity-link-status
 
   .entity-link__text
@@ -21,6 +22,4 @@ include ./entity_link_mixins
       span(ng-if="description") {{ description | truncate:150 }}
       span(ng-if="!description") No description available
 
-  .link-editor-link__toolbar
-    cf-icon(ng-if="config.draggable" data-drag-handle name="drag-handle-2")
-    +entity-link-actions
+  +entity-link-actions

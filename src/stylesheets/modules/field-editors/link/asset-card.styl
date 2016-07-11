@@ -8,7 +8,7 @@
   position: relative
   align-items: center
 
-  > cf-thumbnail
+  cf-thumbnail
     display: flex
     align-items: center
     justify-content: center
@@ -23,18 +23,27 @@
     > img
       border-radius: 1px
 
-  > .entity-status
+  .entity-status
     position: absolute
     width: 13px
     top: 8px
     right: 8px
     &--published
       display: none
-    > .status-bar
+    .status-bar
       width: 13px
       height: @width
       border-radius: 50%
       box-shadow: 0 0 1px $colors.contrast-light;
+
+  [data-drag-handle]
+    position: absolute
+    top: 0
+    left: 0
+    padding: 1px
+    margin: 4px
+    border-radius: 3px
+    background-color: alpha(white, .8)
 
   &__title
     $max-lines = 2
@@ -43,7 +52,6 @@
     line-height: 1.5
     padding-top: 0.4em
     max-height: $max-lines * @font-size * @line-height + @padding-top
-    word-break: break-all
     text-align: center
     overflow: hidden
     color: $colors.text-mid
@@ -58,11 +66,14 @@
     color: $colors.text-light
     background-color: $element-background
 
-  &__custom-tooltip-content:not(:empty)
-    margin-top: $tooltip-padding
+    .entity-link__actions > *
+      color: $colors.blue-light
+      &:hover
+        color: $colors.blue-dark
 
   &__details
     min-width: 180px
+    padding-bottom: $tooltip-padding
     // Line break after filename but squeeze all other info in 2nd line.
     // Whichever line is longer determines the container's width.
     > *

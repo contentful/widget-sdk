@@ -1,9 +1,15 @@
+mixin entity-link-drag-handle
+  cf-icon(
+    ng-if="config.draggable"
+    data-drag-handle
+    name="drag-handle-2")
+
 mixin entity-link-status
   .entity-status(ng-class="status")
     .status-bar
 
 mixin entity-link-actions
-  .link-editor-link__toolbar-actions(ng-if="!config.hideToolbar")
+  .entity-link__actions
     cf-icon(
       ng-if="actions.goToEditor"
       name="edit"

@@ -21,6 +21,7 @@ $cf-links-editor-shadow()
     margin: 0
 
   [data-drag-handle] // TODO: Just have a global rule somewhere.
+    color: $colors.text-light
     cursor: move
     cursor: -moz-grab
     cursor: -webkit-grab
@@ -28,31 +29,40 @@ $cf-links-editor-shadow()
       cursor: -moz-grabbing
       cursor: -webkit-grabbing
 
-
-.link-editor--cf-entity-link
-  $links-gap = 12px
-
-  .link-editor__links
-    > *
-      margin-bottom: $links-gap
-      &:last-child
-        margin-bottom: 0
-
-  .link-editor__links:not(:empty) + .link-editor__actions
-    margin-top: $links-gap
-
-
-.link-editor--cf-asset-card
-  $links-gap-x = 15px
-  $links-gap-y = 20px
-
-  .link-editor__links
-    position: relative
+  .entity-link__actions
     display: flex
-    flex-wrap: wrap
-    left: -($links-gap-x)
-    top: -($links-gap-y)
-    width: "calc(100% + %s)" % $links-gap-x
+    > *:not(:last-child)
+      margin-right: 0.8em
     > *
-      margin-left: $links-gap-x
-      margin-top: $links-gap-y
+      cursor: pointer
+      color: $colors.text-light
+      &:hover
+        color: $colors.text-mid
+
+  &:not(.x--contains-asset-cards)
+    $links-gap = 12px
+
+    .link-editor__links
+      > *
+        margin-bottom: $links-gap
+        &:last-child
+          margin-bottom: 0
+
+    .link-editor__links:not(:empty) + .link-editor__actions
+      margin-top: $links-gap
+
+
+  &.x--contains-asset-cards
+    $links-gap-x = 15px
+    $links-gap-y = 20px
+
+    .link-editor__links
+      position: relative
+      display: flex
+      flex-wrap: wrap
+      left: -($links-gap-x)
+      top: -($links-gap-y)
+      width: "calc(100% + %s)" % $links-gap-x
+      > *
+        margin-left: $links-gap-x
+        margin-top: $links-gap-y
