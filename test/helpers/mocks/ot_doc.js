@@ -30,6 +30,10 @@ angular.module('contentful/mocks')
     this.snapshot = snapshot || {};
     this.base = base || [];
 
+    // TODO this should be automatically incremented when we change
+    // something.
+    this.version = 0;
+
     this.on = sinon.stub();
     this.removeListener = sinon.stub();
     this.close = sinon.stub();

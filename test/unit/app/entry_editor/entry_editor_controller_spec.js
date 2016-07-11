@@ -9,10 +9,9 @@ describe('Entry Editor Controller', function () {
   });
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', ($provide, $controllerProvider) => {
       $provide.removeControllers(
         'FormWidgetsController',
-        'entityEditor/Document',
         'entityEditor/LocalesController',
         'entityEditor/StatusNotificationsController'
       );
@@ -20,6 +19,9 @@ describe('Entry Editor Controller', function () {
         getLocalesState: sinon.stub().returns({}),
         getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'}),
         getPrivateLocales: sinon.stub().returns([{internal_code: 'en-US'}, {internal_code: 'de-DE'}])
+      });
+      $controllerProvider.register('entityEditor/Document', () => {
+        return this.$inject('mocks/entityEditor/Document').create();
       });
     });
 
@@ -29,8 +31,6 @@ describe('Entry Editor Controller', function () {
       var $rootScope = this.$inject('$rootScope');
       scope = $rootScope.$new();
 
-      var OtDoc = this.$inject('mocks/OtDoc');
-      var doc = new OtDoc();
       var ctData = cfStub.contentTypeData();
       scope.contentType = {data: ctData, getId: _.constant(ctData.sys.id)};
       scope.context = {};
@@ -43,12 +43,6 @@ describe('Entry Editor Controller', function () {
 
       var $controller = this.$inject('$controller');
       $controller('EntryEditorController', {$scope: scope});
-
-      scope.otDoc = {
-        doc: doc,
-        open: sinon.stub(),
-        close: sinon.stub()
-      };
 
       scope.validate = sinon.stub();
 
@@ -89,21 +83,15 @@ describe('Entry Editor Controller', function () {
     });
   });
 
-  describe('setting the tab dirty state', function () {
-    it('should be false by default', function () {
-      expect(scope.context.dirty).toBe(false);
-    });
-
-    it('should be true when modified', function () {
-      scope.otDoc.doc.version = scope.entry.getPublishedVersion() + 2;
-      scope.$digest();
+  describe('scope.context.dirty', function () {
+    it('changes according to doc state', function () {
+      scope.otDoc.state.isDirty.set(true);
+      this.$apply();
       expect(scope.context.dirty).toBe(true);
-    });
 
-    it('should be "draft" when no published version available', function () {
-      scope.entry.getPublishedVersion = sinon.stub().returns(undefined);
-      scope.$digest();
-      expect(scope.context.dirty).toBe('draft');
+      scope.otDoc.state.isDirty.set(false);
+      this.$apply();
+      expect(scope.context.dirty).toBe(false);
     });
   });
 });

@@ -1,14 +1,15 @@
 'use strict';
 
 angular.module('contentful')
-.controller('EntryEditorController', ['$scope', '$injector', function EntryEditorController ($scope, $injector) {
-  var $controller = $injector.get('$controller');
-  var spaceContext = $injector.get('spaceContext');
-  var notifier = $injector.get('entryEditor/notifications');
-  var truncate = $injector.get('stringUtils').truncate;
-  var accessChecker = $injector.get('accessChecker');
-  var DataFields = $injector.get('EntityEditor/DataFields');
-  var ContentTypes = $injector.get('data/ContentTypes');
+.controller('EntryEditorController', ['$scope', 'require', function EntryEditorController ($scope, require) {
+  var $controller = require('$controller');
+  var spaceContext = require('spaceContext');
+  var notifier = require('entryEditor/notifications');
+  var truncate = require('stringUtils').truncate;
+  var accessChecker = require('accessChecker');
+  var DataFields = require('EntityEditor/DataFields');
+  var ContentTypes = require('data/ContentTypes');
+  var K = require('utils/kefir');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
@@ -50,19 +51,8 @@ angular.module('contentful')
     $scope.title = truncate(title, 50);
   });
 
-
-  $scope.$watch(function (scope) {
-    if (scope.otDoc.doc && scope.entry) {
-      if (angular.isDefined(scope.entry.getPublishedVersion())) {
-        return scope.otDoc.doc.version > scope.entry.getPublishedVersion() + 1;
-      } else {
-        return 'draft';
-      }
-    } else {
-      return undefined;
-    }
-  }, function (modified, _old, scope) {
-    if (modified !== undefined) scope.context.dirty = modified;
+  K.onValueScope($scope, $scope.otDoc.state.isDirty, function (isDirty) {
+    $scope.context.dirty = isDirty;
   });
 
   // OT Stuff

@@ -1,7 +1,7 @@
 'use strict';
 
 describe('entityEditor/Document', function () {
-  var scope;
+  var scope, K;
 
   // TODO remove this
   function makeOtDocStub (snapshot) {
@@ -15,6 +15,8 @@ describe('entityEditor/Document', function () {
 
   beforeEach(function () {
     module('contentful/test');
+
+    K = this.$inject('mocks/kefir');
 
     var ShareJS = this.$inject('ShareJS');
     ShareJS.isConnected = sinon.stub().returns(true);
@@ -75,7 +77,7 @@ describe('entityEditor/Document', function () {
   });
 
   afterEach(function () {
-    scope = null;
+    scope = K = null;
   });
 
   it('otDoc is initially undefined', function () {
@@ -590,4 +592,43 @@ describe('entityEditor/Document', function () {
       sinon.assert.called(errored);
     });
   }
+
+  describe('#state.isDirty', function () {
+    beforeEach(function () {
+      this.otDoc = this.connectAndOpen();
+      this.docUpdate = function (path, value) {
+        this.otDoc.setAt(path, value);
+        this.otDoc.version++;
+        this.otDoc.on.withArgs('change').yield([{p: path}]);
+        this.$apply();
+      };
+      this.isDirtyValues = K.extractValues(this.doc.state.isDirty);
+    });
+
+    it('changes to false if document is at published version', function () {
+      expect(this.isDirtyValues[0]).toBe(true);
+
+      this.otDoc.version = 12;
+      this.docUpdate(['sys', 'publishedVersion'], 12);
+      expect(this.isDirtyValues[0]).toBe(false);
+    });
+
+    it('changes to true if a published document is changed', function () {
+      this.otDoc.version = 12;
+      this.docUpdate(['sys', 'publishedVersion'], 12);
+      expect(this.isDirtyValues[0]).toBe(false);
+
+      this.docUpdate(['fields'], {});
+      expect(this.isDirtyValues[0]).toBe(true);
+    });
+
+    it('changes to true if a document is unpublishd', function () {
+      this.otDoc.version = 12;
+      this.docUpdate(['sys', 'publishedVersion'], 12);
+      expect(this.isDirtyValues[0]).toBe(false);
+
+      this.docUpdate(['sys', 'publishedVersion'], undefined);
+      expect(this.isDirtyValues[0]).toBe(true);
+    });
+  });
 });

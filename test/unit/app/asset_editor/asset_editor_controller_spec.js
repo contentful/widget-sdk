@@ -5,13 +5,15 @@ describe('Asset editor controller', function () {
   var scope;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', ($provide, $controllerProvider) => {
       $provide.removeControllers(
         'FormWidgetsController',
-        'entityEditor/Document',
         'entityEditor/LocalesController',
         'entityEditor/StatusNotificationsController'
       );
+      $controllerProvider.register('entityEditor/Document', () => {
+        return this.$inject('mocks/entityEditor/Document').create();
+      });
     });
 
     scope = this.$inject('$rootScope').$new();
@@ -26,14 +28,6 @@ describe('Asset editor controller', function () {
 
     var $controller = this.$inject('$controller');
     $controller('AssetEditorController', {$scope: scope});
-
-    scope.otDoc = {
-      doc: {},
-      getValueAt: sinon.stub(),
-      setValueAt: sinon.stub(),
-      open: sinon.stub(),
-      close: sinon.stub()
-    };
 
     scope.validate = sinon.stub();
 
@@ -68,6 +62,7 @@ describe('Asset editor controller', function () {
     });
 
     it('does not set the document title if it present', function () {
+      scope.otDoc.getValueAt = sinon.stub();
       scope.otDoc.getValueAt.withArgs(['fields', 'title', 'en-US']).returns('title');
       scope.$emit('fileUploaded', {fileName: 'file.jpg'}, {internal_code: 'en-US'});
       sinon.assert.notCalled(scope.otDoc.setValueAt);
