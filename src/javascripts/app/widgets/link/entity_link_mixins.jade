@@ -5,18 +5,23 @@ mixin entity-link-drag-handle
     name="drag-handle-2")
 
 mixin entity-link-status
-  .entity-status(ng-class="status")
+  .entity-status(ng-if="!missing" ng-class="status")
     .status-bar
+
+mixin entity-link-title
+  span(ng-if="!missing && title") {{ title | truncateMiddle:30:10 }}
+  span(ng-if="!missing && !title") Untitled
+  span(ng-if="missing") Entity missing or inaccessible
 
 mixin entity-link-actions
   .entity-link__actions
     cf-icon(
-      ng-if="actions.goToEditor"
+      ng-if="!missing && actions.goToEditor"
       name="edit"
       ng-click="actions.goToEditor(entity || link)")
 
     a(
-      ng-if="downloadUrl"
+      ng-if="!missing && downloadUrl"
       ng-href="{{ downloadUrl }}"
       target="_blank")
       cf-icon(name="download")

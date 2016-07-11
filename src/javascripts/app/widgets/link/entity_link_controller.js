@@ -11,7 +11,7 @@ angular.module('cf.app')
     maybeGetEntryDetails();
     maybeGetAssetDetails();
   } else {
-    // @todo entity is missing or inaccessible
+    $scope.missing = true;
   }
 
   function getBasicEntityInfo () {

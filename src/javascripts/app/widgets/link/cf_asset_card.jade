@@ -15,10 +15,9 @@ include ./entity_link_mixins
   +entity-link-status
 
   .asset-card__title(
-    ng-click="actions.goToEditor && actions.goToEditor(entity || link)"
-    ng-class="{'asset-card__title--missing': !title}")
-    span(ng-if="title") {{ title | truncateMiddle:30:10 }}
-    span(ng-if="!title") Untitled
+    ng-click="!missing && actions.goToEditor && actions.goToEditor(entity || link)"
+    ng-class="{'asset-card__title--missing': !title || missing}")
+    +entity-link-title
 
   .asset-card__tooltip.context-menu(
     ng-if="!config.disableTooltip"
