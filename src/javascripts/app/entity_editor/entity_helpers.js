@@ -11,19 +11,19 @@ angular.module('contentful')
 
   var api = {
     entityStatus: entityStatus,
-    entityTitle: wrap('entityTitle'),
-    entityDescription: wrap('entityDescription'),
-    entryImage: wrap('entryImage'),
+    entityTitle: wrapAsEntity('entityTitle'),
+    entityDescription: wrapAsEntity('entityDescription'),
+    entryImage: wrapAsEntity('entryImage'),
     assetFile: assetFile,
-    assetUrl: assetUrl
+    assetFileUrl: assetFileUrl
   };
 
   return {
     api: api,
-    forLocale: forLocale
+    newForLocale: newForLocale
   };
 
-  function forLocale (locale) {
+  function newForLocale (locale) {
     return _.extend(_.clone(api), {
       entityTitle: _.partialRight(api.entityTitle, locale),
       entityDescription: _.partialRight(api.entityDescription, locale),
@@ -41,10 +41,10 @@ angular.module('contentful')
     }));
   }
 
-  function wrap (method) {
+  function wrapAsEntity (methodName) {
     return function (data, localeCode) {
       return dataToEntity(data).then(function (entity) {
-        return spaceContext[method](entity, localeCode);
+        return spaceContext[methodName](entity, localeCode);
       });
     };
   }
@@ -76,10 +76,20 @@ angular.module('contentful')
   }
 
   function assetFile (data, locale) {
-    return $q.resolve(dotty.get(data, 'fields.file.' + locale, null));
+    var file = dotty.get(data, 'fields.file.' + locale);
+
+    if (_.isObject(file)) {
+      return $q.resolve(file);
+    } else {
+      return $q.reject();
+    }
   }
 
-  function assetUrl (url) {
-    return $q.resolve(assetUrlFilter(url));
+  function assetFileUrl (file) {
+    if (_.isObject(file) && file.url) {
+      return $q.resolve(assetUrlFilter(file.url));
+    } else {
+      return $q.reject();
+    }
   }
 }]);

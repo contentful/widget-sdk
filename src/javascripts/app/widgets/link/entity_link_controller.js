@@ -3,8 +3,13 @@
 angular.module('cf.app')
 .controller('EntityLinkController', ['$scope', function ($scope) {
 
-  var data = $scope.entity || $scope.entityStore.get($scope.link);
+  var data = $scope.entity;
   $scope.config = $scope.config || {};
+
+  if (!data) {
+    var getEntity = dotty.get($scope, 'entityStore.get', _.noop);
+    data = getEntity($scope.link);
+  }
 
   if (data) {
     getBasicEntityInfo();
@@ -27,16 +32,10 @@ angular.module('cf.app')
   }
 
   function maybeGetAssetDetails () {
-    if (!is('Asset')) {
-      return;
+    if (is('Asset')) {
+      get('assetFile', 'file')
+      .then(_.partial(get, 'assetFileUrl', 'downloadUrl'));
     }
-
-    get('assetFile', 'file')
-    .then(function (file) {
-      if (_.isObject(file) && file.url) {
-        get('assetUrl', 'downloadUrl', file.url);
-      }
-    });
   }
 
   function get (getter, scopeProperty, arg) {

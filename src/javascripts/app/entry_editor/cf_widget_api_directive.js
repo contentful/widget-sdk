@@ -79,7 +79,7 @@ angular.module('contentful')
   };
 
   this.space = spaceContext.cma;
-  this.entityHelpers = EntityHelpers.forLocale($scope.locale.code);
+  this.entityHelpers = EntityHelpers.newForLocale($scope.locale.code);
 
   this.state = {
     goToEditor: function (linkOrData) {

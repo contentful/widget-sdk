@@ -9,12 +9,13 @@ angular.module('contentful')
 
   function create (space, fetchMethod) {
     var store = {};
-
-    return {
+    var instance = {
       prefetch: prefetch,
       get: get,
       add: add
     };
+
+    return instance;
 
     function prefetch (links) {
       var ids = _.map(links, function (link) {
@@ -26,13 +27,13 @@ angular.module('contentful')
       });
 
       if (!space || !fetchMethod || skip) {
-        return $q.resolve();
+        return $q.resolve(instance);
       }
 
       return space[fetchMethod]({'sys.id[in]': ids.join(',')})
       .then(function (res) {
         _.forEach(res.items, add);
-        return store;
+        return instance;
       });
     }
 
