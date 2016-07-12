@@ -6,25 +6,21 @@ angular.module('contentful')
  * @ngdoc service
  * @name states/api
  */
-.factory('states/api', ['$injector', function ($injector) {
-  var base = $injector.get('states/base');
+.factory('states/api', ['require', function (require) {
+  var base = require('states/base');
+  var contextHistory = require('contextHistory');
 
   var home = {
     name: 'home',
     url: '',
-    ncyBreadcrumb: {
-      label: 'APIs'
-    },
+    label: 'APIs',
     redirectTo: 'spaces.detail.api.keys.list'
   };
 
   var contentModel = {
     name: 'content_model',
     url: '/content_model',
-    ncyBreadcrumb: {
-      label: 'Content model explorer',
-      parent: 'spaces.detail.api.home'
-    },
+    label: 'Content model explorer',
     controller: 'apiContentModelController',
     template: JST['api_content_model']()
   };
@@ -32,40 +28,38 @@ angular.module('contentful')
   var cmaKeys = {
     name: 'cma_keys',
     url: '/cma_keys',
-    ncyBreadcrumb: {
-      label: 'Content Management API Keys',
-      parent: 'spaces.detail.api.home'
-    },
+    label: 'Content Management API Keys',
+    controller: [function () {
+      contextHistory.addEntity({
+        getTitle: function () { return cmaKeys.label; },
+        link: { state: 'spaces.detail.api.cma_keys' },
+        getType: _.constant('CMAKeys'),
+        getId: _.constant('CMAKEYS')
+      });
+    }],
     template: JST.api_cma_keys()
   };
 
+  // TODO(mudit): Move entity generation into a factory
+  var cdaKeyListEntity = {
+    getTitle: function () { return keyList.label; },
+    link: { state: 'spaces.detail.api.keys.list' },
+    getType: _.constant('CDAKeys'),
+    getId: _.constant('CDAKEYS')
+  };
 
   var keyList = base({
     name: 'list',
     url: '/',
-    ncyBreadcrumb: {
-      label: 'Content Delivery API Keys',
-      parent: 'spaces.detail.api.home'
-    },
-    template: '<cf-api-key-list class="workbench" />',
+    label: 'Content Delivery API Keys',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
-    }]
+      contextHistory.addEntity(cdaKeyListEntity);
+    }],
+    template: '<cf-api-key-list class="workbench" />'
   });
 
-  var apiKeyEditorState = {
-    ncyBreadcrumb: {
-      parent: 'spaces.detail.api.keys.list',
-      label: '{{context.title + (context.dirty ? "*" : "")}}'
-    },
-    controller: ['$state', '$scope', '$stateParams', 'apiKey', function ($state, $scope, $stateParams, apiKey) {
-      $state.current.data = $scope.context = {};
-      $scope.apiKey = apiKey;
-    }],
-    template: '<cf-api-key-editor class="workbench" />'
-  };
-
-  var newKey =  _.extend({
+  var newKey = _.extend({
     name: 'new',
     url: '_new',
     resolve: {
@@ -73,7 +67,7 @@ angular.module('contentful')
         return space.newDeliveryApiKey();
       }]
     }
-  }, apiKeyEditorState);
+  }, makeApiKeyEditorState(true));
 
   var keyDetail = _.extend({
     name: 'detail',
@@ -83,7 +77,7 @@ angular.module('contentful')
         return space.getDeliveryApiKey($stateParams.apiKeyId);
       }]
     }
-  }, apiKeyEditorState);
+  }, makeApiKeyEditorState(false));
 
   var cdaKeys = {
     name: 'keys',
@@ -102,4 +96,45 @@ angular.module('contentful')
     controller: 'ApiKeyController',
     controllerAs: 'apiKeyController'
   };
+
+  function makeApiKeyEditorState (isNew) {
+    var apiKeyEditorState = {
+      params: { addToContext: true },
+      controller: ['$scope', 'require', 'apiKey', function ($scope, require, apiKey) {
+        var $state = require('$state');
+        var $stateParams = require('$stateParams');
+
+        var apiKeyId = $stateParams.apiKeyId;
+
+        var id = isNew ? 'CDAKEYNEW' : apiKeyId;
+        var stateFragment = isNew ? 'new' : 'detail';
+        var params = isNew ? undefined : { apiKeyId: apiKeyId };
+
+        $state.current.data = $scope.context = {};
+        $scope.apiKey = apiKey;
+
+        // add cda list as parent
+        contextHistory.addEntity(cdaKeyListEntity);
+
+        // add current state
+        contextHistory.addEntity({
+          getTitle: getTitle,
+          link: {
+            state: 'spaces.detail.api.keys.' + stateFragment,
+            params: params
+          },
+          getType: _.constant('CDAKey'),
+          getId: _.constant(id)
+        });
+
+        function getTitle () {
+          return $scope.context.title + ($scope.context.dirty ? '*' : '');
+        }
+      }],
+      template: '<cf-api-key-editor class="workbench" />'
+    };
+
+    apiKeyEditorState.label = isNew ? 'New API Key' : 'API key details';
+    return apiKeyEditorState;
+  }
 }]);

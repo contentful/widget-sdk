@@ -6,17 +6,26 @@ angular.module('contentful')
  * @ngdoc service
  * @name states/settings/roles
  */
-.factory('states/settings/roles', ['$injector', function ($injector) {
-  var base = $injector.get('states/base');
+.factory('states/settings/roles', ['require', function (require) {
+  var base = require('states/base');
+  var contextHistory = require('contextHistory');
+
+  var listEntity = {
+    getTitle: function () { return list.label; },
+    link: { state: 'spaces.detail.settings.roles.list' },
+    getType: _.constant('Roles'),
+    getId: _.constant('ROLES')
+  };
 
   var list = base({
     name: 'list',
     url: '',
-    ncyBreadcrumb: { label: 'Roles' },
+    label: 'Roles',
     loadingText: 'Loading Roles...',
     template: '<cf-role-list class="workbench role-list" />',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
+      contextHistory.addEntity(listEntity);
     }]
   });
 
@@ -24,15 +33,13 @@ angular.module('contentful')
     name: 'new',
     url: '/new',
     params: {
-      baseRoleId: null
+      baseRoleId: null,
+      addToContext: true
     },
     data: {
       isNew: true
     },
-    ncyBreadcrumb: {
-      parent: 'spaces.detail.settings.roles.list',
-      label: '{{ context.title + (context.dirty ? "*" : "") }}'
-    },
+    label: 'context.title + (context.dirty ? "*" : "")',
     resolve: {
       baseRole: ['RoleRepository', 'space', '$stateParams', '$q', function (RoleRepository, space, $stateParams, $q) {
         if (!$stateParams.baseRoleId) { return $q.when(null); }
@@ -47,19 +54,30 @@ angular.module('contentful')
       $scope.context = $state.current.data;
       $scope.baseRole = baseRole;
       $scope.role = emptyRole;
+
+      // parent is list view
+      contextHistory.addEntity(listEntity);
+
+      // add current view
+      contextHistory.addEntity({
+        getTitle: function () { return $scope.context.title + ($scope.context.dirty ? '*' : ''); },
+        link: {
+          state: 'spaces.detail.settings.roles.new'
+        },
+        getType: _.constant('Role'),
+        getId: _.constant('ROLENEW')
+      });
     }]
   };
 
   var detail = {
     name: 'detail',
     url: '/:roleId',
+    params: { addToContext: true },
     data: {
       isNew: false
     },
-    ncyBreadcrumb: {
-      parent: 'spaces.detail.settings.roles.list',
-      label: '{{ context.title + (context.dirty ? "*" : "") }}'
-    },
+    label: 'context.title + (context.dirty ? "*" : "")',
     resolve: {
       role: ['RoleRepository', 'space', '$stateParams', function (RoleRepository, space, $stateParams) {
         return RoleRepository.getInstance(space).get($stateParams.roleId);
@@ -69,9 +87,28 @@ angular.module('contentful')
       }]
     },
     template: '<cf-role-editor class="workbench role-editor" />',
-    controller: ['$scope', '$state', 'role', function ($scope, $state, role) {
+    controller: ['$scope', 'require', 'role', function ($scope, require, role) {
+      var $state = require('$state');
+      var $stateParams = require('$stateParams');
+
+      var roleId = $stateParams.roleId;
+
       $scope.context = $state.current.data;
       $scope.role = role;
+
+      // parent is list view
+      contextHistory.addEntity(listEntity);
+
+      // add current view
+      contextHistory.addEntity({
+        getTitle: function () { return $scope.context.title + ($scope.context.dirty ? '*' : ''); },
+        link: {
+          state: 'spaces.detail.settings.roles.detail',
+          params: { roleId: roleId }
+        },
+        getType: _.constant('Role'),
+        getId: _.constant(roleId)
+      });
     }]
   };
 

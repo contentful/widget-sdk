@@ -1,11 +1,8 @@
 .workbench.webhook-call
   header.workbench-header
+    cf-breadcrumbs
     cf-icon.workbench-header__icon(name="page-settings")
     h1.workbench-header__title Call details for {{ webhook.name }} at {{ call.requestAt }}
-
-    .workbench-header__actions
-      button.cfnext-btn-secondary-action(ui-sref="^" ui-sref-opts="{reload: true}")
-        | Go back
 
   .workbench-main
     .workbench-main__content
