@@ -11,4 +11,7 @@ angular.module('contentful')
 
   $scope.field = $scope.widget.field;
   $scope.locale = TheLocaleStore.getDefaultLocale();
+  $scope.fieldLocale = $injector.get('$controller')('FieldLocaleController', {
+    $scope: $scope
+  });
 }]);
