@@ -13,10 +13,10 @@
  * @param {float} scale - (optional) scale factor to be applied to the icon
  */
 angular.module('cf.ui')
-.directive('cfIcon', ['icons', function(icons){
+.directive('cfIcon', ['icons', function (icons) {
   return {
     restrict: 'E',
-    link: function (scope, el, attrs) {
+    link: function (_scope, el, attrs) {
       var icon = $(icons[attrs.name]);
       var scale = parseFloat(attrs.scale);
       if (scale === 0) {
