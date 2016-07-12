@@ -1,18 +1,15 @@
 header.workbench-header
+  cf-breadcrumbs
   cf-icon.workbench-header__icon(name="page-settings")
   h1.workbench-header__title Webhook: {{ context.title }}
 
   .workbench-header__actions(ui-tabpanel="settings")
-    button.cfnext-btn-secondary-action(ui-sref="^.list")
-      | Go back
     button.cfnext-btn-secondary-action(ui-command="openRemovalDialog")
       | Remove
     button.cfnext-btn-primary-action(ui-command="save")
       | Save
 
   .workbench-header__actions(ui-tabpanel="activity")
-    button.cfnext-btn-secondary-action(ui-sref="^.list")
-      | Go back
     button.cfnext-btn-secondary-action(ui-command="refreshLogs")
       | Refresh logs
 

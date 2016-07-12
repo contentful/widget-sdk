@@ -133,8 +133,6 @@ test/helpers/deep_diff.js
 test/helpers/dsl.js
 test/helpers/sinon.js
 test/integration/field_validation_dialog_spec.js
-src/javascripts/components/client/cf_activity_breadcrumbs_directive.js
-src/javascripts/components/client/cf_breadcrumbs_directive.js
 src/javascripts/components/client/activation_email_resend_controller.js
 src/javascripts/components/client/cf_main_nav_bar_directive.js
 src/javascripts/components/client/cf_space_selector_directive.js
@@ -320,7 +318,6 @@ src/javascripts/services/sdk_info_supplier.js
 src/javascripts/services/search_query_autocompletions.js
 src/javascripts/services/segment.js
 src/javascripts/services/space_tools.js
-src/javascripts/services/the_store.js
 src/javascripts/services/token_store.js
 src/javascripts/services/user_agent.js
 src/javascripts/services/zone_offsets.js
@@ -375,18 +372,13 @@ src/javascripts/account/iframe_channel.js
 src/javascripts/contentful.js
 src/javascripts/filters.js
 src/javascripts/states/account.js
-src/javascripts/states/api.js
-src/javascripts/states/assets.js
 src/javascripts/states/base.js
 src/javascripts/states/config.js
 src/javascripts/states/content_types.js
-src/javascripts/states/entries.js
 src/javascripts/states/learn.js
 src/javascripts/states/settings.js
-src/javascripts/states/settings_locales.js
 src/javascripts/states/settings_roles.js
 src/javascripts/states/settings_users.js
-src/javascripts/states/settings_webhooks.js
 src/javascripts/states/states.js
 src/javascripts/webhooks/webhook_call_status_directive.js
 src/javascripts/webhooks/webhook_editor_directive.js

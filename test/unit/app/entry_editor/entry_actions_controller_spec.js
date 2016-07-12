@@ -62,7 +62,7 @@ describe('Entry Actions Controller', function () {
       it('opens the editor', function() {
         sinon.assert.calledWith(this.$state.go, 'spaces.detail.entries.detail', {
           entryId: this.scope.entry.getId(),
-          addToContext: true
+          createdFromActionsMenu: true
         });
       });
     });

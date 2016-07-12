@@ -34,7 +34,6 @@ function ContentTypeEditorController ($scope, $injector) {
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
   $scope.hints = hints;
-  $scope.settingsHintShown = hints.shouldShow('ct-field-settings');
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.saveAndClose);
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);

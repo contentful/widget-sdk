@@ -9,9 +9,9 @@ angular.module('contentful')
  * Exposes a function that builds a state with loading views.
  */
 .factory('states/base', [function () {
-  return function base(definition) {
+  return function base (definition) {
     if (!definition.loadingText) {
-      var label = dotty.get(definition, 'ncyBreadcrumb.label');
+      var label = dotty.get(definition, 'label');
       definition.loadingText = label ? ('Loading your ' + label + '...') : 'Loading...';
     }
 
@@ -23,4 +23,3 @@ angular.module('contentful')
     return definition;
   };
 }]);
-
