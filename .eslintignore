@@ -92,7 +92,6 @@ test/unit/services/organization_list_spec.js
 test/unit/services/promised_loader_spec.js
 test/unit/services/reload_notification_spec.js
 test/unit/services/sdk_info_supplier_spec.js
-test/unit/services/sharejs_client_spec.js
 test/unit/services/space_template_creator_spec.js
 test/unit/services/space_template_loader_spec.js
 test/unit/services/space_tools_spec.js

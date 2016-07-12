@@ -98,6 +98,8 @@ angular.module('contentful/mocks')
     this.set(newValue, cb);
   };
 
+  OtDoc.prototype.emit = function () {};
+
   sinon.spy(OtDoc.prototype, 'insert');
   sinon.spy(OtDoc.prototype, 'del');
   sinon.spy(OtDoc.prototype, 'remove');
