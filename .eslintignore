@@ -81,7 +81,6 @@ test/unit/services/totango_spec.js
 test/unit/services/validation_views_spec.js
 test/unit/services/activation_email_resender_spec.js
 test/unit/services/analytics_events_spec.js
-test/unit/services/analytics_spec.js
 test/unit/services/authorization_spec.js
 test/unit/services/bugsnag_spec.js
 test/unit/services/editing_interfaces_helpers_spec.js
@@ -108,15 +107,12 @@ test/unit/widgets/channel_spec.js
 test/unit/widgets/default_spec.js
 test/unit/widgets/deprecations_spec.js
 test/unit/widgets/migrations_spec.js
-test/unit/widgets/store_spec.js
-test/unit/widgets/widgets_spec.js
 test/unit/app/entity_editor/locales_controller_spec.js
 test/unit/app/entity_editor/status_notifications_controller_spec.js
 test/unit/app/entry_editor/entry_actions_controller_spec.js
 test/unit/app/entry_editor/entry_reverter_spec.js
 test/unit/data/content_types_spec.js
 test/unit/data/editing_interfaces/transformer_spec.js
-test/unit/data/editing_interfaces_spec.js
 test/unit/data/space_endpoint_spec.js
 test/unit/data/user_cache_spec.js
 test/unit/markdown_editor/insert_asset_dialog_controller_spec.js
@@ -192,7 +188,6 @@ src/javascripts/components/shared/validation_error_display/cf_error_path_directi
 src/javascripts/components/shared/validation_error_display/error_path_controller.js
 src/javascripts/components/shared/create_new_space/create_new_space_directive.js
 src/javascripts/components/shared/onboarding_dialog/onboarding_dialog_controller.js
-src/javascripts/components/shared/onboarding_dialog/onboarding_persona_selection_directive.js
 src/javascripts/components/shared/accordion_controller.js
 src/javascripts/components/shared/cf_dropdown_toggle_directive.js
 src/javascripts/components/shared/cf_img_load_event.js
@@ -361,8 +356,6 @@ src/javascripts/services/activation_email_resender.js
 src/javascripts/services/analytics/analytics.js
 src/javascripts/services/analytics/analytics_console_log.js
 src/javascripts/services/analytics/analytics_noop.js
-src/javascripts/services/analytics/analytics_track.js
-src/javascripts/services/analytics_events.js
 src/javascripts/services/authorization.js
 src/javascripts/services/bugsnag.js
 src/javascripts/services/editing_interfaces_helpers.js
@@ -405,10 +398,7 @@ src/javascripts/widgets/checks.js
 src/javascripts/widgets/default.js
 src/javascripts/widgets/deprecations.js
 src/javascripts/widgets/migrations.js
-src/javascripts/widgets/store.js
-src/javascripts/widgets/widgets.js
 src/javascripts/data/content_types.js
-src/javascripts/data/editing_interfaces.js
 src/javascripts/data/editing_interfaces/asset_interface.js
 src/javascripts/data/editing_interfaces/transformer.js
 src/javascripts/data/space_endpoint.js
@@ -467,7 +457,6 @@ src/javascripts/states/settings_locales.js
 src/javascripts/states/settings_roles.js
 src/javascripts/states/settings_users.js
 src/javascripts/states/settings_webhooks.js
-src/javascripts/states/spaces.js
 src/javascripts/states/states.js
 src/javascripts/webhooks/webhook_call_status_directive.js
 src/javascripts/webhooks/webhook_editor_directive.js

@@ -10,15 +10,15 @@
  * noops.
  */
 angular.module('contentful')
-.factory('analytics/track', ['$injector', function ($injector) {
-
-  var lazyLoad      = $injector.get('LazyLoader').get;
-  var segment       = $injector.get('segment');
-  var totango       = $injector.get('totango');
-  var logger        = $injector.get('logger');
-  var cookieStore   = $injector.get('TheStore/cookieStore');
-  var stringifySafe = $injector.get('stringifySafe');
-  var $rootScope    = $injector.get('$rootScope');
+.factory('analytics/track', ['require', function (require) {
+  var lazyLoad = require('LazyLoader').get;
+  var segment = require('segment');
+  var totango = require('totango');
+  var logger = require('logger');
+  var cookieStore = require('TheStore/cookieStore');
+  var stringifySafe = require('stringifySafe');
+  var $rootScope = require('$rootScope');
+  var GTM = require('analytics/gtm');
 
   var organizationData, spaceData, userData;
   var turnOffStateChangeListener = null;
@@ -52,7 +52,21 @@ angular.module('contentful')
      * @param {string} module
      */
     trackTotango: trackTotango,
-    trackPersistentNotificationAction: trackPersistentNotificationAction
+    trackPersistentNotificationAction: trackPersistentNotificationAction,
+
+    /**
+     * @ngdoc method
+     * @name analytics#pushGtm
+     * @description
+     * Push an object to the Google Tag Manager
+     *
+     * See the [Google Tag Manager developer docs][1] for more
+     * information.
+     *
+     * [1]:https://developers.google.com/tag-manager/devguide#datalayer
+     * @param {object} data
+     */
+    pushGtm: pushGtm
   };
   return analytics;
 
@@ -64,6 +78,11 @@ angular.module('contentful')
   function enable (user) {
     segment.enable();
     totango.enable();
+    GTM.enable();
+    GTM.push({
+      event: 'app.open',
+      userId: user.sys.id
+    });
     lazyLoad('fontsDotCom');
     turnOffStateChangeListener = $rootScope.$on('$stateChangeSuccess', trackStateChange);
     userData = user;
@@ -73,6 +92,7 @@ angular.module('contentful')
   function disable () {
     segment.disable();
     totango.disable();
+    GTM.disable();
 
     if (_.isFunction(turnOffStateChangeListener)) {
       turnOffStateChangeListener();
@@ -89,13 +109,17 @@ angular.module('contentful')
       try {
         organizationData = space.data.organization;
         spaceData = {
-          spaceIsTutorial:                       space.data.tutorial,
-          spaceSubscriptionKey:                  space.data.organization.sys.id,
-          spaceSubscriptionState:                space.data.organization.subscriptionState,
-          spaceSubscriptionInvoiceState:         space.data.organization.invoiceState,
-          spaceSubscriptionSubscriptionPlanKey:  space.data.organization.subscriptionPlan.sys.id,
+          spaceIsTutorial: space.data.tutorial,
+          spaceSubscriptionKey: space.data.organization.sys.id,
+          spaceSubscriptionState: space.data.organization.subscriptionState,
+          spaceSubscriptionInvoiceState: space.data.organization.invoiceState,
+          spaceSubscriptionSubscriptionPlanKey: space.data.organization.subscriptionPlan.sys.id,
           spaceSubscriptionSubscriptionPlanName: space.data.organization.subscriptionPlan.name
         };
+        GTM.push({
+          spaceId: space.data.sys.id,
+          organizationId: organizationData.sys.id
+        });
       } catch (error) {
         logger.logError('Analytics space organizations exception', {
           data: {
@@ -179,6 +203,10 @@ angular.module('contentful')
       action: name,
       currentPlan: currentPlan !== undefined ? currentPlan : null
     });
+  }
+
+  function pushGtm (obj) {
+    GTM.push(obj);
   }
 
   function shieldFromInvalidUserData (cb) {
