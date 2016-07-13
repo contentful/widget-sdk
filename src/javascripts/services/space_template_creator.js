@@ -162,18 +162,11 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
     createEditingInterface: function (editingInterface) {
       var handlers = this.makeHandlers(editingInterface, 'create', 'EditingInterface');
       if (handlers.itemWasHandled) return $q.resolve(handlers.response);
-      var space = this.spaceContext.space;
-      var contentTypeId = dotty.get(editingInterface, ['sys', 'contentType', 'sys', 'id']);
-      if (contentTypeId) {
-        return space.getContentType(contentTypeId)
-        .then(function (contentType) {
-          return contentType.createEditingInterface(editingInterface);
-        })
-        .then(handlers.success)
-        .catch(handlers.error);
-      } else {
-        return $q.resolve();
-      }
+      var repo = this.spaceContext.editingInterfaces;
+      // The content type has a default editor interface with version 1.
+      editingInterface.data.sys.version = 1;
+      return repo.save(editingInterface.contentType, editingInterface.data)
+      .then(handlers.success, handlers.error);
     },
 
     createAsset: function (asset) {

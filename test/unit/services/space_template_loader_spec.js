@@ -329,7 +329,8 @@ describe('Space Template loading service', function () {
     });
 
     it('editing interface is formatted correctly', function () {
-      expect(template.editingInterfaces[0]).toEqualObj(sourceEditingInterfaces[0]);
+      expect(template.editingInterfaces[0].data).toEqualObj(sourceEditingInterfaces[0]);
+      expect(template.editingInterfaces[0].contentType).toEqualObj(sourceContentTypes[0]);
     });
   });
 

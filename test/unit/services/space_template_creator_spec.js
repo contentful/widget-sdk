@@ -36,8 +36,8 @@ describe('Space Template creation service', function () {
           {sys: {id: 'ct2'}, publish: stubs.ctPublish},
           {sys: {id: 'ct3'}, publish: stubs.ctPublish}],
         editingInterfaces: [
-          {sys: {id: 'ei1', contentType: {sys: {id: 'ct1'}}}},
-          {sys: {id: 'ei2', contentType: {sys: {id: 'ct2'}}}}
+          {contentType: {sys: {id: 'ct1'}}, data: {sys: {id: 'ei1', version: 3}}},
+          {contentType: {sys: {id: 'ct2'}}, data: {sys: {id: 'ei2', version: 5}}}
         ],
         assets: [
           {sys: {id: 'a1'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish},
@@ -56,7 +56,9 @@ describe('Space Template creation service', function () {
       };
 
       spaceContext = {
-        createEditingInterface: sinon.stub(),
+        editingInterfaces: {
+          save: sinon.stub()
+        },
         space: {
           data: {
             locales: [
@@ -66,12 +68,7 @@ describe('Space Template creation service', function () {
           createContentType: sinon.stub(),
           createEntry: sinon.stub(),
           createAsset: sinon.stub(),
-          createDeliveryApiKey: sinon.stub(),
-          getContentType: function () {
-            return $q.resolve({
-              createEditingInterface: spaceContext.createEditingInterface
-            });
-          }
+          createDeliveryApiKey: sinon.stub()
         }
       };
 
@@ -81,8 +78,8 @@ describe('Space Template creation service', function () {
       spaceContext.space.createContentType.onThirdCall().returns($q.reject());
       stubs.ctPublish.returns($q.resolve());
 
-      spaceContext.createEditingInterface.returns($q.resolve());
-      spaceContext.createEditingInterface.onSecondCall().returns($q.reject());
+      spaceContext.editingInterfaces.save.returns($q.resolve());
+      spaceContext.editingInterfaces.save.onSecondCall().returns($q.reject());
 
       _.times(2, function (n) {
         spaceContext.space.createAsset.onCall(n).returns($q.resolve(template.assets[n]));
@@ -134,7 +131,7 @@ describe('Space Template creation service', function () {
     });
 
     it('attempts to create 2 editing interface', function () {
-      expect(spaceContext.createEditingInterface.callCount).toBe(2);
+      expect(spaceContext.editingInterfaces.save.callCount).toBe(2);
     });
 
     it('attempts to create 3 assets', function () {
@@ -194,16 +191,13 @@ describe('Space Template creation service', function () {
     describe('retries creating the failed entities', function () {
       beforeEach(function () {
         spaceContext.space.createContentType = sinon.stub();
-        spaceContext.space.createEditingInterface = sinon.stub();
         spaceContext.space.createEntry = sinon.stub();
         spaceContext.space.createAsset = sinon.stub();
         spaceContext.space.createDeliveryApiKey = sinon.stub();
-        spaceContext.createEditingInterface = sinon.stub();
+        spaceContext.editingInterfaces.save = sinon.stub().resolves();
 
         spaceContext.space.createContentType.returns($q.resolve({sys: {id: 'ct3'}, publish: stubs.ctPublish}));
         stubs.ctPublish.returns($q.resolve());
-
-        spaceContext.createEditingInterface.returns($q.resolve());
 
         spaceContext.space.createAsset.returns($q.resolve({
           sys: {id: 'a3'},
@@ -246,7 +240,7 @@ describe('Space Template creation service', function () {
       });
 
       it('creates 1 editing interface', function () {
-        expect(spaceContext.createEditingInterface.callCount).toBe(1);
+        expect(spaceContext.editingInterfaces.save.callCount).toBe(1);
       });
 
       it('creates 1 asset', function () {

@@ -80,9 +80,12 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
     return function (spaceContents) {
       return $q.all(_.map(spaceContents.contentTypes, function (contentType) {
         return spaceClient.editingInterface(contentType.sys.id, 'default')
-               .catch(function () {
-                 return $q.resolve(null);
-               });
+          .then(function (data) {
+            return {
+              contentType: contentType,
+              data: data
+            };
+          }, _.constant(null));
       })).then(function (editingInterfaces) {
         spaceContents.editingInterfaces = _.filter(editingInterfaces);
         return spaceContents;
