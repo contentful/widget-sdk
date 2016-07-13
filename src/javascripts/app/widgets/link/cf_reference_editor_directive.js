@@ -1,12 +1,12 @@
 'use strict';
 
 angular.module('cf.app')
-.directive('cfReferenceEditor', ['$injector', function ($injector) {
+.directive('cfReferenceEditor', ['require', function (require) {
 
-  var $timeout = $injector.get('$timeout');
-  var entitySelector = $injector.get('entitySelector');
-  var createEntityStore = $injector.get('EntityStore').create;
-  var createEntity = $injector.get('cfReferenceEditor/createEntity');
+  var $timeout = require('$timeout');
+  var entitySelector = require('entitySelector');
+  var createEntityStore = require('EntityStore').create;
+  var createEntity = require('cfReferenceEditor/createEntity');
 
   return {
     restrict: 'E',
@@ -135,10 +135,10 @@ angular.module('cf.app')
   }
 }])
 
-.factory('cfReferenceEditor/createEntity', ['$injector', function ($injector) {
+.factory('cfReferenceEditor/createEntity', ['require', function (require) {
 
-  var modalDialog = $injector.get('modalDialog');
-  var $q = $injector.get('$q');
+  var modalDialog = require('modalDialog');
+  var $q = require('$q');
 
   return function createEntity (entityType, field, space) {
     if (entityType === 'Entry') {

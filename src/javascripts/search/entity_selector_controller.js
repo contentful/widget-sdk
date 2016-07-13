@@ -1,14 +1,14 @@
 'use strict';
 
 angular.module('contentful')
-.controller('EntitySelectorController', ['$injector', '$scope', function EntitySelectorController ($injector, $scope) {
+.controller('EntitySelectorController', ['require', '$scope', function EntitySelectorController (require, $scope) {
 
-  var $timeout = $injector.get('$timeout');
-  var spaceContext = $injector.get('spaceContext');
-  var ListQuery = $injector.get('ListQuery');
-  var Paginator = $injector.get('Paginator');
-  var createQueue = $injector.get('overridingRequestQueue');
-  var EntityHelpers = $injector.get('EntityHelpers');
+  var $timeout = require('$timeout');
+  var spaceContext = require('spaceContext');
+  var ListQuery = require('ListQuery');
+  var Paginator = require('Paginator');
+  var createQueue = require('overridingRequestQueue');
+  var EntityHelpers = require('EntityHelpers');
 
   var MINIMAL_TRIGGERING_LEN = 4;
   var ORDER = {fieldId: 'updatedAt', direction: 'descending'};

@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('contentful')
-.factory('EntityStore', ['$injector', function ($injector) {
+angular.module('cf.app')
+.factory('EntityStore', ['require', function (require) {
 
-  var $q = $injector.get('$q');
+  var $q = require('$q');
 
   return {create: create};
 

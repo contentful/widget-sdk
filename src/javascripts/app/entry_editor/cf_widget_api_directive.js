@@ -32,11 +32,11 @@ angular.module('contentful')
  * Exposed by the `cfWidgetApi` directive.
  */
 .controller('WidgetApiController', ['$scope', '$injector', function ($scope, $injector) {
-  var $state = $injector.get('$state');
   var newSignal = $injector.get('signal').createMemoized;
   var TheLocaleStore = $injector.get('TheLocaleStore');
   var spaceContext = $injector.get('spaceContext');
   var EntityHelpers = $injector.get('EntityHelpers');
+  var goToEntityEditor = $injector.get('goToEntityEditor');
 
   var fieldLocaleDoc = $scope.otSubDoc;
   var isDisabledSignal = newSignal(isEditingDisabled());
@@ -80,20 +80,7 @@ angular.module('contentful')
 
   this.space = spaceContext.cma;
   this.entityHelpers = EntityHelpers.newForLocale($scope.locale.code);
-
-  this.state = {
-    goToEditor: function (linkOrData) {
-      var type = dotty.get(linkOrData, 'sys.linkType', dotty.get(linkOrData, 'sys.type'));
-      var typePlural = {Entry: 'entries', Asset: 'assets'}[type];
-      var path = 'spaces.detail.' + typePlural + '.detail';
-
-      var options = {addToContext: true};
-      var entityIdKey = type.toLowerCase() + 'Id';
-      options[entityIdKey] = dotty.get(linkOrData, 'sys.id');
-
-      return $state.go(path, options);
-    }
-  };
+  this.state = {goToEditor: goToEntityEditor};
 
   this.field = {
     onDisabledStatusChanged: isDisabledSignal.attach,

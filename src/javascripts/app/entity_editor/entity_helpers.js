@@ -1,12 +1,12 @@
 'use strict';
 
-angular.module('contentful')
-.factory('EntityHelpers', ['$injector', function ($injector) {
+angular.module('cf.app')
+.factory('EntityHelpers', ['require', function (require) {
 
-  var $q = $injector.get('$q');
-  var $controller = $injector.get('$controller');
-  var spaceContext = $injector.get('spaceContext');
-  var assetUrlFilter = $injector.get('$filter')('assetUrl');
+  var $q = require('$q');
+  var $controller = require('$controller');
+  var spaceContext = require('spaceContext');
+  var assetUrlFilter = require('$filter')('assetUrl');
   var entityStatusController = $controller('EntityStatusController');
 
   var api = {

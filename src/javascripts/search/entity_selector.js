@@ -1,13 +1,13 @@
 'use strict';
 
 angular.module('contentful')
-.factory('entitySelector', ['$injector', function ($injector) {
+.factory('entitySelector', ['require', function (require) {
 
-  var modalDialog = $injector.get('modalDialog');
-  var spaceContext = $injector.get('spaceContext');
-  var $q = $injector.get('$q');
-  var searchQueryHelper = $injector.get('searchQueryHelper');
-  var mimetype = $injector.get('mimetype');
+  var modalDialog = require('modalDialog');
+  var spaceContext = require('spaceContext');
+  var $q = require('$q');
+  var searchQueryHelper = require('searchQueryHelper');
+  var mimetype = require('mimetype');
 
   var LABELS = {
     entry_single: {
