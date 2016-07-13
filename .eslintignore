@@ -86,7 +86,6 @@ test/unit/services/enforcements_spec.js
 test/unit/services/features_spec.js
 test/unit/services/locale_store_spec.js
 test/unit/services/modal_dialog_spec.js
-test/unit/services/organization_list_spec.js
 test/unit/services/promised_loader_spec.js
 test/unit/services/reload_notification_spec.js
 test/unit/services/sdk_info_supplier_spec.js
@@ -363,7 +362,6 @@ src/javascripts/services/filepicker.js
 src/javascripts/services/hints.js
 src/javascripts/services/locale_store.js
 src/javascripts/services/modal_dialog_service.js
-src/javascripts/services/organization_list.js
 src/javascripts/services/promised_loader.js
 src/javascripts/services/reload_notification.js
 src/javascripts/services/sdk_info_supplier.js

@@ -3,7 +3,7 @@
 describe('OrgniaztionList', function () {
   var OrganizationList;
 
-  function makeUser(organizations) {
+  function makeUser (organizations) {
     return {
       organizationMemberships: _.map(organizations, function (org) {
         return { organization: org };
@@ -28,7 +28,7 @@ describe('OrgniaztionList', function () {
       ]));
       expect(OrganizationList.isEmpty()).toBe(false);
       expect(OrganizationList.getAll().length).toBe(2);
-      expect(OrganizationList.getAll()[1].name).toBe('org2');
+      expect(OrganizationList.getAll()[ 1 ].name).toBe('org2');
     });
   });
 
@@ -49,7 +49,8 @@ describe('OrgniaztionList', function () {
 
   describe('#getName', function () {
     it('gets organization name', function () {
-      OrganizationList.resetWithUser(makeUser([{ name: 'orgname', sys: { id: '123' } }]));
+      OrganizationList.resetWithUser(
+        makeUser([ { name: 'orgname', sys: { id: '123' } } ]));
       expect(OrganizationList.getName('123')).toEqual('orgname');
     });
 
@@ -61,7 +62,7 @@ describe('OrgniaztionList', function () {
 
   describe('#isAdmin, #isOwner and #isOwnerOrAdmin', function () {
     beforeEach(function () {
-      var user = makeUser([{sys: {id: '123'}}, {sys: {id: '456'}}]);
+      var user = makeUser([ { sys: { id: '123' } }, { sys: { id: '456' } } ]);
       this.memberships = user.organizationMemberships;
       OrganizationList.resetWithUser(user);
     });
@@ -76,13 +77,13 @@ describe('OrgniaztionList', function () {
       () => returnsFalseWithArg('unknown-id'));
 
     it('returns false if user is a normal member', function () {
-      this.memberships[0].role = 'member';
+      this.memberships[ 0 ].role = 'member';
       returnsFalseWithArg('123');
     });
 
     it('returns true if is an owner or an admin', function () {
-      this.memberships[0].role = 'admin';
-      this.memberships[1].role = 'owner';
+      this.memberships[ 0 ].role = 'admin';
+      this.memberships[ 1 ].role = 'owner';
       expect(OrganizationList.isAdmin('123')).toBe(true);
       expect(OrganizationList.isAdmin('456')).toBe(false);
       expect(OrganizationList.isOwner('123')).toBe(false);
