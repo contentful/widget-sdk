@@ -1,6 +1,6 @@
 mixin entity-link-drag-handle
   cf-icon(
-    ng-if="config.draggable"
+    ng-if="config.draggable && !disabled"
     data-drag-handle
     name="drag-handle-2")
 
@@ -27,6 +27,6 @@ mixin entity-link-actions
       cf-icon(name="download")
 
     cf-icon(
-      ng-if="actions.removeFromList"
+      ng-if="!disabled && actions.removeFromList"
       name="delete"
       ng-click="actions.removeFromList(entity || link)")

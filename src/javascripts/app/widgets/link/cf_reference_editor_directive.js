@@ -66,7 +66,7 @@ angular.module('cf.app')
       });
     };
 
-    field.onValueChanged(function (links) {
+    var offValueChange = field.onValueChanged(function (links) {
       if (!Array.isArray(links)) {
         links = links ? [links] : [];
       }
@@ -74,6 +74,15 @@ angular.module('cf.app')
       store.prefetch(links).then(function () {
         $scope.links = _.map(links, wrapLink);
       });
+    });
+
+    var offDisabledChange = field.onDisabledStatusChanged(function (isDisabled) {
+      $scope.isDisabled = isDisabled;
+    });
+
+    $scope.$on('$destroy', function () {
+      offValueChange();
+      offDisabledChange();
     });
 
     function is (type, style) {

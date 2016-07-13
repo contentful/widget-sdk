@@ -4,6 +4,7 @@
 
       cf-entity-link(
         ng-if="!isAssetCard"
+        disabled="isDisabled"
         link="item.link"
         entity-store="store"
         entity-helpers="helpers"
@@ -12,13 +13,14 @@
 
       cf-asset-card(
         ng-if="isAssetCard"
+        disabled="isDisabled"
         link="item.link"
         entity-store="store"
         entity-helpers="helpers"
         actions="actions"
         config="config")
 
-  .link-editor__actions(ng-if="!single || !links.length")
+  .link-editor__actions(ng-if="!isDisabled && (!single || !links.length)")
     button.cfnext-btn-action.cfnext-btn-link.link-editor__link-btn(ng-click="addNew()")
       | Create new {{ type.toLowerCase() }} and link
 
