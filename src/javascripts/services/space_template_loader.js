@@ -4,10 +4,10 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
 
 
   var contentfulClient = $injector.get('contentfulClient');
-  var $q               = $injector.get('$q');
-  var environment      = $injector.get('environment');
-  var mergeSort        = $injector.get('mergeSort');
-  var logger           = $injector.get('logger');
+  var $q = $injector.get('$q');
+  var environment = $injector.get('environment');
+  var mergeSort = $injector.get('mergeSort');
+  var logger = $injector.get('logger');
 
   var contentfulConfig = environment.settings.contentful;
 
@@ -16,7 +16,7 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
 
   return {
     getTemplatesList: function () {
-      if(!client) client = getSpaceTemplatesClient();
+      if (!client) client = getSpaceTemplatesClient();
       return client.entries({'content_type': contentfulConfig.spaceTemplateEntryContentTypeId})
              .then(function (entries) {
                _.each(entries, function (entry) {
@@ -36,7 +36,7 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
     }
   };
 
-  function getSpaceTemplatesClient() {
+  function getSpaceTemplatesClient () {
     return contentfulClient.newClient(getClientParams(
       contentfulConfig.space,
       contentfulConfig.accessToken,
@@ -44,10 +44,11 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
     ));
   }
 
-  function getSpaceClient(templateInfo) {
+  function getSpaceClient (templateInfo) {
     var spaceId = templateInfo.spaceId;
-    if(spaceId in spaceClients)
+    if (spaceId in spaceClients) {
       return spaceClients[spaceId];
+    }
 
     spaceClients[spaceId] = contentfulClient.newClient({
       host: contentfulConfig.apiUrl,
@@ -57,17 +58,17 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
     return spaceClients[spaceId];
   }
 
-  function getClientParams(space, accessToken, previewAccessToken) {
-    var isProduction = environment.env == 'production';
+  function getClientParams (space, accessToken, previewAccessToken) {
+    var isProduction = environment.env === 'production';
     var params = {
       space: space,
-      accessToken: isProduction ?  accessToken : previewAccessToken,
+      accessToken: isProduction ? accessToken : previewAccessToken,
       host: isProduction ? contentfulConfig.cdaApiUrl : contentfulConfig.previewApiUrl
     };
     return params;
   }
 
-  function getSpaceContents(spaceClient) {
+  function getSpaceContents (spaceClient) {
     return $q.all({
       contentTypes: spaceClient.contentTypes(),
       entries: spaceClient.entries(),
@@ -75,7 +76,7 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
     }).then(getEditingInterfaces(spaceClient));
   }
 
-  function getEditingInterfaces(spaceClient) {
+  function getEditingInterfaces (spaceClient) {
     return function (spaceContents) {
       return $q.all(_.map(spaceContents.contentTypes, function (contentType) {
         return spaceClient.editingInterface(contentType.sys.id, 'default')
@@ -89,7 +90,7 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
     };
   }
 
-  function parseSpaceContents(contents) {
+  function parseSpaceContents (contents) {
     return {
       contentTypes: parseContentTypes(contents.contentTypes),
       entries: sortEntries(parseEntries(contents.entries)),
@@ -98,7 +99,7 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
     };
   }
 
-  function parseContentTypes(contentTypes) {
+  function parseContentTypes (contentTypes) {
     return _.map(contentTypes, function (contentType) {
       return {
         name: contentType.name,
@@ -109,42 +110,42 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
     });
   }
 
-  function sortEntries(entries) {
+  function sortEntries (entries) {
     var linkedEntries = getLinkedEntries(entries);
 
     linkedEntries = mergeSort(linkedEntries, function (a) {
       var hli = hasLinkedIndexesInFront(a);
-      if(hli) return -1;
-      if(!hli) return 1;
-      if(!hasLinkedIndexes(a)) return -1;
+      if (hli) return -1;
+      if (!hli) return 1;
+      if (!hasLinkedIndexes(a)) return -1;
     });
 
     return _.map(linkedEntries, function (linkInfo) {
       return entries[linkInfo.index];
     });
 
-    function hasLinkedIndexesInFront(item) {
-      if(hasLinkedIndexes(item)){
+    function hasLinkedIndexesInFront (item) {
+      if (hasLinkedIndexes(item)) {
         return _.some(item.linkIndexes, function (index) {
           return index > item.index;
         });
       }
     }
 
-    function hasLinkedIndexes(item) {
+    function hasLinkedIndexes (item) {
       return item.linkIndexes.length > 0;
     }
   }
 
-  function getLinkedEntries(entries) {
+  function getLinkedEntries (entries) {
     return _.map(entries, function (entry) {
       var entryIndex = entries.indexOf(entry);
 
       var rawLinks = _.map(entry.fields, function (field) {
         field = _.values(field)[0];
-        if(isEntryLink(field)){
+        if (isEntryLink(field)) {
           return getFieldEntriesIndex(field, entries);
-        } else if(isEntityArray(field) && isEntryLink(field[0])){
+        } else if (isEntityArray(field) && isEntryLink(field[0])) {
           return _.map(field, function (item) {
             return getFieldEntriesIndex(item, entries);
           });
@@ -160,12 +161,12 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
     });
   }
 
-  function getFieldEntriesIndex(field, entries) {
+  function getFieldEntriesIndex (field, entries) {
     var id = dotty.get(field, 'sys.id');
     return _.findIndex(entries, function (entry) { return entry.sys.id === id; });
   }
 
-  function parseEntries(entries) {
+  function parseEntries (entries) {
     return _.map(entries, function (entry) {
       return {
         sys: {
@@ -181,14 +182,16 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
     });
   }
 
-  function parseEntryFields(fields) {
+  function parseEntryFields (fields) {
     return _.mapValues(fields, function (field) {
       return _.mapValues(field, function (localizedField) {
-        if(isEntryLink(localizedField))
+        if (isEntryLink(localizedField)) {
           return parseEntryLink(localizedField);
-        if(isAssetLink(localizedField))
+        }
+        if (isAssetLink(localizedField)) {
           return parseAssetLink(localizedField);
-        if(isEntityArray(localizedField)){
+        }
+        if (isEntityArray(localizedField)) {
           return _.map(localizedField, parseEntityArray);
         }
         return localizedField;
@@ -196,14 +199,16 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
     });
   }
 
-  function parseEntityArray(item) {
-    if(isEntryLink(item))
+  function parseEntityArray (item) {
+    if (isEntryLink(item)) {
       return parseEntryLink(item);
-    if(isAssetLink(item))
+    }
+    if (isAssetLink(item)) {
       return parseAssetLink(item);
+    }
   }
 
-  function parseEntryLink(field) {
+  function parseEntryLink (field) {
     return {
       sys: {
         id: dotty.get(field, 'sys.id'),
@@ -213,7 +218,7 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
     };
   }
 
-  function parseAssetLink(field) {
+  function parseAssetLink (field) {
     return {
       sys: {
         id: dotty.get(field, 'sys.id'),
@@ -223,7 +228,7 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
     };
   }
 
-  function parseAssets(assets) {
+  function parseAssets (assets) {
     return _.map(assets, function (asset) {
       return {
         sys: {id: dotty.get(asset, 'sys.id')},
@@ -232,18 +237,18 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
     });
   }
 
-  function parseAssetFields(fields) {
+  function parseAssetFields (fields) {
     return _.mapValues(fields, function (field, fieldName) {
       return _.mapValues(field, function (localizedField) {
         try {
-          if(fieldName == 'file'){
+          if (fieldName === 'file') {
             return {
               fileName: localizedField.fileName,
               contentType: localizedField.contentType,
-              upload: 'http:'+localizedField.url
+              upload: 'http:' + localizedField.url
             };
           }
-        } catch(exp) {
+        } catch (exp) {
           logger.logError('No localizedField available', {
             data: {
               exp: exp,
@@ -258,8 +263,8 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
     });
   }
 
-  function createApiKeyObjects(templateInfo) {
-    return function appendApiKeyObjects(contents) {
+  function createApiKeyObjects (templateInfo) {
+    return function appendApiKeyObjects (contents) {
       contents.apiKeys = _.map(templateInfo.templateDeliveryApiKeys || [], function (apiKey) {
         return {
           name: apiKey.fields.name,
@@ -270,17 +275,17 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
     };
   }
 
-  function isEntryLink(item) {
-    return dotty.get(item, 'sys.type') == 'Entry' ||
-           dotty.get(item, 'sys.linkType') == 'Entry';
+  function isEntryLink (item) {
+    return dotty.get(item, 'sys.type') === 'Entry' ||
+           dotty.get(item, 'sys.linkType') === 'Entry';
   }
 
-  function isAssetLink(item) {
-    return dotty.get(item, 'sys.type') == 'Asset' ||
-           dotty.get(item, 'sys.linkType') == 'Asset';
+  function isAssetLink (item) {
+    return dotty.get(item, 'sys.type') === 'Asset' ||
+           dotty.get(item, 'sys.linkType') === 'Asset';
   }
 
-  function isEntityArray(item) {
+  function isEntityArray (item) {
     return _.isArray(item) && item.length > 0 && dotty.exists(item[0], 'sys');
   }
 

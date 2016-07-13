@@ -27,9 +27,9 @@ describe('Space Template creation service', function () {
     });
   });
 
-  describe('creates content based on a template', function() {
+  describe('creates content based on a template', function () {
     var template;
-    beforeEach(function() {
+    beforeEach(function () {
       template = {
         contentTypes: [
           {sys: {id: 'ct1'}, publish: stubs.ctPublish},
@@ -37,17 +37,17 @@ describe('Space Template creation service', function () {
           {sys: {id: 'ct3'}, publish: stubs.ctPublish}],
         editingInterfaces: [
           {sys: {id: 'ei1', contentType: {sys: {id: 'ct1'}}}},
-          {sys: {id: 'ei2', contentType: {sys: {id: 'ct2'}}}},
+          {sys: {id: 'ei2', contentType: {sys: {id: 'ct2'}}}}
         ],
         assets: [
-          {sys: {id: 'a1'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish },
-          {sys: {id: 'a2'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish },
-          {sys: {id: 'a3'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish }
+          {sys: {id: 'a1'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish},
+          {sys: {id: 'a2'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish},
+          {sys: {id: 'a3'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish}
         ],
         entries: [
-          { sys: { id: 'e1', contentType: {sys: {id: 'ct1'}} }, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish},
-          { sys: { id: 'e2', contentType: {sys: {id: 'ct2'}} }, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish},
-          { sys: { id: 'e3', contentType: {sys: {id: 'ct3'}} }, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish}
+          {sys: { id: 'e1', contentType: {sys: {id: 'ct1'}} }, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish},
+          {sys: { id: 'e2', contentType: {sys: {id: 'ct2'}} }, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish},
+          {sys: { id: 'e3', contentType: {sys: {id: 'ct3'}} }, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish}
         ],
         apiKeys: [
           {sys: {id: 'ak1'}},
@@ -67,7 +67,7 @@ describe('Space Template creation service', function () {
           createEntry: sinon.stub(),
           createAsset: sinon.stub(),
           createDeliveryApiKey: sinon.stub(),
-          getContentType: function() {
+          getContentType: function () {
             return $q.resolve({
               createEditingInterface: spaceContext.createEditingInterface
             });
@@ -125,80 +125,80 @@ describe('Space Template creation service', function () {
       $rootScope.$digest();
     });
 
-    it('attempts to create 3 content types', function() {
+    it('attempts to create 3 content types', function () {
       expect(spaceContext.space.createContentType.callCount).toBe(3);
     });
 
-    it('publishes 2 content types', function() {
+    it('publishes 2 content types', function () {
       expect(stubs.ctPublish.callCount).toBe(2);
     });
 
-    it('attempts to create 2 editing interface', function() {
+    it('attempts to create 2 editing interface', function () {
       expect(spaceContext.createEditingInterface.callCount).toBe(2);
     });
 
-    it('attempts to create 3 assets', function() {
+    it('attempts to create 3 assets', function () {
       expect(spaceContext.space.createAsset.callCount).toBe(3);
     });
 
-    it('transforms assets locale', function() {
+    it('transforms assets locale', function () {
       expect(_.keys(spaceContext.space.createAsset.args[0][0].fields.file)[0]).toEqual('de-DE');
       expect(_.keys(spaceContext.space.createAsset.args[1][0].fields.file)[0]).toEqual('de-DE');
       expect(_.keys(spaceContext.space.createAsset.args[2][0].fields.file)[0]).toEqual('de-DE');
     });
 
-    it('processes 2 assets', function() {
+    it('processes 2 assets', function () {
       expect(stubs.assetProcess.callCount).toBe(2);
     });
 
-    it('publishes 2 assets', function() {
+    it('publishes 2 assets', function () {
       expect(stubs.assetPublish.callCount).toBe(2);
     });
 
-    it('attempts to create 3 entries', function() {
+    it('attempts to create 3 entries', function () {
       expect(spaceContext.space.createEntry.callCount).toBe(3);
     });
 
-    it('calls entry with content type id', function() {
+    it('calls entry with content type id', function () {
       expect(spaceContext.space.createEntry.args[0][0]).toEqual('ct1');
       expect(spaceContext.space.createEntry.args[1][0]).toEqual('ct2');
       expect(spaceContext.space.createEntry.args[2][0]).toEqual('ct3');
     });
 
-    it('transforms entries locale', function() {
+    it('transforms entries locale', function () {
       expect(_.keys(spaceContext.space.createEntry.args[0][1].fields.file)[0]).toEqual('de-DE');
       expect(_.keys(spaceContext.space.createEntry.args[1][1].fields.file)[0]).toEqual('de-DE');
       expect(_.keys(spaceContext.space.createEntry.args[2][1].fields.file)[0]).toEqual('de-DE');
     });
 
-    it('publishes 2 entries', function() {
+    it('publishes 2 entries', function () {
       expect(stubs.entryPublish.callCount).toBe(2);
     });
 
-    it('creates 2 apikeys', function() {
+    it('creates 2 apikeys', function () {
       expect(spaceContext.space.createDeliveryApiKey.callCount).toBe(2);
     });
 
-    it('updates success progress 17 times', function() {
+    it('updates success progress 17 times', function () {
       expect(stubs.progressSuccess.callCount).toBe(17);
     });
 
-    it('updates error progress 4 times', function() {
+    it('updates error progress 4 times', function () {
       expect(stubs.progressError.callCount).toBe(4);
     });
 
-    it('rejects promise because some have failed', function() {
+    it('rejects promise because some have failed', function () {
       sinon.assert.called(stubs.error);
     });
 
-    describe('retries creating the failed entities', function() {
-      beforeEach(function() {
-        spaceContext.space.createContentType      = sinon.stub();
+    describe('retries creating the failed entities', function () {
+      beforeEach(function () {
+        spaceContext.space.createContentType = sinon.stub();
         spaceContext.space.createEditingInterface = sinon.stub();
-        spaceContext.space.createEntry            = sinon.stub();
-        spaceContext.space.createAsset            = sinon.stub();
-        spaceContext.space.createDeliveryApiKey   = sinon.stub();
-        spaceContext.createEditingInterface       = sinon.stub();
+        spaceContext.space.createEntry = sinon.stub();
+        spaceContext.space.createAsset = sinon.stub();
+        spaceContext.space.createDeliveryApiKey = sinon.stub();
+        spaceContext.createEditingInterface = sinon.stub();
 
         spaceContext.space.createContentType.returns($q.resolve({sys: {id: 'ct3'}, publish: stubs.ctPublish}));
         stubs.ctPublish.returns($q.resolve());
@@ -237,47 +237,47 @@ describe('Space Template creation service', function () {
 
       });
 
-      it('creates 1 content type', function() {
+      it('creates 1 content type', function () {
         expect(spaceContext.space.createContentType.callCount).toBe(1);
       });
 
-      it('has published all 3 content types', function() {
+      it('has published all 3 content types', function () {
         expect(stubs.ctPublish.callCount).toBe(3);
       });
 
-      it('creates 1 editing interface', function() {
+      it('creates 1 editing interface', function () {
         expect(spaceContext.createEditingInterface.callCount).toBe(1);
       });
 
-      it('creates 1 asset', function() {
+      it('creates 1 asset', function () {
         expect(spaceContext.space.createAsset.callCount).toBe(1);
       });
 
-      it('has processed all 3 assets', function() {
+      it('has processed all 3 assets', function () {
         expect(stubs.assetProcess.callCount).toBe(3);
       });
 
-      it('has published all 3 assets', function() {
+      it('has published all 3 assets', function () {
         expect(stubs.assetPublish.callCount).toBe(3);
       });
 
-      it('creates 1 entry', function() {
+      it('creates 1 entry', function () {
         expect(spaceContext.space.createEntry.callCount).toBe(1);
       });
 
-      it('has published all 3 entries', function() {
+      it('has published all 3 entries', function () {
         expect(stubs.entryPublish.callCount).toBe(3);
       });
 
-      it('updates success progress 25 times in total', function() {
+      it('updates success progress 25 times in total', function () {
         expect(stubs.progressSuccess.callCount).toBe(25);
       });
 
-      it('updates error progress 4 times in total', function() {
+      it('updates error progress 4 times in total', function () {
         expect(stubs.progressError.callCount).toBe(4);
       });
 
-      it('rejects promise because some have failed', function() {
+      it('rejects promise because some have failed', function () {
         sinon.assert.called(stubs.retrySuccess);
       });
 
