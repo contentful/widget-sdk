@@ -200,7 +200,6 @@ angular.module('contentful')
     fieldTypes: ['Entry'],
     name: 'Entry link',
     icon: 'reference',
-    rendersHelpText: true,
     template: '<cf-reference-editor type="Entry" style="link" single="true" />'
   });
 
@@ -208,7 +207,6 @@ angular.module('contentful')
     fieldTypes: ['Asset'],
     name: 'Asset link',
     icon: 'media-reference',
-    rendersHelpText: true,
     template: '<cf-reference-editor type="Asset" style="card" single="true" />'
   });
 
@@ -216,7 +214,6 @@ angular.module('contentful')
     fieldTypes: ['Entries'],
     name: 'Entry links list',
     icon: 'references',
-    rendersHelpText: true,
     template: '<cf-reference-editor type="Entry" style="link" />'
   });
 
@@ -224,7 +221,6 @@ angular.module('contentful')
     fieldTypes: ['Entry'],
     name: 'Entry card',
     icon: 'reference-card',
-    rendersHelpText: true,
     template: '<cf-reference-editor type="Entry" style="card" single="true" />'
   });
 
@@ -232,7 +228,6 @@ angular.module('contentful')
     fieldTypes: ['Entries'],
     name: 'Entry cards',
     icon: 'references-card',
-    rendersHelpText: true,
     template: '<cf-reference-editor type="Entry" style="card" />'
   });
 
@@ -240,7 +235,6 @@ angular.module('contentful')
     fieldTypes: ['Assets'],
     name: 'Asset links list',
     icon: 'media-references',
-    rendersHelpText: true,
     template: '<cf-reference-editor type="Asset" style="link" />'
   });
 
@@ -248,7 +242,6 @@ angular.module('contentful')
     fieldTypes: ['Assets'],
     name: 'Asset gallery',
     icon: 'media-previews',
-    rendersHelpText: true,
     template: '<cf-reference-editor type="Asset" style="card" />'
   });
 
