@@ -13,7 +13,7 @@ mixin single-list-item
     entity="entity"
     entity-helpers="helpers"
     actions="actions"
-    config="{disableTooltip: true}")
+    config="{asThumb: true, disableTooltip: true}")
 
 .modal-background
   .modal-dialog.entity-selector-dialog(ng-controller="EntitySelectorController")
@@ -39,6 +39,7 @@ mixin single-list-item
 
       .entity-selector__item-list.endless-container(
         ng-if="view.mode === AVAILABLE"
+        ng-class="{'entity-selector__thumbnails': config.linksAsset}"
         cf-endless-container
         at-bottom="loadMore()"
         num-elements="paginator.page")
@@ -54,7 +55,9 @@ mixin single-list-item
 
         .loading(ng-show="isLoading")
 
-      .entity-selector__item-list(ng-if="view.mode === SELECTED")
+      .entity-selector__item-list(
+        ng-if="view.mode === SELECTED"
+        ng-class="{'entity-selector__thumbnails': config.linksAsset && selected.length > 0}")
         .entity-selector__item-list-placeholder(ng-if="selected.length < 1")
           | {{ labels.empty }} selected yet
 

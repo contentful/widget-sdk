@@ -22,4 +22,22 @@
 
   &.x--selected
     .entity-link, .asset-card
-      background: $colors.element-lightest
+      background: $colors.element-light
+
+.entity-selector__thumbnails
+  position: relative
+  display: flex
+  flex-wrap: wrap
+  align-items: flex-start
+  align-content: flex-start
+  left: -10px
+  top: -10px
+
+  .entity-selector__item
+    margin-left: 10px
+    margin-top: 10px
+    border: 1px solid $colors.text-lightest
+    padding: 5px
+
+    &.x--selected
+      background: $colors.element-light
