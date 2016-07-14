@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+	 xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"
+	 viewBox="0 0 16 16">
+	<defs>
+		<rect id="rect" width="13.665" height="13.314" y="2.175" rx="2"/>
+		<mask id="b" width="13.665" height="13.314" x="0" y="0" fill="white">
+			<use xlink:href="#rect"/>
+		</mask>
+		<mask id="c">
+			<rect x="0" y="0" width="100%" height="100%" fill="white"/>
+			<use xlink:href="#rect"/>
+		</mask>
+	</defs>
+	<g fill="none" fill-rule="evenodd" stroke="currentColor">
+		<use id="img-fg" stroke-width="2" mask="url(#b)" xlink:href="#rect"/>
+		<path id="img-bg" mask="url(#c)" fill="currentColor" fill-opacity="0.1"
+			d="M2,2.17262348 C2,3.00000002 2,2.18027057 2,2.18027057 C2,1.07289554 2.89659061,0.175190705 4.00162452,0.175190705 L13.6632505,0.175190705 C14.7687172,0.175190705 15.664875,1.06946663 15.664875,2.16850492 L15.664875,11.4963701 C15.664875,12.5972471 14.7602965,13.4896843 13.6555613,13.4896843 L13.5996094,13.4896843"/>
+		<g id="mountains">
+			<polyline points=".438 10.376 4.813 6.876 10.5 14.751" />
+			<polyline points="8.313 10.813 10.063 9.063 13.125 11.798" />
+		</g>
+		<circle id="sun" cx="9" cy="5.8" r="1.1" />
+	</g>
+</svg>
