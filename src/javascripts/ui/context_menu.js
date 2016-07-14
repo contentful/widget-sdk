@@ -75,7 +75,7 @@ angular.module('cf.ui')
     if ($trigger && !elementDisabled($trigger)) {
       var menu = getAttachedMenu($trigger);
       event.preventDefault();
-      if (!menu.data('menuOpen')) {
+      if (menu && !menu.data('menuOpen')) {
         toOpen = menu;
       }
     }

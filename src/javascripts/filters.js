@@ -29,7 +29,9 @@ filters.filter('fileSize', function () {
       i++;
     } while (fileSizeInBytes > 1024);
 
-    return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
+    var size = Math.max(fileSizeInBytes, 0.1);
+    var fixed = Math.round(size) < 100 ? 1 : 0;
+    return size.toFixed(fixed) + byteUnits[i];
   };
 });
 
@@ -136,17 +138,9 @@ filters.filter('truncate', ['stringUtils', function (stringUtils) {
   return stringUtils.truncate;
 }]);
 
-
-filters.filter('truncateMiddle', function () {
-  return function (str, maxLength, endOfStrLength) {
-    if(str && str.length > maxLength) {
-      var startOfStr = str.substr(0, maxLength - endOfStrLength);
-      var endOfStr = str.substr(str.length - endOfStrLength, str.length);
-      return startOfStr + '...' + endOfStr;
-    }
-    return str;
-  };
-});
+filters.filter('truncateMiddle', ['stringUtils', function (stringUtils) {
+  return stringUtils.truncateMiddle;
+}]);
 
 filters.filter('prefixAssetHost', ['environment', function(environment){
   return function (path) {

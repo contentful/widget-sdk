@@ -1,0 +1,79 @@
+mixin single-list-item
+  cf-entity-link(
+    ng-if="config.linksEntry"
+    ng-click="toggleSelection(entity)"
+    entity="entity"
+    entity-helpers="helpers"
+    actions="actions"
+    config="{showDetails: true}")
+
+  cf-asset-card(
+    ng-if="config.linksAsset"
+    ng-click="toggleSelection(entity)"
+    entity="entity"
+    entity-helpers="helpers"
+    actions="actions"
+    config="{asThumb: true, disableTooltip: true}")
+
+.modal-background
+  .modal-dialog.entity-selector-dialog(ng-controller="EntitySelectorController")
+    header.modal-dialog__header
+      h1 {{ labels.title }}
+      button.modal-dialog__close(ng-click="dialog.cancel()")
+
+    .modal-dialog__content
+      .entity-selector__input-label
+        p {{ labels.input }}
+        p(ng-if="config.multiple")
+          a(href ng-click="view.mode = SELECTED" ng-if="view.mode === AVAILABLE")
+            | Show {{ labels.selected }} ({{ selected.length }})
+          a(href ng-click="view.mode = AVAILABLE" ng-if="view.mode === SELECTED")
+            | Hide {{ labels.selected }} ({{ selected.length }})
+
+      .entity-selector__search(
+        cf-tokenized-search="view.searchTerm"
+        search-content-type="singleContentType"
+        placeholder="Type to search, press down arrow key for help"
+        cf-on-blur-component="leftSearch($event)"
+        cf-on-blur-component-when="showAutocompletions")
+
+      .entity-selector__item-list.endless-container(
+        ng-if="view.mode === AVAILABLE"
+        ng-style="{height: listHeight}"
+        ng-class="{'entity-selector__thumbnails': config.linksAsset}"
+        cf-endless-container
+        at-bottom="loadMore()"
+        num-elements="paginator.page")
+        .entity-selector__item-list-placeholder(ng-if="!isLoading && items.length < 1")
+          | {{ labels.empty }} found
+          span(ng-if="view.searchTerm.length > 0")
+            |  for <strong>{{ view.searchTerm }}</strong>
+
+        .entity-selector__item(
+          ng-repeat="entity in items track by entity.sys.id"
+          ng-class="{'x--selected': selectedIds[entity.sys.id]}")
+          +single-list-item
+
+        .loading(ng-show="isLoading")
+
+      .entity-selector__item-list(
+        ng-if="view.mode === SELECTED"
+        ng-style="{height: listHeight}"
+        ng-class="{'entity-selector__thumbnails': config.linksAsset && selected.length > 0}")
+        .entity-selector__item-list-placeholder(ng-if="selected.length < 1")
+          | {{ labels.empty }} selected yet
+
+        .entity-selector__item.x--selected(ng-repeat="entity in selected track by entity.sys.id")
+          +single-list-item
+
+      .note-box-small.note-box--blue(
+        ng-if="!config.multiple"
+        ng-bind="labels.info")
+
+    .modal-dialog__controls(ng-if="config.multiple")
+      button.cfnext-btn-primary-action.modal-dialog__controls-confirm(
+        type="button"
+        ng-click="dialog.confirm(selected)"
+        ng-disabled="selected.length < config.min || selected.length > config.max")
+        | Insert {{ labels.selected }}
+        span(ng-if="selected.length > 0") &nbsp;({{ selected.length }})

@@ -59,7 +59,14 @@ angular.module('contentful/mocks')
         type: ''
       },
       space: {
-        getEntries: sinon.stub().resolves({ total: 0 })
+        getEntries: sinon.stub().resolves({ total: 0, items: [] }),
+        getAssets: sinon.stub().resolves({ total: 0, items: [] }),
+        createEntry: sinon.stub().resolves({}),
+        createAsset: sinon.stub().resolves({}),
+        getContentTypes: sinon.stub().resolves([])
+      },
+      state: {
+        goToEditor: sinon.stub().resolves()
       }
     };
 

@@ -138,7 +138,7 @@ angular.module('contentful')
    * @ngdoc method
    * @name stringUtils#truncate
    * @usage[js]
-   * truncate('Hello world', 6)
+   * truncate('Hello world', 5)
    * // => 'Hello…'
    *
    * @param {string} str
@@ -147,9 +147,35 @@ angular.module('contentful')
    */
   function truncate (str, length) {
     if (str && str.length > length) {
-      str = str.substr(0, length);
-      str = str.replace(/\s.\s*$/, '');
-      return str + '…';
+      return str && str
+      .substr(0, length + 1) // +1 to look ahead and be replaced below.
+      // Get rid of orphan letters but not one letter words (I, a, 2):
+      .replace(/(\s+\S(?=\S)|\s*).$/, '…');
+    } else {
+      return str;
+    }
+  }
+
+  /**
+   * @ngdoc method
+   * @name stringUtils#truncateMiddle
+   * @usage[js]
+   * truncateMiddle('Hello world wide web', 8, 3)
+   * // => 'Hello…web'
+   *
+   * @param {string} str
+   * @param {number} length
+   * @param {number} endOfStrLength
+   * @returns {string}
+   */
+  function truncateMiddle (str, length, endOfStrLength) {
+    if(length < endOfStrLength) {
+      throw new Error('`length` has to be greater or equal to `endOfStrLength`');
+    }
+    if (str && str.length > length) {
+      var endOfStr = str.substr(-endOfStrLength);
+      var beginningOfStr = truncate(str, length - endOfStrLength);
+      return beginningOfStr + endOfStr;
     } else {
       return str;
     }
@@ -187,6 +213,7 @@ angular.module('contentful')
     titleToFileName: titleToFileName,
     getEntityLabel: getEntityLabel,
     truncate: truncate,
+    truncateMiddle: truncateMiddle,
     startsWithVowel: startsWithVowel
   };
 })())

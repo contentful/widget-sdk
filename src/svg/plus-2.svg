@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17"
+	 xmlns:xlink="http://www.w3.org/1999/xlink">
+	<defs>
+		<rect id="stroke" width="2" height="8" x="7.5" y="4.5" fill="currentColor"/>
+	</defs>
+	<g fill="currentColor">
+		<g id="circle">
+			<circle cx="8.5" cy="8.5" r="49%" id="circle"
+					opacity="0.5"
+					filter="url(#brighten1)"/>
+			<circle cx="8.5" cy="8.5" r="46%" id="circle"
+					stroke="currentColor"
+					fill="transparent"
+					filter="url(#brighten2)"/>
+		</g>
+		<g id="plus">
+			<use xlink:href="#stroke"/>
+			<use xlink:href="#stroke" transform="rotate(-90 8.5 8.5)"/>
+		</g>
+	</g>
+	<filter id="brighten1">
+		<feColorMatrix in="SourceGraphic" type="saturate" values="1.1"/>
+		<feComponentTransfer>
+			<feFuncR type="gamma" exponent="0.2"/>
+			<feFuncG type="gamma" exponent="0.2"/>
+			<feFuncB type="gamma" exponent="0.2"/>
+		</feComponentTransfer>
+	</filter>
+	<filter id="brighten2">
+		<feColorMatrix in="SourceGraphic" type="saturate" values="1.05"/>
+		<feComponentTransfer>
+			<feFuncR type="gamma" exponent="0.8"/>
+			<feFuncG type="gamma" exponent="0.8"/>
+			<feFuncB type="gamma" exponent="0.8"/>
+		</feComponentTransfer>
+	</filter>
+</svg>

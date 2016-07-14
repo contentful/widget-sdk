@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfEntryLinkEditor Directive', function () {
+xdescribe('cfEntryLinkEditor Directive', function () {
   var element, scope;
   var compileElement;
   var searchField;

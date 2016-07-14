@@ -17,10 +17,10 @@
 
 angular.module('contentful').directive('cfThumbnail', function () {
   return {
-    restrict: 'A',
+    restrict: 'AE',
     template: JST['cf_thumbnail'],
     scope: {
-      file: '=file'
+      file: '='
     },
     controller: 'ThumbnailController',
     link: function (scope, el, attrs) {
