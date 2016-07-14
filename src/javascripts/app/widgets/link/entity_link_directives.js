@@ -16,7 +16,7 @@ angular.module('cf.app')
     restrict: 'E',
     scope: {
       // hides all actions that may alter the state
-      disabled: '=',
+      disabled: '=isDisabled',
       // entity to be rendered:
       // (optional, can be replaced with "link" and "entityStore")
       entity: '=',

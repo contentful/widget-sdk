@@ -12,7 +12,7 @@ angular.module('cf.app')
     restrict: 'E',
     scope: {
       type: '@',
-      style: '@',
+      style: '@variant',
       single: '='
     },
     template: JST.cf_reference_editor(),

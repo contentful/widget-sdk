@@ -2,7 +2,7 @@
 
 describe('cfReferenceEditorDirective', function () {
 
-  const template = '<cf-reference-editor type="{{ type }}" style="{{ style }}" single="single" />';
+  const template = '<cf-reference-editor type="{{ type }}" variant="{{ variant }}" single="single" />';
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -37,22 +37,22 @@ describe('cfReferenceEditorDirective', function () {
     });
 
     it('shows details for entry cards', function () {
-      const scope = this.init({type: 'Entry', style: 'card'});
+      const scope = this.init({type: 'Entry', variant: 'card'});
       expect(scope.config.showDetails).toBe(true);
     });
 
     it('does not show details for links', function () {
-      const scope = this.init({type: 'Entry', style: 'link'});
+      const scope = this.init({type: 'Entry', variant: 'link'});
       expect(scope.config.showDetails).toBe(false);
     });
 
     it('shows images as thumbs for multiple asset cards', function () {
-      const scope = this.init({type: 'Asset', style: 'card', single: false});
+      const scope = this.init({type: 'Asset', variant: 'card', single: false});
       expect(scope.config.asThumb).toBe(true);
     });
 
     it('checks if uses the asset card variant', function () {
-      const scope = this.init({type: 'Asset', style: 'card'});
+      const scope = this.init({type: 'Asset', variant: 'card'});
       expect(scope.isAssetCard).toBe(true);
     });
 
