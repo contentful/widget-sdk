@@ -54,7 +54,6 @@ test/unit/components/field_dialog/appearance_controller_spec.js
 test/unit/components/search.js
 test/unit/classes/entity_cache_spec.js
 test/unit/classes/entity_state_manager_spec.js
-test/unit/classes/space_context_spec.js
 test/unit/directives/cf_copy_to_clipboard_directive_spec.js
 test/unit/forms/cf_null_empty_input_spec.js
 test/unit/forms/cf_validate_form_spec.js

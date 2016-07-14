@@ -3,49 +3,30 @@
 describe('entityEditor/Document', function () {
   var scope, K;
 
-  // TODO remove this
-  function makeOtDocStub (snapshot) {
-    return {
-      on: sinon.stub(),
-      close: sinon.stub(),
-      removeListener: sinon.stub(),
-      snapshot: snapshot || {sys: {}}
-    };
-  }
-
   beforeEach(function () {
-    module('contentful/test');
+    this.docConnection = {
+      open: sinon.stub(),
+      canOpen: sinon.stub()
+    };
+
+    module('contentful/test', ($provide) => {
+      $provide.value('spaceContext', {docConnection: this.docConnection});
+    });
 
     K = this.$inject('mocks/kefir');
 
-    var ShareJS = this.$inject('ShareJS');
-    ShareJS.isConnected = sinon.stub().returns(true);
-    ShareJS.connectionFailed = sinon.stub().returns(false);
-    this.openDocument = ShareJS.open = sinon.stub();
+    this.docConnection.errors = K.createMockStream();
 
     var OtDoc = this.$inject('mocks/OtDoc');
 
-    this.connect = function () {
-      ShareJS.isConnected.returns(true);
-      ShareJS.connectionFailed.returns(false);
-      this.$apply();
-    };
-
     this.connectAndOpen = function (data) {
-      ShareJS.isConnected.returns(true);
-      ShareJS.connectionFailed.returns(false);
+      this.docConnection.canOpen.returns(true);
       var doc = new OtDoc(_.cloneDeep(data || this.entity.data));
-      this.openDocument.resolves(doc);
+      this.docConnection.open.resolves(doc);
       // Not sure why we need to apply twice. But tests fail otherwise.
       this.$apply();
       this.$apply();
       return doc;
-    };
-
-    this.disconnect = function () {
-      ShareJS.isConnected.returns(false);
-      ShareJS.connectionFailed.returns(true);
-      this.$apply();
     };
 
     this.entity = {
@@ -111,9 +92,9 @@ describe('entityEditor/Document', function () {
       this.otDoc = this.connectAndOpen();
     });
 
-    it('sharejs.open is called', function () {
-      sinon.assert.calledOnce(this.openDocument);
-      sinon.assert.calledWith(this.openDocument, this.entity);
+    it('calls docConnection.open()', function () {
+      sinon.assert.calledOnce(this.docConnection.open);
+      sinon.assert.calledWith(this.docConnection.open, this.entity);
     });
 
     it('calls the document normalizer', function () {
@@ -128,67 +109,19 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('initialization flow fails because document is not ready', function () {
-    beforeEach(function () {
-      // triggers a first digest cycle with different settings because
-      // the initialization already made this watcher fail
-      var $q = this.$inject('$q');
-      this.openDocument.returns($q(_.noop));
-      this.connect();
-
-      this.closeStub = sinon.stub();
-      this.otDoc = makeOtDocStub();
-      this.doc.doc = this.otDoc;
-      this.disconnect();
-    });
-
-    it('sharejs.open is called only once', function () {
-      sinon.assert.calledOnce(this.openDocument);
-    });
-
-    it('otdoc is closed', function () {
-      sinon.assert.called(this.otDoc.close);
-    });
-
-    it('otdoc.doc is removed', function () {
-      expect(this.doc.doc).toBeUndefined();
-    });
-  });
-
-  describe('initialization flow fails because opening the doc failed', function () {
-    beforeEach(function () {
-      this.logger = this.$inject('logger');
-      this.logger.logShareJsError = sinon.stub();
-
-      this.openDocument.rejects();
-      this.connect();
-    });
-
-    it('sharejs.open is called', function () {
-      sinon.assert.called(this.openDocument);
-    });
-
-    it('otDoc.doc is undefined', function () {
-      expect(this.doc.doc).toBeUndefined();
-    });
-
-    it('logger sharejs error is called', function () {
-      sinon.assert.called(this.logger.logSharejsError);
-    });
-  });
-
-  describe('initialization flow fails because doc became unusable after opening', function () {
+  describe('when connection cannot open document', function () {
     beforeEach(function () {
       this.otDoc = this.connectAndOpen();
-      this.disconnect();
+      this.docConnection.canOpen.returns(false);
+      this.$apply();
     });
 
-    it('sharejs.open is called', function () {
-      sinon.assert.called(this.openDocument);
+    it('otDoc is closed', function () {
+      sinon.assert.calledOnce(this.otDoc.close);
     });
 
-    it('doc is closed', function () {
-      sinon.assert.called(this.otDoc.close);
+    it('doc.doc is removed', function () {
+      expect(this.doc.doc).toBeUndefined();
     });
   });
 
@@ -251,8 +184,7 @@ describe('entityEditor/Document', function () {
 
   describe('on scope destruction', function () {
     beforeEach(function () {
-      this.otDoc = makeOtDocStub();
-      this.doc.doc = this.otDoc;
+      this.otDoc = this.connectAndOpen();
       scope.$destroy();
     });
 
@@ -261,29 +193,24 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('otDoc.state.error', function () {
-    beforeEach(function () {
-      this.openDocument.resolves(makeOtDocStub());
-    });
-
+  describe('#state.error', function () {
     it('is set to false if opening document succeeds', function () {
       this.doc.state.error = true;
-      this.connect();
+      this.connectAndOpen();
       expect(this.doc.state.error).toBe(false);
     });
 
     it('is set to true if opening document fails', function () {
       this.doc.state.error = false;
-      this.openDocument.rejects();
-      this.connect();
+      this.docConnection.open.rejects();
+      this.docConnection.canOpen.returns(true);
+      this.$apply();
       expect(this.doc.state.error).toBe(true);
     });
 
     it('is set to true if ShareJS connection failed', function () {
-      this.connect();
-      var ShareJS = this.$inject('ShareJS');
-      ShareJS.connectionFailed.returns(true);
       this.doc.state.error = false;
+      this.docConnection.errors.emit('');
       this.$apply();
       expect(this.doc.state.error).toBe(true);
     });

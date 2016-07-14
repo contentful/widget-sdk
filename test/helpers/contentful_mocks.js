@@ -38,6 +38,14 @@ function ($delegate, mock) {
     return $delegate;
   }]);
 
+  $provide.constant('libs/sharejs', {
+    Connection: sinon.stub().returns({
+      socket: {},
+      emit: _.noop,
+      disconnect: _.noop
+    })
+  });
+
   $provide.provider('realLogger', function (loggerProvider) {
     return loggerProvider;
   });

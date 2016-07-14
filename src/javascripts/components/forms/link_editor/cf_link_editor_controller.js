@@ -8,7 +8,6 @@ angular.module('contentful').controller('LinkEditorController',
   var $controller           = $injector.get('$controller');
   var $q                    = $injector.get('$q');
   var EntityCache           = $injector.get('EntityCache');
-  var ShareJS               = $injector.get('ShareJS');
   var logger                = $injector.get('logger');
   var validation            = $injector.get('validation');
   var lookupLinksForEntityCache = $injector.get('lookupLinksForEntityCache');

@@ -24,7 +24,7 @@ angular.module('cf.app')
 ['$scope', '$injector', 'entity', 'contentType',
 function ($scope, $injector, entity, contentType) {
   var $q = $injector.get('$q');
-  var ShareJS = $injector.get('ShareJS');
+  var ShareJS = $injector.get('data/ShareJS/Utils');
   var logger = $injector.get('logger');
   var moment = $injector.get('moment');
   var TheLocaleStore = $injector.get('TheLocaleStore');
@@ -32,6 +32,8 @@ function ($scope, $injector, entity, contentType) {
   var controller = this;
   var diff = $injector.get('utils/StringDiff').diff;
   var Normalizer = $injector.get('data/documentNormalizer');
+  var spaceContext = $injector.get('spaceContext');
+  var docConnection = spaceContext.docConnection;
 
   // Field types that should use `setStringAt()` to set a value using a
   // string diff.
@@ -200,15 +202,8 @@ function ($scope, $injector, entity, contentType) {
     }
   });
 
-  $scope.$watch(function () {
-    return ShareJS.connectionFailed();
-  }, function (failed) {
-    // We do not want to remove errors that result from failed document
-    // opening. Therefore we only set the error to `true` and to to
-    // `failed`.
-    if (failed) {
-      controller.state.error = true;
-    }
+  K.onValueScope($scope, docConnection.errors, function () {
+    controller.state.error = true;
   });
 
   $scope.$on('$destroy', function () {
@@ -322,11 +317,11 @@ function ($scope, $injector, entity, contentType) {
   }
 
   function shouldOpenDoc () {
-    return ShareJS.isConnected() && shouldOpen;
+    return spaceContext.docConnection.canOpen() && shouldOpen;
   }
 
   function openDoc () {
-    ShareJS.open(entity)
+    docConnection.open(entity)
     .then(function (doc) {
       // Check a second time if we have disconnected or the document
       // has been disabled.
