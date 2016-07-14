@@ -288,7 +288,6 @@ src/javascripts/app/entry_editor/notifications.js
 src/javascripts/app/entry_editor/entry_actions_controller.js
 src/javascripts/app/entry_editor/entry_reverter.js
 src/javascripts/app/entity_editor/locales_controller.js
-src/javascripts/app/entity_editor/sidebar_widgets_controller.js
 src/javascripts/app/entity_editor/status_notifications_controller.js
 src/javascripts/app/widgets/cf_checkbox_editor_directive.js
 src/javascripts/app/widgets/cf_rating_editor_directive.js
