@@ -54,10 +54,24 @@ angular.module('contentful')
         scopeData: {
           config: config,
           labels: getLabels(config),
-          singleContentType: singleContentType
+          singleContentType: singleContentType,
+          listHeight: getListHeight()
         }
       }).promise;
     });
+  }
+
+  function getListHeight () {
+    var height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    var listHeight = height - 350;
+
+    if (listHeight < 200) {
+      return 200;
+    } else if (listHeight > 500) {
+      return 500;
+    } else {
+      return listHeight;
+    }
   }
 
   function prepareConfig (field, links) {

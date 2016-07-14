@@ -39,6 +39,7 @@ mixin single-list-item
 
       .entity-selector__item-list.endless-container(
         ng-if="view.mode === AVAILABLE"
+        ng-style="{height: listHeight}"
         ng-class="{'entity-selector__thumbnails': config.linksAsset}"
         cf-endless-container
         at-bottom="loadMore()"
@@ -57,6 +58,7 @@ mixin single-list-item
 
       .entity-selector__item-list(
         ng-if="view.mode === SELECTED"
+        ng-style="{height: listHeight}"
         ng-class="{'entity-selector__thumbnails': config.linksAsset && selected.length > 0}")
         .entity-selector__item-list-placeholder(ng-if="selected.length < 1")
           | {{ labels.empty }} selected yet
