@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfAssetLinkEditor Directive', function () {
+xdescribe('cfAssetLinkEditor Directive', function () {
   var element, scope;
   var compileElement;
   var stubs;

@@ -330,39 +330,38 @@ describe('spaceContext', function () {
           });
 
           it('fetched successfully', function () {
-            expect(this.spaceContext.entryTitle(entry)).toEqual('the title');
+            expect(this.spaceContext.entryTitle(entry)).toBe('the title');
+            expect(this.spaceContext.entryTitle(entry, 'en-US', true)).toBe('the title');
+            expect(this.spaceContext.entityTitle(entry)).toBe('the title');
           });
 
           it('gets no title, falls back to default', function () {
             sinon.stub(this.spaceContext, 'publishedTypeForEntry').returns({
               data: {}
             });
-            expect(this.spaceContext.entryTitle(entry)).toEqual('Untitled');
+            expect(this.spaceContext.entryTitle(entry)).toBe('Untitled');
+            expect(this.spaceContext.entryTitle(entry, 'en-US', true)).toBe(null);
+            expect(this.spaceContext.entityTitle(entry)).toBe(null);
           });
 
           it('handles an exception, falls back to default', function () {
             sinon.stub(this.spaceContext, 'publishedTypeForEntry').returns({});
-            expect(this.spaceContext.entryTitle(entry)).toEqual('Untitled');
+            expect(this.spaceContext.entryTitle(entry)).toBe('Untitled');
+            expect(this.spaceContext.entityTitle(entry)).toBe(null);
           });
 
           it('fetched successfully but title is empty', function () {
             entry.data.fields.title = '   ';
-            expect(this.spaceContext.entryTitle(entry)).toEqual('Untitled');
-          });
-
-          it('fetched title successfully but title is empty (modelValue)', function () {
-            entry.data.fields.title = '     ';
-            expect(this.spaceContext.entryTitle(entry, undefined, true)).toEqual(null);
+            expect(this.spaceContext.entryTitle(entry)).toBe('Untitled');
+            expect(this.spaceContext.entryTitle(entry, undefined, true)).toBe(null);
+            expect(this.spaceContext.entityTitle(entry)).toBe(null);
           });
 
           it('fetched successfully but title doesn\'t exist', function () {
             delete entry.data.fields.title;
             expect(this.spaceContext.entryTitle(entry)).toEqual('Untitled');
-          });
-
-          it('fetched title successfully but title doesn\'t exist (modelValue)', function () {
-            delete entry.data.fields.title;
             expect(this.spaceContext.entryTitle(entry, undefined, true)).toEqual(null);
+            expect(this.spaceContext.entityTitle(entry)).toEqual(null);
           });
 
           describe('unregistering a published Content Type', function () {
@@ -396,31 +395,38 @@ describe('spaceContext', function () {
           });
 
           it('fetched successfully', function () {
-            expect(this.spaceContext.assetTitle(asset)).toEqual('the title');
+            expect(this.spaceContext.assetTitle(asset)).toBe('the title');
+            expect(this.spaceContext.assetTitle(asset, 'en-US', true)).toBe('the title');
+            expect(this.spaceContext.entityTitle(asset)).toBe('the title');
           });
 
           it('gets no title, falls back to default', function () {
             asset.data = {fields: {}};
-            expect(this.spaceContext.assetTitle(asset)).toEqual('Untitled');
+            expect(this.spaceContext.assetTitle(asset)).toBe('Untitled');
+            expect(this.spaceContext.assetTitle(asset, 'en-US', true)).toBe(null);
+            expect(this.spaceContext.entityTitle(asset)).toBe(null);
           });
 
           it('handles an exception, falls back to default', function () {
             asset.data = {};
-            expect(this.spaceContext.assetTitle(asset)).toEqual('Untitled');
+            expect(this.spaceContext.assetTitle(asset)).toBe('Untitled');
+            expect(this.spaceContext.entityTitle(asset)).toBe(null);
           });
 
           it('fetched successfully but title is empty', function () {
             asset.data.fields.title = '   ';
-            expect(this.spaceContext.assetTitle(asset)).toEqual('Untitled');
+            expect(this.spaceContext.assetTitle(asset)).toBe('Untitled');
+            expect(this.spaceContext.entityTitle(asset)).toBe(null);
           });
 
           it('fetched successfully but title doesn\'t exist', function () {
             delete asset.data.fields.title;
-            expect(this.spaceContext.assetTitle(asset)).toEqual('Untitled');
+            expect(this.spaceContext.assetTitle(asset)).toBe('Untitled');
+            expect(this.spaceContext.entityTitle(asset)).toBe(null);
           });
 
           it('gets a localized field', function () {
-            expect(this.spaceContext.localizedField(asset, 'data.fields.title')).toEqual('the title');
+            expect(this.spaceContext.localizedField(asset, 'data.fields.title')).toBe('the title');
           });
         });
 
@@ -607,50 +613,183 @@ describe('spaceContext', function () {
     });
   });
 
-  describe('#entityDescription()', function () {
+  describe('finding entity fields', function () {
+    const ASSET_LINK_XX = {
+      sys: {id: 'ASSET_1'}
+    };
+    const ASSET_LINK_IT = {
+      sys: {id: 'ASSET_2'}
+    };
 
-    it('returns value of first text field', function () {
-      var ct = {
+    beforeEach(function () {
+      this.default_locale = {internal_code: 'xx'};
+      this.spaceContext.space = {
+        getDefaultLocale: sinon.stub().returns(this.default_locale)
+      };
+
+      this.fields = [
+        {type: 'Number', id: 'NUMBER'},
+        {type: 'Symbol', id: 'SYMBOL'},
+        {type: 'Text', id: 'TEXT'},
+        {type: 'Link', linkType: 'Entry', id: 'ENTRY'},
+        {type: 'Link', linkType: 'Asset', id: 'ASSET'}
+      ];
+      this.ct = {
         data: {
-          fields: [
-            {type: 'Text', id: 'DESC'}
-          ]
+          fields: this.fields
         }
       };
-      this.spaceContext.publishedTypeForEntry = sinon.stub().returns(ct);
 
-      var entry = {
+      this.entry = {
         data: {
           fields: {
-            'DESC': {en: 'VAL'}
+            NUMBER: {xx: 'NUMBER'},
+            SYMBOL: {xx: 'SYMBOL VAL', de: 'SYMBOL VAL DE'},
+            TEXT: {en: 'VAL EN', xx: 'VAL', de: 'VAL DE'},
+            ASSET: {xx: ASSET_LINK_XX, it: ASSET_LINK_IT}
           }
         }
       };
-      var desc = this.spaceContext.entityDescription(entry);
-      expect(desc).toEqual('VAL');
+
+      this.spaceContext.publishedTypeForEntry =
+        sinon.stub().withArgs(this.entry).returns(this.ct);
     });
 
-    it('skips display field', function () {
-      var ct = {
-        data: {
-          displayField: 'DESC',
-          fields: [
-            {type: 'Text', id: 'DESC'}
-          ]
-        }
-      };
-      this.spaceContext.publishedTypeForEntry = sinon.stub().returns(ct);
+    describe('#findLocalizedField()', function () {
+      it('returns undefined if no field can be found', function () {
+        const val = this.spaceContext.findLocalizedField(
+          this.entry, {type: 'AnotherType'});
 
-      var desc = this.spaceContext.entityDescription({});
-      expect(desc).toEqual(undefined);
+        expect(val).toBe(undefined);
+      });
+
+      it('returns value of first matching field`s value', function () {
+        const val = this.spaceContext.findLocalizedField(
+          this.entry, {type: 'Symbol'});
+
+        expect(val).toBe('SYMBOL VAL');
+      });
+
+      it('returns value for given locale', function () {
+        const val = this.spaceContext.findLocalizedField(
+          this.entry, 'it', {type: 'Link', linkType: 'Asset'});
+
+        expect(val).toBe(ASSET_LINK_IT);
+      });
+
+      it('returns value for enity`s first locale code', function () {
+        delete this.entry.data.fields.TEXT.xx; // Delete default field
+
+        const val = this.spaceContext.findLocalizedField(
+          this.entry, {type: 'Text'});
+
+        expect(val).toBe('VAL EN');
+      });
+
+      it('accepts a callback for the search', function () {
+        var fields = [];
+        const val = this.spaceContext.findLocalizedField(
+          this.entry, function (field) {
+            fields.push(field)
+          });
+
+        expect(fields).toEqual(this.fields);
+        expect(val).toEqual(undefined);
+      });
     });
 
-    it('returns undefined if content type is not available', function () {
-      this.spaceContext.publishedTypeForEntry = sinon.stub().returns(null);
-      var desc = this.spaceContext.entityDescription({});
-      expect(desc).toEqual(undefined);
+    describe('#entityDescription()', function () {
+      it('returns value of first text or symbol field, falls back to default locale', function () {
+        const desc = this.spaceContext.entityDescription(this.entry);
+        expect(desc).toBe('SYMBOL VAL');
+      });
+
+      it('returns value of first text or symbol field for given locale', function () {
+        const desc = this.spaceContext.entityDescription(this.entry, 'de');
+        expect(desc).toBe('SYMBOL VAL DE');
+      });
+
+      describe('skips display field', function () {
+        beforeEach(function () {
+          _.remove(this.fields, function (field) {
+            return field.id === 'TEXT';
+          });
+          delete this.entry.data.fields.TEXT;
+          this.ct.data.displayField = 'SYMBOL';
+        });
+
+        it('returns undefined if there is not other field', function () {
+          const desc = this.spaceContext.entityDescription(this.entry);
+          expect(desc).toBe(undefined);
+        });
+
+        it('returns value of the next text field', function () {
+          this.ct.data.fields.push({type: 'Text', id: 'TEXT_2'});
+          this.entry.data.fields.TEXT_2 = {xx: 'VAL 2', de: 'VAL 2 DE'};
+
+          const desc = this.spaceContext.entityDescription(this.entry);
+          expect(desc).toBe('VAL 2');
+          const descDe = this.spaceContext.entityDescription(this.entry, 'de');
+          expect(descDe).toBe('VAL 2 DE');
+        });
+      });
+
+      it('returns undefined if content type is not available', function () {
+        this.spaceContext.publishedTypeForEntry = sinon.stub().returns(null);
+        const desc = this.spaceContext.entityDescription({});
+        expect(desc).toEqual(undefined);
+      });
     });
 
+    describe('#entryImage', function () {
+      beforeEach(function () {
+        this.file = {details: {image: {}}};
+        var asset = {};
+        dotty.put(asset, 'data.fields.file.xx', this.file);
+
+        this.spaceContext.space.getAsset = sinon.stub();
+        this.spaceContext.space.getAsset
+          .withArgs(ASSET_LINK_XX.sys.id).resolves(asset)
+          .withArgs(ASSET_LINK_IT.sys.id).rejects();
+      });
+
+      pit('resolves a promise with an image file', function () {
+        return this.spaceContext.entryImage(this.entry)
+        .then((file) => expect(file).toBe(this.file));
+      });
+
+      pit('resolves a promise with an image file for given locale', function () {
+        return this.spaceContext.entryImage(this.entry, 'xx')
+        .then((file) => expect(file).toBe(this.file));
+      });
+
+      pit('resolves a promise with default locale`s image if unknown locale', function () {
+        return this.spaceContext.entryImage(this.entry, 'foo')
+        .then((file) => expect(file).toBe(this.file));
+      });
+
+      pit('resolves a promise with null if no linked asset field in CT', function () {
+        _.remove(this.fields, function (field) {
+          return field.type === 'Link';
+        });
+        return this.spaceContext.entryImage(this.entry)
+        .then((file) => expect(file).toBe(null));
+      });
+
+      pit('resolves a promise with null if linked asset is not an image', function () {
+        delete this.file.details.image;
+
+        return this.spaceContext.entryImage(this.entry)
+        .then((file) => expect(file).toBe(null));
+      });
+
+      pit('resolves a promise with null if dead link for given locale', function () {
+        // TODO: We might want to refine this edge case's behavior and try to load
+        //       another locale's image then.
+        return this.spaceContext.entryImage(this.entry, 'it')
+        .then((file) => expect(file).toBe(null));
+      });
+    });
   });
 
 });

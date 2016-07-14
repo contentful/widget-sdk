@@ -1,21 +1,21 @@
 'use strict';
 
-angular.module('contentful').factory('UserListHandler', ['$injector', function ($injector) {
+angular.module('contentful')
+.factory('UserListHandler', ['require', function (require) {
+  var $q = require('$q');
+  var spaceContext = require('spaceContext');
+  var RoleRepository = require('RoleRepository');
+  var SpaceMembershipRepository = require('SpaceMembershipRepository');
 
-  var $q                        = $injector.get('$q');
-  var spaceContext              = $injector.get('spaceContext');
-  var RoleRepository            = $injector.get('RoleRepository');
-  var SpaceMembershipRepository = $injector.get('SpaceMembershipRepository');
-
-  var ADMIN_ROLE_ID          = '__cf_builtin_admin';
-  var ADMIN_ROLE_NAME        = 'Administrator';
-  var ADMIN_OPT              = { id: ADMIN_ROLE_ID, name: ADMIN_ROLE_NAME };
-  var UNKNOWN_ROLE_NAME      = 'Unknown';
-  var NOT_DEFINED_USER_NAME  = 'Name not defined';
+  var ADMIN_ROLE_ID = '__cf_builtin_admin';
+  var ADMIN_ROLE_NAME = 'Administrator';
+  var ADMIN_OPT = { id: ADMIN_ROLE_ID, name: ADMIN_ROLE_NAME };
+  var UNKNOWN_ROLE_NAME = 'Unknown';
+  var NOT_DEFINED_USER_NAME = 'Name not defined';
 
   return { create: create };
 
-  function create() {
+  function create () {
     var membershipCounts = {};
     var users = [];
     var adminMap = {};
@@ -36,15 +36,15 @@ angular.module('contentful').factory('UserListHandler', ['$injector', function (
       getAdminRoleId: _.constant(ADMIN_ROLE_ID)
     };
 
-    function reset() {
+    function reset () {
       return $q.all({
         memberships: SpaceMembershipRepository.getInstance(spaceContext.space).getAll(),
         roles: RoleRepository.getInstance(spaceContext.space).getAll(),
-        users: spaceContext.space.getUsers()
+        users: getUsers()
       }).then(processData);
     }
 
-    function processData(data) {
+    function processData (data) {
       adminMap = {};
       membershipMap = {};
       roleNameMap = {};
@@ -71,7 +71,7 @@ angular.module('contentful').factory('UserListHandler', ['$injector', function (
       return data;
     }
 
-    function countMemberships(memberships) {
+    function countMemberships (memberships) {
       var counts = { admin: 0 };
 
       _.forEach(memberships, function (item) {
@@ -85,7 +85,7 @@ angular.module('contentful').factory('UserListHandler', ['$injector', function (
       return counts;
     }
 
-    function prepareUsers(users) {
+    function prepareUsers (users) {
       return _(users).map(function (user) {
         var data = user.data;
         var id = user.getId();
@@ -103,54 +103,54 @@ angular.module('contentful').factory('UserListHandler', ['$injector', function (
       }).sortBy('name').value();
     }
 
-    function getRoleNamesForUser(userId) {
+    function getRoleNamesForUser (userId) {
       var roleIds = _.clone(userRolesMap[userId]);
       if (adminMap[userId]) { roleIds.unshift(ADMIN_ROLE_ID); }
       var roleString = _(roleIds).map(getRoleName).value().join(', ');
       return roleString.length > 0 ? roleString : UNKNOWN_ROLE_NAME;
     }
 
-    function getRoleName(id) {
+    function getRoleName (id) {
       if (isAdminRole(id)) { return ADMIN_ROLE_NAME; }
       return roleNameMap[id] || UNKNOWN_ROLE_NAME;
     }
 
-    function isAdminRole(id) {
+    function isAdminRole (id) {
       return id === ADMIN_ROLE_ID;
     }
 
-    function isLastAdmin(userId) {
+    function isLastAdmin (userId) {
       var adminCount = _.filter(adminMap, _.identity).length;
       return adminMap[userId] && adminCount < 2;
     }
 
-    function getRoleOptions() {
+    function getRoleOptions () {
       return [ADMIN_OPT].concat(_.map(roleNameMap, function (name, id) {
         return { id: id, name: name };
       }));
     }
 
-    function getRoleOptionsBut(roleIdToExclude) {
+    function getRoleOptionsBut (roleIdToExclude) {
       return _.filter(getRoleOptions(), function (option) {
         return option.id !== roleIdToExclude;
       });
     }
 
-    function getUsersByRole(id) {
+    function getUsersByRole (id) {
       return _.filter(users, function (user) {
         if (isAdminRole(id)) { return user.isAdmin; }
         return user.roles.indexOf(id) > -1;
       });
     }
 
-    function getGroupedUsers() {
+    function getGroupedUsers () {
       return {
         name: groupUsersByName(),
         role: groupUsersByRole()
       };
     }
 
-    function groupUsersByName() {
+    function groupUsersByName () {
       var byLetter = {};
 
       _.forEach(users, function (user) {
@@ -170,7 +170,7 @@ angular.module('contentful').factory('UserListHandler', ['$injector', function (
       });
     }
 
-    function groupUsersByRole() {
+    function groupUsersByRole () {
       var byRole = {};
       var admins = [];
 
@@ -194,5 +194,14 @@ angular.module('contentful').factory('UserListHandler', ['$injector', function (
         };
       });
     }
+  }
+
+  function getUsers () {
+    return spaceContext.space.getUsers()
+    .then(function (users) {
+      return _.uniqBy(users, function (user) {
+        return user.data.sys.id;
+      });
+    });
   }
 }]);
