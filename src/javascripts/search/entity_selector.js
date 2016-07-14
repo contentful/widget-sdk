@@ -140,8 +140,9 @@ angular.module('contentful')
       }
 
       applySizeConstraint('fields.file.details.size', config.linkedFileSize);
-      applySizeConstraint('fields.file.details.width', config.linkedImageDimensions.width);
-      applySizeConstraint('fields.file.details.height', config.linkedImageDimensions.height);
+      // @todo API returns 400 when applying these constraints - investigate why?
+      // applySizeConstraint('fields.file.details.width', config.linkedImageDimensions.width);
+      // applySizeConstraint('fields.file.details.height', config.linkedImageDimensions.height);
     }
 
     return extension;
