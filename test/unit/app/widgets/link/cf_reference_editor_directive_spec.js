@@ -114,7 +114,7 @@ describe('cfReferenceEditorDirective', function () {
       it('sets field value when entity is being selected', function () {
         const entity = {sys: {type: 'Entry', id: 'testid2'}};
         this.$inject('entitySelector').open = sinon.stub().resolves([entity]);
-        this.scope.addExisting();
+        this.scope.addExisting({preventDefault: _.noop});
         this.$apply();
         expect(this.field.setValue.firstCall.args[0]).toEqual([link1, link2, link2]);
       });
@@ -196,7 +196,7 @@ describe('cfReferenceEditorDirective', function () {
 
       const scope = this.init({type: 'Asset'});
       this.notifyChange();
-      scope.addNew();
+      scope.addNew({preventDefault: _.noop});
       this.$apply();
 
       expect(scope.links.length).toBe(1);

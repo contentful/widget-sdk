@@ -49,7 +49,8 @@ angular.module('cf.app')
       goToEditor: widgetApi.state.goToEditor
     };
 
-    $scope.addNew = function () {
+    $scope.addNew = function (event) {
+      event.preventDefault();
       createEntity($scope.type, field, widgetApi.space)
       .then(function (entity) {
         linkEntity(entity);
@@ -58,7 +59,8 @@ angular.module('cf.app')
       });
     };
 
-    $scope.addExisting = function () {
+    $scope.addExisting = function (event) {
+      event.preventDefault();
       entitySelector.open(field, unwrapLinks())
       .then(function (entities) {
         _.forEach(entities, linkEntity);
