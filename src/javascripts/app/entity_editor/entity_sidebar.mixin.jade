@@ -102,6 +102,7 @@ mixin entity-sidebar
     .entity-sidebar__widget(
       ng-repeat="widget in sidebarControls"
       ng-controller="SidebarWidgetRenderController")
+      //- FIX(mudit): This shows the field name currently but should show widget name
       h2.entity-sidebar__heading
-        | {{widget.name}}
+        | {{widget.field.name}}
       cf-widget-renderer

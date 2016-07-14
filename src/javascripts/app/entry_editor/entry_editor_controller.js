@@ -107,7 +107,7 @@ angular.module('contentful')
    * TODO This is way to complicated: We should only care about the
    * errors in `body.details.errors` and expose them to the scope so
    * that they can be displayed at the proper location and show a
-   * simple notifictation.
+   * simple notification.
    *
    * For this to happen the CMA needs to be refactored.
    */
