@@ -10,7 +10,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
   var ASSET_PROCESSING_TIMEOUT = 60000;
   var PUBLISHING_WAIT = 5000;
 
-  function TemplateCreator(spaceContext) {
+  function TemplateCreator (spaceContext) {
     this.spaceContext = spaceContext;
     this.handledItems = {};
   }
@@ -29,7 +29,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
      * but instead handles it separately as we do not want the errors
      * on the creation calls to stop the whole chain of events.
      */
-    create: function(template) {
+    create: function (template) {
       var deferred = $q.defer();
       var self = this;
       self.creationErrors = [];
@@ -58,12 +58,14 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       .then($q.all(_.map(template.apiKeys, _.bind(self.createApiKey, self))))
       // end it
       .then(function () {
-        if(self.creationErrors.length > 0)
+        if (self.creationErrors.length > 0) {
           deferred.reject({
             errors: self.creationErrors,
             template: template
           });
-        else deferred.resolve();
+        } else {
+          deferred.resolve();
+        }
       });
 
       return deferred.promise;
@@ -71,13 +73,15 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
 
     handleItem: function (item, actionData, response) {
       var itemKey = generateItemId(item, actionData);
-      if(!(itemKey in this.handledItems))
+      if (!(itemKey in this.handledItems)) {
         this.handledItems[itemKey] = {
           performedActions: [],
           response: response
         };
-      if(!_.includes(this.handledItems[itemKey].performedActions, actionData.action))
+      }
+      if (!_.includes(this.handledItems[itemKey].performedActions, actionData.action)) {
         this.handledItems[itemKey].performedActions.push(actionData.action);
+      }
     },
 
     itemIsHandled: function (item, actionData) {
@@ -133,9 +137,9 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       };
     },
 
-    createContentType: function(contentType) {
+    createContentType: function (contentType) {
       var handlers = this.makeHandlers(contentType, 'create', 'ContentType');
-      if(handlers.itemWasHandled) return $q.resolve(handlers.response);
+      if (handlers.itemWasHandled) return $q.resolve(handlers.response);
       return this.spaceContext.space.createContentType(contentType)
       .then(handlers.success)
       .catch(handlers.error);
@@ -144,9 +148,9 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
     publishContentTypes: function (contentTypes) {
       var self = this;
       return $q.all(_.map(_.filter(contentTypes), function (contentType) {
-        if(contentType) {
+        if (contentType) {
           var handlers = self.makeHandlers(contentType, 'publish', 'ContentType');
-          if(handlers.itemWasHandled) return $q.resolve();
+          if (handlers.itemWasHandled) return $q.resolve();
           var version = dotty.get(contentType, 'data.sys.version');
           return contentType.publish(version)
           .then(handlers.success)
@@ -155,26 +159,19 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       }));
     },
 
-    createEditingInterface: function(editingInterface) {
+    createEditingInterface: function (editingInterface) {
       var handlers = this.makeHandlers(editingInterface, 'create', 'EditingInterface');
-      if(handlers.itemWasHandled) return $q.resolve(handlers.response);
-      var space = this.spaceContext.space;
-      var contentTypeId = dotty.get(editingInterface, ['sys', 'contentType', 'sys', 'id']);
-      if (contentTypeId) {
-        return space.getContentType(contentTypeId)
-        .then(function(contentType) {
-          return contentType.createEditingInterface(editingInterface);
-        })
-        .then(handlers.success)
-        .catch(handlers.error);
-      } else {
-        return $q.resolve();
-      }
+      if (handlers.itemWasHandled) return $q.resolve(handlers.response);
+      var repo = this.spaceContext.editingInterfaces;
+      // The content type has a default editor interface with version 1.
+      editingInterface.data.sys.version = 1;
+      return repo.save(editingInterface.contentType, editingInterface.data)
+      .then(handlers.success, handlers.error);
     },
 
-    createAsset: function(asset) {
+    createAsset: function (asset) {
       var handlers = this.makeHandlers(asset, 'create', 'Asset');
-      if(handlers.itemWasHandled) return $q.resolve();
+      if (handlers.itemWasHandled) return $q.resolve();
       return this.spaceContext.space.createAsset(asset)
       .then(handlers.success)
       .catch(handlers.error);
@@ -183,9 +180,9 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
     processAssets: function (assets) {
       var self = this;
       return $q.all(_.map(_.filter(assets), function (asset) {
-        if(asset) {
+        if (asset) {
           var handlers = self.makeHandlers(asset, 'process', 'Asset');
-          if(handlers.itemWasHandled) return $q.resolve();
+          if (handlers.itemWasHandled) return $q.resolve();
           var version = dotty.get(asset, 'data.sys.version');
           var locale = _.keys(dotty.get(asset, 'data.fields.file'))[0];
           return self.processAsset(asset, version, locale)
@@ -200,7 +197,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       var deferred = $q.defer();
 
       var processingTimeout = $timeout(function () {
-        if(listener && doc) doc.removeListener(listener);
+        if (listener && doc) doc.removeListener(listener);
         deferred.reject({error: 'timeout processing'});
       }, ASSET_PROCESSING_TIMEOUT);
 
@@ -216,14 +213,14 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
 
       return deferred.promise;
 
-      function remoteOpHandler(ops) {
+      function remoteOpHandler (ops) {
         $rootScope.$apply(function () {
           $timeout.cancel(processingTimeout);
           var op = ops && ops.length > 0 ? ops[0] : null;
-          if(op && op.p && op.oi){
+          if (op && op.p && op.oi) {
             var path = op.p;
             var inserted = op.oi;
-            if (path[0] == 'fields' && path[1] == 'file' && 'url' in inserted){
+            if (path[0] === 'fields' && path[1] === 'file' && 'url' in inserted) {
               doc.removeListener(listener);
               doc.close();
               deferred.resolve(asset);
@@ -237,20 +234,20 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
     publishAssets: function (assets) {
       var self = this;
       return $q.all(_.map(assets, function (asset) {
-        if(asset) {
+        if (asset) {
           var handlers = self.makeHandlers(asset, 'publish', 'Asset');
-          if(handlers.itemWasHandled) return $q.resolve();
+          if (handlers.itemWasHandled) return $q.resolve();
           var version = dotty.get(asset, 'data.sys.version');
-          return asset.publish(version+1)
+          return asset.publish(version + 1)
           .then(handlers.success)
           .catch(handlers.error);
         }
       }));
     },
 
-    createEntry: function(entry) {
+    createEntry: function (entry) {
       var handlers = this.makeHandlers(entry, 'create', 'Entry');
-      if(handlers.itemWasHandled) return $q.resolve(handlers.response);
+      if (handlers.itemWasHandled) return $q.resolve(handlers.response);
       var contentTypeId = dotty.get(entry, 'sys.contentType.sys.id');
       delete entry.contentType;
       return this.spaceContext.space.createEntry(contentTypeId, entry)
@@ -263,9 +260,9 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       var deferred = $q.defer();
       $timeout(function () {
         $q.all(_.map(_.filter(entries), function (entry) {
-          if(entry) {
+          if (entry) {
             var handlers = self.makeHandlers(entry, 'publish', 'Entry');
-            if(handlers.itemWasHandled) return $q.resolve();
+            if (handlers.itemWasHandled) return $q.resolve();
             var version = dotty.get(entry, 'data.sys.version');
             return entry.publish(version)
             .then(handlers.success)
@@ -276,9 +273,9 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       return deferred.promise;
     },
 
-    createApiKey: function(apiKey) {
+    createApiKey: function (apiKey) {
       var handlers = this.makeHandlers(apiKey, 'create', 'ApiKey');
-      if(handlers.itemWasHandled) return $q.resolve(handlers.response);
+      if (handlers.itemWasHandled) return $q.resolve(handlers.response);
       return this.spaceContext.space.createDeliveryApiKey(apiKey)
       .then(handlers.success)
       .catch(handlers.error);
@@ -290,15 +287,15 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
     }
   };
 
-  function generateItemId(item, actionData) {
+  function generateItemId (item, actionData) {
     return actionData.entity + getItemId(item);
   }
 
-  function getItemId(item) {
+  function getItemId (item) {
     return dotty.get(item, 'sys.id') || item.name;
   }
 
-  function setDefaultLocale(entities, locale) {
+  function setDefaultLocale (entities, locale) {
     return _.map(_.clone(entities), function (entity) {
       entity.fields = _.mapValues(entity.fields, function (field) {
         var newField = {};

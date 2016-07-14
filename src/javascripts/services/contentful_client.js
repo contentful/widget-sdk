@@ -80,10 +80,6 @@ angular.module('contentful').factory('contentfulClient', ['$injector', function 
       .then(_.partial(SearchResult.parse, ContentType));
   };
 
-  Client.prototype.editingInterface = function(contentTypeId, id) {
-    return this.request('/content_types/'+ contentTypeId +'/editor_interfaces/'+ id);
-  };
-
   Client.prototype.entry = function(id) {
     return this.request('/entries/' + id)
       .then(Entry.parse);

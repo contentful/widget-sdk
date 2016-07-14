@@ -93,8 +93,6 @@ test/unit/services/promised_loader_spec.js
 test/unit/services/reload_notification_spec.js
 test/unit/services/sdk_info_supplier_spec.js
 test/unit/services/sharejs_client_spec.js
-test/unit/services/space_template_creator_spec.js
-test/unit/services/space_template_loader_spec.js
 test/unit/services/space_tools_spec.js
 test/unit/services/string_utils_spec.js
 test/unit/services/the_store_spec.js
@@ -374,8 +372,6 @@ src/javascripts/services/sdk_info_supplier.js
 src/javascripts/services/search_query_autocompletions.js
 src/javascripts/services/segment.js
 src/javascripts/services/sharejs.js
-src/javascripts/services/space_template_creator.js
-src/javascripts/services/space_template_loader.js
 src/javascripts/services/space_tools.js
 src/javascripts/services/the_store.js
 src/javascripts/services/token_store.js
