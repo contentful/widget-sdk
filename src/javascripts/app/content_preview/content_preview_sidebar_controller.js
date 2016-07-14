@@ -5,10 +5,16 @@ angular.module('contentful')
 
   var contentPreview = $injector.get('contentPreview');
 
+  $scope.showDefaultMessage = false;
+
   contentPreview.getForContentType($scope.contentType)
   .then(function (environments) {
     $scope.contentPreviewEnvironments = environments;
     $scope.selectEnvironment($scope.contentPreviewEnvironments[0]);
+    if (environments.length === 1 && environments[0].example) {
+      $scope.showDefaultMessage = true;
+    }
+
     updateUrls();
   });
 

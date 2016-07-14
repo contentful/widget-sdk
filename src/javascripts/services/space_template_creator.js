@@ -5,6 +5,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
   var $q = $injector.get('$q');
   var $rootScope = $injector.get('$rootScope');
   var $timeout = $injector.get('$timeout');
+  var contentPreview = $injector.get('contentPreview');
 
   var ASSET_PROCESSING_TIMEOUT = 60000;
   var PUBLISHING_WAIT = 5000;
@@ -55,6 +56,10 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       .then(_.bind(self.publishEntries, self))
       // api keys
       .then($q.all(_.map(template.apiKeys, _.bind(self.createApiKey, self))))
+      // preview environment
+      .then(function () {
+        return self.createPreviewEnvironment.call(self, template.contentTypes);
+      })
       // end it
       .then(function () {
         if (self.creationErrors.length > 0) {
@@ -278,6 +283,47 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       return this.spaceContext.space.createDeliveryApiKey(apiKey)
       .then(handlers.success)
       .catch(handlers.error);
+    },
+
+    // Create the discovery app environment if there is an API key
+    createPreviewEnvironment: function (contentTypes) {
+      var baseUrl = 'https://contentful.github.io/discovery-app-react/entries/by-content-type/';
+      var getKeys = this.spaceContext.space.getDeliveryApiKeys();
+      var getContentPreview = contentPreview.getAll();
+      var spaceId = this.spaceContext.space.getId();
+
+      return $q.all([getKeys, getContentPreview]).then(function (responses) {
+        var keys = responses[0];
+        var envs = responses[1];
+
+        function createConfig (ct, token) {
+          return {
+            contentType: ct.sys.id,
+            url: baseUrl + ct.sys.id + '/?space_id=' + spaceId + '&access_token=' + token,
+            enabled: true,
+            example: true
+          };
+        }
+
+        // Create default environment if there is none existing, and an API key is present
+        if (keys.length && !Object.keys(envs).length) {
+          var accessToken = keys[0].data.accessToken;
+
+          var env = {
+            name: 'Discovery App',
+            description: 'To help you get started, we\'ve added our own Discovery App to preview content.',
+            configs: contentTypes.map(function (ct) {
+              return createConfig(ct, accessToken);
+            })
+
+          };
+
+          return contentPreview.create(env);
+        } else {
+          // Don't do anything
+          $q.resolve();
+        }
+      });
     },
 
     _getDefaultLocale: function () {

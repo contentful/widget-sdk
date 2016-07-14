@@ -170,7 +170,7 @@ angular.module('contentful')
       description: internal.description,
       configurations: _.reduce(internal.configs, function (acc, config) {
         if (config.url) {
-          acc.push(_.pick(config, ['contentType', 'url', 'enabled']));
+          acc.push(_.pick(config, ['contentType', 'url', 'enabled', 'example']));
         }
         return acc;
       }, [])

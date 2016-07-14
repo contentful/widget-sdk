@@ -81,7 +81,11 @@ mixin entity-sidebar
             target="_blank")
             i.fa.fa-edit
             span Open preview
-          .entity-sidebar__preview__toggle
+          .entity-sidebar__preview__discovery(ng-if="showDefaultMessage")
+            | By default, the Discovery App is used to preview content.&#32;
+            a(ui-sref="spaces.detail.settings.content_preview.list")
+              | Set up a custom content preview.
+          .entity-sidebar__preview__toggle(ng-if="!showDefaultMessage")
             div <strong>Platform:</strong> {{selectedEnvironment.name}}
             a.entity-sidebar__preview__change(cf-context-menu-trigger)
               | Change
