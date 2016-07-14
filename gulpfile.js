@@ -259,7 +259,7 @@ gulp.task('svg', function () {
   .then(function () {
     return spawnOnlyStderr('svgo', [
       '--enable', 'removeTitle',
-      '--disable', 'cleanupIDs',
+      '--disable', 'collapseGroups',
       '-f', src.svg.sourceDirectory,
       '-o', src.svg.outputDirectory
     ]);
