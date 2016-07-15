@@ -50,7 +50,7 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
     // Usually we use a system field for ordering
     if (findFieldById(fieldId)) { return 'sys.' + fieldId; }
 
-    var field = findFieldById(fieldId, contentType.data.fields);
+    var field = findFieldById(fieldId, contentType && contentType.data.fields);
 
     // In case the custom field saved in the view does not exist anymore
     if (!field) {
