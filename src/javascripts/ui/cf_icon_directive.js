@@ -13,7 +13,10 @@
  * @param {float} scale? Scale factor to be applied to the icon
  */
 angular.module('cf.ui')
-.directive('cfIcon', ['icons', function (icons) {
+.directive('cfIcon', ['require', function (require) {
+  var icons = require('icons');
+  var uniquifyIds = require('globalSvgIdUniquifier').uniquifyIds;
+
   return {
     restrict: 'E',
     link: function (_scope, el, attrs) {
@@ -35,6 +38,7 @@ angular.module('cf.ui')
         iconElem.setAttribute('height', height * scale);
       }
 
+      uniquifyIds(iconElem);
       el.append(iconElem);
     }
   };
