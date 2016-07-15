@@ -47,7 +47,7 @@ describe('widgets/channel', function () {
       sinon.assert.calledWith(this.postMessage, {method: 'METHOD2', params: PARAMS});
     });
 
-    it('throws an error if params is not an array', function() {
+    it('throws an error if params is not an array', function () {
       var send = this.channel.send.bind(this.channel, 'METHOD', 'NOT-AN-ARRAY');
       this.channel.connect();
       expect(send).toThrow();
@@ -74,7 +74,7 @@ describe('widgets/channel', function () {
     this.addEventListener.yield({
       data: {
         method: 'MY_METHOD',
-        source: 'another id',
+        source: 'another id'
       }
     });
     sinon.assert.notCalled(handler);

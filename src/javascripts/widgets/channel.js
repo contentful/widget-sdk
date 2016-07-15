@@ -42,7 +42,7 @@ angular.module('contentful')
         if (data.source === self.id) {
           self._dispatch(data.method, data.id, data.params);
         }
-      })
+      });
     };
 
     $window.addEventListener('message', this.messageListener);
@@ -66,8 +66,8 @@ angular.module('contentful')
    * @param {Array<any>} params
    */
   Channel.prototype.send = function (message, params) {
-    if(!Array.isArray(params)) {
-      throw new Error( '`params` is expected to be an array' );
+    if (!Array.isArray(params)) {
+      throw new Error('`params` is expected to be an array');
     }
     if (this.connected) {
       this._send(message, params);
