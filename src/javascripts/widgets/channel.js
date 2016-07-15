@@ -111,6 +111,8 @@ angular.module('contentful')
   };
 
   Channel.prototype.destroy = function () {
+    this.destroyed = true;
+    this.iframe = null;
     $window.removeEventListener('message', this.messageListener);
   };
 
@@ -123,6 +125,10 @@ angular.module('contentful')
   };
 
   Channel.prototype._respondSuccess = function (id, result) {
+    if (this.destroyed) {
+      return;
+    }
+
     this.iframe.contentWindow.postMessage({
       id: id,
       result: result
@@ -130,6 +136,10 @@ angular.module('contentful')
   };
 
   Channel.prototype._respondError = function (id, error) {
+    if (this.destroyed) {
+      return;
+    }
+
     this.iframe.contentWindow.postMessage({
       id: id,
       error: {
