@@ -48,7 +48,10 @@ angular.module('contentful')
       responses: accessChecker.getResponses()
     };
   }, function () {
-    $scope.accessibleCts = _.filter(spaceContext.publishedContentTypes || [], function (ct) {
+    var publishedCTs = _.uniqBy(spaceContext.publishedContentTypes, function (ct) {
+      return ct.getId();
+    });
+    $scope.accessibleCts = _.filter(publishedCTs, function (ct) {
       return accessChecker.canPerformActionOnEntryOfType('create', ct.getId());
     });
 
