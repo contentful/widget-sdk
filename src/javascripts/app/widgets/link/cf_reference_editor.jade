@@ -1,0 +1,31 @@
+.link-editor(ng-class="{'x--contains-asset-cards': isAssetCard}")
+  ol.link-editor__links(cf-ui-sortable ng-model="links")
+    li.link-editor__link(ng-repeat="item in links")
+
+      cf-entity-link(
+        ng-if="!isAssetCard"
+        is-disabled="isDisabled"
+        link="item.link"
+        entity-store="store"
+        entity-helpers="helpers"
+        actions="actions"
+        config="config")
+
+      cf-asset-card(
+        ng-if="isAssetCard"
+        is-disabled="isDisabled"
+        link="item.link"
+        entity-store="store"
+        entity-helpers="helpers"
+        actions="actions"
+        config="config")
+
+  .link-editor__actions(ng-if="!isDisabled && (!single || !links.length)")
+    button.cfnext-btn-action.cfnext-btn-link.link-editor__link-btn(ng-click="addNew($event)")
+      | Create new {{ type.toLowerCase() }} and link
+
+    button.cfnext-btn-action.cfnext-btn-link.link-editor__link-btn(ng-click="addExisting($event)")
+      span(ng-if="single")
+        | Add an existing {{ type.toLowerCase() }}
+      span(ng-if="!single")
+        | Add some existing {{ typePlural.toLowerCase() }}

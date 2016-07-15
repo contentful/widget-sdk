@@ -1,0 +1,43 @@
+.entity-selector__input-label
+  display: flex
+  justify-content: space-between
+
+.entity-selector__search
+  margin-bottom: 20px
+  position: relative
+
+.entity-selector__item-list
+  width: 600px
+  height: 500px
+  overflow-y: scroll
+
+  &-placeholder
+    text-align: center
+    margin-top: 100px
+    color: $colors.text-light
+
+.entity-selector__item
+  cursor: pointer
+  margin-bottom: $rhythm(.5)
+
+  &.x--selected
+    .entity-link, .asset-card
+      background: $colors.element-light
+
+.entity-selector__thumbnails
+  position: relative
+  display: flex
+  flex-wrap: wrap
+  align-items: flex-start
+  align-content: flex-start
+  left: -10px
+  top: -10px
+
+  .entity-selector__item
+    margin-left: 10px
+    margin-top: 10px
+    border: 1px solid $colors.text-lightest
+    padding: 5px
+
+    &.x--selected
+      background: $colors.element-light

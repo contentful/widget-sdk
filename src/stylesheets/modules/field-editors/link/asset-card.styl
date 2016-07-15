@@ -1,0 +1,86 @@
+.asset-card
+  $element-color = $colors.element-mid
+  $element-background = alpha(white, 0.95)
+  $tooltip-padding = 1em
+
+  display: flex
+  flex-direction: column
+  position: relative
+  align-items: center
+
+  cf-thumbnail
+    display: flex
+    align-items: center
+    justify-content: center
+    min-width: 123px
+    min-height: @min-width
+    font-size: 50px
+    color: $colors.element-dark
+    background-color: $element-background
+    border: 1px solid $element-color
+    border-radius: 1px
+    cursor: pointer
+    > img
+      border-radius: 1px
+
+  .entity-status
+    position: absolute
+    width: 13px
+    top: 8px
+    right: 8px
+    &--published
+      display: none
+    .status-bar
+      width: 13px
+      height: @width
+      border-radius: 50%
+      box-shadow: 0 0 1px $colors.contrast-light;
+
+  [data-drag-handle]
+    position: absolute
+    top: 0
+    left: 0
+    padding: 1px
+    margin: 4px
+    border-radius: 3px
+    background-color: alpha(white, .8)
+
+  &__title
+    $max-lines = 2
+    width: 100px
+    font-size: 0.9em
+    line-height: 1.5
+    padding-top: 0.4em
+    height: $max-lines * @font-size * @line-height + @padding-top
+    text-align: center
+    overflow: hidden
+    color: $colors.text-mid
+    cursor: pointer
+    // Text shadow for drag n drop visibility:
+    text-shadow: 2px 2px 15px white, -2px -2px 15px white, 0 0 10px white, 0 0 1px white
+    &--missing
+      font-style: italic
+
+  &__tooltip
+    padding: $tooltip-padding
+    color: $colors.text-light
+    background-color: $element-background
+
+    .entity-link__actions > *
+      color: $colors.blue-light
+      &:hover
+        color: $colors.blue-dark
+
+  &__details
+    min-width: 180px
+    padding-bottom: $tooltip-padding
+    // Line break after filename but squeeze all other info in 2nd line.
+    // Whichever line is longer determines the container's width.
+    > *
+      white-space: nowrap
+      display: inline
+      &:first-child:after
+        content: "\A"
+        white-space: pre
+      &:not(:first-child):not(:last-child):after
+        content: ',\00a0'

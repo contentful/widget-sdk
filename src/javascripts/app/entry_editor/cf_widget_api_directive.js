@@ -33,9 +33,11 @@ angular.module('contentful')
  */
 .controller('WidgetApiController', ['$scope', '$injector', function ($scope, $injector) {
   var newSignal = $injector.get('signal').createMemoized;
-  var spaceContext = $injector.get('spaceContext');
   var TheLocaleStore = $injector.get('TheLocaleStore');
   var K = $injector.get('utils/kefir');
+  var spaceContext = $injector.get('spaceContext');
+  var EntityHelpers = $injector.get('EntityHelpers');
+  var goToEntityEditor = $injector.get('goToEntityEditor');
 
   var fieldLocale = $scope.fieldLocale;
   var isDisabledSignal = newSignal(isEditingDisabled());
@@ -78,6 +80,8 @@ angular.module('contentful')
   };
 
   this.space = spaceContext.cma;
+  this.entityHelpers = EntityHelpers.newForLocale($scope.locale.code);
+  this.state = {goToEditor: goToEntityEditor};
 
   this.field = {
     onDisabledStatusChanged: isDisabledSignal.attach,
@@ -96,9 +100,11 @@ angular.module('contentful')
     id: ctField.apiName, // we only want to expose the public ID
     locale: $scope.locale.code,
     type: ctField.type,
+    linkType: ctField.linkType,
+    itemLinkType: dotty.get(ctField, ['items', 'linkType']),
     required: !!ctField.required,
-    validations: ctField.validations,
-    itemValidations: dotty.get(ctField, ['items', 'validations'])
+    validations: ctField.validations || [],
+    itemValidations: dotty.get(ctField, ['items', 'validations'], [])
   };
 
   /**

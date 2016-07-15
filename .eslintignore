@@ -432,7 +432,6 @@ src/javascripts/access_control/role_repository.js
 src/javascripts/access_control/section_access.js
 src/javascripts/access_control/space_membership_repository.js
 src/javascripts/access_control/user_list_directive.js
-src/javascripts/access_control/user_list_handler.js
 src/javascripts/account/cf_account_dropdown_directive.js
 src/javascripts/account/cf_account_view_directive.js
 src/javascripts/account/handle_gatekeeper_message.js

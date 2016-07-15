@@ -33,12 +33,12 @@ angular.module('cf.ui')
     require: '?ngModel',
     scope: true,
     link: function link (scope, element, attrs, ngModel) {
-      scope.uiSortable = {
+      scope.uiSortable = _.extend(scope.uiSortable || {}, {
         handle: '[data-drag-handle]',
         item: '*:not([data-no-drag])',
         forcePlaceholderSize: true,
         placeholder: 'sortable-placeholder'
-      };
+      });
       uiSortable.link(scope, element, attrs, ngModel);
     }
   };
