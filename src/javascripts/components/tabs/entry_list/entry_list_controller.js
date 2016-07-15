@@ -48,25 +48,13 @@ angular.module('contentful')
       responses: accessChecker.getResponses()
     };
   }, function () {
+    // TODO this should be enforced by the space context
     var publishedCTs = _.uniqBy(spaceContext.publishedContentTypes, function (ct) {
       return ct.getId();
     });
     $scope.accessibleCts = _.filter(publishedCTs, function (ct) {
       return accessChecker.canPerformActionOnEntryOfType('create', ct.getId());
     });
-
-    // @todo remove when a reason will be eliminated
-    var accessibleCtIds = _.map($scope.accessibleCts, function (ct) {
-      return ct.getId();
-    });
-    var uniqueAccessibleCtIds = _.uniq(accessibleCtIds);
-    if (accessibleCtIds.length > uniqueAccessibleCtIds.length) {
-      logger.logError('Non-unique accessible Content Type', {
-        spaceContextLen: (spaceContext.publishedContentTypes || []).length,
-        accessibleCtIds: accessibleCtIds,
-        uniqueAccessibleCtIds: uniqueAccessibleCtIds
-      });
-    }
   });
 
   $scope.typeNameOr = function (or) {
