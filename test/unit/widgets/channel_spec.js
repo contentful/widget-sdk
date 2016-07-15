@@ -2,10 +2,12 @@
 
 describe('widgets/channel', function () {
   beforeEach(function () {
-    var self = this;
-    self.addEventListener = sinon.stub();
-    module('contentful/test', function ($provide) {
-      $provide.value('$window', {addEventListener: self.addEventListener});
+    var addEventListener = sinon.stub();
+    module('contentful/test', ($provide) => {
+      $provide.value('$window', {
+        addEventListener,
+        removeEventListener: sinon.stub()
+      });
       $provide.value('modalDialog', null);
     });
 
@@ -13,6 +15,14 @@ describe('widgets/channel', function () {
     this.postMessage = sinon.stub();
     var iframe = {contentWindow: {postMessage: this.postMessage}};
     this.channel = new Channel(iframe);
+
+    this.receiveMessage = function (data) {
+      if (!data.source) {
+        data.source = this.channel.id;
+      }
+
+      addEventListener.withArgs('message').yield({data});
+    };
   });
 
   describe('#connect()', function () {
@@ -47,93 +57,75 @@ describe('widgets/channel', function () {
       sinon.assert.calledWith(this.postMessage, {method: 'METHOD2', params: PARAMS});
     });
 
-    it('throws an error if params is not an array', function() {
+    it('throws an error if params is not an array', function () {
       var send = this.channel.send.bind(this.channel, 'METHOD', 'NOT-AN-ARRAY');
       this.channel.connect();
       expect(send).toThrow();
     });
   });
 
-  it('calls handlers on message event', function () {
-    var handler = sinon.stub();
-    this.channel.handlers['MY_METHOD'] = handler;
-    this.addEventListener.yield({
-      data: {
+  describe('on message', function () {
+    it('calls handlers on message event', function () {
+      var handler = sinon.stub();
+      this.channel.handlers['MY_METHOD'] = handler;
+      this.receiveMessage({
         method: 'MY_METHOD',
-        source: this.channel.id,
         params: ['A', 'B']
-      }
+      });
+      sinon.assert.calledOnce(handler);
+      sinon.assert.calledWith(handler, 'A', 'B');
     });
-    sinon.assert.calledOnce(handler);
-    sinon.assert.calledWith(handler, 'A', 'B');
-  });
 
-  it('does not call handlers when source id does not match', function () {
-    var handler = sinon.stub();
-    this.channel.handlers['MY_METHOD'] = handler;
-    this.addEventListener.yield({
-      data: {
-        method: 'MY_METHOD',
-        source: 'another id',
-      }
+    it('does not call handlers when source id does not match', function () {
+      var handler = sinon.stub();
+      this.channel.handlers['MY_METHOD'] = handler;
+      this.receiveMessage({method: 'MY_METHOD', source: 'another id'});
+      sinon.assert.notCalled(handler);
     });
-    sinon.assert.notCalled(handler);
-  });
 
-  it('sends result when handler returns a value', function () {
-    var handler = sinon.stub().returns('RESULT');
-    this.channel.handlers['MY_METHOD'] = handler;
-    sinon.assert.notCalled(this.postMessage);
-    this.addEventListener.yield({
-      data: {
-        method: 'MY_METHOD',
-        source: this.channel.id,
-        id: 'CALL ID'
-      }
+    it('sends result when handler returns a value', function () {
+      var handler = sinon.stub().returns('RESULT');
+      this.channel.handlers['MY_METHOD'] = handler;
+      sinon.assert.notCalled(this.postMessage);
+      this.receiveMessage({method: 'MY_METHOD', id: 'CALL ID'});
+      sinon.assert.calledWith(this.postMessage, {id: 'CALL ID', result: 'RESULT'});
     });
-    sinon.assert.calledWith(this.postMessage, {id: 'CALL ID', result: 'RESULT'});
-  });
 
-  it('sends result when handler promise is resolved', function () {
-    var $q = this.$inject('$q');
-    var result = $q.defer();
-    var handler = sinon.stub().returns(result.promise);
-    this.channel.handlers['MY_METHOD'] = handler;
-    this.addEventListener.yield({
-      data: {
-        method: 'MY_METHOD',
-        source: this.channel.id,
-        id: 'CALL ID'
-      }
+    it('sends result when handler promise is resolved', function () {
+      var handler = sinon.stub().defers();
+      this.channel.handlers['MY_METHOD'] = handler;
+      this.receiveMessage({method: 'MY_METHOD', id: 'CALL ID'});
+      sinon.assert.notCalled(this.postMessage);
+      handler.resolve('RESULT');
+      this.$apply();
+      sinon.assert.calledWith(this.postMessage, {id: 'CALL ID', result: 'RESULT'});
     });
-    sinon.assert.notCalled(this.postMessage);
-    result.resolve('RESULT');
-    this.$apply();
-    sinon.assert.calledWith(this.postMessage, {id: 'CALL ID', result: 'RESULT'});
-  });
 
-  it('sends error when handler promise is rejected', function () {
-    var $q = this.$inject('$q');
-    var result = $q.defer();
-    var handler = sinon.stub().returns(result.promise);
-    this.channel.handlers['MY_METHOD'] = handler;
-    this.addEventListener.yield({
-      data: {
-        method: 'MY_METHOD',
-        source: this.channel.id,
-        id: 'CALL ID'
-      }
+    it('does not send result when channel is destroyed', function () {
+      var handler = sinon.stub().defers();
+      this.channel.handlers['MY_METHOD'] = handler;
+      this.receiveMessage({method: 'MY_METHOD', id: 'CALL ID'});
+      this.channel.destroy();
+      handler.resolve();
+      this.$apply();
+      sinon.assert.notCalled(this.postMessage);
     });
-    sinon.assert.notCalled(this.postMessage);
-    result.reject({
-      code: 'ECODE',
-      message: 'EMESSAGE',
-      data: 'EDATA'
-    });
-    this.$apply();
-    sinon.assert.calledWith(this.postMessage, {
-      id: 'CALL ID',
-      error: {code: 'ECODE', message: 'EMESSAGE', data: 'EDATA'}
+
+    it('sends error when handler promise is rejected', function () {
+      var handler = sinon.stub().defers();
+      this.channel.handlers['MY_METHOD'] = handler;
+      this.receiveMessage({method: 'MY_METHOD', id: 'CALL ID'});
+      sinon.assert.notCalled(this.postMessage);
+      handler.reject({
+        code: 'ECODE',
+        message: 'EMESSAGE',
+        data: 'EDATA'
+      });
+      this.$apply();
+      sinon.assert.calledWith(this.postMessage, {
+        id: 'CALL ID',
+        error: {code: 'ECODE', message: 'EMESSAGE', data: 'EDATA'}
+      });
     });
   });
 });
