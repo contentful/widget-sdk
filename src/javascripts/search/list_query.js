@@ -2,10 +2,10 @@
 
 angular.module('contentful').factory('ListQuery', ['$injector', function ($injector) {
 
-  var systemFields      = $injector.get('systemFields');
-  var spaceContext      = $injector.get('spaceContext');
-  var buildQuery        = $injector.get('search/queryBuilder');
-  var TheLocaleStore    = $injector.get('TheLocaleStore');
+  var systemFields = $injector.get('systemFields');
+  var spaceContext = $injector.get('spaceContext');
+  var buildQuery = $injector.get('search/queryBuilder');
+  var TheLocaleStore = $injector.get('TheLocaleStore');
   var searchQueryHelper = $injector.get('searchQueryHelper');
 
   var ORDER_PREFIXES = {
@@ -29,11 +29,11 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
     }
   };
 
-  function prepareEntityListQuery(contentType, opts) {
+  function prepareEntityListQuery (contentType, opts) {
     var queryObject = {
       order: getOrderQuery(opts.order, contentType),
       limit: opts.paginator.pageLength,
-      skip:  opts.paginator.skipItems()
+      skip: opts.paginator.skipItems()
     };
 
     return buildQuery(spaceContext.space, contentType, opts.searchTerm)
@@ -42,11 +42,11 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
       });
   }
 
-  function getOrderQuery(order, contentType) {
+  function getOrderQuery (order, contentType) {
     return ORDER_PREFIXES[order.direction] + getFieldPath(order.fieldId, contentType);
   }
 
-  function getFieldPath(fieldId, contentType) {
+  function getFieldPath (fieldId, contentType) {
     // Usually we use a system field for ordering
     if (findFieldById(fieldId)) { return 'sys.' + fieldId; }
 
@@ -62,11 +62,11 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
     return 'fields.' + apiNameOrId(field) + '.' + defaultLocale;
   }
 
-  function findFieldById(id, fields) {
+  function findFieldById (id, fields) {
     return _.find(fields || systemFields.getList(), { id: id });
   }
 
-  function apiNameOrId(field) {
+  function apiNameOrId (field) {
     return field.apiName || field.id;
   }
 

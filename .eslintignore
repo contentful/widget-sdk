@@ -403,7 +403,6 @@ src/javascripts/markdown_editor/markdown_codemirror_wrapper.js
 src/javascripts/markdown_editor/markdown_editor.js
 src/javascripts/search/cached_parser.js
 src/javascripts/search/system_fields.js
-src/javascripts/search/list_query.js
 src/javascripts/search/query_builder.js
 src/javascripts/utils/encoder.js
 src/javascripts/utils/keycodes.js
