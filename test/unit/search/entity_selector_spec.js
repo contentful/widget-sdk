@@ -195,8 +195,12 @@ describe('entitySelector', function () {
       var validation = {linkContentType: ['ctid1']};
       this.open({linkType: 'Entry', itemValidations: [validation]});
 
-      sinon.assert.calledOnce(fetchStub);
+      sinon.assert.calledOnce(fetchStub.withArgs('ctid1'));
       expect(this.getScope().singleContentType).toBe(ct);
+
+      validation = {linkContentType: 'ctid2'};
+      this.open({linkType: 'Entry', itemValidations: [validation]});
+      sinon.assert.calledOnce(fetchStub.withArgs('ctid2'));
     });
 
     it('uses asset pseudo-CT for all assets', function () {
