@@ -10,7 +10,6 @@ describe('cfWidgetApi directive', function () {
     });
 
     var $controller = this.$inject('$controller');
-    var OtDoc = this.$inject('mocks/OtDoc');
 
     this.scope = this.$inject('$rootScope').$new();
     this.widget = {
@@ -28,14 +27,10 @@ describe('cfWidgetApi directive', function () {
     this.getWidgetApi = function () {
       _.extend(this.scope, {
         widget: this.widget,
-        otSubDoc: {
-          changeString: sinon.stub(),
-          getValue: sinon.stub(),
-          doc: new OtDoc({myfield: {}}, ['myfield'])
-        },
         locale: {},
         fieldLocale: {
-          access: {}
+          access: {},
+          doc: {}
         },
         entity: this.entry,
         fields: {},

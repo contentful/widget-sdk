@@ -46,7 +46,7 @@ angular.module('contentful')
         return $inputEl.val();
       }, function (value) {
         scope.previewUrl = value;
-        field.setString(value);
+        field.setValue(value);
       });
 
       $inputEl.on('input change', debounce(scope.$apply.bind(scope), 200));

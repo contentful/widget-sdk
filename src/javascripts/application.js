@@ -17,7 +17,6 @@ angular.module('contentful/app', ['contentful'])
   authentication.login();
 
   require('client').init(authentication.token);
-  require('ShareJS').connect(authentication.token);
   require('uiVersionSwitcher').checkIfVersionShouldBeSwitched();
   require('navigation/stateChangeHandlers').setup();
   require('contextMenu').init();

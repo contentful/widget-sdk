@@ -4,9 +4,7 @@ angular.module('contentful')
 .controller('entityEditor/StateController',
 ['$scope', '$injector', 'entity', 'notify', 'handlePublishError',
 function ($scope, $injector, entity, notify, handlePublishError) {
-
   var controller = this;
-  var $rootScope = $injector.get('$rootScope');
   var $q = $injector.get('$q');
   var Command = $injector.get('command');
   var createEntryReverter = $injector.get('entryReverter');
@@ -199,19 +197,6 @@ function ($scope, $injector, entity, notify, handlePublishError) {
   });
 
   function setDocFields (fields) {
-    return $scope.otDoc.setValueAt(['fields'], fields)
-    .then(function () {
-      broadcastRevertedValues(fields);
-    });
+    return $scope.otDoc.setValueAt(['fields'], fields);
   }
-
-  function broadcastRevertedValues (data) {
-    _.forEach(data, function (field, fieldId) {
-      _.forEach(field, function (value, localeId) {
-        var path = ['fields', fieldId, localeId];
-        $rootScope.$broadcast('otValueReverted', path, value);
-      });
-    });
-  }
-
 }]);
