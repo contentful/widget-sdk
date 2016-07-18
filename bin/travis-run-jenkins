@@ -28,7 +28,7 @@ fi
 
 AUTH="cf-ci:$JENKINS_PASSWORD"
 QUERY="token=$JENKINS_TOKEN&Git_Commit_Hash=$TRAVIS_COMMIT"
-JOB="User Interface Pull Request"
+JOB="User%20Interface%20Pull%20Request"
 URL="https://jenkins.quirely.com/job/$JOB/buildWithParameters?$QUERY"
 
 echo "POST $URL"

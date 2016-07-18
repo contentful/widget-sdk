@@ -139,23 +139,29 @@ angular.module('contentful')
         }, []).join(',');
       }
 
-      applySizeConstraint('fields.file.details.size', config.linkedFileSize);
-      // @todo API returns 400 when applying these constraints - investigate why?
+      // @todo there are multiple BE problems that need to be solved first;
+      // see these Target Process tickets:
+      // - https://contentful.tpondemand.com/entity/11408
+      // - https://contentful.tpondemand.com/entity/8030
+      // for now we don't want to apply size constraints so behavior
+      // of the reference widget doesn't change
+
+      // applySizeConstraint('fields.file.details.size', config.linkedFileSize);
       // applySizeConstraint('fields.file.details.width', config.linkedImageDimensions.width);
       // applySizeConstraint('fields.file.details.height', config.linkedImageDimensions.height);
     }
 
     return extension;
 
-    function applySizeConstraint (path, constraint) {
-      constraint = _.isObject(constraint) ? constraint : {};
-      if (constraint.min) {
-        extension[path + '[gte]'] = constraint.min;
-      }
-      if (constraint.max) {
-        extension[path + '[lte]'] = constraint.max;
-      }
-    }
+    // function applySizeConstraint (path, constraint) {
+    //   constraint = _.isObject(constraint) ? constraint : {};
+    //   if (constraint.min) {
+    //     extension[path + '[gte]'] = constraint.min;
+    //   }
+    //   if (constraint.max) {
+    //     extension[path + '[lte]'] = constraint.max;
+    //   }
+    // }
   }
 
   function getLabels (config) {
