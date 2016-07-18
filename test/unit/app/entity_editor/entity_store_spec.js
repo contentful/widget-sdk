@@ -47,6 +47,7 @@ describe('EntityStore', function () {
 
   describe('#prefetch', function () {
     const links = [makeLink('e1'), makeLink('e2')];
+    const MAX_IDS = 200;
 
     pit('skips when no links are given', function () {
       return this.store.prefetch().then(function (store) {
@@ -65,17 +66,34 @@ describe('EntityStore', function () {
       }.bind(this));
     });
 
-    pit('fetches entities using [in] query', function () {
-      const entities = [makeEntity('e1'), makeEntity('e2')];
+    pit('fetches entities using [in] query, removes duplicates', function () {
+      const entities = [makeEntity('e1'), makeEntity('e2'), makeEntity('e2')];
       this.space.fetch.resolves({items: entities});
 
       return this.store.prefetch(links).then(function (store) {
-        const q = {'sys.id[in]': 'e1,e2'};
+        const q = {'sys.id[in]': 'e1,e2', limit: 200};
         sinon.assert.calledOnce(this.space.fetch.withArgs(q));
         expect(store).toBe(this.store);
         expect(store.get('e1')).toBe(entities[0]);
-        expect(store.get('e2')).toBe(entities[1]);
+        expect(store.get('e2')).toEqual(entities[1]);
       }.bind(this));
+    });
+
+    pit('chunks IDs used with [in] operator', function () {
+      const entitiesMaxAndTwo = _.range(0, MAX_IDS + 2).map((i) => {
+        return makeEntity('e' + i);
+      });
+
+      const idsMax = _.range(0, MAX_IDS).map((i) => {
+        return 'e' + i;
+      }).join(',');
+
+      this.space.fetch.resolves({items: entitiesMaxAndTwo});
+
+      return this.store.prefetch(entitiesMaxAndTwo).then(() => {
+        expect(this.space.fetch.firstCall.args[0]['sys.id[in]']).toEqual(idsMax);
+        expect(this.space.fetch.secondCall.args[0]['sys.id[in]']).toEqual('e200,e201');
+      });
     });
   });
 });
