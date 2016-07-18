@@ -18,6 +18,8 @@ describe('states/spaces', function () {
     var cfStub = this.$inject('cfStub');
     this.adapter = cfStub.adapter;
     this.space = cfStub.space('SPACE');
+    this.space.getPublishedContentTypes = sinon.stub().resolves([]);
+    this.space.getContentTypes = sinon.stub().resolves([]);
 
     this.tokenStore = this.$inject('tokenStore');
     this.tokenStore.getSpace = sinon.stub().resolves(this.space);
