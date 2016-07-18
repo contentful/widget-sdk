@@ -5,6 +5,8 @@ angular.module('cf.app')
 
   var $q = require('$q');
 
+  var MAX_IN_IDS = 200;
+
   return {create: create};
 
   function create (space, fetchMethod) {
@@ -18,9 +20,9 @@ angular.module('cf.app')
     return instance;
 
     function prefetch (links) {
-      var ids = _.map(links, function (link) {
+      var ids = _.uniq(_.map(links, function (link) {
         return link.sys.id;
-      });
+      }));
 
       var skip = !ids.length || _.every(ids, function (id) {
         return _.isObject(store[id]);
@@ -30,9 +32,17 @@ angular.module('cf.app')
         return $q.resolve(instance);
       }
 
-      return space[fetchMethod]({'sys.id[in]': ids.join(',')})
-      .then(function (res) {
-        _.forEach(res.items, add);
+      var queries = _.chunk(ids, MAX_IN_IDS)
+      .map(function (ids) {
+        return space[fetchMethod]({
+          'sys.id[in]': ids.join(','),
+          limit: MAX_IN_IDS
+        });
+      });
+
+      return $q.all(queries)
+      .then(function (responses) {
+        _(responses).map('items').flatten().forEach(add);
         return instance;
       });
     }
