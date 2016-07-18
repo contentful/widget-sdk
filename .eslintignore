@@ -81,7 +81,6 @@ test/unit/services/validation_views_spec.js
 test/unit/services/activation_email_resender_spec.js
 test/unit/services/analytics_events_spec.js
 test/unit/services/authorization_spec.js
-test/unit/services/bugsnag_spec.js
 test/unit/services/editing_interfaces_helpers_spec.js
 test/unit/services/enforcements_spec.js
 test/unit/services/features_spec.js
@@ -353,7 +352,6 @@ src/javascripts/services/analytics/analytics.js
 src/javascripts/services/analytics/analytics_console_log.js
 src/javascripts/services/analytics/analytics_noop.js
 src/javascripts/services/authorization.js
-src/javascripts/services/bugsnag.js
 src/javascripts/services/editing_interfaces_helpers.js
 src/javascripts/services/enforcements.js
 src/javascripts/services/entity_cache.js

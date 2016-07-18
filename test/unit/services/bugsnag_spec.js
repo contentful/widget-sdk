@@ -1,7 +1,7 @@
 'use strict';
 
-describe('bugsnag', function(){
-  beforeEach(function(){
+describe('bugsnag', function () {
+  beforeEach(function () {
     module('contentful/test');
     this.bugsnag = this.$inject('bugsnag');
     this.LazyLoader = this.$inject('LazyLoader');
@@ -30,7 +30,7 @@ describe('bugsnag', function(){
     sinon.assert.calledWithExactly(this.BugsnagStub.notify, 'ERROR');
   });
 
-  it('loads script only once', function() {
+  it('loads script only once', function () {
     this.bugsnag.enable();
     this.$apply();
     sinon.assert.calledOnce(this.LazyLoader.get);
@@ -39,7 +39,7 @@ describe('bugsnag', function(){
     sinon.assert.calledOnce(this.LazyLoader.get);
   });
 
-  it('enabling after disabling does not send notifications', function(){
+  it('enabling after disabling does not send notifications', function () {
     this.bugsnag.enable();
     this.bugsnag.disable();
     this.$apply();
@@ -48,12 +48,12 @@ describe('bugsnag', function(){
     sinon.assert.notCalled(this.BugsnagStub.notify);
   });
 
-  describe('when script loading fails', function(){
-    beforeEach(function(){
+  describe('when script loading fails', function () {
+    beforeEach(function () {
       this.LazyLoader.get = sinon.stub().rejects();
     });
 
-    it('#notify() does not throw', function(){
+    it('#notify() does not throw', function () {
       this.bugsnag.enable();
       this.$apply();
       this.bugsnag.notify();

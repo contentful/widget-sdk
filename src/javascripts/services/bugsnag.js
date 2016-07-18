@@ -7,7 +7,7 @@
  * See https://bugsnag.com/docs/notifiers/js for more details
 */
 angular.module('contentful')
-.factory('bugsnag', ['$injector', function($injector){
+.factory('bugsnag', ['$injector', function ($injector) {
   var CallBuffer = $injector.get('CallBuffer');
   var environment = $injector.get('environment');
   var memoize = $injector.get('utils/memoize');
@@ -16,7 +16,6 @@ angular.module('contentful')
   // to work with devops get this done.
   var API_KEY = 'b253f10d5d0184a99e1773cec7b726e8';
 
-  var loaderPromise;
   var bugsnag;
   var callBuffer = new CallBuffer();
   var loadOnce = memoize(load);
@@ -39,27 +38,27 @@ angular.module('contentful')
       return loadOnce(user);
     },
 
-    disable: function(){
-      var $q = $injector.get('$q');
-      loaderPromise = $q.reject();
+    disable: function () {
       callBuffer.disable();
     },
 
-    notify: function(){
+    notify: function () {
       var args = arguments;
-      callBuffer.call(function(){
+      callBuffer.call(function () {
         if (bugsnag) bugsnag.notify.apply(bugsnag, args);
       });
     },
-    notifyException: function(){
+
+    notifyException: function () {
       var args = arguments;
-      callBuffer.call(function(){
+      callBuffer.call(function () {
         if (bugsnag) bugsnag.notifyException.apply(bugsnag, args);
       });
     },
-    refresh: function(){
+
+    refresh: function () {
       if (bugsnag) bugsnag.refresh();
-    },
+    }
   };
 
   function load (user) {
@@ -68,10 +67,10 @@ angular.module('contentful')
     return LazyLoader.get('bugsnag')
     .then(function (_bugsnag) {
       bugsnag = _bugsnag;
-      bugsnag.apiKey              = API_KEY;
+      bugsnag.apiKey = API_KEY;
       bugsnag.notifyReleaseStages = ['staging', 'production'];
-      bugsnag.releaseStage        = environment.env;
-      bugsnag.appVersion          = environment.gitRevision;
+      bugsnag.releaseStage = environment.env;
+      bugsnag.appVersion = environment.gitRevision;
       setUserInfo(user, bugsnag);
       callBuffer.resolve();
     }, function () {
@@ -86,21 +85,20 @@ angular.module('contentful')
         firstName: dotty.get(user, 'firstName'),
         lastName: dotty.get(user, 'lastName'),
         adminLink: getAdminLink(user),
-        organizations: getOrganizations(user),
+        organizations: getOrganizations(user)
       };
     }
   }
 
   function getOrganizations (user) {
-    var organizationNames = _.map(user.organizationMemberships, function(m){
+    var organizationNames = _.map(user.organizationMemberships, function (m) {
       return m.organization.name;
     });
     return organizationNames.join(', ');
   }
 
-  function getAdminLink(user) {
+  function getAdminLink (user) {
     var id = dotty.get(user, 'sys.id');
     return 'https://admin.' + environment.settings.main_domain + '/admin/users/' + id;
   }
 }]);
-
