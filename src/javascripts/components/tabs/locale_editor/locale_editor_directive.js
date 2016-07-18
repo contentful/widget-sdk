@@ -53,8 +53,10 @@ angular.module('contentful')
     $scope.context.title = $scope.locale.getId() ? title : 'New locale';
   });
 
-  $scope.$watch('locale.getCode()', updateLocaleName);
-
+  $scope.$watch('locale.getCode()', function (code) {
+    updateLocaleName(code);
+    prepareFallbackList(code);
+  });
 
   /**
    * @ngdoc method
@@ -160,13 +162,20 @@ angular.module('contentful')
   function saveErrorHandler(err) {
     resetFormStatusOnFailure();
     var message = '';
+    var status = dotty.get(err, 'statusCode');
     var errors = dotty.get(err, 'body.details.errors');
 
-    if (dotty.get(err, 'statusCode') !== 422) {
-      logger.logServerWarn('Locale could not be saved', {error: err});
-    } else if (errors && errors.length > 0 && errors[0].name === 'taken') {
+    var isTaken = status === 422 && errors && errors.length > 0 && errors[0].name === 'taken';
+    var isNotRenameable = status === 403 && dotty.get(err, 'body.sys.id') === 'FallbackLocaleNotRenameable';
+
+    if (isTaken) {
       message = ': This locale already exists.';
+    } else if (isNotRenameable) {
+      message = ': Cannot change the code of a locale which is fallback of another one';
+    } else {
+      logger.logServerWarn('Locale could not be saved', {error: err});
     }
+
     notification.warn('Locale could not be saved' + message);
     trackSave('Saved Errored Locale');
   }
@@ -204,6 +213,20 @@ angular.module('contentful')
         $scope.locale.data.name = locale.name;
       }
     }
+  }
+
+  function prepareFallbackList (code) {
+    if (code && $scope.locale.data.fallbackCode === code) {
+      $scope.locale.data.fallbackCode = null;
+    }
+
+    var spaceLocaleCodes = _.map($scope.spaceLocales, function (locale) {
+      return locale.getCode();
+    });
+
+    $scope.fallbackLocales = _.filter(localesList, function (locale) {
+      return locale.code !== code && spaceLocaleCodes.indexOf(locale.code) > -1;
+    });
   }
 
   function updateInitialLocaleCode() {

@@ -21,10 +21,10 @@ header.workbench-header
     thead
       tr
         th.cell-name Locale
-        th Include in response
-        th Allow editing
-        th Can be empty
-        th
+        th Fallback
+        th Incl. in response
+        th Editing
+        th Required fields
   .main-results-wrapper
     table.result-list.main-results
       tbody
@@ -37,15 +37,16 @@ header.workbench-header
               span.entity-list-badge(ng-if="locale.isDefault()") Default
           td
             a.entity-list-link(ui-sref="{{entityNavState}}")
+              | {{ locale.data.fallbackCode ? localeNamesByCode[locale.data.fallbackCode] : 'None' }}
+          td
+            a.entity-list-link(ui-sref="{{entityNavState}}")
               | {{ locale.data.contentDeliveryApi ? 'Enabled' : 'Disabled' }}
           td
             a.entity-list-link(ui-sref="{{entityNavState}}")
               | {{ locale.data.contentManagementApi ? 'Enabled' : 'Disabled' }}
           td
             a.entity-list-link(ui-sref="{{entityNavState}}")
-              | {{ locale.data.optional ? 'Yes' : 'No' }}
-          td
-            a(ui-sref="{{entityNavState}}") Change
+              | {{ locale.data.optional ? 'Can be published empty' : 'Content is required' }}
 
     .advice.locale-list__advice
       .advice__frame.locale-list__advice-frame
