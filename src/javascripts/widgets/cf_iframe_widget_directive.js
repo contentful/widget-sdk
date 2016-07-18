@@ -96,7 +96,7 @@ angular.module('contentful')
       }
 
       function initializeIframe () {
-        iframe.addEventListener('load', function () {
+        $iframe.one('load', function () {
           widgetAPI.connect();
         });
 
