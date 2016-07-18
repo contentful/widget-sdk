@@ -12,8 +12,6 @@ describe('Space Template creation service', function () {
         'success', 'error', 'on', 'timeout', 'timeoutCancel', 'retrySuccess'
       ]);
 
-      $provide.value('ShareJS', {});
-
       stubs.timeout.cancel = stubs.timeoutCancel;
       $provide.value('$timeout', stubs.timeout);
     });
@@ -21,9 +19,7 @@ describe('Space Template creation service', function () {
       spaceTemplateCreator = $injector.get('spaceTemplateCreator');
       $q = $injector.get('$q');
       $rootScope = $injector.get('$rootScope');
-      var ShareJS = $injector.get('ShareJS');
       openShareJSDoc = $q.defer();
-      ShareJS.open = sinon.stub().returns(openShareJSDoc.promise);
     });
   });
 
@@ -69,6 +65,9 @@ describe('Space Template creation service', function () {
           createEntry: sinon.stub(),
           createAsset: sinon.stub(),
           createDeliveryApiKey: sinon.stub()
+        },
+        docConnection: {
+          open: sinon.stub().returns(openShareJSDoc.promise)
         }
       };
 

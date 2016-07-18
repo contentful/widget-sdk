@@ -59,7 +59,7 @@ describe('cfMarkdownEditor', function () {
     it('Updates field with changes made in editor UI', function () {
       this.editor.setCursor({line: 0, ch: 0});
       this.editor.replaceSelection('inserted string for ');
-      sinon.assert.calledOnce(this.fieldStubs.setString.withArgs('inserted string for test'));
+      sinon.assert.calledOnce(this.fieldStubs.setValue.withArgs('inserted string for test'));
     });
 
     it('Does not set content on editor if change originates from widget', function () {
@@ -118,7 +118,7 @@ describe('cfMarkdownEditor', function () {
       // should not set editor's value immediately:
       expect(this.editor.getValue()).toBe('test');
       // only field value changes:
-      sinon.assert.calledOnce(this.fieldStubs.setString.withArgs('ZEN CONTENT'));
+      sinon.assert.calledOnce(this.fieldStubs.setValue.withArgs('ZEN CONTENT'));
     });
 
     it('Syncs field value to parent editor when leaving Zen Mode', function () {
@@ -126,7 +126,7 @@ describe('cfMarkdownEditor', function () {
       this.scope.zen = true;
       this.scope.zenApi.syncToParent('ZEN CONTENT');
       // wire field set value with getter:
-      this.fieldStubs.getValue.returns(this.fieldStubs.setString.lastCall.args[0]);
+      this.fieldStubs.getValue.returns(this.fieldStubs.setValue.lastCall.args[0]);
       this.scope.zenApi.toggle();
       sinon.assert.calledOnce(this.editor.setValue.withArgs('ZEN CONTENT'));
     });

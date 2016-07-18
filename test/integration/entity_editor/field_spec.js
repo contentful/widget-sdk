@@ -13,7 +13,7 @@ describe('entity editor field integration', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
-      $provide.removeDirectives('otPath', 'cfWidgetApi', 'cfWidgetRenderer');
+      $provide.removeDirectives('cfWidgetApi', 'cfWidgetRenderer');
     });
 
     var Focus = this.$inject('FieldControls/Focus');
@@ -43,6 +43,7 @@ describe('entity editor field integration', function () {
       var el = this.$compile('<cf-entity-field>', {
         widget: this.widget,
         validator: this.validator,
+        otDoc: this.$inject('mocks/entityEditor/Document').create(),
         focus: this.focus,
         entry: {}
       });

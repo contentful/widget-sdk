@@ -1,0 +1,75 @@
+.entity-link
+  $element-color = $colors.element-mid
+  $element-background = alpha(white, 0.95)
+
+  $cf-links-editor-shadow()
+
+  display: flex
+  position: relative
+  padding: .85em
+  padding-left: 30px
+  border: 1px solid $element-color
+  border-radius: 1px
+  font-size: 14px
+  background-color: $element-background
+
+  .entity-status
+    margin-top: 2px
+    margin-right: 0.5em
+    .status-bar
+      width: 13px
+      height: @width
+      margin-top: 0.5 * (@font-size - @height)
+      border-radius: 50%
+
+  [data-drag-handle]
+    position: absolute
+    left: 6px
+    padding: 0 5px // larger drag-handle surface
+    margin-top: -1px
+
+  .entity-link__actions
+    position: absolute
+    right: 0.8em
+
+  &__image
+    width: 4em
+    height: @width
+    flex: 0 0 @width;
+    margin-right: 1em
+    &--missing
+      position: relative
+      border: 1px solid
+      border-color: $element-color
+      overflow: hidden
+      &:after,
+      &:before
+        content: ""
+        position: absolute
+        left: 50%
+        top: -50%
+        height: 200%
+        width: 1px
+        background-color: @border-color
+        z-index: 999
+        transform: rotate(45deg)
+      &:after
+        transform: rotate(-45deg)
+
+  &__text
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+
+  &__title
+    font-size: 16px
+    color: inherit!important
+    cursor: pointer
+    &--missing
+      font-style: italic
+
+  &__description
+    margin-top: $rhythm(0.5)
+    color: $colors.text-light
+    &--missing
+      font-style: italic

@@ -39,12 +39,8 @@ angular.module('contentful')
       });
 
       var detachOnValueChangedHandler = field.onValueChanged(function (val) {
-        if (val === undefined) {
-          setSlugFromCurrentTitle();
-        } else {
-          val = val || '';
-          updateInput(val);
-        }
+        val = val || '';
+        updateInput(val);
       });
 
       // The content type’s display field might not exist.
@@ -61,10 +57,6 @@ angular.module('contentful')
           scope.$on('$destroy', detachDefaultLocaleTitleChangeHandler);
         }
       }
-
-      // TODO remove this once `onValueChanged` is called immediately
-      // on registering the callback
-      setSlugFromCurrentTitle();
 
 
       function setTitle (title) {
@@ -101,7 +93,7 @@ angular.module('contentful')
         return $inputEl.val();
       }, function (val) {
         updateStateFromSlug(val);
-        field.setString(val);
+        field.setValue(val);
       });
 
       $inputEl.on('input change', debounce(function () {
@@ -120,14 +112,6 @@ angular.module('contentful')
         } else {
           scope.state = null;
         }
-      }
-
-
-      // TODO remove this once `onValueChanged` is called immediately
-      // on registering the callback
-      function setSlugFromCurrentTitle () {
-        var title = titleField.getValue(field.locale) || titleField.getValue();
-        setTitle(title);
       }
 
 

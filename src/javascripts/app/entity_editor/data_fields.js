@@ -5,10 +5,9 @@ angular.module('contentful')
  * @ngdoc service
  * @name EntityEditor/DataFields
  */
-.factory('EntityEditor/DataFields', ['$injector', function ($injector) {
-  var TheLocaleStore = $injector.get('TheLocaleStore');
-  var Signal = $injector.get('signal');
-  var ShareJS = $injector.get('ShareJS');
+.factory('EntityEditor/DataFields', ['require', function (require) {
+  var TheLocaleStore = require('TheLocaleStore');
+  var K = require('utils/kefir');
 
   return {
     create: buildFieldsApi
@@ -22,59 +21,60 @@ angular.module('contentful')
    *
    * @param {API.Field[]} fields
    * Fields in the entry editor
-   * @param {object} scope
-   * Used to get entity data and otChange event
-   * @param {Client.Entity} scope.entity
-   * Used to get current values of fields.
-   * @return {object}
+   * @param {Document} doc
    */
-  function buildFieldsApi (fields, scope) {
-    var otChangeSignal = Signal.create();
-
-    // TODO The document abstraction should expose this as a signal
-    scope.$on('otChange', function (_, doc, ops) {
-      ops.forEach(function (op) {
-        var path = op.p.slice(0, 3);
-        otChangeSignal.dispatch(path, ShareJS.peek(doc, path));
-      });
-    });
-
+  function buildFieldsApi (fields, otDoc) {
     return _.transform(fields, function (fieldsApi, field) {
-      var internalId = field.id;
-      var publicId = field.apiName || internalId;
-
-      fieldsApi[publicId] = createField(internalId, otChangeSignal, scope.entity);
+      // TODO we should normalize fields so that the API name is always
+      // defined.
+      var publicId = field.apiName || field.id;
+      fieldsApi[publicId] = createField(field, otDoc);
     }, {});
   }
 
-  function createField (id, otChange, entity) {
+  function createField (field, otDoc) {
+    var internalId = field.id;
+    var publicId = field.apiName || internalId;
+    var locales = getPublicLocaleCodes(field);
+
     return {
+      id: publicId,
+      locales: locales,
       getValue: getValue,
+      setValue: setValue,
+      removeValue: removeValue,
       onValueChanged: onValueChanged
     };
 
     function getValue (locale) {
-      locale = getInternalLocaleCode(locale);
-      return dotty.get(entity, ['data', 'fields', id, locale]);
+      return otDoc.getValueAt(makeLocalePath(internalId, locale));
+    }
+
+    function setValue (value, locale) {
+      return otDoc.setValueAt(makeLocalePath(internalId, locale), value);
+    }
+
+    function removeValue (value, locale) {
+      return otDoc.removeValueAt(makeLocalePath(internalId, locale), value);
     }
 
     function onValueChanged (locale, cb) {
       if (!cb) {
         cb = locale;
-        locale = getDefaultLocaleCode();
+        locale = undefined;
       }
-      locale = getInternalLocaleCode(locale);
-      var offLocaleValueChanged = otChange.attach(function (path, value) {
-        if (_.isEqual(path, ['fields', id, locale])) {
-          cb(value);
-        }
-      });
-      return offLocaleValueChanged;
+      var path = makeLocalePath(internalId, locale);
+      return K.onValue(otDoc.valuePropertyAt(path), cb);
     }
   }
 
   function getDefaultLocaleCode () {
     return TheLocaleStore.getDefaultLocale().code;
+  }
+
+  function makeLocalePath (id, publicLocale) {
+    var locale = getInternalLocaleCode(publicLocale);
+    return ['fields', id, locale];
   }
 
   function getInternalLocaleCode (publicCode) {
@@ -85,5 +85,15 @@ angular.module('contentful')
     } else {
       throw new Error('Unknown locale "' + publicCode + '"');
     }
+  }
+
+  function getPublicLocaleCodes (field) {
+    var locales;
+    if (field.localized) {
+      locales = TheLocaleStore.getPrivateLocales();
+    } else {
+      locales = [TheLocaleStore.getDefaultLocale()];
+    }
+    return _.map(locales, 'code');
   }
 }]);

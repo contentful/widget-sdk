@@ -106,7 +106,7 @@ angular.module('contentful')
       turnOffStateChangeListener = null;
     }
 
-    _.forEach(analytics, function (value, key) {
+    _.forEach(analytics, function (_value, key) {
       analytics[key] = _.noop;
     });
   }
@@ -195,7 +195,7 @@ angular.module('contentful')
     });
   }
 
-  function trackStateChange (event, state, stateParams, fromState, fromStateParams) {
+  function trackStateChange (_event, state, stateParams, fromState, fromStateParams) {
     totango.setModule(state.name);
     segment.page(state.name, stateParams);
     track('Switched State', {

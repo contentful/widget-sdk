@@ -32,6 +32,7 @@ angular.module('contentful')
   var createEIRepo = $injector.get('data/editingInterfaces');
   var createQueue = $injector.get('overridingRequestQueue');
   var ApiClient = $injector.get('data/ApiClient');
+  var ShareJSConnection = $injector.get('data/ShareJS/Connection');
 
   var requestContentTypes = createQueue(function (extraHandler) {
     return spaceContext.space.getContentTypes({order: 'name', limit: 1000})
@@ -93,6 +94,13 @@ angular.module('contentful')
       self.cma = new ApiClient(endpoint);
       self.users = createUserCache(space);
       self.editingInterfaces = createEIRepo(endpoint);
+
+      self.docConnection = ShareJSConnection.create(
+        authentication.token,
+        environment.settings.ot_host,
+        space.getId()
+      );
+
       TheLocaleStore.resetWithSpace(space);
       return Widgets.setSpace(space).then(function (widgets) {
         self.widgets = widgets;
@@ -285,25 +293,69 @@ angular.module('contentful')
 
     /**
      * @ngdoc method
+     * @name spaceContext#localizedValue
+     * @param {Object} field Object with locales as keys.
+     * @param {string?} localeCode
+     * @returns {Object?}
+     * @description
+     * Returns a localized value from a field. Optionally takes a localeCode and
+     * falls back to the space's default locale or any other defined locale.
+     */
+    localizedValue: function (field, localeCode) {
+      if (!field) {
+        return;
+      }
+      var defaultLocale = this.space && this.space.getDefaultLocale();
+      var defaultLocaleCode = defaultLocale && defaultLocale.internal_code;
+      var firstLocaleCode = Object.keys(field)[0];
+
+      localeCode = localeCode || defaultLocaleCode || firstLocaleCode;
+
+      return field[localeCode] || field[defaultLocaleCode] || field[firstLocaleCode];
+    },
+
+    /**
+     * @ngdoc method
      * @name spaceContext#localizedField
      * @param {Object} entity
-     * @param {Array} path
+     * @param {string|Array} path
      * @param {string} localeCode
-     * @return {Object}
+     * @return {Object?}
      * @description
      * Given an entity (entry/asset), and a field path, returns the field
-     * content for a given locale
+     * content for a given locale.
     */
     localizedField: function (entity, path, localeCode) {
       var getField = $parse(path);
       var field = getField(entity);
-      var defaultLocale = this.space && this.space.getDefaultLocale();
-      var defaultLocaleCode = defaultLocale && defaultLocale.internal_code;
-      var firstLocaleCode = _.first(_.keys(field));
 
-      localeCode = localeCode || defaultLocaleCode || firstLocaleCode;
+      return this.localizedValue(field, localeCode);
+    },
 
-      return field && (field[localeCode] || field[defaultLocaleCode] || field[firstLocaleCode]);
+    /**
+     * @ngdoc method
+     * @name spaceContext#findLocalizedField
+     * @param {Object} entity
+     * @param {string?} localeCode
+     * @param {Object|function} fieldDefinition Part of a field definition, e.g.
+     *        `{type: 'Link', linkType: 'Entry'}`.
+     * @returns {Object?}
+     * @description
+     * Given an entity (entry/asset), and part of a field definition, returns
+     * the field content for a given locale.
+     */
+    findLocalizedField: function (entity, localeCode, fieldDefinition) {
+      fieldDefinition = fieldDefinition || localeCode;
+
+      var contentType = this.publishedTypeForEntry(entity);
+      if (!contentType) {
+        return;
+      }
+      var field = _.find(contentType.data.fields, fieldDefinition);
+      if (field) {
+        var fieldPath = 'data.fields.' + field.id;
+        return this.localizedField(entity, fieldPath, localeCode);
+      }
     },
 
     /**
@@ -312,7 +364,8 @@ angular.module('contentful')
      * @param {Client.Entry} entry
      * @param {string} localeCode
      * @param {Object} modelValue
-     * @return {Object}
+     * @return {string|null}
+     * @deprecated Use entityTitle() instead.
      * @description
      * Returns the title for a given entry and locale.
      * The `modelValue` flag, if true, causes `null` to be returned
@@ -343,24 +396,51 @@ angular.module('contentful')
      * @ngdoc method
      * @name spaceContext#entityDescription
      * @param {Client.Entity} entry
+     * @param {string?} localeCode
      * @description
      * Gets the localized value of the first text field that is not the
      * display field. May return undefined.
      *
      * @return {string?}
      */
-    entityDescription: function (entity) {
+    entityDescription: function (entity, localeCode) {
       var contentType = this.publishedTypeForEntry(entity);
       if (!contentType) {
         return;
       }
+      var displayFieldId = contentType.data.displayField;
 
-      var field = _.find(contentType.data.fields, function (field) {
-        return field.id !== contentType.data.displayField && field.type === 'Text';
+      return this.findLocalizedField(entity, localeCode, function (field) {
+        return _.includes(['Symbol', 'Text'], field.type) && field.id !== displayFieldId;
       });
+    },
 
-      if (field) {
-        return this.localizedField(entity, 'data.fields.' + field.id);
+    /**
+     * @ngdoc method
+     * @name spaceContext#entryImage
+     * @param {Client.Entry} entry
+     * @param {string?} localeCode
+     * @return {Promise<Object|null>}
+     * @description
+     * Gets a promise resolving with a localized asset image field representing a
+     * given entities image. The promise may resolve with null.
+     */
+    entryImage: function (entry, localeCode) {
+      var link = spaceContext.findLocalizedField(
+        entry, localeCode, {type: 'Link', linkType: 'Asset'});
+
+      var assetId = dotty.get(link, 'sys.id');
+      if (link && assetId) {
+        return this.space.getAsset(assetId).then(function (asset) {
+          var fileField = dotty.get(asset, 'data.fields.file');
+          var file = this.localizedValue(fileField, localeCode);
+          var isImage = dotty.get(file, 'details.image');
+          return isImage ? file : null;
+        }.bind(this), function () {
+          return null;
+        });
+      } else {
+        return $q.resolve(null);
       }
     },
 
@@ -369,12 +449,17 @@ angular.module('contentful')
      * @name spaceContext#assetTitle
      * @param {Client.Asset} asset
      * @param {string} localeCode
+     * @param {Object} modelValue
      * @return {Object}
+     * @deprecated Use entityTitle() instead.
      * @description
      * Returns the title for a given asset and locale.
+     * The `modelValue` flag, if true, causes `null` to be returned
+     * when no title is present. If false or left unspecified, the
+     * UI string indicating that is returned, which is 'Untitled'.
      */
-    assetTitle: function (asset, localeCode) {
-      var defaultTitle = 'Untitled';
+    assetTitle: function (asset, localeCode, modelValue) {
+      var defaultTitle = modelValue ? null : 'Untitled';
 
       try {
         var title = this.localizedField(asset, 'data.fields.title', localeCode);
@@ -386,6 +471,25 @@ angular.module('contentful')
       } catch (e) {
         return defaultTitle;
       }
+    },
+
+    /**
+     * @ngdoc method
+     * @name spaceContext#entityTitle
+     * @param {Client.Entity} entity
+     * @param {string} localeCode
+     * @return {string|null}
+     * @description
+     * Returns the title for a given entity and locale. Returns null if
+     * no title can be found for the entity.
+     */
+    entityTitle: function (entity, localeCode) {
+      var type = entity.getType();
+      if (!_.includes(['Entry', 'Asset'], type)) {
+        return null;
+      }
+      var getterName = type.toLowerCase() + 'Title'; // entryTitle() or assetTitle()
+      return this[getterName](entity, localeCode, true);
     }
   };
 
@@ -454,6 +558,10 @@ angular.module('contentful')
     spaceContext._publishedContentTypeIsMissing = {};
     spaceContext.users = null;
     spaceContext.widgets = null;
+    if (spaceContext.docConnection) {
+      spaceContext.docConnection.close();
+      spaceContext.docConnection = null;
+    }
   }
 
 }]);

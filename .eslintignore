@@ -54,7 +54,6 @@ test/unit/components/field_dialog/appearance_controller_spec.js
 test/unit/components/search.js
 test/unit/classes/entity_cache_spec.js
 test/unit/classes/entity_state_manager_spec.js
-test/unit/classes/space_context_spec.js
 test/unit/directives/cf_copy_to_clipboard_directive_spec.js
 test/unit/forms/cf_null_empty_input_spec.js
 test/unit/forms/cf_validate_form_spec.js
@@ -92,7 +91,6 @@ test/unit/services/organization_list_spec.js
 test/unit/services/promised_loader_spec.js
 test/unit/services/reload_notification_spec.js
 test/unit/services/sdk_info_supplier_spec.js
-test/unit/services/sharejs_client_spec.js
 test/unit/services/space_tools_spec.js
 test/unit/services/string_utils_spec.js
 test/unit/services/the_store_spec.js
@@ -145,7 +143,6 @@ test/unit/webhooks/webhook_repository_spec.js
 test/unit/webhooks/webhook_segmentation_spec.js
 test/helpers/mocks/client.js
 test/helpers/mocks/locale_store.js
-test/helpers/mocks/ot_doc.js
 test/helpers/mocks/the_store.js
 test/helpers/application.js
 test/helpers/deep_diff.js
@@ -286,7 +283,6 @@ src/javascripts/app/entry_editor/notifications.js
 src/javascripts/app/entry_editor/entry_actions_controller.js
 src/javascripts/app/entry_editor/entry_reverter.js
 src/javascripts/app/entity_editor/locales_controller.js
-src/javascripts/app/entity_editor/sidebar_widgets_controller.js
 src/javascripts/app/entity_editor/status_notifications_controller.js
 src/javascripts/app/widgets/cf_checkbox_editor_directive.js
 src/javascripts/app/widgets/cf_rating_editor_directive.js
@@ -369,7 +365,6 @@ src/javascripts/services/reload_notification.js
 src/javascripts/services/sdk_info_supplier.js
 src/javascripts/services/search_query_autocompletions.js
 src/javascripts/services/segment.js
-src/javascripts/services/sharejs.js
 src/javascripts/services/space_tools.js
 src/javascripts/services/the_store.js
 src/javascripts/services/token_store.js
@@ -430,7 +425,6 @@ src/javascripts/access_control/role_repository.js
 src/javascripts/access_control/section_access.js
 src/javascripts/access_control/space_membership_repository.js
 src/javascripts/access_control/user_list_directive.js
-src/javascripts/access_control/user_list_handler.js
 src/javascripts/account/cf_account_dropdown_directive.js
 src/javascripts/account/cf_account_view_directive.js
 src/javascripts/account/iframe_channel.js

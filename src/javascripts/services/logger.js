@@ -151,7 +151,7 @@ angular.module('contentful')
      */
     disable: function () {
       bugsnag.disable();
-      _.forEach(this, _.bind(function (value, key) {
+      _.forEach(this, _.bind(function (_value, key) {
         this[key] = _.noop;
       }, this));
     },

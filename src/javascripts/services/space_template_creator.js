@@ -5,7 +5,6 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
   var $q = $injector.get('$q');
   var $rootScope = $injector.get('$rootScope');
   var $timeout = $injector.get('$timeout');
-  var ShareJS = $injector.get('ShareJS');
 
   var ASSET_PROCESSING_TIMEOUT = 60000;
   var PUBLISHING_WAIT = 5000;
@@ -201,7 +200,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
         deferred.reject({error: 'timeout processing'});
       }, ASSET_PROCESSING_TIMEOUT);
 
-      ShareJS.open(asset)
+      this.spaceContext.docConnection.open(asset)
       .then(function (_doc) {
         doc = _doc;
         listener = doc.on('remoteop', remoteOpHandler);

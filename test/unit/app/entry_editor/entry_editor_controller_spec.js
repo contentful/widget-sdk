@@ -9,10 +9,9 @@ describe('Entry Editor Controller', function () {
   });
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', ($provide, $controllerProvider) => {
       $provide.removeControllers(
         'FormWidgetsController',
-        'entityEditor/Document',
         'entityEditor/LocalesController',
         'entityEditor/StatusNotificationsController'
       );
@@ -20,6 +19,9 @@ describe('Entry Editor Controller', function () {
         getLocalesState: sinon.stub().returns({}),
         getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'}),
         getPrivateLocales: sinon.stub().returns([{internal_code: 'en-US'}, {internal_code: 'de-DE'}])
+      });
+      $controllerProvider.register('entityEditor/Document', () => {
+        return this.$inject('mocks/entityEditor/Document').create();
       });
     });
 
@@ -29,8 +31,6 @@ describe('Entry Editor Controller', function () {
       var $rootScope = this.$inject('$rootScope');
       scope = $rootScope.$new();
 
-      var OtDoc = this.$inject('mocks/OtDoc');
-      var doc = new OtDoc();
       var ctData = cfStub.contentTypeData();
       scope.contentType = {data: ctData, getId: _.constant(ctData.sys.id)};
       scope.context = {};
@@ -44,11 +44,7 @@ describe('Entry Editor Controller', function () {
       var $controller = this.$inject('$controller');
       $controller('EntryEditorController', {$scope: scope});
 
-      scope.otDoc = {
-        doc: doc,
-        open: sinon.stub(),
-        close: sinon.stub()
-      };
+      scope.validate = sinon.stub();
 
       return scope;
     };
@@ -58,7 +54,6 @@ describe('Entry Editor Controller', function () {
   });
 
   it('should validate if the published version has changed', function () {
-    scope.validate = sinon.spy();
     scope.entry.data.sys.publishedVersion = 2;
     scope.$digest();
     sinon.assert.called(scope.validate);
@@ -82,49 +77,21 @@ describe('Entry Editor Controller', function () {
 
   describe('when the published version changes', function () {
     it('should validate', function () {
-      scope.validate = sinon.spy();
       scope.entry.data.sys.publishedVersion++;
       scope.$digest();
       sinon.assert.called(scope.validate);
     });
   });
 
-  describe('setting the tab dirty state', function () {
-    it('should be false by default', function () {
+  describe('scope.context.dirty', function () {
+    it('changes according to doc state', function () {
+      scope.otDoc.state.isDirty.set(true);
+      this.$apply();
+      expect(scope.context.dirty).toBe(true);
+
+      scope.otDoc.state.isDirty.set(false);
+      this.$apply();
       expect(scope.context.dirty).toBe(false);
     });
-
-    it('should be true when modified', function () {
-      scope.otDoc.doc.version = scope.entry.getPublishedVersion() + 2;
-      scope.$digest();
-      expect(scope.context.dirty).toBe(true);
-    });
-
-    it('should be "draft" when no published version available', function () {
-      scope.entry.getPublishedVersion = sinon.stub().returns(undefined);
-      scope.$digest();
-      expect(scope.context.dirty).toBe('draft');
-    });
-  });
-
-  it('should validate when ot became editable', function () {
-    scope.validate = sinon.stub();
-    scope.entry.data.fields = {foo: {'en-US': 'bar'}};
-    scope.$broadcast('otBecameEditable');
-    sinon.assert.called(scope.validate);
-  });
-
-  it('when doc loads adds objects for every field', function () {
-    scope = this.createController();
-    scope.entry.data.fields = {
-      A: {},
-      B: {}
-    };
-    var doc = scope.otDoc.doc;
-    expect(doc.snapshot.fields).toBe(undefined);
-
-    this.$apply();
-    expect(doc.snapshot.fields['A']).toEqual({});
-    expect(doc.snapshot.fields['B']).toEqual({});
   });
 });

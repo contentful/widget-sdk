@@ -18,47 +18,174 @@ angular.module('cf.app')
  * @description
  * Used to edit an entry or asset through ShareJS
  *
- * It emits the following events:
- *
- * - otRemoteOp(op), broadcast:
- *   distribute every incoming remote ot operation to the component
- * - otBecameEditable(entity), emit:
- *   Whenever controller.state.editable becomes true
- * - otBecameReadonly(entity), emit:
- *   Whenever controller.state.editable becomes false
- *
- * It also ensures that the version in the entity is always up-to-date
- *
  * @property {Document.State} state
  */
 .controller('entityEditor/Document',
-['$scope', '$injector', 'entity',
-function ($scope, $injector, entity) {
+['$scope', '$injector', 'entity', 'contentType',
+function ($scope, $injector, entity, contentType) {
   var $q = $injector.get('$q');
-  var ShareJS = $injector.get('ShareJS');
+  var ShareJS = $injector.get('data/ShareJS/Utils');
   var logger = $injector.get('logger');
-  var defer = $injector.get('defer');
   var moment = $injector.get('moment');
   var TheLocaleStore = $injector.get('TheLocaleStore');
+  var K = $injector.get('utils/kefir');
   var controller = this;
   var diff = $injector.get('utils/StringDiff').diff;
+  var Normalizer = $injector.get('data/documentNormalizer');
+  var spaceContext = $injector.get('spaceContext');
+  var docConnection = spaceContext.docConnection;
+
+  // Field types that should use `setStringAt()` to set a value using a
+  // string diff.
+  var STRING_FIELD_TYPES = ['Symbol', 'Text'];
 
   var shouldOpen = false;
 
+  controller.state = {
+    editable: false,
+    error: false,
+    saving: false
+  };
+
+
+  // The stream for this bus contains all the events that come from the
+  // raw ShareJS doc. The data in this stream has the shape
+  // `{doc: doc, name: name, data: data}`.
+  var docEventsBus = K.createBus($scope);
+
+  var acknowledgeEvent = docEventsBus.stream.filter(function (event) {
+    return event.name === 'acknowledge';
+  });
+
+  K.onValueScope($scope, acknowledgeEvent, function (event) {
+    updateEntitySys(event.doc);
+  });
+
+
+  // A boolean property that holds true if the document has
+  // changes unacknowledged by the server.
+  var hasPendingOps = docEventsBus.stream
+    .map(function (event) {
+      return event.doc;
+    })
+    .toProperty(function () {
+      return controller.doc;
+    })
+    .map(function (doc) {
+      return !!(doc && (doc.inflightOp || doc.pendingOp));
+    });
+
+  K.onValueScope($scope, hasPendingOps, function (hasPendingOps) {
+    controller.state.saving = hasPendingOps;
+  });
+
+
+  /**
+   * @ngdoc property
+   * @module cf.app
+   * @name Document#valueChangesAt
+   * @description
+   * A stream of changes on the document. Whenever a value at a given
+   * path is changed (either remotely or locally) we emit the path on
+   * the stream.
+   *
+   * @type {Property<string[]>}
+   */
+  var changes = docEventsBus.stream
+    .flatten(function (event) {
+      if (event.name === 'change') {
+        return event.data.map(function (op) {
+          return op.p;
+        });
+      } else if (event.name === 'open') {
+        // Emit the path of length zero
+        return [[]];
+      } else {
+        return [];
+      }
+    });
+
+  // We sync the changes on the OT document snapshot to
+  // `$scope.entity.data`.
+  K.onValueScope($scope, changes, otUpdateEntityData);
+
+
+  /**
+   * @ngdoc property
+   * @module cf.app
+   * @name Document#sysProperty
+   * @description
+   * A property that keeps the value of the entity’s `sys` property.
+   *
+   * @type {Property<Data.Sys>}
+   */
+  var sysChangeBus = K.createBus($scope);
+  var sysProperty = sysChangeBus.stream
+    .toProperty(_.noop)
+    .map(function () {
+      return entity.data.sys;
+    });
+
+
+  /**
+   * @ngdoc property
+   * @module cf.app
+   * @name Document#state.isDirty
+   * @description
+   * Property that is `false` if and only if the document is published
+   * and does not contain changes relative to the published version.
+   *
+   * Note that an entry is in the same state as its published version
+   * if and only if its version is on more than the published version.
+   *
+   * @type {Property<boolean>}
+   */
+  controller.state.isDirty = sysProperty.map(function (sys) {
+    return sys.publishedVersion
+      ? sys.version > sys.publishedVersion + 1
+      : true;
+  });
+
+  /**
+   * @ngdoc method
+   * @module cf.app
+   * @name Document#valuePropertyAt
+   * @description
+   * Returns a property that always has the current value at the given
+   * path of the document.
+   *
+   * @param {string[]} path
+   * @returns {Property<any>}
+   */
+  var memoizedValuePropertyAt = _.memoize(valuePropertyAt, function (path) {
+    return path.join('!');
+  });
+
+  function valuePropertyAt (valuePath) {
+    return changes.filter(function (changePath) {
+      return pathAffects(changePath, valuePath);
+    })
+    .toProperty(_.constant(undefined))
+    .map(function () {
+      return getValueAt(valuePath);
+    });
+  }
+
+
   _.extend(controller, {
     doc: undefined,
-    state: {
-      editable: false,
-      error: false,
-      saving: false
-    },
+
     getValueAt: getValueAt,
     setValueAt: setValueAt,
-    /**
-     * TODO: Do not expose this and switch it's usage to setValueAt
-     */
-    setStringAt: setStringAt,
     removeValueAt: removeValueAt,
+    insertValueAt: insertValueAt,
+    pushValueAt: pushValueAt,
+    moveValueAt: moveValueAt,
+
+    changes: changes,
+    valuePropertyAt: memoizedValuePropertyAt,
+    sysProperty: sysProperty,
+
     open: open,
     close: close
   });
@@ -70,34 +197,18 @@ function ($scope, $injector, entity) {
   }, function (shouldOpen) {
     if (shouldOpen) {
       openDoc();
-    } else if (controller.doc) {
-      closeDoc(controller.doc);
+    } else {
+      setDoc(undefined);
     }
   });
 
-  // Watch Doc internals to determine if we have sent operations to the
-  // server that have yet to be acknowledged.
-  // TODO Instead of watching trigger the update manually on some
-  // events on the document.
-  $scope.$watchGroup([
-    function () { return controller.doc && controller.doc.inflightOp; },
-    function () { return controller.doc && controller.doc.pendingOp; }
-  ], function (ops) {
-    controller.state.saving = _.some(ops);
+  K.onValueScope($scope, docConnection.errors, function () {
+    controller.state.error = true;
   });
 
-  $scope.$watch(function () {
-    return ShareJS.connectionFailed();
-  }, function (failed) {
-    // We do not want to remove errors that result from failed document
-    // opening. Therefore we only set the error to `true` and to to
-    // `failed`.
-    if (failed) {
-      controller.state.error = true;
-    }
+  $scope.$on('$destroy', function () {
+    setDoc(undefined);
   });
-
-  $scope.$on('$destroy', handleScopeDestruction);
 
   function getValueAt (path) {
     if (controller.doc) {
@@ -108,54 +219,47 @@ function ($scope, $injector, entity) {
   }
 
   function setValueAt (path, value) {
-    var stringFieldTypes = ['Symbol', 'Text'];
-
-    if ($scope.field && _.includes(stringFieldTypes, $scope.field.type)) {
-      return setStringAt(path, value);
-    } else {
-      return _setValueAt(path, value);
-    }
+    return withRawDoc(function (doc) {
+      if ($scope.field && _.includes(STRING_FIELD_TYPES, $scope.field.type)) {
+        return setDocumentStringAt(doc, path, value);
+      } else {
+        return setDocumentValueAt(doc, path, value);
+      }
+    });
   }
 
-  function _setValueAt (path, value) {
-
+  function setDocumentValueAt (doc, path, value) {
     if (value === undefined) {
       return removeValueAt(path);
     }
-    // TODO this should actually reject when doc is not available
-    var doc = controller.doc;
-    if (doc) {
-      // We only test for equality when the value is guaranteed to be
-      // equal. Other wise the some properties might have changed.
-      if (!_.isObject(value) && value === getValueAt(path)) {
-        return $q.resolve(value);
-      } else {
-        return ShareJS.setDeep(doc, path, value);
-      }
+    // We only test for equality when the value is guaranteed to be
+    // equal. Other wise the some properties might have changed.
+    if (!_.isObject(value) && value === getValueAt(path)) {
+      return $q.resolve(value);
     } else {
-      return $q.reject(new Error('Cannot set value on document'));
+      return ShareJS.setDeep(doc, path, value);
     }
   }
 
-  function setStringAt (path, newValue) {
+  function setDocumentStringAt (doc, path, newValue) {
     var oldValue = getValueAt(path);
 
     if (!oldValue || !newValue) {
       // TODO Do not set this to null. Set it to undefined!
-      return _setValueAt(path, newValue || null);
+      return setDocumentValueAt(doc, path, newValue || null);
     } else if (oldValue === newValue) {
       return $q.resolve(newValue);
     } else {
-      var doc = controller.doc && controller.doc.at(path);
+      var subDoc = doc.at(path);
       var patches = diff(oldValue, newValue);
       var ops = patches.map(function (p) {
         if (p.insert) {
           return $q.denodeify(function (cb) {
-            doc.insert(p.insert[0], p.insert[1], cb);
+            subDoc.insert(p.insert[0], p.insert[1], cb);
           });
         } else if (p.delete) {
           return $q.denodeify(function (cb) {
-            doc.del(p.delete[0], p.delete[1], cb);
+            subDoc.del(p.delete[0], p.delete[1], cb);
           });
         }
       });
@@ -164,15 +268,43 @@ function ($scope, $injector, entity) {
   }
 
   function removeValueAt (path) {
-    return $q.denodeify(function (cb) {
-      // We catch synchronous errors since they tell us that a
-      // value along the path does not exist.
-      // TODO this should actually reject when doc is not available
-      try {
-        controller.doc.removeAt(path, cb);
-      } catch (e) {
-        cb();
+    return withRawDoc(function (doc) {
+      return $q.denodeify(function (cb) {
+        // We catch and ignore synchronous errors since they tell us
+        // that a value along the path does not exist. I.e. it has
+        // already been removed.
+        try {
+          doc.removeAt(path, cb);
+        } catch (e) {
+          cb();
+        }
+      });
+    });
+  }
+
+  function insertValueAt (path, i, x) {
+    return withRawDoc(function (doc) {
+      if (getValueAt(path)) {
+        return $q.denodeify(function (cb) {
+          doc.insertAt(path, i, x, cb);
+        });
+      } else if (i === 0) {
+        return setValueAt(path, [x]);
+      } else {
+        return $q.reject(new Error('Cannot insert index ' + i + 'into empty container'));
       }
+    });
+  }
+
+  function pushValueAt (path, value) {
+    var current = getValueAt(path);
+    var pos = current ? current.length : 0;
+    return insertValueAt(path, pos, value);
+  }
+
+  function moveValueAt (path, from, to) {
+    return $q.denodeify(function (cb) {
+      controller.doc.moveAt(path, from, to, cb);
     });
   }
 
@@ -185,24 +317,29 @@ function ($scope, $injector, entity) {
   }
 
   function shouldOpenDoc () {
-    return ShareJS.isConnected() && shouldOpen;
+    return spaceContext.docConnection.canOpen() && shouldOpen;
   }
 
   function openDoc () {
-    ShareJS.open(entity)
+    docConnection.open(entity)
     .then(function (doc) {
-      setupClosedEventHandling(doc);
       // Check a second time if we have disconnected or the document
       // has been disabled.
       if (shouldOpenDoc()) {
-        controller.state.error = false;
-        setupOtDoc(doc);
+        setDoc(doc);
       } else {
         closeDoc(doc);
+        setDoc(undefined);
       }
     }, function (err) {
       controller.state.error = true;
-      handleOtDocOpeningFailure(err, entity);
+      setDoc(undefined);
+      logger.logSharejsError('Failed to open sharejs doc', {
+        data: {
+          error: err,
+          entity: entity
+        }
+      });
     });
   }
 
@@ -213,98 +350,30 @@ function ($scope, $injector, entity) {
       if (e.message !== 'Cannot send to a closed connection') {
         throw e;
       }
-    } finally {
-      resetOtDoc();
     }
   }
 
-
-  function handleOtDocOpeningFailure (err, entity) {
-    resetOtDoc();
-    logger.logSharejsError('Failed to open sharejs doc', {
-      data: {
-        error: err,
-        entity: entity
-      }
-    });
-  }
-
-  function setupClosedEventHandling (doc) {
-    // Remove all event listeners when the document is closed.
-    // TODO I’m not sure this accomplishes what we want. In any case
-    // this should be done through the doc’s public API.
-    doc.on('closed', function () {
-      defer(function () {
-        doc._listeners.length = 0;
-        _.each(doc._events, function (listeners) {
-          listeners.length = 0;
-        });
-      });
-    });
-  }
-
-  function resetOtDoc () {
+  function setDoc (doc) {
     if (controller.doc) {
-      removeListeners(controller.doc);
-    }
-    delete controller.doc;
-    controller.state.editable = false;
-    $scope.$emit('otBecameReadonly', entity);
-  }
-
-
-  function setupOtDoc (doc) {
-    filterDeletedLocales(doc.snapshot);
-    filterDeletedFields(doc.snapshot);
-    installListeners(doc);
-    controller.doc = doc;
-    controller.state.editable = true;
-    $scope.$emit('otBecameEditable', entity);
-    $scope.$broadcast('otDocReady', doc);
-    otUpdateEntityData();
-  }
-
-  function filterDeletedLocales (data) {
-    _.keys(data.fields).forEach(function (fieldId) {
-      _.keys(data.fields[fieldId]).forEach(function (internalCode) {
-        if (!_.find(TheLocaleStore.getPrivateLocales(), { internal_code: internalCode })) {
-          delete data.fields[fieldId][internalCode];
-        }
-      });
-    });
-    return data;
-  }
-
-  function filterDeletedFields (data) {
-    if (entity.getType() !== 'Entry') {
-      return data;
+      unplugDocEvents(controller.doc);
+      closeDoc(controller.doc);
+      delete controller.doc;
+      controller.state.editable = false;
     }
 
-    var ctFields = dotty.get($scope.contentType, 'data.fields');
-    if (!ctFields) {
-      return data;
+    if (doc) {
+      controller.state.error = false;
+      normalize(doc);
+      controller.doc = doc;
+      controller.state.editable = true;
+      plugDocEvents(doc);
     }
-
-    var ctFieldIds = _.map(ctFields, function (field) {
-      return field.id;
-    });
-
-    _.forEach(data.fields, function (_fieldValue, fieldId) {
-      if (ctFieldIds.indexOf(fieldId) < 0) {
-        delete data.fields[fieldId];
-      }
-    });
-
-    return data;
   }
 
-  function updateHandler () {
-    if (controller.doc) {
-      $scope.$apply(function () {
-        entity.setVersion(controller.doc.version);
-        entity.data.sys.updatedAt = moment().toISOString();
-      });
-    }
+  function updateEntitySys (doc) {
+    entity.setVersion(doc.version);
+    entity.data.sys.updatedAt = moment().toISOString();
+    sysChangeBus.emit();
   }
 
   function otUpdateEntityData () {
@@ -324,6 +393,7 @@ function ($scope, $injector, entity) {
       }
       data.sys.version = controller.doc.version;
       entity.update(data);
+      sysChangeBus.emit();
     } else {
       logger.logSharejsError('otUpdateEntityData did not update', {
         data: {
@@ -334,48 +404,47 @@ function ($scope, $injector, entity) {
     }
   }
 
-  function installListeners (doc) {
-    doc.on('remoteop', remoteOpListener);
-    doc.on('change', broadcastOtChange);
-    doc.on('change', applyEntityDataUpdate);
-    doc.on('acknowledge', updateHandler);
+  function plugDocEvents (doc) {
+    doc._originalEmit = doc.emit;
+    doc.emit = function (name, data) {
+      this._originalEmit.apply(this, arguments);
+      docEventsBus.emit({doc: doc, name: name, data: data});
+    };
+    docEventsBus.emit({doc: doc, name: 'open'});
   }
 
-  function removeListeners (doc) {
-    doc.removeListener('remoteop', remoteOpListener);
-    doc.removeListener('change', broadcastOtChange);
-    doc.removeListener('change', applyEntityDataUpdate);
-    doc.removeListener('acknowledge', updateHandler);
+  function unplugDocEvents (doc) {
+    doc.emit = doc._originalEmit;
   }
 
-  function remoteOpListener (ops) {
-    $scope.$apply(function (scope) {
-      _.each(ops, function (op) {
-        scope.$broadcast('otRemoteOp', op);
-      });
-    });
-  }
-
-  function broadcastOtChange (op) {
-    // The 'change' event on a document may be called synchronously
-    // from inside the Angular loop. For instance when a directive
-    // changes the document. We therefore must use `$applyAsync()`
-    // instead of `$apply()`.
-    $scope.$applyAsync(function () {
-      $scope.$broadcast('otChange', controller.doc, op);
-    });
-  }
-
-  function applyEntityDataUpdate () {
-    // See comment above for use of `$applyAsync()`
-    $scope.$applyAsync(otUpdateEntityData);
-  }
-
-  function handleScopeDestruction () {
+  function withRawDoc (cb) {
     if (controller.doc) {
-      closeDoc(controller.doc);
-      resetOtDoc(controller.doc);
+      return cb(controller.doc);
+    } else {
+      return $q.reject(new Error('ShareJS document is not connected'));
     }
   }
 
+  /**
+   * Returns true if a change to the value at 'changePath' in an object
+   * affects the value of 'valuePath'.
+   *
+   * ~~~
+   * pathAffects(['a'], ['a', 'b']) // => true
+   * pathAffects(['a', 'b'], ['a', 'b']) // => true
+   * pathAffects(['a', 'b', 'x'], ['a', 'b']) // => true
+   *
+   * pathAffects(['x'], ['a', 'b']) // => false
+   * pathAffects(['a', 'x'], ['a', 'b']) // => false
+   */
+  function pathAffects (changePath, valuePath) {
+    var m = Math.min(changePath.length, valuePath.length);
+    return _.isEqual(changePath.slice(0, m), valuePath.slice(0, m));
+  }
+
+
+  function normalize (doc) {
+    var locales = TheLocaleStore.getPrivateLocales();
+    Normalizer.normalize(controller, doc.snapshot, contentType, locales);
+  }
 }]);
