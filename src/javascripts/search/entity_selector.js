@@ -93,8 +93,8 @@ angular.module('contentful')
       linksEntry: field.linkType === 'Entry' || field.itemLinkType === 'Entry',
       linksAsset: field.linkType === 'Asset' || field.itemLinkType === 'Asset',
       linkedEntityIds: links,
-      linkedContentTypeIds: findValidation(field, 'linkContentType', []),
-      linkedMimetypeGroups: findValidation(field, 'linkMimetypeGroup', []),
+      linkedContentTypeIds: findLinkValidation(field, 'linkContentType'),
+      linkedMimetypeGroups: findLinkValidation(field, 'linkMimetypeGroup'),
       linkedFileSize: findValidation(field, 'assetFileSize', {}),
       linkedImageDimensions: findValidation(field, 'assetImageDimensions', {})
     };
@@ -102,10 +102,16 @@ angular.module('contentful')
     return _.extend(config, {queryExtension: prepareQueryExtension(config)});
   }
 
+  function findLinkValidation (field, property) {
+    var found = findValidation(field, property, []);
+
+    return _.isString(found) ? [found] : found;
+  }
+
   function findValidation (field, property, defaultValue) {
     var validations = [].concat(field.validations || [], field.itemValidations || []);
     var found = _.find(validations, function (v) {
-      return _.isObject(v[property]);
+      return _.isObject(v[property]) || _.isString(v[property]);
     });
 
     return (found && found[property]) || defaultValue;
