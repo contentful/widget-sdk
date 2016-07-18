@@ -23,7 +23,7 @@ describe('Space Template creation service', function () {
       $q = $injector.get('$q');
       $rootScope = $injector.get('$rootScope');
       openShareJSDoc = $q.defer();
-      stubs.getContentPreview.resolves([])
+      stubs.getContentPreview.resolves([]);
     });
   });
 
@@ -50,9 +50,9 @@ describe('Space Template creation service', function () {
           {sys: {id: 'a3'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish}
         ],
         entries: [
-          {sys: { id: 'e1', contentType: {sys: {id: 'ct1'}} }, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish},
-          {sys: { id: 'e2', contentType: {sys: {id: 'ct2'}} }, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish},
-          {sys: { id: 'e3', contentType: {sys: {id: 'ct3'}} }, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish}
+          {sys: {id: 'e1', contentType: {sys: {id: 'ct1'}}}, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish},
+          {sys: {id: 'e2', contentType: {sys: {id: 'ct2'}}}, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish},
+          {sys: {id: 'e3', contentType: {sys: {id: 'ct3'}}}, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish}
         ],
         apiKeys: [
           {sys: {id: 'ak1'}},
@@ -75,7 +75,12 @@ describe('Space Template creation service', function () {
           createContentType: sinon.stub(),
           createEntry: sinon.stub(),
           createAsset: sinon.stub(),
-          createDeliveryApiKey: sinon.stub()
+          createDeliveryApiKey: sinon.stub(),
+          getContentType: function () {
+            return $q.resolve({
+              createEditingInterface: spaceContext.createEditingInterface
+            });
+          }
         },
         docConnection: {
           open: sinon.stub().returns(openShareJSDoc.promise)
