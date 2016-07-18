@@ -8,7 +8,10 @@ angular.module('contentful')
     var filteredContentType = $scope.spaceContext.getPublishedContentType(contentTypeId);
     var contentTypeFields = filteredContentType ? _.reject(filteredContentType.data.fields, {disabled: true}) : [];
     var fields = systemFields.getList().concat(contentTypeFields);
-    if (filteredContentType) _.remove(fields, function (field) { return field.id === filteredContentType.data.displayField; });
+
+    if (filteredContentType) {
+      _.remove(fields, function (field) { return field.id === filteredContentType.data.displayField; });
+    }
     return fields;
   }
 
