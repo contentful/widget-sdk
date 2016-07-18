@@ -39,6 +39,18 @@ describe('bugsnag', function () {
     sinon.assert.calledOnce(this.LazyLoader.get);
   });
 
+  it('adds user information', function () {
+    this.bugsnag.enable({
+      sys: {id: 'UID'},
+      firstName: 'FIRST NAME',
+      lastName: 'LAST NAME'
+    });
+    this.$apply();
+    expect(this.BugsnagStub.user.id).toEqual('UID');
+    expect(this.BugsnagStub.user.firstName).toEqual('FIRST NAME');
+    expect(this.BugsnagStub.user.lastName).toEqual('LAST NAME');
+  });
+
   it('enabling after disabling does not send notifications', function () {
     this.bugsnag.enable();
     this.bugsnag.disable();

@@ -10,7 +10,6 @@ angular.module('contentful')
 .factory('bugsnag', ['$injector', function ($injector) {
   var CallBuffer = $injector.get('CallBuffer');
   var environment = $injector.get('environment');
-  var memoize = $injector.get('utils/memoize');
 
   // TODO this should be stored in the environment configuration. Need
   // to work with devops get this done.
@@ -18,7 +17,7 @@ angular.module('contentful')
 
   var bugsnag;
   var callBuffer = new CallBuffer();
-  var loadOnce = memoize(load);
+  var loadOnce = _.once(load);
 
   return {
     /**
