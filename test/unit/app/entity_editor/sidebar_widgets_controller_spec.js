@@ -2,8 +2,9 @@
 
 describe('SidebarWidgetRender controller', function () {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', function ($provide, $controllerProvider) {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
+      $controllerProvider.register('FieldLocaleController', function () {});
     });
 
     this.scope = Object.assign(this.$inject('$rootScope').$new(), {

@@ -1,46 +1,32 @@
 'use strict';
 
 describe('entityEditor/Document', function () {
-  var scope;
-
-  function makeOtDocStub (snapshot) {
-    return {
-      on: sinon.stub(),
-      close: sinon.stub(),
-      removeListener: sinon.stub(),
-      snapshot: snapshot || {sys: {}}
-    };
-  }
+  var scope, K;
 
   beforeEach(function () {
-    module('contentful/test');
+    this.docConnection = {
+      open: sinon.stub(),
+      canOpen: sinon.stub()
+    };
 
-    var ShareJS = this.$inject('ShareJS');
-    ShareJS.isConnected = sinon.stub().returns(true);
-    ShareJS.connectionFailed = sinon.stub().returns(false);
-    this.openDocument = ShareJS.open = sinon.stub();
+    module('contentful/test', ($provide) => {
+      $provide.value('spaceContext', {docConnection: this.docConnection});
+    });
+
+    K = this.$inject('mocks/kefir');
+
+    this.docConnection.errors = K.createMockStream();
 
     var OtDoc = this.$inject('mocks/OtDoc');
 
-    this.connect = function () {
-      ShareJS.isConnected.returns(true);
-      ShareJS.connectionFailed.returns(false);
-      this.$apply();
-    };
-
     this.connectAndOpen = function (data) {
-      ShareJS.isConnected.returns(true);
-      ShareJS.connectionFailed.returns(false);
+      this.docConnection.canOpen.returns(true);
       var doc = new OtDoc(_.cloneDeep(data || this.entity.data));
-      this.openDocument.resolves(doc);
+      this.docConnection.open.resolves(doc);
+      // Not sure why we need to apply twice. But tests fail otherwise.
+      this.$apply();
       this.$apply();
       return doc;
-    };
-
-    this.disconnect = function () {
-      ShareJS.isConnected.returns(false);
-      ShareJS.connectionFailed.returns(true);
-      this.$apply();
     };
 
     this.entity = {
@@ -57,6 +43,8 @@ describe('entityEditor/Document', function () {
       }
     };
 
+    this.contentType = {data: {}};
+
     var $controller = this.$inject('$controller');
     var $rootScope = this.$inject('$rootScope');
 
@@ -64,14 +52,15 @@ describe('entityEditor/Document', function () {
     scope.contentType = {data: {fields: []}};
     this.doc = $controller('entityEditor/Document', {
       $scope: scope,
-      entity: this.entity
+      entity: this.entity,
+      contentType: this.contentType
     });
 
     this.doc.open();
   });
 
   afterEach(function () {
-    scope = null;
+    scope = K = null;
   });
 
   it('otDoc is initially undefined', function () {
@@ -80,9 +69,12 @@ describe('entityEditor/Document', function () {
 
   describe('successful initialization flow', function () {
     beforeEach(function () {
-      var localeStore = this.$inject('TheLocaleStore');
-      localeStore.getPrivateLocales = sinon.stub().returns([{internal_code: 'en'}]);
-      scope.contentType.data.fields = [{id: 'field1'}, {id: 'field2'}];
+      const Normalizer = this.$inject('data/documentNormalizer');
+      this.normalize = sinon.spy(Normalizer, 'normalize');
+
+      this.localeStore = this.$inject('TheLocaleStore');
+      this.localeStore.getPrivateLocales = sinon.stub().returns([{internal_code: 'en'}]);
+      this.contentType.data.fields = [{id: 'field1'}, {id: 'field2'}];
 
       this.entity.data.fields = {
         field1: {
@@ -100,117 +92,36 @@ describe('entityEditor/Document', function () {
       this.otDoc = this.connectAndOpen();
     });
 
-    it('sharejs.open is called', function () {
-      sinon.assert.calledOnce(this.openDocument);
-      sinon.assert.calledWith(this.openDocument, this.entity);
+    it('calls docConnection.open()', function () {
+      sinon.assert.calledOnce(this.docConnection.open);
+      sinon.assert.calledWith(this.docConnection.open, this.entity);
     });
 
-    it('sets closed event listener on doc', function () {
-      sinon.assert.calledWith(this.doc.doc.on, 'closed');
-    });
-
-    it('filters deleted locales', function () {
-      expect(this.entity.data.fields.field1.del).toBeUndefined();
-      expect(this.doc.doc.snapshot.fields.field1.del).toBeUndefined();
-    });
-
-    it('keeps non deleted locales', function () {
-      expect(this.doc.doc.snapshot.fields.field2.en).toBeDefined();
-      expect(this.entity.data.fields.field2.en).toBeDefined();
-    });
-
-    it('filters deleted fields', function () {
-      expect(this.doc.doc.snapshot.fields.deletedField).toBeUndefined();
-      expect(this.entity.data.fields.deletedField).toBeUndefined();
-    });
-
-    it('keeps non deleted fields', function () {
-      expect(this.doc.doc.snapshot.fields.field1).toBeDefined();
-      expect(this.entity.data.fields.field1).toBeDefined();
-      expect(this.doc.doc.snapshot.fields.field2).toBeDefined();
-      expect(this.entity.data.fields.field2).toBeDefined();
-    });
-
-    it('sets acknowledge and remoteop event handelrs', function () {
-      sinon.assert.calledWith(this.doc.doc.on, 'acknowledge');
-      sinon.assert.calledWith(this.doc.doc.on, 'remoteop');
-    });
-
-    it('updated version if updateHandler called', function () {
-      this.otDoc.on.withArgs('acknowledge').yield();
-      sinon.assert.called(this.entity.setVersion);
+    it('calls the document normalizer', function () {
+      sinon.assert.calledWith(
+        this.normalize,
+        this.doc, this.doc.doc.snapshot, this.contentType, this.localeStore.getPrivateLocales()
+      );
     });
 
     it('calls otUpdateEntityData', function () {
       sinon.assert.called(this.entity.update);
     });
-
-    it('broadcasts "otDocReady"', function () {
-      sinon.assert.calledWith(scope.$broadcast, 'otDocReady', this.otDoc);
-    });
   });
 
-  describe('initialization flow fails because document is not ready', function () {
-    beforeEach(function () {
-      // triggers a first digest cycle with different settings because
-      // the initialization already made this watcher fail
-      var $q = this.$inject('$q');
-      this.openDocument.returns($q(_.noop));
-      this.connect();
-
-      this.closeStub = sinon.stub();
-      this.otDoc = makeOtDocStub();
-      this.doc.doc = this.otDoc;
-      this.disconnect();
-    });
-
-    it('sharejs.open is called only once', function () {
-      sinon.assert.calledOnce(this.openDocument);
-    });
-
-    it('otdoc is closed', function () {
-      sinon.assert.called(this.otDoc.close);
-    });
-
-    it('otdoc.doc is removed', function () {
-      expect(this.doc.doc).toBeUndefined();
-    });
-  });
-
-  describe('initialization flow fails because opening the doc failed', function () {
-    beforeEach(function () {
-      this.logger = this.$inject('logger');
-      this.logger.logShareJsError = sinon.stub();
-
-      this.openDocument.rejects();
-      this.connect();
-    });
-
-    it('sharejs.open is called', function () {
-      sinon.assert.called(this.openDocument);
-    });
-
-    it('otDoc.doc is undefined', function () {
-      expect(this.doc.doc).toBeUndefined();
-    });
-
-    it('logger sharejs error is called', function () {
-      sinon.assert.called(this.logger.logSharejsError);
-    });
-  });
-
-  describe('initialization flow fails because doc became unusable after opening', function () {
+  describe('when connection cannot open document', function () {
     beforeEach(function () {
       this.otDoc = this.connectAndOpen();
-      this.disconnect();
+      this.docConnection.canOpen.returns(false);
+      this.$apply();
     });
 
-    it('sharejs.open is called', function () {
-      sinon.assert.called(this.openDocument);
+    it('otDoc is closed', function () {
+      sinon.assert.calledOnce(this.otDoc.close);
     });
 
-    it('doc is closed', function () {
-      sinon.assert.called(this.otDoc.close);
+    it('doc.doc is removed', function () {
+      expect(this.doc.doc).toBeUndefined();
     });
   });
 
@@ -228,7 +139,8 @@ describe('entityEditor/Document', function () {
       this.entity.update.reset();
 
       this.fireChange = function () {
-        this.otDoc.on.withArgs('change').yield();
+        this.otDoc.emit('change', [[]]);
+        this.$apply();
         this.$apply();
       };
     });
@@ -272,17 +184,8 @@ describe('entityEditor/Document', function () {
 
   describe('on scope destruction', function () {
     beforeEach(function () {
-      this.otDoc = makeOtDocStub();
-      this.doc.doc = this.otDoc;
+      this.otDoc = this.connectAndOpen();
       scope.$destroy();
-    });
-
-    it('removes the remote op listener', function () {
-      sinon.assert.calledWith(this.otDoc.removeListener, 'remoteop');
-    });
-
-    it('removes the change listener', function () {
-      sinon.assert.calledWith(this.otDoc.removeListener, 'change');
     });
 
     it('closes the doc', function () {
@@ -290,35 +193,30 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('otDoc.state.error', function () {
-    beforeEach(function () {
-      this.openDocument.resolves(makeOtDocStub());
-    });
-
+  describe('#state.error', function () {
     it('is set to false if opening document succeeds', function () {
       this.doc.state.error = true;
-      this.connect();
+      this.connectAndOpen();
       expect(this.doc.state.error).toBe(false);
     });
 
     it('is set to true if opening document fails', function () {
       this.doc.state.error = false;
-      this.openDocument.rejects();
-      this.connect();
+      this.docConnection.open.rejects();
+      this.docConnection.canOpen.returns(true);
+      this.$apply();
       expect(this.doc.state.error).toBe(true);
     });
 
     it('is set to true if ShareJS connection failed', function () {
-      this.connect();
-      var ShareJS = this.$inject('ShareJS');
-      ShareJS.connectionFailed.returns(true);
       this.doc.state.error = false;
+      this.docConnection.errors.emit('');
       this.$apply();
       expect(this.doc.state.error).toBe(true);
     });
   });
 
-  describe('doc events', function () {
+  describe('acknowledged operation', function () {
     beforeEach(function () {
       this.clock = sinon.useFakeTimers(1000, 'Date');
       this.now = this.$inject('moment')();
@@ -331,21 +229,16 @@ describe('entityEditor/Document', function () {
 
     it('updates entity timestamp if operation was acknowleged', function () {
       this.entity.data.sys.updatedAt = null;
-      this.otDoc.on.withArgs('acknowledge').yield();
+      this.otDoc.emit('acknowledge');
+      this.$apply();
       expect(this.entity.data.sys.updatedAt).toEqual(this.now.toISOString());
     });
 
     it('updates version if operation was acknowleged', function () {
       this.otDoc.version = 'VERSION';
-      this.otDoc.on.withArgs('acknowledge').yield();
-      sinon.assert.calledWith(this.entity.setVersion, 'VERSION');
-    });
-
-    it('broadcasts change event to scope', function () {
-      scope.$broadcast = sinon.stub();
-      this.otDoc.on.withArgs('change').yield('OPERATION');
+      this.otDoc.emit('acknowledge');
       this.$apply();
-      sinon.assert.calledWith(scope.$broadcast, 'otChange', this.otDoc, 'OPERATION');
+      sinon.assert.calledWith(this.entity.setVersion, 'VERSION');
     });
   });
 
@@ -363,13 +256,7 @@ describe('entityEditor/Document', function () {
   });
 
   describe('#setValueAt()', function () {
-    it('rejects when doc is not defined', function () {
-      this.doc.close();
-      var errored = sinon.stub();
-      this.doc.setValueAt(['PATH'], 'VAL').catch(errored);
-      this.$apply();
-      sinon.assert.called(errored);
-    });
+    itRejectsWithoutDocument('setValueAt');
 
     it('sets deep value', function () {
       this.connectAndOpen();
@@ -440,6 +327,8 @@ describe('entityEditor/Document', function () {
   });
 
   describe('#removeValueAt()', function () {
+    itRejectsWithoutDocument('removeValueAt');
+
     it('delegates to ShareJS document', function () {
       var doc = this.connectAndOpen();
       doc.removeAt = sinon.stub();
@@ -463,6 +352,219 @@ describe('entityEditor/Document', function () {
       this.doc.removeValueAt('PATH').then(resolved);
       this.$apply();
       sinon.assert.called(resolved);
+    });
+  });
+
+  describe('#insertValueAt()', function () {
+    beforeEach(function () {
+      this.otDoc = this.connectAndOpen({a: [0, 1, 2], sys: {}});
+    });
+
+    itRejectsWithoutDocument('insertValueAt');
+
+    it('inserts value into ShareJS document', function () {
+      this.doc.insertValueAt(['a'], 1, 'X');
+      this.$apply();
+      expect(this.otDoc.snapshot.a).toEqual([0, 'X', 1, 2]);
+    });
+
+    it('sets value to singleton array', function () {
+      delete this.otDoc.snapshot.a;
+      this.doc.insertValueAt(['a'], 0, 'X');
+      this.$apply();
+      expect(this.otDoc.snapshot.a).toEqual(['X']);
+    });
+  });
+
+  describe('#pushValueAt()', function () {
+    beforeEach(function () {
+      this.otDoc = this.connectAndOpen({a: [0, 1, 2], sys: {}});
+    });
+
+    itRejectsWithoutDocument('insertValueAt');
+
+    it('pushes value into ShareJS document', function () {
+      this.doc.pushValueAt(['a'], 'X');
+      this.$apply();
+      expect(this.otDoc.snapshot.a).toEqual([0, 1, 2, 'X']);
+    });
+
+    it('sets value to singleton array', function () {
+      delete this.otDoc.snapshot.a;
+      this.doc.pushValueAt(['a'], 'X');
+      this.$apply();
+      expect(this.otDoc.snapshot.a).toEqual(['X']);
+    });
+  });
+
+  describe('#valuePropertyAt()', function () {
+    it('gets initial value from entity if the doc is not opened', function () {
+      this.entity.data = {a: {b: 'VAL'}};
+      const cb = sinon.spy();
+      this.doc.valuePropertyAt(['a', 'b']).onValue(cb);
+      sinon.assert.calledWith(cb, 'VAL');
+    });
+
+    it('gets initial value from opened doc', function () {
+      this.connectAndOpen({a: {b: 'VAL'}, sys: {}});
+      const cb = sinon.spy();
+      this.doc.valuePropertyAt(['a', 'b']).onValue(cb);
+      sinon.assert.calledWith(cb, 'VAL');
+    });
+
+    it('gets initial value from opened doc', function () {
+      this.connectAndOpen({a: {b: 'VAL'}, sys: {}});
+      const cb = sinon.spy();
+      this.doc.valuePropertyAt(['a', 'b']).onValue(cb);
+      sinon.assert.calledWith(cb, 'VAL');
+    });
+
+    it('updates value when document is opened', function () {
+      const cb = sinon.spy();
+      this.doc.valuePropertyAt(['a', 'b']).onValue(cb);
+      cb.reset();
+
+      this.connectAndOpen({a: {b: 'VAL'}, sys: {}});
+      sinon.assert.calledWith(cb, 'VAL');
+    });
+
+    it('update value when "change" event is emitted with affected path', function () {
+      const paths = [
+        [],
+        ['foo'],
+        ['foo', 'bar'],
+        ['foo', 'bar', 'x'],
+        ['foo', 'bar', 'x', 'y']
+      ];
+      const doc = this.connectAndOpen({foo: {bar: false}, sys: {}});
+      const cb = sinon.spy();
+      this.doc.valuePropertyAt(['foo', 'bar']).onValue(cb);
+
+      paths.forEach(function (path, i) {
+        doc.setAt(['foo', 'bar'], i);
+        cb.reset();
+        doc.emit('change', [{p: path}]);
+        sinon.assert.calledWith(cb, i);
+      });
+    });
+
+    it('does not update value when path is not affected', function () {
+      const paths = [
+        ['x'],
+        ['foo', 'x'],
+        ['x', 'bar'],
+        ['x', 'bar', 'y']
+      ];
+      const doc = this.connectAndOpen();
+      const cb = sinon.spy();
+      this.doc.valuePropertyAt(['foo', 'bar']).onValue(cb);
+      cb.reset();
+
+      paths.forEach(function (path, i) {
+        doc.emit('change', [{p: path}]);
+        sinon.assert.notCalled(cb, i);
+      });
+    });
+  });
+
+  describe('#sysProperty', function () {
+    it('holds entity.data.sys as initial value', function () {
+      this.entity.data.sys = 'SYS';
+      var cb = sinon.spy();
+      this.doc.sysProperty.onValue(cb);
+      sinon.assert.calledWith(cb, 'SYS');
+    });
+
+    it('updates value when "acknowledge" event is emitted on doc', function () {
+      var doc = this.connectAndOpen();
+      var cb = sinon.spy();
+      this.doc.sysProperty.onValue(cb);
+      cb.reset();
+
+      this.entity.data.sys.id = 'NEW ID';
+      doc.emit('acknowledge');
+      this.$apply();
+
+      sinon.assert.calledWith(cb, sinon.match({id: 'NEW ID'}));
+    });
+
+    it('updates value when document is opened', function () {
+      var cb = sinon.spy();
+      this.doc.sysProperty.onValue(cb);
+      cb.reset();
+
+      this.connectAndOpen({sys: {id: 'NEW ID'}});
+      sinon.assert.calledWith(cb, sinon.match({id: 'NEW ID'}));
+    });
+  });
+
+  describe('#state.saving', function () {
+    it('is false if there is no document initially', function () {
+      expect(this.doc.state.saving).toBe(false);
+    });
+
+    it('changes to if document has inflight operation', function () {
+      this.otDoc = this.connectAndOpen();
+      expect(this.doc.state.saving).toBe(false);
+
+      this.otDoc.inflightOp = true;
+      this.otDoc.emit('change', []);
+      this.$apply();
+      expect(this.doc.state.saving).toBe(true);
+
+      this.otDoc.inflightOp = false;
+      this.otDoc.emit('acknowledge');
+      this.$apply();
+      expect(this.doc.state.saving).toBe(false);
+    });
+  });
+
+  function itRejectsWithoutDocument (method) {
+    it('rejects when document is not opened', function () {
+      this.doc.close();
+      var errored = sinon.stub();
+      this.doc[method]().catch(errored);
+      this.$apply();
+      sinon.assert.called(errored);
+    });
+  }
+
+  describe('#state.isDirty', function () {
+    beforeEach(function () {
+      this.otDoc = this.connectAndOpen();
+      this.docUpdate = function (path, value) {
+        this.otDoc.setAt(path, value);
+        this.otDoc.version++;
+        this.otDoc.emit('change', [{p: path}]);
+        this.$apply();
+      };
+      this.isDirtyValues = K.extractValues(this.doc.state.isDirty);
+    });
+
+    it('changes to false if document is at published version', function () {
+      expect(this.isDirtyValues[0]).toBe(true);
+
+      this.otDoc.version = 12;
+      this.docUpdate(['sys', 'publishedVersion'], 12);
+      expect(this.isDirtyValues[0]).toBe(false);
+    });
+
+    it('changes to true if a published document is changed', function () {
+      this.otDoc.version = 12;
+      this.docUpdate(['sys', 'publishedVersion'], 12);
+      expect(this.isDirtyValues[0]).toBe(false);
+
+      this.docUpdate(['fields'], {});
+      expect(this.isDirtyValues[0]).toBe(true);
+    });
+
+    it('changes to true if a document is unpublishd', function () {
+      this.otDoc.version = 12;
+      this.docUpdate(['sys', 'publishedVersion'], 12);
+      expect(this.isDirtyValues[0]).toBe(false);
+
+      this.docUpdate(['sys', 'publishedVersion'], undefined);
+      expect(this.isDirtyValues[0]).toBe(true);
     });
   });
 });

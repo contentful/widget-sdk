@@ -13,7 +13,7 @@ describe('cfSingleLineEditor directive', function () {
     });
 
     this.fieldApi = widgetApi.field;
-    this.setString = widgetApi.field.setString;
+    this.setValue = widgetApi.field.setValue;
 
     this.compileElement = function (validations, fieldType) {
       widgetApi.field.validations = validations;
@@ -37,11 +37,11 @@ describe('cfSingleLineEditor directive', function () {
     expect($el.children('input').val()).toEqual('test');
   });
 
-  it('input event on text field calls changeString (via setString)', function () {
+  it('input event on text field calls changeString', function () {
     var $el = this.compileElement();
 
     $el.children('input').trigger('input', 'what');
-    sinon.assert.calledOnce(this.setString);
+    sinon.assert.calledOnce(this.setValue);
   });
 
   it('counts characters correctly', function () {

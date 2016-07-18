@@ -36,12 +36,7 @@ describe('spaceContext', function () {
       Widgets = this.$inject('widgets');
       Widgets.setSpace = sinon.stub().defers();
 
-      SPACE = {
-        endpoint: sinon.stub().returns({
-          get: sinon.stub().rejects()
-        }),
-        getId: sinon.stub().returns('SPACE_ID')
-      };
+      SPACE = makeSpaceMock();
       sinon.stub(this.spaceContext, 'refreshContentTypes');
       this.spaceContext.contentTypes = [{}];
       result = this.spaceContext.resetWithSpace(SPACE);
@@ -130,7 +125,7 @@ describe('spaceContext', function () {
         expect(this.spaceContext.getData('x.y.z', obj)).toBe(obj);
       });
 
-      it ('returns value if a path is correct', function () {
+      it('returns value if a path is correct', function () {
         var obj = {};
         space.data.x = {y: {z: obj}};
         expect(this.spaceContext.getData('x.y.z')).toBe(obj);
@@ -187,7 +182,7 @@ describe('spaceContext', function () {
             $timeout.flush();
           }.bind(this);
 
-          this.removeSecondCt =  function () {
+          this.removeSecondCt = function () {
             this.spaceContext.unregisterPublishedContentType(contentTypes[1]);
             var slice = contentTypes.slice(0, 1);
             getContentTypes.resolves(slice);
@@ -359,7 +354,7 @@ describe('spaceContext', function () {
           beforeEach(function () {
             asset = cfStub.asset(space, 'asset1', {
               title: {
-               'en-US': 'the title'
+                'en-US': 'the title'
               }
             });
           });
@@ -496,12 +491,12 @@ describe('spaceContext', function () {
 
     });
 
-    describe('getting display field for a given type', function() {
-      beforeEach(function() {
+    describe('getting display field for a given type', function () {
+      beforeEach(function () {
         this.spaceContext.getPublishedContentType = sinon.stub();
       });
 
-      it('returns the field', function() {
+      it('returns the field', function () {
         var field = {id: 'name'};
         this.spaceContext.getPublishedContentType.returns({
           data: {
@@ -512,7 +507,7 @@ describe('spaceContext', function () {
         expect(this.spaceContext.displayFieldForType('type')).toBe(field);
       });
 
-      it('returns nothing', function() {
+      it('returns nothing', function () {
         var field = {id: 'name'};
         this.spaceContext.getPublishedContentType.returns({
           data: {
@@ -557,7 +552,7 @@ describe('spaceContext', function () {
     it('should mark a published type as not missing after retrieval', function () {
       this.spaceContext._publishedContentTypeIsMissing['foo'] = true;
       var ctsPromise = $q.resolve([{
-        getName: function(){return '';},
+        getName: function () { return ''; },
         getId: function () { return 'foo'; },
         isDeleted: sinon.stub().returns(false),
         data: { sys: {id: 'foo'} }
@@ -660,7 +655,7 @@ describe('spaceContext', function () {
         var fields = [];
         const val = this.spaceContext.findLocalizedField(
           this.entry, function (field) {
-            fields.push(field)
+            fields.push(field);
           });
 
         expect(fields).toEqual(this.fields);
@@ -761,5 +756,40 @@ describe('spaceContext', function () {
       });
     });
   });
+
+  describe('#docConnection', function () {
+    beforeEach(function () {
+      const ShareJSConnection = this.$inject('data/ShareJS/Connection');
+      this.createConnection = ShareJSConnection.create = sinon.stub();
+    });
+
+    it('is created on resetSpace', function () {
+      this.spaceContext.resetWithSpace(makeSpaceMock());
+      sinon.assert.calledOnce(this.createConnection);
+    });
+
+    it('is closed on resetSpace', function () {
+      const close = sinon.stub();
+      this.spaceContext.docConnection = {close};
+      this.spaceContext.resetWithSpace(makeSpaceMock());
+      sinon.assert.calledOnce(close);
+    });
+
+    it('is closed on purge', function () {
+      const close = sinon.stub();
+      this.spaceContext.docConnection = {close};
+      this.spaceContext.purge();
+      sinon.assert.calledOnce(close);
+    });
+  });
+
+  function makeSpaceMock () {
+    return {
+      endpoint: sinon.stub().returns({
+        get: sinon.stub().rejects()
+      }),
+      getId: sinon.stub().returns('SPACE_ID')
+    };
+  }
 
 });

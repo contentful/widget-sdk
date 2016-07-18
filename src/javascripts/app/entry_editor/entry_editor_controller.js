@@ -1,15 +1,15 @@
 'use strict';
 
 angular.module('contentful')
-.controller('EntryEditorController', ['$scope', '$injector', function EntryEditorController ($scope, $injector) {
-  var $controller = $injector.get('$controller');
-  var spaceContext = $injector.get('spaceContext');
-  var notifier = $injector.get('entryEditor/notifications');
-  var truncate = $injector.get('stringUtils').truncate;
-  var accessChecker = $injector.get('accessChecker');
-  var ShareJS = $injector.get('ShareJS');
-  var DataFields = $injector.get('EntityEditor/DataFields');
-  var ContentTypes = $injector.get('data/ContentTypes');
+.controller('EntryEditorController', ['$scope', 'require', function EntryEditorController ($scope, require) {
+  var $controller = require('$controller');
+  var spaceContext = require('spaceContext');
+  var notifier = require('entryEditor/notifications');
+  var truncate = require('stringUtils').truncate;
+  var accessChecker = require('accessChecker');
+  var DataFields = require('EntityEditor/DataFields');
+  var ContentTypes = require('data/ContentTypes');
+  var K = require('utils/kefir');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
@@ -38,7 +38,8 @@ angular.module('contentful')
   // TODO rename the scope property
   $scope.otDoc = $controller('entityEditor/Document', {
     $scope: $scope,
-    entity: $scope.entity
+    entity: $scope.entity,
+    contentType: $scope.contentType
   });
 
   $controller('entityEditor/FieldAccessController', {$scope: $scope});
@@ -50,19 +51,8 @@ angular.module('contentful')
     $scope.title = truncate(title, 50);
   });
 
-
-  $scope.$watch(function (scope) {
-    if (scope.otDoc.doc && scope.entry) {
-      if (angular.isDefined(scope.entry.getPublishedVersion())) {
-        return scope.otDoc.doc.version > scope.entry.getPublishedVersion() + 1;
-      } else {
-        return 'draft';
-      }
-    } else {
-      return undefined;
-    }
-  }, function (modified, _old, scope) {
-    if (modified !== undefined) scope.context.dirty = modified;
+  K.onValueScope($scope, $scope.otDoc.state.isDirty, function (isDirty) {
+    $scope.context.dirty = isDirty;
   });
 
   // OT Stuff
@@ -80,12 +70,12 @@ angular.module('contentful')
     if (publishedVersion > oldVersion) scope.validate();
   });
 
-  var firstValidate = $scope.$on('otBecameEditable', function (event) {
-    var scope = event.currentScope;
-    if (!_.isEmpty(scope.entry.data.fields)) scope.validate();
-    firstValidate();
-    firstValidate = null;
+  // We cannot call the method immediately since the directive is only
+  // added to the scope afterwards
+  $scope.$applyAsync(function () {
+    if (!_.isEmpty($scope.entry.data.fields)) $scope.validate();
   });
+
 
   // Building the form
   $controller('FormWidgetsController', {
@@ -94,11 +84,6 @@ angular.module('contentful')
     controls: $scope.formControls
   });
 
-  $scope.$watch('otDoc.doc', function (doc) {
-    if (doc) {
-      cleanSnapshot($scope.entry.data, doc);
-    }
-  });
 
   $scope.$watch('entry.data.fields', function (fields) {
     if (!fields) {
@@ -114,25 +99,9 @@ angular.module('contentful')
    */
   var contentTypeData = $scope.contentType.data;
   var fields = contentTypeData.fields;
-  $scope.fields = DataFields.create(fields, $scope);
+  $scope.fields = DataFields.create(fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);
 
-  /**
-   * Makes sure that the snapshot of the OT doc looks like the object
-   * we get from the CMA. In particular each field should be undefined
-   * or an object that maps locales to values.
-   *
-   * TODO It is unclear if this is necessary. There might be some
-   * corrupt data where a field is not an object.
-   */
-  function cleanSnapshot (entryData, doc) {
-    _.forEach(entryData.fields, function (_field, id) {
-      var docField = ShareJS.peek(doc, ['fields', id]);
-      if (!_.isObject(docField)) {
-        ShareJS.setDeep(doc, ['fields', id], {});
-      }
-    });
-  }
 
   /**
    * TODO This is way to complicated: We should only care about the

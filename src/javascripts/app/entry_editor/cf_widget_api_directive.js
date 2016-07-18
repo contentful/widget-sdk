@@ -34,11 +34,12 @@ angular.module('contentful')
 .controller('WidgetApiController', ['$scope', '$injector', function ($scope, $injector) {
   var newSignal = $injector.get('signal').createMemoized;
   var TheLocaleStore = $injector.get('TheLocaleStore');
+  var K = $injector.get('utils/kefir');
   var spaceContext = $injector.get('spaceContext');
   var EntityHelpers = $injector.get('EntityHelpers');
   var goToEntityEditor = $injector.get('goToEntityEditor');
 
-  var fieldLocaleDoc = $scope.otSubDoc;
+  var fieldLocale = $scope.fieldLocale;
   var isDisabledSignal = newSignal(isEditingDisabled());
   var schemaErrorsSignal = newSignal(null);
   var ctField = $scope.widget.field;
@@ -86,15 +87,15 @@ angular.module('contentful')
     onDisabledStatusChanged: isDisabledSignal.attach,
     onSchemaErrorsChanged: schemaErrorsSignal.attach,
     setInvalid: setInvalid,
-
-    onValueChanged: fieldLocaleDoc.onValueChanged,
-    getValue: fieldLocaleDoc.get,
-    setValue: fieldLocaleDoc.set,
-    setString: fieldLocaleDoc.setString,
-    removeValue: fieldLocaleDoc.remove,
-    removeValueAt: fieldLocaleDoc.removeAt,
-    insertValue: fieldLocaleDoc.insert,
-    pushValue: fieldLocaleDoc.push,
+    onValueChanged: function (cb) {
+      return K.onValue(fieldLocale.doc.valueProperty, cb);
+    },
+    getValue: fieldLocale.doc.get,
+    setValue: fieldLocale.doc.set,
+    removeValue: fieldLocale.doc.remove,
+    removeValueAt: fieldLocale.doc.removeAt,
+    insertValue: fieldLocale.doc.insert,
+    pushValue: fieldLocale.doc.push,
 
     id: ctField.apiName, // we only want to expose the public ID
     locale: $scope.locale.code,
@@ -122,7 +123,7 @@ angular.module('contentful')
   };
 
   function isEditingDisabled () {
-    return $scope.fieldLocale.access.disabled;
+    return fieldLocale.access.disabled;
   }
 
   function getDefaultLocaleCode () {

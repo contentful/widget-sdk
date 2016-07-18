@@ -32,6 +32,7 @@ angular.module('contentful')
   var createEIRepo = $injector.get('data/editingInterfaces');
   var createQueue = $injector.get('overridingRequestQueue');
   var ApiClient = $injector.get('data/ApiClient');
+  var ShareJSConnection = $injector.get('data/ShareJS/Connection');
 
   var requestContentTypes = createQueue(function (extraHandler) {
     return spaceContext.space.getContentTypes({order: 'name', limit: 1000})
@@ -93,6 +94,13 @@ angular.module('contentful')
       self.cma = new ApiClient(endpoint);
       self.users = createUserCache(space);
       self.editingInterfaces = createEIRepo(endpoint);
+
+      self.docConnection = ShareJSConnection.create(
+        authentication.token,
+        environment.settings.ot_host,
+        space.getId()
+      );
+
       TheLocaleStore.resetWithSpace(space);
       return Widgets.setSpace(space).then(function (widgets) {
         self.widgets = widgets;
@@ -550,6 +558,10 @@ angular.module('contentful')
     spaceContext._publishedContentTypeIsMissing = {};
     spaceContext.users = null;
     spaceContext.widgets = null;
+    if (spaceContext.docConnection) {
+      spaceContext.docConnection.close();
+      spaceContext.docConnection = null;
+    }
   }
 
 }]);

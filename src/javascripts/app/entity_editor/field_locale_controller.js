@@ -18,8 +18,9 @@ angular.module('contentful')
  * @scope.requires validationResult
  * @scope.requires docPresence
  */
-.controller('FieldLocaleController', ['$injector', '$scope', function ($injector, $scope) {
-  var accessChecker = $injector.get('accessChecker');
+.controller('FieldLocaleController', ['require', '$scope', function (require, $scope) {
+  var accessChecker = require('accessChecker');
+  var FieldLocaleDoc = require('entityEditor/FieldLocaleDocument');
 
   var controller = this;
   var field = $scope.field;
@@ -33,6 +34,11 @@ angular.module('contentful')
   var EDITING_DISABLED = {editing_disabled: true, disabled: true};
   var EDITABLE = {editable: true};
   var DISCONNECTED = {disconnected: true, disabled: true};
+
+  controller.doc = FieldLocaleDoc.create($scope.otDoc, field.id, locale.internal_code);
+
+  // TODO remove this alias once it is not used by the reference editor anymore
+  $scope.otSubDoc = controller.doc;
 
   /**
    * @ngdoc property

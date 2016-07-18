@@ -30,7 +30,6 @@ angular.module('contentful')
     restrict: 'E',
     template: '<iframe style="width:100%" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe>',
     link: function (scope, element) {
-      var ShareJS = $injector.get('ShareJS');
       var fieldFactory = $injector.get('fieldFactory');
       var spaceContext = $injector.get('spaceContext');
       var $q = $injector.get('$q');
@@ -39,7 +38,9 @@ angular.module('contentful')
       var iframe = $iframe.get(0);
       var WidgetAPI = $injector.get('widgets/API');
       var Widgets = $injector.get('widgets');
+      var K = $injector.get('utils/kefir');
 
+      var doc = scope.otDoc;
       var descriptor = Widgets.get(scope.widget.widgetId);
       var fields = scope.contentType.data.fields;
       var fieldsById = _.transform(fields, function (fieldsById, field) {
@@ -58,14 +59,14 @@ angular.module('contentful')
       widgetAPI.registerHandler('setValue', function (apiName, localeCode, value) {
         var path = widgetAPI.buildDocPath(apiName, localeCode);
 
-        return scope.otDoc.setValueAt(path, value)
+        return doc.setValueAt(path, value)
         .catch(makeErrorHandler(ERRORS.codes.EBADUPDATE, ERRORS.messages.MFAILUPDATE));
       });
 
       widgetAPI.registerHandler('removeValue', function (apiName, localeCode) {
         var path = widgetAPI.buildDocPath(apiName, localeCode);
 
-        return scope.otDoc.removeValueAt(path)
+        return doc.removeValueAt(path)
         .catch(makeErrorHandler(ERRORS.codes.EBADUPDATE, ERRORS.messages.MFAILREMOVAL));
       });
 
@@ -106,22 +107,16 @@ angular.module('contentful')
         }
       }
 
-      scope.$watch('entry.data.sys', function (sys) {
+      K.onValueScope(scope, doc.sysProperty, function (sys) {
         widgetAPI.send('sysChanged', [sys]);
-      }, true);
-
-      scope.$on('otDocReady', function (_ev, doc) {
-        updateWidgetFields(doc);
       });
 
-      scope.$on('otChange', function (ev, doc, ops) {
-        var paths = _.map(ops, 'p');
-        paths = _.filter(paths, function (path) {
-          return path[0] === 'fields';
-        });
-        _.each(paths, function (path) {
-          updateWidgetValue(doc, path[1], path[2]);
-        });
+      var fieldChanges = doc.changes.filter(function (path) {
+        return path[0] === 'fields';
+      });
+
+      K.onValueScope(scope, fieldChanges, function (path) {
+        updateWidgetValue(path[1], path[2]);
       });
 
       // Send a message when the disabled status of the field changes
@@ -144,35 +139,31 @@ angular.module('contentful')
        * Similarly, if `fieldId` is not given it sends an update for
        * every field and locale.
        */
-      function updateWidgetValue (doc, fieldId, locale) {
+      function updateWidgetValue (fieldId, locale) {
         if (!fieldId) {
-          updateWidgetFields(doc);
-          return;
+          updateWidgetFields();
+        } else if (!locale) {
+          updateWidgetLocales(fieldId);
+        } else {
+          updateWidgetLocaleValue(fieldId, locale);
         }
-
-        if (!locale) {
-          updateWidgetLocales(doc, fieldId);
-          return;
-        }
-
-        updateWidgetLocaleValue(doc, fieldId, locale);
       }
 
-      function updateWidgetFields (doc) {
+      function updateWidgetFields () {
         _.forEach(fields, function (field) {
-          updateWidgetLocales(doc, field.id);
+          updateWidgetLocales(field.id);
         });
       }
 
-      function updateWidgetLocales (doc, fieldId) {
+      function updateWidgetLocales (fieldId) {
         var locales = fieldFactory.getLocaleCodes(fieldsById[fieldId]);
         _.forEach(locales, function (locale) {
-          updateWidgetLocaleValue(doc, fieldId, locale);
+          updateWidgetLocaleValue(fieldId, locale);
         });
       }
 
-      function updateWidgetLocaleValue (doc, fieldId, locale) {
-        var value = ShareJS.peek(doc, ['fields', fieldId, locale]);
+      function updateWidgetLocaleValue (fieldId, locale) {
+        var value = doc.getValueAt(['fields', fieldId, locale]);
         widgetAPI.sendFieldValueChange(fieldId, locale, value);
       }
     }
