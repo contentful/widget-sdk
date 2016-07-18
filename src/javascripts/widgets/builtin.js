@@ -200,56 +200,49 @@ angular.module('contentful')
     fieldTypes: ['Entry'],
     name: 'Entry link',
     icon: 'reference',
-    rendersHelpText: true,
-    template: '<div cf-entry-link-editor cf-link-editor ng-model="fieldData.value"></div>'
+    template: '<cf-reference-editor type="Entry" variant="link" single="true" />'
   });
 
   registerWidget('assetLinkEditor', {
     fieldTypes: ['Asset'],
     name: 'Asset link',
     icon: 'media-reference',
-    rendersHelpText: true,
-    template: '<div cf-asset-link-editor cf-link-editor ng-model="fieldData.value"></div>'
+    template: '<cf-reference-editor type="Asset" variant="card" single="true" />'
   });
 
   registerWidget('entryLinksEditor', {
     fieldTypes: ['Entries'],
     name: 'Entry links list',
     icon: 'references',
-    rendersHelpText: true,
-    template: '<div cf-entry-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
+    template: '<cf-reference-editor type="Entry" variant="link" />'
   });
 
   registerWidget('entryCardEditor', {
     fieldTypes: ['Entry'],
     name: 'Entry card',
     icon: 'reference-card',
-    rendersHelpText: true,
-    template: '<div cf-entry-card-editor cf-link-editor ng-model="fieldData.value"></div>'
+    template: '<cf-reference-editor type="Entry" variant="card" single="true" />'
   });
 
   registerWidget('entryCardsEditor', {
     fieldTypes: ['Entries'],
     name: 'Entry cards',
     icon: 'references-card',
-    rendersHelpText: true,
-    template: '<div cf-entry-card-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
+    template: '<cf-reference-editor type="Entry" variant="card" />'
   });
 
   registerWidget('assetLinksEditor', {
     fieldTypes: ['Assets'],
     name: 'Asset links list',
     icon: 'media-references',
-    rendersHelpText: true,
-    template: '<div cf-asset-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
+    template: '<cf-reference-editor type="Asset" variant="link" />'
   });
 
   registerWidget('assetGalleryEditor', {
     fieldTypes: ['Assets'],
     name: 'Asset gallery',
     icon: 'media-previews',
-    rendersHelpText: true,
-    template: '<div cf-asset-gallery-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
+    template: '<cf-reference-editor type="Asset" variant="card" />'
   });
 
   registerWidget('slugEditor', {
