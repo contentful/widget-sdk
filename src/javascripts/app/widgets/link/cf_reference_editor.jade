@@ -1,4 +1,12 @@
-.link-editor(ng-class="{'x--contains-asset-cards': isAssetCard}")
+div(ng-show="!isReady")
+  .loading-box(style="height: 50px")
+    .loading-box__spinner
+    .loading-box__message
+      | Initializing reference editor
+
+.link-editor(
+  ng-show="isReady"
+  ng-class="{'x--contains-asset-cards': isAssetCard}")
   ol.link-editor__links(cf-ui-sortable ng-model="links")
     li.link-editor__link(ng-repeat="item in links")
 
