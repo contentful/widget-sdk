@@ -39,6 +39,10 @@ function ($scope, $injector, entity, contentType) {
   // string diff.
   var STRING_FIELD_TYPES = ['Symbol', 'Text'];
 
+  // Set to true if scope is destroyed to cancel the handler for the
+  // document open promise.
+  var isDestroyed = false;
+
   var shouldOpen = false;
 
   controller.state = {
@@ -207,6 +211,7 @@ function ($scope, $injector, entity, contentType) {
   });
 
   $scope.$on('$destroy', function () {
+    isDestroyed = true;
     setDoc(undefined);
   });
 
@@ -317,7 +322,7 @@ function ($scope, $injector, entity, contentType) {
   }
 
   function shouldOpenDoc () {
-    return spaceContext.docConnection.canOpen() && shouldOpen;
+    return spaceContext.docConnection.canOpen() && shouldOpen && !isDestroyed;
   }
 
   function openDoc () {
