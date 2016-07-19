@@ -46,10 +46,10 @@ angular.module('cf.utils')
 
     var stream = Kefir.stream(function (emitter) {
       currentEmitter = emitter;
-      return function () {
-        currentEmitter = null;
-      };
     });
+
+    // We activate the stream so that `currentEmitter` gets assigned.
+    stream.onValue(_.noop);
 
     if (scope) {
       scope.$on('$destroy', end);
@@ -62,16 +62,11 @@ angular.module('cf.utils')
     };
 
     function emit (value) {
-      if (currentEmitter) {
-        currentEmitter.emit(value);
-      }
+      currentEmitter.emit(value);
     }
 
     function end () {
-      if (currentEmitter) {
-        currentEmitter.end();
-        currentEmitter = null;
-      }
+      currentEmitter.end();
     }
   }
 
@@ -102,23 +97,19 @@ angular.module('cf.utils')
    * @returns {utils/kefir.PropertyBus}
    */
   function createPropertyBus (initialValue, scope) {
-    var currentValue = initialValue;
     var streamBus = createBus(scope);
 
-    var property = streamBus.stream.toProperty(function () {
-      return currentValue;
-    });
+    var property = streamBus.stream.toProperty();
+
+    // We activate the property so that we can start setting its value
+    property.onValue(_.noop);
+    streamBus.emit(initialValue);
 
     return {
       property: property,
       end: streamBus.end,
-      set: set
+      set: streamBus.emit
     };
-
-    function set (value) {
-      currentValue = value;
-      streamBus.emit(value);
-    }
   }
 
 
@@ -136,7 +127,7 @@ angular.module('cf.utils')
    * - The callback is wrapped in `scope.$applyAsync()`
    *
    * @param {Scope} scope
-   * @param {Stream} stream
+   * @param {Observable} observable
    * @param {function} cb
    *
    * @returns {function}
@@ -160,7 +151,7 @@ angular.module('cf.utils')
    * `K.onValue(stream, cb)` is similar to `stream.onValue(cb)` but the
    * former returns a function that, when called, removes the listener.
    *
-   * @param {Stream} stream
+   * @param {Observable} observable
    * @param {function} cb
    *
    * @returns {function}
