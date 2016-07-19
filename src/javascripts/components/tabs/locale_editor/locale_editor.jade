@@ -17,36 +17,49 @@ header.workbench-header
 
 .workbench-main.x--content
   form.workbench-main__middle-content(name="localeForm" submit="save()")
-    .cfnext-form__field
-      label Locale and code
-      select.cfnext-select-box(
-        ng-model="locale.data.code"
-        ng-options="item.code as (item.name + ' (' + item.code + ')') for item in locales")
-        | Locale
-        option(value="") Select a locale
+    .locale-editor
+      h1.locale-editor__group-title Locale
+      .locale-editor__group
+        .locale-editor__setting
+          select.cfnext-select-box(
+            ng-model="locale.data.code"
+            ng-options="item.code as (item.name + ' (' + item.code + ')') for item in locales")
+            | Locale
+            option(value="") Select a locale
 
-    .cfnext-form__field(ng-if="!locale.isDefault() && fallbackLocales.length > 0")
-      label Fallback locale
-      select.cfnext-select-box(
-        ng-model="locale.data.fallbackCode"
-        ng-options="item.code as (item.name + ' (' + item.code + ')') for item in fallbackLocales")
-        | Fallback locale
-        option(value="") Select a fallback
+        .locale-editor__setting(ng-if="!locale.isDefault() && fallbackLocales.length > 0")
+          h2 Fallback locale
+          p
+            | If no content is provided for the locale above, the Delivery API
+            |  will return content in a locale specified below:
 
-    .cfnext-form__fieldset
-      legend Options
-      .cfnext-form-option
-        input(id="cda" type="checkbox" ng-model="locale.data.contentDeliveryApi" ng-disabled="locale.data.default")
-        div.cfnext-form-option__desc
-          label(for="cda") Enable this locale in response
-          p Includes locale in the Delivery API response
-      .cfnext-form-option
-        input(id="cma" type="checkbox" ng-model="locale.data.contentManagementApi" ng-disabled="locale.data.default")
-        div.cfnext-form-option__desc
-          label(for="cma") Enable editing for this locale
-          p Displays locale to editors and enables it in Management API
-      .cfnext-form-option
-        input(id="optional" type="checkbox" ng-model="locale.data.optional" ng-disabled="locale.data.default")
-        div.cfnext-form-option__desc
-          label(for="optional") Allow empty fields for this locale
-          p Entries with required fields can still be published if locale is empty
+          select.cfnext-select-box(
+            ng-model="locale.data.fallbackCode"
+            ng-options="item.code as (item.name + ' (' + item.code + ')') for item in fallbackLocales")
+            | Fallback locale
+            option(value="") Select a fallback
+
+          .note-box.note-box--info
+            | If you have required fields in your content model, please
+            | <strong>enable empty required fields</strong>
+            | (there's a&nbsp;checkbox below). You need to do that because
+            | required fields can't be published when content in
+            | a&nbsp;certain locale is not provided.
+
+      h1.locale-editor__group-title Locale settings
+      .locale-editor__group
+        .cfnext-form-option
+          input(id="cda" type="checkbox" ng-model="locale.data.contentDeliveryApi" ng-disabled="locale.data.default")
+          div.cfnext-form-option__desc
+            label(for="cda") Enable this locale in response
+            p Includes locale in the Delivery API response
+        .cfnext-form-option
+          input(id="cma" type="checkbox" ng-model="locale.data.contentManagementApi" ng-disabled="locale.data.default")
+          div.cfnext-form-option__desc
+            label(for="cma") Enable editing for this locale
+            p Displays locale to editors and enables it in Management API
+        .cfnext-form-option
+          input(id="optional" type="checkbox" ng-model="locale.data.optional" ng-disabled="locale.data.default")
+          div.cfnext-form-option__desc
+            label(for="optional") Allow empty fields for this locale
+            p Entries with required fields can still be published if locale is empty
