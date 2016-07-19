@@ -79,7 +79,7 @@ describe('Locale editor controller', function () {
   });
 
   describe('#delete command succeeds', function () {
-    beforeEach(function() {
+    beforeEach(function () {
       this.scope.locale.delete.resolves();
     });
 
@@ -99,34 +99,34 @@ describe('Locale editor controller', function () {
         sinon.assert.calledWith(this.analytics.track, 'Clicked Delete Locale Button');
       });
 
-      it('sets form to submitted state', function() {
+      it('sets form to submitted state', function () {
         sinon.assert.called(this.scope.localeForm.$setSubmitted);
       });
 
-      it('closes the current state', function() {
+      it('closes the current state', function () {
         sinon.assert.calledOnce(this.closeStateSpy);
       });
     });
 
-    describe('with no confirmation', function() {
+    describe('with no confirmation', function () {
       beforeEach(function () {
         this.modalDialog.openConfirmDialog.resolves({});
         this.controller.delete.execute();
         this.$apply();
       });
 
-      it('does not delete locale', function() {
+      it('does not delete locale', function () {
         sinon.assert.notCalled(this.scope.locale.delete);
       });
 
-      it('sets form to submitted state', function() {
+      it('sets form to submitted state', function () {
         sinon.assert.called(this.scope.localeForm.$setSubmitted);
       });
     });
   });
 
   describe('#delete command failures', function () {
-    var error = { body: { message: 'errorMessage' }};
+    var error = { body: { message: 'errorMessage' } };
     beforeEach(function () {
       this.scope.localeForm.$dirty = true;
       this.scope.locale.delete.rejects(error);
@@ -147,22 +147,22 @@ describe('Locale editor controller', function () {
       sinon.assert.calledWith(this.analytics.track, 'Clicked Delete Locale Button');
     });
 
-    it('sets form to submitted state', function() {
+    it('sets form to submitted state', function () {
       sinon.assert.called(this.scope.localeForm.$setSubmitted);
     });
 
-    it('sets form back to pristine state', function() {
+    it('sets form back to pristine state', function () {
       sinon.assert.called(this.scope.localeForm.$setPristine);
     });
 
-    it('sets form back to dirty state if previously dirty', function() {
+    it('sets form back to dirty state if previously dirty', function () {
       sinon.assert.called(this.scope.localeForm.$setDirty);
     });
   });
 
   describe('#save command succeeds', function () {
 
-    describe('with unchanged code', function() {
+    describe('with unchanged code', function () {
       beforeEach(function () {
         this.controller.save.execute();
         this.$apply();
@@ -177,7 +177,7 @@ describe('Locale editor controller', function () {
         sinon.assert.called(this.scope.localeForm.$setPristine);
       });
 
-      it('refreshes locales', function() {
+      it('refreshes locales', function () {
         sinon.assert.called(this.TheLocaleStoreMock.refresh);
       });
 
@@ -185,57 +185,57 @@ describe('Locale editor controller', function () {
         sinon.assert.calledWith(this.analytics.track, 'Saved Successful Locale');
       });
 
-      it('sets form to submitted state', function() {
+      it('sets form to submitted state', function () {
         sinon.assert.called(this.scope.localeForm.$setSubmitted);
       });
 
-      it('sets form back to pristine state', function() {
+      it('sets form back to pristine state', function () {
         sinon.assert.called(this.scope.localeForm.$setPristine);
       });
     });
 
-    describe('with changed code', function() {
-      beforeEach(function() {
+    describe('with changed code', function () {
+      beforeEach(function () {
         this.scope.initialLocaleCode = 'en-US';
         this.scope.locale.data.code = 'en-UK';
       });
 
-      describe('with confirmation', function() {
-        beforeEach(function() {
+      describe('with confirmation', function () {
+        beforeEach(function () {
           this.modalDialog.openConfirmDialog.resolves({confirmed: true});
           this.controller.save.execute();
           this.$apply();
         });
 
-        it('saves locale', function() {
+        it('saves locale', function () {
           sinon.assert.called(this.scope.locale.save);
         });
 
-        it('sets form to submitted state', function() {
+        it('sets form to submitted state', function () {
           sinon.assert.called(this.scope.localeForm.$setSubmitted);
         });
 
-        it('sets form back to pristine state', function() {
+        it('sets form back to pristine state', function () {
           sinon.assert.called(this.scope.localeForm.$setPristine);
         });
       });
 
-      describe('with no confirmation', function() {
-        beforeEach(function() {
+      describe('with no confirmation', function () {
+        beforeEach(function () {
           this.modalDialog.openConfirmDialog.resolves({});
           this.controller.save.execute();
           this.$apply();
         });
 
-        it('saves locale', function() {
+        it('saves locale', function () {
           sinon.assert.notCalled(this.scope.locale.save);
         });
 
-        it('sets form to submitted state', function() {
+        it('sets form to submitted state', function () {
           sinon.assert.called(this.scope.localeForm.$setSubmitted);
         });
 
-        it('sets form back to pristine state', function() {
+        it('sets form back to pristine state', function () {
           sinon.assert.called(this.scope.localeForm.$setPristine);
         });
       });
@@ -263,11 +263,11 @@ describe('Locale editor controller', function () {
       sinon.assert.calledWith(this.analytics.track, 'Saved Errored Locale');
     });
 
-    it('sets form to submitted state', function() {
+    it('sets form to submitted state', function () {
       sinon.assert.called(this.scope.localeForm.$setSubmitted);
     });
 
-    it('sets form back to dirty state', function() {
+    it('sets form back to dirty state', function () {
       sinon.assert.called(this.scope.localeForm.$setDirty);
     });
   });

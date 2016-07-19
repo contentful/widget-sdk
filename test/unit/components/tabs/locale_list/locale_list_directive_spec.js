@@ -57,23 +57,22 @@ describe('The Locale list directive', function () {
 
     this.scope = this.$inject('$rootScope').$new();
     this.scope.context = {};
-    this.scope.spaceContext = {
-      space: {
-        data: {
-          sys: {createdBy: {sys: {id: ''}}},
-          organization: {
-            usage: {permanent: {}},
-            subscriptionPlan: {
-              limits: {
-                features: {},
-                permanent: {}
-              }
+
+    this.$inject('spaceContext').space = this.space = {
+      data: {
+        sys: {createdBy: {sys: {id: ''}}},
+        organization: {
+          usage: {permanent: {}},
+          subscriptionPlan: {
+            limits: {
+              features: {},
+              permanent: {}
             }
           }
-        },
-        getLocales: sinon.stub().returns(this.$q.resolve(locales)),
-        getOrganizationId: sinon.stub().returns('id')
-      }
+        }
+      },
+      getLocales: sinon.stub().returns(this.$q.resolve(locales)),
+      getOrganizationId: sinon.stub().returns('id')
     };
 
     this.compileElement = function () {
@@ -93,9 +92,9 @@ describe('The Locale list directive', function () {
   });
 
   it('the tab header add button is shown', function () {
-    this.scope.spaceContext.space.data.organization.usage.permanent.locale = 1;
-    this.scope.spaceContext.space.data.organization.subscriptionPlan.limits.permanent.locale = 10;
-    this.scope.spaceContext.space.data.organization.subscriptionPlan.limits.features.multipleLocales = true;
+    this.space.data.organization.usage.permanent.locale = 1;
+    this.space.data.organization.subscriptionPlan.limits.permanent.locale = 10;
+    this.space.data.organization.subscriptionPlan.limits.features.multipleLocales = true;
     this.compileElement();
     expect(this.container.find('button.add-entity')).not.toBeNgHidden();
   });
@@ -116,18 +115,18 @@ describe('The Locale list directive', function () {
       });
 
       it('available via CDA', function () {
-        expect(this.tableCell.get(1).textContent).toMatch('Enabled');
-        expect(this.tableCell.get(6).textContent).toMatch('Disabled');
-      });
-
-      it('available via CMA', function () {
         expect(this.tableCell.get(2).textContent).toMatch('Enabled');
         expect(this.tableCell.get(7).textContent).toMatch('Disabled');
       });
 
+      it('available via CMA', function () {
+        expect(this.tableCell.get(3).textContent).toMatch('Enabled');
+        expect(this.tableCell.get(8).textContent).toMatch('Disabled');
+      });
+
       it('optional for publishing', function () {
-        expect(this.tableCell.get(3).textContent).toMatch('No');
-        expect(this.tableCell.get(8).textContent).toMatch('Yes');
+        expect(this.tableCell.get(4).textContent).toMatch('Content is required');
+        expect(this.tableCell.get(9).textContent).toMatch('Can be published empty');
       });
     });
   });

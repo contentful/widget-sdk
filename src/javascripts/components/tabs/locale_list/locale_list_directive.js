@@ -1,21 +1,38 @@
 'use strict';
 
 angular.module('contentful')
+.directive('cfLocaleList', [function () {
+  return {
+    template: JST.locale_list(),
+    restrict: 'A',
+    controller: 'LocaleListController'
+  };
+}])
 
-.controller('LocaleListController', ['$scope', '$injector', function ($scope, $injector) {
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var spaceContext = $injector.get('spaceContext');
+.controller('LocaleListController', ['$scope', 'require', function ($scope, require) {
+
+  var ReloadNotification = require('ReloadNotification');
+  var spaceContext = require('spaceContext');
+
+  var STATES = {
+    NO_MULTIPLE_LOCALES: 1,
+    ONE_LOCALE_USED: 2,
+    MORE_THAN_ONE_LOCALE_USED: 3,
+    LOCALES_LIMIT_REACHED: 4,
+    UNKNOWN: 5
+  };
+
+  _.extend($scope, STATES);
 
   var organizationId = spaceContext.space.getOrganizationId();
-  $scope.accountUpgradeState = 'account.pathSuffix({ pathSuffix: \'organizations/' +
-                               organizationId + '/subscription\' })';
+  var suffix = 'organizations/' + organizationId + '/subscription';
+  $scope.accountUpgradeState = 'account.pathSuffix({ pathSuffix: \'' + suffix + '\' })';
+
   $scope.locales = [];
   $scope.localeNamesByCode = {};
   $scope.localesUsageState = getLocalesUsageState();
-
-  $scope.getPlanLocalesUsage = getPlanLocalesUsage;
   $scope.getPlanLocalesLimit = getPlanLocalesLimit;
-  $scope.getSubscriptionPlan = getSubscriptionPlan;
+  $scope.getSubscriptionPlanName = _.partial(getSubscriptionPlanData, 'name');
 
   spaceContext.space.getLocales()
   .then(function (locales) {
@@ -33,50 +50,35 @@ angular.module('contentful')
   }
 
   function getLocalesUsageState () {
+    var len = $scope.locales.length;
+    var belowLimit = getPlanLocalesUsage() < getPlanLocalesLimit();
+
     if (!hasMultipleLocales()) {
-      return 'noMultipleLocales';
+      return STATES.NO_MULTIPLE_LOCALES;
+    } else if (belowLimit && len <= 1) {
+      return STATES.ONE_LOCALE_USED;
+    } else if (belowLimit && len > 1) {
+      return STATES.MORE_THAN_ONE_LOCALE_USED;
+    } else if (!belowLimit) {
+      return STATES.LOCALES_LIMIT_REACHED;
+    } else {
+      return STATES.UNKNOWN;
     }
-
-    var localesLength = $scope.locales.length;
-    if (localesLength <= 1 && getPlanLocalesUsage() < getPlanLocalesLimit()) {
-      return 'oneLocaleUsed';
-    }
-    if (localesLength > 1 && getPlanLocalesUsage() < getPlanLocalesLimit()) {
-      return 'moreThanOneLocaleUsed';
-    }
-    if (getPlanLocalesUsage() >= getPlanLocalesLimit()) {
-      return 'localesLimitReached';
-    }
-
-    return '';
   }
 
   function getPlanLocalesUsage () {
-    return dotty.get(getOrganization(), 'usage.permanent.locale');
+    return spaceContext.getData(['organization', 'usage', 'permanent', 'locale']);
   }
 
   function getPlanLocalesLimit () {
-    return dotty.get(getSubscriptionPlan(), 'limits.permanent.locale');
+    return getSubscriptionPlanData('limits.permanent.locale');
   }
 
   function hasMultipleLocales () {
-    return !!dotty.get(getSubscriptionPlan(), 'limits.features.multipleLocales');
+    return !!getSubscriptionPlanData('limits.features.multipleLocales');
   }
 
-  function getSubscriptionPlan () {
-    return dotty.get(getOrganization(), 'subscriptionPlan');
+  function getSubscriptionPlanData (path) {
+    return spaceContext.getData('organization.subscriptionPlan.' + path);
   }
-
-  function getOrganization () {
-    return dotty.get($scope, 'spaceContext.space.data.organization');
-  }
-
-}])
-
-.directive('cfLocaleList', function () {
-  return {
-    template: JST.locale_list(),
-    restrict: 'A',
-    controller: 'LocaleListController'
-  };
-});
+}]);

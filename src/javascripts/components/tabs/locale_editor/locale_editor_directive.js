@@ -1,41 +1,43 @@
 'use strict';
 
 angular.module('contentful')
-
-.directive('cfLocaleEditor', function () {
+.directive('cfLocaleEditor', [function () {
   return {
     template: JST.locale_editor(),
     restrict: 'E',
     controller: 'LocaleEditorController',
     controllerAs: 'localeEditor'
   };
-})
+}])
 
 /**
  * @ngdoc type
  * @name LocaleEditorController
  *
- * @scope.requires  context
- * @scope.requires  locale
- * @scope.requires  localeForm
+ * @scope.requires context
+ * @scope.requires locale
+ * @scope.requires spaceLocales
+ * @scope.requires localeForm
  *
- * @scope.provides  locales
+ * @scope.provides locales
+ * @scope.provides fallbackLocales
 */
-.controller('LocaleEditorController', ['$scope', '$injector', function ($scope, $injector) {
-  var controller       = this;
-  var localesList      = $injector.get('localesList');
-  var TheLocaleStore   = $injector.get('TheLocaleStore');
-  var notification     = $injector.get('notification');
-  var logger           = $injector.get('logger');
-  var $q               = $injector.get('$q');
-  var modalDialog      = $injector.get('modalDialog');
-  var tokenStore       = $injector.get('tokenStore');
-  var analytics        = $injector.get('analytics');
-  var Command          = $injector.get('command');
-  var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
-  var $state           = $injector.get('$state');
-  var spaceContext     = $injector.get('spaceContext');
-  var closeState       = $injector.get('navigation/closeState');
+.controller('LocaleEditorController', ['$scope', 'require', function ($scope, require) {
+
+  var controller = this;
+  var localesList = require('localesList');
+  var TheLocaleStore = require('TheLocaleStore');
+  var notification = require('notification');
+  var logger = require('logger');
+  var $q = require('$q');
+  var modalDialog = require('modalDialog');
+  var tokenStore = require('tokenStore');
+  var analytics = require('analytics');
+  var Command = require('command');
+  var leaveConfirmator = require('navigation/confirmLeaveEditor');
+  var $state = require('$state');
+  var spaceContext = require('spaceContext');
+  var closeState = require('navigation/closeState');
 
   var formWasDirty = false;
 
@@ -71,21 +73,22 @@ angular.module('contentful')
     }
   });
 
-  function startDeleteFlow() {
+  function startDeleteFlow () {
     lockFormWhileSubmitting();
     return modalDialog.openConfirmDialog({
       template: 'locale_removal_confirm_dialog',
       scope: $scope
     })
     .then(function (result) {
-      if(result.confirmed)
+      if (result.confirmed) {
         return deleteLocale();
-      else
+      } else {
         return resetFormStatusOnFailure();
+      }
     });
   }
 
-  function deleteLocale() {
+  function deleteLocale () {
     trackDelete();
     return $scope.locale.delete()
     .then(function deletedSuccesfully () {
@@ -130,11 +133,11 @@ angular.module('contentful')
     }
   });
 
-  function save() {
+  function save () {
     lockFormWhileSubmitting();
     return confirmCodeChange()
     .then(function (result) {
-      if(result.confirmed) {
+      if (result.confirmed) {
         return $scope.locale.save()
         .then(saveSuccessHandler)
         .catch(saveErrorHandler);
@@ -144,7 +147,7 @@ angular.module('contentful')
     });
   }
 
-  function saveSuccessHandler(response) {
+  function saveSuccessHandler (response) {
     $scope.localeForm.$setPristine();
     $scope.context.dirty = false;
     return tokenStore.refresh().then(function () {
@@ -159,7 +162,7 @@ angular.module('contentful')
     });
   }
 
-  function saveErrorHandler(err) {
+  function saveErrorHandler (err) {
     resetFormStatusOnFailure();
     var message = '';
     var status = dotty.get(err, 'statusCode');
@@ -171,7 +174,7 @@ angular.module('contentful')
     if (isTaken) {
       message = ': This locale already exists.';
     } else if (isNotRenameable) {
-      message = ': Cannot change the code of a locale which is fallback of another one';
+      message = ': Cannot change the code of a locale which is fallback of another one.';
     } else {
       logger.logServerWarn('Locale could not be saved', {error: err});
     }
@@ -180,8 +183,8 @@ angular.module('contentful')
     trackSave('Saved Errored Locale');
   }
 
-  function confirmCodeChange() {
-    if($scope.initialLocaleCode && $scope.initialLocaleCode !== $scope.locale.data.code){
+  function confirmCodeChange () {
+    if ($scope.initialLocaleCode && $scope.initialLocaleCode !== $scope.locale.data.code) {
       return modalDialog.openConfirmDialog({
         template: 'locale_code_change_confirm_dialog',
         scope: $scope
@@ -190,26 +193,28 @@ angular.module('contentful')
     return $q.resolve({confirmed: true});
   }
 
-  function findLocaleByCode(code) {
+  function findLocaleByCode (code) {
     return _.find($scope.locales, function (item) {
       return item.code === code;
     });
   }
 
-  function lockFormWhileSubmitting() {
+  function lockFormWhileSubmitting () {
     formWasDirty = $scope.localeForm.$dirty;
     $scope.localeForm.$setSubmitted();
   }
 
-  function resetFormStatusOnFailure() {
+  function resetFormStatusOnFailure () {
     $scope.localeForm.$setPristine();
-    if(formWasDirty) $scope.localeForm.$setDirty();
+    if (formWasDirty) {
+      $scope.localeForm.$setDirty();
+    }
   }
 
-  function updateLocaleName(code) {
+  function updateLocaleName (code) {
     if (code) {
       var locale = findLocaleByCode(code);
-      if(locale) {
+      if (locale) {
         $scope.locale.data.name = locale.name;
       }
     }
@@ -229,7 +234,7 @@ angular.module('contentful')
     });
   }
 
-  function updateInitialLocaleCode() {
+  function updateInitialLocaleCode () {
     $scope.initialLocaleCode = $scope.locale.data.code;
   }
 
@@ -238,7 +243,7 @@ angular.module('contentful')
    *
    * This accounts for user defined locales from before the predefined list of locales existed
   */
-  function addCurrentLocaleToList() {
+  function addCurrentLocaleToList () {
     if (!findLocaleByCode($scope.locale.getCode()) && !!$scope.locale.getId()) {
       $scope.locales.push({
         code: $scope.locale.getCode(),
@@ -247,31 +252,30 @@ angular.module('contentful')
     }
   }
 
-  function trackSave(message) {
+  function trackSave (message) {
     var locale = $scope.locale;
     analytics.track(message, {
       subscriptionPlan: getSubscriptionPlanName(),
-      locale:         locale.getName(),
-      saveFrequency:    locale.getVersion() ? 'return save' : 'first time save',
-      editing:          getEnabledState(locale.data.contentManagementApi),
-      publishing:       getEnabledState(locale.data.contentDeliveryApi),
-      defaultLocale:    getEnabledState(locale.isDefault())
+      locale: locale.getName(),
+      saveFrequency: locale.getVersion() ? 'return save' : 'first time save',
+      editing: getEnabledState(locale.data.contentManagementApi),
+      publishing: getEnabledState(locale.data.contentDeliveryApi),
+      defaultLocale: getEnabledState(locale.isDefault())
     });
   }
 
-  function getEnabledState(state) {
+  function getEnabledState (state) {
     return state ? 'return save' : 'first time save';
   }
 
-  function trackDelete() {
+  function trackDelete () {
     analytics.track('Clicked Delete Locale Button', {
       subscriptionPlan: getSubscriptionPlanName(),
       locale: $scope.locale.getName()
     });
   }
 
-  function getSubscriptionPlanName() {
-    return spaceContext.space.data.organization.subscriptionPlan.name;
+  function getSubscriptionPlanName () {
+    return spaceContext.getData('organization.subscriptionPlan.name');
   }
-
 }]);
