@@ -172,9 +172,7 @@ angular.module('contentful')
     return _.find(orgs, filter);
 
     function filter (organization) {
-      var organizationId = dotty.get(organization, 'sys.id');
-      return organizationId &&
-        OrganizationList.isOwnerOrAdmin(organizationId) &&
+      return OrganizationList.isOwnerOrAdmin(organization) &&
         (organization.subscriptionState === state || state === '*');
     }
   }

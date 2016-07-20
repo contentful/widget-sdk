@@ -25,19 +25,19 @@ angular.module('contentful').factory('OrganizationList', function () {
     /**
      * @ngdoc method
      * @name OrganizationList#isAdmin
-     * @param {string} id
+     * @param {object} organization
      * @returns {boolean}
      * @description
-     * Checks if user is an admin of organization with a given ID.
+     * Checks if user is an admin of a given organization.
      */
     isAdmin: isAdmin,
     /**
      * @ngdoc method
      * @name OrganizationList#isOwner
-     * @param {string} id
+     * @param {object} organization
      * @returns {boolean}
      * @description
-     * Checks if user is an owner of organization with a given ID.
+     * Checks if user is an owner of a given organization.
      */
     isOwner: isOwner,
     isOwnerOrAdmin: isOwnerOrAdmin
@@ -106,17 +106,18 @@ angular.module('contentful').factory('OrganizationList', function () {
   /**
    * @ngdoc method
    * @name OrganizationList#isOwnerOrAdmin
-   * @param {string} id
+   * @param {object} organization
    * @description
    * Checks if the user is an owner or admin of the organization with the given ID.
    */
-  function isOwnerOrAdmin (id) {
-    return isOwner(id) || isAdmin(id);
+  function isOwnerOrAdmin (organization) {
+    return isOwner(organization) || isAdmin(organization);
   }
 
 
   function createRoleChecker (role) {
-    return function checkRole (id) {
+    return function checkRole (organization) {
+      var id = dotty.get(organization, 'sys.id');
       var memberships = dotty.get(currentUser, 'organizationMemberships', []);
       var found = _.find(memberships, {organization: {sys: {id: id}}});
       return role === dotty.get(found, 'role');

@@ -10,8 +10,8 @@ angular.module('contentful').factory('enforcements', ['$injector', function Enfo
   var OrganizationList = $injector.get('OrganizationList');
 
   function isOwner() {
-    var organizationId = spaceContext.getData('organization.sys.id');
-    return OrganizationList.isOwner(organizationId);
+    var organization = spaceContext.getData('organization');
+    return OrganizationList.isOwner(organization);
   }
 
   function getOrgId() {

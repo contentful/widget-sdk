@@ -28,8 +28,7 @@ angular.module('contentful')
   };
 
   function notifyAbout (organization) {
-    var organizationId = dotty.get(organization, 'sys.id');
-    var userOwnsOrganization = OrganizationList.isOwner(organizationId);
+    var userOwnsOrganization = OrganizationList.isOwner(organization);
     var subscription = Subscription.newFromOrganization(organization);
 
     if (!subscription) {

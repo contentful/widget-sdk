@@ -42,7 +42,7 @@ angular.module('contentful')
   };
 
   function notifyAbout (organization) {
-    if (!userOwnsOrganization(organization)) {
+    if (!OrganizationList.isOwner(organization)) {
       return;
     }
 
@@ -67,10 +67,5 @@ angular.module('contentful')
       _.pick(messageDefinition, 'action', 'actionMessage')
     );
     $rootScope.$broadcast('persistentNotification', params);
-  }
-
-  function userOwnsOrganization (organization) {
-    var orgId = dotty.get(organization, 'sys.id');
-    return OrganizationList.isOwner(orgId);
   }
 }]);
