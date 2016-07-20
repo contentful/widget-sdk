@@ -3,10 +3,6 @@ header.workbench-header
   h1.workbench-header__title Webhooks ({{ webhooks.length || 0 }})
 
   .workbench-header__actions
-    .workbench-header__actions-text
-      | Webhooks have been greatly improved.&#32;
-      a(href="https://www.contentful.com/faq/webhooks/" target="_blank") See what’s new
-      | .
     button.cfnext-btn-action.add-entity(
       ng-show="webhooks.length < limit"
       ui-sref="spaces.detail.settings.webhooks.new")
