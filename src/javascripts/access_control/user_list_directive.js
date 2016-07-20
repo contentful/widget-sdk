@@ -52,8 +52,9 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   var Command = $injector.get('command');
   var $rootScope = $injector.get('$rootScope');
   var modalDialog = $injector.get('modalDialog');
-  var space = $injector.get('spaceContext').space;
-  var spaceMembershipRepo = $injector.get('SpaceMembershipRepository').getInstance(space);
+  var spaceContext = $injector.get('spaceContext');
+  var spaceMembershipRepo =
+    $injector.get('SpaceMembershipRepository').getInstance(spaceContext.space);
   var listHandler = $injector.get('UserListHandler').create();
   var stringUtils = $injector.get('stringUtils');
   var notification = $injector.get('notification');
@@ -79,8 +80,10 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   reload().catch(ReloadNotification.basicErrorHandler);
 
   function canModifyUsers () {
-    return accessChecker.canModifyUsers() &&
-      space.subscription && space.subscription.hasTrialEnded();
+    var subscription = spaceContext.subscription;
+    var trialLockdown = subscription &&
+      subscription.isTrial() && subscription.hasTrialEnded();
+    return accessChecker.canModifyUsers() && !trialLockdown;
   }
 
   function canInviteUsers () {

@@ -95,8 +95,10 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
   }
 
   function canModifyRoles () {
-    var trialHasEnded = space.subscription && space.subscription.hasTrialEnded();
-    return accessChecker.canModifyRoles() && !trialHasEnded;
+    var subscription = spaceContext.subscription;
+    var trialLockdown = subscription &&
+      subscription.isTrial() && subscription.hasTrialEnded();
+    return accessChecker.canModifyRoles() && !trialLockdown;
   }
 
   function resetPolicies () {

@@ -63,6 +63,7 @@ angular.module('contentful')
       if (dismissed) {
         return;
       }
+      resetNotification();
       scope.persistentNotification = true;
       _.assign(scope, params);
       var message = params.message;
@@ -71,6 +72,7 @@ angular.module('contentful')
 
     function resetNotification () {
       scope.message = null;
+      scope.action = null;
       scope.actionMessage = null;
       scope.persistentNotification = null;
     }
