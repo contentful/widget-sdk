@@ -2,19 +2,18 @@
 
 angular.module('contentful')
 
-.factory('handleGatekeeperMessage', ['$injector', function ($injector) {
+.factory('handleGatekeeperMessage', ['require', function (require) {
+  var $rootScope = require('$rootScope');
+  var $location = require('$location');
+  var authentication = require('authentication');
+  var notification = require('notification');
+  var TheAccountView = require('TheAccountView');
+  var spaceTools = require('spaceTools');
+  var tokenStore = require('tokenStore');
+  var ReloadNotification = require('ReloadNotification');
+  var logger = require('logger');
 
-  var $rootScope         = $injector.get('$rootScope');
-  var $location          = $injector.get('$location');
-  var authentication     = $injector.get('authentication');
-  var notification       = $injector.get('notification');
-  var TheAccountView     = $injector.get('TheAccountView');
-  var spaceTools         = $injector.get('spaceTools');
-  var tokenStore         = $injector.get('tokenStore');
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var logger = $injector.get('logger');
-
-  return function handleGatekeeperMessage(data) {
+  return function handleGatekeeperMessage (data) {
     var match = makeMessageMatcher(data);
 
     if (match('create', 'UserCancellation')) {
@@ -42,18 +41,25 @@ angular.module('contentful')
     } else { tokenStore.refresh(); }
   };
 
-  function makeMessageMatcher(data) {
-    return function matchMessage(action, type) {
+  function makeMessageMatcher (data) {
+    return function matchMessage (action, type) {
       var messageAction = dotty.get(data, 'action', '').toLowerCase();
-      var messageType   = dotty.get(data, 'type',   '').toLowerCase();
+      var messageType = dotty.get(data, 'type', '').toLowerCase();
 
       return action.toLowerCase() === messageAction && type.toLowerCase() === messageType;
     };
   }
 
-  function showNotification(data) {
+  function showNotification (data) {
     var level = dotty.get(data, 'resource.type', 'info');
     var message = dotty.get(data, 'resource.message');
+
+    if (typeof level !== 'string') {
+      logger.logError('Unknown message sent from GK iframe', {
+        message: data
+      });
+      return;
+    }
 
     if (level.match(/error/)) {
       level = 'warn';
@@ -64,7 +70,7 @@ angular.module('contentful')
     }
   }
 
-  function updateState(data) {
+  function updateState (data) {
     var valid = _.isObject(data) && _.isString(data.path);
 
     // @todo in a long run we want to detect when GK is sending
@@ -79,7 +85,7 @@ angular.module('contentful')
     }
   }
 
-  function updateToken(data) {
+  function updateToken (data) {
     authentication.updateTokenLookup(data);
     if (authentication.tokenLookup) {
       tokenStore.refreshWithLookup(authentication.tokenLookup);

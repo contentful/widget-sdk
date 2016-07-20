@@ -1,4 +1,5 @@
-extends: standard
+extends:
+  - './.eslint-standard.yml'
 rules:
   padded-blocks: off
   semi: ["error", "always"]
@@ -7,7 +8,8 @@ rules:
   eol-last: "error"
   generator-star-spacing: ['error', {before: false, after: true}]
   yield-star-spacing: ['error', {before: false, after: true}]
-
+env:
+  node: true
 globals:
   angular: true
   _: true

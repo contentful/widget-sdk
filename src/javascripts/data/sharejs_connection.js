@@ -20,10 +20,8 @@ angular.module('cf.data')
 
   return {create: create};
 
-  function create (token, host, _spaceId) {
-    var url = '//' + host + '/channel';
-    // TODO this is going to be replaced by a per space endpoint
-    // var url = '//' + host + '/spaces/' + spaceId + '/channel';
+  function create (token, host, spaceId) {
+    var url = '//' + host + '/spaces/' + spaceId + '/channel';
 
     /**
      * `connection.state` may be

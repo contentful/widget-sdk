@@ -20,7 +20,11 @@ describe('data/ShareJS/Connection', function () {
   describe('#create', function () {
     it('passes URL and token to base connection', function () {
       this.create('TOKEN', 'HOST', 'SPACE');
-      sinon.assert.calledWithExactly(this.sharejs.Connection, '//HOST/channel', 'TOKEN');
+      sinon.assert.calledWithExactly(
+        this.sharejs.Connection,
+        '//HOST/spaces/SPACE/channel',
+        'TOKEN'
+      );
     });
   });
 
