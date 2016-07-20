@@ -155,20 +155,19 @@ describe('entitySelector', function () {
       expect(ext['fields.file.contentType[in]']).toBe('mimez,mimez');
     });
 
-    it('extends query with asset size constraints', function () {
+    // see "prepareQueryExtension" function in "entity_selector.js"
+    xit('extends query with asset size constraints', function () {
       var dimensions = _.extend(size(100, 200, 'width'), size(300, 400, 'height'));
       var validations = [{assetImageDimensions: dimensions}, size(100, 200, 'assetFileSize')];
       var ext = this.qe('Asset', validations);
 
-      expect(Object.keys(ext).length).toBe(2);
+      expect(Object.keys(ext).length).toBe(6);
       expect(path('size', false)).toBe(100);
       expect(path('size', true)).toBe(200);
-      // @todo API returns 400 when applying these constraints - investigate why?
-      // see "prepareQueryExtension" function in "entity_selector.js"
-      // expect(path('width', false)).toBe(100);
-      // expect(path('width', true)).toBe(200);
-      // expect(path('height', false)).toBe(300);
-      // expect(path('height', true)).toBe(400);
+      expect(path('width', false)).toBe(100);
+      expect(path('width', true)).toBe(200);
+      expect(path('height', false)).toBe(300);
+      expect(path('height', true)).toBe(400);
 
       function path (property, lowerThan) {
         return ext['fields.file.details.' + property + '[' + (lowerThan ? 'l' : 'g') + 'te]'];
@@ -196,8 +195,12 @@ describe('entitySelector', function () {
       var validation = {linkContentType: ['ctid1']};
       this.open({linkType: 'Entry', itemValidations: [validation]});
 
-      sinon.assert.calledOnce(fetchStub);
+      sinon.assert.calledOnce(fetchStub.withArgs('ctid1'));
       expect(this.getScope().singleContentType).toBe(ct);
+
+      validation = {linkContentType: 'ctid2'};
+      this.open({linkType: 'Entry', itemValidations: [validation]});
+      sinon.assert.calledOnce(fetchStub.withArgs('ctid2'));
     });
 
     it('uses asset pseudo-CT for all assets', function () {

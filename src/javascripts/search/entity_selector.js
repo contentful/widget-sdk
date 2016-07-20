@@ -93,8 +93,8 @@ angular.module('contentful')
       linksEntry: field.linkType === 'Entry' || field.itemLinkType === 'Entry',
       linksAsset: field.linkType === 'Asset' || field.itemLinkType === 'Asset',
       linkedEntityIds: links,
-      linkedContentTypeIds: findValidation(field, 'linkContentType', []),
-      linkedMimetypeGroups: findValidation(field, 'linkMimetypeGroup', []),
+      linkedContentTypeIds: findLinkValidation(field, 'linkContentType'),
+      linkedMimetypeGroups: findLinkValidation(field, 'linkMimetypeGroup'),
       linkedFileSize: findValidation(field, 'assetFileSize', {}),
       linkedImageDimensions: findValidation(field, 'assetImageDimensions', {})
     };
@@ -102,10 +102,16 @@ angular.module('contentful')
     return _.extend(config, {queryExtension: prepareQueryExtension(config)});
   }
 
+  function findLinkValidation (field, property) {
+    var found = findValidation(field, property, []);
+
+    return _.isString(found) ? [found] : found;
+  }
+
   function findValidation (field, property, defaultValue) {
     var validations = [].concat(field.validations || [], field.itemValidations || []);
     var found = _.find(validations, function (v) {
-      return _.isObject(v[property]);
+      return _.isObject(v[property]) || _.isString(v[property]);
     });
 
     return (found && found[property]) || defaultValue;
@@ -139,23 +145,29 @@ angular.module('contentful')
         }, []).join(',');
       }
 
-      applySizeConstraint('fields.file.details.size', config.linkedFileSize);
-      // @todo API returns 400 when applying these constraints - investigate why?
+      // @todo there are multiple BE problems that need to be solved first;
+      // see these Target Process tickets:
+      // - https://contentful.tpondemand.com/entity/11408
+      // - https://contentful.tpondemand.com/entity/8030
+      // for now we don't want to apply size constraints so behavior
+      // of the reference widget doesn't change
+
+      // applySizeConstraint('fields.file.details.size', config.linkedFileSize);
       // applySizeConstraint('fields.file.details.width', config.linkedImageDimensions.width);
       // applySizeConstraint('fields.file.details.height', config.linkedImageDimensions.height);
     }
 
     return extension;
 
-    function applySizeConstraint (path, constraint) {
-      constraint = _.isObject(constraint) ? constraint : {};
-      if (constraint.min) {
-        extension[path + '[gte]'] = constraint.min;
-      }
-      if (constraint.max) {
-        extension[path + '[lte]'] = constraint.max;
-      }
-    }
+    // function applySizeConstraint (path, constraint) {
+    //   constraint = _.isObject(constraint) ? constraint : {};
+    //   if (constraint.min) {
+    //     extension[path + '[gte]'] = constraint.min;
+    //   }
+    //   if (constraint.max) {
+    //     extension[path + '[lte]'] = constraint.max;
+    //   }
+    // }
   }
 
   function getLabels (config) {

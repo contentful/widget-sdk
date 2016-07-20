@@ -2,7 +2,10 @@
 
 describe('cfIframeWidget directive', function () {
   var widgetAPI;
-  var OtDoc;
+
+  afterEach(function () {
+    widgetAPI = null;
+  });
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -11,7 +14,9 @@ describe('cfIframeWidget directive', function () {
       });
     });
 
-    OtDoc = this.$inject('mocks/OtDoc');
+    this.otDoc = this.$inject('mocks/entityEditor/Document').create({
+      fields: {}
+    });
 
     var Widgets = this.$inject('widgets');
     Widgets.get = sinon.stub().returns({});
@@ -22,7 +27,7 @@ describe('cfIframeWidget directive', function () {
       destroy: sinon.stub()
     };
 
-    this.scope = this.$compile('<cf-iframe-widget>', {
+    this.element = this.$compile('<cf-iframe-widget>', {
       widget: {},
       entry: {},
       contentType: {
@@ -30,6 +35,7 @@ describe('cfIframeWidget directive', function () {
           fields: [{id: 'FIELD'}]
         }
       },
+      otDoc: this.otDoc,
       fieldLocale: {
         access: {
           disabled: true
@@ -39,7 +45,9 @@ describe('cfIframeWidget directive', function () {
       fieldController: {
         setInvalid: sinon.spy()
       }
-    }).scope();
+    });
+
+    this.scope = this.element.scope();
   });
 
   describe('"setInvalid" handler', function () {
@@ -68,6 +76,7 @@ describe('cfIframeWidget directive', function () {
 
   describe('"isDisabledChanged" handler', function () {
     it('sends new isDisabled value using the widget api', function () {
+      this.$apply();
       widgetAPI.send.reset();
       this.scope.fieldLocale.access.disabled = 'NEWVALUE';
       this.$apply();
@@ -76,11 +85,15 @@ describe('cfIframeWidget directive', function () {
     });
   });
 
-  describe('"otChange" event handler', function () {
-    it('sends localized field value change', function () {
+  describe('field value changes', function () {
+    beforeEach(function () {
       widgetAPI.sendFieldValueChange = sinon.stub();
-      var doc = new OtDoc({fields: {'FIELD': {'LOCALE': 'VALUE'}}});
-      this.scope.$broadcast('otChange', doc, [{p: ['fields', 'FIELD', 'LOCALE']}]);
+    });
+
+    it('sends localized field value change', function () {
+      this.otDoc.setValueAt(['fields', 'FIELD', 'LOCALE'], 'VALUE');
+      this.otDoc.changes.emit(['fields', 'FIELD', 'LOCALE']);
+      this.$apply();
       sinon.assert.calledWithExactly(widgetAPI.sendFieldValueChange, 'FIELD', 'LOCALE', 'VALUE');
     });
 
@@ -90,23 +103,20 @@ describe('cfIframeWidget directive', function () {
 
       widgetAPI.sendFieldValueChange = sinon.stub();
 
-      var doc = new OtDoc({fields: {
-        'FIELD': {
-          'LOC A': 'VAL A',
-          'LOC B': 'VAL B'
-        }
-      }});
-
-      this.scope.$broadcast('otChange', doc, [{p: ['fields', 'FIELD']}]);
+      this.otDoc.setValueAt(['fields', 'FIELD'], {
+        'LOC A': 'VAL A',
+        'LOC B': 'VAL B'
+      });
+      this.otDoc.changes.emit(['fields', 'FIELD']);
+      this.$apply();
       sinon.assert.calledWithExactly(widgetAPI.sendFieldValueChange, 'FIELD', 'LOC A', 'VAL A');
       sinon.assert.calledWithExactly(widgetAPI.sendFieldValueChange, 'FIELD', 'LOC B', 'VAL B');
       sinon.assert.calledWithExactly(widgetAPI.sendFieldValueChange, 'FIELD', 'LOC C', undefined);
     });
 
     it('does not send field value changes if path does not start with "fields"', function () {
-      widgetAPI.sendFieldValueChange = sinon.stub();
-      var doc = {getAt: sinon.stub()};
-      this.scope.$broadcast('otChange', doc, [{p: ['NOT fields']}]);
+      this.otDoc.changes.emit(['NOT fields', 'FIELD']);
+      this.$apply();
       sinon.assert.notCalled(widgetAPI.sendFieldValueChange);
     });
   });
@@ -117,24 +127,32 @@ describe('cfIframeWidget directive', function () {
         .withArgs('PUBLIC FIELD', 'PUBLIC LOCALE')
         .returns(['internal', 'path']);
 
-      this.scope.otDoc = {
-        setValueAt: sinon.stub().resolves()
-      };
+      this.otDoc.setValueAt = sinon.stub().resolves();
     });
 
     it('delegates with path translated path to "otDoc"', function () {
       var handler = widgetAPI.registerHandler.withArgs('setValue').args[0][1];
       handler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VAL');
-      sinon.assert.calledWithExactly(this.scope.otDoc.setValueAt, ['internal', 'path'], 'VAL');
+      sinon.assert.calledWithExactly(this.otDoc.setValueAt, ['internal', 'path'], 'VAL');
     });
 
     it('rejects with API error code when update fails', function () {
-      this.scope.otDoc.setValueAt.rejects();
+      this.otDoc.setValueAt.rejects();
       var handler = widgetAPI.registerHandler.withArgs('setValue').args[0][1];
       var errored = sinon.stub();
       handler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VAL').catch(errored);
       this.$apply();
       sinon.assert.calledWithExactly(errored, sinon.match({code: 'ENTRY UPDATE FAILED'}));
+    });
+  });
+
+  describe('on iframe load', function () {
+    it('connects the widget API', function () {
+      widgetAPI.connect = sinon.stub();
+      const iframe = this.element.find('iframe').get(0);
+      iframe.dispatchEvent(new window.Event('load'));
+      this.$apply();
+      sinon.assert.calledOnce(widgetAPI.connect);
     });
   });
 });

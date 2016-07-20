@@ -5,14 +5,14 @@ angular.module('contentful')
  * @ngdoc type
  * @name EntryListController
  */
-.controller('EntryListController', ['$scope', '$injector', function EntryListController($scope, $injector) {
-  var $controller     = $injector.get('$controller');
+.controller('EntryListController', ['$scope', '$injector', function EntryListController ($scope, $injector) {
+  var $controller = $injector.get('$controller');
   var EntityListCache = $injector.get('EntityListCache');
-  var logger          = $injector.get('logger');
-  var Paginator       = $injector.get('Paginator');
+  var logger = $injector.get('logger');
+  var Paginator = $injector.get('Paginator');
   var createSelection = $injector.get('selection');
-  var spaceContext    = $injector.get('spaceContext');
-  var accessChecker   = $injector.get('accessChecker');
+  var spaceContext = $injector.get('spaceContext');
+  var accessChecker = $injector.get('accessChecker');
 
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
@@ -48,22 +48,13 @@ angular.module('contentful')
       responses: accessChecker.getResponses()
     };
   }, function () {
-    $scope.accessibleCts = _.filter(spaceContext.publishedContentTypes || [], function (ct) {
-      return accessChecker.canPerformActionOnEntryOfType('create', ct.getId());
-    });
-
-    // @todo remove when a reason will be eliminated
-    var accessibleCtIds = _.map($scope.accessibleCts, function (ct) {
+    // TODO this should be enforced by the space context
+    var publishedCTs = _.uniqBy(spaceContext.publishedContentTypes, function (ct) {
       return ct.getId();
     });
-    var uniqueAccessibleCtIds = _.uniq(accessibleCtIds);
-    if (accessibleCtIds.length > uniqueAccessibleCtIds.length) {
-      logger.logError('Non-unique accessible Content Type', {
-        spaceContextLen: (spaceContext.publishedContentTypes || []).length,
-        accessibleCtIds: accessibleCtIds,
-        uniqueAccessibleCtIds: uniqueAccessibleCtIds
-      });
-    }
+    $scope.accessibleCts = _.filter(publishedCTs, function (ct) {
+      return accessChecker.canPerformActionOnEntryOfType('create', ct.getId());
+    });
   });
 
   $scope.typeNameOr = function (or) {
@@ -155,9 +146,9 @@ angular.module('contentful')
   $scope.getFieldClass = function (field) {
     var type = field.type.toLowerCase();
     var sizeClass = ' ';
-    if(_.includes(narrowFieldTypes, type)) sizeClass += 'narrow';
-    else if(_.includes(mediumFieldTypes, type)) sizeClass += 'medium';
-    return 'cell-'+ type +sizeClass;
+    if (_.includes(narrowFieldTypes, type)) sizeClass += 'narrow';
+    else if (_.includes(mediumFieldTypes, type)) sizeClass += 'medium';
+    return 'cell-' + type + sizeClass;
   };
 
   $scope.$on('reloadEntries', function () {

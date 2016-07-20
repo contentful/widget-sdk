@@ -23,6 +23,13 @@ angular.module('contentful')
   var organizationData, spaceData, userData;
   var turnOffStateChangeListener = null;
 
+  // The integrations segment should send events to.
+  var SEGMENT_INTEGRATIONS = {
+    'All': false,
+    'Mixpanel': true,
+    'Google Analytics': true
+  };
+
   var analytics = {
     enable: enable,
     disable: disable,
@@ -99,7 +106,7 @@ angular.module('contentful')
       turnOffStateChangeListener = null;
     }
 
-    _.forEach(analytics, function (value, key) {
+    _.forEach(analytics, function (_value, key) {
       analytics[key] = _.noop;
     });
   }
@@ -136,7 +143,9 @@ angular.module('contentful')
   }
 
   function track (event, data) {
-    segment.track(event, _.merge({}, data, spaceData));
+    segment.track(event, _.merge({}, data, spaceData), {
+      integrations: SEGMENT_INTEGRATIONS
+    });
   }
 
   function trackTotango (event, module) {
@@ -186,7 +195,7 @@ angular.module('contentful')
     });
   }
 
-  function trackStateChange (event, state, stateParams, fromState, fromStateParams) {
+  function trackStateChange (_event, state, stateParams, fromState, fromStateParams) {
     totango.setModule(state.name);
     segment.page(state.name, stateParams);
     track('Switched State', {

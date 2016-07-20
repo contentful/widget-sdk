@@ -44,7 +44,7 @@ angular.module('contentful')
         return $inputEl.val();
       }, function (val) {
         updateCharCount(val);
-        field.setString(val);
+        field.setValue(val);
       });
 
       $inputEl.on('input change', debounce(scope.$apply.bind(scope), 200));

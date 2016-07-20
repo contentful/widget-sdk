@@ -3540,6 +3540,14 @@
         }
       }
     },
+    "kefir": {
+      "version": "3.2.3",
+      "dependencies": {
+        "symbol-observable": {
+          "version": "0.2.4"
+        }
+      }
+    },
     "kss": {
       "version": "2.4.0",
       "dependencies": {

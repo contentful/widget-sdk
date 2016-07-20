@@ -8,9 +8,10 @@ describe('FieldLocaleController', function () {
     this.init = function (scopeProps) {
       var defaultScopeProps = {
         field: {id: 'FID'},
-        locale: {internal_code: 'LID'}
+        locale: {internal_code: 'LID'},
+        otDoc: this.$inject('mocks/entityEditor/Document').create()
       };
-      var scope = _.extend($rootScope.$new(), defaultScopeProps, scopeProps);
+      var scope = _.merge($rootScope.$new(), defaultScopeProps, scopeProps);
       scope.fieldLocale = $controller('FieldLocaleController', {$scope: scope});
       scope.validator = {};
       this.$apply();

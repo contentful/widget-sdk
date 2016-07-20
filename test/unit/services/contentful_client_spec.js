@@ -86,24 +86,6 @@ describe('Contentful Client', function () {
     $httpBackend.flush();
   });
 
-  it('gets an editing interface', function() {
-    client.editingInterface('123', 'default').then(successStub).catch(failStub).finally(function () {
-      sinon.assert.called(successStub);
-      sinon.assert.notCalled(failStub);
-    });
-    $httpBackend.expectGET(getUrl('/content_types/123/editor_interfaces/default')).respond(200, {sys: {}, fields: []});
-    $httpBackend.flush();
-  });
-
-  it('fails to get an editing interface', function() {
-    client.editingInterface('123', 'default').then(successStub).catch(failStub).finally(function () {
-      sinon.assert.notCalled(successStub);
-      sinon.assert.called(failStub);
-    });
-    $httpBackend.expectGET(getUrl('/content_types/123/editor_interfaces/default')).respond(404, {});
-    $httpBackend.flush();
-  });
-
   it('gets entries', function() {
     client.entries().then(successStub).catch(failStub).finally(function () {
       sinon.assert.called(successStub);

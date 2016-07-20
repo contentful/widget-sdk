@@ -32,6 +32,7 @@ angular.module('contentful')
   var createEIRepo = $injector.get('data/editingInterfaces');
   var createQueue = $injector.get('overridingRequestQueue');
   var ApiClient = $injector.get('data/ApiClient');
+  var ShareJSConnection = $injector.get('data/ShareJS/Connection');
   var Subscription = $injector.get('Subscription');
 
   var requestContentTypes = createQueue(function (extraHandler) {
@@ -72,14 +73,16 @@ angular.module('contentful')
      * @description
      * This method resets a space context with a given space
      *
-     * It also sets the space on the [Widgets][] and [TheLocaleStore][]
-     * services to
+     * It also sets the space on the [TheLocaleStore][]
+     * service.
      *
-     * [Widgets]: api/contentful/app/service/widgets
+     * The returned promise resolves when all the custom extension and
+     * content types for this space have been fetched.
+     *
      * [TheLocaleStore]: api/contentful/app/service/TheLocaleStore
      *
      * @param {Client.Space} space
-     * @returns {Client.Space}
+     * @returns {Promise<self>}
      */
     resetWithSpace: function (space) {
       var self = this;
@@ -97,9 +100,16 @@ angular.module('contentful')
       var organization = self.getData('organization') || null;
       self.subscription =
         organization && Subscription.newFromOrganization(organization);
+
+      self.docConnection = ShareJSConnection.create(
+        authentication.token,
+        environment.settings.ot_host,
+        space.getId()
+      );
+
       TheLocaleStore.resetWithSpace(space);
-      return Widgets.setSpace(space).then(function (widgets) {
-        self.widgets = widgets;
+      return $q.all([loadWidgets(self, space), requestContentTypes()])
+      .then(function () {
         return self;
       });
     },
@@ -554,6 +564,15 @@ angular.module('contentful')
     spaceContext._publishedContentTypeIsMissing = {};
     spaceContext.users = null;
     spaceContext.widgets = null;
+    if (spaceContext.docConnection) {
+      spaceContext.docConnection.close();
+      spaceContext.docConnection = null;
+    }
   }
 
+  function loadWidgets (spaceContext, space) {
+    return Widgets.setSpace(space).then(function (widgets) {
+      spaceContext.widgets = widgets;
+    });
+  }
 }]);

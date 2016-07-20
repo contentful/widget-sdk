@@ -14,7 +14,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
     template: JST['cf_markdown_editor'](),
     scope: {},
     require: '^cfWidgetApi',
-    link: function (scope, el, attrs, api) {
+    link: function (scope, el, _attrs, api) {
       var field = api.field;
       var textarea = el.find('textarea').get(0);
       var preview = el.find('.markdown-preview').first();
@@ -57,7 +57,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         scope.history = editor.history;
 
         var stopPreview = startLivePreview(field.getValue, updatePreview);
-        editor.events.onChange(field.setString);
+        editor.events.onChange(field.setValue);
 
         var detachValueHandler = field.onValueChanged(handleFieldChange);
         var detachStateHandler = field.onDisabledStatusChanged(handleStateChange);
@@ -104,13 +104,9 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       }
 
       function setMode (mode) {
-        // 1. froze element height
         var areas = el.find('.markdown-areas');
-        var height = areas.height();
-        height = height > 40 ? height : 40;
-        areas.height(height);
 
-        // 2. change mode
+        // change mode
         var nextMode = 'preview';
         if (mode === 'md' && !scope.isDisabled) {
           nextMode = 'md';
@@ -123,12 +119,12 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
           currentMode = nextMode;
         }
 
-        // 3. when going to preview mode,tie preview position with editor
+        // when going to preview mode,tie preview position with editor
         if (currentMode === 'preview') {
           editor.tie.previewToEditor(preview);
         }
 
-        // 4. when in Markdown mode:
+        // when in Markdown mode:
         if (currentMode === 'md') {
           // tie editor position with preview
           editor.tie.editorToPreview(preview);
@@ -146,7 +142,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       function syncFromChildToParent (value) {
         // it only changes field value
         // main editor will be updated when leaving Zen Mode
-        if (childEditor) { field.setString(value); }
+        if (childEditor) { field.setValue(value); }
       }
 
       function registerChildEditor (editor) {

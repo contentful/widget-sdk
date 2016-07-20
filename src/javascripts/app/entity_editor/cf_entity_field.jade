@@ -59,7 +59,6 @@ div.entity-editor__field-group(
       // (widgets in asset editor already don't use fieldData)
       cf-widget-renderer.entity-editor__control(
         cf-focus-ot-input="hasInitialFocus"
-        ot-path="['fields', field.id, locale.internal_code]"
         cf-field-editor="entry && entry.data.fields[field.id][locale.internal_code]"
         cf-widget-api)
       +editor-field-collaborators

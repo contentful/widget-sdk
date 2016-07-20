@@ -75,6 +75,7 @@ angular.module('cf.app')
 
       store.prefetch(links).then(function () {
         $scope.links = _.map(links, wrapLink);
+        $scope.isReady = true;
       });
     });
 

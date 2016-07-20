@@ -31,7 +31,7 @@ describe('spaceContext', function () {
   });
 
   describe('#resetWithSpace()', function () {
-    var SPACE, result, Widgets;
+    var SPACE, Widgets;
 
     beforeEach(function () {
       var createEditingInterfaces = this.$inject('data/editingInterfaces');
@@ -40,15 +40,14 @@ describe('spaceContext', function () {
       Widgets = this.$inject('widgets');
       Widgets.setSpace = sinon.stub().defers();
 
-      SPACE = {
-        endpoint: sinon.stub().returns({
-          get: sinon.stub().rejects()
-        }),
-        getId: sinon.stub().returns('SPACE_ID')
-      };
+      SPACE = makeSpaceMock();
       sinon.stub(this.spaceContext, 'refreshContentTypes');
       this.spaceContext.contentTypes = [{}];
-      result = this.spaceContext.resetWithSpace(SPACE);
+      this.result = this.spaceContext.resetWithSpace(SPACE);
+    });
+
+    afterEach(function () {
+      SPACE = Widgets = null;
     });
 
     it('sets space on context', function () {
@@ -85,11 +84,14 @@ describe('spaceContext', function () {
 
     it('resolves when widgets are set', function () {
       var done = sinon.stub();
-      result.then(done);
+      this.result.then(done);
+
       this.$apply();
       sinon.assert.notCalled(done);
 
       Widgets.setSpace.resolve();
+      SPACE.getContentTypes.resolve();
+      SPACE.getPublishedContentTypes.resolve();
       this.$apply();
       sinon.assert.called(done);
     });
@@ -128,18 +130,24 @@ describe('spaceContext', function () {
   });
 
   describe('with a space', function () {
-    var space, rootScope, $q;
-    var cfStub;
+    var space, $q, cfStub;
+
     beforeEach(function () {
       cfStub = this.$inject('cfStub');
       space = cfStub.space('test');
-      rootScope = this.$inject('$rootScope');
+      space.getContentTypes = sinon.stub().resolves([]);
+      space.getPublishedContentTypes = sinon.stub().resolves([]);
       $q = this.$inject('$q');
 
       // do not refresh  CTs while initializing with space
       sinon.stub(this.spaceContext, 'refreshContentTypes');
       this.spaceContext.resetWithSpace(space);
+      this.$apply();
       this.spaceContext.refreshContentTypes.restore();
+    });
+
+    afterEach(function () {
+      space = $q = cfStub = null;
     });
 
     it('has a space', function () {
@@ -160,7 +168,7 @@ describe('spaceContext', function () {
         expect(this.spaceContext.getData('x.y.z', obj)).toBe(obj);
       });
 
-      it ('returns value if a path is correct', function () {
+      it('returns value if a path is correct', function () {
         var obj = {};
         space.data.x = {y: {z: obj}};
         expect(this.spaceContext.getData('x.y.z')).toBe(obj);
@@ -184,7 +192,7 @@ describe('spaceContext', function () {
       it('refreshes content types', function () {
         getContentTypes.returns($q.when(contentTypes.concat().reverse()));
         this.spaceContext.refreshContentTypes();
-        rootScope.$apply();
+        this.$apply();
         expect(this.spaceContext.contentTypes[0].getName()).toEqual('contentType1');
         sinon.assert.called(getPublishedContentTypes);
       });
@@ -193,7 +201,7 @@ describe('spaceContext', function () {
         getContentTypes.returns($q.when(contentTypes.concat().reverse()));
         var p1 = this.spaceContext.refreshContentTypes();
         var p2 = this.spaceContext.refreshContentTypes();
-        rootScope.$apply();
+        this.$apply();
         expect(p1).toBe(p2);
         sinon.assert.calledTwice(getContentTypes);
       });
@@ -202,7 +210,7 @@ describe('spaceContext', function () {
         var handler = this.$inject('ReloadNotification').apiErrorHandler;
         getContentTypes.returns($q.reject({statusCode: 500}));
         this.spaceContext.refreshContentTypes();
-        rootScope.$apply();
+        this.$apply();
         sinon.assert.called(handler);
       });
 
@@ -217,7 +225,7 @@ describe('spaceContext', function () {
             $timeout.flush();
           }.bind(this);
 
-          this.removeSecondCt =  function () {
+          this.removeSecondCt = function () {
             this.spaceContext.unregisterPublishedContentType(contentTypes[1]);
             var slice = contentTypes.slice(0, 1);
             getContentTypes.resolves(slice);
@@ -275,7 +283,7 @@ describe('spaceContext', function () {
       describe('refreshes published content types', function () {
         it('has content types', function () {
           this.spaceContext.refreshContentTypes();
-          rootScope.$apply();
+          this.$apply();
           expect(this.spaceContext.publishedContentTypes.length).toBeGreaterThan(0);
           expect(this.spaceContext.publishedContentTypes[0].getName()).toEqual('contentType1');
         });
@@ -283,14 +291,14 @@ describe('spaceContext', function () {
         it('merges context types from client and server together', function () {
           this.spaceContext.publishedContentTypes = [ contentTypes[0] ];
           this.spaceContext.refreshContentTypes();
-          rootScope.$apply();
+          this.$apply();
           expect(this.spaceContext.publishedContentTypes.length).toBe(2);
         });
 
         it('does not include deleted published content Types', function () {
           sinon.stub(contentTypes[1], 'isDeleted').returns(true);
           this.spaceContext.refreshContentTypes();
-          rootScope.$apply();
+          this.$apply();
           expect(this.spaceContext.publishedContentTypes.length).toBe(1);
           expect(_.includes(this.spaceContext.publishedContentTypes, contentTypes[1])).toBe(false);
         });
@@ -304,7 +312,7 @@ describe('spaceContext', function () {
         it('removes a content type', function () {
           // TODO test this without refresh calls
           this.spaceContext.refreshContentTypes();
-          rootScope.$apply();
+          this.$apply();
           this.spaceContext.removeContentType(contentTypes[0]);
           expect(this.spaceContext.contentTypes[0].getName()).toEqual('contentType2');
         });
@@ -312,7 +320,7 @@ describe('spaceContext', function () {
         it('gets a published type for a given entry', function () {
           // TODO test this without refresh calls
           this.spaceContext.refreshContentTypes();
-          rootScope.$apply();
+          this.$apply();
           var entry = cfStub.entry(space, 'entry2', 'content_type1');
           expect(this.spaceContext.publishedTypeForEntry(entry)).toBe(contentTypes[0]);
         });
@@ -326,7 +334,7 @@ describe('spaceContext', function () {
             getContentTypes.returns($q.resolve(contentTypes.concat().reverse()));
             getPublishedContentTypes.returns($q.resolve(contentTypes.concat().reverse()));
             this.spaceContext.refreshContentTypes();
-            rootScope.$apply();
+            this.$apply();
           });
 
           it('fetched successfully', function () {
@@ -389,7 +397,7 @@ describe('spaceContext', function () {
           beforeEach(function () {
             asset = cfStub.asset(space, 'asset1', {
               title: {
-               'en-US': 'the title'
+                'en-US': 'the title'
               }
             });
           });
@@ -526,12 +534,12 @@ describe('spaceContext', function () {
 
     });
 
-    describe('getting display field for a given type', function() {
-      beforeEach(function() {
+    describe('getting display field for a given type', function () {
+      beforeEach(function () {
         this.spaceContext.getPublishedContentType = sinon.stub();
       });
 
-      it('returns the field', function() {
+      it('returns the field', function () {
         var field = {id: 'name'};
         this.spaceContext.getPublishedContentType.returns({
           data: {
@@ -542,7 +550,7 @@ describe('spaceContext', function () {
         expect(this.spaceContext.displayFieldForType('type')).toBe(field);
       });
 
-      it('returns nothing', function() {
+      it('returns nothing', function () {
         var field = {id: 'name'};
         this.spaceContext.getPublishedContentType.returns({
           data: {
@@ -557,19 +565,25 @@ describe('spaceContext', function () {
   });
 
 
-  describe('resolving missing ContentTypes', function () {
-    var scope, entry, $q;
+  describe('#getPublishedContentType()', function () {
+    var entry, $q;
 
     beforeEach(function () {
       var cfStub = this.$inject('cfStub');
       var space = cfStub.space('test');
-      scope = this.$inject('$rootScope');
+      space.getContentTypes = sinon.stub().resolves([]);
+      space.getPublishedContentTypes = sinon.stub().resolves([]);
       $q = this.$inject('$q');
       sinon.stub(this.spaceContext, 'refreshContentTypes');
       this.spaceContext.resetWithSpace(space);
+      this.$apply();
       this.spaceContext.refreshContentTypes.restore();
       entry = { getContentTypeId: function () { return 'foo'; } };
       sinon.spy(this.spaceContext, 'refreshContentTypes');
+    });
+
+    afterEach(function () {
+      entry = $q = null;
     });
 
     it('should not trigger a refresh when resolving a known published content type', function () {
@@ -587,7 +601,7 @@ describe('spaceContext', function () {
     it('should mark a published type as not missing after retrieval', function () {
       this.spaceContext._publishedContentTypeIsMissing['foo'] = true;
       var ctsPromise = $q.resolve([{
-        getName: function(){return '';},
+        getName: function () { return ''; },
         getId: function () { return 'foo'; },
         isDeleted: sinon.stub().returns(false),
         data: { sys: {id: 'foo'} }
@@ -595,7 +609,7 @@ describe('spaceContext', function () {
       this.spaceContext.space.getContentTypes = sinon.stub().returns(ctsPromise);
       this.spaceContext.space.getPublishedContentTypes = sinon.stub().returns(ctsPromise);
       this.spaceContext.refreshContentTypes();
-      scope.$apply();
+      this.$apply();
       expect(this.spaceContext._publishedContentTypeIsMissing['foo']).toBeFalsy();
     });
 
@@ -690,7 +704,7 @@ describe('spaceContext', function () {
         var fields = [];
         const val = this.spaceContext.findLocalizedField(
           this.entry, function (field) {
-            fields.push(field)
+            fields.push(field);
           });
 
         expect(fields).toEqual(this.fields);
@@ -791,5 +805,42 @@ describe('spaceContext', function () {
       });
     });
   });
+
+  describe('#docConnection', function () {
+    beforeEach(function () {
+      const ShareJSConnection = this.$inject('data/ShareJS/Connection');
+      this.createConnection = ShareJSConnection.create = sinon.stub();
+    });
+
+    it('is created on resetSpace', function () {
+      this.spaceContext.resetWithSpace(makeSpaceMock());
+      sinon.assert.calledOnce(this.createConnection);
+    });
+
+    it('is closed on resetSpace', function () {
+      const close = sinon.stub();
+      this.spaceContext.docConnection = {close};
+      this.spaceContext.resetWithSpace(makeSpaceMock());
+      sinon.assert.calledOnce(close);
+    });
+
+    it('is closed on purge', function () {
+      const close = sinon.stub();
+      this.spaceContext.docConnection = {close};
+      this.spaceContext.purge();
+      sinon.assert.calledOnce(close);
+    });
+  });
+
+  function makeSpaceMock () {
+    return {
+      endpoint: sinon.stub().returns({
+        get: sinon.stub().rejects()
+      }),
+      getId: sinon.stub().returns('SPACE_ID'),
+      getContentTypes: sinon.stub().defers(),
+      getPublishedContentTypes: sinon.stub().defers()
+    };
+  }
 
 });

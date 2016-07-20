@@ -11,8 +11,8 @@ angular.module('cf.ui')
     },
     link: function ($scope, $el) {
       $scope.$watchGroup(['baseString', 'search'], function (values) {
-        var base = values[0];
-        var search = values[1];
+        var base = values[0] || '';
+        var search = values[1] || '';
         var start = base.toLowerCase().indexOf(search.toLowerCase());
         if (start > -1) {
           var end = start + search.length;

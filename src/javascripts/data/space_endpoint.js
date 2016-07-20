@@ -20,9 +20,10 @@ angular.module('cf.data')
  *   data: assetData
  * })
  */
-.factory('data/spaceEndpoint', ['$injector', function ($injector) {
-  var $http = $injector.get('$http');
-  var $q = $injector.get('$q');
+.factory('data/spaceEndpoint', ['require', function (require) {
+  var $http = require('$http');
+  var $q = require('$q');
+  var RequestQueue = require('data/requestQueue');
 
   return {create: create};
 
@@ -65,7 +66,9 @@ angular.module('cf.data')
    * @returns {function}
    */
   function create (token, baseUrl, spaceId) {
-    return function makeRequest (config, headers) {
+    return RequestQueue.create(makeRequest);
+
+    function makeRequest (config, headers) {
       var url = joinPath([baseUrl, 'spaces', spaceId].concat(config.path));
       var request = {
         method: config.method,
@@ -78,8 +81,12 @@ angular.module('cf.data')
       return $http(request).then(function (response) {
         return response.data;
       }, function (response) {
+        var status = parseInt(response.status, 10);
         var error = _.extend(new Error('API request failed'), {
-          status: response.status,
+          status: status,
+          // We duplicate this proprty because it is required by the
+          // request queue.
+          statusCode: status,
           code: dotty.get(response, ['data', 'sys', 'id'], response.status),
           data: response.data,
           headers: response.headers,
@@ -87,7 +94,7 @@ angular.module('cf.data')
         });
         return $q.reject(error);
       });
-    };
+    }
 
     function makeHeaders (version, additional) {
       var headers = _.extend({
