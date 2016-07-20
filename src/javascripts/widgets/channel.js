@@ -42,7 +42,7 @@ angular.module('contentful')
         if (data.source === self.id) {
           self._dispatch(data.method, data.id, data.params);
         }
-      })
+      });
     };
 
     $window.addEventListener('message', this.messageListener);
@@ -66,8 +66,8 @@ angular.module('contentful')
    * @param {Array<any>} params
    */
   Channel.prototype.send = function (message, params) {
-    if(!Array.isArray(params)) {
-      throw new Error( '`params` is expected to be an array' );
+    if (!Array.isArray(params)) {
+      throw new Error('`params` is expected to be an array');
     }
     if (this.connected) {
       this._send(message, params);
@@ -111,6 +111,8 @@ angular.module('contentful')
   };
 
   Channel.prototype.destroy = function () {
+    this.destroyed = true;
+    this.iframe = null;
     $window.removeEventListener('message', this.messageListener);
   };
 
@@ -123,6 +125,10 @@ angular.module('contentful')
   };
 
   Channel.prototype._respondSuccess = function (id, result) {
+    if (this.destroyed) {
+      return;
+    }
+
     this.iframe.contentWindow.postMessage({
       id: id,
       result: result
@@ -130,6 +136,10 @@ angular.module('contentful')
   };
 
   Channel.prototype._respondError = function (id, error) {
+    if (this.destroyed) {
+      return;
+    }
+
     this.iframe.contentWindow.postMessage({
       id: id,
       error: {

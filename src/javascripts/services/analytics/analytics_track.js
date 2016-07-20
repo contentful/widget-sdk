@@ -23,6 +23,13 @@ angular.module('contentful')
   var organizationData, spaceData, userData;
   var turnOffStateChangeListener = null;
 
+  // The integrations segment should send events to.
+  var SEGMENT_INTEGRATIONS = {
+    'All': false,
+    'Mixpanel': true,
+    'Google Analytics': true
+  };
+
   var analytics = {
     enable: enable,
     disable: disable,
@@ -136,7 +143,9 @@ angular.module('contentful')
   }
 
   function track (event, data) {
-    segment.track(event, _.merge({}, data, spaceData));
+    segment.track(event, _.merge({}, data, spaceData), {
+      integrations: SEGMENT_INTEGRATIONS
+    });
   }
 
   function trackTotango (event, module) {

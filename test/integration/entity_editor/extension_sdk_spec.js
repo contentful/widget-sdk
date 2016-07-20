@@ -77,6 +77,7 @@ describe('Extension SDK', function () {
               };
               resolve(api);
             });
+            this.$apply();
           } catch (e) {
             reject(e);
           }

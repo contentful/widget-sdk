@@ -3,6 +3,10 @@
 describe('cfIframeWidget directive', function () {
   var widgetAPI;
 
+  afterEach(function () {
+    widgetAPI = null;
+  });
+
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.value('widgets/API', function () {
@@ -23,7 +27,7 @@ describe('cfIframeWidget directive', function () {
       destroy: sinon.stub()
     };
 
-    this.scope = this.$compile('<cf-iframe-widget>', {
+    this.element = this.$compile('<cf-iframe-widget>', {
       widget: {},
       entry: {},
       contentType: {
@@ -41,7 +45,9 @@ describe('cfIframeWidget directive', function () {
       fieldController: {
         setInvalid: sinon.spy()
       }
-    }).scope();
+    });
+
+    this.scope = this.element.scope();
   });
 
   describe('"setInvalid" handler', function () {
@@ -137,6 +143,16 @@ describe('cfIframeWidget directive', function () {
       handler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VAL').catch(errored);
       this.$apply();
       sinon.assert.calledWithExactly(errored, sinon.match({code: 'ENTRY UPDATE FAILED'}));
+    });
+  });
+
+  describe('on iframe load', function () {
+    it('connects the widget API', function () {
+      widgetAPI.connect = sinon.stub();
+      const iframe = this.element.find('iframe').get(0);
+      iframe.dispatchEvent(new window.Event('load'));
+      this.$apply();
+      sinon.assert.calledOnce(widgetAPI.connect);
     });
   });
 });
