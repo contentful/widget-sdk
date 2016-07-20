@@ -11,7 +11,7 @@ angular.module('cf.utils')
 .factory('utils/kefir', ['require', function (require) {
   var Kefir = require('libs/kefir');
 
-  return Object.assign({
+  return _.assign({
     onValue: onValue,
     onValueScope: onValueScope,
     fromScopeEvent: fromScopeEvent,
