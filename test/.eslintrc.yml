@@ -1,7 +1,11 @@
+parserOptions:
+  ecmaVersion: 6
 rules:
   no-unused-vars: ['error', {vars: 'all', varsIgnorePattern: '^fit$', args: 'all', argsIgnorePattern: '^_'}]
 env:
-  # Do not use this. We want to fail if 'fdescribe', etc. is used.
+  browser: true
+  es6: true
+  # Do not use Jasmine. We want to fail if 'fdescribe', etc. is used.
   jasmine: false
 globals:
   jasmine: false
