@@ -20,7 +20,6 @@ test/unit/components/app_container/space_controller_spec.js
 test/unit/components/client/activation_email_resend_controller_spec.js
 test/unit/components/client/cf_main_nav_bar_directive_spec.js
 test/unit/components/client/cf_space_selector_controller_spec.js
-test/unit/components/client/dialogs_init_controller_spec.js
 test/unit/components/client/onboarding_controller_spec.js
 test/unit/components/shared/thumbnail/thumbnail_controller_spec.js
 test/unit/components/shared/thumbnail/cf_thumbnail_directive_spec.js
@@ -29,7 +28,6 @@ test/unit/components/shared/accordion_controller_spec.js
 test/unit/components/shared/cf_field_editor_controller_spec.js
 test/unit/components/shared/cf_file_metadata_directive_spec.js
 test/unit/components/shared/cf_form_widget_directive_spec.js
-test/unit/components/shared/cf_persistent_notification_directive_spec.js
 test/unit/components/shared/cf_search_directive_spec.js
 test/unit/components/shared/cf_validation_error_display_spec.js
 test/unit/components/shared/create_new_space_directive_spec.js
@@ -86,7 +84,6 @@ test/unit/services/enforcements_spec.js
 test/unit/services/features_spec.js
 test/unit/services/locale_store_spec.js
 test/unit/services/modal_dialog_spec.js
-test/unit/services/organization_list_spec.js
 test/unit/services/promised_loader_spec.js
 test/unit/services/reload_notification_spec.js
 test/unit/services/sdk_info_supplier_spec.js
@@ -155,7 +152,6 @@ src/javascripts/components/client/cf_main_nav_bar_directive.js
 src/javascripts/components/client/cf_space_selector_directive.js
 src/javascripts/components/client/dialogsInitController.js
 src/javascripts/components/client/onboarding_controller.js
-src/javascripts/components/client/trial_watcher.js
 src/javascripts/components/shared/developers/cf_cda_links_directive.js
 src/javascripts/components/shared/developers/cf_cma_links_directive.js
 src/javascripts/components/shared/entity_info_panel/entity_info_panel_directive.js
@@ -167,7 +163,6 @@ src/javascripts/components/shared/file_info/cf_file_metadata_directive.js
 src/javascripts/components/shared/file_info/cf_file_display_buttons_directive.js
 src/javascripts/components/shared/file_info/cf_file_display_directive.js
 src/javascripts/components/shared/getty_dialog/getty_dialog_controller.js
-src/javascripts/components/shared/persistent_notification/cf_persistent_notification_directive.js
 src/javascripts/components/shared/search_field/cf_autocomplete_date_directive.js
 src/javascripts/components/shared/search_field/cf_autocomplete_list_directive.js
 src/javascripts/components/shared/search_field/cf_tokenized_search_directive.js
@@ -357,7 +352,6 @@ src/javascripts/services/filepicker.js
 src/javascripts/services/hints.js
 src/javascripts/services/locale_store.js
 src/javascripts/services/modal_dialog_service.js
-src/javascripts/services/organization_list.js
 src/javascripts/services/promised_loader.js
 src/javascripts/services/reload_notification.js
 src/javascripts/services/sdk_info_supplier.js
@@ -416,12 +410,10 @@ src/javascripts/access_control/policy_access_checker.js
 src/javascripts/access_control/policy_builder.js
 src/javascripts/access_control/remove_outdated_rules.js
 src/javascripts/access_control/response_cache.js
-src/javascripts/access_control/role_list_directive.js
 src/javascripts/access_control/role_remover.js
 src/javascripts/access_control/role_repository.js
 src/javascripts/access_control/section_access.js
 src/javascripts/access_control/space_membership_repository.js
-src/javascripts/access_control/user_list_directive.js
 src/javascripts/account/cf_account_dropdown_directive.js
 src/javascripts/account/cf_account_view_directive.js
 src/javascripts/account/iframe_channel.js

@@ -325,10 +325,10 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
   }
 
   function isSuperUser () {
-    var isSpaceAdmin        = spaceContext.getData('spaceMembership.admin', false);
-    var organizationId      = spaceContext.getData('organization.sys.id');
-    var isOrganizationAdmin = OrganizationList.isAdmin(organizationId);
-    var isOrganizationOwner = OrganizationList.isOwner(organizationId);
+    var isSpaceAdmin = spaceContext.getData('spaceMembership.admin', false);
+    var organization = spaceContext.getData('organization');
+    var isOrganizationAdmin = OrganizationList.isAdmin(organization);
+    var isOrganizationOwner = OrganizationList.isOwner(organization);
 
     return isSpaceAdmin || isOrganizationAdmin || isOrganizationOwner;
   }

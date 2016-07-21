@@ -1,13 +1,13 @@
+include ./paywall_text.mixin.jade
+
 .paywall__text
-  p.paywall__intro.
-    We’re sorry to say that, but your account will be inactive until the account
-    owner decides to set up payment.
+  +paywall-intro
 
   p.
-    Please talk about this to your colleague who manages the Contentful account.
+    Please talk to one of your organization owners who can take care of this matter.
 
   p.paywall__bottom-note
-    | If this message caught you by surprise, or you’re unsure why this has
-    | happened, please&#32;
-    a(ng-click="openIntercom()" role="button") talk to us
-    |  directly.
+    | If this message caught you by surprise, or if you’re unsure why you’re
+    | seeing it – you’re always welcome to&#32;
+    +paywall-contact-link
+    | .

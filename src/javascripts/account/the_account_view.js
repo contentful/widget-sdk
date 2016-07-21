@@ -10,21 +10,23 @@ angular.module('contentful')
  * This service holds the current state of the GK "account" section
  * and exposes some helper methods for URL manipulation.
  */
-.factory('TheAccountView', ['$injector', function ($injector) {
+.factory('TheAccountView', ['require', function (require) {
 
-  var $q = $injector.get('$q');
-  var $state = $injector.get('$state');
-  var spaceContext = $injector.get('spaceContext');
-  var OrganizationList = $injector.get('OrganizationList');
+  var $q = require('$q');
+  var $state = require('$state');
+  var spaceContext = require('spaceContext');
+  var OrganizationList = require('OrganizationList');
 
   var isActive = false;
 
   return {
     goToUserProfile: goToUserProfile,
     getSubscriptionState: getSubscriptionState,
+    goToOrganizations: goToOrganizations,
     goToSubscription: goToSubscription,
+    goToBilling: goToBilling,
     silentlyChangeState: silentlyChangeState,
-    getGoToSubscriptionOrganization: getGoToSubscriptionOrganization,
+    canGoToOrganizations: canGoToOrganizations,
 
     /**
      * @ngdoc method
@@ -71,7 +73,7 @@ angular.module('contentful')
    * permission to access it otherwise returns undefined.
    */
   function getSubscriptionState () {
-    var org = getGoToSubscriptionOrganization();
+    var org = getGoToOrganizationsOrganization();
     if (org) {
       var pathSuffix = 'organizations/' + org.sys.id + '/subscription';
       return 'account.pathSuffix({ pathSuffix: \'' + pathSuffix + '\'})';
@@ -82,14 +84,38 @@ angular.module('contentful')
    * @ngdoc method
    * @name TheAccountView#goToSubscription
    * @description
-   * Navigates to the subscription details page for the current space or - if the
-   * user hasn't got any space yet - for the the user's next best organization.
-   * Only organization owners get navigated.
+   * `TheAccountView#goToOrganizations` shorthand to navigate to the current
+   * organizatin's subscription page.
    */
   function goToSubscription () {
-    var org = getGoToSubscriptionOrganization();
+    return this.goToOrganizations('subscription');
+  }
+
+  /**
+   * @ngdoc method
+   * @name TheAccountView#goToBilling
+   * @description
+   * `TheAccountView#goToOrganizations` shorthand to navigate to the current
+   * organizatin's billing page.
+   */
+  function goToBilling () {
+    return this.goToOrganizations('z_billing');
+  }
+
+  /**
+   * @ngdoc method
+   * @name TheAccountView#goToOrganizations
+   * @description
+   * Navigates to the “Organizations & billing” page of the current organization
+   * or - if the user hasn't got any space yet - for the the user's next best
+   * organization. Only organization owners and admins get navigated.
+   */
+  function goToOrganizations (subpage) {
+    var org = getGoToOrganizationsOrganization();
     if (org) {
-      var pathSuffix = 'organizations/' + org.sys.id + '/subscription';
+      // TODO: Support route in GK without `/subscription` part and remove it here.
+      var subpageSuffix = subpage ? ('/' + subpage) : '/subscription';
+      var pathSuffix = 'organizations/' + org.sys.id + subpageSuffix;
       return goTo(pathSuffix, {reload: true});
     } else {
       return $q.reject();
@@ -98,13 +124,25 @@ angular.module('contentful')
 
   /**
    * @ngdoc method
-   * @name TheAccountView#getGoToSubscriptionOrganization
+   * @name TheAccountView#canGoToOrganizations
+   * @returns {boolean}
+   * @description
+   *
+   * Returns whether the current user can actually navigate to the organizations
+   * settings view.
+   */
+  function canGoToOrganizations () {
+    return !!getGoToOrganizationsOrganization();
+  }
+
+  /**
+   * @ngdoc method
    * @returns {API.Organization?}
    * @description
    * Returns the current space's organization if it is owned by the user or - if the
    * user hasn't got any space yet - the next best current user owned organization.
    */
-  function getGoToSubscriptionOrganization () {
+  function getGoToOrganizationsOrganization () {
     var orgs = [spaceContext.getData('organization')];
     if (!orgs[0]) {
       // No space yet, get next best organization.
@@ -134,9 +172,7 @@ angular.module('contentful')
     return _.find(orgs, filter);
 
     function filter (organization) {
-      var organizationId = dotty.get(organization, 'sys.id');
-      return organizationId &&
-        OrganizationList.isOwnerOrAdmin(organizationId) &&
+      return OrganizationList.isOwnerOrAdmin(organization) &&
         (organization.subscriptionState === state || state === '*');
     }
   }

@@ -25,7 +25,6 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
   var analytics = $injector.get('analytics');
   var logger = $injector.get('logger');
   var accessChecker = $injector.get('accessChecker');
-  var TrialWatcher = $injector.get('TrialWatcher');
 
   // 1. prepare "touch" counter (first touch for role->internal, next for dirty state)
   $scope.context.touched = $scope.context.isNew ? 0 : -1;
@@ -96,7 +95,10 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
   }
 
   function canModifyRoles () {
-    return accessChecker.canModifyRoles() && !TrialWatcher.hasEnded();
+    var subscription = spaceContext.subscription;
+    var trialLockdown = subscription &&
+      subscription.isTrial() && subscription.hasTrialEnded();
+    return accessChecker.canModifyRoles() && !trialLockdown;
   }
 
   function resetPolicies () {
