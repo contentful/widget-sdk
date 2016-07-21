@@ -70,7 +70,11 @@ describe('Extension SDK', function () {
             const w = iframe.contentWindow;
             w.console = window.console;
             w.contentfulExtension.init((api) => {
-              api.nextTick = function () {
+              api.nextTick = () => {
+                this.$apply();
+                // By adding a timeout to the iframe window we assure that the
+                // promise only resolves when the iframe event loops has at
+                // least been run once.
                 return new Promise((resolve) => {
                   w.setTimeout(resolve, 1);
                 });
