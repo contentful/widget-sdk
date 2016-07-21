@@ -6,8 +6,8 @@ angular.module('contentful')
   var controller = this;
   var messages = {
     'ot-connection-error':
-      'We have lost the connection to our server and disabled editing '+
-      'features, please verify you have internet access.',
+      'It appears that you aren’t connected to internet at the moment. ' +
+      'The fields are temporarily locked so that you won’t lose any important changes.',
     'archived':
       'This ' + entityLabel + ' is archived and cannot be ' +
       'modified. Please unarchive it to make any changes.',
@@ -49,7 +49,7 @@ angular.module('contentful')
     }
   }
 
-  function hasLostConnection() {
+  function hasLostConnection () {
     return $scope.otDoc.state.error;
   }
 }]);
