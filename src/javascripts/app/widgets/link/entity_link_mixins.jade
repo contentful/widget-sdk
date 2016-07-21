@@ -9,9 +9,9 @@ mixin entity-link-status
     .status-bar
 
 mixin entity-link-title
-  span(ng-if="!missing && title") {{ title | truncateMiddle:40:20 }}
-  span(ng-if="!missing && !title") Untitled
-  span(ng-if="missing") Entity missing or inaccessible
+  span(ng-if="!missing && title") {{ title | truncate:256 }}
+  span.entity-link__title--missing(ng-if="!missing && !title") Untitled
+  span.entity-link__title--missing(ng-if="missing") Entity missing or inaccessible
 
 mixin entity-link-actions
   .entity-link__actions
