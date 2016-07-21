@@ -17,6 +17,7 @@ angular.module('contentful')
   var config = $scope.config;
   var queryMethod = config.linksEntry ? 'getForEntries' : 'getForAssets';
   var fetchMethod = config.linksEntry ? 'getEntries' : 'getAssets';
+  var itemsById = {};
 
   var load = createQueue(fetch, function (resultPromise) {
     resultPromise.then(handleResponse);
@@ -97,15 +98,26 @@ angular.module('contentful')
 
   function handleResponse (res) {
     $scope.paginator.numEntries = res.total;
-    $scope.items.push.apply($scope.items, res.items);
+    $scope.items.push.apply($scope.items, getItemsToAdd(res));
 
     $timeout(function () {
       $scope.isLoading = false;
     });
   }
 
+  function getItemsToAdd (res) {
+    return _.transform(res.items, function (acc, item) {
+      var id = dotty.get(item, 'sys.id');
+      if (id && !itemsById[id]) {
+        itemsById[id] = item;
+        acc.push(item);
+      }
+    }, []);
+  }
+
   function resetAndLoad () {
     $scope.items = [];
+    itemsById = {};
     $scope.paginator.numEntries = 0;
     $scope.paginator.page = 0;
     load();

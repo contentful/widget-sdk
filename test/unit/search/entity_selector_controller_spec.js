@@ -108,6 +108,19 @@ describe('entitySelector', function () {
       this.createController({linksEntry: true});
       expect(this.scope.paginator.numEntries).toBe(123);
     });
+
+    it('removes duplicates from the fetched page', function () {
+      const entities = [entity('e1'), entity('e2')];
+
+      this.getEntries.resolves({total: 2, items: [entities[0]]});
+      this.createController({linksEntry: true});
+      expect(this.scope.items).toEqual([entities[0]]);
+
+      this.getEntries.resolves({total: 2, items: entities});
+      this.scope.$broadcast('forceSearch');
+      this.$apply();
+      expect(this.scope.items).toEqual(entities);
+    });
   });
 
   describe('selection', function () {

@@ -10,9 +10,12 @@ include ./entity_link_mixins
   +entity-link-status
 
   .entity-link__text
-    .entity-link__title(
-      ng-click="!missing && actions.goToEditor && actions.goToEditor(entity || link)"
-      ng-class="{'entity-link__title--missing': !title || missing}")
+    a.entity-link__title(
+      ng-if="!missing && actions.goToEditor"
+      ui-sref="{{ actions.goToEditor.getStateRef(entity || link) }}")
+      +entity-link-title
+
+    .entity-link__title(ng-if="missing || !actions.goToEditor")
       +entity-link-title
 
     .entity-link__description(
