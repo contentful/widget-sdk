@@ -75,16 +75,55 @@ angular.module('contentful')
 
   function startDeleteFlow () {
     lockFormWhileSubmitting();
+    return openConfirmationDialog()
+    .then(maybeOpenFallbackLocaleChangeDialog)
+    .then(deleteLocale, resetFormStatusOnFailure);
+  }
+
+  function openConfirmationDialog () {
     return modalDialog.openConfirmDialog({
       template: 'locale_removal_confirm_dialog',
       scope: $scope
     })
     .then(function (result) {
-      if (result.confirmed) {
-        return deleteLocale();
-      } else {
-        return resetFormStatusOnFailure();
+      return $q[result.confirmed ? 'resolve' : 'reject']();
+    });
+  }
+
+  function maybeOpenFallbackLocaleChangeDialog () {
+    var dependantLocales = _.filter($scope.spaceLocales, function (locale) {
+      return locale.data.fallbackCode === $scope.locale.data.code;
+    });
+
+    var availableLocales = _.filter($scope.spaceLocales, function (locale) {
+      var isCurrent = locale.data.code === $scope.locale.data.code;
+      var isDependant = dependantLocales.indexOf(locale) > -1;
+      return !isCurrent && !isDependant;
+    });
+
+    if (dependantLocales.length > 0) {
+      return openFallbackLocaleChangeDialog(dependantLocales, availableLocales);
+    } else {
+      return $q.resolve();
+    }
+  }
+
+  function openFallbackLocaleChangeDialog (dependantLocales, availableLocales) {
+    return modalDialog.open({
+      template: 'choose_new_fallback_dialog',
+      scopeData: {
+        locale: $scope.locale,
+        model: {newFallbackCode: null},
+        availableLocales: availableLocales,
+        dependantLocaleNames: _.map(dependantLocales, function (locale) {
+          return locale.data.name + ' (' + locale.data.code + ')';
+        }).join(', ')
       }
+    }).promise.then(function (newFallbackCode) {
+      return $q.all(_.map(dependantLocales, function (locale) {
+        locale.data.fallbackCode = newFallbackCode;
+        return locale.save();
+      }));
     });
   }
 

@@ -37,7 +37,7 @@ header.workbench-header
             ng-model="locale.data.fallbackCode"
             ng-options="item.code as (item.name + ' (' + item.code + ')') for item in fallbackLocales")
             | Fallback locale
-            option(value="") Select a fallback
+            option(value="") None (no fallback)
 
           .note-box.note-box--info
             | If you have required fields in your content model, please

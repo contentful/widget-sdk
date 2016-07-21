@@ -1,0 +1,23 @@
+.modal-background
+  .modal-dialog
+    header.modal-dialog__header
+      h1 You're deleting a locale used as fallback
+      button.modal-dialog__close(ng-click="dialog.cancel()")
+
+    .modal-dialog__content
+      .modal-dialog__richtext
+        p
+          | <strong>{{ locale.data.name }} ({{ locale.data.code }})</strong>
+          | is used as fallback for {{ dependantLocaleNames }}. After deleting
+          | it, the affected locales will fallback to:
+
+        select.cfnext-select-box(
+          ng-model="model.newFallbackCode"
+          ng-options="item.data.code as (item.data.name + ' (' + item.data.code + ')') for item in availableLocales")
+          option(value="") None (no fallback)
+
+    .modal-dialog__controls
+      button.cfnext-btn-primary-action(ng-click="dialog.confirm(model.newFallbackCode)")
+        | OK, delete {{ locale.data.name }} ({{ locale.data.code }}) and update affected locales
+      button.cfnext-btn-secondary-action(ng-click="dialog.cancel()")
+        | Don't delete
