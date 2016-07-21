@@ -13,13 +13,14 @@ describe('The Locale list directive', function () {
     var locales = [
       {
         getId: sinon.stub().returns(1),
-        getName: sinon.stub(),
-        getCode: sinon.stub(),
+        getName: sinon.stub().returns('English'),
+        getCode: sinon.stub().returns('en-US'),
         isDefault: sinon.stub().returns(true),
         data: {
           contentManagementApi: true,
           contentDeliveryApi: true,
-          optional: false
+          optional: false,
+          fallbackCode: null
         }
       },
       {
@@ -30,7 +31,8 @@ describe('The Locale list directive', function () {
         data: {
           contentManagementApi: false,
           contentDeliveryApi: false,
-          optional: true
+          optional: true,
+          fallbackCode: 'en-US'
         }
       },
       {
@@ -55,9 +57,6 @@ describe('The Locale list directive', function () {
       }
     ];
 
-    this.scope = this.$inject('$rootScope').$new();
-    this.scope.context = {};
-
     this.$inject('spaceContext').space = this.space = {
       data: {
         sys: {createdBy: {sys: {id: ''}}},
@@ -76,9 +75,7 @@ describe('The Locale list directive', function () {
     };
 
     this.compileElement = function () {
-      this.container = $('<div cf-locale-list></div>');
-      this.$inject('$compile')(this.container)(this.scope);
-      this.scope.$digest();
+      this.container = this.$compile('<div cf-locale-list />', {context: {}});
     };
   });
 
@@ -105,28 +102,33 @@ describe('The Locale list directive', function () {
       this.list = this.container.find('.main-results-wrapper tbody');
     });
 
-    it('list has 4 elements', function () {
+    it('show locales fetched with spaceContext', function () {
       expect(this.list.find('tr').length).toBe(4);
     });
 
-    describe('locale flags', function () {
+    describe('locale info and flags', function () {
       beforeEach(function () {
         this.tableCell = this.list.find('td');
       });
 
-      it('available via CDA', function () {
-        expect(this.tableCell.get(2).textContent).toMatch('Enabled');
-        expect(this.tableCell.get(7).textContent).toMatch('Disabled');
+      it('shows fallback locale', function () {
+        expect(this.tableCell.get(1).textContent).toBe('None');
+        expect(this.tableCell.get(6).textContent).toBe('English (en-US)');
       });
 
-      it('available via CMA', function () {
-        expect(this.tableCell.get(3).textContent).toMatch('Enabled');
-        expect(this.tableCell.get(8).textContent).toMatch('Disabled');
+      it('shows if available via CDA', function () {
+        expect(this.tableCell.get(2).textContent).toBe('Enabled');
+        expect(this.tableCell.get(7).textContent).toBe('Disabled');
       });
 
-      it('optional for publishing', function () {
-        expect(this.tableCell.get(4).textContent).toMatch('Content is required');
-        expect(this.tableCell.get(9).textContent).toMatch('Can be published empty');
+      it('shows if available via CMA', function () {
+        expect(this.tableCell.get(3).textContent).toBe('Enabled');
+        expect(this.tableCell.get(8).textContent).toBe('Disabled');
+      });
+
+      it('shows if optional for publishing', function () {
+        expect(this.tableCell.get(4).textContent).toBe('Content is required');
+        expect(this.tableCell.get(9).textContent).toBe('Can be published empty');
       });
     });
   });

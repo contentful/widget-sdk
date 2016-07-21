@@ -14,7 +14,8 @@ describe('Locale editor controller', function () {
       track: sinon.stub()
     };
     this.modalDialog = {
-      openConfirmDialog: sinon.stub()
+      openConfirmDialog: sinon.stub(),
+      open: sinon.stub()
     };
     this.TheLocaleStoreMock = {
       refresh: sinon.stub()
@@ -78,6 +79,28 @@ describe('Locale editor controller', function () {
     expect(this.scope.context.dirty).toBeTruthy();
   });
 
+  describe('changing locale code', function () {
+    it('resets fallback if used as locale code', function () {
+      this.scope.locale.data.fallbackCode = 'de-DE';
+      this.scope.locale.getCode.returns('de-DE');
+      this.$apply();
+      expect(this.scope.locale.data.fallbackCode).toBe(null);
+    });
+
+    it('sets available fallback locales', function () {
+      this.scope.spaceLocales = [
+        {getName: _.constant('Polish'), getCode: _.constant('pl-PL')},
+        {getName: _.constant('German'), getCode: _.constant('de-DE')}
+      ];
+
+      this.scope.locale.getCode.returns('de-DE');
+      this.$apply();
+      expect(this.scope.fallbackLocales).toEqual([
+        {name: 'Polish', code: 'pl-PL'}
+      ]);
+    });
+  });
+
   describe('#delete command succeeds', function () {
     beforeEach(function () {
       this.scope.locale.delete.resolves();
@@ -122,6 +145,44 @@ describe('Locale editor controller', function () {
       it('sets form to submitted state', function () {
         sinon.assert.called(this.scope.localeForm.$setSubmitted);
       });
+    });
+  });
+
+  describe('#delete when locale is used as a fallback', function () {
+    beforeEach(function () {
+      this.$q = this.$inject('$q');
+      this.scope.locale.data.code = 'de-DE';
+      this.scope.spaceLocales = [
+        {data: {fallbackCode: null, name: 'English', code: 'en-US'}, save: this.$q.resolve()},
+        {data: {fallbackCode: 'en-US', name: 'German', code: 'de-DE'}, save: this.$q.resolve()},
+        {data: {fallbackCode: 'de-DE', name: 'French', code: 'fr-FR'}, save: sinon.stub().resolves()}
+      ];
+      this.modalDialog.openConfirmDialog.resolves({confirmed: true});
+      this.modalDialog.open.returns({
+        promise: this.$q.resolve('en-US')
+      });
+      this.scope.locale.delete.resolves();
+    });
+
+    it('asks for a new fallback', function () {
+      this.controller.delete.execute();
+      this.$apply();
+
+      sinon.assert.calledOnce(this.modalDialog.open);
+      const data = this.modalDialog.open.firstCall.args[0].scopeData;
+      const codes = data.availableLocales.map((l) => { return l.data.code; });
+      expect(codes).toEqual(['en-US']);
+      expect(this.scope.spaceLocales[2].data.fallbackCode).toEqual('en-US');
+      sinon.assert.calledOnce(this.scope.spaceLocales[2].save);
+      sinon.assert.calledOnce(this.scope.locale.delete);
+    });
+
+    it('does not ask if there is no dependant locale', function () {
+      this.scope.spaceLocales = this.scope.spaceLocales.slice(0, 2);
+      this.controller.delete.execute();
+      this.$apply();
+      sinon.assert.notCalled(this.modalDialog.open);
+      sinon.assert.calledOnce(this.scope.locale.delete);
     });
   });
 

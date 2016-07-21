@@ -264,13 +264,11 @@ angular.module('contentful')
       $scope.locale.data.fallbackCode = null;
     }
 
-    var spaceLocaleCodes = _.map($scope.spaceLocales, function (locale) {
-      return locale.getCode();
-    });
-
-    $scope.fallbackLocales = _.filter(localesList, function (locale) {
-      return locale.code !== code && spaceLocaleCodes.indexOf(locale.code) > -1;
-    });
+    $scope.fallbackLocales = _.transform($scope.spaceLocales, function (acc, locale) {
+      if (locale.getCode() !== code) {
+        acc.push(localeToListItem(locale));
+      }
+    }, []);
   }
 
   function updateInitialLocaleCode () {
@@ -284,11 +282,15 @@ angular.module('contentful')
   */
   function addCurrentLocaleToList () {
     if (!findLocaleByCode($scope.locale.getCode()) && !!$scope.locale.getId()) {
-      $scope.locales.push({
-        code: $scope.locale.getCode(),
-        name: $scope.locale.getName()
-      });
+      $scope.locales.push(localeToListItem($scope.locale));
     }
+  }
+
+  function localeToListItem (locale) {
+    return {
+      code: locale.getCode(),
+      name: locale.getName()
+    };
   }
 
   function trackSave (message) {
