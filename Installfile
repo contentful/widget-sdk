@@ -12,7 +12,7 @@ npm install --no-optional
 
 git submodule update --init
 
-pushd vendor/contentful-widget-sdk
+pushd vendor/ui-extensions-sdk
   npm install --production --no-optional
   make
 popd

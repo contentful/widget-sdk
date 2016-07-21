@@ -1,5 +1,5 @@
-[submodule "vendor/contentful-widget-sdk"]
-	path = vendor/contentful-widget-sdk
-	url = git@github.com:contentful/widget-sdk.git
+[submodule "vendor/ui-extensions-sdk"]
+	path = vendor/ui-extensions-sdk
+	url = git@github.com:contentful/ui-extensions-sdk.git
   branch = master
   update = rebase

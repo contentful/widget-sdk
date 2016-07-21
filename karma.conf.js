@@ -36,7 +36,7 @@ module.exports = function (config) {
       'test/helpers/**/*.js',
       'test/unit/**/*.js',
       'test/integration/**/*.js',
-      {pattern: 'vendor/contentful-widget-sdk/dist/cf-widget-api.js', included: false}
+      {pattern: 'vendor/ui-extensions-sdk/dist/cf-extension-api.js', included: false}
     ],
 
 
