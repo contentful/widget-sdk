@@ -1,14 +1,17 @@
 'use strict';
 
-angular.module('contentful').controller('DisplayedFieldsController', ['$scope', '$injector', function DisplayedFieldsController($scope, $injector) {
+angular.module('contentful')
+.controller('DisplayedFieldsController', ['$scope', 'require', function ($scope, require) {
+  var systemFields = require('systemFields');
 
-  var systemFields = $injector.get('systemFields');
-
-  function getAvailableFields(contentTypeId) {
+  function getAvailableFields (contentTypeId) {
     var filteredContentType = $scope.spaceContext.getPublishedContentType(contentTypeId);
     var contentTypeFields = filteredContentType ? _.reject(filteredContentType.data.fields, {disabled: true}) : [];
     var fields = systemFields.getList().concat(contentTypeFields);
-    if (filteredContentType) _.remove(fields, function (field) { return field.id === filteredContentType.data.displayField; });
+
+    if (filteredContentType) {
+      _.remove(fields, function (field) { return field.id === filteredContentType.data.displayField; });
+    }
     return fields;
   }
 
@@ -19,20 +22,20 @@ angular.module('contentful').controller('DisplayedFieldsController', ['$scope', 
 
     $scope.displayedFields = _.filter(_.map(displayedFieldIds, function (id) {
       var field = _.find(fields, {id: id});
-      if(!field) unavailableFieldIds.push(id);
+      if (!field) unavailableFieldIds.push(id);
       return field;
     }));
 
-    $scope.hiddenFields    = _.sortBy(_.reject(fields, fieldIsDisplayed), 'name');
+    $scope.hiddenFields = _.sortBy(_.reject(fields, fieldIsDisplayed), 'name');
 
     cleanDisplayedFieldIds(unavailableFieldIds);
 
-    function fieldIsDisplayed(field) {
+    function fieldIsDisplayed (field) {
       return _.includes(displayedFieldIds, field.id);
     }
   };
 
-  function cleanDisplayedFieldIds(unavailableFieldIds) {
+  function cleanDisplayedFieldIds (unavailableFieldIds) {
     $scope.context.view.displayedFieldIds = _.reject($scope.context.view.displayedFieldIds, function (id) {
       return _.includes(unavailableFieldIds, id);
     });
