@@ -9,27 +9,33 @@
  *
  * It will inject the SVG code for the icon which has been previously generated.
  *
- * @param {string} name - name of the icon to be used
- * @param {float} scale - (optional) scale factor to be applied to the icon
+ * @param {string} name Name of the icon to be used
+ * @param {float} scale? Scale factor to be applied to the icon
  */
 angular.module('cf.ui')
 .directive('cfIcon', ['icons', function (icons) {
   return {
     restrict: 'E',
     link: function (_scope, el, attrs) {
-      var icon = $(icons[attrs.name]);
-      var scale = parseFloat(attrs.scale);
-      if (scale === 0) {
-        icon.removeAttr('width');
-        icon.removeAttr('height');
-      } else if (!isNaN(scale)) {
-        var width = parseInt(icon.get(0).getAttribute('width'), 10);
-        var height = parseInt(icon.get(0).getAttribute('height'), 10);
-        icon.get(0).setAttribute('width', width * scale);
-        icon.get(0).setAttribute('height', height * scale);
+      // TODO: Cache parsed element for <cf-icon/> using the same svg.
+      var iconTemplate = icons[attrs.name];
+      var iconElem = $(iconTemplate).get(0);
+      if (!iconElem) {
+        return;
       }
 
-      el.append(icon);
+      var scale = parseFloat(attrs.scale);
+      if (scale === 0) {
+        iconElem.removeAttribute('width');
+        iconElem.removeAttribute('height');
+      } else if (!isNaN(scale)) {
+        var width = parseInt(iconElem.getAttribute('width'), 10);
+        var height = parseInt(iconElem.getAttribute('height'), 10);
+        iconElem.setAttribute('width', width * scale);
+        iconElem.setAttribute('height', height * scale);
+      }
+
+      el.append(iconElem);
     }
   };
 }]);
