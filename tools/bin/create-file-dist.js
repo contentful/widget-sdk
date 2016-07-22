@@ -51,6 +51,7 @@ function* createDist (src, dest) {
   let revisionArchive = P.join(dest, 'archive')
   yield mkdirp(revisionArchive)
   yield copy(P.join(src, 'app'), P.join(dest, 'app'))
+  yield copy(P.join(src, 'styleguide'), P.join(dest, 'styleguide', travis.branch))
 
   let indexSrc = P.join(src, 'index.html')
   let shaIndex = P.join(revisionArchive, travis.commit, 'index-compiled.html')
