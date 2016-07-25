@@ -29,10 +29,14 @@ div(ng-show="!isReady")
         config="config")
 
   .link-editor__actions(ng-if="!isDisabled && (!single || !links.length)")
-    button.cfnext-btn-action.cfnext-btn-link.link-editor__link-btn(ng-click="addNew($event)")
+    button.cfnext-btn-action.cfnext-btn-link.link-editor__link-btn(
+      ng-click="addNew($event)"
+      type="button")
       | Create new {{ type.toLowerCase() }} and link
 
-    button.cfnext-btn-action.cfnext-btn-link.link-editor__link-btn(ng-click="addExisting($event)")
+    button.cfnext-btn-action.cfnext-btn-link.link-editor__link-btn(
+      ng-click="addExisting($event)"
+      type="button")
       span(ng-if="single")
         | Add an existing {{ type.toLowerCase() }}
       span(ng-if="!single")
