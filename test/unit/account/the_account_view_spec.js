@@ -2,8 +2,6 @@
 
 describe('TheAccountView service', function () {
   beforeEach(function () {
-    var self = this;
-
     this.spaceContext = {
       getData: sinon.stub()
     };
@@ -13,9 +11,9 @@ describe('TheAccountView service', function () {
       getAll: sinon.stub()
     };
 
-    module('contentful/test', function ($provide) {
-      $provide.value('spaceContext', self.spaceContext);
-      $provide.value('OrganizationList', self.OrganizationList);
+    module('contentful/test', ($provide) => {
+      $provide.value('spaceContext', this.spaceContext);
+      $provide.value('OrganizationList', this.OrganizationList);
     });
 
     this.view = this.$inject('TheAccountView');
@@ -48,8 +46,8 @@ describe('TheAccountView service', function () {
     .itGoesTo('the user`s profile', 'profile/user');
   });
 
-  describe('.goToSubscription() and .getGoToSubscriptionOrganization()', function () {
-    var orgs = [
+  describe('.goToOrganizations() and .canGoToOrganizations()', function () {
+    var ORGS = [
       {subscriptionState: 'active', sys: {id: 'ORG_0'}},
       {subscriptionState: 'active', sys: {id: 'ORG_1'}},
       {subscriptionState: 'active', sys: {id: 'ORG_2'}}
@@ -61,44 +59,68 @@ describe('TheAccountView service', function () {
 
     describe('with at least one space', function () {
       beforeEach(function () {
-        this.spaceContext.getData.withArgs('organization').returns(orgs[0]);
+        this.spaceContext.getData.withArgs('organization').returns(ORGS[0]);
       });
 
-      itGoesToTheSubscriptionOf('the next best organization', orgs[0]);
+      itGoesToTheOrganizationOf('the next best organization', ORGS[0]);
 
-      itRejectsToNavigateNonOrganizationOwners();
+      itRejectsToNavigateNonOrganizationOwnersOrAdmins();
     });
 
     describe('without any space', function () {
       beforeEach(function () {
-        this.OrganizationList.getAll.returns(orgs);
+        this.OrganizationList.getAll.returns(ORGS);
       });
 
-      itGoesToTheSubscriptionOf('the next best organization', orgs[0]);
+      itGoesToTheOrganizationOf('the next best organization', ORGS[0]);
 
       once(function () {
-        this.OrganizationList.isOwnerOrAdmin.withArgs('ORG_1').returns(false);
-        orgs[1].subscriptionState = 'trial'; // Trial but not owned.
-        orgs[2].subscriptionState = 'trial';
+        this.OrganizationList.isOwnerOrAdmin.withArgs(ORGS[1]).returns(false);
+        ORGS[1].subscriptionState = 'trial'; // Trial but not owned.
+        ORGS[2].subscriptionState = 'trial';
       })
-      .itGoesToTheSubscriptionOf('the next best owned trial organization', orgs[2]);
+      .itGoesToTheOrganizationOf('the next best owned trial organization', ORGS[2]);
 
       once(function () {
-        this.OrganizationList.isOwnerOrAdmin.withArgs('ORG_0').returns(false);
-        orgs[1].subscriptionState = 'inactive';
+        this.OrganizationList.isOwnerOrAdmin.withArgs(ORGS[0]).returns(false);
+        ORGS[1].subscriptionState = 'inactive';
       })
-      .itGoesToTheSubscriptionOf('the next best owned active organization', orgs[2]);
+      .itGoesToTheOrganizationOf('the next best owned active organization', ORGS[2]);
 
       once(function () {
-        this.OrganizationList.isOwnerOrAdmin.withArgs('ORG_0').returns(false);
-        this.OrganizationList.isOwnerOrAdmin.withArgs('ORG_2').returns(false);
-        orgs[1].subscriptionState = 'inactive';
+        this.OrganizationList.isOwnerOrAdmin.withArgs(ORGS[0]).returns(false);
+        this.OrganizationList.isOwnerOrAdmin.withArgs(ORGS[2]).returns(false);
+        ORGS[1].subscriptionState = 'inactive';
       })
-      .itGoesToTheSubscriptionOf('the next best owned organization', orgs[1]);
+      .itGoesToTheOrganizationOf('the next best owned organization', ORGS[1]);
 
-      itRejectsToNavigateNonOrganizationOwners();
+      itRejectsToNavigateNonOrganizationOwnersOrAdmins();
     });
   });
+
+  describeGoToMethod('goToBilling', 'z_billing');
+
+  describeGoToMethod('goToSubscription', 'subscription');
+
+  function describeGoToMethod (name, subpage) {
+    describe(`.${name}()`, function () {
+      const RETURN_VALUE = {};
+
+      beforeEach(function () {
+        this.view.goToOrganizations = sinon.stub().returns(RETURN_VALUE);
+        this.returnValue = this.view[name]();
+      });
+
+      it(`calls .goToOrganizations('${subpage}')`, function () {
+        sinon.assert.calledOnce(this.view.goToOrganizations);
+        sinon.assert.calledWithExactly(this.view.goToOrganizations, subpage);
+      });
+
+      it('returns .goToOrganizations() returned promise', function () {
+        expect(this.returnValue).toBe(RETURN_VALUE);
+      });
+    });
+  }
 
   describe('getSubScriptionState()', function () {
     beforeEach(function () {
@@ -128,15 +150,15 @@ describe('TheAccountView service', function () {
   function once (setup) {
     return {
       itGoesTo: itGoesTo,
-      itGoesToTheSubscriptionOf: itGoesToTheSubscriptionOf
+      itGoesToTheOrganizationOf: itGoesToTheOrganizationOf
     };
 
     function itGoesTo (msg, pathSuffix, options) {
-      it('navigates to ' + msg, function () {
+      it(`navigates to ${msg}`, function () {
         setup.call(this);
         sinon.assert.calledOnce(this.go);
 
-        var args = [this.go, 'account.pathSuffix', {pathSuffix: pathSuffix}];
+        let args = [this.go, 'account.pathSuffix', {pathSuffix: pathSuffix}];
         if (options) {
           args.push(options);
         }
@@ -144,38 +166,47 @@ describe('TheAccountView service', function () {
       });
     }
 
-    function itGoesToTheSubscriptionOf (msg, organization) {
-      once(function () {
-        setup.call(this);
-        this.view.goToSubscription();
-      })
-      .itGoesTo('the subscription of ' + msg,
-        'organizations/' + organization.sys.id + '/subscription',
-        {reload: true}
-      );
+    function itGoesToTheOrganizationOf (msg, organization) {
+      describe('navigating to organization (default)', test);
 
-      it('returns the organization of' + msg, function () {
+      describe('navigating to organization (particular subpage)', () => test('foo'));
+
+      it(`returns true since user can navigate to ${msg}`, function () {
         setup.call(this);
-        this.view.goToSubscription();
-        expect(this.view.getGoToSubscriptionOrganization()).toBe(organization);
+        this.view.goToOrganizations();
+        expect(this.view.canGoToOrganizations()).toBe(true);
       });
+
+      function test (subpageParam) {
+        const expectedPathSuffix = subpageParam || 'subscription';
+        once(function () {
+          setup.call(this);
+          this.view.goToOrganizations(subpageParam);
+        })
+        .itGoesTo(`the organization (subscription) of ${msg}`,
+          `organizations/${organization.sys.id}/` + expectedPathSuffix,
+          {reload: true}
+        );
+      }
     }
   }
 
-  function itGoesToTheSubscriptionOf () {
-    once(_.noop).itGoesToTheSubscriptionOf.apply(null, arguments);
+  function itGoesToTheOrganizationOf () {
+    once(_.noop).itGoesToTheOrganizationOf.apply(null, arguments);
   }
 
-  function itRejectsToNavigateNonOrganizationOwners () {
-    it('rejects for users who aren`t organization owners', function (done) {
+  function itRejectsToNavigateNonOrganizationOwnersOrAdmins () {
+    const msg = 'for users who are not organization owners or admins';
+
+    it(`rejects ${msg}`, function (done) {
       this.OrganizationList.isOwnerOrAdmin.returns(false);
-      this.view.goToSubscription().catch(done);
+      this.view.goToOrganizations().catch(done);
       this.$inject('$rootScope').$digest();
     });
 
-    it('returns null instead of an organization', function () {
+    it(`returns false for ${msg}`, function () {
       this.OrganizationList.isOwnerOrAdmin.returns(false);
-      expect(this.view.getGoToSubscriptionOrganization()).toBe(null);
+      expect(this.view.canGoToOrganizations()).toBe(false);
     });
   }
 });

@@ -10,7 +10,7 @@ describe('Extension SDK', function () {
     widgets.get = sinon.stub().returns({
       srcdoc:
         '<!doctype html>' +
-        '<script src="/base/vendor/contentful-widget-sdk/dist/cf-widget-api.js"></script>'
+        '<script src="/base/vendor/ui-extensions-sdk/dist/cf-extension-api.js"></script>'
     });
 
     const spaceContext = this.$inject('spaceContext');
@@ -69,8 +69,12 @@ describe('Extension SDK', function () {
           try {
             const w = iframe.contentWindow;
             w.console = window.console;
-            w.contentfulWidget.init((api) => {
-              api.nextTick = function () {
+            w.contentfulExtension.init((api) => {
+              api.nextTick = () => {
+                this.$apply();
+                // By adding a timeout to the iframe window we assure that the
+                // promise only resolves when the iframe event loops has at
+                // least been run once.
                 return new Promise((resolve) => {
                   w.setTimeout(resolve, 1);
                 });
