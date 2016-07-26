@@ -1,4 +1,5 @@
 'use strict';
+
 angular.module('contentful')
 
 .controller('ViewMenuController',
@@ -11,6 +12,7 @@ function ($scope, $attrs, require, $parse) {
   var analytics = require('analytics');
   var TheStore = require('TheStore');
   var getCurrentView = $parse('context.view');
+  var htmlEncode = require('encoder').htmlEncode;
 
   $scope.tempFreeViews = [];
   $scope.folderStates = TheStore.get('folderStates') || {};
@@ -65,7 +67,11 @@ function ($scope, $attrs, require, $parse) {
   $scope.deleteFolder = function (folder) {
     modalDialog.openConfirmDeleteDialog({
       title: 'Delete folder',
-      message: 'You are about to delete the folder <span class="modal-dialog__highlight">' + folder.title + '</span>. Deleting this Folder will also remove all the saved Views inside.\nIf you want to keep your views, please drag them into another folder before deleting the Folder.',
+      message:
+        'You are about to delete the folder <span class="modal-dialog__highlight">' +
+        htmlEncode(folder.title) + '</span>. Deleting this Folder will also ' +
+        'remove all the saved Views inside. If you want to keep your views, ' +
+        'please drag them into another folder before deleting the Folder.',
       scope: $scope
     }).promise.then(function () {
       _.remove($scope.folders, {id: folder.id});
