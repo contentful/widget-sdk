@@ -121,7 +121,7 @@ function ($scope, require) {
     var action = $scope.context.isNew ? 'create' : 'update';
     return contentPreview[action]($scope.previewEnvironment)
     .then(function (env) {
-      notification.info('"Preview Environment" saved successfully');
+      notification.info('Content preview "' + env.name + '" saved successfully');
       $scope.previewEnvironment.version = env.sys.version;
       $scope.contentPreviewForm.$setPristine();
       $scope.context.dirty = false;
@@ -140,7 +140,7 @@ function ($scope, require) {
   function remove () {
     return contentPreview.remove($scope.previewEnvironment)
     .then(function () {
-      notification.info('Preview environment was deleted successfully');
+      notification.info('Content preview was deleted successfully');
       $scope.context.dirty = false;
       return $state.go('spaces.detail.settings.content_preview.list');
     }, function () {

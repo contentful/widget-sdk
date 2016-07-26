@@ -181,9 +181,10 @@ describe('cfContentPreviewEditor directive', function () {
     });
 
     it('displays success message when saved successfully', function () {
+      contentPreview.update.resolves({name: 'New name', sys: {id: 'foo'}});
       this.element.find('input.content-preview-editor__input').val('New name').trigger('input');
       this.element.find('button:contains("Save")').trigger('click');
-      sinon.assert.calledWith(notification.info, '"Preview Environment" saved successfully');
+      sinon.assert.calledWith(notification.info, 'Content preview "New name" saved successfully');
     });
 
     it('displays error when fails', function () {
