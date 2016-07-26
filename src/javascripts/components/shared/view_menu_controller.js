@@ -1,12 +1,15 @@
 'use strict';
 angular.module('contentful')
 
-.controller('ViewMenuController', ['$scope', '$attrs', 'require', '$parse', function($scope, $attrs, require, $parse) {
-  var modalDialog    = require('modalDialog');
-  var random         = require('random');
-  var $timeout       = require('$timeout');
-  var analytics      = require('analytics');
-  var TheStore       = require('TheStore');
+.controller('ViewMenuController',
+['$scope', '$attrs', 'require', '$parse',
+function ($scope, $attrs, require, $parse) {
+
+  var modalDialog = require('modalDialog');
+  var random = require('random');
+  var $timeout = require('$timeout');
+  var analytics = require('analytics');
+  var TheStore = require('TheStore');
   var getCurrentView = $parse('context.view');
 
   $scope.tempFreeViews = [];
@@ -17,7 +20,7 @@ angular.module('contentful')
   });
 
   $scope.toggleFolder = function (folder) {
-    if ($scope.folderStates[folder.id] === 'closed') {
+    if ($scope.folderStates[ folder.id ] === 'closed') {
       $scope.folderStates[folder.id] = 'open';
     } else {
       $scope.folderStates[folder.id] = 'closed';
@@ -29,7 +32,7 @@ angular.module('contentful')
     return $scope.folderStates[folder.id] !== 'closed';
   };
 
-  function saveFolderStates(folderStates) {
+  function saveFolderStates (folderStates) {
     // Only store closed folders that actually exist
     folderStates = _.pick(folderStates, function (state, folderId) {
       return state === 'closed' && _.find($scope.folders, {id: folderId});
@@ -107,14 +110,14 @@ angular.module('contentful')
     return defaultFolder;
   };
 
-  $scope.viewIsActive = function (view){
+  $scope.viewIsActive = function (view) {
     if (!view) return false;
     var p = getCurrentView($scope);
     return p.id === view.id;
   };
 
 
-  function moveTempFreeViews() {
+  function moveTempFreeViews () {
     var defaultFolder = $scope.createDefaultFolder();
     defaultFolder.views.push.apply(defaultFolder.views, $scope.tempFreeViews);
     $scope.tempFreeViews.length = 0;

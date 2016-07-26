@@ -1,5 +1,9 @@
 'use strict';
-angular.module('contentful').controller('CfViewFolderController', ['$scope', 'modalDialog', 'analytics', function ($scope, modalDialog, analytics) {
+
+angular.module('contentful')
+.controller('CfViewFolderController', ['$scope', 'modalDialog', 'analytics',
+function ($scope, modalDialog, analytics) {
+
   $scope.$watch('folder.id', function (id) {
     $scope.regularFolder = id !== 'default';
   });
@@ -7,7 +11,7 @@ angular.module('contentful').controller('CfViewFolderController', ['$scope', 'mo
   $scope.deleteViewFromFolder = function (view, folder) {
     modalDialog.openConfirmDeleteDialog({
       title: 'Delete view',
-      message: 'Do you really want to delete the view <span class="modal-dialog__highlight">'+view.title+'</span>?',
+      message: 'Do you really want to delete the view <span class="modal-dialog__highlight">' + view.title + '</span>?',
       scope: $scope
     }).promise.then(function () {
       _.remove(folder.views, {id: view.id});
