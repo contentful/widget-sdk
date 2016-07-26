@@ -141,10 +141,10 @@ angular.module('contentful')
   /**
    * @ngdoc method
    * @name contentPreview#remove
-   * @description
    * @param {object} environment
    * @returns {Promise<void>}
    *
+   * @description
    * Deletes the preview environment and updates the cached `previewEnvironments`
   */
   function remove (env) {
@@ -157,10 +157,10 @@ angular.module('contentful')
   /**
    * @ngdoc method
    * @name contentPreview#toExternal
-   * @description
-   * @param {object} environment-internal
-   * @returns {object} environment-external
+   * @param {object} internal
+   * @returns {object}
    *
+   * @description
    * Convert preview environment from internal to external format.
    * Removes any configs with empty URLs from the list.
   */
@@ -206,9 +206,9 @@ angular.module('contentful')
   /**
    * @ngdoc method
    * @name contentPreview#toInternal
-   * @param {object} environment-external
+   * @param {object} external
    * @param {Array<ContentType>} contentTypes
-   * @returns {object} environment-internal
+   * @returns {object}
    *
    * @description
    * Converts a preview environment object from external to internal format.
