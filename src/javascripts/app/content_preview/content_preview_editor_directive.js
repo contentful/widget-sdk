@@ -48,7 +48,8 @@ function ($scope, require) {
   });
 
   $scope.remove = Command.create(remove, {
-    disabled: function () { return $scope.save.inProgress(); }
+    disabled: function () { return $scope.save.inProgress(); },
+    available: function () { return !$scope.context.isNew; }
   });
 
   function validate () {

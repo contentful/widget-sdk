@@ -62,6 +62,11 @@ describe('cfContentPreviewEditor directive', function () {
       expect(button.attr('aria-disabled')).toBe('true');
     });
 
+    it('delete button is not shown', function () {
+      var button = this.element.find('button:contains("Delete")');
+      expect(button.hasClass('ng-hide')).toBe(true);
+    });
+
     it('updates name and description', function () {
       var nameEl = this.element.find('input.content-preview-editor__input');
       var descriptionEl = this.element.find('textarea.content-preview-editor__input');
