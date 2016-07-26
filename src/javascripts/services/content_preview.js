@@ -88,7 +88,7 @@ angular.module('contentful')
     var contentTypeId = contentType.getId();
     return getAll()
     .then(function (environments) {
-      return _.reduce(environments, function (acc, env) {
+      return _.reduce(_.cloneDeep(environments), function (acc, env) {
         var config = _.find(
           env.configurations,
           _.matches({'contentType': contentTypeId})
