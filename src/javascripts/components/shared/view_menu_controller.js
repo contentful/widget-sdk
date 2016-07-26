@@ -1,12 +1,12 @@
 'use strict';
 angular.module('contentful')
 
-.controller('ViewMenuController', ['$scope', '$attrs', '$injector', '$parse', function($scope, $attrs, $injector, $parse) {
-  var modalDialog    = $injector.get('modalDialog');
-  var random         = $injector.get('random');
-  var $timeout       = $injector.get('$timeout');
-  var analytics      = $injector.get('analytics');
-  var TheStore       = $injector.get('TheStore');
+.controller('ViewMenuController', ['$scope', '$attrs', 'require', '$parse', function($scope, $attrs, require, $parse) {
+  var modalDialog    = require('modalDialog');
+  var random         = require('random');
+  var $timeout       = require('$timeout');
+  var analytics      = require('analytics');
+  var TheStore       = require('TheStore');
   var getCurrentView = $parse('context.view');
 
   $scope.tempFreeViews = [];
