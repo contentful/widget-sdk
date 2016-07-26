@@ -1,6 +1,4 @@
 sudo: false
-addons:
-  firefox: "46.0.1"
 
 # Uses node version from .nvmrc
 language: node_js
@@ -12,9 +10,9 @@ cache:
   - node_modules
   - bower_components
   - vendor/slimerjs
+  - vendor/firefox
 env:
   global:
-    - SLIMERJS_BIN=bin/slimerjs
     # JENKINS_PASSWORD
     - secure: "RWpHqk1nc4k4qIJ6TgM8ofrwHL2nMkp5kg5B2jevJtW8UlSnzkVuagQN9Req9dTjaMX/ZsB1Pt4CQE5K1W/xQJTKAnbtyQ8fZOXU4kQvOH+TptdwK+oMwjfITktCYuj1c1/aMD0dzkIaPvjX/OwXZPtCRq2s762YXuCyPjx3ERU="
     # JENKINS_TOKEN
