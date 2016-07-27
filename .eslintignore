@@ -187,13 +187,11 @@ src/javascripts/components/shared/cf_img_load_event.js
 src/javascripts/components/shared/cf_inline_editor_directive.js
 src/javascripts/components/shared/cf_marketing_directive.js
 src/javascripts/components/shared/cf_progress_bar_directive.js
-src/javascripts/components/shared/cf_view_folder_controller.js
 src/javascripts/components/shared/cf_view_folder_directive.js
 src/javascripts/components/shared/data_size_scale_controller.js
 src/javascripts/components/shared/endless_container_directive.js
 src/javascripts/components/shared/entity_status_controller.js
 src/javascripts/components/shared/thumbnail_controller.js
-src/javascripts/components/shared/view_menu_controller.js
 src/javascripts/components/shared/view_menu_directive.js
 src/javascripts/components/shared/view_state_controller.js
 src/javascripts/components/shared/cf_form_widget_directive.js
