@@ -27,7 +27,8 @@ angular.module('contentful')
     new: makeNew,
     toInternal: toInternal,
     getInvalidFields: getInvalidFields,
-    replaceVariablesInUrl: replaceVariablesInUrl
+    replaceVariablesInUrl: replaceVariablesInUrl,
+    urlFormatIsValid: urlFormatIsValid
   };
 
   /**
@@ -288,4 +289,18 @@ angular.module('contentful')
       return _.get(entry, ['data', 'fields', internalId, defaultLocale]) || match;
     });
   }
+
+  /**
+   * @ngdoc method
+   * @name contentPreview#urlFormatIsValid
+   * @param {string} urlTemplate
+   * @returns {boolean}
+   *
+   * @description
+   * Validates the provided URL template and returns true if valid.
+  */
+  function urlFormatIsValid (urlTemplate) {
+    return /^[A-z][A-z\d+-.]*:\/\/.+\..+/.test(urlTemplate);
+  }
+
 }]);

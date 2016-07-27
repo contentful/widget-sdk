@@ -245,4 +245,29 @@ describe('contentPreview', function () {
       expect(this.compiledUrl).toBe('https://www.test.com/{entry_field.invalid}');
     });
   });
+
+  describe('#urlFormatIsValid', function () {
+    it('correctly validates URL templates', function () {
+      const urlTests = [
+        {url: 'https://www.foo.com/{entry_id}/{entry_field.id}', valid: true},
+        {url: 'https://foo.foo?x=y', valid: true},
+        {url: 'https://foo.com/{ entry_id }/{ entry_field.slug }', valid: true},
+        {url: '//foo.bar', valid: false},
+        {url: 'test', valid: false},
+        {url: '://foo.bar', valid: false}
+      ];
+      urlTests.forEach(function (test) {
+        const isValid = this.contentPreview.urlFormatIsValid(test.url);
+        expect(isValid).toBe(test.valid);
+      }.bind(this));
+    });
+
+    it('URL with missing protocol returns false', function () {
+      const urlTemplate = 'www.foo.com';
+      const isValid = this.contentPreview.urlFormatIsValid(urlTemplate);
+      expect(isValid).toBe(false);
+    });
+
+
+  });
 });

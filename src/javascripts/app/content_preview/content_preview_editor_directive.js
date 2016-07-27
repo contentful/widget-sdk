@@ -60,38 +60,35 @@ function ($scope, require) {
     }
 
     $scope.previewEnvironment.configs.forEach(validateConfig);
+
     return !_.get($scope, 'invalidFields.errors');
   }
 
   function validateConfig (config) {
     if (config.enabled && !config.url) {
-      addCtError(config.contentType);
+      addCtError(config.contentType, 'Please provide a URL.');
+    } else if (config.url && !contentPreview.urlFormatIsValid(config.url)) {
+      addCtError(config.contentType, 'URL is invalid.');
     } else {
       var invalidFields = contentPreview.getInvalidFields(
         config.url,
         config.contentTypeFieldNames
       );
       if (invalidFields.length) {
-        addCtWarning(config.contentType, invalidFields);
+        var message =
+          'Fields with the following IDs don\'t exist in the content type: ' +
+          invalidFields.join(', ');
+        addCtWarning(config.contentType, message);
       }
     }
   }
 
-  function addCtWarning (contentType, invalidFields) {
-    _.set(
-      $scope,
-      'invalidFields.warnings.configs.' + contentType,
-      'Fields with the following IDs don\'t exist in the content type: ' +
-      invalidFields.join(', ')
-    );
+  function addCtError (contentType, message) {
+    _.set($scope, 'invalidFields.errors.configs.' + contentType, message);
   }
 
-  function addCtError (contentType) {
-    _.set(
-      $scope,
-      'invalidFields.errors.configs.' + contentType,
-      'Please provide a URL.'
-    );
+  function addCtWarning (contentType, message) {
+    _.set($scope, 'invalidFields.warnings.configs.' + contentType, message);
   }
 
   function handleSuccessResponse (responses) {
