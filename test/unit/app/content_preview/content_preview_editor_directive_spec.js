@@ -32,6 +32,25 @@ describe('cfContentPreviewEditor directive', function () {
         }
       });
       this.scope = this.element.scope();
+
+      this.elements = {
+        name: this.element.find('input.content-preview-editor__input'),
+        description: this.element.find('textarea.content-preview-editor__input'),
+        save: this.element.find('button:contains("Save")'),
+        delete: this.element.find('button:contains("Delete")')
+      };
+
+      this.updateName = function (value) {
+        this.elements.name.val(value).trigger('input');
+      };
+
+      this.updateDescription = function (value) {
+        this.elements.description.val(value).trigger('input');
+      };
+
+      this.clickSave = function () {
+        this.elements.save.trigger('click');
+      };
     };
   });
 
@@ -58,20 +77,16 @@ describe('cfContentPreviewEditor directive', function () {
     });
 
     it('save button is disabled', function () {
-      var button = this.element.find('button:contains("Save")');
-      expect(button.attr('aria-disabled')).toBe('true');
+      expect(this.elements.save.attr('aria-disabled')).toBe('true');
     });
 
     it('delete button is not shown', function () {
-      var button = this.element.find('button:contains("Delete")');
-      expect(button.hasClass('ng-hide')).toBe(true);
+      expect(this.elements.delete.hasClass('ng-hide')).toBe(true);
     });
 
     it('updates name and description', function () {
-      var nameEl = this.element.find('input.content-preview-editor__input');
-      var descriptionEl = this.element.find('textarea.content-preview-editor__input');
-      nameEl.val('My PE').trigger('input');
-      descriptionEl.val('New PE').trigger('input');
+      this.updateName('My PE');
+      this.updateDescription('New PE');
       expect(this.scope.previewEnvironment.name).toBe('My PE');
       expect(this.scope.previewEnvironment.description).toBe('New PE');
       expect(this.scope.context.dirty).toBe(true);
@@ -86,53 +101,58 @@ describe('cfContentPreviewEditor directive', function () {
     });
 
     it('calls Create method and redirects on save', function () {
-      this.element.find('input.content-preview-editor__input').val('My PE').trigger('input');
-      this.element.find('button:contains("Save")').trigger('click');
+      this.updateName('My PE');
+      this.clickSave();
       sinon.assert.calledWith(contentPreview.create, this.scope.previewEnvironment);
-      sinon.assert.calledWith($state.go, 'spaces.detail.settings.content_preview.detail', {contentPreviewId: 'foo'});
+      sinon.assert.calledWith(
+        $state.go,
+        'spaces.detail.settings.content_preview.detail',
+        {contentPreviewId: 'foo'}
+      );
     });
 
     it('shows notification if create fails', function () {
       contentPreview.create.rejects();
-      this.element.find('input.content-preview-editor__input').val('My PE').trigger('input');
-      this.element.find('button:contains("Save")').trigger('click');
+      this.updateName('My PE');
+      this.clickSave();
       sinon.assert.calledWith(contentPreview.create, this.scope.previewEnvironment);
       sinon.assert.calledWith(notification.warn, 'Could not save Preview Environment');
     });
 
     it('shows error if name is not present on save', function () {
-      var descriptionEl = this.element.find('textarea.content-preview-editor__input');
-      descriptionEl.val('description').trigger('input');
-      this.element.find('button:contains("Save")').trigger('click');
+      this.updateDescription('description');
+      this.clickSave();
       expect(this.scope.invalidFields.errors.name).toBe('Please provide a name.');
       sinon.assert.notCalled(contentPreview.create);
     });
 
-    it('shows error if a content type is active but no value is provided', function () {
-      this.element.find('input.content-preview-editor__input').val('My PE').trigger('input');
+    it('shows error if a content type is active but has no value', function () {
+      this.updateName('My PE');
       this.element.find('#ct-1').prop('checked', true).trigger('click');
-      this.element.find('button:contains("Save")').trigger('click');
+      this.clickSave();
       expect(this.scope.invalidFields.errors.configs['ct-1']).toBeTruthy();
       sinon.assert.notCalled(contentPreview.create);
     });
 
     it('saves but shows warning if a provided field token is invalid', function () {
-      this.element.find('input.content-preview-editor__input').val('My PE').trigger('input');
+      this.updateName('My PE');
       var configEl = this.element.find('.content-preview-editor__content-type');
       configEl.find('input[type="checkbox"]').prop('checked', true).trigger('click');
-      configEl.find('input[type="text"]').val('https://www.test.com/{entry_field.field1}/{entry_field.invalid}').trigger('input');
-      this.element.find('button:contains("Save")').trigger('click');
-      expect(this.scope.invalidFields.warnings.configs['ct-1']).toBe('Fields with the following IDs don\'t exist in the content type: invalid');
+      configEl.find('input[type="text"]')
+      .val('https://www.test.com/{entry_field.field1}/{entry_field.invalid}')
+      .trigger('input');
+      this.clickSave();
+      expect(this.scope.invalidFields.warnings.configs['ct-1'])
+      .toBe('Fields with the following IDs don\'t exist in the content type: invalid');
       sinon.assert.calledWith(contentPreview.create, this.scope.previewEnvironment);
     });
 
     it('shows notification and resets form when saved successfully', function () {
-      var descriptionEl = this.element.find('input.content-preview-editor__input');
-      descriptionEl.val('name').trigger('input');
-      this.element.find('button:contains("Save")').trigger('click');
+      this.updateName('name');
+      this.clickSave();
       sinon.assert.calledOnce(notification.info);
       expect(this.scope.context.dirty).toBe(false);
-      expect(this.element.find('button:contains("Save")').attr('aria-disabled')).toBe('true');
+      expect(this.elements.save.attr('aria-disabled')).toBe('true');
     });
   });
 
@@ -166,10 +186,8 @@ describe('cfContentPreviewEditor directive', function () {
     });
 
     it('populates name and description', function () {
-      var name = this.element.find('input.content-preview-editor__input').val();
-      var description = this.element.find('textarea.content-preview-editor__input').val();
-      expect(name).toBe('PE 1');
-      expect(description).toBe('First PE');
+      expect(this.elements.name.val()).toBe('PE 1');
+      expect(this.elements.description.val()).toBe('First PE');
     });
 
     it('displays configuration details', function () {
@@ -179,7 +197,7 @@ describe('cfContentPreviewEditor directive', function () {
       expect(configEl.find('input[type="text"]').val()).toBe(url);
     });
 
-    it('adds empty configuration object if none exists for that content type', function () {
+    it('adds empty config object if none exists for that content type', function () {
       var configEl = this.element.find('.content-preview-editor__content-type:eq(1)');
       expect(configEl.find('input[type="checkbox"]').prop('checked')).toBe(false);
       expect(configEl.find('input[type="text"]').val()).toBe('');
@@ -187,15 +205,18 @@ describe('cfContentPreviewEditor directive', function () {
 
     it('displays success message when saved successfully', function () {
       contentPreview.update.resolves({name: 'New name', sys: {id: 'foo'}});
-      this.element.find('input.content-preview-editor__input').val('New name').trigger('input');
-      this.element.find('button:contains("Save")').trigger('click');
-      sinon.assert.calledWith(notification.info, 'Content preview "New name" saved successfully');
+      this.updateName('New name');
+      this.clickSave();
+      sinon.assert.calledWith(
+        notification.info,
+        'Content preview "New name" saved successfully'
+      );
     });
 
     it('displays error when fails', function () {
       contentPreview.update.rejects();
-      this.element.find('input.content-preview-editor__input').val('New name').trigger('input');
-      this.element.find('button:contains("Save")').trigger('click');
+      this.updateName('New name');
+      this.clickSave();
       sinon.assert.calledWith(notification.warn, 'Could not save Preview Environment');
     });
   });

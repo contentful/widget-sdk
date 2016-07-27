@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('contentful')
-.controller('contentPreviewSidebarController', ['$scope', '$injector', function ($scope, $injector) {
+.controller('contentPreviewSidebarController', ['$scope', '$injector',
+function ($scope, $injector) {
 
   var contentPreview = $injector.get('contentPreview');
 
@@ -30,7 +31,9 @@ angular.module('contentful')
   function updateUrls () {
     if ($scope.contentPreviewEnvironments) {
       $scope.contentPreviewEnvironments.forEach(function (environment) {
-        environment.compiledUrl = contentPreview.replaceVariablesInUrl(environment.url, $scope.entry, $scope.contentType);
+        environment.compiledUrl = contentPreview.replaceVariablesInUrl(
+          environment.url, $scope.entry, $scope.contentType
+        );
       });
     }
   }
