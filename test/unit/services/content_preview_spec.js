@@ -231,16 +231,26 @@ describe('contentPreview', function () {
   });
 
   describe('#getInvalidFields', function () {
-    it('returns invalid fields', function () {
+    it('returns non-existent fields', function () {
       const url = 'https://www.test.com/{entry_field.valid}/{entry_field.invalid}/{entry_field.invalid}';
-      const fields = ['valid'];
-      expect(this.contentPreview.getInvalidFields(url, fields)).toEqual(['invalid']);
+      const fields = [{apiName: 'valid', type: 'Symbol'}];
+      expect(this.contentPreview.getInvalidFields(url, fields).nonExistentFields)
+      .toEqual(['invalid']);
     });
 
-    it('returns empty array if all fields are valid', function () {
+    it('returns invalid type fields', function () {
+      const url = 'https://www.test.com/{entry_field.valid}/{entry_field.invalid}/{entry_field.invalid}';
+      const fields = [{apiName: 'invalid', type: 'Array'}];
+      expect(this.contentPreview.getInvalidFields(url, fields).invalidTypeFields)
+      .toEqual(['invalid']);
+    });
+
+    it('returns empty arrays if all fields are valid', function () {
       const url = 'https://www.test.com/{entry_field.field1}/{entry_field.field2}/{entry_field.field1}';
-      const fields = ['field1', 'field2'];
-      expect(this.contentPreview.getInvalidFields(url, fields)).toEqual([]);
+      const fields = [{apiName: 'field1', type: 'Text'}, {apiName: 'field2', type: 'Symbol'}];
+      const invalidFields = this.contentPreview.getInvalidFields(url, fields);
+      expect(invalidFields.nonExistentFields).toEqual([]);
+      expect(invalidFields.invalidTypeFields).toEqual([]);
     });
   });
 

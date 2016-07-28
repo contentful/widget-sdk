@@ -201,7 +201,9 @@ angular.module('contentful')
       contentType: ct.getId(),
       url: '',
       enabled: false,
-      contentTypeFieldNames: _.map(ct.data.fields, 'apiName')
+      contentTypeFields: _.map(ct.data.fields, function (field) {
+        return _.pick(field, ['apiName', 'type']);
+      })
     };
   }
 
@@ -255,15 +257,26 @@ angular.module('contentful')
    * @ngdoc method
    * @name contentPreview#getInvalidFields
    * @param {string} url
-   * @param {Array<string>} fieldNames
-   * @returns {Array<string>}
+   * @param {Array<string>} fields
+   * @returns {Array<object>}
    *
    * @description
    * Returns a list containing any invalid field tokens in the config's URL structure
   */
-  function getInvalidFields (url, fieldNames) {
+  function getInvalidFields (url, fields) {
     var tokens = extractFieldTokensFromUrl(url);
-    return _.difference(tokens, fieldNames);
+
+    var objectFields = _.map(_.filter(fields, function (field) {
+      return _.includes(['Array', 'Link', 'Object'], field.type);
+    }), 'apiName');
+
+    var nonExistentFields = _.difference(tokens, _.map(fields, 'apiName'));
+    var invalidTypeFields = _.intersection(tokens, objectFields);
+
+    return {
+      nonExistentFields: nonExistentFields,
+      invalidTypeFields: invalidTypeFields
+    };
   }
 
   function extractFieldTokensFromUrl (url) {

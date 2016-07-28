@@ -64,21 +64,38 @@ function ($scope, require) {
     return !_.get($scope, 'invalidFields.errors');
   }
 
+  function getWarnings (config) {
+    var warnings = [];
+    var invalidFields = contentPreview.getInvalidFields(
+      config.url,
+      config.contentTypeFields
+    );
+    maybeAppendWarning(
+      invalidFields.nonExistentFields,
+      'Fields with the following IDs don\'t exist in the content type: '
+    );
+    maybeAppendWarning(
+      invalidFields.invalidTypeFields,
+      'Fields with the following IDs will be output as an object or array: '
+    );
+    return warnings;
+
+    function maybeAppendWarning (fields, message) {
+      if (fields.length) {
+        warnings.push(message + fields.join(', '));
+      }
+    }
+  }
+
   function validateConfig (config) {
     if (config.enabled && !config.url) {
       addCtError(config.contentType, 'Please provide a URL.');
     } else if (config.url && !contentPreview.urlFormatIsValid(config.url)) {
       addCtError(config.contentType, 'URL is invalid.');
     } else {
-      var invalidFields = contentPreview.getInvalidFields(
-        config.url,
-        config.contentTypeFieldNames
-      );
-      if (invalidFields.length) {
-        var message =
-          'Fields with the following IDs don\'t exist in the content type: ' +
-          invalidFields.join(', ');
-        addCtWarning(config.contentType, message);
+      var warnings = getWarnings(config);
+      if (warnings.length) {
+        addCtWarning(config.contentType, warnings);
       }
     }
   }
