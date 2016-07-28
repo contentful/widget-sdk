@@ -5,6 +5,8 @@ angular.module('contentful')
 function ($scope, $injector) {
 
   var contentPreview = $injector.get('contentPreview');
+  var isAdmin = $injector.get('spaceContext')
+    .getData('spaceMembership.admin', false);
 
   $scope.showDefaultMessage = false;
 
@@ -12,7 +14,7 @@ function ($scope, $injector) {
   .then(function (environments) {
     $scope.contentPreviewEnvironments = environments;
     $scope.selectEnvironment($scope.contentPreviewEnvironments[0]);
-    if (environments.length === 1 && environments[0].example) {
+    if (environments.length === 1 && environments[0].example && isAdmin) {
       $scope.showDefaultMessage = true;
     }
 
