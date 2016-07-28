@@ -13,9 +13,9 @@ angular.module('contentful')
     name: 'list',
     url: '',
     ncyBreadcrumb: {
-      label: 'Content Preview'
+      label: 'Content preview'
     },
-    loadingText: 'Loading Content Preview...',
+    loadingText: 'Loading Content preview...',
     template: '<cf-content-preview-list class="workbench entity-list" />',
     controller: ['$scope', 'require', function ($scope, require) {
       var accessChecker = require('accessChecker');
@@ -32,7 +32,7 @@ angular.module('contentful')
       parent: 'spaces.detail.settings.content_preview.list',
       label: '{{context.title + (context.dirty ? "*" : "")}}'
     },
-    loadingText: 'Loading Content Preview...',
+    loadingText: 'Loading Content preview...',
     controller: ['$state', '$scope', 'contentPreview', function ($state, $scope, contentPreview) {
       $scope.context = $state.current.data;
       $scope.contentPreview = contentPreview;
