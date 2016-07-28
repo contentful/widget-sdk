@@ -131,6 +131,25 @@ describe('contentPreview', function () {
     });
   });
 
+  describe('#canCreate', function () {
+    it('resolves to true when limit is not reached', function () {
+      this.contentPreview.canCreate().then(function (allowed) {
+        expect(allowed).toBe(true);
+      });
+    });
+
+    it('resolves to false when limit is reached', function () {
+      // Create 25 preview environments
+      _.times(25, function (idx) {
+        const internal = this.contentPreview.toInternal(makeEnv('foo' + idx), [makeCt('ct-1')]);
+        this.contentPreview.create(internal);
+      }.bind(this));
+      this.contentPreview.canCreate().then(function (allowed) {
+        expect(allowed).toBe(true);
+      });
+    });
+  });
+
   describe('#create', function () {
     beforeEach(function () {
       const internal = this.contentPreview.toInternal(makeEnv('foo'), [makeCt('ct-1')]);
@@ -267,7 +286,5 @@ describe('contentPreview', function () {
       const isValid = this.contentPreview.urlFormatIsValid(urlTemplate);
       expect(isValid).toBe(false);
     });
-
-
   });
 });

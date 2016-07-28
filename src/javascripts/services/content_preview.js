@@ -16,11 +16,13 @@ angular.module('contentful')
 
   var ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
   var ENTRY_FIELD_PATTERN = /\{\s*entry_field\.(\w+)\s*\}/g;
+  var MAX_PREVIEW_ENVIRONMENTS = 25;
 
   return {
     getAll: getAll,
     get: get,
     getForContentType: getForContentType,
+    canCreate: canCreate,
     create: create,
     update: update,
     remove: remove,
@@ -72,6 +74,21 @@ angular.module('contentful')
   function get (id) {
     return getAll().then(function (environments) {
       return environments[id] || $q.reject('Preview environment could not be found');
+    });
+  }
+
+  /**
+   * @ngdoc method
+   * @name contentPreview#canCreate
+   * @returns {Promise<boolean>}
+   *
+   * @description
+   * Resolves to true if the user has less than 25 preview environments
+   * and can thus still create more.
+  */
+  function canCreate () {
+    return getAll().then(function (environments) {
+      return Object.keys(environments).length < MAX_PREVIEW_ENVIRONMENTS;
     });
   }
 

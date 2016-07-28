@@ -22,6 +22,8 @@ describe('cfContentPreviewEditor directive', function () {
     contentPreview.get = sinon.stub();
     contentPreview.create = sinon.stub();
     contentPreview.update = sinon.stub();
+    contentPreview.canCreate = sinon.stub();
+    contentPreview.canCreate.resolves(true);
     $state = this.$inject('$state');
     $state.go = sinon.stub().returns();
 

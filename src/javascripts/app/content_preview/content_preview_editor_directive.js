@@ -31,7 +31,7 @@ function ($scope, require) {
     : [getPreviewEnvironment, getContentTypes]
   );
 
-  $q.all(promises).then(handleSuccessResponse, handleErrorResponse);
+  $q.all(promises).then(handleSuccessResponse, redirectToList);
 
   $scope.$watch('previewEnvironment.name', function (name) {
     $scope.context.title = name || 'Untitled';
@@ -93,11 +93,17 @@ function ($scope, require) {
 
   function handleSuccessResponse (responses) {
     var cts = spaceContext.getFilteredAndSortedContentTypes();
-    $scope.context.ready = true;
-
     if ($scope.context.isNew) {
-      $scope.previewEnvironment = contentPreview.new(cts);
+      contentPreview.canCreate().then(function (allowed) {
+        if (allowed) {
+          $scope.previewEnvironment = contentPreview.new(cts);
+          $scope.context.ready = true;
+        } else {
+          redirectToList();
+        }
+      });
     } else {
+      $scope.context.ready = true;
       var env = responses[0];
       if (env) {
         $scope.previewEnvironment = contentPreview.toInternal(env, cts);
@@ -108,7 +114,7 @@ function ($scope, require) {
     }
   }
 
-  function handleErrorResponse () {
+  function redirectToList () {
     $state.go('spaces.detail.settings.content_preview.list');
   }
 
