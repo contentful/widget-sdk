@@ -85,7 +85,8 @@ mixin entity-sidebar
             | By default, the Discovery App is used to preview content.&#32;
             a(ui-sref="spaces.detail.settings.content_preview.list")
               | Set up a custom content preview.
-          .entity-sidebar__preview__toggle(ng-if="!showDefaultMessage")
+          .entity-sidebar__preview__toggle(
+            ng-if="!showDefaultMessage && contentPreviewEnvironments.length > 1")
             div <strong>Platform:</strong> {{selectedEnvironment.name}}
             a.entity-sidebar__preview__change(cf-context-menu-trigger)
               | Change
