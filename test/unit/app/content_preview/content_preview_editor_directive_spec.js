@@ -22,6 +22,8 @@ describe('cfContentPreviewEditor directive', function () {
     contentPreview.get = sinon.stub();
     contentPreview.create = sinon.stub();
     contentPreview.update = sinon.stub();
+    contentPreview.canCreate = sinon.stub();
+    contentPreview.canCreate.resolves(true);
     $state = this.$inject('$state');
     $state.go = sinon.stub().returns();
 
@@ -37,7 +39,9 @@ describe('cfContentPreviewEditor directive', function () {
         name: this.element.find('input.content-preview-editor__input'),
         description: this.element.find('textarea.content-preview-editor__input'),
         save: this.element.find('button:contains("Save")'),
-        delete: this.element.find('button:contains("Delete")')
+        delete: this.element.find('button:contains("Delete")'),
+        firstConfig: this.element.find('.content-preview-editor__content-type:first'),
+        secondConfig: this.element.find('.content-preview-editor__content-type:eq(1)')
       };
 
       this.updateName = function (value) {
@@ -50,6 +54,13 @@ describe('cfContentPreviewEditor directive', function () {
 
       this.clickSave = function () {
         this.elements.save.trigger('click');
+      };
+
+      this.setFirstConfig = function (value) {
+        this.elements.firstConfig.find('input[type="checkbox"]')
+        .prop('checked', true).trigger('click');
+        this.elements.firstConfig.find('input[type="text"]')
+        .val(value).trigger('input');
       };
     };
   });
@@ -64,7 +75,9 @@ describe('cfContentPreviewEditor directive', function () {
       var contentTypes = [{
         getId: _.constant('ct-1'),
         getName: _.constant('Ct - 1'),
-        data: {fields: [{apiName: 'field1'}]}
+        data: {fields:
+          [{apiName: 'field1', type: 'Symbol'}, {apiName: 'field2', type: 'Array'}]
+        }
       }];
       contentPreview.create.resolves({sys: {id: 'foo'}});
       spaceContext.refreshContentTypes.resolves();
@@ -134,17 +147,21 @@ describe('cfContentPreviewEditor directive', function () {
       sinon.assert.notCalled(contentPreview.create);
     });
 
-    it('saves but shows warning if a provided field token is invalid', function () {
+    it('saves but shows warning if a field doesn\'t exist', function () {
       this.updateName('My PE');
-      var configEl = this.element.find('.content-preview-editor__content-type');
-      configEl.find('input[type="checkbox"]').prop('checked', true).trigger('click');
-      configEl.find('input[type="text"]')
-      .val('https://www.test.com/{entry_field.field1}/{entry_field.invalid}')
-      .trigger('input');
+      this.setFirstConfig('https://www.test.com/{entry_field.field1}/{entry_field.invalid}');
       this.clickSave();
-      expect(this.scope.invalidFields.warnings.configs['ct-1'])
+      expect(this.scope.invalidFields.warnings.configs['ct-1'][0])
       .toBe('Fields with the following IDs don\'t exist in the content type: invalid');
       sinon.assert.calledWith(contentPreview.create, this.scope.previewEnvironment);
+    });
+
+    it('saves but shows warning if a field has an invalid type', function () {
+      this.updateName('My PE');
+      this.setFirstConfig('https://www.test.com/{entry_field.field2}');
+      this.clickSave();
+      expect(this.scope.invalidFields.warnings.configs['ct-1'][0])
+      .toBe('Fields with the following IDs will be output as an object or array: field2');
     });
 
     it('shows notification and resets form when saved successfully', function () {
@@ -191,16 +208,19 @@ describe('cfContentPreviewEditor directive', function () {
     });
 
     it('displays configuration details', function () {
-      var configEl = this.element.find('.content-preview-editor__content-type:first');
-      expect(configEl.find('input[type="checkbox"]').prop('checked')).toBe(true);
-      var url = 'https://www.test.com';
-      expect(configEl.find('input[type="text"]').val()).toBe(url);
+      var checkboxElement = this.elements.firstConfig.find('input[type="checkbox"]');
+      var configElement = this.elements.firstConfig.find('input[type="text"]');
+      expect(checkboxElement.prop('checked')).toBe(true);
+      expect(configElement.val()).toBe('https://www.test.com');
     });
 
     it('adds empty config object if none exists for that content type', function () {
-      var configEl = this.element.find('.content-preview-editor__content-type:eq(1)');
-      expect(configEl.find('input[type="checkbox"]').prop('checked')).toBe(false);
-      expect(configEl.find('input[type="text"]').val()).toBe('');
+
+      var checkboxElement = this.elements.secondConfig.find('input[type="checkbox"]');
+      var configElement = this.elements.secondConfig.find('input[type="text"]');
+
+      expect(checkboxElement.prop('checked')).toBe(false);
+      expect(configElement.val()).toBe('');
     });
 
     it('displays success message when saved successfully', function () {

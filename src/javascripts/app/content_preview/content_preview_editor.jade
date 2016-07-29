@@ -42,8 +42,9 @@ header.workbench-header
           ng-model="config.url")
         .cfnext-form__field-error
           | {{invalidFields.errors.configs[config.contentType]}}
-        .cfnext-form__field-warning
-          | {{invalidFields.warnings.configs[config.contentType]}}
+        .cfnext-form__field-warning(
+          ng-repeat="warning in invalidFields.warnings.configs[config.contentType]")
+          | {{warning}}
     div(ng-if="!previewEnvironment.configs.length")
       | No content types set up yet
   +content-preview-sidebar(isEditor=true)

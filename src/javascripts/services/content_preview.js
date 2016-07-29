@@ -16,18 +16,21 @@ angular.module('contentful')
 
   var ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
   var ENTRY_FIELD_PATTERN = /\{\s*entry_field\.(\w+)\s*\}/g;
+  var MAX_PREVIEW_ENVIRONMENTS = 25;
 
   return {
     getAll: getAll,
     get: get,
     getForContentType: getForContentType,
+    canCreate: canCreate,
     create: create,
     update: update,
     remove: remove,
     new: makeNew,
     toInternal: toInternal,
     getInvalidFields: getInvalidFields,
-    replaceVariablesInUrl: replaceVariablesInUrl
+    replaceVariablesInUrl: replaceVariablesInUrl,
+    urlFormatIsValid: urlFormatIsValid
   };
 
   /**
@@ -71,6 +74,21 @@ angular.module('contentful')
   function get (id) {
     return getAll().then(function (environments) {
       return environments[id] || $q.reject('Preview environment could not be found');
+    });
+  }
+
+  /**
+   * @ngdoc method
+   * @name contentPreview#canCreate
+   * @returns {Promise<boolean>}
+   *
+   * @description
+   * Resolves to true if the user has less than 25 preview environments
+   * and can thus still create more.
+  */
+  function canCreate () {
+    return getAll().then(function (environments) {
+      return Object.keys(environments).length < MAX_PREVIEW_ENVIRONMENTS;
     });
   }
 
@@ -183,7 +201,9 @@ angular.module('contentful')
       contentType: ct.getId(),
       url: '',
       enabled: false,
-      contentTypeFieldNames: _.map(ct.data.fields, 'apiName')
+      contentTypeFields: _.map(ct.data.fields, function (field) {
+        return _.pick(field, ['apiName', 'type']);
+      })
     };
   }
 
@@ -237,15 +257,26 @@ angular.module('contentful')
    * @ngdoc method
    * @name contentPreview#getInvalidFields
    * @param {string} url
-   * @param {Array<string>} fieldNames
-   * @returns {Array<string>}
+   * @param {Array<string>} fields
+   * @returns {Array<object>}
    *
    * @description
    * Returns a list containing any invalid field tokens in the config's URL structure
   */
-  function getInvalidFields (url, fieldNames) {
+  function getInvalidFields (url, fields) {
     var tokens = extractFieldTokensFromUrl(url);
-    return _.difference(tokens, fieldNames);
+
+    var objectFields = _.map(_.filter(fields, function (field) {
+      return _.includes(['Array', 'Link', 'Object'], field.type);
+    }), 'apiName');
+
+    var nonExistentFields = _.difference(tokens, _.map(fields, 'apiName'));
+    var invalidTypeFields = _.intersection(tokens, objectFields);
+
+    return {
+      nonExistentFields: nonExistentFields,
+      invalidTypeFields: invalidTypeFields
+    };
   }
 
   function extractFieldTokensFromUrl (url) {
@@ -288,4 +319,18 @@ angular.module('contentful')
       return _.get(entry, ['data', 'fields', internalId, defaultLocale]) || match;
     });
   }
+
+  /**
+   * @ngdoc method
+   * @name contentPreview#urlFormatIsValid
+   * @param {string} urlTemplate
+   * @returns {boolean}
+   *
+   * @description
+   * Validates the provided URL template and returns true if valid.
+  */
+  function urlFormatIsValid (urlTemplate) {
+    return /^[A-z][A-z\d+-.]*:\/\/.+\..+/.test(urlTemplate);
+  }
+
 }]);

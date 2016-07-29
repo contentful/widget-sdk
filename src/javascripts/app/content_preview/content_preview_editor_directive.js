@@ -31,7 +31,7 @@ function ($scope, require) {
     : [getPreviewEnvironment, getContentTypes]
   );
 
-  $q.all(promises).then(handleSuccessResponse, handleErrorResponse);
+  $q.all(promises).then(handleSuccessResponse, redirectToList);
 
   $scope.$watch('previewEnvironment.name', function (name) {
     $scope.context.title = name || 'Untitled';
@@ -60,47 +60,67 @@ function ($scope, require) {
     }
 
     $scope.previewEnvironment.configs.forEach(validateConfig);
+
     return !_.get($scope, 'invalidFields.errors');
   }
 
-  function validateConfig (config) {
-    if (config.enabled && !config.url) {
-      addCtError(config.contentType);
-    } else {
-      var invalidFields = contentPreview.getInvalidFields(
-        config.url,
-        config.contentTypeFieldNames
-      );
-      if (invalidFields.length) {
-        addCtWarning(config.contentType, invalidFields);
+  function getWarnings (config) {
+    var warnings = [];
+    var invalidFields = contentPreview.getInvalidFields(
+      config.url,
+      config.contentTypeFields
+    );
+    maybeAppendWarning(
+      invalidFields.nonExistentFields,
+      'Fields with the following IDs don\'t exist in the content type: '
+    );
+    maybeAppendWarning(
+      invalidFields.invalidTypeFields,
+      'Fields with the following IDs will be output as an object or array: '
+    );
+    return warnings;
+
+    function maybeAppendWarning (fields, message) {
+      if (fields.length) {
+        warnings.push(message + fields.join(', '));
       }
     }
   }
 
-  function addCtWarning (contentType, invalidFields) {
-    _.set(
-      $scope,
-      'invalidFields.warnings.configs.' + contentType,
-      'Fields with the following IDs don\'t exist in the content type: ' +
-      invalidFields.join(', ')
-    );
+  function validateConfig (config) {
+    if (config.enabled && !config.url) {
+      addCtError(config.contentType, 'Please provide a URL.');
+    } else if (config.url && !contentPreview.urlFormatIsValid(config.url)) {
+      addCtError(config.contentType, 'URL is invalid.');
+    } else {
+      var warnings = getWarnings(config);
+      if (warnings.length) {
+        addCtWarning(config.contentType, warnings);
+      }
+    }
   }
 
-  function addCtError (contentType) {
-    _.set(
-      $scope,
-      'invalidFields.errors.configs.' + contentType,
-      'Please provide a URL.'
-    );
+  function addCtError (contentType, message) {
+    _.set($scope, 'invalidFields.errors.configs.' + contentType, message);
+  }
+
+  function addCtWarning (contentType, message) {
+    _.set($scope, 'invalidFields.warnings.configs.' + contentType, message);
   }
 
   function handleSuccessResponse (responses) {
     var cts = spaceContext.getFilteredAndSortedContentTypes();
-    $scope.context.ready = true;
-
     if ($scope.context.isNew) {
-      $scope.previewEnvironment = contentPreview.new(cts);
+      contentPreview.canCreate().then(function (allowed) {
+        if (allowed) {
+          $scope.previewEnvironment = contentPreview.new(cts);
+          $scope.context.ready = true;
+        } else {
+          redirectToList();
+        }
+      });
     } else {
+      $scope.context.ready = true;
       var env = responses[0];
       if (env) {
         $scope.previewEnvironment = contentPreview.toInternal(env, cts);
@@ -111,7 +131,7 @@ function ($scope, require) {
     }
   }
 
-  function handleErrorResponse () {
+  function redirectToList () {
     $state.go('spaces.detail.settings.content_preview.list');
   }
 

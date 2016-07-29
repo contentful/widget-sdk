@@ -2,10 +2,14 @@ mixin content-preview-sidebar
   .workbench-main__entity-sidebar.content-preview-sidebar
     .entity-sidebar
       .cfnext-form__field(ng-if="previewEnvironments.length")
-        button.cfnext-btn-action.x--block(ui-sref="spaces.detail.settings.content_preview.new")
+        button.cfnext-btn-action.x--block(
+          ng-if="previewEnvironments.length < 25"
+          ui-sref="spaces.detail.settings.content_preview.new")
           div
             cf-icon(name="plus").btn-icon.inverted
             | Add content preview
+        div(ng-if="previewEnvironments.length >= 25")
+          | You can't create more than 25 preview environments
       h2.entity-sidebar__heading
         | What's content preview?
       p
