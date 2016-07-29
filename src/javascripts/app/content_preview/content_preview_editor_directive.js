@@ -57,6 +57,7 @@ function ($scope, require) {
 
     if (!$scope.previewEnvironment.name) {
       _.set($scope, 'invalidFields.errors.name', 'Please provide a name.');
+      showMissingRequiredFieldNotification();
     }
 
     $scope.previewEnvironment.configs.forEach(validateConfig);
@@ -102,10 +103,15 @@ function ($scope, require) {
 
   function addCtError (contentType, message) {
     _.set($scope, 'invalidFields.errors.configs.' + contentType, message);
+    showMissingRequiredFieldNotification();
   }
 
   function addCtWarning (contentType, message) {
     _.set($scope, 'invalidFields.warnings.configs.' + contentType, message);
+  }
+
+  function showMissingRequiredFieldNotification () {
+    notification.warn('Failed to save: please fill out all required fields.');
   }
 
   function handleSuccessResponse (responses) {
