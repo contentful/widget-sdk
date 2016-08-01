@@ -8,6 +8,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
   var specialCharacters = $injector.get('MarkdownEditor/specialCharacters');
   var LinkOrganizer     = $injector.get('LinkOrganizer');
   var notification      = $injector.get('notification');
+  var entitySelector = $injector.get('entitySelector');
 
   return { for: prepareActions };
 
@@ -43,18 +44,22 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
     }
 
     function asset() {
-      modalDialog.open({
-        template: 'insert_asset_dialog'
-      }).promise.then(function (assets) {
-        if (_.isEmpty(assets)) { return; }
-        var links = _.map(assets, _makeAssetLink).join(' ');
-        editor.insert(links);
+      entitySelector.open({
+        type: 'Array',
+        itemLinkType: 'Asset',
+        locale: localeCode
+      })
+      .then(function (assets) {
+        if (Array.isArray(assets) && !_.isEmpty(assets)) {
+          var links = _.map(assets, _makeAssetLink).join(' ');
+          editor.insert(links);
+        }
       });
     }
 
     function _makeAssetLink(asset) {
-      var title = spaceContext.localizedField(asset, 'data.fields.title', localeCode);
-      var file = spaceContext.localizedField(asset, 'data.fields.file', localeCode);
+      var title = dotty.get(asset, ['fields', 'title', localeCode]);
+      var file = dotty.get(asset, ['fields', 'file', localeCode]);
 
       if (title && _.isObject(file) && file.url) {
         return '![' + title + '](' + assetUrl(file.url) + ')';

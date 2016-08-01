@@ -39,6 +39,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         syncToParent: syncFromChildToParent,
         registerChild: registerChildEditor,
         getParent: function () { return editor; },
+        getLocale: _.constant(field.locale),
         toggle: toggleZenMode
       };
 
@@ -53,7 +54,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
       function initEditor (editorInstance) {
         editor = editorInstance;
-        scope.actions = actions.for(editor, api.locale);
+        scope.actions = actions.for(editor, field.locale);
         scope.history = editor.history;
 
         var stopPreview = startLivePreview(field.getValue, updatePreview);

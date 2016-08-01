@@ -50,7 +50,7 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
 
       function initEditor(editorInstance) {
         editor = editorInstance;
-        scope.actions = actions.for(editor);
+        scope.actions = actions.for(editor, scope.zenApi.getLocale());
         scope.history = editor.history;
 
         scope.zenApi.registerChild(editorInstance);
