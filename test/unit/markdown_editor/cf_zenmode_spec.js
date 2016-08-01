@@ -15,7 +15,8 @@ describe('cfZenmode', function () {
         },
         restoreCursor: sinon.stub()
       };
-    }
+    },
+    getLocale: _.constant('en-US')
   };
 
   beforeEach(function () {
