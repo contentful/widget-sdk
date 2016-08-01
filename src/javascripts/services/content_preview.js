@@ -332,7 +332,7 @@ angular.module('contentful')
    * Validates the provided URL template and returns true if valid.
   */
   function urlFormatIsValid (urlTemplate) {
-    return /^[A-z][A-z\d+-.]*:\/\/.+/.test(urlTemplate);
+    return /^https?:\/\/.+/.test(urlTemplate);
   }
 
 }]);
