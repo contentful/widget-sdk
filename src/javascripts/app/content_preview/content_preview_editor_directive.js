@@ -159,8 +159,10 @@ function ($scope, require) {
           {contentPreviewId: env.sys.id}, {reload: true}
         );
       }
-    }, function () {
-      notification.warn('Could not save Preview Environment');
+    }, function (err) {
+      var defaultMessage = 'Could not save Preview Environment';
+      var serverMessage = _.first(_.split(_.get(err, 'body.message'), '\n'));
+      notification.warn(serverMessage || defaultMessage);
     });
   }
 
