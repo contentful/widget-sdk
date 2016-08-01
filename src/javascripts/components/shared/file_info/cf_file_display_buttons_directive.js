@@ -1,40 +1,29 @@
 'use strict';
 
-angular.module('contentful').directive('cfFileDisplayButtons', function () {
+angular.module('contentful')
+.directive('cfFileDisplayButtons', [function () {
   return {
     restrict: 'E',
     template: JST.cf_file_display_buttons,
-    controller: ['$scope', '$state', function ($scope, $state) {
+    controller: ['$scope', function ($scope) {
+      $scope.canEditFile = canEditFile;
+      $scope.canDeleteFile = canDeleteFile;
 
-      $scope.tryOpenAsset = function () {
-        if (hasValidEntity()) {
-          $state.go('spaces.detail.assets.detail', {
-            assetId: $scope.entity.getId(),
-            addToContext: true
-          });
-        }
-      };
-
-      $scope.canOpenAsset = function () {
-        return !$scope.enableUpload && hasValidEntity();
-      };
-
-      $scope.canEditFile = function () {
+      function canEditFile () {
         var file = $scope.file;
         var isReady = $scope.imageHasLoaded && file && file.url;
-        return $scope.fieldLocale.access.editable && $scope.enableUpload && isReady;
-      };
+        return isEditable() && $scope.enableUpload && isReady;
+      }
 
-      $scope.canDeleteFile = function () {
+      function canDeleteFile () {
         var file = $scope.file;
         var uploaded = file && (file.url || file.upload);
-        return $scope.fieldLocale.access.editable && $scope.deleteFile && uploaded;
-      };
+        return isEditable() && $scope.deleteFile && uploaded;
+      }
 
-      function hasValidEntity () {
-        var entity = $scope.entity;
-        return _.isObject(entity) && _.isFunction(entity.getId)
+      function isEditable () {
+        return dotty.get($scope, 'fieldLocale.access.editable', false);
       }
     }]
   };
-});
+}]);

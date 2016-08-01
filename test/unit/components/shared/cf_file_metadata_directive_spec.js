@@ -37,88 +37,80 @@ describe('cfFileMetadata Directive', function () {
     element = scope = parentScope = compileElement = null;
   });
 
-  describe('default state with no attrs set', function() {
-    beforeEach(function() {
+  describe('default state with no attrs set', function () {
+    beforeEach(function () {
       compileElement();
     });
 
-    it('file is not defined', function() {
+    it('file is not defined', function () {
       expect(scope.file).toBeUndefined();
     });
 
-    it('title is not defined', function() {
+    it('title is not defined', function () {
       expect(scope.title).toBeUndefined();
     });
 
-    it('toggles meta info', function() {
+    it('toggles meta info', function () {
       scope.toggleMeta();
       expect(scope.showMeta).toBeTruthy();
     });
 
-    describe('file preview is hidden', function() {
-      it('main container', function() {
+    describe('file preview is hidden', function () {
+      it('main container', function () {
         expect(element.find('.file-preview')).toBeNgHidden();
       });
 
-      it('inner container', function() {
+      it('inner container', function () {
         expect(element.find('.file-preview .vcenter')[0]).toBeUndefined();
       });
     });
 
-    it('title overlay is shown', function() {
+    it('title overlay is shown', function () {
       expect(element.find('.title-overlay')).not.toBeNgHidden();
     });
 
-    it('message warning of no file is shown', function() {
+    it('message warning of no file is shown', function () {
       expect(element.find('.no-file').eq(0)).not.toBeNgHidden();
     });
 
-    it('go to asset button is shown hidden', function() {
-      expect(element.find('[aria-label="Open Asset"]')).not.toBeNgHidden();
-    });
-
-    it('metadata button is hidden', function() {
+    it('metadata button is hidden', function () {
       expect(element.find('[aria-label="Show file information"]')).toBeNgHidden();
     });
 
-    it('delete button is hidden', function() {
+    it('delete button is hidden', function () {
       expect(element.find('[aria-label="Delete file"]')).toBeNgHidden();
     });
 
-    it('remove link button is hidden', function() {
-      expect(element.find('[aria-label="Remove Asset"]')).toBeNgHidden();
-    });
-
-    it('upload button is hidden', function() {
+    it('upload button is hidden', function () {
       expect(element.find('.cf-file-drop')).toBeNgHidden();
     });
   });
 
-  describe('upload mode', function() {
-    beforeEach(function() {
+  describe('upload mode', function () {
+    beforeEach(function () {
       parentScope.enableUpload = true;
       compileElement();
     });
 
-    it('file preview is hidden main container', function() {
+    it('file preview is hidden main container', function () {
       expect(element.find('.file-preview')).toBeNgHidden();
     });
 
-    it('title overlay is hidden', function() {
+    it('title overlay is hidden', function () {
       expect(element.find('.title-overlay')).toBeNgHidden();
     });
 
-    it('message warning of no file is hidden', function() {
+    it('message warning of no file is hidden', function () {
       expect(element.find('.no-file').eq(0)).toBeNgHidden();
     });
 
-    it('upload button is shown', function() {
+    it('upload button is shown', function () {
       expect(element.find('.cf-file-drop')).not.toBeNgHidden();
     });
   });
 
-  describe('file exists and is processing', function() {
-    beforeEach(function() {
+  describe('file exists and is processing', function () {
+    beforeEach(function () {
       parentScope.fileData = {
         fileName: 'file.jpg',
         fileType: 'image/jpeg',
@@ -129,19 +121,19 @@ describe('cfFileMetadata Directive', function () {
       compileElement();
     });
 
-    it('container', function() {
+    it('container', function () {
       expect(element.find('.file-progress').eq(1)).not.toBeNgHidden();
     });
 
-    it('delete button is shown', function() {
+    it('delete button is shown', function () {
       scope.deleteFile = function () {};
       scope.$digest();
       expect(element.find('[aria-label="Delete file"]')).not.toBeNgHidden();
     });
   });
 
-  describe('file exists and is loading', function() {
-    beforeEach(function() {
+  describe('file exists and is loading', function () {
+    beforeEach(function () {
       parentScope.fileData = {
         fileName: 'file.jpg',
         fileType: 'image/jpeg',
@@ -152,13 +144,13 @@ describe('cfFileMetadata Directive', function () {
       compileElement();
     });
 
-    it('container', function() {
+    it('container', function () {
       expect(element.find('.file-progress').eq(0)).not.toBeNgHidden();
     });
   });
 
-  describe('file exists and is visible', function() {
-    beforeEach(function() {
+  describe('file exists and is visible', function () {
+    beforeEach(function () {
       parentScope.fileData = {
         fileName: 'file.jpg',
         fileType: 'image/jpeg',
@@ -169,83 +161,74 @@ describe('cfFileMetadata Directive', function () {
       compileElement();
     });
 
-    it('file is defined', function() {
+    it('file is defined', function () {
       expect(scope.file).toBeDefined();
     });
 
-    it('title is defined', function() {
+    it('title is defined', function () {
       expect(scope.file).toBeDefined();
     });
 
-    describe('file preview is not hidden', function() {
-      it('main container', function() {
+    describe('file preview is not hidden', function () {
+      it('main container', function () {
         expect(element.find('.file-preview')).not.toBeNgHidden();
       });
 
-      it('inner container', function() {
+      it('inner container', function () {
         expect(element.find('.file-preview .vcenter')).not.toBeNgHidden();
       });
 
-      it('unpublished marker', function() {
+      it('unpublished marker', function () {
         expect(element.find('.file-preview .unpublished')).not.toBeNgHidden();
       });
     });
 
-    it('file is not processing', function() {
+    it('file is not processing', function () {
       expect(element.find('.file-progress').eq(1)).toBeNgHidden();
     });
 
-    it('file is not processing', function() {
+    it('file is not processing', function () {
       scope.file.upload = 'http://uploadurl';
       scope.$digest();
       expect(element.find('.file-progress').eq(1)).not.toBeNgHidden();
     });
 
-    it('hides meta info', function() {
+    it('hides meta info', function () {
       expect(element.find('.file-metadata')).toBeNgHidden();
     });
 
-    it('shows meta info', function() {
+    it('shows meta info', function () {
       scope.toggleMeta();
       scope.$digest();
       expect(element.find('.file-metadata')).not.toBeNgHidden();
     });
 
-    it('title overlay is hidden', function() {
+    it('title overlay is hidden', function () {
       expect(element.find('.title-overlay')).toBeNgHidden();
     });
 
-    it('message warning of no file is hidden', function() {
+    it('message warning of no file is hidden', function () {
       expect(element.find('.no-file').eq(0)).toBeNgHidden();
     });
 
-    it('download button is shown', function() {
+    it('download button is shown', function () {
       expect(element.find('[aria-label="Download file"]')).not.toBeNgHidden();
     });
 
-    it('download button is hidden', function() {
+    it('download button is hidden', function () {
       delete scope.file.url;
       scope.$digest();
       expect(element.find('[aria-label="Download file"]')).toBeNgHidden();
     });
 
-    it('metadata button is shown', function() {
+    it('metadata button is shown', function () {
       expect(element.find('[aria-label="Show file information"]')).not.toBeNgHidden();
     });
 
-    it('delete button is shown', function() {
+    it('delete button is shown', function () {
       scope.deleteFile = function () {};
       scope.$digest();
       expect(element.find('[aria-label="Delete file"]')).not.toBeNgHidden();
     });
-
-    it('remove link button is shown', function() {
-      scope.removeLink = function () {};
-      scope.$digest();
-      expect(element.find('[aria-label="Remove Asset"]')).not.toBeNgHidden();
-    });
-
-
   });
-
 });

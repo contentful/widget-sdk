@@ -1,9 +1,4 @@
 .file-buttons
-  button.cfnext-btn-secondary-action(type="button"
-    aria-label="Open Asset" tooltip="Open Asset"
-    ng-click="tryOpenAsset()"
-    ng-show="canOpenAsset()")
-    i.fa.fa-share-square-o
   a.cfnext-btn-secondary-action(type="button"
     aria-label="Download file" tooltip="Download file"
     href="{{file.url|assetUrl}}" target="_blank"
@@ -24,8 +19,3 @@
     ng-click="deleteFile()"
     ng-show="canDeleteFile()")
     i.fa.fa-trash
-  button.cfnext-btn-secondary-action(type="button"
-    aria-label="Remove Asset" tooltip="Remove Asset"
-    ng-show="fieldLocale.access.editable && removeLink"
-    ng-click="removeLink(index, entity)")
-    i.fa.fa-close
