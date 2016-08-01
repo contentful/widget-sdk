@@ -111,7 +111,7 @@ angular.module('contentful')
           env.configurations,
           _.matches({'contentType': contentTypeId})
         );
-        if (config) {
+        if (config && config.enabled) {
           config.name = env.name;
           acc.push(config);
         }
