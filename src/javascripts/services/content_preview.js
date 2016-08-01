@@ -314,9 +314,11 @@ angular.module('contentful')
       var internalId = _.get(
         _.find(
           contentType.data.fields,
-          _.matches({'apiName': fieldId})), 'id'
-        );
-      return _.get(entry, ['data', 'fields', internalId, defaultLocale]) || match;
+          _.matches({'apiName': fieldId})
+        ), 'id'
+      );
+      var fieldValue = _.get(entry, ['data', 'fields', internalId, defaultLocale]);
+      return _.toString(fieldValue) || match;
     });
   }
 
