@@ -12,8 +12,7 @@ describe('cfFileMetadata Directive', function () {
 
     inject(function ($compile, $rootScope) {
       parentScope = $rootScope.$new();
-      parentScope.otDoc = {doc: {}, state: {}};
-      parentScope.isEditable = _.constant(true);
+      parentScope.fieldLocale = {access: {editable: true}};
 
       parentScope.fileData = null;
       parentScope.someTitle = null;

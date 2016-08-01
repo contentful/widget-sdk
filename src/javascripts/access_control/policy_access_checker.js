@@ -55,17 +55,10 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     });
   }
 
-  function getFieldChecker(contentTypeId, predicate) {
-    predicate = predicate || _.constant(true);
-
+  function getFieldChecker (contentTypeId) {
     return {
-      isEditable: function (field, locale) { return  check(field, locale); },
-      isDisabled: function (field, locale) { return !check(field, locale); }
+      isEditable: _.partial(isEditable, contentTypeId)
     };
-
-    function check(field, locale) {
-      return predicate() && isEditable(contentTypeId, field, locale);
-    }
   }
 
   function isEditable(contentTypeId, field, locale) {

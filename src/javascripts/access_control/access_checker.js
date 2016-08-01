@@ -168,15 +168,14 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * @ngdoc method
    * @name accessChecker#getFieldChecker
    * @param {API.Entry|API.Asset} entity
-   * @param {function} predicate
    * @returns {object}
    * @description
    * Gets a field chcecker for a given entity.
    *
    * Predicate may be used to override field access check.
    */
-  function getFieldChecker(entity, predicate) {
-    return policyChecker.getFieldChecker(getContentTypeIdFor(entity), predicate);
+  function getFieldChecker(entity) {
+    return policyChecker.getFieldChecker(getContentTypeIdFor(entity));
   }
 
   function createResponseAttributeGetter(attrName) {

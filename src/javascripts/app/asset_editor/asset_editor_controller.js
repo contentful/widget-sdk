@@ -38,8 +38,6 @@ angular.module('contentful')
     contentType: null
   });
 
-  $controller('entityEditor/FieldAccessController', {$scope: $scope});
-
   $scope.$watch(function () {
     return spaceContext.assetTitle($scope.asset);
   }, function (title) {

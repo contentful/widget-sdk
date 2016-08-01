@@ -329,17 +329,10 @@ describe('Policy Access Checker', function () {
     function test(field, locale, expectation, fac) {
       fac = fac || pac.getFieldChecker('ctid');
       expect(fac.isEditable(field, locale)).toBe(expectation);
-      expect(fac.isDisabled(field, locale)).toBe(!expectation);
     }
 
     it('isEditable returns false by default', function () {
       test({}, {}, false);
-    });
-
-    it('isEditable returns false if predicate returns false', function () {
-      var fac = pac.getFieldChecker('ctid', _.constant(false));
-      test({}, {}, false, fac);
-      expect(fac.isEditable({}, {})).toBe(false);
     });
 
     it('isEditable returns true for admin', function () {

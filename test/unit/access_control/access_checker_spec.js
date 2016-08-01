@@ -158,20 +158,16 @@ describe('Access Checker', function () {
     });
 
     it('returns instance for entry field', function () {
-      ac.getFieldChecker(entry, _.noop);
+      ac.getFieldChecker(entry);
       sinon.assert.calledOnce(policyChecker.getFieldChecker);
-      var args = policyChecker.getFieldChecker.args[0];
-      expect(args[0]).toBe('ctid');
-      expect(args[1]).toBe(_.noop);
+      expect(policyChecker.getFieldChecker.args[0][0]).toBe('ctid');
     });
 
     it('returns instance for asset field', function () {
       var asset = {data: {sys: {type: 'Asset'}}};
-      ac.getFieldChecker(asset, _.noop);
+      ac.getFieldChecker(asset);
       sinon.assert.calledOnce(policyChecker.getFieldChecker);
-      var args = policyChecker.getFieldChecker.args[0];
-      expect(args[0]).toBeUndefined();
-      expect(args[1]).toBe(_.noop);
+      expect(policyChecker.getFieldChecker.args[0][0]).toBeUndefined();
     });
   });
 
