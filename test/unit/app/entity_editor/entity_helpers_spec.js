@@ -5,16 +5,12 @@ describe('EntityHelpers', function () {
   const throwingFn = () => { throw new Error('Should not end up here!'); };
 
   beforeEach(function () {
-    const getClassnameStub = this.getClassnameStub = sinon.stub().returns('status');
-
-    module('contentful/test', function ($provide, $controllerProvider) {
+    module('contentful/test', function ($provide) {
       $provide.value('assetUrlFilter', _.constant(REWRITTEN_URL));
       $provide.value('spaceContext', {});
-      $controllerProvider.register('EntityStatusController', function () {
-        this.getClassname = getClassnameStub;
-      });
     });
 
+    this.$inject('entityStatus').getClassname = this.getClassnameStub = sinon.stub().returns('status');
     this.helpers = this.$inject('EntityHelpers').api;
   });
 

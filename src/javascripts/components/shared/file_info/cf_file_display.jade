@@ -4,8 +4,6 @@
   .file-preview(ng-show="file|isFileReady")
     .loading(ng-show="loadingEditor")
     .vcenter.cf-thumbnail(cf-thumbnail file="file" height="250" ng-if="file && !loadingEditor")
-    .linked-entities__status(ng-show="entity" ng-class="entityStatusController.getClassname(entity)")
-      .status-bar
 
   .file-progress.progress.center(ng-show="(file|isFileReady) && isFileLoading()")
     p Loading…

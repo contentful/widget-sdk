@@ -12,13 +12,14 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
   var TheLocaleStore  = $injector.get('TheLocaleStore');
   var spaceContext    = $injector.get('spaceContext');
   var accessChecker   = $injector.get('accessChecker');
+  var entityStatus = $injector.get('entityStatus');
 
   $controller('AssetListViewsController', {
     $scope: $scope,
     preserveState: true
   });
 
-  $scope.entityStatusController = $controller('EntityStatusController', { $scope: $scope });
+  $scope.entityStatus = entityStatus;
 
   $scope.shouldHide = accessChecker.shouldHide;
   $scope.shouldDisable = accessChecker.shouldDisable;
