@@ -19,10 +19,8 @@
 
   .title-overlay(ng-hide="file || enableUpload")
     | {{title}}
-  .no-file.center.vcenter(ng-hide="(file || enableUpload)")
+  .no-file.center.vcenter(ng-hide="file || enableUpload")
     | Asset has no file
-  .no-file.center.vcenter(ng-show="entity && entity.isMissing")
-    | Asset is missing or inaccessible due to your access level
   .no-file.center.vcenter(ng-show="!file && fieldLocale.access.denied")
     | You don't have a permission to edit this field.
 

@@ -17,7 +17,8 @@ describe('cfFileMetadata Directive', function () {
       parentScope.fileData = null;
       parentScope.someTitle = null;
       parentScope.entity = {
-        canPublish: sinon.stub()
+        canPublish: sinon.stub(),
+        getId: _.noop
       };
 
       parentScope.isFileLoading = sinon.stub();
@@ -72,10 +73,6 @@ describe('cfFileMetadata Directive', function () {
       expect(element.find('.no-file').eq(0)).not.toBeNgHidden();
     });
 
-    it('message warning of missing asset is hidden', function() {
-      expect(element.find('.no-file').eq(1)).toBeNgHidden();
-    });
-
     it('go to asset button is shown hidden', function() {
       expect(element.find('[aria-label="Open Asset"]')).not.toBeNgHidden();
     });
@@ -95,21 +92,6 @@ describe('cfFileMetadata Directive', function () {
     it('upload button is hidden', function() {
       expect(element.find('.cf-file-drop')).toBeNgHidden();
     });
-
-    describe('if entity is missing', function() {
-      beforeEach(function() {
-        scope.entity.isMissing = true;
-        scope.$digest();
-      });
-
-      it('message warning of missing asset is shown', function() {
-        expect(element.find('.no-file').eq(1)).not.toBeNgHidden();
-      });
-
-      it('go to asset button is hidden', function() {
-        expect(element.find('[aria-label="Open Asset"]')).toBeNgHidden();
-      });
-    });
   });
 
   describe('upload mode', function() {
@@ -128,10 +110,6 @@ describe('cfFileMetadata Directive', function () {
 
     it('message warning of no file is hidden', function() {
       expect(element.find('.no-file').eq(0)).toBeNgHidden();
-    });
-
-    it('message warning of missing asset is hidden', function() {
-      expect(element.find('.no-file').eq(1)).toBeNgHidden();
     });
 
     it('upload button is shown', function() {
@@ -239,16 +217,6 @@ describe('cfFileMetadata Directive', function () {
 
     it('message warning of no file is hidden', function() {
       expect(element.find('.no-file').eq(0)).toBeNgHidden();
-    });
-
-    it('message warning of missing asset is hidden', function() {
-      expect(element.find('.no-file').eq(1)).toBeNgHidden();
-    });
-
-    it('message warning of missing asset is shown', function() {
-      scope.entity.isMissing = true;
-      scope.$digest();
-      expect(element.find('.no-file').eq(1)).not.toBeNgHidden();
     });
 
     it('download button is shown', function() {

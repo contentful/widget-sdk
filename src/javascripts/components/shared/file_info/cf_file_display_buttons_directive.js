@@ -7,17 +7,16 @@ angular.module('contentful').directive('cfFileDisplayButtons', function () {
     controller: ['$scope', '$state', function ($scope, $state) {
 
       $scope.tryOpenAsset = function () {
-        var entity = $scope.entity;
-        if (entity && !entity.isMissing) {
+        if (hasValidEntity()) {
           $state.go('spaces.detail.assets.detail', {
-            assetId: entity.getId(),
+            assetId: $scope.entity.getId(),
             addToContext: true
           });
         }
       };
 
       $scope.canOpenAsset = function () {
-        return !$scope.enableUpload && $scope.entity && !$scope.entity.isMissing;
+        return !$scope.enableUpload && hasValidEntity();
       };
 
       $scope.canEditFile = function () {
@@ -32,6 +31,10 @@ angular.module('contentful').directive('cfFileDisplayButtons', function () {
         return $scope.fieldLocale.access.editable && $scope.deleteFile && uploaded;
       };
 
+      function hasValidEntity () {
+        var entity = $scope.entity;
+        return _.isObject(entity) && _.isFunction(entity.getId)
+      }
     }]
   };
 });
