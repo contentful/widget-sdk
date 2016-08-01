@@ -267,7 +267,7 @@ angular.module('contentful')
     var tokens = extractFieldTokensFromUrl(url);
 
     var objectFields = _.map(_.filter(fields, function (field) {
-      return _.includes(['Array', 'Link', 'Object'], field.type);
+      return _.includes(['Array', 'Link', 'Object', 'Location'], field.type);
     }), 'apiName');
 
     var nonExistentFields = _.difference(tokens, _.map(fields, 'apiName'));
