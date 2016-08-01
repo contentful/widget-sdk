@@ -87,7 +87,8 @@ mixin entity-sidebar
               | Set up a custom content preview.
           .entity-sidebar__preview__toggle(
             ng-if="!showDefaultMessage && contentPreviewEnvironments.length > 1")
-            div <strong>Platform:</strong> {{selectedEnvironment.name}}
+            .entity-sidebar__preview__platform
+              | <strong>Platform:</strong> {{selectedEnvironment.name}}
             a.entity-sidebar__preview__change(cf-context-menu-trigger)
               | Change
             .context-menu.x--arrow-right(cf-context-menu="bottom-right")
