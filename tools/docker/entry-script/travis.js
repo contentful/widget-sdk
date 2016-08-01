@@ -102,7 +102,6 @@ function* createFileDist (src, dest, version, branch) {
  * - /opt/contentful/cf-user-interface/build/app
  * - /opt/contentful/cf-user-interface/build/index.html
  * - /opt/contentful/cf-user-interface/build/revision.json
- * - /opt/contentful/cf-user-interface/bin/process_hosts
  *
  * The second one is a simple text file pointing to the path of the
  * package for this version.
@@ -120,8 +119,6 @@ function* createPackageDist (src, dest, version) {
   yield FS.mkdirsAsync(P.dirname(linkFile))
 
   yield copy(src, P.join(buildRoot, 'build'))
-  // TODO remove this file when chef does not need it anymore
-  yield copy('bin/process_hosts', P.join(buildRoot, 'bin', 'process_hosts'))
   yield writeJSON(P.join(buildRoot, 'build', 'revision.json'), {revision: version})
 
   yield exec(
