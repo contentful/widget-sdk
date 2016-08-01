@@ -45,7 +45,6 @@ test/unit/components/tabs/locale_editor/locale_editor_directive_spec.js
 test/unit/components/tabs/learn/cf_learn_view_directive_spec.js
 test/unit/components/field_dialog/appearance_controller_spec.js
 test/unit/components/search.js
-test/unit/classes/entity_cache_spec.js
 test/unit/classes/entity_state_manager_spec.js
 test/unit/directives/cf_copy_to_clipboard_directive_spec.js
 test/unit/forms/cf_null_empty_input_spec.js
@@ -306,7 +305,6 @@ src/javascripts/services/get.js
 src/javascripts/services/getty_images.js
 src/javascripts/services/kaltura_widget_loader.js
 src/javascripts/services/lodash_timing.js
-src/javascripts/services/lookupLinksForEntityCache.js
 src/javascripts/services/merge_sort.js
 src/javascripts/services/ooyala_client.js
 src/javascripts/services/ooyala_player_loader.js
@@ -326,7 +324,6 @@ src/javascripts/services/analytics/analytics_noop.js
 src/javascripts/services/authorization.js
 src/javascripts/services/editing_interfaces_helpers.js
 src/javascripts/services/enforcements.js
-src/javascripts/services/entity_cache.js
 src/javascripts/services/error_message_builder.js
 src/javascripts/services/features.js
 src/javascripts/services/filepicker.js
