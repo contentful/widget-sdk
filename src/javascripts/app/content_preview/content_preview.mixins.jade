@@ -15,7 +15,8 @@ mixin content-preview-sidebar
       p
         | Adding a content preview generates a link in the entry editor, referring to your custom preview environment.
       p
-        | <a href="#">Read the guide</a> before setting up a custom content preview.
+        cf-knowledge-base(target="content_preview" text="Read the guide" inline-text="true")
+        |  before setting up a custom content preview.
       if attributes.isEditor
         h2.entity-sidebar__heading
           | Tokens
