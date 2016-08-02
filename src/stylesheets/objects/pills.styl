@@ -2,53 +2,111 @@
 Pills
 
 Markup:
-ul.pill-list(style="width: 36em")
+ul.pill-list(style="width: 30em")
   li.pill-item
     button.pill-item__remove
-      cf-icon(name="close")
+      cf-icon(name="close" scale="0.6")
     | can be used
   li.pill-item
     | without close
   li.pill-item
     button.pill-item__remove
-      cf-icon(name="close")
+      cf-icon(name="close" scale="0.6")
     | for tagging
   li.pill-item
     button.pill-item__remove
-      cf-icon(name="close")
+      cf-icon(name="close" scale="0.6")
     | truncates very long, long, super long texts
     | really well with some dots
 
 Styleguide: pills
 */
 
+/*
+Draggable
+
+Markup:
+ul.pill-list(cf-ui-sortable)
+  li.pill-item.x--draggable
+    cf-icon.pill-item__drag-handle(data-drag-handle name="drag-handle-2" height="17")
+    button.pill-item__remove
+      cf-icon(name="close" scale="0.6")
+    | draggable
+  li.pill-item.x--draggable
+    cf-icon.pill-item__drag-handle(data-drag-handle name="drag-handle-2" height="17")
+    button.pill-item__remove
+      cf-icon(name="close" scale="0.6")
+    | can be used
+  li.pill-item.x--draggable
+    cf-icon.pill-item__drag-handle(data-drag-handle name="drag-handle-2" height="17")
+    button.pill-item__remove
+      cf-icon(name="close" scale="0.6")
+    | with pill
+  li.pill-item.x--draggable
+    cf-icon.pill-item__drag-handle(data-drag-handle name="drag-handle-2" height="17")
+    button.pill-item__remove
+      cf-icon(name="close" scale="0.6")
+    | lists
+
+Styleguide: pills.draggable
+*/
+
 .pill-list
   display: flex
   flex-wrap: wrap
 
+  > *
+    line-height: 2rem
+    margin-bottom: $rhythm(0.5)
+    margin-right: 1rem
+    &:last-child
+      margin-right: 0
+
+  > .sortable-placeholder
+    border: 1px dashed $colors.element-mid
+
 .pill-item
-  padding: 0 2ex
-  line-height: 2rem
-
-  margin-bottom: $rhythm(0.5)
-  margin-right: 1rem
-
+  $text-truncate()
+  position: relative
+  color: $colors.text-mid
+  padding: 1px 2ex 0 2ex
   border-radius: 2px
   color: $colors.text-mid
-  background: $colors.element-lightest
+  // TODO Make this a variable. It is not part of the color scheme yet
+  background: #EEF2F4
 
-.pill-item__remove
-  $button-reset()
-  float: right
-  height: 2rem
-  padding: 0 0.7rem
-  // Bleed into .pill-item padding
-  margin-right: -2ex
-  outline: 0
+  &.x--draggable
+    padding-left: 3ex
 
-  svg
-    height: $base-font-size
-  path
-    fill: $colors.text-lightest
-  &:hover path
-    fill: $colors.text-mid
+  &__drag-handle
+    position: absolute
+    top: 0
+    left: 0
+    height: 100%
+    width: 3ex
+    cursor: move
+    cursor: -webkit-grabbing
+    cursor: -moz-grab
+    cursor: -moz-grabbing
+    svg
+      position: relative
+      top: 8px
+      left: 7px
+    path
+      fill: $colors.text-lightest
+
+  &__remove
+    $button-reset()
+    float: right
+    height: 2rem
+    padding: 0 0.7rem
+    // Bleed into .pill-item padding
+    margin-right: -2ex
+    outline: 0
+
+    svg
+      height: $base-font-size
+    path
+      fill: $colors.text-lightest
+    &:hover path
+      fill: $colors.text-mid

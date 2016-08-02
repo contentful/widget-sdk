@@ -233,7 +233,7 @@ angular.module('contentful')
   $scope.$watchGroup(['widgetSettings.id', 'availableWidgets'], function (values) {
     var name = values[0];
     var available = values[1];
-    var properWidgets = ['radio', 'dropdown'];
+    var properWidgets = ['radio', 'dropdown', 'checkbox'];
 
     var isProper = _.includes(properWidgets, name);
     var availableIds = _.map(available, 'id');

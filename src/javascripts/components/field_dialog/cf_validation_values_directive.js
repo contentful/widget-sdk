@@ -5,60 +5,69 @@
  * field to add values.
  */
 angular.module('contentful')
-.directive('cfValidationValues', ['$injector', function($injector) {
-  var keycodes = $injector.get('keycodes');
+.directive('cfValidationValues', ['require', function (require) {
+  var KEYCODES = require('keycodes');
+  var normalizeWhiteSpace = require('stringUtils').normalizeWhiteSpace;
 
-  // If precision is larger than this number is only represented in exponential
-  // because lol javascript
-  var MAX_PRECISON = 21;
+  var ERROR_MESSAGES = {
+    integerOutOfRange: 'Number is out of range.',
+    numberOverflow: 'Numbers should be 21 characters long or less (use a text field otherwise).',
+    emptyValue: 'The input is empty. Please add some non-whitespace characters.',
+    numberParsingFailed: 'You can only add number values.',
+    numberNotAnInteger: 'You can only add integer values.',
+    stringTooLong: 'Values must be 85 characters or less.',
+    duplicate: 'This value already exists on the list.'
+  };
+
+  // The maximum number of digits we can represent without rounding
+  // errors.
+  var MAX_PRECISION = 21;
 
   return {
+    scope: true,
     restrict: 'E',
-    template: JST['cf_validation_values'](),
-    link: link,
+    template: JST.cf_validation_values(),
+    link: function ($scope) {
+      if (!$scope.validation.settings) {
+        $scope.validation.settings = [];
+      }
 
-    controllerAs: 'valuesController',
-    controller: ['$scope', function($scope) {
-      var controller = this;
+      $scope.items = $scope.validation.settings;
 
-      /**
-       * Sync 'validation.settings' and the local 'valueList'
-       */
-      $scope.$watch('validation.settings', function(valueList) {
-        if (!valueList)
-          $scope.validation.settings = valueList = [];
-        $scope.valueList = valueList;
+      $scope.$watch('inputValue', function (inputValue) {
+        if (!inputValue) {
+          $scope.errorMessages = [];
+        }
       });
 
-      /**
-       * Remove a the predefined value at the given position
-       */
-      $scope.remove = function(index) {
-        $scope.valueList.splice(index, 1);
-      };
-
-
-      /**
-       * Handles an 'Enter' keypress in order to add the current value
-       * to the list.
-       */
-      $scope.onInputKey = function(ev) {
-        controller.clearErrors();
-        ev.stopPropagation();
-        var input = $(ev.target);
-        if (ev.keyCode === keycodes.ENTER && input.val()) {
-          delete $scope.validation.errors;
-          ev.preventDefault();
-          if (addValue(input.val()))
-            input.val('');
+      $scope.addItem = function (ev) {
+        var value = ev.target.value;
+        if (ev.keyCode !== KEYCODES.ENTER || !value) {
+          return;
         }
+
+        try {
+          value = parseValue(value, $scope.field.type);
+        } catch (e) {
+          setError(e.message);
+          return;
+        }
+
+        if (_.includes($scope.items, value)) {
+          setError(ERROR_MESSAGES.duplicate);
+          return;
+        }
+
+        $scope.items.push(value);
+        $scope.validator.run();
+        $scope.errorMessages = [];
+        ev.target.value = '';
       };
 
-
-      /**
-       * Options for `ui-sortable`.
-       */
-      $scope.sortOptions = { axis: 'y' };
+      $scope.removeItem = function (i) {
+        $scope.items.splice(i, 1);
+        $scope.validator.run();
+      };
 
 
       /**
@@ -68,96 +77,48 @@ angular.module('contentful')
        * The function throws errors if the value could not be parsed
        * correctly.
        */
-      function parseValue(value, type) {
-        if (type == 'Number' || type == 'Integer') {
-          if (value.length > MAX_PRECISON)
-            throw new Error('Numbers should be 21 characters long or less (use a text field otherwise).');
+      function parseValue (value, type) {
+        if (type === 'Number' || type === 'Integer') {
+          if (type === 'Number' && value.length > MAX_PRECISION) {
+            throw new Error(ERROR_MESSAGES.numberOverflow);
+          }
 
-          if (type == 'Integer')
-            value = parseInt(value, 10);
-          if (type == 'Number')
-            value = parseFloat(value, 10);
+          value = value.replace(',', '.');
+          value = parseFloat(value, 10);
 
-          if (isNaN(value))
-            throw new Error('You can only add number values.');
+          if (isNaN(value)) {
+            throw new Error(ERROR_MESSAGES.numberParsingFailed);
+          }
+
+          if (type === 'Integer') {
+            if (!_.isInteger(value)) {
+              throw new Error(ERROR_MESSAGES.numberNotAnInteger);
+            }
+
+            if (value > Number.MAX_SAFE_INTEGER || value < Number.MIN_SAFE_INTEGER) {
+              throw new Error(ERROR_MESSAGES.integerOutOfRange);
+            }
+          }
 
           return value;
-        } else if (value.length > 85){
-          throw new Error('Values must be 85 characters or less');
         } else {
+          value = normalizeWhiteSpace(value);
+          if (value.length > 85) {
+            throw new Error(ERROR_MESSAGES.stringTooLong);
+          }
+
+          if (!value) {
+            throw new Error(ERROR_MESSAGES.emptyValue);
+          }
+
           return value;
         }
       }
 
-      function addValue(value) {
-        try {
-          value = parseValue(value, $scope.field.type);
-        } catch (e) {
-          setError(e.message);
-          return false;
-        }
-
-        if (_.includes($scope.valueList, value)){
-          setError('This value already exists on the list');
-          return false;
-        } else {
-          $scope.valueList.push(value);
-          $scope.validator.run();
-          return true;
-        }
+      function setError (message) {
+        $scope.errorMessages = [message];
       }
 
-      function setError(message) {
-        controller.errorMessages = [message];
-      }
-
-      controller.clearErrors = function () {
-        this.errorMessages = [];
-      };
-    }]
-  };
-
-  function link (scope, elem) {
-    setupScrollIndicators(scope, elem);
-    clearErrorsOnBlur(scope, elem);
-  }
-
-
-  /**
-   * Toggle indicators for scrolled value list.
-   */
-  function setupScrollIndicators(scope, elem) {
-    var valueListFrame = elem.find('.validation-value-list__scroll-frame');
-    var valueList      = valueListFrame.children('ul');
-    var upIndicator    = elem.find('.validation-value-list .fa-caret-up');
-    var downIndicator  = elem.find('.validation-value-list .fa-caret-down');
-
-    function updateIndicators() {
-      var listHeight = valueList.height();
-      var frameHeight = valueListFrame.height();
-      var scrollTop = valueListFrame.scrollTop();
-      var scrollBottom = scrollTop + frameHeight;
-
-      if (scrollTop > 0)
-        upIndicator.show();
-      else
-        upIndicator.hide();
-
-      if (listHeight > frameHeight && scrollBottom < listHeight)
-        downIndicator.show();
-      else
-        downIndicator.hide();
     }
-
-    valueListFrame.on('scroll', updateIndicators);
-    scope.$watchCollection('valueList', updateIndicators);
-  }
-
-  function clearErrorsOnBlur (scope, elem) {
-    elem.children('input[type=text]').first().on('blur', function () {
-      scope.$apply(function () {
-        scope.valuesController.clearErrors();
-      });
-    });
-  }
+  };
 }]);

@@ -205,7 +205,6 @@ src/javascripts/components/app_container/space_controller.js
 src/javascripts/components/field_dialog/cf_position_relative_to_widget_list_directive.js
 src/javascripts/components/field_dialog/cf_validation_date_select_directive.js
 src/javascripts/components/field_dialog/cf_validation_settings_directive.js
-src/javascripts/components/field_dialog/cf_validation_values_directive.js
 src/javascripts/components/field_dialog/field_decorator.js
 src/javascripts/components/field_dialog/image_dimensions_validation_controller.js
 src/javascripts/components/field_dialog/validation_asset_types_controller.js
