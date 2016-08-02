@@ -332,7 +332,6 @@ src/javascripts/navigation/confirm_leave_editor.js
 src/javascripts/navigation/close_state.js
 src/javascripts/navigation/state_change_handlers.js
 src/javascripts/ui/cf_ui_tab.js
-src/javascripts/ui/sortable.js
 src/javascripts/ui/cf_ui_hint.js
 src/javascripts/ui/context_menu.js
 src/javascripts/widgets/id_map.js

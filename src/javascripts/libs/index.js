@@ -1,5 +1,7 @@
 'use strict';
 
+require('angular-ui-sortable');
+
 angular.module('cf.libs', [])
   .constant('libs/kefir', require('kefir'))
   .constant('libs/@contentful/client', require('@contentful/client'))
