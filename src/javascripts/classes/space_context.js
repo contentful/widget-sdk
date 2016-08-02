@@ -34,6 +34,7 @@ angular.module('contentful')
   var ApiClient = $injector.get('data/ApiClient');
   var ShareJSConnection = $injector.get('data/ShareJS/Connection');
   var Subscription = $injector.get('Subscription');
+  var previewEnvironmentsCache = $injector.get('data/previewEnvironmentsCache');
 
   var requestContentTypes = createQueue(function (extraHandler) {
     return spaceContext.space.getContentTypes({order: 'name', limit: 1000})
@@ -107,6 +108,7 @@ angular.module('contentful')
         space.getId()
       );
 
+      previewEnvironmentsCache.clearAll();
       TheLocaleStore.resetWithSpace(space);
       return $q.all([loadWidgets(self, space), requestContentTypes()])
       .then(function () {

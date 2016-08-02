@@ -25,6 +25,7 @@ function ContentTypeActionsController ($scope, $injector) {
   var closeState = $injector.get('navigation/closeState');
   var metadataDialog = $injector.get('contentTypeEditor/metadataDialog');
   var uiConfig = $injector.get('uiConfig');
+  var previewEnvironmentsCache = $injector.get('data/previewEnvironmentsCache');
 
   /**
    * @ngdoc property
@@ -238,6 +239,7 @@ function ContentTypeActionsController ($scope, $injector) {
     .then(function () {
       return uiConfig.addOrEditCt($scope.contentType);
     })
+    .then(previewEnvironmentsCache.clearAll)
     .then(notify.saveSuccess);
   }
 

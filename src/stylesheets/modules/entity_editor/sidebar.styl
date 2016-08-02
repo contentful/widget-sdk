@@ -28,14 +28,11 @@ $entity-sidebar-content()
     // We need to hide the border
     transform: translateX(-1px)
 
-
 .entity-sidebar
   $entity-sidebar-content()
 
   &__heading
     margin-top: $rhythm(2.5)
-    &:first-of-type
-      margin-top: 0
     font-size: .75rem
     font-weight: 500
     text-transform: uppercase
@@ -44,6 +41,9 @@ $entity-sidebar-content()
     border-bottom: 1px solid $colors.element-dark
     letter-spacing: 1px
     margin-bottom: $rhythm(1.5)
+
+  > .entity-sidebar__heading:first-of-type
+    margin-top: 0
 
   &__state-select
     margin-bottom: $rhythm(0.5)
@@ -106,6 +106,25 @@ $entity-sidebar-content()
     margin-left: auto
     flex-shrink: 0
 
+  &__preview
+    i.fa-external-link
+      margin-right: 6px
+    &__discovery
+      margin-top: $rhythm(1)
+      color: $colors.text-light
+    &__toggle
+      display: flex
+      justify-content: space-between
+      margin-top: $rhythm(1)
+      &, a, strong
+        color: $colors.text-light
+    &__change
+      text-decoration: underline
+      cursor: pointer
+      text-align: right
+      min-width: 65px
+    &__platform
+      word-break: break-all
 
   &__translation-list
     display: flex

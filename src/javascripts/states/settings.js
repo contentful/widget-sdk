@@ -30,7 +30,8 @@ angular.module('contentful')
       $injector.get('states/settings/locales'),
       $injector.get('states/settings/users'),
       $injector.get('states/settings/roles'),
-      $injector.get('states/settings/webhooks')
+      $injector.get('states/settings/webhooks'),
+      $injector.get('states/settings/content_preview')
     ]
   };
 }]);

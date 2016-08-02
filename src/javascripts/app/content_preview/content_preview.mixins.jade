@@ -1,0 +1,44 @@
+mixin content-preview-sidebar
+  .workbench-main__entity-sidebar.content-preview-sidebar
+    .entity-sidebar
+      .cfnext-form__field(ng-if="previewEnvironments.length")
+        button.cfnext-btn-action.x--block(
+          ng-if="previewEnvironments.length < 25"
+          ui-sref="spaces.detail.settings.content_preview.new")
+          div
+            cf-icon(name="plus").btn-icon.inverted
+            | Add content preview
+        div(ng-if="previewEnvironments.length >= 25")
+          | You can't create more than 25 preview environments
+      h2.entity-sidebar__heading
+        | What's content preview?
+      p
+        | Adding a content preview generates a link in the entry editor, referring to your custom preview environment.
+      p
+        | <a href="#">Read the guide</a> before setting up a custom content preview.
+      if attributes.isEditor
+        h2.entity-sidebar__heading
+          | Tokens
+        p
+          | Use these representative tokens in your URLs.
+          |  They will be replaced with the corresponding values when the preview is opened in the entry editor.
+        p
+          code.content-preview-sidebar__token
+            | {entry_id}
+          span
+            |  : Entry ID
+        p
+          code.content-preview-sidebar__token
+            span {entry_field.<span class="content-preview-sidebar__token__alt">id</span>}
+          span
+            |  : Entry fields - the value of any given field can be used by passing the ID of the respective field.
+            |  For example, to use the field with the ID slug, the token would be <em>{entry_field.slug}</em>.
+        p
+          | Use the <a ui-sref="spaces.detail.api.content_model">content model explorer</a> to retreive the ID of the field(s) you want to use.
+
+mixin content-preview-item
+  span
+    h3.entity-list__heading {{env.name}}
+    span.entity-list__description {{env.description}}
+  cf-icon(name="dd-arrow-down")
+

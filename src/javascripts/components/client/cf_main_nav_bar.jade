@@ -76,6 +76,11 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
             ng-class="{'selected': $state.includes('spaces.detail.settings.webhooks')}"
             ui-sref="spaces.detail.settings.webhooks.list")
             | Webhooks
+          li(
+            role="menuitem"
+            ng-class="{'selected': $state.includes('spaces.detail.settings.content_preview')}"
+            ui-sref="spaces.detail.settings.content_preview.list")
+            | Content preview
     li.app-top-bar__action.nav-bar__list-item--right
       a.nav-bar__link(
           ng-class="{'is-active': $state.is('spaces.detail.learn')}"
