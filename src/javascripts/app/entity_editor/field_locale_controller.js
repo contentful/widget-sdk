@@ -37,9 +37,6 @@ angular.module('contentful')
 
   controller.doc = FieldLocaleDoc.create($scope.otDoc, field.id, locale.internal_code);
 
-  // TODO remove this alias once it is not used by the reference editor anymore
-  $scope.otSubDoc = controller.doc;
-
   /**
    * @ngdoc property
    * @name FieldLocaleController#errors
