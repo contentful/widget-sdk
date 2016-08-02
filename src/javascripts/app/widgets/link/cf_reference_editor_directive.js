@@ -7,6 +7,8 @@ angular.module('cf.app')
   var entitySelector = require('entitySelector');
   var createEntityStore = require('EntityStore').create;
   var createEntity = require('cfReferenceEditor/createEntity');
+  var $q = require('$q');
+  var modalDialog = require('modalDialog');
 
   return {
     restrict: 'E',
@@ -83,9 +85,12 @@ angular.module('cf.app')
       $scope.isDisabled = isDisabled;
     });
 
+    var unregisterPublicationWarning = field.registerPublicationWarning(hasUnpublishedReferences, showWarning);
+
     $scope.$on('$destroy', function () {
       offValueChange();
       offDisabledChange();
+      unregisterPublicationWarning();
     });
 
     function is (type, style) {
@@ -120,6 +125,33 @@ angular.module('cf.app')
 
     function unwrapLinks () {
       return _.map($scope.links, 'link');
+    }
+
+    function hasUnpublishedReferences () {
+      return getUnpublishedReferences().length > 0;
+    }
+
+    function getUnpublishedReferences () {
+      return _.filter(_.map(unwrapLinks(), store.get), function (data) {
+        return !dotty.get(data, 'sys.publishedVersion', false);
+      });
+    }
+
+    function showWarning () {
+      var numberOfReferences = getUnpublishedReferences().length;
+
+      return modalDialog.openConfirmDialog({
+        title: 'Unpublished references',
+        message: [
+          'The field <strong>' + field.name + ' (' + field.locale + ')</strong>',
+          'references ' + numberOfReferences + ' unpublished',
+          (numberOfReferences > 1 ? $scope.typePlural : $scope.type.toLowerCase()) + '.',
+          'Do you want to continue?'
+        ].join(' ')
+      })
+      .then(function (result) {
+        return $q[result.confirmed ? 'resolve' : 'reject']();
+      });
     }
   }
 

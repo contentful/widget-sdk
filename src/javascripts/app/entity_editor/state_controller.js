@@ -14,6 +14,7 @@ function ($scope, $injector, entity, notify, handlePublishError) {
   var closeState = $injector.get('navigation/closeState');
 
   var stateManager = new StateManager(entity);
+  var publicationWarnings = [];
 
   /**
    * @ngdoc analytics-event
@@ -132,14 +133,17 @@ function ($scope, $injector, entity, notify, handlePublishError) {
   });
 
   function publishEntity () {
-    if (!$scope.validate()) {
-      notify.publishValidationFail();
-      return $q.reject();
-    }
+    showPublicationWarnings()
+    .then(function () {
+      if (!$scope.validate()) {
+        notify.publishValidationFail();
+        return $q.reject();
+      }
 
-    return stateManager.publish()
-    .then(entryReverter.publishedNewVersion)
-    .then(notify.publishSuccess, handlePublishError);
+      return stateManager.publish()
+      .then(entryReverter.publishedNewVersion)
+      .then(notify.publishSuccess, handlePublishError);
+    });
   }
 
   controller.delete = Command.create(function () {
@@ -198,5 +202,20 @@ function ($scope, $injector, entity, notify, handlePublishError) {
 
   function setDocFields (fields) {
     return $scope.otDoc.setValueAt(['fields'], fields);
+  }
+
+  controller.registerPublicationWarning = function (checker, warnFn) {
+    var warning = {shouldShow: checker, warnFn: warnFn};
+    publicationWarnings.push(warning);
+
+    return function () {
+      _.pull(publicationWarnings, warning);
+    };
+  };
+
+  function showPublicationWarnings () {
+    return _.reduce(publicationWarnings, function (promise, warning) {
+      return warning.shouldShow() ? promise.then(warning.warnFn) : promise;
+    }, $q.resolve());
   }
 }]);
