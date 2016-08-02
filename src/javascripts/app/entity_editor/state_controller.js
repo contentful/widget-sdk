@@ -12,9 +12,9 @@ function ($scope, $injector, entity, notify, handlePublishError) {
   var analytics = $injector.get('analytics');
   var accessChecker = $injector.get('accessChecker');
   var closeState = $injector.get('navigation/closeState');
+  var publicationWarnings = $injector.get('entityEditor/publicationWarnings').create();
 
   var stateManager = new StateManager(entity);
-  var publicationWarnings = [];
 
   /**
    * @ngdoc analytics-event
@@ -132,8 +132,10 @@ function ($scope, $injector, entity, notify, handlePublishError) {
     targetStateId: 'published'
   });
 
+  controller.registerPublicationWarning = publicationWarnings.register;
+
   function publishEntity () {
-    showPublicationWarnings()
+    publicationWarnings.show()
     .then(function () {
       if (!$scope.validate()) {
         notify.publishValidationFail();
@@ -202,20 +204,5 @@ function ($scope, $injector, entity, notify, handlePublishError) {
 
   function setDocFields (fields) {
     return $scope.otDoc.setValueAt(['fields'], fields);
-  }
-
-  controller.registerPublicationWarning = function (checker, warnFn) {
-    var warning = {shouldShow: checker, warnFn: warnFn};
-    publicationWarnings.push(warning);
-
-    return function () {
-      _.pull(publicationWarnings, warning);
-    };
-  };
-
-  function showPublicationWarnings () {
-    return _.reduce(publicationWarnings, function (promise, warning) {
-      return warning.shouldShow() ? promise.then(warning.warnFn) : promise;
-    }, $q.resolve());
   }
 }]);

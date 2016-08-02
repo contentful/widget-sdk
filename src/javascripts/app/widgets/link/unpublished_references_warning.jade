@@ -1,0 +1,21 @@
+.modal-background
+  .modal-dialog
+    header.modal-dialog__header
+      h1 This entry links to unpublished {{ linkedEntityTypes }}
+
+    .modal-dialog__content
+      .modal-dialog__richtext
+        p
+          | It appears that you’ve linked to {{ linkedEntityTypes }} that haven’t been published yet.
+        ul
+          li(ng-repeat="item in unpublishedRefs")
+            | <strong>{{ item.fieldName }}</strong> — {{ item.count }} unpublished {{ item.type }}
+        p
+          | That’s fine — but please keep in mind that these {{ linkedEntityTypes }}
+          | won’t show up in the Delivery API response (until they are published, of course).
+
+    .modal-dialog__controls
+      button.cfnext-btn-primary-action(ng-click="dialog.confirm()")
+        | Got it, publish anyway
+      button.cfnext-btn-secondary-action(ng-click="dialog.cancel()")
+        | Back to the editor

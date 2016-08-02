@@ -7,7 +7,6 @@ angular.module('cf.app')
   var entitySelector = require('entitySelector');
   var createEntityStore = require('EntityStore').create;
   var createEntity = require('cfReferenceEditor/createEntity');
-  var $q = require('$q');
   var modalDialog = require('modalDialog');
 
   return {
@@ -85,7 +84,12 @@ angular.module('cf.app')
       $scope.isDisabled = isDisabled;
     });
 
-    var unregisterPublicationWarning = field.registerPublicationWarning(hasUnpublishedReferences, showWarning);
+    var unregisterPublicationWarning = field.registerPublicationWarning({
+      group: 'reference_widget_unpublished_references',
+      shouldShow: hasUnpublishedReferences,
+      warnFn: showWarning,
+      getData: getWarningData
+    });
 
     $scope.$on('$destroy', function () {
       offValueChange();
@@ -137,21 +141,32 @@ angular.module('cf.app')
       });
     }
 
-    function showWarning () {
-      var numberOfReferences = getUnpublishedReferences().length;
+    function getWarningData () {
+      var references = getUnpublishedReferences();
 
-      return modalDialog.openConfirmDialog({
-        title: 'Unpublished references',
-        message: [
-          'The field <strong>' + field.name + ' (' + field.locale + ')</strong>',
-          'references ' + numberOfReferences + ' unpublished',
-          (numberOfReferences > 1 ? $scope.typePlural : $scope.type.toLowerCase()) + '.',
-          'Do you want to continue?'
-        ].join(' ')
-      })
-      .then(function (result) {
-        return $q[result.confirmed ? 'resolve' : 'reject']();
+      return {
+        fieldName: field.name + ' (' + field.locale + ')',
+        count: references.length,
+        linked: $scope.type,
+        type: (references.length > 1 ? $scope.typePlural : $scope.type).toLowerCase()
+      };
+    }
+
+    function showWarning (unpublishedRefs) {
+      unpublishedRefs = _.filter(unpublishedRefs, function (ref) {
+        return ref && ref.count > 0;
       });
+
+      var counts = _.countBy(unpublishedRefs, 'linked');
+      var linkedEntityTypes = [counts.Entry > 0 && 'entries', counts.Asset > 0 && 'assets'];
+
+      return modalDialog.open({
+        template: 'unpublished_references_warning',
+        scopeData: {
+          unpublishedRefs: unpublishedRefs,
+          linkedEntityTypes: _.filter(linkedEntityTypes).join(' and ')
+        }
+      }).promise;
     }
   }
 
