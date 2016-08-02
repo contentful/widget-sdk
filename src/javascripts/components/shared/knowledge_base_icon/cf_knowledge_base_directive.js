@@ -48,7 +48,8 @@ angular.module('contentful').factory('KnowledgeBase/getUrl', ['$injector', funct
     content_apis: 'developers/docs/concepts/apis/',
     delivery_api: 'developers/docs/references/content-delivery-api',
     management_api: 'developers/docs/references/content-management-api',
-    cma_key: 'developers/docs/references/authentication/#the-management-api'
+    cma_key: 'developers/docs/references/authentication/#the-management-api',
+    content_preview: 'r/knowledgebase/setup-content-preview/'
   };
 
   return function getKnowledgeBaseUrl (name) {

@@ -6,6 +6,7 @@ set -ev
 
 SLIMERJS_BIN=bin/slimerjs
 
+./bin/install-firefox
 ./bin/install_slimerjs
 npm install --no-optional
 ./node_modules/bower/bin/bower install

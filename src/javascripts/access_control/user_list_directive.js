@@ -75,7 +75,7 @@ angular.module('contentful').controller('UserListController', ['$scope', '$injec
   $scope.openInvitationDialog = openInvitationDialog;
   $scope.canModifyUsers = canModifyUsers;
   $scope.canInviteUsers = canInviteUsers;
-  $scope.goToSubscription = TheAccountView.goToSubscription;
+  $scope.goToSubscription = TheAccountView.goToSubscription.bind(TheAccountView);
 
   reload().catch(ReloadNotification.basicErrorHandler);
 
