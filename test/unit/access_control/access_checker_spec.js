@@ -145,32 +145,6 @@ describe('Access Checker', function () {
     });
   });
 
-  describe('#getFieldChecker', function () {
-    var entry = {data: {sys: {type: 'Entry', contentType: {sys: {id: 'ctid'}}}}};
-    var fieldChecker = {};
-
-    beforeEach(function () {
-      policyChecker.getFieldChecker = sinon.stub().returns(fieldChecker);
-    });
-
-    it('returns instance from policy checker', function () {
-      expect(ac.getFieldChecker(entry)).toBe(fieldChecker);
-    });
-
-    it('returns instance for entry field', function () {
-      ac.getFieldChecker(entry);
-      sinon.assert.calledOnce(policyChecker.getFieldChecker);
-      expect(policyChecker.getFieldChecker.args[0][0]).toBe('ctid');
-    });
-
-    it('returns instance for asset field', function () {
-      var asset = {data: {sys: {type: 'Asset'}}};
-      ac.getFieldChecker(asset);
-      sinon.assert.calledOnce(policyChecker.getFieldChecker);
-      expect(policyChecker.getFieldChecker.args[0][0]).toBeUndefined();
-    });
-  });
-
   describe('#shouldHide and #shouldDisable', function () {
     it('are shortcuts to response object properties', function () {
       getResStub.withArgs('read', 'Entry').returns(false);

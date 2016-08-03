@@ -24,7 +24,7 @@ angular.module('contentful').factory('accessChecker/policy', ['require', functio
     canUpdateOwnEntries: canUpdateOwnEntries,
     canUpdateAssets: canUpdateAssets,
     canUpdateOwnAssets: canUpdateOwnAssets,
-    getFieldChecker: getFieldChecker
+    canEditFieldLocale: canEditFieldLocale
   };
 
   function setMembership (membership) {
@@ -55,13 +55,7 @@ angular.module('contentful').factory('accessChecker/policy', ['require', functio
     });
   }
 
-  function getFieldChecker (contentTypeId) {
-    return {
-      isEditable: _.partial(isEditable, contentTypeId)
-    };
-  }
-
-  function isEditable (contentTypeId, field, locale) {
+  function canEditFieldLocale (contentTypeId, field, locale) {
     var fieldId = field.apiName || field.id;
     var localeCode = locale.code;
 

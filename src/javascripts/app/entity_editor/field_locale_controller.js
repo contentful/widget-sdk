@@ -19,7 +19,7 @@ angular.module('contentful')
  * @scope.requires docPresence
  */
 .controller('FieldLocaleController', ['require', '$scope', function (require, $scope) {
-  var accessChecker = require('accessChecker');
+  var policyAccessChecker = require('accessChecker/policy');
   var FieldLocaleDoc = require('entityEditor/FieldLocaleDocument');
 
   var controller = this;
@@ -27,7 +27,6 @@ angular.module('contentful')
   var locale = $scope.locale;
   var fieldPath = ['fields', field.id];
   var localePath = fieldPath.concat([locale.internal_code]);
-  var fieldAccessChecker = accessChecker.getFieldChecker($scope.entity);
 
   // Values for controller.access
   var DENIED = {denied: true, disabled: true};
@@ -179,6 +178,7 @@ angular.module('contentful')
   });
 
   function hasEditingPermission () {
-    return fieldAccessChecker.isEditable(field, locale);
+    var ctId = dotty.get($scope, 'entity.data.sys.contentType.sys.id');
+    return policyAccessChecker.canEditFieldLocale(ctId, field, locale);
   }
 }]);

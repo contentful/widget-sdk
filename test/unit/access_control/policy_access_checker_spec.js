@@ -298,7 +298,7 @@ describe('Policy Access Checker', function () {
     });
   });
 
-  describe('#getFieldChecker', function () {
+  describe('#canEditFieldLocale', function () {
     beforeEach(function () {
       setRole(roles.empty);
     });
@@ -326,95 +326,91 @@ describe('Policy Access Checker', function () {
       }]};
     }
 
-    function test (field, locale, expectation, fac) {
-      fac = fac || pac.getFieldChecker('ctid');
-      expect(fac.isEditable(field, locale)).toBe(expectation);
+    function test (field, locale, expectation) {
+      var ctId = arguments.length === 4 ? arguments[3] : 'ctid';
+      expect(pac.canEditFieldLocale(ctId, field, locale)).toBe(expectation);
     }
 
-    it('isEditable returns false by default', function () {
+    it('returns false by default', function () {
       test({}, {}, false);
     });
 
-    it('isEditable returns true for admin', function () {
+    it('returns true for admin', function () {
       setRole(undefined, true);
       test({}, {}, true);
     });
 
-    it('isEditable returns true for admin even for paths that do not match', function () {
+    it('returns true for admin even for paths that do not match', function () {
       setRole(pathPolicy('fields.other.%'), true);
       test({apiName: 'test'}, {}, true);
     });
 
-    it('isEditable returns false if policy states: field - other than given, locale - any', function () {
+    it('returns false if policy states: field - other than given, locale - any', function () {
       setRole(pathPolicy('fields.other.%'));
       test({apiName: 'test'}, {}, false);
     });
 
-    it('isEditable returns false if policy states: field - any, locale - other than given', function () {
+    it('returns false if policy states: field - any, locale - other than given', function () {
       setRole(pathPolicy('fields.%.en'));
       test({apiName: 'test'}, {code: 'pl'}, false);
     });
 
-    it('isEditable returns false if policy states: field - other than given, locale - other than given', function () {
+    it('returns false if policy states: field - other than given, locale - other than given', function () {
       setRole(pathPolicy('fields.other.en'));
       test({apiName: 'test'}, {code: 'pl'}, false);
     });
 
-    it('isEditable returns true if policy states: field - given, locale - any', function () {
+    it('returns true if policy states: field - given, locale - any', function () {
       setRole(pathPolicy('fields.test.%'));
       test({apiName: 'test'}, {}, true);
     });
 
-    it('isEditable returns true if policy states: field - any, locale - given', function () {
+    it('returns true if policy states: field - any, locale - given', function () {
       setRole(pathPolicy('fields.%.en'));
       test({apiName: 'somefield'}, {code: 'en'}, true);
     });
 
-    it('isEditable returns true if policy states: field - give, locale - given', function () {
+    it('returns true if policy states: field - give, locale - given', function () {
       setRole(pathPolicy('fields.test.pl'));
       test({apiName: 'test'}, {code: 'pl'}, true);
     });
 
-    it('isEditable returns false if there is overriding policy', function () {
+    it('returns false if there is overriding policy', function () {
       var p1 = pathPolicy('fields.test.pl');
       var p2 = pathPolicy('fields.test.pl', 'deny');
       setRole({policies: _.union(p1.policies, p2.policies)});
       test({apiName: 'test'}, {code: 'pl'}, false);
     });
 
-    it('isEditable returns false if there is partially overriding policy', function () {
+    it('returns false if there is partially overriding policy', function () {
       var p1 = pathPolicy('fields.test.pl');
       var p2 = pathPolicy('fields.%.pl', 'deny');
       setRole({policies: _.union(p1.policies, p2.policies)});
       test({apiName: 'test'}, {code: 'pl'}, false);
     });
 
-    it('isEditable uses legacy field ID property if apiName is not available', function () {
+    it('uses legacy field ID property if apiName is not available', function () {
       setRole(pathPolicy('fields.test.%'));
       test({id: 'test'}, {code: 'pl'}, true);
     });
 
-    it('isEditable returns false if CT does not match', function () {
-      var fac = pac.getFieldChecker('x');
+    it('returns false if CT does not match', function () {
       setRole(pathPolicy('fields.test.pl'));
-      test({apiName: 'test'}, {code: 'pl'}, false, fac);
+      test({apiName: 'test'}, {code: 'pl'}, false, 'x');
     });
 
-    it('isEditable returns false for asset field w/o allow policies', function () {
-      var fac = pac.getFieldChecker(undefined);
-      test({}, {}, false, fac);
+    it('returns false for asset field w/o allow policies', function () {
+      test({}, {}, false, undefined);
     });
 
-    it('isEditable returns false for asset with policy allowing editing other locale', function () {
-      var fac = pac.getFieldChecker(undefined);
+    it('returns false for asset with policy allowing editing other locale', function () {
       setRole(assetPathPolicy('fields.%.en'));
-      test({}, {code: 'pl'}, false, fac);
+      test({}, {code: 'pl'}, false, undefined);
     });
 
-    it('isEditable returns true for asset with allowing policy', function () {
-      var fac = pac.getFieldChecker(undefined);
+    it('returns true for asset with allowing policy', function () {
       setRole(assetPathPolicy('fields.%.en'));
-      test({}, {code: 'en'}, true, fac);
+      test({}, {code: 'en'}, true, undefined);
     });
   });
 });

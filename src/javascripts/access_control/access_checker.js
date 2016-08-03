@@ -106,7 +106,6 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
     shouldDisable: shouldDisable,
 
     reset: reset,
-    getFieldChecker: getFieldChecker,
     canPerformActionOnEntity: canPerformActionOnEntity,
     canPerformActionOnEntryOfType: canPerformActionOnEntryOfType,
     canUpdateEntry: canUpdateEntry,
@@ -162,18 +161,6 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
     features = spaceContext.getData('organization.subscriptionPlan.limits.features', {});
     userQuota.limit = spaceContext.getData('organization.subscriptionPlan.limits.permanent.organizationMembership', -1);
     userQuota.used = spaceContext.getData('organization.usage.permanent.organizationMembership', 1);
-  }
-
-  /**
-   * @ngdoc method
-   * @name accessChecker#getFieldChecker
-   * @param {API.Entry|API.Asset} entity
-   * @returns {object}
-   * @description
-   * Gets a field checker for a given entity.
-   */
-  function getFieldChecker (entity) {
-    return policyChecker.getFieldChecker(getContentTypeIdFor(entity));
   }
 
   function createResponseAttributeGetter (attrName) {
