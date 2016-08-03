@@ -125,46 +125,6 @@ $entity-sidebar-content()
       min-width: 65px
     &__platform
       word-break: break-all
-
-  &__translation-list
-    display: flex
-    flex-wrap: wrap
-
-  &__translation-pill,
-  &__translation-change
-    margin-bottom: $rhythm(0.5)
-
-  &__translation-pill
-    $text-truncate()
-
-    color: $colors.text-mid
-    padding: 1px 0 0 2ex
-    line-height: 2rem
-    height: 2rem
-
-    background: $colors.element-mid
-    &.x--default
-      background: $colors.element-light
-      padding-right: 2ex
-
-    border-radius: 2px
-    margin-right: 1rem
-
-  &__translation-remove
-    $button-reset()
-    vertical-align: middle
-    position: relative
-    height: 100%
-    padding: 0 0.7rem 0 0.5rem
-    top: -1px
-    outline: 0
-
-    path
-      fill: $colors.text-mid
-
-    &:hover path
-      fill: $colors.text-dark
-
   &__no-users
     color: $colors.text-light
 
@@ -180,6 +140,53 @@ $entity-sidebar-content()
   &__link
     cursor: pointer
     text-decoration: underline
+
+/*
+Translation selector
+
+Markup:
+h2.entity-sidebar__heading
+  | Translation
+.pill-list(style="width: 20em")
+  .entity-sidebar__translation-pill.x--default
+    | en-US
+  .entity-sidebar__translation-pill
+    | de-DE
+    button.entity-sidebar__translation-remove
+      cf-icon(name="close" scale="0.6")
+  .entity-sidebar__translation-pill
+    | pl-PL
+    button.entity-sidebar__translation-remove
+      cf-icon(name="close" scale="0.6")
+  .entity-sidebar__translation-pill
+    | hi-IN
+    button.entity-sidebar__translation-remove
+      cf-icon(name="close" scale="0.6")
+  .entity-sidebar__translation-pill
+    | en-AU
+    button.entity-sidebar__translation-remove
+      cf-icon(name="close" scale="0.6")
+  button.cfnext-btn-link
+    | Change
+
+Styleguide sidebar.translations
+*/
+
+@require '../objects/pills'
+
+.entity-sidebar
+  &__translation-pill
+    $pill-item()
+    background: $colors.element-mid
+    &.x--default
+      background: $colors.element-light
+
+  &__translation-remove
+    $pill-item__remove()
+    path
+      fill: $colors.text-mid
+    &:hover path
+      fill: $colors.text-dark
 
 
 /*

@@ -56,7 +56,6 @@ Styleguide: pills.draggable
   flex-wrap: wrap
 
   > *
-    line-height: 2rem
     margin-bottom: $rhythm(0.5)
     margin-right: 1rem
     &:last-child
@@ -65,15 +64,18 @@ Styleguide: pills.draggable
   > .sortable-placeholder
     border: 1px dashed $colors.element-mid
 
-.pill-item
+$pill-item()
   $text-truncate()
   position: relative
   color: $colors.text-mid
   padding: 1px 2ex 0 2ex
   border-radius: 2px
-  color: $colors.text-mid
+  line-height: 2rem
   // TODO Make this a variable. It is not part of the color scheme yet
   background: #EEF2F4
+
+.pill-item
+  $pill-item()
 
   &.x--draggable
     padding-left: 3ex
@@ -95,18 +97,21 @@ Styleguide: pills.draggable
     path
       fill: $colors.text-lightest
 
-  &__remove
-    $button-reset()
-    float: right
-    height: 2rem
-    padding: 0 0.7rem
-    // Bleed into .pill-item padding
-    margin-right: -2ex
-    outline: 0
+$pill-item__remove()
+  $button-reset()
+  float: right
+  height: 2rem
+  padding: 0 0.7rem
+  // Bleed into .pill-item padding
+  margin-right: -2ex
+  outline: 0
 
-    svg
-      height: $base-font-size
-    path
-      fill: $colors.text-lightest
-    &:hover path
-      fill: $colors.text-mid
+  svg
+    height: $base-font-size
+  path
+    fill: $colors.text-lightest
+  &:hover path
+    fill: $colors.text-mid
+
+.pill-item__remove
+  $pill-item__remove()
