@@ -8,7 +8,6 @@ angular.module('cf.app')
  */
 .factory('entityEditor/FieldLocaleDocument', ['require', function (require) {
   var $q = require('$q');
-  var K = require('utils/kefir');
 
   return {
     create: create
@@ -54,12 +53,7 @@ angular.module('cf.app')
       push: bindToPath('pushValueAt'),
       insert: bindToPath('insertValueAt'),
       move: bindToPath('moveValueAt'),
-      valueProperty: valueProperty,
-      // TODO remove this. Only exists for compatibility with
-      // `CfLinkEditorController`.
-      onValueChanged: function (cb) {
-        return K.onValue(valueProperty, cb);
-      }
+      valueProperty: valueProperty
     };
 
     function set (value) {

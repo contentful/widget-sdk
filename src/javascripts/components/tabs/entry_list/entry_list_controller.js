@@ -13,11 +13,12 @@ angular.module('contentful')
   var createSelection = $injector.get('selection');
   var spaceContext = $injector.get('spaceContext');
   var accessChecker = $injector.get('accessChecker');
+  var entityStatus = $injector.get('entityStatus');
 
   var searchController = $controller('EntryListSearchController', {$scope: $scope});
   $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('EntryListViewsController', {$scope: $scope});
-  $scope.entityStatusController = $controller('EntityStatusController', {$scope: $scope});
+  $scope.entityStatus = entityStatus;
 
   $scope.paginator = new Paginator();
   $scope.selection = createSelection();

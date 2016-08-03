@@ -1,11 +1,11 @@
-input.form-control.date(type="text" ng-model="localDate" ng-disabled="isDisabled(field, locale)")
+input.form-control.date(type="text" ng-model="localDate")
 i.fa.fa-calendar
 span(ng-show="hasTime")
-  input.form-control.time(type="text" ng-model="localTime" ng-disabled="isDisabled(field, locale)" placeholder="eg. {{maxTime}}")
+  input.form-control.time(type="text" ng-model="localTime" placeholder="eg. {{maxTime}}")
   i.fa.fa-clock-o
   select.cfnext-select-box.ampm(
     ng-show="widget.settings.ampm == '12'"
-    ng-model="ampm" ng-disabled="isDisabled(field, locale)")
+    ng-model="ampm")
     option(value="am") AM
     option(value="pm") PM
 
@@ -13,8 +13,7 @@ span(ng-show="hasTime")
     ng-hide="!localTime || !hasTimezone"
     ng-model="tzOffset"
     ng-options="offset as ('UTC'+offset) for offset in timezones"
-    tooltip="Timezone"
-    ng-disabled="isDisabled(field, locale)")
+    tooltip="Timezone")
     option(value="") (None)
 
 i.fa.fa-exclamation-triangle.is-date-invalid(ng-show="dateInvalid" tooltip="You must provide a valid date" tooltip-placement="right")

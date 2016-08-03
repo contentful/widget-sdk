@@ -16,7 +16,7 @@ describe('cfFileEditor Directive', function () {
     fieldApi = widgetApi.field;
 
     scope = this.$compile('<cf-file-editor />', {
-      isEditable: _.constant(true),
+      fieldLocale: {access: {editable: true}},
       fieldData: {
         fileName: 'file.jpg',
         fileType: 'image/jpeg'

@@ -158,11 +158,8 @@ describe('FieldLocaleController', function () {
     dotty.put(withNonEditableDoc, 'otDoc.state.editable', false);
 
     beforeEach(function () {
-      this.hasEditingPermission = sinon.stub();
-      var accessChecker = this.$inject('accessChecker');
-      accessChecker.getFieldChecker = sinon.stub().returns({
-        isEditable: this.hasEditingPermission
-      });
+      var policyAccessChecker = this.$inject('accessChecker/policy');
+      policyAccessChecker.canEditFieldLocale = this.hasEditingPermission = sinon.stub();
     });
 
     it('is "disabled" and "disconnected" without connection and with permission', function () {
