@@ -11,18 +11,18 @@ describe('Policy Access Checker', function () {
 
   var roles = {
     empty: {policies: []},
-    allowAllEntry: {policies:[{
+    allowAllEntry: {policies: [{
       effect: 'allow', actions: 'all',
-      constraint:{and:[{equals:[{doc: 'sys.type'}, 'Entry']}]}
+      constraint: {and: [{equals: [{doc: 'sys.type'}, 'Entry']}]}
     }]},
-    allowReadEntry: {policies:[{
+    allowReadEntry: {policies: [{
       effect: 'allow', actions: ['read'],
-      constraint:{and:[{equals:[{doc: 'sys.type'}, 'Entry']}]}
+      constraint: {and: [{equals: [{doc: 'sys.type'}, 'Entry']}]}
     }]},
     allowReadAndEditOfEntry: function (ctId) {
       return {policies: [{
         effect: 'allow', actions: ['read'],
-        constraint: {and: [{equals:[{doc: 'sys.type'}, 'Entry']}]}
+        constraint: {and: [{equals: [{doc: 'sys.type'}, 'Entry']}]}
       }, {
         effect: 'allow', actions: ['update'],
         constraint: {and: [
@@ -40,17 +40,17 @@ describe('Policy Access Checker', function () {
         ]}
       }]};
     },
-    allowAllAsset: {policies:[{
+    allowAllAsset: {policies: [{
       effect: 'allow', actions: 'all',
-      constraint:{and:[{equals:[{doc: 'sys.type'}, 'Asset']}]}
+      constraint: {and: [{equals: [{doc: 'sys.type'}, 'Asset']}]}
     }]},
-    allowReadAsset: {policies:[{
+    allowReadAsset: {policies: [{
       effect: 'allow', actions: ['read'],
-      constraint:{and:[{equals:[{doc: 'sys.type'}, 'Asset']}]}
+      constraint: {and: [{equals: [{doc: 'sys.type'}, 'Asset']}]}
     }]},
     allowReadAndEditAsset: {policies: [{
       effect: 'allow', actions: ['read'],
-      constraint: {and: [{equals:[{doc: 'sys.type'}, 'Asset']}]}
+      constraint: {and: [{equals: [{doc: 'sys.type'}, 'Asset']}]}
     }, {
       effect: 'allow', actions: ['update'],
       constraint: {and: [{equals: [{doc: 'sys.type'}, 'Asset']}]}
@@ -61,14 +61,14 @@ describe('Policy Access Checker', function () {
     }]}
   };
 
-  function setRole(role, isAdmin) {
+  function setRole (role, isAdmin) {
     pac.setMembership({
       admin: isAdmin,
       roles: [role]
     });
   }
 
-  function clone(x) {
+  function clone (x) {
     return _.cloneDeep(x, true);
   }
 
@@ -303,30 +303,30 @@ describe('Policy Access Checker', function () {
       setRole(roles.empty);
     });
 
-    function pathPolicy(path, effect) {
+    function pathPolicy (path, effect) {
       return {policies: [{
         effect: (effect || 'allow'),
         actions: ['update'],
         constraint: {and: [
           {equals: [{doc: 'sys.type'}, 'Entry']},
-          {paths:  [{doc: path}]},
+          {paths: [{doc: path}]},
           {equals: [{doc: 'sys.contentType.sys.id'}, 'ctid']}
         ]}
       }]};
     }
 
-    function assetPathPolicy(path, effect) {
+    function assetPathPolicy (path, effect) {
       return {policies: [{
         effect: (effect || 'allow'),
         actions: ['update'],
         constraint: {and: [
           {equals: [{doc: 'sys.type'}, 'Asset']},
-          {paths:  [{doc: path}]}
+          {paths: [{doc: path}]}
         ]}
       }]};
     }
 
-    function test(field, locale, expectation, fac) {
+    function test (field, locale, expectation, fac) {
       fac = fac || pac.getFieldChecker('ctid');
       expect(fac.isEditable(field, locale)).toBe(expectation);
     }

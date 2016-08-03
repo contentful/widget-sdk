@@ -11,19 +11,19 @@
  * There are no setters. This __singleton__ service is watching for changes
  * that may change a state of user's permissions.
  */
-angular.module('contentful').factory('accessChecker', ['$injector', function ($injector) {
+angular.module('contentful').factory('accessChecker', ['require', function (require) {
 
-  var $rootScope       = $injector.get('$rootScope');
-  var $q               = $injector.get('$q');
-  var stringUtils      = $injector.get('stringUtils');
-  var enforcements     = $injector.get('enforcements');
-  var authorization    = $injector.get('authorization');
-  var logger           = $injector.get('logger');
-  var OrganizationList = $injector.get('OrganizationList');
-  var spaceContext     = $injector.get('spaceContext');
-  var policyChecker    = $injector.get('accessChecker/policy');
-  var cache            = $injector.get('accessChecker/responseCache');
-  var capitalize       = $injector.get('stringUtils').capitalize;
+  var $rootScope = require('$rootScope');
+  var $q = require('$q');
+  var stringUtils = require('stringUtils');
+  var enforcements = require('enforcements');
+  var authorization = require('authorization');
+  var logger = require('logger');
+  var OrganizationList = require('OrganizationList');
+  var spaceContext = require('spaceContext');
+  var policyChecker = require('accessChecker/policy');
+  var cache = require('accessChecker/responseCache');
+  var capitalize = require('stringUtils').capitalize;
 
   var ACTIONS_FOR_ENTITIES = {
     contentType: ['create', 'read', 'update', 'delete', 'publish', 'unpublish'],
@@ -33,11 +33,11 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     settings: ['update', 'read']
   };
 
-  var shouldHide        = createResponseAttributeGetter('shouldHide');
-  var shouldDisable     = createResponseAttributeGetter('shouldDisable');
-  var responses         = {};
-  var features          = {};
-  var userQuota         = {};
+  var shouldHide = createResponseAttributeGetter('shouldHide');
+  var shouldDisable = createResponseAttributeGetter('shouldDisable');
+  var responses = {};
+  var features = {};
+  var userQuota = {};
   var sectionVisibility = {};
 
   $rootScope.$watchCollection(function () {
@@ -105,20 +105,20 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
      */
     shouldDisable: shouldDisable,
 
-    reset:                           reset,
-    getFieldChecker:                 getFieldChecker,
-    canPerformActionOnEntity:        canPerformActionOnEntity,
-    canPerformActionOnEntryOfType:   canPerformActionOnEntryOfType,
-    canUpdateEntry:                  canUpdateEntry,
-    canUpdateAsset:                  canUpdateAsset,
-    canUploadMultipleAssets:         canUploadMultipleAssets,
-    canModifyApiKeys:                canModifyApiKeys,
-    canModifyRoles:                  canModifyRoles,
-    canModifyUsers:                  canModifyUsers,
-    canCreateSpace:                  canCreateSpace,
+    reset: reset,
+    getFieldChecker: getFieldChecker,
+    canPerformActionOnEntity: canPerformActionOnEntity,
+    canPerformActionOnEntryOfType: canPerformActionOnEntryOfType,
+    canUpdateEntry: canUpdateEntry,
+    canUpdateAsset: canUpdateAsset,
+    canUploadMultipleAssets: canUploadMultipleAssets,
+    canModifyApiKeys: canModifyApiKeys,
+    canModifyRoles: canModifyRoles,
+    canModifyUsers: canModifyUsers,
+    canCreateSpace: canCreateSpace,
     canCreateSpaceInAnyOrganization: canCreateSpaceInAnyOrganization,
-    canCreateSpaceInOrganization:    canCreateSpaceInOrganization,
-    wasForbidden:                    wasForbidden
+    canCreateSpaceInOrganization: canCreateSpaceInOrganization,
+    wasForbidden: wasForbidden
   };
 
   /**
@@ -127,7 +127,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * @description
    * Forcibly recollect all permission data
    */
-  function reset() {
+  function reset () {
     cache.reset(authorization.spaceContext);
     policyChecker.setMembership(spaceContext.getData('spaceMembership'));
     collectResponses();
@@ -135,7 +135,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     collectSectionVisibility();
   }
 
-  function collectResponses() {
+  function collectResponses () {
     var replacement = {};
 
     _.forEach(ACTIONS_FOR_ENTITIES, function (actions, entity) {
@@ -148,20 +148,20 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     responses = replacement;
   }
 
-  function collectSectionVisibility() {
+  function collectSectionVisibility () {
     sectionVisibility = {
       contentType: !shouldHide('updateContentType'),
-      entry:       !shouldHide('readEntry') || policyChecker.canAccessEntries(),
-      asset:       !shouldHide('readAsset') || policyChecker.canAccessAssets(),
-      apiKey:      !shouldHide('readApiKey'),
-      settings:    !shouldHide('updateSettings')
+      entry: !shouldHide('readEntry') || policyChecker.canAccessEntries(),
+      asset: !shouldHide('readAsset') || policyChecker.canAccessAssets(),
+      apiKey: !shouldHide('readApiKey'),
+      settings: !shouldHide('updateSettings')
     };
   }
 
-  function collectFeatures() {
-    features        = spaceContext.getData('organization.subscriptionPlan.limits.features', {});
+  function collectFeatures () {
+    features = spaceContext.getData('organization.subscriptionPlan.limits.features', {});
     userQuota.limit = spaceContext.getData('organization.subscriptionPlan.limits.permanent.organizationMembership', -1);
-    userQuota.used  = spaceContext.getData('organization.usage.permanent.organizationMembership', 1);
+    userQuota.used = spaceContext.getData('organization.usage.permanent.organizationMembership', 1);
   }
 
   /**
@@ -172,18 +172,18 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * @description
    * Gets a field checker for a given entity.
    */
-  function getFieldChecker(entity) {
+  function getFieldChecker (entity) {
     return policyChecker.getFieldChecker(getContentTypeIdFor(entity));
   }
 
-  function createResponseAttributeGetter(attrName) {
+  function createResponseAttributeGetter (attrName) {
     return function (actionName) {
       var action = responses[actionName];
       return (action && attrName in action) ? action[attrName] : false;
     };
   }
 
-  function can(action, entity) {
+  function can (action, entity) {
     var response = { shouldHide: false, shouldDisable: false };
 
     if (!authorization.spaceContext) { return response; }
@@ -209,7 +209,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * @description
    * Returns true if action can be performed on entry with the given content type ID.
    */
-  function canPerformActionOnEntryOfType(action, ctId) {
+  function canPerformActionOnEntryOfType (action, ctId) {
     var entity = {data: {sys: {type: 'Entry', contentType: {sys: {id: ctId}}}}};
     return canPerformActionOnEntity(action, entity);
   }
@@ -225,11 +225,11 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    *
    * This method can be provided with an entity object or string `"Entry"` or `"Asset"`.
    */
-  function canPerformActionOnEntity(action, entity) {
+  function canPerformActionOnEntity (action, entity) {
     return can(action, entity.data).can;
   }
 
-  function canPerformActionOnType(action, type) {
+  function canPerformActionOnType (action, type) {
     return can(action, capitalize(type)).can;
   }
 
@@ -241,7 +241,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * @description
    * Returns true if an entry can be updated.
    */
-  function canUpdateEntry(entry) {
+  function canUpdateEntry (entry) {
     var canUpdate = canPerformActionOnEntity('update', entry);
     var ctId = getContentTypeIdFor(entry);
     var canUpdateThisType = policyChecker.canUpdateEntriesOfType(ctId);
@@ -258,7 +258,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * @description
    * Returns true if an asset can be updated.
    */
-  function canUpdateAsset(asset) {
+  function canUpdateAsset (asset) {
     var canUpdate = canPerformActionOnEntity('update', asset);
     var canUpdateWithPolicy = policyChecker.canUpdateAssets();
     var canUpdateOwn = policyChecker.canUpdateOwnAssets();
@@ -266,7 +266,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     return canUpdate || canUpdateWithPolicy || (canUpdateOwn && isAuthor(asset));
   }
 
-  function isAuthor(entity) {
+  function isAuthor (entity) {
     var author = getAuthorIdFor(entity);
     var currentUser = spaceContext.getData('spaceMembership.user.sys.id');
 
@@ -280,7 +280,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * @description
    * Returns true if multiple assets can be uploaded.
    */
-  function canUploadMultipleAssets() {
+  function canUploadMultipleAssets () {
     var canCreate = canPerformActionOnType('create', 'asset');
     var canUpdate = canPerformActionOnType('update', 'asset');
     var canUpdateWithPolicy = policyChecker.canUpdateAssets() || policyChecker.canUpdateOwnAssets();
@@ -295,7 +295,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * @description
    * Returns true if API Keys can be modified.
    */
-  function canModifyApiKeys() {
+  function canModifyApiKeys () {
     return dotty.get(responses, 'createApiKey.can', false);
   }
 
@@ -337,7 +337,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * @description
    * Returns true if space can be created.
    */
-  function canCreateSpace() {
+  function canCreateSpace () {
     if (OrganizationList.isEmpty()) { return false; }
     if (!authorization.authContext) { return false; }
     if (!canCreateSpaceInAnyOrganization()) { return false; }
@@ -355,7 +355,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * @description
    * Returns true if space can be created in any organization.
    */
-  function canCreateSpaceInAnyOrganization() {
+  function canCreateSpaceInAnyOrganization () {
     return _.some(OrganizationList.getAll(), function (org) {
       return canCreateSpaceInOrganization(org.sys.id);
     });
@@ -369,13 +369,13 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * @description
    * Returns true if space can be created in an organization with a provided ID.
    */
-  function canCreateSpaceInOrganization(organizationId) {
+  function canCreateSpaceInOrganization (organizationId) {
     if (!authorization.authContext) { return false; }
 
     return checkIfCanCreateSpace(authorization.authContext.organization(organizationId));
   }
 
-  function checkIfCanCreateSpace(context) {
+  function checkIfCanCreateSpace (context) {
     var response = false;
     try {
       response = context.can('create', 'Space');
@@ -394,7 +394,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
    * Returns function that will check a status code of response.
    * If it's 403/4, it'll set "forbidden" key on a provided context object.
    */
-  function wasForbidden(context) {
+  function wasForbidden (context) {
     return function (res) {
       if (_.includes([403, 404], parseInt(dotty.get(res, 'statusCode'), 10))) {
         context.forbidden = true;
@@ -405,7 +405,7 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     };
   }
 
-  function broadcastEnforcement(enforcement) {
+  function broadcastEnforcement (enforcement) {
     if (enforcement) {
       $rootScope.$broadcast('persistentNotification', {
         message: enforcement.message,
@@ -415,14 +415,14 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     }
   }
 
-  function getEnforcement(action, entity) {
+  function getEnforcement (action, entity) {
     var reasonsDenied = getReasonsDenied(action, entity);
     var entityType = toType(entity);
 
     return enforcements.determineEnforcement(reasonsDenied, entityType);
   }
 
-  function toType(entity) {
+  function toType (entity) {
     if (_.isString(entity)) {
       return entity;
     } else {
@@ -430,15 +430,15 @@ angular.module('contentful').factory('accessChecker', ['$injector', function ($i
     }
   }
 
-  function getReasonsDenied(action, entity) {
+  function getReasonsDenied (action, entity) {
     return authorization.spaceContext.reasonsDenied(action, entity);
   }
 
-  function getContentTypeIdFor(entry) {
+  function getContentTypeIdFor (entry) {
     return dotty.get(entry, 'data.sys.contentType.sys.id');
   }
 
-  function getAuthorIdFor(entry) {
+  function getAuthorIdFor (entry) {
     return dotty.get(entry, 'data.sys.createdBy.sys.id');
   }
 }]);

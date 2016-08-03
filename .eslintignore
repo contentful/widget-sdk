@@ -102,7 +102,6 @@ test/unit/data/user_cache_spec.js
 test/unit/markdown_editor/link_organizer_spec.js
 test/unit/markdown_editor/markdown_codemirror_wrapper_spec.js
 test/unit/markdown_editor/markdown_tree_spec.js
-test/unit/markdown_editor/cf_zenmode_spec.js
 test/unit/markdown_editor/markdown_editor_spec.js
 test/unit/markdown_editor/markdown_preview_spec.js
 test/unit/search/list_query_spec.js
@@ -111,8 +110,6 @@ test/unit/ui/context_menu_spec.js
 test/unit/ui/command_directive_spec.js
 test/unit/utils/overriding_request_queue_spec.js
 test/unit/utils/signal_spec.js
-test/unit/access_control/access_checker_spec.js
-test/unit/access_control/policy_access_checker_spec.js
 test/unit/access_control/policy_builder_default_rule_spec.js
 test/unit/access_control/policy_builder_external_spec.js
 test/unit/access_control/policy_builder_internal_spec.js
@@ -185,7 +182,6 @@ src/javascripts/components/shared/cf_user_directive.js
 src/javascripts/components/shared/list_views_controller.js
 src/javascripts/components/tabs/asset_list/asset_list_directive.js
 src/javascripts/components/tabs/asset_list/asset_list_actions_controller.js
-src/javascripts/components/tabs/asset_list/asset_list_controller.js
 src/javascripts/components/tabs/asset_list/asset_search_controller.js
 src/javascripts/components/tabs/content_type_editor/add_field_dialog_controller.js
 src/javascripts/components/tabs/content_type_editor/cf_api_name_shadow_directive.js
@@ -360,11 +356,9 @@ src/javascripts/data/space_endpoint.js
 src/javascripts/data/user_cache.js
 src/javascripts/markdown_editor/cf_markdown_action_directive.js
 src/javascripts/markdown_editor/link_organizer.js
-src/javascripts/markdown_editor/markdown_actions.js
 src/javascripts/markdown_editor/markdown_preview.js
 src/javascripts/markdown_editor/markdown_special_characters.js
 src/javascripts/markdown_editor/markdown_tree.js
-src/javascripts/markdown_editor/cf_zenmode_directive.js
 src/javascripts/markdown_editor/markdown_codemirror_wrapper.js
 src/javascripts/markdown_editor/markdown_editor.js
 src/javascripts/search/cached_parser.js
@@ -377,10 +371,8 @@ src/javascripts/utils/overriding_request_queue.js
 src/javascripts/libs/markdown_vendors.js
 src/javascripts/kaltura_credentials.js
 src/javascripts/ui.js
-src/javascripts/access_control/access_checker.js
 src/javascripts/access_control/cf_rule.js
 src/javascripts/access_control/cf_rule_list.js
-src/javascripts/access_control/policy_access_checker.js
 src/javascripts/access_control/policy_builder.js
 src/javascripts/access_control/remove_outdated_rules.js
 src/javascripts/access_control/response_cache.js

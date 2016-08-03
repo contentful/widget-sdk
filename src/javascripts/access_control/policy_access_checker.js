@@ -1,33 +1,33 @@
 'use strict';
 
-angular.module('contentful').factory('accessChecker/policy', ['$injector', function ($injector) {
+angular.module('contentful').factory('accessChecker/policy', ['require', function (require) {
 
-  var PolicyBuilder = $injector.get('PolicyBuilder');
-  var CONFIG        = $injector.get('PolicyBuilder/CONFIG');
+  var PolicyBuilder = require('PolicyBuilder');
+  var CONFIG = require('PolicyBuilder/CONFIG');
 
   var policies = {
-    entry : {
+    entry: {
       allowed: {flat: [], byContentType: {}},
       denied: {flat: [], byContentType: {}}
     },
-    asset : {allowed: [], denied: []}
+    asset: {allowed: [], denied: []}
   };
 
   var isAdmin = false;
   var fieldAccessCache = {};
 
   return {
-    setMembership:          setMembership,
-    canAccessEntries:       function () { return policies.entry.allowed.flat.length > 0; },
-    canAccessAssets:        function () { return policies.asset.allowed.length > 0; },
+    setMembership: setMembership,
+    canAccessEntries: function () { return policies.entry.allowed.flat.length > 0; },
+    canAccessAssets: function () { return policies.asset.allowed.length > 0; },
     canUpdateEntriesOfType: canUpdateEntriesOfType,
-    canUpdateOwnEntries:    canUpdateOwnEntries,
-    canUpdateAssets:        canUpdateAssets,
-    canUpdateOwnAssets:     canUpdateOwnAssets,
-    getFieldChecker:        getFieldChecker
+    canUpdateOwnEntries: canUpdateOwnEntries,
+    canUpdateAssets: canUpdateAssets,
+    canUpdateOwnAssets: canUpdateOwnAssets,
+    getFieldChecker: getFieldChecker
   };
 
-  function setMembership(membership) {
+  function setMembership (membership) {
     var role = _.first(dotty.get(membership, 'roles', []));
     var internal = role ? PolicyBuilder.toInternal(role) : {};
 
@@ -35,15 +35,15 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     fieldAccessCache = {};
 
     policies.entry.allowed.flat = dotty.get(internal, 'entries.allowed', []);
-    policies.entry.denied.flat  = dotty.get(internal, 'entries.denied',  []);
+    policies.entry.denied.flat = dotty.get(internal, 'entries.denied', []);
     policies.asset.allowed = dotty.get(internal, 'assets.allowed', []);
-    policies.asset.denied  = dotty.get(internal, 'assets.denied',  []);
+    policies.asset.denied = dotty.get(internal, 'assets.denied', []);
 
     groupByContentType('allowed');
     groupByContentType('denied');
   }
 
-  function groupByContentType(collectionName) {
+  function groupByContentType (collectionName) {
     var collection = policies.entry[collectionName];
     collection.byContentType = {};
 
@@ -61,8 +61,8 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     };
   }
 
-  function isEditable(contentTypeId, field, locale) {
-    var fieldId    = field.apiName || field.id;
+  function isEditable (contentTypeId, field, locale) {
+    var fieldId = field.apiName || field.id;
     var localeCode = locale.code;
 
     var cached = getCached(contentTypeId, fieldId, localeCode);
@@ -71,67 +71,67 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     }
 
     var allowed = contentTypeId ? getAllowed(contentTypeId) : policies.asset.allowed;
-    var denied  = contentTypeId ? getDenied(contentTypeId)  : policies.asset.denied;
+    var denied = contentTypeId ? getDenied(contentTypeId) : policies.asset.denied;
 
     var hasAllowing = checkPolicyCollectionForPath(allowed, fieldId, localeCode);
-    var hasDenying  = checkPolicyCollectionForPath(denied,  fieldId, localeCode);
+    var hasDenying = checkPolicyCollectionForPath(denied, fieldId, localeCode);
 
     var result = isAdmin || (hasAllowing && !hasDenying);
     cacheResult(contentTypeId, fieldId, localeCode, result);
     return result;
   }
 
-  function getCached(ctId, fieldId, localeCode) {
+  function getCached (ctId, fieldId, localeCode) {
     var result = fieldAccessCache[getCacheKey(ctId, fieldId, localeCode)];
 
     return (result === true || result === false) ? result : null;
   }
 
-  function cacheResult(ctId, fieldId, localeCode, result) {
+  function cacheResult (ctId, fieldId, localeCode, result) {
     fieldAccessCache[getCacheKey(ctId, fieldId, localeCode)] = result;
   }
 
-  function getCacheKey(ctId, fieldId, localeCode) {
+  function getCacheKey (ctId, fieldId, localeCode) {
     return [getCtCacheKey(ctId), fieldId, localeCode].join(',');
   }
 
-  function getCtCacheKey(ctId) {
-    return ctId ? ctId : '__cf_internal_ct_asset__';
+  function getCtCacheKey (ctId) {
+    return ctId || '__cf_internal_ct_asset__';
   }
 
-  function canUpdateEntriesOfType(contentTypeId) {
+  function canUpdateEntriesOfType (contentTypeId) {
     return performCheck(getAllowed(contentTypeId), getDenied(contentTypeId), anyUserUpdatePoliciesOnly);
   }
 
-  function canUpdateOwnEntries() {
+  function canUpdateOwnEntries () {
     return performCheck(policies.entry.allowed.flat, policies.entry.denied.flat, currentUserUpdatePoliciesOnly);
   }
 
-  function canUpdateAssets() {
+  function canUpdateAssets () {
     return performCheck(policies.asset.allowed, policies.asset.denied, anyUserUpdatePoliciesOnly);
   }
 
-  function canUpdateOwnAssets() {
+  function canUpdateOwnAssets () {
     return performCheck(policies.asset.allowed, policies.asset.denied, currentUserUpdatePoliciesOnly);
   }
 
-  function performCheck(c1, c2, fn) {
+  function performCheck (c1, c2, fn) {
     return fn(c1).length > 0 && fn(withoutPathRules(c2)).length === 0;
   }
 
-  function withoutPathRules(c) {
+  function withoutPathRules (c) {
     return _.filter(c, function (p) { return !p.isPath; });
   }
 
-  function getAllowed(contentTypeId) {
+  function getAllowed (contentTypeId) {
     return getCollection('allowed', contentTypeId);
   }
 
-  function getDenied(contentTypeId) {
+  function getDenied (contentTypeId) {
     return getCollection('denied', contentTypeId);
   }
 
-  function getCollection(name, contentTypeId) {
+  function getCollection (name, contentTypeId) {
     var ctGroups = policies.entry[name].byContentType;
     var ctSpecificItems = ctGroups[contentTypeId] || [];
     var generalItems = ctGroups[CONFIG.ALL_CTS] || [];
@@ -139,33 +139,40 @@ angular.module('contentful').factory('accessChecker/policy', ['$injector', funct
     return _.union(ctSpecificItems, generalItems);
   }
 
-  function anyUserUpdatePoliciesOnly(c) {
+  function anyUserUpdatePoliciesOnly (c) {
     return _.filter(updatePoliciesOnly(c), function (p) { return p.scope !== 'user'; });
   }
 
-  function currentUserUpdatePoliciesOnly(c) {
+  function currentUserUpdatePoliciesOnly (c) {
     return _.filter(updatePoliciesOnly(c), function (p) { return p.scope === 'user'; });
   }
 
-  function updatePoliciesOnly(collection) {
+  function updatePoliciesOnly (collection) {
     return _.filter(collection, function (p) {
       return _.includes(['update', 'all'], p.action);
     });
   }
 
-  function checkPolicyCollectionForPath(collection, fieldId, localeCode) {
+  function checkPolicyCollectionForPath (collection, fieldId, localeCode) {
     return _.some(updatePoliciesOnly(collection), function (p) {
-      var noPath                = isNotString(p.field) && isNotString(p.locale);
-      var fieldOnlyPathMatched  = matchField (p.field) && isNotString(p.locale);
+      var noPath = isNotString(p.field) && isNotString(p.locale);
+      var fieldOnlyPathMatched = matchField(p.field) && isNotString(p.locale);
       var localeOnlyPathMatched = isNotString(p.field) && matchLocale(p.locale);
-      var bothMatched           = matchField (p.field) && matchLocale(p.locale);
+      var bothMatched = matchField(p.field) && matchLocale(p.locale);
 
       return noPath || fieldOnlyPathMatched || localeOnlyPathMatched || bothMatched;
     });
 
-    function matchField(field)   { return _.includes([CONFIG.ALL_FIELDS, fieldId], field);       }
-    function matchLocale(locale) { return _.includes([CONFIG.ALL_LOCALES, localeCode], locale);  }
+    function matchField (field) {
+      return _.includes([CONFIG.ALL_FIELDS, fieldId], field);
+    }
+
+    function matchLocale (locale) {
+      return _.includes([CONFIG.ALL_LOCALES, localeCode], locale);
+    }
   }
 
-  function isNotString(value) { return !_.isString(value); }
+  function isNotString (value) {
+    return !_.isString(value);
+  }
 }]);

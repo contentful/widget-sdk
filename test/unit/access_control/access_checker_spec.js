@@ -4,7 +4,7 @@ describe('Access Checker', function () {
   var $rootScope, spaceContext, authorization, enforcements, OrganizationList, policyChecker, ac;
   var getResStub, reasonsDeniedStub;
 
-  function triggerChange() {
+  function triggerChange () {
     authorization.spaceContext = {reasonsDenied: reasonsDeniedStub};
     $rootScope.$apply();
   }
@@ -111,7 +111,7 @@ describe('Access Checker', function () {
     });
 
     it('checks if there is a "hide" flag for chosen actions', function () {
-      function test(action, key, val) {
+      function test (action, key, val) {
         var entity = key.charAt(0).toUpperCase() + key.slice(1);
         getResStub.withArgs(action, entity).returns(val);
         triggerChange();
@@ -132,7 +132,7 @@ describe('Access Checker', function () {
     });
 
     it('shows entries/assets section when it has "hide" flag, but policy checker grants access', function () {
-      function test(key, val) { expect(ac.getSectionVisibility()[key]).toBe(val); }
+      function test (key, val) { expect(ac.getSectionVisibility()[key]).toBe(val); }
       test('entry', false);
       test('asset', false);
       policyChecker.canAccessEntries = sinon.stub().returns(true);
@@ -266,7 +266,7 @@ describe('Access Checker', function () {
   });
 
   describe('#canUploadMultipleAssets', function () {
-    function setup(canCreate, canUpdate, canUpdateWithPolicy, canUpdateOwn) {
+    function setup (canCreate, canUpdate, canUpdateWithPolicy, canUpdateOwn) {
       getResStub.withArgs('create', 'Asset').returns(canCreate);
       getResStub.withArgs('update', 'Asset').returns(canUpdate);
       policyChecker.canUpdateAssets = sinon.stub().returns(canUpdateWithPolicy);
@@ -315,7 +315,7 @@ describe('Access Checker', function () {
 
   describe('#canModifyRoles', function () {
 
-    function changeSpace(hasFeature, isSpaceAdmin) {
+    function changeSpace (hasFeature, isSpaceAdmin) {
       spaceContext.space = {data: {
         organization: {
           sys: {id: 'orgid'},
@@ -352,7 +352,7 @@ describe('Access Checker', function () {
       t('org3id', true);
       t('unknown', false);
 
-      function t(id, expectation) {
+      function t (id, expectation) {
         spaceContext.space.data.organization.sys.id = id;
         expect(ac.canModifyUsers()).toBe(expectation);
       }
@@ -471,7 +471,7 @@ describe('Access Checker', function () {
       authCanStub.returns(false);
       var reasons = ['REASONS!'];
       reasonsDeniedStub.withArgs('create', 'Space').returns(reasons);
-      enforcements.determineEnforcement.withArgs(reasons, 'Space').returns({message:'MESSAGE'});
+      enforcements.determineEnforcement.withArgs(reasons, 'Space').returns({message: 'MESSAGE'});
       sinon.spy($rootScope, '$broadcast');
       expect(ac.canCreateSpace()).toBe(false);
       sinon.assert.calledOnce($rootScope.$broadcast);

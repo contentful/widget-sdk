@@ -1,32 +1,31 @@
 'use strict';
 
-angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', function ($injector) {
+angular.module('contentful').factory('MarkdownEditor/actions', ['require', function (require) {
 
-  var modalDialog       = $injector.get('modalDialog');
-  var assetUrl          = $injector.get('$filter')('assetUrl');
-  var spaceContext      = $injector.get('spaceContext');
-  var specialCharacters = $injector.get('MarkdownEditor/specialCharacters');
-  var LinkOrganizer     = $injector.get('LinkOrganizer');
-  var notification      = $injector.get('notification');
-  var entitySelector = $injector.get('entitySelector');
+  var modalDialog = require('modalDialog');
+  var assetUrl = require('$filter')('assetUrl');
+  var specialCharacters = require('MarkdownEditor/specialCharacters');
+  var LinkOrganizer = require('LinkOrganizer');
+  var notification = require('notification');
+  var entitySelector = require('entitySelector');
 
   return { for: prepareActions };
 
-  function prepareActions(editor, localeCode) {
+  function prepareActions (editor, localeCode) {
 
     var advancedActions = {
-      link:          link,
-      asset:         asset,
-      special:       special,
-      table:         table,
-      embed:         embed,
+      link: link,
+      asset: asset,
+      special: special,
+      table: table,
+      embed: embed,
       organizeLinks: organizeLinks,
-      openHelp:      openHelp
+      openHelp: openHelp
     };
 
     return _.defaults(advancedActions, editor.actions);
 
-    function link() {
+    function link () {
       modalDialog.open({
         scopeData: { model: { url: 'https://' } },
         template: 'markdown_link_dialog'
@@ -35,7 +34,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
       });
     }
 
-    function _makeLink(data) {
+    function _makeLink (data) {
       if (data.title) {
         return '[' + data.title + '](' + data.url + ')';
       } else {
@@ -43,7 +42,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
       }
     }
 
-    function asset() {
+    function asset () {
       entitySelector.open({
         type: 'Array',
         itemLinkType: 'Asset',
@@ -57,7 +56,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
       });
     }
 
-    function _makeAssetLink(asset) {
+    function _makeAssetLink (asset) {
       var title = dotty.get(asset, ['fields', 'title', localeCode]);
       var file = dotty.get(asset, ['fields', 'file', localeCode]);
 
@@ -68,7 +67,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
       }
     }
 
-    function special() {
+    function special () {
       var scopeData = {
         specialCharacters: specialCharacters,
         model: { choice: _.first(specialCharacters) },
@@ -81,14 +80,14 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
       }).promise.then(editor.insert);
     }
 
-    function table() {
+    function table () {
       modalDialog.open({
         scopeData: { model: { rows: 2, cols: 2 } },
         template: 'markdown_table_dialog'
       }).promise.then(editor.actions.table);
     }
 
-    function embed() {
+    function embed () {
       modalDialog.open({
         scopeData: {
           model: { value: 'https://', width: { px: 600, percent: 100 }, widthSuffix: 'percent' },
@@ -100,7 +99,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
       });
     }
 
-    function _makeEmbedlyLink(data) {
+    function _makeEmbedlyLink (data) {
       var s = { percent: '%', px: 'px' };
       return [
         '<a href="' + data.value + '" class="embedly-card" ',
@@ -110,7 +109,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
       ].join('');
     }
 
-    function organizeLinks() {
+    function organizeLinks () {
       var text = editor.getContent();
       text = LinkOrganizer.convertInlineToRef(text);
       text = LinkOrganizer.rewriteRefs(text);
@@ -118,7 +117,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['$injector', fun
       notification.info('All your links are now references at the bottom of your document.');
     }
 
-    function openHelp() {
+    function openHelp () {
       modalDialog.open({
         template: 'markdown_help_dialog'
       });
