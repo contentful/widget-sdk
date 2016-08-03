@@ -1,13 +1,13 @@
 'use strict';
 
-angular.module('contentful').directive('cfZenmode', ['$injector', function ($injector) {
+angular.module('contentful').directive('cfZenmode', ['require', function (require) {
 
-  var $window        = $injector.get('$window');
-  var MarkdownEditor = $injector.get('MarkdownEditor');
-  var actions        = $injector.get('MarkdownEditor/actions');
-  var keycodes       = $injector.get('keycodes');
-  var modalDialog    = $injector.get('modalDialog');
-  var win            = $($window);
+  var $window = require('$window');
+  var MarkdownEditor = require('MarkdownEditor');
+  var actions = require('MarkdownEditor/actions');
+  var keycodes = require('keycodes');
+  var modalDialog = require('modalDialog');
+  var win = $($window);
 
   // This is persisted accross Zen Mode instances
   var initialShowPreview = true;
@@ -19,13 +19,13 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
       zenApi: '=',
       preview: '='
     },
-    link: function(scope, el) {
-      var textarea   = el.find('textarea').get(0);
-      var preview    = el.find('.markdown-preview').first();
-      var editor     = null;
-      var opts       = { height: '100%', fixedHeight: true };
+    link: function (scope, el) {
+      var textarea = el.find('textarea').get(0);
+      var preview = el.find('.markdown-preview').first();
+      var editor = null;
+      var opts = { height: '100%', fixedHeight: true };
       var containers = {
-        editor:  el.find('.zenmode-editor').first(),
+        editor: el.find('.zenmode-editor').first(),
         preview: el.find('.zenmode-preview').first()
       };
 
@@ -48,9 +48,9 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
 
       MarkdownEditor.create(textarea, opts).then(initEditor);
 
-      function initEditor(editorInstance) {
+      function initEditor (editorInstance) {
         editor = editorInstance;
-        scope.actions = actions.for(editor);
+        scope.actions = actions.for(editor, scope.zenApi.getLocale());
         scope.history = editor.history;
 
         scope.zenApi.registerChild(editorInstance);
@@ -67,20 +67,20 @@ angular.module('contentful').directive('cfZenmode', ['$injector', function ($inj
         });
       }
 
-      function tieChildEditor() {
+      function tieChildEditor () {
         var parent = scope.zenApi.getParent();
         parent.tie.editorToEditor(editor);
       }
 
-      function tieParentEditor() {
+      function tieParentEditor () {
         editor.tie.editorToEditor(scope.zenApi.getParent());
       }
 
-      function handleScroll() {
+      function handleScroll () {
         editor.tie.previewToEditor(preview);
       }
 
-      function handleEsc(e) {
+      function handleEsc (e) {
         if (modalDialog.getOpened().length < 1 && e.keyCode === keycodes.ESC) {
           scope.zenApi.toggle();
         }

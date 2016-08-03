@@ -1,24 +1,26 @@
 'use strict';
 
-angular.module('contentful').controller('AssetListController',['$scope', '$injector', function AssetListController($scope, $injector) {
-  var $controller     = $injector.get('$controller');
-  var $q              = $injector.get('$q');
-  var createSelection = $injector.get('selection');
-  var delay           = $injector.get('delay');
-  var filepicker      = $injector.get('filepicker');
-  var logger          = $injector.get('logger');
-  var notification    = $injector.get('notification');
-  var stringUtils     = $injector.get('stringUtils');
-  var TheLocaleStore  = $injector.get('TheLocaleStore');
-  var spaceContext    = $injector.get('spaceContext');
-  var accessChecker   = $injector.get('accessChecker');
+angular.module('contentful')
+.controller('AssetListController', ['$scope', 'require', function AssetListController ($scope, require) {
+  var $controller = require('$controller');
+  var $q = require('$q');
+  var createSelection = require('selection');
+  var delay = require('delay');
+  var filepicker = require('filepicker');
+  var logger = require('logger');
+  var notification = require('notification');
+  var stringUtils = require('stringUtils');
+  var TheLocaleStore = require('TheLocaleStore');
+  var spaceContext = require('spaceContext');
+  var accessChecker = require('accessChecker');
+  var entityStatus = require('entityStatus');
 
   $controller('AssetListViewsController', {
     $scope: $scope,
     preserveState: true
   });
 
-  $scope.entityStatusController = $controller('EntityStatusController', { $scope: $scope });
+  $scope.entityStatus = entityStatus;
 
   $scope.shouldHide = accessChecker.shouldHide;
   $scope.shouldDisable = accessChecker.shouldDisable;
@@ -32,14 +34,14 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
   $scope.selection = createSelection();
   $scope.getAssetDimensions = getAssetDimensions;
 
-  $scope.$watch(function pageParameters(){
+  $scope.$watch(function pageParameters () {
     return {
-      searchTerm:  $scope.context.view.searchTerm,
-      page:        $scope.searchController.paginator.page,
-      pageLength:  $scope.searchController.paginator.pageLength,
-      spaceId:     spaceContext.getId()
+      searchTerm: $scope.context.view.searchTerm,
+      page: $scope.searchController.paginator.page,
+      pageLength: $scope.searchController.paginator.pageLength,
+      spaceId: spaceContext.getId()
     };
-  }, function(pageParameters, old, scope){
+  }, function (pageParameters, old, scope) {
     scope.searchController.resetAssets(pageParameters.page === old.page);
   }, true);
 
@@ -71,8 +73,8 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
   }
 
   $scope.createMultipleAssets = function () {
-    filepicker.pickMultiple().
-    then(uploadFPFiles, function (FPError) {
+    filepicker.pickMultiple()
+    .then(uploadFPFiles, function (FPError) {
       if (FPError.code !== 101) {
         throw new Error(FPError);
       }
@@ -100,13 +102,13 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
         return $q.reject(err);
       });
     }, function (err) {
-      logger.logServerWarn('Some assets failed to upload', {error: err });
+      logger.logServerWarn('Some assets failed to upload', {error: err});
       notification.error('Some assets failed to upload');
       return $q.reject(err);
     });
   }
 
-  function createAssetForFile(FPFile) {
+  function createAssetForFile (FPFile) {
     var file = filepicker.parseFPFile(FPFile);
     var locale = TheLocaleStore.getDefaultLocale().internal_code;
     var data = {
@@ -119,16 +121,16 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
     return spaceContext.space.createAsset(data);
   }
 
-  function processAssetForFile(entity) {
+  function processAssetForFile (entity) {
     var locale = TheLocaleStore.getDefaultLocale().internal_code;
     return entity.process(entity.version, locale);
   }
 
-  function getSearchTerm() {
+  function getSearchTerm () {
     return $scope.context.view.searchTerm;
   }
 
-  function getAssetDimensions(asset) {
+  function getAssetDimensions (asset) {
     var file = spaceContext.localizedField(asset, 'data.fields.file');
     var width = dotty.get(file, 'details.image.width', false);
     var height = dotty.get(file, 'details.image.height', false);
