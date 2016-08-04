@@ -15,7 +15,8 @@ angular.module('cf.utils')
     onValue: onValue,
     onValueScope: onValueScope,
     fromScopeEvent: fromScopeEvent,
-    createBus: createBus
+    createBus: createBus,
+    createPropertyBus: createPropertyBus
   }, Kefir);
 
 
@@ -71,6 +72,52 @@ angular.module('cf.utils')
         currentEmitter.end();
         currentEmitter = null;
       }
+    }
+  }
+
+
+  /**
+   * @ngdoc method
+   * @name utils/kefir#createPropertyBus
+   * @usage[js]
+   * var bus = K.createPropertyBus('INITIAL', scope)
+   * bus.stream.onValue(cb1)
+   * // 'cb1' is called with 'INITIAL'
+   * bus.set('VAL')
+   * bus.stream.onValue(cb2)
+   * // 'cb2' is called with 'VAL'
+   * bus.end()
+   * // or
+   * scope.$destroy()
+   *
+   * @description
+   * Create a bus that allows us to imperatively set the value of a
+   * Kefir property.
+   *
+   * If the scope parameter is given the stream ends when the scope is
+   * destroyed.
+   *
+   * @param {any} initialValue
+   * @param {Scope?} scope
+   * @returns {utils/kefir.PropertyBus}
+   */
+  function createPropertyBus (initialValue, scope) {
+    var currentValue = initialValue;
+    var streamBus = createBus(scope);
+
+    var property = streamBus.stream.toProperty(function () {
+      return currentValue;
+    });
+
+    return {
+      property: property,
+      end: streamBus.end,
+      set: set
+    };
+
+    function set (value) {
+      currentValue = value;
+      streamBus.emit(value);
     }
   }
 
