@@ -12,6 +12,9 @@ describe('cfReferenceEditorDirective', function () {
     this.widgetApi = this.$inject('mocks/widgetApi').create();
     this.field = this.widgetApi.field;
 
+    this.$q = this.$inject('$q');
+    this.modalDialog = this.$inject('modalDialog');
+
     this.notifyChange = function () {
       var notifyFn = this.field.onValueChanged.firstCall.args[0];
       notifyFn(this.field.getValue());
@@ -173,10 +176,10 @@ describe('cfReferenceEditorDirective', function () {
         this.space.createEntry.resolves(createdEntity);
         this.space.getContentTypes.resolves({items: [ct1, ct2]});
 
-        const $q = this.$inject('$q');
-        this.$inject('modalDialog').open = function (config) {
+
+        this.modalDialog.open = (config) => {
           expect(config.scopeData.cts).toEqual([ct1, ct2]);
-          return {promise: $q.resolve(ct1)};
+          return {promise: this.$q.resolve(ct1)};
         };
 
         return this.create('Entry', {}, this.space)
@@ -202,6 +205,77 @@ describe('cfReferenceEditorDirective', function () {
       expect(scope.links.length).toBe(1);
       expect(scope.links[0].link.sys.id).toBe(id);
       sinon.assert.calledOnce(this.widgetApi.state.goToEditor.withArgs(asset));
+    });
+  });
+
+  describe('publication warning - unpublished references', function () {
+    const published = {sys: {publishedVersion: 1}};
+    const unpublished = {sys: {publishedVersion: null}};
+    const validWarning = {count: 1, linked: 'Entry'};
+
+    beforeEach(function () {
+      this.scope = this.init({type: 'Entry'});
+      this.scope.links = [{link: {}}, {link: {}}];
+      this.get = this.scope.store.get = sinon.stub();
+
+      sinon.assert.calledOnce(this.widgetApi.field.registerPublicationWarning);
+      this.warning = this.widgetApi.field.registerPublicationWarning.firstCall.args[0];
+    });
+
+    it('registers publication warning', function () {
+      expect(this.warning.group).toBe('reference_widget_unpublished_references');
+      expect([
+        typeof this.warning.shouldShow,
+        typeof this.warning.warnFn,
+        typeof this.warning.getData
+      ]).toEqual(['function', 'function', 'function']);
+    });
+
+    it('should be shown if there are unpublished references', function () {
+      this.get.onCall(0).returns(published).onCall(1).returns(published);
+      expect(this.warning.shouldShow()).toBe(false);
+
+      this.get.onCall(2).returns(published).onCall(3).returns(unpublished);
+      expect(this.warning.shouldShow()).toBe(true);
+    });
+
+    it('should prepare warning data', function () {
+      this.widgetApi.field.name = 'test';
+      this.widgetApi.field.locale = 'en-US';
+      this.get.onCall(0).returns(unpublished).onCall(1).returns(unpublished);
+
+      const data = this.warning.getData();
+      expect(data.fieldName).toBe('test (en-US)');
+      expect(data.count).toBe(2);
+      expect(data.linked).toBe('Entry');
+      expect(data.type).toBe('entries');
+    });
+
+    it('displays only the valid warnings', function () {
+      this.modalDialog.open = (config) => {
+        expect(config.scopeData.unpublishedRefs).toEqual([validWarning]);
+        expect(config.scopeData.linkedEntityTypes).toBe('entries');
+        return {promise: this.$q.resolve()};
+      };
+
+      this.warning.warnFn([null, {count: 0}, validWarning]);
+    });
+
+    it('computes title based on liked entity types', function () {
+      const assetWarning = {count: 1, linked: 'Asset'};
+
+      this.modalDialog.open = (config) => {
+        if (config.scopeData.unpublishedRefs.length === 2) {
+          expect(config.scopeData.linkedEntityTypes).toBe('entries and assets');
+        } else {
+          expect(config.scopeData.linkedEntityTypes).toBe('assets');
+        }
+
+        return {promise: this.$q.resolve()};
+      };
+
+      this.warning.warnFn([validWarning, assetWarning]);
+      this.warning.warnFn([assetWarning]);
     });
   });
 });

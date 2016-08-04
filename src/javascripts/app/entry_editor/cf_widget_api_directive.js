@@ -14,6 +14,7 @@
  * @scope.requires {object} transformedContentTypeData
  * @scope.requires {object} widget
  * @scope.requires {object} fieldController
+ * @scope.requires {object} state
  */
 angular.module('contentful')
 .directive('cfWidgetApi', [function () {
@@ -98,13 +99,16 @@ angular.module('contentful')
     pushValue: fieldLocale.doc.push,
 
     id: ctField.apiName, // we only want to expose the public ID
+    name: ctField.name,
     locale: $scope.locale.code,
     type: ctField.type,
     linkType: ctField.linkType,
     itemLinkType: dotty.get(ctField, ['items', 'linkType']),
     required: !!ctField.required,
     validations: ctField.validations || [],
-    itemValidations: dotty.get(ctField, ['items', 'validations'], [])
+    itemValidations: dotty.get(ctField, ['items', 'validations'], []),
+
+    registerPublicationWarning: $scope.state.registerPublicationWarning
   };
 
   /**
