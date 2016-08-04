@@ -54,8 +54,10 @@ angular.module('contentful/mocks')
         insertValue: sinon.stub(),
         pushValue: sinon.stub(),
         id: '',
+        name: '',
         locale: 'en-US',
-        type: ''
+        type: '',
+        registerPublicationWarning: sinon.stub().returns(_.noop)
       },
       space: {
         getEntries: sinon.stub().resolves({ total: 0, items: [] }),

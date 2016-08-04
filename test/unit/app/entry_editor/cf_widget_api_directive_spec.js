@@ -34,7 +34,8 @@ describe('cfWidgetApi directive', function () {
         },
         entity: this.entry,
         fields: {},
-        transformedContentTypeData: {}
+        transformedContentTypeData: {},
+        state: {registerPublicationWarning: _.noop}
       });
 
       return $controller('WidgetApiController', {

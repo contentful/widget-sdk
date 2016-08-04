@@ -12,6 +12,7 @@ function ($scope, $injector, entity, notify, handlePublishError) {
   var analytics = $injector.get('analytics');
   var accessChecker = $injector.get('accessChecker');
   var closeState = $injector.get('navigation/closeState');
+  var publicationWarnings = $injector.get('entityEditor/publicationWarnings').create();
 
   var stateManager = new StateManager(entity);
 
@@ -131,15 +132,20 @@ function ($scope, $injector, entity, notify, handlePublishError) {
     targetStateId: 'published'
   });
 
-  function publishEntity () {
-    if (!$scope.validate()) {
-      notify.publishValidationFail();
-      return $q.reject();
-    }
+  controller.registerPublicationWarning = publicationWarnings.register;
 
-    return stateManager.publish()
-    .then(entryReverter.publishedNewVersion)
-    .then(notify.publishSuccess, handlePublishError);
+  function publishEntity () {
+    publicationWarnings.show()
+    .then(function () {
+      if (!$scope.validate()) {
+        notify.publishValidationFail();
+        return $q.reject();
+      }
+
+      return stateManager.publish()
+      .then(entryReverter.publishedNewVersion)
+      .then(notify.publishSuccess, handlePublishError);
+    });
   }
 
   controller.delete = Command.create(function () {
