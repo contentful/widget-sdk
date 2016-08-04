@@ -28,7 +28,6 @@ angular.module('contentful', [
   'ngSanitize',
   'ui.sortable',
   'ui.router',
-  'angular-bind-html-compile',
   'ncy-angular-breadcrumb'
 ])
 .config(['$locationProvider', 'authenticationProvider', 'environment', '$sceDelegateProvider', '$compileProvider', '$animateProvider',

@@ -26,7 +26,8 @@ var yargs = require('yargs');
 var childProcess = require('child_process');
 var rework = require('rework');
 var reworkUrlRewrite = require('rework-plugin-url');
-var FS = B.promisifyAll(require('fs'));
+var fs = require('fs');
+var FS = B.promisifyAll(fs);
 
 var U = require('./tools/lib/utils');
 var jstConcat = require('./tasks/build-template');
@@ -56,33 +57,53 @@ var src = {
   ],
   stylesheets: 'src/stylesheets/**/*',
   vendorScripts: {
-    main: [
-      'bower_components/jquery/dist/jquery.js',
-      'bower_components/jquery-ui/ui/jquery.ui.core.js',
+    main: assertFilesExist([
+      'node_modules/jquery/dist/jquery.js',
+
+      // All these files constitue jquery.ui.core:
+      'node_modules/jquery-ui/ui/version.js',
+      'node_modules/jquery-ui/ui/ie.js',
+      'node_modules/jquery-ui/ui/data.js',
+      'node_modules/jquery-ui/ui/disable-selection.js',
+      'node_modules/jquery-ui/ui/focusable.js',
+      'node_modules/jquery-ui/ui/keycode.js',
+      'node_modules/jquery-ui/ui/escape-selector.js',
+      'node_modules/jquery-ui/ui/labels.js',
+      'node_modules/jquery-ui/ui/plugin.js',
+      'node_modules/jquery-ui/ui/safe-active-element.js',
+      'node_modules/jquery-ui/ui/safe-blur.js',
+      'node_modules/jquery-ui/ui/scroll-parent.js',
+      'node_modules/jquery-ui/ui/safe-blur.js',
+      'node_modules/jquery-ui/ui/tabbable.js',
+      'node_modules/jquery-ui/ui/unique-id.js',
+
       // Required by 'ui/context-menu' service
-      'bower_components/jquery-ui/ui/jquery.ui.position.js',
-      'bower_components/jquery-ui/ui/jquery.ui.widget.js',
-      'bower_components/jquery-ui/ui/jquery.ui.mouse.js',
+      'node_modules/jquery-ui/ui/position.js',
+      'node_modules/jquery-ui/ui/widget.js',
+      'node_modules/jquery-ui/ui/widgets/mouse.js',
+
       // Required by 'angular-ui-sortable'
       // Requires 'jquery.ui.core', 'jquery.ui.mouse', 'jquery.ui.widget'
-      'bower_components/jquery-ui/ui/jquery.ui.sortable.js',
+      'node_modules/jquery-ui/ui/widgets/sortable.js',
+
       // Requires 'jquery.ui.core'
-      'bower_components/jquery-ui/ui/jquery.ui.datepicker.js',
-      'bower_components/jquery-textrange/jquery-textrange.js',
-      'bower_components/angular/angular.js',
-      'bower_components/angular-animate/angular-animate.js',
-      'bower_components/angular-load/angular-load.js',
-      'bower_components/angular-sanitize/angular-sanitize.js',
-      'bower_components/angular-ui-router/release/angular-ui-router.js',
-      'bower_components/angular-breadcrumb/dist/angular-breadcrumb.js',
-      'bower_components/angular-bind-html-compile/angular-bind-html-compile.js',
-      'bower_components/bootstrap/js/tooltip.js',
+      'node_modules/jquery-ui/ui/widgets/datepicker.js',
+
+      'node_modules/jquery-textrange/jquery-textrange.js',
+      'node_modules/angular/angular.js',
+      'node_modules/angular-animate/angular-animate.js',
+      'node_modules/angular-load/angular-load.js',
+      'node_modules/angular-sanitize/angular-sanitize.js',
+      'node_modules/angular-ui-sortable/dist/sortable.js',
+      'node_modules/angular-ui-router/release/angular-ui-router.js',
+      'node_modules/angular-breadcrumb/dist/angular-breadcrumb.js',
+      'node_modules/bootstrap/js/tooltip.js',
       'node_modules/browserchannel/dist/bcsocket-uncompressed.js',
       'vendor/sharejs/webclient/share.uncompressed.js',
       'vendor/sharejs/webclient/json.uncompressed.js',
       'vendor/sharejs/webclient/textarea.js'
-    ],
-    kaltura: [
+    ]),
+    kaltura: assertFilesExist([
       'vendor/kaltura-16-01-2014/webtoolkit.md5.js',
       'vendor/kaltura-16-01-2014/ox.ajast.js',
       'vendor/kaltura-16-01-2014/KalturaClientBase.js',
@@ -90,11 +111,11 @@ var src = {
       'vendor/kaltura-16-01-2014/KalturaVO.js',
       'vendor/kaltura-16-01-2014/KalturaServices.js',
       'vendor/kaltura-16-01-2014/KalturaClient.js'
-    ]
+    ])
   },
   images: [
     'src/images/**/*',
-    './bower_components/jquery-ui/themes/base/images/*'
+    './node_modules/jquery-ui/themes/base/images/*'
   ],
   svg: {
     sourceDirectory: 'src/svg',
@@ -111,9 +132,9 @@ var src = {
     './vendor/formtastic.css',
     // Not sure if we need this
     './vendor/html5reset-1.6.1.css',
-    './bower_components/jquery-ui/themes/base/jquery-ui.css',
-    './bower_components/jquery-ui/themes/base/jquery.ui.autocomplete.css',
-    './bower_components/jquery-ui/themes/base/jquery.ui.datepicker.css',
+    './node_modules/jquery-ui/themes/base/jquery-ui.css',
+    './node_modules/jquery-ui/themes/base/jquery.ui.autocomplete.css',
+    './node_modules/jquery-ui/themes/base/jquery.ui.datepicker.css',
     './node_modules/codemirror/lib/codemirror.css'
   ],
   mainStylesheets: [
@@ -599,4 +620,14 @@ function mapFileContents (fn) {
     file.contents = new Buffer(contents, 'utf8');
     return file;
   });
+}
+
+function assertFilesExist (paths) {
+  paths.forEach(function (path) {
+    var stat = fs.statSync(path);
+    if (!stat.isFile()) {
+      throw new Error(path + ' is not a file');
+    }
+  });
+  return paths;
 }
