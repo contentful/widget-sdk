@@ -1,37 +1,29 @@
 'use strict';
 
-angular.module('contentful').directive('cfFileDisplayButtons', function () {
+angular.module('contentful')
+.directive('cfFileDisplayButtons', [function () {
   return {
     restrict: 'E',
     template: JST.cf_file_display_buttons,
-    controller: ['$scope', '$state', function ($scope, $state) {
+    controller: ['$scope', function ($scope) {
+      $scope.canEditFile = canEditFile;
+      $scope.canDeleteFile = canDeleteFile;
 
-      $scope.tryOpenAsset = function () {
-        var entity = $scope.entity;
-        if (entity && !entity.isMissing) {
-          $state.go('spaces.detail.assets.detail', {
-            assetId: entity.getId(),
-            addToContext: true
-          });
-        }
-      };
-
-      $scope.canOpenAsset = function () {
-        return !$scope.enableUpload && $scope.entity && !$scope.entity.isMissing;
-      };
-
-      $scope.canEditFile = function () {
+      function canEditFile () {
         var file = $scope.file;
         var isReady = $scope.imageHasLoaded && file && file.url;
-        return $scope.isEditable($scope.field, $scope.locale) && $scope.enableUpload && isReady;
-      };
+        return isEditable() && $scope.enableUpload && isReady;
+      }
 
-      $scope.canDeleteFile = function () {
+      function canDeleteFile () {
         var file = $scope.file;
         var uploaded = file && (file.url || file.upload);
-        return $scope.isEditable($scope.field, $scope.locale) && $scope.deleteFile && uploaded;
-      };
+        return isEditable() && $scope.deleteFile && uploaded;
+      }
 
+      function isEditable () {
+        return dotty.get($scope, 'fieldLocale.access.editable', false);
+      }
     }]
   };
-});
+}]);

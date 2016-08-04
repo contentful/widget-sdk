@@ -125,7 +125,7 @@ $cfnext-form-input()
 
 
 /**
- * Errors
+ * Errors and warning
  *
  * Markup:
  * div.cfnext-form__field
@@ -133,6 +133,11 @@ $cfnext-form-input()
  *   input.cfnext-form__input(type="text" aria-invalid="true")
  *   p.cfnext-form__field-error
  *     | Something went wrong!
+ * div.cfnext-form__field
+ *   label Name
+ *   input.cfnext-form__input(type="text" aria-invalid="true")
+ *   .cfnext-form__field-warning
+ *     | This is just a warning :)
  * div.cfnext-form__field
  *   label Name
  *   input.cfnext-form__input(type="text" aria-invalid="true")
@@ -153,8 +158,10 @@ $cfnext-form-input()
  *
  * Styleguide 30.3
  */
+
 .cfnext-form__field-error,
-.cfnext-form__field-errors
+.cfnext-form__field-errors,
+.cfnext-form__field-warning
   margin-top: $rhythm(0.5)
   margin-bottom: 0
   color: $red
@@ -169,6 +176,9 @@ $cfnext-form-input()
   display: inline
   margin: 0 0 0 1.5em
   color: $red
+
+.cfnext-form__field-warning
+  color: $colors.orange-dark
 
 /**
  * Option set

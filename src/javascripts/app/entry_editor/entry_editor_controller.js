@@ -42,8 +42,6 @@ angular.module('contentful')
     contentType: $scope.contentType
   });
 
-  $controller('entityEditor/FieldAccessController', {$scope: $scope});
-
   $scope.$watch(function () {
     return spaceContext.entryTitle($scope.entry);
   }, function (title) {

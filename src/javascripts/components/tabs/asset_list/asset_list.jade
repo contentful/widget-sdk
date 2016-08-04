@@ -76,9 +76,9 @@ header.workbench-header
             td.cell-author
               a.entity-list-link(cf-user link="asset.getUpdatedBy()" as="updater" ui-sref="{{entityNavState}}")
                 | {{updater | userNameDisplay:user}}
-            td.cell-status(ng-class="entityStatusController.getClassname(asset)")
+            td.cell-status(ng-class="entityStatus.getClassname(asset)")
               a.draft-wrapper.entity-list-link(ui-sref="{{entityNavState}}")
-                .status-label {{entityStatusController.getLabel(asset)}}
+                .status-label {{entityStatus.getLabel(asset)}}
                 .status-bar
       .loading(ng-hide="searchController.paginator.atLast()")
 

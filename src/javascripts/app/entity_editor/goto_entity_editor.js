@@ -10,17 +10,37 @@ angular.module('cf.app')
     Asset: 'assets'
   };
 
-  return function (linklike) {
+  goToEntityEditor.getStateRef = getStateRef;
+  return goToEntityEditor;
+
+  function getStateRef (linklike) {
+    var options = getOptions(linklike);
+    var paramsString = '{addToContext: \'' + options.addToContext + '\', ';
+    paramsString += options.entryId ? 'entryId' : 'assetId';
+    paramsString += ': \'' + (options.entryId || options.assetId) + '\'}';
+
+    return getPath(linklike) + '(' + paramsString + ')';
+  }
+
+  function goToEntityEditor (linklike) {
+    return $state.go(getPath(linklike), getOptions(linklike));
+  }
+
+  function getPath (linklike) {
     var type = getType(linklike);
     var typePlural = PLURALS[type];
-    var path = 'spaces.detail.' + typePlural + '.detail';
 
+    return 'spaces.detail.' + typePlural + '.detail';
+  }
+
+  function getOptions (linklike) {
+    var type = getType(linklike);
     var options = {addToContext: true};
     var entityIdKey = type.toLowerCase() + 'Id';
     options[entityIdKey] = getId(linklike);
 
-    return $state.go(path, options);
-  };
+    return options;
+  }
 
   function getType (linklike) {
     var getTypeFn = _.isObject(linklike) && linklike.getType;

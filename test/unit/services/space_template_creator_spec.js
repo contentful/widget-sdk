@@ -9,18 +9,27 @@ describe('Space Template creation service', function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'ctPublish', 'assetPublish', 'assetProcess', 'entryPublish', 'progressSuccess', 'progressError',
-        'success', 'error', 'on', 'timeout', 'timeoutCancel', 'retrySuccess'
+        'success', 'error', 'on', 'timeout', 'timeoutCancel', 'retrySuccess', 'getContentPreview', 'createContentPreview'
       ]);
 
       stubs.timeout.cancel = stubs.timeoutCancel;
       $provide.value('$timeout', stubs.timeout);
+
+      $provide.value('contentPreview', {getAll: stubs.getContentPreview, create: stubs.createContentPreview});
+
     });
     inject(function ($injector) {
       spaceTemplateCreator = $injector.get('spaceTemplateCreator');
       $q = $injector.get('$q');
       $rootScope = $injector.get('$rootScope');
       openShareJSDoc = $q.defer();
+      stubs.getContentPreview.resolves([]);
     });
+  });
+
+  afterEach(function () {
+    spaceTemplateCreator = creator = $q = $rootScope = stubs =
+    attemptedTemplate = spaceContext = openShareJSDoc = null;
   });
 
   describe('creates content based on a template', function () {
@@ -41,9 +50,9 @@ describe('Space Template creation service', function () {
           {sys: {id: 'a3'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish}
         ],
         entries: [
-          {sys: { id: 'e1', contentType: {sys: {id: 'ct1'}} }, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish},
-          {sys: { id: 'e2', contentType: {sys: {id: 'ct2'}} }, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish},
-          {sys: { id: 'e3', contentType: {sys: {id: 'ct3'}} }, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish}
+          {sys: {id: 'e1', contentType: {sys: {id: 'ct1'}}}, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish},
+          {sys: {id: 'e2', contentType: {sys: {id: 'ct2'}}}, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish},
+          {sys: {id: 'e3', contentType: {sys: {id: 'ct3'}}}, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish}
         ],
         apiKeys: [
           {sys: {id: 'ak1'}},
@@ -61,10 +70,17 @@ describe('Space Template creation service', function () {
               { internal_code: 'de-DE' }
             ]
           },
+          getId: _.constant('123'),
+          getDeliveryApiKeys: sinon.stub().returns([{data: {accessToken: 'mock-token'}}]),
           createContentType: sinon.stub(),
           createEntry: sinon.stub(),
           createAsset: sinon.stub(),
-          createDeliveryApiKey: sinon.stub()
+          createDeliveryApiKey: sinon.stub(),
+          getContentType: function () {
+            return $q.resolve({
+              createEditingInterface: spaceContext.createEditingInterface
+            });
+          }
         },
         docConnection: {
           open: sinon.stub().returns(openShareJSDoc.promise)
@@ -173,6 +189,13 @@ describe('Space Template creation service', function () {
 
     it('creates 2 apikeys', function () {
       expect(spaceContext.space.createDeliveryApiKey.callCount).toBe(2);
+    });
+
+    it('creates 1 preview environment', function () {
+      var env = stubs.createContentPreview.args[0][0];
+      sinon.assert.calledOnce(stubs.getContentPreview);
+      expect(env.name).toBe('Discovery App');
+      expect(env.configs.length).toBe(3);
     });
 
     it('updates success progress 17 times', function () {

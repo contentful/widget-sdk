@@ -61,9 +61,9 @@ header.workbench-header
               cf-field-display(ng-hide="isFieldCollapsed(field)")
               button.transparent-button(cf-click-local="expandColumn(field)" ng-show="isFieldCollapsed(field)")
                 | &hellip;
-            td.cell-status(ng-class="entityStatusController.getClassname(entry)")
+            td.cell-status(ng-class="entityStatus.getClassname(entry)")
               a.entity-list-link(ui-sref="{{entityNavState}}")
-                .status-label {{entityStatusController.getLabel(entry)}}
+                .status-label {{entityStatus.getLabel(entry)}}
                 .status-bar
       .loading(ng-hide="paginator.atLast()")
 

@@ -7,6 +7,7 @@ angular.module('cf.app')
   var entitySelector = require('entitySelector');
   var createEntityStore = require('EntityStore').create;
   var createEntity = require('cfReferenceEditor/createEntity');
+  var modalDialog = require('modalDialog');
 
   return {
     restrict: 'E',
@@ -83,9 +84,17 @@ angular.module('cf.app')
       $scope.isDisabled = isDisabled;
     });
 
+    var unregisterPublicationWarning = field.registerPublicationWarning({
+      group: 'reference_widget_unpublished_references',
+      shouldShow: hasUnpublishedReferences,
+      warnFn: showWarning,
+      getData: getWarningData
+    });
+
     $scope.$on('$destroy', function () {
       offValueChange();
       offDisabledChange();
+      unregisterPublicationWarning();
     });
 
     function is (type, style) {
@@ -120,6 +129,44 @@ angular.module('cf.app')
 
     function unwrapLinks () {
       return _.map($scope.links, 'link');
+    }
+
+    function hasUnpublishedReferences () {
+      return getUnpublishedReferences().length > 0;
+    }
+
+    function getUnpublishedReferences () {
+      return _.filter(_.map(unwrapLinks(), store.get), function (data) {
+        return !dotty.get(data, 'sys.publishedVersion', false);
+      });
+    }
+
+    function getWarningData () {
+      var references = getUnpublishedReferences();
+
+      return {
+        fieldName: field.name + ' (' + field.locale + ')',
+        count: references.length,
+        linked: $scope.type,
+        type: (references.length > 1 ? $scope.typePlural : $scope.type).toLowerCase()
+      };
+    }
+
+    function showWarning (unpublishedRefs) {
+      unpublishedRefs = _.filter(unpublishedRefs, function (ref) {
+        return ref && ref.count > 0;
+      });
+
+      var counts = _.countBy(unpublishedRefs, 'linked');
+      var linkedEntityTypes = [counts.Entry > 0 && 'entries', counts.Asset > 0 && 'assets'];
+
+      return modalDialog.open({
+        template: 'unpublished_references_warning',
+        scopeData: {
+          unpublishedRefs: unpublishedRefs,
+          linkedEntityTypes: _.filter(linkedEntityTypes).join(' and ')
+        }
+      }).promise;
     }
   }
 

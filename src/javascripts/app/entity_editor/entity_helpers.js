@@ -4,10 +4,9 @@ angular.module('cf.app')
 .factory('EntityHelpers', ['require', function (require) {
 
   var $q = require('$q');
-  var $controller = require('$controller');
   var spaceContext = require('spaceContext');
   var assetUrlFilter = require('$filter')('assetUrl');
-  var entityStatusController = $controller('EntityStatusController');
+  var getStatusClassname = require('entityStatus').getClassname;
 
   var api = {
     entityStatus: entityStatus,
@@ -34,7 +33,7 @@ angular.module('cf.app')
 
   function entityStatus (data) {
     var isPublished = !!data.sys.publishedVersion;
-    return $q.resolve(entityStatusController.getClassname({
+    return $q.resolve(getStatusClassname({
       isPublished: _.constant(isPublished),
       hasUnpublishedChanges: _.constant(!isPublished || data.sys.version > data.sys.publishedVersion + 1),
       isArchived: _.constant(!!data.sys.archivedVersion)

@@ -23,6 +23,12 @@ describe('entityEditor/StateController', function () {
 
     this.$inject('accessChecker').canPerformActionOnEntity = sinon.stub().returns(true);
 
+    const warnings = this.$inject('entityEditor/publicationWarnings');
+    warnings.create = sinon.stub().returns({
+      register: this.registerWarningSpy = sinon.spy(),
+      show: this.showWarningsStub = sinon.stub().resolves()
+    });
+
     this.entity = entry;
     this.notify = {};
 
@@ -328,4 +334,18 @@ describe('entityEditor/StateController', function () {
 
   });
 
+  describe('publication warnings', function () {
+    it('allows publication warnings registration', function () {
+      const warning = {};
+      this.controller.registerPublicationWarning(warning);
+      sinon.assert.calledOnce(this.registerWarningSpy.withArgs(warning));
+    });
+
+    it('shows publication warnings before actual action', function () {
+      this.entity.data.sys.publishedVersion = null;
+      this.$apply();
+      this.controller.primary.execute();
+      sinon.assert.calledOnce(this.showWarningsStub);
+    });
+  });
 });

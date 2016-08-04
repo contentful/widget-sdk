@@ -42,13 +42,13 @@ describe('entityEditor/FieldLocaleDocument', function () {
       this.rootDoc.valuePropertyAt(path).set('VAL');
       const changed = sinon.stub();
 
-      this.doc.onValueChanged(changed);
+      this.doc.valueProperty.onValue(changed);
       sinon.assert.calledWith(changed, 'VAL');
     });
 
     it('update value when root doc changes at path', function () {
       const changed = sinon.stub();
-      this.doc.onValueChanged(changed);
+      this.doc.valueProperty.onValue(changed);
       changed.reset();
 
       this.rootDoc.valuePropertyAt(path).set('VAL');
@@ -57,7 +57,7 @@ describe('entityEditor/FieldLocaleDocument', function () {
 
     it('does not update value when "set()" is called', function () {
       const changed = sinon.stub();
-      this.doc.onValueChanged(changed);
+      this.doc.valueProperty.onValue(changed);
       changed.reset();
 
       this.doc.set('VAL');

@@ -98,12 +98,10 @@ describe('entity editor field integration', function () {
 
   describe('editing permissions', function () {
     it('shows message if user does not have editing permissions', function () {
-      var accessChecker = this.$inject('accessChecker');
-      accessChecker.getFieldChecker = sinon.stub().returns({
-        isEditable: function (_field, locale) {
-          return locale.code === 'EN';
-        }
-      });
+      var policyAccessChecker = this.$inject('accessChecker/policy');
+      policyAccessChecker.canEditFieldLocale = function (_ctId, _field, locale) {
+        return locale.code === 'EN';
+      };
 
       var el = this.compile();
       expect(findPermissionInfo(el, 'EN')).toBeNgHidden();

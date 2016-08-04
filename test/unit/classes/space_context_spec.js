@@ -3,9 +3,13 @@
 describe('spaceContext', function () {
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    this.Subscription = {
+      newFromOrganization: sinon.stub()
+    };
+    module('contentful/test', ($provide) => {
       $provide.value('data/userCache', sinon.stub());
       $provide.value('data/editingInterfaces', sinon.stub());
+      $provide.value('Subscription', this.Subscription);
     });
     this.spaceContext = this.$inject('spaceContext');
     this.theLocaleStore = this.$inject('TheLocaleStore');
@@ -96,6 +100,32 @@ describe('spaceContext', function () {
       var createEditingInterfaces = this.$inject('data/editingInterfaces');
       sinon.assert.calledOnce(createEditingInterfaces);
       expect(this.spaceContext.editingInterfaces).toEqual('EI');
+    });
+
+    describe('updated `.subscription` value on context', function () {
+      var ORGANIZATION, SUBSCRIPTION;
+      beforeEach(function () {
+        ORGANIZATION = {};
+        SUBSCRIPTION = {};
+        this.Subscription.newFromOrganization.reset();
+        this.Subscription.newFromOrganization
+          .withArgs(ORGANIZATION).returns(SUBSCRIPTION);
+      });
+
+      it('gets built from context `organization` data', function () {
+        SPACE.data = { organization: ORGANIZATION };
+        this.spaceContext.resetWithSpace(SPACE);
+
+        sinon.assert.calledOnce(this.Subscription.newFromOrganization);
+        expect(this.spaceContext.subscription).toBe(SUBSCRIPTION);
+      });
+
+      it('is set to `null` if no organization is set on `data`', function () {
+        this.spaceContext.resetWithSpace(SPACE);
+
+        sinon.assert.notCalled(this.Subscription.newFromOrganization);
+        expect(this.spaceContext.subscription).toBe(null);
+      });
     });
   });
 

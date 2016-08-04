@@ -17,7 +17,8 @@ describe('SlugEditor directive', function () {
     this.title = MockApi.createField();
 
     this.entrySys = {
-      contentType: {sys: {id: 'CTID'}}
+      contentType: {sys: {id: 'CTID'}},
+      createdAt: 1000
     };
 
     this.cfWidgetApi.entry = {

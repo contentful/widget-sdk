@@ -6,13 +6,14 @@ set -ev
 
 SLIMERJS_BIN=bin/slimerjs
 
+./bin/install-firefox
 ./bin/install_slimerjs
 npm install --no-optional
 ./node_modules/bower/bin/bower install
 
 git submodule update --init
 
-pushd vendor/contentful-widget-sdk
+pushd vendor/ui-extensions-sdk
   npm install --production --no-optional
   make
 popd
