@@ -1,6 +1,49 @@
 'use strict';
 
 angular.module('contentful')
+
+/**
+ * @ngdoc service
+ * @name entityEditor/publicationWarnings
+ * @description
+ * This service allows extensions to register warnings that
+ * can be presented before publishing an entity.
+ *
+ * @usage[js]
+ * var warnings = require('entityEditor/publicationWarnings').create();
+ *
+ * warnings.register({
+ *   // a function returning a boolean value indicating
+ *   // if the warning should be shown
+ *   shouldShow: function () { return true; },
+ *
+ *   // a function returning a promise; rejecting this promise
+ *   // will break the chain of notifications
+ *   warnFn: function (maybeData) { return $q.resolve(); },
+ *
+ *   // sometimes we want to merge warnings of a single type
+ *   // so they act as one; warnings like this should be
+ *   // registered with the same group name
+ *   group: 'group-name',
+ *
+ *   // if using grouping, warnFn will be called with
+ *   // an array of getData call results (for all warnings
+ *   // in the group)
+ *   getData: function () { return {}; },
+ *
+ *   // priority has two meanings:
+ *   // - it determines the order in which warnings are shown
+ *   // - when using groups, warnFn of with the highest
+ *   //   priority will be called
+ *   priority: 0
+ * });
+ *
+ * warnings.show().then(function () {
+ *   // no warnings or all warnings were confirmed
+ * }, function () {
+ *   // at least one warning resulted in cancellation
+ * });
+ */
 .factory('entityEditor/publicationWarnings', ['require', function (require) {
 
   var $q = require('$q');
