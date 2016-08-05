@@ -228,10 +228,12 @@ angular.module('cf.app')
     }
 
     function canCreate (field) {
-      var validation = _.find(field.itemValidations, function (validation) {
-        return Array.isArray(validation.linkContentType);
+      var validations = [].concat(field.validations || [], field.itemValidations || []);
+      var found = _.find(validations, function (v) {
+        return Array.isArray(v.linkContentType) || _.isString(v.linkContentType);
       });
-      var linkedCts = validation && validation.linkContentType;
+      var linkedCts = found && found.linkContentType;
+      linkedCts = _.isString(linkedCts) ? [linkedCts] : linkedCts;
 
       return function (ct) {
         var canLink = !linkedCts || linkedCts.indexOf(ct.sys.id) > -1;
