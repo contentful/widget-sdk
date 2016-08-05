@@ -162,7 +162,17 @@ describe('cfReferenceEditorDirective', function () {
         }.bind(this));
       });
 
-      pit('filters out content types to adhere to field validation', function () {
+      pit('filters out content types to adhere to single link field validation', function () {
+        this.space.getContentTypes.resolves({items: [ct1, ct2]});
+        const field = {validations: [{linkContentType: ['ctid']}]};
+
+        return this.create('Entry', field, this.space)
+        .then(function () {
+          sinon.assert.calledOnce(this.space.createEntry.withArgs('ctid', {}));
+        }.bind(this));
+      });
+
+      pit('filters out content types to adhere to multiple link field validation', function () {
         this.space.getContentTypes.resolves({items: [ct1, ct2]});
         const field = {itemValidations: [{linkContentType: ['ctid2']}]};
 
@@ -175,7 +185,6 @@ describe('cfReferenceEditorDirective', function () {
       pit('allows user to choose which CT should be used', function () {
         this.space.createEntry.resolves(createdEntity);
         this.space.getContentTypes.resolves({items: [ct1, ct2]});
-
 
         this.modalDialog.open = (config) => {
           expect(config.scopeData.cts).toEqual([ct1, ct2]);
