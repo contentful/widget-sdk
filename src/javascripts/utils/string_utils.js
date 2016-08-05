@@ -3,12 +3,13 @@
 /**
  * @ngdoc service
  * @name stringUtils
+ * @module cf.utils
  * @description
  * Utility functions that deal with strings.
  *
  * Some of them are also available as filters
  */
-angular.module('contentful')
+angular.module('cf.utils')
 .constant('stringUtils', (function () {
   function toIdentifier (string) {
     if (shouldFallbackToEmptyString(string)) return '';
@@ -195,14 +196,36 @@ angular.module('contentful')
    * @param {string} str
    * @returns {boolean}
    */
-
   function startsWithVowel (str) {
     if (!_.isString(str) || str.length < 1) { return false; }
     var firstLetter = str.substr(0, 1).toLowerCase();
     return ['a', 'e', 'i', 'o', 'u'].indexOf(firstLetter) > -1;
   }
 
+  /**
+   * @ngdoc method
+   * @name stringUtils#normalizeWhiteSpace
+   * @usage[js]
+   * normalizeWhiteSpace('  a  b  ')
+   * // => 'a b'
+   *
+   * @description
+   * Removes whitespaces from the beginning and the end and replaces
+   * multiple whitespaces by one.
+   *
+   * @param {string} str
+   * @returns {string}
+   */
+  function normalizeWhiteSpace (string) {
+    if (string) {
+      return string.trim().replace(/\s{2,}/g, ' ');
+    } else {
+      string;
+    }
+  }
+
   return {
+    normalizeWhiteSpace: normalizeWhiteSpace,
     joinAnd: joinAnd,
     joinAndTruncate: joinAndTruncate,
     toIdentifier: toIdentifier,
