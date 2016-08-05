@@ -75,7 +75,7 @@ describe('stringUtils service', function () {
 
     it('throws an error if string end greater than total length param', function () {
       var call = truncateMiddle.bind(null, 'foo', 10, 11);
-      expect(call).toThrow()
+      expect(call).toThrow();
     });
 
     it('retains short string', function () {

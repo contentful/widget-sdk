@@ -9,42 +9,42 @@
  * Some of them are also available as filters
  */
 angular.module('contentful')
-.constant('stringUtils', (function(){
-  function toIdentifier(string) {
+.constant('stringUtils', (function () {
+  function toIdentifier (string) {
     if (shouldFallbackToEmptyString(string)) return '';
     var words = splitIntoWords(string).map(stripInvalidChars);
     if (_.isEmpty(words)) return '';
     var first = words[0].toLowerCase();
-    var rest =  words.slice(1).map(capitalize);
+    var rest = words.slice(1).map(capitalize);
     return cleanPrefix([first].concat(rest).join(''));
   }
 
-  function capitalize(string) {
+  function capitalize (string) {
     if (shouldFallbackToEmptyString(string)) return '';
     return string[0].toUpperCase() + string.slice(1).toLowerCase();
   }
 
-  function capitalizeFirst(string) {
+  function capitalizeFirst (string) {
     if (shouldFallbackToEmptyString(string)) return '';
     return string[0].toUpperCase() + string.slice(1);
   }
 
-  function uncapitalize(str) {
+  function uncapitalize (str) {
     if (shouldFallbackToEmptyString(str)) return '';
     return str[0].toLowerCase() + str.substr(1);
   }
 
-  function shouldFallbackToEmptyString(str) {
+  function shouldFallbackToEmptyString (str) {
     return !_.isString(str) || str.length < 1;
   }
 
-  function cleanPrefix(string) {
-    return string.replace(/^[^a-z]+/, function(prefix) {
+  function cleanPrefix (string) {
+    return string.replace(/^[^a-z]+/, function (prefix) {
       return prefix.toLowerCase().replace(/[0-9]/g, '');
     });
   }
 
-  function splitIntoWords(string) {
+  function splitIntoWords (string) {
     return _.compact(
       string
         .replace(/([a-z])([A-Z])/g, '$1 $2')
@@ -52,24 +52,24 @@ angular.module('contentful')
         .split(/[\s\-_.)]+/));
   }
 
-  function stripInvalidChars(string) {
+  function stripInvalidChars (string) {
     return string.replace(/\W/g, '');
   }
 
-  function removeQueryString(str) {
+  function removeQueryString (str) {
     return str.replace(/(\.\w+)\?.*/, '$1');
   }
 
-  function removeExtension(str) {
+  function removeExtension (str) {
     return str.replace(/\.\w+$/g, '');
   }
 
-  function fileNameToTitle(str) {
+  function fileNameToTitle (str) {
     return removeExtension(str).replace(/_/g, ' ');
   }
 
-  function titleToFileName(str, spacer) {
-    return str.replace(/\s/g, spacer||'').replace(/[^\w]*/g, '');
+  function titleToFileName (str, spacer) {
+    return str.replace(/\s/g, spacer || '').replace(/[^\w]*/g, '');
   }
 
   var entitiesToLabels = {
@@ -80,7 +80,7 @@ angular.module('contentful')
     EditingInterface: 'Editing Interface'
   };
 
-  function getEntityLabel(id) {
+  function getEntityLabel (id) {
     return entitiesToLabels[id];
   }
 
@@ -93,11 +93,13 @@ angular.module('contentful')
    * @param {string[]} list
    */
   function joinAnd (stringList) {
-    if (stringList.length === 0)
+    if (stringList.length === 0) {
       return '';
+    }
 
-    if (stringList.length === 1)
+    if (stringList.length === 1) {
       return stringList[0];
+    }
 
     var lastPos = stringList.length - 1;
     var head = stringList.slice(0, lastPos);
@@ -120,11 +122,13 @@ angular.module('contentful')
    * @param {string} itemsName
    */
   function joinAndTruncate (list, maxLength, itemsName) {
-    if (list.length <= maxLength)
+    if (list.length <= maxLength) {
       return joinAnd(list);
+    }
 
-    if (list.length === maxLength + 1)
+    if (list.length === maxLength + 1) {
       maxLength = maxLength - 1;
+    }
 
     var restLength = list.length - maxLength;
     var initialList = list.slice(0, maxLength);
@@ -169,7 +173,7 @@ angular.module('contentful')
    * @returns {string}
    */
   function truncateMiddle (str, length, endOfStrLength) {
-    if(length < endOfStrLength) {
+    if (length < endOfStrLength) {
       throw new Error('`length` has to be greater or equal to `endOfStrLength`');
     }
     if (str && str.length > length) {
@@ -192,7 +196,7 @@ angular.module('contentful')
    * @returns {boolean}
    */
 
-  function startsWithVowel(str) {
+  function startsWithVowel (str) {
     if (!_.isString(str) || str.length < 1) { return false; }
     var firstLetter = str.substr(0, 1).toLowerCase();
     return ['a', 'e', 'i', 'o', 'u'].indexOf(firstLetter) > -1;

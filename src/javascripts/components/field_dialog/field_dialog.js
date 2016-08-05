@@ -18,7 +18,7 @@ angular.module('contentful')
  */
 .factory('openFieldDialog', ['$injector', function ($injector) {
   var analytics = $injector.get('analyticsEvents');
-  var modalDialog  = $injector.get('modalDialog');
+  var modalDialog = $injector.get('modalDialog');
 
   return function openFieldDialog ($scope, field, widget) {
     var scope = _.extend($scope.$new(), {
@@ -59,11 +59,11 @@ angular.module('contentful')
 ['$scope', '$injector', function FieldDialogController ($scope, $injector) {
   var dialog = $scope.dialog;
 
-  var validations       = $injector.get('validationDecorator');
-  var field             = $injector.get('fieldDecorator');
-  var analyticsEvents   = $injector.get('analyticsEvents');
-  var fieldFactory      = $injector.get('fieldFactory');
-  var Widgets           = $injector.get('widgets');
+  var validations = $injector.get('validationDecorator');
+  var field = $injector.get('fieldDecorator');
+  var analyticsEvents = $injector.get('analyticsEvents');
+  var fieldFactory = $injector.get('fieldFactory');
+  var Widgets = $injector.get('widgets');
 
   $scope.decoratedField = field.decorate($scope.field, $scope.contentType);
   $scope.validations = validations.decorateFieldValidations($scope.field);
@@ -93,7 +93,7 @@ angular.module('contentful')
 
 
   $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
-  $scope.iconId = fieldFactory.getIconId($scope.field)+'-small';
+  $scope.iconId = fieldFactory.getIconId($scope.field) + '-small';
 
   dialog.save = function () {
     $scope.$broadcast('validate');
@@ -122,19 +122,22 @@ angular.module('contentful')
   };
 
   function isValid () {
-    if (!$scope.fieldForm.$valid)
+    if (!$scope.fieldForm.$valid) {
       return false;
+    }
 
-    if (!_.isEmpty(validations.validateAll($scope.validations)))
+    if (!_.isEmpty(validations.validateAll($scope.validations))) {
       return false;
+    }
 
     return true;
   }
 
   function getTitleField (ct) {
     var fieldId = ct.data.displayField;
-    if (!fieldId || fieldId == $scope.field.id)
+    if (!fieldId || fieldId === $scope.field.id) {
       return null;
+    }
 
     var titleField = _.find(ct.data.fields, {id: fieldId});
     return field.getDisplayName(titleField);
@@ -183,14 +186,14 @@ angular.module('contentful')
 .controller('FieldDialogSettingsController',
 ['$scope', '$injector', function ($scope, $injector) {
   var fieldDecorator = $injector.get('fieldDecorator');
-  var buildMessage   = $injector.get('fieldErrorMessageBuilder');
+  var buildMessage = $injector.get('fieldErrorMessageBuilder');
   var TheLocaleStore = $injector.get('TheLocaleStore');
 
   $scope.schema = {
     errors: function (decoratedField) {
       return fieldDecorator.validateInContentType(decoratedField, $scope.contentType);
     },
-    buildMessage: buildMessage,
+    buildMessage: buildMessage
   };
   $scope.field = $scope.decoratedField;
   $scope.$watch('fieldSettingsForm.$invalid', function (isInvalid) {
