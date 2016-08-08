@@ -28,7 +28,7 @@
         li(ng-show="!context.view.contentTypeId && context.view.contentTypeHidden")
           a(ng-click="toggleContentType($event)")
             | Content type
-        li(ng-repeat="field in hiddenFields track by field.id")
+        li(ng-repeat="field in hiddenFields")
           a(ng-if="field.type != 'Object' && !field.disabled" ng-click="displayField($event, field)")
             | {{field.name}}
           span(ng-if="field.type == 'Object' || field.disabled")
