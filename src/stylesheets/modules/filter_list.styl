@@ -63,6 +63,13 @@
   letter-spacing: 1px
 .header-toggle.toggle-collapse
   color: $gray-light
+  display: inline-block
+  cursor: pointer
+  transition: transform 0.1s ease-in-out
+  &.on-right
+    transform: rotate(180deg)
+  &.open
+    transform: rotate(90deg)
 
 .filter-list-row
   display: flex

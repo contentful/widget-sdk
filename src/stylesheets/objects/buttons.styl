@@ -20,8 +20,14 @@ Styleguide 4.0
   $layer('buttonOverlay')
   margin: 0 !important
 
-@require './buttons-deprecated.styl'
-
+.transparent-button
+  background: none
+  border: none
+  cursor: pointer
+  padding: 0
+  margin: 0
+.transparent-button[disabled]
+  cursor: auto
 
 $button-reset()
   color: inherit
