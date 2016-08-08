@@ -16,6 +16,7 @@ angular.module('contentful/app', ['contentful'])
   var authentication = require('authentication');
   authentication.login();
 
+  require('presence').startTracking();
   require('client').init(authentication.token);
   require('uiVersionSwitcher').checkIfVersionShouldBeSwitched();
   require('navigation/stateChangeHandlers').setup();

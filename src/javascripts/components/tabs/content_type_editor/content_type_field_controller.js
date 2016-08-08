@@ -5,12 +5,12 @@ angular.module('contentful')
  * @ngdoc type
  * @name ContentTypeFieldController
  */
-.controller('ContentTypeFieldController', ['$scope', '$injector', function ($scope, $injector) {
+.controller('ContentTypeFieldController', ['$scope', 'require', function ($scope, require) {
   var controller = this;
-  var fieldFactory = $injector.get('fieldFactory');
-  var trackField = $injector.get('analyticsEvents').trackField;
-  var Field = $injector.get('fieldDecorator');
-  var dialogs = $injector.get('ContentTypeFieldController/dialogs');
+  var fieldFactory = require('fieldFactory');
+  var trackField = require('analyticsEvents').trackField;
+  var Field = require('fieldDecorator');
+  var dialogs = require('ContentTypeFieldController/dialogs');
 
   var isTitleType = Field.isTitleType($scope.field.type);
 
@@ -110,9 +110,10 @@ angular.module('contentful')
   }
 }])
 
-.factory('ContentTypeFieldController/dialogs', ['$injector', function ($injector) {
+.factory('ContentTypeFieldController/dialogs', ['require', function (require) {
 
-  var modalDialog = $injector.get('modalDialog');
+  var modalDialog = require('modalDialog');
+  var htmlEncode = require('encoder').htmlEncode;
 
   return {
     openDisallowDialog: openDisallowDialog,
@@ -126,7 +127,7 @@ angular.module('contentful')
     return modalDialog.open({
       title: 'This field can’t be ' + action[0] + ' right now',
       message: [
-        'The field <span class="modal-dialog__highlight">', field.name,
+        'The field <span class="modal-dialog__highlight">', htmlEncode(field.name),
         '</span> acts as a title for this content type. Before ', action[1],
         ' it you need too choose another field as title.'
       ].join(''),

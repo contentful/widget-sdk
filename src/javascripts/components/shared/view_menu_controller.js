@@ -1,13 +1,18 @@
 'use strict';
+
 angular.module('contentful')
 
-.controller('ViewMenuController', ['$scope', '$attrs', '$injector', '$parse', function($scope, $attrs, $injector, $parse) {
-  var modalDialog    = $injector.get('modalDialog');
-  var random         = $injector.get('random');
-  var $timeout       = $injector.get('$timeout');
-  var analytics      = $injector.get('analytics');
-  var TheStore       = $injector.get('TheStore');
+.controller('ViewMenuController',
+['$scope', '$attrs', 'require', '$parse',
+function ($scope, $attrs, require, $parse) {
+
+  var modalDialog = require('modalDialog');
+  var random = require('random');
+  var $timeout = require('$timeout');
+  var analytics = require('analytics');
+  var TheStore = require('TheStore');
   var getCurrentView = $parse('context.view');
+  var htmlEncode = require('encoder').htmlEncode;
 
   $scope.tempFreeViews = [];
   $scope.folderStates = TheStore.get('folderStates') || {};
@@ -17,7 +22,7 @@ angular.module('contentful')
   });
 
   $scope.toggleFolder = function (folder) {
-    if ($scope.folderStates[folder.id] === 'closed') {
+    if ($scope.folderStates[ folder.id ] === 'closed') {
       $scope.folderStates[folder.id] = 'open';
     } else {
       $scope.folderStates[folder.id] = 'closed';
@@ -29,7 +34,7 @@ angular.module('contentful')
     return $scope.folderStates[folder.id] !== 'closed';
   };
 
-  function saveFolderStates(folderStates) {
+  function saveFolderStates (folderStates) {
     // Only store closed folders that actually exist
     folderStates = _.pick(folderStates, function (state, folderId) {
       return state === 'closed' && _.find($scope.folders, {id: folderId});
@@ -62,7 +67,11 @@ angular.module('contentful')
   $scope.deleteFolder = function (folder) {
     modalDialog.openConfirmDeleteDialog({
       title: 'Delete folder',
-      message: 'You are about to delete the folder <span class="modal-dialog__highlight">' + folder.title + '</span>. Deleting this Folder will also remove all the saved Views inside.\nIf you want to keep your views, please drag them into another folder before deleting the Folder.',
+      message:
+        'You are about to delete the folder <span class="modal-dialog__highlight">' +
+        htmlEncode(folder.title) + '</span>. Deleting this Folder will also ' +
+        'remove all the saved Views inside. If you want to keep your views, ' +
+        'please drag them into another folder before deleting the Folder.',
       scope: $scope
     }).promise.then(function () {
       _.remove($scope.folders, {id: folder.id});
@@ -107,14 +116,14 @@ angular.module('contentful')
     return defaultFolder;
   };
 
-  $scope.viewIsActive = function (view){
+  $scope.viewIsActive = function (view) {
     if (!view) return false;
     var p = getCurrentView($scope);
     return p.id === view.id;
   };
 
 
-  function moveTempFreeViews() {
+  function moveTempFreeViews () {
     var defaultFolder = $scope.createDefaultFolder();
     defaultFolder.views.push.apply(defaultFolder.views, $scope.tempFreeViews);
     $scope.tempFreeViews.length = 0;

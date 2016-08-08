@@ -89,12 +89,12 @@ $cfnext-form-input()
  * div.cfnext-form__field
  *   label First Name
  *   input.cfnext-form__input(type="text")
- *   div.cfnext-form__hint
+ *   p.cfnext-form__hint
  *     | You have to provide your name here
  * div.cfnext-form__field
  *   label Last Name
  *   input.cfnext-form__input(type="text")
- *   div.cfnext-form__hint
+ *   p.cfnext-form__hint
  *     | You have to provide your last name here
  * div.cfnext-form__field
  *   label
@@ -107,11 +107,13 @@ $cfnext-form-input()
  */
 .cfnext-form__hint
   margin-top: $rhythm(0.5)
+  margin-bottom: 0
   color: $text-dimmed
   font-size: $small-font-size
 
 .cfnext-form__hint--normal-text
   margin-top: $rhythm(0.5)
+  margin-bottom: 0
 
 .cfnext-form__label-hint
   margin-left: 1ex
@@ -129,7 +131,7 @@ $cfnext-form-input()
  * div.cfnext-form__field
  *   label Name
  *   input.cfnext-form__input(type="text" aria-invalid="true")
- *   .cfnext-form__field-error
+ *   p.cfnext-form__field-error
  *     | Something went wrong!
  * div.cfnext-form__field
  *   label Name
@@ -139,7 +141,7 @@ $cfnext-form-input()
  * div.cfnext-form__field
  *   label Name
  *   input.cfnext-form__input(type="text" aria-invalid="true")
- *   span.cfnext-form__field-suffix-error
+ *   p.cfnext-form__field-suffix-error
  *     | Something went <strong>wrong!</strong>
  * div.cfnext-form__field
  *   label Name
@@ -161,6 +163,7 @@ $cfnext-form-input()
 .cfnext-form__field-errors,
 .cfnext-form__field-warning
   margin-top: $rhythm(0.5)
+  margin-bottom: 0
   color: $red
   // TODO overide because strong sets color !tableflip
   strong
@@ -170,7 +173,8 @@ $cfnext-form-input()
   margin-bottom: $rhythm(0.5)
 
 .cfnext-form__field-suffix-error
-  margin-left: 1.5em
+  display: inline
+  margin: 0 0 0 1.5em
   color: $red
 
 .cfnext-form__field-warning
