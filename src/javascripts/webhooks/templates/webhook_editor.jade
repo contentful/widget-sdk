@@ -4,13 +4,13 @@ header.workbench-header
   h1.workbench-header__title Webhook: {{ context.title }}
 
   .workbench-header__actions(ui-tabpanel="settings")
-    button.cfnext-btn-secondary-action(ui-command="openRemovalDialog")
+    button.btn-secondary-action(ui-command="openRemovalDialog")
       | Remove
-    button.cfnext-btn-primary-action(ui-command="save")
+    button.btn-primary-action(ui-command="save")
       | Save
 
   .workbench-header__actions(ui-tabpanel="activity")
-    button.cfnext-btn-secondary-action(ui-command="refreshLogs")
+    button.btn-secondary-action(ui-command="refreshLogs")
       | Refresh logs
 
 .workbench-nav(ng-hide="context.isNew")

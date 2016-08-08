@@ -1,12 +1,12 @@
 mixin create-entry-button-wrapper
   if attributes.large
-    button.cfnext-btn-action--large.ct-empty-list__action(
+    button.btn-action--large.ct-empty-list__action(
       ng-disabled="shouldDisable('createEntry')"
       cf-when-disabled="createEntry")&attributes(attributes)
       cf-icon.btn-icon.inverted(name="plus")
       block
   else
-    button.cfnext-btn-action.u-truncate(
+    button.btn-action.u-truncate(
       ng-disabled="shouldDisable('createEntry')"
       cf-when-disabled="createEntry")&attributes(attributes)
       cf-icon.btn-icon.inverted(name="plus")

@@ -13,9 +13,9 @@
         input.cfnext-form__input(ng-model="typedLocaleCode")
 
     .modal-dialog__controls
-      button.cfnext-btn-caution(
+      button.btn-caution(
         ng-click="dialog.confirm()"
         ng-disabled="typedLocaleCode !== locale.data.code")
         | Delete
-      button.cfnext-btn-secondary-action(ng-click="dialog.cancel()")
+      button.btn-secondary-action(ng-click="dialog.cancel()")
         | Don't delete

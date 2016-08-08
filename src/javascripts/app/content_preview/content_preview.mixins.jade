@@ -2,7 +2,7 @@ mixin content-preview-sidebar
   .workbench-main__entity-sidebar.content-preview-sidebar
     .entity-sidebar
       .cfnext-form__field(ng-if="previewEnvironments.length")
-        button.cfnext-btn-action.x--block(
+        button.btn-action.x--block(
           ng-if="previewEnvironments.length < 25"
           ui-sref="spaces.detail.settings.content_preview.new")
           div

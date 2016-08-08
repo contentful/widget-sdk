@@ -100,24 +100,29 @@ $fa-offset()
   .fa
     margin-right: 4px
 
-.btn--primary
+.btn--primary, .cfnext-btn-action
   $fa-offset()
-  @extend .cfnext-btn-action
+  @extend .btn-action
 
 .btn--secondary
   $fa-offset()
-  &, &.new-resource
-    @extend .cfnext-btn-secondary-action
+  @extend .btn-secondary-action
   &.new-resource
     margin-top: 34px //result list tr-height
 
-.btn--confirm
+.btn--confirm, .cfnext-btn-primary-action
   $fa-offset()
-  @extend .cfnext-btn-primary-action
+  @extend .btn-primary-action
 
-.btn--danger
+.btn--danger, .cfnext-btn-caution
   $fa-offset()
-  @extend .cfnext-btn-caution
+  @extend .btn-caution
+
+.cfnext-btn-link
+  @extend .btn-link
+
+.cfnext-btn-inline
+  @extend .btn-inline
 
 input.btn--input
   padding: 0.6em 1em

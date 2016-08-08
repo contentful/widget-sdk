@@ -1,20 +1,20 @@
 .file-buttons
-  a.cfnext-btn-secondary-action(type="button"
+  a.btn-secondary-action(type="button"
     aria-label="Download file" tooltip="Download file"
     href="{{file.url|assetUrl}}" target="_blank"
     ng-show="file|isFileReady")
     i.fa.fa-download
-  button.cfnext-btn-secondary-action(type="button"
+  button.btn-secondary-action(type="button"
     aria-label="Show file information" tooltip="Show file information"
     ng-click="toggleMeta()"
     ng-show="file")
     i.fa.fa-info-circle
-  button.cfnext-btn-secondary-action(type="button"
+  button.btn-secondary-action(type="button"
     aria-label="Edit file" tooltip="Edit file"
     ng-click="editFile()"
     ng-show="canEditFile()")
     i.fa.fa-pencil-square-o
-  button.cfnext-btn-secondary-action(type="button"
+  button.btn-secondary-action(type="button"
     aria-label="Delete file" tooltip="Delete file"
     ng-click="deleteFile()"
     ng-show="canDeleteFile()")

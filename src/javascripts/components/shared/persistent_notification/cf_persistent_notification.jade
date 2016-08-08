@@ -3,5 +3,5 @@
     ng-show="message"
     ng-bind-html="message"
     data-test-id="message")
-  button.persistent-notification__action.cfnext-btn-action(ng-show="actionMessage" ng-click="action()") {{actionMessage}}
+  button.persistent-notification__action.btn-action(ng-show="actionMessage" ng-click="action()") {{actionMessage}}
   a.persistent-notification__dismiss(ng-click="dismissPersistentNotification()" ng-href="#") x

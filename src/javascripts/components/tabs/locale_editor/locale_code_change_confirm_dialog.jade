@@ -13,9 +13,9 @@
         input.cfnext-form__input(ng-model="typedLocaleCode")
 
     .modal-dialog__controls
-      button.cfnext-btn-primary-action(
+      button.btn-primary-action(
         ng-click="dialog.confirm()"
         ng-disabled="typedLocaleCode !== initialLocaleCode")
         | I understand, update this locale code
-      button.cfnext-btn-secondary-action(ng-click="dialog.cancel()")
+      button.btn-secondary-action(ng-click="dialog.cancel()")
         | No, I'd rather not do that
