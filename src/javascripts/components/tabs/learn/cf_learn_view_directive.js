@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 
-.directive('cfLearnView', function() {
+.directive('cfLearnView', function () {
   return {
     template: JST.cf_learn_view(),
     restrict: 'E',
@@ -12,28 +12,29 @@ angular.module('contentful')
   };
 })
 
-.controller('cfLearnViewController', ['$scope', '$injector', '$element', function($scope, $injector, $element) {
+.controller('cfLearnViewController', ['$scope', 'require', '$element',
+function ($scope, require, $element) {
 
   // Onboarding steps
-  var controller      = this;
-  var spaceContext    = $injector.get('spaceContext');
-  var stateParams     = $injector.get('$stateParams');
-  var accessChecker   = $injector.get('accessChecker');
-  var $state          = $injector.get('$state');
-  var analytics       = $injector.get('analytics');
-  var sdkInfoSupplier = $injector.get('sdkInfoSupplier');
+  var controller = this;
+  var spaceContext = require('spaceContext');
+  var stateParams = require('$stateParams');
+  var accessChecker = require('accessChecker');
+  var $state = require('$state');
+  var analytics = require('analytics');
+  var sdkInfoSupplier = require('sdkInfoSupplier');
 
   var visibility = accessChecker.getSectionVisibility();
 
   controller.canAccessContentTypes = visibility.contentType &&
                                      !accessChecker.shouldDisable('createContentType');
-  controller.canAccessEntries      = visibility.entry;
-  controller.canAccessApiKeys      = visibility.apiKey;
+  controller.canAccessEntries = visibility.entry;
+  controller.canAccessApiKeys = visibility.apiKey;
 
   controller.spaceId = stateParams.spaceId;
 
-  function initLearnPage() {
-    spaceContext.refreshContentTypes().then(function() {
+  function initLearnPage () {
+    spaceContext.refreshContentTypes().then(function () {
       var cts = spaceContext.getFilteredAndSortedContentTypes();
 
       controller.allContentTypes = cts;
@@ -52,12 +53,12 @@ angular.module('contentful')
         handleEntries([]);
       }
 
-      function handleEntries(entries) {
+      function handleEntries (entries) {
         controller.hasEntries = !!entries.length;
         $scope.context.ready = true;
       }
 
-    }).catch(function() {
+    }).catch(function () {
       $scope.context.ready = true;
     });
   }
@@ -68,10 +69,10 @@ angular.module('contentful')
 
   // Clicking `Use the API` goes to the delivery API key if there is exactly
   // one otherwise API home
-  controller.goToApiKeySection = function() {
+  controller.goToApiKeySection = function () {
     controller.trackClickedButton('Use the API');
     spaceContext.space.getDeliveryApiKeys()
-    .then(function(keys) {
+    .then(function (keys) {
       if (keys.length === 1) {
         var name = 'spaces.detail.api.keys.detail';
         var params = { apiKeyId: keys[0].data.sys.id };
@@ -83,7 +84,7 @@ angular.module('contentful')
   };
 
   // Languages and SDKs
-  controller.selectLanguage = function(language) {
+  controller.selectLanguage = function (language) {
     if (!controller.selectedLanguage) {
       // Scroll to the bottom of the page
       var container = $element.find('.workbench-main');
@@ -102,12 +103,12 @@ angular.module('contentful')
 
   var documentationList = ['documentation', 'apidemo', 'deliveryApi'];
   controller.languageData = sdkInfoSupplier.get(documentationList);
-  controller.trackClickedButton = function(name) {
+  controller.trackClickedButton = function (name) {
     var eventName = 'Clicked the \'' + name + '\' button from Learn';
     analytics.track(eventName);
   };
 
-  controller.trackResourceLink = function(linkName, language) {
+  controller.trackResourceLink = function (linkName, language) {
     analytics.track('Selected Content at the Dashboard', {
       resource: linkName,
       language: language
