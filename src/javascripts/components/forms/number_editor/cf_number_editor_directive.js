@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 .directive('cfNumberEditor', ['$injector', function ($injector) {
-  var makeInputUpdater = $injector.get('ui/caretHelper').makeInputUpdater;
+  var InputUpdater = $injector.get('ui/inputUpdater');
   var parseNumber = $injector.get('cfNumberEditor/parseNumber');
   var debounce = $injector.get('debounce');
 
@@ -14,7 +14,7 @@ angular.module('contentful')
     link: function (scope, $el, _attrs, widgetApi) {
       var field = widgetApi.field;
       var $inputEl = $el.find('input');
-      var updateInput = makeInputUpdater($inputEl);
+      var updateInput = InputUpdater.create($inputEl.get(0));
 
       // update input field value when new synced value received via ot magic
       var detachOnValueChangedHandler = field.onValueChanged(function (val) {

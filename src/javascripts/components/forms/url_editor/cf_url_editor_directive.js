@@ -3,7 +3,7 @@
 angular.module('contentful')
 .directive('cfUrlEditor', ['$injector', function ($injector) {
   var debounce = $injector.get('debounce');
-  var makeInputUpdater = $injector.get('ui/caretHelper').makeInputUpdater;
+  var InputUpdater = $injector.get('ui/inputUpdater');
 
   return {
     restrict: 'E',
@@ -13,7 +13,7 @@ angular.module('contentful')
     link: function (scope, $el, _attrs, widgetApi) {
       var field = widgetApi.field;
       var $inputEl = $el.find('input');
-      var updateInput = makeInputUpdater($inputEl);
+      var updateInput = InputUpdater.create($inputEl.get(0));
 
       _.extend(scope, {
         urlStatus: 'ok',
