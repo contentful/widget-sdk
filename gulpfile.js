@@ -126,23 +126,17 @@ var src = {
     'vendor/font-awesome/*.+(eot|svg|ttf|woff)',
     'vendor/fonts.com/*.+(woff|woff2)'
   ],
-  vendorStylesheets: [
+  vendorStylesheets: assertFilesExist([
     './vendor/font-awesome/font-awesome.css',
     // Required by gatekeeper
     './vendor/formtastic.css',
     // Not sure if we need this
     './vendor/html5reset-1.6.1.css',
-    './node_modules/jquery-ui/themes/base/jquery-ui.css',
-    './node_modules/jquery-ui/themes/base/jquery.ui.autocomplete.css',
-    './node_modules/jquery-ui/themes/base/jquery.ui.datepicker.css',
+    './node_modules/jquery-ui/themes/base/theme.css',
+    './node_modules/jquery-ui/themes/base/autocomplete.css',
+    './node_modules/jquery-ui/themes/base/datepicker.css',
     './node_modules/codemirror/lib/codemirror.css'
-  ],
-  mainStylesheets: [
-    'src/stylesheets/main.styl'
-  ],
-  styleguideStylesheets: [
-    'styleguide/public/custom.styl'
-  ]
+  ])
 };
 
 gulp.task('all', function (done) {
@@ -306,7 +300,7 @@ gulp.task('stylesheets/vendor', function () {
 });
 
 gulp.task('stylesheets/app', function () {
-  return buildStylus(src.mainStylesheets, './public/app');
+  return buildStylus('src/stylesheets/main.styl', './public/app');
 });
 
 gulp.task('styleguide', function (done) {
@@ -383,6 +377,7 @@ function bundleBrowserify (browserify) {
 }
 
 function buildStylus (sources, dest) {
+  assertFilesExist([sources]);
   dest = gulp.dest(dest);
   return gulp.src(sources)
     .pipe(sourceMaps.init())
