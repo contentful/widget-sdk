@@ -21,7 +21,7 @@
     "angular-ui-router": "^0.2.15",
     "angular-ui-sortable": "^0.14.3",
     "bootstrap": "^3.1.1",
-    "browserify": "^6.1.0",
+    "browserify": "^13.1.0",
     "browserify-pegjs": "~0.8.0-2",
     "codemirror": "5.5.0",
     "dottie": "^1.1.0",
@@ -111,7 +111,7 @@
     "stringmap": "^0.2.2",
     "vdom-to-html": "^2.2.0",
     "virtual-dom": "^2.1.1",
-    "watchify": "2.1.x",
+    "watchify": "^3.7.0",
     "yargs": "^4.2.0"
   },
   "scripts": {
