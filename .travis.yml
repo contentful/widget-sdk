@@ -25,7 +25,7 @@ install:
 - npm list --depth 0 || true
 - "export PATH=$PWD/.node_modules/.bin:$PATH"
 before_script:
-- bin/travis-build
+- gulp build/with-styleguide
 script:
 - tools/bin/validate-config.js config/*.json
 - bin/travis-test

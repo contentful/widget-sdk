@@ -6,7 +6,7 @@ We describe how the User Interface is built and deployed on Travis.
 The following is an overview of the different steps defined in `.travis.yml`.
 
 ~~~bash
-bin/travis-build
+gulp build/with-styleguide
 
 # Run NSP to check for security vulnerabilities
 bin/travis-audit
@@ -36,8 +36,8 @@ bin/travis-run-jenkins
 Configured Build
 ----------------
 
-The `bin/travis-build` script runs `gulp build` and creates all application
-files in the `./build` directory.
+The script `gulp build/with-styleguide` runs `gulp build` and creates all
+application files in the `./build` directory.
 
 The build task compiles and fingerprints all assets (Javascript, CSS, and
 image files) and puts them into `./build/app`. The fingerprint mapping is
@@ -53,6 +53,9 @@ target environment is selected based on the branch Travis is building. The index
 file includes the environment configuration from the `./config` directory and
 links to the fingerprinted assets.
 
+The script also runs `gulp styleguide` and `gulp build/copy-styleguide` which
+generates the styleguide and copies all of the assets it uses into the
+`./build/styleguide` directory.
 
 Deployment
 ----------
@@ -107,8 +110,9 @@ files.
     build/app -> upload/app
     build/index.html -> upload/archive/$TRAVIS_COMMIT/index-compiled.html
     build/index.html -> upload/archive/$TRAVIS_BRANCH/index-compiled.html
+    build/styleguide -> upload/styleguide/$TRAVIS_BRANCH
 
-The `./upload` cirectory is then uploaded to the asset bucket for the
+The `./upload` directory is then uploaded to the asset bucket for the
 `quirely.com` domain.
 
 Note that `build/index.html` has been configured for a given environment and
