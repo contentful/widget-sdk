@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -x
+
+if [[ -f cache/images.tar ]]; then
+  docker load --input cache/images.tar
+fi

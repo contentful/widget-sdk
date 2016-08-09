@@ -29,6 +29,6 @@ set -e
 echo "Downloading SlimerJS v${SLIMER_VERSION}..."
 rm -rf "${SLIMER_DIST}" "${SLIMER_ARCHIVE}"
 curl -O --progress-bar "${DOWNLOAD_URL}"
-unzip -o -qq "${SLIMER_ARCHIVE}" -d vendor/slimerjs 
+unzip -o -qq "${SLIMER_ARCHIVE}" -d vendor/slimerjs
 rm "${SLIMER_ARCHIVE}"
 echo "SlimerJS installed"

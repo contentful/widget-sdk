@@ -1,119 +1,85 @@
-Build and Deployment Pipeline
-=============================
+Build and Deployment with Docker
+================================
 
-We describe how the User Interface is built and deployed on Travis.
+We describe how the User Interface is built and deployed on Travis using Docker.
 
 The following is an overview of the different steps defined in `.travis.yml`.
 
 ~~~bash
-gulp build/with-styleguide
+# Build the 'contentful/user-interface' image from 'Dockerfile'.
+bin/docker-build
 
-# Run NSP to check for security vulnerabilities
-bin/travis-audit
+# Runs karma tests and eslint and validates configuration in a container
+bin/docker-run test
 
-# Runs karma tests and eslint
-bin/travis-test
+# Creates Debian package and static files inside './output'
+bin/docker-run travis --branch "${TRAVIS_BRANCH}" --version "${TRAVIS_COMMIT}" --pr "${TRAVIS_PULL_REQUEST}"
 
-# Prepares Debian package
-bin/create-package-dist
-
-# Prepares file distribution in './upload'
-tools/bin/create-file-dist.js build upload
-
-# Upload './archive' to 'pkg.contentful.org'
+# Upload './output/archive' to 'pkg.contentful.org'
 # Travis does that, no script needs to be run
 
 # Publish the package
 bin/trigger-packagebot
 
-# Upload './upload' to 'cf-preview-static-cdnorigin'
+# Upload './output/files' to 'cf-preview-static-cdnorigin'
 # Travis does that, no script needs to be run
 
-# Trigger a travis build if necessary
+# Trigger a Jenkins build if necessary
 bin/travis-run-jenkins
 ~~~
 
-Configured Build
+
+The Docker Image
 ----------------
 
-The script `gulp build/with-styleguide` runs `gulp build` and creates all
-application files in the `./build` directory.
+Testing and creating a deployable distribution happens in a docker container
+based on the `contentful/user-interface` image.
 
-The build task compiles and fingerprints all assets (Javascript, CSS, and
-image files) and puts them into `./build/app`. The fingerprint mapping is
-recorded in manifest files.
+The image is built by running `bin/docker-build`. It installs all source code
+dependencies (NPM, bower, and submodules) and builds the app using `gulp build`.
+The image contains all fingerprinted assets in the `/app/build` directory. This
+serves as a base to configure the `index.html` file and create the
+distributions.
 
-The stylesheets are processed after fingerprinting all other files in order to
-correctly resolve to fingerprinted URLs. This is not necessary for the
-application source since it resolves the references at runtime by inspecting
-`window.CF_MANIFEST`.
+To build the image an NPM token is required as a build argument so that the
+image can install prviate NPM packages. The `bin/docker-build` command will
+either use the `NPM_TOKEN` environment variable or extract the token from
+`~/.npmrc`.
 
-Finally a `build/index.html` file is created for the target environment. The
-target environment is selected based on the branch Travis is building. The index
-file includes the environment configuration from the `./config` directory and
-links to the fingerprinted assets.
+The entry point of the image (`tools/docker/entry-script`) exposes various
+commands to test, serve, and distribute the application. Run `bin/docker-run
+--help` to see a list of commands.
 
-The script also runs `gulp styleguide` and `gulp build/copy-styleguide` which
-generates the styleguide and copies all of the assets it uses into the
-`./build/styleguide` directory.
+The user interface image is based on the public
+[`contentful/user-interface-base`][cf-ui-base-image]. This image contains system dependencies like
+Xvfb, Firefox, and the fpm gem that are required to build and test the code. The
+image is hosted on the Docker hub.
+
+[cf-ui-base-image]: https://hub.docker.com/r/contentful/user-interface-base
+
+### Updating the base image
+If changes to the system dependencies are required the base image
+`contentful/user-interface-base` needs to be updated. To do this create a pull
+request with the changes. After the PR has been approved build the image with
+`make -C tools/docker/base` and push the image to the Docker hub with
+~~~
+docker push contentful/user-interface-base:V
+~~~
+Here `V` is the next integer version.
+
 
 Deployment
 ----------
 
-After running `gulp build` two distributions can be created and then deployed.
+The app is deployed as a set of fingerprinted asset files (indepedent of the
+environment they run in) and an `index.html` file which serves as the entry
+point for the web application and is configured for a specific environment and
+host.
 
-There are three main branches that are deployed to different environments when
-built. The deployment for these branches is packaged based.
+The `bin/docker-run travis` command creates distributions containing these
+files. It uses the Travis environment to determine the configuration for
+`index.html` and produces a Debian package and a set of files for upload to S3.
 
-    production -> contentful.com
-    master -> flinkly.com
-    preview -> quirely.com
-
-Builds for all other branches are also deployed to the `quirely.com` domain but
-can only be used by specifying the commit hash. This deployment is file based.
-
-### Package-based Deployments
-
-**Note** We plan to remove this method of deployment.
-
-This deployment is run when one of the three main branches `production`,
-`master`, or `preview` is built. A debian package is created, uploaded, and
-[Package Bot][] is notified about the new package.
-
-The `bin/create-package-dist` script creates the package and a commit index at
-
-    ./archive/user_interface/pool/cf-user-interface_$version_$arch.deb
-    ./archive/user_interface/git/$commit-rev
-
-The commit index is a file containing the path to the package, relative to
-`./archive`. The package uses the following files
-
-    ./build -> /opt/contentful/cf-user-interface/build
-    ./bin/process_hosts -> /opt/contentful/cf-user-interface/bin/process_hosts
-
-The contents of the `./archive` folder is uploaded to `pkg.contentful.org`.
-
-Then, `bin/trigger-packagebot` will notifiy [Package Bot][] and publish the
-package built for the current commit. Packagebot will determine the environment
-the package should be deployed to by inspecting the commit hash.
-
-[Package Bot]: https://github.com/contentful/package-bot
-
-### File-based Deployments
-
-This deployment method uploads the application files to an S3 bucket from which
-they can be served immediately.
-
-The `tools/bin/create-file-dist.js` script copies the following directories and
-files.
-
-    build/app -> upload/app
-    build/index.html -> upload/archive/$TRAVIS_COMMIT/index-compiled.html
-    build/index.html -> upload/archive/$TRAVIS_BRANCH/index-compiled.html
-    build/styleguide -> upload/styleguide/$TRAVIS_BRANCH
-
-The `./upload` directory is then uploaded to the asset bucket for the
-`quirely.com` domain.
-
-Note that `build/index.html` has been configured for a given environment and
-has fingerprinted URLs pointing to assets.
+The fingerprinted asset files only depend on the current revision of the
+repository. They are included in the `user-interface` image together with
+manifest to link asset names to their fingerprinted files.

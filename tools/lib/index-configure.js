@@ -14,8 +14,7 @@ let FS = B.promisifyAll(require('fs'))
 /**
  * @usage
  * import configure from '.../index-configure'
- * configure(sha, configPath, manifestPaths, outPath)
- * .then(...)
+ * yield* configure(sha, configPath, outPath)
  *
  * @description
  * Reads configuration and manifest files and creates a configured
@@ -24,17 +23,17 @@ let FS = B.promisifyAll(require('fs'))
  * The configuration data is validated against the schema defined in
  * `./config-schema.js`.
  *
+ * Loads the manifest to resolve URLs from `MANIFEST_PATHS`.
+ *
  * @param {string} revision
  * @param {string} configPath
- * @param {string[]} manifestPaths
  * @param {string} outPath
  * Path to write the index file to.
  */
-export default B.coroutine(configure)
 
-function* configure (revision, configPath, manifestPaths, outPath) {
+export default function* configure (revision, configPath, outPath) {
   let [manifest, config] = yield B.all([
-    U.readMergeJSON(manifestPaths),
+    U.readMergeJSON(MANIFEST_PATHS),
     U.readJSON(configPath)
   ])
 
@@ -44,4 +43,12 @@ function* configure (revision, configPath, manifestPaths, outPath) {
   let indexPage = renderIndexPage(revision, config, manifest)
   yield U.mkdirp(P.dirname(outPath))
   yield FS.writeFileAsync(outPath, indexPage, 'utf8')
+  return config.environment
 }
+
+
+export const MANIFEST_PATHS = [
+  'build/static-manifest.json',
+  'build/styles-manifest.json',
+  'build/app-manifest.json'
+]

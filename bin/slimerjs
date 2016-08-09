@@ -3,6 +3,7 @@
 # Run vendored SlimerJS with vendored Firefox 46
 #
 
+set -x
 REPO_ROOT="$(readlink --canonicalize "$(dirname $0)/../")"
 export SLIMERJSLAUNCHER="${REPO_ROOT}/vendor/firefox/firefox"
 if [[ ! -x "${SLIMERJSLAUNCHER}" ]]; then

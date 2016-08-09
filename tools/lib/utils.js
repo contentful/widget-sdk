@@ -43,9 +43,9 @@ export function writeJSON (path, obj) {
 /**
  * Run a command and get the contents of `stdout`.
  */
-export function exec (cmd) {
+export function exec (cmd, opts) {
   return new B.Promise(function (resolve, reject) {
-    CP.exec(cmd, function (error, stdout, stderr) {
+    CP.exec(cmd, opts, function (error, stdout, stderr) {
       if (error) {
         error.stderr = stderr
         error.stdout = stdout
