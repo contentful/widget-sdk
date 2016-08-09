@@ -113,7 +113,6 @@ test/unit/access_control/policy_builder_external_spec.js
 test/unit/access_control/policy_builder_internal_spec.js
 test/unit/access_control/remove_outdated_rules_spec.js
 test/unit/access_control/response_cache_spec.js
-test/unit/access_control/section_access_spec.js
 test/unit/account/cf_account_dropdown_controller_spec.js
 test/unit/account/cf_account_view_directive_spec.js
 test/unit/account/handle_gatekeeper_message_spec.js
@@ -365,7 +364,6 @@ src/javascripts/access_control/remove_outdated_rules.js
 src/javascripts/access_control/response_cache.js
 src/javascripts/access_control/role_remover.js
 src/javascripts/access_control/role_repository.js
-src/javascripts/access_control/section_access.js
 src/javascripts/access_control/space_membership_repository.js
 src/javascripts/account/cf_account_dropdown_directive.js
 src/javascripts/account/cf_account_view_directive.js
@@ -379,7 +377,6 @@ src/javascripts/states/base.js
 src/javascripts/states/config.js
 src/javascripts/states/content_types.js
 src/javascripts/states/entries.js
-src/javascripts/states/learn.js
 src/javascripts/states/settings.js
 src/javascripts/states/settings_locales.js
 src/javascripts/states/settings_roles.js

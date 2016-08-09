@@ -5,8 +5,9 @@ angular.module('contentful')
  * @ngdoc service
  * @name states/learn
  */
-.factory('states/learn', ['$injector', function ($injector) {
-  var base = $injector.get('states/base');
+.factory('states/learn', ['require', function (require) {
+  var base = require('states/base');
+  var accessChecker = require('accessChecker');
 
   return base({
     name: 'learn',
@@ -16,6 +17,7 @@ angular.module('contentful')
     loadingText: 'Loading...',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
+      $scope.context.forbidden = !accessChecker.getSectionVisibility().learn;
     }]
   });
 }]);
