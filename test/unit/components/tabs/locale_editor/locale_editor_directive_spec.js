@@ -69,7 +69,7 @@ describe('Locale Editor Directive', function () {
   });
 
   it('hides fallbacks if locale is the default one', function () {
-    this.locale.isDefault.returns(true);
+    this.locale.data.default = true;
     this.$apply();
     expect(this.element.find('select').length).toBe(1);
   });

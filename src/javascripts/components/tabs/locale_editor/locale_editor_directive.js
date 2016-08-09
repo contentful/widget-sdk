@@ -39,9 +39,12 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var closeState = require('navigation/closeState');
 
+  var NOT_RENAMEABLE_MESSAGE = 'Cannot change the code of a locale which is fallback of another one';
+
   var formWasDirty = false;
 
-  $scope.locales = _.clone(localesList, true);
+  $scope.locales = _.map(localesList, localeToListItem);
+  var spaceLocalesList = _.map($scope.spaceLocales, localeToListItem);
   addCurrentLocaleToList();
   updateInitialLocaleCode();
 
@@ -57,8 +60,32 @@ angular.module('contentful')
 
   $scope.$watch('locale.getCode()', function (code) {
     updateLocaleName(code);
+    clearFallbackIfTheSame(code);
     prepareFallbackList(code);
   });
+
+  // sometimes a code is selected as a fallback code, but then
+  // the same code is selected as the code of the locale;
+  // in this situation we clear the fallback code;
+  // it cannot happen in the opposite direction (list is filtered)
+  function clearFallbackIfTheSame (code) {
+    if (code && $scope.locale.data.fallbackCode === code) {
+      $scope.locale.data.fallbackCode = null;
+    }
+  }
+
+  function prepareFallbackList (code) {
+    $scope.fallbackLocales = _.filter(spaceLocalesList, function (item) {
+      return item.code !== code;
+    });
+  }
+
+  function getDependantLocales (code) {
+    return _.filter($scope.spaceLocales, function (spaceLocale) {
+      var fallbackCode = spaceLocale.data.fallbackCode;
+      return fallbackCode && fallbackCode === code;
+    });
+  }
 
   /**
    * @ngdoc method
@@ -76,25 +103,25 @@ angular.module('contentful')
   function startDeleteFlow () {
     lockFormWhileSubmitting();
     return openConfirmationDialog()
-    .then(maybeOpenFallbackLocaleChangeDialog)
-    .then(deleteLocale, resetFormStatusOnFailure);
+    .then(function (result) {
+      if (result.confirmed) {
+        return maybeOpenFallbackLocaleChangeDialog()
+        .then(deleteLocale, resetFormStatusOnFailure);
+      } else {
+        return resetFormStatusOnFailure();
+      }
+    });
   }
 
   function openConfirmationDialog () {
     return modalDialog.openConfirmDialog({
       template: 'locale_removal_confirm_dialog',
       scope: $scope
-    })
-    .then(function (result) {
-      return $q[result.confirmed ? 'resolve' : 'reject']();
     });
   }
 
   function maybeOpenFallbackLocaleChangeDialog () {
-    var dependantLocales = _.filter($scope.spaceLocales, function (locale) {
-      return locale.data.fallbackCode === $scope.locale.data.code;
-    });
-
+    var dependantLocales = getDependantLocales($scope.locale.data.code);
     var availableLocales = _.filter($scope.spaceLocales, function (locale) {
       var isCurrent = locale.data.code === $scope.locale.data.code;
       var isDependant = dependantLocales.indexOf(locale) > -1;
@@ -123,7 +150,11 @@ angular.module('contentful')
       return $q.all(_.map(dependantLocales, function (locale) {
         locale.data.fallbackCode = newFallbackCode;
         return locale.save();
-      }));
+      }))
+      .catch(function () {
+        notification.error('New fallback code could not be saved');
+        return $q.reject();
+      });
     });
   }
 
@@ -140,7 +171,7 @@ angular.module('contentful')
       });
     }, function errorDeletingLocale (err) {
       resetFormStatusOnFailure();
-      notification.warn('Locale could not be deleted: ' + err.body.message);
+      notification.error('Locale could not be deleted: ' + err.body.message);
       logger.logServerWarn('Locale could not be deleted', {error: err});
     });
   }
@@ -173,6 +204,11 @@ angular.module('contentful')
   });
 
   function save () {
+    if (getDependantLocales($scope.initialLocaleCode).length > 0) {
+      notification.error(NOT_RENAMEABLE_MESSAGE);
+      return $q.reject();
+    }
+
     lockFormWhileSubmitting();
     return confirmCodeChange()
     .then(function (result) {
@@ -211,14 +247,14 @@ angular.module('contentful')
     var isNotRenameable = status === 403 && dotty.get(err, 'body.sys.id') === 'FallbackLocaleNotRenameable';
 
     if (isTaken) {
-      message = ': This locale already exists.';
+      message = ': This locale already exists';
     } else if (isNotRenameable) {
-      message = ': Cannot change the code of a locale which is fallback of another one.';
+      message = ': ' + NOT_RENAMEABLE_MESSAGE;
     } else {
       logger.logServerWarn('Locale could not be saved', {error: err});
     }
 
-    notification.warn('Locale could not be saved' + message);
+    notification.error('Locale could not be saved' + message);
     trackSave('Saved Errored Locale');
   }
 
@@ -259,18 +295,6 @@ angular.module('contentful')
     }
   }
 
-  function prepareFallbackList (code) {
-    if (code && $scope.locale.data.fallbackCode === code) {
-      $scope.locale.data.fallbackCode = null;
-    }
-
-    $scope.fallbackLocales = _.transform($scope.spaceLocales, function (acc, locale) {
-      if (locale.getCode() !== code) {
-        acc.push(localeToListItem(locale));
-      }
-    }, []);
-  }
-
   function updateInitialLocaleCode () {
     $scope.initialLocaleCode = $scope.locale.data.code;
   }
@@ -287,9 +311,13 @@ angular.module('contentful')
   }
 
   function localeToListItem (locale) {
+    var code = locale.code || locale.getCode();
+    var name = locale.name || locale.getName();
+
     return {
-      code: locale.getCode(),
-      name: locale.getName()
+      code: code,
+      name: name,
+      label: name + ' (' + code + ')'
     };
   }
 

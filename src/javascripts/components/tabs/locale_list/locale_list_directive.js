@@ -71,14 +71,14 @@ angular.module('contentful')
   }
 
   function getPlanLocalesLimit () {
-    return getSubscriptionPlanData('limits.permanent.locale');
+    return getSubscriptionPlanData(['limits', 'permanent', 'locale']);
   }
 
   function hasMultipleLocales () {
-    return !!getSubscriptionPlanData('limits.features.multipleLocales');
+    return !!getSubscriptionPlanData(['limits', 'features', 'multipleLocales']);
   }
 
   function getSubscriptionPlanData (path) {
-    return spaceContext.getData('organization.subscriptionPlan.' + path);
+    return spaceContext.getData(['organization', 'subscriptionPlan'].concat(path));
   }
 }]);

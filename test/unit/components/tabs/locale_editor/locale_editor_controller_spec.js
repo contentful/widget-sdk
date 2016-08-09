@@ -8,7 +8,7 @@ describe('Locale editor controller', function () {
     };
     this.notification = {
       info: sinon.stub(),
-      warn: sinon.stub()
+      error: sinon.stub()
     };
     this.analytics = {
       track: sinon.stub()
@@ -48,15 +48,20 @@ describe('Locale editor controller', function () {
 
     var getIdStub = sinon.stub();
     this.scope.locale = {
-      data: {},
+      data: {code: 'en-US'},
       getName: sinon.stub().returns('localeName'),
       getId: getIdStub.returns('someId'),
       delete: sinon.stub().resolves(),
       save: sinon.stub().resolves({getId: getIdStub}),
-      getCode: sinon.stub(),
+      getCode: sinon.stub().returns('en-US'),
       isDefault: sinon.stub(),
       getVersion: sinon.stub()
     };
+
+    this.scope.spaceLocales = [
+      {getName: _.constant('Polish'), getCode: _.constant('pl-PL'), data: {name: 'Polish', code: 'pl-PL'}},
+      {getName: _.constant('German'), getCode: _.constant('de-DE'), data: {name: 'German', code: 'de-DE'}}
+    ];
 
     var $controller = this.$inject('$controller');
     this.controller = $controller('LocaleEditorController', {$scope: this.scope});
@@ -88,15 +93,10 @@ describe('Locale editor controller', function () {
     });
 
     it('sets available fallback locales', function () {
-      this.scope.spaceLocales = [
-        {getName: _.constant('Polish'), getCode: _.constant('pl-PL')},
-        {getName: _.constant('German'), getCode: _.constant('de-DE')}
-      ];
-
       this.scope.locale.getCode.returns('de-DE');
       this.$apply();
       expect(this.scope.fallbackLocales).toEqual([
-        {name: 'Polish', code: 'pl-PL'}
+        {name: 'Polish', code: 'pl-PL', label: 'Polish (pl-PL)'}
       ]);
     });
   });
@@ -197,7 +197,7 @@ describe('Locale editor controller', function () {
     });
 
     it('error notification is shown', function () {
-      expect(this.notification.warn.args[0][0]).toEqual('Locale could not be deleted: ' + error.body.message);
+      expect(this.notification.error.args[0][0]).toEqual('Locale could not be deleted: ' + error.body.message);
     });
 
     it('error is logged', function () {
@@ -313,7 +313,7 @@ describe('Locale editor controller', function () {
     });
 
     it('error notification is shown', function () {
-      expect(this.notification.warn.args[0][0]).toEqual('Locale could not be saved');
+      expect(this.notification.error.args[0][0]).toEqual('Locale could not be saved');
     });
 
     it('error is logged', function () {

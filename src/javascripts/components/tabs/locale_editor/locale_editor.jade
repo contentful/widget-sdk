@@ -23,11 +23,11 @@ header.workbench-header
         .locale-editor__setting
           select.cfnext-select-box(
             ng-model="locale.data.code"
-            ng-options="item.code as (item.name + ' (' + item.code + ')') for item in locales")
+            ng-options="item.code as item.label for item in locales")
             | Locale
             option(value="") Select a locale
 
-        .locale-editor__setting(ng-if="!locale.isDefault() && fallbackLocales.length > 0")
+        .locale-editor__setting(ng-if="!locale.data.default && fallbackLocales.length > 0")
           h2 Fallback locale
           p
             | If no content is provided for the locale above, the Delivery API
@@ -35,7 +35,7 @@ header.workbench-header
 
           select.cfnext-select-box(
             ng-model="locale.data.fallbackCode"
-            ng-options="item.code as (item.name + ' (' + item.code + ')') for item in fallbackLocales")
+            ng-options="item.code as item.label for item in fallbackLocales")
             | Fallback locale
             option(value="") None (no fallback)
 
