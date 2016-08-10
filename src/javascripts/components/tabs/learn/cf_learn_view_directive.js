@@ -15,52 +15,34 @@ angular.module('contentful')
 .controller('cfLearnViewController', ['$scope', 'require', '$element',
 function ($scope, require, $element) {
 
-  // Onboarding steps
   var controller = this;
+  var $q = require('$q');
+  var $state = require('$state');
   var spaceContext = require('spaceContext');
   var stateParams = require('$stateParams');
-  var accessChecker = require('accessChecker');
-  var $state = require('$state');
   var analytics = require('analytics');
   var sdkInfoSupplier = require('sdkInfoSupplier');
 
-  var visibility = accessChecker.getSectionVisibility();
-
-  controller.canAccessContentTypes = visibility.contentType &&
-                                     !accessChecker.shouldDisable('createContentType');
-  controller.canAccessEntries = visibility.entry;
-  controller.canAccessApiKeys = visibility.apiKey;
-
   controller.spaceId = stateParams.spaceId;
+  controller.activated = !!spaceContext.getData('activatedAt');
 
   function initLearnPage () {
-    spaceContext.refreshContentTypes().then(function () {
-      var cts = spaceContext.getFilteredAndSortedContentTypes();
+    controller.contentTypes = spaceContext.publishedContentTypes;
 
-      controller.allContentTypes = cts;
-      controller.accessibleContentTypes = _.filter(cts || [], function (ct) {
-        var check = _.partialRight(accessChecker.canPerformActionOnEntryOfType, ct.getId());
-        return _.every(['create', 'edit'], check);
-      });
-      controller.hasContentTypes = !!cts.length;
-      controller.hasAccessibleContentTypes = !!controller.accessibleContentTypes.length;
-
-      if (controller.hasAccessibleContentTypes) {
-        spaceContext.space.getEntries()
-        .then(handleEntries)
-        .catch(handleEntries.bind(null, []));
-      } else {
-        handleEntries([]);
-      }
-
-      function handleEntries (entries) {
-        controller.hasEntries = !!entries.length;
-        $scope.context.ready = true;
-      }
-
-    }).catch(function () {
+    getEntries().then(function (entries) {
+      controller.hasEntries = !!_.size(entries);
+    })
+    .finally(function () {
       $scope.context.ready = true;
     });
+  }
+
+  function getEntries () {
+    if (controller.contentTypes.length) {
+      return spaceContext.space.getEntries();
+    } else {
+      return $q.resolve([]);
+    }
   }
 
   initLearnPage();

@@ -1,14 +1,13 @@
 .workbench
   .workbench-main.x--content
     .workbench-main__middle-content.x--learn-home
-      //- Onboarding steps
       .learn-onboarding
         h2 Set up the basics
         p.learn-subheading
           | Complete these three steps to get started creating and fetching your content.
 
         .learn-onboarding__steps
-          .learn-onboarding__step(ng-show="learn.hasAccessibleContentTypes")
+          .learn-onboarding__step(ng-show="learn.contentTypes.length")
             .icon-wrapper
               cf-icon(name="page-ct")
             .step__title
@@ -18,19 +17,12 @@
             p.step__description
               | The content model is comprised of content types, which define the structure of your entries.
             .step__actions
-              //- User has access
               button.cfnext-btn-secondary-action(
-                ng-show="learn.canAccessContentTypes"
                 ng-click="learn.trackClickedButton('View your content model')"
                 ui-sref="spaces.detail.content_types.list({ spaceId: learn.spaceId })")
                 | View your content model
-              //- User has no access
-              button.cfnext-btn-secondary-action.disabled(
-                ng-show="!learn.canAccessContentTypes"
-                tooltip="You don\'t have permission to access content types")
-                | View your content model
 
-          .learn-onboarding__step(ng-show="!learn.hasAccessibleContentTypes")
+          .learn-onboarding__step(ng-show="!learn.contentTypes.length")
             .icon-wrapper
               cf-icon(name="page-ct")
             .step__title
@@ -39,20 +31,12 @@
             p.step__description
               | Create your content model. It’s comprised of content types, which define the structure of your entries.
             .step__actions
-              //- User has access
               button.cfnext-btn-action(
-                ng-if="learn.canAccessContentTypes"
                 ng-click="learn.trackClickedButton('Create a content type')"
                 ui-sref="spaces.detail.content_types.new({ spaceId: learn.spaceId })")
                 | Create a content type
-              //- User has no access
-              button.cfnext-btn-action.disabled(
-                ng-if="!learn.canAccessContentTypes"
-                tooltip="You don\'t have permission to access content types")
-                | Create a content type
 
           .learn-onboarding__step(
-            ng-class="{inactive: !learn.canAccessEntries}"
             ng-show="learn.hasEntries")
             .icon-wrapper
               cf-icon(name="page-entries")
@@ -69,7 +53,7 @@
                 | View your entries
 
           .learn-onboarding__step(
-            ng-class="{inactive: !learn.hasAccessibleContentTypes || !learn.canAccessEntries}"
+            ng-class="{inactive: !learn.contentTypes.length > 0}"
             ng-show="!learn.hasEntries")
             .icon-wrapper
               cf-icon(name="page-entries")
@@ -79,30 +63,25 @@
             p.step__description
               | Add an entry. They are your actual pieces of content, based on the content types you have created.
             .step__actions
-              //- No accessible entries
-              button.cfnext-btn-action.disabled(
-                ng-if="learn.accessibleContentTypes.length === 0"
-                tooltip="You don\'t have permission to access entries"
-                ng-disabled="!learn.hasAccessibleContentTypes")
-                | Add an entry
-              //- One entry
+              //- One or less content type
               button.cfnext-btn-action(
-                ng-if="learn.accessibleContentTypes.length === 1"
-                ng-click="learn.trackClickedButton('Add an entry'); entityCreationController.newEntry(learn.accessibleContentTypes[0])")
+                ng-if="learn.contentTypes.length <= 1"
+                ng-click="learn.trackClickedButton('Add an entry'); entityCreationController.newEntry(learn.contentTypes[0])"
+                ng-disabled="learn.contentTypes.length === 0")
                 | Add an entry
-              //- More than one entry
-              div(ng-show="learn.accessibleContentTypes.length > 1")
+              //- More than one content
+              div(ng-show="learn.contentTypes.length > 1")
                 button.cfnext-btn-action(cf-context-menu-trigger)
                   span Add an entry&nbsp;
                   cf-icon(name="dd-arrow-down")
                 .context-menu(role="menu" cf-context-menu aria-label="Add an entry")
-                  div(ng-repeat="contentType in learn.accessibleContentTypes"
+                  div(ng-repeat="contentType in learn.contentTypes"
                     role="menuitem"
                     ng-click="learn.trackClickedButton('Add an entry'); entityCreationController.newEntry(contentType)")
                     | {{contentType.data.name}}
 
           .learn-onboarding__step(
-            ng-class="{inactive: !learn.hasContentTypes || !learn.hasEntries}")
+            ng-class="{inactive: !learn.hasEntries}")
             .icon-wrapper
               cf-icon(name="page-api")
             .step__title
@@ -111,15 +90,9 @@
             p.step__description
               | Use the API to see your content wherever you like. We’ll show you different ways of delivering your content.
             .step__actions
-              //- Can access API keys
               button.cfnext-btn-action(
-                ng-if="learn.canAccessApiKeys"
                 ng-click="learn.goToApiKeySection()"
-                ng-disabled="!learn.hasContentTypes")
-                | Use the API
-              button.cfnext-btn-action.disabled(
-                ng-if="!learn.canAccessApiKeys"
-                tooltip="You don\'t have permission to access API keys")
+                ng-disabled="!learn.hasEntries")
                 | Use the API
 
       //- Build with Contentful

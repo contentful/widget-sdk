@@ -14,18 +14,8 @@ describe('cfLearnView directive', function () {
           getEntries: sinon.stub(),
           getDeliveryApiKeys: sinon.stub()
         },
-        refreshContentTypes: sinon.stub(),
-        getFilteredAndSortedContentTypes: sinon.stub()
-      },
-      accessChecker: {
-        getSectionVisibility: function () {
-          return {
-            contentType: sinon.stub(),
-            entry: sinon.stub(),
-            apiKey: sinon.stub()
-          };
-        },
-        shouldDisable: sinon.stub()
+        publishedContentTypes: [],
+        getData: _.noop
       },
       $state: {
         current: {},
@@ -36,17 +26,10 @@ describe('cfLearnView directive', function () {
 
     module('contentful/test', function ($provide) {
       $provide.value('spaceContext', stubs.spaceContext);
-      $provide.value('accessChecker', stubs.accessChecker);
       $provide.value('$state', stubs.$state);
     });
 
     $rootScope = this.$inject('$rootScope');
-
-    stubs.accessChecker.getSectionVisibility().contentType.returns(true);
-    stubs.accessChecker.getSectionVisibility().entry.returns(true);
-    stubs.accessChecker.getSectionVisibility().apiKey.returns(true);
-    stubs.accessChecker.shouldDisable.returns(false);
-    stubs.spaceContext.refreshContentTypes.resolves();
 
     this.compile = function () {
       element = this.$compile('<cf-learn-view />', {
@@ -57,16 +40,32 @@ describe('cfLearnView directive', function () {
     };
   });
 
-  describe('no content types', function () {
+  describe('has content types', function () {
     beforeEach(function () {
-      stubs.spaceContext.getFilteredAndSortedContentTypes.returns([]);
+      stubs.spaceContext.publishedContentTypes = [{getId: _.noop}];
+      stubs.spaceContext.space.getEntries.resolves([{}]);
       stubs.spaceContext.space.getDeliveryApiKeys.resolves([]);
       this.compile();
     });
 
-    it('requests content types', function () {
-      sinon.assert.calledOnce(stubs.spaceContext.getFilteredAndSortedContentTypes);
-      expect(controller.hasContentTypes).toBe(false);
+    it('sets content type data', function () {
+      expect(controller.contentTypes.length).toBe(1);
+    });
+
+    it('requests entries', function () {
+      sinon.assert.calledOnce(stubs.spaceContext.space.getEntries);
+      expect(controller.hasEntries).toBe(true);
+    });
+  });
+
+  describe('has no content types', function () {
+    beforeEach(function () {
+      stubs.spaceContext.space.getDeliveryApiKeys.resolves([]);
+      this.compile();
+    });
+
+    it('sets content type data', function () {
+      expect(controller.contentTypes.length).toBe(0);
     });
 
     it('does not request entries', function () {
@@ -75,51 +74,9 @@ describe('cfLearnView directive', function () {
     });
   });
 
-
-  describe('has accessible content types', function () {
-    beforeEach(function () {
-      stubs.accessChecker.canPerformActionOnEntryOfType = sinon.stub().returns(true);
-      stubs.spaceContext.getFilteredAndSortedContentTypes.returns([{getId: _.noop}]);
-      stubs.spaceContext.space.getEntries.resolves(true);
-      stubs.spaceContext.space.getDeliveryApiKeys.resolves([]);
-      this.compile();
-    });
-
-    it('sets content type data', function () {
-      sinon.assert.calledOnce(stubs.spaceContext.getFilteredAndSortedContentTypes);
-      expect(controller.accessibleContentTypes.length).toBe(1);
-      expect(controller.hasContentTypes).toBe(true);
-      expect(controller.hasAccessibleContentTypes).toBe(true);
-    });
-  });
-
-  describe('has non accessible content types', function () {
-    beforeEach(function () {
-      stubs.accessChecker.canPerformActionOnEntryOfType = sinon.stub().returns(false);
-      stubs.spaceContext.getFilteredAndSortedContentTypes.returns([{getId: _.noop}]);
-      stubs.spaceContext.space.getEntries.resolves(true);
-      stubs.spaceContext.space.getDeliveryApiKeys.resolves([]);
-      this.compile();
-    });
-
-    it('sets content type data', function () {
-      sinon.assert.calledOnce(stubs.spaceContext.getFilteredAndSortedContentTypes);
-      expect(controller.accessibleContentTypes.length).toBe(0);
-      expect(controller.hasContentTypes).toBe(true);
-      expect(controller.hasAccessibleContentTypes).toBe(false);
-    });
-
-    it('refreshes when `cfAfterOnboarding` is broadcast', function () {
-      $rootScope.$broadcast('cfAfterOnboarding');
-      $rootScope.$digest();
-      sinon.assert.calledTwice(stubs.spaceContext.getFilteredAndSortedContentTypes);
-    });
-  });
-
   describe('clicked `Use the API`', function () {
     beforeEach(function () {
-      stubs.accessChecker.canPerformActionOnEntryOfType = sinon.stub().returns(true);
-      stubs.spaceContext.getFilteredAndSortedContentTypes.returns([{getId: _.noop}]);
+      stubs.spaceContext.publishedContentTypes = [{getId: _.noop}];
       stubs.spaceContext.space.getEntries.resolves(true);
       stubs.$state.go.returns();
     });
@@ -153,9 +110,8 @@ describe('cfLearnView directive', function () {
     });
   });
 
-  describe('select language', function () {
+  describe('selected language', function () {
     beforeEach(function () {
-      stubs.spaceContext.getFilteredAndSortedContentTypes.returns([]);
       stubs.spaceContext.space.getDeliveryApiKeys.resolves([]);
       this.compile();
       controller.selectLanguage(controller.languageData[0]);
