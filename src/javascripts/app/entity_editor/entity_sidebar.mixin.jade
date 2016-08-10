@@ -102,7 +102,7 @@ mixin entity-sidebar
     h2.entity-sidebar__heading
       | Translation
 
-    .entity-sidebar__translation-list
+    .pill-list
       .entity-sidebar__translation-pill(
         ng-repeat="locale in locales.active track by locale.sys.id"
         ng-class="locale.default && 'x--default'")
@@ -111,7 +111,7 @@ mixin entity-sidebar
           ng-if="!locale.default"
           ng-click="locales.deactivate(locale)")
           cf-icon(name="close" scale="0.6")
-      button.entity-sidebar__translation-change.cfnext-btn-link(
+      button.cfnext-btn-link(
         ui-command="locales.changeActive")
         | Change
 

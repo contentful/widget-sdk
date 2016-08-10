@@ -85,7 +85,6 @@ var src = {
       'bower_components/angular-animate/angular-animate.js',
       'bower_components/angular-load/angular-load.js',
       'bower_components/angular-sanitize/angular-sanitize.js',
-      'bower_components/angular-ui-sortable/sortable.js',
       'bower_components/angular-ui-router/release/angular-ui-router.js',
       'bower_components/angular-breadcrumb/dist/angular-breadcrumb.js',
       'bower_components/angular-bind-html-compile/angular-bind-html-compile.js',
@@ -137,16 +136,13 @@ var src = {
   ]
 };
 
-
-gulp.task('all', [
-  'index',
-  'templates',
-  'js',
-  'copy-images',
-  'copy-static',
-  'stylesheets'
-]);
-
+gulp.task('all', function (done) {
+  runSequence(
+    ['index', 'templates', 'js', 'copy-images', 'copy-static', 'stylesheets'],
+    'styleguide',
+    done
+  );
+});
 
 /**
  * Build all files necessary to run the tests
@@ -304,7 +300,16 @@ gulp.task('stylesheets/app', function () {
   return buildStylus(src.mainStylesheets, './public/app');
 });
 
-gulp.task('styleguide', ['styleguide/stylesheets'], function () {
+gulp.task('styleguide', function (done) {
+  runSequence(
+    'styleguide/stylesheets',
+    'styleguide/copy-assets',
+    'styleguide/generate',
+    done
+  );
+});
+
+gulp.task('styleguide/generate', function () {
   return spawnOnlyStderr('kss-node', [
     '--template', 'styleguide',
     '--helpers', 'styleguide/helpers',
@@ -312,6 +317,11 @@ gulp.task('styleguide', ['styleguide/stylesheets'], function () {
     '--destination', 'public/styleguide',
     '--placeholder', ''
   ]);
+});
+
+gulp.task('styleguide/copy-assets', function () {
+  return gulp.src('public/app/**/*.{js,css}')
+  .pipe(gulp.dest('./public/styleguide/app'));
 });
 
 gulp.task('styleguide/stylesheets', function () {
@@ -324,9 +334,7 @@ gulp.task('serve', function () {
 
   var patternTaskMap = [
     [appSrc, ['js/app']],
-    [src.templates, ['templates']],
-    ['styleguide/**/*', ['styleguide']],
-    [src.stylesheets, ['stylesheets', 'styleguide']]
+    [src.templates, ['templates']]
   ];
 
   return serve(patternTaskMap);

@@ -81,7 +81,6 @@ test/unit/services/promised_loader_spec.js
 test/unit/services/reload_notification_spec.js
 test/unit/services/sdk_info_supplier_spec.js
 test/unit/services/space_tools_spec.js
-test/unit/services/string_utils_spec.js
 test/unit/services/the_store_spec.js
 test/unit/services/token_store_spec.js
 test/unit/services/subscription_plan_recommender_spec.js
@@ -206,13 +205,11 @@ src/javascripts/components/app_container/space_controller.js
 src/javascripts/components/field_dialog/cf_position_relative_to_widget_list_directive.js
 src/javascripts/components/field_dialog/cf_validation_date_select_directive.js
 src/javascripts/components/field_dialog/cf_validation_settings_directive.js
-src/javascripts/components/field_dialog/cf_validation_values_directive.js
 src/javascripts/components/field_dialog/field_decorator.js
 src/javascripts/components/field_dialog/image_dimensions_validation_controller.js
 src/javascripts/components/field_dialog/validation_asset_types_controller.js
 src/javascripts/components/field_dialog/validation_decorator.js
 src/javascripts/components/field_dialog/validation_link_type_controller.js
-src/javascripts/components/field_dialog/field_dialog.js
 src/javascripts/components/forms/autocomplete_results/cf_autocomplete_results_controller.js
 src/javascripts/components/forms/autocomplete_results/cf_autocomplete_results_directive.js
 src/javascripts/components/forms/datetime_editor/cf_datetime_editor_directive.js
@@ -267,7 +264,6 @@ src/javascripts/classes/entity_state_manager.js
 src/javascripts/classes/kaltura_controller_mixin.js
 src/javascripts/classes/paginator.js
 src/javascripts/classes/selection.js
-src/javascripts/classes/string_utils.js
 src/javascripts/directives/cf_click_local_directive.js
 src/javascripts/directives/cf_click_outside_directive.js
 src/javascripts/directives/cf_focus_on_render_directive.js
@@ -335,7 +331,6 @@ src/javascripts/navigation/confirm_leave_editor.js
 src/javascripts/navigation/close_state.js
 src/javascripts/navigation/state_change_handlers.js
 src/javascripts/ui/cf_ui_tab.js
-src/javascripts/ui/sortable.js
 src/javascripts/ui/cf_ui_hint.js
 src/javascripts/ui/context_menu.js
 src/javascripts/widgets/id_map.js

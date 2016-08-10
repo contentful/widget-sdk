@@ -1,4 +1,8 @@
-angular.module('styleguide', ['cf.ui', 'cf.libs'])
+angular.module('styleguide', [
+  'cf.ui',
+  'cf.libs',
+  'ui.sortable'
+])
 
 .directive('cfExampleDatepicker', ['$injector', function ($injector) {
   var Datepicker = $injector.get('datepicker');

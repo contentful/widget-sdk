@@ -161,7 +161,9 @@ $cfnext-form-input()
 
 .cfnext-form__field-error,
 .cfnext-form__field-errors,
+.cfnext-form__field-suffix-error
 .cfnext-form__field-warning
+  word-wrap: break-word
   margin-top: $rhythm(0.5)
   margin-bottom: 0
   color: $red
@@ -176,6 +178,9 @@ $cfnext-form-input()
   display: inline
   margin: 0 0 0 1.5em
   color: $red
+  // TODO overide because strong sets color !tableflip
+  strong
+    color: inherit
 
 .cfnext-form__field-warning
   color: $colors.orange-dark

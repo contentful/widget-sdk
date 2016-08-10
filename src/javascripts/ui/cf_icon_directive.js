@@ -3,14 +3,14 @@
 /*
  * @ngdoc directive
  * @name cfIcon
- *
  * @description
  * This directive is a helper for the SVG icon system
  *
  * It will inject the SVG code for the icon which has been previously generated.
- *
- * @param {string} name Name of the icon to be used
- * @param {float} scale? Scale factor to be applied to the icon
+ * @usage[jade]
+ * cf-icon(name="close")
+ * cf-icon(name="close" scale="2")
+ * cf-icon(name="close" height="20")
  */
 angular.module('cf.ui')
 .directive('cfIcon', ['require', function (require) {
@@ -36,6 +36,11 @@ angular.module('cf.ui')
         var height = parseInt(iconElem.getAttribute('height'), 10);
         iconElem.setAttribute('width', width * scale);
         iconElem.setAttribute('height', height * scale);
+      }
+
+      var setHeight = parseFloat(attrs.height);
+      if (!isNaN(setHeight)) {
+        iconElem.setAttribute('height', setHeight);
       }
 
       uniquifyIds(iconElem);
