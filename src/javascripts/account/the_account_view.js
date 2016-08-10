@@ -136,7 +136,6 @@ angular.module('contentful')
   }
 
   /**
-   * @ngdoc method
    * @returns {API.Organization?}
    * @description
    * Returns the current space's organization if it is owned by the user or - if the
