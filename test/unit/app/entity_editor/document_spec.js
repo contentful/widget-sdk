@@ -283,10 +283,7 @@ describe('entityEditor/Document', function () {
 
       stringFieldTypes.forEach((fieldType) => {
 
-        scope.field = {
-          id: 'id',
-          type: fieldType
-        };
+        this.contentType.data.fields = [{id: 'id', type: fieldType}];
 
         // !old value path
         self.doc.setValueAt(path, 'VAL');

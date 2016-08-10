@@ -36,9 +36,10 @@ function ($scope, $injector, entity, contentType) {
   var docConnection = spaceContext.docConnection;
   var PresenceHub = $injector.get('entityEditor/Document/PresenceHub');
 
-  // Field types that should use `setStringAt()` to set a value using a
-  // string diff.
+  // Field types that should use `setDocumentStringAt()` to set
+  // a value using a string diff.
   var STRING_FIELD_TYPES = ['Symbol', 'Text'];
+  var memoizedIsStringField = _.memoize(isStringField);
 
   // Set to true if scope is destroyed to cancel the handler for the
   // document open promise.
@@ -247,7 +248,7 @@ function ($scope, $injector, entity, contentType) {
 
   function setValueAt (path, value) {
     return withRawDoc(function (doc) {
-      if ($scope.field && _.includes(STRING_FIELD_TYPES, $scope.field.type)) {
+      if (memoizedIsStringField(path[1])) {
         return setDocumentStringAt(doc, path, value);
       } else {
         return setDocumentValueAt(doc, path, value);
@@ -474,5 +475,13 @@ function ($scope, $injector, entity, contentType) {
   function normalize (doc) {
     var locales = TheLocaleStore.getPrivateLocales();
     Normalizer.normalize(controller, doc.snapshot, contentType, locales);
+  }
+
+  function isStringField (fieldId) {
+    var field = _.find(dotty.get(contentType, 'data.fields', []), function (field) {
+      return field.id === fieldId;
+    });
+
+    return _.includes(STRING_FIELD_TYPES, field && field.type);
   }
 }]);
