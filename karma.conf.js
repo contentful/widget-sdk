@@ -56,14 +56,6 @@ module.exports = function (config) {
       template: '(function () { <%= contents %> })()'
     },
 
-    // We do not yet use any features that do not run natively on
-    // modern browsers
-    babelPreprocessor: {
-      options: {
-        babelrc: false
-      }
-    },
-
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
