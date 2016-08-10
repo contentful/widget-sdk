@@ -49,6 +49,11 @@ module.exports = function (config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
+      'test/**/*.js': ['wrap']
+    },
+
+    wrapPreprocessor: {
+      template: '(function () { <%= contents %> })()'
     },
 
     // We do not yet use any features that do not run natively on
