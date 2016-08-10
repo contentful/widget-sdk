@@ -49,6 +49,9 @@
         }
       }
     },
+    "angular-ui-sortable": {
+      "version": "0.14.3"
+    },
     "archy": {
       "version": "1.0.0"
     },
