@@ -1,5 +1,8 @@
 $learn-content-box()
   position: relative
+  display: flex
+  flex-direction: column
+  justify-content: space-between
   width: 31%
   text-align: center
   border: 1px solid $colors.element-mid
@@ -57,12 +60,8 @@ $learn-content-box()
       &__description
         color: $colors.text-mid
         line-height: 1.4em
-        margin-bottom: $rhythm(4)
+        margin-bottom: $rhythm(1)
       &__actions
-        position: absolute
-        left: 0
-        right:0
-        bottom: 24px
         &__completed
           font-weight: bold
           color: $colors.green-darkest
