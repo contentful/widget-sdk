@@ -1,15 +1,15 @@
 'use strict';
 
 describe('The ContentType list directive', function () {
-  var $q, spaceContext;
+  var spaceContext;
 
   beforeEach(function () {
     module('contentful/test');
-    $q = this.$inject('$q');
     spaceContext = this.$inject('spaceContext');
   });
 
   afterEach(function () {
+    spaceContext = null;
     this.$inject('$document').empty();
   });
 
@@ -23,7 +23,7 @@ describe('The ContentType list directive', function () {
     };
   }
 
-  it('filters content types by name', function() {
+  it('filters content types by name', function () {
     var contentTypes = [
       makeCT(1, 'A'),
       makeCT(2, 'B'),

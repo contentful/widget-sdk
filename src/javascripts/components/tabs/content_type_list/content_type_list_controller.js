@@ -2,11 +2,11 @@
 
 angular.module('contentful')
 .controller('ContentTypeListController',
-['$scope', '$injector', function ContentTypeListController($scope, $injector) {
+['$scope', '$injector', function ContentTypeListController ($scope, $injector) {
 
-  var notification  = $injector.get('notification');
-  var spaceContext  = $injector.get('spaceContext');
-  var FilterQS      = $injector.get('FilterQueryString');
+  var notification = $injector.get('notification');
+  var spaceContext = $injector.get('spaceContext');
+  var FilterQS = $injector.get('FilterQueryString');
   var accessChecker = $injector.get('accessChecker');
 
   var qs = FilterQS.create('contentTypes');
@@ -25,8 +25,8 @@ angular.module('contentful')
     }
   });
 
-  function updateList() {
-    spaceContext.refreshContentTypes().then(function() {
+  function updateList () {
+    spaceContext.refreshContentTypes().then(function () {
       var sectionVisibility = accessChecker.getSectionVisibility();
       $scope.context.forbidden = !sectionVisibility.contentType;
       $scope.context.ready = true;
@@ -36,7 +36,7 @@ angular.module('contentful')
     }, accessChecker.wasForbidden($scope.context));
   }
 
-  function shouldBeVisible(contentType) {
+  function shouldBeVisible (contentType) {
     switch ($scope.context.list) {
       case 'changed':
         return matchesSearchTerm(contentType) && contentType.hasUnpublishedChanges();
@@ -49,7 +49,7 @@ angular.module('contentful')
     }
   }
 
-  function matchesSearchTerm(contentType) {
+  function matchesSearchTerm (contentType) {
     var searchTermRe;
 
     try {
@@ -63,7 +63,7 @@ angular.module('contentful')
     return searchTermRe ? searchTermRe.test(contentType.getName()) : true;
   }
 
-  $scope.numFields = function(contentType) {
+  $scope.numFields = function (contentType) {
     return _.size(contentType.data.fields);
   };
 
@@ -71,11 +71,11 @@ angular.module('contentful')
     return _.isString($scope.searchTerm) && $scope.searchTerm.length > 0;
   };
 
-  $scope.statusClass = function(contentType) {
+  $scope.statusClass = function (contentType) {
     return getStatus(contentType, 'class');
   };
 
-  $scope.statusLabel = function(contentType) {
+  $scope.statusLabel = function (contentType) {
     return getStatus(contentType, 'label');
   };
 
@@ -87,7 +87,7 @@ angular.module('contentful')
     return !_.isEmpty($scope.visibleContentTypes);
   };
 
-  function getStatus(contentType, statusType) {
+  function getStatus (contentType, statusType) {
     var status = {
       'class': 'published',
       label: 'active'
