@@ -36,7 +36,7 @@ angular.module('contentful').directive('cfRule', ['$injector', function ($inject
 
       // when selected content type is changed
       $scope.$watch('rule.contentType', function (id, prev) {
-        var ct = $scope.spaceContext._publishedContentTypesHash[id];
+        var ct = $scope.spaceContext.getPublishedContentType(id);
 
         // get fields of selected content type
         $scope.contentTypeFields = _.map(dotty.get(ct, 'data.fields', []), function (f) {
