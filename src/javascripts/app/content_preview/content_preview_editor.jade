@@ -46,6 +46,6 @@ header.workbench-header
           ng-repeat="warning in invalidFields.warnings.configs[config.contentType]")
           | {{warning}}
     .note-box.note-box--blue.x--with-icon(ng-if="!previewEnvironment.configs.length")
-      cf-icon(name="info")
+      cf-icon(name="note-info")
       p You haven't set up any content types yet. Head to <a ui-sref="spaces.detail.content_types.list">content model</a> to add content types.
   +content-preview-sidebar(isEditor=true)

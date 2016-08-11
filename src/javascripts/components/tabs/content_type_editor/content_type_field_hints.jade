@@ -1,12 +1,12 @@
 .ct-hint.note-box.note-box--blue(ng-if="hints.shouldShow('ct-field-max')")
-  cf-icon(name="info")
+  cf-icon(name="note-info")
   div
     h1 Field limits
     p Keep in mind that the maximum number of fields per Content Type is 50.
     a.ct-hint__dismiss.cfnext-btn-link(ng-click="hints.dismiss('ct-field-max')") Dismiss
 
 .ct-hint.note-box.note-box--blue(ng-if="hints.lifecycle.shouldShow('neutral')")
-  cf-icon(name="info")
+  cf-icon(name="note-info")
   div
     h1 Disabling fields
     p
@@ -16,7 +16,7 @@
     a.ct-hint__dismiss.cfnext-btn-link(ng-click="hints.lifecycle.dismiss('neutral')") Dismiss
 
 .ct-hint.note-box.note-box--blue(ng-if="hints.lifecycle.shouldShow('disabled')")
-  cf-icon(name="info")
+  cf-icon(name="note-info")
   div
     h1 Editing is disabled for some fields
     p
@@ -27,7 +27,7 @@
     a.ct-hint__dismiss.cfnext-btn-link(ng-click="hints.lifecycle.dismiss('disabled')") Dismiss
 
 .ct-hint.note-box.note-box--blue(ng-if="hints.lifecycle.shouldShow('omitted')")
-  cf-icon(name="info")
+  cf-icon(name="note-info")
   div
     h1 Some fields are disabled from the response
     p
@@ -37,7 +37,7 @@
     a.ct-hint__dismiss.cfnext-btn-link(ng-click="hints.lifecycle.dismiss('omitted')") Dismiss
 
 .ct-hint.note-box.note-box--blue(ng-if="hints.lifecycle.shouldShow('both')")
-  cf-icon(name="info")
+  cf-icon(name="note-info")
   div
     h1 Some fields are completely disabled
     p
