@@ -24,7 +24,6 @@ Markup:
     | Entries. They can be any file you wish, from sounds to images or
     | videos to text documents.
   .advice__note
-    i.fa.fa-info-circle.advice__note-icon
     | You can lookup old assets in the <a href="#">Archive</a>
   p.ct-empty-list__additional
     | If you are not sure what content types and entries are, <br>
@@ -139,9 +138,9 @@ $advice-icon()
 
 .advice__note
   $note-box()
-  $note-box--blue()
+  $note-box--info()
   margin: 0 0 $rhythm(2)
   padding: $rhythm(0.5) 1.3em
-
-.advice__note-icon
-  margin-right: 0.6em
+  padding-left: $rhythm(2.3)
+  &:before
+    left: $rhythm(0.5)

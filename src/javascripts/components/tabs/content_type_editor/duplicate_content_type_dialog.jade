@@ -8,7 +8,7 @@
       button.modal-dialog__close(type="button" ng-click="dialog.cancel()")
     .modal-dialog__content(ng-init="dialog.formController = newContentTypeForm")
       include ./content_type_metadata_form
-      .note-box-small.note-box--blue
+      .note-box-small.note-box--info
         | You're about to duplicate the content type <span class="modal-dialog__highlight">{{ originalName }}</span>,
         |  with all existing fields. No entries will be duplicated.
 

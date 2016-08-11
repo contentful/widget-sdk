@@ -4,16 +4,14 @@ Note box
 Show highlighted notes
 
 Markup:
+.note-box.note-box--info
+  h3 Important note
+  p This note will show you important and useful information!
 .note-box.note-box--gold
-  h2 Important note
+  h3 Important note
   p This note will show you important and useful information!
-  .note-box-dismissal close
-.note-box.note-box--blue
-  h2 Important note
-  p This note will show you important and useful information!
-  .note-box-dismissal close
-.note-box.note-box--gold.note-box--centered
-  h2 Important note
+.note-box.note-box--gold
+  h3 Important note
   p This note will show you important and useful information!
   .note-box-dismissal close
 
@@ -24,33 +22,21 @@ Styleguide 21.0
 Small note box
 
 Markup:
+.note-box-small.note-box--info
+  h3 Important note
+  p This note will show you important and useful information!
+  .note-box-dismissal close
 .note-box-small.note-box--gold
-  h2 Important note
+  h3 Important note
   p This note will show you important and useful information!
   .note-box-dismissal close
-.note-box-small.note-box--blue
-  h2 Important note
-  p This note will show you important and useful information!
-  .note-box-dismissal close
-.note-box-small.note-box--gold.note-box--centered
-  h2 Important note
+.note-box-small.note-box--gold
+  h3 Important note
   p This note will show you important and useful information!
   .note-box-dismissal close
 
 Styleguide 21.1
 */
-
-/*
-Note box with icon
-
-Markup:
-.note-box.note-box--blue.x--with-icon
-  cf-icon(name="info")
-  p Here is some info next to an icon!
-
-Styleguide 21.3
-*/
-
 
 $note-box()
   clear: both
@@ -64,41 +50,48 @@ $note-box()
   > p:last-of-type
     margin-bottom: 0
     padding-bottom: 0
-  h2
+  h2, h3
     text-transform: none
     margin-bottom: $rhythm(0.4)
   .note-box-dismissal
     position: absolute
     top: 10px
     right: 15px
+  &:before
+    position: absolute
+    content: ''
+    background-repeat: no-repeat
 
 .note-box
   $note-box()
-
-  &.x--with-icon
-    display: flex
-    cf-icon
-      margin-right: 10px
+  padding-left: 46px
+  &:before
+    left: $rhythm(1)
 
 .note-box-small
   $note-box()
   margin: $rhythm(1) $rhythm(0)
   padding: $rhythm(0.66) 2ex
+  padding-left: 32px
+  &:before
+    left: $rhythm(0.66)
 
 $note-box--gold()
   border-radius: 4px
   background-color: lighten($gold, 70%)
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1)
 
-$note-box--blue()
-  background-color: $colors.lightest-blue
-  border: 1px solid $colors.light-blue
+$note-box--info()
+  background-color: $colors.ice-mid
+  border: 1px solid $colors.ice-dark
+  &:before
+    background-image: url("/app/svg/note-info.svg")
+    height: 18px
+    width: 18px
 
 .note-box--gold
   $note-box--gold()
 
-.note-box--blue
-  $note-box--blue()
+.note-box--info
+  $note-box--info()
 
-.note-box--centered
-  text-align: center
