@@ -18,23 +18,32 @@ function ($scope, require, $element) {
   var controller = this;
   var $q = require('$q');
   var $state = require('$state');
+  var moment = require('moment');
   var spaceContext = require('spaceContext');
   var stateParams = require('$stateParams');
   var analytics = require('analytics');
   var sdkInfoSupplier = require('sdkInfoSupplier');
+  var WebhookRepository = require('WebhookRepository');
+
+  var activatedAt = spaceContext.getData('activatedAt');
 
   controller.spaceId = stateParams.spaceId;
-  controller.activated = !!spaceContext.getData('activatedAt');
 
   function initLearnPage () {
     controller.contentTypes = spaceContext.publishedContentTypes;
-
+    controller.activated = !!activatedAt;
     getEntries().then(function (entries) {
       controller.hasEntries = !!_.size(entries);
+      controller.numberStepsCompleted = [
+        controller.contentTypes.length,
+        controller.hasEntries,
+        controller.activated
+      ].filter(function (val) {
+        return !!val;
+      }).length;
     })
-    .finally(function () {
-      $scope.context.ready = true;
-    });
+    .then(maybeGetSecondPage)
+    .finally(showPage);
   }
 
   function getEntries () {
@@ -44,6 +53,57 @@ function ($scope, require, $element) {
       return $q.resolve([]);
     }
   }
+
+  function maybeGetSecondPage () {
+    if (controller.numberStepsCompleted === 3) {
+      return $q.all([
+        spaceContext.space.getUsers(),
+        WebhookRepository.getInstance(spaceContext.space).getAll()
+      ]).then(setSecondPageSteps);
+    }
+  }
+
+  function setSecondPageSteps (responses) {
+    var hasUsers = responses[0].length > 1;
+    var hasLocales = spaceContext.getData('locales').length > 1;
+    var hasWebhooks = responses[1].length > 0;
+
+    // Hide the note after one week post-activation
+    controller.showNote = moment(activatedAt).add(7, 'days').isAfter(moment());
+
+    controller.secondPageSteps = [
+      {
+        title: 'Invite users',
+        buttonText: 'Invite users',
+        linkText: 'View users',
+        description: 'Invite your teammates to the space to get your project off the ground.',
+        icon: 'learn-add-user',
+        sref: 'spaces.detail.settings.users.list',
+        completed: hasUsers
+      }, {
+        title: 'Locales',
+        buttonText: 'Add locales',
+        linkText: 'View locales',
+        description: 'Set up locales to manage and deliver content in different languages.',
+        icon: 'learn-locales',
+        sref: 'spaces.detail.settings.locales.list',
+        completed: hasLocales
+      }, {
+        title: 'Webhooks',
+        buttonText: 'Add webhooks',
+        linkText: 'View webhooks',
+        description: 'Configure webhooks to send requests triggered by changes to your content.',
+        icon: 'learn-webhooks',
+        sref: 'spaces.detail.settings.webhooks.list',
+        completed: hasWebhooks
+      }
+    ];
+  }
+
+  function showPage () {
+    $scope.context.ready = true;
+  }
+
 
   initLearnPage();
   // Refresh after onboarding as content types and entries might have been created
