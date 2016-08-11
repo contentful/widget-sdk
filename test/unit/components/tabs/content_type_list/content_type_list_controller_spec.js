@@ -39,16 +39,6 @@ describe('Content Type List Controller', function () {
     expect(scope.numFields(makeCT())).toEqual(0);
   });
 
-  describe('empty content types', function () {
-    it('content types are synced with spaceContext', function () {
-      expect(scope.contentTypes).toEqual(spaceContext.getFilteredAndSortedContentTypes());
-    });
-
-    it('empty flag is true', function () {
-      expect(scope.empty).toBe(true);
-    });
-  });
-
   describe('on search term change', function () {
     it('if term is null list is not changed', function () {
       scope.searchTerm = null;
@@ -88,15 +78,10 @@ describe('Content Type List Controller', function () {
   });
 
   describe('scope.visibleContentTypes', function () {
-    var contentTypes;
-    beforeEach(function () {
-      spaceContext.getFilteredAndSortedContentTypes = function () { return contentTypes; };
-    });
-
     it('only contains content types matched by the search', function () {
       var matched = makeCT({getName: sinon.stub().returns('MATCH')});
       var unmatched = makeCT({getName: sinon.stub().returns('MA')});
-      contentTypes = [matched, unmatched];
+      spaceContext.contentTypes = [matched, unmatched];
 
       scope.searchTerm = 'MA';
       this.$apply();
@@ -108,7 +93,7 @@ describe('Content Type List Controller', function () {
     });
 
     it('it does not include deleted content types', function () {
-      contentTypes = [makeCT({
+      spaceContext.contentTypes = [makeCT({
         getName: sinon.stub().returns('MATCH'),
         isDeleted: sinon.stub().returns(true)
       })];

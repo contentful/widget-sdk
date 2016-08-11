@@ -24,13 +24,12 @@ describe('The ContentType list directive', function () {
   }
 
   it('filters content types by name', function () {
-    var contentTypes = [
+    spaceContext.contentTypes = [
       makeCT(1, 'A'),
       makeCT(2, 'B'),
       makeCT(3, 'Bx')
     ];
 
-    spaceContext.getFilteredAndSortedContentTypes = sinon.stub().returns(contentTypes);
     spaceContext.refreshContentTypes = sinon.stub().resolves();
 
     var element = this.$compile('<div cf-content-type-list>', { context: {} });

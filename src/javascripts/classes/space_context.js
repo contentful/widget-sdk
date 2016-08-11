@@ -188,18 +188,6 @@ angular.module('contentful')
 
     /**
      * @ngdoc method
-     * @name spaceContext#getFilteredAndSortedContentTypes
-     * @description
-     * Returns a list of content types with deleted ones filtered out
-     * and with the content types sorted by name
-     * @return {Array<Client.ContentType>}
-    */
-    getFilteredAndSortedContentTypes: function () {
-      return filterAndSortContentTypes(this.contentTypes);
-    },
-
-    /**
-     * @ngdoc method
      * @name spaceContext#registerPublishedContentType
      * @param {Client.ContentType} contentType
     */

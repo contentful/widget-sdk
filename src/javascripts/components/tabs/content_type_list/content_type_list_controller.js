@@ -30,9 +30,9 @@ angular.module('contentful')
       var sectionVisibility = accessChecker.getSectionVisibility();
       $scope.context.forbidden = !sectionVisibility.contentType;
       $scope.context.ready = true;
-      $scope.contentTypes = spaceContext.getFilteredAndSortedContentTypes();
-      $scope.empty = $scope.contentTypes.length === 0;
-      $scope.visibleContentTypes = _.filter($scope.contentTypes, shouldBeVisible);
+      var contentTypes = spaceContext.contentTypes;
+      $scope.empty = contentTypes.length === 0;
+      $scope.visibleContentTypes = _.filter(contentTypes, shouldBeVisible);
     }, accessChecker.wasForbidden($scope.context));
   }
 
