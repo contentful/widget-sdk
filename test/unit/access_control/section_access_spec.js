@@ -94,22 +94,34 @@ describe('Section Access', function () {
       expect(goStub.args[0][1].spaceId).toBe('anothersid');
     });
 
-    it('redirects to `Learn` on first sign in', function () {
-      $state.$current.name = 'spaces.detail';
-      $stateParams.spaceId = 'yetanothersid';
-      spaceContext.space = {
-        data: {
-          spaceMembership: {
-            user: {signInCount: 1},
-            admin: true
-          },
-          activatedAt: null
-        }
-      };
-      sectionAccess.redirectToFirstAccessible();
-      sinon.assert.calledOnce(goStub);
-      expect(goStub.args[0][0]).toBe('spaces.detail.learn');
-      expect(goStub.args[0][1].spaceId).toBe('yetanothersid');
+    describe('redirects to learn if space is not activated', function () {
+      beforeEach(function () {
+        $state.$current.name = 'spaces.detail';
+        $stateParams.spaceId = 'yetanothersid';
+        spaceContext.space = {
+          data: {
+            spaceMembership: {
+              admin: true
+            },
+            activatedAt: null
+          }
+        };
+      });
+
+      it('redirects admins', function () {
+        sectionAccess.redirectToFirstAccessible();
+        sinon.assert.calledOnce(goStub);
+        expect(goStub.args[0][0]).toBe('spaces.detail.learn');
+        expect(goStub.args[0][1].spaceId).toBe('yetanothersid');
+      });
+
+      it('does not redirect non-admins', function () {
+        spaceContext.space.data.spaceMembership.admin = false;
+        sectionAccess.redirectToFirstAccessible();
+        sinon.assert.calledOnce(goStub);
+        expect(goStub.args[0][0]).not.toBe('spaces.detail.learn');
+      });
     });
   });
+
 });

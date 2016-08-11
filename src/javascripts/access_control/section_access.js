@@ -68,10 +68,9 @@ angular.module('contentful')
   function redirectToFirstAccessible () {
     var currentStateName = dotty.get($state, '$current.name');
     var firstAccessible = getFirstAccessibleSection();
-    var signInCount = spaceContext.getData('spaceMembership.user.signInCount');
     var userIsAdmin = spaceContext.getData('spaceMembership.admin', false);
     var notActivated = !spaceContext.getData('activatedAt');
-    var shouldGoToLearn = signInCount === 1 && notActivated && userIsAdmin;
+    var shouldGoToLearn = notActivated && userIsAdmin;
     var targetStateName = [
       BASE_STATE,
       shouldGoToLearn ? 'learn' : firstAccessible
