@@ -12,10 +12,14 @@ describe('cfLearnView directive', function () {
       spaceContext: {
         space: {
           getEntries: sinon.stub(),
-          getDeliveryApiKeys: sinon.stub()
+          getDeliveryApiKeys: sinon.stub(),
+          getUsers: sinon.stub()
         },
         publishedContentTypes: [],
-        getData: _.noop
+        getData: sinon.stub()
+      },
+      webhooks: {
+        getAll: sinon.stub()
       },
       $state: {
         current: {},
@@ -26,6 +30,11 @@ describe('cfLearnView directive', function () {
 
     module('contentful/test', function ($provide) {
       $provide.value('spaceContext', stubs.spaceContext);
+      $provide.value('WebhookRepository', {
+        getInstance: function () {
+          return stubs.webhooks;
+        }
+      });
       $provide.value('$state', stubs.$state);
     });
 
@@ -108,6 +117,44 @@ describe('cfLearnView directive', function () {
         { apiKeyId: 1 }
       );
     });
+  });
+
+  describe('second page', function () {
+    beforeEach(function () {
+      stubs.spaceContext.publishedContentTypes = [{}];
+      stubs.spaceContext.space.getEntries.resolves([{}]);
+      stubs.spaceContext.space.getUsers.resolves([{}]);
+      stubs.webhooks.getAll.resolves([]);
+      stubs.spaceContext.getData.withArgs('activatedAt').returns('2015-03-20');
+      stubs.spaceContext.getData.withArgs('locales').returns([{}]);
+    });
+
+    it('fires requests to user and webhooks collections', function () {
+      this.compile();
+      expect(controller.secondPageSteps.length).toBe(3);
+      sinon.assert.calledOnce(stubs.spaceContext.space.getUsers);
+      sinon.assert.calledOnce(stubs.webhooks.getAll);
+    });
+
+    it('shows completion status of items', function () {
+      this.compile();
+      expect(controller.secondPageSteps[0].completed = true);
+      expect(controller.secondPageSteps[1].completed = false);
+      expect(controller.secondPageSteps[2].completed = false);
+    });
+
+    it('hides note after one week', function () {
+      this.compile();
+      expect(controller.showNote).toBe(false);
+    });
+
+    it('shows note for one week', function () {
+      var yesterday = new Date(new Date() - 24 * 60 * 60 * 1000).toISOString();
+      stubs.spaceContext.getData.withArgs('activatedAt').returns(yesterday);
+      this.compile();
+      expect(controller.showNote).toBe(true);
+    });
+
   });
 
   describe('selected language', function () {
