@@ -17,22 +17,6 @@ Markup:
 Styleguide 21.0
 */
 
-/*
-Small note box
-
-Markup:
-.note-box-small.note-box--info
-  h3 Information
-  p Here is some information. <a>Learn more</a>
-.note-box-small.note-box--success
-  h3 Success
-  p Well done, you did a thing. <a>Learn more</a>
-.note-box-small.note-box--warning
-  h3 Critical note
-  p Something bad might happen. <a>Learn more</a>
-
-Styleguide 21.1
-*/
 
 $note-box()
   clear: both
@@ -40,6 +24,7 @@ $note-box()
   position: relative
   margin: $rhythm(1)
   padding: $rhythm(1)
+  padding-left: 46px
   color: $colors.text-mid
   > *:first-child
     padding-top: 0
@@ -48,30 +33,23 @@ $note-box()
     margin-bottom: 0
     padding-bottom: 0
   h3
+    font-size: 14px
+    line-height: 18px
     text-transform: none
     margin-bottom: $rhythm(0.4)
   a
     text-decoration: underline
+    cursor: pointer
   &:before
     position: absolute
     content: ''
     background-repeat: no-repeat
     height: 18px
     width: 18px
+    left: $rhythm(1)
 
 .note-box
   $note-box()
-  padding-left: 46px
-  &:before
-    left: $rhythm(1)
-
-.note-box-small
-  $note-box()
-  margin: $rhythm(1) $rhythm(0)
-  padding: $rhythm(0.66) 2ex
-  padding-left: 34px
-  &:before
-    left: $rhythm(0.66)
 
 $note-box--success()
   background-color: $colors.mint-mid
