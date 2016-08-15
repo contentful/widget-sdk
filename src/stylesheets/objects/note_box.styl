@@ -23,9 +23,11 @@ $note-box()
   overflow: hidden
   position: relative
   margin: $rhythm(1)
-  padding: $rhythm(1)
-  padding-left: 46px
+  padding: 12px 12px 12px 42px
   color: $colors.text-mid
+  line-height: 1.5
+  > *
+    line-height: inherit
   > *:first-child
     padding-top: 0
     margin-top: 0
@@ -34,9 +36,8 @@ $note-box()
     padding-bottom: 0
   h3
     font-size: 14px
-    line-height: 18px
     text-transform: none
-    margin-bottom: $rhythm(0.4)
+    margin-bottom: 4px
   a
     text-decoration: underline
     cursor: pointer
@@ -46,7 +47,8 @@ $note-box()
     background-repeat: no-repeat
     height: 18px
     width: 18px
-    left: $rhythm(1)
+    left: 12px
+    top: 13px
 
 .note-box
   $note-box()
