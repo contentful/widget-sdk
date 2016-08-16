@@ -10,7 +10,7 @@ describe('contentPreview', function () {
 
     module('contentful/test', function ($provide) {
       $provide.value('TheLocaleStore', {
-        getDefaultLocale: _.constant({code: 'en'})
+        getDefaultLocale: _.constant({internal_code: 'en'})
       });
       $provide.value('spaceContext', spaceContext);
     });
