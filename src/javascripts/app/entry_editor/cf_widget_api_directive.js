@@ -89,7 +89,7 @@ angular.module('contentful')
     onSchemaErrorsChanged: schemaErrorsSignal.attach,
     setInvalid: setInvalid,
     onValueChanged: function (cb) {
-      return K.onValue(fieldLocale.doc.valueProperty, cb);
+      return K.onValueScope($scope, fieldLocale.doc.valueProperty, cb);
     },
     getValue: fieldLocale.doc.get,
     setValue: fieldLocale.doc.set,
