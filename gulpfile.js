@@ -9,7 +9,6 @@ var browserify = require('browserify');
 var glob = require('glob');
 var clean = require('gulp-clean');
 var concat = require('gulp-concat');
-var express = require('express');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var jade = require('gulp-jade');
@@ -33,11 +32,7 @@ var U = require('./tools/lib/utils');
 var jstConcat = require('./tasks/build-template');
 var serve = require('./tasks/serve');
 var IndexPage = require('./tools/lib/index-page');
-var configureIndex = require('./tools/lib/index-configure').default;
 var createManifestResolver = require('./tools/lib/manifest-resolver').create;
-var TravisEnv = require('./tools/lib/travis-env');
-
-var travis = TravisEnv.load();
 
 var argv = yargs
 .boolean('verbose')
@@ -49,13 +44,6 @@ process.env['PATH'] += ':./node_modules/.bin';
 
 var loadSubtasks = require('./tasks/subtasks');
 loadSubtasks(gulp, 'docs');
-
-var getGitRevision = _.memoize(function () {
-  return U.exec('git rev-parse HEAD')
-    .then(function (rev) {
-      return rev.trim();
-    });
-});
 
 var CSS_COMMENT_RE = /\/\*[^*]*\*+([^/*][^*]*\*+)*\//g;
 
@@ -89,10 +77,10 @@ var src = {
       'bower_components/angular-breadcrumb/dist/angular-breadcrumb.js',
       'bower_components/angular-bind-html-compile/angular-bind-html-compile.js',
       'bower_components/bootstrap/js/tooltip.js',
-      'node_modules/share/node_modules/browserchannel/dist/bcsocket-uncompressed.js',
-      'node_modules/share/webclient/share.uncompressed.js',
-      'node_modules/share/webclient/json.uncompressed.js',
-      'node_modules/share/webclient/textarea.js'
+      'node_modules/browserchannel/dist/bcsocket-uncompressed.js',
+      'vendor/sharejs/webclient/share.uncompressed.js',
+      'vendor/sharejs/webclient/json.uncompressed.js',
+      'vendor/sharejs/webclient/textarea.js'
     ],
     kaltura: [
       'vendor/kaltura-16-01-2014/webtoolkit.md5.js',
@@ -389,24 +377,6 @@ function buildStylus (sources, dest) {
     .pipe(dest);
 }
 
-function respond404 (_, res) {
-  res.sendStatus(404);
-}
-
-/**
- * Create a middleware that serves *all* GET requests that accept HTML
- * with `dir/index.html`.
- */
-function sendIndex (dir) {
-  return function (req, res, next) {
-    if (req.method === 'GET' && req.accepts('html')) {
-      res.sendFile(path.join(dir, 'index.html'));
-    } else {
-      next();
-    }
-  };
-}
-
 
 /**
  * Production Builds
@@ -434,10 +404,8 @@ function sendIndex (dir) {
 gulp.task('build', function (done) {
   runSequence(
     'clean',
-    [
-      'build/index', 'build/revision',
-      'build/js', 'build/styles', 'build/static'
-    ], done
+    ['build/js', 'build/styles', 'build/static'],
+    done
   );
 });
 
@@ -455,15 +423,6 @@ gulp.task('build/copy-styleguide', function () {
   .pipe(writeBuild('styleguide'));
 });
 
-gulp.task('serve-production', function () {
-  var buildDir = path.resolve(__dirname, 'build');
-
-  var app = express();
-  app.use(express.static(buildDir));
-  app.use(sendIndex(buildDir));
-  app.use(respond404);
-  app.listen(3001);
-});
 
 function writeBuild (dir) {
   return gulp.dest(path.join('build', dir || ''));
@@ -551,34 +510,6 @@ gulp.task('build/js', ['js', 'templates'], function () {
     .pipe(writeFile())
     .pipe(rev.manifest('build/app-manifest.json'))
     .pipe(writeFile());
-});
-
-var MANIFEST_PATHS = [
-  'build/static-manifest.json',
-  'build/styles-manifest.json',
-  'build/app-manifest.json'
-];
-
-gulp.task('build/index', ['build/js', 'build/styles', 'build/static'], function () {
-  var configPath = 'config/' + travis.targetEnv + '.json';
-  return getGitRevision()
-  .then(function (revision) {
-    console.log(
-      'Configuring revision %s for environment "%s"',
-      revision.substr(0, 8), travis.targetEnv
-    );
-    return configureIndex(
-      revision, configPath, MANIFEST_PATHS,
-      'build/index.html'
-    );
-  });
-});
-
-gulp.task('build/revision', function () {
-  return getGitRevision()
-  .then(function (revision) {
-    return U.writeJSON('build/revision.json', {revision: revision});
-  });
 });
 
 

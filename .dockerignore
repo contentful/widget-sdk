@@ -1,0 +1,24 @@
+# Exclude all by default
+*
+
+!package.json
+!npm-shrinkwrap.json
+!bower.json
+
+!.babelrc
+!gulpfile.js
+!karma.conf.js
+!karma-docker.conf.js
+
+!.eslint*
+!bin
+!config
+!docs
+!src
+!styleguide
+!tasks
+!test
+!tools
+!vendor
+vendor/slimerjs
+vendor/firefox
