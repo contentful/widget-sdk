@@ -15,11 +15,11 @@ angular.module('contentful')
     scope: {},
     require: '^cfWidgetApi',
     template: JST['cf_radio_editor'](),
-    link: function (scope, elem, attrs, widgetApi) {
+    link: function (scope, _elem, _attrs, widgetApi) {
       var settings = widgetApi.settings;
       var options = [
-        {value: true,  label: settings.trueLabel || 'Yes'},
-        {value: false, label: settings.falseLabel || 'No'},
+        {value: true, label: settings.trueLabel || 'Yes'},
+        {value: false, label: settings.falseLabel || 'No'}
       ];
       selectionController.create(widgetApi, scope, options);
 
