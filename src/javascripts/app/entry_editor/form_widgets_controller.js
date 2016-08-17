@@ -37,17 +37,17 @@ function ($scope, $injector, contentTypeId, controls) {
 
   /**
    * @ngdoc method
-   * @name FieldControls#focus.set
+   * @name FormWidgetsController#focus.set
    * @param {string} fieldId
    */
   /**
    * @ngdoc method
-   * @name FieldControls#focus.unset
+   * @name FormWidgetsController#focus.unset
    * @param {string} fieldId
    */
   /**
    * @ngdoc method
-   * @name FieldControls#focus.onChanged
+   * @name FormWidgetsController#focus.onChanged
    * @param {function} callback
    */
   $scope.focus = Focus.create();

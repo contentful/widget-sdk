@@ -15,7 +15,7 @@ angular.module('contentful')
   return {
     /**
      * @ngdoc method
-     * @name subscription#get
+     * @name Subscription#get
      * @param {object} organization
      * @returns {object}
      * @description
@@ -56,7 +56,7 @@ angular.module('contentful')
        * NOTE: As long as `isTrial` is true this will return `false` even though
        *  the subscription might actually be on one of the above plans.
        *
-       * @todo: Correct behavior while `isTrial() == false`.
+       * TODO: Correct behavior while `isTrial() == false`.
        */
       isLimitedFree: _.constant(organizationHasLimitedFreeSubscription(org)),
       /**
