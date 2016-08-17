@@ -25,6 +25,5 @@ SlimerJSBrowser.prototype = {
   DEFAULT_CMD: {
     linux: 'bin/slimerjs',
     darwin: 'bin/slimerjs'
-  },
-  ENV_CMD: 'SLIMERJS_BIN'
+  }
 }

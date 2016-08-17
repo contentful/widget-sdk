@@ -1,16 +1,15 @@
-sudo: false
+sudo: required
+dist: trusty
+services:
+  - docker
 
 # Uses node version from .nvmrc
 language: node_js
 
-# Caching
-# http://docs.travis-ci.com/user/caching/
 cache:
   directories:
-  - node_modules
-  - bower_components
-  - vendor/slimerjs
-  - vendor/firefox
+    - ./cache
+
 env:
   global:
     # JENKINS_PASSWORD
@@ -18,29 +17,29 @@ env:
     # JENKINS_TOKEN
     - secure: "eXBRhtfrIBfoszICbvyBmIQxLf+JEp9+OeEh1FGbqWmKWXlDTApyt6+vsOEaD0Akrc4yYdIw+DdP43tFn9VbXzun1AL/RCjDqo6l9yNvCvA5k7rF2w9rAd+ZHKYRMGLvpQ4vfNEuWwiwtjdzLA9VvrDYU/484XuH/1pSpt0rOyw="
 before_install:
-- echo $'@contentful:registry=https://registry.npmjs.org/\n//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> ~/.npmrc
+# Install latest version of docker. We require at least 1.12
+- sudo sh -c 'echo "deb https://apt.dockerproject.org/repo ubuntu-trusty main" > /etc/apt/sources.list.d/docker.list'
+- sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+- sudo apt-get update
+- sudo apt-get -qqy -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install docker-engine
 install:
-- ./Installfile
-- npm prune
-- npm list --depth 0 || true
-- "export PATH=$PWD/.node_modules/.bin:$PATH"
-before_script:
-- gulp build/with-styleguide
+- bin/docker-load
+- bin/docker-build
 script:
-- tools/bin/validate-config.js config/*.json
-- bin/travis-test
-before_deploy:
-- bin/create-package-dist archive
-- tools/bin/create-file-dist.js build upload
+- bin/docker-run test
+after_success:
+# Build the package and static files
+- bin/docker-run travis --branch "${TRAVIS_BRANCH}" --version "${TRAVIS_COMMIT}" --pr "${TRAVIS_PULL_REQUEST}"
+before_cache:
+- bin/docker-save
 deploy:
   - provider: s3
     access_key_id: AKIAJBRHNHEFAA552JLQ
     secret_access_key:
       secure: "IUQlzPFoJ1IdgbjTiHMzQBxS47ymlWTWUH40zgBUSaT2jIKEGWavxmYqdBWwfzDBb5nPOYALUX/+ZZ2mMb3mokaQPhn5BS1Pc7pb1xIwlLskRH6eeoN0JP9He3I8eX0PrnOJJU9lw9b2legopSLm7j7KXBz/pgC5wAwBDBH0bwo="
     bucket: pkg.contentful.org
-    local-dir: archive
+    local-dir: output/package
     skip_cleanup: true
-    upload-dir: archive
     on:
       branch: [master, production, preview]
   # Deploys the previously uploaded package
@@ -55,7 +54,7 @@ deploy:
       secure: "Azx2DWNKfcFZhQoB1eR6dJ1F0QClJYLohozyzutOhpp86mUuoGXtBPOaiD0kfM8sNFdlhyjagVZo30wMCXBw5t9qSDqEpCOOhZk4kRNnInCh+ha/H14FFbxki7TaWn9RQXmTIoGh5JSmIZ5RDYRJZRyoL4Da11CojildoBD7wJ8="
     bucket: cf-preview-static-cdnorigin
     region: eu-west-1
-    local-dir: upload
+    local-dir: output/files
     acl: public_read
     skip_cleanup: true
     on:
@@ -66,4 +65,5 @@ after_script:
 notifications:
   slack:
     secure: lc+kwmitAcp5htZI5ETV5x5ZwP0TGzJKwenaMMyqGCCUlDgK76hBirkg9LgBhG5500Kks+udT6flZLJ0p/gNvbgqEaCR1GZBmCdneqxpkow8kAy2HUGR1MmkA3+zs1YMJ4Rp3nC78ygVKPzreqgEpmfCovYls0PmpO37khqzBnY=
+
 source_key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcEFJQkFBS0NBUUVBdXZjdVZnaW5NcURSQzQ1UElMTURuMGtGbU9NeThrNEttZXhBK0lPRWFPbzFlK1VSCnI5RkZJbEtEaWhhYnlHK0hyV0k2Z0o2VUZpeGJ4Nk1lUVNCcVA1d0FkcVBJMjE2SldnbElxSmIrWGpxTUNwY0cKNFNEcDlBNHI2UzJJUDZJdE9mSllrVVQ2M1J4Q0tSdFlNT3hYZ0tMNUk0SkJRV2YzeFFtVWIzcGR0ZjM5RU1yRQphbjY4ZlJEcW9kSlpCVllnRmtlNVkveStoNjRZdE9YT0U2ZVZRVGtUK2tGLzM3UElNRVBEWjdkQ25QRloxNGx3CnBEK0pVaWNxRzJCUDRJYyt1MGVEZVc3V1JsdlE3aTRCc0VJWEs1UW10bm1qN0RZSVVQQ2R6ZWY1RHJTRVpaVkMKVmZCZ2l5RThFR3R1NitjV2JtTUF6S3NydUljR0tFMStMNUtCNlFJREFRQUJBb0lCQVFDUTJMRVFQREgwZWp5YQpIRTFYUXZqNmJXTWx1RmNlKzdFZzRMVFJFMnNBc1Bwd210NGgvUm4zWmorOE9wbkVKZ3ZTR3JqQ0xwa0J1S24rCk4zUlg5bG42SDgwSUhRbWVVbFpNNThaZnZtTWc4M0ROUDRZMzRmeitkQUEyN1d5U0IvM0wxK0lmNFhZTTJUaTAKaWhmQUIwb2ZRYU9NaS93c1JQVGl0UEpIajJDTWZmK1U0bFQzNnRGM1lLaEdsbzVja3ZvTkxBenhqRDlHUng1UgpjNFdZM0N2UU51LzRGM1BUZ2dPUGlrdkIzQnRSNnVJNXRCclFkVmE5R3dmdi9qalA3OXliZFYzNHZxVWVhVDhBCnZRYkJjMERhNnBlMW9rYTZhSENxRUIralMxM3BRRzh3Vy9ZYlc2anlkaHFRRklrRjBmTHBFTUVib3NHVFdhQkQKNFBCZkNwclJBb0dCQU50aVY5azJmRnFqT2ZOV3kwWm9wdFl2MGR5WHVySlVyOVVKelM4TWwrSUdSYUUvR2RVawpPTFhHYkJlS2ozeTZTMHNFY1VUY1BncnFiVExzWjJaY0hDZWVla0U0b0ZIQkRLMDVNbTZpeE9ST3ZIOFloWDVlCk4vVXliYitJWHkvSWpTeFJoRTZmc0IzdTl1RmFmTWxRV2MyM1lpSGJ5bjRES1I0VkxmM05mSWt0QW9HQkFOb3IKcnd2RGNsVi9OcG10Rk1yWkQ4S1dBNVFzbWJ3ZVk3RTJ6cUQ5OTNXbm9qUm1ydkRFUVRXQ0pBMUdoNlJCTjJFUQpBQzd4NFJqOHRjZkxDd29SWkFEaXNvVEZ1TnpjdWZLN3pmRCtaemdHWGRERTRpanQ2L0s1L1Nvb1M2S2REOCtDCnJZNURwc1RCT3JOV3dndGVtVVByZDdZSyt5U284OGlONXFhd0RSa3RBb0dCQU1CUFIrVFAzMWh3cHpjSmlXMXkKQlhYU08ydmMwYnJMZzhzREtZc3B4ZVpMU3pSYkpTRHkvSWRUcGFOSlFoaTdFWTkwR0hxZGVnR0ZtQzNBajY5cAo1UUJSNnFkTHBUV2xQYUNIZUE4RnZnVEloSElCSTl3dmFXd1dSYUJWUWVPWU1UQjlVTGEvUXRvcWhOM3N2V0NYCmYvRlY1TDc3ZFZqYkdtc1ZjOWg5RGNNTkFvR0FQMVNPNjR0QWxURG9XSk8xaFd5YzlvODFXcjNYb3BQdnZIRjgKYVo5UFJnZnpQZUxReFhNeXVxV2NjWDRYd2Nac25QQllIVWg1WHhkOGJSS3prYWlhcnVjZml3c2FMb0trTjZIcwpsaGhEUGpBYTY0ODdWMFk1UjZ4Vm9QY3hmWEs2TkRKcXp2RTBaOGp2a1QrTjlGN3hmcFhMbWp4MXlwNkFwYWNMClhUZWRsY0VDZ1lCRDlmNFJ2QWVYbG8yRW5BWWpFN3hKVDA4ZFBubi8weS9saDJWZUVYb0NTcFMxTk5BZEwzRkIKOTdYY3hldEYwVTlicEl3aTM1dXNFcFZCR1l6K2QzVHNhdlBIQVVrNE5aTmFKVnhaQnJqWUV2NlY3dWdxSGkrYwoxSklINk03VFgyMWI0YTNTa3JyNzdvYitjdXBGNVpFTSt4WnM0cm5DR2tKd2VWcndpZTFtenc9PQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=

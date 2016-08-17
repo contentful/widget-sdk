@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -ve
+
+tools/bin/validate-config.js config/*.json
+xvfb-run karma start karma-docker.conf.js
+npm run hint

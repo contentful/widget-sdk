@@ -55,7 +55,6 @@
     "querystring": "^0.2.0",
     "react": "0.13.3",
     "run-sequence": "~1.0.2",
-    "share": "git+ssh://git@github.com/contentful/sharejs.git#v1.3.0",
     "sinon": "^1.9.1",
     "speakingurl": "^0.19.0",
     "stream-combiner": "^0.2.1",
@@ -73,6 +72,7 @@
     "babel-preset-es2015": "^6.6.0",
     "babel-register": "^6.8.0",
     "bluebird": "^3.0.5",
+    "browserchannel": "1.2.0",
     "canonical-path": "0.0.2",
     "cheerio": "^0.20.0",
     "chokidar": "^1.4.3",
@@ -92,6 +92,7 @@
     "karma-spec-json-reporter": "0.0.8",
     "karma-story-reporter": "~0.3.1",
     "karma-tape-reporter": "^1.0.3",
+    "kexec": "^2.0.2",
     "nunjucks": "^1.3.3",
     "nunjucks-highlight.js": "0.0.4",
     "regenerator-runtime": "^0.9.5",
@@ -106,7 +107,7 @@
   "scripts": {
     "start": "gulp all serve",
     "test": "xvfb-run karma start --single-run --browsers SlimerJS --reporters dots",
-    "hint": "eslint src test gulpfile.js",
+    "hint": "eslint src test gulpfile.js tools",
     "cloc": "cloc --read-lang-def .cloc.def src",
     "clean": "rm -rf bower_components node_modules",
     "publish-styleguide": "./bin/publish-styleguide.sh"
