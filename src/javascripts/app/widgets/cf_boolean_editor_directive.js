@@ -1,13 +1,13 @@
 'use strict';
 
-angular.module('contentful')
+angular.module('cf.app')
 
 /**
  * @ngdoc directive
  * @module cf.app
- * @name cfWidgetBoolean
+ * @name cfBooleanEditor
  */
-.directive('cfWidgetBoolean', ['$injector', function ($injector) {
+.directive('cfBooleanEditor', ['$injector', function ($injector) {
   var selectionController = $injector.get('widgets/selectionController');
 
   return {
