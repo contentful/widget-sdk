@@ -142,7 +142,7 @@ angular.module('contentful')
       message: [
         'Please <em>disable in response</em> and save your content type before ',
         'deleting a&nbsp;field. This way you can preview how your responses will ',
-        'look like after deletion. We prevent deleting active fields for security ',
+        'look after deletion. We prevent deleting active fields for security ',
         'reasons &ndash;&nbsp;we don’t want you to lose your precious content or ',
         'break your apps.'
       ].join(''),
