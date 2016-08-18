@@ -4,7 +4,10 @@
       .learn-onboarding(ng-show="learn.numberStepsCompleted < 3")
         h2
           | Set up the basics
-          span.learn-onboarding__completion ({{learn.numberStepsCompleted}}/3 completed)
+          span.learn-onboarding__completion(
+            role="status"
+            data-status-code="learn.onboarding.stepsCompleted")
+            | ({{learn.numberStepsCompleted}}/3 completed)
         p.learn-subheading
           | Complete these three steps to get started creating and fetching your content.
 
@@ -23,7 +26,7 @@
                 ui-sref="spaces.detail.content_types.new({ spaceId: learn.spaceId })")
                 | Create a content type
             .step__actions(ng-show="learn.contentTypes.length")
-              .step__actions__completed
+              .step__actions__completed(role="status" data-status-code="learn.onboarding.completed")
                 cf-icon(name="checkmark-alt")
                 | Completed
               a.step__actions__link(
@@ -42,7 +45,7 @@
             p.step__description
               | Add an entry. They are your actual pieces of content, based on the content types you have created.
             .step__actions(ng-show="learn.hasEntries")
-              .step__actions__completed
+              .step__actions__completed(role="status" data-status-code="learn.onboarding.completed")
                 cf-icon(name="checkmark-alt")
                 | Completed
               a.step__actions__link(
@@ -83,7 +86,7 @@
                 ng-disabled="!learn.hasEntries")
                 | Use the API
             .step__actions(ng-show="learn.activated")
-              .step__actions__completed
+              .step__actions__completed(role="status" data-status-code="learn.onboarding.completed")
                 cf-icon(name="checkmark-alt")
                 | Completed
               a.step__actions__link(
@@ -120,7 +123,7 @@
                 ui-sref="{{step.sref}}")
                 | {{step.buttonText}}
             .step__actions(ng-show="step.completed")
-              .step__actions__completed
+              .step__actions__completed(role="status" data-status-code="learn.onboarding.completed")
                 cf-icon(name="checkmark-alt")
                 | Completed
               a.step__actions__link(
