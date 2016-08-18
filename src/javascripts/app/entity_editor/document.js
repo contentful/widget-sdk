@@ -98,9 +98,8 @@ function ($scope, $injector, entity, contentType) {
   var changes = docEventsBus.stream
     .flatten(function (event) {
       if (event.name === 'change') {
-        return event.data.map(function (op) {
-          return op.p;
-        });
+        return maybeMergeCompoundPatch(event.data)
+        .map(_.property('p'));
       } else if (event.name === 'open') {
         // Emit the path of length zero
         return [[]];
@@ -278,21 +277,54 @@ function ($scope, $injector, entity, contentType) {
     } else if (oldValue === newValue) {
       return $q.resolve(newValue);
     } else {
-      var subDoc = doc.at(path);
-      var patches = diff(oldValue, newValue);
-      var ops = patches.map(function (p) {
-        if (p.insert) {
-          return $q.denodeify(function (cb) {
-            subDoc.insert(p.insert[0], p.insert[1], cb);
-          });
-        } else if (p.delete) {
-          return $q.denodeify(function (cb) {
-            subDoc.del(p.delete[0], p.delete[1], cb);
-          });
-        }
-      });
-      return $q.all(ops);
+      return patchStringAt(doc, path, oldValue, newValue);
     }
+  }
+
+  function patchStringAt (doc, path, oldValue, newValue) {
+    var patches = diff(oldValue, newValue);
+
+    /**
+     * `diff` returns patches in the right order:
+     * delete first, then insert (if both ops are needed).
+     *
+     * Patch is an object with properties:
+     * - patch.delete[0] / patch.insert[0] is the start
+     *   position of the operation
+     * - patch.delete[1] is the number of characters that
+     *   should be removed starting from the start pos.
+     * - patch.insert[1] is the string to be inserted
+     *   at the start position
+     */
+    var ops = patches.map(function (patch) {
+      if (patch.delete) {
+        return deleteOp(path, oldValue, patch);
+      } else if (patch.insert) {
+        return insertOp(path, patch);
+      }
+    });
+
+    return $q.denodeify(function (cb) {
+      // When patching - do it atomically
+      return doc.submitOp(_.filter(ops), cb);
+    });
+  }
+
+  function deleteOp (path, value, patch) {
+    var pos = patch.delete[0];
+    var len = patch.delete[1];
+
+    return {
+      p: path.concat(pos),
+      sd: value.slice(pos, pos + len)
+    };
+  }
+
+  function insertOp (path, patch) {
+    return {
+      p: path.concat(patch.insert[0]),
+      si: patch.insert[1]
+    };
   }
 
   function removeValueAt (path) {
@@ -483,5 +515,48 @@ function ($scope, $injector, entity, contentType) {
     });
 
     return _.includes(STRING_FIELD_TYPES, field && field.type);
+  }
+
+  function maybeMergeCompoundPatch (data) {
+    if (Array.isArray(data) && data.length > 1) {
+      var paths = data.map(_.property('p'));
+      return [{p: findCommonPrefix(paths)}];
+    } else {
+      return data;
+    }
+  }
+
+  /**
+   * Given an array of paths (each of which is an array)
+   * returns an array with the longest shared prefix
+   * (that is: subarray) of those arrays (that is: paths).
+   *
+   * ~~~
+   * findCommonPrefix([['a'], ['a', 'b']]) // => ['a']
+   * findCommonPrefix([['a', 'b'], ['a', 'b', 'c']]) // => ['a', b']
+   * findCommonPrefix([['a'], ['b']]) // => []
+   */
+  function findCommonPrefix (paths) {
+    var minLength = _.min(paths.map(_.property('length'))) || 0;
+    var result = [];
+
+    paths = paths.map(function (path) {
+      return path.slice(0, minLength);
+    });
+
+    for (var i = 0; i < minLength; i += 1) {
+      var first = paths[0][i];
+      var allEqual = _.every(paths, function (path) {
+        return path[i] === first;
+      });
+
+      if (allEqual) {
+        result.push(first);
+      } else {
+        break;
+      }
+    }
+
+    return result;
   }
 }]);
