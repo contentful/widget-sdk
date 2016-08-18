@@ -7,64 +7,120 @@
  * @property {boolean} topState  Is true if there is only one
  * breadcrumb. This breadcrumb is associated to the current page.
  */
-angular.module('contentful').directive('cfBreadcrumbs', ['$injector', function ($injector) {
-  var $breadcrumb = $injector.get('$breadcrumb');
-  var $state      = $injector.get('$state');
+angular.module('contentful').directive('cfBreadcrumbs', ['require', function (require) {
+  var $parse = require('$parse');
+  var $state = require('$state');
+  var $document = require('$document');
+  var contextHistory = require('contextHistory');
+
+  var backBtnSelector = '[aria-label="breadcrumbs-back-btn"]';
+  var ancestorBtnSelector = '[aria-label="breadcrumbs-ancestor-btn"]';
+  var ancestorMenuContainerSelector = '[aria-label="breadcrumbs-ancestor-menu-container"]';
+  var ancestorMenuSelector = '[aria-label="breadcrumbs-ancestor-menu"]';
+  var ancestorLinkSelector = ancestorMenuSelector + ' [role="link"]';
+  var hintDismissBtnSelector = '[aria-label="ui-hint-dismiss-btn"]';
 
   return {
     template: JST.cf_breadcrumbs(),
     restrict: 'E',
     replace: true,
-    link: function ($scope, element) {
-      var debounce = $injector.get('debounce'),
-          breadcrumbsContainer = element.find('.breadcrumbs-container'),
-          arrowLeft = element.find('.breadcrumbs-arrow.left'),
-          arrowRight = element.find('.breadcrumbs-arrow.right'),
-          debouncedScrollToLastBreadCrumb = debounce(scrollToLastBreadcrumb, 100);
+    scope: {
+      backHint: '@',
+      ancestorHint: '@'
+    },
+    link: function ($scope, $el) {
+      $el.on('click', backBtnSelector, goBackToPreviousPage);
 
-      function scrollToLastBreadcrumb() {
-        var crumbs = breadcrumbsContainer.find('li'),
-            lastCrumb;
+      $el.on('click', ancestorBtnSelector, toggleAncestorList);
 
-        // Get last breadcrumb and scroll to it.
-        if (crumbs.length) {
-          lastCrumb = crumbs.last();
-          breadcrumbsContainer.animate({ scrollLeft: lastCrumb[0].offsetLeft + lastCrumb.width() });
+      $el.on('click', ancestorLinkSelector, toggleAncestorList);
+
+      document.addEventListener('click', closeAncestorListIfVisible, true);
+
+      $scope.$on('$destroy', function () {
+        $el.off('click', goBackToPreviousPage);
+        $el.off('click', toggleAncestorList);
+        $el.off('click', toggleAncestorList);
+        document.removeEventListener('click', closeAncestorListIfVisible, true);
+      });
+
+      function goBackToPreviousPage () {
+        var crumbs = $scope.crumbs;
+        var link = crumbs[crumbs.length - 2].link;
+
+        $state.go(link.state, link.params || {});
+        dismissHints();
+      }
+
+      function toggleAncestorList () {
+        var $ancestorBtn = $el.find(ancestorBtnSelector);
+        var $ancestorList = $el.find(ancestorMenuContainerSelector);
+        var $ancestorMenu = $el.find(ancestorMenuSelector);
+        var menuAriaHidden = $ancestorMenu.attr('aria-hidden');
+
+        $ancestorBtn.toggleClass('btn__active');
+        $ancestorList.toggle();
+
+        $ancestorMenu.attr('aria-hidden', !$parse(menuAriaHidden)());
+        dismissHints();
+      }
+
+      function closeAncestorListIfVisible (e) {
+        var $ancestorList = $el.find(ancestorMenuContainerSelector);
+        var isAncestorBtn = e.target.getAttribute('aria-label') === 'breadcrumbs-ancestor-btn';
+
+        if ($ancestorList.is(':visible') && !isAncestorBtn) {
+          toggleAncestorList();
         }
-        updateArrows();
-      }
-      arrowLeft.hide();
-      arrowRight.hide();
-
-      function canScroll() {
-        return {
-          left: breadcrumbsContainer[0].scrollLeft !== 0,
-          right: (breadcrumbsContainer[0].offsetWidth + Math.round(breadcrumbsContainer[0].scrollLeft)) !== breadcrumbsContainer[0].scrollWidth
-        };
       }
 
-      // Watch scrollability with jQuery instead of angular's digest cycle
-      function updateArrows() {
-        if (canScroll().left) { arrowLeft.show(); } else { arrowLeft.hide(); }
-        if (canScroll().right) { arrowRight.show(); } else { arrowRight.hide(); }
+      function dismissHints () {
+        $el.find(hintDismissBtnSelector).click();
       }
+    },
+    controller: ['$scope', function ($scope) {
+      /*
+       * TODO(mudit): When building the hierarchical navigation,
+       * this will turn into an object that will hold the tree
+       * rooted at the entry you started from.
+       * The nodes in the tree will be linked entries/assets/whatever
+       * This will be resolved only once which will be when the user
+       * navigates to an entry from the Content page (entry list).
+       * It's an array right now as "breadcrumbs" are linear in shape.
+       */
+      $scope.crumbs = [];
 
-      function updateTopState() {
-        $scope.topState = $breadcrumb.getStatesChain().length === 1;
-      }
+      $scope.$watchCollection(contextHistory.getAll, function (items) {
+        var last = items[items.length - 1];
 
-      breadcrumbsContainer.scroll(updateArrows);
-      updateTopState();
-      $scope.$on('$stateChangeSuccess', debouncedScrollToLastBreadCrumb);
-      $scope.$on('$stateChangeSuccess', updateTopState);
-      $scope.$watch(function () { return $state.current.ncyBreadcrumbLabel; }, debouncedScrollToLastBreadCrumb);
+        $scope.crumbs = items.map(function (item) {
+          var type = item.getType();
 
-      $scope.scrollLeft = function () {
-        breadcrumbsContainer.animate({ scrollLeft: breadcrumbsContainer.scrollLeft() - breadcrumbsContainer.width() });
-      };
-      $scope.scrollRight = function () {
-        breadcrumbsContainer.animate({ scrollLeft: breadcrumbsContainer.scrollLeft() + breadcrumbsContainer.width() });
-      };
-    }
+          return {
+            getTitle: item.getTitle,
+            link: item.link,
+            type: type
+          };
+        });
+
+        $scope.crumbs.hide = $scope.crumbs.length <= 1;
+        $scope.crumbs.isExactlyOneLevelDeep = $scope.crumbs.length === 2;
+        $scope.crumbs.isMoreThanALevelDeep = $scope.crumbs.length > 2;
+        $scope.crumbs.isAtLeastOneLevelDeep = $scope.crumbs.length >= 2;
+
+        $scope.crumbs.backHint = $scope.backHint || 'You can go back to the previous page';
+        $scope.crumbs.ancestorHint = $scope.ancestorHint || 'You can view the list of previous pages';
+
+        // set document title as the title of the page the user is on
+        // TODO(mudit): Browser is mapping the wrong title to the wrong page
+        // when you see the list of things you can go back to on long pressing
+        // the browser back button. Fix it.
+        // TODO(mudit): This doesn't belong here. Move this out into a service
+        // or something.
+        if (last) {
+          $document[0].title = last.getTitle();
+        }
+      });
+    }]
   };
 }]);

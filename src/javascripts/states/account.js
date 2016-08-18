@@ -21,11 +21,11 @@ angular.module('contentful')
       })
     },
     onEnter: ['TheAccountView', function (view) { view.enter(); }],
-    onExit:  ['TheAccountView', function (view) { view.exit();  }],
+    onExit: ['TheAccountView', function (view) { view.exit(); }],
     children: [{
       name: 'pathSuffix',
       url: '/{pathSuffix:PathSuffix}',
-      ncyBreadcrumb: {label: 'Account'}
+      label: 'Account'
     }]
   };
 }]);
