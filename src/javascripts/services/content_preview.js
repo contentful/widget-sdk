@@ -13,10 +13,12 @@ angular.module('contentful')
   var TheLocaleStore = require('TheLocaleStore');
   var spaceContext = require('spaceContext');
   var previewEnvironmentsCache = require('data/previewEnvironmentsCache');
+  var TheStore = require('TheStore');
 
   var ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
   var ENTRY_FIELD_PATTERN = /\{\s*entry_field\.(\w+)\s*\}/g;
   var MAX_PREVIEW_ENVIRONMENTS = 25;
+  var STORE_KEY = 'selectedPreviewEnvsForSpace.' + spaceContext.getId();
 
   return {
     getAll: getAll,
@@ -30,8 +32,41 @@ angular.module('contentful')
     toInternal: toInternal,
     getInvalidFields: getInvalidFields,
     replaceVariablesInUrl: replaceVariablesInUrl,
-    urlFormatIsValid: urlFormatIsValid
+    urlFormatIsValid: urlFormatIsValid,
+    getSelected: getSelected,
+    setSelected: setSelected
   };
+
+  /**
+   * @ngdoc method
+   * @name contentPreview#getSelected
+   * @param {string} contentTypeId
+   * @returns {string|undefined}
+   *
+   * @description
+   * Returns the ID for the last selected environment for the provided content type.
+   * Fetches data from the store each time. Returns undefined if none is available.
+  */
+  function getSelected (contentTypeId) {
+    var environmentsMap = TheStore.get(STORE_KEY);
+    return _.get(environmentsMap, contentTypeId);
+  }
+
+  /**
+   * @ngdoc method
+   * @name contentPreview#setSelected
+   * @param {object} environment
+   * @returns undefined
+   *
+   * @description
+   * Sets the provided environment as the last selected one for that content type.
+  */
+  function setSelected (environment) {
+    var environments = TheStore.get(STORE_KEY) || {};
+    environments[environment.contentType] = environment.envId;
+    TheStore.set(STORE_KEY, environments);
+  }
+
 
   /**
    * @ngdoc method
@@ -103,21 +138,20 @@ angular.module('contentful')
    * Uses #getAll method to load environment list from server or cache.
   */
   function getForContentType (contentType) {
-    var contentTypeId = contentType.getId();
-    return getAll()
-    .then(function (environments) {
-      return _.reduce(_.cloneDeep(environments), function (acc, env) {
-        var config = _.find(
-          env.configurations,
-          _.matches({'contentType': contentTypeId})
-        );
-        if (config && config.enabled) {
-          config.name = env.name;
-          acc.push(config);
-        }
-        return acc;
-      }, []);
-    });
+    var ctId = contentType.getId();
+    return getAll().then(_.partialRight(getEnvsForContentType, ctId));
+  }
+
+  function getEnvsForContentType (environments, ctId) {
+    return _.transform(_.cloneDeep(environments), function (acc, env, envId) {
+      var config = _.find(
+        env.configurations,
+        _.matches({'contentType': ctId})
+      );
+      if (config && config.enabled) {
+        acc.push(_.extend(config, {name: env.name, envId: envId}));
+      }
+    }, []);
   }
 
   /**

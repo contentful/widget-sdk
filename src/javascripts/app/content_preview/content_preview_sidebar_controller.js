@@ -13,7 +13,12 @@ function ($scope, $injector) {
   contentPreview.getForContentType($scope.contentType)
   .then(function (environments) {
     $scope.contentPreviewEnvironments = environments;
-    $scope.selectEnvironment($scope.contentPreviewEnvironments[0]);
+
+    var selectedEnvironmentId = contentPreview.getSelected($scope.entry.getContentTypeId());
+    var selectedEnvironment = _.find(environments, { 'envId': selectedEnvironmentId });
+
+    $scope.selectedEnvironment = selectedEnvironment || environments[0];
+
     if (environments.length === 1 && environments[0].example && isAdmin) {
       $scope.showDefaultMessage = true;
     }
@@ -23,6 +28,7 @@ function ($scope, $injector) {
 
   $scope.selectEnvironment = function (environment) {
     $scope.selectedEnvironment = environment;
+    contentPreview.setSelected(environment);
   };
 
   // update urls when any field changes

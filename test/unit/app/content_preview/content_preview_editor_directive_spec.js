@@ -12,7 +12,8 @@ describe('cfContentPreviewEditor directive', function () {
     });
     spaceContext = {
       refreshContentTypes: sinon.stub(),
-      getFilteredAndSortedContentTypes: sinon.stub()
+      getFilteredAndSortedContentTypes: sinon.stub(),
+      getId: _.constant('sid')
     };
     notification = {
       info: sinon.stub().returns(),
