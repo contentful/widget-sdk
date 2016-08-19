@@ -91,7 +91,7 @@ header.workbench-header
           .context-menu.x--arrow-right(cf-context-menu="bottom-right")
             a(role="menuitem" href="" ng-click="duplicateRole()") Duplicate
             a(role="menuitem" href="" ng-click="removeRole()" ng-if="removeRole") Delete permanently
-      .rule-list__note.note-box--info(ng-show="autofixed")
+      .rule-list__note.note-box.note-box--info(ng-show="autofixed")
         span
           |  Some rules have been removed because of changes in your content structure.
           |  Please review your rules and click "Save changes".
