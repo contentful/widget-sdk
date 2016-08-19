@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Markdown preview', function() {
+describe('Markdown preview', function () {
   var $timeout, scope;
   var startLivePreview;
   var libs = window.cfLibs.markdown;

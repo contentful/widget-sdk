@@ -4,10 +4,21 @@ describe('Markdown tree', function () {
   var createTreeBuilder, buildTree;
   var libs = window.cfLibs.markdown;
 
-  function getRoot(source, fn) { return ((fn || buildTree)(source)).root;                               }
-  function getChildren(node)   { return dotty.get(node, '_store.props.children');                       }
-  function getHTML(node)       { return dotty.get(node, '_store.props.dangerouslySetInnerHTML.__html'); }
-  function hash(str)           { return createTreeBuilder._hash(str);                                   }
+  function getRoot (source, fn) {
+    return ((fn || buildTree)(source)).root;
+  }
+
+  function getChildren (node) {
+    return dotty.get(node, '_store.props.children');
+  }
+
+  function getHTML (node) {
+    return dotty.get(node, '_store.props.dangerouslySetInnerHTML.__html');
+  }
+
+  function hash (str) {
+    return createTreeBuilder._hash(str);
+  }
 
   beforeEach(function () {
     module('contentful/test');

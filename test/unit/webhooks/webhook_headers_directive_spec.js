@@ -29,7 +29,7 @@ describe('Webhook Headers directive', function () {
   });
 
   describe('"add" button', function () {
-    beforeEach(function() {
+    beforeEach(function () {
       this.add = function () {
         return this.element.find('.webhook-new-header__actions > button');
       }.bind(this);

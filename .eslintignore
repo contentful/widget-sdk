@@ -98,9 +98,7 @@ test/unit/data/space_endpoint_spec.js
 test/unit/data/user_cache_spec.js
 test/unit/markdown_editor/link_organizer_spec.js
 test/unit/markdown_editor/markdown_codemirror_wrapper_spec.js
-test/unit/markdown_editor/markdown_tree_spec.js
 test/unit/markdown_editor/markdown_editor_spec.js
-test/unit/markdown_editor/markdown_preview_spec.js
 test/unit/search/list_query_spec.js
 test/unit/ui/command_spec.js
 test/unit/ui/context_menu_spec.js
@@ -118,7 +116,6 @@ test/unit/account/handle_gatekeeper_message_spec.js
 test/unit/account/iframe_channel_spec.js
 test/unit/webhooks/webhook_call_status_directive_spec.js
 test/unit/webhooks/webhook_editor_directive_spec.js
-test/unit/webhooks/webhook_headers_directive_spec.js
 test/unit/webhooks/webhook_health_directive_spec.js
 test/unit/webhooks/webhook_repository_spec.js
 test/unit/webhooks/webhook_segmentation_spec.js
@@ -335,7 +332,6 @@ src/javascripts/data/space_endpoint.js
 src/javascripts/data/user_cache.js
 src/javascripts/markdown_editor/cf_markdown_action_directive.js
 src/javascripts/markdown_editor/link_organizer.js
-src/javascripts/markdown_editor/markdown_preview.js
 src/javascripts/markdown_editor/markdown_special_characters.js
 src/javascripts/markdown_editor/markdown_tree.js
 src/javascripts/markdown_editor/markdown_codemirror_wrapper.js
