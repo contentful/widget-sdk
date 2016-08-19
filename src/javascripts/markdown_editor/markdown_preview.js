@@ -45,8 +45,8 @@ angular.module('contentful').factory('MarkdownEditor/preview', ['$injector', fun
       try {
         tree = buildTree(value);
       } catch (e) {
-        // it can go wrong: both Marked and ngSanitize throw errors
-        // it happens when for e.g. user is in the middle of typing HTML tag
+        // it can go wrong: Marked throws an error when
+        // input cannot be parsed
         err = e;
       }
 

@@ -29,8 +29,11 @@ describe('cfEmbedlyPreview Directive', function () {
 
     this.compileElement = function (defaultValue) {
       defaultValue = defaultValue || null;
-      var scopeProps = { previewUrl: dotty.get(this, 'scope.previewUrl') || defaultValue };
-      this.element = this.$compile('<cf-embedly-preview preview-url="previewUrl" />', scopeProps);
+      var scopeProps = {
+        previewUrl: dotty.get(this, 'scope.previewUrl') || defaultValue,
+        urlStatus: 'loading'
+      };
+      this.element = this.$compile('<cf-embedly-preview preview-url="previewUrl" url-status="urlStatus" />', scopeProps);
       this.scope = this.element.isolateScope();
       this.$apply();
     }.bind(this);

@@ -57,6 +57,6 @@ describe('Markdown tree', function () {
   it('Sanitizes raw HTML fragments', function () {
     var root = getRoot('<img src="test.jpg" onclick="alert(document.cookie)"/>');
     var html = getHTML(getChildren(root));
-    expect(html).toBe('<img src="test.jpg"/>');
+    expect(html).toBe('<img src="test.jpg">');
   });
 });

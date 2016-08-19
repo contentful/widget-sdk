@@ -5,17 +5,17 @@ describe('Asset editor controller', function () {
   var scope;
 
   beforeEach(function () {
+    const document = sinon.stub();
     module('contentful/test', ($provide, $controllerProvider) => {
       $provide.removeControllers(
         'FormWidgetsController',
         'entityEditor/LocalesController',
         'entityEditor/StatusNotificationsController'
       );
-      $controllerProvider.register('entityEditor/Document', () => {
-        return this.$inject('mocks/entityEditor/Document').create();
-      });
+      $controllerProvider.register('entityEditor/Document', document);
     });
 
+    document.returns(this.$inject('mocks/entityEditor/Document').create());
     scope = this.$inject('$rootScope').$new();
     var accessChecker = this.$inject('accessChecker');
     accessChecker.canUpdateAsset = sinon.stub().returns(true);

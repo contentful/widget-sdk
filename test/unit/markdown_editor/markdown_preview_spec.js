@@ -58,15 +58,6 @@ describe('Markdown preview', function() {
     sinon.assert.calledTwice(previewSpy);
   });
 
-  it('notifies with error for incorrect HTML', function () {
-    startLivePreview(getContentFn, function(err) {
-      expect(err !== null).toBe(true);
-    });
-    scope.$apply();
-    content = '<img src=>';
-    $timeout.flush();
-  });
-
   it('stops notifications when killed', function () {
     var previewSpy = sinon.spy();
     var off = startLivePreview(getContentFn, previewSpy);
