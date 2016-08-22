@@ -64,8 +64,7 @@ angular.module('contentful')
     '<div ' + [
       'cf-entry-editor',
       'class="workbench entry-editor"',
-      'cf-validate="entry.data"', 'cf-entry-schema',
-      'ot-doc-presence'
+      'cf-validate="entry.data"', 'cf-entry-schema'
     ].join(' ') + '></div>'
   };
 

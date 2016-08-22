@@ -117,10 +117,10 @@ mixin entity-sidebar
 
     h2.entity-sidebar__heading
       | Users
-    .entity-sidebar__no-users(ng-if="!otPresence.users.length")
+    .entity-sidebar__no-users(ng-if="!docCollaborators.length")
       | No other users online
-    ul.entity-sidebar__users(ng-if="otPresence.users.length")
-      li.avatar(ng-repeat="link in otPresence.users track by link.sys.id"
+    ul.entity-sidebar__users(ng-if="docCollaborators.length")
+      li.avatar(ng-repeat="link in docCollaborators track by link.sys.id"
         cf-user link="link" as="presenceUser"
         tooltip-placement="bottom"
         tooltip="{{presenceUser | userNameDisplay:user}}")

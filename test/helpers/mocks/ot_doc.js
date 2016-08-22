@@ -37,6 +37,7 @@ angular.module('contentful/mocks')
     this.on = sinon.stub();
     this.removeListener = sinon.stub();
     this.close = sinon.stub();
+    this.shout = sinon.spy();
   }
 
   OtDoc.prototype.setAt = function (path, value, cb) {

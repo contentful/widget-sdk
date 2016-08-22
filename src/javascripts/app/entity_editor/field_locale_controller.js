@@ -19,6 +19,7 @@ angular.module('contentful')
  * @scope.requires docPresence
  */
 .controller('FieldLocaleController', ['require', '$scope', function (require, $scope) {
+  var K = require('utils/kefir');
   var policyAccessChecker = require('accessChecker/policy');
   var FieldLocaleDoc = require('entityEditor/FieldLocaleDocument');
 
@@ -74,9 +75,7 @@ angular.module('contentful')
    * @description
    * A list of users that are also editing this field locale.
    */
-  $scope.$watch(function () {
-    return dotty.get($scope, ['otPresence', 'fields', localePath.join('.'), 'users']);
-  }, function (collaborators) {
+  K.onValueScope($scope, controller.doc.collaborators, function (collaborators) {
     controller.collaborators = collaborators;
   });
 
@@ -108,7 +107,7 @@ angular.module('contentful')
    */
   controller.setActive = function (isActive) {
     if (isActive) {
-      $scope.docPresence.focus(localePath.join('.'));
+      controller.doc.notifyFocus();
       $scope.focus.set(field.id);
     } else {
       $scope.focus.unset(field.id);

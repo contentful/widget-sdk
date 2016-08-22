@@ -41,9 +41,6 @@ angular.module('contentful')
         showDialog(user.email);
         storeDialogLastShownTimestamp();
       }
-      // Makes sure to show the dialog again if user keeps the tab open.
-      setTimeout(watcher.bind(null, user),
-        getMillisecondsUntilDialogCanBeReopened());
     } else {
       TheStore.remove(LAST_REMINDER_STORE_KEY);
     }

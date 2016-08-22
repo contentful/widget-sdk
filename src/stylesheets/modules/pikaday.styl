@@ -28,9 +28,11 @@ Styleguide date-selector
 .pika-label
   display: inline-block
   overflow: hidden
-  padding: 5px 3px
+  padding: 5px 3px 0 3px
+  margin-bottom: 5px
   line-height: 20px
   position: relative
+  $entry-editor__input-border()
 
   > select
     cursor: pointer
@@ -97,6 +99,9 @@ Styleguide date-selector
   abbr
     border-bottom: none
     cursor: help
+
+.pika-table .is-today
+  font-weight: bold
 
 .pika-button
   $button-reset()

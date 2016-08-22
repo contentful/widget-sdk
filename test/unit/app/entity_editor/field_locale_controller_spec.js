@@ -6,10 +6,11 @@ describe('FieldLocaleController', function () {
     var $rootScope = this.$inject('$rootScope');
     var $controller = this.$inject('$controller');
     this.init = function (scopeProps) {
+      this.otDoc = this.$inject('mocks/entityEditor/Document').create();
       var defaultScopeProps = {
         field: {id: 'FID'},
         locale: {internal_code: 'LID'},
-        otDoc: this.$inject('mocks/entityEditor/Document').create()
+        otDoc: this.otDoc
       };
       var scope = _.merge($rootScope.$new(), defaultScopeProps, scopeProps);
       scope.fieldLocale = $controller('FieldLocaleController', {$scope: scope});
@@ -108,15 +109,11 @@ describe('FieldLocaleController', function () {
   });
 
   describe('#collaborators', function () {
-    it('watches "otPresence" with path', function () {
+    it('watches "docPresence" with path', function () {
       var scope = this.init();
-      dotty.put(
-        scope,
-        ['otPresence', 'fields', 'fields.FID.LID', 'users'],
-        'USERS'
-      );
+      this.otDoc.collaboratorsFor().set(['USER']);
       this.$apply();
-      expect(scope.fieldLocale.collaborators).toEqual('USERS');
+      expect(scope.fieldLocale.collaborators).toEqual(['USER']);
     });
   });
 
@@ -124,7 +121,6 @@ describe('FieldLocaleController', function () {
 
     beforeEach(function () {
       this.scope = this.init({
-        docPresence: {focus: sinon.stub()},
         focus: {
           set: sinon.stub(),
           unset: sinon.stub()
@@ -132,10 +128,10 @@ describe('FieldLocaleController', function () {
       });
     });
 
-    it('calls "docPresence.focus()" if set to true', function () {
+    it('calls "otDoc.notifyFocus()" if set to true', function () {
       this.scope.fieldLocale.setActive(true);
-      var focus = this.scope.docPresence.focus;
-      sinon.assert.calledWithExactly(focus, 'fields.FID.LID');
+      var focus = this.otDoc.notifyFocus;
+      sinon.assert.calledWithExactly(focus, 'FID', 'LID');
     });
 
     it('calls "scope.focus.set()" if set to true', function () {

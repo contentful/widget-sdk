@@ -124,7 +124,7 @@ div.entry-editor__input-group(style="width: 10em")
   div.entry-editor__input-spinner
 div.entry-editor__input-group(style="width: 10em")
   input(type="text" value="Input has padding to the right")
-  cf-icon(name="calendar")
+  cf-icon(name="calendar" style="cursor: pointer")
 
 Styleguide entry-editor-controls.input-spinner
 */
@@ -141,9 +141,15 @@ Styleguide entry-editor-controls.input-spinner
 
   > cf-icon
     position: absolute
-    top: 8px
-    right: 2px
+    right: 0
+    top: 0
+    bottom: 0
+    width: 18px
     cursor: default
+    svg
+      position: relative
+      top: 8px
+      right: 2px
 
 .entry-editor__input-spinner
   position: absolute

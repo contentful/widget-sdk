@@ -59,7 +59,7 @@ $cfnext-form-input()
     box-shadow: none
     transition: none
   &[aria-invalid="true"]
-    border-color: $red
+    border-color: $colors.red-dark
   &[type="number"]
     padding-right: 0
   textarea&
@@ -121,7 +121,7 @@ $cfnext-form-input()
   font-size: $small-font-size
 
   &.x--invalid
-    color: $red
+    color: $colors.red-dark
 
 
 /**
@@ -166,7 +166,7 @@ $cfnext-form-input()
   word-wrap: break-word
   margin-top: $rhythm(0.5)
   margin-bottom: 0
-  color: $red
+  color: $colors.red-dark
   // TODO overide because strong sets color !tableflip
   strong
     color: inherit
@@ -177,7 +177,7 @@ $cfnext-form-input()
 .cfnext-form__field-suffix-error
   display: inline
   margin: 0 0 0 1.5em
-  color: $red
+  color: $colors.red-dark
   // TODO overide because strong sets color !tableflip
   strong
     color: inherit

@@ -15,7 +15,8 @@ angular.module('cf.utils')
     onValue: onValue,
     onValueScope: onValueScope,
     fromScopeEvent: fromScopeEvent,
-    createBus: createBus
+    createBus: createBus,
+    createPropertyBus: createPropertyBus
   }, Kefir);
 
 
@@ -45,10 +46,10 @@ angular.module('cf.utils')
 
     var stream = Kefir.stream(function (emitter) {
       currentEmitter = emitter;
-      return function () {
-        currentEmitter = null;
-      };
     });
+
+    // We activate the stream so that `currentEmitter` gets assigned.
+    stream.onValue(_.noop);
 
     if (scope) {
       scope.$on('$destroy', end);
@@ -61,17 +62,54 @@ angular.module('cf.utils')
     };
 
     function emit (value) {
-      if (currentEmitter) {
-        currentEmitter.emit(value);
-      }
+      currentEmitter.emit(value);
     }
 
     function end () {
-      if (currentEmitter) {
-        currentEmitter.end();
-        currentEmitter = null;
-      }
+      currentEmitter.end();
     }
+  }
+
+
+  /**
+   * @ngdoc method
+   * @name utils/kefir#createPropertyBus
+   * @usage[js]
+   * var bus = K.createPropertyBus('INITIAL', scope)
+   * bus.stream.onValue(cb1)
+   * // 'cb1' is called with 'INITIAL'
+   * bus.set('VAL')
+   * bus.stream.onValue(cb2)
+   * // 'cb2' is called with 'VAL'
+   * bus.end()
+   * // or
+   * scope.$destroy()
+   *
+   * @description
+   * Create a bus that allows us to imperatively set the value of a
+   * Kefir property.
+   *
+   * If the scope parameter is given the stream ends when the scope is
+   * destroyed.
+   *
+   * @param {any} initialValue
+   * @param {Scope?} scope
+   * @returns {utils/kefir.PropertyBus}
+   */
+  function createPropertyBus (initialValue, scope) {
+    var streamBus = createBus(scope);
+
+    var property = streamBus.stream.toProperty();
+
+    // We activate the property so that we can start setting its value
+    property.onValue(_.noop);
+    streamBus.emit(initialValue);
+
+    return {
+      property: property,
+      end: streamBus.end,
+      set: streamBus.emit
+    };
   }
 
 
@@ -89,7 +127,7 @@ angular.module('cf.utils')
    * - The callback is wrapped in `scope.$applyAsync()`
    *
    * @param {Scope} scope
-   * @param {Stream} stream
+   * @param {Observable} observable
    * @param {function} cb
    *
    * @returns {function}
@@ -113,7 +151,7 @@ angular.module('cf.utils')
    * `K.onValue(stream, cb)` is similar to `stream.onValue(cb)` but the
    * former returns a function that, when called, removes the listener.
    *
-   * @param {Stream} stream
+   * @param {Observable} observable
    * @param {function} cb
    *
    * @returns {function}

@@ -18,7 +18,6 @@ include ./create_entry_button.mixin.jade
     | types you created in the content type builder.
 
   .advice__note(ng-if="hasArchivedEntries")
-    i.fa.fa-info-circle.advice__note-icon
     | You can lookup old entries in the
     | <a ng-click="loadView({searchTerm: 'status:archived'})">archive</a>
 

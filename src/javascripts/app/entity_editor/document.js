@@ -34,6 +34,7 @@ function ($scope, $injector, entity, contentType) {
   var Normalizer = $injector.get('data/documentNormalizer');
   var spaceContext = $injector.get('spaceContext');
   var docConnection = spaceContext.docConnection;
+  var PresenceHub = $injector.get('entityEditor/Document/PresenceHub');
 
   // Field types that should use `setStringAt()` to set a value using a
   // string diff.
@@ -51,7 +52,6 @@ function ($scope, $injector, entity, contentType) {
     saving: false
   };
 
-
   // The stream for this bus contains all the events that come from the
   // raw ShareJS doc. The data in this stream has the shape
   // `{doc: doc, name: name, data: data}`.
@@ -64,7 +64,6 @@ function ($scope, $injector, entity, contentType) {
   K.onValueScope($scope, acknowledgeEvent, function (event) {
     updateEntitySys(event.doc);
   });
-
 
   // A boolean property that holds true if the document has
   // changes unacknowledged by the server.
@@ -176,6 +175,17 @@ function ($scope, $injector, entity, contentType) {
   }
 
 
+  var presence = PresenceHub.create($scope.user.sys.id, docEventsBus.stream, shout);
+
+  K.onValueScope($scope, presence.collaborators, function (collaborators) {
+    $scope.docCollaborators = collaborators;
+  });
+
+  $scope.$on('$destroy', function () {
+    presence.destroy();
+  });
+
+
   _.extend(controller, {
     doc: undefined,
 
@@ -190,9 +200,13 @@ function ($scope, $injector, entity, contentType) {
     valuePropertyAt: memoizedValuePropertyAt,
     sysProperty: sysProperty,
 
+    collaboratorsFor: presence.collaboratorsFor,
+    notifyFocus: presence.focus,
+
     open: open,
     close: close
   });
+
 
   // If the document connection state changes, this watcher is triggered
   // Connection failures during editing are handled from this point onwards.
@@ -214,6 +228,14 @@ function ($scope, $injector, entity, contentType) {
     isDestroyed = true;
     setDoc(undefined);
   });
+
+  function shout (args) {
+    var doc = controller.doc;
+    if (doc && doc.state !== 'closed') {
+      doc.shout(args);
+    }
+  }
+
 
   function getValueAt (path) {
     if (controller.doc) {
@@ -349,6 +371,7 @@ function ($scope, $injector, entity, contentType) {
   }
 
   function closeDoc (doc) {
+    presence.leave();
     try {
       doc.close();
     } catch (e) {

@@ -9,8 +9,13 @@ describe('entityEditor/Document', function () {
       canOpen: sinon.stub()
     };
 
-    module('contentful/test', ($provide) => {
+    module('contentful/test', ($provide, $controllerProvider) => {
       $provide.value('spaceContext', {docConnection: this.docConnection});
+      $controllerProvider.register('otDocPresenceController', function () {
+        return {
+          leave: sinon.stub()
+        };
+      });
     });
 
     K = this.$inject('mocks/kefir');
@@ -50,6 +55,7 @@ describe('entityEditor/Document', function () {
 
     scope = $rootScope.$new();
     scope.contentType = {data: {fields: []}};
+    scope.user = {sys: {id: 'USER'}};
     this.doc = $controller('entityEditor/Document', {
       $scope: scope,
       entity: this.entity,

@@ -108,4 +108,21 @@ describe('utils/kefir', function () {
       sinon.assert.calledOnce(cb);
     });
   });
+
+  describe('#createPropertyBus()', function () {
+    it('emits initial value', function () {
+      const bus = K.createPropertyBus('INIT');
+      const cb = sinon.spy();
+      bus.property.onValue(cb);
+      sinon.assert.calledWithExactly(cb, 'INIT');
+    });
+
+    it('set value when subscribing later', function () {
+      const bus = K.createPropertyBus('INIT');
+      bus.set('VAL');
+      const cb = sinon.spy();
+      bus.property.onValue(cb);
+      sinon.assert.calledWithExactly(cb, 'VAL');
+    });
+  });
 });

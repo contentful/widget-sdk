@@ -56,7 +56,6 @@ test/unit/forms/ng_no_form_spec.js
 test/unit/navigator/leave_editor_confirmation_spec.js
 test/unit/navigator/confirm_leave_editor_spec.js
 test/unit/navigator/state_change_handlers_spec.js
-test/unit/ot/ot_doc_presence_controller_spec.js
 test/unit/services/assert_spec.js
 test/unit/services/call_buffer_spec.js
 test/unit/services/contentful_client_spec.js
@@ -277,7 +276,6 @@ src/javascripts/directives/cf_custom_logo_directive.js
 src/javascripts/directives/cf_schema_directives.js
 src/javascripts/directives/cf_copy_to_clipboard_directive.js
 src/javascripts/directives/cf_when_disabled.js
-src/javascripts/ot/ot_presence.js
 src/javascripts/services/assert.js
 src/javascripts/services/aviary.js
 src/javascripts/services/call_buffer.js
