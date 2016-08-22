@@ -271,14 +271,29 @@ function ($scope, $injector, entity, contentType) {
   function setDocumentStringAt (doc, path, newValue) {
     var oldValue = getValueAt(path);
 
-    if (!oldValue || !newValue) {
-      // TODO Do not set this to null. Set it to undefined!
-      return setDocumentValueAt(doc, path, newValue || null);
-    } else if (oldValue === newValue) {
-      return $q.resolve(newValue);
-    } else {
+    if (isValidStringFieldValue(newValue)) {
+      return $q.reject(new Error('Invalid string field value.'));
+    } else if (shouldSkipStringChange(oldValue, newValue)) {
+      return $q.resolve(oldValue);
+    } else if (shouldPatchString(oldValue, newValue)) {
       return patchStringAt(doc, path, oldValue, newValue);
+    } else {
+      return setDocumentValueAt(doc, path, newValue);
     }
+  }
+
+  function isValidStringFieldValue (newValue) {
+    return !_.isNil(newValue) && !_.isString(newValue);
+  }
+
+  function shouldSkipStringChange (oldValue, newValue) {
+    // @todo experiment: do not store empty strings
+    // if value is not set (undefined)
+    return oldValue === undefined && newValue === '';
+  }
+
+  function shouldPatchString (oldValue, newValue) {
+    return _.isString(oldValue) && _.isString(newValue) && oldValue !== newValue;
   }
 
   function patchStringAt (doc, path, oldValue, newValue) {
