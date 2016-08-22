@@ -12,7 +12,7 @@ angular.module('contentful')
   var list = base({
     name: 'list',
     url: '',
-    label: 'Users',
+    ncyBreadcrumb: { label: 'Users' },
     loadingText: 'Loading Users...',
     template: '<cf-user-list class="workbench user-list" />',
     controller: ['$scope', function ($scope) {

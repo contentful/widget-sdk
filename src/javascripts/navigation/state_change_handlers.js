@@ -36,7 +36,7 @@ angular.module('cf.app')
 
   function setupHandlers () {
     $rootScope.$watch(function () {
-      return $state.current.label;
+      return $state.current.ncyBreadcrumbLabel;
     }, function (label) {
       $document[0].title = label || 'Contentful';
     });

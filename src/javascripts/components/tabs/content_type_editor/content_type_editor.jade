@@ -1,5 +1,4 @@
 header.workbench-header
-  cf-breadcrumbs
   cf-icon.workbench-header__icon(name="page-ct")
   h1.workbench-header__title
     | {{contentType.getName()}}
@@ -41,7 +40,7 @@ header.workbench-header
     .content-type-tab(ui-tabpanel="fields")
       .content-type-fields(ng-if="hasFields")
         include ./content_type_field_list
-      .content-type-hints(ng-if="hasFields")
+      .content-type-hints(ng-if="hasFields && !settingsHintShown")
         include ./content_type_field_hints
       .content-type-fields(ng-if="!hasFields")
         include ./content_type_field_list_empty

@@ -11,7 +11,7 @@ angular.module('contentful')
   return base({
     name: 'learn',
     url: '/learn',
-    label: 'Learn',
+    ncyBreadcrumb: {label: 'Learn'},
     template: '<cf-learn-view />',
     loadingText: 'Loading...',
     controller: ['$scope', function ($scope) {

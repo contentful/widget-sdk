@@ -8,89 +8,52 @@ angular.module('contentful')
  */
 .factory('states/settings/content_preview', ['require', function (require) {
   var base = require('states/base');
-  var contextHistory = require('contextHistory');
-
-  var listEntity = {
-    getTitle: function () { return list.label; },
-    link: { state: 'spaces.detail.settings.content_preview.list' },
-    getType: _.constant('PreviewEnvironments'),
-    getId: _.constant('PREVIEWENVIRONMENTS')
-  };
 
   var list = base({
     name: 'list',
     url: '',
-    label: 'Content Preview',
+    ncyBreadcrumb: {
+      label: 'Content preview'
+    },
     loadingText: 'Loading content preview...',
     template: '<cf-content-preview-list class="workbench entity-list" />',
     controller: ['$scope', 'require', function ($scope, require) {
       var accessChecker = require('accessChecker');
-
       $scope.context = {};
       if (!accessChecker.getSectionVisibility().settings) {
         $scope.context.forbidden = true;
       }
-
-      // add list view as top state
-      contextHistory.addEntity(listEntity);
     }]
   });
 
-  function editorBase (options) {
-    var contentPreviewEditorState = base({
-      template: '<cf-content-preview-editor class="workbench">',
-      label: 'context.title + (context.dirty ? "*" : "")',
-      params: { addToContext: true },
-      loadingText: 'Loading content preview...',
-      controller: ['require', '$scope', 'contentPreview', function (require, $scope, contentPreview) {
-        var $state = require('$state');
-        var $stateParams = require('$stateParams');
+  var contentPreviewEditorState = base({
+    template: '<cf-content-preview-editor class="workbench">',
+    ncyBreadcrumb: {
+      parent: 'spaces.detail.settings.content_preview.list',
+      label: '{{context.title + (context.dirty ? "*" : "")}}'
+    },
+    loadingText: 'Loading content preview...',
+    controller: ['$state', '$scope', 'contentPreview', function ($state, $scope, contentPreview) {
+      $scope.context = $state.current.data;
+      $scope.contentPreview = contentPreview;
+    }]
+  });
 
-        var isNew = options.data.isNew;
-        var contentPreviewId = $stateParams.contentPreviewId;
-        var state = 'spaces.detail.settings.content_preview.';
-        var params = isNew ? {} : { contentPreviewId: contentPreviewId };
-        var id = isNew ? 'PREVIEWENVIRONMENTNEW' : contentPreviewId;
-
-        state += isNew ? 'new' : 'detail';
-
-        $scope.context = $state.current.data;
-        $scope.contentPreview = contentPreview;
-
-        // add list view as parent
-        contextHistory.addEntity(listEntity);
-
-        // add current view as child
-        contextHistory.addEntity({
-          getTitle: function () { return $scope.$eval(contentPreviewEditorState.label); },
-          link: {
-            state: state,
-            params: params
-          },
-          getType: _.constant('PreviewEnvironment'),
-          getId: _.constant(id)
-        });
-      }]
-    });
-
-    return _.extend(options, contentPreviewEditorState);
-  }
-
-  var newContentPreview = editorBase({
+  var newContentPreview = _.extend({
     name: 'new',
     url: '/new',
     data: {
       isNew: true
     }
-  });
+  }, contentPreviewEditorState);
 
-  var detail = editorBase({
+  var detail = _.extend({
     name: 'detail',
     url: '/:contentPreviewId',
     data: {
       isNew: false
     }
-  });
+  }, contentPreviewEditorState);
 
   return {
     name: 'content_preview',

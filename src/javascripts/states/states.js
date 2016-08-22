@@ -52,33 +52,37 @@ angular.module('contentful')
 }])
 
 .config([
-  '$stateProvider', '$urlMatcherFactoryProvider',
-  function ($stateProvider, $urlMatcherFactoryProvider) {
+  '$stateProvider',
+  '$urlMatcherFactoryProvider',
+  '$breadcrumbProvider',
+  function ($stateProvider, $urlMatcherFactoryProvider, $breadcrumbProvider) {
 
-    /*
-     * We need to define a dumb type PathSuffix here and use that to
-     * represent path suffixes for the Space Settings and Account
-     * views, because otherwise UI-Router treats them as regular
-     * URL parameters and does nasty things like escaping slashes.
-     */
-    $urlMatcherFactoryProvider.type('PathSuffix', {
-      encode: function (val) { return val !== null ? val.toString() : val; },
-      decode: function (val) { return val !== null ? val.toString() : val; },
-      is: function (val) { return this.pattern.test(val); },
-      pattern: /.*/
-    });
+  /*
+   * We need to define a dumb type PathSuffix here and use that to
+   * represent path suffixes for the Space Settings and Account
+   * views, because otherwise UI-Router treats them as regular
+   * URL parameters and does nasty things like escaping slashes.
+   */
+  $urlMatcherFactoryProvider.type('PathSuffix', {
+    encode: function (val) { return val !== null? val.toString() : val; },
+    decode: function (val) { return val !== null? val.toString() : val; },
+    is: function (val) { return this.pattern.test(val); },
+    pattern: /.*/
+  });
+  // Avoid being obsessive about matching states to trailing slashes
+  $urlMatcherFactoryProvider.strictMode(false);
 
-    // Avoid being obsessive about matching states to trailing slashes
-    $urlMatcherFactoryProvider.strictMode(false);
-  }
-])
+  $breadcrumbProvider.setOptions({
+    template: JST.cf_structure_breadcrumbs()
+  });
+}])
 
 .factory('states/entityLocaleFilter', [function () {
-  return function filterDeletedLocales (data, availableLocales) {
+  return function filterDeletedLocales(data, availableLocales) {
     _.keys(data.fields).forEach(function (fieldId) {
-      _.keys(data.fields[fieldId]).forEach(function (internalCode) {
-        if (!_.find(availableLocales, { internal_code: internalCode })) {
-          delete data.fields[fieldId][internalCode];
+      _.keys(data.fields[fieldId]).forEach(function (internal_code) {
+        if (!_.find(availableLocales, { internal_code: internal_code })) {
+          delete data.fields[fieldId][internal_code];
         }
       });
     });

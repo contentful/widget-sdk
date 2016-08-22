@@ -1,77 +1,8 @@
-.breadcrumbs-widget(ng-hide="crumbs.hide")
-  .breadcrumbs-container
-    cf-ui-hint(
-      ng-if="crumbs.isExactlyOneLevelDeep"
-      name="breadcrumbs-back-hint"
-      arrow="true"
-      arrow-direction="up"
-      show-dismiss="true"
-      role="note"
-      data-test-id="breadcrumbs-back-hint")
-      | {{crumbs.backHint}}
-
-    cf-ui-hint(
-      ng-if="crumbs.isMoreThanALevelDeep"
-      name="breadcrumbs-ancestor-back-hint"
-      arrow="true"
-      arrow-direction="up"
-      show-dismiss="true"
-      role="note"
-      data-test-id="breadcrumbs-ancestor-back-hint")
-      | {{crumbs.ancestorHint}}
-
-    cf-icon.btn.btn__back(
-      ng-if="crumbs.isAtLeastOneLevelDeep"
-      name="breadcrumbs-icon-back"
-      role="button"
-      aria-label="breadcrumbs-back-btn"
-      data-test-id="breadcrumbs-back-btn")
-
-    .breadcrumbs-ancestor-container(ng-if="crumbs.isMoreThanALevelDeep")
-      cf-icon.btn.btn__ancestor(
-        name="breadcrumbs-icon-ancestors"
-        role="button"
-        aria-label="breadcrumbs-ancestor-btn"
-        data-test-id="breadcrumbs-ancestor-btn")
-      .breadcrumbs-ancestor-list(
-        aria-label="breadcrumbs-ancestor-menu-container"
-        data-test-id="breadcrumbs-ancestor-menu-container")
-        .breadcrumbs-ancestor-list__heading
-          p(role="note")
-            | Go back to:
-        ul.breadcrumbs-ancestor-list__items(
-          role="menu"
-          aria-hidden="true"
-          aria-label="breadcrumbs-ancestor-menu"
-          data-test-id="breadcrumbs-ancestor-menu")
-          li(
-            ng-repeat="crumb in crumbs.slice(0, -1).reverse()"
-            role="menuitem"
-            data-test-id="breadcrumbs-ancestor-menuitem")
-            a(
-              ui-sref="{{crumb.link.state}}({{crumb.link.params}})"
-              ng-switch="crumb.type"
-              role="link"
-              title="{{crumb.getTitle().length > 20 ? crumb.getTitle() : ''}}")
-              cf-icon(
-                name="breadcrumbs-icon-entry"
-                ng-switch-when="Entry")
-              cf-icon(
-                name="breadcrumbs-icon-entries"
-                ng-switch-when="Entries")
-              cf-icon(
-                name="breadcrumbs-icon-asset"
-                ng-switch-when="Asset")
-              cf-icon(
-                name="breadcrumbs-icon-assets"
-                ng-switch-when="Assets")
-              cf-icon(
-                name="breadcrumbs-icon-model"
-                ng-switch-when="ContentType")
-              cf-icon(
-                name="breadcrumbs-icon-model"
-                ng-switch-when="ContentTypes")
-              cf-icon(
-                name="breadcrumbs-icon-settings"
-                ng-switch-default)
-              | {{crumb.getTitle()}}
+.breadcrumbs-widget
+  .breadcrumbs-arrow.left(ng-click="scrollLeft()")
+    i.fa.fa-arrow-circle-left
+  .breadcrumbs-container(ng-show="!topState")
+    ncy-breadcrumb
+    cf-activity-breadcrumbs
+  .breadcrumbs-arrow.right(ng-click="scrollRight()")
+    i.fa.fa-arrow-circle-right

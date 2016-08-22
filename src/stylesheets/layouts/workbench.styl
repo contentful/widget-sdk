@@ -27,7 +27,7 @@ Styleguide 9.0
 .workbench
   display: flex
   flex-direction: column
-  $stretch(0, 0, 0, 0)
+  $stretch($breadcrumbs-height, 0, 0, 0)
   $layer('bottom')
   > *
     flex: 0 0 auto;
@@ -170,23 +170,19 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
   border-bottom: 1px solid $colors.element-darkest
   border-top: 1px solid $colors.element-darkest
   display: flex
-  flex-direction: row
-  align-items: center
+  align-items: baseline
   background-color: $colors.element-lightest
   box-shadow: 0 1px 2px 0 rgba(black ,.09)
   padding-left: $workbench-header-horizontal-padding
   padding-right: $workbench-header-horizontal-padding
   position relative
   z-index: 1
-  min-height: $workbench-header-height
   > *
     flex-shrink: 0
   &.x--with-nav
     display: block
     > *
       display: flex
-    .page-header
-      margin-top: 20px
 
   &__icon
     margin-right: 1em
@@ -197,9 +193,9 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     text-overflow: ellipsis
     overflow: hidden
     font-size: $tab-header-font-size
+    line-height: $workbench-header-height
     margin: 0 0.6em 0 0.1ex
     white-space: nowrap
-    line-height: 30px
 
   &__left
     display: flex
@@ -207,7 +203,7 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     min-width: $workbench-sidebar-width
     max-width: $workbench-max-sidebar-width
     flex: 0 0 auto
-    align-items: center
+
 
   &__kb-link
     line-height: normal
@@ -218,11 +214,6 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     color: $gray
     flex-shrink: 1
     margin-right: 1ex
-    margin-top: 3px
-
-    & + .cfnext-btn-inline
-      position: relative
-      top: 2px
 
   &__actions
     display: flex

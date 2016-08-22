@@ -10,15 +10,15 @@ angular.module('contentful').factory('contextHistory', ['$injector', function ($
     addEntity: addEntity,
     isEmpty: isEmpty,
 
-    pop: function () { return contextHistory.pop(); },
+    pop:   function () { return contextHistory.pop(); },
     purge: function () { contextHistory = []; },
 
-    getAll: function () { return contextHistory; },
-    getLast: function () { return _.last(contextHistory); },
-    getAllButLast: function () { return contextHistory.slice(0, contextHistory.length - 1); }
+    getAll:        function () { return contextHistory; },
+    getLast:       function () { return _.last(contextHistory); },
+    getAllButLast: function () { return contextHistory.slice(0, contextHistory.length-1); }
   };
 
-  function addEntity (entity) {
+  function addEntity(entity) {
     if (isEmpty() || $stateParams.addToContext) {
       var index = findIndex(entity);
       if (index > -1) {
@@ -28,13 +28,13 @@ angular.module('contentful').factory('contextHistory', ['$injector', function ($
     }
   }
 
-  function findIndex (entity) {
+  function findIndex(entity) {
     return _.findIndex(contextHistory, function (historyEntry) {
       return historyEntry.getId() === entity.getId();
     });
   }
 
-  function isEmpty () {
+  function isEmpty() {
     return contextHistory.length === 0;
   }
 }]);

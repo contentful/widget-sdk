@@ -56,6 +56,9 @@ angular.module('contentful')
         return spaceContext.widgets;
       }]
     },
+    ncyBreadcrumb: {
+      skip: true
+    },
     controller: ['$scope', 'space', 'sectionAccess', function ($scope, space, sectionAccess) {
       $scope.label = space.data.name;
 
@@ -67,7 +70,7 @@ angular.module('contentful')
       if (space.isHibernated()) {
         return JST.cf_space_hibernation_advice();
       } else if (sectionAccess.hasAccessToAny()) {
-        return '<ui-view></ui-view>';
+        return '<cf-breadcrumbs></cf-breadcrumbs><ui-view></ui-view>';
       } else {
         return JST.cf_no_section_available();
       }
