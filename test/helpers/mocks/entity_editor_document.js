@@ -25,8 +25,10 @@ angular.module('contentful/mocks')
       state: {
         isDirty: K.createMockProperty()
       },
+
       open: sinon.stub(),
       close: sinon.stub(),
+
       getValueAt: sinon.spy(function (path) {
         return dotty.get(data, path);
       }),
@@ -46,7 +48,10 @@ angular.module('contentful/mocks')
       }, function hashPath (path) {
         return path.join('!');
       })),
-      sysProperty: K.createMockProperty(dotty.get(data, 'sys'))
+      sysProperty: K.createMockProperty(data.sys),
+
+      collaboratorsFor: sinon.stub().returns(K.createMockProperty([])),
+      notifyFocus: sinon.spy()
     };
 
     function insertValueAt (path, pos, val) {

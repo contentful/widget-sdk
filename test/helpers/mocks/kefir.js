@@ -21,9 +21,9 @@ angular.module('contentful/mocks')
     return values;
   }
 
-  function createMockProperty () {
+  function createMockProperty (initial) {
     var bus = Kefir.createBus();
-    var current;
+    var current = initial;
     var property = bus.stream.toProperty(function () {
       return current;
     });

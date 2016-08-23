@@ -52,8 +52,7 @@ angular.module('contentful')
     '<div ' + [
       'cf-asset-editor',
       'class="asset-editor workbench"',
-      'cf-validate="asset.data"', 'cf-asset-schema',
-      'ot-doc-presence',
+      'cf-validate="asset.data"', 'cf-asset-schema'
     ].join(' ') + '></div>'
   };
 

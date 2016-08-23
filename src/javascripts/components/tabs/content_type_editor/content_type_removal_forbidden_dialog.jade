@@ -11,7 +11,7 @@
           | Content types that are currently used by entries can't be deleted. <a href="" ng-click="explanationShown = !explanationShown">Why?</a>
         p(ng-show="explanationShown")
           | This is done for the reasons of security and consistency of the content model. We wouldn't know what to do with these entries otherwise.
-        .note-box-small.note-box--blue
+        .note-box.note-box--info
           | Delete all entries which use this content type before deleting it.
     .modal-dialog__controls
       button.cfnext-btn-primary-action(ng-click="dialog.cancel()")

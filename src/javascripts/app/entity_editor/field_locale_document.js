@@ -53,8 +53,14 @@ angular.module('cf.app')
       push: bindToPath('pushValueAt'),
       insert: bindToPath('insertValueAt'),
       move: bindToPath('moveValueAt'),
-      valueProperty: valueProperty
+      valueProperty: valueProperty,
+      collaborators: doc.collaboratorsFor(fieldId, localeCode),
+      notifyFocus: notifyFocus
     };
+
+    function notifyFocus () {
+      return doc.notifyFocus(fieldId, localeCode);
+    }
 
     function set (value) {
       lastSetValue = value;

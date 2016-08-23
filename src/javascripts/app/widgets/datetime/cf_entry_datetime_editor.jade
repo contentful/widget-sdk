@@ -8,7 +8,7 @@ div.datetime-field-editor
       ng-model="data.date"
       ng-model-options="{updateOn: 'change'}"
       ng-disabled="isDisabled")
-    cf-icon(name="calendar" ng-click="focusDateInput()")
+    cf-icon(name="calendar" ng-click="focusDateInput()" style="cursor: pointer")
 
   input(type="text" ng-show="false" data-datepicker-slot)
 

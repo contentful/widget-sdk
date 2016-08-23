@@ -44,12 +44,12 @@ $form-control()
   &:focus
     background-color: white
     border-color: $blue-link
-    box-shadow: 0 0 3px lighten($blue-light, 50%) inset
+    box-shadow: 0 0 3px lighten($colors.blue-mid, 50%) inset
     outline: none
   &.error-input:focus
-    border-color: darken($red, 10%)
+    border-color: $colors.red-darkest
   &[aria-invalid="true"]
-    border-color: darken($red, 10%)
+    border-color: $colors.red-darkest
 
 input.form-control:not([type="checkbox"]):not([type="radio"]), textarea.form-control
   $form-control()
