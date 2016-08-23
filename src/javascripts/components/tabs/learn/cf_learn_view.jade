@@ -80,12 +80,12 @@
                 | Fetch your content
             p.step__description
               | Use the API to see your content wherever you like. We’ll show you different ways of delivering your content.
-            .step__actions(ng-show="!learn.activated")
+            .step__actions(ng-show="!learn.activated || !learn.hasEntries")
               button.cfnext-btn-action(
                 ng-click="learn.goToApiKeySection()"
                 ng-disabled="!learn.hasEntries")
                 | Use the API
-            .step__actions(ng-show="learn.activated")
+            .step__actions(ng-show="learn.activated && learn.hasEntries")
               .step__actions__completed(role="status" data-status-code="learn.onboarding.completed")
                 cf-icon(name="checkmark-alt")
                 | Completed
