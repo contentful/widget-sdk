@@ -68,10 +68,9 @@ angular.module('contentful')
   function handleSpaceCreationSuccess (template) {
     if (template) {
       analytics.track('Created Space Template', {template: template.name});
-      $rootScope.$broadcast('reloadEntries');
-      $timeout(function () {
-        spaceContext.refreshContentTypes();
-      }, 1000);
+      return spaceContext.refreshContentTypesUntilChanged().then(function () {
+        $rootScope.$broadcast('reloadEntries');
+      });
     }
   }
 

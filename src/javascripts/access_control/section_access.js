@@ -8,12 +8,13 @@
  * This service makes use of accessChecker's section visibility data to expose
  * utility methods for checking access and redirecting to sections (top menu).
  */
-angular.module('contentful').factory('sectionAccess', ['$injector', function ($injector) {
+angular.module('contentful')
+.factory('sectionAccess', ['require', function (require) {
 
-  var accessChecker = $injector.get('accessChecker');
-  var $state        = $injector.get('$state');
-  var $stateParams  = $injector.get('$stateParams');
-  var spaceContext  = $injector.get('spaceContext');
+  var accessChecker = require('accessChecker');
+  var $state = require('$state');
+  var $stateParams = require('$stateParams');
+  var spaceContext = require('spaceContext');
 
   var BASE_STATE = 'spaces.detail';
 
@@ -36,11 +37,11 @@ angular.module('contentful').factory('sectionAccess', ['$injector', function ($i
    * @description
    * Returns true if user has access to at least one section, false otherwise.
    */
-  function hasAccessToAny() {
+  function hasAccessToAny () {
     return _.isString(getFirstAccessibleSection());
   }
 
-  function getFirstAccessibleSection() {
+  function getFirstAccessibleSection () {
     var visibility = accessChecker.getSectionVisibility();
     var section = _.find(SECTION_ACCESS_ORDER, function (section) {
       return visibility[section[0]];
@@ -60,22 +61,23 @@ angular.module('contentful').factory('sectionAccess', ['$injector', function ($i
    * We check current state because `spaces.detail` controller
    * is instantiated for child states, too. Caller should use `hasAccessToAny` first.
    *
-   * If a user has sign in count == 1 and has access to either Entries or
-   * Content Types, go to `Learn`. This is temporary and will be be replaced
-   * by the `Space Home` where all users will be automatically directed
+   * If a user has sign in count == 1, is a space admin and the space is not
+   * activated, go to `Learn`.
+   *
    */
-  function redirectToFirstAccessible() {
+  function redirectToFirstAccessible () {
     var currentStateName = dotty.get($state, '$current.name');
-    var firstAccessible  = getFirstAccessibleSection();
-    var visibility       = accessChecker.getSectionVisibility();
-    var signInCount      = spaceContext.getData('spaceMembership.user.signInCount');
-    var shouldGoToLearn  = signInCount === 1 &&
-                           (visibility.contentType || visibility.entry);
-    var targetStateName  = [BASE_STATE, shouldGoToLearn ? 'learn' : firstAccessible]
-                           .join('.');
+    var firstAccessible = getFirstAccessibleSection();
+    var userIsAdmin = spaceContext.getData('spaceMembership.admin', false);
+    var notActivated = !spaceContext.getData('activatedAt');
+    var shouldGoToLearn = notActivated && userIsAdmin;
+    var targetStateName = [
+      BASE_STATE,
+      shouldGoToLearn ? 'learn' : firstAccessible
+    ].join('.');
 
     if (currentStateName === BASE_STATE) {
-      if (shouldGoToLearn || firstAccessible) {
+      if (targetStateName) {
         $state.go(targetStateName, {spaceId: $stateParams.spaceId});
       } else {
         throw new Error('No section to redirect to.');

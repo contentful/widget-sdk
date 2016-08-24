@@ -14,7 +14,7 @@ describe('Section Access', function () {
   };
   afterEach(function () {
     sectionAccess = accessChecker = $state =
-      $stateParams = visibilityStub = goStub  = null;
+      $stateParams = visibilityStub = goStub = null;
   });
 
   beforeEach(function () {
@@ -22,9 +22,9 @@ describe('Section Access', function () {
 
     sectionAccess = this.$inject('sectionAccess');
     accessChecker = this.$inject('accessChecker');
-    $state        = this.$inject('$state');
-    $stateParams  = this.$inject('$stateParams');
-    spaceContext  = this.$inject('spaceContext');
+    $state = this.$inject('$state');
+    $stateParams = this.$inject('$stateParams');
+    spaceContext = this.$inject('spaceContext');
 
     accessChecker.getSectionVisibility = visibilityStub = sinon.stub().returns(allTrue);
     $state.go = goStub = sinon.stub();
@@ -94,14 +94,34 @@ describe('Section Access', function () {
       expect(goStub.args[0][1].spaceId).toBe('anothersid');
     });
 
-    it('redirects to `Learn` on first sign in', function() {
-      $state.$current.name = 'spaces.detail';
-      $stateParams.spaceId = 'yetanothersid';
-      spaceContext.space = {data: {spaceMembership: {user: {signInCount: 1}}}};
-      sectionAccess.redirectToFirstAccessible();
-      sinon.assert.calledOnce(goStub);
-      expect(goStub.args[0][0]).toBe('spaces.detail.learn');
-      expect(goStub.args[0][1].spaceId).toBe('yetanothersid');
+    describe('redirects to learn if space is not activated', function () {
+      beforeEach(function () {
+        $state.$current.name = 'spaces.detail';
+        $stateParams.spaceId = 'yetanothersid';
+        spaceContext.space = {
+          data: {
+            spaceMembership: {
+              admin: true
+            },
+            activatedAt: null
+          }
+        };
+      });
+
+      it('redirects admins', function () {
+        sectionAccess.redirectToFirstAccessible();
+        sinon.assert.calledOnce(goStub);
+        expect(goStub.args[0][0]).toBe('spaces.detail.learn');
+        expect(goStub.args[0][1].spaceId).toBe('yetanothersid');
+      });
+
+      it('does not redirect non-admins', function () {
+        spaceContext.space.data.spaceMembership.admin = false;
+        sectionAccess.redirectToFirstAccessible();
+        sinon.assert.calledOnce(goStub);
+        expect(goStub.args[0][0]).not.toBe('spaces.detail.learn');
+      });
     });
   });
+
 });

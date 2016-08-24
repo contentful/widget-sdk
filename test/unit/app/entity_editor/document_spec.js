@@ -271,65 +271,53 @@ describe('entityEditor/Document', function () {
       expect(this.doc.getValueAt(['a', 'b'])).toBe('VAL');
     });
 
-    // Test setStringAt via setValueAt
-    // Not creating a new fixture for setStringAt since we will be making
-    // it private anyway.
-    it('calls setString for Text and Symbol widget types', function () {
-      var stringFieldTypes = ['Text', 'Symbol'];
-      var self = this;
-      var path = ['a', 'id'];
+    testDiff('Text');
+    testDiff('Symbol');
 
-      this.connectAndOpen();
+    function testDiff (fieldType) {
+      it(`uses diffing for ${fieldType} fields`, function () {
+        this.contentType.data.fields = [{id: 'id', type: fieldType}];
+        this.connectAndOpen();
 
-      stringFieldTypes.forEach((fieldType) => {
-
-        scope.field = {
-          id: 'id',
-          type: fieldType
+        const path = ['a', 'id'];
+        const docAtPath = this.doc.doc.at(path);
+        const calledWith = (ops) => {
+          sinon.assert.calledWith(docAtPath.submitOp, ops);
+          docAtPath.submitOp.reset();
         };
 
-        // !old value path
-        self.doc.setValueAt(path, 'VAL');
-        expect(self.doc.getValueAt(path)).toBe('VAL');
+        // there was no value at the path:
+        this.doc.setValueAt(path, 'VAL');
+        expect(this.doc.getValueAt(path)).toBe('VAL');
+        sinon.assert.notCalled(docAtPath.submitOp);
 
-        // old value === new value code path
-        self.doc.setValueAt(path, 'VAL');
-        expect(self.doc.getValueAt(path)).toBe('VAL');
+        // value at the path is the same:
+        this.doc.setValueAt(path, 'VAL');
+        expect(this.doc.getValueAt(path)).toBe('VAL');
+        sinon.assert.notCalled(docAtPath.submitOp);
 
-        // insert code path
-        self.doc.setValueAt(path, 'VAIL');
-        expect(self.doc.getValueAt(path)).toBe('VAIL');
+        // sole insert:
+        this.doc.setValueAt(path, 'VAIL');
+        expect(this.doc.getValueAt(path)).toBe('VAIL');
+        calledWith([{p: path.concat([2]), si: 'I'}]);
 
-        // delete code path
-        self.doc.setValueAt(path, 'VIL');
-        expect(self.doc.getValueAt(path)).toBe('VIL');
+        // delete inside of a string:
+        this.doc.setValueAt(path, 'VIL');
+        expect(this.doc.getValueAt(path)).toBe('VIL');
+        calledWith([{p: path.concat([1]), sd: 'A'}]);
 
-        // insert multiple code path
-        self.doc.setValueAt(path, 'PILS');
-        expect(self.doc.getValueAt(path)).toBe('PILS');
+        // compound patch:
+        this.doc.setValueAt(path, 'PILS');
+        expect(this.doc.getValueAt(path)).toBe('PILS');
+        const p = path.concat([0]);
+        calledWith([{p: p, sd: 'VIL'}, {p: p, si: 'PILS'}]);
 
-        // delete multiple code path
-        self.doc.setValueAt(path, 'S');
-        expect(self.doc.getValueAt(path)).toBe('S');
+        // delete from the front of a string:
+        this.doc.setValueAt(path, 'S');
+        expect(this.doc.getValueAt(path)).toBe('S');
+        calledWith([{p: path.concat([0]), sd: 'PIL'}]);
       });
-
-      var doc = this.doc.doc.at(path);
-
-      // set initial value at path
-      this.doc.setValueAt(path, 'ABC');
-      expect(this.doc.getValueAt(path)).toBe('ABC');
-
-      doc.insert.reset();
-      doc.del.reset();
-
-      this.doc.setValueAt(path, 'ABCD');
-      sinon.assert.calledOnce(doc.insert);
-      sinon.assert.calledWith(doc.insert, 3, 'D');
-
-      this.doc.setValueAt(path, 'A');
-      sinon.assert.calledOnce(doc.del);
-      sinon.assert.calledWith(doc.del, 1, 3);
-    });
+    }
   });
 
   describe('#removeValueAt()', function () {
@@ -469,6 +457,50 @@ describe('entityEditor/Document', function () {
       paths.forEach(function (path, i) {
         doc.emit('change', [{p: path}]);
         sinon.assert.notCalled(cb, i);
+      });
+    });
+
+    describe('merging change events', function () {
+      beforeEach(function () {
+        const doc = this.connectAndOpen();
+        this.emitChange = doc.emit.bind(doc, 'change');
+
+        this.listenOn = function (paths) {
+          const spies = paths.map(() => {
+            return sinon.spy();
+          });
+
+          spies.forEach((spy, i) => {
+            this.doc.valuePropertyAt(paths[i]).onValue(spy);
+            spy.reset();
+          });
+
+          return spies;
+        };
+      });
+
+      it('finds longest common prefix', function () {
+        const paths = [['x', 'y', 'z'], ['x', 'y'], ['z']];
+        const spies = this.listenOn(paths);
+
+        this.emitChange(paths.slice(0, 2).map((path) => {
+          return {p: path};
+        }));
+
+        sinon.assert.calledOnce(spies[0]);
+        sinon.assert.calledOnce(spies[1]);
+        sinon.assert.notCalled(spies[2]);
+      });
+
+      it('defaults to zero length shared prefix', function () {
+        const paths = [['x'], ['y'], ['z', 'w']];
+        const spies = this.listenOn(paths);
+
+        this.emitChange([{p: ['y']}, {p: ['x']}]);
+
+        spies.forEach(function (spy) {
+          sinon.assert.calledOnce(spy);
+        });
       });
     });
   });

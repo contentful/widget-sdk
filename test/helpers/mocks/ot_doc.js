@@ -49,6 +49,25 @@ angular.module('contentful/mocks')
     }
   };
 
+  // Supports only "si" and "sd".
+  OtDoc.prototype.submitOp = function (ops, cb) {
+    ops.forEach((op) => {
+      var path = op.p.slice(0, op.p.length - 1);
+      var pos = _.last(op.p);
+      var val = this.getAt(path) || '';
+
+      if (op.sd) {
+        this.setAt(path, val.slice(0, pos) + val.slice(pos + op.sd.length));
+      } else if (op.si) {
+        this.setAt(path, val.slice(0, pos) + op.si + val.slice(pos));
+      }
+    });
+
+    if (cb) {
+      cb();
+    }
+  };
+
   OtDoc.prototype.getAt = function (path) {
     path = this.path.concat(path);
     assertParentContainer(this.snapshot, path);
@@ -105,6 +124,7 @@ angular.module('contentful/mocks')
   sinon.spy(OtDoc.prototype, 'del');
   sinon.spy(OtDoc.prototype, 'remove');
   sinon.spy(OtDoc.prototype, 'set');
+  sinon.spy(OtDoc.prototype, 'submitOp');
 
   return OtDoc;
 

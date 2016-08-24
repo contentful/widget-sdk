@@ -81,11 +81,12 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
             ng-class="{'selected': $state.includes('spaces.detail.settings.content_preview')}"
             ui-sref="spaces.detail.settings.content_preview.list")
             | Content preview
-    li.app-top-bar__action.nav-bar__list-item--right
+    li.app-top-bar__action.nav-bar__list-item--right(
+      ng-if="canNavigateTo.learn")
       a.nav-bar__link(
-          ng-class="{'is-active': $state.is('spaces.detail.learn')}"
-          ui-sref="spaces.detail.learn({ spaceId: $stateParams.spaceId })"
-          data-view-type="learn"
-          tabindex="0")
+        ng-class="{'is-active': $state.is('spaces.detail.learn')}"
+        ui-sref="spaces.detail.learn({ spaceId: $stateParams.spaceId })"
+        data-view-type="learn"
+        tabindex="0")
         cf-icon(name="nav-learn")
         span.nav-bar__list-label Learn
