@@ -35,6 +35,7 @@ function ($scope, require, entity, contentType) {
   var docConnection = spaceContext.docConnection;
   var PresenceHub = require('entityEditor/Document/PresenceHub');
   var StringField = require('entityEditor/Document/StringField');
+  var PathUtils = require('entityEditor/Document/PathUtils');
 
   // Set to true if scope is destroyed to cancel the handler for the
   // document open promise.
@@ -161,7 +162,7 @@ function ($scope, require, entity, contentType) {
 
   function valuePropertyAt (valuePath) {
     return changes.filter(function (changePath) {
-      return pathAffects(changePath, valuePath);
+      return PathUtils.isAffecting(changePath, valuePath);
     })
     .toProperty(_.constant(undefined))
     .map(function () {
@@ -400,24 +401,6 @@ function ($scope, require, entity, contentType) {
     }
   }
 
-  /**
-   * Returns true if a change to the value at 'changePath' in an object
-   * affects the value of 'valuePath'.
-   *
-   * ~~~
-   * pathAffects(['a'], ['a', 'b']) // => true
-   * pathAffects(['a', 'b'], ['a', 'b']) // => true
-   * pathAffects(['a', 'b', 'x'], ['a', 'b']) // => true
-   *
-   * pathAffects(['x'], ['a', 'b']) // => false
-   * pathAffects(['a', 'x'], ['a', 'b']) // => false
-   */
-  function pathAffects (changePath, valuePath) {
-    var m = Math.min(changePath.length, valuePath.length);
-    return _.isEqual(changePath.slice(0, m), valuePath.slice(0, m));
-  }
-
-
   function normalize (doc) {
     var locales = TheLocaleStore.getPrivateLocales();
     Normalizer.normalize(controller, doc.snapshot, contentType, locales);
@@ -426,43 +409,9 @@ function ($scope, require, entity, contentType) {
   function maybeMergeCompoundPatch (data) {
     if (Array.isArray(data) && data.length > 1) {
       var paths = data.map(_.property('p'));
-      return [{p: findCommonPrefix(paths)}];
+      return [{p: PathUtils.findCommonPrefix(paths)}];
     } else {
       return data;
     }
-  }
-
-  /**
-   * Given an array of paths (each of which is an array)
-   * returns an array with the longest shared prefix
-   * (that is: subarray) of those arrays (that is: paths).
-   *
-   * ~~~
-   * findCommonPrefix([['a'], ['a', 'b']]) // => ['a']
-   * findCommonPrefix([['a', 'b'], ['a', 'b', 'c']]) // => ['a', b']
-   * findCommonPrefix([['a'], ['b']]) // => []
-   */
-  function findCommonPrefix (paths) {
-    var minLength = _.min(paths.map(_.property('length'))) || 0;
-    var result = [];
-
-    paths = paths.map(function (path) {
-      return path.slice(0, minLength);
-    });
-
-    for (var i = 0; i < minLength; i += 1) {
-      var first = paths[0][i];
-      var allEqual = _.every(paths, function (path) {
-        return path[i] === first;
-      });
-
-      if (allEqual) {
-        result.push(first);
-      } else {
-        break;
-      }
-    }
-
-    return result;
   }
 }]);
