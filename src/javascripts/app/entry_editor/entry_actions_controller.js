@@ -22,7 +22,7 @@ angular.module('contentful')
 
     return $scope.spaceContext.space.createEntry(contentType, data)
     .then(function(entry){
-      $state.go('spaces.detail.entries.detail', { entryId: entry.getId(), addToContext: true });
+      $state.go('spaces.detail.entries.detail', { entryId: entry.getId(), createdFromActionsMenu: true });
     })
     .catch(notify.duplicateFail);
   }, {
@@ -53,7 +53,7 @@ angular.module('contentful')
       // anythings if the state has changed in the meantime
       $state.go('spaces.detail.entries.detail', {
         entryId: entry.getId(),
-        addToContext: true
+        createdFromActionsMenu: true
       });
     });
     // TODO error handler
