@@ -28,7 +28,7 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
       TOP_STATE: 'topState'
     },
     appSection: {
-      ContentType: 'contentModel',
+      ContentTypes: 'contentModel',
       Entries: 'content',
       Assets: 'media',
       CDAKeys: 'apis.cda',
@@ -53,14 +53,15 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
 
       $el.on('click', ancestorBtnSelector, toggleAncestorList);
 
-      $el.on('click', ancestorLinkSelector, trackAncestorLinkClickAndToggleList);
+      $el.on('click', ancestorLinkSelector, handleAncestorLinkClick);
 
+      // using addEventListener as $el.on doesn't support capture mode handler
       document.addEventListener('click', closeAncestorListIfVisible, true);
 
       $scope.$on('$destroy', function () {
         $el.off('click', goBackToPreviousPage);
         $el.off('click', toggleAncestorList);
-        $el.off('click', toggleAncestorList);
+        $el.off('click', handleAncestorLinkClick);
         document.removeEventListener('click', closeAncestorListIfVisible, true);
       });
 
@@ -97,11 +98,15 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
         dismissHints();
       }
 
-      function trackAncestorLinkClickAndToggleList (e) {
+      function trackAncestorLinkClick (e) {
         var sref = $(e.target).attr('ui-sref');
-        var clickedOn = isTopState(sref) ? analyticsData.clickedOn.TOP_STATE : analyticsData.clickedOn.ANCESTOR;
+        var clickedOn = analyticsData.clickedOn[isTopState(sref) ? 'TOP_STATE' : 'ANCESTOR'];
 
         track(clickedOn);
+      }
+
+      function handleAncestorLinkClick (e) {
+        trackAncestorLinkClick(e);
         toggleAncestorList(e);
       }
 
