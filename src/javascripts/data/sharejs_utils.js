@@ -12,7 +12,8 @@ angular.module('cf.data')
 
   return {
     setDeep: setDeep,
-    peek: peek
+    peek: peek,
+    remove: remove
   };
 
 
@@ -29,8 +30,30 @@ angular.module('cf.data')
     try {
       return doc.getAt(path);
     } catch (e) {
-      return;
+      // Catch synchronous errors and just return undefined.
     }
+  }
+
+  /**
+   * @ngdoc method
+   * @name ShareJS#remove
+   * @description
+   * Remove the value at the given path in the doc
+   * @param {OtDoc} doc
+   * @param {Array<string>} path
+   * @return {Promise<void>}
+   */
+  function remove (doc, path) {
+    return $q.denodeify(function (cb) {
+      // We catch and ignore synchronous errors since they tell us
+      // that a value along the path does not exist. I.e. it has
+      // already been removed.
+      try {
+        doc.removeAt(path, cb);
+      } catch (e) {
+        cb();
+      }
+    });
   }
 
 
@@ -44,7 +67,9 @@ angular.module('cf.data')
    * intermediate containers.
    *
    * The function does not cause an update if the current value in
-   * the document equals the new value.
+   * the document equals the new value. Deep comparison is used.
+   *
+   * If the new value is undefined, the value is removed.
    *
    * @param {OtDoc} doc
    * @param {Array<string>} path
@@ -59,9 +84,11 @@ angular.module('cf.data')
       throw new TypeError('No path provided');
     }
 
-    var current = peek(doc, path);
-    if (value === current) {
-      return $q.resolve();
+    if (_.isEqual(value, peek(doc, path))) {
+      return $q.resolve(value);
+    }
+    if (value === undefined) {
+      return remove(doc, path);
     }
 
     return $q.denodeify(function (callback) {
