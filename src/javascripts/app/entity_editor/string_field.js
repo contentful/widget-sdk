@@ -26,8 +26,12 @@ angular.module('cf.app')
 
     if (!isValidStringFieldValue(newValue)) {
       return $q.reject(new Error('Invalid string field value.'));
-    } else if (shouldSkipStringChange(oldValue, newValue)) {
-      return $q.resolve(oldValue);
+    } else if (newValue === '') {
+      if (oldValue === undefined) {
+        return $q.resolve(oldValue);
+      } else {
+        return ShareJS.setDeep(doc, path, null);
+      }
     } else if (shouldPatchString(oldValue, newValue)) {
       return patchStringAt(doc, path, oldValue, newValue);
     } else {
@@ -37,12 +41,6 @@ angular.module('cf.app')
 
   function isValidStringFieldValue (newValue) {
     return _.isNil(newValue) || _.isString(newValue);
-  }
-
-  function shouldSkipStringChange (oldValue, newValue) {
-    // @todo experiment: do not store empty strings
-    // if value is not set (undefined)
-    return oldValue === undefined && newValue === '';
   }
 
   function shouldPatchString (oldValue, newValue) {

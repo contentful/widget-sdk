@@ -96,14 +96,19 @@ describe('entityEditor/Document/StringField', function () {
         this.assertNoSet();
       });
 
-      it('cur: null, next: empty -> set empty', function () {
+      it('cur: null, next: empty -> set null', function () {
         this.init(null, '');
-        this.assertSet('');
+        this.assertSet(null);
       });
 
-      it('cur: empty, next: empty -> set empty', function () {
+      it('cur: empty, next: empty -> set null', function () {
         this.init('', '');
-        this.assertSet('');
+        this.assertSet(null);
+      });
+
+      it('cur: string, next: empty -> set null', function () {
+        this.init('abc', '');
+        this.assertSet(null);
       });
     });
 
@@ -150,13 +155,6 @@ describe('entityEditor/Document/StringField', function () {
         this.assertSubmit = (ops) => {
           sinon.assert.calledOnce(this.submitOp.withArgs(ops));
         };
-      });
-
-      it('cur: string, next: empty -> delete patch', function () {
-        this.init('abc', '');
-        this.assertSubmit([
-          {p: this.path.concat([0]), sd: 'abc'}
-        ]);
       });
 
       it('cur: empty, next: string -> insert patch', function () {
