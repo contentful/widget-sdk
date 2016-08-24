@@ -12,10 +12,10 @@
  * logic. These are NOT intended to be used on their own.
  */
 angular.module('contentful')
-.factory('TheStore', ['$injector', function($injector) {
+.factory('TheStore', ['$injector', function ($injector) {
 
   var localStorageStore = $injector.get('TheStore/localStorageStore');
-  var cookieStore       = $injector.get('TheStore/cookieStore');
+  var cookieStore = $injector.get('TheStore/cookieStore');
 
   var storage = localStorageStore.isSupported() ? localStorageStore : cookieStore;
 
@@ -24,7 +24,7 @@ angular.module('contentful')
     get: get,
     remove: remove,
     has: has,
-    forKey: forKey,
+    forKey: forKey
   };
 
   /**
@@ -35,7 +35,7 @@ angular.module('contentful')
    * @description
    * Stores the value under the key. Replaces current value, if already set.
    */
-  function set(key, value) {
+  function set (key, value) {
     value = _.isString(value) ? value : JSON.stringify(value);
     storage.set(key, value);
   }
@@ -48,7 +48,7 @@ angular.module('contentful')
    * @description
    * Gets the value under the key. Returns null when value is not set.
    */
-  function get(key) {
+  function get (key) {
     var value = storage.get(key) || 'null';
     try {
       return JSON.parse(value);
@@ -64,7 +64,7 @@ angular.module('contentful')
    * @description
    * Removes the values stored under the given key. Silent for non-existent keys.
    */
-  function remove(key) {
+  function remove (key) {
     storage.remove(key);
   }
 
@@ -76,7 +76,7 @@ angular.module('contentful')
    * @description
    * Returns boolean indicating value presence under the given key.
    */
-  function has(key) {
+  function has (key) {
     return get(key) !== null;
   }
 
@@ -106,7 +106,7 @@ angular.module('contentful')
   }
 }])
 
-.factory('TheStore/localStorageStore', ['$injector', function($injector) {
+.factory('TheStore/localStorageStore', ['$injector', function ($injector) {
 
   var storage = $injector.get('TheStore/localStorageWrapper');
 
@@ -117,19 +117,19 @@ angular.module('contentful')
     isSupported: isSupported
   };
 
-  function set(key, value) {
+  function set (key, value) {
     storage.setItem(key, value);
   }
 
-  function get(key) {
+  function get (key) {
     return storage.getItem(key);
   }
 
-  function remove(key) {
+  function remove (key) {
     storage.removeItem(key);
   }
 
-  function isSupported() {
+  function isSupported () {
     try {
       set('test', { test: true });
       remove('test');
@@ -140,13 +140,13 @@ angular.module('contentful')
   }
 }])
 
-.factory('TheStore/localStorageWrapper', function() {
+.factory('TheStore/localStorageWrapper', function () {
 
   var wrapper = {};
   var methods = ['setItem', 'getItem', 'removeItem'];
 
-  _.forEach(methods, function(method) {
-    wrapper[method] = function() {
+  _.forEach(methods, function (method) {
+    wrapper[method] = function () {
       var args = Array.prototype.slice.call(arguments);
       return window.localStorage[method].apply(window.localStorage, args);
     };
@@ -155,10 +155,10 @@ angular.module('contentful')
   return wrapper;
 })
 
-.factory('TheStore/cookieStore', ['$injector', function($injector) {
+.factory('TheStore/cookieStore', ['$injector', function ($injector) {
 
   var Cookies = $injector.get('Cookies');
-  var config  = $injector.get('environment');
+  var config = $injector.get('environment');
 
   return {
     set: set,
@@ -166,20 +166,20 @@ angular.module('contentful')
     remove: remove
   };
 
-  function set(key, value) {
+  function set (key, value) {
     var attrs = _.extend({ expires: 365 }, _getBaseAttrs());
     Cookies.set(key, value, attrs);
   }
 
-  function get(key) {
+  function get (key) {
     return Cookies.get(key);
   }
 
-  function remove(key) {
+  function remove (key) {
     Cookies.remove(key, _getBaseAttrs());
   }
 
-  function _getBaseAttrs() {
+  function _getBaseAttrs () {
     return { secure: config.env !== 'development' };
   }
 }]);
