@@ -52,26 +52,19 @@ angular.module('cf.app')
    * findCommonPrefix([['a', 'b'], ['a', 'b', 'c']]) // => ['a', b']
    */
   function findCommonPrefix (paths) {
-    var minLength = _.min(paths.map(_.property('length'))) || 0;
-    var result = [];
-
-    paths = paths.map(function (path) {
-      return path.slice(0, minLength);
-    });
-
-    for (var i = 0; i < minLength; i += 1) {
-      var first = paths[0][i];
-      var allEqual = _.every(paths, function (path) {
-        return path[i] === first;
-      });
-
-      if (allEqual) {
-        result.push(first);
-      } else {
-        break;
+    return _(paths)
+    .flatten()
+    .sortBy()
+    .chunk(paths.length)
+    .map(function (chunk) {
+      if (chunk.length === paths.length) {
+        var uniq = _.sortedUniq(chunk);
+        if (uniq.length === 1) {
+          return uniq[0];
+        }
       }
-    }
-
-    return result;
+    })
+    .compact()
+    .value();
   }
 }]);
