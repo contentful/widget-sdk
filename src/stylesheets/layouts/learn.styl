@@ -1,5 +1,8 @@
 $learn-content-box()
   position: relative
+  display: flex
+  flex-direction: column
+  justify-content: space-between
   width: 31%
   text-align: center
   border: 1px solid $colors.element-mid
@@ -12,10 +15,11 @@ $learn-content-box()
     margin-left: -25px
     width: 50px
     background: white
-    top: -17px
+    top: 0
     > cf-icon
+      background: white
       display: inline-block
-      margin: 0 auto
+      margin: -50% auto 0
 
 .workbench-main__middle-content.x--learn-home
   width: 85%
@@ -32,6 +36,12 @@ $learn-content-box()
   margin-bottom: 50px
 
 .learn-onboarding
+  &__note
+    margin: 0 0 $rhythm(2) 0
+  &__completion
+    font-weight: normal
+    color: $colors.orange-dark
+    margin-left: 4px
   &__steps
     display: flex
     margin-top: 50px
@@ -41,24 +51,25 @@ $learn-content-box()
       &:after
         content: ''
         position: absolute
-        top: -20px
+        top: -24px
         bottom: -1px
         left: -1px
         right: -1px
         background-color: rgba(255,255,255,0.6)
     .step
-      &__title
-        display: inline-block
-        &__inner
-          display: flex
-          > cf-icon[name="checkmark-alt"]
-            margin-right: 4px
       &__description
         color: $colors.text-mid
         line-height: 1.4em
-        margin-bottom: 64px
+        margin-bottom: $rhythm(1)
       &__actions
-        position: absolute
-        left: 0
-        right:0
-        bottom: 24px
+        &__completed
+          font-weight: bold
+          color: $colors.green-darkest
+          display: flex
+          justify-content: center
+          margin-bottom: $rhythm(0.5)
+          > cf-icon
+            margin-right: 4px
+        &__link
+          color: $colors.text-light
+          text-decoration: underline
