@@ -42,9 +42,14 @@ angular.module('contentful')
       // update char count whenever input value changes
       scope.$watch(function () {
         return $inputEl.val();
-      }, function (val) {
+      }, function (val, prev) {
         updateCharCount(val);
-        field.setValue(val);
+
+        // do not emit initial value
+        // @todo maybe handle it in `setValue`
+        if (val !== prev) {
+          field.setValue(val);
+        }
       });
 
       $inputEl.on('input change', debounce(scope.$apply.bind(scope), 200));

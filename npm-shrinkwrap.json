@@ -20,7 +20,7 @@
       }
     },
     "@contentful/validation": {
-      "version": "5.15.0"
+      "version": "6.1.0"
     },
     "@contentful/widget-map": {
       "version": "1.0.1"

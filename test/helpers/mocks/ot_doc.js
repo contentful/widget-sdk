@@ -98,6 +98,13 @@ angular.module('contentful/mocks')
     }
   };
 
+  OtDoc.prototype.removeAt = function (path, cb) {
+    dotty.put(this.snapshot, path, undefined);
+    if (cb) {
+      cb();
+    }
+  };
+
   OtDoc.prototype.insert = function (index, value, cb) {
     var valAsArray = this.get().split('');
     valAsArray.splice(index, 0, value);
@@ -123,6 +130,7 @@ angular.module('contentful/mocks')
   sinon.spy(OtDoc.prototype, 'insert');
   sinon.spy(OtDoc.prototype, 'del');
   sinon.spy(OtDoc.prototype, 'remove');
+  sinon.spy(OtDoc.prototype, 'removeAt');
   sinon.spy(OtDoc.prototype, 'set');
   sinon.spy(OtDoc.prototype, 'submitOp');
 

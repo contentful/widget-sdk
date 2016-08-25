@@ -21,25 +21,21 @@ angular.module('cf.app')
  * @property {Document.State} state
  */
 .controller('entityEditor/Document',
-['$scope', '$injector', 'entity', 'contentType',
-function ($scope, $injector, entity, contentType) {
-  var $q = $injector.get('$q');
-  var ShareJS = $injector.get('data/ShareJS/Utils');
-  var logger = $injector.get('logger');
-  var moment = $injector.get('moment');
-  var TheLocaleStore = $injector.get('TheLocaleStore');
-  var K = $injector.get('utils/kefir');
+['$scope', 'require', 'entity', 'contentType',
+function ($scope, require, entity, contentType) {
+  var $q = require('$q');
+  var ShareJS = require('data/ShareJS/Utils');
+  var logger = require('logger');
+  var moment = require('moment');
+  var TheLocaleStore = require('TheLocaleStore');
+  var K = require('utils/kefir');
   var controller = this;
-  var diff = $injector.get('utils/StringDiff').diff;
-  var Normalizer = $injector.get('data/documentNormalizer');
-  var spaceContext = $injector.get('spaceContext');
+  var Normalizer = require('data/documentNormalizer');
+  var spaceContext = require('spaceContext');
   var docConnection = spaceContext.docConnection;
-  var PresenceHub = $injector.get('entityEditor/Document/PresenceHub');
-
-  // Field types that should use `setDocumentStringAt()` to set
-  // a value using a string diff.
-  var STRING_FIELD_TYPES = ['Symbol', 'Text'];
-  var memoizedIsStringField = _.memoize(isStringField);
+  var PresenceHub = require('entityEditor/Document/PresenceHub');
+  var StringField = require('entityEditor/Document/StringField');
+  var PathUtils = require('entityEditor/Document/PathUtils');
 
   // Set to true if scope is destroyed to cancel the handler for the
   // document open promise.
@@ -166,7 +162,7 @@ function ($scope, $injector, entity, contentType) {
 
   function valuePropertyAt (valuePath) {
     return changes.filter(function (changePath) {
-      return pathAffects(changePath, valuePath);
+      return PathUtils.isAffecting(changePath, valuePath);
     })
     .toProperty(_.constant(undefined))
     .map(function () {
@@ -247,113 +243,17 @@ function ($scope, $injector, entity, contentType) {
 
   function setValueAt (path, value) {
     return withRawDoc(function (doc) {
-      if (memoizedIsStringField(path[1])) {
-        return setDocumentStringAt(doc, path, value);
+      if (StringField.is(path[1], contentType)) {
+        return StringField.setAt(doc, path, value);
       } else {
-        return setDocumentValueAt(doc, path, value);
+        return ShareJS.setDeep(doc, path, value);
       }
     });
-  }
-
-  function setDocumentValueAt (doc, path, value) {
-    if (value === undefined) {
-      return removeValueAt(path);
-    }
-    // We only test for equality when the value is guaranteed to be
-    // equal. Other wise the some properties might have changed.
-    if (!_.isObject(value) && value === getValueAt(path)) {
-      return $q.resolve(value);
-    } else {
-      return ShareJS.setDeep(doc, path, value);
-    }
-  }
-
-  function setDocumentStringAt (doc, path, newValue) {
-    var oldValue = getValueAt(path);
-
-    if (isValidStringFieldValue(newValue)) {
-      return $q.reject(new Error('Invalid string field value.'));
-    } else if (shouldSkipStringChange(oldValue, newValue)) {
-      return $q.resolve(oldValue);
-    } else if (shouldPatchString(oldValue, newValue)) {
-      return patchStringAt(doc, path, oldValue, newValue);
-    } else {
-      return setDocumentValueAt(doc, path, newValue);
-    }
-  }
-
-  function isValidStringFieldValue (newValue) {
-    return !_.isNil(newValue) && !_.isString(newValue);
-  }
-
-  function shouldSkipStringChange (oldValue, newValue) {
-    // @todo experiment: do not store empty strings
-    // if value is not set (undefined)
-    return oldValue === undefined && newValue === '';
-  }
-
-  function shouldPatchString (oldValue, newValue) {
-    return _.isString(oldValue) && _.isString(newValue) && oldValue !== newValue;
-  }
-
-  function patchStringAt (doc, path, oldValue, newValue) {
-    var patches = diff(oldValue, newValue);
-
-    /**
-     * `diff` returns patches in the right order:
-     * delete first, then insert (if both ops are needed).
-     *
-     * Patch is an object with properties:
-     * - patch.delete[0] / patch.insert[0] is the start
-     *   position of the operation
-     * - patch.delete[1] is the number of characters that
-     *   should be removed starting from the start pos.
-     * - patch.insert[1] is the string to be inserted
-     *   at the start position
-     */
-    var ops = patches.map(function (patch) {
-      if (patch.delete) {
-        return deleteOp(path, oldValue, patch);
-      } else if (patch.insert) {
-        return insertOp(path, patch);
-      }
-    });
-
-    return $q.denodeify(function (cb) {
-      // When patching - do it atomically
-      return doc.submitOp(_.filter(ops), cb);
-    });
-  }
-
-  function deleteOp (path, value, patch) {
-    var pos = patch.delete[0];
-    var len = patch.delete[1];
-
-    return {
-      p: path.concat(pos),
-      sd: value.slice(pos, pos + len)
-    };
-  }
-
-  function insertOp (path, patch) {
-    return {
-      p: path.concat(patch.insert[0]),
-      si: patch.insert[1]
-    };
   }
 
   function removeValueAt (path) {
     return withRawDoc(function (doc) {
-      return $q.denodeify(function (cb) {
-        // We catch and ignore synchronous errors since they tell us
-        // that a value along the path does not exist. I.e. it has
-        // already been removed.
-        try {
-          doc.removeAt(path, cb);
-        } catch (e) {
-          cb();
-        }
-      });
+      return ShareJS.remove(doc, path);
     });
   }
 
@@ -501,77 +401,17 @@ function ($scope, $injector, entity, contentType) {
     }
   }
 
-  /**
-   * Returns true if a change to the value at 'changePath' in an object
-   * affects the value of 'valuePath'.
-   *
-   * ~~~
-   * pathAffects(['a'], ['a', 'b']) // => true
-   * pathAffects(['a', 'b'], ['a', 'b']) // => true
-   * pathAffects(['a', 'b', 'x'], ['a', 'b']) // => true
-   *
-   * pathAffects(['x'], ['a', 'b']) // => false
-   * pathAffects(['a', 'x'], ['a', 'b']) // => false
-   */
-  function pathAffects (changePath, valuePath) {
-    var m = Math.min(changePath.length, valuePath.length);
-    return _.isEqual(changePath.slice(0, m), valuePath.slice(0, m));
-  }
-
-
   function normalize (doc) {
     var locales = TheLocaleStore.getPrivateLocales();
     Normalizer.normalize(controller, doc.snapshot, contentType, locales);
   }
 
-  function isStringField (fieldId) {
-    var field = _.find(dotty.get(contentType, 'data.fields', []), function (field) {
-      return field.id === fieldId;
-    });
-
-    return _.includes(STRING_FIELD_TYPES, field && field.type);
-  }
-
   function maybeMergeCompoundPatch (data) {
     if (Array.isArray(data) && data.length > 1) {
       var paths = data.map(_.property('p'));
-      return [{p: findCommonPrefix(paths)}];
+      return [{p: PathUtils.findCommonPrefix(paths)}];
     } else {
       return data;
     }
-  }
-
-  /**
-   * Given an array of paths (each of which is an array)
-   * returns an array with the longest shared prefix
-   * (that is: subarray) of those arrays (that is: paths).
-   *
-   * ~~~
-   * findCommonPrefix([['a'], ['a', 'b']]) // => ['a']
-   * findCommonPrefix([['a', 'b'], ['a', 'b', 'c']]) // => ['a', b']
-   * findCommonPrefix([['a'], ['b']]) // => []
-   */
-  function findCommonPrefix (paths) {
-    var minLength = _.min(paths.map(_.property('length'))) || 0;
-    var result = [];
-
-    paths = paths.map(function (path) {
-      return path.slice(0, minLength);
-    });
-
-    for (var i = 0; i < minLength; i += 1) {
-      var first = paths[0][i];
-      var allEqual = _.every(paths, function (path) {
-        return path[i] === first;
-      });
-
-      if (allEqual) {
-        result.push(first);
-      } else {
-        break;
-      }
-    }
-
-    return result;
   }
 }]);
