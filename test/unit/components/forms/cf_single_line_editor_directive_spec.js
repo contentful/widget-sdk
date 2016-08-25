@@ -38,9 +38,9 @@ describe('cfSingleLineEditor directive', function () {
   });
 
   it('input event on text field calls changeString', function () {
-    var $el = this.compileElement();
-
-    $el.children('input').trigger('input', 'what');
+    var $input = this.compileElement().children('input');
+    $input.val('what'); // set the value
+    $input.trigger('input'); // trigger "input" event
     sinon.assert.calledOnce(this.setValue);
   });
 

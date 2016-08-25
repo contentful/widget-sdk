@@ -8,6 +8,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
   var actions = $injector.get('MarkdownEditor/actions');
   var startLivePreview = $injector.get('MarkdownEditor/preview');
   var notification = $injector.get('notification');
+  var throttle = $injector.get('throttle');
 
   return {
     restrict: 'E',
@@ -58,7 +59,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         scope.history = editor.history;
 
         var stopPreview = startLivePreview(field.getValue, updatePreview);
-        editor.events.onChange(field.setValue);
+        editor.events.onChange(throttle(handleEditorChange, 200, {leading: false}));
 
         var detachValueHandler = field.onValueChanged(handleFieldChange);
         var detachStateHandler = field.onDisabledStatusChanged(handleStateChange);
@@ -69,6 +70,14 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         scope.$on('$destroy', editor.destroy);
         scope.$on('$destroy', detachValueHandler);
         scope.$on('$destroy', detachStateHandler);
+      }
+
+      function handleEditorChange (value) {
+        // do not emit initial value
+        // @todo maybe handle it in `setValue`
+        if (value !== field.getValue()) {
+          field.setValue(value);
+        }
       }
 
       function handleFieldChange (value) {
