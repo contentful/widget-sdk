@@ -319,7 +319,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
         function createConfig (ct, token) {
           return {
             contentType: ct.sys.id,
-            url: baseUrl + ct.sys.id + '/?space_id=' + spaceId + '&access_token=' + token,
+            url: baseUrl + ct.sys.id + '/{entry_id}/?space_id=' + spaceId + '&access_token=' + token,
             enabled: true,
             example: true
           };
