@@ -20,31 +20,53 @@ angular.module('contentful')
     dateRange: {after: null, before: null},
     regexp: {pattern: null, flags: null},
     in: null,
+    unique: null,
     linkContentType: null,
     linkMimetypeGroup: null,
     assetFileSize: {min: null, max: null},
-    assetImageDimensions: { width:  {min: null, max: null},
-                            height: {min: null, max: null}}
+    assetImageDimensions: {
+      width: { min: null, max: null },
+      height: {min: null, max: null}
+    }
   };
 
   var validationLabels = {
     size: {
-      Text:   'Specify number of characters',
-      Symbol: 'Specify number of characters',
-      Object: 'Specify number of properties'
+      Text: 'Limit character count',
+      Symbol: 'Limit character count',
+      Object: 'Limit number of properties'
     },
-    range: 'Specify allowed number range',
-    dateRange: 'Specify allowed date range',
+    range: 'Accept only specified number range',
+    dateRange: 'Accept only specified date range',
     regexp: 'Match a specific pattern',
-    in: 'Predefined values',
-    linkContentType: 'Specify allowed entry type',
-    linkMimetypeGroup: 'Specify allowed file types',
-    assetFileSize: 'Specify allowed file size',
-    assetImageDimensions: 'Specify image dimensions'
+    unique: 'Unique field',
+    in: 'Accept only specified values',
+    linkContentType: 'Accept only specified entry type',
+    linkMimetypeGroup: 'Accept only specified file types',
+    assetFileSize: 'Accept only specified file size',
+    assetImageDimensions: 'Accept only specified image dimensions'
+  };
+
+  var validationHelpText = {
+    size: {
+      Text: 'Specify minimum or maximum number of characters: for example, a title should be 20-40 characters long',
+      Symbol: 'Specify minimum or maximum number of characters: for example, a title should be 20-40 characters long',
+      Object: 'Specify minimum or maximum number of properties: for example, a Person should contain only 3 properties'
+    },
+    range: 'Needs hint text',
+    dateRange: 'Needs hint text',
+    regexp: 'Make this field match a pattern: e-mail address, URI, or a custom regular expression',
+    unique: 'You won\'t be able to publish an entry if there is an existing entry with with identical content',
+    in: 'You won\'t be able to publish an entry if the field value is not in the list of specified values',
+    linkContentType: 'Needs hint text',
+    linkMimetypeGroup: 'Needs hint text',
+    assetFileSize: 'Needs hint text',
+    assetImageDimensions: 'Needs hint text'
   };
 
 
   var validationsOrder = [
+    'unique',
     'size',
     'range',
     'dateRange',
@@ -75,8 +97,11 @@ angular.module('contentful')
     var types = _.filter(validationTypesForField(field), function (t) {
       return t in validationSettings;
     });
+    console.log(types)
+
     var fieldValidations = _.map(types, validationDecorator(field));
 
+    console.log(fieldValidations)
     if (field.items) {
       var itemValidations = decorateFieldValidations(field.items);
       _.each(itemValidations, function (v) {
@@ -84,6 +109,7 @@ angular.module('contentful')
       });
       fieldValidations = itemValidations.concat(fieldValidations);
     }
+    console.log(fieldValidations)
 
     return _.sortBy(fieldValidations, function(validation) {
       return validationsOrder.indexOf(validation.type);
@@ -109,9 +135,11 @@ angular.module('contentful')
       var name = getValidationLabel(field, type);
       var views = validationViews.get(type);
       var currentView = views && views[0].name;
+      var helpText = getValidationStringForType(validationHelpText, field, type);
 
       return {
         name: name,
+        helpText: helpText,
         type: type,
         onItems: false,
         enabled: enabled,
@@ -202,19 +230,24 @@ angular.module('contentful')
     });
   }
 
-
   function getValidationLabel(field, type) {
     if (field.type == 'Array' && type == 'size') {
       var itemType = field.items.type == 'Link' ? field.items.linkType : field.items.type;
-      return 'Specify number of ' + pluralize(itemType.toLowerCase());
+      return 'Accept only a specified number of ' + pluralize(itemType.toLowerCase());
     }
 
-    var label = validationLabels[type];
-    if (!label)
+    return getValidationStringForType(validationLabels, field, type);
+  }
+
+  function getValidationStringForType (object, field, type) {
+    var label = object[type];
+
+    if (!label) {
       return type;
-    if (typeof label == 'string')
+    } else if (typeof label === 'string') {
       return label;
-    else
+    } else {
       return label[field.type];
+    }
   }
 }]);

@@ -39,7 +39,9 @@
               label.validation-settings__toggle
                 span.validation-settings__toggle-input-wrapper
                   input(type="checkbox" ng-model="decoratedField.required")
-                span This field is required
+                span Required field
+                p.validation-settings__help-text
+                  | You won't be able to publish an entry if this field is empty
 
           li(ng-repeat="validation in validations"
              aria-label="{{validation.name}}")
