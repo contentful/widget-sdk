@@ -20,7 +20,7 @@ angular.module('contentful')
     dateRange: {after: null, before: null},
     regexp: {pattern: null, flags: null},
     in: null,
-    unique: null,
+    unique: true,
     linkContentType: null,
     linkMimetypeGroup: null,
     assetFileSize: {min: null, max: null},
@@ -97,11 +97,9 @@ angular.module('contentful')
     var types = _.filter(validationTypesForField(field), function (t) {
       return t in validationSettings;
     });
-    console.log(types)
 
     var fieldValidations = _.map(types, validationDecorator(field));
 
-    console.log(fieldValidations)
     if (field.items) {
       var itemValidations = decorateFieldValidations(field.items);
       _.each(itemValidations, function (v) {
@@ -109,7 +107,7 @@ angular.module('contentful')
       });
       fieldValidations = itemValidations.concat(fieldValidations);
     }
-    console.log(fieldValidations)
+    console.log('here', fieldValidations)
 
     return _.sortBy(fieldValidations, function(validation) {
       return validationsOrder.indexOf(validation.type);
@@ -121,7 +119,7 @@ angular.module('contentful')
       var fieldValidation = findValidationByType(field.validations, type);
 
       var settings, enabled, message;
-
+      console.log('in decorator', fieldValidation)
       if (fieldValidation) {
         enabled = true;
         settings = fieldValidation[type];
