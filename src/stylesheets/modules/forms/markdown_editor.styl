@@ -1,8 +1,9 @@
+$editor-max-height = 300px
 $markdown-radius = 2px
 
 .markdown-tabs
   position: relative
-  z-index: 0
+  z-index: 10
   overflow: hidden
   margin-bottom: -1px
 
@@ -27,7 +28,7 @@ $markdown-radius = 2px
 
 .markdown-toolbar
   position: relative
-  z-index: 0
+  z-index: 5
   border: 1px solid $colors.element-dark
   background-color: $colors.element-lightest
   padding: 9px 7px 7px
@@ -86,18 +87,15 @@ $markdown-radius = 2px
 .markdown-areas
   border: 1px solid $colors.element-dark
   border-width: 0 1px
-  max-height: 300px
-  overflow-y: scroll
-  position: relative
-  z-index: 0
+  overflow-y: auto
 
 .markdown-editing-area
-
   textarea
     height: 1px
 
   .CodeMirror
     line-height: 1.5
+    max-height: $editor-max-height
   .CodeMirror-lines
     color: $colors.text-mid
     padding: 20px
@@ -138,6 +136,7 @@ $markdown-radius = 2px
   word-wrap: break-word
   overflow-wrap: break-word
   height: 100%
+  max-height: $editor-max-height
 
 .markdown-preview-crashed
   text-align: center
@@ -300,6 +299,10 @@ $markdown-radius = 2px
   .markdown-preview-mounting-point
     max-width: 640px
     margin: 0 auto
+  .markdown-preview
+    max-height: none
+  .CodeMirror
+    max-height: none
 
 .zenmode-logo
   z-index: 104
