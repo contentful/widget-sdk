@@ -30,7 +30,7 @@ angular.module('cf.app')
       if (oldValue === undefined) {
         return $q.resolve(oldValue);
       } else {
-        return ShareJS.setDeep(doc, path, null);
+        return ShareJS.setDeep(doc, path, undefined);
       }
     } else if (shouldPatchString(oldValue, newValue)) {
       return patchStringAt(doc, path, oldValue, newValue);
