@@ -58,15 +58,20 @@ describe('Locale editor controller', function () {
       getVersion: sinon.stub()
     };
 
-    this.scope.spaceLocales = [
-      {getName: _.constant('Polish'), getCode: _.constant('pl-PL'), data: {name: 'Polish', code: 'pl-PL'}},
-      {getName: _.constant('German'), getCode: _.constant('de-DE'), data: {name: 'German', code: 'de-DE'}}
-    ];
+    this.scope.spaceLocales = [locale('pl-PL', 'Polish'), locale('de-DE', 'German')];
 
     var $controller = this.$inject('$controller');
     this.controller = $controller('LocaleEditorController', {$scope: this.scope});
     this.$apply();
   });
+
+  function locale (code, name, fallbackCode, ext) {
+    return _.merge({
+      getName: _.constant(name),
+      getCode: _.constant(code),
+      data: {name, code, fallbackCode, contentDeliveryApi: true}
+    }, ext || {});
+  }
 
   it('sets a locale on the scope', function () {
     expect(this.scope.locale).toBeDefined();
@@ -84,6 +89,17 @@ describe('Locale editor controller', function () {
     expect(this.scope.context.dirty).toBeTruthy();
   });
 
+  it('checks for dependant locales', function () {
+    expect(this.scope.hasDependantLocales).toBe(false);
+
+    this.scope.locale.data.code = 'pl-PL';
+    this.scope.spaceLocales.push(locale('fr-FR', 'French', 'pl-PL'));
+    var $controller = this.$inject('$controller');
+    $controller('LocaleEditorController', {$scope: this.scope});
+    this.$apply();
+    expect(this.scope.hasDependantLocales).toBe(true);
+  });
+
   describe('changing locale code', function () {
     it('resets fallback if used as locale code', function () {
       this.scope.locale.data.fallbackCode = 'de-DE';
@@ -93,6 +109,8 @@ describe('Locale editor controller', function () {
     });
 
     it('sets available fallback locales', function () {
+      const noDelivery = locale('fr-FR', 'French', null, {data: {contentDeliveryApi: false}});
+      this.scope.spaceLocales.push(noDelivery);
       this.scope.locale.getCode.returns('de-DE');
       this.$apply();
       expect(this.scope.fallbackLocales).toEqual([
@@ -153,9 +171,9 @@ describe('Locale editor controller', function () {
       this.$q = this.$inject('$q');
       this.scope.locale.data.code = 'de-DE';
       this.scope.spaceLocales = [
-        {data: {fallbackCode: null, name: 'English', code: 'en-US'}, save: this.$q.resolve()},
-        {data: {fallbackCode: 'en-US', name: 'German', code: 'de-DE'}, save: this.$q.resolve()},
-        {data: {fallbackCode: 'de-DE', name: 'French', code: 'fr-FR'}, save: sinon.stub().resolves()}
+        locale('en-US', 'English', null, {save: this.$q.resolve()}),
+        locale('de-DE', 'German', 'en-US', {save: this.$q.resolve()}),
+        locale('fr-FR', 'German', 'de-DE', {save: sinon.stub().resolves()})
       ];
       this.modalDialog.openConfirmDialog.resolves({confirmed: true});
       this.modalDialog.open.returns({
@@ -279,6 +297,10 @@ describe('Locale editor controller', function () {
         it('sets form back to pristine state', function () {
           sinon.assert.called(this.scope.localeForm.$setPristine);
         });
+
+        it('updates initial code', function () {
+          expect(this.scope.initialLocaleCode).toBe('en-UK');
+        });
       });
 
       describe('with no confirmation', function () {
@@ -288,7 +310,7 @@ describe('Locale editor controller', function () {
           this.$apply();
         });
 
-        it('saves locale', function () {
+        it('does not save locale', function () {
           sinon.assert.notCalled(this.scope.locale.save);
         });
 

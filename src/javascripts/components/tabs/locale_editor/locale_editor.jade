@@ -49,7 +49,7 @@ header.workbench-header
       h1.locale-editor__group-title Locale settings
       .locale-editor__group
         .cfnext-form-option
-          input(id="cda" type="checkbox" ng-model="locale.data.contentDeliveryApi" ng-disabled="locale.data.default")
+          input(id="cda" type="checkbox" ng-model="locale.data.contentDeliveryApi" ng-disabled="locale.data.default || hasDependantLocales")
           div.cfnext-form-option__desc
             label(for="cda") Enable this locale in response
             p Includes locale in the Delivery API response

@@ -36,7 +36,7 @@ describe('Locale Editor Directive', function () {
 
   function locale (code) {
     return {
-      data: {code: code},
+      data: {code: code, contentDeliveryApi: true},
       getName: sinon.stub().returns('name for ' + code),
       getCode: _.constant(code)
     };

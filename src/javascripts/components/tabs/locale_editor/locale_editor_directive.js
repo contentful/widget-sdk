@@ -44,7 +44,6 @@ angular.module('contentful')
   var formWasDirty = false;
 
   $scope.locales = _.map(localesList, localeToListItem);
-  var spaceLocalesList = _.map($scope.spaceLocales, localeToListItem);
   addCurrentLocaleToList();
   updateInitialLocaleCode();
 
@@ -75,14 +74,21 @@ angular.module('contentful')
   }
 
   function prepareFallbackList (code) {
-    $scope.fallbackLocales = _.filter(spaceLocalesList, function (item) {
-      return item.code !== code;
-    });
+    $scope.fallbackLocales = $scope.spaceLocales
+    .filter(canBeFallbackOf(code))
+    .map(localeToListItem);
+  }
+
+  function canBeFallbackOf (code) {
+    return function (locale) {
+      return locale.data.contentDeliveryApi && locale.data.code !== code;
+    };
   }
 
   function getDependantLocales (code) {
-    return _.filter($scope.spaceLocales, function (spaceLocale) {
-      var fallbackCode = spaceLocale.data.fallbackCode;
+    return $scope.spaceLocales
+    .filter(function (locale) {
+      var fallbackCode = locale.data.fallbackCode;
       return fallbackCode && fallbackCode === code;
     });
   }
@@ -204,7 +210,7 @@ angular.module('contentful')
   });
 
   function save () {
-    if (getDependantLocales($scope.initialLocaleCode).length > 0) {
+    if ($scope.hasDependantLocales && wasLocaleCodeChanged()) {
       notification.error(NOT_RENAMEABLE_MESSAGE);
       return $q.reject();
     }
@@ -259,13 +265,18 @@ angular.module('contentful')
   }
 
   function confirmCodeChange () {
-    if ($scope.initialLocaleCode && $scope.initialLocaleCode !== $scope.locale.data.code) {
+    if (wasLocaleCodeChanged()) {
       return modalDialog.openConfirmDialog({
         template: 'locale_code_change_confirm_dialog',
         scope: $scope
       });
+    } else {
+      return $q.resolve({confirmed: true});
     }
-    return $q.resolve({confirmed: true});
+  }
+
+  function wasLocaleCodeChanged () {
+    return $scope.initialLocaleCode && $scope.initialLocaleCode !== $scope.locale.data.code;
   }
 
   function findLocaleByCode (code) {
@@ -296,7 +307,9 @@ angular.module('contentful')
   }
 
   function updateInitialLocaleCode () {
-    $scope.initialLocaleCode = $scope.locale.data.code;
+    var code = $scope.locale.data.code;
+    $scope.initialLocaleCode = code;
+    $scope.hasDependantLocales = getDependantLocales(code).length > 0;
   }
 
   /**
