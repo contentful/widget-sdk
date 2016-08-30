@@ -25,7 +25,6 @@ angular.module('cf.app')
 function ($scope, require, entity, contentType) {
   var $q = require('$q');
   var ShareJS = require('data/ShareJS/Utils');
-  var logger = require('logger');
   var moment = require('moment');
   var TheLocaleStore = require('TheLocaleStore');
   var K = require('utils/kefir');
@@ -36,10 +35,8 @@ function ($scope, require, entity, contentType) {
   var PresenceHub = require('entityEditor/Document/PresenceHub');
   var StringField = require('entityEditor/Document/StringField');
   var PathUtils = require('entityEditor/Document/PathUtils');
-
-  // Set to true if scope is destroyed to cancel the handler for the
-  // document open promise.
-  var isDestroyed = false;
+  var DocLoad = require('data/ShareJS/Connection').DocLoad;
+  var caseof = require('libs/sum-types').caseof;
 
   var readOnlyBus = K.createPropertyBus(false, $scope);
 
@@ -201,16 +198,20 @@ function ($scope, require, entity, contentType) {
   });
 
 
-  // If the document connection state changes, this watcher is triggered
-  // Connection failures during editing are handled from this point onwards.
-  $scope.$watch(function () {
-    return shouldOpenDoc();
-  }, function (shouldOpen) {
-    if (shouldOpen) {
-      openDoc();
-    } else {
-      setDoc(undefined);
-    }
+  var docLoader = spaceContext.docConnection.getDocLoader(entity, readOnlyBus.property);
+  K.onValueScope($scope, docLoader.doc, function (doc) {
+    caseof(doc, [
+      [DocLoad.Doc, function (d) {
+        setDoc(d.doc);
+      }],
+      [DocLoad.None, function () {
+        setDoc(undefined);
+      }],
+      [DocLoad.Error, function () {
+        controller.state.error = true;
+        setDoc(undefined);
+      }]
+    ]);
   });
 
   K.onValueScope($scope, docConnection.errors, function () {
@@ -218,8 +219,8 @@ function ($scope, require, entity, contentType) {
   });
 
   $scope.$on('$destroy', function () {
-    isDestroyed = true;
     setDoc(undefined);
+    docLoader.destroy();
   });
 
   function shout (args) {
@@ -280,33 +281,6 @@ function ($scope, require, entity, contentType) {
     });
   }
 
-
-  function shouldOpenDoc () {
-    return spaceContext.docConnection.canOpen() && shouldOpen && !isDestroyed;
-  }
-
-  function openDoc () {
-    docConnection.open(entity)
-    .then(function (doc) {
-      // Check a second time if we have disconnected or the document
-      // has been disabled.
-      if (shouldOpenDoc()) {
-        setDoc(doc);
-      } else {
-        closeDoc(doc);
-        setDoc(undefined);
-      }
-    }, function (err) {
-      controller.state.error = true;
-      setDoc(undefined);
-      logger.logSharejsError('Failed to open sharejs doc', {
-        data: {
-          error: err,
-          entity: entity
-        }
-      });
-    });
-  }
 
   function closeDoc (doc) {
     presence.leave();

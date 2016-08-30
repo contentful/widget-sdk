@@ -1,16 +1,13 @@
 'use strict';
 
 describe('entityEditor/Document', function () {
-  var scope, K;
+  let scope, K, DocLoad;
 
   beforeEach(function () {
-    this.docConnection = {
-      open: sinon.stub(),
-      canOpen: sinon.stub()
-    };
+    const spaceContext = {};
 
     module('contentful/test', ($provide, $controllerProvider) => {
-      $provide.value('spaceContext', {docConnection: this.docConnection});
+      $provide.value('spaceContext', spaceContext);
       $controllerProvider.register('otDocPresenceController', function () {
         return {
           leave: sinon.stub()
@@ -19,17 +16,24 @@ describe('entityEditor/Document', function () {
     });
 
     K = this.$inject('mocks/kefir');
+    DocLoad = this.$inject('data/ShareJS/Connection').DocLoad;
+    const OtDoc = this.$inject('mocks/OtDoc');
 
-    this.docConnection.errors = K.createMockStream();
+    this.docLoader = {
+      doc: K.createMockProperty(DocLoad.None()),
+      destroy: sinon.spy()
+    };
 
-    var OtDoc = this.$inject('mocks/OtDoc');
+    this.docConnection = {
+      getDocLoader: sinon.stub().returns(this.docLoader),
+      errors: K.createMockStream()
+    };
+
+    spaceContext.docConnection = this.docConnection;
 
     this.connectAndOpen = function (data) {
-      this.docConnection.canOpen.returns(true);
       var doc = new OtDoc(_.cloneDeep(data || this.entity.data));
-      this.docConnection.open.resolves(doc);
-      // Not sure why we need to apply twice. But tests fail otherwise.
-      this.$apply();
+      this.docLoader.doc.set(DocLoad.Doc(doc));
       this.$apply();
       return doc;
     };
@@ -62,18 +66,14 @@ describe('entityEditor/Document', function () {
       contentType: this.contentType
     });
 
-    this.doc.open();
+    this.doc.setReadOnly(false);
   });
 
   afterEach(function () {
-    scope = K = null;
+    scope = K = DocLoad = null;
   });
 
-  it('otDoc is initially undefined', function () {
-    expect(this.doc.doc).toBeUndefined();
-  });
-
-  describe('successful initialization flow', function () {
+  describe('when doc is loaded', function () {
     beforeEach(function () {
       const Normalizer = this.$inject('data/documentNormalizer');
       this.normalize = sinon.spy(Normalizer, 'normalize');
@@ -94,13 +94,7 @@ describe('entityEditor/Document', function () {
         }
       };
 
-      scope.$broadcast = sinon.stub();
       this.otDoc = this.connectAndOpen();
-    });
-
-    it('calls docConnection.open()', function () {
-      sinon.assert.calledOnce(this.docConnection.open);
-      sinon.assert.calledWith(this.docConnection.open, this.entity);
     });
 
     it('calls the document normalizer', function () {
@@ -110,24 +104,8 @@ describe('entityEditor/Document', function () {
       );
     });
 
-    it('calls otUpdateEntityData', function () {
+    it('updates the entity data', function () {
       sinon.assert.called(this.entity.update);
-    });
-  });
-
-  describe('when connection cannot open document', function () {
-    beforeEach(function () {
-      this.otDoc = this.connectAndOpen();
-      this.docConnection.canOpen.returns(false);
-      this.$apply();
-    });
-
-    it('otDoc is closed', function () {
-      sinon.assert.calledOnce(this.otDoc.close);
-    });
-
-    it('doc.doc is removed', function () {
-      expect(this.doc.doc).toBeUndefined();
     });
   });
 
@@ -208,8 +186,7 @@ describe('entityEditor/Document', function () {
 
     it('is set to true if opening document fails', function () {
       this.doc.state.error = false;
-      this.docConnection.open.rejects();
-      this.docConnection.canOpen.returns(true);
+      this.docLoader.doc.set(DocLoad.Error());
       this.$apply();
       expect(this.doc.state.error).toBe(true);
     });
@@ -559,7 +536,8 @@ describe('entityEditor/Document', function () {
 
   function itRejectsWithoutDocument (method) {
     it('rejects when document is not opened', function () {
-      this.doc.close();
+      this.docLoader.doc.set(DocLoad.None());
+      this.$apply();
       var errored = sinon.stub();
       this.doc[method]().catch(errored);
       this.$apply();

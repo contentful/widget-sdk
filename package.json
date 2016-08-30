@@ -67,6 +67,7 @@
     "speakingurl": "^0.19.0",
     "stream-combiner": "^0.2.1",
     "stylus": "^0.52.4",
+    "sum-types": "^0.9.0",
     "svgo": "^0.6.6",
     "through2": "^0.6.5",
     "vinyl": "^0.4.6",
