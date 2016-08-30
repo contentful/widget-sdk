@@ -41,7 +41,7 @@ function ($scope, require, entity, contentType) {
   // document open promise.
   var isDestroyed = false;
 
-  var shouldOpen = false;
+  var readOnlyBus = K.createPropertyBus(false, $scope);
 
   controller.state = {
     editable: false,
@@ -197,8 +197,7 @@ function ($scope, require, entity, contentType) {
     collaboratorsFor: presence.collaboratorsFor,
     notifyFocus: presence.focus,
 
-    open: open,
-    close: close
+    setReadOnly: readOnlyBus.set
   });
 
 
@@ -281,13 +280,6 @@ function ($scope, require, entity, contentType) {
     });
   }
 
-  function open () {
-    shouldOpen = true;
-  }
-
-  function close () {
-    shouldOpen = false;
-  }
 
   function shouldOpenDoc () {
     return spaceContext.docConnection.canOpen() && shouldOpen && !isDestroyed;
