@@ -43,7 +43,7 @@ angular.module('contentful')
           return asset;
         });
       }],
-      formControls: ['require', function (require) {
+      formControls: ['spaceContext', function (spaceContext) {
         var ei = require('data/editingInterfaces/asset');
         return spaceContext.widgets.buildRenderable(ei.widgets).form;
       }]
