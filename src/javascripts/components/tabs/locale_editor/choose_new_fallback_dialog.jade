@@ -17,7 +17,7 @@
           option(value="") None (no fallback)
 
     .modal-dialog__controls
-      button.cfnext-btn-primary-action(ng-click="dialog.confirm(model.newFallbackCode)")
+      button.btn-primary-action(ng-click="dialog.confirm(model.newFallbackCode)")
         | OK, delete {{ locale.data.name }} ({{ locale.data.code }}) and update affected locales
-      button.cfnext-btn-secondary-action(ng-click="dialog.cancel()")
+      button.btn-secondary-action(ng-click="dialog.cancel()")
         | Don't delete

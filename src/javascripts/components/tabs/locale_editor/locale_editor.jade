@@ -52,14 +52,17 @@ header.workbench-header
           input(id="cda" type="checkbox" ng-model="locale.data.contentDeliveryApi" ng-disabled="locale.data.default || hasDependantLocales")
           div.cfnext-form-option__desc
             label(for="cda") Enable this locale in response
-            p Includes locale in the Delivery API response
+            p
+              | Includes locale in the Delivery API response.&#32;
+              span(ng-if="hasDependantLocales")
+                | You can't change this because this locale is being used as a fallback.
         .cfnext-form-option
           input(id="cma" type="checkbox" ng-model="locale.data.contentManagementApi" ng-disabled="locale.data.default")
           div.cfnext-form-option__desc
             label(for="cma") Enable editing for this locale
-            p Displays locale to editors and enables it in Management API
+            p Displays locale to editors and enables it in Management API.
         .cfnext-form-option
           input(id="optional" type="checkbox" ng-model="locale.data.optional" ng-disabled="locale.data.default")
           div.cfnext-form-option__desc
             label(for="optional") Allow empty fields for this locale
-            p Entries with required fields can still be published if locale is empty
+            p Entries with required fields can still be published if locale is empty.
