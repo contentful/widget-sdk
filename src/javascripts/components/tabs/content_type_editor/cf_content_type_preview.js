@@ -15,13 +15,15 @@ angular.module('contentful')
     template: JST.cf_content_type_preview(),
     controller: ['$scope', function ($scope) {
 
-      $scope.$watch('contentType.data.sys.publishedVersion', function (version) {
-        $scope.isNew = !version;
+      $scope.$watch('contentType.data', function (data) {
+        var publishedVersion = _.get(data, 'sys.publishedVersion');
+        $scope.isNew = !publishedVersion;
+
         loadPreview($scope.isNew)
         .then(function (preview) {
           $scope.preview = preview;
         });
-      });
+      }, true);
 
       function loadPreview (isNew) {
         if (isNew)
@@ -75,7 +77,7 @@ angular.module('contentful')
   }
 
   function fromData (contentType) {
-    return $q.resolve(contentType.data).then(orderPreviewKeys);
+    return $q.resolve(contentType.data).then(orderPreviewKeys).then(omitApiName);
   }
 
   // We rely on the fact the keys are displayed in the order they
@@ -86,4 +88,12 @@ angular.module('contentful')
     }, {});
     return _.defaults(ordered, data);
   }
+
+  function omitApiName (data) {
+    data.fields = _.map(data.fields, function (field) {
+      return _.omit(field, 'apiName');
+    });
+    return data;
+  }
+
 }]);
