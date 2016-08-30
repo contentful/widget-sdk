@@ -21,11 +21,17 @@ angular.module('contentful')
  *
  * @scope.provides locales
  * @scope.provides fallbackLocales
+ *
+ *
+ * TODO
+ * - add persistence layer (repo)
+ * - do not use @contetnful/client objects
+ * - do not expose the locale instance on the scope
+ * - simplify relation with TokenStore
 */
 .controller('LocaleEditorController', ['$scope', 'require', function ($scope, require) {
 
   var controller = this;
-  var localesList = require('localesList');
   var TheLocaleStore = require('TheLocaleStore');
   var notification = require('notification');
   var logger = require('logger');
@@ -38,14 +44,15 @@ angular.module('contentful')
   var $state = require('$state');
   var spaceContext = require('spaceContext');
   var closeState = require('navigation/closeState');
+  var localeList = require('data/localeList').fromClientResponse($scope.spaceLocales);
 
   var NOT_RENAMEABLE_MESSAGE = 'Cannot change the code of a locale which is fallback of another one';
 
   var formWasDirty = false;
+  var persistedLocaleCode = null;
 
-  $scope.locales = _.map(localesList, localeToListItem);
-  addCurrentLocaleToList();
-  updateInitialLocaleCode();
+  $scope.locales = localeList.prepareLocaleList($scope.locale.data);
+  onLoadOrUpdate();
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
 
@@ -53,15 +60,29 @@ angular.module('contentful')
     $scope.context.dirty = modified;
   });
 
-  $scope.$watch('locale.getName()', function (title) {
-    $scope.context.title = $scope.locale.getId() ? title : 'New locale';
+  $scope.$watch('locale.data.code', function (code) {
+    $scope.context.title = prepareTitle();
+    clearFallbackIfTheSame(code);
+    $scope.fallbackLocales = localeList.prepareFallbackList(code);
   });
 
-  $scope.$watch('locale.getCode()', function (code) {
-    updateLocaleName(code);
-    clearFallbackIfTheSame(code);
-    prepareFallbackList(code);
-  });
+  function onLoadOrUpdate () {
+    var code = $scope.locale.data.code;
+    persistedLocaleCode = code;
+    $scope.hasDependantLocales = localeList.hasDependantLocales(code);
+  }
+
+  function prepareTitle () {
+    var name = getLocaleName();
+    var empty = $scope.locale.getId() ? 'Unnamed locale' : 'New locale';
+    return name || empty;
+  }
+
+  function getLocaleName () {
+    var code = $scope.locale.data.code;
+    var locale = _.find($scope.locales, {code: code});
+    return locale && locale.name;
+  }
 
   // sometimes a code is selected as a fallback code, but then
   // the same code is selected as the code of the locale;
@@ -71,26 +92,6 @@ angular.module('contentful')
     if (code && $scope.locale.data.fallbackCode === code) {
       $scope.locale.data.fallbackCode = null;
     }
-  }
-
-  function prepareFallbackList (code) {
-    $scope.fallbackLocales = $scope.spaceLocales
-    .filter(canBeFallbackOf(code))
-    .map(localeToListItem);
-  }
-
-  function canBeFallbackOf (code) {
-    return function (locale) {
-      return locale.data.contentDeliveryApi && locale.data.code !== code;
-    };
-  }
-
-  function getDependantLocales (code) {
-    return $scope.spaceLocales
-    .filter(function (locale) {
-      var fallbackCode = locale.data.fallbackCode;
-      return fallbackCode && fallbackCode === code;
-    });
   }
 
   /**
@@ -122,46 +123,49 @@ angular.module('contentful')
   function openConfirmationDialog () {
     return modalDialog.openConfirmDialog({
       template: 'locale_removal_confirm_dialog',
-      scope: $scope
+      scopeData: {locale: $scope.locale}
     });
   }
 
   function maybeOpenFallbackLocaleChangeDialog () {
-    var dependantLocales = getDependantLocales($scope.locale.data.code);
-    var availableLocales = _.filter($scope.spaceLocales, function (locale) {
-      var isCurrent = locale.data.code === $scope.locale.data.code;
-      var isDependant = dependantLocales.indexOf(locale) > -1;
-      return !isCurrent && !isDependant;
-    });
-
-    if (dependantLocales.length > 0) {
-      return openFallbackLocaleChangeDialog(dependantLocales, availableLocales);
+    if (localeList.hasDependantLocales($scope.locale.data.code)) {
+      return openFallbackLocaleChangeDialog();
     } else {
       return $q.resolve();
     }
   }
 
-  function openFallbackLocaleChangeDialog (dependantLocales, availableLocales) {
+  function openFallbackLocaleChangeDialog () {
+    var code = $scope.locale.data.code;
+    var dependantLocales = localeList.getDependantLocales(code);
+
     return modalDialog.open({
       template: 'choose_new_fallback_dialog',
       scopeData: {
         locale: $scope.locale,
         model: {newFallbackCode: null},
-        availableLocales: availableLocales,
-        dependantLocaleNames: _.map(dependantLocales, function (locale) {
-          return locale.data.name + ' (' + locale.data.code + ')';
-        }).join(', ')
+        dependantLocaleNames: _.map(dependantLocales, 'label').join(', '),
+        availableLocales: localeList.getAvailableFallbackLocales(code)
       }
     }).promise.then(function (newFallbackCode) {
-      return $q.all(_.map(dependantLocales, function (locale) {
-        locale.data.fallbackCode = newFallbackCode;
-        return locale.save();
-      }))
-      .catch(function () {
+      var updates = _.map(dependantLocales, fallbackUpdater(newFallbackCode));
+      return $q.all(updates).catch(function () {
         notification.error('New fallback code could not be saved');
         return $q.reject();
       });
     });
+  }
+
+  function fallbackUpdater (newFallbackCode) {
+    return function (locale) {
+      locale = _.find($scope.spaceLocales, {data: {code: locale.code}});
+      if (locale) {
+        locale.data.fallbackCode = newFallbackCode;
+        return locale.save();
+      } else {
+        return $q.resolve();
+      }
+    };
   }
 
   function deleteLocale () {
@@ -205,7 +209,7 @@ angular.module('contentful')
   controller.save = Command.create(save, {
     disabled: function () {
       var form = $scope.localeForm;
-      return form.$invalid || !form.$dirty;
+      return form.$invalid || !form.$dirty || !$scope.locale.data.code;
     }
   });
 
@@ -215,6 +219,7 @@ angular.module('contentful')
       return $q.reject();
     }
 
+    $scope.locale.data.name = getLocaleName();
     lockFormWhileSubmitting();
     return confirmCodeChange()
     .then(function (result) {
@@ -232,7 +237,7 @@ angular.module('contentful')
     $scope.localeForm.$setPristine();
     $scope.context.dirty = false;
     return tokenStore.refresh().then(function () {
-      updateInitialLocaleCode();
+      onLoadOrUpdate();
       // TODO Should probably be handled by the token store
       TheLocaleStore.refresh();
       notification.info('Locale saved successfully');
@@ -268,7 +273,10 @@ angular.module('contentful')
     if (wasLocaleCodeChanged()) {
       return modalDialog.openConfirmDialog({
         template: 'locale_code_change_confirm_dialog',
-        scope: $scope
+        scopeData: {
+          locale: $scope.locale,
+          persistedLocaleCode: persistedLocaleCode
+        }
       });
     } else {
       return $q.resolve({confirmed: true});
@@ -276,13 +284,7 @@ angular.module('contentful')
   }
 
   function wasLocaleCodeChanged () {
-    return $scope.initialLocaleCode && $scope.initialLocaleCode !== $scope.locale.data.code;
-  }
-
-  function findLocaleByCode (code) {
-    return _.find($scope.locales, function (item) {
-      return item.code === code;
-    });
+    return persistedLocaleCode && persistedLocaleCode !== $scope.locale.data.code;
   }
 
   function lockFormWhileSubmitting () {
@@ -295,43 +297,6 @@ angular.module('contentful')
     if (formWasDirty) {
       $scope.localeForm.$setDirty();
     }
-  }
-
-  function updateLocaleName (code) {
-    if (code) {
-      var locale = findLocaleByCode(code);
-      if (locale) {
-        $scope.locale.data.name = locale.name;
-      }
-    }
-  }
-
-  function updateInitialLocaleCode () {
-    var code = $scope.locale.data.code;
-    $scope.initialLocaleCode = code;
-    $scope.hasDependantLocales = getDependantLocales(code).length > 0;
-  }
-
-  /**
-   * Adds the current locale to the list
-   *
-   * This accounts for user defined locales from before the predefined list of locales existed
-  */
-  function addCurrentLocaleToList () {
-    if (!findLocaleByCode($scope.locale.getCode()) && !!$scope.locale.getId()) {
-      $scope.locales.push(localeToListItem($scope.locale));
-    }
-  }
-
-  function localeToListItem (locale) {
-    var code = locale.code || locale.getCode();
-    var name = locale.name || locale.getName();
-
-    return {
-      code: code,
-      name: name,
-      label: name + ' (' + code + ')'
-    };
   }
 
   function trackSave (message) {

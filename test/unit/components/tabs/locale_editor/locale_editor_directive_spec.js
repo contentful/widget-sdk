@@ -19,11 +19,7 @@ describe('Locale Editor Directive', function () {
     spaceContext.space = {};
     dotty.put(spaceContext, 'space.data.organization.subscriptionPlan.name');
 
-    this.locale = _.extend(locale('co-DE'), {
-      getId: sinon.stub().returns('id'),
-      getVersion: sinon.stub(),
-      isDefault: sinon.stub().returns(false)
-    });
+    this.locale = locale('co-DE');
 
     this.element = this.$compile('<cf-locale-editor>', {
       spaceLocales: [locale('fr'), locale('de'), locale('co-DE')],
@@ -35,17 +31,23 @@ describe('Locale Editor Directive', function () {
   });
 
   function locale (code) {
+    var id = 'id-for-' + code;
     return {
-      data: {code: code, contentDeliveryApi: true},
-      getName: sinon.stub().returns('name for ' + code),
-      getCode: _.constant(code)
+      data: {
+        sys: {id: id},
+        default: false,
+        name: 'name for ' + code,
+        code: code,
+        contentDeliveryApi: true
+      },
+      getId: sinon.stub().returns(id)
     };
   }
 
-  it('has a headline', function () {
-    this.scope.locale.getName.returns('Some locale');
+  it('has a headline based on locale code', function () {
+    this.scope.locale.data.code = 'de';
     this.$apply();
-    expect(this.element.find('.workbench-header h1').text()).toMatch('Some locale');
+    expect(this.element.find('.workbench-header h1').text()).toMatch('German');
   });
 
   it('shows a delete button', function () {

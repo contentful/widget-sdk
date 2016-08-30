@@ -6,8 +6,8 @@
 
     .modal-dialog__content
       .modal-dialog__richtext
-        p You're about to change the locale code from <code>{{initialLocaleCode}}</code> to <code>{{locale.data.code}}</code>
-        p This will break any API clients that have <code>{{initialLocaleCode}}</code> in the application source code.
+        p You're about to change the locale code from <code>{{persistedLocaleCode}}</code> to <code>{{locale.data.code}}</code>
+        p This will break any API clients that have <code>{{persistedLocaleCode}}</code> in the application source code.
         p You can change the locale code back to the old one if this causes an issue.
         p Please type old locale code below to confirm this change:
         input.cfnext-form__input(ng-model="typedLocaleCode")
@@ -15,7 +15,7 @@
     .modal-dialog__controls
       button.btn-primary-action(
         ng-click="dialog.confirm()"
-        ng-disabled="typedLocaleCode !== initialLocaleCode")
+        ng-disabled="typedLocaleCode !== persistedLocaleCode")
         | I understand, update this locale code
       button.btn-secondary-action(ng-click="dialog.cancel()")
         | No, I'd rather not do that

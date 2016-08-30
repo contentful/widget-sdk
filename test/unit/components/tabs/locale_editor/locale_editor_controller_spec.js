@@ -60,9 +60,12 @@ describe('Locale editor controller', function () {
 
     this.scope.spaceLocales = [locale('pl-PL', 'Polish'), locale('de-DE', 'German')];
 
-    var $controller = this.$inject('$controller');
-    this.controller = $controller('LocaleEditorController', {$scope: this.scope});
-    this.$apply();
+    const $controller = this.$inject('$controller');
+    this.init = () => {
+      this.controller = $controller('LocaleEditorController', {$scope: this.scope});
+      this.$apply();
+    };
+    this.init();
   });
 
   function locale (code, name, fallbackCode, ext) {
@@ -78,9 +81,9 @@ describe('Locale editor controller', function () {
   });
 
   it('sets the state title', function () {
-    this.scope.locale.getName.returns('Some name');
+    this.scope.locale.data.code = 'de-DE';
     this.scope.$digest();
-    expect(this.scope.context.title).toEqual('Some name');
+    expect(this.scope.context.title).toEqual('German (Germany)');
   });
 
   it('sets the dirty param on the tab', function () {
@@ -103,7 +106,7 @@ describe('Locale editor controller', function () {
   describe('changing locale code', function () {
     it('resets fallback if used as locale code', function () {
       this.scope.locale.data.fallbackCode = 'de-DE';
-      this.scope.locale.getCode.returns('de-DE');
+      this.scope.locale.data.code = 'de-DE';
       this.$apply();
       expect(this.scope.locale.data.fallbackCode).toBe(null);
     });
@@ -111,7 +114,7 @@ describe('Locale editor controller', function () {
     it('sets available fallback locales', function () {
       const noDelivery = locale('fr-FR', 'French', null, {data: {contentDeliveryApi: false}});
       this.scope.spaceLocales.push(noDelivery);
-      this.scope.locale.getCode.returns('de-DE');
+      this.scope.locale.data.code = 'de-DE';
       this.$apply();
       expect(this.scope.fallbackLocales).toEqual([
         {name: 'Polish', code: 'pl-PL', label: 'Polish (pl-PL)'}
@@ -173,8 +176,10 @@ describe('Locale editor controller', function () {
       this.scope.spaceLocales = [
         locale('en-US', 'English', null, {save: this.$q.resolve()}),
         locale('de-DE', 'German', 'en-US', {save: this.$q.resolve()}),
-        locale('fr-FR', 'German', 'de-DE', {save: sinon.stub().resolves()})
+        locale('fr-FR', 'French', 'de-DE', {save: sinon.stub().resolves()})
       ];
+      this.init(); // grab another set of space locales
+
       this.modalDialog.openConfirmDialog.resolves({confirmed: true});
       this.modalDialog.open.returns({
         promise: this.$q.resolve('en-US')
@@ -188,7 +193,7 @@ describe('Locale editor controller', function () {
 
       sinon.assert.calledOnce(this.modalDialog.open);
       const data = this.modalDialog.open.firstCall.args[0].scopeData;
-      const codes = data.availableLocales.map((l) => { return l.data.code; });
+      const codes = data.availableLocales.map((l) => { return l.code; });
       expect(codes).toEqual(['en-US']);
       expect(this.scope.spaceLocales[2].data.fallbackCode).toEqual('en-US');
       sinon.assert.calledOnce(this.scope.spaceLocales[2].save);
@@ -197,6 +202,8 @@ describe('Locale editor controller', function () {
 
     it('does not ask if there is no dependant locale', function () {
       this.scope.spaceLocales = this.scope.spaceLocales.slice(0, 2);
+      this.init(); // grab another set of space locales
+
       this.controller.delete.execute();
       this.$apply();
       sinon.assert.notCalled(this.modalDialog.open);
@@ -275,7 +282,6 @@ describe('Locale editor controller', function () {
 
     describe('with changed code', function () {
       beforeEach(function () {
-        this.scope.initialLocaleCode = 'en-US';
         this.scope.locale.data.code = 'en-UK';
       });
 
@@ -296,10 +302,6 @@ describe('Locale editor controller', function () {
 
         it('sets form back to pristine state', function () {
           sinon.assert.called(this.scope.localeForm.$setPristine);
-        });
-
-        it('updates initial code', function () {
-          expect(this.scope.initialLocaleCode).toBe('en-UK');
         });
       });
 
