@@ -80,8 +80,12 @@ angular.module('contentful')
 
   function getLocaleName () {
     var code = $scope.locale.data.code;
-    var locale = _.find($scope.locales, {code: code});
+    var locale = findLocale(code);
     return locale && locale.name;
+  }
+
+  function findLocale (code) {
+    return _.find($scope.locales, {code: code});
   }
 
   // sometimes a code is selected as a fallback code, but then
@@ -275,6 +279,7 @@ angular.module('contentful')
         template: 'locale_code_change_confirm_dialog',
         scopeData: {
           locale: $scope.locale,
+          persistedLocaleName: findLocale(persistedLocaleCode).name,
           persistedLocaleCode: persistedLocaleCode
         }
       });

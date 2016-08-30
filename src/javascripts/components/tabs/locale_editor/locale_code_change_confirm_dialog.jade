@@ -1,21 +1,23 @@
 .modal-background
   .modal-dialog
     header.modal-dialog__header
-      h1 You're about to change the locale code
+      h1 Changing a locale might break things
       button.modal-dialog__close(ng-click="dialog.cancel()")
 
     .modal-dialog__content
       .modal-dialog__richtext
-        p You're about to change the locale code from <code>{{persistedLocaleCode}}</code> to <code>{{locale.data.code}}</code>
-        p This will break any API clients that have <code>{{persistedLocaleCode}}</code> in the application source code.
-        p You can change the locale code back to the old one if this causes an issue.
-        p Please type old locale code below to confirm this change:
+        p
+          | You're about to change {{persistedLocaleName}} to {{locale.data.name}},
+          | which might break localisation in your apps. If you're using the locale
+          | code <code>{{persistedLocaleCode}}</code> in your API clients, make sure
+          | you update it to <code>{{locale.data.code}}</code>. You can revert these
+          | changes afterwards. Please type the old locale code below:
         input.cfnext-form__input(ng-model="typedLocaleCode")
 
     .modal-dialog__controls
       button.btn-primary-action(
         ng-click="dialog.confirm()"
         ng-disabled="typedLocaleCode !== persistedLocaleCode")
-        | I understand, update this locale code
+        | Got it, change locale
       button.btn-secondary-action(ng-click="dialog.cancel()")
-        | No, I'd rather not do that
+        | No, I need some more time
