@@ -24,6 +24,11 @@ angular.module('contentful')
     scope.data = {};
     scope.fieldId = field.id;
 
+    scope.clear = function clear (e) {
+      e.preventDefault();
+      field.removeValue();
+    };
+
     var removeChangeListener = field.onValueChanged(function (value) {
       scope.data.selected = value;
     });
