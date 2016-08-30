@@ -15,6 +15,7 @@ angular.module('cf.utils')
     onValue: onValue,
     onValueScope: onValueScope,
     fromScopeEvent: fromScopeEvent,
+    sampleBy: sampleBy,
     createBus: createBus,
     createPropertyBus: createPropertyBus
   }, Kefir);
@@ -206,5 +207,21 @@ angular.module('cf.utils')
         offDestroy();
       };
     });
+  }
+
+  /**
+   * @ngdoc method
+   * @name utils/kefir#sampleBy
+   * @description
+   * Create a property that is updated whenever the observable emits a
+   * new event. The sampler function is used to obtain the value.
+   *
+   * @param {Observable<any>} obs
+   * @param {function} sampler
+   * @returns {Property<any>}
+   */
+  function sampleBy (obs, sampler) {
+    // We need to pass `noop` to get an initial, undefined value.
+    return obs.toProperty(_.noop).map(sampler);
   }
 }]);

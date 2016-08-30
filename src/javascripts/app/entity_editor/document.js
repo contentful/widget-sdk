@@ -119,11 +119,9 @@ function ($scope, require, entity, contentType) {
    * @type {Property<Data.Sys>}
    */
   var sysChangeBus = K.createBus($scope);
-  var sysProperty = sysChangeBus.stream
-    .toProperty(_.noop)
-    .map(function () {
-      return entity.data.sys;
-    });
+  var sysProperty = K.sampleBy(sysChangeBus.stream, function () {
+    return entity.data.sys;
+  });
 
 
   /**
