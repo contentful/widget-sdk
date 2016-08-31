@@ -1,6 +1,0 @@
-#!/bin/sh
-set -e
-bower install --save angular#latest \
-                     angular-animate#latest \
-                     angular-sanitize#latest \
-                     angular-mocks#latest

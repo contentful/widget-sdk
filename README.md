@@ -4,12 +4,11 @@
 
 Make sure you are using Node version specified in the [`.nvmrc`]('./.nvmrc')
 file and the default NPM version that comes with that Node version.
-Then run `./Installfile` to install all npm and bower dependencies
+Then run `./Installfile` to install all npm dependencies
 
 ## Dependencies
 
-We use Bower and NPM with at shrinkwrap file to manage our dependecies. If you
-add a new dependency, prefer NPM over Bower.
+We use NPM with the shrinkwrap file to manage our dependencies.
 
 Production dependencies in NPM are all those packages used on Travis to build
 and test. Dev dependencies on the other hand are used to run tests locally,
@@ -129,4 +128,4 @@ Count Lines of Code. (Run `brew install cloc` to install cloc).
 
 ### npm run clean
 
-Removes installed bower and node modules.
+Removes installed node modules.

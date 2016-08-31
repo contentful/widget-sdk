@@ -30,8 +30,10 @@ describe('contentPreview', function () {
       put: sinon.stub(),
       delete: sinon.stub()
     };
+    spaceContext.getId = _.constant('space01');
 
     this.contentPreview = this.$inject('contentPreview');
+    this.TheStore = this.$inject('TheStore');
   });
 
   afterEach(function () {
@@ -295,6 +297,35 @@ describe('contentPreview', function () {
       const urlTemplate = 'www.foo.com';
       const isValid = this.contentPreview.urlFormatIsValid(urlTemplate);
       expect(isValid).toBe(false);
+    });
+  });
+
+  describe('#getSelected', function () {
+    beforeEach(function () {
+      this.TheStore.get = sinon.stub();
+      this.TheStore.get.withArgs('selectedPreviewEnvsForSpace.space01')
+      .returns({'ct1': 'env1'});
+    });
+
+    it('returns environment id', function () {
+      const selectedEnvironmentId = this.contentPreview.getSelected('ct1');
+      expect(selectedEnvironmentId).toBe('env1');
+    });
+
+    it('returns undefined if not found', function () {
+      const selectedEnvironmentId = this.contentPreview.getSelected('ct2');
+      expect(selectedEnvironmentId).toBeUndefined();
+    });
+  });
+
+  describe('#setSelected', function () {
+    it('updates store value', function () {
+      var environment = {
+        contentType: 'ct1',
+        envId: 'env1'
+      };
+      this.contentPreview.setSelected(environment);
+      expect(this.contentPreview.getSelected('ct1')).toBe('env1');
     });
   });
 });

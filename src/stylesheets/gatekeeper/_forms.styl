@@ -100,21 +100,57 @@ $fa-offset()
   .fa
     margin-right: 4px
 
-.btn--primary
+.btn--primary, .cfnext-btn-action
   $fa-offset()
-  @extend .cfnext-btn-action
+  @extend .btn-action
 
 .btn--secondary
   $fa-offset()
-  &, &.new-resource
-    @extend .cfnext-btn-secondary-action
+  @extend .btn-secondary-action
   &.new-resource
     margin-top: 34px //result list tr-height
 
-.btn--confirm
+.btn--confirm, .cfnext-btn-primary-action
   $fa-offset()
-  @extend .cfnext-btn-primary-action
+  @extend .btn-primary-action
 
-.btn--danger
+.btn--danger, .cfnext-btn-caution
   $fa-offset()
-  @extend .cfnext-btn-caution
+  @extend .btn-caution
+
+.cfnext-btn-link
+  @extend .btn-link
+
+.cfnext-btn-inline
+  @extend .btn-inline
+
+input.btn--input
+  padding: 0.6em 1em
+
+// All of the below styles are only referenced in the pre-zuora subscription views
+// and should be removed soon. They are no longer used in production but are still
+// necessary in GK dev mode for now
+.toggle-button
+  flex-grow: 1
+  border-radius: 0
+  &:first-child
+    border-radius: 3px 0 0 3px
+  &:last-child
+    border-radius: 0 3px 3px 0
+  cursor: pointer
+  margin: 0
+  &:active,
+  &.active
+    top: 0
+    box-shadow: 0 2px 2px darken($gray-lightest, 10%) inset
+    cursor: default
+  &:focus
+    outline: none !important
+.button-icon-right
+  position: relative
+  right: 2px
+  float: right
+  top: 2px
+  right: 0
+  left: 3px
+

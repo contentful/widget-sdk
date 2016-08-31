@@ -40,12 +40,12 @@ ul(cf-ui-sortable ng-model="contentType.data.fields")
       | Deleted
     .ct-field__status(ng-if="fieldIsTitle")
       | Entry title
-    button.ct-field__settings.cfnext-btn-inline(
+    button.ct-field__settings.btn-inline(
       aria-label="Settings"
       ng-if="!field.deleted"
       ng-click="fieldController.openSettingsDialog()")
       | Settings
-    button.ct-field__actions.cfnext-btn-inline(type="button"
+    button.ct-field__actions.btn-inline(type="button"
       aria-label="Actions" cf-context-menu-trigger)
       | &bullet;&bullet;&bullet;
     +actions-dropdown

@@ -6,20 +6,20 @@ header.workbench-header
     cf-knowledge-base.workbench-header__kb-link(target="api_key")
 
   .workbench-header__actions
-    button.cfnext-btn-secondary-action(type="button"
+    button.btn-secondary-action(type="button"
       ng-click="preferences.toggleAuxPanel()"
       ng-class="{active: preferences.showAuxPanel}")
       | Info
-    button.cfnext-btn-secondary-action.delete(type="button"
+    button.btn-secondary-action.delete(type="button"
       ng-show="apiKey.getId() && !isReadOnly()"
       cf-context-menu-trigger
       data-test-id="delete-api-key")
       | Delete
     .delete-confirm.context-menu.x--arrow-right(cf-context-menu="bottom-left")
       p You are about to delete {{context.title}}
-      button.cfnext-btn-caution(type="button" ng-click="delete()") Delete
-      button.cfnext-btn-secondary-action(type="button") Don't Delete
-    button.cfnext-btn-primary-action.save(type="submit"
+      button.btn-caution(type="button" ng-click="delete()") Delete
+      button.btn-secondary-action(type="button") Don't Delete
+    button.btn-primary-action.save(type="submit"
       ui-command="apiKeyEditorController.save"
       cf-when-disabled="createApiKey")
       | Save
@@ -74,9 +74,9 @@ header.workbench-header
                   i.fa.fa-exclamation-circle
                   |  Warning
                 p Regenerating the production API access token will break the connection to your apps
-                button.cfnext-btn-caution(type="button" ng-click="regenerateProductionToken=true") Unlock
+                button.btn-caution(type="button" ng-click="regenerateProductionToken=true") Unlock
                 | &nbsp;
-                button.cfnext-btn-secondary-action(type="button") Cancel
+                button.btn-secondary-action(type="button") Cancel
 
           input.cfnext-form__input--full-size(
             ng-hide="apiKey.data.accessToken"

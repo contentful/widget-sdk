@@ -1,13 +1,13 @@
 include ./entity_sidebar.mixin.jade
 
 mixin editor-info-toggle
-  button.cfnext-btn-secondary-action(type="button"
+  button.btn-secondary-action(type="button"
     ng-click="preferences.toggleAuxPanel()"
     ng-class="{active: preferences.showAuxPanel}")
     | Info
 
 mixin editor-actions-dropdown
-  button.cfnext-btn-secondary-action(
+  button.btn-secondary-action(
     cf-context-menu-trigger
     data-test-id="entity-actions-menu-trigger")
     cf-icon.btn-dropdown-icon(name="dd-arrow-down")
@@ -20,8 +20,8 @@ mixin editor-actions-dropdown
 mixin entity-delete-confirm-menu
   .delete-confirm.context-menu.x--arrow-right(cf-context-menu="bottom-right")
     p Do you really want to delete the entry <em>{{ title }}</em>
-    button.cfnext-btn-caution(ui-command="state.delete") Delete
-    button.cfnext-btn-secondary-action(type="button") Cancel
+    button.btn-caution(ui-command="state.delete") Delete
+    button.btn-secondary-action(type="button") Cancel
 
 mixin editor-notification
   .entity-editor__notification(ng-if="notifications.message" role="alert")

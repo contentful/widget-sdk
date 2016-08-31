@@ -1,16 +1,17 @@
 'use strict';
 
-angular.module('contentful').factory('MarkdownEditor/preview', ['$injector', function ($injector) {
+angular.module('contentful')
+.factory('MarkdownEditor/preview', ['require', function (require) {
 
-  var $timeout          = $injector.get('$timeout');
-  var LazyLoader        = $injector.get('LazyLoader');
-  var createTreeBuilder = $injector.get('MarkdownEditor/tree');
+  var $timeout = require('$timeout');
+  var LazyLoader = require('LazyLoader');
+  var createTreeBuilder = require('MarkdownEditor/tree');
 
-  var NOTIFY_INTERVAL  = 250;
+  var NOTIFY_INTERVAL = 250;
   var UNIQUE_SOMETHING = {};
 
-  return function startLivePreview(getContentFn, subscriberCb) {
-    var destroyed     = false;
+  return function startLivePreview (getContentFn, subscriberCb) {
+    var destroyed = false;
     var previousValue = UNIQUE_SOMETHING;
     var buildTree;
 
@@ -19,13 +20,15 @@ angular.module('contentful').factory('MarkdownEditor/preview', ['$injector', fun
       scheduleSubscriberNotification();
     });
 
-    return function stopNotification() { destroyed = true; };
+    return function stopNotification () {
+      destroyed = true;
+    };
 
-    function scheduleSubscriberNotification() {
+    function scheduleSubscriberNotification () {
       $timeout(notifySubscriber, NOTIFY_INTERVAL);
     }
 
-    function notifySubscriber() {
+    function notifySubscriber () {
       // editor was destroyed - kill loop immediately
       if (destroyed) { return; }
 
@@ -45,8 +48,8 @@ angular.module('contentful').factory('MarkdownEditor/preview', ['$injector', fun
       try {
         tree = buildTree(value);
       } catch (e) {
-        // it can go wrong: both Marked and ngSanitize throw errors
-        // it happens when for e.g. user is in the middle of typing HTML tag
+        // it can go wrong: Marked throws an error when
+        // input cannot be parsed
         err = e;
       }
 
@@ -58,11 +61,11 @@ angular.module('contentful').factory('MarkdownEditor/preview', ['$injector', fun
       scheduleSubscriberNotification();
     }
   };
-}]);
+}])
 
-angular.module('contentful').directive('cfMarkdownPreview', ['$injector', function ($injector) {
+.directive('cfMarkdownPreview', ['require', function (require) {
 
-  var LazyLoader = $injector.get('LazyLoader');
+  var LazyLoader = require('LazyLoader');
 
   return {
     restrict: 'E',
@@ -73,9 +76,9 @@ angular.module('contentful').directive('cfMarkdownPreview', ['$injector', functi
     template: [
       '<div ng-show="!preview.hasCrashed" class="markdown-preview-mounting-point"></div>',
       '<div ng-show="preview.hasCrashed || mountHasCrashed" class="markdown-preview-crashed">',
-        '<i class="fa fa-warning"></i> ',
-        'We cannot render the preview. ',
-        'If you use HTML tags, check if these are valid.',
+      '<i class="fa fa-warning"></i> ',
+      'We cannot render the preview. ',
+      'If you use HTML tags, check if these are valid.',
       '</div>'
     ].join(''),
     link: function (scope, el) {
@@ -83,15 +86,15 @@ angular.module('contentful').directive('cfMarkdownPreview', ['$injector', functi
       scope.mountHasCrashed = false;
       LazyLoader.get('markdown').then(initPreview);
 
-      function initPreview(libs) {
+      function initPreview (libs) {
         var React = libs.React;
 
         scope.$watch('preview.tree', update);
-        scope.$watch('isDisabled',   update);
+        scope.$watch('isDisabled', update);
 
         scope.$on('$destroy', unmount);
 
-        function update() {
+        function update () {
           var newTree = scope.preview && scope.preview.tree;
           if (!newTree || scope.isDisabled) { return; }
 
@@ -103,8 +106,13 @@ angular.module('contentful').directive('cfMarkdownPreview', ['$injector', functi
           }
         }
 
-        function mount()   { React.render(scope.preview.tree, mountingPoint); }
-        function unmount() { React.unmountComponentAtNode(mountingPoint);     }
+        function mount () {
+          React.render(scope.preview.tree, mountingPoint);
+        }
+
+        function unmount () {
+          React.unmountComponentAtNode(mountingPoint);
+        }
       }
     }
   };

@@ -3,7 +3,7 @@ include ./create_entry_button.mixin.jade
 .cfnext-advice
   header.advice__title
     | You have no entries yet
-  button.cfnext-btn-action--large-popout-icon.ct-empty-list__action(
+  button.btn-action--large-popout-icon.ct-empty-list__action(
     type="button"
     ng-click="entityCreationController.newContentType()"
     ng-hide="spaceContext.publishedContentTypes.length > 0 || shouldHide('createContentType')"

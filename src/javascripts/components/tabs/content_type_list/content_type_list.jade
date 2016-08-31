@@ -12,7 +12,7 @@ header.workbench-header
       placeholder="Search for content types")
 
   .workbench-header__actions
-    button.cfnext-btn-action(
+    button.btn-action(
       ng-click="entityCreationController.newContentType()"
       ng-hide="shouldHide('createContentType')"
       ng-disabled="shouldDisable('createContentType')"
@@ -24,7 +24,7 @@ header.workbench-header
   .cfnext-advice
     header.advice__title
       | <em>{{spaceContext.space.data.name}}</em> has no content types yet
-    button.cfnext-btn-action--large-popout-icon.ct-empty-list__action(
+    button.btn-action--large-popout-icon.ct-empty-list__action(
       type="button"
       ng-click="entityCreationController.newContentType()"
       ng-hide="shouldHide('createContentType')"

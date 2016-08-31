@@ -3,7 +3,6 @@
 
 !package.json
 !npm-shrinkwrap.json
-!bower.json
 
 !.babelrc
 !gulpfile.js

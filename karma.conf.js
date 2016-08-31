@@ -30,7 +30,7 @@ module.exports = function (config) {
       'src/javascripts/*/**/*.js',
 
       // Test libraries
-      'bower_components/angular-mocks/angular-mocks.js',
+      'node_modules/angular-mocks/angular-mocks.js',
       'node_modules/sinon/pkg/sinon.js',
 
       'test/helpers/**/*.js',

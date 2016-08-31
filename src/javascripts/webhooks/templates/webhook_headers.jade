@@ -8,23 +8,23 @@
         ng-model="model.existing.value"
         ng-keydown="updateWithEnter($event)")
     .webhook-header__actions
-      button.cfnext-btn-link(
+      button.btn-link(
         ng-click="update()"
         ng-show="isEditing(header)"
         ng-disabled="!canUpdate()")
         i.fa.fa-check
         |  Update
-      button.cfnext-btn-link(
+      button.btn-link(
         ng-click="edit(null)"
         ng-show="isEditing(header)")
         i.fa.fa-times
         |  Cancel
-      button.cfnext-btn-link(
+      button.btn-link(
         ng-click="edit(header)"
         ng-hide="isEditing(header)")
         i.fa.fa-pencil
         |  Edit
-      button.cfnext-btn-link(
+      button.btn-link(
         ng-click="remove(header)"
         ng-hide="isEditing(header)")
         i.fa.fa-trash
@@ -42,6 +42,6 @@
         ng-model="model.fresh.value"
         ng-keydown="addWithEnter($event)")
     .webhook-new-header__actions
-      button.cfnext-btn-link(ui-command="add")
+      button.btn-link(ui-command="add")
         i.fa.fa-plus-square
         |  Add

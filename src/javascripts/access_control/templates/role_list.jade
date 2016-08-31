@@ -16,7 +16,7 @@ header.workbench-header
       .role-list__member-count
         a(href="" ng-click="jumpToAdminRoleMembers()")
           | {{ memberships.admin || 0 }} members
-      button.role-list__actions.role-list__actions--disabled.cfnext-btn-inline
+      button.role-list__actions.role-list__actions--disabled.btn-inline
         | &bullet;&bullet;&bullet;
 
     .role-list__item(ng-repeat="role in roles track by role.sys.id")
@@ -26,7 +26,7 @@ header.workbench-header
       .role-list__member-count
         a(href="" ng-click="jumpToRoleMembers(role.sys.id)")
           | {{ memberships[role.sys.id] || 0 }} members
-      button.role-list__actions.cfnext-btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
+      button.role-list__actions.btn-inline(type="button" aria-label="Actions" cf-context-menu-trigger)
         | &bullet;&bullet;&bullet;
       .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="Role Actions")
         ul.context-menu__items
@@ -44,5 +44,5 @@ header.workbench-header
         | Create new role
       p
         | Select one of the predefined role templates or create one from the scratch.
-      button.cfnext-btn-primary-action(ui-sref="spaces.detail.settings.roles.new")
+      button.btn-primary-action(ui-sref="spaces.detail.settings.roles.new")
         | Create new role

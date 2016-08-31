@@ -168,27 +168,6 @@ $context-menu-arrow-bottom()
       left: 28px
       right: auto
 
-
-.context-menu__arrow
-  position: absolute
-  display: flex
-  justify-content: center
-  // TODO should actually be -13px to hide the context menu border
-  top: -12px
-  left: 0
-  right: 0
-
-  &.x--bottom,
-  &.x--bottom-left
-    top: auto
-    bottom: -12px
-    > svg, img
-      transform: rotate(180deg)
-
-  &.x--bottom-left
-    justify-content: flex-start
-    padding-left: 1em
-
 /**
 Top Bar Context Menu
 
@@ -208,9 +187,6 @@ $context-menu-top-bar()
   background-color: $colors.ice-mid
   margin-top: 13px
   border-color: $context-menu-top-bar--border
-  > .context-menu__arrow path
-    fill: $colors.ice-mid
-    stroke: $context-menu-top-bar--border
 
 .context-menu.x--top-bar
   $context-menu-top-bar()

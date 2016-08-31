@@ -5,7 +5,6 @@ var _ = require('lodash-node');
 var gulp = require('gulp');
 var log = require('gulp-util').log;
 var concat = require('gulp-concat');
-var bower = require('bower');
 var Dgeni = require('dgeni');
 var merge = require('merge-stream');
 var path = require('path');
@@ -85,34 +84,17 @@ gulp.task('stylesheets', function () {
     .pipe(gulp.dest(destFolder));
 });
 
-gulp.task('components', ['bower-install'], function() {
+gulp.task('components', function() {
   var dest = path.join(outputFolder, 'components');
-  var bower = copyPackage('bower_components', dest);
-  var node_modules = copyPackage('../node_modules', dest);
+  var modules = copyPackage('../node_modules', dest);
   return merge(
-    bower('angular', '*.js'),
-    // TODO use the package from the UI
-    bower('angular-ui-router', 'release/angular-ui-router.js'),
-    bower('font-source-sans-pro'),
-    bower('lunr.js', '*.js'),
-    bower('google-code-prettify'),
-    bower('jquery', 'dist/*.js'),
-    bower('font-awesome', '**/*.+(css|woff|svg)'),
-    node_modules('highlight.js', 'styles/**/*.css')
+    modules('angular', 'angular.js'),
+    modules('angular-ui-router', 'release/angular-ui-router.js'),
+    modules('npm-font-source-sans-pro'),
+    modules('jquery', 'dist/jquery.js'),
+    modules('highlight.js', 'styles/agate.css')
   )
   .pipe(gulp.dest(dest));
-});
-
-
-gulp.task('bower-install', function() {
-  var bowerTask = bower.commands.install(null, null, {cwd: __dirname});
-  bowerTask.on('log', function (result) {
-    log('bower:', result.id, result.data.endpoint.name);
-  });
-  bowerTask.on('error', function(error) {
-    log(error);
-  });
-  return bowerTask;
 });
 
 

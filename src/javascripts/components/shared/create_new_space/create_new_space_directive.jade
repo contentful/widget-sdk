@@ -105,7 +105,7 @@ include ./../onboarding_dialog/onboarding_nav.mixin.jade
                 div(ng-bind-html="template.descriptionV2")
 
     .modal-dialog__controls.create-new-space-dialog__controls--right
-      button.cfnext-btn-action(
+      button.btn-action(
         ng-class="{'is-loading': createSpace.createSpaceInProgress}"
         ng-disabled="createSpace.createSpaceInProgress"
         data-test-id="create-space")
@@ -148,7 +148,7 @@ include ./../onboarding_dialog/onboarding_nav.mixin.jade
             p An API key is the token that you’ll use to retrieve your content. We created a few API keys so that you can get started fetching your content right away.
 
     .modal-dialog__controls.create-new-space-dialog__controls--centered
-      button.cfnext-btn-action(
+      button.btn-action(
         data-test-id="get-started"
         ng-disabled="createSpace.createTemplateInProgress"
         ng-click="createSpace.finishedSpaceCreation()")

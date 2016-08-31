@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Markdown preview', function() {
+describe('Markdown preview', function () {
   var $timeout, scope;
   var startLivePreview;
   var libs = window.cfLibs.markdown;
@@ -56,15 +56,6 @@ describe('Markdown preview', function() {
     content = '__test2__';
     $timeout.flush();
     sinon.assert.calledTwice(previewSpy);
-  });
-
-  it('notifies with error for incorrect HTML', function () {
-    startLivePreview(getContentFn, function(err) {
-      expect(err !== null).toBe(true);
-    });
-    scope.$apply();
-    content = '<img src=>';
-    $timeout.flush();
   });
 
   it('stops notifications when killed', function () {
