@@ -30,7 +30,12 @@ mixin field-locale-errors
       role="status"
       aria-roledescription="field-locale-schema"
       data-error-code="entry.schema.{{error.name}}")
-      | {{ error.message }}
+      div(ng-switch="error.name")
+        ul(ng-switch-when="unique")
+          li(ng-repeat="conflict in error.conflicting track by index")
+            a(ui-sref="spaces.detail.entries.detail('{{conflict.sys.id}}')")
+        span(ng-switch-default)
+          | {{ error.message }}
 
 div.entity-editor__field-group(
   data-test-id="entity-field-controls"
