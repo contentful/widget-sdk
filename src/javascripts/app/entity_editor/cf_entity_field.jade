@@ -30,12 +30,16 @@ mixin field-locale-errors
       role="status"
       aria-roledescription="field-locale-schema"
       data-error-code="entry.schema.{{error.name}}")
-      div(ng-switch="error.name")
-        ul(ng-switch-when="unique")
-          li(ng-repeat="conflict in error.conflicting track by index")
-            a(ui-sref="spaces.detail.entries.detail('{{conflict.sys.id}}')")
-        span(ng-switch-default)
-          | {{ error.message }}
+      | {{ error.message }}
+      ul.cfnext-form__field-errors(
+        ng-if="error.name === 'unique'"
+        data-test-id="uniqueness-conflicts-list")
+        li.entity-editor__control-error(ng-repeat="conflict in error.conflicting track by index")
+          a.cfnext-form__field-error(
+            target="_blank"
+            ui-sref="spaces.detail.entries.detail({ entryId: \"{{conflict.sys.id}}\", notALinkedEntity: true })")
+            | {{ conflict.conflictingData || "Loading title for conflicting entry.."}}
+            i.fa.fa-external-link
 
 div.entity-editor__field-group(
   data-test-id="entity-field-controls"

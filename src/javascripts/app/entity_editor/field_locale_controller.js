@@ -47,8 +47,26 @@ angular.module('contentful')
    */
   $scope.$watch('validator.errors', function (errors) {
     errors = filterLocaleErrors(errors);
+    errors = errors.map(function (error) {
+      if (error.name === 'unique') {
+        error.message = error.message.replace('${fieldName}', $scope.field.name);
+        error.conflicting = error.conflicting.map(decorateWithConflictDataForField(error.path));
+      }
+      return error;
+    });
     controller.errors = errors.length > 0 ? errors : null;
   });
+
+  function decorateWithConflictDataForField (path) {
+    return function (conflict) {
+      // get conflicting data for path from entry id with conflict.sys.id
+      $scope.spaceContext.space.getEntry(conflict.sys.id).then(function (entry) {
+        // put it on conflict.conflictingData asynchronously
+        conflict.conflictingData = entry.data.fields[path[1]][path[2]];
+      });
+      return conflict;
+    };
+  }
 
   // Only retuns errors that apply to this field locale
   function filterLocaleErrors (errors) {

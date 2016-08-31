@@ -107,7 +107,6 @@ angular.module('contentful')
       });
       fieldValidations = itemValidations.concat(fieldValidations);
     }
-    console.log('here', fieldValidations)
 
     return _.sortBy(fieldValidations, function(validation) {
       return validationsOrder.indexOf(validation.type);
@@ -119,7 +118,7 @@ angular.module('contentful')
       var fieldValidation = findValidationByType(field.validations, type);
 
       var settings, enabled, message;
-      console.log('in decorator', fieldValidation)
+
       if (fieldValidation) {
         enabled = true;
         settings = fieldValidation[type];

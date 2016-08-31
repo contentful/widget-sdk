@@ -126,6 +126,18 @@ $entity-editor__field-width = 80%
 .entity-editor__control
   width: $entity-editor__field-width
 
+.entity-editor__control-error
+  list-style-type: disc
+  margin-left: 1em
+  font-weight: bold
+
+  a:hover
+    color: darken($colors.red-dark, 20%)
+
+  i.fa.fa-external-link
+    margin-left: 0.5em
+    position: relative
+    top: 1px
 
 .entity-editor__field-hint
   width: $entity-editor__field-width

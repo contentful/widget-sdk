@@ -42,6 +42,14 @@ angular.module('contentful')
         return 'Required';
       }
     },
+
+    unique: function(error) {
+      if (error.conflicting.length > 1) {
+        return 'There are already entries with the same ${fieldName} field';
+      } else {
+        return 'There\'s already an entry with the same ${fieldName} field';
+      }
+    },
   };
 
   function stringLengthMessage (min, max) {
