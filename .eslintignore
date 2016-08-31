@@ -67,7 +67,6 @@ test/unit/services/authorization_spec.js
 test/unit/services/editing_interfaces_helpers_spec.js
 test/unit/services/enforcements_spec.js
 test/unit/services/features_spec.js
-test/unit/services/locale_store_spec.js
 test/unit/services/modal_dialog_spec.js
 test/unit/services/promised_loader_spec.js
 test/unit/services/reload_notification_spec.js
@@ -113,7 +112,6 @@ test/unit/webhooks/webhook_health_directive_spec.js
 test/unit/webhooks/webhook_repository_spec.js
 test/unit/webhooks/webhook_segmentation_spec.js
 test/helpers/mocks/client.js
-test/helpers/mocks/locale_store.js
 test/helpers/mocks/the_store.js
 test/helpers/application.js
 test/helpers/deep_diff.js
@@ -283,7 +281,6 @@ src/javascripts/services/enforcements.js
 src/javascripts/services/features.js
 src/javascripts/services/filepicker.js
 src/javascripts/services/hints.js
-src/javascripts/services/locale_store.js
 src/javascripts/services/modal_dialog_service.js
 src/javascripts/services/promised_loader.js
 src/javascripts/services/reload_notification.js

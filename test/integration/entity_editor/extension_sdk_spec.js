@@ -395,7 +395,7 @@ describe('Extension SDK', function () {
     beforeEach(function () {
       const LocaleStore = this.$inject('TheLocaleStore');
       LocaleStore.setLocales([
-        {code: 'en', internal_code: 'en-internal'},
+        {code: 'en', internal_code: 'en-internal', default: true},
         {code: 'de', internal_code: 'de-internal'}
       ]);
     });

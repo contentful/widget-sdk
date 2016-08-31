@@ -23,7 +23,7 @@ describe('EntityEditor/DataFields', function () {
 
       var localeStore = this.$inject('TheLocaleStore');
       localeStore.setLocales([
-        {code: 'en', internal_code: 'en-internal'},
+        {code: 'en', internal_code: 'en-internal', default: true},
         {code: 'hi', internal_code: 'hi-internal'}
       ]);
 

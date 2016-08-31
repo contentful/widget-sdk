@@ -79,7 +79,7 @@ describe('widgets/API', function () {
 
     it('sends fieldInfo param', function () {
       this.setLocales([
-        {code: 'en', internal_code: 'en-internal'}
+        {code: 'en', internal_code: 'en-internal', default: true}
       ]);
 
       this.fields = [
@@ -97,7 +97,7 @@ describe('widgets/API', function () {
     });
 
     it('sends locales param', function () {
-      this.setLocales([{code: 'A'}, {code: 'B'}]);
+      this.setLocales([{code: 'A', default: true}, {code: 'B'}]);
       this.createAPI().connect();
       expect(this.postMessage.args[0][0].params[0].locales.default).toEqual('A');
       expect(this.postMessage.args[0][0].params[0].locales.available).toEqual(['A', 'B']);
@@ -107,7 +107,7 @@ describe('widgets/API', function () {
   describe('#sendFieldValueChange()', function () {
     beforeEach(function () {
       this.setLocales([
-        {code: 'LC-public', internal_code: 'LC-internal'}
+        {code: 'LC-public', internal_code: 'LC-internal', default: true}
       ]);
       this.fields = [
         {id: 'FID-internal', apiName: 'FID-public'}

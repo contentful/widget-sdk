@@ -146,7 +146,7 @@ describe('entity editor field integration', function () {
 
     it('only shows default locale when field is not localized', function () {
       this.setLocales([
-        {code: 'en'}, {code: 'de'}, {code: 'fr'}
+        {code: 'en', default: true}, {code: 'de'}, {code: 'fr'}
       ]);
       this.widget.field.localized = false;
       var el = this.compile();
