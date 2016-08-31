@@ -62,7 +62,7 @@ angular.module('contentful')
       // get conflicting data for path from entry id with conflict.sys.id
       $scope.spaceContext.space.getEntry(conflict.sys.id).then(function (entry) {
         // put it on conflict.conflictingData asynchronously
-        conflict.conflictingData = entry.data.fields[path[1]][path[2]];
+        conflict.conflictingData = $scope.spaceContext.entryTitle(entry);
       });
       return conflict;
     };
