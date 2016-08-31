@@ -148,7 +148,7 @@ angular.module('contentful')
       scopeData: {
         locale: $scope.locale,
         model: {newFallbackCode: null},
-        dependantLocaleNames: _.map(dependantLocales, 'label').join(', '),
+        dependantLocaleNames: prepareDependantLocaleNames(dependantLocales),
         availableLocales: localeList.getAvailableFallbackLocales(code)
       }
     }).promise.then(function (newFallbackCode) {
@@ -158,6 +158,15 @@ angular.module('contentful')
         return $q.reject();
       });
     });
+  }
+
+  function prepareDependantLocaleNames (dependantLocales) {
+    if (dependantLocales.length > 4) {
+      var rest = ' and ' + (dependantLocales.length - 3) + ' other locales';
+      return _.map(dependantLocales.slice(0, 3), 'name').join(', ') + rest;
+    } else {
+      return _.map(dependantLocales, 'name').join(', ');
+    }
   }
 
   function fallbackUpdater (newFallbackCode) {

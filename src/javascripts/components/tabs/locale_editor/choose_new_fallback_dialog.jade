@@ -7,9 +7,9 @@
     .modal-dialog__content
       .modal-dialog__richtext
         p
-          | <strong>{{ locale.data.name }} ({{ locale.data.code }})</strong>
-          | is used as fallback for {{ dependantLocaleNames }}. After deleting
-          | it, the affected locales will fallback to:
+          | <strong>{{ locale.data.name }}</strong> is used as fallback
+          | for {{ dependantLocaleNames }}. After deleting it, the affected
+          | locales will fallback to:
 
         select.cfnext-select-box(
           ng-model="model.newFallbackCode"
@@ -18,6 +18,6 @@
 
     .modal-dialog__controls
       button.btn-primary-action(ng-click="dialog.confirm(model.newFallbackCode)")
-        | OK, delete {{ locale.data.name }} ({{ locale.data.code }}) and update affected locales
+        | OK, delete {{ locale.data.name }} and update affected locales
       button.btn-secondary-action(ng-click="dialog.cancel()")
         | Don't delete
