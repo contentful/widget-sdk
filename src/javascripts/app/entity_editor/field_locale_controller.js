@@ -47,26 +47,9 @@ angular.module('contentful')
    */
   $scope.$watch('validator.errors', function (errors) {
     errors = filterLocaleErrors(errors);
-    errors = errors.map(function (error) {
-      if (error.name === 'unique') {
-        error.message = error.message.replace('${fieldName}', $scope.field.name);
-        error.conflicting = error.conflicting.map(decorateWithConflictDataForField(error.path));
-      }
-      return error;
-    });
+    errors = errors.map(handleUniquenessConflicts);
     controller.errors = errors.length > 0 ? errors : null;
   });
-
-  function decorateWithConflictDataForField (path) {
-    return function (conflict) {
-      // get conflicting data for path from entry id with conflict.sys.id
-      $scope.spaceContext.space.getEntry(conflict.sys.id).then(function (entry) {
-        // put it on conflict.conflictingData asynchronously
-        conflict.conflictingData = $scope.spaceContext.entryTitle(entry);
-      });
-      return conflict;
-    };
-  }
 
   // Only retuns errors that apply to this field locale
   function filterLocaleErrors (errors) {
@@ -84,6 +67,30 @@ angular.module('contentful')
 
       return _.isEqual(path.slice(0, 3), localePath);
     });
+  }
+
+  function handleUniquenessConflicts (error) {
+    if (error.name === 'unique') {
+      var conflicts = error.conflicting;
+      var conflictingEntryIds = conflicts.map(_.property('sys.id')).join(',');
+      var query = { 'sys.id[in]': conflictingEntryIds };
+
+      // asynchronously add conflicting entry title to the error objects
+      // so that we can display the list in the UI
+      $scope.spaceContext.space.getEntries(query).then(function (entries) {
+        entries.forEach(function (entry) {
+          var conflict = _.find(conflicts, function (c) {
+            return c.sys.id === entry.data.sys.id;
+          });
+
+          conflict.conflictingData = $scope.spaceContext.entryTitle(entry);
+        });
+      });
+
+      // poor man's string interpolation
+      error.message = error.message.replace('${fieldName}', $scope.field.name);
+    }
+    return error;
   }
 
   /**
