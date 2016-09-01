@@ -6,21 +6,22 @@ angular.module('contentful')
  * @ngdoc service
  * @name baseErrorMessageBuilder
  *
- * @method {function(error:Error): string} baseErrorMessageBuilder
+ * @method {function (error:Error): string} baseErrorMessageBuilder
  */
 .factory('baseErrorMessageBuilder', [function () {
   var messages = {
     size: function (error) {
-      if (_.isString(error.value))
+      if (_.isString(error.value)) {
         return stringLengthMessage(error.min, error.max);
-      else
+      } else {
         return sizeMessage(error.min, error.max, 'items');
+      }
     },
 
     range: function (error) {
       if (_.isNumber(error.min) && _.isNumber(error.max)) {
         return 'Please enter a number between ' + error.min + ' and ' + error.max;
-      } else if(_.isNumber(error.min)) {
+      } else if (_.isNumber(error.min)) {
         return 'Please enter a number no less than ' + error.min;
       } else {
         return 'Please enter a number no greater than ' + error.max;
@@ -35,27 +36,27 @@ angular.module('contentful')
       return 'Must be one of ' + error.expected.join(', ') + '.';
     },
 
-    required: function(error) {
-      if (error.path.length == 1 && error.path[0] == 'fields') {
+    required: function (error) {
+      if (error.path.length === 1 && error.path[0] === 'fields') {
         return 'All fields are empty. Please fill out some fields.';
       } else {
         return 'Required';
       }
     },
 
-    unique: function(error) {
+    unique: function (error) {
       if (error.conflicting.length > 1) {
         return 'There are already entries with the same ${fieldName} field';
       } else {
         return 'There\'s already an entry with the same ${fieldName} field';
       }
-    },
+    }
   };
 
   function stringLengthMessage (min, max) {
     if (_.isNumber(min) && _.isNumber(max)) {
       return 'Please edit the text so it\'s between ' + min + ' and ' + max + ' characters long';
-    } else if(_.isNumber(min)) {
+    } else if (_.isNumber(min)) {
       return 'Please expand the text so it\'s no shorter than ' + min + ' characters';
     } else {
       return 'Please shorten the text so it\'s no longer than ' + max + ' characters';
@@ -64,21 +65,23 @@ angular.module('contentful')
 
   function sizeMessage (min, max, itemsName) {
     if (_.isNumber(min) && _.isNumber(max)) {
-      return 'Please provide between ' + min + ' and ' + max + ' ' +  itemsName;
-    } else if(_.isNumber(min)) {
-      return 'Please provide at least ' + min +  ' ' + itemsName;
+      return 'Please provide between ' + min + ' and ' + max + ' ' + itemsName;
+    } else if (_.isNumber(min)) {
+      return 'Please provide at least ' + min + ' ' + itemsName;
     } else {
       return 'Please provide at most ' + max + ' ' + itemsName;
     }
   }
 
-  function defaultMessage(error) {
-    if (error.message)
+  function defaultMessage (error) {
+    if (error.message) {
       return error.message;
-    if (error.details)
+    }
+    if (error.details) {
       return error.details;
-    else
+    } else {
       return 'Error: ' + error.name;
+    }
   }
 
   function buildErrorMessage (error) {
@@ -101,19 +104,23 @@ angular.module('contentful')
  * Extends the `baseErrorMessageBuilder` with special messages for the
  * `apiName` property of a CT field.
  *
- * @method {function(error:Error): string} fieldErrorMessageBuilder
+ * @method {function (error:Error): string} fieldErrorMessageBuilder
  */
 .factory('fieldErrorMessageBuilder', ['baseErrorMessageBuilder', function (buildBaseMessage) {
   return function buildMessage (error) {
     if (error.path && error.path[0] === 'apiName') {
-      if (error.name === 'regexp' && error.value.match(/^\d/))
+      if (error.name === 'regexp' && error.value.match(/^\d/)) {
         return 'Please use a letter as the first character';
-      if (error.name === 'regexp')
+      }
+      if (error.name === 'regexp') {
         return 'Please use only letters and number';
-      if (error.name === 'size')
+      }
+      if (error.name === 'size') {
         return 'Please shorten the text so it’s no longer than 64 characters';
-      if (error.name === 'uniqueFieldId')
+      }
+      if (error.name === 'uniqueFieldId') {
         return 'A field with this ID already exists';
+      }
     }
     return buildBaseMessage(error);
   };
@@ -130,13 +137,13 @@ angular.module('contentful')
  * SpaceContext.
  *
  * @method {(sc:SpaceContext) => ((e:Error) => string)} errorMessageBuilder
- * @method {function(error:Error): string} errorMessageBuilder.forContentType
- * @method {function(error:Error): string} errorMessageBuilder.forAsset
+ * @method {function (error:Error): string} errorMessageBuilder.forContentType
+ * @method {function (error:Error): string} errorMessageBuilder.forAsset
  */
 .factory('errorMessageBuilder', ['$injector', function ($injector) {
-  var moment                = $injector.get('moment');
-  var joinAnd               = $injector.get('stringUtils').joinAnd;
-  var mimetypeGroupNames    = $injector.get('mimetype').getGroupNames();
+  var moment = $injector.get('moment');
+  var joinAnd = $injector.get('stringUtils').joinAnd;
+  var mimetypeGroupNames = $injector.get('mimetype').getGroupNames();
   var buildBaseErrorMessage = $injector.get('baseErrorMessageBuilder');
 
   var messages = {
@@ -147,12 +154,13 @@ angular.module('contentful')
       return '' + joinAnd(labels) + ' are the only acceptable file types';
     },
 
-    linkContentType: function(error, spaceContext) {
+    linkContentType: function (error, spaceContext) {
       var ct = spaceContext.getPublishedContentType(error.contentTypeId);
-      if (!ct)
+      if (!ct) {
         return 'Invalid content type';
-      else
+      } else {
         return 'Linked Entry\'s content type must be ' + ct.getName() + '.';
+      }
     },
 
     dateRange: function (error) {
@@ -160,8 +168,8 @@ angular.module('contentful')
       var min = error.min && moment(error.min).format(dateFormat);
       var max = error.max && moment(error.max).format(dateFormat);
 
-      if (min && max ) {
-        return 'Please set a date between ' + min + ' and ' +  max;
+      if (min && max) {
+        return 'Please set a date between ' + min + ' and ' + max;
       } else if (min) {
         return 'Please set a time no earlier than ' + min;
       } else {
@@ -169,8 +177,8 @@ angular.module('contentful')
       }
     },
 
-    type: function(error) {
-      if (error.details && (error.type == 'Validation' || error.type == 'Text')) {
+    type: function (error) {
+      if (error.details && (error.type === 'Validation' || error.type === 'Text')) {
         return error.details;
       } else if (error.type === 'Symbol') {
         return buildBaseErrorMessage.stringLength(null, 256);
@@ -187,9 +195,9 @@ angular.module('contentful')
     },
 
     unknown: function (error) {
-      if (error.path.length == 3 && error.path[0] == 'fields') {
+      if (error.path.length === 3 && error.path[0] === 'fields') {
         return 'This field is not localized and should not contain a value.';
-      } else if (error.path.length == 2 && error.path[0] == 'fields') {
+      } else if (error.path.length === 2 && error.path[0] === 'fields') {
         return 'Unknown field.';
       } else {
         return 'Unkown property.';
@@ -197,38 +205,44 @@ angular.module('contentful')
     }
   };
 
-  function customMessage(error) {
+  function customMessage (error) {
     return error.customMessage;
   }
 
   function buildErrorMessage (error, spaceContext) {
     var getMessage;
-    if (error.customMessage)
+    if (error.customMessage) {
       getMessage = customMessage;
-    else
+    } else {
       getMessage = messages[error.name] || buildBaseErrorMessage;
+    }
     return getMessage(error, spaceContext);
   }
 
   function buildContentTypeError (error) {
-    if (error.name === 'size' && error.path.length === 1 && error.path[0] === 'fields')
+    if (error.name === 'size' && error.path.length === 1 && error.path[0] === 'fields') {
       return 'You have reached the maximum number of ' + error.max + ' fields per content type.';
-    if (error.name === 'uniqueFieldIds')
+    }
+    if (error.name === 'uniqueFieldIds') {
       return 'Field ID must be unique';
-    if (error.name === 'uniqueFieldApiNames')
+    }
+    if (error.name === 'uniqueFieldApiNames') {
       return 'Field API Name must be unique';
-    if (error.name === 'regexp' && error.path[2] === 'apiName')
+    }
+    if (error.name === 'regexp' && error.path[2] === 'apiName') {
       return 'Please provide input that only contains letters and digits';
-    else
+    } else {
       return buildErrorMessage(error);
+    }
   }
 
   function buildAssetError (error) {
-    if (error.name === 'required' && error.path.length == 4 &&
-        error.path[1] == 'file' && error.path[3] == 'url')
+    if (error.name === 'required' && error.path.length === 4 &&
+        error.path[1] === 'file' && error.path[3] === 'url') {
       return 'Cannot publish until processing has finished';
-    else
+    } else {
       return buildErrorMessage(error);
+    }
   }
 
   function errorMessageBuilder (spaceContext) {

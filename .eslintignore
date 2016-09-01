@@ -296,7 +296,6 @@ src/javascripts/services/analytics/analytics_noop.js
 src/javascripts/services/authorization.js
 src/javascripts/services/editing_interfaces_helpers.js
 src/javascripts/services/enforcements.js
-src/javascripts/services/error_message_builder.js
 src/javascripts/services/features.js
 src/javascripts/services/filepicker.js
 src/javascripts/services/hints.js
