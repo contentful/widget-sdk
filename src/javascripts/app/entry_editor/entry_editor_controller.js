@@ -10,6 +10,7 @@ angular.module('contentful')
   var DataFields = require('EntityEditor/DataFields');
   var ContentTypes = require('data/ContentTypes');
   var K = require('utils/kefir');
+  var $timeout = require('$timeout');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
@@ -57,6 +58,34 @@ angular.module('contentful')
   $scope.$watch(function entryEditorDisabledWatcher () {
     return $scope.entry.isArchived() || isReadOnly();
   }, $scope.otDoc.setReadOnly);
+
+  $scope.setSnapshot = function (s) {
+    $scope.snapshot = null;
+    $timeout(function () {
+      $scope.snapshot = s;
+    });
+  };
+
+  $scope.restore = function () {
+    var fields = {};
+    Object.keys($scope.snapshot.snapshot.fields).forEach(function (key) {
+      var field = _.find($scope.contentType.data.fields, {apiName: key});
+      fields[field.id] = $scope.snapshot.snapshot.fields[key];
+    });
+
+    $scope.otDoc.setValueAt(['fields'], fields)
+    .finally(function () {
+      $scope.setSnapshot();
+    });
+  };
+
+  $scope.restoreAtPath = function (field, locale) {
+    var val = $scope.snapshot.snapshot.fields[field.apiName][locale.code];
+    $scope.otDoc.setValueAt(['fields', field.id, locale.internal_code], val)
+    .finally(function () {
+      $scope.setSnapshot();
+    });
+  };
 
   $scope.$watch('entry.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
     if (publishedVersion > oldVersion) scope.validate();

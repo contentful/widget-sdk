@@ -117,6 +117,10 @@ mixin entity-sidebar
         | Change
 
     h2.entity-sidebar__heading
+      | Snapshots
+    cf-snapshot-list
+
+    h2.entity-sidebar__heading
       | Users
     .entity-sidebar__no-users(ng-if="!docCollaborators.length")
       | No other users online

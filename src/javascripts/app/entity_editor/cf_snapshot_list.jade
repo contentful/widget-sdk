@@ -1,0 +1,21 @@
+.snapshot(ng-repeat="snapshot in snapshots track by snapshot.sys.id")
+  .snapshot-item(style="width: 25%")
+    | {{ snapshot.sys.snapshotType }}
+
+  time.snapshot-item(
+    style="width: 25%"
+    datetime="{{ snapshot.sys.createdAt }}"
+    cf-relative-datetime)
+
+  .snapshot-item(
+    style="width: 35%"
+    cf-user
+    link="snapshot.sys.createdBy"
+    as="snapshotAuthor")
+    img(
+      style="width: 25px; height: 25px"
+      ng-src="{{ snapshotAuthor.data.avatarUrl }}")
+    | {{ snapshotAuthor | userNameDisplay:user }}
+
+  .snapshot-item(style="width: 10%")
+    a(href="" ng-click="setSnapshot(snapshot)") View
