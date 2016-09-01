@@ -1,0 +1,73 @@
+/**
+Tables
+
+The `.table` class should be applied to tables that will use the generic table
+layout.
+
+Markup:
+table.table
+  thead
+    tr
+      th.x--selected
+        a.x--asc(href="")
+          | Name
+      th Description
+  tbody
+    tr
+      td Pikachu
+      td Electric type pokemon
+    tr.pseudo-class-last-child
+      td Charizard
+      td A big dragon
+script
+  | $('.x--asc').click(function () {
+  |   $(this).toggleClass('x--asc x--desc')
+  | })
+
+
+
+Styleguide 7
+*/
+.table {
+  width: 100%
+  border-collapse: separate
+  tr {
+    height: 40px
+    line-height: 40px
+  }
+  td, th {
+    padding: 0 14px
+  }
+  th {
+    background-color: $colors.element-lightest
+    border-bottom: 1px solid $colors.element-mid
+    text-align: left
+    font-weight: normal
+    &, a {
+      color: $colors.text-light
+    }
+    a.x--asc:after, a.x--desc:after {
+      $caret()
+      color: $colors.text-light
+      margin-left: 3px
+    }
+    a.x--asc:after {
+      content: "\f0d8";
+    }
+    a.x--desc:after {
+      content: "\f0d7";
+    }
+  }
+  th.x--selected {
+    font-weight: bold
+  }
+  tbody {
+    color: $colors.text-mid
+    tr:not(:last-child) {
+      border-bottom: 1px solid $colors.element-light
+      > td {
+        border-bottom: 1px solid $colors.element-light
+      }
+    }
+  }
+}
