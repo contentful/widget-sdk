@@ -10,12 +10,10 @@ ENV PATH=/app/node_modules/.bin:$PATH \
 # Install dependencies
 COPY package.json \
      npm-shrinkwrap.json \
-     bower.json \
      ./
 
 RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc && \
-    npm install --no-optional && \
-    bower --allow-root install
+    npm install --no-optional
 
 COPY vendor ./vendor
 RUN cd vendor/ui-extensions-sdk && \

@@ -57,7 +57,7 @@ mixin entity-sidebar
         span.entity-sidebar__saving(ng-show="otDoc.state.saving")
           | Saving
       if attributes.revert
-        button.entity-sidebar__revert.cfnext-btn-link(
+        button.entity-sidebar__revert.btn-link(
           cf-context-menu-trigger
           data-test-id="revert-menu-trigger"
           ng-disabled="!state.revertToPublished.isAvailable() && !state.revertToPrevious.isAvailable()")
@@ -76,7 +76,7 @@ mixin entity-sidebar
         h2.entity-sidebar__heading
           | Preview
         .entity-sidebar__preview
-          a.cfnext-btn-secondary-action.x--block(
+          a.btn-secondary-action.x--block(
             ng-href="{{selectedEnvironment.compiledUrl}}"
             target="_blank")
             i.fa.fa-external-link
@@ -111,7 +111,7 @@ mixin entity-sidebar
           ng-if="!locale.default"
           ng-click="locales.deactivate(locale)")
           cf-icon(name="close" scale="0.6")
-      button.cfnext-btn-link(
+      button.btn-link(
         ui-command="locales.changeActive")
         | Change
 

@@ -21,7 +21,7 @@
             p.step__description
               | Create your content model. It’s comprised of content types, which define the structure of your entries.
             .step__actions(ng-show="!learn.contentTypes.length")
-              button.cfnext-btn-action(
+              button.btn-action(
                 ng-click="learn.trackClickedButton('Create a content type')"
                 ui-sref="spaces.detail.content_types.new({ spaceId: learn.spaceId })")
                 | Create a content type
@@ -54,14 +54,14 @@
                 | View content
             .step__actions(ng-show="!learn.hasEntries")
               //- One or less content type
-              button.cfnext-btn-action(
+              button.btn-action(
                 ng-if="learn.contentTypes.length <= 1"
                 ng-click="learn.trackClickedButton('Add an entry'); entityCreationController.newEntry(learn.contentTypes[0])"
                 ng-disabled="learn.contentTypes.length === 0")
                 | Add an entry
               //- More than one content
               div(ng-show="learn.contentTypes.length > 1")
-                button.cfnext-btn-action(cf-context-menu-trigger)
+                button.btn-action(cf-context-menu-trigger)
                   span Add an entry&nbsp;
                   cf-icon(name="dd-arrow-down")
                 .context-menu(role="menu" cf-context-menu aria-label="Add an entry")
@@ -81,7 +81,7 @@
             p.step__description
               | Use the API to see your content wherever you like. We’ll show you different ways of delivering your content.
             .step__actions(ng-show="!learn.activated || !learn.hasEntries")
-              button.cfnext-btn-action(
+              button.btn-action(
                 ng-click="learn.goToApiKeySection()"
                 ng-disabled="!learn.hasEntries")
                 | Use the API
@@ -118,7 +118,7 @@
             h3 {{step.title}}
             p.step__description {{step.description}}
             .step__actions(ng-show="!step.completed")
-              button.cfnext-btn-action(
+              button.btn-action(
                 ng-click="learn.trackClickedButton('{{step.title}}')"
                 ui-sref="{{step.sref}}")
                 | {{step.buttonText}}

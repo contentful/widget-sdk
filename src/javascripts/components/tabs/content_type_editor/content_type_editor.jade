@@ -5,12 +5,12 @@ header.workbench-header
     | {{contentType.getName()}}
   .workbench-header__description
     | {{contentType.data.description}}
-  button.cfnext-btn-inline(ui-command="showMetadataDialog")
+  button.btn-inline(ui-command="showMetadataDialog")
     | Edit
   .workbench-header__actions
-    button.cfnext-btn-secondary-action(ui-command="actions.cancel")
+    button.btn-secondary-action(ui-command="actions.cancel")
       | Cancel
-    button.cfnext-btn-secondary-action(cf-context-menu-trigger)
+    button.btn-secondary-action(cf-context-menu-trigger)
       cf-icon.btn-dropdown-icon(name="dd-arrow-down")
       | Actions
     .context-menu(cf-context-menu)
@@ -18,12 +18,12 @@ header.workbench-header
         | Duplicate
       div(role="menuitem" ui-command="actions.delete")
         | Delete
-    button.cfnext-btn-primary-action(ui-command="actions.save")
+    button.btn-primary-action(ui-command="actions.save")
       | Save
 
 .workbench-nav
   .workbench-nav__left-content
-    button.cfnext-btn-action(ui-command="showNewFieldDialog")
+    button.btn-action(ui-command="showNewFieldDialog")
       cf-icon.btn-icon.inverted(name="plus")
       | Add field
   ul.workbench-nav__tabs

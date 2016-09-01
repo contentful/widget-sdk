@@ -6,8 +6,8 @@ describe('Webhook Headers directive', function () {
     module('contentful/test');
 
     this.compile = function (headers) {
-      var data = {headers: headers || []};
-      this.element = this.$compile('<cf-webhook-headers headers="headers" />', data);
+      var data = {headers: headers || [], isDirty: false};
+      this.element = this.$compile('<cf-webhook-headers headers="headers" is-dirty="isDirty" />', data);
       this.scope = this.element.isolateScope();
     }.bind(this);
 
@@ -29,7 +29,7 @@ describe('Webhook Headers directive', function () {
   });
 
   describe('"add" button', function () {
-    beforeEach(function() {
+    beforeEach(function () {
       this.add = function () {
         return this.element.find('.webhook-new-header__actions > button');
       }.bind(this);

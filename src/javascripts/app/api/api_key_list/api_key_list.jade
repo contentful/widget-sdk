@@ -34,7 +34,7 @@ cf-api-key-nav
           | Whoops, looks like you don't have any API keys
         .cfnext-advice-box__sub-title
           | Add your first key to get started delivering content.
-        button.cfnext-btn-action(ui-command="createApiKey")
+        button.btn-action(ui-command="createApiKey")
           div
             cf-icon.btn-icon.inverted(name="plus")
             | Add API key
@@ -54,7 +54,7 @@ cf-api-key-nav
             | <a class="entity-sidebar__link" ui-sref="{{subscriptionState}}">upgrade your account</a>.
           span(ng-if="!subscriptionState")
             | If you want to create additional keys, you need to either delete an existing one or contact the owner of your organization to upgrade the account.
-        button.cfnext-btn-action.x--block(
+        button.btn-action.x--block(
           ui-command="createApiKey")
           div
             cf-icon.btn-icon.inverted(name="plus")

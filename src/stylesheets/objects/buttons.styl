@@ -20,8 +20,14 @@ Styleguide 4.0
   $layer('buttonOverlay')
   margin: 0 !important
 
-@require './buttons-deprecated.styl'
-
+.transparent-button
+  background: none
+  border: none
+  cursor: pointer
+  padding: 0
+  margin: 0
+.transparent-button[disabled]
+  cursor: auto
 
 $button-reset()
   color: inherit
@@ -41,10 +47,10 @@ $button-reset()
     padding: 0
 
 
-$cfnext-button($color, $text)
-  $cfnext-button-layout()
-  $cfnext-button-colors($color, $text)
-  $cfnext-button-loading($text)
+$button($color, $text)
+  $button-layout()
+  $button-colors($color, $text)
+  $button-loading($text)
 
 
 
@@ -52,7 +58,7 @@ $cfnext-button($color, $text)
  * Applies layout and typography styles
  */
 $button-vertical-padding = (10 / 16) * 1rem
-$cfnext-button-layout()
+$button-layout()
   display: inline-block
   padding: $button-vertical-padding 1.5rem
   cursor: pointer
@@ -65,14 +71,14 @@ $cfnext-button-layout()
   line-height: $base-line-height
 
 
-$cfnext-button-large()
+$button-large()
   font-size: 1.15rem
   padding: 1rem 2.5rem
 
 /**
  * Applies background, text and border colors for the various states.
  */
-$cfnext-button-colors($bg, $text)
+$button-colors($bg, $text)
   color: $text
   background: $bg
   background-size: 100% 200%
@@ -107,7 +113,7 @@ $cfnext-button-colors($bg, $text)
  * Add a spinner pseude element and activate it in the `is-loading`
  * state.
  */
-$cfnext-button-loading($text)
+$button-loading($text)
   > *
     display: inline-block
   +$spinner-base()
@@ -126,11 +132,11 @@ This button should be used for actions which are important, but not necessarily
 the most important action in the current view
 
 Markup:
-button.cfnext-btn-action{{modifier_class}} Action
-button.cfnext-btn-action{{modifier_class}}.pseudo-class-hover Action
-button.cfnext-btn-action{{modifier_class}}.active Action
-button.cfnext-btn-action{{modifier_class}}(disabled) Action
-button.cfnext-btn-action{{modifier_class}}.is-loading Action
+button.btn-action{{modifier_class}} Action
+button.btn-action{{modifier_class}}.pseudo-class-hover Action
+button.btn-action{{modifier_class}}.active Action
+button.btn-action{{modifier_class}}(disabled) Action
+button.btn-action{{modifier_class}}.is-loading Action
 
 --large - Large variation
 
@@ -139,18 +145,18 @@ Styleguide 4.1
 
 $btn-action-bg = linear-gradient(to top, $colors.blue-dark, $colors.blue-light)
 $btn-action()
-  $cfnext-button($btn-action-bg, white)
+  $button($btn-action-bg, white)
   border-color: $colors.blue-dark
 
   &:hover, &.active
     border-color: $colors.blue-darkest
 
-.cfnext-btn-action,
-.cfnext-btn-action--large
+.btn-action,
+.btn-action--large
   $btn-action()
 
-.cfnext-btn-action--large
-  $cfnext-button-large()
+.btn-action--large
+  $button-large()
 
 
 /*
@@ -159,11 +165,11 @@ Primary Action Button
 Used for the most important action in a given context
 
 Markup:
-button.cfnext-btn-primary-action{{modifier_class}} Action
-button.cfnext-btn-primary-action{{modifier_class}}.pseudo-class-hover Action
-button.cfnext-btn-primary-action{{modifier_class}}.active Action
-button.cfnext-btn-primary-action{{modifier_class}}(disabled) Action
-button.cfnext-btn-primary-action{{modifier_class}}.is-loading Action
+button.btn-primary-action{{modifier_class}} Action
+button.btn-primary-action{{modifier_class}}.pseudo-class-hover Action
+button.btn-primary-action{{modifier_class}}.active Action
+button.btn-primary-action{{modifier_class}}(disabled) Action
+button.btn-primary-action{{modifier_class}}.is-loading Action
 
 --large - Large variation
 
@@ -172,18 +178,18 @@ Styleguide 4.2
 
 $btn-primary-bg = linear-gradient(to top, $colors.green-dark, $colors.green-light)
 $btn-primary()
-  $cfnext-button($btn-primary-bg, white)
+  $button($btn-primary-bg, white)
   border-color: $colors.green-dark
 
   &:hover, &.active
     border-color: $colors.green-darkest
 
-.cfnext-btn-primary-action,
-.cfnext-btn-primary-action--large
+.btn-primary-action,
+.btn-primary-action--large
   $btn-primary()
 
-.cfnext-btn-primary-action--large
-  $cfnext-button-large()
+.btn-primary-action--large
+  $button-large()
 
 /*
 Secondary Action Button
@@ -192,11 +198,11 @@ Used for actions that should complement primary actions or visually less
 important actions
 
 Markup:
-button.cfnext-btn-secondary-action{{modifier_class}} Action
-button.cfnext-btn-secondary-action{{modifier_class}}.pseudo-class-hover Action
-button.cfnext-btn-secondary-action{{modifier_class}}.active Action
-button.cfnext-btn-secondary-action{{modifier_class}}(disabled) Action
-button.cfnext-btn-secondary-action{{modifier_class}}.is-loading Action
+button.btn-secondary-action{{modifier_class}} Action
+button.btn-secondary-action{{modifier_class}}.pseudo-class-hover Action
+button.btn-secondary-action{{modifier_class}}.active Action
+button.btn-secondary-action{{modifier_class}}(disabled) Action
+button.btn-secondary-action{{modifier_class}}.is-loading Action
 
 --large - Large variation
 
@@ -205,16 +211,16 @@ Styleguide 4.3
 $btn-secondary-text = $colors.text-mid
 $btn-secondary-bg = $colors.element-light
 $button-secondary-colors()
-  $cfnext-button-colors($btn-secondary-bg, $btn-secondary-text)
+  $button-colors($btn-secondary-bg, $btn-secondary-text)
   border-color: $colors.element-dark
 
   &:hover:not(:disabled), &.active
     background-color: $colors.element-mid
     border-color: $colors.element-darkest
 
-.cfnext-btn-secondary-action,
-.cfnext-btn-secondary-action--large
-  $cfnext-button($btn-secondary-bg, $btn-secondary-text)
+.btn-secondary-action,
+.btn-secondary-action--large
+  $button($btn-secondary-bg, $btn-secondary-text)
   border-color: $colors.element-dark
 
   &:hover, &.active
@@ -227,24 +233,24 @@ $button-secondary-colors()
     path
       stroke: $btn-secondary-bg
 
-.cfnext-btn-secondary-action--large
-  $cfnext-button-large()
+.btn-secondary-action--large
+  $button-large()
 
 
 /**
 Caution button
 
 Markup:
-button.cfnext-btn-caution Be Careful!
-button.cfnext-btn-caution.pseudo-class-hover Be Careful!
-button.cfnext-btn-caution.active Be Careful!
-button.cfnext-btn-caution(disabled) Be Careful!
+button.btn-caution Be Careful!
+button.btn-caution.pseudo-class-hover Be Careful!
+button.btn-caution.active Be Careful!
+button.btn-caution(disabled) Be Careful!
 
 Styleguide 4.4
 */
 $btn-caution-bg = linear-gradient(to top, $colors.red-dark, $colors.red-light)
-.cfnext-btn-caution
-  $cfnext-button($btn-caution-bg, white)
+.btn-caution
+  $button($btn-caution-bg, white)
   border-color: $colors.red-dark
 
   &:hover
@@ -254,26 +260,26 @@ $btn-caution-bg = linear-gradient(to top, $colors.red-dark, $colors.red-light)
 /**
 Plain Action Button
 
-TODO: Support `button.cfnext-btn-plain.is-loading`, and `button.cfnext-btn-plain(disabled)`
+TODO: Support `button.btn-plain.is-loading`, and `button.btn-plain(disabled)`
 
 Markup:
-button.cfnext-btn-primary-action
+button.btn-primary-action
   | One
-button.cfnext-btn-plain
+button.btn-plain
   | Two
-button.cfnext-btn-action
+button.btn-action
   | Three
 
 Styleguide 4.5
 */
-$cfnext-button-plain()
+$button-plain()
   background: none
-  $cfnext-button-layout()
+  $button-layout()
   color: $colors.blue
   outline: 0
 
-.cfnext-btn-plain
-  $cfnext-button-plain()
+.btn-plain
+  $button-plain()
 
 /**
 Block button
@@ -281,13 +287,13 @@ Block button
 Markup:
 p
   | Normal
-  button.cfnext-btn-primary-action.x--block Action Button
+  button.btn-primary-action.x--block Action Button
 p
   | Loading
-  button.cfnext-btn-primary-action.x--block.is-loading Loading
+  button.btn-primary-action.x--block.is-loading Loading
 p
   | Icon
-  button.cfnext-btn-primary-action.x--block
+  button.btn-primary-action.x--block
     cf-icon.btn-icon.inverted(name="plus")
     | Action
 
@@ -312,7 +318,7 @@ $x--block()
 
 
 // DEPRECATED
-$cfnext-btn-inline()
+$btn-inline()
   font-size: inherit
   display: inline-block
   vertical-align: baseline
@@ -323,28 +329,28 @@ $cfnext-btn-inline()
   cursor: pointer
   color: $colors.blue
 
-.cfnext-btn-inline
-  $cfnext-btn-inline()
+.btn-inline
+  $btn-inline()
 
 
 /**
 Link Style Button
 
 Markup:
-button.cfnext-btn-link
+button.btn-link
   | Action
-button.cfnext-btn-link(disabled)
+button.btn-link(disabled)
   | Disabled
-button.cfnext-btn-link.is-loading
+button.btn-link.is-loading
   | Loading
-button.cfnext-btn-link
+button.btn-link
   cf-icon.btn-icon(name="plus")
   | Action
 
 Styleguide 4.7
 */
 
-.cfnext-btn-link
+.btn-link
   $button-reset();
   display: block
   color: $colors.blue-mid
@@ -365,16 +371,16 @@ Styleguide 4.7
 Buttons with icons
 
 Markup:
-button.cfnext-btn-action
+button.btn-action
   cf-icon.btn-icon.inverted(name="plus")
   | Action
-button.cfnext-btn-secondary-action
+button.btn-secondary-action
   cf-icon.btn-icon.inverted(name="plus")
   | Action
-button.cfnext-btn-plain
+button.btn-plain
   cf-icon.btn-icon(name="plus")
   | Action
-button.cfnext-btn-action--large-popout-icon
+button.btn-action--large-popout-icon
   cf-icon(name="new-ct")
   | Action
 
@@ -393,49 +399,45 @@ $btn-icon()
   $btn-icon()
 
 
-$cfnext-button--large-popout-icon()
-  $cfnext-button-large()
+$button--large-popout-icon()
+  $button-large()
   padding-left: 5.0rem
   cf-icon
     position: absolute
     left: 1.0rem
     top: -0.5rem
 
-.cfnext-btn-action--large-popout-icon
+.btn-action--large-popout-icon
   position: relative
   $btn-action()
-  $cfnext-button--large-popout-icon()
+  $button--large-popout-icon()
 
 
 /*
 Buttons with dropdowns
 
 Markup:
-button.cfnext-btn-secondary-action.cfnext-btn--dropdown
+button.btn-secondary-action
   cf-icon.btn-dropdown-icon(name="dd-arrow-down")
   | More
-button.cfnext-btn-action.cfnext-btn--dropdown
+button.btn-action
   cf-icon.btn-dropdown-icon(name="dd-arrow-down")
   | More
-button.cfnext-btn-primary-action.cfnext-btn--dropdown
+button.btn-primary-action
   cf-icon.btn-dropdown-icon(name="dd-arrow-down")
   | More
 
 Styleguide 4.9
 */
 
-.btn-dropdown-icon,
-.btn-dropdown-icon--up
+.btn-dropdown-icon
   float: right
   margin-left: 0.4em
   margin-right: -0.2em
   svg
     display: inline-block
 
-.btn-dropdown-icon--up
-  transform: rotate(180deg)
-
-.cfnext-btn-secondary-action cf-icon path
+.btn-secondary-action cf-icon path
   fill: $colors.text-mid
 
 
@@ -522,6 +524,3 @@ Styleguide 4.10
   .btn-action-select__selector-label
     display: inline
 
-.context-menu__arrow.x--btn-action-select
-  justify-content: flex-end
-  padding-right: calc(1.6rem - 8px)

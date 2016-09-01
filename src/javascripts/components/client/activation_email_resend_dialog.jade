@@ -14,9 +14,9 @@
         | The email could not be sent. Please try again later or contact us.
 
     .modal-dialog__controls
-      button.cfnext-btn-primary-action(ng-click="dialog.confirm()" ng-disabled="isSending")
+      button.btn-primary-action(ng-click="dialog.confirm()" ng-disabled="isSending")
         | OK, got it
-      button.activation-email-resend-dialog__resend-btn.cfnext-btn-secondary-action.cfnext-btn-link(
+      button.activation-email-resend-dialog__resend-btn.btn-secondary-action.btn-link(
         ng-click="resendEmail()" ng-disabled="isSending"
         ng-class="{'is-loading': isSending}"
       )

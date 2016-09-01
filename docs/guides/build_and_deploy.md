@@ -36,7 +36,7 @@ Testing and creating a deployable distribution happens in a docker container
 based on the `contentful/user-interface` image.
 
 The image is built by running `bin/docker-build`. It installs all source code
-dependencies (NPM, bower, and submodules) and builds the app using `gulp build`.
+dependencies (NPM and git submodules) and builds the app using `gulp build`.
 The image contains all fingerprinted assets in the `/app/build` directory. This
 serves as a base to configure the `index.html` file and create the
 distributions.

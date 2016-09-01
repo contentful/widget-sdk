@@ -479,7 +479,7 @@ angular.module('contentful')
     return {
       type: 'List',
       items: _.map(values, function (val) {
-        return _.isPlainObject(val) ? val : {value: val};
+        return _.isPlainObject(val) ? val : {value: '"' + val + '"'};
       })
     };
   }

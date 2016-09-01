@@ -5,7 +5,7 @@ include ./paywall_text.mixin.jade
 
   div(ng-show="planRecommendationReasonHtml" ng-bind-html="planRecommendationReasonHtml")
 
-  button.advice__action.cfnext-btn-primary-action.modal-dialog__controls-confirm(
+  button.advice__action.btn-primary-action.modal-dialog__controls-confirm(
     ng-click="dialog.confirm(model); setUpPayment()"
     type="button") Select a plan
 

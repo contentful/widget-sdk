@@ -48,11 +48,11 @@ describe('The ApiKey list directive', function () {
   it('save button is disabled', function () {
     accessChecker.shouldDisable.returns(true);
     this.setup();
-    expect(sidebar.find('.cfnext-btn-action').attr('aria-disabled')).toBe('true');
+    expect(sidebar.find('.btn-action').attr('aria-disabled')).toBe('true');
   });
 
   it('save button is enabled', function () {
     this.setup();
-    expect(sidebar.find('.cfnext-btn-action').attr('aria-disabled')).toBeUndefined();
+    expect(sidebar.find('.btn-action').attr('aria-disabled')).toBeUndefined();
   });
 });

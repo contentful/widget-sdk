@@ -17,7 +17,7 @@ header.workbench-header
 
   .workbench-header__actions(
     ng-show="!showNoAssetsAdvice() && !shouldHide('createAsset')")
-    button.cfnext-btn-action(
+    button.btn-action(
       cf-context-menu-trigger
       ng-disabled="shouldDisable('createAsset')"
       cf-when-disabled="createAsset"
@@ -97,16 +97,16 @@ header.workbench-header
   ng-controller="AssetListActionsController")
   .workbench-actions__label
     | {{selection.size()}} Assets selected
-  button.cfnext-btn-secondary-action.delete(type="button"
+  button.btn-secondary-action.delete(type="button"
     ng-show="showDelete()"
     cf-context-menu-trigger
     data-test-id="delete-asset")
     | Delete
   .delete-confirm(cf-context-menu="top")
     p You are about to delete {{selection.size()}} Assets
-    button.cfnext-btn-caution(type="button" ng-click="deleteSelected()") Delete
-    button.cfnext-btn-secondary-action(type="button") Don't Delete
-  button.cfnext-btn-secondary-action.archive(type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
-  button.cfnext-btn-secondary-action.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
-  button.cfnext-btn-secondary-action.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
-  button.cfnext-btn-primary-action.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}
+    button.btn-caution(type="button" ng-click="deleteSelected()") Delete
+    button.btn-secondary-action(type="button") Don't Delete
+  button.btn-secondary-action.archive(type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
+  button.btn-secondary-action.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
+  button.btn-secondary-action.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
+  button.btn-primary-action.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}

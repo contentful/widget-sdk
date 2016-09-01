@@ -2,7 +2,7 @@ header.workbench-header
   cf-icon.workbench-header__icon(name="page-settings")
   h1.workbench-header__title Users ({{ count || 0 }})
   .workbench-header__actions
-    button.cfnext-btn-secondary-action(cf-context-menu-trigger)
+    button.btn-secondary-action(cf-context-menu-trigger)
       cf-icon.btn-dropdown-icon(name="dd-arrow-down")
       | {{ viewLabels[selectedView] }}
     .context-menu(role="menu" cf-context-menu="bottom-right" aria-label="Change view")
@@ -21,9 +21,9 @@ header.workbench-header
           strong.user-list__name {{ user.name }}
           small(ng-if="!user.confirmed") This account is not confirmed
           .user-list__roles {{ user.roleNames }}
-        button.user-list__actions.user-list__actions--disabled.cfnext-btn-inline(ng-if="!canModifyUsers()")
+        button.user-list__actions.user-list__actions--disabled.btn-inline(ng-if="!canModifyUsers()")
           | &bullet;&bullet;&bullet;
-        button.user-list__actions.cfnext-btn-inline(type="button"
+        button.user-list__actions.btn-inline(type="button"
           aria-label="Actions" cf-context-menu-trigger
           ng-if="canModifyUsers()")
           | &bullet;&bullet;&bullet;
@@ -46,7 +46,7 @@ header.workbench-header
         | Your organization has used {{ userQuota.used }} out of
         |  {{ userQuota.limit > 0 ? userQuota.limit : 'unlimited' }} user accounts.
       p(ng-show="canModifyUsers()") <a href="" ng-click="goToSubscription()">Increase your plan quotas here</a>.
-      button.cfnext-btn-primary-action(
+      button.btn-primary-action(
         ng-click="openInvitationDialog()"
         ng-disabled="!canModifyUsers() || !canInviteUsers()")
         | Invite users to this space

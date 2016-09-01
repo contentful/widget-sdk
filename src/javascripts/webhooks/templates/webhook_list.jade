@@ -4,7 +4,7 @@ header.workbench-header
   h1.workbench-header__title Webhooks ({{ webhooks.length || 0 }})
 
   .workbench-header__actions
-    button.cfnext-btn-action.add-entity(
+    button.btn-action.add-entity(
       ng-show="webhooks.length < limit"
       ui-sref="spaces.detail.settings.webhooks.new")
       cf-icon.btn-icon.inverted(name="plus")

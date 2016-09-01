@@ -71,7 +71,7 @@ mixin single-list-item
         ng-bind="labels.info")
 
     .modal-dialog__controls(ng-if="config.multiple")
-      button.cfnext-btn-primary-action.modal-dialog__controls-confirm(
+      button.btn-primary-action.modal-dialog__controls-confirm(
         type="button"
         ng-click="dialog.confirm(selected)"
         ng-disabled="selected.length < config.min || selected.length > config.max")
