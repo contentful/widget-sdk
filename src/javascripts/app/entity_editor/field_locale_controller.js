@@ -39,15 +39,30 @@ angular.module('contentful')
 
   /**
    * @ngdoc property
+   * @name FieldLocaleController#errors$
+   * @description
+   * Property that contains the array of schema errors for this field
+   * locale.
+   *
+   * @type {Property<Error[]?>}
+   */
+  controller.errors$ =
+    $scope.validator.errors$
+    .map(function (errors) {
+      errors = filterLocaleErrors(errors);
+      return errors.length > 0 ? errors : null;
+    });
+
+  /**
+   * @ngdoc property
    * @name FieldLocaleController#errors
    * @description
    * An array of schema errors for this field locale.
    *
    * @type {Array<Error>?}
    */
-  $scope.$watch('validator.errors', function (errors) {
-    errors = filterLocaleErrors(errors);
-    controller.errors = errors.length > 0 ? errors : null;
+  K.onValueScope($scope, controller.errors$, function (errors) {
+    controller.errors = errors;
   });
 
   // Only retuns errors that apply to this field locale

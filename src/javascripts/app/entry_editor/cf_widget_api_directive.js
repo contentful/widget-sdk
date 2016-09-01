@@ -42,16 +42,11 @@ angular.module('contentful')
 
   var fieldLocale = $scope.fieldLocale;
   var isDisabledSignal = newSignal(isEditingDisabled());
-  var schemaErrorsSignal = newSignal(null);
   var ctField = $scope.widget.field;
 
   $scope.$watch(isEditingDisabled, function (value) {
     // Do not send other listener arguments to signal
     isDisabledSignal.dispatch(value);
-  });
-
-  $scope.$watch('fieldLocale.errors', function (errors) {
-    schemaErrorsSignal.dispatch(errors);
   });
 
   // TODO: consolidate entity data at one place instead of
@@ -86,7 +81,9 @@ angular.module('contentful')
 
   this.field = {
     onDisabledStatusChanged: isDisabledSignal.attach,
-    onSchemaErrorsChanged: schemaErrorsSignal.attach,
+    onSchemaErrorsChanged: function (cb) {
+      return K.onValueScope($scope, fieldLocale.errors$, cb);
+    },
     setInvalid: setInvalid,
     onValueChanged: function (cb) {
       return K.onValueScope($scope, fieldLocale.doc.valueProperty, cb);

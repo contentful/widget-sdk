@@ -16,9 +16,10 @@ describe('entity editor field integration', function () {
       $provide.removeDirectives('cfWidgetApi', 'cfWidgetRenderer');
     });
 
-    var Focus = this.$inject('FieldControls/Focus');
+    const K = this.$inject('mocks/kefir');
+    const Focus = this.$inject('FieldControls/Focus');
 
-    var TheLocaleStore = this.$inject('TheLocaleStore');
+    const TheLocaleStore = this.$inject('TheLocaleStore');
     this.setLocales = TheLocaleStore.setLocales;
     this.setLocales([
       {code: 'DEF', name: 'Default'},
@@ -35,12 +36,13 @@ describe('entity editor field integration', function () {
     };
 
     this.validator = {
-      hasError: sinon.stub().returns(false)
+      hasError: sinon.stub().returns(false),
+      errors$: K.createMockProperty([])
     };
 
     this.compile = function () {
       this.focus = Focus.create();
-      var el = this.$compile('<cf-entity-field>', {
+      const el = this.$compile('<cf-entity-field>', {
         widget: this.widget,
         validator: this.validator,
         otDoc: this.$inject('mocks/entityEditor/Document').create(),
@@ -199,11 +201,11 @@ describe('entity editor field integration', function () {
       var el = this.compile();
       expect(hasErrorStatus(el)).toBe(false);
 
-      this.validator.errors = [
+      this.validator.errors$.set([
         {path: ['fields', 'FID', 'DEF-internal'], name: 'def-error'},
         {path: ['fields', 'FID', 'EN-internal'], name: 'en-error-1'},
         {path: ['fields', 'FID', 'EN-internal'], name: 'en-error-2'}
-      ];
+      ]);
       this.$apply();
 
       var defLocale = el.find('[data-locale=DEF]');
