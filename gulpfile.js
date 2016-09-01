@@ -59,36 +59,8 @@ var src = {
   vendorScripts: {
     main: assertFilesExist([
       'node_modules/jquery/dist/jquery.js',
-
-      // All these files constitue jquery.ui.core:
-      'node_modules/jquery-ui/ui/version.js',
-      'node_modules/jquery-ui/ui/ie.js',
-      'node_modules/jquery-ui/ui/data.js',
-      'node_modules/jquery-ui/ui/disable-selection.js',
-      'node_modules/jquery-ui/ui/focusable.js',
-      'node_modules/jquery-ui/ui/keycode.js',
-      'node_modules/jquery-ui/ui/escape-selector.js',
-      'node_modules/jquery-ui/ui/labels.js',
-      'node_modules/jquery-ui/ui/plugin.js',
-      'node_modules/jquery-ui/ui/safe-active-element.js',
-      'node_modules/jquery-ui/ui/safe-blur.js',
-      'node_modules/jquery-ui/ui/scroll-parent.js',
-      'node_modules/jquery-ui/ui/safe-blur.js',
-      'node_modules/jquery-ui/ui/tabbable.js',
-      'node_modules/jquery-ui/ui/unique-id.js',
-
-      // Required by 'ui/context-menu' service
-      'node_modules/jquery-ui/ui/position.js',
-      'node_modules/jquery-ui/ui/widget.js',
-      'node_modules/jquery-ui/ui/widgets/mouse.js',
-
-      // Required by 'angular-ui-sortable'
-      // Requires 'jquery.ui.core', 'jquery.ui.mouse', 'jquery.ui.widget'
-      'node_modules/jquery-ui/ui/widgets/sortable.js',
-
-      // Requires 'jquery.ui.core'
-      'node_modules/jquery-ui/ui/widgets/datepicker.js',
-
+      // Custom jQuery UI build: see the file for version and contents
+      'vendor/jquery-ui/jqui.js',
       'node_modules/jquery-textrange/jquery-textrange.js',
       'node_modules/angular/angular.js',
       'node_modules/angular-animate/angular-animate.js',
@@ -115,7 +87,7 @@ var src = {
   },
   images: [
     'src/images/**/*',
-    './node_modules/jquery-ui/themes/base/images/*'
+    './vendor/jquery-ui/images/*'
   ],
   svg: {
     sourceDirectory: 'src/svg',
@@ -132,9 +104,8 @@ var src = {
     './vendor/formtastic.css',
     // Not sure if we need this
     './vendor/html5reset-1.6.1.css',
-    './node_modules/jquery-ui/themes/base/theme.css',
-    './node_modules/jquery-ui/themes/base/autocomplete.css',
-    './node_modules/jquery-ui/themes/base/datepicker.css',
+    // Custom jQuery UI build: see the file for version and contents
+    './vendor/jquery-ui/jqui.css',
     './node_modules/codemirror/lib/codemirror.css'
   ])
 };
