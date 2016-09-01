@@ -35,16 +35,16 @@ header.workbench-header
             a.entity-list-link(ui-sref="{{ entityNavState }}")
               | {{ locale.getName() }} ({{ locale.getCode() }})
               span.entity-list-badge(ng-if="locale.isDefault()") Default
-          td
+          td(data-test-id="locale-list-fallback-column")
             a.entity-list-link(ui-sref="{{ entityNavState }}")
               | {{ locale.data.fallbackCode ? localeNamesByCode[locale.data.fallbackCode] : 'None' }}
-          td
+          td(data-test-id="locale-list-cda-column")
             a.entity-list-link(ui-sref="{{ entityNavState }}")
               | {{ locale.data.contentDeliveryApi ? 'Enabled' : 'Disabled' }}
-          td
+          td(data-test-id="locale-list-cma-column")
             a.entity-list-link(ui-sref="{{ entityNavState} }")
               | {{ locale.data.contentManagementApi ? 'Enabled' : 'Disabled' }}
-          td
+          td(data-test-id="locale-list-optional-column")
             a.entity-list-link(ui-sref="{{ entityNavState }}")
               | {{ locale.data.optional ? 'Can be published empty' : 'Content is required' }}
 
