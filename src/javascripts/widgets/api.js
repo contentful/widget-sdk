@@ -168,7 +168,8 @@ angular.module('contentful')
         locale: locale.code,
         value: fieldValue,
         isDisabled: isDisabled,
-        type: field.type
+        type: field.type,
+        validations: field.validations
       },
       fieldInfo: fieldInfo,
       locales: {

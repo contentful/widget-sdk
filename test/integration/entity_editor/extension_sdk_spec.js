@@ -104,6 +104,13 @@ describe('Extension SDK', function () {
   const fit = makeApiTestDescriptor(window.fit);
 
   describe('#field', function () {
+    beforeEach(function () {
+      this.scope.field.validations = ['VALIDATION'];
+    });
+
+    it('receives #validations property', function* (api) {
+      expect(api.field.validations).toEqual(['VALIDATION']);
+    });
 
     describe('#getValue()', function () {
       beforeEach(function () {
