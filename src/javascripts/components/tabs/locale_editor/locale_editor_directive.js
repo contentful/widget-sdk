@@ -33,8 +33,6 @@ angular.module('contentful')
 
   var controller = this;
   var TheLocaleStore = require('TheLocaleStore');
-  var notification = require('notification');
-  var logger = require('logger');
   var $q = require('$q');
   var modalDialog = require('modalDialog');
   var tokenStore = require('tokenStore');
@@ -45,8 +43,7 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var closeState = require('navigation/closeState');
   var localeList = require('data/localeList').fromClientResponse($scope.spaceLocales);
-
-  var NOT_RENAMEABLE_MESSAGE = 'Cannot change the code of a locale which is fallback of another one';
+  var notify = require('LocaleEditor/notifications');
 
   var formWasDirty = false;
   var persistedLocaleCode = null;
@@ -154,7 +151,7 @@ angular.module('contentful')
     }).promise.then(function (newFallbackCode) {
       var updates = _.map(dependantLocales, fallbackUpdater(newFallbackCode));
       return $q.all(updates).catch(function () {
-        notification.error('New fallback code could not be saved');
+        notify.codeChangeError();
         return $q.reject();
       });
     });
@@ -185,17 +182,16 @@ angular.module('contentful')
     trackDelete();
     return $scope.locale.delete()
     .then(function deletedSuccesfully () {
-      return tokenStore.refresh().then(function () {
+      return tokenStore.refresh()
+      .then(function () {
         // TODO Should probably be handled by the token store
         TheLocaleStore.refresh();
         return closeState();
-      }).finally(function () {
-        notification.info('Locale deleted successfully');
-      });
+      })
+      .finally(notify.deleteSuccess);
     }, function errorDeletingLocale (err) {
       resetFormStatusOnFailure();
-      notification.error('Locale could not be deleted: ' + err.body.message);
-      logger.logServerWarn('Locale could not be deleted', {error: err});
+      notify.deleteError(err);
     });
   }
 
@@ -228,7 +224,7 @@ angular.module('contentful')
 
   function save () {
     if ($scope.hasDependantLocales && wasLocaleCodeChanged()) {
-      notification.error(NOT_RENAMEABLE_MESSAGE);
+      notify.notRenameable();
       return $q.reject();
     }
 
@@ -253,7 +249,7 @@ angular.module('contentful')
       onLoadOrUpdate();
       // TODO Should probably be handled by the token store
       TheLocaleStore.refresh();
-      notification.info('Locale saved successfully');
+      notify.saveSuccess();
       trackSave('Saved Successful Locale');
       if ($scope.context.isNew) {
         return $state.go('spaces.detail.settings.locales.detail', { localeId: response.getId() });
@@ -262,23 +258,8 @@ angular.module('contentful')
   }
 
   function saveErrorHandler (err) {
+    notify.saveError(err);
     resetFormStatusOnFailure();
-    var message = '';
-    var status = dotty.get(err, 'statusCode');
-    var errors = dotty.get(err, 'body.details.errors');
-
-    var isTaken = status === 422 && errors && errors.length > 0 && errors[0].name === 'taken';
-    var isNotRenameable = status === 403 && dotty.get(err, 'body.sys.id') === 'FallbackLocaleNotRenameable';
-
-    if (isTaken) {
-      message = ': This locale already exists';
-    } else if (isNotRenameable) {
-      message = ': ' + NOT_RENAMEABLE_MESSAGE;
-    } else {
-      logger.logServerWarn('Locale could not be saved', {error: err});
-    }
-
-    notification.error('Locale could not be saved' + message);
     trackSave('Saved Errored Locale');
   }
 
@@ -338,5 +319,83 @@ angular.module('contentful')
 
   function getSubscriptionPlanName () {
     return spaceContext.getData('organization.subscriptionPlan.name');
+  }
+}])
+
+.factory('LocaleEditor/notifications', ['require', function (require) {
+  var notification = require('notification');
+  var logger = require('logger');
+
+  var NOT_RENAMEABLE_MESSAGE = 'Cannot change the code of a locale which is fallback of another one';
+  var ERROR_CHECKS = [
+    {
+      message: 'This locale already exists',
+      check: _.partial(checkUnprocessableEntityErrorName, 'taken')
+    },
+    {
+      message: 'Fallback setting creates a loop',
+      check: _.partial(checkUnprocessableEntityErrorName, 'fallback locale creates a loop')
+    },
+    {
+      message: NOT_RENAMEABLE_MESSAGE,
+      check: function (err) {
+        return status === 403 && dotty.get(err, 'body.sys.id') === 'FallbackLocaleNotRenameable';
+      }
+    }
+  ];
+
+  return {
+    deleteSuccess: deleteSuccess,
+    saveSuccess: saveSuccess,
+    notRenameable: notRenameable,
+    codeChangeError: codeChangeError,
+    deleteError: deleteError,
+    saveError: saveError
+  };
+
+  function deleteSuccess () {
+    notification.info('Locale deleted successfully');
+  }
+
+  function saveSuccess () {
+    notification.info('Locale saved successfully');
+  }
+
+  function notRenameable () {
+    notification.error(NOT_RENAMEABLE_MESSAGE);
+  }
+
+  function codeChangeError () {
+    notification.error('New fallback code could not be saved');
+  }
+
+  function deleteError (err) {
+    notification.error('Locale could not be deleted: ' + err.body.message);
+    logger.logServerWarn('Locale could not be deleted', {error: err});
+  }
+
+  function saveError (err) {
+    var message = getErrorMessage(err);
+    if (message) {
+      notification.error('Locale could not be saved: ' + message);
+    } else {
+      notification.error('Locale could not be saved');
+      logger.logServerWarn('Locale could not be saved', {error: err});
+    }
+  }
+
+  function getErrorMessage (err) {
+    var found = _.find(ERROR_CHECKS, function (item) {
+      return item.check(err);
+    });
+
+    return found && found.message;
+  }
+
+  function checkUnprocessableEntityErrorName (name, err) {
+    var status = dotty.get(err, 'statusCode');
+    var errors = dotty.get(err, 'body.details.errors');
+
+    return status === 422 && errors && errors.length > 0 && errors[0].name === name;
   }
 }]);
