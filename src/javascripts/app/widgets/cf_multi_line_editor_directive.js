@@ -2,7 +2,7 @@
 
 angular.module('cf.app')
 .directive('cfMultiLineEditor', ['$injector', function ($injector) {
-  var makeInputUpdater = $injector.get('ui/caretHelper').makeInputUpdater;
+  var InputUpdater = $injector.get('ui/inputUpdater');
 
   return {
     restrict: 'E',
@@ -12,7 +12,7 @@ angular.module('cf.app')
     link: function ($scope, $el, _$attrs, widgetApi) {
       var field = widgetApi.field;
       var $inputEl = $el.children('textarea');
-      var updateInput = makeInputUpdater($inputEl);
+      var updateInput = InputUpdater.create($inputEl.get(0));
 
       var offValueChanged = field.onValueChanged(function (val) {
         // Might be `null` or `undefined` when value is not present

@@ -8,6 +8,8 @@ var express = require('express');
 var _ = require('lodash-node/modern');
 var runSequence = require('run-sequence');
 var runSequenceP = Promise.denodeify(runSequence);
+var IndexPage = require('../tools/lib/index-page');
+var readJSON = require('../tools/lib/utils').readJSON;
 
 module.exports = function serveWatch (patternTaskMap) {
   var buildList = createPromiseList();
@@ -54,14 +56,24 @@ module.exports = function serveWatch (patternTaskMap) {
 function createServer (getBuilds) {
   var publicDir = Path.resolve(Path.resolve('public'));
   var docIndex = sendIndex(Path.join(publicDir, 'docs'));
-  var appIndex = sendIndex(publicDir);
 
   var app = express();
   app.use(express.static(publicDir));
   app.use('/docs/', docIndex);
   app.get('*', function (req, res, next) {
+    if (!req.accepts('html')) {
+      next();
+      return;
+    }
+
     getBuilds().then(function () {
-      appIndex(req, res, next);
+      return readJSON('config/development.json')
+      .then(function (config) {
+        var index = IndexPage.renderDev(config);
+        res.status(200)
+        .type('html')
+        .end(index);
+      });
     }, function (err) {
       res
       .status(500)
@@ -70,7 +82,9 @@ function createServer (getBuilds) {
       .end();
     });
   });
-  app.use(respond404);
+  app.use(function (_req, res) {
+    res.sendStatus(404).end();
+  });
   app.listen(3001);
 }
 
@@ -87,10 +101,6 @@ function sendIndex (dir) {
       next();
     }
   };
-}
-
-function respond404 (req, res) {
-  res.sendStatus(404);
 }
 
 
