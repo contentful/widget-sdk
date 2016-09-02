@@ -8,8 +8,8 @@ describe('Subscription', function () {
   beforeEach(function () {
     ORGANIZATION = {
       sys: { id: 'SOME_ORG' },
-      subscriptionState: 'active',
-      subscriptionPlan: { paid: true }
+      subscription: {},
+      subscriptionState: 'active'
     };
 
     module('contentful/test');
@@ -39,29 +39,23 @@ describe('Subscription', function () {
 
       describe('isLimitedFree()', function () {
         beforeEach(function () {
-          ORGANIZATION.subscriptionState = 'active';
-          ORGANIZATION.subscriptionPlan = { paid: false, kind: 'default' };
+          ORGANIZATION.subscription.status = 'free';
         });
 
         it('returns `false` for trial subscription', function () {
-          ORGANIZATION.subscriptionState = 'trial';
+          ORGANIZATION.subscription.status = 'trial';
           const subscription = this.newFromOrganization(ORGANIZATION);
           expect(subscription.isLimitedFree()).toBe(false);
         });
 
         it('returns `true` for limited free subscription', function () {
+          ORGANIZATION.subscription.status = 'free';
           const subscription = this.newFromOrganization(ORGANIZATION);
           expect(subscription.isLimitedFree()).toBe(true);
         });
 
         it('returns `false` for paid subscriptions', function () {
-          ORGANIZATION.subscriptionPlan.paid = true;
-          const subscription = this.newFromOrganization(ORGANIZATION);
-          expect(subscription.isLimitedFree()).toBe(false);
-        });
-
-        it('returns `false` for subscriptions with non-default plan', function () {
-          ORGANIZATION.subscriptionPlan.kind = 'not default';
+          ORGANIZATION.subscription.status = 'paid';
           const subscription = this.newFromOrganization(ORGANIZATION);
           expect(subscription.isLimitedFree()).toBe(false);
         });
@@ -69,13 +63,19 @@ describe('Subscription', function () {
 
       describe('.isTrial()', function () {
         it('returns `true` for a trial subscription', function () {
-          ORGANIZATION.subscriptionState = 'trial';
+          ORGANIZATION.subscription.status = 'trial';
           const subscription = this.newFromOrganization(ORGANIZATION);
           expect(subscription.isTrial()).toBe(true);
         });
 
-        it('returns `false` for a non-trial subscription', function () {
-          ORGANIZATION.subscriptionState = 'foo';
+        it('returns `false` for limited free subscription', function () {
+          ORGANIZATION.subscription.status = 'free';
+          const subscription = this.newFromOrganization(ORGANIZATION);
+          expect(subscription.isTrial()).toBe(false);
+        });
+
+        it('returns `false` for paid subscriptions', function () {
+          ORGANIZATION.subscription.status = 'paid';
           const subscription = this.newFromOrganization(ORGANIZATION);
           expect(subscription.isTrial()).toBe(false);
         });
@@ -83,7 +83,7 @@ describe('Subscription', function () {
 
       describe('.hasTrialEnded()', function () {
         beforeEach(function () {
-          ORGANIZATION.subscriptionState = 'trial';
+          ORGANIZATION.subscription.status = 'trial';
         });
 
         it('returns `true` if trial has ended', function () {
@@ -107,7 +107,7 @@ describe('Subscription', function () {
 
       describe('.getTrialHoursLeft()', function () {
         beforeEach(function () {
-          ORGANIZATION.subscriptionState = 'trial';
+          ORGANIZATION.subscription.status = 'trial';
         });
 
         it('returns 1 hour left', function () {
