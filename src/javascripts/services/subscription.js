@@ -38,15 +38,6 @@ angular.module('contentful')
        */
       organization: { sys: buildLink(org) },
       /**
-       * @ngdoc property
-       * @name Subscription#state
-       * @type {string}
-       * @description
-       * Indicates the subscription's state. In most cases is...() methods are
-       * more useful to find out about a subscription's state.
-       */
-      state: org.subscriptionState,
-      /**
        * @ngdoc method
        * @name Subscription#isLimitedFree
        * @returns {boolean}

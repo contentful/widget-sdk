@@ -8,8 +8,7 @@ describe('Subscription', function () {
   beforeEach(function () {
     ORGANIZATION = {
       sys: { id: 'SOME_ORG' },
-      subscription: {},
-      subscriptionState: 'active'
+      subscription: {}
     };
 
     module('contentful/test');
@@ -29,14 +28,6 @@ describe('Subscription', function () {
     });
 
     describe('returned subscription', function () {
-      describe('.state', function () {
-        it('is set to its organization`s `subscriptionState`', function () {
-          ORGANIZATION.subscriptionState = 'SOME_STATE';
-          const subscription = this.newFromOrganization(ORGANIZATION);
-          expect(subscription.state).toBe('SOME_STATE');
-        });
-      });
-
       describe('isLimitedFree()', function () {
         beforeEach(function () {
           ORGANIZATION.subscription.status = 'free';
