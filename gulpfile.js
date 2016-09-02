@@ -308,7 +308,8 @@ gulp.task('serve', function () {
 
   var patternTaskMap = [
     [appSrc, ['js/app']],
-    [src.templates, ['templates']]
+    [src.templates, ['templates']],
+    [src.stylesheets, ['stylesheets/app']]
   ];
 
   return serve(patternTaskMap);
