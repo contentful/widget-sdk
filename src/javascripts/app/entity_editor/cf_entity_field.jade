@@ -34,7 +34,7 @@ mixin field-locale-errors
       ul.cfnext-form__field-errors(
         ng-if="error.name === 'unique'"
         data-test-id="uniqueness-conflicts-list")
-        li.entity-editor__control-error(ng-repeat="conflict in error.conflicting track by index")
+        li.entity-editor__control-error(ng-repeat="conflict in error.conflicting track by conflict.sys.id")
           a.cfnext-form__field-error(
             target="_blank"
             ui-sref="spaces.detail.entries.detail({ entryId: \"{{conflict.sys.id}}\", notALinkedEntity: true })")
