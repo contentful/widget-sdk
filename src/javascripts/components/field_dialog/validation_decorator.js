@@ -7,11 +7,11 @@ angular.module('contentful')
  * @name validationDecorator
  */
 .factory('validationDecorator', ['$injector', function ($injector) {
-  var pluralize               = $injector.get('pluralize');
-  var validationViews         = $injector.get('validationViews');
-  var createSchema            = $injector.get('validation');
-  var getErrorMessage         = $injector.get('validationDialogErrorMessages');
-  var validationName          = createSchema.Validation.getName;
+  var pluralize = $injector.get('pluralize');
+  var validationViews = $injector.get('validationViews');
+  var createSchema = $injector.get('validation');
+  var getErrorMessage = $injector.get('validationDialogErrorMessages');
+  var validationName = createSchema.Validation.getName;
   var validationTypesForField = createSchema.Validation.forField;
 
   var validationSettings = {
@@ -81,8 +81,8 @@ angular.module('contentful')
 
   return {
     decorateFieldValidations: decorateFieldValidations,
-    extractAll:  extractAll,
-    validate:    validate,
+    extractAll: extractAll,
+    validate: validate,
     validateAll: validateAll,
     updateField: updateField
   };
@@ -93,7 +93,7 @@ angular.module('contentful')
    * @param {Field} field
    * @returns {DecoratedValidation[]}
    */
-  function decorateFieldValidations(field) {
+  function decorateFieldValidations (field) {
     var types = _.filter(validationTypesForField(field), function (t) {
       return t in validationSettings;
     });
@@ -105,18 +105,24 @@ angular.module('contentful')
       _.each(itemValidations, function (v) {
         v.onItems = true;
       });
+
+      // remove unique validation for items as we don't support
+      // it for items nor for the Array container type
+      itemValidations = _.remove(itemValidations, function (validation) {
+        return validation.type !== 'unique';
+      });
+
       fieldValidations = itemValidations.concat(fieldValidations);
     }
 
-    return _.sortBy(fieldValidations, function(validation) {
+    return _.sortBy(fieldValidations, function (validation) {
       return validationsOrder.indexOf(validation.type);
     });
   }
 
-  function validationDecorator(field) {
+  function validationDecorator (field) {
     return function decorateValidation (type) {
       var fieldValidation = findValidationByType(field.validations, type);
-
       var settings, enabled, message;
 
       if (fieldValidation) {
@@ -132,7 +138,7 @@ angular.module('contentful')
       var name = getValidationLabel(field, type);
       var views = validationViews.get(type);
       var currentView = views && views[0].name;
-      var helpText = getValidationStringForType(validationHelpText, field, type);
+      var helpText = getValidationHelpText(field, type);
 
       return {
         name: name,
@@ -163,8 +169,9 @@ angular.module('contentful')
   function extractOne (decorated) {
     var extracted = {};
     extracted[decorated.type] = _.cloneDeep(decorated.settings);
-    if (decorated.message)
+    if (decorated.message) {
       extracted.message = decorated.message;
+    }
     return extracted;
   }
 
@@ -203,8 +210,9 @@ angular.module('contentful')
     var itemValidations = _.filter(validations, {onItems: true});
 
     field.validations = extractAll(baseValidations);
-    if (!_.isEmpty(itemValidations))
+    if (!_.isEmpty(itemValidations)) {
       field.items.validations = extractAll(itemValidations);
+    }
   }
 
   function validateAll (decoratedValidations) {
@@ -221,19 +229,31 @@ angular.module('contentful')
    * Return the index and the settings for the validation of type
    * `type` from a list of `validations`.
    */
-  function findValidationByType(validations, name) {
-    return _.find(validations, function(validation) {
+  function findValidationByType (validations, name) {
+    return _.find(validations, function (validation) {
       return validationName(validation) === name;
     });
   }
 
-  function getValidationLabel(field, type) {
-    if (field.type == 'Array' && type == 'size') {
-      var itemType = field.items.type == 'Link' ? field.items.linkType : field.items.type;
+  function getValidationLabel (field, type) {
+    if (field.type === 'Array' && type === 'size') {
+      var itemType = field.items.type === 'Link' ? field.items.linkType : field.items.type;
       return 'Accept only a specified number of ' + pluralize(itemType.toLowerCase());
     }
 
     return getValidationStringForType(validationLabels, field, type);
+  }
+
+  function getValidationHelpText (field, type) {
+    if (field.type === 'Array' && type === 'size') {
+      var itemType = field.items.type === 'Link' ? field.items.linkType : field.items.type;
+      var helpText = 'Specify minimum or maximum number of ${itemType}: for example, allow 5-10 ${itemType}';
+      var itemTypePlural = pluralize(itemType.toLowerCase());
+
+      return helpText.replace(/\$\{itemType\}/g, itemTypePlural);
+    }
+
+    return getValidationStringForType(validationHelpText, field, type);
   }
 
   function getValidationStringForType (object, field, type) {
