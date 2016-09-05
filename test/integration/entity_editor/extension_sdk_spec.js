@@ -6,6 +6,8 @@ describe('Extension SDK', function () {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
+    const K = this.$inject('mocks/kefir');
+
     const widgets = this.$inject('widgets');
     widgets.get = sinon.stub().returns({
       srcdoc:
@@ -51,7 +53,8 @@ describe('Extension SDK', function () {
       fieldLocale: {
         access: {
           disabled: false
-        }
+        },
+        errors$: K.createMockProperty(null)
       },
       fieldController: {
         setInvalid: sinon.spy()
@@ -202,6 +205,28 @@ describe('Extension SDK', function () {
         yield api.nextTick();
         sinon.assert.calledOnce(isDisabledChanged);
         sinon.assert.calledWithExactly(isDisabledChanged, true);
+      });
+    });
+
+    describe('#onSchemaErrorsChanged()', function () {
+      when('there are initial errors', function () {
+        this.scope.fieldLocale.errors$.set(['INITIAL']);
+      })
+      .it('receives the initial errors', function* (api) {
+        const cb = sinon.spy();
+        api.field.onSchemaErrorsChanged(cb);
+        sinon.assert.calledWithExactly(cb, ['INITIAL']);
+      });
+
+      it('triggers when errors change', function* (api, scope) {
+        const cb = sinon.spy();
+        api.field.onSchemaErrorsChanged(cb);
+        yield api.nextTick();
+        cb.reset();
+        scope.fieldLocale.errors$.set(['errors']);
+        yield api.nextTick();
+        sinon.assert.calledOnce(cb);
+        sinon.assert.calledWithExactly(cb, ['errors']);
       });
     });
 

@@ -115,6 +115,11 @@ angular.module('contentful')
         widgetAPI.send('sysChanged', [sys]);
       });
 
+      K.onValueScope(scope, scope.fieldLocale.errors$, function (errors) {
+        errors = errors || [];
+        widgetAPI.send('schemaErrorsChanged', [errors]);
+      });
+
       var fieldChanges = doc.changes.filter(function (path) {
         return path[0] === 'fields';
       });
