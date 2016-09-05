@@ -370,13 +370,6 @@ function ($scope, require, entity, contentType) {
       data.sys.version = controller.doc.version;
       entity.update(data);
       sysChangeBus.emit();
-    } else {
-      logger.logSharejsError('otUpdateEntityData did not update', {
-        data: {
-          entity: entity,
-          otDoc: controller.doc
-        }
-      });
     }
   }
 
