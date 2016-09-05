@@ -29,7 +29,7 @@ import {settings} from 'environment';
  * @returns {string}
  */
 export function authUrl (path, params) {
-  let base = '//' + settings.base_host + ensureLeadingSlash(path);
+  let base = settings.authUrl + ensureLeadingSlash(path);
   if (params) {
     // TODO use qs module instead
     base += '?' + JQuery.param(params);
@@ -47,7 +47,7 @@ export function authUrl (path, params) {
  * @returns {string}
  */
 export function websiteUrl (path) {
-  return settings.marketing_url + ensureLeadingSlash(path);
+  return settings.marketingUrl + ensureLeadingSlash(path);
 }
 
 /**

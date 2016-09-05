@@ -8,7 +8,7 @@ angular.module('cf.data')
  * @name data/ShareJS/Connection
  * @usage[js]
  * var Connection = require('data/ShareJS/Connection')
- * var connection = Connection.create(token, host, spaceId)
+ * var connection = Connection.create(token, baseUrl, spaceId)
  */
 .factory('data/ShareJS/Connection', ['require', function (require) {
   var ShareJS = require('libs/sharejs');
@@ -23,7 +23,7 @@ angular.module('cf.data')
     DocLoad: DocLoad
   };
 
-  function create (token, host, spaceId) {
+  function create (token, baseUrl, spaceId) {
     /**
      * `connection.state` may be
      * - 'connecting': The connection is being established
@@ -33,7 +33,7 @@ angular.module('cf.data')
      * - 'stopped': The connection is closed, and will not reconnect.
      * (From ShareJS client docs)
      */
-    var connection = createBaseConnection(token, host, spaceId);
+    var connection = createBaseConnection(token, baseUrl, spaceId);
 
     var events = getEventStream(connection);
 
@@ -161,8 +161,8 @@ angular.module('cf.data')
   }
 
 
-  function createBaseConnection (token, host, spaceId) {
-    var url = '//' + host + '/spaces/' + spaceId + '/channel';
+  function createBaseConnection (token, baseUrl, spaceId) {
+    var url = baseUrl + '/spaces/' + spaceId + '/channel';
     var connection = new ShareJS.Connection(url, token);
 
     // I’m not sure why we do this

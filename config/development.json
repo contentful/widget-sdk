@@ -1,10 +1,10 @@
 {
   "environment": "development",
-  "base_host": "be.joistio.com:8888",
-  "api_host": "api.joistio.com:8888",
-  "asset_host": "static.joistio.com:8888",
-  "ot_host": "ot.joistio.com:8888",
-  "marketing_url": "http://www.joistio.com:8888",
+  "authUrl": "//be.joistio.com:8888",
+  "apiUrl": "//api.joistio.com:8888",
+  "otUrl": "//ot.joistio.com:8888",
+  "assetUrl": "//static.joistio.com:8888",
+  "marketingUrl": "//www.joistio.com:8888",
   "main_domain": "joistio.com:8888",
   "contentful": {
     "apiUrl": "api.contentful.com",

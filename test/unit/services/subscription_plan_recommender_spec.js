@@ -17,7 +17,7 @@ describe('subscriptionPlanRecommender', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide, environment) {
-      environment.settings.base_host = HOST;
+      environment.settings.authUrl = '//' + HOST;
       $provide.value('authentication', {
         token: TEST_TOKEN
       });

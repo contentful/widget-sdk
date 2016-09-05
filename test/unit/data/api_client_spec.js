@@ -7,9 +7,6 @@ describe('data/ApiClient', function () {
     $http = sinon.stub();
     module('cf.data', function ($provide) {
       $provide.value('$http', $http);
-      $provide.constant('environment', {
-        settings: {api_host: 'api.test.local'}
-      });
     });
 
     const SpaceEndpoint = this.$inject('data/spaceEndpoint');

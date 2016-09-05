@@ -28,11 +28,11 @@ angular.module('contentful/test', ['contentful', 'contentful/mocks'])
       aviary: {},
       google: {},
       contentful: {},
-      base_host: 'be.test.com',
-      api_host: 'api.test.com',
-      asset_host: 'static.test.com',
-      ot_host: 'ot.test.com',
-      marketing_url: '//www.test.com',
+      authUrl: '//be.test.com',
+      apiUrl: '//api.test.com',
+      otUrl: '//ot.test.com',
+      assetUrl: '//static.test.com',
+      marketingUrl: '//www.test.com',
       main_domain: 'test.com'
     },
     manifest: {

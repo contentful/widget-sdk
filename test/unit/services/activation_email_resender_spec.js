@@ -7,7 +7,7 @@ describe('activationEmailResender', function () {
 
   beforeEach(function () {
     module('contentful/test', function (environment) {
-      environment.settings.base_host = 'be.contentful.com:443';
+      environment.settings.authUrl = '//be.contentful.com:443';
     });
 
     resend = this.$inject('activationEmailResender').resend;

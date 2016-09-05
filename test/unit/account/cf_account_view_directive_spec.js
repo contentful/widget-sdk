@@ -23,8 +23,6 @@ describe('Account View directive', function () {
   });
 
   it('sets a source of the GK iframe using state params', function () {
-    const settings = this.$inject('environment').settings;
-    settings.base_host = 'be.test.com';
     this.$inject('$stateParams').pathSuffix = 'x/y/z';
     this.compile();
     expect(this.element.find('iframe').first().prop('src')).toBe('http://be.test.com/account/x/y/z');

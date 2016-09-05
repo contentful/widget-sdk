@@ -1,10 +1,10 @@
 {
   "environment": "production",
-  "base_host" : "be.contentful.com",
-  "api_host" : "api.contentful.com",
-  "asset_host" : "static.contentful.com",
-  "ot_host" : "ot.contentful.com",
-  "marketing_url" : "//www.contentful.com",
+  "authUrl" : "//be.contentful.com",
+  "apiUrl" : "//api.contentful.com",
+  "otUrl" : "//ot.contentful.com",
+  "assetUrl" : "//static.contentful.com",
+  "marketingUrl" : "//www.contentful.com",
   "main_domain" : "contentful.com",
   "contentful" : {
     "spaceTemplatesUserReadOnlyToken" : "8adea107285afc11819019618341f5b98e5808c84b957cba9ede1e57c6026475",

@@ -2,7 +2,7 @@ describe('Config', function () {
   beforeEach(function () {
     module('contentful/test');
     this.settings = this.$inject('environment').settings;
-    this.settings.base_host = 'basehost';
+    this.settings.authUrl = '//basehost';
     this.Config = this.$inject('Config');
   });
 
@@ -12,7 +12,7 @@ describe('Config', function () {
 
 
   it('provides websiteUrl', function () {
-    this.settings.marketing_url = 'http://www';
+    this.settings.marketingUrl = 'http://www';
     expect(this.Config.websiteUrl('path/a')).toEqual('http://www/path/a');
   });
 
