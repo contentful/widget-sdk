@@ -16,12 +16,12 @@ angular.module('contentful')
 
   var assetLoader = new PromisedLoader();
 
-  this.paginator = new Paginator();
+  this.paginator = Paginator.create();
   $scope.assetContentType = require('assetContentType');
 
   this.resetAssets = function (resetPage) {
     $scope.context.loading = true;
-    if (resetPage) { this.paginator.page = 0; }
+    if (resetPage) { this.paginator.page(0); }
 
     return prepareQuery()
     .then(function (query) {
@@ -32,7 +32,7 @@ angular.module('contentful')
     .then(function (assets) {
       $scope.context.ready = true;
       $scope.context.loading = false;
-      controller.paginator.numEntries = assets.total;
+      controller.paginator.total(assets.total);
       $scope.assets = filterOutDeleted(assets);
       $scope.selection.updateList($scope.assets);
     }, accessChecker.wasForbidden($scope.context))
@@ -40,8 +40,8 @@ angular.module('contentful')
   };
 
   this.loadMore = function () {
-    if (this.paginator.atLast()) return;
-    this.paginator.page++;
+    if (this.paginator.end()) { return; }
+    this.paginator.next();
     var queryForDebug;
 
     return prepareQuery()
@@ -62,12 +62,12 @@ angular.module('contentful')
         });
         return;
       }
-      controller.paginator.numEntries = assets.total;
+      controller.paginator.total(assets.total);
       assets = _.difference(assets, $scope.assets);
       $scope.assets.push.apply($scope.assets, filterOutDeleted(assets));
       $scope.selection.updateList($scope.assets);
     }, function (err) {
-      controller.paginator.page--;
+      controller.paginator.previous();
       return $q.reject(err);
     })
     .catch(ReloadNotification.apiErrorHandler);

@@ -29,8 +29,8 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
   function prepareEntityListQuery (contentType, opts) {
     var queryObject = {
       order: getOrderQuery(opts.order, contentType),
-      limit: opts.paginator.pageLength,
-      skip: opts.paginator.skipItems()
+      limit: opts.paginator.perPage(),
+      skip: opts.paginator.skipParam()
     };
 
     return buildQuery(spaceContext.space, contentType, opts.searchTerm)

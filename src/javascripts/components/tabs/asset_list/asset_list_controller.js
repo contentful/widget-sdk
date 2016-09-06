@@ -37,8 +37,8 @@ angular.module('contentful')
   $scope.$watch(function pageParameters () {
     return {
       searchTerm: $scope.context.view.searchTerm,
-      page: $scope.searchController.paginator.page,
-      pageLength: $scope.searchController.paginator.pageLength,
+      page: $scope.searchController.paginator.page(),
+      pageLength: $scope.searchController.paginator.perPage(),
       spaceId: spaceContext.getId()
     };
   }, function (pageParameters, old, scope) {

@@ -39,12 +39,22 @@ angular.module('contentful')
   }
 
   function removeFromList (entity) {
+    var wasRemoved = removeFromCollection(entity);
+
+    if (wasRemoved && $scope.paginator) {
+      $scope.paginator.total(function (total) {
+        return total > 0 ? total - 1 : 0;
+      });
+    }
+  }
+
+  function removeFromCollection (entity) {
     var index = _.indexOf($scope[collection], entity);
     if (index > -1) {
       $scope[collection].splice(index, 1);
-      if (_.isNumber(dotty.get($scope, 'paginator.numEntries'))) {
-        $scope.paginator.numEntries -= 1;
-      }
+      return true;
+    } else {
+      return false;
     }
   }
 

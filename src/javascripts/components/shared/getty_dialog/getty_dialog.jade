@@ -9,7 +9,7 @@
 
     .getty__dialog-container(ng-show="!imageDetail"
       cf-endless-container at-bottom="loadMore()"
-      num-elements="paginator.page" threshold="50")
+      num-elements="paginator.page()" threshold="50")
 
       .getty__search-area
         include ./getty_search_area
@@ -22,6 +22,6 @@
           include ./getty_search_results_info
         .getty__search-result(ng-repeat="image in imageResults track by image.id" ng-controller="GettyImageController")
           include ./getty_search_result
-        .loading(ng-hide="paginator.atLast()")
+        .loading(ng-hide="paginator.end()")
       .getty__loading.loading(ng-show="gettyLoading")
 

@@ -4,6 +4,11 @@ describe('Entry List Actions Controller', function () {
   var controller, scope, stubs, $q, accessChecker;
   var action1, action2, action3, action4;
 
+  afterEach(function () {
+    controller = scope = stubs = $q = accessChecker = null;
+    action1 = action2 = action3 = action4 = null;
+  });
+
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
@@ -33,39 +38,40 @@ describe('Entry List Actions Controller', function () {
       $provide.value('$timeout', stubs.timeout);
     });
 
-    inject(function ($rootScope, $controller, _$q_, _accessChecker_, _spaceContext_) {
-      $rootScope.$broadcast = stubs.broadcast;
-      scope = $rootScope.$new();
-      $q = _$q_;
+    $q = this.$inject('$q');
 
-      action1 = $q.defer();
-      action2 = $q.defer();
-      action3 = $q.defer();
-      action4 = $q.defer();
-      stubs.action1.returns(action1.promise);
-      stubs.action2.returns(action2.promise);
-      stubs.action3.returns(action3.promise);
-      stubs.action4.returns(action4.promise);
+    const $rootScope = this.$inject('$rootScope');
+    $rootScope.$broadcast = stubs.broadcast;
+    scope = $rootScope.$new();
 
-      scope.selection = {
-        size: stubs.size,
-        getSelected: stubs.getSelected,
-        clear: stubs.clear
-      };
+    action1 = $q.defer();
+    action2 = $q.defer();
+    action3 = $q.defer();
+    action4 = $q.defer();
+    stubs.action1.returns(action1.promise);
+    stubs.action2.returns(action2.promise);
+    stubs.action3.returns(action3.promise);
+    stubs.action4.returns(action4.promise);
 
-      _spaceContext_.space = {
-        createEntry: stubs.createEntry
-      };
+    scope.selection = {
+      size: stubs.size,
+      getSelected: stubs.getSelected,
+      clear: stubs.clear
+    };
 
-      scope.paginator = {numEntries: 0};
+    this.$inject('spaceContext').space = {
+      createEntry: stubs.createEntry
+    };
 
-      accessChecker = _accessChecker_;
-      accessChecker.shouldHide = sinon.stub().returns(false);
-      accessChecker.shouldDisable = sinon.stub().returns(false);
-      accessChecker.canPerformActionOnEntity = sinon.stub();
+    scope.paginator = this.$inject('Paginator').create();
 
-      controller = $controller('EntryListActionsController', {$scope: scope});
-    });
+    accessChecker = this.$inject('accessChecker');
+    accessChecker.shouldHide = sinon.stub().returns(false);
+    accessChecker.shouldDisable = sinon.stub().returns(false);
+    accessChecker.canPerformActionOnEntity = sinon.stub();
+
+    const $controller = this.$inject('$controller');
+    controller = $controller('EntryListActionsController', {$scope: scope});
   });
 
   function makeEntity(action, stub) {
@@ -195,7 +201,7 @@ describe('Entry List Actions Controller', function () {
     });
 
     it('increases paginator value', function () {
-      expect(scope.paginator.numEntries).toBe(1);
+      expect(scope.paginator.total()).toBe(1);
     });
   });
 

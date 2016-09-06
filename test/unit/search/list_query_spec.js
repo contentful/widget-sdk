@@ -9,13 +9,12 @@ describe('ListQuery service', function () {
 
   const OPTS = {
     order: { direction: 'descending', fieldId: 'updatedAt' },
-    paginator: { pageLength: 30, skipItems: _.constant(0) },
     searchTerm: 'test'
   };
 
   function testQuery (q) {
     expect(q.order).toBe('-sys.updatedAt');
-    expect(q.limit).toBe(30);
+    expect(q.limit).toBe(40);
     expect(q.skip).toBe(0);
     expect(q.query).toBe('test');
     expect(q['sys.archivedAt[exists]']).toBe('false');
@@ -24,6 +23,7 @@ describe('ListQuery service', function () {
   beforeEach(function () {
     module('contentful/test');
     ListQuery = this.$inject('ListQuery');
+    _.extend(OPTS, {paginator: this.$inject('Paginator').create()});
 
     this.$inject('spaceContext').fetchPublishedContentType = sinon.stub().resolves({
       data: { fields: [] }, getId: _.constant('test')

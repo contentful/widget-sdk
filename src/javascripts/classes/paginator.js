@@ -1,32 +1,60 @@
 'use strict';
-angular.module('contentful').factory('Paginator', function(){
 
-  // @todo rename numEntries to numEntities
-  // @todo revise API
-  // @todo do not expose private state
-  function Paginator(numEntries) {
-    this.numEntries = numEntries || 0;
-    this.page = 0;
-    this.pageLength = 40;
+angular.module('cf.app')
+
+.factory('Paginator', [function () {
+  var DEFAULT_PER_PAGE = 40;
+
+  return {create: create};
+
+  function create (perPage) {
+    var page = 0;
+    var total = 0;
+    perPage = perPage || DEFAULT_PER_PAGE;
+
+    return {
+      total: function (newTotal) {
+        total = updatedValue(newTotal, total);
+        return total;
+      },
+      page: function (newPage) {
+        page = updatedValue(newPage, page);
+        return page;
+      },
+      next: function () {
+        return this.page(step(+1));
+      },
+      previous: function () {
+        return this.page(step(-1));
+      },
+      perPage: function () {
+        return perPage;
+      },
+      skipParam: function () {
+        return page * perPage;
+      },
+      pageCount: function () {
+        return Math.ceil(total / perPage);
+      },
+      end: function () {
+        return page >= this.pageCount() - 1;
+      }
+    };
   }
 
-  Paginator.prototype = {
-    skipItems: function() {
-      return (this.page) * this.pageLength;
-    },
-
-    numPages: function() {
-      return Math.ceil(this.numEntries / this.pageLength);
-    },
-
-    atFirst: function() {
-      return this.page === 0;
-    },
-
-    atLast: function() {
-      return this.page >= this.numPages()-1;
+  function updatedValue (next, current) {
+    if (_.isNumber(next)) {
+      return next;
+    } else if (_.isFunction(next)) {
+      return next(current);
+    } else {
+      return current;
     }
-  };
+  }
 
-  return Paginator;
-});
+  function step (change) {
+    return function (current) {
+      return current + change;
+    };
+  }
+}]);

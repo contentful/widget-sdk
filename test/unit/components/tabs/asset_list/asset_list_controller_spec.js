@@ -3,6 +3,10 @@
 describe('Asset List Controller', function () {
   var controller, scope, stubs, $q, $rootScope, getAssets;
 
+  afterEach(function () {
+    controller = scope = stubs = $q = $rootScope = getAssets = null;
+  });
+
   function createAssets (n) {
     var assets = _.map(new Array(n), function () {
       return { isDeleted: _.constant(false), data: { fields: [] } };
@@ -97,7 +101,7 @@ describe('Asset List Controller', function () {
       });
 
       it('page is set to the first one', function () {
-        expect(scope.searchController.paginator.page).toBe(0);
+        expect(scope.searchController.paginator.page()).toBe(0);
       });
     });
 
@@ -115,7 +119,7 @@ describe('Asset List Controller', function () {
 
     it('search term', function () {
       scope.context.view.searchTerm = null;
-      scope.searchController.paginator.page = 0;
+      scope.searchController.paginator.page(0);
       scope.$digest();
       stubs.reset.restore();
       stubs.reset = sinon.stub(scope.searchController, 'resetAssets');
@@ -125,7 +129,7 @@ describe('Asset List Controller', function () {
     });
 
     it('page', function () {
-      scope.searchController.paginator.page = 1;
+      scope.searchController.paginator.page(1);
       scope.$digest();
       sinon.assert.called(stubs.reset);
     });
@@ -156,10 +160,6 @@ describe('Asset List Controller', function () {
     beforeEach(function() {
       assets = createAssets(30);
       getAssets.resolve(assets);
-
-      scope.searchController.paginator.pageLength = 3;
-      scope.searchController.paginator.skipItems = sinon.stub();
-      scope.searchController.paginator.skipItems.returns(true);
     });
 
     it('sets loading flag', function () {
@@ -178,7 +178,7 @@ describe('Asset List Controller', function () {
     it('sets assets num on the paginator', function() {
       scope.searchController.resetAssets();
       scope.$apply();
-      expect(scope.searchController.paginator.numEntries).toEqual(30);
+      expect(scope.searchController.paginator.total()).toEqual(30);
     });
 
     it('sets assets on scope', function() {
@@ -202,7 +202,6 @@ describe('Asset List Controller', function () {
     });
 
     describe('creates a query object', function() {
-
       it('with a defined order', function() {
         scope.context.list = 'all';
         scope.searchController.resetAssets();
@@ -213,13 +212,15 @@ describe('Asset List Controller', function () {
       it('with a defined limit', function() {
         scope.searchController.resetAssets();
         scope.$apply();
-        expect(stubs.getAssets.args[0][0].limit).toEqual(3);
+        expect(stubs.getAssets.args[0][0].limit).toEqual(40);
       });
 
       it('with a defined skip param', function() {
+        const SKIP = 1337;
+        scope.searchController.paginator.skipParam = sinon.stub().returns(SKIP);
         scope.searchController.resetAssets();
         scope.$apply();
-        expect(stubs.getAssets.args[0][0].skip).toBeTruthy();
+        expect(stubs.getAssets.args[0][0].skip).toBe(SKIP);
       });
     });
   });
@@ -257,20 +258,19 @@ describe('Asset List Controller', function () {
       // resetEntries not running:
       scope.searchController.resetAssets = sinon.stub();
 
-      scope.searchController.paginator.atLast = sinon.stub();
-      scope.searchController.paginator.atLast.returns(false);
+      scope.searchController.paginator.end = sinon.stub().returns(false);
     });
 
     it('doesnt load if on last page', function() {
-      scope.searchController.paginator.atLast.returns(true);
+      scope.searchController.paginator.end.returns(true);
       scope.searchController.loadMore();
       sinon.assert.notCalled(stubs.getAssets);
     });
 
     it('paginator count is increased', function() {
-      scope.searchController.paginator.page = 0;
+      scope.searchController.paginator.page(0);
       scope.searchController.loadMore();
-      expect(scope.searchController.paginator.page).toBe(1);
+      expect(scope.searchController.paginator.page()).toBe(1);
     });
 
     it('gets query params', function () {
@@ -281,8 +281,8 @@ describe('Asset List Controller', function () {
 
     it('should work on the page before the last', function () {
       // Regression test for https://www.pivotaltracker.com/story/show/57743532
-      scope.searchController.paginator.numEntries = 47;
-      scope.searchController.paginator.page = 0;
+      scope.searchController.paginator.total(47);
+      scope.searchController.paginator.page(0);
       scope.searchController.loadMore();
       scope.$apply();
       sinon.assert.called(stubs.getAssets);
@@ -298,13 +298,13 @@ describe('Asset List Controller', function () {
       beforeEach(function() {
         getAssets.resolve(assets);
         scope.$apply();
-        scope.searchController.paginator.page = 1;
+        scope.searchController.paginator.page(1);
         scope.searchController.loadMore();
       });
 
       it('sets num assets', function() {
         scope.$apply();
-        expect(scope.searchController.paginator.numEntries).toEqual(30);
+        expect(scope.searchController.paginator.total()).toEqual(30);
       });
 
       it('appends assets to scope', function () {
@@ -318,7 +318,7 @@ describe('Asset List Controller', function () {
     describe('on failed load response', function() {
       beforeEach(function() {
         getAssets.resolve(assets);
-        scope.searchController.paginator.page = 1;
+        scope.searchController.paginator.page(1);
         scope.$apply(); //trigger resetAssets
         stubs.getAssets.returns($q.resolve());
         sinon.spy(scope.assets, 'push');
@@ -340,7 +340,7 @@ describe('Asset List Controller', function () {
         scope.$apply(); // trigger resetAssets
         getAssets.reject();
         scope.$apply();
-        scope.searchController.paginator.page = 1;
+        scope.searchController.paginator.page(1);
         sinon.spy(scope.assets, 'push');
         scope.searchController.loadMore();
         scope.$apply();
@@ -351,7 +351,7 @@ describe('Asset List Controller', function () {
       });
 
       it('pagination count decreases', function() {
-        expect(scope.searchController.paginator.page).toBe(1);
+        expect(scope.searchController.paginator.page()).toBe(1);
       });
     });
   });
