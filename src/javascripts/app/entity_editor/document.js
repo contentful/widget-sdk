@@ -96,7 +96,6 @@ function ($scope, require, entity, contentType) {
       if (event.name === 'change') {
         var paths = _.map(event.data, _.property('p'));
         return [PathUtils.findCommonPrefix(paths)];
-        // return mergeCompoundPatch(paths)
       } else if (event.name === 'open') {
         // Emit the path of length zero
         return [[]];
@@ -236,9 +235,9 @@ function ($scope, require, entity, contentType) {
 
   function getValueAt (path) {
     if (controller.doc) {
-      return ShareJS.peek(controller.doc, path);
+      return _.cloneDeep(ShareJS.peek(controller.doc, path));
     } else {
-      return dotty.get(entity.data, path);
+      return _.cloneDeep(dotty.get(entity.data, path));
     }
   }
 
