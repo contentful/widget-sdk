@@ -13,6 +13,7 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
   var analytics = require('analytics');
   var $document = require('$document');
   var contextHistory = require('contextHistory');
+  var Logger = require('logger');
 
   var backBtnSelector = '[aria-label="breadcrumbs-back-btn"]';
   var ancestorBtnSelector = '[aria-label="breadcrumbs-ancestor-btn"]';
@@ -135,11 +136,27 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
        */
       $scope.crumbs = [];
 
+      $scope.$watch(function () {
+        var last = $scope.crumbs[$scope.crumbs.length - 1];
+        return last ? last.getTitle() : undefined;
+      }, function (title) {
+        // set document title as the title of the page the user is on
+        // TODO(mudit): Browser is mapping the wrong title to the wrong page
+        // when you see the list of things you can go back to on long pressing
+        // the browser back button. Fix it.
+        // TODO(mudit): This doesn't belong here. Move this out into a service
+        // or something.
+        if (title) {
+          $document[0].title = title;
+        }
+      });
       $scope.$watchCollection(contextHistory.getAll, function (items) {
-        var last = items[items.length - 1];
-
         $scope.crumbs = items.map(function (item) {
           var type = item.getType();
+          var state = dotty.get(item, ['link', 'state']);
+          if (!state) {
+            Logger.logError('Invalid context history. No state defined', {items: items});
+          }
 
           return {
             getTitle: item.getTitle,
@@ -155,16 +172,6 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
 
         $scope.crumbs.backHint = $scope.backHint || 'You can go back to the previous page';
         $scope.crumbs.ancestorHint = $scope.ancestorHint || 'You can view the list of previous pages';
-
-        // set document title as the title of the page the user is on
-        // TODO(mudit): Browser is mapping the wrong title to the wrong page
-        // when you see the list of things you can go back to on long pressing
-        // the browser back button. Fix it.
-        // TODO(mudit): This doesn't belong here. Move this out into a service
-        // or something.
-        if (last) {
-          $document[0].title = last.getTitle();
-        }
       });
     }]
   };
