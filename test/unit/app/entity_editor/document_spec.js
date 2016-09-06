@@ -422,7 +422,7 @@ describe('entityEditor/Document', function () {
       sinon.assert.calledWith(cb, 'VAL');
     });
 
-    it('update value when "change" event is emitted with affected path', function () {
+    it('updates value when "change" event is emitted with affected path', function () {
       const paths = [
         [],
         ['foo'],
