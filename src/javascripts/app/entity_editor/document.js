@@ -94,8 +94,9 @@ function ($scope, require, entity, contentType) {
   var changes = docEventsBus.stream
     .flatten(function (event) {
       if (event.name === 'change') {
-        return maybeMergeCompoundPatch(event.data)
-        .map(_.property('p'));
+        var paths = _.map(event.data, _.property('p'));
+        return [PathUtils.findCommonPrefix(paths)];
+        // return mergeCompoundPatch(paths)
       } else if (event.name === 'open') {
         // Emit the path of length zero
         return [[]];
@@ -397,14 +398,5 @@ function ($scope, require, entity, contentType) {
   function normalize (doc) {
     var locales = TheLocaleStore.getPrivateLocales();
     Normalizer.normalize(controller, doc.snapshot, contentType, locales);
-  }
-
-  function maybeMergeCompoundPatch (data) {
-    if (Array.isArray(data) && data.length > 1) {
-      var paths = data.map(_.property('p'));
-      return [{p: PathUtils.findCommonPrefix(paths)}];
-    } else {
-      return data;
-    }
   }
 }]);
