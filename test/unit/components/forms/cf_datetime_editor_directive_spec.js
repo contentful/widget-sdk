@@ -245,6 +245,4 @@ describe('DateTime Editor', function () {
       expectScope('2013-12-24', '12:00', null, 'pm');
     });
   });
-
-  it('should warn about malformed times');
 });

@@ -144,4 +144,24 @@ beforeEach(function () {
     }
     return service;
   };
+
+  /**
+   * @ngdoc method
+   * @name helpers#catchPromise
+   * @description
+   * Returns a promise that resolves with the rejection reason of the original
+   * promise.
+   *
+   * It will reject when the original promise is resolved.
+   *
+   * @param {Promise<any>} promise
+   * @return {Promise<Error>}
+   */
+  this.catchPromise = function (promise) {
+    return promise.then(function () {
+      throw new Error('Unexpectedly resolved promise');
+    }, function (error) {
+      return error;
+    });
+  };
 });

@@ -27,7 +27,7 @@ describe('API Key List Controller', function () {
       scope = $rootScope.$new();
       scope.context = {};
 
-      this.setup = function () {
+      this.create = function () {
         $controller('ApiKeyListController', {
           $scope: _.extend(scope, {
             apiKeyController: stubs.apiKeyController,
@@ -44,13 +44,13 @@ describe('API Key List Controller', function () {
   describe('empty marker', function () {
     it('is true', function () {
       stubs.apiKeyController.getApiKeyList.resolves([]);
-      this.setup();
+      this.create();
       expect(scope.empty).toBeTruthy();
     });
 
     it('is false', function () {
       stubs.apiKeyController.getApiKeyList.resolves([{}]);
-      this.setup();
+      this.create();
       expect(scope.empty).toBeFalsy();
     });
   });
@@ -58,13 +58,13 @@ describe('API Key List Controller', function () {
   describe('has reached the API keys limit', function () {
     it('under keys limit', function () {
       stubs.apiKeyController.getApiKeyList.resolves([{}]);
-      this.setup();
+      this.create();
       expect(scope.reachedLimit).toBeFalsy();
     });
 
     it('reached the limit', function () {
       stubs.apiKeyController.getApiKeyList.resolves([{}, {}]);
-      this.setup();
+      this.create();
       expect(scope.reachedLimit).toBeTruthy();
 
     });
@@ -74,7 +74,7 @@ describe('API Key List Controller', function () {
   describe('refreshing api keys', function () {
     it('saves api keys on scope', function () {
       stubs.apiKeyController.getApiKeyList.resolves({});
-      this.setup();
+      this.create();
       expect(scope.apiKeys).toEqual({});
     });
   });
@@ -82,7 +82,7 @@ describe('API Key List Controller', function () {
   describe('refreshing api keys fails', function () {
     it('results in an error message', function () {
       stubs.apiKeyController.getApiKeyList.rejects();
-      this.setup();
+      this.create();
       sinon.assert.called(apiErrorHandler);
     });
   });

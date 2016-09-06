@@ -16,15 +16,8 @@ sinon.stub.defers = function () {
   return this;
 };
 
-sinon.spyAll = function (object) {
-  for (let key in object) {
-    if (typeof object[key] === 'function') {
-      sinon.spy(object, key);
-    }
-  }
-};
-
 sinon.stubAll = function (object) {
+  /* eslint prefer-const: off */
   for (let key in object) {
     if (typeof object[key] === 'function') {
       sinon.stub(object, key);

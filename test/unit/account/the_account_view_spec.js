@@ -198,9 +198,9 @@ describe('TheAccountView service', function () {
   function itRejectsToNavigateNonOrganizationOwnersOrAdmins () {
     const msg = 'for users who are not organization owners or admins';
 
-    it(`rejects ${msg}`, function (done) {
+    it(`rejects ${msg}`, function* () {
       this.OrganizationList.isOwnerOrAdmin.returns(false);
-      this.view.goToOrganizations().catch(done);
+      yield this.catchPromise(this.view.goToOrganizations());
       this.$inject('$rootScope').$digest();
     });
 

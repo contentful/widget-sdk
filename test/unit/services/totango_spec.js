@@ -20,21 +20,15 @@ describe('Totango service', function () {
     delete this.$window.totango;
   });
 
-  it('should enable', function (done) {
-    this.totango.enable().then(function () {
-      expect(this.$window.totango.go).toBe(this.totangoStub.go);
-      done();
-    }.bind(this));
-    this.$apply();
+  it('should enable', function* () {
+    yield this.totango.enable();
+    expect(this.$window.totango.go).toBe(this.totangoStub.go);
   });
 
-  it('should disable', function (done) {
+  it('should disable', function* () {
     this.totango.disable();
-    this.totango.enable().then(null, function () {
-      expect(this.$window.totango).toBe(undefined);
-      done();
-    }.bind(this));
-    this.$apply();
+    yield this.catchPromise(this.totango.enable());
+    expect(this.$window.totango).toBe(undefined);
   });
 
   describe('when script loading fails', function () {

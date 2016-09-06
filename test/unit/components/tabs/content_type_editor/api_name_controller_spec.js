@@ -34,32 +34,22 @@ describe('ApiNameController', function () {
       expect(this.apiNameController.isEditable()).toBe(false);
     });
 
-    it('is true after confirmation', function (done) {
+    it('is true after confirmation', function* () {
       const apiNameController = this.apiNameController;
 
-      this.modalDialog.open = sinon.stub().returns({promise: this.when()});
+      this.modalDialog.open = sinon.stub().returns({promise: this.resolve()});
 
-      apiNameController.unlockEditing()
-      .finally(function () {
-        expect(apiNameController.isEditable()).toBe(true);
-        done();
-      });
-
-      this.$apply();
+      yield apiNameController.unlockEditing();
+      expect(apiNameController.isEditable()).toBe(true);
     });
 
-    it('is false after unlock cancel', function (done) {
+    it('is false after unlock cancel', function* () {
       const apiNameController = this.apiNameController;
 
       this.modalDialog.open = sinon.stub().returns({promise: this.reject()});
 
-      apiNameController.unlockEditing()
-      .finally(function () {
-        expect(apiNameController.isEditable()).toBe(false);
-        done();
-      });
-
-      this.$apply();
+      yield this.catchPromise(apiNameController.unlockEditing());
+      expect(apiNameController.isEditable()).toBe(false);
     });
   });
 
