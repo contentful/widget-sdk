@@ -156,7 +156,15 @@ angular.module('contentful')
       }
 
       function updateWidgetLocales (fieldId) {
-        var locales = fieldFactory.getLocaleCodes(fieldsById[fieldId]);
+        var field = fieldsById[fieldId];
+
+        // We might receive changes from other uses on fields that we
+        // do not yet know about. We silently ignore them.
+        if (!field) {
+          return;
+        }
+
+        var locales = fieldFactory.getLocaleCodes(field);
         _.forEach(locales, function (locale) {
           updateWidgetLocaleValue(fieldId, locale);
         });
