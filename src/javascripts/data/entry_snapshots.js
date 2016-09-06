@@ -8,22 +8,31 @@ angular.module('cf.app')
   var $timeout = require('$timeout');
   var moment = require('moment');
 
-  var ITEMS = 10;
-  var snapshots = _.range(ITEMS).map(fakeSnapshot);
+  var ITEMS = 135;
+  var PER_PAGE = 40;
 
+  var snapshots = _.range(ITEMS).map(fakeSnapshot);
 
   return {
     getList: getList
   };
 
-  function getList (entryId) {
+  function getList (query) {
+    query = query || {};
+    var page = query.page || 0;
+    var start = page * PER_PAGE;
+
     return $timeout(200)
     .then(getCurrentUser)
     .then(function (user) {
       var link = {sys: {type: 'Link', linkType: 'User', id: user.sys.id}};
-      return snapshots.map(function (s) {
-        return _.merge({sys: {createdBy: link, entryId: entryId}}, s);
+      var result = snapshots
+      .slice(start, start + PER_PAGE)
+      .map(function (s) {
+        return _.merge({sys: {createdBy: link, entryId: query.entryId}}, s);
       });
+
+      return _.extend(result, {total: ITEMS});
     });
   }
 

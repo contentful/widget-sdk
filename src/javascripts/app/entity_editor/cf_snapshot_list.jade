@@ -1,21 +1,20 @@
-.snapshot(ng-repeat="snapshot in snapshots track by snapshot.sys.id")
-  .snapshot-item(style="width: 25%")
-    | {{ snapshot.sys.snapshotType }}
+include ./snapshot_mixins.jade
 
-  time.snapshot-item(
-    style="width: 25%"
-    datetime="{{ snapshot.sys.createdAt }}"
-    cf-relative-datetime)
+.snapshot-list
+  table(ng-if="!isLoading && snapshots.length > 0")
+    tr.snapshot(ng-repeat="snapshot in snapshots track by snapshot.sys.id")
+      td
+        | {{ snapshot.sys.snapshotType }}
+      td
+        +snapshot-dt
+      td
+        +snapshot-author
+      td
+        a(href="" ng-click="setSnapshot(snapshot)") View
 
-  .snapshot-item(
-    style="width: 35%"
-    cf-user
-    link="snapshot.sys.createdBy"
-    as="snapshotAuthor")
-    img(
-      style="width: 25px; height: 25px"
-      ng-src="{{ snapshotAuthor.data.avatarUrl }}")
-    | {{ snapshotAuthor | userNameDisplay:user }}
+  button.btn-action.x--block(
+    ng-if="!isLoading && shouldShowSelector"
+    ng-click="openSelector()")
+    | All snapshots
 
-  .snapshot-item(style="width: 10%")
-    a(href="" ng-click="setSnapshot(snapshot)") View
+  .loading(ng-if="isLoading")

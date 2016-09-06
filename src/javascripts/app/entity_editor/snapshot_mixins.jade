@@ -1,0 +1,7 @@
+mixin snapshot-author
+  .snapshot-author(cf-user link="snapshot.sys.createdBy" as="snapshotAuthor")
+    img(ng-src="{{ snapshotAuthor.data.avatarUrl }}")
+    span {{ snapshotAuthor.getName() }}
+
+mixin snapshot-dt
+  time(datetime="{{ snapshot.sys.createdAt }}" cf-relative-datetime)
