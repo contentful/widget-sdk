@@ -13,6 +13,7 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
   var analytics = require('analytics');
   var $document = require('$document');
   var contextHistory = require('contextHistory');
+  var Logger = require('logger');
 
   var backBtnSelector = '[aria-label="breadcrumbs-back-btn"]';
   var ancestorBtnSelector = '[aria-label="breadcrumbs-ancestor-btn"]';
@@ -152,6 +153,10 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
       $scope.$watchCollection(contextHistory.getAll, function (items) {
         $scope.crumbs = items.map(function (item) {
           var type = item.getType();
+          var state = dotty.get(item, ['link', 'state']);
+          if (!state) {
+            Logger.logError('Invalid context history. No state defined', {items: items});
+          }
 
           return {
             getTitle: item.getTitle,
