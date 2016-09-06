@@ -92,6 +92,17 @@ describe('cfBreadcrumbsDirective spec', function () {
       this.assertPropAfterStubAndCompile(2, 'crumbs.isAtLeastOneLevelDeep', true);
       this.assertPropAfterStubAndCompile(3, 'crumbs.isAtLeastOneLevelDeep', true);
     });
+
+    it('should update the document title when the title of the latest crumb changes', function () {
+      var $el = this.makeEntitesAndCompileEl(1);
+      var $scope = $el.find(':first-child').scope();
+      var document = $el.prop('ownerDocument');
+
+      expect(document.title).toEqual('title0');
+      $scope.crumbs[0].getTitle = _.constant('new title');
+      this.$apply();
+      expect(document.title).toEqual('new title');
+    });
   });
 
   describe('link method', function () {
