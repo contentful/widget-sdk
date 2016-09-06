@@ -1,9 +1,9 @@
 'use strict';
 
 describe('Content Type List Controller', function () {
-  var scope, cfStub, stubs, $q, spaceContext, controller;
+  var scope, cfStub, stubs, $q, spaceContext;
 
-  function makeCT(extensions) {
+  function makeCT (extensions) {
     var space = cfStub.space('spaceid');
     var ct = cfStub.contentType(space, 'typeid', 'typename');
     stubs = {};
@@ -31,22 +31,12 @@ describe('Content Type List Controller', function () {
     scope.context = {};
     scope.searchTerm = null;
     TheStore.set = _.noop;
-    controller = $controller('ContentTypeListController', {$scope: scope});
+    $controller('ContentTypeListController', {$scope: scope});
     scope.$apply();
   });
 
-  it('getting number of fields from a content type', function() {
+  it('getting number of fields from a content type', function () {
     expect(scope.numFields(makeCT())).toEqual(0);
-  });
-
-  describe('empty content types', function () {
-    it('content types are synced with spaceContext', function() {
-      expect(scope.contentTypes).toEqual(spaceContext.getFilteredAndSortedContentTypes());
-    });
-
-    it('empty flag is true', function() {
-      expect(scope.empty).toBe(true);
-    });
   });
 
   describe('on search term change', function () {
@@ -66,21 +56,21 @@ describe('Content Type List Controller', function () {
         expect(scope.context.list).toBe('all');
       });
 
-      it('content types are refreshed', function() {
+      it('content types are refreshed', function () {
         sinon.assert.called(spaceContext.refreshContentTypes);
       });
     });
   });
 
   describe('switching lists', function () {
-    it('preserves search term', function() {
+    it('preserves search term', function () {
       scope.searchTerm = 'thing';
       scope.context.list = 'changed';
       this.$apply();
       expect(scope.searchTerm).toBe('thing');
     });
 
-    it('refreshes content types', function() {
+    it('refreshes content types', function () {
       scope.context.list = 'changed';
       this.$apply();
       sinon.assert.called(spaceContext.refreshContentTypes);
@@ -88,15 +78,10 @@ describe('Content Type List Controller', function () {
   });
 
   describe('scope.visibleContentTypes', function () {
-    var contentTypes;
-    beforeEach(function() {
-      spaceContext.getFilteredAndSortedContentTypes = function () { return contentTypes; };
-    });
-
     it('only contains content types matched by the search', function () {
       var matched = makeCT({getName: sinon.stub().returns('MATCH')});
       var unmatched = makeCT({getName: sinon.stub().returns('MA')});
-      contentTypes = [matched, unmatched];
+      spaceContext.contentTypes = [matched, unmatched];
 
       scope.searchTerm = 'MA';
       this.$apply();
@@ -108,7 +93,7 @@ describe('Content Type List Controller', function () {
     });
 
     it('it does not include deleted content types', function () {
-      contentTypes = [makeCT({
+      spaceContext.contentTypes = [makeCT({
         getName: sinon.stub().returns('MATCH'),
         isDeleted: sinon.stub().returns(true)
       })];
@@ -120,17 +105,17 @@ describe('Content Type List Controller', function () {
   });
 
   describe('query check', function () {
-    it('has a query', function() {
+    it('has a query', function () {
       scope.searchTerm = 'term';
       expect(scope.hasQuery()).toBeTruthy();
     });
 
-    it('has no query when term is null', function() {
+    it('has no query when term is null', function () {
       scope.searchTerm = null;
       expect(scope.hasQuery()).toBeFalsy();
     });
 
-    it('has no query when term is empty string', function() {
+    it('has no query when term is empty string', function () {
       scope.searchTerm = '';
       expect(scope.hasQuery()).toBeFalsy();
     });

@@ -6,8 +6,7 @@ describe('apiContentModel Controller', function () {
 
   beforeEach(function () {
     spaceContext = {
-      refreshContentTypes: sinon.stub(),
-      getFilteredAndSortedContentTypes: sinon.stub()
+      refreshContentTypes: sinon.stub()
     };
     accessChecker = {
       wasForbidden: sinon.stub()
@@ -16,7 +15,6 @@ describe('apiContentModel Controller', function () {
     module('contentful/test', function ($provide) {
       $provide.value('accessChecker', accessChecker);
       $provide.value('spaceContext', spaceContext);
-
     });
 
     var $rootScope = this.$inject('$rootScope');
@@ -40,18 +38,20 @@ describe('apiContentModel Controller', function () {
   });
 
   afterEach(function () {
-    spaceContext = accessChecker = null;
+    spaceContext = accessChecker = scope = null;
   });
 
   it('displays content types', function () {
-    spaceContext.getFilteredAndSortedContentTypes
-      .returns([this.makeContentType('foo'), this.makeContentType('bar')]);
+    spaceContext.contentTypes = [
+      this.makeContentType('foo'),
+      this.makeContentType('bar')
+    ];
     this.setup();
     expect(scope.contentTypes.length).toBe(2);
   });
 
   it('displays empty state if there are no content types', function () {
-    spaceContext.getFilteredAndSortedContentTypes.returns([]);
+    spaceContext.contentTypes = [];
     this.setup();
     expect(scope.contentTypes.length).toBe(0);
   });

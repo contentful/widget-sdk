@@ -12,7 +12,6 @@ describe('cfContentPreviewEditor directive', function () {
     });
     spaceContext = {
       refreshContentTypes: sinon.stub(),
-      getFilteredAndSortedContentTypes: sinon.stub(),
       getId: _.constant('sid')
     };
     notification = {
@@ -67,13 +66,13 @@ describe('cfContentPreviewEditor directive', function () {
   });
 
   afterEach(function () {
-    spaceContext = contentPreview = notification = null;
+    spaceContext = contentPreview = notification = $state = null;
   });
 
   describe('Create new content preview environment', function () {
     beforeEach(function () {
       contentPreview.get.rejects();
-      var contentTypes = [{
+      spaceContext.contentTypes = [{
         getId: _.constant('ct-1'),
         getName: _.constant('Ct - 1'),
         data: {fields:
@@ -82,7 +81,6 @@ describe('cfContentPreviewEditor directive', function () {
       }];
       contentPreview.create.resolves({sys: {id: 'foo'}});
       spaceContext.refreshContentTypes.resolves();
-      spaceContext.getFilteredAndSortedContentTypes.returns(contentTypes);
       this.setup(true);
     });
 
@@ -189,7 +187,7 @@ describe('cfContentPreviewEditor directive', function () {
       contentPreview.get.resolves(env);
       contentPreview.update.resolves({sys: {id: 'foo'}});
 
-      var contentTypes = [{
+      spaceContext.contentTypes = [{
         getId: _.constant('foo'),
         getName: _.constant('Foo'),
         data: {fields: [{apiName: 'field1'}]}
@@ -199,7 +197,6 @@ describe('cfContentPreviewEditor directive', function () {
         data: {fields: [{apiName: 'field2'}]}
       }];
       spaceContext.refreshContentTypes.resolves();
-      spaceContext.getFilteredAndSortedContentTypes.returns(contentTypes);
       this.setup(false);
     });
 

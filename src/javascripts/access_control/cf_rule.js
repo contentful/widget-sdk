@@ -20,23 +20,23 @@ angular.module('contentful').directive('cfRule', ['$injector', function ($inject
       // when selected action changes...
       $scope.$watch('rule.action', function (action, prev) {
         // ...for the first time -> do nothing
-        if (action === prev) {}
-        // ...to "edit" -> reset locale and field
-        else if (action === 'update') {
+        if (action === prev) {
+        } else if (action === 'update') {
+          // ...to "edit" -> reset locale and field
           setDefaultFieldAndLocale();
-        }
-        // ...to "create" -> reset scope, remove locale and field
-        else if (action === 'create') {
+        } else if (action === 'create') {
+          // ...to "create" -> reset scope, remove locale and field
           $scope.rule.scope = 'any';
           removeFieldAndLocale();
+        } else {
+          // otherwise -> remove locale and field
+          removeFieldAndLocale();
         }
-        // otherwise -> remove locale and field
-        else { removeFieldAndLocale(); }
       });
 
       // when selected content type is changed
       $scope.$watch('rule.contentType', function (id, prev) {
-        var ct = $scope.spaceContext._publishedContentTypesHash[id];
+        var ct = $scope.spaceContext.getPublishedContentType(id);
 
         // get fields of selected content type
         $scope.contentTypeFields = _.map(dotty.get(ct, 'data.fields', []), function (f) {
@@ -48,29 +48,29 @@ angular.module('contentful').directive('cfRule', ['$injector', function ($inject
         if (id !== prev) { setDefaultField(); }
       });
 
-      function setDefaultFieldAndLocale() {
+      function setDefaultFieldAndLocale () {
         setDefaultField();
         setLocale(CONFIG.ALL_LOCALES);
       }
 
-      function removeFieldAndLocale() {
+      function removeFieldAndLocale () {
         setField(null);
         setLocale(null);
       }
 
-      function setDefaultField() {
+      function setDefaultField () {
         setField(CONFIG.ALL_FIELDS);
       }
 
       // this sets field involved in a rule (only if rule can hold field)
-      function setField(field) {
+      function setField (field) {
         if ('field' in $scope.rule) {
           $scope.rule.field = field || null;
         }
       }
 
       // the same for locale
-      function setLocale(locale) {
+      function setLocale (locale) {
         if ('locale' in $scope.rule) {
           $scope.rule.locale = locale || null;
         }

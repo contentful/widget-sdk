@@ -57,6 +57,11 @@ angular.module('contentful')
     }
   }.reset();
 
+  // Maps CT ID to instance of Client.ContentType
+  var publishedContentTypesHash = {};
+
+  var publishedContentTypeIsMissing = {};
+
   var spaceContext = {
     /**
      * @ngdoc method
@@ -183,25 +188,13 @@ angular.module('contentful')
 
     /**
      * @ngdoc method
-     * @name spaceContext#getFilteredAndSortedContentTypes
-     * @description
-     * Returns a list of content types with deleted ones filtered out
-     * and with the content types sorted by name
-     * @return {Array<Client.ContentType>}
-    */
-    getFilteredAndSortedContentTypes: function () {
-      return filterAndSortContentTypes(this.contentTypes);
-    },
-
-    /**
-     * @ngdoc method
      * @name spaceContext#registerPublishedContentType
      * @param {Client.ContentType} contentType
     */
     registerPublishedContentType: function (contentType) {
-      if (!this._publishedContentTypesHash[contentType.getId()]) {
+      if (!publishedContentTypesHash[contentType.getId()]) {
         this.publishedContentTypes.push(contentType);
-        this._publishedContentTypesHash[contentType.getId()] = contentType;
+        publishedContentTypesHash[contentType.getId()] = contentType;
       }
     },
 
@@ -215,7 +208,7 @@ angular.module('contentful')
       if (index === -1) return;
 
       this.publishedContentTypes.splice(index, 1);
-      this._publishedContentTypesHash = _.omitBy(this._publishedContentTypesHash, function (ct) {
+      publishedContentTypesHash = _.omitBy(publishedContentTypesHash, function (ct) {
         return ct === publishedContentType;
       });
     },
@@ -254,10 +247,10 @@ angular.module('contentful')
      * Returns the published content type for a given ID
     */
     getPublishedContentType: function (contentTypeId) {
-      var contentType = this._publishedContentTypesHash[contentTypeId];
+      var contentType = publishedContentTypesHash[contentTypeId];
 
-      if (!contentType && !this._publishedContentTypeIsMissing[contentTypeId]) {
-        this._publishedContentTypeIsMissing[contentTypeId] = true;
+      if (!contentType && !publishedContentTypeIsMissing[contentTypeId]) {
+        publishedContentTypeIsMissing[contentTypeId] = true;
         if (requestContentTypes.isIdle()) {
           this.refreshContentTypes();
         }
@@ -275,14 +268,13 @@ angular.module('contentful')
      * Different from getPublishedContentType, it will fetch CT if it's not loaded yet.
      */
     fetchPublishedContentType: function (contentTypeId) {
-      var self = this;
       var contentType = pick();
       if (contentType) { return $q.resolve(contentType); }
 
       return this.refreshContentTypes().then(pick);
 
       function pick () {
-        return self._publishedContentTypesHash[contentTypeId];
+        return publishedContentTypesHash[contentTypeId];
       }
     },
 
@@ -531,10 +523,10 @@ angular.module('contentful')
       contentTypes = filterAndSortContentTypes(contentTypes);
       spaceContext.publishedContentTypes = contentTypes;
 
-      spaceContext._publishedContentTypesHash = _.transform(contentTypes, function (acc, ct) {
+      publishedContentTypesHash = _.transform(contentTypes, function (acc, ct) {
         var id = ct.getId();
         acc[id] = ct;
-        spaceContext._publishedContentTypeIsMissing[id] = false;
+        publishedContentTypeIsMissing[id] = false;
       });
 
       return contentTypes;
@@ -562,8 +554,8 @@ angular.module('contentful')
     spaceContext.space = null;
     spaceContext.contentTypes = [];
     spaceContext.publishedContentTypes = [];
-    spaceContext._publishedContentTypesHash = {};
-    spaceContext._publishedContentTypeIsMissing = {};
+    publishedContentTypesHash = {};
+    publishedContentTypeIsMissing = {};
     spaceContext.users = null;
     spaceContext.widgets = null;
     if (spaceContext.docConnection) {
