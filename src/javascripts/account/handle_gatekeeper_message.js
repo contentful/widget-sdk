@@ -54,10 +54,7 @@ angular.module('contentful')
     var level = dotty.get(data, 'resource.type', 'info');
     var message = dotty.get(data, 'resource.message');
 
-    if (typeof level !== 'string') {
-      logger.logError('Unknown message sent from GK iframe', {
-        message: data
-      });
+    if (!level) {
       return;
     }
 

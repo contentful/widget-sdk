@@ -36,6 +36,8 @@ describe('entityEditor/Document/PathUtils', function () {
       test([['a'], ['b']], []);
       test([['a'], ['a', 'b']], ['a']);
       test([['a', 'b'], ['a', 'b', 'c']], ['a', 'b']);
+      test([['a', 'b']], ['a', 'b']);
+      test([['foo', 'ba'], ['foo', 'ba']], ['foo', 'ba']);
     });
   });
 });

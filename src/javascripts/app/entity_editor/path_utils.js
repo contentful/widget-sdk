@@ -50,21 +50,34 @@ angular.module('cf.app')
    * findCommonPrefix([['a'], ['b']]) // => []
    * findCommonPrefix([['a'], ['a', 'b']]) // => ['a']
    * findCommonPrefix([['a', 'b'], ['a', 'b', 'c']]) // => ['a', b']
+   *
+   * @param {string[][]} paths
+   * @returns {string[]}
    */
   function findCommonPrefix (paths) {
-    return _(paths)
-    .flatten()
-    .sortBy()
-    .chunk(paths.length)
-    .map(function (chunk) {
-      if (chunk.length === paths.length) {
-        var uniq = _.sortedUniq(chunk);
-        if (uniq.length === 1) {
-          return uniq[0];
-        }
+    if (paths.length === 1) {
+      return paths[0];
+    }
+
+    var segments = _.zip.apply(_, paths);
+    var prefix = [];
+    var i = 0;
+    while (true) {
+      var common = getCommon(segments[i] || []);
+      if (common) {
+        prefix.push(common);
+      } else {
+        return prefix;
       }
-    })
-    .compact()
-    .value();
+      i++;
+    }
+  }
+
+  function getCommon (values) {
+    var common = values[0];
+    var isCommon = _.every(values.slice(1), function (value) {
+      return value === common;
+    });
+    return isCommon ? common : null;
   }
 }]);
