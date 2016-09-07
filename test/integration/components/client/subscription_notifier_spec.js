@@ -54,7 +54,7 @@ describe('subscriptionNotifier', function () {
 
   describe('without trial user', function () {
     beforeEach(function () {
-      this.setupOrganization({subscriptionState: 'testState'});
+      this.setupOrganization({subscription: {status: ''}});
       this.$apply();
     });
 
@@ -83,7 +83,9 @@ describe('subscriptionNotifier', function () {
     describe('for a trial subscription', function () {
       beforeEach(function () {
         this.setupOrganization({
-          subscriptionState: 'trial',
+          subscription: {
+            status: 'trial'
+          },
           trialPeriodEndsAt: '2013-12-13T13:28:44Z',
           name: 'TEST_ORGA_NAME'
         });
@@ -177,7 +179,9 @@ describe('subscriptionNotifier', function () {
     describe('for a free subscription', function () {
       beforeEach(function () {
         this.setupOrganization({
-          subscriptionState: 'active',
+          subscription: {
+            status: 'free'
+          },
           subscriptionPlan: {
             paid: false,
             kind: 'default'
