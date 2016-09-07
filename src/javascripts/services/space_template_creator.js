@@ -207,20 +207,20 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
     },
 
     processAsset: function (asset, version, locale) {
-      var listener, doc;
+      var destroyDoc;
       var deferred = $q.defer();
 
       var processingTimeout = $timeout(function () {
-        if (listener && doc) {
-          doc.removeListener(listener);
+        if (destroyDoc) {
+          destroyDoc();
         }
         deferred.reject({error: 'timeout processing'});
       }, ASSET_PROCESSING_TIMEOUT);
 
       this.spaceContext.docConnection.open(asset)
-      .then(function (_doc) {
-        doc = _doc;
-        listener = doc.on('remoteop', remoteOpHandler);
+      .then(function (info) {
+        destroyDoc = info.destroy;
+        info.doc.on('remoteop', remoteOpHandler);
         asset.process(version, locale);
       }, function (err) {
         $timeout.cancel(processingTimeout);
@@ -237,8 +237,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
             var path = op.p;
             var inserted = op.oi;
             if (path[0] === 'fields' && path[1] === 'file' && 'url' in inserted) {
-              doc.removeListener(listener);
-              doc.close();
+              destroyDoc();
               deferred.resolve(asset);
             }
           }

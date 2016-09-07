@@ -130,6 +130,51 @@ describe('data/ShareJS/Connection', function () {
     });
   });
 
+  describe('#open()', function () {
+    beforeEach(function () {
+      this.OtDoc = this.$inject('mocks/OtDoc');
+
+      const entity = {
+        data: {sys: {
+          type: 'Entry',
+          id: 'ENTITY',
+          space: {sys: {id: 'SPACE'}}
+        }}
+      };
+
+      const connection = this.create('TOKEN', 'HOST', 'SPACE');
+
+      this.open = function () {
+        return connection.open(entity);
+      };
+    });
+
+    it('resolves to opened document', function () {
+      const doc = new this.OtDoc();
+      const success = sinon.spy();
+      this.open().then(success);
+
+      this.baseConnection.state = 'handshaking';
+      this.baseConnection.emit();
+      this.baseConnection.open.yield(null, doc);
+      this.$apply();
+
+      sinon.assert.calledWith(success, sinon.match({doc: doc}));
+    });
+
+    it('it closes document when destroyed', function () {
+      const doc = new this.OtDoc();
+      this.open().then(({destroy}) => destroy());
+
+      this.baseConnection.state = 'handshaking';
+      this.baseConnection.emit();
+      this.baseConnection.open.yield(null, doc);
+      this.$apply();
+
+      sinon.assert.called(doc.close);
+    });
+  });
+
   describe('#errors', function () {
     it('emits error events from base connection', function () {
       const connection = this.create();
