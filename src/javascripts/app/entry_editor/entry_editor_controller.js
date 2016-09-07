@@ -56,13 +56,7 @@ angular.module('contentful')
   // OT Stuff
   $scope.$watch(function entryEditorDisabledWatcher () {
     return $scope.entry.isArchived() || isReadOnly();
-  }, function entryEditorDisabledHandler (disabled) {
-    if (disabled) {
-      $scope.otDoc.close();
-    } else {
-      $scope.otDoc.open();
-    }
-  });
+  }, $scope.otDoc.setReadOnly);
 
   $scope.$watch('entry.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
     if (publishedVersion > oldVersion) scope.validate();

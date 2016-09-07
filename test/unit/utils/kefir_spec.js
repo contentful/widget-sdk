@@ -2,10 +2,12 @@
 
 describe('utils/kefir', function () {
   let K;
+  let KMock;
 
   beforeEach(function () {
-    module('cf.utils');
+    module('cf.utils', 'contentful/test');
     K = this.$inject('utils/kefir');
+    KMock = this.$inject('mocks/kefir');
     this.scope = this.$inject('$rootScope').$new();
   });
 
@@ -123,6 +125,21 @@ describe('utils/kefir', function () {
       const cb = sinon.spy();
       bus.property.onValue(cb);
       sinon.assert.calledWithExactly(cb, 'VAL');
+    });
+  });
+
+  describe('#sampleBy()', function () {
+    it('samples new value when event is fired', function () {
+      const obs = KMock.createMockStream();
+      const sampler = sinon.stub();
+      const prop = K.sampleBy(obs, sampler);
+
+      sampler.returns('INITIAL');
+      const values = KMock.extractValues(prop);
+
+      sampler.returns('VAL');
+      obs.emit();
+      expect(values).toEqual(['VAL', 'INITIAL']);
     });
   });
 });
