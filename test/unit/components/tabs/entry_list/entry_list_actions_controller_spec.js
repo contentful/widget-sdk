@@ -1,11 +1,11 @@
 'use strict';
 
 describe('Entry List Actions Controller', function () {
-  var controller, scope, stubs, $q, accessChecker;
-  var action1, action2, action3, action4;
+  let scope, stubs, $q, accessChecker;
+  let action1, action2, action3, action4;
 
   afterEach(function () {
-    controller = scope = stubs = $q = accessChecker = null;
+    scope = stubs = $q = accessChecker = null;
     action1 = action2 = action3 = action4 = null;
   });
 
@@ -71,20 +71,20 @@ describe('Entry List Actions Controller', function () {
     accessChecker.canPerformActionOnEntity = sinon.stub();
 
     const $controller = this.$inject('$controller');
-    controller = $controller('EntryListActionsController', {$scope: scope});
+    $controller('EntryListActionsController', {$scope: scope});
   });
 
-  function makeEntity(action, stub) {
-    var entity = {};
+  function makeEntity (action, stub) {
+    const entity = {};
     entity[action] = stub;
     return entity;
   }
 
-  function makePerformTests(action, extraSpecs){
-    describe(action+' selected entries', function () {
+  function makePerformTests (action, extraSpecs) {
+    describe(action + ' selected entries', function () {
       beforeEach(function () {
         stubs.size.returns(2);
-        var entities = [
+        const entities = [
           makeEntity(action, stubs.action1),
           makeEntity(action, stubs.action2),
           makeEntity(action, stubs.action3),
@@ -97,23 +97,23 @@ describe('Entry List Actions Controller', function () {
         stubs.getSelected.returns(entities);
         stubs.timeout.callsArg(0);
 
-        scope[action+'Selected']();
+        scope[action + 'Selected']();
         scope.$digest();
       });
 
-      it('calls '+action+' on first selected entry', function () {
+      it('calls ' + action + ' on first selected entry', function () {
         sinon.assert.called(stubs.action1);
       });
 
-      it('calls '+action+' on second selected entry', function () {
+      it('calls ' + action + ' on second selected entry', function () {
         sinon.assert.called(stubs.action2);
       });
 
-      it('calls '+action+' on third selected entry', function () {
+      it('calls ' + action + ' on third selected entry', function () {
         sinon.assert.called(stubs.action3);
       });
 
-      it('calls '+action+' on fourth selected entry', function () {
+      it('calls ' + action + ' on fourth selected entry', function () {
         sinon.assert.called(stubs.action4);
       });
 
@@ -141,7 +141,9 @@ describe('Entry List Actions Controller', function () {
         sinon.assert.called(stubs.track);
       });
 
-      if(extraSpecs){ extraSpecs(); }
+      if (extraSpecs) {
+        extraSpecs();
+      }
     });
   }
 
@@ -160,8 +162,8 @@ describe('Entry List Actions Controller', function () {
       stubs.createEntry.withArgs('bar').rejects(new Error('boom'));
       scope.entries = [];
       stubs.getSelected.returns([
-        { getSys: stubs.action1, data: {sys: {}}},
-        { getSys: stubs.action2, data: {sys: {}}}
+        { getSys: stubs.action1, data: {sys: {}} },
+        { getSys: stubs.action2, data: {sys: {}} }
       ]);
 
       scope.duplicateSelected();
@@ -214,11 +216,11 @@ describe('Entry List Actions Controller', function () {
     expect(scope.showDuplicate()).toBeFalsy();
   });
 
-  function makePermissionTests(action){
-    var methodName = 'show'+action.charAt(0).toUpperCase()+action.substr(1);
-    var canMethodName = 'can'+action.charAt(0).toUpperCase()+action.substr(1);
+  function makePermissionTests (action) {
+    const methodName = 'show' + action.charAt(0).toUpperCase() + action.substr(1);
+    const canMethodName = 'can' + action.charAt(0).toUpperCase() + action.substr(1);
 
-    it('can show '+action+' action', function () {
+    it('can show ' + action + ' action', function () {
       stubs.action1.returns(true);
       stubs.action2.returns(true);
       accessChecker.canPerformActionOnEntity.returns(true);
@@ -230,8 +232,8 @@ describe('Entry List Actions Controller', function () {
       expect(scope[methodName]()).toBeTruthy();
     });
 
-    it('cannot show delete '+action+' because no general permission', function () {
-      accessChecker.shouldHide.withArgs(action+'Entry').returns(true);
+    it('cannot show delete ' + action + ' because no general permission', function () {
+      accessChecker.shouldHide.withArgs(action + 'Entry').returns(true);
       stubs.action1.returns(true);
       stubs.action2.returns(true);
       accessChecker.canPerformActionOnEntity.returns(false);
@@ -243,7 +245,7 @@ describe('Entry List Actions Controller', function () {
       expect(scope[methodName]()).toBeFalsy();
     });
 
-    it('cannot show '+action+' action because no permission on item', function () {
+    it('cannot show ' + action + ' action because no permission on item', function () {
       stubs.action1.returns(true);
       stubs.action2.returns(false);
       accessChecker.canPerformActionOnEntity.returns(true);

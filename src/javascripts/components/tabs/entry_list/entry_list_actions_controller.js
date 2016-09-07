@@ -1,17 +1,18 @@
 'use strict';
 
 angular.module('contentful')
-.controller('EntryListActionsController', ['$scope', '$injector', function EntryListActionsController ($scope, $injector) {
 
-  var accessChecker = $injector.get('accessChecker');
-  var $controller   = $injector.get('$controller');
+.controller('EntryListActionsController', ['$scope', 'require', function EntryListActionsController ($scope, require) {
+
+  var accessChecker = require('accessChecker');
+  var $controller = require('$controller');
 
   var listActionsController = $controller('ListActionsController', {
     $scope: $scope,
     entityType: 'Entry'
   });
 
-  $scope.showDuplicate     = showDuplicate;
+  $scope.showDuplicate = showDuplicate;
   $scope.duplicateSelected = duplicate;
 
   function showDuplicate () {

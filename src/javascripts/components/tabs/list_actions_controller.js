@@ -1,10 +1,11 @@
 'use strict';
 
 angular.module('contentful')
-.controller('ListActionsController', ['$scope', '$injector', 'entityType', function ListActionsController ($scope, $injector, entityType) {
 
-  var accessChecker  = $injector.get('accessChecker');
-  var batchPerformer = $injector.get('batchPerformer');
+.controller('ListActionsController', ['$scope', 'require', 'entityType', function ListActionsController ($scope, require, entityType) {
+
+  var accessChecker = require('accessChecker');
+  var batchPerformer = require('batchPerformer');
 
   var collection = entityType === 'Entry' ? 'entries' : 'assets';
 
@@ -18,21 +19,26 @@ angular.module('contentful')
   this.duplicate = performer.duplicate;
 
   $scope.publishButtonName = publishButtonName;
-  $scope.showPublish       = createShowChecker('publish', 'canPublish');
-  $scope.publishSelected   = performer.publish;
-  $scope.showUnpublish     = createShowChecker('unpublish', 'canUnpublish');
+
+  $scope.showPublish = createShowChecker('publish', 'canPublish');
+  $scope.publishSelected = performer.publish;
+
+  $scope.showUnpublish = createShowChecker('unpublish', 'canUnpublish');
   $scope.unpublishSelected = performer.unpublish;
-  $scope.showDelete        = createShowChecker('delete', 'canDelete');
-  $scope.deleteSelected    = performer.delete;
-  $scope.showArchive       = createShowChecker('archive', 'canArchive');
-  $scope.archiveSelected   = performer.archive;
-  $scope.showUnarchive     = createShowChecker('unarchive', 'canUnarchive');
+
+  $scope.showDelete = createShowChecker('delete', 'canDelete');
+  $scope.deleteSelected = performer.delete;
+
+  $scope.showArchive = createShowChecker('archive', 'canArchive');
+  $scope.archiveSelected = performer.archive;
+
+  $scope.showUnarchive = createShowChecker('unarchive', 'canUnarchive');
   $scope.unarchiveSelected = performer.unarchive;
 
   function createShowChecker (action, predicate) {
     return function () {
       var selected = $scope.selection.getSelected();
-      return _.isArray(selected) && selected.length > 0 &&  _.every(selected, function (entity) {
+      return _.isArray(selected) && selected.length > 0 && _.every(selected, function (entity) {
         return accessChecker.canPerformActionOnEntity(action, entity) && entity[predicate]();
       });
     };

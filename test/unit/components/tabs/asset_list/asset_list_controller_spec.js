@@ -1,14 +1,14 @@
 'use strict';
 
 describe('Asset List Controller', function () {
-  var controller, scope, stubs, $q, $rootScope, getAssets;
+  let scope, stubs, $q, $rootScope, getAssets;
 
   afterEach(function () {
-    controller = scope = stubs = $q = $rootScope = getAssets = null;
+    scope = stubs = $q = $rootScope = getAssets = null;
   });
 
   function createAssets (n) {
-    var assets = _.map(new Array(n), function () {
+    const assets = _.map(new Array(n), function () {
       return { isDeleted: _.constant(false), data: { fields: [] } };
     });
     Object.defineProperty(assets, 'total', {value: n});
@@ -16,7 +16,7 @@ describe('Asset List Controller', function () {
   }
 
   beforeEach(function () {
-    var self = this;
+    const self = this;
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'archived',
@@ -59,24 +59,24 @@ describe('Asset List Controller', function () {
       $provide.value('TheLocaleStore', self.TheLocaleStoreMock);
     });
 
-    $rootScope         = this.$inject('$rootScope');
-    $q                 = this.$inject('$q');
-    var $controller    = this.$inject('$controller');
-    var cfStub         = this.$inject('cfStub');
+    $rootScope = this.$inject('$rootScope');
+    $q = this.$inject('$q');
+    const $controller = this.$inject('$controller');
+    const cfStub = this.$inject('cfStub');
 
     getAssets = $q.defer();
     scope = $rootScope.$new();
 
     scope.context = {};
 
-    var space = cfStub.space('test');
-    var contentTypeData = cfStub.contentTypeData('testType');
+    const space = cfStub.space('test');
+    const contentTypeData = cfStub.contentTypeData('testType');
     scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
 
     stubs.getAssets.returns(getAssets.promise);
     space.getAssets = stubs.getAssets;
 
-    controller = $controller('AssetListController', {$scope: scope});
+    $controller('AssetListController', {$scope: scope});
     scope.selection.updateList = sinon.stub();
   });
 
@@ -155,9 +155,9 @@ describe('Asset List Controller', function () {
     });
   });
 
-  describe('resetting assets', function() {
-    var assets;
-    beforeEach(function() {
+  describe('resetting assets', function () {
+    let assets;
+    beforeEach(function () {
       assets = createAssets(30);
       getAssets.resolve(assets);
     });
@@ -169,19 +169,19 @@ describe('Asset List Controller', function () {
       expect(scope.context.loading).toBe(false);
     });
 
-    it('loads assets', function() {
+    it('loads assets', function () {
       scope.searchController.resetAssets();
       scope.$apply();
       sinon.assert.called(stubs.getAssets);
     });
 
-    it('sets assets num on the paginator', function() {
+    it('sets assets num on the paginator', function () {
       scope.searchController.resetAssets();
       scope.$apply();
       expect(scope.searchController.paginator.total()).toEqual(30);
     });
 
-    it('sets assets on scope', function() {
+    it('sets assets on scope', function () {
       scope.searchController.resetAssets();
       scope.$apply();
       expect(scope.assets).toEqual(assets);
@@ -201,21 +201,21 @@ describe('Asset List Controller', function () {
       sinon.assert.called(scope.selection.updateList.withArgs(assets));
     });
 
-    describe('creates a query object', function() {
-      it('with a defined order', function() {
+    describe('creates a query object', function () {
+      it('with a defined order', function () {
         scope.context.list = 'all';
         scope.searchController.resetAssets();
         scope.$apply();
         expect(stubs.getAssets.args[0][0].order).toEqual('-sys.updatedAt');
       });
 
-      it('with a defined limit', function() {
+      it('with a defined limit', function () {
         scope.searchController.resetAssets();
         scope.$apply();
         expect(stubs.getAssets.args[0][0].limit).toEqual(40);
       });
 
-      it('with a defined skip param', function() {
+      it('with a defined skip param', function () {
         const SKIP = 1337;
         scope.searchController.paginator.skipParam = sinon.stub().returns(SKIP);
         scope.searchController.resetAssets();
@@ -226,28 +226,27 @@ describe('Asset List Controller', function () {
   });
 
   describe('Api Errors', function () {
-    var apiErrorHandler;
-    beforeEach(inject(function (ReloadNotification){
-      apiErrorHandler = ReloadNotification.apiErrorHandler;
+    beforeEach(function () {
+      this.handler = this.$inject('ReloadNotification').apiErrorHandler;
       stubs.getAssets.returns($q.reject({statusCode: 500}));
-    }));
+    });
 
     it('should cause resetAssets to show an error message', function () {
       scope.searchController.resetAssets();
       scope.$apply();
-      sinon.assert.called(apiErrorHandler);
+      sinon.assert.called(this.handler);
     });
 
     it('should cause loadMore to show an error message', function () {
       scope.searchController.loadMore();
       scope.$apply();
-      sinon.assert.called(apiErrorHandler);
+      sinon.assert.called(this.handler);
     });
   });
 
   describe('loadMore', function () {
-    var assets;
-    beforeEach(function() {
+    let assets;
+    beforeEach(function () {
       assets = createAssets(30);
 
       scope.assets = createAssets(60);
@@ -261,13 +260,13 @@ describe('Asset List Controller', function () {
       scope.searchController.paginator.end = sinon.stub().returns(false);
     });
 
-    it('doesnt load if on last page', function() {
+    it('doesnt load if on last page', function () {
       scope.searchController.paginator.end.returns(true);
       scope.searchController.loadMore();
       sinon.assert.notCalled(stubs.getAssets);
     });
 
-    it('paginator count is increased', function() {
+    it('paginator count is increased', function () {
       scope.searchController.paginator.page(0);
       scope.searchController.loadMore();
       expect(scope.searchController.paginator.page()).toBe(1);
@@ -294,15 +293,15 @@ describe('Asset List Controller', function () {
       sinon.assert.called(stubs.track);
     });
 
-    describe('on successful load response', function() {
-      beforeEach(function() {
+    describe('on successful load response', function () {
+      beforeEach(function () {
         getAssets.resolve(assets);
         scope.$apply();
         scope.searchController.paginator.page(1);
         scope.searchController.loadMore();
       });
 
-      it('sets num assets', function() {
+      it('sets num assets', function () {
         scope.$apply();
         expect(scope.searchController.paginator.total()).toEqual(30);
       });
@@ -315,28 +314,28 @@ describe('Asset List Controller', function () {
       });
     });
 
-    describe('on failed load response', function() {
-      beforeEach(function() {
+    describe('on failed load response', function () {
+      beforeEach(function () {
         getAssets.resolve(assets);
         scope.searchController.paginator.page(1);
-        scope.$apply(); //trigger resetAssets
+        scope.$apply(); // trigger resetAssets
         stubs.getAssets.returns($q.resolve());
         sinon.spy(scope.assets, 'push');
         scope.searchController.loadMore();
-        scope.$apply(); //trigger loadMore promises
+        scope.$apply(); // trigger loadMore promises
       });
 
       it('appends assets to scope', function () {
         sinon.assert.notCalled(scope.assets.push);
       });
 
-      it('sends an error', function() {
+      it('sends an error', function () {
         sinon.assert.called(stubs.logError);
       });
     });
 
-    describe('on previous page', function() {
-      beforeEach(function() {
+    describe('on previous page', function () {
+      beforeEach(function () {
         scope.$apply(); // trigger resetAssets
         getAssets.reject();
         scope.$apply();
@@ -350,17 +349,17 @@ describe('Asset List Controller', function () {
         sinon.assert.notCalled(scope.assets.push);
       });
 
-      it('pagination count decreases', function() {
+      it('pagination count decreases', function () {
         expect(scope.searchController.paginator.page()).toBe(1);
       });
     });
   });
 
-  describe('creating multiple assets', function() {
-    var files, entity;
-    beforeEach(function() {
+  describe('creating multiple assets', function () {
+    let files, entity;
+    beforeEach(function () {
       files = [{}, {}];
-      scope.searchController.resetAssets  = sinon.stub();
+      scope.searchController.resetAssets = sinon.stub();
       scope.spaceContext.space.getDefaultLocale = sinon.stub();
       scope.spaceContext.space.getDefaultLocale.returns({code: 'en-US'});
       scope.spaceContext.space.createAsset = sinon.stub();
@@ -386,15 +385,15 @@ describe('Asset List Controller', function () {
       $rootScope.$apply();
     });
 
-    it('filepicker is called', function() {
+    it('filepicker is called', function () {
       sinon.assert.calledOnce(stubs.pickMultiple);
     });
 
-    it('asset is created', function() {
+    it('asset is created', function () {
       sinon.assert.calledTwice(scope.spaceContext.space.createAsset);
     });
 
-    it('process is triggered', function() {
+    it('process is triggered', function () {
       sinon.assert.calledTwice(stubs.process);
     });
 

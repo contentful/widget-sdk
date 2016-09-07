@@ -1,8 +1,7 @@
 'use strict';
 
 describe('Entry List Controller', function () {
-  let scope, spaceContext;
-  let getEntries;
+  let scope, spaceContext, getEntries;
 
   function createEntries (n) {
     const entries = _.map(new Array(n), function () {
@@ -292,11 +291,9 @@ describe('Entry List Controller', function () {
     });
 
     describe('on successful load response', function () {
-      let entries;
-
       beforeEach(function () {
-        entries = createEntries(30);
-        spaceContext.space.getEntries.resolves(entries);
+        this.entries = createEntries(30);
+        spaceContext.space.getEntries.resolves(this.entries);
         scope.loadNextPage();
       });
 
@@ -307,7 +304,7 @@ describe('Entry List Controller', function () {
 
       it('appends entries to scope', function () {
         scope.$apply();
-        expect(scope.entries.slice(30)).toEqual(entries);
+        expect(scope.entries.slice(30)).toEqual(this.entries);
       });
     });
 
@@ -322,17 +319,15 @@ describe('Entry List Controller', function () {
   });
 
   describe('Api Errors', function () {
-    let apiErrorHandler;
-
-    beforeEach(inject(function (ReloadNotification) {
-      apiErrorHandler = ReloadNotification.apiErrorHandler;
+    beforeEach(function () {
+      this.handler = this.$inject('ReloadNotification').apiErrorHandler;
       spaceContext.space.getEntries.rejects({statusCode: 500});
-    }));
+    });
 
     it('should cause updateEntries to show an error message', function () {
       scope.updateEntries();
       scope.$apply();
-      sinon.assert.called(apiErrorHandler);
+      sinon.assert.called(this.handler);
     });
 
     it('should cause loadNextPage to show an error message', function () {
@@ -341,7 +336,7 @@ describe('Entry List Controller', function () {
 
       scope.loadNextPage();
       scope.$apply();
-      sinon.assert.called(apiErrorHandler);
+      sinon.assert.called(this.handler);
     });
   });
 
