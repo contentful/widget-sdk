@@ -58,14 +58,14 @@ describe('utils/kefir', function () {
   });
 
   describe('#onValueScope()', function () {
-    it('calls callback only when scope is applied', function () {
+    it('applies scope after calling callback when value changes', function () {
       const bus = K.createBus();
       const cb = sinon.spy();
+      sinon.spy(this.scope, '$applyAsync');
       K.onValueScope(this.scope, bus.stream, cb);
       bus.emit('VAL');
-      sinon.assert.notCalled(cb);
-      this.$apply();
       sinon.assert.calledOnce(cb);
+      sinon.assert.calledOnce(this.scope.$applyAsync);
     });
 
     it('removes callback when scope is destroyed', function () {

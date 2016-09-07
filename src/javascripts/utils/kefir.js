@@ -124,7 +124,7 @@ angular.module('cf.utils')
    * In particular:
    * - The callback is detached from the stream when the scope is
    *   destroyed
-   * - The callback is wrapped in `scope.$applyAsync()`
+   * - `scope.$applyAsync()` is called after each time the value changes
    *
    * @param {Scope} scope
    * @param {Observable} observable
@@ -135,9 +135,8 @@ angular.module('cf.utils')
    */
   function onValueScope (scope, stream, cb) {
     var off = onValue(stream, function (value) {
-      scope.$applyAsync(function () {
-        cb(value);
-      });
+      cb(value);
+      scope.$applyAsync();
     });
     scope.$on('$destroy', off);
     return off;
