@@ -47,6 +47,7 @@ function createTimingReporter () {
   };
 
   function printThing (thing) {
+    /*eslint no-console: off*/
     if (thing.children) {
       console.groupCollapsed(format(thing.length, thing.description));
       _.each(thing.children, printThing);

@@ -1,8 +1,15 @@
 extends:
   - './.eslint-standard.yml'
+  - 'eslint:recommended'
 rules:
+  # eslint:recommended overrides
+  require-yield: off
+
+  # eslint-standard overrides
   padded-blocks: off
   semi: ["error", "always"]
+
+  # Other
   no-multiple-empty-lines: ["error", {max: 2, maxBOF: 0, maxEOF: 0}]
   no-unused-vars: ['error', {vars: 'all', args: 'all', argsIgnorePattern: '^_'}]
   eol-last: "error"

@@ -92,7 +92,7 @@ describe('contentPreview', function () {
           expect(environments.foo2).toEqual(makeEnv('foo2'));
         });
         this.$apply();
-      };
+      }
       fetchEnvironmentsAndAssertResponse.call(this);
       fetchEnvironmentsAndAssertResponse.call(this);
     });

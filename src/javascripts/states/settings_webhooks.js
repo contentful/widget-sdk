@@ -112,7 +112,9 @@ angular.module('contentful')
           try {
             $scope.body = JSON.parse($scope.call.request.body);
             $scope.call.request = _.omit($scope.call.request, ['body']);
-          } catch (e) {}
+          } catch (e) {
+            /* eslint no-empty: off */
+          }
         }]
       }
     }
