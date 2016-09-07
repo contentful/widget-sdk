@@ -79,7 +79,6 @@ test/unit/services/the_store_spec.js
 test/unit/services/token_store_spec.js
 test/unit/services/subscription_plan_recommender_spec.js
 test/unit/widgets/checks_spec.js
-test/unit/widgets/api_spec.js
 test/unit/widgets/builtin_spec.js
 test/unit/widgets/default_spec.js
 test/unit/widgets/deprecations_spec.js

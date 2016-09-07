@@ -49,6 +49,8 @@ angular.module('contentful')
 
       var widgetAPI = new WidgetAPI(
         spaceContext.cma, fields, scope.entry.data, scope.transformedContentTypeData,
+        // TODO the isDisabled property is only required for <v2.1 of the
+        // extension SDK. We should remove it
         {field: scope.field, locale: scope.locale, isDisabled: scope.fieldLocale.access.disabled}, iframe
       );
 
@@ -97,7 +99,9 @@ angular.module('contentful')
 
       function initializeIframe () {
         $iframe.one('load', function () {
-          widgetAPI.connect();
+          scope.$applyAsync(function () {
+            widgetAPI.connect();
+          });
         });
 
         if (descriptor.src) {
@@ -109,6 +113,11 @@ angular.module('contentful')
 
       K.onValueScope(scope, doc.sysProperty, function (sys) {
         widgetAPI.send('sysChanged', [sys]);
+      });
+
+      K.onValueScope(scope, scope.fieldLocale.errors$, function (errors) {
+        errors = errors || [];
+        widgetAPI.send('schemaErrorsChanged', [errors]);
       });
 
       var fieldChanges = doc.changes.filter(function (path) {

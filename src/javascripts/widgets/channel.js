@@ -72,7 +72,7 @@ angular.module('contentful')
     if (this.connected) {
       this._send(message, params);
     } else {
-      this.messageQueue.push([message, params]);
+      this.messageQueue.push({method: message, params: params});
     }
   };
 
@@ -81,12 +81,8 @@ angular.module('contentful')
       throw new Error('Widget Channel already connected');
     }
     this.connected = true;
-    var params = [_.extend({id: this.id}, data)];
+    var params = [_.extend({id: this.id}, data), this.messageQueue];
     this._send('connect', params);
-    var self = this;
-    _.forEach(this.messageQueue, function (args) {
-      self._send.apply(self, args);
-    });
   };
 
   Channel.prototype._dispatch = function (method, callId, args) {

@@ -14,6 +14,8 @@ describe('cfIframeWidget directive', function () {
       });
     });
 
+    const K = this.$inject('mocks/kefir');
+
     this.otDoc = this.$inject('mocks/entityEditor/Document').create({
       fields: {}
     });
@@ -40,6 +42,7 @@ describe('cfIframeWidget directive', function () {
         access: {
           disabled: true
         },
+        errors$: K.createMockProperty(),
         setActive: sinon.spy()
       },
       fieldController: {
