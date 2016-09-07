@@ -50,19 +50,19 @@ angular.module('contentful')
 
   var validationHelpText = {
     size: {
-      Text: 'Specify minimum or maximum number of characters: for example, a title should be 20-40 characters long',
-      Symbol: 'Specify minimum or maximum number of characters: for example, a title should be 20-40 characters long',
-      Object: 'Specify minimum or maximum number of properties: for example, a Person should contain only 3 properties'
+      Text: 'Specify a minimum and/or maximum allowed number of characters',
+      Symbol: 'Specify a minimum and/or maximum allowed number of characters',
+      Object: 'Specify a minimum and/or maximum allowed number of properties'
     },
-    range: 'Needs hint text',
-    dateRange: 'Needs hint text',
+    range: 'Specify a minimum and/or maximum allowed number for this field',
+    dateRange: 'Specify an early and/or latest allowed date for this field',
     regexp: 'Make this field match a pattern: e-mail address, URI, or a custom regular expression',
     unique: 'You won\'t be able to publish an entry if there is an existing entry with with identical content',
     in: 'You won\'t be able to publish an entry if the field value is not in the list of specified values',
-    linkContentType: 'Needs hint text',
-    linkMimetypeGroup: 'Needs hint text',
-    assetFileSize: 'Needs hint text',
-    assetImageDimensions: 'Needs hint text'
+    linkContentType: 'Make this field only accept entries from specified content type(s)',
+    linkMimetypeGroup: 'Make this field only accept specified file types',
+    assetFileSize: 'Specify a minimum and/or maximum allowed file size',
+    assetImageDimensions: 'Specify a minimum and/or maximum allowed image dimension'
   };
 
 
@@ -250,7 +250,7 @@ angular.module('contentful')
     if (field.type === 'Array' && type === 'size') {
       var itemTypes = pluralize((field.items.linkType || field.items.type).toLowerCase());
 
-      return 'Specify minimum or maximum number of ' + itemTypes + ': for example, allow 5-10 ' + itemTypes;
+      return 'Specify a minimum and/or maximum allowed number of ' + itemTypes;
     }
 
     return getValidationStringForType(validationHelpText, field, type);
