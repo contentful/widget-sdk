@@ -38,7 +38,7 @@ mixin field-locale-errors
           a.cfnext-form__field-error(
             target="_blank"
             ui-sref="spaces.detail.entries.detail({ entryId: \"{{conflict.sys.id}}\", notALinkedEntity: true })")
-            | {{ conflict.conflictingData || "Loading title for conflicting entry.."}}
+            | {{ conflict.data.entryTitle || 'Loading title for conflicting entry..'}}
             i.fa.fa-external-link
 
 div.entity-editor__field-group(

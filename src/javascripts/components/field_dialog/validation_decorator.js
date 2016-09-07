@@ -6,11 +6,12 @@ angular.module('contentful')
  * @ngdoc service
  * @name validationDecorator
  */
-.factory('validationDecorator', ['$injector', function ($injector) {
-  var pluralize = $injector.get('pluralize');
-  var validationViews = $injector.get('validationViews');
-  var createSchema = $injector.get('validation');
-  var getErrorMessage = $injector.get('validationDialogErrorMessages');
+.factory('validationDecorator', ['require', function (require) {
+  var pluralize = require('pluralize');
+  var validationViews = require('validationViews');
+  var createSchema = require('validation');
+  var getErrorMessage = require('validationDialogErrorMessages');
+
   var validationName = createSchema.Validation.getName;
   var validationTypesForField = createSchema.Validation.forField;
 
@@ -108,7 +109,7 @@ angular.module('contentful')
 
       // remove unique validation for items as we don't support
       // it for items nor for the Array container type
-      itemValidations = _.remove(itemValidations, function (validation) {
+      itemValidations = _.filter(itemValidations, function (validation) {
         return validation.type !== 'unique';
       });
 
@@ -237,8 +238,9 @@ angular.module('contentful')
 
   function getValidationLabel (field, type) {
     if (field.type === 'Array' && type === 'size') {
-      var itemType = field.items.type === 'Link' ? field.items.linkType : field.items.type;
-      return 'Accept only a specified number of ' + pluralize(itemType.toLowerCase());
+      var itemTypes = pluralize((field.items.linkType || field.items.type).toLowerCase());
+
+      return 'Accept only a specified number of ' + itemTypes;
     }
 
     return getValidationStringForType(validationLabels, field, type);
@@ -246,11 +248,9 @@ angular.module('contentful')
 
   function getValidationHelpText (field, type) {
     if (field.type === 'Array' && type === 'size') {
-      var itemType = field.items.type === 'Link' ? field.items.linkType : field.items.type;
-      var helpText = 'Specify minimum or maximum number of ${itemType}: for example, allow 5-10 ${itemType}';
-      var itemTypePlural = pluralize(itemType.toLowerCase());
+      var itemTypes = pluralize((field.items.linkType || field.items.type).toLowerCase());
 
-      return helpText.replace(/\$\{itemType\}/g, itemTypePlural);
+      return 'Specify minimum or maximum number of ' + itemTypes + ': for example, allow 5-10 ' + itemTypes;
     }
 
     return getValidationStringForType(validationHelpText, field, type);
@@ -261,7 +261,7 @@ angular.module('contentful')
 
     if (!label) {
       return type;
-    } else if (typeof label === 'string') {
+    } else if (_.isString(label)) {
       return label;
     } else {
       return label[field.type];
