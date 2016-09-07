@@ -25,7 +25,7 @@ beforeEach(function () {
    */
   this.$inject = function (serviceName) {
     if (!this.$injector) {
-      var self = this;
+      const self = this;
       inject(function ($injector) {
         self.$injector = $injector;
       });
@@ -89,10 +89,10 @@ beforeEach(function () {
    * @return {JQueryElement}
    */
   this.$compile = function (template, scopeProperties, controllers) {
-    var $compile = this.$inject('$compile');
-    var $rootScope = this.$inject('$rootScope');
-    var scope = _.extend($rootScope.$new(true), scopeProperties);
-    var transcludeControllers = {};
+    const $compile = this.$inject('$compile');
+    const $rootScope = this.$inject('$rootScope');
+    const scope = _.extend($rootScope.$new(true), scopeProperties);
+    let transcludeControllers = {};
 
     if (controllers) {
       // convert controllers to a form `$compile` understands
@@ -103,7 +103,7 @@ beforeEach(function () {
       });
     }
 
-    var element = $compile(template)(scope, undefined, {
+    const element = $compile(template)(scope, undefined, {
       transcludeControllers: transcludeControllers
     });
 

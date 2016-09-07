@@ -4,7 +4,7 @@ describe('AssetResolver service', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    var manifest = this.$inject('environment').manifest;
+    const manifest = this.$inject('environment').manifest;
     manifest['asset.jpg'] = 'http://fingerprinted.jpg';
 
     this.resolve = this.$inject('AssetResolver').resolve;

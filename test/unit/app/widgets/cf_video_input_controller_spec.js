@@ -1,8 +1,8 @@
 'use strict';
 
 describe('cfVideoInput Controller', function () {
-  var assetLookupDeferred, attrs, controller;
-  var modalDialogStub, modalDialogDeferred, scope;
+  let assetLookupDeferred, attrs, controller;
+  let modalDialogStub, modalDialogDeferred, scope;
 
   beforeEach(function () {
     module('contentful/test');
@@ -72,7 +72,7 @@ describe('cfVideoInput Controller', function () {
     });
 
     describe('modal dialog params', function () {
-      var args;
+      let args;
       beforeEach(function () {
         args = modalDialogStub.open.calls.mostRecent().args[0];
       });
@@ -87,7 +87,7 @@ describe('cfVideoInput Controller', function () {
     });
 
     describe('when some elements are selected on the modal dialog', function () {
-      var args;
+      let args;
       beforeEach(function () {
         modalDialogDeferred.resolve('selection');
         scope.$apply();

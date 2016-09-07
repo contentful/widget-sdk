@@ -36,7 +36,7 @@ function createTimingReporter () {
       this.lastSuite = this.suites.pop();
     },
     specStarted: function (result) {
-      var suite = this.getCurrentSuite();
+      const suite = this.getCurrentSuite();
       result.start = performance.now();
       suite.children.push(result);
     },
@@ -69,7 +69,7 @@ function createTimingReporter () {
   }
 
   function format (timing, desc) {
-    var seconds = timing / 1000;
+    const seconds = timing / 1000;
     return seconds.toFixed(3) + 's: ' + desc;
   }
 

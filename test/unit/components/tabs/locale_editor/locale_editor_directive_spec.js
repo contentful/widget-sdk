@@ -15,7 +15,7 @@ describe('Locale Editor Directive', function () {
       ]);
     });
 
-    var spaceContext = this.$inject('spaceContext');
+    const spaceContext = this.$inject('spaceContext');
     spaceContext.space = {};
     dotty.put(spaceContext, 'space.data.organization.subscriptionPlan.name');
 
@@ -31,7 +31,7 @@ describe('Locale Editor Directive', function () {
   });
 
   function locale (code) {
-    var id = 'id-for-' + code;
+    const id = 'id-for-' + code;
     return {
       data: {
         sys: {id: id},

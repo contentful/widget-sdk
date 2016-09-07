@@ -2,10 +2,10 @@
 
 describe('Section Access', function () {
 
-  var sectionAccess, accessChecker, $state, $stateParams, spaceContext;
-  var visibilityStub, goStub;
+  let sectionAccess, accessChecker, $state, $stateParams, spaceContext;
+  let visibilityStub, goStub;
 
-  var allTrue = {
+  const allTrue = {
     contentType: true,
     entry: true,
     asset: true,

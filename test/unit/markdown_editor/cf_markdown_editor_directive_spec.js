@@ -6,12 +6,12 @@ describe('cfMarkdownEditor', function () {
 
     this.$inject('LazyLoader').get = sinon.stub().resolves(window.cfLibs.markdown);
 
-    var widgetApi = this.$inject('mocks/widgetApi').create();
+    const widgetApi = this.$inject('mocks/widgetApi').create();
     widgetApi.field.getValue.returns('test');
     this.fieldStubs = widgetApi.field;
 
     this.notifyChange = function () {
-      var notifyFn = this.fieldStubs.onValueChanged.firstCall.args[0];
+      const notifyFn = this.fieldStubs.onValueChanged.firstCall.args[0];
       notifyFn(this.fieldStubs.getValue());
     }.bind(this);
 
@@ -19,7 +19,7 @@ describe('cfMarkdownEditor', function () {
       this.fieldStubs.onDisabledStatusChanged.firstCall.args[0](true);
     }.bind(this);
 
-    var elem = this.$compile('<cf-markdown-editor />', {}, {
+    const elem = this.$compile('<cf-markdown-editor />', {}, {
       cfWidgetApi: {field: this.fieldStubs}
     });
 
@@ -45,8 +45,8 @@ describe('cfMarkdownEditor', function () {
 
   it('Subscribes to preview notifications', function () {
     this.$inject('$timeout').flush();
-    var previewKeys = _.intersection(Object.keys(this.scope.preview), ['info', 'tree', 'value', 'field']);
-    var infoKeys = _.intersection(Object.keys(this.scope.preview.info), ['chars', 'words']);
+    const previewKeys = _.intersection(Object.keys(this.scope.preview), ['info', 'tree', 'value', 'field']);
+    const infoKeys = _.intersection(Object.keys(this.scope.preview.info), ['chars', 'words']);
     expect(previewKeys.length).toBe(4);
     expect(infoKeys.length).toBe(2);
   });

@@ -1,8 +1,8 @@
 'use strict';
 
 describe('Kaltura Client Wrapper', function () {
-  var kalturaCredentialsDeferred, kalturaClientWrapper;
-  var kalturaClientMock, KalturaErrorMessages, $q, $rootScope;
+  let kalturaCredentialsDeferred, kalturaClientWrapper;
+  let kalturaClientMock, KalturaErrorMessages, $q, $rootScope;
 
   beforeEach(function () {
     module('contentful/test');
@@ -34,15 +34,15 @@ describe('Kaltura Client Wrapper', function () {
 
   describe('#_processResponseFromKalturaAPI', function () {
     function simulateCallToProcessResponseFromKalturaAPI (response) {
-      var deferred, promise;
-      deferred = $q.defer(); promise = deferred.promise;
+      const deferred = $q.defer();
+      const promise = deferred.promise;
 
       kalturaClientWrapper._processResponseFromKalturaAPI(deferred, undefined, response);
       return promise;
     }
 
     describe('when the request fails', function () {
-      var error;
+      let error;
 
       function failRequest (errorCode) {
         simulateCallToProcessResponseFromKalturaAPI({code: errorCode})
@@ -69,7 +69,7 @@ describe('Kaltura Client Wrapper', function () {
     });
 
     describe('when the request succeeds', function () {
-      var response;
+      let response;
 
       beforeEach(function () {
         simulateCallToProcessResponseFromKalturaAPI('response_from_kaltura')

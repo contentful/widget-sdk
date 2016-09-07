@@ -1,14 +1,14 @@
 'use strict';
 
 describe('paywallOpener', function () {
-  var self, $q, $rootScope;
+  let self, $q, $rootScope;
 
   beforeEach(function () {
     this.modalDialog = {
       open: sinon.stub()
     };
     this.recommendPlan = sinon.stub();
-    var subscriptionPlanRecommender = {
+    const subscriptionPlanRecommender = {
       recommend: this.recommendPlan
     };
     this.analytics = {
@@ -69,7 +69,7 @@ describe('paywallOpener', function () {
   }
 
   function testOpenPaywall (openPaywallOptions, moreTests) {
-    var userCanUpgrade =
+    const userCanUpgrade =
       openPaywallOptions && openPaywallOptions.offerPlanUpgrade || false;
 
     beforeEach(function () {
@@ -78,7 +78,7 @@ describe('paywallOpener', function () {
         this.LazyLoader.get.withArgs('gkPlanCardStyles').resolves();
       }
 
-      var openPaywall = this.$inject('paywallOpener').openPaywall;
+      const openPaywall = this.$inject('paywallOpener').openPaywall;
       this.openPaywall = function () {
         openPaywall(this.org, openPaywallOptions);
         $rootScope.$digest();
@@ -94,7 +94,7 @@ describe('paywallOpener', function () {
     }
 
     it('has no return value yet (to be implemented on demand)', function () {
-      var ret = this.openPaywall();
+      const ret = this.openPaywall();
       expect(ret).toBe(undefined);
     });
 
@@ -125,7 +125,7 @@ describe('paywallOpener', function () {
       beforeEach(function () {
         this.modalDialog.open.returns({promise: $q.resolve()});
         this.openPaywall();
-        var upgrade = this.modalDialog.open.args[0][0].scopeData.setUpPayment;
+        const upgrade = this.modalDialog.open.args[0][0].scopeData.setUpPayment;
         upgrade();
         $rootScope.$digest();
       });
@@ -161,7 +161,7 @@ describe('paywallOpener', function () {
 
     function testCanReopen (canReopen) {
       return function () {
-        var initialCallCount = self.modalDialog.open.callCount;
+        const initialCallCount = self.modalDialog.open.callCount;
         self.openPaywall();
         sinon.assert.callCount(self.modalDialog.open, initialCallCount + canReopen);
       };

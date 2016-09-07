@@ -320,7 +320,7 @@ describe('contentPreview', function () {
 
   describe('#setSelected', function () {
     it('updates store value', function () {
-      var environment = {
+      const environment = {
         contentType: 'ct1',
         envId: 'env1'
       };

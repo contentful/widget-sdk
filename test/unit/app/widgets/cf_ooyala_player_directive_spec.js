@@ -1,7 +1,7 @@
 'use strict';
 
 describe('cfOoyalaPlayer Directive', function () {
-  var directive, ooyalaPlayerLoaderDeferred, scope, $compile, $window;
+  let directive, ooyalaPlayerLoaderDeferred, scope, $compile, $window;
 
   function compileDirective (scope) {
     return $compile('<cf-ooyala-player/>')(scope);
@@ -45,14 +45,14 @@ describe('cfOoyalaPlayer Directive', function () {
   });
 
   it('generates different DOM ids for each new player', function () {
-    var otherDirective = compileDirective(scope);
+    const otherDirective = compileDirective(scope);
     scope.$apply();
 
     expect(directive.scope().playerDOMId).not.toEqual(otherDirective.scope().playerDOMId);
   });
 
   describe('Ooyala player loads successfully', function () {
-    var ooyalaStub;
+    let ooyalaStub;
 
     beforeEach(function () {
       ooyalaStub = {Player: {create: jasmine.createSpy()}};
@@ -61,7 +61,7 @@ describe('cfOoyalaPlayer Directive', function () {
     });
 
     describe('creates the player', function () {
-      var args;
+      let args;
 
       beforeEach(function () { args = ooyalaStub.Player.create.calls.mostRecent().args; });
 
@@ -83,7 +83,7 @@ describe('cfOoyalaPlayer Directive', function () {
     });
 
     describe('on player creation', function () {
-      var playerStub;
+      let playerStub;
 
       beforeEach(function () {
         playerStub = {mb: {subscribe: jasmine.createSpy()}, getTitle: sinon.stub().returns('title-1')};
@@ -108,7 +108,7 @@ describe('cfOoyalaPlayer Directive', function () {
       });
 
       describe('on playback ready', function () {
-        var eventHandlerSpy;
+        let eventHandlerSpy;
         beforeEach(function () {
           eventHandlerSpy = jasmine.createSpy();
           scope.$on('player:ready', eventHandlerSpy);

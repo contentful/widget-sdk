@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Kaltura Multi Video Editor Controller', function () {
-  var kalturaMultiVideoEditorController, kalturaClientWrapperMock;
+  let kalturaMultiVideoEditorController, kalturaClientWrapperMock;
 
   beforeEach(function () {
     module('contentful/test');
@@ -10,12 +10,12 @@ describe('Kaltura Multi Video Editor Controller', function () {
       $provide.value('kalturaClientWrapper', kalturaClientWrapperMock);
     });
 
-    var spaceContext = this.$inject('spaceContext');
+    const spaceContext = this.$inject('spaceContext');
     spaceContext.space = {
       getOrganizationId: sinon.stub().returns('org-123')
     };
 
-    var $controller = this.$inject('$controller');
+    const $controller = this.$inject('$controller');
     kalturaMultiVideoEditorController = $controller('cfKalturaMultiVideoEditorController');
   });
 
@@ -29,7 +29,7 @@ describe('Kaltura Multi Video Editor Controller', function () {
   });
 
   describe('overwrites the #customAttrsForPlayer method', function () {
-    var attrs;
+    let attrs;
     beforeEach(function () {
       attrs = kalturaMultiVideoEditorController.customAttrsForPlayer({assetId: 'assedId-1'});
     });

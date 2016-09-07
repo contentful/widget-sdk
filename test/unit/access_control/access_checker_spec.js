@@ -1,8 +1,8 @@
 'use strict';
 
 describe('Access Checker', function () {
-  var $rootScope, spaceContext, authorization, enforcements, OrganizationList, policyChecker, ac;
-  var getResStub, reasonsDeniedStub;
+  let $rootScope, spaceContext, authorization, enforcements, OrganizationList, policyChecker, ac;
+  let getResStub, reasonsDeniedStub;
 
   function triggerChange () {
     authorization.spaceContext = {reasonsDenied: reasonsDeniedStub};
@@ -26,7 +26,7 @@ describe('Access Checker', function () {
     policyChecker = this.$inject('accessChecker/policy');
     ac = this.$inject('accessChecker');
 
-    var responseCache = this.$inject('accessChecker/responseCache');
+    const responseCache = this.$inject('accessChecker/responseCache');
     responseCache.getResponse = getResStub = sinon.stub().returns(false);
 
     reasonsDeniedStub = sinon.stub().returns([]);
@@ -37,22 +37,22 @@ describe('Access Checker', function () {
 
   describe('#getResponses', function () {
     it('collects responses when auth context changes', function () {
-      var responses = ac.getResponses();
+      const responses = ac.getResponses();
       triggerChange();
       expect(ac.getResponses() === responses).toBe(false);
     });
 
     it('contains keys for entity actions', function () {
-      var responses = ac.getResponses();
-      var testKeys = ['createContentType', 'readEntry', 'updateAsset', 'createApiKey', 'updateSettings'];
-      var intersection = _.intersection(_.keys(responses), testKeys);
+      const responses = ac.getResponses();
+      const testKeys = ['createContentType', 'readEntry', 'updateAsset', 'createApiKey', 'updateSettings'];
+      const intersection = _.intersection(_.keys(responses), testKeys);
       expect(intersection.length).toBe(testKeys.length);
     });
 
     it('should not hide or disable when operation can be performed', function () {
       getResStub.withArgs('read', 'Entry').returns(true);
       triggerChange();
-      var response = ac.getResponses()['readEntry'];
+      const response = ac.getResponses()['readEntry'];
       expect(response.can).toBe(true);
       expect(response.shouldHide).toBe(false);
       expect(response.shouldDisable).toBe(false);
@@ -61,7 +61,7 @@ describe('Access Checker', function () {
     it('should disable, but not hide when operation cannot be performed and reasons for denial are given', function () {
       reasonsDeniedStub.withArgs('read', 'Entry').returns(['DENIED!']);
       triggerChange();
-      var response = ac.getResponses()['readEntry'];
+      const response = ac.getResponses()['readEntry'];
       expect(response.can).toBe(false);
       expect(response.shouldHide).toBe(false);
       expect(response.shouldDisable).toBe(true);
@@ -69,7 +69,7 @@ describe('Access Checker', function () {
     });
 
     it('should hide when operation cannot be performed and no reasons are given', function () {
-      var response = ac.getResponses()['readEntry'];
+      const response = ac.getResponses()['readEntry'];
       expect(response.can).toBe(false);
       expect(response.shouldHide).toBe(true);
       expect(response.shouldDisable).toBe(false);
@@ -77,13 +77,13 @@ describe('Access Checker', function () {
     });
 
     it('should broadcast enforcement if found', function () {
-      var reasons = ['DENIED!'];
+      const reasons = ['DENIED!'];
       reasonsDeniedStub.withArgs('read', 'Entry').returns(reasons);
       enforcements.determineEnforcement.withArgs(reasons, 'Entry').returns({message: 'ENFORCEMENT MSG'});
       sinon.spy($rootScope, '$broadcast');
       triggerChange();
       sinon.assert.calledOnce($rootScope.$broadcast);
-      var args = $rootScope.$broadcast.args[0];
+      const args = $rootScope.$broadcast.args[0];
       expect(args[0]).toBe('persistentNotification');
       expect(args[1].message).toBe('ENFORCEMENT MSG');
       $rootScope.$broadcast.restore();
@@ -96,8 +96,8 @@ describe('Access Checker', function () {
     });
 
     it('returns response for a known action', function () {
-      var n = 'readEntry';
-      var response = ac.getResponseByActionName(n);
+      const n = 'readEntry';
+      const response = ac.getResponseByActionName(n);
       expect(response).toBe(ac.getResponses()[n]);
       expect(_.isObject(response) && response.can === false).toBe(true);
     });
@@ -105,14 +105,14 @@ describe('Access Checker', function () {
 
   describe('#getSectionVisibility', function () {
     it('changes when auth context changes', function () {
-      var visibility = ac.getSectionVisibility();
+      const visibility = ac.getSectionVisibility();
       triggerChange();
       expect(ac.getSectionVisibility() === visibility).toBe(false);
     });
 
     it('checks if there is a "hide" flag for chosen actions', function () {
       function test (action, key, val) {
-        var entity = key.charAt(0).toUpperCase() + key.slice(1);
+        const entity = key.charAt(0).toUpperCase() + key.slice(1);
         getResStub.withArgs(action, entity).returns(val);
         triggerChange();
         expect(ac.getSectionVisibility()[key]).toBe(val);
@@ -124,8 +124,8 @@ describe('Access Checker', function () {
         'read,apiKey',
         'update,settings'
       ].forEach(function (x) {
-        var action = x.split(',').shift();
-        var key = x.split(',').pop();
+        const action = x.split(',').shift();
+        const key = x.split(',').pop();
         test(action, key, true);
         test(action, key, false);
       });
@@ -149,7 +149,7 @@ describe('Access Checker', function () {
     it('are shortcuts to response object properties', function () {
       getResStub.withArgs('read', 'Entry').returns(false);
       triggerChange();
-      var response = ac.getResponseByActionName('readEntry');
+      const response = ac.getResponseByActionName('readEntry');
       expect(response.shouldHide).toBe(true);
       expect(response.shouldDisable).toBe(false);
       expect(ac.shouldHide('readEntry')).toBe(response.shouldHide);
@@ -164,16 +164,16 @@ describe('Access Checker', function () {
 
   describe('#canPerformActionOnEntity', function () {
     it('calls "can" with entity data and extracts result from response', function () {
-      var entity = {data: {}};
+      const entity = {data: {}};
       getResStub.withArgs('update', entity.data).returns('YES WE CAN');
-      var result = ac.canPerformActionOnEntity('update', entity);
+      const result = ac.canPerformActionOnEntity('update', entity);
       sinon.assert.calledOnce(getResStub.withArgs('update', entity.data));
       expect(result).toBe('YES WE CAN');
     });
 
     it('determines enforcements for entity type', function () {
-      var reasons = ['DENIED!'];
-      var entity = {data: {sys: {type: 'Entry'}}};
+      const reasons = ['DENIED!'];
+      const entity = {data: {sys: {type: 'Entry'}}};
       reasonsDeniedStub.withArgs('update', entity.data).returns(reasons);
       getResStub.withArgs('update', entity.data).returns(false);
       ac.canPerformActionOnEntity('update', entity);
@@ -184,8 +184,8 @@ describe('Access Checker', function () {
   describe('#canPerformActionOnEntryOfType', function () {
     it('calls "can" with fake entity of given content type and extracts result from response', function () {
       getResStub.returns(true);
-      var result = ac.canPerformActionOnEntryOfType('update', 'ctid');
-      var args = getResStub.lastCall.args;
+      const result = ac.canPerformActionOnEntryOfType('update', 'ctid');
+      const args = getResStub.lastCall.args;
       expect(args[0]).toBe('update');
       expect(args[1].sys.contentType.sys.id).toBe('ctid');
       expect(args[1].sys.type).toBe('Entry');
@@ -194,7 +194,7 @@ describe('Access Checker', function () {
   });
 
   describe('#canUpdateEntry', function () {
-    var entry = {data: {sys: {contentType: {sys: {id: 'ctid'}}}}};
+    const entry = {data: {sys: {contentType: {sys: {id: 'ctid'}}}}};
 
     it('returns true if "can" returns true', function () {
       getResStub.withArgs('update', entry.data).returns(true);
@@ -217,7 +217,7 @@ describe('Access Checker', function () {
   });
 
   describe('#canUpdateAsset', function () {
-    var asset = {data: {}};
+    const asset = {data: {}};
 
     it('returns true if "can" returns true', function () {
       getResStub.withArgs('update', asset.data).returns(true);
@@ -311,7 +311,7 @@ describe('Access Checker', function () {
     });
 
     it('returns true when has feature, is not admin of space but is admin or owner of organization', function () {
-      var user = {organizationMemberships: [
+      const user = {organizationMemberships: [
         {organization: {sys: {id: 'org1id'}}, role: 'admin'},
         {organization: {sys: {id: 'org2id'}}, role: 'member'},
         {organization: {sys: {id: 'org3id'}}, role: 'owner'}
@@ -340,7 +340,7 @@ describe('Access Checker', function () {
     });
 
     it('returns result of organization authContext "can" call', function () {
-      var organizationCanStub = sinon.stub().returns('YES WE CAN');
+      const organizationCanStub = sinon.stub().returns('YES WE CAN');
       authorization.authContext = {
         organization: sinon.stub().withArgs('orgid').returns({can: organizationCanStub})
       };
@@ -356,7 +356,7 @@ describe('Access Checker', function () {
       };
 
       expect(ac.canCreateSpaceInOrganization('orgid')).toBe(false);
-      var logger = this.$inject('logger');
+      const logger = this.$inject('logger');
       sinon.assert.calledOnce(logger.logError);
       expect(logger.logError.args[0][0].indexOf('Worf exception')).toBe(0);
     });
@@ -390,7 +390,7 @@ describe('Access Checker', function () {
   });
 
   describe('#canCreateSpace', function () {
-    var organizationCanStub, authCanStub;
+    let organizationCanStub, authCanStub;
 
     beforeEach(function () {
       organizationCanStub = sinon.stub().returns(false);
@@ -443,13 +443,13 @@ describe('Access Checker', function () {
     it('broadcasts enforcement if found for a general case', function () {
       organizationCanStub.returns(true);
       authCanStub.returns(false);
-      var reasons = ['REASONS!'];
+      const reasons = ['REASONS!'];
       reasonsDeniedStub.withArgs('create', 'Space').returns(reasons);
       enforcements.determineEnforcement.withArgs(reasons, 'Space').returns({message: 'MESSAGE'});
       sinon.spy($rootScope, '$broadcast');
       expect(ac.canCreateSpace()).toBe(false);
       sinon.assert.calledOnce($rootScope.$broadcast);
-      var args = $rootScope.$broadcast.args[0];
+      const args = $rootScope.$broadcast.args[0];
       expect(args[0]).toBe('persistentNotification');
       expect(args[1].message).toBe('MESSAGE');
       $rootScope.$broadcast.restore();
@@ -463,16 +463,16 @@ describe('Access Checker', function () {
 
     it('sets "forbidden" flag on provided context if response is 404/3', function () {
       [200, 404, 403].forEach(function (status) {
-        var context = {};
-        var cb = ac.wasForbidden(context);
+        const context = {};
+        const cb = ac.wasForbidden(context);
         cb({statusCode: status});
         expect(context.forbidden).toBe(status === 200 ? undefined : true);
       });
     });
 
     pit('returns resolved promise with context if was forbidden', function () {
-      var ctx = {};
-      var cb = ac.wasForbidden(ctx);
+      const ctx = {};
+      const cb = ac.wasForbidden(ctx);
 
       return cb({statusCode: 404}).then(function (ctx2) {
         expect(ctx === ctx2).toBe(true);
@@ -481,8 +481,8 @@ describe('Access Checker', function () {
     });
 
     pit('returns rejected promise with response if was not forbidden', function () {
-      var cb = ac.wasForbidden({});
-      var res = {statusCode: 400};
+      const cb = ac.wasForbidden({});
+      const res = {statusCode: 400};
 
       return cb(res).then(_.noop, function (res2) {
         expect(res === res2);

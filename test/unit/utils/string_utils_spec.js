@@ -61,7 +61,7 @@ describe('stringUtils service', function () {
 
   describe('#truncateMiddle()', function () {
     it('throws an error if string end greater than total length param', function () {
-      var call = this.utils.truncateMiddle.bind(null, 'foo', 10, 11);
+      const call = this.utils.truncateMiddle.bind(null, 'foo', 10, 11);
       expect(call).toThrow();
     });
 
@@ -83,7 +83,7 @@ describe('stringUtils service', function () {
   });
 
   describe('#startsWithVowel', function () {
-    var starts;
+    let starts;
     beforeEach(function () {
       starts = this.$inject('stringUtils').startsWithVowel;
     });

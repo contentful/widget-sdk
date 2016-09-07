@@ -6,7 +6,7 @@ describe('Webhook Headers directive', function () {
     module('contentful/test');
 
     this.compile = function (headers) {
-      var data = {headers: headers || [], isDirty: false};
+      const data = {headers: headers || [], isDirty: false};
       this.element = this.$compile('<cf-webhook-headers headers="headers" is-dirty="isDirty" />', data);
       this.scope = this.element.isolateScope();
     }.bind(this);
@@ -22,7 +22,7 @@ describe('Webhook Headers directive', function () {
 
     it('displays rows when some headers are defined', function () {
       this.compile([{key: 'x', value: 'y'}, {key: 'z', value: 'v'}]);
-      var items = this.element.find('.webhook-header__item');
+      const items = this.element.find('.webhook-header__item');
       expect(items.length).toBe(2);
       expect(items.first().children().eq(1).text()).toBe('y');
     });
@@ -110,7 +110,7 @@ describe('Webhook Headers directive', function () {
   describe('"delete" button', function () {
     it('removes a pair from the list', function () {
       this.compile([{key: 'test', value: 'test'}]);
-      var btn = this.element.find('.webhook-header__actions:eq(0) button:last-child');
+      const btn = this.element.find('.webhook-header__actions:eq(0) button:last-child');
       btn.click();
       this.$apply();
       expect(_.keys(this.scope.headers).length).toBe(0);

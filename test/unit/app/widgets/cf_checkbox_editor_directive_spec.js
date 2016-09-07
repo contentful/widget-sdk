@@ -3,7 +3,7 @@
 describe('cfCheckboxEditor directive', function () {
   beforeEach(function () {
     module('contentful/test');
-    var widgetApi = this.$inject('mocks/widgetApi').create({
+    const widgetApi = this.$inject('mocks/widgetApi').create({
       field: {
         itemValidations: [{in: ['A', 'B', 'C']}]
       }
@@ -18,15 +18,15 @@ describe('cfCheckboxEditor directive', function () {
 
   it('shows warning when there are no item validations', function () {
     this.fieldApi.itemValidations = undefined;
-    var el = this.$compile('<cf-checkbox-editor />', {}, {
+    const el = this.$compile('<cf-checkbox-editor />', {}, {
       cfWidgetApi: {field: this.fieldApi}
     });
-    var alert = el.find('[role=alert]');
+    const alert = el.find('[role=alert]');
     expect(alert.text()).toMatch('The widget failed to initialize');
   });
 
   it('renders checkbox for each item validation', function () {
-    var labels = this.el.find('label').map(function () {
+    const labels = this.el.find('label').map(function () {
       return $(this).text();
     }).get();
     expect(labels).toEqual(['A', 'B', 'C']);
@@ -36,7 +36,7 @@ describe('cfCheckboxEditor directive', function () {
     this.fieldApi.onValueChanged.yield(['C', 'A']);
     this.$apply();
 
-    var checked = this.el.find('input[type=checkbox]').map(function () {
+    let checked = this.el.find('input[type=checkbox]').map(function () {
       return $(this).prop('checked');
     }).get();
     expect(checked).toEqual([true, false, true]);

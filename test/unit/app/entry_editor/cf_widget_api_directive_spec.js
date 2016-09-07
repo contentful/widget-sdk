@@ -9,7 +9,7 @@ describe('cfWidgetApi directive', function () {
       });
     });
 
-    var $controller = this.$inject('$controller');
+    const $controller = this.$inject('$controller');
     const K = this.$inject('mocks/kefir');
 
     this.scope = this.$inject('$rootScope').$new();
@@ -65,14 +65,14 @@ describe('cfWidgetApi directive', function () {
         this.widget.defaultHelpText = 'wat';
         this.widget.settings.helpText = undefined;
 
-        var widgetApi = this.getWidgetApi();
+        const widgetApi = this.getWidgetApi();
 
         expect(widgetApi.settings.helpText).toEqual(this.widget.defaultHelpText);
       });
       it('should default to undefined when no help text nor default help text is configured', function () {
         this.widget.settings.helpText = undefined;
 
-        var widgetApi = this.getWidgetApi();
+        const widgetApi = this.getWidgetApi();
 
         expect(widgetApi.settings.helpText).toEqual(undefined);
       });
@@ -89,7 +89,7 @@ describe('cfWidgetApi directive', function () {
 
     describe('#onSysChanged()', function () {
       it('calls callback if "entry.data.sys" changes', function () {
-        var cb = sinon.spy();
+        const cb = sinon.spy();
         this.widgetApi.entry.onSysChanged(cb);
         cb.reset();
         this.entry.data.sys = 'new sys';
@@ -103,7 +103,7 @@ describe('cfWidgetApi directive', function () {
 
   describe('#space', function () {
     it('exposes spaceContext.cma', function () {
-      var spaceContext = this.$inject('spaceContext');
+      const spaceContext = this.$inject('spaceContext');
       expect(this.widgetApi.space).toEqual(spaceContext.cma);
     });
   });
@@ -111,7 +111,7 @@ describe('cfWidgetApi directive', function () {
 
   describe('#onDisabledStatusChanged()', function () {
     it('is dispatched with initial value', function () {
-      var cb = sinon.spy();
+      const cb = sinon.spy();
       this.scope.fieldLocale.access.disabled = true;
       this.$apply();
       this.widgetApi.field.onDisabledStatusChanged(cb);
@@ -120,7 +120,7 @@ describe('cfWidgetApi directive', function () {
     });
 
     it('is dispatched when value changes', function () {
-      var cb = sinon.spy();
+      const cb = sinon.spy();
       this.scope.fieldLocale.access.disabled = true;
       this.$apply();
       this.widgetApi.field.onDisabledStatusChanged(cb);
@@ -135,7 +135,7 @@ describe('cfWidgetApi directive', function () {
 
   describe('#onSchemaErrorsChanged()', function () {
     it('emits errors when "fieldLocale.errors" changes', function () {
-      var cb = sinon.spy();
+      const cb = sinon.spy();
       this.widgetApi.field.onSchemaErrorsChanged(cb);
       this.$apply();
       cb.reset();
@@ -149,7 +149,7 @@ describe('cfWidgetApi directive', function () {
 
   describe('#field.setInvalid()', function () {
     it('delegates to $scope.fieldController with locale code', function () {
-      var setInvalid = sinon.stub();
+      const setInvalid = sinon.stub();
       this.scope.fieldController = {setInvalid: setInvalid};
       this.scope.locale.code = 'LC';
       this.widgetApi.field.setInvalid('VAL');

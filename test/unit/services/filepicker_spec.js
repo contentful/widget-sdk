@@ -1,9 +1,9 @@
 'use strict';
 
 describe('Filepicker service', function () {
-  var filepicker;
-  var makeDropPaneStub, pickStub, storeStub;
-  var $rootScope;
+  let filepicker;
+  let makeDropPaneStub, pickStub, storeStub;
+  let $rootScope;
 
   beforeEach(function () {
     module('contentful/test', function (environment) {
@@ -13,8 +13,8 @@ describe('Filepicker service', function () {
       };
     });
 
-    var $q = this.$inject('$q');
-    var LazyLoader = this.$inject('LazyLoader');
+    const $q = this.$inject('$q');
+    const LazyLoader = this.$inject('LazyLoader');
     $rootScope = this.$inject('$rootScope');
 
     LazyLoader.get = function () {
@@ -41,7 +41,7 @@ describe('Filepicker service', function () {
 
   describe('makeDropPane is called', function () {
 
-    var myDropPane = {drop: 'pane'};
+    const myDropPane = {drop: 'pane'};
 
     beforeEach(function () {
       this.callMakeDropPane = function (dropPane, opts) {
@@ -86,8 +86,8 @@ describe('Filepicker service', function () {
 
   describe('pick is called', function () {
     it('returns a file', function () {
-      var successStub = sinon.stub();
-      var file = {file: 'name'};
+      const successStub = sinon.stub();
+      const file = {file: 'name'};
       pickStub.callsArgWith(1, file);
       filepicker.pick().then(successStub).finally(function () {
         $rootScope.$apply();
@@ -96,8 +96,8 @@ describe('Filepicker service', function () {
     });
 
     it('returns an error', function () {
-      var errorStub = sinon.stub();
-      var error = new Error('fileerror');
+      const errorStub = sinon.stub();
+      const error = new Error('fileerror');
       pickStub.callsArgWith(2, error);
       filepicker.pick().catch(errorStub).finally(function () {
         $rootScope.$apply();
@@ -117,8 +117,8 @@ describe('Filepicker service', function () {
   describe('store is called', function () {
 
     it('returns a file', function () {
-      var successStub = sinon.stub();
-      var file = {fileName: 'name', mimetype: 'type', details: {size: 'size'}};
+      const successStub = sinon.stub();
+      const file = {fileName: 'name', mimetype: 'type', details: {size: 'size'}};
       storeStub.callsArgWith(2, file);
 
       filepicker.store('newurl', file).then(successStub).finally(function () {
@@ -134,8 +134,8 @@ describe('Filepicker service', function () {
     });
 
     it('returns an error', function () {
-      var errorStub = sinon.stub();
-      var error = new Error('fileerror');
+      const errorStub = sinon.stub();
+      const error = new Error('fileerror');
       storeStub.callsArgWith(3, error);
       filepicker.store('', {details: {}}).catch(errorStub).finally(function () {
         sinon.assert.calledWith(errorStub, error);

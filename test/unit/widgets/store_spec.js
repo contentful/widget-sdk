@@ -1,7 +1,7 @@
 'use strict';
 
 describe('widgets/store', function () {
-  var Store;
+  let Store;
 
   beforeEach(function () {
     module('contentful/test');
@@ -14,18 +14,18 @@ describe('widgets/store', function () {
 
   describe('#getMap()', function () {
     pit('returns an object including the builtin widgets', function () {
-      var builtin = this.$inject('widgets/builtin');
-      var builtinIds = _.keys(builtin);
-      var store = Store.create(makeSpaceStub());
+      const builtin = this.$inject('widgets/builtin');
+      const builtinIds = _.keys(builtin);
+      const store = Store.create(makeSpaceStub());
       return store.getMap()
       .then(function (widgets) {
-        var widgetIds = _.keys(widgets);
+        const widgetIds = _.keys(widgets);
         expect(widgetIds).toEqual(builtinIds);
       });
     });
 
     pit('includes processed widgets from API', function () {
-      var custom = {
+      const custom = {
         sys: {id: 'CUSTOM'},
         widget: {
           name: 'NAME',
@@ -34,10 +34,10 @@ describe('widgets/store', function () {
           fieldTypes: [{type: 'Array', items: {type: 'Link', linkType: 'Asset'}}]
         }
       };
-      var store = Store.create(makeSpaceStub([custom]));
+      const store = Store.create(makeSpaceStub([custom]));
 
       return store.getMap().then(function (widgets) {
-        var processed = widgets['CUSTOM'];
+        const processed = widgets['CUSTOM'];
         expect(processed.sidebar).toEqual('SIDEBAR');
         expect(processed.src).toEqual('SRC');
         expect(processed.name).toEqual('NAME');
@@ -47,12 +47,12 @@ describe('widgets/store', function () {
     });
 
     pit('returns only builtins if response fails', function () {
-      var store = Store.create({
+      const store = Store.create({
         endpoint: sinon.stub().returns({
           get: sinon.stub().rejects()
         })
       });
-      var builtin = this.$inject('widgets/builtin');
+      const builtin = this.$inject('widgets/builtin');
       return store.getMap()
       .then(function (widgets) {
         expect(widgets).toEqual(builtin);

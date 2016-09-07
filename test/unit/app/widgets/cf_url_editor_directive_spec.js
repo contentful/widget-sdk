@@ -22,8 +22,8 @@ describe('cfUrlEditor directive', function () {
     };
 
     this.assertStatus = function (assertions) {
-      var self = this;
-      var statusEls = {
+      const self = this;
+      const statusEls = {
         invalid: self.$el.find('[data-status-code*=invalid]'),
         broken: self.$el.find('[data-status-code*=broken]')
       };
@@ -40,14 +40,14 @@ describe('cfUrlEditor directive', function () {
   it('shows configured help text', function () {
     this.setHelpText('some help text');
 
-    var helpText = this.compileElement().find('[role=note]').text();
+    const helpText = this.compileElement().find('[role=note]').text();
     expect(helpText).toEqual('some help text');
   });
 
   it('shows nothing when no help text configured', function () {
     this.setHelpText(undefined);
 
-    var helpText = this.compileElement().find('[role=note]').text();
+    const helpText = this.compileElement().find('[role=note]').text();
     expect(helpText).toEqual('');
   });
 
@@ -57,7 +57,7 @@ describe('cfUrlEditor directive', function () {
   });
 
   it('updates when url is modified by calling changeString', function () {
-    var $inputEl = this.$el.find('input');
+    const $inputEl = this.$el.find('input');
 
     /*
      * Since onValueChanged handler is called when attached

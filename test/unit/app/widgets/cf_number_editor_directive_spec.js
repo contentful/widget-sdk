@@ -9,12 +9,12 @@ describe('Number widgets', function () {
     this.fieldApi = this.widgetApi.field;
 
     this.compileElement = function () {
-      var el = this.$compile('<cf-number-editor />', {}, {
+      const el = this.$compile('<cf-number-editor />', {}, {
         cfWidgetApi: this.widgetApi
       });
 
-      var inputEl = el.find('input');
-      var statusEl = el.find('[role=status]');
+      const inputEl = el.find('input');
+      const statusEl = el.find('[role=status]');
 
       return _.assign(el, {
         inputEl: inputEl,
@@ -90,7 +90,7 @@ describe('Number widgets', function () {
 });
 
 describe('cfNumberEditor/parseNumber', function () {
-  var parseNumber;
+  let parseNumber;
 
   beforeEach(function () {
     module('contentful/test');
@@ -99,7 +99,7 @@ describe('cfNumberEditor/parseNumber', function () {
 
   describe('parse numbers', function () {
     it('should parse numbers correctly', function () {
-      var specs = [
+      const specs = [
         ['12', true],
         ['12.12', true],
         ['0.12', true],
@@ -127,7 +127,7 @@ describe('cfNumberEditor/parseNumber', function () {
 
   describe('parse integers', function () {
     it('should parse integers correctly', function () {
-      var specs = [
+      const specs = [
         ['12', true],
         ['012', true],
         ['-12', true],

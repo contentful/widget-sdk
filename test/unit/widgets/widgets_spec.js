@@ -1,7 +1,7 @@
 'use strict';
 
 describe('widgets', function () {
-  var widgets;
+  let widgets;
 
   beforeEach(function () {
     module('contentful/test');
@@ -11,7 +11,7 @@ describe('widgets', function () {
     Store.create = _.constant({getMap: this.storeGetMap});
 
     this.setupWidgets = function (ws) {
-      var builtinWidgets = this.$inject('widgets/builtin');
+      const builtinWidgets = this.$inject('widgets/builtin');
 
       this.storeGetMap.resolves(ws || builtinWidgets);
 
@@ -50,7 +50,7 @@ describe('widgets', function () {
     beforeEach(function () {
       // Disable checking if a widget is misconfigured since this
       // involves API requests.
-      var widgetChecks = this.$inject('widgets/checks');
+      const widgetChecks = this.$inject('widgets/checks');
       widgetChecks.markMisconfigured = function (widgets) {
         return widgets;
       };
@@ -67,7 +67,7 @@ describe('widgets', function () {
 
     function testAvailableForFieldType (fieldType) {
       describe('for field type "' + fieldType + '"', function () {
-        var availableWidgets;
+        let availableWidgets;
         beforeEach(function () {
           widgets.getAvailable({type: fieldType}).then(function (_widgets) {
             availableWidgets = _widgets;
@@ -86,9 +86,9 @@ describe('widgets', function () {
         });
 
         it('has options property from builtin descriptor', function () {
-          var builtins = this.$inject('widgets/builtin');
+          const builtins = this.$inject('widgets/builtin');
           availableWidgets.forEach(function (widget) {
-            var builtin = builtins[widget.id];
+            const builtin = builtins[widget.id];
             expect(builtin.options).toEqual(widget.options);
           });
         });
@@ -111,7 +111,7 @@ describe('widgets', function () {
     testAvailableForFieldType('Object');
 
     it('rejects promise if field type has no widget', function () {
-      var err;
+      let err;
       widgets.getAvailable({type: 'unsupportedtype'}).catch(function (_err) {
         err = _err;
       });
@@ -130,20 +130,20 @@ describe('widgets', function () {
     });
 
     it('removes unknown parameters', function () {
-      var params = {unknown: true};
-      var filtered = widgets.filteredParams('WID', params);
+      const params = {unknown: true};
+      const filtered = widgets.filteredParams('WID', params);
       expect(filtered).toEqual({});
     });
 
     it('retains known parameters', function () {
-      var params = {foo: true, unknown: true};
-      var filtered = widgets.filteredParams('WID', params);
+      const params = {foo: true, unknown: true};
+      const filtered = widgets.filteredParams('WID', params);
       expect(filtered).toEqual({foo: true});
     });
 
     it('removes undefined parameters', function () {
-      var params = {foo: undefined};
-      var filtered = widgets.filteredParams('WID', params);
+      const params = {foo: undefined};
+      const filtered = widgets.filteredParams('WID', params);
       expect(filtered).toEqual({});
     });
 
@@ -151,8 +151,8 @@ describe('widgets', function () {
       this.setupWidgets({
         'WID': {}
       });
-      var params = {foo: undefined};
-      var filtered = widgets.filteredParams('WID', params);
+      const params = {foo: undefined};
+      const filtered = widgets.filteredParams('WID', params);
       expect(filtered).toEqual({});
     });
   });
@@ -170,20 +170,20 @@ describe('widgets', function () {
     });
 
     it('sets missing parameters to default value', function () {
-      var params = {};
+      const params = {};
       this.widgets.applyDefaults('WIDGET', params);
       expect(params.x).toEqual('DEFAULT');
     });
 
     it('does not overwrite existing params', function () {
-      var params = {x: 'VALUE'};
+      const params = {x: 'VALUE'};
       this.widgets.applyDefaults('WIDGET', params);
       expect(params.x).toEqual('VALUE');
     });
   });
 
   describe('#filterOptions(opts, params)', function () {
-    var filtered, options;
+    let filtered, options;
 
     beforeEach(function () {
       options = [
@@ -197,7 +197,7 @@ describe('widgets', function () {
 
     function feedTest (pairs) {
       pairs.forEach(function (pair) {
-        var params = _.isObject(pair[0]) ? pair[0] : {x: pair[0]};
+        const params = _.isObject(pair[0]) ? pair[0] : {x: pair[0]};
         filtered = widgets.filterOptions(options, params);
         expect(filtered.length).toEqual(pair[1]);
       });
@@ -218,7 +218,7 @@ describe('widgets', function () {
     });
 
     it('removes option if no dependencies are met (depending on multiple params)', function () {
-      var deps = {};
+      const deps = {};
       options.push({param: 'z', default: 0, dependsOnAny: deps});
       deps.x = [1000, 'test'];
       deps.y = 'hello';
@@ -237,7 +237,7 @@ describe('widgets', function () {
     });
 
     it('removes option if some of dependencies are not met', function () {
-      var deps = {};
+      const deps = {};
       options.push({param: 'z', default: 0, dependsOnEvery: deps});
       deps.x = 42;
       deps.y = 'hello';
@@ -252,7 +252,7 @@ describe('widgets', function () {
   });
 
   describe('#buildRenderable()', function () {
-    var descriptor, field;
+    let descriptor, field;
 
     beforeEach(function () {
       descriptor = { fieldTypes: ['Symbol'] };
@@ -271,13 +271,13 @@ describe('widgets', function () {
     });
 
     it('returns object with widget arrays', function () {
-      var renderable = widgets.buildRenderable([]);
+      const renderable = widgets.buildRenderable([]);
       expect(renderable.form).toEqual([]);
       expect(renderable.sidebar).toEqual([]);
     });
 
     it('filters widgets without field', function () {
-      var renderable = widgets.buildRenderable([
+      const renderable = widgets.buildRenderable([
         {widgetId: 'HAS_FIELD', field: {}},
         {widgetId: 'NO_FIELD'}
       ]);
@@ -287,7 +287,7 @@ describe('widgets', function () {
 
     it('adds sidebar widges to sidebar collection', function () {
       descriptor.sidebar = true;
-      var renderable = this.buildOne();
+      const renderable = this.buildOne();
       expect(renderable.form.length).toBe(0);
       expect(renderable.sidebar.length).toBe(1);
       expect(renderable.sidebar[0].widgetId).toBe('WIDGET');
@@ -295,26 +295,26 @@ describe('widgets', function () {
 
     it('adds widget’s template property', function () {
       descriptor.template = 'TEMPLATE';
-      var renderable = this.buildOne();
+      const renderable = this.buildOne();
       expect(renderable.form[0].template).toEqual('TEMPLATE');
     });
 
     it('sets warning template if widget does not exist', function () {
-      var renderable = this.buildOne({widgetId: 'foo'});
+      const renderable = this.buildOne({widgetId: 'foo'});
       expect(renderable.form[0].template)
       .toMatch('The editor widget “foo” does not exist');
     });
 
     it('sets warning template if widget is incompatible', function () {
       field.type = 'other type';
-      var renderable = this.buildOne();
+      const renderable = this.buildOne();
       expect(renderable.form[0].template)
       .toMatch('The “WIDGET” editor widget cannot be used with this field');
     });
 
     it('keeps settings property', function () {
-      var params = {param: 'MY PARAMS'};
-      var renderable = this.buildOne({settings: params});
+      const params = {param: 'MY PARAMS'};
+      const renderable = this.buildOne({settings: params});
       expect(renderable.form[0].settings).toEqual(params);
     });
 
@@ -322,7 +322,7 @@ describe('widgets', function () {
       descriptor.options = [
         {param: 'foo', default: 'bar'}
       ];
-      var renderable = this.buildOne();
+      const renderable = this.buildOne();
       expect(renderable.form[0].settings).toEqual({foo: 'bar'});
     });
 
@@ -330,7 +330,7 @@ describe('widgets', function () {
       descriptor.options = [
         {param: 'foo', default: 'bar'}
       ];
-      var renderable = this.buildOne({ settings: 'not an object' });
+      const renderable = this.buildOne({ settings: 'not an object' });
       expect(renderable.form[0].settings).toEqual({foo: 'bar'});
     });
 
@@ -339,7 +339,7 @@ describe('widgets', function () {
         {param: 'x', default: 'DEF_X'},
         {param: 'y', default: 'DEF_Y'}
       ];
-      var renderable = this.buildOne({settings: {x: true}});
+      const renderable = this.buildOne({settings: {x: true}});
       expect(renderable.form[0].settings).toEqual({
         x: true,
         y: 'DEF_Y'

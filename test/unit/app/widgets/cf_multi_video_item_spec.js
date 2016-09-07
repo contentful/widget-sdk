@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Multi Video Item Controller', function () {
-  var attrs, scope, multiVideoItemController, lookupAssetDeferred;
+  let attrs, scope, multiVideoItemController, lookupAssetDeferred;
 
   afterEach(function () {
     attrs = scope = multiVideoItemController =
@@ -11,7 +11,7 @@ describe('Multi Video Item Controller', function () {
   beforeEach(function () {
     module('contentful/test');
     inject(function ($controller, $q, $injector) {
-      var $rootScope = $injector.get('$rootScope');
+      const $rootScope = $injector.get('$rootScope');
 
       lookupAssetDeferred = $q.defer();
 

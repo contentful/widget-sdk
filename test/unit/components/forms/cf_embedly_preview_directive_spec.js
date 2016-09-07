@@ -1,7 +1,7 @@
 'use strict';
 
 describe('cfEmbedlyPreview Directive', function () {
-  var deferredEmbedlyResponse;
+  let deferredEmbedlyResponse;
 
   afterEach(function () {
     deferredEmbedlyResponse = null;
@@ -10,11 +10,11 @@ describe('cfEmbedlyPreview Directive', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    var $q = this.$inject('$q');
+    const $q = this.$inject('$q');
     deferredEmbedlyResponse = $q.defer();
 
     this.$inject('LazyLoader').get = function () {
-      var stubbedEmbedly = function (type, element, callback) {
+      const stubbedEmbedly = function (type, element, callback) {
         if (type === 'card' &&
             element.localName === 'a' &&
             element.hasAttribute('href')) {
@@ -29,7 +29,7 @@ describe('cfEmbedlyPreview Directive', function () {
 
     this.compileElement = function (defaultValue) {
       defaultValue = defaultValue || null;
-      var scopeProps = {
+      const scopeProps = {
         previewUrl: dotty.get(this, 'scope.previewUrl') || defaultValue,
         urlStatus: 'loading'
       };

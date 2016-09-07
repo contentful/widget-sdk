@@ -3,7 +3,7 @@
 describe('SlugEditor directive', function () {
   beforeEach(function () {
     module('contentful/test');
-    var MockApi = this.$inject('mocks/widgetApi');
+    const MockApi = this.$inject('mocks/widgetApi');
 
     this.cfWidgetApi = MockApi.create({
       field: {
@@ -38,28 +38,28 @@ describe('SlugEditor directive', function () {
   describe('#titleToSlug', function () {
     it('uses an "untitled" slug with the entry creation time, when the title is empty', function () {
       this.entrySys.createdAt = '2015-01-28T10:38:28.989Z';
-      var $inputEl = this.compileElement().find('input');
+      const $inputEl = this.compileElement().find('input');
 
       expect($inputEl.val()).toEqual('untitled-entry-2015-01-28-at-10-38-28');
     });
 
     it('sets slug to initial title', function () {
       this.title.onValueChanged.yields('This is a title');
-      var $inputEl = this.compileElement().find('input');
+      const $inputEl = this.compileElement().find('input');
       expect($inputEl.val()).toEqual('this-is-a-title');
     });
 
     it('does not track the title if both fields have diverged', function () {
-      var $inputEl = this.compileElement().find('input');
+      const $inputEl = this.compileElement().find('input');
 
-      var slug = 'does-not-match';
+      const slug = 'does-not-match';
       $inputEl.val(slug);
       this.title.onValueChanged.yield('Some new title');
       expect($inputEl.val()).toEqual(slug);
     });
 
     it('tracks the title if both fields have not diverged', function () {
-      var $inputEl = this.compileElement().find('input');
+      const $inputEl = this.compileElement().find('input');
       $inputEl.val('this-is-the-first-title');
       this.title.onValueChanged.yield('This is the first title');
       this.title.onValueChanged.yield('This is the second title');
@@ -67,7 +67,7 @@ describe('SlugEditor directive', function () {
     });
 
     it('does not track the title if it is published', function () {
-      var $inputEl = this.compileElement().find('input');
+      const $inputEl = this.compileElement().find('input');
 
       this.title.onValueChanged.yield('This is the first title');
       this.entrySys.publishedVersion = 1;
@@ -86,7 +86,7 @@ describe('SlugEditor directive', function () {
         it('should generate a slug using title value in default locale', function () {
           this.cfWidgetApi.field.locale = 'hi';
 
-          var $inputEl = this.compileElement().find('input');
+          const $inputEl = this.compileElement().find('input');
 
           this.title.onValueChanged.withArgs(this.cfWidgetApi.field.locale).yield('');
           expect($inputEl.val()).toMatch(/^untitled-entry/);
@@ -113,8 +113,8 @@ describe('SlugEditor directive', function () {
 
   describe('uniquenness state', function () {
     it('queries duplicates when input value changes', function () {
-      var $inputEl = this.compileElement().find('input');
-      var getEntries = this.cfWidgetApi.space.getEntries;
+      const $inputEl = this.compileElement().find('input');
+      const getEntries = this.cfWidgetApi.space.getEntries;
       getEntries.reset();
 
       $inputEl.val('SLUG');
@@ -124,7 +124,7 @@ describe('SlugEditor directive', function () {
 
     it('queries duplicates when field value changes', function () {
       this.compileElement();
-      var getEntries = this.cfWidgetApi.space.getEntries;
+      const getEntries = this.cfWidgetApi.space.getEntries;
       getEntries.reset();
 
       this.cfWidgetApi.field.onValueChanged.yield('SLUG');
@@ -135,7 +135,7 @@ describe('SlugEditor directive', function () {
     it('sets duplicate query parameters from entry sys', function () {
       this.entrySys.id = 'ENTRY ID';
       this.compileElement();
-      var getEntries = this.cfWidgetApi.space.getEntries;
+      const getEntries = this.cfWidgetApi.space.getEntries;
       getEntries.reset();
 
       this.cfWidgetApi.field.onValueChanged.yield('SLUG');
@@ -149,8 +149,8 @@ describe('SlugEditor directive', function () {
     });
 
     it('is "unique" when there are no duplicates', function () {
-      var $inputEl = this.compileElement().find('input');
-      var scope = $inputEl.scope();
+      const $inputEl = this.compileElement().find('input');
+      const scope = $inputEl.scope();
 
       $inputEl.val('SLUG');
       this.$apply();
@@ -160,8 +160,8 @@ describe('SlugEditor directive', function () {
     });
 
     it('is "duplicate" when there are matching entries in the query result', function () {
-      var $inputEl = this.compileElement().find('input');
-      var scope = $inputEl.scope();
+      const $inputEl = this.compileElement().find('input');
+      const scope = $inputEl.scope();
 
       // Let the server respond with one entry
       this.cfWidgetApi.space.getEntries = sinon.stub().resolves({ total: 1 });
@@ -175,11 +175,11 @@ describe('SlugEditor directive', function () {
     });
 
     it('is "checking" when the query has not been resolved', function () {
-      var getEntries = sinon.stub().defers();
+      const getEntries = sinon.stub().defers();
       this.cfWidgetApi.space.getEntries = getEntries;
 
-      var $inputEl = this.compileElement().find('input');
-      var scope = $inputEl.scope();
+      const $inputEl = this.compileElement().find('input');
+      const scope = $inputEl.scope();
 
       // Trigger status update
       this.title.onValueChanged.yield('New Title');

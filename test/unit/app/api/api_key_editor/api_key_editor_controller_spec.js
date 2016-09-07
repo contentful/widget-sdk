@@ -2,9 +2,9 @@
 
 describe('API key editor controller', function () {
 
-  var scope, stubs, $q, $rootScope;
-  var apiKeyEditorCtrl;
-  var apiKey;
+  let scope, stubs, $q, $rootScope;
+  let apiKeyEditorCtrl;
+  let apiKey;
 
   beforeEach(function () {
     module('contentful/test', function ($provide, environment) {
@@ -139,7 +139,7 @@ describe('API key editor controller', function () {
   });
 
   describe('saves an api key', function () {
-    var pristineStub, $state;
+    let pristineStub, $state;
     beforeEach(function () {
       pristineStub = sinon.stub();
       $state = this.$inject('$state');

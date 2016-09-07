@@ -2,8 +2,8 @@
 
 describe('Batch performer service', function () {
 
-  var ENTITY_API = ['publish', 'unpublish', 'archive', 'unarchive', 'delete'];
-  var API = ENTITY_API.concat(['duplicate']);
+  const ENTITY_API = ['publish', 'unpublish', 'archive', 'unarchive', 'delete'];
+  const API = ENTITY_API.concat(['duplicate']);
 
   beforeEach(function () {
     module('contentful/test');
@@ -28,9 +28,9 @@ describe('Batch performer service', function () {
 
     describe('duplicate', function () {
       beforeEach(function () {
-        var i = 0;
-        var retried = cc();
-        var calls = [cc(), retried, cc(), retried];
+        let i = 0;
+        const retried = cc();
+        const calls = [cc(), retried, cc(), retried];
         this.actionStubs = calls;
         this.$inject('spaceContext').space = {createEntry: ce};
 
@@ -67,12 +67,12 @@ describe('Batch performer service', function () {
   }
 
   function makeEntry () {
-    var sys = {type: 'Entry', contentType: {sys: {id: 'ctid'}}};
+    const sys = {type: 'Entry', contentType: {sys: {id: 'ctid'}}};
     return _.extend(makeEntity(), {getSys: _.constant(sys)});
   }
 
   function makeEntity () {
-    var entity = {};
+    const entity = {};
     entity.getVersion = sinon.stub().returns(123);
     entity.setDeleted = sinon.spy();
     return _.transform(ENTITY_API, function (entity, method) {
@@ -139,7 +139,7 @@ describe('Batch performer service', function () {
 
   function itNotifiesAboutResult (action) {
     pit('notifies about results of the operation', function () {
-      var isEntry = this.entityType === 'Entry';
+      const isEntry = this.entityType === 'Entry';
       this.actionStubs[1].rejects('boom!');
 
       return this.performer[action]().then(function () {
@@ -162,8 +162,8 @@ describe('Batch performer service', function () {
 
   function itHandles404 (action) {
     it('set as deleted and fires delete listener for 404 HTTP errors', function () {
-      var actionStub = this.actionStubs[1];
-      var entity = this.entities[1];
+      const actionStub = this.actionStubs[1];
+      const entity = this.entities[1];
       actionStub.rejects({statusCode: 404});
       this.performer[action]();
       this.$apply();

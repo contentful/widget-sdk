@@ -1,8 +1,8 @@
 'use strict';
 
 describe('ContentType Actions Controller', function () {
-  var controller, scope, $q, logger, notification, accessChecker, ReloadNotification, spaceContext;
-  var space, contentType;
+  let controller, scope, $q, logger, notification, accessChecker, ReloadNotification, spaceContext;
+  let space, contentType;
 
   function FormStub () {
     this.$setDirty = function () {
@@ -22,7 +22,7 @@ describe('ContentType Actions Controller', function () {
   }
 
   beforeEach(function () {
-    var self = this;
+    const self = this;
     module('contentful/test', function ($provide) {
       $provide.value('navigation/closeState', self.closeSpy = sinon.spy());
     });
@@ -51,7 +51,7 @@ describe('ContentType Actions Controller', function () {
     scope.broadcastFromSpace = sinon.stub();
     scope.ctEditorController = {registerPublishedFields: sinon.spy()};
 
-    var $controller = this.$inject('$controller');
+    const $controller = this.$inject('$controller');
     controller = $controller('ContentTypeActionsController', {$scope: scope});
   });
 
@@ -116,7 +116,7 @@ describe('ContentType Actions Controller', function () {
 
     describe('delete flow interruptions', function () {
       function testForbiddenRemoval (dialog, data) {
-        var matchObj = {
+        const matchObj = {
           template: 'content_type_removal_forbidden_dialog',
           scopeData: data || {}
         };
@@ -225,7 +225,7 @@ describe('ContentType Actions Controller', function () {
     pit('saves and publishes content type', function () {
       return controller.save.execute()
       .then(function () {
-        var ct = scope.contentType;
+        const ct = scope.contentType;
         sinon.assert.calledOnce(ct.save);
         sinon.assert.calledOnce(ct.publish);
         sinon.assert.calledOnce(scope.ctEditorController.registerPublishedFields);
@@ -244,7 +244,7 @@ describe('ContentType Actions Controller', function () {
       .then(function () {
         sinon.assert.calledOnce(spaceContext.editingInterfaces.save);
 
-        var callArgs = spaceContext.editingInterfaces.save.getCall(0).args;
+        const callArgs = spaceContext.editingInterfaces.save.getCall(0).args;
 
         // First argument is the content type
         expect(callArgs[0]).toEqual({
@@ -330,7 +330,7 @@ describe('ContentType Actions Controller', function () {
     });
 
     pit('redirects if the content type is new', function () {
-      var goStub = this.$state.go;
+      const goStub = this.$state.go;
       scope.context.isNew = true;
       return controller.save.execute()
       .then(function () {
@@ -388,7 +388,7 @@ describe('ContentType Actions Controller', function () {
       sinon.stub(this.$inject('modalDialog'), 'open', function (params) {
         if (params.scope && params.scope.duplicate) {
           _.extend(params.scope.contentTypeMetadata, {name: 'test', id: 'test'});
-          var confirm = sinon.spy();
+          const confirm = sinon.spy();
           params.scope.dialog = {confirm: confirm, cancel: sinon.spy(), formController: {$valid: true}};
           params.scope.duplicate.execute();
           scope.$apply();
@@ -401,7 +401,7 @@ describe('ContentType Actions Controller', function () {
       });
 
       sinon.stub(spaceContext.space, 'newContentType', function (data) {
-        var ct = this.cfStub.contentType(space, 'ct-id', 'ct-name');
+        const ct = this.cfStub.contentType(space, 'ct-id', 'ct-name');
         _.extend(ct.data, data);
         ct.save = sinon.stub().resolves(ct);
         ct.publish = sinon.stub().resolves(ct);
@@ -433,7 +433,7 @@ describe('ContentType Actions Controller', function () {
       contentType.data.fields = [{id: 'field-id-1'}, {id: 'field-id-2-disp'}];
 
       return controller.duplicate.execute().then(function () {
-        var ct = getCreatedCt();
+        const ct = getCreatedCt();
         sinon.assert.calledOnce(ct.save);
         expect(typeof ct.data.displayField).toBe('string');
         expect(ct.data.displayField).toBe(contentType.data.displayField);
@@ -458,7 +458,7 @@ describe('ContentType Actions Controller', function () {
 
       return controller.duplicate.execute().then(function () {
         sinon.assert.calledOnce(spaceContext.editingInterfaces.save);
-        var ei = spaceContext.editingInterfaces.save.firstCall.args[1];
+        const ei = spaceContext.editingInterfaces.save.firstCall.args[1];
         expect(ei.controls[0].widgetId).toBe('margarita-making-widget');
         expect(ei.controls[1].widgetId).toBe('some-other-widget');
       });

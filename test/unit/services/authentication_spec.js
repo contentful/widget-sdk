@@ -155,7 +155,7 @@ describe('Authentication service', function () {
 
 
   describe('fail to login with no token', function () {
-    var redirectStub;
+    let redirectStub;
     beforeEach(function () {
       this.$location.hash.returns('');
       this.TheStore.get.withArgs('token').returns(false);
@@ -278,9 +278,9 @@ describe('Authentication service', function () {
   });
 
   describe('getting token lookup', function () {
-    var clientTokenLookupStub;
+    let clientTokenLookupStub;
     beforeEach(function () {
-      var client = this.$inject('client');
+      const client = this.$inject('client');
       clientTokenLookupStub = sinon.stub(client, 'getTokenLookup');
     });
 
@@ -300,7 +300,7 @@ describe('Authentication service', function () {
     });
 
     describe('rejects because call fails', function () {
-      var tokenLookup, errorResponse;
+      let tokenLookup, errorResponse;
       beforeEach(function () {
         errorResponse = {error: 'response'};
         clientTokenLookupStub.returns(this.reject(errorResponse));
@@ -326,7 +326,7 @@ describe('Authentication service', function () {
     });
 
     describe('resolves because call succeeds', function () {
-      var tokenLookup, tokenLookupObj, dataResponse, setTokenStub;
+      let tokenLookup, tokenLookupObj, dataResponse, setTokenStub;
       beforeEach(function () {
         dataResponse = {token: 'lookup'};
         clientTokenLookupStub.returns(this.when(dataResponse));
@@ -366,14 +366,14 @@ describe('Authentication service', function () {
     });
 
     it('with token lookup', function () {
-      var user = {name: 'doge'};
+      const user = {name: 'doge'};
       this.authentication.tokenLookup = {sys: {createdBy: user}};
       expect(this.authentication.getUser()).toBe(user);
     });
   });
 
   describe('set token lookup', function () {
-    var tokenLookup;
+    let tokenLookup;
     beforeEach(function () {
       tokenLookup = {token: 'lookup'};
       this.QueryLinkResolver.resolveQueryLinks = sinon.stub().returns(['resolvedLink']);
@@ -428,7 +428,7 @@ describe('Authentication service', function () {
 
     it('should merge includes', function () {
       this.authentication.updateTokenLookup(this.newTokenLookup);
-      var t = this.authentication.tokenLookup;
+      const t = this.authentication.tokenLookup;
       expect(t.includes.Foo[0].updated).toBe(undefined);
       expect(t.includes.Foo[1].updated).toBe(true);
       expect(t.includes.Bar[0].sys.id).toBe('3');
@@ -436,7 +436,7 @@ describe('Authentication service', function () {
 
     it('should update spaces', function () {
       this.authentication.updateTokenLookup(this.newTokenLookup);
-      var t = this.authentication.tokenLookup;
+      const t = this.authentication.tokenLookup;
       expect(t.items[0].spaces[0].updated).toBe(true);
       expect(t.items[0].spaces[1].updated).toBe(undefined);
     });
@@ -447,7 +447,7 @@ describe('Authentication service', function () {
         name: 'HerpDerp', sys: {id: 'herpderp'}
       });
       this.authentication.updateTokenLookup(this.newTokenLookup);
-      var t = this.authentication.tokenLookup;
+      const t = this.authentication.tokenLookup;
       expect(t.includes.Foo[2].sys.id).toBe('new3');
       expect(t.items[0].spaces[2].name).toBe('HerpDerp');
     });
