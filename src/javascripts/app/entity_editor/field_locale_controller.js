@@ -19,6 +19,7 @@ angular.module('contentful')
  * @scope.requires docPresence
  */
 .controller('FieldLocaleController', ['require', '$scope', function (require, $scope) {
+  var spaceContext = require('spaceContext');
   var K = require('utils/kefir');
   var policyAccessChecker = require('accessChecker/policy');
   var FieldLocaleDoc = require('entityEditor/FieldLocaleDocument');
@@ -47,6 +48,12 @@ angular.module('contentful')
    */
   $scope.$watch('validator.errors', function (errors) {
     errors = filterLocaleErrors(errors);
+
+    // side-effecting in progress below :(
+    errors
+      .filter(function (error) { return error.name === 'unique'; })
+      .forEach(decorateUniquenessErrors);
+
     controller.errors = errors.length > 0 ? errors : null;
   });
 
@@ -66,6 +73,30 @@ angular.module('contentful')
 
       return _.isEqual(path.slice(0, 3), localePath);
     });
+  }
+
+  function decorateUniquenessErrors (error) {
+    if (error.name === 'unique') {
+      var conflicts = error.conflicting;
+      var conflictingEntryIds = conflicts.map(_.property('sys.id')).join(',');
+      var query = { 'sys.id[in]': conflictingEntryIds };
+
+      // asynchronously add conflicting entry title to the error objects
+      // so that we can display the list in the UI
+      spaceContext.space.getEntries(query).then(function (entries) {
+        entries.forEach(function (entry) {
+          var conflict = _.find(conflicts, function (c) {
+            return c.sys.id === entry.data.sys.id;
+          });
+
+          conflict.data = conflict.data || {};
+          conflict.data.entryTitle = spaceContext.entryTitle(entry);
+        });
+      });
+
+      // poor man's string interpolation
+      error.message = error.message.replace('${fieldName}', $scope.field.name);
+    }
   }
 
   /**

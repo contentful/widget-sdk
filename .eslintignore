@@ -197,7 +197,6 @@ src/javascripts/components/field_dialog/cf_validation_settings_directive.js
 src/javascripts/components/field_dialog/field_decorator.js
 src/javascripts/components/field_dialog/image_dimensions_validation_controller.js
 src/javascripts/components/field_dialog/validation_asset_types_controller.js
-src/javascripts/components/field_dialog/validation_decorator.js
 src/javascripts/components/field_dialog/validation_link_type_controller.js
 src/javascripts/components/forms/autocomplete_results/cf_autocomplete_results_controller.js
 src/javascripts/components/forms/autocomplete_results/cf_autocomplete_results_directive.js
@@ -296,7 +295,6 @@ src/javascripts/services/analytics/analytics_noop.js
 src/javascripts/services/authorization.js
 src/javascripts/services/editing_interfaces_helpers.js
 src/javascripts/services/enforcements.js
-src/javascripts/services/error_message_builder.js
 src/javascripts/services/features.js
 src/javascripts/services/filepicker.js
 src/javascripts/services/hints.js

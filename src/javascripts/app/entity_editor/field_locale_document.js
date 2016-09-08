@@ -40,7 +40,7 @@ angular.module('cf.app')
      */
     var valueProperty = doc.valuePropertyAt(path)
       .filter(function (value) {
-        return value !== lastSetValue;
+        return !_.isEqual(value, lastSetValue);
       })
       .toProperty(getValue);
 

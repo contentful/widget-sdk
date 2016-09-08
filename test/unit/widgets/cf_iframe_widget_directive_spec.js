@@ -119,6 +119,12 @@ describe('cfIframeWidget directive', function () {
       this.$apply();
       sinon.assert.notCalled(widgetAPI.sendFieldValueChange);
     });
+
+    it('ignores unknown fields', function () {
+      this.otDoc.changes.emit(['fields', 'UNKNOWN']);
+      this.$apply();
+      sinon.assert.notCalled(widgetAPI.sendFieldValueChange);
+    });
   });
 
   describe('"setValue" handler', function () {
