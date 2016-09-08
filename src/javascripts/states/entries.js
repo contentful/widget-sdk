@@ -34,7 +34,7 @@ angular.module('contentful')
   var detail = {
     name: 'detail',
     url: '/:entryId',
-    params: { addToContext: true, createdFromActionsMenu: false },
+    params: { addToContext: true, notALinkedEntity: false },
     label: 'context.title + (context.dirty ? "*" : "")',
     resolve: {
       entry: ['$stateParams', 'space', function ($stateParams, space) {
@@ -87,7 +87,7 @@ angular.module('contentful')
         entryEntity.getId = _.constant(entryId);
 
         // purge context history
-        if ($stateParams.createdFromActionsMenu) {
+        if ($stateParams.notALinkedEntity) {
           contextHistory.purge();
         }
 
