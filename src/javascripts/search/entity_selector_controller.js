@@ -11,7 +11,6 @@ angular.module('contentful')
   var EntityHelpers = require('EntityHelpers');
 
   var MINIMAL_TRIGGERING_LEN = 4;
-  var ORDER = {fieldId: 'updatedAt', direction: 'descending'};
   var MODES = {AVAILABLE: 1, SELECTED: 2};
 
   var config = $scope.config;
@@ -52,7 +51,7 @@ angular.module('contentful')
   function getParams () {
     var params = {
       searchTerm: $scope.view.searchTerm,
-      order: ORDER,
+      order: getOrder(),
       paginator: $scope.paginator
     };
 
@@ -61,6 +60,20 @@ angular.module('contentful')
     }
 
     return params;
+  }
+
+  function getOrder () {
+    var ct = $scope.singleContentType;
+    var order = {fieldId: 'updatedAt', direction: 'descending'};
+
+    if (ct) {
+      var displayField = _.find(ct.data.fields, {id: ct.data.displayField});
+      if (displayField && displayField.type === 'Symbol' && displayField.id) {
+        order = {fieldId: displayField.id, direction: 'ascending'};
+      }
+    }
+
+    return order;
   }
 
   function toggleSelection (entity) {

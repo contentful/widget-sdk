@@ -14,8 +14,8 @@ describe('entitySelector', function () {
       getAssets: this.getAssets = sinon.stub().resolves({items: []})
     };
 
-    this.createController = function (config) {
-      this.scope = _.extend($rootScope.$new(), {config: config || {}});
+    this.createController = function (config, ct) {
+      this.scope = _.extend($rootScope.$new(), {config: config || {}, singleContentType: ct});
       this.ctrl = $controller('EntitySelectorController', {$scope: this.scope});
       this.$apply();
     };
@@ -120,6 +120,40 @@ describe('entitySelector', function () {
       this.scope.$broadcast('forceSearch');
       this.$apply();
       expect(this.scope.items).toEqual(entities);
+    });
+  });
+
+  describe('single content type link', function () {
+    beforeEach(function () {
+      this.getQuery = this.$inject('ListQuery').getForEntries = sinon.stub().resolves({});
+      this.ct = {getId: _.constant('ctid'), data: {}};
+      this.withData = (data) => {
+        this.createController({linksEntry: true}, _.extend(this.ct, {data: data}));
+      };
+    });
+
+    it('sets content type on query', function () {
+      this.createController({linksEntry: true}, this.ct);
+      sinon.assert.calledOnce(this.getQuery);
+      expect(this.getQuery.firstCall.args[0].contentTypeId).toBe('ctid');
+    });
+
+    it('uses Symbol display field for ordering', function () {
+      this.withData({displayField: 'x', fields: [{id: 'x', type: 'Symbol'}]});
+      this.withData({});
+      this.withData({displayField: 'y', fields: []});
+      this.withData({displayField: 'x', fields: [{id: 'x', type: 'Text'}]});
+
+      expect(this.getQuery.callCount).toBe(4);
+      expect(this.getQuery.firstCall.args[0].order).toEqual({
+        fieldId: 'x', direction: 'ascending'
+      });
+
+      this.getQuery.args.slice(1).forEach((callArgs) => {
+        expect(callArgs[0].order).toEqual({
+          fieldId: 'updatedAt', direction: 'descending'
+        });
+      });
     });
   });
 
