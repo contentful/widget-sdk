@@ -49,7 +49,7 @@ function createPromiseSpec (specFactory, desc, run) {
   return spec;
 }
 
-function addException(spec, err) {
+function addException (spec, err) {
   spec.addExpectationResult(false, {
     matcherName: '',
     passed: false,

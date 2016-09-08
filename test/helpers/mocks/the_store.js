@@ -13,7 +13,7 @@
  */
 angular.module('contentful/mocks')
 .factory('mocks/TheStore/localStorageWrapper', [function () {
-  var localStore = {};
+  let localStore = {};
 
   return {
     getItem: function (key) {
@@ -25,7 +25,7 @@ angular.module('contentful/mocks')
     removeItem: function (key) {
       delete localStore[key];
     },
-    clear: function() {
+    clear: function () {
       localStore = {};
     }
   };

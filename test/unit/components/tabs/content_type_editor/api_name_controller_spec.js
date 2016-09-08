@@ -6,7 +6,7 @@ describe('ApiNameController', function () {
       $provide.value('KnowledgeBase/getUrl', sinon.spy());
     });
 
-    var $controller = this.$inject('$controller');
+    const $controller = this.$inject('$controller');
 
     this.modalDialog = this.$inject('modalDialog');
 
@@ -23,8 +23,8 @@ describe('ApiNameController', function () {
   });
 
 
-  describe('isEditable()', function() {
-    it('is true if field not published', function() {
+  describe('isEditable()', function () {
+    it('is true if field not published', function () {
       this.getPublishedField.returns(undefined);
       this.$apply();
       expect(this.apiNameController.isEditable()).toBe(true);
@@ -35,7 +35,7 @@ describe('ApiNameController', function () {
     });
 
     it('is true after confirmation', function (done) {
-      var apiNameController = this.apiNameController;
+      const apiNameController = this.apiNameController;
 
       this.modalDialog.open = sinon.stub().returns({promise: this.when()});
 
@@ -49,7 +49,7 @@ describe('ApiNameController', function () {
     });
 
     it('is false after unlock cancel', function (done) {
-      var apiNameController = this.apiNameController;
+      const apiNameController = this.apiNameController;
 
       this.modalDialog.open = sinon.stub().returns({promise: this.reject()});
 
@@ -64,4 +64,3 @@ describe('ApiNameController', function () {
   });
 
 });
-
