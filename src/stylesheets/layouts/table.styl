@@ -28,46 +28,34 @@ script
 
 Styleguide 7
 */
-.table {
+.table
   width: 100%
   border-collapse: separate
-  tr {
+  tr
     height: 40px
     line-height: 40px
-  }
-  td, th {
+  td, th
     padding: 0 14px
-  }
-  th {
+  th
     background-color: $colors.element-lightest
     border-bottom: 1px solid $colors.element-mid
     text-align: left
     font-weight: normal
-    &, a {
+    &, a
       color: $colors.text-light
-    }
-    a.x--asc:after, a.x--desc:after {
+    .x--asc:after, .x--desc:after
       $caret()
       color: $colors.text-light
       margin-left: 3px
-    }
-    a.x--asc:after {
-      content: "\f0d8";
-    }
-    a.x--desc:after {
-      content: "\f0d7";
-    }
-  }
-  th.x--selected {
+    .x--asc:after
+      content: "\f0d8"
+    .x--desc:after
+      content: "\f0d7"
+
+  th.x--selected
     font-weight: bold
-  }
-  tbody {
+  tbody
     color: $colors.text-mid
-    tr:not(:last-child) {
-      border-bottom: 1px solid $colors.element-light
-      > td {
+    tr:not(:last-child)
+      > td
         border-bottom: 1px solid $colors.element-light
-      }
-    }
-  }
-}
