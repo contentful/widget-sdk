@@ -48,7 +48,7 @@
           li(ng-repeat="validation in validations"
              aria-label="{{validation.name}}"
              role="option"
-             data-validation-type="{{validation.type}}{{validation.onItems ?  '' : '.listElement'}}")
+             data-validation-type="{{validation.type}}{{field.type === 'Array' && !validation.onItems ?  '.listElement' : ''}}")
             cf-validation-setting.u-bce
 
 
