@@ -12,15 +12,18 @@ angular.module('cf.data')
  */
 .factory('data/ShareJS/Connection', ['require', function (require) {
   var ShareJS = require('libs/sharejs');
+  var caseof = require('libs/sum-types').caseof;
   var K = require('utils/kefir');
+  var $q = require('$q');
   var DocLoader = require('data/ShareJS/Connection/DocLoader');
+  var DocLoad = DocLoader.DocLoad;
 
   // A list of connection states that allow us to open documents.
   var CAN_OPEN_STATES = ['handshaking', 'ok'];
 
   return {
     create: create,
-    DocLoad: DocLoader.DocLoad
+    DocLoad: DocLoad
   };
 
   function create (token, host, spaceId) {
@@ -63,6 +66,7 @@ angular.module('cf.data')
 
     return {
       getDocLoader: getDocLoader,
+      open: open,
       close: close,
       errors: errors
     };
@@ -79,6 +83,33 @@ angular.module('cf.data')
      */
     function getDocLoader (entity, readOnly) {
       return DocLoader.create(connection, canOpen, entity, readOnly);
+    }
+
+
+    /**
+     * @ngdoc method
+     * @module cf.data
+     * @name data/ShareJS/Connection#open
+     *
+     * @param {Client.Entity} entity
+     */
+    function open (entity) {
+      var readOnly = K.constant(false);
+      var loader = getDocLoader(entity, readOnly);
+
+      return loader.doc
+        .flatten(function (docLoad) {
+          return caseof(docLoad, [
+            [DocLoad.Doc, function (d) { return [d.doc]; }],
+            [DocLoad.Error, function (e) { throw e.error; }],
+            [DocLoad.None, _.constant([])]
+          ]);
+        })
+        .take(1)
+        .toPromise($q)
+        .then(function (doc) {
+          return {doc: doc, destroy: loader.destroy};
+        });
     }
 
 
