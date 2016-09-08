@@ -6,7 +6,7 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
   var spaceContext = $injector.get('spaceContext');
   var buildQuery = $injector.get('search/queryBuilder');
   var TheLocaleStore = $injector.get('TheLocaleStore');
-  var searchQueryHelper = $injector.get('searchQueryHelper');
+  var AssetContentType = $injector.get('AssetContentType');
 
   var ORDER_PREFIXES = {
     descending: '-',
@@ -25,7 +25,7 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
       }
     },
     getForAssets: function (opts) {
-      return prepareEntityListQuery(searchQueryHelper.assetContentType, opts);
+      return prepareEntityListQuery(AssetContentType, opts);
     }
   };
 

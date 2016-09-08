@@ -2,7 +2,7 @@
 
 angular.module('cf.data')
 .factory('data/editingInterfaces/asset', ['$injector', function ($injector) {
-  var assetFields = $injector.get('AssetContentType').fields;
+  var assetFields = $injector.get('AssetContentType').data.fields;
 
   var widgets = _.forEach([{
     fieldId: 'title',

@@ -205,8 +205,7 @@ describe('entitySelector', function () {
 
     it('uses asset pseudo-CT for all assets', function () {
       this.open({linkType: 'Asset'});
-      const assetCt = this.$inject('searchQueryHelper').assetContentType;
-      expect(this.getScope().singleContentType).toBe(assetCt);
+      expect(this.getScope().singleContentType).toBe(this.$inject('AssetContentType'));
     });
 
     it('sets single CT to null if there is no such constraint', function () {

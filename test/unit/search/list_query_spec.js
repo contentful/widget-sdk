@@ -1,7 +1,11 @@
 'use strict';
 
 describe('ListQuery service', function () {
-  var $q, ListQuery, spaceContext, searchQueryHelper;
+
+  var ListQuery;
+  afterEach(function () {
+    ListQuery = null;
+  });
 
   var OPTS = {
     order: { direction: 'descending', fieldId: 'updatedAt' },
@@ -19,24 +23,22 @@ describe('ListQuery service', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    $q = this.$inject('$q');
     ListQuery = this.$inject('ListQuery');
-    spaceContext = this.$inject('spaceContext');
-    searchQueryHelper = this.$inject('searchQueryHelper');
 
-    spaceContext.fetchPublishedContentType = sinon.stub().resolves({
+    this.$inject('spaceContext').fetchPublishedContentType = sinon.stub().resolves({
       data: { fields: [] }, getId: _.constant('test')
     });
   });
 
   describe('Returns promise of a query', function () {
     pit('for assets', function () {
-      sinon.stub(searchQueryHelper.assetContentType, 'getId');
+      const assetCt = this.$inject('AssetContentType');
+      assetCt.getId = sinon.spy();
 
       return ListQuery.getForAssets(OPTS).then(function (q) {
         testQuery(q);
         expect(q.content_type).toBeUndefined();
-        sinon.assert.called(searchQueryHelper.assetContentType.getId);
+        sinon.assert.called(assetCt.getId);
       });
     });
 

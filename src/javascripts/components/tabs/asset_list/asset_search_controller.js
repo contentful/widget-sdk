@@ -16,7 +16,7 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
   var assetLoader = new PromisedLoader();
 
   this.paginator = new Paginator();
-  $scope.assetContentType = searchQueryHelper.assetContentType;
+  $scope.assetContentType = $injector.get('AssetContentType');
 
   this.resetAssets = function(resetPage) {
     $scope.context.loading = true;

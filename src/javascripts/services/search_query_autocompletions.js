@@ -173,7 +173,7 @@ angular.module('contentful')
 
   // Returns all the static autocompletions that are possible for the content Type.
   function staticAutocompletions(contentType) {
-    if (contentType && contentType.data === AssetContentType) {
+    if (contentType === AssetContentType) {
       return _.extend({}, autocompletion, assetcompletions);
     } else {
       return autocompletion;

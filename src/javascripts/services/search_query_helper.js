@@ -4,7 +4,6 @@ angular.module('contentful')
 .factory('searchQueryHelper', ['$injector', function($injector) {
 
   var $q                         = $injector.get('$q');
-  var AssetContentType           = $injector.get('AssetContentType');
   var searchQueryAutocompletions = $injector.get('searchQueryAutocompletions');
   var createParser               = $injector.get('search/cachedParser');
 
@@ -12,14 +11,6 @@ angular.module('contentful')
 
   var complete = searchQueryAutocompletions.complete;
   var api = {
-    // Dummy Content-Type object that can be used when searching for Assets
-    // Whenever we're searching for/in fields, the code around the search stuff
-    // needs a Content-Type to work with and build the queries
-    assetContentType: {
-      data: AssetContentType,
-      getId: _.constant(undefined)
-    },
-
     // Parse the queryString and return the current top-level token
     // This top-level token can have subtokens if it is a pair (key+operator+value)
     currentToken: function (queryString, cursorPos) {
