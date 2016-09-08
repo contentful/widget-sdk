@@ -86,7 +86,6 @@ test/unit/data/user_cache_spec.js
 test/unit/markdown_editor/link_organizer_spec.js
 test/unit/markdown_editor/markdown_codemirror_wrapper_spec.js
 test/unit/markdown_editor/markdown_editor_spec.js
-test/unit/search/list_query_spec.js
 test/unit/ui/command_spec.js
 test/unit/ui/context_menu_spec.js
 test/unit/ui/command_directive_spec.js
@@ -151,7 +150,6 @@ src/javascripts/components/shared/cf_user_directive.js
 src/javascripts/components/shared/list_views_controller.js
 src/javascripts/components/tabs/asset_list/asset_list_directive.js
 src/javascripts/components/tabs/asset_list/asset_list_actions_controller.js
-src/javascripts/components/tabs/asset_list/asset_search_controller.js
 src/javascripts/components/tabs/content_type_editor/add_field_dialog_controller.js
 src/javascripts/components/tabs/content_type_editor/cf_api_name_shadow_directive.js
 src/javascripts/components/tabs/content_type_editor/cf_list_type_for_directive.js
@@ -210,7 +208,6 @@ src/javascripts/app/entry_editor/notifications.js
 src/javascripts/app/entry_editor/entry_actions_controller.js
 src/javascripts/app/entry_editor/entry_reverter.js
 src/javascripts/app/entity_editor/locales_controller.js
-src/javascripts/classes/asset_content_type.js
 src/javascripts/classes/kaltura_error_messages.js
 src/javascripts/classes/kaltura_search.js
 src/javascripts/classes/ooyala_error_messages.js
@@ -255,7 +252,6 @@ src/javascripts/services/ooyala_player_loader.js
 src/javascripts/services/q_decorator.js
 src/javascripts/services/random.js
 src/javascripts/services/revision.js
-src/javascripts/services/search_query_helper.js
 src/javascripts/services/totango.js
 src/javascripts/services/validation_dialog_error_messages.js
 src/javascripts/services/validation_views.js
@@ -274,7 +270,6 @@ src/javascripts/services/modal_dialog_service.js
 src/javascripts/services/promised_loader.js
 src/javascripts/services/reload_notification.js
 src/javascripts/services/sdk_info_supplier.js
-src/javascripts/services/search_query_autocompletions.js
 src/javascripts/services/segment.js
 src/javascripts/services/space_tools.js
 src/javascripts/services/token_store.js
@@ -294,7 +289,6 @@ src/javascripts/widgets/default.js
 src/javascripts/widgets/deprecations.js
 src/javascripts/widgets/migrations.js
 src/javascripts/data/content_types.js
-src/javascripts/data/editing_interfaces/asset_interface.js
 src/javascripts/data/editing_interfaces/transformer.js
 src/javascripts/data/space_endpoint.js
 src/javascripts/data/user_cache.js

@@ -25,13 +25,13 @@
 // - A couple of helper methods
 // - The public facing API, exposing some functions to the outside
 angular.module('contentful')
-.factory('searchQueryAutocompletions', ['$injector',function($injector) {
+.factory('searchQueryAutocompletions', ['require', function (require) {
 
-  var spaceContext     = $injector.get('spaceContext');
-  var mimetype         = $injector.get('mimetype');
-  var AssetContentType = $injector.get('AssetContentType');
-  var $q               = $injector.get('$q');
-  var moment           = $injector.get('moment');
+  var spaceContext = require('spaceContext');
+  var mimetype = require('mimetype');
+  var AssetContentType = require('AssetContentType');
+  var $q = require('$q');
+  var moment = require('moment');
 
   function operatorDescription (op) {
     return operatorDescriptions[op] || '';
@@ -39,10 +39,10 @@ angular.module('contentful')
 
   var operatorDescriptions = {
     '<=': 'Less than or equal',
-    '<' : 'Less than',
+    '<': 'Less than',
     '>=': 'Greater than or equal',
-    '>' : 'Greater than',
-    '=' : 'Equal',
+    '>': 'Greater than',
+    '=': 'Equal',
     '==': 'Equal',
     '!=': 'Not equal'
   };
@@ -53,9 +53,9 @@ angular.module('contentful')
 
   var dateOperatorDescriptions = {
     '<=': 'Before or on that date/time',
-    '<' : 'Before that date/time',
+    '<': 'Before that date/time',
     '>=': 'After or on that date/time',
-    '>' : 'After that date/time',
+    '>': 'After that date/time',
     '==': 'Exactly on that date/time',
     '!=': 'Not on that date/time'
   };
@@ -87,7 +87,7 @@ angular.module('contentful')
     firstPublishedAt: dateCompletions('sys.firstPublishedAt', 'Date the item was published for the first time'),
     id: {
       description: 'Unique identifier',
-      convert: function (operator, value) {
+      convert: function (_operator, value) {
         return $q.resolve({
           'sys.id': value
         });
@@ -98,11 +98,11 @@ angular.module('contentful')
       complete: function () {
         return getUserMap().then(function (userMap) {
           return makeListCompletion(_(userMap).keys().map(function (userName) {
-            return {value: '"'+userName+'"', description: userName};
+            return {value: '"' + userName + '"', description: userName};
           }).value());
         });
       },
-      convert: function (operator, value, space) {
+      convert: function (_operator, value, space) {
         return getUserMap(space).then(function (userMap) {
           if (userMap[value]) {
             var query = {};
@@ -116,9 +116,9 @@ angular.module('contentful')
       description: 'Current status of the item',
       complete: makeListCompletion([
         {value: 'published', description: 'Published and visible to the public'},
-        {value: 'changed'  , description: 'Was modified, but changes are invisible until re-published'},
-        {value: 'draft'    , description: 'Not published, invisible to the public'},
-        {value: 'archived' , description: 'Not published and hidden from editors'},
+        {value: 'changed', description: 'Was modified, but changes are invisible until re-published'},
+        {value: 'draft', description: 'Not published, invisible to the public'},
+        {value: 'archived', description: 'Not published and hidden from editors'}
       ]),
       convert: {
         published: {'sys.publishedAt[exists]': 'true'},
@@ -147,7 +147,7 @@ angular.module('contentful')
       complete: makeListCompletion(_.map(mimetype.getGroupNames(), function (name, id) {
         return {value: id, description: name};
       })),
-      convert: function (operator, value) {
+      convert: function (_operator, value) {
         return {mimetype_group: value};
       }
     },
@@ -164,7 +164,7 @@ angular.module('contentful')
     // TODO image sizes, extract numerical stuff, filesize image size dates etc in function
     filename: {
       description: 'The exact filename of the item',
-      convert: function (op, value) {
+      convert: function (_op, value) {
         // TODO fuzzy [match]ing on filenames?
         return {'fields.file.fileName': value};
       }
@@ -172,7 +172,7 @@ angular.module('contentful')
   };
 
   // Returns all the static autocompletions that are possible for the content Type.
-  function staticAutocompletions(contentType) {
+  function staticAutocompletions (contentType) {
     if (contentType === AssetContentType) {
       return _.extend({}, autocompletion, assetcompletions);
     } else {
@@ -181,7 +181,7 @@ angular.module('contentful')
   }
 
   // All possible keys for a content Type
-  function staticKeys(contentType) {
+  function staticKeys (contentType) {
     var completions = staticAutocompletions(contentType);
     return _.map(completions, function (completion, key) {
       return {value: key, description: completion.description};
@@ -189,9 +189,9 @@ angular.module('contentful')
   }
 
   // Generates a factory for completing a key that contains a date
-  function dateCompletions(key, description) {
+  function dateCompletions (key, description) {
     var RELATIVE = /(\d+) +days +ago/i;
-    var DAY      = /^\s*\d{2,4}-\d{2}-\d{2}\s*$/;
+    var DAY = /^\s*\d{2,4}-\d{2}-\d{2}\s*$/;
     var EQUALITY = /^(==|=|:)$/;
     return {
       description: description,
@@ -211,19 +211,19 @@ angular.module('contentful')
             }
             return query;
           }
-        } catch(e) {
+        } catch (e) {
           return;
         }
       }
     };
 
-    function dayEquality(op, exp) {
+    function dayEquality (op, exp) {
       return EQUALITY.test(op) && DAY.test(exp);
     }
   }
 
   // Generates a factory for completing image dimensions (width, height)
-  function imageDimensionCompletion(key, description) {
+  function imageDimensionCompletion (key, description) {
     return {
       description: description,
       operators: makeOperatorList(['<', '<=', '==', '>=', '>']),
@@ -232,7 +232,7 @@ angular.module('contentful')
           var query = {};
           query['fields.file.details.image.' + key + queryOperator(op)] = exp;
           return query;
-        } catch(e) {
+        } catch (e) {
           return;
         }
       }
@@ -249,7 +249,7 @@ angular.module('contentful')
       var occurences = _.countBy(names);
       return _.transform(users, function (map, user) {
         var name = user.getName();
-        name = occurences[name] > 1 ? name + ' (' +user.getId()+ ')' : name;
+        name = occurences[name] > 1 ? name + ' (' + user.getId() + ')' : name;
         map[name] = user.getId();
       }, {});
     });
@@ -281,12 +281,12 @@ angular.module('contentful')
       });
     }
 
-    function fieldIsSearchable(field) {
+    function fieldIsSearchable (field) {
       return !field.disabled && !field.type.match(/Location|Object|File/);
     }
   }
 
-  function operatorCompletion(key, contentType) {
+  function operatorCompletion (key, contentType) {
     var completions = staticAutocompletions(contentType);
     if (completions[key]) {
       return makeListCompletion(completions[key].operators || makeOperatorList([':']));
@@ -314,7 +314,7 @@ angular.module('contentful')
     }
   }
 
-  function valueCompletion(key, contentType) {
+  function valueCompletion (key, contentType) {
     var completions = staticAutocompletions(contentType);
     if (!completions[key]) {
       return predefinedFieldCompletion(key, contentType);
@@ -329,7 +329,7 @@ angular.module('contentful')
 
     // Offer set of valid values as autocompletions for fields
     // with predefined values/numeric ranges
-    function predefinedFieldCompletion(key, contentType) {
+    function predefinedFieldCompletion (key, contentType) {
       var field = findField(key, contentType);
       if (field) {
         var val;
@@ -348,10 +348,10 @@ angular.module('contentful')
     }
 
     // Turn a min and a max into an array of intermediate values
-    function buildRange(min, max) {
-      if (!_.isNumber(max) || !_.isNumber(min) || max - min > 25 ) return null;
+    function buildRange (min, max) {
+      if (!_.isNumber(max) || !_.isNumber(min) || max - min > 25) return null;
       var res = [];
-      for (var i=min; i<= max; i++) res.push(i);
+      for (var i = min; i <= max; i++) res.push(i);
       return res;
     }
   }
@@ -360,11 +360,11 @@ angular.module('contentful')
   //
   // This part contains the function that turns a parsed key/value pair into a queryObject
 
-  function pairToRequestObject(pair, contentType, space) {
-    var key      = pair.content.key.content;
+  function pairToRequestObject (pair, contentType, space) {
+    var key = pair.content.key.content;
     var operator = pair.content.operator.content;
-    var value    = pair.content.value.content;
-    var keyData  = staticAutocompletions(contentType)[key];
+    var value = pair.content.value.content;
+    var keyData = staticAutocompletions(contentType)[key];
     if (keyData) {
       if (_.isFunction(keyData.convert)) {
         return keyData.convert(operator, value, space);
@@ -377,34 +377,36 @@ angular.module('contentful')
     }
 
     // Turn a converter object into a requestobject
-    function createConverter(convertData, operator, value, space) {
+    function createConverter (convertData, operator, value, space) {
       var converterForValue = convertData[value];
       if (!converterForValue) return;
 
       if (_.isFunction(converterForValue)) {
         return converterForValue(operator, value, space);
-      } else { //is requestObject
+      } else { // is requestObject
         return converterForValue;
       }
     }
 
     // Turn a field query into a requestobject
-    function createFieldQuery(key, operator, value, contentType) {
+    function createFieldQuery (key, operator, value, contentType) {
       var field = findField(key, contentType);
-      if (field) return _.tap({}, function (q) {
-        // TODO Using apiNameOrId here is a temporary solution while the backend doesn't honor
-        // the Skip-Transformation header for field.ids in searches
-        var queryKey = 'fields.'+ apiNameOrId(field) + queryOperator(operator);
-        if (field.type === 'Text') queryKey = queryKey + '[match]';
-        if (field.type === 'Boolean') value = value.match(/yes|true/i) ? 'true' : false;
-        if (field.type === 'Link') {
-          queryKey = 'fields.'+apiNameOrId(field)+'.sys.id';
-        }
-        if (field.type === 'Array' && field.items.type == 'Link') {
-          queryKey = 'fields.'+apiNameOrId(field)+'.sys.id';
-        }
-        q[queryKey] = value;
-      });
+      if (field) {
+        return _.tap({}, function (q) {
+          // TODO Using apiNameOrId here is a temporary solution while the backend doesn't honor
+          // the Skip-Transformation header for field.ids in searches
+          var queryKey = 'fields.' + apiNameOrId(field) + queryOperator(operator);
+          if (field.type === 'Text') queryKey = queryKey + '[match]';
+          if (field.type === 'Boolean') value = value.match(/yes|true/i) ? 'true' : false;
+          if (field.type === 'Link') {
+            queryKey = 'fields.' + apiNameOrId(field) + '.sys.id';
+          }
+          if (field.type === 'Array' && field.items.type === 'Link') {
+            queryKey = 'fields.' + apiNameOrId(field) + '.sys.id';
+          }
+          q[queryKey] = value;
+        });
+      }
     }
   }
 
@@ -412,16 +414,16 @@ angular.module('contentful')
 
   // Convert operator into operator for the querystring
   // CONVERT(datecompletions) + PAIRTOREQUESTOBJECT
-  function queryOperator(op) {
-    return op == '<=' ? '[lte]' :
-           op == '<'  ? '[lt]'  :
-           op == '>=' ? '[gte]' :
-           op == '>'  ? '[gt]'  :
-           op == '!=' ? '[ne]'  :
-           '';
+  function queryOperator (op) {
+    return op === '<=' ? '[lte]'
+      : op === '<' ? '[lt]'
+      : op === '>=' ? '[gte]'
+      : op === '>' ? '[gt]'
+      : op === '!=' ? '[ne]'
+      : '';
   }
 
-  function apiNameOrId(field) {
+  function apiNameOrId (field) {
     if (field.apiName) {
       return field.apiName;
     } else {
@@ -429,7 +431,7 @@ angular.module('contentful')
     }
   }
 
-  function sizeParser(exp) {
+  function sizeParser (exp) {
     var number = parseInt(exp, 10);
     if (number < 1) return exp;
 
@@ -475,7 +477,7 @@ angular.module('contentful')
   // Helper for creating a listCompletion from values
   //
   // values can either be strings or {value, description} objects
-  function makeListCompletion(values) {
+  function makeListCompletion (values) {
     return {
       type: 'List',
       items: _.map(values, function (val) {
@@ -507,7 +509,7 @@ angular.module('contentful')
     });
   }
 
-  function makeDateCompletion() {
+  function makeDateCompletion () {
     return {
       type: 'Date'
     };
@@ -518,9 +520,9 @@ angular.module('contentful')
   // The public facing API for this service
   return {
     complete: {
-      key:      keyCompletion,
+      key: keyCompletion,
       operator: operatorCompletion,
-      value:    valueCompletion
+      value: valueCompletion
     },
     pairToRequestObject: pairToRequestObject
   };

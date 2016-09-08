@@ -13,7 +13,7 @@ describe('ListQuery service', function () {
     searchTerm: 'test'
   };
 
-  function testQuery(q) {
+  function testQuery (q) {
     expect(q.order).toBe('-sys.updatedAt');
     expect(q.limit).toBe(30);
     expect(q.skip).toBe(0);
@@ -52,24 +52,24 @@ describe('ListQuery service', function () {
   });
 
   describe('special search terms', function () {
-    function queryFor(term) {
-      return ListQuery.getForEntries(_.extend({contentTypeId: 'test'}, OPTS, {searchTerm  : term}));
+    function queryFor (term) {
+      return ListQuery.getForEntries(_.extend({contentTypeId: 'test'}, OPTS, {searchTerm: term}));
     }
 
-    pit('for published list', function() {
+    pit('for published list', function () {
       return queryFor('status:published').then(function (q) {
         expect(q['sys.publishedAt[exists]']).toBe('true');
       });
     });
 
-    pit('for changed list', function() {
+    pit('for changed list', function () {
       return queryFor('status:changed').then(function (q) {
         expect(q['sys.archivedAt[exists]']).toBe('false');
         expect(q.changed).toBe('true');
       });
     });
 
-    pit('for draft list', function() {
+    pit('for draft list', function () {
       return queryFor('status:draft').then(function (q) {
         expect(q['sys.archivedAt[exists]']).toBe('false');
         expect(q['sys.publishedVersion[exists]']).toBe('false');
@@ -77,7 +77,7 @@ describe('ListQuery service', function () {
       });
     });
 
-    it('for archived list', function() {
+    it('for archived list', function () {
       return queryFor('status:archived').then(function (q) {
         expect(q['sys.archivedAt[exists]']).toBe('true');
       });
