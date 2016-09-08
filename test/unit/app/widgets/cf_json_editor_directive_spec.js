@@ -45,7 +45,7 @@ describe('cfJsonEditor directive', function () {
     fieldApi.onValueChanged.yield({json: true});
     this.$apply();
     expect(element.find('pre:visible').length).toBe(0);
-    fieldApi.onDisabledStatusChanged.yield(true);
+    fieldApi.onIsDisabledChanged.yield(true);
     this.$apply();
     expect(JSON.parse(element.find('pre').text())).toEqual({json: true});
   });

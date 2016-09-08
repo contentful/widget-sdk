@@ -80,7 +80,7 @@ angular.module('contentful')
   this.state = {goToEditor: goToEntityEditor};
 
   this.field = {
-    onDisabledStatusChanged: isDisabledSignal.attach,
+    onIsDisabledChanged: isDisabledSignal.attach,
     onSchemaErrorsChanged: function (cb) {
       return K.onValueScope($scope, fieldLocale.errors$, cb);
     },
@@ -124,7 +124,7 @@ angular.module('contentful')
   }
 
   function isEditingDisabled () {
-    return fieldLocale.access.disabled;
+    return !!fieldLocale.access.disabled;
   }
 
   function getDefaultLocaleCode () {

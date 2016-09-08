@@ -34,11 +34,11 @@ describe('cfMultiLineEditor directive', function () {
     const $el = this.compile();
     const textarea = $el.find('textarea');
 
-    this.fieldApi.onDisabledStatusChanged.yield(true);
+    this.fieldApi.onIsDisabledChanged.yield(true);
     this.$apply();
     expect(textarea.prop('disabled')).toBe(true);
 
-    this.fieldApi.onDisabledStatusChanged.yield(false);
+    this.fieldApi.onIsDisabledChanged.yield(false);
     this.$apply();
     expect(textarea.prop('disabled')).toBe(false);
   });

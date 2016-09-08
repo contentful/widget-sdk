@@ -109,12 +109,12 @@ describe('cfWidgetApi directive', function () {
   });
 
 
-  describe('#onDisabledStatusChanged()', function () {
+  describe('#onIsDisabledChanged()', function () {
     it('is dispatched with initial value', function () {
       const cb = sinon.spy();
       this.scope.fieldLocale.access.disabled = true;
       this.$apply();
-      this.widgetApi.field.onDisabledStatusChanged(cb);
+      this.widgetApi.field.onIsDisabledChanged(cb);
       sinon.assert.calledOnce(cb);
       sinon.assert.calledWithExactly(cb, true);
     });
@@ -123,7 +123,7 @@ describe('cfWidgetApi directive', function () {
       const cb = sinon.spy();
       this.scope.fieldLocale.access.disabled = true;
       this.$apply();
-      this.widgetApi.field.onDisabledStatusChanged(cb);
+      this.widgetApi.field.onIsDisabledChanged(cb);
       cb.reset();
 
       this.scope.fieldLocale.access.disabled = false;
