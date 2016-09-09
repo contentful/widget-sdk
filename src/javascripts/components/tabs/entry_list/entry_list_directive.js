@@ -3,6 +3,7 @@
 angular.module('contentful')
 .directive('cfEntryList', ['require', function (require) {
   var $timeout = require('$timeout');
+  var spaceContext = require('spaceContext');
 
   // Definitions for narrow/medium types in entry list controller
   var classToWidth = {
@@ -30,6 +31,20 @@ angular.module('contentful')
       scope.expandColumn = function (field) {
         expandedField = field.id;
         $timeout(collapseColumns);
+      };
+
+      scope.contentTypeName = function (entry) {
+        var ctId = entry.getContentTypeId();
+        var ct = spaceContext.getPublishedContentType(ctId);
+        if (ct) {
+          return ct.getName();
+        } else {
+          return '';
+        }
+      };
+
+      scope.entryTitle = function (entry) {
+        return spaceContext.entryTitle(entry);
       };
 
       // Must be deferred because it depends on the rendered content
