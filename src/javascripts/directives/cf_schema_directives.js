@@ -22,14 +22,14 @@ angular.module('contentful')
     scope: true,
     controller: ['$scope', '$injector', function ($scope, $injector) {
       var errorMessageBuilder = $injector.get('errorMessageBuilder');
-      var SchemaController    = $injector.get('SchemaController');
-      var createEntrySchema   = $injector.get('validation').fromContentType;
+      var SchemaController = $injector.get('SchemaController');
+      var createEntrySchema = $injector.get('validation').fromContentType;
 
       var buildMessage = errorMessageBuilder($scope.spaceContext);
       $scope.schema = new SchemaController(buildMessage);
       $scope.schema.setContext({ skipDeletedLocaleFieldValidation: true });
 
-      $scope.$watch('spaceContext.publishedTypeForEntry(entry).data', function(data) {
+      $scope.$watch('spaceContext.publishedTypeForEntry(entry).data', function (data) {
         if (!data) return;
         var locales = $scope.spaceContext.space.data.locales; // TODO: watch this, too
         $scope.schema.setSchema(createEntrySchema(data, locales));
@@ -55,8 +55,8 @@ angular.module('contentful')
     scope: true,
     controller: ['$scope', '$injector', function ($scope, $injector) {
       var errorMessageBuilder = $injector.get('errorMessageBuilder');
-      var SchemaController    = $injector.get('SchemaController');
-      var createAssetSchema   = $injector.get('validation').schemas.Asset;
+      var SchemaController = $injector.get('SchemaController');
+      var createAssetSchema = $injector.get('validation').schemas.Asset;
 
       var buildMessage = errorMessageBuilder.forAsset;
       var schema = createAssetSchema($scope.spaceContext.space.getPrivateLocales());
@@ -81,8 +81,8 @@ angular.module('contentful')
     scope: true,
     controller: ['$scope', '$injector', function ($scope, $injector) {
       var errorMessageBuilder = $injector.get('errorMessageBuilder');
-      var SchemaController    = $injector.get('SchemaController');
-      var validation          = $injector.get('validation');
+      var SchemaController = $injector.get('SchemaController');
+      var validation = $injector.get('validation');
 
       var buildMessage = errorMessageBuilder.forContentType;
       $scope.schema = new SchemaController(buildMessage, validation.schemas.ContentType);
@@ -101,7 +101,7 @@ angular.module('contentful')
 angular.module('contentful')
 .factory('SchemaController', [function () {
 
-  function SchemaController(messageBuilder, schema) {
+  function SchemaController (messageBuilder, schema) {
     this.messageBuilder = messageBuilder;
     this.context = {};
     this.setSchema(schema);
@@ -132,8 +132,9 @@ angular.module('contentful')
    * @returns {Array<Error>}
    */
   SchemaController.prototype.errors = function (data) {
-    if (this.schema)
+    if (this.schema) {
       return this.schema.errors(data, this.context);
+    }
   };
 
   SchemaController.prototype.buildMessage = function (error, data) {
