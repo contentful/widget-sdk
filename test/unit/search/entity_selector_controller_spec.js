@@ -1,6 +1,6 @@
 'use strict';
 
-describe('entitySelector', function () {
+describe('EntitySelectorController', function () {
   beforeEach(function () {
     module('contentful/test');
 
@@ -150,9 +150,7 @@ describe('entitySelector', function () {
       });
 
       this.getQuery.args.slice(1).forEach((callArgs) => {
-        expect(callArgs[0].order).toEqual({
-          fieldId: 'updatedAt', direction: 'descending'
-        });
+        expect(callArgs[0].order).toBeUndefined();
       });
     });
   });

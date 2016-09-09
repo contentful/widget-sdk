@@ -64,16 +64,13 @@ angular.module('contentful')
 
   function getOrder () {
     var ct = $scope.singleContentType;
-    var order = {fieldId: 'updatedAt', direction: 'descending'};
 
     if (ct) {
       var displayField = _.find(ct.data.fields, {id: ct.data.displayField});
       if (displayField && displayField.type === 'Symbol' && displayField.id) {
-        order = {fieldId: displayField.id, direction: 'ascending'};
+        return {fieldId: displayField.id, direction: 'ascending'};
       }
     }
-
-    return order;
   }
 
   function toggleSelection (entity) {
