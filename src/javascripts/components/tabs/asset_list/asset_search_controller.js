@@ -12,7 +12,6 @@ angular.module('contentful')
   var logger = require('logger');
   var spaceContext = require('spaceContext');
   var ListQuery = require('ListQuery');
-  var systemFields = require('systemFields');
   var accessChecker = require('accessChecker');
 
   var assetLoader = new PromisedLoader();
@@ -83,7 +82,6 @@ angular.module('contentful')
   function prepareQuery () {
     return ListQuery.getForAssets({
       paginator: controller.paginator,
-      order: systemFields.getDefaultOrder(),
       searchTerm: getSearchTerm()
     });
   }

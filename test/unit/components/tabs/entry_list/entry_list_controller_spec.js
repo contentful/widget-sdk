@@ -188,13 +188,13 @@ describe('Entry List Controller', function () {
         });
 
         it('when the field exists', function() {
-          scope.context.view.order.fieldId = 'ORDER_FIELD';
+          scope.context.view.order = {fieldId: 'ORDER_FIELD', direction: 'descending'}
           scope.$apply();
-          expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-fields.ORDER_FIELD.en-US');
+          expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-fields.ORDER_FIELD');
         });
 
         it('when the field does not exist', function() {
-          scope.context.view.order.fieldId = 'deletedFieldId';
+          scope.context.view.order = {fieldId: 'deletedFieldId', direction: 'descending'}
           scope.$apply();
           expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-sys.updatedAt');
         });

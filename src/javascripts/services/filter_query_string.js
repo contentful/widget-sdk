@@ -28,8 +28,10 @@ angular.module('contentful').factory('FilterQueryString', ['$injector', function
       var currentQS  = $location.search();
       var previousQS = TheStore.get(getKey()) || {};
       var qs = _.keys(currentQS).length ? currentQS : previousQS;
+
       var view = dotty.transform(qs);
       toBool(view, 'contentTypeHidden');
+      toBool(view, 'order.sys');
 
       return view;
     }
@@ -48,10 +50,10 @@ angular.module('contentful').factory('FilterQueryString', ['$injector', function
     return dotty.flatten(view);
   }
 
-  function toBool(obj, key) {
-    if (_.has(obj, key)) {
-      var value = obj[key].toString();
-      obj[key] = value !== 'false';
+  function toBool(obj, path) {
+    var value = dotty.get(obj, path, undefined);
+    if (value !== undefined) {
+      dotty.put(obj, path, value.toString() !== 'false');
     }
   }
 }]);
