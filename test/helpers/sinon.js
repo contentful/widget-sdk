@@ -16,6 +16,22 @@ sinon.stub.defers = function () {
   return this;
 };
 
+sinon.spyAll = function (object) {
+  for (let key in object) {
+    if (typeof object[key] === 'function') {
+      sinon.spy(object, key);
+    }
+  }
+};
+
+sinon.stubAll = function (object) {
+  for (let key in object) {
+    if (typeof object[key] === 'function') {
+      sinon.stub(object, key);
+    }
+  }
+};
+
 function get$q () {
   var $q;
   inject(function (_$q_) {
@@ -23,4 +39,3 @@ function get$q () {
   });
   return $q;
 }
-
