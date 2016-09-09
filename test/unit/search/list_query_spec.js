@@ -2,12 +2,12 @@
 
 describe('ListQuery service', function () {
 
-  var ListQuery;
+  let ListQuery;
   afterEach(function () {
     ListQuery = null;
   });
 
-  var OPTS = {
+  const OPTS = {
     order: { direction: 'descending', fieldId: 'updatedAt' },
     paginator: { pageLength: 30, skipItems: _.constant(0) },
     searchTerm: 'test'

@@ -1,22 +1,24 @@
 'use strict';
 
-angular.module('contentful').factory('FilterQueryString', ['$injector', function ($injector) {
+angular.module('contentful')
 
-  var querystring  = $injector.get('querystring');
-  var $location    = $injector.get('$location');
-  var spaceContext = $injector.get('spaceContext');
-  var TheStore     = $injector.get('TheStore');
+.factory('FilterQueryString', ['require', function (require) {
+
+  var querystring = require('querystring');
+  var $location = require('$location');
+  var spaceContext = require('spaceContext');
+  var TheStore = require('TheStore');
 
   return { create: create };
 
-  function create(entityType) {
+  function create (entityType) {
 
     return {
       readView: readView,
-      update:   update
+      update: update
     };
 
-    function update(view) {
+    function update (view) {
       var viewData = processView(view);
       TheStore.set(getKey(), viewData);
       var qs = querystring.stringify(viewData);
@@ -24,8 +26,8 @@ angular.module('contentful').factory('FilterQueryString', ['$injector', function
       $location.replace();
     }
 
-    function readView() {
-      var currentQS  = $location.search();
+    function readView () {
+      var currentQS = $location.search();
       var previousQS = TheStore.get(getKey()) || {};
       var qs = _.keys(currentQS).length ? currentQS : previousQS;
 
@@ -36,13 +38,13 @@ angular.module('contentful').factory('FilterQueryString', ['$injector', function
       return view;
     }
 
-    function getKey() {
+    function getKey () {
       var spaceId = spaceContext.getId() || 'undef';
       return 'lastFilterQueryString.' + entityType + '.' + spaceId;
     }
   }
 
-  function processView(view) {
+  function processView (view) {
     view = _.omitBy(view, function (item, key) {
       return key === 'title' || _.isNull(item) || _.isUndefined(item) || item === '';
     });
@@ -50,7 +52,7 @@ angular.module('contentful').factory('FilterQueryString', ['$injector', function
     return dotty.flatten(view);
   }
 
-  function toBool(obj, path) {
+  function toBool (obj, path) {
     var value = dotty.get(obj, path, undefined);
     if (value !== undefined) {
       dotty.put(obj, path, value.toString() !== 'false');
