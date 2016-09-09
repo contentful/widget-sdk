@@ -16,24 +16,23 @@
  * @scope.requires {Entry}         entry
  */
 angular.module('contentful')
-.directive('cfEntrySchema', [function () {
+.directive('cfEntrySchema', ['require', function (require) {
+  var errorMessageBuilder = require('errorMessageBuilder');
+  var SchemaController = require('SchemaController');
+  var createEntrySchema = require('validation').fromContentType;
+  var spaceContext = require('spaceContext');
+
   return {
     restrict: 'A',
     scope: true,
-    controller: ['$scope', '$injector', function ($scope, $injector) {
-      var errorMessageBuilder = $injector.get('errorMessageBuilder');
-      var SchemaController = $injector.get('SchemaController');
-      var createEntrySchema = $injector.get('validation').fromContentType;
-
+    controller: ['$scope', function ($scope) {
       var buildMessage = errorMessageBuilder($scope.spaceContext);
       $scope.schema = new SchemaController(buildMessage);
       $scope.schema.setContext({ skipDeletedLocaleFieldValidation: true });
 
-      $scope.$watch('spaceContext.publishedTypeForEntry(entry).data', function (data) {
-        if (!data) return;
-        var locales = $scope.spaceContext.space.data.locales; // TODO: watch this, too
-        $scope.schema.setSchema(createEntrySchema(data, locales));
-      });
+      var ctData = $scope.contentType.data;
+      var locales = spaceContext.space.data.locales;
+      $scope.schema.setSchema(createEntrySchema(ctData, locales));
     }]
   };
 }]);
@@ -49,15 +48,15 @@ angular.module('contentful')
  * @scope.requires {SpaceContext} spaceContext
  */
 angular.module('contentful')
-.directive('cfAssetSchema', [function () {
+.directive('cfAssetSchema', ['require', function (require) {
+  var errorMessageBuilder = require('errorMessageBuilder');
+  var SchemaController = require('SchemaController');
+  var createAssetSchema = require('validation').schemas.Asset;
+
   return {
     restrict: 'A',
     scope: true,
-    controller: ['$scope', '$injector', function ($scope, $injector) {
-      var errorMessageBuilder = $injector.get('errorMessageBuilder');
-      var SchemaController = $injector.get('SchemaController');
-      var createAssetSchema = $injector.get('validation').schemas.Asset;
-
+    controller: ['$scope', function ($scope) {
       var buildMessage = errorMessageBuilder.forAsset;
       var schema = createAssetSchema($scope.spaceContext.space.getPrivateLocales());
       $scope.schema = new SchemaController(buildMessage, schema);
@@ -75,15 +74,15 @@ angular.module('contentful')
  * @property {SchemaController} $scope.schema
  */
 angular.module('contentful')
-.directive('cfContentTypeSchema', [function () {
+.directive('cfContentTypeSchema', ['require', function (require) {
+  var errorMessageBuilder = require('errorMessageBuilder');
+  var SchemaController = require('SchemaController');
+  var validation = require('validation');
+
   return {
     restrict: 'A',
     scope: true,
-    controller: ['$scope', '$injector', function ($scope, $injector) {
-      var errorMessageBuilder = $injector.get('errorMessageBuilder');
-      var SchemaController = $injector.get('SchemaController');
-      var validation = $injector.get('validation');
-
+    controller: ['$scope', function ($scope) {
       var buildMessage = errorMessageBuilder.forContentType;
       $scope.schema = new SchemaController(buildMessage, validation.schemas.ContentType);
     }]
