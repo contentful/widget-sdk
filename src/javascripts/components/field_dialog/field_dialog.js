@@ -66,6 +66,7 @@ angular.module('contentful')
   var Widgets = $injector.get('widgets');
 
   $scope.decoratedField = field.decorate($scope.field, $scope.contentType);
+
   $scope.validations = validations.decorateFieldValidations($scope.field);
 
   $scope.currentTitleField = getTitleField($scope.contentType);

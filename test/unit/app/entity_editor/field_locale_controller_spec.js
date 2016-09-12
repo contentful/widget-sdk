@@ -3,24 +3,28 @@
 describe('FieldLocaleController', function () {
   beforeEach(function () {
     module('contentful/test');
-    var $rootScope = this.$inject('$rootScope');
-    var $controller = this.$inject('$controller');
+    const $rootScope = this.$inject('$rootScope');
+    const $controller = this.$inject('$controller');
+    const K = this.$inject('mocks/kefir');
+    this.extractValues = K.extractValues;
     this.init = function (scopeProps) {
       this.otDoc = this.$inject('mocks/entityEditor/Document').create();
-      var defaultScopeProps = {
+      const defaultScopeProps = {
         field: {id: 'FID'},
         locale: {internal_code: 'LID'},
         otDoc: this.otDoc
       };
-      var scope = _.merge($rootScope.$new(), defaultScopeProps, scopeProps);
+      const scope = _.merge($rootScope.$new(), defaultScopeProps, scopeProps);
+      scope.validator = {
+        errors$: K.createMockProperty([])
+      };
       scope.fieldLocale = $controller('FieldLocaleController', {$scope: scope});
-      scope.validator = {};
       this.$apply();
       return scope;
     };
   });
 
-  describe('#errors', function () {
+  describe('#errors$ and #errors', function () {
     it('get filtered items from "validator.errors"', function () {
       var scope = this.init();
 
@@ -36,25 +40,34 @@ describe('FieldLocaleController', function () {
         {path: ['fields', 'FID-2']}
       ];
 
-      scope.validator.errors = fieldLocaleErrors.concat(otherErrors);
+      const errorsStream = this.extractValues(scope.fieldLocale.errors$);
+      scope.validator.errors$.set(fieldLocaleErrors.concat(otherErrors));
       this.$apply();
       expect(scope.fieldLocale.errors).toEqual(fieldLocaleErrors);
+      expect(errorsStream[0]).toEqual(fieldLocaleErrors);
     });
 
     it('is set to "null" if no errors match', function () {
       var scope = this.init();
-      scope.validator.errors = [{path: 'does not match'}];
+      scope.validator.errors$.set([{path: 'does not match'}]);
       this.$apply();
+      const errorsStream = this.extractValues(scope.fieldLocale.errors$);
       expect(scope.fieldLocale.errors).toEqual(null);
+      expect(errorsStream[0]).toEqual(null);
     });
 
     it('excludes field-level "required" error if a locale is optional', function () {
-      var requiredError = {path: ['fields', 'FID'], name: 'required'};
-      var scope = this.init();
+      const errors = [
+        {path: ['fields', 'FID'], name: 'required'},
+        {path: ['fields', 'FID'], name: 'other'}
+      ];
+      const scope = this.init();
       scope.locale.optional = true;
-      scope.validator.errors = [requiredError];
+      const errorsStream = this.extractValues(scope.fieldLocale.errors$);
+      scope.validator.errors$.set(errors);
       this.$apply();
-      expect(scope.fieldLocale.errors).toEqual(null);
+      expect(scope.fieldLocale.errors).toEqual([errors[1]]);
+      expect(errorsStream[0]).toEqual([errors[1]]);
     });
   });
 

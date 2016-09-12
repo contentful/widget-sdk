@@ -6,12 +6,13 @@ angular.module('contentful')
  * @ngdoc service
  * @name validationDecorator
  */
-.factory('validationDecorator', ['$injector', function ($injector) {
-  var pluralize               = $injector.get('pluralize');
-  var validationViews         = $injector.get('validationViews');
-  var createSchema            = $injector.get('validation');
-  var getErrorMessage         = $injector.get('validationDialogErrorMessages');
-  var validationName          = createSchema.Validation.getName;
+.factory('validationDecorator', ['require', function (require) {
+  var pluralize = require('pluralize');
+  var validationViews = require('validationViews');
+  var createSchema = require('validation');
+  var getErrorMessage = require('validationDialogErrorMessages');
+
+  var validationName = createSchema.Validation.getName;
   var validationTypesForField = createSchema.Validation.forField;
 
   var validationSettings = {
@@ -20,31 +21,53 @@ angular.module('contentful')
     dateRange: {after: null, before: null},
     regexp: {pattern: null, flags: null},
     in: null,
+    unique: true,
     linkContentType: null,
     linkMimetypeGroup: null,
     assetFileSize: {min: null, max: null},
-    assetImageDimensions: { width:  {min: null, max: null},
-                            height: {min: null, max: null}}
+    assetImageDimensions: {
+      width: { min: null, max: null },
+      height: {min: null, max: null}
+    }
   };
 
   var validationLabels = {
     size: {
-      Text:   'Specify number of characters',
-      Symbol: 'Specify number of characters',
-      Object: 'Specify number of properties'
+      Text: 'Limit character count',
+      Symbol: 'Limit character count',
+      Object: 'Limit number of properties'
     },
-    range: 'Specify allowed number range',
-    dateRange: 'Specify allowed date range',
+    range: 'Accept only specified number range',
+    dateRange: 'Accept only specified date range',
     regexp: 'Match a specific pattern',
-    in: 'Predefined values',
-    linkContentType: 'Specify allowed entry type',
-    linkMimetypeGroup: 'Specify allowed file types',
-    assetFileSize: 'Specify allowed file size',
-    assetImageDimensions: 'Specify image dimensions'
+    unique: 'Unique field',
+    in: 'Accept only specified values',
+    linkContentType: 'Accept only specified entry type',
+    linkMimetypeGroup: 'Accept only specified file types',
+    assetFileSize: 'Accept only specified file size',
+    assetImageDimensions: 'Accept only specified image dimensions'
+  };
+
+  var validationHelpText = {
+    size: {
+      Text: 'Specify a minimum and/or maximum allowed number of characters',
+      Symbol: 'Specify a minimum and/or maximum allowed number of characters',
+      Object: 'Specify a minimum and/or maximum allowed number of properties'
+    },
+    range: 'Specify a minimum and/or maximum allowed number for this field',
+    dateRange: 'Specify an early and/or latest allowed date for this field',
+    regexp: 'Make this field match a pattern: e-mail address, URI, or a custom regular expression',
+    unique: 'You won\'t be able to publish an entry if there is an existing entry with with identical content',
+    in: 'You won\'t be able to publish an entry if the field value is not in the list of specified values',
+    linkContentType: 'Make this field only accept entries from specified content type(s)',
+    linkMimetypeGroup: 'Make this field only accept specified file types',
+    assetFileSize: 'Specify a minimum and/or maximum allowed file size',
+    assetImageDimensions: 'Specify a minimum and/or maximum allowed image dimension'
   };
 
 
   var validationsOrder = [
+    'unique',
     'size',
     'range',
     'dateRange',
@@ -59,8 +82,8 @@ angular.module('contentful')
 
   return {
     decorateFieldValidations: decorateFieldValidations,
-    extractAll:  extractAll,
-    validate:    validate,
+    extractAll: extractAll,
+    validate: validate,
     validateAll: validateAll,
     updateField: updateField
   };
@@ -71,10 +94,11 @@ angular.module('contentful')
    * @param {Field} field
    * @returns {DecoratedValidation[]}
    */
-  function decorateFieldValidations(field) {
+  function decorateFieldValidations (field) {
     var types = _.filter(validationTypesForField(field), function (t) {
       return t in validationSettings;
     });
+
     var fieldValidations = _.map(types, validationDecorator(field));
 
     if (field.items) {
@@ -82,18 +106,24 @@ angular.module('contentful')
       _.each(itemValidations, function (v) {
         v.onItems = true;
       });
+
+      // remove unique validation for items as we don't support
+      // it for items nor for the Array container type
+      itemValidations = _.filter(itemValidations, function (validation) {
+        return validation.type !== 'unique';
+      });
+
       fieldValidations = itemValidations.concat(fieldValidations);
     }
 
-    return _.sortBy(fieldValidations, function(validation) {
+    return _.sortBy(fieldValidations, function (validation) {
       return validationsOrder.indexOf(validation.type);
     });
   }
 
-  function validationDecorator(field) {
+  function validationDecorator (field) {
     return function decorateValidation (type) {
       var fieldValidation = findValidationByType(field.validations, type);
-
       var settings, enabled, message;
 
       if (fieldValidation) {
@@ -109,9 +139,11 @@ angular.module('contentful')
       var name = getValidationLabel(field, type);
       var views = validationViews.get(type);
       var currentView = views && views[0].name;
+      var helpText = getValidationHelpText(field, type);
 
       return {
         name: name,
+        helpText: helpText,
         type: type,
         onItems: false,
         enabled: enabled,
@@ -138,8 +170,9 @@ angular.module('contentful')
   function extractOne (decorated) {
     var extracted = {};
     extracted[decorated.type] = _.cloneDeep(decorated.settings);
-    if (decorated.message)
+    if (decorated.message) {
       extracted.message = decorated.message;
+    }
     return extracted;
   }
 
@@ -178,8 +211,9 @@ angular.module('contentful')
     var itemValidations = _.filter(validations, {onItems: true});
 
     field.validations = extractAll(baseValidations);
-    if (!_.isEmpty(itemValidations))
+    if (!_.isEmpty(itemValidations)) {
       field.items.validations = extractAll(itemValidations);
+    }
   }
 
   function validateAll (decoratedValidations) {
@@ -196,25 +230,41 @@ angular.module('contentful')
    * Return the index and the settings for the validation of type
    * `type` from a list of `validations`.
    */
-  function findValidationByType(validations, name) {
-    return _.find(validations, function(validation) {
+  function findValidationByType (validations, name) {
+    return _.find(validations, function (validation) {
       return validationName(validation) === name;
     });
   }
 
+  function getValidationLabel (field, type) {
+    if (field.type === 'Array' && type === 'size') {
+      var itemTypes = pluralize((field.items.linkType || field.items.type).toLowerCase());
 
-  function getValidationLabel(field, type) {
-    if (field.type == 'Array' && type == 'size') {
-      var itemType = field.items.type == 'Link' ? field.items.linkType : field.items.type;
-      return 'Specify number of ' + pluralize(itemType.toLowerCase());
+      return 'Accept only a specified number of ' + itemTypes;
     }
 
-    var label = validationLabels[type];
-    if (!label)
+    return getValidationStringForType(validationLabels, field, type);
+  }
+
+  function getValidationHelpText (field, type) {
+    if (field.type === 'Array' && type === 'size') {
+      var itemTypes = pluralize((field.items.linkType || field.items.type).toLowerCase());
+
+      return 'Specify a minimum and/or maximum allowed number of ' + itemTypes;
+    }
+
+    return getValidationStringForType(validationHelpText, field, type);
+  }
+
+  function getValidationStringForType (object, field, type) {
+    var label = object[type];
+
+    if (!label) {
       return type;
-    if (typeof label == 'string')
+    } else if (_.isString(label)) {
       return label;
-    else
+    } else {
       return label[field.type];
+    }
   }
 }]);

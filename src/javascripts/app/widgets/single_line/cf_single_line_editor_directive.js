@@ -2,7 +2,7 @@
 
 angular.module('contentful')
 .directive('cfSingleLineEditor', ['$injector', function ($injector) {
-  var makeInputUpdater = $injector.get('ui/caretHelper').makeInputUpdater;
+  var InputUpdater = $injector.get('ui/inputUpdater');
   var debounce = $injector.get('debounce');
 
   return {
@@ -14,7 +14,7 @@ angular.module('contentful')
       var field = widgetApi.field;
       var constraints = _(field.validations).map('size').filter().first() || {};
       var $inputEl = $el.children('input');
-      var updateInput = makeInputUpdater($inputEl);
+      var updateInput = InputUpdater.create($inputEl.get(0));
 
       if (field.type === 'Symbol' && !_.isNumber(constraints.max)) {
         constraints.max = 256;

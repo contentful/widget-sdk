@@ -10,6 +10,7 @@ describe('cfWidgetApi directive', function () {
     });
 
     var $controller = this.$inject('$controller');
+    const K = this.$inject('mocks/kefir');
 
     this.scope = this.$inject('$rootScope').$new();
     this.widget = {
@@ -30,7 +31,8 @@ describe('cfWidgetApi directive', function () {
         locale: {},
         fieldLocale: {
           access: {},
-          doc: {}
+          doc: {},
+          errors$: K.createMockProperty()
         },
         entity: this.entry,
         fields: {},
@@ -135,12 +137,13 @@ describe('cfWidgetApi directive', function () {
     it('emits errors when "fieldLocale.errors" changes', function () {
       var cb = sinon.spy();
       this.widgetApi.field.onSchemaErrorsChanged(cb);
+      this.$apply();
       cb.reset();
 
-      this.scope.fieldLocale.errors = 'ERRORS';
+      this.scope.fieldLocale.errors$.set(['ERRORS']);
       this.$apply();
       sinon.assert.calledOnce(cb);
-      sinon.assert.calledWithExactly(cb, 'ERRORS');
+      sinon.assert.calledWithExactly(cb, ['ERRORS']);
     });
   });
 

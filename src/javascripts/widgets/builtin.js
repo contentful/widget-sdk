@@ -90,7 +90,7 @@ angular.module('contentful')
     name: 'Radio',
     icon: 'radio',
     notFocusable: true,
-    template: '<cf-widget-boolean />',
+    template: '<cf-boolean-editor />',
     options: [{
       name: 'True condition custom label',
       param: 'trueLabel',

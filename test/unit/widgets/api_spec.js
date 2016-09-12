@@ -61,13 +61,19 @@ describe('widgets/API', function () {
       this.context.field.apiName = 'FID-public';
       this.context.field.id = 'FID-internal';
       this.context.field.type = 'FIELD-TYPE';
+      this.context.field.validations = 'VALIDATIONS';
       this.context.locale = {
         code: 'LOCALE',
         internal_code: 'LOCALE-internal'
       };
       this.createAPI().connect();
       expect(this.postMessage.args[0][0].params[0].field).toEqual({
-        id: 'FID-public', locale: 'LOCALE', value: 'VALUE', isDisabled: false, type: 'FIELD-TYPE'
+        id: 'FID-public',
+        locale: 'LOCALE',
+        value: 'VALUE',
+        isDisabled: false,
+        type: 'FIELD-TYPE',
+        validations: 'VALIDATIONS'
       });
     });
 

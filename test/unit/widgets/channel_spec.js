@@ -29,7 +29,13 @@ describe('widgets/channel', function () {
     it('sends connect message with id', function () {
       this.channel.connect();
       var id = this.channel.id;
-      sinon.assert.calledWith(this.postMessage, {method: 'connect', params: [{id: id}]});
+      sinon.assert.calledWith(
+        this.postMessage,
+        {
+          method: 'connect',
+          params: [{id: id}, []]
+        }
+      );
     });
 
     it('throws an error when called twice', function () {
@@ -49,12 +55,22 @@ describe('widgets/channel', function () {
     });
 
     it('queued messages after connecting', function () {
-      this.channel.send('METHOD', PARAMS);
-      this.channel.send('METHOD2', PARAMS);
+      this.channel.send('METHOD1', ['PARAM1']);
+      this.channel.send('METHOD2', ['PARAM2']);
       sinon.assert.notCalled(this.postMessage);
       this.channel.connect();
-      sinon.assert.calledWith(this.postMessage, {method: 'METHOD', params: PARAMS});
-      sinon.assert.calledWith(this.postMessage, {method: 'METHOD2', params: PARAMS});
+      const id = this.channel.id;
+      const queued = [
+        {method: 'METHOD1', params: ['PARAM1']},
+        {method: 'METHOD2', params: ['PARAM2']}
+      ];
+      sinon.assert.calledWith(
+        this.postMessage,
+        {
+          method: 'connect',
+          params: [{id: id}, queued]
+        }
+      );
     });
 
     it('throws an error if params is not an array', function () {

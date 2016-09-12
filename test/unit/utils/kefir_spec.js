@@ -2,10 +2,12 @@
 
 describe('utils/kefir', function () {
   let K;
+  let KMock;
 
   beforeEach(function () {
-    module('cf.utils');
+    module('cf.utils', 'contentful/test');
     K = this.$inject('utils/kefir');
+    KMock = this.$inject('mocks/kefir');
     this.scope = this.$inject('$rootScope').$new();
   });
 
@@ -58,14 +60,14 @@ describe('utils/kefir', function () {
   });
 
   describe('#onValueScope()', function () {
-    it('calls callback only when scope is applied', function () {
+    it('applies scope after calling callback when value changes', function () {
       const bus = K.createBus();
       const cb = sinon.spy();
+      sinon.spy(this.scope, '$applyAsync');
       K.onValueScope(this.scope, bus.stream, cb);
       bus.emit('VAL');
-      sinon.assert.notCalled(cb);
-      this.$apply();
       sinon.assert.calledOnce(cb);
+      sinon.assert.calledOnce(this.scope.$applyAsync);
     });
 
     it('removes callback when scope is destroyed', function () {
@@ -123,6 +125,21 @@ describe('utils/kefir', function () {
       const cb = sinon.spy();
       bus.property.onValue(cb);
       sinon.assert.calledWithExactly(cb, 'VAL');
+    });
+  });
+
+  describe('#sampleBy()', function () {
+    it('samples new value when event is fired', function () {
+      const obs = KMock.createMockStream();
+      const sampler = sinon.stub();
+      const prop = K.sampleBy(obs, sampler);
+
+      sampler.returns('INITIAL');
+      const values = KMock.extractValues(prop);
+
+      sampler.returns('VAL');
+      obs.emit();
+      expect(values).toEqual(['VAL', 'INITIAL']);
     });
   });
 });

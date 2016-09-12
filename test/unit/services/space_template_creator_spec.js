@@ -125,9 +125,12 @@ describe('Space Template creation service', function () {
       $rootScope.$digest();
 
       openShareJSDoc.resolve({
-        on: stubs.on,
-        removeListener: sinon.stub(),
-        close: sinon.stub()
+        destroy: _.noop,
+        doc: {
+          on: stubs.on,
+          removeListener: sinon.stub(),
+          close: sinon.stub()
+        }
       });
       this.$apply();
       stubs.on.yield([

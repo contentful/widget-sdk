@@ -14,6 +14,8 @@ describe('cfIframeWidget directive', function () {
       });
     });
 
+    const K = this.$inject('mocks/kefir');
+
     this.otDoc = this.$inject('mocks/entityEditor/Document').create({
       fields: {}
     });
@@ -40,6 +42,7 @@ describe('cfIframeWidget directive', function () {
         access: {
           disabled: true
         },
+        errors$: K.createMockProperty(),
         setActive: sinon.spy()
       },
       fieldController: {
@@ -116,6 +119,12 @@ describe('cfIframeWidget directive', function () {
 
     it('does not send field value changes if path does not start with "fields"', function () {
       this.otDoc.changes.emit(['NOT fields', 'FIELD']);
+      this.$apply();
+      sinon.assert.notCalled(widgetAPI.sendFieldValueChange);
+    });
+
+    it('ignores unknown fields', function () {
+      this.otDoc.changes.emit(['fields', 'UNKNOWN']);
       this.$apply();
       sinon.assert.notCalled(widgetAPI.sendFieldValueChange);
     });
