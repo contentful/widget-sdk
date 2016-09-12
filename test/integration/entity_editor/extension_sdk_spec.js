@@ -6,6 +6,8 @@ describe('Extension SDK', function () {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
+    const K = this.$inject('mocks/kefir');
+
     const widgets = this.$inject('widgets');
     widgets.get = sinon.stub().returns({
       srcdoc:
@@ -51,7 +53,8 @@ describe('Extension SDK', function () {
       fieldLocale: {
         access: {
           disabled: false
-        }
+        },
+        errors$: K.createMockProperty(null)
       },
       fieldController: {
         setInvalid: sinon.spy()
@@ -104,6 +107,13 @@ describe('Extension SDK', function () {
   const fit = makeApiTestDescriptor(window.fit);
 
   describe('#field', function () {
+    beforeEach(function () {
+      this.scope.field.validations = ['VALIDATION'];
+    });
+
+    it('receives #validations property', function* (api) {
+      expect(api.field.validations).toEqual(['VALIDATION']);
+    });
 
     describe('#getValue()', function () {
       beforeEach(function () {
@@ -168,6 +178,24 @@ describe('Extension SDK', function () {
     });
 
     describe('#onIsDisabledChanged', function () {
+      when('initially disabled', function () {
+        this.scope.fieldLocale.access.disabled = true;
+      })
+      .it('receives default value', function* (api) {
+        const isDisabledChanged = sinon.spy();
+        api.field.onIsDisabledChanged(isDisabledChanged);
+        sinon.assert.calledWithExactly(isDisabledChanged, true);
+      });
+
+      when('initially enabled', function () {
+        this.scope.fieldLocale.access.disabled = true;
+      })
+      .it('receives default value', function* (api) {
+        const isDisabledChanged = sinon.spy();
+        api.field.onIsDisabledChanged(isDisabledChanged);
+        sinon.assert.calledWithExactly(isDisabledChanged, true);
+      });
+
       it('calls callback when disable status of field is changed', function* (api, scope) {
         const isDisabledChanged = sinon.spy();
         api.field.onIsDisabledChanged(isDisabledChanged);
@@ -178,15 +206,27 @@ describe('Extension SDK', function () {
         sinon.assert.calledOnce(isDisabledChanged);
         sinon.assert.calledWithExactly(isDisabledChanged, true);
       });
+    });
 
-      it('does not call callback after detaching', function* (api, scope) {
-        const isDisabledChanged = sinon.spy();
-        api.field.onIsDisabledChanged(isDisabledChanged)(); // detach the listener
+    describe('#onSchemaErrorsChanged()', function () {
+      when('there are initial errors', function () {
+        this.scope.fieldLocale.errors$.set(['INITIAL']);
+      })
+      .it('receives the initial errors', function* (api) {
+        const cb = sinon.spy();
+        api.field.onSchemaErrorsChanged(cb);
+        sinon.assert.calledWithExactly(cb, ['INITIAL']);
+      });
+
+      it('triggers when errors change', function* (api, scope) {
+        const cb = sinon.spy();
+        api.field.onSchemaErrorsChanged(cb);
         yield api.nextTick();
-        isDisabledChanged.reset();
-        scope.fieldLocale.access.disabled = true;
+        cb.reset();
+        scope.fieldLocale.errors$.set(['errors']);
         yield api.nextTick();
-        sinon.assert.notCalled(isDisabledChanged);
+        sinon.assert.calledOnce(cb);
+        sinon.assert.calledWithExactly(cb, ['errors']);
       });
     });
 
@@ -237,7 +277,7 @@ describe('Extension SDK', function () {
     const SYS_1 = 'new sys value';
 
     beforeEach(function () {
-      this.scope.entry.data.sys = SYS_0;
+      this.doc.sysProperty.set(SYS_0);
     });
 
     describe('#getSys()', function () {
@@ -400,8 +440,11 @@ describe('Extension SDK', function () {
 
 
   function makeApiTestDescriptor (testFactory) {
-    return function defineTest (desc, runner) {
+    return function defineTest (desc, runner, setup) {
       testFactory(desc, function (done) {
+        if (setup) {
+          setup.call(this);
+        }
         const $apply = this.$apply.bind(this);
         this.loadApi()
         .then((api) => {
@@ -445,4 +488,18 @@ describe('Extension SDK', function () {
       }
     });
   }
+
+
+  function when (desc1, setup) {
+    return {it: itLocal, fit: fitLocal};
+
+    function itLocal (desc2, gen) {
+      it(`when ${desc1} it ${desc2}`, gen, setup);
+    }
+
+    function fitLocal (desc2, gen) {
+      fit(`when ${desc1} it ${desc2}`, gen, setup);
+    }
+  }
+
 });

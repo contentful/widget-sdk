@@ -5,7 +5,7 @@ angular.module('contentful')
   var slugUtils = $injector.get('slug');
   var moment = $injector.get('moment');
   var debounce = $injector.get('debounce');
-  var caretHelper = $injector.get('ui/caretHelper');
+  var InputUpdater = $injector.get('ui/inputUpdater');
 
   return {
     restrict: 'E',
@@ -20,7 +20,7 @@ angular.module('contentful')
       var contentType = widgetApi.contentType;
 
       var $inputEl = $el.find('input');
-      var updateInput = caretHelper.makeInputUpdater($inputEl);
+      var updateInput = InputUpdater.create($inputEl.get(0));
       var titleField = entry.fields[contentType.displayField];
 
       // The most recent value of the title field.

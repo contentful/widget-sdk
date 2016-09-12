@@ -38,27 +38,13 @@ angular.module('contentful')
        */
       organization: { sys: buildLink(org) },
       /**
-       * @ngdoc property
-       * @name Subscription#state
-       * @type {string}
-       * @description
-       * Indicates the subscription's state. In most cases is...() methods are
-       * more useful to find out about a subscription's state.
-       */
-      state: org.subscriptionState,
-      /**
        * @ngdoc method
        * @name Subscription#isLimitedFree
        * @returns {boolean}
        * @description
-       * Whether the subscription is a “Starter” or “Hacker” plan.
-       *
-       * NOTE: As long as `isTrial` is true this will return `false` even though
-       *  the subscription might actually be on one of the above plans.
-       *
-       * TODO: Correct behavior while `isTrial() == false`.
+       * Returns whether the subscription is a “Starter” or “Hacker” plan.
        */
-      isLimitedFree: _.constant(organizationHasLimitedFreeSubscription(org)),
+      isLimitedFree: _.constant(org.subscription.status === 'free'),
       /**
        * @ngdoc method
        * @name Subscription#isTrial
@@ -66,7 +52,7 @@ angular.module('contentful')
        * @description
        * Returns whether this is a trial subscription.
        */
-      isTrial: _.constant(org.subscriptionState === 'trial'),
+      isTrial: _.constant(org.subscription.status === 'trial'),
       /**
        * @ngdoc method
        * @name Subscription#hasTrialEnded
@@ -88,12 +74,6 @@ angular.module('contentful')
         return Math.max(hoursLeft, 0);
       }
     };
-  }
-
-  function organizationHasLimitedFreeSubscription (org) {
-    return org.subscriptionState === 'active' &&
-        !org.subscriptionPlan.paid &&
-        org.subscriptionPlan.kind === 'default';
   }
 
   function buildLink (org) {

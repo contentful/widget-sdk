@@ -96,6 +96,7 @@ angular.module('contentful/mocks')
           id: '456'
         },
         usage: {},
+        subscription: {},
         subscriptionPlan: {limits: {}}
       }
     }, extraData || {}));

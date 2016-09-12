@@ -2,9 +2,7 @@
 
 describe('cfSingleLineEditor directive', function () {
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
-      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
-    });
+    module('contentful/test');
 
     var widgetApi = this.$inject('mocks/widgetApi').create({
       settings: {

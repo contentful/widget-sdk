@@ -155,7 +155,7 @@ angular.module('contentful')
       globalObject: 'google.maps'
     },
     bugsnag: {
-      url: 'https://d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js',
+      url: 'https://d2wy8f7a9ursnm.cloudfront.net/bugsnag-3.min.js',
       globalObject: 'Bugsnag'
     },
     googleTagManager: {
