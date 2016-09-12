@@ -12,7 +12,7 @@ angular.module('cf.app')
     scope: {},
     template: JST['cf_radio_editor'](),
     require: '^cfWidgetApi',
-    link: function (scope, elem, attrs, widgetApi) {
+    link: function (scope, _elem, _attrs, widgetApi) {
       var selectionController = $injector.get('widgets/selectionController');
       selectionController.createFromValidations(widgetApi, scope);
 

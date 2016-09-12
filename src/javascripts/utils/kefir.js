@@ -15,6 +15,7 @@ angular.module('cf.utils')
     onValue: onValue,
     onValueScope: onValueScope,
     fromScopeEvent: fromScopeEvent,
+    sampleBy: sampleBy,
     createBus: createBus,
     createPropertyBus: createPropertyBus
   }, Kefir);
@@ -124,7 +125,7 @@ angular.module('cf.utils')
    * In particular:
    * - The callback is detached from the stream when the scope is
    *   destroyed
-   * - The callback is wrapped in `scope.$applyAsync()`
+   * - `scope.$applyAsync()` is called after each time the value changes
    *
    * @param {Scope} scope
    * @param {Observable} observable
@@ -135,9 +136,8 @@ angular.module('cf.utils')
    */
   function onValueScope (scope, stream, cb) {
     var off = onValue(stream, function (value) {
-      scope.$applyAsync(function () {
-        cb(value);
-      });
+      cb(value);
+      scope.$applyAsync();
     });
     scope.$on('$destroy', off);
     return off;
@@ -207,5 +207,21 @@ angular.module('cf.utils')
         offDestroy();
       };
     });
+  }
+
+  /**
+   * @ngdoc method
+   * @name utils/kefir#sampleBy
+   * @description
+   * Create a property that is updated whenever the observable emits a
+   * new event. The sampler function is used to obtain the value.
+   *
+   * @param {Observable<any>} obs
+   * @param {function} sampler
+   * @returns {Property<any>}
+   */
+  function sampleBy (obs, sampler) {
+    // We need to pass `noop` to get an initial, undefined value.
+    return obs.toProperty(_.noop).map(sampler);
   }
 }]);

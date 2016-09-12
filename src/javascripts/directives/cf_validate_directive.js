@@ -20,14 +20,27 @@ angular.module('contentful')
   };
 }])
 
-.controller('ValidationController', ['$scope', '$attrs', '$timeout',
-function ValidationController ($scope, $attrs, $timeout) {
+.controller('ValidationController', ['$scope', '$attrs', 'require',
+function ValidationController ($scope, $attrs, require) {
+  var $timeout = require('$timeout');
+  var K = require('utils/kefir');
   var controller = this;
 
   // Caches values for #hasError()
   var errorTree = {};
 
-  controller.errors = [];
+  var errorsBus = K.createPropertyBus([], $scope);
+
+  /**
+   * @ngdoc property
+   * @name cfValidate#errors$
+   * @type {Property<Error[]>}
+   */
+  controller.errors$ = errorsBus.property;
+
+  controller.errors$.onValue(function (errors) {
+    controller.errors = errors;
+  });
 
   $scope.validationResult = {};
 
@@ -104,7 +117,7 @@ function ValidationController ($scope, $attrs, $timeout) {
   controller.setErrors = function (errors) {
     $scope.validationResult = makeValidationResult(errors, getData(), $scope.schema);
     errorTree = $scope.validationResult.errorTree;
-    this.errors = $scope.validationResult.errors;
+    errorsBus.set($scope.validationResult.errors);
     this.valid = _.isEmpty(this.errors);
   };
 

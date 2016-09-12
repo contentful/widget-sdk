@@ -7,7 +7,7 @@ angular.module('cf.app')
     scope: {},
     template: JST.cf_checkbox_editor(),
     require: '^cfWidgetApi',
-    link: function (scope, elem, attrs, widgetApi) {
+    link: function (scope, _elem, _attrs, widgetApi) {
       var field = widgetApi.field;
       var options = scope.options = getOptions(field);
 

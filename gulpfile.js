@@ -27,12 +27,10 @@ var childProcess = require('child_process');
 var rework = require('rework');
 var reworkUrlRewrite = require('rework-plugin-url');
 var fs = require('fs');
-var FS = B.promisifyAll(fs);
 
 var U = require('./tools/lib/utils');
 var jstConcat = require('./tasks/build-template');
 var serve = require('./tasks/serve');
-var IndexPage = require('./tools/lib/index-page');
 var createManifestResolver = require('./tools/lib/manifest-resolver').create;
 
 var argv = yargs
@@ -112,7 +110,7 @@ var src = {
 
 gulp.task('all', function (done) {
   runSequence(
-    ['index', 'templates', 'js', 'copy-images', 'copy-static', 'stylesheets'],
+    ['templates', 'js', 'copy-images', 'copy-static', 'stylesheets'],
     'styleguide',
     done
   );
@@ -128,8 +126,7 @@ gulp.task('clean', function () {
   return gulp.src([
     './public/app',
     './public/styleguide*',
-    './build/*',
-    './public/index.html'
+    './build/*'
   ], {read: false})
     .pipe(clean());
 });
@@ -145,15 +142,6 @@ gulp.task('copy-images', function () {
     .pipe(gulp.dest('./public/app/images'));
 });
 
-// TODO We should not build the index file. Instead, the server should
-// generate it on the fly.
-gulp.task('index', function () {
-  return U.readJSON('config/development.json')
-  .then(function (config) {
-    var index = IndexPage.renderDev(config);
-    return FS.writeFileAsync('public/index.html', index, 'utf8');
-  });
-});
 
 gulp.task('templates', function () {
   var dest = gulp.dest('./public/app');

@@ -1,13 +1,13 @@
 'use strict';
 
 angular.module('cf.app')
-.directive('cfRatingEditor', [function(){
+.directive('cfRatingEditor', [function () {
   return {
     restrict: 'E',
     scope: {},
     template: JST.cf_rating_editor(),
     require: '^cfWidgetApi',
-    link: function ($scope, $el, attrs, widgetApi) {
+    link: function ($scope, _$el, _attrs, widgetApi) {
       var field = widgetApi.field;
       var starCount = widgetApi.settings.stars;
       // Determines whether to highlight stars according to mouse
@@ -48,9 +48,9 @@ angular.module('cf.app')
       };
 
       $scope.isActive = function (star) {
-        return hovered ?
-          star.hovered :
-          star.selected;
+        return hovered
+          ? star.hovered
+          : star.selected;
       };
 
       $scope.setRating = function (rating) {

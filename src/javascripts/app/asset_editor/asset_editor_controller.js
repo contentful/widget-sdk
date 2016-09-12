@@ -52,13 +52,7 @@ angular.module('contentful')
   // OT Stuff
   $scope.$watch(function assetEditorDisabledWatcher (scope) {
     return scope.asset.isArchived() || isReadOnly();
-  }, function assetEditorDisabledHandler (disabled) {
-    if (disabled) {
-      $scope.otDoc.close();
-    } else {
-      $scope.otDoc.open();
-    }
-  });
+  }, $scope.otDoc.setReadOnly);
 
   // Validations
   $scope.$watch('asset.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
