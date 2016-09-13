@@ -4,7 +4,7 @@ describe('cfSingleLineEditor directive', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    var widgetApi = this.$inject('mocks/widgetApi').create({
+    const widgetApi = this.$inject('mocks/widgetApi').create({
       settings: {
         helpText: 'wat'
       }
@@ -29,21 +29,21 @@ describe('cfSingleLineEditor directive', function () {
   });
 
   it('updates correctly when value change is indicated by sharejs', function () {
-    var $el = this.compileElement();
+    const $el = this.compileElement();
 
     this.dispatchValue('test');
     expect($el.children('input').val()).toEqual('test');
   });
 
   it('input event on text field calls changeString', function () {
-    var $input = this.compileElement().children('input');
+    const $input = this.compileElement().children('input');
     $input.val('what'); // set the value
     $input.trigger('input'); // trigger "input" event
     sinon.assert.calledOnce(this.setValue);
   });
 
   it('counts characters correctly', function () {
-    var testData = [
+    const testData = [
       {input: 'Test', expected: '4 characters'},
       {input: 'A  sentence with lots of  spaces', expected: '32 characters'},
       {input: '', expected: '0 characters'},
@@ -51,7 +51,7 @@ describe('cfSingleLineEditor directive', function () {
     ];
 
     testData.forEach(function (data) {
-      var $el = this.compileElement();
+      const $el = this.compileElement();
 
       this.dispatchValue(data.input);
       expect($el.text()).toBe(data.expected);
@@ -59,7 +59,7 @@ describe('cfSingleLineEditor directive', function () {
   });
 
   it('displays validation hints', function () {
-    var testData = [
+    const testData = [
       {
         validations: [{size: {max: 20, min: 10}}],
         hint: 'Requires between 10 and 20 characters'
@@ -72,7 +72,7 @@ describe('cfSingleLineEditor directive', function () {
       }
     ];
     testData.forEach(function (data) {
-      var $el = this.compileElement(data.validations);
+      const $el = this.compileElement(data.validations);
 
       this.dispatchValue('');
       expect($el.text()).toMatch(data.hint);
@@ -80,7 +80,7 @@ describe('cfSingleLineEditor directive', function () {
   });
 
   it('changes color according to maxlength validation', function () {
-    var testData = [
+    const testData = [
       {
         input: 'This text should turn orange',
         validations: [{size: {max: 30, min: 10}}],
@@ -93,7 +93,7 @@ describe('cfSingleLineEditor directive', function () {
       }
     ];
     testData.forEach(function (data) {
-      var el = this.compileElement(data.validations);
+      const el = this.compileElement(data.validations);
 
       this.dispatchValue(data.input);
       expect(el.find(data.expectedClass).length).toBe(1);
@@ -102,28 +102,28 @@ describe('cfSingleLineEditor directive', function () {
   });
 
   it('adds max constraints for symbol fields', function () {
-    var elem = this.compileElement(false, 'Symbol');
+    const elem = this.compileElement(false, 'Symbol');
 
     this.dispatchValue('');
     expect(elem.text()).toMatch('Requires less than 256 characters');
   });
 
   it('adds max constraints to symbol fields with min validation', function () {
-    var elem = this.compileElement([{size: {min: 20, max: null}}], 'Symbol');
+    const elem = this.compileElement([{size: {min: 20, max: null}}], 'Symbol');
 
     this.dispatchValue('');
     expect(elem.text()).toMatch('Requires between 20 and 256 characters');
   });
 
   it('does not overwrite constraints for symbol fields', function () {
-    var elem = this.compileElement([{size: {min: null, max: 50}}], 'Symbol');
+    const elem = this.compileElement([{size: {min: null, max: 50}}], 'Symbol');
 
     this.dispatchValue('');
     expect(elem.text()).toMatch('Requires less than 50 characters');
   });
 
   it('sets input to invalid when there are schema errors', function () {
-    var input = this.compileElement().find('input');
+    const input = this.compileElement().find('input');
 
     this.fieldApi.onSchemaErrorsChanged.yield(null);
     this.$apply();

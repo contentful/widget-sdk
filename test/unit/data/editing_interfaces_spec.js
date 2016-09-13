@@ -1,7 +1,7 @@
 'use strict';
 
 describe('data/editingInterfaces', function () {
-  var editingInterfaces, spaceEndpoint, contentType;
+  let editingInterfaces, spaceEndpoint, contentType;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -9,7 +9,7 @@ describe('data/editingInterfaces', function () {
     });
 
     spaceEndpoint = sinon.stub().defers();
-    var createEditingInterfaces = this.$inject('data/editingInterfaces');
+    const createEditingInterfaces = this.$inject('data/editingInterfaces');
     editingInterfaces = createEditingInterfaces(spaceEndpoint);
 
     contentType = {
@@ -57,7 +57,7 @@ describe('data/editingInterfaces', function () {
       });
 
       pit('resolves with the default interface if a 404 is returned', function () {
-        var getDefaultWidget = this.$inject('widgets/default');
+        const getDefaultWidget = this.$inject('widgets/default');
         getDefaultWidget.returns('DEFAULT');
 
         spaceEndpoint.rejects({status: 404});
@@ -70,7 +70,7 @@ describe('data/editingInterfaces', function () {
       it('fails if API responds with an error', function () {
         spaceEndpoint.rejects({status: 500});
 
-        var errorHandler = sinon.stub();
+        const errorHandler = sinon.stub();
         editingInterfaces.get(contentType).catch(errorHandler);
         this.$apply();
         sinon.assert.calledWithExactly(errorHandler, {status: 500});
@@ -89,7 +89,7 @@ describe('data/editingInterfaces', function () {
       });
 
       pit('resolves with the default interface', function () {
-        var getDefaultWidget = this.$inject('widgets/default');
+        const getDefaultWidget = this.$inject('widgets/default');
         getDefaultWidget.returns('DEFAULT');
 
         return editingInterfaces.get(contentType)
@@ -123,7 +123,7 @@ describe('data/editingInterfaces', function () {
           {fieldId: 'FIELD', field: {}}
         ]
       });
-      var data = spaceEndpoint.args[0][0].data;
+      const data = spaceEndpoint.args[0][0].data;
       expect(data.controls[0].field).toBe(undefined);
     });
 
@@ -134,7 +134,7 @@ describe('data/editingInterfaces', function () {
           {fieldId: 'FIELD', settings: {}}
         ]
       });
-      var data = spaceEndpoint.args[0][0].data;
+      const data = spaceEndpoint.args[0][0].data;
       expect(data.controls[0].settings).toBe(undefined);
     });
   });

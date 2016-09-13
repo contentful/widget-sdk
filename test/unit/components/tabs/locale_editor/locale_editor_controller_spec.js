@@ -2,7 +2,7 @@
 
 describe('Locale editor controller', function () {
   beforeEach(function () {
-    var self = this;
+    const self = this;
     this.logger = {
       logServerWarn: sinon.stub()
     };
@@ -34,7 +34,7 @@ describe('Locale editor controller', function () {
     this.$inject('tokenStore').refresh = sinon.stub().resolves();
     this.scope = this.$inject('$rootScope').$new();
 
-    var spaceContext = this.$inject('spaceContext');
+    const spaceContext = this.$inject('spaceContext');
     spaceContext.space = {};
     dotty.put(spaceContext, 'space.data.organization.subscriptionPlan.name', 'Unlimited');
 
@@ -46,7 +46,7 @@ describe('Locale editor controller', function () {
       $setSubmitted: sinon.stub()
     };
 
-    var getIdStub = sinon.stub();
+    const getIdStub = sinon.stub();
     this.scope.locale = {
       data: {code: 'en-US'},
       getName: sinon.stub().returns('localeName'),
@@ -97,7 +97,7 @@ describe('Locale editor controller', function () {
 
     this.scope.locale.data.code = 'pl-PL';
     this.scope.spaceLocales.push(locale('fr-FR', 'French', 'pl-PL'));
-    var $controller = this.$inject('$controller');
+    const $controller = this.$inject('$controller');
     $controller('LocaleEditorController', {$scope: this.scope});
     this.$apply();
     expect(this.scope.hasDependantLocales).toBe(true);
@@ -212,7 +212,7 @@ describe('Locale editor controller', function () {
   });
 
   describe('#delete command failures', function () {
-    var error = { body: { message: 'errorMessage' } };
+    const error = { body: { message: 'errorMessage' } };
     beforeEach(function () {
       this.scope.localeForm.$dirty = true;
       this.scope.locale.delete.rejects(error);

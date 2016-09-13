@@ -2,4 +2,7 @@ parserOptions:
   ecmaVersion: 6
   sourceType: 'module'
 rules:
+  # eslint:recommended overrides
+  no-console: off
+
   semi: ["error", "never"]

@@ -2,7 +2,7 @@
 
 describe('widgets/channel', function () {
   beforeEach(function () {
-    var addEventListener = sinon.stub();
+    const addEventListener = sinon.stub();
     module('contentful/test', ($provide) => {
       $provide.value('$window', {
         addEventListener,
@@ -11,9 +11,9 @@ describe('widgets/channel', function () {
       $provide.value('modalDialog', null);
     });
 
-    var Channel = this.$inject('widgets/channel');
+    const Channel = this.$inject('widgets/channel');
     this.postMessage = sinon.stub();
-    var iframe = {contentWindow: {postMessage: this.postMessage}};
+    const iframe = {contentWindow: {postMessage: this.postMessage}};
     this.channel = new Channel(iframe);
 
     this.receiveMessage = function (data) {
@@ -28,7 +28,7 @@ describe('widgets/channel', function () {
   describe('#connect()', function () {
     it('sends connect message with id', function () {
       this.channel.connect();
-      var id = this.channel.id;
+      const id = this.channel.id;
       sinon.assert.calledWith(
         this.postMessage,
         {
@@ -39,14 +39,14 @@ describe('widgets/channel', function () {
     });
 
     it('throws an error when called twice', function () {
-      var connect = this.channel.connect.bind(this.channel);
+      const connect = this.channel.connect.bind(this.channel);
       connect();
       expect(connect).toThrow();
     });
   });
 
   describe('#send()', function () {
-    var PARAMS = ['PARAM'];
+    const PARAMS = ['PARAM'];
 
     it('messages to the iframe', function () {
       this.channel.connect();
@@ -74,7 +74,7 @@ describe('widgets/channel', function () {
     });
 
     it('throws an error if params is not an array', function () {
-      var send = this.channel.send.bind(this.channel, 'METHOD', 'NOT-AN-ARRAY');
+      const send = this.channel.send.bind(this.channel, 'METHOD', 'NOT-AN-ARRAY');
       this.channel.connect();
       expect(send).toThrow();
     });
@@ -82,7 +82,7 @@ describe('widgets/channel', function () {
 
   describe('on message', function () {
     it('calls handlers on message event', function () {
-      var handler = sinon.stub();
+      const handler = sinon.stub();
       this.channel.handlers['MY_METHOD'] = handler;
       this.receiveMessage({
         method: 'MY_METHOD',
@@ -93,14 +93,14 @@ describe('widgets/channel', function () {
     });
 
     it('does not call handlers when source id does not match', function () {
-      var handler = sinon.stub();
+      const handler = sinon.stub();
       this.channel.handlers['MY_METHOD'] = handler;
       this.receiveMessage({method: 'MY_METHOD', source: 'another id'});
       sinon.assert.notCalled(handler);
     });
 
     it('sends result when handler returns a value', function () {
-      var handler = sinon.stub().returns('RESULT');
+      const handler = sinon.stub().returns('RESULT');
       this.channel.handlers['MY_METHOD'] = handler;
       sinon.assert.notCalled(this.postMessage);
       this.receiveMessage({method: 'MY_METHOD', id: 'CALL ID'});
@@ -108,7 +108,7 @@ describe('widgets/channel', function () {
     });
 
     it('sends result when handler promise is resolved', function () {
-      var handler = sinon.stub().defers();
+      const handler = sinon.stub().defers();
       this.channel.handlers['MY_METHOD'] = handler;
       this.receiveMessage({method: 'MY_METHOD', id: 'CALL ID'});
       sinon.assert.notCalled(this.postMessage);
@@ -118,7 +118,7 @@ describe('widgets/channel', function () {
     });
 
     it('does not send result when channel is destroyed', function () {
-      var handler = sinon.stub().defers();
+      const handler = sinon.stub().defers();
       this.channel.handlers['MY_METHOD'] = handler;
       this.receiveMessage({method: 'MY_METHOD', id: 'CALL ID'});
       this.channel.destroy();
@@ -128,7 +128,7 @@ describe('widgets/channel', function () {
     });
 
     it('sends error when handler promise is rejected', function () {
-      var handler = sinon.stub().defers();
+      const handler = sinon.stub().defers();
       this.channel.handlers['MY_METHOD'] = handler;
       this.receiveMessage({method: 'MY_METHOD', id: 'CALL ID'});
       sinon.assert.notCalled(this.postMessage);

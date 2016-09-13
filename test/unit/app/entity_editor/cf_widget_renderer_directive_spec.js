@@ -30,13 +30,13 @@ describe('cfWidgetRenderer Directive', function () {
 
   it('renders a widget template', function () {
     this.widget.template = '<p class=foo>';
-    var el = this.compile();
+    const el = this.compile();
     expect(el.find('.foo').length).toBe(1);
   });
 
   it('has scope#contentTypeStateRef property', function () {
     this.widget.template = '<p>{{contentTypeHref}}</p>';
-    var el = this.compile();
+    const el = this.compile();
     expect(el.find('p').text())
     .toEqual('/spaceHref/CTID');
   });
@@ -44,14 +44,14 @@ describe('cfWidgetRenderer Directive', function () {
   it('does not have scope#contentTypeStateRef property if there is no content type', function () {
     this.widget.template = '<p>{{contentTypeHref}}</p>';
     this.contentType = {};
-    var el = this.compile();
+    const el = this.compile();
     expect(el.find('p').text())
     .toEqual('');
   });
 
   it('activates field locale when element is focused', function () {
     this.widget.template = '<div>';
-    var el = this.compile();
+    const el = this.compile();
     el.trigger('focusin');
     this.$apply();
     sinon.assert.calledOnce(this.fieldLocale.setActive);
@@ -60,7 +60,7 @@ describe('cfWidgetRenderer Directive', function () {
 
   it('deactivates field locale when element is unfocused', function () {
     this.widget.template = '<div>';
-    var el = this.compile();
+    const el = this.compile();
     el.trigger('focusout');
     this.$apply();
     sinon.assert.calledOnce(this.fieldLocale.setActive);

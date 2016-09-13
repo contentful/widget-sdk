@@ -15,16 +15,16 @@ angular.module('contentful/mocks')
   };
 
   function create (overrides) {
-    var state = {
+    const state = {
       // Set by field.isInvalid()
       isInvalid: false
     };
 
-    var entrySys = {
+    const entrySys = {
       contentType: {sys: {id: 'CTID'}}
     };
 
-    var api = {
+    const api = {
       _state: state,
       settings: {
         helpText: ''

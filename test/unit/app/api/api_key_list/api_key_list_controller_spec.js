@@ -1,9 +1,9 @@
 'use strict';
 
 describe('API Key List Controller', function () {
-  var scope, apiErrorHandler, stubs;
+  let scope, apiErrorHandler;
 
-  stubs = {
+  const stubs = {
     spaceContext: {
       getData: function () { return 2; },
       space: {

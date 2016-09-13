@@ -8,14 +8,14 @@ describe('states/spaces', function () {
   }));
 
   beforeEach(function () {
-    var states = this.$inject('states');
-    var spaceState = this.$inject('states/spaces');
+    const states = this.$inject('states');
+    const spaceState = this.$inject('states/spaces');
     states.load([spaceState]);
 
-    var $state = this.$inject('$state');
+    const $state = this.$inject('$state');
     this.$state = $state;
 
-    var cfStub = this.$inject('cfStub');
+    const cfStub = this.$inject('cfStub');
     this.adapter = cfStub.adapter;
     this.space = cfStub.space('SPACE');
     this.space.getPublishedContentTypes = sinon.stub().resolves([]);
@@ -35,8 +35,8 @@ describe('states/spaces', function () {
   });
 
   it('reset the space context', function () {
-    var spaceContext = this.$inject('spaceContext');
-    var resetWithSpace = sinon.spy(spaceContext, 'resetWithSpace');
+    const spaceContext = this.$inject('spaceContext');
+    const resetWithSpace = sinon.spy(spaceContext, 'resetWithSpace');
     this.$state.go('spaces.detail', {spaceId: 'SPACE'});
     this.$apply();
     sinon.assert.calledWith(resetWithSpace, this.space);

@@ -74,7 +74,7 @@ describe('OrgniaztionList', function () {
 
   describe('#isAdmin, #isOwner and #isOwnerOrAdmin', function () {
     beforeEach(function () {
-      var user = makeUser([ ORG_1, ORG_2, ORG_3 ]);
+      const user = makeUser([ ORG_1, ORG_2, ORG_3 ]);
       user.organizationMemberships[0].role = 'member';
       user.organizationMemberships[1].role = 'admin';
       user.organizationMemberships[2].role = 'owner';

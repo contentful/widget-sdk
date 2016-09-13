@@ -1,12 +1,12 @@
 'use strict';
 
 describe('Markdown preview', function () {
-  var $timeout, scope;
-  var startLivePreview;
-  var libs = window.cfLibs.markdown;
+  let $timeout, scope;
+  let startLivePreview;
+  const libs = window.cfLibs.markdown;
 
-  var content;
-  var getContentFn = function () { return content || '__test__'; };
+  let content;
+  const getContentFn = function () { return content || '__test__'; };
 
   beforeEach(function () {
     module('contentful/test');
@@ -15,8 +15,8 @@ describe('Markdown preview', function () {
     scope = this.$inject('$rootScope');
     startLivePreview = this.$inject('MarkdownEditor/preview');
 
-    var $q = this.$inject('$q');
-    var LazyLoader = this.$inject('LazyLoader');
+    const $q = this.$inject('$q');
+    const LazyLoader = this.$inject('LazyLoader');
     sinon.stub(LazyLoader, 'get', function () { return $q.resolve(libs); });
   });
 
@@ -34,8 +34,8 @@ describe('Markdown preview', function () {
   });
 
   it('notifies even when content is null or undefined', function () {
-    var s1 = sinon.spy();
-    var s2 = sinon.spy();
+    const s1 = sinon.spy();
+    const s2 = sinon.spy();
     startLivePreview(function () { return null; }, s1);
     startLivePreview(function () { return undefined; }, s2);
     scope.$apply();
@@ -45,7 +45,7 @@ describe('Markdown preview', function () {
   });
 
   it('notifies after the change to content only', function () {
-    var previewSpy = sinon.spy();
+    const previewSpy = sinon.spy();
     startLivePreview(getContentFn, previewSpy);
     scope.$apply();
     sinon.assert.notCalled(previewSpy);
@@ -59,8 +59,8 @@ describe('Markdown preview', function () {
   });
 
   it('stops notifications when killed', function () {
-    var previewSpy = sinon.spy();
-    var off = startLivePreview(getContentFn, previewSpy);
+    const previewSpy = sinon.spy();
+    const off = startLivePreview(getContentFn, previewSpy);
     scope.$apply();
     $timeout.flush();
     sinon.assert.calledOnce(previewSpy);

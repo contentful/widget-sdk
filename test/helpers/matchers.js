@@ -19,8 +19,8 @@ beforeEach(function () {
     toHaveClass: function () {
       return {
         compare: function (actual, expected) {
-          var pass = actual.hasClass(expected);
-          var notText = pass ? 'not ' : '';
+          const pass = actual.hasClass(expected);
+          const notText = pass ? 'not ' : '';
           return {
             pass: pass,
             message: 'Expected element ' + notText + 'to have class ' + expected
@@ -32,8 +32,8 @@ beforeEach(function () {
     toBeNgHidden: function () {
       return {
         compare: function (actual) {
-          var pass = actual.hasClass('ng-hide');
-          var notText = pass ? 'not ' : '';
+          const pass = actual.hasClass('ng-hide');
+          const notText = pass ? 'not ' : '';
           return {
             pass: pass,
             message: 'Expected element ' + notText + 'to be ng-hidden'
@@ -45,14 +45,14 @@ beforeEach(function () {
     toHaveTagName: function () {
       return {
         compare: function (actual, expected) {
-          var pass, tag;
+          let tag;
           if (actual.tagName) {
             tag = actual.tagName.toLowerCase();
           } else if (actual.get && actual.get(0) && actual.get(0).tagName) {
             tag = actual.get(0).tagName.toLowerCase();
           }
-          pass = tag && tag === expected;
-          var notText = pass ? 'not ' : '';
+          const pass = tag && tag === expected;
+          const notText = pass ? 'not ' : '';
           return {
             pass: pass,
             message: 'Expected element with tag ' + tag + ' ' + notText + 'to have tag name ' + expected
@@ -64,10 +64,8 @@ beforeEach(function () {
     toBeInstanceOf: function () {
       return {
         compare: function (actual, expected) {
-          var pass, notText;
-
-          pass = (actual instanceof expected);
-          notText = pass ? ' not' : '';
+          const pass = (actual instanceof expected);
+          const notText = pass ? ' not' : '';
 
           return {
             pass: pass,
@@ -78,7 +76,7 @@ beforeEach(function () {
     },
 
     toEqualObj: function () {
-      var KINDS = {
+      const KINDS = {
         'N': 'newly added property/element',
         'D': 'property/element was deleted',
         'E': 'property/element was edited',
@@ -95,7 +93,7 @@ beforeEach(function () {
       return {
         compare: function (actual, expected) {
           /* global deepDiff */
-          var objdiff = (deepDiff(expected, actual) || []).map(function (diff) {
+          const objdiff = (deepDiff(expected, actual) || []).map(function (diff) {
             return {
               kind: KINDS[diff.kind],
               path: diff.path,
@@ -125,8 +123,8 @@ beforeEach(function () {
     toMatchMultipleCallsArgs: function () {
       return {
         compare: function (actual, expected) {
-          var flattenedArgs = _.flatten(actual);
-          var pass = _.isEqual(flattenedArgs, expected);
+          const flattenedArgs = _.flatten(actual);
+          const pass = _.isEqual(flattenedArgs, expected);
           return {
             pass: pass,
             message: pass ? 'Expected arguments ' + JSON.stringify(actual) + ' not to equal ' + JSON.stringify(expected)

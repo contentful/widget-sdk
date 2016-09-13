@@ -2,11 +2,11 @@
 
 describe('cfLearnView directive', function () {
 
-  var controller, stubs, $rootScope;
+  let controller, stubs, $rootScope;
 
   beforeEach(function () {
 
-    var element;
+    let element;
 
     stubs = {
       spaceContext: {
@@ -106,7 +106,7 @@ describe('cfLearnView directive', function () {
     });
 
     it('navigates to API key page when there is one key', function () {
-      var apiKeys = [{data: {sys: {id: 1}}}];
+      const apiKeys = [{data: {sys: {id: 1}}}];
       stubs.spaceContext.space.getDeliveryApiKeys.resolves(apiKeys);
       this.compile();
       controller.goToApiKeySection();
@@ -149,7 +149,7 @@ describe('cfLearnView directive', function () {
     });
 
     it('shows note for one week', function () {
-      var yesterday = new Date(new Date() - 24 * 60 * 60 * 1000).toISOString();
+      const yesterday = new Date(new Date() - 24 * 60 * 60 * 1000).toISOString();
       stubs.spaceContext.getData.withArgs('activatedAt').returns(yesterday);
       this.compile();
       expect(controller.showNote).toBe(true);

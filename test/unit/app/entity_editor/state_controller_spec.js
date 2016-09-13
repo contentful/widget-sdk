@@ -1,10 +1,10 @@
 'use strict';
 
 describe('entityEditor/StateController', function () {
-  var $q;
+  let $q;
 
   beforeEach(function () {
-    var closeStateSpy = this.closeStateSpy = sinon.spy();
+    const closeStateSpy = this.closeStateSpy = sinon.spy();
 
     module('contentful/test', function ($provide) {
       $provide.value('navigation/closeState', closeStateSpy);
@@ -12,9 +12,9 @@ describe('entityEditor/StateController', function () {
 
     $q = this.$inject('$q');
 
-    var cfStub = this.$inject('cfStub');
-    var space = cfStub.space('spaceid');
-    var entry = cfStub.entry(space, 'entryid', 'typeid');
+    const cfStub = this.$inject('cfStub');
+    const space = cfStub.space('spaceid');
+    const entry = cfStub.entry(space, 'entryid', 'typeid');
 
 
     this.rootScope = this.$inject('$rootScope');
@@ -32,7 +32,7 @@ describe('entityEditor/StateController', function () {
     this.entity = entry;
     this.notify = {};
 
-    var $controller = this.$inject('$controller');
+    const $controller = this.$inject('$controller');
     this.controller = $controller('entityEditor/StateController', {
       $scope: this.scope,
       notify: this.notify,
@@ -232,7 +232,7 @@ describe('entityEditor/StateController', function () {
      * directive.
      */
     function OtDoc (data) {
-      var snapshot = _.cloneDeep(data);
+      const snapshot = _.cloneDeep(data);
       return {
         getValueAt: function (path) {
           return dotty.get(snapshot, path);

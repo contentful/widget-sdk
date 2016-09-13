@@ -10,7 +10,7 @@ describe('The Locale list directive', function () {
     this.compileElement = null;
     this.$q = this.$inject('$q');
 
-    var locales = [
+    const locales = [
       {
         getId: sinon.stub().returns(1),
         getName: sinon.stub().returns('English'),

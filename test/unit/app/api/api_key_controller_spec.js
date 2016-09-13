@@ -2,14 +2,14 @@
 
 describe('API Key Controller', function () {
 
-  var spaceContextStub = { space: {} };
+  const spaceContextStub = { space: {} };
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.value('spaceContext', spaceContextStub);
     });
-    var $controller = this.$inject('$controller');
-    var $rootScope = this.$inject('$rootScope');
+    const $controller = this.$inject('$controller');
+    const $rootScope = this.$inject('$rootScope');
     this.scope = $rootScope.$new();
     $controller('ApiKeyController as controller', { $scope: this.scope });
 

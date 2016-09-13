@@ -65,7 +65,7 @@ describe('Content Type Field Controller', function () {
       });
 
       it('shows notification when marking title field as ' + prop, function () {
-        var dialogs = this.$inject('ContentTypeFieldController/dialogs');
+        const dialogs = this.$inject('ContentTypeFieldController/dialogs');
         dialogs.openDisallowDialog = sinon.spy();
         this.field[prop] = false;
         this.contentType.data.displayField = this.field.id;
@@ -91,28 +91,28 @@ describe('Content Type Field Controller', function () {
     it('is not shown if field cannot be title', function () {
       this.field.type = 'Number';
       this.createFieldElements();
-      var setEntryButton = this.fieldElement.find('[role=menuitem]:contains(Set field as Entry title)');
+      const setEntryButton = this.fieldElement.find('[role=menuitem]:contains(Set field as Entry title)');
       expect(setEntryButton.length).toBe(0);
     });
 
     it('is not shown if field is title', function () {
       this.contentType.data.displayField = this.field.id;
       this.$apply();
-      var setEntryButton = this.fieldElement.find('[role=menuitem]:contains(Set field as Entry title)');
+      const setEntryButton = this.fieldElement.find('[role=menuitem]:contains(Set field as Entry title)');
       expect(setEntryButton.length).toBe(0);
     });
 
     it('is not shown if field is disabled', function () {
       this.field.disabled = true;
       this.$apply();
-      var setEntryButton = this.fieldElement.find('[role=menuitem]:contains(Set field as Entry title)');
+      const setEntryButton = this.fieldElement.find('[role=menuitem]:contains(Set field as Entry title)');
       expect(setEntryButton.length).toBe(0);
     });
 
     it('is not shown if field is omitted', function () {
       this.field.omitted = true;
       this.$apply();
-      var setEntryButton = this.fieldElement.find('[role=menuitem]:contains(Set field as Entry title)');
+      const setEntryButton = this.fieldElement.find('[role=menuitem]:contains(Set field as Entry title)');
       expect(setEntryButton.length).toBe(0);
     });
   });
@@ -124,7 +124,7 @@ describe('Content Type Field Controller', function () {
       this.ctEditorController.getPublishedField = this.getPublishedField;
 
       this.click = function () {
-        var deleteButton = this.fieldElement.find('[role=menuitem]:contains(Delete)');
+        const deleteButton = this.fieldElement.find('[role=menuitem]:contains(Delete)');
         deleteButton.click();
         this.$apply();
       };
@@ -139,7 +139,7 @@ describe('Content Type Field Controller', function () {
     });
 
     it('deletes a field if field is not published', function () {
-      var removeField = sinon.stub();
+      const removeField = sinon.stub();
       this.ctEditorController.removeField = removeField;
       this.click();
       sinon.assert.called(removeField);
@@ -155,7 +155,7 @@ describe('Content Type Field Controller', function () {
     it('asks about saving pending changes', function () {
       this.field.omitted = true;
       this.getPublishedField.returns(_.defaults({omitted: false}, this.field));
-      var save = sinon.spy();
+      const save = sinon.spy();
       this.scope.actions = {save: {execute: save}};
       this.dialogs.openSaveDialog = sinon.stub().resolves();
       this.click();

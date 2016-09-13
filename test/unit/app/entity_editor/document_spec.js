@@ -32,7 +32,7 @@ describe('entityEditor/Document', function () {
     spaceContext.docConnection = this.docConnection;
 
     this.connectAndOpen = function (data) {
-      var doc = new OtDoc(_.cloneDeep(data || this.entity.data));
+      const doc = new OtDoc(_.cloneDeep(data || this.entity.data));
       this.docLoader.doc.set(DocLoad.Doc(doc));
       this.$apply();
       return doc;
@@ -54,8 +54,8 @@ describe('entityEditor/Document', function () {
 
     this.contentType = {data: {}};
 
-    var $controller = this.$inject('$controller');
-    var $rootScope = this.$inject('$rootScope');
+    const $controller = this.$inject('$controller');
+    const $rootScope = this.$inject('$rootScope');
 
     scope = $rootScope.$new();
     scope.contentType = {data: {fields: []}};
@@ -112,7 +112,7 @@ describe('entityEditor/Document', function () {
   describe('update entity data on "change" event', function () {
 
     beforeEach(function () {
-      var moment = this.$inject('moment');
+      const moment = this.$inject('moment');
       this.clock = sinon.useFakeTimers(1234, 'Date');
       this.now = moment();
 
@@ -137,7 +137,7 @@ describe('entityEditor/Document', function () {
       sinon.assert.notCalled(this.entity.update);
       this.fireChange();
       sinon.assert.calledOnce(this.entity.update);
-      var data = this.entity.data;
+      const data = this.entity.data;
       expect(data).not.toBe(this.doc.doc.snapshot);
       expect(_.omit(data, ['sys'])).toLookEqual(_.omit(this.doc.doc.snapshot, ['sys']));
     });
@@ -227,7 +227,7 @@ describe('entityEditor/Document', function () {
 
   describe('#getValueAt()', function () {
     it('gets value from snapshot if doc is connected', function () {
-      var doc = this.connectAndOpen();
+      const doc = this.connectAndOpen();
       dotty.put(doc.snapshot, ['a', 'b'], 'VAL');
       expect(this.doc.getValueAt(['a', 'b'])).toEqual('VAL');
     });
@@ -301,25 +301,25 @@ describe('entityEditor/Document', function () {
     itRejectsWithoutDocument('removeValueAt');
 
     it('delegates to ShareJS document', function () {
-      var doc = this.connectAndOpen();
+      const doc = this.connectAndOpen();
       doc.removeAt = sinon.stub();
       this.doc.removeValueAt('PATH');
       sinon.assert.calledWith(doc.removeAt, 'PATH');
     });
 
     it('resolves when ShareJS callback is called', function () {
-      var doc = this.connectAndOpen();
+      const doc = this.connectAndOpen();
       doc.removeAt = sinon.stub().yields();
-      var resolved = sinon.stub();
+      const resolved = sinon.stub();
       this.doc.removeValueAt('PATH').then(resolved);
       this.$apply();
       sinon.assert.called(resolved);
     });
 
     it('resolves quietly when doc.removeAt() throws', function () {
-      var doc = this.connectAndOpen();
+      const doc = this.connectAndOpen();
       doc.removeAt = sinon.stub().throws('ERROR');
-      var resolved = sinon.stub();
+      const resolved = sinon.stub();
       this.doc.removeValueAt('PATH').then(resolved);
       this.$apply();
       sinon.assert.called(resolved);
@@ -485,14 +485,14 @@ describe('entityEditor/Document', function () {
   describe('#sysProperty', function () {
     it('holds entity.data.sys as initial value', function () {
       this.entity.data.sys = 'SYS';
-      var cb = sinon.spy();
+      const cb = sinon.spy();
       this.doc.sysProperty.onValue(cb);
       sinon.assert.calledWith(cb, 'SYS');
     });
 
     it('updates value when "acknowledge" event is emitted on doc', function () {
-      var doc = this.connectAndOpen();
-      var cb = sinon.spy();
+      const doc = this.connectAndOpen();
+      const cb = sinon.spy();
       this.doc.sysProperty.onValue(cb);
       cb.reset();
 
@@ -504,7 +504,7 @@ describe('entityEditor/Document', function () {
     });
 
     it('updates value when document is opened', function () {
-      var cb = sinon.spy();
+      const cb = sinon.spy();
       this.doc.sysProperty.onValue(cb);
       cb.reset();
 
@@ -538,7 +538,7 @@ describe('entityEditor/Document', function () {
     it('rejects when document is not opened', function () {
       this.docLoader.doc.set(DocLoad.None());
       this.$apply();
-      var errored = sinon.stub();
+      const errored = sinon.stub();
       this.doc[method]().catch(errored);
       this.$apply();
       sinon.assert.called(errored);

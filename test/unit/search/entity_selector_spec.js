@@ -4,12 +4,12 @@ describe('entitySelector', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    var entitySelector = this.$inject('entitySelector');
-    var modalDialog = this.$inject('modalDialog');
+    const entitySelector = this.$inject('entitySelector');
+    const modalDialog = this.$inject('modalDialog');
     modalDialog.open = sinon.stub().resolves();
 
     this.open = function (field, links) {
-      var promise = entitySelector.open(field, links);
+      const promise = entitySelector.open(field, links);
       this.$apply();
       return promise;
     };
@@ -28,7 +28,7 @@ describe('entitySelector', function () {
   }
 
   function size (min, max, key) {
-    var t = {};
+    const t = {};
     t[key || 'size'] = {min: min, max: max};
     return t;
   }
@@ -63,14 +63,14 @@ describe('entitySelector', function () {
       });
 
       it('substracts current link count from limits', function () {
-        var links = [link('a'), link('b')];
+        const links = [link('a'), link('b')];
         this.open({linkType: 'Entry', itemValidations: [size(3, 6)]}, links);
         expect(this.getConfig().min).toBe(1);
         expect(this.getConfig().max).toBe(4);
       });
 
       it('uses 1 as minimal lower bound', function () {
-        var links = [link('a'), link('b')];
+        const links = [link('a'), link('b')];
         this.open({linkType: 'Entry', itemValidations: [size(2, 6)]}, links);
         expect(this.getConfig().min).toBe(1);
         expect(this.getConfig().max).toBe(4);
@@ -99,7 +99,7 @@ describe('entitySelector', function () {
     describe('processing validations', function () {
       it('defaults to an appropriate (empty) data structure', function () {
         this.open({linkType: 'Entry'});
-        var config = this.getConfig();
+        const config = this.getConfig();
         expect(config.linkedContentTypeIds).toEqual([]);
         expect(config.linkedMimetypeGroups).toEqual([]);
         expect(config.linkedFileSize).toEqual({});
@@ -107,26 +107,26 @@ describe('entitySelector', function () {
       });
 
       it('extracts allowed linked entry content type IDs', function () {
-        var validation = {linkContentType: ['ctid1', 'ctid2']};
+        const validation = {linkContentType: ['ctid1', 'ctid2']};
         this.open({linkType: 'Entry', itemValidations: [validation]});
         expect(this.getConfig().linkedContentTypeIds).toEqual(['ctid1', 'ctid2']);
       });
 
       it('extracts allowed asset MIMEtype groups', function () {
-        var validation = {linkMimetypeGroup: ['group1', 'group2']};
+        const validation = {linkMimetypeGroup: ['group1', 'group2']};
         this.open({linkType: 'Asset', itemValidations: [validation]});
         expect(this.getConfig().linkedMimetypeGroups).toEqual(['group1', 'group2']);
       });
 
       it('extracts allowed asset size', function () {
-        var validation = size(100, 200, 'assetFileSize');
+        const validation = size(100, 200, 'assetFileSize');
         this.open({linkType: 'Asset', itemValidations: [validation]});
         expect(this.getConfig().linkedFileSize).toEqual({min: 100, max: 200});
       });
 
       it('extracts allowed image dimensions', function () {
-        var dimensions = _.extend(size(100, 200, 'width'), size(300, 400, 'height'));
-        var validation = {assetImageDimensions: dimensions};
+        const dimensions = _.extend(size(100, 200, 'width'), size(300, 400, 'height'));
+        const validation = {assetImageDimensions: dimensions};
         this.open({linkType: 'Asset', itemValidations: [validation]});
         expect(this.getConfig().linkedImageDimensions).toEqual({
           width: {min: 100, max: 200},
@@ -145,21 +145,21 @@ describe('entitySelector', function () {
     });
 
     it('extends query with allowed content types', function () {
-      var ext = this.qe('Entry', {linkContentType: ['ctid1', 'ctid2']});
+      const ext = this.qe('Entry', {linkContentType: ['ctid1', 'ctid2']});
       expect(ext['sys.contentType.sys.id[in]']).toBe('ctid1,ctid2');
     });
 
     it('extends query with allowed asset MIMEs', function () {
       this.$inject('mimetype').getTypesForGroup = sinon.stub().returns('mimez');
-      var ext = this.qe('Asset', {linkMimetypeGroup: ['g1', 'g2']});
+      const ext = this.qe('Asset', {linkMimetypeGroup: ['g1', 'g2']});
       expect(ext['fields.file.contentType[in]']).toBe('mimez,mimez');
     });
 
     // see "prepareQueryExtension" function in "entity_selector.js"
     xit('extends query with asset size constraints', function () {
-      var dimensions = _.extend(size(100, 200, 'width'), size(300, 400, 'height'));
-      var validations = [{assetImageDimensions: dimensions}, size(100, 200, 'assetFileSize')];
-      var ext = this.qe('Asset', validations);
+      const dimensions = _.extend(size(100, 200, 'width'), size(300, 400, 'height'));
+      const validations = [{assetImageDimensions: dimensions}, size(100, 200, 'assetFileSize')];
+      const ext = this.qe('Asset', validations);
 
       expect(Object.keys(ext).length).toBe(6);
       expect(path('size', false)).toBe(100);
@@ -188,11 +188,11 @@ describe('entitySelector', function () {
 
   describe('single CT prefetching', function () {
     it('fetches CT if a field links to a single CT', function () {
-      var ct = {};
-      var fetchStub = sinon.stub().resolves(ct);
+      const ct = {};
+      const fetchStub = sinon.stub().resolves(ct);
       this.$inject('spaceContext').fetchPublishedContentType = fetchStub;
 
-      var validation = {linkContentType: ['ctid1']};
+      let validation = {linkContentType: ['ctid1']};
       this.open({linkType: 'Entry', itemValidations: [validation]});
 
       sinon.assert.calledOnce(fetchStub.withArgs('ctid1'));
@@ -205,7 +205,7 @@ describe('entitySelector', function () {
 
     it('uses asset pseudo-CT for all assets', function () {
       this.open({linkType: 'Asset'});
-      var assetCt = this.$inject('searchQueryHelper').assetContentType;
+      const assetCt = this.$inject('searchQueryHelper').assetContentType;
       expect(this.getScope().singleContentType).toBe(assetCt);
     });
 
@@ -215,7 +215,7 @@ describe('entitySelector', function () {
     });
 
     it('sets single CT to null if there is constraint > 1', function () {
-      var validation = {linkContentType: ['ctid1', 'ctid2']};
+      const validation = {linkContentType: ['ctid1', 'ctid2']};
       this.open({linkType: 'Entry', itemValidations: [validation]});
       expect(this.getScope().singleContentType).toBe(null);
     });

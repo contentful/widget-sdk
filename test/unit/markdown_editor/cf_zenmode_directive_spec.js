@@ -1,11 +1,11 @@
 'use strict';
 
 describe('cfZenmode', function () {
-  var editor;
-  var libs = window.cfLibs.markdown;
+  let editor;
+  const libs = window.cfLibs.markdown;
 
-  var tieSpy = sinon.spy();
-  var apiMock = {
+  const tieSpy = sinon.spy();
+  const apiMock = {
     registerChild: sinon.spy(),
     syncToParent: sinon.spy(),
     getParent: function () {
@@ -20,15 +20,15 @@ describe('cfZenmode', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    var $q = this.$inject('$q');
-    var LazyLoader = this.$inject('LazyLoader');
-    var scopeProps = { zenApi: apiMock, preview: {} };
+    const $q = this.$inject('$q');
+    const LazyLoader = this.$inject('LazyLoader');
+    const scopeProps = { zenApi: apiMock, preview: {} };
 
     sinon.stub(LazyLoader, 'get', function () {
       return $q.resolve(libs);
     });
 
-    var elem = this.$compile('<cf-zenmode zen-api="zenApi" />', scopeProps);
+    const elem = this.$compile('<cf-zenmode zen-api="zenApi" />', scopeProps);
     this.scope = elem.isolateScope();
 
     // resolve lazy-load promise:
@@ -55,8 +55,8 @@ describe('cfZenmode', function () {
     this.scope.showPreview(false);
     expect(this.scope.isPreviewActive).toEqual(false);
 
-    var otherZenMode = this.$compile('<cf-zenmode zen-api="zenApi">', {zenApi: apiMock});
-    var otherScope = otherZenMode.isolateScope();
+    const otherZenMode = this.$compile('<cf-zenmode zen-api="zenApi">', {zenApi: apiMock});
+    const otherScope = otherZenMode.isolateScope();
     expect(otherScope.isPreviewActive).toEqual(false);
   });
 });

@@ -2,7 +2,7 @@
 
 describe('Asset editor controller', function () {
 
-  var scope;
+  let scope;
 
   beforeEach(function () {
     const document = sinon.stub();
@@ -17,16 +17,16 @@ describe('Asset editor controller', function () {
 
     document.returns(this.$inject('mocks/entityEditor/Document').create());
     scope = this.$inject('$rootScope').$new();
-    var accessChecker = this.$inject('accessChecker');
+    const accessChecker = this.$inject('accessChecker');
     accessChecker.canUpdateAsset = sinon.stub().returns(true);
 
-    var cfStub = this.$inject('cfStub');
-    var space = cfStub.space('testSpace');
-    var asset = cfStub.asset(space, 'testAsset', 'testType');
+    const cfStub = this.$inject('cfStub');
+    const space = cfStub.space('testSpace');
+    const asset = cfStub.asset(space, 'testAsset', 'testType');
     scope.asset = asset;
     scope.context = {};
 
-    var $controller = this.$inject('$controller');
+    const $controller = this.$inject('$controller');
     $controller('AssetEditorController', {$scope: scope});
 
     scope.validate = sinon.stub();
@@ -39,7 +39,7 @@ describe('Asset editor controller', function () {
   });
 
   it('gets a title set', function () {
-    var spaceContext = this.$inject('spaceContext');
+    const spaceContext = this.$inject('spaceContext');
     spaceContext.assetTitle = sinon.stub().returns('title');
     scope.$apply();
     expect(scope.context.title).toBe('title');
@@ -76,10 +76,10 @@ describe('Asset editor controller', function () {
     });
 
     it('shows error when asset processing fails', function () {
-      var notification = this.$inject('notification');
+      const notification = this.$inject('notification');
 
       scope.asset.process = sinon.stub().rejects();
-      var processingFailed = sinon.stub();
+      const processingFailed = sinon.stub();
       scope.$on('fileProcessingFailed', processingFailed);
       scope.$emit('fileUploaded', {fileName: ''}, {internal_code: 'en-US'});
       this.$apply();

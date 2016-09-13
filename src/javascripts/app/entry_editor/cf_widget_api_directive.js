@@ -121,7 +121,7 @@ angular.module('contentful')
    */
   function setInvalid (isInvalid) {
     $scope.fieldController.setInvalid($scope.locale.code, isInvalid);
-  };
+  }
 
   function isEditingDisabled () {
     return fieldLocale.access.disabled;

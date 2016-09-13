@@ -1,7 +1,7 @@
 'use strict';
 
 describe('logger service', function () {
-  var step = 0;
+  let step = 0;
 
   beforeEach(function () {
     module('contentful/test');
@@ -34,7 +34,7 @@ describe('logger service', function () {
   });
 
   it('logs exceptions', function () {
-    var exception = new Error();
+    const exception = new Error();
     this.logger.logException(exception, {meta: 'Data'});
     sinon.assert.calledWith(this.bugsnag.notifyException,
       exception, null, sinon.match({meta: 'Data'}), 'error');
@@ -99,7 +99,7 @@ describe('logger service', function () {
     describe('augmenting metadata', function () {
       it('adds params', function () {
         this.logger.logError('error', {groupingHash: 'grp'});
-        var actual = this.bugsnag.notify.args[0][2];
+        const actual = this.bugsnag.notify.args[0][2];
         expect(actual.params.spaceId).toBe('123456');
         expect(actual.params.state).toBe('some.state.name');
         expect(actual.groupingHash).toBe('grp');
@@ -108,47 +108,47 @@ describe('logger service', function () {
       });
 
       it('preparses the data property', function () {
-        var data = {foo: {bar: {}}};
+        const data = {foo: {bar: {}}};
         data.foo.bar.baz = data;
         this.logger.logError('error', {data: data});
-        var actual = this.bugsnag.notify.args[0][2];
+        const actual = this.bugsnag.notify.args[0][2];
         expect(actual.data).toEqual({foo: {bar: {baz: '[Circular ~]'}}});
       });
     });
   });
 
-  var SOME_OBJECT = uniqueObject();
-  var SERVER_ERROR = uniqueObject({
+  const SOME_OBJECT = uniqueObject();
+  const SERVER_ERROR = uniqueObject({
     sys: {type: 'Error'}
   });
-  var SERVER_ERROR_WITH_DETAILS = uniqueObject({
+  const SERVER_ERROR_WITH_DETAILS = uniqueObject({
     sys: SERVER_ERROR.sys,
     details: uniqueObject()
   });
-  var SERVER_ERROR_WITH_DETAILS_REPLACED =
+  const SERVER_ERROR_WITH_DETAILS_REPLACED =
     _.extend({}, SERVER_ERROR_WITH_DETAILS, {details: '[@ERROR_DETAILS tab]'});
-  var SERVER_REQUEST = uniqueObject({
+  const SERVER_REQUEST = uniqueObject({
     headers: uniqueObject({
       Authorization: 'bearer TOKEN'
     })
   });
-  var SERVER_REQUEST_WITH_TOKEN_REPLACED = _.cloneDeep(SERVER_REQUEST);
+  const SERVER_REQUEST_WITH_TOKEN_REPLACED = _.cloneDeep(SERVER_REQUEST);
   SERVER_REQUEST_WITH_TOKEN_REPLACED.headers.Authorization = '[SECRET]';
-  var RESPONSE = uniqueObject({
+  const RESPONSE = uniqueObject({
     body: SERVER_ERROR_WITH_DETAILS,
     request: SERVER_REQUEST
   });
-  var TRANSFORMED_RESPONSE = _.extend({}, RESPONSE, {
+  const TRANSFORMED_RESPONSE = _.extend({}, RESPONSE, {
     body: SERVER_ERROR_WITH_DETAILS_REPLACED,
     request: SERVER_REQUEST_WITH_TOKEN_REPLACED
   });
 
-  var BASE_META_DATA = {
+  const BASE_META_DATA = {
     groupingHash: jasmine.any(String),
     params: jasmine.any(Object)
   };
 
-  var SERVER_LOGGING_CASES = {
+  const SERVER_LOGGING_CASES = {
     'response with error in “body” and additional data for some “FOO” tab': {
       data: {
         error: RESPONSE,
@@ -191,7 +191,7 @@ describe('logger service', function () {
   };
 
   _.each(SERVER_LOGGING_CASES, function (testCase, descriptionMsg) {
-    var msg = ' for ' + descriptionMsg;
+    const msg = ' for ' + descriptionMsg;
 
     describe('#logServerError()' + msg, testServerErrorLogging.bind(
       null, 'logServerError', 'Error', testCase));
@@ -201,23 +201,23 @@ describe('logger service', function () {
   });
 
   function testServerErrorLogging (fnName, severity, testCase) {
-    var severityLC = severity.toLowerCase();
+    const severityLC = severity.toLowerCase();
 
     beforeEach(function () {
-      var metaData = testCase.data;
+      const metaData = testCase.data;
       this.logger[fnName]('LOG_MSG', metaData);
       this.transformedData = this.bugsnag.notify.firstCall.args[2];
     });
 
     it('logs a server ' + severityLC, function () {
-      var loggingType = 'Logged Server ' + severity;
+      const loggingType = 'Logged Server ' + severity;
       sinon.assert.calledOnce(this.bugsnag.notify);
       sinon.assert.calledWithExactly(this.bugsnag.notify,
         loggingType, 'LOG_MSG', sinon.match.object, severityLC);
     });
 
     _.each(testCase.expected, function (value, name) {
-      var tabName = name.replace(/([A-Z])/g, ' $1').toUpperCase();
+      const tabName = name.replace(/([A-Z])/g, ' $1').toUpperCase();
 
       describe('“' + tabName + '” tab on Bugsnag', function () {
         it('will be present', function () {
@@ -225,14 +225,14 @@ describe('logger service', function () {
         });
 
         it('has transformed data as expected', function () {
-          var tabData = this.transformedData[name];
+          const tabData = this.transformedData[name];
           expect(tabData).toEqual(value);
         });
       });
     });
 
     it('transforms all metaData as expected', function () {
-      var expectedMetaData = jasmine.objectContaining(
+      const expectedMetaData = jasmine.objectContaining(
         _.extend({}, BASE_META_DATA, testCase.expected));
 
       expect(this.transformedData).toEqual(expectedMetaData);
@@ -247,7 +247,7 @@ describe('logger service', function () {
   }
 
   function uniqueObject (obj) {
-    var o = {};
+    const o = {};
     o['unique_property_' + (++step)] = 'unique property value ' + step;
     return _.extend(o, obj);
   }
