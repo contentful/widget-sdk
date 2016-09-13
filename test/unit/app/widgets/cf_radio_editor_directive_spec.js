@@ -42,7 +42,7 @@ describe('cfRadioEditor Directive', function () {
     fieldApi.validations = [{in: ['initial']}];
     fieldApi.onValueChanged.yields('initial');
     var element = this.compile();
-    expect(element.find('input:checked').parent().text()).toEqual('initial');
+    expect(element.find('input:checked').next()[0].firstChild.nodeValue).toEqual('initial');
   });
 
   it('selects nothing when field data is undefined', function () {
@@ -58,7 +58,7 @@ describe('cfRadioEditor Directive', function () {
 
     fieldApi.onValueChanged.yield('value');
     this.$apply();
-    expect(element.find('input:checked').parent().text()).toEqual('value');
+    expect(element.find('input:checked').next()[0].firstChild.nodeValue).toEqual('value');
   });
 
   it('is disbled when widgetApi emits disabled event', function () {
