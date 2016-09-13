@@ -41,9 +41,16 @@ angular.module('cf.app')
       $document[0].title = label || 'Contentful';
     });
 
+    $rootScope.$on('$stateChangeSuccess', stateChangeSuccessHandler);
     $rootScope.$on('$stateChangeStart', stateChangeStartHandler);
     $rootScope.$on('$stateChangeError', stateChangeErrorHandler);
     $rootScope.$on('$stateNotFound', stateChangeErrorHandler);
+  }
+
+  function stateChangeSuccessHandler (_event, toState, toStateParams) {
+    logger.leaveBreadcrumb('Enter state', _.extend({
+      state: toState
+    }, toStateParams));
   }
 
   function stateChangeStartHandler (event, toState, toStateParams, fromState, fromStateParams) {

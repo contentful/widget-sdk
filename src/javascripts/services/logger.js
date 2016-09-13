@@ -320,8 +320,32 @@ angular.module('contentful')
         logToConsole(type, severity, message, augmentedMetadata);
       }
       bugsnag.notify(type, message, augmentedMetadata, severity);
-    }
+    },
+
+    leaveBreadcrumb: leaveBreadcrumb
   };
+
+
+  /**
+   * @ngdoc method
+   * @name logger#leaveBreadcrumb
+   * @description
+   * Records an event.
+   *
+   * The event trail is shown on bugsnag when an error occured.
+   *
+   * Note that the data object should only be one level deep and the
+   * object’s values are limited to 140 characters each.
+   *
+   * https://docs.bugsnag.com/platforms/browsers/#leaving-breadcrumbs
+   *
+   * @param {string} name
+   * @param {object} data
+   */
+  function leaveBreadcrumb (name, data) {
+    bugsnag.leaveBreadcrumb(name, data);
+  }
+
 
   function logToConsole (type, severity, message, metadata) {
     message = type + ': ' + message;
