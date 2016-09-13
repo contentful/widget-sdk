@@ -46,7 +46,9 @@ angular.module('cf.data')
     return {
       doc: docLoad,
       destroy: function () {
-        closeCurrent();
+        if (closeCurrent) {
+          closeCurrent();
+        }
         dead.emit();
         dead.end();
       }
