@@ -309,14 +309,6 @@ src/javascripts/account/cf_account_view_directive.js
 src/javascripts/account/iframe_channel.js
 src/javascripts/contentful.js
 src/javascripts/filters.js
-src/javascripts/states/account.js
-src/javascripts/states/base.js
-src/javascripts/states/config.js
-src/javascripts/states/content_types.js
-src/javascripts/states/settings.js
-src/javascripts/states/settings_roles.js
-src/javascripts/states/settings_users.js
-src/javascripts/states/states.js
 src/javascripts/webhooks/webhook_call_status_directive.js
 src/javascripts/webhooks/webhook_editor_directive.js
 src/javascripts/webhooks/webhook_headers_directive.js

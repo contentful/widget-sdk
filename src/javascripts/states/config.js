@@ -29,7 +29,7 @@ angular.module('contentful')
     $get: function () { return stateConfig; }
   };
 
-  /**
+  /*
    * @ngdoc method
    * @name states/config#init
    * @description
@@ -81,4 +81,3 @@ angular.module('contentful')
     return _.omit(state, VIEW_PROPERTIES);
   }
 }]);
-
