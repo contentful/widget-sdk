@@ -1,5 +1,11 @@
 include ../field_editor.mixins.jade
 
+mixin clear-button
+  button.cfnext-btn-link.radio-editor__clear(
+    ng-click="clear($event)"
+    ng-disabled="isDisabled")
+    | Clear
+
 +predefined-values-warning(ng-if="misconfigured")
 
 div.radio-editor__options(
@@ -14,3 +20,7 @@ div.radio-editor__options(
       ng-disabled="isDisabled")
     span.radio-editor__label
       | {{option.label}}
+      span(ng-if="!horizontalLayout && data.selected === option.value")
+        +clear-button
+  span(ng-if="horizontalLayout && data.selected !== undefined")
+    +clear-button

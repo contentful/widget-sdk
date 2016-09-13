@@ -8,11 +8,10 @@ describe('Locale List Controller', function () {
     this.apiErrorHandler = this.$inject('ReloadNotification').apiErrorHandler;
 
     this.scope.context = {};
-    this.scope.spaceContext = {
-      space: {
-        getLocales: sinon.stub().returns(this.$q.resolve({})),
-        getOrganizationId: sinon.stub()
-      }
+
+    this.$inject('spaceContext').space = this.space = {
+      getLocales: sinon.stub().resolves({}),
+      getOrganizationId: sinon.stub()
     };
 
     this.createController = function () {
@@ -27,7 +26,7 @@ describe('Locale List Controller', function () {
     });
 
     it('calls locales getter', function () {
-      sinon.assert.called(this.scope.spaceContext.space.getLocales);
+      sinon.assert.called(this.space.getLocales);
     });
 
     it('places locales on scope', function () {
@@ -37,7 +36,7 @@ describe('Locale List Controller', function () {
 
   describe('refreshing locales fails', function () {
     beforeEach(function () {
-      this.scope.spaceContext.space.getLocales.returns(this.$q.reject({statusCode: 500}));
+      this.space.getLocales.returns(this.$q.reject({statusCode: 500}));
       this.createController();
     });
 

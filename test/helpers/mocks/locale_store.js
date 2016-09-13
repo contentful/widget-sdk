@@ -29,7 +29,7 @@ angular.module('contentful/mocks')
   var createBase = $injector.get('TheLocaleStore/implementation').create;
   var TheStore = $injector.get('TheStore');
   var locales = [
-    {code: 'en', internal_code: 'en-internal', name: 'English'},
+    {code: 'en', internal_code: 'en-internal', name: 'English', default: true},
     {code: 'de', internal_code: 'de-internal', name: 'German'}
   ];
 

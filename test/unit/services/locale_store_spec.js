@@ -26,14 +26,10 @@ describe('TheLocaleStore', function () {
     var privateLocales;
     beforeEach(function () {
       privateLocales = [
-        { code: 'en-US', internal_code: 'en-US' },
+        { code: 'en-US', internal_code: 'en-US', default: true },
         { code: 'de-DE', internal_code: 'de-DE' }
       ];
       this.space.getPrivateLocales = sinon.stub().returns(privateLocales);
-      this.space.getDefaultLocale  = sinon.stub().returns({
-        code: 'en-US',
-        internal_code: 'en-US'
-      });
 
       this.theLocaleStore.refresh();
     });
@@ -42,8 +38,8 @@ describe('TheLocaleStore', function () {
       expect(this.theLocaleStore.getPrivateLocales()).toEqual(privateLocales);
     });
 
-    it('gets default locale', function() {
-      expect(this.theLocaleStore.getDefaultLocale()).toEqual(this.space.getDefaultLocale());
+    it('gets default locale', function () {
+      expect(this.theLocaleStore.getDefaultLocale()).toEqual(this.space.getPrivateLocales()[0]);
     });
 
     it('gets active locale states', function () {
@@ -51,14 +47,14 @@ describe('TheLocaleStore', function () {
       expect(this.theLocaleStore.isLocaleActive({internal_code: 'de-DE'})).toBe(false);
     });
 
-    it('gets updated active locales', function() {
+    it('gets updated active locales', function () {
       expect(this.theLocaleStore.getActiveLocales()).toEqual([
-        { code: 'en-US', internal_code: 'en-US' }
+        { code: 'en-US', internal_code: 'en-US', default: true }
       ]);
     });
 
-    describe('changes active locales', function() {
-      beforeEach(function() {
+    describe('changes active locales', function () {
+      beforeEach(function () {
         this.theLocaleStore.setActiveLocales([
           {internal_code: 'en-US'},
           {internal_code: 'de-DE'}
@@ -70,9 +66,9 @@ describe('TheLocaleStore', function () {
         expect(this.theLocaleStore.isLocaleActive({internal_code: 'de-DE'})).toBe(true);
       });
 
-      it('gets updated active locales', function() {
+      it('gets updated active locales', function () {
         expect(this.theLocaleStore.getActiveLocales()).toEqual([
-          { code: 'en-US', internal_code: 'en-US' },
+          { code: 'en-US', internal_code: 'en-US', default: true },
           { code: 'de-DE', internal_code: 'de-DE' }
         ]);
       });
@@ -122,7 +118,7 @@ describe('TheLocaleStore', function () {
     var notSaved = {internal_code: 'bb', code: 'nosave', contentManagementApi: true};
     var deLocale = {internal_code: 'cc', code: 'de-DE', contentManagementApi: true};
 
-    function k(id) { return 'activeLocalesForSpace.' + id; }
+    function k (id) { return 'activeLocalesForSpace.' + id; }
 
     it('gets different stores for different spaces', function () {
       var test = function (id) {
