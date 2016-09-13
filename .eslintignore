@@ -46,7 +46,6 @@ test/unit/forms/ng_model_spec.js
 test/unit/forms/ng_no_form_spec.js
 test/unit/navigator/leave_editor_confirmation_spec.js
 test/unit/navigator/confirm_leave_editor_spec.js
-test/unit/navigator/state_change_handlers_spec.js
 test/unit/services/assert_spec.js
 test/unit/services/call_buffer_spec.js
 test/unit/services/contentful_client_spec.js
@@ -286,7 +285,6 @@ src/javascripts/forms/errors.js
 src/javascripts/forms/validation.js
 src/javascripts/navigation/confirm_leave_editor.js
 src/javascripts/navigation/close_state.js
-src/javascripts/navigation/state_change_handlers.js
 src/javascripts/ui/cf_ui_tab.js
 src/javascripts/ui/cf_ui_hint.js
 src/javascripts/ui/context_menu.js
