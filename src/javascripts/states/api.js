@@ -83,7 +83,6 @@ angular.module('contentful')
     name: 'keys',
     abstract: true,
     url: '/keys',
-    template: '<ui-view/>',
     children: [keyList, newKey, keyDetail]
   };
 
@@ -91,10 +90,7 @@ angular.module('contentful')
     name: 'api',
     url: '/api',
     abstract: true,
-    template: '<ui-view/>',
-    children: [home, cdaKeys, cmaKeys, contentModel],
-    controller: 'ApiKeyController',
-    controllerAs: 'apiKeyController'
+    children: [home, cdaKeys, cmaKeys, contentModel]
   };
 
   function makeApiKeyEditorState (isNew) {

@@ -5,6 +5,7 @@ describe('API key editor controller', function () {
   let scope, stubs, $q, $rootScope;
   let apiKeyEditorCtrl;
   let apiKey;
+  let getDeliveryKeysStub;
 
   beforeEach(function () {
     module('contentful/test', function ($provide, environment) {
@@ -39,7 +40,8 @@ describe('API key editor controller', function () {
 
       spaceContext.space = {
         getId: stubs.spaceGetId,
-        createPreviewApiKey: stubs.createPreviewApiKey
+        createPreviewApiKey: stubs.createPreviewApiKey,
+        getDeliveryApiKeys: getDeliveryKeysStub = sinon.stub()
       };
 
       scope.context = {};
@@ -51,9 +53,6 @@ describe('API key editor controller', function () {
         save: sinon.stub()
       };
       scope.apiKey = apiKey;
-      scope.apiKeyController = {
-        getApiKeyList: sinon.stub()
-      };
       stubs.createPreviewApiKey.returns($q.defer().promise);
 
       apiKeyEditorCtrl = $controller('ApiKeyEditorController', {$scope: scope});
@@ -167,7 +166,7 @@ describe('API key editor controller', function () {
     });
 
     it('updates API key list', function () {
-      sinon.assert.calledOnce(scope.apiKeyController.getApiKeyList);
+      sinon.assert.calledOnce(getDeliveryKeysStub);
     });
   });
 

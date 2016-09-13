@@ -1,6 +1,8 @@
 'use strict';
 
 angular.module('contentful')
+
+// TODO this should be "data/" service
 .controller('ApiKeyController', ['$injector', function ($injector) {
 
   var spaceContext = $injector.get('spaceContext');

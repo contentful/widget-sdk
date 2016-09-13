@@ -14,6 +14,8 @@ angular.module('contentful')
  */
 .provider('states/config', ['$stateProvider', function ($stateProvider) {
 
+  var VIEW_PROPERTIES = ['controller', 'controllerAs', 'template', 'templateProvider'];
+
   // Collection of registered services
   var states = [];
 
@@ -43,7 +45,7 @@ angular.module('contentful')
    * @ngdoc method
    * @name states/config#init
    * @description
-   * Register a top-level state. Recursivle adds states in the
+   * Register a top-level state. Recursively adds states in the
    * `children` property.
    *
    * @param {object} state
@@ -53,7 +55,8 @@ angular.module('contentful')
   }
 
   function addChildren (parentName, children) {
-    _.forEach(children, function (state) {
+    children.forEach(function (state) {
+      state = useContentView(state);
       var children = state.children;
       var name;
       if (parentName) {
@@ -69,6 +72,13 @@ angular.module('contentful')
         addChildren(name, children);
       }
     });
+  }
+
+  function useContentView (state) {
+    state.views = state.views || {};
+    state.views['content@'] = state.views['content@'] || _.pick(state, VIEW_PROPERTIES);
+
+    return _.omit(state, VIEW_PROPERTIES);
   }
 }]);
 

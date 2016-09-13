@@ -13,12 +13,15 @@ angular.module('contentful')
   var closeState = $injector.get('navigation/closeState');
   var sdkInfoSupplier = $injector.get('sdkInfoSupplier');
   var analytics = $injector.get('analytics');
+  var $controller = $injector.get('$controller');
 
   var notify = notifier(function getTitle () {
     return truncate($scope.apiKey.getName(), 50);
   });
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator(save);
+
+  $scope.apiKeyController = $controller('ApiKeyController');
 
   $scope.isReadOnly = function () { return !accessChecker.canModifyApiKeys(); };
 

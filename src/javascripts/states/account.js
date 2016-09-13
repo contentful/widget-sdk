@@ -8,24 +8,22 @@ angular.module('contentful')
 .factory('states/account', ['$injector', function ($injector) {
   var base = $injector.get('states/base');
 
+  var pathSuffix = base({
+    name: 'pathSuffix',
+    url: '/{pathSuffix:PathSuffix}',
+    label: 'Account',
+    template: '<cf-account-view />',
+    controller: ['$scope', function ($scope) {
+      $scope.context = {};
+    }]
+  });
+
   return {
     name: 'account',
     url: '/account',
     abstract: true,
-    views: {
-      'content': base({
-        template: '<cf-account-view />',
-        controller: ['$scope', function ($scope) {
-          $scope.context = {};
-        }]
-      })
-    },
     onEnter: ['TheAccountView', function (view) { view.enter(); }],
     onExit: ['TheAccountView', function (view) { view.exit(); }],
-    children: [{
-      name: 'pathSuffix',
-      url: '/{pathSuffix:PathSuffix}',
-      label: 'Account'
-    }]
+    children: [pathSuffix]
   };
 }]);

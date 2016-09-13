@@ -27,7 +27,6 @@ angular.module('contentful')
       }]
     },
     views: {
-      'content': { template: '<ui-view>' },
       'main-nav-bar': { template: '<cf-main-nav-bar>' }
     },
     children: [newSpace, $injector.get('states/spaces/detail')]
@@ -66,9 +65,7 @@ angular.module('contentful')
     templateProvider: ['space', 'sectionAccess', function (space, sectionAccess) {
       if (space.isHibernated()) {
         return JST.cf_space_hibernation_advice();
-      } else if (sectionAccess.hasAccessToAny()) {
-        return '<ui-view></ui-view>';
-      } else {
+      } else if (!sectionAccess.hasAccessToAny()) {
         return JST.cf_no_section_available();
       }
     }],

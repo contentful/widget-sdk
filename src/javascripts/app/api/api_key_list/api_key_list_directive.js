@@ -17,8 +17,11 @@ function ApiKeyListController ($scope, $injector) {
   var accessChecker = $injector.get('accessChecker');
   var Command = $injector.get('command');
   var TheAccountView = $injector.get('TheAccountView');
+  var $controller = $injector.get('$controller');
 
   var disableCreateApiKey = accessChecker.shouldDisable('createApiKey');
+
+  $scope.apiKeyController = $controller('ApiKeyController');
 
   $scope.showCreateApiKey = !accessChecker.shouldHide('createApiKey');
 
