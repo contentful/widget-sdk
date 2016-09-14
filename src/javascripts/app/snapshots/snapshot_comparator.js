@@ -19,6 +19,7 @@ angular.module('cf.app')
   var modalDialog = require('modalDialog');
   var $state = require('$state');
   var $timeout = require('$timeout');
+  var localeStore = require('TheLocaleStore');
 
   $scope.context.title = spaceContext.entryTitle($scope.entry);
   $scope.otDoc = SnapshotDoc.create(dotty.get($scope, 'entry.data', {}));
@@ -32,6 +33,15 @@ angular.module('cf.app')
   var fields = contentTypeData.fields;
   $scope.fields = DataFields.create(fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);
+
+  $scope.changed = _.transform(contentTypeData.fields, function (acc, field) {
+    _.transform(localeStore.getPrivateLocales(), function (acc, locale) {
+      var path = ['fields', field.id, locale.internal_code];
+      if (!_.isEqual($scope.otDoc.getValueAt(path), $scope.snapshotDoc.getValueAt(path))) {
+        acc[path.join('.')] = true;
+      }
+    }, acc);
+  }, {});
 
   function select () {
     return modalDialog.open({

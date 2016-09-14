@@ -55,11 +55,15 @@
   &:first-child
     border-right: 1px solid $colors.element-darkest
 
-.snapshot-comparator__field-locale-overlay
+.snapshot-comparator__overlay-different,
+.snapshot-comparator__overlay-identical
   z-index: 99999
-  background: rgba(255, 255, 255, 0.6)
+  background: rgba(0, 0, 0, 0)
   position: absolute
   top: 0
   left: 0
   right: 0
   bottom: 0
+
+.snapshot-comparator__overlay-identical
+  background: rgba(255, 255, 255, 0.75)

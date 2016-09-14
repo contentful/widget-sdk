@@ -31,7 +31,8 @@ header.workbench-header
     ng-repeat="widget in widgets"
     ng-controller="SnapshotFieldController as fieldController")
     .snapshot-comparator__locale(
-      ng-repeat="locale in locales track by locale.internal_code")
+      ng-repeat="locale in locales track by locale.internal_code"
+      ng-init="path = ['fields', field.id, locale.internal_code].join('.')")
 
       .snapshot-comparator__cell(
         ng-controller="FieldLocaleController as fieldLocale"
@@ -44,4 +45,5 @@ header.workbench-header
         +snapshot-field-title
         cf-widget-renderer(cf-widget-api)
 
-      .snapshot-comparator__field-locale-overlay
+      .snapshot-comparator__overlay-different(ng-if="changed[path]")
+      .snapshot-comparator__overlay-identical(ng-if="!changed[path]")
