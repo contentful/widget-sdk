@@ -30,8 +30,10 @@ describe('cfWidgetApi directive', function () {
         widget: this.widget,
         locale: {},
         fieldLocale: {
-          access: {},
-          doc: {},
+          access$: K.createMockProperty({}),
+          doc: {
+            sys: K.createMockProperty({})
+          },
           errors$: K.createMockProperty()
         },
         entity: this.entry,
@@ -46,14 +48,6 @@ describe('cfWidgetApi directive', function () {
     };
 
     this.widgetApi = this.getWidgetApi();
-  });
-
-  afterEach(function () {
-    this.scope.$destroy();
-    this.scope = null;
-    this.widget = null;
-    this.widgetApi = null;
-    this.getWidgetApi = null;
   });
 
   describe('#settings', function () {
@@ -88,12 +82,11 @@ describe('cfWidgetApi directive', function () {
     });
 
     describe('#onSysChanged()', function () {
-      it('calls callback if "entry.data.sys" changes', function () {
+      it('calls callback if "doc.sys" emits changes', function () {
         const cb = sinon.spy();
         this.widgetApi.entry.onSysChanged(cb);
         cb.reset();
-        this.entry.data.sys = 'new sys';
-        this.$apply();
+        this.scope.fieldLocale.doc.sys.set('new sys');
         sinon.assert.calledWithExactly(cb, 'new sys');
         sinon.assert.calledOnce(cb);
       });
@@ -112,8 +105,7 @@ describe('cfWidgetApi directive', function () {
   describe('#onIsDisabledChanged()', function () {
     it('is dispatched with initial value', function () {
       const cb = sinon.spy();
-      this.scope.fieldLocale.access.disabled = true;
-      this.$apply();
+      this.scope.fieldLocale.access$.set({disabled: true});
       this.widgetApi.field.onIsDisabledChanged(cb);
       sinon.assert.calledOnce(cb);
       sinon.assert.calledWithExactly(cb, true);
@@ -121,13 +113,11 @@ describe('cfWidgetApi directive', function () {
 
     it('is dispatched when value changes', function () {
       const cb = sinon.spy();
-      this.scope.fieldLocale.access.disabled = true;
-      this.$apply();
+      this.scope.fieldLocale.access$.set({disabled: true});
       this.widgetApi.field.onIsDisabledChanged(cb);
       cb.reset();
 
-      this.scope.fieldLocale.access.disabled = false;
-      this.$apply();
+      this.scope.fieldLocale.access$.set({});
       sinon.assert.calledOnce(cb);
       sinon.assert.calledWithExactly(cb, false);
     });
