@@ -76,9 +76,12 @@ describe('cfJsonEditor directive', function () {
 
     it('removes field value with empty content', function () {
       fieldApi.removeValue = sinon.stub();
+      this.emitContentChange('{}');
+      this.flush();
+      sinon.assert.notCalled(fieldApi.removeValue);
       this.emitContentChange('');
       this.flush();
-      sinon.assert.called(fieldApi.removeValue);
+      sinon.assert.calledOnce(fieldApi.removeValue);
     });
 
     it('does not set field value with invalid json', function () {

@@ -97,6 +97,7 @@ var src = {
     'vendor/fonts.com/*.+(woff|woff2)'
   ],
   vendorStylesheets: assertFilesExist([
+    './vendor/ui-extensions-sdk/dist/cf-extension.css',
     './vendor/font-awesome/font-awesome.css',
     // Required by gatekeeper
     './vendor/formtastic.css',

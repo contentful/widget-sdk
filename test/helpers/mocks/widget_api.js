@@ -41,9 +41,9 @@ angular.module('contentful/mocks')
         fields: {}
       },
       field: {
-        onValueChanged: sinon.stub().returns(_.noop),
+        onValueChanged: sinon.stub().returns(_.noop).yields(undefined),
         onIsDisabledChanged: sinon.stub().returns(_.noop).yields(false),
-        onSchemaErrorsChanged: sinon.stub().returns(_.noop),
+        onSchemaErrorsChanged: sinon.stub().returns(_.noop).yields(null),
         setInvalid: sinon.spy(function (isInvalid) {
           state.isInvalid = isInvalid;
         }),

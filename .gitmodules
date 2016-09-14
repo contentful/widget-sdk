@@ -8,3 +8,8 @@
 	url = git@github.com:contentful/sharejs.git
   branch = v1.3.0
   update = rebase
+[submodule "vendor/extensions"]
+	path = vendor/extensions
+	url = git@github.com:contentful/extensions.git
+  branch = master
+  update = rebase
