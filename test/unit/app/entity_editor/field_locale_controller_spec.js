@@ -18,7 +18,7 @@ describe('FieldLocaleController', function () {
       scope.validator = {
         errors$: K.createMockProperty([])
       };
-      scope.fieldLocale = $controller('FieldLocaleController', {$scope: scope});
+      scope.fieldLocale = $controller('FieldLocaleController', {$scope: scope, $attrs: {}});
       this.$apply();
       return scope;
     };

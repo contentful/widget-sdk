@@ -36,8 +36,8 @@ angular.module('contentful')
     url: '/:snapshotId',
     loadingText: 'Loading snapshot...',
     resolve: {
-      snapshot: ['$stateParams', 'data/entrySnapshots', function ($stateParams, repo) {
-        return repo.getOne($stateParams.snapshotId);
+      snapshot: ['$stateParams', 'data/entrySnapshots', 'contentType', function ($stateParams, repo, ct) {
+        return repo.getOne($stateParams.snapshotId, ct);
       }]
     },
     template: '<cf-snapshot-comparator class="workbench" />',

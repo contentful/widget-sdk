@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful')
+angular.module('cf.app')
 
 .directive('cfSnapshotComparator', [function () {
   return {

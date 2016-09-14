@@ -7,6 +7,7 @@ angular.module('cf.app')
   var $timeout = require('$timeout');
   var $q = require('$q');
   var moment = require('moment');
+  var localeStore = require('TheLocaleStore');
 
   var ITEMS = 135;
   var PER_PAGE = 40;
@@ -18,29 +19,34 @@ angular.module('cf.app')
     getList: getList
   };
 
-  function getOne (id) {
+  function getOne (id, ct) {
     var snapshot = _.find(snapshots, function (s) {
       return s.sys.id === id;
     });
-    var err = new Error('No snapshot with ID ' + id + '!');
 
-    return snapshot ? $q.resolve(snapshot) : $q.reject(err);
+    if (!snapshot) {
+      return $q.reject(new Error('No snapshot with ID ' + id + '!'));
+    }
+
+    return $timeout(300)
+    .then(getCurrentUser)
+    .then(function (user) {
+      return fakeFields(ct)(fakeSys(user)(snapshot));
+    });
   }
 
-  function getList (query) {
+  function getList (query, ct) {
     query = query || {};
     var page = query.page || 0;
     var start = page * PER_PAGE;
 
-    return $timeout(200)
+    return $timeout(300)
     .then(getCurrentUser)
     .then(function (user) {
-      var link = {sys: {type: 'Link', linkType: 'User', id: user.sys.id}};
       var result = snapshots
       .slice(start, start + PER_PAGE)
-      .map(function (s) {
-        return _.merge({sys: {createdBy: link, entryId: query.entryId}}, s);
-      });
+      .map(fakeSys(user))
+      .map(fakeFields(ct));
 
       return _.extend(result, {total: ITEMS});
     });
@@ -61,20 +67,40 @@ angular.module('cf.app')
         type: 'Snapshot',
         createdAt: moment().subtract(i, 'days').format(),
         id: 'artificial-id-' + i,
-        snapshotType: 'publication'
+        snapshotType: 'publication',
+        tmp: {i: i}
       },
-      snapshot: {
-        fields: {
-          title: {
-            'en-US': 'title of version ' + i,
-            'pl': 'Tytuł wersji numer ' + i
-          },
-          content: {
-            'en-US': 'content of version ' + i,
-            'pl': 'Zawartość wersji numer ' + i
-          }
-        }
-      }
+      snapshot: {}
     };
+  }
+
+  function fakeSys (user) {
+    var link = {sys: {type: 'Link', linkType: 'User', id: user.sys.id}};
+
+    return function (s) {
+      return _.merge({sys: {createdBy: link}}, s);
+    };
+  }
+
+  function fakeFields (ct) {
+    var fields = dotty.get(ct, 'data.fields', []);
+    var locales = localeStore.getPrivateLocales();
+
+    return function (s) {
+      s.snapshot.fields = _.transform(fields, function (acc, field) {
+        acc[field.id] = _.transform(locales, function (acc, locale) {
+          var code = locale.internal_code;
+          acc[code] = fakeContent(field, code, s.sys);
+        }, {});
+      }, {});
+
+      return s;
+    };
+  }
+
+  function fakeContent (field, code, sys) {
+    if (_.includes(['Text', 'Symbol'], field.type)) {
+      return 'Content of ' + field.apiName + ' for snapshot #' + sys.tmp.i + '. Language is ' + code + '.';
+    }
   }
 }]);
