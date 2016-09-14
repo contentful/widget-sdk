@@ -32,7 +32,7 @@ var babel = require('gulp-babel');
 var S = require('./tools/lib/stream-utils');
 var U = require('./tools/lib/utils');
 var jstConcat = require('./tasks/build-template');
-var serve = require('./tasks/serve');
+var serve = require('./tools/lib/server').serveWatch;
 var createManifestResolver = require('./tools/lib/manifest-resolver').create;
 var babelOptions = require('./tools/app-babel-options').options;
 
