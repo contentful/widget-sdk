@@ -59,6 +59,17 @@ deploy:
     skip_cleanup: true
     on:
       all_branches: true
+  - provider: s3
+    access_key_id: AKIAJHQB2MH23CVUXK6Q
+    secret_access_key:
+      secure: "DPVDc2YHfDuquRY2JxGkaNYq4j3xuhr0e+MFUIvo61zxLpXeueBLKgmG6n/bnRFGiN2vFOUi3K404/adVOH4OuQedsjOx9Ew/ubUSM582DEhmFzqSicDOJm9kTA3+9u4OA2UiKw4pdYZ+/jTqjwMzr1GLaV5RAnlH2jue/XLhcc="
+    bucket: static.cdnorigin.flinkly.com
+    region: us-east-1
+    local-dir: output/files
+    acl: public_read
+    skip_cleanup: true
+    on:
+      all_branches: true
 after_script:
   - bin/travis-run-jenkins
 
