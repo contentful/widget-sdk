@@ -1,8 +1,4 @@
-mixin snapshot-field-title
-  h3
-    | {{ field.name }}
-    span(ng-if="locales.length > 1")
-      | &#32;&ndash; {{locale.name}}
+include ./snapshot.mixin.jade
 
 header.workbench-header
   cf-breadcrumbs

@@ -5,3 +5,8 @@ mixin snapshot-author
 
 mixin snapshot-dt
   time(datetime="{{ snapshot.sys.createdAt }}" cf-relative-datetime)
+
+mixin snapshot-field-title
+  span {{ field.name }}
+  span(ng-if="locales.length > 1")
+    | &#32;&ndash; {{locale.name}}
