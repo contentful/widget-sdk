@@ -1,0 +1,46 @@
+mixin snapshot-field-title
+  h3
+    | {{ field.name }}
+    span(ng-if="locales.length > 1")
+      | &#32;&ndash; {{locale.name}}
+
+header.workbench-header
+  cf-breadcrumbs
+  cf-icon.workbench-header__icon(name="page-entries")
+  h1.workbench-header__title {{ context.title | truncate:50 }}
+
+  .workbench-header__actions
+    button.btn-primary-action(
+      type="button"
+      ui-command="save")
+      | Save changes
+    a.btn-secondary-action(
+      type="button"
+      ui-sref="^.^")
+      | Cancel
+
+.workbench-main.x--content-full-size
+  .snapshot-comparator__header
+    .snapshot-comparator__cell
+      span This is a snapshot of your entry from {{ snapshot.sys.id }}
+      button.btn-link(href="" ng-click="restore()") Restore all fields
+    .snapshot-comparator__cell
+      span This is the current state of your entry
+
+  .snapshot-comparator__field-locale(
+    ng-repeat="widget in widgets"
+    ng-controller="SnapshotFieldController as fieldController")
+    .snapshot-comparator__locale(
+      ng-repeat="locale in locales track by locale.internal_code")
+
+      .snapshot-comparator__cell(ng-init="otDoc = otDoc")
+        div(ng-controller="FieldLocaleController as fieldLocale")
+          +snapshot-field-title
+          cf-widget-renderer(cf-widget-api)
+
+      .snapshot-comparator__cell
+        div(ng-controller="FieldLocaleController as fieldLocale")
+          +snapshot-field-title
+          cf-widget-renderer(cf-widget-api)
+
+      .snapshot-comparator__field-locale-overlay

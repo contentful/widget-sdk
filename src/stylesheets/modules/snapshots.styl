@@ -24,4 +24,35 @@
     margin: 7px 0
   span
     margin-left: 10px
-    line-height: 1.1em;
+    line-height: 1.1em
+
+.snapshot-comparator__header
+  display: flex
+  background-color: $colors.element-lightest
+  border-bottom: 1px solid $colors.element-darkest
+
+  .snapshot-comparator__cell
+    display: flex
+    justify-content: space-between
+
+.snapshot-comparator__locale
+  display: flex
+  position: relative
+  border-bottom: 1px solid $colors.element-darkest
+
+.snapshot-comparator__cell
+  flex-grow: 1
+  flex-basis: 0
+  padding: 2em
+
+  &:first-child
+    border-right: 1px solid $colors.element-darkest
+
+.snapshot-comparator__field-locale-overlay
+  z-index: 99999
+  background: rgba(255, 255, 255, 0.6)
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0

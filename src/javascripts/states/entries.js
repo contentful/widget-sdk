@@ -31,9 +31,49 @@ angular.module('contentful')
     template: '<div cf-entry-list class="workbench entry-list entity-list"></div>'
   });
 
+  var compareWithCurrent = base({
+    name: 'withCurrent',
+    url: '/:snapshotId',
+    label: 'Compare snapshots',
+    loadingText: 'Loading snapshots...',
+    resolve: {
+      snapshot: function () {
+        return {sys: {id: 'some-snapshot-id'}};
+      }
+    },
+    template: '<cf-snapshot-comparator class="workbench" />',
+    controller: [
+      '$scope', 'fieldControls', 'entry', 'contentType', 'snapshot',
+      function ($scope, fieldControls, entry, contentType, snapshot) {
+        $scope.context = {ready: true};
+        $scope.widgets = fieldControls.form;
+        $scope.entry = $scope.entity = entry;
+        $scope.contentType = contentType;
+        $scope.snapshot = snapshot;
+      }
+    ]
+  });
+
+  var compare = base({
+    name: 'compare',
+    url: '/compare',
+    children: [compareWithCurrent],
+    label: 'Compare snapshots',
+    loadingText: 'Loading snapshots...',
+    controller: ['require', function (require) {
+      var snapshotRepo = require('data/entrySnapshots');
+      var $state = require('$state');
+
+      snapshotRepo.getList({}).then(function (snapshots) {
+        $state.go('.withCurrent', {snapshotId: snapshots[0].sys.id});
+      });
+    }]
+  });
+
   var detail = {
     name: 'detail',
     url: '/:entryId',
+    children: [compare],
     params: { addToContext: true, notALinkedEntity: false },
     label: 'context.title + (context.dirty ? "*" : "")',
     resolve: {

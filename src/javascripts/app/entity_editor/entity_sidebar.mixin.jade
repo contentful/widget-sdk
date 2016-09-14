@@ -116,8 +116,12 @@ mixin entity-sidebar
         ui-command="locales.changeActive")
         | Change
 
-    h2.entity-sidebar__heading Snapshots
-    cf-snapshot-list
+    div(ng-if="entity.getType() === 'Entry'")
+      h2.entity-sidebar__heading Snapshots
+      a.btn-secondary-action.x--block(
+        ui-sref=".compare"
+        ui-sref-opts="{location: false}")
+        | Open snapshots
 
     h2.entity-sidebar__heading
       | Users

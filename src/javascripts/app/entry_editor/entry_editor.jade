@@ -29,35 +29,7 @@ header.workbench-header
   .workbench-main__content
     +editor-notification
 
-    .entity-editor-form(ng-if="snapshot")
-      h1
-        | Snapshot {{ snapshot.sys.id }}&#32;
-        a(href="" ng-click="setSnapshot()") Close
-        |  |&#32;
-        a(href="" ng-click="restore()") Restore
-
-      div.entity-editor__field-group(
-        ng-repeat="widget in widgets"
-        ng-controller="EntityFieldController as fieldController")
-        div.entity-editor__field-locale(
-          ng-repeat="locale in locales track by locale.internal_code"
-          ng-controller="FieldLocaleController as fieldLocale")
-
-          div.entity-editor__field-heading
-            label(data-test-id="field-locale-label")
-              | {{ field.name }}
-              span(ng-if="locales.length > 1")
-                | &#32;&ndash; {{locale.name}}
-
-          div(style="display: flex; ")
-            div.entity-editor__control-group(style="flex-grow: 1")
-              cf-widget-renderer.entity-editor__control(cf-widget-api)
-            div.entity-editor__control-group(ng-init="compare = true" style="flex-grow: 1")
-              cf-widget-renderer.entity-editor__control(cf-widget-api)
-
-          a(href="" ng-click="restoreAtPath(field, locale)") Restore at path
-
-    form.entity-editor-form(name="entryForm" ng-if="!snapshot && snapshot !== null")
+    form.entity-editor-form(name="entryForm")
       cf-error-list.form-box-error(cf-error-path="['fields']")
       cf-entity-field(ng-repeat="widget in widgets")
 

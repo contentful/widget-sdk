@@ -103,16 +103,6 @@ angular.module('contentful')
     registerPublicationWarning: $scope.state.registerPublicationWarning
   };
 
-  if ($scope.snapshot && !$scope.compare) {
-    var fields = $scope.snapshot.snapshot.fields;
-    var value = dotty.get(fields, [ctField.apiName, $scope.locale.code]);
-    this.field.getValue = _.constant(value);
-    this.field.onValueChanged = function (cb) {
-      cb(value);
-      return _.noop;
-    };
-  }
-
   /**
    * @ngdoc method
    * @name WidgetApiController#field.setInvalid
