@@ -8,13 +8,14 @@ angular.module('contentful')
  */
 .factory('states/entries', ['require', function (require) {
   var contextHistory = require('contextHistory');
+  var spaceContext = require('spaceContext');
 
   var base = require('states/base');
   var resolvers = require('states/resolvers');
   var filterDeletedLocales = require('states/entityLocaleFilter');
 
   var listEntity = {
-    getTitle: function () { return list.label; },
+    getTitle: function () { return 'Content'; },
     link: { state: 'spaces.detail.entries.list' },
     getType: _.constant('Entries'),
     getId: _.constant('ENTRIES')
@@ -23,7 +24,6 @@ angular.module('contentful')
   var list = base({
     name: 'list',
     url: '',
-    label: 'Content',
     loadingText: 'Loading content...',
     controller: [function () {
       contextHistory.addEntity(listEntity);
@@ -34,12 +34,11 @@ angular.module('contentful')
   var compareWithCurrent = base({
     name: 'withCurrent',
     url: '/:snapshotId',
-    label: 'Compare snapshots',
-    loadingText: 'Loading snapshots...',
+    loadingText: 'Loading snapshot...',
     resolve: {
-      snapshot: function () {
-        return {sys: {id: 'some-snapshot-id'}};
-      }
+      snapshot: ['$stateParams', 'data/entrySnapshots', function ($stateParams, repo) {
+        return repo.getOne($stateParams.snapshotId);
+      }]
     },
     template: '<cf-snapshot-comparator class="workbench" />',
     controller: [
@@ -50,6 +49,18 @@ angular.module('contentful')
         $scope.entry = $scope.entity = entry;
         $scope.contentType = contentType;
         $scope.snapshot = snapshot;
+
+        contextHistory.addEntity(listEntity);
+        contextHistory.addEntity(buildEntryCrumb(entry));
+        contextHistory.addEntity({
+          getTitle: _.constant(spaceContext.entryTitle(entry)),
+          link: {
+            state: 'spaces.detail.entries.compare.withCurrent',
+            params: {snapshotId: snapshot.id}
+          },
+          getType: _.constant('SnapshotComparison'),
+          getId: _.constant(snapshot.sys.id)
+        });
       }
     ]
   });
@@ -58,8 +69,7 @@ angular.module('contentful')
     name: 'compare',
     url: '/compare',
     children: [compareWithCurrent],
-    label: 'Compare snapshots',
-    loadingText: 'Loading snapshots...',
+    loadingText: 'Loading snapshot...',
     controller: ['require', function (require) {
       var snapshotRepo = require('data/entrySnapshots');
       var $state = require('$state');
@@ -75,7 +85,6 @@ angular.module('contentful')
     url: '/:entryId',
     children: [compare],
     params: { addToContext: true, notALinkedEntity: false },
-    label: 'context.title + (context.dirty ? "*" : "")',
     resolve: {
       entry: ['$stateParams', 'space', function ($stateParams, space) {
         return space.getEntry($stateParams.entryId).then(function (entry) {
@@ -84,50 +93,26 @@ angular.module('contentful')
         });
       }],
       editingInterface: resolvers.editingInterface,
-      contentType: ['$injector', 'entry', function ($injector, entry) {
-        var spaceContext = $injector.get('spaceContext');
+      contentType: ['entry', function (entry) {
         var ctId = entry.data.sys.contentType.sys.id;
         return spaceContext.fetchPublishedContentType(ctId);
       }],
-      fieldControls: ['editingInterface', 'spaceContext', function (ei, spaceContext) {
+      fieldControls: ['editingInterface', function (ei) {
         return spaceContext.widgets.buildRenderable(ei.controls);
       }]
     },
     controller: [
       '$scope', 'require', 'entry', 'contentType', 'fieldControls',
       function ($scope, require, entry, contentType, fieldControls) {
-        var $state = require('$state');
-        var spaceContext = require('spaceContext');
-        var $stateParams = require('$stateParams');
-
-        var entryId = $stateParams.entryId;
-        var entryEntity = {};
-
-        $state.current.data = $scope.context = {};
+        require('$state').current.data = $scope.context = {};
         $scope.entry = entry;
         $scope.entity = entry;
         $scope.contentType = contentType;
         $scope.formControls = fieldControls.form;
         $scope.sidebarControls = fieldControls.sidebar;
 
-        // build entry entity
-        entryEntity.getTitle = function () {
-          var title = 'hasUnpublishedChanges' in entry && entry.hasUnpublishedChanges() ? '*' : '';
-
-          return spaceContext.entryTitle(entry) + title;
-        };
-
-        entryEntity.link = {
-          state: 'spaces.detail.entries.detail',
-          params: { entryId: entryId }
-        };
-
-        entryEntity.getType = entry.getType.bind(entry);
-
-        entryEntity.getId = _.constant(entryId);
-
         // purge context history
-        if ($stateParams.notALinkedEntity) {
+        if (require('$stateParams').notALinkedEntity) {
           contextHistory.purge();
         }
 
@@ -137,7 +122,7 @@ angular.module('contentful')
         }
 
         // add current state
-        contextHistory.addEntity(entryEntity);
+        contextHistory.addEntity(buildEntryCrumb(entry));
       }],
     template:
     '<div ' + [
@@ -154,4 +139,19 @@ angular.module('contentful')
     abstract: true,
     children: [list, detail]
   };
+
+  function buildEntryCrumb (entry) {
+    return {
+      getTitle: function () {
+        var asterisk = 'hasUnpublishedChanges' in entry && entry.hasUnpublishedChanges() ? '*' : '';
+        return spaceContext.entryTitle(entry) + asterisk;
+      },
+      link: {
+        state: 'spaces.detail.entries.detail',
+        params: { entryId: entry.getId() }
+      },
+      getType: entry.getType.bind(entry),
+      getId: _.constant(entry.getId())
+    };
+  }
 }]);

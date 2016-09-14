@@ -3,9 +3,9 @@
 angular.module('cf.app')
 
 .factory('data/entrySnapshots', ['require', function (require) {
-  var random = require('random');
   var authentication = require('authentication');
   var $timeout = require('$timeout');
+  var $q = require('$q');
   var moment = require('moment');
 
   var ITEMS = 135;
@@ -14,8 +14,18 @@ angular.module('cf.app')
   var snapshots = _.range(ITEMS).map(fakeSnapshot);
 
   return {
+    getOne: getOne,
     getList: getList
   };
+
+  function getOne (id) {
+    var snapshot = _.find(snapshots, function (s) {
+      return s.sys.id === id;
+    });
+    var err = new Error('No snapshot with ID ' + id + '!');
+
+    return snapshot ? $q.resolve(snapshot) : $q.reject(err);
+  }
 
   function getList (query) {
     query = query || {};
@@ -44,11 +54,13 @@ angular.module('cf.app')
   }
 
   function fakeSnapshot (i) {
+    i = i + 1;
+
     return {
       sys: {
         type: 'Snapshot',
         createdAt: moment().subtract(i, 'days').format(),
-        id: random.id(),
+        id: 'artificial-id-' + i,
         snapshotType: 'publication'
       },
       snapshot: {
