@@ -59,6 +59,7 @@ deploy:
     skip_cleanup: true
     on:
       all_branches: true
+  ## Deploy staging preview
   - provider: s3
     access_key_id: AKIAJHQB2MH23CVUXK6Q
     secret_access_key:
@@ -68,7 +69,18 @@ deploy:
     local-dir: output/files/staging
     acl: public_read
     skip_cleanup: true
-    on: 'public-preview/*'
+    on: 'staging-preview/*'
+  ## Deploy production preview
+  - provider: s3
+    access_key_id: AKIAITC7MCJO3VAWCEOA
+    secret_access_key:
+      secure: "G2e17qRtyDKnRhFxvucKt0AP3jPsydabJ4s0LJHTfaWd+D8YPompFU8SussNrOaUQmPi5OlBKA4fTp2XQOI4l/bLy/5Q6Z11Ihze8BVeFICgHg0pYvLrJG+id2HAn8aG0W0HbQi0x/V/7m7i+j2MeIg6taO6PodJ4j+8vNoWwwg="
+    bucket: static.cdnorigin.contentful.com
+    region: us-east-1
+    local-dir: output/files/production
+    acl: public_read
+    skip_cleanup: true
+    on: 'production-preview/*'
 after_script:
   - bin/travis-run-jenkins
 

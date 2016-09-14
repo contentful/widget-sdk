@@ -25,7 +25,7 @@ const BUILD_SRC = P.resolve('./build')
 const FILE_DIST_DEST = P.resolve('./output/files')
 
 // Destination directory for debian packages.
-const PKG_DEST = P.resolve('./output/files')
+const PKG_DEST = P.resolve('./output/package')
 
 // The name prefix for branches that should have tagged deploys to
 // staging and production.
@@ -53,7 +53,7 @@ export default function* runTravis ({branch, pr, version}) {
   }
   if (travis.isMainBranch) {
     yield* configureIndex(version, travis.targetEnv, 'build/index.html')
-    yield* createPackageDist('output/package', version)
+    yield* createPackageDist(version)
   }
 }
 
@@ -205,7 +205,7 @@ function* stripCssFingerprints (dir) {
 }
 
 function copy (src, dest) {
-  console.log('%s -> %s', P.relative('', src), P.relative('', dest))
+  console.log('%s -> %s', src, dest)
   return FS.copyAsync(src, dest)
 }
 
