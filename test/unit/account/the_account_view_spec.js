@@ -167,7 +167,7 @@ describe('TheAccountView service', function () {
     }
 
     function itGoesToTheOrganizationOf (msg, organization) {
-      describe('navigating to organization (default)', test);
+      describe('navigating to organization (default)', () => test());
 
       describe('navigating to organization (particular subpage)', () => test('foo'));
 
