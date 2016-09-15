@@ -28,10 +28,10 @@ describe('cfContentPreviewEditor directive', function () {
     $state = this.$inject('$state');
     $state.go = sinon.stub().returns();
 
-    this.setup = function (isNew) {
+    this.setup = function () {
       this.element = this.$compile('<cf-content-preview-editor />', {
         context: {
-          isNew: isNew
+          isNew: this.isNew
         }
       });
       this.scope = this.element.scope();
@@ -83,7 +83,7 @@ describe('cfContentPreviewEditor directive', function () {
       contentPreview.create.resolves({sys: {id: 'foo'}});
       spaceContext.refreshContentTypes.resolves();
       spaceContext.getFilteredAndSortedContentTypes.returns(contentTypes);
-      this.setup(true);
+      this.isNew = true;
     });
 
     it('sets default title', function () {
@@ -200,7 +200,7 @@ describe('cfContentPreviewEditor directive', function () {
       }];
       spaceContext.refreshContentTypes.resolves();
       spaceContext.getFilteredAndSortedContentTypes.returns(contentTypes);
-      this.setup(false);
+      this.isNew = false;
     });
 
     it('populates name and description', function () {
