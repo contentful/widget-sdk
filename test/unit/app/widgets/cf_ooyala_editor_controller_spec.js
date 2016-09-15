@@ -1,8 +1,8 @@
 'use strict';
 
 describe('cfOoyalaEditorController', function () {
-  var OoyalaEditorController, ooyalaClientSpy;
-  var ooyalaSearchStub, ooyalaSearchInstanceSpy;
+  let OoyalaEditorController, ooyalaClientSpy;
+  let ooyalaSearchStub, ooyalaSearchInstanceSpy;
 
   beforeEach(function () {
     module('contentful/test');
@@ -49,7 +49,7 @@ describe('cfOoyalaEditorController', function () {
 
   describe('#customAttrsForPlayerInSearchDialog', function () {
     describe('the returned object', function () {
-      var attrs;
+      let attrs;
       beforeEach(function () {
         attrs = OoyalaEditorController.customAttrsForPlayerInSearchDialog({id: 'assetId-1'});
       });
@@ -61,7 +61,7 @@ describe('cfOoyalaEditorController', function () {
   });
 
   describe('#loadingFeedbackMessage', function () {
-    var message;
+    let message;
     beforeEach(function () {
       message = OoyalaEditorController.loadingFeedbackMessage({assetId: 'assetId-1'});
     });
@@ -73,7 +73,7 @@ describe('cfOoyalaEditorController', function () {
 
   describe('#processLookupInProviderResult', function () {
     describe('the returned object', function () {
-      var video;
+      let video;
       beforeEach(function () {
         video = OoyalaEditorController.processLookupInProviderResult({embed_code: 'assetId-1', player_id: 'player-123', name: 'name-abc'});
       });
@@ -103,7 +103,7 @@ describe('cfOoyalaEditorController', function () {
   });
 
   describe('#shouldRenderVideoPlayer', function () {
-    var shouldRender;
+    let shouldRender;
     describe('when the "playerId" property is present in the given object', function () {
       beforeEach(function () {
         shouldRender = OoyalaEditorController.shouldRenderVideoPlayer({playerId: 'player-123'});
@@ -144,7 +144,7 @@ describe('cfOoyalaEditorController', function () {
 
   describe('#processSearchResults', function () {
     describe('for every search result', function () {
-      var result, descriptor;
+      let result, descriptor;
       beforeEach(function () {
         result = { embed_code: 1, duration: 99, player_id: 'player-123', name: 'name', preview_image_url: 'url' };
         descriptor = OoyalaEditorController.processSearchResults([result])[0];

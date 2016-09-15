@@ -26,15 +26,15 @@ describe('FieldLocaleController', function () {
 
   describe('#errors$ and #errors', function () {
     it('get filtered items from "validator.errors"', function () {
-      var scope = this.init();
+      const scope = this.init();
 
-      var fieldLocaleErrors = [
+      const fieldLocaleErrors = [
         {path: ['fields', 'FID']},
         {path: ['fields', 'FID', 'LID']},
         {path: ['fields', 'FID', 'LID', 'X']}
       ];
 
-      var otherErrors = [
+      const otherErrors = [
         {path: ['fields', 'FID', 'LID-2']},
         {path: ['fields', 'FID-2', 'LID']},
         {path: ['fields', 'FID-2']}
@@ -48,7 +48,7 @@ describe('FieldLocaleController', function () {
     });
 
     it('is set to "null" if no errors match', function () {
-      var scope = this.init();
+      const scope = this.init();
       scope.validator.errors$.set([{path: 'does not match'}]);
       this.$apply();
       const errorsStream = this.extractValues(scope.fieldLocale.errors$);
@@ -123,7 +123,7 @@ describe('FieldLocaleController', function () {
 
   describe('#collaborators', function () {
     it('watches "docPresence" with path', function () {
-      var scope = this.init();
+      const scope = this.init();
       this.otDoc.collaboratorsFor().set(['USER']);
       this.$apply();
       expect(scope.fieldLocale.collaborators).toEqual(['USER']);
@@ -143,37 +143,37 @@ describe('FieldLocaleController', function () {
 
     it('calls "otDoc.notifyFocus()" if set to true', function () {
       this.scope.fieldLocale.setActive(true);
-      var focus = this.otDoc.notifyFocus;
+      const focus = this.otDoc.notifyFocus;
       sinon.assert.calledWithExactly(focus, 'FID', 'LID');
     });
 
     it('calls "scope.focus.set()" if set to true', function () {
       this.scope.fieldLocale.setActive(true);
-      var setFocus = this.scope.focus.set;
+      const setFocus = this.scope.focus.set;
       sinon.assert.calledWithExactly(setFocus, 'FID');
     });
 
     it('calls "scope.focus.unset()" if set to false', function () {
       this.scope.fieldLocale.setActive(false);
-      var unsetFocus = this.scope.focus.unset;
+      const unsetFocus = this.scope.focus.unset;
       sinon.assert.calledWithExactly(unsetFocus, 'FID');
     });
   });
 
   describe('#access', function () {
-    var withEditableDoc = {};
+    const withEditableDoc = {};
     dotty.put(withEditableDoc, 'otDoc.state.editable', true);
-    var withNonEditableDoc = {};
+    const withNonEditableDoc = {};
     dotty.put(withNonEditableDoc, 'otDoc.state.editable', false);
 
     beforeEach(function () {
-      var policyAccessChecker = this.$inject('accessChecker/policy');
+      const policyAccessChecker = this.$inject('accessChecker/policy');
       policyAccessChecker.canEditFieldLocale = this.hasEditingPermission = sinon.stub();
     });
 
     it('is "disabled" and "disconnected" without connection and with permission', function () {
       this.hasEditingPermission.returns(true);
-      var scope = this.init(withNonEditableDoc);
+      const scope = this.init(withNonEditableDoc);
       expect(scope.fieldLocale.access).toEqual({
         disconnected: true,
         disabled: true
@@ -182,8 +182,8 @@ describe('FieldLocaleController', function () {
 
     it('is "disabled" and "editing_disabled" if a field is disabled', function () {
       this.hasEditingPermission.returns(true);
-      var field = {field: {disabled: true}};
-      var scope = this.init(_.extend(field, withEditableDoc));
+      const field = {field: {disabled: true}};
+      const scope = this.init(_.extend(field, withEditableDoc));
       expect(scope.fieldLocale.access).toEqual({
         editing_disabled: true,
         disabled: true
@@ -192,7 +192,7 @@ describe('FieldLocaleController', function () {
 
     it('is "disabled" and "denied" without permissions and with connection', function () {
       this.hasEditingPermission.returns(false);
-      var scope = this.init(withEditableDoc);
+      const scope = this.init(withEditableDoc);
       expect(scope.fieldLocale.access).toEqual({
         denied: true,
         disabled: true
@@ -201,7 +201,7 @@ describe('FieldLocaleController', function () {
 
     it('is "disabled" and "denied" without permissions and connection', function () {
       this.hasEditingPermission.returns(false);
-      var scope = this.init(withNonEditableDoc);
+      const scope = this.init(withNonEditableDoc);
       expect(scope.fieldLocale.access).toEqual({
         denied: true,
         disabled: true
@@ -210,7 +210,7 @@ describe('FieldLocaleController', function () {
 
     it('is "editable" with permissions and connection', function () {
       this.hasEditingPermission.returns(true);
-      var scope = this.init(withEditableDoc);
+      const scope = this.init(withEditableDoc);
       expect(scope.fieldLocale.access).toEqual({
         editable: true
       });

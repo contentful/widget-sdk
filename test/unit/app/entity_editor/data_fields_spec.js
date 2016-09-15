@@ -9,7 +9,7 @@ describe('EntityEditor/DataFields', function () {
 
   describe('#create()', function () {
     beforeEach(function () {
-      var ctFields = [
+      const ctFields = [
         {
           apiName: 'A',
           id: 'FIELD_A'
@@ -19,11 +19,11 @@ describe('EntityEditor/DataFields', function () {
         }
       ];
 
-      var createDataFields = this.$inject('EntityEditor/DataFields').create;
+      const createDataFields = this.$inject('EntityEditor/DataFields').create;
 
-      var localeStore = this.$inject('TheLocaleStore');
+      const localeStore = this.$inject('TheLocaleStore');
       localeStore.setLocales([
-        {code: 'en', internal_code: 'en-internal'},
+        {code: 'en', internal_code: 'en-internal', default: true},
         {code: 'hi', internal_code: 'hi-internal'}
       ]);
 
@@ -45,7 +45,7 @@ describe('EntityEditor/DataFields', function () {
 
     describe('#getValue()', function () {
       it('returns value of field for the default locale', function () {
-        var fieldData = this.otDoc.getValueAt(['fields']);
+        const fieldData = this.otDoc.getValueAt(['fields']);
         expect(this.fieldsApi.A.getValue())
         .toEqual(fieldData.FIELD_A['en-internal']);
         expect(this.fieldsApi.B.getValue())
@@ -53,7 +53,7 @@ describe('EntityEditor/DataFields', function () {
       });
 
       it('returns value of field if fo a given locale', function () {
-        var fieldData = this.otDoc.getValueAt(['fields']);
+        const fieldData = this.otDoc.getValueAt(['fields']);
         expect(this.fieldsApi.A.getValue('hi'))
         .toEqual(fieldData.FIELD_A['hi-internal']);
         expect(this.fieldsApi.B.getValue('hi'))
@@ -61,7 +61,7 @@ describe('EntityEditor/DataFields', function () {
       });
 
       it('throws if locale isn’t in list of active locales', function () {
-        var field = this.fieldsApi.A;
+        const field = this.fieldsApi.A;
         expect(function () {
           field.getValue('invalidLocale');
         }).toThrowError('Unknown locale "invalidLocale"');
@@ -70,7 +70,7 @@ describe('EntityEditor/DataFields', function () {
 
     describe('#onValueChanged()', function () {
       it('call callback when value at locale changes', function () {
-        var cb = sinon.spy();
+        const cb = sinon.spy();
         this.fieldsApi.A.onValueChanged('hi', cb);
         cb.reset();
         this.otDoc.valuePropertyAt(['fields', 'FIELD_A', 'hi-internal']).set('omg');
@@ -80,7 +80,7 @@ describe('EntityEditor/DataFields', function () {
       });
 
       it('call callback when value at default locale changes', function () {
-        var cb = sinon.spy();
+        const cb = sinon.spy();
         this.fieldsApi.A.onValueChanged(cb);
         cb.reset();
         this.otDoc.valuePropertyAt(['fields', 'FIELD_A', 'en-internal']).set('omg');
@@ -90,7 +90,7 @@ describe('EntityEditor/DataFields', function () {
       });
 
       it('throws if locale is invalid', function () {
-        var field = this.fieldsApi.A;
+        const field = this.fieldsApi.A;
         expect(function () {
           field.onValueChanged('invalidLocale', sinon.spy());
         }).toThrowError('Unknown locale "invalidLocale"');

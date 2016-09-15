@@ -28,7 +28,7 @@ describe('Datetime Editor', function () {
 
   describe('rendering', function () {
     it('leaves date and time field empty without value', function () {
-      var el = this.compile();
+      const el = this.compile();
       expect(getInputValue(el, 'datetime.date')).toEqual('');
 
       this.fieldApi.onValueChanged.yield(null);
@@ -38,7 +38,7 @@ describe('Datetime Editor', function () {
     });
 
     it('selects AM without value', function () {
-      var el = this.compile({format: 'time', ampm: '12'});
+      const el = this.compile({format: 'time', ampm: '12'});
 
       this.fieldApi.onValueChanged.yield(null);
       this.$apply();
@@ -46,16 +46,16 @@ describe('Datetime Editor', function () {
     });
 
     it('selects local timezone without value', function () {
-      var moment = this.$inject('moment');
-      var currentOffset = moment().format('Z');
-      var el = this.compile({format: 'timeZ'});
+      const moment = this.$inject('moment');
+      const currentOffset = moment().format('Z');
+      const el = this.compile({format: 'timeZ'});
       this.fieldApi.onValueChanged.yield(null);
       this.$apply();
       expect(getInputValue(el, 'datetime.timezone')).toEqual('string:' + currentOffset);
     });
 
     it('displays date', function () {
-      var el = this.compile({format: 'dateonly'});
+      const el = this.compile({format: 'dateonly'});
       expect(getInputValue(el, 'datetime.date')).toEqual('');
 
       this.fieldApi.onValueChanged.yield('2000-01-01T12:00');
@@ -65,7 +65,7 @@ describe('Datetime Editor', function () {
     });
 
     it('displays 24h time', function () {
-      var el = this.compile();
+      const el = this.compile();
       expect(getInputValue(el, 'datetime.time')).toEqual('');
 
       this.fieldApi.onValueChanged.yield('2000-01-01T12:34');
@@ -74,7 +74,7 @@ describe('Datetime Editor', function () {
     });
 
     it('displays 12h time', function () {
-      var el = this.compile({ampm: '12'});
+      const el = this.compile({ampm: '12'});
       expect(getInputValue(el, 'datetime.time')).toEqual('');
 
       this.fieldApi.onValueChanged.yield('2000-01-01T15:00');
@@ -84,7 +84,7 @@ describe('Datetime Editor', function () {
     });
 
     it('displays timezone time', function () {
-      var el = this.compile();
+      const el = this.compile();
       this.fieldApi.onValueChanged.yield('2000-01-01T15:00+0500');
       this.$apply();
       expect(getInputValue(el, 'datetime.timezone')).toEqual('string:+05:00');
@@ -109,7 +109,7 @@ describe('Datetime Editor', function () {
     });
 
     it('updates value with "timeZ" format', function () {
-      var el = this.compile({format: 'timeZ'});
+      const el = this.compile({format: 'timeZ'});
       this.fieldApi.onValueChanged.yield('2001-01-01T12:00+00:00');
       this.$apply();
       setInputValue(el, 'datetime.date', '2001-01-02');
@@ -212,7 +212,7 @@ describe('Datetime Editor', function () {
   describe('timezone input', function () {
     it('updates the field value', function () {
       this.fieldApi.onValueChanged.yields('2000-01-01T00:00Z');
-      var el = this.compile();
+      const el = this.compile();
       setInputValue(el, 'datetime.timezone', 'string:+10:00');
       this.$apply();
       sinon.assert.calledWith(this.fieldApi.setValue, '2000-01-01T00:00+10:00');
@@ -234,7 +234,7 @@ describe('Datetime Editor', function () {
   }
 
   function findOne ($container, selector) {
-    var $el = $container.find(selector);
+    const $el = $container.find(selector);
 
     if ($el.length === 0) {
       throw new Error('Cannot find element for selector: ' + selector);
@@ -248,11 +248,11 @@ describe('Datetime Editor', function () {
   }
 
   function hasStatus ($container, statusCode) {
-    var selector =
+    const selector =
       '[role=status]' +
       '[data-status-code="' + statusCode + '"]';
 
-    var $el = $container.find(selector);
+    const $el = $container.find(selector);
 
     if ($el.length > 1) {
       throw new Error('Found multiple elements for selector: ' + selector);

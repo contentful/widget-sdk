@@ -41,16 +41,16 @@ angular.module('contentful')
     var codeToActiveLocaleMap = {};
 
     return {
-      resetWithSpace:    resetWithSpace,
-      refresh:           refreshLocales,
-      getDefaultLocale:  getDefaultLocale,
-      getActiveLocales:  getActiveLocales,
+      resetWithSpace: resetWithSpace,
+      refresh: refreshLocales,
+      getDefaultLocale: getDefaultLocale,
+      getActiveLocales: getActiveLocales,
       getPrivateLocales: getPrivateLocales,
-      toInternalCode:    toInternalCode,
-      toPublicCode:      toPublicCode,
-      setActiveLocales:  setActiveLocales,
-      isLocaleActive:    isLocaleActive,
-      deactivateLocale:  deactivateLocale
+      toInternalCode: toInternalCode,
+      toPublicCode: toPublicCode,
+      setActiveLocales: setActiveLocales,
+      isLocaleActive: isLocaleActive,
+      deactivateLocale: deactivateLocale
     };
 
     /**
@@ -81,7 +81,10 @@ angular.module('contentful')
     function refreshLocales () {
       currentSpaceId = currentSpace.getId();
       privateLocales = currentSpace.getPrivateLocales();
-      defaultLocale  = currentSpace.getDefaultLocale();
+
+      // @contentful/client caches the default locale, so calling
+      // space.getDefaultLocale() always returns the same locale
+      defaultLocale = _.find(privateLocales, {default: true});
 
       var storedLocaleCodes = getStoredActiveLocales();
       var storedLocales = _.filter(privateLocales, function (locale) {

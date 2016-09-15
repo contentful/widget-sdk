@@ -58,7 +58,7 @@ angular.module('cf.app')
         if (dateController.$valid) {
           dateController.$viewValue = Data.formatDateDisplay(dateController.$modelValue);
           dateController.$render();
-        };
+        }
       });
 
       var offValueChanged = field.onValueChanged(function (datetime) {
@@ -121,7 +121,7 @@ angular.module('cf.app')
         } else if (value.valid) {
           field.setValue(value.valid);
         }
-      };
+      }
 
       $scope.$watchCollection(function () {
         return [].concat(

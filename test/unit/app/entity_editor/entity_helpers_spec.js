@@ -7,10 +7,11 @@ describe('EntityHelpers', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.value('assetUrlFilter', _.constant(REWRITTEN_URL));
-      $provide.value('spaceContext', {});
     });
 
-    this.$inject('entityStatus').getClassname = this.getClassnameStub = sinon.stub().returns('status');
+    this.spaceContext = this.mockService('spaceContext');
+    this.entityStatus = this.mockService('entityStatus');
+
     this.helpers = this.$inject('EntityHelpers').api;
   });
 
@@ -22,8 +23,8 @@ describe('EntityHelpers', function () {
     function itGetsEntityStatus (status, sys, expectations) {
       pit(`gets status for ${status} entity`, function () {
         return this.helpers.entityStatus({sys: sys}).then(() => {
-          sinon.assert.calledOnce(this.getClassnameStub);
-          const [entity] = this.getClassnameStub.firstCall.args;
+          sinon.assert.calledOnce(this.entityStatus.getClassname);
+          const [entity] = this.entityStatus.getClassname.firstCall.args;
           expect(entity.isPublished()).toBe(expectations[0]);
           expect(entity.hasUnpublishedChanges()).toBe(expectations[1]);
           expect(entity.isArchived()).toBe(expectations[2]);
@@ -66,10 +67,7 @@ describe('EntityHelpers', function () {
 
   function itConvertsToEntityAndCallsMethod (methodName) {
     pit(`converts data to entity and calls #${methodName}`, function () {
-      const spaceContext = this.$inject('spaceContext');
-
-      spaceContext[methodName] = sinon.stub().resolves();
-      spaceContext.fetchPublishedContentType = sinon.stub().resolves({
+      this.spaceContext.fetchPublishedContentType.resolves({
         data: {fields: [{apiName: 'test', id: 'realid'}]}
       });
 
@@ -77,8 +75,8 @@ describe('EntityHelpers', function () {
         sys: {type: 'Entry', contentType: {sys: {id: 'ctid'}}},
         fields: {test: {}}
       }, 'en-US').then(() => {
-        sinon.assert.calledOnce(spaceContext[methodName]);
-        const [entity, locale] = spaceContext[methodName].firstCall.args;
+        sinon.assert.calledOnce(this.spaceContext[methodName]);
+        const [entity, locale] = this.spaceContext[methodName].firstCall.args;
 
         expect(entity.data.fields).toEqual({realid: {}});
         expect(entity.getType()).toBe('Entry');

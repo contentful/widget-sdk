@@ -1,16 +1,16 @@
 'use strict';
 
 describe('ContentTypeEditor Controller', function () {
-  var scope;
-  var contentType;
-  var createContentType;
+  let scope;
+  let contentType;
+  let createContentType;
 
   afterEach(function () {
     scope = contentType = createContentType = null;
   });
 
   beforeEach(function () {
-    var self = this;
+    const self = this;
     module('contentful/test', function ($provide) {
       self.trackContentTypeChangeStub = sinon.stub();
       $provide.value('analyticsEvents', {
@@ -27,8 +27,8 @@ describe('ContentTypeEditor Controller', function () {
       });
     });
 
-    var cfStub = this.$inject('cfStub');
-    var $rootScope = this.$inject('$rootScope');
+    const cfStub = this.$inject('cfStub');
+    const $rootScope = this.$inject('$rootScope');
 
     scope = $rootScope.$new();
 
@@ -41,12 +41,12 @@ describe('ContentTypeEditor Controller', function () {
     });
 
 
-    var $controller = this.$inject('$controller');
+    const $controller = this.$inject('$controller');
     createContentType = function (fields) {
-      var space = cfStub.space('space');
+      const space = cfStub.space('space');
       contentType = cfStub.contentType(space, 'contentType', 'Content Type', fields);
       scope.contentType = contentType;
-      var controller = $controller('ContentTypeEditorController', {$scope: scope});
+      const controller = $controller('ContentTypeEditorController', {$scope: scope});
       $rootScope.$apply();
       return controller;
     };
@@ -89,7 +89,7 @@ describe('ContentTypeEditor Controller', function () {
 
       ['Symbol', 'Text'].forEach(function (type) {
         it('catches up "' + type + '" fields', function () {
-          var id = type + '_field';
+          const id = type + '_field';
           scope.contentType.data.fields.push({id: id, type: type});
           scope.$digest();
           expect(scope.contentType.data.displayField).toEqual(id);
@@ -99,7 +99,7 @@ describe('ContentTypeEditor Controller', function () {
 
     describe('tries to select title field when current is deleted', function () {
       it('clears "displayField" property when no field was found', function () {
-        var data = scope.contentType.data;
+        const data = scope.contentType.data;
         data.fields.push({id: 1, type: 'Text'});
         scope.$digest();
         expect(data.displayField).toEqual(1);
@@ -109,7 +109,7 @@ describe('ContentTypeEditor Controller', function () {
       });
 
       it('gets the next one when available', function () {
-        var data = scope.contentType.data;
+        const data = scope.contentType.data;
         data.fields.push({id: 1, type: 'Text'});
         scope.$digest();
         expect(data.displayField).toEqual(1);
@@ -150,7 +150,7 @@ describe('ContentTypeEditor Controller', function () {
   });
 
   describe('sets array with published content fields', function () {
-    var fields = [
+    const fields = [
       {apiName: 'a1', id: 'i1'},
       {apiName: 'a2', id: 'i2'},
       {apiName: 'a3', id: 'i3'}
@@ -158,24 +158,24 @@ describe('ContentTypeEditor Controller', function () {
 
     it('handles initial published content type', function () {
       scope.publishedContentType = {data: {fields: fields}};
-      var ctrl = createContentType([]);
+      const ctrl = createContentType([]);
       expect(ctrl.getPublishedField('i2')).toEqual(fields[1]);
     });
 
     it('handles lack of initial published content type', function () {
       scope.publishedContentType = null;
-      var ctrl = createContentType([]);
+      const ctrl = createContentType([]);
       expect(ctrl.getPublishedField('i2')).toBeUndefined();
     });
 
     it('registers published content type field', function () {
-      var ctrl = createContentType([]);
+      const ctrl = createContentType([]);
       ctrl.registerPublishedFields({data: {fields: fields}});
       expect(ctrl.getPublishedField('i2')).toEqual(fields[1]);
     });
 
     it('clears published content type fields if call with null', function () {
-      var ctrl = createContentType([]);
+      const ctrl = createContentType([]);
       ctrl.registerPublishedFields({data: {fields: fields}});
       expect(ctrl.getPublishedField('i2')).toEqual(fields[1]);
       ctrl.registerPublishedFields(null);
@@ -184,10 +184,10 @@ describe('ContentTypeEditor Controller', function () {
   });
 
   describe('#showNewFieldDialog command', function () {
-    var syncControls;
+    let syncControls;
 
     beforeEach(function () {
-      var spaceContext = this.$inject('spaceContext');
+      const spaceContext = this.$inject('spaceContext');
       syncControls = sinon.stub();
       spaceContext.editingInterfaces = {syncControls: syncControls};
 
@@ -229,10 +229,10 @@ describe('ContentTypeEditor Controller', function () {
   });
 
   describe('#removeField(id)', function () {
-    var syncControls;
+    let syncControls;
 
     beforeEach(function () {
-      var spaceContext = this.$inject('spaceContext');
+      const spaceContext = this.$inject('spaceContext');
       syncControls = sinon.stub();
       spaceContext.editingInterfaces = {syncControls: syncControls};
 
@@ -259,10 +259,10 @@ describe('ContentTypeEditor Controller', function () {
   });
 
   describe('with "isNew context"', function () {
-    var openCreateDialog;
+    let openCreateDialog;
 
     beforeEach(function () {
-      var metadataDialog = this.$inject('contentTypeEditor/metadataDialog');
+      const metadataDialog = this.$inject('contentTypeEditor/metadataDialog');
       openCreateDialog = metadataDialog.openCreateDialog = sinon.stub();
       scope.context.isNew = true;
     });
@@ -274,7 +274,7 @@ describe('ContentTypeEditor Controller', function () {
     });
 
     it('updates the metdata from the dialog', function () {
-      var metadata = {
+      const metadata = {
         name: 'NAME',
         description: 'DESCRIPTION',
         id: 'ID'
@@ -288,7 +288,7 @@ describe('ContentTypeEditor Controller', function () {
     });
 
     it('goes back to list when create dialog is canceled', function () {
-      var $state = this.$inject('$state');
+      const $state = this.$inject('$state');
       $state.go = sinon.stub();
       openCreateDialog.rejects();
       createContentType();
@@ -297,9 +297,9 @@ describe('ContentTypeEditor Controller', function () {
   });
 
   describe('#showMetadataDialog command', function () {
-    var openEditDialog;
+    let openEditDialog;
     beforeEach(function () {
-      var metadataDialog = this.$inject('contentTypeEditor/metadataDialog');
+      const metadataDialog = this.$inject('contentTypeEditor/metadataDialog');
       openEditDialog = metadataDialog.openEditDialog = sinon.stub();
       createContentType();
     });
@@ -311,7 +311,7 @@ describe('ContentTypeEditor Controller', function () {
     });
 
     it('updates the metdata from the dialog', function () {
-      var metadata = {
+      const metadata = {
         name: 'NAME',
         description: 'DESCRIPTION',
         id: 'ID'
@@ -327,7 +327,7 @@ describe('ContentTypeEditor Controller', function () {
   });
 
   describe('#openFieldDialog', function () {
-    var openFieldDialog, controller;
+    let openFieldDialog, controller;
 
     beforeEach(function () {
       openFieldDialog = this.$inject('openFieldDialog');
@@ -336,8 +336,8 @@ describe('ContentTypeEditor Controller', function () {
     });
 
     it('opens the field dialog with correct arguments', function () {
-      var field = {apiName: 'FIELD'};
-      var control = {fieldId: 'FIELD'};
+      const field = {apiName: 'FIELD'};
+      const control = {fieldId: 'FIELD'};
       scope.editingInterface = {
         controls: [control]
       };

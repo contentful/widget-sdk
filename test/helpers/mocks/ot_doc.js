@@ -52,9 +52,9 @@ angular.module('contentful/mocks')
   // Supports only "si" and "sd".
   OtDoc.prototype.submitOp = function (ops, cb) {
     ops.forEach((op) => {
-      var path = op.p.slice(0, op.p.length - 1);
-      var pos = _.last(op.p);
-      var val = this.getAt(path) || '';
+      const path = op.p.slice(0, op.p.length - 1);
+      const pos = _.last(op.p);
+      const val = this.getAt(path) || '';
 
       if (op.sd) {
         this.setAt(path, val.slice(0, pos) + val.slice(pos + op.sd.length));
@@ -89,9 +89,9 @@ angular.module('contentful/mocks')
   };
 
   OtDoc.prototype.remove = function (cb) {
-    var containerPath = this.path.slice(0, -1);
-    var index = this.path.slice(-1)[0];
-    var container = dotty.get(this.snapshot, containerPath);
+    const containerPath = this.path.slice(0, -1);
+    const index = this.path.slice(-1)[0];
+    const container = dotty.get(this.snapshot, containerPath);
     container.splice(index, 1);
     if (cb) {
       cb();
@@ -106,22 +106,22 @@ angular.module('contentful/mocks')
   };
 
   OtDoc.prototype.insert = function (index, value, cb) {
-    var valAsArray = this.get().split('');
+    const valAsArray = this.get().split('');
     valAsArray.splice(index, 0, value);
-    var newValue = valAsArray.join('');
+    const newValue = valAsArray.join('');
     this.set(newValue, cb);
   };
 
   OtDoc.prototype.insertAt = function (path, pos, value, cb) {
-    var list = this.getAt(path);
+    const list = this.getAt(path);
     list.splice(pos, 0, value);
     cb();
   };
 
   OtDoc.prototype.del = function (index, length, cb) {
-    var valAsArray = this.get().split('');
+    const valAsArray = this.get().split('');
     valAsArray.splice(index, length);
-    var newValue = valAsArray.join('');
+    const newValue = valAsArray.join('');
     this.set(newValue, cb);
   };
 

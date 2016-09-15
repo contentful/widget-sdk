@@ -18,12 +18,12 @@ describe('LocationEditor integration', function () {
 
     this.googleMaps = createGoogleMapsStub();
 
-    var LazyLoader = this.$inject('LazyLoader');
+    const LazyLoader = this.$inject('LazyLoader');
     LazyLoader.get.resolves(this.googleMaps);
 
 
     this.compile = function () {
-      var el = this.$compile('<cf-location-editor>', {}, {
+      const el = this.$compile('<cf-location-editor>', {}, {
         cfWidgetApi: {field: this.fieldApi}
       });
       // Enable visibility checks. If not attached to body all elemnts
@@ -89,11 +89,11 @@ describe('LocationEditor integration', function () {
     it('populates result completion', function () {
       this.el.setInputValue('address', 'something');
 
-      var results = ['A 1', 'A 2', 'A 3'];
+      const results = ['A 1', 'A 2', 'A 3'];
       this.geocode.callArgWith(1, results.map(makeSearchResult));
 
       this.$apply();
-      var resultItems = this.el.find('[data-test-id=search-results] li')
+      const resultItems = this.el.find('[data-test-id=search-results] li')
         .map(function () {
           return $(this).text();
         }).get();
@@ -105,7 +105,7 @@ describe('LocationEditor integration', function () {
 
       this.geocode.callArgWith(1, [makeSearchResult('ADDRESS')]);
       this.$apply();
-      var resultElement = this.el.find('[data-test-id=search-results]');
+      const resultElement = this.el.find('[data-test-id=search-results]');
       expect(resultElement.is(':visible')).toBe(true);
 
       this.el.setInputValue('address', '');
@@ -176,8 +176,8 @@ describe('LocationEditor integration', function () {
     });
 
     it('updates map', function () {
-      var marker = this.googleMaps.marker;
-      var map = this.googleMaps.map;
+      const marker = this.googleMaps.marker;
+      const map = this.googleMaps.map;
 
       this.el.setInputValue('lon', '-1');
       sinon.assert.calledWithExactly(marker.setPosition, {lat: 1, lng: -1});
@@ -185,7 +185,7 @@ describe('LocationEditor integration', function () {
     });
 
     it('removes map marker when value is empty', function () {
-      var marker = this.googleMaps.marker;
+      const marker = this.googleMaps.marker;
       marker.setVisible.reset();
 
       this.el.setInputValue('lat', '');
@@ -199,7 +199,7 @@ describe('LocationEditor integration', function () {
     });
 
     it('looks up and sets address', function () {
-      var geocode = this.googleMaps.geocoder.geocode;
+      const geocode = this.googleMaps.geocoder.geocode;
       geocode.reset();
 
       this.el.setInputValue('lat', '-1');
@@ -231,9 +231,9 @@ describe('LocationEditor integration', function () {
     });
 
     it('shows loading box while loading', function () {
-      var LazyLoader = this.$inject('LazyLoader');
+      const LazyLoader = this.$inject('LazyLoader');
       LazyLoader.get.defers();
-      var el = this.compile();
+      const el = this.compile();
 
       expect(el.findStatus('loading').length).toEqual(1);
 
@@ -243,10 +243,10 @@ describe('LocationEditor integration', function () {
     });
 
     it('shows initialization error when loading fails', function () {
-      var LazyLoader = this.$inject('LazyLoader');
+      const LazyLoader = this.$inject('LazyLoader');
       LazyLoader.get.defers();
-      var el = this.compile();
-      var alertSelector =
+      const el = this.compile();
+      const alertSelector =
         '[role=alert]' +
         '[data-error-code=field-editor-initialization]';
 
@@ -280,19 +280,19 @@ describe('LocationEditor integration', function () {
   }
 
   function createGoogleMapsStub () {
-    var map = {
+    const map = {
       getCenter: sinon.stub(),
       panTo: sinon.stub(),
       fitBounds: sinon.stub()
     };
 
-    var marker = {
+    const marker = {
       setDraggable: sinon.stub(),
       setPosition: sinon.stub(),
       setVisible: sinon.stub()
     };
 
-    var geocoder = {
+    const geocoder = {
       geocode: sinon.stub()
     };
 

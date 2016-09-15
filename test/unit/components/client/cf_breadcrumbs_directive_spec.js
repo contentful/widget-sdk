@@ -1,7 +1,7 @@
 'use strict';
 
 describe('cfBreadcrumbsDirective spec', function () {
-  var contextHistoryMock = {
+  const contextHistoryMock = {
     addEntity: sinon.spy(),
     isEmpty: sinon.spy(),
     pop: sinon.spy(),
@@ -10,7 +10,7 @@ describe('cfBreadcrumbsDirective spec', function () {
     getLast: sinon.spy(),
     getAllButLast: sinon.spy()
   };
-  var $stateMock = {
+  const $stateMock = {
     go: sinon.spy(),
     current: {},
     href: sinon.stub().returns('somelink')
@@ -36,8 +36,8 @@ describe('cfBreadcrumbsDirective spec', function () {
 
     this.assertPropAfterStubAndCompile = function (entityCount, prop, val) {
       contextHistoryMock.getAll.returns(makeEntities(entityCount));
-      var $el = this.compileElement();
-      var scope = $el.find(':first-child').scope();
+      const $el = this.compileElement();
+      const scope = $el.find(':first-child').scope();
       expect(dotty.get(scope, prop)).toEqual(val);
     };
 
@@ -56,7 +56,7 @@ describe('cfBreadcrumbsDirective spec', function () {
 
       it('each crumb should have a getTitle fn, link object and type property', function () {
         contextHistoryMock.getAll.returns([makeEntity('title1', 'type1', 1, 'state1', { a: 10 })]);
-        var crumb = this.compileElement().find(':first-child').scope().crumbs[0];
+        const crumb = this.compileElement().find(':first-child').scope().crumbs[0];
 
         expect(_.isFunction(crumb.getTitle)).toEqual(true);
         expect(crumb.getTitle()).toEqual('title1');
@@ -94,9 +94,9 @@ describe('cfBreadcrumbsDirective spec', function () {
     });
 
     it('should update the document title when the title of the latest crumb changes', function () {
-      var $el = this.makeEntitesAndCompileEl(1);
-      var $scope = $el.find(':first-child').scope();
-      var document = $el.prop('ownerDocument');
+      const $el = this.makeEntitesAndCompileEl(1);
+      const $scope = $el.find(':first-child').scope();
+      const document = $el.prop('ownerDocument');
 
       expect(document.title).toEqual('title0');
       $scope.crumbs[0].getTitle = _.constant('new title');
@@ -106,16 +106,16 @@ describe('cfBreadcrumbsDirective spec', function () {
   });
 
   describe('link method', function () {
-    var backBtnSelector = '[aria-label="breadcrumbs-back-btn"]';
-    var ancestorBtnSelector = '[aria-label="breadcrumbs-ancestor-btn"]';
-    var ancestorMenuSelector = '[aria-label="breadcrumbs-ancestor-menu"]';
+    const backBtnSelector = '[aria-label="breadcrumbs-back-btn"]';
+    const ancestorBtnSelector = '[aria-label="breadcrumbs-ancestor-btn"]';
+    const ancestorMenuSelector = '[aria-label="breadcrumbs-ancestor-menu"]';
 
     beforeEach(function () {
       this.getAssertionFnForElem = function (selector) {
-        var self = this;
+        const self = this;
 
         return function (entityCount, prop, value) {
-          var $el = self.makeEntitesAndCompileEl(entityCount).find(selector);
+          const $el = self.makeEntitesAndCompileEl(entityCount).find(selector);
 
           expect(dotty.get($el, prop)).toEqual(value);
         };
@@ -124,7 +124,7 @@ describe('cfBreadcrumbsDirective spec', function () {
 
     describe('Back button', function () {
       it('should call $state.go', function () {
-        var $backBtn = this.makeEntitesAndCompileEl(2).find(backBtnSelector);
+        const $backBtn = this.makeEntitesAndCompileEl(2).find(backBtnSelector);
 
         $backBtn.click();
         sinon.assert.calledOnce($stateMock.go);
@@ -132,7 +132,7 @@ describe('cfBreadcrumbsDirective spec', function () {
       });
 
       it('should appear on the ui only if there are atleast 2 crumbs', function () {
-        var assert = this.getAssertionFnForElem(backBtnSelector);
+        const assert = this.getAssertionFnForElem(backBtnSelector);
 
         assert(0, 'length', 0);
         assert(1, 'length', 0);
@@ -142,9 +142,9 @@ describe('cfBreadcrumbsDirective spec', function () {
 
     describe('Ancestor list button', function () {
       it('should toggle aria-hidden attribute of ancestor list dropdown menu', function () {
-        var $el = this.makeEntitesAndCompileEl(3);
-        var $ancestorBtn = $el.find(ancestorBtnSelector);
-        var $ancestorMenu = $el.find(ancestorMenuSelector);
+        const $el = this.makeEntitesAndCompileEl(3);
+        const $ancestorBtn = $el.find(ancestorBtnSelector);
+        const $ancestorMenu = $el.find(ancestorMenuSelector);
 
         expect($ancestorMenu.attr('aria-hidden')).toEqual('true');
         $ancestorBtn.click();
@@ -154,7 +154,7 @@ describe('cfBreadcrumbsDirective spec', function () {
       });
 
       it('should appear on the ui iff there are more than 2 crumbs', function () {
-        var assert = this.getAssertionFnForElem(ancestorBtnSelector);
+        const assert = this.getAssertionFnForElem(ancestorBtnSelector);
 
         assert(0, 'length', 0);
         assert(1, 'length', 0);
@@ -166,9 +166,9 @@ describe('cfBreadcrumbsDirective spec', function () {
 
 
   function makeEntities (count) {
-    var result = [];
+    const result = [];
 
-    for (var i = 0; i < count; i++) {
+    for (let i = 0; i < count; i++) {
       result.push(makeEntity(`title${i}`, `type${i}`, i, `state${i}`, { id: i }));
     }
 

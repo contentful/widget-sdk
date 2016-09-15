@@ -4,10 +4,10 @@ describe('entitySelector', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    var $rootScope = this.$inject('$rootScope');
-    var $controller = this.$inject('$controller');
-    var $timeout = this.$inject('$timeout');
-    var spaceContext = this.$inject('spaceContext');
+    const $rootScope = this.$inject('$rootScope');
+    const $controller = this.$inject('$controller');
+    const $timeout = this.$inject('$timeout');
+    const spaceContext = this.$inject('spaceContext');
 
     spaceContext.cma = {
       getEntries: this.getEntries = sinon.stub().resolves({items: []}),
@@ -88,17 +88,17 @@ describe('entitySelector', function () {
     });
 
     it('constructs a query with paginator and search term', function () {
-      var getQuery = this.$inject('ListQuery').getForEntries = sinon.stub().resolves({});
+      const getQuery = this.$inject('ListQuery').getForEntries = sinon.stub().resolves({});
       this.createController({linksEntry: true});
       this.scope.view.searchTerm = '4444';
       this.$apply();
-      var config = getQuery.lastCall.args[0];
+      const config = getQuery.lastCall.args[0];
       expect(config.paginator).toBe(this.scope.paginator);
       expect(config.searchTerm).toBe('4444');
     });
 
     it('uses query extension', function () {
-      var qe = {test: true};
+      const qe = {test: true};
       this.createController({linksEntry: true, queryExtension: qe});
       expect(this.getEntries.lastCall.args[0].test).toBe(qe.test);
     });
@@ -132,7 +132,7 @@ describe('entitySelector', function () {
 
     it('closes dialog with single entity', function () {
       this.createController({linksEntry: true, multiple: false});
-      var confirm = sinon.spy();
+      const confirm = sinon.spy();
       this.scope.dialog = {confirm: confirm};
       this.scope.toggleSelection(this.e1);
       sinon.assert.calledOnce(confirm.withArgs([this.e1]));

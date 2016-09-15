@@ -2,7 +2,7 @@
 
 describe('cfContentPreviewEditor directive', function () {
 
-  var spaceContext, contentPreview, notification, $state;
+  let spaceContext, contentPreview, notification, $state;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -28,10 +28,10 @@ describe('cfContentPreviewEditor directive', function () {
     $state = this.$inject('$state');
     $state.go = sinon.stub().returns();
 
-    this.setup = function (isNew) {
+    this.setup = function () {
       this.element = this.$compile('<cf-content-preview-editor />', {
         context: {
-          isNew: isNew
+          isNew: this.isNew
         }
       });
       this.scope = this.element.scope();
@@ -73,7 +73,7 @@ describe('cfContentPreviewEditor directive', function () {
   describe('Create new content preview environment', function () {
     beforeEach(function () {
       contentPreview.get.rejects();
-      var contentTypes = [{
+      const contentTypes = [{
         getId: _.constant('ct-1'),
         getName: _.constant('Ct - 1'),
         data: {fields:
@@ -83,7 +83,7 @@ describe('cfContentPreviewEditor directive', function () {
       contentPreview.create.resolves({sys: {id: 'foo'}});
       spaceContext.refreshContentTypes.resolves();
       spaceContext.getFilteredAndSortedContentTypes.returns(contentTypes);
-      this.setup(true);
+      this.isNew = true;
     });
 
     it('sets default title', function () {
@@ -107,7 +107,7 @@ describe('cfContentPreviewEditor directive', function () {
     });
 
     it('generates empty configs from content types', function () {
-      var configs = this.scope.previewEnvironment.configs;
+      const configs = this.scope.previewEnvironment.configs;
       expect(configs.length).toBe(1);
       expect(configs[0].contentType).toBe('ct-1');
       expect(configs[0].name).toBe('Ct - 1');
@@ -176,7 +176,7 @@ describe('cfContentPreviewEditor directive', function () {
 
   describe('Edit existing content preview environment', function () {
     beforeEach(function () {
-      var env = {
+      const env = {
         name: 'PE 1',
         description: 'First PE',
         sys: {id: 'pe-1'},
@@ -189,7 +189,7 @@ describe('cfContentPreviewEditor directive', function () {
       contentPreview.get.resolves(env);
       contentPreview.update.resolves({sys: {id: 'foo'}});
 
-      var contentTypes = [{
+      const contentTypes = [{
         getId: _.constant('foo'),
         getName: _.constant('Foo'),
         data: {fields: [{apiName: 'field1'}]}
@@ -200,7 +200,7 @@ describe('cfContentPreviewEditor directive', function () {
       }];
       spaceContext.refreshContentTypes.resolves();
       spaceContext.getFilteredAndSortedContentTypes.returns(contentTypes);
-      this.setup(false);
+      this.isNew = false;
     });
 
     it('populates name and description', function () {
@@ -209,16 +209,16 @@ describe('cfContentPreviewEditor directive', function () {
     });
 
     it('displays configuration details', function () {
-      var checkboxElement = this.elements.firstConfig.find('input[type="checkbox"]');
-      var configElement = this.elements.firstConfig.find('input[type="text"]');
+      const checkboxElement = this.elements.firstConfig.find('input[type="checkbox"]');
+      const configElement = this.elements.firstConfig.find('input[type="text"]');
       expect(checkboxElement.prop('checked')).toBe(true);
       expect(configElement.val()).toBe('https://www.test.com');
     });
 
     it('adds empty config object if none exists for that content type', function () {
 
-      var checkboxElement = this.elements.secondConfig.find('input[type="checkbox"]');
-      var configElement = this.elements.secondConfig.find('input[type="text"]');
+      const checkboxElement = this.elements.secondConfig.find('input[type="checkbox"]');
+      const configElement = this.elements.secondConfig.find('input[type="text"]');
 
       expect(checkboxElement.prop('checked')).toBe(false);
       expect(configElement.val()).toBe('');

@@ -62,7 +62,7 @@ describe('Extension SDK', function () {
     };
 
 
-    this.loadApi = () => {
+    this.setup = () => {
       return new Promise((resolve, reject) => {
         const el = this.$compile('<cf-iframe-widget>', this.scope);
         this.scope = el.scope();
@@ -102,9 +102,6 @@ describe('Extension SDK', function () {
   afterEach(function () {
     this.container.remove();
   });
-
-  const it = makeApiTestDescriptor(window.it);
-  const fit = makeApiTestDescriptor(window.fit);
 
   describe('#field', function () {
     beforeEach(function () {
@@ -196,12 +193,12 @@ describe('Extension SDK', function () {
         sinon.assert.calledWithExactly(isDisabledChanged, true);
       });
 
-      it('calls callback when disable status of field is changed', function* (api, scope) {
+      it('calls callback when disable status of field is changed', function* (api) {
         const isDisabledChanged = sinon.spy();
         api.field.onIsDisabledChanged(isDisabledChanged);
         yield api.nextTick();
         isDisabledChanged.reset();
-        scope.fieldLocale.access.disabled = true;
+        this.scope.fieldLocale.access.disabled = true;
         yield api.nextTick();
         sinon.assert.calledOnce(isDisabledChanged);
         sinon.assert.calledWithExactly(isDisabledChanged, true);
@@ -218,12 +215,12 @@ describe('Extension SDK', function () {
         sinon.assert.calledWithExactly(cb, ['INITIAL']);
       });
 
-      it('triggers when errors change', function* (api, scope) {
+      it('triggers when errors change', function* (api) {
         const cb = sinon.spy();
         api.field.onSchemaErrorsChanged(cb);
         yield api.nextTick();
         cb.reset();
-        scope.fieldLocale.errors$.set(['errors']);
+        this.scope.fieldLocale.errors$.set(['errors']);
         yield api.nextTick();
         sinon.assert.calledOnce(cb);
         sinon.assert.calledWithExactly(cb, ['errors']);
@@ -239,21 +236,25 @@ describe('Extension SDK', function () {
     });
 
     describe('#setInvalid', function () {
-      it('proxies call to setInvalid method on scope.fieldController', function* (api, scope) {
-        api.field.setInvalid(true, scope.locale.code);
+      it('proxies call to setInvalid method on scope.fieldController', function* (api) {
+        api.field.setInvalid(true, this.scope.locale.code);
         yield api.nextTick();
-        sinon.assert.calledWithExactly(scope.fieldController.setInvalid, scope.locale.code, true);
+        sinon.assert.calledWithExactly(
+          this.scope.fieldController.setInvalid,
+          this.scope.locale.code,
+          true
+        );
       });
     });
 
     function testValueMethods (method, value) {
-      it(`calls "otDoc.${method}At()" with current field path`, function* (api, scope) {
+      it(`calls "otDoc.${method}At()" with current field path`, function* (api) {
         if (_.isUndefined(value)) {
           yield api.field[method]();
-          sinon.assert.calledWith(scope.otDoc[`${method}At`], ['fields', 'FID-internal', 'de-internal']);
+          sinon.assert.calledWith(this.scope.otDoc[`${method}At`], ['fields', 'FID-internal', 'de-internal']);
         } else {
           yield api.field[method](value);
-          sinon.assert.calledWith(scope.otDoc[`${method}At`], ['fields', 'FID-internal', 'de-internal'], value);
+          sinon.assert.calledWith(this.scope.otDoc[`${method}At`], ['fields', 'FID-internal', 'de-internal'], value);
         }
       });
 
@@ -263,8 +264,8 @@ describe('Extension SDK', function () {
         sinon.assert.called(success);
       });
 
-      it(`rejects when "otDoc.${method}At()" fails`, function* (api, scope) {
-        scope.otDoc[`${method}At`] = sinon.stub().rejects();
+      it(`rejects when "otDoc.${method}At()" fails`, function* (api) {
+        this.scope.otDoc[`${method}At`] = sinon.stub().rejects();
         const errored = sinon.stub();
         yield api.field[method](value).catch(errored);
         sinon.assert.calledWith(errored);
@@ -358,12 +359,12 @@ describe('Extension SDK', function () {
     });
 
     describe('#setValue()', function () {
-      it('calls "otDoc.setValueAt()" with current field path', function* (api, scope) {
+      it('calls "otDoc.setValueAt()" with current field path', function* (api) {
         const field = api.entry.fields.f2;
         yield field.setValue('VAL');
-        sinon.assert.calledWith(scope.otDoc.setValueAt, ['fields', 'f2-internal', 'en-internal'], 'VAL');
+        sinon.assert.calledWith(this.scope.otDoc.setValueAt, ['fields', 'f2-internal', 'en-internal'], 'VAL');
         yield field.setValue('VAL', 'de');
-        sinon.assert.calledWith(scope.otDoc.setValueAt, ['fields', 'f2-internal', 'de-internal'], 'VAL');
+        sinon.assert.calledWith(this.scope.otDoc.setValueAt, ['fields', 'f2-internal', 'de-internal'], 'VAL');
       });
 
       it('throws if locale is unknown', function* (api) {
@@ -382,8 +383,8 @@ describe('Extension SDK', function () {
         sinon.assert.calledWith(success);
       });
 
-      it('rejects when "otDoc.setValueAt()" fails', function* (api, scope) {
-        scope.otDoc.setValueAt = sinon.stub().rejects();
+      it('rejects when "otDoc.setValueAt()" fails', function* (api) {
+        this.scope.otDoc.setValueAt = sinon.stub().rejects();
         const errored = sinon.stub();
         yield api.entry.fields.f2.setValue('VAL').catch(errored);
         sinon.assert.calledWith(errored);
@@ -395,7 +396,7 @@ describe('Extension SDK', function () {
     beforeEach(function () {
       const LocaleStore = this.$inject('TheLocaleStore');
       LocaleStore.setLocales([
-        {code: 'en', internal_code: 'en-internal'},
+        {code: 'en', internal_code: 'en-internal', default: true},
         {code: 'de', internal_code: 'de-internal'}
       ]);
     });
@@ -410,6 +411,8 @@ describe('Extension SDK', function () {
   });
 
   describe('#space methods', function () {
+    // TODO firefox does not yet support for (const x in y)
+    /*eslint prefer-const: off*/
     it('delegates to API client and responds with data', function* (api) {
       for (let method of Object.keys(api.space)) {
         this.apiClient[method] = sinon.stub().resolves('DATA');
@@ -438,68 +441,15 @@ describe('Extension SDK', function () {
     });
   });
 
-
-  function makeApiTestDescriptor (testFactory) {
-    return function defineTest (desc, runner, setup) {
-      testFactory(desc, function (done) {
-        if (setup) {
-          setup.call(this);
-        }
-        const $apply = this.$apply.bind(this);
-        this.loadApi()
-        .then((api) => {
-          const gen = runner.call(this, api, this.scope);
-          return runGenerator(gen, $apply);
-        })
-        .then(done, done.fail);
-      });
-    };
-  }
-
-
-  function runGenerator (gen, $apply) {
-    return new Promise((resolve, reject) => {
-      const next = makeDispatcher('next');
-      const throwTo = makeDispatcher('throw');
-
-      next();
-
-      function makeDispatcher (method) {
-        return function (val) {
-          let ret;
-          try {
-            ret = gen[method](val);
-          } catch (e) {
-            reject(e);
-            return;
-          }
-
-          handleYield(ret);
-        };
-      }
-
-      function handleYield (ret) {
-        if (ret.done) {
-          resolve();
-        } else {
-          ret.value.then(next, throwTo);
-          $apply();
-        }
-      }
-    });
-  }
-
-
   function when (desc1, setup) {
-    return {it: itLocal, fit: fitLocal};
+    return {it: whenIt, fit: whenFit};
 
-    function itLocal (desc2, gen) {
+    function whenIt (desc2, gen) {
       it(`when ${desc1} it ${desc2}`, gen, setup);
     }
 
-    function fitLocal (desc2, gen) {
-      fit(`when ${desc1} it ${desc2}`, gen, setup);
+    function whenFit (desc2, gen) {
+      window.fit(`when ${desc1} it ${desc2}`, gen, setup);
     }
   }
-
 });

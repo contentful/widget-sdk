@@ -9,9 +9,9 @@ angular.module('contentful/mocks')
  * Create a mock implementation of `entityEditor/Document`.
  */
 .factory('mocks/entityEditor/Document', ['require', function (require) {
-  var K = require('mocks/kefir');
-  var OtDoc = require('mocks/OtDoc');
-  var $q = require('$q');
+  const K = require('mocks/kefir');
+  const OtDoc = require('mocks/OtDoc');
+  const $q = require('$q');
 
   return {
     create: create
@@ -55,22 +55,22 @@ angular.module('contentful/mocks')
     };
 
     function insertValueAt (path, pos, val) {
-      var list = dotty.get(data, path, []);
+      const list = dotty.get(data, path, []);
       list.splice(pos, 0, val);
       dotty.put(data, path, list);
       return $q.resolve(val);
     }
 
     function pushValueAt (path, val) {
-      var list = dotty.get(data, path, []);
+      const list = dotty.get(data, path, []);
       list.push(val);
       dotty.put(data, path, list);
       return $q.resolve(val);
     }
 
     function moveValueAt (path, from, to) {
-      var list = dotty.get(data, path, []);
-      let [val] = list.splice(from, 1);
+      const list = dotty.get(data, path, []);
+      const [val] = list.splice(from, 1);
       list.splice(to, 0, val);
       dotty.put(data, path, list);
       return $q.resolve();

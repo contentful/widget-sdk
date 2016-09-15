@@ -134,7 +134,7 @@ describe('Subscription', function () {
   }
 
   function inTime (number, timeMeasure) {
-    var method = number < 0 ? 'subtract' : 'add';
+    const method = number < 0 ? 'subtract' : 'add';
     return moment()[method](Math.abs(number), timeMeasure).toISOString();
   }
 });

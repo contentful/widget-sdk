@@ -59,16 +59,16 @@ describe('entity editor field integration', function () {
 
     it('shows field name for single locale', function () {
       this.setLocales([{code: 'EN'}]);
-      var el = this.compile();
-      var label = el.find('[data-test-id="field-locale-label"]');
+      const el = this.compile();
+      const label = el.find('[data-test-id="field-locale-label"]');
       expect(label.length).toEqual(1);
       expect(label.text()).toEqual('FIELD NAME');
     });
 
     it('shows "required" if field is required', function () {
       this.widget.field.required = true;
-      var el = this.compile();
-      var labels = el.find('[data-test-id="field-locale-label"]');
+      const el = this.compile();
+      const labels = el.find('[data-test-id="field-locale-label"]');
       expect(labels.length).toEqual(2);
       labels.each(function () {
         expect($(this).text()).toMatch('(required)');
@@ -81,16 +81,16 @@ describe('entity editor field integration', function () {
         {code: 'EN', name: 'English', optional: true}
       ]);
       this.widget.field.required = true;
-      var el = this.compile();
-      var labels = el.find('[data-test-id="field-locale-label"]');
+      const el = this.compile();
+      const labels = el.find('[data-test-id="field-locale-label"]');
       expect(labels.eq(0).text()).toMatch('(required)');
       expect(labels.eq(1).text()).not.toMatch('(required)');
     });
 
     it('shows locale name for multiple locales', function () {
       this.widget.field.required = true;
-      var el = this.compile();
-      var labels = el.find('[data-test-id="field-locale-label"]');
+      const el = this.compile();
+      const labels = el.find('[data-test-id="field-locale-label"]');
       expect(labels.length).toEqual(2);
       expect(labels.eq(0).text()).toMatch('Default');
       expect(labels.eq(1).text()).toMatch('English');
@@ -100,12 +100,12 @@ describe('entity editor field integration', function () {
 
   describe('editing permissions', function () {
     it('shows message if user does not have editing permissions', function () {
-      var policyAccessChecker = this.$inject('accessChecker/policy');
+      const policyAccessChecker = this.$inject('accessChecker/policy');
       policyAccessChecker.canEditFieldLocale = function (_ctId, _field, locale) {
         return locale.code === 'EN';
       };
 
-      var el = this.compile();
+      const el = this.compile();
       expect(findPermissionInfo(el, 'EN')).toBeNgHidden();
       expect(findPermissionInfo(el, 'DEF')).not.toBeNgHidden();
     });
@@ -121,7 +121,7 @@ describe('entity editor field integration', function () {
   describe('hint', function () {
     it('shows widget default helpt text', function () {
       this.widget.defaultHelpText = 'HELP TEXT';
-      var hint = this.compile().find('[data-test-id=field-hint]');
+      const hint = this.compile().find('[data-test-id=field-hint]');
       expect(hint.length).toBe(1);
       expect(hint.text()).toEqual('HELP TEXT');
     });
@@ -129,7 +129,7 @@ describe('entity editor field integration', function () {
     it('shows custom widget settings help text', function () {
       this.widget.defaultHelpText = 'DEFAULT';
       this.widget.settings.helpText = 'HELP TEXT';
-      var hint = this.compile().find('[data-test-id=field-hint]');
+      const hint = this.compile().find('[data-test-id=field-hint]');
       expect(hint.length).toBe(1);
       expect(hint.text()).toEqual('HELP TEXT');
     });
@@ -137,7 +137,7 @@ describe('entity editor field integration', function () {
     it('does not show hint if widget renders it', function () {
       this.widget.settings.helpText = 'HELP TEXT';
       this.widget.rendersHelpText = true;
-      var hint = this.compile().find('[data-test-id=field-hint]');
+      const hint = this.compile().find('[data-test-id=field-hint]');
       expect(hint.length).toBe(0);
     });
   });
@@ -146,10 +146,10 @@ describe('entity editor field integration', function () {
 
     it('only shows default locale when field is not localized', function () {
       this.setLocales([
-        {code: 'en'}, {code: 'de'}, {code: 'fr'}
+        {code: 'en', default: true}, {code: 'de'}, {code: 'fr'}
       ]);
       this.widget.field.localized = false;
-      var el = this.compile();
+      const el = this.compile();
       expect(getDataLocaleAttr(el)).toEqual(['en']);
     });
 
@@ -159,7 +159,7 @@ describe('entity editor field integration', function () {
         {code: 'de', active: false},
         {code: 'fr'}
       ]);
-      var el = this.compile();
+      const el = this.compile();
       expect(getDataLocaleAttr(el)).toEqual(['en', 'fr']);
       this.setLocales([
         {code: 'en'},
@@ -176,7 +176,7 @@ describe('entity editor field integration', function () {
         {code: 'fr', active: false}
       ]);
 
-      var el = this.compile();
+      const el = this.compile();
       expect(getDataLocaleAttr(el)).toEqual(['en']);
 
       this.validator.hasError
@@ -198,7 +198,7 @@ describe('entity editor field integration', function () {
 
   describe('errors', function () {
     it('shows field locale errors', function () {
-      var el = this.compile();
+      const el = this.compile();
       expect(hasErrorStatus(el)).toBe(false);
 
       this.validator.errors$.set([
@@ -208,16 +208,16 @@ describe('entity editor field integration', function () {
       ]);
       this.$apply();
 
-      var defLocale = el.find('[data-locale=DEF]');
+      const defLocale = el.find('[data-locale=DEF]');
       expect(hasErrorStatus(defLocale, 'entry.schema.def-error')).toBe(true);
 
-      var enLocale = el.find('[data-locale=EN]');
+      const enLocale = el.find('[data-locale=EN]');
       expect(hasErrorStatus(enLocale, 'entry.schema.en-error-1')).toBe(true);
       expect(hasErrorStatus(enLocale, 'entry.schema.en-error-2')).toBe(true);
     });
 
     it('sets field’s invalid state if there are schema errors', function () {
-      var el = this.compile();
+      const el = this.compile();
       assertInvalidState(el.field, false);
 
       this.validator.hasError
@@ -234,7 +234,7 @@ describe('entity editor field integration', function () {
     });
 
     it('sets field’s invalid state if a field control is invalid', function () {
-      var el = this.compile();
+      const el = this.compile();
       assertInvalidState(el.field, false);
 
       el.fieldController.setInvalid('DEF', true);
@@ -254,7 +254,7 @@ describe('entity editor field integration', function () {
 
   describe('focus', function () {
     it('is set when widget activates this field', function () {
-      var el = this.compile();
+      const el = this.compile();
 
       this.focus.set('FID');
       this.$apply();
@@ -262,7 +262,7 @@ describe('entity editor field integration', function () {
     });
 
     it('is unset when other field activates', function () {
-      var el = this.compile();
+      const el = this.compile();
 
       this.focus.set('FID');
       this.$apply();
@@ -274,7 +274,7 @@ describe('entity editor field integration', function () {
     });
 
     it('is unset when widget deactivates this field', function () {
-      var el = this.compile();
+      const el = this.compile();
 
       this.focus.set('FID');
       this.$apply();
@@ -287,7 +287,7 @@ describe('entity editor field integration', function () {
   });
 
   function hasErrorStatus (el, errorCode) {
-    var selector = '[role="status"]';
+    let selector = '[role="status"]';
     if (errorCode) {
       selector += '[data-error-code^="' + errorCode + '"]';
     }
@@ -303,8 +303,8 @@ describe('entity editor field integration', function () {
       value = true;
     }
 
-    var attrValue = el.attr('aria-' + flag);
-    var flagValue = !!(attrValue && attrValue !== 'false');
+    const attrValue = el.attr('aria-' + flag);
+    const flagValue = !!(attrValue && attrValue !== 'false');
 
     if (flagValue !== value) {
       throw new Error('Expected element to have "aria-' + flag + '" set to ' + value);

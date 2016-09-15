@@ -1,7 +1,7 @@
 'use strict';
 
 describe('cfIframeWidget directive', function () {
-  var widgetAPI;
+  let widgetAPI;
 
   afterEach(function () {
     widgetAPI = null;
@@ -20,7 +20,7 @@ describe('cfIframeWidget directive', function () {
       fields: {}
     });
 
-    var Widgets = this.$inject('widgets');
+    const Widgets = this.$inject('widgets');
     Widgets.get = sinon.stub().returns({});
 
     widgetAPI = {
@@ -59,7 +59,7 @@ describe('cfIframeWidget directive', function () {
     });
 
     it('dispatches call to setInvalid on field controller', function () {
-      var locale = 'en-public';
+      const locale = 'en-public';
 
       this.setInvalidHandler(true, locale);
       sinon.assert.calledWithExactly(this.scope.fieldController.setInvalid, locale, true);
@@ -101,7 +101,7 @@ describe('cfIframeWidget directive', function () {
     });
 
     it('sends field value change for each locale', function () {
-      var fieldFactory = this.$inject('fieldFactory');
+      const fieldFactory = this.$inject('fieldFactory');
       fieldFactory.getLocaleCodes = sinon.stub().returns(['LOC A', 'LOC B', 'LOC C']);
 
       widgetAPI.sendFieldValueChange = sinon.stub();
@@ -140,15 +140,15 @@ describe('cfIframeWidget directive', function () {
     });
 
     it('delegates with path translated path to "otDoc"', function () {
-      var handler = widgetAPI.registerHandler.withArgs('setValue').args[0][1];
+      const handler = widgetAPI.registerHandler.withArgs('setValue').args[0][1];
       handler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VAL');
       sinon.assert.calledWithExactly(this.otDoc.setValueAt, ['internal', 'path'], 'VAL');
     });
 
     it('rejects with API error code when update fails', function () {
       this.otDoc.setValueAt.rejects();
-      var handler = widgetAPI.registerHandler.withArgs('setValue').args[0][1];
-      var errored = sinon.stub();
+      const handler = widgetAPI.registerHandler.withArgs('setValue').args[0][1];
+      const errored = sinon.stub();
       handler('PUBLIC FIELD', 'PUBLIC LOCALE', 'VAL').catch(errored);
       this.$apply();
       sinon.assert.calledWithExactly(errored, sinon.match({code: 'ENTRY UPDATE FAILED'}));

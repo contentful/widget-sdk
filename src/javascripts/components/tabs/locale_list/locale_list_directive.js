@@ -1,73 +1,84 @@
 'use strict';
 
 angular.module('contentful')
-
-.controller('LocaleListController', ['$scope', '$injector', function ($scope, $injector) {
-  var ReloadNotification = $injector.get('ReloadNotification');
-
-  var organizationId = $scope.spaceContext.space.getOrganizationId();
-  $scope.accountUpgradeState = 'account.pathSuffix({ pathSuffix: \'organizations/' +
-                               organizationId + '/subscription\' })';
-  $scope.locales = [];
-  $scope.localesUsageState = getLocalesUsageState();
-
-  $scope.getPlanLocalesUsage = getPlanLocalesUsage;
-  $scope.getPlanLocalesLimit = getPlanLocalesLimit;
-  $scope.getSubscriptionPlan = getSubscriptionPlan;
-
-  return $scope.spaceContext.space.getLocales()
-  .then(function (locales) {
-    $scope.locales = locales;
-    $scope.localesUsageState = getLocalesUsageState();
-    $scope.context.ready = true;
-  })
-  .catch(ReloadNotification.apiErrorHandler);
-
-  function getLocalesUsageState () {
-    if (!hasMultipleLocales()) {
-      return 'noMultipleLocales';
-    }
-
-    var localesLength = $scope.locales.length;
-    if (localesLength <= 1 && getPlanLocalesUsage() < getPlanLocalesLimit()) {
-      return 'oneLocaleUsed';
-    }
-    if (localesLength > 1 && getPlanLocalesUsage() < getPlanLocalesLimit()) {
-      return 'moreThanOneLocaleUsed';
-    }
-    if (getPlanLocalesUsage() >= getPlanLocalesLimit()) {
-      return 'localesLimitReached';
-    }
-
-    return '';
-  }
-
-  function getPlanLocalesUsage () {
-    return dotty.get(getOrganization(), 'usage.permanent.locale');
-  }
-
-  function getPlanLocalesLimit () {
-    return dotty.get(getSubscriptionPlan(), 'limits.permanent.locale');
-  }
-
-  function hasMultipleLocales () {
-    return !!dotty.get(getSubscriptionPlan(), 'limits.features.multipleLocales');
-  }
-
-  function getSubscriptionPlan () {
-    return dotty.get(getOrganization(), 'subscriptionPlan');
-  }
-
-  function getOrganization () {
-    return dotty.get($scope, 'spaceContext.space.data.organization');
-  }
-
-}])
-
-.directive('cfLocaleList', function () {
+.directive('cfLocaleList', [function () {
   return {
     template: JST.locale_list(),
     restrict: 'A',
     controller: 'LocaleListController'
   };
-});
+}])
+
+.controller('LocaleListController', ['$scope', 'require', function ($scope, require) {
+
+  var ReloadNotification = require('ReloadNotification');
+  var spaceContext = require('spaceContext');
+
+  var STATES = {
+    NO_MULTIPLE_LOCALES: 1,
+    ONE_LOCALE_USED: 2,
+    MORE_THAN_ONE_LOCALE_USED: 3,
+    LOCALES_LIMIT_REACHED: 4,
+    UNKNOWN: 5
+  };
+
+  _.extend($scope, STATES);
+
+  var organizationId = spaceContext.space.getOrganizationId();
+  var suffix = 'organizations/' + organizationId + '/subscription';
+  $scope.accountUpgradeState = 'account.pathSuffix({ pathSuffix: \'' + suffix + '\' })';
+
+  $scope.locales = [];
+  $scope.localeNamesByCode = {};
+  $scope.localesUsageState = getLocalesUsageState();
+  $scope.getPlanLocalesLimit = getPlanLocalesLimit;
+  $scope.getSubscriptionPlanName = _.partial(getSubscriptionPlanData, 'name');
+
+  spaceContext.space.getLocales()
+  .then(function (locales) {
+    $scope.locales = locales;
+    $scope.localeNamesByCode = groupLocaleNamesByCode(locales);
+    $scope.localesUsageState = getLocalesUsageState();
+    $scope.context.ready = true;
+  })
+  .catch(ReloadNotification.apiErrorHandler);
+
+  function groupLocaleNamesByCode (locales) {
+    return _.transform(locales, function (acc, locale) {
+      acc[locale.getCode()] = locale.getName() + ' (' + locale.getCode() + ')';
+    }, {});
+  }
+
+  function getLocalesUsageState () {
+    var len = $scope.locales.length;
+    var belowLimit = getPlanLocalesUsage() < getPlanLocalesLimit();
+
+    if (!hasMultipleLocales()) {
+      return STATES.NO_MULTIPLE_LOCALES;
+    } else if (belowLimit && len <= 1) {
+      return STATES.ONE_LOCALE_USED;
+    } else if (belowLimit && len > 1) {
+      return STATES.MORE_THAN_ONE_LOCALE_USED;
+    } else if (!belowLimit) {
+      return STATES.LOCALES_LIMIT_REACHED;
+    } else {
+      return STATES.UNKNOWN;
+    }
+  }
+
+  function getPlanLocalesUsage () {
+    return spaceContext.getData(['organization', 'usage', 'permanent', 'locale']);
+  }
+
+  function getPlanLocalesLimit () {
+    return getSubscriptionPlanData(['limits', 'permanent', 'locale']);
+  }
+
+  function hasMultipleLocales () {
+    return !!getSubscriptionPlanData(['limits', 'features', 'multipleLocales']);
+  }
+
+  function getSubscriptionPlanData (path) {
+    return spaceContext.getData(['organization', 'subscriptionPlan'].concat(path));
+  }
+}]);

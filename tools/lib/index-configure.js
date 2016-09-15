@@ -25,10 +25,14 @@ let FS = B.promisifyAll(require('fs'))
  *
  * Loads the manifest to resolve URLs from `MANIFEST_PATHS`.
  *
+ * Returns the name of the environment.That is the value of the
+ * `environment` configufation key.
+ *
  * @param {string} revision
  * @param {string} configPath
  * @param {string} outPath
- * Path to write the index file to.
+ *   Path to write the index file to.
+ * @return {string}
  */
 
 export default function* configure (revision, configPath, outPath) {

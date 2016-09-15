@@ -32,7 +32,9 @@ function ($delegate, mock) {
   });
 
   $provide.decorator('ReloadNotification', ['$delegate', function ($delegate) {
-    for (var prop in $delegate) {
+    // TODO firefox does not yet support for (const x in y)
+    /*eslint prefer-const: off*/
+    for (let prop in $delegate) {
       sinon.stub($delegate, prop);
     }
     return $delegate;
@@ -93,7 +95,7 @@ function ($delegate, mock) {
 
   $provide.removeDirectives = function () {
     _.flatten(arguments).forEach(function (directive) {
-      var fullName = directive + 'Directive';
+      const fullName = directive + 'Directive';
       $provide.factory(fullName, function () {
         return [];
       });
@@ -118,7 +120,7 @@ function ($delegate, mock) {
 
   $provide.makeStubs = function makeStubs (stubList) {
     if (!_.isArray(stubList)) stubList = _.flatten(arguments);
-    var stubs = {};
+    const stubs = {};
     _.each(stubList, function (val) {
       stubs[val] = sinon.stub();
     });

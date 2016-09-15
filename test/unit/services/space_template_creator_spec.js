@@ -1,9 +1,9 @@
 'use strict';
 
 describe('Space Template creation service', function () {
-  var spaceTemplateCreator, creator, $q, $rootScope, stubs;
-  var attemptedTemplate, spaceContext;
-  var openShareJSDoc;
+  let spaceTemplateCreator, creator, $q, $rootScope, stubs;
+  let attemptedTemplate, spaceContext;
+  let openShareJSDoc;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -33,7 +33,7 @@ describe('Space Template creation service', function () {
   });
 
   describe('creates content based on a template', function () {
-    var template;
+    let template;
     beforeEach(function () {
       template = {
         contentTypes: [
@@ -195,7 +195,7 @@ describe('Space Template creation service', function () {
     });
 
     it('creates 1 preview environment', function () {
-      var env = stubs.createContentPreview.args[0][0];
+      const env = stubs.createContentPreview.args[0][0];
       sinon.assert.calledOnce(stubs.getContentPreview);
       expect(env.name).toBe('Discovery App');
       expect(env.configs.length).toBe(3);

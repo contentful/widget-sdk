@@ -5,13 +5,13 @@ describe('TheLocaleStore', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    var persistors = {};
-    var persistorGet = function () { return this.activeLocales; };
-    var persistorSet = function (data) { this.activeLocales = data; };
+    const persistors = {};
+    const persistorGet = function () { return this.activeLocales; };
+    const persistorSet = function (data) { this.activeLocales = data; };
 
     this.TheStore = this.$inject('TheStore');
     this.TheStore.forKey = sinon.stub(this.TheStore, 'forKey', function (key) {
-      var persitor = persistors[key];
+      let persitor = persistors[key];
       persistors[key] = persitor = persitor || {get: persistorGet, set: persistorSet};
       return persitor;
     });
@@ -23,17 +23,13 @@ describe('TheLocaleStore', function () {
   });
 
   describe('refreshes locales', function () {
-    var privateLocales;
+    let privateLocales;
     beforeEach(function () {
       privateLocales = [
-        { code: 'en-US', internal_code: 'en-US' },
+        { code: 'en-US', internal_code: 'en-US', default: true },
         { code: 'de-DE', internal_code: 'de-DE' }
       ];
       this.space.getPrivateLocales = sinon.stub().returns(privateLocales);
-      this.space.getDefaultLocale  = sinon.stub().returns({
-        code: 'en-US',
-        internal_code: 'en-US'
-      });
 
       this.theLocaleStore.refresh();
     });
@@ -42,8 +38,8 @@ describe('TheLocaleStore', function () {
       expect(this.theLocaleStore.getPrivateLocales()).toEqual(privateLocales);
     });
 
-    it('gets default locale', function() {
-      expect(this.theLocaleStore.getDefaultLocale()).toEqual(this.space.getDefaultLocale());
+    it('gets default locale', function () {
+      expect(this.theLocaleStore.getDefaultLocale()).toEqual(this.space.getPrivateLocales()[0]);
     });
 
     it('gets active locale states', function () {
@@ -51,14 +47,14 @@ describe('TheLocaleStore', function () {
       expect(this.theLocaleStore.isLocaleActive({internal_code: 'de-DE'})).toBe(false);
     });
 
-    it('gets updated active locales', function() {
+    it('gets updated active locales', function () {
       expect(this.theLocaleStore.getActiveLocales()).toEqual([
-        { code: 'en-US', internal_code: 'en-US' }
+        { code: 'en-US', internal_code: 'en-US', default: true }
       ]);
     });
 
-    describe('changes active locales', function() {
-      beforeEach(function() {
+    describe('changes active locales', function () {
+      beforeEach(function () {
         this.theLocaleStore.setActiveLocales([
           {internal_code: 'en-US'},
           {internal_code: 'de-DE'}
@@ -70,9 +66,9 @@ describe('TheLocaleStore', function () {
         expect(this.theLocaleStore.isLocaleActive({internal_code: 'de-DE'})).toBe(true);
       });
 
-      it('gets updated active locales', function() {
+      it('gets updated active locales', function () {
         expect(this.theLocaleStore.getActiveLocales()).toEqual([
-          { code: 'en-US', internal_code: 'en-US' },
+          { code: 'en-US', internal_code: 'en-US', default: true },
           { code: 'de-DE', internal_code: 'de-DE' }
         ]);
       });
@@ -83,15 +79,15 @@ describe('TheLocaleStore', function () {
   describe('#setActiveLocales', function () {
 
     it('activates given locale', function () {
-      var locale = {internal_code: 'zz'};
+      const locale = {internal_code: 'zz'};
       expect(this.theLocaleStore.isLocaleActive(locale)).toBe(false);
       this.theLocaleStore.setActiveLocales([locale]);
       expect(this.theLocaleStore.isLocaleActive(locale)).toBe(true);
     });
 
     it('removes other locales', function () {
-      var a = {internal_code: 'aa'};
-      var b = {internal_code: 'bb'};
+      const a = {internal_code: 'aa'};
+      const b = {internal_code: 'bb'};
       this.theLocaleStore.setActiveLocales([a]);
       expect(this.theLocaleStore.isLocaleActive(a)).toBe(true);
       this.theLocaleStore.setActiveLocales([b]);
@@ -99,7 +95,7 @@ describe('TheLocaleStore', function () {
     });
 
     it('keeps default locale', function () {
-      var def = this.theLocaleStore.getDefaultLocale();
+      const def = this.theLocaleStore.getDefaultLocale();
       expect(this.theLocaleStore.isLocaleActive(def)).toBe(true);
       this.theLocaleStore.setActiveLocales([]);
       expect(this.theLocaleStore.isLocaleActive(def)).toBe(true);
@@ -109,7 +105,7 @@ describe('TheLocaleStore', function () {
   describe('#deactivateLocale', function () {
 
     it('it makes locale inactive', function () {
-      var locale = {internal_code: 'zz'};
+      const locale = {internal_code: 'zz'};
       this.theLocaleStore.setActiveLocales([locale]);
       expect(this.theLocaleStore.isLocaleActive(locale)).toBe(true);
       this.theLocaleStore.deactivateLocale(locale);
@@ -118,17 +114,17 @@ describe('TheLocaleStore', function () {
   });
 
   describe('persistence', function () {
-    var saved = {internal_code: 'aa', code: 'save', contentManagementApi: true};
-    var notSaved = {internal_code: 'bb', code: 'nosave', contentManagementApi: true};
-    var deLocale = {internal_code: 'cc', code: 'de-DE', contentManagementApi: true};
+    const saved = {internal_code: 'aa', code: 'save', contentManagementApi: true};
+    const notSaved = {internal_code: 'bb', code: 'nosave', contentManagementApi: true};
+    const deLocale = {internal_code: 'cc', code: 'de-DE', contentManagementApi: true};
 
-    function k(id) { return 'activeLocalesForSpace.' + id; }
+    function k (id) { return 'activeLocalesForSpace.' + id; }
 
     it('gets different stores for different spaces', function () {
-      var test = function (id) {
-        var space = this.cfStub.space(id);
+      const test = function (id) {
+        const space = this.cfStub.space(id);
         this.theLocaleStore.resetWithSpace(space);
-        var call = this.TheStore.forKey.lastCall;
+        const call = this.TheStore.forKey.lastCall;
         expect(call.args[0]).toBe(k(id));
       }.bind(this);
 
@@ -137,7 +133,7 @@ describe('TheLocaleStore', function () {
     });
 
     it('activates locales form the store', function () {
-      var persistor = this.TheStore.forKey(k('test'));
+      const persistor = this.TheStore.forKey(k('test'));
       persistor.set(['save']);
       this.space.data.locales.push(saved, notSaved);
       this.theLocaleStore.refresh();
@@ -147,7 +143,7 @@ describe('TheLocaleStore', function () {
     });
 
     it('saves locales to store', function () {
-      var persistor = this.TheStore.forKey(k('test'));
+      const persistor = this.TheStore.forKey(k('test'));
       this.space.data.locales.push(saved);
 
       this.theLocaleStore.refresh();
@@ -156,10 +152,10 @@ describe('TheLocaleStore', function () {
       this.theLocaleStore.setActiveLocales([saved]);
       expect(persistor.get()).toEqual(['en-US', 'save']);
 
-      var space = this.cfStub.space('another');
+      const space = this.cfStub.space('another');
       space.data.locales.push(deLocale);
       this.theLocaleStore.resetWithSpace(space);
-      var anotherPersistor = this.TheStore.forKey(k('another'));
+      const anotherPersistor = this.TheStore.forKey(k('another'));
 
       expect(persistor.get()).toEqual(['en-US', 'save']);
       expect(anotherPersistor.get()).toEqual(['en-US']);

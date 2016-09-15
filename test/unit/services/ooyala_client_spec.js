@@ -1,9 +1,9 @@
 'use strict';
 
 describe('Ooyala Client', function () {
-  var baseUrl, client, clientDeferred, ooyalaClient;
-  var OoyalaErrorMessages, clientPromise;
-  var $rootScope;
+  let baseUrl, client, clientDeferred, ooyalaClient;
+  let OoyalaErrorMessages, clientPromise;
+  let $rootScope;
 
   beforeEach(function () {
     module('contentful/test');
@@ -29,7 +29,7 @@ describe('Ooyala Client', function () {
   describe('#request', function () {
     describe('when no organization id has been set', function () {
       it('raises an exception', function () {
-        var request = function () {
+        const request = function () {
           ooyalaClient.request('bla', 'ble', 'bli');
         };
 
@@ -55,7 +55,7 @@ describe('Ooyala Client', function () {
     });
 
     describe('when the request fails', function () {
-      var error;
+      let error;
 
       function failedRequest (response) {
         beforeEach(function () {
@@ -67,7 +67,7 @@ describe('Ooyala Client', function () {
       }
 
       describe('because the user has no ooyala credentials', function () {
-        var response = {statusCode: 403, body: { message: 'Missing credentials' }};
+        const response = {statusCode: 403, body: { message: 'Missing credentials' }};
 
         failedRequest(response);
 
@@ -81,7 +81,7 @@ describe('Ooyala Client', function () {
       });
 
       describe('because the specified asset cannot be found', function () {
-        var response = {statusCode: 404};
+        const response = {statusCode: 404};
 
         failedRequest(response);
 
@@ -95,7 +95,7 @@ describe('Ooyala Client', function () {
       });
 
       describe('because of an unknown error', function () {
-        var response = {statusCode: 500};
+        const response = {statusCode: 500};
 
         failedRequest(response);
 

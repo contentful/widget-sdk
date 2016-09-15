@@ -1,7 +1,7 @@
 'use strict';
 
 describe('cfKnowledgeBase directive', function () {
-  var el, scope, trackFollowedKbpLinkSpy;
+  let el, scope, trackFollowedKbpLinkSpy;
 
   function getLink () { return el.find('a').first(); }
 
@@ -28,7 +28,7 @@ describe('cfKnowledgeBase directive', function () {
     });
 
     it('has href', function () {
-      var href = getLink().attr('href');
+      const href = getLink().attr('href');
       expect(href).toBe('http://test.com/developers/docs/concepts/data-model/');
       expect(getLink().attr('target')).toBe('_blank');
     });
@@ -50,13 +50,13 @@ describe('cfKnowledgeBase directive', function () {
     });
 
     it('has no link text', function () {
-      var children = getLink().children();
+      const children = getLink().children();
       expect(children.length).toBe(1);
       expect(children[0].tagName).toBe('I');
     });
 
     it('has no text class', function () {
-      var classNames = getLink().attr('class');
+      const classNames = getLink().attr('class');
       expect(classNames.indexOf('--no-text') > -1).toBe(true);
     });
   });

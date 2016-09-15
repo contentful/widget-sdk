@@ -56,17 +56,20 @@ function parseArgs (argv) {
       .usage(`Usage: ... travis [options]\n\n${TRAVIS_DESC}`)
       .options({
         branch: {
+          type: 'string',
           alias: 'b',
           description: 'Value of $TRAVIS_BRANCH',
           requiresArgs: true,
           required: true
         },
         pr: {
+          type: 'string',
           description: 'Value of $TRAVIS_PULL_REQUEST',
           requiresArg: true,
           required: true
         },
         version: {
+          type: 'string',
           alias: 'v',
           description: 'Set the version identifier',
           requiresArg: true,

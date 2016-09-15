@@ -1,7 +1,7 @@
 'use strict';
 
 describe('cfInlineCopy directive', function () {
-  var stubs;
+  let stubs;
 
   beforeEach(function () {
     stubs = {

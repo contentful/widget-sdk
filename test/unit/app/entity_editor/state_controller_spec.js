@@ -1,10 +1,10 @@
 'use strict';
 
 describe('entityEditor/StateController', function () {
-  var $q;
+  let $q;
 
   beforeEach(function () {
-    var closeStateSpy = this.closeStateSpy = sinon.spy();
+    const closeStateSpy = this.closeStateSpy = sinon.spy();
 
     module('contentful/test', function ($provide) {
       $provide.value('navigation/closeState', closeStateSpy);
@@ -12,9 +12,9 @@ describe('entityEditor/StateController', function () {
 
     $q = this.$inject('$q');
 
-    var cfStub = this.$inject('cfStub');
-    var space = cfStub.space('spaceid');
-    var entry = cfStub.entry(space, 'entryid', 'typeid');
+    const cfStub = this.$inject('cfStub');
+    const space = cfStub.space('spaceid');
+    const entry = cfStub.entry(space, 'entryid', 'typeid');
 
 
     this.rootScope = this.$inject('$rootScope');
@@ -32,7 +32,7 @@ describe('entityEditor/StateController', function () {
     this.entity = entry;
     this.notify = {};
 
-    var $controller = this.$inject('$controller');
+    const $controller = this.$inject('$controller');
     this.controller = $controller('entityEditor/StateController', {
       $scope: this.scope,
       notify: this.notify,
@@ -107,10 +107,10 @@ describe('entityEditor/StateController', function () {
         this.action = this.controller.secondary[0];
       });
 
-      it('unpublishes and archives the entity', function (done) {
+      it('unpublishes and archives the entity', function () {
         this.entity.unpublish = sinon.stub().resolves();
         this.entity.archive = sinon.stub().resolves();
-        this.action.execute().finally(done);
+        this.action.execute();
         this.$apply();
         sinon.assert.callOrder(
           this.entity.unpublish,
@@ -124,9 +124,9 @@ describe('entityEditor/StateController', function () {
         this.action = this.controller.secondary[1];
       });
 
-      it('unpublishes the entity', function (done) {
+      it('unpublishes the entity', function () {
         this.entity.unpublish = sinon.stub().resolves();
-        this.action.execute().finally(done);
+        this.action.execute();
         this.$apply();
         sinon.assert.calledOnce(this.entity.unpublish);
       });
@@ -148,9 +148,9 @@ describe('entityEditor/StateController', function () {
 
     describe('primary action', function () {
 
-      it('publishes entity', function (done) {
+      it('publishes entity', function () {
         this.entity.publish = sinon.stub().resolves();
-        this.controller.primary.execute().finally(done);
+        this.controller.primary.execute();
         this.$apply();
         sinon.assert.calledOnce(this.entity.publish);
       });
@@ -171,12 +171,12 @@ describe('entityEditor/StateController', function () {
         sinon.assert.calledOnce(this.notify.publishValidationFail);
       });
 
-      it('does not publish if validation failed', function (done) {
+      it('does not publish if validation failed', function () {
         this.entity.publish = sinon.stub().resolves();
         this.scope.validate = sinon.stub().returns(false);
         this.notify.publishValidationFail = sinon.stub();
 
-        this.controller.primary.execute().finally(done);
+        this.controller.primary.execute();
         this.$apply();
         sinon.assert.notCalled(this.entity.publish);
       });
@@ -232,7 +232,7 @@ describe('entityEditor/StateController', function () {
      * directive.
      */
     function OtDoc (data) {
-      var snapshot = _.cloneDeep(data);
+      const snapshot = _.cloneDeep(data);
       return {
         getValueAt: function (path) {
           return dotty.get(snapshot, path);

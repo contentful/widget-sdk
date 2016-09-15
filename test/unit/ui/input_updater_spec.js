@@ -1,7 +1,7 @@
 'use strict';
 
 describe('ui/inputControl', function () {
-  var inputEl;
+  let inputEl;
 
   beforeEach(function () {
     module('contentful/test');

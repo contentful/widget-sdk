@@ -4,18 +4,18 @@ angular.module('contentful/mocks')
 .value('throttle', _.identity)
 
 .value('defer', function (f) {
-  var args = _.tail(arguments);
+  const args = _.tail(arguments);
   f.apply(this, args);
 })
 
 .value('delay', function (f) {
-  var args = _.drop(arguments, 2);
+  const args = _.drop(arguments, 2);
   f.apply(this, args);
 })
 
 
 .constant('delayedInvocationStub', function (originalFunction) {
-  var result;
+  let result;
   function delayedFunction () {
     delayedFunction.calls.push({
       thisArg: this,
@@ -25,7 +25,7 @@ angular.module('contentful/mocks')
   }
   delayedFunction.calls = [];
   delayedFunction.invokeDelayed = function () {
-    var call = this.calls.shift();
+    const call = this.calls.shift();
     result = originalFunction.apply(call.thisArg, call.arguments);
   };
   delayedFunction.invokeAll = function () {
