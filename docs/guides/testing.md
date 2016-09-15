@@ -76,24 +76,65 @@ Mocks and Stubs
 ---------------
 
 Use `sinon.stub()` to create mock functions and `sinon.assert` to make
-assertions.
+assertions. We provide a couple of extensions to Sinon stubs.
 
-We provide two extensions to Sinon stubs that allow you to create
-functions that return promises.
+### Promises
+
+The `stub.resolves(value)` method makes a stub return a resolved promise
 
 ~~~js
-// Equivalent: Function that returns a resolved promise
+// Equivalent
 sinon.stub().resolves('yeah')
 sinon.stub().returns($q.resolve('yeah'))
+~~~
 
-// Equivalent: Function that returns a rejected promise
+The `stub.rejects(error)` method makes a stub return a rejected promise
+~~~ js
+// Equivalent
 sinon.stub().rejects(new Error())
 sinon.stub().returns($q.reject(new Error()))
 ~~~
 
-There is a `mocks` module and a `cfStub` service that provide elaborate
-mocks for certain parts of the app. Use of this module is *deprecated*
-and needs some major cleanup.
+The `stub.defers()` helper makes the stub return a promise that is not yet
+resolved. One can use `stub.resolve()` and `stub.reject()` to resolve and reject
+the promise.
+
+~~~js
+const stub = sinon.stub().defers()
+stub().then(cb)
+stub.resolves('val')
+this.$apply()
+// `cb` is called with 'val'
+~~~
+
+### Services
+
+The `this.mockService()` helper mocks all methods in an Angular service.
+
+Assume the `myService` service is an object that exports the `foo` and `bar`
+methods.
+
+~~~js
+it('mocks a service', function () {
+  const mock = this.mockService('myService', {
+    bar: true
+  })
+
+  mock.foo.returns('foo')
+
+  const service = this.$inject('myService')
+  expect(service.foo()).toBe('foo')
+  expect(service.bar).toBe(true)
+})
+~~~
+
+The object passed to `this.mockService()` contains custom extensions to the
+service. It only allows you to change properties that already exist on the
+service.
+
+There is a `mocks` module and a `cfStub` service that provide elaborate mocks
+for certain parts of the app. Use of `cfStub` service is *deprecated* and needs
+some major cleanup.
 
 
 Asynchronous Tests
