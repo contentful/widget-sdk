@@ -1,8 +1,8 @@
 'use string';
 
 describe('utils/StringDiff', function () {
-  var CHARS = '0123456789abcdefghijklmnopqvwxyzABCDEFGHIJKLMNOPQVWXYZ';
-  var diff;
+  const CHARS = '0123456789abcdefghijklmnopqvwxyzABCDEFGHIJKLMNOPQVWXYZ';
+  let diff;
 
   beforeEach(function () {
     module('cf.utils');
@@ -15,16 +15,16 @@ describe('utils/StringDiff', function () {
 
   it('diffs inserts', function () {
     _.times(1000, function () {
-      var a = randomString();
-      var p = randomInsert(a.length);
+      const a = randomString();
+      const p = randomInsert(a.length);
       assertPatchedDiff(a, [p]);
     });
   });
 
   it('diffs deletes', function () {
     _.times(1000, function () {
-      var a = randomString();
-      var p = randomDelete(a.length);
+      const a = randomString();
+      const p = randomDelete(a.length);
       assertPatchedDiff(a, [p]);
     });
   });
@@ -32,7 +32,7 @@ describe('utils/StringDiff', function () {
 
   function patch (a, patches) {
     return _.reduce(patches, function (a, p) {
-      var prefix, suffix;
+      let prefix, suffix;
       if (p.insert) {
         prefix = a.slice(0, p.insert[0]);
         suffix = a.slice(p.insert[0]);
@@ -46,24 +46,24 @@ describe('utils/StringDiff', function () {
   }
 
   function assertPatchedDiff (a, ps) {
-    var b = patch(a, ps);
+    const b = patch(a, ps);
     expect(patch(a, diff(a, b))).toEqual(b);
   }
 
   function randomInsert (size) {
-    var pos = _.random(0, size);
-    var str = randomString();
+    const pos = _.random(0, size);
+    const str = randomString();
     return {insert: [pos, str]};
   }
 
   function randomDelete (size) {
-    var pos = _.random(0, size);
-    var length = _.random(pos, size);
+    const pos = _.random(0, size);
+    const length = _.random(pos, size);
     return {delete: [pos, length]};
   }
 
   function randomString () {
-    var size = _.random(0, 8);
+    const size = _.random(0, 8);
     return _.times(size, function () {
       return randomChar();
     }).join('');

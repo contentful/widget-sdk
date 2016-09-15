@@ -2,7 +2,7 @@
 
 describe('The ApiKey list directive', function () {
 
-  var container, sidebar, accessChecker;
+  let container, sidebar, accessChecker;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -13,14 +13,14 @@ describe('The ApiKey list directive', function () {
 
     accessChecker.shouldDisable = sinon.stub().returns(false);
 
-    var entityCreationController = {
+    const entityCreationController = {
       newApiKey: _.noop
     };
-    var apiKeys = [
+    const apiKeys = [
       {getId: _.constant(1), getName: function () { return 'key1'; }},
       {getId: _.constant(2), getName: function () { return 'key2'; }}
     ];
-    var apiKeyController = {
+    const apiKeyController = {
       getApiKeyList: sinon.stub().resolves(apiKeys)
     };
 
@@ -41,7 +41,7 @@ describe('The ApiKey list directive', function () {
 
   it('list has 2 elements', function () {
     this.setup();
-    var list = container.find('.api-key-list');
+    const list = container.find('.api-key-list');
     expect(list.find('.entity-list__item').length).toBe(2);
   });
 

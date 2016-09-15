@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Entry Editor Controller', function () {
-  var scope;
+  let scope;
 
   afterEach(function () {
     scope.$destroy();
@@ -25,22 +25,22 @@ describe('Entry Editor Controller', function () {
     });
 
     this.createController = function () {
-      var cfStub = this.$inject('cfStub');
+      const cfStub = this.$inject('cfStub');
 
-      var $rootScope = this.$inject('$rootScope');
+      const $rootScope = this.$inject('$rootScope');
       scope = $rootScope.$new();
 
-      var ctData = cfStub.contentTypeData();
+      const ctData = cfStub.contentTypeData();
       scope.contentType = {data: ctData, getId: _.constant(ctData.sys.id)};
       scope.context = {};
 
-      var space = cfStub.space('testSpace');
-      var entry = cfStub.entry(space, 'testEntry', 'testType', {}, {
+      const space = cfStub.space('testSpace');
+      const entry = cfStub.entry(space, 'testEntry', 'testType', {}, {
         sys: { publishedVersion: 1 }
       });
       scope.entry = entry;
 
-      var $controller = this.$inject('$controller');
+      const $controller = this.$inject('$controller');
       $controller('EntryEditorController', {$scope: scope});
 
       scope.validate = sinon.stub();
@@ -61,7 +61,7 @@ describe('Entry Editor Controller', function () {
 
   describe('when the entry title changes', function () {
     it('should update the tab title', function () {
-      var spaceContext = this.$inject('spaceContext');
+      const spaceContext = this.$inject('spaceContext');
       spaceContext.entryTitle = sinon.stub();
 
       spaceContext.entryTitle.returns('foo');

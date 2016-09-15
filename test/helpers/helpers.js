@@ -25,7 +25,7 @@ beforeEach(function () {
    */
   this.$inject = function (serviceName) {
     if (!this.$injector) {
-      var self = this;
+      const self = this;
       inject(function ($injector) {
         self.$injector = $injector;
       });
@@ -89,10 +89,10 @@ beforeEach(function () {
    * @return {JQueryElement}
    */
   this.$compile = function (template, scopeProperties, controllers) {
-    var $compile = this.$inject('$compile');
-    var $rootScope = this.$inject('$rootScope');
-    var scope = _.extend($rootScope.$new(true), scopeProperties);
-    var transcludeControllers = {};
+    const $compile = this.$inject('$compile');
+    const $rootScope = this.$inject('$rootScope');
+    const scope = _.extend($rootScope.$new(true), scopeProperties);
+    let transcludeControllers = {};
 
     if (controllers) {
       // convert controllers to a form `$compile` understands
@@ -103,7 +103,7 @@ beforeEach(function () {
       });
     }
 
-    var element = $compile(template)(scope, undefined, {
+    const element = $compile(template)(scope, undefined, {
       transcludeControllers: transcludeControllers
     });
 
@@ -113,4 +113,35 @@ beforeEach(function () {
     return element;
   };
 
+  /**
+   * @ngdoc method
+   * @name helpers#mockService
+   * @description
+   * Stubs all methods on a service object.
+   *
+   * Resolves the service by name and calls `sinon.stub(service, prop)` for each
+   * property that is a function. Returns the modified object.
+   *
+   * The optional second argument is used to extend the service object.
+   * It only allows you to specify properties that already exist on the
+   * service.
+   *
+   * @param {string} service
+   * @param {object?} extension
+   * @return {object}
+   */
+  this.mockService = function (name, extension) {
+    const service = this.$inject(name);
+    // We cannot use sinon.mock() because it will not add the
+    // sinon.stub helpers like 'resolve()' etc.
+    sinon.stubAll(service);
+    /* eslint prefer-const: off */
+    for (let key in extension) {
+      if (!(key in service)) {
+        throw new Error(`Property "${key}" does not exist on service`);
+      }
+      service[key] = extension[key];
+    }
+    return service;
+  };
 });

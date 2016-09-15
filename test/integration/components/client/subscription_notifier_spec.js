@@ -7,8 +7,8 @@
  * @covers Subscription
  */
 describe('subscriptionNotifier', function () {
-  var A_DAY = 24;
-  var broadcastStub, openPaywallStub;
+  const A_DAY = 24;
+  let broadcastStub, openPaywallStub;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -17,17 +17,17 @@ describe('subscriptionNotifier', function () {
       });
     });
 
-    var dialogsInitController = this.$inject('dialogsInitController');
-    var moment = this.$inject('moment');
-    var OrganizationList = this.$inject('OrganizationList');
-    var spaceContext = this.$inject('spaceContext');
-    var $rootScope = this.$inject('$rootScope');
+    const dialogsInitController = this.$inject('dialogsInitController');
+    const moment = this.$inject('moment');
+    const OrganizationList = this.$inject('OrganizationList');
+    const spaceContext = this.$inject('spaceContext');
+    const $rootScope = this.$inject('$rootScope');
 
     broadcastStub = sinon.stub($rootScope, '$broadcast').returns({});
     openPaywallStub = this.$inject('paywallOpener').openPaywall;
 
     this.organization = {sys: {id: 42}};
-    var membership = {organization: this.organization};
+    const membership = {organization: this.organization};
     OrganizationList.resetWithUser({organizationMemberships: [membership]});
     dialogsInitController.init();
 
@@ -60,7 +60,7 @@ describe('subscriptionNotifier', function () {
 
     describe('removal of old notification (e.g. after switch orga)', function () {
       it('calls broadcast with null once', function () {
-        var notificationCalls = broadcastStub.args.filter(function (x) {
+        const notificationCalls = broadcastStub.args.filter(function (x) {
           return x[0] === 'persistentNotification';
         });
 

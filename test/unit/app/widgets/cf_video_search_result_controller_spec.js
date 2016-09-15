@@ -1,17 +1,17 @@
 'use strict';
 
 describe('Video Search Result Controller', function () {
-  var controller, scope;
+  let controller, scope;
 
   beforeEach(function () {
     module('contentful/test');
 
     inject(function ($controller, $rootScope) {
-      var videoPlayerControllerMock, videoSearchControllerMock;
-
-      videoPlayerControllerMock = jasmine.createSpyObj('videoPlayerControllerMock', ['pause', 'play']);
-      videoSearchControllerMock = jasmine.createSpyObj('videoSearchControllerMock',
-                                                       ['pauseCurrentPlayer', 'deselectVideo', 'selectVideo']);
+      const videoPlayerControllerMock = jasmine.createSpyObj('videoPlayerControllerMock', ['pause', 'play']);
+      const videoSearchControllerMock = jasmine.createSpyObj(
+        'videoSearchControllerMock',
+        ['pauseCurrentPlayer', 'deselectVideo', 'selectVideo']
+      );
 
       scope = $rootScope.$new();
       scope.video = 'video-1';

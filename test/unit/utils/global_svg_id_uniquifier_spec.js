@@ -200,7 +200,7 @@ describe('globalSvgIdUniquifier.uniquifyIds()', function () {
    *        `uniquifyIds()` call.
    */
   function describeSequentiallyPassing (msg, ...steps) {
-    let uniquifySvgSteps = [];
+    const uniquifySvgSteps = [];
 
     describe(`sequentially passing ${msg};`, () => {
       _.forEach(steps, handleStep);

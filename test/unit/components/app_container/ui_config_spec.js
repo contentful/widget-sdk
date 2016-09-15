@@ -2,7 +2,7 @@
 
 describe('uiConfig service', function () {
 
-  var uiConfig, stubs;
+  let uiConfig, stubs;
 
   beforeEach(function () {
 
@@ -24,7 +24,7 @@ describe('uiConfig service', function () {
   });
 
   describe('#load', function () {
-    var config;
+    let config;
     beforeEach(function () {
       config = {
         entryListViews: [{}]
@@ -44,7 +44,7 @@ describe('uiConfig service', function () {
     });
 
     pit('resolves to empty object if server returns 404', function () {
-      var err = { statusCode: 404 };
+      const err = { statusCode: 404 };
       stubs.spaceContext.space.getUIConfig.rejects(err);
       return uiConfig.load().then(function (val) {
         expect(val).toEqual({});
@@ -52,7 +52,7 @@ describe('uiConfig service', function () {
     });
 
     pit('rejects if non-404 server error', function () {
-      var err = { statusCode: 502 };
+      const err = { statusCode: 502 };
       stubs.spaceContext.space.getUIConfig.rejects(err);
 
       return uiConfig.load().catch(function (val) {
@@ -75,7 +75,7 @@ describe('uiConfig service', function () {
 
   describe('#save', function () {
     it('calls setUIConfig method', function () {
-      var newConfig = { name: 'new' };
+      const newConfig = { name: 'new' };
       stubs.spaceContext.space.getUIConfig.resolves({ name: 'old' });
       stubs.spaceContext.space.setUIConfig.resolves();
       uiConfig.load();
@@ -87,7 +87,7 @@ describe('uiConfig service', function () {
 
   describe('#addOrEditCt', function () {
 
-    var mockCt;
+    let mockCt;
 
     beforeEach(function () {
       mockCt = {
@@ -99,7 +99,7 @@ describe('uiConfig service', function () {
     });
 
     it('does nothing if config is not defined', function () {
-      var newConfig = { name: 'new' };
+      const newConfig = { name: 'new' };
       stubs.spaceContext.space.getUIConfig.rejects({statusCode: 404});
       stubs.spaceContext.space.setUIConfig.resolves();
       uiConfig.load();
@@ -109,7 +109,7 @@ describe('uiConfig service', function () {
     });
 
     it('does nothing if there is no `Content Type` folder', function () {
-      var config = {
+      const config = {
         entryListViews: [{ title: 'foo' }]
       };
       stubs.spaceContext.space.getUIConfig.resolves(config);
@@ -120,7 +120,7 @@ describe('uiConfig service', function () {
     });
 
     it('adds content type if it doesn\'t exist', function () {
-      var config = {
+      const config = {
         entryListViews: [{
           title: 'Content Type',
           views: [{
@@ -143,7 +143,7 @@ describe('uiConfig service', function () {
     });
 
     it('edits view title when existing Content Type is changed', function () {
-      var config = {
+      const config = {
         entryListViews: [{
           title: 'Content Type',
           views: [{

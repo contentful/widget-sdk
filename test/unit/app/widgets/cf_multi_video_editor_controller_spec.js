@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Multi Video Editor Controller', function () {
-  var scope, multiVideoEditorController;
+  let scope, multiVideoEditorController;
 
   afterEach(function () {
     scope = multiVideoEditorController = null;
@@ -10,19 +10,19 @@ describe('Multi Video Editor Controller', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    var $rootScope = this.$inject('$rootScope');
-    var $controller = this.$inject('$controller');
+    const $rootScope = this.$inject('$rootScope');
+    const $controller = this.$inject('$controller');
 
     scope = $rootScope.$new();
     scope.providerVideoEditorController = {
       widgetPlayerDirective: 'cf-widget-player-directive'
     };
-    var videoInputController = {
+    const videoInputController = {
       clearField: sinon.stub()
     };
     scope.videoInputController = sinon.stub().returns(videoInputController);
 
-    var widgetApi = this.$inject('mocks/widgetApi').create();
+    const widgetApi = this.$inject('mocks/widgetApi').create();
     this.fieldApi = widgetApi.field;
 
     multiVideoEditorController = $controller('cfMultiVideoEditorController', {
@@ -43,7 +43,7 @@ describe('Multi Video Editor Controller', function () {
 
       it('inserts each selected asset', function () {
         scope.multiVideoEditor.assets = [{assetId: 'A'}];
-        var selection = [{id: 'B'}, {id: 'C'}];
+        const selection = [{id: 'B'}, {id: 'C'}];
         scope.multiVideoEditor.searchConfig.onSelection(selection);
         sinon.assert.calledOnce(this.fieldApi.setValue);
         sinon.assert.calledWithExactly(this.fieldApi.setValue, ['B', 'C', 'A']);
@@ -69,7 +69,7 @@ describe('Multi Video Editor Controller', function () {
     });
 
     it('returns the value returned from the callback', function () {
-      var customAttrs = multiVideoEditorController.customAttrsForPlayer('asset');
+      const customAttrs = multiVideoEditorController.customAttrsForPlayer('asset');
       expect(customAttrs).toEqual('attrs');
     });
   });
@@ -85,7 +85,7 @@ describe('Multi Video Editor Controller', function () {
     });
 
     it('returns the value returned from the callback', function () {
-      var isReady = multiVideoEditorController.isVideoWidgetReady();
+      const isReady = multiVideoEditorController.isVideoWidgetReady();
       expect(isReady).toBe('READY');
     });
   });
@@ -136,7 +136,7 @@ describe('Multi Video Editor Controller', function () {
     });
 
     it('returns the value returned from the callback', function () {
-      var asset = multiVideoEditorController.lookupAsset('asset-1');
+      const asset = multiVideoEditorController.lookupAsset('asset-1');
       expect(asset).toEqual('asset');
     });
   });

@@ -1,7 +1,7 @@
 'use strict';
 
 describe('The ContentType list directive', function () {
-  var spaceContext;
+  let spaceContext;
 
   beforeEach(function () {
     module('contentful/test');
@@ -32,8 +32,8 @@ describe('The ContentType list directive', function () {
 
     spaceContext.refreshContentTypes = sinon.stub().resolves();
 
-    var element = this.$compile('<div cf-content-type-list>', { context: {} });
-    var scope = element.scope();
+    const element = this.$compile('<div cf-content-type-list>', { context: {} });
+    const scope = element.scope();
 
     scope.searchTerm = 'B';
     scope.$apply();

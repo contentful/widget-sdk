@@ -12,8 +12,8 @@ angular.module('contentful/mocks')
     requests: null, // initialized in constructor
 
     request: function (options) {
-      var self = this;
-      var deferred = $q.defer();
+      const self = this;
+      const deferred = $q.defer();
       self.requests.push({
         options: options,
         resolve: _.bind(deferred.resolve, deferred),
@@ -23,23 +23,23 @@ angular.module('contentful/mocks')
     },
 
     resolve: function (value) {
-      var req = this.requests.shift();
+      const req = this.requests.shift();
       req.resolve(value);
     },
 
     resolveLast: function (value) {
-      var req = this.requests.pop();
+      const req = this.requests.pop();
       this.requests.length = 0;
       req.resolve(value);
     },
 
     reject: function (error) {
-      var req = this.requests.shift();
+      const req = this.requests.shift();
       req.reject(error);
     },
 
     rejectLast: function (value) {
-      var req = this.requests.pop();
+      const req = this.requests.pop();
       this.requests.length = 0;
       req.resolve(value);
     }
@@ -49,15 +49,15 @@ angular.module('contentful/mocks')
 })
 
 .factory('cfStub', function ($injector) {
-  var $rootScope = $injector.get('$rootScope');
-  var spaceContext = $injector.get('spaceContext');
-  var contentfulClient = $injector.get('libs/@contentful/client');
-  var Adapter = $injector.get('TestingAdapter');
+  const $rootScope = $injector.get('$rootScope');
+  const spaceContext = $injector.get('spaceContext');
+  const contentfulClient = $injector.get('libs/@contentful/client');
+  const Adapter = $injector.get('TestingAdapter');
 
-  var Client = contentfulClient.Client;
-  var adapter = new Adapter();
+  const Client = contentfulClient.Client;
+  const adapter = new Adapter();
 
-  var cfStub = {};
+  const cfStub = {};
   cfStub.adapter = adapter;
 
   cfStub.locale = function (code, extraData) {
@@ -79,8 +79,8 @@ angular.module('contentful/mocks')
 
   cfStub.space = function (id, extraData) {
     id = id || 'testSpace';
-    var client = new Client(adapter);
-    var testSpace;
+    const client = new Client(adapter);
+    let testSpace;
     client.getSpace(id)
     .then(function (space) {
       testSpace = space;
@@ -105,7 +105,7 @@ angular.module('contentful/mocks')
   };
 
   cfStub.spaceContext = function (space, contentTypes) {
-    var context = spaceContext;
+    const context = spaceContext;
     context.resetWithSpace(space);
     context.refreshContentTypes();
     adapter.resolveLast({
@@ -128,8 +128,8 @@ angular.module('contentful/mocks')
   };
 
   cfStub.mockSpaceContext = function () {
-    var space = cfStub.space('test');
-    var contentTypeData = cfStub.contentTypeData('testType');
+    const space = cfStub.space('test');
+    const contentTypeData = cfStub.contentTypeData('testType');
     return cfStub.spaceContext(space, [contentTypeData]);
   };
 
@@ -145,12 +145,12 @@ angular.module('contentful/mocks')
   };
 
   cfStub.contentType = function (space, id, name, fields, extraData) {
-    var contentType;
+    let contentType;
     space.getContentType(id)
     .then(function (res) {
       contentType = res;
     });
-    var data = cfStub.contentTypeData(id, fields, {
+    const data = cfStub.contentTypeData(id, fields, {
       name: name,
       sys: { version: 1 }
     });
@@ -161,7 +161,7 @@ angular.module('contentful/mocks')
 
   cfStub.entry = function (space, id, contentTypeId, fields, extraData) {
     fields = fields || {};
-    var entry;
+    let entry;
     space.getEntry(id)
     .then(function (res) {
       entry = res;
@@ -186,7 +186,7 @@ angular.module('contentful/mocks')
   };
 
   cfStub.asset = function (space, id, fields, extraData) {
-    var asset;
+    let asset;
     space.getAsset(id).then(function (res) {
       asset = res;
     });

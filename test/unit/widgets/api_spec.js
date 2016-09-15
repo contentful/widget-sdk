@@ -1,14 +1,14 @@
 'use strict';
 
 describe('widgets/API', function () {
-  var API;
+  let API;
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
     API = this.$inject('widgets/API');
 
-    var TheLocaleStore = this.$inject('TheLocaleStore');
+    const TheLocaleStore = this.$inject('TheLocaleStore');
     this.setLocales = TheLocaleStore.setLocales;
 
     // API constructor parameters
@@ -36,7 +36,7 @@ describe('widgets/API', function () {
 
   describe('#connect()', function () {
     it('sends connect message through channel', function () {
-      var api = this.createAPI();
+      const api = this.createAPI();
       api.connect();
       sinon.assert.calledOnce(this.postMessage);
       expect(this.postMessage.args[0][0].method).toEqual('connect');
@@ -79,7 +79,7 @@ describe('widgets/API', function () {
 
     it('sends fieldInfo param', function () {
       this.setLocales([
-        {code: 'en', internal_code: 'en-internal'}
+        {code: 'en', internal_code: 'en-internal', default: true}
       ]);
 
       this.fields = [
@@ -97,7 +97,7 @@ describe('widgets/API', function () {
     });
 
     it('sends locales param', function () {
-      this.setLocales([{code: 'A'}, {code: 'B'}]);
+      this.setLocales([{code: 'A', default: true}, {code: 'B'}]);
       this.createAPI().connect();
       expect(this.postMessage.args[0][0].params[0].locales.default).toEqual('A');
       expect(this.postMessage.args[0][0].params[0].locales.available).toEqual(['A', 'B']);
@@ -107,7 +107,7 @@ describe('widgets/API', function () {
   describe('#sendFieldValueChange()', function () {
     beforeEach(function () {
       this.setLocales([
-        {code: 'LC-public', internal_code: 'LC-internal'}
+        {code: 'LC-public', internal_code: 'LC-internal', default: true}
       ]);
       this.fields = [
         {id: 'FID-internal', apiName: 'FID-public'}
@@ -144,9 +144,9 @@ describe('widgets/API', function () {
       this.fields = [{
         id: 'FID-internal', apiName: 'FID-public'
       }];
-      var api = this.createAPI();
+      const api = this.createAPI();
 
-      var path = api.buildDocPath('FID-public', 'LC-public');
+      const path = api.buildDocPath('FID-public', 'LC-public');
       expect(path).toEqual(['fields', 'FID-internal', 'LC-internal']);
     });
   });

@@ -1,8 +1,8 @@
 'use strict';
 
 describe('Kaltura Editor Controller Mixin', function () {
-  var KalturaEditorControllerMixin, kalturaClientWrapperMock;
-  var kalturaSearchMock, kalturaSearchInstanceMock;
+  let KalturaEditorControllerMixin, kalturaClientWrapperMock;
+  let kalturaSearchMock, kalturaSearchInstanceMock;
 
   beforeEach(function () {
     module('contentful/test');
@@ -22,8 +22,8 @@ describe('Kaltura Editor Controller Mixin', function () {
       kalturaClientWrapperMock.init.returns($q.resolve());
     });
 
-    var $q = this.$inject('$q');
-    var LazyLoader = this.$inject('LazyLoader');
+    const $q = this.$inject('$q');
+    const LazyLoader = this.$inject('LazyLoader');
     this.loadKaltura = $q.defer();
     LazyLoader.get = sinon.stub().returns(this.loadKaltura.promise);
 
@@ -39,7 +39,7 @@ describe('Kaltura Editor Controller Mixin', function () {
   }));
 
   it('loads the kaltura framework', function () {
-    var LazyLoader = this.$inject('LazyLoader');
+    const LazyLoader = this.$inject('LazyLoader');
     sinon.assert.calledWith(LazyLoader.get, 'kaltura');
   });
 
@@ -66,7 +66,7 @@ describe('Kaltura Editor Controller Mixin', function () {
 
     describe('#customAttrsForPlayerInSearchDialog', function () {
       describe('it returns an object', function () {
-        var attrs;
+        let attrs;
         beforeEach(function () {
           attrs = KalturaEditorControllerMixin.customAttrsForPlayerInSearchDialog({id: 'entryId-1'});
         });
@@ -84,7 +84,7 @@ describe('Kaltura Editor Controller Mixin', function () {
     });
 
     describe('#loadingFeedbackMessage', function () {
-      var message;
+      let message;
       beforeEach(function () {
         message = KalturaEditorControllerMixin.loadingFeedbackMessage({entryId: 'entry-1'});
       });
@@ -96,7 +96,7 @@ describe('Kaltura Editor Controller Mixin', function () {
 
     describe('#processLookupInProviderResult', function () {
       describe('it returns an object', function () {
-        var entry;
+        let entry;
         beforeEach(function () {
           entry = KalturaEditorControllerMixin.processLookupInProviderResult({assetId: 'entry-1'});
         });
@@ -118,7 +118,7 @@ describe('Kaltura Editor Controller Mixin', function () {
     });
 
     describe('#shouldRenderVideoPlayer', function () {
-      var shouldRender;
+      let shouldRender;
       describe('when the "entryId" property is present in the given object', function () {
         beforeEach(function () {
           shouldRender = KalturaEditorControllerMixin.shouldRenderVideoPlayer({entryId: 'entry-id'});
@@ -159,7 +159,7 @@ describe('Kaltura Editor Controller Mixin', function () {
 
     describe('#processSearchResults', function () {
       describe('for every search result', function () {
-        var result, descriptor;
+        let result, descriptor;
         beforeEach(function () {
           result = { id: 1, msDuration: 99, name: 'name', thumbnailUrl: 'url' };
           descriptor = KalturaEditorControllerMixin.processSearchResults([result])[0];

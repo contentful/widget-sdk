@@ -1,11 +1,11 @@
 'use strict';
 
 describe('Content Type List Controller', function () {
-  var scope, cfStub, stubs, $q, spaceContext;
+  let scope, cfStub, stubs, $q, spaceContext;
 
   function makeCT (extensions) {
-    var space = cfStub.space('spaceid');
-    var ct = cfStub.contentType(space, 'typeid', 'typename');
+    const space = cfStub.space('spaceid');
+    const ct = cfStub.contentType(space, 'typeid', 'typename');
     stubs = {};
     stubs.deleted = sinon.stub(ct, 'isDeleted');
     stubs.published = sinon.stub(ct, 'isPublished');
@@ -18,9 +18,9 @@ describe('Content Type List Controller', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    var $controller = this.$inject('$controller');
-    var $rootScope = this.$inject('$rootScope');
-    var TheStore = this.$inject('TheStore');
+    const $controller = this.$inject('$controller');
+    const $rootScope = this.$inject('$rootScope');
+    const TheStore = this.$inject('TheStore');
 
     cfStub = this.$inject('cfStub');
     $q = this.$inject('$q');
@@ -79,8 +79,8 @@ describe('Content Type List Controller', function () {
 
   describe('scope.visibleContentTypes', function () {
     it('only contains content types matched by the search', function () {
-      var matched = makeCT({getName: sinon.stub().returns('MATCH')});
-      var unmatched = makeCT({getName: sinon.stub().returns('MA')});
+      const matched = makeCT({getName: sinon.stub().returns('MATCH')});
+      const unmatched = makeCT({getName: sinon.stub().returns('MA')});
       spaceContext.contentTypes = [matched, unmatched];
 
       scope.searchTerm = 'MA';
@@ -123,21 +123,21 @@ describe('Content Type List Controller', function () {
 
   describe('status class', function () {
     it('is updated', function () {
-      var contentType = makeCT();
+      const contentType = makeCT();
       stubs.publishedAt.returns(true);
       stubs.hasUnpublishedChanges.returns(true);
       expect(scope.statusClass(contentType)).toBe('updated');
     });
 
     it('is published', function () {
-      var contentType = makeCT();
+      const contentType = makeCT();
       stubs.publishedAt.returns(true);
       stubs.hasUnpublishedChanges.returns(false);
       expect(scope.statusClass(contentType)).toBe('published');
     });
 
     it('is draft', function () {
-      var contentType = makeCT();
+      const contentType = makeCT();
       stubs.publishedAt.returns(false);
       expect(scope.statusClass(contentType)).toBe('draft');
     });
@@ -145,21 +145,21 @@ describe('Content Type List Controller', function () {
 
   describe('status label', function () {
     it('is updated', function () {
-      var contentType = makeCT();
+      const contentType = makeCT();
       stubs.publishedAt.returns(true);
       stubs.hasUnpublishedChanges.returns(true);
       expect(scope.statusLabel(contentType)).toBe('updated');
     });
 
     it('is active', function () {
-      var contentType = makeCT();
+      const contentType = makeCT();
       stubs.publishedAt.returns(true);
       stubs.hasUnpublishedChanges.returns(false);
       expect(scope.statusLabel(contentType)).toBe('active');
     });
 
     it('is draft', function () {
-      var contentType = makeCT();
+      const contentType = makeCT();
       stubs.publishedAt.returns(false);
       expect(scope.statusLabel(contentType)).toBe('draft');
     });

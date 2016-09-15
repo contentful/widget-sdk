@@ -232,14 +232,15 @@ function ContentTypeActionsController ($scope, $injector) {
     .catch(triggerApiErrorNotification)
     .then(setPristine)
     .then(function () {
+      setPristine();
+      previewEnvironmentsCache.clearAll();
+      uiConfig.addOrEditCt($scope.contentType);
       if (redirect && $scope.context.isNew) {
         return goToDetails($scope.contentType);
       }
     })
-    .then(function () {
-      return uiConfig.addOrEditCt($scope.contentType);
-    })
-    .then(previewEnvironmentsCache.clearAll)
+    // Need to do this _after_ redirecting so it is not automatically
+    // dismissed.
     .then(notify.saveSuccess);
   }
 

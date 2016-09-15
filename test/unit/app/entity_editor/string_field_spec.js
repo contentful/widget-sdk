@@ -96,19 +96,19 @@ describe('entityEditor/Document/StringField', function () {
         this.assertNoSet();
       });
 
-      it('cur: null, next: empty -> set null', function () {
+      it('cur: null, next: empty -> set undefined', function () {
         this.init(null, '');
-        this.assertSet(null);
+        this.assertSet(undefined);
       });
 
-      it('cur: empty, next: empty -> set null', function () {
+      it('cur: empty, next: empty -> set undefined', function () {
         this.init('', '');
-        this.assertSet(null);
+        this.assertSet(undefined);
       });
 
-      it('cur: string, next: empty -> set null', function () {
+      it('cur: string, next: empty -> set undefined', function () {
         this.init('abc', '');
-        this.assertSet(null);
+        this.assertSet(undefined);
       });
     });
 

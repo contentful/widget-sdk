@@ -35,8 +35,8 @@ angular.module('contentful')
       label: 'context.title + (context.dirty ? "*" : "")',
       params: { addToContext: true },
       controller: [
-        '$scope', 'require', '$stateParams', 'locale',
-        function ($scope, require, $stateParams, locale) {
+        '$scope', 'require', '$stateParams', 'locale', 'spaceLocales',
+        function ($scope, require, $stateParams, locale, spaceLocales) {
           var $state = require('$state');
 
           var localeId = $stateParams.localeId;
@@ -47,6 +47,7 @@ angular.module('contentful')
 
           $scope.context = $state.current.data;
           $scope.locale = locale;
+          $scope.spaceLocales = spaceLocales;
 
           // add list state as parent
           contextHistory.addEntity(listEntity);
@@ -68,6 +69,9 @@ angular.module('contentful')
     return localeEditorState;
   }
 
+  var resolveSpaceLocales = ['space', function (space) {
+    return space.getLocales();
+  }];
 
   var newLocale = _.extend({
     name: 'new',
@@ -79,10 +83,12 @@ angular.module('contentful')
       locale: ['space', function (space) {
         return space.newLocale({
           code: null,
+          fallbackCode: null,
           contentDeliveryApi: true,
           contentManagementApi: true
         });
-      }]
+      }],
+      spaceLocales: resolveSpaceLocales
     }
   }, makeLocaleEditorState(true));
 
@@ -95,7 +101,8 @@ angular.module('contentful')
     resolve: {
       locale: ['$stateParams', 'space', function ($stateParams, space) {
         return space.getLocale($stateParams.localeId);
-      }]
+      }],
+      spaceLocales: resolveSpaceLocales
     }
   }, makeLocaleEditorState(false));
 

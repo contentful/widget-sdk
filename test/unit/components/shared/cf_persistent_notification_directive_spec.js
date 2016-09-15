@@ -14,7 +14,7 @@ describe('cfPersistentNotification Directive', function () {
     $rootScope = this.$inject('$rootScope');
     $timeout = this.$inject('$timeout');
 
-    var data = { field: {} };
+    const data = { field: {} };
     element = this.$compile('<cf-persistent-notification />', data);
     scope = element.scope();
   });

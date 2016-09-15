@@ -130,7 +130,7 @@ describe('analytics', function () {
         entryId: 'entryId'
       };
 
-      var $rootScope = this.$inject('$rootScope');
+      const $rootScope = this.$inject('$rootScope');
       this.broadcast = function () {
         $rootScope.$broadcast('$stateChangeSuccess', this.state, this.stateParams);
       }.bind(this);

@@ -1,7 +1,7 @@
 'use strict';
 
 describe('cfFileEditor Directive', function () {
-  var scope, fieldApi;
+  let scope, fieldApi;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -12,7 +12,7 @@ describe('cfFileEditor Directive', function () {
       });
     });
 
-    var widgetApi = this.$inject('mocks/widgetApi').create();
+    const widgetApi = this.$inject('mocks/widgetApi').create();
     fieldApi = widgetApi.field;
 
     scope = this.$compile('<cf-file-editor />', {
@@ -42,7 +42,7 @@ describe('cfFileEditor Directive', function () {
     beforeEach(function () {
       fieldApi.setValue = sinon.stub().resolves();
 
-      var FP = this.$inject('filepicker');
+      const FP = this.$inject('filepicker');
       FP.pick.resolves('FP FILE');
       FP.parseFPFile.returns('FILE DATA');
 
@@ -53,7 +53,7 @@ describe('cfFileEditor Directive', function () {
     });
 
     it('calls filepickers pick', function () {
-      var FP = this.$inject('filepicker');
+      const FP = this.$inject('filepicker');
       sinon.assert.called(FP.pick);
     });
 
@@ -71,7 +71,7 @@ describe('cfFileEditor Directive', function () {
     });
 
     it('runs validations on file picker 101 error', function () {
-      var FP = this.$inject('filepicker');
+      const FP = this.$inject('filepicker');
       FP.pick.rejects({code: 101});
       scope.validate = sinon.stub();
 
@@ -86,7 +86,7 @@ describe('cfFileEditor Directive', function () {
       scope.$emit = sinon.stub();
       fieldApi.removeValue = sinon.stub().resolves();
 
-      var FP = this.$inject('filepicker');
+      const FP = this.$inject('filepicker');
       FP.parseFPFile.withArgs(null).returns(null);
 
       scope.deleteFile();
@@ -110,7 +110,7 @@ describe('cfFileEditor Directive', function () {
     beforeEach(function () {
       fieldApi.setValue = sinon.stub().resolves();
 
-      var FP = this.$inject('filepicker');
+      const FP = this.$inject('filepicker');
       FP.pick.resolves('FP FILE');
       FP.parseFPFile.returns('FILE DATA');
 
@@ -134,7 +134,7 @@ describe('cfFileEditor Directive', function () {
     });
 
     it('runs validations on file picker 101 error', function () {
-      var FP = this.$inject('filepicker');
+      const FP = this.$inject('filepicker');
       FP.pick.rejects({code: 101});
       scope.validate = sinon.stub();
 

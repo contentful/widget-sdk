@@ -17,28 +17,28 @@ describe('contentTypeEditor/metadataDialog', function () {
       this.metadataDialog.openEditDialog({data: {name: 'NAME', description: 'DESC'}});
       this.$apply();
 
-      var nameInput = this.dialogContainer.find('input[name=contentTypeName]');
+      const nameInput = this.dialogContainer.find('input[name=contentTypeName]');
       expect(nameInput.val()).toEqual('NAME');
-      var descriptionInput = this.dialogContainer.find('textarea[name=contentTypeDescription]');
+      const descriptionInput = this.dialogContainer.find('textarea[name=contentTypeDescription]');
       expect(descriptionInput.val()).toEqual('DESC');
     });
 
     it('changes the content type name and description', function () {
-      var handleMetadataChange = sinon.stub();
+      const handleMetadataChange = sinon.stub();
       this.metadataDialog.openEditDialog({data: {}}).then(handleMetadataChange);
       this.$apply();
 
-      var nameInput = this.dialogContainer.find('input[name=contentTypeName]');
+      const nameInput = this.dialogContainer.find('input[name=contentTypeName]');
       nameInput.val('NEW NAME').trigger('input');
-      var descriptionInput = this.dialogContainer.find('textarea[name=contentTypeDescription]');
+      const descriptionInput = this.dialogContainer.find('textarea[name=contentTypeDescription]');
       descriptionInput.val('NEW DESC').trigger('input');
 
-      var submitButton = this.dialogContainer.find('button:contains(Save)');
+      const submitButton = this.dialogContainer.find('button:contains(Save)');
       submitButton.trigger('click');
       this.$apply();
 
       sinon.assert.called(handleMetadataChange);
-      var newMetadata = handleMetadataChange.firstCall.args[0];
+      const newMetadata = handleMetadataChange.firstCall.args[0];
       expect(newMetadata.name).toEqual('NEW NAME');
       expect(newMetadata.description).toEqual('NEW DESC');
     });
@@ -46,20 +46,20 @@ describe('contentTypeEditor/metadataDialog', function () {
 
   describe('#openCreateDialog()', function () {
     it('sets the content type id from the content type name', function () {
-      var handleMetadataChange = sinon.stub();
+      const handleMetadataChange = sinon.stub();
       this.metadataDialog.openCreateDialog().then(handleMetadataChange);
       this.$apply();
 
-      var nameInput = this.dialogContainer.find('input[name=contentTypeName]');
+      const nameInput = this.dialogContainer.find('input[name=contentTypeName]');
       nameInput.val('NEW NAME').trigger('input');
       this.$apply();
 
-      var submitButton = this.dialogContainer.find('button:contains(Create)');
+      const submitButton = this.dialogContainer.find('button:contains(Create)');
       submitButton.trigger('click');
       this.$apply();
 
       sinon.assert.called(handleMetadataChange);
-      var newMetadata = handleMetadataChange.firstCall.args[0];
+      const newMetadata = handleMetadataChange.firstCall.args[0];
       expect(newMetadata.name).toEqual('NEW NAME');
       expect(newMetadata.id).toEqual('newName');
     });
@@ -67,21 +67,21 @@ describe('contentTypeEditor/metadataDialog', function () {
 
   describe('#openDuplicateDialog()', function () {
     it('duplicates a provided content type', function () {
-      var duplicate = sinon.stub().resolves();
+      const duplicate = sinon.stub().resolves();
       this.metadataDialog.openDuplicateDialog({data: {name: 'test', description: 'xyz'}}, duplicate);
       this.$apply();
 
-      var nameInput = this.dialogContainer.find('input[name=contentTypeName]');
+      const nameInput = this.dialogContainer.find('input[name=contentTypeName]');
       expect(nameInput.attr('placeholder')).toBe('Duplicate of "test"');
       nameInput.val('NEW NAME').trigger('input');
       this.$apply();
 
-      var submitButton = this.dialogContainer.find('button:contains(Duplicate)');
+      const submitButton = this.dialogContainer.find('button:contains(Duplicate)');
       submitButton.trigger('click');
       this.$apply();
 
       sinon.assert.called(duplicate);
-      var newMetadata = duplicate.firstCall.args[0];
+      const newMetadata = duplicate.firstCall.args[0];
       expect(newMetadata.name).toEqual('NEW NAME');
       expect(newMetadata.id).toEqual('newName');
       expect(newMetadata.description).toEqual('xyz');

@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Video Search Controller', function () {
-  var controller, searchObjectMock, searchObjectRunDeferred, scope;
+  let controller, searchObjectMock, searchObjectRunDeferred, scope;
 
   beforeEach(function () {
     module('contentful/test');
@@ -196,7 +196,7 @@ describe('Video Search Controller', function () {
       });
 
       describe('#getSelected', function () {
-        var selection;
+        let selection;
         beforeEach(function () {
           scope.videoSearch.selection = ['video-1'];
           selection = controller.getSelected();

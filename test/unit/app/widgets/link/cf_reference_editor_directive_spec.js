@@ -16,7 +16,7 @@ describe('cfReferenceEditorDirective', function () {
     this.modalDialog = this.$inject('modalDialog');
 
     this.notifyChange = function () {
-      var notifyFn = this.field.onValueChanged.firstCall.args[0];
+      const notifyFn = this.field.onValueChanged.firstCall.args[0];
       notifyFn(this.field.getValue());
       this.$apply();
     };

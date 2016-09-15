@@ -1,8 +1,6 @@
 'use strict';
 
 describe('Space Template loading service', function () {
-  var sourceContentTypes, sourceEntries, sourceAssets, sourceEditingInterfaces;
-
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.value('contentfulClient', {
@@ -29,7 +27,7 @@ describe('Space Template loading service', function () {
 
   describe('gets template list from contentful', function () {
     beforeEach(function () {
-      var self = this;
+      const self = this;
       this.client.entries.returns(this.$q.resolve([
         {fields: {id: 3}},
         {fields: {id: 2, order: 1}},
@@ -54,7 +52,7 @@ describe('Space Template loading service', function () {
   });
 
   describe('gets a template from contentful', function () {
-    var template, templateInfo;
+    let template, templateInfo;
 
     beforeEach(function () {
       templateInfo = {
@@ -334,7 +332,7 @@ describe('Space Template loading service', function () {
     });
   });
 
-  sourceContentTypes = [
+  const sourceContentTypes = [
     {
       'sys': {
         'id': '68VvdXqINiM0MCoqwa8CQC',
@@ -410,7 +408,7 @@ describe('Space Template loading service', function () {
     }
   ];
 
-  sourceEditingInterfaces = [
+  const sourceEditingInterfaces = [
     {
       'controls': [
         {
@@ -421,7 +419,7 @@ describe('Space Template loading service', function () {
     }
   ];
 
-  sourceEntries = [
+  const sourceEntries = [
     {
       'sys': {
         'id': '4Gwo3bNWc8UW2ycWiswGsM',
@@ -767,7 +765,7 @@ describe('Space Template loading service', function () {
 
   ];
 
-  sourceAssets = [
+  const sourceAssets = [
     {
       'sys': {
         'id': '5o4iPgRgYMmaGac8SckKCc',

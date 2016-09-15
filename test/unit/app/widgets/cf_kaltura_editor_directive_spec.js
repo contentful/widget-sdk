@@ -1,7 +1,7 @@
 'use strict';
 
 describe('cfKalturaEditor directive', function () {
-  var kalturaClientWrapperMock;
+  let kalturaClientWrapperMock;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -9,7 +9,7 @@ describe('cfKalturaEditor directive', function () {
       $provide.value('kalturaClientWrapper', kalturaClientWrapperMock);
     });
 
-    var spaceContext = this.$inject('spaceContext');
+    const spaceContext = this.$inject('spaceContext');
     spaceContext.space = { getOrganizationId: sinon.stub().returns('org-123') };
   });
 

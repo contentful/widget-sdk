@@ -2,7 +2,7 @@
 
 describe('Client', function () {
   beforeEach(function () {
-    var self = this;
+    const self = this;
     self.httpStub = sinon.stub();
 
     function passThrough (fn) {
@@ -16,7 +16,7 @@ describe('Client', function () {
       $provide.value('data/requestQueue', {create: passThrough});
     });
 
-    var env = this.$inject('environment');
+    const env = this.$inject('environment');
     env.settings.api_host = 'api.contentful.com';
 
     this.client = this.$inject('client');
@@ -39,7 +39,7 @@ describe('Client', function () {
       this.client.request({path: '/path'});
 
       sinon.assert.calledOnce(this.httpStub);
-      var call = this.call(0);
+      const call = this.call(0);
       expect(call.url).toBe('//api.contentful.com/path');
       expect(call.headers).toEqual({
         Authorization: 'Bearer TOKEN',

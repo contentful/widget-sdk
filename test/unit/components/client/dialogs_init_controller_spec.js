@@ -29,7 +29,7 @@ describe('dialogsInitController', function () {
 
     this.$rootScope = this.$inject('$rootScope');
 
-    var controller = this.$inject('dialogsInitController');
+    const controller = this.$inject('dialogsInitController');
     controller.init();
     this.$rootScope.$apply();
   });
@@ -64,7 +64,7 @@ describe('dialogsInitController', function () {
     });
 
     describe('notifier services communication', function () {
-      var ORGANIZATION = {};
+      const ORGANIZATION = {};
 
       beforeEach(function () {
         this.spaceContext.getId.returns('SPACE_ID');

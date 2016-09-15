@@ -1,8 +1,8 @@
 'use strict';
 
 describe('ooyalaPlayerLoader', function () {
-  var angularLoadDeferred, angularLoadSpy, ooyalaPlayerLoader;
-  var ooyalaPlayerLoaderPromise, baseUrl, $window, $rootScope;
+  let angularLoadDeferred, angularLoadSpy, ooyalaPlayerLoader;
+  let ooyalaPlayerLoaderPromise, baseUrl, $window, $rootScope;
 
   beforeEach(function () {
     module('contentful/test');
@@ -27,7 +27,7 @@ describe('ooyalaPlayerLoader', function () {
   });
 
   describe('#load', function () {
-    var expectedUrl, url;
+    let expectedUrl, url;
 
     beforeEach(function () {
       ooyalaPlayerLoaderPromise = ooyalaPlayerLoader.load('123');
@@ -50,7 +50,7 @@ describe('ooyalaPlayerLoader', function () {
       });
 
       describe('on player ready', function () {
-        var player;
+        let player;
 
         beforeEach(function () {
           ooyalaPlayerLoaderPromise.then(function (_player_) { player = _player_; });

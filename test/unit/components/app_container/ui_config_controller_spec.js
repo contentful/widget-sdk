@@ -1,7 +1,7 @@
 'use strict';
 
 describe('UiConfigController', function () {
-  var scope, stubs;
+  let scope, stubs;
 
   afterEach(function () {
     scope = stubs = null;
@@ -32,8 +32,8 @@ describe('UiConfigController', function () {
       stubs.uiConfig.load.resolves({});
       stubs.uiConfig.save.resolves();
       scope = $rootScope.$new();
-      var get = $q.defer();
-      var set = $q.defer();
+      const get = $q.defer();
+      const set = $q.defer();
       stubs.spaceContext.space.getUIConfig.returns(get.promise);
       stubs.spaceContext.space.getUIConfig.returns(set.promise);
       stubs.spaceContext.space.isAdmin.returns(true);

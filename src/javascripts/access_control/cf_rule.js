@@ -21,6 +21,7 @@ angular.module('contentful').directive('cfRule', ['$injector', function ($inject
       $scope.$watch('rule.action', function (action, prev) {
         // ...for the first time -> do nothing
         if (action === prev) {
+          /* eslint no-empty: off */
         } else if (action === 'update') {
           // ...to "edit" -> reset locale and field
           setDefaultFieldAndLocale();

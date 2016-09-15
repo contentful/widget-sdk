@@ -1,7 +1,7 @@
 'use strict';
 
 describe('data/ApiClient', function () {
-  var $http;
+  let $http;
 
   beforeEach(function () {
     $http = sinon.stub();
@@ -12,10 +12,10 @@ describe('data/ApiClient', function () {
       });
     });
 
-    var SpaceEndpoint = this.$inject('data/spaceEndpoint');
-    var Client = this.$inject('data/ApiClient');
-    var $timeout = this.$inject('$timeout');
-    var endpoint = SpaceEndpoint.create('TOKEN', '//api.test.local', 'SPACE');
+    const SpaceEndpoint = this.$inject('data/spaceEndpoint');
+    const Client = this.$inject('data/ApiClient');
+    const $timeout = this.$inject('$timeout');
+    const endpoint = SpaceEndpoint.create('TOKEN', '//api.test.local', 'SPACE');
     this.client = new Client(function (...args) {
       const response = endpoint(...args);
       $timeout.flush();
@@ -58,7 +58,7 @@ describe('data/ApiClient', function () {
     });
 
     pit('createEntry(ctId, data)', function () {
-      var entry = {'fields': 'MY FIELDS'};
+      const entry = {'fields': 'MY FIELDS'};
       return this.client.createEntry('CTID', entry)
       .then(assertRequestResponse('DATA', {
         method: 'POST',
@@ -133,7 +133,7 @@ describe('data/ApiClient', function () {
     return function (res) {
       expect(res).toEqual(resExp);
       sinon.assert.calledOnce($http);
-      var req = $http.getCall(0).args[0];
+      const req = $http.getCall(0).args[0];
       _.forEach(reqExp, function (val, prop) {
         expect(req[prop]).toEqual(val);
       });

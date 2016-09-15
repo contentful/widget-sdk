@@ -395,7 +395,7 @@ describe('Extension SDK', function () {
     beforeEach(function () {
       const LocaleStore = this.$inject('TheLocaleStore');
       LocaleStore.setLocales([
-        {code: 'en', internal_code: 'en-internal'},
+        {code: 'en', internal_code: 'en-internal', default: true},
         {code: 'de', internal_code: 'de-internal'}
       ]);
     });
@@ -410,6 +410,8 @@ describe('Extension SDK', function () {
   });
 
   describe('#space methods', function () {
+    // TODO firefox does not yet support for (const x in y)
+    /*eslint prefer-const: off*/
     it('delegates to API client and responds with data', function* (api) {
       for (let method of Object.keys(api.space)) {
         this.apiClient[method] = sinon.stub().resolves('DATA');

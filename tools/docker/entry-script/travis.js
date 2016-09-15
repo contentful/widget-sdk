@@ -1,4 +1,5 @@
 import * as P from 'path'
+import * as B from 'bluebird'
 import {includes} from 'lodash'
 
 import {writeJSON, FS, exec} from '../../lib/utils'
@@ -89,7 +90,6 @@ function* createFileDist (src, dest, version, branch) {
   }
 }
 
-
 /*
  * Creates a Debian package from a build.
  *
@@ -106,9 +106,10 @@ function* createFileDist (src, dest, version, branch) {
  * The second one is a simple text file pointing to the path of the
  * package for this version.
  */
-function* createPackageDist (src, dest, version) {
+function* createPackageDist (srcBuild, dest, version) {
   console.log(`Creating package distribution in ${dest}`)
   let buildRoot = P.resolve('/tmp', 'cf-build')
+  const destBuild = P.join(buildRoot, 'build')
   let epochSeconds = Math.floor(Date.now() / 1000)
   let pkgVersion = `0.${epochSeconds}-g${version}`
   let poolDirRelative = P.join('archive', 'user_interface', 'pool')
@@ -118,8 +119,9 @@ function* createPackageDist (src, dest, version) {
   yield FS.mkdirsAsync(poolDir)
   yield FS.mkdirsAsync(P.dirname(linkFile))
 
-  yield copy(src, P.join(buildRoot, 'build'))
-  yield writeJSON(P.join(buildRoot, 'build', 'revision.json'), {revision: version})
+  yield copy(srcBuild, destBuild)
+  yield copyAppCss(srcBuild, destBuild)
+  yield writeJSON(P.join(destBuild, 'revision.json'), {revision: version})
 
   yield exec(
     'fpm -t deb -s dir -n cf-user-interface ' +
@@ -130,6 +132,23 @@ function* createPackageDist (src, dest, version) {
   let packageFiles = yield FS.readdirAsync(poolDir)
   console.log('Created package', packageFiles[0])
   yield FS.writeFileAsync(linkFile, P.join(poolDirRelative, packageFiles[0]), 'utf8')
+}
+
+/**
+ * Copies the following files:
+ * src/app/main-abcdef78.css[.map] -> dest/app/main.css[.map]
+ * src/app/vendor-abcdef78.css[.map] -> dest/app/vendor.css[.map]
+ */
+function copyAppCss (src, dest) {
+  const FINGERPRINTED_CSS_REGEXP = /(.+)-.{8}(\.css(?:\.map)?)/
+  const srcApp = P.join(src, 'app')
+  const destApp = P.join(dest, 'app')
+  const files = FS.readdirAsync(srcApp)
+  const cssFiles = files.filter((file) => file.match(FINGERPRINTED_CSS_REGEXP))
+  return B.map(cssFiles, (cssFile) => {
+    const newCssFile = cssFile.replace(FINGERPRINTED_CSS_REGEXP, '$1$2')
+    return copy(P.join(srcApp, cssFile), P.join(destApp, newCssFile))
+  })
 }
 
 function copy (src, dest) {

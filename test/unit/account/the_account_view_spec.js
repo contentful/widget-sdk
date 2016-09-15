@@ -17,7 +17,7 @@ describe('TheAccountView service', function () {
     });
 
     this.view = this.$inject('TheAccountView');
-    var $state = this.$inject('$state');
+    const $state = this.$inject('$state');
 
     this.go = $state.go = sinon.spy();
   });
@@ -47,7 +47,7 @@ describe('TheAccountView service', function () {
   });
 
   describe('.goToOrganizations() and .canGoToOrganizations()', function () {
-    var ORGS = [
+    const ORGS = [
       {subscriptionState: 'active', sys: {id: 'ORG_0'}},
       {subscriptionState: 'active', sys: {id: 'ORG_1'}},
       {subscriptionState: 'active', sys: {id: 'ORG_2'}}
@@ -130,7 +130,7 @@ describe('TheAccountView service', function () {
 
     it('returns path if user has permission', function () {
       this.OrganizationList.isOwnerOrAdmin.returns(true);
-      var path = 'account.pathSuffix({ pathSuffix: \'organizations/ORG_0/subscription\'})';
+      const path = 'account.pathSuffix({ pathSuffix: \'organizations/ORG_0/subscription\'})';
       expect(this.view.getSubscriptionState()).toBe(path);
     });
 
@@ -158,7 +158,7 @@ describe('TheAccountView service', function () {
         setup.call(this);
         sinon.assert.calledOnce(this.go);
 
-        let args = [this.go, 'account.pathSuffix', {pathSuffix: pathSuffix}];
+        const args = [this.go, 'account.pathSuffix', {pathSuffix: pathSuffix}];
         if (options) {
           args.push(options);
         }

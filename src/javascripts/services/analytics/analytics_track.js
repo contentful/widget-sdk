@@ -257,6 +257,8 @@ angular.module('contentful')
     try {
       var cookie = cookieStore.get(cookieName);
       return JSON.parse(cookie)[prop];
-    } catch (e) {}
+    } catch (e) {
+      return;
+    }
   }
 }]);

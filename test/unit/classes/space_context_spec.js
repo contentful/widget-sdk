@@ -27,7 +27,7 @@ describe('spaceContext', function () {
 
   describe('#purge', function () {
     it('gets rid of all space-related data', function () {
-      var sc = this.spaceContext;
+      const sc = this.spaceContext;
       sc.purge();
 
       ['space', 'users', 'widgets'].forEach(function (field) {
@@ -40,10 +40,10 @@ describe('spaceContext', function () {
   });
 
   describe('#resetWithSpace()', function () {
-    var SPACE, Widgets;
+    let SPACE, Widgets;
 
     beforeEach(function () {
-      var createEditingInterfaces = this.$inject('data/editingInterfaces');
+      const createEditingInterfaces = this.$inject('data/editingInterfaces');
       createEditingInterfaces.returns('EI');
 
       Widgets = this.$inject('widgets');
@@ -74,8 +74,8 @@ describe('spaceContext', function () {
     });
 
     it('creates the user cache', function () {
-      var userCache = {};
-      var createUserCache = this.$inject('data/userCache');
+      const userCache = {};
+      const createUserCache = this.$inject('data/userCache');
       createUserCache.reset().returns(userCache);
       this.spaceContext.resetWithSpace(SPACE);
       sinon.assert.calledWithExactly(createUserCache, SPACE);
@@ -94,7 +94,7 @@ describe('spaceContext', function () {
     });
 
     it('resolves when widgets are set', function () {
-      var done = sinon.stub();
+      const done = sinon.stub();
       this.result.then(done);
 
       this.$apply();
@@ -108,13 +108,13 @@ describe('spaceContext', function () {
     });
 
     it('sets #editingInterfaces', function () {
-      var createEditingInterfaces = this.$inject('data/editingInterfaces');
+      const createEditingInterfaces = this.$inject('data/editingInterfaces');
       sinon.assert.calledOnce(createEditingInterfaces);
       expect(this.spaceContext.editingInterfaces).toEqual('EI');
     });
 
     describe('updated `.subscription` value on context', function () {
-      var ORGANIZATION, SUBSCRIPTION;
+      let ORGANIZATION, SUBSCRIPTION;
       beforeEach(function () {
         ORGANIZATION = {};
         SUBSCRIPTION = {};
@@ -150,19 +150,19 @@ describe('spaceContext', function () {
     });
 
     it('returns provided default value for an invalid path', function () {
-      var obj = {};
+      const obj = {};
       expect(this.spaceContext.getData('x.y.z', obj)).toBe(obj);
     });
 
     it('returns value if a path is correct', function () {
-      var obj = {};
+      const obj = {};
       this.space.data.x = {y: {z: obj}};
       expect(this.spaceContext.getData('x.y.z')).toBe(obj);
     });
   });
 
   describe('#entryTitle()', function () {
-    var entry;
+    let entry;
     beforeEach(function () {
       entry = {
         getContentTypeId: _.constant('CTID'),
@@ -224,7 +224,7 @@ describe('spaceContext', function () {
   });
 
   describe('#assetTitle()', function () {
-    var asset;
+    let asset;
     beforeEach(function () {
       asset = {
         getType: _.constant('Asset'),
@@ -275,7 +275,7 @@ describe('spaceContext', function () {
   });
 
   describe('#refreshContentTypesUntilChanged()', function () {
-    var contentTypes;
+    let contentTypes;
 
     beforeEach(function () {
       this.space = this.resetWithSpace();
@@ -291,7 +291,7 @@ describe('spaceContext', function () {
       this.spaceContext.refreshContentTypes();
       this.$apply();
 
-      var $timeout = this.$inject('$timeout');
+      const $timeout = this.$inject('$timeout');
       this.flush = () => {
         this.$apply();
         $timeout.flush();
@@ -300,7 +300,7 @@ describe('spaceContext', function () {
       this.removeSecondCt = function () {
         const secondCt = this.spaceContext.contentTypes[1];
         this.spaceContext.unregisterPublishedContentType(secondCt);
-        var slice = contentTypes.slice(0, 1);
+        const slice = contentTypes.slice(0, 1);
         this.space.getContentTypes.resolves(slice);
         this.space.getPublishedContentTypes.resolves(slice);
       };
@@ -326,7 +326,7 @@ describe('spaceContext', function () {
     });
 
     pit('it retries if content types are not changed', function () {
-      var p = this.spaceContext.refreshContentTypesUntilChanged();
+      const p = this.spaceContext.refreshContentTypesUntilChanged();
 
       this.removeSecondCt();
       this.flush();
@@ -341,7 +341,7 @@ describe('spaceContext', function () {
     });
 
     pit('it tries 5 times and resolves this old content types if not changed', function () {
-      var p = this.spaceContext.refreshContentTypesUntilChanged();
+      const p = this.spaceContext.refreshContentTypesUntilChanged();
 
       _.range(5).forEach(this.flush);
 
@@ -359,7 +359,7 @@ describe('spaceContext', function () {
     });
 
     it('updates "contentTypes" property', function () {
-      var cts = [
+      const cts = [
         makeCtMock('A'),
         makeCtMock('B')
       ];
@@ -370,7 +370,7 @@ describe('spaceContext', function () {
     });
 
     it('updates "publishedContentTypes" property', function () {
-      var cts = [
+      const cts = [
         makeCtMock('A'),
         makeCtMock('B')
       ];
@@ -381,14 +381,14 @@ describe('spaceContext', function () {
     });
 
     it('enqueues requests for content types', function () {
-      var p1 = this.spaceContext.refreshContentTypes();
-      var p2 = this.spaceContext.refreshContentTypes();
+      const p1 = this.spaceContext.refreshContentTypes();
+      const p2 = this.spaceContext.refreshContentTypes();
       expect(p1).toBe(p2);
       sinon.assert.calledTwice(this.space.getContentTypes);
     });
 
     it('results in an error message if API broken', function () {
-      var handler = this.$inject('ReloadNotification').apiErrorHandler;
+      const handler = this.$inject('ReloadNotification').apiErrorHandler;
       this.space.getContentTypes.rejects({statusCode: 500});
       this.spaceContext.refreshContentTypes();
       this.$apply();
@@ -396,8 +396,8 @@ describe('spaceContext', function () {
     });
 
     it('merges published content types from client and server together', function () {
-      var initialCts = [makeCtMock('C')];
-      var newCts = [
+      const initialCts = [makeCtMock('C')];
+      const newCts = [
         makeCtMock('A'),
         makeCtMock('B')
       ];
@@ -417,7 +417,7 @@ describe('spaceContext', function () {
       ]);
       this.spaceContext.refreshContentTypes();
       this.$apply();
-      var ctIds = this.spaceContext.contentTypes.map((ct) => ct.getId());
+      const ctIds = this.spaceContext.contentTypes.map((ct) => ct.getId());
       expect(ctIds).toEqual(['A', 'C']);
     });
   });
@@ -428,7 +428,7 @@ describe('spaceContext', function () {
     });
 
     it('returns the field', function () {
-      var field = {id: 'name'};
+      const field = {id: 'name'};
       this.spaceContext.getPublishedContentType.returns({
         data: {
           displayField: 'name',
@@ -439,7 +439,7 @@ describe('spaceContext', function () {
     });
 
     it('returns nothing', function () {
-      var field = {id: 'name'};
+      const field = {id: 'name'};
       this.spaceContext.getPublishedContentType.returns({
         data: {
           displayField: 'othername',
@@ -461,7 +461,7 @@ describe('spaceContext', function () {
     });
 
     it('returns existing ct and does not trigger refresh', function () {
-      var ct = this.spaceContext.getPublishedContentType('already_fetched');
+      const ct = this.spaceContext.getPublishedContentType('already_fetched');
       expect(ct.getId()).toBe('already_fetched');
       sinon.assert.notCalled(this.space.getPublishedContentTypes);
     });
@@ -579,7 +579,7 @@ describe('spaceContext', function () {
       });
 
       it('accepts a callback for the search', function () {
-        var fields = [];
+        const fields = [];
         const val = this.spaceContext.findLocalizedField(
           this.entry, function (field) {
             fields.push(field);
@@ -636,7 +636,7 @@ describe('spaceContext', function () {
     describe('#entryImage', function () {
       beforeEach(function () {
         this.file = {details: {image: {}}};
-        var asset = {};
+        const asset = {};
         dotty.put(asset, 'data.fields.file.xx', this.file);
 
         this.spaceContext.space.getAsset = sinon.stub();
