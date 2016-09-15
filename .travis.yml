@@ -54,11 +54,33 @@ deploy:
       secure: "Azx2DWNKfcFZhQoB1eR6dJ1F0QClJYLohozyzutOhpp86mUuoGXtBPOaiD0kfM8sNFdlhyjagVZo30wMCXBw5t9qSDqEpCOOhZk4kRNnInCh+ha/H14FFbxki7TaWn9RQXmTIoGh5JSmIZ5RDYRJZRyoL4Da11CojildoBD7wJ8="
     bucket: cf-preview-static-cdnorigin
     region: eu-west-1
-    local-dir: output/files
+    local-dir: output/files/preview
     acl: public_read
     skip_cleanup: true
     on:
       all_branches: true
+  ## Deploy staging preview
+  - provider: s3
+    access_key_id: AKIAJHQB2MH23CVUXK6Q
+    secret_access_key:
+      secure: "DPVDc2YHfDuquRY2JxGkaNYq4j3xuhr0e+MFUIvo61zxLpXeueBLKgmG6n/bnRFGiN2vFOUi3K404/adVOH4OuQedsjOx9Ew/ubUSM582DEhmFzqSicDOJm9kTA3+9u4OA2UiKw4pdYZ+/jTqjwMzr1GLaV5RAnlH2jue/XLhcc="
+    bucket: static.cdnorigin.flinkly.com
+    region: us-east-1
+    local-dir: output/files/staging
+    acl: public_read
+    skip_cleanup: true
+    on: 'staging-preview/*'
+  ## Deploy production preview
+  - provider: s3
+    access_key_id: AKIAITC7MCJO3VAWCEOA
+    secret_access_key:
+      secure: "G2e17qRtyDKnRhFxvucKt0AP3jPsydabJ4s0LJHTfaWd+D8YPompFU8SussNrOaUQmPi5OlBKA4fTp2XQOI4l/bLy/5Q6Z11Ihze8BVeFICgHg0pYvLrJG+id2HAn8aG0W0HbQi0x/V/7m7i+j2MeIg6taO6PodJ4j+8vNoWwwg="
+    bucket: static.cdnorigin.contentful.com
+    region: us-east-1
+    local-dir: output/files/production
+    acl: public_read
+    skip_cleanup: true
+    on: 'production-preview/*'
 after_script:
   - bin/travis-run-jenkins
 
