@@ -1,6 +1,6 @@
 extends:
-  - './.eslint-standard.yml'
   - 'eslint:recommended'
+  - './.eslint-standard.yml'
 rules:
   # eslint:recommended overrides
   require-yield: off
