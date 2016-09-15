@@ -26,15 +26,19 @@ header.workbench-header
       button.btn-link(href="" ng-click="restore()") Restore all fields
     .snapshot-comparator__cell
       span This is the current state of your entry
+      label
+        input(type="checkbox" ng-model="showOnlyDifferences")
+        | Show only differences
 
-  .snapshot-comparator__field-locale(
+  .snapshot-comparator__field(
     ng-repeat="widget in widgets"
     ng-controller="SnapshotFieldController as fieldController")
-    .snapshot-comparator__locale(
+    .snapshot-comparator__field-locale(
       ng-repeat="locale in locales track by locale.internal_code"
       ng-controller="SnapshotComparisonController")
 
       .snapshot-comparator__cell(
+        ng-if="showOnlyDifferences ? isDifferent : true"
         ng-controller="FieldLocaleController as fieldLocale"
         document-property="snapshotDoc")
         +snapshot-field-title
@@ -42,6 +46,7 @@ header.workbench-header
         +snapshot-overlays('left')
 
       .snapshot-comparator__cell(
+        ng-if="showOnlyDifferences ? isDifferent : true"
         ng-controller="FieldLocaleController as fieldLocale")
         +snapshot-field-title
         cf-widget-renderer(cf-widget-api)
