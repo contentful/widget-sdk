@@ -44,10 +44,10 @@
 
 .snapshot-comparator__locale
   display: flex
-  position: relative
   border-bottom: 1px solid $colors.element-darkest
 
 .snapshot-comparator__cell
+  position: relative
   flex-grow: 1
   flex-basis: 0
   padding: 2em
@@ -57,8 +57,8 @@
 
 .snapshot-comparator__overlay-different,
 .snapshot-comparator__overlay-identical
-  z-index: 99999
-  background: rgba(0, 0, 0, 0)
+  $layer(snapshotOverlay)
+  background-color: rgba(0, 0, 0, 0)
   position: absolute
   top: 0
   left: 0
@@ -67,3 +67,10 @@
 
 .snapshot-comparator__overlay-identical
   background: rgba(255, 255, 255, 0.75)
+
+.snapshot-comparator__overlay-different
+  cursor: pointer
+
+  &.x--selected
+    border-left: 4px solid $colors.blue-light
+    background-color: alpha($colors.blue-light, 0.05)

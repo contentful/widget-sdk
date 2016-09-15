@@ -19,29 +19,25 @@ angular.module('cf.app')
   var modalDialog = require('modalDialog');
   var $state = require('$state');
   var $timeout = require('$timeout');
-  var localeStore = require('TheLocaleStore');
+  var TheLocaleStore = require('TheLocaleStore');
 
   $scope.context.title = spaceContext.entryTitle($scope.entry);
   $scope.otDoc = SnapshotDoc.create(dotty.get($scope, 'entry.data', {}));
   $scope.snapshotDoc = SnapshotDoc.create(dotty.get($scope, 'snapshot.snapshot', {}));
+  $scope.pathsToRestore = [];
 
   $scope.select = select;
   $scope.restore = restore;
-  $scope.save = Command.create(_.noop, {disabled: _.constant(true)});
+  $scope.save = Command.create(save, {
+    disabled: function () {
+      return $scope.pathsToRestore.length < 1;
+    }
+  });
 
   var contentTypeData = $scope.contentType.data;
   var fields = contentTypeData.fields;
   $scope.fields = DataFields.create(fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);
-
-  $scope.changed = _.transform(contentTypeData.fields, function (acc, field) {
-    _.transform(localeStore.getPrivateLocales(), function (acc, locale) {
-      var path = ['fields', field.id, locale.internal_code];
-      if (!_.isEqual($scope.otDoc.getValueAt(path), $scope.snapshotDoc.getValueAt(path))) {
-        acc[path.join('.')] = true;
-      }
-    }, acc);
-  }, {});
 
   function select () {
     return modalDialog.open({
@@ -58,7 +54,41 @@ angular.module('cf.app')
   }
 
   function restore () {
-    // Not implemented
+    $scope.$broadcast('select:left');
+  }
+
+  function save () {
+    var data = {sys: _.cloneDeep($scope.entry.data.sys)};
+    allPaths($scope.entry.data.fields).forEach(externalize(data, $scope.otDoc));
+    $scope.pathsToRestore.forEach(externalize(data, $scope.snapshotDoc));
+
+    return spaceContext.cma.updateEntry(data)
+    .then(function () {
+      return $state.go('^.^', {}, {reload: true});
+    });
+  }
+
+  function allPaths (fields) {
+    return _.reduce(fields, function (acc, field, fieldId) {
+      return acc.concat(_.reduce(field, function (acc, _locale, localeCode) {
+        return acc.concat(['fields', fieldId, localeCode].join('.'));
+      }, []));
+    }, []);
+  }
+
+  function externalize (target, sourceDoc) {
+    return function (path) {
+      path = path.split('.');
+      var fieldId = externalFieldId(path[1]);
+      var localeCode = TheLocaleStore.toPublicCode(path[2]);
+      var value = sourceDoc.getValueAt(path);
+      dotty.put(target, ['fields', fieldId, localeCode], value);
+    };
+  }
+
+  function externalFieldId (internalId) {
+    var field = _.find(contentTypeData.fields, {id: internalId});
+    return field && (field.apiName || field.id);
   }
 }])
 
@@ -108,4 +138,29 @@ angular.module('cf.app')
   $scope.state = {registerPublicationWarning: _.constant(_.noop)};
 
   this.setInvalid = _.noop;
+}])
+
+.controller('SnapshotComparisonController', ['$scope', function ($scope) {
+  var path = ['fields', $scope.field.id, $scope.locale.internal_code];
+  var v1 = $scope.otDoc.getValueAt(path);
+  var v2 = $scope.snapshotDoc.getValueAt(path);
+
+  $scope.isDifferent = !_.isEqual(v1, v2);
+  $scope.select = $scope.isDifferent ? select : _.noop;
+
+  $scope.select('right');
+  $scope.$on('select:left', function () {
+    $scope.select('left');
+  });
+
+  function select (side) {
+    var joined = path.join('.');
+    $scope.selected = side;
+
+    if (side === 'right') {
+      _.pull($scope.pathsToRestore, joined);
+    } else {
+      $scope.pathsToRestore.push(joined);
+    }
+  }
 }]);

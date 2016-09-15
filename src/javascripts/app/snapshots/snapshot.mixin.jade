@@ -10,3 +10,11 @@ mixin snapshot-field-title
   span {{ field.name }}
   span(ng-if="locales.length > 1")
     | &#32;&ndash; {{locale.name}}
+
+mixin snapshot-overlays(side)
+  - var attrs = {};
+  - attrs["ng-class"] = "{'x--selected': selected === '" + side + "'}";
+  - attrs["ng-click"] = "select('" + side + "')";
+
+  .snapshot-comparator__overlay-different(ng-if="isDifferent")&attributes(attrs)
+  .snapshot-comparator__overlay-identical(ng-if="!isDifferent")
