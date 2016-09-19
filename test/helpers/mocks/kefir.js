@@ -2,7 +2,7 @@
 
 angular.module('contentful/mocks')
 .factory('mocks/kefir', ['require', function (require) {
-  var Kefir = require('utils/kefir');
+  const Kefir = require('utils/kefir');
 
   return Object.assign({
     createMockProperty: createMockProperty,
@@ -16,15 +16,15 @@ angular.module('contentful/mocks')
    * array.
    */
   function extractValues (stream) {
-    var values = [];
+    const values = [];
     stream.onValue((x) => values.unshift(x));
     return values;
   }
 
   function createMockProperty (initial) {
-    var bus = Kefir.createBus();
-    var current = initial;
-    var property = bus.stream.toProperty(function () {
+    const bus = Kefir.createBus();
+    let current = initial;
+    const property = bus.stream.toProperty(function () {
       return current;
     });
     property.end = bus.end;
@@ -36,7 +36,7 @@ angular.module('contentful/mocks')
   }
 
   function createMockStream () {
-    var bus = Kefir.createBus();
+    const bus = Kefir.createBus();
     bus.stream.end = bus.end;
     bus.stream.emit = bus.emit;
     return bus.stream;

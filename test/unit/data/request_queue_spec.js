@@ -4,12 +4,12 @@ describe('data/requestQueue', function () {
   beforeEach(function () {
     module('cf.data', 'ngMock');
 
-    var wrap = this.$inject('data/requestQueue').create;
+    const wrap = this.$inject('data/requestQueue').create;
     this.$timeout = this.$inject('$timeout');
     this.$q = this.$inject('$q');
 
     this.requestStub = sinon.stub();
-    var wrapped = wrap(this.requestStub);
+    const wrapped = wrap(this.requestStub);
 
     this.push = function (n) {
       if (n) {
@@ -31,8 +31,8 @@ describe('data/requestQueue', function () {
   });
 
   pit('executes a request', function () {
-    var promise = this.push();
-    var res = {};
+    const promise = this.push();
+    const res = {};
     this.requestStub.resolves(res);
     this.flush();
 
@@ -70,8 +70,8 @@ describe('data/requestQueue', function () {
 
   pit('retries with an exponential backoff for 429', function () {
     this.requestStub.rejects({statusCode: 429});
-    var promise = this.push();
-    var res = {};
+    const promise = this.push();
+    const res = {};
 
     this.flush(10);
     this.expectCallCount(1);

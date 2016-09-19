@@ -6,7 +6,7 @@ describe('ApiNameController', function () {
       $provide.value('KnowledgeBase/getUrl', sinon.spy());
     });
 
-    var $controller = this.$inject('$controller');
+    const $controller = this.$inject('$controller');
 
     this.modalDialog = this.$inject('modalDialog');
 
@@ -23,8 +23,8 @@ describe('ApiNameController', function () {
   });
 
 
-  describe('isEditable()', function() {
-    it('is true if field not published', function() {
+  describe('isEditable()', function () {
+    it('is true if field not published', function () {
       this.getPublishedField.returns(undefined);
       this.$apply();
       expect(this.apiNameController.isEditable()).toBe(true);
@@ -34,34 +34,23 @@ describe('ApiNameController', function () {
       expect(this.apiNameController.isEditable()).toBe(false);
     });
 
-    it('is true after confirmation', function (done) {
-      var apiNameController = this.apiNameController;
+    it('is true after confirmation', function* () {
+      const apiNameController = this.apiNameController;
 
-      this.modalDialog.open = sinon.stub().returns({promise: this.when()});
+      this.modalDialog.open = sinon.stub().returns({promise: this.resolve()});
 
-      apiNameController.unlockEditing()
-      .finally(function () {
-        expect(apiNameController.isEditable()).toBe(true);
-        done();
-      });
-
-      this.$apply();
+      yield apiNameController.unlockEditing();
+      expect(apiNameController.isEditable()).toBe(true);
     });
 
-    it('is false after unlock cancel', function (done) {
-      var apiNameController = this.apiNameController;
+    it('is false after unlock cancel', function* () {
+      const apiNameController = this.apiNameController;
 
       this.modalDialog.open = sinon.stub().returns({promise: this.reject()});
 
-      apiNameController.unlockEditing()
-      .finally(function () {
-        expect(apiNameController.isEditable()).toBe(false);
-        done();
-      });
-
-      this.$apply();
+      yield this.catchPromise(apiNameController.unlockEditing());
+      expect(apiNameController.isEditable()).toBe(false);
     });
   });
 
 });
-

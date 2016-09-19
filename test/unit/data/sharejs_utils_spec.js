@@ -38,7 +38,7 @@ describe('data/ShareJS/Utils', function () {
 
   describe('#setDeep()', function () {
     beforeEach(function () {
-      var OtDocMock = this.$inject('mocks/OtDoc');
+      const OtDocMock = this.$inject('mocks/OtDoc');
       this.doc = new OtDocMock();
       this.setDeep = this.ShareJS.setDeep;
     });
@@ -50,7 +50,7 @@ describe('data/ShareJS/Utils', function () {
     });
 
     it('keeps values in intermediate containers', function () {
-      var intermediate = {x: 'VAL'};
+      const intermediate = {x: 'VAL'};
       this.doc.snapshot = {i: intermediate};
       this.setDeep(this.doc, ['i', 'a', 'b'], 'NEW');
       expect(this.doc.snapshot.i).toBe(intermediate);
@@ -92,7 +92,7 @@ describe('data/ShareJS/Utils', function () {
     });
 
     it('resolves the promise', function () {
-      var success = sinon.stub();
+      const success = sinon.stub();
       this.setDeep(this.doc, ['a', 'b'], 'VAL').then(success);
       this.$apply();
       sinon.assert.calledOnce(success);

@@ -8,7 +8,7 @@ describe('cfValidate', function () {
     beforeEach(function () {
       this.scope = this.$inject('$rootScope').$new();
 
-      var $controller = this.$inject('$controller');
+      const $controller = this.$inject('$controller');
       this.validator = $controller('ValidationController', {
         $scope: this.scope,
         $attrs: {cfValidate: 'data'}
@@ -124,7 +124,7 @@ describe('cfValidate', function () {
           {name: '3', path: ['a', 'b', 'c']}
         ];
 
-        var errors = this.validator.getPathErrors('a.b');
+        const errors = this.validator.getPathErrors('a.b');
         expect(errors).toEqual([{name: '2', path: ['a', 'b']}]);
       });
 
@@ -135,13 +135,13 @@ describe('cfValidate', function () {
           {name: '3', path: ['a', 'b', 'c']}
         ];
 
-        var expectedErrors = [
+        const expectedErrors = [
           {name: '2', path: ['a', 'b']},
           {name: '3', path: ['a', 'b', 'c']}
         ];
-        var errorsGlob = this.validator.getPathErrors('a.b.*');
+        const errorsGlob = this.validator.getPathErrors('a.b.*');
         expect(errorsGlob).toEqual(expectedErrors);
-        var errorsParent = this.validator.getPathErrors('a.b', true);
+        const errorsParent = this.validator.getPathErrors('a.b', true);
         expect(errorsParent).toEqual(expectedErrors);
       });
     });
@@ -181,11 +181,11 @@ describe('cfValidate', function () {
   describe('with cfEntrySchema', function () {
 
     beforeEach(function () {
-      var $compile = this.$inject('$compile');
-      var $rootScope = this.$inject('$rootScope');
+      const $compile = this.$inject('$compile');
+      const $rootScope = this.$inject('$rootScope');
 
-      var template = '<div cf-validate="entry" cf-entry-schema></div>';
-      var element = $compile(template)($rootScope);
+      const template = '<div cf-validate="entry" cf-entry-schema></div>';
+      const element = $compile(template)($rootScope);
       this.scope = element.scope();
       this.$apply();
 
@@ -200,7 +200,7 @@ describe('cfValidate', function () {
 
   describe('with cfContentTypeSchema', function () {
 
-    var fieldFixture = {
+    const fieldFixture = {
       id: 'fieldId',
       apiName: 'fieldApiName',
       name: 'fieldName',
@@ -208,11 +208,11 @@ describe('cfValidate', function () {
     };
 
     beforeEach(function () {
-      var $compile = this.$inject('$compile');
-      var $rootScope = this.$inject('$rootScope');
+      const $compile = this.$inject('$compile');
+      const $rootScope = this.$inject('$rootScope');
 
-      var template = '<div cf-validate="contentType" cf-content-type-schema></div>';
-      var element = $compile(template)($rootScope);
+      const template = '<div cf-validate="contentType" cf-content-type-schema></div>';
+      const element = $compile(template)($rootScope);
       this.scope = element.scope();
       this.$apply();
     });
@@ -232,7 +232,7 @@ describe('cfValidate', function () {
       };
       this.scope.validate();
       expect(this.scope.validationResult.errors.length).toBe(1);
-      var error = this.scope.validationResult.errors[0];
+      const error = this.scope.validationResult.errors[0];
       expect(error.name).toBe('required');
       expect(error.message).toBe('Required');
     });
@@ -240,10 +240,10 @@ describe('cfValidate', function () {
 
   describe('with cfAssetSchema', function () {
     beforeEach(function () {
-      var $compile = this.$inject('$compile');
-      var $rootScope = this.$inject('$rootScope');
+      const $compile = this.$inject('$compile');
+      const $rootScope = this.$inject('$rootScope');
 
-      var defaultLocale = {
+      const defaultLocale = {
         internal_code: 'default-locale',
         default: true
       };
@@ -254,8 +254,8 @@ describe('cfValidate', function () {
         }
       };
 
-      var template = '<div cf-validate="asset" cf-asset-schema></div>';
-      var element = $compile(template)($rootScope);
+      const template = '<div cf-validate="asset" cf-asset-schema></div>';
+      const element = $compile(template)($rootScope);
       this.scope = element.scope();
       this.$apply();
     });
@@ -273,7 +273,7 @@ describe('cfValidate', function () {
       };
       this.scope.validate();
       expect(this.scope.validationResult.errors.length).toBe(1);
-      var error = this.scope.validationResult.errors[0];
+      const error = this.scope.validationResult.errors[0];
       expect(error.name).toBe('required');
       expect(error.message).toBe('Cannot publish until processing has finished');
     });

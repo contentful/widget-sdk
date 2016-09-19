@@ -33,7 +33,7 @@ describe('translatorLocaleSelector directive', function () {
   describe('locale dropdown', function () {
     it('dropdown populates locales', function () {
       this.compile();
-      var options = this.element.find('option');
+      const options = this.element.find('option');
       expect(options.length).toBe(3);
       expect(options[0].innerHTML).toBe('All locales');
       expect(options[1].innerHTML).toBe('English (en)');
@@ -42,16 +42,16 @@ describe('translatorLocaleSelector directive', function () {
 
     it('preselect first permitted locale', function () {
       this.compile();
-      var selected = this.element.find('option[selected="selected"]')[0];
+      const selected = this.element.find('option[selected="selected"]')[0];
       expect(selected.innerHTML).toBe('German (de)');
     });
 
     it('preselect all locales', function () {
-      var ALL_LOCALES = this.$inject('PolicyBuilder/CONFIG').ALL_LOCALES;
+      const ALL_LOCALES = this.$inject('PolicyBuilder/CONFIG').ALL_LOCALES;
       this.internalRoleRepesentation.entries.allowed[1].locale = ALL_LOCALES;
       this.internalRoleRepesentation.assets.allowed[1].locale = ALL_LOCALES;
       this.compile();
-      var selected = this.element.find('option[selected="selected"]')[0];
+      const selected = this.element.find('option[selected="selected"]')[0];
       expect(selected.innerHTML).toBe('All locales');
     });
 
@@ -61,7 +61,7 @@ describe('translatorLocaleSelector directive', function () {
   describe('toggle locale', function () {
     it('updates scope', function () {
       this.compile();
-      var select = this.element.find('select');
+      const select = this.element.find('select');
       select.val('string:en');
       select.trigger('change');
       expect(this.internalRoleRepesentation.entries.allowed[1].locale).toBe('en');

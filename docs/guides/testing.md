@@ -18,11 +18,63 @@ $ xvfb-run karma --browsers SlimerJS
 ~~~
 
 
-Focused Tests
--------------
+Testing DSL
+-----------
+
+We extend Jasmine’s testing DSL with a couple of features. The DSL functions are
+defined in `test/helpers/dsl.js`.
 
 To select only a subsect of specs to run, replace their respective
 `describe` or `it` calls with `fdescribe` or `fit`.
+
+In the context of a test we make varous helpers available. They are documented
+in the [Test module][module:test].
+
+### Generators
+
+You can write asynchronous tests using generator functions.
+~~~js
+it('a generator test', function* () {
+  const value = yield this.resolve('X')
+  expect(value).toBe('X')
+})
+~~~
+You must always yield a promise. `$rootScope.$apply()` will be called after each
+yield and before control is handed back to the generator.
+
+If you need more control over Angular’s digest cycle and the promise resolution
+consider using spies.
+~~~js
+it('test promise', function () {
+  const success = sinon.spy()
+  this.resolve('X').then(success)
+  sinon.assert.notCalled(success)
+  this.$apply()
+  sinon.assert.calledWith(success, 'X')
+})
+~~~
+
+### Setup
+
+If you define a `this.setup` method in one of your `before` hooks this method is
+run just before executing a test case. The method may return a promise this the
+resolved value passed to the test runner.
+
+~~~js
+beforeEach(function () {
+  this.setup = function () {
+    return Promise.resolve(this.params)
+  }
+})
+describe('with params', function () {
+  beforeEach(function () {
+    this.params = true
+  })
+  it('receives params', function (params) {
+    expect(params).toBe(true)
+  })
+})
+~~~
 
 
 Using Angular
@@ -76,66 +128,65 @@ Mocks and Stubs
 ---------------
 
 Use `sinon.stub()` to create mock functions and `sinon.assert` to make
-assertions.
+assertions. We provide a couple of extensions to Sinon stubs.
 
-We provide two extensions to Sinon stubs that allow you to create
-functions that return promises.
+### Promises
+
+The `stub.resolves(value)` method makes a stub return a resolved promise
 
 ~~~js
-// Equivalent: Function that returns a resolved promise
+// Equivalent
 sinon.stub().resolves('yeah')
 sinon.stub().returns($q.resolve('yeah'))
+~~~
 
-// Equivalent: Function that returns a rejected promise
+The `stub.rejects(error)` method makes a stub return a rejected promise
+~~~ js
+// Equivalent
 sinon.stub().rejects(new Error())
 sinon.stub().returns($q.reject(new Error()))
 ~~~
 
-There is a `mocks` module and a `cfStub` service that provide elaborate
-mocks for certain parts of the app. Use of this module is *deprecated*
-and needs some major cleanup.
-
-
-Asynchronous Tests
-------------------
-
-In test cases we can use the `this.resolve()` and `this.reject()`
-helper methods to create promises. This is documented in the [Test
-module][module:test].
-
-There are two ways to test code that uses promises. The first is to
-flush promises in a test case with `this.$apply()`
+The `stub.defers()` helper makes the stub return a promise that is not yet
+resolved. One can use `stub.resolve()` and `stub.reject()` to resolve and reject
+the promise.
 
 ~~~js
-it('will fail', function () {
-  this.resolve('X')
-  .then(function (value) {
-    expect(value).toEqual('Y');
+const stub = sinon.stub().defers()
+stub().then(cb)
+stub.resolves('val')
+this.$apply()
+// `cb` is called with 'val'
+~~~
+
+### Services
+
+The `this.mockService()` helper mocks all methods in an Angular service.
+
+Assume the `myService` service is an object that exports the `foo` and `bar`
+methods.
+
+~~~js
+it('mocks a service', function () {
+  const mock = this.mockService('myService', {
+    bar: true
   })
-  this.$apply()
+
+  mock.foo.returns('foo')
+
+  const service = this.$inject('myService')
+  expect(service.foo()).toBe('foo')
+  expect(service.bar).toBe(true)
 })
 ~~~
 
-The problem here is that the initial promise might be rejected and the
-expectation never run.
+The object passed to `this.mockService()` contains custom extensions to the
+service. It only allows you to change properties that already exist on the
+service.
 
-To migitate this the `pit(name, runner)` DSL function creates a test
-case that calls `runner` and wraps the result in a `$q` promise. The
-test case only finishes when the promise is resolved. If the promise is
-rejected, the test case fails with the rejection reason.
-
-~~~js
-describe('async tests', function () {
-  pit('this will fail', function () {
-    var rejected = this.reject(new Error('fail'))
-    return this.resolve('X')
-    .then(function (value) {
-      expect(value).toEqual('X')
-      return rejected
-    })
-  })
-})
-~~~
+There is a `mocks` module and a `cfStub` service that provide elaborate mocks
+for certain parts of the app. Use of `cfStub` service is *deprecated* and needs
+some major cleanup.
 
 
 Reporters

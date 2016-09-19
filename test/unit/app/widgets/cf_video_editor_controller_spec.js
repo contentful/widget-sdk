@@ -1,14 +1,14 @@
 'use strict';
 
 describe('Video Editor Controller', function () {
-  var scope, videoEditorController, widgetApi;
+  let scope, videoEditorController, widgetApi;
 
   beforeEach(function () {
     module('contentful/test');
 
-    var $controller = this.$inject('$controller');
+    const $controller = this.$inject('$controller');
     scope = this.$inject('$rootScope').$new();
-    var providerVideoControllerCallbackNames = [
+    const providerVideoControllerCallbackNames = [
       'prepareSearch',
       'processSearchResults',
       'customAttrsForPlayerInSearchDialog',
@@ -60,7 +60,7 @@ describe('Video Editor Controller', function () {
 
       describe('#onSelection callback method', function () {
         describe('when there is no selected video', function () {
-          var oldFieldDataValue;
+          let oldFieldDataValue;
           beforeEach(function () {
             scope.fieldData.value = 'value';
             oldFieldDataValue = scope.fieldData.value;
@@ -104,7 +104,7 @@ describe('Video Editor Controller', function () {
   });
 
   describe('#customAttrsForPlayer', function () {
-    var customAttrs;
+    let customAttrs;
     beforeEach(function () {
       scope.providerVideoEditorController.customAttrsForPlayer.and.returnValue('attrs');
       scope.videoEditor.selectedAsset = 'asset';
@@ -121,7 +121,7 @@ describe('Video Editor Controller', function () {
   });
 
   describe('#isVideoWidgetReady', function () {
-    var isReady;
+    let isReady;
     beforeEach(function () {
       scope.providerVideoEditorController.isWidgetReady.and.returnValue(true);
       isReady = videoEditorController.isVideoWidgetReady();
@@ -137,7 +137,7 @@ describe('Video Editor Controller', function () {
   });
 
   describe('#loadingPlayerFeedbackMessage', function () {
-    var message;
+    let message;
     beforeEach(function () {
       scope.providerVideoEditorController.loadingFeedbackMessage.and.returnValue('message');
       scope.videoEditor.selectedAsset = 'asset';
@@ -154,7 +154,7 @@ describe('Video Editor Controller', function () {
   });
 
   describe('#lookupAsset', function () {
-    var asset;
+    let asset;
     beforeEach(function () {
       scope.providerVideoEditorController.lookupVideoInProvider.and.returnValue('asset');
       asset = videoEditorController.lookupAsset('asset-1');
@@ -241,7 +241,7 @@ describe('Video Editor Controller', function () {
 
   describe('#shouldShowPlayerLoadingFeedback', function () {
     describe('when the player is loading and the player is not ready and there is no error', function () {
-      var shouldShowFeedback;
+      let shouldShowFeedback;
       beforeEach(function () {
         scope.videoEditor.isPlayerLoading = true;
         scope.videoEditor.isPlayerReady = false;
@@ -257,7 +257,7 @@ describe('Video Editor Controller', function () {
   });
 
   describe('#shouldRenderVideoPlayer', function () {
-    var shouldRenderPlayer;
+    let shouldRenderPlayer;
     beforeEach(function () {
       scope.providerVideoEditorController.shouldRenderVideoPlayer.and.returnValue('returned value');
       scope.videoEditor.selectedAsset = 'asset-1';

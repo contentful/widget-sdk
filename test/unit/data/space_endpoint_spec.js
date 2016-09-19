@@ -15,14 +15,14 @@ describe('data/spaceEndpoint', function () {
     this.$http = this.$inject('$httpBackend');
   });
 
-  afterEach(function() {
+  afterEach(function () {
     this.$http.verifyNoOutstandingExpectation();
     this.$http.verifyNoOutstandingRequest();
   });
 
   it('sends GET request relative to space resource', function () {
-    var url = '//test.io/spaces/SPACE/foo/bar';
-    var headers = {
+    const url = '//test.io/spaces/SPACE/foo/bar';
+    const headers = {
       'Authorization': 'Bearer TOKEN',
       'Accept': 'application/json, text/plain, */*'
     };
@@ -35,7 +35,7 @@ describe('data/spaceEndpoint', function () {
   });
 
   it('resolves the promise with response data', function () {
-    var responseHandler = sinon.stub();
+    const responseHandler = sinon.stub();
     this.$http.expectGET('//test.io/spaces/SPACE/foo/bar')
     .respond('DATA');
     this.makeRequest({
@@ -47,13 +47,13 @@ describe('data/spaceEndpoint', function () {
   });
 
   it('sends POST request without version header', function () {
-    var url = '//test.io/spaces/SPACE/foo/bar';
-    var headers = {
+    const url = '//test.io/spaces/SPACE/foo/bar';
+    const headers = {
       'Content-Type': 'application/vnd.contentful.management.v1+json',
       'Authorization': 'Bearer TOKEN',
       'Accept': 'application/json, text/plain, */*'
     };
-    var data = {foo: 42};
+    const data = {foo: 42};
     this.$http.expectPOST(url, JSON.stringify(data), headers).respond();
     this.makeRequest({
       method: 'POST',
@@ -64,14 +64,14 @@ describe('data/spaceEndpoint', function () {
   });
 
   it('sends POST request with version header', function () {
-    var url = '//test.io/spaces/SPACE/foo/bar';
-    var headers = {
+    const url = '//test.io/spaces/SPACE/foo/bar';
+    const headers = {
       'Content-Type': 'application/vnd.contentful.management.v1+json',
       'Authorization': 'Bearer TOKEN',
       'Accept': 'application/json, text/plain, */*',
       'X-Contentful-Version': 3
     };
-    var data = {foo: 42};
+    const data = {foo: 42};
     this.$http.expectPOST(url, JSON.stringify(data), headers).respond();
     this.makeRequest({
       method: 'POST',
@@ -84,55 +84,51 @@ describe('data/spaceEndpoint', function () {
 
   describe('error response', function () {
 
-    it('is an error object', function (done) {
+    it('is an error object', function* () {
       this.$http.whenGET(/./).respond(500);
-      this.makeRequest({
+      const req = this.makeRequest({
         method: 'GET',
-        path: ['foo'],
-      }).catch(function (error) {
-        expect(error instanceof Error).toBe(true);
-        expect(error.message).toEqual('API request failed');
-        _.defer(done);
+        path: ['foo']
       });
       this.$http.flush();
+      const error = yield this.catchPromise(req);
+      expect(error instanceof Error).toBe(true);
+      expect(error.message).toEqual('API request failed');
     });
 
-    it('has "request" object', function (done) {
+    it('has "request" object', function* () {
       this.$http.whenGET(/./).respond(500);
-      this.makeRequest({
+      const req = this.makeRequest({
         method: 'GET',
-        path: ['foo'],
-      }).catch(function (error) {
-        expect(error.request.method).toBe('GET');
-        expect(error.request.url).toBe('//test.io/spaces/SPACE/foo');
-        _.defer(done);
+        path: ['foo']
       });
       this.$http.flush();
+      const error = yield this.catchPromise(req);
+      expect(error.request.method).toBe('GET');
+      expect(error.request.url).toBe('//test.io/spaces/SPACE/foo');
     });
 
-    it('shadows Authorization header in request', function (done) {
+    it('shadows Authorization header in request', function* () {
       this.$http.whenGET(/./).respond(500);
-      this.makeRequest({
+      const req = this.makeRequest({
         method: 'GET',
-        path: ['foo'],
-      }).catch(function (error) {
-        expect(error.request.headers['Authorization']).toBe('[REDACTED]');
-        _.defer(done);
+        path: ['foo']
       });
       this.$http.flush();
+      const error = yield this.catchPromise(req);
+      expect(error.request.headers['Authorization']).toBe('[REDACTED]');
     });
 
-    it('has "response" properties', function (done) {
+    it('has "response" properties', function* () {
       this.$http.whenGET(/./).respond(455, 'ERRORS');
-      this.makeRequest({
+      const req = this.makeRequest({
         method: 'GET',
-        path: ['foo'],
-      }).catch(function (error) {
-        expect(error.status).toBe(455);
-        expect(error.data).toEqual('ERRORS');
-        _.defer(done);
+        path: ['foo']
       });
       this.$http.flush();
+      const error = yield this.catchPromise(req);
+      expect(error.status).toBe(455);
+      expect(error.data).toEqual('ERRORS');
     });
   });
 });

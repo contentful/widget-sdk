@@ -1,8 +1,8 @@
 'use strict';
 
 describe('Ooyala Search', function () {
-  var ooyalaClientSpy, ooyalaClientDeferred, ooyalaSearch, querySpy;
-  var $rootScope;
+  let ooyalaClientSpy, ooyalaClientDeferred, ooyalaSearch, querySpy;
+  let $rootScope;
 
   beforeEach(function () {
     module('contentful/test');
@@ -45,7 +45,7 @@ describe('Ooyala Search', function () {
   });
 
   describe('#limit', function () {
-    var returnValue;
+    let returnValue;
     beforeEach(function () {
       returnValue = ooyalaSearch.limit(10);
     });
@@ -60,7 +60,7 @@ describe('Ooyala Search', function () {
   });
 
   describe('#where', function () {
-    var returnValue;
+    let returnValue;
     beforeEach(function () {
       returnValue = ooyalaSearch.where('name', 'mp4');
     });
@@ -74,7 +74,7 @@ describe('Ooyala Search', function () {
   });
 
   describe('#nextPage', function () {
-    var returnValue;
+    let returnValue;
     beforeEach(function () {
       ooyalaSearch.nextPageUrl = 'value=1&page_token=1234&value=2';
       returnValue = ooyalaSearch.nextPage();
@@ -90,7 +90,7 @@ describe('Ooyala Search', function () {
   });
 
   describe('#run', function () {
-    var ooyalaSearchPromise;
+    let ooyalaSearchPromise;
     beforeEach(function () {
       querySpy.toQueryString.and.returnValue('query-string');
       ooyalaSearchPromise = ooyalaSearch.run();
@@ -105,7 +105,7 @@ describe('Ooyala Search', function () {
     });
 
     describe('if the request succeeds', function () {
-      var items;
+      let items;
       beforeEach(function () {
         ooyalaClientDeferred.resolve({next_page: 'page', items: 'items'});
         ooyalaSearchPromise.then(function (_items_) { items = _items_; });

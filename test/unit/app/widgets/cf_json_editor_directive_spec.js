@@ -1,7 +1,7 @@
 'use strict';
 
 describe('cfJsonEditor directive', function () {
-  var cmEditor, fieldApi, element;
+  let cmEditor, fieldApi, element;
 
   beforeEach(function () {
     module('contentful/test', function ($provide, createQueuedDebounce) {
@@ -18,13 +18,13 @@ describe('cfJsonEditor directive', function () {
       historySize: sinon.stub().returns({})
     };
 
-    var CodeMirror = sinon.stub().returns(cmEditor);
-    var LazyLoader = this.$inject('LazyLoader');
+    const CodeMirror = sinon.stub().returns(cmEditor);
+    const LazyLoader = this.$inject('LazyLoader');
     LazyLoader.get = sinon.stub()
       .withArgs('markdown')
       .resolves({CodeMirror: CodeMirror});
 
-    var widgetApi = this.$inject('mocks/widgetApi').create();
+    const widgetApi = this.$inject('mocks/widgetApi').create();
     fieldApi = widgetApi.field;
 
     element = this.$compile('<cf-json-editor />', {}, {
@@ -54,7 +54,7 @@ describe('cfJsonEditor directive', function () {
     beforeEach(function () {
       fieldApi.setValue = sinon.stub();
 
-      var debounce = this.$inject('debounce');
+      const debounce = this.$inject('debounce');
       this.flush = function () {
         debounce.flush();
         this.$apply();

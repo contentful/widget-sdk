@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Video Player Controller', function () {
-  var scope, videoPlayerController;
+  let scope, videoPlayerController;
   beforeEach(function () {
     module('contentful/test');
     inject(function ($controller, $rootScope) {

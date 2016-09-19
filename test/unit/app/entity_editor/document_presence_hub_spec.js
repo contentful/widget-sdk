@@ -22,19 +22,19 @@ describe('entityEditor/Document/PresenceHub', function () {
       this.$apply();
     };
 
-    var PresenceHub = this.$inject('entityEditor/Document/PresenceHub');
+    const PresenceHub = this.$inject('entityEditor/Document/PresenceHub');
     this.presence = PresenceHub.create('ownUser', docEvents, this.shout);
   });
 
   describe('#collaborators', function () {
     it('adds users when presence is shouted', function () {
-      let idsStream = extractUserIds(this.presence.collaborators);
+      const idsStream = extractUserIds(this.presence.collaborators);
       this.receiveShout(['ping', 'sourceUser']);
       expect(idsStream[0]).toEqual(['sourceUser']);
     });
 
     it('removes uers when close is shouted', function () {
-      let idsStream = extractUserIds(this.presence.collaborators);
+      const idsStream = extractUserIds(this.presence.collaborators);
       this.receiveShout(['ping', 'sourceUser']);
       expect(idsStream[0]).toEqual(['sourceUser']);
 
@@ -45,7 +45,7 @@ describe('entityEditor/Document/PresenceHub', function () {
     it('removes users after time out', function () {
       const $interval = this.$inject('$interval');
       const clock = sinon.useFakeTimers();
-      let idsStream = extractUserIds(this.presence.collaborators);
+      const idsStream = extractUserIds(this.presence.collaborators);
 
       this.receiveShout(['ping', 'userA']);
       clock.tick(1000);
@@ -67,7 +67,7 @@ describe('entityEditor/Document/PresenceHub', function () {
 
   describe('#collaboratorsFor', function () {
     it('adds user to field when presence is shouted', function () {
-      let idsStream = extractUserIds(this.presence.collaboratorsFor('FID', 'LID'));
+      const idsStream = extractUserIds(this.presence.collaboratorsFor('FID', 'LID'));
       this.receiveShout(['focus', 'userA', 'fields.FID.LID']);
       this.receiveShout(['focus', 'userB', 'fields.FID.LID']);
       this.receiveShout(['focus', 'userC', 'fields.FID.LID-2']);

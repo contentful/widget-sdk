@@ -1,7 +1,7 @@
 'use strict';
 
-describe('Totango service', function(){
-  beforeEach(function(){
+describe('Totango service', function () {
+  beforeEach(function () {
     module('contentful/test');
     this.totango = this.$inject('totango');
     this.$window = this.$inject('$window');
@@ -11,46 +11,40 @@ describe('Totango service', function(){
       track: sinon.stub()
     };
 
-    sinon.stub(this.angularLoad, 'loadScript').returns(this.when().then(function(){
+    sinon.stub(this.angularLoad, 'loadScript').returns(this.when().then(function () {
       _.merge(this.$window.totango, this.totangoStub);
     }.bind(this)));
   });
 
-  afterEach(function(){
+  afterEach(function () {
     delete this.$window.totango;
   });
 
-  it('should enable', function(done) {
-    this.totango.enable().then(function(){
-      expect(this.$window.totango.go).toBe(this.totangoStub.go);
-      done();
-    }.bind(this));
-    this.$apply();
+  it('should enable', function* () {
+    yield this.totango.enable();
+    expect(this.$window.totango.go).toBe(this.totangoStub.go);
   });
 
-  it('should disable', function(done){
+  it('should disable', function* () {
     this.totango.disable();
-    this.totango.enable().then(null, function(){
-      expect(this.$window.totango).toBe(undefined);
-      done();
-    }.bind(this));
-    this.$apply();
+    yield this.catchPromise(this.totango.enable());
+    expect(this.$window.totango).toBe(undefined);
   });
 
-  describe('when script loading fails', function(){
-    beforeEach(function(){
+  describe('when script loading fails', function () {
+    beforeEach(function () {
       sinon.stub(this.totango._buffer, 'disable');
       this.angularLoad.loadScript.returns(this.reject());
     });
 
-    it('should disable the buffer', function(){
+    it('should disable the buffer', function () {
       this.totango.enable();
       this.$apply();
       sinon.assert.called(this.totango._buffer.disable);
     });
   });
 
-  it('buffers calls to totango and runs them when enabled', function(){
+  it('buffers calls to totango and runs them when enabled', function () {
     this.totango.track('foo');
     this.totango.enable();
     this.$apply(); // Totango done loading
@@ -59,13 +53,13 @@ describe('Totango service', function(){
     expect(this.totangoStub.track.args[1][0]).toBe('bar');
   });
 
-  describe('after loading', function() {
-    beforeEach(function() {
+  describe('after loading', function () {
+    beforeEach(function () {
       this.totango.enable();
       this.$apply(); // Totango done loading
     });
 
-    it('sets module names', function(){
+    it('sets module names', function () {
       this.totango.setModule('API Keys');
       expect(this.$window.totango_options.module).toBe('API Keys');
     });

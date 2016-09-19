@@ -8,17 +8,17 @@ describe('uiKeyInputReject directive', function () {
   });
 
   it('prevents keypress event default when character is invalid', function () {
-    var triggerDefault = dispatchKeyPress(this.el, 'X');
+    const triggerDefault = dispatchKeyPress(this.el, 'X');
     expect(triggerDefault).toBe(false);
   });
 
   it('does not prevent keypress event default when character is valid', function () {
-    var triggerDefault = dispatchKeyPress(this.el, 'a');
+    const triggerDefault = dispatchKeyPress(this.el, 'a');
     expect(triggerDefault).toBe(true);
   });
 
   function dispatchKeyPress (el, character) {
-    var ev = new window.KeyboardEvent('keypress', {
+    const ev = new window.KeyboardEvent('keypress', {
       charCode: character.charCodeAt(0),
       cancelable: true
     });

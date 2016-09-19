@@ -2,14 +2,14 @@
 
 /* eslint-disable no-unused-vars */
 describe('Client Controller', function () {
-  var scope;
+  let scope;
 
   afterEach(function () {
     scope = null;
   });
 
   beforeEach(function () {
-    var self = this;
+    const self = this;
     module('contentful/test', function ($provide) {
       $provide.value('analytics', {
         enable: sinon.stub(),
@@ -34,12 +34,12 @@ describe('Client Controller', function () {
       });
     });
 
-    var tokenStore = this.$inject('tokenStore');
+    const tokenStore = this.$inject('tokenStore');
     this.dispatchTokenUpdate = function (token) {
       tokenStore.changed.attach.yield(token);
     };
 
-    var $rootScope = this.$inject('$rootScope');
+    const $rootScope = this.$inject('$rootScope');
     scope = $rootScope.$new();
     this.$inject('$controller')('ClientController', {$scope: scope});
   });
@@ -68,7 +68,7 @@ describe('Client Controller', function () {
 
   describe('on authentication.tokenLookup update', function () {
     it('it calls authorization.setTokenLookup', function () {
-      var TOKEN = {};
+      const TOKEN = {};
       this.$inject('authentication').tokenLookup = TOKEN;
       this.$apply();
       sinon.assert.calledWith(this.authorizationStubs.setTokenLookup, TOKEN);
@@ -120,7 +120,7 @@ describe('Client Controller', function () {
     });
 
     it('tracks analytics event', function () {
-      var analytics = this.$inject('analytics');
+      const analytics = this.$inject('analytics');
       scope.showCreateSpaceDialog();
       sinon.assert.called(analytics.track);
     });
@@ -130,7 +130,7 @@ describe('Client Controller', function () {
     beforeEach(function () {
       this.user = {sys: {}};
 
-      var Revision = this.$inject('revision');
+      const Revision = this.$inject('revision');
       this.hasNewVersion = Revision.hasNewVersion = sinon.stub().resolves(true);
       this.clock = sinon.useFakeTimers();
       scope.initClient();
@@ -152,11 +152,11 @@ describe('Client Controller', function () {
     });
 
     describe('new version check', function () {
-      var A_SECOND = 1000;
-      var A_MINUTE = 60 * A_SECOND;
+      const A_SECOND = 1000;
+      const A_MINUTE = 60 * A_SECOND;
 
       beforeEach(function () {
-        var env = this.$inject('environment');
+        const env = this.$inject('environment');
         env.settings.disableUpdateCheck = false;
       });
 
@@ -177,7 +177,7 @@ describe('Client Controller', function () {
       });
 
       it('is not run five minutes after loading if user is inactive', function () {
-        var presence = this.$inject('presence');
+        const presence = this.$inject('presence');
         presence.isActive = sinon.stub().returns(false);
 
         this.clock.tick(5 * A_SECOND);
@@ -189,8 +189,8 @@ describe('Client Controller', function () {
       });
 
       it('broadcasts notification only if there is a new version', function () {
-        var $rootScope = this.$inject('$rootScope');
-        var onNotification = sinon.stub();
+        const $rootScope = this.$inject('$rootScope');
+        const onNotification = sinon.stub();
         $rootScope.$on('persistentNotification', onNotification);
 
         this.hasNewVersion.resolves(false);
@@ -221,9 +221,9 @@ describe('Client Controller', function () {
       });
 
       it('reload is triggered if lookup fails', function () {
-        var tokenStore = this.$inject('tokenStore');
+        const tokenStore = this.$inject('tokenStore');
         tokenStore.refresh.rejects();
-        var ReloadNotification = this.$inject('ReloadNotification');
+        const ReloadNotification = this.$inject('ReloadNotification');
         ReloadNotification.trigger = sinon.stub();
 
         this.clock.tick(50 * 60 * 1000);
@@ -234,7 +234,7 @@ describe('Client Controller', function () {
   });
 
   describe('organizations on the scope', function () {
-    var OrganizationList, logger;
+    let OrganizationList, logger;
 
     beforeEach(function () {
       OrganizationList = this.$inject('OrganizationList');
@@ -250,7 +250,7 @@ describe('Client Controller', function () {
     });
 
     describe('if user exists', function () {
-      var user, org1, org2, org3;
+      let user, org1, org2, org3;
       beforeEach(function () {
         org1 = {org1: true};
         org2 = {org2: true};
@@ -280,7 +280,7 @@ describe('Client Controller', function () {
       });
 
       it('should not set or enable anything when analytics are disallowed', function () {
-        var features = this.$inject('features');
+        const features = this.$inject('features');
         features.allowAnalytics = sinon.stub().returns(false);
         this.prepare();
         sinon.assert.notCalled(this.analytics.enable);

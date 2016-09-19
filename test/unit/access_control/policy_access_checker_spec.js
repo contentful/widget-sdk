@@ -2,14 +2,14 @@
 
 describe('Policy Access Checker', function () {
 
-  var pac;
+  let pac;
 
   beforeEach(function () {
     module('contentful/test');
     pac = this.$inject('accessChecker/policy');
   });
 
-  var roles = {
+  const roles = {
     empty: {policies: []},
     allowAllEntry: {policies: [{
       effect: 'allow', actions: 'all',
@@ -123,38 +123,38 @@ describe('Policy Access Checker', function () {
     });
 
     it('returns false when has only denying rule for edit', function () {
-      var allow = roles.allowAllEntry;
-      var deny = roles.denyEditOfEntry('ctid');
+      const allow = roles.allowAllEntry;
+      const deny = roles.denyEditOfEntry('ctid');
       setRole({ policies: allow.policies.concat(deny.policies) });
       expect(pac.canUpdateEntriesOfType('ctid')).toBe(false);
     });
 
     it('returns false when there is both general allowing and denying rules', function () {
-      var allow = roles.allowReadAndEditOfEntry('ctid');
-      var deny = roles.denyEditOfEntry('ctid');
+      const allow = roles.allowReadAndEditOfEntry('ctid');
+      const deny = roles.denyEditOfEntry('ctid');
       setRole({ policies: allow.policies.concat(deny.policies) });
       expect(pac.canUpdateEntriesOfType('ctid')).toBe(false);
     });
 
     it('returns true when then there is allowing policy and denying for only a single field', function () {
-      var allow = roles.allowReadAndEditOfEntry('ctid');
-      var deny = roles.denyEditOfEntry('ctid');
+      const allow = roles.allowReadAndEditOfEntry('ctid');
+      const deny = roles.denyEditOfEntry('ctid');
       deny.policies[0].constraint.and.push({paths: [{doc: 'fields.test.%'}]});
       setRole({ policies: allow.policies.concat(deny.policies) });
       expect(pac.canUpdateEntriesOfType('ctid')).toBe(true);
     });
 
     it('returns true when there is allowing policy for a field and denying for another one', function () {
-      var allow = roles.allowReadAndEditOfEntry('ctid');
+      const allow = roles.allowReadAndEditOfEntry('ctid');
       allow.policies[1].constraint.and.push({paths: [{doc: 'fields.test.%'}]});
-      var deny = roles.denyEditOfEntry('ctid');
+      const deny = roles.denyEditOfEntry('ctid');
       deny.policies[0].constraint.and.push({paths: [{doc: 'fields.test2.%'}]});
       setRole({policies: allow.policies.concat(deny.policies)});
       expect(pac.canUpdateEntriesOfType('ctid')).toBe(true);
     });
 
     it('returns true when there is allowing policy for a single locale', function () {
-      var allow = roles.allowReadAndEditOfEntry('ctid');
+      const allow = roles.allowReadAndEditOfEntry('ctid');
       allow.policies[1].constraint.and.push({paths: [{doc: 'fields.%.en-US'}]});
       setRole(allow);
       expect(pac.canUpdateEntriesOfType('ctid')).toBe(true);
@@ -162,7 +162,7 @@ describe('Policy Access Checker', function () {
   });
 
   describe('#canUpdateOwnEntries', function () {
-    var userCurrent = {equals: [{doc: 'sys.createdBy.sys.id'}, 'User.current()']};
+    const userCurrent = {equals: [{doc: 'sys.createdBy.sys.id'}, 'User.current()']};
 
     it('returns false when there is no user-scoped policy', function () {
       setRole(roles.allowReadAndEditOfEntry('ctid'));
@@ -170,14 +170,14 @@ describe('Policy Access Checker', function () {
     });
 
     it('returns true when there is allowing user-scoped policy', function () {
-      var allow = roles.allowReadAndEditOfEntry('ctid');
+      const allow = roles.allowReadAndEditOfEntry('ctid');
       allow.policies[1].constraint.and.push(userCurrent);
       setRole(allow);
       expect(pac.canUpdateOwnEntries()).toBe(true);
     });
 
     it('returns true when there is user-scoped allowing path rule', function () {
-      var allow = roles.allowReadAndEditOfEntry('ctid');
+      const allow = roles.allowReadAndEditOfEntry('ctid');
       allow.policies[1].constraint.and.push(userCurrent);
       allow.policies[1].constraint.and.push({paths: [{doc: 'fields.test.%'}]});
       setRole(allow);
@@ -185,18 +185,18 @@ describe('Policy Access Checker', function () {
     });
 
     it('returns false when there is general denying user-scoped rule', function () {
-      var allow = roles.allowReadAndEditOfEntry('ctid');
+      const allow = roles.allowReadAndEditOfEntry('ctid');
       allow.policies[1].constraint.and.push(userCurrent);
-      var deny = roles.denyEditOfEntry('ctid');
+      const deny = roles.denyEditOfEntry('ctid');
       deny.policies[0].constraint.and.push(userCurrent);
       setRole({ policies: allow.policies.concat(deny.policies) });
       expect(pac.canUpdateOwnEntries()).toBe(false);
     });
 
     it('returns true when there is denying user-scoped path rule', function () {
-      var allow = roles.allowReadAndEditOfEntry('ctid');
+      const allow = roles.allowReadAndEditOfEntry('ctid');
       allow.policies[1].constraint.and.push(userCurrent);
-      var deny = roles.denyEditOfEntry('ctid');
+      const deny = roles.denyEditOfEntry('ctid');
       deny.policies[0].constraint.and.push(userCurrent);
       deny.policies[0].constraint.and.push({paths: [{doc: 'fields.test.%'}]});
       setRole({ policies: allow.policies.concat(deny.policies) });
@@ -231,24 +231,24 @@ describe('Policy Access Checker', function () {
     });
 
     it('returns false when there is both allowing and denying rule', function () {
-      var allow = roles.allowReadAndEditAsset;
-      var deny = roles.denyEditAsset;
+      const allow = roles.allowReadAndEditAsset;
+      const deny = roles.denyEditAsset;
       setRole({policies: allow.policies.concat(deny.policies)});
       expect(pac.canUpdateAssets()).toBe(false);
     });
 
     it('returns true when there is denying rule for a single locale', function () {
-      var allow = roles.allowReadAndEditAsset;
-      var deny = clone(roles.denyEditAsset);
+      const allow = roles.allowReadAndEditAsset;
+      const deny = clone(roles.denyEditAsset);
       deny.policies[0].constraint.and.push({paths: [{doc: 'fields.%.en-US'}]});
       setRole({policies: allow.policies.concat(deny.policies)});
       expect(pac.canUpdateAssets()).toBe(true);
     });
 
     it('returns true when there are allowing and denying rules for different locales', function () {
-      var allow = clone(roles.allowReadAndEditAsset);
+      const allow = clone(roles.allowReadAndEditAsset);
       allow.policies[1].constraint.and.push({paths: [{doc: 'fields.%.pl-PL'}]});
-      var deny = clone(roles.denyEditAsset);
+      const deny = clone(roles.denyEditAsset);
       deny.policies[0].constraint.and.push({paths: [{doc: 'fields.%.en-US'}]});
       setRole({policies: allow.policies.concat(deny.policies)});
       expect(pac.canUpdateAssets()).toBe(true);
@@ -256,7 +256,7 @@ describe('Policy Access Checker', function () {
   });
 
   describe('#canUpdateOwnAssets', function () {
-    var userCurrent = {equals: [{doc: 'sys.createdBy.sys.id'}, 'User.current()']};
+    const userCurrent = {equals: [{doc: 'sys.createdBy.sys.id'}, 'User.current()']};
 
     it('returns false when there is no user-scoped policy', function () {
       setRole(roles.allowReadAndEditAsset);
@@ -264,14 +264,14 @@ describe('Policy Access Checker', function () {
     });
 
     it('returns true when there is allowing user-scoped policy', function () {
-      var allow = clone(roles.allowReadAndEditAsset);
+      const allow = clone(roles.allowReadAndEditAsset);
       allow.policies[1].constraint.and.push(userCurrent);
       setRole(allow);
       expect(pac.canUpdateOwnAssets()).toBe(true);
     });
 
     it('returns true when there is user-scoped allowing locale rule', function () {
-      var allow = clone(roles.allowReadAndEditAsset);
+      const allow = clone(roles.allowReadAndEditAsset);
       allow.policies[1].constraint.and.push(userCurrent);
       allow.policies[1].constraint.and.push({paths: [{doc: 'fields.%.en-US'}]});
       setRole(allow);
@@ -279,18 +279,18 @@ describe('Policy Access Checker', function () {
     });
 
     it('returns false when there is general denying user-scoped rule', function () {
-      var allow = clone(roles.allowReadAndEditAsset);
+      const allow = clone(roles.allowReadAndEditAsset);
       allow.policies[1].constraint.and.push(userCurrent);
-      var deny = clone(roles.denyEditAsset);
+      const deny = clone(roles.denyEditAsset);
       deny.policies[0].constraint.and.push(userCurrent);
       setRole({ policies: allow.policies.concat(deny.policies) });
       expect(pac.canUpdateOwnAssets()).toBe(false);
     });
 
     it('returns true when there is denying user-scoped locale rule', function () {
-      var allow = clone(roles.allowReadAndEditAsset);
+      const allow = clone(roles.allowReadAndEditAsset);
       allow.policies[1].constraint.and.push(userCurrent);
-      var deny = clone(roles.denyEditAsset);
+      const deny = clone(roles.denyEditAsset);
       deny.policies[0].constraint.and.push(userCurrent);
       deny.policies[0].constraint.and.push({paths: [{doc: 'fields.%.en-US'}]});
       setRole({ policies: allow.policies.concat(deny.policies) });
@@ -327,7 +327,7 @@ describe('Policy Access Checker', function () {
     }
 
     function test (field, locale, expectation) {
-      var ctId = arguments.length === 4 ? arguments[3] : 'ctid';
+      const ctId = arguments.length === 4 ? arguments[3] : 'ctid';
       expect(pac.canEditFieldLocale(ctId, field, locale)).toBe(expectation);
     }
 
@@ -376,15 +376,15 @@ describe('Policy Access Checker', function () {
     });
 
     it('returns false if there is overriding policy', function () {
-      var p1 = pathPolicy('fields.test.pl');
-      var p2 = pathPolicy('fields.test.pl', 'deny');
+      const p1 = pathPolicy('fields.test.pl');
+      const p2 = pathPolicy('fields.test.pl', 'deny');
       setRole({policies: _.union(p1.policies, p2.policies)});
       test({apiName: 'test'}, {code: 'pl'}, false);
     });
 
     it('returns false if there is partially overriding policy', function () {
-      var p1 = pathPolicy('fields.test.pl');
-      var p2 = pathPolicy('fields.%.pl', 'deny');
+      const p1 = pathPolicy('fields.test.pl');
+      const p2 = pathPolicy('fields.%.pl', 'deny');
       setRole({policies: _.union(p1.policies, p2.policies)});
       test({apiName: 'test'}, {code: 'pl'}, false);
     });

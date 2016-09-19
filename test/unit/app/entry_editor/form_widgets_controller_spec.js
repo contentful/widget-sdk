@@ -1,7 +1,7 @@
 'use strict';
 
 describe('FormWidgetsController#widgets', function () {
-  var scope, field;
+  let scope, field;
 
   beforeEach(function () {
     module('contentful/test');
@@ -15,14 +15,14 @@ describe('FormWidgetsController#widgets', function () {
       apiName: 'foo'
     };
 
-    var controls = [{
+    const controls = [{
       widgetId: 'foo',
       fieldId: 'foo',
       field: field
     }];
 
     this.createController = function () {
-      var $controller = this.$inject('$controller');
+      const $controller = this.$inject('$controller');
       $controller('FormWidgetsController', {
         $scope: scope,
         contentTypeId: '',

@@ -1,8 +1,8 @@
 'use strict';
 
 describe('cfFileMetadata Directive', function () {
-  var element, scope, parentScope;
-  var compileElement;
+  let element, scope, parentScope;
+  let compileElement;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {

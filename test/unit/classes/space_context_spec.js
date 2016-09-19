@@ -18,7 +18,7 @@ describe('spaceContext', function () {
 
   describe('#purge', function () {
     it('gets rid of all space-related data', function () {
-      var sc = this.spaceContext;
+      const sc = this.spaceContext;
       sc.purge();
 
       ['space', 'users', 'widgets'].forEach(function (field) {
@@ -31,10 +31,10 @@ describe('spaceContext', function () {
   });
 
   describe('#resetWithSpace()', function () {
-    var SPACE, Widgets;
+    let SPACE, Widgets;
 
     beforeEach(function () {
-      var createEditingInterfaces = this.$inject('data/editingInterfaces');
+      const createEditingInterfaces = this.$inject('data/editingInterfaces');
       createEditingInterfaces.returns('EI');
 
       Widgets = this.$inject('widgets');
@@ -63,8 +63,8 @@ describe('spaceContext', function () {
     });
 
     it('creates the user cache', function () {
-      var userCache = {};
-      var createUserCache = this.$inject('data/userCache');
+      const userCache = {};
+      const createUserCache = this.$inject('data/userCache');
       createUserCache.reset().returns(userCache);
       this.spaceContext.resetWithSpace(SPACE);
       sinon.assert.calledWithExactly(createUserCache, SPACE);
@@ -83,7 +83,7 @@ describe('spaceContext', function () {
     });
 
     it('resolves when widgets are set', function () {
-      var done = sinon.stub();
+      const done = sinon.stub();
       this.result.then(done);
 
       this.$apply();
@@ -97,13 +97,13 @@ describe('spaceContext', function () {
     });
 
     it('sets #editingInterfaces', function () {
-      var createEditingInterfaces = this.$inject('data/editingInterfaces');
+      const createEditingInterfaces = this.$inject('data/editingInterfaces');
       sinon.assert.calledOnce(createEditingInterfaces);
       expect(this.spaceContext.editingInterfaces).toEqual('EI');
     });
 
     describe('updated `.subscription` value on context', function () {
-      var ORGANIZATION, SUBSCRIPTION;
+      let ORGANIZATION, SUBSCRIPTION;
       beforeEach(function () {
         ORGANIZATION = {};
         SUBSCRIPTION = {};
@@ -130,7 +130,7 @@ describe('spaceContext', function () {
   });
 
   describe('with a space', function () {
-    var space, $q, cfStub;
+    let space, $q, cfStub;
 
     beforeEach(function () {
       cfStub = this.$inject('cfStub');
@@ -164,20 +164,20 @@ describe('spaceContext', function () {
       });
 
       it('returns provided default value for an invalid path', function () {
-        var obj = {};
+        const obj = {};
         expect(this.spaceContext.getData('x.y.z', obj)).toBe(obj);
       });
 
       it('returns value if a path is correct', function () {
-        var obj = {};
+        const obj = {};
         space.data.x = {y: {z: obj}};
         expect(this.spaceContext.getData('x.y.z')).toBe(obj);
       });
     });
 
     describe('getting content types from server', function () {
-      var getContentTypes, getPublishedContentTypes;
-      var contentTypes;
+      let getContentTypes, getPublishedContentTypes;
+      let contentTypes;
       beforeEach(function () {
         contentTypes = [
           cfStub.contentType(space, 'content_type1', 'contentType1',
@@ -199,15 +199,15 @@ describe('spaceContext', function () {
 
       it('enqueues requests for content types', function () {
         getContentTypes.returns($q.when(contentTypes.concat().reverse()));
-        var p1 = this.spaceContext.refreshContentTypes();
-        var p2 = this.spaceContext.refreshContentTypes();
+        const p1 = this.spaceContext.refreshContentTypes();
+        const p2 = this.spaceContext.refreshContentTypes();
         this.$apply();
         expect(p1).toBe(p2);
         sinon.assert.calledTwice(getContentTypes);
       });
 
       it('results in an error message if API broken', function () {
-        var handler = this.$inject('ReloadNotification').apiErrorHandler;
+        const handler = this.$inject('ReloadNotification').apiErrorHandler;
         getContentTypes.returns($q.reject({statusCode: 500}));
         this.spaceContext.refreshContentTypes();
         this.$apply();
@@ -219,7 +219,7 @@ describe('spaceContext', function () {
           this.spaceContext.refreshContentTypes();
           this.$apply();
 
-          var $timeout = this.$inject('$timeout');
+          const $timeout = this.$inject('$timeout');
           this.flush = function () {
             this.$apply();
             $timeout.flush();
@@ -227,15 +227,15 @@ describe('spaceContext', function () {
 
           this.removeSecondCt = function () {
             this.spaceContext.unregisterPublishedContentType(contentTypes[1]);
-            var slice = contentTypes.slice(0, 1);
+            const slice = contentTypes.slice(0, 1);
             getContentTypes.resolves(slice);
             getPublishedContentTypes.resolves(slice);
           }.bind(this);
         });
 
         pit('resolves with content types when one was added', function () {
-          var newCt = cfStub.contentType(space, 'content_type3', 'contentType3');
-          var cts = contentTypes.concat(newCt);
+          const newCt = cfStub.contentType(space, 'content_type3', 'contentType3');
+          const cts = contentTypes.concat(newCt);
           getContentTypes.resolves(cts);
           getPublishedContentTypes.resolves(cts);
           return this.spaceContext.refreshContentTypesUntilChanged().then(function (data) {
@@ -253,7 +253,7 @@ describe('spaceContext', function () {
         });
 
         pit('it retries if content types are not changed', function () {
-          var p = this.spaceContext.refreshContentTypesUntilChanged();
+          const p = this.spaceContext.refreshContentTypesUntilChanged();
 
           this.removeSecondCt();
           this.flush();
@@ -268,7 +268,7 @@ describe('spaceContext', function () {
         });
 
         pit('it tries 5 times and resolves this old content types if not changed', function () {
-          var p = this.spaceContext.refreshContentTypesUntilChanged();
+          const p = this.spaceContext.refreshContentTypesUntilChanged();
 
           _.range(5).forEach(this.flush);
 
@@ -304,7 +304,7 @@ describe('spaceContext', function () {
         });
 
         it('registers a published content type', function () {
-          var contentType = cfStub.contentType(space, 'content_type3', 'contentType3');
+          const contentType = cfStub.contentType(space, 'content_type3', 'contentType3');
           this.spaceContext.registerPublishedContentType(contentType);
           expect(this.spaceContext.publishedContentTypes[0]).toBe(contentType);
         });
@@ -321,12 +321,12 @@ describe('spaceContext', function () {
           // TODO test this without refresh calls
           this.spaceContext.refreshContentTypes();
           this.$apply();
-          var entry = cfStub.entry(space, 'entry2', 'content_type1');
+          const entry = cfStub.entry(space, 'entry2', 'content_type1');
           expect(this.spaceContext.publishedTypeForEntry(entry)).toBe(contentTypes[0]);
         });
 
         describe('gets an entry title', function () {
-          var entry;
+          let entry;
           beforeEach(function () {
             entry = cfStub.entry(space, 'entry1',
                                  'content_type1',
@@ -382,7 +382,7 @@ describe('spaceContext', function () {
             });
 
             it('should not be found by publishedTypeForEntry anymore', function () {
-              var entry = {
+              const entry = {
                 getContentTypeId: sinon.stub().returns('contentType1')
               };
               expect(this.spaceContext.publishedTypeForEntry(entry)).toBe(undefined);
@@ -393,7 +393,7 @@ describe('spaceContext', function () {
         });
 
         describe('gets an asset title', function () {
-          var asset;
+          let asset;
           beforeEach(function () {
             asset = cfStub.asset(space, 'asset1', {
               title: {
@@ -443,7 +443,7 @@ describe('spaceContext', function () {
     });
 
     describe('forced fetch of content types', function () {
-      var spaceContext, $q;
+      let spaceContext, $q;
 
       beforeEach(function () {
         spaceContext = this.spaceContext;
@@ -453,7 +453,7 @@ describe('spaceContext', function () {
           already_fetched: { data: { sys: { id: 'already_fetched' } } }
         };
         sinon.stub(this.spaceContext, 'refreshContentTypes', function () {
-          var ct = { data: { sys: { id: 'to_be_fetched' } } };
+          const ct = { data: { sys: { id: 'to_be_fetched' } } };
           spaceContext._publishedContentTypesHash['to_be_fetched'] = ct;
           return $q.resolve(ct);
         });
@@ -477,7 +477,7 @@ describe('spaceContext', function () {
     });
 
     describe('getting existing published content types locally', function () {
-      var contentType;
+      let contentType;
 
       beforeEach(function () {
         this.spaceContext._publishedContentTypesHash = {
@@ -500,14 +500,14 @@ describe('spaceContext', function () {
       });
 
       it('gets a published type for a given entry', function () {
-        var entry = cfStub.entry(space, 'entry1', 'hashId');
+        const entry = cfStub.entry(space, 'entry1', 'hashId');
         expect(this.spaceContext.publishedTypeForEntry(entry)).toBe('contentType1');
       });
 
     });
 
     describe('getting missing published content types locally', function () {
-      var contentType;
+      let contentType;
 
       beforeEach(function () {
         this.spaceContext._publishedContentTypesHash = {};
@@ -528,7 +528,7 @@ describe('spaceContext', function () {
       });
 
       it('gets no published type for a given entry', function () {
-        var entry = cfStub.entry(space, 'entry1', 'hashId');
+        const entry = cfStub.entry(space, 'entry1', 'hashId');
         expect(this.spaceContext.publishedTypeForEntry(entry)).toBeUndefined();
       });
 
@@ -540,7 +540,7 @@ describe('spaceContext', function () {
       });
 
       it('returns the field', function () {
-        var field = {id: 'name'};
+        const field = {id: 'name'};
         this.spaceContext.getPublishedContentType.returns({
           data: {
             displayField: 'name',
@@ -551,7 +551,7 @@ describe('spaceContext', function () {
       });
 
       it('returns nothing', function () {
-        var field = {id: 'name'};
+        const field = {id: 'name'};
         this.spaceContext.getPublishedContentType.returns({
           data: {
             displayField: 'othername',
@@ -566,11 +566,11 @@ describe('spaceContext', function () {
 
 
   describe('#getPublishedContentType()', function () {
-    var entry, $q;
+    let entry, $q;
 
     beforeEach(function () {
-      var cfStub = this.$inject('cfStub');
-      var space = cfStub.space('test');
+      const cfStub = this.$inject('cfStub');
+      const space = cfStub.space('test');
       space.getContentTypes = sinon.stub().resolves([]);
       space.getPublishedContentTypes = sinon.stub().resolves([]);
       $q = this.$inject('$q');
@@ -600,7 +600,7 @@ describe('spaceContext', function () {
 
     it('should mark a published type as not missing after retrieval', function () {
       this.spaceContext._publishedContentTypeIsMissing['foo'] = true;
-      var ctsPromise = $q.resolve([{
+      const ctsPromise = $q.resolve([{
         getName: function () { return ''; },
         getId: function () { return 'foo'; },
         isDeleted: sinon.stub().returns(false),
@@ -701,7 +701,7 @@ describe('spaceContext', function () {
       });
 
       it('accepts a callback for the search', function () {
-        var fields = [];
+        const fields = [];
         const val = this.spaceContext.findLocalizedField(
           this.entry, function (field) {
             fields.push(field);
@@ -758,7 +758,7 @@ describe('spaceContext', function () {
     describe('#entryImage', function () {
       beforeEach(function () {
         this.file = {details: {image: {}}};
-        var asset = {};
+        const asset = {};
         dotty.put(asset, 'data.fields.file.xx', this.file);
 
         this.spaceContext.space.getAsset = sinon.stub();

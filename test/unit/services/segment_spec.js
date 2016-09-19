@@ -1,8 +1,8 @@
 'use strict';
 
 describe('Segment service', function () {
-  var segment, $window, document;
-  var logSpy;
+  let segment, $window, document;
+  let logSpy;
 
   beforeEach(function () {
     logSpy = sinon.spy();

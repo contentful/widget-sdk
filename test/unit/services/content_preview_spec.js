@@ -92,7 +92,7 @@ describe('contentPreview', function () {
           expect(environments.foo2).toEqual(makeEnv('foo2'));
         });
         this.$apply();
-      };
+      }
       fetchEnvironmentsAndAssertResponse.call(this);
       fetchEnvironmentsAndAssertResponse.call(this);
     });
@@ -320,7 +320,7 @@ describe('contentPreview', function () {
 
   describe('#setSelected', function () {
     it('updates store value', function () {
-      var environment = {
+      const environment = {
         contentType: 'ct1',
         envId: 'env1'
       };

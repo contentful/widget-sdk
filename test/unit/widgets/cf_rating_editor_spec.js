@@ -24,8 +24,8 @@ describe('cfRatingEditor directive', function () {
 
   it('renders a number of stars according to the widget setting', function () {
     this.widgetApi.settings.stars = 1;
-    var el = this.compile();
-    var stars = el.find('cf-icon[name="star"]');
+    let el = this.compile();
+    let stars = el.find('cf-icon[name="star"]');
     expect(stars.length).toEqual(1);
 
     this.widgetApi.settings.stars = 11;
@@ -35,24 +35,24 @@ describe('cfRatingEditor directive', function () {
   });
 
   it('activates no stars when value is not set', function () {
-    var el = this.compile();
+    const el = this.compile();
     this.fieldApi.onValueChanged.yield(null);
     this.$apply();
-    var active = el.find('[data-active="true"]');
+    const active = el.find('[data-active="true"]');
     expect(active.length).toEqual(0);
   });
 
   it('activates the number of stars that are set', function () {
-    var el = this.compile();
+    const el = this.compile();
     this.fieldApi.onValueChanged.yield(3);
     this.$apply();
-    var active = el.find('[data-active="true"]');
+    const active = el.find('[data-active="true"]');
     expect(active.length).toEqual(3);
   });
 
   it('sets rating value according to star clicked', function () {
     this.fieldApi.setValue = sinon.stub();
-    var el = this.compile();
+    const el = this.compile();
 
     el.find('[role="button"][aria-label="3"]').click();
     this.$apply();
@@ -62,7 +62,7 @@ describe('cfRatingEditor directive', function () {
 
   it('does not set rating when field is disabled', function () {
     this.fieldApi.setValue = sinon.stub();
-    var el = this.compile();
+    const el = this.compile();
     this.$apply();
     this.fieldApi.onDisabledStatusChanged.yield(true);
 
@@ -73,7 +73,7 @@ describe('cfRatingEditor directive', function () {
 
   it('removes value when "clear" button is clicked', function () {
     this.fieldApi.removeValue = sinon.stub();
-    var el = this.compile();
+    const el = this.compile();
 
     // Show the button
     this.fieldApi.onValueChanged.yield(3);

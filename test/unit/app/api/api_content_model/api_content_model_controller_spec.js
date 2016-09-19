@@ -2,7 +2,7 @@
 
 describe('apiContentModel Controller', function () {
 
-  var scope, spaceContext, accessChecker;
+  let scope, spaceContext, accessChecker;
 
   beforeEach(function () {
     spaceContext = {
@@ -19,8 +19,8 @@ describe('apiContentModel Controller', function () {
 
     });
 
-    var $rootScope = this.$inject('$rootScope');
-    var $controller = this.$inject('$controller');
+    const $rootScope = this.$inject('$rootScope');
+    const $controller = this.$inject('$controller');
 
     this.makeContentType = function (id) {
       return {

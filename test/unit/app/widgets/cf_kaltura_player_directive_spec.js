@@ -1,9 +1,9 @@
 'use strict';
 
 describe('Kaltura Player Directive', function () {
-  var kalturaCredentials, kalturaCredentialsDeferred;
-  var kalturaWidgetLoader, kalturaWidgetLoaderDeferred;
-  var scope, $rootScope, $window;
+  let kalturaCredentials, kalturaCredentialsDeferred;
+  let kalturaWidgetLoader, kalturaWidgetLoaderDeferred;
+  let scope, $rootScope, $window;
 
   afterEach(function () {
     kalturaCredentials = kalturaCredentialsDeferred =
@@ -19,8 +19,6 @@ describe('Kaltura Player Directive', function () {
     });
 
     inject(function ($injector, $q) {
-      var directive;
-
       kalturaWidgetLoader = $injector.get('kalturaWidgetLoader');
       kalturaCredentials = $injector.get('kalturaCredentials');
       $rootScope = $injector.get('$rootScope');
@@ -40,13 +38,12 @@ describe('Kaltura Player Directive', function () {
         }
       };
 
-      var spaceContext = $injector.get('spaceContext');
+      const spaceContext = $injector.get('spaceContext');
       spaceContext.space = {
         getOrganizationId: sinon.stub().returns('org-123')
       };
 
-
-      directive = [
+      const directive = [
         '<cf-kaltura-player',
         'on-init="on-init-callback"',
         'on-ready="on-ready-callback"',

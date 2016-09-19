@@ -8,9 +8,9 @@ describe('Publication warnings', function () {
 
   describe('#register', function () {
     it('registers a warning', function () {
-      var warning = {shouldShow: _.noop, priority: 1, getData: _.noop};
+      const warning = {shouldShow: _.noop, priority: 1, getData: _.noop};
       this.warnings.register(warning);
-      var list = this.warnings.getList();
+      const list = this.warnings.getList();
       expect(list[0]).toEqual(warning);
       expect(list[0]).not.toBe(warning);
     });
@@ -18,7 +18,7 @@ describe('Publication warnings', function () {
     it('uses defaults', function () {
       this.warnings.register({});
       this.warnings.register({priority: 100, getData: _.constant('data')});
-      var list = this.warnings.getList();
+      const list = this.warnings.getList();
       expect(list[0].priority).toBe(0);
       expect(list[0].getData()).toBe(null);
       expect(list[1].priority).toBe(100);
@@ -26,7 +26,7 @@ describe('Publication warnings', function () {
     });
 
     it('returns unregister function', function () {
-      var unregister = this.warnings.register({});
+      const unregister = this.warnings.register({});
       expect(this.warnings.getList().length).toBe(1);
       unregister();
       expect(this.warnings.getList().length).toBe(0);

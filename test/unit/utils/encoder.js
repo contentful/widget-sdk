@@ -1,12 +1,12 @@
 'use strict';
 
 describe('encoder', function () {
-  var encoder;
+  let encoder;
 
-  var RAW = 'RAW_STRING';
-  var ENCODED = 'HTML_ENCODED';
+  const RAW = 'RAW_STRING';
+  const ENCODED = 'HTML_ENCODED';
 
-  var libraryMockInstance = {
+  const libraryMockInstance = {
     htmlEncode: sinon.stub().withArgs(RAW).returns(ENCODED),
     htmlDecode: sinon.stub().withArgs(ENCODED).returns(RAW)
   };
