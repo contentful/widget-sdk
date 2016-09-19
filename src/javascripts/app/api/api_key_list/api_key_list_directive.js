@@ -17,11 +17,8 @@ function ApiKeyListController ($scope, $injector) {
   var accessChecker = $injector.get('accessChecker');
   var Command = $injector.get('command');
   var TheAccountView = $injector.get('TheAccountView');
-  var $controller = $injector.get('$controller');
 
   var disableCreateApiKey = accessChecker.shouldDisable('createApiKey');
-
-  $scope.apiKeyController = $controller('ApiKeyController');
 
   $scope.showCreateApiKey = !accessChecker.shouldHide('createApiKey');
 
@@ -55,7 +52,7 @@ function ApiKeyListController ($scope, $injector) {
     }
   );
 
-  $scope.apiKeyController.getApiKeyList()
+  spaceContext.apiKeys.getDeliveryKeys()
   .then(function (apiKeys) {
     $scope.apiKeys = apiKeys;
     $scope.empty = _.isEmpty(apiKeys);

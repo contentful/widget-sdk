@@ -9,10 +9,8 @@ describe('API Key List Controller', function () {
 
     this.spaceContext = _.extend(this.$inject('spaceContext'), {
       getData: _.constant(2),
-      space: {
-        getOrganizationId: _.constant(1),
-        getDeliveryApiKeys: sinon.stub()
-      }
+      space: {getOrganizationId: _.constant(1)},
+      apiKeys: {getDeliveryKeys: sinon.stub()}
     });
 
     this.create = () => {
@@ -27,13 +25,13 @@ describe('API Key List Controller', function () {
 
   describe('empty marker', function () {
     it('is true', function () {
-      this.spaceContext.space.getDeliveryApiKeys.resolves([]);
+      this.spaceContext.apiKeys.getDeliveryKeys.resolves([]);
       this.create();
       expect(this.scope.empty).toBeTruthy();
     });
 
     it('is false', function () {
-      this.spaceContext.space.getDeliveryApiKeys.resolves([{}]);
+      this.spaceContext.apiKeys.getDeliveryKeys.resolves([{}]);
       this.create();
       expect(this.scope.empty).toBeFalsy();
     });
@@ -41,13 +39,13 @@ describe('API Key List Controller', function () {
 
   describe('has reached the API keys limit', function () {
     it('under keys limit', function () {
-      this.spaceContext.space.getDeliveryApiKeys.resolves([{}]);
+      this.spaceContext.apiKeys.getDeliveryKeys.resolves([{}]);
       this.create();
       expect(this.scope.reachedLimit).toBeFalsy();
     });
 
     it('reached the limit', function () {
-      this.spaceContext.space.getDeliveryApiKeys.resolves([{}, {}]);
+      this.spaceContext.apiKeys.getDeliveryKeys.resolves([{}, {}]);
       this.create();
       expect(this.scope.reachedLimit).toBeTruthy();
     });
@@ -55,7 +53,7 @@ describe('API Key List Controller', function () {
 
   describe('refreshing api keys', function () {
     it('saves api keys on scope', function () {
-      this.spaceContext.space.getDeliveryApiKeys.resolves({});
+      this.spaceContext.apiKeys.getDeliveryKeys.resolves({});
       this.create();
       expect(this.scope.apiKeys).toEqual({});
     });
@@ -63,7 +61,7 @@ describe('API Key List Controller', function () {
 
   describe('refreshing api keys fails', function () {
     it('results in an error message', function () {
-      this.spaceContext.space.getDeliveryApiKeys.rejects();
+      this.spaceContext.apiKeys.getDeliveryKeys.rejects();
       this.create();
       sinon.assert.called(this.$inject('ReloadNotification').apiErrorHandler);
     });

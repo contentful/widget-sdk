@@ -20,8 +20,8 @@ describe('The ApiKey list directive', function () {
       {getId: _.constant(2), getName: function () { return 'key2'; }}
     ];
 
-    this.$inject('spaceContext').space = {
-      getDeliveryApiKeys: sinon.stub().resolves(apiKeys)
+    this.$inject('spaceContext').apiKeys = {
+      getDeliveryKeys: sinon.stub().resolves(apiKeys)
     };
 
     this.setup = function () {
