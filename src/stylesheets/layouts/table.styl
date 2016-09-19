@@ -8,10 +8,10 @@ Markup:
 table.table
   thead
     tr
-      th.x--selected
-        a.x--asc(href="")
-          | Name
-      th Description
+      th.x--selected.x--asc
+        | Name
+      th
+        | Description
   tbody
     tr
       td Pikachu
@@ -41,19 +41,19 @@ Styleguide 7
     border-bottom: 1px solid $colors.element-mid
     text-align: left
     font-weight: normal
-    &, a
-      color: $colors.text-light
-    .x--asc:after, .x--desc:after
-      $caret()
-      color: $colors.text-light
-      margin-left: 3px
-    .x--asc:after
+    color: $colors.text-light
+    &.x--asc, &.x--desc
+      cursor: pointer
+      &:after
+        $caret()
+        color: $colors.text-light
+        margin-left: 3px
+    &.x--asc:after
       content: "\f0d8"
-    .x--desc:after
+    &.x--desc:after
       content: "\f0d7"
-
-  th.x--selected
-    font-weight: bold
+    &.x--selected
+      font-weight: bold
   tbody
     color: $colors.text-mid
     tr:not(:last-child)
