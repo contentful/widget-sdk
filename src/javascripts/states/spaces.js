@@ -26,9 +26,7 @@ angular.module('contentful')
         return tokenStore.getSpaces();
       }]
     },
-    views: {
-      'main-nav-bar': { template: '<cf-main-nav-bar>' }
-    },
+    views: {'nav-bar': { template: '<cf-main-nav-bar />' }},
     children: [newSpace, $injector.get('states/spaces/detail')]
   };
 }])
