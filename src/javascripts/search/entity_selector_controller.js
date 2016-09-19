@@ -107,7 +107,7 @@ angular.module('contentful')
   }
 
   function handleResponse (res) {
-    $scope.paginator.total(res.total);
+    $scope.paginator.setTotal(res.total);
     $scope.items.push.apply($scope.items, getItemsToAdd(res));
 
     $timeout(function () {
@@ -128,13 +128,13 @@ angular.module('contentful')
   function resetAndLoad () {
     $scope.items = [];
     itemsById = {};
-    $scope.paginator.total(0);
-    $scope.paginator.page(0);
+    $scope.paginator.setTotal(0);
+    $scope.paginator.setPage(0);
     load();
   }
 
   function loadMore () {
-    if (!$scope.isLoading && !$scope.paginator.end()) {
+    if (!$scope.isLoading && !$scope.paginator.isAtLast()) {
       $scope.paginator.next();
       load();
     }

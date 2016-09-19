@@ -48,7 +48,7 @@ angular.module('contentful')
     var wasRemoved = removeFromCollection(entity);
 
     if (wasRemoved && $scope.paginator) {
-      $scope.paginator.total(function (total) {
+      $scope.paginator.setTotal(function (total) {
         return total > 0 ? total - 1 : 0;
       });
     }

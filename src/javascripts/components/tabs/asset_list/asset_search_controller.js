@@ -22,7 +22,7 @@ angular.module('contentful')
 
   this.resetAssets = function (resetPage) {
     $scope.context.loading = true;
-    if (resetPage) { this.paginator.page(0); }
+    if (resetPage) { this.paginator.setPage(0); }
 
     return prepareQuery()
     .then(function (query) {
@@ -33,7 +33,7 @@ angular.module('contentful')
     .then(function (assets) {
       $scope.context.ready = true;
       $scope.context.loading = false;
-      controller.paginator.total(assets.total);
+      controller.paginator.setTotal(assets.total);
       $scope.assets = filterOutDeleted(assets);
       $scope.selection.updateList($scope.assets);
     }, accessChecker.wasForbidden($scope.context))
@@ -41,7 +41,7 @@ angular.module('contentful')
   };
 
   this.loadMore = function () {
-    if (this.paginator.end()) { return; }
+    if (this.paginator.isAtLast()) { return; }
     this.paginator.next();
     var queryForDebug;
 
@@ -63,12 +63,12 @@ angular.module('contentful')
         });
         return;
       }
-      controller.paginator.total(assets.total);
+      controller.paginator.setTotal(assets.total);
       assets = _.difference(assets, $scope.assets);
       $scope.assets.push.apply($scope.assets, filterOutDeleted(assets));
       $scope.selection.updateList($scope.assets);
     }, function (err) {
-      controller.paginator.previous();
+      controller.paginator.prev();
       return $q.reject(err);
     })
     .catch(ReloadNotification.apiErrorHandler);

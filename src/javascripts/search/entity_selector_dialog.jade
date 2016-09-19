@@ -43,7 +43,7 @@ mixin single-list-item
         ng-class="{'entity-selector__thumbnails': config.linksAsset}"
         cf-endless-container
         at-bottom="loadMore()"
-        num-elements="paginator.page()")
+        num-elements="paginator.getPage()")
         .entity-selector__item-list-placeholder(ng-if="!isLoading && items.length < 1")
           | {{ labels.empty }} found
           span(ng-if="view.searchTerm.length > 0")

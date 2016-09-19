@@ -39,7 +39,7 @@ angular.module('contentful')
    * Watches: triggering list updates
    */
 
-  $scope.$watch('paginator.page()', function () {
+  $scope.$watch('paginator.getPage()', function () {
     if (isResettingPage) {
       isResettingPage = false;
     } else {
@@ -83,7 +83,7 @@ angular.module('contentful')
       contentTypeId: getViewItem('contentTypeId'),
       displayedFieldIds: getViewItem('displayedFieldIds'),
       entriesLength: $scope.entries && $scope.entries.length,
-      page: $scope.paginator.page(),
+      page: $scope.paginator.getPage(),
       orderDirection: getViewItem('order.direction'),
       orderFieldId: getViewItem('order.fieldId')
     };
@@ -116,8 +116,8 @@ angular.module('contentful')
     mode = mode || MODE_RESET;
     $scope.context.loading = true;
 
-    if (mode === MODE_RESET && $scope.paginator.page() !== 0) {
-      $scope.paginator.page(0);
+    if (mode === MODE_RESET && $scope.paginator.getPage() !== 0) {
+      $scope.paginator.setPage(0);
       isResettingPage = true;
     }
 
@@ -152,10 +152,10 @@ angular.module('contentful')
     // 2. if response doesn't contain any entries:
     if (!res.entries) {
       // reset paginator
-      $scope.paginator.total(0);
+      $scope.paginator.setTotal(0);
     } else if (Array.isArray(res.entries)) { // 3. if response contain some entries:
       // set paginator's total count
-      $scope.paginator.total(res.entries.total);
+      $scope.paginator.setTotal(res.entries.total);
       // add new entries to the list
       var entriesToAdd = _(res.entries)
       .difference($scope.entries)
@@ -174,7 +174,7 @@ angular.module('contentful')
   }
 
   function loadNextPage () {
-    if ($scope.paginator.end() || isAppendingPage || $scope.context.loading) {
+    if ($scope.paginator.isAtLast() || isAppendingPage || $scope.context.loading) {
       return;
     }
 

@@ -13,36 +13,40 @@ angular.module('cf.app')
     perPage = perPage || DEFAULT_PER_PAGE;
 
     return {
-      total: function (newTotal) {
-        total = updatedValue(newTotal, total);
+      setTotal: function (newTotal) {
+        total = updateValue(newTotal, total);
+      },
+      getTotal: function () {
         return total;
       },
-      page: function (newPage) {
-        page = updatedValue(newPage, page);
+      setPage: function (newPage) {
+        page = updateValue(newPage, page);
+      },
+      getPage: function () {
         return page;
       },
       next: function () {
-        return this.page(step(+1));
+        page += 1;
       },
-      previous: function () {
-        return this.page(step(-1));
+      prev: function () {
+        page -= 1;
       },
-      perPage: function () {
+      getPerPage: function () {
         return perPage;
       },
-      skipParam: function () {
+      getSkipParam: function () {
         return page * perPage;
       },
-      pageCount: function () {
+      getPageCount: function () {
         return Math.ceil(total / perPage);
       },
-      end: function () {
-        return page >= this.pageCount() - 1;
+      isAtLast: function () {
+        return page >= this.getPageCount() - 1;
       }
     };
   }
 
-  function updatedValue (next, current) {
+  function updateValue (next, current) {
     if (_.isNumber(next)) {
       return next;
     } else if (_.isFunction(next)) {
@@ -50,11 +54,5 @@ angular.module('cf.app')
     } else {
       return current;
     }
-  }
-
-  function step (change) {
-    return function (current) {
-      return current + change;
-    };
   }
 }]);

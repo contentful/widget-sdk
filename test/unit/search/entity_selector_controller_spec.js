@@ -22,7 +22,7 @@ describe('EntitySelectorController', function () {
 
     this.loadMore = function () {
       $timeout.flush();
-      this.scope.paginator.end = _.constant(false);
+      this.scope.paginator.isAtLast = _.constant(false);
       this.scope.loadMore();
       this.$apply();
     };
@@ -80,11 +80,11 @@ describe('EntitySelectorController', function () {
     it('requests first page of results on init', function () {
       this.createController({linksEntry: true});
       sinon.assert.calledOnce(this.getEntries);
-      expect(this.scope.paginator.page()).toBe(0);
+      expect(this.scope.paginator.getPage()).toBe(0);
 
       this.createController({linksAsset: true});
       sinon.assert.calledOnce(this.getAssets);
-      expect(this.scope.paginator.page()).toBe(0);
+      expect(this.scope.paginator.getPage()).toBe(0);
     });
 
     it('constructs a query with paginator and search term', function () {
@@ -106,7 +106,7 @@ describe('EntitySelectorController', function () {
     it('updates total number of entities', function () {
       this.getEntries.resolves({total: 123, items: []});
       this.createController({linksEntry: true});
-      expect(this.scope.paginator.total()).toBe(123);
+      expect(this.scope.paginator.getTotal()).toBe(123);
     });
 
     it('removes duplicates from the fetched page', function () {

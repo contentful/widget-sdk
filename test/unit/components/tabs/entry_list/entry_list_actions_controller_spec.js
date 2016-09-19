@@ -203,7 +203,7 @@ describe('Entry List Actions Controller', function () {
     });
 
     it('increases paginator value', function () {
-      expect(scope.paginator.total()).toBe(1);
+      expect(scope.paginator.getTotal()).toBe(1);
     });
   });
 

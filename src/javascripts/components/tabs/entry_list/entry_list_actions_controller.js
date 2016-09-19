@@ -23,7 +23,7 @@ angular.module('contentful')
     listActionsController.duplicate().then(function (results) {
       var succeeded = results.succeeded;
       $scope.entries.unshift.apply($scope.entries, succeeded);
-      $scope.paginator.total(function (total) {
+      $scope.paginator.setTotal(function (total) {
         return total + succeeded.length;
       });
     });

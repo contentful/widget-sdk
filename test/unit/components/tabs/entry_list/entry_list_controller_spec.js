@@ -88,10 +88,10 @@ describe('Entry List Controller', function () {
   describe('on search term change', function () {
     it('page is set to the first one', function () {
       scope.$apply();
-      scope.paginator.page(1);
+      scope.paginator.setPage(1);
       scope.context.view.searchTerm = 'thing';
       scope.$apply();
-      expect(scope.paginator.page()).toBe(0);
+      expect(scope.paginator.getPage()).toBe(0);
     });
   });
 
@@ -108,7 +108,7 @@ describe('Entry List Controller', function () {
     });
 
     it('page', function () {
-      scope.paginator.page(1);
+      scope.paginator.setPage(1);
       scope.$digest();
       sinon.assert.calledOnce(this.getQuery);
     });
@@ -141,7 +141,7 @@ describe('Entry List Controller', function () {
       scope.updateEntries();
       getEntries.resolve(entries);
       scope.$apply();
-      expect(scope.paginator.total()).toEqual(30);
+      expect(scope.paginator.getTotal()).toEqual(30);
     });
 
     it('sets entries on scope', function () {
@@ -207,7 +207,7 @@ describe('Entry List Controller', function () {
       });
 
       it('with a defined skip param', function () {
-        scope.paginator.skipParam = sinon.stub().returns(true);
+        scope.paginator.getSkipParam = sinon.stub().returns(true);
         scope.updateEntries();
         scope.$apply();
         expect(spaceContext.space.getEntries.args[0][0].skip).toBeTruthy();
@@ -257,22 +257,22 @@ describe('Entry List Controller', function () {
 
   describe('loadNextPage', function () {
     beforeEach(function () {
-      scope.paginator.end = sinon.stub().returns(false);
+      scope.paginator.isAtLast = sinon.stub().returns(false);
       spaceContext.space.getEntries.resolves(createEntries(30));
       scope.$apply();
       spaceContext.space.getEntries.reset();
     });
 
     it('doesnt load if on last page', function () {
-      scope.paginator.end.returns(true);
+      scope.paginator.isAtLast.returns(true);
       scope.loadNextPage();
       sinon.assert.notCalled(spaceContext.space.getEntries);
     });
 
     it('paginator count is increased', function () {
-      scope.paginator.page(0);
+      scope.paginator.setPage(0);
       scope.loadNextPage();
-      expect(scope.paginator.page()).toBe(1);
+      expect(scope.paginator.getPage()).toBe(1);
     });
 
     it('gets query params', function () {
@@ -283,8 +283,8 @@ describe('Entry List Controller', function () {
 
     it('should work on the page before the last', function () {
       // Regression test for https://www.pivotaltracker.com/story/show/57743532
-      scope.paginator.total(47);
-      scope.paginator.page(0);
+      scope.paginator.setTotal(47);
+      scope.paginator.setPage(0);
       scope.loadNextPage();
       scope.$apply();
       sinon.assert.called(spaceContext.space.getEntries);
@@ -299,7 +299,7 @@ describe('Entry List Controller', function () {
 
       it('sets num entries', function () {
         scope.$apply();
-        expect(scope.paginator.total()).toEqual(30);
+        expect(scope.paginator.getTotal()).toEqual(30);
       });
 
       it('appends entries to scope', function () {
@@ -332,7 +332,7 @@ describe('Entry List Controller', function () {
 
     it('should cause loadNextPage to show an error message', function () {
       // Load more only executes when we are not at the last page
-      scope.paginator.end = sinon.stub().returns(false);
+      scope.paginator.isAtLast = sinon.stub().returns(false);
 
       scope.loadNextPage();
       scope.$apply();
