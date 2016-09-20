@@ -12,12 +12,6 @@ describe('ReloadNotification service', function () {
     ReloadNotification.apiErrorHandler.restore();
   }));
 
-  describe('trigger', function () {
-    it('should not open the notification twice');
-    it('should send the correct message');
-    it('should default to the default message');
-  });
-
   describe('the apiErrorHandler', function () {
     it('should trigger the api error for 500eds', function () {
       $q.reject({statusCode: 500}).catch(ReloadNotification.apiErrorHandler);

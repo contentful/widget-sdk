@@ -1,12 +1,12 @@
 'use strict';
 
 describe('DateTime Editor', function () {
-  var moment;
-  var element, scope;
+  let moment;
+  let element, scope;
 
   beforeEach(module('contentful/test'));
 
-  beforeEach(inject(function ($compile, $rootScope, $q, _moment_){
+  beforeEach(inject(function ($compile, $rootScope, _moment_) {
     moment = _moment_;
     scope = $rootScope;
     scope.widget = {settings: {
@@ -24,42 +24,51 @@ describe('DateTime Editor', function () {
     element = scope = moment = null;
   });
 
-  function enter(date, time, zone, ampm) {
-    /*jshint eqnull:true*/
-    if (date != null) element.find('.date').val(date).
-      trigger('input').
-      trigger('change').
-      trigger('blur');
-    if (time != null) element.find('.time').val(time).
-      trigger('input').
-      trigger('change');
-    if (ampm != null) element.find('.ampm').val(ampm).
-      trigger('change');
+  function enter (date, time, zone, ampm) {
+    /* jshint eqnull:true*/
+    if (date != null) {
+      element.find('.date')
+        .val(date)
+        .trigger('input')
+        .trigger('change')
+        .trigger('blur');
+    }
+    if (time != null) {
+      element.find('.time')
+        .val(time)
+        .trigger('input')
+        .trigger('change');
+    }
+    if (ampm != null) {
+      element.find('.ampm')
+        .val(ampm)
+        .trigger('change');
+    }
     if (zone != null) {
-      selectValue(element.find('.zone'), 'UTC'+zone);
+      selectValue(element.find('.zone'), 'UTC' + zone);
     }
   }
 
   function selectValue ($select, label) {
-    var option = $select.find('option').filter(function () {
+    const option = $select.find('option').filter(function () {
       return $(this).text() === label;
     });
-    var value = option.attr('value');
+    const value = option.attr('value');
     $select.val(value).trigger('change');
   }
 
-  function expectScope(date, time, zone, ampm) {
+  function expectScope (date, time, zone, ampm) {
     if (date) expect(scope.localDate).toBe(date);
     if (time) expect(scope.localTime).toBe(time);
     if (zone) expect(scope.tzOffset).toBe(zone);
     if (ampm) expect(scope.ampm).toBe(ampm);
   }
 
-  function expectFields(date, time, zone, ampm) {
+  function expectFields (date, time, zone, ampm) {
     if (date) expect(element.find('.date').val()).toBe(date);
     if (time) expect(element.find('.time').val()).toBe(time);
     if (zone) {
-      var selected = element.find('.zone').val().substr('string:'.length);
+      const selected = element.find('.zone').val().substr('string:'.length);
       expect(selected).toBe(zone);
     }
     if (ampm) expect(element.find('.ampm').val()).toBe(ampm);
@@ -93,12 +102,12 @@ describe('DateTime Editor', function () {
     expect(scope.fieldData.value).toBe('2013-12-24T05:23+03:00');
   });
 
-  it('should parse only dates', function() {
+  it('should parse only dates', function () {
     scope.setFromISO('2012-12-12');
     expectScope('2012-12-12');
   });
 
-  it('should parse seconds and milliseconds', function() {
+  it('should parse seconds and milliseconds', function () {
     scope.setFromISO('2012-12-12T12:34:56');
     expectScope('2012-12-12', '12:34:56');
     scope.setFromISO('2012-12-12T12:34:56.789');
@@ -118,14 +127,14 @@ describe('DateTime Editor', function () {
   });
 
   it('should assume local time when no timezone given in ISO', function () {
-    var iso = '2013-12-24T05:23:00';
+    const iso = '2013-12-24T05:23:00';
     scope.setFromISO(iso);
     scope.$apply();
     expectScope('2013-12-24', '05:23:00', null);
   });
 
   it('should accepts different inputs', function () {
-    var localZone = moment().format('Z');
+    const localZone = moment().format('Z');
     // No time
     enter('2013-12-24');
     expect(scope.fieldData.value).toBe('2013-12-24');
@@ -166,7 +175,7 @@ describe('DateTime Editor', function () {
   });
 
   it('should return null for Invalid Date strings', function () {
-    var dateController = element.find('.date').controller('ngModel');
+    const dateController = element.find('.date').controller('ngModel');
     dateController.$setViewValue('');
     scope.$apply();
     expect(scope.fieldData.value).toBe(null);
@@ -204,19 +213,19 @@ describe('DateTime Editor', function () {
   });
 
   describe('AM/PM mode', function () {
-    beforeEach(function(){
+    beforeEach(function () {
       scope.widget.settings.ampm = '12';
       scope.widget.settings.format = 'time';
     });
 
-    it('should not allow invalid times', function() {
+    it('should not allow invalid times', function () {
       enter('2013-11-11', '13:00', null, 'am');
       expect(scope.timeInvalid).toBe(true);
       enter('2013-11-11', '00:00', null, 'am');
       expect(scope.timeInvalid).toBe(true);
     });
 
-    it('should convert outgoing times', function() {
+    it('should convert outgoing times', function () {
       enter('2013-11-11', '12:00', null, 'am');
       expect(scope.fieldData.value).toBe('2013-11-11T00:00');
       enter('2013-11-11', '12:00', null, 'pm');
@@ -225,7 +234,7 @@ describe('DateTime Editor', function () {
       expect(scope.fieldData.value).toBe('2013-11-11T14:00');
     });
 
-    it('should convert incoming times', function() {
+    it('should convert incoming times', function () {
       scope.setFromISO('2013-12-24T05:23:00');
       expectScope('2013-12-24', '05:23:00', null, 'am');
       scope.setFromISO('2013-12-24T17:23:00');
@@ -236,6 +245,4 @@ describe('DateTime Editor', function () {
       expectScope('2013-12-24', '12:00', null, 'pm');
     });
   });
-
-  it('should warn about malformed times');
 });

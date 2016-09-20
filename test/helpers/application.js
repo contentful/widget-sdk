@@ -35,5 +35,5 @@ angular.module('contentful/test', ['contentful', 'contentful/mocks'])
     },
     isDev: false,
     env: 'unittest'
-  }
+  };
 })());

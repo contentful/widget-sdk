@@ -3,7 +3,6 @@
 
 test/unit/app/widgets/cf_video_player_directive_spec.js
 test/unit/components/forms/cf_autocomplete_results_controller_spec.js
-test/unit/components/forms/cf_datetime_editor_directive_spec.js
 test/unit/components/forms/cf_field_alert_directive_spec.js
 test/unit/components/forms/cf_multi_video_editor_controller_spec.js
 test/unit/components/app_container/context_history_spec.js
@@ -27,7 +26,6 @@ test/unit/components/shared/view_menu_controller_spec.js
 test/unit/components/tabs/asset_list/asset_list_actions_controller_spec.js
 test/unit/components/tabs/asset_list/asset_list_controller_spec.js
 test/unit/components/tabs/content_type_editor/add_field_dialog_spec.js
-test/unit/components/tabs/content_type_editor/api_name_controller_spec.js
 test/unit/components/tabs/content_type_editor/cf_list_type_for_spec.js
 test/unit/components/tabs/content_type_editor/cf_content_type_preview_spec.js
 test/unit/components/tabs/entry_list/displayed_fields_controller_spec.js
@@ -57,7 +55,6 @@ test/unit/services/intercom_spec.js
 test/unit/services/kaltura_search_spec.js
 test/unit/services/revision_spec.js
 test/unit/services/search_parser_spec.js
-test/unit/services/totango_spec.js
 test/unit/services/validation_views_spec.js
 test/unit/services/activation_email_resender_spec.js
 test/unit/services/analytics_events_spec.js
@@ -84,7 +81,6 @@ test/unit/app/entry_editor/entry_actions_controller_spec.js
 test/unit/app/entry_editor/entry_reverter_spec.js
 test/unit/data/content_types_spec.js
 test/unit/data/editing_interfaces/transformer_spec.js
-test/unit/data/space_endpoint_spec.js
 test/unit/data/user_cache_spec.js
 test/unit/markdown_editor/link_organizer_spec.js
 test/unit/markdown_editor/markdown_codemirror_wrapper_spec.js
@@ -101,7 +97,6 @@ test/unit/access_control/policy_builder_internal_spec.js
 test/unit/access_control/remove_outdated_rules_spec.js
 test/unit/access_control/response_cache_spec.js
 test/unit/account/cf_account_dropdown_controller_spec.js
-test/unit/account/cf_account_view_directive_spec.js
 test/unit/account/handle_gatekeeper_message_spec.js
 test/unit/account/iframe_channel_spec.js
 test/unit/webhooks/webhook_call_status_directive_spec.js
@@ -109,12 +104,7 @@ test/unit/webhooks/webhook_editor_directive_spec.js
 test/unit/webhooks/webhook_health_directive_spec.js
 test/unit/webhooks/webhook_repository_spec.js
 test/unit/webhooks/webhook_segmentation_spec.js
-test/helpers/mocks/client.js
-test/helpers/mocks/the_store.js
-test/helpers/application.js
 test/helpers/deep_diff.js
-test/helpers/dsl.js
-test/helpers/sinon.js
 test/integration/field_validation_dialog_spec.js
 src/javascripts/components/client/activation_email_resend_controller.js
 src/javascripts/components/client/cf_main_nav_bar_directive.js

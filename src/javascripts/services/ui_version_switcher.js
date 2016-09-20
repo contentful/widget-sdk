@@ -12,16 +12,11 @@ angular.module('contentful')
   var $location = $injector.get('$location');
   var $window = $injector.get('$window');
   var $document = $injector.get('$document');
-  var environment = $injector.get('environment');
   var Cookies = $injector.get('Cookies');
   var moment = $injector.get('moment');
 
   return {
     checkIfVersionShouldBeSwitched: function () {
-      if (environment.env === 'production') {
-        return;
-      }
-
       setVersionFromQuery();
       addVersionNotification();
     }

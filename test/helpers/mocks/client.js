@@ -9,10 +9,10 @@ angular.module('contentful/mocks')
  */
 .factory('contentTypeMock', ['mockClient', function (client) {
 
-  var id = 0;
+  let id = 0;
 
   return {
-    create: create,
+    create: create
   };
 
   /**
@@ -43,7 +43,7 @@ angular.module('contentful/mocks')
   }, client);
 
   function mockPersistenceContext () {
-    var request = new client.Request({
+    const request = new client.Request({
       request: sinon.stub().returns($q.reject(new Error('Requests are mocked')))
     });
     return new client.PersistenceContext(request);
