@@ -32,7 +32,7 @@ describe('ListQuery service', function () {
 
   describe('Returns promise of a query', function () {
     pit('for assets', function () {
-      const assetCt = this.$inject('AssetContentType');
+      const assetCt = this.$inject('assetContentType');
       assetCt.getId = sinon.spy();
 
       return ListQuery.getForAssets(OPTS).then(function (q) {

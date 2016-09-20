@@ -4,7 +4,7 @@
 // in the same manner the Entry form is generated
 angular.module('contentful')
 
-.constant('AssetContentType', {
+.constant('assetContentType', {
   getId: _.constant(undefined),
   data: {
     fields: [

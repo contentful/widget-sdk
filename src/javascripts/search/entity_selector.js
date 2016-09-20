@@ -6,7 +6,7 @@ angular.module('contentful')
   var modalDialog = require('modalDialog');
   var spaceContext = require('spaceContext');
   var $q = require('$q');
-  var AssetContentType = require('AssetContentType');
+  var assetContentType = require('assetContentType');
   var mimetype = require('mimetype');
 
   var LABELS = {
@@ -119,7 +119,7 @@ angular.module('contentful')
 
   function getSingleContentType (config) {
     if (config.linksAsset) {
-      return $q.resolve(AssetContentType);
+      return $q.resolve(assetContentType);
     }
 
     var linked = config.linkedContentTypeIds;

@@ -29,7 +29,7 @@ angular.module('contentful')
 
   var spaceContext = require('spaceContext');
   var mimetype = require('mimetype');
-  var AssetContentType = require('AssetContentType');
+  var assetContentType = require('assetContentType');
   var $q = require('$q');
   var moment = require('moment');
 
@@ -173,7 +173,7 @@ angular.module('contentful')
 
   // Returns all the static autocompletions that are possible for the content Type.
   function staticAutocompletions (contentType) {
-    if (contentType === AssetContentType) {
+    if (contentType === assetContentType) {
       return _.extend({}, autocompletion, assetcompletions);
     } else {
       return autocompletion;

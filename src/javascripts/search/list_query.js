@@ -5,7 +5,7 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
   var systemFields = $injector.get('systemFields');
   var spaceContext = $injector.get('spaceContext');
   var buildQuery = $injector.get('search/queryBuilder');
-  var AssetContentType = $injector.get('AssetContentType');
+  var assetContentType = $injector.get('assetContentType');
 
   var DEFAULT_ORDER = systemFields.getDefaultOrder();
   var DEFAULT_ORDER_PATH = ['sys', DEFAULT_ORDER.fieldId];
@@ -22,7 +22,7 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
       }
     },
     getForAssets: function (opts) {
-      return prepareEntityListQuery(AssetContentType, opts);
+      return prepareEntityListQuery(assetContentType, opts);
     }
   };
 

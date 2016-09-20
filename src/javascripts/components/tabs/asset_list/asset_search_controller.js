@@ -17,7 +17,7 @@ angular.module('contentful')
   var assetLoader = new PromisedLoader();
 
   this.paginator = new Paginator();
-  $scope.assetContentType = require('AssetContentType');
+  $scope.assetContentType = require('assetContentType');
 
   this.resetAssets = function (resetPage) {
     $scope.context.loading = true;
