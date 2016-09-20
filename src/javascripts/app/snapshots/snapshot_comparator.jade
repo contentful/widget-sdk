@@ -13,22 +13,31 @@ header.workbench-header
     a.btn-secondary-action(
       type="button"
       ui-sref="^.^")
-      | Cancel
+      | Close
+
+.snapshot-comparator__header
+  .snapshot-comparator__header-cell
+    button.btn-link.snapshot-comparator__version(ng-click="select()")
+      +snapshot-dt
+      cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+    button.btn-link(href="" ng-click="restore()") Restore this version
+  .snapshot-comparator__header-cell
+    .snapshot-comparator__version Current version
+    label
+      input(type="checkbox" ng-model="showOnlyDifferences")
+      | Show only differences
 
 .workbench-main.x--content-full-size
-  .snapshot-comparator__header
-    .snapshot-comparator__cell
-      div
-        span This is a snapshot of your entry from&#32;
-        button.btn-link(ng-click="select()")
-          +snapshot-dt
-          cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-      button.btn-link(href="" ng-click="restore()") Restore all fields
-    .snapshot-comparator__cell
-      span This is the current state of your entry
-      label
-        input(type="checkbox" ng-model="showOnlyDifferences")
-        | Show only differences
+
+  cf-ui-hint.snapshot-comparator__hint(
+    name="snapshots-intro"
+    arrow="true"
+    arrow-direction="up"
+    show-dismiss="true"
+    role="note"
+    data-test-id="snapshots-intro")
+    | This version looks different than the current version of your entry
+    | (shown on the right side). Only content that has changed can be restored.
 
   .snapshot-comparator__field(
     ng-repeat="widget in widgets"
@@ -41,13 +50,19 @@ header.workbench-header
         ng-if="showOnlyDifferences ? isDifferent : true"
         ng-controller="FieldLocaleController as fieldLocale"
         document-property="snapshotDoc")
-        +snapshot-field-title
-        cf-widget-renderer(cf-widget-api)
-        +snapshot-overlays('left')
+        .snapshot-comparator__cell__radio
+          input(type="radio" ng-model="selected" value="left")
+        .snapshot-comparator__cell__presenter
+          +snapshot-field-title
+          cf-widget-renderer(cf-widget-api)
+          +snapshot-overlays('left')
 
       .snapshot-comparator__cell(
         ng-if="showOnlyDifferences ? isDifferent : true"
         ng-controller="FieldLocaleController as fieldLocale")
-        +snapshot-field-title
-        cf-widget-renderer(cf-widget-api)
-        +snapshot-overlays('right')
+        .snapshot-comparator__cell__radio
+          input(type="radio" ng-model="selected" value="right")
+        .snapshot-comparator__cell__presenter
+          +snapshot-field-title
+          cf-widget-renderer(cf-widget-api)
+          +snapshot-overlays('right')

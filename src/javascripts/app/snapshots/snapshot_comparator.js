@@ -20,24 +20,33 @@ angular.module('cf.app')
   var $state = require('$state');
   var $timeout = require('$timeout');
   var TheLocaleStore = require('TheLocaleStore');
+  var leaveConfirmator = require('navigation/confirmLeaveEditor');
 
-  $scope.context.title = spaceContext.entryTitle($scope.entry);
+  _.extend($scope.context, {
+    title: spaceContext.entryTitle($scope.entry),
+    requestLeaveConfirmation: leaveConfirmator(save)
+  });
+
+  $scope.$watch(isUntouched, function (untouched) {
+    $scope.context.dirty = !untouched;
+  });
+
   $scope.otDoc = SnapshotDoc.create(dotty.get($scope, 'entry.data', {}));
   $scope.snapshotDoc = SnapshotDoc.create(dotty.get($scope, 'snapshot.snapshot', {}));
   $scope.pathsToRestore = [];
 
   $scope.select = select;
   $scope.restore = restore;
-  $scope.save = Command.create(save, {
-    disabled: function () {
-      return $scope.pathsToRestore.length < 1;
-    }
-  });
+  $scope.save = Command.create(save, {disabled: isUntouched});
 
   var contentTypeData = $scope.contentType.data;
   var fields = contentTypeData.fields;
   $scope.fields = DataFields.create(fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);
+
+  function isUntouched () {
+    return $scope.pathsToRestore.length < 1;
+  }
 
   function select () {
     return modalDialog.open({
@@ -48,6 +57,7 @@ angular.module('cf.app')
 
   function goToSnapshot (snapshot) {
     $scope.context.ready = false;
+    $scope.pathsToRestore = [];
     $timeout(function () {
       $state.go('.', {snapshotId: snapshot.sys.id});
     });
@@ -64,7 +74,10 @@ angular.module('cf.app')
 
     return spaceContext.cma.updateEntry(data)
     .then(function () {
-      return $state.go('^.^', {}, {reload: true});
+      $scope.pathsToRestore = [];
+      return $timeout(function () {
+        return $state.go('^.^', {}, {reload: true});
+      });
     });
   }
 

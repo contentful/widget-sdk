@@ -30,29 +30,47 @@
   display: flex
   background-color: $colors.element-lightest
 
-  .snapshot-comparator__cell
-    display: flex
-    justify-content: space-between
-    align-items: center
 
-    .btn-link
-      display: inline-block
+.snapshot-comparator__cell,
+.snapshot-comparator__header-cell
+  display: flex
+  flex-grow: 1
+  flex-basis: 0
 
-    cf-icon path
-      fill: $colors.blue-mid
+  &:first-child
+    border-right: 1px dashed #D6D6D6
+
+.snapshot-comparator__header-cell
+  justify-content: space-between
+  align-items: center
+  border-bottom: 1px solid $colors.element-darkest
+
+  > *
+    padding: 1.5em 4em
+
+.snapshot-comparator__version
+  color: $base-font-color
+  border-right: 1px solid $colors.element-darkest
+
+  cf-icon path
+    fill: $base-font-color
 
 .snapshot-comparator__field-locale
   display: flex
 
 .snapshot-comparator__cell
   position: relative
-  flex-grow: 1
-  flex-basis: 0
-  padding: 2em
-  border-bottom: 1px solid $colors.element-darkest
+  border-bottom: 1px solid #EEEEEE
 
-  &:first-child
-    border-right: 1px solid $colors.element-darkest
+  &__radio
+    width: 4em
+    display: flex
+    justify-content: center
+    align-items: center
+  &__presenter
+    flex-grow: 1
+    margin: 4em
+    margin-left: 0
 
 .snapshot-comparator__overlay-different,
 .snapshot-comparator__overlay-identical
@@ -71,5 +89,18 @@
   cursor: pointer
 
   &.x--selected
-    border-left: 4px solid $colors.blue-light
     background-color: alpha($colors.blue-light, 0.05)
+
+.snapshot-comparator__hint
+  top: 25px
+  left: 25px
+  box-sizing: border-box
+  padding: 15px
+
+  .ui-hint-content
+    display: inline-block
+    max-width: 600px
+    margin-bottom: 0
+
+  [data-arrow-direction="up"]
+    top: -7px

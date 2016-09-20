@@ -44,7 +44,7 @@ angular.module('contentful')
     controller: [
       '$scope', 'fieldControls', 'entry', 'contentType', 'snapshot',
       function ($scope, fieldControls, entry, contentType, snapshot) {
-        $scope.context = {ready: true};
+        require('$state').current.data = $scope.context = {ready: true};
         $scope.widgets = fieldControls.form;
         $scope.entry = $scope.entity = entry;
         $scope.contentType = contentType;
