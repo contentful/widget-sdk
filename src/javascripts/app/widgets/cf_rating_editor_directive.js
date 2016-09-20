@@ -20,7 +20,7 @@ angular.module('cf.app')
 
       var removeChangeListener = field.onValueChanged(selectStars, true);
 
-      var removeDisabledStatusListener = field.onDisabledStatusChanged(function (disabled) {
+      var removeDisabledStatusListener = field.onIsDisabledChanged(function (disabled) {
         $scope.isDisabled = disabled;
       }, true);
 

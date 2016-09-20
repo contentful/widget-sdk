@@ -7,7 +7,7 @@
  * @description
  * Provides an interface similar to the new widget api.
  *
- * @scope.requires {object} entry
+ * @scope.requires {object} entity
  * @scope.requires {object} locale
  * @scope.requires {object} otSubDoc
  * @scope.requires {object} fields
@@ -32,29 +32,18 @@ angular.module('contentful')
  *
  * Exposed by the `cfWidgetApi` directive.
  */
-.controller('WidgetApiController', ['$scope', '$injector', function ($scope, $injector) {
-  var newSignal = $injector.get('signal').createMemoized;
-  var TheLocaleStore = $injector.get('TheLocaleStore');
-  var K = $injector.get('utils/kefir');
-  var spaceContext = $injector.get('spaceContext');
-  var EntityHelpers = $injector.get('EntityHelpers');
-  var goToEntityEditor = $injector.get('goToEntityEditor');
+.controller('WidgetApiController', ['$scope', 'require', function ($scope, require) {
+  var TheLocaleStore = require('TheLocaleStore');
+  var K = require('utils/kefir');
+  var spaceContext = require('spaceContext');
+  var EntityHelpers = require('EntityHelpers');
+  var goToEntityEditor = require('goToEntityEditor');
 
   var fieldLocale = $scope.fieldLocale;
-  var isDisabledSignal = newSignal(isEditingDisabled());
   var ctField = $scope.widget.field;
 
-  $scope.$watch(isEditingDisabled, function (value) {
-    // Do not send other listener arguments to signal
-    isDisabledSignal.dispatch(value);
-  });
-
-  // TODO: consolidate entity data at one place instead of
-  // splitting it across a sharejs doc as well as global
-  // entity data
-  var sysChangedSignal = newSignal($scope.entity.data.sys);
-  $scope.$watch('entity.data.sys', function (sys) {
-    sysChangedSignal.dispatch(sys);
+  var isEditingDisabled = fieldLocale.access$.map(function (access) {
+    return !!access.disabled;
   });
 
   this.settings = $scope.widget.settings;
@@ -68,10 +57,14 @@ angular.module('contentful')
   this.contentType = $scope.transformedContentTypeData;
 
   this.entry = {
+    // TODO only used by slug editor we should remove it and only offer a
+    // property interface
     getSys: function () {
       return $scope.entity.data.sys;
     },
-    onSysChanged: sysChangedSignal.attach,
+    onSysChanged: function (cb) {
+      return K.onValueScope($scope, fieldLocale.doc.sys, cb);
+    },
     fields: $scope.fields // comes from entry editor controller
   };
 
@@ -80,7 +73,9 @@ angular.module('contentful')
   this.state = {goToEditor: goToEntityEditor};
 
   this.field = {
-    onDisabledStatusChanged: isDisabledSignal.attach,
+    onIsDisabledChanged: function (cb) {
+      return K.onValueScope($scope, isEditingDisabled, cb);
+    },
     onSchemaErrorsChanged: function (cb) {
       return K.onValueScope($scope, fieldLocale.errors$, cb);
     },
@@ -121,10 +116,6 @@ angular.module('contentful')
    */
   function setInvalid (isInvalid) {
     $scope.fieldController.setInvalid($scope.locale.code, isInvalid);
-  }
-
-  function isEditingDisabled () {
-    return fieldLocale.access.disabled;
   }
 
   function getDefaultLocaleCode () {

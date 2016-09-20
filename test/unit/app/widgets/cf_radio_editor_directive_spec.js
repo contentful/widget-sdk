@@ -65,7 +65,7 @@ describe('cfRadioEditor Directive', function () {
     fieldApi.validations = [{in: ['value']}];
     const input = this.compile().find('input');
     expect(input.prop('disabled')).toBe(false);
-    fieldApi.onDisabledStatusChanged.yield(true);
+    fieldApi.onIsDisabledChanged.yield(true);
     this.$apply();
     expect(input.prop('disabled')).toBe(true);
   });

@@ -2,6 +2,7 @@
 
 describe('cfMultiLineEditor directive', function () {
   beforeEach(function () {
+    this.clock = sinon.useFakeTimers();
     module('contentful/test');
 
     const widgetApi = this.$inject('mocks/widgetApi').create();
@@ -14,6 +15,10 @@ describe('cfMultiLineEditor directive', function () {
     };
   });
 
+  afterEach(function () {
+    this.clock.restore();
+  });
+
   it('updates correctly when value change is indicated by sharejs', function () {
     const $el = this.compile();
 
@@ -21,10 +26,13 @@ describe('cfMultiLineEditor directive', function () {
     expect($el.find('textarea').val()).toEqual('test');
   });
 
-  it('input event on text field calls "setValue()"', function () {
+  it('input event on text field calls "setValue()" after some time', function () {
     const $el = this.compile();
 
-    $el.find('textarea').val('NEW').trigger('input');
+    const textarea = $el.find('textarea').get(0);
+    textarea.value = 'NEW';
+    textarea.dispatchEvent(new Event('input'));
+    this.clock.tick(300);
     this.$apply();
     sinon.assert.calledOnce(this.fieldApi.setValue);
     sinon.assert.calledWithExactly(this.fieldApi.setValue, 'NEW');
@@ -34,11 +42,11 @@ describe('cfMultiLineEditor directive', function () {
     const $el = this.compile();
     const textarea = $el.find('textarea');
 
-    this.fieldApi.onDisabledStatusChanged.yield(true);
+    this.fieldApi.onIsDisabledChanged.yield(true);
     this.$apply();
     expect(textarea.prop('disabled')).toBe(true);
 
-    this.fieldApi.onDisabledStatusChanged.yield(false);
+    this.fieldApi.onIsDisabledChanged.yield(false);
     this.$apply();
     expect(textarea.prop('disabled')).toBe(false);
   });
@@ -49,7 +57,7 @@ describe('cfMultiLineEditor directive', function () {
 
     this.fieldApi.onSchemaErrorsChanged.yield(null);
     this.$apply();
-    expect(textarea.attr('aria-invalid')).toBe('');
+    expect(textarea.attr('aria-invalid')).toBe(undefined);
     this.fieldApi.onSchemaErrorsChanged.yield([{}]);
     this.$apply();
     expect(textarea.attr('aria-invalid')).toBe('true');

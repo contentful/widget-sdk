@@ -12,6 +12,10 @@ npm install --no-optional
 
 git submodule update --init
 
+pushd vendor/extensions/core-field-editors
+  npm install --no-optional
+popd
+
 pushd vendor/ui-extensions-sdk
   npm install --production --no-optional
   make
