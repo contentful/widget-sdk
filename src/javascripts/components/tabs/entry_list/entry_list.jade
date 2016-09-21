@@ -13,7 +13,7 @@ header.workbench-header
     select.search-area__select-box.cfnext-select-box(
       ng-model="context.view.contentTypeId"
       ng-change="selectedContentType()"
-      ng-options="ct.getId() as ct.getName() group by getGroupName() for ct in spaceContext.publishedContentTypes")
+      ng-options="ct.id as ct.name group by 'Content types' for ct in contentTypeSelectOptions")
       option(value="") All
 
     .search-area__input(

@@ -9,9 +9,8 @@ describe('EntityHelpers', function () {
       $provide.value('assetUrlFilter', _.constant(REWRITTEN_URL));
     });
 
-    this.spaceContext = this.mockService('spaceContext');
+    this.spaceContext = this.$inject('mocks/spaceContext').init();
     this.entityStatus = this.mockService('entityStatus');
-
     this.helpers = this.$inject('EntityHelpers').api;
   });
 
@@ -67,7 +66,7 @@ describe('EntityHelpers', function () {
 
   function itConvertsToEntityAndCallsMethod (methodName) {
     pit(`converts data to entity and calls #${methodName}`, function () {
-      this.spaceContext.fetchPublishedContentType.resolves({
+      this.spaceContext.publishedCTs.fetch.resolves({
         data: {fields: [{apiName: 'test', id: 'realid'}]}
       });
 

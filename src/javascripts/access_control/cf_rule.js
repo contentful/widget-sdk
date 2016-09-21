@@ -1,8 +1,10 @@
 'use strict';
 
-angular.module('contentful').directive('cfRule', ['$injector', function ($injector) {
-
-  var CONFIG = $injector.get('PolicyBuilder/CONFIG');
+angular.module('contentful')
+.directive('cfRule', ['require', function (require) {
+  var spaceContext = require('spaceContext');
+  var K = require('utils/kefir');
+  var CONFIG = require('PolicyBuilder/CONFIG');
 
   return {
     restrict: 'E',
@@ -10,11 +12,14 @@ angular.module('contentful').directive('cfRule', ['$injector', function ($inject
     controller: ['$scope', function ($scope) {
 
       // prepare content type select options
-      $scope.$watch('spaceContext.publishedContentTypes', function (cts) {
-        $scope.contentTypes = _.map(cts, function (ct) {
-          return { id: ct.getId(), name: ct.data.name };
+      K.onValueScope($scope, spaceContext.publishedCTs.items$, function (cts) {
+        var ctsInfo = cts.map(function (ct) {
+          return { id: ct.sys.id, name: ct.name };
+        }).unshift({
+          id: CONFIG.ALL_CTS,
+          name: 'All content types'
         });
-        $scope.contentTypes.unshift({ id: CONFIG.ALL_CTS, name: 'All content types' });
+        $scope.contentTypes = ctsInfo.toArray();
       });
 
       // when selected action changes...
@@ -37,7 +42,7 @@ angular.module('contentful').directive('cfRule', ['$injector', function ($inject
 
       // when selected content type is changed
       $scope.$watch('rule.contentType', function (id, prev) {
-        var ct = $scope.spaceContext.getPublishedContentType(id);
+        var ct = spaceContext.publishedCTs.get(id);
 
         // get fields of selected content type
         $scope.contentTypeFields = _.map(dotty.get(ct, 'data.fields', []), function (f) {

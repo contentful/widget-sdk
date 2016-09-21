@@ -5,11 +5,10 @@
  * whether the content type is acceptable for this link field.
  */
 angular.module('contentful')
-.controller('ValidationLinkTypeController', ['$scope', function ($scope) {
+.controller('ValidationLinkTypeController', ['require', '$scope', function (require, $scope) {
+  var spaceContext = require('spaceContext');
 
-  $scope.$watch('spaceContext.publishedContentTypes', function (contentTypes) {
-    $scope.contentTypes = _.map(contentTypes, decorateContentType);
-  });
+  $scope.contentTypes = spaceContext.publishedContentTypes.map(decorateContentType);
 
   $scope.update = function () {
     $scope.validation.settings = getSelectedIDs();

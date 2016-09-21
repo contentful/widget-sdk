@@ -44,10 +44,9 @@ angular.module('contentful')
         });
       }],
       editingInterface: resolvers.editingInterface,
-      contentType: ['$injector', 'entry', function ($injector, entry) {
-        var spaceContext = $injector.get('spaceContext');
+      contentType: ['spaceContext', 'entry', function (spaceContext, entry) {
         var ctId = entry.data.sys.contentType.sys.id;
-        return spaceContext.fetchPublishedContentType(ctId);
+        return spaceContext.publishedCTs.fetch(ctId);
       }],
       fieldControls: ['editingInterface', 'spaceContext', function (ei, spaceContext) {
         return spaceContext.widgets.buildRenderable(ei.controls);

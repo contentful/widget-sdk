@@ -188,9 +188,10 @@ describe('entitySelector', function () {
 
   describe('single CT prefetching', function () {
     it('fetches CT if a field links to a single CT', function () {
+      const spaceContext = this.$inject('mocks/spaceContext').init();
+
       const ct = {};
-      const fetchStub = sinon.stub().resolves(ct);
-      this.$inject('spaceContext').fetchPublishedContentType = fetchStub;
+      const fetchStub = spaceContext.publishedCTs.fetch.resolves(ct);
 
       let validation = {linkContentType: ['ctid1']};
       this.open({linkType: 'Entry', itemValidations: [validation]});
