@@ -90,6 +90,9 @@ angular.module('contentful')
     name: 'api',
     url: '/api',
     abstract: true,
+    onEnter: ['spaceContext', function (spaceContext) {
+      spaceContext.apiKeys.refresh();
+    }],
     children: [home, cdaKeys, cmaKeys, contentModel]
   };
 
