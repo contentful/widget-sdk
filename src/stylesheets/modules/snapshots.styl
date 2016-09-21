@@ -63,14 +63,22 @@
   border-bottom: 1px solid #EEEEEE
 
   &__radio
-    width: 4em
+    min-width: 4em
+    max-width: 4em
     display: flex
     justify-content: center
     align-items: center
   &__presenter
     flex-grow: 1
-    margin: 4em
-    margin-left: 0
+    padding: 4em
+    padding-left: 0
+
+.snapshot-comparator__field_title
+  color: $colors.text-light
+  margin-bottom: $rhythm(0.5)
+
+.snapshot-comparator__presenter
+  font-size: 1.1em
 
 .snapshot-comparator__overlay-different,
 .snapshot-comparator__overlay-identical

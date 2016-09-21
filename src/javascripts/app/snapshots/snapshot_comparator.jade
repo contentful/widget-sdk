@@ -53,8 +53,9 @@ header.workbench-header
         .snapshot-comparator__cell__radio
           input(type="radio" ng-model="selected" value="left")
         .snapshot-comparator__cell__presenter
-          +snapshot-field-title
-          cf-widget-renderer(cf-widget-api)
+          .snapshot-comparator__field_title
+            +snapshot-field-title
+          cf-snapshot-presenter
           +snapshot-overlays('left')
 
       .snapshot-comparator__cell(
@@ -63,6 +64,7 @@ header.workbench-header
         .snapshot-comparator__cell__radio
           input(type="radio" ng-model="selected" value="right")
         .snapshot-comparator__cell__presenter
-          +snapshot-field-title
-          cf-widget-renderer(cf-widget-api)
+          .snapshot-comparator__field_title
+            +snapshot-field-title
+          cf-snapshot-presenter
           +snapshot-overlays('right')

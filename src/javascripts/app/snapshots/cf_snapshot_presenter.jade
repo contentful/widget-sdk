@@ -1,0 +1,17 @@
+.snapshot-comparator__presenter
+  div(ng-if="!hasValue")
+    p no value (<code>{{ noValueType }}</code>)
+
+  div(ng-if="hasValue" ng-switch="type")
+
+    div(ng-switch-when="Symbol")
+      | {{ value }}
+
+    div(ng-switch-when="Text")
+      cf-snapshot-presenter-markdown
+
+    div(ng-switch-when="Reference")
+      cf-snapshot-presenter-link
+
+    div(ng-switch-default)
+      pre {{ value | json }}
