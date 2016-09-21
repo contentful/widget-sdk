@@ -11,7 +11,7 @@ describe('LocationEditor integration', function () {
 
     this.fieldApi = {
       onValueChanged: sinon.stub().yields(),
-      onDisabledStatusChanged: sinon.stub().yields(),
+      onIsDisabledChanged: sinon.stub().yields(),
       removeValue: sinon.stub(),
       setValue: sinon.stub()
     };

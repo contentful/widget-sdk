@@ -14,7 +14,7 @@ angular.module('cf.app')
         $scope.items = items || [];
       });
 
-      var removeDisabledStatusListener = field.onDisabledStatusChanged(function (disabled) {
+      var removeDisabledStatusListener = field.onIsDisabledChanged(function (disabled) {
         $scope.isDisabled = disabled;
       }, true);
 

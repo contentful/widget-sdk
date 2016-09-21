@@ -16,7 +16,7 @@ describe('cfMarkdownEditor', function () {
     }.bind(this);
 
     this.setDisabled = function () {
-      this.fieldStubs.onDisabledStatusChanged.firstCall.args[0](true);
+      this.fieldStubs.onIsDisabledChanged.firstCall.args[0](true);
     }.bind(this);
 
     const elem = this.$compile('<cf-markdown-editor />', {}, {

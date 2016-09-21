@@ -16,7 +16,7 @@ angular.module('cf.app')
       });
 
       var offDisabledStatusChanged =
-        field.onDisabledStatusChanged(function (isDisabled) {
+        field.onIsDisabledChanged(function (isDisabled) {
           scope.isDisabled = isDisabled;
         });
 

@@ -65,7 +65,7 @@ angular.module('cf.app')
         $scope.data = Data.userInputFromDatetime(datetime, $scope.uses12hClock);
       });
 
-      var offDisabledStatusChanged = field.onDisabledStatusChanged(function (isDisabled) {
+      var offDisabledStatusChanged = field.onIsDisabledChanged(function (isDisabled) {
         $scope.isDisabled = isDisabled;
       });
 
