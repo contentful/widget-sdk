@@ -23,7 +23,9 @@ include ./snapshot.mixin.jade
 
         table.result-list.main-results
           tbody
-            tr(ng-repeat="snapshot in snapshots track by snapshot.sys.id")
+            tr(
+              ng-repeat="snapshot in snapshots track by snapshot.sys.id"
+              ng-class="{'x--current': currentId === snapshot.sys.id}")
               td
                 code {{ snapshot.sys.id }}
               td {{ snapshot.sys.snapshotType }}
@@ -32,7 +34,12 @@ include ./snapshot.mixin.jade
               td
                 +snapshot-author
               td
-                button.btn-link(ng-click="dialog.confirm(snapshot)") Compare
+                button.btn-link(
+                  ng-click="dialog.confirm(snapshot)"
+                  ng-if="currentId !== snapshot.sys.id")
+                  | Compare
+                span(ng-if="currentId === snapshot.sys.id")
+                  | &ndash;
 
         .snapshot-selector__item-list-placeholder(
           ng-if="!isLoading && snapshots.length < 1")
