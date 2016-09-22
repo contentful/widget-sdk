@@ -22,6 +22,9 @@
       span(ng-if="value === true") {{ widget.settings.trueLabel || 'Yes' }}
       span(ng-if="value === false") {{ widget.settings.falseLabel || 'No' }}
 
+    div(ng-switch-when="Date")
+      cf-snapshot-presenter-date
+
     div(ng-switch-when="Reference")
       cf-snapshot-presenter-link
 

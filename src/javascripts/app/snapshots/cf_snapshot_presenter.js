@@ -92,4 +92,37 @@ angular.module('cf.app')
       $scope.config = {};
     }]
   };
+}])
+
+.directive('cfSnapshotPresenterDate', ['require', function (require) {
+  var Data = require('widgets/datetime/data');
+  var moment = require('moment');
+
+  return {
+    restrict: 'E',
+    template: '<span>{{ dtString }}</span>',
+    controller: ['$scope', function ($scope) {
+      var dt = Data.userInputFromDatetime($scope.value);
+      var mode = dotty.get($scope, 'widget.settings.format', 'date');
+      var s = moment(dt.date).format('dddd, MMMM Do YYYY');
+
+      if (mode === 'date') {
+        $scope.dtString = s;
+        return;
+      }
+
+      if (parseInt(dotty.get($scope, 'widget.settings.ampm'), 10) !== 24) {
+        var x = dt.time.split(':');
+        s += ', ' + moment().hour(x[0]).minute(x[1]).format('LT');
+      } else {
+        s += ', ' + dt.time;
+      }
+
+      if (mode === 'timeZ') {
+        s += ', UTC' + dt.utcOffset;
+      }
+
+      $scope.dtString = s;
+    }]
+  };
 }]);
