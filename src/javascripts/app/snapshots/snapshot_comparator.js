@@ -21,6 +21,7 @@ angular.module('cf.app')
   var $timeout = require('$timeout');
   var TheLocaleStore = require('TheLocaleStore');
   var leaveConfirmator = require('navigation/confirmLeaveEditor');
+  var notification = require('notification');
 
   _.extend($scope.context, {
     title: spaceContext.entryTitle($scope.entry),
@@ -78,6 +79,12 @@ angular.module('cf.app')
       return $timeout(function () {
         return $state.go('^.^', {}, {reload: true});
       });
+    }, function (error) {
+      if (error.code === 'VersionMismatch') {
+        notification.error('Versions do not match. Please reload the version first.');
+      } else {
+        notification.error('Changes could not be reverted. Please try again.');
+      }
     });
   }
 
