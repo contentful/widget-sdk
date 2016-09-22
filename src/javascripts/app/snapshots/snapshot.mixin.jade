@@ -16,5 +16,8 @@ mixin snapshot-overlays(side)
   - attrs["ng-class"] = "{'x--selected': selected === '" + side + "'}";
   - attrs["ng-click"] = "select('" + side + "')";
 
-  .snapshot-comparator__overlay-different(ng-if="isDifferent")&attributes(attrs)
-  .snapshot-comparator__overlay-identical(ng-if="!isDifferent")
+  .snapshot-comparator__overlay-different(
+    ng-if="isDifferent && !widget.field.disabled")&attributes(attrs)
+
+  .snapshot-comparator__overlay-identical(
+    ng-if="!isDifferent || widget.field.disabled")
