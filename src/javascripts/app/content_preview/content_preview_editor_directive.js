@@ -22,6 +22,7 @@ function ($scope, require) {
   var contentPreview = require('contentPreview');
   var notification = require('notification');
   var logger = require('logger');
+  var slugUtils = require('slug');
 
   // Fetch content types and preview environment
   var getPreviewEnvironment = contentPreview.get($stateParams.contentPreviewId);
@@ -51,6 +52,10 @@ function ($scope, require) {
     disabled: function () { return $scope.save.inProgress(); },
     available: function () { return !$scope.context.isNew; }
   });
+
+  $scope.slugify = function (text) {
+    return slugUtils.slugify(text, 'en-US');
+  }
 
   function validate () {
     $scope.invalidFields = null;

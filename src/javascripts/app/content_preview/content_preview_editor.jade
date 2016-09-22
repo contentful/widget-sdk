@@ -28,6 +28,7 @@ header.workbench-header
       | Content preview URLs
     .cfnext-form__field
       | Activate the content preview and specify a custom URL for every content type that should display it.
+      | Use the tokens documented on the right to include specific field values of your entries.
     .content-preview-editor__content-type(
       ng-show="previewEnvironment.configs.length"
       ng-repeat="config in previewEnvironment.configs track by config.contentType")
@@ -40,7 +41,8 @@ header.workbench-header
       .cfnext-form__field(ng-show="config.enabled")
         input.cfnext-form__input--full-size(
           type="text"
-          ng-model="config.url")
+          ng-model="config.url"
+          placeholder="Preview URL for content type '{{config.name}}'. E.g. http://www.yourwebsite.com/{{slugify(config.name)}}/{entry_field.slug}/")
         .cfnext-form__field-error
           | {{invalidFields.errors.configs[config.contentType]}}
         .cfnext-form__field-warning(
