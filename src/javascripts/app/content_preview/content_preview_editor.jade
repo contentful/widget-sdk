@@ -6,8 +6,14 @@ header.workbench-header
   h1.workbench-header__title
     | {{ context.title | truncate:50 }}
   .workbench-header__actions
-    button.btn-secondary-action(ui-command="remove") Delete
+    button.btn-secondary-action(cf-context-menu-trigger)
+      | Delete
     button.btn-primary-action(ui-command="save") Save
+    .delete-confirm.context-menu.x--arrow-right(cf-context-menu="bottom-left")
+      p Are you sure you want to delete the content preview <em>{{context.title}}</em>?
+      button.btn-caution(type="button" ui-command="remove") Delete
+      button.btn-secondary-action(type="button") Don't Delete
+
 .workbench-main
   form.workbench-main__content.content-preview-editor(name="contentPreviewForm")
     h3.section-title

@@ -55,7 +55,7 @@ function ($scope, require) {
 
   $scope.slugify = function (text) {
     return slugUtils.slugify(text, 'en-US');
-  }
+  };
 
   function validate () {
     $scope.invalidFields = null;
