@@ -9,7 +9,7 @@ header.workbench-header
     button.btn-primary-action(
       type="button"
       ui-command="save")
-      | Save changes
+      | Apply changes
     a.btn-secondary-action(
       type="button"
       ui-sref="^.^")
@@ -20,12 +20,14 @@ header.workbench-header
     button.btn-link.snapshot-comparator__version(ng-click="select()")
       +snapshot-dt
       cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-    button.btn-link(href="" ng-click="restore()") Restore this version
+    button.btn-link(href="" ng-click="restore()")
+      | Select all fields from this version
+
   .snapshot-comparator__header-cell
     .snapshot-comparator__version Current version
     label
       input(type="checkbox" ng-model="showOnlyDifferences")
-      | Show only differences
+      span Show only differences
 
 cf-ui-hint.snapshot-comparator__hint(
   name="snapshots-intro"
