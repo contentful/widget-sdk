@@ -39,22 +39,20 @@ header.workbench-header
             type="text"
             ng-model="apiKey.data.name"
             required
-            ng-disabled="isReadOnly()"
-            placeholder="My API key")
+            ng-disabled="isReadOnly()")
         .cfnext-form__field
           label
             strong Description
           textarea.cfnext-form__input--full-size(
             ng-model="apiKey.data.description"
-            ng-disabled="isReadOnly()"
-            placeholder="API key for website")
+            ng-disabled="isReadOnly()")
 
         h3.section-title
           | API keys
 
         .cfnext-form__field
           label.api-key-editor__label
-            strong Production
+            strong Content Delivery API
             span(ng-show="apiKey.data.accessToken && !isReadOnly()")
               a.api-key-editor__label--right.u-locked-action(
                 ng-show="!regenerateProductionToken"
@@ -82,7 +80,7 @@ header.workbench-header
             ng-hide="apiKey.data.accessToken"
             type="text"
             readonly="readonly"
-            value="The token will be automatically generated once you save the existing key.")
+            value="The key will be automatically generated upon saving.")
           .cfnext-form__input-group--full-size(
             ng-show="apiKey.data.accessToken")
             input.cfnext-form__input--full-size(
@@ -95,7 +93,7 @@ header.workbench-header
               text="{{apiKey.data.accessToken}}")
         .cfnext-form__field
           label.api-key-editor__label
-            strong Preview
+            strong Content Preview API
             span(ng-show="previewApiKey.data.accessToken  && !isReadOnly()")
               a.api-key-editor__label--right(
                 ng-click="regenerateAccessToken('preview')"
@@ -116,12 +114,12 @@ header.workbench-header
             type="text"
             readonly="readonly"
             ng-hide="previewApiKey.data.accessToken"
-            value="The token will be automatically generated once you save the existing key.")
+            value="The key will be automatically generated upon saving.")
           .cfnext-form__hint
             a(
               href="https://www.contentful.com/developers/docs/concepts/apis/"
               target="_blank")
-              | What's the difference between production and preview?
+              | What's the difference between Content Delivery &amp; Content Preview API?
 
 
         .cfnext-form__field
@@ -139,7 +137,7 @@ header.workbench-header
           .cfnext-form__hint
             a(
               href="#"
-              tooltip="To fetch content you need to authenticate with both the Space ID and an Access token")
+              tooltip="To query the API you need to authenticate with both the Space ID and an API key.")
               | What do I need the Space ID for?
 
       .api-key-editor__two-col
@@ -229,7 +227,8 @@ header.workbench-header
                   span(ng-if="!$last")
                     | &#32;|&#32;
         .advice__note(ng-show="canAccessUsers")
-          | You're not a developer? You can <a ui-sref="spaces.detail.settings.users.list">invite</a> users to help get you started
+          h3 You're not a developer?
+          p You can <a ui-sref="spaces.detail.settings.users.list">invite</a> users to your space to help get you started.
 
   .workbench-main__info-sidebar.entity-info-panel(
     ng-class="preferences.showAuxPanel && 'x--show'")
