@@ -25,6 +25,10 @@
     div(ng-switch-when="Date")
       cf-snapshot-presenter-date
 
+    div(ng-switch-when="Array<Symbol>")
+      ul.symbol-array-preview
+        li(ng-repeat="item in value") {{ item }}
+
     div(ng-switch-when="Reference")
       cf-snapshot-presenter-link
 

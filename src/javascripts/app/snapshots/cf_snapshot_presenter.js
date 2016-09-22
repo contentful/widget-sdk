@@ -54,7 +54,7 @@ angular.module('cf.app')
 
   return {
     restrict: 'E',
-    template: '<cf-markdown-preview preview="preview" />',
+    template: '<cf-markdown-preview class="markdown-preview" preview="preview" />',
     controller: ['$scope', function ($scope) {
       startPreview(_.constant($scope.value), function (_err, preview) {
         $scope.preview = preview;
