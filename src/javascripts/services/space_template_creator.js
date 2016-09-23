@@ -6,6 +6,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
   var $rootScope = $injector.get('$rootScope');
   var $timeout = $injector.get('$timeout');
   var contentPreview = $injector.get('contentPreview');
+  var analytics = $injector.get('analytics');
 
   var ASSET_PROCESSING_TIMEOUT = 60000;
   var PUBLISHING_WAIT = 5000;
@@ -335,7 +336,13 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
               return createConfig(ct, accessToken);
             })
           };
-          return contentPreview.create(env);
+          return contentPreview.create(env).then(function (env) {
+            analytics.track('Created content preview', {
+              name: env.name,
+              id: env.sys.id,
+              isDiscoveryApp: true
+            });
+          });
         } else {
           // Don't do anything
           $q.resolve();
