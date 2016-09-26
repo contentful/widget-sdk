@@ -14,6 +14,7 @@ angular.module('cf.app')
       $scope.value = $scope.fieldLocale.doc.get();
       $scope.noValueType = getNoValueType($scope.value);
       $scope.hasValue = !$scope.noValueType;
+      $scope.isCustom = ($scope.widget.template || '').indexOf('cf-iframe-widget') > -1;
 
       var field = $scope.widget.field;
       $scope.type = getFieldType(field);

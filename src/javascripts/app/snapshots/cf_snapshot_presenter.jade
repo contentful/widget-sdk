@@ -2,8 +2,11 @@
   div(ng-if="!hasValue")
     p no value (<code>{{ noValueType }}</code>)
 
+  div(ng-if="hasValue && isCustom")
+    cf-widget-renderer(cf-widget-api)
+
   div(
-    ng-if="hasValue"
+    ng-if="hasValue && !isCustom"
     ng-switch="type")
 
     div(ng-switch-when="Symbol")
