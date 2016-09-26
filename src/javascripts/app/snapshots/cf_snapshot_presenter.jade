@@ -32,5 +32,8 @@
     div(ng-switch-when="Reference")
       cf-snapshot-presenter-link
 
+    div(ng-switch-when="Location")
+      cf-snapshot-presenter-location
+
     div(ng-switch-default)
       pre {{ value | json }}
