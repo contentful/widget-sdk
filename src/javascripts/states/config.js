@@ -76,8 +76,13 @@ angular.module('contentful')
 
   function useContentView (state) {
     state.views = state.views || {};
-    state.views['content@'] = state.views['content@'] || _.pick(state, VIEW_PROPERTIES);
+    var picked = _.pick(state, VIEW_PROPERTIES);
 
-    return _.omit(state, VIEW_PROPERTIES);
+    if (state.views['content@'] || Object.keys(picked).length < 1) {
+      return state;
+    } else {
+      state.views['content@'] = picked;
+      return _.omit(state, VIEW_PROPERTIES);
+    }
   }
 }]);
