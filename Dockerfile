@@ -16,9 +16,11 @@ RUN echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc && \
     npm install --no-optional
 
 COPY vendor ./vendor
-RUN cd vendor/ui-extensions-sdk && \
+RUN cd /app/vendor/ui-extensions-sdk && \
       npm install --no-optional --production --quiet && \
-      make
+      make && \
+    cd /app/vendor/extensions/core-field-editors && \
+      npm install --unsafe-perm
 
 # Copy source files and build app
 COPY ./ ./

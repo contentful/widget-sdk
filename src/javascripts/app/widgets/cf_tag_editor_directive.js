@@ -56,7 +56,7 @@ angular.module('cf.app')
        * @name cfTagEditor#$scope.isDisabled
        * @type {boolean}
        */
-      field.onDisabledStatusChanged(function (isDisabled) {
+      field.onIsDisabledChanged(function (isDisabled) {
         $scope.isDisabled = isDisabled;
       });
 

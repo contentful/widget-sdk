@@ -46,6 +46,7 @@ angular.module('cf.app')
 
 
     return {
+      sys: doc.sysProperty,
       set: set,
       get: getValue,
       remove: bindToPath('removeValueAt'),

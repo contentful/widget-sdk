@@ -77,7 +77,7 @@ describe('cfUrlEditor directive', function () {
 
   it('should be disabled when disabled flag is set', function () {
     expect(this.$el.find('input').prop('disabled')).toEqual(false);
-    this.widgetApi.field.onDisabledStatusChanged.yield(true);
+    this.widgetApi.field.onIsDisabledChanged.yield(true);
     this.$apply();
     expect(this.$el.find('input').prop('disabled')).toEqual(true);
   });

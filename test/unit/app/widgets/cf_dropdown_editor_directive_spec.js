@@ -69,7 +69,7 @@ describe('cfDropdownEditor Directive', function () {
     fieldApi.validations = [{in: ['value']}];
     const select = this.compile().find('select');
     expect(select.prop('disabled')).toBe(false);
-    fieldApi.onDisabledStatusChanged.yield(true);
+    fieldApi.onIsDisabledChanged.yield(true);
     this.$apply();
     expect(select.prop('disabled')).toBe(true);
   });

@@ -35,7 +35,7 @@ angular.module('cf.app')
         });
       });
 
-      var removeDisabledStatusListener = field.onDisabledStatusChanged(function (disabled) {
+      var removeDisabledStatusListener = field.onIsDisabledChanged(function (disabled) {
         scope.isDisabled = disabled;
       });
 

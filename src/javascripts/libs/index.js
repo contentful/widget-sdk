@@ -4,6 +4,7 @@ require('angular-ui-sortable');
 
 angular.module('cf.libs', [])
   .constant('libs/sum-types', require('sum-types'))
+  .constant('libs/editors', require('../../../vendor/extensions/core-field-editors'))
   .constant('libs/kefir', require('kefir'))
   .constant('libs/@contentful/client', require('@contentful/client'))
   .constant('libs/sharejs', window.sharejs)
