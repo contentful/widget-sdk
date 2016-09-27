@@ -24,7 +24,6 @@ angular.module('contentful')
     name: 'users',
     url: '/users',
     abstract: true,
-    template: '<ui-view />',
     children: [list]
   };
 }]);

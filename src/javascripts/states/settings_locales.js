@@ -110,7 +110,6 @@ angular.module('contentful')
     name: 'locales',
     url: '/locales',
     abstract: true,
-    template: '<ui-view/>',
     children: [list, newLocale, detail]
   };
 }]);

@@ -84,7 +84,6 @@ angular.module('contentful')
     name: 'assets',
     url: '/assets',
     abstract: true,
-    template: '<ui-view/>',
     children: [list, detail]
   };
 }]);

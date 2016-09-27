@@ -96,7 +96,6 @@ angular.module('contentful')
     name: 'content_preview',
     url: '/content_preview',
     abstract: true,
-    template: '<ui-view />',
     children: [list, newContentPreview, detail]
   };
 }]);

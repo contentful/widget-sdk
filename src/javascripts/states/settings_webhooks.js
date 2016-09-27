@@ -61,63 +61,30 @@ angular.module('contentful')
   var callState = {
     name: 'call',
     url: '/call/:callId',
+    params: { addToContext: true },
     label: 'Call details',
     resolve: {
       call: ['WebhookRepository', 'space', 'webhook', '$stateParams', function (WebhookRepository, space, webhook, $stateParams) {
         return WebhookRepository.getInstance(space).logs.getCall(webhook.sys.id, $stateParams.callId);
       }]
     },
-    views: {
-      '@spaces.detail.settings.webhooks': {
-        template: JST['webhook_call'](),
-        params: { addToContext: true },
-        controller: ['$scope', 'require', 'webhook', 'call', function ($scope, require, webhook, call) {
-          var $stateParams = require('$stateParams');
-          var callId = $stateParams.callId;
-          var webhookId = $stateParams.webhookId;
+    template: JST['webhook_call'](),
+    controller: ['$scope', '$stateParams', 'webhook', 'call', function ($scope, $stateParams, webhook, call) {
+      $scope.webhook = webhook;
+      $scope.call = call;
 
-          $scope.call = call;
-          $scope.webhook = webhook;
-          $scope.context = { parentTitle: webhook.name };
-
-          // add list as grand parent
-          contextHistory.addEntity(listEntity);
-
-          // add parent state ('webhook detail') manually as this state renders in the ui-view
-          // of the parent of webhook detail and thus the controller for webhook detail state is never called
-          // therefore not adding webhook detail to the contextHistory for a deep link
-          contextHistory.addEntity({
-            getTitle: function () {
-              return $scope.context.parentTitle || ($scope.context.title + ($scope.context.dirty ? '*' : ''));
-            },
-            link: {
-              state: 'spaces.detail.settings.webhooks.detail',
-              params: { webhookId: webhookId }
-            },
-            getType: _.constant('Webhook'),
-            getId: _.constant(webhookId)
-          });
-
-          // add webhook call to contextHistory
-          contextHistory.addEntity({
-            getTitle: function () { return 'Call details (' + call.requestAt + ')'; },
-            link: {
-              state: 'spaces.details.settings.webhooks.detail.call',
-              params: { callId: callId }
-            },
-            getType: _.constant('WebhookCall'),
-            getId: _.constant(callId)
-          });
-
-          try {
-            $scope.body = JSON.parse($scope.call.request.body);
-            $scope.call.request = _.omit($scope.call.request, ['body']);
-          } catch (e) {
-            /* eslint no-empty: off */
-          }
-        }]
+      try {
+        $scope.body = JSON.parse($scope.call.request.body);
+        $scope.call.request = _.omit($scope.call.request, ['body']);
+      } catch (e) {
+        /* eslint no-empty: off */
       }
-    }
+
+      // add list as grand parent and webhook as parent
+      contextHistory.addEntity(listEntity);
+      contextHistory.addEntity(createWebhookCrumb({title: webhook.name}, $stateParams.webhookId));
+      contextHistory.addEntity(createWebhookCallCrumb(call));
+    }]
   };
 
   var detail = {
@@ -134,29 +101,12 @@ angular.module('contentful')
       }]
     },
     template: '<cf-webhook-editor cf-ui-tab class="workbench webhook-editor" />',
-    controller: ['$scope', 'require', 'webhook', function ($scope, require, webhook) {
-      var $state = require('$state');
-      var $stateParams = require('$stateParams');
-      var webhookId = $stateParams.webhookId;
-
+    controller: ['$scope', '$state', '$stateParams', 'webhook', function ($scope, $state, $stateParams, webhook) {
       $scope.context = $state.current.data;
       $scope.webhook = webhook;
 
-      // add list view as parent
       contextHistory.addEntity(listEntity);
-
-      // add current state
-      contextHistory.addEntity({
-        getTitle: function () {
-          return $scope.context.parentTitle || ($scope.context.title + ($scope.context.dirty ? '*' : ''));
-        },
-        link: {
-          state: 'spaces.detail.settings.webhooks.detail',
-          params: { webhookId: webhookId }
-        },
-        getType: _.constant('Webhook'),
-        getId: _.constant(webhookId)
-      });
+      contextHistory.addEntity(createWebhookCrumb($scope.context, $stateParams.webhookId));
     }],
     children: [callState]
   };
@@ -165,10 +115,35 @@ angular.module('contentful')
     name: 'webhooks',
     url: '/webhooks',
     abstract: true,
-    template: '<ui-view />',
     onEnter: ['analytics', function (analytics) {
       analytics.track('Opened Webhooks view');
     }],
     children: [list, newWebhook, detail]
   };
+
+  function createWebhookCrumb (context, webhookId) {
+    return {
+      getTitle: function () {
+        return context.title + (context.dirty ? '*' : '');
+      },
+      link: {
+        state: 'spaces.detail.settings.webhooks.detail',
+        params: { webhookId: webhookId }
+      },
+      getType: _.constant('Webhook'),
+      getId: _.constant(webhookId)
+    };
+  }
+
+  function createWebhookCallCrumb (call) {
+    return {
+      getTitle: _.constant('Call details (' + call.requestAt + ')'),
+      link: {
+        state: 'spaces.details.settings.webhooks.detail.call',
+        params: { callId: call.sys.id }
+      },
+      getType: _.constant('WebhookCall'),
+      getId: _.constant(call.sys.id)
+    };
+  }
 }]);

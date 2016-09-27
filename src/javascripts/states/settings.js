@@ -24,7 +24,6 @@ angular.module('contentful')
     name: 'settings',
     url: '/settings',
     abstract: true,
-    template: '<ui-view/>',
     children: [
       space,
       $injector.get('states/settings/locales'),
