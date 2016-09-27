@@ -24,6 +24,7 @@ describe('Space Template creation service', function () {
       $rootScope = $injector.get('$rootScope');
       openShareJSDoc = $q.defer();
       stubs.getContentPreview.resolves([]);
+      stubs.createContentPreview.resolves({sys: {id: 1}, name: 'test'});
     });
   });
 

@@ -77,6 +77,7 @@ mixin entity-sidebar
           | Preview
         .entity-sidebar__preview
           a.btn-secondary-action.x--block(
+            ng-click="trackClickedLink()"
             ng-href="{{selectedEnvironment.compiledUrl}}"
             target="_blank")
             i.fa.fa-external-link
