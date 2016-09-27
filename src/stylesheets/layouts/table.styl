@@ -34,9 +34,10 @@ Styleguide 7
   tr
     height: 40px
     line-height: 40px
-  td, th
-    padding: 0 14px
+  td
+    padding: 4px 14px
   th
+    padding: 0 14px
     background-color: $colors.element-lightest
     border-bottom: 1px solid $colors.element-mid
     text-align: left
@@ -59,3 +60,7 @@ Styleguide 7
     tr:not(:last-child)
       > td
         border-bottom: 1px solid $colors.element-light
+  &.x--hoverable
+    tr:hover
+      cursor: pointer
+      background-color: $colors.element-lightest
