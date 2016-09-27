@@ -337,7 +337,9 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
             })
           };
           return contentPreview.create(env).then(function (env) {
-            analytics.track('Created content preview', {
+            // TODO: extract into a separate content preview analytics service
+            analytics.track('content-preview', {
+              action: 'create',
               name: env.name,
               id: env.sys.id,
               isDiscoveryApp: true

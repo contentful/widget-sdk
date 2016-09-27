@@ -33,7 +33,9 @@ function ($scope, $injector) {
   };
 
   $scope.trackClickedLink = function () {
-    analytics.track('Opened preview environment', {
+    // TODO: extract into a separate content preview analytics service
+    analytics.track('content-preview', {
+      action: 'open',
       id: $scope.selectedEnvironment.envId,
       name: $scope.selectedEnvironment.name,
       url: $scope.selectedEnvironment.url

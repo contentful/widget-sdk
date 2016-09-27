@@ -165,15 +165,18 @@ function ($scope, require) {
           {contentPreviewId: env.sys.id}, {reload: true}
         );
       }
-      // track event
       if ($scope.context.isNew) {
-        analytics.track('Created content preview', {
+        // TODO: extract into a separate content preview analytics service
+        analytics.track('content-preview', {
+          action: 'create',
           name: env.name,
           id: env.sys.id,
           isDiscoveryApp: false
         });
       } else {
-        analytics.track('Edited content preview', {
+        // TODO: extract into a separate content preview analytics service
+        analytics.track('content-preview', {
+          action: 'edit',
           name: env.name,
           id: env.sys.id
         });
@@ -191,7 +194,10 @@ function ($scope, require) {
     .then(function () {
       notification.info('Content preview was deleted successfully');
       $scope.context.dirty = false;
-      analytics.track('Deleted content preview');
+      // TODO: extract into a separate content preview analytics service
+      analytics.track('content-preview', {
+        action: 'delete'
+      });
       return $state.go('spaces.detail.settings.content_preview.list');
     }, function () {
       notification.warn('An error occurred');
