@@ -30,9 +30,7 @@ test/unit/components/tabs/content_type_editor/cf_list_type_for_spec.js
 test/unit/components/tabs/content_type_editor/cf_content_type_preview_spec.js
 test/unit/components/tabs/content_type_list/content_type_list_directive_spec.js
 test/unit/components/tabs/content_type_list/content_type_list_controller_spec.js
-test/unit/components/tabs/entry_list/displayed_fields_controller_spec.js
 test/unit/components/tabs/entry_list/entry_list_actions_controller_spec.js
-test/unit/components/tabs/entry_list/entry_list_controller_spec.js
 test/unit/components/field_dialog/appearance_controller_spec.js
 test/unit/components/search.js
 test/unit/classes/entity_state_manager_spec.js
@@ -86,7 +84,6 @@ test/unit/data/user_cache_spec.js
 test/unit/markdown_editor/link_organizer_spec.js
 test/unit/markdown_editor/markdown_codemirror_wrapper_spec.js
 test/unit/markdown_editor/markdown_editor_spec.js
-test/unit/search/list_query_spec.js
 test/unit/ui/command_spec.js
 test/unit/ui/context_menu_spec.js
 test/unit/ui/command_directive_spec.js
@@ -151,7 +148,6 @@ src/javascripts/components/shared/cf_user_directive.js
 src/javascripts/components/shared/list_views_controller.js
 src/javascripts/components/tabs/asset_list/asset_list_directive.js
 src/javascripts/components/tabs/asset_list/asset_list_actions_controller.js
-src/javascripts/components/tabs/asset_list/asset_search_controller.js
 src/javascripts/components/tabs/content_type_editor/add_field_dialog_controller.js
 src/javascripts/components/tabs/content_type_editor/cf_api_name_shadow_directive.js
 src/javascripts/components/tabs/content_type_editor/cf_list_type_for_directive.js
@@ -210,7 +206,6 @@ src/javascripts/app/entry_editor/notifications.js
 src/javascripts/app/entry_editor/entry_actions_controller.js
 src/javascripts/app/entry_editor/entry_reverter.js
 src/javascripts/app/entity_editor/locales_controller.js
-src/javascripts/classes/asset_content_type.js
 src/javascripts/classes/kaltura_error_messages.js
 src/javascripts/classes/kaltura_search.js
 src/javascripts/classes/ooyala_error_messages.js
@@ -243,7 +238,6 @@ src/javascripts/services/call_buffer.js
 src/javascripts/services/contentful_client.js
 src/javascripts/services/exception_handler.js
 src/javascripts/services/field_factory.js
-src/javascripts/services/filter_query_string.js
 src/javascripts/services/fontsdotcom.js
 src/javascripts/services/get.js
 src/javascripts/services/getty_images.js
@@ -255,7 +249,6 @@ src/javascripts/services/ooyala_player_loader.js
 src/javascripts/services/q_decorator.js
 src/javascripts/services/random.js
 src/javascripts/services/revision.js
-src/javascripts/services/search_query_helper.js
 src/javascripts/services/totango.js
 src/javascripts/services/validation_dialog_error_messages.js
 src/javascripts/services/validation_views.js
@@ -274,7 +267,6 @@ src/javascripts/services/modal_dialog_service.js
 src/javascripts/services/promised_loader.js
 src/javascripts/services/reload_notification.js
 src/javascripts/services/sdk_info_supplier.js
-src/javascripts/services/search_query_autocompletions.js
 src/javascripts/services/segment.js
 src/javascripts/services/space_tools.js
 src/javascripts/services/token_store.js
@@ -294,7 +286,6 @@ src/javascripts/widgets/default.js
 src/javascripts/widgets/deprecations.js
 src/javascripts/widgets/migrations.js
 src/javascripts/data/content_types.js
-src/javascripts/data/editing_interfaces/asset_interface.js
 src/javascripts/data/editing_interfaces/transformer.js
 src/javascripts/data/space_endpoint.js
 src/javascripts/data/user_cache.js
@@ -304,7 +295,6 @@ src/javascripts/markdown_editor/markdown_special_characters.js
 src/javascripts/markdown_editor/markdown_codemirror_wrapper.js
 src/javascripts/markdown_editor/markdown_editor.js
 src/javascripts/search/cached_parser.js
-src/javascripts/search/system_fields.js
 src/javascripts/search/query_builder.js
 src/javascripts/utils/encoder.js
 src/javascripts/utils/keycodes.js

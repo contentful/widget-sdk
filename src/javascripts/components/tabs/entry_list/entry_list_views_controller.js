@@ -6,7 +6,6 @@ angular.module('contentful')
   var $controller = $injector.get('$controller');
   var uiConfig = $injector.get('uiConfig');
   var systemFields = $injector.get('systemFields');
-  var defaultOrder = systemFields.getDefaultOrder();
 
   var SORTABLE_TYPES = [
     'Boolean',
@@ -16,17 +15,6 @@ angular.module('contentful')
     'Symbol',
     'Location'
   ];
-
-  // @todo some old todo stated that "status" should
-  // be the first of fallback fields when it'll be supported.
-  // Revisit when rewriting entity lists.
-  var FALLBACK_FIELDS = [
-    'publishedAt',
-    'createdAt',
-    'updatedAt'
-  ];
-
-  $scope.getDefaultFieldIds = getDefaultFieldIds;
 
   $scope.fieldIsSortable = function (field) {
     return _.includes(SORTABLE_TYPES, field.type) && field.id !== 'author';
@@ -46,7 +34,7 @@ angular.module('contentful')
 
   $scope.$watch('context.view.displayedFieldIds', function (displayedFieldIds) {
     if (!_.includes(displayedFieldIds, $scope.context.view.order.fieldId)) {
-      setOrderField(determineFallbackSortField(displayedFieldIds));
+      setOrderField(systemFields.getFallbackOrderField(displayedFieldIds));
       $scope.updateEntries();
     }
   }, true);
@@ -71,7 +59,7 @@ angular.module('contentful')
   });
 
   function setOrderField (field) {
-    $scope.context.view.order = _.defaults({ fieldId: field.id }, defaultOrder);
+    $scope.context.view.order = {fieldId: field.id, sys: !!field.sys};
   }
 
   function switchOrderDirection (direction) {
@@ -85,23 +73,9 @@ angular.module('contentful')
       contentTypeId: null,
       contentTypeHidden: false,
       id: null,
-      order: defaultOrder,
-      displayedFieldIds: getDefaultFieldIds()
+      order: systemFields.getDefaultOrder(),
+      displayedFieldIds: _.map(systemFields.getDefaultFields(), 'id')
     };
-  }
-
-  function determineFallbackSortField (displayedFieldIds) {
-    var fallbackId = _.find(FALLBACK_FIELDS, function (fieldId) {
-      return _.includes(displayedFieldIds, fieldId);
-    });
-
-    return systemFields.get(fallbackId) || {id: undefined};
-  }
-
-  function getDefaultFieldIds () {
-    return _.reject(_.map(systemFields.getList(), 'id'), function (fieldId) {
-      return fieldId === 'createdAt' || fieldId === 'publishedAt';
-    });
   }
 
   function generateDefaultViews (wait) {
