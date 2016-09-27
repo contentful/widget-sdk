@@ -75,6 +75,9 @@ $button-large()
   font-size: 1.15rem
   padding: 1rem 2.5rem
 
+  > .btn-icon
+    height: 0.8em
+
 /**
  * Applies background, text and border colors for the various states.
  */
@@ -137,6 +140,9 @@ button.btn-action{{modifier_class}}.pseudo-class-hover Action
 button.btn-action{{modifier_class}}.active Action
 button.btn-action{{modifier_class}}(disabled) Action
 button.btn-action{{modifier_class}}.is-loading Action
+button.btn-action{{modifier_class}}
+  cf-icon.btn-icon.inverted(name="plus")
+  | Action
 
 --large - Large variation
 
@@ -170,6 +176,9 @@ button.btn-primary-action{{modifier_class}}.pseudo-class-hover Action
 button.btn-primary-action{{modifier_class}}.active Action
 button.btn-primary-action{{modifier_class}}(disabled) Action
 button.btn-primary-action{{modifier_class}}.is-loading Action
+button.btn-primary-action{{modifier_class}}
+  cf-icon.btn-icon.inverted(name="plus")
+  | Action
 
 --large - Large variation
 
@@ -203,6 +212,9 @@ button.btn-secondary-action{{modifier_class}}.pseudo-class-hover Action
 button.btn-secondary-action{{modifier_class}}.active Action
 button.btn-secondary-action{{modifier_class}}(disabled) Action
 button.btn-secondary-action{{modifier_class}}.is-loading Action
+button.btn-secondary-action{{modifier_class}}
+  cf-icon.btn-icon.inverted(name="plus")
+  | Action
 
 --large - Large variation
 
@@ -389,7 +401,7 @@ Styleguide 4.8
 
 $btn-icon()
   display: inline-block
-  float: left
+  height: 0.9em
   margin-right: 0.55em
   margin-left: -0.7em
   > svg
