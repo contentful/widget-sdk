@@ -25,7 +25,7 @@ angular.module('contentful')
   _.extend($scope, MODES, {
     spaceContext: spaceContext,
     view: {mode: MODES.AVAILABLE},
-    paginator: new Paginator(),
+    paginator: Paginator.create(),
     items: [],
     selected: [],
     selectedIds: {},
@@ -107,7 +107,7 @@ angular.module('contentful')
   }
 
   function handleResponse (res) {
-    $scope.paginator.numEntries = res.total;
+    $scope.paginator.setTotal(res.total);
     $scope.items.push.apply($scope.items, getItemsToAdd(res));
 
     $timeout(function () {
@@ -128,14 +128,14 @@ angular.module('contentful')
   function resetAndLoad () {
     $scope.items = [];
     itemsById = {};
-    $scope.paginator.numEntries = 0;
-    $scope.paginator.page = 0;
+    $scope.paginator.setTotal(0);
+    $scope.paginator.setPage(0);
     load();
   }
 
   function loadMore () {
-    if (!$scope.isLoading && !$scope.paginator.atLast()) {
-      $scope.paginator.page += 1;
+    if (!$scope.isLoading && !$scope.paginator.isAtLast()) {
+      $scope.paginator.next();
       load();
     }
   }
