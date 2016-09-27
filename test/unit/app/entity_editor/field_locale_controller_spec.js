@@ -37,7 +37,8 @@ describe('FieldLocaleController', function () {
       const otherErrors = [
         {path: ['fields', 'FID', 'LID-2']},
         {path: ['fields', 'FID-2', 'LID']},
-        {path: ['fields', 'FID-2']}
+        {path: ['fields', 'FID-2']},
+        {path: null}
       ];
 
       const errorsStream = this.extractValues(scope.fieldLocale.errors$);
