@@ -143,6 +143,16 @@ button.btn-action{{modifier_class}}.is-loading Action
 button.btn-action{{modifier_class}}
   cf-icon.btn-icon.inverted(name="plus")
   | Action
+button.btn-action{{modifier_class}}.is-loading
+  cf-icon.btn-icon.inverted(name="plus")
+  | Action
+button.btn-action{{modifier_class}}
+  cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+  | Action
+button.btn-action{{modifier_class}}
+  cf-icon.btn-icon.inverted(name="plus")
+  cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+  | Action
 
 --large - Large variation
 
@@ -179,6 +189,16 @@ button.btn-primary-action{{modifier_class}}.is-loading Action
 button.btn-primary-action{{modifier_class}}
   cf-icon.btn-icon.inverted(name="plus")
   | Action
+button.btn-primary-action{{modifier_class}}.is-loading
+  cf-icon.btn-icon.inverted(name="plus")
+  | Action
+button.btn-primary-action{{modifier_class}}
+  cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+  | Action
+button.btn-primary-action{{modifier_class}}
+  cf-icon.btn-icon.inverted(name="plus")
+  cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+  | Action
 
 --large - Large variation
 
@@ -214,6 +234,16 @@ button.btn-secondary-action{{modifier_class}}(disabled) Action
 button.btn-secondary-action{{modifier_class}}.is-loading Action
 button.btn-secondary-action{{modifier_class}}
   cf-icon.btn-icon.inverted(name="plus")
+  | Action
+button.btn-secondary-action{{modifier_class}}.is-loading
+  cf-icon.btn-icon.inverted(name="plus")
+  | Action
+button.btn-secondary-action{{modifier_class}}
+  cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+  | Action
+button.btn-secondary-action{{modifier_class}}
+  cf-icon.btn-icon.inverted(name="plus")
+  cf-icon.btn-dropdown-icon(name="dd-arrow-down")
   | Action
 
 --large - Large variation
@@ -307,6 +337,22 @@ p
   | Icon
   button.btn-primary-action.x--block
     cf-icon.btn-icon.inverted(name="plus")
+    | Action
+p
+  | Icon and loading
+  button.btn-primary-action.x--block.is-loading
+    cf-icon.btn-icon.inverted(name="plus")
+    | Action
+p
+  | Dropdown
+  button.btn-primary-action.x--block
+    cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+    | Action
+p
+  | Icon and dropdown
+  button.btn-primary-action.x--block
+    cf-icon.btn-icon.inverted(name="plus")
+    cf-icon.btn-dropdown-icon(name="dd-arrow-down")
     | Action
 
 Styleguide 4.6
