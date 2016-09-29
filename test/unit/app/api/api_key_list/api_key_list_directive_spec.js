@@ -10,7 +10,6 @@ describe('The ApiKey list directive', function () {
     });
 
     accessChecker = this.$inject('accessChecker');
-
     accessChecker.shouldDisable = sinon.stub().returns(false);
 
     const entityCreationController = {
@@ -20,15 +19,15 @@ describe('The ApiKey list directive', function () {
       {getId: _.constant(1), getName: function () { return 'key1'; }},
       {getId: _.constant(2), getName: function () { return 'key2'; }}
     ];
-    const apiKeyController = {
-      getApiKeyList: sinon.stub().resolves(apiKeys)
+
+    this.$inject('spaceContext').apiKeys = {
+      getDeliveryKeys: sinon.stub().resolves(apiKeys)
     };
 
     this.setup = function () {
       container = this.$compile('<cf-api-key-list />', {
         context: {},
-        entityCreationController: entityCreationController,
-        apiKeyController: apiKeyController
+        entityCreationController: entityCreationController
       });
       sidebar = container.find('.entity-sidebar');
     };

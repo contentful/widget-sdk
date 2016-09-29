@@ -211,8 +211,8 @@ angular.module('contentful')
   // Create an API key for blank templates
   function createApiKey() {
     var key = {
-      name: 'Website Key',
-      description: 'Use this key in your web application. API requests are sent directly to Contentful from your users’ browser.'
+      name: 'Example Key',
+      description: 'We’ve created an example API key for you to help you get started.'
     };
     return spaceContext.space.createDeliveryApiKey(key);
   }

@@ -1,10 +1,10 @@
 'use strict';
 
 describe('navigation/stateChangeHandlers', function () {
-  var logger;
-  var $rootScope;
-  var spaceTools;
-  var modalCloseStub;
+  let logger;
+  let $rootScope;
+  let spaceTools;
+  let modalCloseStub;
 
   beforeEach(function () {
     spaceTools = {goToInitialSpace: sinon.stub()};
@@ -23,7 +23,7 @@ describe('navigation/stateChangeHandlers', function () {
     $rootScope = this.$inject('$rootScope');
     logger = this.$inject('logger');
 
-    var setup = this.$inject('navigation/stateChangeHandlers').setup;
+    const setup = this.$inject('navigation/stateChangeHandlers').setup;
     setup();
   });
 
@@ -39,7 +39,7 @@ describe('navigation/stateChangeHandlers', function () {
     it('logs exceptions raised during routing', function () {
       logger.logException = sinon.stub();
 
-      var error = new Error();
+      const error = new Error();
       $rootScope.$emit('$stateChangeError', {}, {}, {}, {}, error);
       sinon.assert.calledWith(logger.logException, error);
     });
@@ -47,7 +47,7 @@ describe('navigation/stateChangeHandlers', function () {
     it('logs servers errors encountered during routing', function () {
       logger.logServerError = sinon.stub();
 
-      var error = {statusCode: 500};
+      const error = {statusCode: 500};
       $rootScope.$emit('$stateChangeError', {}, {}, {}, {}, error);
       sinon.assert.called(logger.logServerError);
     });
@@ -55,7 +55,7 @@ describe('navigation/stateChangeHandlers', function () {
   });
 
   describe('redirections', function () {
-    var $state;
+    let $state;
 
     beforeEach(function () {
       $state = this.$inject('$state');
@@ -63,62 +63,62 @@ describe('navigation/stateChangeHandlers', function () {
     });
 
     it('redirects "spaces" to initial space', function () {
-      var to = {name: 'spaces'};
-      var change = $rootScope.$emit('$stateChangeStart', to, {}, {}, {});
+      const to = {name: 'spaces'};
+      const change = $rootScope.$emit('$stateChangeStart', to, {}, {}, {});
       expect(change.defaultPrevented).toBe(true);
       sinon.assert.calledOnce(spaceTools.goToInitialSpace);
     });
 
     it('redirects "otherwise" to initial space', function () {
-      var to = {name: 'otherwise'};
-      var change = $rootScope.$emit('$stateChangeStart', to, {}, {}, {});
+      const to = {name: 'otherwise'};
+      const change = $rootScope.$emit('$stateChangeStart', to, {}, {}, {});
       expect(change.defaultPrevented).toBe(true);
       sinon.assert.calledOnce(spaceTools.goToInitialSpace);
     });
 
     it('redirects "spaces.detail" with missing id to initial space', function () {
-      var to = {name: 'spaces.detail'};
-      var toParams = {spaceId: null};
-      var change = $rootScope.$emit('$stateChangeStart', to, toParams, {}, {});
+      const to = {name: 'spaces.detail'};
+      const toParams = {spaceId: null};
+      const change = $rootScope.$emit('$stateChangeStart', to, toParams, {}, {});
       expect(change.defaultPrevented).toBe(true);
       sinon.assert.calledOnce(spaceTools.goToInitialSpace);
     });
 
     it('it does not request leave confirmation when redirecting', function () {
-      var requestLeaveConfirmation = sinon.stub().rejects();
-      var to = {name: 'otherwise'};
-      var from = {
+      const requestLeaveConfirmation = sinon.stub().rejects();
+      const to = {name: 'otherwise'};
+      const from = {
         data: {
           dirty: true,
           requestLeaveConfirmation: requestLeaveConfirmation
         }
       };
-      var change = $rootScope.$emit('$stateChangeStart', to, {}, from, {});
+      const change = $rootScope.$emit('$stateChangeStart', to, {}, from, {});
       expect(change.defaultPrevented).toBe(true);
       sinon.assert.notCalled(requestLeaveConfirmation);
     });
 
-    it('does not close modals', function() {
+    it('does not close modals', function () {
       sinon.assert.notCalled(modalCloseStub);
     });
 
     it('redirects if `redirectTo` property is provided', function () {
       $state.go.returns();
-      var to = {name: 'spaces.detail.entries', redirectTo: 'spaces.detail.content_types'};
-      var change = $rootScope.$emit('$stateChangeStart', to, {}, {}, {});
-      sinon.assert.calledWith($state.go, to.redirectTo, {})
+      const to = {name: 'spaces.detail.entries', redirectTo: 'spaces.detail.content_types'};
+      $rootScope.$emit('$stateChangeStart', to, {}, {}, {});
+      sinon.assert.calledWith($state.go, to.redirectTo, {});
     });
 
   });
 
   describe('leave confirmation', function () {
     it('logs error when changing state during confirmation', function () {
-      var logger = this.$inject('logger');
+      const logger = this.$inject('logger');
       logger.logError = sinon.stub();
 
-      var $q = this.$inject('$q');
-      var requestLeaveConfirmation = sinon.stub().returns($q.defer().promise);
-      var from = {
+      const $q = this.$inject('$q');
+      const requestLeaveConfirmation = sinon.stub().returns($q.defer().promise);
+      const from = {
         name: 'any',
         data: {
           dirty: true,
@@ -134,7 +134,7 @@ describe('navigation/stateChangeHandlers', function () {
 
   describe('addToContext', function () {
     it('prevents transition when only "addToContext" has changed', function () {
-      var change = $rootScope.$emit(
+      const change = $rootScope.$emit(
         '$stateChangeStart',
         {name: 'A'},
         {addToContext: true},
@@ -145,7 +145,7 @@ describe('navigation/stateChangeHandlers', function () {
     });
 
     it('does not prevent transition when "addToContext" is missing', function () {
-      var change = $rootScope.$emit(
+      const change = $rootScope.$emit(
         '$stateChangeStart',
         {name: 'A'},
         {other: true},
@@ -156,7 +156,7 @@ describe('navigation/stateChangeHandlers', function () {
     });
 
     it('does not prevent transition when name is different', function () {
-      var change = $rootScope.$emit(
+      const change = $rootScope.$emit(
         '$stateChangeStart',
         {name: 'A'},
         {addToContext: true},

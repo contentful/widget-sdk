@@ -5,21 +5,17 @@ angular.module('contentful')
  * @ngdoc service
  * @name states/account
  */
-.factory('states/account', ['$injector', function ($injector) {
-  var base = $injector.get('states/base');
+.factory('states/account', ['require', function (require) {
+  var base = require('states/base');
 
-  return {
+  return base({
     name: 'account',
     url: '/account',
     abstract: true,
-    views: {
-      'content': base({
-        template: '<cf-account-view />',
-        controller: ['$scope', function ($scope) {
-          $scope.context = {};
-        }]
-      })
-    },
+    template: '<cf-account-view />',
+    controller: ['$scope', function ($scope) {
+      $scope.context = {};
+    }],
     onEnter: ['TheAccountView', function (view) { view.enter(); }],
     onExit: ['TheAccountView', function (view) { view.exit(); }],
     children: [{
@@ -27,5 +23,5 @@ angular.module('contentful')
       url: '/{pathSuffix:PathSuffix}',
       label: 'Account'
     }]
-  };
+  });
 }]);

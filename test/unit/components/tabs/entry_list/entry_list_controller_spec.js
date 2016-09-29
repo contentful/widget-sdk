@@ -1,11 +1,10 @@
 'use strict';
 
 describe('Entry List Controller', function () {
-  var scope, spaceContext;
-  var getEntries;
+  let scope, spaceContext, getEntries;
 
   function createEntries (n) {
-    var entries = _.map(new Array(n), function () {
+    const entries = _.map(new Array(n), function () {
       return { isDeleted: _.constant(false), data: { fields: [] } };
     });
     Object.defineProperty(entries, 'total', {value: n});
@@ -30,30 +29,30 @@ describe('Entry List Controller', function () {
     scope.context = {};
 
     spaceContext = this.$inject('spaceContext');
-    var cfStub = this.$inject('cfStub');
-    var space = cfStub.space('test');
+    const cfStub = this.$inject('cfStub');
+    const space = cfStub.space('test');
 
-    var ct = {
+    const ct = {
       getId: _.constant(1),
-      data: { fields: [{ id: 'fieldId'}], sys: { id: 1 }}
+      data: {fields: [{id: 'fieldId'}], sys: {id: 1}}
     };
 
-    var $q = this.$inject('$q');
+    const $q = this.$inject('$q');
     getEntries = $q.defer();
     spaceContext.resetWithSpace(space);
     sinon.stub(space, 'getEntries').returns(getEntries.promise);
     sinon.stub(space, 'getContentTypes').resolves([ct]);
     sinon.stub(spaceContext, 'fetchPublishedContentType').resolves(ct);
 
-    var $controller = this.$inject('$controller');
+    const $controller = this.$inject('$controller');
     $controller('EntryListController', {$scope: scope});
     scope.selection.updateList = sinon.stub();
   });
 
-  describe('#loadView()', function() {
-    var view;
+  describe('#loadView()', function () {
+    let view;
 
-    beforeEach(function() {
+    beforeEach(function () {
       scope.updateEntries = sinon.stub();
 
       view = {
@@ -72,14 +71,14 @@ describe('Entry List Controller', function () {
     });
 
     it('sets the view', function () {
-      var loaded = _.defaults({
+      const loaded = _.defaults({
         title: 'New View'
       }, view);
       expect(scope.context.view).toEqual(loaded);
       expect(scope.context.view).not.toBe(view);
     });
 
-    it('resets entries', function() {
+    it('resets entries', function () {
       scope.$apply();
       sinon.assert.calledOnce(scope.updateEntries);
     });
@@ -89,10 +88,10 @@ describe('Entry List Controller', function () {
   describe('on search term change', function () {
     it('page is set to the first one', function () {
       scope.$apply();
-      scope.paginator.page = 1;
+      scope.paginator.setPage(1);
       scope.context.view.searchTerm = 'thing';
       scope.$apply();
-      expect(scope.paginator.page).toBe(0);
+      expect(scope.paginator.getPage()).toBe(0);
     });
   });
 
@@ -109,7 +108,7 @@ describe('Entry List Controller', function () {
     });
 
     it('page', function () {
-      scope.paginator.page = 1;
+      scope.paginator.setPage(1);
       scope.$digest();
       sinon.assert.calledOnce(this.getQuery);
     });
@@ -121,10 +120,10 @@ describe('Entry List Controller', function () {
     });
   });
 
-  describe('#updateEntries()', function() {
-    var entries;
+  describe('#updateEntries()', function () {
+    let entries;
 
-    beforeEach(function() {
+    beforeEach(function () {
       entries = createEntries(30);
       scope.$apply();
       getEntries.resolve(entries);
@@ -138,14 +137,14 @@ describe('Entry List Controller', function () {
       expect(scope.context.loading).toBe(false);
     });
 
-    it('sets entries num on the paginator', function() {
+    it('sets entries num on the paginator', function () {
       scope.updateEntries();
       getEntries.resolve(entries);
       scope.$apply();
-      expect(scope.paginator.numEntries).toEqual(30);
+      expect(scope.paginator.getTotal()).toEqual(30);
     });
 
-    it('sets entries on scope', function() {
+    it('sets entries on scope', function () {
       scope.updateEntries();
       scope.$apply();
       entries.forEach(function (entry, i) {
@@ -167,15 +166,15 @@ describe('Entry List Controller', function () {
       sinon.assert.called(scope.selection.updateList.withArgs(scope.entries));
     });
 
-    describe('creates a query object', function() {
-      it('with a default order', function() {
+    describe('creates a query object', function () {
+      it('with a default order', function () {
         scope.updateEntries();
         scope.$apply();
         expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-sys.updatedAt');
       });
 
-      describe('with a user defined order', function() {
-        beforeEach(function() {
+      describe('with a user defined order', function () {
+        beforeEach(function () {
           scope.context.view.contentTypeId = 'CT';
           spaceContext.fetchPublishedContentType.withArgs('CT').resolves({
             getId: _.constant('CT'),
@@ -187,29 +186,28 @@ describe('Entry List Controller', function () {
           });
         });
 
-        it('when the field exists', function() {
-          scope.context.view.order.fieldId = 'ORDER_FIELD';
+        it('when the field exists', function () {
+          scope.context.view.order = {fieldId: 'ORDER_FIELD', direction: 'descending'};
           scope.$apply();
-          expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-fields.ORDER_FIELD.en-US');
+          expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-fields.ORDER_FIELD');
         });
 
-        it('when the field does not exist', function() {
-          scope.context.view.order.fieldId = 'deletedFieldId';
+        it('when the field does not exist', function () {
+          scope.context.view.order = {fieldId: 'deletedFieldId', direction: 'descending'};
           scope.$apply();
           expect(spaceContext.space.getEntries.args[0][0].order).toEqual('-sys.updatedAt');
         });
       });
 
-      it('with a defined limit', function() {
-        scope.paginator.pageLength = 3;
+      it('with a defined limit', function () {
         scope.updateEntries();
         scope.$apply();
         getEntries.resolve(entries);
-        expect(spaceContext.space.getEntries.args[0][0].limit).toEqual(3);
+        expect(spaceContext.space.getEntries.args[0][0].limit).toEqual(40);
       });
 
-      it('with a defined skip param', function() {
-        scope.paginator.skipItems = sinon.stub().returns(true);
+      it('with a defined skip param', function () {
+        scope.paginator.getSkipParam = sinon.stub().returns(true);
         scope.updateEntries();
         scope.$apply();
         expect(spaceContext.space.getEntries.args[0][0].skip).toBeTruthy();
@@ -258,24 +256,23 @@ describe('Entry List Controller', function () {
   });
 
   describe('loadNextPage', function () {
-    beforeEach(function() {
-      scope.paginator.atLast = sinon.stub().returns(false);
-
+    beforeEach(function () {
+      scope.paginator.isAtLast = sinon.stub().returns(false);
       spaceContext.space.getEntries.resolves(createEntries(30));
       scope.$apply();
       spaceContext.space.getEntries.reset();
     });
 
-    it('doesnt load if on last page', function() {
-      scope.paginator.atLast.returns(true);
+    it('doesnt load if on last page', function () {
+      scope.paginator.isAtLast.returns(true);
       scope.loadNextPage();
       sinon.assert.notCalled(spaceContext.space.getEntries);
     });
 
-    it('paginator count is increased', function() {
-      scope.paginator.page = 0;
+    it('paginator count is increased', function () {
+      scope.paginator.setPage(0);
       scope.loadNextPage();
-      expect(scope.paginator.page).toBe(1);
+      expect(scope.paginator.getPage()).toBe(1);
     });
 
     it('gets query params', function () {
@@ -286,36 +283,34 @@ describe('Entry List Controller', function () {
 
     it('should work on the page before the last', function () {
       // Regression test for https://www.pivotaltracker.com/story/show/57743532
-      scope.paginator.numEntries = 47;
-      scope.paginator.page = 0;
+      scope.paginator.setTotal(47);
+      scope.paginator.setPage(0);
       scope.loadNextPage();
       scope.$apply();
       sinon.assert.called(spaceContext.space.getEntries);
     });
 
-    describe('on successful load response', function() {
-      var entries;
-
-      beforeEach(function() {
-        entries = createEntries(30);
-        spaceContext.space.getEntries.resolves(entries);
+    describe('on successful load response', function () {
+      beforeEach(function () {
+        this.entries = createEntries(30);
+        spaceContext.space.getEntries.resolves(this.entries);
         scope.loadNextPage();
       });
 
-      it('sets num entries', function() {
+      it('sets num entries', function () {
         scope.$apply();
-        expect(scope.paginator.numEntries).toEqual(30);
+        expect(scope.paginator.getTotal()).toEqual(30);
       });
 
       it('appends entries to scope', function () {
         scope.$apply();
-        expect(scope.entries.slice(30)).toEqual(entries);
+        expect(scope.entries.slice(30)).toEqual(this.entries);
       });
     });
 
     it('discards entries already in the list', function () {
       scope.entries = createEntries(1);
-      var nextResponse = scope.entries.concat(createEntries(2));
+      const nextResponse = scope.entries.concat(createEntries(2));
       spaceContext.space.getEntries.resolves(nextResponse);
       scope.loadNextPage();
       scope.$apply();
@@ -324,31 +319,29 @@ describe('Entry List Controller', function () {
   });
 
   describe('Api Errors', function () {
-    var apiErrorHandler;
-
-    beforeEach(inject(function (ReloadNotification){
-      apiErrorHandler = ReloadNotification.apiErrorHandler;
+    beforeEach(function () {
+      this.handler = this.$inject('ReloadNotification').apiErrorHandler;
       spaceContext.space.getEntries.rejects({statusCode: 500});
-    }));
+    });
 
     it('should cause updateEntries to show an error message', function () {
       scope.updateEntries();
       scope.$apply();
-      sinon.assert.called(apiErrorHandler);
+      sinon.assert.called(this.handler);
     });
 
     it('should cause loadNextPage to show an error message', function () {
       // Load more only executes when we are not at the last page
-      scope.paginator.atLast = sinon.stub().returns(false);
+      scope.paginator.isAtLast = sinon.stub().returns(false);
 
       scope.loadNextPage();
       scope.$apply();
-      sinon.assert.called(apiErrorHandler);
+      sinon.assert.called(this.handler);
     });
   });
 
   describe('#hasArchivedEntries', function () {
-    var entriesResponse;
+    let entriesResponse;
 
     beforeEach(function () {
       scope.showNoEntriesAdvice = _.constant(true);
@@ -364,7 +357,7 @@ describe('Entry List Controller', function () {
 
     it('gets archived entries when showNoEntries() changes to true', function () {
       this.$apply();
-      var query = {
+      const query = {
         'limit': 1,
         'sys.archivedAt[exists]': true
       };

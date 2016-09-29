@@ -1,6 +1,6 @@
 'use strict';
 
-describe('entitySelector', function () {
+describe('EntitySelectorController', function () {
   beforeEach(function () {
     module('contentful/test');
 
@@ -14,15 +14,15 @@ describe('entitySelector', function () {
       getAssets: this.getAssets = sinon.stub().resolves({items: []})
     };
 
-    this.createController = function (config) {
-      this.scope = _.extend($rootScope.$new(), {config: config || {}});
+    this.createController = function (config, ct) {
+      this.scope = _.extend($rootScope.$new(), {config: config || {}, singleContentType: ct});
       this.ctrl = $controller('EntitySelectorController', {$scope: this.scope});
       this.$apply();
     };
 
     this.loadMore = function () {
       $timeout.flush();
-      this.scope.paginator.atLast = _.constant(false);
+      this.scope.paginator.isAtLast = _.constant(false);
       this.scope.loadMore();
       this.$apply();
     };
@@ -80,11 +80,11 @@ describe('entitySelector', function () {
     it('requests first page of results on init', function () {
       this.createController({linksEntry: true});
       sinon.assert.calledOnce(this.getEntries);
-      expect(this.scope.paginator.page).toBe(0);
+      expect(this.scope.paginator.getPage()).toBe(0);
 
       this.createController({linksAsset: true});
       sinon.assert.calledOnce(this.getAssets);
-      expect(this.scope.paginator.page).toBe(0);
+      expect(this.scope.paginator.getPage()).toBe(0);
     });
 
     it('constructs a query with paginator and search term', function () {
@@ -106,7 +106,7 @@ describe('entitySelector', function () {
     it('updates total number of entities', function () {
       this.getEntries.resolves({total: 123, items: []});
       this.createController({linksEntry: true});
-      expect(this.scope.paginator.numEntries).toBe(123);
+      expect(this.scope.paginator.getTotal()).toBe(123);
     });
 
     it('removes duplicates from the fetched page', function () {
@@ -120,6 +120,38 @@ describe('entitySelector', function () {
       this.scope.$broadcast('forceSearch');
       this.$apply();
       expect(this.scope.items).toEqual(entities);
+    });
+  });
+
+  describe('single content type link', function () {
+    beforeEach(function () {
+      this.getQuery = this.$inject('ListQuery').getForEntries = sinon.stub().resolves({});
+      this.ct = {getId: _.constant('ctid'), data: {}};
+      this.withData = (data) => {
+        this.createController({linksEntry: true}, _.extend(this.ct, {data: data}));
+      };
+    });
+
+    it('sets content type on query', function () {
+      this.createController({linksEntry: true}, this.ct);
+      sinon.assert.calledOnce(this.getQuery);
+      expect(this.getQuery.firstCall.args[0].contentTypeId).toBe('ctid');
+    });
+
+    it('uses Symbol display field for ordering', function () {
+      this.withData({displayField: 'x', fields: [{id: 'x', type: 'Symbol'}]});
+      this.withData({});
+      this.withData({displayField: 'y', fields: []});
+      this.withData({displayField: 'x', fields: [{id: 'x', type: 'Text'}]});
+
+      expect(this.getQuery.callCount).toBe(4);
+      expect(this.getQuery.firstCall.args[0].order).toEqual({
+        fieldId: 'x', direction: 'ascending'
+      });
+
+      this.getQuery.args.slice(1).forEach((callArgs) => {
+        expect(callArgs[0].order).toBeUndefined();
+      });
     });
   });
 

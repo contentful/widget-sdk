@@ -2,9 +2,7 @@
 
 describe('API key editor controller', function () {
 
-  let scope, stubs, $q, $rootScope;
-  let apiKeyEditorCtrl;
-  let apiKey;
+  let scope, stubs;
 
   beforeEach(function () {
     module('contentful/test', function ($provide, environment) {
@@ -30,43 +28,40 @@ describe('API key editor controller', function () {
       $provide.value('navigation/closeState', stubs.closeState);
       $provide.value('analytics', {});
     });
-    inject(function ($controller, $injector, spaceContext) {
-      $q = $injector.get('$q');
-      $rootScope = $injector.get('$rootScope');
-      stubs.broadcast = sinon.stub($rootScope, '$broadcast');
-      stubs.broadcast.returns({});
-      scope = $rootScope.$new();
 
-      spaceContext.space = {
-        getId: stubs.spaceGetId,
-        createPreviewApiKey: stubs.createPreviewApiKey
-      };
+    const $controller = this.$inject('$controller');
+    const $q = this.$inject('$q');
+    const $rootScope = this.$inject('$rootScope');
+    const spaceContext = this.$inject('spaceContext');
 
-      scope.context = {};
-      apiKey = {
-        data: {},
-        getName: sinon.stub().returns('apiKeyName'),
-        getId: sinon.stub(),
-        delete: sinon.stub(),
-        save: sinon.stub()
-      };
-      scope.apiKey = apiKey;
-      scope.apiKeyController = {
-        getApiKeyList: sinon.stub()
-      };
-      stubs.createPreviewApiKey.returns($q.defer().promise);
+    stubs.broadcast = sinon.stub($rootScope, '$broadcast');
+    stubs.broadcast.returns({});
+    scope = $rootScope.$new();
 
-      apiKeyEditorCtrl = $controller('ApiKeyEditorController', {$scope: scope});
-      scope.$apply();
-    });
+    spaceContext.space = {
+      getId: stubs.spaceGetId,
+      createPreviewApiKey: stubs.createPreviewApiKey
+    };
+
+    stubs.refresh = sinon.stub();
+    spaceContext.apiKeys = {refresh: stubs.refresh};
+
+    scope.context = {};
+    scope.apiKey = {
+      data: {},
+      getName: sinon.stub().returns('apiKeyName'),
+      getId: sinon.stub(),
+      delete: sinon.stub(),
+      save: sinon.stub()
+    };
+    stubs.createPreviewApiKey.returns($q.defer().promise);
+
+    this.controller = $controller('ApiKeyEditorController', {$scope: scope});
+    scope.$apply();
   });
 
   afterEach(function () {
     stubs.broadcast.restore();
-  });
-
-  it('sets an apiKey on the scope', function () {
-    expect(scope.apiKey).toEqual(apiKey);
   });
 
   it('sets the state title to new api key', function () {
@@ -95,7 +90,7 @@ describe('API key editor controller', function () {
   describe('creates a preview api if none exists', function () {
     beforeEach(function () {
       scope.apiKey.data.accessToken = 'accessToken';
-      apiKey.getId.returns('123');
+      scope.apiKey.getId.returns('123');
       scope.$apply();
     });
 
@@ -110,7 +105,7 @@ describe('API key editor controller', function () {
 
   describe('deletes an api key', function () {
     beforeEach(function () {
-      apiKey.delete.resolves();
+      scope.apiKey.delete.resolves();
       scope.delete();
       scope.$apply();
     });
@@ -126,7 +121,7 @@ describe('API key editor controller', function () {
 
   describe('fails to delete an api key', function () {
     beforeEach(function () {
-      apiKey.delete.rejects({});
+      scope.apiKey.delete.rejects({});
       scope.delete();
       scope.$apply();
     });
@@ -144,11 +139,11 @@ describe('API key editor controller', function () {
       pristineStub = sinon.stub();
       $state = this.$inject('$state');
       $state.go = sinon.stub().resolves();
-      apiKey.save.resolves();
+      scope.apiKey.save.resolves();
       scope.apiKeyForm = {
         '$setPristine': pristineStub
       };
-      apiKeyEditorCtrl.save.execute();
+      this.controller.save.execute();
       this.$apply();
     });
 
@@ -162,19 +157,19 @@ describe('API key editor controller', function () {
 
     it('gets api key editor from navigator', function () {
       sinon.assert.calledWith($state.go, 'spaces.detail.api.keys.detail', {
-        apiKeyId: apiKey.getId()
+        apiKeyId: scope.apiKey.getId()
       });
     });
 
     it('updates API key list', function () {
-      sinon.assert.calledOnce(scope.apiKeyController.getApiKeyList);
+      sinon.assert.calledOnce(stubs.refresh);
     });
   });
 
   describe('fails to save an api key', function () {
     beforeEach(function () {
-      apiKey.save.rejects('AN ERROR');
-      apiKeyEditorCtrl.save.execute();
+      scope.apiKey.save.rejects('AN ERROR');
+      this.controller.save.execute();
       this.$apply();
     });
 

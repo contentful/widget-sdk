@@ -23,7 +23,7 @@ header.workbench-header
       cf-on-blur-component="leftSearch($event)"
       cf-on-blur-component-when="showAutocompletions")
 
-    .search-results-position(cf-search-results-position paginator="paginator" ng-hide="!paginator.numEntries")
+    .search-results-position(cf-search-results-position paginator="paginator" ng-hide="!paginator.getTotal()")
 
   .workbench-header__actions(ng-if="!showNoEntriesAdvice()")
     +create-entry-button
@@ -46,7 +46,7 @@ header.workbench-header
           th.cell-status Status
     .view-customizer(cf-view-customizer)
 
-    .main-results-wrapper.endless-container(cf-endless-container at-bottom="loadNextPage()" num-elements="paginator.page")
+    .main-results-wrapper.endless-container(cf-endless-container at-bottom="loadNextPage()" num-elements="paginator.getPage()")
       table.result-list.main-results.animated
         tbody
           tr(ng-repeat="entry in entries track by entry.getId()"
@@ -66,7 +66,7 @@ header.workbench-header
               a.entity-list-link(ui-sref="{{entityNavState}}")
                 .status-label {{entityStatus.getLabel(entry)}}
                 .status-bar
-      .loading(ng-hide="paginator.atLast()")
+      .loading(ng-hide="paginator.isAtLast()")
 
     .advice(ng-show="entries | isEmpty")
       .advice__frame

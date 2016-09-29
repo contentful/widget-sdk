@@ -24,15 +24,11 @@ test/unit/components/shared/list_views_controller_spec.js
 test/unit/components/shared/onboarding_persona_selection_directive_spec.js
 test/unit/components/shared/view_menu_controller_spec.js
 test/unit/components/tabs/asset_list/asset_list_actions_controller_spec.js
-test/unit/components/tabs/asset_list/asset_list_controller_spec.js
 test/unit/components/tabs/content_type_editor/add_field_dialog_spec.js
 test/unit/components/tabs/content_type_editor/cf_list_type_for_spec.js
 test/unit/components/tabs/content_type_editor/cf_content_type_preview_spec.js
 test/unit/components/tabs/content_type_list/content_type_list_directive_spec.js
 test/unit/components/tabs/content_type_list/content_type_list_controller_spec.js
-test/unit/components/tabs/entry_list/displayed_fields_controller_spec.js
-test/unit/components/tabs/entry_list/entry_list_actions_controller_spec.js
-test/unit/components/tabs/entry_list/entry_list_controller_spec.js
 test/unit/components/field_dialog/appearance_controller_spec.js
 test/unit/components/search.js
 test/unit/classes/entity_state_manager_spec.js
@@ -46,7 +42,6 @@ test/unit/forms/ng_model_spec.js
 test/unit/forms/ng_no_form_spec.js
 test/unit/navigator/leave_editor_confirmation_spec.js
 test/unit/navigator/confirm_leave_editor_spec.js
-test/unit/navigator/state_change_handlers_spec.js
 test/unit/services/assert_spec.js
 test/unit/services/call_buffer_spec.js
 test/unit/services/contentful_client_spec.js
@@ -87,7 +82,6 @@ test/unit/data/user_cache_spec.js
 test/unit/markdown_editor/link_organizer_spec.js
 test/unit/markdown_editor/markdown_codemirror_wrapper_spec.js
 test/unit/markdown_editor/markdown_editor_spec.js
-test/unit/search/list_query_spec.js
 test/unit/ui/command_spec.js
 test/unit/ui/context_menu_spec.js
 test/unit/ui/command_directive_spec.js
@@ -126,7 +120,6 @@ src/javascripts/components/shared/search_field/cf_autocomplete_list_directive.js
 src/javascripts/components/shared/search_field/cf_tokenized_search_directive.js
 src/javascripts/components/shared/search_field/cf_search_directive.js
 src/javascripts/components/shared/search_field/cf_tokenized_search_controller.js
-src/javascripts/components/shared/search_results_position/search_results_position_directive.js
 src/javascripts/components/shared/thumbnail/cf_thumbnail_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_list_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_messages_directive.js
@@ -152,7 +145,6 @@ src/javascripts/components/shared/cf_user_directive.js
 src/javascripts/components/shared/list_views_controller.js
 src/javascripts/components/tabs/asset_list/asset_list_directive.js
 src/javascripts/components/tabs/asset_list/asset_list_actions_controller.js
-src/javascripts/components/tabs/asset_list/asset_search_controller.js
 src/javascripts/components/tabs/content_type_editor/add_field_dialog_controller.js
 src/javascripts/components/tabs/content_type_editor/cf_api_name_shadow_directive.js
 src/javascripts/components/tabs/content_type_editor/cf_list_type_for_directive.js
@@ -163,10 +155,7 @@ src/javascripts/components/tabs/entry_list/cf_field_display_directive.js
 src/javascripts/components/tabs/entry_list/cf_field_order_header_directive.js
 src/javascripts/components/tabs/entry_list/view_customizer_directive.js
 src/javascripts/components/tabs/entry_list/entry_list_directive.js
-src/javascripts/components/tabs/entry_list/entry_list_actions_controller.js
-src/javascripts/components/tabs/entry_list/entry_list_search_controller.js
 src/javascripts/components/tabs/space_settings/space_settings_directive.js
-src/javascripts/components/tabs/list_actions_controller.js
 src/javascripts/components/app_container/cf_app_container_directive.js
 src/javascripts/components/app_container/context_history.js
 src/javascripts/components/app_container/entity_creation_controller.js
@@ -211,7 +200,6 @@ src/javascripts/app/entry_editor/notifications.js
 src/javascripts/app/entry_editor/entry_actions_controller.js
 src/javascripts/app/entry_editor/entry_reverter.js
 src/javascripts/app/entity_editor/locales_controller.js
-src/javascripts/classes/asset_content_type.js
 src/javascripts/classes/kaltura_error_messages.js
 src/javascripts/classes/kaltura_search.js
 src/javascripts/classes/ooyala_error_messages.js
@@ -223,7 +211,6 @@ src/javascripts/classes/content_model_field_types.js
 src/javascripts/classes/entity_list_cache.js
 src/javascripts/classes/entity_state_manager.js
 src/javascripts/classes/kaltura_controller_mixin.js
-src/javascripts/classes/paginator.js
 src/javascripts/classes/selection.js
 src/javascripts/directives/cf_click_local_directive.js
 src/javascripts/directives/cf_click_outside_directive.js
@@ -244,7 +231,6 @@ src/javascripts/services/call_buffer.js
 src/javascripts/services/contentful_client.js
 src/javascripts/services/exception_handler.js
 src/javascripts/services/field_factory.js
-src/javascripts/services/filter_query_string.js
 src/javascripts/services/fontsdotcom.js
 src/javascripts/services/get.js
 src/javascripts/services/getty_images.js
@@ -256,7 +242,6 @@ src/javascripts/services/ooyala_player_loader.js
 src/javascripts/services/q_decorator.js
 src/javascripts/services/random.js
 src/javascripts/services/revision.js
-src/javascripts/services/search_query_helper.js
 src/javascripts/services/totango.js
 src/javascripts/services/validation_dialog_error_messages.js
 src/javascripts/services/validation_views.js
@@ -275,7 +260,6 @@ src/javascripts/services/modal_dialog_service.js
 src/javascripts/services/promised_loader.js
 src/javascripts/services/reload_notification.js
 src/javascripts/services/sdk_info_supplier.js
-src/javascripts/services/search_query_autocompletions.js
 src/javascripts/services/segment.js
 src/javascripts/services/space_tools.js
 src/javascripts/services/token_store.js
@@ -286,7 +270,6 @@ src/javascripts/forms/errors.js
 src/javascripts/forms/validation.js
 src/javascripts/navigation/confirm_leave_editor.js
 src/javascripts/navigation/close_state.js
-src/javascripts/navigation/state_change_handlers.js
 src/javascripts/ui/cf_ui_tab.js
 src/javascripts/ui/cf_ui_hint.js
 src/javascripts/ui/context_menu.js
@@ -296,18 +279,15 @@ src/javascripts/widgets/default.js
 src/javascripts/widgets/deprecations.js
 src/javascripts/widgets/migrations.js
 src/javascripts/data/content_types.js
-src/javascripts/data/editing_interfaces/asset_interface.js
 src/javascripts/data/editing_interfaces/transformer.js
 src/javascripts/data/space_endpoint.js
 src/javascripts/data/user_cache.js
 src/javascripts/markdown_editor/cf_markdown_action_directive.js
 src/javascripts/markdown_editor/link_organizer.js
 src/javascripts/markdown_editor/markdown_special_characters.js
-src/javascripts/markdown_editor/markdown_tree.js
 src/javascripts/markdown_editor/markdown_codemirror_wrapper.js
 src/javascripts/markdown_editor/markdown_editor.js
 src/javascripts/search/cached_parser.js
-src/javascripts/search/system_fields.js
 src/javascripts/search/query_builder.js
 src/javascripts/utils/encoder.js
 src/javascripts/utils/keycodes.js
@@ -329,14 +309,6 @@ src/javascripts/account/cf_account_view_directive.js
 src/javascripts/account/iframe_channel.js
 src/javascripts/contentful.js
 src/javascripts/filters.js
-src/javascripts/states/account.js
-src/javascripts/states/base.js
-src/javascripts/states/config.js
-src/javascripts/states/content_types.js
-src/javascripts/states/settings.js
-src/javascripts/states/settings_roles.js
-src/javascripts/states/settings_users.js
-src/javascripts/states/states.js
 src/javascripts/webhooks/webhook_call_status_directive.js
 src/javascripts/webhooks/webhook_editor_directive.js
 src/javascripts/webhooks/webhook_headers_directive.js

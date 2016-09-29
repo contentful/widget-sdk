@@ -1,58 +1,60 @@
 'use strict';
-angular.module('contentful').controller('AssetSearchController', ['$scope', '$injector', 'getSearchTerm', function AssetSearchController($scope, $injector, getSearchTerm){
+
+angular.module('contentful')
+
+.controller('AssetSearchController', ['$scope', 'require', 'getSearchTerm', function AssetSearchController ($scope, require, getSearchTerm) {
   var controller = this;
-  var $q                 = $injector.get('$q');
-  var Paginator          = $injector.get('Paginator');
-  var PromisedLoader     = $injector.get('PromisedLoader');
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var analytics          = $injector.get('analytics');
-  var searchQueryHelper  = $injector.get('searchQueryHelper');
-  var logger             = $injector.get('logger');
-  var spaceContext       = $injector.get('spaceContext');
-  var ListQuery          = $injector.get('ListQuery');
-  var systemFields       = $injector.get('systemFields');
-  var accessChecker      = $injector.get('accessChecker');
+  var $q = require('$q');
+  var Paginator = require('Paginator');
+  var PromisedLoader = require('PromisedLoader');
+  var ReloadNotification = require('ReloadNotification');
+  var analytics = require('analytics');
+  var logger = require('logger');
+  var spaceContext = require('spaceContext');
+  var ListQuery = require('ListQuery');
+  var systemFields = require('systemFields');
+  var accessChecker = require('accessChecker');
 
   var assetLoader = new PromisedLoader();
 
-  this.paginator = new Paginator();
-  $scope.assetContentType = searchQueryHelper.assetContentType;
+  this.paginator = Paginator.create();
+  $scope.assetContentType = require('assetContentType');
 
-  this.resetAssets = function(resetPage) {
+  this.resetAssets = function (resetPage) {
     $scope.context.loading = true;
-    if (resetPage) { this.paginator.page = 0; }
+    if (resetPage) { this.paginator.setPage(0); }
 
     return prepareQuery()
     .then(function (query) {
-      return assetLoader.loadPromise(function(){
+      return assetLoader.loadPromise(function () {
         return spaceContext.space.getAssets(query);
       });
     })
     .then(function (assets) {
       $scope.context.ready = true;
       $scope.context.loading = false;
-      controller.paginator.numEntries = assets.total;
+      controller.paginator.setTotal(assets.total);
       $scope.assets = filterOutDeleted(assets);
       $scope.selection.updateList($scope.assets);
     }, accessChecker.wasForbidden($scope.context))
     .catch(ReloadNotification.apiErrorHandler);
   };
 
-  this.loadMore = function() {
-    if (this.paginator.atLast()) return;
-    this.paginator.page++;
+  this.loadMore = function () {
+    if (this.paginator.isAtLast()) { return; }
+    this.paginator.next();
     var queryForDebug;
 
     return prepareQuery()
     .then(function (query) {
       analytics.track('Scrolled AssetList');
       queryForDebug = query;
-      return assetLoader.loadPromise(function(){
+      return assetLoader.loadPromise(function () {
         return spaceContext.space.getAssets(query);
       });
     })
     .then(function (assets) {
-      if(!assets){
+      if (!assets) {
         logger.logError('Failed to load more assets', {
           data: {
             assets: assets,
@@ -61,12 +63,12 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
         });
         return;
       }
-      controller.paginator.numEntries = assets.total;
+      controller.paginator.setTotal(assets.total);
       assets = _.difference(assets, $scope.assets);
       $scope.assets.push.apply($scope.assets, filterOutDeleted(assets));
       $scope.selection.updateList($scope.assets);
     }, function (err) {
-      controller.paginator.page--;
+      controller.paginator.prev();
       return $q.reject(err);
     })
     .catch(ReloadNotification.apiErrorHandler);
@@ -80,8 +82,8 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
 
   function prepareQuery () {
     return ListQuery.getForAssets({
-      paginator:  controller.paginator,
-      order:      systemFields.getDefaultOrder(),
+      paginator: controller.paginator,
+      order: systemFields.getDefaultOrder(),
       searchTerm: getSearchTerm()
     });
   }

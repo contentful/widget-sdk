@@ -2,19 +2,19 @@
 
 angular.module('contentful')
 
-.controller('EntryListSearchController', ['$scope', '$injector', function ($scope, $injector) {
-  var ListQuery          = $injector.get('ListQuery');
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var createRequestQueue = $injector.get('overridingRequestQueue');
-  var spaceContext       = $injector.get('spaceContext');
-  var accessChecker      = $injector.get('accessChecker');
-  var debounce           = $injector.get('debounce');
+.controller('EntryListSearchController', ['$scope', 'require', function ($scope, require) {
+  var ListQuery = require('ListQuery');
+  var ReloadNotification = require('ReloadNotification');
+  var createRequestQueue = require('overridingRequestQueue');
+  var spaceContext = require('spaceContext');
+  var accessChecker = require('accessChecker');
+  var debounce = require('debounce');
 
   var AUTOTRIGGER_MIN_LEN = 4;
 
-  var MODE_APPEND  = 'append';
+  var MODE_APPEND = 'append';
   var MODE_REPLACE = 'replace';
-  var MODE_RESET   = 'reset';
+  var MODE_RESET = 'reset';
 
   var searchTerm = null;
 
@@ -39,7 +39,7 @@ angular.module('contentful')
    * Watches: triggering list updates
    */
 
-  $scope.$watch('paginator.page', function () {
+  $scope.$watch('paginator.getPage()', function () {
     if (isResettingPage) {
       isResettingPage = false;
     } else {
@@ -57,18 +57,17 @@ angular.module('contentful')
     var viewChanged = next.view !== prev.view;
     var hasTerm = _.isString(value) && value.length > 0;
 
-    // for initial run or resetting term just set search term w/o list update
+
     if (value === prev.value || isResettingTerm) {
+      // for initial run or resetting term just set search term w/o list update
       searchTerm = value;
       isResettingTerm = false;
-    }
-    // if view was changed or term was cleared then update immediately
-    else if (viewChanged || !hasTerm) {
+    } else if (viewChanged || !hasTerm) {
+      // if view was changed or term was cleared then update immediately
       updateWithTerm(value);
-    }
-    // use debounced version when user is actively typing
-    // we autotrigger only when query is long enough
-    else if (hasTerm && value.length >= AUTOTRIGGER_MIN_LEN) {
+    } else if (hasTerm && value.length >= AUTOTRIGGER_MIN_LEN) {
+      // use debounced version when user is actively typing
+      // we autotrigger only when query is long enough
       debouncedUpdateWithTerm(value);
     }
   });
@@ -81,12 +80,12 @@ angular.module('contentful')
 
   $scope.$watch(function () {
     return {
-      contentTypeId:     getViewItem('contentTypeId'),
+      contentTypeId: getViewItem('contentTypeId'),
       displayedFieldIds: getViewItem('displayedFieldIds'),
-      entriesLength:     $scope.entries && $scope.entries.length,
-      page:              $scope.paginator.page,
-      orderDirection:    getViewItem('order.direction'),
-      orderFieldId:      getViewItem('order.fieldId')
+      entriesLength: $scope.entries && $scope.entries.length,
+      page: $scope.paginator.getPage(),
+      orderDirection: getViewItem('order.direction'),
+      orderFieldId: getViewItem('order.fieldId')
     };
   }, refreshEntityCaches, true);
 
@@ -117,8 +116,8 @@ angular.module('contentful')
     mode = mode || MODE_RESET;
     $scope.context.loading = true;
 
-    if (mode == MODE_RESET && $scope.paginator.page !== 0) {
-      $scope.paginator.page = 0;
+    if (mode === MODE_RESET && $scope.paginator.getPage() !== 0) {
+      $scope.paginator.setPage(0);
       isResettingPage = true;
     }
 
@@ -148,17 +147,15 @@ angular.module('contentful')
         container.scrollTop = 0;
       }
       // initialize with an empty array
-      $scope.entries  = [];
+      $scope.entries = [];
     }
     // 2. if response doesn't contain any entries:
     if (!res.entries) {
       // reset paginator
-      $scope.paginator.numEntries = 0;
-    }
-    // 3. if response contain some entries:
-    else if (Array.isArray(res.entries)) {
+      $scope.paginator.setTotal(0);
+    } else if (Array.isArray(res.entries)) { // 3. if response contain some entries:
       // set paginator's total count
-      $scope.paginator.numEntries = res.entries.total;
+      $scope.paginator.setTotal(res.entries.total);
       // add new entries to the list
       var entriesToAdd = _(res.entries)
       .difference($scope.entries)
@@ -177,22 +174,22 @@ angular.module('contentful')
   }
 
   function loadNextPage () {
-    if ($scope.paginator.atLast() || isAppendingPage || $scope.context.loading) {
+    if ($scope.paginator.isAtLast() || isAppendingPage || $scope.context.loading) {
       return;
     }
 
     $scope.$apply(function () {
       isAppendingPage = true;
-      $scope.paginator.page += 1;
+      $scope.paginator.next();
     });
   }
 
   function prepareQuery () {
     return ListQuery.getForEntries({
       contentTypeId: getViewItem('contentTypeId'),
-      searchTerm:    searchTerm || getViewItem('searchTerm'),
-      order:         getViewItem('order'),
-      paginator:     $scope.paginator
+      searchTerm: searchTerm || getViewItem('searchTerm'),
+      order: getViewItem('order'),
+      paginator: $scope.paginator
     });
   }
 

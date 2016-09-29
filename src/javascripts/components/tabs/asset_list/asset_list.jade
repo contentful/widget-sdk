@@ -13,7 +13,7 @@ header.workbench-header
       search-content-type="assetContentType"
       placeholder="Search for assets")
 
-    .search-results-position(cf-search-results-position paginator="searchController.paginator" ng-hide="!searchController.paginator.numEntries")
+    .search-results-position(cf-search-results-position paginator="searchController.paginator" ng-hide="!searchController.paginator.getTotal()")
 
   .workbench-header__actions(
     ng-show="!showNoAssetsAdvice() && !shouldHide('createAsset')")
@@ -53,7 +53,7 @@ header.workbench-header
           th.cell-author By
           th.cell-status Status
 
-    .main-results-wrapper.endless-container(cf-endless-container at-bottom="searchController.loadMore()" num-elements="searchController.paginator.page")
+    .main-results-wrapper.endless-container(cf-endless-container at-bottom="searchController.loadMore()" num-elements="searchController.paginator.getPage()")
       table.result-list.main-results
         tbody
           tr(ng-repeat="asset in assets track by asset.getId()"
@@ -81,7 +81,7 @@ header.workbench-header
               a.draft-wrapper.entity-list-link(ui-sref="{{entityNavState}}")
                 .status-label {{entityStatus.getLabel(asset)}}
                 .status-bar
-      .loading(ng-hide="searchController.paginator.atLast()")
+      .loading(ng-hide="searchController.paginator.isAtLast()")
 
     .advice(ng-show="assets | isEmpty")
       .advice__frame

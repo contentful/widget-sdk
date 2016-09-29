@@ -1,37 +1,28 @@
-$formtastic-fieldwidth = 40%
 .tab-iframe .formtastic
-  max-width: 80em
+  max-width: 50em
   // remove list bullets
   .inputs,
   .actions
     li
       list-style-type: none
-      margin: 0
-    .input
-      margin-bottom: $form-spacing
   .input
-    padding: 0
-    .label
-      display: block
-      position: relative
-      color: inherit
-      margin-left: $form-gutter
-      padding-bottom: 10px
-    .form-control
-      width: $formtastic-fieldwidth
-      margin-left: $form-gutter
+    @extend .cfnext-form__field
+    input.form-control:not([type="checkbox"]):not([type="radio"]), textarea.form-control
+      @extend .cfnext-form__input--full-size
+    // not being @extend-ed properly
+    textarea.form-control
+      padding-top: 0.5em
+      padding-bottom: 0.5em
+      line-height: 1.3
+      height: auto
     input[type="checkbox"],
     input[type="radio"]
       vertical-align: baseline
       width: auto
-    input[type="checkbox"]
-      position: relative
-      top: -1px
     .inline-hints
-      margin-left: $form-labelwidth
-      width: $formtastic-fieldwidth
+      @extend .cfnext-form__hint
     .inline-errors
-      margin-left: $form-labelwidth
+      @extend .cfnext-form__field-error
   .input.info > div
     margin-left: $form-gutter
   .input > select
@@ -39,8 +30,6 @@ $formtastic-fieldwidth = 40%
   .fragment
     padding-right: 10px
   .input.boolean
-    padding-top: $form-offset
-    padding-bottom: $form-offset
     .tooltip.top
       left: $form-labelwidth !important
   .input.table
@@ -69,14 +58,7 @@ $formtastic-fieldwidth = 40%
         margin-top: $form-offset
 
   fieldset.actions
-    padding: 10px 20px 10px
-    margin-top: 3em
-    margin-bottom: 3em
-    background-color: $gray-lightest
-    border-top: 1px solid $gray-light
-    border-bottom: 1px solid $gray-light
-    padding-left: $form-labelwidth
-    height: 54px
+    padding: 10px 0
     .action
       display: inline-block
     ol

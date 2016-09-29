@@ -5,6 +5,7 @@ angular.module('contentful')
 function ($scope, $injector) {
 
   var contentPreview = $injector.get('contentPreview');
+  var analytics = $injector.get('analytics');
   var isAdmin = $injector.get('spaceContext')
     .getData('spaceMembership.admin', false);
 
@@ -29,6 +30,16 @@ function ($scope, $injector) {
   $scope.selectEnvironment = function (environment) {
     $scope.selectedEnvironment = environment;
     contentPreview.setSelected(environment);
+  };
+
+  $scope.trackClickedLink = function () {
+    // TODO: extract into a separate content preview analytics service
+    analytics.track('content-preview', {
+      action: 'open',
+      id: $scope.selectedEnvironment.envId,
+      name: $scope.selectedEnvironment.name,
+      url: $scope.selectedEnvironment.url
+    });
   };
 
   // update urls when any field changes
