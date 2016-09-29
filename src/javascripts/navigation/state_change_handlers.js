@@ -14,13 +14,13 @@ angular.module('cf.app')
  * $injector.get('navigation/stateChangeHandlers').setup()
  */
 .factory('navigation/stateChangeHandlers', ['$injector', function ($injector) {
-  var $rootScope     = $injector.get('$rootScope');
-  var $document      = $injector.get('$document');
-  var $state         = $injector.get('$state');
-  var spaceTools     = $injector.get('spaceTools');
+  var $rootScope = $injector.get('$rootScope');
+  var $document = $injector.get('$document');
+  var $state = $injector.get('$state');
+  var spaceTools = $injector.get('spaceTools');
   var contextHistory = $injector.get('contextHistory');
-  var logger         = $injector.get('logger');
-  var modalDialog    = $injector.get('modalDialog');
+  var logger = $injector.get('logger');
+  var modalDialog = $injector.get('modalDialog');
 
   // Result of confirmation dialog
   var navigationConfirmed = false;
@@ -41,12 +41,19 @@ angular.module('cf.app')
       $document[0].title = label || 'Contentful';
     });
 
+    $rootScope.$on('$stateChangeSuccess', stateChangeSuccessHandler);
     $rootScope.$on('$stateChangeStart', stateChangeStartHandler);
     $rootScope.$on('$stateChangeError', stateChangeErrorHandler);
     $rootScope.$on('$stateNotFound', stateChangeErrorHandler);
   }
 
-  function stateChangeStartHandler(event, toState, toStateParams, fromState, fromStateParams) {
+  function stateChangeSuccessHandler (_event, toState, toStateParams) {
+    logger.leaveBreadcrumb('Enter state', _.extend({
+      state: toState
+    }, toStateParams));
+  }
+
+  function stateChangeStartHandler (event, toState, toStateParams, fromState, fromStateParams) {
     var hasRedirected = redirect(event, toState, toStateParams);
 
     if (hasRedirected) {
@@ -119,15 +126,15 @@ angular.module('cf.app')
   /**
    * Switches to the first space's entry list if there is a navigation error
    */
-  function stateChangeErrorHandler(event, toState, toParams, fromState, fromParams, error) {
+  function stateChangeErrorHandler (event, toState, toParams, fromState, fromParams, error) {
     event.preventDefault();
 
     var matchedSection = /spaces.detail.(entries|assets|content_types|api\.keys).detail/.exec(toState.name);
-    if (matchedSection && error.statusCode == 404) {
+    if (matchedSection && error.statusCode === 404) {
       // If a request for an entity returns a 404 error we just go to the
       // list for that entity.
       // TODO we should provide some feedback to the user
-      $state.go('spaces.detail.'+matchedSection[1]+'.list', { spaceId: toParams.spaceId });
+      $state.go('spaces.detail.' + matchedSection[1] + '.list', { spaceId: toParams.spaceId });
     } else {
       spaceTools.goToInitialSpace();
       // Otherwise we redirect the user to the inital space

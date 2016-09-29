@@ -1,32 +1,25 @@
 'use strict';
+
 // Provide services to entrylistController and cfTokenizedSearch
 angular.module('contentful')
-.factory('searchQueryHelper', ['$injector', function($injector) {
 
-  var $q                         = $injector.get('$q');
-  var AssetContentType           = $injector.get('AssetContentType');
-  var searchQueryAutocompletions = $injector.get('searchQueryAutocompletions');
-  var createParser               = $injector.get('search/cachedParser');
+.factory('searchQueryHelper', ['require', function (require) {
+
+  var $q = require('$q');
+  var searchQueryAutocompletions = require('searchQueryAutocompletions');
+  var createParser = require('search/cachedParser');
 
   var parse = createParser();
 
   var complete = searchQueryAutocompletions.complete;
   var api = {
-    // Dummy Content-Type object that can be used when searching for Assets
-    // Whenever we're searching for/in fields, the code around the search stuff
-    // needs a Content-Type to work with and build the queries
-    assetContentType: {
-      data: AssetContentType,
-      getId: _.constant(undefined)
-    },
-
     // Parse the queryString and return the current top-level token
     // This top-level token can have subtokens if it is a pair (key+operator+value)
     currentToken: function (queryString, cursorPos) {
       if (!queryString) return null;
 
       var tokens = parse(queryString);
-      for (var i = 0, l = tokens.length; i < l; i ++) {
+      for (var i = 0, l = tokens.length; i < l; i++) {
         var token = tokens[i];
         var pos = tokenPosition(cursorPos, token);
         if (pos.after) continue;
@@ -41,19 +34,24 @@ angular.module('contentful')
         var p = token.content;
         var pos = tokenPosition(cursorPos, token.content.operator);
         var key = token.content.key.content;
-        if (pos.before) return p.key;
-        if (pos.pre)    return p.operator;
-        else if (pos.end) {
-          var values    = complete.value(key, contentType);
+
+        if (pos.before) {
+          return p.key;
+        } else if (pos.pre) {
+          return p.operator;
+        } else if (pos.end) {
+          var values = complete.value(key, contentType);
           return !_.isEmpty(values) ? p.value : p.operator;
-        } else return p.value;
+        } else {
+          return p.value;
+        }
       } else {
         return token;
       }
     },
 
     // List of available autocompletions for current position
-    offerCompletion: _.flowRight($q.when, function (space, contentType, queryString, cursorPos) {
+    offerCompletion: _.flowRight($q.when, function (_space, contentType, queryString, cursorPos) {
       var token = api.currentToken(queryString, cursorPos);
 
       if (token && token.type === 'Pair') {
@@ -62,11 +60,15 @@ angular.module('contentful')
         if (pos.pre) {
           return complete.operator(key, contentType);
         } else if (pos.end) {
-          var operators = complete.operator(key, contentType),
-              values    = complete.value(key, contentType);
-          return !_.isEmpty(values)   ? values    :
-                 operators.length > 1 ? operators : // if only 1 operator it has already been filled
-                 [];
+          var operators = complete.operator(key, contentType);
+          var values = complete.value(key, contentType);
+
+          if (_.isEmpty(values)) {
+            // if only 1 operator it has already been filled
+            return operators.length > 1 ? operators : [];
+          } else {
+            return values;
+          }
         } else if (pos.after) {
           return complete.value(key, contentType);
         }
@@ -94,19 +96,19 @@ angular.module('contentful')
   // pre: start or inside
   // post end or inside
   // touch: touching the token, either at the start or the end
-  function tokenPosition(cursorPos, token) {
+  function tokenPosition (cursorPos, token) {
     var pos = {
-      before: cursorPos     <  token.offset,
-      start:  cursorPos    === token.offset,
-      inside: token.offset  <  cursorPos && cursorPos < token.end,
-      end:    cursorPos    === token.end,
-      after:  token.end     <  cursorPos,
+      before: cursorPos < token.offset,
+      start: cursorPos === token.offset,
+      inside: token.offset < cursorPos && cursorPos < token.end,
+      end: cursorPos === token.end,
+      after: token.end < cursorPos
     };
 
     pos.outside = pos.before || pos.after;
-    pos.pre     = pos.start  || pos.inside;
-    pos.post    = pos.inside || pos.end;
-    pos.touch   = pos.pre    || pos.post;
+    pos.pre = pos.start || pos.inside;
+    pos.post = pos.inside || pos.end;
+    pos.touch = pos.pre || pos.post;
 
     return pos;
   }

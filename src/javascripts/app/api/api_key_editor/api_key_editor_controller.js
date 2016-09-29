@@ -56,10 +56,7 @@ angular.module('contentful')
     $scope.apiKey.delete()
     .then(function () {
       notify.deleteSuccess();
-
-      // Refresh API key list
-      refreshApiKeyList();
-
+      spaceContext.apiKeys.refresh();
       return closeState();
     }, notify.deleteFail);
   };
@@ -111,8 +108,7 @@ angular.module('contentful')
       }
       $scope.context.dirty = false;
 
-      // Refresh API key list
-      refreshApiKeyList();
+      spaceContext.apiKeys.refresh();
       $state.go('spaces.detail.api.keys.detail', { apiKeyId: $scope.apiKey.getId() })
       .finally(notify.saveSuccess);
     })
@@ -128,11 +124,6 @@ angular.module('contentful')
       $scope.previewApiKey = previewApiKey;
     });
   }
-
-  function refreshApiKeyList () {
-    $scope.apiKeyController.getApiKeyList(true);
-  }
-
 }])
 
 .factory('apiKeyEditor/notifications', ['$injector', function ($injector) {

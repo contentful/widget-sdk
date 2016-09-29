@@ -84,7 +84,6 @@ angular.module('contentful')
     name: 'content_types',
     url: '/content_types',
     abstract: true,
-    template: '<ui-view/>',
     children: [list, newState, detail]
   };
 

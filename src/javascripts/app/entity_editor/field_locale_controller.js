@@ -74,8 +74,12 @@ angular.module('contentful')
 
   // Only retuns errors that apply to this field locale
   function filterLocaleErrors (errors) {
-    return _.filter(errors, function (error) {
+    return errors.filter(function (error) {
       var path = error.path;
+
+      if (!path) {
+        return false;
+      }
 
       // If a field is required and none of field-locale pairs is provided,
       // validation library reports an error on a [fields, fid] path.

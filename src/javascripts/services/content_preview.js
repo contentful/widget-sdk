@@ -200,6 +200,10 @@ angular.module('contentful')
    * Deletes the preview environment and updates the cached `previewEnvironments`
   */
   function remove (env) {
+    if (!env) {
+      return $q.reject('No environment specified for deletion');
+    }
+
     return spaceContext.space.endpoint('preview_environments', env.id).delete()
     .then(function () {
       previewEnvironmentsCache.clearAll();

@@ -1,18 +1,19 @@
 'use strict';
 
 angular.module('cf.data')
-.factory('data/editingInterfaces/asset', ['$injector', function ($injector) {
-  var assetFields = $injector.get('AssetContentType').fields;
+
+.factory('data/editingInterfaces/asset', ['require', function (require) {
+  var assetFields = require('assetContentType').data.fields;
 
   var widgets = _.forEach([{
     fieldId: 'title',
-    widgetId: 'singleLine',
+    widgetId: 'singleLine'
   }, {
     fieldId: 'description',
-    widgetId: 'singleLine',
+    widgetId: 'singleLine'
   }, {
     fieldId: 'file',
-    widgetId: 'fileEditor',
+    widgetId: 'fileEditor'
   }], assignField);
 
   return {

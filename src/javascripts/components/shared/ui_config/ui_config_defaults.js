@@ -15,6 +15,8 @@ angular.module('contentful')
   var systemFields = $injector.get('systemFields');
   var defaultOrder = systemFields.getDefaultOrder();
 
+  var DEFAULT_FIELD_IDS = _.map(systemFields.getDefaultFields(), 'id');
+
   return {
     getEntryViews: getEntryViews,
     getAssetViews: getAssetViews,
@@ -30,7 +32,7 @@ angular.module('contentful')
           id: random.id(),
           title: 'All',
           order: defaultOrder,
-          displayedFieldIds: getDefaultFieldIds()
+          displayedFieldIds: DEFAULT_FIELD_IDS
         }]
       },
       {
@@ -85,14 +87,8 @@ angular.module('contentful')
       searchTerm: searchTerm,
       id: random.id(),
       order: defaultOrder,
-      displayedFieldIds: getDefaultFieldIds()
+      displayedFieldIds: DEFAULT_FIELD_IDS
     };
-  }
-
-  function getDefaultFieldIds () {
-    return _.reject(_.map(systemFields.getList(), 'id'), function (fieldId) {
-      return _.includes(['createdAt', 'publishedAt'], fieldId);
-    });
   }
 
   function contentTypeViews (contentTypes) {
@@ -107,7 +103,7 @@ angular.module('contentful')
       contentTypeId: contentType.getId(),
       id: random.id(),
       order: defaultOrder,
-      displayedFieldIds: getDefaultFieldIds()
+      displayedFieldIds: DEFAULT_FIELD_IDS
     };
   }
 

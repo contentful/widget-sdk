@@ -1,33 +1,35 @@
 'use strict';
 
-angular.module('contentful').factory('MarkdownEditor/tree', ['$injector', function ($injector) {
+angular.module('contentful')
 
-  var $sanitize = $injector.get('$sanitize');
+.factory('MarkdownEditor/tree', ['require', function (require) {
+
+  var $sanitize = require('$sanitize');
   var currentId = 1;
 
-  var TERMINAL_TAGS             = ['br', 'hr'];
-  var INLINE_TAGS               = ['strong', 'em', 'del'];
-  var HTML_TAGS_RE              = /<\/?[^>]+(>|$)/g;
-  var WHITESPACE_RE             = /\s+/g;
-  var NEWLINE_ENTITY_RE         = new RegExp('&#10;', 'g');
-  var EMBEDLY_CLASS_RE          = new RegExp('class="embedly-card"', 'g');
+  var TERMINAL_TAGS = ['br', 'hr'];
+  var INLINE_TAGS = ['strong', 'em', 'del'];
+  var HTML_TAGS_RE = /<\/?[^>]+(>|$)/g;
+  var WHITESPACE_RE = /\s+/g;
+  var NEWLINE_ENTITY_RE = new RegExp('&#10;', 'g');
+  var EMBEDLY_CLASS_RE = new RegExp('class="embedly-card"', 'g');
   var EMBEDLY_CLASS_REPLACEMENT = 'class="embedly-card markdown-block" data-card-controls="0"';
 
   createTreeBuilder._hash = getHashCode;
   return createTreeBuilder;
 
-  function createTreeBuilder(libs) {
-    var MarkedAst  = libs.MarkedAst;
+  function createTreeBuilder (libs) {
+    var MarkedAst = libs.MarkedAst;
     var AstBuilder = libs.MarkedAst.AstBuilder;
-    var React      = libs.React;
+    var React = libs.React;
 
-    var rootKey   = 'root/' + currentId;
+    var rootKey = 'root/' + currentId;
     var conflicts = {};
-    var words     = 0;
+    var words = 0;
 
     currentId += 1;
 
-    return function buildTree(source) {
+    return function buildTree (source) {
       var ast = MarkedAst._marked(source, {
         // use renderer with altered methods for links and images
         renderer: new AstBuilder(),
@@ -46,125 +48,123 @@ angular.module('contentful').factory('MarkdownEditor/tree', ['$injector', functi
       return result;
     };
 
-    function buildLevel(level) {
+    function buildLevel (level) {
       return _(level || [])
         .map(processItem)
         .filter(notNull)
         .value();
     }
 
-    function processItem(item, i) {
-      if ( _.isString(item))      { return createFragmentEl(item);      }
-      if (!_.isObject(item))      { return null;                        }
-      if (is(item, 'paragraph'))  { return createParagraphEl(item, i);  }
-      if (is(item, 'inline'))     { return createInlineEl(item, i);     }
-      if (is(item, 'heading'))    { return createHeadingEl(item, i);    }
-      if (is(item, 'image'))      { return createImageEl(item, i);      }
-      if (is(item, 'link'))       { return createLinkEl(item, i);       }
-      if (is(item, 'list'))       { return createListEl(item, i);       }
-      if (is(item, 'listitem'))   { return createListItemEl(item, i);   }
-      if (is(item, 'terminal'))   { return createTerminalEl(item, i);   }
-      if (is(item, 'blockquote')) { return createQuoteEl(item, i);      }
-      if (is(item, 'code'))       { return createCodeBlockEl(item, i);  }
-      if (is(item, 'codespan'))   { return createCodeSpanEl(item, i);   }
-      if (is(item, 'table'))      { return createTableEl(item, i);      }
-      if (is(item, 'tablerow'))   { return createTableRowEl(item, i);   }
-      if (is(item, 'tablecell'))  { return createTableCellEl(item, i);  }
-      if (is(item, 'html'))       { return createHtmlEl(item, i);       }
-                                    return null;
+    function processItem (item, i) {
+      if (_.isString(item)) { return createFragmentEl(item); }
+      if (!_.isObject(item)) { return null; }
+      if (is(item, 'paragraph')) { return createParagraphEl(item, i); }
+      if (is(item, 'inline')) { return createInlineEl(item, i); }
+      if (is(item, 'heading')) { return createHeadingEl(item, i); }
+      if (is(item, 'image')) { return createImageEl(item, i); }
+      if (is(item, 'link')) { return createLinkEl(item, i); }
+      if (is(item, 'list')) { return createListEl(item, i); }
+      if (is(item, 'listitem')) { return createListItemEl(item, i); }
+      if (is(item, 'terminal')) { return createTerminalEl(item, i); }
+      if (is(item, 'blockquote')) { return createQuoteEl(item, i); }
+      if (is(item, 'code')) { return createCodeBlockEl(item, i); }
+      if (is(item, 'codespan')) { return createCodeSpanEl(item, i); }
+      if (is(item, 'table')) { return createTableEl(item, i); }
+      if (is(item, 'tablerow')) { return createTableRowEl(item, i); }
+      if (is(item, 'tablecell')) { return createTableCellEl(item, i); }
+      if (is(item, 'html')) { return createHtmlEl(item, i); }
+      return null;
     }
 
     /**
      * Creating elements for AST parts
      */
 
-    function createRootEl(ast) {
+    function createRootEl (ast) {
       return createReactEl('div', { key: rootKey }, buildLevel(ast));
     }
 
-    function createFragmentEl(item) {
+    function createFragmentEl (item) {
       return createLeafEl('div', item, { className: 'markdown-fragment' });
     }
 
-    function createParagraphEl(item, key) {
+    function createParagraphEl (item, key) {
       var props = { key: key, className: 'markdown-paragraph markdown-block' };
       return createParentEl('div', props, item.text);
     }
 
-    function createInlineEl(item, key) {
+    function createInlineEl (item, key) {
       var props = { key: key, className: 'markdown-fragment' };
       return createParentEl(item.type, props, item.text);
     }
 
-    function createHeadingEl(item, key) {
+    function createHeadingEl (item, key) {
       var headingType = 'h' + item.level;
-      var props       = { key: key, className: 'markdown-heading markdown-block' };
+      var props = { key: key, className: 'markdown-heading markdown-block' };
       return createParentEl(headingType, props, item.text);
     }
 
-    function createListEl(item, key) {
+    function createListEl (item, key) {
       var listType = item.ordered ? 'ol' : 'ul';
-      var props    = { key: key, className: 'markdown-list markdown-block' };
+      var props = { key: key, className: 'markdown-list markdown-block' };
       return createParentEl(listType, props, item.body);
     }
 
-    function createListItemEl(item, key) {
+    function createListItemEl (item, key) {
       return createParentEl('li', { key: key }, item.text);
     }
 
-    function createImageEl(item, key) {
-      var href  = _.isString(item.href) ? (item.href + '?h=200') : null;
+    function createImageEl (item, key) {
+      var href = _.isString(item.href) ? (item.href + '?h=200') : null;
       var imgEl = createReactEl('img', { src: href, title: item.title, alt: item.text });
       var props = { key: key, className: 'markdown-image-placeholder markdown-block' };
       return createReactEl('div', props, imgEl);
     }
 
-    function createLinkEl(item, key) {
-      /*jshint scripturl:true*/
-      var isSafe  = _.isString(item.href) && item.href.substr(0, 11) !== 'javascript:';
-      var props   = { key: key, href: isSafe ? item.href : null, title: item.title, target: '_blank' };
+    function createLinkEl (item, key) {
+      var props = { key: key, href: getSafeHref(item), title: item.title, target: '_blank' };
       return createParentEl('a', props, item.text);
     }
 
-    function createTerminalEl(item, key) {
+    function createTerminalEl (item, key) {
       return createReactEl(item.type, { key: key });
     }
 
-    function createQuoteEl(item, key) {
+    function createQuoteEl (item, key) {
       var props = { key: key, className: 'markdown-quote markdown-block' };
       return createParentEl('blockquote', props, item.quote);
     }
 
-    function createCodeBlockEl(item, key) {
+    function createCodeBlockEl (item, key) {
       var codeEl = createReactEl('code', null, item.code);
-      var props  = { key: key, className: 'markdown-code markdown-block' };
+      var props = { key: key, className: 'markdown-code markdown-block' };
       return createReactEl('pre', props, codeEl);
     }
 
-    function createCodeSpanEl(item, key) {
+    function createCodeSpanEl (item, key) {
       var props = { key: key, className: 'markdown-fragment' };
       return createParentEl('code', props, item.text);
     }
 
-    function createTableEl(item, key) {
+    function createTableEl (item, key) {
       var headerEl = createReactEl('thead', { key: 'table/head/' + key }, buildLevel(item.header));
-      var bodyEl   = createReactEl('tbody', { key: 'table/body/' + key }, buildLevel(item.body));
-      var props    = { key: key, className: 'markdown-table markdown-block' };
+      var bodyEl = createReactEl('tbody', { key: 'table/body/' + key }, buildLevel(item.body));
+      var props = { key: key, className: 'markdown-table markdown-block' };
       return createReactEl('table', props, [headerEl, bodyEl]);
     }
 
-    function createTableCellEl(item, key) {
+    function createTableCellEl (item, key) {
       var cellType = item.flags.header ? 'th' : 'td';
       return createParentEl(cellType, { key: key }, item.content);
     }
 
-    function createTableRowEl(item, key) {
+    function createTableRowEl (item, key) {
       return createParentEl('tr', { key: key }, item.content);
     }
 
-    function createHtmlEl(item, key) {
+    function createHtmlEl (item, key) {
       var props = { key: key, className: 'markdown-html markdown-block' };
-      var html  = _.reduce(item.html, accStrings, '');
+      var html = _.reduce(item.html, accStrings, '');
       return createLeafEl('div', html, props);
     }
 
@@ -172,11 +172,11 @@ angular.module('contentful').factory('MarkdownEditor/tree', ['$injector', functi
      * Low-level React DOM functions
      */
 
-    function createLeafEl(tag, html, props) {
+    function createLeafEl (tag, html, props) {
       var isClean = html.indexOf('<') < 0;
 
-      if (!isClean    ) { html = sanitize(html); }
-      if (!html.length) { return null;           }
+      if (!isClean) { html = sanitize(html); }
+      if (!html.length) { return null; }
 
       words += countWords(html, isClean);
       props = _.extend(props || {}, {
@@ -187,7 +187,7 @@ angular.module('contentful').factory('MarkdownEditor/tree', ['$injector', functi
       return createReactEl(tag, props);
     }
 
-    function createParentEl(tag, props, children) {
+    function createParentEl (tag, props, children) {
       children = prepareChildren(children);
       children = mergeTextNodes(children);
 
@@ -198,13 +198,13 @@ angular.module('contentful').factory('MarkdownEditor/tree', ['$injector', functi
       }
     }
 
-    function createReactEl(tag, props, children) {
+    function createReactEl (tag, props, children) {
       var args = [tag, props].concat(prepareChildren(children));
       return React.createElement.apply(React, args);
     }
 
     // using string hashing to get unique keys for React
-    function getKey(str, tag) {
+    function getKey (str, tag) {
       var hash = getHashCode(str);
       var conflictCount = conflicts[hash];
       var key = 'html/' + tag + '/' + hash;
@@ -224,22 +224,22 @@ angular.module('contentful').factory('MarkdownEditor/tree', ['$injector', functi
    * Context-free utilities
    */
 
-  function is(item, type) {
+  function is (item, type) {
     return (
       (item.type === type) ||
       (type === 'terminal' && TERMINAL_TAGS.indexOf(item.type) > -1) ||
-      (type === 'inline'   && INLINE_TAGS.indexOf(item.type)   > -1)
+      (type === 'inline' && INLINE_TAGS.indexOf(item.type) > -1)
     );
   }
 
-  function prepareChildren(nodes) {
+  function prepareChildren (nodes) {
     nodes = nodes || [];
     nodes = _.isArray(nodes) ? nodes : [nodes];
 
     return nodes;
   }
 
-  function sanitize(html) {
+  function sanitize (html) {
     html = $sanitize(html);
     html = html.replace(NEWLINE_ENTITY_RE, '\n');
     html = html.replace(EMBEDLY_CLASS_RE, EMBEDLY_CLASS_REPLACEMENT);
@@ -247,7 +247,18 @@ angular.module('contentful').factory('MarkdownEditor/tree', ['$injector', functi
     return html;
   }
 
-  function countWords(html, isClean) {
+  function getSafeHref (item) {
+    var notJs = item.href.substr(0, 11) !== 'javascript:';
+    var notHtml = item.href.substr(0, 9) !== 'data:html';
+
+    if (_.isString(item.href) && notJs && notHtml) {
+      return item.href;
+    } else {
+      return null;
+    }
+  }
+
+  function countWords (html, isClean) {
     var clean = isClean ? html : html.replace(HTML_TAGS_RE, '');
     clean = _.isString(clean) ? clean : '';
     var words = clean.replace(WHITESPACE_RE, ' ').split(' ');
@@ -255,7 +266,7 @@ angular.module('contentful').factory('MarkdownEditor/tree', ['$injector', functi
     return _.filter(words, notEmpty).length;
   }
 
-  function mergeTextNodes(nodes) {
+  function mergeTextNodes (nodes) {
     var merged = [];
     var i, node, last;
 
@@ -266,11 +277,9 @@ angular.module('contentful').factory('MarkdownEditor/tree', ['$injector', functi
 
       if (!_.isString(node)) {
         merged.push(node);
-      }
-      else if (merged.length < 1 || !_.isString(merged[last])) {
+      } else if (merged.length < 1 || !_.isString(merged[last])) {
         merged.push(node);
-      }
-      else if (_.isString(merged[last]) && _.isString(node)) {
+      } else if (_.isString(merged[last]) && _.isString(node)) {
         merged[last] += node;
       }
     }
@@ -279,13 +288,21 @@ angular.module('contentful').factory('MarkdownEditor/tree', ['$injector', functi
   }
 
   // DJB2 hashing algorithm
-  function getHashCode(str) {
+  function getHashCode (str) {
     return _.reduce(str.split(''), function (a, b) {
       return ((a << 5) + a) + b.charCodeAt(0);
     }, 5381);
   }
 
-  function notNull(x)         { return !_.isNull(x);                    }
-  function notEmpty(x)        { return x.length > 0;                    }
-  function accStrings(acc, x) { return _.isString(x) ? (acc + x) : acc; }
+  function notNull (x) {
+    return !_.isNull(x);
+  }
+
+  function notEmpty (x) {
+    return x.length > 0;
+  }
+
+  function accStrings (acc, x) {
+    return _.isString(x) ? (acc + x) : acc;
+  }
 }]);

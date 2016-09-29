@@ -68,6 +68,7 @@ function ($delegate, mock) {
       logSharejsError: sinon.stub(),
       logSharejsWarn: sinon.stub(),
       logWarn: sinon.stub(),
+      leaveBreadcrumb: sinon.stub(),
       log: sinon.stub()
     };
   });

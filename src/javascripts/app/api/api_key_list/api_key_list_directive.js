@@ -52,7 +52,7 @@ function ApiKeyListController ($scope, $injector) {
     }
   );
 
-  $scope.apiKeyController.getApiKeyList()
+  spaceContext.apiKeys.getDeliveryKeys()
   .then(function (apiKeys) {
     $scope.apiKeys = apiKeys;
     $scope.empty = _.isEmpty(apiKeys);

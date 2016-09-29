@@ -13,8 +13,7 @@ angular.module('contentful').controller('GettyDialogController', ['$scope', '$in
 
   var entryLoader = new PromisedLoader();
 
-  $scope.paginator = new Paginator();
-  $scope.paginator.pageLength = IMAGES_PER_PAGE;
+  $scope.paginator = Paginator.create(IMAGES_PER_PAGE);
 
   function makeFileNameRe() {
     return (/\/([\d|\w|-]*.(\w{3}))\?/g);
@@ -133,7 +132,7 @@ angular.module('contentful').controller('GettyDialogController', ['$scope', '$in
     $scope.gettyLoading = false;
     var itemCount = getItemCount(res);
     if(!itemCount) return;
-    $scope.paginator.numEntries = itemCount;
+    $scope.paginator.setTotal(itemCount);
     $scope.hasBlendedSortOrder = !!getPath(res, 'data.result.BlendedSortOrder');
     $scope.currentSortOrder = getPath(res, 'data.result.CreativeSortOrder') || getPath(res, 'data.result.EditorialSortOrder');
     $scope.imageResults = prepareImageObjects(parseImagesResult(res));
@@ -211,26 +210,26 @@ angular.module('contentful').controller('GettyDialogController', ['$scope', '$in
   }
 
   $scope.loadMore = function() {
-    if ($scope.paginator.atLast() ||
+    if ($scope.paginator.isAtLast() ||
         !$scope.imageResults ||
         $scope.imageResults.length === 0
        ) return;
     resetErrors();
-    $scope.paginator.page++;
+    $scope.paginator.next();
     entryLoader.loadPromise(
-      searchForImages, $scope.getty, $scope.paginator.skipItems()
+      searchForImages, $scope.getty, $scope.paginator.getSkipParam()
     )
     .then(function (res) {
       var itemCount = getItemCount(res);
       if(!itemCount) return;
-      $scope.paginator.numEntries = itemCount;
+      $scope.paginator.setTotal(itemCount);
       var images = _.difference(
         prepareImageObjects(parseImagesResult(res)),
         $scope.imageResults
       );
       $scope.imageResults.push.apply($scope.imageResults, images);
     }, function () {
-      $scope.paginator.page--;
+      $scope.paginator.prev();
     });
   };
 

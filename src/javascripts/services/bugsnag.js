@@ -57,6 +57,28 @@ angular.module('contentful')
 
     refresh: function () {
       if (bugsnag) bugsnag.refresh();
+    },
+
+    /**
+     * @ngdoc method
+     * @name bugsnag#leaveBreadcrumb
+     * @description
+     * Records an event.
+     *
+     * The event trail is shown on bugsnag when an error occured.
+     *
+     * Note that the data object should only be one level deep and the
+     * object’s values are limited to 140 characters each.
+     *
+     * https://docs.bugsnag.com/platforms/browsers/#leaving-breadcrumbs
+     *
+     * @param {string} name
+     * @param {object} data
+     */
+    leaveBreadcrumb: function (name, data) {
+      callBuffer.call(function () {
+        if (bugsnag) bugsnag.leaveBreadcrumb(name, data);
+      });
     }
   };
 
