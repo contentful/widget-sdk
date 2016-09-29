@@ -9,7 +9,7 @@ angular.module('cf.app')
   var snapshotsById = {};
 
   $scope.isLoading = false;
-  $scope.paginator = new Paginator();
+  $scope.paginator = Paginator.create();
   $scope.loadMore = loadMore;
 
   resetAndLoad();
@@ -17,20 +17,20 @@ angular.module('cf.app')
   function resetAndLoad () {
     snapshotsById = {};
     $scope.snapshots = [];
-    $scope.paginator.numEntries = 0;
-    $scope.paginator.page = 0;
+    $scope.paginator.setTotal(0);
+    $scope.paginator.setPage(0);
     return load();
   }
 
   function loadMore () {
-    if (!$scope.isLoading && !$scope.paginator.atLast()) {
-      $scope.paginator.page += 1;
+    if (!$scope.isLoading && !$scope.paginator.isAtLast()) {
+      $scope.paginator.next();
       load();
     }
   }
 
   function load () {
-    var query = _.extend({page: $scope.paginator.page}, $scope.query);
+    var query = _.extend({page: $scope.paginator.getPage()}, $scope.query);
     $scope.isLoading = true;
     return snapshotRepo.getList(query)
     .then(addUniqueAndSort)
@@ -40,7 +40,7 @@ angular.module('cf.app')
   }
 
   function addUniqueAndSort (snapshots) {
-    $scope.paginator.numEntries = snapshots.total;
+    $scope.paginator.setTotal(snapshots.total);
 
     snapshots.filter(function (snapshot) {
       return !snapshotsById[snapshot.sys.id];
