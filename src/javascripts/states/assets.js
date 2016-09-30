@@ -15,7 +15,7 @@ angular.module('contentful')
   var loadEditorData = require('app/entity_editor/DataLoader').loadAsset;
 
   var listEntity = {
-    getTitle: function () { return list.label; },
+    getTitle: _.constant('Media'),
     link: { state: 'spaces.detail.assets.list' },
     getType: _.constant('Assets'),
     getId: _.constant('ASSETS')
@@ -24,7 +24,6 @@ angular.module('contentful')
   var list = base({
     name: 'list',
     url: '',
-    label: 'Media',
     loadingText: 'Loading media...',
     controller: [function () {
       contextHistory.addEntity(listEntity);
@@ -36,7 +35,6 @@ angular.module('contentful')
     name: 'detail',
     url: '/:assetId',
     params: { addToContext: true },
-    label: 'Asset details',
     resolve: {
       editorData: ['$stateParams', 'spaceContext', function ($stateParams, spaceContext) {
         return loadEditorData(spaceContext, $stateParams.assetId);

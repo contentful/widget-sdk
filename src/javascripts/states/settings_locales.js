@@ -11,7 +11,7 @@ angular.module('contentful')
   var contextHistory = require('contextHistory');
 
   var listEntity = {
-    getTitle: function () { return list.label; },
+    getTitle: _.constant('Locales'),
     link: { state: 'spaces.detail.settings.locales.list' },
     getType: _.constant('Locales'),
     getId: _.constant('LOCALES')
@@ -20,8 +20,7 @@ angular.module('contentful')
   var list = base({
     name: 'list',
     url: '',
-    label: 'Locales',
-    loadingText: 'Loading locales...',
+    loadingText: 'Loading Locales...',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
       contextHistory.addEntity(listEntity);
@@ -30,20 +29,14 @@ angular.module('contentful')
   });
 
   function makeLocaleEditorState (isNew) {
-    var localeEditorState = {
-      template: '<cf-locale-editor class="workbench">',
-      label: 'context.title + (context.dirty ? "*" : "")',
+    return {
+      template: '<cf-locale-editor class="workbench" />',
       params: { addToContext: true },
       controller: [
-        '$scope', 'require', '$stateParams', 'locale', 'spaceLocales',
-        function ($scope, require, $stateParams, locale, spaceLocales) {
+        '$scope', 'require', 'locale', 'spaceLocales',
+        function ($scope, require, locale, spaceLocales) {
           var $state = require('$state');
-
-          var localeId = $stateParams.localeId;
-
-          var id = isNew ? 'LOCALENEW' : localeId;
-          var stateFragment = isNew ? 'new' : 'detail';
-          var params = isNew ? undefined : { localeId: localeId };
+          var $stateParams = require('$stateParams');
 
           $scope.context = $state.current.data;
           $scope.locale = locale;
@@ -53,20 +46,29 @@ angular.module('contentful')
           contextHistory.addEntity(listEntity);
 
           // add current state
-          contextHistory.addEntity({
-            getTitle: function () { return $scope.context.title + ($scope.context.dirty ? '*' : ''); },
-            link: {
-              state: 'spaces.detail.settings.locales.' + stateFragment,
-              params: params
-            },
-            getType: _.constant('Locale'),
-            getId: _.constant(id)
-          });
+          var crumb = createLocaleCrumb($scope.context, $stateParams.localeId, isNew);
+          contextHistory.addEntity(crumb);
         }
       ]
     };
+  }
 
-    return localeEditorState;
+  function createLocaleCrumb (context, localeId, isNew) {
+    var id = isNew ? 'LOCALENEW' : localeId;
+    var stateFragment = isNew ? 'new' : 'detail';
+    var params = isNew ? undefined : { localeId: localeId };
+
+    return {
+      getTitle: function () {
+        return context.title + (context.dirty ? '*' : '');
+      },
+      link: {
+        state: 'spaces.detail.settings.locales.' + stateFragment,
+        params: params
+      },
+      getType: _.constant('Locale'),
+      getId: _.constant(id)
+    };
   }
 
   var resolveSpaceLocales = ['space', function (space) {

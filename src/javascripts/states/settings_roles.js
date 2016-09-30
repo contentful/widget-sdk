@@ -11,7 +11,7 @@ angular.module('contentful')
   var contextHistory = require('contextHistory');
 
   var listEntity = {
-    getTitle: function () { return list.label; },
+    getTitle: _.constant('Roles'),
     link: { state: 'spaces.detail.settings.roles.list' },
     getType: _.constant('Roles'),
     getId: _.constant('ROLES')
@@ -20,7 +20,6 @@ angular.module('contentful')
   var list = base({
     name: 'list',
     url: '',
-    label: 'Roles',
     loadingText: 'Loading roles...',
     template: '<cf-role-list class="workbench role-list" />',
     controller: ['$scope', function ($scope) {
@@ -39,7 +38,6 @@ angular.module('contentful')
     data: {
       isNew: true
     },
-    label: 'context.title + (context.dirty ? "*" : "")',
     resolve: {
       baseRole: ['RoleRepository', 'space', '$stateParams', '$q', function (RoleRepository, space, $stateParams, $q) {
         if (!$stateParams.baseRoleId) { return $q.when(null); }
@@ -60,7 +58,9 @@ angular.module('contentful')
 
       // add current view
       contextHistory.addEntity({
-        getTitle: function () { return $scope.context.title + ($scope.context.dirty ? '*' : ''); },
+        getTitle: function () {
+          return $scope.context.title + ($scope.context.dirty ? '*' : '');
+        },
         link: {
           state: 'spaces.detail.settings.roles.new'
         },
@@ -77,7 +77,6 @@ angular.module('contentful')
     data: {
       isNew: false
     },
-    label: 'context.title + (context.dirty ? "*" : "")',
     resolve: {
       role: ['RoleRepository', 'space', '$stateParams', function (RoleRepository, space, $stateParams) {
         return RoleRepository.getInstance(space).get($stateParams.roleId);
@@ -101,7 +100,9 @@ angular.module('contentful')
 
       // add current view
       contextHistory.addEntity({
-        getTitle: function () { return $scope.context.title + ($scope.context.dirty ? '*' : ''); },
+        getTitle: function () {
+          return $scope.context.title + ($scope.context.dirty ? '*' : '');
+        },
         link: {
           state: 'spaces.detail.settings.roles.detail',
           params: { roleId: roleId }

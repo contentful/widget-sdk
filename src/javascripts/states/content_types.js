@@ -13,7 +13,7 @@ angular.module('contentful')
   var resolvers = require('states/resolvers');
 
   var listEntity = {
-    getTitle: function () { return list.label; },
+    getTitle: _.constant('Content model'),
     link: { state: 'spaces.detail.content_types.list' },
     getType: _.constant('ContentTypes'),
     getId: _.constant('CONTENTTYPES')
@@ -22,7 +22,6 @@ angular.module('contentful')
   var list = base({
     name: 'list',
     url: '',
-    label: 'Content model',
     loadingText: 'Loading content model...',
     controller: ['$scope', function ($scope) {
       contextHistory.addEntity(listEntity);
@@ -112,9 +111,7 @@ angular.module('contentful')
   };
 
   function editorBase (options) {
-    var label = options.data.isNew ? 'New Content Model' : 'Content Model Details';
-    var state = _.extend({
-      label: label,
+    return _.extend({
       params: { addToContext: true },
       abstract: true,
       controller: [
@@ -160,8 +157,6 @@ angular.module('contentful')
         'cf-ui-tab'
       ].join(' ') + '></div>'
     }, options);
-
-    return state;
   }
 
 }]);

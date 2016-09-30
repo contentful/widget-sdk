@@ -11,7 +11,7 @@ angular.module('contentful')
   var contextHistory = require('contextHistory');
 
   var listEntity = {
-    getTitle: function () { return list.label; },
+    getTitle: _.constant('Content Preview'),
     link: { state: 'spaces.detail.settings.content_preview.list' },
     getType: _.constant('PreviewEnvironments'),
     getId: _.constant('PREVIEWENVIRONMENTS')
@@ -20,7 +20,6 @@ angular.module('contentful')
   var list = base({
     name: 'list',
     url: '',
-    label: 'Content Preview',
     loadingText: 'Loading content preview...',
     template: '<cf-content-preview-list class="workbench entity-list" />',
     controller: ['$scope', 'require', function ($scope, require) {
@@ -39,7 +38,6 @@ angular.module('contentful')
   function editorBase (options) {
     var contentPreviewEditorState = base({
       template: '<cf-content-preview-editor class="workbench">',
-      label: 'context.title + (context.dirty ? "*" : "")',
       params: { addToContext: true },
       loadingText: 'Loading content preview...',
       controller: ['require', '$scope', 'contentPreview', function (require, $scope, contentPreview) {
@@ -62,7 +60,9 @@ angular.module('contentful')
 
         // add current view as child
         contextHistory.addEntity({
-          getTitle: function () { return $scope.$eval(contentPreviewEditorState.label); },
+          getTitle: function () {
+            return $scope.context.title + ($scope.context.dirty ? '*' : '');
+          },
           link: {
             state: state,
             params: params
