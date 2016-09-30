@@ -50,8 +50,7 @@ angular.module('contentful', [
   'ngAnimate',
   'ngSanitize',
   'ui.sortable',
-  'ui.router',
-  'ncy-angular-breadcrumb'
+  'ui.router'
 ]);
 
 /**

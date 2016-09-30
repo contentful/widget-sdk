@@ -55,9 +55,6 @@
     "angular-animate": {
       "version": "1.5.7"
     },
-    "angular-breadcrumb": {
-      "version": "0.4.0"
-    },
     "angular-load": {
       "version": "0.2.0"
     },
