@@ -30,7 +30,7 @@ angular.module('contentful')
 
       var debouncedPerformDuplicityCheck = debounce(performDuplicityCheck, 500);
 
-      var detachOnFieldDisabledHandler = field.onDisabledStatusChanged(function (disabledStatus) {
+      var detachOnFieldDisabledHandler = field.onIsDisabledChanged(function (disabledStatus) {
         scope.isDisabled = disabledStatus;
       });
 

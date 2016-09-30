@@ -15,7 +15,7 @@ angular.module('cf.app')
       var searchResultsMenu = $el.find('[data-search-results]');
       var mapSlotElement = $el.find('[data-map-slot]').get(0);
 
-      var offDisabledStatusChanged = field.onDisabledStatusChanged(function (disabled) {
+      var offDisabledStatusChanged = field.onIsDisabledChanged(function (disabled) {
         $scope.isDisabled = disabled;
       });
 

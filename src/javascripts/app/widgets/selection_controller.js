@@ -33,7 +33,7 @@ angular.module('contentful')
       scope.data.selected = value;
     });
 
-    var removeDisabledStatusListener = field.onDisabledStatusChanged(function (disabled) {
+    var removeDisabledStatusListener = field.onIsDisabledChanged(function (disabled) {
       scope.isDisabled = disabled;
     });
 

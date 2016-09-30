@@ -5,13 +5,10 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
   var systemFields = $injector.get('systemFields');
   var spaceContext = $injector.get('spaceContext');
   var buildQuery = $injector.get('search/queryBuilder');
-  var TheLocaleStore = $injector.get('TheLocaleStore');
-  var searchQueryHelper = $injector.get('searchQueryHelper');
+  var assetContentType = $injector.get('assetContentType');
 
-  var ORDER_PREFIXES = {
-    descending: '-',
-    ascending: ''
-  };
+  var DEFAULT_ORDER = systemFields.getDefaultOrder();
+  var DEFAULT_ORDER_PATH = ['sys', DEFAULT_ORDER.fieldId];
 
   return {
     getForEntries: function (opts) {
@@ -25,15 +22,15 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
       }
     },
     getForAssets: function (opts) {
-      return prepareEntityListQuery(searchQueryHelper.assetContentType, opts);
+      return prepareEntityListQuery(assetContentType, opts);
     }
   };
 
   function prepareEntityListQuery (contentType, opts) {
     var queryObject = {
       order: getOrderQuery(opts.order, contentType),
-      limit: opts.paginator.pageLength,
-      skip: opts.paginator.skipItems()
+      limit: opts.paginator.getPerPage(),
+      skip: opts.paginator.getSkipParam()
     };
 
     return buildQuery(spaceContext.space, contentType, opts.searchTerm)
@@ -43,31 +40,60 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
   }
 
   function getOrderQuery (order, contentType) {
-    return ORDER_PREFIXES[order.direction] + getFieldPath(order.fieldId, contentType);
+    order = prepareOrderObject(order);
+    var prefix = order.direction === 'descending' ? '-' : '';
+
+    return prefix + getOrderPath(order, contentType).join('.');
   }
 
-  function getFieldPath (fieldId, contentType) {
-    // Usually we use a system field for ordering
-    if (findFieldById(fieldId)) { return 'sys.' + fieldId; }
+  function prepareOrderObject (order) {
+    order = _.clone(order) || {};
+    order.direction = order.direction || DEFAULT_ORDER.direction;
 
-    var field = findFieldById(fieldId, contentType && contentType.data.fields);
-
-    // In case the custom field saved in the view does not exist anymore
-    if (!field) {
-      return 'sys.' + systemFields.getDefaultOrder().fieldId;
+    if (!order.fieldId) {
+      order.fieldId = DEFAULT_ORDER.fieldId;
+      order.sys = DEFAULT_ORDER.sys;
     }
 
-    // If the user has defined a custom field for ordering
-    var defaultLocale = TheLocaleStore.getDefaultLocale().internal_code;
-    return 'fields.' + apiNameOrId(field) + '.' + defaultLocale;
+    return order;
   }
 
-  function findFieldById (id, fields) {
-    return _.find(fields || systemFields.getList(), { id: id });
+  function getOrderPath (order, contentType) {
+    if (!_.includes([true, false], order.sys)) {
+      return guessOrderPath(order, contentType);
+    }
+
+    if (order.sys) {
+      return isSystemField(order.fieldId) ? ['sys', order.fieldId] : DEFAULT_ORDER_PATH;
+    } else {
+      var ctField = getCtField(order.fieldId, contentType);
+      return ctField ? ['fields', ctField.apiName || ctField.id] : DEFAULT_ORDER_PATH;
+    }
   }
 
-  function apiNameOrId (field) {
-    return field.apiName || field.id;
+  // handling stored list order w/o distinction
+  // between sys.% and fields.% paths
+  function guessOrderPath (order, contentType) {
+    // check system fields first:
+    if (isSystemField(order.fieldId)) {
+      return ['sys', order.fieldId];
+    }
+
+    // and CT fields afterwards:
+    var ctField = getCtField(order.fieldId, contentType);
+    if (ctField) {
+      return ['fields', ctField.apiName || ctField.id];
+    }
+
+    return DEFAULT_ORDER_PATH;
   }
 
+  function isSystemField (id) {
+    return !!_.find(systemFields.getList(), {id: id});
+  }
+
+  function getCtField (id, ct) {
+    var ctFields = dotty.get(ct, 'data.fields', []);
+    return _.find(ctFields, {id: id});
+  }
 }]);

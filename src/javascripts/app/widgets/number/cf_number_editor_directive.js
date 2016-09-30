@@ -21,7 +21,7 @@ angular.module('contentful')
         updateInput(val === 0 ? String(val) : (val ? String(val) : ''));
       });
       // call handler when the disabled status of the field changes
-      var detachOnFieldDisabledHandler = field.onDisabledStatusChanged(updateDisabledStatus);
+      var detachOnFieldDisabledHandler = field.onIsDisabledChanged(updateDisabledStatus);
 
       var offSchemaErrorsChanged = field.onSchemaErrorsChanged(function (errors) {
         scope.hasErrors = errors && errors.length > 0;

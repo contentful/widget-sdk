@@ -80,7 +80,7 @@ angular.module('cf.app')
       });
     });
 
-    var offDisabledChange = field.onDisabledStatusChanged(function (isDisabled) {
+    var offDisabledChange = field.onIsDisabledChanged(function (isDisabled) {
       $scope.isDisabled = isDisabled;
     });
 

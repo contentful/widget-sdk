@@ -74,8 +74,12 @@ angular.module('contentful')
 
   // Only retuns errors that apply to this field locale
   function filterLocaleErrors (errors) {
-    return _.filter(errors, function (error) {
+    return errors.filter(function (error) {
       var path = error.path;
+
+      if (!path) {
+        return false;
+      }
 
       // If a field is required and none of field-locale pairs is provided,
       // validation library reports an error on a [fields, fid] path.
@@ -207,19 +211,31 @@ angular.module('contentful')
    *
    * Implies `access.disabled === true`.
    */
-  controller.access = DISCONNECTED;
+  var accessBus = K.createPropertyBus(DISCONNECTED, $scope);
   $scope.$watchGroup(['otDoc.state.editable', hasEditingPermission], function (access) {
     var docOpen = access[0];
     var editingAllowed = access[1];
     if (field.disabled) {
-      controller.access = EDITING_DISABLED;
+      accessBus.set(EDITING_DISABLED);
     } else if (!editingAllowed) {
-      controller.access = DENIED;
+      accessBus.set(DENIED);
     } else if (docOpen) {
-      controller.access = EDITABLE;
+      accessBus.set(EDITABLE);
     } else {
-      controller.access = DISCONNECTED;
+      accessBus.set(DISCONNECTED);
     }
+  });
+
+  /**
+   * @ngdoc property
+   * @name FieldLocaleController#access$
+   * @type {Property<Access>}
+   * @description
+   * A property the holds the same value as FieldLocaleController#access
+   */
+  controller.access$ = accessBus.property;
+  K.onValueScope($scope, controller.access$, function (access) {
+    controller.access = access;
   });
 
   function hasEditingPermission () {

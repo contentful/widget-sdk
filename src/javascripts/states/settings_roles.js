@@ -116,7 +116,6 @@ angular.module('contentful')
     name: 'roles',
     url: '/roles',
     abstract: true,
-    template: '<ui-view />',
     children: [newRole, detail, list]
   };
 }]);

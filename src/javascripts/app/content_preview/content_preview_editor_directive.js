@@ -22,6 +22,8 @@ function ($scope, require) {
   var contentPreview = require('contentPreview');
   var notification = require('notification');
   var logger = require('logger');
+  var slugUtils = require('slug');
+  var analytics = require('analytics');
 
   // Fetch content types and preview environment
   var getPreviewEnvironment = contentPreview.get($stateParams.contentPreviewId);
@@ -48,9 +50,12 @@ function ($scope, require) {
   });
 
   $scope.remove = Command.create(remove, {
-    disabled: function () { return $scope.save.inProgress(); },
-    available: function () { return !$scope.context.isNew; }
+    disabled: function () { return $scope.save.inProgress(); }
   });
+
+  $scope.slugify = function (text) {
+    return slugUtils.slugify(text, 'en-US');
+  };
 
   function validate () {
     $scope.invalidFields = null;
@@ -159,6 +164,23 @@ function ($scope, require) {
           {contentPreviewId: env.sys.id}, {reload: true}
         );
       }
+      if ($scope.context.isNew) {
+        // TODO: extract into a separate content preview analytics service
+        analytics.track('content-preview', {
+          action: 'create',
+          name: env.name,
+          id: env.sys.id,
+          isDiscoveryApp: false
+        });
+      } else {
+        // TODO: extract into a separate content preview analytics service
+        analytics.track('content-preview', {
+          action: 'edit',
+          name: env.name,
+          id: env.sys.id
+        });
+      }
+
     }, function (err) {
       var defaultMessage = 'Could not save Preview Environment';
       var serverMessage = _.first(_.split(_.get(err, 'body.message'), '\n'));
@@ -171,6 +193,10 @@ function ($scope, require) {
     .then(function () {
       notification.info('Content preview was deleted successfully');
       $scope.context.dirty = false;
+      // TODO: extract into a separate content preview analytics service
+      analytics.track('content-preview', {
+        action: 'delete'
+      });
       return $state.go('spaces.detail.settings.content_preview.list');
     }, function () {
       notification.warn('An error occurred');

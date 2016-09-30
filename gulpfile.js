@@ -97,9 +97,8 @@ var src = {
     'vendor/fonts.com/*.+(woff|woff2)'
   ],
   vendorStylesheets: assertFilesExist([
+    './vendor/ui-extensions-sdk/dist/cf-extension.css',
     './vendor/font-awesome/font-awesome.css',
-    // Required by gatekeeper
-    './vendor/formtastic.css',
     // Not sure if we need this
     './vendor/html5reset-1.6.1.css',
     // Custom jQuery UI build: see the file for version and contents

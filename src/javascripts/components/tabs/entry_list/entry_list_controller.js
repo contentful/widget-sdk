@@ -20,7 +20,7 @@ angular.module('contentful')
   $controller('EntryListViewsController', {$scope: $scope});
   $scope.entityStatus = entityStatus;
 
-  $scope.paginator = new Paginator();
+  $scope.paginator = Paginator.create();
   $scope.selection = createSelection();
 
   $scope.shouldHide = accessChecker.shouldHide;

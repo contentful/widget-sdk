@@ -139,7 +139,10 @@ angular.module('cf.utils')
       cb(value);
       scope.$applyAsync();
     });
-    scope.$on('$destroy', off);
+    scope.$on('$destroy', function () {
+      off();
+      stream = cb = null;
+    });
     return off;
   }
 
@@ -161,7 +164,10 @@ angular.module('cf.utils')
     stream.onValue(cb);
 
     return function off () {
-      stream.offValue(cb);
+      if (stream) {
+        stream.offValue(cb);
+        stream = cb = null;
+      }
     };
   }
 

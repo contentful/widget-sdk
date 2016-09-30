@@ -35,6 +35,7 @@ angular.module('contentful')
   var ShareJSConnection = $injector.get('data/ShareJS/Connection');
   var Subscription = $injector.get('Subscription');
   var previewEnvironmentsCache = $injector.get('data/previewEnvironmentsCache');
+  var apiKeysCache = $injector.get('data/apiKeysCache');
 
   var requestContentTypes = createQueue(function (extraHandler) {
     return spaceContext.space.getContentTypes({order: 'name', limit: 1000})
@@ -102,6 +103,7 @@ angular.module('contentful')
       self.space = space;
       self.cma = new ApiClient(endpoint);
       self.users = createUserCache(space);
+      self.apiKeys = apiKeysCache.create(space);
       self.editingInterfaces = createEIRepo(endpoint);
       var organization = self.getData('organization') || null;
       self.subscription =

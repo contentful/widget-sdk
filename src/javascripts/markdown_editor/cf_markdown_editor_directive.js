@@ -62,7 +62,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         editor.events.onChange(throttle(handleEditorChange, 200, {leading: false}));
 
         var detachValueHandler = field.onValueChanged(handleFieldChange);
-        var detachStateHandler = field.onDisabledStatusChanged(handleStateChange);
+        var detachStateHandler = field.onIsDisabledChanged(handleStateChange);
 
         scope.isReady = true;
 

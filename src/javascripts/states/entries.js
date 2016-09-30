@@ -112,7 +112,6 @@ angular.module('contentful')
     name: 'entries',
     url: '/entries',
     abstract: true,
-    template: '<ui-view/>',
     children: [list, detail]
   };
 }]);

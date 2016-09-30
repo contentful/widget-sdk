@@ -45,7 +45,7 @@ describe('cfJsonEditor directive', function () {
     fieldApi.onValueChanged.yield({json: true});
     this.$apply();
     expect(element.find('pre:visible').length).toBe(0);
-    fieldApi.onDisabledStatusChanged.yield(true);
+    fieldApi.onIsDisabledChanged.yield(true);
     this.$apply();
     expect(JSON.parse(element.find('pre').text())).toEqual({json: true});
   });
@@ -76,9 +76,12 @@ describe('cfJsonEditor directive', function () {
 
     it('removes field value with empty content', function () {
       fieldApi.removeValue = sinon.stub();
+      this.emitContentChange('{}');
+      this.flush();
+      sinon.assert.notCalled(fieldApi.removeValue);
       this.emitContentChange('');
       this.flush();
-      sinon.assert.called(fieldApi.removeValue);
+      sinon.assert.calledOnce(fieldApi.removeValue);
     });
 
     it('does not set field value with invalid json', function () {
