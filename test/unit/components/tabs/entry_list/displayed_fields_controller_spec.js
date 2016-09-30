@@ -4,19 +4,17 @@ describe('Displayed Fields Controller', function () {
   beforeEach(function () {
     module('contentful/test');
 
+    this.mockService('systemFields', {
+      getList: sinon.stub().returns([]),
+      getDefaultFields: _.constant([{id: 1}, {id: 2}, {id: 3}])
+    });
+
     this.scope = this.$inject('$rootScope').$new();
-    this.scope.context = {
-      view: {}
-    };
 
-    this.systemFields = this.$inject('systemFields');
-    this.systemFields.getList = _.constant([]);
-    this.systemFields.getDefaultFields = _.constant([{id: 1}, {id: 2}, {id: 3}]);
-
-    const cfStub = this.$inject('cfStub');
-    const space = cfStub.space('test');
-    const contentTypeData = cfStub.contentTypeData('testType');
-    this.scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
+    Object.assign(this.scope, {
+      context: {view: {}},
+      spaceContext: {}
+    });
 
     const $controller = this.$inject('$controller');
     $controller('DisplayedFieldsController', {$scope: this.scope});
@@ -26,19 +24,19 @@ describe('Displayed Fields Controller', function () {
     beforeEach(function () {
       this.scope.context.view.displayedFieldIds = ['id1', 'id2', 'id5', 'display1'];
       this.scope.context.view.contentTypeId = 'ct1';
-      this.scope.spaceContext.getPublishedContentType = sinon.stub();
-      this.scope.spaceContext.getPublishedContentType.returns({
-        data: {
-          displayField: 'display1',
-          fields: [
-            {id: 'id1'},
-            {id: 'id2'},
-            {id: 'id3', disabled: true},
-            {id: 'id4'},
-            {id: 'display1'}
-          ]
-        }
-      });
+      this.scope.spaceContext.getPublishedContentType =
+        sinon.stub().returns({
+          data: {
+            displayField: 'display1',
+            fields: [
+              {id: 'id1'},
+              {id: 'id2'},
+              {id: 'id3', disabled: true},
+              {id: 'id4'},
+              {id: 'display1'}
+            ]
+          }
+        });
       this.scope.refreshDisplayFields();
     });
 
