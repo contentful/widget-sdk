@@ -11,8 +11,8 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
   var $parse = require('$parse');
   var $state = require('$state');
   var analytics = require('analytics');
-  var $document = require('$document');
   var contextHistory = require('contextHistory');
+  var documentTitle = require('navigation/document_title');
 
   var backBtnSelector = '[aria-label="breadcrumbs-back-btn"]';
   var ancestorBtnSelector = '[aria-label="breadcrumbs-ancestor-btn"]';
@@ -137,18 +137,9 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
 
       $scope.$watch(function () {
         var last = $scope.crumbs[$scope.crumbs.length - 1];
-        return last ? last.getTitle() : undefined;
-      }, function (title) {
-        // set document title as the title of the page the user is on
-        // TODO(mudit): Browser is mapping the wrong title to the wrong page
-        // when you see the list of things you can go back to on long pressing
-        // the browser back button. Fix it.
-        // TODO(mudit): This doesn't belong here. Move this out into a service
-        // or something.
-        if (title) {
-          $document[0].title = title;
-        }
-      });
+        return last && last.getTitle();
+      }, documentTitle.maybeOverride);
+
       $scope.$watchCollection(contextHistory.getAll, function (items) {
         $scope.crumbs = items.map(function (item) {
           return {

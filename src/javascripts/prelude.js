@@ -75,6 +75,7 @@ angular.module('contentful/app', ['contentful'])
   require('notification').setupClearMessageHooks();
   require('states').loadAll();
   require('dialogsInitController').init();
+  require('navigation/document_title').init();
 }]);
 
 angular.module('contentful')
