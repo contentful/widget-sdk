@@ -11,12 +11,12 @@ angular.module('contentful')
     $scope.contentTypes = _.map(contentTypes, decorateContentType);
   });
 
-  $scope.update = function() {
+  $scope.update = function () {
     $scope.validation.settings = getSelectedIDs();
     $scope.validator.run();
   };
 
-  function decorateContentType(ct) {
+  function decorateContentType (ct) {
     var id = ct.getId();
     return {
       id: id,
@@ -25,11 +25,11 @@ angular.module('contentful')
     };
   }
 
-  function getSelectedIDs() {
+  function getSelectedIDs () {
     return _($scope.contentTypes).filter('selected').map('id').value();
   }
 
-  function isSelected(contentTypeId) {
+  function isSelected (contentTypeId) {
     return _.includes($scope.validation.settings, contentTypeId);
   }
 
