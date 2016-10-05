@@ -6,18 +6,23 @@ mixin snapshot-author
 mixin snapshot-dt
   time(datetime="{{ snapshot.sys.createdAt }}" cf-relative-datetime)
 
-mixin snapshot-field-title
-  span {{ field.name }}
-  span(ng-if="locales.length > 1")
-    | &#32;&ndash; {{locale.name}}
-
-mixin snapshot-overlays(side)
+mixin snapshot-overlays(version)
   - var attrs = {};
-  - attrs["ng-class"] = "{'x--selected': selected === '" + side + "'}";
-  - attrs["ng-click"] = "select('" + side + "')";
+  - attrs["ng-class"] = "{'x--selected': selected === '" + version + "'}";
+  - attrs["ng-click"] = "select('" + version + "')";
+  .snapshot-comparator__overlay-different(ng-if="canRestore")&attributes(attrs)
+  .snapshot-comparator__overlay-identical(ng-if="!canRestore")
 
-  .snapshot-comparator__overlay-different(
-    ng-if="isDifferent && !widget.field.disabled")&attributes(attrs)
-
-  .snapshot-comparator__overlay-identical(
-    ng-if="!isDifferent || widget.field.disabled")
+mixin snapshot-value(doc, version)
+  .snapshot-comparator__cell(
+    ng-if="showOnlyDifferences ? isDifferent : true"
+    ng-controller="FieldLocaleController as fieldLocale"
+    document-property!=doc)
+      .snapshot-comparator__cell__radio
+        input(type="radio" ng-model="selected" value!=version)
+      .snapshot-comparator__cell__presenter
+        .snapshot-comparator__field_title
+          span {{ field.name }}
+          span(ng-if="locales.length > 1") &#32;&ndash; {{locale.name}}
+        cf-snapshot-presenter
+        +snapshot-overlays(version)

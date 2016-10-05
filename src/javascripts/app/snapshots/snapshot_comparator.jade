@@ -11,16 +11,17 @@ header.workbench-header
       ui-command="save")
       | Apply changes
     a.btn-secondary-action(
+      role="button"
       type="button"
       ui-sref="^.^")
       | Close
 
 .snapshot-comparator__header
   .snapshot-comparator__header-cell
-    button.btn-link.snapshot-comparator__version(ng-click="select()")
+    button.btn-link.snapshot-comparator__version(ng-click="selectSnapshot()")
       +snapshot-dt
       cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-    button.btn-link(href="" ng-click="restore()")
+    button.btn-link(ng-click="versionPicker.restoreAll()")
       | Select all fields from this version
 
   .snapshot-comparator__header-cell
@@ -47,25 +48,5 @@ cf-ui-hint.snapshot-comparator__hint(
       ng-repeat="locale in locales track by locale.internal_code"
       ng-controller="SnapshotComparisonController")
 
-      .snapshot-comparator__cell(
-        ng-if="showOnlyDifferences ? isDifferent : true"
-        ng-controller="FieldLocaleController as fieldLocale"
-        document-property="snapshotDoc")
-        .snapshot-comparator__cell__radio
-          input(type="radio" ng-model="selected" value="left")
-        .snapshot-comparator__cell__presenter
-          .snapshot-comparator__field_title
-            +snapshot-field-title
-          cf-snapshot-presenter
-          +snapshot-overlays('left')
-
-      .snapshot-comparator__cell(
-        ng-if="showOnlyDifferences ? isDifferent : true"
-        ng-controller="FieldLocaleController as fieldLocale")
-        .snapshot-comparator__cell__radio
-          input(type="radio" ng-model="selected" value="right")
-        .snapshot-comparator__cell__presenter
-          .snapshot-comparator__field_title
-            +snapshot-field-title
-          cf-snapshot-presenter
-          +snapshot-overlays('right')
+      +snapshot-value('snapshotDoc', 'snapshot')
+      +snapshot-value('otDoc', 'current')

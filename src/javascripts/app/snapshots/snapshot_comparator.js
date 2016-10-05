@@ -15,41 +15,40 @@ angular.module('cf.app')
   var SnapshotDoc = require('SnapshotComparatorController/snapshotDoc');
   var DataFields = require('EntityEditor/DataFields');
   var ContentTypes = require('data/ContentTypes');
+  var Entries = require('data/Entries');
   var Command = require('command');
   var modalDialog = require('modalDialog');
   var $state = require('$state');
   var $timeout = require('$timeout');
-  var TheLocaleStore = require('TheLocaleStore');
   var leaveConfirmator = require('navigation/confirmLeaveEditor');
   var notification = require('notification');
 
+  $scope.versionPicker = require('SnapshotComparatorController/versionPicker').create();
+
   _.extend($scope.context, {
+    ready: true,
     title: spaceContext.entryTitle($scope.entry),
     requestLeaveConfirmation: leaveConfirmator(save)
   });
 
-  $scope.$watch(isUntouched, function (untouched) {
+  $scope.$watch($scope.versionPicker.isUntouched, function (untouched) {
     $scope.context.dirty = !untouched;
   });
 
+  var ctData = $scope.contentType.data;
+  var snapshotData = $scope.snapshot.snapshot || {};
+
   $scope.otDoc = SnapshotDoc.create(dotty.get($scope, 'entry.data', {}));
-  $scope.snapshotDoc = SnapshotDoc.create(dotty.get($scope, 'snapshot.snapshot', {}));
-  $scope.pathsToRestore = [];
+  $scope.snapshotDoc = SnapshotDoc.create(snapshotData);
+  $scope.fields = DataFields.create(ctData.fields, $scope.otDoc);
+  $scope.transformedContentTypeData = ContentTypes.internalToPublic(ctData);
 
-  $scope.select = select;
-  $scope.restore = restore;
-  $scope.save = Command.create(save, {disabled: isUntouched});
+  $scope.selectSnapshot = selectSnapshot;
+  $scope.save = Command.create(save, {
+    disabled: $scope.versionPicker.isUntouched
+  });
 
-  var contentTypeData = $scope.contentType.data;
-  var fields = contentTypeData.fields;
-  $scope.fields = DataFields.create(fields, $scope.otDoc);
-  $scope.transformedContentTypeData = ContentTypes.internalToPublic(contentTypeData);
-
-  function isUntouched () {
-    return $scope.pathsToRestore.length < 1;
-  }
-
-  function select () {
+  function selectSnapshot () {
     return modalDialog.open({
       template: 'snapshot_selector',
       scopeData: {query: {}, currentId: $scope.snapshot.sys.id}
@@ -58,88 +57,40 @@ angular.module('cf.app')
 
   function goToSnapshot (snapshot) {
     $scope.context.ready = false;
-    $scope.pathsToRestore = [];
+    $scope.versionPicker.keepAll();
     $timeout(function () {
       $state.go('.', {snapshotId: snapshot.sys.id});
     });
   }
 
-  function restore () {
-    $scope.$broadcast('select:left');
-  }
-
   function save () {
-    var data = {sys: _.cloneDeep($scope.entry.data.sys)};
-    allPaths($scope.entry.data.fields).forEach(externalize(data, $scope.otDoc));
-    $scope.pathsToRestore.forEach(externalize(data, $scope.snapshotDoc));
-
-    return spaceContext.cma.updateEntry(data)
+    return spaceContext.cma.updateEntry(prepareRestoredEntry())
     .then(function () {
-      $scope.pathsToRestore = [];
+      $scope.versionPicker.keepAll();
       return $timeout(function () {
         return $state.go('^.^', {}, {reload: true});
       });
-    }, function (error) {
-      if (error.code === 'VersionMismatch') {
-        notification.error('Versions do not match. Please reload the version first.');
-      } else {
-        notification.error('Changes could not be reverted. Please try again.');
-      }
+    }, handleSaveError);
+  }
+
+  function prepareRestoredEntry () {
+    var snapshot = Entries.internalToExternal(snapshotData, ctData);
+    var result = Entries.internalToExternal($scope.entry.data, ctData);
+
+    $scope.versionPicker.getPathsToRestore()
+    .forEach(function (path) {
+      path = Entries.internalPathToExternal(path, ctData);
+      dotty.put(result, path, dotty.get(snapshot, path));
     });
+
+    return result;
   }
 
-  function allPaths (fields) {
-    return _.reduce(fields, function (acc, field, fieldId) {
-      return acc.concat(_.reduce(field, function (acc, _locale, localeCode) {
-        return acc.concat(['fields', fieldId, localeCode].join('.'));
-      }, []));
-    }, []);
-  }
-
-  function externalize (target, sourceDoc) {
-    return function (path) {
-      path = path.split('.');
-      var fieldId = externalFieldId(path[1]);
-      var localeCode = TheLocaleStore.toPublicCode(path[2]);
-      var value = sourceDoc.getValueAt(path);
-      dotty.put(target, ['fields', fieldId, localeCode], value);
-    };
-  }
-
-  function externalFieldId (internalId) {
-    var field = _.find(contentTypeData.fields, {id: internalId});
-    return field && (field.apiName || field.id);
-  }
-}])
-
-.factory('SnapshotComparatorController/snapshotDoc', ['require', function (require) {
-  var $q = require('$q');
-  var K = require('utils/kefir');
-
-  var resolve = _.constant($q.resolve());
-
-  return {create: create};
-
-  function create (data) {
-    return {
-      getValueAt: valueAt,
-      valuePropertyAt: valuePropertyAt,
-
-      setValueAt: resolve,
-      removeValueAt: resolve,
-      insertValueAt: resolve,
-      pushValueAt: resolve,
-      moveValueAt: resolve,
-
-      collaboratorsFor: _.constant(K.constant([]))
-    };
-
-    function valuePropertyAt (path) {
-      return K.constant(valueAt(path));
-    }
-
-    function valueAt (path) {
-      return dotty.get(data, path);
+  function handleSaveError (error) {
+    if (error.code === 'VersionMismatch') {
+      notification.error('Versions do not match. Please reload the version first.');
+    } else {
+      notification.error('Changes could not be reverted. Please try again.');
     }
   }
 }])
@@ -161,26 +112,24 @@ angular.module('cf.app')
 }])
 
 .controller('SnapshotComparisonController', ['$scope', function ($scope) {
-  var path = ['fields', $scope.field.id, $scope.locale.internal_code];
-  var v1 = $scope.otDoc.getValueAt(path);
-  var v2 = $scope.snapshotDoc.getValueAt(path);
+  var fieldPath = ['fields', $scope.field.id, $scope.locale.internal_code];
 
-  $scope.isDifferent = !_.isEqual(v1, v2);
+  var currentVersion = $scope.otDoc.getValueAt(fieldPath);
+  var snapshotVersion = $scope.snapshotDoc.getValueAt(fieldPath);
+
+  $scope.isDifferent = !_.isEqual(currentVersion, snapshotVersion);
+  $scope.canRestore = $scope.isDifferent && !$scope.field.disabled;
+
   $scope.select = $scope.isDifferent ? select : _.noop;
+  $scope.selected = 'current';
 
-  $scope.select('right');
-  $scope.$on('select:left', function () {
-    $scope.select('left');
-  });
+  $scope.versionPicker.registerRestoreFn(_.partial(select, 'snapshot'));
 
-  function select (side) {
-    var joined = path.join('.');
-    $scope.selected = side;
-
-    if (side === 'right') {
-      _.pull($scope.pathsToRestore, joined);
-    } else {
-      $scope.pathsToRestore.push(joined);
+  function select (version) {
+    if ($scope.canRestore) {
+      var method = version === 'current' ? 'keep' : 'restore';
+      $scope.versionPicker[method](fieldPath);
+      $scope.selected = version;
     }
   }
 }]);
