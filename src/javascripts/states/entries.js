@@ -45,7 +45,9 @@ angular.module('contentful')
       '$scope', 'fieldControls', 'entry', 'contentType', 'snapshot',
       function ($scope, fieldControls, entry, contentType, snapshot) {
         require('$state').current.data = $scope.context = {};
-        $scope.widgets = fieldControls.form;
+        $scope.widgets = _.filter(fieldControls.form, function (widget) {
+          return !dotty.get(widget, 'field.disabled') || $scope.preferences.showDisabledFields;
+        });
         $scope.entry = $scope.entity = entry;
         $scope.contentType = contentType;
         $scope.snapshot = snapshot;

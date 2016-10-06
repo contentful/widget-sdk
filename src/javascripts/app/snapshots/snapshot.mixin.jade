@@ -22,8 +22,12 @@ mixin snapshot-value(doc, version)
       .snapshot-comparator__cell__radio
         input(type="radio" ng-model="selected" value!=version)
       .snapshot-comparator__cell__presenter
-        .snapshot-comparator__field_title
-          span {{ field.name }}
-          span(ng-if="locales.length > 1") &#32;&ndash; {{locale.name}}
+        .snapshot-comparator__field-title
+          div
+            | {{ field.name }}
+            span(ng-if="locales.length > 1") &#32;&ndash; {{locale.name}}
+          .entity-editor__no-permission-info(ng-if="field.disabled")
+            cf-icon(name="lock")
+            | This field is disabled
         cf-snapshot-presenter
         +snapshot-overlays(version)

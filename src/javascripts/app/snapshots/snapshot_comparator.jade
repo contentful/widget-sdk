@@ -21,7 +21,9 @@ header.workbench-header
     button.btn-link.snapshot-comparator__version(ng-click="selectSnapshot()")
       +snapshot-dt
       cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-    button.btn-link(ng-click="versionPicker.restoreAll()")
+    button.btn-link(
+      ng-show="versionPicker.getDifferenceCount() > 0"
+      ng-click="versionPicker.restoreAll()")
       | Select all fields from this version
 
   .snapshot-comparator__header-cell
