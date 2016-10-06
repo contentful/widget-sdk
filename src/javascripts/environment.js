@@ -7,6 +7,8 @@
  * Exposes configuration for the application that depends on the envrionment
  *
  * Uses `window.CF_CONFIG` and `window.CF_UI_VERSION` to load the configuration.
+ *
+ * TODO This service should be replaced by the 'Config' service
  */
 angular.module('contentful/environment')
 .constant('environment', (function () {

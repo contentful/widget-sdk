@@ -19,21 +19,26 @@
 
 angular.module('contentful/test', ['contentful', 'contentful/mocks'])
 
-.constant('environment', (function () {
-  return {
+.config(['$provide', 'environment', function ($provide) {
+  // We cannot provide the environment as a constant directly because
+  // changes to it would leak between tests.
+  $provide.constant('environment', {
     settings: {
-      main_domain: 'contentful.com',
       filepicker: {},
       aviary: {},
       google: {},
       contentful: {},
-      marketing_url: '//example.com'
+      base_host: 'be.test.com',
+      api_host: 'api.test.com',
+      asset_host: 'static.test.com',
+      ot_host: 'ot.test.com',
+      marketing_url: '//www.test.com',
+      main_domain: 'test.com'
     },
     manifest: {
       'app/markdown_vendors.js': 'x',
       'app/kaltura.js': 'x'
     },
-    isDev: false,
     env: 'unittest'
-  };
-})());
+  });
+}]);

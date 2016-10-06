@@ -8,6 +8,7 @@ angular.module('contentful')
   var $stateParams = $injector.get('$stateParams');
   var $location = $injector.get('$location');
   var authentication = $injector.get('authentication');
+  var Config = $injector.get('Config');
   var modalDialog = $injector.get('modalDialog');
   var createChannel = $injector.get('iframeChannel').create;
   var handleGK = $injector.get('handleGatekeeperMessage');
@@ -23,7 +24,7 @@ angular.module('contentful')
       channel.onMessage(handleGK);
       channel.onMessage(function () { scope.context.ready = true; });
       iframe.ready(waitAndForceLogin);
-      iframe.prop('src', authentication.accountUrl() + '/' + $stateParams.pathSuffix);
+      iframe.prop('src', Config.accountUrl($stateParams.pathSuffix));
       scope.$on('$destroy', function () {
         channel.off();
         cancelTimeout();

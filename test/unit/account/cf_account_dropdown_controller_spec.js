@@ -11,7 +11,7 @@ describe('Account Dropdown Controller', function () {
     });
 
     this.stubs.analytics = {track: sinon.stub()};
-    this.stubs.authentication = {logout: sinon.stub(), supportUrl: sinon.stub()};
+    this.stubs.authentication = {logout: sinon.stub()};
     this.stubs.window = {
       open: sinon.stub(),
       addEventListener: sinon.stub(),
@@ -38,17 +38,13 @@ describe('Account Dropdown Controller', function () {
     });
   });
 
-  describe('open support', function () {
-    beforeEach(function () {
+  describe('#openSupport', function () {
+    it('opens new window with support URL', function () {
+      this.mockService('Config', {
+        supportUrl: 'support url'
+      });
       this.scope.openSupport();
-    });
-
-    it('opens new window', function () {
-      sinon.assert.called(this.stubs.window.open);
-    });
-
-    it('gets support url', function () {
-      sinon.assert.called(this.stubs.authentication.supportUrl);
+      sinon.assert.calledWith(this.stubs.window.open, 'support url');
     });
   });
 

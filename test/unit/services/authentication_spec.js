@@ -241,19 +241,6 @@ describe('Authentication service', function () {
     }));
   });
 
-  it('account url', function () {
-    expect(this.authentication.accountUrl()).toEqual('//basehost/account');
-  });
-
-
-  it('support url', function () {
-    expect(this.authentication.supportUrl()).toEqual('//basehost/integrations/zendesk/login');
-  });
-
-  it('space settings url', function () {
-    expect(this.authentication.spaceSettingsUrl('123')).toEqual('//basehost/settings/spaces/123');
-  });
-
   describe('redirect to login', function () {
     beforeEach(inject(function ($window) {
       $window.location = {

@@ -9,14 +9,13 @@ angular.module('contentful')
  */
 .factory('activationEmailResender', ['$injector', function ($injector) {
 
-  var environment = $injector.get('environment');
+  var Config = $injector.get('Config');
   var $http = $injector.get('$http');
   var $q = $injector.get('$q');
   var uriEncode = $injector.get('$window').encodeURIComponent;
   var logger = $injector.get('logger');
 
-  var GK_URL = '//' + environment.settings.base_host;
-  var ENDPOINT = GK_URL + '/confirmation';
+  var ENDPOINT = Config.authUrl('confirmation');
 
   return {
     /**

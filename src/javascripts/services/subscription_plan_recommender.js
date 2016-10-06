@@ -11,13 +11,12 @@
 angular.module('contentful')
 .factory('subscriptionPlanRecommender', ['require', function (require) {
 
-  var environment = require('environment');
+  var Config = require('Config');
   var authentication = require('authentication');
   var $http = require('$http');
   var $q = require('$q');
 
-  var GK_URL = '//' + environment.settings.base_host;
-  var ENDPOINT = GK_URL + '/account/organizations/:organization/z_subscription_plans/recommended';
+  var ENDPOINT = Config.authUrl('/account/organizations/:organization/z_subscription_plans/recommended');
 
   return {
     /**

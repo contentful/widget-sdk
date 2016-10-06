@@ -17,6 +17,7 @@ angular.module('contentful')
   var $window = $injector.get('$window');
   var TheAccountView = $injector.get('TheAccountView');
   var authentication = $injector.get('authentication');
+  var Config = $injector.get('Config');
   var analytics = $injector.get('analytics');
   var intercom = $injector.get('intercom');
 
@@ -32,7 +33,7 @@ angular.module('contentful')
   $scope.logout = logout;
 
   function openSupport () {
-    $window.open(authentication.supportUrl());
+    $window.open(Config.supportUrl);
   }
 
   function logout () {
