@@ -8,6 +8,7 @@ angular.module('cf.app')
   function create () {
     var pathsToRestore = [];
     var restoreFns = [];
+    var differenceCount = 0;
 
     return {
       keep: keep,
@@ -16,7 +17,9 @@ angular.module('cf.app')
       registerRestoreFn: function (fn) { restoreFns.push(fn); },
       restoreAll: restoreAll,
       getPathsToRestore: getPathsToRestore,
-      isUntouched: function () { return pathsToRestore.length < 1; }
+      isUntouched: function () { return pathsToRestore.length < 1; },
+      registerDifference: function () { differenceCount += 1; },
+      getDifferenceCount: function () { return differenceCount; }
     };
 
     function keep (path) {

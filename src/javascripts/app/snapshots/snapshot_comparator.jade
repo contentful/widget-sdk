@@ -26,9 +26,10 @@ header.workbench-header
 
   .snapshot-comparator__header-cell
     .snapshot-comparator__version Current version
-    label
+    label(ng-show="versionPicker.getDifferenceCount() > 0")
       input(type="checkbox" ng-model="showOnlyDifferences")
-      span Show only differences
+      span
+        | Show only differences ({{ versionPicker.getDifferenceCount() }})
 
 cf-ui-hint.snapshot-comparator__hint(
   name="snapshots-intro"

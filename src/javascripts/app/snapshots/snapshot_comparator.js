@@ -125,6 +125,10 @@ angular.module('cf.app')
 
   $scope.versionPicker.registerRestoreFn(_.partial(select, 'snapshot'));
 
+  if ($scope.isDifferent) {
+    $scope.versionPicker.registerDifference();
+  }
+
   function select (version) {
     if ($scope.canRestore) {
       var method = version === 'current' ? 'keep' : 'restore';
