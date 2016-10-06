@@ -1,7 +1,17 @@
 'use strict';
 
 angular.module('cf.app')
-
+/**
+ * @ngdoc directive
+ * @module cf.app
+ * @name cfSnapshotComparator
+ * @description
+ * This directive is responsible for rendering
+ * of the comparison view. Its controller (and
+ * small child controllers) allow users to choose
+ * between field versions and restore composed
+ * version of an entry at the end of the process.
+ */
 .directive('cfSnapshotComparator', [function () {
   return {
     template: JST.snapshot_comparator(),
@@ -31,8 +41,10 @@ angular.module('cf.app')
     requestLeaveConfirmation: leaveConfirmator(save)
   });
 
-  $scope.$watch($scope.versionPicker.isUntouched, function (untouched) {
-    $scope.context.dirty = !untouched;
+  $scope.$watch(function () {
+    return $scope.versionPicker.getPathsToRestore().length > 0;
+  }, function (isDirty) {
+    $scope.context.dirty = isDirty;
   });
 
   var ctData = $scope.contentType.data;
@@ -45,7 +57,7 @@ angular.module('cf.app')
 
   $scope.selectSnapshot = selectSnapshot;
   $scope.save = Command.create(save, {
-    disabled: $scope.versionPicker.isUntouched
+    disabled: function () { return !$scope.context.dirty; }
   });
 
   function selectSnapshot () {
@@ -123,11 +135,10 @@ angular.module('cf.app')
   $scope.select = $scope.isDifferent ? select : _.noop;
   $scope.selected = 'current';
 
-  $scope.versionPicker.registerRestoreFn(_.partial(select, 'snapshot'));
-
-  if ($scope.isDifferent) {
-    $scope.versionPicker.registerDifference();
-  }
+  $scope.versionPicker.registerPath({
+    isDifferent: $scope.isDifferent,
+    restoreFn: _.partial(select, 'snapshot')
+  });
 
   function select (version) {
     if ($scope.canRestore) {

@@ -1,7 +1,18 @@
 'use strict';
 
 angular.module('cf.app')
-
+/**
+ * @ngdoc service
+ * @module cf.app
+ * @name SnapshotComparatorController/snapshotDoc
+ * @description
+ * Given the entry data, it returns a fake
+ * instance of "entityEditor/Document".
+ *
+ * Values at paths are created from the
+ * data provided, but all mutating methods
+ * are no-ops.
+ */
 .factory('SnapshotComparatorController/snapshotDoc', ['require', function (require) {
   var K = require('utils/kefir');
   var $q = require('$q');
