@@ -2,22 +2,22 @@
 
 describe('subscriptionPlanRecommender', function () {
 
-  var $httpBackend;
-  var recommend;
+  let $httpBackend;
+  let recommend;
 
-  var HOST = 'be.contentful.com:443';
-  var TEST_ORG_ID = 'TEST_ORG_ID';
-  var TEST_TOKEN = 'TEST_TOKEN';
-  var ENDPOINT = '//' + HOST + '/account/organizations/' + TEST_ORG_ID +
+  const HOST = 'be.contentful.com:443';
+  const TEST_ORG_ID = 'TEST_ORG_ID';
+  const TEST_TOKEN = 'TEST_TOKEN';
+  const ENDPOINT = '//' + HOST + '/account/organizations/' + TEST_ORG_ID +
     '/z_subscription_plans/recommended';
-  var REQUEST = ENDPOINT + '?access_token=' + TEST_TOKEN;
+  const REQUEST = ENDPOINT + '?access_token=' + TEST_TOKEN;
 
-  var PLAN_CLASS = {'class': 'z-subscription-plan'};
-  var REASON_CLASS = {'class': 'z-subscription-plan-recommendation-reason'};
+  const PLAN_CLASS = {'class': 'z-subscription-plan'};
+  const REASON_CLASS = {'class': 'z-subscription-plan-recommendation-reason'};
 
   beforeEach(function () {
     module('contentful/test', function ($provide, environment) {
-      environment.settings.base_host = HOST
+      environment.settings.base_host = HOST;
       $provide.value('authentication', {
         token: TEST_TOKEN
       });
@@ -45,7 +45,7 @@ describe('subscriptionPlanRecommender', function () {
     });
 
     describe('returned promise', function () {
-      var rejected, resolved;
+      let rejected, resolved;
       beforeEach(function () {
         rejected = sinon.spy();
         resolved = sinon.spy();
@@ -64,8 +64,8 @@ describe('subscriptionPlanRecommender', function () {
         assertRejected();
       });
 
-      var plan = $('<article>', PLAN_CLASS).text('_PLAN_');
-      var reason = $('<p>', REASON_CLASS).text('_REASON_');
+      const plan = $('<article>', PLAN_CLASS).text('_PLAN_');
+      const reason = $('<p>', REASON_CLASS).text('_REASON_');
 
       describeSuccessOnResponseBody('containing a plan only',
         responseBody(plan),
@@ -73,7 +73,7 @@ describe('subscriptionPlanRecommender', function () {
 
       describeSuccessOnResponseBody('containing a plan and unrelated elements',
         responseBody($('<p>'), plan, $('<p>')),
-        plan );
+        plan);
 
       describeSuccessOnResponseBody('containing a plan and reason',
         responseBody(plan, reason),
@@ -134,7 +134,7 @@ describe('subscriptionPlanRecommender', function () {
       function describeFailureOnResponseBody (msg, responseBody) {
         describe('on response body' + msg, function () {
           beforeEach(function () {
-            var data = responseBody;
+            const data = responseBody;
             this.respond(200, data);
             $httpBackend.flush();
           });
@@ -144,7 +144,7 @@ describe('subscriptionPlanRecommender', function () {
       }
 
       function responseBody () {
-        var body = $('<body>');
+        const body = $('<body>');
         body.append.apply(body, arguments);
         return $('<html>').append(body).html();
       }

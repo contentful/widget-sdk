@@ -10,10 +10,10 @@ angular.module('contentful')
 .factory('activationEmailResender', ['$injector', function ($injector) {
 
   var environment = $injector.get('environment');
-  var $http       = $injector.get('$http');
-  var $q          = $injector.get('$q');
-  var uriEncode   = $injector.get('$window').encodeURIComponent;
-  var logger      = $injector.get('logger');
+  var $http = $injector.get('$http');
+  var $q = $injector.get('$q');
+  var uriEncode = $injector.get('$window').encodeURIComponent;
+  var logger = $injector.get('logger');
 
   var GK_URL = '//' + environment.settings.base_host;
   var ENDPOINT = GK_URL + '/confirmation';
@@ -36,7 +36,7 @@ angular.module('contentful')
 
   function resendActivationEmail (email) {
     if (!_.isString(email)) {
-      throw new Error( 'email is required and expected to be a string' );
+      throw new Error('email is required and expected to be a string');
     }
     var data = uriEncode('user[email]') + '=' + uriEncode(email);
     var request = {

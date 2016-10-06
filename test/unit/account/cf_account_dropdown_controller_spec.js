@@ -2,9 +2,9 @@
 
 describe('Account Dropdown Controller', function () {
   beforeEach(function () {
-    var stubs = this.stubs = {};
+    const stubs = this.stubs = {};
 
-    module('contentful/test', function($provide) {
+    module('contentful/test', function ($provide) {
       $provide.value('analytics', stubs.analytics);
       $provide.value('authentication', stubs.authentication);
       $provide.value('$window', stubs.window);
@@ -18,8 +18,8 @@ describe('Account Dropdown Controller', function () {
       document: window.document
     };
 
-    var $rootScope = this.$inject('$rootScope');
-    var $controller = this.$inject('$controller');
+    const $rootScope = this.$inject('$rootScope');
+    const $controller = this.$inject('$controller');
     this.scope = $rootScope.$new();
     $controller('cfAccountDropdownController', { $scope: this.scope });
   });
@@ -54,7 +54,7 @@ describe('Account Dropdown Controller', function () {
 
   describe('navigation to organization settings', function () {
     beforeEach(function () {
-      var OrganizationList = this.$inject('OrganizationList');
+      const OrganizationList = this.$inject('OrganizationList');
       this.isOwnerStub = OrganizationList.isOwnerOrAdmin = sinon.stub().returns(false);
       this.$apply();
     });

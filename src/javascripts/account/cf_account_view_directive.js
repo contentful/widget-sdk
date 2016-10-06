@@ -2,21 +2,21 @@
 
 angular.module('contentful')
 
-.directive('cfAccountView', ['$injector', function($injector) {
+.directive('cfAccountView', ['$injector', function ($injector) {
 
-  var $timeout       = $injector.get('$timeout');
-  var $stateParams   = $injector.get('$stateParams');
-  var $location      = $injector.get('$location');
+  var $timeout = $injector.get('$timeout');
+  var $stateParams = $injector.get('$stateParams');
+  var $location = $injector.get('$location');
   var authentication = $injector.get('authentication');
-  var modalDialog    = $injector.get('modalDialog');
-  var createChannel  = $injector.get('iframeChannel').create;
-  var handleGK       = $injector.get('handleGatekeeperMessage');
+  var modalDialog = $injector.get('modalDialog');
+  var createChannel = $injector.get('iframeChannel').create;
+  var handleGK = $injector.get('handleGatekeeperMessage');
 
   return {
     template: '<div class="account-container"><iframe width="100%" height="100%" id="accountViewFrame" /></div>',
     restrict: 'E',
     link: function (scope, elem) {
-      var iframe  = elem.find('iframe');
+      var iframe = elem.find('iframe');
       var channel = createChannel(iframe);
       var timeout = null;
 
@@ -29,14 +29,14 @@ angular.module('contentful')
         cancelTimeout();
       });
 
-      function waitAndForceLogin() {
+      function waitAndForceLogin () {
         timeout = $timeout(function () {
           if (!dotty.get(scope, 'context.ready')) { forceLogin(); }
           timeout = null;
         }, 5000);
       }
 
-      function cancelTimeout() {
+      function cancelTimeout () {
         if (timeout) {
           $timeout.cancel(timeout);
           timeout = null;
@@ -45,7 +45,7 @@ angular.module('contentful')
     }
   };
 
-  function forceLogin() {
+  function forceLogin () {
     modalDialog.open({
       title: 'We need to check your credentials',
       message: 'Before continuing to account settings we need to verify your identity.',
