@@ -73,7 +73,7 @@ mixin entity-sidebar
             target="_blank")
             i.fa.fa-external-link
             span Open preview
-          .entity-sidebar__help-text(ng-if="showDefaultMessage")
+          .entity-sidebar__help-text(role="note" ng-if="showDefaultMessage")
             | By default, the Discovery App is used to preview content.&#32;
             a(ui-sref="spaces.detail.settings.content_preview.list")
               | Set up a custom content preview.
@@ -109,11 +109,13 @@ mixin entity-sidebar
 
     div(ng-if="entity.getType() === 'Entry'")
       h2.entity-sidebar__heading Versions
+      cf-snapshot-sidebar-list
       a.btn-secondary-action.x--block(
+        role="button"
         ui-sref=".compare"
         ui-sref-opts="{location: false}")
         | Compare versions
-      .entity-sidebar__help-text
+      .entity-sidebar__help-text(role="note")
         | Versions are previous states of this entry. You will be able to review
         | and compare different versions, and restore some or all fields.
 
