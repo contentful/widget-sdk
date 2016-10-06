@@ -142,10 +142,4 @@ filters.filter('truncateMiddle', ['stringUtils', function (stringUtils) {
   return stringUtils.truncateMiddle;
 }]);
 
-filters.filter('prefixAssetHost', ['environment', function(environment){
-  return function (path) {
-    return '//' + environment.settings.asset_host + path;
-  };
-}]);
-
 filters = null;
