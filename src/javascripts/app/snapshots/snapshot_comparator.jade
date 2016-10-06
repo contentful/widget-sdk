@@ -18,7 +18,9 @@ header.workbench-header
 
 .snapshot-comparator__header
   .snapshot-comparator__header-cell
-    button.btn-link.snapshot-comparator__version(ng-click="selectSnapshot()")
+    button.btn-link.snapshot-comparator__version(
+      aria-label="show-snapshot-list-btn"
+      ng-click="showSnapshotList = !showSnapshotList")
       +snapshot-dt
       cf-icon.btn-dropdown-icon(name="dd-arrow-down")
     button.btn-link(
@@ -32,6 +34,8 @@ header.workbench-header
       input(type="checkbox" ng-model="showOnlyDifferences")
       span
         | Show only differences ({{ versionPicker.getDifferenceCount() }})
+
+cf-snapshot-selector(ng-show="showSnapshotList")
 
 cf-ui-hint.snapshot-comparator__hint(
   name="snapshots-intro"

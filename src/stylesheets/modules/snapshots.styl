@@ -7,14 +7,79 @@
     padding: 5px 7px
 
 .snapshot-selector
-  width: 80%
-  max-width: 1000px
+  width: 32%
+  border: 1px solid $colors.element-mid
+  box-shadow: 0px 1px 2px 0px rgba(black, 0.1)
+  position: absolute
+  top: 122px
+  left: 10px
+  padding: 25px
+  background-color: white
+  $layer(dropdown)
 
+  &:after
+    content: ''
+    display: block
+    position: absolute
+    top: -6px
+    left: 86px
+    height: 8px
+    width: 8px
+    background-color: white
+    transform: rotate(45deg)
+    border: 1px solid $colors.ice-dark
+    border-bottom-color: transparent
+    border-right-color: transparent
+
+
+  &__list
+    > .result-list.main-header tr
+      background-color: $colors.element-lightest
+
+      th
+        text-transform: none
+        font-size: 100%
+        letter-spacing: normal
+        padding-top: 14px
+        padding-bottom: 14px
+        line-height: 1.5em
+        i
+          margin-left: 4px
+        &:hover
+          cursor: pointer
+      th:first-child, th:nth-child(2)
+        padding-left: 10px
+
+  &__item
+    &-status
+      font-size: 0.9em
+      letter-spacing: 2px
+      text-transform: uppercase
+    &-status-published
+      color: $colors.green-dark
+    &-status-draft
+      color: $colors.blue-dark
+    &-list-placeholder
+      color: $colors.text-mid
+      padding-left: 10px
+      padding-top: 20px
   .main-results-wrapper
     height: 400px
     overflow: scroll
 
+    tr
+      color: $colors.text-mid
+      &:hover
+        cursor: pointer
+        background-color: $colors.element-lightest
+      td
+        padding-top: 14px
+        padding-bottom: 14px
+        line-height: 2.5em
+
   .x--current
+    background-color: $colors.ice-mid
+  .x--selected
     font-weight: bold
 
 .snapshot-author
@@ -65,6 +130,13 @@
   color: $base-font-color
   font-size: 16px
   font-weight: bold
+  outline: none
+
+  &.btn-link:hover
+    transition: none
+    color: $colors.gray
+    cf-icon path
+     fill: $colors.gray
 
   cf-icon path
     fill: $base-font-color

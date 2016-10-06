@@ -1,7 +1,14 @@
+mixin snapshot-header(headerText, sortingFn, isCurrentSortedColumn)
+  th(
+    ng-click="#{sortingFn}(isAscending)"
+    ng-class="{'x--selected': snapshots.length && #{isCurrentSortedColumn}}")
+    = headerText
+    i.button-icon.fa.fa-caret-down(ng-show="snapshots.length && isAscending && #{isCurrentSortedColumn}")
+    i.button-icon.fa.fa-caret-up(ng-show="snapshots.length && !isAscending && #{isCurrentSortedColumn}")
+
 mixin snapshot-author
-  .snapshot-author(cf-user link="snapshot.sys.createdBy" as="snapshotAuthor")
-    img(ng-src="{{ snapshotAuthor.data.avatarUrl }}")
-    span {{ snapshotAuthor.getName() }}
+  .snapshot-author
+    span {{ snapshot.sys.createdBy.authorName }}
 
 mixin snapshot-dt
   time(datetime="{{ snapshot.sys.createdAt }}" cf-relative-datetime)

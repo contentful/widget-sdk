@@ -28,7 +28,6 @@ angular.module('cf.app')
   var ContentTypes = require('data/ContentTypes');
   var Entries = require('data/Entries');
   var Command = require('command');
-  var modalDialog = require('modalDialog');
   var $state = require('$state');
   var $stateParams = require('$stateParams');
   var notification = require('notification');
@@ -52,24 +51,18 @@ angular.module('cf.app')
   var ctData = $scope.contentType.data;
   var snapshotData = $scope.snapshot.snapshot || {};
 
+  $scope.showSnapshotList = false;
   $scope.showOnlyDifferences = false;
   $scope.otDoc = SnapshotDoc.create(dotty.get($scope, 'entry.data', {}));
   $scope.snapshotDoc = SnapshotDoc.create(snapshotData);
   $scope.fields = DataFields.create(ctData.fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(ctData);
 
-  $scope.selectSnapshot = selectSnapshot;
+  $scope.goToSnapshot = goToSnapshot;
   $scope.close = close;
   $scope.save = Command.create(_.partial(save, true), {
     disabled: function () { return !$scope.context.dirty; }
   });
-
-  function selectSnapshot () {
-    return modalDialog.open({
-      template: 'snapshot_selector',
-      scopeData: {currentId: $scope.snapshot.sys.id}
-    }).promise.then(goToSnapshot);
-  }
 
   function goToSnapshot (snapshot) {
     $scope.context.ready = false;

@@ -1,48 +1,37 @@
 include ./snapshot.mixin.jade
 
-.modal-background
-  .modal-dialog.snapshot-selector
-    header.modal-dialog__header
-      h1 All snapshots
-      button.modal-dialog__close(ng-click="dialog.cancel()")
+.snapshot-selector(aria-label="snapshot-list")
+  .snapshot-selector__list
+    table.result-list.main-header
+      thead
+        tr
+          +snapshot-header('Last edited', 'sortByLastEdited', 'sortOrder.byLastEdited')
+          +snapshot-header('Edited by', 'sortByEditor', 'sortOrder.byEditor')
+          +snapshot-header('Status', 'sortByStatus', 'sortOrder.byStatus')
+  .main-results-wrapper.endless-container(
+    cf-endless-container
+    at-bottom="loadMore()"
+    num-elements="paginator.page")
+    table.result-list.main-results
+      tbody
+        tr(
+          ng-repeat="snapshot in snapshots track by snapshot.sys.id"
+          ng-class="{'x--current': currentId === snapshot.sys.id}"
+          ng-click="goToSnapshot(snapshot)")
+          td
+            +snapshot-dt
+          td
+            .snapshot-author
+              span {{ snapshot.sys.createdBy.authorName }}
+          td(
+            ng-class="{" +
+              "'snapshot-selector__item-status': true," +
+              "'snapshot-selector__item-status-published': snapshot.sys.snapshotType === 'publication'" +
+            "}")
+            | {{ snapshot.sys.snapshotType === 'publication' ? 'published' :  'other' }}
 
-    .modal-dialog__content.snapshot-selector__list(ng-controller="SnapshotSelectorController")
-      table.result-list.main-header
-        thead
-          tr
-            th Id
-            th Event type
-            th Created at
-            th Author
-            th Actions
+    .snapshot-selector__item-list-placeholder(
+      ng-if="!isLoading && snapshots.length < 1")
+      | No snapshots found.
 
-      .main-results-wrapper.endless-container(
-        cf-endless-container
-        at-bottom="loadMore()"
-        num-elements="paginator.page")
-
-        table.result-list.main-results
-          tbody
-            tr(
-              ng-repeat="snapshot in snapshots track by snapshot.sys.id"
-              ng-class="{'x--current': currentId === snapshot.sys.id}")
-              td
-                code {{ snapshot.sys.id }}
-              td {{ snapshot.sys.snapshotType }}
-              td
-                +snapshot-dt
-              td
-                +snapshot-author
-              td
-                button.btn-link(
-                  ng-click="dialog.confirm(snapshot)"
-                  ng-if="currentId !== snapshot.sys.id")
-                  | Compare
-                span(ng-if="currentId === snapshot.sys.id")
-                  | &ndash;
-
-        .snapshot-selector__item-list-placeholder(
-          ng-if="!isLoading && snapshots.length < 1")
-          | No snapshots found.
-
-        .loading(ng-show="isLoading")
+    .loading(ng-show="isLoading")

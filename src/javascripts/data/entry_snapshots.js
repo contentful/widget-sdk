@@ -72,9 +72,9 @@ angular.module('cf.app')
   }
 
   function fakeSys (user) {
-    var link = {sys: {type: 'Link', linkType: 'User', id: user.sys.id}};
-
     return function (s) {
+      var link = {sys: {type: 'Link', linkType: 'User', id: user.sys.id}};
+
       return _.merge({sys: {createdBy: link}}, s);
     };
   }
