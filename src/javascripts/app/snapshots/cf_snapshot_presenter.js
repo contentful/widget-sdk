@@ -5,19 +5,22 @@ angular.module('cf.app')
  * @ngdoc directive
  * @module cf.app
  * @name cfSnapshotPresenter
+ * @description
+ * This directive "presents" value of a field.
+ * Directives prefixed with "cfSnapshotPresenter..."
+ * implement logic needed for specific field
+ * types (if the type is complex enough).
  */
 .directive('cfSnapshotPresenter', [function () {
   return {
     restrict: 'E',
     template: JST.cf_snapshot_presenter(),
     controller: ['$scope', function ($scope) {
-      $scope.value = $scope.fieldLocale.doc.get();
-      $scope.noValueType = getNoValueType($scope.value);
-      $scope.hasValue = !$scope.noValueType;
-      $scope.isCustom = ($scope.widget.template || '').indexOf('cf-iframe-widget') > -1;
-
       var field = $scope.widget.field;
       $scope.type = getFieldType(field);
+      $scope.value = $scope.fieldLocale.doc.get();
+      $scope.hasValue = !isEmpty($scope.value);
+      $scope.isCustom = ($scope.widget.template || '').indexOf('cf-iframe-widget') > -1;
       $scope.linkType = dotty.get(field, 'linkType', dotty.get(field, 'items.linkType'));
     }]
   };
@@ -35,18 +38,8 @@ angular.module('cf.app')
     return type === 'Link' ? 'Reference' : (alt || type);
   }
 
-  function getNoValueType (val) {
-    if (val === null) {
-      return 'null';
-    } else if (val === undefined) {
-      return 'undefined';
-    } else if (val === '') {
-      return 'empty string';
-    } else if (_.isEqual(val, [])) {
-      return 'empty array';
-    } else if (_.isEqual(val, {})) {
-      return 'empty object';
-    }
+  function isEmpty (v) {
+    return v === null || v === undefined || v === '' || _.isEqual(v, []) || _.isEqual(v, {});
   }
 }])
 
