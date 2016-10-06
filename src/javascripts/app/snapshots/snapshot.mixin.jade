@@ -11,6 +11,7 @@ mixin snapshot-overlays(version)
   - attrs["ng-class"] = "{'x--selected': selected === '" + version + "'}";
   - attrs["ng-click"] = "select('" + version + "')";
   .snapshot-comparator__overlay-different(ng-if="canRestore")&attributes(attrs)
+    span Field will be restored to this version
   .snapshot-comparator__overlay-identical(ng-if="!canRestore")
 
 mixin snapshot-value(doc, version)

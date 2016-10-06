@@ -34,7 +34,7 @@ angular.module('contentful')
   var compareWithCurrent = base({
     name: 'withCurrent',
     url: '/:snapshotId',
-    loadingText: 'Loading snapshot...',
+    loadingText: 'Loading versions...',
     resolve: {
       snapshot: ['$stateParams', 'data/entrySnapshots', 'contentType', function ($stateParams, repo, ct) {
         return repo.getOne($stateParams.snapshotId, ct);
@@ -69,7 +69,7 @@ angular.module('contentful')
     name: 'compare',
     url: '/compare',
     children: [compareWithCurrent],
-    loadingText: 'Loading snapshot...',
+    loadingText: 'Loading versions...',
     controller: ['require', function (require) {
       var snapshotRepo = require('data/entrySnapshots');
       var $state = require('$state');
