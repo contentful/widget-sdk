@@ -31,8 +31,8 @@ angular.module('cf.app')
   var modalDialog = require('modalDialog');
   var $state = require('$state');
   var $stateParams = require('$stateParams');
-  var leaveConfirmator = require('navigation/confirmLeaveEditor');
   var notification = require('notification');
+  var tracking = require('track/versioning');
 
   $scope.versionPicker = require('SnapshotComparatorController/versionPicker').create();
   $scope.snapshotCount = $stateParams.snapshotCount;
@@ -40,7 +40,7 @@ angular.module('cf.app')
   _.extend($scope.context, {
     ready: true,
     title: spaceContext.entryTitle($scope.entry),
-    requestLeaveConfirmation: leaveConfirmator(save, 'confirm_leave_comparison')
+    requestLeaveConfirmation: tracking.trackableConfirmator(save)
   });
 
   $scope.$watch(function () {
@@ -52,12 +52,14 @@ angular.module('cf.app')
   var ctData = $scope.contentType.data;
   var snapshotData = $scope.snapshot.snapshot || {};
 
+  $scope.showOnlyDifferences = false;
   $scope.otDoc = SnapshotDoc.create(dotty.get($scope, 'entry.data', {}));
   $scope.snapshotDoc = SnapshotDoc.create(snapshotData);
   $scope.fields = DataFields.create(ctData.fields, $scope.otDoc);
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(ctData);
 
   $scope.selectSnapshot = selectSnapshot;
+  $scope.close = close;
   $scope.save = Command.create(_.partial(save, true), {
     disabled: function () { return !$scope.context.dirty; }
   });
@@ -72,12 +74,22 @@ angular.module('cf.app')
   function goToSnapshot (snapshot) {
     $scope.context.ready = false;
     setPristine();
-    $state.go('.', {snapshotId: snapshot.sys.id});
+    $state.go('.', {snapshotId: snapshot.sys.id, source: 'compareView'});
+  }
+
+  function close () {
+    if (!$scope.context.dirty) {
+      tracking.closed();
+    }
+
+    return $state.go('^.^');
   }
 
   function save (redirect) {
     return spaceContext.cma.updateEntry(prepareRestoredEntry())
-    .then(function () {
+    .then(function (entry) {
+      tracking.registerRestoredVersion(entry);
+      tracking.restored($scope.versionPicker, $scope.showOnlyDifferences);
       setPristine();
       if (redirect) {
         return $state.go('^.^', {}, {reload: true});

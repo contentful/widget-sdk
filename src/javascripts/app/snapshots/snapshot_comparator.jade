@@ -10,10 +10,10 @@ header.workbench-header
       type="button"
       ui-command="save")
       | Apply changes
-    a.btn-secondary-action(
+    button.btn-secondary-action(
       role="button"
       type="button"
-      ui-sref="^.^")
+      ng-click="close()")
       | Close
 
 .snapshot-comparator__header

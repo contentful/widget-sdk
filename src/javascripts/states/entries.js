@@ -35,7 +35,10 @@ angular.module('contentful')
     name: 'withCurrent',
     url: '/:snapshotId',
     loadingText: 'Loading versions...',
-    params: {snapshotCount: 0},
+    params: {
+      snapshotCount: 0,
+      source: 'deepLink'
+    },
     resolve: {
       snapshot: ['$stateParams', 'data/entrySnapshots', 'contentType', function ($stateParams, repo, ct) {
         return repo.getOne($stateParams.snapshotId, ct);
@@ -43,15 +46,22 @@ angular.module('contentful')
     },
     template: '<cf-snapshot-comparator class="workbench" />',
     controller: [
-      '$scope', 'fieldControls', 'entry', 'contentType', 'snapshot',
-      function ($scope, fieldControls, entry, contentType, snapshot) {
-        require('$state').current.data = $scope.context = {};
+      'require', '$scope', 'fieldControls', 'entry', 'contentType', 'snapshot',
+      function (require, $scope, fieldControls, entry, contentType, snapshot) {
+        var $state = require('$state');
+        var $stateParams = require('$stateParams');
+        var tracking = require('track/versioning');
+
+        $state.current.data = $scope.context = {};
         $scope.widgets = _.filter(fieldControls.form, function (widget) {
           return !dotty.get(widget, 'field.disabled') || $scope.preferences.showDisabledFields;
         });
         $scope.entry = $scope.entity = entry;
         $scope.contentType = contentType;
         $scope.snapshot = snapshot;
+
+        tracking.setData($scope.user, entry.data, snapshot);
+        tracking.opened($stateParams.source);
 
         contextHistory.addEntity(listEntity);
         contextHistory.addEntity(buildEntryCrumb(entry));
@@ -87,7 +97,8 @@ angular.module('contentful')
       function compare (snapshot, count) {
         return $state.go('.withCurrent', {
           snapshotId: snapshot.sys.id,
-          snapshotCount: count
+          snapshotCount: count,
+          source: 'entryEditor'
         });
       }
 

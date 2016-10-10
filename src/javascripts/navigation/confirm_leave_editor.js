@@ -32,14 +32,14 @@ angular.module('contentful')
       var dialog;
       var save = Command.create(function () {
         return runSave().then(function () {
-          dialog.confirm(true);
+          dialog.confirm({saved: true});
         }, function (error) {
           dialog.cancel(error);
         });
       });
 
       var discard = Command.create(function () {
-        dialog.confirm(true);
+        dialog.confirm({discarded: true});
       });
 
       var cancel = Command.create(function () {
