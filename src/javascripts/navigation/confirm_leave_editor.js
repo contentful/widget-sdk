@@ -27,7 +27,7 @@ angular.module('contentful')
   var modalDialog = $injector.get('modalDialog');
   var Command     = $injector.get('command');
 
-  return function createLeaveConfirmator (runSave) {
+  return function createLeaveConfirmator (runSave, template) {
     return function confirmLeaveEditor () {
       var dialog;
       var save = Command.create(function () {
@@ -47,7 +47,7 @@ angular.module('contentful')
       });
 
       dialog = modalDialog.open({
-        template: 'confirm_leave_editor',
+        template: template || 'confirm_leave_editor',
         backgroundClose: false,
         ignoreEnter: false,
         enterAction: function () {

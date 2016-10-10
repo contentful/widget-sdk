@@ -40,8 +40,12 @@ cf-ui-hint.snapshot-comparator__hint(
   show-dismiss="true"
   role="note"
   data-test-id="snapshots-intro")
-  | This version looks different than the current version of your entry
-  | (shown on the right side). Only content that has changed can be restored.
+  span(ng-show="versionPicker.getDifferenceCount() > 0")
+    | The contents of these two versions seem to be different.
+  span(ng-show="versionPicker.getDifferenceCount() < 1")
+    | These two versions are identical.
+  span(ng-show="snapshotCount > 1")
+    |  Use this navigation to change the versions being compared.
 
 .workbench-main.x--content-full-size
   .snapshot-comparator__field(

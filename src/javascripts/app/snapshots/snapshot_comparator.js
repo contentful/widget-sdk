@@ -21,6 +21,7 @@ angular.module('cf.app')
 }])
 
 .controller('SnapshotComparatorController', ['require', '$scope', function (require, $scope) {
+  var $q = require('$q');
   var spaceContext = require('spaceContext');
   var SnapshotDoc = require('SnapshotComparatorController/snapshotDoc');
   var DataFields = require('EntityEditor/DataFields');
@@ -30,7 +31,6 @@ angular.module('cf.app')
   var modalDialog = require('modalDialog');
   var $state = require('$state');
   var $stateParams = require('$stateParams');
-  var $timeout = require('$timeout');
   var leaveConfirmator = require('navigation/confirmLeaveEditor');
   var notification = require('notification');
 
@@ -40,7 +40,7 @@ angular.module('cf.app')
   _.extend($scope.context, {
     ready: true,
     title: spaceContext.entryTitle($scope.entry),
-    requestLeaveConfirmation: leaveConfirmator(save)
+    requestLeaveConfirmation: leaveConfirmator(save, 'confirm_leave_comparison')
   });
 
   $scope.$watch(function () {
@@ -58,7 +58,7 @@ angular.module('cf.app')
   $scope.transformedContentTypeData = ContentTypes.internalToPublic(ctData);
 
   $scope.selectSnapshot = selectSnapshot;
-  $scope.save = Command.create(save, {
+  $scope.save = Command.create(_.partial(save, true), {
     disabled: function () { return !$scope.context.dirty; }
   });
 
@@ -71,20 +71,26 @@ angular.module('cf.app')
 
   function goToSnapshot (snapshot) {
     $scope.context.ready = false;
-    $scope.versionPicker.keepAll();
-    $timeout(function () {
-      $state.go('.', {snapshotId: snapshot.sys.id});
+    setPristine();
+    $state.go('.', {snapshotId: snapshot.sys.id});
+  }
+
+  function save (redirect) {
+    return spaceContext.cma.updateEntry(prepareRestoredEntry())
+    .then(function () {
+      setPristine();
+      if (redirect) {
+        return $state.go('^.^', {}, {reload: true});
+      }
+    }, handleSaveError)
+    .then(function () {
+      notification.info('Entry successfully restored.');
     });
   }
 
-  function save () {
-    return spaceContext.cma.updateEntry(prepareRestoredEntry())
-    .then(function () {
-      $scope.versionPicker.keepAll();
-      return $timeout(function () {
-        return $state.go('^.^', {}, {reload: true});
-      });
-    }, handleSaveError);
+  function setPristine () {
+    $scope.versionPicker.keepAll();
+    $scope.context.dirty = false;
   }
 
   function prepareRestoredEntry () {
@@ -106,6 +112,8 @@ angular.module('cf.app')
     } else {
       notification.error('Changes could not be reverted. Please try again.');
     }
+
+    return $q.reject(error);
   }
 }])
 
