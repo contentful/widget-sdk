@@ -6,10 +6,12 @@ angular.module('cf.app')
   var snapshotRepo = require('data/entrySnapshots');
   var Paginator = require('Paginator');
 
+  var PER_PAGE = 40;
+
   var snapshotsById = {};
 
   $scope.isLoading = false;
-  $scope.paginator = Paginator.create();
+  $scope.paginator = Paginator.create(PER_PAGE);
   $scope.loadMore = loadMore;
 
   resetAndLoad();
@@ -30,19 +32,24 @@ angular.module('cf.app')
   }
 
   function load () {
-    var query = _.extend({page: $scope.paginator.getPage()}, $scope.query);
     $scope.isLoading = true;
-    return snapshotRepo.getList(query)
-    .then(addUniqueAndSort)
+
+    return snapshotRepo.getList({
+      skip: $scope.paginator.getSkipParam(),
+      limit: PER_PAGE + 1
+    })
+    .then(addUnique)
     .then(function () {
       $scope.isLoading = false;
     });
   }
 
-  function addUniqueAndSort (snapshots) {
-    $scope.paginator.setTotal(snapshots.total);
+  function addUnique (snapshots) {
+    $scope.paginator.setTotal(function (total) {
+      return total + snapshots.length;
+    });
 
-    snapshots.filter(function (snapshot) {
+    snapshots.slice(0, PER_PAGE).filter(function (snapshot) {
       return !snapshotsById[snapshot.sys.id];
     }).forEach(function (snapshot) {
       snapshotsById[snapshot.sys.id] = snapshot;

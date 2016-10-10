@@ -67,7 +67,7 @@ angular.module('cf.app')
   function selectSnapshot () {
     return modalDialog.open({
       template: 'snapshot_selector',
-      scopeData: {query: {}, currentId: $scope.snapshot.sys.id}
+      scopeData: {currentId: $scope.snapshot.sys.id}
     }).promise.then(goToSnapshot);
   }
 

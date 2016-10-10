@@ -9,10 +9,7 @@ angular.module('cf.app')
   var moment = require('moment');
   var localeStore = require('TheLocaleStore');
 
-  var ITEMS = 135;
-  var PER_PAGE = 40;
-
-  var snapshots = _.range(ITEMS).map(fakeSnapshot);
+  var snapshots = _.range(135).map(fakeSnapshot);
 
   return {
     getOne: getOne,
@@ -35,20 +32,20 @@ angular.module('cf.app')
     });
   }
 
-  function getList (query, ct) {
-    query = query || {};
-    var page = query.page || 0;
-    var start = page * PER_PAGE;
+  function getList (q, ct) {
+    q = q || {};
+    q.skip = q.skip || 0;
+    q.limit = q.limit || 40;
 
     return $timeout(300)
     .then(getCurrentUser)
     .then(function (user) {
       var result = snapshots
-      .slice(start, start + PER_PAGE)
+      .slice(q.skip, q.skip + q.limit)
       .map(fakeSys(user))
       .map(fakeFields(ct));
 
-      return _.extend(result, {total: ITEMS});
+      return result;
     });
   }
 

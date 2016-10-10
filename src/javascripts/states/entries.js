@@ -88,7 +88,7 @@ angular.module('contentful')
       var $state = require('$state');
       var modalDialog = require('modalDialog');
 
-      snapshotRepo.getList({})
+      snapshotRepo.getList({limit: 1})
       .then(function (snapshots) {
         var count = dotty.get(snapshots, 'length', 0);
         return count > 0 ? compare(_.first(snapshots), count) : back();
