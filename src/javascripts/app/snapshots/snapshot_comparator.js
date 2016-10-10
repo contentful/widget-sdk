@@ -29,11 +29,13 @@ angular.module('cf.app')
   var Command = require('command');
   var modalDialog = require('modalDialog');
   var $state = require('$state');
+  var $stateParams = require('$stateParams');
   var $timeout = require('$timeout');
   var leaveConfirmator = require('navigation/confirmLeaveEditor');
   var notification = require('notification');
 
   $scope.versionPicker = require('SnapshotComparatorController/versionPicker').create();
+  $scope.snapshotCount = $stateParams.snapshotCount;
 
   _.extend($scope.context, {
     ready: true,

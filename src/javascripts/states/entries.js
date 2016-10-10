@@ -35,6 +35,7 @@ angular.module('contentful')
     name: 'withCurrent',
     url: '/:snapshotId',
     loadingText: 'Loading versions...',
+    params: {snapshotCount: 0},
     resolve: {
       snapshot: ['$stateParams', 'data/entrySnapshots', 'contentType', function ($stateParams, repo, ct) {
         return repo.getOne($stateParams.snapshotId, ct);
@@ -75,10 +76,30 @@ angular.module('contentful')
     controller: ['require', function (require) {
       var snapshotRepo = require('data/entrySnapshots');
       var $state = require('$state');
+      var modalDialog = require('modalDialog');
 
-      snapshotRepo.getList({}).then(function (snapshots) {
-        $state.go('.withCurrent', {snapshotId: snapshots[0].sys.id});
+      snapshotRepo.getList({})
+      .then(function (snapshots) {
+        var count = dotty.get(snapshots, 'length', 0);
+        return count > 0 ? compare(_.first(snapshots), count) : back();
       });
+
+      function compare (snapshot, count) {
+        return $state.go('.withCurrent', {
+          snapshotId: snapshot.sys.id,
+          snapshotCount: count
+        });
+      }
+
+      function back () {
+        return modalDialog.open({
+          title: 'No versions found',
+          message: 'You’ll be redirected back to your entry.',
+          cancelLabel: null
+        }).promise.finally(function () {
+          return $state.go('^');
+        });
+      }
     }]
   });
 
