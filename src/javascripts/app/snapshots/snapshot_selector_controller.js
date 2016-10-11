@@ -40,7 +40,7 @@ angular.module('cf.app')
   var snapshotRepo = require('data/entrySnapshots');
   var Paginator = require('Paginator');
 
-  var PER_PAGE = 40;
+  var PER_PAGE = 20;
 
   var snapshotsById = {};
 
