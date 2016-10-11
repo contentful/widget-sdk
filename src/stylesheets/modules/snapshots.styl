@@ -40,6 +40,9 @@
   flex-grow: 1
   flex-basis: 0
 
+  .btn-link
+    outline: none
+
   &:first-child
     border-right: 1px solid #DBDBDB
 
@@ -116,8 +119,10 @@
 
   > span
     display: none
-    padding: 3px 7px
-    font-size: 0.9em
+    padding: 3px 8px
+    font-size: 0.75rem
+    font-weight: 500
+    letter-spacing: 1px
     text-transform: uppercase
     background: #4A90E2
     color: #FFF
@@ -144,3 +149,6 @@
 
   [data-arrow-direction="up"]
     top: -7px
+
+.snapshot-comparator__leave-dialog
+  max-width: 600px
