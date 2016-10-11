@@ -49,6 +49,14 @@ describe('data/ApiClient', function () {
       }));
     });
 
+    pit('getEntrySnapshot(entryId, snapshotId)', function () {
+      return this.client.getEntrySnapshot('EID', 'SID')
+      .then(assertRequestResponse('DATA', {
+        method: 'GET',
+        url: '//api.test.local/spaces/SPACE/entries/EID/snapshots/SID'
+      }));
+    });
+
     pit('getAsset(id)', function () {
       return this.client.getAsset('ID')
       .then(assertRequestResponse('DATA', {
@@ -93,6 +101,15 @@ describe('data/ApiClient', function () {
       .then(assertRequestResponse('DATA', {
         method: 'GET',
         url: '//api.test.local/spaces/SPACE/entries',
+        params: 'QUERY'
+      }));
+    });
+
+    pit('getEntrySnapshots(entryId, query)', function () {
+      return this.client.getEntrySnapshots('EID', 'QUERY')
+      .then(assertRequestResponse('DATA', {
+        method: 'GET',
+        url: '//api.test.local/spaces/SPACE/entries/EID/snapshots',
         params: 'QUERY'
       }));
     });
