@@ -42,14 +42,10 @@
         letter-spacing: normal
         padding-top: 14px
         padding-bottom: 14px
+        padding-left: 10px
         line-height: 1.5em
         i
-          margin-left: 4px
-        &:hover
-          cursor: pointer
-      th:first-child, th:nth-child(2)
-        padding-left: 10px
-
+          margin-left: 5px
   &__item
     &-status
       font-size: 0.9em
@@ -76,11 +72,19 @@
         padding-top: 14px
         padding-bottom: 14px
         line-height: 2.5em
+        padding-left: 10px
 
+  .x--sortable
+    &:hover
+      cursor: pointer
+      background-color: $colors.element-light
   .x--current
     background-color: $colors.ice-mid
   .x--selected
     font-weight: bold
+    .button-icon
+      color: $colors.text-light
+      font-weight: normal
 
 .snapshot-author
   display: flex
@@ -90,9 +94,6 @@
     width: 25px
     height: 25px
     margin: 7px 0
-  span
-    margin-left: 10px
-    line-height: 1.1em
 
 .snapshot-comparator__header
   display: flex
