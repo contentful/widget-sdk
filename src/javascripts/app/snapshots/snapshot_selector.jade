@@ -5,9 +5,9 @@ include ./snapshot.mixin.jade
     table.result-list.main-header
       thead
         tr
-          +snapshot-header('Last edited', 'sortByLastEdited', 'sortOrder.byLastEdited')
-          +snapshot-header('Edited by', 'sortByEditor', 'sortOrder.byEditor')
-          +snapshot-header('Status', 'sortByStatus', 'sortOrder.byStatus')
+          +snapshot-list-header('Last edited', 'sortByLastEdited', 'sortOrder.byLastEdited')
+          +snapshot-list-header('Edited by', 'sortByEditor', 'sortOrder.byEditor')
+          +snapshot-list-header('Status', 'sortByStatus', 'sortOrder.byStatus')
   .main-results-wrapper.endless-container(
     cf-endless-container
     at-bottom="loadMore()"
@@ -21,8 +21,7 @@ include ./snapshot.mixin.jade
           td
             +snapshot-dt
           td
-            .snapshot-author
-              span {{ snapshot.sys.createdBy.authorName }}
+            | {{ snapshot.sys.createdBy.authorName }}
           td(
             ng-class="{" +
               "'snapshot-selector__item-status': true," +
