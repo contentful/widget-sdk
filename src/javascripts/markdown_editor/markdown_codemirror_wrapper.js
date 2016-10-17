@@ -46,9 +46,17 @@ angular.module('contentful')
       Enter: 'newlineAndIndentContinueMarkdownList'
     });
 
-    // API
+
+    /**
+     * @ngdoc type
+     * @name CodeMirrorWrapper
+     * @description
+     * Custom API for a CodeMirror instance.
+     *
+     * An instance wraps a CodeMirror instance and provides a custom interface
+     * on top of CodeMirror.
+     */
     return {
-      getEditor: function () { return cm; },
       destroy: function () { cm.toTextArea(); },
       attachEvent: attachEvent,
       addKeyShortcuts: addKeyShortcuts,
@@ -83,7 +91,9 @@ angular.module('contentful')
       getNl: getNl,
       getValue: getValue,
       getHistorySize: getHistorySize,
-      getScrollInfo: getScrollInfo
+
+      scrollToFraction: scrollToFraction,
+      getScrollFraction: getScrollFraction
     };
 
     function assureHeight () {
@@ -290,8 +300,17 @@ angular.module('contentful')
       return which ? history[which] : history;
     }
 
-    function getScrollInfo () {
-      return cm.getScrollInfo();
+    /**
+     * @ngdoc method
+     * @name CodeMirrorWrapper#getScrollFraction
+     * @description
+     * Returns the scroll postition has a fraction of the overall height.
+     *
+     * @returns {number}
+     */
+    function getScrollFraction () {
+      var info = cm.getScrollInfo();
+      return info.top / info.height;
     }
 
     function repeat (what, n) {
@@ -301,6 +320,20 @@ angular.module('contentful')
     function opt (name, value) {
       if (!value) { return cm.getOption(name); }
       cm.setOption(name, value);
+    }
+
+    /**
+     * @ngdoc method
+     * @name CodeMirrorWrapper#scrollToFraction
+     * @description
+     * Given a number between 0 and 1 this method scrolls to the given fraction
+     * of the document
+     *
+     * @param {number} position
+     */
+    function scrollToFraction (pos) {
+      var height = cm.getScrollInfo().height;
+      cm.scrollTo(null, pos * height);
     }
   };
 }]);

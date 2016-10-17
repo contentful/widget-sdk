@@ -12,8 +12,12 @@ describe('CodeMirror wrapper', function () {
     const createWrapper = this.$inject('MarkdownEditor/wrapper');
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
+
+    const cmFactory = sinon.spy(CodeMirror, 'fromTextArea');
     wrapper = createWrapper(textarea, {}, CodeMirror);
-    cm = wrapper.getEditor();
+    cm = cmFactory.returnValues[0];
+    cmFactory.restore();
+
     focusSpy = sinon.spy();
     cm.on('focus', focusSpy);
   });

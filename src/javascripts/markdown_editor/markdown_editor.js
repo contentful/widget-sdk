@@ -50,7 +50,7 @@ angular.module('contentful')
         onChange: function (fn) { editor.attachEvent('change', wrapChange(fn)); }
       },
       tie: {
-        previewToEditor: tiePreviewToEdiotr,
+        previewToEditor: tiePreviewToEditor,
         editorToEditor: tieEditorToEditor,
         editorToPreview: tieEditorToPreview
       },
@@ -94,12 +94,11 @@ angular.module('contentful')
       };
     }
 
-    function tiePreviewToEdiotr (el) {
-      var info = editor.getScrollInfo();
-      var position = info.top / info.height;
+    function tiePreviewToEditor (el) {
+      var fraction = editor.getScrollFraction();
 
       $timeout(function () {
-        var top = el.get(0).scrollHeight * position;
+        var top = el.get(0).scrollHeight * fraction;
         el.scrollTop(top);
       });
     }
@@ -113,8 +112,7 @@ angular.module('contentful')
       var position = el.scrollTop() / el.get(0).scrollHeight;
 
       $timeout(function () {
-        var info = editor.getScrollInfo();
-        editor.getEditor().scrollTo(null, position * info.height);
+        editor.scrollToFraction(position);
       });
     }
 

@@ -9,10 +9,14 @@ describe('Markdown editor', function () {
     const MarkdownEditor = this.$inject('MarkdownEditor');
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
+
+    const cmFactory = sinon.spy(libs.CodeMirror, 'fromTextArea');
     editor = MarkdownEditor.createManually(textarea, {}, libs.CodeMirror, libs.marked);
+    cm = cmFactory.returnValues[0];
+    cmFactory.restore();
+
     actions = editor.actions;
     wrapper = editor.getWrapper();
-    cm = wrapper.getEditor();
   });
 
   afterEach(function () {
