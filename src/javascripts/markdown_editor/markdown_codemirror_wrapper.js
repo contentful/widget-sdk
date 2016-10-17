@@ -168,6 +168,19 @@ angular.module('contentful')
       cm.focus();
     }
 
+
+    /**
+     * @ngdoc method
+     * @name CodeMirrorWrapper#moveIfNotEmpty
+     * @description
+     * Insert a new line below the cursor and move to the beginning of
+     * that line.
+     *
+     * Only do this if the editor has content and we are not already on
+     * the last line.
+     *
+     * TODO rename this
+     */
     function moveIfNotEmpty () {
       if (getCurrentLineLength() < 1) { return; }
 

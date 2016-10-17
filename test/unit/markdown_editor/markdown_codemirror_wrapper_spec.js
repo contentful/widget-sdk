@@ -53,7 +53,6 @@ describe('CodeMirror wrapper', function () {
     it('simple getter methods', function () {
       expect(wrapper.getNl()).toBe('\n');
       expect(wrapper.getIndentation()).toBe('  ');
-      expect(wrapper.opt('mode')).toBe('markdown');
       assertHasNotFocused();
     });
 
