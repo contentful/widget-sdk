@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', function ($injector) {
+angular.module('contentful')
+.factory('MarkdownEditor/wrapper', ['require', function (require) {
+  var throttle = require('throttle');
+  var userAgent = require('userAgent');
 
-  var throttle  = $injector.get('throttle');
-  var userAgent = $injector.get('userAgent');
-
-  return function(textarea, options, CodeMirror) {
+  return function (textarea, options, CodeMirror) {
 
     options = options || {};
 
@@ -48,45 +48,45 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
 
     // API
     return {
-      getEditor:               function () { return cm; },
-      destroy:                 function () { cm.toTextArea(); },
-      attachEvent:             attachEvent,
-      addKeyShortcuts:         addKeyShortcuts,
-      setValue:                setValue,
-      cmd:                     cmd,
-      opt:                     opt,
-      moveToLineBeginning:     moveToLineBeginning,
-      moveIfNotEmpty:          moveIfNotEmpty,
-      restoreCursor:           restoreCursor,
-      moveToLineEnd:           moveToLineEnd,
-      usePrimarySelection:     usePrimarySelection,
-      select:                  select,
-      selectBackwards:         selectBackwards,
-      extendSelectionBy:       extendSelectionBy,
-      insertAtCursor:          insertAtCursor,
-      insertAtLineBeginning:   insertAtLineBeginning,
-      wrapSelection:           wrapSelection,
+      getEditor: function () { return cm; },
+      destroy: function () { cm.toTextArea(); },
+      attachEvent: attachEvent,
+      addKeyShortcuts: addKeyShortcuts,
+      setValue: setValue,
+      cmd: cmd,
+      opt: opt,
+      moveToLineBeginning: moveToLineBeginning,
+      moveIfNotEmpty: moveIfNotEmpty,
+      restoreCursor: restoreCursor,
+      moveToLineEnd: moveToLineEnd,
+      usePrimarySelection: usePrimarySelection,
+      select: select,
+      selectBackwards: selectBackwards,
+      extendSelectionBy: extendSelectionBy,
+      insertAtCursor: insertAtCursor,
+      insertAtLineBeginning: insertAtLineBeginning,
+      wrapSelection: wrapSelection,
       removeFromLineBeginning: removeFromLineBeginning,
-      removeSelectedText:      removeSelectedText,
-      replaceSelectedText:     replaceSelectedText,
-      getSelection:            getSelection,
-      getLine:                 getLine,
-      isLineEmpty:             isLineEmpty,
-      getSelectedText:         getSelectedText,
-      getSelectionLength:      getSelectionLength,
-      getCurrentLine:          getCurrentLine,
-      getCurrentLineNumber:    getCurrentLineNumber,
-      getCurrentCharacter:     getCurrentCharacter,
-      getCurrentLineLength:    getCurrentLineLength,
-      lineStartsWith:          lineStartsWith,
-      getIndentation:          getIndentation,
-      getNl:                   getNl,
-      getValue:                getValue,
-      getHistorySize:          getHistorySize,
-      getScrollInfo:           getScrollInfo
+      removeSelectedText: removeSelectedText,
+      replaceSelectedText: replaceSelectedText,
+      getSelection: getSelection,
+      getLine: getLine,
+      isLineEmpty: isLineEmpty,
+      getSelectedText: getSelectedText,
+      getSelectionLength: getSelectionLength,
+      getCurrentLine: getCurrentLine,
+      getCurrentLineNumber: getCurrentLineNumber,
+      getCurrentCharacter: getCurrentCharacter,
+      getCurrentLineLength: getCurrentLineLength,
+      lineStartsWith: lineStartsWith,
+      getIndentation: getIndentation,
+      getNl: getNl,
+      getValue: getValue,
+      getHistorySize: getHistorySize,
+      getScrollInfo: getScrollInfo
     };
 
-    function assureHeight() {
+    function assureHeight () {
       var current = cm.heightAtLine(cm.lastLine(), 'local') + EDITOR_SIZE.shift;
       var next = current;
       if (current < EDITOR_SIZE.min) { next = EDITOR_SIZE.min; }
@@ -94,14 +94,14 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
       cm.setSize('100%', next);
     }
 
-    function attachEvent(name, fn, throttleInterval) {
+    function attachEvent (name, fn, throttleInterval) {
       if (throttleInterval) {
         fn = throttle(fn, throttleInterval);
       }
       cm.on(name, fn);
     }
 
-    function addKeyShortcuts(map) {
+    function addKeyShortcuts (map) {
       var ctrlKey = userAgent.getCtrlKey();
       cm.addKeyMap(_.transform(map, function (acc, value, key) {
         acc[ctrlKey + '-' + key] = value;
@@ -112,21 +112,21 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
      * low-level editor manipulation functions
      */
 
-    function setValue(value) {
+    function setValue (value) {
       cm.setValue(value || '');
     }
 
-    function cmd(name) {
+    function cmd (name) {
       cm.execCommand(name);
       cm.focus();
     }
 
-    function moveToLineBeginning(lineNumber) {
+    function moveToLineBeginning (lineNumber) {
       cm.setCursor({line: defaultToCurrentLineNumber(lineNumber), ch: 0});
       cm.focus();
     }
 
-    function moveIfNotEmpty() {
+    function moveIfNotEmpty () {
       if (getCurrentLineLength() < 1) { return; }
 
       var next = getCurrentLineNumber() + 1;
@@ -138,36 +138,39 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
       moveToLineBeginning(next);
     }
 
-    function restoreCursor(character, lineNumber, noFocus) {
+    function restoreCursor (character, lineNumber, noFocus) {
       cm.setCursor({line: defaultToCurrentLineNumber(lineNumber), ch: character});
       if (!noFocus) { cm.focus(); }
     }
 
-    function moveToLineEnd(lineNumber) {
-      cm.setCursor({line: defaultToCurrentLineNumber(lineNumber), ch: getCurrentLineLength() });
+    function moveToLineEnd (lineNumber) {
+      cm.setCursor({
+        line: defaultToCurrentLineNumber(lineNumber),
+        ch: getCurrentLineLength()
+      });
       cm.focus();
     }
 
-    function defaultToCurrentLineNumber(lineNumber) {
+    function defaultToCurrentLineNumber (lineNumber) {
       if (lineNumber === 0 || lineNumber > 0) {
         return lineNumber;
       }
       return getCurrentLineNumber();
     }
 
-    function usePrimarySelection() {
+    function usePrimarySelection () {
       cmd('singleSelection');
     }
 
-    function select(from, to) {
+    function select (from, to) {
       cm.setSelection(from, to);
       cm.focus();
     }
 
-    function selectBackwards(skip, len) {
+    function selectBackwards (skip, len) {
       select(getPos(-skip - len), getPos(-skip));
 
-      function getPos(modifier) {
+      function getPos (modifier) {
         return {
           line: getCurrentLineNumber(),
           ch: getCurrentCharacter() + modifier
@@ -175,21 +178,21 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
       }
     }
 
-    function extendSelectionBy(modifier) {
+    function extendSelectionBy (modifier) {
       select(getPos('anchor', 0), getPos('head', modifier));
 
-      function getPos(prop, modifier) {
+      function getPos (prop, modifier) {
         var selection = getSelection();
         return {line: selection[prop].line, ch: selection[prop].ch + modifier};
       }
     }
 
-    function insertAtCursor(text) {
+    function insertAtCursor (text) {
       cm.replaceRange(text, cm.getCursor());
       cm.focus();
     }
 
-    function insertAtLineBeginning(text) {
+    function insertAtLineBeginning (text) {
       var initialCh = getCurrentCharacter();
       moveToLineBeginning();
       insertAtCursor(text);
@@ -197,25 +200,25 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
       cm.focus();
     }
 
-    function wrapSelection(wrapper) {
+    function wrapSelection (wrapper) {
       var replacement = wrapper + getSelectedText() + wrapper;
       var selection = getSelection();
       cm.replaceRange(replacement, selection.anchor, selection.head);
       cm.focus();
     }
 
-    function removeFromLineBeginning(charCount) {
+    function removeFromLineBeginning (charCount) {
       var lineNumber = getCurrentLineNumber();
       cm.replaceRange('', {line: lineNumber, ch: 0}, {line: lineNumber, ch: charCount});
       cm.focus();
     }
 
-    function removeSelectedText() {
+    function removeSelectedText () {
       cm.replaceSelection('');
       cm.focus();
     }
 
-    function replaceSelectedText(replacement) {
+    function replaceSelectedText (replacement) {
       cm.replaceSelection(replacement);
       cm.focus();
     }
@@ -224,7 +227,7 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
      *  low-level editor get/check functions
      */
 
-    function getSelection() {
+    function getSelection () {
       var selections = cm.listSelections();
       if (!cm.somethingSelected() || !selections || selections.length < 1) {
         return null;
@@ -232,70 +235,70 @@ angular.module('contentful').factory('MarkdownEditor/wrapper', ['$injector', fun
       return selections[0];
     }
 
-    function getLine(n) {
+    function getLine (n) {
       return cm.getLine(n) || '';
     }
 
-    function isLineEmpty(n) {
+    function isLineEmpty (n) {
       n = defaultToCurrentLineNumber(n);
       return n > -1 && getLine(n).length < 1 && n < cm.lineCount();
     }
 
-    function getSelectedText() {
+    function getSelectedText () {
       return getSelection() ? cm.getSelection() : '';
     }
 
-    function getSelectionLength() {
+    function getSelectionLength () {
       return getSelectedText().length;
     }
 
-    function getCurrentLine() {
+    function getCurrentLine () {
       return getLine(getCurrentLineNumber());
     }
 
-    function getCurrentLineNumber() {
+    function getCurrentLineNumber () {
       return cm.getCursor().line;
     }
 
-    function getCurrentCharacter() {
+    function getCurrentCharacter () {
       return cm.getCursor().ch;
     }
 
-    function getCurrentLineLength() {
+    function getCurrentLineLength () {
       return getCurrentLine().length;
     }
 
-    function lineStartsWith(text) {
+    function lineStartsWith (text) {
       return getCurrentLine().substring(0, text.length) === text;
     }
 
-    function getIndentation() {
+    function getIndentation () {
       return repeat(' ', opt('indentUnit'));
     }
 
-    function getNl(n) {
+    function getNl (n) {
       if (n < 1) { return ''; }
       return repeat(LF, n || 1);
     }
 
-    function getValue() {
+    function getValue () {
       return cm.getValue() || '';
     }
 
-    function getHistorySize(which) {
+    function getHistorySize (which) {
       var history = cm.historySize();
       return which ? history[which] : history;
     }
 
-    function getScrollInfo() {
+    function getScrollInfo () {
       return cm.getScrollInfo();
     }
 
-    function repeat(what, n) {
+    function repeat (what, n) {
       return new Array(n + 1).join(what);
     }
 
-    function opt(name, value) {
+    function opt (name, value) {
       if (!value) { return cm.getOption(name); }
       cm.setOption(name, value);
     }
