@@ -7,8 +7,10 @@
     padding: 5px 7px
 
 .snapshot-selector
-  width: 32%
-  border: 1px solid $colors.element-mid
+  width: 40%
+  min-width: 600px
+  max-width: 700px
+  border: 1px solid $colors.element-light
   box-shadow: 0 1px 2px 0 rgba(black, 0.1)
   position: absolute
   top: 122px
@@ -40,8 +42,8 @@
         text-transform: none
         font-size: 100%
         letter-spacing: normal
-        padding-top: 14px
-        padding-bottom: 14px
+        padding-top: 10px
+        padding-bottom: 10px
         padding-left: 10px
         line-height: 1.5em
         i
@@ -61,6 +63,7 @@
       padding-top: 20px
   .main-results-wrapper
     height: 400px
+    max-height: 45vh
     overflow: scroll
 
     tr
@@ -69,9 +72,10 @@
         cursor: pointer
         background-color: $colors.element-lightest
       td
-        padding-top: 14px
-        padding-bottom: 14px
-        line-height: 2.5em
+        border-bottom: 1px solid $colors.element-light
+        padding-top: 16px
+        padding-bottom: 16px
+        line-height: 1.5em
         padding-left: 10px
 
   .x--sortable
