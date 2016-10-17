@@ -31,16 +31,74 @@ Each Doc Comment contains a number of tags starting with `@`. A tag’s
 content starts at first white space after the tag name and ends when
 the next tag begins.
 
-API Documentation will only be generated for doc comments that have the
-`@ngdoc type` tag. Here *type* is the type of documentation to
+API Documentation will only be generated for doc comments that have a
+`@ngdoc <TYPE>` and `@name`. tag. Here *TYPE* is the type of documentation to
 generate. Currently the following types are supported and will be
 explained below.
 
-* *module*
-* *directive*
-* *type*
-* *method*
-* *property*
+There are three types that generate documentation for top-level objects:
+`service`, `type` and `directive`. Each of these may have documentation of type
+`method` or `property` attached. Both of them use the`@name` tag to refer to
+their parent.
+
+## Service
+
+The `service` type documents the collection of methods and properties exported
+by an Angular service.
+
+~~~js
+/**
+ * @ngdoc service
+ * @name path/to/service
+ */
+factory('path/to/service', function () {
+  return {
+    /**
+     * @ngdoc method
+     * @name path/to/service#create
+     */
+    create: create
+  }
+})
+~~~
+
+In some cases the object exported by a service may be used as a parameter in
+other functions. In that case the service object should be documented as a
+`type` and the service declared to export that type.
+~~~js
+/**
+ * @ngdoc service
+ * @name spaceContext
+ * @type SpaceContext
+ */
+~~~
+
+
+## Type
+
+This documentation defines an abstract type.
+
+It documents the shape of objects that are passed between functions. Types must
+have UpperCamelCase names.
+
+~~~js
+/**
+ * @ngdoc type
+ * @name Person
+ *
+ * @property {string}     name
+ * @method   {function()} invite
+ */
+~~~
+
+You can use the `@param`, `@returns`, and `@type` tags to refer to a type.
+~~~js
+/**
+ * @ngdoc method
+ * @name createPerson
+ * @returns {Person}
+ */
+~~~
 
 ## Directives
 
@@ -63,9 +121,9 @@ explained below.
 
 ## Members
 
-Documentation with the `@ngdoc` type `method` or `property` will be
-attached to their parent document. The parent document’s is determined
-by the string preceding the `#` in the `@name` tag.
+Documentation with the `@ngdoc` type `method` or `property` are attached to the
+documentation of a `service`, `directive` or `type`. The parent is determined by
+the string preceding the `#` in the `@name` tag.
 
 ~~~js
 /**
@@ -85,21 +143,6 @@ this.methodName = function(arg) {
  * @type {string}
  */
 this.state = 'ready 2 rumble'
-~~~
-
-You can also inline method and property tags in the parent.
-~~~js
-/**
- * @ngdoc type
- * @name MyClass
- *
- * @property {string}     name
- * @method   {function()} go
- */
-function MyClass() {
-  this.name = 'myname'
-  this.go = function() {}
-}
 ~~~
 
 ## `@usage`

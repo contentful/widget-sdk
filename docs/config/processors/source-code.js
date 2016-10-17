@@ -1,6 +1,4 @@
-'use strict';
-
-import {forEach} from 'lodash-node';
+import {forEach, includes} from 'lodash';
 
 /**
  * Attaches the source following the doc string to the `source`
@@ -12,9 +10,12 @@ export default function sourceCodeProcessor () {
     $runBefore: ['adding-extra-docs'],
     $process: function (docs) {
       forEach(docs, function (doc) {
-        var loc = doc.codeNode.loc;
-        var lines = doc.fileInfo.content.split('\n');
-        doc.source = lines.slice(loc.start.line, loc.end.line).join('\n').trim();
+        if (includes(['method', 'property'], doc.docType)) {
+          console.log(doc.docType, doc.name)
+          var loc = doc.codeNode.loc;
+          var lines = doc.fileInfo.content.split('\n');
+          doc.source = lines.slice(loc.start.line, loc.end.line).join('\n').trim();
+        }
       });
     }
   };
