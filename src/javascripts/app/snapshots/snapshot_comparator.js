@@ -104,7 +104,7 @@ angular.module('cf.app')
 
     $scope.versionPicker.getPathsToRestore()
     .forEach(function (path) {
-      path = Entries.internalPathToExternal(path, ctData);
+      path = Entries.internalPathToExternal(ctData, path);
       dotty.put(result, path, dotty.get(snapshot, path));
     });
 

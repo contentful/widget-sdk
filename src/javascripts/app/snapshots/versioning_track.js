@@ -42,7 +42,7 @@ angular.module('cf.app')
   function restored (picker, showDiffsOnly) {
     var count = picker.getPathsToRestore().length;
 
-    track('snapshot_closed', _.extend({
+    track('snapshot_restored', _.extend({
       fullRestore: count === picker.getDifferenceCount(),
       restoredFieldsCount: count,
       showDiffsOnly: !!showDiffsOnly

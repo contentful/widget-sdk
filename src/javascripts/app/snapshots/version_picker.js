@@ -58,7 +58,10 @@ angular.module('cf.app')
      * version should be used
      */
     function restore (path) {
-      pathsToRestore.push(path.join('.'));
+      var joined = path.join('.');
+      if (pathsToRestore.indexOf(joined) < 0) {
+        pathsToRestore.push(joined);
+      }
     }
 
     /**

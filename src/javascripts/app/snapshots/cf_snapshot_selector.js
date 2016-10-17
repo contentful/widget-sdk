@@ -4,7 +4,7 @@ angular.module('cf.app')
 
 .directive('cfSnapshotSelector', [function () {
   return {
-    template: JST.snapshot_selector(),
+    template: JST.cf_snapshot_selector(),
     restrict: 'E',
     controller: 'SnapshotSelectorController',
     link: function ($scope, $el) {
@@ -36,7 +36,6 @@ angular.module('cf.app')
   var spaceContext = require('spaceContext');
   var moment = require('moment');
   var $q = require('$q');
-
   var snapshotRepo = require('data/entrySnapshots');
   var Paginator = require('Paginator');
 

@@ -12,25 +12,44 @@ angular.module('cf.data')
 
   return {
     internalToExternal: internalToExternal,
-    internalPathToExternal: internalPathToExternal
+    internalPathToExternal: internalPathToExternal,
+    externalToInternal: externalToInternal,
+    externalPathToInternal: externalPathToInternal
   };
 
   function internalToExternal (entryData, contentTypeData) {
+    var transformPath = _.partial(internalPathToExternal, contentTypeData);
+    return transformRepresentation(entryData, transformPath);
+  }
+
+  function externalToInternal (entryData, contentTypeData) {
+    var transformPath = _.partial(externalPathToInternal, contentTypeData);
+    return transformRepresentation(entryData, transformPath);
+  }
+
+  function transformRepresentation (entryData, transformPath) {
     var result = {sys: _.cloneDeep(entryData.sys)};
 
     getAllPathsOf(entryData.fields).forEach(function (path) {
       var value = _.cloneDeep(dotty.get(entryData, path));
-      path = internalPathToExternal(path, contentTypeData);
-      dotty.put(result, path, value);
+      dotty.put(result, transformPath(path), value);
     });
 
     return result;
   }
 
-  function internalPathToExternal (path, contentTypeData) {
+  function internalPathToExternal (contentTypeData, path) {
     var field = _.find(contentTypeData.fields, {id: path[1]});
     var fieldId = field && (field.apiName || field.id);
     var localeCode = TheLocaleStore.toPublicCode(path[2]);
+
+    return ['fields', fieldId, localeCode];
+  }
+
+  function externalPathToInternal (contentTypeData, path) {
+    var field = _.find(contentTypeData.fields, {apiName: path[1]});
+    var fieldId = field && (field.id || field.apiName);
+    var localeCode = TheLocaleStore.toInternalCode(path[2]);
 
     return ['fields', fieldId, localeCode];
   }
