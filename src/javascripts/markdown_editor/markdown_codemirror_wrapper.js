@@ -91,6 +91,7 @@ angular.module('contentful')
       getNl: getNl,
       getValue: getValue,
       getHistorySize: getHistorySize,
+      repaint: function () { cm.refresh(); },
 
       scrollToFraction: scrollToFraction,
       getScrollFraction: getScrollFraction

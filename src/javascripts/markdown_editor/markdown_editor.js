@@ -59,6 +59,7 @@ angular.module('contentful')
       getContent: editor.getValue,
       destroy: editor.destroy,
       setContent: setContent,
+      repaint: editor.repaint,
       getWrapper: function () { return editor; }
     };
 
