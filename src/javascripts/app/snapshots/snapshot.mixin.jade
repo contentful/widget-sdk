@@ -29,7 +29,7 @@ mixin snapshot-value(doc, version)
           div
             | {{ field.name }}
             span(ng-if="locales.length > 1") &#32;&ndash; {{locale.name}}
-          .entity-editor__no-permission-info(ng-if="field.disabled")
+          .entity-editor__no-permission-info(ng-if="isDisabled")
             cf-icon(name="lock")
             | This field is disabled
         cf-snapshot-presenter

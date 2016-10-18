@@ -138,14 +138,20 @@ angular.module('cf.app')
   this.setInvalid = _.noop;
 }])
 
-.controller('SnapshotComparisonController', ['$scope', function ($scope) {
+.controller('SnapshotComparisonController', ['$scope', 'require', function ($scope, require) {
+  var policyAccessChecker = require('accessChecker/policy');
+
   var fieldPath = ['fields', $scope.field.id, $scope.locale.internal_code];
+
+  var ctId = $scope.contentType.getId();
+  var canEdit = policyAccessChecker.canEditFieldLocale(ctId, $scope.field, $scope.locale);
 
   var currentVersion = $scope.otDoc.getValueAt(fieldPath);
   var snapshotVersion = $scope.snapshotDoc.getValueAt(fieldPath);
 
   $scope.isDifferent = !_.isEqual(currentVersion, snapshotVersion);
-  $scope.canRestore = $scope.isDifferent && !$scope.field.disabled;
+  $scope.isDisabled = $scope.field.disabled || !canEdit;
+  $scope.canRestore = $scope.isDifferent && !$scope.isDisabled;
 
   $scope.select = $scope.isDifferent ? select : _.noop;
   $scope.selected = 'current';
