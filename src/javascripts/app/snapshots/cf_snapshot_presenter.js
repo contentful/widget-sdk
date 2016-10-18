@@ -69,15 +69,19 @@ angular.module('cf.app')
 
   return {
     restrict: 'E',
-    template: '<cf-entity-link ng-repeat="item in value" ng-if="ready" is-disabled="true" link="item" entity-store="store" entity-helpers="helper" config="config" />',
+    template: '<cf-entity-link ng-repeat="item in value" ng-if="ready" is-disabled="true" link="item.link" entity-store="store" entity-helpers="helper" config="config" />',
     controller: ['$scope', function ($scope) {
       if (!Array.isArray($scope.value)) {
         $scope.value = [$scope.value];
       }
 
+      $scope.value = $scope.value.map(function (value) {
+        return {link: value};
+      });
+
       $scope.store = EntityStore.create(spaceContext.cma, FETCH_METHODS[$scope.linkType]);
 
-      $scope.store.prefetch($scope.value)
+      $scope.store.prefetch(_.map($scope.value, 'link'))
       .then(function () {
         $scope.ready = true;
       });
@@ -128,7 +132,7 @@ angular.module('cf.app')
 
   return {
     restrict: 'E',
-    template: '<div><div data-map-slot /></div>',
+    template: '<div class="snapshot-presenter__location-wrapper"><div data-map-slot></div></div>',
     link: function ($scope, $el) {
       $scope.location = $scope.value;
       $scope.isDisabled = true;

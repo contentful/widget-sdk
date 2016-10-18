@@ -55,7 +55,7 @@ angular.module('cf.ui')
       name: '@'
     },
     template:
-      '<div class="ui-hint" data-test-id="{{name}}">' +
+      '<div class="ui-hint" data-test-id="{{name}}" role="note">' +
       '<span data-arrow-direction="{{arrowDirection}}" ng-if="showArrow"></span>' +
       '<p ng-transclude class="ui-hint-content"></p>' +
       '<a class="ui-hint__dismiss" ng-if="showDismiss" role="button" data-test-id="ui-hint-dismiss-btn" aria-label="ui-hint-dismiss-btn">Dismiss</a>' +

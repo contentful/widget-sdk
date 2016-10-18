@@ -16,7 +16,6 @@ angular.module('cf.app')
 .factory('SnapshotComparatorController/snapshotDoc', ['require', function (require) {
   var K = require('utils/kefir');
   var $q = require('$q');
-  var resolve = _.constant($q.resolve());
 
   return {create: create};
 
@@ -24,11 +23,11 @@ angular.module('cf.app')
     return {
       getValueAt: valueAt,
       valuePropertyAt: valuePropertyAt,
-      setValueAt: resolve,
-      removeValueAt: resolve,
-      insertValueAt: resolve,
-      pushValueAt: resolve,
-      moveValueAt: resolve,
+      setValueAt: $q.resolve,
+      removeValueAt: $q.resolve,
+      insertValueAt: $q.resolve,
+      pushValueAt: $q.resolve,
+      moveValueAt: $q.resolve,
       collaboratorsFor: _.constant(K.constant([]))
     };
 

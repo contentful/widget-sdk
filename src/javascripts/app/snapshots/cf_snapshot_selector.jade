@@ -25,9 +25,9 @@ include ./snapshot.mixin.jade
           td(
             ng-class="{" +
               "'snapshot-selector__item-status': true," +
-              "'snapshot-selector__item-status-published': snapshot.sys.snapshotType === 'publication'" +
+              "'snapshot-selector__item-status-published': snapshot.sys.snapshotType === 'publish'" +
             "}")
-            | {{ snapshot.sys.snapshotType === 'publication' ? 'published' :  'other' }}
+            | {{ snapshot.sys.snapshotType === 'publish' ? 'published' :  'other' }}
 
     .snapshot-selector__item-list-placeholder(
       ng-if="!isLoading && snapshots.length < 1")

@@ -42,7 +42,6 @@ cf-ui-hint.snapshot-comparator__hint(
   arrow="true"
   arrow-direction="up"
   show-dismiss="true"
-  role="note"
   data-test-id="snapshots-intro")
   span(ng-show="versionPicker.getDifferenceCount() > 0")
     | The contents of these two versions seem to be different.
@@ -54,7 +53,8 @@ cf-ui-hint.snapshot-comparator__hint(
 .workbench-main.x--content-full-size
   .snapshot-comparator__field(
     ng-repeat="widget in widgets"
-    ng-controller="SnapshotFieldController as fieldController")
+    ng-controller="SnapshotFieldController as fieldController"
+    data-field-api-name="{{widget.field.apiName}}")
     .snapshot-comparator__field-locale(
       ng-repeat="locale in locales track by locale.internal_code"
       ng-controller="SnapshotComparisonController")
