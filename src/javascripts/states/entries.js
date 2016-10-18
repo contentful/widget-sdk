@@ -40,9 +40,20 @@ angular.module('contentful')
       source: 'deepLink'
     },
     resolve: {
-      snapshot: ['$stateParams', 'data/entrySnapshots', 'contentType', function ($stateParams, repo, ct) {
-        return repo.getOne($stateParams.snapshotId, ct);
-      }]
+      snapshot: [
+        'require', '$stateParams', 'entry', 'contentType',
+        function (require, $stateParams, entry, contentType) {
+          var spaceContext = require('spaceContext');
+          var Entries = require('data/Entries');
+
+          return spaceContext.cma.getEntrySnapshot(entry.getId(), $stateParams.snapshotId)
+          .then(function (snapshot) {
+            return _.extend(snapshot, {
+              snapshot: Entries.externalToInternal(snapshot.snapshot, contentType.data)
+            });
+          });
+        }
+      ]
     },
     template: '<cf-snapshot-comparator class="workbench" />',
     controller: [
@@ -83,21 +94,21 @@ angular.module('contentful')
     url: '/compare',
     children: [compareWithCurrent],
     loadingText: 'Loading versions...',
-    controller: ['require', function (require) {
-      var snapshotRepo = require('data/entrySnapshots');
+    controller: ['require', 'entry', function (require, entry) {
+      var spaceContext = require('spaceContext');
       var $state = require('$state');
       var modalDialog = require('modalDialog');
 
-      snapshotRepo.getList({limit: 1})
-      .then(function (snapshots) {
-        var count = dotty.get(snapshots, 'length', 0);
-        return count > 0 ? compare(_.first(snapshots), count) : back();
-      });
+      spaceContext.cma.getEntrySnapshots(entry.getId(), {limit: 1})
+      .then(function (res) {
+        var count = dotty.get(res, 'items.length', 0);
+        return count > 0 ? compare(_.first(res.items)) : back();
+      }, back);
 
-      function compare (snapshot, count) {
+      function compare (snapshot) {
         return $state.go('.withCurrent', {
           snapshotId: snapshot.sys.id,
-          snapshotCount: count,
+          snapshotCount: 1,
           source: 'entryEditor'
         });
       }

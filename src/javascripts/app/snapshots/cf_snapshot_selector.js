@@ -36,7 +36,6 @@ angular.module('cf.app')
   var spaceContext = require('spaceContext');
   var moment = require('moment');
   var $q = require('$q');
-  var snapshotRepo = require('data/entrySnapshots');
   var Paginator = require('Paginator');
 
   var PER_PAGE = 20;
@@ -70,12 +69,16 @@ angular.module('cf.app')
   }
 
   function load () {
-    $scope.isLoading = true;
-
-    return snapshotRepo.getList({
+    var entryId = $scope.entity.getId();
+    var query = {
       skip: $scope.paginator.getSkipParam(),
       limit: PER_PAGE + 1
-    })
+    };
+
+    $scope.isLoading = true;
+
+    return spaceContext.cma.getEntrySnapshots(entryId, query)
+    .then(function (res) { return res.items; })
     .then(addUnique)
     .then(decorateWithAuthorName)
     .then(function (snapshots) {

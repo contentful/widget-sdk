@@ -16,21 +16,24 @@ angular.module('cf.app')
  * we'll put list of snapshots into the
  * entity sidebar (instead of a button).
  */
-.directive('cfSnapshotSidebarList', ['require', function (require) {
-  var snapshotRepo = require('data/entrySnapshots');
-
+.directive('cfSnapshotSidebarList', [function () {
   var PREVIEW_COUNT = 7;
 
   return {
     restrict: 'E',
-    template: '<span style="display: none;">cfSnapshotSidebarList</span>',
-    controller: ['$scope', function ($scope) {
+    template: '<span />',
+    controller: ['$scope', 'spaceContext', function ($scope, spaceContext) {
+      var entryId = $scope.entity.getId();
+      var query = {limit: PREVIEW_COUNT};
+
       $scope.isLoading = true;
 
-      snapshotRepo.getList({limit: PREVIEW_COUNT})
-      .then(function (snapshots) {
-        $scope.snapshots = snapshots;
+      spaceContext.cma.getEntrySnapshots(entryId, query)
+      .then(function (res) {
+        $scope.snapshots = res.items;
         $scope.isLoading = false;
+      }, function () {
+        // @todo handle errors
       });
     }]
   };
