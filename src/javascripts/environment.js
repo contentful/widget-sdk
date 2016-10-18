@@ -8,7 +8,7 @@
  *
  * Uses `window.CF_CONFIG` and `window.CF_UI_VERSION` to load the configuration.
  */
-angular.module('contentful/environment', [])
+angular.module('contentful/environment')
 .constant('environment', (function () {
   // TODO Should throw when CF_CONFIG is undefined, but currently required for tests
   var settings = window.CF_CONFIG || {};

@@ -1,5 +1,6 @@
 'use strict';
 
+/* global require, process, Buffer */
 require('babel-register');
 require('regenerator-runtime/runtime');
 
@@ -21,17 +22,19 @@ var sourceMaps = require('gulp-sourcemaps');
 var stylus = require('gulp-stylus');
 var uglify = require('gulp-uglify');
 var path = require('path');
-var through = require('through2');
 var yargs = require('yargs');
 var childProcess = require('child_process');
 var rework = require('rework');
 var reworkUrlRewrite = require('rework-plugin-url');
 var fs = require('fs');
+var babel = require('gulp-babel');
 
+var S = require('./tools/lib/stream-utils');
 var U = require('./tools/lib/utils');
 var jstConcat = require('./tasks/build-template');
 var serve = require('./tasks/serve');
 var createManifestResolver = require('./tools/lib/manifest-resolver').create;
+var babelOptions = require('./tools/app-babel-options').options;
 
 var argv = yargs
 .boolean('verbose')
@@ -51,7 +54,8 @@ var src = {
   // All Angular modules except 'cf.lib'
   components: [
     'src/javascripts/**/*.js',
-    '!src/javascripts/libs/*.js'
+    '!src/javascripts/libs/*.js',
+    '!src/javascripts/prelude.js'
   ],
   stylesheets: 'src/stylesheets/**/*',
   vendorScripts: {
@@ -199,12 +203,18 @@ gulp.task('js/external-bundle', function () {
 
 gulp.task('js/app', ['icons'], function () {
   var srcs = src.components.concat([src.svg.outputFile]);
-  // Use `base: '.'` for correct source map paths
-  return gulp.src(srcs, {base: '.'})
-    .pipe(sourceMaps.init())
-    .pipe(concat('components.js'))
-    .pipe(sourceMaps.write({sourceRoot: '/'}))
-    .pipe(gulp.dest('./public/app/'));
+  return S.pipe([
+    S.join([
+      // Use `base: '.'` for correct source map paths
+      gulp.src('src/javascripts/prelude.js', {base: '.'}),
+      gulp.src(srcs, {base: '.'})
+    ]),
+    sourceMaps.init(),
+    babel(babelOptions),
+    concat('components.js'),
+    sourceMaps.write({sourceRoot: '/'}),
+    gulp.dest('./public/app/')
+  ]).on('error', function (e) { throw e; });
 });
 
 /**
@@ -499,7 +509,7 @@ function passError (target) {
  * file’s source maps.
  */
 function removeSourceRoot () {
-  return streamMap(function (file) {
+  return S.map(function (file) {
     if (file.sourceMap) {
       file.sourceMap.sourceRoot = null;
     }
@@ -511,7 +521,7 @@ function removeSourceRoot () {
  * Stream transformer that for every file applies a function to all source map paths.
  */
 function mapSourceMapPaths (fn) {
-  return streamMap(function (file) {
+  return S.map(function (file) {
     if (file.sourceMap) {
       file.sourceMap.sources = _.map(file.sourceMap.sources, fn);
     }
@@ -546,7 +556,7 @@ function spawnOnlyStderr (cmd, args, opts) {
 }
 
 function changeBase (base) {
-  return streamMap(function (file) {
+  return S.map(function (file) {
     base = path.resolve(base);
     var filePath = path.join(base, file.relative);
     file.base = base;
@@ -561,14 +571,8 @@ function writeFile () {
   });
 }
 
-function streamMap (fn) {
-  return through.obj(function (file, _, push) {
-    push(null, fn(file));
-  });
-}
-
 function mapFileContents (fn) {
-  return streamMap(function (file) {
+  return S.map(function (file) {
     var contents = file.contents.toString();
     contents = fn(contents, file);
     file.contents = new Buffer(contents, 'utf8');

@@ -1,0 +1,54 @@
+# Eslint configuration for files ending in .es6.js
+parserOptions:
+  ecmaVersion: 6
+  sourceType: module
+rules:
+  # ES6 specific
+  prefer-const: error
+  no-var: error
+  # We disallow everything we do not transpile with babel
+  no-restricted-syntax:
+  - error
+  - AssignmentPattern
+  - ArrayPattern
+  - ArrowFunctionExpression
+  - BreakStatement
+  - ClassBody
+  - ClassDeclaration
+  - ClassExpression
+  - ContinueStatement
+  - DebuggerStatement
+  - EmptyStatement
+  - ExperimentalRestProperty
+  - ExperimentalSpreadProperty
+  - ForStatement
+  - ForInStatement
+  - ForOfStatement
+  - LabeledStatement
+  - MetaProperty
+  - MethodDefinition
+  - ObjectPattern
+  - RestElement
+  - SequenceExpression
+  - SpreadElement
+  - Super
+  - SwitchCase
+  - SwitchStatement
+  - TaggedTemplateExpression
+  - TemplateElement
+  - TemplateLiteral
+  - UpdateExpression
+  - WithStatement
+  - YieldExpression
+  - JSXIdentifier
+  - JSXNamespacedName
+  - JSXMemberExpression
+  - JSXEmptyExpression
+  - JSXExpressionContainer
+  - JSXElement
+  - JSXClosingElement
+  - JSXOpeningElement
+  - JSXAttribute
+  - JSXSpreadAttribute
+  - JSXText
+  - ExportSpecifier
