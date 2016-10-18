@@ -9,6 +9,10 @@ angular.module('contentful')
 
     options = options || {};
 
+    // Set to true if `setValue()` has been called. This is to prevent
+    // undoing the initial content.
+    var initializedWithValue = false;
+
     var LF = '\n';
 
     var EDITOR_SIZE = {
@@ -20,9 +24,7 @@ angular.module('contentful')
     var cm = CodeMirror.fromTextArea(textarea, {
       mode: 'markdown',
       lineNumbers: false,
-      // Will be set to 200 after setting the initial value. Prevents
-      // undoing the initial population.
-      undoDepth: 0,
+      undoDepth: 200,
       matchBrackets: true,
       lineWrapping: true,
       theme: 'elegant',
@@ -62,7 +64,6 @@ angular.module('contentful')
       addKeyShortcuts: addKeyShortcuts,
       setValue: setValue,
       cmd: cmd,
-      opt: opt,
       moveToLineBeginning: moveToLineBeginning,
       moveIfNotEmpty: moveIfNotEmpty,
       restoreCursor: restoreCursor,
@@ -123,8 +124,38 @@ angular.module('contentful')
      * low-level editor manipulation functions
      */
 
+    /**
+     * @ngdoc method
+     * @name CodeMirrorWrapper#setValue
+     * @description
+     * Sets the content of the editor while preserving the cursor
+     * position.
+     *
+     * If called for the first time it will not record the change in
+     * the history.
+     *
+     * @params {string?} value
+     */
     function setValue (value) {
-      cm.setValue(value || '');
+      value = value || '';
+      if (getValue() === value) {
+        return;
+      }
+
+      // set value, but save cursor position first
+      // position will be restored, but w/o focus (third arg)
+      var line = getCurrentLineNumber();
+      var ch = getCurrentCharacter();
+      cm.setValue(value);
+      restoreCursor(ch, line, true);
+
+      // We do not want to record the initial population in the
+      // history. Otherwise it would always be possible to revert to
+      // the empty string.
+      if (!initializedWithValue) {
+        cm.clearHistory();
+        initializedWithValue = true;
+      }
     }
 
     function cmd (name) {
@@ -284,7 +315,7 @@ angular.module('contentful')
     }
 
     function getIndentation () {
-      return repeat(' ', opt('indentUnit'));
+      return repeat(' ', cm.getOption('indentUnit'));
     }
 
     function getNl (n) {
@@ -316,11 +347,6 @@ angular.module('contentful')
 
     function repeat (what, n) {
       return new Array(n + 1).join(what);
-    }
-
-    function opt (name, value) {
-      if (!value) { return cm.getOption(name); }
-      cm.setOption(name, value);
     }
 
     /**

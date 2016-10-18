@@ -58,8 +58,9 @@ angular.module('contentful')
       focus: editor.focus,
       getContent: editor.getValue,
       destroy: editor.destroy,
-      setContent: setContent,
+      setContent: editor.setValue,
       repaint: editor.repaint,
+      // TODO Remove this. We want to hide the low-level interface
       getWrapper: function () { return editor; }
     };
 
@@ -72,22 +73,6 @@ angular.module('contentful')
     });
 
     return api;
-
-    function setContent (value) {
-      if (editor.getValue() !== value) {
-        // set value, but save cursor position first
-        // position will be restored, but w/o focus (third arg)
-        var line = editor.getCurrentLineNumber();
-        var ch = editor.getCurrentCharacter();
-        editor.setValue(value);
-        editor.restoreCursor(ch, line, true);
-      }
-
-      // enable undo/redo, by default "undoDepth" is set to 0 we set it
-      // here so we cannot undo setting initial value (first "setValue"
-      // call)
-      editor.opt('undoDepth', 200);
-    }
 
     function wrapChange (fn) {
       return function (e, ch) {
