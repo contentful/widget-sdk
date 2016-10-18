@@ -233,4 +233,34 @@ describe('MarkdownEditor/Commands', function () {
     ].join('\n');
     expect(cm.getValue().indexOf(expected) > -1).toBe(true);
   });
+
+  describe('#link()', function () {
+    it('inserts bracketed url at current cursor', function () {
+      cm.setValue('AB');
+      cm.setCursor({line: 0, ch: 1});
+      commands.link('https://example.com');
+      expect(cm.getValue()).toBe('A<https://example.com>B');
+    });
+
+    it('inserts titled url at current cursor', function () {
+      cm.setValue('AB');
+      cm.setCursor({line: 0, ch: 1});
+      commands.link('https://example.com', 'title');
+      expect(cm.getValue()).toBe('A[title](https://example.com)B');
+    });
+
+    it('replace selection with bracketed url', function () {
+      cm.setValue('AXXB');
+      cm.setSelection({line: 0, ch: 1}, {line: 0, ch: 3});
+      commands.link('https://example.com');
+      expect(cm.getValue()).toBe('A<https://example.com>B');
+    });
+
+    it('replace selection with titled url', function () {
+      cm.setValue('AXXB');
+      cm.setSelection({line: 0, ch: 1}, {line: 0, ch: 3});
+      commands.link('https://example.com', 'title');
+      expect(cm.getValue()).toBe('A[title](https://example.com)B');
+    });
+  });
 });

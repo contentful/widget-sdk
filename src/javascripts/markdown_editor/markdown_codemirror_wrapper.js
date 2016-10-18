@@ -273,8 +273,25 @@ angular.module('contentful')
       cm.focus();
     }
 
-    function replaceSelectedText (replacement) {
-      cm.replaceSelection(replacement);
+    /**
+     * @ngdoc method
+     * @name CodeMirrorWrapper#replaceSelectedText
+     * @description
+     * Replace the selected text with the given string.
+     *
+     * If nothing is selected it will insert the text at the current
+     * cursor position
+     *
+     * The optional `select` parameter controls what will be selected
+     * afters wards. By default the cursor will be at the end of the
+     * inserted text. You can pass 'around' to select the inserted
+     * text.
+     *
+     * @param {string} replacement
+     * @param {string?} select
+     */
+    function replaceSelectedText (replacement, select) {
+      cm.replaceSelection(replacement, select);
       cm.focus();
     }
 
