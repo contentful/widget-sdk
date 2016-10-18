@@ -4,7 +4,7 @@ mixin snapshot-dt
 mixin snapshot-list-header(headerText, sortingFn, isCurrentSortedColumn)
   th(
     ng-click="#{sortingFn}(isAscending)"
-    ng-class="{'x--selected': snapshots.length && #{isCurrentSortedColumn}, 'x--sortable': true}")
+    ng-class="{'x--selected-header': snapshots.length && #{isCurrentSortedColumn}, 'x--sortable': true}")
     = headerText
     i.button-icon.fa.fa-caret-down(ng-show="snapshots.length && isAscending && #{isCurrentSortedColumn}")
     i.button-icon.fa.fa-caret-up(ng-show="snapshots.length && !isAscending && #{isCurrentSortedColumn}")

@@ -46,19 +46,26 @@ angular.module('cf.app')
   $scope.isLoading = false;
   $scope.paginator = Paginator.create(PER_PAGE);
   $scope.loadMore = loadMore;
-  $scope.currentId = $scope.snapshot.sys.id;
+  $scope.isCurrent = isCurrent;
   $scope.sortByLastEdited = sortByLastEdited;
   $scope.sortByEditor = sortByEditor;
   $scope.sortByStatus = sortByStatus;
 
-  resetAndLoad();
+  $scope.snapshots = [];
+  $scope.paginator.setTotal(0);
+  $scope.paginator.setPage(0);
 
-  function resetAndLoad () {
-    snapshotsById = {};
-    $scope.snapshots = [];
-    $scope.paginator.setTotal(0);
-    $scope.paginator.setPage(0);
-    return load();
+  var removeInitLoadHandler = $scope.$watch('showSnapshotList', lazyLoad);
+
+  function isCurrent (snapshot) {
+    return $scope.snapshot.sys.id === snapshot.sys.id;
+  }
+
+  function lazyLoad (listVisible) {
+    if (listVisible) {
+      load();
+      removeInitLoadHandler();
+    }
   }
 
   function loadMore () {

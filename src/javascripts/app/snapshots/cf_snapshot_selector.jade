@@ -16,8 +16,8 @@ include ./snapshot.mixin.jade
       tbody
         tr(
           ng-repeat="snapshot in snapshots track by snapshot.sys.id"
-          ng-class="{'x--current': currentId === snapshot.sys.id}"
-          ng-click="goToSnapshot(snapshot)")
+          ng-class="{'x--current': isCurrent(snapshot)}"
+          ng-click="!isCurrent(snapshot) && goToSnapshot(snapshot)")
           td
             +snapshot-dt
           td
