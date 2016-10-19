@@ -28,7 +28,11 @@ angular.module('cf.app')
       insertValueAt: $q.resolve,
       pushValueAt: $q.resolve,
       moveValueAt: $q.resolve,
-      collaboratorsFor: _.constant(K.constant([]))
+      sysProperty: K.constant(data.sys),
+      changes: K.constant([]),
+      collaboratorsFor: _.constant(K.constant([])),
+      notifyFocus: _.noop,
+      setReadOnly: _.noop
     };
 
     function valuePropertyAt (path) {

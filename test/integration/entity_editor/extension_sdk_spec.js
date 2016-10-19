@@ -29,7 +29,14 @@ describe('Extension SDK', function () {
       type: 'Text'
     };
 
-    this.doc = this.$inject('mocks/entityEditor/Document').create();
+    const entry = {
+      data: {
+        sys: {},
+        fields: {}
+      }
+    };
+
+    this.doc = this.$inject('mocks/entityEditor/Document').create(entry.data);
 
     this.scope = {
       widget: {},
@@ -38,12 +45,7 @@ describe('Extension SDK', function () {
           fields: [field]
         }
       },
-      entry: {
-        data: {
-          sys: {},
-          fields: {}
-        }
-      },
+      entry: entry,
       field: field,
       locale: {
         code: 'de',

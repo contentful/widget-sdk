@@ -36,8 +36,8 @@ angular.module('contentful')
   var EDITABLE = {editable: true};
   var DISCONNECTED = {disconnected: true, disabled: true};
 
-  var docProperty = $attrs.documentProperty || 'otDoc';
-  controller.doc = FieldLocaleDoc.create($scope[docProperty], field.id, locale.internal_code);
+  $scope.docImpl = $scope[$attrs.documentProperty || 'otDoc'];
+  controller.doc = FieldLocaleDoc.create($scope.docImpl, field.id, locale.internal_code);
 
   /**
    * @ngdoc property
