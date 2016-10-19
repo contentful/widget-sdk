@@ -1,12 +1,14 @@
 'use strict';
 
-angular.module('contentful').directive('cfFileEditor', ['$injector', function ($injector) {
-  var aviary = $injector.get('aviary');
-  var filepicker = $injector.get('filepicker');
-  var logger = $injector.get('logger');
-  var modalDialog = $injector.get('modalDialog');
-  var notification = $injector.get('notification');
-  var stringUtils = $injector.get('stringUtils');
+angular.module('contentful').directive('cfFileEditor',
+['require', function (require) {
+
+  var aviary = require('aviary');
+  var filepicker = require('filepicker');
+  var logger = require('logger');
+  var modalDialog = require('modalDialog');
+  var notification = require('notification');
+  var stringUtils = require('stringUtils');
 
   // TODO use isolated scope.
   // This is not possible right now because the widget depends on a
