@@ -96,9 +96,10 @@ angular.module('contentful').directive('cfFileEditor',
         var preview = elem.find('[aviary-editor-preview]').get(0);
         preview.src = '';
         var imgUrl = stringUtils.removeQueryString(img.src);
+        var file = scope.file;
         preview.onload = function () {
           aviary.createEditor({
-            file: scope.file,
+            file: file,
             image: preview,
             url: imgUrl,
             onClose: function (params) {
