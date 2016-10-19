@@ -123,24 +123,4 @@ angular.module('cf.app')
       $scope.dtString = s;
     }]
   };
-}])
-
-.directive('cfSnapshotPresenterLocation', ['require', function (require) {
-  var LocationMap = require('widgets/location/Map');
-
-  var HEIGHT = 400;
-
-  return {
-    restrict: 'E',
-    template: '<div class="snapshot-presenter__location-wrapper"><div data-map-slot></div></div>',
-    link: function ($scope, $el) {
-      $scope.location = $scope.value;
-      $scope.isDisabled = true;
-
-      var slot = $el.find('[data-map-slot]');
-      $el.height(HEIGHT);
-      slot.height(HEIGHT);
-      LocationMap.init($scope, slot.get(0));
-    }
-  };
 }]);
