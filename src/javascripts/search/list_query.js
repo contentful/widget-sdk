@@ -48,32 +48,15 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
 
   function prepareOrderObject (order) {
     order = _.clone(order) || {};
+    order.fieldId = order.fieldId || DEFAULT_ORDER.fieldId;
     order.direction = order.direction || DEFAULT_ORDER.direction;
-
-    if (!order.fieldId) {
-      order.fieldId = DEFAULT_ORDER.fieldId;
-      order.sys = DEFAULT_ORDER.sys;
-    }
 
     return order;
   }
 
-  function getOrderPath (order, contentType) {
-    if (!_.includes([true, false], order.sys)) {
-      return guessOrderPath(order, contentType);
-    }
-
-    if (order.sys) {
-      return isSystemField(order.fieldId) ? ['sys', order.fieldId] : DEFAULT_ORDER_PATH;
-    } else {
-      var ctField = getCtField(order.fieldId, contentType);
-      return ctField ? ['fields', ctField.apiName || ctField.id] : DEFAULT_ORDER_PATH;
-    }
-  }
-
   // handling stored list order w/o distinction
   // between sys.% and fields.% paths
-  function guessOrderPath (order, contentType) {
+  function getOrderPath (order, contentType) {
     // check system fields first:
     if (isSystemField(order.fieldId)) {
       return ['sys', order.fieldId];
