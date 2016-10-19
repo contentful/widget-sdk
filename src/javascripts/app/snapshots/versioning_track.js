@@ -11,6 +11,7 @@ angular.module('cf.app')
 
   return {
     setData: setData,
+    noSnapshots: noSnapshots,
     opened: opened,
     closed: closed,
     restored: restored,
@@ -25,6 +26,10 @@ angular.module('cf.app')
       entry: entry,
       snapshot: snapshot
     };
+  }
+
+  function noSnapshots (entryId) {
+    track('no_snapshots', {entryId: entryId});
   }
 
   function opened (source) {

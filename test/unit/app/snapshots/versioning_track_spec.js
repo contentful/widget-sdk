@@ -54,6 +54,13 @@ describe('Versioning tracking', function () {
     });
   });
 
+  describe('#noSnapshots', function () {
+    it('sends entryId', function () {
+      this.track.noSnapshots('xxx');
+      this.assertAnalyticsCall('no_snapshots', {entryId: 'xxx'});
+    });
+  });
+
   describe('#opened', function () {
     it('uses "deepLink" as a default source', function () {
       this.track.opened();

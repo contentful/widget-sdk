@@ -98,6 +98,7 @@ angular.module('contentful')
       var spaceContext = require('spaceContext');
       var $state = require('$state');
       var modalDialog = require('modalDialog');
+      var tracking = require('track/versioning');
 
       spaceContext.cma.getEntrySnapshots(entry.getId(), {limit: 1})
       .then(function (res) {
@@ -114,9 +115,12 @@ angular.module('contentful')
       }
 
       function back () {
+        tracking.noSnapshots(entry.getId());
+
         return modalDialog.open({
-          title: 'No versions found',
-          message: 'You’ll be redirected back to your entry.',
+          title: 'This entry has no versions',
+          message: 'It seems that this entry doesn’t have any versions yet. As you update it, ' +
+                   'new versions will be created and you will be able to review and compare them.',
           cancelLabel: null
         }).promise.finally(function () {
           return $state.go('^');
