@@ -247,9 +247,6 @@ src/javascripts/services/validation_dialog_error_messages.js
 src/javascripts/services/validation_views.js
 src/javascripts/services/moment.js
 src/javascripts/services/activation_email_resender.js
-src/javascripts/services/analytics/analytics.js
-src/javascripts/services/analytics/analytics_console_log.js
-src/javascripts/services/analytics/analytics_noop.js
 src/javascripts/services/authorization.js
 src/javascripts/services/editing_interfaces_helpers.js
 src/javascripts/services/enforcements.js
