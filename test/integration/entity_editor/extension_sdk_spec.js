@@ -155,15 +155,6 @@ describe('Extension SDK', function () {
         yield api.nextTick();
       });
 
-      it('does not call callback in the window that called setValue', function* (api) {
-        const valueChanged = sinon.spy();
-        api.field.onValueChanged(valueChanged);
-        valueChanged.reset();
-        api.field.setValue('VALUE');
-        yield api.nextTick();
-        sinon.assert.notCalled(valueChanged);
-      });
-
       it('calls callback with most recently dispatched value', function* (api) {
         const valueChanged = sinon.spy();
         this.setDocValueAt(['fields', 'FID-internal', 'de-internal'], 'VALUE');
