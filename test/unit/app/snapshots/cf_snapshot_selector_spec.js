@@ -1,0 +1,218 @@
+'use strict';
+
+describe('cfSnapshotSelector', function () {
+  let spaceContext;
+  const PER_PAGE = 20; // page size
+
+  beforeEach(function () {
+    spaceContext = {};
+
+    module('contentful/test', $provide => {
+      $provide.value('spaceContext', spaceContext);
+    });
+
+    const moment = this.$inject('moment');
+    const $compile = this.$compile.bind(this);
+
+    spaceContext.cma = {
+      getEntrySnapshots: sinon.stub().resolves({
+        items: Array.apply(null, {length: 50}).map(makeFakeSnapshots(50))
+      })
+    };
+
+    spaceContext.users = {
+      get: sinon.stub().resolves({
+        getName: () => String.fromCharCode(65 + _.random(25))
+      })
+    };
+
+    this.scope = compile().scope();
+    this.makeFakeSnapshot = makeFakeSnapshot;
+    this.makeFakeSnapshots = makeFakeSnapshots;
+
+    this.toggleList = function (flag) {
+      this.scope.showSnapshotList = flag;
+      this.$apply();
+    };
+
+    this.assertLoadCalledAndReset = function () {
+      sinon.assert.calledOnce(spaceContext.cma.getEntrySnapshots);
+      sinon.assert.calledWith(spaceContext.cma.getEntrySnapshots, 1);
+      spaceContext.cma.getEntrySnapshots.reset();
+    };
+
+    this.assertSnapshotsLength = function (count) {
+      expect(this.scope.snapshots.length).toEqual(count);
+    };
+
+    function compile (scope) {
+      const $scope = _.extend({
+        entity: {
+          getId: _.constant(1)
+        },
+        showSnapshotList: false,
+        snapshot: makeFakeSnapshot(1)
+      }, scope);
+
+      return $compile('<cf-snapshot-selector />', $scope);
+    }
+
+    function makeFakeSnapshots (count) {
+      let map;
+
+      return function () {
+        let rand = _.random(count * 2);
+
+        map = map || {}; // broken it this way only to keep the linter happy
+
+        while (rand in map) {
+          rand = _.random(count * 2);
+        }
+
+        map[rand] = true;
+
+        return makeFakeSnapshot(rand);
+      };
+    }
+
+    function makeFakeSnapshot (rand) {
+      return {
+        sys: {
+          createdAt: moment().subtract(rand, 'days').format(),
+          createdBy: {
+            sys: {
+              id: 'xyz' + rand,
+              linkType: 'User',
+              type: 'Link'
+            }
+          },
+          id: 'some-id-' + rand,
+          snapshotType: 'publication',
+          type: 'Snapshot'
+        },
+        snapshot: {
+          fields: []
+        }
+      };
+    }
+  });
+
+  describe('lazy init', function () {
+    it('should load initial list of snapshots lazily', function () {
+      expect(this.scope.showSnapshotList).toEqual(false);
+      this.assertSnapshotsLength(0);
+
+      this.toggleList(true);
+
+      this.assertLoadCalledAndReset();
+      this.assertSnapshotsLength(PER_PAGE);
+      this.scope.snapshots.forEach(snapshot => expect(snapshot.sys.createdBy.authorName).toBeTruthy());
+
+      // hide and show snapshots list
+      this.toggleList(false);
+      this.toggleList(true);
+      sinon.assert.notCalled(spaceContext.cma.getEntrySnapshots);
+    });
+  });
+
+
+  describe('pagination', function () {
+    beforeEach(function () {
+      this.assertLoadMoreBehaviour = function (isLoading, isAtLast) {
+        this.scope.isLoading = isLoading;
+        this.scope.paginator.isAtLast = sinon.stub().returns(isAtLast);
+        this.scope.paginator.next = sinon.spy();
+        this.scope.loadMore();
+
+        if (!isLoading && !isAtLast) {
+          sinon.assert.calledOnce(this.scope.paginator.next);
+          this.assertLoadCalledAndReset();
+        } else {
+          sinon.assert.notCalled(this.scope.paginator.next);
+        }
+      };
+    });
+
+    it('should be called only when nothing is loading and we still have pages to show', function () {
+      this.assertLoadMoreBehaviour(false, false);
+      this.assertLoadMoreBehaviour(true, false);
+      this.assertLoadMoreBehaviour(false, true);
+    });
+  });
+
+  describe('sorting', function () {
+    beforeEach(function () {
+      this.assertSort = function (sortMethod, sortedOnProp, transformFn) {
+        const testSortingOrder = this.testSortingOrder(sortMethod, sortedOnProp, transformFn || _.identity);
+
+        this.toggleList(true);
+        testSortingOrder(true); // true => ascending
+        testSortingOrder(false);
+      };
+
+      this.testSortingOrder = function (sortMethod, sortedOnProp, transformFn) {
+        const scope = this.scope;
+
+        return function (isAscending) {
+          const noOfSnapshots = scope.snapshots.length;
+
+          scope.isAscending = isAscending;
+          sortMethod(scope.isAscending);
+
+          expect(_.filter(scope.sortOrder, _.identity).length).toEqual(1);
+
+          const pluckedPropArray = _.map(scope.snapshots, s => transformFn(dotty.get(s, sortedOnProp)));
+          const assertOrdering = isAscending ? isSortedAscending : isSortedDescending;
+
+          expect(assertOrdering(pluckedPropArray)).toEqual(true);
+          expect(scope.isAscending).not.toEqual(isAscending);
+          expect(scope.snapshots.length).toEqual(noOfSnapshots);
+        };
+      };
+
+      function isSortedAscending (arr) {
+        return _.isEqual(arr, _.sortBy(arr));
+      }
+
+      function isSortedDescending (arr) {
+        return isSortedAscending(_.reverse(arr));
+      }
+    });
+
+    describe('sort by last edited', function () {
+      it('should sort by snapshot.sys.createdAt', function () {
+        this.assertSort(this.scope.sortByLastEdited, 'sys.createdAt', dateString => new Date(dateString).getTime());
+      });
+    });
+
+    describe('sort by editor', function () {
+      it('should sort by sys.createdBy.authorName', function () {
+        this.assertSort(this.scope.sortByEditor, 'sys.createdBy.authorName');
+      });
+    });
+
+    describe('sort by status', function () {
+      it('should sort by sys.snapshotType', function () {
+        this.assertSort(this.scope.sortByStatus, 'sys.snapshotType');
+      });
+    });
+  });
+
+  describe('dont add duplicate snapshots', function () {
+    it('should only add unique snapshots to the list', function () {
+      const snapshotsArr = Array.apply(null, {length: PER_PAGE}).map(this.makeFakeSnapshots(PER_PAGE));
+
+      spaceContext.cma = {
+        getEntrySnapshots: sinon.stub().resolves({
+          items: snapshotsArr
+        })
+      };
+
+      this.toggleList(true);
+      this.assertSnapshotsLength(20);
+
+      this.scope.loadMore(); // api mock will return same 20 snapshots
+      this.assertSnapshotsLength(20);
+    });
+  });
+});
