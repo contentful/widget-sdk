@@ -268,7 +268,6 @@ src/javascripts/forms/validation.js
 src/javascripts/navigation/confirm_leave_editor.js
 src/javascripts/navigation/close_state.js
 src/javascripts/ui/cf_ui_tab.js
-src/javascripts/ui/cf_ui_hint.js
 src/javascripts/ui/context_menu.js
 src/javascripts/widgets/id_map.js
 src/javascripts/widgets/checks.js
