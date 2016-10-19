@@ -100,16 +100,16 @@ angular.module('contentful')
       var modalDialog = require('modalDialog');
       var tracking = require('track/versioning');
 
-      spaceContext.cma.getEntrySnapshots(entry.getId(), {limit: 1})
+      spaceContext.cma.getEntrySnapshots(entry.getId(), {limit: 2})
       .then(function (res) {
         var count = dotty.get(res, 'items.length', 0);
-        return count > 0 ? compare(_.first(res.items)) : back();
+        return count > 0 ? compare(_.first(res.items), count) : back();
       }, back);
 
-      function compare (snapshot) {
+      function compare (snapshot, count) {
         return $state.go('.withCurrent', {
           snapshotId: snapshot.sys.id,
-          snapshotCount: 1,
+          snapshotCount: count,
           source: 'entryEditor'
         });
       }
