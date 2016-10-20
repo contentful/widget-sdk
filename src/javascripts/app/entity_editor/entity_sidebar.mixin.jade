@@ -58,19 +58,10 @@ mixin entity-sidebar
           | Saving
       if attributes.revert
         button.entity-sidebar__revert.btn-link(
-          cf-context-menu-trigger
-          data-test-id="revert-menu-trigger"
-          ng-disabled="!state.revertToPublished.isAvailable() && !state.revertToPrevious.isAvailable()")
-          | Revert
-        .context-menu(
-          role="menu"
-          cf-context-menu="bottom-right"
-          aria-label="Revert"
-          data-test-id="revert-menu")
-          div(role="menuitem" ui-command="state.revertToPublished")
-            | Revert to published
-          div(role="menuitem" ui-command="state.revertToPrevious")
-            | Revert current changes
+          data-test-id="discard-changed-button"
+          ui-command="state.revertToPrevious")
+          | Discard changes
+
     div(ng-controller="contentPreviewSidebarController" ng-if="entity.getType() === 'Entry'")
       div(ng-if="contentPreviewEnvironments && contentPreviewEnvironments.length")
         h2.entity-sidebar__heading
@@ -82,7 +73,7 @@ mixin entity-sidebar
             target="_blank")
             i.fa.fa-external-link
             span Open preview
-          .entity-sidebar__preview__discovery(ng-if="showDefaultMessage")
+          .entity-sidebar__help-text(role="note" ng-if="showDefaultMessage")
             | By default, the Discovery App is used to preview content.&#32;
             a(ui-sref="spaces.detail.settings.content_preview.list")
               | Set up a custom content preview.
@@ -115,6 +106,18 @@ mixin entity-sidebar
       button.btn-link(
         ui-command="locales.changeActive")
         | Change
+
+    div(ng-if="entity.getType() === 'Entry'")
+      h2.entity-sidebar__heading Versions
+      cf-snapshot-sidebar-list
+      a.btn-secondary-action.x--block(
+        role="button"
+        ui-sref=".compare"
+        ui-sref-opts="{location: false}")
+        | Compare versions
+      .entity-sidebar__help-text(role="note")
+        | Versions are previous states of this entry. You will be able to review
+        | and compare different versions, and restore some or all fields.
 
     h2.entity-sidebar__heading
       | Users

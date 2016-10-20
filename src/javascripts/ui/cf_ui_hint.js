@@ -9,6 +9,10 @@ angular.module('cf.ui')
  * Displays a hint which can optionally show an arrow and dismiss link, with a
  * transcluded message.
  *
+ * The directive queries the 'hints' service and the 'name' attribute
+ * to determine if the hint should be shown. A hint with a given name
+ * will only be shown once.
+ *
  * @param {string} name
  *
  * @param {boolean} arrow
@@ -43,7 +47,8 @@ angular.module('cf.ui')
  *   [data-arrow-direction="up"]
  *     top: -7px
 */
-.directive('cfUiHint', ['hints', function (hints) {
+.directive('cfUiHint', ['require', function (require) {
+  var Hints = require('hints');
   return {
     restrict: 'E',
     replace: true,
@@ -55,25 +60,25 @@ angular.module('cf.ui')
       name: '@'
     },
     template:
-      '<div class="ui-hint" data-test-id="{{name}}">' +
+      '<div class="ui-hint" data-test-id="{{name}}" role="note">' +
       '<span data-arrow-direction="{{arrowDirection}}" ng-if="showArrow"></span>' +
       '<p ng-transclude class="ui-hint-content"></p>' +
       '<a class="ui-hint__dismiss" ng-if="showDismiss" role="button" data-test-id="ui-hint-dismiss-btn" aria-label="ui-hint-dismiss-btn">Dismiss</a>' +
       '</div>',
     compile: function (_, attrs) {
-      if (!hints.shouldShow(attrs.name)) {
-        return function (_, elem) {
-          elem.remove();
-        };
-      } else {
+      if (Hints.shouldShow(attrs.name)) {
         return function (scope, elem) {
           var $elem = $(elem);
 
-          hints.setAsSeen(scope.name);
+          Hints.setAsSeen(scope.name);
 
           if (scope.showDismiss) {
             $elem.on('click', '[data-test-id="ui-hint-dismiss-btn"]', $elem.fadeOut.bind($elem));
           }
+        };
+      } else {
+        return function (_, elem) {
+          elem.remove();
         };
       }
     }

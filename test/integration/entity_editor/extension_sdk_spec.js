@@ -29,7 +29,14 @@ describe('Extension SDK', function () {
       type: 'Text'
     };
 
-    this.doc = this.$inject('mocks/entityEditor/Document').create();
+    const entry = {
+      data: {
+        sys: {},
+        fields: {}
+      }
+    };
+
+    this.doc = this.$inject('mocks/entityEditor/Document').create(entry.data);
 
     this.scope = {
       widget: {},
@@ -38,12 +45,7 @@ describe('Extension SDK', function () {
           fields: [field]
         }
       },
-      entry: {
-        data: {
-          sys: {},
-          fields: {}
-        }
-      },
+      entry: entry,
       field: field,
       locale: {
         code: 'de',
@@ -153,15 +155,6 @@ describe('Extension SDK', function () {
         detach();
         this.setDocValueAt(['fields', 'FID-internal', 'de-internal'], 'VALUE');
         yield api.nextTick();
-      });
-
-      it('does not call callback in the window that called setValue', function* (api) {
-        const valueChanged = sinon.spy();
-        api.field.onValueChanged(valueChanged);
-        valueChanged.reset();
-        api.field.setValue('VALUE');
-        yield api.nextTick();
-        sinon.assert.notCalled(valueChanged);
       });
 
       it('calls callback with most recently dispatched value', function* (api) {

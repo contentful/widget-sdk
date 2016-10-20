@@ -30,33 +30,27 @@ angular.module('contentful')
     type: 'Symbol'
   };
 
-  var fallbackFields = [
-    publishedAt,
-    createdAt,
-    updatedAt
-  ];
-
-  var list = [createdAt, updatedAt, publishedAt, author].map(function (field) {
-    return Object.freeze(_.extend(field, {sys: true}));
-  });
+  var list = [createdAt, updatedAt, publishedAt, author];
+  var defaultFields = [updatedAt, author];
+  var fallbackFields = [publishedAt, createdAt, updatedAt];
 
   var defaultOrder = {
     fieldId: updatedAt.id,
-    sys: true,
     direction: 'descending'
   };
 
-  var defaultFields = [
-    updatedAt,
-    author
-  ];
-
   return {
-    getList: _.constant(Object.freeze(list)),
-    getDefaultOrder: _.constant(Object.freeze(defaultOrder)),
-    getDefaultFields: _.constant(Object.freeze(defaultFields)),
+    getList: returnClone(list),
+    getDefaultFields: returnClone(defaultFields),
+    getDefaultOrder: returnClone(defaultOrder),
     getFallbackOrderField: getFallbackOrderField
   };
+
+  function returnClone (obj) {
+    return function () {
+      return _.cloneDeep(obj);
+    };
+  }
 
   function getFallbackOrderField (availableFieldIds) {
     return _.find(fallbackFields, function (field) {

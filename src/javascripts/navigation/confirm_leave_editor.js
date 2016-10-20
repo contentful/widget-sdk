@@ -27,19 +27,19 @@ angular.module('contentful')
   var modalDialog = $injector.get('modalDialog');
   var Command     = $injector.get('command');
 
-  return function createLeaveConfirmator (runSave) {
+  return function createLeaveConfirmator (runSave, template) {
     return function confirmLeaveEditor () {
       var dialog;
       var save = Command.create(function () {
         return runSave().then(function () {
-          dialog.confirm(true);
+          dialog.confirm({saved: true});
         }, function (error) {
           dialog.cancel(error);
         });
       });
 
       var discard = Command.create(function () {
-        dialog.confirm(true);
+        dialog.confirm({discarded: true});
       });
 
       var cancel = Command.create(function () {
@@ -47,7 +47,7 @@ angular.module('contentful')
       });
 
       dialog = modalDialog.open({
-        template: 'confirm_leave_editor',
+        template: template || 'confirm_leave_editor',
         backgroundClose: false,
         ignoreEnter: false,
         enterAction: function () {

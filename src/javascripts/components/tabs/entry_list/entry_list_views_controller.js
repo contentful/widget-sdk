@@ -59,7 +59,7 @@ angular.module('contentful')
   });
 
   function setOrderField (field) {
-    $scope.context.view.order = {fieldId: field.id, sys: !!field.sys};
+    $scope.context.view.order = {fieldId: field.id};
   }
 
   function switchOrderDirection (direction) {
