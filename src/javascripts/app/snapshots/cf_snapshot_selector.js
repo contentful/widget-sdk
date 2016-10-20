@@ -98,7 +98,9 @@ angular.module('cf.app')
     var promises = snapshots.map(function (snapshot) {
       return spaceContext.users.get(snapshot.sys.createdBy.sys.id)
         .then(function (user) {
-          snapshot.sys.createdBy.authorName = user.getName();
+          var authorName = user ? user.getName() : '';
+
+          snapshot.sys.createdBy.authorName = authorName;
           return snapshot;
         });
     });
