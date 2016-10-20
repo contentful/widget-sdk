@@ -8,7 +8,6 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
   var assetContentType = $injector.get('assetContentType');
 
   var DEFAULT_ORDER = systemFields.getDefaultOrder();
-  var DEFAULT_ORDER_PATH = ['sys', DEFAULT_ORDER.fieldId];
 
   return {
     getForEntries: function (opts) {
@@ -68,7 +67,7 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
       return ['fields', ctField.apiName || ctField.id];
     }
 
-    return DEFAULT_ORDER_PATH;
+    return ['sys', DEFAULT_ORDER.fieldId];
   }
 
   function isSystemField (id) {
