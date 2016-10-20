@@ -8,7 +8,7 @@ angular.module('cf.data')
  * @module cf.data
  * @description
  * A basic client for the CMA that manages the Content Types, Entries,
- * and Assets of a given space.
+ * Entry Snapshots and Assets of a given space.
  *
  * It has almost the same interface as the [Javascript CMA
  * library][cma-js].
@@ -29,11 +29,20 @@ angular.module('cf.data')
     this._endpoint = spaceEndpoint;
   }
 
-  Client.prototype._getResource = function (path, id) {
+  Client.prototype._get = function (path, query) {
     return this._request({
       method: 'GET',
-      path: [path, id]
+      path: path,
+      query: query
     });
+  };
+
+  Client.prototype._getResources = function (name, query) {
+    return this._get([name], query);
+  };
+
+  Client.prototype._getResource = function (path, id) {
+    return this._get([path, id]);
   };
 
   Client.prototype.getContentTypes = function (query) {
@@ -42,6 +51,10 @@ angular.module('cf.data')
 
   Client.prototype.getEntries = function (query) {
     return this._getResources('entries', query);
+  };
+
+  Client.prototype.getEntrySnapshots = function (entryId, query) {
+    return this._get(['entries', entryId, 'snapshots'], query);
   };
 
   Client.prototype.getAssets = function (query) {
@@ -60,20 +73,16 @@ angular.module('cf.data')
     return this._getResources('public/assets', query);
   };
 
-  Client.prototype._getResources = function (name, query) {
-    return this._request({
-      method: 'GET',
-      path: [name],
-      query: query
-    });
-  };
-
   Client.prototype.getContentType = function (id) {
     return this._getResource('content_types', id);
   };
 
   Client.prototype.getEntry = function (id) {
     return this._getResource('entries', id);
+  };
+
+  Client.prototype.getEntrySnapshot = function (entryId, snapshotId) {
+    return this._get(['entries', entryId, 'snapshots', snapshotId]);
   };
 
   Client.prototype.getAsset = function (id) {

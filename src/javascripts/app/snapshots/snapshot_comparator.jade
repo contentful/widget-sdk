@@ -1,0 +1,63 @@
+include ./snapshot.mixin.jade
+
+header.workbench-header
+  cf-breadcrumbs
+  cf-icon.workbench-header__icon(name="page-entries")
+  h1.workbench-header__title {{ context.title | truncate:50 }}
+
+  .workbench-header__actions
+    button.btn-primary-action(
+      type="button"
+      ui-command="save")
+      | Apply changes
+    button.btn-secondary-action(
+      role="button"
+      type="button"
+      ng-click="close()")
+      | Close
+
+.snapshot-comparator__header
+  .snapshot-comparator__header-cell
+    button.btn-link.snapshot-comparator__version(
+      aria-label="show-snapshot-list-btn"
+      ng-click="showSnapshotList = !showSnapshotList")
+      +snapshot-dt
+      cf-icon.btn-dropdown-icon(name="dd-arrow-down")
+    button.btn-link(
+      ng-show="versionPicker.getDifferenceCount() > 0"
+      ng-click="versionPicker.restoreAll()")
+      | Select all fields from this version
+
+  .snapshot-comparator__header-cell
+    .snapshot-comparator__version Current version
+    label(ng-show="versionPicker.getDifferenceCount() > 0")
+      input(type="checkbox" ng-model="showOnlyDifferences")
+      span
+        | Show only differences ({{ versionPicker.getDifferenceCount() }})
+
+cf-snapshot-selector(ng-show="showSnapshotList")
+
+cf-ui-hint.snapshot-comparator__hint(
+  name="snapshots-intro"
+  arrow="true"
+  arrow-direction="up"
+  show-dismiss="true"
+  data-test-id="snapshots-intro")
+  span(ng-show="versionPicker.getDifferenceCount() > 0")
+    | The contents of these two versions seem to be different.
+  span(ng-show="versionPicker.getDifferenceCount() < 1")
+    | These two versions are identical.
+  span(ng-show="snapshotCount > 1")
+    |  Use this navigation to change the versions being compared.
+
+.workbench-main.x--content-full-size
+  .snapshot-comparator__field(
+    ng-repeat="widget in widgets"
+    ng-controller="SnapshotFieldController as fieldController"
+    data-field-api-name="{{widget.field.apiName}}")
+    .snapshot-comparator__field-locale(
+      ng-repeat="locale in locales track by locale.internal_code"
+      ng-controller="SnapshotComparisonController")
+
+      +snapshot-value('snapshotDoc', 'snapshot')
+      +snapshot-value('otDoc', 'current')

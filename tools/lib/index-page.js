@@ -73,7 +73,6 @@ function indexPage (uiVersion, config, resolve, entryScripts) {
       h('title', ['Contentful']),
       stylesheet(resolve('vendor.css')),
       stylesheet(resolve('main.css')),
-      stylesheet(`//${config.base_host}/gatekeeper/plan_cards.css`),
       iconLink('shortcut icon', resolve('images/favicons/favicon32x32.png')),
       iconLink('apple-touch-icon', resolve('images/favicons/apple_icon57x57.png')),
       iconLink('apple-touch-icon', resolve('images/favicons/apple_icon72x72.png')),
