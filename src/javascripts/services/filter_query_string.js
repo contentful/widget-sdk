@@ -33,7 +33,12 @@ angular.module('contentful')
 
       var view = dotty.transform(qs);
       toBool(view, 'contentTypeHidden');
-      toBool(view, 'order.sys');
+
+      // migration of faulty query strings
+      if (view && _.isObject(view.order)) {
+        delete view.order.sys;
+        delete view.order.isSys;
+      }
 
       return view;
     }

@@ -16,10 +16,15 @@ angular.module('contentful')
 
   return _.extend({}, noopAnalytics, {
     track: trackStub,
-    trackTotango: trackStub
+    trackTotango: trackStub,
+    pushGtm: trackStub
   });
 
   function trackStub (event, data) {
-    console.log('track: ' + event, data);
+    if (arguments.length === 2) {
+      console.log('track: ' + event, data); // eslint-disable-line no-console
+    } else {
+      console.log('track:', event); // eslint-disable-line no-console
+    }
   }
 }]);

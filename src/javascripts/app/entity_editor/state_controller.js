@@ -13,6 +13,7 @@ function ($scope, $injector, entity, notify, handlePublishError) {
   var accessChecker = $injector.get('accessChecker');
   var closeState = $injector.get('navigation/closeState');
   var publicationWarnings = $injector.get('entityEditor/publicationWarnings').create();
+  var versioningTracking = $injector.get('track/versioning');
 
   var stateManager = new StateManager(entity);
 
@@ -143,6 +144,9 @@ function ($scope, $injector, entity, notify, handlePublishError) {
       }
 
       return stateManager.publish()
+      .then(function trackRestoredPublication () {
+        versioningTracking.publishedRestored(entity.data);
+      })
       .then(entryReverter.publishedNewVersion)
       .then(notify.publishSuccess, handlePublishError);
     });

@@ -1,0 +1,40 @@
+.snapshot-comparator__presenter
+  div(ng-if="hasValue && isCustom")
+    cf-widget-renderer(cf-widget-api)
+
+  div(
+    ng-if="hasValue && !isCustom"
+    ng-switch="type")
+
+    div(ng-switch-when="Symbol")
+      | {{ value }}
+
+    div(ng-switch-when="Integer")
+      | {{ value }}
+
+    div(ng-switch-when="Number")
+      | {{ value }}
+
+    div(ng-switch-when="Text")
+      cf-snapshot-presenter-markdown
+
+    div(ng-switch-when="Boolean")
+      span(ng-if="value === true") {{ widget.settings.trueLabel || 'Yes' }}
+      span(ng-if="value === false") {{ widget.settings.falseLabel || 'No' }}
+
+    div(ng-switch-when="Date")
+      cf-snapshot-presenter-date
+
+    div(ng-switch-when="Array<Symbol>")
+      ul.symbol-array-preview
+        li(ng-repeat="item in value") {{ item }}
+
+    div(ng-switch-when="Location")
+      p <strong>Longitude:</strong> {{ value.lon }}
+      p <strong>Latitude:</strong> {{ value.lat }}
+
+    div(ng-switch-when="Reference")
+      cf-snapshot-presenter-link
+
+    div(ng-switch-default)
+      pre {{ value | json }}
