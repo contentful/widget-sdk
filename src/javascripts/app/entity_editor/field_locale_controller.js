@@ -18,7 +18,7 @@ angular.module('contentful')
  * @scope.requires validationResult
  * @scope.requires docPresence
  */
-.controller('FieldLocaleController', ['require', '$scope', function (require, $scope) {
+.controller('FieldLocaleController', ['require', '$scope', '$attrs', function (require, $scope, $attrs) {
   var spaceContext = require('spaceContext');
   var K = require('utils/kefir');
   var policyAccessChecker = require('accessChecker/policy');
@@ -36,7 +36,8 @@ angular.module('contentful')
   var EDITABLE = {editable: true};
   var DISCONNECTED = {disconnected: true, disabled: true};
 
-  controller.doc = FieldLocaleDoc.create($scope.otDoc, field.id, locale.internal_code);
+  $scope.docImpl = $scope[$attrs.documentProperty || 'otDoc'];
+  controller.doc = FieldLocaleDoc.create($scope.docImpl, field.id, locale.internal_code);
 
   /**
    * @ngdoc property

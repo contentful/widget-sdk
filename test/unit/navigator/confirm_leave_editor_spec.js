@@ -27,7 +27,7 @@ describe('navigation/confirmLeaveEditor', function () {
     this.$apply();
     return confirmation
     .then(function (confirmed) {
-      expect(confirmed).toEqual(true);
+      expect(confirmed).toEqual({saved: true});
     });
   });
 
@@ -49,7 +49,7 @@ describe('navigation/confirmLeaveEditor', function () {
     sinon.assert.calledOnce(this.save);
     return confirmation
     .then(function (confirmed) {
-      expect(confirmed).toEqual(true);
+      expect(confirmed).toEqual({saved: true});
     });
   });
 
@@ -74,7 +74,7 @@ describe('navigation/confirmLeaveEditor', function () {
     this.$apply();
     return confirmation
     .then(function (confirmed) {
-      expect(confirmed).toEqual(true);
+      expect(confirmed).toEqual({discarded: true});
     });
   });
 

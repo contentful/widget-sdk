@@ -40,7 +40,7 @@ angular.module('contentful')
       var Widgets = $injector.get('widgets');
       var K = $injector.get('utils/kefir');
 
-      var doc = scope.otDoc;
+      var doc = scope.docImpl || scope.otDoc;
       var descriptor = Widgets.get(scope.widget.widgetId);
       var fields = scope.contentType.data.fields;
       var fieldsById = _.transform(fields, function (fieldsById, field) {
@@ -48,7 +48,7 @@ angular.module('contentful')
       }, {});
 
       var widgetAPI = new WidgetAPI(
-        spaceContext.cma, fields, scope.entry.data, scope.transformedContentTypeData,
+        spaceContext.cma, fields, doc.getValueAt([]), scope.transformedContentTypeData,
         // TODO the isDisabled property is only required for <v2.1 of the
         // extension SDK. We should remove it
         {field: scope.field, locale: scope.locale, isDisabled: scope.fieldLocale.access.disabled}, iframe

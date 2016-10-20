@@ -104,6 +104,11 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     display: block
     $workbench-content()
 
+  &.x--content-full-size
+    display: block
+    overflow-y: auto
+    position: relative
+
   &__content
     $workbench-content()
     flex-grow: 1

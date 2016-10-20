@@ -1,0 +1,36 @@
+include ./snapshot.mixin.jade
+
+.snapshot-selector(aria-label="snapshot-list")
+  .snapshot-selector__list
+    table.result-list.main-header
+      thead
+        tr
+          +snapshot-list-header('Last edited', 'sortByLastEdited', 'sortOrder.byLastEdited')
+          +snapshot-list-header('Edited by', 'sortByEditor', 'sortOrder.byEditor')
+          +snapshot-list-header('Status', 'sortByStatus', 'sortOrder.byStatus')
+  .main-results-wrapper.endless-container(
+    cf-endless-container
+    at-bottom="loadMore()"
+    num-elements="paginator.page")
+    table.result-list.main-results
+      tbody
+        tr(
+          ng-repeat="snapshot in snapshots track by snapshot.sys.id"
+          ng-class="{'x--current': isCurrent(snapshot)}"
+          ng-click="!isCurrent(snapshot) && goToSnapshot(snapshot)")
+          td
+            +snapshot-dt
+          td
+            | {{ snapshot.sys.createdBy.authorName }}
+          td(
+            ng-class="{" +
+              "'snapshot-selector__item-status': true," +
+              "'snapshot-selector__item-status-published': snapshot.sys.snapshotType === 'publish'" +
+            "}")
+            | {{ snapshot.sys.snapshotType === 'publish' ? 'published' :  'other' }}
+
+    .snapshot-selector__item-list-placeholder(
+      ng-if="!isLoading && snapshots.length < 1")
+      | No snapshots found.
+
+    .loading(ng-show="isLoading")

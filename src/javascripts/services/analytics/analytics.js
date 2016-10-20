@@ -17,7 +17,7 @@
 angular.module('contentful')
 .factory('analytics', ['$injector', function ($injector) {
 
-  var $location   = $injector.get('$location');
+  var $location = $injector.get('$location');
   var environment = $injector.get('environment');
 
   var serviceName;

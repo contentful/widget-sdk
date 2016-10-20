@@ -36,13 +36,10 @@ angular.module('contentful')
     updatedAt
   ];
 
-  var list = [createdAt, updatedAt, publishedAt, author].map(function (field) {
-    return Object.freeze(_.extend(field, {sys: true}));
-  });
+  var list = [createdAt, updatedAt, publishedAt, author];
 
   var defaultOrder = {
     fieldId: updatedAt.id,
-    sys: true,
     direction: 'descending'
   };
 
