@@ -13,7 +13,7 @@ angular.module('contentful').factory('ListQuery', ['$injector', function ($injec
   return {
     getForEntries: function (opts) {
       if (opts.contentTypeId) {
-        return spaceContext.fetchPublishedContentType(opts.contentTypeId)
+        return spaceContext.publishedCTs.fetch(opts.contentTypeId)
         .then(function (contentType) {
           return prepareEntityListQuery(contentType, opts);
         });

@@ -3,9 +3,10 @@
 angular.module('contentful')
 .controller('DisplayedFieldsController', ['$scope', 'require', function ($scope, require) {
   var systemFields = require('systemFields');
+  var spaceContext = require('spaceContext');
 
   function getAvailableFields (contentTypeId) {
-    var filteredContentType = $scope.spaceContext.getPublishedContentType(contentTypeId);
+    var filteredContentType = spaceContext.publishedCTs.get(contentTypeId);
     var contentTypeFields = filteredContentType ? _.reject(filteredContentType.data.fields, {disabled: true}) : [];
     var fields = systemFields.getList().concat(contentTypeFields);
 

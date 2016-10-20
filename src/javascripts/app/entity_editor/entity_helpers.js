@@ -54,7 +54,7 @@ angular.module('cf.app')
 
     if (data.sys.type === 'Entry') {
       prepareFields = spaceContext
-      .fetchPublishedContentType(ctId)
+      .publishedCTs.fetch(ctId)
       .then(function (ct) {
         return _.transform(ct.data.fields, function (acc, ctField) {
           var field = dotty.get(data, ['fields', ctField.apiName]);

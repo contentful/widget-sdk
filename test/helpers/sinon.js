@@ -23,6 +23,7 @@ sinon.stubAll = function (object) {
       sinon.stub(object, key);
     }
   }
+  return object;
 };
 
 function get$q () {

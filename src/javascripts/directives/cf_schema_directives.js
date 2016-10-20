@@ -21,12 +21,11 @@ angular.module('contentful')
   var SchemaController = require('SchemaController');
   var createEntrySchema = require('validation').fromContentType;
   var spaceContext = require('spaceContext');
-
   return {
     restrict: 'A',
     scope: true,
     controller: ['$scope', function ($scope) {
-      var buildMessage = errorMessageBuilder($scope.spaceContext);
+      var buildMessage = errorMessageBuilder(spaceContext.publishedCTs);
       $scope.schema = new SchemaController(buildMessage);
       $scope.schema.setContext({ skipDeletedLocaleFieldValidation: true });
 

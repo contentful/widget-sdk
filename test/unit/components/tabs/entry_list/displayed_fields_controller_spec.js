@@ -9,11 +9,12 @@ describe('Displayed Fields Controller', function () {
       getDefaultFields: _.constant([{id: 1}, {id: 2}, {id: 3}])
     });
 
+    this.spaceContext = this.$inject('mocks/spaceContext').init();
+
     this.scope = this.$inject('$rootScope').$new();
 
     Object.assign(this.scope, {
-      context: {view: {}},
-      spaceContext: {}
+      context: {view: {}}
     });
 
     const $controller = this.$inject('$controller');
@@ -24,19 +25,18 @@ describe('Displayed Fields Controller', function () {
     beforeEach(function () {
       this.scope.context.view.displayedFieldIds = ['id1', 'id2', 'id5', 'display1'];
       this.scope.context.view.contentTypeId = 'ct1';
-      this.scope.spaceContext.getPublishedContentType =
-        sinon.stub().returns({
-          data: {
-            displayField: 'display1',
-            fields: [
-              {id: 'id1'},
-              {id: 'id2'},
-              {id: 'id3', disabled: true},
-              {id: 'id4'},
-              {id: 'display1'}
-            ]
-          }
-        });
+      this.spaceContext.publishedCTs.get.returns({
+        data: {
+          displayField: 'display1',
+          fields: [
+            {id: 'id1'},
+            {id: 'id2'},
+            {id: 'id3', disabled: true},
+            {id: 'id4'},
+            {id: 'display1'}
+          ]
+        }
+      });
       this.scope.refreshDisplayFields();
     });
 

@@ -102,7 +102,7 @@ describe('spaceContext', function () {
 
       Widgets.setSpace.resolve();
       SPACE.getContentTypes.resolve();
-      SPACE.getPublishedContentTypes.resolve();
+      SPACE.getPublishedContentTypes.resolve([]);
       this.$apply();
       sinon.assert.called(done);
     });
@@ -137,6 +137,19 @@ describe('spaceContext', function () {
         sinon.assert.notCalled(this.Subscription.newFromOrganization);
         expect(this.spaceContext.subscription).toBe(null);
       });
+    });
+
+    it('sets #publishedContentTypes from refreshed CT list', function* () {
+      Widgets.setSpace.resolve();
+      SPACE.getContentTypes.resolve([]);
+
+      SPACE.getPublishedContentTypes.resolve([
+        makeCtMock('A'), makeCtMock('B')
+      ]);
+      yield this.result;
+      expect(
+        this.spaceContext.publishedContentTypes.map((ct) => ct.getId())
+      ).toEqual(['A', 'B']);
     });
   });
 
@@ -177,33 +190,30 @@ describe('spaceContext', function () {
       };
       this.space = this.resetWithSpace();
       this.space.getDefaultLocale = sinon.stub().returns('en-US');
-      this.space.getPublishedContentTypes.resolves([
-        makeCtMock('CTID', {
-          displayField: 'title',
-          fields: {id: 'title', type: 'Symbol'}
-        })
-      ]);
-      this.spaceContext.refreshContentTypes();
-      this.$apply();
+
+      const CTRepo = this.$inject('data/ContentTypeRepo/Published');
+      this.spaceContext.publishedCTs = sinon.stubAll(CTRepo.create());
     });
 
     it('fetched successfully', function () {
+      this.spaceContext.publishedCTs.get.returns(makeCtMock('CTID', {
+        displayField: 'title',
+        fields: {id: 'title', type: 'Symbol'}
+      }));
       expect(this.spaceContext.entryTitle(entry)).toBe('the title');
       expect(this.spaceContext.entryTitle(entry, 'en-US', true)).toBe('the title');
       expect(this.spaceContext.entityTitle(entry)).toBe('the title');
     });
 
     it('gets no title, falls back to default', function () {
-      sinon.stub(this.spaceContext, 'publishedTypeForEntry').returns({
-        data: {}
-      });
+      this.spaceContext.publishedCTs.get.returns({data: {}});
       expect(this.spaceContext.entryTitle(entry)).toBe('Untitled');
       expect(this.spaceContext.entryTitle(entry, 'en-US', true)).toBe(null);
       expect(this.spaceContext.entityTitle(entry)).toBe(null);
     });
 
     it('handles an exception, falls back to default', function () {
-      sinon.stub(this.spaceContext, 'publishedTypeForEntry').returns({});
+      this.spaceContext.publishedCTs.get.returns({});
       expect(this.spaceContext.entryTitle(entry)).toBe('Untitled');
       expect(this.spaceContext.entityTitle(entry)).toBe(null);
     });
@@ -298,8 +308,6 @@ describe('spaceContext', function () {
       };
 
       this.removeSecondCt = function () {
-        const secondCt = this.spaceContext.contentTypes[1];
-        this.spaceContext.unregisterPublishedContentType(secondCt);
         const slice = contentTypes.slice(0, 1);
         this.space.getContentTypes.resolves(slice);
         this.space.getPublishedContentTypes.resolves(slice);
@@ -395,20 +403,6 @@ describe('spaceContext', function () {
       sinon.assert.called(handler);
     });
 
-    it('merges published content types from client and server together', function () {
-      const initialCts = [makeCtMock('C')];
-      const newCts = [
-        makeCtMock('A'),
-        makeCtMock('B')
-      ];
-      this.space.getPublishedContentTypes.resolves(newCts);
-      this.spaceContext.publishedContentTypes = initialCts;
-      this.spaceContext.refreshContentTypes();
-      this.$apply();
-      expect(this.spaceContext.publishedContentTypes)
-        .toEqual(newCts.concat(initialCts));
-    });
-
     it('does not include deleted published content Types', function () {
       this.space.getContentTypes.resolves([
         makeCtMock('A'),
@@ -424,12 +418,13 @@ describe('spaceContext', function () {
 
   describe('#displayedFieldForType()', function () {
     beforeEach(function () {
-      this.spaceContext.getPublishedContentType = sinon.stub();
+      const CTRepo = this.$inject('data/ContentTypeRepo/Published');
+      this.spaceContext.publishedCTs = sinon.stubAll(CTRepo.create());
     });
 
     it('returns the field', function () {
       const field = {id: 'name'};
-      this.spaceContext.getPublishedContentType.returns({
+      this.spaceContext.publishedCTs.get.returns({
         data: {
           displayField: 'name',
           fields: [field]
@@ -440,67 +435,13 @@ describe('spaceContext', function () {
 
     it('returns nothing', function () {
       const field = {id: 'name'};
-      this.spaceContext.getPublishedContentType.returns({
+      this.spaceContext.publishedCTs.get.returns({
         data: {
           displayField: 'othername',
           fields: [field]
         }
       });
       expect(this.spaceContext.displayFieldForType('type')).toBeUndefined();
-    });
-  });
-
-
-  describe('#getPublishedContentType()', function () {
-    beforeEach(function () {
-      this.space = makeSpaceMock();
-      this.space.getPublishedContentTypes.resolves([
-        makeCtMock('already_fetched')
-      ]);
-      this.resetWithSpace(this.space);
-    });
-
-    it('returns existing ct and does not trigger refresh', function () {
-      const ct = this.spaceContext.getPublishedContentType('already_fetched');
-      expect(ct.getId()).toBe('already_fetched');
-      sinon.assert.notCalled(this.space.getPublishedContentTypes);
-    });
-
-    it('triggers refresh when content type is not available', function () {
-      this.spaceContext.getPublishedContentType('foo');
-      this.$apply();
-      sinon.assert.called(this.space.getPublishedContentTypes);
-    });
-  });
-
-
-  describe('#fetchPublishedContentType()', function () {
-    beforeEach(function () {
-      this.space = makeSpaceMock();
-      this.space.getPublishedContentTypes.resolves([
-        makeCtMock('already_fetched')
-      ]);
-      this.resetWithSpace(this.space);
-    });
-
-    pit('resolves without reloading when content type exists', function () {
-      return this.spaceContext.fetchPublishedContentType('already_fetched')
-      .then((ct) => {
-        expect(ct.getId()).toBe('already_fetched');
-        sinon.assert.notCalled(this.space.getContentTypes);
-        sinon.assert.notCalled(this.space.getPublishedContentTypes);
-      });
-    });
-
-    pit('resolves after reloading the published content types', function () {
-      this.space.getPublishedContentTypes.resolves([
-        makeCtMock('to_be_fetched')
-      ]);
-      return this.spaceContext.fetchPublishedContentType('to_be_fetched')
-        .then((ct) => {
-          expect(ct.getId()).toBe('to_be_fetched');
-          sinon.assert.called(this.space.getPublishedContentTypes);
-        });
     });
   });
 
@@ -533,6 +474,7 @@ describe('spaceContext', function () {
       };
 
       this.entry = {
+        getContentTypeId: _.constant('CTID'),
         data: {
           fields: {
             NUMBER: {xx: 'NUMBER'},
@@ -543,8 +485,9 @@ describe('spaceContext', function () {
         }
       };
 
-      this.spaceContext.publishedTypeForEntry =
-        sinon.stub().withArgs(this.entry).returns(this.ct);
+      const CTRepo = this.$inject('data/ContentTypeRepo/Published');
+      this.spaceContext.publishedCTs = sinon.stubAll(CTRepo.create());
+      this.spaceContext.publishedCTs.get.withArgs('CTID').returns(this.ct);
     });
 
     describe('#findLocalizedField()', function () {
@@ -627,8 +570,10 @@ describe('spaceContext', function () {
       });
 
       it('returns undefined if content type is not available', function () {
-        this.spaceContext.publishedTypeForEntry = sinon.stub().returns(null);
-        const desc = this.spaceContext.entityDescription({});
+        this.spaceContext.publishedCTs.get = sinon.stub().returns(null);
+        const desc = this.spaceContext.entityDescription({
+          getContentTypeId: _.constant()
+        });
         expect(desc).toEqual(undefined);
       });
     });

@@ -4,6 +4,7 @@ angular.module('contentful')
 .directive('cfEntryList', ['require', function (require) {
   var $timeout = require('$timeout');
   var spaceContext = require('spaceContext');
+  var K = require('utils/kefir');
 
   // Definitions for narrow/medium types in entry list controller
   var classToWidth = {
@@ -33,9 +34,18 @@ angular.module('contentful')
         $timeout(collapseColumns);
       };
 
+      K.onValueScope(scope, spaceContext.publishedCTs.items$, function (cts) {
+        scope.contentTypeSelectOptions = cts.map(function (ct) {
+          return {
+            id: ct.sys.id,
+            name: ct.name
+          };
+        }).toArray();
+      });
+
       scope.contentTypeName = function (entry) {
         var ctId = entry.getContentTypeId();
-        var ct = spaceContext.getPublishedContentType(ctId);
+        var ct = spaceContext.publishedCTs.get(ctId);
         if (ct) {
           return ct.getName();
         } else {
@@ -84,11 +94,6 @@ angular.module('contentful')
       function isOrderingField (elem) {
         return elem.find('span').hasClass('active');
       }
-
-      scope.getGroupName = function () {
-        return 'Content types';
-      };
-
     }
   };
 }]);
