@@ -1,21 +1,29 @@
 'use strict';
 
 describe('CodeMirror wrapper', function () {
-  var textarea, wrapper, cm, focusSpy;
-  var CodeMirror = window.cfLibs.markdown.CodeMirror;
+  let textarea, wrapper, cm, focusSpy;
+  const CodeMirror = window.cfLibs.markdown.CodeMirror;
 
-  function assertHasFocused() { sinon.assert.called(focusSpy); }
-  function assertHasNotFocused() { sinon.assert.notCalled(focusSpy); }
+  function assertHasFocused () { sinon.assert.called(focusSpy); }
+  function assertHasNotFocused () { sinon.assert.notCalled(focusSpy); }
 
   beforeEach(function () {
     module('contentful/test');
-    var createWrapper = this.$inject('MarkdownEditor/wrapper');
+    const createWrapper = this.$inject('MarkdownEditor/wrapper');
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
+
+    const cmFactory = sinon.spy(CodeMirror, 'fromTextArea');
     wrapper = createWrapper(textarea, {}, CodeMirror);
-    cm = wrapper.getEditor();
+    cm = cmFactory.returnValues[0];
+    cmFactory.restore();
+
     focusSpy = sinon.spy();
     cm.on('focus', focusSpy);
+  });
+
+  afterEach(function () {
+    textarea = wrapper = cm = focusSpy = null;
   });
 
   describe('Wrapper creation', function () {
@@ -25,7 +33,7 @@ describe('CodeMirror wrapper', function () {
     });
 
     it('sets options on CodeMirror instance', function () {
-      var opt = cm.getOption.bind(cm);
+      const opt = cm.getOption.bind(cm);
       expect(opt('mode')).toBe('gfm');
       expect(opt('lineNumbers')).toBe(false);
       expect(opt('undoDepth')).toBe(0);
@@ -34,7 +42,7 @@ describe('CodeMirror wrapper', function () {
     });
 
     it('restores to original textarea on destroy', function () {
-      function countStyles() { return Object.keys(textarea.style).length; }
+      function countStyles () { return Object.keys(textarea.style).length; }
       expect(countStyles()).toBe(1);
       wrapper.destroy();
       expect(countStyles()).toBe(0);
@@ -105,7 +113,7 @@ describe('CodeMirror wrapper', function () {
     });
 
     it('removes from line beginning', function () {
-      var val = 'to-be-removed test';
+      const val = 'to-be-removed test';
       cm.setValue(val);
       wrapper.removeFromLineBeginning(val.split(' ')[0].length + 1);
       expect(wrapper.getValue()).toBe('test');
@@ -130,7 +138,7 @@ describe('CodeMirror wrapper', function () {
   });
 
   describe('Cursor movement methods', function () {
-    var val = 'Some longer line.\nThe next one.';
+    const val = 'Some longer line.\nThe next one.';
 
     beforeEach(function () { cm.setValue(val); });
 
@@ -189,7 +197,7 @@ describe('CodeMirror wrapper', function () {
   });
 
   describe('Selection methods', function () {
-    var val = 'Some text that will be selected in the future.';
+    const val = 'Some text that will be selected in the future.';
 
     beforeEach(function () {
       cm.setValue(val);
@@ -210,7 +218,7 @@ describe('CodeMirror wrapper', function () {
       });
 
       it('returns selection (when single)', function () {
-        var selection = wrapper.getSelection();
+        const selection = wrapper.getSelection();
         expect(selection.anchor.ch).toBe(5);
         expect(selection.head.ch).toBe(9);
         assertHasNotFocused();
@@ -218,7 +226,7 @@ describe('CodeMirror wrapper', function () {
 
       it('returns first selection (when multiple)', function () {
         cm.addSelection({ line: 0, ch: 11 }, { line: 0, ch: 12 });
-        var selection = wrapper.getSelection();
+        const selection = wrapper.getSelection();
         expect(selection.anchor.ch).toBe(5);
         expect(selection.head.ch).toBe(9);
         assertHasNotFocused();

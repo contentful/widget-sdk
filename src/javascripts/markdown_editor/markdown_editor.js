@@ -1,64 +1,65 @@
 'use strict';
 
-angular.module('contentful').factory('MarkdownEditor', ['$injector', function($injector) {
-
-  var $timeout   = $injector.get('$timeout');
-  var wrapEditor = $injector.get('MarkdownEditor/wrapper');
-  var LazyLoader = $injector.get('LazyLoader');
+angular.module('contentful')
+.factory('MarkdownEditor', ['require', function (require) {
+  var $timeout = require('$timeout');
+  var wrapEditor = require('MarkdownEditor/wrapper');
+  var LazyLoader = require('LazyLoader');
 
   return {
-    create:         loadAndCreate,
+    create: loadAndCreate,
     createManually: create
   };
 
-  function loadAndCreate(textarea, options) {
+  function loadAndCreate (textarea, options) {
     return LazyLoader.get('markdown').then(function (libs) {
       return create(textarea, options, libs.CodeMirror);
     });
   }
 
-  function create(textarea, options, CodeMirror) {
+  function create (textarea, options, CodeMirror) {
     var editor = wrapEditor(textarea, options, CodeMirror);
     var quoteToggleFn = createPrefixToggleFn('> ');
     var codeToggleFn = createPrefixToggleFn('    ');
 
     var api = {
       actions: {
-        bold:   function () { insertInline('__', 'text in bold');  },
+        bold: function () { insertInline('__', 'text in bold'); },
         italic: function () { insertInline('*', 'text in italic'); },
-        strike: function () { insertInline('~~', 'striked out');   },
-        quote:  function () { modifySelection(quoteToggleFn);      },
-        code:   function () { modifySelection(codeToggleFn);       },
-        h1:     function () { insertHeader('#');                   },
-        h2:     function () { insertHeader('##');                  },
-        h3:     function () { insertHeader('###');                 },
-        ul:     function () { modifySelection(ulToggleFn, true);   },
-        ol:     function () { modifySelection(olToggleFn, true);   },
-        undo:   function () { editor.cmd('undo');                  },
-        redo:   function () { editor.cmd('redo');                  },
-        hr:     insertHr,
+        strike: function () { insertInline('~~', 'striked out'); },
+        quote: function () { modifySelection(quoteToggleFn); },
+        code: function () { modifySelection(codeToggleFn); },
+        h1: function () { insertHeader('#'); },
+        h2: function () { insertHeader('##'); },
+        h3: function () { insertHeader('###'); },
+        ul: function () { modifySelection(ulToggleFn, true); },
+        ol: function () { modifySelection(olToggleFn, true); },
+        undo: function () { editor.cmd('undo'); },
+        redo: function () { editor.cmd('redo'); },
+        hr: insertHr,
         indent: indent,
         dedent: dedent,
-        table:  insertTable
+        table: insertTable
       },
       history: {
         hasUndo: function () { return editor.getHistorySize('undo') > 0; },
         hasRedo: function () { return editor.getHistorySize('redo') > 0; }
       },
       events: {
-        onScroll: function (fn) { editor.attachEvent('scroll', fn, 150);        },
+        onScroll: function (fn) { editor.attachEvent('scroll', fn, 150); },
         onChange: function (fn) { editor.attachEvent('change', wrapChange(fn)); }
       },
       tie: {
-        previewToEditor: tiePreviewToEdiotr,
-        editorToEditor:  tieEditorToEditor,
+        previewToEditor: tiePreviewToEditor,
+        editorToEditor: tieEditorToEditor,
         editorToPreview: tieEditorToPreview
       },
-      insert:     editor.insertAtCursor,
-      focus:      editor.focus,
+      insert: editor.insertAtCursor,
+      focus: editor.focus,
       getContent: editor.getValue,
-      destroy:    editor.destroy,
+      destroy: editor.destroy,
       setContent: setContent,
+      repaint: editor.repaint,
       getWrapper: function () { return editor; }
     };
 
@@ -72,7 +73,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
 
     return api;
 
-    function setContent(value) {
+    function setContent (value) {
       if (editor.getValue() !== value) {
         // set value, but save cursor position first
         // position will be restored, but w/o focus (third arg)
@@ -88,33 +89,31 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       editor.opt('undoDepth', 200);
     }
 
-    function wrapChange(fn) {
+    function wrapChange (fn) {
       return function (e, ch) {
         fn(editor.getValue(), e, ch);
       };
     }
 
-    function tiePreviewToEdiotr(el) {
-      var info = editor.getScrollInfo();
-      var position = info.top / info.height;
+    function tiePreviewToEditor (el) {
+      var fraction = editor.getScrollFraction();
 
       $timeout(function () {
-        var top = el.get(0).scrollHeight * position;
+        var top = el.get(0).scrollHeight * fraction;
         el.scrollTop(top);
       });
     }
 
-    function tieEditorToEditor(other) {
+    function tieEditorToEditor (other) {
       other = _.isFunction(other.getWrapper) ? other.getWrapper() : other;
       other.restoreCursor(editor.getCurrentCharacter(), editor.getCurrentLineNumber());
     }
 
-    function tieEditorToPreview(el) {
-      var position =  el.scrollTop() / el.get(0).scrollHeight;
+    function tieEditorToPreview (el) {
+      var position = el.scrollTop() / el.get(0).scrollHeight;
 
       $timeout(function () {
-        var info = editor.getScrollInfo();
-        editor.getEditor().scrollTo(null, position*info.height);
+        editor.scrollToFraction(position);
       });
     }
 
@@ -122,25 +121,25 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
      * Simple Markdown markup
      */
 
-    function insertHr() {
+    function insertHr () {
       editor.moveIfNotEmpty();
       var nl = editor.getNl();
       var markup = nl + '---' + nl + nl;
       editor.insertAtCursor(markup);
     }
 
-    function indent() {
+    function indent () {
       editor.insertAtLineBeginning(editor.getIndentation());
     }
 
-    function dedent() {
+    function dedent () {
       var indentation = editor.getIndentation();
       if (editor.lineStartsWith(indentation)) {
         editor.removeFromLineBeginning(indentation.length);
       }
     }
 
-    function insertInline(marker, emptyText) {
+    function insertInline (marker, emptyText) {
       editor.usePrimarySelection();
 
       // there's a selection - wrap it with inline marker
@@ -154,8 +153,8 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       editor.selectBackwards(marker.length, emptyText.length);
     }
 
-    function createPrefixToggleFn(prefix) {
-      return function() {
+    function createPrefixToggleFn (prefix) {
+      return function () {
         if (editor.lineStartsWith(prefix)) {
           editor.removeFromLineBeginning(prefix.length);
         } else {
@@ -168,7 +167,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
      * Header-related functions
      */
 
-    function insertHeader(prefix) {
+    function insertHeader (prefix) {
       var initialCh = editor.getCurrentCharacter();
       var currentHeader = selectHeader();
 
@@ -195,7 +194,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       editor.restoreCursor(initialCh + diff);
     }
 
-    function selectHeader() {
+    function selectHeader () {
       var result = editor.getCurrentLine().match(/^( {0,3})(#{1,6}) /);
       if (!result) { return null; }
       var indentation = result[1];
@@ -204,7 +203,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       editor.select(getPos(0), getPos(header.length));
       return editor.getSelection();
 
-      function getPos(modifier) {
+      function getPos (modifier) {
         return {line: editor.getCurrentLineNumber(), ch: indentation.length + modifier};
       }
     }
@@ -214,7 +213,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
      */
 
     // toggle function for unordered lists
-    function ulToggleFn() {
+    function ulToggleFn () {
       if (editor.lineStartsWith('- ')) {
         editor.removeFromLineBeginning(2);
       } else {
@@ -225,7 +224,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
     }
 
     // toggle function for ordered lists
-    function olToggleFn(n) {
+    function olToggleFn (n) {
       var listNumber = getListNumber();
       if (listNumber) {
         editor.removeFromLineBeginning(listNumber.length);
@@ -235,7 +234,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       }
     }
 
-    function getListNumber() {
+    function getListNumber () {
       var result = editor.getCurrentLine().match(/^(\d+\. )/);
       return result ? result[1] : null;
     }
@@ -244,7 +243,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
      * Table-related functions
      */
 
-    function insertTable(config) {
+    function insertTable (config) {
       var nl = editor.getNl();
       editor.moveIfNotEmpty();
       editor.insertAtCursor(nl);
@@ -254,7 +253,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       editor.restoreCursor(2, line);
     }
 
-    function generateTableRows(c) {
+    function generateTableRows (c) {
       var cellWidth = new Array(11);
       var cell = ' ' + cellWidth.join(' ') + ' |';
       var separatorCell = ' ' + cellWidth.join('-') + ' |';
@@ -263,15 +262,15 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       var i = 0;
 
       for (; i < c.cols; i += 1) {
-        baseRow      += cell;
+        baseRow += cell;
         separatorRow += separatorCell;
       }
 
-      var bodyRow   = baseRow.replace(/\|     /g,   '| Cell');
-      var headerRow = baseRow.replace(/\|       /g, '| Header');
+      var bodyRow = baseRow.replace(/\| {5}/g, '| Cell');
+      var headerRow = baseRow.replace(/\| {7}/g, '| Header');
 
       var rows = [headerRow, separatorRow];
-      for (i = 0; i < c.rows-1; i += 1) {
+      for (i = 0; i < c.rows - 1; i += 1) {
         rows.push(bodyRow);
       }
 
@@ -282,7 +281,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
      * Selection processing functions
      */
 
-    function modifySelection(toggleFn, isList) {
+    function modifySelection (toggleFn, isList) {
       editor.usePrimarySelection();
 
       // there's no selection - just toggle line prefix
@@ -304,7 +303,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       editor.moveToLineEnd();
     }
 
-    function prepareListWhitespace() {
+    function prepareListWhitespace () {
       var line = editor.getCurrentLineNumber();
       var isEmpty = editor.isLineEmpty();
       var emptyLines = countEmptyLines();
@@ -316,7 +315,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       editor.restoreCursor(0, editor.getCurrentLineNumber() + 1);
     }
 
-    function countEmptyLines() {
+    function countEmptyLines () {
       var line = editor.getCurrentLineNumber() + 1;
       var empty = 0;
 
@@ -327,7 +326,7 @@ angular.module('contentful').factory('MarkdownEditor', ['$injector', function($i
       return empty;
     }
 
-    function forLineIn(selection, cb) {
+    function forLineIn (selection, cb) {
       // anchor/head depend on selection direction, so min & max have to be used
       var lines = [selection.anchor.line, selection.head.line];
       var lineRange = _.range(_.min(lines), _.max(lines) + 1);

@@ -8,7 +8,6 @@ angular.module('contentful')
 .controller('EntryListController', ['$scope', '$injector', function EntryListController ($scope, $injector) {
   var $controller = $injector.get('$controller');
   var EntityListCache = $injector.get('EntityListCache');
-  var logger = $injector.get('logger');
   var Paginator = $injector.get('Paginator');
   var createSelection = $injector.get('selection');
   var spaceContext = $injector.get('spaceContext');
@@ -53,20 +52,6 @@ angular.module('contentful')
       return accessChecker.canPerformActionOnEntryOfType('create', ct.getId());
     });
   });
-
-  $scope.typeNameOr = function (or) {
-    var id;
-    try {
-      id = dotty.get($scope, 'context.view.contentTypeId');
-      if (!id) return or;
-      var ct = spaceContext.publishedCTs.get(id);
-      if (!ct) return or;
-      return 'entries of the content type "' + ct.getName() + '"';
-    } catch (e) {
-      logger.logException(e, {data: {contentTypeId: id}});
-      return or;
-    }
-  };
 
   $scope.selectedContentType = function () {
     searchController.resetSearchTerm();

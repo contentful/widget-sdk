@@ -32,11 +32,13 @@ div(ng-show="!isReady")
     button.btn-action.btn-link.link-editor__link-btn(
       ng-click="addNew($event)"
       type="button")
+      cf-icon.btn-icon(name="plus-2")
       | Create new {{ type.toLowerCase() }} and link
 
     button.btn-action.btn-link.link-editor__link-btn(
       ng-click="addExisting($event)"
       type="button")
+      cf-icon.btn-icon(name="{{ typePlural.toLowerCase() }}")
       span(ng-if="single")
         | Add an existing {{ type.toLowerCase() }}
       span(ng-if="!single")

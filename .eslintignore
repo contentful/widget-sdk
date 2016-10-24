@@ -78,8 +78,6 @@ test/unit/data/content_types_spec.js
 test/unit/data/editing_interfaces/transformer_spec.js
 test/unit/data/user_cache_spec.js
 test/unit/markdown_editor/link_organizer_spec.js
-test/unit/markdown_editor/markdown_codemirror_wrapper_spec.js
-test/unit/markdown_editor/markdown_editor_spec.js
 test/unit/ui/command_spec.js
 test/unit/ui/context_menu_spec.js
 test/unit/ui/command_directive_spec.js
@@ -219,7 +217,6 @@ src/javascripts/directives/cf_custom_logo_directive.js
 src/javascripts/directives/cf_copy_to_clipboard_directive.js
 src/javascripts/directives/cf_when_disabled.js
 src/javascripts/services/assert.js
-src/javascripts/services/aviary.js
 src/javascripts/services/call_buffer.js
 src/javascripts/services/contentful_client.js
 src/javascripts/services/exception_handler.js
@@ -274,8 +271,6 @@ src/javascripts/data/user_cache.js
 src/javascripts/markdown_editor/cf_markdown_action_directive.js
 src/javascripts/markdown_editor/link_organizer.js
 src/javascripts/markdown_editor/markdown_special_characters.js
-src/javascripts/markdown_editor/markdown_codemirror_wrapper.js
-src/javascripts/markdown_editor/markdown_editor.js
 src/javascripts/search/cached_parser.js
 src/javascripts/search/query_builder.js
 src/javascripts/utils/encoder.js

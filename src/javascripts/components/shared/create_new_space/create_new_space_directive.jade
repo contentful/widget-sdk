@@ -29,8 +29,10 @@ include ./../onboarding_dialog/onboarding_nav.mixin.jade
               data-test-id="select-organization"
               ng-model="createSpace.newSpace.organization"
               ng-options="opt as opt.name for opt in createSpace.writableOrganizations"
-              ng-disabled="createSpace.createSpaceInProgress")
-            div
+              ng-disabled="createSpace.createSpaceInProgress"
+              aria-invalid="{{!!createSpace.newSpace.errors.fields.organization}}")
+            p.cfnext-form__field-error(
+              ng-if="createSpace.newSpace.errors.fields.organization")
               | {{createSpace.newSpace.errors.fields.organization}}
           .cfnext-form__field
             label(for="newspace-name")
@@ -41,8 +43,10 @@ include ./../onboarding_dialog/onboarding_nav.mixin.jade
               ng-required="required"
               cf-focus-on-render
               type="text"
-              ng-disabled="createSpace.createSpaceInProgress")
-            div
+              ng-disabled="createSpace.createSpaceInProgress"
+              aria-invalid="{{!!createSpace.newSpace.errors.fields.name}}")
+            p.cfnext-form__field-error(
+              ng-if="createSpace.newSpace.errors.fields.name")
               | {{createSpace.newSpace.errors.fields.name}}
           .cfnext-form__field
             label
@@ -51,8 +55,10 @@ include ./../onboarding_dialog/onboarding_nav.mixin.jade
               data-test-id="select-locale"
               ng-model="createSpace.newSpace.data.defaultLocale"
               ng-options="opt.code as opt.displayName for opt in createSpace.localesList"
-              ng-disabled="createSpace.createSpaceInProgress")
-            div
+              ng-disabled="createSpace.createSpaceInProgress"
+              aria-invalid="{{!!createSpace.newSpace.errors.fields.default_locale}}")
+            p.cfnext-form__field-error(
+              ng-if="createSpace.newSpace.errors.fields.default_locale")
               | {{createSpace.newSpace.errors.fields.default_locale}}
         .cfnext-form__field(ng-show="createSpace.newSpace.errors.form")
           .cfnext-form__field-error

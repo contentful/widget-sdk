@@ -1,26 +1,29 @@
 'use strict';
 
-angular.module('contentful').factory('aviary', ['$injector', function ($injector) {
-  var $q          = $injector.get('$q');
-  var $window     = $injector.get('$window');
-  var angularLoad = $injector.get('angularLoad');
-  var client      = $injector.get('client');
-  var delay       = $injector.get('delay');
-  var environment = $injector.get('environment');
-  var filepicker  = $injector.get('filepicker');
+angular.module('contentful').factory('aviary',
+['require', function (require) {
+
+  var $q = require('$q');
+  var $window = require('$window');
+  var angularLoad = require('angularLoad');
+  var client = require('client');
+  var delay = require('delay');
+  var environment = require('environment');
+  var filepicker = require('filepicker');
 
   if (!$window.Aviary) {
-    angularLoad.loadScript('https://dme0ih8comzn4.cloudfront.net/imaging/v1/editor.js');
+    angularLoad.loadScript(
+      'https://dme0ih8comzn4.cloudfront.net/imaging/v1/editor.js');
   }
 
   var featherEditor, file, createDeferred, onClose;
 
-  function createEditor() {
+  function createEditor () {
     var initDeferred = $q.defer();
     var saveButtonWasClicked = false;
-    if(featherEditor)
+    if (featherEditor) {
       initDeferred.resolve();
-    else
+    } else {
       featherEditor = new $window.Aviary.Feather({
         apiKey: environment.settings.aviary.api_key,
         appendTo: '',
@@ -36,20 +39,23 @@ angular.module('contentful').factory('aviary', ['$injector', function ($injector
         },
         onClose: function (dirty) {
           // The asynchronicity of this method is very unpredictable
-          if(onClose) delay(function () {
-            onClose({
-              dirty: dirty,
-              saveWasClicked: saveButtonWasClicked
-            });
-          }, 0);
+          if (onClose) {
+            delay(function () {
+              onClose({
+                dirty: dirty,
+                saveWasClicked: saveButtonWasClicked
+              });
+            }, 0);
+          }
         },
         onSaveHiRes: onSave,
         onError: onError
       });
+    }
     return initDeferred.promise;
   }
 
-  function onSave(imageID, newURL) {
+  function onSave (_imageID, newURL) {
     featherEditor.showWaitIndicator();
     filepicker.store(newURL, file)
     .then(function (res) {
@@ -66,7 +72,7 @@ angular.module('contentful').factory('aviary', ['$injector', function ($injector
     });
   }
 
-  function onError(error) {
+  function onError (error) {
     createDeferred.reject({
       message: 'There was a problem editing the file',
       error: {
@@ -76,13 +82,13 @@ angular.module('contentful').factory('aviary', ['$injector', function ($injector
     });
   }
 
-  function getIntegrationToken() {
+  function getIntegrationToken () {
     return client.getIntegrationToken('aviary');
   }
 
   return {
     close: function () {
-      if(featherEditor) {
+      if (featherEditor) {
         featherEditor.hideWaitIndicator();
         featherEditor.close();
       }
@@ -92,13 +98,15 @@ angular.module('contentful').factory('aviary', ['$injector', function ($injector
       createDeferred = $q.defer();
       $q.all([getIntegrationToken(), createEditor()]).then(function (results) {
         var aviaryToken = results[0];
-        file = params.file; delete params.file;
-        onClose = params.onClose; delete params.onClose;
+        file = params.file;
+        delete params.file;
+        onClose = params.onClose;
+        delete params.onClose;
         params.encryptionMethod = 'sha1';
-        params.hiresUrl         = params.url;
-        params.timestamp        = aviaryToken.timestamp;
-        params.signature        = aviaryToken.signature;
-        params.salt             = aviaryToken.salt;
+        params.hiresUrl = params.url;
+        params.timestamp = aviaryToken.timestamp;
+        params.signature = aviaryToken.signature;
+        params.salt = aviaryToken.salt;
 
         featherEditor.launch(_.clone(params));
       }).catch(function (errors) {
