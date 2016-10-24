@@ -1,25 +1,31 @@
 'use strict';
 
 describe('Markdown editor', function () {
-  var $timeout;
-  var textarea, editor, actions, wrapper, cm;
-  var libs = window.cfLibs.markdown;
+  let textarea, editor, actions, wrapper, cm;
+  const libs = window.cfLibs.markdown;
 
   beforeEach(function () {
     module('contentful/test');
-    $timeout = this.$inject('$timeout');
-    var MarkdownEditor = this.$inject('MarkdownEditor');
+    const MarkdownEditor = this.$inject('MarkdownEditor');
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
+
+    const cmFactory = sinon.spy(libs.CodeMirror, 'fromTextArea');
     editor = MarkdownEditor.createManually(textarea, {}, libs.CodeMirror, libs.marked);
+    cm = cmFactory.returnValues[0];
+    cmFactory.restore();
+
     actions = editor.actions;
     wrapper = editor.getWrapper();
-    cm = wrapper.getEditor();
+  });
+
+  afterEach(function () {
+    textarea = editor = actions = wrapper = cm = null;
   });
 
   describe('Actions', function () {
     describe('inline actions', function () {
-      var inlineActions = [
+      const inlineActions = [
         { action: 'bold', prefix: '__', hint: 'text in bold' },
         { action: 'italic', prefix: '*', hint: 'text in italic' },
         { action: 'strike', prefix: '~~', hint: 'striked out' }
@@ -29,7 +35,7 @@ describe('Markdown editor', function () {
         it('for ' + item.action + ': inserts sample text and selects content', function () {
           actions[item.action]();
           expect(cm.getValue()).toBe(item.prefix + item.hint + item.prefix);
-          var selection = wrapper.getSelection();
+          const selection = wrapper.getSelection();
           expect(selection.anchor.ch).toBe(item.prefix.length);
           expect(selection.head.ch).toBe(item.prefix.length + item.hint.length);
         });
@@ -37,11 +43,11 @@ describe('Markdown editor', function () {
 
       inlineActions.forEach(function (item) {
         it('for ' + item.action + ': wraps selection', function () {
-          var words = ['super', 'hyper', 'extra'];
+          const words = ['super', 'hyper', 'extra'];
           wrapper.setValue(words.join(' '));
           wrapper.select({ line: 0, ch: 6 }, { line: 0, ch: 11 });
           actions[item.action]();
-          var val = wrapper.getValue();
+          const val = wrapper.getValue();
           expect(val).toBe(words[0] + ' ' + item.prefix + words[1] + item.prefix + ' ' + words[2]);
         });
       });
@@ -94,7 +100,7 @@ describe('Markdown editor', function () {
     });
 
     describe('headers', function () {
-      var headers = { h1: '#', h2: '##', h3: '###' };
+      const headers = { h1: '#', h2: '##', h3: '###' };
 
       _.forEach(headers, function (prefix, header) {
         it('for header ' + header + ': toggles marker, keeps cursor position', function () {
@@ -121,7 +127,7 @@ describe('Markdown editor', function () {
     });
 
     describe('horizontal rule', function () {
-      var hrMarkup = '\n---\n\n';
+      const hrMarkup = '\n---\n\n';
 
       it('inserts horizontal rule after current line, if not empty', function () {
         cm.setValue('test');
@@ -137,7 +143,7 @@ describe('Markdown editor', function () {
     });
 
     describe('code/quote', function () {
-      var markers = { code: '    ', quote: '> ' };
+      const markers = { code: '    ', quote: '> ' };
 
       _.forEach(markers, function (prefix, marker) {
         it('for ' + marker + ': toggles marker in current line, saves cursor position', function () {
@@ -152,7 +158,7 @@ describe('Markdown editor', function () {
         });
 
         it('for ' + marker + ': toggles markers in all lines selected', function () {
-          var initialValue = 'one\ntwo\nthree';
+          const initialValue = 'one\ntwo\nthree';
           cm.setValue(initialValue);
           cm.setSelection({ line: 0, ch: 0 }, { line: 2, ch: 5 });
           actions[marker]();
@@ -169,16 +175,16 @@ describe('Markdown editor', function () {
     });
 
     describe('lists', function () {
-      var nl = '\n';
-      var initialValue = 'one\ntwo\nthree';
-      var lists = { ul: '- ', ol: '1. ' };
-      var other = { ul: 'ol', ol: 'ul' };
-      var lineCheckers = {
+      const nl = '\n';
+      const initialValue = 'one\ntwo\nthree';
+      const lists = { ul: '- ', ol: '1. ' };
+      const other = { ul: 'ol', ol: 'ul' };
+      const lineCheckers = {
         ul: function (line) { expect(line.substring(0, 2)).toBe('- '); },
-        ol: function (line, i) { expect(line.substring(0, 3)).toBe('' + (i+1) + '. '); }
+        ol: function (line, i) { expect(line.substring(0, 3)).toBe('' + (i + 1) + '. '); }
       };
 
-      function selectAll() { cm.setSelection({ line: 0, ch: 0 }, { line: 2, ch: Infinity }); }
+      function selectAll () { cm.setSelection({ line: 0, ch: 0 }, { line: 2, ch: Infinity }); }
 
       _.forEach(lists, function (prefix, list) {
         it('for ' + list + ': inserts marker, surrounds with whitespace', function () {
@@ -207,7 +213,7 @@ describe('Markdown editor', function () {
         });
 
         it('for ' + list + ': changes to other list type', function () {
-          var secondType = other[list];
+          const secondType = other[list];
           cm.setValue(initialValue);
           selectAll();
           actions[list]();
@@ -220,7 +226,7 @@ describe('Markdown editor', function () {
 
     it('generates table markup', function () {
       actions.table({ rows: 2, cols: 3 });
-      var expected = [
+      const expected = [
         '| Header     | Header     | Header     |',
         '| ---------- | ---------- | ---------- |',
         '| Cell       | Cell       | Cell       |'
