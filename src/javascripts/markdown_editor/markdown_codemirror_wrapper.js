@@ -18,7 +18,7 @@ angular.module('contentful')
     };
 
     var cm = CodeMirror.fromTextArea(textarea, {
-      mode: 'gfm',
+      mode: 'markdown',
       lineNumbers: false,
       // Will be set to 200 after setting the initial value. Prevents
       // undoing the initial population.

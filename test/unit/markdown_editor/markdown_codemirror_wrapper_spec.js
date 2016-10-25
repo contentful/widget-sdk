@@ -34,7 +34,7 @@ describe('CodeMirror wrapper', function () {
 
     it('sets options on CodeMirror instance', function () {
       const opt = cm.getOption.bind(cm);
-      expect(opt('mode')).toBe('gfm');
+      expect(opt('mode')).toBe('markdown');
       expect(opt('lineNumbers')).toBe(false);
       expect(opt('undoDepth')).toBe(0);
       expect(opt('lineSeparator')).toBe(null);
@@ -53,7 +53,7 @@ describe('CodeMirror wrapper', function () {
     it('simple getter methods', function () {
       expect(wrapper.getNl()).toBe('\n');
       expect(wrapper.getIndentation()).toBe('  ');
-      expect(wrapper.opt('mode')).toBe('gfm');
+      expect(wrapper.opt('mode')).toBe('markdown');
       assertHasNotFocused();
     });
 
