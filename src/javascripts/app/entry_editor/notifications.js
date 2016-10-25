@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('contentful')
-.factory('entryEditor/notifications', ['$injector', function ($injector) {
-  var logger       = $injector.get('logger');
-  var notification = $injector.get('notification');
+.factory('entryEditor/notifications', ['require', function (require) {
+  var logger = require('logger');
+  var notification = require('notification');
 
   return function (getTitle) {
     return {
@@ -13,7 +13,7 @@ angular.module('contentful')
 
       archiveFail: function (error) {
         notification.error('Error archiving ' + getTitle() + ' (' + dotty.get(error, 'body.sys.id') + ')');
-        logger.logServerWarn('Error archiving entry', {error: error });
+        logger.logServerWarn('Error archiving entry', {error: error});
       },
 
       unarchiveSuccess: function () {
@@ -22,12 +22,12 @@ angular.module('contentful')
 
       unarchiveFail: function (error) {
         notification.error('Error unarchiving ' + getTitle() + ' (' + dotty.get(error, 'body.sys.id') + ')');
-        logger.logServerWarn('Error unarchiving entry', {error: error });
+        logger.logServerWarn('Error unarchiving entry', {error: error});
       },
 
       duplicateFail: function (error) {
         notification.error('Could not duplicate Entry');
-        logger.logServerWarn('Could not duplicate Entry', {error: error });
+        logger.logServerWarn('Could not duplicate Entry', {error: error});
       },
 
       deleteSuccess: function () {
@@ -36,7 +36,7 @@ angular.module('contentful')
 
       deleteFail: function (error) {
         notification.error('Error deleting Entry');
-        logger.logServerWarn('Error deleting Entry', {error: error });
+        logger.logServerWarn('Error deleting Entry', {error: error});
       },
 
       revertToPublishedSuccess: function () {
@@ -63,7 +63,7 @@ angular.module('contentful')
 
       unpublishFail: function (error) {
         notification.error('Error unpublishing ' + getTitle() + ' (' + dotty.get(error, 'body.sys.id') + ')');
-        logger.logServerWarn('Error unpublishing entry', {error: error });
+        logger.logServerWarn('Error unpublishing entry', {error: error});
       },
 
       publishSuccess: function () {
@@ -72,7 +72,7 @@ angular.module('contentful')
 
       publishServerFail: function (error) {
         notification.error('Publishing the entry has failed due to a server issue. We have been notified.');
-        logger.logServerWarn('Publishing the entry has failed due to a server issue. We have been notified.', {error: error });
+        logger.logServerWarn('Publishing the entry has failed due to a server issue. We have been notified.', {error: error});
       },
 
       publishFail: function (message) {
@@ -83,7 +83,6 @@ angular.module('contentful')
         notification.error('Error publishing ' + getTitle() + ': ' + 'Validation failed. ' +
                            'Please check the individual fields for errors.');
       }
-
     };
   };
 }]);

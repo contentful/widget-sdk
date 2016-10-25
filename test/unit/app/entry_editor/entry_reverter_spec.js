@@ -1,14 +1,14 @@
 'use strict';
 
 describe('entryReverter factory', function () {
-  var entry;
-  beforeEach(function() {
+  let entry;
+  beforeEach(function () {
     module('contentful/test');
 
-    var cfStub              = this.$inject('cfStub');
-    var createEntryReverter = this.$inject('entryReverter');
+    const cfStub = this.$inject('cfStub');
+    const createEntryReverter = this.$inject('entryReverter');
 
-    var space = cfStub.space('testSpace');
+    const space = cfStub.space('testSpace');
     entry = cfStub.entry(space, 'testEntry', 'testType', {}, {
       sys: {
         publishedVersion: 1,
@@ -23,19 +23,19 @@ describe('entryReverter factory', function () {
     this.entryReverter.init();
   });
 
-  it('#canRevertToPrevious', function() {
+  it('#canRevertToPrevious', function () {
     expect(this.entryReverter.canRevertToPrevious()).toBe(false);
     entry.data.sys.version = 6;
     expect(this.entryReverter.canRevertToPrevious()).toBe(true);
   });
 
-  it('#getPreviousData', function() {
+  it('#getPreviousData', function () {
     entry.data.sys.version = 6;
     entry.data.fields.title = '&&&&';
-    expect(this.entryReverter.getPreviousData().fields).toEqual({title:'!@#$'});
+    expect(this.entryReverter.getPreviousData().fields).toEqual({title: '!@#$'});
   });
 
-  it('#revertedToPrevious', function() {
+  it('#revertedToPrevious', function () {
     entry.data.sys.version = 6;
     entry.data.fields.title = '&&&&';
     expect(this.entryReverter.canRevertToPrevious()).toBe(true);
@@ -43,22 +43,22 @@ describe('entryReverter factory', function () {
     expect(this.entryReverter.canRevertToPrevious()).toBe(false);
   });
 
-  it('#canRevertToPublished - published entry', function() {
+  it('#canRevertToPublished - published entry', function () {
     expect(this.entryReverter.canRevertToPublished()).toBe(true);
   });
 
-  it('#canRevertToPublished - unpublished entry', function() {
+  it('#canRevertToPublished - unpublished entry', function () {
     entry.data.sys.publishedVersion = undefined;
     expect(this.entryReverter.canRevertToPublished()).toBe(false);
   });
 
-  it('#revertedToPublished', function() {
+  it('#revertedToPublished', function () {
     expect(this.entryReverter.canRevertToPublished()).toBe(true);
     this.entryReverter.revertedToPublished();
     expect(this.entryReverter.canRevertToPublished()).toBe(false);
   });
 
-  it('#publishedNewVersion', function() {
+  it('#publishedNewVersion', function () {
     expect(this.entryReverter.canRevertToPublished()).toBe(true);
     entry.data.sys.publishedVersion = 5;
     this.entryReverter.publishedNewVersion();
