@@ -8,6 +8,7 @@ describe('entityEditor/Document', function () {
 
     module('contentful/test', ($provide, $controllerProvider) => {
       $provide.value('spaceContext', spaceContext);
+      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
       $controllerProvider.register('otDocPresenceController', function () {
         return {
           leave: sinon.stub()
@@ -38,6 +39,11 @@ describe('entityEditor/Document', function () {
       return doc;
     };
 
+    this.localeStore = this.$inject('TheLocaleStore');
+    this.localeStore.setLocales([
+      {internal_code: 'en'}
+    ]);
+
     this.entity = {
       getType: _.constant('Entry'),
       update: sinon.spy(function (data) {
@@ -48,6 +54,11 @@ describe('entityEditor/Document', function () {
         sys: {
           id: 'id',
           version: 8
+        },
+        fields: {
+          a: {
+            en: 'INITIAL'
+          }
         }
       }
     };
@@ -78,8 +89,6 @@ describe('entityEditor/Document', function () {
       const Normalizer = this.$inject('data/documentNormalizer');
       this.normalize = sinon.spy(Normalizer, 'normalize');
 
-      this.localeStore = this.$inject('TheLocaleStore');
-      this.localeStore.getPrivateLocales = sinon.stub().returns([{internal_code: 'en'}]);
       this.contentType.data.fields = [{id: 'field1'}, {id: 'field2'}];
 
       this.entity.data.fields = {
@@ -483,10 +492,10 @@ describe('entityEditor/Document', function () {
 
   describe('#sysProperty', function () {
     it('holds entity.data.sys as initial value', function () {
-      this.entity.data.sys = 'SYS';
-      const cb = sinon.spy();
-      this.doc.sysProperty.onValue(cb);
-      sinon.assert.calledWith(cb, 'SYS');
+      K.assertCurrentValue(
+        this.doc.sysProperty,
+        this.entity.data.sys
+      );
     });
 
     it('updates value when "acknowledge" event is emitted on doc', function () {
@@ -578,6 +587,33 @@ describe('entityEditor/Document', function () {
 
       this.docUpdate(['sys', 'publishedVersion'], undefined);
       expect(this.isDirtyValues[0]).toBe(true);
+    });
+  });
+
+  describe('#reverter', function () {
+    it('has changes if changes are made', function* () {
+      this.connectAndOpen();
+      expect(this.doc.reverter.hasChanges()).toBe(false);
+      yield this.doc.setValueAt(['fields'], {});
+      expect(this.doc.reverter.hasChanges()).toBe(true);
+    });
+
+    it('reverts field changes', function* () {
+      const path = ['fields', 'a', 'en'];
+      this.connectAndOpen();
+      yield this.doc.setValueAt(path, 'NEW');
+      expect(this.doc.getValueAt(path)).toBe('NEW');
+      yield this.doc.reverter.revert();
+      expect(this.doc.getValueAt(path)).toBe('INITIAL');
+    });
+
+    it('does not have changes after reverting', function* () {
+      this.connectAndOpen();
+      expect(this.doc.reverter.hasChanges()).toBe(false);
+      yield this.doc.setValueAt(['fields'], {});
+      expect(this.doc.reverter.hasChanges()).toBe(true);
+      yield this.doc.reverter.revert();
+      expect(this.doc.reverter.hasChanges()).toBe(false);
     });
   });
 });

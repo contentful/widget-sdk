@@ -50,6 +50,11 @@ angular.module('contentful/mocks')
       })),
       sysProperty: K.createMockProperty(data.sys),
 
+      reverter: {
+        hasChanges: sinon.stub(),
+        revert: sinon.stub().resolves()
+      },
+
       collaboratorsFor: sinon.stub().returns(K.createMockProperty([])),
       notifyFocus: sinon.spy()
     };

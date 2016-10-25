@@ -28,12 +28,16 @@ describe('entityEditor/StateController', function () {
     this.entity = entry;
     this.notify = {};
 
+    const Document = this.$inject('mocks/entityEditor/Document');
+    this.doc = Document.create();
+
     const $controller = this.$inject('$controller');
     this.controller = $controller('entityEditor/StateController', {
       $scope: this.scope,
       notify: this.notify,
       entity: entry,
-      handlePublishError: null
+      handlePublishError: null,
+      otDoc: this.doc
     });
   });
 
@@ -184,59 +188,45 @@ describe('entityEditor/StateController', function () {
         expect(this.controller.secondary.length).toEqual(1);
       });
 
-
       it('archives entity', function () {
         this.entity.archive = sinon.stub().resolves();
         this.action.execute();
         this.$apply();
         sinon.assert.calledOnce(this.entity.archive);
       });
-
     });
-
   });
 
-  describe('reverting', function () {
-    beforeEach(function () {
-      this.entity.data.fields = {field1: 'one'};
-      const Document = this.$inject('mocks/entityEditor/Document');
-
-      this.otDoc = Document.create(this.entity.data);
-      this.otDoc.state.editable = true;
-      this.scope.otDoc = this.otDoc;
-      this.$apply();
-    });
-
-    it('cannot be reverted to previous state initially', function () {
+  describe('#revertToPrevious command', function () {
+    it('is available iff document has changes', function () {
+      this.doc.reverter.hasChanges.returns(true);
+      expect(this.controller.revertToPrevious.isAvailable()).toBe(true);
+      this.doc.reverter.hasChanges.returns(false);
       expect(this.controller.revertToPrevious.isAvailable()).toBe(false);
     });
 
-    describe('with changes', function () {
-      beforeEach(function () {
-        this.entity.data.sys.version++;
-        this.otDoc.setValueAt(['fields', 'field1'], 'changed');
-        this.$apply();
-      });
+    it('calls notification for successful execution', function () {
+      this.doc.reverter.revert.resolves();
+      this.notify.revertToPreviousSuccess = sinon.spy();
 
-      it('can be reverted to previous state', function () {
-        expect(this.controller.revertToPrevious.isAvailable()).toBe(true);
-      });
+      sinon.assert.notCalled(this.doc.reverter.revert);
+      this.controller.revertToPrevious.execute();
+      this.$apply();
 
-      describe('#revertToPrevious command', function () {
+      sinon.assert.calledOnce(this.doc.reverter.revert);
+      sinon.assert.calledOnce(this.notify.revertToPreviousSuccess);
+    });
 
-        it('reverts the field data', function () {
-          expect(this.otDoc.getValueAt(['fields', 'field1'])).toBe('changed');
-          this.controller.revertToPrevious.execute();
-          this.$apply();
-          expect(this.otDoc.getValueAt(['fields', 'field1'])).toBe('one');
-        });
+    it('calls notification for failed execution', function () {
+      this.doc.reverter.revert.rejects();
+      this.notify.revertToPreviousFail = sinon.spy();
 
-        it('cannot be reverted to previous state afterwards', function () {
-          this.controller.revertToPrevious.execute();
-          this.$apply();
-          expect(this.controller.revertToPrevious.isAvailable()).toBe(false);
-        });
-      });
+      sinon.assert.notCalled(this.doc.reverter.revert);
+      this.controller.revertToPrevious.execute();
+      this.$apply();
+
+      sinon.assert.calledOnce(this.doc.reverter.revert);
+      sinon.assert.calledOnce(this.notify.revertToPreviousFail);
     });
   });
 

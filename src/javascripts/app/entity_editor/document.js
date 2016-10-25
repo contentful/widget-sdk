@@ -26,6 +26,7 @@ angular.module('cf.app')
   var PathUtils = require('entityEditor/Document/PathUtils');
   var DocLoad = require('data/ShareJS/Connection').DocLoad;
   var caseof = require('libs/sum-types').caseof;
+  var Reverter = require('entityEditor/Document/Reverter');
 
   var readOnlyBus = K.createPropertyBus(false, $scope);
 
@@ -165,6 +166,11 @@ angular.module('cf.app')
     presence.destroy();
   });
 
+  var version$ = sysProperty.map(function (sys) {
+    return sys.version;
+  });
+  var reverter = Reverter.create(getValueAt([]), version$, setFields);
+
 
   _.extend(controller, {
     doc: undefined,
@@ -182,6 +188,17 @@ angular.module('cf.app')
 
     collaboratorsFor: presence.collaboratorsFor,
     notifyFocus: presence.focus,
+
+    /**
+     * @ngdoc property
+     * @name Document#reverter
+     * @type {Document/Reverter}
+     * @description
+     * Exposes the methods `reverter.hasChanges()` and
+     * `reverter.revert()` to revert to the initial data of the
+     * document.
+     */
+    reverter: reverter,
 
     setReadOnly: readOnlyBus.set
   });
@@ -350,5 +367,14 @@ angular.module('cf.app')
   function normalize (doc) {
     var locales = TheLocaleStore.getPrivateLocales();
     Normalizer.normalize(controller, doc.snapshot, contentType, locales);
+  }
+
+
+  // Passed to document reverter
+  function setFields (fields) {
+    return setValueAt(['fields'], fields)
+    .then(function () {
+      return dotty.get(controller, ['doc', 'version']);
+    });
   }
 }]);
