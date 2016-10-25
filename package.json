@@ -23,7 +23,7 @@
     "bootstrap": "^3.1.1",
     "browserify": "^13.1.0",
     "browserify-pegjs": "~0.8.0-2",
-    "codemirror": "5.5.0",
+    "codemirror": "^5.19.0",
     "dottie": "^1.1.0",
     "express": "^4.8.0",
     "file-size": "^1.0.0",
