@@ -145,7 +145,6 @@ angular.module('contentful')
       .then(function trackRestoredPublication () {
         versioningTracking.publishedRestored(entity.data);
       })
-      .then(entryReverter.publishedNewVersion)
       .then(notify.publishSuccess, handlePublishError);
     });
   }
@@ -172,21 +171,6 @@ angular.module('contentful')
     if (!editable) { return; }
     entryReverter.init();
     unwatchRevertSetup();
-  });
-
-  controller.revertToPublished = Command.create(function () {
-    $scope.entry.getPublishedState().then(function (data) {
-      return setDocFields(data.fields);
-    }).then(function () {
-      entryReverter.revertedToPublished();
-    })
-    .then(notify.revertToPublishedSuccess, notify.revertToPublishedFail);
-  }, {
-    available: function () {
-      return hasPermission('update') &&
-             !entity.isArchived() &&
-             entryReverter.canRevertToPublished();
-    }
   });
 
   controller.revertToPrevious = Command.create(function () {

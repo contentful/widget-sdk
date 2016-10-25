@@ -1,16 +1,12 @@
 'use strict';
 
 describe('entityEditor/StateController', function () {
-  let $q;
-
   beforeEach(function () {
     const closeStateSpy = this.closeStateSpy = sinon.spy();
 
     module('contentful/test', function ($provide) {
       $provide.value('navigation/closeState', closeStateSpy);
     });
-
-    $q = this.$inject('$q');
 
     const cfStub = this.$inject('cfStub');
     const space = cfStub.space('spaceid');
@@ -39,10 +35,6 @@ describe('entityEditor/StateController', function () {
       entity: entry,
       handlePublishError: null
     });
-  });
-
-  afterEach(function () {
-    $q = null;
   });
 
   describe('#delete command execution', function () {
@@ -205,112 +197,30 @@ describe('entityEditor/StateController', function () {
   });
 
   describe('reverting', function () {
-    function canBeReverted (states) {
-      if (states.toPublished) {
-        it('entry can be reverted to published', function () {
-          expect(this.controller.revertToPublished.isAvailable()).toBeTruthy();
-        });
-      } else {
-        it('entry cannot be reverted to published', function () {
-          expect(this.controller.revertToPublished.isAvailable()).toBeFalsy();
-        });
-      }
-
-      if (states.toPrevious) {
-        it('entry can be reverted to previous state', function () {
-          expect(this.controller.revertToPrevious.isAvailable()).toBeTruthy();
-        });
-      } else {
-        it('entry cannot be reverted to previous state', function () {
-          expect(this.controller.revertToPrevious.isAvailable()).toBeFalsy();
-        });
-      }
-    }
-
-    /**
-     * Mock object providing the interface from the `ot-doc-for`
-     * directive.
-     */
-    function OtDoc (data) {
-      const snapshot = _.cloneDeep(data);
-      return {
-        getValueAt: function (path) {
-          return dotty.get(snapshot, path);
-        },
-        setValueAt: function (path, value) {
-          dotty.put(snapshot, path, value);
-          return $q.resolve(value);
-        },
-        state: {
-          editable: true
-        }
-      };
-    }
-
     beforeEach(function () {
-      this.entity.publish = function () {
-        this.data.sys.publishedVersion = this.data.sys.version;
-        this.data.sys.version += 1;
-        return $q.resolve();
-      };
-
       this.entity.data.fields = {field1: 'one'};
+      const Document = this.$inject('mocks/entityEditor/Document');
 
-      this.otDoc = new OtDoc(this.entity.data);
+      this.otDoc = Document.create(this.entity.data);
+      this.otDoc.state.editable = true;
       this.scope.otDoc = this.otDoc;
-      this.scope.validate = sinon.stub().returns(true);
       this.$apply();
     });
 
-    describe('in initial, unpublished state', function () {
-      canBeReverted({toPublished: false, toPrevious: false});
+    it('cannot be reverted to previous state initially', function () {
+      expect(this.controller.revertToPrevious.isAvailable()).toBe(false);
     });
 
-    describe('published entry with changes', function () {
-      beforeEach(function () {
-        // publish
-        this.controller.primary.execute();
-        this.$apply();
-
-        // add changes
-        this.entity.data.sys.version++;
-        this.otDoc.setValueAt(['fields', 'field1'], 'changed');
-        this.$apply();
-      });
-
-      canBeReverted({toPublished: true, toPrevious: true});
-
-      describe('#revertToPublished command', function () {
-        beforeEach(function () {
-          this.entity.getPublishedState = sinon.stub().resolves({fields: {'some-field': {'de-DE': 'published'}}});
-          this.controller.revertToPublished.execute();
-          this.$apply();
-        });
-
-        it('reverts the field data', function () {
-          expect(this.otDoc.getValueAt(['fields', 'some-field', 'de-DE'])).toBe('published');
-        });
-
-        describe('afterwards', function () {
-          beforeEach(function () {
-            this.controller.revertToPublished.execute();
-            this.$apply();
-          });
-
-          canBeReverted({toPublished: false, toPrevious: false});
-        });
-      });
-    });
-
-
-    describe('unpublished entry with changes', function () {
+    describe('with changes', function () {
       beforeEach(function () {
         this.entity.data.sys.version++;
         this.otDoc.setValueAt(['fields', 'field1'], 'changed');
         this.$apply();
       });
 
-      canBeReverted({toPublished: false, toPrevious: true});
+      it('can be reverted to previous state', function () {
+        expect(this.controller.revertToPrevious.isAvailable()).toBe(true);
+      });
 
       describe('#revertToPrevious command', function () {
 
@@ -321,17 +231,13 @@ describe('entityEditor/StateController', function () {
           expect(this.otDoc.getValueAt(['fields', 'field1'])).toBe('one');
         });
 
-        describe('afterwards', function () {
-          beforeEach(function () {
-            this.controller.revertToPrevious.execute();
-            this.$apply();
-          });
-
-          canBeReverted({toPublished: false, toPrevious: false});
+        it('cannot be reverted to previous state afterwards', function () {
+          this.controller.revertToPrevious.execute();
+          this.$apply();
+          expect(this.controller.revertToPrevious.isAvailable()).toBe(false);
         });
       });
     });
-
   });
 
   describe('publication warnings', function () {

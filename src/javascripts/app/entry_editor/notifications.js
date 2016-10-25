@@ -39,15 +39,6 @@ angular.module('contentful')
         logger.logServerWarn('Error deleting Entry', {error: error});
       },
 
-      revertToPublishedSuccess: function () {
-        notification.info('Entry reverted to the last published state successfully');
-      },
-
-      revertToPublishedFail: function (error) {
-        notification.error('Error reverting to the last published state of ' + getTitle() + ' (' + dotty.get(error, 'body.sys.id') + ')');
-        logger.logSharejsWarn('Error reverting entry to published state', {error: error});
-      },
-
       revertToPreviousSuccess: function () {
         notification.info('Entry reverted to the previous state successfully');
       },
