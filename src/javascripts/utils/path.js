@@ -5,19 +5,20 @@ angular.module('cf.app')
 /**
  * @ngdoc service
  * @module cf.app
- * @name PathUtils
+ * @name utils/Path
  * @description
  * Helpers simplifying work with path arrays.
  */
-.factory('entityEditor/Document/PathUtils', [function () {
+.factory('utils/Path', [function () {
   return {
+    isPrefix: isPrefix,
     isAffecting: isAffecting,
     findCommonPrefix: findCommonPrefix
   };
 
   /**
    * @ngdoc method
-   * @name PathUtils#isAffecting
+   * @name utils/Path#isAffecting
    * @description
    * Returns true if a change to the value at 'changePath' in an object
    * affects the value of 'valuePath'.
@@ -39,7 +40,7 @@ angular.module('cf.app')
 
   /**
    * @ngdoc method
-   * @name PathUtils#findCommonPrefix
+   * @name utils/Path#findCommonPrefix
    * @description
    * Given an array of paths (each of which is an array)
    * returns an array with the longest shared prefix
@@ -80,5 +81,29 @@ angular.module('cf.app')
       return value === common;
     });
     return isCommon ? common : null;
+  }
+
+  /**
+   * @ngdoc method
+   * @name utils/Path#isPrefix
+   * @description
+   * Returns true if the first argument is a prefix of the second one.
+   *
+   * @param {string[]} prefix
+   * @param {string[]} path
+   *
+   * @usage[js]
+   * isPrefix([], anything) // => true
+   * isPrefix(['a', 'b'], ['a', 'b', 'c']) // => true
+   * isAffecting(['a', 'b'], ['a']) // => false
+   * isAffecting(['a', 'b'], ['a', 'c']) // => false
+   */
+  function isPrefix (prefix, target) {
+    for (var i = 0; i < prefix.length; i++) {
+      if (prefix[i] !== target[i]) {
+        return false;
+      }
+    }
+    return true;
   }
 }]);

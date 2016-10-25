@@ -13,6 +13,7 @@ describe('Asset editor controller', function () {
         'entityEditor/StatusNotificationsController'
       );
       $controllerProvider.register('entityEditor/Document', document);
+      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
     });
 
     document.returns(this.$inject('mocks/entityEditor/Document').create());
@@ -43,16 +44,6 @@ describe('Asset editor controller', function () {
     spaceContext.assetTitle = sinon.stub().returns('title');
     scope.$apply();
     expect(scope.context.title).toBe('title');
-  });
-
-  it('validates if the published version has changed', function () {
-    scope.asset.data.sys.publishedVersion = 1;
-    scope.asset.isArchived = sinon.stub().returns(false);
-    scope.$digest();
-
-    scope.asset.data.sys.publishedVersion = 2;
-    scope.$digest();
-    sinon.assert.called(scope.validate);
   });
 
   describe('"fileUpload" event', function () {

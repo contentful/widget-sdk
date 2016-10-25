@@ -20,12 +20,11 @@ angular.module('cf.app')
  * Has field data and specifications to render the control. Provided by
  * `FromWidgetsController`.
  * @scope.requires {FieldControls/Focus} focus
- * @scope.requires {object} validator
- * Provided by the `cfValidate` directive.
- *
  */
-.directive('cfEntityField', ['$injector', function ($injector) {
-  var TheLocaleStore = $injector.get('TheLocaleStore');
+.directive('cfEntityField', ['require', function (require) {
+  var TheLocaleStore = require('TheLocaleStore');
+  var K = require('utils/kefir');
+
   return {
     restrict: 'E',
     template: JST.cf_entity_field(),
@@ -65,8 +64,8 @@ angular.module('cf.app')
       // TODO Changes to 'validator.errors' change the behavior of
       // 'validator.hasError()'. We should make this dependency explicity
       // by listening to signal on the validator.
-      $scope.$watch('validator.errors', updateLocales);
-      $scope.$watch('validator.errors', updateErrorStatus);
+      K.onValueScope($scope, $scope.editorContext.validator.errors$, updateLocales);
+      K.onValueScope($scope, $scope.editorContext.validator.errors$, updateErrorStatus);
 
       var offFocusChanged = $scope.focus.onChanged(function (value) {
         $scope.data.fieldHasFocus = value === field.id;
@@ -77,7 +76,7 @@ angular.module('cf.app')
       });
 
       function updateErrorStatus () {
-        var hasSchemaErrors = $scope.validator.hasError(['fields', field.id]);
+        var hasSchemaErrors = $scope.editorContext.validator.hasFieldError(field.id);
         var hasControlErrors = _.some(invalidControls);
         $scope.data.fieldHasErrors = hasSchemaErrors || hasControlErrors;
       }
@@ -89,7 +88,7 @@ angular.module('cf.app')
       function updateLocales () {
         $scope.locales = _.filter(getFieldLocales(field), function (locale) {
           var isActive = TheLocaleStore.isLocaleActive(locale);
-          var hasError = $scope.validator.hasError(['fields', field.id, locale.internal_code]);
+          var hasError = $scope.editorContext.validator.hasFieldLocaleError(field.id, locale.internal_code);
           return isActive || hasError;
         });
       }

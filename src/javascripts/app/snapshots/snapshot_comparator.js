@@ -32,6 +32,7 @@ angular.module('cf.app')
   var $stateParams = require('$stateParams');
   var notification = require('notification');
   var tracking = require('track/versioning');
+  var Validator = require('entityEditor/Validator');
 
   $scope.versionPicker = require('SnapshotComparatorController/versionPicker').create();
   $scope.snapshotCount = $stateParams.snapshotCount;
@@ -41,6 +42,10 @@ angular.module('cf.app')
     title: spaceContext.entryTitle($scope.entry),
     requestLeaveConfirmation: tracking.trackableConfirmator(save)
   });
+
+  $scope.editorContext = {
+    validator: Validator.createNoop()
+  };
 
   $scope.$watch(function () {
     return $scope.versionPicker.getPathsToRestore().length > 0;
@@ -124,7 +129,6 @@ angular.module('cf.app')
 
 .controller('SnapshotFieldController', ['require', '$scope', function (require, $scope) {
   var store = require('TheLocaleStore');
-  var K = require('utils/kefir');
 
   var field = $scope.widget.field;
   var locales = field.localized ? store.getPrivateLocales() : [store.getDefaultLocale()];
@@ -132,7 +136,6 @@ angular.module('cf.app')
   $scope.field = field;
   $scope.locales = _.filter(locales, store.isLocaleActive);
 
-  $scope.validator = {errors$: K.constant([])};
   $scope.state = {registerPublicationWarning: _.constant(_.noop)};
 
   this.setInvalid = _.noop;

@@ -15,6 +15,7 @@ describe('entityEditor/StateController', function () {
 
     this.rootScope = this.$inject('$rootScope');
     this.scope = this.rootScope.$new();
+    this.scope.editorContext = this.$inject('mocks/entityEditor/Context').create();
     this.scope.entry = entry;
 
     this.$inject('accessChecker').canPerformActionOnEntity = sinon.stub().returns(true);
@@ -134,7 +135,6 @@ describe('entityEditor/StateController', function () {
       this.entity.data.sys.version = 1;
       this.entity.data.sys.publishedVersion = null;
       this.entity.data.sys.archivedVersion = null;
-      this.scope.validate = sinon.stub().returns(true);
       this.$apply();
     });
 
@@ -143,6 +143,10 @@ describe('entityEditor/StateController', function () {
     });
 
     describe('primary action', function () {
+      beforeEach(function () {
+        this.validator = this.scope.editorContext.validator;
+        this.notify.publishValidationFail = sinon.stub();
+      });
 
       it('publishes entity', function () {
         this.entity.publish = sinon.stub().resolves();
@@ -151,17 +155,15 @@ describe('entityEditor/StateController', function () {
         sinon.assert.calledOnce(this.entity.publish);
       });
 
-      it('calls scope.validate()', function () {
+      it('calls runs validator', function () {
         this.entity.publish = sinon.stub().resolves();
         this.controller.primary.execute();
         this.$apply();
-        sinon.assert.calledOnce(this.scope.validate);
+        sinon.assert.calledOnce(this.validator.run);
       });
 
       it('sends notification if validation failed', function () {
-        this.scope.validate = sinon.stub().returns(false);
-        this.notify.publishValidationFail = sinon.stub();
-
+        this.validator.run.returns(false);
         this.controller.primary.execute();
         this.$apply();
         sinon.assert.calledOnce(this.notify.publishValidationFail);
@@ -169,7 +171,7 @@ describe('entityEditor/StateController', function () {
 
       it('does not publish if validation failed', function () {
         this.entity.publish = sinon.stub().resolves();
-        this.scope.validate = sinon.stub().returns(false);
+        this.validator.run.returns(false);
         this.notify.publishValidationFail = sinon.stub();
 
         this.controller.primary.execute();

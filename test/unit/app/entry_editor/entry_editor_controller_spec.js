@@ -16,11 +16,7 @@ describe('Entry Editor Controller', function () {
         'entityEditor/LocalesController',
         'entityEditor/StatusNotificationsController'
       );
-      $provide.value('TheLocaleStore', {
-        getLocalesState: sinon.stub().returns({}),
-        getDefaultLocale: sinon.stub().returns({internal_code: 'en-US'}),
-        getPrivateLocales: sinon.stub().returns([{internal_code: 'en-US'}, {internal_code: 'de-DE'}])
-      });
+      $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
       $controllerProvider.register('entityEditor/Document', document);
     });
 
@@ -53,12 +49,6 @@ describe('Entry Editor Controller', function () {
     this.$apply();
   });
 
-  it('should validate if the published version has changed', function () {
-    scope.entry.data.sys.publishedVersion = 2;
-    scope.$digest();
-    sinon.assert.called(scope.validate);
-  });
-
   describe('when the entry title changes', function () {
     it('should update the tab title', function () {
       const spaceContext = this.$inject('spaceContext');
@@ -71,15 +61,6 @@ describe('Entry Editor Controller', function () {
       spaceContext.entryTitle.returns('bar');
       this.$apply();
       expect(scope.context.title).toEqual('bar');
-    });
-  });
-
-
-  describe('when the published version changes', function () {
-    it('should validate', function () {
-      scope.entry.data.sys.publishedVersion++;
-      scope.$digest();
-      sinon.assert.called(scope.validate);
     });
   });
 

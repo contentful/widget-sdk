@@ -1,9 +1,9 @@
 'use strict';
 
-describe('entityEditor/Document/PathUtils', function () {
+describe('utils/Path', function () {
   beforeEach(function () {
     module('contentful/test');
-    this.utils = this.$inject('entityEditor/Document/PathUtils');
+    this.utils = this.$inject('utils/Path');
   });
 
   describe('#isAffecting', function () {
@@ -39,5 +39,26 @@ describe('entityEditor/Document/PathUtils', function () {
       test([['a', 'b']], ['a', 'b']);
       test([['foo', 'ba'], ['foo', 'ba']], ['foo', 'ba']);
     });
+  });
+
+  it('#isPrefix', function () {
+    const test = (prefix, target, expected) => {
+      expect(this.utils.isPrefix(prefix, target)).toBe(expected);
+    };
+
+    test([], [], true);
+    test([], ['a'], true);
+
+    test(['a'], [], false);
+    test(['a'], ['a'], true);
+    test(['a'], ['b'], false);
+    test(['a'], ['a', 'b'], true);
+
+    test(['a', 'b'], [], false);
+    test(['a', 'b'], ['a'], false);
+    test(['a', 'b'], ['a', 'b'], true);
+    test(['a', 'b'], ['a', 'c'], false);
+    test(['a', 'b'], ['a', 'b', 'c'], true);
+    test(['a', 'b'], ['a', 'd', 'c'], false);
   });
 });
