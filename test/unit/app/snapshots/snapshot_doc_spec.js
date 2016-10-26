@@ -3,6 +3,7 @@
 describe('SnapshotComparatorController/snapshotDoc', function () {
 
   const data = {
+    sys: {},
     fields: {
       field1: {'en-US': 'lol'},
       field2: {'de-DE': {some: 'prop'}}

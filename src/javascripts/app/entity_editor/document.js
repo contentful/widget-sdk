@@ -31,7 +31,11 @@ angular.module('cf.app')
   var Reverter = require('entityEditor/Document/Reverter');
   var accessChecker = require('accessChecker');
   var Status = require('data/Document/Status');
+  var Permissions = require('access_control/EntityPermissions');
 
+  // Used to determine if we should open the document
+  // Can be set from the outside through `setReadOnly()`.
+  // TODO internalize this
   var readOnlyBus = K.createPropertyBus(false, $scope);
 
 
@@ -150,7 +154,14 @@ angular.module('cf.app')
     });
   }
 
-  var docLoader = docConnection.getDocLoader(entity, readOnlyBus.property);
+  // We assume that the permissions only depend on the immutable data
+  // like the ID the content type ID and the creator.
+  var permissions = Permissions.create(entity.data.sys);
+
+  var readOnly$ = readOnlyBus.property.map(function (readOnly) {
+    return readOnly || !permissions.can('update');
+  }).skipDuplicates();
+  var docLoader = docConnection.getDocLoader(entity, readOnly$);
 
   // Property<ShareJS.Document?>
   var doc$ = docLoader.doc.map(function (doc) {
@@ -270,6 +281,34 @@ angular.module('cf.app')
      * document.
      */
     reverter: reverter,
+
+    /**
+     * @ngdoc method
+     * @name Document#permissions.can
+     * @description
+     * Returns true if the given action can be taken on the document.
+     *
+     * Supported actions are 'update', 'delete', 'publish',
+     * 'unpublish', 'archive', 'unarchive'.
+     *
+     * @param {string} action
+     * @returns {boolean}
+     */
+    /**
+     * @ngdoc method
+     * @name Document#permissions.canEditFieldLocale
+     * @description
+     * Returns true if the field locale can be edited.
+     *
+     * Accpets public IDs as parameters.
+     *
+     * This method is used by the 'FieldLocaleController'.
+     *
+     * @param {string} fieldId
+     * @param {string} localeCode
+     * @returns {boolean}
+     */
+    permissions: permissions,
 
     setReadOnly: readOnlyBus.set
   });

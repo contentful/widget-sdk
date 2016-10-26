@@ -30,8 +30,8 @@ describe('entityEditor/Document', function () {
     const spaceContext = this.mockService('spaceContext');
     spaceContext.docConnection = this.docConnection;
 
-    const accessChecker = this.mockService('accessChecker');
-    accessChecker.canUpdateEntity = sinon.stub().returns(true);
+    this.accessChecker = this.mockService('accessChecker');
+    this.accessChecker.canUpdateEntity.returns(true);
 
     this.connectAndOpen = function (data) {
       const doc = new OtDoc(_.cloneDeep(data || this.entity.data));
@@ -54,7 +54,11 @@ describe('entityEditor/Document', function () {
       data: {
         sys: {
           id: 'id',
-          version: 8
+          version: 8,
+          type: 'Entry',
+          contentType: {
+            sys: {}
+          }
         },
         fields: {
           a: {
@@ -625,6 +629,106 @@ describe('entityEditor/Document', function () {
       K.assertCurrentValue(this.doc.state.isConnected$, true);
       this.docLoader.doc.set(DocLoad.Error());
       K.assertCurrentValue(this.doc.state.isConnected$, false);
+    });
+  });
+
+  describe('#permissions', function () {
+    beforeEach(function () {
+      const $controller = this.$inject('$controller');
+      const $rootScope = this.$inject('$rootScope');
+
+      const baseSys = {
+        id: 'ENTITY ID',
+        contentType: {
+          sys: {
+            id: 'CT ID'
+          }
+        }
+      };
+
+      this.createDoc = function (sys) {
+        const scope = $rootScope.$new();
+        scope.user = {sys: {id: 'USER'}};
+        return $controller('entityEditor/Document', {
+          $scope: scope,
+          entity: {data: {sys: _.merge(baseSys, sys)}},
+          contentType: null
+        });
+      };
+    });
+
+    describe('#can()', function () {
+      it('delegates to "accessChecker.canPerformActionOnEntity()"', function () {
+        const doc = this.createDoc();
+
+        this.accessChecker.canPerformActionOnEntity.returns(true);
+        expect(doc.permissions.can('publish')).toBe(true);
+
+        this.accessChecker.canPerformActionOnEntity.returns(false);
+        expect(doc.permissions.can('publish')).toBe(false);
+
+        const entity = this.accessChecker.canPerformActionOnEntity.args[0][1];
+        expect(entity.data.sys.id).toEqual('ENTITY ID');
+      });
+
+      it('delegates "update" calls to "accessChecker.canUpdateEntry()"', function () {
+        const doc = this.createDoc({type: 'Entry'});
+
+        this.accessChecker.canUpdateEntry.returns(true);
+        expect(doc.permissions.can('update')).toBe(true);
+
+        this.accessChecker.canUpdateEntry.returns(false);
+        expect(doc.permissions.can('update')).toBe(false);
+
+        const entity = this.accessChecker.canUpdateEntry.args[0][0];
+        expect(entity.data.sys.id).toEqual('ENTITY ID');
+      });
+
+      it('delegates "update" calls to "accessChecker.canUpdateAsset()"', function () {
+        const doc = this.createDoc({type: 'Asset'});
+
+        this.accessChecker.canUpdateAsset.returns(true);
+        expect(doc.permissions.can('update')).toBe(true);
+
+        this.accessChecker.canUpdateAsset.returns(false);
+        expect(doc.permissions.can('update')).toBe(false);
+
+        const entity = this.accessChecker.canUpdateAsset.args[0][0];
+        expect(entity.data.sys.id).toEqual('ENTITY ID');
+      });
+
+      it('throws when entity type is unknown', function () {
+        const doc = this.createDoc({type: 'X'});
+        expect(
+          _.partial(doc.permissions.can, 'update')
+        ).toThrowError('Unknown entity type "X"');
+      });
+
+      it('throws when action is unknown', function () {
+        const doc = this.createDoc();
+        expect(
+          _.partial(doc.permissions.can, 'abc')
+        ).toThrowError('Unknown entity action "abc"');
+      });
+    });
+
+    describe('#canEditFieldLocale()', function () {
+      it('delegates to "policyAccessChecker"', function () {
+        const pac = this.mockService('accessChecker/policy');
+        const doc = this.createDoc({type: 'Entry'});
+
+        pac.canEditFieldLocale.returns(true);
+        expect(doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(true);
+
+        pac.canEditFieldLocale.returns(false);
+        expect(doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(false);
+
+        const args = pac.canEditFieldLocale.args[0];
+        const [ctId, {apiName}, {code}] = args;
+        expect(ctId).toBe('CT ID');
+        expect(apiName).toBe('FIELD');
+        expect(code).toBe('LOCALE');
+      });
     });
   });
 

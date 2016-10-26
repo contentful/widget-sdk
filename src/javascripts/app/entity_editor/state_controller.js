@@ -7,20 +7,16 @@ angular.module('contentful')
   var Command = $injector.get('command');
   var StateManager = $injector.get('EntityStateManager');
   var analytics = $injector.get('analytics');
-  var accessChecker = $injector.get('accessChecker');
   var closeState = $injector.get('navigation/closeState');
   var publicationWarnings = $injector.get('entityEditor/publicationWarnings').create();
   var trackVersioning = $injector.get('analyticsEvents/versioning');
+  var permissions = otDoc.permissions;
 
   var stateManager = new StateManager(entity, trackStatusChange);
 
-  function hasPermission (action) {
-    return accessChecker.canPerformActionOnEntity(action, entity);
-  }
-
-  function disabledChecker (action) {
+  function checkDisallowed (action) {
     return function () {
-      return !hasPermission(action);
+      return !permissions.can(action);
     };
   }
 
@@ -70,7 +66,7 @@ angular.module('contentful')
     return stateManager.archive()
     .then(notify.archiveSuccess, notify.archiveFail);
   }, {
-    disabled: disabledChecker('archive')
+    disabled: checkDisallowed('archive')
   }, {
     label: 'Archive',
     status: 'Archived',
@@ -81,7 +77,7 @@ angular.module('contentful')
     return stateManager.toDraft()
     .then(notify.unarchiveSuccess, notify.unarchiveFail);
   }, {
-    disabled: disabledChecker('unarchive')
+    disabled: checkDisallowed('unarchive')
   }, {
     label: 'Unarchive',
     status: 'Draft',
@@ -93,7 +89,7 @@ angular.module('contentful')
     return stateManager.toDraft()
     .then(notify.unpublishSuccess, notify.unpublishFail);
   }, {
-    disabled: disabledChecker('unpublish')
+    disabled: checkDisallowed('unpublish')
   }, {
     label: 'Unpublish',
     status: 'Draft',
@@ -101,14 +97,14 @@ angular.module('contentful')
   });
 
   var publishChanges = Command.create(publishEntity, {
-    disabled: disabledChecker('publish')
+    disabled: checkDisallowed('publish')
   }, {
     label: 'Publish changes',
     targetStateId: 'published'
   });
 
   var publish = Command.create(publishEntity, {
-    disabled: disabledChecker('publish')
+    disabled: checkDisallowed('publish')
   }, {
     label: 'Publish',
     status: 'Published',
@@ -143,12 +139,12 @@ angular.module('contentful')
     disabled: function () {
       switch (stateManager.getState()) {
         case 'draft':
-          return !hasPermission('delete');
+          return !permissions.can('delete');
         case 'archive':
-          return !hasPermission('delete');
+          return !(permissions.can('delete') && permissions.can('unarchive'));
         case 'changes':
         case 'published':
-          return !hasPermission('unpublish') || !hasPermission('delete');
+          return !(permissions.can('unpublish') && permissions.can('delete'));
       }
     }
   });
@@ -158,7 +154,7 @@ angular.module('contentful')
     .then(notify.revertToPreviousSuccess, notify.revertToPreviousFail);
   }, {
     available: function () {
-      return hasPermission('update') &&
+      return permissions.can('update') &&
              !entity.isArchived() &&
              otDoc.reverter.hasChanges();
     }

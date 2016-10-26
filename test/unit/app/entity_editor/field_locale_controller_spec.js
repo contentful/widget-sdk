@@ -8,7 +8,7 @@ describe('FieldLocaleController', function () {
     const K = this.$inject('mocks/kefir');
     this.extractValues = K.extractValues;
     this.init = function (scopeProps) {
-      this.otDoc = this.$inject('mocks/entityEditor/Document').create();
+      this.otDoc = this.otDoc || this.$inject('mocks/entityEditor/Document').create();
       const scope = Object.assign($rootScope.$new(), {
         widget: {
           field: {id: 'FID'}
@@ -163,8 +163,8 @@ describe('FieldLocaleController', function () {
 
   describe('#access', function () {
     beforeEach(function () {
-      const policyAccessChecker = this.$inject('accessChecker/policy');
-      policyAccessChecker.canEditFieldLocale = this.hasEditingPermission = sinon.stub();
+      this.otDoc = this.$inject('mocks/entityEditor/Document').create();
+      this.hasEditingPermission = this.otDoc.permissions.canEditFieldLocale;
     });
 
     it('is "disabled" and "disconnected" without connection and with permission', function () {

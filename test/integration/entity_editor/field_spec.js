@@ -42,11 +42,12 @@ describe('entity editor field integration', function () {
     this.validator = editorContext.validator;
 
     this.compile = function () {
+      this.otDoc = this.otDoc || this.$inject('mocks/entityEditor/Document').create();
       this.focus = Focus.create();
       const el = this.$compile('<cf-entity-field>', {
         widget: this.widget,
         editorContext: editorContext,
-        otDoc: this.$inject('mocks/entityEditor/Document').create(),
+        otDoc: this.otDoc,
         focus: this.focus,
         entry: {}
       });
@@ -101,9 +102,9 @@ describe('entity editor field integration', function () {
 
   describe('editing permissions', function () {
     it('shows message if user does not have editing permissions', function () {
-      const policyAccessChecker = this.$inject('accessChecker/policy');
-      policyAccessChecker.canEditFieldLocale = function (_ctId, _field, locale) {
-        return locale.code === 'EN';
+      this.otDoc = this.$inject('mocks/entityEditor/Document').create();
+      this.otDoc.permissions.canEditFieldLocale = function (_field, locale) {
+        return locale === 'EN';
       };
 
       const el = this.compile();
