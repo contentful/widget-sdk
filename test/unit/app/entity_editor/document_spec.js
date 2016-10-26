@@ -254,24 +254,23 @@ describe('entityEditor/Document', function () {
     function testDiff (fieldType) {
       it(`uses diffing for ${fieldType} fields`, function () {
         this.contentType.data.fields = [{id: 'id', type: fieldType}];
-        this.connectAndOpen();
+        const otDoc = this.connectAndOpen();
 
         const path = ['a', 'id'];
-        const docAtPath = this.doc.doc.at(path);
         const calledWith = (ops) => {
-          sinon.assert.calledWith(docAtPath.submitOp, ops);
-          docAtPath.submitOp.reset();
+          sinon.assert.calledWith(otDoc.submitOp, ops);
+          otDoc.submitOp.reset();
         };
 
         // there was no value at the path:
         this.doc.setValueAt(path, 'VAL');
         expect(this.doc.getValueAt(path)).toBe('VAL');
-        sinon.assert.notCalled(docAtPath.submitOp);
+        sinon.assert.notCalled(otDoc.submitOp);
 
         // value at the path is the same:
         this.doc.setValueAt(path, 'VAL');
         expect(this.doc.getValueAt(path)).toBe('VAL');
-        sinon.assert.notCalled(docAtPath.submitOp);
+        sinon.assert.notCalled(otDoc.submitOp);
 
         // sole insert:
         this.doc.setValueAt(path, 'VAIL');
@@ -550,8 +549,6 @@ describe('entityEditor/Document', function () {
       this.otDoc = this.connectAndOpen();
       this.docUpdate = function (path, value) {
         this.otDoc.setAt(path, value);
-        this.otDoc.version++;
-        this.otDoc.emit('change', [{p: path}]);
         this.$apply();
       };
       this.isDirtyValues = K.extractValues(this.doc.state.isDirty);
