@@ -1,4 +1,5 @@
 include ../entity_editor/entity_editor.mixins.jade
+include ../../ui/loader.mixin.jade
 
 header.workbench-header
   cf-breadcrumbs
@@ -24,6 +25,7 @@ header.workbench-header
 
     +editor-info-toggle
 
++interstitial-loader('isLoading')
 
 .workbench-main
   .workbench-main__content
