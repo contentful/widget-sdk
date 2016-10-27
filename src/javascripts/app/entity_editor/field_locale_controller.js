@@ -36,6 +36,8 @@ angular.module('contentful')
   var EDITABLE = {editable: true};
   var DISCONNECTED = {disconnected: true, disabled: true};
 
+  // TODO We should remove the dependency on $attrs. This was the
+  // source of a bug.
   $scope.docImpl = $scope[$attrs.documentProperty || 'otDoc'];
   controller.doc = FieldLocaleDoc.create($scope.docImpl, field.id, locale.internal_code);
 

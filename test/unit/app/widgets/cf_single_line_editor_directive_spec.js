@@ -4,6 +4,8 @@ describe('cfSingleLineEditor directive', function () {
   beforeEach(function () {
     module('contentful/test');
 
+    this.clock = sinon.useFakeTimers();
+
     const widgetApi = this.$inject('mocks/widgetApi').create({
       settings: {
         helpText: 'wat'
@@ -28,21 +30,36 @@ describe('cfSingleLineEditor directive', function () {
     };
   });
 
-  it('updates correctly when value change is indicated by sharejs', function () {
+  function waitRaf () {
+    return new Promise((resolve) => {
+      window.requestAnimationFrame(resolve);
+    });
+  }
+
+  afterEach(function () {
+    this.clock.restore();
+  });
+
+  it('updates input value when document value is changed', function* () {
     const $el = this.compileElement();
 
     this.dispatchValue('test');
-    expect($el.children('input').val()).toEqual('test');
+    yield waitRaf();
+    expect($el.find('input').val()).toEqual('test');
   });
 
-  it('input event on text field calls changeString', function () {
-    const $input = this.compileElement().children('input');
-    $input.val('what'); // set the value
-    $input.trigger('input'); // trigger "input" event
+  it('input event on text field updates document value after some time', function* () {
+    const $el = this.compileElement();
+
+    const input = $el.find('input').get(0);
+    input.value = 'NEW';
+    input.dispatchEvent(new Event('input'));
+    this.clock.tick(300);
     sinon.assert.calledOnce(this.setValue);
+    sinon.assert.calledWithExactly(this.setValue, 'NEW');
   });
 
-  it('counts characters correctly', function () {
+  it('counts characters correctly', function* () {
     const testData = [
       {input: 'Test', expected: '4 characters'},
       {input: 'A  sentence with lots of  spaces', expected: '32 characters'},
@@ -50,12 +67,15 @@ describe('cfSingleLineEditor directive', function () {
       {input: undefined, expected: '0 characters'}
     ];
 
-    testData.forEach(function (data) {
-      const $el = this.compileElement();
+    const $el = this.compileElement();
+    this.clock.restore();
 
-      this.dispatchValue(data.input);
-      expect($el.text()).toBe(data.expected);
-    }, this);
+    /*eslint prefer-const: off*/
+    for (let {input, expected} of testData) {
+      this.dispatchValue(input);
+      yield waitRaf();
+      expect($el.text()).toBe(expected);
+    }
   });
 
   it('displays validation hints', function () {
@@ -79,26 +99,20 @@ describe('cfSingleLineEditor directive', function () {
     }, this);
   });
 
-  it('changes color according to maxlength validation', function () {
-    const testData = [
-      {
-        input: 'This text should turn orange',
-        validations: [{size: {max: 30, min: 10}}],
-        expectedClass: '.colors__orange'
-      },
-      {
-        input: 'This text should turn red',
-        validations: [{size: {max: 20, min: 10}}],
-        expectedClass: '.colors__red'
-      }
-    ];
-    testData.forEach(function (data) {
-      const el = this.compileElement(data.validations);
+  it('changes character info status code according to validation', function* () {
+    const el = this.compileElement([{size: {min: 2, max: 3}}]);
 
-      this.dispatchValue(data.input);
-      expect(el.find(data.expectedClass).length).toBe(1);
-    }, this);
+    this.dispatchValue('1');
+    yield waitRaf();
+    expect(el.find('[role="status"][data-status-code="invalid-size"]').length).toBe(1);
 
+    this.dispatchValue('12');
+    yield waitRaf();
+    expect(el.find('[role="status"][data-status-code="invalid-size"]').length).toBe(0);
+
+    this.dispatchValue('1234');
+    yield waitRaf();
+    expect(el.find('[role="status"][data-status-code="invalid-size"]').length).toBe(1);
   });
 
   it('adds max constraints for symbol fields', function () {
@@ -122,14 +136,14 @@ describe('cfSingleLineEditor directive', function () {
     expect(elem.text()).toMatch('Requires less than 50 characters');
   });
 
-  it('sets input to invalid when there are schema errors', function () {
+  it('sets input to invalid when there are schema errors', function* () {
     const input = this.compileElement().find('input');
 
-    this.fieldApi.onSchemaErrorsChanged.yield(null);
-    this.$apply();
-    expect(input.attr('aria-invalid')).toBe('');
-    this.fieldApi.onSchemaErrorsChanged.yield([{}]);
-    this.$apply();
+    this.fieldApi.onSchemaErrorsChanged['yield'](null);
+    yield waitRaf();
+    expect(input.attr('aria-invalid')).toBe(undefined);
+    this.fieldApi.onSchemaErrorsChanged['yield']([{}]);
+    yield waitRaf();
     expect(input.attr('aria-invalid')).toBe('true');
   });
 });
