@@ -1,3 +1,5 @@
+include ../advice.mixin.jade
+
 header.workbench-header
   cf-breadcrumbs
   .workbench-header__left
@@ -83,10 +85,7 @@ header.workbench-header
                 .status-bar
       .loading(ng-hide="searchController.paginator.isAtLast()")
 
-    .advice(ng-show="assets | isEmpty")
-      .advice__frame
-        i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
-        header.advice__title There are no matches to your search
+    +no-search-results("!assets.length || isEmpty", "context.view.searchTerm")
 
 .workbench-main.x--content(ng-show="showNoAssetsAdvice()")
   include ./no_assets_advice

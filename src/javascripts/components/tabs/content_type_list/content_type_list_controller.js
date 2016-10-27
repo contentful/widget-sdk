@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('contentful')
-.controller('ContentTypeListController', ['$scope', '$injector', function ContentTypeListController ($scope, $injector) {
-
+.controller('ContentTypeListController',
+['$scope', '$injector', function ContentTypeListController ($scope, $injector) {
   var notification = $injector.get('notification');
   var spaceContext = $injector.get('spaceContext');
   var FilterQS = $injector.get('FilterQueryString');
@@ -25,14 +25,27 @@ angular.module('contentful')
   });
 
   function updateList () {
-    spaceContext.refreshContentTypes().then(function () {
-      var sectionVisibility = accessChecker.getSectionVisibility();
-      $scope.context.forbidden = !sectionVisibility.contentType;
-      $scope.context.ready = true;
-      var contentTypes = spaceContext.contentTypes;
-      $scope.empty = contentTypes.length === 0;
-      $scope.visibleContentTypes = _.filter(contentTypes, shouldBeVisible);
-    }, accessChecker.wasForbidden($scope.context));
+    $scope.isSearching = true;
+
+    spaceContext.refreshContentTypes()
+      .then(function () {
+        var sectionVisibility = accessChecker.getSectionVisibility();
+
+        $scope.context.forbidden = !sectionVisibility.contentType;
+        $scope.context.ready = true;
+        var contentTypes = spaceContext.contentTypes;
+        $scope.empty = contentTypes.length === 0;
+        $scope.visibleContentTypes = _.filter(contentTypes, shouldBeVisible);
+      }, accessChecker.wasForbidden($scope.context))
+      .then(function (res) {
+        $scope.isSearching = false;
+        return res;
+      })
+      .catch(function (err) {
+        if (_.isObject(err) && 'statusCode' in err && err.statusCode === -1) {
+          $scope.isSearching = true;
+        }
+      });
   }
 
   function shouldBeVisible (contentType) {
@@ -101,5 +114,4 @@ angular.module('contentful')
       return 'draft';
     }
   }
-
 }]);

@@ -1,3 +1,6 @@
+include ../../../ui/loader.mixin.jade
+include ../advice.mixin.jade
+
 header.workbench-header
   cf-breadcrumbs
   .workbench-header__left
@@ -9,6 +12,8 @@ header.workbench-header
   .workbench-header__search.search-area
     .search-field(
       cf-search="searchTerm"
+      is-searching="isSearching"
+      search-type-ahead="true"
       placeholder="Type to search")
 
   .workbench-header__actions
@@ -57,9 +62,7 @@ header.workbench-header
         span.filter-list-title Active
 
   .workbench-main__right-content(ng-show="!hasQueryResults()")
-    .cfnext-advice
-      i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
-      .advice__title There are no matches to your search
+    +no-search-results("true", "searchTerm", "context.list")
 
   .workbench-main__right-content(ng-show="hasQueryResults()")
     table.result-list.main-results.main-header

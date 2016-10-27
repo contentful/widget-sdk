@@ -1,5 +1,7 @@
+include ../../../ui/loader.mixin.jade
+
 .search-field
-  .search-field__input
+  .search-field__input(ng-class="{'search-field__input--searching': isSearching}")
     input.form-control(type="search"
       ng-model="inner.term"
       ng-trim="false"

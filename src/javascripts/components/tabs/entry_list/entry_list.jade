@@ -1,4 +1,6 @@
 include ./create_entry_button.mixin.jade
+include ../../../ui/loader.mixin.jade
+include ../advice.mixin.jade
 
 header.workbench-header
   cf-breadcrumbs
@@ -68,10 +70,7 @@ header.workbench-header
                 .status-bar
       .loading(ng-hide="paginator.isAtLast()")
 
-    .advice(ng-show="entries | isEmpty")
-      .advice__frame
-        i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
-        header.advice__title There are no matches to your search
+    +no-search-results("!entries.length || isEmpty", "context.view.searchTerm")
 
 .workbench-main.x--content(ng-show="showNoEntriesAdvice()")
   include ./no_entries_advice

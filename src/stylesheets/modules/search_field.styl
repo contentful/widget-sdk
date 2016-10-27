@@ -23,6 +23,10 @@
     content: "\f057"
     color: $gray
 
+.search-field__input--searching
+  input.form-control:not([type="checkbox"]):not([type="radio"])
+    padding-right: 30px
+
 .search-field__button
   position: absolute
   top: 0
@@ -58,5 +62,5 @@
     border-top-left-radius: 0px
     border-bottom-left-radius: 0px
   .search-field__input
-    input[type="search"]
-      border-radius: 0px
+    input[type="search"].form-control
+      border-radius: 0
