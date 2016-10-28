@@ -160,9 +160,9 @@ angular.module('contentful')
   controller.setActive = function (isActive) {
     if (isActive) {
       controller.doc.notifyFocus();
-      $scope.focus.set(field.id);
+      $scope.editorContext.focus.set(field.id);
     } else {
-      $scope.focus.unset(field.id);
+      $scope.editorContext.focus.unset(field.id);
     }
   };
 

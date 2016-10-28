@@ -67,12 +67,8 @@ angular.module('cf.app')
       K.onValueScope($scope, $scope.editorContext.validator.errors$, updateLocales);
       K.onValueScope($scope, $scope.editorContext.validator.errors$, updateErrorStatus);
 
-      var offFocusChanged = $scope.focus.onChanged(function (value) {
-        $scope.data.fieldHasFocus = value === field.id;
-      });
-
-      $scope.$on('$destroy', function () {
-        offFocusChanged();
+      K.onValueScope($scope, $scope.editorContext.focus.field$, function (focusedField) {
+        templateData.fieldHasFocus = focusedField === field.id;
       });
 
       function updateErrorStatus () {

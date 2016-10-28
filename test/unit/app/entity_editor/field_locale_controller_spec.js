@@ -1,11 +1,12 @@
 'use strict';
 
 describe('FieldLocaleController', function () {
+  let K;
   beforeEach(function () {
     module('contentful/test');
     const $rootScope = this.$inject('$rootScope');
     const $controller = this.$inject('$controller');
-    const K = this.$inject('mocks/kefir');
+    K = this.$inject('mocks/kefir');
     this.extractValues = K.extractValues;
     this.init = function (scopeProps) {
       this.otDoc = this.otDoc || this.$inject('mocks/entityEditor/Document').create();
@@ -22,6 +23,10 @@ describe('FieldLocaleController', function () {
       this.$apply();
       return scope;
     };
+  });
+
+  afterEach(function () {
+    K = null;
   });
 
   describe('#errors$ and #errors', function () {
@@ -134,12 +139,7 @@ describe('FieldLocaleController', function () {
   describe('#setActive()', function () {
 
     beforeEach(function () {
-      this.scope = this.init({
-        focus: {
-          set: sinon.stub(),
-          unset: sinon.stub()
-        }
-      });
+      this.scope = this.init();
     });
 
     it('calls "otDoc.notifyFocus()" if set to true', function () {
@@ -148,16 +148,17 @@ describe('FieldLocaleController', function () {
       sinon.assert.calledWithExactly(focus, 'FID', 'LID');
     });
 
-    it('calls "scope.focus.set()" if set to true', function () {
+    it('sets the editor context field focus', function () {
+      K.assertCurrentValue(this.scope.editorContext.focus.field$, null);
       this.scope.fieldLocale.setActive(true);
-      const setFocus = this.scope.focus.set;
-      sinon.assert.calledWithExactly(setFocus, 'FID');
+      K.assertCurrentValue(this.scope.editorContext.focus.field$, 'FID');
     });
 
-    it('calls "scope.focus.unset()" if set to false', function () {
+    it('unsets the editor context field focus', function () {
+      this.scope.fieldLocale.setActive(true);
+      K.assertCurrentValue(this.scope.editorContext.focus.field$, 'FID');
       this.scope.fieldLocale.setActive(false);
-      const unsetFocus = this.scope.focus.unset;
-      sinon.assert.calledWithExactly(unsetFocus, 'FID');
+      K.assertCurrentValue(this.scope.editorContext.focus.field$, null);
     });
   });
 

@@ -15,6 +15,7 @@ angular.module('contentful')
   var createAssetSchema = require('validation').schemas.Asset;
   var errorMessageBuilder = require('errorMessageBuilder');
   var deepFreeze = require('utils/DeepFreeze').deepFreeze;
+  var Focus = require('app/entity_editor/Focus');
 
   var editorData = $scope.editorData;
 
@@ -49,6 +50,7 @@ angular.module('contentful')
   validator.run();
   this.validator = validator;
 
+  this.focus = Focus.create();
 
   $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,
