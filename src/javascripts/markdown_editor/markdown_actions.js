@@ -27,19 +27,16 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['require', funct
 
     function link () {
       modalDialog.open({
-        scopeData: { model: { url: 'https://' } },
+        scopeData: {
+          model: {
+            url: 'https://',
+            title: editor.getSelectedText()
+          }
+        },
         template: 'markdown_link_dialog'
       }).promise.then(function (data) {
-        editor.insert(_makeLink(data));
+        editor.actions.link(data.url, data.title);
       });
-    }
-
-    function _makeLink (data) {
-      if (data.title) {
-        return '[' + data.title + '](' + data.url + ')';
-      } else {
-        return '<' + data.url + '>';
-      }
     }
 
     function asset () {

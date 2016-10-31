@@ -27,6 +27,7 @@ angular.module('cf.app')
       strike: wrapSelection(editor, '~~', 'striked out'),
       quote: modifySelection(editor, quoteToggleFn),
       code: modifySelection(editor, codeToggleFn),
+      link: link,
       h1: toggleHeader(editor, 1),
       h2: toggleHeader(editor, 2),
       h3: toggleHeader(editor, 3),
@@ -96,6 +97,25 @@ angular.module('cf.app')
       editor.restoreCursor(2, line);
     }
 
+
+    /**
+     * @ngdoc method
+     * @name MarkdownEditor/Commands#link
+     * @description
+     * Inserts or replaces the current selection with a markdown link
+     *
+     * @param {string} url
+     * @param {string?} text
+     */
+    function link (url, text) {
+      editor.usePrimarySelection();
+
+      var link = text
+        ? '[' + text + '](' + url + ')'
+        : '<' + url + '>';
+
+      editor.replaceSelectedText(link, 'around');
+    }
   }
 
   /**
