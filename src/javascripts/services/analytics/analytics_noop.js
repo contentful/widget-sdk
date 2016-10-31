@@ -10,9 +10,21 @@
  * noops.
  */
 angular.module('contentful')
-.factory('analytics/noop', ['$injector', function ($injector) {
 
-  var analyticsAnalytics = $injector.get('analytics/track');
+.factory('analytics/noop', ['require', function (require) {
 
-  return _.mapValues(analyticsAnalytics, _.constant(_.noop));
+  var analyticsAnalytics = require('analytics/track');
+  var analyticsConsole = require('analytics/console');
+
+  var service = _.mapValues(analyticsAnalytics, _.constant(_.noop));
+
+  service.track = function (name, data) {
+    analyticsConsole.add(name, 'Segment', data);
+  };
+
+  service.pushGtm = function (data) {
+    analyticsConsole.add(data.event || 'No event name', 'GTM', _.omit(data || {}, 'event'));
+  };
+
+  return service;
 }]);
