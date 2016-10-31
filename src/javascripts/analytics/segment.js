@@ -11,7 +11,7 @@ angular.module('contentful')
   var analyticsConsole = require('analytics/console');
 
   var apiKey = dotty.get(environment, 'settings.segment_io');
-  var buffer = new CallBuffer();
+  var buffer = CallBuffer.create();
   var enabled;
   var noCommunication;
 

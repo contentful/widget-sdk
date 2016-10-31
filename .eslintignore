@@ -41,7 +41,6 @@ test/unit/forms/ng_no_form_spec.js
 test/unit/navigator/leave_editor_confirmation_spec.js
 test/unit/navigator/confirm_leave_editor_spec.js
 test/unit/services/assert_spec.js
-test/unit/analytics/call_buffer_spec.js
 test/unit/services/contentful_client_spec.js
 test/unit/services/exception_handler_spec.js
 test/unit/services/field_factory_spec.js
@@ -212,7 +211,6 @@ src/javascripts/directives/cf_custom_logo_directive.js
 src/javascripts/directives/cf_copy_to_clipboard_directive.js
 src/javascripts/directives/cf_when_disabled.js
 src/javascripts/services/assert.js
-src/javascripts/analytics/call_buffer.js
 src/javascripts/services/contentful_client.js
 src/javascripts/services/exception_handler.js
 src/javascripts/services/field_factory.js

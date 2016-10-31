@@ -1,52 +1,62 @@
 'use strict';
-angular.module('contentful').constant('CallBuffer', (function(){
 
-  var OPEN = 'open', RESOLVED = 'resolved', DISABLED = 'disabled';
+angular.module('contentful')
+/**
+ * @ngdoc service
+ * @name CallBuffer
+ * @description
+ * A service that records function calls while in the initial
+ * open state. When the buffer is resolved, buffered computations
+ * are executed.
+ *
+ * Afterwards, subsequent computations are executed immediately
+ * and synchronously.
+ *
+ * Instead of resolving the buffer can also be disabled. That
+ * discards all buffered function calls. Future calls are discarded
+ * immediately.
+ *
+ * After being resolved or disabled, the buffer can not be
+ * transitioned into another state anymore.
+ */
+.factory('CallBuffer', [function () {
+  var OPEN = 'open';
+  var RESOLVED = 'resolved';
+  var DISABLED = 'disabled';
 
-  /**
-   * A service that records computations while in the initial open state.
-   * When you resolve the Callbuffer then buffered computations are executed.
-   *
-   * Afterwards, subsequent computations are executed immediately and synchronously.
-   *
-   * Instead of resolving you can also disable the Callbuffer.
-   * That discards all buffered computations.
-   * Future computations are discarded immediately.
-   *
-   * After being resolved or disabled, the CallBuffer can not be
-   * transitioned into another state anymore
-   */
-  function CallBuffer(){
-    this._calls = [];
-    this._state = OPEN;
-  }
+  return {create: create};
 
-  CallBuffer.prototype.call = function(fn){
-    if (this._state === RESOLVED) {
-      fn();
-    } else if (this._state === DISABLED) {
-      void 0;
-    } else {
-      this._calls.push(fn);
-    }
-  };
+  function create () {
+    var calls = [];
+    var state = OPEN;
 
-  CallBuffer.prototype.resolve = function(){
-    /*jshint boss:true*/
-    if (this._state === OPEN) {
-      this._state = RESOLVED;
-      var call;
-      while (call = this._calls.shift()){
-        call();
+    return {
+      call: call,
+      resolve: resolve,
+      disable: disable
+    };
+
+    function call (fn) {
+      if (state === RESOLVED) {
+        fn();
+      } else if (state !== DISABLED) {
+        calls.push(fn);
       }
-      this._calls = [];
     }
-  };
 
-  CallBuffer.prototype.disable = function(){
-    this._state = DISABLED;
-    this._calls = [];
-  };
+    function resolve () {
+      if (state === OPEN) {
+        state = RESOLVED;
+        calls.forEach(function (fn) {
+          fn();
+        });
+        calls = [];
+      }
+    }
 
-  return CallBuffer;
-})());
+    function disable () {
+      state = DISABLED;
+      calls = [];
+    }
+  }
+}]);
