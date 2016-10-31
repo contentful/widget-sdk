@@ -241,7 +241,6 @@ src/javascripts/services/modal_dialog_service.js
 src/javascripts/services/promised_loader.js
 src/javascripts/services/reload_notification.js
 src/javascripts/services/sdk_info_supplier.js
-src/javascripts/services/segment.js
 src/javascripts/services/space_tools.js
 src/javascripts/services/token_store.js
 src/javascripts/services/user_agent.js
