@@ -1,8 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.controller('ContentTypeListController',
-['$scope', '$injector', function ContentTypeListController ($scope, $injector) {
+.controller('ContentTypeListController', ['$scope', '$injector', function ContentTypeListController ($scope, $injector) {
 
   var notification = $injector.get('notification');
   var spaceContext = $injector.get('spaceContext');

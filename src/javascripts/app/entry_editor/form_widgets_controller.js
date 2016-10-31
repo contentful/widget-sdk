@@ -15,9 +15,7 @@ angular.module('contentful')
  * error paths determine dynamically for which fields and which locales
  * widgets should be rendered.
  */
-.controller('FormWidgetsController',
-['$scope', '$injector', 'contentTypeId', 'controls',
-function ($scope, $injector, contentTypeId, controls) {
+.controller('FormWidgetsController', ['$scope', '$injector', 'contentTypeId', 'controls', function ($scope, $injector, contentTypeId, controls) {
   var analytics = $injector.get('analyticsEvents');
   var Focus = $injector.get('FieldControls/Focus');
 

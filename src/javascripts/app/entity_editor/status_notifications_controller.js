@@ -1,8 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.controller('entityEditor/StatusNotificationsController',
-['$scope', 'entityLabel', 'isReadOnly', function ($scope, entityLabel, isReadOnly) {
+.controller('entityEditor/StatusNotificationsController', ['$scope', 'entityLabel', 'isReadOnly', function ($scope, entityLabel, isReadOnly) {
   var controller = this;
   var messages = {
     'ot-connection-error':

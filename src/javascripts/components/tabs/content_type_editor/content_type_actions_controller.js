@@ -7,8 +7,7 @@
  * @scope.requires {client.ContentType} contentType
  */
 angular.module('contentful')
-.controller('ContentTypeActionsController', ['$scope', '$injector',
-function ContentTypeActionsController ($scope, $injector) {
+.controller('ContentTypeActionsController', ['$scope', '$injector', function ContentTypeActionsController ($scope, $injector) {
   var controller = this;
   var $rootScope = $injector.get('$rootScope');
   var analytics = $injector.get('analytics');

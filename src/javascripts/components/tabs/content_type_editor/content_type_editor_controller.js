@@ -12,8 +12,7 @@
  * @scope.provides  hasFields
  */
 angular.module('contentful')
-.controller('ContentTypeEditorController', ['$scope', '$injector',
-function ContentTypeEditorController ($scope, $injector) {
+.controller('ContentTypeEditorController', ['$scope', '$injector', function ContentTypeEditorController ($scope, $injector) {
   var controller = this;
   var $controller = $injector.get('$controller');
   var $state = $injector.get('$state');

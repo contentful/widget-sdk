@@ -20,9 +20,7 @@ angular.module('cf.app')
  *
  * @property {Document.State} state
  */
-.controller('entityEditor/Document',
-['$scope', 'require', 'entity', 'contentType',
-function ($scope, require, entity, contentType) {
+.controller('entityEditor/Document', ['$scope', 'require', 'entity', 'contentType', function ($scope, require, entity, contentType) {
   var $q = require('$q');
   var ShareJS = require('data/ShareJS/Utils');
   var moment = require('moment');

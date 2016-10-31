@@ -12,8 +12,7 @@ angular.module('contentful')
   };
 })
 
-.controller('cfLearnViewController', ['$scope', 'require', '$element',
-function ($scope, require, $element) {
+.controller('cfLearnViewController', ['$scope', 'require', '$element', function ($scope, require, $element) {
 
   var controller = this;
   var $q = require('$q');

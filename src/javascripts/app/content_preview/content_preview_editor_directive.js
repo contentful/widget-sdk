@@ -10,9 +10,7 @@ angular.module('contentful')
   };
 }])
 
-.controller('cfContentPreviewEditorController', ['$scope', 'require',
-function ($scope, require) {
-
+.controller('cfContentPreviewEditorController', ['$scope', 'require', function ($scope, require) {
   var $q = require('$q');
   var $state = require('$state');
   var $stateParams = require('$stateParams');
