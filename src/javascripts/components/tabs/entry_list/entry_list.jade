@@ -13,7 +13,7 @@ header.workbench-header
     select.search-area__select-box.cfnext-select-box(
       ng-model="context.view.contentTypeId"
       ng-change="selectedContentType()"
-      ng-options="ct.getId() as ct.getName() group by getGroupName() for ct in spaceContext.publishedContentTypes")
+      ng-options="ct.id as ct.name group by 'Content types' for ct in contentTypeSelectOptions")
       option(value="") All
 
     .search-area__input(
@@ -55,9 +55,9 @@ header.workbench-header
             td.cell-select(ng-click="selection.toggle(entry);$event.stopPropagation()")
               input(type="checkbox" cf-selection="entry" tabindex="-1")
             td.cell-content-type(ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden")
-              a.entity-list-link(ui-sref="{{entityNavState}}") {{spaceContext.publishedTypeForEntry(entry).getName()}}
+              a.entity-list-link(ui-sref="{{entityNavState}}") {{contentTypeName(entry)}}
             td.cell-display-name
-              a.entity-list-link(ui-sref="{{entityNavState}}") {{spaceContext.entryTitle(entry)}}
+              a.entity-list-link(ui-sref="{{entityNavState}}") {{entryTitle(entry)}}
             td(ng-repeat="field in displayedFields track by field.id" ng-class="[getFieldClass(field), getFieldCollapsedClass(field)]")
               cf-field-display(ng-hide="isFieldCollapsed(field)")
               button.transparent-button(cf-click-local="expandColumn(field)" ng-show="isFieldCollapsed(field)")

@@ -1,9 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.controller('contentPreviewSidebarController', ['$scope', '$injector',
-function ($scope, $injector) {
-
+.controller('contentPreviewSidebarController', ['$scope', '$injector', function ($scope, $injector) {
   var contentPreview = $injector.get('contentPreview');
   var analytics = $injector.get('analytics');
   var isAdmin = $injector.get('spaceContext')

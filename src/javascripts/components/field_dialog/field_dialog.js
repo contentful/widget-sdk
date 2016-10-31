@@ -55,8 +55,7 @@ angular.module('contentful')
  * @property {string} $scope.widgetSettings.id
  * @property {object} $scope.widgetSettings.params
  */
-.controller('FieldDialogController',
-['$scope', '$injector', function FieldDialogController ($scope, $injector) {
+.controller('FieldDialogController', ['$scope', '$injector', function FieldDialogController ($scope, $injector) {
   var dialog = $scope.dialog;
 
   var validations = $injector.get('validationDecorator');
@@ -184,8 +183,7 @@ angular.module('contentful')
 }])
 
 
-.controller('FieldDialogSettingsController',
-['$scope', '$injector', function ($scope, $injector) {
+.controller('FieldDialogSettingsController', ['$scope', '$injector', function ($scope, $injector) {
   var fieldDecorator = $injector.get('fieldDecorator');
   var buildMessage = $injector.get('fieldErrorMessageBuilder');
   var TheLocaleStore = $injector.get('TheLocaleStore');
@@ -212,8 +210,7 @@ angular.module('contentful')
  * @scope.requires {string}  widgetSettings.id
  * @scope.requires {Widgets.Descriptor[]}  availableWidgets
  */
-.controller('FieldDialogValidationsController',
-['$scope', '$injector', function ($scope, $injector) {
+.controller('FieldDialogValidationsController', ['$scope', '$injector', function ($scope, $injector) {
   var validations = $injector.get('validationDecorator');
 
   $scope.$watch('fieldValidationsForm.$invalid', function (isInvalid) {
@@ -257,8 +254,7 @@ angular.module('contentful')
  * @property {Widgets.Descriptor}    widget
  * @property {Widgets.Options[]}     widgetOptions
  */
-.controller('FieldDialogAppearanceController',
-['$scope', '$injector', function ($scope, $injector) {
+.controller('FieldDialogAppearanceController', ['$scope', '$injector', function ($scope, $injector) {
   var Widgets = $injector.get('widgets');
   var getDefaultWidgetId = $injector.get('widgets/default');
 

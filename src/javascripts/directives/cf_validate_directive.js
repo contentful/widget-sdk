@@ -20,8 +20,7 @@ angular.module('contentful')
   };
 }])
 
-.controller('ValidationController', ['$scope', '$attrs', 'require',
-function ValidationController ($scope, $attrs, require) {
+.controller('ValidationController', ['$scope', '$attrs', 'require', function ValidationController ($scope, $attrs, require) {
   var $timeout = require('$timeout');
   var K = require('utils/kefir');
   var controller = this;

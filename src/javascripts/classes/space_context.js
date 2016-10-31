@@ -20,8 +20,6 @@ angular.module('contentful')
   var $q = $injector.get('$q');
   var $timeout = $injector.get('$timeout');
   var ReloadNotification = $injector.get('ReloadNotification');
-  var notification = $injector.get('notification');
-  var logger = $injector.get('logger');
   var TheLocaleStore = $injector.get('TheLocaleStore');
   var createUserCache = $injector.get('data/userCache');
   var ctHelpers = $injector.get('data/ContentTypes');
@@ -36,6 +34,8 @@ angular.module('contentful')
   var Subscription = $injector.get('Subscription');
   var previewEnvironmentsCache = $injector.get('data/previewEnvironmentsCache');
   var apiKeysCache = $injector.get('data/apiKeysCache');
+  var PublishedCTRepo = $injector.get('data/ContentTypeRepo/Published');
+  var logger = $injector.get('logger');
 
   var requestContentTypes = createQueue(function (extraHandler) {
     return spaceContext.space.getContentTypes({order: 'name', limit: 1000})
@@ -110,6 +110,11 @@ angular.module('contentful')
         space.getId()
       );
 
+      self.publishedCTs = PublishedCTRepo.create(space);
+      self.publishedCTs.wrappedItems$.onValue(function (cts) {
+        self.publishedContentTypes = cts.toArray();
+      });
+
       previewEnvironmentsCache.clearAll();
       TheLocaleStore.resetWithSpace(space);
       return $q.all([loadWidgets(self, space), requestContentTypes()])
@@ -165,8 +170,14 @@ angular.module('contentful')
      * Refreshes all Content Type related information in the context.
      * If refresh doesn't change state of content types, it tries
      * again (with limit of 5 tries and 1500ms of delay between requests).
-     * It's needed because if the content type was created for the first
-     * time the API will not include it immediately.
+     *
+     * This is needed because when a content type is created publishing it is
+     * not immediately possible. We use the list enpoint as a proxy to determine
+     * when the backend has processed the created content type.
+     *
+     * TODO we should remove this method and instead introduce a special purpose
+     * publish method for CTs that retries when it fails for CTs not yet
+     * processed by the backend.
      */
     refreshContentTypesUntilChanged: function () {
       var before = getContentTypeIds(spaceContext.contentTypes);
@@ -185,45 +196,6 @@ angular.module('contentful')
 
     /**
      * @ngdoc method
-     * @name spaceContext#getFilteredAndSortedContentTypes
-     * @description
-     * Returns a list of content types with deleted ones filtered out
-     * and with the content types sorted by name
-     * @return {Array<Client.ContentType>}
-    */
-    getFilteredAndSortedContentTypes: function () {
-      return filterAndSortContentTypes(this.contentTypes);
-    },
-
-    /**
-     * @ngdoc method
-     * @name spaceContext#registerPublishedContentType
-     * @param {Client.ContentType} contentType
-    */
-    registerPublishedContentType: function (contentType) {
-      if (!this._publishedContentTypesHash[contentType.getId()]) {
-        this.publishedContentTypes.push(contentType);
-        this._publishedContentTypesHash[contentType.getId()] = contentType;
-      }
-    },
-
-    /**
-     * @ngdoc method
-     * @name spaceContext#unregisterPublishedContentType
-     * @param {Client.ContentType} publishedContentType
-    */
-    unregisterPublishedContentType: function (publishedContentType) {
-      var index = _.indexOf(this.publishedContentTypes, publishedContentType);
-      if (index === -1) return;
-
-      this.publishedContentTypes.splice(index, 1);
-      this._publishedContentTypesHash = _.omitBy(this._publishedContentTypesHash, function (ct) {
-        return ct === publishedContentType;
-      });
-    },
-
-    /**
-     * @ngdoc method
      * @name spaceContext#removeContentType
      * @param {Client.ContentType} contentType
     */
@@ -236,60 +208,6 @@ angular.module('contentful')
 
     /**
      * @ngdoc method
-     * @name spaceContext#publishedTypeForEntry
-     * @param {Client.Entry} entry
-     * @return {Client.ContentType}
-     * @description
-     * Returns the published content type for a given entry
-    */
-    publishedTypeForEntry: function (entry) {
-      var contentTypeId = entry.getContentTypeId();
-      return this.getPublishedContentType(contentTypeId);
-    },
-
-    /**
-     * @ngdoc method
-     * @name spaceContext#getPublishedContentType
-     * @param {string} contentTypeId
-     * @return {Client.ContentType}
-     * @description
-     * Returns the published content type for a given ID
-    */
-    getPublishedContentType: function (contentTypeId) {
-      var contentType = this._publishedContentTypesHash[contentTypeId];
-
-      if (!contentType && !this._publishedContentTypeIsMissing[contentTypeId]) {
-        this._publishedContentTypeIsMissing[contentTypeId] = true;
-        if (requestContentTypes.isIdle()) {
-          this.refreshContentTypes();
-        }
-      }
-      return contentType;
-    },
-
-    /**
-     * @ngdoc method
-     * @name spaceContext#fetchPublishedContentType
-     * @param {string} contentTypeId
-     * @return Promise<Client.ContentType>
-     * @description
-     * Returns the promise of published content type for a given ID.
-     * Different from getPublishedContentType, it will fetch CT if it's not loaded yet.
-     */
-    fetchPublishedContentType: function (contentTypeId) {
-      var self = this;
-      var contentType = pick();
-      if (contentType) { return $q.resolve(contentType); }
-
-      return this.refreshContentTypes().then(pick);
-
-      function pick () {
-        return self._publishedContentTypesHash[contentTypeId];
-      }
-    },
-
-    /**
-     * @ngdoc method
      * @name spaceContext#displayFieldForType
      * @param {string} contentTypeId
      * @return {Object}
@@ -297,7 +215,7 @@ angular.module('contentful')
      * Returns the display field for a given content type id
     */
     displayFieldForType: function (contentTypeId) {
-      var ct = this.getPublishedContentType(contentTypeId);
+      var ct = this.publishedCTs.get(contentTypeId);
       return ct && _.find(ct.data.fields, {id: ct.data.displayField});
     },
 
@@ -357,7 +275,8 @@ angular.module('contentful')
     findLocalizedField: function (entity, localeCode, fieldDefinition) {
       fieldDefinition = fieldDefinition || localeCode;
 
-      var contentType = this.publishedTypeForEntry(entity);
+      var contentTypeId = entity.getContentTypeId();
+      var contentType = this.publishedCTs.get(contentTypeId);
       if (!contentType) {
         return;
       }
@@ -386,7 +305,12 @@ angular.module('contentful')
       var defaultTitle = modelValue ? null : 'Untitled';
 
       try {
-        var displayField = this.publishedTypeForEntry(entry).data.displayField;
+        var contentTypeId = entry.getContentTypeId();
+        var contentType = this.publishedCTs.get(contentTypeId);
+        if (!contentType) {
+          return defaultTitle;
+        }
+        var displayField = contentType.data.displayField;
         if (!displayField) {
           return defaultTitle;
         } else {
@@ -397,7 +321,10 @@ angular.module('contentful')
             return title;
           }
         }
-      } catch (e) {
+      } catch (error) {
+        // The logic should not be in a try catch block. Instead we should make
+        // sure that we handle undefined values properly.
+        logger.logException(error);
         return defaultTitle;
       }
     },
@@ -414,7 +341,8 @@ angular.module('contentful')
      * @return {string?}
      */
     entityDescription: function (entity, localeCode) {
-      var contentType = this.publishedTypeForEntry(entity);
+      var contentTypeId = entity.getContentTypeId();
+      var contentType = this.publishedCTs.get(contentTypeId);
       if (!contentType) {
         return;
       }
@@ -523,33 +451,7 @@ angular.module('contentful')
       ctHelpers.assureName(ct.data);
     });
 
-    return refreshPublishedContentTypes();
-  }
-
-  function refreshPublishedContentTypes () {
-    return spaceContext.space.getPublishedContentTypes()
-    .then(function (contentTypes) {
-      contentTypes = _.union(contentTypes, spaceContext.publishedContentTypes);
-      contentTypes = filterAndSortContentTypes(contentTypes);
-      spaceContext.publishedContentTypes = contentTypes;
-
-      spaceContext._publishedContentTypesHash = _.transform(contentTypes, function (acc, ct) {
-        var id = ct.getId();
-        acc[id] = ct;
-        spaceContext._publishedContentTypeIsMissing[id] = false;
-      });
-
-      return contentTypes;
-    }, function (err) {
-      var message = dotty.get(err, 'body.message');
-      if (message) {
-        notification.warn(message);
-      } else {
-        notification.warn('Could not get published content types');
-        logger.logServerError('Could not get published Content Types', { error: err });
-      }
-      return $q.reject(err);
-    });
+    return spaceContext.publishedCTs.refresh();
   }
 
   function filterAndSortContentTypes (contentTypes) {
@@ -564,13 +466,14 @@ angular.module('contentful')
     spaceContext.space = null;
     spaceContext.contentTypes = [];
     spaceContext.publishedContentTypes = [];
-    spaceContext._publishedContentTypesHash = {};
-    spaceContext._publishedContentTypeIsMissing = {};
     spaceContext.users = null;
     spaceContext.widgets = null;
     if (spaceContext.docConnection) {
       spaceContext.docConnection.close();
       spaceContext.docConnection = null;
+    }
+    if (self.publishedCTs) {
+      self.publishedCTs = null;
     }
   }
 

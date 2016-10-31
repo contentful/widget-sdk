@@ -7,7 +7,7 @@ angular.module('contentful')
   var accessChecker = $injector.get('accessChecker');
 
   spaceContext.refreshContentTypes().then(function () {
-    $scope.contentTypes = spaceContext.getFilteredAndSortedContentTypes();
+    $scope.contentTypes = spaceContext.contentTypes;
   }, accessChecker.wasForbidden($scope.context));
 
 }]);

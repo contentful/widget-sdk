@@ -2711,6 +2711,9 @@
         }
       }
     },
+    "immutable": {
+      "version": "3.8.1"
+    },
     "inherits": {
       "version": "2.0.1"
     },

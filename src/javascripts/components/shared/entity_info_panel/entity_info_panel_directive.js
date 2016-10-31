@@ -1,31 +1,24 @@
 'use strict';
 
-angular.module('contentful').
-  directive('cfEntityInfoPanel', function() {
-    return {
-      restrict: 'A',
-      controller: ['$scope', '$attrs', function EntityInfoPanelController($scope, $attrs) {
-        $scope.$watch('entry && spaceContext.publishedTypeForEntry(entry).getName()', function(name, old, scope) {
-          scope.contentTypeName = name;
-        });
+angular.module('contentful')
+.directive('cfEntityInfoPanel', [function () {
+  return {
+    scope: {
+      entity: '=',
+      contentType: '=',
+      user: '='
+    },
+    restrict: 'E',
+    template: JST.entity_info_panel(),
+    controller: ['$scope', function ($scope) {
+      if ($scope.contentType) {
+        $scope.contentTypeName = $scope.contentType.getName();
+        $scope.contentTypeDescription = $scope.contentType.data.description;
+      }
 
-        $scope.$watch('entry && spaceContext.publishedTypeForEntry(entry).data.description', function(description, old, scope) {
-          scope.contentTypeDescription = description;
-        });
-
-        $scope.$watch($attrs.cfEntityInfoPanel, function(sys) {
-          $scope.sys = sys;
-        });
-
-        $scope.entityVersion = function () {
-          if($scope.otDoc && $scope.otDoc.doc)
-            return $scope.otDoc.doc.version;
-          if($scope.sys)
-            return $scope.sys.version;
-          return '';
-        };
-
-      }],
-      template: JST['entity_info_panel']
-    };
-  });
+      $scope.$watch('entity.data.sys', function (sys) {
+        $scope.sys = sys;
+      }, true);
+    }]
+  };
+}]);
