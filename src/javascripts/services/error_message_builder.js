@@ -136,9 +136,9 @@ angular.module('contentful')
  * The error messages for Entries are parameterized by the
  * SpaceContext.
  *
- * @method {(sc:SpaceContext) => ((e:Error) => string)} errorMessageBuilder
- * @method {function (error:Error): string} errorMessageBuilder.forContentType
- * @method {function (error:Error): string} errorMessageBuilder.forAsset
+ * @method {(cts: Data.ContentTypeRepo.Published) => ((e:Error) => string)} errorMessageBuilder
+ * @method {function(error:Error): string} errorMessageBuilder.forContentType
+ * @method {function(error:Error): string} errorMessageBuilder.forAsset
  */
 .factory('errorMessageBuilder', ['$injector', function ($injector) {
   var moment = $injector.get('moment');
@@ -154,12 +154,12 @@ angular.module('contentful')
       return '' + joinAnd(labels) + ' are the only acceptable file types';
     },
 
-    linkContentType: function (error, spaceContext) {
-      var ct = spaceContext.getPublishedContentType(error.contentTypeId);
-      if (!ct) {
-        return 'Invalid content type';
+    linkContentType: function (error, ctRepo) {
+      var ct = ctRepo.get(error.contentTypeId);
+      if (ct) {
+        return 'Linked Entry’s content type must be ' + ct.getName() + '.';
       } else {
-        return 'Linked Entry\'s content type must be ' + ct.getName() + '.';
+        return 'Invalid content type';
       }
     },
 
@@ -209,14 +209,14 @@ angular.module('contentful')
     return error.customMessage;
   }
 
-  function buildErrorMessage (error, spaceContext) {
+  function buildErrorMessage (error, ctRepo) {
     var getMessage;
     if (error.customMessage) {
       getMessage = customMessage;
     } else {
       getMessage = messages[error.name] || buildBaseErrorMessage;
     }
-    return getMessage(error, spaceContext);
+    return getMessage(error, ctRepo);
   }
 
   function buildContentTypeError (error) {
@@ -245,9 +245,9 @@ angular.module('contentful')
     }
   }
 
-  function errorMessageBuilder (spaceContext) {
+  function errorMessageBuilder (ctRepo) {
     return function (error) {
-      return buildErrorMessage(error, spaceContext);
+      return buildErrorMessage(error, ctRepo);
     };
   }
 

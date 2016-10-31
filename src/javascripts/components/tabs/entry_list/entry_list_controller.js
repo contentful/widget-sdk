@@ -39,7 +39,7 @@ angular.module('contentful')
 
   $scope.getSearchContentType = function () {
     var id = dotty.get($scope, 'context.view.contentTypeId');
-    return spaceContext.getPublishedContentType(id);
+    return spaceContext.publishedCTs.get(id);
   };
 
   $scope.$watchCollection(function () {
@@ -48,11 +48,7 @@ angular.module('contentful')
       responses: accessChecker.getResponses()
     };
   }, function () {
-    // TODO this should be enforced by the space context
-    var publishedCTs = _.uniqBy(spaceContext.publishedContentTypes, function (ct) {
-      return ct.getId();
-    });
-    $scope.accessibleCts = _.filter(publishedCTs, function (ct) {
+    $scope.accessibleCts = _.filter(spaceContext.publishedContentTypes, function (ct) {
       return accessChecker.canPerformActionOnEntryOfType('create', ct.getId());
     });
   });

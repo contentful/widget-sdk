@@ -1,8 +1,7 @@
 'use strict';
 
-angular.module('contentful').factory('aviary',
-['require', function (require) {
-
+angular.module('contentful')
+.factory('aviary', ['require', function (require) {
   var $q = require('$q');
   var $window = require('$window');
   var angularLoad = require('angularLoad');

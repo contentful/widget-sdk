@@ -116,8 +116,7 @@ angular.module('contentful')
  * @scope.requires {object} contentTypeMetadata
  * @scope.requires {bool}   contentTypeIsNew
 */
-.controller('ContentTypeMetadataController',
-['$scope', '$injector', function ($scope, $injector) {
+.controller('ContentTypeMetadataController', ['$scope', '$injector', function ($scope, $injector) {
   var stringUtils = $injector.get('stringUtils');
   var spaceContext = $injector.get('spaceContext');
 

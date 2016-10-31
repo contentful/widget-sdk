@@ -10,8 +10,7 @@ angular.module('contentful')
   };
 })
 
-.controller('ApiKeyListController', ['$scope', '$injector',
-function ApiKeyListController ($scope, $injector) {
+.controller('ApiKeyListController', ['$scope', '$injector', function ($scope, $injector) {
   var ReloadNotification = $injector.get('ReloadNotification');
   var spaceContext = $injector.get('spaceContext');
   var accessChecker = $injector.get('accessChecker');

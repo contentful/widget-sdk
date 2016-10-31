@@ -1,9 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.controller('entityEditor/StateController',
-['$scope', '$injector', 'entity', 'notify', 'handlePublishError',
-function ($scope, $injector, entity, notify, handlePublishError) {
+.controller('entityEditor/StateController', ['$scope', '$injector', 'entity', 'notify', 'handlePublishError', function ($scope, $injector, entity, notify, handlePublishError) {
   var controller = this;
   var $q = $injector.get('$q');
   var Command = $injector.get('command');

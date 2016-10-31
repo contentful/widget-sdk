@@ -265,8 +265,8 @@ describe('Space Template loading service', function () {
                 'type': 'Link',
                 'linkType': 'Asset'
               }
-            }
-          ]},
+            }]
+          },
           'symbolList': {
             'en-US': [
               'this',

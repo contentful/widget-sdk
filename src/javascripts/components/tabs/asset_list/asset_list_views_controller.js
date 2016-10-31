@@ -1,8 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.controller('AssetListViewsController',
-['$scope', '$injector', 'preserveState', function ($scope, $injector, preserveState) {
+.controller('AssetListViewsController', ['$scope', '$injector', 'preserveState', function ($scope, $injector, preserveState) {
 
   var $controller = $injector.get('$controller');
   var uiConfig = $injector.get('uiConfig');

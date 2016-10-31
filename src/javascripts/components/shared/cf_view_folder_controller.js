@@ -1,8 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.controller('CfViewFolderController', ['$scope', 'require',
-function ($scope, require) {
+.controller('CfViewFolderController', ['$scope', 'require', function ($scope, require) {
 
   var modalDialog = require('modalDialog');
   var analytics = require('analytics');

@@ -10,9 +10,7 @@ angular.module('contentful')
   };
 }])
 
-.controller('cfContentPreviewEditorController', ['$scope', 'require',
-function ($scope, require) {
-
+.controller('cfContentPreviewEditorController', ['$scope', 'require', function ($scope, require) {
   var $q = require('$q');
   var $state = require('$state');
   var $stateParams = require('$stateParams');
@@ -120,7 +118,7 @@ function ($scope, require) {
   }
 
   function handleSuccessResponse (responses) {
-    var cts = spaceContext.getFilteredAndSortedContentTypes();
+    var cts = spaceContext.contentTypes;
     if ($scope.context.isNew) {
       contentPreview.canCreate().then(function (allowed) {
         if (allowed) {

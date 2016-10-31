@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('contentful').directive('cfFileEditor',
-['require', function (require) {
+angular.module('contentful')
+.directive('cfFileEditor', ['require', function (require) {
 
   var aviary = require('aviary');
   var filepicker = require('filepicker');

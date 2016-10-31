@@ -142,9 +142,9 @@ angular.module('contentful')
         });
       }],
       editingInterface: resolvers.editingInterface,
-      contentType: ['entry', function (entry) {
+      contentType: ['spaceContext', 'entry', function (spaceContext, entry) {
         var ctId = entry.data.sys.contentType.sys.id;
-        return spaceContext.fetchPublishedContentType(ctId);
+        return spaceContext.publishedCTs.fetch(ctId);
       }],
       fieldControls: ['editingInterface', function (ei) {
         return spaceContext.widgets.buildRenderable(ei.controls);

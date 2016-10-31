@@ -5,8 +5,10 @@ angular.module('contentful')
   var getSlug = $injector.get('speakingurl');
 
   // Languages supported by SpeakingURL.
-  var languages = ['ar', 'cz', 'de', 'en', 'es', 'fr', 'it',
-                   'my', 'nl', 'pt', 'ru', 'sk', 'tr', 'vn'];
+  var languages = [
+    'ar', 'cz', 'de', 'en', 'es', 'fr', 'it',
+    'my', 'nl', 'pt', 'ru', 'sk', 'tr', 'vn'
+  ];
 
   /**
    * Extracts the first two lowercased characters from the locale,

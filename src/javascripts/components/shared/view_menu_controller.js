@@ -2,9 +2,7 @@
 
 angular.module('contentful')
 
-.controller('ViewMenuController',
-['$scope', '$attrs', 'require', '$parse',
-function ($scope, $attrs, require, $parse) {
+.controller('ViewMenuController', ['$scope', '$attrs', 'require', '$parse', function ($scope, $attrs, require, $parse) {
 
   var modalDialog = require('modalDialog');
   var random = require('random');

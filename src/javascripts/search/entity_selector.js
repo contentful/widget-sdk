@@ -124,7 +124,7 @@ angular.module('contentful')
 
     var linked = config.linkedContentTypeIds;
     if (config.linksEntry && linked.length === 1) {
-      return spaceContext.fetchPublishedContentType(linked[0]);
+      return spaceContext.publishedCTs.fetch(linked[0]);
     }
 
     return $q.resolve(null);

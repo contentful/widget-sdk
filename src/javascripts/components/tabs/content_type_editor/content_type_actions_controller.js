@@ -7,8 +7,7 @@
  * @scope.requires {client.ContentType} contentType
  */
 angular.module('contentful')
-.controller('ContentTypeActionsController', ['$scope', '$injector',
-function ContentTypeActionsController ($scope, $injector) {
+.controller('ContentTypeActionsController', ['$scope', '$injector', function ContentTypeActionsController ($scope, $injector) {
   var controller = this;
   var $rootScope = $injector.get('$rootScope');
   var analytics = $injector.get('analytics');
@@ -131,15 +130,13 @@ function ContentTypeActionsController ($scope, $injector) {
   }
 
   function unpublish () {
-    return $scope.contentType.unpublish()
+    return spaceContext.publishedCTs.unpublish($scope.contentType)
       .then(unpublishSuccessHandler, unpublishErrorHandler);
   }
 
   function unpublishSuccessHandler (publishedContentType) {
     $scope.publishedContentType = null;
     $scope.ctEditorController.registerPublishedFields(null);
-    spaceContext.unregisterPublishedContentType(publishedContentType);
-    spaceContext.refreshContentTypes();
     trackUnpublishedContentType($scope.contentType);
     return publishedContentType;
   }
@@ -244,26 +241,13 @@ function ContentTypeActionsController ($scope, $injector) {
     .then(notify.saveSuccess);
   }
 
-  // TODO this should be handled by a content type repository
   function publishContentType (contentType) {
-    var version = contentType.getVersion();
-
-    return contentType.publish(version)
-    .then(function (published) {
-      contentType.setPublishedVersion(version);
-      spaceContext.registerPublishedContentType(published);
-
+    return spaceContext.publishedCTs.publish(contentType)
+    .then(function () {
       return spaceContext.editingInterfaces.get(contentType.data);
     }).then(function (editingInterface) {
       // On publish the API also updates the editor interface
       $scope.editingInterface.sys.version = editingInterface.sys.version;
-
-      if (version === 1) {
-        spaceContext.refreshContentTypesUntilChanged();
-      } else {
-        spaceContext.refreshContentTypes();
-      }
-
       return contentType;
     });
   }

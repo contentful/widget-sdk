@@ -178,26 +178,6 @@ describe('cfValidate', function () {
     });
   });
 
-  describe('with cfEntrySchema', function () {
-
-    beforeEach(function () {
-      const $compile = this.$inject('$compile');
-      const $rootScope = this.$inject('$rootScope');
-
-      const template = '<div cf-validate="entry" cf-entry-schema></div>';
-      const element = $compile(template)($rootScope);
-      this.scope = element.scope();
-      this.$apply();
-
-    });
-
-    it('validation is undefined if schema not set yet', function () {
-      this.scope.entry = {};
-      this.scope.validate();
-      expect(this.scope.validationResult.valid).toBeUndefined();
-    });
-  });
-
   describe('with cfContentTypeSchema', function () {
 
     const fieldFixture = {
