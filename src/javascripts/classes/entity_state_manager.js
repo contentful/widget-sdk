@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('contentful')
-.factory('EntityStateManager', ['$injector', function ($injector) {
-  var $q           = $injector.get('$q');
-  var createSignal = $injector.get('signal').create;
+.factory('EntityStateManager', ['require', function (require) {
+  var $q = require('$q');
+  var createSignal = require('signal').create;
 
   /**
    * @ngdoc type

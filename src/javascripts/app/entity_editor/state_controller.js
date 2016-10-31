@@ -1,11 +1,10 @@
 'use strict';
 
 angular.module('contentful')
-.controller('entityEditor/StateController', ['$scope', '$injector', 'entity', 'notify', 'handlePublishError', function ($scope, $injector, entity, notify, handlePublishError) {
+.controller('entityEditor/StateController', ['$scope', '$injector', 'entity', 'notify', 'handlePublishError', 'otDoc', function ($scope, $injector, entity, notify, handlePublishError, otDoc) {
   var controller = this;
   var $q = $injector.get('$q');
   var Command = $injector.get('command');
-  var createEntryReverter = $injector.get('entryReverter');
   var StateManager = $injector.get('EntityStateManager');
   var analytics = $injector.get('analytics');
   var accessChecker = $injector.get('accessChecker');
@@ -27,8 +26,6 @@ angular.module('contentful')
       to: to
     });
   });
-
-  var entryReverter = createEntryReverter(entity);
 
   function hasPermission (action) {
     return accessChecker.canPerformActionOnEntity(action, entity);
@@ -145,7 +142,6 @@ angular.module('contentful')
       .then(function trackRestoredPublication () {
         versioningTracking.publishedRestored(entity.data);
       })
-      .then(entryReverter.publishedNewVersion)
       .then(notify.publishSuccess, handlePublishError);
     });
   }
@@ -167,44 +163,14 @@ angular.module('contentful')
     }
   });
 
-
-  var unwatchRevertSetup = $scope.$watch('otDoc.state.editable', function (editable) {
-    if (!editable) { return; }
-    entryReverter.init();
-    unwatchRevertSetup();
-  });
-
-  controller.revertToPublished = Command.create(function () {
-    $scope.entry.getPublishedState().then(function (data) {
-      return setDocFields(data.fields);
-    }).then(function () {
-      entryReverter.revertedToPublished();
-    })
-    .then(notify.revertToPublishedSuccess, notify.revertToPublishedFail);
-  }, {
-    available: function () {
-      return hasPermission('update') &&
-             !entity.isArchived() &&
-             entryReverter.canRevertToPublished();
-    }
-  });
-
   controller.revertToPrevious = Command.create(function () {
-    var fields = entryReverter.getPreviousData().fields;
-    return setDocFields(fields)
-    .then(function () {
-      entryReverter.revertedToPrevious();
-    })
+    otDoc.reverter.revert()
     .then(notify.revertToPreviousSuccess, notify.revertToPreviousFail);
   }, {
     available: function () {
       return hasPermission('update') &&
              !entity.isArchived() &&
-             entryReverter.canRevertToPrevious();
+             otDoc.reverter.hasChanges();
     }
   });
-
-  function setDocFields (fields) {
-    return $scope.otDoc.setValueAt(['fields'], fields);
-  }
 }]);

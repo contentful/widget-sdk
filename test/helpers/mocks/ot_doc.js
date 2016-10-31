@@ -7,6 +7,9 @@
  * @description
  * Creates a mock instance of a ShareJS document.
  *
+ * The mock instance tries to simulate the behavior of a real ShareJS
+ * document.
+ *
  * Supported methods are
  * - `getAt(path)`
  * - `setAt(path, value, cb)`
@@ -26,13 +29,10 @@ angular.module('contentful/mocks')
   // TODO(mudit): Convert this from a contructor to a normal function
   // that returns an object with the methods. This would make it easier
   // to spy on stuff.
-  function OtDoc (snapshot, path) {
+  function OtDoc (snapshot) {
     this.snapshot = snapshot || {};
-    this.path = path || [];
 
-    // TODO this should be automatically incremented when we change
-    // something.
-    this.version = 0;
+    this.version = dotty.get(snapshot, ['sys', 'version']) || 0;
 
     this.on = sinon.stub();
     this.removeListener = sinon.stub();
@@ -41,9 +41,10 @@ angular.module('contentful/mocks')
   }
 
   OtDoc.prototype.setAt = function (path, value, cb) {
-    path = this.path.concat(path);
     assertParentContainer(this.snapshot, path);
     dotty.put(this.snapshot, path, value);
+    this.version++;
+    this.emit('change', [{p: path}]);
     if (cb) {
       cb();
     }
@@ -63,21 +64,20 @@ angular.module('contentful/mocks')
       }
     });
 
+    this.version++;
+    this.emit('change', ops.map((op) => op.p));
     if (cb) {
       cb();
     }
   };
 
   OtDoc.prototype.getAt = function (path) {
-    path = this.path.concat(path);
     assertParentContainer(this.snapshot, path);
     return dotty.get(this.snapshot, path);
   };
 
   OtDoc.prototype.at = function (path) {
-    // Assumes that `at` is only called with one segment. This might
-    // not be true.
-    return new OtDoc(this.snapshot, this.path.concat(path));
+    return new SubDoc(this, path);
   };
 
   OtDoc.prototype.get = function () {
@@ -126,6 +126,37 @@ angular.module('contentful/mocks')
   };
 
   OtDoc.prototype.emit = function () {};
+
+
+  class SubDoc {
+    constructor (root, path) {
+      this.root = root;
+      // This is an implementation quirk copied from the actual ShareJS
+      // implementation. It basically converts a single string path,
+      // like `a` into an array `['a']`.
+      this.path = [].concat(path);
+    }
+
+    setAt (path, value, cb) {
+      this.root.setAt(this.path.concat(path), value, cb);
+    }
+
+    set (value, cb) {
+      this.setAt([], value, cb);
+    }
+
+    getAt (path) {
+      return this.root.getAt(this.path.concat(path));
+    }
+
+    get () {
+      return this.getAt([]);
+    }
+
+    at (path) {
+      return new SubDoc(this.root, this.path.concat(path));
+    }
+  }
 
   sinon.spy(OtDoc.prototype, 'insert');
   sinon.spy(OtDoc.prototype, 'del');

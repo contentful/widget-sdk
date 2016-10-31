@@ -29,7 +29,6 @@ test/unit/components/tabs/content_type_editor/cf_list_type_for_spec.js
 test/unit/components/tabs/content_type_editor/cf_content_type_preview_spec.js
 test/unit/components/field_dialog/appearance_controller_spec.js
 test/unit/components/search.js
-test/unit/classes/entity_state_manager_spec.js
 test/unit/directives/cf_copy_to_clipboard_directive_spec.js
 test/unit/forms/cf_null_empty_input_spec.js
 test/unit/forms/cf_validate_form_spec.js
@@ -73,7 +72,6 @@ test/unit/widgets/migrations_spec.js
 test/unit/app/entity_editor/locales_controller_spec.js
 test/unit/app/entity_editor/status_notifications_controller_spec.js
 test/unit/app/entry_editor/entry_actions_controller_spec.js
-test/unit/app/entry_editor/entry_reverter_spec.js
 test/unit/data/content_types_spec.js
 test/unit/data/editing_interfaces/transformer_spec.js
 test/unit/data/user_cache_spec.js
@@ -187,10 +185,7 @@ src/javascripts/components/notifications/cf_notifications_directive.js
 src/javascripts/components/notifications/index.js
 src/javascripts/app/asset_editor/asset_editor_directive.js
 src/javascripts/app/asset_editor/notifications.js
-src/javascripts/app/entry_editor/entry_editor_directive.js
-src/javascripts/app/entry_editor/notifications.js
 src/javascripts/app/entry_editor/entry_actions_controller.js
-src/javascripts/app/entry_editor/entry_reverter.js
 src/javascripts/app/entity_editor/locales_controller.js
 src/javascripts/classes/kaltura_error_messages.js
 src/javascripts/classes/kaltura_search.js
@@ -201,13 +196,11 @@ src/javascripts/classes/url_utils.js
 src/javascripts/classes/kaltura_client_wrapper.js
 src/javascripts/classes/content_model_field_types.js
 src/javascripts/classes/entity_list_cache.js
-src/javascripts/classes/entity_state_manager.js
 src/javascripts/classes/kaltura_controller_mixin.js
 src/javascripts/classes/selection.js
 src/javascripts/directives/cf_click_local_directive.js
 src/javascripts/directives/cf_click_outside_directive.js
 src/javascripts/directives/cf_focus_on_render_directive.js
-src/javascripts/directives/cf_focus_ot_input_directive.js
 src/javascripts/directives/cf_focus_watched_expression_directive.js
 src/javascripts/directives/cf_on_blur_component.js
 src/javascripts/directives/cf_relative_datetime.js

@@ -17,11 +17,19 @@ angular.module('contentful')
 
   $scope.locales = $controller('entityEditor/LocalesController');
 
+  // TODO rename the scope property
+  $scope.otDoc = $controller('entityEditor/Document', {
+    $scope: $scope,
+    entity: $scope.entity,
+    contentType: $scope.contentType
+  });
+
   $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,
     entity: $scope.entry,
     notify: notify,
-    handlePublishError: handlePublishError
+    handlePublishError: handlePublishError,
+    otDoc: $scope.otDoc
   });
 
   $scope.actions = $controller('EntryActionsController', {
@@ -33,13 +41,6 @@ angular.module('contentful')
     $scope: $scope,
     entityLabel: 'entry',
     isReadOnly: isReadOnly
-  });
-
-  // TODO rename the scope property
-  $scope.otDoc = $controller('entityEditor/Document', {
-    $scope: $scope,
-    entity: $scope.entity,
-    contentType: $scope.contentType
   });
 
   $scope.$watch(function () {

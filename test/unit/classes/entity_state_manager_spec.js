@@ -2,14 +2,14 @@
 
 describe('StateManager class', function () {
 
-  var entityURL = '/spaces/SID/entries/EID';
+  const entityURL = '/spaces/SID/entries/EID';
 
   beforeEach(function () {
     module('contentful/test');
 
-    var cfStub = this.$inject('cfStub');
+    const cfStub = this.$inject('cfStub');
 
-    var EntityStateManager = this.$inject('EntityStateManager');
+    const EntityStateManager = this.$inject('EntityStateManager');
     this.entity = cfStub.entry(cfStub.space('SID'), 'EID');
     this.manager = new EntityStateManager(this.entity);
     this.adapter = cfStub.adapter;
@@ -57,9 +57,9 @@ describe('StateManager class', function () {
 
   describe('#archive()', function () {
     pit('send archive PUT request', function () {
-      var archive = this.manager.archive();
+      const archive = this.manager.archive();
       this.$apply();
-      var req = this.adapter.requests.pop();
+      const req = this.adapter.requests.pop();
       expect(req.options.path).toEqual(entityURL + '/archived');
       expect(req.options.method).toEqual('PUT');
 
@@ -69,9 +69,9 @@ describe('StateManager class', function () {
 
     pit('unpublishes published entity first', function () {
       this.entity.data.sys.publishedVersion = 1;
-      var archive = this.manager.archive();
+      const archive = this.manager.archive();
       this.$apply();
-      var req = this.adapter.requests.pop();
+      const req = this.adapter.requests.pop();
       expect(req.options.path).toEqual(entityURL + '/published');
       expect(req.options.method).toEqual('DELETE');
 
@@ -84,7 +84,7 @@ describe('StateManager class', function () {
     });
 
     it('triggers "changedEditingState" signal', function () {
-      var listener = sinon.stub();
+      const listener = sinon.stub();
       this.manager.changedEditingState.attach(listener);
       this.manager.archive();
       this.$apply();
@@ -99,9 +99,9 @@ describe('StateManager class', function () {
 
   describe('#publish()', function () {
     pit('send publish PUT request', function () {
-      var publish = this.manager.publish();
+      const publish = this.manager.publish();
       this.$apply();
-      var req = this.adapter.requests.pop();
+      const req = this.adapter.requests.pop();
       expect(req.options.path).toEqual(entityURL + '/published');
       expect(req.options.method).toEqual('PUT');
 
@@ -111,9 +111,9 @@ describe('StateManager class', function () {
 
     pit('unarchives archived entity first', function () {
       this.entity.data.sys.archivedVersion = 1;
-      var publish = this.manager.publish();
+      const publish = this.manager.publish();
       this.$apply();
-      var req = this.adapter.requests.pop();
+      const req = this.adapter.requests.pop();
       expect(req.options.path).toEqual(entityURL + '/archived');
       expect(req.options.method).toEqual('DELETE');
 
@@ -126,7 +126,7 @@ describe('StateManager class', function () {
     });
 
     it('triggers "changedEditingState" signal', function () {
-      var listener = sinon.stub();
+      const listener = sinon.stub();
       this.manager.changedEditingState.attach(listener);
       this.manager.publish();
       this.$apply();
@@ -143,10 +143,10 @@ describe('StateManager class', function () {
   describe('#toDraft()', function () {
     pit('unpublishes published entity', function () {
       this.entity.data.sys.publishedVersion = 1;
-      var toDraft = this.manager.toDraft();
+      const toDraft = this.manager.toDraft();
       this.$apply();
 
-      var req = this.adapter.requests.pop();
+      const req = this.adapter.requests.pop();
       expect(req.options.path).toEqual(entityURL + '/published');
       expect(req.options.method).toEqual('DELETE');
       req.resolve();
@@ -156,10 +156,10 @@ describe('StateManager class', function () {
 
     pit('unarchives archived entity', function () {
       this.entity.data.sys.archivedVersion = 1;
-      var toDraft = this.manager.toDraft();
+      const toDraft = this.manager.toDraft();
       this.$apply();
 
-      var req = this.adapter.requests.pop();
+      const req = this.adapter.requests.pop();
       expect(req.options.path).toEqual(entityURL + '/archived');
       expect(req.options.method).toEqual('DELETE');
       req.resolve();
@@ -169,7 +169,7 @@ describe('StateManager class', function () {
 
     pit('does nothing by default', function () {
       this.adapter.requests = [];
-      var toDraft = this.manager.toDraft();
+      const toDraft = this.manager.toDraft();
       this.$apply();
 
       expect(this.adapter.requests.length).toEqual(0);
@@ -179,10 +179,10 @@ describe('StateManager class', function () {
 
   describe('#delete()', function () {
     pit('sends DELETE request', function () {
-      var del = this.manager.delete();
+      const del = this.manager.delete();
       this.$apply();
 
-      var req = this.adapter.requests.pop();
+      const req = this.adapter.requests.pop();
       expect(req.options.path).toEqual(entityURL);
       expect(req.options.method).toEqual('DELETE');
       req.resolve();
@@ -193,10 +193,10 @@ describe('StateManager class', function () {
     pit('unpublishes published entries', function () {
       this.entity.data.sys.publishedVersion = 1;
 
-      var del = this.manager.delete();
+      const del = this.manager.delete();
       this.$apply();
 
-      var req = this.adapter.requests.pop();
+      const req = this.adapter.requests.pop();
       expect(req.options.path).toEqual(entityURL + '/published');
       expect(req.options.method).toEqual('DELETE');
       req.resolve(this.entity.data);

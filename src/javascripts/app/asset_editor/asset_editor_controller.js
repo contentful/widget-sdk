@@ -18,24 +18,25 @@ angular.module('contentful')
 
   $scope.locales = $controller('entityEditor/LocalesController');
 
+  // TODO rename the scope property
+  $scope.otDoc = $controller('entityEditor/Document', {
+    $scope: $scope,
+    entity: $scope.entity,
+    contentType: null
+  });
+
   $scope.state = $controller('entityEditor/StateController', {
     $scope: $scope,
     entity: $scope.asset,
     notify: notify,
-    handlePublishError: handlePublishError
+    handlePublishError: handlePublishError,
+    otDoc: $scope.otDoc
   });
 
   $scope.notifications = $controller('entityEditor/StatusNotificationsController', {
     $scope: $scope,
     entityLabel: 'asset',
     isReadOnly: isReadOnly
-  });
-
-  // TODO rename the scope property
-  $scope.otDoc = $controller('entityEditor/Document', {
-    $scope: $scope,
-    entity: $scope.entity,
-    contentType: null
   });
 
   $scope.$watch(function () {
