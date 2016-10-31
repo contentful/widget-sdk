@@ -22,7 +22,7 @@ angular.module('contentful')
     }).promise.then(function () {
       _.remove(folder.views, {id: view.id});
       $scope.cleanDefaultFolder();
-      analytics.trackTotango('Deleted View');
+      analytics.track('Deleted View');
       return $scope.saveViews();
     });
   };

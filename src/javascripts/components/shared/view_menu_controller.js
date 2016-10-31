@@ -52,7 +52,7 @@ angular.module('contentful')
     };
     $scope.folders.push(folder);
     $scope.saveViews();
-    analytics.trackTotango('Added View Folder');
+    analytics.track('Added View Folder');
     $timeout(function () {
       $scope.$broadcast('startInlineEditor', folder);
     });
@@ -73,7 +73,7 @@ angular.module('contentful')
       scope: $scope
     }).promise.then(function () {
       _.remove($scope.folders, {id: folder.id});
-      analytics.trackTotango('Deleted View Folder');
+      analytics.track('Deleted View Folder');
       return $scope.saveViews();
     });
   };
@@ -88,7 +88,7 @@ angular.module('contentful')
     view.id = random.id();
     folder.views.push(view);
     $scope.saveViews();
-    analytics.trackTotango('Added View');
+    analytics.track('Added View');
 
     $timeout(function () {
       $scope.$broadcast('startInlineEditor', view);

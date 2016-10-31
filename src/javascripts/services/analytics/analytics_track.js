@@ -13,7 +13,6 @@ angular.module('contentful')
 .factory('analytics/track', ['require', function (require) {
   var lazyLoad = require('LazyLoader').get;
   var segment = require('segment');
-  var totango = require('totango');
   var logger = require('logger');
   var cookieStore = require('TheStore/cookieStore');
   var stringifySafe = require('stringifySafe');
@@ -46,19 +45,6 @@ angular.module('contentful')
      * @param {object} data
      */
     track: track,
-    /**
-     * @ngdoc method
-     * @name analytics#trackTotango
-     * @description
-     * Send event to Totango.
-     *
-     * Note that for new analytics events 'module' should be "UI" to
-     * keep the number of modules in Totango low.
-     *
-     * @param {string} event
-     * @param {string} module
-     */
-    trackTotango: trackTotango,
     trackPersistentNotificationAction: trackPersistentNotificationAction,
 
     /**
@@ -84,7 +70,6 @@ angular.module('contentful')
    */
   function enable (user) {
     segment.enable();
-    totango.enable();
     GTM.enable();
     GTM.push({
       event: 'app.open',
@@ -98,7 +83,6 @@ angular.module('contentful')
 
   function disable () {
     segment.disable();
-    totango.disable();
     GTM.disable();
 
     if (_.isFunction(turnOffStateChangeListener)) {
@@ -148,44 +132,12 @@ angular.module('contentful')
     });
   }
 
-  function trackTotango (event, module) {
-    try {
-      totango.track(event, module);
-    } catch (error) {
-      logger.logError('Analytics totango.track() exception', {
-        data: {
-          event: event,
-          module: module,
-          error: error
-        }
-      });
-    }
-  }
-
   function initialize () {
-    if (!userData) {
-      return;
-    }
-    var analyticsUserData;
-
     shieldFromInvalidUserData(function () {
-      analyticsUserData = getAnalyticsUserData(userData);
-      addIdentifyingData(analyticsUserData);
-    });
-
-    if (analyticsUserData && organizationData) {
-      try {
-        totango.initialize(analyticsUserData, organizationData);
-      } catch (error) {
-        logger.logError('Analytics totango.initialize() exception', {
-          data: {
-            userData: analyticsUserData,
-            organizationData: organizationData,
-            error: error
-          }
-        });
+      if (userData) {
+        addIdentifyingData(getAnalyticsUserData(userData));
       }
-    }
+    });
   }
 
   // Send further identifying user data to segment
@@ -196,7 +148,6 @@ angular.module('contentful')
   }
 
   function trackStateChange (_event, state, stateParams, fromState, fromStateParams) {
-    totango.setModule(state.name);
     segment.page(state.name, stateParams);
     track('Switched State', {
       state: state.name,
@@ -236,7 +187,7 @@ angular.module('contentful')
     userData = JSON.parse(stringifySafe(userData));
 
     // On first login, send referrer, campaign and A/B test data to
-    // segment and totango if it has been set by marketing website cookie
+    // segment if it has been set by marketing website cookie
     if (userData.signInCount === 1) {
       var firstVisitData = _.pickBy({
         firstReferrer: parseCookie('cf_first_visit', 'referer'),

@@ -1,6 +1,6 @@
 // This directive is used for `new_space_dialog` as well as `onboarding_dialog`
 // If `isOnboarding = true` is passed into the scope then it will display the
-// onboarding version of the directive with a different headline, subheadline 
+// onboarding version of the directive with a different headline, subheadline
 // and nav.
 
 
@@ -221,7 +221,6 @@ angular.module('contentful')
     analytics.track('Selected Space Template', {
       template: templateName
     });
-    analytics.trackTotango('Selected Space Template: '+ templateName);
   }
 
   function handleSpaceCreationFailure(err) {

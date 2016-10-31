@@ -73,10 +73,6 @@ function integrations () {
       project_id: {type: 'string', format: 'uuid'}
     }),
     segment_io: alnum(10),
-    totango: {
-      type: 'string',
-      pattern: '^SP-\\d{4}-\\d{2}$'
-    },
     googleTagManagerContainer: {
       type: 'string',
       pattern: '^GTM-\\w{6}$'

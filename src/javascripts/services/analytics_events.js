@@ -57,7 +57,6 @@ angular.module('contentful')
     }, extra);
 
     analytics.track(event, props);
-    analytics.trackTotango(event, 'UI');
   }
 
   function trackFollowedKbpLink (section) {

@@ -24,8 +24,7 @@ describe('cfCreateNewSpace directive', function() {
       },
       analytics: {
         addIdentifyingData: sinon.stub(),
-        track: sinon.stub(),
-        trackTotango: sinon.stub()
+        track: sinon.stub()
       },
       logger: {
         logError: sinon.stub(),
@@ -183,7 +182,6 @@ describe('cfCreateNewSpace directive', function() {
 
         it ('sends template selection analytics event', function() {
           sinon.assert.calledWith(stubs.analytics.track, 'Selected Space Template', {template: 'Blank'});
-          sinon.assert.calledWith(stubs.analytics.trackTotango, 'Selected Space Template: Blank');
         });
 
         it('calls client lib with data', function() {
