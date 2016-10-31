@@ -8,10 +8,12 @@ angular.module('contentful')
   var CallBuffer = require('CallBuffer');
   var environment = require('environment');
   var logger = require('logger');
+  var analyticsConsole = require('analytics/console');
 
   var apiKey = dotty.get(environment, 'settings.segment_io');
   var buffer = new CallBuffer();
   var enabled;
+  var noCommunication;
 
   return {
     enable: enable,
@@ -21,7 +23,9 @@ angular.module('contentful')
     track: bufferedSegmentCall('track')
   };
 
-  function enable () {
+  function enable (shouldSend) {
+    noCommunication = !shouldSend;
+
     if (enabled === undefined) {
       enabled = true;
       install();
@@ -40,7 +44,12 @@ angular.module('contentful')
       var args = arguments;
       buffer.call(function () {
         try {
-          $window.analytics[fnName].apply($window.analytics, args);
+          if (!noCommunication) {
+            $window.analytics[fnName].apply($window.analytics, args);
+          }
+          if (fnName === 'track') {
+            analyticsConsole.add(args[0], 'Segment', args[1]);
+          }
         } catch (exp) {
           logger.logError('Failed analytics.js call', {
             data: {

@@ -46,12 +46,6 @@ describe('Segment service', function () {
       segment.enable();
       assertSegmentGotNotLoaded();
     });
-
-    it('stops if previously enabled', function () {
-      segment.enable();
-      segment.disable();
-
-    });
   });
 
   describeSegmentFunction('page');
@@ -69,12 +63,12 @@ describe('Segment service', function () {
 
       it('buffers calls until service gets enabled', function () {
         segment[fnName]('foo', 1, 2);
-        segment.enable();
+        segment.enable(true);
         sinon.assert.calledWithExactly($window.analytics[fnName], 'foo', 1, 2);
       });
 
       it('invokes calls immediately if service is enabled', function () {
-        segment.enable();
+        segment.enable(true);
         segment[fnName]('bar', 1, 2);
         sinon.assert.calledWithExactly($window.analytics[fnName], 'bar', 1, 2);
       });
@@ -85,7 +79,7 @@ describe('Segment service', function () {
       });
 
       it('results in an error being logged if the respective analytics.js function throws an exception', function () {
-        segment.enable();
+        segment.enable(true);
         $window.analytics[fnName].throws();
         segment[fnName]('bar', 1, 2);
         sinon.assert.calledOnce(logSpy);

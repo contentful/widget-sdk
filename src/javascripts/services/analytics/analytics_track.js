@@ -2,15 +2,13 @@
 
 /**
  * @ngdoc service
- * @name analytics/track
+ * @name analytics
  * @description
- *
- * Returns an object with the same interface as the proper
- * analytics service, except that all functions are replaced by
- * noops.
+ * This service exposes an API for event tracking.
  */
 angular.module('contentful')
-.factory('analytics/track', ['require', function (require) {
+
+.factory('analytics', ['require', function (require) {
   var lazyLoad = require('LazyLoader').get;
   var segment = require('segment');
   var logger = require('logger');
@@ -18,6 +16,9 @@ angular.module('contentful')
   var stringifySafe = require('stringifySafe');
   var $rootScope = require('$rootScope');
   var GTM = require('analytics/gtm');
+
+  var env = dotty.get(require('environment'), 'env');
+  var shouldSend = _.includes(['production', 'staging'], env);
 
   var organizationData, spaceData, userData;
   var turnOffStateChangeListener = null;
@@ -69,7 +70,7 @@ angular.module('contentful')
    * @param {API.User} user
    */
   function enable (user) {
-    segment.enable();
+    segment.enable(shouldSend);
     GTM.enable();
     GTM.push({
       event: 'app.open',

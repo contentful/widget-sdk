@@ -47,7 +47,9 @@ angular.module('contentful')
   }
 }])
 
-.directive('cfAnalyticsConsole', [function () {
+.directive('cfAnalyticsConsole', ['require', function (require) {
+  var $timeout = require('$timeout');
+
   return {
     template: JST.analytics_console(),
     link: function (scope, $el) {
@@ -56,8 +58,10 @@ angular.module('contentful')
 
       var container = $events.get(0);
       scope.$watchCollection('events', function () {
-        container.scrollTop = container.scrollHeight;
-        $events.children().css({border: '1px dashed gray', padding: '5px'});
+        $timeout(function () {
+          container.scrollTop = container.scrollHeight;
+          $events.children().css({border: '1px dashed gray', padding: '5px'});
+        });
       });
 
       scope.$watch('isCollapsed', function (isCollapsed) {
