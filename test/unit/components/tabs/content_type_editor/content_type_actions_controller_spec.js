@@ -58,7 +58,7 @@ describe('ContentType Actions Controller', function () {
   describe('#delete command', function () {
     beforeEach(function () {
       contentType.delete = sinon.stub().resolves();
-      contentType.unpublish = sinon.stub().resolves();
+      contentType.unpublish = sinon.stub().resolves(contentType);
       contentType.isPublished = sinon.stub().returns(true);
 
       space.getEntries = sinon.stub().resolves([]);
@@ -229,7 +229,6 @@ describe('ContentType Actions Controller', function () {
         sinon.assert.calledOnce(ct.save);
         sinon.assert.calledOnce(ct.publish);
         sinon.assert.calledOnce(scope.ctEditorController.registerPublishedFields);
-        expect(ct.getPublishedVersion()).toEqual(ct.getVersion());
       });
     });
 
@@ -253,8 +252,7 @@ describe('ContentType Actions Controller', function () {
           sys: {
             id: 'typeid',
             type: 'ContentType',
-            version: 1,
-            publishedVersion: 1
+            version: 1
           },
           displayField: undefined
         });

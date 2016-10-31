@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Entry List Controller', function () {
-  let scope, spaceContext, getEntries;
+  let scope, spaceContext;
 
   function createEntries (n) {
     const entries = _.map(new Array(n), function () {
@@ -28,21 +28,16 @@ describe('Entry List Controller', function () {
     scope = this.$inject('$rootScope').$new();
     scope.context = {};
 
-    spaceContext = this.$inject('spaceContext');
-    const cfStub = this.$inject('cfStub');
-    const space = cfStub.space('test');
+    spaceContext = this.$inject('mocks/spaceContext').init();
 
     const ct = {
       getId: _.constant(1),
       data: {fields: [{id: 'fieldId'}], sys: {id: 1}}
     };
+    spaceContext.publishedCTs.fetch.resolves(ct);
 
-    const $q = this.$inject('$q');
-    getEntries = $q.defer();
-    spaceContext.resetWithSpace(space);
-    sinon.stub(space, 'getEntries').returns(getEntries.promise);
-    sinon.stub(space, 'getContentTypes').resolves([ct]);
-    sinon.stub(spaceContext, 'fetchPublishedContentType').resolves(ct);
+    spaceContext.space.getEntries.defers();
+    spaceContext.space.getContentTypes.resolves([ct]);
 
     const $controller = this.$inject('$controller');
     $controller('EntryListController', {$scope: scope});
@@ -126,7 +121,7 @@ describe('Entry List Controller', function () {
     beforeEach(function () {
       entries = createEntries(30);
       scope.$apply();
-      getEntries.resolve(entries);
+      spaceContext.space.getEntries.resolve(entries);
       spaceContext.space.getEntries.reset();
     });
 
@@ -139,7 +134,7 @@ describe('Entry List Controller', function () {
 
     it('sets entries num on the paginator', function () {
       scope.updateEntries();
-      getEntries.resolve(entries);
+      spaceContext.space.getEntries.resolve(entries);
       scope.$apply();
       expect(scope.paginator.getTotal()).toEqual(30);
     });
@@ -176,7 +171,7 @@ describe('Entry List Controller', function () {
       describe('with a user defined order', function () {
         beforeEach(function () {
           scope.context.view.contentTypeId = 'CT';
-          spaceContext.fetchPublishedContentType.withArgs('CT').resolves({
+          spaceContext.publishedCTs.fetch.withArgs('CT').resolves({
             getId: _.constant('CT'),
             data: {
               fields: [
@@ -202,7 +197,7 @@ describe('Entry List Controller', function () {
       it('with a defined limit', function () {
         scope.updateEntries();
         scope.$apply();
-        getEntries.resolve(entries);
+        spaceContext.space.getEntries.resolve(entries);
         expect(spaceContext.space.getEntries.args[0][0].limit).toEqual(40);
       });
 

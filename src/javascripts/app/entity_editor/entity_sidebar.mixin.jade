@@ -1,7 +1,7 @@
 mixin entity-sidebar
   .entity-sidebar__info-panel.entity-info-panel(
     ng-class="preferences.showAuxPanel && 'x--show'")
-    div(cf-entity-info-panel="entity.getSys()")
+    cf-entity-info-panel(entity="entity" content-type="contentType" user="user")
 
   .entity-sidebar
     h2.entity-sidebar__heading

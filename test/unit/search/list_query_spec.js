@@ -25,7 +25,8 @@ describe('ListQuery service', function () {
     ListQuery = this.$inject('ListQuery');
     _.extend(OPTS, {paginator: this.$inject('Paginator').create()});
 
-    this.$inject('spaceContext').fetchPublishedContentType = sinon.stub().resolves({
+    const spaceContext = this.$inject('mocks/spaceContext').init();
+    spaceContext.publishedCTs.fetch.resolves({
       data: { fields: [] }, getId: _.constant('test')
     });
   });

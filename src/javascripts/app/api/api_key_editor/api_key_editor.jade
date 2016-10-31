@@ -232,4 +232,4 @@ header.workbench-header
 
   .workbench-main__info-sidebar.entity-info-panel(
     ng-class="preferences.showAuxPanel && 'x--show'")
-    div(cf-entity-info-panel="apiKey.getSys()")
+    cf-entity-info-panel(entity="apiKey" user="user")

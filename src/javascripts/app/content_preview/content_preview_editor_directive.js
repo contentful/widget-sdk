@@ -120,7 +120,7 @@ function ($scope, require) {
   }
 
   function handleSuccessResponse (responses) {
-    var cts = spaceContext.getFilteredAndSortedContentTypes();
+    var cts = spaceContext.contentTypes;
     if ($scope.context.isNew) {
       contentPreview.canCreate().then(function (allowed) {
         if (allowed) {
