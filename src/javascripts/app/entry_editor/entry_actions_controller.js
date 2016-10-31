@@ -1,8 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-.controller('EntryActionsController',
-['$scope', 'require', 'notify', function ($scope, require, notify) {
+.controller('EntryActionsController', ['$scope', 'require', 'notify', function ($scope, require, notify) {
 
   var controller = this;
   var Command = require('command');
