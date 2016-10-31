@@ -127,7 +127,7 @@ angular.module('contentful')
       // fonts.com for tracking and resembles the logic in their own
       // http://fast.fonts.net/t/trackingCode.js
       url: '//fast.fonts.net/t/1.css?apiType=css&projectid=' +
-           dotty.get(environment, 'settings.fonts_dot_com.project_id')
+        dotty.get(environment, 'settings.fonts_dot_com.project_id')
     },
     // JavaScript:
     markdown: {
@@ -151,7 +151,7 @@ angular.module('contentful')
     },
     googleMaps: {
       url: 'https://maps.googleapis.com/maps/api/js?v=3&key=' +
-      environment.settings.google.maps_api_key,
+        environment.settings.google.maps_api_key,
       globalObject: 'google.maps'
     },
     bugsnag: {
@@ -160,8 +160,13 @@ angular.module('contentful')
     },
     googleTagManager: {
       url: 'https://www.googletagmanager.com/gtm.js?l=gtmDataLayer&' +
-              'id=' + environment.settings.googleTagManagerContainer,
+        'id=' + environment.settings.googleTagManagerContainer,
       globalObject: 'gtmDataLayer'
+    },
+    segment: {
+      url: 'https://cdn.segment.com/analytics.js/v1/' +
+        environment.settings.segment_io + '/analytics.min.js',
+      globalObject: 'analytics'
     }
   };
 
