@@ -14,9 +14,7 @@ angular.module('contentful')
  * `$scope.fieldLocale`.
  *
  * @scope.requires {API.Locale} locale
- * @scope.requires {API.Field} field
- * @scope.requires validationResult
- * @scope.requires docPresence
+ * @scope.requires {Widget.Renderable} widget
  */
 .controller('FieldLocaleController', ['require', '$scope', '$attrs', function (require, $scope, $attrs) {
   var spaceContext = require('spaceContext');
@@ -25,7 +23,7 @@ angular.module('contentful')
   var FieldLocaleDoc = require('entityEditor/FieldLocaleDocument');
 
   var controller = this;
-  var field = $scope.field;
+  var field = $scope.widget.field;
   var locale = $scope.locale;
   var fieldPath = ['fields', field.id];
   var localePath = fieldPath.concat([locale.internal_code]);

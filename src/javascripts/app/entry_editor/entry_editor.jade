@@ -31,7 +31,7 @@ header.workbench-header
 
     form.entity-editor-form(name="entryForm")
       cf-error-list.form-box-error(cf-error-path="['fields']")
-      cf-entity-field(ng-repeat="widget in widgets")
+      cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")
 
   .workbench-main__entity-sidebar
     +entity-sidebar(revert=true)

@@ -6,10 +6,15 @@ angular.module('cf.app')
  * @module cf.app
  * @name cfEntityField
  *
- * @property {API.Field}    $scope.field
  * @property {API.Locale[]} $scope.locales
- * @property {string}       $scope.showHelpText
- * @property {string}       $scope.helpText
+ * @property {object}       $scope.data
+ *   Data that is read by the template
+ * @property {API.Field}    $scope.data.field
+ * @property {string}       $scope.data.helpText
+ * @property {boolean}      $scope.data.showHelpText
+ * @property {boolean}      $scope.data.hasInitialFocus
+ * @property {boolean}      $scope.data.fieldHasFocus
+ * @property {boolean}      $scope.data.fieldHasErrors
  *
  * @scope.requires {object} widget
  * Has field data and specifications to render the control. Provided by
@@ -26,18 +31,21 @@ angular.module('cf.app')
     template: JST.cf_entity_field(),
     controllerAs: 'fieldController',
     controller: ['$scope', function ($scope) {
-      $scope.hasInitialFocus = $scope.$index === 0 &&
-                               $scope.widget.isFocusable;
-
-      $scope.field = $scope.widget.field;
-      // TODO I think this never changes
-      $scope.$watch('widget.field', function (field) {
-        $scope.field = field;
-      });
-
       // Records the 'invalid' flag for each locale’s control. Keys are public
       // locale codes.
       var invalidControls = {};
+
+      var widget = $scope.widget;
+      var field = widget.field;
+
+      // All data that is read by the template
+      var templateData = {
+        field: field,
+        helpText: widget.settings.helpText || widget.defaultHelpText,
+        hasInitialFocus: $scope.$index === 0 && widget.isFocusable,
+        showHelpText: !widget.rendersHelpText
+      };
+      $scope.data = templateData;
 
       /**
        * @ngdoc method
@@ -52,14 +60,6 @@ angular.module('cf.app')
         updateErrorStatus();
       };
 
-      $scope.$watch('widget.settings.helpText', function (helpText) {
-        $scope.helpText = helpText || $scope.widget.defaultHelpText;
-      });
-
-      $scope.$watch('widget.rendersHelpText', function (rendersHelpText) {
-        $scope.showHelpText = !rendersHelpText;
-      });
-
       $scope.$watchCollection(getActiveLocaleCodes, updateLocales);
 
       // TODO Changes to 'validator.errors' change the behavior of
@@ -69,7 +69,7 @@ angular.module('cf.app')
       $scope.$watch('validator.errors', updateErrorStatus);
 
       var offFocusChanged = $scope.focus.onChanged(function (value) {
-        $scope.fieldHasFocus = value === $scope.field.id;
+        $scope.data.fieldHasFocus = value === field.id;
       });
 
       $scope.$on('$destroy', function () {
@@ -77,9 +77,9 @@ angular.module('cf.app')
       });
 
       function updateErrorStatus () {
-        var hasSchemaErrors = $scope.validator.hasError(['fields', $scope.field.id]);
+        var hasSchemaErrors = $scope.validator.hasError(['fields', field.id]);
         var hasControlErrors = _.some(invalidControls);
-        $scope.fieldHasErrors = hasSchemaErrors || hasControlErrors;
+        $scope.data.fieldHasErrors = hasSchemaErrors || hasControlErrors;
       }
 
       function getActiveLocaleCodes () {
@@ -87,8 +87,6 @@ angular.module('cf.app')
       }
 
       function updateLocales () {
-        var field = $scope.widget.field;
-
         $scope.locales = _.filter(getFieldLocales(field), function (locale) {
           var isActive = TheLocaleStore.isLocaleActive(locale);
           var hasError = $scope.validator.hasError(['fields', field.id, locale.internal_code]);

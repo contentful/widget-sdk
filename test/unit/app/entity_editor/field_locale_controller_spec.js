@@ -10,7 +10,9 @@ describe('FieldLocaleController', function () {
     this.init = function (scopeProps) {
       this.otDoc = this.$inject('mocks/entityEditor/Document').create();
       const defaultScopeProps = {
-        field: {id: 'FID'},
+        widget: {
+          field: {id: 'FID'}
+        },
         locale: {internal_code: 'LID'},
         otDoc: this.otDoc
       };
@@ -78,7 +80,7 @@ describe('FieldLocaleController', function () {
         this.isRequired = function (required, optional) {
           return this.init({
             entry: {},
-            field: {required: required},
+            widget: {field: {required: required}},
             locale: {optional: optional}
           }).fieldLocale.isRequired;
         };
@@ -102,7 +104,7 @@ describe('FieldLocaleController', function () {
         this.isRequired = function (required, def) {
           return this.init({
             asset: {},
-            field: {required: required},
+            widget: {field: {required: required}},
             locale: {default: def}
           }).fieldLocale.isRequired;
         };
@@ -183,8 +185,8 @@ describe('FieldLocaleController', function () {
 
     it('is "disabled" and "editing_disabled" if a field is disabled', function () {
       this.hasEditingPermission.returns(true);
-      const field = {field: {disabled: true}};
-      const scope = this.init(_.extend(field, withEditableDoc));
+      const widget = {field: {disabled: true}};
+      const scope = this.init(_.extend({widget: widget}, withEditableDoc));
       expect(scope.fieldLocale.access).toEqual({
         editing_disabled: true,
         disabled: true

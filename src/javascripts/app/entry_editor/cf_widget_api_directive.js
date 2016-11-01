@@ -46,7 +46,7 @@ angular.module('contentful')
     return !!access.disabled;
   });
 
-  this.settings = $scope.widget.settings;
+  this.settings = _.clone($scope.widget.settings);
   this.settings.helpText = this.settings.helpText || $scope.widget.defaultHelpText;
 
   this.locales = {
