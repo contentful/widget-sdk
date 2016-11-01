@@ -11,7 +11,7 @@ describe('navigation/stateChangeHandlers', function () {
 
     modalCloseStub = sinon.stub();
 
-    module('cf.app', function ($provide) {
+    module('contentful/test', function ($provide) {
       $provide.value('$state', {});
       $provide.value('spaceTools', spaceTools);
       $provide.value('contextHistory');

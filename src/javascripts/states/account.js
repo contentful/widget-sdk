@@ -16,7 +16,10 @@ angular.module('contentful')
     controller: ['$scope', function ($scope) {
       $scope.context = {};
     }],
-    onEnter: ['TheAccountView', function (view) { view.enter(); }],
+    onEnter: ['TheAccountView', 'analytics', function (view, analytics) {
+      view.enter();
+      analytics.trackSpaceChange(null);
+    }],
     onExit: ['TheAccountView', function (view) { view.exit(); }],
     children: [{
       name: 'pathSuffix',

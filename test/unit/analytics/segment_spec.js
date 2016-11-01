@@ -2,7 +2,9 @@
 
 describe('Segment service', function () {
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', (environment) => {
+      environment.env = 'production';
+    });
 
     this.segment = this.$inject('segment');
     this.window = this.$inject('$window');

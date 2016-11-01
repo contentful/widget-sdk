@@ -14,21 +14,26 @@ angular.module('contentful')
   var logger = require('logger');
   var cookieStore = require('TheStore/cookieStore');
   var stringifySafe = require('stringifySafe');
-  var $rootScope = require('$rootScope');
   var GTM = require('analytics/gtm');
+  var environment = require('environment');
+  var analyticsConsole = require('analytics/console');
 
-  var env = dotty.get(require('environment'), 'env');
-  var shouldSend = _.includes(['production', 'staging'], env);
+  var env = dotty.get(environment, 'env');
+  var shouldSend = _.includes(['production', 'staging', 'preview'], env);
+  var data = {};
 
-  var organizationData, spaceData, userData;
-  var turnOffStateChangeListener = null;
+  // TODO: migrate `userData` to `data` hash
+  var userData;
 
   var API = {
     enable: _.once(enable),
     disable: disable,
-    setSpace: setSpace,
-    addIdentifyingData: addIdentifyingData,
     track: track,
+    trackSpaceChange: trackSpaceChange,
+    trackStateChange: trackStateChange,
+
+    // TODO: revisit these methods
+    addIdentifyingData: addIdentifyingData,
     trackPersistentNotificationAction: trackPersistentNotificationAction,
     // TODO: remove this method
     pushGtm: pushGtm
@@ -36,14 +41,18 @@ angular.module('contentful')
 
   return API;
 
-  /**
-   * @ngdoc method
-   * @name analytics#enable
-   * @param {API.User} user
-   */
   function enable (user) {
-    segment.enable(shouldSend);
+    if (shouldSend) {
+      segment.enable();
+    }
 
+    userData = user;
+    initialize();
+
+    legacyEnable(user);
+  }
+
+  function legacyEnable (user) {
     // TODO: remove GTM pushes
     GTM.enable();
     GTM.push({
@@ -53,61 +62,58 @@ angular.module('contentful')
 
     // TODO: verify if we need fontsDotCom
     lazyLoad('fontsDotCom');
-
-    turnOffStateChangeListener = $rootScope.$on('$stateChangeSuccess', trackStateChange);
-    userData = user;
-    initialize();
   }
 
   function disable () {
     segment.disable();
     API.enable = _.noop;
+    data = {};
+  }
 
-    GTM.disable();
-
-    if (_.isFunction(turnOffStateChangeListener)) {
-      turnOffStateChangeListener();
-      turnOffStateChangeListener = null;
+  function trackSpaceChange (space) {
+    if (space) {
+      data.space = dotty.get(space, 'data', {});
+      data.organization = dotty.get(space, 'data.organization', {});
+    } else {
+      data.space = data.organization = null;
     }
 
-    _.forEach(API, function (_value, key) {
-      API[key] = _.noop;
+    // TODO: to be removed
+    GTM.push({
+      spaceId: dotty.get(data.space, 'sys.id'),
+      organizationId: dotty.get(data.organization, 'sys.id')
     });
   }
 
-  function setSpace (space) {
-    if (space) {
-      try {
-        organizationData = space.data.organization;
-        spaceData = {
-          spaceIsTutorial: space.data.tutorial,
-          spaceSubscriptionKey: space.data.organization.sys.id,
-          spaceSubscriptionState: space.data.organization.subscriptionState,
-          spaceSubscriptionInvoiceState: space.data.organization.invoiceState,
-          spaceSubscriptionSubscriptionPlanKey: space.data.organization.subscriptionPlan.sys.id,
-          spaceSubscriptionSubscriptionPlanName: space.data.organization.subscriptionPlan.name
-        };
-        GTM.push({
-          spaceId: space.data.sys.id,
-          organizationId: organizationData.sys.id
-        });
-      } catch (error) {
-        logger.logError('Analytics space organizations exception', {
-          data: {
-            space: space,
-            error: error
-          }
-        });
-      }
-      initialize();
-    } else {
-      spaceData = null;
-      organizationData = null;
+  function trackStateChange (state, params, from, fromParams) {
+    segment.page(state.name, params);
+    track('Switched State', {
+      state: state.name,
+      params: params,
+      fromState: from ? from.name : null,
+      fromStateParams: fromParams || null
+    });
+  }
+
+  function getSpaceData () {
+    try {
+      return {
+        spaceIsTutorial: data.space.tutorial,
+        spaceSubscriptionKey: data.organization.sys.id,
+        spaceSubscriptionState: data.organization.subscriptionState,
+        spaceSubscriptionInvoiceState: data.organization.invoiceState,
+        spaceSubscriptionSubscriptionPlanKey: data.organization.subscriptionPlan.sys.id,
+        spaceSubscriptionSubscriptionPlanName: data.organization.subscriptionPlan.name
+      };
+    } catch (err) {
+      return {};
     }
   }
 
   function track (event, data) {
-    segment.track(event, _.merge({}, data, spaceData));
+    data = _.merge({}, data, getSpaceData());
+    segment.track(event, data);
+    analyticsConsole.add(event, 'Segment', data);
   }
 
   function initialize () {
@@ -125,18 +131,8 @@ angular.module('contentful')
     });
   }
 
-  function trackStateChange (_event, state, stateParams, fromState, fromStateParams) {
-    segment.page(state.name, stateParams);
-    track('Switched State', {
-      state: state.name,
-      params: stateParams,
-      fromState: fromState ? fromState.name : null,
-      fromStateParams: fromStateParams || null
-    });
-  }
-
   function trackPersistentNotificationAction (name) {
-    var currentPlan = dotty.get(organizationData, 'subscriptionPlan.name');
+    var currentPlan = dotty.get(data.organization, 'subscriptionPlan.name');
     track('Clicked Top Banner CTA Button', {
       action: name,
       currentPlan: currentPlan !== undefined ? currentPlan : null

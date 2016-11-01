@@ -39,10 +39,8 @@ angular.module('contentful')
       spaceContext: ['require', '$stateParams', function (require, $stateParams) {
         var tokenStore = require('tokenStore');
         var spaceContext = require('spaceContext');
-        var analytics = require('analytics');
         return tokenStore.getSpace($stateParams.spaceId)
         .then(function (space) {
-          analytics.setSpace(space);
           return spaceContext.resetWithSpace(space);
         });
       }],
@@ -53,6 +51,9 @@ angular.module('contentful')
         return spaceContext.widgets;
       }]
     },
+    onEnter: ['space', 'analytics', function (space, analytics) {
+      analytics.trackSpaceChange(space);
+    }],
     controller: ['$scope', 'space', 'sectionAccess', function ($scope, space, sectionAccess) {
       $scope.label = space.data.name;
 
