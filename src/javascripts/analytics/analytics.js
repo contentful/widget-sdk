@@ -9,20 +9,18 @@
 angular.module('contentful')
 
 .factory('analytics', ['require', function (require) {
-  var lazyLoad = require('LazyLoader').get;
   var segment = require('segment');
-  var logger = require('logger');
   var cookieStore = require('TheStore/cookieStore');
   var stringifySafe = require('stringifySafe');
   var environment = require('environment');
   var analyticsConsole = require('analytics/console');
 
+  // TODO: verify if we need fontsDotCom
+  var lazyLoad = require('LazyLoader').get;
+
   var env = dotty.get(environment, 'env');
   var shouldSend = _.includes(['production', 'staging', 'preview'], env);
-  var data = {};
-
-  // TODO: migrate `userData` to `data` hash
-  var userData;
+  var session = {};
 
   var API = {
     enable: _.once(enable),
@@ -30,9 +28,9 @@ angular.module('contentful')
     track: track,
     trackSpaceChange: trackSpaceChange,
     trackStateChange: trackStateChange,
+    trackPersonaSelection: trackPersonaSelection,
 
-    // TODO: revisit these methods
-    addIdentifyingData: addIdentifyingData,
+    // TODO: revisit this method
     trackPersistentNotificationAction: trackPersistentNotificationAction
   };
 
@@ -43,9 +41,8 @@ angular.module('contentful')
       segment.enable();
     }
 
-    userData = user;
-    initialize();
-    track('app:open', {userId: user.sys.id});
+    identify(prepareUserData(user));
+    track('app:loaded');
 
     // TODO: verify if we need fontsDotCom
     lazyLoad('fontsDotCom');
@@ -54,20 +51,36 @@ angular.module('contentful')
   function disable () {
     segment.disable();
     API.enable = _.noop;
-    data = {};
+    session = {};
+  }
+
+  function track (event, data) {
+    data = _.merge({}, data, getSpaceData());
+    segment.track(event, data);
+    analyticsConsole.add(event, 'Segment', data);
+  }
+
+  function identify (extension) {
+    session.user = session.user || {};
+    var user = _.merge(session.user, extension || {});
+    var userId = dotty.get(user, 'sys.id');
+
+    if (userId) {
+      segment.identify(userId, user);
+    }
   }
 
   function trackSpaceChange (space) {
     if (space) {
-      data.space = dotty.get(space, 'data', {});
-      data.organization = dotty.get(space, 'data.organization', {});
+      session.space = dotty.get(space, 'data', {});
+      session.organization = dotty.get(space, 'data.organization', {});
     } else {
-      data.space = data.organization = null;
+      session.space = session.organization = null;
     }
 
     track('app:space_changed', {
-      spaceId: dotty.get(data.space, 'sys.id'),
-      organizationId: dotty.get(data.organization, 'sys.id')
+      spaceId: dotty.get(session.space, 'sys.id'),
+      organizationId: dotty.get(session.organization, 'sys.id')
     });
   }
 
@@ -81,91 +94,79 @@ angular.module('contentful')
     });
   }
 
+  function trackPersonaSelection (personaCode) {
+    var personaName = {
+      code: 'Coder',
+      content: 'Content Manager',
+      project: 'Project Manager',
+      other: 'Other'
+    }[personaCode];
+
+    if (personaName) {
+      var trait = {personaName: personaName};
+      identify(trait);
+      track('Selected Persona', trait);
+      track('user:persona_selected', trait);
+    } else {
+      track('Skipped Persona Selection');
+      track('user:persona_selection_skipped');
+    }
+  }
+
   function getSpaceData () {
     try {
       return {
-        spaceIsTutorial: data.space.tutorial,
-        spaceSubscriptionKey: data.organization.sys.id,
-        spaceSubscriptionState: data.organization.subscriptionState,
-        spaceSubscriptionInvoiceState: data.organization.invoiceState,
-        spaceSubscriptionSubscriptionPlanKey: data.organization.subscriptionPlan.sys.id,
-        spaceSubscriptionSubscriptionPlanName: data.organization.subscriptionPlan.name
+        spaceIsTutorial: session.space.tutorial,
+        spaceSubscriptionKey: session.organization.sys.id,
+        spaceSubscriptionState: session.organization.subscriptionState,
+        spaceSubscriptionInvoiceState: session.organization.invoiceState,
+        spaceSubscriptionSubscriptionPlanKey: session.organization.subscriptionPlan.sys.id,
+        spaceSubscriptionSubscriptionPlanName: session.organization.subscriptionPlan.name
       };
     } catch (err) {
       return {};
     }
   }
 
-  function track (event, data) {
-    data = _.merge({}, data, getSpaceData());
-    segment.track(event, data);
-    analyticsConsole.add(event, 'Segment', data);
-  }
-
-  function initialize () {
-    shieldFromInvalidUserData(function () {
-      if (userData) {
-        addIdentifyingData(getAnalyticsUserData(userData));
-      }
-    });
-  }
-
-  // Send further identifying user data to segment
-  function addIdentifyingData (data) {
-    shieldFromInvalidUserData(function () {
-      segment.identify(userData.sys.id, data);
-    });
-  }
-
   function trackPersistentNotificationAction (name) {
-    var currentPlan = dotty.get(data.organization, 'subscriptionPlan.name');
+    var currentPlan = dotty.get(session.organization, 'subscriptionPlan.name');
     track('Clicked Top Banner CTA Button', {
       action: name,
       currentPlan: currentPlan !== undefined ? currentPlan : null
     });
   }
 
-  function shieldFromInvalidUserData (cb) {
-    try {
-      cb();
-    } catch (error) {
-      logger.logError('Analytics user data exception', {
-        data: {
-          userData: userData,
-          error: error
-        }
-      });
-    }
-  }
-
-  function getAnalyticsUserData (userData) {
+  function prepareUserData (userData) {
     // Remove circular references
     userData = JSON.parse(stringifySafe(userData));
 
-    // On first login, send referrer, campaign and A/B test data to
-    // segment if it has been set by marketing website cookie
     if (userData.signInCount === 1) {
-      var firstVisitData = _.pickBy({
-        firstReferrer: parseCookie('cf_first_visit', 'referer'),
-        campaignName: parseCookie('cf_first_visit', 'campaign_name'),
-        lastReferrer: parseCookie('cf_last_visit', 'referer'),
-        experimentId: parseCookie('cf_experiment', 'experiment_id'),
-        experimentVariationId: parseCookie('cf_experiment', 'variation_id')
-      }, function (val) {
-        return val !== null && val !== undefined;
-      });
-      return _.merge(firstVisitData, userData);
+      // On first login, send referrer, campaign and A/B test data
+      // if it has been set in marketing website cookie
+      return _.merge(getFirstVisitData(), userData);
     } else {
       return userData;
     }
+  }
+
+  function getFirstVisitData () {
+    return _.pickBy({
+      firstReferrer: parseCookie('cf_first_visit', 'referer'),
+      campaignName: parseCookie('cf_first_visit', 'campaign_name'),
+      lastReferrer: parseCookie('cf_last_visit', 'referer'),
+      experimentId: parseCookie('cf_experiment', 'experiment_id'),
+      experimentVariationId: parseCookie('cf_experiment', 'variation_id')
+    }, function (val) {
+      return val !== null && val !== undefined;
+    });
   }
 
   function parseCookie (cookieName, prop) {
     try {
       var cookie = cookieStore.get(cookieName);
       return JSON.parse(cookie)[prop];
-    } catch (e) {
-      return;
+    } catch (err) {
+      return null;
     }
   }
 }]);

@@ -17,11 +17,7 @@ angular.module('contentful')
     trackWidgetEventIfCustom: trackWidgetEventIfCustom,
     trackFollowedKbpLink: trackFollowedKbpLink,
     trackContentTypeChange: trackContentTypeChange,
-    trackToggleAuxPanel: trackToggleAuxPanel,
-    persona: {
-      trackSelected: personaTrackSelected,
-      trackSkipped: personaTrackSkipped
-    }
+    trackToggleAuxPanel: trackToggleAuxPanel
   };
 
   /**
@@ -94,26 +90,5 @@ angular.module('contentful')
     analytics.track(action, {
       currentState: stateName
     });
-  }
-
-  function personaTrackSelected (personaCode) {
-    var personaName = {
-      code: 'Coder',
-      content: 'Content Manager',
-      project: 'Project Manager',
-      other: 'Other'
-    }[personaCode];
-
-    if (!personaName) {
-      return;
-    }
-
-    analytics.addIdentifyingData({personaName: personaName});
-    analytics.track('Selected Persona', {personaName: personaName});
-    analytics.track('user:persona_selected', {personaName: personaName});
-  }
-
-  function personaTrackSkipped () {
-    analytics.track('Skipped Persona Selection');
   }
 }]);

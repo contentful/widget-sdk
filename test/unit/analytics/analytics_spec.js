@@ -65,11 +65,12 @@ describe('analytics', function () {
       sinon.assert.calledWith(this.segment.identify, 'userid', this.userData);
     });
 
-    it('calls identify with new data', function () {
+    it('calls identify with new data when persona is selected', function () {
       this.analytics.enable(this.userData);
-      this.analytics.addIdentifyingData({data: 'lolcat'});
+      this.analytics.trackPersonaSelection('code');
       sinon.assert.calledTwice(this.segment.identify);
-      sinon.assert.calledWith(this.segment.identify, 'userid', {data: 'lolcat'});
+      const expected = _.extend({personaName: 'Coder'}, this.userData);
+      sinon.assert.calledWith(this.segment.identify, 'userid', expected);
     });
   });
 
