@@ -27,30 +27,20 @@ const FILE_DIST_DEST = P.resolve('./output/files')
 // Destination directory for debian packages.
 const PKG_DEST = P.resolve('./output/package')
 
-// The name prefix for branches that should have tagged deploys to
-// staging and production.
-// Make sure to sync this with the Travis deploy configuration.
-const PUBLIC_PREVIEW_PREFIX = 'public-preview/'
-
 
 /**
  * Create and configure distribution based on Travis parameters.
  *
- * - Determines the configuration from the branch and wheter it is pull
- *   request or not.
- * - Create a file distribution in `output/files` with a version and
- *   branch link to upload to the preview and environment.
+ * - For each target environment create a file distribution in
+ *   `output/files/{env}`.
  * - Create a debian package in `output/packages` if we build the
  *   'master', 'production', or 'preview' branch.
  */
 export default function* runTravis ({branch, pr, version}) {
   let travis = loadTravisEnv(branch, pr)
   yield* createFileDist('preview', version, travis.distBranch, true)
-  if (travis.publicPreview) {
-    console.log('Generating public preview distribution')
-    yield* createFileDist('staging', version, travis.distBranch)
-    yield* createFileDist('production', version, travis.distBranch)
-  }
+  yield* createFileDist('staging', version, travis.distBranch)
+  yield* createFileDist('production', version, travis.distBranch)
   if (travis.isMainBranch) {
     yield* configureIndex(version, travis.targetEnv, 'build/index.html')
     yield* createPackageDist(version)
@@ -72,19 +62,15 @@ export default function* runTravis ({branch, pr, version}) {
  *   one of the target environments.
  * - distBranch: string?  Contains the name of the branch if we are
  *   building a branch head.
- * - publicPreview: boolean  True iff we the branch starts with
- *   'public-preview/'. We will then build file distributions for
- *   staging and proudction.
  */
 function loadTravisEnv (branch, pullRequest) {
   let isMerge = pullRequest !== 'false'
   let distBranch = isMerge ? null : branch
   let targetEnv = getTravisTargetEnv(branch, isMerge)
   let isMainBranch = !isMerge && includes(MAIN_BRANCHES, branch)
-  let publicPreview = distBranch && distBranch.startsWith(PUBLIC_PREVIEW_PREFIX)
   return {
     branch, pullRequest, isMerge, targetEnv,
-    isMainBranch, distBranch, publicPreview
+    isMainBranch, distBranch
   }
 }
 
@@ -120,7 +106,9 @@ function getTravisTargetEnv (branch, isMerge) {
  * build/styleguide -> dest/files/${env}/styleguide/${branch}
  * ~~~
  *
- * @param {string} dest
+ * The index.html file is configured with `config/{env}.json`.
+ *
+ * @param {string} env
  * @param {string} version
  * @param {string?} branch
  * @param {boolean?} includeStyleguide
