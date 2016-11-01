@@ -24,7 +24,11 @@ angular.module('cf.utils')
       return o;
     }
 
-    Object.freeze(o);
+    try {
+      Object.freeze(o);
+    } catch (e) {
+      // ES5 throws TypeError. ES6 is ok.
+    }
 
     if (_.isObject(o)) {
       Object.getOwnPropertyNames(o).forEach(function (prop) {
