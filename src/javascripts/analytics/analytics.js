@@ -23,46 +23,18 @@ angular.module('contentful')
   var organizationData, spaceData, userData;
   var turnOffStateChangeListener = null;
 
-  // The integrations segment should send events to.
-  var SEGMENT_INTEGRATIONS = {
-    'All': false,
-    'Mixpanel': true,
-    'Google Analytics': true
-  };
-
-  var analytics = {
-    enable: enable,
+  var API = {
+    enable: _.once(enable),
     disable: disable,
     setSpace: setSpace,
     addIdentifyingData: addIdentifyingData,
-    /**
-     * @ngdoc method
-     * @name analytics#track
-     * @description
-     * Send `data` merged with information about the space to
-     * Segment.
-     *
-     * @param {string} event
-     * @param {object} data
-     */
     track: track,
     trackPersistentNotificationAction: trackPersistentNotificationAction,
-
-    /**
-     * @ngdoc method
-     * @name analytics#pushGtm
-     * @description
-     * Push an object to the Google Tag Manager
-     *
-     * See the [Google Tag Manager developer docs][1] for more
-     * information.
-     *
-     * [1]:https://developers.google.com/tag-manager/devguide#datalayer
-     * @param {object} data
-     */
+    // TODO: remove this method
     pushGtm: pushGtm
   };
-  return analytics;
+
+  return API;
 
   /**
    * @ngdoc method
@@ -71,12 +43,17 @@ angular.module('contentful')
    */
   function enable (user) {
     segment.enable(shouldSend);
+
+    // TODO: remove GTM pushes
     GTM.enable();
     GTM.push({
       event: 'app.open',
       userId: user.sys.id
     });
+
+    // TODO: verify if we need fontsDotCom
     lazyLoad('fontsDotCom');
+
     turnOffStateChangeListener = $rootScope.$on('$stateChangeSuccess', trackStateChange);
     userData = user;
     initialize();
@@ -84,6 +61,8 @@ angular.module('contentful')
 
   function disable () {
     segment.disable();
+    API.enable = _.noop;
+
     GTM.disable();
 
     if (_.isFunction(turnOffStateChangeListener)) {
@@ -91,8 +70,8 @@ angular.module('contentful')
       turnOffStateChangeListener = null;
     }
 
-    _.forEach(analytics, function (_value, key) {
-      analytics[key] = _.noop;
+    _.forEach(API, function (_value, key) {
+      API[key] = _.noop;
     });
   }
 
@@ -128,9 +107,7 @@ angular.module('contentful')
   }
 
   function track (event, data) {
-    segment.track(event, _.merge({}, data, spaceData), {
-      integrations: SEGMENT_INTEGRATIONS
-    });
+    segment.track(event, _.merge({}, data, spaceData));
   }
 
   function initialize () {

@@ -4,58 +4,55 @@ angular.module('contentful')
 
 .factory('segment', ['require', function (require) {
   var $window = require('$window');
+  var $q = require('$q');
   var CallBuffer = require('CallBuffer');
   var LazyLoader = require('LazyLoader');
   var logger = require('logger');
-  var analyticsConsole = require('analytics/console');
 
-  var buffer = CallBuffer.create();
-  var enabled;
-  var noCommunication;
-
-  return {
-    enable: enable,
-    disable: disable,
-    page: bufferedSegmentCall('page'),
-    identify: bufferedSegmentCall('identify'),
-    track: bufferedSegmentCall('track')
+  var INTEGRATIONS = {
+    All: false,
+    Mixpanel: false,
+    'Google Analytics': true
   };
 
-  function enable (shouldSend) {
-    noCommunication = !shouldSend;
+  var buffer = CallBuffer.create();
+  var bufferedTrack = bufferedCall('track');
 
-    if (enabled === undefined) {
-      enabled = true;
-      install().then(function () {
-        buffer.resolve();
-      });
-    }
+  var API = {
+    enable: _.once(enable),
+    disable: disable,
+    track: track,
+    page: bufferedCall('page'),
+    identify: bufferedCall('identify')
+  };
+
+  return API;
+
+  function enable () {
+    install().then(buffer.resolve);
   }
 
   function disable () {
-    enabled = false;
     buffer.disable();
+    API.enable = _.noop;
   }
 
-  function bufferedSegmentCall (fnName) {
+  function track (event, data) {
+    bufferedTrack(event, data, INTEGRATIONS);
+  }
+
+  function bufferedCall (fnName) {
     return function () {
-      var args = arguments;
+      var args = _.toArray(arguments);
       buffer.call(function () {
         try {
-          if (!noCommunication) {
-            $window.analytics[fnName].apply($window.analytics, args);
-          }
-          if (fnName === 'track') {
-            analyticsConsole.add(args[0], 'Segment', args[1]);
-          }
-        } catch (exp) {
-          logger.logError('Failed analytics.js call', {
-            data: {
-              exp: exp,
-              msg: exp.message,
-              analyticsFn: fnName,
-              analyticsFnArgs: _.toArray(args)
-            }
+          $window.analytics[fnName].apply($window.analytics, args);
+        } catch (err) {
+          logger.logError('Failed Segment call', {
+            err: err,
+            msg: err.message,
+            analyticsFn: fnName,
+            analyticsFnArgs: args
           });
         }
       });
@@ -67,13 +64,8 @@ angular.module('contentful')
   function install () {
     var analytics = $window.analytics = $window.analytics || [];
 
-    if (analytics.initialize) {
-      return;
-    }
-
-    if (analytics.invoked) {
-      logger.logError('Segment snippet included twice.');
-      return;
+    if (analytics.initialize || analytics.invoked) {
+      return $q.reject();
     } else {
       analytics.invoked = true;
     }
@@ -99,7 +91,7 @@ angular.module('contentful')
 
     analytics.factory = function (method) {
       return function () {
-        var args = Array.prototype.slice.call(arguments);
+        var args = _.toArray(arguments);
         args.unshift(method);
         analytics.push(args);
         return analytics;

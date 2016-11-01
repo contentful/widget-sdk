@@ -5,88 +5,102 @@ describe('Segment service', function () {
     module('contentful/test');
 
     this.segment = this.$inject('segment');
-    this.win = this.$inject('$window');
+    this.window = this.$inject('$window');
+    this.loader = this.$inject('LazyLoader');
 
-    sinon.stub(this.$inject('LazyLoader'), 'get', () => {
-      this.win.analytics = {
-        track: sinon.stub(),
-        page: sinon.stub(),
-        identify: sinon.stub()
-      };
-      return this.$inject('$q').resolve(this.win.analytics);
+    this.analytics = {
+      track: sinon.stub(),
+      page: sinon.stub(),
+      identify: sinon.stub()
+    };
+
+    const resolve = this.$inject('$q').resolve;
+    sinon.stub(this.loader, 'get', () => {
+      return resolve(this.window.analytics = this.analytics);
     });
   });
 
   afterEach(function () {
-    delete this.win.analytics;
+    delete this.window.analytics;
   });
 
   describe('enable()', function () {
     it('enables the service', function () {
       this.segment.enable();
-      expect(this.win.analytics).not.toBeUndefined();
+      sinon.assert.calledOnce(this.loader.get.withArgs('segment'));
+      expect(this.window.analytics).not.toBeUndefined();
     });
   });
 
   describe('disable()', function () {
     it('disables the service', function () {
       this.segment.disable();
-      expect(this.win.analytics).toBeUndefined();
+      expect(this.window.analytics).toBeUndefined();
     });
 
     it('ignores subsequent enable() calls', function () {
       this.segment.disable();
       this.segment.enable();
-      expect(this.win.analytics).toBeUndefined();
+      expect(this.window.analytics).toBeUndefined();
     });
   });
 
-  describeSegmentFunction('track');
-  describeSegmentFunction('page');
-  describeSegmentFunction('identify');
+  describeCall('track', {All: false, Mixpanel: false, 'Google Analytics': true});
+  describeCall('page');
+  describeCall('identify');
 
-  function describeSegmentFunction (fnName) {
+  function describeCall (fnName, extraArg) {
     describe(`${fnName} method`, function () {
+      beforeEach(function () {
+        this.enable = () => {
+          this.segment.enable();
+          this.$apply(); // resolve lazy loader
+        };
+
+        this.getExpectedArgs = () => {
+          return extraArg ? ['key', {data: 1}, extraArg] : ['key', {data: 1}];
+        };
+
+        this.assertMethodCalled = () => {
+          sinon.assert.calledOnce(this.analytics[fnName]);
+          expect(this.analytics[fnName].firstCall.args).toEqual(this.getExpectedArgs());
+        };
+      });
+
       it('buffers calls until service gets enabled', function () {
-        this.segment[fnName]('foo', 1, 2);
-        this.segment.enable(true);
-        this.$apply();
-        sinon.assert.calledWithExactly(this.win.analytics[fnName], 'foo', 1, 2);
+        this.segment[fnName]('key', {data: 1});
+        this.enable();
+        this.assertMethodCalled();
       });
 
       it('invokes calls immediately if service is enabled', function () {
-        this.segment.enable(true);
-        this.$apply();
-        this.segment[fnName]('bar', 1, 2);
-        sinon.assert.calledWithExactly(this.win.analytics[fnName], 'bar', 1, 2);
+        this.enable();
+        this.segment[fnName]('key', {data: 1});
+        this.assertMethodCalled();
       });
 
       it('ignores calls on a disabled service', function () {
-        this.segment.enable(true);
-        this.$apply();
+        this.enable();
         this.segment.disable();
-        this.segment[fnName]('foo');
-        sinon.assert.notCalled(this.win.analytics[fnName]);
+        this.segment[fnName]();
+        sinon.assert.notCalled(this.analytics[fnName]);
       });
 
-      it('results in an error being logged if the respective analytics.js function throws an exception', function () {
-        const logSpy = sinon.spy();
-        this.$inject('logger').logError = logSpy;
+      it('logs an error if segment function throws an exception', function () {
+        const spy = this.$inject('logger').logError = sinon.spy();
+        const err = new Error('Some exception');
 
-        this.segment.enable(true);
-        this.$apply();
-        this.win.analytics[fnName].throws();
+        this.enable();
+        this.analytics[fnName].throws(err);
+        this.segment[fnName]('key', {data: 1});
 
-        this.segment[fnName]('bar', 1, 2);
-
-        sinon.assert.calledOnce(logSpy);
-        sinon.assert.calledWithExactly(logSpy, 'Failed analytics.js call', sinon.match.object);
-        expect(logSpy.args[0][1].data).toEqual(jasmine.objectContaining({
-          msg: jasmine.any(String),
-          exp: jasmine.any(Error),
+        sinon.assert.calledOnce(spy);
+        expect(spy.firstCall.args).toEqual(['Failed Segment call', {
+          err: err,
+          msg: err.message,
           analyticsFn: fnName,
-          analyticsFnArgs: ['bar', 1, 2]
-        }));
+          analyticsFnArgs: this.getExpectedArgs()
+        }]);
       });
     });
   }
