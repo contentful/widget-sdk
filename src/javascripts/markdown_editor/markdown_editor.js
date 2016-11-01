@@ -42,6 +42,7 @@ angular.module('contentful')
       destroy: editor.destroy,
       setContent: editor.setValue,
       getSelectedText: editor.getSelectedText,
+      usePrimarySelection: editor.usePrimarySelection,
       repaint: editor.repaint,
       // TODO Remove this. We want to hide the low-level interface
       getWrapper: function () { return editor; }

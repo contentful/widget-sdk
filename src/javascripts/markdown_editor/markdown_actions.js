@@ -26,6 +26,7 @@ angular.module('contentful').factory('MarkdownEditor/actions', ['require', funct
     return _.defaults(advancedActions, editor.actions);
 
     function link () {
+      editor.usePrimarySelection();
       modalDialog.open({
         scopeData: {
           model: {
