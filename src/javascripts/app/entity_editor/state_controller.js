@@ -12,20 +12,7 @@ angular.module('contentful')
   var publicationWarnings = $injector.get('entityEditor/publicationWarnings').create();
   var versioningTracking = $injector.get('track/versioning');
 
-  var stateManager = new StateManager(entity);
-
-  /**
-   * @ngdoc analytics-event
-   * @name Changed Entity State
-   * @param {string} from
-   * @param {string} to
-   */
-  stateManager.changedEditingState.attach(function (from, to) {
-    analytics.track('Changed Entity State', {
-      from: from,
-      to: to
-    });
-  });
+  var stateManager = new StateManager(entity, trackStatusChange);
 
   function hasPermission (action) {
     return accessChecker.canPerformActionOnEntity(action, entity);
@@ -173,4 +160,11 @@ angular.module('contentful')
              otDoc.reverter.hasChanges();
     }
   });
+
+  function trackStatusChange (from, to) {
+    analytics.track('Changed Entity State', {
+      from: from,
+      to: to
+    });
+  }
 }]);

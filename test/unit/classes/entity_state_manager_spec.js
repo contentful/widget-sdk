@@ -11,7 +11,7 @@ describe('StateManager class', function () {
 
     const EntityStateManager = this.$inject('EntityStateManager');
     this.entity = cfStub.entry(cfStub.space('SID'), 'EID');
-    this.manager = new EntityStateManager(this.entity);
+    this.manager = new EntityStateManager(this.entity, sinon.stub());
     this.adapter = cfStub.adapter;
   });
 
@@ -82,19 +82,6 @@ describe('StateManager class', function () {
       this.adapter.requests.pop().resolve();
       return archive;
     });
-
-    it('triggers "changedEditingState" signal', function () {
-      const listener = sinon.stub();
-      this.manager.changedEditingState.attach(listener);
-      this.manager.archive();
-      this.$apply();
-
-      this.adapter.requests.pop().resolve();
-      this.entity.isArchived = sinon.stub.returns(true);
-      this.$apply();
-
-      sinon.assert.calledWith(listener, 'draft', 'archived');
-    });
   });
 
   describe('#publish()', function () {
@@ -123,20 +110,6 @@ describe('StateManager class', function () {
       this.$apply();
       this.adapter.requests.pop().resolve();
       return publish;
-    });
-
-    it('triggers "changedEditingState" signal', function () {
-      const listener = sinon.stub();
-      this.manager.changedEditingState.attach(listener);
-      this.manager.publish();
-      this.$apply();
-
-      this.adapter.requests.pop().resolve(_.merge({
-        sys: {archivedVersion: null, publishedVersion: 1}
-      }, this.entity.data));
-      this.$apply();
-
-      sinon.assert.calledWith(listener, 'draft', 'published');
     });
   });
 

@@ -3,7 +3,6 @@
 angular.module('contentful')
 .factory('EntityStateManager', ['require', function (require) {
   var $q = require('$q');
-  var createSignal = require('signal').create;
 
   /**
    * @ngdoc type
@@ -13,9 +12,9 @@ angular.module('contentful')
    *
    * @property {Signal<string, string>} changedEditingState
    */
-  function StateManager (entity) {
+  function StateManager (entity, trackChange) {
+    this.trackChange = trackChange;
     this.entity = entity;
-    this.changedEditingState = createSignal();
   }
 
   /**
@@ -153,7 +152,7 @@ angular.module('contentful')
       self._lockedEditingState = null;
     })
     .then(function () {
-      self.changedEditingState.dispatch(lockedEditingState, self.getEditingState());
+      self.trackChange(lockedEditingState, self.getEditingState());
     });
   };
 
