@@ -26,7 +26,7 @@ angular.module('contentful')
 
 
   $scope.$watch(function () {
-    return stateManager.getEditingState();
+    return stateManager.getState();
   }, function (state) {
     controller.current = state;
     switch (state) {
@@ -142,10 +142,13 @@ angular.module('contentful')
   }, {
     disabled: function () {
       switch (stateManager.getState()) {
-        case 'draft': return !hasPermission('delete');
-        case 'archive': return !hasPermission('delete');
-        case 'published': return !hasPermission('unpublish') || !hasPermission('delete');
-        default: return true;
+        case 'draft':
+          return !hasPermission('delete');
+        case 'archive':
+          return !hasPermission('delete');
+        case 'changes':
+        case 'published':
+          return !hasPermission('unpublish') || !hasPermission('delete');
       }
     }
   });

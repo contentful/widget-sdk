@@ -21,37 +21,21 @@ describe('StateManager class', function () {
       expect(this.manager.getState()).toEqual('archived');
     });
 
-    it('returns "published" when published version is set', function () {
-      this.entity.data.sys.publishedVersion = 1;
-      expect(this.manager.getState()).toEqual('published');
-    });
-
-    it('returns "draft" otherwise', function () {
-      expect(this.manager.getState()).toEqual('draft');
-    });
-  });
-
-  describe('#getEditingState()', function () {
-    it('returns "archived" when archived version is set', function () {
-      this.entity.data.sys.archivedVersion = 1;
-      expect(this.manager.getEditingState()).toEqual('archived');
-    });
-
     it('returns "published" when current version is published', function () {
       this.entity.data.sys.publishedVersion = 1;
       this.entity.data.sys.version = 2;
-      expect(this.manager.getEditingState()).toEqual('published');
+      expect(this.manager.getState()).toEqual('published');
     });
 
     it('returns "changes" when current version is larger then published version', function () {
       this.entity.data.sys.publishedVersion = 1;
       this.entity.data.sys.version = 3;
-      expect(this.manager.getEditingState()).toEqual('changes');
+      expect(this.manager.getState()).toEqual('changes');
     });
 
 
     it('returns "draft" otherwise', function () {
-      expect(this.manager.getEditingState()).toEqual('draft');
+      expect(this.manager.getState()).toEqual('draft');
     });
   });
 
