@@ -1,12 +1,10 @@
 'use strict';
 
-angular.module('contentful')
-.controller('ContentTypeListController',
-['$scope', '$injector', function ContentTypeListController ($scope, $injector) {
-  var notification = $injector.get('notification');
-  var spaceContext = $injector.get('spaceContext');
-  var FilterQS = $injector.get('FilterQueryString');
-  var accessChecker = $injector.get('accessChecker');
+angular.module('contentful').controller('ContentTypeListController', ['$scope', 'require', function ($scope, require) {
+  var notification = require('notification');
+  var spaceContext = require('spaceContext');
+  var FilterQS = require('FilterQueryString');
+  var accessChecker = require('accessChecker');
 
   var qs = FilterQS.create('contentTypes');
   var view = qs.readView();
@@ -25,7 +23,7 @@ angular.module('contentful')
   });
 
   function updateList () {
-    $scope.isSearching = true;
+    $scope.context.isSearching = true;
 
     spaceContext.refreshContentTypes()
       .then(function () {
@@ -38,12 +36,12 @@ angular.module('contentful')
         $scope.visibleContentTypes = _.filter(contentTypes, shouldBeVisible);
       }, accessChecker.wasForbidden($scope.context))
       .then(function (res) {
-        $scope.isSearching = false;
+        $scope.context.isSearching = false;
         return res;
       })
       .catch(function (err) {
         if (_.isObject(err) && 'statusCode' in err && err.statusCode === -1) {
-          $scope.isSearching = true;
+          $scope.context.isSearching = true;
         }
       });
   }

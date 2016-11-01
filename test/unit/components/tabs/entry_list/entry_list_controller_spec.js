@@ -2,7 +2,6 @@
 
 describe('Entry List Controller', function () {
   let scope, spaceContext;
-  const originalDebounce = _.debounce;
 
   function createEntries (n) {
     const entries = _.map(new Array(n), function () {
@@ -42,13 +41,8 @@ describe('Entry List Controller', function () {
 
     const $controller = this.$inject('$controller');
 
-    _.debounce = _.identity;
     $controller('EntryListController', {$scope: scope});
     scope.selection.updateList = sinon.stub();
-  });
-
-  afterEach(function () {
-    _.debounce = originalDebounce;
   });
 
   describe('#loadView()', function () {

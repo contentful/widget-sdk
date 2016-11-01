@@ -165,7 +165,7 @@ describe('Asset List Controller', function () {
     it('unsets isSearching flag if successful', function () {
       scope.searchController.resetAssets();
       scope.$apply();
-      expect(scope.isSearching).toBe(false);
+      expect(scope.context.isSearching).toBe(false);
     });
 
     // infinite loader when the query fails with a status code of -1
@@ -175,7 +175,7 @@ describe('Asset List Controller', function () {
       });
       scope.searchController.resetAssets();
       scope.$apply();
-      expect(scope.isSearching).toBe(true);
+      expect(scope.context.isSearching).toBe(true);
     });
 
     it('loads assets', function () {
@@ -429,7 +429,7 @@ describe('Asset List Controller', function () {
     it('is false when the view is loading', function () {
       scope.assets = [{}];
       scope.context.view.searchTerm = 'foo';
-      scope.isSearching = true;
+      scope.context.isSearching = true;
       expect(scope.showNoAssetsAdvice()).toBe(false);
     });
   });

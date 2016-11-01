@@ -50,7 +50,7 @@ angular.module('contentful')
     var view = $scope.context.view;
     var hasQuery = !_.isEmpty(view.searchTerm);
     var hasEntries = $scope.assets && $scope.assets.length > 0;
-    return !hasEntries && !hasQuery && !$scope.isSearching;
+    return !hasEntries && !hasQuery && !$scope.context.isSearching;
   };
 
   $scope.$watch('showNoAssetsAdvice()', function (show) {

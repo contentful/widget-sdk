@@ -111,9 +111,7 @@ src/javascripts/components/shared/file_info/cf_file_display_directive.js
 src/javascripts/components/shared/getty_dialog/getty_dialog_controller.js
 src/javascripts/components/shared/search_field/cf_autocomplete_date_directive.js
 src/javascripts/components/shared/search_field/cf_autocomplete_list_directive.js
-src/javascripts/components/shared/search_field/cf_tokenized_search_directive.js
 src/javascripts/components/shared/search_field/cf_search_directive.js
-src/javascripts/components/shared/search_field/cf_tokenized_search_controller.js
 src/javascripts/components/shared/thumbnail/cf_thumbnail_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_list_directive.js
 src/javascripts/components/shared/validation_error_display/cf_error_messages_directive.js

@@ -9,8 +9,9 @@ angular.module('contentful')
   var createRequestQueue = require('overridingRequestQueue');
   var spaceContext = require('spaceContext');
   var accessChecker = require('accessChecker');
+  var debounce = require('debounce');
 
-  var AUTOTRIGGER_MIN_LEN = 3;
+  var AUTOTRIGGER_MIN_LEN = 4;
 
   var MODE_APPEND = 'append';
   var MODE_REPLACE = 'replace';
@@ -22,11 +23,11 @@ angular.module('contentful')
   var isResettingTerm = false;
   var isAppendingPage = false;
 
-  var isSearching = toggleIsSearching(true);
-  var isNotSearching = toggleIsSearching(false);
+  var setIsSearching = makeIsSearchingSetter(true);
+  var unsetIsSearching = makeIsSearchingSetter(false);
 
 
-  var debouncedUpdateWithTerm = _.debounce(updateWithTerm, 200);
+  var debouncedUpdateWithTerm = debounce(updateWithTerm, 200);
   var updateEntries = createRequestQueue(requestEntries, setupEntriesHandler);
 
   /**
@@ -115,9 +116,9 @@ angular.module('contentful')
     updateEntries();
   }
 
-  function toggleIsSearching (flag) {
+  function makeIsSearchingSetter (flag) {
     return function (res) {
-      $scope.isSearching = flag;
+      $scope.context.isSearching = flag;
       return res;
     };
   }
@@ -131,7 +132,7 @@ angular.module('contentful')
     }
 
     return prepareQuery()
-      .then(isSearching)
+      .then(setIsSearching)
       .then(function (query) {
         return spaceContext.space.getEntries(query);
       })
@@ -148,12 +149,12 @@ angular.module('contentful')
 
   function setupEntriesHandler (promise) {
     return promise
-      .then(isNotSearching)
+      .then(unsetIsSearching)
       .then(handleEntriesResponse, accessChecker.wasForbidden($scope.context))
       .catch(function (err) {
         if (_.isObject(err) && 'statusCode' in err && err.statusCode === -1) {
           // entries update failed due to some network issue
-          isSearching();
+          setIsSearching();
         }
         return $q.reject(err);
       })

@@ -1,7 +1,5 @@
-include ../../../ui/loader.mixin.jade
-
 .search-field__input
   input.form-control(type="search" ng-model="inner.term" placeholder="{{placeholder}}")
-  +inline-loader("isSearching")
+  cf-inline-loader(is-shown="isSearching")
 .search-field__button.btn-secondary-action(ng-click="updateFromButton()" tabindex="0")
   i.fa.fa-search.fa-flip-horizontal

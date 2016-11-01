@@ -2,7 +2,7 @@
 
 angular.module('contentful').directive('cfSearch', ['require', function (require) {
   var keycodes = require('keycodes');
-  var debounce = _.debounce;
+  var debounce = require('debounce');
 
   return {
     template: JST['cf_search'](),

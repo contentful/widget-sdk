@@ -1,6 +1,6 @@
 mixin no-search-results(condition, searchTerm, filter)
   - filter = filter || '"all"'
-  .advice.advice--row-aligned(ng-show=condition)
+  .advice.advice--row-aligned(ng-show=condition)&attributes(attributes)
     i.fa.fa-search.fa-flip-horizontal.advice__icon.advice__icon--normal.advice__icon--margin-right.advice__icon--margin-bottom
     .advice__frame.advice__frame--no-margin.advice__frame--align-left
       header.advice__title.advice__title--normal Sadly, we didn't find anything matching #[i {{ #{searchTerm} || (#{filter} !== 'all' ? 'status:' + #{filter} : '""')}}]

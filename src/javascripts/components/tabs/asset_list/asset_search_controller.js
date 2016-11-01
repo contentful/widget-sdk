@@ -17,8 +17,8 @@ angular.module('contentful')
 
   var assetLoader = new PromisedLoader();
 
-  var isSearching = toggleIsSearching(true);
-  var isNotSearching = toggleIsSearching(false);
+  var setIsSearching = makeIsSearchingSetter(true);
+  var unsetIsSearching = makeIsSearchingSetter(false);
 
   this.paginator = Paginator.create();
   $scope.assetContentType = require('assetContentType');
@@ -27,7 +27,7 @@ angular.module('contentful')
     if (resetPage) { this.paginator.setPage(0); }
 
     return prepareQuery()
-      .then(isSearching)
+      .then(setIsSearching)
       .then(function (query) {
         return assetLoader.loadPromise(function () {
           return spaceContext.space.getAssets(query);
@@ -39,11 +39,11 @@ angular.module('contentful')
         $scope.assets = filterOutDeleted(assets);
         $scope.selection.updateList($scope.assets);
       }, accessChecker.wasForbidden($scope.context))
-      .then(isNotSearching)
+      .then(unsetIsSearching)
       .catch(function (err) {
         if (_.isObject(err) && 'statusCode' in err && err.statusCode === -1) {
           // infinite loader if there's network related error
-          isSearching();
+          setIsSearching();
         }
         return $q.reject(err);
       })
@@ -87,9 +87,9 @@ angular.module('contentful')
       .catch(ReloadNotification.apiErrorHandler);
   };
 
-  function toggleIsSearching (flag) {
+  function makeIsSearchingSetter (flag) {
     return function (val) {
-      $scope.isSearching = flag;
+      $scope.context.isSearching = flag;
       return val;
     };
   }

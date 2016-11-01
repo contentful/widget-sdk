@@ -202,34 +202,36 @@ angular.module('contentful')
   // the backupString is cleared and the cursor is placed at the end of the token
   $scope.confirmAutocompletion = function () {
     var token = $scope.getCurrentToken();
-    if(!token) return;
+    if (!token) {
+      return;
+    }
     var originalString = $scope.inner.term || '';
-    var appendString = token.type === 'Value'    ? ' ' :
-                       token.type === 'Operator' ? '' :
-                       /*token.type === Key*/      operator(token.content) + ' ';
+    var appendString = token.type === 'Value' ? ' ' : token.type === 'Operator' ? '' : operator(token.content) + ' ';
     $scope.inner.term = spliceSlice(originalString, token.end, 0, appendString);
     $scope.clearBackupString();
-    if(token.type === 'Value')  {
+    if (token.type === 'Value') {
       $scope.submitSearch($scope.inner.term);
       toggleAutocompletions(false);
     }
     $scope.selectRange(token.end + appendString.length, 0)
     .then(function () {
-      if($scope) {
+      if ($scope) {
         $scope.position = token.end + appendString.length;
         $scope.updateAutocompletions();
       }
     });
 
-    function operator(key) {
+    function operator (key) {
       return searchQueryHelper.operatorForKey(key, $scope.getContentType());
     }
   };
 
-  $scope._backupString=null;
+  $scope._backupString = null;
   $scope.backupString = function (str, offset, length) {
-    var b = str.slice(offset, offset+length);
-    if (!$scope._backupString && b.length > 0) $scope._backupString = b;
+    var b = str.slice(offset, offset + length);
+    if (!$scope._backupString && b.length > 0) {
+      $scope._backupString = b;
+    }
   };
 
   $scope.restoreString = function () {
@@ -251,12 +253,12 @@ angular.module('contentful')
   // index: position where to insert
   // count: how many characters to remove at index
   // add: which string to insert at the index
-  function spliceSlice(str, index, count, add) {
+  function spliceSlice (str, index, count, add) {
     return str.slice(0, index) + add + str.slice(index + count);
   }
 
   $scope.$on('$destroy', function () {
-    $scope = null; //MEMLEAK FIX
+    $scope = null; // MEMLEAK FIX
   });
 
 }]);
