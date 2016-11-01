@@ -14,7 +14,6 @@ angular.module('contentful')
   var logger = require('logger');
   var cookieStore = require('TheStore/cookieStore');
   var stringifySafe = require('stringifySafe');
-  var GTM = require('analytics/gtm');
   var environment = require('environment');
   var analyticsConsole = require('analytics/console');
 
@@ -34,9 +33,7 @@ angular.module('contentful')
 
     // TODO: revisit these methods
     addIdentifyingData: addIdentifyingData,
-    trackPersistentNotificationAction: trackPersistentNotificationAction,
-    // TODO: remove this method
-    pushGtm: pushGtm
+    trackPersistentNotificationAction: trackPersistentNotificationAction
   };
 
   return API;
@@ -48,17 +45,7 @@ angular.module('contentful')
 
     userData = user;
     initialize();
-
-    legacyEnable(user);
-  }
-
-  function legacyEnable (user) {
-    // TODO: remove GTM pushes
-    GTM.enable();
-    GTM.push({
-      event: 'app.open',
-      userId: user.sys.id
-    });
+    track('app:open', {userId: user.sys.id});
 
     // TODO: verify if we need fontsDotCom
     lazyLoad('fontsDotCom');
@@ -78,8 +65,7 @@ angular.module('contentful')
       data.space = data.organization = null;
     }
 
-    // TODO: to be removed
-    GTM.push({
+    track('app:space_changed', {
       spaceId: dotty.get(data.space, 'sys.id'),
       organizationId: dotty.get(data.organization, 'sys.id')
     });
@@ -137,10 +123,6 @@ angular.module('contentful')
       action: name,
       currentPlan: currentPlan !== undefined ? currentPlan : null
     });
-  }
-
-  function pushGtm (obj) {
-    GTM.push(obj);
   }
 
   function shieldFromInvalidUserData (cb) {

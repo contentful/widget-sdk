@@ -94,6 +94,6 @@ angular.module('cf.app')
   }
 
   function track (event, data) {
-    analytics.pushGtm(_.extend({event: 'versioning:' + event}, data));
+    analytics.track('versioning:' + event, data);
   }
 }]);

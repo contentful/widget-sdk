@@ -72,11 +72,7 @@ function integrations () {
     fonts_dot_com: strictObject({
       project_id: {type: 'string', format: 'uuid'}
     }),
-    segment_io: alnum(10),
-    googleTagManagerContainer: {
-      type: 'string',
-      pattern: '^GTM-\\w{6}$'
-    }
+    segment_io: alnum(10)
   }
 }
 

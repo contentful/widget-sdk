@@ -110,10 +110,7 @@ angular.module('contentful')
 
     analytics.addIdentifyingData({personaName: personaName});
     analytics.track('Selected Persona', {personaName: personaName});
-    analytics.pushGtm({
-      event: 'user.persona',
-      userPersonaName: personaName
-    });
+    analytics.track('user:persona_selected', {personaName: personaName});
   }
 
   function personaTrackSkipped () {

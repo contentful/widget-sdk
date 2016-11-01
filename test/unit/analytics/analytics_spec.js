@@ -2,15 +2,8 @@
 
 describe('analytics', function () {
   beforeEach(function () {
-    this.gtm = {
-      enable: sinon.spy(),
-      disable: sinon.spy(),
-      push: sinon.spy()
-    };
-
-    module('contentful/test', (environment, $provide) => {
+    module('contentful/test', (environment) => {
       environment.env = 'production';
-      $provide.value('analytics/gtm', this.gtm);
     });
 
     this.userData = {
@@ -48,15 +41,6 @@ describe('analytics', function () {
     it('enables segment', function () {
       this.analytics.enable(this.userData);
       sinon.assert.called(this.segment.enable);
-    });
-
-    it('enables GTM and identifies the user', function () {
-      this.analytics.enable(this.userData);
-      sinon.assert.called(this.gtm.enable);
-      sinon.assert.calledWith(this.gtm.push, {
-        event: 'app.open',
-        userId: this.userData.sys.id
-      });
     });
 
     it('is executed only once', function () {
