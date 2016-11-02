@@ -2,8 +2,20 @@
 
 describe('analytics', function () {
   beforeEach(function () {
-    module('contentful/test', (environment) => {
-      environment.env = 'production';
+    module('contentful/test');
+
+    // we want to simulate production environment
+    // this way data hits the "segment" service
+    const environment = this.$inject('environment');
+    const originalEnv = environment.env;
+    environment.env = 'production';
+    this.restoreEnv = () => { environment.env = originalEnv; };
+
+    this.analytics = this.$inject('analytics');
+
+    this.segment = this.$inject('segment');
+    ['enable', 'disable', 'identify', 'track', 'page'].forEach((m) => {
+      sinon.stub(this.segment, m);
     });
 
     this.userData = {
@@ -11,15 +23,10 @@ describe('analytics', function () {
       lastName: 'Wurst',
       sys: {id: 'userid'}
     };
+  });
 
-    this.analytics = this.$inject('analytics');
-
-    this.segment = this.$inject('segment');
-    sinon.stub(this.segment, 'enable');
-    sinon.stub(this.segment, 'disable');
-    sinon.stub(this.segment, 'identify');
-    sinon.stub(this.segment, 'track');
-    sinon.stub(this.segment, 'page');
+  afterEach(function () {
+    this.restoreEnv();
   });
 
   describe('#enable()', function () {

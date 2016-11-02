@@ -1,7 +1,6 @@
 'use strict';
 
-describe('Versioning tracking', function () {
-
+describe('Tracking versioning', function () {
   const data = {
     user: {sys: {id: 'uid'}},
     entry: {sys: {id: 'eid'}},
@@ -14,9 +13,12 @@ describe('Versioning tracking', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    this.track = this.$inject('track/versioning');
-    this.track.setData(data.user, data.entry, data.snapshot);
-    this.analyticsTrack = this.$inject('analytics').track = sinon.stub();
+    const analytics = this.$inject('analytics');
+    analytics.enable(data.user);
+    this.analyticsTrack = analytics.track = sinon.stub();
+
+    this.track = this.$inject('analyticsEvents/versioning');
+    this.track.setData(data.entry, data.snapshot);
 
     this.getTrackingData = () => {
       return this.analyticsTrack.firstCall.args[1];
@@ -49,8 +51,10 @@ describe('Versioning tracking', function () {
     });
 
     it('sends false if snapshot was taken by some other user', function () {
-      const user = {sys: {id: 'other-user'}};
-      this.track.setData(user, data.entry, data.snapshot);
+      const snapshot = _.cloneDeep(data.snapshot);
+      snapshot.sys.createdBy.sys.id = 'other-user';
+      this.track.setData(data.entry, snapshot);
+
       this.track.opened();
       this.assertAnalyticsCall('snapshot_opened', {authorIsUser: false});
     });

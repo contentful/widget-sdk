@@ -11,7 +11,7 @@ angular.module('contentful')
   var accessChecker = $injector.get('accessChecker');
   var closeState = $injector.get('navigation/closeState');
   var publicationWarnings = $injector.get('entityEditor/publicationWarnings').create();
-  var versioningTracking = $injector.get('track/versioning');
+  var trackVersioning = $injector.get('analyticsEvents/versioning');
 
   var stateManager = new StateManager(entity);
 
@@ -143,7 +143,7 @@ angular.module('contentful')
 
       return stateManager.publish()
       .then(function trackRestoredPublication () {
-        versioningTracking.publishedRestored(entity.data);
+        trackVersioning.publishedRestored(entity.data);
       })
       .then(entryReverter.publishedNewVersion)
       .then(notify.publishSuccess, handlePublishError);
