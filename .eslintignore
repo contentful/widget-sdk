@@ -72,7 +72,6 @@ test/unit/widgets/deprecations_spec.js
 test/unit/widgets/migrations_spec.js
 test/unit/app/entity_editor/locales_controller_spec.js
 test/unit/app/entity_editor/status_notifications_controller_spec.js
-test/unit/app/entry_editor/entry_actions_controller_spec.js
 test/unit/app/entry_editor/entry_reverter_spec.js
 test/unit/data/content_types_spec.js
 test/unit/data/editing_interfaces/transformer_spec.js
@@ -189,7 +188,6 @@ src/javascripts/app/asset_editor/asset_editor_directive.js
 src/javascripts/app/asset_editor/notifications.js
 src/javascripts/app/entry_editor/entry_editor_directive.js
 src/javascripts/app/entry_editor/notifications.js
-src/javascripts/app/entry_editor/entry_actions_controller.js
 src/javascripts/app/entry_editor/entry_reverter.js
 src/javascripts/app/entity_editor/locales_controller.js
 src/javascripts/classes/kaltura_error_messages.js

@@ -1,17 +1,16 @@
 'use strict';
 
 angular.module('contentful')
-.controller('EntryActionsController',
-['$scope', '$injector', 'notify', function ($scope, $injector, notify) {
+.controller('EntryActionsController', ['$scope', 'require', 'notify', function ($scope, require, notify) {
 
-  var controller    = this;
-  var Command       = $injector.get('command');
-  var spaceContext  = $injector.get('spaceContext');
-  var $state        = $injector.get('$state');
-  var analytics     = $injector.get('analytics');
-  var accessChecker = $injector.get('accessChecker');
+  var controller = this;
+  var Command = require('command');
+  var spaceContext = require('spaceContext');
+  var $state = require('$state');
+  var analytics = require('analytics');
+  var accessChecker = require('accessChecker');
 
-  function canCreateEntry() {
+  function canCreateEntry () {
     var ctId = dotty.get($scope, 'entry.data.sys.contentType.sys.id');
     return accessChecker.canPerformActionOnEntryOfType('create', ctId);
   }
@@ -21,15 +20,16 @@ angular.module('contentful')
     var data = _.omit($scope.entry.data, ['sys']);
 
     return $scope.spaceContext.space.createEntry(contentType, data)
-    .then(function(entry){
-      $state.go('spaces.detail.entries.detail', { entryId: entry.getId(), notALinkedEntity: true });
+    .then(function (entry) {
+      $state.go('spaces.detail.entries.detail', {
+        entryId: entry.getId(),
+        notALinkedEntity: true
+      });
     })
     .catch(notify.duplicateFail);
   }, {
     disabled: function () { return !canCreateEntry(); }
   });
-
-
 
   controller.toggleDisabledFields = Command.create(function () {
     var show = !$scope.preferences.showDisabledFields;
@@ -37,12 +37,11 @@ angular.module('contentful')
     $scope.preferences.showDisabledFields = show;
   }, {}, {
     label: function () {
-      return $scope.preferences.showDisabledFields ?
-               'Hide disabled fields' :
-               'Show disabled fields';
+      return $scope.preferences.showDisabledFields
+        ? 'Hide disabled fields'
+        : 'Show disabled fields';
     }
   });
-
 
   controller.add = Command.create(function () {
     analytics.track('Clicked Create new Entry of same CT');
