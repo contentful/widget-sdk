@@ -66,11 +66,6 @@ angular.module('contentful')
     notify: notify
   });
 
-  $scope.notifications = $controller('entityEditor/StatusNotificationsController', {
-    $scope: $scope,
-    entityLabel: 'entry',
-    isReadOnly: isReadOnly
-  });
 
   var schema = createEntrySchema($scope.contentType.data, localeStore.getPrivateLocales());
   var buildMessage = errorMessageBuilder(spaceContext.publishedCTs);
@@ -79,6 +74,7 @@ angular.module('contentful')
   });
   validator.run();
   this.validator = validator;
+
 
   $scope.$watch(function () {
     return spaceContext.entryTitle($scope.entry);

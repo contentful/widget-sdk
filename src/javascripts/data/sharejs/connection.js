@@ -18,9 +18,6 @@ angular.module('cf.data')
   var DocLoader = require('data/ShareJS/Connection/DocLoader');
   var DocLoad = DocLoader.DocLoad;
 
-  // A list of connection states that allow us to open documents.
-  var CAN_OPEN_STATES = ['handshaking', 'ok'];
-
   return {
     create: create,
     DocLoad: DocLoad
@@ -40,35 +37,42 @@ angular.module('cf.data')
 
     var events = getEventStream(connection);
 
-    /**
-     * @ngdoc property
-     * @module cf.data
-     * @name data/ShareJS/Connection#errors
-     * @description
-     * Stream that fires an event whenever the connection has an error.
-     *
-     * This is the case if the connection with the ShareJS server
-     * fails.
-     *
-     * @type {Stream<string>}
-     */
-    var errors = events.filter(function (event) {
-      return event.name === 'error';
-    }).map(function (event) {
-      return event.data;
-    });
 
-    // Property that is `true` if and only if we can open a document
-    var canOpen = K.sampleBy(events, function () {
-      return _.includes(CAN_OPEN_STATES, connection.state);
+    /**
+     * @type {Property<string>}
+     * Stream that hold the current connection state
+     *
+     * We skip the 'connecting' value when reconnecting and go straight
+     * to 'hanshaking'
+     *
+     *    connecting
+     * -> handshaking
+     * -> ok
+     * -> disconnected
+     * -> handshaking
+     * -> ...
+     */
+    // Set to false after we connected once
+    var initialConnect = true;
+    var state$ = K.sampleBy(events, function () {
+      if (connection.state === 'connecting') {
+        if (initialConnect) {
+          initialConnect = false;
+          return 'connecting';
+        } else {
+          return 'disconnected';
+        }
+      } else {
+        return connection.state;
+      }
+
     }).skipDuplicates();
 
 
     return {
       getDocLoader: getDocLoader,
       open: open,
-      close: close,
-      errors: errors
+      close: close
     };
 
 
@@ -82,7 +86,8 @@ angular.module('cf.data')
      * @returns {Document.Loader}
      */
     function getDocLoader (entity, readOnly) {
-      return DocLoader.create(connection, canOpen, entity, readOnly);
+      var key = entityMetadataToKey(entity.data.sys);
+      return DocLoader.create(connection, key, state$, readOnly);
     }
 
 
@@ -155,5 +160,16 @@ angular.module('cf.data')
     };
 
     return connection;
+  }
+
+  function entityMetadataToKey (sys) {
+    switch (sys.type) {
+      case 'Entry':
+        return [sys.space.sys.id, 'entry', sys.id].join('!');
+      case 'Asset':
+        return [sys.space.sys.id, 'asset', sys.id].join('!');
+      default:
+        throw new Error('Unable to encode key for type ' + sys.type);
+    }
   }
 }]);

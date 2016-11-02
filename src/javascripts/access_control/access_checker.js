@@ -110,6 +110,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
     canPerformActionOnEntryOfType: canPerformActionOnEntryOfType,
     canUpdateEntry: canUpdateEntry,
     canUpdateAsset: canUpdateAsset,
+    canUpdateEntity: canUpdateEntity,
     canUploadMultipleAssets: canUploadMultipleAssets,
     canModifyApiKeys: canModifyApiKeys,
     canModifyRoles: canModifyRoles,
@@ -224,7 +225,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
   /**
    * @ngdoc method
    * @name accessChecker#canUpdateEntry
-   * @param {API.Entry} entry
+   * @param {Client.Entry} entry
    * @returns {boolean}
    * @description
    * Returns true if an entry can be updated.
@@ -241,7 +242,7 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
   /**
    * @ngdoc method
    * @name accessChecker#canUpdateAsset
-   * @param {API.Asset} asset
+   * @param {Client.Asset} asset
    * @returns {boolean}
    * @description
    * Returns true if an asset can be updated.
@@ -252,6 +253,29 @@ angular.module('contentful').factory('accessChecker', ['require', function (requ
     var canUpdateOwn = policyChecker.canUpdateOwnAssets();
 
     return canUpdate || canUpdateWithPolicy || (canUpdateOwn && isAuthor(asset));
+  }
+
+
+  /**
+   * @ngdoc method
+   * @name accessChecker#canUpdateEntity
+   * @param {Client.Entity} entity
+   * @returns {boolean}
+   * @description
+   * Returns true if the entity can be updated.
+   *
+   * Dispatches to the entry or asset method based on
+   * `entity.data.sys.type`.
+   */
+  function canUpdateEntity (entity) {
+    var type = entity.data.sys.type;
+    if (type === 'Entry') {
+      return canUpdateEntry(entity);
+    } else if (type === 'Asset') {
+      return canUpdateAsset(entity);
+    } else {
+      throw new TypeError('Unknown entity type: ' + type);
+    }
   }
 
   function isAuthor (entity) {
