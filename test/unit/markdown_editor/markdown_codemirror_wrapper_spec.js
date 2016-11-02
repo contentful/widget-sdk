@@ -34,9 +34,9 @@ describe('CodeMirror wrapper', function () {
 
     it('sets options on CodeMirror instance', function () {
       const opt = cm.getOption.bind(cm);
-      expect(opt('mode')).toBe('gfm');
+      expect(opt('mode')).toBe('markdown');
       expect(opt('lineNumbers')).toBe(false);
-      expect(opt('undoDepth')).toBe(0);
+      expect(opt('undoDepth')).toBe(200);
       expect(opt('lineSeparator')).toBe(null);
       expect(opt('indentUnit')).toBe(2);
     });
@@ -53,7 +53,6 @@ describe('CodeMirror wrapper', function () {
     it('simple getter methods', function () {
       expect(wrapper.getNl()).toBe('\n');
       expect(wrapper.getIndentation()).toBe('  ');
-      expect(wrapper.opt('mode')).toBe('gfm');
       assertHasNotFocused();
     });
 
@@ -134,6 +133,17 @@ describe('CodeMirror wrapper', function () {
       wrapper.replaceSelectedText('really');
       expect(wrapper.getValue()).toBe('this is really fun');
       assertHasFocused();
+    });
+
+    it('does not allow you to undo initial value population', function () {
+      wrapper.setValue('AAA');
+      wrapper.cmd('undo');
+      expect(wrapper.getValue()).toBe('AAA');
+
+      wrapper.setValue('BBB');
+      expect(wrapper.getValue()).toBe('BBB');
+      wrapper.cmd('undo');
+      expect(wrapper.getValue()).toBe('AAA');
     });
   });
 
