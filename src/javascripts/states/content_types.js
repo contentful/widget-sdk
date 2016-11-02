@@ -48,12 +48,33 @@ angular.module('contentful')
     }
   });
 
-  var detail = editorBase({
-    name: 'detail',
-    url: '/:contentTypeId',
+  var detailHome = {
+    name: 'home',
+    url: '',
+    redirectTo: 'spaces.detail.content_types.detail.fields'
+  };
+
+  var detailFields = editorBase({
+    name: 'fields',
+    url: '/fields',
     data: {
       isNew: false
-    },
+    }
+  });
+
+  var detailPreview = editorBase({
+    name: 'preview',
+    url: '/preview',
+    data: {
+      isNew: false
+    }
+  });
+
+  var detail = {
+    name: 'detail',
+    url: '/:contentTypeId',
+    abstract: true,
+    children: [detailHome, detailFields, detailPreview],
     resolve: {
       contentType: ['require', '$stateParams', 'space', function (require, $stateParams, space) {
         var ctHelpers = require('data/ContentTypes');
@@ -78,7 +99,7 @@ angular.module('contentful')
       }],
       editingInterface: resolvers.editingInterface
     }
-  });
+  };
 
   return {
     name: 'content_types',

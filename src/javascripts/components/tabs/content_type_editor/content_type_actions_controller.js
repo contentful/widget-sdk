@@ -271,7 +271,7 @@ angular.module('contentful')
   }
 
   function goToDetails (contentType) {
-    return $state.go('spaces.detail.content_types.detail', {
+    return $state.go('spaces.detail.content_types.detail.home', {
       contentTypeId: contentType.getId()
     });
   }

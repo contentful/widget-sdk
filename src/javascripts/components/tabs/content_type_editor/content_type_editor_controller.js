@@ -32,6 +32,8 @@ angular.module('contentful')
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
+  $scope.$state = $state;
+
   $scope.hints = hints;
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.saveAndClose);

@@ -53,7 +53,7 @@ angular.module('cf.app')
   function buildContentTypeHref (contentType) {
     if (contentType && contentType.getId) {
       return $state.href(
-        'spaces.detail.content_types.detail',
+        'spaces.detail.content_types.detail.home',
         {contentTypeId: contentType.getId()}
       );
     }
