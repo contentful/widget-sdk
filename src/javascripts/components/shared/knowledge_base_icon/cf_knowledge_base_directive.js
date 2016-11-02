@@ -6,7 +6,7 @@
 angular.module('contentful').directive('cfKnowledgeBase', ['$injector', function ($injector) {
 
   var getUrl = $injector.get('KnowledgeBase/getUrl');
-  var trackFollowedKbpLink = $injector.get('analyticsEvents').trackFollowedKbpLink;
+  var analytics = $injector.get('analytics');
 
   return {
     restrict: 'E',
@@ -20,7 +20,9 @@ angular.module('contentful').directive('cfKnowledgeBase', ['$injector', function
     link: function (scope, el) {
       scope.url = getUrl(scope.target);
       el.on('click', function () {
-        trackFollowedKbpLink(scope.target);
+        analytics.track('Clicked KBP link', {
+          section: scope.target
+        });
       });
     }
   };

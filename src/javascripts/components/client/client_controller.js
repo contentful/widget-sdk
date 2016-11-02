@@ -10,7 +10,6 @@ angular.module('contentful')
   var authentication = require('authentication');
   var tokenStore = require('tokenStore');
   var analytics = require('analytics');
-  var analyticsEvents = require('analyticsEvents');
   var authorization = require('authorization');
   var modalDialog = require('modalDialog');
   var presence = require('presence');
@@ -30,7 +29,7 @@ angular.module('contentful')
     toggleAuxPanel: function () {
       var showAuxPanel = !$scope.preferences.showAuxPanel;
       $scope.preferences.showAuxPanel = showAuxPanel;
-      analyticsEvents.trackToggleAuxPanel(showAuxPanel, $state.current.name);
+      trackToggleAuxPanel(showAuxPanel, $state.current.name);
     },
     showDisabledFields: false
   };
@@ -132,5 +131,12 @@ angular.module('contentful')
     } else {
       spaceContext.refreshContentTypes();
     }
+  }
+
+  function trackToggleAuxPanel (visible, stateName) {
+    var action = visible ? 'Opened Aux-Panel' : 'Closed Aux-Panel';
+    analytics.track(action, {
+      currentState: stateName
+    });
   }
 }]);

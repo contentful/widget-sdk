@@ -1,24 +1,19 @@
 'use strict';
 
 describe('cfKnowledgeBase directive', function () {
-  let el, scope, trackFollowedKbpLinkSpy;
+  let el, scope;
 
   function getLink () { return el.find('a').first(); }
 
   beforeEach(function () {
-    trackFollowedKbpLinkSpy = sinon.spy();
-
-    module('contentful/test', function ($provide, environment) {
-      $provide.value('analyticsEvents', {
-        trackFollowedKbpLink: trackFollowedKbpLinkSpy
-      });
+    module('contentful/test', function (environment) {
       environment.settings.marketing_url = 'http://test.com';
     });
     scope = this.$inject('$rootScope');
   });
 
   afterEach(function () {
-    el = scope = trackFollowedKbpLinkSpy = null;
+    el = scope = null;
   });
 
   describe('points to knowledge base', function () {
@@ -31,11 +26,6 @@ describe('cfKnowledgeBase directive', function () {
       const href = getLink().attr('href');
       expect(href).toBe('http://test.com/developers/docs/concepts/data-model/');
       expect(getLink().attr('target')).toBe('_blank');
-    });
-
-    it('sends analytics event', function () {
-      el.click();
-      sinon.assert.calledWith(trackFollowedKbpLinkSpy, 'entry');
     });
   });
 

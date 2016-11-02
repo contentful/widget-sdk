@@ -28,7 +28,7 @@ angular.module('contentful')
   var eiHelpers = require('editingInterfaces/helpers');
   var spaceContext = require('spaceContext');
   var editingInterfaces = spaceContext.editingInterfaces;
-  var trackContentTypeChange = require('analyticsEvents').trackContentTypeChange;
+  var trackFields = $injector.get('analyticsEvents/fields');
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
@@ -175,7 +175,7 @@ angular.module('contentful')
     data.fields.push(newField);
     $scope.$broadcast('fieldAdded');
     syncEditingInterface();
-    trackContentTypeChange('Modified ContentType', $scope.contentType, newField, 'add');
+    trackFields.added($scope.contentType, newField);
   }
 
   /**

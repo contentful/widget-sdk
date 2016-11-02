@@ -16,7 +16,7 @@ angular.module('contentful')
  * widgets should be rendered.
  */
 .controller('FormWidgetsController', ['$scope', '$injector', 'contentTypeId', 'controls', function ($scope, $injector, contentTypeId, controls) {
-  var analytics = $injector.get('analyticsEvents');
+  var trackCustomWidgets = $injector.get('analyticsEvents/customWidgets');
   var Focus = $injector.get('FieldControls/Focus');
 
   // TODO Changes to 'validator.errors' change the behavior of
@@ -29,9 +29,10 @@ angular.module('contentful')
 
   // Executed only once when 'widgets' is not undefined.
   $scope.$watch('::widgets', function (widgets) {
-    _.forEach(widgets, trackCustomWidgetRendered);
+    _.forEach(widgets, function (widget) {
+      trackCustomWidgets.rendered(widget, contentTypeId);
+    });
   });
-
 
   /**
    * @ngdoc method
@@ -49,14 +50,6 @@ angular.module('contentful')
    * @param {function} callback
    */
   $scope.focus = Focus.create();
-
-  function trackCustomWidgetRendered (widget) {
-    analytics.trackWidgetEventIfCustom(
-      'Custom Widget rendered',
-      widget, widget.field,
-      { contentTypeId: contentTypeId }
-    );
-  }
 
   function updateWidgets () {
     $scope.widgets = _.filter(controls, widgetIsVisible);

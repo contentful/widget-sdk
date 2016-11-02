@@ -51,7 +51,6 @@ test/unit/services/revision_spec.js
 test/unit/services/search_parser_spec.js
 test/unit/services/validation_views_spec.js
 test/unit/services/activation_email_resender_spec.js
-test/unit/analytics/analytics_events_spec.js
 test/unit/services/authorization_spec.js
 test/unit/services/editing_interfaces_helpers_spec.js
 test/unit/services/enforcements_spec.js
@@ -136,7 +135,6 @@ src/javascripts/components/shared/cf_user_directive.js
 src/javascripts/components/shared/list_views_controller.js
 src/javascripts/components/tabs/asset_list/asset_list_directive.js
 src/javascripts/components/tabs/asset_list/asset_list_actions_controller.js
-src/javascripts/components/tabs/content_type_editor/add_field_dialog_controller.js
 src/javascripts/components/tabs/content_type_editor/cf_api_name_shadow_directive.js
 src/javascripts/components/tabs/content_type_editor/cf_list_type_for_directive.js
 src/javascripts/components/tabs/content_type_editor/cf_content_type_preview.js
