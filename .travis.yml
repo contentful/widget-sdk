@@ -27,11 +27,11 @@ install:
 - bin/docker-build
 script:
 - bin/docker-run test
+before_cache:
+- bin/docker-save
 after_success:
 # Build the package and static files
 - bin/docker-run travis --branch "${TRAVIS_BRANCH}" --version "${TRAVIS_COMMIT}" --pr "${TRAVIS_PULL_REQUEST}"
-before_cache:
-- bin/docker-save
 deploy:
   - provider: s3
     access_key_id: AKIAJBRHNHEFAA552JLQ
@@ -59,7 +59,7 @@ deploy:
     skip_cleanup: true
     on:
       all_branches: true
-  ## Deploy staging preview
+  ## Deploy all branches to staging preview
   - provider: s3
     access_key_id: AKIAJHQB2MH23CVUXK6Q
     secret_access_key:
@@ -69,7 +69,8 @@ deploy:
     local-dir: output/files/staging
     acl: public_read
     skip_cleanup: true
-    on: 'staging-preview/*'
+    on:
+      all_branches: true
   ## Deploy production preview
   - provider: s3
     access_key_id: AKIAITC7MCJO3VAWCEOA
