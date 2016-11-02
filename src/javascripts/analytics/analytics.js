@@ -10,9 +10,8 @@ angular.module('contentful')
 
 .factory('analytics', ['require', function (require) {
   var segment = require('segment');
-  var cookieStore = require('TheStore/cookieStore');
-  var stringifySafe = require('stringifySafe');
   var environment = require('environment');
+  var userData = require('analytics/userData');
   var analyticsConsole = require('analytics/console');
 
   var env = dotty.get(environment, 'env');
@@ -38,7 +37,7 @@ angular.module('contentful')
       segment.enable();
     }
 
-    identify(prepareUserData(user));
+    identify(userData.prepare(user));
     track('app:loaded');
   }
 
@@ -59,7 +58,7 @@ angular.module('contentful')
     var user = _.merge(session.user, extension || {});
     var userId = dotty.get(user, 'sys.id');
 
-    if (userId) {
+    if (userId && user) {
       segment.identify(userId, user);
     }
   }
@@ -129,6 +128,15 @@ angular.module('contentful')
       currentPlan: currentPlan !== undefined ? currentPlan : null
     });
   }
+}])
+
+.factory('analytics/userData', ['require', function (require) {
+  var cookieStore = require('TheStore/cookieStore');
+  var stringifySafe = require('stringifySafe');
+
+  return {
+    prepare: prepareUserData
+  };
 
   function prepareUserData (userData) {
     // Remove circular references
