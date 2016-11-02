@@ -6,14 +6,16 @@ var libs = {
   React:      require('react')
 };
 
+// For JSON field editor component
 require('codemirror/addon/edit/closebrackets');
 require('codemirror/mode/javascript/javascript');
 
-require('codemirror/addon/mode/overlay');
-require('codemirror/mode/xml/xml');
+// For Markdown field editor component
 require('codemirror/mode/markdown/markdown');
-require('codemirror/mode/gfm/gfm');
+// HTML highlighting inside markdown
+require('codemirror/mode/xml/xml');
 require('codemirror/addon/edit/continuelist');
+require('codemirror/addon/mode/overlay');
 
 if (window.cfFeedLazyLoader) {
   window.cfFeedLazyLoader('markdown', libs);

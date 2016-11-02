@@ -20,11 +20,20 @@ angular.module('cf.utils')
    * @returns {object|array}
    */
   function deepFreeze (o) {
-    if (Object.isFrozen(o)) {
+    try {
+      if (Object.isFrozen(o)) {
+        return o;
+      }
+    } catch (e) {
+      // ES5 throws TypeError if not an object. ES6 is ok.
       return o;
     }
 
-    Object.freeze(o);
+    try {
+      Object.freeze(o);
+    } catch (e) {
+      // ES5 throws TypeError if not an object. ES6 is ok.
+    }
 
     if (_.isObject(o)) {
       Object.getOwnPropertyNames(o).forEach(function (prop) {
