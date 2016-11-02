@@ -15,9 +15,6 @@ angular.module('contentful')
   var environment = require('environment');
   var analyticsConsole = require('analytics/console');
 
-  // TODO: verify if we need fontsDotCom
-  var lazyLoad = require('LazyLoader').get;
-
   var env = dotty.get(environment, 'env');
   var shouldSend = _.includes(['production', 'staging', 'preview'], env);
   var session = {};
@@ -43,9 +40,6 @@ angular.module('contentful')
 
     identify(prepareUserData(user));
     track('app:loaded');
-
-    // TODO: verify if we need fontsDotCom
-    lazyLoad('fontsDotCom');
   }
 
   function disable () {
