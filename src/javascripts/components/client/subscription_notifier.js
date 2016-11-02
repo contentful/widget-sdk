@@ -5,15 +5,14 @@
  * @name subscriptionNotifier
  */
 angular.module('contentful')
-.factory('subscriptionNotifier', ['$injector', function ($injector) {
-
-  var $rootScope = $injector.get('$rootScope');
-  var analytics = $injector.get('analytics');
-  var TheAccountView = $injector.get('TheAccountView');
-  var OrganizationList = $injector.get('OrganizationList');
-  var htmlEncode = $injector.get('encoder').htmlEncode;
-  var openPaywall = $injector.get('paywallOpener').openPaywall;
-  var Subscription = $injector.get('Subscription');
+.factory('subscriptionNotifier', ['require', function (require) {
+  var $rootScope = require('$rootScope');
+  var trackPersistentNotification = require('analyticsEvents/persistentNotification');
+  var TheAccountView = require('TheAccountView');
+  var OrganizationList = require('OrganizationList');
+  var htmlEncode = require('encoder').htmlEncode;
+  var openPaywall = require('paywallOpener').openPaywall;
+  var Subscription = require('Subscription');
 
   return {
     /**
@@ -49,21 +48,15 @@ angular.module('contentful')
       var params = {message: message};
       if (userOwnsOrganization) {
         params.actionMessage = 'Choose a plan';
-        params.action = newUpgradeAction(trackPlanUpgrade);
+        params.action = upgradeAction;
       }
       $rootScope.$broadcast('persistentNotification', params);
-
-      function trackPlanUpgrade () {
-        analytics.trackPersistentNotificationAction('Plan Upgrade');
-      }
     }
   }
 
-  function newUpgradeAction (trackingFn) {
-    return function upgradeAction () {
-      trackingFn();
-      TheAccountView.goToSubscription();
-    };
+  function upgradeAction () {
+    trackPersistentNotification.action('Plan Upgrade');
+    TheAccountView.goToSubscription();
   }
 
   function trialEndMsg (organization, userIsOrganizationOwner) {

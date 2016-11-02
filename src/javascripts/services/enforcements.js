@@ -1,23 +1,24 @@
 'use strict';
-angular.module('contentful').factory('enforcements', ['$injector', function Enforcements($injector) {
 
-  var $location        = $injector.get('$location');
-  var $window          = $injector.get('$window');
-  var stringUtils      = $injector.get('stringUtils');
-  var analytics        = $injector.get('analytics');
-  var logger           = $injector.get('logger');
-  var spaceContext     = $injector.get('spaceContext');
-  var OrganizationList = $injector.get('OrganizationList');
+angular.module('contentful')
+.factory('enforcements', ['require', function Enforcements (require) {
+  var $location = require('$location');
+  var $window = require('$window');
+  var stringUtils = require('stringUtils');
+  var trackPersistentNotification = require('analyticsEvents/persistentNotification');
+  var logger = require('logger');
+  var spaceContext = require('spaceContext');
+  var OrganizationList = require('OrganizationList');
 
-  function isOwner() {
+  function isOwner () {
     var organization = spaceContext.getData('organization');
     return OrganizationList.isOwner(organization);
   }
 
-  function getOrgId() {
+  function getOrgId () {
     try {
       return spaceContext.space.getOrganizationId();
-    } catch(exp){
+    } catch (exp) {
       logger.logError('enforcements organization exception', {
         data: {
           space: spaceContext.space,
@@ -27,13 +28,13 @@ angular.module('contentful').factory('enforcements', ['$injector', function Enfo
     }
   }
 
-  function upgradeActionMessage() {
-    return isOwner() ?  'Upgrade': undefined;
+  function upgradeActionMessage () {
+    return isOwner() ? 'Upgrade' : undefined;
   }
 
-  function upgradeAction() {
-    analytics.trackPersistentNotificationAction('Quota Increase');
-    $location.path('/account/organizations/'+getOrgId()+'/subscription');
+  function upgradeAction () {
+    trackPersistentNotification.action('Quota Increase');
+    $location.path('/account/organizations/' + getOrgId() + '/subscription');
   }
 
 
@@ -43,24 +44,25 @@ angular.module('contentful').factory('enforcements', ['$injector', function Enfo
       message: '<strong>System under maintenance.</strong> The service is down for maintenance and accessible in read-only mode.',
       actionMessage: 'Status',
       action: function () {
-        analytics.trackPersistentNotificationAction('Visit Status Page');
+        trackPersistentNotification.action('Visit Status Page');
         $window.location = 'http://status.contentful.com';
       }
     },
     {
       label: 'subscriptionUnsettled',
       message: function () {
-        return '<strong>Outstanding invoices.</strong> ' +
-          (isOwner() ?
-          'To be able to edit content within your Organization, please update your billing details.':
-          'To be able to edit content within your Organization, the Organization Owner must update billing details.');
+        return '<strong>Outstanding invoices.</strong> ' + (
+          isOwner()
+            ? 'To be able to edit content within your Organization, please update your billing details.'
+            : 'To be able to edit content within your Organization, the Organization Owner must update billing details.'
+        );
       },
       actionMessage: function () {
-        return isOwner() ?  'Update': undefined;
+        return isOwner() ? 'Update' : undefined;
       },
       action: function () {
-        analytics.trackPersistentNotificationAction('Update Billing Details');
-        $location.path('/account/organizations/'+getOrgId()+'/subscription/billing');
+        trackPersistentNotification.action('Update Billing Details');
+        $location.path('/account/organizations/' + getOrgId() + '/subscription/billing');
       }
     },
     {
@@ -78,7 +80,7 @@ angular.module('contentful').factory('enforcements', ['$injector', function Enfo
     },
     {
       label: 'accessTokenScope',
-      message: 'An unknown error occurred',
+      message: 'An unknown error occurred'
     }
   ];
 
@@ -102,49 +104,49 @@ angular.module('contentful').factory('enforcements', ['$injector', function Enfo
     'contentDeliveryApiRequest'
   ];
 
-  function getMetricMessage(metricKey) {
-    return 'You have exceeded your '+usageMetrics[stringUtils.uncapitalize(metricKey)]+' usage';
+  function getMetricMessage (metricKey) {
+    return 'You have exceeded your ' + usageMetrics[stringUtils.uncapitalize(metricKey)] + ' usage';
   }
 
-  function computeUsage(filter) {
-    if(!spaceContext.space) return;
-    if(filter) filter = stringUtils.uncapitalize(filter);
+  function computeUsage (filter) {
+    if (!spaceContext.space) return;
+    if (filter) filter = stringUtils.uncapitalize(filter);
     var organization = spaceContext.space.data.organization;
     var usage = _.merge(
       organization.usage.permanent,
-      organization.usage.period);
+      organization.usage.period
+    );
     var limits = _.merge(
       organization.subscriptionPlan.limits.permanent,
-      organization.subscriptionPlan.limits.period);
+      organization.subscriptionPlan.limits.period
+    );
 
     var metricKey = _.findKey(usage, function (value, name) {
       return (!filter || filter === name) && value >= limits[name];
     });
 
-    return metricKey ?
-      getMetricMessage(metricKey) :
-      undefined;
+    return metricKey ? getMetricMessage(metricKey) : undefined;
   }
 
-  function determineEnforcement(reasons, entityType) {
-    if(!reasons || reasons.length && reasons.length === 0) return null;
+  function determineEnforcement (reasons, entityType) {
+    if (!reasons || reasons.length && reasons.length === 0) return null;
     var errors = _.filter(errorsByPriority, function (val) {
       return reasons.indexOf(val.label) >= 0;
     });
-    if(errors.length === 0) return null;
+    if (errors.length === 0) return null;
 
     var error = _.clone(errors[0]);
 
-    if(typeof error.tooltip == 'function'){
+    if (typeof error.tooltip === 'function') {
       error.tooltip = entityType ? error.tooltip(entityType) : error.tooltip;
     }
 
-    if(typeof error.tooltip !== 'string'){
+    if (typeof error.tooltip !== 'string') {
       error.tooltip = error.message;
     }
 
     _.forEach(error, function (value, key) {
-      if(typeof value == 'function' && key != 'action'){
+      if (typeof value === 'function' && key !== 'action') {
         error[key] = value();
       }
     });
@@ -152,10 +154,10 @@ angular.module('contentful').factory('enforcements', ['$injector', function Enfo
     return error;
   }
 
-  function getPeriodUsage() {
+  function getPeriodUsage () {
     var enforcement;
     _.forEach(periodUsageMetrics, function (metric) {
-      if(computeUsage(metric)){
+      if (computeUsage(metric)) {
         enforcement = determineEnforcement('periodUsageExceeded');
         return false;
       }

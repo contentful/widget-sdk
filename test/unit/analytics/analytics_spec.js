@@ -12,21 +12,6 @@ describe('analytics', function () {
       sys: {id: 'userid'}
     };
 
-    this.space = {
-      data: {
-        tutorial: false,
-        organization: {
-          sys: {id: 'orgId'},
-          subscriptionState: 'subscriptionStateValue',
-          invoiceState: 'invoiceStateValue',
-          subscriptionPlan: {
-            sys: {id: 'subscriptionPlanId'},
-            name: 'subscriptionPlanName'
-          }
-        }
-      }
-    };
-
     this.analytics = this.$inject('analytics');
 
     this.segment = this.$inject('segment');
@@ -94,29 +79,6 @@ describe('analytics', function () {
 
     it('should track segment', function () {
       sinon.assert.called(this.segment.track);
-    });
-  });
-
-  describe('trackPersistentNotificationAction()', function () {
-    describe('without organization data available', function () {
-      it('tracks to segment', function () {
-        this.analytics.trackPersistentNotificationAction('ACTION_NAME');
-        sinon.assert.calledWith(this.segment.track, sinon.match.string, {
-          action: 'ACTION_NAME',
-          currentPlan: null
-        });
-      });
-    });
-
-    describe('with organization data set', function () {
-      it('tracks to segment and contains current plan name', function () {
-        this.analytics.trackSpaceChange(this.space);
-        this.analytics.trackPersistentNotificationAction('ACTION_NAME');
-        sinon.assert.calledWith(this.segment.track, sinon.match.string, sinon.match({
-          action: 'ACTION_NAME',
-          currentPlan: 'subscriptionPlanName'
-        }));
-      });
     });
   });
 });

@@ -1,17 +1,18 @@
 'use strict';
 
-angular.module('contentful').factory('ReloadNotification', ['$injector', function($injector) {
-  var $location   = $injector.get('$location');
-  var $q          = $injector.get('$q');
-  var modalDialog = $injector.get('modalDialog');
-  var analytics   = $injector.get('analytics');
+angular.module('contentful')
+.factory('ReloadNotification', ['require', function (require) {
+  var $location = require('$location');
+  var $q = require('$q');
+  var modalDialog = require('modalDialog');
+  var trackPersistentNotification = require('analyticsEvents/persistentNotification');
 
   var open = false;
 
-  function reloadWithCacheBuster() {
+  function reloadWithCacheBuster () {
     var search = $location.search();
     var reloaded = search.reloaded;
-    search.cfv = Math.ceil(Math.random()*10000000);
+    search.cfv = Math.ceil(Math.random() * 10000000);
     if (reloaded) {
       delete search.reloaded;
       $location.path('/');
@@ -22,8 +23,8 @@ angular.module('contentful').factory('ReloadNotification', ['$injector', functio
     window.location = $location.url();
   }
 
-  function trigger(options) {
-    if(open) return;
+  function trigger (options) {
+    if (open) return;
     open = true;
     options = _.defaults({}, options, {
       title: 'The application needs to reload',
@@ -37,20 +38,20 @@ angular.module('contentful').factory('ReloadNotification', ['$injector', functio
     modalDialog.open(options).promise.then(reloadWithCacheBuster);
   }
 
-  function isApiError(error) {
+  function isApiError (error) {
     return _.isObject(error) &&
       'statusCode' in error &&
-      500 <=  error.statusCode &&
-      502 !== error.statusCode; // 502 means a space is hibernated
+      error.statusCode >= 500 &&
+      error.statusCode !== 502; // 502 means a space is hibernated
   }
 
-  var ReloadNotificationService = {
+  return {
     triggerImmediateReload: function () {
-      analytics.trackPersistentNotificationAction('App Reload');
+      trackPersistentNotification.action('App Reload');
       reloadWithCacheBuster();
     },
 
-    trigger: function(message) {
+    trigger: function (message) {
       trigger({message: message});
     },
 
@@ -77,6 +78,4 @@ angular.module('contentful').factory('ReloadNotification', ['$injector', functio
     },
     basicErrorHandler: function () { trigger(); }
   };
-
-  return ReloadNotificationService;
 }]);

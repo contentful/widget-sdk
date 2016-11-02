@@ -21,13 +21,11 @@ angular.module('contentful')
   var API = {
     enable: _.once(enable),
     disable: disable,
+    getSessionData: getSessionData,
     track: track,
     trackSpaceChange: trackSpaceChange,
     trackStateChange: trackStateChange,
-    trackPersonaSelection: trackPersonaSelection,
-
-    // TODO: revisit this method
-    trackPersistentNotificationAction: trackPersistentNotificationAction
+    trackPersonaSelection: trackPersonaSelection
   };
 
   return API;
@@ -45,6 +43,10 @@ angular.module('contentful')
     segment.disable();
     API.enable = _.noop;
     session = {};
+  }
+
+  function getSessionData (path) {
+    return dotty.get(session, path || []);
   }
 
   function track (event, data) {
@@ -119,14 +121,6 @@ angular.module('contentful')
     } catch (err) {
       return {};
     }
-  }
-
-  function trackPersistentNotificationAction (name) {
-    var currentPlan = dotty.get(session.organization, 'subscriptionPlan.name');
-    track('Clicked Top Banner CTA Button', {
-      action: name,
-      currentPlan: currentPlan !== undefined ? currentPlan : null
-    });
   }
 }])
 
