@@ -25,7 +25,7 @@ angular.module('cf.data')
     var store = Store.create();
     var wrappedItems$ = store.items$.map(function (ctList) {
       return ctList.sortBy(function (ct) {
-        return ct.data.name;
+        return ct.data.name && ct.data.name.toLowerCase();
       });
     });
 
