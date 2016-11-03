@@ -70,4 +70,19 @@ describe('Markdown tree', function () {
     const html = getHTML(getChildren(root));
     expect(html).toBe('<img src="test.jpg">');
   });
+
+  it('Sanitizes data: and js: URIs', function () {
+    const BAD_URIS = [
+      'data:text/html;base64,SomEtHiGBad+',
+      'javascript:something_bad'
+    ];
+
+    BAD_URIS.forEach((uri) => {
+      const root = getRoot(`[test](${uri})`);
+      // paragraph is created -> getting children twice to get the anchor
+      const anchor = getChildren(getChildren(root));
+      expect(getHTML(anchor)).toBe('test');
+      expect(anchor._store.props.href).toBe(null);
+    });
+  });
 });
