@@ -12,20 +12,7 @@ angular.module('contentful')
   var publicationWarnings = $injector.get('entityEditor/publicationWarnings').create();
   var versioningTracking = $injector.get('track/versioning');
 
-  var stateManager = new StateManager(entity);
-
-  /**
-   * @ngdoc analytics-event
-   * @name Changed Entity State
-   * @param {string} from
-   * @param {string} to
-   */
-  stateManager.changedEditingState.attach(function (from, to) {
-    analytics.track('Changed Entity State', {
-      from: from,
-      to: to
-    });
-  });
+  var stateManager = new StateManager(entity, trackStatusChange);
 
   function hasPermission (action) {
     return accessChecker.canPerformActionOnEntity(action, entity);
@@ -39,7 +26,7 @@ angular.module('contentful')
 
 
   $scope.$watch(function () {
-    return stateManager.getEditingState();
+    return stateManager.getState();
   }, function (state) {
     controller.current = state;
     switch (state) {
@@ -155,10 +142,13 @@ angular.module('contentful')
   }, {
     disabled: function () {
       switch (stateManager.getState()) {
-        case 'draft': return !hasPermission('delete');
-        case 'archive': return !hasPermission('delete');
-        case 'published': return !hasPermission('unpublish') || !hasPermission('delete');
-        default: return true;
+        case 'draft':
+          return !hasPermission('delete');
+        case 'archive':
+          return !hasPermission('delete');
+        case 'changes':
+        case 'published':
+          return !hasPermission('unpublish') || !hasPermission('delete');
       }
     }
   });
@@ -173,4 +163,11 @@ angular.module('contentful')
              otDoc.reverter.hasChanges();
     }
   });
+
+  function trackStatusChange (from, to) {
+    analytics.track('Changed Entity State', {
+      from: from,
+      to: to
+    });
+  }
 }]);
