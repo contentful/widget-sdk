@@ -10,6 +10,13 @@ angular.module('cf.utils')
  */
 .factory('utils/kefir', ['require', function (require) {
   var Kefir = require('libs/kefir');
+  var SumTypes = require('libs/sum-types');
+
+  var PromiseStatus = SumTypes.makeSum({
+    Pending: ['value'],
+    Resolved: ['value'],
+    Rejected: ['error']
+  });
 
   return _.assign({
     onValue: onValue,
@@ -17,7 +24,9 @@ angular.module('cf.utils')
     fromScopeEvent: fromScopeEvent,
     sampleBy: sampleBy,
     createBus: createBus,
-    createPropertyBus: createPropertyBus
+    createPropertyBus: createPropertyBus,
+    PromiseStatus: PromiseStatus,
+    promiseProperty: promiseProperty
   }, Kefir);
 
 
@@ -229,5 +238,43 @@ angular.module('cf.utils')
   function sampleBy (obs, sampler) {
     // We need to pass `noop` to get an initial, undefined value.
     return obs.toProperty(_.noop).map(sampler);
+  }
+
+
+  /**
+   * @ngdoc method
+   * @name utils/kefir#promiseProperty
+   * @usage[js]
+   * const prop = K.promiseProperty(promise, 'PENDING')
+   * prop.onValue((p) => {
+   *   caseof(p, [
+   *     [K.PromiseStatus.Pending, ({value}) => console.log('pending', value)]
+   *     [K.PromiseStatus.Resolved, ({value}) => console.log('sucess', value)]
+   *     [K.PromiseStatus.Rejected, ({error}) => console.log('error', error)]
+   *   ])
+   * })
+   *
+   * @description
+   * Create a property from a promise.
+   *
+   * The property value is of 'PromiseStatus' which is either
+   * 'Pending', 'Resolved', or 'Rejected'.
+   *
+   * You can pass an optional value parameter that is assigned to the
+   * 'Pending' constructor.
+   *
+   *
+   * @param {Promise<T>} promise
+   * @param {T?} pendingValue
+   * @returns {Property<PromiseStatus<T>>}
+   */
+  function promiseProperty (promise, pendingValue) {
+    var bus = createPropertyBus(PromiseStatus.Pending(pendingValue));
+    promise.then(function (value) {
+      bus.set(PromiseStatus.Resolved(value));
+    }, function (error) {
+      bus.set(PromiseStatus.Rejected(error));
+    });
+    return bus.property;
   }
 }]);

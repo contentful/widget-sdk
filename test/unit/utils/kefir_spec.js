@@ -142,4 +142,49 @@ describe('utils/kefir', function () {
       expect(values).toEqual(['VAL', 'INITIAL']);
     });
   });
+
+  describe('#promiseProperty', function () {
+    it('is set to "Pending" initially', function* () {
+      const deferred = makeDeferred();
+      const prop = K.promiseProperty(deferred.promise, 'PENDING');
+      const values = KMock.extractValues(prop);
+      expect(values[0]).toBeInstanceOf(K.PromiseStatus.Pending);
+      expect(values[0].value).toBe('PENDING');
+    });
+
+    it('is set to "Resolved" when promise resolves', function* () {
+      const deferred = makeDeferred();
+      const prop = K.promiseProperty(deferred.promise, 'PENDING');
+      const values = KMock.extractValues(prop);
+
+      deferred.resolve('SUCCESS');
+      yield deferred.promise;
+      expect(values[0]).toBeInstanceOf(K.PromiseStatus.Resolved);
+      expect(values[0].value).toBe('SUCCESS');
+    });
+
+    it('is set to "Resolved" when promise resolves', function* () {
+      const deferred = makeDeferred();
+      const prop = K.promiseProperty(deferred.promise, 'PENDING');
+      const values = KMock.extractValues(prop);
+
+      deferred.reject('ERROR');
+      yield deferred.promise.catch(() => null);
+      expect(values[0]).toBeInstanceOf(K.PromiseStatus.Rejected);
+      expect(values[0].error).toBe('ERROR');
+    });
+
+    function makeDeferred () {
+      let _resolve, _reject;
+      const promise = new Promise((resolve, reject) => {
+        _resolve = resolve;
+        _reject = reject;
+      });
+      return {
+        promise: promise,
+        resolve: _resolve,
+        reject: _reject
+      };
+    }
+  });
 });
