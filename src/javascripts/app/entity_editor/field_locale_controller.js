@@ -49,7 +49,7 @@ angular.module('contentful')
    * @type {Property<Error[]?>}
    */
   controller.errors$ =
-    $scope.validator.errors$
+    $scope.editorContext.validator.errors$
     .map(function (errors) {
       errors = filterLocaleErrors(errors);
 
@@ -74,6 +74,7 @@ angular.module('contentful')
   });
 
   // Only retuns errors that apply to this field locale
+  // TODO move this to entry validator
   function filterLocaleErrors (errors) {
     return errors.filter(function (error) {
       var path = error.path;

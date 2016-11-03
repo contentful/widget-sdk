@@ -1,6 +1,31 @@
 'use strict';
 
 angular.module('contentful')
+/**
+ * @ngdoc type
+ * @name EntryEditorController
+ * @description
+ * Main controller for the entry editor that is exposed as
+ * `editorContext`.
+ *
+ * The scope properties this controller depends on are provided by the
+ * entry state controller.
+ *
+ * This controller can be mocked with the `mocks/entryEditor/Context`
+ * service.
+ *
+ * TODO this controller shares a lot of code with the
+ * AssetEditorController.
+ *
+ * TODO instead of exposing the sub-controllers on the scope we should
+ * expose them on this controller.
+ *
+ * @scope.requires {Client.Entity} entry
+ * @scope.requires {Client.Entity} entity
+ * @scope.requires {Client.ContentType} contentType
+ * @scope.requires {Data.FieldControl[]} formControls
+ *   Passed to FormWidgetsController to render field controls
+ */
 .controller('EntryEditorController', ['$scope', 'require', function EntryEditorController ($scope, require) {
   var $controller = require('$controller');
   var spaceContext = require('spaceContext');
@@ -10,6 +35,10 @@ angular.module('contentful')
   var DataFields = require('EntityEditor/DataFields');
   var ContentTypes = require('data/ContentTypes');
   var K = require('utils/kefir');
+  var Validator = require('entityEditor/Validator');
+  var createEntrySchema = require('validation').fromContentType;
+  var localeStore = require('TheLocaleStore');
+  var errorMessageBuilder = require('errorMessageBuilder');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
@@ -43,6 +72,14 @@ angular.module('contentful')
     isReadOnly: isReadOnly
   });
 
+  var schema = createEntrySchema($scope.contentType.data, localeStore.getPrivateLocales());
+  var buildMessage = errorMessageBuilder(spaceContext.publishedCTs);
+  var validator = Validator.create(buildMessage, schema, function () {
+    return $scope.otDoc.getValueAt([]);
+  });
+  validator.run();
+  this.validator = validator;
+
   $scope.$watch(function () {
     return spaceContext.entryTitle($scope.entry);
   }, function (title) {
@@ -58,16 +95,6 @@ angular.module('contentful')
   $scope.$watch(function entryEditorDisabledWatcher () {
     return $scope.entry.isArchived() || isReadOnly();
   }, $scope.otDoc.setReadOnly);
-
-  $scope.$watch('entry.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
-    if (publishedVersion > oldVersion) scope.validate();
-  });
-
-  // We cannot call the method immediately since the directive is only
-  // added to the scope afterwards
-  $scope.$applyAsync(function () {
-    if (!_.isEmpty($scope.entry.data.fields)) $scope.validate();
-  });
 
 
   // Building the form
@@ -105,21 +132,19 @@ angular.module('contentful')
    * For this to happen the CMA needs to be refactored.
    */
   function handlePublishError (err) {
+    validator.setApiResponseErrors(err);
+
     var errorId = dotty.get(err, 'body.sys.id');
     if (errorId === 'ValidationFailed') {
-      setValidationErrors(err);
       notify.publishValidationFail();
     } else if (errorId === 'VersionMismatch') {
       notify.publishFail('Can only publish most recent version');
     } else if (errorId === 'UnresolvedLinks') {
-      setValidationErrors(err);
       notify.publishFail('Some linked entries are missing.');
     } else if (errorId === 'InvalidEntry') {
       if (isLinkValidationError(err)) {
         notify.publishFail(getLinkValidationErrorMessage(err));
-        setValidationErrors(err);
       } else if (err.body.message === 'Validation error') {
-        setValidationErrors(err);
         notify.publishValidationFail();
       } else {
         notify.publishServerFail(err);
@@ -127,10 +152,6 @@ angular.module('contentful')
     } else {
       notify.publishServerFail(err);
     }
-  }
-
-  function setValidationErrors (err) {
-    $scope.validator.setErrors(dotty.get(err, 'body.details.errors'));
   }
 
   function isLinkValidationError (err) {

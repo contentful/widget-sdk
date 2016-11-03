@@ -134,7 +134,7 @@ angular.module('contentful')
  * Build error messages for Entries, Assets, and Content Types.
  *
  * The error messages for Entries are parameterized by the
- * SpaceContext.
+ * repo of published content types.
  *
  * @method {(cts: Data.ContentTypeRepo.Published) => ((e:Error) => string)} errorMessageBuilder
  * @method {function(error:Error): string} errorMessageBuilder.forContentType

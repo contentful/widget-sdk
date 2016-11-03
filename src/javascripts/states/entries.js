@@ -173,12 +173,7 @@ angular.module('contentful')
         // add current state
         contextHistory.addEntity(buildEntryCrumb(entry));
       }],
-    template:
-    '<div ' + [
-      'cf-entry-editor',
-      'class="workbench entry-editor"',
-      'cf-validate="entry.data"', 'cf-entry-schema'
-    ].join(' ') + '></div>'
+    template: '<cf-entry-editor class="entry-editor workbench">'
   };
 
 

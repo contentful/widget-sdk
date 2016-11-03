@@ -72,12 +72,7 @@ angular.module('contentful')
       // add current state
       contextHistory.addEntity(asset);
     }],
-    template:
-    '<div ' + [
-      'cf-asset-editor',
-      'class="asset-editor workbench"',
-      'cf-validate="asset.data"', 'cf-asset-schema'
-    ].join(' ') + '></div>'
+    template: '<cf-asset-editor class="asset-editor workbench">'
   };
 
   return {

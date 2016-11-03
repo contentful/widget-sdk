@@ -182,7 +182,6 @@ src/javascripts/app/widgets/video/cf_video_search_result_controller.js
 src/javascripts/app/widgets/video/cf_video_search_result_directive.js
 src/javascripts/components/notifications/cf_notifications_directive.js
 src/javascripts/components/notifications/index.js
-src/javascripts/app/asset_editor/asset_editor_directive.js
 src/javascripts/app/asset_editor/notifications.js
 src/javascripts/app/entity_editor/locales_controller.js
 src/javascripts/classes/kaltura_error_messages.js

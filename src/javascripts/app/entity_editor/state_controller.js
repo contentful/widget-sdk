@@ -120,7 +120,7 @@ angular.module('contentful')
   function publishEntity () {
     publicationWarnings.show()
     .then(function () {
-      if (!$scope.validate()) {
+      if (!$scope.editorContext.validator.run()) {
         notify.publishValidationFail();
         return $q.reject();
       }

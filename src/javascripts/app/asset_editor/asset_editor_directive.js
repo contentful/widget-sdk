@@ -1,9 +1,10 @@
 'use strict';
 
-angular.module('contentful').directive('cfAssetEditor', [function(){
+angular.module('contentful').directive('cfAssetEditor', [function () {
   return {
     template: JST.asset_editor(),
-    restrict: 'A',
-    controller: 'AssetEditorController'
+    restrict: 'E',
+    controller: 'AssetEditorController',
+    controllerAs: 'editorContext'
   };
 }]);

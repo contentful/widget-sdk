@@ -11,6 +11,10 @@ angular.module('contentful')
   var truncate = require('stringUtils').truncate;
   var accessChecker = require('accessChecker');
   var K = require('utils/kefir');
+  var Validator = require('entityEditor/Validator');
+  var localeStore = require('TheLocaleStore');
+  var createAssetSchema = require('validation').schemas.Asset;
+  var errorMessageBuilder = require('errorMessageBuilder');
 
   var notify = notifier(function () {
     return '“' + $scope.title + '”';
@@ -39,6 +43,14 @@ angular.module('contentful')
     isReadOnly: isReadOnly
   });
 
+  var schema = createAssetSchema(localeStore.getPrivateLocales());
+  var buildMessage = errorMessageBuilder.forAsset;
+  var validator = Validator.create(buildMessage, schema, function () {
+    return $scope.otDoc.getValueAt([]);
+  });
+  validator.run();
+  this.validator = validator;
+
   $scope.$watch(function () {
     return spaceContext.assetTitle($scope.asset);
   }, function (title) {
@@ -54,17 +66,6 @@ angular.module('contentful')
   $scope.$watch(function assetEditorDisabledWatcher (scope) {
     return scope.asset.isArchived() || isReadOnly();
   }, $scope.otDoc.setReadOnly);
-
-  // Validations
-  $scope.$watch('asset.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
-    if (publishedVersion > oldVersion) scope.validate();
-  });
-
-  // We cannot call the method immediately since the directive is only
-  // added to the scope afterwards
-  $scope.$applyAsync(function () {
-    if (!_.isEmpty($scope.asset.data.fields)) $scope.validate();
-  });
 
   // Building the form
   $controller('FormWidgetsController', {
@@ -91,14 +92,12 @@ angular.module('contentful')
       $scope.otDoc.setValueAt(path, fileName);
     }
   }
-  $scope.$watch('asset.data.fields.file', function (file, old, scope) {
-    if (file !== old) scope.validate();
-  }, true);
 
   function handlePublishError (error) {
+    validator.setApiResponseErrors(error);
+
     var errorId = dotty.get(error, 'body.sys.id');
     if (errorId === 'ValidationFailed') {
-      $scope.validator.setErrors(dotty.get(error, 'body.details.errors'));
       notify.publishValidationFail();
     } else if (errorId === 'VersionMismatch') {
       notify.publishFail('Can only publish most recent version');

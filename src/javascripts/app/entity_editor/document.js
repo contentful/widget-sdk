@@ -23,7 +23,7 @@ angular.module('cf.app')
   var docConnection = spaceContext.docConnection;
   var PresenceHub = require('entityEditor/Document/PresenceHub');
   var StringField = require('entityEditor/Document/StringField');
-  var PathUtils = require('entityEditor/Document/PathUtils');
+  var PathUtils = require('utils/Path');
   var DocLoad = require('data/ShareJS/Connection').DocLoad;
   var caseof = require('libs/sum-types').caseof;
   var Reverter = require('entityEditor/Document/Reverter');
