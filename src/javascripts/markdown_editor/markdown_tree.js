@@ -248,10 +248,12 @@ angular.module('contentful')
   }
 
   function getSafeHref (item) {
+    // There's no value in trying to be permissive
+    // in the preview; sanitize all js: and data: URIs
     var notJs = item.href.substr(0, 11) !== 'javascript:';
-    var notHtml = item.href.substr(0, 9) !== 'data:html';
+    var notData = item.href.substr(0, 5) !== 'data:';
 
-    if (_.isString(item.href) && notJs && notHtml) {
+    if (_.isString(item.href) && notJs && notData) {
       return item.href;
     } else {
       return null;

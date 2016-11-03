@@ -74,11 +74,13 @@ Deployment
 The app is deployed as a set of fingerprinted asset files (indepedent of the
 environment they run in) and an `index.html` file which serves as the entry
 point for the web application and is configured for a specific environment and
-host.
+host. There are three target environments (“preview”, “staging”, and
+“production”) with corresponding configurations in the `config` directory.
 
-The `bin/docker-run travis` command creates distributions containing these
-files. It uses the Travis environment to determine the configuration for
-`index.html` and produces a Debian package and a set of files for upload to S3.
+The `bin/docker-run travis` command creates distributions containing the
+application files. It builds a file distribution for each environment in
+`output/files/{env}` and creates a Debian package when we deploy an environment
+branch.
 
 The fingerprinted asset files only depend on the current revision of the
 repository. They are included in the `user-interface` image together with
