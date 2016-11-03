@@ -43,12 +43,12 @@ mixin field-locale-errors
 
 div.entity-editor__field-group(
   data-test-id="entity-field-controls"
-  data-field-id="{{field.id}}"
-  data-field-api-name="{{field.apiName}}"
-  data-field-type="{{field.type}}"
-  data-field-items-type="{{field.items.type}}"
-  aria-current="{{fieldHasFocus}}"
-  aria-invalid="{{fieldHasErrors}}")
+  data-field-id="{{data.field.id}}"
+  data-field-api-name="{{data.field.apiName}}"
+  data-field-type="{{data.field.type}}"
+  data-field-items-type="{{data.field.items.type}}"
+  aria-current="{{data.fieldHasFocus}}"
+  aria-invalid="{{data.fieldHasErrors}}")
 
   div.entity-editor__field-locale(
     ng-repeat="locale in locales track by locale.internal_code"
@@ -57,7 +57,7 @@ div.entity-editor__field-group(
 
     div.entity-editor__field-heading
       label(data-test-id="field-locale-label")
-        | {{ field.name }}
+        | {{ data.field.name }}
         span(ng-if="fieldLocale.isRequired") &#32;(required)
         span(ng-if="locales.length > 1")
           | &#32;&ndash; {{locale.name}}
@@ -65,13 +65,13 @@ div.entity-editor__field-group(
 
     div.entity-editor__control-group
       cf-widget-renderer.entity-editor__control(
-        cf-focus-ot-input="hasInitialFocus"
+        cf-focus-ot-input="data.hasInitialFocus"
         cf-widget-api)
       +editor-field-collaborators
     +field-locale-errors
 
   div.entity-editor__field-hint(
-    ng-if="showHelpText"
+    ng-if="data.showHelpText"
     role="note"
     data-test-id="field-hint")
-    | {{helpText}}
+    | {{data.helpText}}

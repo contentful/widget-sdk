@@ -11,6 +11,7 @@ angular.module('contentful')
   var checks = require('widgets/checks');
   var deprecations = require('widgets/deprecations');
   var WidgetStore = require('widgets/store');
+  var deepFreeze = require('utils/DeepFreeze').deepFreeze;
 
   /**
    * @ngdoc type
@@ -26,11 +27,23 @@ angular.module('contentful')
   /**
    * @ngdoc type
    * @name Widget.Renderable
-   * @property {string} template
+   * @description
+   * This type is exposed to the cfEntityField directive to render a
+   * field control.
+   *
+   * It is created by the `buildRenderable()` function from a list of
+   * `Data.FieldControl`.
+   *
+   * @property {string} fieldId
+   * @property {string} widgetId
    * @property {object} settings
+   * @property {API.Field} field
+   *
+   * @property {string} template
    * @property {string} defaultHelpText
    * @property {boolean} rendersHelpText
    * @property {boolean} isFocusable
+   * @property {boolean} sidebar
    */
 
   /**
@@ -241,23 +254,43 @@ angular.module('contentful')
     return renderable;
   }
 
+  /**
+   * @ngdoc method
+   * @name widgets#buildRenderable
+   * @description
+   * Create an object that contains all the necessary data to render a
+   * field control.
+   *
+   * @param {Data.FieldControl} control
+   * @return {Widget.Renderable}
+   */
   function buildOneRenderable (widget) {
     var id = widget.widgetId;
-    widget = _.cloneDeep(widget);
+    var settings = _.cloneDeep(widget.settings);
+    var field = _.cloneDeep(widget.field);
 
-    if (!_.isObject(widget.settings)) {
-      widget.settings = {};
+    if (!_.isObject(settings)) {
+      settings = {};
     }
+    applyDefaults(id, settings);
 
-    applyDefaults(id, widget.settings);
+    var renderable = {
+      // TODO we should use `field.id` but I don’t know if we normalize
+      // it so that it is always defined.
+      fieldId: widget.fieldId,
+      widgetId: widget.widgetId,
+      field: field,
+      settings: settings
+    };
+
 
     var descriptor = getWidget(id);
     if (!descriptor) {
-      widget.template = getWarningTemplate(id, 'missing');
-      return widget;
+      renderable.template = getWarningTemplate(id, 'missing');
+      return renderable;
     }
 
-    _.extend(widget, {
+    _.extend(renderable, {
       template: descriptor.template,
       rendersHelpText: descriptor.rendersHelpText,
       defaultHelpText: descriptor.defaultHelpText,
@@ -265,11 +298,11 @@ angular.module('contentful')
       sidebar: !!descriptor.sidebar
     });
 
-    if (!isCompatibleWithField(descriptor, widget.field)) {
-      widget.template = getWarningTemplate(id, 'incompatible');
+    if (!isCompatibleWithField(descriptor, field)) {
+      renderable.template = getWarningTemplate(id, 'incompatible');
     }
 
-    return widget;
+    return deepFreeze(renderable);
   }
 
   function getWarningTemplate (widgetId, message) {
