@@ -22,10 +22,13 @@ angular.module('contentful')
     enable: _.once(enable),
     disable: disable,
     getSessionData: getSessionData,
-    track: track,
+    send: send,
     trackSpaceChange: trackSpaceChange,
     trackStateChange: trackStateChange,
-    trackPersonaSelection: trackPersonaSelection
+    trackPersonaSelection: trackPersonaSelection,
+
+    // TODO: eliminate calls to this method
+    track: trackLegacy
   };
 
   return API;
@@ -36,7 +39,7 @@ angular.module('contentful')
     }
 
     identify(userData.prepare(user));
-    track('app:loaded');
+    send('global:app_loaded');
   }
 
   function disable () {
@@ -49,8 +52,8 @@ angular.module('contentful')
     return dotty.get(session, path || []);
   }
 
-  function track (event, data) {
-    data = _.merge({}, data, getSpaceData());
+  function send (event, data) {
+    data = _.extend({}, data);
     segment.track(event, data);
     analyticsConsole.add(event, 'Segment', data);
   }
@@ -73,20 +76,28 @@ angular.module('contentful')
       session.space = session.organization = null;
     }
 
-    track('app:space_changed', {
-      spaceId: dotty.get(session.space, 'sys.id'),
-      organizationId: dotty.get(session.organization, 'sys.id')
-    });
+    if (space) {
+      send('global:space_changed', {
+        spaceId: dotty.get(session.space, 'sys.id'),
+        organizationId: dotty.get(session.organization, 'sys.id')
+      });
+    } else {
+      send('global:space_left');
+    }
+
   }
 
   function trackStateChange (state, params, from, fromParams) {
     segment.page(state.name, params);
-    track('Switched State', {
+    var data = {
       state: state.name,
       params: params,
       fromState: from ? from.name : null,
       fromStateParams: fromParams || null
-    });
+    };
+
+    trackLegacy('Switched State', data);
+    send('global:state_changed', data);
   }
 
   function trackPersonaSelection (personaCode) {
@@ -100,15 +111,22 @@ angular.module('contentful')
     if (personaName) {
       var trait = {personaName: personaName};
       identify(trait);
-      track('Selected Persona', trait);
-      track('user:persona_selected', trait);
+      trackLegacy('Selected Persona', trait);
+      send('global:persona_selected', trait);
     } else {
-      track('Skipped Persona Selection');
-      track('user:persona_selection_skipped');
+      trackLegacy('Skipped Persona Selection');
+      send('global:persona_selection_skipped');
     }
   }
 
-  function getSpaceData () {
+  // TODO: eliminate calls to this method
+  function trackLegacy (event, data) {
+    data = _.merge({}, data, getLegacySpaceData());
+    segment.track(event, data);
+    analyticsConsole.add(event, 'Legacy Segment', data);
+  }
+
+  function getLegacySpaceData () {
     try {
       return {
         spaceIsTutorial: session.space.tutorial,
