@@ -119,9 +119,9 @@ describe('data/ContentTypeRepo/Published', function () {
 
     it('sorts content types by name', function* () {
       this.space.getPublishedContentTypes.resolves([
-        makeCtMock('A', {name: '2'}),
-        makeCtMock('B', {name: '3'}),
-        makeCtMock('C', {name: '1'})
+        makeCtMock('A', {name: 'y'}),
+        makeCtMock('B', {name: 'Z'}),
+        makeCtMock('C', {name: 'X'})
       ]);
       yield this.repo.refresh();
       expect(this.idValues[0]).toEqual(['C', 'A', 'B']);
