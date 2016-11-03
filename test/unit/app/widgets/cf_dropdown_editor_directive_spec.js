@@ -6,9 +6,9 @@ describe('cfDropdownEditor Directive', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    const widgetApi = this.$inject('mocks/widgetApi').create();
+    this.widgetApi = this.$inject('mocks/widgetApi').create();
 
-    fieldApi = widgetApi.field;
+    fieldApi = this.widgetApi.field;
 
     this.compile = function () {
       return this.$compile('<cf-dropdown-editor />', {}, {
@@ -69,7 +69,7 @@ describe('cfDropdownEditor Directive', function () {
     fieldApi.validations = [{in: ['value']}];
     const select = this.compile().find('select');
     expect(select.prop('disabled')).toBe(false);
-    fieldApi.onIsDisabledChanged.yield(true);
+    this.widgetApi.fieldProperties.isDisabled$.set(true);
     this.$apply();
     expect(select.prop('disabled')).toBe(true);
   });

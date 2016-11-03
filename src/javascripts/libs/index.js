@@ -4,6 +4,7 @@ require('angular-ui-sortable');
 
 angular.module('cf.libs', [])
   .constant('libs/sum-types', require('sum-types'))
+  .constant('libs/sum-types/caseof-eq', require('sum-types/caseof-eq'))
   .constant('libs/editors', require('../../../vendor/extensions/core-field-editors'))
   .constant('libs/Immutable', require('immutable'))
   .constant('libs/kefir', require('kefir'))

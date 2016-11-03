@@ -6,26 +6,26 @@ describe('cfSingleLineEditor directive', function () {
 
     this.clock = sinon.useFakeTimers();
 
-    const widgetApi = this.$inject('mocks/widgetApi').create({
+    this.widgetApi = this.$inject('mocks/widgetApi').create({
       settings: {
         helpText: 'wat'
       }
     });
 
-    this.fieldApi = widgetApi.field;
-    this.setValue = widgetApi.field.setValue;
+    this.fieldApi = this.widgetApi.field;
+    this.setValue = this.widgetApi.field.setValue;
 
     this.compileElement = function (validations, fieldType) {
-      widgetApi.field.validations = validations;
-      widgetApi.field.type = fieldType;
+      this.widgetApi.field.validations = validations;
+      this.widgetApi.field.type = fieldType;
 
       return this.$compile('<cf-single-line-editor>', {}, {
-        cfWidgetApi: widgetApi
+        cfWidgetApi: this.widgetApi
       });
     };
 
     this.dispatchValue = function (value) {
-      widgetApi.field.onValueChanged.yield(value);
+      this.widgetApi.field.onValueChanged.yield(value);
       this.$apply();
     };
   });
@@ -139,10 +139,10 @@ describe('cfSingleLineEditor directive', function () {
   it('sets input to invalid when there are schema errors', function* () {
     const input = this.compileElement().find('input');
 
-    this.fieldApi.onSchemaErrorsChanged['yield'](null);
+    this.widgetApi.fieldProperties.schemaErrors$.set(true);
     yield waitRaf();
     expect(input.attr('aria-invalid')).toBe(undefined);
-    this.fieldApi.onSchemaErrorsChanged['yield']([{}]);
+    this.widgetApi.fieldProperties.schemaErrors$.set([{}]);
     yield waitRaf();
     expect(input.attr('aria-invalid')).toBe('true');
   });

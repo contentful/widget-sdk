@@ -64,7 +64,7 @@ describe('cfRatingEditor directive', function () {
     this.fieldApi.setValue = sinon.stub();
     const el = this.compile();
     this.$apply();
-    this.fieldApi.onIsDisabledChanged.yield(true);
+    this.widgetApi.fieldProperties.isDisabled$.set(true);
 
     el.find('[role="button"][aria-label="3"]').click();
     this.$apply();

@@ -7,25 +7,22 @@ div(ng-show="!isReady")
 .link-editor(
   ng-show="isReady"
   ng-class="{'x--contains-asset-cards': isAssetCard}")
-  ol.link-editor__links(cf-ui-sortable ng-model="links")
-    li.link-editor__link(ng-repeat="item in links")
+  ol.link-editor__links(cf-ui-sortable ng-model="entityModels")
+    li.link-editor__link(ng-repeat="model in entityModels track by model.key")
 
       cf-entity-link(
         ng-if="!isAssetCard"
-        is-disabled="isDisabled"
-        link="item.link"
-        entity-store="store"
+        entity="model.value.entity"
         entity-helpers="helpers"
-        actions="actions"
+        actions="model.value.actions"
         config="config")
 
       cf-asset-card(
         ng-if="isAssetCard"
         is-disabled="isDisabled"
-        link="item.link"
-        entity-store="store"
+        entity="model.value.entity"
         entity-helpers="helpers"
-        actions="actions"
+        actions="model.value.actions"
         config="config")
 
   .link-editor__actions(ng-if="!isDisabled && (!single || !links.length)")

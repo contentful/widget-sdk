@@ -24,11 +24,11 @@ describe('cfJsonEditor directive', function () {
       .withArgs('markdown')
       .resolves({CodeMirror: CodeMirror});
 
-    const widgetApi = this.$inject('mocks/widgetApi').create();
-    fieldApi = widgetApi.field;
+    this.widgetApi = this.$inject('mocks/widgetApi').create();
+    fieldApi = this.widgetApi.field;
 
     element = this.$compile('<cf-json-editor />', {}, {
-      cfWidgetApi: widgetApi
+      cfWidgetApi: this.widgetApi
     });
   });
 
@@ -45,7 +45,7 @@ describe('cfJsonEditor directive', function () {
     fieldApi.onValueChanged.yield({json: true});
     this.$apply();
     expect(element.find('pre:visible').length).toBe(0);
-    fieldApi.onIsDisabledChanged.yield(true);
+    this.widgetApi.fieldProperties.isDisabled$.set(true);
     this.$apply();
     expect(JSON.parse(element.find('pre').text())).toEqual({json: true});
   });

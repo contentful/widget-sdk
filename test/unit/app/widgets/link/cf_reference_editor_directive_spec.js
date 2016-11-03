@@ -3,6 +3,9 @@
 describe('cfReferenceEditorDirective', function () {
 
   const template = '<cf-reference-editor type="{{ type }}" variant="{{ variant }}" single="single" />';
+  const link1 = {sys: {type: 'Link', linkType: 'Entry', id: 'testid1'}};
+  const link2 = {sys: {type: 'Link', linkType: 'Entry', id: 'testid2'}};
+
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -15,14 +18,9 @@ describe('cfReferenceEditorDirective', function () {
     this.$q = this.$inject('$q');
     this.modalDialog = this.$inject('modalDialog');
 
-    this.notifyChange = function () {
-      const notifyFn = this.field.onValueChanged.firstCall.args[0];
-      notifyFn(this.field.getValue());
-      this.$apply();
-    };
-
     this.init = function (scopeProps) {
-      return this.$compile(template, scopeProps || {}, {
+      scopeProps = _.defaults(scopeProps, {type: 'Entry'});
+      return this.$compile(template, scopeProps, {
         cfWidgetApi: this.widgetApi
       }).isolateScope();
     };
@@ -66,52 +64,55 @@ describe('cfReferenceEditorDirective', function () {
   });
 
   describe('syncing widget and field values', function () {
-    const link1 = {sys: {type: 'Link', linkType: 'Entry', id: 'testid1'}};
-    const link2 = {sys: {type: 'Link', linkType: 'Entry', id: 'testid2'}};
-
-    beforeEach(function () {
-      this.scope = this.init({type: 'Entry'});
-    });
-
     describe('on field value change', function () {
       it('defaults to an empty array for no field value', function () {
-        this.field.getValue.returns(null);
-        this.notifyChange();
-        expect(this.scope.links).toEqual([]);
+        this.scope = this.init();
+        this.field.setValue(null);
+        expect(this.scope.entityModels).toEqual([]);
       });
 
       it('wraps and puts single links into their own arrays', function () {
-        this.field.getValue.returns(link1);
-        this.notifyChange();
-        expect(this.scope.links.length).toBe(1);
-        expect(this.scope.links[0].link).toBe(link1);
+        this.scope = this.init({single: true});
+        this.field.setValue(link1);
+        this.$apply();
+        expect(this.scope.entityModels.length).toBe(1);
+        expect(this.scope.entityModels[0].value.id).toBe(link1.sys.id);
       });
 
       it('wraps every link in array values', function () {
-        this.field.getValue.returns([link1, link2]);
-        this.notifyChange();
-        expect(this.scope.links.length).toBe(2);
-        expect(this.scope.links[0].link).toBe(link1);
-        expect(this.scope.links[1].link).toBe(link2);
+        this.scope = this.init();
+        this.field.setValue([link1, link2]);
+        this.$apply();
+        expect(this.scope.entityModels.length).toBe(2);
+        expect(this.scope.entityModels[0].value.id).toBe(link1.sys.id);
+        expect(this.scope.entityModels[1].value.id).toBe(link2.sys.id);
       });
 
       it('prefetches linked entities', function () {
-        const prefetchSpy = sinon.spy(this.scope.store, 'prefetch');
-        this.field.getValue.returns(link1);
-        this.notifyChange();
-        sinon.assert.calledOnce(prefetchSpy.withArgs([link1]));
+        this.scope = this.init();
+        this.field.setValue([link1]);
+        this.$apply();
+        sinon.assert.calledOnce(this.widgetApi.space.getEntries);
+        sinon.assert.calledWith(
+          this.widgetApi.space.getEntries,
+          sinon.match.has('sys.id[in]', link1.sys.id)
+        );
       });
     });
 
     describe('on widget state changes', function () {
       beforeEach(function () {
-        this.scope.links = [{link: link1}, {link: link2}];
+        this.scope = this.init();
+        this.field.setValue([link1, link2]);
+        this.field.setValue.reset();
+        this.$apply();
       });
 
       it('sets field value when list is rearranged', function () {
+        this.scope.entityModels = _.reverse(this.scope.entityModels);
         this.scope.uiSortable.update();
-        this.$inject('$timeout').flush();
-        sinon.assert.calledOnce(this.field.setValue.withArgs([link1, link2]));
+        this.$apply();
+        sinon.assert.calledOnce(this.field.setValue.withArgs([link2, link1]));
       });
 
       it('sets field value when entity is being selected', function () {
@@ -123,7 +124,7 @@ describe('cfReferenceEditorDirective', function () {
       });
 
       it('sets field value when link is being removed', function () {
-        this.scope.actions.removeFromList(link1);
+        this.scope.entityModels[0].value.actions.remove();
         sinon.assert.calledOnce(this.field.setValue.withArgs([link2]));
       });
     });
@@ -203,35 +204,40 @@ describe('cfReferenceEditorDirective', function () {
       const id = 'assetid';
       const asset = {sys: {id, type: 'Asset'}};
 
-      this.field.getValue.returns([]);
+      this.field.setValue([]);
       this.space.createAsset.resolves(asset);
 
       const scope = this.init({type: 'Asset'});
-      this.notifyChange();
       scope.addNew({preventDefault: _.noop});
       this.$apply();
 
-      expect(scope.links.length).toBe(1);
-      expect(scope.links[0].link.sys.id).toBe(id);
+      expect(scope.entityModels.length).toBe(1);
+      expect(scope.entityModels[0].value.id).toBe(id);
       sinon.assert.calledOnce(this.widgetApi.state.goToEditor.withArgs(asset));
     });
   });
 
   describe('publication warning - unpublished references', function () {
-    const published = {sys: {publishedVersion: 1}};
-    const unpublished = {sys: {publishedVersion: null}};
     const validWarning = {count: 1, linked: 'Entry'};
+    function makeEntity (link, published) {
+      return {
+        sys: {
+          id: link.sys.id,
+          publishedVersion: published ? 1 : undefined
+        }
+      };
+    }
 
     beforeEach(function () {
-      this.scope = this.init({type: 'Entry'});
-      this.scope.links = [{link: {}}, {link: {}}];
-      this.get = this.scope.store.get = sinon.stub();
+      this.widgetApi.space.getEntries.defers();
+      this.field.setValue([link1, link2]);
+      this.scope = this.init();
 
-      sinon.assert.calledOnce(this.widgetApi.field.registerPublicationWarning);
       this.warning = this.widgetApi.field.registerPublicationWarning.firstCall.args[0];
     });
 
     it('registers publication warning', function () {
+      sinon.assert.calledOnce(this.widgetApi.field.registerPublicationWarning);
       expect(this.warning.group).toBe('reference_widget_unpublished_references');
       expect([
         typeof this.warning.shouldShow,
@@ -240,18 +246,29 @@ describe('cfReferenceEditorDirective', function () {
       ]).toEqual(['function', 'function', 'function']);
     });
 
-    it('should be shown if there are unpublished references', function () {
-      this.get.onCall(0).returns(published).onCall(1).returns(published);
-      expect(this.warning.shouldShow()).toBe(false);
-
-      this.get.onCall(2).returns(published).onCall(3).returns(unpublished);
+    it('is shown if there are unpublished references', function () {
+      this.widgetApi.space.getEntries.resolve({
+        items: [makeEntity(link1, true), makeEntity(link2, false)]
+      });
+      this.$apply();
       expect(this.warning.shouldShow()).toBe(true);
+    });
+
+    it('is not be shown if all references are published', function () {
+      this.widgetApi.space.getEntries.resolve({
+        items: [makeEntity(link1, true), makeEntity(link2, true)]
+      });
+      this.$apply();
+      expect(this.warning.shouldShow()).toBe(false);
     });
 
     it('should prepare warning data', function () {
       this.widgetApi.field.name = 'test';
       this.widgetApi.field.locale = 'en-US';
-      this.get.onCall(0).returns(unpublished).onCall(1).returns(unpublished);
+      this.widgetApi.space.getEntries.resolve({
+        items: [makeEntity(link1, false), makeEntity(link2, false)]
+      });
+      this.$apply();
 
       const data = this.warning.getData();
       expect(data.fieldName).toBe('test (en-US)');
