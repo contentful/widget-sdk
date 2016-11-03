@@ -12,23 +12,23 @@
  * @scope.provides  hasFields
  */
 angular.module('contentful')
-.controller('ContentTypeEditorController', ['$scope', '$injector', function ContentTypeEditorController ($scope, $injector) {
+.controller('ContentTypeEditorController', ['$scope', 'require', function ContentTypeEditorController ($scope, require) {
   var controller = this;
-  var $controller = $injector.get('$controller');
-  var $state = $injector.get('$state');
-  var validation = $injector.get('validation');
-  var hints = $injector.get('ContentTypeEditorController/hints')();
-  var modalDialog = $injector.get('modalDialog');
-  var openFieldDialog = $injector.get('openFieldDialog');
-  var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
-  var metadataDialog = $injector.get('contentTypeEditor/metadataDialog');
-  var Command = $injector.get('command');
-  var accessChecker = $injector.get('accessChecker');
-  var ctHelpers = $injector.get('data/ContentTypes');
-  var eiHelpers = $injector.get('editingInterfaces/helpers');
-  var spaceContext = $injector.get('spaceContext');
+  var $controller = require('$controller');
+  var $state = require('$state');
+  var validation = require('validation');
+  var hints = require('ContentTypeEditorController/hints')();
+  var modalDialog = require('modalDialog');
+  var openFieldDialog = require('openFieldDialog');
+  var leaveConfirmator = require('navigation/confirmLeaveEditor');
+  var metadataDialog = require('contentTypeEditor/metadataDialog');
+  var Command = require('command');
+  var accessChecker = require('accessChecker');
+  var ctHelpers = require('data/ContentTypes');
+  var eiHelpers = require('editingInterfaces/helpers');
+  var spaceContext = require('spaceContext');
   var editingInterfaces = spaceContext.editingInterfaces;
-  var trackContentTypeChange = $injector.get('analyticsEvents').trackContentTypeChange;
+  var trackContentTypeChange = require('analyticsEvents').trackContentTypeChange;
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
@@ -182,9 +182,9 @@ angular.module('contentful')
   }
 }])
 
-.factory('ContentTypeEditorController/hints', ['$injector', function ($injector) {
+.factory('ContentTypeEditorController/hints', ['require', function (require) {
 
-  var hints = $injector.get('hints');
+  var hints = require('hints');
 
   return function prepareContentTypeHints () {
     var fieldPropertyCounts = countFieldProperties([]);

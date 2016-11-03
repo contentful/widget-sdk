@@ -14,9 +14,9 @@
  * @property {string} $scope.contentTypeHref
  */
 angular.module('cf.app')
-.directive('cfWidgetRenderer', ['$injector', function ($injector) {
-  var $compile = $injector.get('$compile');
-  var $state = $injector.get('$state');
+.directive('cfWidgetRenderer', ['require', function (require) {
+  var $compile = require('$compile');
+  var $state = require('$state');
 
   return {
     scope: true,
