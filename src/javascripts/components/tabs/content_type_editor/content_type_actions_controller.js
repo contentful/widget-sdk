@@ -192,6 +192,7 @@ angular.module('contentful')
   }, {
     disabled: function () {
       var dirty = $scope.contentTypeForm.$dirty ||
+                  $scope.contentType.hasUnpublishedChanges() ||
                   !$scope.contentType.getPublishedVersion();
       var valid = !allFieldsInactive($scope.contentType);
       var denied = accessChecker.shouldDisable('updateContentType') ||
