@@ -94,13 +94,13 @@ angular.module('contentful')
     options: [{
       name: 'True condition custom label',
       param: 'trueLabel',
-      type: 'short-text',
+      type: 'Text',
       description: 'Yes',
       default: 'Yes'
     }, {
       name: 'False condition custom label',
       param: 'falseLabel',
-      type: 'short-text',
+      type: 'Text',
       description: 'No',
       default: 'No'
     }]
