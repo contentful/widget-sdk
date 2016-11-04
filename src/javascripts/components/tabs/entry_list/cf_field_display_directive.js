@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfFieldDisplay', function(){
+angular.module('contentful').directive('cfFieldDisplay', function () {
   return {
     template: JST.cf_field_display(),
     restrict: 'E',
@@ -8,30 +8,32 @@ angular.module('contentful').directive('cfFieldDisplay', function(){
     link: function (scope) {
 
       scope.displayType = function (field) {
-        if(field.type == 'Date' && (field.id == 'updatedAt' || field.id == 'createdAt' || field.id == 'publishedAt'))
+        if (field.type === 'Date' && (field.id === 'updatedAt' || field.id === 'createdAt' || field.id === 'publishedAt')) {
           return field.id;
+        }
 
-        if(field.type == 'Symbol' && field.id == 'author')
+        if (field.type === 'Symbol' && field.id === 'author') {
           return 'author';
+        }
 
-        if(field.type == 'Link'){
+        if (field.type === 'Link') {
           return field.linkType;
         }
 
         return field.type;
       };
 
-      scope.dataForField = function(entry, field) {
-        return scope.spaceContext.localizedField(entry, 'data.fields.'+field.id);
+      scope.dataForField = function (entry, field) {
+        return scope.spaceContext.localizedField(entry, 'data.fields.' + field.id);
       };
 
-      function filterVisibleItems(items) {
+      function filterVisibleItems (items) {
         var counter = 0;
         var cacheName = hasItemsOfType(items, 'Entry') ? 'entryCache' : 'assetCache';
         var limit = scope[cacheName].params.limit;
         return _.filter(items, function (item) {
           var hasItem = scope[cacheName].has(item.sys.id);
-          if(hasItem && counter < limit) {
+          if (hasItem && counter < limit) {
             counter++;
             return true;
           }
@@ -56,13 +58,13 @@ angular.module('contentful').directive('cfFieldDisplay', function(){
 
       scope.dataForArray = function (entry, field) {
         var items = scope.dataForField(entry, field);
-        if(hasItemsOfType(items, 'Entry')) {
+        if (hasItemsOfType(items, 'Entry')) {
           return _.map(filterVisibleItems(items), function (entry) {
             return scope.dataForEntry(entry);
           });
         }
 
-        if(hasItemsOfType(items, 'Asset')) {
+        if (hasItemsOfType(items, 'Asset')) {
           return _.map(filterVisibleItems(items), function (entry) {
             return scope.dataForAsset(entry, 'data.fields.file');
           });
@@ -80,12 +82,12 @@ angular.module('contentful').directive('cfFieldDisplay', function(){
       };
 
       scope.dataForLinkedEntry = function (entry, field) {
-        var entryLinkField = scope.spaceContext.localizedField(entry, 'data.fields.'+field.id);
+        var entryLinkField = scope.spaceContext.localizedField(entry, 'data.fields.' + field.id);
         return entryLinkField ? scope.dataForEntry(entryLinkField) : '';
       };
 
       scope.dataForLinkedAsset = function (entry, field) {
-        var assetLinkField = scope.spaceContext.localizedField(entry, 'data.fields.'+field.id);
+        var assetLinkField = scope.spaceContext.localizedField(entry, 'data.fields.' + field.id);
         return assetLinkField ? scope.dataForAsset(assetLinkField) : '';
       };
 
@@ -94,15 +96,15 @@ angular.module('contentful').directive('cfFieldDisplay', function(){
       };
 
       scope.displayLocation = function (value) {
-        return value ? parseLocation(value.lat) +', '+ parseLocation(value.lon) : '';
+        return value ? parseLocation(value.lat) + ', ' + parseLocation(value.lon) : '';
       };
 
-      function parseLocation(val) {
+      function parseLocation (val) {
         return _.isNumber(val) ? val.toFixed(4) : 'Invalid value';
       }
 
-      function hasItemsOfType(items, type){
-        return items && items.length > 0 && items[0].sys && items[0].sys.linkType == type;
+      function hasItemsOfType (items, type) {
+        return items && items.length > 0 && items[0].sys && items[0].sys.linkType === type;
       }
 
     }
