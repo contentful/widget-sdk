@@ -1,0 +1,152 @@
+/**
+Tables
+
+The `.table` class should be applied to tables that will use the table pattern.
+
+Markup:
+
+.table
+  .table__head
+    table
+      thead
+        tr
+          th.x--sortable.x--active-sort
+            input(type="checkbox")
+            | Title
+          th Content type
+          th.x--sortable Updated at
+          th.x--sortable Created at
+
+  .table__bulk-actions
+    span Some entries selected:
+    a action 1
+    a action 2
+
+  .table__body
+    table
+      tbody
+        tr
+          td
+            input(type="checkbox")
+            | Title 1
+          td Sponsor
+          td Yesterday
+          td Two months ago
+        tr.x--highlight
+          td
+            input(type="checkbox")
+            | This large entry title will be truncated and have an ellipsis at the end
+          td Another title
+          td Yesterday
+          td Two months ago
+        tr.x--multiline
+          td.x--align-items
+            input(type="checkbox")
+            p This is a large entry title which will wrap and not cause the ellipsis to kick in
+          td Title
+          td Yesterday
+          td Two months ago
+        tr.x--multiline
+          td
+            p This is a large entry title which will wrap and not cause the ellipsis to kick in
+          td Title
+          td Yesterday
+          td Two months ago
+        tr
+          td.x--align-items
+            img(src="http://placehold.it/50x50")
+            span Claus Hollensteiner
+          td Title
+          td 3 years ago
+          td 4 years ago
+
+Styleguide 7
+**/
+
+/* Block */
+.table
+  line-height: 1.5em
+
+  /* Elements */
+  table
+    width: 100%
+    table-layout: fixed
+    background-color: white
+
+  th:first-child, td:first-child
+    width: 40%
+
+  th, td
+    padding-left: 10px
+    vertical-align: middle
+    text-align: left
+    > input, img
+      margin-right: 10px
+    > input[type="checkbox"]
+      height: 13px
+    > img
+      height: 25px
+    p
+      width: 100%
+
+  thead
+    border-bottom: 1px solid $colors.element-mid
+    tr
+      background-color: $colors.element-lightest
+      th
+        padding-top: 10px
+        padding-bottom: 10px
+        color: $colors.text-light
+  tbody
+    tr
+      color: $colors.text-mid
+      &:hover
+        cursor: pointer
+        background-color: $colors.element-lightest
+      td
+        border-bottom: 1px solid $colors.element-light
+        overflow: hidden
+        white-space: nowrap
+        text-overflow: ellipsis
+        padding-top: 16px
+        padding-bottom: 16px
+
+  .table__body
+    overflow-x: hidden
+    overflow-y: scroll
+
+  .table__bulk-actions
+    padding: 10px
+    background-color: $colors.element-light
+    border-bottom: 1px solid $colors.element-mid
+    a
+      margin-left: 10px
+      text-decoration: underline
+
+  /* Modifiers */
+  .x--align-items
+    display: flex
+    flex-direction: row
+    align-items: center
+    > span
+      text-overflow: ellipsis
+      overflow: hidden
+
+  .x--multiline
+    > td
+      width: 100%
+      white-space: normal
+      vertical-align: top
+    > .x--align-items
+      align-items: flex-start
+
+  .x--sortable
+    &:hover
+      cursor: pointer
+      background-color: $colors.element-light
+
+  .x--highlight
+    background-color: $colors.ice-mid
+
+  .x--active-sort
+    font-weight: bold
