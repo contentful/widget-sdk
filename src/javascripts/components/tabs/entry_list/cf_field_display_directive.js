@@ -1,6 +1,16 @@
 'use strict';
 
-angular.module('contentful').directive('cfFieldDisplay', function () {
+angular.module('contentful')
+/**
+ * @ngdoc directive
+ * @name cfFieldDisplay
+ * @description
+ * Displays the content of an entry field.
+ *
+ * @scope.requires {API.Field} field
+ *   The content type field to display value for
+ */
+.directive('cfFieldDisplay', function () {
   return {
     template: JST.cf_field_display(),
     restrict: 'E',
@@ -71,9 +81,18 @@ angular.module('contentful').directive('cfFieldDisplay', function () {
         }
       };
 
+      /**
+       * If the field value is an entry link, return its title.
+       *
+       * If the link points to a missing entry, return "missing".
+       */
       scope.dataForEntry = function (entryLink) {
         var entry = scope.entryCache.get(entryLink.sys.id);
-        return scope.spaceContext.entryTitle(entry);
+        if (entry) {
+          return scope.spaceContext.entryTitle(entry);
+        } else {
+          return 'missing';
+        }
       };
 
       scope.dataForAsset = function (assetLink) {
