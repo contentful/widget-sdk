@@ -4,10 +4,7 @@ describe('entityEditor/Document', function () {
   let scope, K, DocLoad;
 
   beforeEach(function () {
-    const spaceContext = {};
-
     module('contentful/test', ($provide, $controllerProvider) => {
-      $provide.value('spaceContext', spaceContext);
       $provide.factory('TheLocaleStore', ['mocks/TheLocaleStore', _.identity]);
       $controllerProvider.register('otDocPresenceController', function () {
         return {
@@ -15,6 +12,7 @@ describe('entityEditor/Document', function () {
         };
       });
     });
+
 
     K = this.$inject('mocks/kefir');
     DocLoad = this.$inject('data/ShareJS/Connection').DocLoad;
@@ -26,11 +24,14 @@ describe('entityEditor/Document', function () {
     };
 
     this.docConnection = {
-      getDocLoader: sinon.stub().returns(this.docLoader),
-      errors: K.createMockStream()
+      getDocLoader: sinon.stub().returns(this.docLoader)
     };
 
+    const spaceContext = this.mockService('spaceContext');
     spaceContext.docConnection = this.docConnection;
+
+    const accessChecker = this.mockService('accessChecker');
+    accessChecker.canUpdateEntity = sinon.stub().returns(true);
 
     this.connectAndOpen = function (data) {
       const doc = new OtDoc(_.cloneDeep(data || this.entity.data));
@@ -186,25 +187,31 @@ describe('entityEditor/Document', function () {
     });
   });
 
-  describe('#state.error', function () {
-    it('is set to false if opening document succeeds', function () {
-      this.doc.state.error = true;
+  describe('#status$', function () {
+    it('is "ok" initially', function () {
+      K.assertCurrentValue(this.doc.status$, 'ok');
+    });
+
+    it('is "ok" when the document connects', function () {
       this.connectAndOpen();
-      expect(this.doc.state.error).toBe(false);
+      this.$apply();
+      K.assertCurrentValue(this.doc.status$, 'ok');
     });
 
-    it('is set to true if opening document fails', function () {
-      this.doc.state.error = false;
+    it('is "ot-connection-error" when there is a document error', function () {
+      this.connectAndOpen();
+      this.$apply();
+      K.assertCurrentValue(this.doc.status$, 'ok');
       this.docLoader.doc.set(DocLoad.Error());
-      this.$apply();
-      expect(this.doc.state.error).toBe(true);
+      K.assertCurrentValue(this.doc.status$, 'ot-connection-error');
     });
 
-    it('is set to true if ShareJS connection failed', function () {
-      this.doc.state.error = false;
-      this.docConnection.errors.emit('');
+    it('is "archived" when the entity is archived', function () {
+      const doc = this.connectAndOpen();
       this.$apply();
-      expect(this.doc.state.error).toBe(true);
+      K.assertCurrentValue(this.doc.status$, 'ok');
+      doc.setAt(['sys', 'archivedVersion'], 1);
+      K.assertCurrentValue(this.doc.status$, 'archived');
     });
   });
 

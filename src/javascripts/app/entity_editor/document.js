@@ -27,12 +27,13 @@ angular.module('cf.app')
   var DocLoad = require('data/ShareJS/Connection').DocLoad;
   var caseof = require('libs/sum-types').caseof;
   var Reverter = require('entityEditor/Document/Reverter');
+  var accessChecker = require('accessChecker');
+  var Status = require('data/Document/Status');
 
   var readOnlyBus = K.createPropertyBus(false, $scope);
 
   controller.state = {
     editable: false,
-    error: false,
     saving: false
   };
 
@@ -155,6 +156,61 @@ angular.module('cf.app')
     });
   }
 
+  var docLoader = docConnection.getDocLoader(entity, readOnlyBus.property);
+
+  // Property<ShareJS.Document?>
+  var doc$ = docLoader.doc.map(function (doc) {
+    return caseof(doc, [
+      [DocLoad.Doc, function (d) {
+        return d.doc;
+      }],
+      [null, function () {
+        return null;
+      }]
+    ]);
+  });
+
+  K.onValueScope($scope, doc$, setDoc);
+
+  // Property<boolean>
+  // Is true if there was an error opening the document. E.g. when
+  // disconnected from the server.
+  var docLoadError$ = docLoader.doc.map(function (doc) {
+    return caseof(doc, [
+      [DocLoad.Doc, function () {
+        return false;
+      }],
+      [DocLoad.None, function () {
+        return false;
+      }],
+      [DocLoad.Error, function () {
+        return true;
+      }]
+    ]);
+  });
+
+
+  /**
+   * @ngdoc property
+   * @name Document#status$
+   * @type string
+   * @description
+   * Current status of the document
+   *
+   * Is one of
+   * - 'editing-not-allowed'
+   * - 'ot-connection-error'
+   * - 'archived'
+   * - 'ok'
+   *
+   * This property is used by 'cfEditorStatusNotifcation' directive.
+   */
+  var status$ = Status.create(
+    sysProperty,
+    docLoadError$,
+    accessChecker.canUpdateEntity(entity)
+  );
+
 
   var presence = PresenceHub.create($scope.user.sys.id, docEventsBus.stream, shout);
 
@@ -173,7 +229,10 @@ angular.module('cf.app')
 
 
   _.extend(controller, {
+    // TODO do not expose internal reference
     doc: undefined,
+
+    status$: status$,
 
     getValueAt: getValueAt,
     setValueAt: setValueAt,
@@ -203,26 +262,6 @@ angular.module('cf.app')
     setReadOnly: readOnlyBus.set
   });
 
-
-  var docLoader = spaceContext.docConnection.getDocLoader(entity, readOnlyBus.property);
-  K.onValueScope($scope, docLoader.doc, function (doc) {
-    caseof(doc, [
-      [DocLoad.Doc, function (d) {
-        setDoc(d.doc);
-      }],
-      [DocLoad.None, function () {
-        setDoc(undefined);
-      }],
-      [DocLoad.Error, function () {
-        controller.state.error = true;
-        setDoc(undefined);
-      }]
-    ]);
-  });
-
-  K.onValueScope($scope, docConnection.errors, function () {
-    controller.state.error = true;
-  });
 
   $scope.$on('$destroy', function () {
     setDoc(undefined);
@@ -308,7 +347,6 @@ angular.module('cf.app')
     }
 
     if (doc) {
-      controller.state.error = false;
       normalize(doc);
       controller.doc = doc;
       controller.state.editable = true;

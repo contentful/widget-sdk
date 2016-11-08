@@ -37,12 +37,6 @@ angular.module('contentful')
     otDoc: $scope.otDoc
   });
 
-  $scope.notifications = $controller('entityEditor/StatusNotificationsController', {
-    $scope: $scope,
-    entityLabel: 'asset',
-    isReadOnly: isReadOnly
-  });
-
   var schema = createAssetSchema(localeStore.getPrivateLocales());
   var buildMessage = errorMessageBuilder.forAsset;
   var validator = Validator.create(buildMessage, schema, function () {
@@ -50,6 +44,7 @@ angular.module('contentful')
   });
   validator.run();
   this.validator = validator;
+
 
   $scope.$watch(function () {
     return spaceContext.assetTitle($scope.asset);

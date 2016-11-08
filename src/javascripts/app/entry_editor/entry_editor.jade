@@ -27,7 +27,7 @@ header.workbench-header
 
 .workbench-main
   .workbench-main__content
-    +editor-notification
+    cf-editor-status-notification(status="otDoc.status$" entity-label="entry")
 
     form.entity-editor-form(name="entryForm")
       cf-error-list.form-box-error(cf-error-path="['fields']")

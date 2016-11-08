@@ -9,6 +9,12 @@ describe('data/ShareJS/Connection', function () {
       emit: _.noop,
       open: sinon.stub()
     };
+
+    this.setState = function (state) {
+      this.baseConnection.state = state;
+      this.baseConnection.emit();
+    };
+
     this.sharejs = {
       Connection: sinon.stub().returns(this.baseConnection)
     };
@@ -49,8 +55,7 @@ describe('data/ShareJS/Connection', function () {
 
       const connection = this.create('TOKEN', 'HOST', 'SPACE');
       this.readOnly = Kefir.createMockProperty(false);
-      this.baseConnection.state = 'handshaking';
-      this.baseConnection.emit();
+      this.setState('handshaking');
 
       this.docLoader = connection.getDocLoader(this.entity, this.readOnly);
       this.docValues = Kefir.extractValues(this.docLoader.doc);
@@ -81,17 +86,26 @@ describe('data/ShareJS/Connection', function () {
       expect(this.docValues[0].error).toBe('ERROR');
     });
 
+    it('emits error when disconnected fails', function () {
+      const doc = new OtDoc();
+      this.baseConnection.open.yield(null, doc);
+      this.$apply();
+      expect(this.docValues[0].doc).toBe(doc);
+
+      this.setState('disconnected');
+      this.$apply();
+      expect(this.docValues[0].error).toBe('disconnected');
+    });
+
     it('opens a document again after being disconnected', function () {
       this.baseConnection.open.yield(null, new OtDoc());
       this.$apply();
 
-      this.baseConnection.state = null;
-      this.baseConnection.emit();
+      this.setState(null);
       this.$apply();
       expect(this.docValues[0]).toBeInstanceOf(DocLoad.None);
 
-      this.baseConnection.state = 'ok';
-      this.baseConnection.emit();
+      this.setState('ok');
       this.baseConnection.open.yield(null, 'DOC 2');
       this.$apply();
       expect(this.docValues[0].doc).toBe('DOC 2');
@@ -154,8 +168,7 @@ describe('data/ShareJS/Connection', function () {
       const success = sinon.spy();
       this.open().then(success);
 
-      this.baseConnection.state = 'handshaking';
-      this.baseConnection.emit();
+      this.setState('handshaking');
       this.baseConnection.open.yield(null, doc);
       this.$apply();
 
@@ -166,23 +179,11 @@ describe('data/ShareJS/Connection', function () {
       const doc = new this.OtDoc();
       this.open().then(({destroy}) => destroy());
 
-      this.baseConnection.state = 'handshaking';
-      this.baseConnection.emit();
+      this.setState('handshaking');
       this.baseConnection.open.yield(null, doc);
       this.$apply();
 
       sinon.assert.called(doc.close);
-    });
-  });
-
-  describe('#errors', function () {
-    it('emits error events from base connection', function () {
-      const connection = this.create();
-      const errors = Kefir.extractValues(connection.errors);
-      this.baseConnection.emit('error', 1);
-      this.baseConnection.emit('error', 2);
-      this.baseConnection.emit('error', 3);
-      expect(errors).toEqual([3, 2, 1]);
     });
   });
 

@@ -1,6 +1,13 @@
 'use strict';
 
 angular.module('cf.data')
+/**
+ * @ngdoc service
+ * @name data/ShareJS/Connection/DocLoader
+ * @description
+ * Creates a property that holds the current state of loading a
+ * document.
+ */
 .factory('data/ShareJS/Connection/DocLoader', ['require', function (require) {
   var $q = require('$q');
   var K = require('utils/kefir');
@@ -8,8 +15,29 @@ angular.module('cf.data')
   var caseof = SumTypes.caseof;
 
   var DocLoad = SumTypes.makeSum({
+    /**
+     * @ngdoc method
+     * @name data/ShareJS/Connection/DocLoader#DocLoad.None
+     * @description
+     * Constructor representing that no document is loaded yet.
+     */
     None: [],
+    /**
+     * @ngdoc method
+     * @name data/ShareJS/Connection/DocLoader#DocLoad.Doc
+     * @description
+     * Constructor holding an opened ShareJS document
+     * @param {ShareJS.Document} doc
+     */
     Doc: ['doc'],
+    /**
+     * @ngdoc method
+     * @name data/ShareJS/Connection/DocLoader#DocLoad.Error
+     * @description
+     * Constructor holding an opening error, for example if the
+     * connection to the server has dropped.
+     * @param {string} error
+     */
     Error: ['error']
   });
 
@@ -18,26 +46,55 @@ angular.module('cf.data')
     DocLoad: DocLoad
   };
 
-  function create (connection, canOpen, entity, readOnly) {
-    var closeCurrent;
+  /**
+   * @ngdoc method
+   * @name data/ShareJS/Connection/DocLoader#create
+   * @param {ShareJS.Connection} connection
+   * @param {string} key
+   * @param {Property<string>} connectionState$
+   * @param {Property<boolean>} readOnly$
+   */
+  function create (connection, key, state$, readOnly) {
+    var opener = createLoader(connection, key);
 
+    // Property<boolean>
+    // True when we want the doc to be opened
     var requestOpenDoc = K.combine(
-      [readOnly, canOpen],
-      function (readOnly, canOpen) { return canOpen && !readOnly; }
+      [state$, readOnly],
+      function (state, readOnly) {
+        return {state: state, shouldOpen: !readOnly};
+      }
     ).skipDuplicates().toProperty();
 
-    var docLoad = requestOpenDoc.flatMapLatest(function (shouldOpen) {
-      if (closeCurrent) {
-        closeCurrent();
+
+    var docLoad = requestOpenDoc.flatMapLatest(function (vals) {
+      var state = vals.state;
+      var shouldOpen = vals.shouldOpen;
+
+      if (state === 'disconnected') {
+        opener.close();
+        return K.constant(DocLoad.Error('disconnected'));
       }
-      if (shouldOpen) {
-        var opened = openDoc(connection, entity);
-        closeCurrent = opened.close;
-        return K.fromPromise(opened.docLoad);
+
+      if (shouldOpen && (state === 'ok' || state === 'handshaking')) {
+        return opener.request().map(function (p) {
+          return caseof(p, [
+            [K.PromiseStatus.Pending, function () {
+              return DocLoad.None();
+            }],
+            [K.PromiseStatus.Resolved, function (x) {
+              return DocLoad.Doc(x.value);
+            }],
+            [K.PromiseStatus.Rejected, function (x) {
+              return DocLoad.Error(x.error);
+            }]
+          ]);
+        });
       } else {
+        opener.close();
         return K.constant(DocLoad.None());
       }
-    }).toProperty(_.constant(DocLoad.None()));
+    });
 
     // Emit a value to end the doc loader stream.
     var dead = K.createBus();
@@ -46,9 +103,7 @@ angular.module('cf.data')
     return {
       doc: docLoad,
       destroy: function () {
-        if (closeCurrent) {
-          closeCurrent();
-        }
+        opener.close();
         dead.emit();
         dead.end();
       }
@@ -56,51 +111,45 @@ angular.module('cf.data')
   }
 
 
-  function openDoc (connection, entity) {
-    var key = entityMetadataToKey(entity.data.sys);
-    var docLoadPromise = $q.denodeify(function (cb) {
-      connection.open(key, 'json', cb);
-    }).then(function (doc) {
-      return DocLoad.Doc(doc);
-    }, function (error) {
-      return DocLoad.Error(error);
-    });
+  function createLoader (connection, key) {
+    var docPromise = null;
+    var docStream = null;
 
     return {
-      docLoad: docLoadPromise,
-      close: close
+      close: close,
+      request: request
     };
 
+    function request () {
+      if (!docStream) {
+        docPromise = openDoc(connection, key);
+        docStream = K.promiseProperty(docPromise);
+      }
+      return docStream;
+    }
+
     function close () {
-      docLoadPromise.then(closeDoc);
+      if (docPromise) {
+        docPromise.then(closeDoc);
+      }
+      docPromise = null;
+      docStream = null;
     }
   }
-
 
   function closeDoc (doc) {
-    caseof(doc, [
-      [DocLoad.Doc, function (d) {
-        try {
-          d.doc.close();
-        } catch (e) {
-          if (e.message !== 'Cannot send to a closed connection') {
-            throw e;
-          }
-        }
-      }],
-      [null, _.noop]
-    ]);
+    try {
+      doc.close();
+    } catch (e) {
+      if (e.message !== 'Cannot send to a closed connection') {
+        throw e;
+      }
+    }
   }
 
-
-  function entityMetadataToKey (sys) {
-    switch (sys.type) {
-      case 'Entry':
-        return [sys.space.sys.id, 'entry', sys.id].join('!');
-      case 'Asset':
-        return [sys.space.sys.id, 'asset', sys.id].join('!');
-      default:
-        throw new Error('Unable to encode key for type ' + sys.type);
-    }
+  function openDoc (connection, key) {
+    return $q.denodeify(function (cb) {
+      connection.open(key, 'json', cb);
+    });
   }
 }]);
