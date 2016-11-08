@@ -127,6 +127,7 @@ angular.module('cf.app')
    * Switches to the first space's entry list if there is a navigation error
    */
   function stateChangeErrorHandler (event, toState, toParams, fromState, fromParams, error) {
+
     event.preventDefault();
 
     var matchedSection = /spaces.detail.(entries|assets|content_types|api\.keys).detail/.exec(toState.name);

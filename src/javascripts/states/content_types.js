@@ -31,9 +31,26 @@ angular.module('contentful')
     template: '<div cf-content-type-list class="workbench"></div>'
   });
 
+  var fields = {
+    name: 'fields',
+    url: '/fields'
+  };
+
+  var preview = {
+    name: 'preview',
+    url: '/preview'
+  };
+
   var newState = editorBase({
     name: 'new',
     url: '_new',
+    children: [
+      {
+        name: 'home',
+        url: '',
+        redirectTo: 'spaces.detail.content_types.new.fields'
+      }, fields, preview
+    ],
     data: {
       isNew: true
     },
@@ -48,33 +65,19 @@ angular.module('contentful')
     }
   });
 
-  var detailHome = {
-    name: 'home',
-    url: '',
-    redirectTo: 'spaces.detail.content_types.detail.fields'
-  };
-
-  var detailFields = editorBase({
-    name: 'fields',
-    url: '/fields',
-    data: {
-      isNew: false
-    }
-  });
-
-  var detailPreview = editorBase({
-    name: 'preview',
-    url: '/preview',
-    data: {
-      isNew: false
-    }
-  });
-
-  var detail = {
+  var detail = editorBase({
     name: 'detail',
     url: '/:contentTypeId',
-    abstract: true,
-    children: [detailHome, detailFields, detailPreview],
+    children: [
+      {
+        name: 'home',
+        url: '',
+        redirectTo: 'spaces.detail.content_types.detail.fields'
+      }, fields, preview
+    ],
+    data: {
+      isNew: false
+    },
     resolve: {
       contentType: ['require', '$stateParams', 'space', function (require, $stateParams, space) {
         var ctHelpers = require('data/ContentTypes');
@@ -99,7 +102,7 @@ angular.module('contentful')
       }],
       editingInterface: resolvers.editingInterface
     }
-  };
+  });
 
   return {
     name: 'content_types',
@@ -113,6 +116,7 @@ angular.module('contentful')
     var state = _.extend({
       label: label,
       params: { addToContext: true },
+      abstract: true,
       controller: [
         '$scope', 'require', 'contentType', 'editingInterface', 'publishedContentType',
         function ($scope, require, contentType, editingInterface, publishedContentType) {

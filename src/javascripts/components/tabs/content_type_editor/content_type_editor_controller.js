@@ -34,6 +34,10 @@ angular.module('contentful')
 
   $scope.$state = $state;
 
+  $scope.goTo = function (stateName) {
+    $state.go('^.' + stateName);
+  };
+
   $scope.hints = hints;
 
   $scope.context.requestLeaveConfirmation = leaveConfirmator($scope.actions.saveAndClose);
@@ -57,7 +61,7 @@ angular.module('contentful')
   if ($scope.context.isNew) {
     metadataDialog.openCreateDialog()
     .then(applyContentTypeMetadata(true), function () {
-      $state.go('^.list');
+      $state.go('spaces.detail.content_types.list');
     });
   }
 

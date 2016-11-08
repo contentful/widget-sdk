@@ -28,23 +28,23 @@ header.workbench-header
       | Add field
   ul.workbench-nav__tabs
     li(
-      ui-sref="spaces.detail.content_types.detail.fields"
-      aria-selected="{{$state.is('spaces.detail.content_types.detail.fields')}}"
+      ng-click="goTo('fields')"
+      aria-selected="{{$state.is('^.fields')}}"
       role="tab")
       | Fields
       span(ng-show="contentType.data.fields.length") &nbsp;({{contentType.data.fields.length}})
     li(
-      ui-sref="spaces.detail.content_types.detail.preview"
-      aria-selected="{{$state.is('spaces.detail.content_types.detail.preview')}}"
+      ng-click="goTo('preview')"
+      aria-selected="{{$state.is('^.preview')}}"
       role="tab")
       | JSON preview
 
 .workbench-main
   form.workbench-main__right-content(name="contentTypeForm")
-    div(ng-if="$state.includes('spaces.detail.content_types.detail.preview')")
+    div(ng-if="$state.is('^.preview')")
       cf-content-type-preview.u-bce
 
-    .content-type-tab(ng-if="$state.includes('spaces.detail.content_types.detail.fields')")
+    .content-type-tab(ng-if="$state.is('^.fields')")
       .content-type-fields(ng-if="hasFields")
         include ./content_type_field_list
       .content-type-hints(ng-if="hasFields")
