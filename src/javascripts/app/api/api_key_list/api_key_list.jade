@@ -7,6 +7,8 @@ cf-api-key-nav
     .loading-box__message
       | Loading API keys
 
+cf-interstitial-loader(is-shown="isLoading")
+
 .workbench-main(ng-if="apiKeys")
   //- Non empty state
   .workbench-main__content(ng-if="!empty")

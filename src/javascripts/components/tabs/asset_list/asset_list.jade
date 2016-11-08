@@ -34,6 +34,8 @@ header.workbench-header
         li(role="menuitem" ng-click="createMultipleAssets()" ng-show="canUploadMultipleAssets()")
           | Multiple assets
 
+cf-interstitial-loader(is-shown="isLoading")
+
 .workbench-main(ng-hide="showNoAssetsAdvice()")
   .workbench-main__left-sidebar(
     ng-show="uiConfig"

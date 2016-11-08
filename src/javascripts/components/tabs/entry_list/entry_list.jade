@@ -28,7 +28,7 @@ header.workbench-header
   .workbench-header__actions(ng-if="!showNoEntriesAdvice()")
     +create-entry-button
 
-+interstitial-loader("isLoading", "interstitialLoaderMsg")
+cf-interstitial-loader(is-shown="isLoading")
 
 .workbench-main(ng-hide="showNoEntriesAdvice()")
   .workbench-main__left-sidebar(

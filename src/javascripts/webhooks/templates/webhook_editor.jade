@@ -13,6 +13,8 @@ header.workbench-header
     button.btn-secondary-action(ui-command="refreshLogs")
       | Refresh logs
 
+cf-interstitial-loader(is-shown="isLoading")
+
 .workbench-nav(ng-hide="context.isNew")
   ul.workbench-nav__tabs
     li(ui-tab="settings") Webhook settings

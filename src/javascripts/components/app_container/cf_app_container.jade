@@ -1,5 +1,3 @@
-include ../../ui/loader.mixin.jade
-
 cf-persistent-notification(role="banner")
 .app-top-bar
   .app-top-bar__logo.app-top-bar__child.app-top-bar--right-separator(ng-click="logoClicked()")
@@ -10,6 +8,6 @@ cf-persistent-notification(role="banner")
 
 cf-notifications
 
-+fullscreen-loader('showFullscreenLoader')
+cf-fullscreen-loader(is-shown="showFullscreenLoader")
 
 .app-container__content(ui-view="content")
