@@ -26,15 +26,10 @@ angular.module('contentful')
 
   $scope.goToUserProfile = TheAccountView.goToUserProfile;
   $scope.goToOrganizations = TheAccountView.goToOrganizations;
-  $scope.clickedProfileButton = clickedProfileButton;
   $scope.openSupport = openSupport;
   $scope.openIntercom = intercom.open;
   $scope.isIntercomLoaded = intercom.isLoaded;
   $scope.logout = logout;
-
-  function clickedProfileButton () {
-    analytics.track('Clicked Profile Button');
-  }
 
   function openSupport () {
     $window.open(authentication.supportUrl());

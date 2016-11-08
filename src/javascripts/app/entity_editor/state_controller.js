@@ -15,12 +15,6 @@ angular.module('contentful')
 
   var stateManager = new StateManager(entity);
 
-  /**
-   * @ngdoc analytics-event
-   * @name Changed Entity State
-   * @param {string} from
-   * @param {string} to
-   */
   stateManager.changedEditingState.attach(function (from, to) {
     analytics.track('Changed Entity State', {
       from: from,

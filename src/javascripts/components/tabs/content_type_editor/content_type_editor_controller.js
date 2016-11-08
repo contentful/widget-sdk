@@ -28,7 +28,7 @@ angular.module('contentful')
   var eiHelpers = require('editingInterfaces/helpers');
   var spaceContext = require('spaceContext');
   var editingInterfaces = spaceContext.editingInterfaces;
-  var trackFields = $injector.get('analyticsEvents/fields');
+  var trackFields = require('analyticsEvents/fields');
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 

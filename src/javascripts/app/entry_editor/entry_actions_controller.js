@@ -62,14 +62,6 @@ angular.module('contentful')
     name: function () { return $scope.contentTypeName; }
   });
 
-  /**
-   * @ngdoc analytics-event
-   * @name Show Disabled Fields
-   */
-  /**
-   * @ngdoc analytics-event
-   * @name Hide Disabled Fields
-   */
   function trackToggleDisabledFields (show) {
     if (show) {
       analytics.track('Show Disabled Fields');
@@ -77,5 +69,4 @@ angular.module('contentful')
       analytics.track('Hide Disabled Fields');
     }
   }
-
 }]);

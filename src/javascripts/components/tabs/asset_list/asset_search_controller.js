@@ -8,7 +8,6 @@ angular.module('contentful')
   var Paginator = require('Paginator');
   var PromisedLoader = require('PromisedLoader');
   var ReloadNotification = require('ReloadNotification');
-  var analytics = require('analytics');
   var logger = require('logger');
   var spaceContext = require('spaceContext');
   var ListQuery = require('ListQuery');
@@ -60,7 +59,6 @@ angular.module('contentful')
 
     return prepareQuery()
       .then(function (query) {
-        analytics.track('Scrolled AssetList');
         queryForDebug = query;
         return assetLoader.loadPromise(function () {
           return spaceContext.space.getAssets(query);

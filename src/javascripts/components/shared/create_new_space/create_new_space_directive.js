@@ -183,15 +183,7 @@ angular.module('contentful')
   function createTemplate(template, retried) {
     return controller.templateCreator.create(template)
     .catch(function (data) {
-      if (retried) {
-        _.each(data.errors, function (error) {
-          analytics.track('Created Errored Space Template', {
-            entityType: error.entityType,
-            entityId: error.entityId,
-            action: error.action
-          });
-        });
-      } else {
+      if (!retried) {
         createTemplate(data.template, true);
       }
     });

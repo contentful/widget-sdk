@@ -115,9 +115,6 @@ angular.module('contentful')
     name: 'webhooks',
     url: '/webhooks',
     abstract: true,
-    onEnter: ['analytics', function (analytics) {
-      analytics.track('Opened Webhooks view');
-    }],
     children: [list, newWebhook, detail]
   };
 

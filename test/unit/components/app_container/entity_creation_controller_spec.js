@@ -1,7 +1,7 @@
 'use strict';
 
 describe('EntityCreationController', function () {
-  var stubs;
+  let stubs;
 
   afterEach(function () {
     stubs = null;
@@ -27,27 +27,28 @@ describe('EntityCreationController', function () {
         track: stubs.track
       });
     });
-    inject(function ($injector, $controller, $rootScope, cfStub){
-      this.notification = $injector.get('notification');
-      this.$q = $injector.get('$q');
-      this.scope = $rootScope.$new();
 
-      var space = cfStub.space('test');
-      var contentTypeData = cfStub.contentTypeData('testType');
-      this.scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
-      this.$state = $injector.get('$state');
-      this.$state.go = sinon.stub();
+    const cfStub = this.$inject('cfStub');
+    const $controller = this.$inject('$controller');
 
-      this.entityCreationController = $controller('EntityCreationController', {$scope: this.scope});
-    });
+    this.notification = this.$inject('notification');
+    this.$q = this.$inject('$q');
+
+    this.spaceContext = this.$inject('spaceContext');
+    this.spaceContext.space = cfStub.space('test');
+
+    this.$state = this.$inject('$state');
+    this.$state.go = sinon.stub();
+
+    this.entityCreationController = $controller('EntityCreationController');
   });
 
   describe('creates an entry', function () {
-    var createStub;
-    var contentType;
+    let createStub;
+    let contentType;
     beforeEach(inject(function (cfStub) {
-      createStub = sinon.stub(this.scope.spaceContext.space, 'createEntry').returns(this.$q.defer().promise);
-      contentType = cfStub.contentType(this.scope.spaceContext.space, 'thing', 'Thing');
+      createStub = sinon.stub(this.spaceContext.space, 'createEntry').returns(this.$q.defer().promise);
+      contentType = cfStub.contentType(this.spaceContext.space, 'thing', 'Thing');
     }));
 
     afterEach(function () {
@@ -69,7 +70,7 @@ describe('EntityCreationController', function () {
           }
         }));
         this.entityCreationController.newEntry(contentType);
-        this.scope.$apply();
+        this.$apply();
       });
 
       it('determines enforcements', function () {
@@ -89,7 +90,7 @@ describe('EntityCreationController', function () {
       beforeEach(function () {
         createStub.returns(this.$q.resolve({ getId: sinon.stub().returns('someEntryId') }));
         this.entityCreationController.newEntry(contentType);
-        this.scope.$apply();
+        this.$apply();
       });
 
       it('navigates to editor', function () {
@@ -105,9 +106,9 @@ describe('EntityCreationController', function () {
   });
 
   describe('creates an asset', function () {
-    var createStub;
+    let createStub;
     beforeEach(function () {
-      createStub = sinon.stub(this.scope.spaceContext.space, 'createAsset').returns(this.$q.defer().promise);
+      createStub = sinon.stub(this.spaceContext.space, 'createAsset').returns(this.$q.defer().promise);
     });
 
     afterEach(function () {
@@ -129,7 +130,7 @@ describe('EntityCreationController', function () {
           }
         }));
         this.entityCreationController.newAsset();
-        this.scope.$apply();
+        this.$apply();
       });
 
       it('determines enforcements', function () {
@@ -147,9 +148,9 @@ describe('EntityCreationController', function () {
 
     describe('creation suceeds', function () {
       beforeEach(inject(function (cfStub) {
-        createStub.returns(this.$q.resolve(cfStub.asset(this.scope.spaceContext.space, 'someAssetId')));
+        createStub.returns(this.$q.resolve(cfStub.asset(this.spaceContext.space, 'someAssetId')));
         this.entityCreationController.newAsset();
-        this.scope.$apply();
+        this.$apply();
       }));
 
       it('navigates to editor', function () {
@@ -167,15 +168,11 @@ describe('EntityCreationController', function () {
   describe('creates a content type', function () {
     beforeEach(function () {
       this.entityCreationController.newContentType();
-      this.scope.$apply();
+      this.$apply();
     });
 
     it('navigates to editor', function () {
       sinon.assert.calledWith(this.$state.go, 'spaces.detail.content_types.new.home');
-    });
-
-    it('tracks analytics', function () {
-      sinon.assert.called(stubs.track);
     });
   });
 

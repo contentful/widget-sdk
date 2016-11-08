@@ -127,14 +127,13 @@ angular.module('contentful')
     /**
      * @ngdoc method
      * @name CodeMirrorWrapper#setValue
+     * @param {string?} value
      * @description
      * Sets the content of the editor while preserving the cursor
      * position.
      *
      * If called for the first time it will not record the change in
      * the history.
-     *
-     * @params {string?} value
      */
     function setValue (value) {
       value = value || '';

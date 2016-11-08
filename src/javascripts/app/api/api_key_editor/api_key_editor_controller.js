@@ -82,13 +82,6 @@ angular.module('contentful')
     }
   };
 
-  $scope.trackResourceLink = function (linkName, language) {
-    analytics.track('Selected Content at the API key page', {
-      resource: linkName,
-      language: language
-    });
-  };
-
   controller.save = Command.create(save, {
     disabled: function () {
       return $scope.apiKeyForm.$invalid || accessChecker.shouldDisable('createApiKey');

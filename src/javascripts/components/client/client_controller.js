@@ -3,7 +3,6 @@
 angular.module('contentful')
 .controller('ClientController', ['$scope', 'require', function ClientController ($scope, require) {
   var $rootScope = require('$rootScope');
-  var $state = require('$state');
   var features = require('features');
   var logger = require('logger');
   var spaceContext = require('spaceContext');
@@ -29,7 +28,6 @@ angular.module('contentful')
     toggleAuxPanel: function () {
       var showAuxPanel = !$scope.preferences.showAuxPanel;
       $scope.preferences.showAuxPanel = showAuxPanel;
-      trackToggleAuxPanel(showAuxPanel, $state.current.name);
     },
     showDisabledFields: false
   };
@@ -116,10 +114,7 @@ angular.module('contentful')
       persistOnNavigation: true
     })
     .promise
-    .then(handleSpaceCreationSuccess)
-    .catch(function () {
-      analytics.track('Closed Space Template Selection Modal');
-    });
+    .then(handleSpaceCreationSuccess);
   }
 
   function handleSpaceCreationSuccess (template) {
@@ -131,12 +126,5 @@ angular.module('contentful')
     } else {
       spaceContext.refreshContentTypes();
     }
-  }
-
-  function trackToggleAuxPanel (visible, stateName) {
-    var action = visible ? 'Opened Aux-Panel' : 'Closed Aux-Panel';
-    analytics.track(action, {
-      currentState: stateName
-    });
   }
 }]);

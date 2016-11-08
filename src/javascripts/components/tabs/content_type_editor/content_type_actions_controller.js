@@ -10,7 +10,6 @@ angular.module('contentful')
 .controller('ContentTypeActionsController', ['$scope', 'require', function ContentTypeActionsController ($scope, require) {
   var controller = this;
   var $rootScope = require('$rootScope');
-  var analytics = require('analytics');
   var logger = require('logger');
   var notify = require('contentType/notifications');
   var $q = require('$q');
@@ -137,7 +136,6 @@ angular.module('contentful')
   function unpublishSuccessHandler (publishedContentType) {
     $scope.publishedContentType = null;
     $scope.ctEditorController.registerPublishedFields(null);
-    trackUnpublishedContentType($scope.contentType);
     return publishedContentType;
   }
 
@@ -154,19 +152,6 @@ angular.module('contentful')
       return closeState();
     }, notify.deleteFail);
   }
-
-  /**
-   * @ngdoc analytics-event
-   * @name Unpublished Content Type
-   */
-  function trackUnpublishedContentType (contentType) {
-    analytics.track('Unpublished ContentType', {
-      contentTypeId: contentType.getId(),
-      contentTypeName: contentType.getName(),
-      version: contentType.getVersion()
-    });
-  }
-
 
   /**
    * @ngdoc property
@@ -210,7 +195,6 @@ angular.module('contentful')
   };
 
   function save (redirect) {
-    trackSavedContentType($scope.contentType);
     ctHelpers.assureDisplayField($scope.contentType.data);
 
     if (!$scope.validate()) {
@@ -280,18 +264,6 @@ angular.module('contentful')
   function triggerApiErrorNotification (errOrErrContainer) {
     notify.saveFailure(errOrErrContainer, $scope.contentType);
     return $q.reject(errOrErrContainer);
-  }
-
-  /**
-   * @ngdoc analytics-event
-   * @name Clicked Save Content Type Button
-   * @param initialSave
-   */
-  function trackSavedContentType (contentType) {
-    var isNew = !_.isNumber(contentType.getId());
-    analytics.track('Clicked Save Content Type Button', {
-      initialSave: isNew
-    });
   }
 
   function allFieldsInactive (contentType) {

@@ -9,7 +9,8 @@ angular.module('contentful').controller('SpaceController', ['$scope', '$injector
   var enforcements   = $injector.get('enforcements');
 
   $controller('UiConfigController', {$scope: $scope});
-  $scope.entityCreationController = $controller('EntityCreationController', {$scope: $scope});
+  // TODO: it's not a controller, it should be a service
+  $scope.entityCreationController = $controller('EntityCreationController');
 
   $scope.$watch(function () {
     return authorization.isUpdated(authentication.tokenLookup, $scope.spaceContext.space) && authentication.tokenLookup;

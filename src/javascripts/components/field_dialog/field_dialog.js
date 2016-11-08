@@ -17,7 +17,6 @@ angular.module('contentful')
  * @return {Promise<void>}
  */
 .factory('openFieldDialog', ['$injector', function ($injector) {
-  var trackFields = $injector.get('analyticsEvents/fields');
   var modalDialog = $injector.get('modalDialog');
 
   return function openFieldDialog ($scope, field, widget) {
@@ -25,7 +24,6 @@ angular.module('contentful')
       field: field,
       widget: widget
     });
-    trackFields.action('Clicked Field Settings Button', field);
     return modalDialog.open({
       scope: scope,
       template: 'field_dialog'
@@ -49,7 +47,6 @@ angular.module('contentful')
 
   var validations = $injector.get('validationDecorator');
   var field = $injector.get('fieldDecorator');
-  var trackFields = $injector.get('analyticsEvents/fields');
   var trackCustomWidgets = $injector.get('analyticsEvents/customWidgets');
   var fieldFactory = $injector.get('fieldFactory');
   var Widgets = $injector.get('widgets');
@@ -88,7 +85,6 @@ angular.module('contentful')
   dialog.save = function () {
     $scope.$broadcast('validate');
     if (!isValid()) {
-      trackFields.action('Saved Errored Field Settings Modal', $scope.field);
       return;
     }
 
@@ -107,7 +103,6 @@ angular.module('contentful')
       trackCustomWidgets.selected(widget, $scope.field, $scope.contentType);
     }
 
-    trackFields.action('Saved Successful Field Settings Modal', $scope.field);
     dialog.confirm();
   };
 

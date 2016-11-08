@@ -10,9 +10,6 @@ describe('Locale editor controller', function () {
       info: sinon.stub(),
       error: sinon.stub()
     };
-    this.analytics = {
-      track: sinon.stub()
-    };
     this.modalDialog = {
       openConfirmDialog: sinon.stub(),
       open: sinon.stub()
@@ -139,10 +136,6 @@ describe('Locale editor controller', function () {
         expect(this.notification.info.args[0][0]).toEqual('Locale deleted successfully');
       });
 
-      it('is logged to analytics', function () {
-        sinon.assert.calledWith(this.analytics.track, 'Clicked Delete Locale Button');
-      });
-
       it('sets form to submitted state', function () {
         sinon.assert.called(this.scope.localeForm.$setSubmitted);
       });
@@ -229,10 +222,6 @@ describe('Locale editor controller', function () {
       expect(this.logger.logServerWarn.args[0][1]).toEqual({error: error});
     });
 
-    it('is logged to analytics', function () {
-      sinon.assert.calledWith(this.analytics.track, 'Clicked Delete Locale Button');
-    });
-
     it('sets form to submitted state', function () {
       sinon.assert.called(this.scope.localeForm.$setSubmitted);
     });
@@ -265,10 +254,6 @@ describe('Locale editor controller', function () {
 
       it('refreshes locales', function () {
         sinon.assert.called(this.TheLocaleStoreMock.refresh);
-      });
-
-      it('is logged to analytics', function () {
-        sinon.assert.calledWith(this.analytics.track, 'Saved Successful Locale');
       });
 
       it('sets form to submitted state', function () {
@@ -342,10 +327,6 @@ describe('Locale editor controller', function () {
 
     it('error is logged', function () {
       expect(this.logger.logServerWarn.args[0][1]).toEqual({error: {}});
-    });
-
-    it('is logged to analytics', function () {
-      sinon.assert.calledWith(this.analytics.track, 'Saved Errored Locale');
     });
 
     it('sets form to submitted state', function () {
