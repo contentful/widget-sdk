@@ -4,11 +4,12 @@ angular.module('contentful')
 
 .run(['require', function (require) {
   var env = require('environment').env;
+
   var CONSOLE_ENVS = ['development', 'preview', 'staging'];
+  var FN_NAME = '__ANALYTICS_CONSOLE';
 
   if (_.includes(CONSOLE_ENVS, env)) {
-    var showConsole = require('analytics/console').show;
-    window.__ANALYTICS_CONSOLE = showConsole;
+    window[FN_NAME] = require('analytics/console').show;
   }
 }])
 
@@ -26,12 +27,20 @@ angular.module('contentful')
   var $compile = require('$compile');
   var $rootScope = require('$rootScope');
   var moment = require('moment');
+  var K = require('utils/kefir');
 
   var events = [];
+  var eventsBus = null;
+  var sessionData = {};
+  var sessionDataBus = null;
   var scope = null;
   var el = null;
 
-  return {show: show, add: add};
+  return {
+    show: show,
+    add: add,
+    setSessionData: setSessionData
+  };
 
   /**
    * @ngdoc method
@@ -42,7 +51,12 @@ angular.module('contentful')
    */
   function show () {
     if (!scope) {
-      scope = _.extend($rootScope.$new(true), {events: events});
+      eventsBus = K.createPropertyBus(events);
+      sessionDataBus = K.createPropertyBus(sessionData);
+      scope = _.extend($rootScope.$new(true), {
+        eventsProperty: eventsBus.property,
+        sessionDataProperty: sessionDataBus.property
+      });
       el = $compile('<cf-analytics-console />')(scope);
     }
 
@@ -74,6 +88,24 @@ angular.module('contentful')
       integration: integration,
       data: data
     });
+
+    if (eventsBus) {
+      eventsBus.set(events);
+    }
+  }
+
+  /**
+   * @ngdoc method
+   * @name analytics/console#setUserData
+   * @param {object} data
+   * @description
+   * Replaces current session data.
+   */
+  function setSessionData (data) {
+    sessionData = data;
+    if (sessionDataBus) {
+      sessionDataBus.set(data);
+    }
   }
 }])
 
@@ -83,31 +115,39 @@ angular.module('contentful')
   return {
     template: JST.analytics_console(),
     link: function (scope, $el) {
-      var $wrapper = $el.find('.analytics-console');
-      var $events = $el.find('.analytics-console__events');
+      var containerEl = $el.find('.analytics-console__content').get(0);
 
-      var container = $events.get(0);
-      scope.$watchCollection('events', function () {
+      scope.toggle = function () {
+        scope.showSessionData = !scope.showSessionData;
+        if (scope.showSessionData) {
+          scrollUp();
+        } else {
+          scrollDown();
+        }
+      };
+
+      scope.eventsProperty.onValue(function (events) {
+        scope.events = events;
+        if (!scope.showSessionData) {
+          scrollDown();
+        }
+      });
+
+      scope.sessionDataProperty.onValue(function (data) {
+        scope.sessionData = data;
+      });
+
+      function scrollDown () {
         $timeout(function () {
-          container.scrollTop = container.scrollHeight;
-          $events.children().css({border: '1px dashed gray', padding: '5px'});
+          containerEl.scrollTop = containerEl.scrollHeight;
         });
-      });
+      }
 
-      $wrapper.css({
-        position: 'absolute',
-        width: '350px',
-        border: '2px solid black',
-        right: '20px',
-        bottom: '20px',
-        background: 'white'
-      });
-
-      $events.css({
-        height: '350px',
-        'overflow-y': 'scroll',
-        padding: '15px'
-      });
+      function scrollUp () {
+        $timeout(function () {
+          containerEl.scrollTop = 0;
+        });
+      }
     }
   };
 }]);

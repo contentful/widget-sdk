@@ -34,6 +34,7 @@ angular.module('contentful')
   var segment = require('analytics/segment');
   var userData = require('analytics/userData');
   var analyticsConsole = require('analytics/console');
+  var stringifySafe = require('stringifySafe');
 
   var SEGMENT_ENVS = ['production', 'staging', 'preview'];
 
@@ -69,7 +70,7 @@ angular.module('contentful')
       segment.enable();
     }
 
-    identify(userData.prepare(user));
+    identify(userData.prepare(removeCircularRefs(user)));
     send('global:app_loaded');
   }
 
@@ -84,6 +85,7 @@ angular.module('contentful')
     segment.disable();
     isDisabled = true;
     session = {};
+    sendSessionDataToConsole();
   }
 
   /**
@@ -130,6 +132,8 @@ angular.module('contentful')
     if (userId && user) {
       segment.identify(userId, user);
     }
+
+    sendSessionDataToConsole();
   }
 
   /**
@@ -142,11 +146,13 @@ angular.module('contentful')
    */
   function trackSpaceChange (space) {
     if (space) {
-      session.space = dotty.get(space, 'data', {});
-      session.organization = dotty.get(space, 'data.organization', {});
+      session.space = removeCircularRefs(dotty.get(space, 'data', {}));
+      session.organization = removeCircularRefs(dotty.get(space, 'data.organization', {}));
     } else {
       session.space = session.organization = null;
     }
+
+    sendSessionDataToConsole();
 
     if (space) {
       send('global:space_changed', {
@@ -173,12 +179,14 @@ angular.module('contentful')
    * the Segment's client.
    */
   function trackStateChange (state, params, from, fromParams) {
-    var data = session.navigation = {
+    var data = session.navigation = removeCircularRefs({
       state: state.name,
       params: params,
       fromState: from ? from.name : null,
       fromStateParams: fromParams || null
-    };
+    });
+
+    sendSessionDataToConsole();
 
     trackLegacy('Switched State', data);
     send('global:state_changed', data);
@@ -211,6 +219,14 @@ angular.module('contentful')
       trackLegacy('Skipped Persona Selection');
       send('global:persona_selection_skipped');
     }
+  }
+
+  function sendSessionDataToConsole () {
+    analyticsConsole.setSessionData(session);
+  }
+
+  function removeCircularRefs (obj) {
+    return JSON.parse(stringifySafe(obj));
   }
 
   /**
@@ -256,7 +272,6 @@ angular.module('contentful')
  */
 .factory('analytics/userData', ['require', function (require) {
   var cookieStore = require('TheStore/cookieStore');
-  var stringifySafe = require('stringifySafe');
 
   return {
     prepare: prepareUserData
@@ -272,9 +287,6 @@ angular.module('contentful')
    * specific to the first visit.
    */
   function prepareUserData (userData) {
-    // Remove circular references
-    userData = JSON.parse(stringifySafe(userData));
-
     if (userData.signInCount === 1) {
       // On first login, send referrer, campaign and A/B test data
       // if it has been set in marketing website cookie
