@@ -15,9 +15,9 @@ angular.module('contentful')
  * error paths determine dynamically for which fields and which locales
  * widgets should be rendered.
  */
-.controller('FormWidgetsController', ['$scope', '$injector', 'contentTypeId', 'controls', function ($scope, $injector, contentTypeId, controls) {
-  var trackCustomWidgets = $injector.get('analyticsEvents/customWidgets');
-  var Focus = $injector.get('FieldControls/Focus');
+.controller('FormWidgetsController', ['$scope', 'require', 'controls', function ($scope, require, controls) {
+  var trackCustomWidgets = require('analyticsEvents/customWidgets');
+  var Focus = require('FieldControls/Focus');
 
   // TODO Changes to 'validator.errors' change the behavior of
   // 'validator.hasError()'. We should make this dependency explicity
@@ -30,7 +30,7 @@ angular.module('contentful')
   // Executed only once when 'widgets' is not undefined.
   $scope.$watch('::widgets', function (widgets) {
     _.forEach(widgets, function (widget) {
-      trackCustomWidgets.rendered(widget, contentTypeId);
+      trackCustomWidgets.rendered(widget, $scope.contentType, $scope.entry);
     });
   });
 

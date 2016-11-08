@@ -1,23 +1,25 @@
 'use strict';
 
-angular.module('contentful').controller('SpaceController', ['$scope', '$injector', function SpaceController($scope, $injector) {
-  var $controller    = $injector.get('$controller');
-  var $rootScope     = $injector.get('$rootScope');
-  var analytics      = $injector.get('analytics');
-  var authentication = $injector.get('authentication');
-  var authorization  = $injector.get('authorization');
-  var enforcements   = $injector.get('enforcements');
+angular.module('contentful')
+.controller('SpaceController', ['$scope', 'require', function SpaceController ($scope, require) {
+  var $controller = require('$controller');
+  var $rootScope = require('$rootScope');
+  var analytics = require('analytics');
+  var authentication = require('authentication');
+  var authorization = require('authorization');
+  var enforcements = require('enforcements');
+  var spaceContext = require('spaceContext');
 
   $controller('UiConfigController', {$scope: $scope});
   // TODO: it's not a controller, it should be a service
   $scope.entityCreationController = $controller('EntityCreationController');
 
   $scope.$watch(function () {
-    return authorization.isUpdated(authentication.tokenLookup, $scope.spaceContext.space) && authentication.tokenLookup;
+    return authorization.isUpdated(authentication.tokenLookup, spaceContext.space) && authentication.tokenLookup;
   }, function (updated) {
-    if(updated) {
+    if (updated) {
       var enforcement = enforcements.getPeriodUsage();
-      if(enforcement) {
+      if (enforcement) {
         $rootScope.$broadcast('persistentNotification', {
           message: enforcement.message,
           actionMessage: enforcement.actionMessage,
@@ -27,8 +29,5 @@ angular.module('contentful').controller('SpaceController', ['$scope', '$injector
     }
   });
 
-  $scope.logoClicked = function () {
-    analytics.track('Clicked Logo');
-  };
-
+  $scope.logoClicked = _.partial(analytics.track, 'global:logo_clicked');
 }]);

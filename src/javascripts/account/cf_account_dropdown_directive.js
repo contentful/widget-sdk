@@ -36,7 +36,7 @@ angular.module('contentful')
   }
 
   function logout () {
-    analytics.track('Clicked Logout');
+    analytics.track('global:logout_clicked');
     authentication.logout();
   }
 }]);

@@ -52,7 +52,7 @@ angular.module('contentful')
     };
     $scope.folders.push(folder);
     $scope.saveViews();
-    analytics.track('Added View Folder');
+    track('view_folder_added');
     $timeout(function () {
       $scope.$broadcast('startInlineEditor', folder);
     });
@@ -73,7 +73,7 @@ angular.module('contentful')
       scope: $scope
     }).promise.then(function () {
       _.remove($scope.folders, {id: folder.id});
-      analytics.track('Deleted View Folder');
+      track('view_folder_deleted');
       return $scope.saveViews();
     });
   };
@@ -88,10 +88,26 @@ angular.module('contentful')
     view.id = random.id();
     folder.views.push(view);
     $scope.saveViews();
-    analytics.track('Added View');
+    track('view_added');
 
     $timeout(function () {
       $scope.$broadcast('startInlineEditor', view);
+    });
+  };
+
+  $scope.deleteViewFromFolder = function (view, folder) {
+    modalDialog.openConfirmDeleteDialog({
+      title: 'Delete view',
+      message:
+      'Do you really want to delete the view ' +
+      '<span class="modal-dialog__highlight">' + htmlEncode(view.title) +
+      '</span>?',
+      scope: $scope
+    }).promise.then(function () {
+      _.remove(folder.views, {id: view.id});
+      $scope.cleanDefaultFolder();
+      track('view_deleted');
+      return $scope.saveViews();
     });
   };
 
@@ -173,4 +189,11 @@ angular.module('contentful')
   $scope.nameChanged = function () {
     $scope.saveViews();
   };
+
+  function track (event) {
+    var state = analytics.getSessionData('navigation.state', '');
+    var source = state.indexOf('assets') > -1 ? 'media' : 'content';
+
+    analytics.track('search:' + event, {source: source});
+  }
 }]);

@@ -8,7 +8,47 @@ angular.module('contentful')
     'space_changed',
     'space_left',
     'state_changed',
+    'logo_clicked',
+    'logout_clicked',
+    'top_banner_dismissed'
+  ],
+  onboarding: [
     'persona_selected'
+  ],
+  learn: [
+    'step_clicked',
+    'language_selected',
+    'resource_selected'
+  ],
+  space_switcher: [
+    'opened',
+    'create_clicked',
+    'space_switched'
+  ],
+  space: [
+    'template_selected',
+    'created_from_template'
+  ],
+  search: [
+    'view_folder_added',
+    'view_folder_deleted',
+    'view_added',
+    'view_deleted',
+    'bulk_action_performed'
+  ],
+  modelling: [
+    'custom_extension_selected'
+  ],
+  entry_editor: [
+    'state_changed',
+    'disabled_fields_visibility_toggled',
+    'created_with_same_ct',
+    'preview_opened',
+    'custom_extension_rendered'
+  ],
+  api_keys: [
+    'create_screen_opened',
+    'language_selected'
   ],
   versioning: [
     'no_snapshots',
@@ -16,6 +56,16 @@ angular.module('contentful')
     'snapshot_closed',
     'snapshot_restored',
     'published_restored'
+  ],
+  content_preview: [
+    'created',
+    'updated',
+    'deleted'
+  ],
+  paywall: [
+    'viewed',
+    'closed',
+    'upgrade_clicked'
   ]
 })
 

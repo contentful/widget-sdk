@@ -181,7 +181,7 @@ describe('cfCreateNewSpace directive', function() {
         });
 
         it ('sends template selection analytics event', function() {
-          sinon.assert.calledWith(stubs.analytics.track, 'Selected Space Template', {template: 'Blank'});
+          sinon.assert.calledWith(stubs.analytics.track, 'space:template_selected', {templateName: 'Blank'});
         });
 
         it('calls client lib with data', function() {

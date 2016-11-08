@@ -127,7 +127,7 @@ angular.module('contentful')
   function identify (extension) {
     session.user = session.user || {};
     var user = _.merge(session.user, extension || {});
-    var userId = dotty.get(user, 'sys.id');
+    var userId = getSessionData('user.sys.id');
 
     if (userId && user) {
       segment.identify(userId, user);
@@ -200,15 +200,16 @@ angular.module('contentful')
     }[personaCode];
 
     if (personaName) {
-      trait = {personaCode: personaCode, personaName: personaName};
+      trait = {skipped: false, personaName: personaName};
       identify(trait);
     }
 
-    track('global:persona_selected', trait);
+    track('onboarding:persona_selected', trait);
   }
 
   function getBasicPayload () {
     return _.pickBy({
+      userId: getSessionData('user.sys.id', VALUE_UNKNOWN),
       spaceId: getSessionData('space.sys.id', VALUE_UNKNOWN),
       organizationId: getSessionData('organization.sys.id', VALUE_UNKNOWN),
       currentState: getSessionData('navigation.state', VALUE_UNKNOWN)

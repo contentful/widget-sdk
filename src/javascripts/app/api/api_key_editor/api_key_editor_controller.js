@@ -76,7 +76,7 @@ angular.module('contentful')
       $scope.selectedLanguage = undefined;
     } else {
       $scope.selectedLanguage = language;
-      analytics.track('Selected Language at the API Key Page', {
+      analytics.track('api_keys:language_selected', {
         language: $scope.selectedLanguage.name
       });
     }

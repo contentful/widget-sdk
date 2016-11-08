@@ -107,7 +107,7 @@ describe('paywallOpener', function () {
 
       it('does not open more than one dialogs at a time', testCanReopen(false));
 
-      describeNthAnalyticsEvent(0, 'Viewed Paywall');
+      describeNthAnalyticsEvent(0, 'paywall:viewed');
     });
 
     describe('after paywall got cancelled', function () {
@@ -118,7 +118,7 @@ describe('paywallOpener', function () {
 
       it('allows to reopen the paywall', testCanReopen(true));
 
-      describeNthAnalyticsEvent(1, 'Cancelled Paywall');
+      describeNthAnalyticsEvent(1, 'paywall:closed');
     });
 
     describe('after user attempted to set up payment', function () {
@@ -136,7 +136,7 @@ describe('paywallOpener', function () {
         sinon.assert.calledOnce(this.TheAccountView.goToSubscription);
       });
 
-      describeNthAnalyticsEvent(1, 'Clicked Paywall Plan Upgrade Button');
+      describeNthAnalyticsEvent(1, 'paywall:upgrade_clicked');
     });
 
     function describeNthAnalyticsEvent (n, event) {
@@ -152,8 +152,7 @@ describe('paywallOpener', function () {
 
         it('received relevant data', function () {
           expect(this.nthTrack.args[1]).toEqual({
-            userCanUpgradePlan: userCanUpgrade,
-            organizationName: 'TEST_ORGANIZATION'
+            userCanUpgradePlan: userCanUpgrade
           });
         });
       });

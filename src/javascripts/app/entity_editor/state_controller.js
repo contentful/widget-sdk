@@ -16,9 +16,11 @@ angular.module('contentful')
   var stateManager = new StateManager(entity);
 
   stateManager.changedEditingState.attach(function (from, to) {
-    analytics.track('Changed Entity State', {
-      from: from,
-      to: to
+    analytics.track('entry_editor:state_changed', {
+      fromState: from,
+      toState: to,
+      entityType: entity.getType(),
+      entityId: entity.getId()
     });
   });
 

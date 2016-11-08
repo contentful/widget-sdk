@@ -146,8 +146,9 @@ angular.module('contentful')
       return showFormError('You can\'t create a Space in this Organization');
     }
 
-    // Send analytics event
-    sendTemplateSelectedAnalyticsEvent(template.name);
+    analytics.track('space:template_selected', {
+      templateName: template.name
+    });
 
     // Create space
     client.createSpace(data, orgId)
@@ -207,12 +208,6 @@ angular.module('contentful')
       description: 'We’ve created an example API key for you to help you get started.'
     };
     return spaceContext.space.createDeliveryApiKey(key);
-  }
-
-  function sendTemplateSelectedAnalyticsEvent(templateName) {
-    analytics.track('Selected Space Template', {
-      template: templateName
-    });
   }
 
   function handleSpaceCreationFailure(err) {

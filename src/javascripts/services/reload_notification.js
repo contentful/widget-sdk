@@ -5,7 +5,6 @@ angular.module('contentful')
   var $location = require('$location');
   var $q = require('$q');
   var modalDialog = require('modalDialog');
-  var trackPersistentNotification = require('analyticsEvents/persistentNotification');
 
   var open = false;
 
@@ -47,7 +46,6 @@ angular.module('contentful')
 
   return {
     triggerImmediateReload: function () {
-      trackPersistentNotification.action('App Reload');
       reloadWithCacheBuster();
     },
 

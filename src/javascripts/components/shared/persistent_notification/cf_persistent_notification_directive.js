@@ -30,7 +30,7 @@ angular.module('contentful')
     resetNotification();
 
     scope.dismissPersistentNotification = function () {
-      analytics.track('Clicked Top Banner Close Button');
+      analytics.track('global:top_banner_dismissed');
       dismissed = true;
       resetNotification();
     };

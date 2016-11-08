@@ -33,20 +33,20 @@ angular.module('contentful')
       offerPlanUpgrade: false
     }, options);
 
-    trackPaywall('Viewed Paywall');
+    track('viewed');
     paywallIsOpen = true;
 
     loadScopeData().then(openPaywallDialog);
 
     function openPaywallDialog (scopeData) {
       modalDialog.open({
-        title: 'Paywall', // For generic Modal Dialog tracking.
+        title: 'Paywall',
         template: 'paywall_dialog',
         persistOnNavigation: true,
         scopeData: scopeData
       }).promise
       .catch(function () {
-        trackPaywall('Cancelled Paywall');
+        track('closed');
       })
       .finally(function () {
         paywallIsOpen = false;
@@ -88,19 +88,17 @@ angular.module('contentful')
       }
     }
 
-    function trackPaywall (event) {
-      analytics.track(event, {
-        userCanUpgradePlan: options.offerPlanUpgrade,
-        organizationName: organization.name
-      });
-    }
-
     function newUpgradeAction () {
       return function upgradeAction () {
-        trackPaywall('Clicked Paywall Plan Upgrade Button');
+        track('upgrade_clicked');
         TheAccountView.goToSubscription();
       };
     }
-  }
 
+    function track (event) {
+      analytics.track('paywall:' + event, {
+        userCanUpgradePlan: options.offerPlanUpgrade
+      });
+    }
+  }
 }]);

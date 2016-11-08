@@ -2,7 +2,6 @@
 
 describe('Tracking versioning', function () {
   const data = {
-    user: {sys: {id: 'uid'}},
     entry: {sys: {id: 'eid'}},
     snapshot: {sys: {
       id: 'sid',
@@ -15,7 +14,7 @@ describe('Tracking versioning', function () {
     module('contentful/test');
     this.analytics = this.$inject('analytics');
     sinon.stub(this.analytics, 'track');
-    this.analytics.enable(data.user);
+    this.analytics.enable({sys: {id: 'uid'}});
 
     this.track = this.$inject('analyticsEvents/versioning');
     this.track.setData(data.entry, data.snapshot);
@@ -35,7 +34,6 @@ describe('Tracking versioning', function () {
 
     this.assertBasicAnalyticsCall = (event) => {
       this.assertAnalyticsCall(event, {
-        userId: 'uid',
         entryId: 'eid',
         snapshotId: 'sid',
         snapshotType: 'publication',

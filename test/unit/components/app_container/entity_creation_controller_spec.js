@@ -22,10 +22,6 @@ describe('EntityCreationController', function () {
         determineEnforcement: stubs.enforcement,
         setSpaceContext: stubs.setSpaceContext
       });
-
-      $provide.value('analytics', {
-        track: stubs.track
-      });
     });
 
     const cfStub = this.$inject('cfStub');
@@ -80,10 +76,6 @@ describe('EntityCreationController', function () {
       it('notifies of the error', function () {
         sinon.assert.called(this.notification.error);
       });
-
-      it('tracks analytics', function () {
-        sinon.assert.called(stubs.track);
-      });
     });
 
     describe('creation suceeds', function () {
@@ -97,10 +89,6 @@ describe('EntityCreationController', function () {
         sinon.assert.calledWith(this.$state.go, 'spaces.detail.entries.detail', {
           entryId: 'someEntryId'
         });
-      });
-
-      it('tracks analytics', function () {
-        sinon.assert.called(stubs.track);
       });
     });
   });
@@ -140,10 +128,6 @@ describe('EntityCreationController', function () {
       it('notifies of the error', function () {
         sinon.assert.called(this.notification.error);
       });
-
-      it('tracks analytics', function () {
-        sinon.assert.called(stubs.track);
-      });
     });
 
     describe('creation suceeds', function () {
@@ -157,10 +141,6 @@ describe('EntityCreationController', function () {
         sinon.assert.calledWith(this.$state.go, 'spaces.detail.assets.detail', {
           assetId: 'someAssetId'
         });
-      });
-
-      it('tracks analytics', function () {
-        sinon.assert.called(stubs.track);
       });
     });
   });
@@ -189,10 +169,6 @@ describe('EntityCreationController', function () {
     it('navigates to editor', function () {
       sinon.assert.calledWith(this.$state.go, 'spaces.detail.api.keys.new');
     });
-
-    it('tracks analytics', function () {
-      sinon.assert.called(stubs.track);
-    });
   });
 
   describe('opens editor for new locale', function () {
@@ -207,10 +183,6 @@ describe('EntityCreationController', function () {
 
     it('navigates to editor', function () {
       sinon.assert.calledWith(this.$state.go, 'spaces.detail.settings.locales.new');
-    });
-
-    it('tracks analytics', function () {
-      sinon.assert.called(stubs.track);
     });
   });
 });

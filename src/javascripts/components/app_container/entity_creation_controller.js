@@ -9,8 +9,6 @@ angular.module('contentful')
   var $state = require('$state');
   var spaceContext = require('spaceContext');
 
-  var EVENT_NAME = 'Selected Add-Button in the Frame';
-
   this.newEntry = function (contentType) {
     var handler = makeEntityResponseHandler({
       entityType: 'entry',
@@ -50,10 +48,7 @@ angular.module('contentful')
       return notification.error(usage);
     }
     $state.go('spaces.detail.api.keys.new');
-    analytics.track(EVENT_NAME, {
-      currentState: $state.current.name,
-      entityType: 'apiKey'
-    });
+    analytics.track('api_keys:create_screen_opened');
   };
 
   this.newLocale = function () {
@@ -62,10 +57,6 @@ angular.module('contentful')
       return notification.error(usage);
     }
     $state.go('spaces.detail.settings.locales.new');
-    analytics.track(EVENT_NAME, {
-      currentState: $state.current.name,
-      entityType: 'locale'
-    });
   };
 
   function makeEntityResponseHandler (params) {
@@ -85,14 +76,6 @@ angular.module('contentful')
         logger.logServerWarn(params.errorMessage, {error: err});
         notification.error(params.errorMessage);
       }
-      analytics.track(EVENT_NAME, {
-        currentState: $state.current.name,
-        entityType: params.entityType,
-        entitySubType: (typeof params.entitySubType === 'function')
-          ? params.entitySubType(entity)
-          : params.entitySubType
-      });
     };
   }
-
 }]);
