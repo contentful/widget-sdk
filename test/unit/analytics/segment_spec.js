@@ -4,7 +4,7 @@ describe('Segment service', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    this.segment = this.$inject('segment');
+    this.segment = this.$inject('analytics/segment');
     this.window = this.$inject('$window');
     this.loader = this.$inject('LazyLoader');
 

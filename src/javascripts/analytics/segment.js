@@ -2,7 +2,18 @@
 
 angular.module('contentful')
 
-.factory('segment', ['require', function (require) {
+/**
+ * @ngdoc service
+ * @name analytics/segment
+ * @description
+ * The segment.com client service.
+ *
+ * All calls (`track`, `page`, `identify`)
+ * are buffered and executed after `enable`
+ * call. Once disabled, this service cannot
+ * be enabled again.
+ */
+.factory('analytics/segment', ['require', function (require) {
   var $window = require('$window');
   var $q = require('$q');
   var CallBuffer = require('CallBuffer');
@@ -17,26 +28,65 @@ angular.module('contentful')
 
   var buffer = CallBuffer.create();
   var bufferedTrack = bufferedCall('track');
+  var isDisabled = false;
 
-  var API = {
+  return {
     enable: _.once(enable),
     disable: disable,
     track: track,
+    /**
+     * @ngdoc method
+     * @name analytics/segment#page
+     * @param {string} pageName
+     * @param {object} pageData
+     * @description
+     * Sets current page.
+     */
     page: bufferedCall('page'),
+    /**
+     * @ngdoc method
+     * @name analytics/segment#identify
+     * @param {object} userTraits
+     * @description
+     * Sets current user traits.
+     */
     identify: bufferedCall('identify')
   };
 
-  return API;
-
+  /**
+   * @ngdoc method
+   * @name analytics/segment#enable
+   * @description
+   * Loads lazily the script and starts
+   * sending analytical events.
+   */
   function enable () {
-    install().then(buffer.resolve);
+    if (!isDisabled) {
+      install().then(buffer.resolve);
+    }
   }
 
+  /**
+   * @ngdoc method
+   * @name analytics/segment#disable
+   * @description
+   * Stops sending analytical events and
+   * blocks next calls to `enable`.
+   */
   function disable () {
     buffer.disable();
-    API.enable = _.noop;
+    isDisabled = true;
   }
 
+  /**
+   * @ngdoc method
+   * @name analytics/segment#track
+   * @param {string} event
+   * @param {object} data
+   * @description
+   * Sends a single event with data to
+   * the selected integrations.
+   */
   function track (event, data) {
     bufferedTrack(event, data, INTEGRATIONS);
   }

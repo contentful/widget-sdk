@@ -9,7 +9,7 @@
  *
  * We host files on our own, but the fonts.com
  * EULA states that we should also load the CSS
- * on all the pages where use them.
+ * on all the pages where we use them.
  *
  * We violate the EULA slightly by not calling
  * `enable` for users that didn't agree with

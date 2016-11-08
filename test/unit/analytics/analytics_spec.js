@@ -13,7 +13,7 @@ describe('analytics', function () {
 
     this.analytics = this.$inject('analytics');
 
-    this.segment = this.$inject('segment');
+    this.segment = this.$inject('analytics/segment');
     ['enable', 'disable', 'identify', 'track', 'page'].forEach((m) => {
       sinon.stub(this.segment, m);
     });
@@ -43,10 +43,23 @@ describe('analytics', function () {
   });
 
   describe('#disable()', function () {
-    it('disables segment and turns enable into noop', function () {
+    it('disables segment', function () {
       this.analytics.disable();
       sinon.assert.called(this.segment.disable);
-      expect(this.analytics.enable).toBe(_.noop);
+    });
+
+    it('blocks next calls to #enable', function () {
+      this.analytics.disable();
+      this.analytics.enable({userData: true});
+      sinon.assert.notCalled(this.segment.enable);
+      expect(this.analytics.getSessionData('user')).toBeUndefined();
+    });
+
+    it('cleans up session data', function () {
+      this.analytics.enable({test: true});
+      expect(this.analytics.getSessionData('user.test')).toBe(true);
+      this.analytics.disable();
+      expect(this.analytics.getSessionData()).toEqual({});
     });
   });
 

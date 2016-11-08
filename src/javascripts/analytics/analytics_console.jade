@@ -1,7 +1,7 @@
 .analytics-console(ng-show="isVisible")
-  button(ng-click="hide()") hide
+  button(ng-click="isVisible = false") hide
   button(ng-click="isCollapsed = !isCollapsed") {{ isCollapsed ? 'expand' : 'collapse' }}
-  .analytics-console__events
+  .analytics-console__events(ng-show="!isCollapsed")
     .analytics-console__event(ng-repeat="event in events track by $index")
       p ({{ event.time }} {{ event.integration }}) <strong>{{ event.name }}</strong>
       pre {{ event.data || 'no data' | json }}
