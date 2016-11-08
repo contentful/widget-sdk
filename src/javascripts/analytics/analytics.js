@@ -37,6 +37,7 @@ angular.module('contentful')
   var stringifySafe = require('stringifySafe');
 
   var SEGMENT_ENVS = ['production', 'staging', 'preview'];
+  var VALUE_UNKNOWN = {};
 
   var shouldSend = _.includes(SEGMENT_ENVS, env);
   var session = {};
@@ -46,13 +47,10 @@ angular.module('contentful')
     enable: _.once(enable),
     disable: disable,
     getSessionData: getSessionData,
-    send: send,
+    track: track,
     trackSpaceChange: trackSpaceChange,
     trackStateChange: trackStateChange,
-    trackPersonaSelection: trackPersonaSelection,
-
-    // TODO: eliminate calls to this method
-    track: trackLegacy
+    trackPersonaSelection: trackPersonaSelection
   };
 
   /**
@@ -71,7 +69,7 @@ angular.module('contentful')
     }
 
     identify(userData.prepare(removeCircularRefs(user)));
-    send('global:app_loaded');
+    track('global:app_loaded');
   }
 
   /**
@@ -92,28 +90,30 @@ angular.module('contentful')
    * @ngdoc method
    * @name analytics#getSessionData
    * @param {string|array?} path
+   * @param {any?} defaultValue
    * @returns {object}
    * @description
    * Gets session data. If `path` is provided then
    * dotty is used to extract specific nested value.
    */
-  function getSessionData (path) {
-    return dotty.get(session, path || []);
+  function getSessionData (path, defaultValue) {
+    return dotty.get(session, path || [], defaultValue);
   }
 
   /**
    * @ngdoc method
-   * @name analytics#send
+   * @name analytics#track
    * @param {string} event
    * @param {object?} data
    * @description
    * Sends tracking event (with optionally provided
    * data) to Segment.
    */
-  function send (event, data) {
+  function track (event, data) {
     data = _.isObject(data) ? _.cloneDeep(data) : {};
+    data = _.extend(data, getBasicPayload());
     segment.track(event, data);
-    analyticsConsole.add(event, 'Segment', data);
+    analyticsConsole.add(event, data);
   }
 
   /**
@@ -153,16 +153,7 @@ angular.module('contentful')
     }
 
     sendSessionDataToConsole();
-
-    if (space) {
-      send('global:space_changed', {
-        spaceId: dotty.get(session.space, 'sys.id'),
-        organizationId: dotty.get(session.organization, 'sys.id')
-      });
-    } else {
-      send('global:space_left');
-    }
-
+    track(space ? 'global:space_changed' : 'global:space_left');
   }
 
   /**
@@ -187,10 +178,7 @@ angular.module('contentful')
     });
 
     sendSessionDataToConsole();
-
-    trackLegacy('Switched State', data);
-    send('global:state_changed', data);
-
+    track('global:state_changed', data);
     segment.page(state.name, params);
   }
 
@@ -211,14 +199,22 @@ angular.module('contentful')
     }[personaCode];
 
     if (personaName) {
-      var trait = {personaName: personaName};
+      var trait = {personaCode: personaCode, personaName: personaName};
       identify(trait);
-      trackLegacy('Selected Persona', trait);
-      send('global:persona_selected', trait);
+      track('global:persona_selected', trait);
     } else {
-      trackLegacy('Skipped Persona Selection');
-      send('global:persona_selection_skipped');
+      track('global:persona_selected', {skipped: true});
     }
+  }
+
+  function getBasicPayload () {
+    return _.pickBy({
+      spaceId: getSessionData('space.sys.id', VALUE_UNKNOWN),
+      organizationId: getSessionData('organization.sys.id', VALUE_UNKNOWN),
+      currentState: getSessionData('navigation.state', VALUE_UNKNOWN)
+    }, function (val) {
+      return val !== VALUE_UNKNOWN;
+    });
   }
 
   function sendSessionDataToConsole () {
@@ -227,39 +223,6 @@ angular.module('contentful')
 
   function removeCircularRefs (obj) {
     return JSON.parse(stringifySafe(obj));
-  }
-
-  /**
-   * @ngdoc method
-   * @name analytics#track
-   * @param {string} event
-   * @param {object?} data
-   * @description
-   * Sends an event into Segment. Event data will
-   * be extended with session data produced by
-   * `getLegacySpaceData`.
-   *
-   * TODO: eliminate calls to this method!
-   */
-  function trackLegacy (event, data) {
-    data = _.merge({}, data, getLegacySpaceData());
-    segment.track(event, data);
-    analyticsConsole.add(event, 'Legacy Segment', data);
-  }
-
-  function getLegacySpaceData () {
-    try {
-      return {
-        spaceIsTutorial: session.space.tutorial,
-        spaceSubscriptionKey: session.organization.sys.id,
-        spaceSubscriptionState: session.organization.subscriptionState,
-        spaceSubscriptionInvoiceState: session.organization.invoiceState,
-        spaceSubscriptionSubscriptionPlanKey: session.organization.subscriptionPlan.sys.id,
-        spaceSubscriptionSubscriptionPlanName: session.organization.subscriptionPlan.name
-      };
-    } catch (err) {
-      return {};
-    }
   }
 }])
 

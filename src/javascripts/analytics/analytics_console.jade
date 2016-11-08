@@ -17,7 +17,7 @@
         style=style.box
         ng-repeat="event in events track by $index")
         p
-          | ({{ event.time }} {{ event.integration }}) <strong>{{ event.name }}</strong>
+          | {{ event.time }} <strong>{{ event.name }}</strong>
         pre(style=style.json)
           | {{ (event.data || 'no data') | json }}
     .analytics-console__session-data(ng-show="showSessionData")

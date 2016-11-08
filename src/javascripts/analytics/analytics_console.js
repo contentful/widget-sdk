@@ -76,16 +76,14 @@ angular.module('contentful')
    * @ngdoc method
    * @name analytics/console#add
    * @param {string} name
-   * @param {string} integration
    * @param {object?} data
    * @description
    * Adds an event to the console.
    */
-  function add (name, integration, data) {
+  function add (name, data) {
     events.push({
-      name: name,
       time: moment().format('HH:mm:ss'),
-      integration: integration,
+      name: name,
       data: data
     });
 

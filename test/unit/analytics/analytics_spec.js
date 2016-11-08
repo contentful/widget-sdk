@@ -74,7 +74,7 @@ describe('analytics', function () {
       this.analytics.enable(this.userData);
       this.analytics.trackPersonaSelection('code');
       sinon.assert.calledTwice(this.segment.identify);
-      const expected = _.extend({personaName: 'Coder'}, this.userData);
+      const expected = _.extend({personaName: 'Coder', personaCode: 'code'}, this.userData);
       sinon.assert.calledWith(this.segment.identify, 'userid', expected);
     });
   });

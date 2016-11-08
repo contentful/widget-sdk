@@ -93,6 +93,6 @@ angular.module('contentful')
   }
 
   function track (event, data) {
-    analytics.send('versioning:' + event, data);
+    analytics.track('versioning:' + event, data);
   }
 }]);

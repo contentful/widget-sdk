@@ -14,19 +14,19 @@ describe('Tracking versioning', function () {
   beforeEach(function () {
     module('contentful/test');
     this.analytics = this.$inject('analytics');
-    sinon.stub(this.analytics, 'send');
+    sinon.stub(this.analytics, 'track');
     this.analytics.enable(data.user);
 
     this.track = this.$inject('analyticsEvents/versioning');
     this.track.setData(data.entry, data.snapshot);
 
     this.getTrackingData = () => {
-      return this.analytics.send.firstCall.args[1];
+      return this.analytics.track.firstCall.args[1];
     };
 
     this.assertAnalyticsCall = (event, expected) => {
-      sinon.assert.calledOnce(this.analytics.send);
-      expect(this.analytics.send.firstCall.args[0]).toBe(`versioning:${event}`);
+      sinon.assert.calledOnce(this.analytics.track);
+      expect(this.analytics.track.firstCall.args[0]).toBe(`versioning:${event}`);
       const data = this.getTrackingData();
       Object.keys(expected).forEach((key) => {
         expect(data[key]).toEqual(expected[key]);
@@ -162,7 +162,7 @@ describe('Tracking versioning', function () {
 
       this.track.trackableConfirmator(_.noop)();
       this.$apply();
-      sinon.assert.notCalled(this.analytics.send);
+      sinon.assert.notCalled(this.analytics.track);
     });
   });
 
@@ -176,12 +176,12 @@ describe('Tracking versioning', function () {
     it('does nothing if actions were performed between restoring and publishing', function () {
       this.track.registerRestoredVersion({sys: {version: 1, id: 'xyz'}});
       this.track.publishedRestored({sys: {version: 9, id: 'xyz'}});
-      sinon.assert.notCalled(this.analytics.send);
+      sinon.assert.notCalled(this.analytics.track);
     });
 
     it('does nothing if entry was not restored', function () {
       this.track.publishedRestored({sys: {version: 1, id: 'xyz'}});
-      sinon.assert.notCalled(this.analytics.send);
+      sinon.assert.notCalled(this.analytics.track);
     });
   });
 });
