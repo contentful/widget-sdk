@@ -1,9 +1,10 @@
 'use strict';
 
 angular.module('contentful')
+
 /**
  * @ngdoc service
- * @name CallBuffer
+ * @name utils/CallBuffer
  * @description
  * A service that records function calls while in the initial
  * open state. When the buffer is resolved, buffered computations
@@ -19,7 +20,7 @@ angular.module('contentful')
  * After being resolved or disabled, the buffer can not be
  * transitioned into another state anymore.
  */
-.factory('CallBuffer', [function () {
+.factory('utils/CallBuffer', [function () {
   var OPEN = 'open';
   var RESOLVED = 'resolved';
   var DISABLED = 'disabled';
@@ -29,6 +30,7 @@ angular.module('contentful')
   function create () {
     var calls = [];
     var state = OPEN;
+    var service = null;
 
     return {
       call: call,
@@ -36,24 +38,50 @@ angular.module('contentful')
       disable: disable
     };
 
+    /**
+     * @ngdoc method
+     * @name utils/CallBuffer#call
+     * @param {function} fn
+     * @description
+     * Depending on state, executes the function
+     * or records it to execute in the future.
+     * The function is called with a service
+     * passed to `resolve`
+     */
     function call (fn) {
       if (state === RESOLVED) {
-        fn();
-      } else if (state !== DISABLED) {
+        fn(service);
+      } else if (state === OPEN) {
         calls.push(fn);
       }
     }
 
-    function resolve () {
+    /**
+     * @ngdoc method
+     * @name utils/CallBuffer#resolve
+     * @param {any?} _service
+     * @description
+     * Executes recorded calls and marks buffer
+     * as resolved.
+     */
+    function resolve (_service) {
       if (state === OPEN) {
         state = RESOLVED;
+        service = _service;
         calls.forEach(function (fn) {
-          fn();
+          fn(service);
         });
         calls = [];
       }
     }
 
+    /**
+     * @ngdoc method
+     * @name utils/CallBuffer#disable
+     * @description
+     * Discards all recorded calls and marks
+     * buffer as disabled.
+     */
     function disable () {
       state = DISABLED;
       calls = [];

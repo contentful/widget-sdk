@@ -8,7 +8,7 @@
 */
 angular.module('contentful')
 .factory('bugsnag', ['$injector', function ($injector) {
-  var CallBuffer = $injector.get('CallBuffer');
+  var CallBuffer = $injector.get('utils/CallBuffer');
   var environment = $injector.get('environment');
 
   // TODO this should be stored in the environment configuration. Need

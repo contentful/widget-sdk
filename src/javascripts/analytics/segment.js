@@ -16,7 +16,7 @@ angular.module('contentful')
 .factory('analytics/segment', ['require', function (require) {
   var $window = require('$window');
   var $q = require('$q');
-  var CallBuffer = require('CallBuffer');
+  var CallBuffer = require('utils/CallBuffer');
   var LazyLoader = require('LazyLoader');
   var logger = require('logger');
 
@@ -94,9 +94,9 @@ angular.module('contentful')
   function bufferedCall (fnName) {
     return function () {
       var args = _.toArray(arguments);
-      buffer.call(function () {
+      buffer.call(function (analytics) {
         try {
-          $window.analytics[fnName].apply($window.analytics, args);
+          analytics[fnName].apply(analytics, args);
         } catch (err) {
           logger.logError('Failed Segment call', {
             err: err,
