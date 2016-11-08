@@ -1,6 +1,6 @@
 - var style = {};
-- style.wrapper = 'position: fixed; width: 350px; border: 2px solid #000; right: 20px; bottom: 20px; background: #fff';
-- style.content = 'height: 350px; overflow-y: scroll; padding: 15px';
+- style.wrapper = 'position: fixed; width: 400px; border: 2px solid #000; right: 20px; bottom: 20px; background: #fff';
+- style.content = 'height: 450px; overflow-y: scroll; padding: 15px';
 - style.json = 'font-size: 0.9em; white-space: pre-wrap; word-wrap: break-word';
 - style.box = 'border: 1px dashed gray; padding: 5px; margin-bottom: 2px';
 
@@ -18,6 +18,8 @@
         ng-repeat="event in events track by $index")
         p
           | {{ event.time }} <strong>{{ event.name }}</strong>
+          span(ng-show="!event.isValid" style="color: red")
+            |  invalid name
         pre(style=style.json)
           | {{ (event.data || 'no data') | json }}
     .analytics-console__session-data(ng-show="showSessionData")

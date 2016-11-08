@@ -9,7 +9,9 @@ angular.module('contentful')
   var FN_NAME = '__ANALYTICS_CONSOLE';
 
   if (_.includes(CONSOLE_ENVS, env)) {
-    window[FN_NAME] = require('analytics/console').show;
+    var c = require('analytics/console');
+    c.setSafe();
+    window[FN_NAME] = c.show;
   }
 }])
 
@@ -28,7 +30,9 @@ angular.module('contentful')
   var $rootScope = require('$rootScope');
   var moment = require('moment');
   var K = require('utils/kefir');
+  var validateEvent = require('analytics/validateEvent');
 
+  var isSafe = false;
   var events = [];
   var eventsBus = null;
   var sessionData = {};
@@ -37,6 +41,13 @@ angular.module('contentful')
   var el = null;
 
   return {
+    /**
+     * @ngdoc method
+     * @name analytics/console#setSafe
+     * @description
+     * Unlocks the console (env is safe).
+     */
+    setSafe: function () { isSafe = true; },
     show: show,
     add: add,
     setSessionData: setSessionData
@@ -45,11 +56,15 @@ angular.module('contentful')
   /**
    * @ngdoc method
    * @name analytics/console#show
-   * @returns {string} nice message > `undefined`
+   * @returns {string|undefined}
    * @description
    * Activates the console.
    */
   function show () {
+    if (!isSafe) {
+      return;
+    }
+
     if (!scope) {
       eventsBus = K.createPropertyBus(events);
       sessionDataBus = K.createPropertyBus(sessionData);
@@ -81,10 +96,15 @@ angular.module('contentful')
    * Adds an event to the console.
    */
   function add (name, data) {
+    if (!isSafe) {
+      return;
+    }
+
     events.push({
       time: moment().format('HH:mm:ss'),
       name: name,
-      data: data
+      data: data,
+      isValid: validateEvent(name)
     });
 
     if (eventsBus) {
@@ -100,6 +120,10 @@ angular.module('contentful')
    * Replaces current session data.
    */
   function setSessionData (data) {
+    if (!isSafe) {
+      return;
+    }
+
     sessionData = data;
     if (sessionDataBus) {
       sessionDataBus.set(data);

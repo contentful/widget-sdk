@@ -191,6 +191,7 @@ angular.module('contentful')
    * persona's name.
    */
   function trackPersonaSelection (personaCode) {
+    var trait = {skipped: true};
     var personaName = {
       code: 'Coder',
       content: 'Content Manager',
@@ -199,12 +200,11 @@ angular.module('contentful')
     }[personaCode];
 
     if (personaName) {
-      var trait = {personaCode: personaCode, personaName: personaName};
+      trait = {personaCode: personaCode, personaName: personaName};
       identify(trait);
-      track('global:persona_selected', trait);
-    } else {
-      track('global:persona_selected', {skipped: true});
     }
+
+    track('global:persona_selected', trait);
   }
 
   function getBasicPayload () {
