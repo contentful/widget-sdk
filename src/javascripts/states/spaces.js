@@ -7,7 +7,7 @@ angular.module('contentful')
  * @name states/spaces
  */
 
-.factory('states/spaces', ['$injector', function ($injector) {
+.factory('states/spaces', ['require', function (require) {
   var newSpace = {
     name: 'new',
     url: '_new',
@@ -27,11 +27,14 @@ angular.module('contentful')
       }]
     },
     views: {'nav-bar': { template: '<cf-main-nav-bar />' }},
-    children: [newSpace, $injector.get('states/spaces/detail')]
+    children: [newSpace, require('states/spaces/detail')]
   };
 }])
 
-.factory('states/spaces/detail', ['$injector', function ($injector) {
+.factory('states/spaces/detail', ['require', function (require) {
+  var analytics = require('analytics');
+  var sectionAccess = require('sectionAccess');
+
   return {
     name: 'detail',
     url: '/:spaceId',
@@ -51,17 +54,17 @@ angular.module('contentful')
         return spaceContext.widgets;
       }]
     },
-    onEnter: ['space', 'analytics', function (space, analytics) {
+    onEnter: ['space', function (space) {
       analytics.trackSpaceChange(space);
     }],
-    controller: ['$scope', 'space', 'sectionAccess', function ($scope, space, sectionAccess) {
+    controller: ['$scope', 'space', function ($scope, space) {
       $scope.label = space.data.name;
 
       if (sectionAccess.hasAccessToAny()) {
         sectionAccess.redirectToFirstAccessible();
       }
     }],
-    templateProvider: ['space', 'sectionAccess', function (space, sectionAccess) {
+    templateProvider: ['space', function (space) {
       if (space.isHibernated()) {
         return JST.cf_space_hibernation_advice();
       } else if (!sectionAccess.hasAccessToAny()) {
@@ -69,12 +72,12 @@ angular.module('contentful')
       }
     }],
     children: [
-      $injector.get('states/contentTypes'),
-      $injector.get('states/entries'),
-      $injector.get('states/assets'),
-      $injector.get('states/api'),
-      $injector.get('states/settings'),
-      $injector.get('states/learn')
+      require('states/contentTypes'),
+      require('states/entries'),
+      require('states/assets'),
+      require('states/api'),
+      require('states/settings'),
+      require('states/learn')
     ]
   };
 }]);
