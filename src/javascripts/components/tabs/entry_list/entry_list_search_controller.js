@@ -210,7 +210,7 @@ angular.module('contentful')
   function prepareQuery () {
     return ListQuery.getForEntries({
       contentTypeId: getViewItem('contentTypeId'),
-      searchTerm: searchTerm || getViewItem('searchTerm'),
+      searchTerm: getViewItem('searchTerm'),
       order: getViewItem('order'),
       paginator: $scope.paginator
     });

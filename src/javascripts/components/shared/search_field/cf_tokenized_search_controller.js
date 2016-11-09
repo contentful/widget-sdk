@@ -111,6 +111,7 @@ angular.module('contentful')
           $scope.confirmAutocompletion();
         }
       } else {
+        $scope.submitSearch($scope.inner.term);
         forceSearch();
       }
       event.preventDefault();
