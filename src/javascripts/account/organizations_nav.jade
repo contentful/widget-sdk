@@ -1,0 +1,28 @@
+header.workbench-header.x--with-nav
+  cf-breadcrumbs
+  .page-header
+    .organizations-page-header
+      h1.workbench-header__title
+        | Organizations &amp; Billing
+      div Switch organization
+      select.cfnext-select-box(
+        ng-options="org.sys.id as org.name for org in nav.organizations"
+        ng-model="nav.selectedOrganizationId"
+        ng-change="nav.goToOrganization(nav.selectedOrganizationId)")
+
+  nav.workbench-nav__tabs(ng-if="!nav.isNewOrgState")
+    a(
+      role="tab"
+      ui-sref="{{tab.state + tab.params}}"
+      ng-repeat="tab in nav.tabs track by $index"
+      aria-selected='{{tab.selected}}'
+      ng-if="tab.isActive")
+      | {{tab.name}}
+
+
+  nav.workbench-nav__tabs(ng-if="nav.isNewOrgState")
+    a(
+      role="tab"
+      ui-sref="account.organizations.new"
+      aria-selected='true')
+      | New Organization

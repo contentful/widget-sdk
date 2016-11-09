@@ -10,11 +10,10 @@
     role="menu" cf-context-menu="bottom-right"
     aria-label="Account Menu" data-test-id="account-menu")
     ul.context-menu__items
-      //- TODO: Use `ui-sref` isntead of `ng-click`.
-      li(role="menuitem" ng-click="goToUserProfile()")
+      li(role="menuitem" ui-sref="account.profile.user")
         | User profile
-      li(role="menuitem" ng-click="goToOrganizations()" ng-show="canGoToOrganizations")
-        | Organizations & billing
+      li(role="menuitem" ui-sref="account.organizations.subscription({orgId: orgId})" ng-show="canGoToOrganizations")
+        | Organizations &amp; billing
       li(role="menuitem" ng-click="openIntercom()" ng-if="isIntercomLoaded()")
         | Talk to us
       li(role="menuitem" ng-click="openSupport()")

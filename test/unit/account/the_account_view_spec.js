@@ -22,13 +22,6 @@ describe('TheAccountView service', function () {
     this.go = $state.go = sinon.spy();
   });
 
-  describe('.goToUserProfile()', function () {
-    once(function () {
-      this.view.goToUserProfile();
-    })
-    .itGoesTo('the user`s profile', 'profile/user');
-  });
-
   describe('.goToOrganizations() and .canGoToOrganizations()', function () {
     const ORGS = [
       {subscriptionState: 'active', sys: {id: 'ORG_0'}},
@@ -81,7 +74,7 @@ describe('TheAccountView service', function () {
     });
   });
 
-  describeGoToMethod('goToBilling', 'z_billing');
+  describeGoToMethod('goToBilling', 'billing');
 
   describeGoToMethod('goToSubscription', 'subscription');
 
@@ -113,7 +106,7 @@ describe('TheAccountView service', function () {
 
     it('returns path if user has permission', function () {
       this.OrganizationList.isOwnerOrAdmin.returns(true);
-      const path = 'account.pathSuffix({ pathSuffix: \'organizations/ORG_0/subscription\'})';
+      const path = 'account.organizations.subscription({ orgId: \'ORG_0\' })';
       expect(this.view.getSubscriptionState()).toBe(path);
     });
 
@@ -123,25 +116,18 @@ describe('TheAccountView service', function () {
     });
   });
 
-  describe('silentlyChangeState()', function () {
-    once(function () {
-      this.view.silentlyChangeState('x/y');
-    })
-    .itGoesTo('given location', 'x/y', {location: 'replace'});
-  });
-
   function once (setup) {
     return {
-      itGoesTo: itGoesTo,
+      itGoesToOrganizationSubpage: itGoesToOrganizationSubpage,
       itGoesToTheOrganizationOf: itGoesToTheOrganizationOf
     };
 
-    function itGoesTo (msg, pathSuffix, options) {
+    function itGoesToOrganizationSubpage (msg, subpage, orgId, options) {
       it(`navigates to ${msg}`, function () {
         setup.call(this);
         sinon.assert.calledOnce(this.go);
 
-        const args = [this.go, 'account.pathSuffix', {pathSuffix: pathSuffix}];
+        const args = [this.go, `account.organizations.${subpage}`, { orgId: orgId }];
         if (options) {
           args.push(options);
         }
@@ -160,14 +146,15 @@ describe('TheAccountView service', function () {
         expect(this.view.canGoToOrganizations()).toBe(true);
       });
 
-      function test (subpageParam) {
-        const expectedPathSuffix = subpageParam || 'subscription';
+      function test (subpageParam = 'subscription') {
         once(function () {
           setup.call(this);
           this.view.goToOrganizations(subpageParam);
         })
-        .itGoesTo(`the organization (subscription) of ${msg}`,
-          `organizations/${organization.sys.id}/` + expectedPathSuffix,
+        .itGoesToOrganizationSubpage(
+          `the organization (subscription) of ${msg}`,
+          subpageParam,
+          organization.sys.id,
           {reload: true}
         );
       }

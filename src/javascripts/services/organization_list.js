@@ -8,13 +8,17 @@
  * This service keeps global state of organizations.
  * It exposes multiple utility getter methods.
  */
-angular.module('contentful').factory('OrganizationList', function () {
+angular.module('contentful').factory('OrganizationList', ['require', function (require) {
+
+  var K = require('utils/kefir');
 
   var currentUser = null;
   var organizations = [];
 
   var isAdmin = createRoleChecker('admin');
   var isOwner = createRoleChecker('owner');
+
+  var organizationsBus = K.createPropertyBus([]);
 
   return {
     resetWithUser: resetWithUser,
@@ -40,7 +44,8 @@ angular.module('contentful').factory('OrganizationList', function () {
      * Checks if user is an owner of a given organization.
      */
     isOwner: isOwner,
-    isOwnerOrAdmin: isOwnerOrAdmin
+    isOwnerOrAdmin: isOwnerOrAdmin,
+    organizations$: organizationsBus.property
   };
 
   /**
@@ -53,6 +58,7 @@ angular.module('contentful').factory('OrganizationList', function () {
   function resetWithUser (user) {
     currentUser = user;
     organizations = _.map(user.organizationMemberships, 'organization');
+    organizationsBus.set(organizations);
   }
 
   /**
@@ -123,4 +129,4 @@ angular.module('contentful').factory('OrganizationList', function () {
       return role === dotty.get(found, 'role');
     };
   }
-});
+}]);

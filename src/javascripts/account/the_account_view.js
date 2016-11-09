@@ -16,29 +16,38 @@ angular.module('contentful')
   var spaceContext = require('spaceContext');
   var OrganizationList = require('OrganizationList');
 
+  var isActive = false;
+
   return {
-    goToUserProfile: goToUserProfile,
     getSubscriptionState: getSubscriptionState,
     goToOrganizations: goToOrganizations,
     goToSubscription: goToSubscription,
     goToBilling: goToBilling,
-    silentlyChangeState: silentlyChangeState,
-    canGoToOrganizations: canGoToOrganizations
+    canGoToOrganizations: canGoToOrganizations,
+    getGoToOrganizationsOrganization: getGoToOrganizationsOrganization,
+
+    /**
+     * @ngdoc method
+     * @name TheAccountView#enter
+     * @description
+     * Marks the "account" section as active.
+     */
+    enter: function () { isActive = true; },
+    /**
+     * @ngdoc method
+     * @name TheAccountView#exit
+     * @description
+     * Marks the "account" section as inactive.
+     */
+    exit: function () { isActive = false; },
+    /**
+     * @ngdoc method
+     * @name TheAccountView#isActive
+     * @description
+     * Checks if the "account" section is active.
+     */
+    isActive: function () { return isActive; }
   };
-
-  function goTo (pathSuffix, options) {
-    return $state.go('account.pathSuffix', { pathSuffix: pathSuffix }, options);
-  }
-
-  /**
-   * @ngdoc method
-   * @name TheAccountView#goToUserProfile
-   * @description
-   * Navigates to the current user's user profile.
-   */
-  function goToUserProfile () {
-    return goTo('profile/user', {reload: true});
-  }
 
   /**
    * @ngdoc method
@@ -50,8 +59,7 @@ angular.module('contentful')
   function getSubscriptionState () {
     var org = getGoToOrganizationsOrganization();
     if (org) {
-      var pathSuffix = 'organizations/' + org.sys.id + '/subscription';
-      return 'account.pathSuffix({ pathSuffix: \'' + pathSuffix + '\'})';
+      return 'account.organizations.subscription({ orgId: \'' + org.sys.id + '\' })';
     }
   }
 
@@ -71,10 +79,10 @@ angular.module('contentful')
    * @name TheAccountView#goToBilling
    * @description
    * `TheAccountView#goToOrganizations` shorthand to navigate to the current
-   * organizatin's billing page.
+   * organization's billing page.
    */
   function goToBilling () {
-    return this.goToOrganizations('z_billing');
+    return this.goToOrganizations('billing');
   }
 
   /**
@@ -88,10 +96,8 @@ angular.module('contentful')
   function goToOrganizations (subpage) {
     var org = getGoToOrganizationsOrganization();
     if (org) {
-      // TODO: Support route in GK without `/subscription` part and remove it here.
-      var subpageSuffix = subpage ? ('/' + subpage) : '/subscription';
-      var pathSuffix = 'organizations/' + org.sys.id + subpageSuffix;
-      return goTo(pathSuffix, {reload: true});
+      subpage = subpage || 'subscription';
+      return $state.go('account.organizations.' + subpage, {orgId: org.sys.id}, {reload: true});
     } else {
       return $q.reject();
     }
@@ -128,20 +134,6 @@ angular.module('contentful')
       findOwnedOrgWithState(orgs, 'active') ||
       findOwnedOrgWithState(orgs, '*') ||
       null;
-  }
-
-  /**
-   * @ngdoc method
-   * @name TheAccountView#silentlyChangeState
-   * @description
-   * Changes URL, without any other side effects.
-   */
-  function silentlyChangeState (pathSuffix) {
-    if (pathSuffix) {
-      return goTo(pathSuffix, {location: 'replace'});
-    } else {
-      return $q.reject();
-    }
   }
 
   function findOwnedOrgWithState (orgs, state) {

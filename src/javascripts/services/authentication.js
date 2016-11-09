@@ -61,7 +61,6 @@ angular.module('contentful')
       TheStore.remove('token');
       $window.location = Config.websiteUrl('goodbye');
     },
-
     redirectToLogin: function () {
       this.redirectingToLogin = true;
       $window.location = Config.authUrl('oauth/authorize', {

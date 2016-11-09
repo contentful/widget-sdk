@@ -23,10 +23,9 @@ angular.module('contentful')
 
   $scope.$watch(TheAccountView.canGoToOrganizations, function (canGo) {
     $scope.canGoToOrganizations = canGo;
+    $scope.orgId = _.get(TheAccountView.getGoToOrganizationsOrganization(), 'sys.id');
   });
 
-  $scope.goToUserProfile = TheAccountView.goToUserProfile;
-  $scope.goToOrganizations = TheAccountView.goToOrganizations;
   $scope.openSupport = openSupport;
   $scope.openIntercom = intercom.open;
   $scope.isIntercomLoaded = intercom.isLoaded;

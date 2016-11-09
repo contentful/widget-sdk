@@ -1,17 +1,16 @@
 'use strict';
 
 angular.module('contentful')
+.directive('cfAccountView', ['require', function (require) {
 
-.directive('cfAccountView', ['$injector', function ($injector) {
-
-  var $timeout = $injector.get('$timeout');
-  var $stateParams = $injector.get('$stateParams');
-  var authentication = $injector.get('authentication');
-  var Config = $injector.get('Config');
-  var modalDialog = $injector.get('modalDialog');
-  var createChannel = $injector.get('account/IframeChannel').default;
-  var handleGK = $injector.get('handleGatekeeperMessage');
-  var K = $injector.get('utils/kefir');
+  var $timeout = require('$timeout');
+  var $location = require('$location');
+  var authentication = require('authentication');
+  var modalDialog = require('modalDialog');
+  var createChannel = require('account/IframeChannel').default;
+  var K = require('utils/kefir');
+  var handleGK = require('handleGatekeeperMessage');
+  var Config = require('Config');
 
   return {
     template: '<div class="account-container"><iframe width="100%" height="100%" id="accountViewFrame" /></div>',
@@ -21,12 +20,19 @@ angular.module('contentful')
       var messages$ = createChannel(iframe.get(0));
       var timeout = null;
 
+      var gkPathSuffix = getGkPathSuffix($location.path());
+
       K.onValueScope(scope, messages$, handleGK);
       K.onValueScope(scope, messages$, closeModalsIfLocationUpdated);
 
       iframe.ready(waitAndForceLogin);
-      iframe.prop('src', Config.accountUrl($stateParams.pathSuffix));
+      iframe.prop('src', Config.accountUrl(gkPathSuffix));
       scope.$on('$destroy', cancelTimeout);
+
+      // remove leading /account and add trailing slash
+      function getGkPathSuffix (path) {
+        return (_.endsWith(path, '/') ? path : path + '/').replace(/^\/account/, '');
+      }
 
       function waitAndForceLogin () {
         timeout = $timeout(function () {
