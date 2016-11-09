@@ -29,22 +29,22 @@ header.workbench-header
   ul.workbench-nav__tabs
     li(
       ng-click="goTo('fields')"
-      aria-selected="{{$state.is('^.fields')}}"
+      aria-selected="{{stateIs('^.fields')}}"
       role="tab")
       | Fields
       span(ng-show="contentType.data.fields.length") &nbsp;({{contentType.data.fields.length}})
     li(
       ng-click="goTo('preview')"
-      aria-selected="{{$state.is('^.preview')}}"
+      aria-selected="{{stateIs('^.preview')}}"
       role="tab")
       | JSON preview
 
 .workbench-main
   form.workbench-main__right-content(name="contentTypeForm")
-    div(ng-if="$state.is('^.preview')")
+    div(ng-if="stateIs('^.preview')")
       cf-content-type-preview.u-bce
 
-    .content-type-tab(ng-if="$state.is('^.fields')")
+    .content-type-tab(ng-if="stateIs('^.fields')")
       .content-type-fields(ng-if="hasFields")
         include ./content_type_field_list
       .content-type-hints(ng-if="hasFields")

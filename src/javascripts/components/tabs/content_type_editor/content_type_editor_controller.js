@@ -32,7 +32,7 @@ angular.module('contentful')
 
   $scope.actions = $controller('ContentTypeActionsController', {$scope: $scope});
 
-  $scope.$state = $state;
+  $scope.stateIs = $state.is;
 
   $scope.goTo = function (stateName) {
     $state.go('^.' + stateName);
