@@ -1,0 +1,119 @@
+Analytics
+=========
+
+This guide explains how we track events occurring in the app and what data
+we send to analytical services.
+
+## Analytical services
+
+We've migrated away from using Totango and GTM. Mixpanel integration for
+Segment was disabled as well. The only service to which we send data is
+Segment with Google Analytics integration enabled.
+
+Network communication is performed only in production, staging and preview.
+Separate API keys are used for each environment. Majority of tracking code
+is also executed in the development mode. In particular events are sent to
+an analytics console (see below).
+
+We call Segment's `page` method when state is changed and `identify` method
+each time we obtain some more information about a user.
+
+
+## Analytics console
+
+The analytics console is a simple front-end tool that allows to intercept
+and show data sent to Segment. The tool is available only in development,
+preview and staging modes.
+
+To open the console open browser's dev tools and invoke a function:
+
+`window.__ANALYTICS_CONSOLE()`
+
+
+## Event name convention
+
+Anatomy of an event name:
+
+- namespace: only lowercase characters and underscores (snake_case)
+- colon
+- event name: only lowercase characters and underscores (snake_case)
+
+Namespace should be derived from the location in the app where events are
+tracked. Event name should be descriptive 1-5 words in the past tense.
+
+
+## Adding a new tracking event
+
+Please follow this checklist:
+
+- agree with product people on what and how should be tracked
+- ask if there's a value in adding the new event (analytics code clutters
+  app's code)
+- create name: select one of existing namespaces or introduce a new one,
+  think twice about a good event name
+- add the name to the list of valid event names (`analytics/validEvents`
+  constant in `src/javascripts/analytics/analytics_validator.js`)
+- add a call to `analytics.track` method
+- if computing a payload requires some logic or events can be grouped
+  together, introduce a special service for tracking purposes only
+  (put this service into `src/javascripts/analytics/events`)
+
+
+## Default payload
+
+Every event by default contains the following data:
+
+- `userId: id-string`
+- `spaceId: id-string`
+- `organizationId: id-string`
+- `currentState: string`
+
+Each event can extend this payload with custom payload. In very rare cases
+space/organization ID may not be available (organization/space not created
+yet).
+
+
+## List of events
+
+| namespace           | event name                            | payload
+|---------------------|---------------------------------------|---------
+| global              | app_loaded                            | -
+| global              | space_changed                         | -
+| global              | space_left                            | -
+| global              | state_changed                         | <code>state: string<br>params: obj<br>fromState: string<br>fromParams: obj</code>
+| global              | logo_clicked                          | -
+| global              | logout_clicked                        | -
+| global              | top_banner_dismissed                  | -
+| global              | navigated                             | -
+| onboarding          | persona_selected                      | <code>personaName: string<br>skipped: bool</code>
+| learn               | step_clicked                          | <code>linkName: string</code>
+| learn               | language_selected                     | <code>language: string (js, ruby...)</code>
+| learn               | resource_selected                     | <code>language: string<br>resource: string (documentation, example....)</code>
+| space_switcher      | opened                                | -
+| space_switcher      | create_clicked                        | -
+| space_switcher      | space_switched                        | <code>targetSpaceId: id-string<br>targetSpaceName: string</code>
+| space               | template_selected                     | <code>templateName: string</code>
+| space               | created_from_template                 | <code>templateName: string</code>
+| search              | view_folder_added                     | <code>source: string (content, media)</code>
+| search              | view_folder_deleted                   | <code>source: string</code>
+| search              | view_added                            | <code>source: string</code>
+| search              | view_deleted                          | <code>source: string</code>
+| modelling           | custom_extension_selected             | <code>extensionId: id-string<br>extensionName: string<br>fieldType: string (Text, Symbol...)<br>contentTypeId: id-string</code>
+| entry_editor        | state_changed                         | <code>entityType: string (Asset, Entry)<br>entityId: id-string<br>fromState: string (draft, published...)<br>toState: string</code>
+| entry_editor        | disabled_fields_visibility_toggled    | <code>entryId: id-string<br>show: bool</code>
+| entry_editor        | created_with_same_ct                  | <code>contentTypeId: id-string<br>entryId: id-string</code>
+| entry_editor        | preview_opened                        | <code>envName: string<br>envId: id-string<br>previewUrl: string<br>entryId: id-string</code>
+| entry_editor        | custom_extension_rendered             | <code>extensionId: id-string<br>extensionName: string<br>fieldType: string<br>contentTypeId: id-string<br>entryId: id-string</code>
+| api_keys            | create_screen_opened                  | -
+| api_keys            | language_selected                     | <code>language: string</code>
+| versioning          | no_snapshots                          | <code>entryId: id-string</code>
+| versioning          | snapshot_opened                       | <code>entryId: id-string<br>snapshotId: id-string<br>snapshotType: string<br>authorIsUser: bool<br>source: string</code>
+| versioning          | snapshot_closed                       | <code>entryId: id-string<br>snapshotId: id-string<br>snapshotType: string<br>authorIsUser: bool<br>changesDiscarded: bool</code>
+| versioning          | snapshot_restored                     | <code>entryId: id-string<br>snapshotId: id-string<br>snapshotType: string<br>authorIsUser: bool<br>fullRestore: bool<br>restoredFieldsCount: number<br>showDiffsOnly: bool</code>
+| versioning          | published_restored                    | <code>entryId: id-string<br>snapshotId: id-string<br>snapshotType: string<br>authorIsUser: bool</code>
+| content_preview     | created                               | <code>envName: string<br>envId: id-string<br>isDiscoveryApp: bool</code>
+| content_preview     | updated                               | <code>envName: string<br>envId: id-string</code>
+| content_preview     | deleted                               | <code>envName: string<br>envId: id-string</code>
+| paywall             | viewed                                | <code>userCanUpgradePlan: bool</code>
+| paywall             | closed                                | <code>userCanUpgradePlan: bool</code>
+| paywall             | upgrade_clicked                       | <code>userCanUpgradePlan: bool</code>

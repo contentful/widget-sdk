@@ -2,6 +2,10 @@
 
 angular.module('contentful')
 
+/**
+ * When adding a new event, please extend the guide:
+ * ${UI_REPO_ROOT}/docs/guides/analytics.md
+ */
 .constant('analytics/validEvents', {
   global: [
     'app_loaded',
@@ -10,7 +14,8 @@ angular.module('contentful')
     'state_changed',
     'logo_clicked',
     'logout_clicked',
-    'top_banner_dismissed'
+    'top_banner_dismissed',
+    'navigated'
   ],
   onboarding: [
     'persona_selected'

@@ -84,7 +84,6 @@ angular.module('contentful')
     var snapshotSys = data.snapshot.sys;
 
     return {
-      userId: userId,
       entryId: data.entry.sys.id,
       snapshotId: snapshotSys.id,
       snapshotType: snapshotSys.snapshotType,
