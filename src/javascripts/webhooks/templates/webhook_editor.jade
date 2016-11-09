@@ -13,7 +13,7 @@ header.workbench-header
     button.btn-secondary-action(ui-command="refreshLogs")
       | Refresh logs
 
-cf-interstitial-loader(is-shown="isLoading")
+cf-loader(watch-state-change="true")
 
 .workbench-nav(ng-hide="context.isNew")
   ul.workbench-nav__tabs

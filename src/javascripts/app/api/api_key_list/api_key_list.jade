@@ -1,14 +1,5 @@
 cf-api-key-nav
 
-//- Loading screen
-.workbench-main(ng-if="!apiKeys")
-  .loading-box--full-screen
-    .loading-box__spinner
-    .loading-box__message
-      | Loading API keys
-
-cf-interstitial-loader(is-shown="isLoading")
-
 .workbench-main(ng-if="apiKeys")
   //- Non empty state
   .workbench-main__content(ng-if="!empty")

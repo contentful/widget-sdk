@@ -23,7 +23,7 @@ angular.module('contentful')
 
   $scope.limit = spaceContext.getData('organization.subscriptionPlan.limits.permanent.apiKey', {});
 
-  $scope.context.ready = true;
+  $scope.context.ready = false;
 
   $scope.placeholderApiKeys = [
     {
@@ -52,6 +52,10 @@ angular.module('contentful')
   );
 
   spaceContext.apiKeys.getDeliveryKeys()
+  .then(function (apiKeys) {
+    $scope.context.ready = true;
+    return apiKeys;
+  })
   .then(function (apiKeys) {
     $scope.apiKeys = apiKeys;
     $scope.empty = _.isEmpty(apiKeys);
