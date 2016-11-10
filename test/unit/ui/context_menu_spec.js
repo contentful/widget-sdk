@@ -6,6 +6,9 @@ describe('context menu', function () {
     this.detach = this.$inject('contextMenu').init();
     var $document = this.$inject('$document');
     this.$body = $document.find('body');
+    this.$body.append(
+      '<style>[cf-context-menu] {display: none}</style>'
+    )
   });
 
   afterEach(function () {
