@@ -27,18 +27,24 @@ header.workbench-header
       cf-icon.btn-icon.inverted(name="plus")
       | Add field
   ul.workbench-nav__tabs
-    li(ui-tab="fields")
+    li(
+      ng-click="goTo('fields')"
+      aria-selected="{{stateIs('^.fields')}}"
+      role="tab")
       | Fields
       span(ng-show="contentType.data.fields.length") &nbsp;({{contentType.data.fields.length}})
-    li(ui-tab="json") JSON preview
-
+    li(
+      ng-click="goTo('preview')"
+      aria-selected="{{stateIs('^.preview')}}"
+      role="tab")
+      | JSON preview
 
 .workbench-main
   form.workbench-main__right-content(name="contentTypeForm")
-    div(ui-tabpanel="json")
+    div(ng-if="stateIs('^.preview')")
       cf-content-type-preview.u-bce
 
-    .content-type-tab(ui-tabpanel="fields")
+    .content-type-tab(ng-if="stateIs('^.fields')")
       .content-type-fields(ng-if="hasFields")
         include ./content_type_field_list
       .content-type-hints(ng-if="hasFields")

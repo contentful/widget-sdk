@@ -171,7 +171,7 @@ describe('EntityCreationController', function () {
     });
 
     it('navigates to editor', function () {
-      sinon.assert.calledWith(this.$state.go, 'spaces.detail.content_types.new');
+      sinon.assert.calledWith(this.$state.go, 'spaces.detail.content_types.new.home');
     });
 
     it('tracks analytics', function () {
