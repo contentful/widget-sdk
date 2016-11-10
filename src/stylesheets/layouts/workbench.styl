@@ -56,12 +56,12 @@ Markup:
   .workbench-main__content
     code __content
   .workbench-main__info-sidebar.x--show
-    code __info-sidebar
+    | <code>__info-sidebar</code> Click to slide
 .workbench-main
   .workbench-main__content
     code __content
-  .workbench-main__entity-sidebar
-    code __entity-sidebar
+  .workbench-main__sidebar
+    code __sidebar
 .workbench-main
   .workbench-main__left-sidebar.styleguide-filled-box1
     code __left-sidebar
@@ -128,6 +128,7 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
     margin-left: auto
 
 
+  // Animated slide-in. Only used in API key editor
   &__info-sidebar
     $workbench-content()
     flex-shrink: 0
@@ -144,12 +145,10 @@ $workbench-middle-width = 100% - (2 * $workbench-sidebar-width)
       max-width: 30rem
 
 
-  &__entity-sidebar
+  &__sidebar
     $workbench-content()
     z-index: 0
-    width: 30vw
-    flex-shrink: 0
-    max-width: 30rem
+    flex: 0 0 22.5rem
     background: $colors.element-lightest
     overflow: hidden
 

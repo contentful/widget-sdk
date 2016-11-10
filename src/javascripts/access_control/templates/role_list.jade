@@ -36,7 +36,7 @@ header.workbench-header
           li.role-list__action--disabled(ng-if="!canModifyRoles()") Duplicate
           li.role-list__action--disabled(ng-if="!canModifyRoles()") Delete permanently
 
-  .workbench-main__entity-sidebar
+  .workbench-main__sidebar
     .entity-sidebar(ng-if="!canModifyRoles()")
       +custom-roles-plan-info
     .entity-sidebar(ng-if="canModifyRoles()")
