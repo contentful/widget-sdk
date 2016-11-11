@@ -4,18 +4,19 @@ describe('entitySelector', function () {
   beforeEach(function () {
     module('contentful/test');
 
-    const entitySelector = this.$inject('entitySelector');
-    const modalDialog = this.$inject('modalDialog');
-    modalDialog.open = sinon.stub().resolves();
+    this.$q = this.$inject('$q');
+    this.entitySelector = this.$inject('entitySelector');
+    this.openDialogStub = sinon.stub().returns({promise: this.$q.resolve()});
+    this.$inject('modalDialog').open = this.openDialogStub;
 
     this.open = function (field, links) {
-      const promise = entitySelector.open(field, links);
+      const promise = this.entitySelector.open(field, links);
       this.$apply();
       return promise;
     };
 
     this.getScope = function () {
-      return modalDialog.open.lastCall.args[0].scopeData;
+      return this.openDialogStub.lastCall.args[0].scopeData;
     };
 
     this.getConfig = function () {
@@ -91,19 +92,12 @@ describe('entitySelector', function () {
       });
     });
 
-    it('extracts IDs of already linked entities', function () {
-      this.open({linkType: 'Entry'}, [link('a'), link('b')]);
-      expect(this.getConfig().linkedEntityIds).toEqual(['a', 'b']);
-    });
-
     describe('processing validations', function () {
       it('defaults to an appropriate (empty) data structure', function () {
         this.open({linkType: 'Entry'});
         const config = this.getConfig();
         expect(config.linkedContentTypeIds).toEqual([]);
         expect(config.linkedMimetypeGroups).toEqual([]);
-        expect(config.linkedFileSize).toEqual({});
-        expect(config.linkedImageDimensions).toEqual({});
       });
 
       it('extracts allowed linked entry content type IDs', function () {
@@ -118,13 +112,16 @@ describe('entitySelector', function () {
         expect(this.getConfig().linkedMimetypeGroups).toEqual(['group1', 'group2']);
       });
 
-      it('extracts allowed asset size', function () {
+
+      // @todo disabled: see comments in "entitySelector#prepareQueryExtension"
+      xit('extracts allowed asset size', function () {
         const validation = size(100, 200, 'assetFileSize');
         this.open({linkType: 'Asset', itemValidations: [validation]});
         expect(this.getConfig().linkedFileSize).toEqual({min: 100, max: 200});
       });
 
-      it('extracts allowed image dimensions', function () {
+      // @todo disabled: see comments in "entitySelector#prepareQueryExtension"
+      xit('extracts allowed image dimensions', function () {
         const dimensions = _.extend(size(100, 200, 'width'), size(300, 400, 'height'));
         const validation = {assetImageDimensions: dimensions};
         this.open({linkType: 'Asset', itemValidations: [validation]});
@@ -218,6 +215,84 @@ describe('entitySelector', function () {
       const validation = {linkContentType: ['ctid1', 'ctid2']};
       this.open({linkType: 'Entry', itemValidations: [validation]});
       expect(this.getScope().singleContentType).toBe(null);
+    });
+  });
+
+  describe('opening from an extension', function () {
+    beforeEach(function () {
+      this.$inject('TheLocaleStore').getDefaultLocale = _.constant({code: 'de-DE'});
+
+      this.openFromExt = (opts) => {
+        const promise = this.entitySelector.openFromExtension(opts);
+        this.$apply();
+        return promise;
+      };
+
+      this.resolveWith = (value) => {
+        this.openDialogStub.returns({promise: this.$q.resolve(value)});
+      };
+
+      this.rejectWith = (err) => {
+        this.openDialogStub.returns({promise: this.$q.reject(err)});
+      };
+
+      this.resolveWith([{test: true}]);
+    });
+
+    it('selecting a single entity', function* () {
+      const entry = yield this.openFromExt({entityType: 'Entry', multiple: false});
+      expect(this.getConfig().multiple).toBe(false);
+      expect(entry).toEqual({test: true});
+    });
+
+    it('selecting many entities', function* () {
+      const selected = [{multiple: 1}, {multiple: 2}];
+      this.resolveWith(selected);
+      const entries = yield this.openFromExt({entityType: 'Entry', multiple: true});
+      expect(this.getConfig().multiple).toBe(true);
+      expect(entries).toEqual(selected);
+    });
+
+    it('resolves with null if selection was skipped', function* () {
+      this.rejectWith(undefined);
+      expect(yield this.openFromExt({entityType: 'Entry'})).toBe(null);
+    });
+
+    it('rejects with an original error thrown in the process', function* () {
+      this.rejectWith(new Error('selector error'));
+
+      const err = yield this.openFromExt({entityType: 'Entry'}).catch(_.identity);
+      expect(err.message).toBe('selector error');
+    });
+
+    describe('converting options to validations', function () {
+      it('"contentTypes" option converted to validation', function () {
+        const spaceContext = this.$inject('mocks/spaceContext').init();
+        spaceContext.publishedCTs.fetch.resolves({});
+
+        const ids = ['blogpost', 'cat'];
+        this.openFromExt({entityType: 'Entry', contentTypes: ids});
+        expect(this.getConfig().linkedContentTypeIds).toEqual(ids);
+      });
+
+      it('"mix" and "max" options converted to validation', function () {
+        this.openFromExt({entityType: 'Entry', multiple: true, min: 2, max: 4});
+        const config = this.getConfig();
+        expect(config.min).toBe(2);
+        expect(config.max).toBe(4);
+      });
+    });
+
+    describe('locale option', function () {
+      it('uses provided locale', function () {
+        this.openFromExt({entityType: 'Entry', locale: 'co-DE'});
+        expect(this.getConfig().locale).toBe('co-DE');
+      });
+
+      it('uses default space locale if not provided', function () {
+        this.openFromExt({entityType: 'Entry'});
+        expect(this.getConfig().locale).toBe('de-DE');
+      });
     });
   });
 });
