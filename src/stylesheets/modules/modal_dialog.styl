@@ -51,9 +51,10 @@ $modal-transition()
   $layer('modalBackground')
   $modal-transition()
   position: fixed
+  display: flex
   overflow-y: auto
   height: 100vh
-  text-align: center
+  padding: 1em
   background-color: rgba($colors.contrast-dark, .75)
 
 $modal-dialog-layout()
@@ -62,7 +63,7 @@ $modal-dialog-layout()
   position: relative
   min-width: 520px
   padding: 0
-  text-align: left
+  margin: auto // Ensure scrolling when dialog height exceeds viewport height.
 
 $modal-dialog-chrome()
   background-color: white
