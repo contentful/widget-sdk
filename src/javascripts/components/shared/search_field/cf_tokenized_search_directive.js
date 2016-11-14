@@ -1,13 +1,15 @@
 'use strict';
 
-angular.module('contentful').directive('cfTokenizedSearch', ['$parse', 'searchQueryHelper', '$timeout', function($parse, searchQueryHelper, $timeout){
+angular.module('contentful').directive('cfTokenizedSearch', ['require', function (require) {
+  var $timeout = require('$timeout');
+
   return {
     template: JST['cf_tokenized_search'](),
     restrict: 'A',
     scope: true,
     controller: 'cfTokenizedSearchController',
     controllerAs: 'tokenizedSearchController',
-    link: function(scope, element) {
+    link: function (scope, element) {
       var input = element.find('input');
 
       // Make position query available on the scope so it can be called from the controller
@@ -23,10 +25,8 @@ angular.module('contentful').directive('cfTokenizedSearch', ['$parse', 'searchQu
       };
 
       scope.$on('$destroy', function () {
-        scope = null; //MEMLEAK FIX
+        scope = null; // MEMLEAK FIX
       });
     }
   };
 }]);
-
-

@@ -1,10 +1,9 @@
 div(ng-show="context.ready && !context.forbidden")
+  cf-loader(watch-state-change="true")
   | ${{template}}
-div.workbench.workbench-loading.x--center(
-  ng-show="!context.ready && !context.forbidden")
-  div.workbench-loading__spinner
-  div.workbench-loading__message
-    | ${{loadingText}}
+
+cf-loader(is-shown="!context.ready && !context.forbidden", loader-msg="${{loadingText}}")
+
 div.workbench.workbench-forbidden.x--center(
   ng-show="context.forbidden")
   div.workbench-forbidden__headline

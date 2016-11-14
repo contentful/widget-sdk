@@ -24,6 +24,8 @@ header.workbench-header
       cf-when-disabled="createApiKey")
       | Save
 
+cf-loader(watch-state-change="true")
+
 .workbench-main
   .workbench-main__content.api-key-editor
     .entity-editor__notification(ng-if="isReadOnly()" role="alert")

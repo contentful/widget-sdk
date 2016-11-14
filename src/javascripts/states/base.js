@@ -12,7 +12,8 @@ angular.module('contentful')
   return function base (definition) {
     if (!definition.loadingText) {
       var label = dotty.get(definition, 'label');
-      definition.loadingText = label ? ('Loading your ' + label + '...') : 'Loading...';
+
+      definition.loadingText = label ? ('Loading ' + label + '...') : 'Please hold on...';
     }
 
     definition.template = JST.base_state_view({

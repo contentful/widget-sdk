@@ -1,3 +1,5 @@
+include ../advice.mixin.jade
+
 header.workbench-header
   cf-breadcrumbs
   .workbench-header__left
@@ -9,6 +11,8 @@ header.workbench-header
   .workbench-header__search.search-area
     .search-field(
       cf-search="searchTerm"
+      is-searching="context.isSearching"
+      search-type-ahead="true"
       placeholder="Type to search")
 
   .workbench-header__actions
@@ -56,13 +60,9 @@ header.workbench-header
       li.filter-list-item(ng-class="{active: context.list == 'active'}" ng-click="context.list = 'active'")
         span.filter-list-title Active
 
-  .workbench-main__right-content(ng-show="!hasQueryResults()")
-    .cfnext-advice
-      i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
-      .advice__title There are no matches to your search
-
-  .workbench-main__right-content(ng-show="hasQueryResults()")
-    table.result-list.main-results.main-header
+  .workbench-main__right-content
+    +no-search-results("!hasQueryResults()", "searchTerm", "context.list")
+    table.result-list.main-results.main-header(ng-show="hasQueryResults()")
       thead
         tr
           th.cell-display-name Name
@@ -77,21 +77,20 @@ header.workbench-header
         tbody
           tr.entity-list__item(
             ng-repeat="contentType in visibleContentTypes track by contentType.getId()"
-            ng-init="entityNavState='spaces.detail.content_types.detail.home({ contentTypeId: contentType.getId() })'"
-            ui-sref="{{entityNavState}}")
+            ui-sref="spaces.detail.content_types.detail.home({ contentTypeId: contentType.getId() })")
             td.cell-display-name
-              a.entity-list-link(ui-sref="{{entityNavState}}") {{contentType.getName()}}
+              a.entity-list-link {{contentType.getName()}}
             td.cell-description
-              a.entity-list-link(ui-sref="{{entityNavState}}") {{contentType.data.description}}
+              a.entity-list-link {{contentType.data.description}}
             td.cell-integer
-              a.entity-list-link(ui-sref="{{entityNavState}}") {{numFields(contentType)}}
+              a.entity-list-link {{numFields(contentType)}}
             td.cell-date
-              a.entity-list-link(ng-if="contentType.getUpdatedAt()" ui-sref="{{entityNavState}}")
+              a.entity-list-link(ng-if="contentType.getUpdatedAt()")
                 date(datetime="{{contentType.getUpdatedAt()}}" cf-relative-datetime)
             td.cell-symbol
-              a.entity-list-link(cf-user link="contentType.getUpdatedBy()" as="updater" ui-sref="{{entityNavState}}")
+              a.entity-list-link(cf-user link="contentType.getUpdatedBy()" as="updater")
                 | {{updater | userNameDisplay:user}}
             td.cell-status(ng-class="statusClass(contentType)")
-              a.entity-list-link(ui-sref="{{entityNavState}}")
+              a.entity-list-link
                 .status-label {{statusLabel(contentType)}}
                 .status-bar
