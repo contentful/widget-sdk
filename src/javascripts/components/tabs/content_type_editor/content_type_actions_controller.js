@@ -272,7 +272,7 @@ angular.module('contentful')
   }
 
   function goToDetails (contentType) {
-    return $state.go('spaces.detail.content_types.detail.home', {
+    return $state.go('spaces.detail.content_types.detail.fields', {
       contentTypeId: contentType.getId()
     });
   }
