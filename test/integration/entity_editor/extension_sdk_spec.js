@@ -39,14 +39,15 @@ describe('Extension SDK', function () {
     this.doc = this.$inject('mocks/entityEditor/Document').create(entry.data);
 
     this.scope = {
-      widget: {},
+      widget: {
+        field: field
+      },
       contentType: {
         data: {
           fields: [field]
         }
       },
       entry: entry,
-      field: field,
       locale: {
         code: 'de',
         internal_code: 'de-internal'
@@ -107,7 +108,7 @@ describe('Extension SDK', function () {
 
   describe('#field', function () {
     beforeEach(function () {
-      this.scope.field.validations = ['VALIDATION'];
+      this.scope.widget.field.validations = ['VALIDATION'];
     });
 
     it('receives #validations property', function* (api) {
@@ -309,7 +310,7 @@ describe('Extension SDK', function () {
   describe('#fields', function () {
     beforeEach(function () {
       this.scope.contentType.data.fields = [
-        this.scope.field,
+        this.scope.widget.field,
         {id: 'f2-internal', apiName: 'f2', localized: true},
         {id: 'f3-internal', apiName: 'f3', localized: false}
       ];
