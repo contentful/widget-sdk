@@ -18,12 +18,14 @@ angular.module('contentful/mocks')
   };
 
   function create (data) {
-    data = data || {};
+    data = data || {sys: {}};
 
     return {
       doc: new OtDoc(data),
       state: {
-        isDirty: K.createMockProperty()
+        isDirty$: K.createMockProperty(),
+        isSaving$: K.createMockProperty(false),
+        isConnected$: K.createMockProperty(true)
       },
 
       open: sinon.stub(),

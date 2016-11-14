@@ -94,7 +94,7 @@ angular.module('cf.data')
         opener.close();
         return K.constant(DocLoad.None());
       }
-    });
+    }).toProperty(_.constant(DocLoad.None()));
 
     // Emit a value to end the doc loader stream.
     var dead = K.createBus();

@@ -21,6 +21,9 @@ angular.module('cf.app')
 
   function create (data) {
     return {
+      state: {
+        isConnected$: K.constant(false)
+      },
       getValueAt: valueAt,
       valuePropertyAt: valuePropertyAt,
       setValueAt: $q.resolve,

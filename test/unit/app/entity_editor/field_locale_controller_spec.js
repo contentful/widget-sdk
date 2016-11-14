@@ -162,11 +162,6 @@ describe('FieldLocaleController', function () {
   });
 
   describe('#access', function () {
-    const withEditableDoc = {};
-    dotty.put(withEditableDoc, 'otDoc.state.editable', true);
-    const withNonEditableDoc = {};
-    dotty.put(withNonEditableDoc, 'otDoc.state.editable', false);
-
     beforeEach(function () {
       const policyAccessChecker = this.$inject('accessChecker/policy');
       policyAccessChecker.canEditFieldLocale = this.hasEditingPermission = sinon.stub();
@@ -175,7 +170,7 @@ describe('FieldLocaleController', function () {
     it('is "disabled" and "disconnected" without connection and with permission', function () {
       this.hasEditingPermission.returns(true);
       const scope = this.init();
-      dotty.put(scope, 'otDoc.state.editable', false);
+      this.otDoc.state.isConnected$.set(false);
       this.$apply();
       expect(scope.fieldLocale.access).toEqual({
         disconnected: true,
@@ -189,7 +184,6 @@ describe('FieldLocaleController', function () {
       const scope = this.init({
         widget: widget
       });
-      dotty.put(scope, 'otDoc.state.editable', true);
       this.$apply();
       expect(scope.fieldLocale.access).toEqual({
         editing_disabled: true,
@@ -200,7 +194,6 @@ describe('FieldLocaleController', function () {
     it('is "disabled" and "denied" without permissions and with connection', function () {
       this.hasEditingPermission.returns(false);
       const scope = this.init();
-      dotty.put(scope, 'otDoc.state.editable', true);
       this.$apply();
       expect(scope.fieldLocale.access).toEqual({
         denied: true,
@@ -211,7 +204,7 @@ describe('FieldLocaleController', function () {
     it('is "disabled" and "denied" without permissions and connection', function () {
       this.hasEditingPermission.returns(false);
       const scope = this.init();
-      dotty.put(scope, 'otDoc.state.editable', false);
+      this.otDoc.state.isConnected$.set(false);
       this.$apply();
       expect(scope.fieldLocale.access).toEqual({
         denied: true,
@@ -222,7 +215,6 @@ describe('FieldLocaleController', function () {
     it('is "editable" with permissions and connection', function () {
       this.hasEditingPermission.returns(true);
       const scope = this.init();
-      dotty.put(scope, 'otDoc.state.editable', true);
       this.$apply();
       expect(scope.fieldLocale.access).toEqual({
         editable: true

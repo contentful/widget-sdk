@@ -169,80 +169,47 @@ angular.module('contentful')
 
   /**
    * @ngdoc property
-   * @name FieldLocaleController#access
-   * @type {object}
-   * @description
-   * Information about the access to the current field locale.
-   *
-   * The object has a number of boolean properties that are set
-   * according to the connection state and editing permissions. See
-   * below for a description of the properties.
-   */
-  /**
-   * @ngdoc property
-   * @name FieldLocaleController#access.disabled
-   * @type {boolean}
-   * @description
-   * True if there is no connction to ShareJS or if the user does not
-   * have permissions to the edit the field locale.
-   */
-  /**
-   * @ngdoc property
-   * @name FieldLocaleController#access.editing_disabled
-   * @type {boolean}
-   * @description
-   * True if the field is disabled on a content type level.
-   *
-   * Implies `access.disabled === true`.
-   */
-  /**
-   * @ngdoc property
-   * @name FieldLocaleController#access.denied
-   * @type {boolean}
-   * @description
-   * True if the user does not have permissions to the edit the field
-   * locale.
-   *
-   * Implies `access.disabled === true`.
-   */
-  /**
-   * @ngdoc property
-   * @name FieldLocaleController#access.disconnected
-   * @type {boolean}
-   * @description
-   * True if there is no connction to ShareJS.
-   *
-   * Implies `access.disabled === true`.
-   */
-  var accessBus = K.createPropertyBus(DISCONNECTED, $scope);
-  $scope.$watchGroup(['otDoc.state.editable', hasEditingPermission], function (access) {
-    var docOpen = access[0];
-    var editingAllowed = access[1];
-    if (field.disabled) {
-      accessBus.set(EDITING_DISABLED);
-    } else if (!editingAllowed) {
-      accessBus.set(DENIED);
-    } else if (docOpen) {
-      accessBus.set(EDITABLE);
-    } else {
-      accessBus.set(DISCONNECTED);
-    }
-  });
-
-  /**
-   * @ngdoc property
    * @name FieldLocaleController#access$
    * @type {Property<Access>}
    * @description
-   * A property the holds the same value as FieldLocaleController#access
+   * Holds information about the access to the current field locale.
+   *
+   * The object has a number of boolean properties that are set
+   * according to the connection state and editing permissions.
+   *
+   * - `disconnected`  No ShareJS connection
+   * - `denied`  The user does not have permission to edit the field
+   * - `editing_disabled`  The field is disabled at the content type
+   *   level
+   * - `disabled` Is true if one of the above is true
+   * - `editable` Is true if 'disabled' is false
    */
-  controller.access$ = accessBus.property;
+
+  var hasEditingPermission$ =
+    $scope.docImpl.sysProperty
+    // The content type id never changes
+    .take(1)
+    .map(function (sys) {
+      // Assets have an implicit content type id of 'null'
+      var ctId = sys.contentType && sys.contentType.sys.id;
+      return policyAccessChecker.canEditFieldLocale(ctId, field, locale);
+    }).skipDuplicates();
+
+  controller.access$ = K.combineProperties(
+    [hasEditingPermission$, $scope.docImpl.state.isConnected$],
+    function (editingAllowed, connected) {
+      if (field.disabled) {
+        return EDITING_DISABLED;
+      } else if (!editingAllowed) {
+        return DENIED;
+      } else if (connected) {
+        return EDITABLE;
+      } else {
+        return DISCONNECTED;
+      }
+    });
+
   K.onValueScope($scope, controller.access$, function (access) {
     controller.access = access;
   });
-
-  function hasEditingPermission () {
-    var ctId = dotty.get($scope, 'entity.data.sys.contentType.sys.id');
-    return policyAccessChecker.canEditFieldLocale(ctId, field, locale);
-  }
 }]);

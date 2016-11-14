@@ -83,8 +83,13 @@ angular.module('contentful')
     $scope.title = truncate(title, 50);
   });
 
-  K.onValueScope($scope, $scope.otDoc.state.isDirty, function (isDirty) {
+  K.onValueScope($scope, $scope.otDoc.state.isDirty$, function (isDirty) {
     $scope.context.dirty = isDirty;
+  });
+
+  // TODO move this into sidebar controller
+  K.onValueScope($scope, $scope.otDoc.state.isSaving$, function (isSaving) {
+    $scope.documentIsSaving = isSaving;
   });
 
   // OT Stuff
