@@ -10,7 +10,7 @@ angular.module('contentful')
 
   if (_.includes(CONSOLE_ENVS, env)) {
     var c = require('analytics/console');
-    c.setSafe();
+    c.enable();
     window[FN_NAME] = c.show;
   }
 }])
@@ -31,26 +31,45 @@ angular.module('contentful')
   var moment = require('moment');
   var K = require('utils/kefir');
   var validateEvent = require('analytics/validateEvent');
+  var logger = require('logger');
 
-  var isSafe = false;
-  var events = [];
-  var eventsBus = null;
-  var sessionData = {};
-  var sessionDataBus = null;
-  var scope = null;
+  var isEnabled = false;
   var el = null;
+
+  var eventsBus = K.createBus();
+  var sessionDataBus = K.createPropertyBus();
+
+  var events$ = eventsBus.stream.scan(function (events, newEvent) {
+    return events.concat([newEvent]);
+  }, []);
+  events$.onValue(_.noop);
+
+  var scope = _.extend($rootScope.$new(true), {
+    events$: events$,
+    sessionData$: sessionDataBus.property
+  });
 
   return {
     /**
      * @ngdoc method
-     * @name analytics/console#setSafe
+     * @name analytics/console#enable
      * @description
-     * Unlocks the console (env is safe).
+     * Enables the console. W/o this call
+     * the console cannot be opened. It's
+     * called when we're in an environment
+     * where it's safe to expose dev data.
      */
-    setSafe: function () { isSafe = true; },
+    enable: function () { isEnabled = true; },
     show: show,
     add: add,
-    setSessionData: setSessionData
+    /**
+     * @ngdoc method
+     * @name analytics/console#setUserData
+     * @param {object} data
+     * @description
+     * Replaces current session data.
+     */
+    setSessionData: sessionDataBus.set
   };
 
   /**
@@ -61,26 +80,17 @@ angular.module('contentful')
    * Activates the console.
    */
   function show () {
-    if (!isSafe) {
+    if (!isEnabled) {
       return;
     }
 
-    if (!scope) {
-      eventsBus = K.createPropertyBus(events);
-      sessionDataBus = K.createPropertyBus(sessionData);
-      scope = _.extend($rootScope.$new(true), {
-        eventsProperty: eventsBus.property,
-        sessionDataProperty: sessionDataBus.property
-      });
-      el = $compile('<cf-analytics-console />')(scope);
-    }
-
+    el = el || $compile('<cf-analytics-console />')(scope);
     var first = el[0];
     if (!first.parentElement) {
       document.body.appendChild(first);
     }
 
-    scope.$apply(function () {
+    scope.$applyAsync(function () {
       scope.isVisible = true;
     });
 
@@ -96,37 +106,27 @@ angular.module('contentful')
    * Adds an event to the console.
    */
   function add (name, data) {
-    if (!isSafe) {
-      return;
-    }
-
-    events.push({
+    var event = {
       time: moment().format('HH:mm:ss'),
       name: name,
       data: data,
       isValid: validateEvent(name)
-    });
+    };
 
-    if (eventsBus) {
-      eventsBus.set(events);
-    }
+    eventsBus.emit(event);
+    throwOrLogInvalidEvent(event);
   }
 
-  /**
-   * @ngdoc method
-   * @name analytics/console#setUserData
-   * @param {object} data
-   * @description
-   * Replaces current session data.
-   */
-  function setSessionData (data) {
-    if (!isSafe) {
+  function throwOrLogInvalidEvent (event) {
+    if (event.isValid) {
       return;
     }
 
-    sessionData = data;
-    if (sessionDataBus) {
-      sessionDataBus.set(data);
+    var message = 'Invalid analytical event name: ' + event.name;
+    if (isEnabled) {
+      throw new Error(message);
+    } else {
+      logger.logWarn(message, {data: {event: event}});
     }
   }
 }])
@@ -148,14 +148,14 @@ angular.module('contentful')
         }
       };
 
-      scope.eventsProperty.onValue(function (events) {
+      scope.events$.onValue(function (events) {
         scope.events = events;
         if (!scope.showSessionData) {
           scrollDown();
         }
       });
 
-      scope.sessionDataProperty.onValue(function (data) {
+      scope.sessionData$.onValue(function (data) {
         scope.sessionData = data;
       });
 
