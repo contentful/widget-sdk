@@ -24,7 +24,7 @@ angular.module('cf.ui')
 .directive('cfLoader', function () {
   var template = '';
 
-  template += '<div class="loader" ng-show=isShown role="progressbar" aria-busy="{{ isShown }}" aria-label="loader-interstitial">';
+  template += '<div class="loader" ng-show="isShown" role="progressbar" aria-busy="{{ isShown }}" aria-label="loader-interstitial">';
   template += '  <div class="loader__container">';
   template += '    <div class="loader__spinner"></div>';
   template += '    <div class="loader__message">{{ loaderMsg }}</div>';

@@ -7,12 +7,15 @@ describe('cfLoaders', function () {
     this.$rootScope = this.$inject('$rootScope');
 
     this.compile = function (directive) {
-      return function (isShownProp = 'isLoading', isShown, loaderMsg, watchStateChange = true) {
-        let template = `<${directive} is-shown=${isShownProp} watch-state-change="${watchStateChange}" `;
-        template += loaderMsg ? `loader-msg=${loaderMsg} />` : '/>';
+      return function (isShownProp, isShown, loaderMsg, watchStateChange = true) {
+        let template = `<${directive} `;
 
-        const $el = this.$compile(template).find(':first-child');
-        const scope = $el.scope();
+        template += isShownProp ? `is-shown=${isShownProp} ` : '';
+        template += loaderMsg ? `loader-msg="${loaderMsg}" ` : '';
+        template += `watch-state-change="${watchStateChange}" />`;
+
+        const $el = this.$compile(template);
+        const scope = $el.find(':first-child').scope();
 
         scope.$parent[isShownProp] = isShown;
         scope.$apply();
