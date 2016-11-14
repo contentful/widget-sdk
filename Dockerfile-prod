@@ -1,0 +1,19 @@
+FROM nginx:1.10-alpine
+
+# TODO Make this configurable at runtime
+ARG CF_ENV=development
+ARG CF_VERSION
+
+# File layout
+# output/files/${env}/app
+# output/files/${env}/archive/${version}/index-compiled.html
+COPY output/files /app
+
+# Link environment to be served
+RUN ln -sf /app/${CF_ENV}/archive/${CF_VERSION}/index-compiled.html /usr/share/nginx/html/index.html
+RUN ln -sf /app/${CF_ENV}/app /usr/share/nginx/html/app
+
+# Expose on the default user_interface port
+RUN sed -i 's/80;/3001;/' /etc/nginx/conf.d/default.conf
+
+EXPOSE 3001
