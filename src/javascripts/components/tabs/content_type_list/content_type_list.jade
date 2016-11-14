@@ -77,7 +77,7 @@ header.workbench-header
         tbody
           tr.entity-list__item(
             ng-repeat="contentType in visibleContentTypes track by contentType.getId()"
-            ng-init="entityNavState='spaces.detail.content_types.detail({ contentTypeId: contentType.getId() })'"
+            ng-init="entityNavState='spaces.detail.content_types.detail.home({ contentTypeId: contentType.getId() })'"
             ui-sref="{{entityNavState}}")
             td.cell-display-name
               a.entity-list-link(ui-sref="{{entityNavState}}") {{contentType.getName()}}
