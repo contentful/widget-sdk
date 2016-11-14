@@ -98,6 +98,8 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
         this.open = true;
         scope.$apply();
 
+        this._centerOnBackground();
+
         if(this.domElement.find('input').length > 0) {
           this.domElement.find('input').eq(0).focus();
         } else {
@@ -109,6 +111,30 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
         this.domElement.addClass('is-visible');
 
       }, this));
+    },
+
+    _centerOnBackground: function () {
+      var elem = this.domElement.children('.modal-dialog');
+      var debouncedReposition = debounce(reposition, 50);
+      var destroyed = false;
+
+      reposition();
+      $($window).on('resize', debouncedReposition);
+
+      var repositionOff = $rootScope.$on('centerOn:reposition', function () {
+        if (!destroyed) { reposition(); }
+      });
+
+      elem.on('$destroy', function () {
+        destroyed = true;
+        $($window).off('resize', debouncedReposition);
+        repositionOff();
+      });
+
+      function reposition() {
+        var topOffset = Math.max(($window.innerHeight-elem.height())/2, 0);
+        elem.css({ top: topOffset + 'px' });
+      }
     },
 
     _closeOnBackground: function (ev) {
