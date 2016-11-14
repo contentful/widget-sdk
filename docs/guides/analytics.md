@@ -98,6 +98,7 @@ yet).
 | search              | view_folder_deleted                   | <code>source: string</code>
 | search              | view_added                            | <code>source: string</code>
 | search              | view_deleted                          | <code>source: string</code>
+| modelling           | field_added                           | <code>contentTypeId: id-string<br>contentTypeName: string<br>fieldId: id-string<br>fieldName: string<br>fieldType: string<br>fieldItemType: string<br>fieldLocalized: bool<br>fieldRequired: bool</code>
 | modelling           | custom_extension_selected             | <code>extensionId: id-string<br>extensionName: string<br>fieldType: string (Text, Symbol...)<br>contentTypeId: id-string</code>
 | entry_editor        | state_changed                         | <code>entityType: string (Asset, Entry)<br>entityId: id-string<br>fromState: string (draft, published...)<br>toState: string</code>
 | entry_editor        | disabled_fields_visibility_toggled    | <code>entryId: id-string<br>show: bool</code>

@@ -8,7 +8,6 @@ angular.module('contentful')
 .controller('ContentTypeFieldController', ['$scope', 'require', function ($scope, require) {
   var controller = this;
   var fieldFactory = require('fieldFactory');
-  var trackFields = require('analyticsEvents/fields');
   var Field = require('fieldDecorator');
   var dialogs = require('ContentTypeFieldController/dialogs');
 
@@ -37,9 +36,6 @@ angular.module('contentful')
       dialogs.openDisallowDialog(field, 'disable');
     } else {
       field[property] = toggled;
-      trackFields.action('Clicked Field Actions Button', field, {
-        action: [field[property] ? 'on' : 'off', property].join('-')
-      });
     }
   };
 

@@ -42,6 +42,7 @@ angular.module('contentful')
     'bulk_action_performed'
   ],
   modelling: [
+    'field_added',
     'custom_extension_selected'
   ],
   entry_editor: [

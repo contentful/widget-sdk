@@ -21,7 +21,6 @@ angular.module('contentful')
   var random = require('random');
   var stringUtils = require('stringUtils');
   var buildMessage = require('fieldErrorMessageBuilder');
-  var trackFields = require('analyticsEvents/fields');
   var $q = require('$q');
 
   $scope.viewState = $controller('ViewStateController', {
@@ -106,7 +105,6 @@ angular.module('contentful')
       return $q.reject(new Error('Invalid user data'));
     }
 
-    trackFields.action('Clicked Create Field Button', field);
     return $scope.dialog.confirm(field)
     .promise.then(function () {
       return field;
