@@ -22,6 +22,7 @@ export const options = {
     ['transform-es2015-block-scoping'],
     // Make sure 'const' variables are not reassigned
     ['check-es2015-constants'],
+    ['transform-es2015-template-literals'],
     ['transform-es2015-arrow-functions']
   ],
 

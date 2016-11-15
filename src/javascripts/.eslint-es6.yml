@@ -34,8 +34,6 @@ rules:
   - SwitchCase
   - SwitchStatement
   - TaggedTemplateExpression
-  - TemplateElement
-  - TemplateLiteral
   - UpdateExpression
   - WithStatement
   - YieldExpression
