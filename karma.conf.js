@@ -56,9 +56,13 @@ module.exports = function (config) {
     },
 
     babelPreprocessor: {
-      options: Object.assign({
-        sourceMap: 'inline'
-      }, babelOptions),
+      options: Object.assign({}, babelOptions, {
+        sourceMap: 'inline',
+        // Since we strip the '.es6.js' extension from the filename we
+        // do not need to match /.es6.js/. This is done by the
+        // preprocessor glob.
+        only: null
+      }),
       filename: function (file) {
         return file.originalPath
           .replace(/\.es6\.js$/, '.js');
