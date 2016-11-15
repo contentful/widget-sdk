@@ -123,11 +123,8 @@ angular.module('contentful')
       url: '//' + environment.settings.base_host + '/gatekeeper/plan_cards.css'
     },
     fontsDotCom: {
-      // Empty stylesheet. The request happening to the file is misused by
-      // fonts.com for tracking and resembles the logic in their own
-      // http://fast.fonts.net/t/trackingCode.js
       url: '//fast.fonts.net/t/1.css?apiType=css&projectid=' +
-           dotty.get(environment, 'settings.fonts_dot_com.project_id')
+        dotty.get(environment, 'settings.fonts_dot_com.project_id')
     },
     // JavaScript:
     markdown: {
@@ -151,17 +148,17 @@ angular.module('contentful')
     },
     googleMaps: {
       url: 'https://maps.googleapis.com/maps/api/js?v=3&key=' +
-      environment.settings.google.maps_api_key,
+        environment.settings.google.maps_api_key,
       globalObject: 'google.maps'
     },
     bugsnag: {
       url: 'https://d2wy8f7a9ursnm.cloudfront.net/bugsnag-3.min.js',
       globalObject: 'Bugsnag'
     },
-    googleTagManager: {
-      url: 'https://www.googletagmanager.com/gtm.js?l=gtmDataLayer&' +
-              'id=' + environment.settings.googleTagManagerContainer,
-      globalObject: 'gtmDataLayer'
+    segment: {
+      url: 'https://cdn.segment.com/analytics.js/v1/' +
+        environment.settings.segment_io + '/analytics.min.js',
+      globalObject: 'analytics'
     }
   };
 

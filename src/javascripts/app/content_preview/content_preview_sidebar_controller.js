@@ -31,12 +31,11 @@ angular.module('contentful')
   };
 
   $scope.trackClickedLink = function () {
-    // TODO: extract into a separate content preview analytics service
-    analytics.track('content-preview', {
-      action: 'open',
-      id: $scope.selectedEnvironment.envId,
-      name: $scope.selectedEnvironment.name,
-      url: $scope.selectedEnvironment.url
+    analytics.track('entry_editor:preview_opened', {
+      envName: $scope.selectedEnvironment.name,
+      envId: $scope.selectedEnvironment.envId,
+      previewUrl: $scope.selectedEnvironment.url,
+      entryId: $scope.entity.getId()
     });
   };
 

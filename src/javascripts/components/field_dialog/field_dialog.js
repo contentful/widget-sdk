@@ -17,7 +17,6 @@ angular.module('contentful')
  * @return {Promise<void>}
  */
 .factory('openFieldDialog', ['$injector', function ($injector) {
-  var analytics = $injector.get('analyticsEvents');
   var modalDialog = $injector.get('modalDialog');
 
   return function openFieldDialog ($scope, field, widget) {
@@ -25,23 +24,11 @@ angular.module('contentful')
       field: field,
       widget: widget
     });
-    trackOpenSettingsDialog(field);
     return modalDialog.open({
       scope: scope,
       template: 'field_dialog'
     }).promise;
   };
-
-
-  /**
-   * @ngdoc analytics-event
-   * @name Clicked Field Settings Button
-   * @param fieldId
-   * @param originatingFieldType
-   */
-  function trackOpenSettingsDialog (field) {
-    analytics.trackField('Clicked Field Settings Button', field);
-  }
 }])
 
 /**
@@ -60,7 +47,7 @@ angular.module('contentful')
 
   var validations = $injector.get('validationDecorator');
   var field = $injector.get('fieldDecorator');
-  var analyticsEvents = $injector.get('analyticsEvents');
+  var trackCustomWidgets = $injector.get('analyticsEvents/customWidgets');
   var fieldFactory = $injector.get('fieldFactory');
   var Widgets = $injector.get('widgets');
 
@@ -98,7 +85,6 @@ angular.module('contentful')
   dialog.save = function () {
     $scope.$broadcast('validate');
     if (!isValid()) {
-      trackFieldSettingsError($scope.field);
       return;
     }
 
@@ -114,10 +100,9 @@ angular.module('contentful')
     });
 
     if (widgetId !== initialWidgetId) {
-      trackCustomWidgetSelected($scope.field, widget);
+      trackCustomWidgets.selected(widget, $scope.field, $scope.contentType);
     }
 
-    trackFieldSettingsSuccess($scope.field);
     dialog.confirm();
   };
 
@@ -142,44 +127,6 @@ angular.module('contentful')
     var titleField = _.find(ct.data.fields, {id: fieldId});
     return field.getDisplayName(titleField);
   }
-
-
-  /**
-   * @ngdoc analytics-event
-   * @name Saved Errored Field Settings Modal
-   * @param fieldId
-   * @param originatingFieldType
-   */
-  function trackFieldSettingsError (field) {
-    analyticsEvents.trackField('Saved Errored Field Settings Modal', field);
-  }
-
-  /**
-   * @ngdoc analytics-event
-   * @name Saved Successful Field Settings Modal
-   * @param fieldId
-   * @param originatingFieldType
-   */
-  function trackFieldSettingsSuccess (field) {
-    analyticsEvents.trackField('Saved Successful Field Settings Modal', field);
-  }
-
-  /**
-   * @ngdoc analytics-event
-   * @name Custom Widget Selected
-   * @param widgetId
-   * @param widgetName
-   * @param fieldType
-   * @param contentTypeId
-   */
-  function trackCustomWidgetSelected (field, widgetLink) {
-    analyticsEvents.trackWidgetEventIfCustom(
-      'Custom Widget selected',
-      widgetLink, field,
-      { contentTypeId: $scope.contentType.getId() }
-    );
-  }
-
 }])
 
 

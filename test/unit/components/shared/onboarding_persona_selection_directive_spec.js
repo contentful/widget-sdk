@@ -14,15 +14,12 @@ describe('cfOnboardingPersonaSelection directive', function() {
     };
 
     module('contentful/test', function($provide) {
-      $provide.value('analyticsEvents', {
-        persona: {
-          trackSelected: sinon.spy(),
-          trackSkipped: sinon.spy()
-        }
+      $provide.value('analytics', {
+        trackPersonaSelection: sinon.spy()
       });
     });
 
-    this.analytics = this.$inject('analyticsEvents')
+    this.analytics = this.$inject('analytics')
 
     var element = this.$compile('<cf-onboarding-persona-selection>', {
       $emit: stubs.$emit
@@ -47,7 +44,7 @@ describe('cfOnboardingPersonaSelection directive', function() {
 
     it('sends values to segment', function() {
       controller.submitPersonaSelection('code');
-      sinon.assert.calledWith(this.analytics.persona.trackSelected, 'code');
+      sinon.assert.calledWith(this.analytics.trackPersonaSelection, 'code');
     });
 
     it('emits submitPersonaSelection event', function() {
@@ -63,7 +60,7 @@ describe('cfOnboardingPersonaSelection directive', function() {
       controller.skipSelection();
     });
     it('tracks event if selection is skipped', function() {
-      sinon.assert.calledWith(this.analytics.persona.trackSkipped);
+      sinon.assert.calledWith(this.analytics.trackPersonaSelection, null);
     });
     it('emits skipPersonaSelection event', function() {
       sinon.assert.called(stubs.$emit);

@@ -33,8 +33,11 @@ angular.module('contentful')
 
   controller.toggleDisabledFields = Command.create(function () {
     var show = !$scope.preferences.showDisabledFields;
-    trackToggleDisabledFields(show);
     $scope.preferences.showDisabledFields = show;
+    analytics.track('entry_editor:disabled_fields_visibility_toggled', {
+      entryId: $scope.entry.getId(),
+      show: show
+    });
   }, {}, {
     label: function () {
       return $scope.preferences.showDisabledFields
@@ -44,8 +47,12 @@ angular.module('contentful')
   });
 
   controller.add = Command.create(function () {
-    analytics.track('Clicked Create new Entry of same CT');
     var contentTypeId = $scope.entry.getSys().contentType.sys.id;
+    analytics.track('entry_editor:created_with_same_ct', {
+      contentTypeId: contentTypeId,
+      entryId: $scope.entry.getId()
+    });
+
     return spaceContext.space.createEntry(contentTypeId, {})
     .then(function (entry) {
       // TODO Create a service that works like $state.go but cancels
@@ -61,21 +68,4 @@ angular.module('contentful')
   }, {
     name: function () { return $scope.contentTypeName; }
   });
-
-  /**
-   * @ngdoc analytics-event
-   * @name Show Disabled Fields
-   */
-  /**
-   * @ngdoc analytics-event
-   * @name Hide Disabled Fields
-   */
-  function trackToggleDisabledFields (show) {
-    if (show) {
-      analytics.track('Show Disabled Fields');
-    } else {
-      analytics.track('Hide Disabled Fields');
-    }
-  }
-
 }]);

@@ -8,7 +8,7 @@
 */
 angular.module('contentful')
 .factory('bugsnag', ['$injector', function ($injector) {
-  var CallBuffer = $injector.get('CallBuffer');
+  var CallBuffer = $injector.get('utils/CallBuffer');
   var environment = $injector.get('environment');
 
   // TODO this should be stored in the environment configuration. Need
@@ -16,7 +16,7 @@ angular.module('contentful')
   var API_KEY = 'b253f10d5d0184a99e1773cec7b726e8';
 
   var bugsnag;
-  var callBuffer = new CallBuffer();
+  var callBuffer = CallBuffer.create();
   var loadOnce = _.once(load);
 
   return {

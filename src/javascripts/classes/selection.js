@@ -1,34 +1,31 @@
 'use strict';
 
-angular.module('contentful').factory('selection', ['analytics', function (analytics) {
-
+angular.module('contentful')
+.factory('selection', [function () {
   return function createSelection () {
-
     var selectedById = {};
     var selected = [];
 
     return {
-      add:         add,
-      remove:      remove,
-      toggle:      toggle,
-      isSelected:  isSelected,
-      updateList:  updateList,
-      clear:       function () { selectedById = {}; sync();  },
-      size:        function () { return _.size(selected);    },
-      isEmpty:     function () { return _.isEmpty(selected); },
-      getSelected: function () { return selected;            }
+      add: add,
+      remove: remove,
+      toggle: toggle,
+      isSelected: isSelected,
+      updateList: updateList,
+      clear: clear,
+      size: function () { return _.size(selected); },
+      isEmpty: function () { return _.isEmpty(selected); },
+      getSelected: function () { return selected; }
     };
 
     function add (entity) {
       selectedById[entity.getId()] = entity;
       sync();
-      analytics.track('Selected Entity', {entity: entity.getType(), id: entity.getId()});
     }
 
     function remove (entity) {
       delete selectedById[entity.getId()];
       sync();
-      analytics.track('Deselected Entity', {entity: entity.getType(), id: entity.getId()});
     }
 
     function isSelected (entity) {
@@ -50,6 +47,11 @@ angular.module('contentful').factory('selection', ['analytics', function (analyt
         }
       }, {});
 
+      sync();
+    }
+
+    function clear () {
+      selectedById = {};
       sync();
     }
 

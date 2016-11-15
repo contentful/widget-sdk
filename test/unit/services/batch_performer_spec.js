@@ -153,10 +153,9 @@ describe('Batch performer service', function () {
 
   function itTracksAnalytics (action) {
     pit('creates analytics event', function () {
-      return this.performer[action]().then(function () {
-        sinon.assert.calledOnce(this.analytics.track);
-        expect(this.analytics.track.args[0][0]).toMatch(/list action/);
-      }.bind(this));
+      return this.performer[action]().then(() => {
+        sinon.assert.calledOnce(this.analytics.track.withArgs('search:bulk_action_performed'));
+      });
     });
   }
 

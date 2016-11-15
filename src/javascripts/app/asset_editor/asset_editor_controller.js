@@ -68,7 +68,6 @@ angular.module('contentful')
   // Building the form
   $controller('FormWidgetsController', {
     $scope: $scope,
-    contentTypeId: '__cf_asset',
     controls: $scope.formControls
   });
 

@@ -24,11 +24,6 @@ describe('Account Dropdown Controller', function () {
     $controller('cfAccountDropdownController', { $scope: this.scope });
   });
 
-  it('tracks profile button click event', function () {
-    this.scope.clickedProfileButton();
-    sinon.assert.called(this.stubs.analytics.track);
-  });
-
   describe('calls logout', function () {
     beforeEach(function () {
       this.scope.logout();

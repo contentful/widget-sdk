@@ -22,7 +22,6 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
   var PolicyBuilder = $injector.get('PolicyBuilder');
   var leaveConfirmator = $injector.get('navigation/confirmLeaveEditor');
   var notification = $injector.get('notification');
-  var analytics = $injector.get('analytics');
   var logger = $injector.get('logger');
   var accessChecker = $injector.get('accessChecker');
 
@@ -121,7 +120,6 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
 
   function handleRole (role) {
     notification.info(role.name + ' role saved successfully');
-    trackRoleChange(role);
 
     if ($scope.context.isNew) {
       $scope.context.dirty = false;
@@ -166,18 +164,6 @@ angular.module('contentful').controller('RoleEditorController', ['$scope', '$inj
         return _.isObject(err) && err.name === errName && err.path === 'name';
       });
     }
-  }
-
-  function trackRoleChange (changedRole) {
-    var eventName = 'Role created in UI';
-    var data = { changedRole: changedRole };
-
-    if (!$scope.context.isNew) {
-      eventName = 'Role changed in UI';
-      data.originalRole = $scope.role;
-    }
-
-    analytics.track(eventName, data);
   }
 
   function autofixPolicies () {

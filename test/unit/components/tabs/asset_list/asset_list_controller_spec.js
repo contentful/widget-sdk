@@ -43,10 +43,6 @@ describe('Asset List Controller', function () {
         serverError: stubs.serverError
       });
 
-      $provide.value('analytics', {
-        track: stubs.track
-      });
-
       $provide.value('filepicker', {
         pickMultiple: stubs.pickMultiple,
         parseFPFile: stubs.parseFPFile
@@ -294,12 +290,6 @@ describe('Asset List Controller', function () {
       scope.searchController.loadMore();
       scope.$apply();
       sinon.assert.called(stubs.getAssets);
-    });
-
-    it('triggers analytics event', function () {
-      scope.searchController.loadMore();
-      scope.$apply();
-      sinon.assert.called(stubs.track);
     });
 
     describe('on successful load response', function () {

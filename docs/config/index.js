@@ -35,23 +35,6 @@ module.exports = new Package('angularjs', [
 .processor(require('./processors/doc-label').default)
 .processor(require('./processors/api-index'))
 
-.processor(function analyticsDocsProcessor () {
-  return {
-    $runAfter: ['docs-processed'],
-    $runBefore: ['extra-docs-added'],
-    $process: function (docs) {
-      var analytics = _.remove(docs, {docType: 'analytics-event'});
-      docs.push({
-        id: 'analytics-events',
-        docType: 'overview',
-        analytics: analytics,
-        template: 'analytics-events.template.html',
-        outputPath: 'partials/api/analytics-events.html'
-      });
-    }
-  };
-})
-
 .processor(function memberUnionProcessor () {
   return {
     $runAfter: ['memberDocsProcessor'],

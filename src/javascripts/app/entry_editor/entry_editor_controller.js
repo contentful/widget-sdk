@@ -72,7 +72,6 @@ angular.module('contentful')
   // Building the form
   $controller('FormWidgetsController', {
     $scope: $scope,
-    contentTypeId: $scope.contentType.getId(),
     controls: $scope.formControls
   });
 

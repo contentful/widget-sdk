@@ -221,10 +221,7 @@ cf-loader(watch-state-change="true")
                 p.build-with-contentful__reference-description
                   | {{item.description}}
                 span(ng-repeat="link in item.links track by $index")
-                  a.build-with-contentful__reference-link(
-                    ng-click="trackResourceLink(item.name, selectedLanguage.name)"
-                    href="{{link.url}}"
-                    target="_blank")
+                  a.build-with-contentful__reference-link(href="{{link.url}}" target="_blank")
                     | {{link.text}}
                   span(ng-if="!$last")
                     | &#32;|&#32;
