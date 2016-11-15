@@ -12,6 +12,11 @@ cache:
 
 env:
   global:
+    # Use by estivador
+    - PACKAGE_BUCKET=pkg.contentful.org
+    - DOCKER_REGISTRY=806120774687.dkr.ecr.us-east-1.amazonaws.com
+    # Use in before_deploy and by estivador
+    - DOCKER_IMAGE=contentful/user_interface
     # JENKINS_PASSWORD
     - secure: "RWpHqk1nc4k4qIJ6TgM8ofrwHL2nMkp5kg5B2jevJtW8UlSnzkVuagQN9Req9dTjaMX/ZsB1Pt4CQE5K1W/xQJTKAnbtyQ8fZOXU4kQvOH+TptdwK+oMwjfITktCYuj1c1/aMD0dzkIaPvjX/OwXZPtCRq2s762YXuCyPjx3ERU="
     # JENKINS_TOKEN
@@ -32,22 +37,15 @@ before_cache:
 after_success:
 # Build the package and static files
 - bin/docker-run travis --branch "${TRAVIS_BRANCH}" --version "${TRAVIS_COMMIT}" --pr "${TRAVIS_PULL_REQUEST}"
+before_deploy:
+- docker build -t $DOCKER_IMAGE -f Dockerfile-prod --build-arg CF_VERSION="${TRAVIS_COMMIT}" .
 deploy:
-  - provider: s3
-    access_key_id: AKIAJBRHNHEFAA552JLQ
-    secret_access_key:
-      secure: "IUQlzPFoJ1IdgbjTiHMzQBxS47ymlWTWUH40zgBUSaT2jIKEGWavxmYqdBWwfzDBb5nPOYALUX/+ZZ2mMb3mokaQPhn5BS1Pc7pb1xIwlLskRH6eeoN0JP9He3I8eX0PrnOJJU9lw9b2legopSLm7j7KXBz/pgC5wAwBDBH0bwo="
-    bucket: pkg.contentful.org
-    local-dir: output/package
-    skip_cleanup: true
-    on:
-      branch: [master, production, preview]
-  # Deploys the previously uploaded package
+  # Deploys package and image
   - provider: script
-    script: bin/trigger-packagebot
+    script: ./tools/push-and-promote.sh
     skip_cleanup: true
     on:
-      branch: [master, production, preview]
+      all_branches: true
   - provider: s3
     access_key_id: AKIAI35UEY5UVV5IT6BQ
     secret_access_key:

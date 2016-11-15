@@ -21,3 +21,4 @@
 !vendor
 vendor/slimerjs
 vendor/firefox
+!output/files
