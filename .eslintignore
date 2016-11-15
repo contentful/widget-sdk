@@ -271,7 +271,6 @@ src/javascripts/access_control/space_membership_repository.js
 src/javascripts/account/cf_account_dropdown_directive.js
 src/javascripts/account/cf_account_view_directive.js
 src/javascripts/account/iframe_channel.js
-src/javascripts/contentful.js
 src/javascripts/filters.js
 src/javascripts/webhooks/webhook_call_status_directive.js
 src/javascripts/webhooks/webhook_editor_directive.js

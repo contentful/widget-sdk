@@ -1,6 +1,9 @@
 parserOptions:
   ecmaVersion: 6
   sourceType: 'module'
+env:
+  node: true
+  es6: true
 rules:
   # eslint:recommended overrides
   no-console: off

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Lint all JS files with ESLint
+# We choose different configurations depending on the location of the file.
+
+set -e
+shopt -s globstar
+export PATH="./node_modules/.bin/:${PATH}"
+
+eslint \
+  --config src/javascripts/.eslint-es5.yml \
+  --ignore-pattern '**/*.es6.js' \
+  src/javascripts
+
+eslint \
+  --config src/javascripts/.eslint-es6.yml \
+  --ext .es6.js \
+  src/javascripts
+
+eslint \
+  test gulpfile.js tools
