@@ -96,6 +96,7 @@ angular.module('contentful')
     });
   }
 
+  // TODO there are no tests for this
   function decorateUniquenessErrors (error) {
     if (error.name === 'unique') {
       var conflicts = error.conflicting;
@@ -116,7 +117,7 @@ angular.module('contentful')
       });
 
       // poor man's string interpolation
-      error.message = error.message.replace('${fieldName}', $scope.field.name);
+      error.message = error.message.replace('${fieldName}', field.name);
     }
   }
 
