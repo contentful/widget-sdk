@@ -20,21 +20,20 @@ angular.module('contentful')
  * entity field directive. This wasy we can do without the list
  * manipulation.
  */
-.controller('FormWidgetsController', ['$scope', 'require', 'contentTypeId', 'controls', function ($scope, require, contentTypeId, controls) {
+.controller('FormWidgetsController', ['$scope', 'require', 'controls', function ($scope, require, controls) {
   var K = require('utils/kefir');
-  var analytics = require('analyticsEvents');
+  var trackCustomWidgets = require('analyticsEvents/customWidgets');
   var Focus = require('FieldControls/Focus');
-
-  $scope.$watch('preferences.showDisabledFields', updateWidgets);
-
   var validator = $scope.editorContext.validator;
+  $scope.$watch('preferences.showDisabledFields', updateWidgets);
   K.onValueScope($scope, validator.errors$, updateWidgets);
 
   // Executed only once when 'widgets' is not undefined.
   $scope.$watch('::widgets', function (widgets) {
-    _.forEach(widgets, trackCustomWidgetRendered);
+    _.forEach(widgets, function (widget) {
+      trackCustomWidgets.rendered(widget, $scope.contentType, $scope.entry);
+    });
   });
-
 
   /**
    * @ngdoc method
@@ -52,14 +51,6 @@ angular.module('contentful')
    * @param {function} callback
    */
   $scope.focus = Focus.create();
-
-  function trackCustomWidgetRendered (widget) {
-    analytics.trackWidgetEventIfCustom(
-      'Custom Widget rendered',
-      widget, widget.field,
-      { contentTypeId: contentTypeId }
-    );
-  }
 
   function updateWidgets () {
     $scope.widgets = _.filter(controls, widgetIsVisible);

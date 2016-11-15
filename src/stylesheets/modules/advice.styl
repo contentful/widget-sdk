@@ -88,6 +88,10 @@ Styleguide 20.2
   flex-direction: column
   justify-content: center
 
+.advice--row-aligned
+  flex-direction: row
+  align-items: center
+
 /*
 Used for the advice items at the top level which act as content fallback in
 case no spaces are available
@@ -100,13 +104,23 @@ $advice-icon()
   text-shadow: 0 -1px 0px rgba(0,0,0,0.7)
   margin-bottom: 1rem
 
-.advice__medium-icon
+.advice__icon
   $advice-icon()
+
+.advice__icon--normal
+  font-size: 5em
+
+.advice__icon--medium
   font-size: 9rem
 
-.advice__giant-icon
-  $advice-icon()
+.advice__icon--giant
   font-size: 14rem
+
+.advice__icon--margin-right
+  margin-right: 30px
+
+.advice__icon--margin-bottom
+  margin-bottom: 0.8rem
 
 .advice__frame
   max-width: 60em
@@ -116,17 +130,33 @@ $advice-icon()
   align-items: center
   text-align: center
 
+.advice__frame--align-left
+  align-items: flex-start
+  text-align: left
+
+.advice__frame--no-margin
+  margin: inherit
+
 .advice__title
   font-weight: bold
   font-size: 2em
   line-height: 1.2em
   margin-top: 0
   margin-bottom: $rhythm(0.5)
+  i
+    font-style: italic
+
+.advice__title--normal
+  font-weight: 600
 
 .advice__description
   font-size: 1.2em
   line-height: 1.2em
   margin: 0 6em $rhythm(0.5)
+
+.advice__subtext
+  font-size: 1.2em
+  line-height: 1.2em
 
 .advice__action
   margin: $rhythm(1) 0
@@ -140,4 +170,3 @@ $advice-icon()
   $note-box()
   $note-box--info()
   margin: 0 0 $rhythm(2)
-

@@ -7,6 +7,8 @@ angular.module('contentful')
  */
 .factory('states/account', ['require', function (require) {
   var base = require('states/base');
+  var TheAccountView = require('TheAccountView');
+  var analytics = require('analytics');
 
   return base({
     name: 'account',
@@ -16,8 +18,11 @@ angular.module('contentful')
     controller: ['$scope', function ($scope) {
       $scope.context = {};
     }],
-    onEnter: ['TheAccountView', function (view) { view.enter(); }],
-    onExit: ['TheAccountView', function (view) { view.exit(); }],
+    onEnter: function () {
+      TheAccountView.enter();
+      analytics.trackSpaceChange(null);
+    },
+    onExit: TheAccountView.exit,
     children: [{
       name: 'pathSuffix',
       url: '/{pathSuffix:PathSuffix}',

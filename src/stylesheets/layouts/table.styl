@@ -16,9 +16,12 @@ table.table
     tr
       td Pikachu
       td Electric type pokemon
-    tr.pseudo-class-last-child
+    tr
       td Charizard
       td A big dragon
+    tr.pseudo-class-last-child
+      td Snorlax
+      td Snorlax, known in Japan as Kabigon (カビゴン?), is a Pokémon species in Nintendo and Game Freak's Pokémon franchise. Created by Ken Sugimori, Snorlax first appeared in the video games Pokémon Red and Blue and subsequent sequels, later appearing in various merchandise, spinoff titles and animated and printed adaptations of the franchise.
 script
   | $('.x--asc').click(function () {
   |   $(this).toggleClass('x--asc x--desc')
@@ -33,9 +36,8 @@ Styleguide 7
   border-collapse: separate
   tr
     height: 40px
-    line-height: 40px
   td
-    padding: 4px 14px
+    padding: 14px
   th
     padding: 0 14px
     background-color: $colors.element-lightest
@@ -43,6 +45,7 @@ Styleguide 7
     text-align: left
     font-weight: normal
     color: $colors.text-light
+    line-height: 40px
     &.x--asc, &.x--desc
       cursor: pointer
       &:after

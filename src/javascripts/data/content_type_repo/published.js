@@ -23,6 +23,11 @@ angular.module('cf.data')
 
   function create (space) {
     var store = Store.create();
+    var wrappedItems$ = store.items$.map(function (ctList) {
+      return ctList.sortBy(function (ct) {
+        return ct.data.name && ct.data.name.toLowerCase();
+      });
+    });
 
     // requesting[id] holds a promise for the content type if we are
     // already requesting it.
@@ -37,7 +42,7 @@ angular.module('cf.data')
        * TODO this interface is deprecated and only used to set
        * `spaceContext.publishedContentTypes`.
        */
-      wrappedItems$: store.items$,
+      wrappedItems$: wrappedItems$,
 
       /**
        * @ngdoc property
@@ -46,7 +51,7 @@ angular.module('cf.data')
        * @description
        * The items in the list will be deep frozen to prevent mutation.
        */
-      items$: store.items$.map(function (ctList) {
+      items$: wrappedItems$.map(function (ctList) {
         return ctList.map(function (ct) {
           return deepFreeze(_.cloneDeep(ct.data));
         });

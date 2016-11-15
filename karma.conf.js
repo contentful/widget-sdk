@@ -2,6 +2,8 @@
 // Generated on Sat Aug 09 2014 23:18:39 GMT+0200 (CEST)
 
 require('babel-register');
+var babelOptions = require('./tools/app-babel-options').options;
+var P = require('path');
 
 module.exports = function (config) {
 
@@ -26,8 +28,8 @@ module.exports = function (config) {
       'public/app/markdown_vendors.js',
       'public/app/templates.js',
       'public/app/libs.js',
-      'src/javascripts/*.js',
-      'src/javascripts/*/**/*.js',
+      'src/javascripts/prelude.js',
+      'src/javascripts/**/*.js',
 
       // Test libraries
       'node_modules/angular-mocks/angular-mocks.js',
@@ -49,11 +51,30 @@ module.exports = function (config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
+      'src/**/*.es6.js': ['babel', 'sourcemap'],
       'test/**/*.js': ['wrap']
     },
 
+    babelPreprocessor: {
+      options: Object.assign({}, babelOptions, {
+        sourceMap: 'inline',
+        // Since we strip the '.es6.js' extension from the filename we
+        // do not need to match /.es6.js/. This is done by the
+        // preprocessor glob.
+        only: null
+      }),
+      filename: function (file) {
+        return file.originalPath
+          .replace(/\.es6\.js$/, '.js');
+      },
+      sourceFileName: function (file) {
+        return file.originalPath
+          .replace(P.resolve(), '');
+      }
+    },
+
     wrapPreprocessor: {
-      template: '(function () { <%= contents %> })()'
+      template: '(function () { "use strict"; <%= contents %> })()'
     },
 
 

@@ -76,17 +76,10 @@ angular.module('contentful')
       $scope.selectedLanguage = undefined;
     } else {
       $scope.selectedLanguage = language;
-      analytics.track('Selected Language at the API Key Page', {
+      analytics.track('api_keys:language_selected', {
         language: $scope.selectedLanguage.name
       });
     }
-  };
-
-  $scope.trackResourceLink = function (linkName, language) {
-    analytics.track('Selected Content at the API key page', {
-      resource: linkName,
-      language: language
-    });
   };
 
   controller.save = Command.create(save, {

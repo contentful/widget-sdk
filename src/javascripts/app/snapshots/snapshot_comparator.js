@@ -31,7 +31,7 @@ angular.module('cf.app')
   var $state = require('$state');
   var $stateParams = require('$stateParams');
   var notification = require('notification');
-  var tracking = require('track/versioning');
+  var trackVersioning = require('analyticsEvents/versioning');
   var Validator = require('entityEditor/Validator');
 
   $scope.versionPicker = require('SnapshotComparatorController/versionPicker').create();
@@ -40,7 +40,7 @@ angular.module('cf.app')
   _.extend($scope.context, {
     ready: true,
     title: spaceContext.entryTitle($scope.entry),
-    requestLeaveConfirmation: tracking.trackableConfirmator(save)
+    requestLeaveConfirmation: trackVersioning.trackableConfirmator(save)
   });
 
   $scope.editorContext = {
@@ -77,7 +77,7 @@ angular.module('cf.app')
 
   function close () {
     if (!$scope.context.dirty) {
-      tracking.closed();
+      trackVersioning.closed();
     }
 
     return $state.go('^.^');
@@ -86,8 +86,8 @@ angular.module('cf.app')
   function save (redirect) {
     return spaceContext.cma.updateEntry(prepareRestoredEntry())
     .then(function (entry) {
-      tracking.registerRestoredVersion(entry);
-      tracking.restored($scope.versionPicker, $scope.showOnlyDifferences);
+      trackVersioning.registerRestoredVersion(entry);
+      trackVersioning.restored($scope.versionPicker, $scope.showOnlyDifferences);
       setPristine();
       if (redirect) {
         return $state.go('^.^', {}, {reload: true});

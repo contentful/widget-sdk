@@ -1,0 +1,60 @@
+@require "../mixins/spinner"
+
+/*
+Loaders for the app
+
+Styles used by the loader directives
+
+Markup:
+.loader
+  .loader__container
+    .loader__spinner
+    .loader_message
+
+.loader.loader--inline
+  span.loader__spinner--inline
+
+Styleguide app-loaders
+*/
+
+$loader-base()
+  display: flex
+  align-items: center
+  justify-content: center
+  background: rgba(255,255,255, 0.7)
+
+.loader
+  $loader-base()
+  height: 100%
+  width: 100%
+  position: absolute
+  top: 0
+  left: 0
+  $layer('buttonOverlay')
+
+.loader__container
+  $loader-base()
+  padding: 10px
+  border-radius: 5em
+
+.loader__spinner
+  $spinner-base()
+  +$spinner-active()
+    display: block
+    width: 2em
+    height: 2em
+    margin-right: $new-rhythm(0.5)
+
+.loader--inline
+  left: 100%
+  margin-left: -20px
+  width: inherit
+  background: transparent
+
+.loader__spinner--inline
+  $spinner-base()
+  +$spinner-active()
+    display: inline-block
+
+.loader__message
+  font-size: 2em

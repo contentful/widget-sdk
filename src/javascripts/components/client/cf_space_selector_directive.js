@@ -32,7 +32,7 @@ angular.module('contentful')
   $scope.spaceContext = spaceContext;
   $scope.canCreateSpace = accessChecker.canCreateSpace;
   $scope.canCreateSpaceInAnyOrganization = accessChecker.canCreateSpaceInAnyOrganization;
-  $scope.clickedSpaceSwitcher = clickedSpaceSwitcher;
+  $scope.clickedSpaceSwitcher = _.partial(analytics.track, 'space_switcher:opened');
   $scope.getOrganizationName = OrganizationList.getName;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
   $scope.selectSpace = spaceTools.goTo;
@@ -45,10 +45,6 @@ angular.module('contentful')
     $scope.spacesByOrganization = _.groupBy($scope.spaces || [], function(space) {
       return space.data.organization.sys.id;
     });
-  }
-
-  function clickedSpaceSwitcher() {
-    analytics.track('Clicked Space-Switcher');
   }
 
   function showCreateSpaceDialog() {

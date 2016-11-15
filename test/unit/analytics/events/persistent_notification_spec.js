@@ -1,0 +1,36 @@
+'use strict';
+
+describe('Tracking persistent notification', function () {
+  beforeEach(function () {
+    module('contentful/test');
+    this.analytics = this.$inject('analytics');
+    sinon.stub(this.analytics, 'track');
+    this.trackPersistenNotification = this.$inject('analyticsEvents/persistentNotification');
+  });
+
+  describe('without organization data available', function () {
+    it('tracks action', function () {
+      this.trackPersistenNotification.action('ACTION_NAME');
+      sinon.assert.calledWith(this.analytics.track, sinon.match.string, {
+        action: 'ACTION_NAME',
+        currentPlan: null
+      });
+    });
+  });
+
+  describe('with organization data set', function () {
+    it('tracks action and contains current plan name', function () {
+      const space = {};
+      const planName = 'subscriptionPlanName';
+      dotty.put(space, 'data.organization.subscriptionPlan.name', planName);
+
+      this.analytics.trackSpaceChange(space);
+      this.trackPersistenNotification.action('ACTION_NAME');
+
+      sinon.assert.calledWith(this.analytics.track, sinon.match.string, sinon.match({
+        action: 'ACTION_NAME',
+        currentPlan: planName
+      }));
+    });
+  });
+});

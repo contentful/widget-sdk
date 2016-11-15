@@ -116,6 +116,16 @@ describe('data/ContentTypeRepo/Published', function () {
       yield this.repo.refresh();
       expect(this.idValues[0]).toEqual(['A', 'C']);
     });
+
+    it('sorts content types by name', function* () {
+      this.space.getPublishedContentTypes.resolves([
+        makeCtMock('A', {name: 'y'}),
+        makeCtMock('B', {name: 'Z'}),
+        makeCtMock('C', {name: 'X'})
+      ]);
+      yield this.repo.refresh();
+      expect(this.idValues[0]).toEqual(['C', 'A', 'B']);
+    });
   });
 
 
@@ -142,15 +152,17 @@ describe('data/ContentTypeRepo/Published', function () {
   }
 
   function makeCtMock (id, opts = {}) {
+    const name = opts.name || id;
     return {
       data: {
         sys: {id},
         displayField: opts.displayField,
-        fields: opts.fields || []
+        fields: opts.fields || [],
+        name: name
       },
       getId: _.constant(id),
       isDeleted: _.constant(opts.isDeleted === true),
-      getName: _.constant(id),
+      getName: _.constant(name),
       publish: sinon.spy(function () {
         return $q.resolve(this);
       })

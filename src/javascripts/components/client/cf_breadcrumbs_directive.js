@@ -66,9 +66,9 @@ angular.module('contentful').directive('cfBreadcrumbs', ['require', function (re
       });
 
       function track (clickedOn) {
-        analytics.track('navigation-control', {
-          clickedOn: clickedOn,
-          appSection: analyticsData.appSection[$scope.crumbs[0].type]
+        analytics.track('global:navigated', {
+          control: clickedOn,
+          section: analyticsData.appSection[$scope.crumbs[0].type]
         });
       }
 

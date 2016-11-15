@@ -7,24 +7,23 @@
  * @scope.requires {client.ContentType} contentType
  */
 angular.module('contentful')
-.controller('ContentTypeActionsController', ['$scope', '$injector', function ContentTypeActionsController ($scope, $injector) {
+.controller('ContentTypeActionsController', ['$scope', 'require', function ContentTypeActionsController ($scope, require) {
   var controller = this;
-  var $rootScope = $injector.get('$rootScope');
-  var analytics = $injector.get('analytics');
-  var logger = $injector.get('logger');
-  var notify = $injector.get('contentType/notifications');
-  var $q = $injector.get('$q');
-  var modalDialog = $injector.get('modalDialog');
-  var Command = $injector.get('command');
-  var spaceContext = $injector.get('spaceContext');
-  var $state = $injector.get('$state');
-  var accessChecker = $injector.get('accessChecker');
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var ctHelpers = $injector.get('data/ContentTypes');
-  var closeState = $injector.get('navigation/closeState');
-  var metadataDialog = $injector.get('contentTypeEditor/metadataDialog');
-  var uiConfig = $injector.get('uiConfig');
-  var previewEnvironmentsCache = $injector.get('data/previewEnvironmentsCache');
+  var $rootScope = require('$rootScope');
+  var logger = require('logger');
+  var notify = require('contentType/notifications');
+  var $q = require('$q');
+  var modalDialog = require('modalDialog');
+  var Command = require('command');
+  var spaceContext = require('spaceContext');
+  var $state = require('$state');
+  var accessChecker = require('accessChecker');
+  var ReloadNotification = require('ReloadNotification');
+  var ctHelpers = require('data/ContentTypes');
+  var closeState = require('navigation/closeState');
+  var metadataDialog = require('contentTypeEditor/metadataDialog');
+  var uiConfig = require('uiConfig');
+  var previewEnvironmentsCache = require('data/previewEnvironmentsCache');
 
   /**
    * @ngdoc property
@@ -137,7 +136,6 @@ angular.module('contentful')
   function unpublishSuccessHandler (publishedContentType) {
     $scope.publishedContentType = null;
     $scope.ctEditorController.registerPublishedFields(null);
-    trackUnpublishedContentType($scope.contentType);
     return publishedContentType;
   }
 
@@ -154,19 +152,6 @@ angular.module('contentful')
       return closeState();
     }, notify.deleteFail);
   }
-
-  /**
-   * @ngdoc analytics-event
-   * @name Unpublished Content Type
-   */
-  function trackUnpublishedContentType (contentType) {
-    analytics.track('Unpublished ContentType', {
-      contentTypeId: contentType.getId(),
-      contentTypeName: contentType.getName(),
-      version: contentType.getVersion()
-    });
-  }
-
 
   /**
    * @ngdoc property
@@ -192,6 +177,7 @@ angular.module('contentful')
   }, {
     disabled: function () {
       var dirty = $scope.contentTypeForm.$dirty ||
+                  $scope.contentType.hasUnpublishedChanges() ||
                   !$scope.contentType.getPublishedVersion();
       var valid = !allFieldsInactive($scope.contentType);
       var denied = accessChecker.shouldDisable('updateContentType') ||
@@ -209,7 +195,6 @@ angular.module('contentful')
   };
 
   function save (redirect) {
-    trackSavedContentType($scope.contentType);
     ctHelpers.assureDisplayField($scope.contentType.data);
 
     if (!$scope.validate()) {
@@ -271,7 +256,7 @@ angular.module('contentful')
   }
 
   function goToDetails (contentType) {
-    return $state.go('spaces.detail.content_types.detail', {
+    return $state.go('spaces.detail.content_types.detail.fields', {
       contentTypeId: contentType.getId()
     });
   }
@@ -279,18 +264,6 @@ angular.module('contentful')
   function triggerApiErrorNotification (errOrErrContainer) {
     notify.saveFailure(errOrErrContainer, $scope.contentType);
     return $q.reject(errOrErrContainer);
-  }
-
-  /**
-   * @ngdoc analytics-event
-   * @name Clicked Save Content Type Button
-   * @param initialSave
-   */
-  function trackSavedContentType (contentType) {
-    var isNew = !_.isNumber(contentType.getId());
-    analytics.track('Clicked Save Content Type Button', {
-      initialSave: isNew
-    });
   }
 
   function allFieldsInactive (contentType) {
@@ -362,10 +335,10 @@ angular.module('contentful')
   }
 }])
 
-.factory('contentType/notifications', ['$injector', function ($injector) {
-  var logger = $injector.get('logger');
-  var notification = $injector.get('notification');
-  var truncate = $injector.get('stringUtils').truncate;
+.factory('contentType/notifications', ['require', function (require) {
+  var logger = require('logger');
+  var notification = require('notification');
+  var truncate = require('stringUtils').truncate;
 
   var saveError = 'Unable to save content type: ';
   var messages = {

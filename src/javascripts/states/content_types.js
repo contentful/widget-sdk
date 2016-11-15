@@ -31,9 +31,26 @@ angular.module('contentful')
     template: '<div cf-content-type-list class="workbench"></div>'
   });
 
+  var fields = {
+    name: 'fields',
+    url: '/fields'
+  };
+
+  var preview = {
+    name: 'preview',
+    url: '/preview'
+  };
+
   var newState = editorBase({
     name: 'new',
     url: '_new',
+    children: [
+      {
+        name: 'home',
+        url: '',
+        redirectTo: 'spaces.detail.content_types.new.fields'
+      }, fields, preview
+    ],
     data: {
       isNew: true
     },
@@ -51,6 +68,13 @@ angular.module('contentful')
   var detail = editorBase({
     name: 'detail',
     url: '/:contentTypeId',
+    children: [
+      {
+        name: 'home',
+        url: '',
+        redirectTo: 'spaces.detail.content_types.detail.fields'
+      }, fields, preview
+    ],
     data: {
       isNew: false
     },
@@ -92,6 +116,7 @@ angular.module('contentful')
     var state = _.extend({
       label: label,
       params: { addToContext: true },
+      abstract: true,
       controller: [
         '$scope', 'require', 'contentType', 'editingInterface', 'publishedContentType',
         function ($scope, require, contentType, editingInterface, publishedContentType) {

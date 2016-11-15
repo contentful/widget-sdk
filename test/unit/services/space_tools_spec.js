@@ -48,7 +48,7 @@ describe('Space tools service', function () {
     });
 
     it('tracks the space properties', function () {
-      expect(analytics.track.args[0][1]).toEqual({spaceId: 123, spaceName: 'test_space'});
+      expect(analytics.track.args[0][1]).toEqual({targetSpaceId: 123, targetSpaceName: 'test_space'});
     });
 
     it('route to another space', function () {
@@ -66,7 +66,7 @@ describe('Space tools service', function () {
     });
 
     it('tracks the space properties', function () {
-      expect(analytics.track.args[0][1]).toEqual({spaceId: 456, spaceName: 'test_space'});
+      expect(analytics.track.args[0][1]).toEqual({targetSpaceId: 456, targetSpaceName: 'test_space'});
     });
 
     it('route to another space', function () {

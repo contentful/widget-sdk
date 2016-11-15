@@ -39,7 +39,10 @@ angular.module('contentful').factory('batchPerformer', ['$injector', function ($
         results = groupBySuccess(results);
         notifyBatchResult(method, results);
         if (_.isFunction(config.onComplete)) { config.onComplete(); }
-        analytics.track('Performed ' + config.entityType + ' list action', {action: method});
+        analytics.track('search:bulk_action_performed', {
+          entityType: config.entityType,
+          action: method
+        });
         return results;
       });
     }

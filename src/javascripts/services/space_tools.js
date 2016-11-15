@@ -65,9 +65,9 @@ angular.module('contentful').factory('spaceTools', ['$injector', function($injec
       return;
     }
     if (!doNotTrack) {
-      analytics.track('Switched Space', {
-        spaceId: space.getId(),
-        spaceName: space.data.name
+      analytics.track('space_switcher:space_switched', {
+        targetSpaceId: space.getId(),
+        targetSpaceName: space.data.name
       });
     }
     TheStore.set('lastUsedSpace', space.getId());

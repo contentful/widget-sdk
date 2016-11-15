@@ -28,7 +28,7 @@ angular.module('contentful')
   var cmaKeys = {
     name: 'cma_keys',
     url: '/cma_keys',
-    label: 'Content Management API Keys',
+    label: 'content management API keys',
     controller: [function () {
       contextHistory.addEntity({
         getTitle: function () { return cmaKeys.label; },
@@ -51,7 +51,7 @@ angular.module('contentful')
   var keyList = base({
     name: 'list',
     url: '/',
-    label: 'Content Delivery API Keys',
+    label: 'API keys',
     controller: ['$scope', function ($scope) {
       $scope.context = {};
       contextHistory.addEntity(cdaKeyListEntity);

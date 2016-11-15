@@ -307,7 +307,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
 
     // Create the discovery app environment if there is an API key
     createPreviewEnvironment: function (contentTypes) {
-      var baseUrl = 'https://contentful.github.io/discovery-app-react/entries/by-content-type/';
+      var baseUrl = 'https://discovery.contentful.com/entries/by-content-type/';
       var getKeys = this.spaceContext.space.getDeliveryApiKeys();
       var getContentPreview = contentPreview.getAll();
       var spaceId = this.spaceContext.space.getId();
@@ -319,7 +319,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
         function createConfig (ct, token) {
           return {
             contentType: ct.sys.id,
-            url: baseUrl + ct.sys.id + '/{entry_id}/?space_id=' + spaceId + '&access_token=' + token,
+            url: baseUrl + ct.sys.id + '/{entry_id}/?space_id=' + spaceId + '&delivery_access_token=' + token,
             enabled: true,
             example: true
           };
@@ -337,9 +337,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
             })
           };
           return contentPreview.create(env).then(function (env) {
-            // TODO: extract into a separate content preview analytics service
-            analytics.track('content-preview', {
-              action: 'create',
+            analytics.track('content_preview:created', {
               name: env.name,
               id: env.sys.id,
               isDiscoveryApp: true

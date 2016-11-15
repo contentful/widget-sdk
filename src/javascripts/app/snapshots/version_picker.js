@@ -29,7 +29,7 @@ angular.module('cf.app')
 
     /**
      * @ngdoc method
-     * @name versionPicker#keep
+     * @name SnapshotComparatorController/versionPicker#keep
      * @param {array} path
      * @description
      * Marks path as "kept": current version
@@ -41,7 +41,7 @@ angular.module('cf.app')
 
     /**
      * @ngdoc method
-     * @name versionPicker#keepAll
+     * @name SnapshotComparatorController/versionPicker#keepAll
      * @description
      * Marks all paths as "kept"
      */
@@ -51,7 +51,7 @@ angular.module('cf.app')
 
     /**
      * @ngdoc method
-     * @name versionPicker#restore
+     * @name SnapshotComparatorController/versionPicker#restore
      * @param {array} path
      * @description
      * Marks path as "restored": snapshot
@@ -66,7 +66,7 @@ angular.module('cf.app')
 
     /**
      * @ngdoc method
-     * @name versionPicker#registerPath
+     * @name SnapshotComparatorController/versionPicker#registerPath
      * @param {object} spec
      * @description
      * Control for each path should register
@@ -84,7 +84,7 @@ angular.module('cf.app')
 
     /**
      * @ngdoc method
-     * @name versionPicker#restoreAll
+     * @name SnapshotComparatorController/versionPicker#restoreAll
      * @description
      * Calls "restoreFn" of all paths
      */
@@ -96,7 +96,7 @@ angular.module('cf.app')
 
     /**
      * @ngdoc method
-     * @name versionPicker#getPathsToRestore
+     * @name SnapshotComparatorController/versionPicker#getPathsToRestore
      * @returns {string[][]}
      * @description
      * Gets an array of paths to restore
@@ -109,7 +109,7 @@ angular.module('cf.app')
 
     /**
      * @ngdoc method
-     * @name versionPicker#getDifferenceCount
+     * @name SnapshotComparatorController/versionPicker#getDifferenceCount
      * @returns {number}
      * @description
      * Gets an array of paths to restore

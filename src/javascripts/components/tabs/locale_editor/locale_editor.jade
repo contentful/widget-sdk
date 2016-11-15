@@ -15,6 +15,8 @@ header.workbench-header
       ui-command="localeEditor.save")
       | Save
 
+cf-loader(watch-state-change="true")
+
 .workbench-main.x--content
   form.workbench-main__middle-content(name="localeForm" submit="save()")
     .locale-editor

@@ -61,7 +61,7 @@ angular.module('contentful')
       function (require, $scope, fieldControls, entry, contentType, snapshot) {
         var $state = require('$state');
         var $stateParams = require('$stateParams');
-        var tracking = require('track/versioning');
+        var trackVersioning = require('analyticsEvents/versioning');
 
         $state.current.data = $scope.context = {};
         $scope.widgets = _.filter(fieldControls.form, function (widget) {
@@ -71,8 +71,8 @@ angular.module('contentful')
         $scope.contentType = contentType;
         $scope.snapshot = snapshot;
 
-        tracking.setData($scope.user, entry.data, snapshot);
-        tracking.opened($stateParams.source);
+        trackVersioning.setData(entry.data, snapshot);
+        trackVersioning.opened($stateParams.source);
 
         contextHistory.addEntity(listEntity);
         contextHistory.addEntity(buildEntryCrumb(entry));
@@ -98,7 +98,7 @@ angular.module('contentful')
       var spaceContext = require('spaceContext');
       var $state = require('$state');
       var modalDialog = require('modalDialog');
-      var tracking = require('track/versioning');
+      var trackVersioning = require('analyticsEvents/versioning');
 
       spaceContext.cma.getEntrySnapshots(entry.getId(), {limit: 2})
       .then(function (res) {
@@ -115,7 +115,7 @@ angular.module('contentful')
       }
 
       function back () {
-        tracking.noSnapshots(entry.getId());
+        trackVersioning.noSnapshots(entry.getId());
 
         return modalDialog.open({
           title: 'This entry has no versions',

@@ -12,11 +12,6 @@ describe('ContentTypeEditor Controller', function () {
   beforeEach(function () {
     const self = this;
     module('contentful/test', function ($provide) {
-      self.trackContentTypeChangeStub = sinon.stub();
-      $provide.value('analyticsEvents', {
-        trackContentTypeChange: self.trackContentTypeChangeStub
-      });
-
       self.modalDialogOpenStub = sinon.stub();
       $provide.value('modalDialog', {
         open: self.modalDialogOpenStub
@@ -221,11 +216,6 @@ describe('ContentTypeEditor Controller', function () {
       this.$apply();
       sinon.assert.calledWithExactly(scope.$broadcast, 'fieldAdded');
     });
-
-    it('fires analytics event', function () {
-      this.$apply();
-      sinon.assert.called(this.trackContentTypeChangeStub);
-    });
   });
 
   describe('#removeField(id)', function () {
@@ -292,7 +282,7 @@ describe('ContentTypeEditor Controller', function () {
       $state.go = sinon.stub();
       openCreateDialog.rejects();
       createContentType();
-      sinon.assert.calledWithExactly($state.go, '^.list');
+      sinon.assert.calledWithExactly($state.go, 'spaces.detail.content_types.list');
     });
   });
 

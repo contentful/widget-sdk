@@ -1,5 +1,5 @@
 .search-field
-  .search-field__input
+  .search-field__input(ng-class="{'search-field__input--searching': context.isSearching}")
     input.form-control(type="search"
       ng-model="inner.term"
       ng-trim="false"
@@ -9,6 +9,7 @@
       ng-keyup="keyReleased($event)"
       ng-focus="inputFocused($event)"
       ng-blur="inputBlurred($event)")
+    cf-inline-loader(is-shown="context.isSearching")
   .search-field__button.btn-secondary-action(ng-click="updateFromButton()" tabindex="0")
     i.fa.fa-search.fa-flip-horizontal
 .search-results(cf-autocomplete-list ng-if="showAutocompletions && autocompletion.type === 'List'")

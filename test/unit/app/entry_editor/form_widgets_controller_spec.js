@@ -7,6 +7,7 @@ describe('FormWidgetsController#widgets', function () {
     this.scope = this.$inject('$rootScope').$new();
 
     this.scope.editorContext = this.$inject('mocks/entityEditor/Context').create();
+    this.scope.contentType = {getId: _.constant('ctid')};
 
     this.field = {
       id: 'foo',
@@ -23,7 +24,6 @@ describe('FormWidgetsController#widgets', function () {
       const $controller = this.$inject('$controller');
       $controller('FormWidgetsController', {
         $scope: this.scope,
-        contentTypeId: '',
         controls: controls
       });
       this.$apply();

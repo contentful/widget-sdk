@@ -24,6 +24,8 @@ header.workbench-header
       cf-when-disabled="createApiKey")
       | Save
 
+cf-loader(watch-state-change="true")
+
 .workbench-main
   .workbench-main__content.api-key-editor
     .entity-editor__notification(ng-if="isReadOnly()" role="alert")
@@ -154,7 +156,7 @@ header.workbench-header
               div
                strong Discovery for Web (JavaScript)
               .discovery-app__links
-                a(href="https://contentful.github.io/discovery-app-react/?space_id={{getSpaceId()}}&access_token={{apiKey.data.accessToken}}&preview_access_token={{previewApiKey.data.accessToken}}"
+                a(href="https://discovery.contentful.com/entries?space_id={{getSpaceId()}}&delivery_access_token={{apiKey.data.accessToken}}&preview_access_token={{previewApiKey.data.accessToken}}"
                   target="_blank")
                   | Open the App
                 .discovery-app__separator
@@ -219,10 +221,7 @@ header.workbench-header
                 p.build-with-contentful__reference-description
                   | {{item.description}}
                 span(ng-repeat="link in item.links track by $index")
-                  a.build-with-contentful__reference-link(
-                    ng-click="trackResourceLink(item.name, selectedLanguage.name)"
-                    href="{{link.url}}"
-                    target="_blank")
+                  a.build-with-contentful__reference-link(href="{{link.url}}" target="_blank")
                     | {{link.text}}
                   span(ng-if="!$last")
                     | &#32;|&#32;

@@ -2,7 +2,7 @@
 
 angular.module('cf.app')
 .directive('cfJsonEditor', ['$injector', function ($injector) {
-  var Editor = $injector.get('widgets/json/codeEditor');
+  var Editor = $injector.get('app/widgets/json/code_editor');
 
   return {
     restrict: 'E',

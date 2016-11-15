@@ -1,23 +1,22 @@
 'use strict';
 
 angular.module('contentful')
-.controller('ClientController', ['$scope', '$injector', function ClientController ($scope, $injector) {
-  var $rootScope = $injector.get('$rootScope');
-  var $state = $injector.get('$state');
-  var features = $injector.get('features');
-  var logger = $injector.get('logger');
-  var spaceContext = $injector.get('spaceContext');
-  var authentication = $injector.get('authentication');
-  var tokenStore = $injector.get('tokenStore');
-  var analytics = $injector.get('analytics');
-  var analyticsEvents = $injector.get('analyticsEvents');
-  var authorization = $injector.get('authorization');
-  var modalDialog = $injector.get('modalDialog');
-  var presence = $injector.get('presence');
-  var revision = $injector.get('revision');
-  var ReloadNotification = $injector.get('ReloadNotification');
-  var OrganizationList = $injector.get('OrganizationList');
-  var environment = $injector.get('environment');
+.controller('ClientController', ['$scope', 'require', function ClientController ($scope, require) {
+  var $rootScope = require('$rootScope');
+  var features = require('features');
+  var logger = require('logger');
+  var spaceContext = require('spaceContext');
+  var authentication = require('authentication');
+  var tokenStore = require('tokenStore');
+  var analytics = require('analytics');
+  var authorization = require('authorization');
+  var modalDialog = require('modalDialog');
+  var presence = require('presence');
+  var revision = require('revision');
+  var ReloadNotification = require('ReloadNotification');
+  var OrganizationList = require('OrganizationList');
+  var environment = require('environment');
+  var fontsDotCom = require('fontsDotCom');
 
   // TODO remove this eventually. All components should access it as a service
   $scope.spaceContext = spaceContext;
@@ -29,7 +28,6 @@ angular.module('contentful')
     toggleAuxPanel: function () {
       var showAuxPanel = !$scope.preferences.showAuxPanel;
       $scope.preferences.showAuxPanel = showAuxPanel;
-      analyticsEvents.trackToggleAuxPanel(showAuxPanel, $state.current.name);
     },
     showDisabledFields: false
   };
@@ -85,6 +83,7 @@ angular.module('contentful')
     if (features.allowAnalytics(user)) {
       logger.enable(user);
       analytics.enable(user);
+      fontsDotCom.enable();
     } else {
       logger.disable();
       analytics.disable();
@@ -107,7 +106,7 @@ angular.module('contentful')
   }
 
   function showCreateSpaceDialog () {
-    analytics.track('Clicked Create-Space');
+    analytics.track('space_switcher:create_clicked');
     modalDialog.open({
       title: 'Space templates',
       template: 'create_new_space_dialog',
@@ -115,15 +114,14 @@ angular.module('contentful')
       persistOnNavigation: true
     })
     .promise
-    .then(handleSpaceCreationSuccess)
-    .catch(function () {
-      analytics.track('Closed Space Template Selection Modal');
-    });
+    .then(handleSpaceCreationSuccess);
   }
 
   function handleSpaceCreationSuccess (template) {
     if (template) {
-      analytics.track('Created Space Template', {template: template.name});
+      analytics.track('space:created_from_template', {
+        templateName: template.name
+      });
       spaceContext.refreshContentTypesUntilChanged().then(function () {
         $rootScope.$broadcast('reloadEntries');
       });

@@ -155,30 +155,20 @@ angular.module('contentful')
       $scope.previewEnvironment.version = env.sys.version;
       $scope.contentPreviewForm.$setPristine();
       $scope.context.dirty = false;
-      // redirect if its new
+
+      // redirect if it's new
       if ($scope.context.isNew) {
         $state.go(
           'spaces.detail.settings.content_preview.detail',
           {contentPreviewId: env.sys.id}, {reload: true}
         );
       }
-      if ($scope.context.isNew) {
-        // TODO: extract into a separate content preview analytics service
-        analytics.track('content-preview', {
-          action: 'create',
-          name: env.name,
-          id: env.sys.id,
-          isDiscoveryApp: false
-        });
-      } else {
-        // TODO: extract into a separate content preview analytics service
-        analytics.track('content-preview', {
-          action: 'edit',
-          name: env.name,
-          id: env.sys.id
-        });
-      }
 
+      if ($scope.context.isNew) {
+        track('created', env, {isDiscoveryApp: false});
+      } else {
+        track('updated', env);
+      }
     }, function (err) {
       var defaultMessage = 'Could not save Preview Environment';
       var serverMessage = _.first(_.split(_.get(err, 'body.message'), '\n'));
@@ -187,18 +177,23 @@ angular.module('contentful')
   }
 
   function remove () {
-    return contentPreview.remove($scope.previewEnvironment)
+    var env = $scope.previewEnvironment;
+
+    return contentPreview.remove(env)
     .then(function () {
       notification.info('Content preview was deleted successfully');
       $scope.context.dirty = false;
-      // TODO: extract into a separate content preview analytics service
-      analytics.track('content-preview', {
-        action: 'delete'
-      });
+      track('deleted', {name: env.name, sys: {id: env.id}});
       return $state.go('spaces.detail.settings.content_preview.list');
     }, function () {
       notification.warn('An error occurred');
     });
   }
 
+  function track (event, env, extraData) {
+    analytics.track('content_preview:' + event, _.extend({
+      envName: env.name,
+      envId: env.sys.id
+    }, extraData || {}));
+  }
 }]);
