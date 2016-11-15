@@ -1,6 +1,6 @@
 'use strict';
 
-/* global require, process, Buffer */
+/* global require, process, Buffer, console */
 require('babel-register');
 require('regenerator-runtime/runtime');
 
@@ -111,6 +111,16 @@ var src = {
   ])
 };
 
+// Gulp does not produce stack traces when logging errors.
+// This workaround is not part of the public API and not documented so
+// it might stop working at some point.
+// Found it here: https://github.com/gulpjs/gulp/issues/105#issuecomment-40841985
+gulp.on('err', function (e) {
+  /* eslint no-console: off */
+  console.error(e.err.stack);
+});
+
+
 gulp.task('all', function (done) {
   runSequence(
     ['templates', 'js', 'copy-images', 'copy-static', 'stylesheets'],
@@ -214,7 +224,7 @@ gulp.task('js/app', ['icons'], function () {
     concat('components.js'),
     sourceMaps.write({sourceRoot: '/'}),
     gulp.dest('./public/app/')
-  ]).on('error', function (e) { throw e; });
+  ]);
 });
 
 /**
